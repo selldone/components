@@ -1,0 +1,75 @@
+<template>
+  <div
+    class="add-new-btn-widget position-relative "
+    :class="{ 'no-fade': !src, 'widget-hover': !small, disabled: loading ,'h-100':fillHeight}"
+    @click.stop="$emit('click')"
+    :style="{ 'border-radius': radius, minHeight: minHeight, height: height }"
+  >
+    <v-img :src="src" contain class="sprite flip-image-rtl"> </v-img>
+    <div class="center-content px-2">
+      <v-icon
+        dark
+        :class="{ 'mb-3': !small }"
+        :size="small ? 24 : 36"
+        v-text="icon"
+      >
+      </v-icon>
+      <div class="-title" :class="{ small: small, 'inline-block': horizontal }">
+        {{ caption }}
+      </div>
+      <p class="-message" v-if="message" :class="`${space ? 'mt-5' : ''} ${classMessage}`">
+        {{ message }}
+      </p>
+      <slot></slot>
+    </div>
+    <v-progress-circular
+      v-if="loading"
+      class="center-absolute"
+    ></v-progress-circular>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "AddButtonGreen",
+
+  props: {
+    icon: {},
+    src: {},
+    caption: {},
+    message: {},
+    radius: {
+      default: "8px",
+    },
+    minHeight: {
+      default: "200px",
+    },
+    height: {
+      default: "max-content",
+    },
+    small: {
+      type: Boolean,
+      default: false,
+    },
+    fillHeight: {
+      type: Boolean,
+      default: true,
+    },
+    horizontal: {
+      type: Boolean,
+      default: false,
+    },
+    space: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    classMessage: {},
+  },
+};
+</script>
+
+<style scoped></style>

@@ -1,0 +1,80 @@
+<template>
+  <v-flex d-flex align-center justify-start>
+    <p
+      class="m-0 small text-muted text-truncate flex-grow-1"
+      style="width: 40%"
+      :title="title"
+    >
+      {{ title }}
+    </p>
+    <div style="max-width: 112px; width: 40%" class="position-relative">
+      <v-progress-linear
+        v-model="rating_percent"
+        color="#1976D2"
+        class="m-1"
+        rounded
+        style="pointer-events: none"
+      />
+      <v-avatar
+        v-if="userRate"
+        size="18"
+        :style="{
+          left: $vuetify.rtl ? undefined : `calc(${userRate * 20}% - 9px)`,
+          right: !$vuetify.rtl ? undefined : `calc(${userRate * 20}% - 9px)`,
+          top: '-4px',
+        }"
+        class="position-absolute"
+        color="#1976D2"
+      >
+        <img :src="getUserAvatar(USER_ID())" style="padding: 2px" />
+      </v-avatar>
+    </div>
+
+    <small class="ms-4" style="width: 20%">{{ rating_name }}</small>
+  </v-flex>
+</template>
+
+<script>
+export default {
+  name: "RatingBar",
+
+  props: {
+    value: {
+      required: false,
+      type: Number,
+      default: 0,
+    },
+    max: {
+      required: false,
+      type: Number,
+      default: 100,
+    },
+    title: {
+      required: false,
+      type: String,
+    },
+    userRate: {
+      required: false,
+    },
+  },
+
+  data: () => ({}),
+  computed: {
+    rating_percent() {
+      if (!this.max) return 50;
+      return (this.value * 100) / this.max;
+    },
+
+    rating_name() {
+      if (this.rating_percent < 30) return this.$t("surveys")[0];
+      if (this.rating_percent < 50) return this.$t("surveys")[1];
+      if (this.rating_percent < 70) return this.$t("surveys")[2];
+      if (this.rating_percent < 90) return this.$t("surveys")[3];
+      return this.$t("surveys")[4];
+    },
+  },
+  watch: {},
+};
+</script>
+
+<style scoped></style>

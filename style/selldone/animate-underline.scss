@@ -1,0 +1,164 @@
+$green: #388E3C;
+$whitey: #f0f0f0;
+
+$duration: .2s;
+$distance: 8px;
+$distance_div: 4px;
+$easeOutBack: cubic-bezier(0.175, 0.885, 0.320, 1.275);
+
+span {  // Fix Bug: in RTL hover not show underline! width=100% not work properly!
+  &.animate-underline {
+    display: inline-block;
+
+  }
+}
+
+.animate-underline {
+  position: relative;
+  text-decoration: none;
+  padding-bottom: 8px;
+  cursor: pointer;
+
+  &:before,
+  &:after {
+    content: ' ';
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: $green;
+    width: 100%;
+  }
+
+  &:before {
+    opacity: 0;
+    transform: translateY(- $distance);
+    transition: transform 0s $easeOutBack, opacity 0s;
+  }
+
+  &:after {
+    opacity: 0;
+    transform: translateY($distance_div);
+    transition: transform $duration $easeOutBack, opacity $duration;
+  }
+
+  &:hover,
+  &:focus {
+    &:before,
+    &:after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    &:before {
+      transition: transform $duration $easeOutBack, opacity $duration;
+    }
+
+    &:after {
+      transition: transform 0s $duration $easeOutBack, opacity 0s $duration;
+    }
+  }
+}
+
+
+.animate-underline-editable {
+  position: relative;
+  text-decoration: none;
+  padding-bottom: 2px;
+  padding-top: 2px;
+
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #1976D2;
+  }
+
+  &:before {
+    opacity: 0;
+    transform: translateY(- $distance);
+    transition: transform 0s $easeOutBack, opacity 0s;
+  }
+
+  &:after {
+    opacity: 0;
+    transform: translateY($distance_div);
+    transition: transform $duration $easeOutBack, opacity $duration;
+  }
+
+  &:hover,
+  &:focus {
+    &:before,
+    &:after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    &:before {
+      transition: transform $duration $easeOutBack, opacity $duration;
+      font-family: "Font Awesome 5 Free";
+      font-weight: 900;
+      content: "\f304";
+      color: #1976D2;
+    }
+
+    &:after {
+      transition: transform 0s $duration $easeOutBack, opacity 0s $duration;
+    }
+  }
+}
+
+
+.animate-underline-input {
+  .v-text-field__slot {
+    position: relative;
+    text-decoration: none;
+    padding-bottom: 8px;
+
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: $green;
+    }
+
+    &:before {
+      opacity: 0;
+      transform: translateY(- $distance);
+      transition: transform 0s $easeOutBack, opacity 0s;
+    }
+
+    &:after {
+      opacity: 0;
+      transform: translateY($distance_div);
+      transition: transform $duration $easeOutBack, opacity $duration;
+    }
+
+    &:hover,
+    &:focus {
+      &:before,
+      &:after {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      &:before {
+        transition: transform $duration $easeOutBack, opacity $duration;
+      }
+
+      &:after {
+        transition: transform 0s $duration $easeOutBack, opacity 0s $duration;
+      }
+    }
+  }
+
+}

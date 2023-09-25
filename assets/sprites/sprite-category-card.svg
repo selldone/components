@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2019 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="1146px" height="863px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 107.05 80.58"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#E6E7E8;stroke-width:0.39;stroke-miterlimit:2.61313}
+    .fil0 {fill:none}
+    .fil1 {fill:#E6E7E8}
+    .fil2 {fill:#E6E7E8}
+   ]]>
+  </style>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <rect class="fil0" width="107.05" height="80.58"/>
+  <line class="fil0 str0" x1="99.16" y1="35.12" x2="8.96" y2= "35.12" />
+  <rect class="fil1" x="8.51" y="26.69" width="30.48" height="6.19" rx="2.21" ry="2.21"/>
+  <rect class="fil1" x="8.51" y="36.5" width="30.48" height="6.19" rx="2.21" ry="2.21"/>
+  <rect class="fil1" x="8.51" y="7.09" width="55.17" height="8.44" rx="3.45" ry="2.21"/>
+  <polygon class="fil2" points="69.84,7 70.85,10.12 74.14,10.12 71.48,12.04 72.5,15.17 69.84,13.23 67.19,15.17 68.21,12.04 65.55,10.12 68.83,10.12 "/>
+  <rect class="fil1" x="8.51" y="19.78" width="18.63" height="4.38" rx="1.1" ry="1.1"/>
+  <path class="fil1" d="M14.72 45.85l31.72 0c3.18,0 5.79,2.61 5.79,5.8l0 0c0,3.19 -2.61,5.79 -5.79,5.79l-31.72 0c-3.19,0 -5.8,-2.6 -5.8,-5.79l0 0c0,-3.19 2.61,-5.8 5.8,-5.8zm30.58 1.96c2.15,0 3.9,1.74 3.9,3.9 0,2.15 -1.75,3.89 -3.9,3.89 -2.15,0 -3.9,-1.74 -3.9,-3.89 0,-2.16 1.75,-3.9 3.9,-3.9z"/>
+  <path class="fil1" d="M14.41 62.44l32.33 0c3.25,0 5.91,2.66 5.91,5.91l0 0c0,3.25 -2.66,5.91 -5.91,5.91l-32.33 0c-3.25,0 -5.9,-2.66 -5.9,-5.91l0 0c0,-3.25 2.65,-5.91 5.9,-5.91zm31.17 2c2.2,0 3.97,1.77 3.97,3.97 0,2.19 -1.77,3.97 -3.97,3.97 -2.19,0 -3.97,-1.78 -3.97,-3.97 0,-2.2 1.78,-3.97 3.97,-3.97z"/>
+  <circle class="fil1" cx="95.08" cy="14.71" r="9.17"/>
+  <path class="fil1" d="M60.38 45.39l31.72 0c3.19,0 5.79,2.6 5.79,5.79l0 0c0,3.19 -2.6,5.8 -5.79,5.8l-31.72 0c-3.19,0 -5.8,-2.61 -5.8,-5.8l0 0c0,-3.19 2.61,-5.79 5.8,-5.79zm30.58 1.95c2.16,0 3.9,1.75 3.9,3.9 0,2.15 -1.74,3.89 -3.9,3.89 -2.15,0 -3.89,-1.74 -3.89,-3.89 0,-2.15 1.74,-3.9 3.89,-3.9z"/>
+ </g>
+</svg>

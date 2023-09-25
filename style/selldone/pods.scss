@@ -1,0 +1,333 @@
+
+body {
+  --pod-color: #0061e0;
+  --pod-dot-color: #3fa9e3;
+  --pod-badge-text-color: #fff;
+
+  --pod-size: 84px;
+  --pod-icon-size: 24px;
+  --pod-shadow: inset 0 -3em 3em rgba(0, 0, 0, 0.01), 0 5px 30px 1px rgba(93, 93, 93, 0.3);
+  --pod-border-radius: 18px;
+
+}
+
+.pods-small {
+
+
+  .pod {
+    --pod-size: 42px;
+    --pod-icon-size: 16px;
+    --pod-shadow: inset 0 -0.4em 0.4em rgba(0, 0, 0, 0.01), 0 5px 6px 1px rgba(93, 93, 93, 0.3);
+    --pod-border-radius: 10px;
+
+
+    padding: 4px;
+    font-size: 7px;
+    border: solid 2px var(--pod-color);
+
+  }
+
+  .sph {
+    height: 4px;
+  }
+
+  .dot {
+    width: 3px;
+    height: 3px;
+
+  }
+
+
+}
+
+.pod {
+
+
+  background-color: #fff;
+  box-shadow: var(--pod-shadow) !important;
+  height: var(--pod-size);
+  width: var(--pod-size);
+  border-radius: var(--pod-border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  z-index: 1;
+  position: relative;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 500;
+  flex-direction: column;
+  border: solid 4px var(--pod-color);
+  user-select: none;
+
+  &.-dashed {
+    border: dashed 2px var(--pod-color);
+  }
+
+  &.-black {
+    border: solid 4px #000;
+  }
+
+  &.-white {
+    border: solid 4px white;
+  }
+
+  &.-large {
+    height: 128px;
+    width: 128px;
+  }
+
+  &.-rounded {
+    border-radius: 50%;
+    margin: 0 -10px; // Fix spv cropped by curve!
+  }
+
+  small {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 90%;
+  }
+
+  .pod-img, .pod-icon {
+    width: var(--pod-icon-size) !important;
+    height: var(--pod-icon-size) !important;
+  }
+
+}
+
+.spv {
+  flex-grow: 1;
+  background-color: var(--pod-color);
+
+  &.-black {
+    background-color: #000;
+  }
+
+  &.-white {
+    background-color: white;
+  }
+
+  width: 6px;
+  display: block;
+  position: relative;
+
+  .dot {
+
+    animation: move_vertical 5s linear forwards infinite;
+
+    &.-reverse {
+      animation: move_vertical 5s linear reverse infinite;
+    }
+  }
+
+}
+
+.dot.-large {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: super;
+  margin-top: -14px;
+  background-color: var(--pod-color);
+}
+
+.sph {
+  flex-grow: 1;
+  background-color: var(--pod-color);
+  height: 6px;
+  display: block;
+  position: relative;
+
+  &.-black {
+    background-color: #000;
+  }
+
+  &.-white {
+    background-color: white;
+  }
+
+  .dot {
+
+    animation: move_horizontal 5s linear forwards infinite;
+
+    &.-reverse {
+      animation: move_horizontal 5s linear reverse infinite;
+    }
+
+    &.-large {
+      animation: move_horizontal_scale 5s linear forwards infinite;
+
+      &.-reverse {
+        animation: move_horizontal_scale 5s linear reverse infinite;
+      }
+    }
+
+
+    &.-add-offset {
+      animation: move_horizontal_offset 5s linear forwards infinite;
+
+      &.-reverse {
+        animation: move_horizontal_offset 5s linear reverse infinite;
+      }
+    }
+
+    &.slow {
+      animation-duration: 6s !important;
+    }
+  }
+}
+
+.dot {
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--pod-dot-color);
+  width: 4px;
+  height: 4px;
+  margin: 1px;
+
+}
+
+@keyframes move_vertical {
+  0% {
+    top: 0;
+  }
+
+  100% {
+    top: 100%;
+  }
+}
+
+@keyframes move_horizontal {
+  0% {
+    right: 0;
+  }
+
+  100% {
+    right: 100%;
+  }
+}
+
+@keyframes move_horizontal_offset {
+  0% {
+    right: -48px;
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 1;
+  }
+
+  95% {
+    opacity: 1;
+  }
+
+
+  100% {
+    right: calc(100% + 48px);
+    opacity: 0;
+  }
+}
+
+
+@keyframes move_horizontal_scale {
+  0% {
+    transform: scale(0);
+    right: -24px;
+  }
+  10% {
+    transform: scale(1);
+  }
+  90% {
+    transform: scale(1);
+  }
+  100% {
+    right: calc(100% + 0px);
+    transform: scale(0);
+  }
+}
+
+
+.bdg {
+  position: absolute;
+  top: 0;
+  right: 6px;
+  position: absolute;
+  background-color: var(--pod-color);
+  color: var(--pod-badge-text-color);
+  font-size: 11px;
+  font-weight: 400;
+  border-radius: 0 0px 6px 6px;
+  padding: 4px 2px 6px 2px;
+  writing-mode: vertical-rl;
+
+}
+
+.dark {
+  .pod {
+    background-color: #000;
+    box-shadow: none !important;
+  }
+}
+
+.dense-text {
+  letter-spacing: -0.03em;
+}
+
+
+.pod-toggle {
+  background-color: #fff;
+  border-radius: 33px;
+  width: 66px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 7px;
+  border: solid thin #eee;
+
+  .-nut {
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 -3em 3em rgba(0, 0, 0, 0.01), 0 5px 40px 2px rgba(93, 93, 93, 0.3);
+  }
+}
+
+// Stop all animation in children:
+.stop-animations {
+  .spv, .sph {
+    .dot {
+      animation: none !important;
+    }
+  }
+}
+
+.v-application--is-rtl {
+  .sph {
+
+    .dot {
+
+      animation: move_horizontal 3s linear reverse infinite;
+
+      &.-reverse {
+        animation: move_horizontal 3s linear forwards infinite;
+      }
+
+      &.-large {
+        animation: move_horizontal_scale 3s linear reverse infinite;
+
+        &.-reverse {
+          animation: move_horizontal_scale 3s linear forwards infinite;
+        }
+      }
+    }
+  }
+}

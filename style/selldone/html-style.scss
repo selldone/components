@@ -1,0 +1,58 @@
+.html-style {
+  text-align: start;
+  --margin-p: 8px;
+  --margin-h1: 16px 0 8px;
+  --margin-h2: 12px 0 6px;
+  --margin-h3: 8px 0 4px;
+  font-family: var(--font);
+
+  &.-dense {
+    --margin-p: 0;
+    --margin-h1: 0;
+    --margin-h2: 0;
+    --margin-h3: 0;
+  }
+  .chip-user {
+    direction: ltr;
+    user-select: text;
+    //background-color: #f4f4f4;
+    color: currentColor;
+    padding: 2px 4px;
+    display: inline-block;
+    border-radius: 12px;
+    font-size: 90%;
+    font-weight: 700;
+
+    img {
+      // Avatar
+      border-radius: 50%;
+      width: 20px;
+      transition: all 0.3s ease-in-out;
+      vertical-align: middle;
+      &:hover {
+        transform: scale(3, 3);
+      }
+    }
+    span {
+      // Name
+      margin-right: 4px;
+      margin-left: 4px;
+      pointer-events: none; // Pass to parent
+    }
+    i {
+      display: none;
+    }
+  }
+  p {
+    margin-bottom: var(--margin-p);
+  }
+  h1 {
+    margin: var(--margin-h1);
+  }
+  h2 {
+    margin: var(--margin-h2);
+  }
+  h3 {
+    margin: var(--margin-h3);
+  }
+}

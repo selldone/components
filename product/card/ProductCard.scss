@@ -1,0 +1,53 @@
+
+.card-item {
+  /////font-family: var(--font);
+
+}
+.card-item .title{
+  font-size: 1.2em !important;
+  font-weight: 600;
+  line-height: 1.3em;
+  color: #333;
+  word-wrap: break-word;
+  padding: 0;
+
+  display: block; /* or inline-block */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-height: 2.8em;
+  min-height:2.8em;
+  -webkit-box-orient: vertical;
+
+}
+.card-item .media{
+  position: relative;
+  width: 100%;
+ // padding-bottom: 30%; /* 8:5 Aspect Ratio */
+}
+
+
+.card-item .description{
+  font-size: 1em !important;
+  font-weight: 500 !important;
+  line-height: 1.2em;
+  color: #333;
+  word-wrap: break-word;
+  padding:0.2em;
+
+
+  display: block; /* or inline-block */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  //max-height: 5.2em;
+  -webkit-box-orient: vertical;
+}
+
+
+
+.center-cropped {
+  width: 100%;
+  height: 120px;
+
+  object-fit: cover; /* Do not scale the image */
+  object-position: center; /* Center the image within the element */
+}

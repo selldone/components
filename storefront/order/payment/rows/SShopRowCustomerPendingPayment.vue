@@ -1,0 +1,262 @@
+<template>
+  <tr
+    class="text-start"
+    :class="{
+      'bg-warning': transaction.status === 'RequireAction',
+      'bg-info text-white': transaction.status === 'Processing',
+      'bg-danger text-white': transaction.status === 'Canceled',
+    }"
+  >
+    <td class="py-2" :colspan="transaction.dir ? 3 : 1">
+      <img height="24" class="mx-2" :src="getShopImagePath(transaction.logo)" />
+      {{ transaction.name }}
+      <b class="ms-2 small">({{ $t("global.commons.payment_not_settled") }})</b>
+
+      <v-chip
+        v-if="!transaction.livemode"
+        class="mx-2 pointer-event-none my-1"
+        color="#fff"
+        small
+      >
+        <v-icon small left :color="transaction.livemode ? 'green' : 'amber'">{{
+          transaction.livemode ? "check" : "science"
+        }}</v-icon>
+        {{
+          transaction.livemode
+            ? $t("global.commons.livemode")
+            : $t("global.commons.debug")
+        }}
+      </v-chip>
+
+      <i
+        v-if="transaction.status === 'Processing'"
+        class="fa fa-spinner fa-spin fa-fw mx-2"
+      ></i>
+
+      <div
+        v-if="
+          transaction.status === 'RequireAction' &&
+          !transaction.expired &&
+          !transaction.cod &&
+          !transaction.cash &&
+          !transaction.dir
+        "
+      >
+        <v-btn
+          color="primary"
+          small
+          @click="
+            TryToPayOrder(
+              transaction.gateway_code,
+              transaction.id,
+              $route.params.basket_id
+            )
+          "
+          class="mx-2 my-1"
+        >
+          <v-icon small class="me-1">fas fa-shopping-bag</v-icon>
+          {{ $t("global.actions.pay_now") }}
+          <img
+            v-if="transaction.icon"
+            :src="getShopImagePath(transaction.icon)"
+            height="18"
+            width="18"
+            class="ms-2 me-n1"
+          />
+        </v-btn>
+
+        <v-btn
+          color="#fff"
+          light
+          small
+          @click="changePaymentMethod(transaction)"
+          class="mx-2 my-1"
+        >
+          <v-icon small class="me-1">fas fa-credit-card</v-icon>
+          {{ $t("global.actions.change_payment_method") }}
+        </v-btn>
+      </div>
+
+      <!-- ------------------------ Payment receipt in direct payment ----------------------------- -->
+      <image-uploader
+        v-if="transaction.dir && transaction.status !== 'Succeeded'"
+        :label="
+          payment_receipt
+            ? $t('pending_payment.upload_payment_receipt_done')
+            : $t('pending_payment.upload_payment_receipt')
+        "
+        :image="payment_receipt ? getShopImagePath(payment_receipt) : undefined"
+        :placeholder-image="
+          require('@/Components/assets/placeholders/image/payment-check.png')
+        "
+        :server="
+          window.XAPI.POST_UPLOAD_DIRECT_PAYMENT_RECEIPT(
+            shop_name,
+            transaction.id,
+            transaction.currency
+          )
+        "
+        class="mt-2"
+        max-file-size="2MB"
+        @new-path="
+          (path) => {
+            transaction.billing_details = { receipt: path };
+            transaction.status = 'Processing';
+            fetchBasketAndShop();
+          }
+        "
+        auto-compact
+      ></image-uploader>
+      <v-img
+        v-else-if="transaction.dir && payment_receipt"
+        :src="getShopImagePath(payment_receipt)"
+        class="pointer-zoom-in rounded-2rem"
+        @click="showFullscreen"
+        width="240"
+      ></v-img>
+
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Public Form Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+      <!-- Payment card to card or money transfer bank info in DIR (Direct) payments-->
+
+      <v-card
+        v-if="public_form"
+        class="p-4 rounded-18px mx-auto"
+        max-width="420"
+        light
+        flat
+      >
+        <small class="black--text op-0-6">
+          {{ $t("pending_payment.public_form_title") }}
+          <v-icon small>arrow_drop_down</v-icon>
+        </small>
+        <div v-for="(val, key) in public_form" :key="key" class="py-1">
+          <div v-if="key.toLowerCase() === 'qr'" class="text-center">
+            <div v-if="val.includes('::')" class="text-start">
+              {{ extractLabel(val, key) }}:
+            </div>
+
+            <qrcode
+              :value="extractValue(val)"
+              :options="{
+                width: 280,
+                color: { dark: '#333', light: '#FFFFFF00' },
+              }"
+            />
+          </div>
+
+          <div v-else>
+            <p class="mt-2 mb-1 small black--text">
+              {{ extractLabel(val, key) }}:
+            </p>
+            <h3 style="unicode-bidi: plaintext">{{ extractValue(val) }}</h3>
+          </div>
+        </div>
+      </v-card>
+
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Direct Payment > Issue Information ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+      <div v-if="transaction.dir" class="max-widget-width my-3">
+        <s-value-dashed>
+          <template v-slot:label>
+            <v-icon class="me-1" style="color: currentColor">loupe</v-icon>
+            {{ $t("global.commons.issued_at") }}
+          </template>
+          {{ getLocalTimeString(transaction.issued_at) }}
+        </s-value-dashed>
+
+        <s-value-dashed>
+          <template v-slot:label>
+            <v-icon class="me-1" style="color: currentColor"
+              >flip_camera_android</v-icon
+            >
+            {{ $t("global.commons.last_status") }}
+          </template>
+          {{ getTransactionStatusName(transaction.status) }}
+        </s-value-dashed>
+      </div>
+    </td>
+
+    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Normal Payment > Issue Information ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+    <td v-if="!transaction.dir" class="text-left">
+      <price-view
+        :amount="transaction.amount"
+        :currency="transaction.currency"
+      ></price-view>
+    </td>
+    <td v-if="!transaction.dir">
+      <span class="me-1 small">
+        <v-icon class="me-1" style="color: currentColor" small>loupe</v-icon>
+        {{ $t("global.commons.issued_at") }}:</span
+      >
+      {{ getLocalTimeString(transaction.issued_at) }}
+      <br />
+      <span class="me-1 small">
+        <v-icon class="me-1" style="color: currentColor" small
+          >flip_camera_android</v-icon
+        >
+        {{ $t("global.commons.last_status") }}:</span
+      >
+      {{ getTransactionStatusName(transaction.status) }}
+    </td>
+  </tr>
+</template>
+
+<script>
+import { TransactionStatus } from "../../../../../../core/enums/payment/TransactionStatus";
+import ImageUploader from "../../../../uploader/ImageUploader.vue";
+import SValueDashed from "@/Components/ui/text/SValueDashed.vue";
+
+export default {
+  name: "SShopRowCustomerPendingPayment",
+  components: { SValueDashed, ImageUploader },
+  props: {
+    transaction: {
+      require: true,
+    },
+  },
+
+  computed: {
+    payment_receipt() {
+      return (
+        this.transaction.billing_details &&
+        this.transaction.billing_details.receipt
+      );
+    },
+    public_form() {
+      return this.transaction.dir && this.transaction.public_form;
+    },
+  },
+  methods: {
+    getTransactionStatusName(status) {
+      if (!TransactionStatus[status]) return "NOT FOUND!";
+      return this.$t(TransactionStatus[status].name);
+    },
+
+    extractLabel(val, def) {
+      const arr = val.split("::");
+      if (arr.length < 2) return def;
+      return arr[0];
+    },
+    extractValue(val) {
+      const arr = val.split("::");
+      if (arr.length < 2) return val;
+      arr.splice(0, 1);
+      return arr.join("::");
+    },
+
+    changePaymentMethod(transaction) {
+        this.openConfirmationAlert('Change the payment method','Are you sure about switching payment methods?','Yes, Show payment options',()=>{
+            this.TryToPayOrder(
+                transaction.gateway_code,
+                transaction.id,
+                this.$route.params.basket_id,
+                true
+            );
+        })
+
+    },
+  },
+};
+</script>
+
+<style scoped></style>

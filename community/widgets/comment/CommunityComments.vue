@@ -1,0 +1,683 @@
+<template>
+  <div>
+    <!-- Comments view -->
+
+    <v-expand-transition>
+      <div
+        v-if="show || fake_show"
+        class="my-2"
+        :class="{ 'mx-4': !parent, 'ms-4': parent }"
+      >
+        <loading v-if="busy_fetch && page === 1" css-mode light></loading>
+
+        <!-- No comment message -->
+        <div v-if="!busy_fetch && !comments.length" class="text-muted p-2">
+          {{ $t("community.comment.first_comment") }}
+        </div>
+
+        <!-- No comments -->
+        <v-scroll-y-reverse-transition group hide-on-leave>
+          <div v-for="com in comments" :key="com.id" :id="'comment-' + com.id">
+            <div class="d-flex">
+              <!-- User Avatar -->
+              <v-avatar
+                :size="parent ? '2.2em' : '2.6em'"
+                color="#fafafa"
+                class="me-2"
+              >
+                <v-img :src="getUserAvatar(com.user_id)"></v-img>
+              </v-avatar>
+
+              <!-- Author name / description -->
+              <div
+                class="flex-grow-1 p-2 cmt-body overflow-hidden bgc"
+                :class="{ '-blue': focus === com.id }"
+              >
+                <div class="d-flex align-center">
+                  <b class="d-block text-capitalize flex-grow-1"
+                    >{{ com.profile.name }}
+                    <v-icon
+                      v-if="com.profile.verified"
+                      small
+                      color="blue"
+                      class="ms-1"
+                      >verified</v-icon
+                    >
+
+                    <v-chip
+                      v-if="com.user_id === post.user_id"
+                      x-small
+                      color="#333"
+                      dark
+                      pill
+                      class="mx-1"
+                      >{{ $t("community.commons.author") }}</v-chip
+                    >
+                  </b>
+                  <small
+                    >{{ getFromNowString(com.created_at) }}
+                    <span v-if="com.created_at !== com.updated_at">
+                      . edited</span
+                    ></small
+                  >
+                  <v-btn
+                    icon
+                    class="ms-2"
+                    small
+                    @click="
+                      (e) =>
+                        showCommunityCommentActionsMenu(
+                          e.target,
+                          shop,
+                          post,
+                          com,
+                          () => {
+                            DeleteItemByID(comments, com.id);
+                          }
+                        )
+                    "
+                    ><v-icon>more_horiz</v-icon></v-btn
+                  >
+                </div>
+                <small class="d-block single-line mb-2">{{
+                  com.profile.description
+                }}</small>
+
+                <!-- Comment image -->
+
+                <community-image
+                  v-if="com.image"
+                  :src="getShopImagePath(com.image)"
+                  width="240"
+                  max-height="480"
+                  height="auto"
+                  class="rounded-18px"
+                  fullscreen
+                >
+                </community-image>
+
+                <!-- Comment body -->
+                <v-btn
+                  v-if="com.offensive"
+                  small
+                  text
+                  color="red"
+                  @click="force_show = !force_show && com.id"
+                  ><v-icon class="me-1" small>warning</v-icon> This comment is
+                  offensive!</v-btn
+                >
+                <p
+                  v-if="!com.offensive || force_show === com.id"
+                  class="my-2"
+                  v-html="convertToHtml(com.body)"
+                ></p>
+
+                <!-- Show reports to admin -->
+                <div class="subtitle-2 mb-1 d-flex justify-end">
+                  <span
+                    v-if="com.reports"
+                    class="red--text pp"
+                    @click="showCommunityCommentReportsMenu(com)"
+                  >
+                    <v-icon small color="red">report</v-icon>
+                    {{ com.reports }} {{ $t("community.commons.reports") }}
+                  </span>
+                </div>
+
+                <!-- actions -->
+                <div class="d-flex">
+                  <v-btn
+                    text
+                    @click="showReplies(com, 1)"
+                    :disabled="show_replies_id === com.id"
+                    ><v-icon small class="me-1">question_answer</v-icon>
+                    {{ $t("community.commons.reply") }}
+                    <b v-if="com.replies">({{ com.replies }})</b></v-btn
+                  >
+
+                  <v-spacer></v-spacer>
+
+                  <!-- actions > Disagree -->
+
+                  <v-btn
+                    :color="
+                      com.action && com.action.reaction === 'DISAGREE'
+                        ? '#9C27B0'
+                        : undefined
+                    "
+                    text
+                    depressed
+                    :style="{
+                      '--size':
+                        Math.round(
+                          60 *
+                            (com.disagrees /
+                              (com.agrees + com.disagrees + 10)) /*bias*/
+                        ) + 'px',
+                    }"
+                    class="m-1 cc-d"
+                    small
+                    @click="sendCommentReaction(com, 'DISAGREE')"
+                    :loading="busy_reaction === com.id + 'DISAGREE'"
+                    ><v-icon small class="me-1">{{
+                      com.action && com.action.reaction === "DISAGREE"
+                        ? "thumb_down"
+                        : "thumb_down_off_alt"
+                    }}</v-icon>
+                    {{ $t("community.commons.disagree") }}
+                    <b v-if="com.disagrees" class="ms-1"
+                      >({{ com.disagrees | numeralFormat("0.[0]a") }})</b
+                    ></v-btn
+                  >
+
+                  <!-- actions > Agree -->
+
+                  <v-btn
+                    :color="
+                      com.action && com.action.reaction === 'AGREE'
+                        ? 'success'
+                        : undefined
+                    "
+                    text
+                    depressed
+                    :style="{
+                      '--size':
+                        Math.round(
+                          60 *
+                            (com.agrees /
+                              (com.agrees + com.disagrees + 10)) /*bias*/
+                        ) + 'px',
+                    }"
+                    class="m-1 cc-a"
+                    small
+                    @click="sendCommentReaction(com, 'AGREE')"
+                    :loading="busy_reaction === com.id + 'AGREE'"
+                    ><v-icon small class="me-1">{{
+                      com.action && com.action.reaction === "AGREE"
+                        ? "thumb_up"
+                        : "thumb_up_off_alt"
+                    }}</v-icon>
+                    {{ $t("community.commons.agree") }}
+                    <b v-if="com.agrees" class="ms-1"
+                      >({{ com.agrees | numeralFormat("0.[0]a") }})</b
+                    ></v-btn
+                  >
+                </div>
+              </div>
+            </div>
+            <!-- replies -->
+
+            <div v-if="show_replies_id === com.id">
+              <v-btn
+                v-if="com.replies"
+                small
+                text
+                color="blue"
+                class="text-capitalize"
+                @click="show_replies_messages = !show_replies_messages"
+                >{{
+                  show_replies_messages ? "Hide replies" : "Show replies"
+                }}
+                ({{ com.replies }})</v-btn
+              >
+              <community-comments
+                :post="post"
+                :parent="com"
+                :show="show_replies_messages"
+                @focus="focus = com.id"
+                @blur="focus = null"
+              >
+              </community-comments>
+            </div>
+          </div>
+        </v-scroll-y-reverse-transition>
+
+        <v-btn
+          v-if="has_more"
+          text
+          @click="fetchComments(page + 1)"
+          class="my-2"
+          :loading="busy_fetch"
+          >{{ $t("community.commons.show_more") }}</v-btn
+        >
+      </div>
+    </v-expand-transition>
+
+    <!-- image -->
+    <v-expand-transition>
+      <div v-show="image">
+        <v-img
+          width="320"
+          max-width="90%"
+          height="200"
+          :src="image"
+          class="position-relative rounded-18px mx-4 my-2"
+        >
+          <v-btn
+            class="absolute-top-end"
+            depressed
+            @click="clearImage"
+            fab
+            small
+            ><v-icon>close</v-icon></v-btn
+          >
+        </v-img>
+      </div>
+    </v-expand-transition>
+
+    <!-- Comment send -->
+
+    <v-textarea
+      v-model="body"
+      rows="1"
+      auto-grow
+      rounded
+      solo
+      flat
+      class="my-2"
+      :class="{
+        border: !parent || focus_me,
+        'mx-4': !parent,
+        'ms-4': parent,
+        opx: !show,
+      }"
+      hide-details
+      :placeholder="
+        parent
+          ? $t('community.comment.comment_response_plc', {
+              name: parent.profile.name,
+            })
+          : $t('community.comment.comment_plc')
+      "
+      color="#ddd"
+      @focus="
+        $emit('focus');
+        focus_me = true;
+      "
+      @blur="
+        $emit('blur');
+        focus_me = false;
+      "
+    >
+      <template slot="prepend-inner">
+        <v-avatar size="2.4em" color="#fafafa" class="margin-n7px ms-n4 me-2">
+          <v-img :src="getUserAvatar(USER_ID())"></v-img>
+        </v-avatar>
+      </template>
+      <template slot="append">
+        <v-btn icon class="margin-n7px me-2" @click="showSelectImage()">
+          <v-icon>add_a_photo</v-icon>
+        </v-btn>
+
+        <v-btn
+          :depressed="!!body"
+          :class="{ disabled: !body }"
+          :icon="!body"
+          :fab="!!body"
+          :small="!!body"
+          :color="body ? 'blue' : '#666'"
+          dark
+          class="margin-n7px me-n3"
+          :loading="busy"
+          @click="sendComment"
+        >
+          <v-icon class="flip-rtl">send</v-icon>
+        </v-btn>
+      </template>
+    </v-textarea>
+
+    <input
+      type="file"
+      ref="image_input"
+      hidden="hidden"
+      @change="onSelectImage"
+      accept="image/*"
+    />
+  </div>
+</template>
+
+<script>
+import CommunityImage from "../image/CommunityImage.vue";
+import { SmartConvertTextToHtml } from "../../../../../core/helper/html/HtmlHelper";
+export default {
+  name: "CommunityComments",
+  components: { CommunityImage },
+  props: {
+    shop: {},
+
+    post: {
+      require: true,
+      type: Object,
+    },
+    parent: {},
+
+    show: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      // Comment:
+      comments: [],
+      totalItems: 0,
+      page: 1,
+      busy_fetch: false,
+      itemsPerPage: 5,
+
+      // New Comment:
+      body: null,
+      image: null,
+      image_file: null,
+      busy: false,
+
+      fake_show: false, // Force show my new comments
+
+      //--------------------------
+      show_replies_id: null,
+      show_replies_messages: false,
+      replies_page: 1,
+
+      focus: false, // Focus on reply
+      focus_me: false, // Focus on comment input
+      //----------- Comment Reactions -----------
+      busy_reaction: false,
+
+      //--------------------------
+      force_show: null,
+    };
+  },
+
+  computed: {
+    has_more() {
+      return this.totalItems > this.comments.length;
+    },
+
+    preset_total() {
+      return this.parent ? this.parent.replies : this.post.total_comments;
+    },
+  },
+
+  watch: {
+    show(show) {
+      // First show load comments
+      if (show && !this.totalItems && this.preset_total /*Post has comment!*/)
+        this.fetchComments(1);
+
+      if (!show) this.fake_show = false; // force hide if user want!
+    },
+  },
+
+  created() {
+    if (this.show && this.preset_total) {
+      this.fetchComments(1);
+    } else {
+      // Show attached comments to post: (used by assign comment_id on fetch posts)
+      if (this.post.comments && !this.parent /*Just show in the firs level!*/) {
+        this.comments = this.post.comments;
+        this.fake_show = true;
+      }
+    }
+  },
+  mounted() {},
+
+  methods: {
+    convertToHtml(body) {
+      return SmartConvertTextToHtml(body, false, true, [
+        "b",
+        "p",
+        "i",
+        "a",
+        "hr",
+        "br",
+        "span",
+      ]);
+    },
+    //――――――――――――――――――――――― Comment > Image ―――――――――――――――――――――――
+
+    showSelectImage() {
+      const defaultFile = this.$refs.image_input;
+      defaultFile.click();
+    },
+
+    onSelectImage() {
+      const defaultFile = this.$refs.image_input;
+
+      // Image Preview
+      const file = defaultFile.files[0]; //files[0] - For getting first file
+      //   console.log(files);
+
+      if (file.size > 2 * 1024 * 1024) {
+        this.showErrorAlert(null, "Max image size limit is 2Mb.");
+        return;
+      }
+
+      if (file) {
+        //Read File
+        const fileReader = new FileReader();
+
+        const t = this;
+        fileReader.addEventListener("load", function () {
+          // convert image to base64 encoded string
+          t.image = this.result;
+          t.image_file = file;
+        });
+        fileReader.readAsDataURL(file);
+      }
+    },
+    clearImage() {
+      this.image = null;
+      this.image_file = null;
+    },
+
+    //――――――――――――――――――――――― Comment > Get list ―――――――――――――――――――――――
+    fetchComments(page) {
+      if (this.busy_fetch) return; // Prevent multiple fetching!
+
+      this.busy_fetch = true;
+
+      this.page = page;
+
+      axios
+        .get(
+          window.CAPI.GET_COMMUNITY_TOPIC_POST_COMMENTS(
+            this.post.community_id,
+            this.post.topic_id,
+            this.post.id
+          ),
+          {
+            params: {
+              parent_id: this.parent ? this.parent.id : null,
+
+              sortBy: null, // default
+              sortDesc: null, // default
+
+              offset: (this.page - 1) * this.itemsPerPage,
+              limit: this.itemsPerPage,
+            },
+          }
+        )
+        .then(({ data }) => {
+          if (data.error) {
+            this.showErrorAlert(null, data.error_msg);
+            return;
+          }
+
+          data.comments.forEach((c) => {
+            this.AddOrUpdateItemByID(this.comments, c);
+          });
+
+          this.totalItems = data.total;
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_fetch = false;
+        });
+    },
+
+    //――――――――――――――――――――――― Comment > Send ―――――――――――――――――――――――
+    sendComment() {
+      if (!this.USER()) {
+        this.NeedLogin();
+        return;
+      }
+
+      this.busy = true;
+
+      const formData = new FormData();
+
+      formData.append("body", this.body);
+
+      if (this.parent)
+        // Reply to this comment
+        formData.append("parent_id", this.parent.id);
+
+      if (this.image_file)
+        formData.append("image", this.image_file, this.image_file.name);
+
+      axios
+        .post(
+          window.CAPI.POST_COMMUNITY_TOPIC_POST_COMMENT_CREATE(
+            this.post.community_id,
+            this.post.topic_id,
+            this.post.id
+          ),
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            this.body = null;
+            this.clearImage();
+            this.comments.push(data.comment);
+
+            this.fake_show = true; // Force show my new comments
+
+            // Update post comments count:
+            if (this.parent) {
+              this.parent.replies++;
+            } else {
+              this.post.total_comments++;
+            }
+
+            // Update parent replies count:
+            if (this.parent) {
+              this.parent.replies++;
+            }
+
+            this.$emit("add", data.comment);
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy = false;
+        });
+    },
+
+    //――――――――――――――――――――――― Comment > Replies ―――――――――――――――――――――――
+
+    showReplies(comment, page) {
+      this.show_replies_id = comment.id;
+      this.replies_page = page;
+      this.show_replies_messages = true;
+    },
+
+    //――――――――――――――――――――――― Comment > Reaction ―――――――――――――――――――――――
+    sendCommentReaction(comment, reaction) {
+      if (!this.USER()) {
+        return this.NeedLogin();
+      }
+
+      if (comment.action && comment.action.reaction === reaction) return;
+
+      this.busy_reaction = comment.id + reaction;
+
+      axios
+        .post(
+          window.CAPI.POST_COMMUNITY_TOPIC_POST_COMMENT_REACTION(
+            this.post.community_id,
+            this.post.topic_id,
+            this.post.id,
+            comment.id
+          ),
+          {
+            reaction: reaction,
+          }
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            comment.action = data.action; // Update user reaction
+            Object.assign(comment, data.comment); // Update agrees / disagrees count
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_reaction = null;
+        });
+    },
+  },
+};
+</script>
+
+<style lang="scss">
+.bgc {
+  background-color: #f8f9fa75;
+  transition: all 0.3s ease;
+  &.-blue {
+    background-color: #0b77bf;
+    color: #fff;
+    small {
+      color: #eee !important;
+    }
+  }
+}
+.cc-a,
+.cc-d {
+  position: relative;
+  &:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    mix-blend-mode: hard-light;
+    transition: all 0.3s ease;
+    transition-delay: 0.15s;
+    pointer-events: none;
+  }
+
+  &:hover {
+    --size: 0 !important;
+  }
+}
+.cc-a {
+  &:after {
+    background-color: #4fb053;
+    opacity: 0.3;
+  }
+}
+.cc-d {
+  &:after {
+    background-color: #ac59ba;
+    opacity: 0.6;
+  }
+}
+</style>

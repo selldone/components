@@ -1,0 +1,265 @@
+<template>
+  <div class="root" :class="{'is-rtl':$vuetify.rtl}">
+    <h3 class="progress-xyz-title">
+      {{ title }}
+    </h3>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <v-btn text rounded :disabled="!previous" @click="$emit('previous')">
+        <v-icon> {{ $t("icons.chevron_back") }}</v-icon>
+        {{ $t("global.actions.previous") }}
+      </v-btn>
+
+      <v-btn text rounded :disabled="!next" @click="$emit('next')">
+        {{ $t("global.actions.next") }}
+
+        <v-icon>{{ $t("icons.chevron_next") }}</v-icon>
+      </v-btn>
+    </div>
+
+    <div class="progress-xyz">
+      <div
+        class="progress-xyz-bar"
+        :style="{
+          width: `${tweeningValue}%`,
+          background: gradient ? gradient : color,
+        }"
+      >
+        <span
+          class="progress-xyz-icon"
+          :style="{
+            color: '#fff',
+            'border-color': colorValue ? colorValue : color,
+            background: colorValue ? colorValue : color,
+          }"
+          ><span>{{ Math.round(tweeningValue)  }}</span
+          >%</span
+        >
+      </div>
+
+      <div
+        class="progress-xyz-value"
+        :style="{ color: color, 'border-color': color }"
+      >
+        <v-icon :color="color" small style="margin-bottom: 6px">
+          {{ icon }}
+        </v-icon>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import TWEEN from "@tweenjs/tween.js";
+
+export default {
+  name: "ProgressXyzStepper",
+  components: {},
+  props: {
+    value:{},
+    title: {
+      required: false,
+      type: String,
+    },
+    color: {
+      required: false,
+      type: String,
+      default: "#f7810e",
+    },
+    colorValue: {
+      required: false,
+      type: String,
+      default: "#f7810e",
+    },
+    gradient: {
+      required: false,
+      type: String,
+    },
+    icon: {
+      required: false,
+      type: String,
+      default: "home",
+    },
+    next: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
+    previous: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
+
+    // How long the tween should take. (In milliseconds.)
+    tweenDuration: {
+      type: Number,
+      default: 500,
+    },
+  },
+
+  data() {
+    return {
+      tweeningValue: 0,
+    };
+  },
+
+  watch: {
+    // Whenever `props.value` changes, update the tween.
+    value(newVal, oldVal) {
+      this.tween(oldVal, newVal);
+    },
+  },
+
+  mounted() {
+    this.tween(0, this.value);
+  },
+  methods: {
+    // This is our main logic block. It handles tweening from a start value to an end value.
+    tween(start, end) {
+      let frameHandler;
+
+      // Handles updating the tween on each frame.
+      const animate = function (currentTime) {
+        TWEEN.update(currentTime);
+        frameHandler = requestAnimationFrame(animate);
+      };
+
+      const myTween = new TWEEN.Tween({ tweeningValue: start })
+        .to({ tweeningValue: end }, this.tweenDuration)
+        // Be careful to not to do too much here! It will slow down the app.
+        .onUpdate((object) => {
+          this.tweeningValue = object.tweeningValue;
+        })
+        .onComplete(() => {
+          // Make sure to clean up after ourselves.
+          cancelAnimationFrame(frameHandler);
+        })
+        // This actually starts the tween.
+        .start();
+
+      frameHandler = requestAnimationFrame(animate);
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.root {
+  padding: 0 32px 30px 32px;
+}
+.progress-xyz-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 30px;
+}
+.progress-xyz {
+  height: 17px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+  overflow: visible;
+  position: relative;
+
+  .progress-xyz-icon, .progress-xyz-value {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    line-height: 40px;
+    background: #fff;
+    border: 7px solid #1f75c4;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1f75c4;
+    position: absolute;
+    top: -17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+
+
+  }
+
+  .progress-xyz-value {
+    left: -25px;
+
+
+
+  }
+
+  .progress-xyz-icon{
+    right: -50px;
+    transform: translate(-25px, 0);
+
+  }
+
+
+
+}
+
+.is-rtl {
+  .progress-xyz{
+    .progress-xyz-value {
+      right: -25px;
+      left: auto;
+    }
+    .progress-xyz-icon {
+      left: -50px;
+      right: auto;
+
+      transform: translate(25px, 0);
+    }
+
+  }
+}
+
+
+
+
+.progress-xyz .progress-xyz-bar {
+  border-radius: 15px;
+  box-shadow: none;
+  position: relative;
+  animation: animate-positive 2s;
+  height: 17px;
+  position: relative;
+}
+
+.progress-xyz .progress-xyz-icon {
+  left: auto;
+
+
+}
+
+.progress-xyz.orange-bar .progress-xyz-icon,
+.progress-xyz.orange-bar .progress-xyz-value {
+  border: 7px solid #f7810e;
+  color: #f7810e;
+}
+.progress-xyz.pink-bar .progress-xyz-icon,
+.progress-xyz.pink-bar .progress-xyz-value {
+  border: 7px solid #f2438f;
+  color: #f2438f;
+}
+.progress-xyz.green-bar-bar .progress-xyz-icon,
+.progress-xyz.green-bar-bar .progress-xyz-value {
+  border: 7px solid #08a061;
+  color: #08a061;
+}
+@-webkit-keyframes animate-positive {
+  0% {
+    width: 0;
+  }
+}
+@keyframes animate-positive {
+  0% {
+    width: 0;
+  }
+}
+
+
+</style>

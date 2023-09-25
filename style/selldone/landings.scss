@@ -1,0 +1,259 @@
+@use 'sass:math';
+@function strip-unit($value) {
+  @return   math.div($value, ($value * 0 + 1));  // BUG in minify css step on build production! //$value / ($value * 0 + 1) //
+}
+
+@mixin fluid-type($min-vw, $max-vw, $min-font-size, $max-font-size) {
+  $u1: unit($min-vw);
+  $u2: unit($max-vw);
+  $u3: unit($min-font-size);
+  $u4: unit($max-font-size);
+
+  @if $u1 == $u2 and $u1 == $u3 and $u1 == $u4 {
+    & {
+      font-size: $min-font-size;
+      @media screen and (min-width: $min-vw) {
+        font-size: calc(#{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} * ((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)}));
+      }
+      @media screen and (min-width: $max-vw) {
+        font-size: $max-font-size;
+      }
+    }
+  }
+}
+
+$min_width: 320px;
+$max_width: 1720px;
+$min_font: 16px;
+$max_font: 24px;
+
+$mod_1: 1.2; // mobile
+$mod_2: 1.5; // desktop
+
+.default-template {
+  padding-bottom: 0;
+
+
+  h1 {
+    color: #252528;
+    font-size: $mod_1*$mod_1*$mod_1*$mod_1 *1rem;
+    @include fluid-type($min_width, $max_width, $mod_1*$mod_1*$mod_1 *$min_font, $mod_2*$mod_2*$mod_2 *$min_font);
+
+    line-height: 140%;
+  }
+
+  h2 {
+    color: #252528;
+    font-size: $mod_1*$mod_1*$mod_1 *1rem;
+    @include fluid-type($min_width, $max_width, $mod_1*$mod_1*$mod_1 *$min_font, $mod_2*$mod_2*$mod_2 *$min_font);
+
+    line-height: 140%;
+  }
+
+  h3 {
+    color: #252528;
+    font-size: $mod_1*$mod_1 *1rem;
+    @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
+
+    line-height: 3rem;
+  }
+
+  h4 {
+    color: #252528;
+    font-size: $mod_1*$mod_1 *0.9rem;
+    @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
+    line-height: 140%;
+  }
+
+  h5 {
+    color: #252528;
+    font-size: $mod_1*$mod_1 *0.75rem;
+    @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
+    line-height: 140%;
+  }
+
+
+
+
+
+//-------------------------
+  .dark {
+
+    h1 {
+      color: #fff;
+    }
+
+    h2 {
+      color: #fff;
+    }
+
+    h3 {
+      color: #fff;
+    }
+
+    h4 {
+      color: #fff;
+    }
+
+    h5 {
+      color: #fff;
+    }
+    p {
+      color: #fff;
+    }
+    .v-card {
+      p {
+        color: #fff;
+      }
+    }
+    .text-muted{
+      color: #ffffffab !important;
+    }
+    small{
+      color: #ffffffab !important;
+    }
+
+  }
+//---------------------------
+
+  .h2-subtitle{
+    margin-bottom: 7rem;
+    margin-top: 1.5rem;
+    font-size: 1.4rem;
+    line-height: 160%;
+    text-align: center;
+  }
+
+
+  .top-banner {
+    background-size: cover;
+    min-height: 70vh;
+    background-position: center;
+    text-align: start;
+    padding: 0 10%;
+    @media only screen and (min-width: 1400px) {
+      min-height: 90vh;
+    }
+
+
+
+  }
+
+
+
+  .v-card {
+    &.dark,&.theme--dark{
+      p {
+        color: #fff;
+      }
+    }
+    p {
+      color: #252528;
+      font-size: 1.1rem;
+    }
+
+    small {
+      font-size: 0.8rem;
+    }
+
+    .small {
+      font-size: 0.8rem;
+    }
+  }
+
+  .bg-image{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    top:0;
+    left: 0;
+  }
+
+
+}
+
+/**
+ Section Sub title > Big > White
+  */
+.sub-title-big-w {
+  color: hsla(0, 0%, 100%, 0.8);
+  line-height: 160%;
+  font-weight: 300;
+
+  font-size: 1.7rem;
+  @media screen and (max-width: 750px) {
+    font-size: 1.4rem;
+  }
+  @media screen and (max-width: 500px) {
+    font-size: 1.2rem;
+  }
+  b{
+    font-weight: 600;
+  }
+}
+.sub-title-big-b {
+  color: hsla(0, 0%, 0%, 0.8);
+  line-height: 160%;
+  font-weight: 300;
+
+  font-size: 1.7rem;
+  @media screen and (max-width: 750px) {
+    font-size: 1.4rem;
+  }
+  @media screen and (max-width: 500px) {
+    font-size: 1.2rem;
+  }
+  b{
+    font-weight: 600;
+  }
+}
+.sub-title-medium-b {
+  color: hsla(0, 0%, 0%, 0.8);
+  line-height: 160%;
+  font-weight: 300;
+
+  font-size: 1.5rem;
+  @media screen and (max-width: 750px) {
+    font-size: 1.3rem;
+  }
+  @media screen and (max-width: 500px) {
+    font-size: 1.1rem;
+  }
+}
+
+
+.h1-big {
+  color: #252528;
+  font-size: $mod_1*$mod_1*$mod_1*$mod_1 *1rem;
+  @include fluid-type($min_width, 1200px, 28px, 90px);
+
+  line-height: 140%;
+}
+.h1-medium {
+  color: #252528;
+  font-size: $mod_1*$mod_1*$mod_1 *1.2rem;
+  @include fluid-type($min_width, $max_width, 24px, 48px);
+
+  line-height: 140%;
+}
+.theme--dark{
+  .sub-title-medium-b {
+    color: hsla(0, 0%, 100%, 0.8);
+  }
+  .h1-big,.h1-medium {
+    color: #fff;
+  }
+}
+// ----------------------- Editor ----------------------
+.row-font{
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: solid thin #888;
+  border-radius: 12px;
+  margin: 4px;
+  user-select: none;
+
+}

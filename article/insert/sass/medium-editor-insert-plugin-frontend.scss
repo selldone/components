@@ -1,0 +1,128 @@
+.medium-insert-images-safe,.medium-insert-images {
+    text-align: center;
+    figure {
+         margin: 0;
+         display: block;
+         img {
+             max-width: 100%;
+             margin-top: 1em;
+             vertical-align: top;
+         }
+         &:first-child {
+             img {
+                 margin-top: 0;
+             }
+         }
+    }
+    &.medium-insert-images-left {
+        max-width: 33.33%;
+        float: left;
+        margin: 0 30px 20px 0;
+        // + Add responsive:
+        @media only screen and (max-width: 600px) {
+            max-width: 100%;
+            margin: 0;
+            float:unset;
+        }
+    }
+    &.medium-insert-images-right {
+        max-width: 33.33%;
+        float: right;
+        margin: 0 0 20px 30px;
+        // + Add responsive:
+        @media only screen and (max-width: 600px) {
+            max-width: 100%;
+            margin: 0;
+            float:unset;
+        }
+    }
+    &.medium-insert-images-grid {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: center;
+        margin: 0.5em -0.5em;
+        figure {
+            width: 33.33%;
+            display: inline-block;
+            // + Add responsive:
+            @media  only screen and (max-width: 520px) {
+                width: 99%;
+            }
+
+            img {
+                max-width: calc(100% - 1em);
+                margin: 0.5em;
+            }
+        }
+    }
+}
+
+.medium-insert-embeds {
+    text-align: center;
+    margin: 1em 0;
+    position: relative;
+
+    .medium-insert-embed{
+        .iframe{
+            margin: 0 auto !important;
+        }
+         > div { // Only direct children and do not apply into nested elements!
+            margin: 0 auto !important;
+        }
+        .twitter-tweet{// Fix twitter show
+            margin: 0 auto !important;
+        }
+
+        video{
+            max-width: 100%;
+        }
+    }
+
+    &.medium-insert-embeds-left {
+        width: 33.33%;
+        float: left;
+        margin: 0 30px 20px 0;
+    }
+    &.medium-insert-embeds-right {
+        width: 33.33%;
+        float: right;
+        margin: 0 0 20px 30px;
+    }
+}
+
+.medium-insert-images-safe,.medium-insert-images, .medium-insert-embeds {
+    figure {
+        position: relative;
+        figcaption {
+            position: relative;
+            z-index: 1;
+            display: block;
+            text-align: center;
+            margin: 10px 0;
+            color: #ccc;
+            font-size: 0.8em;
+            font-style: italic;
+            outline: 0 solid transparent;
+            &:focus {
+                outline: 0 solid transparent;
+            }
+        }
+    }
+}
+
+
+// Backwards copatibility with v0.*
+
+.mediumInsert {
+    @extend .medium-insert-images;
+}
+
+.mediumInsert.small {
+    @extend .medium-insert-images,.medium-insert-images-left;
+    // OLD:   @extend .medium-insert-images.medium-insert-images-left;
+}
+
+.mediumInsert-embeds {
+    @extend .medium-insert-embeds;
+}

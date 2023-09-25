@@ -1,0 +1,145 @@
+<template>
+  <v-container class="s--shop-product-vendors-list">
+    <v-row justify="start">
+      <v-col
+        v-for="vendor in vendors"
+        :key="vendor.id"
+        cols="12"
+        sm="12"
+        md="6"
+        lg="4"
+        xl="3"
+      >
+        <v-card
+          class="vnd-card"
+        rounded="lg"
+          outlined
+          :to="{
+            name: 'VendorPublicPage',
+            params: { slug: slugify(vendor.name), vendor_id: vendor.id },
+          }"
+          @mouseenter.native="$emit('vendor-hover:enter',vendor)"
+          @mouseleave.native="$emit('vendor-hover:leave',vendor)"
+
+        >
+          <v-img :src="getShopImagePath(vendor.icon)" :aspect-ratio="2"></v-img>
+
+          <v-card-title style="min-height: 64px">
+            {{ vendor.name }}
+          </v-card-title>
+          <v-card-subtitle style="min-height: 64px">
+            {{ vendor.description?.limitWords(12) }}
+          </v-card-subtitle>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script>
+import _ from "lodash-es";
+
+export default {
+  name: "ShopVendorsListView",
+  props: {
+    shop: {
+      required: true,
+      type: Object,
+    },
+    locationBounds: {
+      type: Array,
+      /*
+      [
+      lng1,lat1, // max!
+       lng2,lat2  // min!
+      ]
+       */
+    },
+  },
+
+  data: () => ({
+    busy: false,
+    vendors: [],
+
+    search: null,
+
+    limit: 20,
+
+    total: 0,
+  }),
+
+  watch:{
+    //-------------------------------------------------------
+
+    locationBounds: _.debounce(function (newVal, oldVal) {
+      this.fetchData(false);
+    }, 1500),
+  },
+
+  created() {
+    this.fetchData();
+  },
+
+  methods: {
+    fetchData(more = false) {
+      this.busy = true;
+
+      axios
+        .get(window.XAPI.GET_VENDORS(this.shop.name), {
+          params: {
+            offset: more ? this.vendors.length : 0,
+            limit: this.limit,
+
+            search: this.search,
+
+            bounds: this.locationBounds, // Location constraints
+          },
+        })
+        .then(({ data }) => {
+          if (data.error) {
+            return this.showErrorAlert(null, data.error_msg);
+          }
+          this.total = data.total;
+
+          if (more) {
+            data.vendors.forEach((vendor) => {
+              this.AddOrUpdateItemByID(this.vendors, vendor);
+            });
+          } else {
+            this.vendors = data.vendors;
+          }
+
+          // Emit vendors (Used in map view show pins)
+          this.$emit("fetch-vendors", {
+            vendors: this.vendors,
+            total: data.total,
+          });
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+
+        .finally(() => {
+          this.busy = false;
+        });
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--shop-product-vendors-list{
+  .vnd-card {
+    min-height: 100%;
+  }
+}
+
+
+</style>

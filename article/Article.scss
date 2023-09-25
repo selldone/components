@@ -1,0 +1,406 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+
+
+@import './insert/sass/medium-editor-insert-plugin';
+
+@import '~medium-editor/dist/css/themes/default.css';
+@import '~medium-editor/dist/css/medium-editor.css';
+@import 'comment/comment-style';
+
+
+
+.master-article-container{
+
+  position: relative;
+
+
+  .medium-insert-images.medium-insert-images-grid.small-grid figure {
+    width: 10%;
+  }
+
+  @media (max-width: 750px) {
+    .medium-insert-images.medium-insert-images-grid.small-grid figure {
+      width: 20%;
+    }
+  }
+
+  @media (max-width: 450px) {
+    .medium-insert-images.medium-insert-images-grid.small-grid figure {
+      width: 25%;
+    }
+  }
+
+  .medium-insert-embeds.medium-insert-embeds-grid figure {
+    max-width: 680px;
+    margin: auto;
+    box-shadow: inset 0 -3em 3em rgba(0, 0, 0, 0.01),0 5px 50px 4px rgba(166, 166, 166, 0.37) !important;
+    padding: 18px;
+    border-radius: 16px;
+    .card{
+      border: none;
+    }
+    iframe{
+      border-radius: 18px;
+    }
+    .section-text{
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+
+
+
+
+  .article {
+
+    font-size: 17px;
+    line-height: 1.77059;
+    font-weight: 400;
+    letter-spacing: -.022em;
+
+    color: #333;
+    word-wrap: break-word;
+
+
+    .h1{
+      font-size: 3.2rem !important;
+      font-weight: 900;
+      margin-bottom: 1.9rem;
+      line-height: 1.4em;
+    }
+
+    h2{
+      font-size: 1.8rem !important;
+      font-weight: 700;
+      margin-top: 2.8rem;
+    }
+
+    h3{
+      font-size: 1.5rem !important;
+      font-weight: 600;
+      margin-top: 2rem;
+    }
+
+    ol{
+      font-size: 100%;
+    }
+    ul{
+      font-size: 100%;
+    }
+
+  }
+
+  .article-container {
+    // max-width: 960px;
+    margin: 0;
+    padding: 0 0;
+    width: 100%;
+    min-height: 20vh;
+
+  }
+
+// Solve img size in imported table by word in blogs
+  @media all and (max-width: 800px) {
+    .article-container table{
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  }
+  .article-container table tr td{
+    padding: 4px 16px;
+  }
+  .article-container table p{
+    margin: 0;
+  }
+
+  .article-container table td div{
+    display: inline-block;
+    margin: 0;
+  }
+  .article-container table td figure{
+    max-width: 36px !important;
+    max-height: 36px !important;
+    object-fit: contain;
+  }
+  //-----------------------------------------
+
+
+
+  @media screen and (max-width: 1000px) {
+    .article {
+
+      .h1{
+        font-size: 1.9rem !important;
+      }
+      h2{
+        font-size: 1.6rem !important;
+      }
+
+      h3{
+        font-size: 1.4rem !important;
+      }
+
+
+
+    }
+    .article-container {
+      margin: 0;
+      padding: 0 0;
+    }
+
+
+
+
+
+  }
+
+  @media screen and (max-width: 600px) {
+    .article {
+
+      .h1{
+        font-size: 2rem !important;
+
+      }
+      h2{
+        font-size: 1.6rem !important;
+
+      }
+
+      h3{
+        font-size: 1.4rem !important;
+
+
+      }
+
+    }
+    .article-container {
+      margin: 0 0;
+      padding: 0 0;
+
+
+    }
+
+
+  }
+
+  .document-list-item {
+    padding: 6px;
+  }
+
+
+  /**
+Article component editor:
+ */
+
+  .component-editor-header{ // TODO : DELETE THIS !!!!!!!!!!!!!!!
+    background-color: var(--theme-deep-dark) !important;
+    position: relative;
+    line-height: normal;
+    text-align: center;
+
+    border-radius: 24px;
+    margin: 8px  auto 8px auto ;
+    padding: 12px 8px 8px 8px;
+    transition: all 0.45s !important;
+   // cursor: pointer;
+
+    &:hover {
+      background-color: #2b1d32 !important;
+      box-shadow: 0 10px 50px 0 rgba(0, 0, 0, 0.2);
+      z-index:3;
+    }
+
+    .comp-title{
+      font-size: 10px;
+      color: #fff;
+      top: 6px;
+      left: 24px;
+
+      position: absolute;
+    }
+  }
+
+
+  .component-editor-container{
+    background: #fcfcfc;
+    border-radius: 24px;
+    margin: 8px auto;
+    padding: 8px;
+
+    border: var(--theme-deep-dark) solid medium;
+  }
+
+
+  // -------------------------- Limited Width Article --------------------------
+  .samin-article-content {
+    //line-height: 2.9rem;
+    max-width: 860px;
+    margin: auto;
+
+    @media only screen and (max-width: 900px) {
+      // line-height: 2.4rem;
+      margin: 4px;
+    }
+
+    @media only screen and (max-width: 600px) {
+      // line-height: 2.2rem;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+  }
+  //------------------------------------------------------------------------------
+
+
+}
+
+
+
+
+
+
+
+
+.circular-ribbons,.medium-insert-images-progress {
+  direction: ltr ;
+  background: #fafafa !important;
+  width: 100%;
+
+  img {
+    position: absolute !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 84px;
+    height: 84px;
+    object-fit: cover;
+    border-radius: 49.9%;
+  }
+
+  .progress-bar {
+    transition: all 1s;
+    position: absolute;
+    height: 6px;
+    top: 0;
+    left: 0;
+    background: rgba(0, 168, 154, 0.84) !important;
+
+  }
+
+
+  .loader {
+    display: block;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #3498db;
+    -webkit-animation: spin 2s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+    animation: spin 2s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+  }
+
+  .loader:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #e74c3c;
+    -webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+    animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+  }
+
+  .loader:after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #f9c922;
+    -webkit-animation: spin 1.5s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+    animation: spin 1.5s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+  }
+
+  @-webkit-keyframes spin {
+    0% {
+      -webkit-transform: rotate(0deg); /* Chrome, Opera 15+, Safari 3.1+ */
+      -ms-transform: rotate(0deg); /* IE 9 */
+      transform: rotate(0deg); /* Firefox 16+, IE 10+, Opera */
+    }
+    100% {
+      -webkit-transform: rotate(360deg); /* Chrome, Opera 15+, Safari 3.1+ */
+      -ms-transform: rotate(360deg); /* IE 9 */
+      transform: rotate(360deg); /* Firefox 16+, IE 10+, Opera */
+    }
+  }
+  @keyframes spin {
+    0% {
+      -webkit-transform: rotate(0deg); /* Chrome, Opera 15+, Safari 3.1+ */
+      -ms-transform: rotate(0deg); /* IE 9 */
+      transform: rotate(0deg); /* Firefox 16+, IE 10+, Opera */
+    }
+    100% {
+      -webkit-transform: rotate(360deg); /* Chrome, Opera 15+, Safari 3.1+ */
+      -ms-transform: rotate(360deg); /* IE 9 */
+      transform: rotate(360deg); /* Firefox 16+, IE 10+, Opera */
+    }
+  }
+}
+
+
+.v-application--is-rtl {
+  .circular-ribbons,.medium-insert-images-progress {
+    direction: rtl !important;
+    .loader {
+      margin: -75px  -75px 0 0;
+      left: unset;
+      right: 50%;
+    }
+  }
+
+
+}
+
+
+
+
+// Adjust tools for small screens:
+.medium-editor-toolbar{
+  background: #242424;
+  .medium-editor-toolbar-actions{
+    li button{
+      padding: 8px;
+      font-size: 11px;
+      min-width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+
+

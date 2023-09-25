@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="512" height="512">
+    <title>Interest-percentage-banking-loan-money</title>
+    <g id="Flat">
+        <path d="M7,53V28.175a12,12,0,0,1,5.025-9.764L14,17H27l1.975,1.411A12,12,0,0,1,34,28.175V53a8,8,0,0,1-8,8H15A8,8,0,0,1,7,53Z"
+              style="fill:#a67c52"/>
+        <path d="M29,53V38.175a12,12,0,0,1,5.025-9.764L36,27H50l1.975,1.411A12,12,0,0,1,57,38.175V53a8,8,0,0,1-8,8H37A8,8,0,0,1,29,53Z"
+              style="fill:#c69c6d"/>
+        <path d="M38,23l-1.423-5.691A1.858,1.858,0,0,1,38.38,15h0a1.855,1.855,0,0,1,1.116.372L43,18l3.5-2.628A1.855,1.855,0,0,1,47.62,15h0a1.858,1.858,0,0,1,1.8,2.309L48,23Z"
+              style="fill:#c69c6d"/>
+        <circle cx="43" cy="44" r="8" style="fill:#fed856"/>
+        <rect x="38" y="43" width="10" height="2" transform="translate(-18.518 43.293) rotate(-45)"
+              style="fill:#cd9829"/>
+        <rect x="44.828" y="45.828" width="2" height="2" transform="translate(-19.69 46.133) rotate(-45.01)"
+              style="fill:#cd9829"/>
+        <rect x="39.172" y="40.172" width="2" height="2" transform="translate(-17.347 40.475) rotate(-45.01)"
+              style="fill:#cd9829"/>
+        <rect x="36" y="23" width="14" height="4" style="fill:#8c6239"/>
+
+
+
+
+        <circle cx="21" cy="39" r="8" style="fill:#fed856"/>
+        <rect x="16" y="38" width="10" height="2" transform="translate(-21.426 26.272) rotate(-45)"
+              style="fill:#cd9829"/>
+        <rect x="22.828" y="40.828" width="2" height="2" transform="translate(-22.6 29.108) rotate(-45.01)"
+              style="fill:#cd9829"/>
+        <rect x="17.172" y="35.172" width="2" height="2" transform="translate(-20.257 23.45) rotate(-45.01)"
+              style="fill:#cd9829"/>
+        <path d="M16,13,14.577,7.309A1.858,1.858,0,0,1,16.38,5h0a1.855,1.855,0,0,1,1.116.372L21,8l3.5-2.628A1.855,1.855,0,0,1,25.62,5h0a1.858,1.858,0,0,1,1.8,2.309L26,13Z"
+              style="fill:#c69c6d"/>
+        <rect x="14" y="13" width="14" height="4" style="fill:#8c6239"/>
+    </g>
+</svg>

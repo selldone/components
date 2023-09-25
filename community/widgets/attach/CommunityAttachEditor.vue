@@ -1,0 +1,136 @@
+<template>
+  <div class="min-width-150">
+    <!-- ████████████████ List ████████████████ -->
+
+    <v-slide-y-transition
+      group
+      tag="v-list"
+      class="bg-transparent border-between-vertical"
+    >
+      <v-list-item v-for="file in files" :key="file.key">
+        <template>
+          <v-list-item-avatar tile>
+            <img :src="getFileExtensionImage(file.name)" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>
+              <b>{{ file.name }}</b>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ file.size | numeralFormat("0.[0] b") }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn color="red" icon @click="remove(files, file)">
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-list-item-action>
+        </template>
+      </v-list-item>
+    </v-slide-y-transition>
+    <!-- ████████████████ Add ████████████████ -->
+
+    <v-expand-transition>
+      <div v-if="files?.length < 3">
+        <v-file-input
+          v-model="selected_file"
+          @change="selectFile"
+          multiple
+          clearable
+          solo
+          placeholder="Select files... max 3 files limited to 8MB each file."
+          append-icon="add_box"
+          class="mt-3 mx-3"
+        ></v-file-input>
+
+        <v-subheader>
+          <div>
+            Acceptable files:
+            <span v-if="mims">
+              <span v-for="m in mims" :key="m" class="mx-1"><img :src="getFileExtensionImage(m)" width="16" height="16" class="hover-scale" > {{m}}</span>
+            </span>
+            <span v-else>*.*</span>
+          </div>
+        </v-subheader>
+      </div>
+    </v-expand-transition>
+  </div>
+</template>
+
+<script>
+import numeral from "numeral";
+
+export default {
+  name: "CommunityAttachEditor",
+  components: {},
+  props: {
+
+    community: {
+      require: true,
+      type: Object,
+    },
+
+    value: {},
+  },
+
+  data: () => ({
+    selected_file: null,
+    files: [],
+  }),
+
+  watch: {
+    files(val) {
+      this.$emit("input", val);
+    },
+  },
+
+  computed: {
+    mims(){
+      return this.community.mims
+    }
+  },
+
+  created() {
+    if (this.value) {
+      this.files = this.value;
+    } else {
+      this.files = [];
+    }
+  },
+
+  methods: {
+    selectFile(files) {
+      if (!files) return;
+      // console.log("select files", files);
+
+      if (!Array.isArray(files)) files = [files];
+
+      files.forEach((file) => {
+        if (this.files.length >= 3) return;
+        // Check size:
+        if (file.size > 8 * 1024 * 1024) {
+          return this.showErrorAlert(
+            file.name + " size is " + numeral(file.size).format("0.[0] b"),
+            "The file size is limited to 8MB."
+          );
+        }
+
+        // Check does not exist:
+        file.key = file.name + file.size;
+        if (this.files.some((f) => f.key === file.key)) {
+          return this.showErrorAlert(
+            "Duplicated file | " + file.name,
+            "This file exists in your attachment list."
+          );
+        }
+
+        this.files.push(file);
+      });
+
+      this.selected_file = []; //Reset input.
+    },
+  },
+};
+</script>
+
+<style scoped></style>

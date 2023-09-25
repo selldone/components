@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Creator: CorelDRAW 2018 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="500px" height="500px" version="1.0" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 61.63 61.63"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil3 {fill:none}
+    .fil1 {fill:#010101;fill-rule:nonzero;fill-opacity:0.450980}
+    .fil0 {fill:#010101;fill-rule:nonzero;fill-opacity:0.600000}
+    .fil2 {fill:#010101;fill-rule:nonzero;fill-opacity:0.800000}
+   ]]>
+  </style>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2196974835088">
+   <polygon id="path3078" class="fil0" points="30.82,24.15 13.66,31.95 30.82,42.1 47.98,31.95 "/>
+   <polygon id="path3094" class="fil1" points="13.66,31.95 30.82,42.1 30.82,24.15 30.82,3.48 "/>
+   <polygon id="path3110" class="fil2" points="30.82,3.48 30.82,24.15 30.82,42.1 47.98,31.95 "/>
+   <polygon id="path3126" class="fil1" points="13.66,35.21 30.82,59.39 30.82,45.34 "/>
+   <polygon id="path3142" class="fil2" points="30.82,45.34 30.82,59.39 47.99,35.21 "/>
+  </g>
+  <rect class="fil3" width="61.63" height="61.63"/>
+ </g>
+</svg>

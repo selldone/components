@@ -1,0 +1,61 @@
+.svg-dash-anim {
+  animation: svg-dash-anim 50s linear infinite;
+  stroke-dasharray: 3;
+}
+
+@keyframes svg-dash-anim {
+  to {
+    stroke-dashoffset: 1000;
+  }
+}
+
+.svg-heart-animate{
+  animation: svg-heart-animate 3s linear alternate infinite;
+  transform-origin: center;
+}
+
+@keyframes svg-heart-animate {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
+
+
+
+
+.svg-scale-fade-animate{
+  animation: svg-scale-fade-animate 6s linear forwards infinite;
+  transform-origin: center;
+  animation-delay: 0.5s;
+
+  &:nth-child(3n){
+    animation-delay: 0.5s;
+  }
+  &:nth-child(3n+1){
+    animation-delay: 0.8s;
+  }
+  &:nth-child(3n+2){
+    animation-delay: 1s;
+  }
+}
+
+
+
+
+@keyframes svg-scale-fade-animate {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}

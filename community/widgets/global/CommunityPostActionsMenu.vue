@@ -1,0 +1,442 @@
+<template>
+  <div>
+    <v-menu
+      :activator="activator"
+      left
+      bottom
+      offset-y
+      offset-x
+      v-model="value"
+      max-width="360"
+      rounded="xl"
+    >
+      <div class="p-3 bg-white">
+        <v-list class="text-start">
+          <v-list-item
+            v-for="(item, index) in items"
+            :key="index"
+            @click="item.click"
+          >
+            <v-list-item-avatar tile>
+              <v-icon :color="item.color">{{ item.icon }}</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </div>
+    </v-menu>
+
+    <!-- ------------------ Embed post dialog ------------------------ -->
+    <v-dialog
+      v-if="embed_dialog"
+      max-width="560"
+      v-model="embed_dialog"
+      scrollable
+    >
+      <v-card class="d-flex flex-column text-start">
+        <v-card-title
+          >{{ $t("community.post_actions.embed") }} <v-spacer></v-spacer
+          ><v-btn large icon @click="embed_dialog = false"
+            ><v-icon>close</v-icon></v-btn
+          ></v-card-title
+        >
+
+        <v-card-text>
+          <small>{{ $t("community.embed.copy_code_msg") }} </small>
+          <div
+            v-text="embed_code"
+            class="border my-3 hover-editable px-2 py-4 rounded"
+          ></div>
+
+          <v-btn text @click="copyToClipboard(embed_code)" color="blue"
+            ><v-icon small class="me-1">content_copy</v-icon>
+            {{ $t("community.embed.copy_code") }}</v-btn
+          >
+          <hr class="mb-4" />
+          <small>{{ $t("global.commons.preview") }}</small>
+          <div v-html="embed_code" class="my-3"></div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- ------------------ Edit post dialog ------------------------ -->
+    <v-dialog
+      v-if="edit_dialog"
+      max-width="680"
+      v-model="edit_dialog"
+      content-class="no-shadow-dialog"
+      scrollable
+    >
+      <v-btn large icon @click="edit_dialog = false" class="absolute-top-end"
+        ><v-icon>close</v-icon></v-btn
+      >
+
+      <community-post-editor
+        :post="post"
+        :shop="shop"
+        :community="community"
+        class="my-0"
+        scrollable
+        @update:post="
+          (val) => {
+            if (val.id === post.id) Object.assign(post, val);
+            edit_dialog = false;
+          }
+        "
+      >
+      </community-post-editor>
+    </v-dialog>
+
+    <!-- ------------------ Report post dialog ------------------------ -->
+
+    <s-content-violation-report-dialog
+      v-model="report_dialog"
+      @report="reportPost"
+      :loading="busy_report"
+    ></s-content-violation-report-dialog>
+  </div>
+</template>
+<script>
+import CommunityPostEditor from "../post/CommunityPostEditor.vue";
+import SContentViolationReportDialog from "../../../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
+import { ArticleReport } from "../../../../../core/enums/article/ArticleReport";
+import CommunityURLs from "../../helper/CommunityURLs";
+import _ from "lodash-es";
+
+export default {
+  name: "CommunityPostActionsMenu",
+  components: { SContentViolationReportDialog, CommunityPostEditor },
+  props: {
+    shop: {},
+
+    community: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      topic: null,
+      post: null,
+      delete_callback: null,
+
+      activator: null,
+      value: false,
+
+      busy: false,
+      // ---------------------------------
+      embed_dialog: false,
+
+      edit_dialog: false,
+
+      report_dialog: false,
+      busy_report: false,
+    };
+  },
+
+  computed: {
+    access() {
+      return this.community.access;
+    },
+
+    items() {
+      if (!this.USER() || !this.post) {
+        return [
+          {
+            title: this.$t("global.actions.login_now"),
+            icon: "edit",
+            subtitle: this.$t("community.commons.login_msg"),
+            click: this.NeedLogin,
+          },
+        ];
+      }
+
+      const out = [
+        {
+          title: this.$t("community.post_actions.save"),
+          icon:
+            this.post.action && this.post.action.save
+              ? "bookmark"
+              : "bookmark_border",
+          subtitle: this.$t("community.post_actions.save_msg"),
+          click: this.savePost,
+          color:
+            this.post.action && this.post.action.save ? "success" : undefined,
+        },
+
+        {
+          title: this.$t("community.post_actions.copy_link"),
+          icon: "link",
+          subtitle: this.$t("community.post_actions.copy_link_msg"),
+          click: this.copyLink,
+        },
+
+        {
+          title: this.$t("community.post_actions.embed"),
+          icon: "filter_frames",
+          subtitle: this.$t("community.post_actions.embed_msg"),
+          click: this.embedPost,
+        },
+      ];
+
+      // Not author:
+
+      if (this.USER_ID() !== this.post.user_id) {
+        out.push({
+          title:
+            this.post.action && this.post.action.report
+              ? this.$t("community.commons.reported")
+              : this.$t("community.commons.report"),
+          icon: "report",
+          subtitle:
+            this.post.action && this.post.action.report
+              ? this.$t(ArticleReport[this.post.action.report].title)
+              : this.$t("community.post_actions.report_msg"),
+          click: this.showReportPost,
+          color:
+            this.post.action && this.post.action.report ? "red" : undefined,
+        });
+      }
+
+      // Author:
+
+      if (this.USER_ID() === this.post.user_id) {
+        out.unshift({
+          title: this.$t("community.post_actions.edit"),
+          icon: "edit",
+          subtitle: this.$t("community.post_actions.edit_msg"),
+          click: this.editPost,
+        });
+      }
+   
+      // Author and admin:
+      if (
+        this.access.admin ||
+        this.access.moderator ||
+        this.USER_ID() === this.post.user_id
+      ) {
+        out.push({
+          title: this.$t("community.post_actions.delete"),
+          icon: "delete_outline",
+          subtitle: this.$t("community.post_actions.delete_msg"),
+          click: this.deletePost,
+        });
+
+        if (this.topic.post_id !== this.post.id)
+          // Main topic post can not mark as accepted answer
+          out.push({
+            title: this.post.approved
+              ? this.$t("community.post_actions.approved")
+              : this.$t("community.post_actions.approve_action"),
+            icon: this.post.approved ? "check_circle" : "check_circle_outline",
+            color: this.post.approved ? "success" : undefined,
+            subtitle: this.$t("community.post_actions.approved_msg"),
+            click: this.approvePost,
+          });
+      }
+
+      return out;
+    },
+
+    embed_code() {
+      const link = CommunityURLs.PostEmbedUrl(this.shop, this.post);
+      return `<iframe src="${link}" allowfullscreen="" title="Embedded post" width="500" height="470" frameborder="0" style="max-width: 100%;border: solid thin #ddd;border-radius: 12px;"></iframe>`;
+    },
+  },
+
+  methods: {
+    //――――――――――――――――――――――――― Delete ―――――――――――――――――――――――――
+
+    deletePost() {
+      this.openDangerAlert(
+        this.$t("community.post_actions.delete_dialog.title"),
+        this.$t("community.post_actions.delete_dialog.message"),
+        this.$t("community.post_actions.delete_dialog.action"),
+        () => {
+          this.busy = true;
+
+          axios
+            .delete(
+              window.CAPI.DELETE_COMMUNITY_TOPIC_POST(
+                this.post.community_id,
+                this.post.topic_id,
+                this.post.id
+              )
+            )
+            .then(({ data }) => {
+              if (!data.error) {
+                if (this.delete_callback) {
+                  this.delete_callback(this.post, data.topic_removed);
+                }
+                // Errors in removing files on disk:
+                if(data.errors){
+                  this.showWarningAlert(null,'There is some issue with removing files: <ul>'+data.errors.map(e=>'<li>'+e+'</li>').join(' ')+'</ul>')
+                }
+              } else {
+                this.showErrorAlert(null, data.error_msg);
+              }
+            })
+            .catch((error) => {
+              this.showLaravelError(error);
+            })
+            .finally(() => {
+              this.busy = false;
+            });
+        }
+      );
+    },
+
+    //――――――――――――――――――――――――― Save ―――――――――――――――――――――――――
+
+    savePost() {
+      this.busy = true;
+
+      axios
+        .post(
+          window.CAPI.POST_COMMUNITY_TOPIC_POST_SAVE(
+            this.post.community_id,
+            this.post.topic_id,
+            this.post.id
+          ),
+          {
+            save: !(this.post.action && this.post.action.save),
+          }
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            this.post.action = data.action;
+            this.showSuccessAlert();
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy = false;
+        });
+    },
+    //――――――――――――――――――――――――― Approve ―――――――――――――――――――――――――
+
+    approvePost() {
+      this.busy = true;
+
+      axios
+        .post(
+          window.CAPI.POST_COMMUNITY_TOPIC_POST_APPROVED(
+            this.post.community_id,
+            this.post.topic_id,
+            this.post.id
+          ),
+          {
+            approved: !this.post.approved,
+          }
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            this.post.approved = data.approved;
+            this.showSuccessAlert();
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy = false;
+        });
+    },
+
+    //――――――――――――――――――――――――― Embed ―――――――――――――――――――――――――
+
+    embedPost() {
+      this.embed_dialog = true;
+      this.onCommunityPostEmbed(this.topic, this.post); // + Set on community analytic
+    },
+
+    //――――――――――――――――――――――――― Report ―――――――――――――――――――――――――
+    showReportPost() {
+      this.report_dialog = true;
+    },
+    reportPost(report) {
+      this.busy_report = true;
+
+      axios
+        .post(
+          window.CAPI.POST_COMMUNITY_TOPIC_POST_REPORT(
+            this.post.community_id,
+            this.post.topic_id,
+            this.post.id
+          ),
+          {
+            report: report,
+          }
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            this.post.action = data.action;
+            this.report_dialog = false;
+            this.showSuccessAlert();
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_report = false;
+        });
+    },
+    //――――――――――――――――――――――――― Edit ―――――――――――――――――――――――――
+    editPost() {
+      this.edit_dialog = true;
+    },
+    //――――――――――――――――――――――――― Link ―――――――――――――――――――――――――
+    copyLink() {
+      this.copyToClipboard(CommunityURLs.PostUrl(this.shop, this.post));
+
+      this.onCommunityPostShare(this.topic, this.post); // + Set on community analytic
+    },
+  },
+
+  mounted() {
+    //█████████████████████████████████████████████████████████████
+    //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
+    //█████████████████████████████████████████████████████████████
+    // Listen for show loading data from server
+    this.EventBus.$on(
+      "community:post-actions-menu",
+      ({ activator, topic, post, delete_callback }) => {
+        if (this.busy) return;
+
+        this.activator = activator;
+        this.topic = topic;
+        this.post = post;
+        this.delete_callback = delete_callback;
+
+        if (this.value) {
+          this.value = false;
+          _.delay(() => {
+            this.value = true;
+          }, 350);
+        } else {
+          this.$nextTick(() => {
+            this.value = true;
+          });
+        }
+      }
+    );
+  },
+  beforeDestroy() {
+    this.EventBus.$off("community:post-actions-menu");
+  },
+};
+</script>
+
+<style lang="scss"></style>

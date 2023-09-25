@@ -1,0 +1,421 @@
+
+.landing-page {
+
+
+  --scale: 1;
+
+  h1 {
+    line-height: normal;
+    font-size: calc(48px * var(--scale));
+    @media only screen and (max-width: 1360px) {
+      font-size: calc(42px * var(--scale));
+    }
+    @media only screen and (max-width: 767px) {
+      font-size: calc(36px * var(--scale));
+    }
+    @media only screen and (max-width: 520px) {
+      font-size: calc(32px * var(--scale));
+    }
+  }
+
+  h2 {
+    line-height: normal;
+    font-size: calc(32px * var(--scale));
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+
+    @media only screen and (max-width: 1360px) {
+      font-size: calc(30px * var(--scale));
+    }
+    @media only screen and (max-width: 767px) {
+      font-size: calc(26px * var(--scale));
+    }
+    @media only screen and (max-width: 520px) {
+      font-size: calc(24px * var(--scale));
+    }
+  }
+
+  h3 {
+    line-height: normal;
+    font-size: calc(24px * var(--scale));
+    margin-bottom: 1rem;
+
+    @media only screen and (max-width: 1360px) {
+      font-size: calc(23px * var(--scale));
+    }
+
+    @media only screen and (max-width: 767px) {
+      font-size: calc(22px * var(--scale));
+    }
+    @media only screen and (max-width: 520px) {
+      font-size: calc(20px * var(--scale));
+    }
+  }
+
+  h4 {
+    line-height: normal;
+    font-size: calc(18px * var(--scale));
+    @media only screen and (max-width: 1360px) {
+      font-size: calc(18px * var(--scale));
+    }
+
+    @media only screen and (max-width: 767px) {
+      font-size: calc(18px * var(--scale));
+    }
+    @media only screen and (max-width: 520px) {
+      font-size: calc(18px * var(--scale));
+    }
+  }
+
+  h5 {
+    line-height: normal;
+    font-size: calc(1.3rem * var(--scale));
+    @media only screen and (max-width: 1360px) {
+      font-size: calc(1.2rem * var(--scale));
+    }
+
+    @media only screen and (max-width: 767px) {
+      font-size: calc(1rem * var(--scale));
+    }
+    @media only screen and (max-width: 520px) {
+      font-size: calc(0.9rem * var(--scale));
+    }
+  }
+
+  p {
+    font-size: calc(16px * var(--scale));
+    font-weight: 400;
+    line-height: 1.76em;
+
+    @media only screen and (max-width: 1360px) {
+      font-size: calc(15px * var(--scale));
+    }
+    @media only screen and (max-width: 767px) {
+      font-size: calc(14px * var(--scale));
+    }
+  }
+
+  /*.sub-body {
+    font-size: calc(1.325rem * var(--scale));
+    font-weight: 200;
+    line-height: 1.76em;
+
+    @media only screen and (max-width: 1360px) {
+      font-size: calc(1.225rem * var(--scale));
+      font-weight: 400;
+    }
+    @media only screen and (max-width: 767px) {
+      font-size: calc(1.125rem * var(--scale));
+      font-weight: 400;
+    }
+  }*/
+
+  .sub-header {
+    font-size: 19px;
+    font-weight: 400;
+    @media only screen and (max-width: 520px) {
+      font-size: 17px;
+    }
+
+  }
+
+  .sub-message {
+    padding-bottom: 16px;
+    padding-top: 16px;
+    max-width: 640px;
+    font-size: 19px;
+    margin: auto;
+    font-weight: 400;
+    @media only screen and (max-width: 640px) {
+      margin: auto 8px;
+    }
+
+  }
+
+  .sub-title {
+    font-size: 19px;
+  }
+
+
+  .small {
+    font-size: calc(100% * var(--scale));
+    font-weight: 400;
+  }
+
+  .tab-sub-header {
+    min-height: 7em;
+    font-size: 0.9em;
+  }
+
+  .header-section-bg {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 0;
+    min-height: 120vh;
+    background-size: cover;
+    background-position: bottom center;
+
+    @media only screen and (max-width: 767px) {
+      height: 120vh;
+    }
+  }
+
+  .two-col-container {
+    position: relative;
+    max-width: 1200px;
+
+    &--large {
+      max-width: 1720px;
+    }
+
+    .linker-image {
+      position: absolute;
+      max-width: none;
+      bottom: -100px;
+      left: 50%;
+      margin-left: -18%;
+      margin-top: 0;
+      margin-bottom: 0;
+      width: 36%;
+      z-index: 1;
+      display: block;
+
+      @media only screen and (max-width: 767px) {
+        bottom: -20px;
+      }
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .flip-image-x {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+  }
+
+
+  // -------------------------------------------
+  // White box around container
+  .window-mode {
+    background-color: #fff;
+    padding-top: 50px !important;
+    padding-bottom: 50px !important;
+    border-radius: 28px;
+    @media only screen and (max-width: 767px) {
+      padding-top: 30px !important;
+      padding-bottom: 30px !important;
+    }
+  }
+  // -------------------------------------------
+  // Dark mode page:
+  &.dark-mode {
+    .window-mode {
+      background-color: #00000017;
+    }
+    .text-muted{
+      color: rgba(255, 255, 255, 0.93) !important;
+    }
+  }
+
+  // -------------------------------------------
+
+
+  .bottom-border-img {
+    position: absolute;
+    bottom: -1%;
+    left: -1%;
+    width: 102%;
+    filter: drop-shadow(0px -13px 9px rgba(0, 0, 0, 0.11));
+    min-height: 10%;
+    object-position: bottom;
+    object-fit: cover;
+    z-index: 10;
+
+    &.-filter {
+      mask-position: bottom;
+      mask-size: cover;
+      mask-image: var(--img);
+      filter: none;
+    }
+
+  }
+
+  .shadow-textbox {
+    //filter: drop-shadow(3px 13px 11px rgba(0, 0, 0, 0.84));
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.83));
+  }
+
+  .montain {
+    position: absolute;
+    right: 0%;
+    bottom: 9%;
+    @media only screen and (max-width: 680px) {
+      bottom: 5rem;
+    }
+  }
+
+
+  .iframe-container {
+    iframe {
+      border-radius: 16px !important;
+      border: none !important;
+    }
+  }
+
+
+  .info-box-top-end {
+    margin-bottom: -32px;
+    margin-left: -32px;
+    border-radius: 8px;
+    background-color: #fff;
+    @media only screen and (max-width: 900px) {
+      margin-left: 8px;
+    }
+  }
+
+  .font-weight-light {
+    b {
+      font-weight: 600;
+
+      b {
+        font-weight: 800;
+      }
+    }
+
+    strong {
+      font-weight: 800;
+    }
+  }
+
+  .no-select {
+    user-select: none;
+    pointer-events: none;
+  }
+
+
+  //---------------------------------------------------
+
+
+  .container:not(.container--fluid) {
+    max-width: 1240px;
+  }
+
+
+  .text-small {
+    position: relative;
+    z-index: 5;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .caption {
+    position: relative;
+    z-index: 5;
+    color: #717274;
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+
+}
+
+
+.quote-block {
+  &:before {
+    content: "❝";
+    padding: 0 6px;
+    //color: var(--text-color-colored);
+    font-size: 28px;
+    vertical-align: text-top;
+  }
+
+  &:after {
+    content: "❞";
+    padding: 0 6px;
+    //color: var(--text-color-colored);
+    font-size: 28px;
+    vertical-align: text-top;
+  }
+}
+
+.v-application--is-rtl {
+  .quote-block {
+    &:before {
+      content: "❞";
+    }
+
+    &:after {
+      content: "❝";
+    }
+  }
+}
+
+
+.border-start-thick-colored {
+  border-left: thick solid var(--text-color-colored) !important;
+}
+
+
+//----------------------------------- Border patterns ----------------------------------
+.border-pattern-top {
+  background-repeat: repeat-x;
+  background-size: auto 32px;
+  height: 32px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  filter: drop-shadow(0px 9px 4px rgba(0, 0, 0, 0.11))
+}
+
+.border-pattern-bottom {
+  background-repeat: repeat-x;
+  background-size: auto 32px;
+  height: 32px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  filter: drop-shadow(0px -9px 4px rgba(0, 0, 0, 0.11))
+}
+
+
+//----------------------------------- RTL MODE ----------------------------------
+
+
+.v-application--is-rtl {
+  .landing-page {
+    .info-box-top-end {
+      margin-left: unset;
+      margin-right: -32px;
+      @media only screen and (max-width: 900px) {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .border-start-thick-colored {
+    border-left: unset !important;
+    border-right: thick solid var(--text-color-colored) !important;
+  }
+}
+
+.text-gray-555 {
+  color: #555;
+}
+
+.text-gray-444 {
+  color: #444;
+}
+
+.text-gray-333 {
+  color: #333;
+}

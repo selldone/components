@@ -1,0 +1,143 @@
+<template>
+  <v-container
+    :class="{ 'opx-active': opx_active }"
+    style="margin-bottom: 20vh"
+  >
+    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+    <community-breadcrumb
+      class="breadcrumb-max-w mb-12"
+      :shop="shop"
+      :community="community"
+    ></community-breadcrumb>
+
+    <v-container class="c-max-w">
+      <v-row justify="center" align="start">
+
+        <community-comment-widget :shop="shop" :community="community" :comment="comment"  v-for="comment in comments" :key="comment.id">
+
+        </community-comment-widget>
+
+        <!-- Auto load more -->
+
+        <v-col
+          cols="12"
+          v-if="has_more"
+          style="height: 50vh"
+          v-intersect.quiet="
+            (entries) => {
+              if (entries[0].isIntersecting) fetchComments(page + 1);
+            }
+          "
+        >
+          <loading light css-mode v-if="busy"></loading>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-container>
+</template>
+
+<script>
+import CommunityBreadcrumb from "../widgets/header/CommunityBreadcrumb.vue";
+import CommunityComments from "../widgets/comment/CommunityComments.vue";
+import CommunityCommentWidget from "../widgets/comment/CommunityCommentWidget.vue";
+
+export default {
+  name: "CommunityMyCommentsPage",
+  components: {
+    CommunityCommentWidget,
+
+    CommunityBreadcrumb,
+  },
+
+  props: {
+    shop: {},
+
+    community: {
+      required: true,
+      type: Object,
+    },
+    categories: {
+      required: true,
+      type: Array,
+    },
+  },
+
+  data() {
+    return {
+      opx_active: false,
+
+      //----------------------------------
+      busy: false,
+      comments: [],
+      page: 1,
+      itemsPerPage: 10,
+      totalItems: 0,
+    };
+  },
+
+  computed: {
+    has_more() {
+      return this.totalItems > this.comments.length;
+    },
+  },
+  watch: {},
+
+  created() {
+    this.fetchComments(1);
+  },
+  mounted() {},
+
+  methods: {
+    refreshData() {
+      this.fetchComments(1);
+    },
+
+    //――――――――――――――――――――――― Topics ―――――――――――――――――――――――
+
+    fetchComments(page) {
+      if (this.busy) return; // Prevent multiple fetching!
+
+      this.busy = true;
+      this.$emit("busy", true);
+
+      this.page = page;
+
+      if (page === 1) {
+        // Reset values:
+        this.comments = [];
+        this.totalItems = 0;
+      }
+
+      axios
+        .get(window.CAPI.GET_COMMUNITY_MY_COMMENTS(this.community.id), {
+          params: {
+            offset: (this.page - 1) * this.itemsPerPage,
+            limit: this.itemsPerPage,
+          },
+        })
+        .then(({ data }) => {
+          if (data.error) {
+            this.showErrorAlert(null, data.error_msg);
+            return;
+          }
+          this.comments.push(...data.comments);
+
+          if (data.comments.length) {
+            this.totalItems = this.comments.length + 1; // Maybe has mode!
+          } else {
+            this.totalItems = this.comments.length;
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy = false;
+          this.$emit("busy", false);
+        });
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss"></style>

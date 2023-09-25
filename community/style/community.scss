@@ -1,0 +1,175 @@
+//-------------------------------------------------------------
+.c-avatar{
+
+  &:before{
+    content: ' ';
+    background-color: #fafafa;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    border-radius: 50%;
+  }
+
+  &.-owner{
+    background-image: linear-gradient(45deg,#ffa95f 5%,#f99c4a 15%,#f47838 30%,#e75157 45%,#d92d7a 70%,#cc2a92 80%,#c32e92 95%);
+  }
+
+  &.-moderator{
+    background-image: linear-gradient(45deg,#00BCD4 5%,#0288D1 15%,#1976D2 30%, #2dd9c5 70%,#3F51B5 80%,#303F9F 95%);
+
+  }
+
+  &.-starter{
+    background-image: linear-gradient(45deg, #8BC34A 5%, #4CAF50 15%, #4CAF50 30%, #bae751 45%, #29b22b 80%, #72E332 95%);
+  }
+
+  img{
+    padding: 4px;
+    position: relative;
+    z-index: 1;
+  }
+
+  &.-dense{
+    img{
+      padding:2px;
+    }
+  }
+
+}
+
+
+//---------------------------- Community Post Widget---------------------------------
+
+.breadcrumb-max-w {
+  max-width: 840px !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+.c-max-w {
+  max-width: 680px !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.c-container {
+  position: relative;
+  border-radius: 22px;
+  box-shadow: inset 0px 2px 8px rgba(15, 15, 15, 0.08);
+  margin: 0 auto 18px auto;
+  display: flex;
+  flex-direction: column;
+  max-width: 680px;
+  transition: all 0.3s ease;
+  width: 100%;
+
+  @media only screen and (max-width: 680px) {
+    &:not(.-force-rounded) {
+      padding: 18px 8px 18px 8px;
+      border-radius: unset;
+    }
+    &.-force-rounded {
+      max-width: calc(100% - 8px);
+    }
+  }
+  .limit-w {
+    // Make sure limit preview embed size:
+    img, video, iframe {
+      max-width: 100%;
+    }
+  }
+}
+.c-widget {
+  box-sizing: border-box;
+  box-shadow: 0px 7px 15px 8px rgba(113, 112, 112, 0.24);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background-color: #fff;
+
+  &:not(.-no-radius){
+    border-radius: 18px ;
+    &.v-card{
+      border-radius: 18px ;
+    }
+  }
+  // Fix place holder on center:
+  .v-textarea {
+    textarea {
+      align-self: center;
+    }
+  }
+
+  // Comment body:
+  .cmt-body {
+    margin-top: 8px;
+    margin-bottom: 12px;
+    border-radius: 0 8px 8px 8px;
+  }
+
+  &.-hover{
+    box-shadow: unset !important; // important: to override card shadow!
+    &:hover{
+      box-shadow: 0px 7px 15px 8px rgba(113, 112, 112, 0.24) !important;
+    }
+  }
+
+  // Curve last child for fix in overflow visible mode:
+
+  // fix iframe embed:
+  .embed-video-view{
+    iframe{
+      width: 100%;
+      min-height: 420px;
+    }
+  }
+
+
+// Solve img and video size in community markdown
+   img,video{
+    max-width: 100%;
+  }
+
+}
+.widget-bottom{
+  border-radius: 0 0 18px 18px;
+  overflow: hidden;
+}
+
+// RTL support:
+.v-application--is-rtl {
+  .c-widget {
+    // Comment body:
+    .cmt-body {
+      border-radius: 8px 0 8px 8px;
+    }
+  }
+}
+//-------------------------------------------------------------
+// Community text view:
+.c-body{
+  font-size: 16px;
+}
+
+//-------------------------------------------------------------
+// Hide not important data:
+.opx-active{
+  .opx{
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    user-select: none;
+  }
+  .c-container{
+    &:not(.nopx){
+      box-shadow:none !important;
+    }
+
+
+  }
+  .c-widget{
+    &:not(.nopx){
+      box-shadow:none !important;
+    }
+  }
+}

@@ -1,0 +1,136 @@
+<template>
+  <v-col
+    v-if="has_suggestion"
+    cols="12"
+    class="c-container -force-rounded position-relative border-top-thick -blue"
+  >
+    <div class="bg-white z2 c-widget py-3">
+      <h4 class="mx-3">{{ $t("community.commons.suggestion_list") }}</h4>
+
+      <v-slide-group show-arrows class="center-items">
+        <v-slide-item
+          v-for="profile in profiles"
+          :key="profile.user_id"
+          v-slot="{}"
+        >
+          <v-card
+            class="ma-2 ma-sm-3 ma-md-4 user-select-none"
+            :height="$vuetify.breakpoint.xsOnly ? 160 : 200"
+            :width="$vuetify.breakpoint.xsOnly ? 100 : 150"
+            outlined
+            rounded
+          >
+            <v-card-text
+              class="d-flex align-center justify-center flex-column h-100"
+            >
+              <v-avatar :size="$vuetify.breakpoint.xsOnly ? 64 : 86">
+                <img :src="getUserAvatar(profile.user_id)" />
+              </v-avatar>
+
+              <div class="subtitle-2 mt-2 mt-sm-4 single-line black--text">
+                <b>{{ profile.name }}</b>
+                <small v-if="profile.mutual" class="ms-1">2th</small>
+              </div>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="#1976D2"
+                dark
+                width="100%"
+                :small="$vuetify.breakpoint.xsOnly"
+                @click="follow(profile)"
+                :loading="busy_follow === profile.user_id"
+                :class="{ disabled: profile.follow }"
+              >
+                <v-icon v-if="profile.follow" class="me-1">check</v-icon>
+                {{
+                  profile.follow
+                    ? $t("community.commons.following_action")
+                    : $t("community.commons.follow_action")
+                }}</v-btn
+              >
+            </v-card-text>
+          </v-card>
+        </v-slide-item>
+      </v-slide-group>
+    </div>
+  </v-col>
+</template>
+
+<script>
+export default {
+  name: "CommunityFollowSuggestion",
+  components: {},
+  props: {
+    community: {
+      required: true,
+      type: Object,
+    },
+  },
+
+  data() {
+    return {
+      busy: false,
+      profiles: null,
+
+      busy_follow: null,
+    };
+  },
+
+  computed: {
+    has_suggestion() {
+      return this.profiles && this.profiles.length;
+    },
+  },
+
+  created() {
+    this.getSuggestions();
+  },
+
+  methods: {
+    getSuggestions() {
+      this.busy = true;
+
+      axios
+        .get(window.CAPI.GET_FOLLOWERS_REQUEST(this.community.id), {
+          params: {
+            // Extra info to create suggestions:
+            category_id: this.$route.params.category_id,
+            topic_id: this.$route.params.topic_id,
+          },
+        })
+        .then(({ data }) => {
+          if (!data.error) {
+            this.profiles = data.profiles;
+          }
+        })
+        .catch((error) => {})
+        .finally(() => {
+          this.busy = false;
+        });
+    },
+
+    //――――――――――――――――――――――― Follow ―――――――――――――――――――――――
+    follow(profile) {
+      this.busy_follow = profile.user_id;
+
+      axios
+        .post(window.CAPI.POST_FOLLOW(this.community.id), {
+          user_id: profile.user_id,
+        })
+        .then(({ data }) => {
+          if (!data.error) {
+            profile.follow = true; // Indicate followed now!
+          }
+        })
+        .catch((error) => {
+          this.showErrorAlert(error);
+        })
+        .finally(() => {
+          this.busy_follow = false;
+        });
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss"></style>

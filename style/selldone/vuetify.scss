@@ -1,0 +1,649 @@
+
+
+.v-application{
+  .display-1, .display-2, .display-3, .display-4 {
+    letter-spacing: -.018em !important;
+  }
+}
+
+
+.is-mobile {
+  // Solve bottom navigation overlap bug:
+  .v-bottom-sheet--inset {
+    &:last-child {
+      &>:last-child {
+        padding-bottom: 70px;
+      }
+    }
+
+  }
+
+}
+
+/*
+.v-bottom-navigation {
+  &.app-style {
+    > .v-btn {
+      padding-bottom: 16px !important;
+    }
+  }
+}*/
+
+.v-application--is-rtl {
+  .v-card__title, .v-tab {
+    letter-spacing: normal !important;
+  }
+
+  .v-messages__message {
+    line-height: normal; // Input field message (Solve line space in persian)
+  }
+
+  .flex-rtl-row-revert{
+    flex-direction: row-reverse;
+  }
+}
+
+.v-tab-start {
+  justify-content: flex-start !important;
+  letter-spacing: normal !important;
+
+}
+
+.bugged-snack {
+
+  width: 100%;
+  text-align: center !important;
+
+}
+
+// BUG: v-slide-group vertically scroll by touch not work!
+.v-slide-group__wrapper{
+  touch-action: auto !important;
+}
+
+/**
+BUG: vutify size table haa ro kheyli riz mikone!!!!
+ */
+.v-data-table td {
+  font-size: unset !important;
+}
+
+.v-data-table th {
+  font-size: unset !important;
+
+}
+
+
+// remove box shadow from v-menu to able curve corners!
+/*.v-menu__content {
+  // box-shadow: unset !important;
+  background: transparent !important;
+  border-radius: 12px !important;
+  z-index: 1000 !important;
+
+  max-height: 100%; // Large menu solve scroll!
+  overflow: auto;
+
+  .v-list-item__title {
+    overflow: visible; // for solving problem:  Bad show persian text!
+  }
+
+  .v-list-item__subtitle {
+
+  }
+}*/
+
+
+.v-autocomplete__content {
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12) !important;
+  // border-style: solid;
+  border-radius: 8px !important;
+}
+
+
+// Rounded Button Group
+.rounded-group {
+  min-width: max-content;
+}
+
+.v-application--is-rtl {
+  .rounded-group {
+    /*  flex-direction: row-reverse !important; FIXED!
+      -webkit-flex-direction: row-reverse;
+      -ms-flex-direction: row-reverse;*/
+
+    //   direction: rtl;
+  }
+
+  // Fix BUG in RTL for list in the navigation drawer:
+ /* .v-navigation-drawer__content {
+    .v-list {
+      .v-list-item {
+        flex-direction: row-reverse;
+        text-align: right;
+      }
+    }
+  }*/
+
+
+
+
+
+}
+//-------------------------------------------------------------------------------------------------------
+.v-application--is-rtl {
+  // Calendar: (Week & Day bug in RTL)
+
+  .v-calendar-daily__head {
+    flex-direction: row-reverse;
+    margin-left: 0;
+    margin-right: 0 !important;
+  }
+
+  .v-calendar-daily__day-container {
+    flex-direction: row-reverse;
+  }
+}
+// Calendar thine scroll:
+.v-calendar-daily__scroll-area {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+
+  &:hover {
+    scrollbar-width: thin;
+    -ms-overflow-style: unset;
+  }
+}
+.v-calendar-daily__head {
+  margin-right: 0px !important; // To adjust no scroll!
+}
+.v-calendar-daily__intervals-head,.v-calendar-daily__intervals-body{  // Remove border of hours & days in week & day views
+  border: none !important;
+  .v-calendar-daily__interval{
+    text-align: center;
+  }
+}
+// Set current day bold:
+.v-calendar-weekly__day.v-present{
+  .v-btn.v-btn--has-bg{
+    background-color: #8BC34A;
+    color: #fff;
+  }
+
+}
+.v-calendar{
+  .v-event{
+    padding: 0 4px; //Fix event label padding in RTL
+  }
+}
+//-------------------------------------------------------------------------------------------------------
+
+
+.hover-smart-tree {
+  .v-treeview-node {
+    .v-treeview-node__level {
+      transition: all 0.3s;
+    }
+
+    &:hover {
+      .v-treeview-node__level {
+        width: 0;
+      }
+    }
+  }
+}
+
+
+// Fix height of responsive tables:
+.v-data-table {
+  .v-data-table__wrapper {
+    table {
+      .v-data-table__mobile-table-row {
+        .v-data-table__mobile-row {
+          height: max-content;
+          min-height: 48px;
+        }
+      }
+
+      .v-data-table-header-mobile__wrapper {
+        .v-text-field {
+          .v-input__control {
+            .v-input__slot {
+              &:before {
+                border: none !important;
+              }
+
+              &:after {
+                border: none !important;
+              }
+            }
+          }
+        }
+
+
+      }
+
+
+    }
+  }
+}
+
+// Do not gray selected row in table!
+.theme--light.v-data-table tbody tr.v-data-table__selected {
+  background-color: #fff !important;
+
+}
+@media only screen and (min-width: 600px) {
+  .dense-padding.v-data-table {
+
+
+    thead {
+      .tbody{
+        tr {
+          th {
+            padding: 0 8px !important;
+            .v-icon {
+              display: inline-block;
+              margin: auto;
+            }
+
+            &.sortable {
+              span {
+                white-space: nowrap;
+                display: block; // Force header be two line (+ sort icon)
+              }
+            }
+
+            &:not(.sortable) {
+              span {
+                white-space: nowrap;
+                min-height: 36px; // Force header be two line (- sort icon)
+                display: block;
+              }
+            }
+
+
+          }
+        }
+      }
+
+    }
+
+    & > .v-data-table__wrapper > table > tbody > tr > td {
+      padding: 0 8px !important;
+    }
+
+
+  }
+}
+
+// Fix header background color:
+.theme--light.v-data-table.v-data-table--fixed-header thead th{
+  background: var(--background) !important;
+}
+
+
+.small-label {
+  .v-input__control {
+    .v-label {
+      font-size: 0.8em;
+    }
+  }
+}
+
+.card-text-normal {
+  font-size: 1rem;
+  line-height: 1.8rem;
+}
+
+.letter-spacing-normal {
+  letter-spacing: normal !important;
+}
+
+
+.no-x-padding-expansion-panel {
+  .v-expansion-panel-content__wrap {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+.justify-space-around{    // Apply space around for radio groups
+  .v-input--radio-group__input{
+    justify-content: space-around;
+  }
+}
+
+
+
+
+
+
+
+// Small suffix input
+.sm-suffix{
+  .v-text-field__suffix{
+    font-size: 10px !important;
+    font-weight: 500;
+    margin-top: 0 !important;
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+}
+
+
+
+
+// Button font auto small
+.fnt-as {
+  .v-btn {
+    @media only screen and (max-width: 680px) {
+      font-size: 8px !important;
+    }
+
+    @media only screen and (max-width: 460px) {
+      .-ah{ // Auto hide
+        display: none;
+      }
+    }
+
+  }
+}
+
+// ----------------------- Center items in slide group ----------------------
+.v-slide-group.center-items{
+  .v-slide-group__content{
+    justify-content: center;
+  }
+}
+// ----------------------- Remove background of switch (in @ SortView) ----------------------
+.switch-no-bg{
+  &.v-input--switch .v-input--switch__track{
+    color: transparent !important;
+  }
+}
+
+.icon-side{
+  left: -12px;
+  height: 100% !important;
+  min-width: 30px !important;
+  color: #fff !important;
+  &.-purple{
+    background: #847;
+  }
+  &.-blue{
+    background: #1976D2;
+  }
+  &.-green{
+    background: #4CAF50;
+  }
+  &.-amber{
+    background: #FFA000;
+  }
+  &.-red{
+    background: #D32F2F;
+  }
+}
+.v-application--is-rtl {
+  .icon-side{
+    left: unset;
+    right: -12px;
+  }
+}
+
+
+.toolbar-no-transform{
+  button{
+    text-transform: initial !important;
+  }
+}
+
+// Group data table style:
+.theme--light.v-data-table .v-row-group__header, .theme--light.v-data-table .v-row-group__summary {
+  background: #f9f9f9;
+  margin: 3px 0;
+  border-radius: 14px;
+}
+/*
+.black--text{
+  i.v-icon:not(.theme--dark){
+    color: #000 !important;
+  }
+}*/
+// ----------------------- Unified UI Kit Dashboard ----------------------
+// Normal button
+.nbt{
+  background: #fff !important;
+  border: 1px solid #dee2e6 !important;
+  text-transform: initial !important;
+  font-weight: 500;
+  font-size: 12px;
+  color: rgb(60, 66, 87);
+  border-radius: 5px;
+
+  &.theme--dark{
+    background: #333 !important;
+    border: 1px solid #111 !important;
+  }
+}
+.nbt-colored{
+  text-transform: initial !important;
+  font-weight: 500;
+  font-size: 12px;
+  color: rgb(60, 66, 87);
+  border-radius: 5px;
+}
+
+.dashboard{
+
+
+  // Tables:
+  .v-data-table{
+    table{
+      thead{
+        font-size: 12px;
+      }
+      tbody{
+        td.v-data-table__mobile-row{
+          font-size: 12px !important;
+          min-height: 28px !important;
+          .v-data-table__mobile-row__header{
+
+          }
+          .v-data-table__mobile-row__cell{
+
+          }
+        }
+      }
+    }
+  }
+
+  //Toolbars:
+  header.v-toolbar{
+    // Header title:
+    .v-toolbar__title{
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+}
+
+
+
+  // Expansion panel:
+  .v-expansion-panels.auto-small-expansion{
+
+    @media only screen and (max-width: 600px) {
+
+      .v-expansion-panel-header{
+        padding: 6px 0;
+      }
+      .v-expansion-panel-content{
+        .v-expansion-panel-content__wrap{
+          padding: 6px 0;
+        }
+      }
+    }
+
+
+  }
+
+
+}
+
+// ----------------------- Stylish Data picker / Time picker ----------------------
+
+
+
+.v-picker.picker-style {
+  background: transparent !important;
+
+  .v-picker__body{
+    background: transparent;
+  }
+  .v-picker__title {
+    background: transparent !important;
+    .v-time-picker-title,
+    .v-date-picker-title {
+      color: #333 !important;
+      .v-time-picker-title__time,
+      .v-picker__title__btn {
+        & > div,
+        span {
+          font-size: 18px !important;
+          font-weight: 600;
+        }
+      }
+      .v-time-picker-title__time {
+        .v-picker__title__btn,
+        span {
+          height: unset !important;
+        }
+      }
+    }
+  }
+  .theme--light.v-time-picker-clock {
+   // background: #fafafa;
+    background: #fff;
+    background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+  }
+}
+
+
+
+
+
+// ----------------------- Fonts ----------------------
+
+.font--14{
+  font-size: 14px;
+}
+.font--20{
+  font-size: 20px;
+}
+
+.v-input{
+  &.small-field{
+    .v-input__control{
+      min-height: 28px !important;
+      .v-input__slot{
+        min-height: 28px !important;
+        padding: 0 4px !important;
+      }
+      input{
+        height: 28px;
+      }
+    }
+  }
+}
+
+// ----------------------- Fix dialog width ----------------------
+.v-dialog{
+  width: 100%;
+}
+
+// ----------------------- Draw an outline around the badge ----------------------
+
+.badge-border{
+  .v-badge__wrapper{
+    .v-badge__badge{
+     // outline: solid #141414 3px; // safari bug! not round!
+      &:before{
+        content: '';
+        position: absolute;
+        left: -3px;
+        top: -3px;
+        width: calc(100% + 6px);
+        height: calc(100% + 6px);
+        border:  solid #141414 3.5px;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &.-light{
+    .v-badge__wrapper {
+      .v-badge__badge {
+        &:before {
+          border:  solid #fafafa 3.5px;
+        }
+      }
+    }
+  }
+}
+
+// ----------------------- Negative orders ----------------------
+
+.order--1{
+  order: -1 !important;
+}
+.order--2{
+  order: -2 !important;
+}
+.order--3{
+  order: -3 !important;
+}
+.order--4{
+  order: -4 !important;
+}
+.order--5{
+  order: -5 !important;
+}
+
+
+// Tabs prev box bug (Add empty space on mobile:
+.v-slide-group__prev.v-slide-group__prev--disabled{
+  display: none !important;
+}
+
+
+
+// ----------------------- Price fields ----------------------
+
+.strong-field{
+   input {
+    font-size: 22px;
+    font-weight: 900;
+    min-height: 44px;
+  }
+  .v-select__selections {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: normal;
+  }
+
+}
+
+
+// ----------------------- 5 columns in row ----------------------
+
+.flex.xl20p{
+  @media only screen and (min-width: 1500px) {
+    flex-basis: 20% !important;
+    flex-grow: 0;
+    max-width: 20% !important;
+  }
+}
+
+

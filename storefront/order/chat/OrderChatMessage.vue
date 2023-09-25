@@ -1,0 +1,139 @@
+<template>
+  <div :class="{ disabled: busy_delete_message }" class="text-start">
+    <div class="d-flex align-center">
+      <v-avatar
+        :size="32"
+        class="avatar-gradient -thin me-2"
+        :class="{
+          '-staff': message.officer,
+        }"
+      >
+        <v-img v-if="message.user_id" :src="getUserAvatar(message.user_id)" />
+        <v-icon v-else>account_circle</v-icon>
+      </v-avatar>
+      <div class="flex-grow-1">
+        <b>{{ message.user_name }}</b>
+        <!-- Show it from admin to customer -->
+        <v-chip
+          v-if="!isAdmin && message.officer"
+          color="#F44336"
+          dark
+          label
+          x-small
+          class="mx-2"
+        >
+          {{$t('global.commons.admin')}}
+        </v-chip>
+        <!-- Show it from customer to admin -->
+        <v-chip
+          v-else-if="isAdmin && !message.officer"
+          color="#1976D2"
+          dark
+          label
+          x-small
+          class="mx-2"
+        >
+          {{$t('global.commons.customer')}}
+        </v-chip>
+
+        <small class="d-block"
+          >{{ getFromNowString(message.date) }} ●
+          {{ getLocalDateString(message.date) }}</small
+        >
+      </div>
+
+      <v-btn
+        v-if="
+          hasDelete &&
+          ((isAdmin && message.officer) || (!isAdmin && !message.officer))
+        "
+        color="red"
+        :title="$t('global.actions.delete')"
+        @click="deleteMessage()"
+        icon
+        :loading="busy_delete_message"
+        :class="{ disabled: busy_delete_message}"
+      >
+        <v-icon>close</v-icon>
+      </v-btn>
+    </div>
+    <div class="typo-body my-2">
+      {{ message.body }}
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "OrderChatMessage",
+  props: {
+    shop: {
+      require: true,
+      type: Object,
+    },
+    basket: {
+      require: true,
+      type: Object,
+    },
+
+    isAdmin: {
+      default: false,
+      type: Boolean,
+    },
+    message: {
+      require: true,
+      type: Object,
+    },
+
+    hasDelete: {
+      default: false,
+      type: Boolean,
+    },
+  },
+
+  data: () => ({
+    busy_delete_message: null,
+  }),
+
+  methods: {
+    deleteMessage() {
+      const index = this.basket.chat.indexOf(this.message);
+
+      this.busy_delete_message = true;
+      axios
+        .delete(
+          !this.isAdmin
+            ? window.XAPI.DELETE_CUSTOMER_BASKET_CHAT_MESSAGE(
+                this.shop.name,
+                this.basket.id,
+                index
+              )
+            : window.API.DELETE_BASKET_CHAT_MESSAGE(
+                this.shop.id,
+                this.basket.id,
+                index
+              )
+        )
+        .then(({ data }) => {
+          if (data.error) {
+            this.showErrorAlert(null, data.error_msg);
+          } else {
+            this.basket.chat = data.chat;
+            this.showSuccessAlert(
+              null,
+              "Message has been deleted successfully."
+            );
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_delete_message = false;
+        });
+    },
+  },
+};
+</script>
+
+<style scoped></style>

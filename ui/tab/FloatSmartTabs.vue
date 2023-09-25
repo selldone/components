@@ -1,0 +1,68 @@
+<!--
+  - Copyright (c) 2023. Selldone® Business OS™
+  -
+  - Author: M.Pajuhaan
+  - Web: https://selldone.com
+  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  -
+  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+  - Our journey is not just about reaching a destination, but about creating a masterpiece.
+  - Tread carefully, for you're treading on dreams.
+  -->
+
+<template>
+  <fade-scroll class="sx-menu">
+    <v-tabs
+      :vertical="$vuetify.breakpoint.mdAndUp"
+      :value="value"
+      @change="(val) => $emit('input', val)"
+      slider-size="7"
+      :style="{
+        'min-width': $vuetify.breakpoint.mdAndUp ? undefined : 'max-content',
+      }"
+    >
+      <v-tab v-for="(item, i) in items" :key="i" class="sx-item">
+        <v-icon left>
+          {{ item.icon }}
+        </v-icon>
+        {{ item.title }}
+        <v-icon v-if="item.warning" color="orange" small class="mx-1">warning</v-icon>
+      </v-tab>
+    </v-tabs>
+  </fade-scroll>
+</template>
+
+<script>
+import FadeScroll from "@/Components/ui/fade-scroll/FadeScroll.vue";
+
+export default {
+  name: "FloatSmartTabs",
+  components: { FadeScroll },
+  props: {
+    value: {},
+    items: { required: true, type: Array },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.sx-menu {
+  position: relative;
+  text-align: start;
+  margin-bottom: 16px;
+
+  .sx-item {
+    font-weight: 500;
+    justify-content: flex-start !important;
+  }
+  @media only screen and (min-width: 1100px) {
+    position: absolute;
+    left: 8px;
+    top: 86px;
+    width: 240px;
+    z-index: 1;
+  }
+}
+</style>

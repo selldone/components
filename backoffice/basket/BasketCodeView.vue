@@ -1,0 +1,52 @@
+<template>
+  <span v-if="basket" class="d-block mt-2 font-weight-black" dir="ltr"
+    >{{ code }}-{{ basket.id }}
+    <v-icon class="mt-n2" size="10" :color="status ? status.color : null"
+      >lens</v-icon
+    >
+  </span>
+</template>
+
+<script>
+import { BasketStatus } from "../../../../core/enums/basket/BasketStatus";
+import { ProductType } from "../../../../core/enums/product/ProductType";
+
+export default {
+  name: "BasketCodeView",
+  props: {
+    basket: {},
+    isFulfilment: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    status() {
+      return BasketStatus[this.basket.status];
+    },
+    code() {
+      return this.basket.type === ProductType.PHYSICAL.code
+        ? "SM"
+        : this.basket.type === ProductType.VIRTUAL.code
+        ? "SV"
+        : this.basket.type === ProductType.FILE.code
+        ? "SF"
+        : this.basket.type === ProductType.SERVICE.code
+        ? "SS"
+        : this.basket.type === ProductType.SUBSCRIPTION.code
+        ? "SN"
+        : this.basket.type === "POS"
+        ? "POS"
+        : this.isFulfilment
+        ? "DS"
+        : this.basket.type === "AVO"
+        ? "SVO"
+        : this.basket.type === "HYP"
+        ? "HYP"
+        : null;
+    },
+  },
+};
+</script>
+
+<style scoped></style>

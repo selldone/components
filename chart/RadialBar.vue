@@ -1,0 +1,121 @@
+<template>
+  <apexchart
+    class="mx-auto d-inline-block"
+    type="radialBar"
+    :height="height"
+    :width="height"
+    :options="chartOptions"
+    :series="series"
+  />
+</template>
+
+<script>
+export default {
+  name: "RadialBar",
+  props: {
+    series: {},
+    height: {
+      default: 168,
+    },
+    colors: {
+      type: Array,
+      default: () => {
+        return ["#57adb5"];
+      },
+    },
+    toColors: {
+      type: Array,
+      default: () => {
+        return ["#3F51B5"];
+      },
+    },
+    labels: {
+      type: Array,
+    },
+    small: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data: function () {
+    return {
+      chartOptions: {
+        chart: {
+          fontFamily: "var(--font)",
+        },
+        plotOptions: {
+          radialBar: {
+            startAngle: -135,
+            endAngle: 225,
+            hollow: {
+              margin: 0,
+              size: this.small ? "35%" : "50%",
+              background: "#fff",
+              position: "front",
+              dropShadow: {
+                enabled: true,
+                top: 2,
+                left: 0,
+                blur: 4,
+                opacity: 0.24,
+              },
+            },
+            track: {
+              background: "#fff",
+              strokeWidth: this.small ? "95%" : "67%",
+              margin: 0, // margin is in pixels
+              dropShadow: {
+                enabled: true,
+                top: -2,
+                left: 0,
+                blur: 4,
+                opacity: 0.35,
+              },
+            },
+            dataLabels: {
+              enabled: !this.small,
+              name: {
+                offsetY: -5,
+                show: !this.small,
+                color: "#888",
+                fontSize: "10px",
+              },
+              value: {
+                formatter: (val) => {
+                  return this.small ? "" : "%" + parseInt(val);
+                },
+                offsetY: -5,
+
+                color: "#111",
+                fontSize: "12px",
+                show: true,
+              },
+            },
+          },
+        },
+        fill: {
+          colors: this.$props.toColors,
+          type: "gradient",
+          gradient: {
+            shade: "dark",
+            type: "horizontal",
+            shadeIntensity: 0.5,
+            gradientToColors: this.$props.colors,
+            inverseColors: true,
+            opacityFrom: 1,
+            opacityTo: 1,
+            stops: [0, 100],
+          },
+        },
+        stroke: {
+          lineCap: "round",
+        },
+        labels: this.$props.labels,
+      },
+    };
+  },
+};
+</script>
+
+<style scoped></style>
