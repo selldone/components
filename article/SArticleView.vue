@@ -889,11 +889,11 @@
             ></faq-section>
 
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Structured Data ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <structured-data
+            <s-article-structured-data
               v-if="is_editing"
               :editMode="edit"
               v-model="article.structures"
-            ></structured-data>
+            ></s-article-structured-data>
           </template>
         </s-article-editor>
 
@@ -1285,7 +1285,7 @@ import SArticlesTimeline from "@/Components/article/timeline/SArticlesTimeline.v
 import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
 import SLanguageInput from "@/Components/ui/language/SLanguageInput.vue";
 import FaqSection from "./widgets/FaqSection.vue";
-import StructuredData from "./StructuredData.vue";
+import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./SArticleTagsEditor.vue";
 import SContentViolationReportDialog from "../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
 import UserEmailInput from "@/Applications/Backoffice/components/user/UserEmailInput.vue";
@@ -1308,7 +1308,7 @@ export default {
     UserEmailInput,
     SContentViolationReportDialog,
     SArticleTagsEditor,
-    StructuredData,
+    SArticleStructuredData,
     FaqSection,
     SLanguageInput,
     NumberPicker,

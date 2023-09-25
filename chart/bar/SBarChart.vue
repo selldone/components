@@ -117,11 +117,11 @@
 </template>
 
 <script>
-import { DateConverter } from "../../../core/helper/date/DateConverter";
+import { DateConverter } from "../../../../core/helper/date/DateConverter";
 import FadeScroll from "@/Components/ui/fade-scroll/FadeScroll.vue";
 
 export default {
-  name: "SimplifyBarChart",
+  name: "SBarChart",
   components: { FadeScroll },
   props: {
     startDate: {},

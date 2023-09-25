@@ -165,7 +165,7 @@
         <b>{{ name }} (Array)</b>
       </p>
 
-      <structure-input
+      <s-structure-data-input
         v-for="(it_val, index) in value"
         :key="index"
         :type="type[0]"
@@ -174,7 +174,7 @@
         @input="(val) => (value[index] = val)"
         deletable
         @delete="(val) => remove(value, val)"
-      ></structure-input>
+      ></s-structure-data-input>
 
       <v-btn
         @click="value.push(type[0].startsWith('@') ? {} : '')"
@@ -189,13 +189,13 @@
       <p class="bg-primary text-white px-2 rounded mb-4">
         <b>{{ name }}</b>
       </p>
-      <structure-input
+      <s-structure-data-input
         v-for="(_type, key) in blueprint"
         :key="key"
         :type="_type"
         v-model="value[key]"
         :name="/*name +' > '+*/ key"
-      ></structure-input>
+      ></s-structure-data-input>
     </div>
   </div>
 </template>
@@ -236,7 +236,7 @@ function CheckEnum(type) {
   return [Availability, ActionPlatform, BookFormat, Duration].includes(type);
 }
 export default {
-  name: "StructureInput",
+  name: "SStructureDataInput",
   components: {
     NumberPicker,
     DateTimePickerGlobal,

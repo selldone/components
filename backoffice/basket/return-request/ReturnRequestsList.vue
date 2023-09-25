@@ -138,9 +138,9 @@
 
 <script>
 import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import { ReturnItemStates } from "../../../../core/enums/basket/ReturnItemStates";
-import { ReturnOrderReason } from "../../../../core/enums/basket/ReturnOrderReason";
-import { ProductType } from "../../../../core/enums/product/ProductType";
+import { ReturnItemStates } from "../../../../../core/enums/basket/ReturnItemStates";
+import { ReturnOrderReason } from "../../../../../core/enums/basket/ReturnOrderReason";
+import { ProductType } from "../../../../../core/enums/product/ProductType";
 
 export default {
   name: "ReturnRequestsList",

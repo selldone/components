@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "DeviceTypesPieChart",
+  name: "SDeviceTypesPieChart",
 
   props: {
     fullDetails: {

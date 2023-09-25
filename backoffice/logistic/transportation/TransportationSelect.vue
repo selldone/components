@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { ShopTransportations } from "../../../core/enums/logistic/ShopTransportations";
+import { ShopTransportations } from "../../../../../core/enums/logistic/ShopTransportations";
 
 export default {
   name: "TransportationSelect",

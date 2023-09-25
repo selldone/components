@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: "SemiCircleChart",
+  name: "SSemiCircleChart",
   props: {
     value: {
       required: true,

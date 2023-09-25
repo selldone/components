@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: "RadialBar",
+  name: "SRadialBarsChart",
   props: {
     series: {},
     height: {

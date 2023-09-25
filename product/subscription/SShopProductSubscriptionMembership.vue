@@ -61,7 +61,7 @@ export default {
 
     // 🦄 Membership > Subscribed
     membership_subscribed_plan() {
-      return RibbonHelper.getSubscribedPrice(this.product);
+      return RibbonHelper.isMembershipSubscribed(this.product);
     },
   },
 

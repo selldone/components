@@ -115,11 +115,11 @@
                     {{ name }}:{{ type }}
                   </div>
 
-                  <structure-input
+                  <s-structure-data-input
                     v-model="structure_data[name]"
                     :type="type"
                     :name="name"
-                  ></structure-input>
+                  ></s-structure-data-input>
                 </div>
               </v-col>
             </v-row>
@@ -179,11 +179,11 @@
 
 <script>
 import AddButtonGreen from "../ui/button/AddButtonGreen.vue";
-import StructureInput from "./StructureInput.vue";
+import SStructureDataInput from "./SStructureDataInput.vue";
 
 export default {
-  name: "StructuredData",
-  components: { StructureInput, AddButtonGreen },
+  name: "SArticleStructuredData",
+  components: { SStructureDataInput, AddButtonGreen },
 
   props: {
     value: {},
