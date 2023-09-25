@@ -1,5 +1,9 @@
 # Selldone ® Business OS | Open Source Commerce Components
 
+* **Mode:** 🌍 Public
+* **Use case:** Pre built Vue commerce components for both storefront and backoffice.
+
+
 # Use
 ```
 // ━━━ Components ━━━

@@ -69,20 +69,9 @@ console.log(
   "color:#70557e;font-weight: 800;"
 );
 
-//―――――――――――――――――――――― Selldone URLs ――――――――――――――――――――
-import CDN from "../../core/server/CDN";
-import XAPI from "../../SDKs/storefront/apis/XAPI";
-import URLS from "../../core/server/URLS";
-import GAPI from "../../core/server/GAPI";
-import CAPI from "../../SDKs/community/apis/CAPI";
-
-window.CDN = new CDN();
-window.XAPI = new XAPI();
-window.URLS = new URLS();
-window.GAPI = new GAPI();
 
 
-//―――――――――――――――――――――― Global config ――――――――――――――――――――
+
 //█████████████████████████████████████████████████████████████
 //――――――――――――――― Global Config ――――――――――――――
 //█████████████████████████████████████████████████████████████
