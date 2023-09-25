@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "SocialRadarChart",
+  name: "SSocialRadarChart",
 
   props: {
     fullDetails: {

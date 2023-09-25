@@ -120,7 +120,7 @@ import "funnel-graph-js/src/scss/theme.scss";
 import CurrencyIcon from "@/Components/ui/currency/CurrencyIcon.vue";
 
 export default {
-  name: "VueFunnelGraph",
+  name: "SFunnelGraph",
   components: { CurrencyIcon },
   props: {
     animated: {

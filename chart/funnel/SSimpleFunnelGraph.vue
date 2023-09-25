@@ -1,8 +1,8 @@
 <template>
-  <vue-funnel-graph
+  <s-funnel-graph
     v-if="show_funnel"
     class="funnel-chart-single-data mx-auto text-start pl-5"
-    :class="{ 'dense p-0':dense,dark: isDark,'no-legend':noLegend }"
+    :class="{ 'dense p-0': dense, dark: isDark, 'no-legend': noLegend }"
     :width="width"
     :height="height"
     :labels="labels"
@@ -13,12 +13,12 @@
     :gradient-direction="gradientDirection"
     :animated="true"
     :display-percentage="displayPercentage"
-  ></vue-funnel-graph>
+  ></s-funnel-graph>
 </template>
 
 <script>
 export default {
-  name: "SingleFunnelData",
+  name: "SSimpleFunnelGraph",
   components: {},
 
   props: {
@@ -137,9 +137,9 @@ export default {
     }
   }
   // Dashed horizontal on horizontal chart only:
-  &:not(.svg-funnel-js--vertical){
+  &:not(.svg-funnel-js--vertical) {
     .svg-funnel-js__label:not(:first-child) {
-      border-left:  1px dashed rgba(119, 119, 119, 0.48) !important;
+      border-left: 1px dashed rgba(119, 119, 119, 0.48) !important;
     }
   }
 

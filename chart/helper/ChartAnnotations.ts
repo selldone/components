@@ -13,41 +13,51 @@
  */
 
 import { DateConverter } from "../../../../core/helper/date/DateConverter";
+import { TimeSeries } from "../../../../core/timeserie/TimeSeries";
 
 export class ChartAnnotations {
-  static CreateMaxPoints(timeSeries, keys, labelsData, colors) {
-    let maxPoints = [];
+  static CreateMaxPoints(
+    timeSeries: TimeSeries,
+    keys: string[],
+    labelsData: string[],
+    colors: string[]
+  ) {
+    const maxPoints = [];
 
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
-      let maxItem = timeSeries.maxItemByKey(key, true);
+      const maxItem = timeSeries.maxItemByKey(key, true);
 
-      if (maxItem && maxItem[key])
+      if (maxItem && maxItem[key]) {
+        const _date = DateConverter.convertToLocalTime(
+          maxItem.created_at,
+          true
+        );
+
         // Prevent show zero!
-        maxPoints.push({
-          x: DateConverter.convertToLocalTime(
-            maxItem.created_at,
-            true
-          ).getTime(),
-          y: maxItem[key],
-          marker: {
-            size: 4,
-            fillColor: "#fff",
-            strokeColor: colors[i],
-            radius: 2,
-          },
-          label: {
-            borderColor: colors[i],
-            offsetY: 0,
-            align: "center",
-            style: {
-              color: "#fff",
-              background: colors[i],
+        if (_date)
+          maxPoints.push({
+            x: _date.getTime(),
+            y: maxItem[key],
+            marker: {
+              size: 4,
+              fillColor: "#fff",
+              strokeColor: colors[i],
+              radius: 2,
             },
+            label: {
+              borderColor: colors[i],
+              offsetY: 0,
+              align: "center",
+              style: {
+                color: "#fff",
+                background: colors[i],
+              },
 
-            text: `${labelsData[i]}: ${maxItem[key]}`,
-          },
-        });
+              text: `${labelsData[i]}: ${maxItem[key]}`,
+            },
+          });
+      }
     }
 
     return maxPoints;
