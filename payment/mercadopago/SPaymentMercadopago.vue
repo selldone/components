@@ -8,7 +8,7 @@
 import { Language } from "../../../../core/enums/language/Language";
 
 export default {
-  name: "MercadopagoPayment",
+  name: "SPaymentMercadopago",
 
   props: {
     publicKey: {

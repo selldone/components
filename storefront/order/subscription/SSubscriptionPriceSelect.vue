@@ -14,7 +14,10 @@
 
 <template>
   <div v-if="subscriptionPrices" :class="{ dark: dark }" class="text-start">
-    <h3 v-if="label" class="my-2"><v-icon class="me-1" :color="dark?'#fff':'#111'">storefront</v-icon> {{ label }}</h3>
+    <h3 v-if="label" class="my-2">
+      <v-icon class="me-1" :color="dark ? '#fff' : '#111'">storefront</v-icon>
+      {{ label }}
+    </h3>
     <v-subheader v-if="hint">{{ hint }}</v-subheader>
 
     <v-slide-y-transition
@@ -31,25 +34,52 @@
         :class="{
           'bg-dark': dark,
           'bg-white': !dark,
-          's--shadow-no-padding z1 my-2': plan.id === (returnObject?value?.id:value),
+          's--shadow-no-padding z1 my-2':
+            plan.id === (returnObject ? value?.id : value),
         }"
         @click="
-          $emit('input', forceShowAll ? (returnObject?plan:plan.id) : value ? null : (returnObject?plan:plan.id));
-          $emit('change', forceShowAll ? (returnObject?plan:plan.id) : value ? null : (returnObject?plan:plan.id));
+          $emit(
+            'input',
+            forceShowAll
+              ? returnObject
+                ? plan
+                : plan.id
+              : value
+              ? null
+              : returnObject
+              ? plan
+              : plan.id
+          );
+          $emit(
+            'change',
+            forceShowAll
+              ? returnObject
+                ? plan
+                : plan.id
+              : value
+              ? null
+              : returnObject
+              ? plan
+              : plan.id
+          );
         "
       >
         <div class="d-flex align-center mnh">
           <div class="flex-grow-0 me-2">
-            <v-icon color="primary" :large="plan.id=== (returnObject?value?.id:value)">{{
-                plan.id === (returnObject?value?.id:value) ? "lens" : "radio_button_unchecked"
-            }}</v-icon>
+            <v-icon
+              color="primary"
+              :large="plan.id === (returnObject ? value?.id : value)"
+              >{{
+                plan.id === (returnObject ? value?.id : value)
+                  ? "lens"
+                  : "radio_button_unchecked"
+              }}</v-icon
+            >
           </div>
           <div class="flex-grow-1">
-
-            <b >
+            <b>
               {{ plan.title }}
             </b>
-
           </div>
 
           <div class="min-width-150 px-1">
@@ -59,22 +89,23 @@
               medium
             ></price-view>
 
-           <div>
-         /
-             {{$t(getPeriod(plan.period)?.title)}}
-           </div>
-
+            <div>
+              /
+              {{ $t(getPeriod(plan.period)?.title) }}
+            </div>
           </div>
 
-          <v-icon :color="getPeriod(plan.period)?.color" small class="ms-1">circle</v-icon>
-
+          <v-icon :color="getPeriod(plan.period)?.color" small class="ms-1"
+            >circle</v-icon
+          >
         </div>
       </div>
     </v-slide-y-transition>
 
     <div v-if="!subscriptionPrices.length" class="text-center">
       <v-icon color="#333">mood_bad</v-icon>
-      No subscription plan was found for <b>{{currency}}</b>.
+      No subscription plan was found for <b>{{ currency }}</b
+      >.
     </div>
   </div>
 </template>
@@ -83,7 +114,7 @@
 import BillingPeriod from "../../../../../core/enums/subscription/BillingPeriod";
 
 export default {
-  name: "VSmartSelectSubscription",
+  name: "SSubscriptionPriceSelect",
   props: {
     value: {},
     subscriptionPrices: { type: Array },
@@ -111,31 +142,30 @@ export default {
     },
   },
   computed: {
-
-    currency(){
-      return this.GetUserSelectedCurrency().code
+    currency() {
+      return this.GetUserSelectedCurrency().code;
     },
 
-
-    subscriptionPricesForSelectedCurrency(){
-      return this.subscriptionPrices.filter(s=>s.currency===this.currency)
+    subscriptionPricesForSelectedCurrency() {
+      return this.subscriptionPrices.filter(
+        (s) => s.currency === this.currency
+      );
     },
-
 
     items_show() {
       if (this.forceShowAll) return this.subscriptionPricesForSelectedCurrency;
       if (!this.value) return this.subscriptionPricesForSelectedCurrency;
-      const out = this.subscriptionPricesForSelectedCurrency.filter((i) => i.id === (this.returnObject ? this.value.id : this.value));
+      const out = this.subscriptionPricesForSelectedCurrency.filter(
+        (i) => i.id === (this.returnObject ? this.value.id : this.value)
+      );
       return out.length ? out : this.subscriptionPricesForSelectedCurrency;
     },
-
-
   },
 
   methods: {
-    getPeriod(period){
-      return BillingPeriod[period]
-    }
+    getPeriod(period) {
+      return BillingPeriod[period];
+    },
   },
 };
 </script>

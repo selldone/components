@@ -81,7 +81,7 @@
 
       <v-divider />
 
-      <v-smart-toggle
+      <s-smart-toggle
         v-model="only_is_original"
         :true-title="$t('product_filter_menu.only_original')"
         false-gray
@@ -91,7 +91,7 @@
 
       <v-divider />
 
-      <v-smart-toggle
+      <s-smart-toggle
         v-model="only_has_discount"
         :true-title="$t('product_filter_menu.only_has_discount')"
         false-gray
@@ -202,11 +202,11 @@
 <script>
 import SelectionList from "@/Components/ui/select/SelectionList.vue";
 import { ProductVariants } from "../../../../core/enums/product/ProductVariants";
-import VSmartToggle from "@/Components/smart/VSmartToggle.vue";
+import SSmartToggle from "@/Components/smart/SSmartToggle.vue";
 
 export default {
   name: "ProductFilterMenu",
-  components: { VSmartToggle, SelectionList },
+  components: { SSmartToggle, SelectionList },
   props: {
     value: {},
     folders: {},

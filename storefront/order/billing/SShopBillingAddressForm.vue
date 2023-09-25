@@ -14,7 +14,7 @@
 
 <template>
   <div class="s--shop-billing-address-form">
-    <v-smart-toggle
+    <s-smart-toggle
       v-if="!forceShowForm"
       class="text-start-dir"
       v-model="same_billing"
@@ -35,11 +35,11 @@
       :false-description="$t('basket_page.custom_billing_info_desc')"
       @change="updateValue"
       :dark="dark"
-    ></v-smart-toggle>
+    ></s-smart-toggle>
 
     <v-expand-transition>
       <v-container fluid v-if="!same_billing">
-        <v-smart-switch
+        <s-smart-switch
           v-model="billing_business"
           rounded
           class="my-3"
@@ -52,7 +52,7 @@
           false-icon="person"
           :dark="dark"
         >
-        </v-smart-switch>
+        </s-smart-switch>
 
         <v-expand-transition>
           <div v-if="billing_business">
@@ -114,12 +114,12 @@
 
 <script>
 import CountryList from "@/Components/ui/country/country-list/CountryList.vue";
-import VSmartToggle from "@/Components/smart/VSmartToggle.vue";
-import VSmartSwitch from "@/Components/smart/VSmartSwitch.vue";
+import SSmartToggle from "@/Components/smart/SSmartToggle.vue";
+import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
 import { MapHelper } from "../../../../../core/helper/map/MapHelper";
 export default {
   name: "SShopBillingAddressForm",
-  components: { VSmartSwitch, VSmartToggle, CountryList },
+  components: { SSmartSwitch, SSmartToggle, CountryList },
   props: {
     value: {},
     receiverInfo: {},

@@ -15,23 +15,21 @@
         :key="task[itemValue]"
         class="p-2 pp row-hover usn"
         :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: task.disabled }"
-        @click="
-       toggle( task[itemValue])
-        "
+        @click="toggle(task[itemValue])"
       >
         <div class="d-flex align-center mnh">
           <v-icon
             color="primary"
             class="me-2 -thin -gray flex-grow-0"
-            :class="{ 'avatar-gradient': value.includes(task[itemValue])   }"
+            :class="{ 'avatar-gradient': value.includes(task[itemValue]) }"
             >{{
-              value.includes(task[itemValue]) ? "lens" : "radio_button_unchecked"
+              value.includes(task[itemValue])
+                ? "lens"
+                : "radio_button_unchecked"
             }}</v-icon
           >
           <div class="flex-grow-1">
-            <b v-html="$t(task[itemText])">
-
-            </b>
+            <b v-html="$t(task[itemText])"> </b>
             <v-subheader
               v-if="itemDescription"
               style="height: auto"
@@ -42,7 +40,7 @@
           </div>
 
           <v-icon v-if="itemIcon">{{ task[itemIcon] }}</v-icon>
-          <img v-if="itemImage" width="24" height="24" :src="task[itemImage]">
+          <img v-if="itemImage" width="24" height="24" :src="task[itemImage]" />
         </div>
       </div>
     </v-slide-y-transition>
@@ -50,9 +48,8 @@
 </template>
 
 <script>
-
 export default {
-  name: "VSmartMultiSelect",
+  name: "SSmartMultiSelect",
   props: {
     value: {},
     items: { type: Array },
@@ -64,11 +61,10 @@ export default {
     },
     itemDescription: {},
     itemIcon: {},
-    itemImage:{},
+    itemImage: {},
 
     label: {},
     hint: {},
-
 
     disabled: {
       default: false,
@@ -86,28 +82,19 @@ export default {
 
   computed: {
     items_show() {
-     return this.items;
-
+      return this.items;
     },
   },
   watch: {},
 
   methods: {
-    toggle(val){
-     this.value.toggle(val)
+    toggle(val) {
+      this.value.toggle(val);
 
-
-      this.$emit(
-          'input',
-          this.value
-      );
-      this.$emit(
-          'change',
-          this.value
-      );
+      this.$emit("input", this.value);
+      this.$emit("change", this.value);
       this.signalUpdate();
     },
-
 
     signalUpdate() {
       this.$nextTick(() => {

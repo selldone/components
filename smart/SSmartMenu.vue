@@ -65,7 +65,7 @@
 
 <script>
 export default {
-  name: "VSmartMenu",
+  name: "SSmartMenu",
   props: {
     icon: { default: "more_vert" },
     items: { type: Array },

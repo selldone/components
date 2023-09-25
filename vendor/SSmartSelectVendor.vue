@@ -73,7 +73,7 @@
 
 <script>
 export default {
-  name: "VSmartSelectVendor",
+  name: "SSmartSelectVendor",
   props: {
     value: {},
     vendors: { type: Array },

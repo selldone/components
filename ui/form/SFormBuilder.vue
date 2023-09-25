@@ -105,7 +105,7 @@
               </template>
             </v-combobox>
 
-            <v-smart-switch
+            <s-smart-switch
               v-model="item.multiple"
               true-title="Multiple items"
               false-title="Single item"
@@ -114,12 +114,12 @@
               @change="$forceUpdate()"
               class="mt-3"
             >
-            </v-smart-switch>
+            </s-smart-switch>
           </template>
 
           <!-- switch -->
 
-          <v-smart-switch
+          <s-smart-switch
             v-if="item.type === 'switch'"
             v-model="item.default"
             :true-title="$t('global.form_builder.default') + ': True'"
@@ -131,7 +131,7 @@
             @change="$forceUpdate()"
             class="mt-3"
           >
-          </v-smart-switch>
+          </s-smart-switch>
 
           <!-- Upload file -->
           <template v-if="item.type === 'file'">
@@ -160,7 +160,7 @@
               </template>
             </v-combobox>
 
-            <v-smart-switch
+            <s-smart-switch
               v-model="item.multiple"
               true-title="Multiple files"
               false-title="Single file"
@@ -168,7 +168,7 @@
               false-description="User can upload just one file."
               @change="$forceUpdate()"
             >
-            </v-smart-switch>
+            </s-smart-switch>
           </template>
 
           <!-- -------------- Hints -------------- -->
@@ -234,10 +234,10 @@
 
 <script>
 import CircleButton from "@/Components/ui/button/CircleButton.vue";
-import VSmartSwitch from "@/Components/smart/VSmartSwitch.vue";
+import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
 export default {
   name: "SFormBuilder",
-  components: { VSmartSwitch, CircleButton },
+  components: { SSmartSwitch, CircleButton },
   props: {
     structure: {
       required: false,

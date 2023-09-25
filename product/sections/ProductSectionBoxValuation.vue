@@ -78,7 +78,7 @@
       >
       </v-select>
       <!-- switch -->
-      <v-smart-switch
+      <s-smart-switch
         v-else-if="item.type === 'switch'"
         v-model="preferences_valuation[item.name]"
         :label="item.title"
@@ -101,7 +101,7 @@
         :readonly="readonly"
 
       >
-      </v-smart-switch>
+      </s-smart-switch>
 
       <!-- File not implemented yet!-->
       <!--
@@ -199,13 +199,13 @@
 
 <script>
 import { FileHelper } from "../../../../core/helper/converters/FileHelper";
-import VSmartSwitch from "@/Components/smart/VSmartSwitch.vue";
+import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
 import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
 import _ from "lodash-es";
 
 export default {
   name: "ProductSectionBoxValuation",
-  components: { NumberPicker, VSmartSwitch },
+  components: { NumberPicker, SSmartSwitch },
   props: {
     shop: {
       required: true,

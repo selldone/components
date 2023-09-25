@@ -143,11 +143,11 @@
             <widget-header title="Payment" icon="payment"></widget-header>
             <v-subheader> </v-subheader>
 
-            <v-smart-select-subscription
+            <s-subscription-price-select
               v-model="selected_price_id"
               :subscription-prices="subscription_prices"
               class="mb-5"
-            ></v-smart-select-subscription>
+            ></s-subscription-price-select>
 
             <number-picker
               v-if="has_count"
@@ -206,7 +206,7 @@
 
 <script>
 import SShopCustomerReceiverInfoWidget from "@/Components/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
-import VSmartSelectSubscription from "@/Components/storefront/order/subscription/VSmartSelectSubscription.vue";
+import SSubscriptionPriceSelect from "@/Components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
 import BillingPeriod from "../../../../core/enums/subscription/BillingPeriod";
 import SShopBillingAddressForm from "@/Components/storefront/order/billing/SShopBillingAddressForm.vue";
 import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
@@ -216,7 +216,7 @@ export default {
   components: {
     NumberPicker,
     SShopBillingAddressForm,
-    VSmartSelectSubscription,
+    SSubscriptionPriceSelect,
     SShopCustomerReceiverInfoWidget,
   },
   props: {

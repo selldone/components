@@ -59,7 +59,7 @@
 
 <script>
 export default {
-  name: "BillingDetails",
+  name: "SPaymentBillingDetails",
   props: {
     billingDetail: {
       require: true,

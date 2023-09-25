@@ -34,11 +34,11 @@
           }}</span>
 
           {{ getLocalTimeString(payment.payment_at) }}
-          <billing-details
+          <s-payment-billing-details
             v-if="payment.billing_details"
             class="min-width-200 mb-2"
             :billing-detail="payment.billing_details"
-          ></billing-details>
+          ></s-payment-billing-details>
         </div>
 
         <single-country-map
@@ -53,11 +53,11 @@
 
 <script>
 import PaymentCard from "@/Components/payment/widgets/PaymentCard.vue";
-import BillingDetails from "@/Components/payment/widgets/BillingDetails.vue";
+import SPaymentBillingDetails from "@/Components/payment/widgets/SPaymentBillingDetails.vue";
 import SingleCountryMap from "@/Components/map/SingleCountryMap.vue";
 export default {
   name: "SShopRowCustomerPaymentRecord",
-  components: { SingleCountryMap, BillingDetails, PaymentCard },
+  components: { SingleCountryMap, SPaymentBillingDetails, PaymentCard },
   props: {
     payment: {
       require: true,

@@ -45,7 +45,7 @@
 <script>
 import CommunityImage from "@/Components/community/widgets/image/CommunityImage.vue";
 export default {
-  name: "vImageUploader",
+  name: "SImageUploader",
   components: { CommunityImage },
   props: {
     value: {},

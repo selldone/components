@@ -348,13 +348,13 @@
           </div>
         </v-subheader>
 
-        <v-smart-check-verify-action
+        <s-smart-check-verify-action
           v-model="accept_delete"
           color="red"
           true-title="Confirm Remove Category"
           true-description="I want to remove this category."
           false-gray
-        ></v-smart-check-verify-action>
+        ></s-smart-check-verify-action>
 
         <div class="widget-buttons">
           <v-btn
@@ -379,7 +379,7 @@ import CategoriesManagementFilter from "@/Applications/Backoffice/components/cat
 import CircleImage from "@/Components/ui/image/CircleImage.vue";
 import ImageUploader from "@/Components/uploader/ImageUploader.vue";
 import CategorySelect from "./CategorySelect.vue";
-import VSmartCheckVerifyAction from "@/Components/smart/VSmartCheckVerifyAction.vue";
+import SSmartCheckVerifyAction from "@/Components/smart/SSmartCheckVerifyAction.vue";
 import AugmentForm from "../augment/AugmentForm.vue";
 import PageInputField from "@/Applications/Backoffice/pages/shop/widgets/page/PageInputField.vue";
 
@@ -388,7 +388,7 @@ export default {
   components: {
     PageInputField,
     AugmentForm,
-    VSmartCheckVerifyAction,
+    SSmartCheckVerifyAction,
     CategorySelect,
     ImageUploader,
     CircleImage,

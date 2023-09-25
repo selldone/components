@@ -260,7 +260,7 @@
             </v-list-item-content>
 
             <v-list-item-action style="min-width: 36px">
-              <v-smart-menu
+              <s-smart-menu
                 v-if="getTimelineStatus(item.type).editable"
                 icon="more_horiz"
                 :items="[
@@ -284,7 +284,7 @@
                   },
                 ]"
               >
-              </v-smart-menu>
+              </s-smart-menu>
 
               <v-btn
                 v-if="
@@ -371,12 +371,12 @@ import { CampaignMedium } from "../../../../../core/enums/campaign/CampaignMediu
 import { CustomerClubLevels } from "../../../../../core/enums/customer/CustomerClubLevels";
 import GeoNavigationButton from "@/Applications/Backoffice/pages/shop/pages/logistic/widgets/GeoNavigationButton.vue";
 import TimelineStatus from "../../../../../core/enums/timeline/TimelineStatus";
-import VSmartMenu from "@/Components/smart/VSmartMenu.vue";
+import SSmartMenu from "@/Components/smart/SSmartMenu.vue";
 
 export default {
   name: "OrderTimeline",
   components: {
-    VSmartMenu,
+    SSmartMenu,
     GeoNavigationButton,
     UsersDenseImagesCircles,
     SMentionableInput,

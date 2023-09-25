@@ -49,7 +49,7 @@
       </template>
 
       <template v-else-if="connect_shipping_option.options?.length">
-        <v-smart-select
+        <s-smart-select
           :value="
             findSelectedConnectShipping(connect_shipping_option)?.shipping_id
           "
@@ -70,20 +70,20 @@ class="my-3"
             ></price-view>
             <span class="mx-2">|</span>
           </template>
-        </v-smart-select>
+        </s-smart-select>
       </template>
     </div>
   </div>
 </template>
 
 <script>
-import VSmartSelect from "@/Components/smart/VSmartSelect.vue";
+import SSmartSelect from "@/Components/smart/SSmartSelect.vue";
 import ProductsDenseImagesCircles
   from "@/Components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopConnectShippingOptions",
-  components: {ProductsDenseImagesCircles, VSmartSelect },
+  components: {ProductsDenseImagesCircles, SSmartSelect },
   props: {
     shop: {
       required: true,

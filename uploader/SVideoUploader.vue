@@ -101,7 +101,7 @@
 
 <script>
 export default {
-  name: "VideoUploader",
+  name: "SVideoUploader",
   props: {
     label: {
       required: false,

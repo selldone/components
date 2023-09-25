@@ -1,60 +1,3 @@
-<script>
-import { defineComponent } from "vue";
-import Seasons from "./Seasons.js";
-
-export default defineComponent({
-  name: "VSmartSuggestion",
-  components: {  },
-  props: {
-    samples: {},
-    addSession: { type: Boolean },
-    noRandom: { type: Boolean },
-  },
-  data: () => ({
-    dialog_pre: false,
-    dialog: false,
-  }),
-  computed: {
-    samples_processed() {
-      let out = this.samples;
-      if (this.addSession) {
-        // Get current date
-        const date = new Date();
-
-        // Get current month and year
-        const month = date.getMonth();
-        const year = date.getFullYear();
-
-        // Get current season
-        const found = Object.values(Seasons).find((s) =>
-          s.months.includes(month)
-        );
-        const currentSeason = found ? this.$t(found.name) : "";
-
-        out = this.samples?.map((n) => n + ` | ${currentSeason} ${year}`);
-      }
-      if (this.noRandom) return out;
-
-      return out.random();
-    },
-  },
-  methods: {
-    showDialog() {
-      this.dialog_pre = true;
-      this.$nextTick(() => {
-        this.dialog = true;
-      });
-    },
-    closeDialog() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.dialog_pre = false;
-      });
-    },
-  },
-});
-</script>
-
 <template>
   <div v-if="Array.isArray(samples) && samples?.length">
     <v-slide-group show-arrows>
@@ -124,5 +67,62 @@ export default defineComponent({
     </v-dialog>
   </div>
 </template>
+
+<script>
+import { defineComponent } from "vue";
+import Seasons from "./Seasons.ts";
+
+export default defineComponent({
+  name: "SSmartSuggestion",
+  components: {},
+  props: {
+    samples: {},
+    addSession: { type: Boolean },
+    noRandom: { type: Boolean },
+  },
+  data: () => ({
+    dialog_pre: false,
+    dialog: false,
+  }),
+  computed: {
+    samples_processed() {
+      let out = this.samples;
+      if (this.addSession) {
+        // Get current date
+        const date = new Date();
+
+        // Get current month and year
+        const month = date.getMonth();
+        const year = date.getFullYear();
+
+        // Get current season
+        const found = Object.values(Seasons).find((s) =>
+          s.months.includes(month)
+        );
+        const currentSeason = found ? this.$t(found.name) : "";
+
+        out = this.samples?.map((n) => n + ` | ${currentSeason} ${year}`);
+      }
+      if (this.noRandom) return out;
+
+      return out.random();
+    },
+  },
+  methods: {
+    showDialog() {
+      this.dialog_pre = true;
+      this.$nextTick(() => {
+        this.dialog = true;
+      });
+    },
+    closeDialog() {
+      this.dialog = false;
+      this.$nextTick(() => {
+        this.dialog_pre = false;
+      });
+    },
+  },
+});
+</script>
 
 <style scoped lang="scss"></style>

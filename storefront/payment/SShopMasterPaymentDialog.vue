@@ -24,7 +24,7 @@
       scrollable
       persistent
     >
-      <payment-methods-form
+      <s-payment-form
         v-if="exist_payment_form"
         ref="payment_form"
         :mode="special_payment_mode"
@@ -117,7 +117,7 @@
 
 <script>
 import { Currency } from "../../../../core/enums/payment/Currency";
-import PaymentMethodsForm from "@/Components/payment/PaymentMethodsForm.vue";
+import SPaymentForm from "@/Components/payment/SPaymentForm.vue";
 import RadialProgressBar from "@/Components/ui/progress/RadialProgressBar.vue";
 import { DateConverter } from "../../../../core/helper/date/DateConverter";
 import { LocalStorages } from "../../../../core/helper/local-storage/LocalStorages";
@@ -127,7 +127,7 @@ import _ from "lodash-es";
 
 export default {
   name: "SShopMasterPaymentDialog",
-  components: { RadialProgressBar, PaymentMethodsForm },
+  components: { RadialProgressBar, SPaymentForm },
 
   props: {
     shop: {

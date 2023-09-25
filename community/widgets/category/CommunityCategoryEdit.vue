@@ -46,13 +46,13 @@
       ></widget-header>
 
       <v-subheader>Here, you can adjust the SEO configurations specifically at the category level. </v-subheader>
-      <v-smart-toggle
+      <s-smart-toggle
         v-model="nofollow"
         true-title="No follow links"
         false-title="Follow links"
         :true-description="$t('community.commons.nofollow_msg')"
         false-gray
-      ></v-smart-toggle>
+      ></s-smart-toggle>
     </div>
 
     <!-- Cross Community -->
@@ -63,12 +63,12 @@
       ></widget-header>
 
       <v-subheader>Categories can be cross-linked and integrated into other communities. </v-subheader>
-      <v-smart-toggle
+      <s-smart-toggle
         v-model="cross"
         :true-title="$t('community.commons.crossable')"
         :true-description="$t('community.commons.crossable_msg')"
         false-gray
-      ></v-smart-toggle>
+      ></s-smart-toggle>
     </div>
 
     <!-- Access -->
@@ -79,23 +79,23 @@
       ></widget-header>
 
       <v-subheader>Determine whether customers are permitted to create new topics in this category. </v-subheader>
-      <v-smart-toggle
+      <s-smart-toggle
         v-model="restrict"
         :true-title="$t('community.category.restrict')"
         :true-description="$t('community.category.restrict_msg')"
         color="red"
         false-gray
-      ></v-smart-toggle>
+      ></s-smart-toggle>
     </div>
   </div>
 </template>
 
 <script>
 import ImageInput from "../image/ImageInput.vue";
-import VSmartToggle from "@/Components/smart/VSmartToggle.vue";
+import SSmartToggle from "@/Components/smart/SSmartToggle.vue";
 export default {
   name: "CommunityCategoryEdit",
-  components: { VSmartToggle, ImageInput },
+  components: { SSmartToggle, ImageInput },
 
   props: {
     community: {

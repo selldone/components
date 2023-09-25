@@ -50,8 +50,8 @@
               >lock</v-icon
             >
           </b>
-          <v-subheader v-if="description" style="height: auto" class="p-0" >
-<span v-html="description"></span>
+          <v-subheader v-if="description" style="height: auto" class="p-0">
+            <span v-html="description"></span>
           </v-subheader>
         </div>
 
@@ -63,7 +63,7 @@
 
 <script>
 export default {
-  name: "VSmartToggle",
+  name: "SSmartToggle",
   components: {},
   props: {
     value: {},
@@ -140,7 +140,6 @@ export default {
       if (this.readonly) return;
       const val = !this.value;
       this.$emit("input", val);
-
 
       this.$nextTick(() => {
         this.$emit("change", val);

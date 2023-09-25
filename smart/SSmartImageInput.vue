@@ -36,7 +36,7 @@
 
 <script>
 export default {
-  name: "VSmartImageInput",
+  name: "SSmartImageInput",
   components: {},
   props: {
     file: {},

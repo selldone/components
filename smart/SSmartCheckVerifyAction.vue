@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: "VSmartCheckVerifyAction",
+  name: "SSmartCheckVerifyAction",
   components: {},
   props: {
     value: {},

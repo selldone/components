@@ -121,7 +121,7 @@
 import { ProductVariants } from "../../../core/enums/product/ProductVariants";
 
 export default {
-  name: "VSmartVariantSelect",
+  name: "SSmartVariantSelect",
   props: {
     value: {},
 

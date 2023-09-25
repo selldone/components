@@ -82,13 +82,13 @@
 
       <v-subheader> This is the default SEO configuration for your community. Please note that SEO settings can also be adjusted at the topic and category level.</v-subheader>
 
-      <v-smart-toggle
+      <s-smart-toggle
         v-model="nofollow"
         true-title="No follow links"
         false-title="Follow links"
         :true-description="$t('community.commons.nofollow_msg')"
         false-gray
-      ></v-smart-toggle>
+      ></s-smart-toggle>
     </div>
 
     <!-- Cross Community -->
@@ -100,12 +100,12 @@
 
       <v-subheader>Can other communities embed your topics? </v-subheader>
 
-      <v-smart-toggle
+      <s-smart-toggle
         v-model="cross"
         :true-title="$t('community.commons.crossable')"
         :true-description="$t('community.commons.crossable_msg')"
         false-gray
-      ></v-smart-toggle>
+      ></s-smart-toggle>
     </div>
 
     <!-- Access -->
@@ -117,7 +117,7 @@
 
       <v-subheader>Define the access level and status of your community here. The structure of the community follows this hierarchy: Your Community > Categories > Topics > Posts. </v-subheader>
 
-      <v-smart-select
+      <s-smart-select
         v-model="stage"
         :items="Object.values(CommunityStageLevel)"
         item-text="name"
@@ -126,9 +126,9 @@
         item-description="description"
         class="mb-5"
         label="Who can create topics by default?"
-      ></v-smart-select>
+      ></s-smart-select>
 
-      <v-smart-toggle
+      <s-smart-toggle
         v-model="enable"
         :true-title="$t('global.commons.enable')"
         :false-title="$t('global.commons.disable')"
@@ -137,7 +137,7 @@
         label="Is your community available?"
         true-icon="public"
         false-icon="public_off"
-      ></v-smart-toggle>
+      ></s-smart-toggle>
     </div>
 
     <!-- Access -->
@@ -149,7 +149,7 @@
       <v-subheader> You can add the attachment option in your community. Your customers can
         attach up to 3 files, each 8MB, in their posts.</v-subheader>
 
-      <v-smart-select
+      <s-smart-select
         v-model="attachment"
         :items="Object.values(CommunityAttachmentAccess)"
         item-text="name"
@@ -158,7 +158,7 @@
         item-description="description"
         class="my-5"
         label="Who can attach files?"
-      ></v-smart-select>
+      ></s-smart-select>
 
       <v-combobox
         multiple
@@ -234,13 +234,13 @@
 <script>
 import ImageInput from "../image/ImageInput.vue";
 import { CommunityStageLevel } from "../../../../../core/enums/community/CommunityStageLevel";
-import VSmartToggle from "@/Components/smart/VSmartToggle.vue";
-import VSmartSelect from "@/Components/smart/VSmartSelect.vue";
+import SSmartToggle from "@/Components/smart/SSmartToggle.vue";
+import SSmartSelect from "@/Components/smart/SSmartSelect.vue";
 import { CommunityAttachmentAccess } from "../../../../../core/enums/community/CommunityAttachmentAccess";
 import _ from "lodash-es";
 export default {
   name: "CommunityEdit",
-  components: {  VSmartSelect, VSmartToggle, ImageInput },
+  components: {  SSmartSelect, SSmartToggle, ImageInput },
 
   props: {
     shop: {}, // optional for shops.

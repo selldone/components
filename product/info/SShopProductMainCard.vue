@@ -217,7 +217,7 @@
             ></product-section-box-valuation>
 
             <!-- ▁▁▁▁▁▁ 🞇 🎗️ Subscription Price 🞇 ▁▁▁▁▁▁ -->
-            <v-smart-select-subscription
+            <s-subscription-price-select
               v-if="isSubscription"
               v-model="selected_subscription_price"
               :subscription-prices="subscription_prices"
@@ -229,7 +229,7 @@
                   !!membership_subscribed_plan /* 🦄 Membership > Subscribed before*/,
               }"
               :disabled="!product.quantity"
-            ></v-smart-select-subscription>
+            ></s-subscription-price-select>
 
             <!-- ▁▁▁▁▁▁ 🞇 Price 🞇 ▁▁▁▁▁▁ -->
             <product-section-box-price
@@ -312,7 +312,7 @@
     <!-- ████████████████████ 🟣 Marketplace (Vendors) 🟣 ████████████████████ -->
 
     <v-container v-if="vendors && vendors.length" class="my-0 my-sm-5 my-md-10">
-      <v-smart-select-vendor
+      <s-smart-select-vendor
         v-model="selected_vendor_product_id"
         :vendors="vendors"
         force-show-all
@@ -320,7 +320,7 @@
         :hint="$t('product_info.select_a_vendor_message')"
         @change="changeVendor"
       >
-      </v-smart-select-vendor>
+      </s-smart-select-vendor>
     </v-container>
 
     <!-- ████████████████████ USER MESSAGE > Physical (All now!) ████████████████████ -->
@@ -346,7 +346,7 @@ import SShopProductRatingView from "@/Components/product/rating/SShopProductRati
 import BasketItemUserMessageForm from "@/Components/backoffice/basket/BasketItemUserMessageForm.vue";
 import SCoupons from "@/Components/storefront/incentives/coupon/SCoupons.vue";
 import { ProductVariants } from "../../../../core/enums/product/ProductVariants";
-import VSmartSelectVendor from "@/Components/vendor/VSmartSelectVendor.vue";
+import SSmartSelectVendor from "@/Components/vendor/SSmartSelectVendor.vue";
 import ProductSectionBoxGeneralInfo from "@/Components/product/sections/ProductSectionBoxGeneralInfo.vue";
 import ProductSectionBoxCondition from "@/Components/product/sections/ProductSectionBoxCondition.vue";
 import ProductSectionBoxService from "@/Components/product/sections/ProductSectionBoxService.vue";
@@ -359,7 +359,7 @@ import ProductSectionBoxExtraButtons from "@/Components/product/sections/Product
 import SShopProductSlideShow from "@/Components/product/images/SShopProductSlideShow.vue";
 import ProductSectionBoxValuation from "@/Components/product/sections/ProductSectionBoxValuation.vue";
 import { ProductType } from "../../../../core/enums/product/ProductType";
-import VSmartSelectSubscription from "@/Components/storefront/order/subscription/VSmartSelectSubscription.vue";
+import SSubscriptionPriceSelect from "@/Components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
 import { RibbonHelper } from "../../../../core/helper/ribbon/RibbonHelper";
 import ProductSectionBoxExtraPricings from "@/Components/product/sections/ProductSectionBoxExtraPricings.vue";
 import ProductSectionBoxTax from "@/Components/product/sections/ProductSectionBoxTax.vue";
@@ -373,7 +373,7 @@ export default {
     ProductDiscountCountdown,
     ProductSectionBoxTax,
     ProductSectionBoxExtraPricings,
-    VSmartSelectSubscription,
+    SSubscriptionPriceSelect,
     ProductSectionBoxValuation,
     SShopProductSlideShow,
     ProductSectionBoxExtraButtons,
@@ -385,7 +385,7 @@ export default {
     ProductSectionBoxService,
     ProductSectionBoxCondition,
     ProductSectionBoxGeneralInfo,
-    VSmartSelectVendor,
+    SSmartSelectVendor,
     SCoupons,
     BasketItemUserMessageForm,
     SShopProductRatingView,

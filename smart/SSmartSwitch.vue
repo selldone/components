@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-smart-select
+  <s-smart-select
     :value="value"
     @input="(val) => $emit('input', val)"
     :items="items"
@@ -34,15 +34,15 @@
     :class="{ 'theme--dark': dark }"
     :loading="loading"
   >
-  </v-smart-select>
+  </s-smart-select>
 </template>
 
 <script>
-import VSmartSelect from "./VSmartSelect.vue";
+import SSmartSelect from "./SSmartSelect.vue";
 
 export default {
-  name: "VSmartSwitch",
-  components: { VSmartSelect },
+  name: "SSmartSwitch",
+  components: { SSmartSelect },
   props: {
     value: {},
 

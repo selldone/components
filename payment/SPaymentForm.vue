@@ -599,7 +599,7 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Stripe ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isStripe">
-      <stripe-payment
+      <s-payment-stripe
         v-if="pack && stripe_js_loaded"
         :amount="amount"
         :currency="currency.code.toLowerCase()"
@@ -617,13 +617,13 @@
         :billingEmail="billingEmail"
         :billingPhone="billingPhone"
         :billingAddress="billingAddress"
-      ></stripe-payment>
+      ></s-payment-stripe>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Razorpay ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isRazorpay">
-      <razorpay-payment
+      <s-payment-razorpay
         :pack="pack"
         :amount="amount"
         :currency="currency.code"
@@ -632,13 +632,13 @@
         :billingEmail="billingEmail"
         :billingPhone="billingPhone"
         :billingAddress="billingAddress"
-      ></razorpay-payment>
+      ></s-payment-razorpay>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ PayPal Standard ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isPayPalStandard">
-      <paypal-standard-payment
+      <s-payment-paypal-standard
         :shop-name="customShopName ? customShopName : shop_name"
         :pack="pack"
         :amount="amount"
@@ -648,17 +648,17 @@
         :billingEmail="billingEmail"
         :billingPhone="billingPhone"
         :billingAddress="billingAddress"
-      ></paypal-standard-payment>
+      ></s-payment-paypal-standard>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Mercadopago ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isMercadopago">
-      <mercadopago-payment
+      <s-payment-mercadopago
         :public-key="pack.public_key"
         :preference-id="pack.unique_id"
         :currency="currency.code"
-      ></mercadopago-payment>
+      ></s-payment-mercadopago>
     </v-card-text>
   </v-card>
 </template>
@@ -666,29 +666,28 @@
 <script>
 import CircleButton from "@/Components/ui/button/CircleButton.vue";
 
-import StripePayment from "./stripe/StripePayment.vue";
+import SPaymentStripe from "./stripe/SPaymentStripe.vue";
 import PaymentButton from "./widgets/PaymentButton.vue";
 import SelectGiftCards from "@/Components/backoffice/incentives/gift-card/SelectGiftCards.vue";
 import SValueCopyBox from "@/Components/ui/text/SValueCopyBox.vue";
 import TimeLapse from "@/Components/ui/time-lapse/timeLapse.vue";
 import CurrencyIcon from "@/Components/ui/currency/CurrencyIcon.vue";
-import SetupService from "../../../core/server/SetupService";
-import RazorpayPayment from "./razorpay/RazorpayPayment.vue";
-import PaypalStandardPayment from "./paypal-standard/PaypalStandardPayment.vue";
-import MercadopagoPayment from "./mercadopago/MercadopagoPayment.vue";
+import SPaymentRazorpay from "./razorpay/SPaymentRazorpay.vue";
+import SPaymentPaypalStandard from "./paypal-standard/SPaymentPaypalStandard.vue";
+import SPaymentMercadopago from "./mercadopago/SPaymentMercadopago.vue";
 
 export default {
-  name: "PaymentMethodsForm",
+  name: "SPaymentForm",
   components: {
-    MercadopagoPayment,
-    PaypalStandardPayment,
-    RazorpayPayment,
+    SPaymentMercadopago,
+    SPaymentPaypalStandard,
+    SPaymentRazorpay,
     CurrencyIcon,
     TimeLapse,
     SValueCopyBox,
     SelectGiftCards,
     PaymentButton,
-    StripePayment,
+    SPaymentStripe,
     CircleButton,
   },
   props: {

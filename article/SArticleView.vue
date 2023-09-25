@@ -269,7 +269,7 @@
               }}
             </v-btn>
 
-            <v-smart-menu
+            <s-smart-menu
               :items="[
                 ...(can_auto_translate
                   ? [
@@ -297,7 +297,7 @@
                 },
               ]"
             >
-            </v-smart-menu>
+            </s-smart-menu>
           </template>
 
           <template v-if="canEdit && !is_editing && languages && multiLanguage">
@@ -1289,7 +1289,7 @@ import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./SArticleTagsEditor.vue";
 import SContentViolationReportDialog from "../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
 import UserEmailInput from "@/Applications/Backoffice/components/user/UserEmailInput.vue";
-import VSmartMenu from "@/Components/smart/VSmartMenu.vue";
+import SSmartMenu from "@/Components/smart/SSmartMenu.vue";
 import TimeProgressBar from "../ui/calendar/TimeProgressBar.vue";
 import { ShopOptionsHelper } from "../../../core/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
@@ -1304,7 +1304,7 @@ export default {
     AiButton,
     SArticleSearchConsole,
     TimeProgressBar,
-    VSmartMenu,
+    SSmartMenu,
     UserEmailInput,
     SContentViolationReportDialog,
     SArticleTagsEditor,

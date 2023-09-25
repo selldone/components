@@ -8,7 +8,7 @@
 import SetupService from "../../../../core/server/SetupService";
 
 export default {
-  name: "RazorpayPayment",
+  name: "SPaymentRazorpay",
 
   props: {
     pack: {

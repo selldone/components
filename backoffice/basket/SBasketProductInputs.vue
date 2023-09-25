@@ -56,7 +56,7 @@
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ switch ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-      <v-smart-switch
+      <s-smart-switch
         v-else-if="item.type === 'switch'"
         v-model="message[item.name]"
         :label="item.title"
@@ -72,7 +72,7 @@
         :readonly="readonly"
         @change="$forceUpdate()"
       >
-      </v-smart-switch>
+      </s-smart-switch>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ File ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <v-file-input
@@ -161,7 +161,7 @@
 
 <script>
 import { FileHelper } from "../../../../core/helper/converters/FileHelper";
-import VSmartSwitch from "@/Components/smart/VSmartSwitch.vue";
+import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
 import {
   FORM_BUILDER_TAGS,
   SmartConvertTextToHtml,
@@ -169,7 +169,7 @@ import {
 
 export default {
   name: "SBasketProductInputs",
-  components: { VSmartSwitch },
+  components: { SSmartSwitch },
   props: {
     value: {},
     product: {

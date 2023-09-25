@@ -90,7 +90,7 @@
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Configuration ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div v-if="tab === 'config'" class="px-4 py-2">
-          <v-smart-switch
+          <s-smart-switch
             v-model="nofollow"
             label="Follow / Nofollow links"
             :true-title="$t('community.commons.nofollow')"
@@ -98,8 +98,8 @@
             false-title="Follow links"
             border
             class="my-3"
-          ></v-smart-switch>
-          <v-smart-switch
+          ></s-smart-switch>
+          <s-smart-switch
             v-model="cross"
             label="Crossable topic by other communities"
             :true-title="$t('community.commons.cross')"
@@ -109,8 +109,8 @@
             false-gray
             border
             class="my-3"
-          ></v-smart-switch>
-          <v-smart-switch
+          ></s-smart-switch>
+          <s-smart-switch
             v-model="pin"
             label="Pin topic"
             :true-title="$t('community.commons.pin')"
@@ -120,8 +120,8 @@
             false-gray
             border
             class="my-3"
-          ></v-smart-switch>
-          <v-smart-switch
+          ></s-smart-switch>
+          <s-smart-switch
             v-model="private"
             color="red"
             label="Who can see this topic?"
@@ -133,9 +133,9 @@
             false-icon="public"
             border
             class="my-3"
-          ></v-smart-switch>
+          ></s-smart-switch>
 
-          <v-smart-switch
+          <s-smart-switch
             v-model="lock_post"
             label="Who can send new posts?"
             true-title="Lock posts"
@@ -145,9 +145,9 @@
             false-description="Anyone can send a post here."
             border
             class="my-3"
-          ></v-smart-switch>
+          ></s-smart-switch>
 
-          <v-smart-switch
+          <s-smart-switch
             v-model="lock_comment"
             label="Who can send new comments?"
             true-title="Lock comments"
@@ -157,7 +157,7 @@
             false-description="Anyone can send a comment here."
             border
             class="my-3"
-          ></v-smart-switch>
+          ></s-smart-switch>
         </div>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ SEO ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -664,7 +664,7 @@ import { CommunityStageLevel } from "../../../../../core/enums/community/Communi
 import CommunityProductEditor from "../product/CommunityProductEditor.vue";
 import CommunityProductView from "../product/CommunityProductView.vue";
 import ImageDimension from "../../../../../core/helper/image/ImageDimension";
-import VSmartSwitch from "@/Components/smart/VSmartSwitch.vue";
+import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
 import CommunityAttachEditor from "../attach/CommunityAttachEditor.vue";
 import CommunityAttachView from "../attach/CommunityAttachView.vue";
 import VideoHelper from "../../../../../core/helper/video/VideoHelper";
@@ -683,7 +683,7 @@ export default {
   components: {
     CommunityAttachView,
     CommunityAttachEditor,
-    VSmartSwitch,
+    SSmartSwitch,
     CommunityProductView,
     CommunityProductEditor,
     CommunityPoll,

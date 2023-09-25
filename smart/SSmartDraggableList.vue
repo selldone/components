@@ -59,11 +59,11 @@
             ></b>
 
             <span class="me-2">
-              <v-smart-menu
+              <s-smart-menu
                 v-if="itemMenu"
                 :items="itemMenu"
                 :return-click-value="item"
-              ></v-smart-menu
+              ></s-smart-menu
             ></span>
 
             <v-icon> menu </v-icon>
@@ -94,10 +94,10 @@
 
 <script>
 import draggable from "vuedraggable";
-import VSmartMenu from "./VSmartMenu.vue";
+import SSmartMenu from "./SSmartMenu.vue";
 export default {
-  name: "VSmartDraggableList",
-  components: { VSmartMenu, draggable },
+  name: "SSmartDraggableList",
+  components: { SSmartMenu, draggable },
   props: {
     value: {},
     itemLabel: { type: Function },

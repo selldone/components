@@ -123,7 +123,7 @@
 
 <script>
 export default {
-  name: "VSmartSelect",
+  name: "SSmartSelect",
   props: {
     value: {},
     items: { type: Array },
