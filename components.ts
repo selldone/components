@@ -81,7 +81,6 @@ window.XAPI = new XAPI();
 window.URLS = new URLS();
 window.GAPI = new GAPI();
 
-window.CAPI = new CAPI(); // Community API
 
 //―――――――――――――――――――――― Global config ――――――――――――――――――――
 //█████████████████████████████████████████████████████████████

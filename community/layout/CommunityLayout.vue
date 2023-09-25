@@ -50,7 +50,7 @@
       <router-link
         v-for="(post, i) in posts"
         :key="post.id"
-        style="color: #111;"
+        style="color: #111"
         :to="{
           name: 'CommunityTopicPage',
           params: {
@@ -60,7 +60,7 @@
             topic_slug: slugify(post.topic.title),
           },
         }"
-        @click.native="search=null"
+        @click.native="search = null"
       >
         <community-widget
           :community="community"
@@ -208,42 +208,34 @@ export default {
 
     fetchCommunity() {
       this.busy = true;
-      axios
-        .get(
-          window.CAPI.GET_COMMUNITY_INFO(
-            this.shop
-              ? this.shop.community && this.shop.community.id
-              : 1 /* 1 : Main Selldone official community */
-          ),
-          {
-            params: {
-              offset: this.offset,
-              days: this.days,
-            },
-          }
+
+      const handleSuccessResponse = ({ community, categories, data }) => {
+        this.community = community;
+
+        this.categories = categories;
+        this.data = data;
+        // Statistics:
+        if (data) {
+          this.community_timeseries = new TimeSeries(
+            data,
+            "Community Data",
+            this.offset,
+            this.days
+          );
+
+          // Register fetch callback (Use to refresh by change time span)
+          this.community_timeseries.fetch = this.fetchCallback;
+        }
+      };
+
+      window.$community
+        .getInfo(
+          window.$community.getCommunityID(this.shop),
+          this.offset,
+          this.days
         )
-        .then(({ data }) => {
-          if (!data.error) {
-            this.community = data.community;
-
-            this.categories = data.categories;
-            this.data = data.data;
-            // Statistics:
-            if (data.data) {
-              this.community_timeseries = new TimeSeries(
-                data.data,
-                "Community Data",
-                this.offset,
-                this.days
-              );
-
-              // Register fetch callback (Use to refresh by change time span)
-              this.community_timeseries.fetch = this.fetchCallback;
-            }
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-          }
-        })
+        .cache(handleSuccessResponse)
+        .then(handleSuccessResponse)
         .catch((error) => {
           this.showLaravelError(error);
         })
@@ -275,21 +267,15 @@ export default {
 
       this.last_search = this.search;
 
-      axios
-        .get(window.CAPI.GET_COMMUNITY_POSTS_SEARCH(this.community.id), {
-          params: {
-            offset: (this.page - 1) * this.itemsPerPage,
-            limit: this.itemsPerPage,
-            search: this.search,
-          },
-        })
-        .then(({ data }) => {
-          if (!data.error) {
-            this.posts.push(...data.posts);
-            this.has_more = data.more;
-          } else {
-          }
-        })
+      const handleSuccessResponse = ({ posts, more }) => {
+        this.posts.push(...posts);
+        this.has_more = more;
+      };
+
+      window.$community.post.optimize(60)
+        .searchPosts(this.community.id, this.offset, this.limit, this.search)
+        .cache(handleSuccessResponse)
+        .then(handleSuccessResponse)
         .catch((error) => {
           this.showLaravelError(error);
         })

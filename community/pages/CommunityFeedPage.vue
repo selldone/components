@@ -12,46 +12,45 @@
 
     <v-container class="c-max-w">
       <v-row justify="center" align="start">
-
         <community-widget
-                v-for="(post, i) in posts"
-                :key="post.id"
-                :community="community"
-                :topic="post.topic"
-                show-topic-title
-                :post="post"
-                :shop="shop"
-                @delete="  () => { DeleteItemByID(posts, post.id); }  "
-                class="fadeInUp"
-                :style="{ 'animation-delay': 50 * (i % itemsPerPage) + 'ms' }"
+          v-for="(post, i) in posts"
+          :key="post.id"
+          :community="community"
+          :topic="post.topic"
+          show-topic-title
+          :post="post"
+          :shop="shop"
+          @delete="
+            () => {
+              DeleteItemByID(posts, post.id);
+            }
+          "
+          class="fadeInUp"
+          :style="{ 'animation-delay': 50 * (i % itemsPerPage) + 'ms' }"
         ></community-widget>
-
 
         <!-- Auto load more -->
 
         <v-col
-                cols="12"
-                v-if="has_more"
-                style="height: 50vh"
-                v-intersect.quiet="
-                (entries) => {
-                  if (entries[0].isIntersecting) fetchFeed(page + 1);
-                }
-              "
+          cols="12"
+          v-if="has_more"
+          style="height: 50vh"
+          v-intersect.quiet="
+            (entries) => {
+              if (entries[0].isIntersecting) fetchFeed(page + 1);
+            }
+          "
         >
           <loading light css-mode v-if="busy"></loading>
         </v-col>
-
       </v-row>
     </v-container>
   </v-container>
 </template>
 
 <script>
-
 import CommunityBreadcrumb from "../widgets/header/CommunityBreadcrumb.vue";
 import CommunityWidget from "../widgets/CommunityWidget.vue";
-
 
 export default {
   name: "CommunityFeedPage",
@@ -76,9 +75,7 @@ export default {
 
   data() {
     return {
-
-      opx_active:false,
-
+      opx_active: false,
 
       //----------------------------------
       busy: false,
@@ -86,8 +83,6 @@ export default {
       page: 1,
       itemsPerPage: 10,
       totalItems: 0,
-
-
     };
   },
 
@@ -95,11 +90,8 @@ export default {
     has_more() {
       return this.totalItems > this.posts.length;
     },
-
   },
-  watch: {
-
-  },
+  watch: {},
 
   created() {
     this.fetchFeed(1);
@@ -110,7 +102,6 @@ export default {
     refreshData() {
       this.fetchFeed(1);
     },
-
 
     //――――――――――――――――――――――― Topics ―――――――――――――――――――――――
 
@@ -129,16 +120,12 @@ export default {
       }
 
       axios
-        .get(
-          window.CAPI.GET_COMMUNITY_FEED(this.community.id,),
-          {
-            params: {
-
-              offset: (this.page - 1) * this.itemsPerPage,
-              limit: this.itemsPerPage,
-            },
-          }
-        )
+        .get(window.CAPI.GET_COMMUNITY_FEED(this.community.id), {
+          params: {
+            offset: (this.page - 1) * this.itemsPerPage,
+            limit: this.itemsPerPage,
+          },
+        })
         .then(({ data }) => {
           if (data.error) {
             this.showErrorAlert(null, data.error_msg);
@@ -155,11 +142,6 @@ export default {
           this.$emit("busy", false);
         });
     },
-
-
-
-
-
   },
 };
 </script>
