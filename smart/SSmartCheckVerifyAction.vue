@@ -11,7 +11,7 @@
           :class="{ 'avatar-gradient': value }"
           >{{ value ? "lens" : "radio_button_unchecked" }}</v-icon
         >
-        <div class="flex-grow-1">
+        <div class="flex-grow-1 ok">
           <b> {{ trueTitle }} </b>
           <v-subheader v-if="description" style="height: auto" class="p-0">
             {{ description }}
