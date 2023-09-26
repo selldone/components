@@ -112,7 +112,8 @@
             v-if="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
             size="24"
             :rounded="rounded"
-            ><img
+            >
+            <img
               :src="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
           /></v-avatar>
         </div>
