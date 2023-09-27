@@ -1,3 +1,5 @@
+![Selldone Official Storefront App](_docs/images/banner-components.jpg)
+
 # Selldone ® Business OS | Open Source Commerce Components
 
 * **Mode:** 🌍 Public
