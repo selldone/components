@@ -13,8 +13,6 @@ require("../../Components/components.ts");
 ```
 
 
-
-
 # Copyright and License
 
 ## Copyright Notice
