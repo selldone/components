@@ -13,11 +13,7 @@
   -->
 
 <template>
-
-
-    <div >
-
-
+  <div>
     <v-row
       align="center"
       justify="start"
@@ -25,8 +21,6 @@
       no-gutters
       dense
     >
-
-
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <v-col
         cols="12"
@@ -36,27 +30,37 @@
         xl="6"
         class="text-start px-2 flex-grow-1"
       >
-        <router-link :to="{ name: 'ProductPage',params: {product_id: basketItem.product_id }}">
+        <router-link
+          :to="{
+            name: 'ProductPage',
+            params: { product_id: basketItem.product_id },
+          }"
+        >
           <v-img
-              class="item-image rounded float-start me-2"
-              height="84px"
-              width="84px"
-              min-height="42px"
-              min-width="42px"
-              aspect-ratio="1"
-              :src="
-            product?.icon
-              ? getShopImagePath(
-                  variant?.image ? variant.image : product.icon,
-                  128
-                )
-              : getProductImage(basketItem.product_id)
-          "
+            class="item-image rounded float-start me-2"
+            height="84px"
+            width="84px"
+            min-height="42px"
+            min-width="42px"
+            aspect-ratio="1"
+            :src="
+              product?.icon
+                ? getShopImagePath(
+                    variant?.image ? variant.image : product.icon,
+                    128,
+                  )
+                : getProductImage(basketItem.product_id)
+            "
           />
         </router-link>
 
-        <router-link class="shop-item-title"
-                     :to="{ name: 'ProductPage',params: {product_id: basketItem.product_id }}">
+        <router-link
+          class="shop-item-title"
+          :to="{
+            name: 'ProductPage',
+            params: { product_id: basketItem.product_id },
+          }"
+        >
           {{ product.title }}
 
           <v-icon
@@ -74,27 +78,21 @@
             >{{ preferences?.dim_1 }} 🞬 {{ preferences?.dim_2 }} 🞬
             {{ preferences?.dim_3
             }}{{
-              product.unit
-                ? product.unit
-                : $t("basket_items.items_unit")
+              product.unit ? product.unit : $t("basket_items.items_unit")
             }}</span
           >
           <!-- ▂▂▂▂▂▂▂▂▂▂▂ area ▂▂▂▂▂▂▂▂▂▂▂ -->
           <span v-else-if="product.price_input === 'area'"
             >{{ preferences?.dim_1 }} 🞬 {{ preferences?.dim_2 }}
             {{
-              product.unit
-                ? product.unit
-                : $t("basket_items.items_unit")
+              product.unit ? product.unit : $t("basket_items.items_unit")
             }}</span
           >
           <!-- ▂▂▂▂▂▂▂▂▂▂▂ default ▂▂▂▂▂▂▂▂▂▂▂ -->
           <span v-else
             >{{ basketItem.count }}
             {{
-              product.unit
-                ? product.unit
-                : $t("basket_items.items_unit")
+              product.unit ? product.unit : $t("basket_items.items_unit")
             }}</span
           >
 
@@ -104,10 +102,7 @@
           >
         </p>
 
-        <variant-item-view-micro
-          v-if="variant"
-          :product-variant="variant"
-        />
+        <variant-item-view-micro v-if="variant" :product-variant="variant" />
 
         <p class="offer" v-if="offer">
           <v-icon small color="#00a89a" class="me-1">fas fa-gift</v-icon>
@@ -123,30 +118,32 @@
         </p>
       </v-col>
 
-
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <v-col xl="3" lg="3" md="6" sm="5" cols="6">
         <p v-if="basketItem.dis" class="discount-value">
           <price-view
-              :amount="getBasketItemSumPriceDiscount(shop,basketItem) * basketItem.count"
-              line-through
+            :amount="
+              getBasketItemSumPriceDiscount(shop, basketItem) * basketItem.count
+            "
+            line-through
           ></price-view>
         </p>
         <p class="shop-item-price m-0">
           <price-view
-              :amount="getBasketItemPrice(shop,basketItem) * basketItem.count - basketItem.offer_amount"
+            :amount="
+              getBasketItemPrice(shop, basketItem) * basketItem.count -
+              basketItem.offer_amount
+            "
           ></price-view>
-          <small v-if="subscription_price"
-          >/{{ subscription_period  }}</small
-          >
+          <small v-if="subscription_price">/{{ subscription_period }}</small>
         </p>
         <div v-if="basketItem.cross_dis">
           <v-chip
-              label
-              color="green"
-              dark
-              small
-              :title="$t('basket_page.cross_selling_discount')"
+            label
+            color="green"
+            dark
+            small
+            :title="$t('basket_page.cross_selling_discount')"
           >
             <v-icon small left>whatshot</v-icon>
             <price-view :amount="-basketItem.cross_dis"></price-view>
@@ -158,44 +155,44 @@
             {{ $t("basket_items.price_changed") }}<br />
 
             <price-view
-                class="font-weight-medium"
-                :amount="current_item_price"
+              class="font-weight-medium"
+              :amount="current_item_price"
             ></price-view>
             <!-- Change percent labels -->
             <v-chip
-                v-if="price_error_percent > 1"
-                small
-                color="red"
-                dark
-                label
-                class="ms-1 p-1"
-            ><v-icon small>arrow_drop_up</v-icon>
+              v-if="price_error_percent > 1"
+              small
+              color="red"
+              dark
+              label
+              class="ms-1 p-1"
+              ><v-icon small>arrow_drop_up</v-icon>
               {{ price_error_percent | numeralFormat("0,0") }}%</v-chip
             >
             <v-chip
-                v-if="price_error_percent < -1"
-                small
-                color="green"
-                dark
-                label
-                class="ms-1 p-1"
-            ><v-icon small>arrow_drop_down</v-icon>
+              v-if="price_error_percent < -1"
+              small
+              color="green"
+              dark
+              label
+              class="ms-1 p-1"
+              ><v-icon small>arrow_drop_down</v-icon>
               {{ price_error_percent | numeralFormat("0,0") }}%</v-chip
             >
           </p>
           <v-btn
-              class="mx-1"
-              icon
-              color="#8BC34A"
-              @click="spinnerSelectAction( basketItem.count)"
+            class="mx-1"
+            icon
+            color="#8BC34A"
+            @click="spinnerSelectAction(basketItem.count)"
           >
             <v-icon>check</v-icon>
           </v-btn>
           <v-btn
-              class="mx-1"
-              icon
-              color="#C2185B"
-              @click="spinnerSelectAction( 0)"
+            class="mx-1"
+            icon
+            color="#C2185B"
+            @click="spinnerSelectAction(0)"
           >
             <v-icon>close</v-icon>
           </v-btn>
@@ -208,17 +205,17 @@
           :disabled="['area', 'volume'].includes(product.price_input)"
           v-model="basketItem.count"
           :max="available_quantity"
-          @change="(count) => spinnerSelectAction( count)"
+          @change="(count) => spinnerSelectAction(count)"
           :min="product?.limit_min ? product?.limit_min : 0"
           :loading="busy"
           class="my-1"
           :unit="product.unit"
-
-          filled flat dark
+          filled
+          flat
+          dark
           background-color="#111"
           :dense="$vuetify.breakpoint.smAndDown"
           :solo="$vuetify.breakpoint.xsOnly"
-
           :has-delete="$vuetify.breakpoint.smAndUp"
           @click:delete="buyRemoveAction()"
           :loading-delete="busy_delete"
@@ -229,26 +226,22 @@
           class="m-1 text-danger small"
         ></p>
       </v-col>
-
-
-
     </v-row>
-      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Service Form ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Service Form ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <service-order-view
-        :basket="getBasket(product.type)"
-        :product="product"
+      :basket="getBasket(product.type)"
+      :product="product"
     ></service-order-view>
 
-      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product Input Form ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product Input Form ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-      <basket-item-user-message-form
-        :basket="getBasket(product.type)"
-        :product="product"
-        :variant-id="basketItem.variant_id"
+    <basket-item-user-message-form
+      :basket="getBasket(product.type)"
+      :product="product"
+      :variant-id="basketItem.variant_id"
     ></basket-item-user-message-form>
-    </div>
-
+  </div>
 </template>
 
 <script>
@@ -269,10 +262,9 @@ export default {
     VariantItemViewMicro,
   },
   props: {
-    shop:{
+    shop: {
       required: true,
       type: Object,
-
     },
     basketItem: {
       required: true,
@@ -287,37 +279,32 @@ export default {
     };
   },
   computed: {
-
-
-    product(){
-      return this.basketItem.product
+    product() {
+      return this.basketItem.product;
     },
-    variant(){
-      return this.basketItem.variant
+    variant() {
+      return this.basketItem.variant;
     },
-    preferences(){
-      return this.basketItem.preferences
+    preferences() {
+      return this.basketItem.preferences;
     },
 
-
-    extra_pricing(){
-      return this.basketItem.extra_pricing
+    extra_pricing() {
+      return this.basketItem.extra_pricing;
     },
-    subscription_price(){
-      return this.basketItem.subscription_price
-    },
-
-    offer(){
-      return this.basketItem.offer
+    subscription_price() {
+      return this.basketItem.subscription_price;
     },
 
+    offer() {
+      return this.basketItem.offer;
+    },
 
     available_quantity() {
       // File:
       if (this.product.type === ProductType.FILE.code) return 1;
       // Subscription:
-      if (this.product.type === ProductType.SUBSCRIPTION.code)
-        return 999;
+      if (this.product.type === ProductType.SUBSCRIPTION.code) return 999;
 
       let N = this.product.quantity;
 
@@ -329,92 +316,76 @@ export default {
       return N;
     },
 
-
     current_item_price() {
-
       // ▀▀▀▀▀▀▀▀▀ 🟣 Marketplace 🟣 ▀▀▀▀▀▀▀▀▀
       if (this.basketItem.vendor_product) {
         return this.CalcPriceProductCurrentCurrency(
-            this.shop,
-            this.basketItem.vendor_product,
-            null,
-            this.preferences,
-            this.product.valuation,
-            this.subscription_price,
-            this.extra_pricing // 🌸 Add extra pricing 🌸
+          this.shop,
+          this.basketItem.vendor_product,
+          null,
+          this.preferences,
+          this.product.valuation,
+          this.subscription_price,
+          this.extra_pricing, // 🌸 Add extra pricing 🌸
         );
       }
 
       return this.CalcPriceProductCurrentCurrency(
-          this.shop,
-          this.product,
-          this.variant,
-          this.preferences,
-          this.product.valuation,
-          this.subscription_price,
-          this.extra_pricing // 🌸 Add extra pricing 🌸
+        this.shop,
+        this.product,
+        this.variant,
+        this.preferences,
+        this.product.valuation,
+        this.subscription_price,
+        this.extra_pricing, // 🌸 Add extra pricing 🌸
       );
     },
-
-
 
     price_error_percent() {
       if (this.is_booking) return 0; // Does not work for service!
       return (
-          (100 *
-              (this.current_item_price -
-                  this.getBasketItemPrice(this.shop, this.basketItem))) /
-          (0.01 + this.current_item_price)
+        (100 *
+          (this.current_item_price -
+            this.getBasketItemPrice(this.shop, this.basketItem))) /
+        (0.01 + this.current_item_price)
       );
     },
 
-
-
     subscription_period() {
-
       return (
-          this.subscription_price &&
-          this.$t(BillingPeriod[this.subscription_price.period]?.title)
+        this.subscription_price &&
+        this.$t(BillingPeriod[this.subscription_price.period]?.title)
       );
     },
 
     is_booking() {
       return (
-          this.product.type === ProductType.SERVICE.code &&
-          this.product.outputs &&
-          ServiceTypes[this.product.outputs.type]?.form.includes("booking")
+        this.product.type === ProductType.SERVICE.code &&
+        this.product.outputs &&
+        ServiceTypes[this.product.outputs.type]?.form.includes("booking")
       );
     },
-
 
     lead_time() {
       return this.leadProduct(this.product, this.variant);
     },
   },
   methods: {
-
-
-
-
-
-
-
-    spinnerSelectAction( count) {
+    spinnerSelectAction(count) {
       //console.log('spinnerSelectAction',count)
       if (count) {
-        this.buyAddAction( count);
+        this.buyAddAction(count);
       } else {
         this.buyRemoveAction();
       }
     },
 
-    buyAddAction( count) {
-
-      this.busy =true;
+    buyAddAction(count) {
+      this.busy = true;
       this.AddToBasket(
         this.shop_name,
-          this.product,
-          this.variant,
+        this.product,
+        this.variant,
         count,
         (error) => {
           this.busy = false;
@@ -422,36 +393,33 @@ export default {
         (basket) => {
           this.busy = false;
         },
-          this.preferences, // Should send! (Used for services)
-          this.basketItem.vendor_product, // 🟣 Marketplace 🟣
-          this.subscription_price // 🎗️ Subscription
+        this.preferences, // Should send! (Used for services)
+        this.basketItem.vendor_product, // 🟣 Marketplace 🟣
+        this.subscription_price, // 🎗️ Subscription
       );
     },
 
     buyRemoveAction() {
-
       this.busy_delete = true;
 
       let variant_id = this.variant ? this.basketItem.variant_id : null;
 
       this.RemoveFromBasket(
-          this.product_id,
+        this.basketItem.product_id,
         variant_id,
         (error) => {
           this.busy_delete = false;
         },
         (basket) => {
           this.busy_delete = false;
-        }
+        },
       );
     },
-
   },
 };
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -460,71 +428,66 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
+.s--shop-basket-item {
+  text-align: center;
+  font-weight: 400;
+  position: relative;
 
+  //  margin: 2px 0px 10px 0px;
+  padding: 6px 12px;
+  min-height: 88px;
 
-  .s--shop-basket-item {
-    text-align: center;
-    font-weight: 400;
-    position: relative;
-
-    //  margin: 2px 0px 10px 0px;
-    padding: 6px 12px;
-    min-height: 88px;
-
-    &:hover {
-      background: #fafafa;
-    }
-
-    .shop-item-title {
-      display: block;
-      margin: 0;
-      min-height: 2em;
-      cursor: pointer;
-      font-weight: 500;
-      color: currentColor;
-    }
-
-    .mini-info {
-      font-size: 0.9em;
-      color: #6c757d;
-      margin: 0;
-    }
-
-    .item-image {
-      cursor: pointer;
-    }
-
-    .shop-item-price {
-      font-size: 1.2rem;
-      font-weight: 500;
-    }
-
-    .select-order-count {
-      margin-top: 8px;
-      margin-left: auto;
-      margin-right: auto;
-      max-width: 160px;
-      font-size: 20px;
-    }
-
-    .options {
-      margin: 8px 6px;
-      font-size: 16px;
-    }
-
-    .discount-value {
-      color: #666;
-    }
-    .offer {
-      color: #00a89a;
-      font-size: 0.9rem;
-      font-weight: 500;
-      i {
-        vertical-align: baseline;
-      }
-    }
+  &:hover {
+    background: #fafafa;
   }
 
+  .shop-item-title {
+    display: block;
+    margin: 0;
+    min-height: 2em;
+    cursor: pointer;
+    font-weight: 500;
+    color: currentColor;
+  }
 
+  .mini-info {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin: 0;
+  }
 
+  .item-image {
+    cursor: pointer;
+  }
+
+  .shop-item-price {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  .select-order-count {
+    margin-top: 8px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 160px;
+    font-size: 20px;
+  }
+
+  .options {
+    margin: 8px 6px;
+    font-size: 16px;
+  }
+
+  .discount-value {
+    color: #666;
+  }
+  .offer {
+    color: #00a89a;
+    font-size: 0.9rem;
+    font-weight: 500;
+    i {
+      vertical-align: baseline;
+    }
+  }
+}
 </style>

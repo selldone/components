@@ -6,7 +6,9 @@ All components in this section start with the prefix `'S'` to easily identify th
 
 ## Introduction
 
-The **Storefront** components are tailored to provide functionalities and designs especially suited for storefronts. By following a consistent naming convention with the `'S'` prefix, developers can effortlessly distinguish and utilize them in the appropriate contexts.
+The **Storefront** components are tailored to provide functionalities and designs especially suited for storefronts. By
+following a consistent naming convention with the `'S'` prefix, developers can effortlessly distinguish and utilize them
+in the appropriate contexts.
 
 ## Usage
 

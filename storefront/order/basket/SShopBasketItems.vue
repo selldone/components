@@ -14,35 +14,28 @@
 
 <template>
   <div class="s--shop-basket-items border-between-vertical">
-
-
-    <s-shop-basket-item    v-for="(item, index) in items"
-            :key="index"
-    :shop="shop"
-                           :basket-item="item"
-
+    <s-shop-basket-item
+      v-for="(item, index) in items"
+      :key="index"
+      :shop="shop"
+      :basket-item="item"
     >
-
     </s-shop-basket-item>
-
   </div>
 </template>
 
 <script>
-
 import SShopBasketItem from "@/Components/storefront/order/basket/SShopBasketItem.vue";
 
 export default {
   name: "SShopBasketItems",
   components: {
     SShopBasketItem,
-
   },
   props: {
-    shop:{
+    shop: {
       required: true,
       type: Object,
-
     },
     items: {
       required: true,
@@ -51,19 +44,14 @@ export default {
   },
 
   data: function () {
-    return {
-
-    };
+    return {};
   },
   computed: {},
-  methods: {
-
-  },
+  methods: {},
 };
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -72,9 +60,6 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--shop-basket-items{
-
-
+.s--shop-basket-items {
 }
-
 </style>
