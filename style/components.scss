@@ -5013,3 +5013,23 @@ canvas.heatmap-canvas {
 .fw-semi-bold{
   font-weight: 500;
 }
+
+
+.disabled-view {
+  position: relative;
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+  transition: all 0.5s ease-in;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom right, transparent 48%, #000000 48%, #000000 52%, transparent 52%);
+    pointer-events: none; // Ensures the line doesn't interfere with any interactions
+  }
+}
