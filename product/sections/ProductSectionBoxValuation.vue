@@ -42,7 +42,7 @@
       </v-text-field>
 
       <!-- Number -->
-      <number-picker
+      <s-number-input
         v-else-if="item.type === 'number'"
         v-model="preferences_valuation[item.name]"
         :label="item.title"
@@ -54,7 +54,7 @@
         :min="0"
         class="mx-4"
       >
-      </number-picker>
+      </s-number-input>
 
       <!-- Select -->
       <v-select
@@ -200,12 +200,12 @@
 <script>
 import { FileHelper } from "../../../../core/helper/converters/FileHelper";
 import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
 import _ from "lodash-es";
 
 export default {
   name: "ProductSectionBoxValuation",
-  components: { NumberPicker, SSmartSwitch },
+  components: { SNumberInput, SSmartSwitch },
   props: {
     shop: {
       required: true,

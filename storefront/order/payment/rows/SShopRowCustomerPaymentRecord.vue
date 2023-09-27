@@ -41,11 +41,11 @@
           ></s-payment-billing-details>
         </div>
 
-        <single-country-map
+        <s-country-world-map
           class="min-width-200 flex-grow-1 m-1"
           v-if="payment.card && payment.card.country"
           :country="payment.card.country"
-        ></single-country-map>
+        ></s-country-world-map>
       </div>
     </td>
   </tr>
@@ -54,10 +54,10 @@
 <script>
 import PaymentCard from "@/Components/payment/widgets/PaymentCard.vue";
 import SPaymentBillingDetails from "@/Components/payment/widgets/SPaymentBillingDetails.vue";
-import SingleCountryMap from "@/Components/map/SingleCountryMap.vue";
+import SCountryWorldMap from "@/Components/map/SCountryWorldMap.vue";
 export default {
   name: "SShopRowCustomerPaymentRecord",
-  components: { SingleCountryMap, SPaymentBillingDetails, PaymentCard },
+  components: { SCountryWorldMap, SPaymentBillingDetails, PaymentCard },
   props: {
     payment: {
       require: true,

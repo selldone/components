@@ -148,7 +148,7 @@
 
         <!-- Image -->
 
-        <image-uploader
+        <s-image-uploader
           v-if="category && category.id"
           :label="$t('add_category.image_input')"
           :server="
@@ -164,7 +164,7 @@
           @new-path="handleProcessFile"
           auto-compact
         >
-        </image-uploader>
+        </s-image-uploader>
 
         <v-file-input
           v-else
@@ -377,7 +377,7 @@
 <script>
 import CategoriesManagementFilter from "@/Applications/Backoffice/components/category/CategoriesManagement_Filter.vue";
 import CircleImage from "@/Components/ui/image/CircleImage.vue";
-import ImageUploader from "@/Components/uploader/ImageUploader.vue";
+import SImageUploader from "@/Components/uploader/SImageUploader.vue";
 import CategorySelect from "./CategorySelect.vue";
 import SSmartCheckVerifyAction from "@/Components/smart/SSmartCheckVerifyAction.vue";
 import AugmentForm from "../augment/AugmentForm.vue";
@@ -390,7 +390,7 @@ export default {
     AugmentForm,
     SSmartCheckVerifyAction,
     CategorySelect,
-    ImageUploader,
+   SImageUploader,
     CircleImage,
     CategoriesManagementFilter,
   },

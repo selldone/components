@@ -71,7 +71,7 @@
 
         <v-col cols="12" md="6" class="text-center">
           <v-slide-y-reverse-transition hide-on-leave>
-            <number-picker
+            <s-number-input
               v-if="exist_in_basket"
               v-model="count"
               :min="1"
@@ -79,7 +79,7 @@
               show-buttons
               rounded
               filled
-            ></number-picker>
+            ></s-number-input>
 
             <v-btn
               v-else
@@ -125,11 +125,11 @@
 
 <script>
 import VariantSelectorMenu from "../../../Applications/Backoffice/pages/product/widgets/variants/VariantSelectorMenu.vue";
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
 
 export default {
   name: "SShopHyperProductView",
-  components: {  NumberPicker, VariantSelectorMenu },
+  components: {  SNumberInput, VariantSelectorMenu },
   props: {
     shop: {
       require: true,

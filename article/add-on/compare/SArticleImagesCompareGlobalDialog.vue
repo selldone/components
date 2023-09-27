@@ -67,7 +67,7 @@
 
               <v-row dense>
                 <v-col cols="12" md="6">
-                  <image-uploader
+                  <s-image-uploader
                     contenteditable="false"
                     :server="uploadUrl"
                     label="Select image A"
@@ -76,7 +76,7 @@
                   />
                 </v-col>
                 <v-col cols="12" md="6">
-                  <image-uploader
+                  <s-image-uploader
                     contenteditable="false"
                     :server="uploadUrl"
                     label="Select image B"
@@ -138,12 +138,12 @@
 </template>
 
 <script>
-import ImageUploader from "@/Components/uploader/ImageUploader.vue";
+import SImageUploader from "@/Components/uploader/SImageUploader.vue";
 import { EventName } from "../../../../../core/events/EventBus";
 
 export default {
   name: "SArticleImagesCompareGlobalDialog",
-  components: { ImageUploader },
+  components: {SImageUploader },
 
   props: {
     masterId: {

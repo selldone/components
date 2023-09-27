@@ -113,7 +113,7 @@
       "
     >
       <!-- ―――――――――――――― 🞇 Price input: Default / Custom ―――――――――――――― -->
-      <number-picker
+      <s-number-input
         v-if="default_mode || custom_mode"
         v-model="selected_order_count"
         class="extendable select-order-count"
@@ -148,12 +148,12 @@
             <span class="ms-1 small">{{ unit }}</span>
           </span>
         </template>
-      </number-picker>
+      </s-number-input>
 
       <!-- ―――――――――――――― 🞇 Price input: Area / Volume ―――――――――――――― -->
 
       <div v-else-if="area_mode || volume_mode" class="d-flex align-center">
-        <number-picker
+        <s-number-input
           v-model="dim_1"
           class="extendable select-order-count"
           :placeholder="$t('buy_button.quantity')"
@@ -168,8 +168,8 @@
           clearable
           hot-update-mode
         >
-        </number-picker>
-        <number-picker
+        </s-number-input>
+        <s-number-input
           v-model="dim_2"
           class="extendable select-order-count"
           :placeholder="$t('buy_button.quantity')"
@@ -184,9 +184,9 @@
           clearable
           hot-update-mode
         >
-        </number-picker>
+        </s-number-input>
 
-        <number-picker
+        <s-number-input
           v-if="volume_mode"
           v-model="dim_3"
           class="extendable select-order-count"
@@ -202,7 +202,7 @@
           clearable
           hot-update-mode
         >
-        </number-picker>
+        </s-number-input>
       </div>
     </template>
 
@@ -241,7 +241,7 @@ import Loading from "@/Components/ui/loading/loading.vue";
 import GtagEcommerce from "@/Applications/Storefront/plugins/gtag/GtagEcommerce";
 import { ShopOptionsHelper } from "../../../../core/helper/shop/ShopOptionsHelper";
 import { BusinessModel } from "../../../../core/enums/shop/BusinessModel";
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
 import SShopSubscribeButton from "./SShopSubscribeButton.vue";
 import { SubscriptionMode } from "../../../../core/enums/subscription/SubscriptionMode";
 import { BasketHelper } from "../../../../core/helper/shop/BasketHelper";
@@ -250,7 +250,7 @@ import _ from "lodash-es";
 
 export default {
   name: "SShopBuyButton",
-  components: { SShopSubscribeButton, NumberPicker, Loading },
+  components: { SShopSubscribeButton, SNumberInput, Loading },
   props: {
     product: {
       required: true,

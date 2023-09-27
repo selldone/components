@@ -59,7 +59,7 @@
 
               <v-row dense>
                 <v-col cols="12" md="6">
-                  <image-uploader
+                  <s-image-uploader
                     contenteditable="false"
                     :server="uploadUrl"
                     label="Select image"
@@ -131,12 +131,12 @@
 </template>
 
 <script>
-import ImageUploader from "@/Components/uploader/ImageUploader.vue";
+import SImageUploader from "@/Components/uploader/SImageUploader.vue";
 import DraggableImagesList from "@/Components/ui/image/draggableImagesList.vue";
 import { EventName } from "../../../../../core/events/EventBus";
 export default {
   name: "SArticleFlipBookGlobalDialog",
-  components: { DraggableImagesList, ImageUploader },
+  components: { DraggableImagesList,SImageUploader },
 
   props: {
     masterId: {

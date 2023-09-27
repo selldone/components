@@ -20,7 +20,7 @@
       transition="dialog-bottom-transition"
       content-class="bg-map"
   >
-    <map-view
+    <s-map-view
         v-if="map_load"
         v-model="map_location"
         :color="SaminColorDark"

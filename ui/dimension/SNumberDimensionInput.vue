@@ -23,7 +23,7 @@
       <div style="min-height: 38px"></div>
     </template>
   </dimension-selector>
-  <number-picker
+  <s-number-input
     v-else
     v-model="number_val"
     :step="1"
@@ -73,15 +73,15 @@
       >
       </dimension-selector>
     </template>
-  </number-picker>
+  </s-number-input>
 </template>
 
 <script>
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
 import DimensionSelector from "./DimensionSelector.vue";
 export default {
-  name: "NumberPickerDimension",
-  components: { DimensionSelector, NumberPicker },
+  name: "SNumberDimensionInput",
+  components: { DimensionSelector, SNumberInput },
   props: {
     value: {},
 

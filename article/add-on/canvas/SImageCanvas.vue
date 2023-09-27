@@ -108,7 +108,7 @@
     ></canvas>
 
     <div v-if="show_upload && editable" class="setting-overlay">
-      <image-uploader
+      <s-image-uploader
         class="center-absolute m-3 w-100"
         contenteditable="false"
         :server="uploadUrl"
@@ -122,10 +122,10 @@
 </template>
 
 <script>
-import ImageUploader from "@/Components/uploader/ImageUploader.vue";
+import SImageUploader from "@/Components/uploader/SImageUploader.vue";
 export default {
   name: "SImageCanvas",
-  components: { ImageUploader },
+  components: {SImageUploader },
   props: {
     ratio: {
       default: 1.6,

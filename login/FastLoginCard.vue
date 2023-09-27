@@ -147,14 +147,9 @@
 
         <v-otp-input
           v-model="verification_code"
-          separator="-"
-          :num-inputs="6"
-          :should-auto-focus="true"
-          :is-input-num="true"
-          input-type="tel"
-          input-classes="otp-input"
-          @on-change="(val) => (verification_code = val)"
-          @on-complete="(val) => (verification_code = val)"
+          :length="6"
+          autofocus
+          @finish="(val) => (verification_code = val)"
           class="max-width-field mx-auto text-center mb-12"
         />
 
@@ -431,7 +426,6 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { SoundHelper } from "../../../core/helper/sound/SoundHelper";
-import VOtpInput from "@/Components/ui/input/otp/VOtpInput.vue";
 import CountDown from "@/Components/ui/count-down/CountDown.vue";
 import SetupService from "../../../core/server/SetupService";
 import {
@@ -442,7 +436,7 @@ import {XapiAuth} from "../../../SDKs/storefront/auth/XapiAuth";
 import ShopEmailLogin from "@/Components/storefront/login/widgets/ShopEmailLogin.vue";
 
 @Component({
-  components: { ShopEmailLogin, CountDown, VOtpInput },
+  components: { ShopEmailLogin, CountDown },
 })
 export default class FastLoginCard extends Vue {
   @Prop({ default: false, type: Boolean }) show!: boolean;

@@ -55,7 +55,7 @@
         <v-layout row wrap align-center justify-center>
           <v-flex v-if="step === 1" xs12 md6>
             <p class="action-title text-start m-2">
-              <number-picker
+              <s-number-input
                 :label="$t('return_request.count_input')"
                 v-model="count"
                 class="max-width-field mx-auto "
@@ -217,13 +217,13 @@
 
 <script>
 import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
 import { ReturnOrderReason } from "../../../../../core/enums/basket/ReturnOrderReason";
 
 export default {
   name: "SShopBasketItemReturnForm",
   components: {
-    NumberPicker,
+    SNumberInput,
     VariantItemViewMicro
   },
 

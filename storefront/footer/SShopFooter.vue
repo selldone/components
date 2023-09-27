@@ -26,7 +26,7 @@
       :class="{ 'for-native': isNative }"
     >
       <!-- MAP -->
-      <map-view
+      <s-map-view
         class="map-view-panel"
         :radius="18"
         :zoom="16"
@@ -35,7 +35,7 @@
         :pin-image="require('@/Components/assets/icons/bags.svg')"
         :delay-load="1000"
       >
-      </map-view>
+      </s-map-view>
     </v-card>
 
     <v-container
@@ -404,7 +404,6 @@ export default {
 
     SShopSocialButtons,
     SShopCookiePreferences,
-    //  MapView,
     SCurrencySelector,
   },
   props: {

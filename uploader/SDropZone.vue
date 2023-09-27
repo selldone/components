@@ -62,7 +62,7 @@
 
 <script>
 export default {
-  name: "DropZone",
+  name: "SDropZone",
   delimiters: ["${", "}"], // Avoid Twig conflicts
 
   props: {
@@ -102,40 +102,7 @@ export default {
       this.$emit("update:uploadedFiles", []);
       this.$emit("update:failedFiles", []);
     },
-    /*  onChange() {
-      const accepted = [];
-      this.filelist.forEach((file) => {
-        if (
-          this.extension &&
-          !file.name.toLowerCase().endsWith(this.extension)
-        ) {
-          this.showErrorAlert(
-            null,
-            `Acceptable file format is ${this.extension}!`
-          );
-          return;
-        }
-        if (file.size > this.maxFileSize) {
-          this.showErrorAlert(
-            null,
-            `Maximum file size limited to ${Math.round(
-              maxFileSize / (1024 * 1024)
-            )} MB!`
-          );
-          return;
-        }
-        accepted.push(file);
-      });
 
-
-      if (this.multiple) this.$emit("select:files", {files:this.filelist,local_folder:this.local_folder});
-      else
-        this.$emit(
-          "select:file",
-          this.filelist.length ? this.filelist[0] : null
-        );
-    },
-*/
     dragover(event) {
       event.preventDefault();
       // Add some visual fluff to show the user can drop its files

@@ -2244,19 +2244,6 @@ Image loading (scale down)
 }
 
 
-/**********************************************
-Drop Zone
- */
-
-.drop-zone {
-  transition: all 0.5s;
-
-  &.on-drop {
-    filter: blur(1rem);
-  }
-
-
-}
 
 // Main content container in shop-admin pages (shops, shop admin, account page,...)
 .admin-shop-container, .admin-user-container, .admin-account-container,.admin-administrators-container {

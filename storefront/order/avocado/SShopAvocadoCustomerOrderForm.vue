@@ -64,14 +64,14 @@
           prepend-icon=""
         />
 
-        <number-picker
+        <s-number-input
           v-model="count"
           :label="$t('global.commons.count')"
           :min="1"
           show-buttons
           class="mt-5"
         >
-        </number-picker>
+        </s-number-input>
 
         <div class="widget-buttons">
           <v-btn
@@ -176,7 +176,7 @@
 
 <script>
 import SShopAvocadoCustomerOrderItems from "./SShopAvocadoCustomerOrderItems.vue";
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
 import SShopCustomerReceiverInfoWidget from "../delivery/SShopCustomerReceiverInfoWidget.vue";
 import CurrencyList from "@/Components/ui/currency/CurrencyList.vue";
 export default {
@@ -184,7 +184,7 @@ export default {
   components: {
     CurrencyList,
     SShopCustomerReceiverInfoWidget,
-    NumberPicker,
+    SNumberInput,
     SShopAvocadoCustomerOrderItems,
   },
   props: {

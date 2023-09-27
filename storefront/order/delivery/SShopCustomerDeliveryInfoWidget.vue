@@ -224,7 +224,7 @@
       <!-- ========================================= MAP ========================================= -->
 
       <v-col cols="12" sm="12" md="4" class="">
-        <map-view
+        <s-map-view
             v-if="receiver_info.location"
           v-model="receiver_info"
           :zoom="15"
@@ -305,7 +305,7 @@
       transition="dialog-bottom-transition"
     >
       <v-sheet color="#fff" width="100%" height="100%">
-        <map-view
+        <s-map-view
           v-if="map_dialog"
           v-model="receiver_info_edit"
           :color="SaminColorDark"
@@ -333,12 +333,10 @@
 
 <script>
 import { PhysicalOrderStates } from "../../../../../core/enums/basket/PhysicalOrderStates";
-//import MapView from "../../../../../../components/Map/MapView";
 import BasketBillingWidget from "../../../../Applications/Backoffice/pages/shop/widgets/order-billing/BasketBillingWidget.vue";
 import { ProductType } from "../../../../../core/enums/product/ProductType";
 import BasketAutoCompleteCountDown from "../../../../Applications/Backoffice/components/order/BasketAutoCompleteCountDown.vue";
 import DeliveryTimelineTransportationOrder from "@/Applications/Backoffice/pages/shop/pages/logistic/widgets/DeliveryTimelineTransportationOrder.vue";
-import {LocalStorages} from "../../../../../core/helper/local-storage/LocalStorages";
 import {ShopTransportations} from "../../../../../core/enums/logistic/ShopTransportations";
 import GeoNavigationButton
   from "@/Applications/Backoffice/pages/shop/pages/logistic/widgets/GeoNavigationButton.vue";

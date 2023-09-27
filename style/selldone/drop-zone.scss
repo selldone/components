@@ -92,3 +92,16 @@
 
 
 
+/**********************************************
+Drop Zone
+ */
+
+.s-drop-zone {
+  transition: all 0.5s;
+
+  &.on-drop {
+    filter: blur(1rem);
+  }
+
+
+}

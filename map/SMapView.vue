@@ -164,7 +164,9 @@
            />-->
         <img
           width="64px"
-          :src="require('@/Components/assets/icons/location-center-icon-blue.svg')"
+          :src="
+            require('@/Components/assets/icons/location-center-icon-blue.svg')
+          "
           :class="{ jump: !last_selected_position }"
         />
         <span class="label-icon text-nowrap">
@@ -263,7 +265,7 @@
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Has Map Mode > Address input (Auto complete) ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-            <address-input-auto
+            <s-address-input
               v-model="address"
               :is-focus.sync="isFocus"
               @select:address="(it) => onSelectAddress(it)"
@@ -271,7 +273,7 @@
               :top="!isMobile"
               :bottom="isMobile"
               auto-disable-auto-complete
-            ></address-input-auto>
+            ></s-address-input>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Actions ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -318,7 +320,7 @@
                 />
                 <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ No Map Mode > Address input (Auto complete) ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-                <address-input-auto
+                <s-address-input
                   v-else
                   v-model="address"
                   :is-focus.sync="isFocus"
@@ -327,7 +329,7 @@
                   bottom
                   clearable
                   auto-disable-auto-complete
-                ></address-input-auto>
+                ></s-address-input>
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Building No ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -385,7 +387,7 @@
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ State ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-              <v-col cols="6" :sm="6" >
+              <v-col cols="6" :sm="6">
                 <component
                   :is="states && states.length ? 'v-combobox' : 'v-text-field'"
                   v-model="state"
@@ -394,9 +396,18 @@
                   :dense="isMobile"
                   :items="states ? states : []"
                 >
-                    <template v-slot:prepend-inner v-if="state_code">
-                        <b style="background-color: #000;color: #fff;padding: 4px;border-radius: 4px;font-size: 12px">{{state_code}}</b>
-                    </template>
+                  <template v-slot:prepend-inner v-if="state_code">
+                    <b
+                      style="
+                        background-color: #000;
+                        color: #fff;
+                        padding: 4px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                      "
+                      >{{ state_code }}</b
+                    >
+                  </template>
                 </component>
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ City ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -408,7 +419,6 @@
                   :readonly="viewOnly"
                   :dense="isMobile"
                 >
-
                 </v-text-field>
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Post Code ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -572,11 +582,11 @@ import CountryList from "@/Components/ui/country/country-list/CountryList.vue";
 //―――――――――――――――――――――― Mapbox ――――――――――――――――――――
 import Mapbox from "./MapBox";
 import SetupService from "../../../core/server/SetupService";
-import AddressInputAuto from "@/Components/ui/input/address/AddressInputAuto.vue";
+import SAddressInput from "@/Components/ui/input/address/SAddressInput.vue";
 
 export default {
-  name: "MapView",
-  components: { AddressInputAuto, CountryList },
+  name: "SMapView",
+  components: { SAddressInput, CountryList },
   props: {
     value: {
       type: Object,
@@ -906,10 +916,10 @@ export default {
       if (!this.selected_country_detail?.states?.length) return null;
 
       const found = this.selected_country_detail?.states?.find(
-        (i) => i.name === this.state
+        (i) => i.name === this.state,
       );
       if (found) {
-       // console.log("State Code", found.code);
+        // console.log("State Code", found.code);
         return found.code;
       }
       return null;
@@ -1039,14 +1049,16 @@ export default {
             if (!this.postal) this.postal = data.postal;
             this.city = data.city;
             this.state = data.state;
-            if(data.state_code && this.selected_country_detail?.states?.length){
-                // Force to select state by state code: Maybe miss match state name with local
+            if (
+              data.state_code &&
+              this.selected_country_detail?.states?.length
+            ) {
+              // Force to select state by state code: Maybe miss match state name with local
 
-                const found = this.selected_country_detail.states.find(
-                    (i) => i.code === data.state_code
-                );
-                if(found)  this.state=found.name
-
+              const found = this.selected_country_detail.states.find(
+                (i) => i.code === data.state_code,
+              );
+              if (found) this.state = found.name;
             }
 
             this.center_clicked = true; // TODO: Base on little feedbacks I disappear center pointer after first click!
@@ -1280,7 +1292,7 @@ export default {
           if (!response.data.error) {
             this.showSuccessAlert(
               null,
-              this.$t("global.map_view.notifications.save_in_list")
+              this.$t("global.map_view.notifications.save_in_list"),
             );
             this.AddOrUpdateItemByID(this.address_book, response.data.address);
             this.selected_address_from_list = null;
@@ -1340,7 +1352,7 @@ export default {
             .catch((error) => {
               this.showLaravelError(error);
             });
-        }
+        },
       );
     },
 
@@ -1351,7 +1363,7 @@ export default {
           window.ADDRESS_API.PUT_ADDRESS(
             this.selectedAddressId
               ? this.selectedAddressId
-              : this.selected_address_from_list.id
+              : this.selected_address_from_list.id,
           ),
           {
             title: this.selectedAddressTitle
@@ -1370,7 +1382,7 @@ export default {
             phone: this.phone_number,
             message: this.details_message,
             postal: this.postal,
-          }
+          },
         )
         .then((response) => {
           if (!response.data.error) {
@@ -1379,7 +1391,7 @@ export default {
               null,
               this.$t("global.map_view.notifications.edit_success", {
                 title: response.data.address.title,
-              })
+              }),
             );
           } else {
             this.showErrorAlert(null, response.data.error_msg);

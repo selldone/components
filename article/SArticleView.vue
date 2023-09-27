@@ -680,7 +680,7 @@
                 @change="state = 'changed'"
               />
 
-              <number-picker
+              <s-number-input
                 v-if="articleType === ArticleTypes.SaminHelp.code && menu"
                 messages="Order"
                 v-model="menu.order"
@@ -690,7 +690,7 @@
                 class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white z1"
                 @change="state = 'changed'"
                 :hide-details="false"
-              ></number-picker>
+              ></s-number-input>
 
               <div
                 v-if="
@@ -1282,8 +1282,8 @@ import { PermissionLevels } from "@/Applications/Selldone/enums/permission/Permi
 import { HelpCategories } from "@/Applications/Selldone/enums/help/HelpCategories";
 import DateTimePickerGlobal from "../ui/calendar/dateTimePickerGlobal.vue";
 import SArticlesTimeline from "@/Components/article/timeline/SArticlesTimeline.vue";
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
-import SLanguageInput from "@/Components/ui/language/SLanguageInput.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
+import SLanguageInput from "@/Components/ui/input/language/SLanguageInput.vue";
 import FaqSection from "./widgets/FaqSection.vue";
 import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./SArticleTagsEditor.vue";
@@ -1311,7 +1311,7 @@ export default {
     SArticleStructuredData,
     FaqSection,
     SLanguageInput,
-    NumberPicker,
+    SNumberInput,
     SArticlesTimeline,
     DateTimePickerGlobal,
     SArticleSeoEditor,

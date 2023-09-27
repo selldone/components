@@ -149,7 +149,7 @@
               class="mb-5"
             ></s-subscription-price-select>
 
-            <number-picker
+            <s-number-input
               v-if="has_count"
               v-model="count"
               class="extendable strong-field"
@@ -162,7 +162,7 @@
               clearable
               :min="1"
             >
-            </number-picker>
+            </s-number-input>
 
             <div class="widget-buttons">
               <v-btn
@@ -209,12 +209,12 @@ import SShopCustomerReceiverInfoWidget from "@/Components/storefront/order/deliv
 import SSubscriptionPriceSelect from "@/Components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
 import BillingPeriod from "../../../../core/enums/subscription/BillingPeriod";
 import SShopBillingAddressForm from "@/Components/storefront/order/billing/SShopBillingAddressForm.vue";
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
 import { RibbonHelper } from "../../../../core/helper/ribbon/RibbonHelper";
 export default {
   name: "SShopSubscribeButton",
   components: {
-    NumberPicker,
+    SNumberInput,
     SShopBillingAddressForm,
     SSubscriptionPriceSelect,
     SShopCustomerReceiverInfoWidget,

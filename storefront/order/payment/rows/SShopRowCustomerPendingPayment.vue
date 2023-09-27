@@ -78,7 +78,7 @@
       </div>
 
       <!-- ------------------------ Payment receipt in direct payment ----------------------------- -->
-      <image-uploader
+      <s-image-uploader
         v-if="transaction.dir && transaction.status !== 'Succeeded'"
         :label="
           payment_receipt
@@ -106,7 +106,7 @@
           }
         "
         auto-compact
-      ></image-uploader>
+      ></s-image-uploader>
       <v-img
         v-else-if="transaction.dir && payment_receipt"
         :src="getShopImagePath(payment_receipt)"
@@ -203,12 +203,12 @@
 
 <script>
 import { TransactionStatus } from "../../../../../../core/enums/payment/TransactionStatus";
-import ImageUploader from "../../../../uploader/ImageUploader.vue";
+import SImageUploader from "../../../../uploader/SImageUploader.vue";
 import SValueDashed from "@/Components/ui/text/SValueDashed.vue";
 
 export default {
   name: "SShopRowCustomerPendingPayment",
-  components: { SValueDashed, ImageUploader },
+  components: { SValueDashed,SImageUploader },
   props: {
     transaction: {
       require: true,

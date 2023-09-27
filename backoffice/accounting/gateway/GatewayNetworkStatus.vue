@@ -49,12 +49,12 @@
       </v-sparkline>
     </v-col>
 
-    <v-col v-if="network.error" cols="12">
+    <v-col v-if="network.error" cols="12" :title="network.error" class="text-start">
       <small
         ><v-icon color="red" small>error</v-icon>
         {{ $t("global.commons.error") }}</small
       >
-      {{ network.error }}
+      {{ network.error?.limitWords(12) }}
     </v-col>
   </v-row>
 </template>

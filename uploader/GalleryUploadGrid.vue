@@ -90,7 +90,7 @@
       </div>
 
       <div class="p-2 item-grid white" :style="style_value">
-        <image-uploader
+        <s-image-uploader
           class="marginal-center"
           label="Upload images"
           :server="uploadPath"
@@ -101,18 +101,18 @@
           dense
           disable-past
         >
-        </image-uploader>
+        </s-image-uploader>
       </div>
     </muuri-grid>
   </div>
 </template>
 
 <script>
-import ImageUploader from "./ImageUploader.vue";
+import SImageUploader from "./SImageUploader.vue";
 import MuuriGrid from "@/Components/ui/grid/MurriGrid.vue";
 export default {
   name: "GalleryUploadGrid",
-  components: { MuuriGrid, ImageUploader },
+  components: { MuuriGrid,SImageUploader },
   props: {
     uploadPath: {
       required: true,

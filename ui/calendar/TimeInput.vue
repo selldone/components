@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-center">
-    <number-picker
+    <s-number-input
       v-model="h"
       solo
       hide-details
@@ -13,9 +13,9 @@
       class="intim"
       :title="$t('global.commons.hour')"
     >
-    </number-picker>
+    </s-number-input>
     :
-    <number-picker
+    <s-number-input
       v-model="m"
       solo
       hide-details
@@ -28,7 +28,7 @@
       class="intim"
       :title="$t('global.commons.minute')"
     >
-    </number-picker>
+    </s-number-input>
 
     <v-slide-y-transition hide-on-leave>
       <img
@@ -44,11 +44,11 @@
 </template>
 
 <script>
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
 import { TimeSpans } from "../../../../core/enums/logistic/TimeSpans";
 export default {
   name: "TimeInput",
-  components: { NumberPicker },
+  components: { SNumberInput },
   props: {
     value: {},
   },

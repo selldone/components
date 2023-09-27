@@ -54,7 +54,7 @@
 
 <script>
 export default {
-  name: "FileUploader",
+  name: "SFileUploader",
   props: {
     label: {
       required: false,

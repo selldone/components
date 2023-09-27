@@ -13,7 +13,12 @@
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action>
-        <v-btn :href="`https://www.youtube.com/watch?v=${videoId}`" target="_blank" title="View video on youtube." icon>
+        <v-btn
+          :href="`https://www.youtube.com/watch?v=${videoId}`"
+          target="_blank"
+          title="View video on youtube."
+          icon
+        >
           <v-icon small>open_in_new</v-icon>
         </v-btn>
       </v-list-item-action>
@@ -23,7 +28,7 @@
 
 <script>
 export default {
-  name: "YoutubeVideoPreview",
+  name: "SYoutubeVideoPreview",
   components: {},
   props: {
     videoId: {
@@ -55,7 +60,7 @@ export default {
 
   methods: {
     fetch() {
-         this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
 
       if (!this.is_valid) return;
 

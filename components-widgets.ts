@@ -88,9 +88,9 @@ Vue.component(ProgressLoading.name, ProgressLoading);
 
 //---------------- Map --------------
 Vue.component(
-  "map-view",
+  "s-map-view",
   // A dynamic import returns a Promise.
-  () => import(/* webpackChunkName: "plug-map" */ "./map/MapView.vue")
+  () => import(/* webpackChunkName: "plug-map" */ "./map/SMapView.vue")
 );
 
 //---------------- Lottie Animation View for Vue --------------

@@ -16,7 +16,7 @@
   <v-text-field
     ref="field"
     v-model="model"
-    :suffix="suffix?suffix:(currency_obj?$t(currency_obj.name):undefined)"
+    :suffix="suffix ? suffix : currency_obj ? $t(currency_obj.name) : undefined"
     :error-messages="errorMessages"
     v-bind="$attrs"
     @focus="onFocus"
@@ -44,8 +44,6 @@
   >
     <template v-slot:append>
       <slot name="append"></slot>
-
-
     </template>
   </v-text-field>
 </template>
@@ -65,87 +63,84 @@ function tryParseFloat(str, defaultValue) {
   return retValue;
 }
 export default {
+  name: "SPriceInput",
   props: {
     value: null,
-    messages:{},
+    messages: {},
     errorMessages: null,
     allowNegative: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    label:{},
-    hint:{},
+    label: {},
+    hint: {},
     suffix: {
       type: String,
-      default: ""
+      default: "",
     },
     thousandsSeparator: {
       type: String,
-      default: ","
+      default: ",",
     },
     decimalSeparator: {
       type: String,
-      default: "."
+      default: ".",
     },
     languageCode: {
       type: String,
-      default: "en-US"
+      default: "en-US",
     },
 
     decimal: {
       type: Number,
-      default: 6
+      default: 6,
     },
-
-
 
     outlined: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     rounded: {
       type: Boolean,
-      default: false
+      default: false,
     },
     flat: {
       type: Boolean,
-      default: false
+      default: false,
     },
     dense: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     clearable: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     filled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     solo: {
       type: Boolean,
-      default: false
+      default: false,
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    rules:{},
-    prependIcon:{},
-    prependInnerIcon:{},
+    rules: {},
+    prependIcon: {},
+    prependInnerIcon: {},
 
-    backgroundColor:{},
+    backgroundColor: {},
     hideDetails: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    currency: {
-    },
-
+    currency: {},
   },
   data() {
     return {
@@ -153,15 +148,15 @@ export default {
       model: this.value,
       isMasked: true,
       thousandsSeparatorRegex: new RegExp(`\\${this.thousandsSeparator}`, "g"),
-      decimalSeparatorRegex: new RegExp(`\\${this.decimalSeparator}`, "g")
+      decimalSeparatorRegex: new RegExp(`\\${this.decimalSeparator}`, "g"),
     };
   },
 
-  computed:{
-    currency_obj(){
-      if(!this.currency)return null;
-      return this.GetCurrency(this.currency)
-    }
+  computed: {
+    currency_obj() {
+      if (!this.currency) return null;
+      return this.GetCurrency(this.currency);
+    },
   },
   watch: {
     numberValue(v) {
@@ -172,7 +167,7 @@ export default {
       if (!this.$refs.field.isFocused) {
         this.format();
       }
-    }
+    },
   },
   created() {
     this.format();
@@ -204,10 +199,14 @@ export default {
       else parsed = result;
       if (!this.allowNegative && result < 0) parsed = 0;
 
-      this.numberValue = parseFloat(parsed.toFixed(this.currency_obj?this.currency_obj.floats:this.decimal));
+      this.numberValue = parseFloat(
+        parsed.toFixed(
+          this.currency_obj ? this.currency_obj.floats : this.decimal,
+        ),
+      );
     },
     updateModel() {
-      if (this.numberValue === null || this.numberValue===undefined) return;
+      if (this.numberValue === null || this.numberValue === undefined) return;
       let v = this.numberValue.toString();
       v = v.replace(this.thousandsSeparatorRegex, this.decimalSeparator);
       this.model = v === "0" ? "" : v;
@@ -215,10 +214,12 @@ export default {
     format() {
       if (this.numberValue === null) return;
       let v = this.numberValue;
-      if(!v)v='0';
+      if (!v) v = "0";
       v = v.toLocaleString(this.languageCode, {
         style: "decimal",
-        maximumFractionDigits: this.currency_obj?this.currency_obj.floats:this.decimal
+        maximumFractionDigits: this.currency_obj
+          ? this.currency_obj.floats
+          : this.decimal,
       });
 
       if (
@@ -228,9 +229,9 @@ export default {
         v += "0";
       this.model = v;
 
-     // console.log(v);
-    }
-  }
+      // console.log(v);
+    },
+  },
 };
 </script>
 

@@ -60,7 +60,7 @@
               ></v-text-field>
             </td>
             <td>
-              <image-uploader
+              <s-image-uploader
                 v-if="item.type === 'image'"
                 dense
                 auto-compact
@@ -77,7 +77,7 @@
                 :image="item.value ? getShopImagePath(item.value) : undefined"
                 max-file-size="2MB"
                 min-height="110px"
-              ></image-uploader>
+              ></s-image-uploader>
               <v-text-field
                 v-else
                 v-model="item.value"
@@ -203,11 +203,11 @@
 </template>
 
 <script>
-import ImageUploader from "@/Components/uploader/ImageUploader.vue";
+import SImageUploader from "@/Components/uploader/SImageUploader.vue";
 
 export default {
   name: "AugmentForm",
-  components: { ImageUploader },
+  components: {SImageUploader },
   props: {
     value: {},
     loading:{type:Boolean}

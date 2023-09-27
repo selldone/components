@@ -71,7 +71,13 @@
     :disabled="disabled"
   >
     <template v-slot:append>
-      <v-btn v-if="lock" class="me-2" icon @click="is_locked=!is_locked" :title="lock?'Click to edit value.':'Click to lock input'">
+      <v-btn
+        v-if="lock"
+        class="me-2"
+        icon
+        @click="is_locked = !is_locked"
+        :title="lock ? 'Click to edit value.' : 'Click to lock input'"
+      >
         <v-icon>{{ is_locked ? "lock" : "lock_open" }}</v-icon>
       </v-btn>
 
@@ -88,7 +94,13 @@
       >
         {{ alternativeButtonText }}
       </v-btn>
-      <v-btn v-if="showButtons" :style="btn_style" icon @click.stop="mpminus()"   :disabled="is_locked">
+      <v-btn
+        v-if="showButtons"
+        :style="btn_style"
+        icon
+        @click.stop="mpminus()"
+        :disabled="is_locked"
+      >
         <v-icon small> fas fa-minus </v-icon>
       </v-btn>
       <v-icon v-if="appendIcon">{{ appendIcon }}</v-icon>
@@ -129,7 +141,7 @@
 import NumberHelper from "../../../../../core/helper/number/NumberHelper";
 
 export default {
-  name: "NumberPicker",
+  name: "SNumberInput",
 
   props: {
     value: {
@@ -334,7 +346,7 @@ export default {
       if (this.max === undefined || this.newValue < this.max) {
         this.newValue = NumberHelper.toEnglishFloat(
           NumberHelper.toEnglishFloat(this.newValue, this.decimal) + this.step,
-          this.decimal
+          this.decimal,
         );
         this.$emit("input", this.newValue);
         this.$emit("change", this.newValue);
@@ -344,7 +356,7 @@ export default {
       if (this.newValue > this.min) {
         this.newValue = NumberHelper.toEnglishFloat(
           NumberHelper.toEnglishFloat(this.newValue, this.decimal) - this.step,
-          this.decimal
+          this.decimal,
         );
         this.$emit("input", this.newValue);
         this.$emit("change", this.newValue);

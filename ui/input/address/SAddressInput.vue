@@ -82,7 +82,7 @@
 import _ from "lodash-es";
 
 export default {
-  name: "AddressInputAuto",
+  name: "SAddressInput",
 
   props: {
     value: {},

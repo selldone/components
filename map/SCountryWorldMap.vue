@@ -24,13 +24,13 @@
 <script>
 import WorldMap from "@/Applications/Backoffice/components/map/WorldMap.vue";
 export default {
-  name: "SingleCountryMap",
+  name: "SCountryWorldMap",
   components: { WorldMap },
   props: {
     country: {
       require: true,
-      type: String
-    }
+      type: String,
+    },
   },
   computed: {
     mapData() {
@@ -38,8 +38,8 @@ export default {
       let out = { X: 0 };
       out[this.country] = 100;
       return out;
-    }
-  }
+    },
+  },
 };
 </script>
 

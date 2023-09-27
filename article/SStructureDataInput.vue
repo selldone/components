@@ -94,7 +94,7 @@
       prepend-icon="link"
       rounded
     ></v-text-field>
-    <number-picker
+    <s-number-input
       v-else-if="type === 'number'"
       class="max-width-field"
       :label="name"
@@ -103,8 +103,8 @@
       :value="value"
       @input="(val) => $emit('input', val)"
       rounded
-    ></number-picker>
-    <v-currency-field
+    ></s-number-input>
+    <s-price-input
       v-else-if="type === 'price'"
       class="max-width-field"
       :label="name"
@@ -115,7 +115,7 @@
       :decimal="2"
       prepend-icon="attach_money"
       rounded
-    ></v-currency-field>
+    ></s-price-input>
     <currency-list
       v-else-if="type === 'currency'"
       class="max-width-field"
@@ -201,10 +201,10 @@
 </template>
 
 <script>
-import VCurrencyField from "@/Components/ui/input/currency/VCurrencyField.vue";
+import SPriceInput from "@/Components/ui/input/price/SPriceInput.vue";
 import CurrencyList from "@/Components/ui/currency/CurrencyList.vue";
 import DateTimePickerGlobal from "../ui/calendar/dateTimePickerGlobal.vue";
-import NumberPicker from "@/Components/ui/input/number/NumberPicker.vue";
+import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
 const ActionPlatform = [
   "http://schema.org/DesktopWebPlatform",
   "http://schema.org/IOSPlatform",
@@ -238,10 +238,10 @@ function CheckEnum(type) {
 export default {
   name: "SStructureDataInput",
   components: {
-    NumberPicker,
+    SNumberInput,
     DateTimePickerGlobal,
     CurrencyList,
-    VCurrencyField,
+    SPriceInput,
   },
   props: {
     value: {},

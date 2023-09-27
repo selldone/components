@@ -63,7 +63,7 @@
               :title="$t('global.commons.price')"
             />
 
-            <v-currency-field
+            <s-price-input
               v-model="price"
               class="delay_200 strong-field"
               :title="$t('global.commons.currency')"
@@ -73,7 +73,7 @@
               :rules="[GlobalRules.required()]"
               :suffix="currency ? currency.code : undefined"
             >
-            </v-currency-field>
+            </s-price-input>
 
             <v-select
               v-model="trial"
@@ -654,7 +654,7 @@ import { SmartConvertTextToHtmlHashtags } from "../../../../../core/helper/html/
 import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
 import { Screenshot } from "../../../../../core/helper/canvas/Screenshot";
 import { FileHelper } from "../../../../../core/helper/converters/FileHelper";
-import VCurrencyField from "@/Components/ui/input/currency/VCurrencyField.vue";
+import SPriceInput from "@/Components/ui/input/price/SPriceInput.vue";
 import CurrencyList from "@/Components/ui/currency/CurrencyList.vue";
 import { TopicSubscriptionType } from "../../../../../core/enums/community/TopicSubscriptionType";
 import { TopicTrialType } from "../../../../../core/enums/community/TopicTrialType";
@@ -688,7 +688,7 @@ export default {
     CommunityProductEditor,
     CommunityPoll,
     CurrencyList,
-    VCurrencyField,
+    SPriceInput,
     UsersDenseImagesCircles,
     SMentionableInput,
     RoundedTabs,

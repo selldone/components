@@ -169,8 +169,8 @@
 </template>
 
 <script>
-import { Language } from "../../../../core/enums/language/Language";
-import SetupService from "../../../../core/server/SetupService";
+import { Language } from "../../../../../core/enums/language/Language";
+import SetupService from "../../../../../core/server/SetupService";
 import SLanguagesDialog from "./SLanguagesDialog.vue";
 
 export default {
