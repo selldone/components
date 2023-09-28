@@ -69,9 +69,6 @@ console.log(
   "color:#70557e;font-weight: 800;"
 );
 
-
-
-
 //█████████████████████████████████████████████████████████████
 //――――――――――――――― Global Config ――――――――――――――
 //█████████████████████████████████████████████████████████████
@@ -119,7 +116,7 @@ $.cachedScript = function (url: string, options?: any) {
 };
 
 //―――――――――――――――――――――― SEO ――――――――――――――――――――
-import {SEO} from "../../core/helper/seo/SEO";
+import { SEO } from "../../core/helper/seo/SEO";
 Vue.prototype.$SEO = SEO;
 
 //█████████████████████████████████████████████████████████████
@@ -128,7 +125,6 @@ Vue.prototype.$SEO = SEO;
 import type { ILanguage } from "../../core/enums/language/Language";
 
 declare global {
-
   interface Window {
     CUSTOME_TEMPLATE:
       | {
@@ -140,7 +136,7 @@ declare global {
       | null
       | undefined;
 
-    $language: ILanguage ;
+    $language: ILanguage;
   }
 
   interface HTMLElement {

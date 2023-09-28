@@ -1,3 +1,6 @@
+import axios, { AxiosRequestConfig } from "axios";
+import type { IFileUploadResponse } from "../../../../core/types/upload/file-upload-response-type.type";
+
 export class UploadHelper {
   /**
    *
@@ -15,19 +18,21 @@ export class UploadHelper {
    */
   static UploadFile(
     vue,
-    target,
-    url,
-    file_id,
-    file,
+    target: Element,
+    url: string,
+    file_id: number,
+    file: File,
     file_key = "photo",
-    params = {},
+    params: Record<string, any> = {},
     withCredentials = true,
-    success = null,
-    color = null
+    success:
+      | ((data: { success: boolean; files: IFileUploadResponse }) => void)
+      | null = null,
+    color: string | null = null
   ) {
     // console.log('Start uploading..',file)
 
-    const config = {
+    const config: AxiosRequestConfig = {
       withCredentials: withCredentials,
       onUploadProgress: (e) => {
         const pval = Math.floor((e.loaded / (e.total + 0.001)) * 100);
