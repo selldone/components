@@ -332,8 +332,6 @@ export default {
  */
 
 .s--form-builder {
-
-
   .s--form-builder-item {
     background: #fff;
     border-radius: 12px;
@@ -354,6 +352,5 @@ export default {
       border: solid #0061e0 3px;
     }
   }
-
 }
 </style>

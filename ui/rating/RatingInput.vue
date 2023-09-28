@@ -4,16 +4,15 @@
       <v-icon :color="ticksColor[value_clone - 1]">{{
         tickIcons[value_clone - 1]
       }}</v-icon>
-      <br>
+      <br />
       {{ ticksLabels[value_clone - 1] }}
-    </small
-    >
+    </small>
 
     <p class="m-0 small text-muted">{{ title }}:</p>
 
     <v-slider
       v-model="value_clone"
-      style="border-radius: 4px;max-width: 240px;"
+      style="border-radius: 4px; max-width: 240px"
       reverse
       :max="5"
       :min="1"
@@ -26,7 +25,6 @@
       track-color="#ddd"
       track-fill-color="blue darken-3"
       thumb-color="blue darken-3"
-
     />
   </v-flex>
 </template>
@@ -45,24 +43,24 @@ export default {
       "far fa-frown",
       "far fa-meh",
       "far fa-smile",
-      "far fa-grin-stars"
+      "far fa-grin-stars",
     ],
-    ticksColor: ["#D32F2F", "#E64A19", "#FFA000", "#0288D1", "#689F38"]
+    ticksColor: ["#D32F2F", "#E64A19", "#FFA000", "#0288D1", "#689F38"],
   }),
   computed: {
-    ticksLabels(){
-      return this.$t('global.rating_labels')
-    }
+    ticksLabels() {
+      return this.$t("global.rating_labels");
+    },
   },
   watch: {
     value(new_val) {
       this.value_clone = new_val;
-    }
+    },
   },
   created() {
     this.value_clone = this.value;
   },
-  methods: {}
+  methods: {},
 };
 </script>
 
