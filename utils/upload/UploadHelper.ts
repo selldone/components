@@ -3,26 +3,27 @@ import type { IFileUploadResponse } from "../../../../core/types/upload/file-upl
 
 export class UploadHelper {
   /**
+   * Uploads a file to a specified URL.
    *
-   * @param vue
-   * @param target              Use to show upload indicator on product, category,... cards!      Ex: {product:product_id}  {category:category_id}
-   * @param url
-   * @param file_id
-   * @param file
-   * @param file_key
-   * @param params
-   * @param withCredentials
-   * @param success
-   * @param color               Progress color
-   * @constructor
+   * @param vue                The Vue instance, used for accessing the store and displaying alerts.
+   * @param target             An HTML element representing the upload target. This is used to show upload indicators on entities like product, category, etc. cards.
+   *                           Example: {product:product_id}  {category:category_id}
+   * @param url                The endpoint URL where the file should be uploaded.
+   * @param file_id            A unique identifier for the file being uploaded.
+   * @param file               The actual File object to be uploaded.
+   * @param file_key           The form data key for the file upload. Defaults to "photo".
+   * @param params             Additional parameters to be sent along with the file in the form data.
+   * @param withCredentials    Indicates whether the request should be made with credentials (like cookies or HTTP authentication). Defaults to true.
+   * @param success            A callback function to be executed upon successful upload. It receives an object with a `success` boolean and an `files` array containing the uploaded file's details.
+   * @param color              The color to be used for the upload progress indicator. If not provided, a default color will be used.
    */
   static UploadFile(
-    vue,
+    vue: any,
     target: Element,
     url: string,
     file_id: number,
     file: File,
-    file_key = "photo",
+    file_key: string = "photo",
     params: Record<string, any> = {},
     withCredentials = true,
     success:
@@ -30,8 +31,6 @@ export class UploadHelper {
       | null = null,
     color: string | null = null
   ) {
-    // console.log('Start uploading..',file)
-
     const config: AxiosRequestConfig = {
       withCredentials: withCredentials,
       onUploadProgress: (e) => {
@@ -50,6 +49,7 @@ export class UploadHelper {
       },
     };
 
+    // Constructing the form data for the upload
     const formData = new FormData();
 
     if (params)
@@ -59,6 +59,7 @@ export class UploadHelper {
 
     formData.append(file_key, file, file.name);
 
+    // Making the actual upload request
     axios
       .post(url, formData, config)
       .then(({ data }) => {
@@ -72,7 +73,7 @@ export class UploadHelper {
         vue.showLaravelError(e);
       })
       .finally(() => {
-        // Remove from global upload keeper:
+        // Remove the completed upload details from the global upload keeper in the store
         vue.$store.dispatch({
           type: "removeUploadingFile",
           file_id: file.name,

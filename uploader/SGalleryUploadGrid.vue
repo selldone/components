@@ -43,7 +43,8 @@
 
           <div
             v-if="(image.width && image.height) || image.size"
-            class="absolute-bottom-start x-small white--text text-nowrap pen usn rounded-lg pa-1" style="background-color: rgba(10,20,60,0.21)"
+            class="absolute-bottom-start x-small white--text text-nowrap pen usn rounded-lg pa-1"
+            style="background-color: rgba(10, 20, 60, 0.21)"
           >
             <span
               v-if="image.width && image.height && image.size"
@@ -61,7 +62,7 @@
                     ? 'amber'
                     : 'green'
                 "
-                :value="(100 * image.size) / (1024*1024)"
+                :value="(100 * image.size) / (1024 * 1024)"
                 height="2"
                 rounded
                 style="max-width: 64px"
@@ -70,8 +71,18 @@
             </div>
           </div>
 
-          <v-btn v-if="hasAlt" title="Set Alt text" color="rgba(10,20,60)" depressed dark  class="absolute-bottom-end" small @click.stop="$emit('click:alt',image)"><v-icon v-if="image.alt" class="me-1" x-small>check_circle</v-icon>ALT</v-btn>
-
+          <v-btn
+            v-if="hasAlt"
+            title="Set Alt text"
+            color="rgba(10,20,60)"
+            depressed
+            dark
+            class="absolute-bottom-end"
+            small
+            @click.stop="$emit('click:alt', image)"
+            ><v-icon v-if="image.alt" class="me-1" x-small>check_circle</v-icon
+            >ALT</v-btn
+          >
         </v-img>
 
         <v-btn
@@ -111,8 +122,8 @@
 import SImageUploader from "./SImageUploader.vue";
 import MuuriGrid from "@/Components/ui/grid/MurriGrid.vue";
 export default {
-  name: "GalleryUploadGrid",
-  components: { MuuriGrid,SImageUploader },
+  name: "SGalleryUploadGrid",
+  components: { MuuriGrid, SImageUploader },
   props: {
     uploadPath: {
       required: true,
@@ -133,7 +144,7 @@ export default {
     },
     hasAlt: {
       type: Boolean,
-      default:false
+      default: false,
     },
   },
 

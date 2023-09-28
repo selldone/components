@@ -43,7 +43,7 @@
 
 @import "material-design-fonts/material-design-icons";
 
-@import "font.css";
+@import "lang-fa-iransans/lang-fa-iransans.css";
 @import "./../uploader/style/uploader";
 @import "selldone/borders";
 @import "selldone/overlays";
@@ -104,13 +104,13 @@ html {
   --font: 'Inter', sans-serif, "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
   &.admin-font {
-    --font: "IRANSans", "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --font: "Inter", "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-family: var(--font) !important;
   }
 
   // Custom font for languages:
   &.lang-fa {
-    --font: "IRANSansPersianNum", "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --font: "lang-fa-iransans", "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   }
 
   .v-application--wrap {
