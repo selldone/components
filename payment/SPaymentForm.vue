@@ -109,8 +109,7 @@
         !isRazorpay &&
         !isPayPalStandard &&
         !isMercadopago &&
-                !isPaymob
-
+        !isPaymob
       "
     >
       <div>
@@ -146,7 +145,8 @@
               dark
               small
               class="ma-2"
-              ><v-icon small left>add_card</v-icon> Add card to the wallet.</v-chip
+              ><v-icon small left>add_card</v-icon> Add card to the
+              wallet.</v-chip
             >
             <v-tooltip v-else-if="bill" top color="transparent">
               <template v-slot:activator="{ on }">
@@ -527,7 +527,11 @@
               <p class="font-weight-black m-0">
                 {{ $t("global.payment_form.pay_by_gift_cards_action") }}
               </p>
-              <img class="mx-2" src="@/Components/assets/icons/gift.svg" :width="24" />
+              <img
+                class="mx-2"
+                src="@/Components/assets/icons/gift.svg"
+                :width="24"
+              />
               {{ $t("global.commons.free") }}
             </payment-button>
           </div>
@@ -663,21 +667,17 @@
       ></s-payment-mercadopago>
     </v-card-text>
 
-
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Paymob ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isPaymob">
       <s-payment-paymob
-          :payment-token="pack.token"
-          :iframe-card-id="pack.card_id"
-          :iframe-installment-id="pack.installment_id"
-          :iframe-valu-id="pack.valu_id"
-          :iframe-forsa-id="pack.forsa_id"
-
-
+        :payment-token="pack.token"
+        :iframe-card-id="pack.card_id"
+        :iframe-installment-id="pack.installment_id"
+        :iframe-valu-id="pack.valu_id"
+        :iframe-forsa-id="pack.forsa_id"
       ></s-payment-paymob>
     </v-card-text>
-
   </v-card>
 </template>
 
@@ -1187,7 +1187,7 @@ export default {
      *
      */
     reset() {
-         this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
       this.fetchGiftCards();
 
       // Remove previous paypal form:
