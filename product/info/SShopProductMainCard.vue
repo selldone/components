@@ -307,7 +307,14 @@
               </v-btn>
             </div>
 
-            <div id="payment-method-messaging-element"></div>
+            <s-stripe-split-payment-info
+              :product="product"
+              :variant="current_variant"
+              :preferences="preferences"
+              :selected-vendor-product="selected_vendor_product"
+              :selected-subscription-price="selected_subscription_price"
+              :basket="corresponding_basket_item ? basket : null"
+            ></s-stripe-split-payment-info>
           </v-container>
         </v-col>
       </v-row>
@@ -370,10 +377,12 @@ import ProductSectionBoxTax from "@/Components/product/sections/ProductSectionBo
 import ProductDiscountCountdown from "@/Components/storefront/product/count-down/ProductDiscountCountdown.vue";
 import SShopBuyButton from "@/Components/product/button/SShopBuyButton.vue";
 import SetupService from "../../../../core/server/SetupService";
+import SStripeSplitPaymentInfo from "@/Components/payment/stripe/SStripeSplitPaymentInfo.vue";
 
 export default {
   name: "ProductInfo",
   components: {
+    SStripeSplitPaymentInfo,
     SShopBuyButton,
     ProductDiscountCountdown,
     ProductSectionBoxTax,
@@ -583,7 +592,6 @@ export default {
 
   mounted() {
     //  this.assignValuesByCurrentItemInBasket();
-    this.initExtraStripePaymentInfo(this.product);
   },
   beforeDestroy() {
     this.$store.commit("setCurrentSelectedVariant", null); // Reset
@@ -752,60 +760,6 @@ export default {
       ) {
         this.selected_vendor_product_id = this.vendors[0].id;
       }
-    },
-
-    initExtraStripePaymentInfo(product) {
-      const currency = this.GetUserSelectedCurrency().code;
-
-      const stripe_gateway = this.shop.gateways?.find(
-        (g) => g.code === "stripe_" + currency.toLowerCase()
-      );
-      if (!stripe_gateway?.public?.key) return;
-
-      const zeroDecimalCurrencies = [
-        "BIF", // Burundian Franc
-        "CLP", // Chilean Peso
-        "DJF", // Djiboutian Franc
-        "GNF", // Guinean Franc
-        "JPY", // Japanese Yen
-        "KMF", // Comorian Franc
-        "KRW", // South Korean Won
-        "MGA", // Malagasy Ariary
-        "PYG", // Paraguayan Guaraní
-        "RWF", // Rwandan Franc
-        "UGX", // Ugandan Shilling
-        "VND", // Vietnamese Đồng
-        "VUV", // Vanuatu Vatu
-        "XAF", // Central African Cfa Franc
-        "XOF", // West African Cfa Franc
-        "XPF", // Cfp Franc
-      ];
-
-      this.$nextTick(() => {
-        if (Stripe) {
-          const stripe = Stripe(stripe_gateway.public.key);
-          const elements = stripe.elements();
-          const options = {
-            amount:
-              (this.corresponding_basket_item
-                ? this.basket
-                    .price /*Consider basket price if product be in basket.*/
-                : product.price) *
-              (zeroDecimalCurrencies.includes(currency) ? 1 : 100), // $99.00 USD
-            currency: currency,
-            paymentMethodTypes: ["klarna", "afterpay_clearpay", "affirm"],
-            // the country that the end-buyer is in
-            countryCode: this.basket?.receiver_info?.country
-              ? this.basket.receiver_info.country
-              : SetupService.DefaultCountry(),
-          };
-          const PaymentMessageElement = elements.create(
-            "paymentMethodMessaging",
-            options
-          );
-          PaymentMessageElement.mount("#payment-method-messaging-element");
-        }
-      });
     },
   },
 };
