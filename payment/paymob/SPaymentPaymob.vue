@@ -12,7 +12,7 @@
         {{ item.title }}
         <img
           :src="item.image"
-          style="object-fit: contain;"
+          style="object-fit: contain"
           width="28"
           height="28"
         />
