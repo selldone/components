@@ -193,13 +193,10 @@
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title
-                  v-text="user.name"
-                  class="font-weight-bold"
-                ></v-list-item-title>
-                <v-list-item-subtitle
-                  v-text="user.email"
-                ></v-list-item-subtitle>
+                <v-list-item-title class="font-weight-bold">{{
+                  user.name
+                }}</v-list-item-title>
+                <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </template>
@@ -423,242 +420,235 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+<script>
 import { SoundHelper } from "../../../core/helper/sound/SoundHelper";
 import CountDown from "@/Components/ui/count-down/CountDown.vue";
 import SetupService from "../../../core/server/SetupService";
-import {
-  ISMSVerifyOTPServerResponse_Select_User,
-  SuccessVerifyMethod,
-} from "../../../SDKs/storefront/auth/XapiAuthSMS";
-import {XapiAuth} from "../../../SDKs/storefront/auth/XapiAuth";
+import { SuccessVerifyMethod } from "../../../SDKs/storefront/auth/XapiAuthSMS";
+import { XapiAuth } from "../../../SDKs/storefront/auth/XapiAuth";
 import ShopEmailLogin from "@/Components/storefront/login/widgets/ShopEmailLogin.vue";
-
-@Component({
-  components: { ShopEmailLogin, CountDown },
-})
-export default class FastLoginCard extends Vue {
-  @Prop({ default: false, type: Boolean }) show!: boolean;
-  @Prop({ default: "transparent" }) color!: string;
-  @Prop({ default: XapiAuth.LoginSource.CUSTOMER }) source!: XapiAuth.LoginSource;
-
-  // data properties
-  show_sms_agreement = false;
-  busy_redirect :string|null = null;
-  country: any = null;
-  phone: any = null;
-  phone_number = "";
-  verification_code: string | null = null;
-  busy_login = false;
-  method: string = "fast";
-  countdown_end: Date | null = null;
-  show_resend = false;
-  users: ISMSVerifyOTPServerResponse_Select_User[] | null | undefined;
-  code: string | null = null;
-  name: string | null = null;
-  email: string | null = null;
-  password: string | null = null;
-  password_show = false;
-  tel_f = false;
-  no_email_mode = false;
-  after_login = false;
-
-  // computed properties
-  get shop(): any {
-    return this.getShop();
-  }
-
-  get user(): any {
-    return this.$store.getters.getUser;
-  }
-
-  get current_step(): string | null {
-    if (this.method === "request")
-      return this.$t("global.commons.mobile") as string;
-    if (this.method === "verify")
-      return this.$t("global.actions.verify") as string;
-    if (this.method === "select")
-      return this.$t("global.commons.select_account") as string;
-    if (this.method === "register")
-      return this.$t("global.commons.register") as string;
-    return null;
-  }
-
-  get defaultCountry(): any {
-    return SetupService.DefaultCountry();
-  }
-
-  get disabled_fast_buttons(): boolean {
-    return !!this.busy_redirect;
-  }
-
-  get login_modes(): any {
-    return this.shop.login_modes;
-  }
-
-  // watchers
-  @Watch("user")
-  onUserChanged(user: any) {
-    this.busy_redirect = null;
-    if (user) this.$emit("update:show", false);
-  }
-
-  @Watch("show")
-  onShowChanged() {
-    setTimeout(() => {
-      this.resetState();
-    }, 500);
-  }
-
-  @Watch("verification_code")
-  onVerificationCodeChanged(val: string) {
-    if (this.method === "verify" && val && val.length >= 6) {
-      this.loginVerify();
-    }
-  }
-
+export default {
+  name: "SShopLogin",
+  components: {
+    ShopEmailLogin,
+    CountDown,
+  },
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+    color: {
+      default: "transparent",
+    },
+    source: {
+      default: XapiAuth.LoginSource.CUSTOMER,
+    },
+  },
+  data() {
+    return {
+      show_sms_agreement: false,
+      busy_redirect: null,
+      country: null,
+      phone: null,
+      phone_number: "",
+      verification_code: null,
+      busy_login: false,
+      method: "fast",
+      countdown_end: null,
+      show_resend: false,
+      users: null,
+      code: null,
+      name: null,
+      email: null,
+      password: null,
+      password_show: false,
+      tel_f: false,
+      no_email_mode: false,
+      after_login: false,
+    };
+  },
+  computed: {
+    shop() {
+      return this.getShop();
+    },
+    user() {
+      return this.$store.getters.getUser;
+    },
+    current_step() {
+      if (this.method === "request") return this.$t("global.commons.mobile");
+      if (this.method === "verify") return this.$t("global.actions.verify");
+      if (this.method === "select")
+        return this.$t("global.commons.select_account");
+      if (this.method === "register") return this.$t("global.commons.register");
+      return null;
+    },
+    defaultCountry() {
+      return SetupService.DefaultCountry();
+    },
+    disabled_fast_buttons() {
+      return !!this.busy_redirect;
+    },
+    login_modes() {
+      return this.shop.login_modes;
+    },
+  },
+  watch: {
+    user(user) {
+      this.busy_redirect = null;
+      if (user) this.$emit("update:show", false);
+    },
+    show() {
+      setTimeout(() => {
+        this.resetState();
+      }, 500);
+    },
+    verification_code(val) {
+      if (this.method === "verify" && val && val.length >= 6) {
+        this.loginVerify();
+      }
+    },
+  },
   created() {
     this.EventBus.$on("get-me:error", this.resetState);
-  }
-
+  },
   beforeDestroy() {
     this.EventBus.$off("get-me:error");
-  }
+  },
+  methods: {
+    tick() {
+      SoundHelper.playTick(0.1);
+    },
 
-  // methods
-  tick() {
-    SoundHelper.playTick(0.1);
-  }
+    requestSendCode() {
+      this.show_resend = false;
+      this.countdown_end = null;
 
-  requestSendCode() {
-    this.show_resend = false;
-    this.countdown_end = null;
+      this.busy_login = true;
 
-    this.busy_login = true;
+      window.$storefront.auth.sms
+        .requestOTP(this.country.dialCode, this.country.iso2, this.phone)
+        .then((data) => {
+          this.method = "verify";
+          this.phone_number = data.phone;
 
-    window.$storefront.auth.sms
-      .requestOTP(this.country.dialCode, this.country.iso2, this.phone)
-      .then((data) => {
-        this.method = "verify";
-        this.phone_number = data.phone;
+          // Start count down resend:
+          this.countdown_end = new Date().addSeconds(60);
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_login = false;
+        });
+    },
 
-        // Start count down resend:
-        this.countdown_end = new Date().addSeconds(60);
-      })
-      .catch((error) => {
-        this.showLaravelError(error);
-      })
-      .finally(() => {
-        this.busy_login = false;
-      });
-  }
+    loginVerify() {
+      if (this.verification_code?.length !== 6) return;
+      this.busy_login = true;
 
-  loginVerify() {
-    if(this.verification_code?.length!==6)return
-    this.busy_login = true;
+      // Reset values:
+      this.users = null;
+      this.code = null;
+      window.$storefront.auth.sms
+        .verifyOTP(
+          this.country.dialCode,
+          this.country.iso2,
+          this.phone,
+          this.verification_code,
+          this.source
+        )
 
-    // Reset values:
-    this.users = null;
-    this.code = null;
-    window.$storefront.auth.sms
-      .verifyOTP(
-        this.country.dialCode,
-        this.country.iso2,
-        this.phone,
-        this.verification_code,
-        this.source
-      )
+        .then((data) => {
+          this.method = data.method;
 
-      .then((data) => {
-        this.method = data.method;
+          if (data.method === SuccessVerifyMethod.SELECT) {
+            // Next step is select user:
+            this.users = data.users;
+          } else if (data.method === SuccessVerifyMethod.LOGIN) {
+            // User has been login and get token
+            this.handleToken(data.token, data.expires_in); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
+          } else if (data.method === SuccessVerifyMethod.REGISTER) {
+            // Next step is register new user:
+            this.code = data.code;
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
 
-        if (data.method === SuccessVerifyMethod.SELECT) {
-          // Next step is select user:
-          this.users = data.users;
-        } else if (data.method === SuccessVerifyMethod.LOGIN) {
+        .finally(() => {
+          this.busy_login = false;
+        });
+    },
+
+    loginSelectUser(user) {
+      this.busy_login = true;
+      window.$storefront.auth.sms
+        .selectUser(user.code, this.source)
+        .then((data) => {
           // User has been login and get token
+          this.method = "login";
           this.handleToken(data.token, data.expires_in); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
-        } else if (data.method === SuccessVerifyMethod.REGISTER) {
-          // Next step is register new user:
-          this.code = data.code;
-        }
-      })
-      .catch((error) => {
-        this.showLaravelError(error);
-      })
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
 
-      .finally(() => {
-        this.busy_login = false;
-      });
-  }
+        .finally(() => {
+          this.busy_login = false;
+        });
+    },
 
-  loginSelectUser(user : ISMSVerifyOTPServerResponse_Select_User) {
-    this.busy_login = true;
-    window.$storefront.auth.sms
-      .selectUser(user.code, this.source)
-      .then((data) => {
-        // User has been login and get token
-        this.method = "login";
-        this.handleToken(data.token, data.expires_in); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
-      })
-      .catch((error) => {
-        this.showLaravelError(error);
-      })
+    loginNewUser() {
+      if (!this.code || !this.name) return;
+      this.busy_login = true;
 
-      .finally(() => {
-        this.busy_login = false;
-      });
-  }
+      window.$storefront.auth.sms
+        .registerUser(
+          this.code,
+          this.name,
+          this.email,
+          this.password,
+          this.no_email_mode,
+          this.source
+        )
+        .then((data) => {
+          // User has been login and get token
+          this.method = "login";
+          this.handleToken(data.token, data.expires_in); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
 
-  loginNewUser() {
-    if (!this.code || !this.name) return;
-    this.busy_login = true;
+        .finally(() => {
+          this.busy_login = false;
+        });
+    },
 
-    window.$storefront.auth.sms
-      .registerUser(
-        this.code,
-        this.name,
-        this.email,
-        this.password,
-        this.no_email_mode,
-        this.source
-      )
-      .then((data) => {
-        // User has been login and get token
-        this.method = "login";
-        this.handleToken(data.token, data.expires_in); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
-      })
-      .catch((error) => {
-        this.showLaravelError(error);
-      })
+    handleToken(token, expires_in) {
+      this.after_login = true;
+      const expire_date = new Date();
+      expire_date.setUTCSeconds(expires_in);
 
-      .finally(() => {
-        this.busy_login = false;
-      });
-  }
+      window.SetToken(token, expire_date);
+    },
 
-  handleToken(token: string, expires_in: number) {
-    this.after_login = true;
-    const expire_date = new Date();
-    expire_date.setUTCSeconds(expires_in);
-
-    window.SetToken(token, expire_date);
-  }
-
-  resetState() {
-    this.method = "fast";
-    this.country = null;
-    this.phone = null;
-    this.verification_code = null;
-    this.code = null;
-    this.name = null;
-    this.email = null;
-    this.password = null;
-    this.password_show = false;
-    this.after_login = false;
-  }
-}
+    resetState() {
+      this.method = "fast";
+      this.country = null;
+      this.phone = null;
+      this.verification_code = null;
+      this.code = null;
+      this.name = null;
+      this.email = null;
+      this.password = null;
+      this.password_show = false;
+      this.after_login = false;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>

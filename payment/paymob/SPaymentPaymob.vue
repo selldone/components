@@ -1,0 +1,134 @@
+<template>
+  <div class="position-relative min-height-60vh my-5">
+    <v-tabs v-model="tab" light icons-and-text class="mx-n5" height="84">
+      <v-tabs-slider></v-tabs-slider>
+
+      <v-tab
+        v-for="item in tabs"
+        :key="item.title"
+        :tab-value="item.title"
+        class="border mx-3 my-2 rounded-lg tnt" style="min-width: 120px"
+      >
+        {{ item.title }}
+        <img
+          :src="item.image"
+          style="object-fit: contain;"
+          width="28"
+          height="28"
+        />
+      </v-tab>
+    </v-tabs>
+
+    <v-tabs-items v-model="tab">
+      <v-tab-item v-for="item in tabs" :key="item.title" :value="item.title">
+        <v-card flat>
+          <v-card-text>
+            <iframe
+              :src="item.url"
+              width="100%"
+              style="border: none; border-radius: inherit"
+              :style="{ height: item.height }"
+            ></iframe>
+          </v-card-text>
+        </v-card>
+      </v-tab-item>
+    </v-tabs-items>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "SPaymentPaymob",
+
+  props: {
+    shopName: {},
+    paymentToken: {
+      require: true,
+    },
+    iframeCardId: {
+      require: true,
+    },
+    iframeInstallmentId: {
+      require: false,
+    },
+    iframeValuId: {
+      require: false,
+    },
+    iframeForsaId: {
+      require: false,
+    },
+  },
+  data: () => ({
+    busy: false,
+    tab: "Card",
+  }),
+  computed: {
+    card_iframe_url() {
+      return (
+        this.iframeCardId &&
+        `https://accept.paymobsolutions.com/api/acceptance/iframes/${this.iframeCardId}?payment_token=${this.paymentToken}`
+      );
+    },
+    installment_iframe_url() {
+      return (
+        this.iframeInstallmentId &&
+        `https://accept.paymobsolutions.com/api/acceptance/iframes/${this.iframeInstallmentId}?payment_token=${this.paymentToken}`
+      );
+    },
+
+    ValU_iframe_url() {
+      return (
+          this.iframeValuId &&
+          `https://accept.paymobsolutions.com/api/acceptance/iframes/${this.iframeValuId}?payment_token=${this.paymentToken}`
+      );
+    },
+    forsa_iframe_url() {
+      return (
+          this.iframeForsaId &&
+          `https://accept.paymobsolutions.com/api/acceptance/iframes/${this.iframeForsaId}?payment_token=${this.paymentToken}`
+      );
+    },
+
+    tabs() {
+      const out = [];
+      if (this.card_iframe_url)
+        out.push({
+          title: "Card",
+          image: require("./assets/credit-cards.svg"),
+          height: "60vh",
+          url: this.card_iframe_url,
+        });
+
+      if (this.installment_iframe_url)
+        out.push({
+          title: "Instalment",
+          image: require("./assets/installment.svg"),
+          height: "60vh",
+          url: this.installment_iframe_url,
+        });
+
+      if (this.ValU_iframe_url)
+        out.push({
+          title: "ValU",
+          image: require("./assets/valu.png"),
+          height: "60vh",
+          url: this.ValU_iframe_url,
+        });
+      if (this.forsa_iframe_url)
+        out.push({
+          title: "Forsa",
+          image: require("./assets/forsa.png"),
+          height: "60vh",
+          url: this.forsa_iframe_url,
+        });
+      return out;
+    },
+  },
+
+  mounted() {},
+
+  methods: {},
+};
+</script>
+
+<style scoped lang="scss"></style>

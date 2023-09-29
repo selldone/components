@@ -302,7 +302,7 @@ export default {
         // Based on delivery methods support COD!
         // Reset previous data:
 
-        this.resetToDefault();      // 🞇 Reset to default
+        this.resetToDefault(); // 🞇 Reset to default
 
         this.callback = callback; // Success / fail callback
 
@@ -350,7 +350,7 @@ export default {
       "payment-form-bill",
       _.throttle(({ code /*🥶 Guest*/, bill, callback }) => {
         // Reset previous data:
-        this.resetToDefault();      // 🞇 Reset to default
+        this.resetToDefault(); // 🞇 Reset to default
         this.getPaymentQue();
 
         // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
@@ -390,7 +390,7 @@ export default {
       "payment-form-avocado",
       _.throttle(({ avocado, callback }) => {
         // Reset previous data:
-        this.resetToDefault();      // 🞇 Reset to default
+        this.resetToDefault(); // 🞇 Reset to default
         /////this.getPaymentQue();
 
         // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
@@ -430,7 +430,7 @@ export default {
       "payment-form-hyper",
       _.throttle(({ hyper, callback }) => {
         // Reset previous data:
-        this.resetToDefault();      // 🞇 Reset to default
+        this.resetToDefault(); // 🞇 Reset to default
 
         // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
         this.code = null;
@@ -554,6 +554,8 @@ export default {
           }
         )
         .then(({ data }) => {
+          console.log("Received information...", data);
+
           // ―――――――― Reset Order ――――――――
           if (force_reset_payment && data.reset) {
             this.fetchBasketAndShop();
@@ -561,111 +563,119 @@ export default {
               name: "BasketPage",
               params: { type: data.order.type },
             });
-              this.showSuccessAlert(
-                  'Reopen Order',
-                  "We've successfully reopened this order, allowing you to attempt payment with a different method."
-              );
+            this.showSuccessAlert(
+              "Reopen Order",
+              "We've successfully reopened this order, allowing you to attempt payment with a different method."
+            );
             return;
           }
 
-          if (!data.error) {
-            // ―――――――― Payment succeeded ――――――――
+          if (data.error) {
+            this.showErrorAlert(null, data.error_msg);
+            this.fetchBasketAndShop(); // Refresh!
+            return;
+          }
+          // ―――――――― Payment succeeded ――――――――
 
-            if (data.success) {
-              this.showSuccessAlert(
-                this.$t("master_payment.notifications.payment_success_title"),
-                this.$t("master_payment.notifications.payment_success")
-              );
+          if (data.success) {
+            this.showSuccessAlert(
+              this.$t("master_payment.notifications.payment_success_title"),
+              this.$t("master_payment.notifications.payment_success")
+            );
 
-              this.goToOrderInfo(data.order_type, data.order_id);
+            const _refreshing_page = this.goToOrderInfo(
+              data.order_type,
+              data.order_id
+            );
+            if (!_refreshing_page) {
               this.fetchBasketAndShop(); // Refresh!
               this.OnPaymentCompleted(data.order_type, data.order_id); // Send global signal (refresh basket or pos basket poge if needed!)
             }
 
-            // ―――――――― Payment Waiting ――――――――
-            else {
-              this.currency = Currency[data.currency];
+            return;
+          }
 
-              // * Fill payment form:
-              this.fillPaymentForm(data);
+          // ―――――――― Payment Waiting ――――――――
 
-              // Billing extract:// TODO: must receive a billing info from server and add this step to dropshipping and basket payment! Feed billing info to stripe!
-              if (this.USER()) {
-                this.billingName = this.USER().name;
-                this.billingEmail = this.USER().email;
-                this.billingPhone = this.USER().phone;
-                this.billingAddress = null;
-              }
+          this.currency = Currency[data.currency];
 
-              // Set redirect URL:
-              this.order_url = data.order_url;
+          // * Fill payment form:
+          this.fillPaymentForm(data);
 
-              if (data.status === "Processing") {
-                this.showWarningAlert(
-                  "Processing",
-                  "Payment on processing, require no more actions."
+          // Billing extract:// TODO: must receive a billing info from server and add this step to dropshipping and basket payment! Feed billing info to stripe!
+          if (this.USER()) {
+            this.billingName = this.USER().name;
+            this.billingEmail = this.USER().email;
+            this.billingPhone = this.USER().phone;
+            this.billingAddress = null;
+          }
+
+          // Set redirect URL:
+          this.order_url = data.order_url;
+
+          if (data.status === "Processing") {
+            this.showWarningAlert(
+              "Processing",
+              "Payment on processing, require no more actions."
+            );
+          }
+          // ―――――――― Direct payment  ――――――――
+          if (data.dir) {
+            this.goToOrderInfo(data.order_type, data.target_id);
+            return;
+          }
+
+          // ―――――――― Interval check payment mode ――――――――                Use: blockchain
+
+          // Restart interval checking:
+          if (
+            data.interval_check &&
+            data.gateway_code &&
+            data.transaction_id &&
+            data.unique_id &&
+            data.timeout &&
+            data.interval
+          ) {
+            _.delay(() => {
+              if (this.$refs.payment_form)
+                this.$refs.payment_form.pollIntervalPaymentStatus(
+                  data.gateway_code,
+                  data.transaction_id,
+                  data.unique_id,
+                  data.timeout * 1000,
+                  data.interval * 1000
                 );
-              }
-              // ―――――――― Direct payment  ――――――――
-              if (data.dir) {
-                this.goToOrderInfo(data.order_type, data.target_id);
-                return;
-              }
+            }, 1000);
+          }
+          // ―――――――――――――――――――――――――――――――
 
-              // ―――――――― Interval check payment mode ――――――――                Use: blockchain
+          // Has QR code:
+          if (data.address && data.amount && data.qr_code) {
+            this.payment_form_qr_code = data.qr_code;
+            this.timeout = data.timeout * 1000;
 
-              // Restart interval checking:
-              if (
-                data.interval_check &&
-                data.gateway_code &&
-                data.transaction_id &&
-                data.unique_id &&
-                data.timeout &&
-                data.interval
-              ) {
-                _.delay(() => {
-                  if (this.$refs.payment_form)
-                    this.$refs.payment_form.pollIntervalPaymentStatus(
-                      data.gateway_code,
-                      data.transaction_id,
-                      data.unique_id,
-                      data.timeout * 1000,
-                      data.interval * 1000
-                    );
-                }, 1000);
-              }
-              // ―――――――――――――――――――――――――――――――
+            this.$nextTick(function () {
+              this.showSelectGateway = true;
+              this.exist_payment_form = true;
+            });
+          }
 
-              // Has QR code:
-              if (data.address && data.amount && data.qr_code) {
-                this.payment_form_qr_code = data.qr_code;
-                this.timeout = data.timeout * 1000;
-
-                this.$nextTick(function () {
-                  this.showSelectGateway = true;
-                  this.exist_payment_form = true;
-                });
-              }
-
-              // is Stripe / Razorpay : (Complete payment on the site!)
-              if (
-                [
-                  "stripe",
-                  "razorpay",
-                  "paypal-standard",
-                  "mercadopago",
-                ].includes(data.mode)
-              ) {
-                this.pack = data.pack;
-                this.$nextTick(function () {
-                  this.showSelectGateway = true;
-                  this.exist_payment_form = true;
-                });
-              }
-            }
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-            this.fetchBasketAndShop(); // Refresh!
+          // is Stripe / Razorpay : (Complete payment on the site!)
+          if (
+            [
+              "stripe",
+              "razorpay",
+              "paypal-standard",
+              "mercadopago",
+              "paymob",
+            ].includes(data.mode)
+          ) {
+            this.pack = data.pack;
+            this.$nextTick(function () {
+              this.showSelectGateway = true;
+              this.exist_payment_form = true;
+            });
+            console.log("In site payment form.");
           }
         })
         .finally(() => {
@@ -846,6 +856,7 @@ export default {
                 "paypal",
                 "paypal-standard",
                 "mercadopago",
+                "paymob",
               ].includes(data.mode)
             ) {
               this.pack = data.pack;

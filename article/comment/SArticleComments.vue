@@ -14,17 +14,13 @@
 
 <template>
   <div style="line-height: normal">
-
     <div class="mx-auto">
       <div v-if="user" class="comment-form">
         <div
           class="comment-placeholder"
-          :class="{ disabled: !can_send_comment}"
+          :class="{ disabled: !can_send_comment }"
         >
-          <div
-            class="pa-5"
-            @click="expand()"
-          >
+          <div class="pa-5" @click="expand()">
             <v-icon class="me-1">add_comment</v-icon>
             {{ $t("global.comments.new_action") }}
 
@@ -88,7 +84,7 @@
       <div v-else class="mb-16">
         <div class="ps-5">
           <!-- Shop Login -->
-          <fast-login-card v-if="isShop" class="mt-16"></fast-login-card>
+          <s-shop-login v-if="isShop" class="mt-16"></s-shop-login>
           <!-- Selldone Login -->
           <login-page
             v-if="isSelldone"
@@ -109,7 +105,7 @@
 
       <!-- ――――――――――――――――――――――― My comments ――――――――――――――――――――――― -->
       <div v-if="my_comments && my_comments.length" class="mt-3">
-        <h2 class="my-5 text-start">  {{ $t("global.comments.my_comments") }}</h2>
+        <h2 class="my-5 text-start">{{ $t("global.comments.my_comments") }}</h2>
         <transition-group name="fadeUp">
           <s-article-comment
             v-for="(comment, index) in my_comments"
@@ -143,7 +139,6 @@
             :style="{ 'animation-delay': (index % 10) * 100 + 'ms' }"
             :is-admin="isAdmin"
             @comment-reply="replyComment"
-
           />
         </transition-group>
 
@@ -171,7 +166,7 @@
 
 <script>
 import SArticleComment from "./SArticleComment.vue";
-import FastLoginCard from "@/Components/login/FastLoginCard.vue";
+import SShopLogin from "@/Components/login/SShopLogin.vue";
 import LoginPage from "@/Applications/Selldone/pages/auth/login/Login.vue";
 
 export default {
@@ -179,7 +174,7 @@ export default {
 
   components: {
     LoginPage,
-    FastLoginCard,
+    SShopLogin,
     SArticleComment,
   },
   props: {
@@ -187,7 +182,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    shop:{},
+    shop: {},
 
     isSelldone: {
       default: false,
@@ -241,21 +236,21 @@ export default {
     };
   },
   computed: {
-    user(){
-      return this.USER()
+    user() {
+      return this.USER();
     },
 
     my_comments() {
-      if(!this.user)return []
-      return  this.comments.filter((i) => i.user_id === this.user.id);
+      if (!this.user) return [];
+      return this.comments.filter((i) => i.user_id === this.user.id);
     },
     other_comments() {
-      if(!this.user)return this.comments
+      if (!this.user) return this.comments;
       return this.comments.filter((i) => i.user_id !== this.user.id);
     },
-    can_send_comment(){
-      return !this.my_comments || !this.my_comments.some(i=>!i.deleted_at)
-    }
+    can_send_comment() {
+      return !this.my_comments || !this.my_comments.some((i) => !i.deleted_at);
+    },
   },
   watch: {
     articleId: function (newVal, oldVal) {
@@ -271,14 +266,12 @@ export default {
     // this.initScroll();
   },
   methods: {
-
-    expand(){
-      $('.comment-input').slideDown();
-      $('.comment-placeholder').hide();
-      $('#comment-form textarea').fadeIn();
-      $('#comment-form textarea').focus()
+    expand() {
+      $(".comment-input").slideDown();
+      $(".comment-placeholder").hide();
+      $("#comment-form textarea").fadeIn();
+      $("#comment-form textarea").focus();
     },
-
 
     getRates(user_id) {
       if (!this.forProduct) return null;
@@ -338,7 +331,7 @@ export default {
         .put(window.ARTICLE_API.PUT_UPDATE_COMMENT($event.comment_id), $event)
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null,data.error_msg)
+            this.showErrorAlert(null, data.error_msg);
             return;
           }
           this.comments[this.commentIndex($event.comment_id)].body =
@@ -355,29 +348,30 @@ export default {
     },
 
     //――――――――――――――――――――――― Comment ▶ Reply (By admin) ―――――――――――――――――――――――
-    replyComment({comment_id,reply}) {
+    replyComment({ comment_id, reply }) {
       this.busy_update = comment_id;
       axios
-          .put(window.ARTICLE_API.PUT_SHOP_COMMENT_REPLY(this.shop.id,comment_id), {reply:reply})
-          .then(({ data }) => {
-            if (data.error) {
-              this.showErrorAlert(null,data.error_msg)
-              return;
-            }
-            this.comments[this.commentIndex(comment_id)].reply =
-                data.comment.reply;
-            this.comments[this.commentIndex(comment_id)].updated_at =
-                data.comment.updated_at;
-          })
-          .catch((error) => {
-            this.showLaravelError(error);
-          })
-          .finally(() => {
-            this.busy_update = null;
-          });
+        .put(
+          window.ARTICLE_API.PUT_SHOP_COMMENT_REPLY(this.shop.id, comment_id),
+          { reply: reply }
+        )
+        .then(({ data }) => {
+          if (data.error) {
+            this.showErrorAlert(null, data.error_msg);
+            return;
+          }
+          this.comments[this.commentIndex(comment_id)].reply =
+            data.comment.reply;
+          this.comments[this.commentIndex(comment_id)].updated_at =
+            data.comment.updated_at;
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_update = null;
+        });
     },
-
-
 
     //――――――――――――――――――――――― Comment ▶ Save ―――――――――――――――――――――――
 

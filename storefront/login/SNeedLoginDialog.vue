@@ -26,20 +26,20 @@
       ><v-icon>close</v-icon></v-btn
     >
 
-    <fast-login-card
+    <s-shop-login
       :show.sync="show_dialog"
       :color="SaminColorDarkDeep"
       class="rounded-0"
-    ></fast-login-card>
+    ></s-shop-login>
   </v-bottom-sheet>
 </template>
 
 <script>
-import FastLoginCard from "@/Components/login/FastLoginCard.vue";
+import SShopLogin from "@/Components/login/SShopLogin.vue";
 import _ from "lodash-es";
 export default {
   name: "SNeedLoginDialog",
-  components: { FastLoginCard },
+  components: { SShopLogin },
   data: () => ({
     show_dialog: false,
   }),

@@ -392,7 +392,7 @@
 import BasketTopMenu from "../order/basket/BasketTopMenu.vue";
 import Loading from "@/Components/ui/loading/loading.vue";
 
-import WheelOfFortune from "@/Components/backoffice/incentives/lottery/WheelOfFortune.vue";
+import WheelOfFortune from "@/Components/storefront/incentives/lottery/WheelOfFortune.vue";
 import SCurrencySelector from "@/Components/ui/currency/SCurrencySelector.vue";
 import SShopNavigationDrawer from "@/Components/storefront/menu/SShopNavigationDrawer.vue";
 import SShopUserMenuList from "@/Components/storefront/menu/SShopUserMenuList.vue";

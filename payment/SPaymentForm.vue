@@ -108,7 +108,9 @@
         !in_paypal_message &&
         !isRazorpay &&
         !isPayPalStandard &&
-        !isMercadopago
+        !isMercadopago &&
+                !isPaymob
+
       "
     >
       <div>
@@ -660,6 +662,22 @@
         :currency="currency.code"
       ></s-payment-mercadopago>
     </v-card-text>
+
+
+    <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Paymob ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
+
+    <v-card-text v-if="isPaymob">
+      <s-payment-paymob
+          :payment-token="pack.token"
+          :iframe-card-id="pack.card_id"
+          :iframe-installment-id="pack.installment_id"
+          :iframe-valu-id="pack.valu_id"
+          :iframe-forsa-id="pack.forsa_id"
+
+
+      ></s-payment-paymob>
+    </v-card-text>
+
   </v-card>
 </template>
 
@@ -675,10 +693,12 @@ import CurrencyIcon from "@/Components/ui/currency/CurrencyIcon.vue";
 import SPaymentRazorpay from "./razorpay/SPaymentRazorpay.vue";
 import SPaymentPaypalStandard from "./paypal-standard/SPaymentPaypalStandard.vue";
 import SPaymentMercadopago from "./mercadopago/SPaymentMercadopago.vue";
+import SPaymentPaymob from "@/Components/payment/paymob/SPaymentPaymob.vue";
 
 export default {
   name: "SPaymentForm",
   components: {
+    SPaymentPaymob,
     SPaymentMercadopago,
     SPaymentPaypalStandard,
     SPaymentRazorpay,
@@ -849,6 +869,10 @@ export default {
 
     isMercadopago() {
       return this.mode === "mercadopago";
+    },
+
+    isPaymob() {
+      return this.mode === "paymob";
     },
 
     isBraintree() {

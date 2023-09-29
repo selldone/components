@@ -27,12 +27,12 @@
 
     <!-- ***************** Checkout ************************ -->
 
-    <form  :class="{ disabled: busy_pay }">
+    <form :class="{ disabled: busy_pay }">
       <div id="payment-element">
         <!-- Mount the Payment Element here -->
       </div>
 
-      <v-alert v-if="!!error_message" type="error" class="my-3" dense>
+      <v-alert v-if="!!error_message" type="error" class="my-3 text-start" dense>
         {{ error_message }}
       </v-alert>
 
@@ -125,10 +125,11 @@ export default {
   }),
 
   computed: {
-    country_code(){
-      if(this.billingAddress && this.billingAddress.country_code)return this.billingAddress.country_code;
-      return SetupService.DefaultCountry()
-    }
+    country_code() {
+      if (this.billingAddress && this.billingAddress.country_code)
+        return this.billingAddress.country_code;
+      return SetupService.DefaultCountry();
+    },
   },
 
   watch: {},
@@ -175,9 +176,17 @@ export default {
       },
     };
 
+    const shop = this.getShop();
+
     this.elements = this.stripe.elements({
       clientSecret: this.clientSecret,
       appearance,
+      business: {
+        /**
+         * The name of your business. Your business name will be used to render mandate text for some payment methods.
+         */
+        name: shop?.title ? shop.title : "Selldone",
+      },
     });
     const paymentElement = this.elements.create("payment");
     paymentElement.mount("#payment-element");
@@ -227,9 +236,12 @@ export default {
             if (
               error.type === "card_error" ||
               error.type === "validation_error"
-            )
+            ) {
               // Inform the customer that there was an error.
               this.error_message = error.message;
+            } else {
+              this.error_message = error.message;
+            }
           } else {
             this.error_message =
               "We had a problem with payment process service.";

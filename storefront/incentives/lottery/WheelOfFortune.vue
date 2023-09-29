@@ -103,9 +103,9 @@
                   {{ $t("global.wheel_fortune.win_message") }}
                 </h3>
 
-                <lottery-prize-for-winner
+                <s-lottery-prize-for-winner
                   :lottery="win"
-                ></lottery-prize-for-winner>
+                ></s-lottery-prize-for-winner>
               </div>
               <div v-else class="center-absolute" style="width: 70%">
                 <h3 class="text-white zoomIn user-select-none">
@@ -151,7 +151,9 @@
                 @click="selected_lottery = null"
               >
                 <v-img
-                  :src="require('../../../login/assets/pattern-empty-fortune.jpg')"
+                  :src="
+                    require('../../../login/assets/pattern-empty-fortune.jpg')
+                  "
                   class="image"
                 ></v-img>
                 <span class="icon"></span>
@@ -249,31 +251,12 @@
 </template>
 
 <script>
-import LotteryPrizeForWinner from "../../../login/LotteryPrizeForWinner.vue";
+import SLotteryPrizeForWinner from "./SLotteryPrizeForWinner.vue";
 import { SoundHelper } from "../../../../../core/helper/sound/SoundHelper";
-
-/*
-let audio = new Audio('/sound/tick.mp3');
-function playSound()
-{
-  // Stop and rewind the sound if it already happens to be playing.
-  audio.pause();
-  audio.currentTime = 0;
-
-  // Play the sound.
-  audio.play();
-}
-
-function playWin()
-{
-  let win = new Audio('/sound/win.mp3');
-  win.play();
-}
-*/
 
 export default {
   name: "WheelOfFortune",
-  components: { LotteryPrizeForWinner },
+  components: { SLotteryPrizeForWinner },
   data: () => ({
     dialog: false,
 
@@ -360,7 +343,7 @@ export default {
   },
   methods: {
     reset() {
-         this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
       this.fetchLottery();
     },
 
@@ -376,7 +359,7 @@ export default {
           }
         })
         .catch((error) => {
-         // this.showLaravelError(error); Prevent show error on restricted shops!
+          // this.showLaravelError(error); Prevent show error on restricted shops!
         })
         .finally(() => {
           this.busy_fetch = false;
