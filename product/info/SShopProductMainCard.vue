@@ -88,7 +88,7 @@
                 v-bind="
                   window.ExternalWidget
                     ? {
-                        href: getShopPageLink(shop,{
+                        href: getShopPageLink(shop, {
                           search: product.brand,
                         }),
                         target: '_blank',
@@ -105,7 +105,7 @@
             <div class="flex-grow-1">
               {{ product.title_en?.limitWords(limit_title_en) }}
               <v-btn
-                v-if="product.title_en?.wordsCount()>20"
+                v-if="product.title_en?.wordsCount() > 20"
                 @click="limit_title_en = limit_title_en > 20 ? 20 : 2000"
                 small
                 text
@@ -284,15 +284,17 @@
               :selected-subscription-price="selected_subscription_price"
               :quick-buy-mode="quickBuyMode"
               :hss-sticky-but-button="hssStickyButButton"
+              class="mt-3 mb-3"
             ></product-section-box-buy-button>
             <!-- ▁▁▁▁▁▁ 🞇 Embed Mode 🞇 ▁▁▁▁▁▁ -->
             <div
               v-if="embedMode"
-              class="mx-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
+              class="mx-2 widget-buttons mt-3 mb-3 d-flex flex-column flex-grow-0"
             >
               <v-btn
-                :href="getProductLink(shop,product.id, product.slug)"
-                min-width="220" dark
+                :href="getProductLink(shop, product.id, product.slug)"
+                min-width="220"
+                dark
                 min-height="72"
                 target="_blank"
                 :color="
@@ -304,6 +306,8 @@
                 <v-icon class="mx-1">open_in_new</v-icon>
               </v-btn>
             </div>
+
+            <div id="payment-method-messaging-element"></div>
           </v-container>
         </v-col>
       </v-row>
@@ -365,6 +369,7 @@ import ProductSectionBoxExtraPricings from "@/Components/product/sections/Produc
 import ProductSectionBoxTax from "@/Components/product/sections/ProductSectionBoxTax.vue";
 import ProductDiscountCountdown from "@/Components/storefront/product/count-down/ProductDiscountCountdown.vue";
 import SShopBuyButton from "@/Components/product/button/SShopBuyButton.vue";
+import SetupService from "../../../../core/server/SetupService";
 
 export default {
   name: "ProductInfo",
@@ -482,8 +487,6 @@ export default {
       return this.product && this.product.original;
     },
 
-
-
     product_variants() {
       if (
         !this.product ||
@@ -556,7 +559,7 @@ export default {
   },
   watch: {
     product() {
-      this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
       this.init();
     },
     current_variant(variant) {
@@ -580,6 +583,7 @@ export default {
 
   mounted() {
     //  this.assignValuesByCurrentItemInBasket();
+    this.initExtraStripePaymentInfo(this.product);
   },
   beforeDestroy() {
     this.$store.commit("setCurrentSelectedVariant", null); // Reset
@@ -641,7 +645,6 @@ export default {
         if (this.structure) {
           this.structure.forEach((row) => {
             if (preferences_valuation[row.name] !== undefined) {
-
               return; // Rerun if exist
             }
 
@@ -659,9 +662,7 @@ export default {
         this.preferences = preferences;
 
         this.$forceUpdate();
-
       }
-
     },
 
     //█████████████████████████████████████████████████████████████
@@ -752,27 +753,74 @@ export default {
         this.selected_vendor_product_id = this.vendors[0].id;
       }
     },
+
+    initExtraStripePaymentInfo(product) {
+      const currency = this.GetUserSelectedCurrency().code;
+
+      const stripe_gateway = this.shop.gateways?.find(
+        (g) => g.code === "stripe_" + currency.toLowerCase()
+      );
+      if (!stripe_gateway?.public?.key) return;
+
+      const zeroDecimalCurrencies = [
+        "BIF", // Burundian Franc
+        "CLP", // Chilean Peso
+        "DJF", // Djiboutian Franc
+        "GNF", // Guinean Franc
+        "JPY", // Japanese Yen
+        "KMF", // Comorian Franc
+        "KRW", // South Korean Won
+        "MGA", // Malagasy Ariary
+        "PYG", // Paraguayan Guaraní
+        "RWF", // Rwandan Franc
+        "UGX", // Ugandan Shilling
+        "VND", // Vietnamese Đồng
+        "VUV", // Vanuatu Vatu
+        "XAF", // Central African Cfa Franc
+        "XOF", // West African Cfa Franc
+        "XPF", // Cfp Franc
+      ];
+
+      this.$nextTick(() => {
+        if (Stripe) {
+          const stripe = Stripe(stripe_gateway.public.key);
+          const elements = stripe.elements();
+          const options = {
+            amount:
+              (this.corresponding_basket_item
+                ? this.basket
+                    .price /*Consider basket price if product be in basket.*/
+                : product.price) *
+              (zeroDecimalCurrencies.includes(currency) ? 1 : 100), // $99.00 USD
+            currency: currency,
+            paymentMethodTypes: ["klarna", "afterpay_clearpay", "affirm"],
+            // the country that the end-buyer is in
+            countryCode: this.basket?.receiver_info?.country
+              ? this.basket.receiver_info.country
+              : SetupService.DefaultCountry(),
+          };
+          const PaymentMessageElement = elements.create(
+            "paymentMethodMessaging",
+            options
+          );
+          PaymentMessageElement.mount("#payment-method-messaging-element");
+        }
+      });
+    },
   },
 };
 </script>
 
-
-<style  lang="scss">
-
-
+<style lang="scss">
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 
 .s--product-info {
-
   --h1-size: 3rem;
-  --h1-margin:8px 12px 32px 12px;
-  --title-en-margin:8px 12px 0 12px
-
-
+  --h1-margin: 8px 12px 32px 12px;
+  --title-en-margin: 8px 12px 0 12px;
 }
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
@@ -788,13 +836,13 @@ export default {
     font-size: var(--h1-size) !important;
   }
 
-  .s--title-en{
+  .s--title-en {
     color: #888;
     margin: var(--title-en-margin);
     text-align: start;
     flex-grow: 0;
 
-    .-rate-value{
+    .-rate-value {
       color: #222;
     }
   }
@@ -805,7 +853,5 @@ export default {
 
   .image-gallery-root {
   }
-
 }
-
 </style>
