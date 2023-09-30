@@ -109,7 +109,8 @@
         !isRazorpay &&
         !isPayPalStandard &&
         !isMercadopago &&
-        !isPaymob
+        !isPaymob &&
+        !isSquareup
       "
     >
       <div>
@@ -678,6 +679,22 @@
         :iframe-forsa-id="pack.forsa_id"
       ></s-payment-paymob>
     </v-card-text>
+
+    <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Squareup ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
+
+    <v-card-text v-if="isSquareup">
+      <s-payment-squareup
+        :script="pack.script"
+        :amount="pack.amount"
+        :currency="pack.currency"
+        :location-id="pack.location_id"
+        :app-id="pack.app_id"
+        :submit-url="pack.submit_url"
+        :order-url="orderUrl"
+        :transaction-id="pack.transaction_id"
+        :billing-address="billingAddress"
+      ></s-payment-squareup>
+    </v-card-text>
   </v-card>
 </template>
 
@@ -694,10 +711,12 @@ import SPaymentRazorpay from "./razorpay/SPaymentRazorpay.vue";
 import SPaymentPaypalStandard from "./paypal-standard/SPaymentPaypalStandard.vue";
 import SPaymentMercadopago from "./mercadopago/SPaymentMercadopago.vue";
 import SPaymentPaymob from "@/Components/payment/paymob/SPaymentPaymob.vue";
+import SPaymentSquareup from "@/Components/payment/squareup/SPaymentSquareup.vue";
 
 export default {
   name: "SPaymentForm",
   components: {
+    SPaymentSquareup,
     SPaymentPaymob,
     SPaymentMercadopago,
     SPaymentPaypalStandard,
@@ -873,6 +892,9 @@ export default {
 
     isPaymob() {
       return this.mode === "paymob";
+    },
+    isSquareup() {
+      return this.mode === "squareup";
     },
 
     isBraintree() {

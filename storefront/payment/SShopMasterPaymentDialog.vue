@@ -668,6 +668,7 @@ export default {
               "paypal-standard",
               "mercadopago",
               "paymob",
+                "squareup"
             ].includes(data.mode)
           ) {
             this.pack = data.pack;
@@ -857,6 +858,7 @@ export default {
                 "paypal-standard",
                 "mercadopago",
                 "paymob",
+                  "squareup"
               ].includes(data.mode)
             ) {
               this.pack = data.pack;

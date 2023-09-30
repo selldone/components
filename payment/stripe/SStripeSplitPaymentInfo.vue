@@ -96,7 +96,11 @@ export default {
       if (!stripe_gateway?.public?.key) return;
 
       const price = this.basket
-        ? this.basket.price /*Consider basket price if product be in basket.*/
+        ? this.basket.price +
+          (this.basket.tax_included
+            ? 0
+            : this.basket
+                .tax) /*Consider basket price if product be in basket.*/
         : this.CalcPriceProductCurrentCurrency(
             this.shop,
             this.product,

@@ -34,7 +34,7 @@
           </v-list-item-subtitle>
 
           <v-list-item-subtitle v-if="item[1].target">
-            {{ item[1].request.target }}
+            {{ item[1].target }}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>

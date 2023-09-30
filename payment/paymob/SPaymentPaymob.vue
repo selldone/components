@@ -6,8 +6,9 @@
       <v-tab
         v-for="item in tabs"
         :key="item.title"
-        :tab-value="item.title"
-        class="border mx-3 my-2 rounded-lg tnt" style="min-width: 120px"
+        :tab-value="item.value"
+        class="border mx-3 my-2 rounded-lg tnt"
+        style="min-width: 120px"
       >
         {{ item.title }}
         <img
@@ -78,14 +79,14 @@ export default {
 
     ValU_iframe_url() {
       return (
-          this.iframeValuId &&
-          `https://accept.paymobsolutions.com/api/acceptance/iframes/${this.iframeValuId}?payment_token=${this.paymentToken}`
+        this.iframeValuId &&
+        `https://accept.paymobsolutions.com/api/acceptance/iframes/${this.iframeValuId}?payment_token=${this.paymentToken}`
       );
     },
     forsa_iframe_url() {
       return (
-          this.iframeForsaId &&
-          `https://accept.paymobsolutions.com/api/acceptance/iframes/${this.iframeForsaId}?payment_token=${this.paymentToken}`
+        this.iframeForsaId &&
+        `https://accept.paymobsolutions.com/api/acceptance/iframes/${this.iframeForsaId}?payment_token=${this.paymentToken}`
       );
     },
 
@@ -93,6 +94,7 @@ export default {
       const out = [];
       if (this.card_iframe_url)
         out.push({
+          value: "Card",
           title: "Card",
           image: require("./assets/credit-cards.svg"),
           height: "60vh",
@@ -101,6 +103,7 @@ export default {
 
       if (this.installment_iframe_url)
         out.push({
+          value: "Instalment",
           title: "Instalment",
           image: require("./assets/installment.svg"),
           height: "60vh",
@@ -109,6 +112,7 @@ export default {
 
       if (this.ValU_iframe_url)
         out.push({
+          value: "ValU",
           title: "ValU",
           image: require("./assets/valu.png"),
           height: "60vh",
@@ -116,6 +120,7 @@ export default {
         });
       if (this.forsa_iframe_url)
         out.push({
+          value: "Forsa",
           title: "Forsa",
           image: require("./assets/forsa.png"),
           height: "60vh",
