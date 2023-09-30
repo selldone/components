@@ -234,13 +234,11 @@ export default {
  */
 .s--shop-related-products {
   --card-background: #fff;
-  --card-width:380px;
-  --padding-x:10vw; // 10vw: Add overscroll on sides
-
-
+  --card-width: 380px;
+  --padding-x: 10vw; // 10vw: Add overscroll on sides
 
   min-height: 30vh;
-  margin: 15vh 0 15vh  0;
+  margin: 15vh 0 15vh 0;
 
   // Define breakpoint values
   $breakpoint-mobile: 480px;
@@ -248,29 +246,27 @@ export default {
   $breakpoint-desktop: 1024px;
 
   // Mobile styles
-  @media screen and  (max-width: $breakpoint-tablet) {
+  @media screen and (max-width: $breakpoint-tablet) {
     .-product-container {
-      --padding-x:0;
-      --card-width:75vw;
+      --padding-x: 0;
+      --card-width: 75vw;
     }
-
   }
 
   // Tablet styles
-  @media screen and  (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop /*- 1px*/) {
+  @media screen and (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop /*- 1px*/) {
     .-product-container {
-      --padding-x:12px;
+      --padding-x: 12px;
       --card-width: min(35vw, 380px);
     }
   }
 
   // Desktop styles
-  @media screen and  (min-width: $breakpoint-desktop) {
+  @media screen and (min-width: $breakpoint-desktop) {
     .-product-container {
       --card-width: min(25vw, 380px);
     }
   }
-
 
   .-product-container {
     display: flex;
@@ -278,7 +274,6 @@ export default {
     padding: 36px var(--padding-x); // 10vw: Add overscroll on sides
 
     min-width: max-content;
-
 
     .-product-card {
       text-align: start;
@@ -301,17 +296,15 @@ export default {
       }
       transition: all 0.3s;
 
-      .-rate-view{
+      .-rate-view {
         font-size: 0.8em;
         display: inline-flex;
         align-items: center;
-        margin:  2px 4px auto 4px;
+        margin: 2px 4px auto 4px;
       }
 
-      &.-hover:hover{
-
+      &.-hover:hover {
         transform: translateY(-20px);
-
       }
     }
   }
