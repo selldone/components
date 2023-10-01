@@ -310,10 +310,12 @@
             <s-stripe-split-payment-info
               :product="product"
               :variant="current_variant"
+              :vendor-product="selected_vendor_product"
               :preferences="preferences"
               :selected-vendor-product="selected_vendor_product"
               :selected-subscription-price="selected_subscription_price"
               :basket="corresponding_basket_item ? basket : null"
+              :country-code="basket?.receiver_info?.country"
             ></s-stripe-split-payment-info>
           </v-container>
         </v-col>
@@ -376,7 +378,6 @@ import ProductSectionBoxExtraPricings from "@/Components/product/sections/Produc
 import ProductSectionBoxTax from "@/Components/product/sections/ProductSectionBoxTax.vue";
 import ProductDiscountCountdown from "@/Components/storefront/product/count-down/ProductDiscountCountdown.vue";
 import SShopBuyButton from "@/Components/product/button/SShopBuyButton.vue";
-import SetupService from "../../../../core/server/SetupService";
 import SStripeSplitPaymentInfo from "@/Components/payment/stripe/SStripeSplitPaymentInfo.vue";
 
 export default {

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div id="payment-method-messaging-element"></div>
+  <div id="payment-method-messaging-element" :title="getCountryName(countryCode)"></div>
 </template>
 
 <script>
@@ -24,6 +24,7 @@ export default {
   name: "SStripeSplitPaymentInfo",
   components: {},
   props: {
+    countryCode:{},
     dark: { type: Boolean },
     isFlat: { type: Boolean },
     product: {
@@ -31,6 +32,10 @@ export default {
       type: Object,
     },
     variant: {
+      required: false,
+      type: Object,
+    },
+    vendorProduct: {
       required: false,
       type: Object,
     },
@@ -52,16 +57,40 @@ export default {
     valuation() {
       return this.product.valuation;
     },
+
+    price() {
+      return this.basket
+        ? this.basket.price +
+            (this.basket.tax_included
+              ? 0
+              : this.basket
+                  .tax) /*Consider basket price if product be in basket.*/
+        : this.vendorProduct
+        ? this.CalcPriceProductCurrentCurrency(
+            this.shop,
+            this.vendorProduct,
+            null,
+            this.preferences,
+            this.valuation,
+            null,
+            null
+          )
+        : this.CalcPriceProductCurrentCurrency(
+            this.shop,
+            this.product,
+            this.variant,
+            this.preferences,
+            this.valuation,
+            null,
+            null
+          );
+    },
   },
   watch: {
-    basket() {
+    price() {
       this.initExtraStripePaymentInfo();
     },
-
-    product() {
-      this.initExtraStripePaymentInfo();
-    },
-    variant() {
+    countryCode() {
       this.initExtraStripePaymentInfo();
     },
 
@@ -95,22 +124,6 @@ export default {
       );
       if (!stripe_gateway?.public?.key) return;
 
-      const price = this.basket
-        ? this.basket.price +
-          (this.basket.tax_included
-            ? 0
-            : this.basket
-                .tax) /*Consider basket price if product be in basket.*/
-        : this.CalcPriceProductCurrentCurrency(
-            this.shop,
-            this.product,
-            this.variant,
-            this.preferences,
-            this.valuation,
-            null,
-            null
-          );
-
       const zeroDecimalCurrencies = [
         "BIF", // Burundian Franc
         "CLP", // Chilean Peso
@@ -140,12 +153,12 @@ export default {
         const elements = stripe.elements({ appearance });
         const options = {
           amount: Math.round(
-            price * (zeroDecimalCurrencies.includes(currency) ? 1 : 100)
+            this.price * (zeroDecimalCurrencies.includes(currency) ? 1 : 100)
           ),
           currency: currency,
           paymentMethodTypes: ["klarna", "afterpay_clearpay", "affirm"],
           // the country that the end-buyer is in
-          countryCode: this.basket?.receiver_info?.country
+          countryCode:this.countryCode?this.countryCode: this.basket?.receiver_info?.country
             ? this.basket.receiver_info.country
             : SetupService.DefaultCountry(),
         };

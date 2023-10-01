@@ -1003,16 +1003,21 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       subscription_price = null, // 🎗️ Subscription
       current_extra_pricing = null // 🌸 Add extra pricing 🌸
     ) {
-      return PriceHelper.priceProductByCurrency(
-        shop,
-        product,
-        variant,
-        to_currency,
-        preferences,
-        valuation,
-        subscription_price,
-        current_extra_pricing
-      );
+      try {
+        return PriceHelper.priceProductByCurrency(
+          shop,
+          product,
+          variant,
+          to_currency,
+          preferences,
+          valuation,
+          subscription_price,
+          current_extra_pricing
+        );
+      } catch (e) {
+        console.error(e);
+        return "🚨";
+      }
     },
 
     /**
@@ -1037,12 +1042,17 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       variant: ProductVariant | null = null,
       to_currency: keyof typeof Currency
     ) {
-      return PriceHelper.getProductDiscountAmountByCurrency(
-        shop,
-        product,
-        variant,
-        to_currency
-      );
+      try {
+        return PriceHelper.getProductDiscountAmountByCurrency(
+          shop,
+          product,
+          variant,
+          to_currency
+        );
+      } catch (e) {
+        console.error(e);
+        return "🚨";
+      }
     },
 
     discountProductPercent(

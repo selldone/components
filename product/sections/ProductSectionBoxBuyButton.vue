@@ -1,7 +1,10 @@
 <template>
   <div v-scroll="onScroll">
     <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Product Locations ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-    <div v-if="canBuy && has_product_locations_restriction" class="max-widget-width mx-4">
+    <div
+      v-if="canBuy && has_product_locations_restriction"
+      class="max-widget-width mx-4"
+    >
       <v-sheet
         class="d-flex align-center position-relative border"
         style="padding: 4px 8px; border-radius: 12px"
@@ -20,7 +23,6 @@
           flat
           transparent
           :dense="$vuetify.breakpoint.xsOnly"
-
         ></country-list>
         <v-autocomplete
           v-model="selected_postal"
@@ -40,7 +42,12 @@
             <span class="small me-2 single-line">ZIP / PIN </span>
           </template>
           <template v-slot:append>
-            <v-icon v-if="selected_country && !selected_postal" color="primary" class="blink-me-linear">touch_app</v-icon>
+            <v-icon
+              v-if="selected_country && !selected_postal"
+              color="primary"
+              class="blink-me-linear"
+              >touch_app</v-icon
+            >
           </template>
         </v-autocomplete>
 
@@ -123,7 +130,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
 
     <!-- █████████████████ Sticky But Button █████████████████ -->
 
@@ -236,7 +242,7 @@ export default {
     //-------------------------
     selected_country: null,
     selected_postal: null,
-    busy_location:false,
+    busy_location: false,
   }),
 
   computed: {
@@ -284,7 +290,6 @@ export default {
       );
     },
 
-
     //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Product Locations ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     locations() {
       return this.product?.locations;
@@ -294,13 +299,18 @@ export default {
     },
     is_available_location() {
       const receiver_info = this.basket?.receiver_info;
-      const my_country =this.selected_country ?this.selected_country : receiver_info?.country;
-      const my_postal =   this.selected_postal ?  this.selected_postal :receiver_info?.postal;
+      const my_country = this.selected_country
+        ? this.selected_country
+        : receiver_info?.country;
+      const my_postal = this.selected_postal
+        ? this.selected_postal
+        : receiver_info?.postal;
       const locations = this.locations;
 
       return (
         !this.has_product_locations_restriction ||
-        (my_country && my_postal &&
+        (my_country &&
+          my_postal &&
           locations[my_country] &&
           Array.isArray(locations[my_country]) &&
           locations[my_country].includes(my_postal))
@@ -311,10 +321,9 @@ export default {
     },
     buy_color() {
       return this.theme && this.theme.color_buy
-          ? this.theme.color_buy
-          : "#0061e0";
+        ? this.theme.color_buy
+        : "#0061e0";
     },
-
   },
   watch: {
     product() {
@@ -335,49 +344,50 @@ export default {
     },
 
     init() {
-      if(this.has_product_locations_restriction){
+      if (this.has_product_locations_restriction) {
         // Set initial selected location:
         const receiver_info = this.basket?.receiver_info;
         if (receiver_info) {
           this.selected_country = receiver_info.country;
           this.selected_postal = receiver_info.postal;
         }
-        if(!this.selected_country && this.locations && Object.keys(this.locations).length){
-        // Auto select first country:
-          this.selected_country=Object.keys(this.locations)[0]
+        if (
+          !this.selected_country &&
+          this.locations &&
+          Object.keys(this.locations).length
+        ) {
+          // Auto select first country:
+          this.selected_country = Object.keys(this.locations)[0];
         }
       }
-
     },
 
-
-    setMyLocation(){
-      if(!this.selected_country)return;
+    setMyLocation() {
+      if (!this.selected_country) return;
 
       this.busy_location = true;
 
       axios
-          .post(window.XAPI.POST_SET_MY_LOCATION(this.shop.name,this.product.type), {
-
+        .post(
+          window.XAPI.POST_SET_MY_LOCATION(this.shop.name, this.product.type),
+          {
             country: this.selected_country,
             postal: this.selected_postal,
-         
-          })
-          .then(({ data }) => {
-            if (!data.error) {
-              return this.getBasket(this.product.type);
-            } else {
-              this.showErrorAlert(null, data.error_msg);
-            }
-          })
-          .catch((error) => {
-            this.showLaravelError(error);
-          })
-          .finally(() => {
-            this.busy_location = false;
-          });
-
-
+          }
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            this.setBasket(this.basket);
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_location = false;
+        });
     },
 
     //█████████████████████████████████████████████████████████████

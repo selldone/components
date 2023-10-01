@@ -161,21 +161,21 @@
             <!-- Change percent labels -->
             <v-chip
               v-if="price_error_percent > 1"
-              small
+              x-small
               color="red"
               dark
               label
-              class="ms-1 p-1"
+              class="mx-2 p-1"
               ><v-icon small>arrow_drop_up</v-icon>
               {{ price_error_percent | numeralFormat("0,0") }}%</v-chip
             >
             <v-chip
               v-if="price_error_percent < -1"
-              small
+              x-small
               color="green"
               dark
               label
-              class="ms-1 p-1"
+              class="mx-2 p-1"
               ><v-icon small>arrow_drop_down</v-icon>
               {{ price_error_percent | numeralFormat("0,0") }}%</v-chip
             >
@@ -343,11 +343,12 @@ export default {
 
     price_error_percent() {
       if (this.is_booking) return 0; // Does not work for service!
+
       return (
         (100 *
           (this.current_item_price -
             this.getBasketItemPrice(this.shop, this.basketItem))) /
-        (0.01 + this.current_item_price)
+        (0.00001 + this.current_item_price)
       );
     },
 
