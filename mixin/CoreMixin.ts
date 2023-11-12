@@ -1015,7 +1015,7 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
           current_extra_pricing
         );
       } catch (e) {
-        console.error(e);
+        console.error(e,'⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.');
         return "🚨";
       }
     },
@@ -1061,7 +1061,7 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       variant: ProductVariant | null = null,
       to_currency?: keyof typeof Currency | null
     ) {
-      if (!to_currency) to_currency = this.GetUserSelectedCurrency().code;
+      if (!to_currency) to_currency =product.currency; // It's percent!
 
       return PriceHelper.discountProductPercent(
         shop,

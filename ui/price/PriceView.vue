@@ -4,7 +4,7 @@
     class="price-view"
     :class="{ medium: medium, large: large, 'x-large': xLarge, dark: dark,'-invalid':!is_valid_amount }"
     :style="{ 'min-height': minHeight }"
-    :title="is_valid_amount?`Invalid amount! ${amount}`:undefined"
+    :title="!is_valid_amount?`Invalid amount! ⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.`:undefined"
   >
     <span v-if="isUnicode && !at_end">{{
       GetUserSelectedCurrencyName(currency_string, true)
