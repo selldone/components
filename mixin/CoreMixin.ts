@@ -1339,11 +1339,18 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
 
       if (!error.response) {
         console.error("1- error", error);
-        if (error.message)
+        if (error.message){
           this.showErrorAlert(
-            this.$t("global.notification.error") as string,
-            `<div dir="ltr" class="text-left">${error.message}</div>`
+              this.$t("global.notification.error") as string,
+              `<div dir="ltr" class="text-left">${error.message}</div>`
           );
+        }
+        else      if (error.body){
+          this.showErrorAlert(
+              this.$t("global.notification.error") as string,
+              `<div dir="ltr" class="text-left">${error.body}</div>`
+          );
+        }
         return;
       }
 
@@ -1404,6 +1411,8 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
           this.$t("global.notification.error_message") as string
         );
       }
+
+
     },
 
     FormatNumberCurrency(

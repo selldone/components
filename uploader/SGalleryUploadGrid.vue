@@ -105,7 +105,7 @@
           class="marginal-center"
           label="Upload images"
           :server="uploadPath"
-          max-file-size="2MB"
+          :max-file-size="maxFileSize"
           @response="handleUploadAppImages"
           allow-multiple
           :max-files="20"
@@ -145,6 +145,9 @@ export default {
     hasAlt: {
       type: Boolean,
       default: false,
+    },
+    maxFileSize: {
+      default: "2MB",
     },
   },
 

@@ -3,33 +3,38 @@
     <!-- --------- Compact mode --------- -->
     <div v-if="on_compact" class="d-flex align-center py-5">
       <v-avatar size="64" rounded="lg" class="me-2 border">
-        <img :src="image_url" class="pa-1 rounded-lg" style="object-fit: cover;" />
+        <img
+          :src="image_url"
+          class="pa-1 rounded-lg"
+          style="object-fit: cover"
+        />
       </v-avatar>
       <div class="flex-grow-1">
         <b>{{ label }}</b>
       </div>
 
-
-
-    <v-btn
+      <v-btn
         icon
         color="red"
-        v-if=" clearable && last_image"
+        v-if="clearable && last_image"
         @click.stop="
-              () => {
-                last_image = null;
-                $emit('onClear');
-              }
-            "
+          () => {
+            last_image = null;
+            $emit('onClear');
+          }
+        "
         title="Clear image"
         class="ms-1"
-    ><v-icon>close</v-icon></v-btn
-    >
+        ><v-icon>close</v-icon></v-btn
+      >
 
       <v-btn
         icon
         class="ms-1"
-        @click="force_edit = !force_edit;last_image=null"
+        @click="
+          force_edit = !force_edit;
+          last_image = null;
+        "
         :title="$t('global.actions.edit')"
         ><v-icon>edit</v-icon></v-btn
       >
@@ -115,12 +120,12 @@
             fab
             depressed
             small
-            v-if=" clearable && last_image"
+            v-if="clearable && last_image"
             @click.stop="
               () => {
                 last_image = null;
                 $emit('onClear');
-                force_edit=false
+                force_edit = false;
               }
             "
             title="Clear image"
@@ -254,7 +259,12 @@ export default {
 
   computed: {
     on_compact() {
-      return this.autoCompact && this.last_image && !this.force_edit && !this.last_image.includes('/image-placeholder'); // /image-placeholder -> default place holder image!
+      return (
+        this.autoCompact &&
+        this.last_image &&
+        !this.force_edit &&
+        !this.last_image.includes("/image-placeholder")
+      ); // /image-placeholder -> default place holder image!
     },
 
     acceptedFileTypes() {
@@ -325,13 +335,17 @@ export default {
     },
 
     handleFilePondError(error) {
-      this.showErrorAlert(null, error.body);
-      //  console.error('handleFilePondError',error)
+      if (error.main && error.sub)
+        return this.showErrorAlert(error.main, error.sub);
+      else if (error.main) return this.showErrorAlert(null, error.main);
+
+      this.showLaravelError(error);
+      console.error("File upload error", error);
     },
 
     handleProcessFile: function (error, file) {
       if (!error) {
-        this.force_edit=false; // Reset to compact mode!
+        this.force_edit = false; // Reset to compact mode!
 
         let response = JSON.parse(file.serverId);
         this.$emit("response", response);
