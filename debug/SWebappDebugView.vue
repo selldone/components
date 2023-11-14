@@ -5,14 +5,20 @@
     width="640"
     color="#fafaf6"
     class="s--webapp-debug-view"
-
+    touchless
   >
     <div class="widget-buttons">
       <v-btn @click="dialog = false" text x-large
         ><v-icon class="me-2">close</v-icon> {{ $t("global.actions.close") }}
       </v-btn>
     </div>
+
     <v-list class="" three-line>
+      <v-subheader>
+        This is a debug window designed to log errors and key messages. It's
+        intended solely for debugging purposes and is primarily useful for shop
+        owners, developers, and technically savvy users.
+      </v-subheader>
       <v-list-item
         v-for="(item, key) in errors.entries()"
         :key="key"
@@ -39,17 +45,20 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <p
+      v-if="!errors.length()"
+      class="display-1 font-weight-thin te text-center my-16"
+    >
+      {{ $t("global.commons.empty") }}
+    </p>
   </v-navigation-drawer>
 </template>
 
 <script>
 import { LRUCache } from "../../../core/helper/cache/LRUCache";
+import { StorefrontDebugLogType } from "@/Components/debug/StorefrontDebugLogType";
+import StorefrontDebugEvents from "@/Components/debug/StorefrontDebugEvents";
 
-const LOG_TYPE = {
-  API_ERROR: { icon: "report", color: "#D32F2F" },
-  EXTERNAL_ERROR: { icon: "error_outline", color: "#673AB7" }, //External services error
-  WEB_APP_ERROR: { icon: "warning", color: "#F57C00" },
-};
 export default {
   name: "SWebappDebugView",
   components: {},
@@ -70,7 +79,8 @@ export default {
     console.log("Debug view is enable. Press ⌘Ctrl + d");
 
     const t = this;
-    // Global error handler
+
+    // ----------------------------- Global error handler -----------------------------
     this.globalErrorHandler = function ({
       message,
       source = null,
@@ -81,16 +91,33 @@ export default {
     }) {
       const _key = target ? `Element ${target}` : "Global";
       t.logError(
-        target ? LOG_TYPE.WEB_APP_ERROR : LOG_TYPE.EXTERNAL_ERROR,
+        target
+          ? StorefrontDebugLogType.WEB_APP_ERROR
+          : StorefrontDebugLogType.EXTERNAL_ERROR,
         _key,
         `Exception: ${message} at ${source}:${lineno}:${colno}`,
-        target,
+        target
       );
       return true; // true: prevents the default browser action
     };
     window.addEventListener("error", this.globalErrorHandler);
 
-    // Promise rejection handler
+    // ----------------------------- Global warning handler -----------------------------
+    window.addEventListener(
+      StorefrontDebugEvents.WARNING_EVENT,
+      ({ detail: { key, message } }) => {
+        t.logError(StorefrontDebugLogType.WARNING, key, message, null);
+      }
+    );
+    // ----------------------------- Global info handler -----------------------------
+    window.addEventListener(
+      StorefrontDebugEvents.INFO_EVENT,
+      ({ detail: { key, message } }) => {
+        t.logError(StorefrontDebugLogType.INFO, key, message, null);
+      }
+    );
+
+    // ----------------------------- Promise rejection handler -----------------------------
     this.promiseRejectionHandler = function (event) {
       let errorMessage = event.reason;
       let requestURL = "Unknown URL"; // Default value
@@ -109,14 +136,14 @@ export default {
       const _error_type =
         requestURL?.includes("selldone.") ||
         requestURL?.includes("127.") /*Local*/
-          ? LOG_TYPE.API_ERROR
-          : LOG_TYPE.EXTERNAL_ERROR;
+          ? StorefrontDebugLogType.API_ERROR
+          : StorefrontDebugLogType.EXTERNAL_ERROR;
 
       t.logError(_error_type, requestURL, errorMessage);
     };
     window.addEventListener("unhandledrejection", this.promiseRejectionHandler);
 
-    // Axios error interceptor
+    // ----------------------------- Axios error interceptor -----------------------------
     this.axiosInterceptor = axios.interceptors.response.use(
       (response) => {
         return response;
@@ -125,12 +152,18 @@ export default {
         const requestURL = error.config?.url || "Unknown URL";
 
         const _message = error.message;
-        t.logError(LOG_TYPE.API_ERROR, requestURL, _message, null, {
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-        });
+        t.logError(
+          StorefrontDebugLogType.API_ERROR,
+          requestURL,
+          _message,
+          null,
+          {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+          }
+        );
         return Promise.reject(error);
-      },
+      }
     );
 
     //――――――――――――――――――――――  START Editor key listener ――――――――――――――――――――
@@ -163,7 +196,7 @@ export default {
     // Remove promise rejection handler
     window.removeEventListener(
       "unhandledrejection",
-      this.promiseRejectionHandler,
+      this.promiseRejectionHandler
     );
 
     // Remove Axios interceptor
@@ -178,7 +211,7 @@ export default {
       key,
       message,
       target /*Element*/,
-      request /*API Request error*/,
+      request /*API Request error*/
     ) {
       // For demonstration purposes, we'll just log to the console
       // In a real-world scenario, you might want to send this information to a server

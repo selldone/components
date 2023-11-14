@@ -141,6 +141,7 @@ import ProductVariantsView from "@/Components/product/variant/ProductVariantsVie
 import FadeScroll from "@/Components/ui/fade-scroll/FadeScroll.vue";
 import { BasketHelper } from "../../../../core/helper/shop/BasketHelper";
 import CrossSellActionType from "../../../../core/enums/product/CrossSellActionType";
+import {ShopOptionsHelper} from "../../../../core/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "SShopProductCrossSellList",
@@ -204,6 +205,14 @@ export default {
      * @param cross_sell
      */
     addToCardCrossSelling(cross_sell) {
+      if (
+          !this.USER() &&
+          !ShopOptionsHelper.HasGuestCheckout(this.shop) /*🥶 Guest*/
+      ) {
+        this.NeedLogin();
+        return;
+      }
+
       if (cross_sell.in_basket) {
         // Just open side menu cart
 
