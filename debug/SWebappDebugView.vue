@@ -72,6 +72,9 @@ export default {
       promiseRejectionHandler: null,
 
       errors: new LRUCache(100),
+
+      warning_event_handler: null,
+      info_event_handler: null,
     };
   },
   computed: {},
@@ -103,18 +106,20 @@ export default {
     window.addEventListener("error", this.globalErrorHandler);
 
     // ----------------------------- Global warning handler -----------------------------
+    this.warning_event_handler = ({ detail: { key, message } }) => {
+      t.logError(StorefrontDebugLogType.WARNING, key, message, null);
+    };
     window.addEventListener(
       StorefrontDebugEvents.WARNING_EVENT,
-      ({ detail: { key, message } }) => {
-        t.logError(StorefrontDebugLogType.WARNING, key, message, null);
-      }
+      this.warning_event_handler
     );
     // ----------------------------- Global info handler -----------------------------
+    this.info_event_handler = ({ detail: { key, message } }) => {
+      t.logError(StorefrontDebugLogType.INFO, key, message, null);
+    };
     window.addEventListener(
       StorefrontDebugEvents.INFO_EVENT,
-      ({ detail: { key, message } }) => {
-        t.logError(StorefrontDebugLogType.INFO, key, message, null);
-      }
+      this.info_event_handler
     );
 
     // ----------------------------- Promise rejection handler -----------------------------
@@ -192,6 +197,14 @@ export default {
   beforeDestroy() {
     // Remove global error handler
     window.removeEventListener("error", this.globalErrorHandler);
+    window.removeEventListener(
+      StorefrontDebugEvents.WARNING_EVENT,
+      this.globalErrorHandler
+    );
+    window.removeEventListener(
+      StorefrontDebugEvents.INFO_EVENT,
+      this.globalErrorHandler
+    );
 
     // Remove promise rejection handler
     window.removeEventListener(
