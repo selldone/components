@@ -97,6 +97,13 @@
           "
         >
           <template v-slot:append>
+            <s-translations-button-category
+              :shop="shop"
+              :category="category"
+              translation-key="title"
+              :label="$t('add_category.title_input')"
+            ></s-translations-button-category>
+
             <v-btn
               class="margin-n7px"
               rounded
@@ -144,7 +151,16 @@
           :messages="$t('add_category.description_input_message')"
           rows="2"
           auto-grow
-        />
+        >
+          <template v-slot:append>
+            <s-translations-button-category
+              :shop="shop"
+              :category="category"
+              translation-key="description"
+              :label="$t('add_category.description_input')"
+            ></s-translations-button-category>
+          </template>
+        </v-textarea>
 
         <!-- Image -->
 
@@ -306,27 +322,19 @@
             ></augment-form>
           </div>
         </v-expand-transition>
-
-
       </div>
 
       <v-expand-transition>
         <div
-            v-if="page?.id !== category.page_id || changed"
-            class="widget-buttons"
+          v-if="page?.id !== category.page_id || changed"
+          class="widget-buttons"
         >
-          <v-btn
-              x-large
-              color="primary"
-              :loading="busy"
-              @click="editCategory"
-          >
+          <v-btn x-large color="primary" :loading="busy" @click="editCategory">
             <v-icon class="me-1">save</v-icon>
             {{ $t("global.actions.save") }}
           </v-btn>
         </div>
       </v-expand-transition>
-
     </div>
 
     <!-- ███████████████████████████ Critical ███████████████████████████ -->
@@ -382,15 +390,17 @@ import CategorySelect from "./CategorySelect.vue";
 import SSmartCheckVerifyAction from "@/Components/smart/SSmartCheckVerifyAction.vue";
 import AugmentForm from "../augment/AugmentForm.vue";
 import PageInputField from "@/Applications/Backoffice/pages/shop/widgets/page/PageInputField.vue";
+import STranslationsButtonCategory from "@/Applications/Backoffice/components/translation/STranslationsButtonCategory.vue";
 
 export default {
   name: "AddCategory",
   components: {
+    STranslationsButtonCategory,
     PageInputField,
     AugmentForm,
     SSmartCheckVerifyAction,
     CategorySelect,
-   SImageUploader,
+    SImageUploader,
     CircleImage,
     CategoriesManagementFilter,
   },
@@ -682,7 +692,7 @@ export default {
     },
 
     assignData() {
-         this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
 
       if (this.category) {
         this.title = this.category.title;
@@ -710,11 +720,20 @@ export default {
 
       this.busy_load = true;
 
-      (this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/?
-          window.$vendor.page.getPageAugment(this.$route.params.vendor_id, page.id,this.augment):
-          window.$backoffice.page.getPageAugment(this.shop.id, page.id,this.augment))
+      (this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+        ? window.$vendor.page.getPageAugment(
+            this.$route.params.vendor_id,
+            page.id,
+            this.augment
+          )
+        : window.$backoffice.page.getPageAugment(
+            this.shop.id,
+            page.id,
+            this.augment
+          )
+      )
 
-        .then(({augment}) => {
+        .then(({ augment }) => {
           this.augment = augment;
         })
         .catch((error) => {

@@ -13,7 +13,10 @@
   -->
 
 <template>
-  <div id="payment-method-messaging-element" :title="getCountryName(countryCode)"></div>
+  <div
+    id="payment-method-messaging-element"
+    :title="getCountryName(countryCode)"
+  ></div>
 </template>
 
 <script>
@@ -24,7 +27,7 @@ export default {
   name: "SStripeSplitPaymentInfo",
   components: {},
   props: {
-    countryCode:{},
+    countryCode: {},
     dark: { type: Boolean },
     isFlat: { type: Boolean },
     product: {
@@ -109,7 +112,11 @@ export default {
 
   methods: {
     initExtraStripePaymentInfo() {
-      if (!Stripe) return;
+      try {
+        if (!Stripe) return;
+      } catch (e) {
+        return;
+      }
 
       if (
         this.product?.type === ProductType.SUBSCRIPTION ||
@@ -158,7 +165,9 @@ export default {
           currency: currency,
           paymentMethodTypes: ["klarna", "afterpay_clearpay", "affirm"],
           // the country that the end-buyer is in
-          countryCode:this.countryCode?this.countryCode: this.basket?.receiver_info?.country
+          countryCode: this.countryCode
+            ? this.countryCode
+            : this.basket?.receiver_info?.country
             ? this.basket.receiver_info.country
             : SetupService.DefaultCountry(),
         };

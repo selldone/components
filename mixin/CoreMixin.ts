@@ -115,9 +115,14 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
     is_standalone() {
       // Detects if device is in standalone mode
       const isInWebAppiOS = window.navigator.standalone === true;
-      const isInWebAppChrome = window.matchMedia(
-        "(display-mode: standalone)"
-      ).matches;
+
+      let isInWebAppChrome = false;
+      try {
+        isInWebAppChrome = window.matchMedia(
+          "(display-mode: standalone)"
+        ).matches;
+      } catch (e) {}
+
       return isInWebAppiOS || isInWebAppChrome;
     },
   },
@@ -1015,7 +1020,10 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
           current_extra_pricing
         );
       } catch (e) {
-        console.error(e,'⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.');
+        console.error(
+          e,
+          "⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate."
+        );
         return "🚨";
       }
     },
@@ -1061,7 +1069,7 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       variant: ProductVariant | null = null,
       to_currency?: keyof typeof Currency | null
     ) {
-      if (!to_currency) to_currency =product.currency; // It's percent!
+      if (!to_currency) to_currency = product.currency; // It's percent!
 
       return PriceHelper.discountProductPercent(
         shop,
@@ -1339,16 +1347,15 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
 
       if (!error.response) {
         console.error("1- error", error);
-        if (error.message){
+        if (error.message) {
           this.showErrorAlert(
-              this.$t("global.notification.error") as string,
-              `<div dir="ltr" class="text-left">${error.message}</div>`
+            this.$t("global.notification.error") as string,
+            `<div dir="ltr" class="text-left">${error.message}</div>`
           );
-        }
-        else      if (error.body){
+        } else if (error.body) {
           this.showErrorAlert(
-              this.$t("global.notification.error") as string,
-              `<div dir="ltr" class="text-left">${error.body}</div>`
+            this.$t("global.notification.error") as string,
+            `<div dir="ltr" class="text-left">${error.body}</div>`
           );
         }
         return;
@@ -1411,8 +1418,6 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
           this.$t("global.notification.error_message") as string
         );
       }
-
-
     },
 
     FormatNumberCurrency(

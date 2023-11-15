@@ -26,7 +26,7 @@
           >
             <div class="ma-auto">
               <v-icon color="#fff" class="mb-1">smart_display</v-icon>
-              <div>Video</div>
+              <div>{{$t('global.commons.video')}}</div>
             </div>
           </div>
 

@@ -361,11 +361,10 @@
       fixed
       :right="!$vuetify.rtl"
       color="#fff"
-      style="z-index: 99999999"
       class="s--shop-main-header-basket-navigation"
       :width="$vuetify.breakpoint.mdAndUp ? 640 : 360"
       temporary
-      floating
+
     >
       <div class="d-flex flex-column" style="min-height: 100%">
         <v-btn
