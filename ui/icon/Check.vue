@@ -1,15 +1,15 @@
 <template>
-  <span>
+  <span v-if="value !== null && value!==undefined">
     <v-icon
       v-if="value"
       color="green"
       :small="small"
       @click="$emit('input', !value)"
     >
-      {{trueIcon}}
+      {{ trueIcon }}
     </v-icon>
     <v-icon v-else color="red" :small="small" @click="$emit('input', !value)">
-      {{falseIcon}}
+      {{ falseIcon }}
     </v-icon>
   </span>
 </template>
@@ -23,8 +23,8 @@ export default {
       type: Boolean,
       default: false,
     },
-    trueIcon:{default:'check'},
-    falseIcon:{default:'close'},
+    trueIcon: { default: "check" },
+    falseIcon: { default: "close" },
   },
 };
 </script>

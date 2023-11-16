@@ -73,7 +73,7 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Remove Button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <template v-slot:prepend-inner v-if="hasDelete">
-      <div class="delete-button-con" :style="{ '--delete-width':dense?'32px': '48px'}" :class="{ 'me-2': solo }">
+      <div class="delete-button-con" :style="{ '--delete-width':dense?'32px': '48px'}" :class="{ 'me-2': solo,'-rtl': $vuetify.rtl}">
         <v-btn
           title="Remove item from the cart."
           :loading="loadingDelete"
@@ -211,6 +211,13 @@ export default {
       min-width: var(--delete-width) !important;
       width: var(--delete-width);
       height: 100% !important;
+    }
+
+    &.-rtl{
+      .delete-button {
+        left: unset;
+        right: 0;
+      }
     }
   }
 
