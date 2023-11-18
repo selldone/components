@@ -121,8 +121,8 @@
 
 <script>
 import SCoupon from "./SCoupon.vue";
-import { LocalStorages } from "../../../../../core/helper/local-storage/LocalStorages";
-import FadeScroll from "@/Components/ui/fade-scroll/FadeScroll.vue";
+import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
+import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 import _ from "lodash-es";
 
 export default {

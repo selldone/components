@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import ProductsDenseImagesCirclesLinks from "@/Components/product/products-dense-images-circles/ProductsDenseImagesCirclesLinks.vue";
+import ProductsDenseImagesCirclesLinks from "@components/product/products-dense-images-circles/ProductsDenseImagesCirclesLinks.vue";
 
 export default {
   name: "SShopProductOffers",

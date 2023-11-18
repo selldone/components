@@ -233,10 +233,10 @@
 
 <script>
 import ImageInput from "../image/ImageInput.vue";
-import { CommunityStageLevel } from "../../../../../core/enums/community/CommunityStageLevel";
-import SSmartToggle from "@/Components/smart/SSmartToggle.vue";
-import SSmartSelect from "@/Components/smart/SSmartSelect.vue";
-import { CommunityAttachmentAccess } from "../../../../../core/enums/community/CommunityAttachmentAccess";
+import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
+import SSmartToggle from "@components/smart/SSmartToggle.vue";
+import SSmartSelect from "@components/smart/SSmartSelect.vue";
+import { CommunityAttachmentAccess } from "@core/enums/community/CommunityAttachmentAccess";
 import _ from "lodash-es";
 export default {
   name: "CommunityEdit",

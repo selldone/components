@@ -80,7 +80,7 @@
 
 <script>
 import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
-import SMentionableInput from "@/Components/ui/text/SMentionableInput.vue";
+import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
 import NoteView from "./NoteView.vue";
 
 

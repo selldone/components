@@ -355,30 +355,30 @@
 </template>
 
 <script>
-import SShopProductRatingView from "@/Components/product/rating/SShopProductRatingView.vue";
-import BasketItemUserMessageForm from "@/Components/backoffice/basket/BasketItemUserMessageForm.vue";
-import SCoupons from "@/Components/storefront/incentives/coupon/SCoupons.vue";
+import SShopProductRatingView from "@components/product/rating/SShopProductRatingView.vue";
+import BasketItemUserMessageForm from "@components/backoffice/basket/BasketItemUserMessageForm.vue";
+import SCoupons from "@components/storefront/incentives/coupon/SCoupons.vue";
 import { ProductVariants } from "../../../../core/enums/product/ProductVariants";
-import SSmartSelectVendor from "@/Components/vendor/SSmartSelectVendor.vue";
-import ProductSectionBoxGeneralInfo from "@/Components/product/sections/ProductSectionBoxGeneralInfo.vue";
-import ProductSectionBoxCondition from "@/Components/product/sections/ProductSectionBoxCondition.vue";
-import ProductSectionBoxService from "@/Components/product/sections/ProductSectionBoxService.vue";
-import ProductSectionBoxVariants from "@/Components/product/sections/ProductSectionBoxVariants.vue";
-import SShopProductSectionBoxBadges from "@/Components/product/sections/SShopProductSectionBoxBadges.vue";
-import ProductSectionBoxPrice from "@/Components/product/sections/ProductSectionBoxPrice.vue";
-import ProductSectionBoxForAuction from "@/Components/product/sections/ProductSectionBoxForAuction.vue";
-import ProductSectionBoxBuyButton from "@/Components/product/sections/ProductSectionBoxBuyButton.vue";
-import ProductSectionBoxExtraButtons from "@/Components/product/sections/ProductSectionBoxExtraButtons.vue";
-import SShopProductSlideShow from "@/Components/product/images/SShopProductSlideShow.vue";
-import ProductSectionBoxValuation from "@/Components/product/sections/ProductSectionBoxValuation.vue";
+import SSmartSelectVendor from "@components/vendor/SSmartSelectVendor.vue";
+import ProductSectionBoxGeneralInfo from "@components/product/sections/ProductSectionBoxGeneralInfo.vue";
+import ProductSectionBoxCondition from "@components/product/sections/ProductSectionBoxCondition.vue";
+import ProductSectionBoxService from "@components/product/sections/ProductSectionBoxService.vue";
+import ProductSectionBoxVariants from "@components/product/sections/ProductSectionBoxVariants.vue";
+import SShopProductSectionBoxBadges from "@components/product/sections/SShopProductSectionBoxBadges.vue";
+import ProductSectionBoxPrice from "@components/product/sections/ProductSectionBoxPrice.vue";
+import ProductSectionBoxForAuction from "@components/product/sections/ProductSectionBoxForAuction.vue";
+import ProductSectionBoxBuyButton from "@components/product/sections/ProductSectionBoxBuyButton.vue";
+import ProductSectionBoxExtraButtons from "@components/product/sections/ProductSectionBoxExtraButtons.vue";
+import SShopProductSlideShow from "@components/product/images/SShopProductSlideShow.vue";
+import ProductSectionBoxValuation from "@components/product/sections/ProductSectionBoxValuation.vue";
 import { ProductType } from "../../../../core/enums/product/ProductType";
-import SSubscriptionPriceSelect from "@/Components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
+import SSubscriptionPriceSelect from "@components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
 import { RibbonHelper } from "../../../../core/helper/ribbon/RibbonHelper";
-import ProductSectionBoxExtraPricings from "@/Components/product/sections/ProductSectionBoxExtraPricings.vue";
-import ProductSectionBoxTax from "@/Components/product/sections/ProductSectionBoxTax.vue";
-import ProductDiscountCountdown from "@/Components/storefront/product/count-down/ProductDiscountCountdown.vue";
-import SShopBuyButton from "@/Components/product/button/SShopBuyButton.vue";
-import SStripeSplitPaymentInfo from "@/Components/payment/stripe/SStripeSplitPaymentInfo.vue";
+import ProductSectionBoxExtraPricings from "@components/product/sections/ProductSectionBoxExtraPricings.vue";
+import ProductSectionBoxTax from "@components/product/sections/ProductSectionBoxTax.vue";
+import ProductDiscountCountdown from "@components/storefront/product/count-down/ProductDiscountCountdown.vue";
+import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
+import SStripeSplitPaymentInfo from "@components/payment/stripe/SStripeSplitPaymentInfo.vue";
 
 export default {
   name: "ProductInfo",

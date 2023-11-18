@@ -116,9 +116,9 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import SShopCustomerReceiverInfoWidget from "@/Components/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
-import { ShopOptionsHelper } from "../../../../../core/helper/shop/ShopOptionsHelper";
+import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import SShopCustomerReceiverInfoWidget from "@components/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
+import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 export default {
   name: "SRetrieveShareOrder",
   components: { SShopCustomerReceiverInfoWidget, VariantItemViewMicro },

@@ -80,8 +80,8 @@
 </template>
 
 <script>
-import RatingBar from "@/Components/ui/rating/RatingBar.vue";
-import RatingInput from "@/Components/ui/rating/RatingInput.vue";
+import RatingBar from "@components/ui/rating/RatingBar.vue";
+import RatingInput from "@components/ui/rating/RatingInput.vue";
 export default {
   name: "SShopProductRatingView",
   components: { RatingInput, RatingBar },

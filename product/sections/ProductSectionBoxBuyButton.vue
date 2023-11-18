@@ -188,8 +188,8 @@
 <script>
 import SShopBuyButton from "../button/SShopBuyButton.vue";
 import { ProductType } from "../../../../core/enums/product/ProductType";
-import SShopProductFilesList from "@/Components/storefront/product/file/SShopProductFilesList.vue";
-import CountryList from "@/Components/ui/country/country-list/CountryList.vue";
+import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
+import CountryList from "@components/ui/country/country-list/CountryList.vue";
 export default {
   name: "ProductSectionBoxBuyButton",
   components: { CountryList, SShopProductFilesList, SShopBuyButton },

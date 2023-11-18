@@ -341,7 +341,7 @@ import CommunityCategoryEdit from "../widgets/category/CommunityCategoryEdit.vue
 import CommunityCategoryStatistic from "../widgets/category/CommunityCategoryStatistic.vue";
 import { CommunityStageLevel } from "../../../../core/enums/community/CommunityStageLevel";
 import CommunityImage from "../widgets/image/CommunityImage.vue";
-import SSmartCheckVerifyAction from "@/Components/smart/SSmartCheckVerifyAction.vue";
+import SSmartCheckVerifyAction from "@components/smart/SSmartCheckVerifyAction.vue";
 
 export default {
   name: "CommunityCategoryPage",

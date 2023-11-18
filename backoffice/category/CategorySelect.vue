@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import CircleImage from "@/Components/ui/image/CircleImage.vue";
+import CircleImage from "@components/ui/image/CircleImage.vue";
 import CategoryParentsView from "./CategoryParentsView.vue";
 import _ from "lodash-es";
 

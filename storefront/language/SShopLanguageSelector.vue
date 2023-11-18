@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import SLanguageInput from "@/Components/ui/input/language/SLanguageInput.vue";
+import SLanguageInput from "@components/ui/input/language/SLanguageInput.vue";
 import { ShopOptionsHelper } from "../../../../core/helper/shop/ShopOptionsHelper";
 
 export default {

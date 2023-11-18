@@ -636,20 +636,20 @@
 </template>
 
 <script>
-import { BasketStatus } from "../../../../../core/enums/basket/BasketStatus";
-import { PhysicalOrderStates } from "../../../../../core/enums/basket/PhysicalOrderStates";
-import { ShopTransportations } from "../../../../../core/enums/logistic/ShopTransportations";
+import { BasketStatus } from "@core/enums/basket/BasketStatus";
+import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
+import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 
-import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import { BillStatus } from "../../../../../core/enums/basket/BillStatus";
+import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import { BillStatus } from "@core/enums/basket/BillStatus";
 import GtagEcommerce from "../../../../Applications/Storefront/plugins/gtag/GtagEcommerce";
-import SShopRowCustomerPaymentGiftCard from "@/Components/storefront/order/payment/rows/SShopRowCustomerPaymentGiftCard.vue";
-import SShopRowCustomerPaymentRecord from "@/Components/storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
-import SShopRowCustomerPendingPayment from "@/Components/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
-import { ProductType } from "../../../../../core/enums/product/ProductType";
-import CurrencyIcon from "@/Components/ui/currency/CurrencyIcon.vue";
-import PaymentCard from "@/Components/payment/widgets/PaymentCard.vue";
-import { URLHelper } from "../../../../../core/helper/url/URLHelper";
+import SShopRowCustomerPaymentGiftCard from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentGiftCard.vue";
+import SShopRowCustomerPaymentRecord from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
+import SShopRowCustomerPendingPayment from "@components/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
+import { ProductType } from "@core/enums/product/ProductType";
+import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
+import PaymentCard from "@components/payment/widgets/PaymentCard.vue";
+import { URLHelper } from "@core/helper/url/URLHelper";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",

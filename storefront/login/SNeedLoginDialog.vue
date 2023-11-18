@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import SShopLogin from "@/Components/login/SShopLogin.vue";
+import SShopLogin from "@components/login/SShopLogin.vue";
 import _ from "lodash-es";
 export default {
   name: "SNeedLoginDialog",

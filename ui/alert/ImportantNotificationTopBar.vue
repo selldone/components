@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import TimeLapse from "@/Components/ui/time-lapse/timeLapse.vue";
-import CountDown from "@/Components/ui/count-down/CountDown.vue";
+import TimeLapse from "@components/ui/time-lapse/timeLapse.vue";
+import CountDown from "@components/ui/count-down/CountDown.vue";
 export default {
   name: "ImportantNotificationTopBar",
   components: { CountDown, TimeLapse },

@@ -235,9 +235,9 @@
 <script>
 import { ReturnItemStates } from "../../../../core/enums/basket/ReturnItemStates";
 import { ReturnOrderReason } from "../../../../core/enums/basket/ReturnOrderReason";
-import CircleImage from "@/Components/ui/image/CircleImage.vue";
-import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import SValueDashed from "@/Components/ui/text/SValueDashed.vue";
+import CircleImage from "@components/ui/image/CircleImage.vue";
+import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import SValueDashed from "@components/ui/text/SValueDashed.vue";
 
 export default {
   name: "BasketReturnItemsRequestView",

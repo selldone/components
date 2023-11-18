@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import SShopSocialButtons from "@/Components/storefront/social/SShopSocialButtons.vue";
+import SShopSocialButtons from "@components/storefront/social/SShopSocialButtons.vue";
 export default {
   name: "ProductSectionBoxExtraButtons",
   components: { SShopSocialButtons },

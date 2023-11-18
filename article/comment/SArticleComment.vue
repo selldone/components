@@ -237,7 +237,7 @@
 </template>
 
 <script>
-import RatingBar from "@/Components/ui/rating/RatingBar.vue";
+import RatingBar from "@components/ui/rating/RatingBar.vue";
 import { SmartConvertTextToHtml } from "../../../../core/helper/html/HtmlHelper";
 export default {
   name: "SArticleComment",

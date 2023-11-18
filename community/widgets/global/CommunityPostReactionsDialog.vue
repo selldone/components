@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { PostReaction } from "../../../../../core/enums/community/PostReaction";
+import { PostReaction } from "@core/enums/community/PostReaction";
 
 export default {
   name: "CommunityPostReactionsDialog",

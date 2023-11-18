@@ -135,12 +135,12 @@
 </template>
 
 <script>
-import CurrencyList from "@/Components/ui/currency/CurrencyList.vue";
+import CurrencyList from "@components/ui/currency/CurrencyList.vue";
 import SShopHyperItemsList from "./SShopHyperItemsList.vue";
 import SShopHyperProductView from "./SShopHyperProductView.vue";
 import GtagEcommerce from "../../../Applications/Storefront/plugins/gtag/GtagEcommerce";
 import { BasketStatus } from "../../../../core/enums/basket/BasketStatus";
-import Stamp from "@/Components/ui/stamp/Stamp.vue";
+import Stamp from "@components/ui/stamp/Stamp.vue";
 import _ from "lodash-es";
 
 export default {

@@ -261,9 +261,9 @@
 <script>
 import SShopUserMenuList from "./SShopUserMenuList.vue";
 import MenuCategories from "@/Applications/Backoffice/pages/shop/widgets/shop-header/MenuCategories.vue";
-import SCurrencySelector from "@/Components/ui/currency/SCurrencySelector.vue";
-import SShopLanguageSelector from "@/Components/storefront/language/SShopLanguageSelector.vue";
-import SShopSocialButtons from "@/Components/storefront/social/SShopSocialButtons.vue";
+import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
+import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
+import SShopSocialButtons from "@components/storefront/social/SShopSocialButtons.vue";
 export default {
   name: "SShopNavigationDrawer",
   components: {
@@ -308,7 +308,7 @@ export default {
         out.push({
           to: { name: "AvocadoPage" },
           name: this.$t("global.commons.avocado"),
-          src: require("@/Components/assets/icons/avocado.svg"),
+          src: require("@components/assets/icons/avocado.svg"),
         });
       }
       // Hyper:
@@ -316,7 +316,7 @@ export default {
         out.push({
           to: { name: "HyperPage" },
           name: this.$t("global.commons.hyper"),
-          src: require("@/Components/assets/icons/hyper.svg"),
+          src: require("@components/assets/icons/hyper.svg"),
         });
       }
 
@@ -325,7 +325,7 @@ export default {
         out.push({
           to: { name: "InstagramPage" },
           name: this.$t("global.commons.instagram"),
-          src: require("@/Components/assets/tradmark/instagram.svg"),
+          src: require("@components/assets/tradmark/instagram.svg"),
         });
       }
 

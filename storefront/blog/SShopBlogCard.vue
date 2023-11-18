@@ -61,12 +61,12 @@
       {{ article.title }}
     </v-card-title>
     <v-card-text class="text-start">
-      <blog-user-category-view
+      <s-blog-user-category-view
         :user="article.user"
         :categories="categories"
         :category-name="article.parent ? article.parent.category_id : null"
         :dark="dark"
-      ></blog-user-category-view>
+      ></s-blog-user-category-view>
     </v-card-text>
 
     <v-card-text
@@ -94,10 +94,10 @@
 </template>
 
 <script>
-import BlogUserCategoryView from "../../../Applications/Selldone/pages/blogs/widgets/BlogUserCategoryView.vue";
+import SBlogUserCategoryView from "./SBlogUserCategoryView.vue";
 export default {
   name: "SShopBlogCard",
-  components: { BlogUserCategoryView },
+  components: { SBlogUserCategoryView },
   props: {
     article: {
       type: Object,

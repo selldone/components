@@ -83,7 +83,7 @@
 <script>
 import CommunityImage from "../image/CommunityImage.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
-import { TimeSeries } from "../../../../../core/timeserie/TimeSeries";
+import { TimeSeries } from "@core/timeserie/TimeSeries";
 export default {
   name: "CommunityCategoryCard",
   components: { TrendSparkline, CommunityImage },

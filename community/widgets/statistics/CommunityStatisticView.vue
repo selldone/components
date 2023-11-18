@@ -132,8 +132,8 @@ import TimeSpan from "../../../ui/calendar/TimeSpan.vue";
 import AreaChart from "@/Applications/Backoffice/components/chart/AreaChart.vue";
 import LineChart from "@/Applications/Backoffice/components/chart/LineChart.vue";
 import TrendSparkline from "./TrendSparkline.vue";
-import { DateConverter } from "../../../../../core/helper/date/DateConverter";
-import {IntersectMixin} from "@/Components/mixin/IntersectMixin";
+import { DateConverter } from "@core/helper/date/DateConverter";
+import {IntersectMixin} from "@components/mixin/IntersectMixin";
 
 export default {
   name: "CommunityStatisticView",

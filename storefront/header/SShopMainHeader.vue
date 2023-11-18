@@ -389,16 +389,16 @@
 
 <script>
 import BasketTopMenu from "../order/basket/BasketTopMenu.vue";
-import Loading from "@/Components/ui/loading/loading.vue";
+import Loading from "@components/ui/loading/loading.vue";
 
-import WheelOfFortune from "@/Components/storefront/incentives/lottery/WheelOfFortune.vue";
-import SCurrencySelector from "@/Components/ui/currency/SCurrencySelector.vue";
-import SShopNavigationDrawer from "@/Components/storefront/menu/SShopNavigationDrawer.vue";
-import SShopUserMenuList from "@/Components/storefront/menu/SShopUserMenuList.vue";
+import WheelOfFortune from "@components/storefront/incentives/lottery/WheelOfFortune.vue";
+import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
+import SShopNavigationDrawer from "@components/storefront/menu/SShopNavigationDrawer.vue";
+import SShopUserMenuList from "@components/storefront/menu/SShopUserMenuList.vue";
 import { ShopOptionsHelper } from "../../../../core/helper/shop/ShopOptionsHelper";
-import SShopLanguageSelector from "@/Components/storefront/language/SShopLanguageSelector.vue";
+import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 import { ProductType } from "../../../../core/enums/product/ProductType";
-import SShopMainHeaderLogo from "@/Components/storefront/header/SShopMainHeaderLogo.vue";
+import SShopMainHeaderLogo from "@components/storefront/header/SShopMainHeaderLogo.vue";
 
 const BOTTOM_PADDING_CONTAINER = "82px";
 export default {

@@ -155,11 +155,11 @@
 <script>
 import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
 import CommunityImage from "../image/CommunityImage.vue";
-import { TopicSubscriptionType } from "../../../../../core/enums/community/TopicSubscriptionType";
-import { TopicTrialType } from "../../../../../core/enums/community/TopicTrialType";
-import Ribbon from "@/Components/ui/ribbon/Ribbon.vue";
+import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
+import { TopicTrialType } from "@core/enums/community/TopicTrialType";
+import Ribbon from "@components/ui/ribbon/Ribbon.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
-import { TimeSeries } from "../../../../../core/timeserie/TimeSeries";
+import { TimeSeries } from "@core/timeserie/TimeSeries";
 export default {
   name: "CommunityTopicCard",
   components: {

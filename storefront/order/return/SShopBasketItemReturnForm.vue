@@ -216,9 +216,9 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
-import { ReturnOrderReason } from "../../../../../core/enums/basket/ReturnOrderReason";
+import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+import { ReturnOrderReason } from "@core/enums/basket/ReturnOrderReason";
 
 export default {
   name: "SShopBasketItemReturnForm",

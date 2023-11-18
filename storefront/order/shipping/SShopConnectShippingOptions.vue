@@ -77,9 +77,9 @@ class="my-3"
 </template>
 
 <script>
-import SSmartSelect from "@/Components/smart/SSmartSelect.vue";
+import SSmartSelect from "@components/smart/SSmartSelect.vue";
 import ProductsDenseImagesCircles
-  from "@/Components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+  from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopConnectShippingOptions",

@@ -66,7 +66,7 @@
       min-width="220"
     >
       <img
-        src="@/Components/assets/icons/available-notify.svg"
+        src="@components/assets/icons/available-notify.svg"
         class="ms-2"
         width="28"
       />
@@ -237,11 +237,11 @@
 
 <script>
 import { ProductType } from "../../../../core/enums/product/ProductType";
-import Loading from "@/Components/ui/loading/loading.vue";
+import Loading from "@components/ui/loading/loading.vue";
 import GtagEcommerce from "@/Applications/Storefront/plugins/gtag/GtagEcommerce";
 import { ShopOptionsHelper } from "../../../../core/helper/shop/ShopOptionsHelper";
 import { BusinessModel } from "../../../../core/enums/shop/BusinessModel";
-import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
+import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SShopSubscribeButton from "./SShopSubscribeButton.vue";
 import { SubscriptionMode } from "../../../../core/enums/subscription/SubscriptionMode";
 import { BasketHelper } from "../../../../core/helper/shop/BasketHelper";

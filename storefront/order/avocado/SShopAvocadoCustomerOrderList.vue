@@ -27,7 +27,7 @@
     >
       <div class="d-flex align-items-center">
         <img
-          src="../../../../../core/enums/product/assets/product-types/basket-avocado.svg"
+          src="@core/enums/product/assets/product-types/basket-avocado.svg"
           width="48"
           height="48"
           class="ms-1 me-2 flex-grow-0 my-3"
@@ -119,12 +119,12 @@
 </template>
 
 <script>
-import OrderStatusView from "@/Components/backoffice/basket/OrderStatusView.vue";
-import { AvocadoOrderStates } from "../../../../../core/enums/avocado/AvocadoOrderStates";
-import StatusStepper from "../../../../Applications/Backoffice/pages/shop/widgets/order-status/StatusStepper.vue";
-import { BasketStatus } from "../../../../../core/enums/basket/BasketStatus";
+import OrderStatusView from "@components/backoffice/basket/OrderStatusView.vue";
+import { AvocadoOrderStates } from "@core/enums/avocado/AvocadoOrderStates";
+import StatusStepper from "@components/storefront/order/order-status/StatusStepper.vue";
+import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import ProductsDenseImagesCircles
-  from "@/Components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+  from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 export default {
   name: "SShopAvocadoCustomerOrderList",
   components: {ProductsDenseImagesCircles, StatusStepper, OrderStatusView },

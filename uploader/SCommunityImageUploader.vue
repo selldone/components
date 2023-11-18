@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import CommunityImage from "@/Components/community/widgets/image/CommunityImage.vue";
+import CommunityImage from "@components/community/widgets/image/CommunityImage.vue";
 export default {
   name: "SCommunityImageUploader",
   components: { CommunityImage },

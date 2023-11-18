@@ -201,10 +201,10 @@
 </template>
 
 <script>
-import SPriceInput from "@/Components/ui/input/price/SPriceInput.vue";
-import CurrencyList from "@/Components/ui/currency/CurrencyList.vue";
+import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
+import CurrencyList from "@components/ui/currency/CurrencyList.vue";
 import DateTimePickerGlobal from "../ui/calendar/dateTimePickerGlobal.vue";
-import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
+import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 const ActionPlatform = [
   "http://schema.org/DesktopWebPlatform",
   "http://schema.org/IOSPlatform",

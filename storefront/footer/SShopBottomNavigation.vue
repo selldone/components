@@ -225,7 +225,7 @@
 </template>
 
 <script>
-import ShopSearchBox from "@/Components/storefront/search/ShopSearchBox.vue";
+import ShopSearchBox from "@components/storefront/search/ShopSearchBox.vue";
 export default {
   name: "SShopBottomNavigation",
   components: { ShopSearchBox },

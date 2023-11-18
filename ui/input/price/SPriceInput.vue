@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import NumberHelper from "../../../../../core/helper/number/NumberHelper";
+import NumberHelper from "@core/helper/number/NumberHelper";
 
 function tryParseFloat(str, defaultValue) {
   let retValue = defaultValue;

@@ -117,12 +117,12 @@
 </template>
 
 <script>
-import OrderStatusView from "@/Components/backoffice/basket/OrderStatusView.vue";
+import OrderStatusView from "@components/backoffice/basket/OrderStatusView.vue";
 import { AvocadoOrderStates } from "../../../../core/enums/avocado/AvocadoOrderStates";
-import StatusStepper from "../../../Applications/Backoffice/pages/shop/widgets/order-status/StatusStepper.vue";
+import StatusStepper from "@components/storefront/order/order-status/StatusStepper.vue";
 import { BasketStatus } from "../../../../core/enums/basket/BasketStatus";
 import ProductsDenseImagesCircles
-  from "@/Components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+  from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopHyperCustomerOrdersList",

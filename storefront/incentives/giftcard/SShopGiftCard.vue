@@ -111,8 +111,8 @@
 
 <script>
 
-import CircleButton from "@/Components/ui/button/CircleButton.vue";
-import CurrencyIcon from "@/Components/ui/currency/CurrencyIcon.vue";
+import CircleButton from "@components/ui/button/CircleButton.vue";
+import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
 export default {
   name: "SShopGiftCard",
   components: {CurrencyIcon, CircleButton },

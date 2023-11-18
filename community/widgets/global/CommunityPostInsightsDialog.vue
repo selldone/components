@@ -53,8 +53,8 @@
 </template>
 
 <script>
-import { PostReaction } from "../../../../../core/enums/community/PostReaction";
-import { PostAction } from "../../../../../core/enums/community/PostAction";
+import { PostReaction } from "@core/enums/community/PostReaction";
+import { PostAction } from "@core/enums/community/PostAction";
 
 export default {
   name: "CommunityPostInsightsDialog",

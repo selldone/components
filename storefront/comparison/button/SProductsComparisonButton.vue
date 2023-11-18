@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import RadialProgressBar from "@/Components/ui/progress/RadialProgressBar.vue";
+import RadialProgressBar from "@components/ui/progress/RadialProgressBar.vue";
 import ProductComparisonList from "../list/ProductComparisonList.vue";
 
 export default {

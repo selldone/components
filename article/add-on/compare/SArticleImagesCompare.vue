@@ -52,7 +52,7 @@
 <script>
 
 import SArticleEditorComponentToolbar from "../toolbar/SArticleEditorComponentToolbar.vue";
-import VueCompareImage from "@/Components/ui/image-compare/VueCompareImage.vue";
+import VueCompareImage from "@components/ui/image-compare/VueCompareImage.vue";
 
 export default {
   name: "SArticleImagesCompare",

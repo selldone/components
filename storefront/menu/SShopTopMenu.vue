@@ -142,7 +142,7 @@
 
 <script>
 import MenuCategories from "../../../Applications/Backoffice/pages/shop/widgets/shop-header/MenuCategories.vue";
-import FadeScroll from "@/Components/ui/fade-scroll/FadeScroll.vue";
+import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 export default {
   name: "SShopTopMenu",
   components: { FadeScroll, MenuCategories },

@@ -202,9 +202,9 @@
 </template>
 
 <script>
-import { TransactionStatus } from "../../../../../../core/enums/payment/TransactionStatus";
+import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
 import SImageUploader from "../../../../uploader/SImageUploader.vue";
-import SValueDashed from "@/Components/ui/text/SValueDashed.vue";
+import SValueDashed from "@components/ui/text/SValueDashed.vue";
 
 export default {
   name: "SShopRowCustomerPendingPayment",

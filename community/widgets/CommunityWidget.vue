@@ -337,7 +337,7 @@ import { SmartConvertTextToHtmlHashtags } from "../../../../core/helper/html/Htm
 import CommunityComments from "./comment/CommunityComments.vue";
 import CommunityImage from "./image/CommunityImage.vue";
 import { PostReaction } from "../../../../core/enums/community/PostReaction";
-import Ribbon from "@/Components/ui/ribbon/Ribbon.vue";
+import Ribbon from "@components/ui/ribbon/Ribbon.vue";
 import CommunityPoll from "./post/CommunityPoll.vue";
 import CommunityProductView from "./product/CommunityProductView.vue";
 import CommunityAttachView from "./attach/CommunityAttachView.vue";

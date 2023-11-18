@@ -31,7 +31,7 @@ export default {
     pinImage: {
       require: false,
       type: String,
-      default: require("@/Components/assets/icons/Truck-fill.svg"),
+      default: require("@components/assets/icons/Truck-fill.svg"),
     },
 
     pinIcon: {

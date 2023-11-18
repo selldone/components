@@ -367,7 +367,7 @@
             </p>
             <img
               class="mx-2"
-              src="@/Components/assets/icons/free-badge.svg"
+              src="@components/assets/icons/free-badge.svg"
               :width="24"
             />
             {{ $t("global.commons.free") }}
@@ -484,7 +484,7 @@
 
             <div v-if="!gateways || !gateways.length">
               <img
-                src="@/Components/assets/emotions/013-disappointed.svg"
+                src="@components/assets/emotions/013-disappointed.svg"
                 class="m-2"
                 :width="48"
               /><br />
@@ -530,7 +530,7 @@
               </p>
               <img
                 class="mx-2"
-                src="@/Components/assets/icons/gift.svg"
+                src="@components/assets/icons/gift.svg"
                 :width="24"
               />
               {{ $t("global.commons.free") }}
@@ -699,19 +699,19 @@
 </template>
 
 <script>
-import CircleButton from "@/Components/ui/button/CircleButton.vue";
+import CircleButton from "@components/ui/button/CircleButton.vue";
 
 import SPaymentStripe from "./stripe/SPaymentStripe.vue";
 import PaymentButton from "./widgets/PaymentButton.vue";
-import SelectGiftCards from "@/Components/backoffice/incentives/gift-card/SelectGiftCards.vue";
-import SValueCopyBox from "@/Components/ui/text/SValueCopyBox.vue";
-import TimeLapse from "@/Components/ui/time-lapse/timeLapse.vue";
-import CurrencyIcon from "@/Components/ui/currency/CurrencyIcon.vue";
+import SelectGiftCards from "@components/backoffice/incentives/gift-card/SelectGiftCards.vue";
+import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
+import TimeLapse from "@components/ui/time-lapse/timeLapse.vue";
+import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
 import SPaymentRazorpay from "./razorpay/SPaymentRazorpay.vue";
 import SPaymentPaypalStandard from "./paypal-standard/SPaymentPaypalStandard.vue";
 import SPaymentMercadopago from "./mercadopago/SPaymentMercadopago.vue";
-import SPaymentPaymob from "@/Components/payment/paymob/SPaymentPaymob.vue";
-import SPaymentSquareup from "@/Components/payment/squareup/SPaymentSquareup.vue";
+import SPaymentPaymob from "@components/payment/paymob/SPaymentPaymob.vue";
+import SPaymentSquareup from "@components/payment/squareup/SPaymentSquareup.vue";
 
 export default {
   name: "SPaymentForm",

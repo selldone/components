@@ -56,8 +56,8 @@
 
 <script>
 import { LRUCache } from "../../../core/helper/cache/LRUCache";
-import { StorefrontDebugLogType } from "@/Components/debug/StorefrontDebugLogType";
-import StorefrontDebugEvents from "@/Components/debug/StorefrontDebugEvents";
+import { StorefrontDebugLogType } from "@components/debug/StorefrontDebugLogType";
+import StorefrontDebugEvents from "@components/debug/StorefrontDebugEvents";
 
 export default {
   name: "SWebappDebugView",

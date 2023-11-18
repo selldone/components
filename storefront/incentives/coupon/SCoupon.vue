@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import TimeProgressBar from "@/Components/ui/calendar/TimeProgressBar.vue";
+import TimeProgressBar from "@components/ui/calendar/TimeProgressBar.vue";
 export default {
   name: "SCoupon",
   components: { TimeProgressBar },

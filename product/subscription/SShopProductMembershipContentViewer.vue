@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import SShopProductFilesList from "@/Components/storefront/product/file/SShopProductFilesList.vue";
+import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
 import FilesListGroupedView from "@/Applications/Backoffice/pages/product/widgets/FilesListGroupedView.vue";
 import _ from "lodash-es";
 export default {

@@ -37,8 +37,8 @@
 
 <script>
 import ServiceBillingItem from "@/Applications/Backoffice/pages/order-service/pages/widgets/ServiceBillingItem.vue";
-import { BasketStatus } from "../../../../../core/enums/basket/BasketStatus";
-import { ServiceOrderStates } from "../../../../../core/enums/basket/ServiceOrderStates";
+import { BasketStatus } from "@core/enums/basket/BasketStatus";
+import { ServiceOrderStates } from "@core/enums/basket/ServiceOrderStates";
 export default {
   name: "SShopServiceTasks",
   components: { ServiceBillingItem },

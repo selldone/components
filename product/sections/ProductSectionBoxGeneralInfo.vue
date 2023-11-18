@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import CircleImage from "@/Components/ui/image/CircleImage.vue";
+import CircleImage from "@components/ui/image/CircleImage.vue";
 export default {
   name: "ProductSectionBoxGeneralInfo",
   components: { CircleImage },

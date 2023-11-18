@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { ArticleReport } from "../../../../../core/enums/article/ArticleReport";
+import { ArticleReport } from "@core/enums/article/ArticleReport";
 
 export default {
   name: "SContentViolationReportDialog",

@@ -24,13 +24,13 @@ import "../../core/utils/console/ConsoleStyle";
 //――――――――――――――――― Style ―――――――――――――――――
 //█████████████████████████████████████████████████████████████
 
-import "@/Components/style/components.scss";
+import "@components/style/components.scss";
 
 // Fonts:
 import "@fortawesome/fontawesome-free/css/all.css"; // Ensure you are using css-loader
 
 //――― SVG Filters (Css filters add elements) ―――
-import { SvgFilters } from "../../core/helper/style/SvgFilters";
+import { SvgFilters } from "@core/helper/style/SvgFilters";
 SvgFilters.Install();
 
 require("./components-widgets");
@@ -40,7 +40,7 @@ require("./components-widgets");
 //█████████████████████████████████████████████████████████████
 
 // ━━━ Selldone Core (gapi,...) ━━━
-import { SelldoneCore } from "../../core/SelldoneCore";
+import { SelldoneCore } from "@core/SelldoneCore";
 SelldoneCore.Setup();
 
 console.log(
@@ -80,7 +80,7 @@ console.log(
 window.SERACH_THROTTLE = 1500; //ms; //TODO: Should remove!
 
 // Initial global language object:
-import { Language } from "../../core/enums/language/Language";
+import { Language } from "@core/enums/language/Language";
 window.$language = Language.en;
 
 //█████████████████████████████████████████████████████████████
@@ -116,13 +116,13 @@ $.cachedScript = function (url: string, options?: any) {
 };
 
 //―――――――――――――――――――――― SEO ――――――――――――――――――――
-import { SEO } from "../../core/helper/seo/SEO";
+import { SEO } from "@core/helper/seo/SEO";
 Vue.prototype.$SEO = SEO;
 
 //█████████████████████████████████████████████████████████████
 //―――――――――――――――― Interfaces ―――――――――――――――
 //█████████████████████████████████████████████████████████████
-import type { ILanguage } from "../../core/enums/language/Language";
+import type { ILanguage } from "@core/enums/language/Language";
 
 declare global {
   interface Window {

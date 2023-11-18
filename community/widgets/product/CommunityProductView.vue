@@ -55,10 +55,10 @@
 </template>
 
 <script>
-import SShopProductMainCard from "@/Components/product/info/SShopProductMainCard.vue";
-import { SpecHelper } from "../../../../../core/helper/product/SpecHelper";
+import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
+import { SpecHelper } from "@core/helper/product/SpecHelper";
 import GtagEcommerce from "@/Applications/Storefront/plugins/gtag/GtagEcommerce";
-import ProductSpecView from "@/Applications/Backoffice/components/product/spec/ProductSpecView.vue";
+import ProductSpecView from "@components/storefront/product/spec/ProductSpecView.vue";
 
 export default {
   name: "CommunityProductView",

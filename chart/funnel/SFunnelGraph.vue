@@ -117,7 +117,7 @@ import {
 } from "funnel-graph-js/src/js/graph";
 import "funnel-graph-js/src/scss/main.scss";
 import "funnel-graph-js/src/scss/theme.scss";
-import CurrencyIcon from "@/Components/ui/currency/CurrencyIcon.vue";
+import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
 
 export default {
   name: "SFunnelGraph",

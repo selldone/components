@@ -147,9 +147,9 @@
 </template>
 
 <script>
-import FadeScroll from "@/Components/ui/fade-scroll/FadeScroll.vue";
-import ProductVariantsView from "@/Components/product/variant/ProductVariantsView.vue";
-import SCloudTagsView from "@/Components/ui/tag/SCloudTagsView.vue";
+import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
+import SCloudTagsView from "@components/ui/tag/SCloudTagsView.vue";
 import _ from "lodash-es";
 
 export default {

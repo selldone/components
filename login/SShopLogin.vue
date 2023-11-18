@@ -422,11 +422,11 @@
 
 <script>
 import { SoundHelper } from "../../../core/helper/sound/SoundHelper";
-import CountDown from "@/Components/ui/count-down/CountDown.vue";
+import CountDown from "@components/ui/count-down/CountDown.vue";
 import SetupService from "../../../core/server/SetupService";
-import { SuccessVerifyMethod } from "../../../SDKs/storefront/auth/XapiAuthSMS";
-import { XapiAuth } from "../../../SDKs/storefront/auth/XapiAuth";
-import ShopEmailLogin from "@/Components/storefront/login/widgets/ShopEmailLogin.vue";
+import { SuccessVerifyMethod } from "@sdk-storefront/auth/XapiAuthSMS";
+import { XapiAuth } from "@sdk-storefront/auth/XapiAuth";
+import ShopEmailLogin from "@components/storefront/login/widgets/ShopEmailLogin.vue";
 export default {
   name: "SShopLogin",
   components: {

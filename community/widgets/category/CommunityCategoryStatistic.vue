@@ -18,7 +18,7 @@
 
 <script>
 import CommunityStatisticView from "../statistics/CommunityStatisticView.vue";
-import { TimeSeries } from "../../../../../core/timeserie/TimeSeries";
+import { TimeSeries } from "@core/timeserie/TimeSeries";
 import CommunityStatisticViewSkeleton from "../statistics/CommunityStatisticViewSkeleton.vue";
 export default {
   name: "CommunityCategoryStatistic",

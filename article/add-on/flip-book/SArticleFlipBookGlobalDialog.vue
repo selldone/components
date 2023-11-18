@@ -131,9 +131,9 @@
 </template>
 
 <script>
-import SImageUploader from "@/Components/uploader/SImageUploader.vue";
-import DraggableImagesList from "@/Components/ui/image/draggableImagesList.vue";
-import { EventName } from "../../../../../core/events/EventBus";
+import SImageUploader from "@components/uploader/SImageUploader.vue";
+import DraggableImagesList from "@components/ui/image/draggableImagesList.vue";
+import { EventName } from "@core/events/EventBus";
 export default {
   name: "SArticleFlipBookGlobalDialog",
   components: { DraggableImagesList,SImageUploader },

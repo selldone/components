@@ -117,8 +117,8 @@
 </template>
 
 <script>
-import CountryList from "@/Components/ui/country/country-list/CountryList.vue";
-import LocationMarker from "@/Components/map/widgets/LocationMarker.vue";
+import CountryList from "@components/ui/country/country-list/CountryList.vue";
+import LocationMarker from "@components/map/widgets/LocationMarker.vue";
 export default {
   name: "SShopCustomerReceiverInfoWidget",
   components: { LocationMarker, CountryList },

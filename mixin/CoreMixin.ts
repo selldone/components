@@ -40,7 +40,7 @@ import type { Note } from "../../../core/models/shop/note/note.model";
 import { Shop } from "../../../core/models/shop/shop.model";
 import type { ProductVariant } from "../../../core/models/shop/product/product_variant.model";
 import { Product } from "../../../core/models/shop/product/product.model";
-import { XapiShop } from "../../../SDKs/storefront/shop/XapiShop";
+import { XapiShop } from "@sdk-storefront/shop/XapiShop";
 import type { Basket } from "../../../core/models/shop/order/basket/basket.model";
 import type { IAddress } from "../../../core/models/traits/address.model";
 import type { CommunityTopic } from "../../../core/models/community/community.topic.model";
@@ -54,7 +54,7 @@ import type { ICountryCode } from "../../../core/enums/country/CountriesListEnum
 import type { BasketItem } from "../../../core/models/shop/order/basket/basket_item.model";
 import type { gapi } from "../../../core/gapi/requests/gapi.countries.get";
 import type { User } from "../../../core/models/user/user.model";
-import { XapiUser } from "../../../SDKs/storefront/user/XapiUser";
+import { XapiUser } from "@sdk-storefront/user/XapiUser";
 
 //――― User Device Preferences ―――
 let IMAGE_SIZE_SMALL = localStorage.getItem("boost-mode") ? 64 : 128; // Can be 64 (low speed networks) or 128
@@ -662,13 +662,13 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
 
     getProductTypeImage(type: string) {
       if (type === "POS")
-        return require("@/Components/assets/icons/pos-order-type.svg");
+        return require("@components/assets/icons/pos-order-type.svg");
       else if (type === "FUL")
-        return require("@/Components/assets/icons/dropshipping.svg");
+        return require("@components/assets/icons/dropshipping.svg");
       else if (type === "AVO")
-        return require("@/Components/assets/icons/avocado.svg");
+        return require("@components/assets/icons/avocado.svg");
       else if (type === "HYP")
-        return require("@/Components/assets/icons/hyper.svg");
+        return require("@components/assets/icons/hyper.svg");
 
       return ProductType[type] ? ProductType[type].image : "";
     },
@@ -799,16 +799,16 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       if (!code) return null;
       code = code.toLowerCase();
       if (code === "firefox")
-        return require("@/Components/assets/tradmark/firefox.svg");
+        return require("@components/assets/tradmark/firefox.svg");
       if (code === "chrome")
-        return require("@/Components/assets/tradmark/chrome.svg");
+        return require("@components/assets/tradmark/chrome.svg");
       if (code === "opera")
-        return require("@/Components/assets/tradmark/opera.svg");
+        return require("@components/assets/tradmark/opera.svg");
       if (code === "internet-explorer")
-        return require("@/Components/assets/tradmark/internet-explorer.svg");
+        return require("@components/assets/tradmark/internet-explorer.svg");
       if (code === "safari")
-        return require("@/Components/assets/tradmark/safari.svg");
-      else return require("@/Components/assets/tradmark/information.svg");
+        return require("@components/assets/tradmark/safari.svg");
+      else return require("@components/assets/tradmark/information.svg");
     },
 
     //―――――――――――――――――――――― Basket > Reject ――――――――――――――――――――
@@ -1876,22 +1876,22 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
     //――――――――――――――――――――――――― Home Image Helper ―――――――――――――――――――――――――
     GetDomainHomeIcon: function (home: string) {
       return home === "shop"
-        ? require("@/Components/assets/icons/store.svg")
+        ? require("@components/assets/icons/store.svg")
         : home === "avocado"
-        ? require("@/Components/assets/icons/avocado.svg")
+        ? require("@components/assets/icons/avocado.svg")
         : home === "blog"
-        ? require("@/Components/assets/icons/blog.svg")
+        ? require("@components/assets/icons/blog.svg")
         : home === "hyper"
-        ? require("@/Components/assets/icons/hyper.svg")
+        ? require("@components/assets/icons/hyper.svg")
         : home === "community"
-        ? require("@/Components/assets/icons/community.png")
+        ? require("@components/assets/icons/community.png")
         : home === "map"
-        ? require("@/Components/assets/icons/map-tag.svg")
+        ? require("@components/assets/icons/map-tag.svg")
         : ("" + home).startsWith("/")
-        ? require("@/Components/assets/icons/static-pages.svg")
+        ? require("@components/assets/icons/static-pages.svg")
         : home
-        ? require("@/Components/assets/icons/landing-page.svg")
-        : require("@/Components/assets/icons/store.svg");
+        ? require("@components/assets/icons/landing-page.svg")
+        : require("@components/assets/icons/store.svg");
     },
     GetDomainHomeName(home: string) {
       return home === "shop"

@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { ShopPermissions } from "../../../../../core/enums/permission/ShopPermissions";
+import { ShopPermissions } from "@core/enums/permission/ShopPermissions";
 
 export default {
   name: "SShopPermissionInput",

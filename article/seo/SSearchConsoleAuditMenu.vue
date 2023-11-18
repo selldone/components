@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import ScoreIndicator from "@/Components/ui/progress/score-indicator/ScoreIndicator.vue";
+import ScoreIndicator from "@components/ui/progress/score-indicator/ScoreIndicator.vue";
 import numeral from "numeral";
 export default {
   name: "SSearchConsoleAuditMenu",

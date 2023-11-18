@@ -122,8 +122,8 @@
 </template>
 
 <script>
-import { SoundHelper } from "../../../../../core/helper/sound/SoundHelper";
-import GlobalRules from "../../../../../core/helper/rules/GlobalRules";
+import { SoundHelper } from "@core/helper/sound/SoundHelper";
+import GlobalRules from "@core/helper/rules/GlobalRules";
 
 export default {
   name: "ShopEmailLogin",

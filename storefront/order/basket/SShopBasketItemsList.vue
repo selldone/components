@@ -340,12 +340,12 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import { ReturnItemStates } from "../../../../../core/enums/basket/ReturnItemStates";
-import SShopBasketItemReturnForm from "@/Components/storefront/order/return/SShopBasketItemReturnForm.vue";
-import BasketItemUserMessageForm from "@/Components/backoffice/basket/BasketItemUserMessageForm.vue";
-import { ProductType } from "../../../../../core/enums/product/ProductType";
-import ProductSectionBoxValuation from "@/Components/product/sections/ProductSectionBoxValuation.vue";
+import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import { ReturnItemStates } from "@core/enums/basket/ReturnItemStates";
+import SShopBasketItemReturnForm from "@components/storefront/order/return/SShopBasketItemReturnForm.vue";
+import BasketItemUserMessageForm from "@components/backoffice/basket/BasketItemUserMessageForm.vue";
+import { ProductType } from "@core/enums/product/ProductType";
+import ProductSectionBoxValuation from "@components/product/sections/ProductSectionBoxValuation.vue";
 
 export default {
   name: "SShopBasketItemsList",

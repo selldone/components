@@ -152,7 +152,7 @@
 <script>
 import { DateConverter } from "../../../../core/helper/date/DateConverter";
 import numeral from "numeral";
-import ScoreIndicator from "@/Components/ui/progress/score-indicator/ScoreIndicator.vue";
+import ScoreIndicator from "@components/ui/progress/score-indicator/ScoreIndicator.vue";
 
 export default {
   name: "SArticleSearchConsole",

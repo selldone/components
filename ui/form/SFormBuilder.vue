@@ -233,8 +233,8 @@
 </template>
 
 <script>
-import CircleButton from "@/Components/ui/button/CircleButton.vue";
-import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
+import CircleButton from "@components/ui/button/CircleButton.vue";
+import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 export default {
   name: "SFormBuilder",
   components: { SSmartSwitch, CircleButton },

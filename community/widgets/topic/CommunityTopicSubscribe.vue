@@ -69,8 +69,8 @@
 </template>
 
 <script>
-import { TopicTrialType } from "../../../../../core/enums/community/TopicTrialType";
-import { TopicSubscriptionType } from "../../../../../core/enums/community/TopicSubscriptionType";
+import { TopicTrialType } from "@core/enums/community/TopicTrialType";
+import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
 
 export default {
   name: "CommunityTopicSubscribe",

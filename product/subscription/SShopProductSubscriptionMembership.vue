@@ -28,8 +28,8 @@
 
 <script>
 
-import ExpandView from "@/Components/ui/expand-view/ExpandView.vue";
-import SShopProductMembershipContentViewer from "@/Components/product/subscription/SShopProductMembershipContentViewer.vue";
+import ExpandView from "@components/ui/expand-view/ExpandView.vue";
+import SShopProductMembershipContentViewer from "@components/product/subscription/SShopProductMembershipContentViewer.vue";
 import { SubscriptionMode } from "../../../../core/enums/subscription/SubscriptionMode";
 import { RibbonHelper } from "../../../../core/helper/ribbon/RibbonHelper";
 

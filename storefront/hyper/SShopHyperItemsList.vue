@@ -65,7 +65,7 @@
 
 <script>
 import { BasketStatus } from "../../../../core/enums/basket/BasketStatus";
-import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
+import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
 
 export default {
   name: "SShopHyperItemsList",

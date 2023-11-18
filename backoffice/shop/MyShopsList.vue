@@ -113,7 +113,7 @@
 
 <script>
 import { ShopPermissions } from "../../../../core/enums/permission/ShopPermissions";
-import AddButtonGreen from "@/Components/ui/button/AddButtonGreen.vue";
+import AddButtonGreen from "@components/ui/button/AddButtonGreen.vue";
 
 export default {
   name: "MyShopsList",

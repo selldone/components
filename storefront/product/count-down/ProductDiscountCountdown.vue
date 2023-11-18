@@ -2,7 +2,7 @@
   <!--  ▃▃▃▃▃▃▃▃▃▃ Discount countdown ▃▃▃▃▃▃▃▃▃▃ -->
   <div v-if="hasDiscountCountDown">
     <img
-      src="@/Components/assets/icons/countdown-badge.svg"
+      src="@components/assets/icons/countdown-badge.svg"
       class="count-down-bg fadeIn delay_400"
       fetchpriority="high"
     />
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import CountDown from "@/Components/ui/count-down/CountDown.vue";
+import CountDown from "@components/ui/count-down/CountDown.vue";
 
 export default {
   name: "ProductDiscountCountdown",

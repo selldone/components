@@ -131,7 +131,7 @@ export default {
   computed: {
     image() {
       if (this.card && this.card.blockchain)
-        return require("@/Components/assets/icons/blockchain.svg");
+        return require("@components/assets/icons/blockchain.svg");
 
       if (!this.card.brand) return Cards.card;
 

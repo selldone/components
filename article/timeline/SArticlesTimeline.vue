@@ -152,7 +152,7 @@
 
 <script>
 import { ArticleTypes } from "../../../../core/enums/article/ArticleTypes";
-import SValueDashed from "@/Components/ui/text/SValueDashed.vue";
+import SValueDashed from "@components/ui/text/SValueDashed.vue";
 
 export default {
   name: "SArticlesTimeline",

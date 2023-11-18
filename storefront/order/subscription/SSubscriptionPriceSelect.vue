@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import BillingPeriod from "../../../../../core/enums/subscription/BillingPeriod";
+import BillingPeriod from "@core/enums/subscription/BillingPeriod";
 
 export default {
   name: "SSubscriptionPriceSelect",

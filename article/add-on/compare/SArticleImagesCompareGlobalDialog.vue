@@ -138,8 +138,8 @@
 </template>
 
 <script>
-import SImageUploader from "@/Components/uploader/SImageUploader.vue";
-import { EventName } from "../../../../../core/events/EventBus";
+import SImageUploader from "@components/uploader/SImageUploader.vue";
+import { EventName } from "@core/events/EventBus";
 
 export default {
   name: "SArticleImagesCompareGlobalDialog",

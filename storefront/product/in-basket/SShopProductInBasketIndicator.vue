@@ -34,7 +34,7 @@
 
 <script>
 import Vue from "vue";
-import { ProductType } from "../../../../../core/enums/product/ProductType";
+import { ProductType } from "@core/enums/product/ProductType";
 
 export default Vue.extend({
   name: "SShopProductInBasketIndicator",

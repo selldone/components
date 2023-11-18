@@ -16,7 +16,8 @@
   <div>
     <v-btn
       :color="SaminColorDarkDeep"
-      rounded dark
+      rounded
+      dark
       class="tnt"
       @click="showShareDialog"
       :loading="busy_share"
@@ -46,7 +47,7 @@
 
         <v-card-text>
           <p>
-            {{ $t('share_order.message') }}
+            {{ $t("share_order.message") }}
           </p>
 
           <progress-loading v-if="busy_share"></progress-loading>
@@ -55,8 +56,8 @@
             v-model="share_address"
             true-icon="local_mall place"
             false-icon="local_mall"
-            :true-title="$t('share_order.address_included') "
-            :false-title="$t('share_order.address_excluded') "
+            :true-title="$t('share_order.address_included')"
+            :false-title="$t('share_order.address_excluded')"
             dark
             @change="showShareDialog"
           >
@@ -90,11 +91,11 @@
 </template>
 
 <script>
-import SValueCopyBox from "@/Components/ui/text/SValueCopyBox.vue";
-import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
+import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
+import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 export default {
   name: "SShopShareOrderButton",
-  components: {SSmartSwitch, SValueCopyBox},
+  components: { SSmartSwitch, SValueCopyBox },
   props: {
     shop: {
       require: true,
@@ -153,7 +154,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -161,7 +161,6 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-share-order-button{
-
+.s--shop-share-order-button {
 }
 </style>

@@ -200,9 +200,9 @@
 </template>
 
 <script>
-import SelectionList from "@/Components/ui/select/SelectionList.vue";
+import SelectionList from "@components/ui/select/SelectionList.vue";
 import { ProductVariants } from "../../../../core/enums/product/ProductVariants";
-import SSmartToggle from "@/Components/smart/SSmartToggle.vue";
+import SSmartToggle from "@components/smart/SSmartToggle.vue";
 
 export default {
   name: "ProductFilterMenu",

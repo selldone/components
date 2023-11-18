@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { ArticleReport } from "../../../../../core/enums/article/ArticleReport";
+import { ArticleReport } from "@core/enums/article/ArticleReport";
 import SContentViolationReportDialog from "../../../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
 import CommunityURLs from "../../helper/CommunityURLs";
 import _ from "lodash-es";

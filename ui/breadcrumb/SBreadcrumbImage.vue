@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import CircleImage from "@/Components/ui/image/CircleImage.vue";
+import CircleImage from "@components/ui/image/CircleImage.vue";
 export default {
   name: "SBreadcrumbImage",
   components: { CircleImage },

@@ -113,8 +113,8 @@
 </template>
 
 <script>
-import { BasketStatus } from "../../../../../core/enums/basket/BasketStatus";
-import { AvocadoItemStatus } from "../../../../../core/enums/avocado/AvocadoItemStatus";
+import { BasketStatus } from "@core/enums/basket/BasketStatus";
+import { AvocadoItemStatus } from "@core/enums/avocado/AvocadoItemStatus";
 
 export default {
   name: "SShopAvocadoCustomerOrderItems",

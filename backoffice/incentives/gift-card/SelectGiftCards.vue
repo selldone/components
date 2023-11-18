@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import SShopGiftCardAddDialog from "@/Components/storefront/incentives/giftcard/SShopGiftCardAddDialog.vue";
+import SShopGiftCardAddDialog from "@components/storefront/incentives/giftcard/SShopGiftCardAddDialog.vue";
 export default {
   name: "SelectGiftCards",
   components: { SShopGiftCardAddDialog },

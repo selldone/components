@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { EventName } from "../../../../../core/events/EventBus";
+import { EventName } from "@core/events/EventBus";
 
 export default {
   name: "SArticleCodeEditorGlobalDialog",

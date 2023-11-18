@@ -102,7 +102,7 @@
 <script>
 import CommunityPostEditor from "../post/CommunityPostEditor.vue";
 import SContentViolationReportDialog from "../../../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
-import { ArticleReport } from "../../../../../core/enums/article/ArticleReport";
+import { ArticleReport } from "@core/enums/article/ArticleReport";
 import CommunityURLs from "../../helper/CommunityURLs";
 import _ from "lodash-es";
 

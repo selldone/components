@@ -386,10 +386,10 @@
 
 <script>
 import CategoriesManagementFilter from "@/Applications/Backoffice/components/category/CategoriesManagement_Filter.vue";
-import CircleImage from "@/Components/ui/image/CircleImage.vue";
-import SImageUploader from "@/Components/uploader/SImageUploader.vue";
+import CircleImage from "@components/ui/image/CircleImage.vue";
+import SImageUploader from "@components/uploader/SImageUploader.vue";
 import CategorySelect from "./CategorySelect.vue";
-import SSmartCheckVerifyAction from "@/Components/smart/SSmartCheckVerifyAction.vue";
+import SSmartCheckVerifyAction from "@components/smart/SSmartCheckVerifyAction.vue";
 import AugmentForm from "../augment/AugmentForm.vue";
 import PageInputField from "@/Applications/Backoffice/pages/shop/widgets/page/PageInputField.vue";
 import STranslationsButtonCategory from "@/Applications/Backoffice/components/translation/STranslationsButtonCategory.vue";

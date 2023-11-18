@@ -24,7 +24,7 @@
     v-on="$listeners"
   >
     <img
-      src="@/Components/assets/icons/ci-logo.png"
+      src="@components/assets/icons/ci-logo.png"
       :width="xLarge ? 36 : 24"
       :height="xLarge ? 36 : 24"
     />

@@ -96,9 +96,9 @@
 </template>
 
 <script>
-import ExpandView from "@/Components/ui/expand-view/ExpandView.vue";
-import SArticleComments from "@/Components/article/comment/SArticleComments.vue";
-import SShopProductRatingView from "@/Components/product/rating/SShopProductRatingView.vue";
+import ExpandView from "@components/ui/expand-view/ExpandView.vue";
+import SArticleComments from "@components/article/comment/SArticleComments.vue";
+import SShopProductRatingView from "@components/product/rating/SShopProductRatingView.vue";
 import { FontSizeHelper } from "../../../../core/helper/style/FontSizeHelper";
 
 export default {

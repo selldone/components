@@ -117,8 +117,8 @@
 
 <script>
 import { Currency } from "../../../../core/enums/payment/Currency";
-import SPaymentForm from "@/Components/payment/SPaymentForm.vue";
-import RadialProgressBar from "@/Components/ui/progress/RadialProgressBar.vue";
+import SPaymentForm from "@components/payment/SPaymentForm.vue";
+import RadialProgressBar from "@components/ui/progress/RadialProgressBar.vue";
 import { DateConverter } from "../../../../core/helper/date/DateConverter";
 import { LocalStorages } from "../../../../core/helper/local-storage/LocalStorages";
 import SetupService from "../../../../core/server/SetupService";

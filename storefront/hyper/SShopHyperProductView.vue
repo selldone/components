@@ -125,7 +125,7 @@
 
 <script>
 import VariantSelectorMenu from "../../../Applications/Backoffice/pages/product/widgets/variants/VariantSelectorMenu.vue";
-import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
+import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 
 export default {
   name: "SShopHyperProductView",

@@ -59,8 +59,8 @@ Vue.use(VueTimeago, {
 import VueNotifications from "vue-notification";
 Vue.use(VueNotifications);
 
-require("@/Components/style/animation/vue2-animate.scss");
-require("@/Components/style/selldone/general_animates.scss");
+require("@components/style/animation/vue2-animate.scss");
+require("@components/style/selldone/general_animates.scss");
 
 //---------------- Number format --------------
 // @ts-ignore
@@ -70,20 +70,20 @@ Vue.use(VueNumerals);
 
 
 //---------------- Check --------------
-import Check from "@/Components/ui/icon/Check.vue";
+import Check from "@components/ui/icon/Check.vue";
 Vue.component("Check", Check);
 
 //---------------- Price view --------------
 
-import PriceView from "@/Components/ui/price/PriceView.vue";
+import PriceView from "@components/ui/price/PriceView.vue";
 Vue.component("price-view", PriceView);
 
 //---------------- Loading --------------
 
-import Loading from "@/Components/ui/loading/loading.vue";
+import Loading from "@components/ui/loading/loading.vue";
 Vue.component("loading", Loading);
 
-import ProgressLoading from "@/Components/ui/loading/ProgressLoading.vue";
+import ProgressLoading from "@components/ui/loading/ProgressLoading.vue";
 Vue.component(ProgressLoading.name, ProgressLoading);
 
 //---------------- Map --------------
@@ -204,13 +204,13 @@ Vue.component(TipsButton.name, TipsButton);
 import "medium-editor";
 
 
-import "@/Components/article/add-on/code-editor/CodeEditorMediumPlugin";
-import "@/Components/article/add-on/compare/ImagesCompareMediumPlugin";
-import "@/Components/article/add-on/flip-book/FlipBookMediumPlugin";
-import "@/Components/article/add-on/canvas/ImageOverlayCanvasMediumPlugin";
+import "@components/article/add-on/code-editor/CodeEditorMediumPlugin";
+import "@components/article/add-on/compare/ImagesCompareMediumPlugin";
+import "@components/article/add-on/flip-book/FlipBookMediumPlugin";
+import "@components/article/add-on/canvas/ImageOverlayCanvasMediumPlugin";
 
 // @ts-ignore
-import { MediumInsert } from "@/Components/article/insert/SelldoneEditorInsert";
+import { MediumInsert } from "@components/article/insert/SelldoneEditorInsert";
 window.MediumInsert = MediumInsert;
 
 //―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
@@ -225,9 +225,9 @@ Vue.component("prism-editor", PrismEditor);
 
 //---------------- Widget --------------
 
-import Widget from "@/Components/widget/Widget.vue";
+import Widget from "@components/widget/Widget.vue";
 Vue.component(Widget.name, Widget);
 
-import WidgetHeader from "@/Components/widget/WidgetHeader.vue";
+import WidgetHeader from "@components/widget/WidgetHeader.vue";
 Vue.component(WidgetHeader.name, WidgetHeader);
 

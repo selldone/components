@@ -13,7 +13,7 @@
 
 <script>
 import CommunityStatisticView from "../statistics/CommunityStatisticView.vue";
-import { TimeSeries } from "../../../../../core/timeserie/TimeSeries";
+import { TimeSeries } from "@core/timeserie/TimeSeries";
 
 export default {
   name: "CommunityStatistic",

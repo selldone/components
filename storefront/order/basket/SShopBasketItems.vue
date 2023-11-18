@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import SShopBasketItem from "@/Components/storefront/order/basket/SShopBasketItem.vue";
+import SShopBasketItem from "@components/storefront/order/basket/SShopBasketItem.vue";
 
 export default {
   name: "SShopBasketItems",

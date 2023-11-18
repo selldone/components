@@ -1,0 +1,354 @@
+<template>
+  <div
+    :class="{ dark: dark }"
+    :style="{
+      '--step-color': dark ? '#000' : color,
+      '--step-color-dark': darkColor ? darkColor : SaminColorDarkDeep,
+    }"
+  >
+    <div class="container-stepper" :class="{ 'mt-5': hasSubscription }">
+      <div
+        :style="`height: 2px;width: ${100 - 100 / length}%;left: ${
+          50 / length
+        }%;top: 15px;background-color: ${
+          dark ? '#000' : color
+        };position: absolute;z-index:1`"
+      ></div>
+
+      <div
+        :style="`height: 2px;width: ${(activeIndex * 100) / length}%;left: ${
+          50 / length
+        }%;top: 15px;background-color: ${
+          dark ? '#fff' : SaminColorDarkDeep
+        };position: absolute;z-index:2`"
+      ></div>
+
+      <ul
+        class="progressbar"
+        @mouseenter="
+          (e) => {
+            if ($refs.target) $emit('mouseEnterToCustomer', $refs.target[0]);
+          }
+        "
+      >
+        <li
+          v-for="(item, _key, index) in states"
+          :key="_key"
+          :class="{
+            active: activeIndex >= index,
+            'sub-caption b-16px -no-wrap': showCaption,
+            '-black': showCaption && dark,
+            '-hover': $vuetify.breakpoint.xs,
+          }"
+          :style="`width:${100 / length}%`"
+          :title="$t(item.name)"
+          :caption="$t(item.name)"
+          :ref="_key === 'ToCustomer' ? 'target' : undefined"
+        >
+          <v-icon
+            v-if="activeIndex > index"
+            color="#fff"
+            small
+            class="hide-on-hover"
+          >
+            check_circle
+          </v-icon>
+
+          <v-icon
+            v-else-if="activeIndex === index"
+            color="#fff"
+            small
+            class="hide-on-hover"
+          >
+            {{ item.icon ? item.icon : "radio_button_unchecked" }}
+          </v-icon>
+          <v-icon
+            v-else-if="item.icon"
+            color="#ccc"
+            class="op-0-6 hide-on-hover"
+            small
+          >
+            {{ item.icon }}
+          </v-icon>
+
+          <v-icon
+            :color="activeIndex >= index ? '#fff' : '#ccc'"
+            small
+            class="show-on-hover"
+          >
+            {{ item.icon ? item.icon : "radio_button_unchecked" }}
+          </v-icon>
+        </li>
+      </ul>
+
+      <div
+        v-if="hasSubscription"
+        class="top-chain"
+        :class="{ '-rtl': $vuetify.rtl }"
+      >
+        <v-icon small class="-ic-1">shortcut</v-icon>
+
+        <span class="-br"></span>
+        <span v-if="isSubscribed">
+          <v-icon color="green" x-small>check_circle</v-icon>
+          subscribed
+        </span>
+        <span v-else>
+          <v-icon color="red" x-small>cancel</v-icon>
+          unsubscribed
+        </span>
+        <span class="-br"></span>
+        <v-icon small class="-ic-2">{{
+          isSubscribed ? "swipe_left_alt" : "credit_card_off"
+        }}</v-icon>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  name: "StatusStepper",
+
+  props: {
+    dark: {
+      type: Boolean,
+      default: false,
+    },
+    states: {
+      required: true,
+    },
+    state: {},
+    color: {
+      default: "#979797",
+    },
+    showCaption: {
+      type: Boolean,
+      default: false,
+    },
+    darkColor: {},
+
+    hasSubscription: {
+      type: Boolean,
+      default: false,
+    },
+    isSubscribed: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data() {
+    return {};
+  },
+
+  computed: {
+    activeIndex() {
+      let index = 0;
+      for (let property in this.states) {
+        let state = this.states[property];
+        if (state.code === this.state) return index;
+        index++;
+      }
+
+      return 0;
+    },
+
+    length() {
+      let length = Object.keys(this.states).length;
+      return length ? length : 1;
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+$color_1: var(--step-color);
+$color_2: white;
+$border_color_1: var(--step-color-dark);
+
+.container-stepper {
+  position: relative;
+  z-index: 1;
+
+  ul {
+    padding: 0 !important;
+  }
+}
+
+.progressbar {
+  position: relative;
+  z-index: 3;
+  counter-reset: step;
+
+  list-style-type: none;
+
+  li {
+    float: left;
+    width: 14.28%;
+    position: relative;
+    text-align: center;
+
+    transition: all 0.15s ease-in-out;
+    &:hover {
+      transform: scale(1.5, 1.5);
+      z-index: 1;
+
+      .show-on-hover {
+        display: block !important;
+      }
+      .hide-on-hover {
+        display: none !important;
+      }
+    }
+
+    .hide-on-hover {
+      display: block !important;
+    }
+
+    .show-on-hover {
+      display: none !important;
+    }
+
+    i {
+      // Icon
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    &:before {
+      content: "";
+      counter-increment: step;
+      width: 30px;
+      height: 30px;
+      border: 2px solid $color_1;
+      display: block;
+      margin: 0 auto 0px auto;
+      border-radius: 50%;
+      line-height: 27px;
+      background: white;
+      color: $color_1;
+      text-align: center;
+      font-weight: bold;
+    }
+    /*
+        &:after {
+          transition: all 0.15s step-end;
+    pointer-events: none;
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 3px;
+          background: #979797;
+          top: 15px;
+          left: -50%;
+          z-index: -1;
+        }
+
+        &:first-child {
+          &:after {
+            content: none;
+          }
+        }*/
+  }
+
+  li.active {
+    &:before {
+      border-color: $border_color_1;
+      background: $border_color_1;
+      color: $color_2;
+    }
+
+    /* &:after {
+      background: $border_color_1;
+    }*/
+
+    li {
+      /* &:after {
+        background: $border_color_1;
+      }*/
+
+      &:before {
+        border-color: $border_color_1;
+        background: $border_color_1;
+        color: $color_2;
+      }
+    }
+  }
+}
+
+.top-chain {
+  --chain-color: #111;
+
+  position: absolute;
+  right: 0;
+  width: 52%;
+  top: -21px;
+  z-index: 11;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: var(--chain-color);
+  .-br {
+    margin: 0 3px;
+    flex-grow: 1;
+    height: 1px;
+    background-color: var(--chain-color);
+  }
+  .-ic-1 {
+    transform: rotate(-90deg) scaleX(-1) translateX(5px);
+    color: var(--chain-color) !important;
+  }
+  .-ic-2 {
+    color: var(--chain-color) !important;
+  }
+
+  &.-rtl {
+    flex-direction: row-reverse;
+  }
+}
+
+$border_color_1_dark: #fff;
+
+.dark {
+  .progressbar {
+    li {
+      &:before {
+        border: 2px solid #000;
+        background: var(--step-color-dark);
+      }
+
+      &:after {
+        background: var(--step-color-dark);
+      }
+    }
+
+    li.active {
+      &:before {
+        border-color: $border_color_1_dark;
+        background: var(--step-color-dark);
+      }
+
+      &:after {
+        background: $border_color_1_dark;
+      }
+
+      li {
+        &:after {
+          background: $border_color_1_dark;
+        }
+
+        &:before {
+          border-color: $border_color_1_dark;
+          background: $border_color_1_dark;
+        }
+      }
+    }
+  }
+  .top-chain {
+    --chain-color: #fff;
+  }
+}
+</style>

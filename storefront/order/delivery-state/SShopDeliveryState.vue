@@ -218,10 +218,10 @@
 </template>
 
 <script>
-import { BasketRejectReasons } from "../../../../../core/enums/basket/BasketRejectReasons";
-import { DateConverter } from "../../../../../core/helper/date/DateConverter";
-import CountDown from "@/Components/ui/count-down/CountDown.vue";
-import { ProductType } from "../../../../../core/enums/product/ProductType";
+import { BasketRejectReasons } from "@core/enums/basket/BasketRejectReasons";
+import { DateConverter } from "@core/helper/date/DateConverter";
+import CountDown from "@components/ui/count-down/CountDown.vue";
+import { ProductType } from "@core/enums/product/ProductType";
 
 export default {
   name: "SShopDeliveryState",

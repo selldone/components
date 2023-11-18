@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import SImageUploader from "@/Components/uploader/SImageUploader.vue";
+import SImageUploader from "@components/uploader/SImageUploader.vue";
 export default {
   name: "SImageCanvas",
   components: {SImageUploader },

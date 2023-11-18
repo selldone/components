@@ -332,14 +332,14 @@
 </template>
 
 <script>
-import { PhysicalOrderStates } from "../../../../../core/enums/basket/PhysicalOrderStates";
+import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
 import BasketBillingWidget from "../../../../Applications/Backoffice/pages/shop/widgets/order-billing/BasketBillingWidget.vue";
-import { ProductType } from "../../../../../core/enums/product/ProductType";
+import { ProductType } from "@core/enums/product/ProductType";
 import BasketAutoCompleteCountDown from "../../../../Applications/Backoffice/components/order/BasketAutoCompleteCountDown.vue";
 import DeliveryTimelineTransportationOrder from "@/Applications/Backoffice/pages/shop/pages/logistic/widgets/DeliveryTimelineTransportationOrder.vue";
-import {ShopTransportations} from "../../../../../core/enums/logistic/ShopTransportations";
+import {ShopTransportations} from "@core/enums/logistic/ShopTransportations";
 import GeoNavigationButton
-  from "@/Applications/Backoffice/pages/shop/pages/logistic/widgets/GeoNavigationButton.vue";
+  from "@components/map/GeoNavigationButton.vue";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",

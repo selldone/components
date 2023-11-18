@@ -187,8 +187,8 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import FadeScroll from "@/Components/ui/fade-scroll/FadeScroll.vue";
+import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 
 export default {
   name: "SShopProductSlideShow",

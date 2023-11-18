@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import {InlineEditorMixin} from "@/Components/mixin/InlineEditorMixin";
+import {InlineEditorMixin} from "@components/mixin/InlineEditorMixin";
 
 export default {
   name: "FaqSection",

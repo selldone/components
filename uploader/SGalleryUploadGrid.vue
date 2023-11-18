@@ -120,7 +120,7 @@
 
 <script>
 import SImageUploader from "./SImageUploader.vue";
-import MuuriGrid from "@/Components/ui/grid/MurriGrid.vue";
+import MuuriGrid from "@components/ui/grid/MurriGrid.vue";
 export default {
   name: "SGalleryUploadGrid",
   components: { MuuriGrid, SImageUploader },

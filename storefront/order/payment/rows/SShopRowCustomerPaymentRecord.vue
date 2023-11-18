@@ -52,9 +52,9 @@
 </template>
 
 <script>
-import PaymentCard from "@/Components/payment/widgets/PaymentCard.vue";
-import SPaymentBillingDetails from "@/Components/payment/widgets/SPaymentBillingDetails.vue";
-import SCountryWorldMap from "@/Components/map/SCountryWorldMap.vue";
+import PaymentCard from "@components/payment/widgets/PaymentCard.vue";
+import SPaymentBillingDetails from "@components/payment/widgets/SPaymentBillingDetails.vue";
+import SCountryWorldMap from "@components/map/SCountryWorldMap.vue";
 export default {
   name: "SShopRowCustomerPaymentRecord",
   components: { SCountryWorldMap, SPaymentBillingDetails, PaymentCard },

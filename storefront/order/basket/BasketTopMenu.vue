@@ -163,9 +163,9 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import { ProductType } from "../../../../../core/enums/product/ProductType";
-import {MapHelper} from "../../../../../core/helper/map/MapHelper";
+import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import { ProductType } from "@core/enums/product/ProductType";
+import {MapHelper} from "@core/helper/map/MapHelper";
 export default {
   name: "BasketTopMenu",
   components: { VariantItemViewMicro },

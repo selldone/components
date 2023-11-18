@@ -2,9 +2,19 @@
   <span
     v-if="!notShowZero || amount"
     class="price-view"
-    :class="{ medium: medium, large: large, 'x-large': xLarge, dark: dark,'-invalid':!is_valid_amount }"
+    :class="{
+      medium: medium,
+      large: large,
+      'x-large': xLarge,
+      dark: dark,
+      '-invalid': !is_valid_amount,
+    }"
     :style="{ 'min-height': minHeight }"
-    :title="!is_valid_amount?`Invalid amount! ⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.`:undefined"
+    :title="
+      !is_valid_amount
+        ? `Invalid amount! ⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.`
+        : undefined
+    "
   >
     <span v-if="isUnicode && !at_end">{{
       GetUserSelectedCurrencyName(currency_string, true)
@@ -12,7 +22,9 @@
 
     <span :class="{ 'line-through': lineThrough }">
       {{ absolute_part
-      }}<span class="small">{{ is_valid_amount?getAmountAfterPoint(formatted_number) :''}}</span>
+      }}<span class="small">{{
+        is_valid_amount ? getAmountAfterPoint(formatted_number) : ""
+      }}</span>
     </span>
     <span v-if="!isUnicode" class="mx-2 cur-name">{{
       GetUserSelectedCurrencyName(currency_string, true)
@@ -25,7 +37,7 @@
 </template>
 
 <script>
-import { CurrencyHelper } from "../../../../core/helper/currency/CurrencyHelper";
+import { CurrencyHelper } from "@core/helper/currency/CurrencyHelper";
 
 export default {
   name: "PriceView",
@@ -60,8 +72,6 @@ export default {
       type: Boolean,
       default: false,
     },
-
-
   },
 
   computed: {
@@ -69,19 +79,21 @@ export default {
      * At times, when the number is incorrect (like when an exchange rate is unavailable), we might return an error message or an emoji.
      * @returns {boolean}
      */
-    is_valid_amount(){
-        return this.amount !== null && this.amount !== undefined && !isNaN(this.amount) ;
+    is_valid_amount() {
+      return (
+        this.amount !== null && this.amount !== undefined && !isNaN(this.amount)
+      );
     },
 
     currency_string() {
       return this.isObject(this.currency) ? this.currency.code : this.currency;
     },
     formatted_number() {
-      if(!this.is_valid_amount)return null;
+      if (!this.is_valid_amount) return null;
       return this.FormatNumberCurrency(this.amount, this.currency_string);
     },
     absolute_part() {
-      if(!this.is_valid_amount)return this.amount;
+      if (!this.is_valid_amount) return this.amount;
       return this.formatted_number.split(".")[0];
     },
     currency_code() {
@@ -116,7 +128,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -127,13 +138,13 @@ export default {
 .price-view {
   font-weight: 600;
   unicode-bidi: plaintext;
-  unicode-bidi: -webkit-isolate;    // Solve invalid sign position in safari
+  unicode-bidi: -webkit-isolate; // Solve invalid sign position in safari
   transition: all 0.5s;
   span {
     unicode-bidi: initial;
   }
 
-  &.-invalid{
+  &.-invalid {
     color: red;
   }
 
@@ -165,9 +176,4 @@ export default {
     font-size: 10px !important;
   }
 }
-
-
-
-
-
 </style>

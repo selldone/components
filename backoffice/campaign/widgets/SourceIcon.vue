@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { Brands } from "../../../../../core/enums/social/Brands";
+import { Brands } from "@core/enums/social/Brands";
 
 export default {
   name: "SourceIcon",
@@ -17,7 +17,7 @@ export default {
 
   computed: {
     icon() {
-      if(this.value==='direct')return  require("@/Components/assets/icons/direct-enter.svg");
+      if(this.value==='direct')return  require("@components/assets/icons/direct-enter.svg");
       const found = this.value
         ? Brands.find(
             (item) => item.name.toLowerCase() === this.value.toLowerCase()
@@ -26,7 +26,7 @@ export default {
 
       return found
         ? found.icon
-        : require("@/Components/assets/tradmark/default.svg");
+        : require("@components/assets/tradmark/default.svg");
     },
   },
   methods: {},

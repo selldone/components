@@ -36,7 +36,7 @@
 
 
 import CommunityComments from "./CommunityComments.vue";
-import {SmartConvertTextToHtmlHashtags} from "../../../../../core/helper/html/HtmlHelper";
+import {SmartConvertTextToHtmlHashtags} from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "CommunityCommentWidget",

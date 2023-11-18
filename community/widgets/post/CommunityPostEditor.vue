@@ -647,27 +647,27 @@
 
 <script>
 import VoiceRecorder from "../voice/VoiceRecorder.vue";
-import RoundedTabs from "@/Components/ui/tab/RoundedTabs.vue";
-import GlobalRules from "../../../../../core/helper/rules/GlobalRules";
-import SMentionableInput from "@/Components/ui/text/SMentionableInput.vue";
-import { SmartConvertTextToHtmlHashtags } from "../../../../../core/helper/html/HtmlHelper";
+import RoundedTabs from "@components/ui/tab/RoundedTabs.vue";
+import GlobalRules from "@core/helper/rules/GlobalRules";
+import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
+import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
 import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
-import { Screenshot } from "../../../../../core/helper/canvas/Screenshot";
-import { FileHelper } from "../../../../../core/helper/converters/FileHelper";
-import SPriceInput from "@/Components/ui/input/price/SPriceInput.vue";
-import CurrencyList from "@/Components/ui/currency/CurrencyList.vue";
-import { TopicSubscriptionType } from "../../../../../core/enums/community/TopicSubscriptionType";
-import { TopicTrialType } from "../../../../../core/enums/community/TopicTrialType";
-import { Currency } from "../../../../../core/enums/payment/Currency";
+import { Screenshot } from "@core/helper/canvas/Screenshot";
+import { FileHelper } from "@core/helper/converters/FileHelper";
+import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
+import CurrencyList from "@components/ui/currency/CurrencyList.vue";
+import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
+import { TopicTrialType } from "@core/enums/community/TopicTrialType";
+import { Currency } from "@core/enums/payment/Currency";
 import CommunityPoll from "./CommunityPoll.vue";
-import { CommunityStageLevel } from "../../../../../core/enums/community/CommunityStageLevel";
+import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
 import CommunityProductEditor from "../product/CommunityProductEditor.vue";
 import CommunityProductView from "../product/CommunityProductView.vue";
-import ImageDimension from "../../../../../core/helper/image/ImageDimension";
-import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
+import ImageDimension from "@core/helper/image/ImageDimension";
+import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 import CommunityAttachEditor from "../attach/CommunityAttachEditor.vue";
 import CommunityAttachView from "../attach/CommunityAttachView.vue";
-import VideoHelper from "../../../../../core/helper/video/VideoHelper";
+import VideoHelper from "@core/helper/video/VideoHelper";
 import _ from "lodash-es";
 
 /**

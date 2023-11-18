@@ -149,7 +149,7 @@
 </template>
 
 <script>
-import SetupService from "../../../../../core/server/SetupService";
+import SetupService from "@core/server/SetupService";
 import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
 
 export default {

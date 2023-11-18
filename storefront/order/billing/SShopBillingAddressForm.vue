@@ -113,10 +113,10 @@
 </template>
 
 <script>
-import CountryList from "@/Components/ui/country/country-list/CountryList.vue";
-import SSmartToggle from "@/Components/smart/SSmartToggle.vue";
-import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
-import { MapHelper } from "../../../../../core/helper/map/MapHelper";
+import CountryList from "@components/ui/country/country-list/CountryList.vue";
+import SSmartToggle from "@components/smart/SSmartToggle.vue";
+import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
+import { MapHelper } from "@core/helper/map/MapHelper";
 export default {
   name: "SShopBillingAddressForm",
   components: { SSmartSwitch, SSmartToggle, CountryList },

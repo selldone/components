@@ -105,7 +105,7 @@
 
 <script>
 import VueSelectImage from "vue-select-image";
-import ScoreIndicator from "@/Components/ui/progress/score-indicator/ScoreIndicator.vue";
+import ScoreIndicator from "@components/ui/progress/score-indicator/ScoreIndicator.vue";
 
 require("vue-select-image/dist/vue-select-image.css");
 

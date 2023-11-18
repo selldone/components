@@ -422,10 +422,10 @@
 </template>
 
 <script>
-import SShopProductRatingView from "@/Components/product/rating/SShopProductRatingView.vue";
-import SShopBuyButton from "@/Components/product/button/SShopBuyButton.vue";
-import ColorCircle from "@/Components/ui/color/ColorCircle.vue";
-import SValueCopyBox from "@/Components/ui/text/SValueCopyBox.vue";
+import SShopProductRatingView from "@components/product/rating/SShopProductRatingView.vue";
+import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
+import ColorCircle from "@components/ui/color/ColorCircle.vue";
+import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 
 export default {
   name: "ProductComparisonList",

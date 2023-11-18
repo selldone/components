@@ -96,8 +96,8 @@
 </template>
 
 <script>
-import { Language } from "../../../../../core/enums/language/Language";
-import SetupService from "../../../../../core/server/SetupService";
+import { Language } from "@core/enums/language/Language";
+import SetupService from "@core/server/SetupService";
 
 export default {
   name: "SLanguagesDialog",

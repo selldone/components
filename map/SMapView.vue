@@ -577,12 +577,12 @@
 <script>
 import Vue from "vue";
 import LocationMarker from "./widgets/LocationMarker.vue";
-import CountryList from "@/Components/ui/country/country-list/CountryList.vue";
+import CountryList from "@components/ui/country/country-list/CountryList.vue";
 
 //―――――――――――――――――――――― Mapbox ――――――――――――――――――――
 import Mapbox from "./MapBox";
 import SetupService from "../../../core/server/SetupService";
-import SAddressInput from "@/Components/ui/input/address/SAddressInput.vue";
+import SAddressInput from "@components/ui/input/address/SAddressInput.vue";
 
 export default {
   name: "SMapView",
@@ -681,7 +681,7 @@ export default {
     pinImage: {
       require: false,
       type: String,
-      default: require("@/Components/assets/icons/Truck-fill.svg"),
+      default: require("@components/assets/icons/Truck-fill.svg"),
     },
 
     pinIcon: {

@@ -92,7 +92,7 @@
 
 <script>
 import ImageInput from "../image/ImageInput.vue";
-import SSmartToggle from "@/Components/smart/SSmartToggle.vue";
+import SSmartToggle from "@components/smart/SSmartToggle.vue";
 export default {
   name: "CommunityCategoryEdit",
   components: { SSmartToggle, ImageInput },

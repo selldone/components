@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { CampaignMedium } from "../../../../../core/enums/campaign/CampaignMedium";
+import { CampaignMedium } from "@core/enums/campaign/CampaignMedium";
 
 export default {
   name: "MediumIcon",
@@ -23,7 +23,7 @@ export default {
           )
         : null;
 
-      return found ? found.icon : require("../../../../../core/enums/campaign/assets/mediums/default.svg");
+      return found ? found.icon : require("@core/enums/campaign/assets/mediums/default.svg");
     }
   },
   methods: {}

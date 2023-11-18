@@ -566,9 +566,9 @@ import SSocialShareButtons from "../../../ui/button/share/SSocialShareButtons.vu
 import UserEmailInput from "@/Applications/Backoffice/components/user/UserEmailInput.vue";
 import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
 import CommunityAccessController from "../access/CommunityAccessController.vue";
-import CountDown from "@/Components/ui/count-down/CountDown.vue";
-import { DateConverter } from "../../../../../core/helper/date/DateConverter";
-import {SmartConvertTextToHtml} from "../../../../../core/helper/html/HtmlHelper";
+import CountDown from "@components/ui/count-down/CountDown.vue";
+import { DateConverter } from "@core/helper/date/DateConverter";
+import {SmartConvertTextToHtml} from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "CommunityBreadcrumb",

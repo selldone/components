@@ -245,13 +245,13 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@/Components/product/variant/VariantItemViewMicro.vue";
-import BasketItemUserMessageForm from "@/Components/backoffice/basket/BasketItemUserMessageForm.vue";
-import { ProductType } from "../../../../../core/enums/product/ProductType";
+import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import BasketItemUserMessageForm from "@components/backoffice/basket/BasketItemUserMessageForm.vue";
+import { ProductType } from "@core/enums/product/ProductType";
 import SShopBasketItemCountSelect from "./SShopBasketItemCountSelect.vue";
-import ServiceOrderView from "@/Components/product/service/ServiceOrderView.vue";
-import { ServiceTypes } from "../../../../../core/enums/product/ServiceTypes";
-import BillingPeriod from "../../../../../core/enums/subscription/BillingPeriod";
+import ServiceOrderView from "@components/product/service/ServiceOrderView.vue";
+import { ServiceTypes } from "@core/enums/product/ServiceTypes";
+import BillingPeriod from "@core/enums/subscription/BillingPeriod";
 
 export default {
   name: "SShopBasketItem",

@@ -252,7 +252,7 @@
 
 <script>
 import SLotteryPrizeForWinner from "./SLotteryPrizeForWinner.vue";
-import { SoundHelper } from "../../../../../core/helper/sound/SoundHelper";
+import { SoundHelper } from "@core/helper/sound/SoundHelper";
 
 export default {
   name: "WheelOfFortune",

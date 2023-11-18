@@ -331,18 +331,18 @@
 </template>
 
 <script>
-import SShopProductCard from "@/Components/product/card/SShopProductCard.vue";
-import SProductsSortView from "@/Components/product/sort/SProductsSortView.vue";
-import CategoryCard from "@/Components/backoffice/category/CategoryCard.vue";
+import SShopProductCard from "@components/product/card/SShopProductCard.vue";
+import SProductsSortView from "@components/product/sort/SProductsSortView.vue";
+import CategoryCard from "@components/backoffice/category/CategoryCard.vue";
 import { HierarchyHelper } from "../../../../core/helper/breadcrumb/HierarchyHelper";
-import ProductFilterMenu from "@/Components/storefront/filter/ProductFilterMenu.vue";
+import ProductFilterMenu from "@components/storefront/filter/ProductFilterMenu.vue";
 import { LocalStorages } from "../../../../core/helper/local-storage/LocalStorages";
 import GtagEcommerce from "../../../Applications/Storefront/plugins/gtag/GtagEcommerce";
-import SShopProductMainCard from "@/Components/product/info/SShopProductMainCard.vue";
+import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
 import { SpecHelper } from "../../../../core/helper/product/SpecHelper";
-import ProductSpecView from "../../../Applications/Backoffice/components/product/spec/ProductSpecView.vue";
-import SBreadcrumbImage from "@/Components/ui/breadcrumb/SBreadcrumbImage.vue";
-import ProductInfoLoadingView from "@/Components/product/loading/ProductInfoLoadingView.vue";
+import ProductSpecView from "../product/spec/ProductSpecView.vue";
+import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
+import ProductInfoLoadingView from "@components/product/loading/ProductInfoLoadingView.vue";
 import { ModeView } from "../../../../core/enums/shop/ModeView";
 import _ from "lodash-es";
 

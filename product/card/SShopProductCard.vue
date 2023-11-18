@@ -260,7 +260,7 @@
                       >fas fa-plus</v-icon
                     >
                     <img
-                      src="@/Components/assets/icons/coupon.svg"
+                      src="@components/assets/icons/coupon.svg"
                       height="24"
                     />
                   </span>
@@ -286,14 +286,14 @@
            -->
 
         <span v-if="hasOffer" class="offer-top-end"
-          ><img src="@/Components/assets/icons/gift-w.svg" />
+          ><img src="@components/assets/icons/gift-w.svg" />
           <span>{{ $t("global.commons.offer") }}</span></span
         >
       </div>
       <!--  -------- Discount countdown ---------- -->
       <img
         v-if="hasDiscountCountDown"
-        src="@/Components/assets/icons/countdown-badge.svg"
+        src="@components/assets/icons/countdown-badge.svg"
         class="count-down-bg fadeIn delay_400"
       />
 
@@ -394,7 +394,7 @@
 
                 <img
                   v-if="hasCoupon"
-                  src="@/Components/assets/icons/coupon.svg"
+                  src="@components/assets/icons/coupon.svg"
                   height="24"
                   title="Has extra coupon!"
                 />
@@ -439,7 +439,7 @@
         </v-row>
 
         <span v-if="hasOffer" class="offer-top-end"
-          ><img src="@/Components/assets/icons/gift-w.svg" />
+          ><img src="@components/assets/icons/gift-w.svg" />
           <span>{{ $t("global.commons.offer") }}</span></span
         >
       </v-container>
@@ -447,7 +447,7 @@
       <!--  -------- Discount countdown ---------- -->
       <img
         v-if="hasDiscountCountDown"
-        src="@/Components/assets/icons/countdown-badge.svg"
+        src="@components/assets/icons/countdown-badge.svg"
         class="count-down-bg fadeIn delay_400"
       />
 
@@ -466,10 +466,10 @@
 
 <script>
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
-import PriceView from "@/Components/ui/price/PriceView.vue";
-import CountDown from "@/Components/ui/count-down/CountDown.vue";
+import PriceView from "@components/ui/price/PriceView.vue";
+import CountDown from "@components/ui/count-down/CountDown.vue";
 import { ProductType } from "../../../../core/enums/product/ProductType";
-import ColorCircle from "@/Components/ui/color/ColorCircle.vue";
+import ColorCircle from "@components/ui/color/ColorCircle.vue";
 
 export default {
   name: "SShopProductCard",

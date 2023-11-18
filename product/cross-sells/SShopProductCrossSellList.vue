@@ -137,8 +137,8 @@
 </template>
 
 <script>
-import ProductVariantsView from "@/Components/product/variant/ProductVariantsView.vue";
-import FadeScroll from "@/Components/ui/fade-scroll/FadeScroll.vue";
+import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
+import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 import { BasketHelper } from "../../../../core/helper/shop/BasketHelper";
 import CrossSellActionType from "../../../../core/enums/product/CrossSellActionType";
 import {ShopOptionsHelper} from "../../../../core/helper/shop/ShopOptionsHelper";

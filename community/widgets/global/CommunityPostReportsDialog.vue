@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { ArticleReport } from "../../../../../core/enums/article/ArticleReport";
+import { ArticleReport } from "@core/enums/article/ArticleReport";
 import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
 
 export default {

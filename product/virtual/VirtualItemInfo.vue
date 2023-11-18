@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import SValueDashed from "@/Components/ui/text/SValueDashed.vue";
+import SValueDashed from "@components/ui/text/SValueDashed.vue";
 import VariantItemViewMicro from "../variant/VariantItemViewMicro.vue";
 export default {
   name: "VirtualItemInfo",

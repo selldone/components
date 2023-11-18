@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import FadeScroll from "@/Components/ui/fade-scroll/FadeScroll.vue";
+import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 
 export default {
   name: "FloatSmartTabs",

@@ -141,10 +141,10 @@
 </template>
 
 <script>
-import SArticleEditor from "@/Components/article/SArticleEditor.vue";
+import SArticleEditor from "@components/article/SArticleEditor.vue";
 import { LogisticProfileType } from "../../../../core/enums/logistic/LogisticProfileType";
 import SetupService from "../../../../core/server/SetupService";
-import ExpandView from "@/Components/ui/expand-view/ExpandView.vue";
+import ExpandView from "@components/ui/expand-view/ExpandView.vue";
 
 export default {
   name: "SShopProductWarranty",

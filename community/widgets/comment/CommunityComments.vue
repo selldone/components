@@ -338,7 +338,7 @@
 
 <script>
 import CommunityImage from "../image/CommunityImage.vue";
-import { SmartConvertTextToHtml } from "../../../../../core/helper/html/HtmlHelper";
+import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 export default {
   name: "CommunityComments",
   components: { CommunityImage },

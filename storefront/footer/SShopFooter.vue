@@ -390,12 +390,12 @@
 </template>
 
 <script>
-import SCurrencySelector from "@/Components/ui/currency/SCurrencySelector.vue";
+import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
 import SShopCookiePreferences from "../cookie/SShopCookiePreferences.vue";
-import SShopSocialButtons from "@/Components/storefront/social/SShopSocialButtons.vue";
+import SShopSocialButtons from "@components/storefront/social/SShopSocialButtons.vue";
 
 import SetupService from "../../../../core/server/SetupService";
-import SShopLanguageSelector from "@/Components/storefront/language/SShopLanguageSelector.vue";
+import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 
 export default {
   name: "SShopFooter",

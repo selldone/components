@@ -22,7 +22,7 @@
       <progress-loading v-if="busy_track_price"></progress-loading>
       <img
         class="fadeIn float-start me-1"
-        src="@/Components/assets/icons/track-price.svg"
+        src="@components/assets/icons/track-price.svg"
         width="28"
         height="28"
         :class="{ 'img-grayscale': !forAuction }"

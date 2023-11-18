@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { CustomerClubLevels } from "../../../../../core/enums/customer/CustomerClubLevels";
+import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
 
 export default {
   name: "SelectCustomerClub",

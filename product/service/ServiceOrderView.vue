@@ -94,7 +94,7 @@
 
 <script>
 import { ServiceTypes } from "../../../../core/enums/product/ServiceTypes";
-import WeekDayTimeTable from "@/Components/ui/calendar/WeekDayTimeTable.vue";
+import WeekDayTimeTable from "@components/ui/calendar/WeekDayTimeTable.vue";
 import _ from "lodash-es";
 
 export default {

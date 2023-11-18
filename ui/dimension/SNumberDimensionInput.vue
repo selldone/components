@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
+import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import DimensionSelector from "./DimensionSelector.vue";
 export default {
   name: "SNumberDimensionInput",

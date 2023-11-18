@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import ColorCircle from "@/Components/ui/color/ColorCircle.vue";
+import ColorCircle from "@components/ui/color/ColorCircle.vue";
 import VariantAssetView from "@/Applications/Backoffice/pages/product/widgets/graphical-assets/VariantAssetView.vue";
 
 export default {

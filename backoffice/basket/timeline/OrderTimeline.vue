@@ -362,16 +362,16 @@
 </template>
 
 <script>
-import SMentionableInput from "@/Components/ui/text/SMentionableInput.vue";
+import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
 import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
-import { ShopTransportations } from "../../../../../core/enums/logistic/ShopTransportations";
-import { Reactions } from "../../../../../core/enums/support/Reactions";
-import { Brands } from "../../../../../core/enums/social/Brands";
-import { CampaignMedium } from "../../../../../core/enums/campaign/CampaignMedium";
-import { CustomerClubLevels } from "../../../../../core/enums/customer/CustomerClubLevels";
-import GeoNavigationButton from "@/Applications/Backoffice/pages/shop/pages/logistic/widgets/GeoNavigationButton.vue";
-import TimelineStatus from "../../../../../core/enums/timeline/TimelineStatus";
-import SSmartMenu from "@/Components/smart/SSmartMenu.vue";
+import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
+import { Reactions } from "@core/enums/support/Reactions";
+import { Brands } from "@core/enums/social/Brands";
+import { CampaignMedium } from "@core/enums/campaign/CampaignMedium";
+import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
+import GeoNavigationButton from "@components/map/GeoNavigationButton.vue";
+import TimelineStatus from "@core/enums/timeline/TimelineStatus";
+import SSmartMenu from "@components/smart/SSmartMenu.vue";
 
 export default {
   name: "OrderTimeline",

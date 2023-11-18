@@ -161,7 +161,7 @@
 
 <script>
 import { FileHelper } from "../../../../core/helper/converters/FileHelper";
-import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
+import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 import {
   FORM_BUILDER_TAGS,
   SmartConvertTextToHtml,

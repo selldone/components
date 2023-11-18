@@ -199,8 +199,8 @@
 
 <script>
 import { FileHelper } from "../../../../core/helper/converters/FileHelper";
-import SSmartSwitch from "@/Components/smart/SSmartSwitch.vue";
-import SNumberInput from "@/Components/ui/input/number/SNumberInput.vue";
+import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
+import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import _ from "lodash-es";
 
 export default {

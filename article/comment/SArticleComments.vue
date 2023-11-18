@@ -166,7 +166,7 @@
 
 <script>
 import SArticleComment from "./SArticleComment.vue";
-import SShopLogin from "@/Components/login/SShopLogin.vue";
+import SShopLogin from "@components/login/SShopLogin.vue";
 import LoginPage from "@/Applications/Selldone/pages/auth/login/Login.vue";
 
 export default {
