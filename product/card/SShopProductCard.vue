@@ -63,7 +63,7 @@
           :class="{ 'has-discount-banner': hasDiscountCountDown }"
         >
           <h3 class="card-new-title" :class="{ 'is-small': isSmall }">
-            {{ product.title?.limitWords(8) }}
+            {{ product.title?.limitWords(12) }}
           </h3>
 
           <div v-if="false" class="bar-gradient" />

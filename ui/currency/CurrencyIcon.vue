@@ -77,6 +77,7 @@ export default {
   font-weight: 500;
   line-height: 40px;
   text-align: center;
+  justify-content: center;
 
   &.-small {
     font-size: 16px;

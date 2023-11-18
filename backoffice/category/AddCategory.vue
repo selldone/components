@@ -98,6 +98,7 @@
         >
           <template v-slot:append>
             <s-translations-button-category
+              v-if="category?.id"
               :shop="shop"
               :category="category"
               translation-key="title"
@@ -154,6 +155,7 @@
         >
           <template v-slot:append>
             <s-translations-button-category
+              v-if="category?.id"
               :shop="shop"
               :category="category"
               translation-key="description"
@@ -238,7 +240,7 @@
           :loading="busy"
         >
           <v-icon class="me-1">save</v-icon>
-          {{ $t("add_category.edit_action") }}
+          {{ $t("global.actions.save_changes") }}
         </v-btn>
 
         <v-btn

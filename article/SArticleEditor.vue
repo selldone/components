@@ -1507,14 +1507,13 @@ export default {
   /**
         blockquote
         */
-  --bg-color: #fff;
 
   blockquote {
     display: flow-root;
     //  display: block;
     border-width: 2px 0;
     border-style: solid;
-    border-color: #eee;
+    border-color: #ddd;
     padding: 0.7em 0 0.5em;
     margin: 1.5em auto !important;
     position: relative;
@@ -1526,7 +1525,7 @@ export default {
       top: -5px;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: var(--bg-color);
+      background: var(--background);
       width: 3rem;
       height: 2rem;
       font-family: "Font Awesome 5 Free";
