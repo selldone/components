@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <!-- ********************* 🞇 Discount inform ********************* -->
     <v-sheet
       v-if="!discount_percent && !window.ExternalWidget"
@@ -27,7 +27,7 @@
         height="28"
         :class="{ 'img-grayscale': !forAuction }"
       />
-      <div class="font-weight-black">
+      <div class="font-weight-black single-line">
         {{ $t("product_info.track_price") }}
       </div>
       <div class="body-2 single-line">

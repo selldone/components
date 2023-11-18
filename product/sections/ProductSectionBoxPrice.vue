@@ -102,7 +102,8 @@
     <!-- ▁▁▁▁▁▁ 🞇 For Auction Inform 🞇 ▁▁▁▁▁▁ -->
 
     <product-section-box-for-auction
-      class="mb-2"
+      class="mb-2 min-width-200"
+      style="max-width: 70%"
       :shop="shop"
       :product="product"
       :current-variant="currentVariant"
