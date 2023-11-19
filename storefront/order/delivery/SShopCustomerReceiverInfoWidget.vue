@@ -105,7 +105,7 @@
       :src="
         receiverInfo.location
           ? `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${receiverInfo.location.lng},${receiverInfo.location.lat},17,0,0/800x400?access_token=pk.eyJ1IjoicGFqdWhhYW4iLCJhIjoiY2sxaHNtbnU3MDFjcjNta2V0OTZ0d2ExYiJ9.YKRh0EP7NnhbmuSil7AvSw`
-          : require('@/Components/assets/icons/map-shop.svg')
+          : require('@components/assets/icons/map-shop.svg')
       "
     >
       <location-marker

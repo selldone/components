@@ -238,7 +238,7 @@
 <script>
 import { ProductType } from "../../../../core/enums/product/ProductType";
 import Loading from "@components/ui/loading/loading.vue";
-import GtagEcommerce from "@/Applications/Storefront/plugins/gtag/GtagEcommerce";
+import GtagEcommerce from "@app-storefront/plugins/gtag/GtagEcommerce";
 import { ShopOptionsHelper } from "../../../../core/helper/shop/ShopOptionsHelper";
 import { BusinessModel } from "../../../../core/enums/shop/BusinessModel";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";

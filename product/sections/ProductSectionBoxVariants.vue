@@ -111,9 +111,9 @@
 
 <script>
 import VariantFilter from "../variant/variant-filter/VariantFilter.vue";
-import VariantItemMini from "@/Applications/Backoffice/pages/product/widgets/variants/VariantItemMini.vue";
+import VariantItemMini from "@app-backoffice/pages/product/widgets/variants/VariantItemMini.vue";
 import { ProductVariants } from "../../../../core/enums/product/ProductVariants";
-import VariantAssetView from "@/Applications/Backoffice/pages/product/widgets/graphical-assets/VariantAssetView.vue";
+import VariantAssetView from "@app-backoffice/pages/product/widgets/graphical-assets/VariantAssetView.vue";
 import ColorCircle from "@components/ui/color/ColorCircle.vue";
 export default {
   name: "ProductSectionBoxVariants",

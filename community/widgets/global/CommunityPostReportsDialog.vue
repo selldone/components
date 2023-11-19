@@ -47,7 +47,7 @@
 
 <script>
 import { ArticleReport } from "@core/enums/article/ArticleReport";
-import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
+import UsersDenseImagesCircles from "@app-backoffice/components/user/UsersDenseImagesCircles.vue";
 
 export default {
   name: "CommunityPostReportsDialog",

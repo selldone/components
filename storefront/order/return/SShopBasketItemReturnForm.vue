@@ -134,7 +134,7 @@
               <v-img
                 v-if="videoPath"
                 class="m-auto"
-                :src="require('@/Components/assets/icons/film.svg')"
+                :src="require('@components/assets/icons/film.svg')"
                 :width="48"
                 :height="48"
               />
@@ -163,7 +163,7 @@
               <v-img
                 v-if="voicePath"
                 class="m-auto"
-                :src="require('@/Components/assets/icons/voice.svg')"
+                :src="require('@components/assets/icons/voice.svg')"
                 :width="48"
                 :height="48"
               />

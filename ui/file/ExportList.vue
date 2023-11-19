@@ -8,7 +8,7 @@
     <!-- --------------------------------------- PDF --------------------------------------- -->
     <v-list-item v-if="pdf"  :href="pdf" target="_blank">
       <v-list-item-avatar tile>
-        <v-img :src="require('@/Components/assets/icons/pdf.svg')" contain></v-img>
+        <v-img :src="require('@components/assets/icons/pdf.svg')" contain></v-img>
       </v-list-item-avatar>
 
       <v-list-item-content>
@@ -27,7 +27,7 @@
     <!-- --------------------------------------- Excel --------------------------------------- -->
     <v-list-item v-if="excel"  :href="excel" target="_blank">
       <v-list-item-avatar tile>
-        <v-img :src="require('@/Components/assets/file/excel.svg')" contain></v-img>
+        <v-img :src="require('@components/assets/file/excel.svg')" contain></v-img>
       </v-list-item-avatar>
 
       <v-list-item-content>
@@ -45,7 +45,7 @@
 
     <v-list-item v-if="csv" :href="csv" target="_blank">
       <v-list-item-avatar tile>
-        <v-img :src="require('@/Components/assets/file/csv.svg')" contain></v-img>
+        <v-img :src="require('@components/assets/file/csv.svg')" contain></v-img>
       </v-list-item-avatar>
 
       <v-list-item-content>

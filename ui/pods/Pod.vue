@@ -20,7 +20,7 @@
       height="var(--pod-icon-size)"
       :class="{ 'rounded-xl': rounded, rounded: !rounded }"
       :src="
-        isSelldoneIcon ? require('@/Components/assets/selldone-logo/selldone.svg') : image
+        isSelldoneIcon ? require('@components/assets/selldone-logo/selldone.svg') : image
       "
     />
 

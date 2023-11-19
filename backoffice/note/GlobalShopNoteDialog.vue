@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
+import UsersDenseImagesCircles from "@app-backoffice/components/user/UsersDenseImagesCircles.vue";
 import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
 import NoteView from "./NoteView.vue";
 

@@ -3,7 +3,7 @@
     <div class="market-pin">
       <img
         width="64px"
-        :src="require('@/Components/assets/icons/location-center-icon.svg')"
+        :src="require('@components/assets/icons/location-center-icon.svg')"
       />
       <img
         v-if="pinImage"

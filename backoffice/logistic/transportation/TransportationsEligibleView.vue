@@ -54,7 +54,7 @@
 
 <script>
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
-import DeliveryCardContent from "@/Applications/Backoffice/pages/shop/pages/logistic/widgets/DeliveryCardContent.vue";
+import DeliveryCardContent from "@app-backoffice/pages/shop/pages/logistic/widgets/DeliveryCardContent.vue";
 import _ from "lodash-es";
 
 export default {

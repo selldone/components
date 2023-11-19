@@ -165,7 +165,7 @@
         <img
           width="64px"
           :src="
-            require('@/Components/assets/icons/location-center-icon-blue.svg')
+            require('@components/assets/icons/location-center-icon-blue.svg')
           "
           :class="{ jump: !last_selected_position }"
         />
@@ -1116,7 +1116,7 @@ export default {
       /*
                 const el = document.createElement('img');
                 el.className = 'marker marker-samin';
-                el.src =  require('@/Components/assets/icons/user-marker.svg');
+                el.src =  require('@components/assets/icons/user-marker.svg');
                 el.style.width = '20px';
                 el.style.height = '20px';*/
 

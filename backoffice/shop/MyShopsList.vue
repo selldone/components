@@ -35,7 +35,7 @@
             :src="
               shop.icon
                 ? getShopImagePath(shop.icon, 96)
-                : require('@/Components/assets/placeholders/shop/store.svg')
+                : require('@components/assets/placeholders/shop/store.svg')
             "
             height="80"
             width="80"

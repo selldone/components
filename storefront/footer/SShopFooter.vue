@@ -32,7 +32,7 @@
         :zoom="16"
         :center="location"
         :marker-position="location"
-        :pin-image="require('@/Components/assets/icons/bags.svg')"
+        :pin-image="require('@components/assets/icons/bags.svg')"
         :delay-load="1000"
       >
       </s-map-view>
@@ -304,7 +304,7 @@
 
             <v-btn class="m-2" outlined small @click.stop="apps_dialog = true">
               <v-img
-                :src="require('@/Components/assets/icons/gdpr-user.svg')"
+                :src="require('@components/assets/icons/gdpr-user.svg')"
                 width="20"
                 height="20"
                 contain

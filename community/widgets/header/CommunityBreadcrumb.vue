@@ -563,8 +563,8 @@
 <script>
 import CommunityURLs from "../../helper/CommunityURLs";
 import SSocialShareButtons from "../../../ui/button/share/SSocialShareButtons.vue";
-import UserEmailInput from "@/Applications/Backoffice/components/user/UserEmailInput.vue";
-import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
+import UserEmailInput from "@app-backoffice/components/user/UserEmailInput.vue";
+import UsersDenseImagesCircles from "@app-backoffice/components/user/UsersDenseImagesCircles.vue";
 import CommunityAccessController from "../access/CommunityAccessController.vue";
 import CountDown from "@components/ui/count-down/CountDown.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";

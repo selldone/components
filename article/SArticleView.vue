@@ -1277,9 +1277,9 @@ import SArticleSeoEditor from "./SArticleSeoEditor.vue";
 import SArticleEditor from "./SArticleEditor.vue";
 
 import { ArticleTypes } from "../../../core/enums/article/ArticleTypes";
-import { PermissionNames } from "@/Applications/Selldone/enums/permission/PermissionNames";
-import { PermissionLevels } from "@/Applications/Selldone/enums/permission/PermissionLevels";
-import { HelpCategories } from "@/Applications/Selldone/enums/help/HelpCategories";
+import { PermissionNames } from "@app-selldone/enums/permission/PermissionNames";
+import { PermissionLevels } from "@app-selldone/enums/permission/PermissionLevels";
+import { HelpCategories } from "@app-selldone/enums/help/HelpCategories";
 import DateTimePickerGlobal from "../ui/calendar/dateTimePickerGlobal.vue";
 import SArticlesTimeline from "@components/article/timeline/SArticlesTimeline.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
@@ -1288,13 +1288,13 @@ import FaqSection from "./widgets/FaqSection.vue";
 import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./SArticleTagsEditor.vue";
 import SContentViolationReportDialog from "../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
-import UserEmailInput from "@/Applications/Backoffice/components/user/UserEmailInput.vue";
+import UserEmailInput from "@app-backoffice/components/user/UserEmailInput.vue";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
 import TimeProgressBar from "../ui/calendar/TimeProgressBar.vue";
 import { ShopOptionsHelper } from "../../../core/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import AiButton from "@components/ui/button/ai/AiButton.vue";
-import ClusterSelect from "@/Applications/Backoffice/components/cluster/ClusterSelect.vue";
+import ClusterSelect from "@app-backoffice/components/cluster/ClusterSelect.vue";
 import _ from "lodash-es";
 
 export default {

@@ -260,7 +260,7 @@
 
 <script>
 import SShopUserMenuList from "./SShopUserMenuList.vue";
-import MenuCategories from "@/Applications/Backoffice/pages/shop/widgets/shop-header/MenuCategories.vue";
+import MenuCategories from "@app-backoffice/pages/shop/widgets/shop-header/MenuCategories.vue";
 import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 import SShopSocialButtons from "@components/storefront/social/SShopSocialButtons.vue";

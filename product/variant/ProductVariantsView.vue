@@ -233,7 +233,7 @@
 
 <script>
 import { GetArrayOfValuesInVariants } from "../../../../core/enums/product/ProductVariants";
-import VariantAssetView from "@/Applications/Backoffice/pages/product/widgets/graphical-assets/VariantAssetView.vue";
+import VariantAssetView from "@app-backoffice/pages/product/widgets/graphical-assets/VariantAssetView.vue";
 import ColorCircle from "@components/ui/color/ColorCircle.vue";
 
 export default {

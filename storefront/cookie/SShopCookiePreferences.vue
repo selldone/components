@@ -35,7 +35,7 @@
       <v-list-item class="text-start">
         <v-list-item-avatar tile>
           <v-img
-            :src="require('@/Components/assets/icons/europe.svg')"
+            :src="require('@components/assets/icons/europe.svg')"
             width="48"
             height="48"
             contain

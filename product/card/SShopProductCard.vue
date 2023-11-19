@@ -273,7 +273,7 @@
               </h5>
               <img
                 width="36px"
-                :src="require('@/Components/assets/icons/sold.svg')"
+                :src="require('@components/assets/icons/sold.svg')"
               />
             </v-col>
           </v-row>
@@ -417,7 +417,7 @@
               </h5>
               <img
                 width="36px"
-                :src="require('@/Components/assets/icons/sold.svg')"
+                :src="require('@components/assets/icons/sold.svg')"
               />
             </div>
 

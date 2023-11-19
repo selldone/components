@@ -129,8 +129,8 @@
 
 <script>
 import TimeSpan from "../../../ui/calendar/TimeSpan.vue";
-import AreaChart from "@/Applications/Backoffice/components/chart/AreaChart.vue";
-import LineChart from "@/Applications/Backoffice/components/chart/LineChart.vue";
+import AreaChart from "@app-backoffice/components/chart/AreaChart.vue";
+import LineChart from "@app-backoffice/components/chart/LineChart.vue";
 import TrendSparkline from "./TrendSparkline.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
 import {IntersectMixin} from "@components/mixin/IntersectMixin";

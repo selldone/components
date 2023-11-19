@@ -5,7 +5,7 @@
         class="me-1"
         :src="
           gatewayProcessing
-            ? require('@/Components/assets/icons/gateway-processing.svg')
+            ? require('@components/assets/icons/gateway-processing.svg')
             : statusObject.src
         "
         width="24"

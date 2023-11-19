@@ -47,8 +47,8 @@
           :src="
             in_custom_home_page
               ? is_light_header
-                ? require('@/Components/assets/icons/basket.svg')
-                : require('@/Components/assets/icons/basket-w.svg')
+                ? require('@components/assets/icons/basket.svg')
+                : require('@components/assets/icons/basket-w.svg')
               : logo
           "
           alt="Shop"

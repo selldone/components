@@ -35,7 +35,7 @@
       <template v-slot:no-data>
         <div v-if="!busy_fetch" class="py-5 usn text-center fadeIn">
           <img
-            :src="require('@/Components/assets/guides/returned-orders-empty.png')"
+            :src="require('@components/assets/guides/returned-orders-empty.png')"
             width="85%"
             class="m-3 op-0-3"
             style="max-height: 400px; object-fit: contain"

@@ -651,7 +651,7 @@ import RoundedTabs from "@components/ui/tab/RoundedTabs.vue";
 import GlobalRules from "@core/helper/rules/GlobalRules";
 import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
 import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
-import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
+import UsersDenseImagesCircles from "@app-backoffice/components/user/UsersDenseImagesCircles.vue";
 import { Screenshot } from "@core/helper/canvas/Screenshot";
 import { FileHelper } from "@core/helper/converters/FileHelper";
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";

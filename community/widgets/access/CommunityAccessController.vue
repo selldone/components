@@ -146,8 +146,8 @@
 </template>
 
 <script>
-import UsersDenseImagesCircles from "@/Applications/Backoffice/components/user/UsersDenseImagesCircles.vue";
-import UserEmailInput from "@/Applications/Backoffice/components/user/UserEmailInput.vue";
+import UsersDenseImagesCircles from "@app-backoffice/components/user/UsersDenseImagesCircles.vue";
+import UserEmailInput from "@app-backoffice/components/user/UserEmailInput.vue";
 export default {
   name: "CommunityAccessController",
   components: {  UserEmailInput, UsersDenseImagesCircles },

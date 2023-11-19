@@ -87,7 +87,7 @@
         "
         :image="payment_receipt ? getShopImagePath(payment_receipt) : undefined"
         :placeholder-image="
-          require('@/Components/assets/placeholders/image/payment-check.png')
+          require('@components/assets/placeholders/image/payment-check.png')
         "
         :server="
           window.XAPI.POST_UPLOAD_DIRECT_PAYMENT_RECEIPT(

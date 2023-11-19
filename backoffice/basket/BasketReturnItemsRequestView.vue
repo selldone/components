@@ -135,7 +135,7 @@
             <v-img
               v-else
               class="m-auto"
-              :src="require('@/Components/assets/icons/camera.svg')"
+              :src="require('@components/assets/icons/camera.svg')"
               :width="48"
               :height="48"
             />
@@ -158,7 +158,7 @@
           >
             <v-img
               class="m-auto"
-              :src="require('@/Components/assets/icons/film.svg')"
+              :src="require('@components/assets/icons/film.svg')"
               :width="48"
               :height="48"
             />
@@ -179,7 +179,7 @@
           >
             <v-img
               class="m-auto"
-              :src="require('@/Components/assets/icons/voice.svg')"
+              :src="require('@components/assets/icons/voice.svg')"
               :width="48"
               :height="48"
             />
