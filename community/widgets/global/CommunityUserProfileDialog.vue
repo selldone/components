@@ -164,7 +164,7 @@
 
 <script>
 import SetupService from "@core/server/SetupService";
-import UsersDenseImagesCircles from "@app-backoffice/components/user/UsersDenseImagesCircles.vue";
+import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
 
 export default {
   name: "CommunityUserProfileDialog",

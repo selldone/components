@@ -160,8 +160,8 @@
 </template>
 
 <script>
-import UsersDenseImagesCircles from "@app-backoffice/components/user/UsersDenseImagesCircles.vue";
-import UserEmailInput from "@app-backoffice/components/user/UserEmailInput.vue";
+import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
 export default {
   name: "CommunityAccessController",
   components: {  UserEmailInput, UsersDenseImagesCircles },

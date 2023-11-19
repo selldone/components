@@ -292,10 +292,10 @@
 
 <script>
 import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
-import { InstagramHelper } from "@app-backoffice/pages/shop/pages/channels/pages/instagram/helpers/InstagramHelper";
+import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
 import DragablePins from "@components/storefront/instagram/DragablePins.vue";
 import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
-import VariantSelectorMenu from "@app-backoffice/pages/product/widgets/variants/VariantSelectorMenu.vue";
+import VariantSelectorMenu from "@components/ui/variant/VariantSelectorMenu.vue";
 import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
 import _ from "lodash-es";
 

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import ServiceBillingItem from "@app-backoffice/pages/order-service/pages/widgets/ServiceBillingItem.vue";
+import ServiceBillingItem from "@components/storefront/order/billing/ServiceBillingItem.vue";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import { ServiceOrderStates } from "@core/enums/basket/ServiceOrderStates";
 export default {

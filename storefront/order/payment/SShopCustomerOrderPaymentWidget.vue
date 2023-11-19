@@ -642,7 +642,7 @@ import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 
 import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
 import { BillStatus } from "@core/enums/basket/BillStatus";
-import GtagEcommerce from "../../../../Applications/Storefront/plugins/gtag/GtagEcommerce";
+import GtagEcommerce from "@components/plugins/gtag/GtagEcommerce";
 import SShopRowCustomerPaymentGiftCard from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentGiftCard.vue";
 import SShopRowCustomerPaymentRecord from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
 import SShopRowCustomerPendingPayment from "@components/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";

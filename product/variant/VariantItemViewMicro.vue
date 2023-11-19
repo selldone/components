@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import VariantAssetView from "@app-backoffice/pages/product/widgets/graphical-assets/VariantAssetView.vue";
+import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
 import ColorCircle from "@components/ui/color/ColorCircle.vue";
 
 export default {

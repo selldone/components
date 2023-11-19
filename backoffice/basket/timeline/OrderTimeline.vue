@@ -377,7 +377,7 @@
 
 <script>
 import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
-import UsersDenseImagesCircles from "@app-backoffice/components/user/UsersDenseImagesCircles.vue";
+import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import { Reactions } from "@core/enums/support/Reactions";
 import { Brands } from "@core/enums/social/Brands";

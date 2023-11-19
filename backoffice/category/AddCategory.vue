@@ -385,14 +385,14 @@
 </template>
 
 <script>
-import CategoriesManagementFilter from "@app-backoffice/components/category/CategoriesManagement_Filter.vue";
+import CategoriesManagementFilter from "@components/backoffice/category/CategoriesManagement_Filter.vue";
 import CircleImage from "@components/ui/image/CircleImage.vue";
 import SImageUploader from "@components/uploader/SImageUploader.vue";
 import CategorySelect from "./CategorySelect.vue";
 import SSmartCheckVerifyAction from "@components/smart/SSmartCheckVerifyAction.vue";
 import AugmentForm from "../augment/AugmentForm.vue";
-import PageInputField from "@app-backoffice/pages/shop/widgets/page/PageInputField.vue";
-import STranslationsButtonCategory from "@app-backoffice/components/translation/STranslationsButtonCategory.vue";
+import PageInputField from "@components/ui/input/page/PageInputField.vue";
+import STranslationsButtonCategory from "@components/translation/STranslationsButtonCategory.vue";
 
 export default {
   name: "AddCategory",

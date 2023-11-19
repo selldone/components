@@ -136,7 +136,7 @@
 
 <script>
 import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
-import FilesListGroupedView from "@app-backoffice/pages/product/widgets/FilesListGroupedView.vue";
+import FilesListGroupedView from "@components/product/subscription/FilesListGroupedView.vue";
 import _ from "lodash-es";
 export default {
   name: "MembershipContentViewer",

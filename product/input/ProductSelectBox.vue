@@ -226,8 +226,8 @@
 </template>
 
 <script>
-import ProductsSelectAdmin from "@app-backoffice/pages/shop/widgets/products-window/ProductsSelectAdmin.vue";
-import VariantItemMini from "@app-backoffice/pages/product/widgets/variants/VariantItemMini.vue";
+import ProductsSelectAdmin from "@components/backoffice/product/ProductsSelectAdmin.vue";
+import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
 import Loading from "@components/ui/loading/loading.vue";
 export default {

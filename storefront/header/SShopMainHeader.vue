@@ -393,8 +393,8 @@ import Loading from "@components/ui/loading/loading.vue";
 
 import WheelOfFortune from "@components/storefront/incentives/lottery/WheelOfFortune.vue";
 import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
-import SShopNavigationDrawer from "@components/storefront/menu/SShopNavigationDrawer.vue";
-import SShopUserMenuList from "@components/storefront/menu/SShopUserMenuList.vue";
+import SShopNavigationDrawer from "@components/storefront/menu/side/SShopNavigationDrawer.vue";
+import SShopUserMenuList from "@components/storefront/menu/user/SShopUserMenuList.vue";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 import { ProductType } from "@core/enums/product/ProductType";

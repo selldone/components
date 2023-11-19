@@ -138,7 +138,7 @@
 import CurrencyList from "@components/ui/currency/CurrencyList.vue";
 import SShopHyperItemsList from "./SShopHyperItemsList.vue";
 import SShopHyperProductView from "./SShopHyperProductView.vue";
-import GtagEcommerce from "../../../Applications/Storefront/plugins/gtag/GtagEcommerce";
+import GtagEcommerce from "@components/plugins/gtag/GtagEcommerce";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import Stamp from "@components/ui/stamp/Stamp.vue";
 import _ from "lodash-es";

@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import WidgetProductCard from "@app-backoffice/pages/shop/widgets/products-window/widgets/WidgetProductCard.vue";
+import WidgetProductCard from "@components/backoffice/product/widgets/WidgetProductCard.vue";
 export default {
   name: "SLotteryPrizeForWinner",
   components: { WidgetProductCard },

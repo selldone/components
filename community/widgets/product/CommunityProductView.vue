@@ -71,7 +71,7 @@
 <script>
 import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
-import GtagEcommerce from "@app-storefront/plugins/gtag/GtagEcommerce";
+import GtagEcommerce from "@components/plugins/gtag/GtagEcommerce";
 import ProductSpecView from "@components/storefront/product/spec/ProductSpecView.vue";
 
 export default {

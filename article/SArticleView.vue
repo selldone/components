@@ -32,9 +32,7 @@
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Need login ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
     <div v-if="NEED_LOGIN">
-
       <div class="text-center font-weight-thin display-1 my-16">Private</div>
-
 
       <h2 class="text-secondary text-center">
         {{ $t("global.article.login_to_see_error") }}
@@ -204,11 +202,7 @@
             @click="showGoogleSearch()"
             title="Show Google Search Rank."
           >
-            <img
-              src="../assets/tradmark/google.svg"
-              width="24"
-              height="24"
-            />
+            <img src="../assets/tradmark/google.svg" width="24" height="24" />
           </v-btn>
 
           <v-slide-y-transition>
@@ -544,7 +538,14 @@
                     {{ $t("global.commons.tags") }}
                   </span>
                   <div class="flex-grow-1">
-                    <v-chip x-small label v-for="tag in article.tags" :key="tag" class="ma-1">{{tag}}</v-chip>
+                    <v-chip
+                      x-small
+                      label
+                      v-for="tag in article.tags"
+                      :key="tag"
+                      class="ma-1"
+                      >{{ tag }}</v-chip
+                    >
                   </div>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
@@ -1277,9 +1278,9 @@ import SArticleSeoEditor from "./SArticleSeoEditor.vue";
 import SArticleEditor from "./SArticleEditor.vue";
 
 import { ArticleTypes } from "@core/enums/article/ArticleTypes";
-import { PermissionNames } from "@app-selldone/enums/permission/PermissionNames";
-import { PermissionLevels } from "@app-selldone/enums/permission/PermissionLevels";
-import { HelpCategories } from "@app-selldone/enums/help/HelpCategories";
+import { PermissionNames } from "@core/enums/admin/permission/PermissionNames";
+import { PermissionLevels } from "@core/enums/admin/permission/PermissionLevels";
+import { HelpCategories } from "@core/enums/admin/help/HelpCategories";
 import DateTimePickerGlobal from "../ui/calendar/dateTimePickerGlobal.vue";
 import SArticlesTimeline from "@components/article/timeline/SArticlesTimeline.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
@@ -1288,13 +1289,13 @@ import FaqSection from "./widgets/FaqSection.vue";
 import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./SArticleTagsEditor.vue";
 import SContentViolationReportDialog from "../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
-import UserEmailInput from "@app-backoffice/components/user/UserEmailInput.vue";
+import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
 import TimeProgressBar from "../ui/calendar/TimeProgressBar.vue";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import AiButton from "@components/ui/button/ai/AiButton.vue";
-import ClusterSelect from "@app-backoffice/components/cluster/ClusterSelect.vue";
+import ClusterSelect from "@components/cluster/ClusterSelect.vue";
 import _ from "lodash-es";
 
 export default {
@@ -1708,8 +1709,6 @@ export default {
   },
 
   watch: {
-
-
     targetId(to, from) {
       const force = !(this.multiLanguage && this.forceLanguage); // Prevent reload page in multi-language edit mode!
       this.updateArticlePage(force);
@@ -1929,9 +1928,10 @@ export default {
             this.state = "no-change";
 
             // Old methods:
-            this.article.id = data.id;  // Old way
-            if(data.article){ // New way
-              Object.assign(this.article,data.article)
+            this.article.id = data.id; // Old way
+            if (data.article) {
+              // New way
+              Object.assign(this.article, data.article);
             }
 
             this.article.published = this.published_state;
@@ -2031,7 +2031,6 @@ export default {
           })
 
           .catch((error) => {
-
             this.NOT_FOUND_ARTICLE = true;
 
             this.can_create_new = true;

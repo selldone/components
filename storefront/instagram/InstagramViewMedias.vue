@@ -511,9 +511,9 @@ import {
 import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
 import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
-import VariantSelectorMenu from "@app-backoffice/pages/product/widgets/variants/VariantSelectorMenu.vue";
+import VariantSelectorMenu from "@components/ui/variant/VariantSelectorMenu.vue";
 import DragablePins from "@components/storefront/instagram/DragablePins.vue";
-import { InstagramHelper } from "@app-backoffice/pages/shop/pages/channels/pages/instagram/helpers/InstagramHelper";
+import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
 import CurrencyList from "@components/ui/currency/CurrencyList.vue";

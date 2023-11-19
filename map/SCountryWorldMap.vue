@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import WorldMap from "@app-backoffice/components/map/WorldMap.vue";
+import WorldMap from "@components/map/countries/WorldMap.vue";
 export default {
   name: "SCountryWorldMap",
   components: { WorldMap },

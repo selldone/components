@@ -48,7 +48,7 @@
 
 <script>
 import ColorCircle from "@components/ui/color/ColorCircle.vue";
-import VariantAssetView from "@app-backoffice/pages/product/widgets/graphical-assets/VariantAssetView.vue";
+import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
 
 export default {
   name: "SelectionList",

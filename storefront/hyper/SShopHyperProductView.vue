@@ -124,7 +124,7 @@
 </template>
 
 <script>
-import VariantSelectorMenu from "../../../Applications/Backoffice/pages/product/widgets/variants/VariantSelectorMenu.vue";
+import VariantSelectorMenu from "../../ui/variant/VariantSelectorMenu.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 
 export default {
