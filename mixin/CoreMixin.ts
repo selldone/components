@@ -1,59 +1,59 @@
 import Vue from "vue";
 import type { VueConstructor } from "vue";
-import SetupService from "../../../core/server/SetupService";
-import { ProductType } from "../../../core/enums/product/ProductType";
-import { PhysicalOrderStates } from "../../../core/enums/basket/PhysicalOrderStates";
-import { DateConverter } from "../../../core/helper/date/DateConverter";
-import { Currency } from "../../../core/enums/payment/Currency";
-import type { ICurrency } from "../../../core/enums/payment/Currency";
+import SetupService from "@core/server/SetupService";
+import { ProductType } from "@core/enums/product/ProductType";
+import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
+import { DateConverter } from "@core/helper/date/DateConverter";
+import { Currency } from "@core/enums/payment/Currency";
+import type { ICurrency } from "@core/enums/payment/Currency";
 import {
   type ILanguage,
   Language,
-} from "../../../core/enums/language/Language";
-import { ShopLicense } from "../../../core/enums/shop/ShopLicense";
-import { Scopes } from "../../../core/enums/permission/Scopes";
+} from "@core/enums/language/Language";
+import { ShopLicense } from "@core/enums/shop/ShopLicense";
+import { Scopes } from "@core/enums/permission/Scopes";
 
-import { ReturnItemStates } from "../../../core/enums/basket/ReturnItemStates";
-import { FileExtensions } from "../../../core/enums/file/FileExtensions";
-import GlobalRules from "../../../core/helper/rules/GlobalRules";
-import { SocialNetwork } from "../../../core/enums/social/SocialNetwork";
-import ShopURLs from "../../../core/helper/url/ShopURLs";
-import { ColorHelper } from "../../../core/helper/color/ColorHelper";
-import EventBusTriggers from "../../../core/enums/event-bus/EventBusTriggers";
+import { ReturnItemStates } from "@core/enums/basket/ReturnItemStates";
+import { FileExtensions } from "@core/enums/file/FileExtensions";
+import GlobalRules from "@core/helper/rules/GlobalRules";
+import { SocialNetwork } from "@core/enums/social/SocialNetwork";
+import ShopURLs from "@core/helper/url/ShopURLs";
+import { ColorHelper } from "@core/helper/color/ColorHelper";
+import EventBusTriggers from "@core/enums/event-bus/EventBusTriggers";
 
-import { CustomerClubLevels } from "../../../core/enums/customer/CustomerClubLevels";
-import { CurrencyHelper } from "../../../core/helper/currency/CurrencyHelper";
-import { PriceHelper } from "../../../core/helper/price/PriceHelper";
-import { LogesticHelper } from "../../../core/helper/logistic/LogesticHelper";
-import { GiftStatus } from "../../../core/enums/wallet/gift/GiftStatus";
-import { GiftStProgramTypes } from "../../../core/enums/wallet/gift/GiftStProgramTypes";
-import { MapHelper } from "../../../core/helper/map/MapHelper";
+import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
+import { CurrencyHelper } from "@core/helper/currency/CurrencyHelper";
+import { PriceHelper } from "@core/helper/price/PriceHelper";
+import { LogesticHelper } from "@core/helper/logistic/LogesticHelper";
+import { GiftStatus } from "@core/enums/wallet/gift/GiftStatus";
+import { GiftStProgramTypes } from "@core/enums/wallet/gift/GiftStProgramTypes";
+import { MapHelper } from "@core/helper/map/MapHelper";
 import numeral from "numeral";
 import _ from "lodash-es";
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-import { EventBus, EventName } from "../../../core/events/EventBus";
+import { EventBus, EventName } from "@core/events/EventBus";
 
 //―――――――――――――――――――――― Country ――――――――――――――――――――
 
-import { getCountryName } from "../../../core/enums/country/country-list";
-import type { Note } from "../../../core/models/shop/note/note.model";
-import { Shop } from "../../../core/models/shop/shop.model";
-import type { ProductVariant } from "../../../core/models/shop/product/product_variant.model";
-import { Product } from "../../../core/models/shop/product/product.model";
+import { getCountryName } from "@core/enums/country/country-list";
+import type { Note } from "@core/models/shop/note/note.model";
+import { Shop } from "@core/models/shop/shop.model";
+import type { ProductVariant } from "@core/models/shop/product/product_variant.model";
+import { Product } from "@core/models/shop/product/product.model";
 import { XapiShop } from "@sdk-storefront/shop/XapiShop";
-import type { Basket } from "../../../core/models/shop/order/basket/basket.model";
-import type { IAddress } from "../../../core/models/traits/address.model";
-import type { CommunityTopic } from "../../../core/models/community/community.topic.model";
-import type { CommunityPost } from "../../../core/models/community/community.post.model";
-import type { CommunityComment } from "../../../core/models/community/community.comment.model";
-import type { Guild } from "../../../core/models/guild/guild.model";
-import type { IOrder } from "../../../core/models/traits/order.model";
-import type { Avocado } from "../../../core/models/shop/order/avocado/avocado.order";
-import type { IReturn } from "../../../core/types/route/return.type";
-import type { ICountryCode } from "../../../core/enums/country/CountriesListEnum";
-import type { BasketItem } from "../../../core/models/shop/order/basket/basket_item.model";
-import type { gapi } from "../../../core/gapi/requests/gapi.countries.get";
-import type { User } from "../../../core/models/user/user.model";
+import type { Basket } from "@core/models/shop/order/basket/basket.model";
+import type { IAddress } from "@core/models/traits/address.model";
+import type { CommunityTopic } from "@core/models/community/community.topic.model";
+import type { CommunityPost } from "@core/models/community/community.post.model";
+import type { CommunityComment } from "@core/models/community/community.comment.model";
+import type { Guild } from "@core/models/guild/guild.model";
+import type { IOrder } from "@core/models/traits/order.model";
+import type { Avocado } from "@core/models/shop/order/avocado/avocado.order";
+import type { IReturn } from "@core/types/route/return.type";
+import type { ICountryCode } from "@core/enums/country/CountriesListEnum";
+import type { BasketItem } from "@core/models/shop/order/basket/basket_item.model";
+import type { gapi } from "@core/gapi/requests/gapi.countries.get";
+import type { User } from "@core/models/user/user.model";
 import { XapiUser } from "@sdk-storefront/user/XapiUser";
 
 //――― User Device Preferences ―――
@@ -674,13 +674,13 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
     },
     getBasketTypeImage(type: string) {
       if (type === "POS")
-        return require("../../../core/enums/product/assets/product-types/basket-pos.svg");
+        return require("@core/enums/product/assets/product-types/basket-pos.svg");
       else if (type === "FUL")
-        return require("../../../core/enums/product/assets/product-types/basket-drop-shipping.svg");
+        return require("@core/enums/product/assets/product-types/basket-drop-shipping.svg");
       else if (type === "AVO")
-        return require("../../../core/enums/product/assets/product-types/basket-avocado.svg");
+        return require("@core/enums/product/assets/product-types/basket-avocado.svg");
       else if (type === "HYP")
-        return require("../../../core/enums/product/assets/product-types/basket-hyper.svg");
+        return require("@core/enums/product/assets/product-types/basket-hyper.svg");
 
       return ProductType[type] ? ProductType[type].basket : "";
     },
@@ -1668,7 +1668,7 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       );
       return out
         ? out.src
-        : require("../../../core/enums/file/assets/extensions/file.svg");
+        : require("@core/enums/file/assets/extensions/file.svg");
     },
 
     //―――――――――――――――――――――― Remove item from array by value ――――――――――――――――――――

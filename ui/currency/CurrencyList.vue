@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { Currency } from "../../../../core/enums/payment/Currency";
+import { Currency } from "@core/enums/payment/Currency";
 import CurrencyIcon from "./CurrencyIcon.vue";
 
 export default {

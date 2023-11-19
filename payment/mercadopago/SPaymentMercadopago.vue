@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { Language } from "../../../../core/enums/language/Language";
+import { Language } from "@core/enums/language/Language";
 
 export default {
   name: "SPaymentMercadopago",

@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import { PricingTypes } from "../../../../core/enums/product/PricingTypes";
-import { ExtraPricingHelper } from "../../../../core/helper/shop/ExtraPricingHelper";
+import { PricingTypes } from "@core/enums/product/PricingTypes";
+import { ExtraPricingHelper } from "@core/helper/shop/ExtraPricingHelper";
 import numeral from "numeral";
 
 export default {

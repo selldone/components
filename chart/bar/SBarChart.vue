@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import { DateConverter } from "../../../../core/helper/date/DateConverter";
+import { DateConverter } from "@core/helper/date/DateConverter";
 import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 
 export default {

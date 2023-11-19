@@ -421,9 +421,9 @@
 </template>
 
 <script>
-import { SoundHelper } from "../../../core/helper/sound/SoundHelper";
+import { SoundHelper } from "@core/helper/sound/SoundHelper";
 import CountDown from "@components/ui/count-down/CountDown.vue";
-import SetupService from "../../../core/server/SetupService";
+import SetupService from "@core/server/SetupService";
 import { SuccessVerifyMethod } from "@sdk-storefront/auth/XapiAuthSMS";
 import { XapiAuth } from "@sdk-storefront/auth/XapiAuth";
 import ShopEmailLogin from "@components/storefront/login/widgets/ShopEmailLogin.vue";

@@ -333,15 +333,15 @@
 </template>
 
 <script>
-import { SmartConvertTextToHtmlHashtags } from "../../../../core/helper/html/HtmlHelper";
+import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
 import CommunityComments from "./comment/CommunityComments.vue";
 import CommunityImage from "./image/CommunityImage.vue";
-import { PostReaction } from "../../../../core/enums/community/PostReaction";
+import { PostReaction } from "@core/enums/community/PostReaction";
 import Ribbon from "@components/ui/ribbon/Ribbon.vue";
 import CommunityPoll from "./post/CommunityPoll.vue";
 import CommunityProductView from "./product/CommunityProductView.vue";
 import CommunityAttachView from "./attach/CommunityAttachView.vue";
-import VideoHelper from "../../../../core/helper/video/VideoHelper";
+import VideoHelper from "@core/helper/video/VideoHelper";
 
 export default {
   name: "CommunityWidget",

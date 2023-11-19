@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { ColorHelper } from "../../../../core/helper/color/ColorHelper";
+import { ColorHelper } from "@core/helper/color/ColorHelper";
 
 export default {
   name: "ColorCircle",

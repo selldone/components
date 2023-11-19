@@ -232,7 +232,7 @@
 </template>
 
 <script>
-import { GetArrayOfValuesInVariants } from "../../../../core/enums/product/ProductVariants";
+import { GetArrayOfValuesInVariants } from "@core/enums/product/ProductVariants";
 import VariantAssetView from "@app-backoffice/pages/product/widgets/graphical-assets/VariantAssetView.vue";
 import ColorCircle from "@components/ui/color/ColorCircle.vue";
 

@@ -132,7 +132,7 @@ import CommunityCommentActionsMenu from "../widgets/global/CommunityCommentActio
 import CommunityPostReportsDialog from "../widgets/global/CommunityPostReportsDialog.vue";
 import CommunityAnalytics from "../widgets/global/CommunityAnalytics.vue";
 import CommunityCommentReportsDialog from "../widgets/global/CommunityCommentReportsDialog.vue";
-import { TimeSeries } from "../../../../core/timeserie/TimeSeries";
+import { TimeSeries } from "@core/timeserie/TimeSeries";
 import CommunityWidget from "../widgets/CommunityWidget.vue";
 import _ from "lodash-es";
 export default {

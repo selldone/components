@@ -15,7 +15,7 @@
 import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
-import SetupService from "../../../../core/server/SetupService";
+import SetupService from "@core/server/SetupService";
 import type { UserVuetifyPreset } from "vuetify/types/services/presets";
 // Import the Vuetify CSS. Ensure you have configured css-loader.
 

@@ -167,7 +167,7 @@
 </template>
 
 <script>
-import {ModeView} from "../../../../core/enums/shop/ModeView";
+import {ModeView} from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
 
 

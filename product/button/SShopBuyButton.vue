@@ -236,16 +236,16 @@
 </template>
 
 <script>
-import { ProductType } from "../../../../core/enums/product/ProductType";
+import { ProductType } from "@core/enums/product/ProductType";
 import Loading from "@components/ui/loading/loading.vue";
 import GtagEcommerce from "@app-storefront/plugins/gtag/GtagEcommerce";
-import { ShopOptionsHelper } from "../../../../core/helper/shop/ShopOptionsHelper";
-import { BusinessModel } from "../../../../core/enums/shop/BusinessModel";
+import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
+import { BusinessModel } from "@core/enums/shop/BusinessModel";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SShopSubscribeButton from "./SShopSubscribeButton.vue";
-import { SubscriptionMode } from "../../../../core/enums/subscription/SubscriptionMode";
-import { BasketHelper } from "../../../../core/helper/shop/BasketHelper";
-import { BuyButtonHelper } from "../../../../core/helper/shop/BuyButtonHelper";
+import { SubscriptionMode } from "@core/enums/subscription/SubscriptionMode";
+import { BasketHelper } from "@core/helper/shop/BasketHelper";
+import { BuyButtonHelper } from "@core/helper/shop/BuyButtonHelper";
 import _ from "lodash-es";
 
 export default {

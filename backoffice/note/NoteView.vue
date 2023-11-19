@@ -49,12 +49,12 @@
 </template>
 
 <script>
-import { ShopTransportations } from "../../../../core/enums/logistic/ShopTransportations";
-import { Reactions } from "../../../../core/enums/support/Reactions";
-import { Brands } from "../../../../core/enums/social/Brands";
-import { CampaignMedium } from "../../../../core/enums/campaign/CampaignMedium";
-import { CustomerClubLevels } from "../../../../core/enums/customer/CustomerClubLevels";
-import {CompileMarkdown} from "../../../../core/helper/html/HtmlHelper";
+import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
+import { Reactions } from "@core/enums/support/Reactions";
+import { Brands } from "@core/enums/social/Brands";
+import { CampaignMedium } from "@core/enums/campaign/CampaignMedium";
+import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
+import {CompileMarkdown} from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "NoteView",

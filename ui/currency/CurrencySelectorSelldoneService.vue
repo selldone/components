@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import SetupService from "../../../../core/server/SetupService";
+import SetupService from "@core/server/SetupService";
 import SCurrencySelector from "./SCurrencySelector.vue";
 
 export default {

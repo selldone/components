@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { ShopPermissions } from "../../../../core/enums/permission/ShopPermissions";
+import { ShopPermissions } from "@core/enums/permission/ShopPermissions";
 import AddButtonGreen from "@components/ui/button/AddButtonGreen.vue";
 
 export default {

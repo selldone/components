@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { CreateSocialConnectLink, SocialNetwork } from "../../../../core/enums/social/SocialNetwork";
+import { CreateSocialConnectLink, SocialNetwork } from "@core/enums/social/SocialNetwork";
 
 export default {
   name: "WhatsappCallButton",

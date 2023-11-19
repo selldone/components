@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import {CreateSocialConnectLink, SocialNetwork} from "../../../../core/enums/social/SocialNetwork";
+import {CreateSocialConnectLink, SocialNetwork} from "@core/enums/social/SocialNetwork";
 import _ from "lodash-es";
 
 export default {

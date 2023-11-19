@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { StripTags } from "../../../../core/helper/html/HtmlHelper";
+import { StripTags } from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "SHtmlInput",

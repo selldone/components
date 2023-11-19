@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { TaxRegionTypes } from "../../../../core/enums/tax/TaxRegionTypes";
+import { TaxRegionTypes } from "@core/enums/tax/TaxRegionTypes";
 
 export default {
   name: "TaxRegionTypeView",

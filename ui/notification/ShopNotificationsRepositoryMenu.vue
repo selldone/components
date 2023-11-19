@@ -153,9 +153,9 @@
 </template>
 
 <script>
-import { NotificationRepositoryType } from "../../../../core/enums/notification/NotificationRepositoryType";
+import { NotificationRepositoryType } from "@core/enums/notification/NotificationRepositoryType";
 import ProductsDenseImagesCirclesLinks from "@components/product/products-dense-images-circles/ProductsDenseImagesCirclesLinks.vue";
-import NotificationHelper from "../../../../core/enums/notification/NotificationHelper";
+import NotificationHelper from "@core/enums/notification/NotificationHelper";
 
 export default {
   name: "ShopNotificationsRepositoryMenu",

@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import type { IFileUploadResponse } from "../../../../core/types/upload/file-upload-response-type.type";
+import type { IFileUploadResponse } from "@core/types/upload/file-upload-response-type.type";
 
 export class UploadHelper {
   /**

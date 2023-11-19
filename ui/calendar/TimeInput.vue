@@ -45,7 +45,7 @@
 
 <script>
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
-import { TimeSpans } from "../../../../core/enums/logistic/TimeSpans";
+import { TimeSpans } from "@core/enums/logistic/TimeSpans";
 export default {
   name: "TimeInput",
   components: { SNumberInput },

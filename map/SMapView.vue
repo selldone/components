@@ -581,7 +581,7 @@ import CountryList from "@components/ui/country/country-list/CountryList.vue";
 
 //―――――――――――――――――――――― Mapbox ――――――――――――――――――――
 import Mapbox from "./MapBox";
-import SetupService from "../../../core/server/SetupService";
+import SetupService from "@core/server/SetupService";
 import SAddressInput from "@components/ui/input/address/SAddressInput.vue";
 
 export default {

@@ -86,10 +86,10 @@
 </template>
 
 <script>
-import { BasketHelper } from "../../../../core/helper/shop/BasketHelper";
-import { ShopTransportations } from "../../../../core/enums/logistic/ShopTransportations";
-import { MapHelper } from "../../../../core/helper/map/MapHelper";
-import { ProductType } from "../../../../core/enums/product/ProductType";
+import { BasketHelper } from "@core/helper/shop/BasketHelper";
+import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
+import { MapHelper } from "@core/helper/map/MapHelper";
+import { ProductType } from "@core/enums/product/ProductType";
 
 export default {
   name: "ProductSectionBoxTax",

@@ -334,16 +334,16 @@
 import SShopProductCard from "@components/product/card/SShopProductCard.vue";
 import SProductsSortView from "@components/product/sort/SProductsSortView.vue";
 import CategoryCard from "@components/backoffice/category/CategoryCard.vue";
-import { HierarchyHelper } from "../../../../core/helper/breadcrumb/HierarchyHelper";
+import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
 import ProductFilterMenu from "@components/storefront/filter/ProductFilterMenu.vue";
-import { LocalStorages } from "../../../../core/helper/local-storage/LocalStorages";
+import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
 import GtagEcommerce from "../../../Applications/Storefront/plugins/gtag/GtagEcommerce";
 import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
-import { SpecHelper } from "../../../../core/helper/product/SpecHelper";
+import { SpecHelper } from "@core/helper/product/SpecHelper";
 import ProductSpecView from "../product/spec/ProductSpecView.vue";
 import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
 import ProductInfoLoadingView from "@components/product/loading/ProductInfoLoadingView.vue";
-import { ModeView } from "../../../../core/enums/shop/ModeView";
+import { ModeView } from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
 
 export default {

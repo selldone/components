@@ -182,7 +182,7 @@ Vue.use(Clipboard);
 
 //Vue.prototype.window_portal = window;
 Vue.prototype.window = window;
-require("../../core/prototypes/Prototypes");
+require("@core/prototypes/Prototypes");
 
 //---------------- Vue-Awesome-Swiper --------------
 

@@ -132,8 +132,8 @@
 </template>
 
 <script>
-import { WeekDays } from "../../../../core/enums/logistic/WeekDays";
-import { DateConverter } from "../../../../core/helper/date/DateConverter";
+import { WeekDays } from "@core/enums/logistic/WeekDays";
+import { DateConverter } from "@core/helper/date/DateConverter";
 
 export default {
   name: "CalendarTable",

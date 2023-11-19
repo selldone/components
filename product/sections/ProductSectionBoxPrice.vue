@@ -112,12 +112,12 @@
 </template>
 
 <script>
-import { ProductType } from "../../../../core/enums/product/ProductType";
-import { PricingTypes } from "../../../../core/enums/product/PricingTypes";
-import { ServiceTypes } from "../../../../core/enums/product/ServiceTypes";
+import { ProductType } from "@core/enums/product/ProductType";
+import { PricingTypes } from "@core/enums/product/PricingTypes";
+import { ServiceTypes } from "@core/enums/product/ServiceTypes";
 import SProductPrice from "../price/SProductPrice.vue";
-import { ExtraPricingHelper } from "../../../../core/helper/shop/ExtraPricingHelper";
-import { BasketHelper } from "../../../../core/helper/shop/BasketHelper";
+import { ExtraPricingHelper } from "@core/helper/shop/ExtraPricingHelper";
+import { BasketHelper } from "@core/helper/shop/BasketHelper";
 import ProductSectionBoxForAuction from "./ProductSectionBoxForAuction.vue";
 
 export default {

@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import { ProductType } from "../../../../core/enums/product/ProductType";
-import { ProductCondition } from "../../../../core/enums/product/ProductCondition";
+import { ProductType } from "@core/enums/product/ProductType";
+import { ProductCondition } from "@core/enums/product/ProductCondition";
 
 export default {
   name: "ProductSectionBoxCondition",

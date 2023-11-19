@@ -207,10 +207,10 @@
 <script>
 import SShopCustomerReceiverInfoWidget from "@components/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
 import SSubscriptionPriceSelect from "@components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
-import BillingPeriod from "../../../../core/enums/subscription/BillingPeriod";
+import BillingPeriod from "@core/enums/subscription/BillingPeriod";
 import SShopBillingAddressForm from "@components/storefront/order/billing/SShopBillingAddressForm.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
-import { RibbonHelper } from "../../../../core/helper/ribbon/RibbonHelper";
+import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
 export default {
   name: "SShopSubscribeButton",
   components: {

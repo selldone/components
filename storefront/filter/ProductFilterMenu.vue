@@ -201,7 +201,7 @@
 
 <script>
 import SelectionList from "@components/ui/select/SelectionList.vue";
-import { ProductVariants } from "../../../../core/enums/product/ProductVariants";
+import { ProductVariants } from "@core/enums/product/ProductVariants";
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
 
 export default {

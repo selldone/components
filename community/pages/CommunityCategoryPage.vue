@@ -339,7 +339,7 @@ import CommunityTopicCard from "../widgets/topic/CommunityTopicCard.vue";
 import CommunityPostEditor from "../widgets/post/CommunityPostEditor.vue";
 import CommunityCategoryEdit from "../widgets/category/CommunityCategoryEdit.vue";
 import CommunityCategoryStatistic from "../widgets/category/CommunityCategoryStatistic.vue";
-import { CommunityStageLevel } from "../../../../core/enums/community/CommunityStageLevel";
+import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
 import CommunityImage from "../widgets/image/CommunityImage.vue";
 import SSmartCheckVerifyAction from "@components/smart/SSmartCheckVerifyAction.vue";
 

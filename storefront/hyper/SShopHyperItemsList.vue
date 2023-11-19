@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { BasketStatus } from "../../../../core/enums/basket/BasketStatus";
+import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
 
 export default {

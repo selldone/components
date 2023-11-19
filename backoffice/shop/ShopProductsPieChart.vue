@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { ProductType } from "../../../../core/enums/product/ProductType";
+import { ProductType } from "@core/enums/product/ProductType";
 
 export default {
   name: "ShopProductsPieChart",

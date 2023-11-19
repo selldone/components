@@ -468,7 +468,7 @@
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
 import PriceView from "@components/ui/price/PriceView.vue";
 import CountDown from "@components/ui/count-down/CountDown.vue";
-import { ProductType } from "../../../../core/enums/product/ProductType";
+import { ProductType } from "@core/enums/product/ProductType";
 import ColorCircle from "@components/ui/color/ColorCircle.vue";
 
 export default {

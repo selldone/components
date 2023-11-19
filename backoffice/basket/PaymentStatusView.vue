@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { TransactionStatus } from "../../../../core/enums/payment/TransactionStatus";
+import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
 
 export default {
   name: "PaymentStatusView",

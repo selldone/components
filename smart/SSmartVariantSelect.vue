@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { ProductVariants } from "../../../core/enums/product/ProductVariants";
+import { ProductVariants } from "@core/enums/product/ProductVariants";
 
 export default {
   name: "SSmartVariantSelect",

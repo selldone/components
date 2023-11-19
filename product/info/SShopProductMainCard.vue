@@ -358,7 +358,7 @@
 import SShopProductRatingView from "@components/product/rating/SShopProductRatingView.vue";
 import BasketItemUserMessageForm from "@components/backoffice/basket/BasketItemUserMessageForm.vue";
 import SCoupons from "@components/storefront/incentives/coupon/SCoupons.vue";
-import { ProductVariants } from "../../../../core/enums/product/ProductVariants";
+import { ProductVariants } from "@core/enums/product/ProductVariants";
 import SSmartSelectVendor from "@components/vendor/SSmartSelectVendor.vue";
 import ProductSectionBoxGeneralInfo from "@components/product/sections/ProductSectionBoxGeneralInfo.vue";
 import ProductSectionBoxCondition from "@components/product/sections/ProductSectionBoxCondition.vue";
@@ -371,9 +371,9 @@ import ProductSectionBoxBuyButton from "@components/product/sections/ProductSect
 import ProductSectionBoxExtraButtons from "@components/product/sections/ProductSectionBoxExtraButtons.vue";
 import SShopProductSlideShow from "@components/product/images/SShopProductSlideShow.vue";
 import ProductSectionBoxValuation from "@components/product/sections/ProductSectionBoxValuation.vue";
-import { ProductType } from "../../../../core/enums/product/ProductType";
+import { ProductType } from "@core/enums/product/ProductType";
 import SSubscriptionPriceSelect from "@components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
-import { RibbonHelper } from "../../../../core/helper/ribbon/RibbonHelper";
+import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
 import ProductSectionBoxExtraPricings from "@components/product/sections/ProductSectionBoxExtraPricings.vue";
 import ProductSectionBoxTax from "@components/product/sections/ProductSectionBoxTax.vue";
 import ProductDiscountCountdown from "@components/storefront/product/count-down/ProductDiscountCountdown.vue";

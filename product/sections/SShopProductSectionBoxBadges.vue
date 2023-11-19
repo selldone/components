@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import { LeadStatus } from "../../../../core/enums/logistic/LeadStatus";
+import { LeadStatus } from "@core/enums/logistic/LeadStatus";
 export default {
   name: "SShopProductSectionBoxBadges",
   components: {},

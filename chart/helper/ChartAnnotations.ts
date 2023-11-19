@@ -12,8 +12,8 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import { DateConverter } from "../../../../core/helper/date/DateConverter";
-import { TimeSeries } from "../../../../core/timeserie/TimeSeries";
+import { DateConverter } from "@core/helper/date/DateConverter";
+import { TimeSeries } from "@core/timeserie/TimeSeries";
 
 export class ChartAnnotations {
   static CreateMaxPoints(

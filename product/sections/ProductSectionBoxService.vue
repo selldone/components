@@ -12,7 +12,7 @@
 
 <script>
 import ServiceOrderView from "../service/ServiceOrderView.vue";
-import { ProductType } from "../../../../core/enums/product/ProductType";
+import { ProductType } from "@core/enums/product/ProductType";
 export default {
   name: "ProductSectionBoxService",
   components: {

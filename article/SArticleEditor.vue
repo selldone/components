@@ -152,7 +152,7 @@ import SArticleCodeEditorGlobalDialog from "./add-on/code-editor/SArticleCodeEdi
 import SArticleFlipBookGlobalDialog from "./add-on/flip-book/SArticleFlipBookGlobalDialog.vue";
 import SArticleImagesCompareGlobalDialog from "./add-on/compare/SArticleImagesCompareGlobalDialog.vue";
 import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
-import { FileFormatConverterOnline } from "../../../core/helper/converters/FileFormatConverterOnline";
+import { FileFormatConverterOnline } from "@core/helper/converters/FileFormatConverterOnline";
 
 const OPTIONS_TITLE = {
   buttonLabels: "fontawesome",

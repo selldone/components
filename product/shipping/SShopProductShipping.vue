@@ -113,11 +113,11 @@
 <script>
 import SArticleEditor from "@components/article/SArticleEditor.vue";
 import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
-import { LogisticProfileType } from "../../../../core/enums/logistic/LogisticProfileType";
-import SetupService from "../../../../core/server/SetupService";
-import { ProductType } from "../../../../core/enums/product/ProductType";
-import { ShopTransportations } from "../../../../core/enums/logistic/ShopTransportations";
-import { MapHelper } from "../../../../core/helper/map/MapHelper";
+import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
+import SetupService from "@core/server/SetupService";
+import { ProductType } from "@core/enums/product/ProductType";
+import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
+import { MapHelper } from "@core/helper/map/MapHelper";
 import ExpandView from "@components/ui/expand-view/ExpandView.vue";
 
 export default {

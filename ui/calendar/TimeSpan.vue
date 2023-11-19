@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { DateConverter } from "../../../../core/helper/date/DateConverter";
+import { DateConverter } from "@core/helper/date/DateConverter";
 import TimeSpansTextSelector from "./TimeSpansTextSelector.vue";
 import _ from "lodash-es";
 

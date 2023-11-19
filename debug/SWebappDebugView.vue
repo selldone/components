@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { LRUCache } from "../../../core/helper/cache/LRUCache";
+import { LRUCache } from "@core/helper/cache/LRUCache";
 import { StorefrontDebugLogType } from "@components/debug/StorefrontDebugLogType";
 import StorefrontDebugEvents from "@components/debug/StorefrontDebugEvents";
 

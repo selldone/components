@@ -105,7 +105,7 @@ import SBasketProductInputs from "./SBasketProductInputs.vue";
 import {
   FORM_BUILDER_TAGS,
   SmartConvertTextToHtml,
-} from "../../../../core/helper/html/HtmlHelper";
+} from "@core/helper/html/HtmlHelper";
 export default {
   name: "BasketItemUserMessageForm",
   components: { SBasketProductInputs },

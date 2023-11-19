@@ -192,7 +192,7 @@
             :class="{ pen: !is_editing }"
           >
             <img
-              src="../../../core/enums/file/assets/extensions/docx.svg"
+              src="@core/enums/file/assets/extensions/docx.svg"
               width="24"
               height="24"
             />
@@ -1276,7 +1276,7 @@ import SArticleSeoEditor from "./SArticleSeoEditor.vue";
 
 import SArticleEditor from "./SArticleEditor.vue";
 
-import { ArticleTypes } from "../../../core/enums/article/ArticleTypes";
+import { ArticleTypes } from "@core/enums/article/ArticleTypes";
 import { PermissionNames } from "@app-selldone/enums/permission/PermissionNames";
 import { PermissionLevels } from "@app-selldone/enums/permission/PermissionLevels";
 import { HelpCategories } from "@app-selldone/enums/help/HelpCategories";
@@ -1291,7 +1291,7 @@ import SContentViolationReportDialog from "../ui/dialog/conent-violation-report/
 import UserEmailInput from "@app-backoffice/components/user/UserEmailInput.vue";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
 import TimeProgressBar from "../ui/calendar/TimeProgressBar.vue";
-import { ShopOptionsHelper } from "../../../core/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import AiButton from "@components/ui/button/ai/AiButton.vue";
 import ClusterSelect from "@app-backoffice/components/cluster/ClusterSelect.vue";

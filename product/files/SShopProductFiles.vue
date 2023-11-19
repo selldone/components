@@ -52,7 +52,7 @@
 <script>
 import ExpandView from "@components/ui/expand-view/ExpandView.vue";
 import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
-import { ProductType } from "../../../../core/enums/product/ProductType";
+import { ProductType } from "@core/enums/product/ProductType";
 
 export default {
   name: "SShopProductFiles",

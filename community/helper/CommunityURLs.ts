@@ -1,8 +1,8 @@
-import SetupService from "../../../../core/server/SetupService";
-import ShopURLs from "../../../../core/helper/url/ShopURLs";
-import type { Shop } from "../../../../core/models/shop/shop.model";
-import type { CommunityPost } from "../../../../core/models/community/community.post.model";
-import type { CommunityComment } from "../../../../core/models/community/community.comment.model";
+import SetupService from "@core/server/SetupService";
+import ShopURLs from "@core/helper/url/ShopURLs";
+import type { Shop } from "@core/models/shop/shop.model";
+import type { CommunityPost } from "@core/models/community/community.post.model";
+import type { CommunityComment } from "@core/models/community/community.comment.model";
 
 export default class CommunityURLs {
   static CommunityUrl(shop: Shop) {

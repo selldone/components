@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { ServiceTypes } from "../../../../core/enums/product/ServiceTypes";
+import { ServiceTypes } from "@core/enums/product/ServiceTypes";
 import WeekDayTimeTable from "@components/ui/calendar/WeekDayTimeTable.vue";
 import _ from "lodash-es";
 

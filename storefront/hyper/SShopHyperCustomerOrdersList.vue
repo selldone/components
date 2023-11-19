@@ -27,7 +27,7 @@
     >
       <div class="d-flex align-items-center">
         <img
-          src="../../../../core/enums/product/assets/product-types/basket-hyper.svg"
+          src="@core/enums/product/assets/product-types/basket-hyper.svg"
           width="48"
           height="48"
           class="ms-1 me-2 flex-grow-0 my-3"
@@ -118,9 +118,9 @@
 
 <script>
 import OrderStatusView from "@components/backoffice/basket/OrderStatusView.vue";
-import { AvocadoOrderStates } from "../../../../core/enums/avocado/AvocadoOrderStates";
+import { AvocadoOrderStates } from "@core/enums/avocado/AvocadoOrderStates";
 import StatusStepper from "@components/storefront/order/order-status/StatusStepper.vue";
-import { BasketStatus } from "../../../../core/enums/basket/BasketStatus";
+import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import ProductsDenseImagesCircles
   from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 

@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { ShopRestriction } from "../../../../core/enums/shop/ShopRestriction";
+import { ShopRestriction } from "@core/enums/shop/ShopRestriction";
 
 export default {
   name: "SShopPrivateAccessCheckView",

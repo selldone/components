@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { StringToColour } from "../../../../core/helper/color/ColorGenerator";
+import { StringToColour } from "@core/helper/color/ColorGenerator";
 
 export default {
   name: "VTextAvatar",

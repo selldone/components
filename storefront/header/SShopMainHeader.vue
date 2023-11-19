@@ -395,9 +395,9 @@ import WheelOfFortune from "@components/storefront/incentives/lottery/WheelOfFor
 import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
 import SShopNavigationDrawer from "@components/storefront/menu/SShopNavigationDrawer.vue";
 import SShopUserMenuList from "@components/storefront/menu/SShopUserMenuList.vue";
-import { ShopOptionsHelper } from "../../../../core/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
-import { ProductType } from "../../../../core/enums/product/ProductType";
+import { ProductType } from "@core/enums/product/ProductType";
 import SShopMainHeaderLogo from "@components/storefront/header/SShopMainHeaderLogo.vue";
 
 const BOTTOM_PADDING_CONTAINER = "82px";

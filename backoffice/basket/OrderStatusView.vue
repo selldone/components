@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { BasketStatus } from "../../../../core/enums/basket/BasketStatus";
+import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import TimeProgressBar from "../../ui/calendar/TimeProgressBar.vue";
 
 export default {

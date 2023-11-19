@@ -106,8 +106,8 @@
 </template>
 
 <script>
-import { Cards } from "../../../../core/enums/payment/Cards";
-import SVGs from "../../../../core/enums/payment/stripe/SVGs";
+import { Cards } from "@core/enums/payment/Cards";
+import SVGs from "@core/enums/payment/stripe/SVGs";
 
 export default {
   name: "PaymentCard",

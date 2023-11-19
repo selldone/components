@@ -151,7 +151,7 @@
 </template>
 
 <script>
-import { ArticleTypes } from "../../../../core/enums/article/ArticleTypes";
+import { ArticleTypes } from "@core/enums/article/ArticleTypes";
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
 
 export default {

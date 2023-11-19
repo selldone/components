@@ -18,7 +18,7 @@
 import Vue from "vue";
 import $ from "jquery";
 
-import "../../core/utils/console/ConsoleStyle";
+import "@core/utils/console/ConsoleStyle";
 
 //█████████████████████████████████████████████████████████████
 //――――――――――――――――― Style ―――――――――――――――――

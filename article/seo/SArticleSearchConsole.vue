@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { DateConverter } from "../../../../core/helper/date/DateConverter";
+import { DateConverter } from "@core/helper/date/DateConverter";
 import numeral from "numeral";
 import ScoreIndicator from "@components/ui/progress/score-indicator/ScoreIndicator.vue";
 

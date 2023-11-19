@@ -30,8 +30,8 @@
 
 import ExpandView from "@components/ui/expand-view/ExpandView.vue";
 import SShopProductMembershipContentViewer from "@components/product/subscription/SShopProductMembershipContentViewer.vue";
-import { SubscriptionMode } from "../../../../core/enums/subscription/SubscriptionMode";
-import { RibbonHelper } from "../../../../core/helper/ribbon/RibbonHelper";
+import { SubscriptionMode } from "@core/enums/subscription/SubscriptionMode";
+import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
 
 export default {
   name: "SShopProductSubscriptionMembership",

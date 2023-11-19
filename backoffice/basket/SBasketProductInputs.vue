@@ -160,12 +160,12 @@
 </template>
 
 <script>
-import { FileHelper } from "../../../../core/helper/converters/FileHelper";
+import { FileHelper } from "@core/helper/converters/FileHelper";
 import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 import {
   FORM_BUILDER_TAGS,
   SmartConvertTextToHtml,
-} from "../../../../core/helper/html/HtmlHelper";
+} from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "SBasketProductInputs",

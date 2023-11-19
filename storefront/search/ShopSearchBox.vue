@@ -194,7 +194,7 @@
 </template>
 
 <script>
-import { LocalStorages } from "../../../../core/helper/local-storage/LocalStorages";
+import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
 
 export default {
   name: "ShopSearchBox",
