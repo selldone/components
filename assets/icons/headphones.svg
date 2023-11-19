@@ -1,2 +1,16 @@
 <?xml version="1.0"?>
+<!--
+  - Copyright (c) 2023. Selldone® Business OS™
+  -
+  - Author: M.Pajuhaan
+  - Web: https://selldone.com
+  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  -
+  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+  - Our journey is not just about reaching a destination, but about creating a masterpiece.
+  - Tread carefully, for you're treading on dreams.
+  -->
+
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" version="1.1" width="512" height="512" x="0" y="0" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><g xmlns="http://www.w3.org/2000/svg"><g><g><path d="m0 305v60c0 30.376 24.624 55 55 55h30c8.284 0 15-6.716 15-15v-155h-45c-30.376 0-55 24.624-55 55z" fill="#ffffff" data-original="#000000" style="" class=""/><path d="m351 295v-80c0-19.299-15.701-35-35-35h-120c-19.299 0-35 15.701-35 35v80c0 19.299 15.701 35 35 35h34.569l55.828 46.523c2.749 2.291 6.16 3.477 9.605 3.477 2.158 0 4.33-.466 6.36-1.416 5.271-2.469 8.638-7.764 8.638-13.584v-35h5c19.299 0 35-15.701 35-35zm-75-25h-40c-8.284 0-15-6.716-15-15s6.716-15 15-15h40c8.284 0 15 6.716 15 15s-6.716 15-15 15z" fill="#ffffff" data-original="#000000" style="" class=""/><path d="m201 482c0 16.569 13.431 30 30 30h50c16.569 0 30-13.431 30-30 0-16.569-13.431-30-30-30h-50c-16.569 0-30 13.431-30 30z" fill="#ffffff" data-original="#000000" style="" class=""/></g><g><g><path d="m422 450v3c0 8.271-6.729 15-15 15h-67.666c1.079 4.495 1.666 9.179 1.666 14 0 5.541-.771 10.902-2.183 16h68.183c24.813 0 45-20.187 45-45v-3z" fill="#ffffff" data-original="#000000" style="" class=""/></g><path d="m457 250h-45v155c0 8.284 6.716 15 15 15h30c30.376 0 55-24.624 55-55v-60c0-30.376-24.624-55-55-55z" fill="#ffffff" data-original="#000000" style="" class=""/></g></g><path d="m408.735 63.265c-40.797-40.797-95.039-63.265-152.735-63.265s-111.938 22.468-152.735 63.265-63.265 95.039-63.265 152.735v4h60v-4c0-86.019 69.981-156 156-156s156 69.981 156 156v4h60v-4c0-57.696-22.468-111.938-63.265-152.735z" fill="#ffffff" data-original="#000000" style="" class=""/></g></g></svg>

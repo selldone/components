@@ -15,7 +15,7 @@
 <template>
   <div>
     <!-- ████████████████████ Custom Page ███████████████████ -->
-    <VuseRenderer
+    <SPageRender
       v-if="parent_folders?.page"
       :data="parent_folders.page.content"
       :augment="parent_folders.augment"

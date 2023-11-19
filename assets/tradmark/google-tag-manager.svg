@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Copyright (c) 2023. Selldone® Business OS™
+  -
+  - Author: M.Pajuhaan
+  - Web: https://selldone.com
+  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  -
+  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+  - Our journey is not just about reaching a destination, but about creating a masterpiece.
+  - Tread carefully, for you're treading on dreams.
+  -->
+
 <svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
     <defs>
         <path d="M250.874183,115.639875 L140.360125,5.12581653 C133.525703,-1.70860551 122.474297,-1.70860551 115.639875,5.12581653 L5.12581653,115.639875 C-1.70860551,122.474297 -1.70860551,133.525703 5.12581653,140.360125 L115.639875,250.874183 C122.474297,257.708606 133.525703,257.708606 140.360125,250.874183 L250.874183,140.360125 C257.708606,133.525703 257.708606,122.474297 250.874183,115.639875 Z M128,157.082647 L98.917353,128 L128,98.917353 L157.082647,128 L128,157.082647 Z" id="path-1"></path>

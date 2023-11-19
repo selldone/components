@@ -124,7 +124,7 @@
 
             <!-- Menu > Custom -->
 
-            <VuseRendererMenu
+            <SPageRenderMenu
               v-if="
                 tab.type === 'custom' &&
                 tab.page &&

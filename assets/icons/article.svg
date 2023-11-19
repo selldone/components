@@ -1,1 +1,15 @@
+<!--
+  - Copyright (c) 2023. Selldone® Business OS™
+  -
+  - Author: M.Pajuhaan
+  - Web: https://selldone.com
+  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  -
+  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+  - Our journey is not just about reaching a destination, but about creating a masterpiece.
+  - Tread carefully, for you're treading on dreams.
+  -->
+
 <svg id="Flat" height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg"><rect fill="#e9eef2" height="448" rx="16" transform="matrix(-1 0 0 -1 512 512)" width="464" x="24" y="32"/><path d="m488 48v48h-464v-48a16 16 0 0 1 16-16h432a16 16 0 0 1 16 16z" fill="#c3c6c7"/><circle cx="120" cy="64" fill="#e9eef2" r="8"/><circle cx="88" cy="64" fill="#e9eef2" r="8"/><circle cx="56" cy="64" fill="#e9eef2" r="8"/><path d="m72 144h368v128h-368z" fill="#2d85cc"/><g fill="#c3c6c7"><path d="m136 344h-32a8 8 0 0 1 0-16h32a8 8 0 0 1 0 16z"/><path d="m296 344h-128a8 8 0 0 1 0-16h128a8 8 0 0 1 0 16z"/><path d="m248 376h-176a8 8 0 0 1 0-16h176a8 8 0 0 1 0 16z"/><path d="m120 408h-48a8 8 0 0 1 0-16h48a8 8 0 0 1 0 16z"/><path d="m200 440h-128a8 8 0 0 1 0-16h128a8 8 0 0 1 0 16z"/><path d="m440 344h-112a8 8 0 0 1 0-16h112a8 8 0 0 1 0 16z"/><path d="m440 376h-160a8 8 0 0 1 0-16h160a8 8 0 0 1 0 16z"/><path d="m376 408h-224a8 8 0 0 1 0-16h224a8 8 0 0 1 0 16z"/><path d="m440 408h-32a8 8 0 0 1 0-16h32a8 8 0 0 1 0 16z"/><path d="m440 440h-208a8 8 0 0 1 0-16h208a8 8 0 0 1 0 16z"/></g><path d="m392 232a8 8 0 0 1 -5.657-13.657l10.344-10.343-10.344-10.343a8 8 0 0 1 11.314-11.314l16 16a8 8 0 0 1 0 11.314l-16 16a7.974 7.974 0 0 1 -5.657 2.343z" fill="#54a3e3"/><path d="m120 232a7.974 7.974 0 0 1 -5.657-2.343l-16-16a8 8 0 0 1 0-11.314l16-16a8 8 0 0 1 11.314 11.314l-10.344 10.343 10.344 10.343a8 8 0 0 1 -5.657 13.657z" fill="#54a3e3"/><circle cx="304" cy="192" fill="#f7cc38" r="8"/><path d="m248 272h-112l56-80z" fill="#75ab7d"/><path d="m376 272h-96l48-48z" fill="#75ab7d"/><path d="m312 272h-96l48-64z" fill="#88c791"/><path d="m304 312h-96a8 8 0 0 1 0-16h96a8 8 0 0 1 0 16z" fill="#c3c6c7"/></svg>

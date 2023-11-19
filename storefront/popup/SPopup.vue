@@ -1,3 +1,17 @@
+<!--
+  - Copyright (c) 2023. Selldone® Business OS™
+  -
+  - Author: M.Pajuhaan
+  - Web: https://selldone.com
+  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  -
+  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+  - Our journey is not just about reaching a destination, but about creating a masterpiece.
+  - Tread carefully, for you're treading on dreams.
+  -->
+
 <template>
   <div
     class="popup-dialog-container"
@@ -30,7 +44,7 @@
         :ripple="false"
         style="cursor: initial"
       >
-        <VusePopupRenderer
+        <s-page-render-popup
           v-if="popup.content"
           :data="popup.content"
           class="thin-scroll overflow-y-auto"
@@ -43,7 +57,6 @@
         class="absolute-top-end zoomIn delay_500"
         fab
         depressed
-
         color="#fff"
         ><v-icon>close</v-icon></v-btn
       >
@@ -72,9 +85,11 @@
 </template>
 
 <script>
+import SPageRenderPopup from "@app-page-builder/SPageRenderPopup.vue";
+
 export default {
   name: "SPopup",
-  components: {},
+  components: { SPageRenderPopup },
   props: {
     popup: {
       require: true,

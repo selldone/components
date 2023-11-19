@@ -192,17 +192,7 @@
                 style="--item-heigh: 42px"
               ></menu-categories>
 
-              <!-- Menu > Custom -->
-              <!--
-                                                              <VuseRendererMenu
-                                                                      v-if="
-                                                        tab.type === 'custom' &&
-                                                        tab.page &&
-                                                        tab.page.content &&
-                                                        visibles[index]
-                                                      "
-                                                                      :data="tab.page.content"
-                                                              />-->
+
             </v-expansion-panel-content>
           </v-expansion-panel>
         </template>

@@ -1,4 +1,18 @@
 <?xml version="1.0"?>
+<!--
+  - Copyright (c) 2023. Selldone® Business OS™
+  -
+  - Author: M.Pajuhaan
+  - Web: https://selldone.com
+  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  -
+  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+  - Our journey is not just about reaching a destination, but about creating a masterpiece.
+  - Tread carefully, for you're treading on dreams.
+  -->
+
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs"
      version="1.1" width="512" height="512" x="0" y="0" viewBox="0 0 511.971 511.971"
      style="enable-background:new 0 0 512 512" xml:space="preserve"><g><g xmlns="http://www.w3.org/2000/svg"><path d="m352.281 404.095-39.213-39.215c-7.549-7.547-17.584-11.704-28.258-11.704-10.675 0-20.71 4.157-28.258 11.705l-7.188 7.188c-5.502 5.501-12.297 8.176-20.776 8.176-.001 0-.002 0-.003 0-31.349-.002-75.922-36.062-91.719-74.2-5.395-13.023-9.244-31.129 3.049-43.423l7.248-7.247c7.554-7.553 11.71-17.596 11.705-28.277-.006-10.683-4.173-20.722-11.734-28.269l-39.255-39.171c-7.544-7.529-17.569-11.676-28.229-11.676-10.674 0-20.709 4.156-28.257 11.704l-19.626 19.626c-35.333 35.333-41.415 87.076-17.127 145.698 18.879 45.566 55.146 92.244 99.502 128.063 47.034 37.982 96.644 58.896 139.704 58.896h.023c31.228-.005 57.741-10.688 78.805-31.752l19.606-19.606c7.549-7.548 11.705-17.584 11.705-28.258.001-10.675-4.156-20.711-11.704-28.258z" fill="#0097a7" data-original="#000000" style=""/><path
