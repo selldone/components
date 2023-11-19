@@ -333,9 +333,9 @@
 
 <script>
 import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
-import BasketBillingWidget from "../../../../Applications/Backoffice/pages/shop/widgets/order-billing/BasketBillingWidget.vue";
+import BasketBillingWidget from "@components/storefront/order/order-billing/BasketBillingWidget.vue";
 import { ProductType } from "@core/enums/product/ProductType";
-import BasketAutoCompleteCountDown from "../../../../Applications/Backoffice/components/order/BasketAutoCompleteCountDown.vue";
+import BasketAutoCompleteCountDown from "@components/storefront/order/delivery/BasketAutoCompleteCountDown.vue";
 import DeliveryTimelineTransportationOrder from "@components/storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
 import {ShopTransportations} from "@core/enums/logistic/ShopTransportations";
 import GeoNavigationButton
