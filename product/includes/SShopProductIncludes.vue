@@ -20,7 +20,7 @@
     </v-subheader>
     <v-row v-if="$vuetify.breakpoint.mdAndUp" align="start" justify="center">
       <v-col v-for="it in includes" :key="it.id" cols="3">
-        <a v-if="it.url" :target="'_blank'" :href="it.url">
+        <a v-if="it.url && !it.path" :target="'_blank'" :href="it.url">
           <img
             v-if="it.image"
             :src="getShopImagePath(it.image)"
@@ -82,12 +82,12 @@
         v-for="it in includes"
         :key="it.id"
         :target="it.url ? '_blank' : undefined"
-        :href="it.url"
+        :href="it.path ? undefined : it.url"
         :to="
           it.path
             ? {
                 name: 'IncludePageRender',
-                param: { path: it.path, include_id: it.id },
+                params: { path: it.path, include_id: it.id },
               }
             : undefined
         "
@@ -125,7 +125,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
