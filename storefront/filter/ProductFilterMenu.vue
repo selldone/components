@@ -203,6 +203,7 @@
 import SelectionList from "@components/ui/select/SelectionList.vue";
 import { ProductVariants } from "@core/enums/product/ProductVariants";
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
+import {StorefrontRoutesName} from "@core/enums/route/StorefrontRoutesName";
 
 export default {
   name: "ProductFilterMenu",
@@ -508,7 +509,7 @@ export default {
           name: "home",
           children: children,
           //to: {query: {dir: ''}}
-          to: { name: "ShopPage" },
+          to: { name: StorefrontRoutesName.SHOP_PAGE },
         });
       }
 

@@ -226,6 +226,7 @@
 
 <script>
 import ShopSearchBox from "@components/storefront/search/ShopSearchBox.vue";
+import {StorefrontRoutesName} from "@core/enums/route/StorefrontRoutesName";
 export default {
   name: "SShopBottomNavigation",
   components: { ShopSearchBox },
@@ -254,7 +255,7 @@ export default {
     },
 
     tab() {
-      if (this.$route.name === "ShopPage") return "home";
+      if (this.$route.name === StorefrontRoutesName.SHOP_PAGE) return "home";
       else if (this.$route.name === "UserFavoritesPage") return "favorite";
       else if (this.$route.name === "BasketPage") return "basket";
       else if (this.$route.name === "UserProfilePage") return "profile";
@@ -312,7 +313,7 @@ export default {
 
   watch: {
     $route(new_route, old_route) {
-      const home_names = ["ShopPage", "ShopCategoryPage", "ProductPage"];
+      const home_names = [StorefrontRoutesName.SHOP_PAGE, "ShopCategoryPage", "ProductPage"];
 
       if (
         home_names.includes(old_route.name) &&
@@ -383,17 +384,17 @@ export default {
     // --------------- Search ------------
     onSearch(event) {
       this.$router.push({
-        name: "ShopPage",
+        name: StorefrontRoutesName.SHOP_PAGE,
         params: { shop_name: this.shop.shop_name },
         query: { search: event.search, search_type: event.search_type },
       });
     },
 
     onClear() {
-      if (this.$route.name === "ShopPage")
+      if (this.$route.name === StorefrontRoutesName.SHOP_PAGE)
         //Only in shop page clear => show all products!
         this.$router.push({
-          name: "ShopPage",
+          name: StorefrontRoutesName.SHOP_PAGE,
           params: { shop_name: this.shop.shop_name },
         });
     },

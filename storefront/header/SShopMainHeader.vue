@@ -399,6 +399,7 @@ import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import SShopMainHeaderLogo from "@components/storefront/header/SShopMainHeaderLogo.vue";
+import {StorefrontRoutesName} from "@core/enums/route/StorefrontRoutesName";
 
 const BOTTOM_PADDING_CONTAINER = "82px";
 export default {
@@ -653,7 +654,7 @@ export default {
 
     goToShopInfoPage() {
       if (this.$route.name === "ShopInfoPageMobile")
-        this.$router.push({ name: "ShopPage" });
+        this.$router.push({ name: StorefrontRoutesName.SHOP_PAGE });
       else this.$router.push({ name: "ShopInfoPageMobile" });
     },
   },

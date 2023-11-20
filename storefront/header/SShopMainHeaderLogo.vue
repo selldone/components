@@ -88,6 +88,8 @@
 </template>
 
 <script>
+import {StorefrontRoutesName} from "@core/enums/route/StorefrontRoutesName";
+
 export default {
   name: "SShopMainHeaderLogo",
   components: {},
@@ -152,7 +154,7 @@ export default {
   methods: {
     goToShopInfoPage() {
       if (this.$route.name === "ShopInfoPageMobile")
-        this.$router.push({ name: "ShopPage" });
+        this.$router.push({ name: StorefrontRoutesName.SHOP_PAGE });
       else this.$router.push({ name: "ShopInfoPageMobile" });
     },
   },
