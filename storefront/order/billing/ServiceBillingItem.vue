@@ -39,10 +39,12 @@
         </div>
 
         <v-row no-gutters align="center">
+
+
           <price-view
             v-if="service_item?.price"
-            :price="service_item.price"
-            :currency="currency"
+            :amount="service_item.price"
+            :currency="service_item.currency"
             class="me-2"
             title="Pricing of this item by seller."
           ></price-view>

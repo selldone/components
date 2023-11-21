@@ -31,7 +31,7 @@
     "
   >
     <span v-if="isUnicode && !at_end">{{
-      GetUserSelectedCurrencyName(currency_string, true)
+      GetUserSelectedCurrencyName(currency_code, true)
     }}</span>
 
     <span :class="{ 'line-through': lineThrough }">
@@ -41,11 +41,11 @@
       }}</span>
     </span>
     <span v-if="!isUnicode" class="mx-2 cur-name">{{
-      GetUserSelectedCurrencyName(currency_string, true)
+      GetUserSelectedCurrencyName(currency_code, true)
     }}</span>
 
     <span v-if="isUnicode && at_end" class="mx-1">{{
-      GetUserSelectedCurrencyName(currency_string, true)
+      GetUserSelectedCurrencyName(currency_code, true)
     }}</span>
   </span>
 </template>
@@ -99,26 +99,26 @@ export default {
       );
     },
 
-    currency_string() {
+    currency_code() {
       return this.isObject(this.currency) ? this.currency.code : this.currency;
     },
     formatted_number() {
       if (!this.is_valid_amount) return null;
-      return this.FormatNumberCurrency(this.amount, this.currency_string);
+      return this.FormatNumberCurrency(this.amount, this.currency_code);
     },
     absolute_part() {
       if (!this.is_valid_amount) return this.amount;
       return this.formatted_number.split(".")[0];
     },
-    currency_code() {
-      return this.GetUserSelectedCurrencyName(this.currency_string, true);
+    currency_name() {
+      return this.GetUserSelectedCurrencyName(this.currency_code, true);
     },
     isUnicode() {
       return (
-        this.currency_code ===
+        this.currency_name ===
         CurrencyHelper.GetUserSelectedCurrencyUnicode(
           this,
-          this.currency_string
+          this.currency_code
         )
       );
     },
@@ -134,7 +134,7 @@ export default {
 
       return CurrencyHelper.GetUserSelectedCurrencySignAtEnd(
         this,
-        this.currency_string
+        this.currency_code
       );
     },
   },
