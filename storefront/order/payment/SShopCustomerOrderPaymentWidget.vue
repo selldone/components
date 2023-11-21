@@ -805,10 +805,6 @@ export default {
     total_payed() {
       let out = 0;
 
-
-
-
-
       // Payment of bills:
       if (this.bills?.length) {
         this.bills.forEach((bill) => {
@@ -816,10 +812,9 @@ export default {
         });
       }
       // Normal payment:
-      else{
+      else {
         if (this.payment) out += this.payment.amount;
       }
-
 
       if (this.gift_cards)
         this.gift_cards.forEach((item) => {
@@ -858,11 +853,11 @@ export default {
     //―――――――――――――――――――――― Final Step > Go to payment bill (Service) ――――――――――――――――――――
 
     goToPaymentBill(bill) {
-      this.ShowPaymentDialogBill(this.order.code, bill, () => {
+      this.ShowPaymentDialogBill(this.order.code, this.order, bill, () => {
         this.$emit("request:refresh"); // Refresh order info...
       });
 
-      GtagEcommerce.MeasuringCheckoutSteps( this.order, 2, null);
+      GtagEcommerce.MeasuringCheckoutSteps(this.order, 2, null);
     },
 
     //―――――――――――――――――――――― 🎗️ Subscription > Portal ――――――――――――――――――――

@@ -26,11 +26,12 @@
         name: 'MySubscriptionOrderInfoPage',
         params: { basket_id: membership_subscribed_plan.basket_id },
       }"
-      @click="load_basket=!load_basket"
+      @click="load_basket = !load_basket"
       :loading="load_basket"
     >
       <v-icon class="me-2"> shopping_bag </v-icon>
-      {{ $t("buy_button.manage_subscriptions") }} <small class="ms-2">SN-{{membership_subscribed_plan.basket_id}}</small>
+      {{ $t("buy_button.manage_subscriptions") }}
+      <small class="ms-2">SN-{{ membership_subscribed_plan.basket_id }}</small>
     </v-btn>
 
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Subscribe button ▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
@@ -44,7 +45,7 @@
       @click.stop="showSubscribe"
       v-bind="
         window.ExternalWidget
-          ? { href: getProductLink(shop,product.id), target: '' }
+          ? { href: getProductLink(shop, product.id), target: '' }
           : {}
       "
       :loading="busy"
@@ -256,8 +257,7 @@ export default {
     selected_price_id: null,
 
     //-----------------------
-    load_basket:false,
-
+    load_basket: false,
   }),
 
   computed: {
@@ -319,7 +319,7 @@ export default {
 
   watch: {
     product() {
-         this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
     },
   },
 
@@ -376,6 +376,7 @@ export default {
           if (!data.error) {
             this.ShowPaymentDialogSubscription(
               data.currency,
+              null,
               data.bill,
               data.gateway_codes,
               /*Used for in site payment flow & free orders!*/

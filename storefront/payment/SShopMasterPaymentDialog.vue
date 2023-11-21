@@ -124,6 +124,7 @@ import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
 import SetupService from "@core/server/SetupService";
 import { ProductType } from "@core/enums/product/ProductType";
 import _ from "lodash-es";
+import { BasketHelper } from "@core/helper/shop/BasketHelper";
 
 export default {
   name: "SShopMasterPaymentDialog",
@@ -189,6 +190,8 @@ export default {
 
     code: null /*🥶 Guest*/,
 
+    order: null,
+
     //-------------------------------
     callback: null,
 
@@ -238,6 +241,7 @@ export default {
       _.throttle(
         ({
           code /*🥶 Guest*/,
+          order,
           type,
           bill,
           prize_selected_variant_id,
@@ -259,6 +263,8 @@ export default {
           this.currency = this.GetUserSelectedCurrency();
 
           this.EventBus.$emit("PaymentMethodsForm:reset", null);
+
+          this.order = order; // Basket
 
           this.bill = bill; // Bill of order
 
@@ -298,7 +304,7 @@ export default {
 
     this.EventBus.$on(
       "payment-form-subscription",
-      _.throttle(({ currency, bill, gateway_codes, callback }) => {
+      _.throttle(({ currency, bill, gateway_codes, callback ,order}) => {
         // Based on delivery methods support COD!
         // Reset previous data:
 
@@ -309,6 +315,8 @@ export default {
         this.currency = Currency[currency];
 
         this.EventBus.$emit("PaymentMethodsForm:reset", null);
+
+        this.order = order; // Basket
 
         this.bill = bill; // Bill of order
 
@@ -348,7 +356,7 @@ export default {
     // Payment of bill:
     this.EventBus.$on(
       "payment-form-bill",
-      _.throttle(({ code /*🥶 Guest*/, bill, callback }) => {
+      _.throttle(({ code /*🥶 Guest*/, bill, callback,order }) => {
         // Reset previous data:
         this.resetToDefault(); // 🞇 Reset to default
         this.getPaymentQue();
@@ -359,6 +367,8 @@ export default {
         this.currency = Currency[bill.currency];
 
         this.EventBus.$emit("PaymentMethodsForm:reset", null);
+
+        this.order = order; // Basket
 
         this.bill = {
           // ShopBill
@@ -400,6 +410,8 @@ export default {
 
         this.EventBus.$emit("PaymentMethodsForm:reset", null);
 
+        this.order = avocado; // Basket
+
         this.bill = {
           // ShopBill
           sum: avocado.price + (avocado.tax_included ? 0 : avocado.tax),
@@ -438,6 +450,8 @@ export default {
         this.currency = Currency[hyper.currency];
 
         this.EventBus.$emit("PaymentMethodsForm:reset", null);
+
+        this.order = hyper; // Basket
 
         this.bill = {
           // ShopBill
@@ -668,7 +682,7 @@ export default {
               "paypal-standard",
               "mercadopago",
               "paymob",
-                "squareup"
+              "squareup",
             ].includes(data.mode)
           ) {
             this.pack = data.pack;
@@ -701,7 +715,12 @@ export default {
 
       let url = window.XAPI.POST_BUY_BASKET(this.shop_name, this.type, gateway);
 
-      if (this.type === "SERVICE") {
+      if (
+        BasketHelper.IsServiceAndNeedPricing(
+          this.order
+        ) /*this.type === "SERVICE"*/
+      ) {
+        console.log("It needs pricing by the seller after checkout.");
         url = window.XAPI.POST_PAY_BILL(
           this.shop_name,
           this.shop_bill.order_id,
@@ -858,7 +877,7 @@ export default {
                 "paypal-standard",
                 "mercadopago",
                 "paymob",
-                  "squareup"
+                "squareup",
               ].includes(data.mode)
             ) {
               this.pack = data.pack;
