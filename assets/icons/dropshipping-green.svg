@@ -1,17 +1,5 @@
 <?xml version="1.0"?>
-<!--
-  - Copyright (c) 2023. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
-  -->
+
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" version="1.1" width="512" height="512" x="0" y="0" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g>
 <path xmlns="http://www.w3.org/2000/svg" style="" d="M501.044,245.045C501.044,109.926,391.119,0,256,0S10.955,109.926,10.955,245.045  c0,0.243,0.06,0.471,0.073,0.714c-0.073,4.499,1.667,9.007,5.286,12.24l107.733,96.289c3.068,2.742,6.893,4.088,10.706,4.088  c4.414,0,8.811-1.808,11.985-5.363c5.912-6.614,5.343-16.775-1.271-22.686L43.669,239.341c2.809-19.999,19.858-35.491,40.618-35.491  c22.714,0,41.195,18.481,41.195,41.195c0,8.874,7.195,16.068,16.068,16.068c8.874,0,16.068-7.195,16.068-16.068  c0-22.714,18.481-41.195,41.195-41.195s41.195,18.481,41.195,41.195c0,8.874,7.195,16.068,16.068,16.068  c8.874,0,16.068-7.195,16.068-16.068c0-22.714,18.481-41.195,41.195-41.195c22.714,0,41.195,18.481,41.195,41.195  c0,8.874,7.194,16.068,16.068,16.068s16.068-7.195,16.068-16.068c0-22.714,18.481-41.195,41.195-41.195  c20.682,0,37.667,15.492,40.464,35.491l-101.8,90.986c-6.614,5.912-7.183,16.072-1.271,22.686c3.174,3.554,7.571,5.363,11.985,5.363  c3.813,0,7.638-1.35,10.706-4.088l107.733-96.289c3.619-3.232,5.359-7.74,5.287-12.24  C500.984,245.515,501.044,245.288,501.044,245.045z" fill="#8bc34a" data-original="#fe5722" class=""/>

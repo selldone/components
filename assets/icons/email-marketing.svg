@@ -1,15 +1,3 @@
-<!--
-  - Copyright (c) 2023. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
-  -->
+
 
 <svg id="color" enable-background="new 0 0 24 24" height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m24 8.65v1.59l-11.07 5.78c-.58.3-1.28.3-1.86 0l-11.07-5.78v-1.59c0-.83.46-1.59 1.19-1.98l9.75-5.21c.66-.35 1.46-.35 2.12 0l9.75 5.21c.73.39 1.19 1.15 1.19 1.98z" fill="#2196f3"/><path d="m21 2.75c0-1.519-1.231-2.75-2.75-2.75h-12.5c-1.519 0-2.75 1.231-2.75 2.75v17.32c0 .414.336.75.75.75h16.5c.414 0 .75-.336.75-.75z" fill="#eceff1"/><path d="m24 10.24v10.51c0 1.24-1.01 2.25-2.25 2.25h-19.5c-1.24 0-2.25-1.01-2.25-2.25v-10.51l11.07 5.78c.58.3 1.28.3 1.86 0z" fill="#64b5f6"/><path d="m10.25 12.275c-1.24 0-2.25-1.009-2.25-2.25 0-.788.415-1.52 1.083-1.908.358-.208.817-.086 1.025.271.208.358.087.817-.271 1.025-.211.123-.337.352-.337.612 0 .414.337.75.75.75s.75-.337.75-.75c0-.107-.021-.199-.063-.279-.193-.366-.054-.82.312-1.014.365-.195.819-.054 1.014.312.157.298.237.628.237.981 0 1.241-1.01 2.25-2.25 2.25z" fill="#ff9800"/><path d="m17.25 11.799c-.07 0-.142-.01-.211-.03l-10.5-3.074c-.319-.094-.539-.387-.539-.72v-1.5c0-.335.222-.629.544-.721l10.5-3c.225-.063.471-.02.657.123.189.141.299.363.299.598v7.574c0 .236-.111.458-.301.6-.131.099-.289.15-.449.15z" fill="#ffc107"/><g fill="#ffb300"><path d="m17.25 12.225c-.414 0-.75-.336-.75-.75v-8.5c0-.414.336-.75.75-.75s.75.336.75.75v8.5c0 .414-.336.75-.75.75z"/><path d="m6.75 9.225c-.414 0-.75-.336-.75-.75v-2.5c0-.414.336-.75.75-.75s.75.336.75.75v2.5c0 .414-.336.75-.75.75z"/></g></svg>

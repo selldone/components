@@ -1,16 +1,4 @@
 <?xml version="1.0"?>
-<!--
-  - Copyright (c) 2023. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
-  -->
+
 
 <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 128 128" width="512" height="512"><path d="M109.329,70.711V57.289l-11.157-2.25a35.122,35.122,0,0,0-3.678-8.857l6.3-9.489L91.307,27.2l-9.489,6.3a35.122,35.122,0,0,0-8.857-3.678l-2.25-11.157H57.289l-2.25,11.157a35.122,35.122,0,0,0-8.857,3.678l-9.489-6.3L27.2,36.693l6.3,9.489a35.122,35.122,0,0,0-3.678,8.857l-11.157,2.25V70.711l11.157,2.25a35.122,35.122,0,0,0,3.678,8.857l-6.3,9.489,9.491,9.491,9.489-6.3a35.122,35.122,0,0,0,8.857,3.678l2.25,11.157H70.711l2.25-11.157a35.122,35.122,0,0,0,8.857-3.678l9.489,6.3,9.491-9.491-6.3-9.489a35.122,35.122,0,0,0,3.678-8.857ZM64,79.035A15.035,15.035,0,1,1,79.035,64,15.034,15.034,0,0,1,64,79.035Z" style="fill:#178bfb"/><path d="M64,41.628A22.372,22.372,0,1,0,86.372,64,22.372,22.372,0,0,0,64,41.628Zm0,37.407A15.035,15.035,0,1,1,79.035,64,15.034,15.034,0,0,1,64,79.035Z" style="fill:#88cafd"/></svg>

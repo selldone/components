@@ -1,15 +1,3 @@
-<!--
-  - Copyright (c) 2023. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
-  -->
+
 
 <svg height="512" viewBox="0 0 64 64" width="512" xmlns="http://www.w3.org/2000/svg"><g id="Cloud_server_network" data-name="Cloud server network"><path d="m20 26h24v3h-24z" fill="#2488ff"/><path d="m14 41s36.67-.02 37-.05a10.993 10.993 0 0 0 2.95-21.21 5.969 5.969 0 0 0 -5.95-6.74 5.835 5.835 0 0 0 -2.44.52 14 14 0 0 0 -27.12 0 5.835 5.835 0 0 0 -2.44-.52 5.969 5.969 0 0 0 -5.95 6.74 11 11 0 0 0 3.95 21.26z" fill="#96c8ef"/><path d="m53.95 19.74a5.983 5.983 0 0 0 -7.45-6.54 5.952 5.952 0 0 1 4.45 6.54 10.993 10.993 0 0 1 -2.95 21.21c-.273.025 2.67.03 3 0a10.993 10.993 0 0 0 2.95-21.21z" fill="#78b9eb"/><path d="m42.56 13.52a5.835 5.835 0 0 1 2.44-.52c.138 0 .274.012.41.021a13.888 13.888 0 0 0 -14.91-9.932 14 14 0 0 1 12.06 10.431z" fill="#78b9eb"/><path d="m20 37h24v3h-24z" fill="#a7a9ac"/><path d="m46 18h-28a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2v-4a2 2 0 0 0 -2-2z" fill="#2488ff"/><path d="m46 29h-28a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2v-4a2 2 0 0 0 -2-2z" fill="#006df0"/><path d="m46 40h-28a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2v-4a2 2 0 0 0 -2-2z" fill="#005ece"/><path d="m44 48h-24v3h12 12z" fill="#a7a9ac"/><path d="m44 26h-24v3h12 12z" fill="#a7a9ac"/><path d="m20 26h24v1h-24z" fill="#808285"/><path d="m20 37h24v1h-24z" fill="#808285"/><path d="m20 48h24v1h-24z" fill="#808285"/><g fill="#f1f2f2"><path d="m19 20h2v4h-2z"/><path d="m23 20h2v4h-2z"/><path d="m27 20h2v4h-2z"/><path d="m31 20h2v4h-2z"/><path d="m19 31h2v4h-2z"/><path d="m23 31h2v4h-2z"/><path d="m27 31h2v4h-2z"/><path d="m31 31h2v4h-2z"/><path d="m19 42h2v4h-2z"/><path d="m23 42h2v4h-2z"/><path d="m27 42h2v4h-2z"/><path d="m31 42h2v4h-2z"/></g><path d="m43 21h2v2h-2z" fill="#5eac24"/><path d="m39 21h2v2h-2z" fill="#d80027"/><path d="m43 32h2v2h-2z" fill="#5eac24"/><path d="m39 32h2v2h-2z" fill="#d80027"/><path d="m43 43h2v2h-2z" fill="#5eac24"/><path d="m39 43h2v2h-2z" fill="#d80027"/><path d="m2 58h60v2h-60z" fill="#ed1c24"/><path d="m31 51h2v9h-2z" fill="#ed1c24"/><circle cx="32" cy="59" fill="#ffcd00" r="2"/></g></svg>

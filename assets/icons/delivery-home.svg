@@ -1,15 +1,3 @@
-<!--
-  - Copyright (c) 2023. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
-  -->
+
 
 <svg height="512" viewBox="0 0 64 64" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m58 44.14v16.86h-22v-16.86l11-3.14z" fill="#ff7956"/><path d="m36 8c0 2.21-4 8-4 8s-4-5.79-4-8a4 4 0 0 1 8 0z" fill="#ffda44"/><path d="m44 51h6v10h-6z" fill="#cd2a00"/><path d="m61 41v4l-14-4-14 4v-4l14-4z" fill="#ff5023"/><path d="m24 54h-1.5a11.5 11.5 0 0 1 0-23h20.5a5 5 0 0 0 0-10h-4v-2h4a7 7 0 0 1 0 14h-20.5a9.5 9.5 0 0 0 0 19h1.5z" fill="#1a6fb0"/><path d="m32 10a2 2 0 1 1 2-2 2 2 0 0 1 -2 2z" fill="#fff"/><g fill="#1a6fb0"><path d="m26 52h2v2h-2z"/><path d="m30 52h2v2h-2z"/><path d="m31 19h2v2h-2z"/><path d="m35 19h2v2h-2z"/></g><path d="m14 3h7v3h-7z" fill="#ff9811"/><path d="m3 3h7v3h-7z" fill="#ff9811"/><path d="m3 6h18v15h-18z" fill="#ffda44"/><path d="m6 15h4v2h-4z" fill="#fff"/><path d="m3 6h18v1h-18z" fill="#cc7400"/><path d="m14 6v2l-4 1v-3-3h4z" fill="#d80027"/></svg>
