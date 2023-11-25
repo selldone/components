@@ -85,11 +85,10 @@
 </template>
 
 <script>
-import SPageRenderPopup from "@app-page-builder/SPageRenderPopup.vue";
 
 export default {
   name: "SPopup",
-  components: { SPageRenderPopup },
+  components: {  },
   props: {
     popup: {
       require: true,
