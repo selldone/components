@@ -31,7 +31,7 @@
     :persistent-placeholder="persistentPlaceholder"
     :search-input.sync="search"
     :filter="() => true"
-    :class="{ disabled: (value && busy && !category_obj ) }"
+    :class="{ disabled: value && busy && !category_obj }"
     @change="$emit('change')"
     :multiple="multiple"
     :chips="chips"
@@ -86,11 +86,7 @@
         @click:close="parent.selectItem(item)"
       >
         <v-avatar left>
-          <v-img
-            :src="
-              (getShopImagePath(item.icon, IMAGE_SIZE_SMALL))
-            "
-          />
+          <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)" />
         </v-avatar>
 
         {{ item.title }}
@@ -108,7 +104,7 @@
         class="mb-1 me-1 hover-scale force-top"
       />
       <v-avatar v-else :size="32">
-        <v-icon>home</v-icon>
+        <v-icon>{{ defaultIcon }}</v-icon>
       </v-avatar>
     </template>
 
@@ -136,6 +132,9 @@
           >{{ $t("global.actions.create") }}</v-btn
         >
       </div>
+    </template>
+    <template v-slot:append>
+      <slot name="append"></slot>
     </template>
   </v-autocomplete>
 </template>
@@ -201,6 +200,9 @@ export default {
     chips: {
       default: false,
       type: Boolean,
+    },
+    defaultIcon: {
+      default: "home",
     },
   },
   data: () => ({

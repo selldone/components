@@ -16,18 +16,19 @@
   <div class="circles-container" :style="{ padding: `${size / 3}px` }">
     <v-avatar
       :size="size"
-      v-for="(id,index) in ids"
-      :key="id+'-'+index"
+      v-for="(id, index) in ids"
+      :key="id + '-' + index"
       class="citm"
-      @click="$emit('click:item', id) "
-      :class="{ 'pointer-pointer': link, 'big-scale': bigScale }"
-      color="#0061e0"
-
+      @click="$emit('click:item', id)"
+      :class="{
+        'pointer-pointer': link,
+        'big-scale': bigScale,
+        '-no-scale-on-hover': noScale,
+      }"
+      :color="color"
     >
-
-      <img  :src="getShopIcon(id,IMAGE_SIZE_SMALL)" style="padding: 2px" />
+      <img :src="getShopIcon(id, IMAGE_SIZE_SMALL)" style="padding: 2px" />
     </v-avatar>
-
   </div>
 </template>
 
@@ -39,7 +40,8 @@ export default {
       require: true,
       type: Array,
     },
-    rawImagesPath: {    // Used in avocado items view
+    rawImagesPath: {
+      // Used in avocado items view
       type: Boolean,
       default: false,
     },
@@ -55,7 +57,13 @@ export default {
       type: Boolean,
       default: false,
     },
-
+    color: {
+      default: "#0061e0",
+    },
+    noScale: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
@@ -64,26 +72,28 @@ export default {
 .circles-container {
   display: flex;
   overflow: auto;
+
   //  padding: 10px;
   .citm {
     transition: all 0.5s;
+
+    --scale: 1.5;
+    &.big-scale {
+      --scale: 2.2;
+    }
 
     &:not(:first-child) {
       margin-left: -12px;
     }
 
-    &:hover {
+    &:hover:not(.-no-scale-on-hover) {
       &:not(:first-child) {
         margin-left: 10px;
       }
       margin-right: 22px;
 
-      transform: scale(1.5);
+      transform: scale(var(--scale));
       z-index: 1;
-
-      &.big-scale {
-        transform: scale(2.2);
-      }
     }
   }
 }

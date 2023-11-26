@@ -366,7 +366,7 @@
         <div
           class="position-relative d-flex flex-column align-center justify-center transition-ease-in-out hover-up"
           @click="selectFolder(parent_folders.parent)"
-          :class="{ disabled: busy_fetch }"
+          :class="{ disabled: busy_fetch, 'h-100': !mini }"
           :title="`Back to ${
             parent_folders.parent ? parent_folders.parent.title : 'Home'
           } | Press 🠨 backspace`"
@@ -375,11 +375,13 @@
             <v-icon
               class="no-inv"
               color="#dcab19"
-              size="100"
+              :size="mini ? 100 : 200"
               style="position: absolute; top: -4px; left: -5px"
               >folder
             </v-icon>
-            <v-icon size="100" color="amber" class="no-inv z1">folder</v-icon>
+            <v-icon :size="mini ? 100 : 200" color="amber" class="no-inv z1"
+              >folder</v-icon
+            >
           </div>
 
           <div class="mt-n1 center-absolute" style="z-index: 2">
@@ -575,6 +577,7 @@
             "
             :restoring="product.id === busy_restore"
             :selected="selected_products.includes(product.id)"
+            :shortcut="current_dir_id && product.category_id !== current_dir_id"
           >
           </product-card-mini>
 
@@ -612,6 +615,7 @@
               }
             "
             :selected="selected_products.includes(product.id)"
+            :shortcut="current_dir_id && product.category_id !== current_dir_id"
           />
           <v-scale-transition leave-absolute origin="center center">
             <v-icon

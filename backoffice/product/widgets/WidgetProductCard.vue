@@ -21,20 +21,23 @@
       small ? 'm-1' : '',
       dark ? 'widget-dark' : '',
       hover ? 'widget-hover' : '',
-      dashed ? 'dashed' : '',
+      dashed ? '-dashed' : '',
       hover ? 'pointer-pointer' : '',
       product.deleted_at ? 'op-0-7 -deleted' : '',
-      selected?' border-selected ':''
+      selected ? 'border-selected ' : '',
+      shortcut ? '-shortcut' : '',
     ]"
     :deleted_at="getFromNowString(product.deleted_at)"
     :style="`background: ${color}`"
-    :title="`<h5 class='align-items-center pb-1'  style='font-size: 1.16rem;min-height: 42px'>    <span class='circle ${state_class} mr-sm' style='font-size: 6px;'></span>  ${product.title}  </h5>`"
+    :title="`<h5 class='align-items-center pb-1'  style='font-size: 1.16rem;min-height: 42px'>    <span class='circle ${state_class} mr-sm' style='font-size: 6px;'></span>  ${product.title?.limitWords(
+      12
+    )}  </h5>`"
     body-class="p-0 mt"
     custom-header
     @click="$emit('select')"
     :h100="false"
   >
-    <template slot="top-left">
+    <template v-slot:top-left>
       <v-btn
         v-if="showEditButton"
         icon
@@ -45,6 +48,7 @@
         }"
         class="z2"
         @click.stop
+        title="Edit product."
       >
         <v-icon small> fas fa-edit </v-icon>
       </v-btn>
@@ -80,11 +84,14 @@
         style="min-height: 21px"
         :class="small ? 'small' : ''"
       >
+        <v-chip v-if="shortcut" label color="#009688" dark x-small class="me-1" title="Originally, this product belongs to a different category."
+          ><v-icon left size="9">snippet_folder</v-icon> Shortcut</v-chip
+        >
         <v-avatar v-if="product.connect_id" size="24" rounded class="me-1"
           ><img :src="getConnectIcon(product.connect_id)"
         /></v-avatar>
 
-        {{ product.title_en }}
+        {{ product.title_en?.limitWords(24) }}
       </h6>
     </div>
 
@@ -249,11 +256,7 @@
               ><!-- dro-image : active drop area for images fast upload -->
               <v-img
                 v-if="product.icon"
-                :src="
-                  (
-                    getShopImagePath(product.icon, IMAGE_SIZE_SMALL)
-                  )
-                "
+                :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
                 aspect-ratio="1"
                 class="grey lighten-2"
               >
@@ -538,6 +541,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    shortcut: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -695,7 +702,13 @@ a {
   vertical-align: text-top;
 }
 
-.border-selected{
+.border-selected {
   border: solid #0061e0 4px;
+}
+.-dashed {
+  border: #444 dashed 2px;
+}
+.-shortcut {
+  border-color: #009688 !important;
 }
 </style>

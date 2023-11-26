@@ -116,6 +116,28 @@
           }"
           drop-image="true"
         ></circle-image>
+        <v-avatar
+          :size="24"
+          v-if="shortcut"
+          label
+          color="#FFA000"
+          dark
+          x-small
+          class="hover-scale"
+          style="
+            border: solid 2px #ffa000;
+            position: absolute;
+            right: -5px;
+            bottom: -5px;
+          "
+          title="Shortcut | Originally, this product belongs to a different category."
+        >
+          <img
+            v-if="product.category_id"
+            :src="getCategoryIcon(product.category_id)"
+          />
+          <v-icon v-else size="12" color="#000">home</v-icon>
+        </v-avatar>
       </div>
 
       <!-- Delete / Restore -->
@@ -244,6 +266,10 @@ export default {
       default: false,
     },
     selected: {
+      type: Boolean,
+      default: false,
+    },
+    shortcut: {
       type: Boolean,
       default: false,
     },
