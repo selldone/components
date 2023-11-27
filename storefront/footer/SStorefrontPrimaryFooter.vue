@@ -15,8 +15,8 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-sheet
     v-if="!disabled"
-    class="s--shop-footer"
-    :class="{ '-dark': dark ,'-rtl':$vuetify.rtl}"
+    class="s--storefront-primary-footer"
+    :class="{ '-dark': dark, '-rtl': $vuetify.rtl }"
     :color="dark ? SaminColorDarkDeep : '#fff'"
     :dark="dark"
   >
@@ -398,7 +398,7 @@ import SetupService from "@core/server/SetupService";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 
 export default {
-  name: "SShopFooter",
+  name: "SStorefrontPrimaryFooter",
   components: {
     SShopLanguageSelector,
 
@@ -511,15 +511,11 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 
-
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--shop-footer{
-
-
+.s--storefront-primary-footer {
   position: relative;
   z-index: 1;
   width: 100%;
@@ -546,10 +542,10 @@ export default {
 
   hr {
     background-image: linear-gradient(
-            to right,
-            #f3e7e9 0%,
-            #e3eeff 99%,
-            #e3eeff 100%
+      to right,
+      #f3e7e9 0%,
+      #e3eeff 99%,
+      #e3eeff 100%
     );
     height: 1px;
     border: 0;
@@ -684,28 +680,27 @@ export default {
     }
   }
 
-.s--footer-svg{
-  .fil1 {
-    fill: #373435;
-    fill-rule: nonzero;
-  }
-  .fil0 {
-    fill: #70557e;
-    fill-rule: nonzero;
-  }
-
-  &.dark {
+  .s--footer-svg {
     .fil1 {
-      fill: #fff;
+      fill: #373435;
       fill-rule: nonzero;
     }
     .fil0 {
-      fill: #fff;
+      fill: #70557e;
       fill-rule: nonzero;
     }
-  }
 
-}
+    &.dark {
+      .fil1 {
+        fill: #fff;
+        fill-rule: nonzero;
+      }
+      .fil0 {
+        fill: #fff;
+        fill-rule: nonzero;
+      }
+    }
+  }
 
   &.-rtl {
     .footer {
@@ -717,14 +712,5 @@ export default {
       }
     }
   }
-
 }
-
-
-
-
-
-
-
 </style>
-

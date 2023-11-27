@@ -16,7 +16,7 @@
   <v-slide-y-reverse-transition>
     <router-link
       v-if="availableInBasketCount"
-      class="s--shop-product-in-basket-indicator in-basket"
+      class="s--storefront-product-in-basket-indicator in-basket"
       :class="{ 'is-mobile': isMobile, '-up': bottom_nav_show }"
       :to="to"
     >
@@ -37,7 +37,7 @@ import Vue from "vue";
 import { ProductType } from "@core/enums/product/ProductType";
 
 export default Vue.extend({
-  name: "SShopProductInBasketIndicator",
+  name: "SStorefrontProductInBasketIndicator",
 
   computed: {
     shop() {
@@ -91,7 +91,6 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -100,12 +99,10 @@ export default Vue.extend({
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--shop-product-in-basket-indicator {
-
+.s--storefront-product-in-basket-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
-
 
   cursor: pointer;
   user-select: none;

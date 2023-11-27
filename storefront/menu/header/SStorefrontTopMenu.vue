@@ -20,13 +20,13 @@
     :dark="dark"
     :color="transparent ? 'transparent' : dark ? 'var(--theme-dark)' : null"
     :outlined="outlined"
-    class="s--top-custom-menu"
+    class="s--storefront-top-menu"
     :style="{ '--justify': center ? 'center' : 'start' }"
   >
     <fade-scroll class="overflow-auto">
       <div class="text-no-wrap">
         <template v-for="(tab, index) in tabs">
-          <span v-if="tab.type === 'link'" :key="index">
+          <span v-if="tab.type === 'link'" :key="'l' + index">
             <v-btn
               :href="preview ? undefined : tab.link"
               text
@@ -38,7 +38,8 @@
                 left
                 :small="tab.icon_size === 'small'"
                 :large="tab.icon_size === 'large'"
-              >{{tab.icon}}</v-icon>
+                >{{ tab.icon }}</v-icon
+              >
 
               {{ tab.title }}
             </v-btn>
@@ -47,7 +48,7 @@
           <v-menu
             v-else
             offset-y
-            :key="index"
+            :key="'m' + index"
             :min-width="window.innerWidth - 24"
             :max-width="window.innerWidth - 24"
             close-delay="0"
@@ -71,11 +72,10 @@
               >
                 <v-icon
                   v-if="tab.icon"
-                  v-text="tab.icon"
                   left
                   :small="tab.icon_size === 'small'"
                   :large="tab.icon_size === 'large'"
-                ></v-icon>
+                >{{tab.icon}}</v-icon>
 
                 {{ tab.title }}
               </v-btn>
@@ -144,7 +144,7 @@
 import MenuCategories from "./MenuCategories.vue";
 import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 export default {
-  name: "SShopTopMenu",
+  name: "SStorefrontTopMenu",
   components: { FadeScroll, MenuCategories },
   props: {
     shop: {
@@ -281,26 +281,20 @@ export default {
 </script>
 
 <style lang="scss">
-
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--top-custom-menu{
-
+.s--storefront-top-menu {
   --justify: start;
-  --font-size:1.1rem;
-  --text-transform:none;
+  --font-size: 1.1rem;
+  --text-transform: none;
 }
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-
-.s--top-custom-menu {
-
+.s--storefront-top-menu {
   .list-menu-item {
     font-weight: 500;
     font-size: 1rem;
@@ -309,11 +303,11 @@ export default {
   .v-toolbar__content {
     justify-content: var(--justify);
 
-    button,.v-btn {
+    button,
+    .v-btn {
       font-size: var(--font-size);
       text-transform: var(--text-transform);
     }
   }
 }
-
 </style>

@@ -17,5 +17,5 @@ To use a **Storefront** component, simply import it into your project:
 ```vue
 e.g.
 
-<s-shop-footer :shop="shop"/>
+<s-storefront-primary-footer :shop="shop"/>
 ```

@@ -109,7 +109,7 @@ import SShopLogin from "@components/login/SShopLogin.vue";
 import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
 
 export default {
-  name: "ShopContactsChatPopup",
+  name: "SStorefrontChatPopup",
   components: { EmojiRating, SShopLogin, ShopChatsList },
   props: {
     shop: {

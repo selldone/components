@@ -16,7 +16,7 @@
   <div>
     <v-toolbar
       v-if="!$store.getters.getIsNative"
-      class="s--shop-main-header border-bottom"
+      class="s--storefront-primary-header border-bottom"
       :extended="!overlay"
       :dark="overlay ? overlayDark : !transparent_header && !is_light_header"
       flat
@@ -32,7 +32,7 @@
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
       }"
     >
-      <template v-if="!isMobile || !searchmode">
+      <template v-if="!isMobile || !searchMode">
         <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
         <v-btn
           v-if="isMobile || is_standalone"
@@ -46,7 +46,10 @@
           <v-icon> menu </v-icon>
         </v-btn>
 
-        <s-shop-main-header-logo v-if="shop" :shop="shop"></s-shop-main-header-logo>
+        <s-shop-main-header-logo
+          v-if="shop"
+          :shop="shop"
+        ></s-shop-main-header-logo>
 
         <loading css-mode v-else-if="!shop"></loading>
 
@@ -327,8 +330,8 @@
               :color="SaminInfoColor"
               dark
               @click.stop="NeedLogin()"
-              key="kav1"
-              class="s--shop-main-header-login-button"
+              key="kav2"
+              class="s--storefront-primary-header-login-button"
             >
               <v-icon small class="me-2"> fas fa-sign-in-alt </v-icon>
               <div v-if="!!shop">
@@ -361,10 +364,9 @@
       fixed
       :right="!$vuetify.rtl"
       color="#fff"
-      class="s--shop-main-header-basket-navigation"
+      class="s--storefront-primary-header-basket-navigation"
       :width="$vuetify.breakpoint.mdAndUp ? 640 : 360"
       temporary
-
     >
       <div class="d-flex flex-column" style="min-height: 100%">
         <v-btn
@@ -399,11 +401,11 @@ import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import SShopMainHeaderLogo from "@components/storefront/header/SShopMainHeaderLogo.vue";
-import {StorefrontRoutesName} from "@core/enums/route/StorefrontRoutesName";
+import { StorefrontRoutesName } from "@core/enums/route/StorefrontRoutesName";
 
 const BOTTOM_PADDING_CONTAINER = "82px";
 export default {
-  name: "ShopMainHeader",
+  name: "SStorefrontPrimaryHeader",
   components: {
     SShopMainHeaderLogo,
     SShopLanguageSelector,
@@ -418,7 +420,7 @@ export default {
   },
   props: {
     shop: {},
-    searchmode: {},
+    searchMode: {},
     overlay: { type: Boolean, default: false },
     overlayDark: {
       default: false,
@@ -651,34 +653,25 @@ export default {
         this.busy_logout = false;
       });
     },
-
-    goToShopInfoPage() {
-      if (this.$route.name === "ShopInfoPageMobile")
-        this.$router.push({ name: StorefrontRoutesName.SHOP_PAGE });
-      else this.$router.push({ name: "ShopInfoPageMobile" });
-    },
   },
 };
 </script>
 
 <style lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--shop-main-header{
+.s--storefront-primary-header {
   overflow-x: auto;
   overflow-y: hidden;
-
 }
 
-.s--shop-main-header-basket-navigation {
+.s--storefront-primary-header-basket-navigation {
   padding: 8px;
   margin: 8px;
   height: calc(100vh - 16px) !important;
@@ -690,8 +683,7 @@ export default {
   }
 }
 
-
-.s--shop-main-header-login-button {
+.s--storefront-primary-header-login-button {
   //  background-color: var(--theme-dark);
   //  color: #fff;
 

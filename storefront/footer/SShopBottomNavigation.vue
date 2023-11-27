@@ -22,14 +22,14 @@
     background-color="#fafafa"
     class="s--shop-bottom-nav shadow-small"
     :class="{
-      '-hide': (!showNavbar && !searchmode) || force_hide_navigation,
-      '-top': searchmode,
+      '-hide': (!showNavbar && !search_mode) || force_hide_navigation,
+      '-top': search_mode,
     }"
     style="z-index: 9999999; box-shadow: none"
     :value="tab"
     :height="76"
   >
-    <template v-if="!searchmode">
+    <template v-if="!search_mode">
       <!-- ------------------ Home ------------------ -->
 
       <v-btn
@@ -82,7 +82,7 @@
 
       <v-btn
         value="search"
-        @click="searchmode = true"
+        @click="search_mode = true"
         min-width="60"
         class="zoomIn delay_100"
         key="ser"
@@ -181,7 +181,7 @@
 
     <!-- ------------------ Search Box ------------------ -->
 
-    <template v-if="searchmode">
+    <template v-if="search_mode">
       <v-btn
         @click="$refs.search.showQRScanner()"
         icon
@@ -192,7 +192,7 @@
         <v-icon>qr_code_scanner</v-icon>
       </v-btn>
 
-      <shop-search-box
+      <s-storefront-search-box
         ref="search"
         class="full-width align-center d-flex flex-grow-1 fadeIn"
         :class="{}"
@@ -211,7 +211,7 @@
       />
 
       <v-btn
-        @click="searchmode = false"
+        @click="search_mode = false"
         icon
         class="zoomIn"
         width="70"
@@ -225,11 +225,11 @@
 </template>
 
 <script>
-import ShopSearchBox from "@components/storefront/search/ShopSearchBox.vue";
-import {StorefrontRoutesName} from "@core/enums/route/StorefrontRoutesName";
+import SStorefrontSearchBox from "@components/storefront/search/SStorefrontSearchBox.vue";
+import { StorefrontRoutesName } from "@core/enums/route/StorefrontRoutesName";
 export default {
   name: "SShopBottomNavigation",
-  components: { ShopSearchBox },
+  components: { SStorefrontSearchBox },
   data: () => ({
     last_home_route: null,
     last_cat: null,
@@ -239,7 +239,7 @@ export default {
     lastScrollPosition: 0,
     sum: 0,
 
-    searchmode: false,
+    search_mode: false,
   }),
 
   computed: {
@@ -313,7 +313,11 @@ export default {
 
   watch: {
     $route(new_route, old_route) {
-      const home_names = [StorefrontRoutesName.SHOP_PAGE, "ShopCategoryPage", "ProductPage"];
+      const home_names = [
+        StorefrontRoutesName.SHOP_PAGE,
+        "ShopCategoryPage",
+        "ProductPage",
+      ];
 
       if (
         home_names.includes(old_route.name) &&
@@ -339,12 +343,12 @@ export default {
 
       if (!new_route.query.search) {
         // Hide search bar on change route.
-        this.searchmode = false;
+        this.search_mode = false;
       }
     },
 
     force_hide_navigation(hide) {
-      if (hide) this.searchmode = false; // Hide on force hide navigation.
+      if (hide) this.search_mode = false; // Hide on force hide navigation.
     },
   },
 
@@ -403,12 +407,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━

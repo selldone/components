@@ -15,7 +15,7 @@
 <template>
   <div
     v-if="value && can_show"
-    class="custom-notification p-2 fadeInUpBig"
+    class="s--storefront-campaign-notification p-2 fadeInUpBig"
     :class="{ preview: preview }"
     :style="{
       'background-image': notification.bg
@@ -97,7 +97,7 @@
 import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
 
 export default {
-  name: "CustomNotification",
+  name: "SStorefrontCampaignNotification",
   props: {
     notification: {
       require: true,
@@ -161,7 +161,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.custom-notification {
+.s--storefront-campaign-notification {
   filter: drop-shadow(3px 13px 11px rgba(0, 0, 0, 0.13));
   min-height: 200px;
   max-height: 100%;

@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div  :class="{ block: block }">
+  <div :class="{ block: block }" class="s--storefront-search-box">
     <v-btn
       v-if="isMobile && !force_show"
       class="collapse-button"
@@ -59,7 +59,6 @@
       :background-color="backgroundColor"
       :color="color"
       :outlined="outlined"
-
       v-on:keyup.enter="
         () => {
           search ? goToResult({ title: search }) : undefined;
@@ -69,9 +68,7 @@
         isMobile && noClose ? $t('icons.navigate_next') : undefined
       "
       @click:append-outer="force_show = false"
-
       prepend-inner-icon="search"
-
       :persistentPlaceholder="persistentPlaceholder"
     >
       <template v-slot:prepend>
@@ -131,16 +128,9 @@
       </template>
 
       <template v-slot:selection="{ item, selected }">
-
         <v-chip :input-value="selected" class="subtitle-2" outlined>
           <v-avatar v-if="item.icon" left>
-            <v-img
-              :src="
-                (
-                  getShopImagePath(item.icon, IMAGE_SIZE_SMALL)
-                )
-              "
-            />
+            <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)" />
           </v-avatar>
 
           <span
@@ -152,11 +142,7 @@
 
       <template v-slot:item="{ item }">
         <v-list-item-avatar v-if="item.icon">
-          <v-img
-            :src="
-              (getShopImagePath(item.icon, IMAGE_SIZE_SMALL))
-            "
-          >
+          <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)">
             <template v-slot:placeholder>
               <v-layout fill-height align-center justify-center ma-0>
                 <v-progress-circular indeterminate color="grey lighten-5" />
@@ -211,7 +197,7 @@
 import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
 
 export default {
-  name: "ShopSearchBox",
+  name: "SStorefrontSearchBox",
   components: {},
   props: {
     title: {
@@ -292,8 +278,8 @@ export default {
     placeholder: {},
     messages: {},
     hint: {},
-    persistentPlaceholder:{},
-    singleLine:{default:true},
+    persistentPlaceholder: {},
+    singleLine: { default: true },
 
     outlined: {
       type: Boolean,
@@ -369,13 +355,18 @@ export default {
   },
 
   created() {
-
     // Reconstruct from current route query:
-    if(this.$route.query.search){
-      this.model={title:this.$route.query.search,cat:this.$route.query.search==='category',id:this.$route.query.search==='exact'?this.$route.query.search:null};
-      this.items=[this.model]
+    if (this.$route.query.search) {
+      this.model = {
+        title: this.$route.query.search,
+        cat: this.$route.query.search === "category",
+        id:
+          this.$route.query.search === "exact"
+            ? this.$route.query.search
+            : null,
+      };
+      this.items = [this.model];
     }
-
 
     this.force_show = this.expandInput;
 
@@ -386,7 +377,6 @@ export default {
     if (!this.old_items || !Array.isArray(this.old_items)) this.old_items = [];
   },
   methods: {
-
     goToResult(item) {
       if (item && this.$route.query.search === item.title) return; // Prevent duplicated search!
 
@@ -442,61 +432,70 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box {
-  transition: all 0.3s ease-out;
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
 
-  &.is-mobile {
-    //visibility: hidden;
-    transform: scale(0.1);
-    top: -80px;
-    max-width: 48px;
-    //display: none !important;
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--storefront-search-box {
+  .search-box {
+    transition: all 0.3s ease-out;
+
+    &.is-mobile {
+      //visibility: hidden;
+      transform: scale(0.1);
+      top: -80px;
+      max-width: 48px;
+      //display: none !important;
+    }
+
+    &.force_show {
+      top: 0px;
+      //display: block !important;
+      max-width: 100vw;
+      //visibility: visible;
+      transform: scale(1);
+    }
+
+    &.shadow {
+      box-shadow: 0px 5px 15px 2px rgba(220, 220, 220, 0.24) !important;
+    }
   }
 
-  &.force_show {
-    top: 0px;
-    //display: block !important;
-    max-width: 100vw;
-    //visibility: visible;
-    transform: scale(1);
-  }
-
-  &.shadow {
-    box-shadow: 0px 5px 15px 2px rgba(220, 220, 220, 0.24) !important;
-  }
-}
-
-.collapse-button {
-  visibility: hidden !important;
-  display: none !important;
-
-  position: absolute;
-  // top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-
-  @media only screen and (max-width: 780px) {
-    visibility: visible !important;
-    display: block !important;
-  }
-
-  @media only screen and (max-width: 500px) {
-    right: 0;
-    //transform: translateX(-50%);
-  }
-}
-.block {
   .collapse-button {
-    position: relative;
-    left: unset;
-    transform: unset;
-  }
-}
+    visibility: hidden !important;
+    display: none !important;
 
-.hoverable-icon {
-  &:hover {
-    background-color: var(--theme-light) !important;
-    color: #fff !important;
+    position: absolute;
+    // top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    @media only screen and (max-width: 780px) {
+      visibility: visible !important;
+      display: block !important;
+    }
+
+    @media only screen and (max-width: 500px) {
+      right: 0;
+      //transform: translateX(-50%);
+    }
+  }
+  .block {
+    .collapse-button {
+      position: relative;
+      left: unset;
+      transform: unset;
+    }
+  }
+
+  .hoverable-icon {
+    &:hover {
+      background-color: var(--theme-light) !important;
+      color: #fff !important;
+    }
   }
 }
 </style>
