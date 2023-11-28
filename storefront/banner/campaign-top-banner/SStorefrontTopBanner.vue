@@ -14,9 +14,8 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-expand-transition>
-
-      <v-banner
-          v-if="
+    <v-banner
+      v-if="
         !close &&
         banner &&
         banner.message &&
@@ -25,63 +24,57 @@
           $route.params.page_name === banner.page_name
         )
       "
-          class="s--top-banner"
+      class="s--storefront-top-banner"
+      :dark="banner.dark"
+      :style="{
+        'background-color': banner.bg,
+        'background-image': `url(${banner.bg_image})`,
+      }"
+      :class="{ '-bg-repeat': banner.repeat }"
+      single-line
+    >
+      <template v-slot:icon>
+        <v-avatar v-if="banner.icon" :color="banner.icon_bg" size="40">
+          <v-icon>
+            {{ banner.icon }}
+          </v-icon>
+        </v-avatar>
+      </template>
 
-          :dark="banner.dark"
-          :style="{
-          'background-color': banner.bg,
-          'background-image': `url(${banner.bg_image})`,
-        }"
-          :class="{ 'bg-repeat': banner.repeat }"
-          single-line
-
+      <router-link
+        :to="
+          banner.page_name
+            ? {
+                name: 'PageRender',
+                params: { page_name: banner.page_name },
+              }
+            : {}
+        "
+        :class="{ pen: developerMode }"
+        class="flex-grow-1"
       >
-        <template v-slot:icon>
-          <v-avatar
-              v-if="banner.icon"
-              :color="banner.icon_bg"
-              size="40"
-          >
-            <v-icon>
-              {{ banner.icon }}
-            </v-icon>
-          </v-avatar>
-        </template>
+        <div v-html="banner.message"></div>
+      </router-link>
 
-        <router-link
-            :to="
-        banner.page_name
-          ?{
-              name: 'PageRender',
-              params: { page_name: banner.page_name },
-            }
-          : {}
-      "
-            :class="{'pen':developerMode }" class="flex-grow-1"
-
-        >
-
-          <div v-html="banner.message"></div>
-        </router-link>
-
-        <template v-slot:actions>
-          <lottie
-              :options="{ path: banner.anim, loop: true }"
-              :height="banner.anim_height"
-              :width="banner.anim_width"
-              :speed="1" class="mx-1 flex-grow-0"
-          />
-          <v-btn icon @click.stop="dismiss" class="mx-1 flex-grow-0">
-            <v-icon>close</v-icon>
-          </v-btn>
-        </template>
-      </v-banner>
+      <template v-slot:actions>
+        <lottie
+          :options="{ path: banner.anim, loop: true }"
+          :height="banner.anim_height"
+          :width="banner.anim_width"
+          :speed="1"
+          class="mx-1 flex-grow-0"
+        />
+        <v-btn icon @click.stop="dismiss" class="mx-1 flex-grow-0">
+          <v-icon>close</v-icon>
+        </v-btn>
+      </template>
+    </v-banner>
   </v-expand-transition>
 </template>
 
 <script>
 export default {
-  name: "STopBanner",
+  name: "SStorefrontTopBanner",
 
   props: {
     shop: {
@@ -117,41 +110,44 @@ export default {
      */
     if (!this.developerMode)
       this.$store.commit("setShopMainBanner", this.banner);
-
   },
   watch: {
     banner() {
       if (!this.developerMode)
         this.$store.commit("setShopMainBanner", this.banner);
-    }
+    },
   },
   methods: {
     dismiss() {
       this.close = true;
-      if (!this.developerMode)
-        this.$store.commit("setShopMainBanner", null);
-
+      if (!this.developerMode) this.$store.commit("setShopMainBanner", null);
     },
   },
 };
 </script>
+
 <style lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
 html {
   --s--top-banner-heigh: 64px;
 }
 
-</style>
-<style scoped>
-.s--top-banner {
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+
+.s--storefront-top-banner {
   z-index: 100;
   height: var(--s--top-banner-heigh);
   text-align: start;
-  a{
-    color: #000;
+  a {
+    color: currentColor !important;
   }
-}
 
-.bg-repeat {
-  background-repeat: repeat;
+  &.-bg-repeat {
+    background-repeat: repeat;
+  }
 }
 </style>

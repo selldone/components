@@ -19,7 +19,7 @@
     :max-width="640"
     width="90%"
     scrollable
-    content-class="login-container"
+    content-class="s--storefront-need-login-dialog"
     persistent
   >
     <v-btn icon class="absolute-top-end m-3 z2" @click="show_dialog = false"
@@ -38,7 +38,7 @@
 import SShopLogin from "@components/login/SShopLogin.vue";
 import _ from "lodash-es";
 export default {
-  name: "SNeedLoginDialog",
+  name: "SStorefrontNeedLoginDialog",
   components: { SShopLogin },
   data: () => ({
     show_dialog: false,
@@ -63,7 +63,16 @@ export default {
 </script>
 
 <style lang="scss">
-.login-container {
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+
+.s--storefront-need-login-dialog {
   bottom: 5vh;
   position: relative;
   border-radius: 52px !important;

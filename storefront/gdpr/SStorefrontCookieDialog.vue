@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="cookie-dialog slideInUp" :class="{preview: preview,'is-mobile': isMobile , delay_4s: !preview }">
+  <div class="s--storefront-cookie-dialog slideInUp" :class="{preview: preview,'is-mobile': isMobile , delay_4s: !preview }">
     <v-sheet
       v-if="show"
       color="#fafafa"
@@ -54,7 +54,7 @@
 
 <script>
 export default {
-  name: "CookieDialog",
+  name: "SStorefrontCookieDialog",
   props: {
     preview: {
       default: false,
@@ -79,7 +79,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.cookie-dialog {
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--storefront-cookie-dialog {
   position: fixed;
   bottom: 0;
   left: 0;

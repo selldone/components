@@ -85,10 +85,9 @@
 </template>
 
 <script>
-
 export default {
-  name: "SPopup",
-  components: {  },
+  name: "SStorefrontPopup",
+  components: {},
   props: {
     popup: {
       require: true,
@@ -117,6 +116,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
 .popup-dialog-container {
   position: fixed;
   width: 100%;

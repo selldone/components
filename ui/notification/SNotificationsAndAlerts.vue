@@ -32,8 +32,9 @@
 
           <v-icon v-else class="float-start m-2" dark>
             {{
-              item.data?.icon?item.data.icon:
-              item.type === "error"
+              item.data?.icon
+                ? item.data.icon
+                : item.type === "error"
                 ? "error"
                 : item.type === "warn"
                 ? "warning"
@@ -47,9 +48,7 @@
             }}
           </v-icon>
 
-          <b class="font-weight-bold" v-html="item.title">
-
-          </b>
+          <b class="font-weight-bold" v-html="item.title"> </b>
 
           <v-btn icon class="float-end" dark @click="close" small>
             <v-icon>close</v-icon>
@@ -67,41 +66,29 @@
           480,
           (alert_dialog_accept_button + alert_dialog_reject_button).length * 11
         )
-      " scrollable
+      "
+      scrollable
       content-class="no-shadow-dialog"
     >
       <v-card class="text-start rounded-28px" :min-height="240" color="#e5e5e5">
-        <v-card-title class="dialog-title d-flex align-center" >
-
-            <div class="pe-2 flex-grow-1"  v-html="alert_dialog_title"></div>
-            <v-icon color="#bbb">error_outline</v-icon>
+        <v-card-title class="dialog-title d-flex align-center">
+          <div class="pe-2 flex-grow-1" v-html="alert_dialog_title"></div>
+          <v-icon color="#bbb">error_outline</v-icon>
         </v-card-title>
 
-        <v-card-text  class="typo-body" >
-          <div v-html="alert_dialog_message">
-
-          </div>
+        <v-card-text class="typo-body">
+          <div v-html="alert_dialog_message"></div>
         </v-card-text>
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn
-              color="#333"
-              text
-              @click="alert_dialog = false"
-              x-large
-            >
-                <v-icon class="me-1">close</v-icon>
+            <v-btn color="#333" text @click="alert_dialog = false" x-large>
+              <v-icon class="me-1">close</v-icon>
               {{ alert_dialog_reject_button }}
             </v-btn>
 
-            <v-btn
-              :color="color"
-              depressed
-              dark
-              @click="onAccept"
-              x-large
-            >     <v-icon class="me-1">check</v-icon>
+            <v-btn :color="color" depressed dark @click="onAccept" x-large>
+              <v-icon class="me-1">check</v-icon>
               {{ alert_dialog_accept_button }}
             </v-btn>
           </div>
@@ -160,6 +147,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+
 .is-mobile {
   .vue-notification-group {
     bottom: 76px !important;

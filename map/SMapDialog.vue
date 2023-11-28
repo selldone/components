@@ -14,44 +14,52 @@
 
 <template>
   <v-dialog
-      v-model="map_dialog"
-      fullscreen
-      hide-overlay
-      transition="dialog-bottom-transition"
-      content-class="bg-map"
+    v-model="map_dialog"
+    fullscreen
+    hide-overlay
+    transition="dialog-bottom-transition"
+    content-class="bg-map"
   >
     <s-map-view
-        v-if="map_load"
-        v-model="map_location"
-        :color="SaminColorDark"
-        :center.sync="center"
-        :zoom="17"
-        style="width: 100%; height: 100%"
-        :startup-mode="startup_mode_map_dialog"
-        has-top-bar
-        :can-select-address="!view_only"
-        has-bottom-bar
-        :has-address-book="!view_only"
-        :title="$t('global.map.title')"
-        :confirm-text="$t('global.map.confirm')"
-        :address-type="$t('global.map.address')"
-        :receptor-type="$t('global.map.receptor')"
-        @close="map_dialog = false"
-        @clickSetLocation="onClickSetLocation"
-        :viewOnly="view_only"
+      v-if="map_load"
+      v-model="map_location"
+      :color="SaminColorDark"
+      :center.sync="center"
+      :zoom="17"
+      style="width: 100%; height: 100%"
+      :startup-mode="startup_mode_map_dialog"
+      has-top-bar
+      :can-select-address="!view_only"
+      has-bottom-bar
+      :has-address-book="!view_only"
+      :title="$t('global.map.title')"
+      :confirm-text="$t('global.map.confirm')"
+      :address-type="$t('global.map.address')"
+      :receptor-type="$t('global.map.receptor')"
+      @close="map_dialog = false"
+      @clickSetLocation="onClickSetLocation"
+      :viewOnly="view_only"
     />
   </v-dialog>
 </template>
 
 <script>
-import {EventName} from "@core/events/EventBus";
+import { EventName } from "@core/events/EventBus";
 
 export default {
   name: "SMapDialog",
   components: {},
-  props: {
-
-  },
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Props
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
+  props: {},
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Data
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
   data: () => ({
     map_dialog: false,
     map_load: false,
@@ -61,22 +69,36 @@ export default {
     onClickSetLocation: null,
     view_only: false,
   }),
-  computed: {
 
-  },
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Compute Section
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
+  computed: {},
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Watch Section
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
   watch: {},
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Component Lifecycle
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
   created() {
     this.EventBus.$on(
-        EventName.SHOW_MAP,
-        ({ center, mode, location, selectCallback, viewOnly }) => {
-          this.map_load = true;
-          this.center = center;
-          this.startup_mode_map_dialog = mode;
-          this.map_location = location;
-          this.onClickSetLocation = selectCallback;
-          this.map_dialog = true;
-          this.view_only = viewOnly;
-        }
+      EventName.SHOW_MAP,
+      ({ center, mode, location, selectCallback, viewOnly }) => {
+        this.map_load = true;
+        this.center = center;
+        this.startup_mode_map_dialog = mode;
+        this.map_location = location;
+        this.onClickSetLocation = selectCallback;
+        this.map_dialog = true;
+        this.view_only = viewOnly;
+      }
     );
     this.EventBus.$on(EventName.HIDE_MAP, () => {
       this.map_dialog = false;
@@ -85,17 +107,13 @@ export default {
       }, 150);
     });
   },
-  mounted() {
-
-  },
+  mounted() {},
   beforeDestroy() {
     this.EventBus.$off(EventName.SHOW_MAP);
     this.EventBus.$off(EventName.HIDE_MAP);
   },
 
-  methods: {
-
-  },
+  methods: {},
 };
 </script>
 

@@ -13,9 +13,12 @@
   -->
 
 <template>
-  <div v-if="products && products.length">
+  <div
+    v-if="products && products.length"
+    class="s--storefront-products-comparison-button"
+  >
     <radial-progress-bar
-      class="widget-hover circle-progress"
+      class="widget-hover s--storefront-products-comparison-circle-progress"
       :diameter="84"
       :completed-steps="products.length"
       :total-steps="10"
@@ -65,7 +68,7 @@ import RadialProgressBar from "@components/ui/progress/RadialProgressBar.vue";
 import ProductComparisonList from "../list/ProductComparisonList.vue";
 
 export default {
-  name: "SProductsComparisonButton",
+  name: "SStorefrontProductsComparisonButton",
   components: { ProductComparisonList, RadialProgressBar },
 
   data: () => ({
@@ -137,7 +140,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.circle-progress {
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--storefront-products-comparison-button {
+
+}
+.s--storefront-products-comparison-circle-progress{
   user-select: none;
   position: fixed;
   bottom: 12px;

@@ -20,7 +20,7 @@
     fixed
     :color="SaminColorDark"
     background-color="#fafafa"
-    class="s--shop-bottom-nav shadow-small"
+    class="s--storefront-bottom-navigation shadow-small"
     :class="{
       '-hide': (!showNavbar && !search_mode) || force_hide_navigation,
       '-top': search_mode,
@@ -228,8 +228,14 @@
 import SStorefrontSearchBox from "@components/storefront/search/SStorefrontSearchBox.vue";
 import { StorefrontRoutesName } from "@core/enums/route/StorefrontRoutesName";
 export default {
-  name: "SShopBottomNavigation",
+  name: "SStorefrontBottomNavigation",
   components: { SStorefrontSearchBox },
+
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Data
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
   data: () => ({
     last_home_route: null,
     last_cat: null,
@@ -242,6 +248,11 @@ export default {
     search_mode: false,
   }),
 
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Compute Section
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
   computed: {
     /*
      * Force hide navigation when map dialog opened.
@@ -311,6 +322,11 @@ export default {
     },
   },
 
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Watch Section
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
   watch: {
     $route(new_route, old_route) {
       const home_names = [
@@ -352,6 +368,12 @@ export default {
     },
   },
 
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Component Lifecycle
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
+
   mounted() {
     this.$store.commit("setBottomNavShow", true);
 
@@ -360,6 +382,11 @@ export default {
   beforeDestroy() {
     window.removeEventListener("scroll", this.onScroll);
   },
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Component Methods
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
   methods: {
     onScroll() {
       // Get the current scroll position
@@ -414,7 +441,7 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-bottom-nav {
+.s--storefront-bottom-navigation {
   bottom: 8px !important;
   left: 8px !important;
   right: 8px !important;

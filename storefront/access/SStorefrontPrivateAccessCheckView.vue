@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="min-height-80vh d-flex">
+  <div class="s--storefront-private-access-check-view d-flex">
     <div class="m-auto pa-3">
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Shop Info ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
@@ -30,14 +30,16 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Busy User ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div v-if="busy_user" class="display-1" key="1">
-          {{$t('check_access.waiting_message')}}
+          {{ $t("check_access.waiting_message") }}
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ User Fetched ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div v-else key="2">
-          <div class="display-1 mb-3" v-html="$t('check_access.no_access_message')">
-          </div>
+          <div
+            class="display-1 mb-3"
+            v-html="$t('check_access.no_access_message')"
+          ></div>
 
           <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Contact ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
@@ -114,18 +116,33 @@
 import { ShopRestriction } from "@core/enums/shop/ShopRestriction";
 
 export default {
-  name: "SShopPrivateAccessCheckView",
+  name: "SStorefrontPrivateAccessCheckView",
   components: {},
-  props:{
-    shop:{required:true,type:Object}
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Props
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
+  props: {
+    shop: { required: true, type: Object },
   },
+
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Data
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
   data: () => ({
     busy_logout: false,
     busy_login: false,
   }),
 
+  /**
+   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+   *  🔷 Compute Section
+   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+   */
   computed: {
-
     is_private() {
       return (
         this.shop && this.shop.restriction === ShopRestriction.PRIVATE.code
@@ -146,3 +163,17 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--storefront-private-access-check-view {
+  min-height: 80vh;
+  display: flex;
+}
+</style>

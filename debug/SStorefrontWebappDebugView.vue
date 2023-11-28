@@ -74,7 +74,7 @@ import { StorefrontDebugLogType } from "@components/debug/StorefrontDebugLogType
 import StorefrontDebugEvents from "@components/debug/StorefrontDebugEvents";
 
 export default {
-  name: "SWebappDebugView",
+  name: "SStorefrontWebappDebugView",
   components: {},
   props: {},
   data() {

@@ -52,7 +52,7 @@
 
 <script>
 export default {
-  name: "SShopApplicationLogin",
+  name: "SStorefrontApplicationLogin",
   components: {},
   props: {
     shop: {

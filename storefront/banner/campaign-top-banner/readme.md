@@ -1,8 +1,8 @@
-# <s-top-banner> | Campaign Top Banner
+# <s-storefront-top-banner> | Campaign Top Banner
 
 ## Overview
 
-The `STopBanner` component is designed to display banners created within campaigns. These campaigns can be crafted and
+The `SStorefrontTopBanner` component is designed to display banners created within campaigns. These campaigns can be crafted and
 managed via the shop dashboard under the path: `Shop dashboard > Marketing > Campaign tab`.
 
 ## 🪄 Dashboard Magic Link

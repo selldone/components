@@ -58,11 +58,11 @@
           </p>
 
           <!-- =――――――――――――――――――――― Social links ――――――――――――――――――――― -->
-          <s-shop-social-buttons
+          <s-storefront-social-buttons
             :shop="shop"
             class="my-3"
             parallax
-          ></s-shop-social-buttons>
+          ></s-storefront-social-buttons>
         </v-col>
 
         <v-col
@@ -392,7 +392,7 @@
 <script>
 import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
 import SShopCookiePreferences from "../cookie/SShopCookiePreferences.vue";
-import SShopSocialButtons from "@components/storefront/social/SShopSocialButtons.vue";
+import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 
 import SetupService from "@core/server/SetupService";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
@@ -402,7 +402,7 @@ export default {
   components: {
     SShopLanguageSelector,
 
-    SShopSocialButtons,
+    SStorefrontSocialButtons,
     SShopCookiePreferences,
     SCurrencySelector,
   },

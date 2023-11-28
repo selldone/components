@@ -14,7 +14,10 @@
 
 <template>
   <v-row no-gutters align="center" justify="space-around" class="flex-grow-0">
-    <div v-if="!window.ExternalWidget" class="btn-fav border d-flex align-center">
+    <div
+      v-if="!window.ExternalWidget"
+      class="btn-fav border d-flex align-center"
+    >
       <v-btn
         v-if="!existInComparisonList"
         :disabled="productsCountInComparisonList >= 10"
@@ -26,13 +29,17 @@
       >
         <v-icon class="me-1">add</v-icon>
 
-      <div style="max-width: 20vw" class="single-line overflow-hidden d-block" :class="{'small':$vuetify.breakpoint.xsOnly}">
+        <div
+          style="max-width: 20vw"
+          class="single-line overflow-hidden d-block"
+          :class="{ small: $vuetify.breakpoint.xsOnly }"
+        >
           {{
-          productsCountInComparisonList >= 10
+            productsCountInComparisonList >= 10
               ? $t("product_info.compare_limit")
               : $t("product_info.compare_add")
-        }}
-      </div>
+          }}
+        </div>
       </v-btn>
       <v-btn
         v-else
@@ -62,14 +69,14 @@
       </v-btn>
 
       <!-- 🞇 Direct Ask (WhatsApp,...) -->
-      <s-shop-social-buttons
+      <s-storefront-social-buttons
         :shop="shop"
         product-only
         tile
         large
         min-width="54px"
       >
-      </s-shop-social-buttons>
+      </s-storefront-social-buttons>
     </div>
 
     <v-spacer></v-spacer>
@@ -95,10 +102,10 @@
 </template>
 
 <script>
-import SShopSocialButtons from "@components/storefront/social/SShopSocialButtons.vue";
+import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 export default {
   name: "ProductSectionBoxExtraButtons",
-  components: { SShopSocialButtons },
+  components: { SStorefrontSocialButtons },
   props: {
     shop: {
       required: true,
@@ -202,5 +209,4 @@ export default {
   border-radius: 26px;
   overflow: hidden;
 }
-
 </style>

@@ -238,10 +238,10 @@
             {{ info.address }}
           </div>
         </div>
-        <s-shop-social-buttons
+        <s-storefront-social-buttons
           :shop="shop"
           class="justify-center mt-5"
-        ></s-shop-social-buttons>
+        ></s-storefront-social-buttons>
         <div style="height: 15vh"></div>
       </v-sheet>
     </div>
@@ -253,7 +253,7 @@ import SShopUserMenuList from "../user/SShopUserMenuList.vue";
 import MenuCategories from "@components/storefront/menu/header/MenuCategories.vue";
 import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
-import SShopSocialButtons from "@components/storefront/social/SShopSocialButtons.vue";
+import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 import {StorefrontRoutesName} from "@core/enums/route/StorefrontRoutesName";
 export default {
   name: "SShopNavigationDrawer",
@@ -262,7 +262,7 @@ export default {
     SCurrencySelector,
     MenuCategories,
     SShopUserMenuList,
-    SShopSocialButtons,
+    SStorefrontSocialButtons,
   },
   props: {
     value: {},

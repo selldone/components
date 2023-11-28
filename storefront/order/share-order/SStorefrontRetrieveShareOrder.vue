@@ -120,7 +120,7 @@ import VariantItemViewMicro from "@components/product/variant/VariantItemViewMic
 import SShopCustomerReceiverInfoWidget from "@components/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 export default {
-  name: "SRetrieveShareOrder",
+  name: "SStorefrontRetrieveShareOrder",
   components: { SShopCustomerReceiverInfoWidget, VariantItemViewMicro },
   props: {
     shop: {

@@ -118,7 +118,9 @@
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title v-text="old_item.replace('%c-', '')" />
+              <v-list-item-title>{{
+                old_item.replace("%c-", "")
+              }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -156,7 +158,7 @@
         </v-list-item-icon>
 
         <v-list-item-content>
-          <v-list-item-title v-text="item.title" />
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item-content>
 
         <v-list-item-action>
@@ -199,6 +201,7 @@ import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
 export default {
   name: "SStorefrontSearchBox",
   components: {},
+  emits: ["onSearch", "onClear", "update:expandInput"],
   props: {
     title: {
       type: String,

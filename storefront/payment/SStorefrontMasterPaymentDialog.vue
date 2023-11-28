@@ -20,7 +20,7 @@
       v-model="showSelectGateway"
       inset
       :max-width="640"
-      content-class="z-index-dialog position-relative s--master-payment-dialog"
+      content-class="s--storefront-master-payment-dialog"
       scrollable
       persistent
     >
@@ -59,7 +59,7 @@
     <radial-progress-bar
       v-for="(item, index) in paymentQue"
       :key="index"
-      class="widget-hover circle-progress"
+      class="widget-hover s--storefront-master-payment-circle-progress"
       :style="{ top: `${index * 55 + 120}px` }"
       :diameter="size"
       :completed-steps="item.progress"
@@ -127,7 +127,7 @@ import _ from "lodash-es";
 import { BasketHelper } from "@core/helper/shop/BasketHelper";
 
 export default {
-  name: "SShopMasterPaymentDialog",
+  name: "SStorefrontMasterPaymentDialog",
   components: { RadialProgressBar, SPaymentForm },
 
   props: {
@@ -304,7 +304,7 @@ export default {
 
     this.EventBus.$on(
       "payment-form-subscription",
-      _.throttle(({ currency, bill, gateway_codes, callback ,order}) => {
+      _.throttle(({ currency, bill, gateway_codes, callback, order }) => {
         // Based on delivery methods support COD!
         // Reset previous data:
 
@@ -356,7 +356,7 @@ export default {
     // Payment of bill:
     this.EventBus.$on(
       "payment-form-bill",
-      _.throttle(({ code /*🥶 Guest*/, bill, callback,order }) => {
+      _.throttle(({ code /*🥶 Guest*/, bill, callback, order }) => {
         // Reset previous data:
         this.resetToDefault(); // 🞇 Reset to default
         this.getPaymentQue();
@@ -1055,8 +1055,21 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.circle-progress {
+<style lang="scss" scoped>
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+
+.s--storefront-master-payment-dialog {
+  position: relative;
+
+
+}
+.s--storefront-master-payment-circle-progress {
   user-select: none;
   position: fixed;
   top: 128px;
@@ -1075,4 +1088,5 @@ export default {
     z-index: 101;
   }
 }
+
 </style>

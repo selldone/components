@@ -17,7 +17,7 @@
     v-if="socials && socials.length"
     dense
     align="center"
-    class="text-center m-0"
+    class="s--storefront-social-buttons"
     :class="{
       'flex-column': vertical,
       'border-start': productOnly && socials.length,
@@ -62,11 +62,14 @@
 </template>
 
 <script>
-import {CreateSocialConnectLink, SocialNetwork} from "@core/enums/social/SocialNetwork";
+import {
+  CreateSocialConnectLink,
+  SocialNetwork,
+} from "@core/enums/social/SocialNetwork";
 import _ from "lodash-es";
 
 export default {
-  name: "SShopSocialButtons",
+  name: "SStorefrontSocialButtons",
   props: {
     shop: {
       require: true,
@@ -113,7 +116,9 @@ export default {
         );
 
       if (this.activeOnly)
-        return this.shop.socials.filter((i) => i.active && SocialNetwork[i.network]);
+        return this.shop.socials.filter(
+          (i) => i.active && SocialNetwork[i.network]
+        );
 
       return this.shop.socials.filter((i) => SocialNetwork[i.network]); // Check exist in web app (supported)
     },
@@ -134,9 +139,8 @@ export default {
 
   methods: {
     getUrl(item) {
-      return CreateSocialConnectLink(item.network,item.url );
+      return CreateSocialConnectLink(item.network, item.url);
     },
-
 
     hasScale(item) {
       return !this.parallax;
@@ -145,15 +149,27 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.toc {
-  transform-origin: center;
-}
-.-scale {
-  transform: scale(1.5);
-  transition: all 0.3s !important;
-}
-.trn {
-  transition: all 0.5s;
+<style lang="scss" scoped>
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--storefront-social-buttons {
+  text-align: center;
+  margin: 0;
+
+  .toc {
+    transform-origin: center;
+  }
+  .-scale {
+    transform: scale(1.5);
+    transition: all 0.3s !important;
+  }
+  .trn {
+    transition: all 0.5s;
+  }
 }
 </style>
