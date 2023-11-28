@@ -468,7 +468,7 @@ export default {
             window.___CACHED_LOADED_PRDUCTS_LIST_1["" + p.id] = p;
           });
         })
-        .catch(function (error) {})
+           .catch( (error) =>{})
         .finally(() => {
           this.busy_fetch = false;
         });
@@ -502,7 +502,7 @@ export default {
         .then(({ data }) => {
           this.categories_detail = data.categories;
         })
-        .catch(function (error) {})
+           .catch( (error) =>{})
         .finally(() => {
           this.busy_fetch = false;
         });

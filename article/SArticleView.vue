@@ -2180,7 +2180,7 @@ export default {
             this.isLiked ? this.article.like++ : this.article.like--;
           }
         })
-        .catch(function (error) {
+           .catch( (error) =>{
           console.log(error);
           this.isLiked = !this.isLiked;
           this.isLiked ? this.article.like++ : this.article.like--;
@@ -2202,7 +2202,7 @@ export default {
             this.isStared = !this.isStared;
           }
         })
-        .catch(function (error) {
+           .catch( (error) =>{
           console.log(error);
           this.isStared = !this.isStared;
         });
@@ -2221,7 +2221,7 @@ export default {
             t.isFollow = !t.isFollow;
           }
         })
-        .catch(function (error) {
+           .catch( (error) =>{
           console.log(error);
           t.isFollow = !t.isFollow;
         });

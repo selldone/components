@@ -25,7 +25,76 @@
       <v-btn @click="dialog = false" text x-large
         ><v-icon class="me-2">close</v-icon> {{ $t("global.actions.close") }}
       </v-btn>
+      <v-btn
+        @click="show_settings = !show_settings"
+        text
+        x-large
+        title="Advanced settings"
+        max-width="100px"
+      >
+        <v-icon>{{ show_settings ? "settings_suggest" : "settings" }}</v-icon>
+      </v-btn>
     </div>
+
+    <v-expand-transition>
+      <div v-if="pack_dev_server">
+        <div class="py-2 px-5">
+          <small class="me-1">Dev Server: </small>
+          <v-icon class="blink-me me-2" small color="green">circle</v-icon>
+          <span class="me-2"
+            >Path: <b>{{ pack_dev_server.path }} </b></span
+          >
+          <span
+            >Version: <b>{{ pack_dev_server.version }}</b></span
+          >
+        </div>
+      </div>
+    </v-expand-transition>
+    <v-expand-transition>
+      <div v-if="show_settings">
+        <v-subheader style="height: unset" class="my-3">
+          To execute your development storefront web application in a live
+          storefront environment in real-time, initiate the process by running
+          yarn serv. Afterward, enter the development URL in the provided field
+          and click 'Save' to proceed.
+        </v-subheader>
+
+        <v-text-field
+          v-model="dev_url"
+          placeholder="https://localhost:8080"
+          clearable
+          class="mx-5"
+          label="Local dev server"
+          append-icon="cloud_sync"
+          persistent-placeholder
+          @blur="getValidateDevPack(dev_url)"
+        ></v-text-field>
+
+        <div class="widget-buttons">
+          <v-btn
+            x-large
+            color="primary"
+            @click="setLocalDevServer(dev_url)"
+            :loading="busy_dev_server"
+            :class="{ disable: count_down_refresh }"
+          >
+            <template v-if="count_down_refresh">
+              Auto refresh after 5 seconds...
+            </template>
+            <template v-else>
+              <v-icon class="me-1">save</v-icon>
+              {{ $t("global.actions.save") }}
+            </template>
+          </v-btn>
+        </div>
+
+        <v-expand-transition>
+          <div v-if="error_dev_serve" class="red--text px-5">
+            {{ error_dev_serve }}
+          </div>
+        </v-expand-transition>
+      </div>
+    </v-expand-transition>
 
     <v-list class="" three-line>
       <v-subheader>
@@ -72,6 +141,8 @@
 import { LRUCache } from "@core/helper/cache/LRUCache";
 import { StorefrontDebugLogType } from "@components/debug/StorefrontDebugLogType";
 import StorefrontDebugEvents from "@components/debug/StorefrontDebugEvents";
+import SetupService from "@core/server/SetupService";
+import _ from "lodash-es";
 
 export default {
   name: "SStorefrontWebappDebugView",
@@ -89,6 +160,14 @@ export default {
 
       warning_event_handler: null,
       info_event_handler: null,
+
+      show_settings: false,
+
+      dev_url: null,
+      error_dev_serve: null,
+      busy_dev_server: false,
+      pack_dev_server: null,
+      count_down_refresh: false,
     };
   },
   computed: {},
@@ -207,6 +286,12 @@ export default {
       }
     };
     document.addEventListener("keydown", this.key_listener_keydown, true);
+
+    this.dev_url = SetupService.GetMetaValue("dev-url");
+    if (this.dev_url) {
+      // Try check local dev server:
+      this.getValidateDevPack(this.dev_url);
+    }
   },
   beforeDestroy() {
     // Remove global error handler
@@ -245,6 +330,101 @@ export default {
       console.log("[🔴 Error Logger]", key, message, target, request);
       this.errors.set(key, { type: error_type, message, target, request });
       this.$forceUpdate();
+    },
+
+    async getValidateDevPack(url) {
+      this.error_dev_serve = null;
+      this.pack_dev_server = null;
+
+      try {
+        // Fetch the HTML content from the URL
+        const response = await fetch(url);
+        const html = await response.text();
+
+        // Parse the HTML content
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        // Find all script tags
+        const scripts = Array.from(doc.querySelectorAll("script"));
+
+        // Filter the script with the specific src attribute
+        const targetScript = scripts.find((script) =>
+          script.src.includes("shop.js")
+        );
+
+        if (targetScript) {
+          // Extract the 'XXX' part from the src attribute
+          const src = targetScript.src;
+          const matches = src.match(
+            /http[s]?:\/\/[^\/]+\/(.*?)\/(v\d+)\/shop\.js/
+          );
+
+          console.log("matches", src, matches);
+
+          if (matches && matches.length >= 3) {
+            const path = matches[1]; // 'xxxx/yyyy' or 'layers'
+            const version = matches[2]; // 'v1'
+
+            console.log("Path:", path, "Version:", version);
+            return (this.pack_dev_server = { path, version });
+          } else {
+            console.log("No matches found");
+            return null;
+          }
+        }
+
+        console.log("Script shop.js not found!");
+        this.error_dev_serve = "Script shop.js not found!";
+
+        return null;
+      } catch (error) {
+        console.error("Error:", error);
+        this.error_dev_serve = error;
+        return null;
+      }
+    },
+
+    async setLocalDevServer(dev_url) {
+      console.log("Dev host", dev_url);
+      const currentUrl = new URL(window.location.href);
+
+      let _pack = null;
+      if (dev_url) {
+        this.busy_dev_server = true;
+        _pack = await this.getValidateDevPack(dev_url);
+        this.busy_dev_server = false;
+        if (!_pack) return;
+      }
+
+      this.busy_dev_server = true;
+      axios
+        .post("/register-dev-server", {
+          url: dev_url,
+          path: _pack?.path,
+          version: _pack?.version,
+        })
+        .then(({ data }) => {
+          if (!data.error) {
+            this.showSuccessAlert(null, "Dev server config successfully!");
+
+            this.count_down_refresh = true;
+
+            _.delay(() => {
+              // Navigate to the new URL
+              window.location.href = currentUrl.href;
+            }, 5000);
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.error_dev_serve = error;
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_dev_server = false;
+        });
     },
   },
 };
