@@ -24,7 +24,7 @@
       class="c-widget -hover d-flex black--text"
       :class="{ 'flex-column': $vuetify.breakpoint.xs }"
       :to="{
-        name: 'CommunityTopicPage',
+        name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
         params: { topic_id: topic.id, topic_slug: slugify(topic.title) },
       }"
     >

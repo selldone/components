@@ -43,7 +43,7 @@
                   small
                   color="primary"
                   dark
-                  :to="editable ? undefined : { name: 'BasketPage' }"
+                  :to="editable ? undefined : { name: window.$storefront.routes.BASKET_PAGE }"
                   ><b>Checkout</b></v-btn
                 >
                 <v-btn
@@ -51,7 +51,7 @@
                   color="primary"
                   dark
                   class="ml-2"
-                  :to="editable ? undefined : { name: 'BasketPage' }"
+                  :to="editable ? undefined : { name: window.$storefront.routes.BASKET_PAGE }"
                 >
                   <v-icon>shopping_cart</v-icon>
                 </v-btn>

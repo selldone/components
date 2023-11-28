@@ -293,12 +293,12 @@
           </p>
 
           <p class="m-0">
-            <router-link class="mx-2" :to="{ name: 'ShopProfilePage_Privacy' }">
+            <router-link class="mx-2" :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_PRIVACY }">
               {{ $t("footer.privacy") }}
             </router-link>
 
             |
-            <router-link class="mx-2" :to="{ name: 'ShopProfilePage_Terms' }">
+            <router-link class="mx-2" :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_TERMS }">
               {{ $t("footer.term_of_use") }}
             </router-link>
 

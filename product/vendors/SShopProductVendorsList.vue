@@ -26,15 +26,14 @@
       >
         <v-card
           class="vnd-card"
-        rounded="lg"
+          rounded="lg"
           outlined
           :to="{
-            name: 'VendorPublicPage',
+            name: window.$storefront.routes.SHOP_VENDOR_PAGE,
             params: { slug: slugify(vendor.name), vendor_id: vendor.id },
           }"
-          @mouseenter.native="$emit('vendor-hover:enter',vendor)"
-          @mouseleave.native="$emit('vendor-hover:leave',vendor)"
-
+          @mouseenter.native="$emit('vendor-hover:enter', vendor)"
+          @mouseleave.native="$emit('vendor-hover:leave', vendor)"
         >
           <v-img :src="getShopImagePath(vendor.icon)" :aspect-ratio="2"></v-img>
 
@@ -72,6 +71,7 @@ export default {
   },
 
   data: () => ({
+
     busy: false,
     vendors: [],
 
@@ -82,7 +82,7 @@ export default {
     total: 0,
   }),
 
-  watch:{
+  watch: {
     //-------------------------------------------------------
 
     locationBounds: _.debounce(function (newVal, oldVal) {
@@ -149,11 +149,9 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-product-vendors-list{
+.s--shop-product-vendors-list {
   .vnd-card {
     min-height: 100%;
   }
 }
-
-
 </style>

@@ -58,7 +58,7 @@
               <b class="d-block">
                 <router-link
                   :to="{
-                    name: 'ProductPage',
+                    name: window.$storefront.routes.PRODUCT_PAGE,
                     params: { product_id: cross_sell.target?.id },
                   }"
                   :title="`${$t('global.actions.view_now')} ● ${cross_sell.target.title}`"

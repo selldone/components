@@ -14,7 +14,10 @@
 
 <template>
   <div :class="{ dark: dark }" class="text-start">
-    <h3 v-if="label" class="my-2"><v-icon class="me-1" :color="dark?'#fff':'#111'">storefront</v-icon> {{ label }}</h3>
+    <h3 v-if="label" class="my-2">
+      <v-icon class="me-1" :color="dark ? '#fff' : '#111'">storefront</v-icon>
+      {{ label }}
+    </h3>
     <v-subheader v-if="hint">{{ hint }}</v-subheader>
 
     <v-slide-y-transition
@@ -48,7 +51,7 @@
             <router-link
               v-if="vendor.page"
               :to="{
-                name: 'PageRender',
+                name: window.$storefront.routes.PAGE_RENDER,
                 params: { page_name: vendor.page.name },
               }"
               class="font-weight-bold tnt text-primary"
@@ -86,6 +89,7 @@
 </template>
 
 <script>
+
 export default {
   name: "SSmartSelectVendor",
   props: {
@@ -109,6 +113,12 @@ export default {
       type: Boolean,
     },
   },
+  data() {
+    return {
+
+    };
+  },
+
   computed: {
     items_show() {
       if (this.forceShowAll) return this.vendors;

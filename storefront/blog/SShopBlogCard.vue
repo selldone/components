@@ -18,16 +18,22 @@
     :to="
       !window.ExternalWidget
         ? is_product
-          ? { name: 'ProductPage', params: { product_id: article.parent_id } }
-          : { name: 'ShopBlogPage', params: { blog_id: article.parent_id } }
+          ? {
+              name: window.$storefront.routes.PRODUCT_PAGE,
+              params: { product_id: article.parent_id },
+            }
+          : {
+              name: window.$storefront.routes.SHOP_BLOG_PAGE,
+              params: { blog_id: article.parent_id },
+            }
         : undefined
     "
     v-bind="
       window.ExternalWidget
         ? {
             href: is_product
-              ? getProductLink(shop,article.parent_id)
-              : getBlogLink(shop,article.parent_id),
+              ? getProductLink(shop, article.parent_id)
+              : getBlogLink(shop, article.parent_id),
             target: '',
           }
         : {}
@@ -111,8 +117,8 @@ export default {
     color: {},
   },
   computed: {
-    shop(){
-      return this.getShop()
+    shop() {
+      return this.getShop();
     },
     is_blog() {
       return this.article.parent_type === "blog";

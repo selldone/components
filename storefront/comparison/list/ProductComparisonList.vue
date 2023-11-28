@@ -138,7 +138,7 @@
                 :can-buy="true"
                 @start-buy-virtual="
                   $router.push({
-                    name: 'ProductPage',
+                    name: window.$storefront.routes.PRODUCT_PAGE,
                     params: { product_id: product.id },
                   })
                 "
@@ -470,7 +470,7 @@ export default {
       // console.log("encodeURIComponent: "+encodeURIComponent(list_simplify))
 
       let url = this.$router.resolve({
-        name: "ComparisonPage",
+        name: window.$storefront.routes.COMPARISON_PAGE,
         params: {
           shop_name: this.shop_name,
         },

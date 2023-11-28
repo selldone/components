@@ -32,7 +32,7 @@
       >
         <router-link
           :to="{
-            name: 'ProductPage',
+            name: window.$storefront.routes.PRODUCT_PAGE,
             params: { product_id: basketItem.product_id },
           }"
         >
@@ -57,7 +57,7 @@
         <router-link
           class="shop-item-title"
           :to="{
-            name: 'ProductPage',
+            name: window.$storefront.routes.PRODUCT_PAGE,
             params: { product_id: basketItem.product_id },
           }"
         >

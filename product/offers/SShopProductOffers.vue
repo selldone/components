@@ -15,7 +15,6 @@
 <template>
   <v-expand-transition>
     <div v-if="hasOffer">
-
       <div class="s--shop-product-offers">
         <v-container
           v-for="offer in offers"
@@ -43,8 +42,8 @@
               </div>
 
               <products-dense-images-circles-links
-                :to-product=" toProduct "
-                :to-category="toCategory "
+                :to-product="toProduct"
+                :to-category="toCategory"
                 :ids="Object.keys(offer.get_products)"
                 link
                 :size="$vuetify.breakpoint.smAndUp ? 84 : 46"
@@ -116,7 +115,9 @@ export default {
     currentVariant: {},
   },
 
-  data: () => ({}),
+  data: () => ({
+
+  }),
 
   computed: {
     hasOffer() {
@@ -134,21 +135,18 @@ export default {
     },
   },
   methods: {
-      toProduct(product_id) {
-          return {
-              name: 'ProductPage',
-              params: { product_id: product_id },
-          };
-      },
-      toCategory(category_id){
-
-              return {
-                  name: 'ShopCategoryPage',
-                  params: { category_name: category_id },
-              };
-
-      }
-
+    toProduct(product_id) {
+      return {
+        name: window.$storefront.routes.PRODUCT_PAGE,
+        params: { product_id: product_id },
+      };
+    },
+    toCategory(category_id) {
+      return {
+        name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+        params: { category_name: category_id },
+      };
+    },
   },
 };
 </script>

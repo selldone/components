@@ -16,7 +16,7 @@
   <v-list :dense="$vuetify.breakpoint.smAndUp" class="s--shop-user-menu-list">
     <v-list-item
       :to="{
-        name: 'HistoryOrdersPhysical',
+        name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL,
       }"
       active-class="bg-primary text-white"
     >
@@ -38,7 +38,7 @@
     </v-list-item>
 
     <v-list-item
-      :to="{ name: 'UserProfilePage' }"
+      :to="{ name: window.$storefront.routes.USER_PROFILE_PAGE }"
       active-class="bg-primary text-white"
     >
       <v-list-item-icon>
@@ -67,7 +67,7 @@
     </v-list-item>
 
     <v-list-item
-      :to="{ name: 'UserFavoritesPage' }"
+      :to="{ name: window.$storefront.routes.USER_FAVORITES_PAGE }"
       active-class="bg-primary text-white"
     >
       <v-list-item-icon>
@@ -81,7 +81,7 @@
     </v-list-item>
 
     <v-list-item
-      :to="{ name: 'UserGiftCardsPage' }"
+      :to="{ name:  window.$storefront.routes.USER_GIFTCARDS_PAGE }"
       active-class="bg-primary text-white"
     >
       <v-list-item-icon>
@@ -96,7 +96,7 @@
 
     <v-list-item
       :to="{
-        name: 'UserReturnRequests',
+        name: window.$storefront.routes.USER_RETURN_REQUESTS,
       }"
       active-class="bg-primary text-white"
     >
@@ -113,7 +113,7 @@
     <v-list-item
       v-if="total_items_in_carts"
       :to="{
-        name: 'BasketPage',
+        name: window.$storefront.routes.BASKET_PAGE,
         params: { type: current_product_type_in_basket },
       }"
       active-class="bg-primary text-white"

@@ -197,7 +197,7 @@ export default {
 
     full_width() {
       return (
-        this.$route.name === "PageRender" ||
+        this.$route.name === window.$storefront.routes.PAGE_RENDER ||
         this.$route.name === "CustomHomePage"
       );
     },

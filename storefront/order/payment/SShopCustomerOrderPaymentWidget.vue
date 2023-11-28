@@ -314,7 +314,7 @@
                 <div class="d-flex align-center">
                   <router-link
                     :to="{
-                      name: 'ProductPage',
+                      name: window.$storefront.routes.PRODUCT_PAGE,
                       params: { product_id: order.lottery_order.product.id },
                     }"
                   >

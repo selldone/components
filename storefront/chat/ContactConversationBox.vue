@@ -217,7 +217,7 @@
               :to="
                 !isAdmin
                   ? {
-                      name: 'ProductPage',
+                      name: window.$storefront.routes.PRODUCT_PAGE,
                       params: { product_id: item.product },
                     }
                   : undefined

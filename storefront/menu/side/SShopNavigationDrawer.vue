@@ -254,7 +254,6 @@ import MenuCategories from "@components/storefront/menu/header/MenuCategories.vu
 import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
-import {StorefrontRoutesName} from "@core/enums/route/StorefrontRoutesName";
 export default {
   name: "SShopNavigationDrawer",
   components: {
@@ -297,7 +296,7 @@ export default {
       // Avocado:
       if (this.shop.avocado && this.shop.avocado.enable) {
         out.push({
-          to: { name: StorefrontRoutesName.AVOCADO_PAGE },
+          to: { name: window.$storefront.routes.AVOCADO_PAGE },
           name: this.$t("global.commons.avocado"),
           src: require("@components/assets/icons/avocado.svg"),
         });
@@ -305,7 +304,7 @@ export default {
       // Hyper:
       if (this.shop.hyper && this.shop.hyper.enable) {
         out.push({
-          to: { name: StorefrontRoutesName.HYPER_PAGE },
+          to: { name: window.$storefront.routes.HYPER_PAGE },
           name: this.$t("global.commons.hyper"),
           src: require("@components/assets/icons/hyper.svg"),
         });
@@ -314,7 +313,7 @@ export default {
       // Instagram:
       if (this.shop.instagram) {
         out.push({
-          to: { name: StorefrontRoutesName.INSTAGRAM_PAGE },
+          to: { name: window.$storefront.routes.INSTAGRAM_PAGE },
           name: this.$t("global.commons.instagram"),
           src: require("@components/assets/tradmark/instagram.svg"),
         });
@@ -339,18 +338,18 @@ export default {
                     name: this.$t("global.commons.home"),
                   },
                   {
-                    to: { name: StorefrontRoutesName.SHOP_PAGE },
+                    to: { name: window.$storefront.routes.SHOP_PAGE },
                     name: this.$t("global.commons.shop"),
                   },
                 ]
               : [
                   {
-                    to: { name: StorefrontRoutesName.SHOP_PAGE },
+                    to: { name: window.$storefront.routes.SHOP_PAGE },
                     name: this.$t("global.commons.shop"),
                   },
                 ]),
             {
-              to: { name: "ShopBlogsPage" },
+              to: { name: window.$storefront.routes.SHOP_BLOGS_PAGE },
               name: this.$t("global.commons.blog"),
             },
           ]

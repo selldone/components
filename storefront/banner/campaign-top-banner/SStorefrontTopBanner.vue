@@ -20,7 +20,7 @@
         banner &&
         banner.message &&
         !(
-          $route.name === 'PageRender' &&
+          $route.name === window.$storefront.routes.PAGE_RENDER &&
           $route.params.page_name === banner.page_name
         )
       "
@@ -45,7 +45,7 @@
         :to="
           banner.page_name
             ? {
-                name: 'PageRender',
+                name: window.$storefront.routes.PAGE_RENDER,
                 params: { page_name: banner.page_name },
               }
             : {}
@@ -73,6 +73,7 @@
 </template>
 
 <script>
+
 export default {
   name: "SStorefrontTopBanner",
 

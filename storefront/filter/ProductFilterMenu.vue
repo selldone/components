@@ -203,7 +203,6 @@
 import SelectionList from "@components/ui/select/SelectionList.vue";
 import { ProductVariants } from "@core/enums/product/ProductVariants";
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
-import {StorefrontRoutesName} from "@core/enums/route/StorefrontRoutesName";
 
 export default {
   name: "ProductFilterMenu",
@@ -216,6 +215,8 @@ export default {
 
   data() {
     return {
+
+
       selected_spec: {},
       selected_variants: {},
 
@@ -301,7 +302,7 @@ export default {
           this.getShop(),
           item.currency,
           this.GetUserSelectedCurrency().code,
-          null,
+          null
         );
         if (!rate) return;
 
@@ -320,7 +321,7 @@ export default {
           this.getShop(),
           item.currency,
           this.GetUserSelectedCurrency().code,
-          null,
+          null
         );
         if (!rate) return;
 
@@ -347,7 +348,7 @@ export default {
       for (let prop in this.filters) {
         if (
           !Object.values(ProductVariants).some(
-            (item) => item.code + "s" === prop,
+            (item) => item.code + "s" === prop
           ) &&
           !this.reserved_names.includes(prop)
         )
@@ -366,7 +367,7 @@ export default {
       if (this.parentFolders) {
         return this.getShopImagePath(
           this.parentFolders.icon,
-          this.IMAGE_SIZE_SMALL,
+          this.IMAGE_SIZE_SMALL
         );
       }
       return this.getShopIcon(this.getShop().id);
@@ -405,7 +406,7 @@ export default {
                 name: this.parentFolders.parent.parent.parent.name,
                 //  to: {query: {dir: this.parentFolders.parent.parent.parent.id}}
                 to: {
-                  name: "ShopCategoryPage",
+                  name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                   params: {
                     category_name: this.parentFolders.parent.parent.parent.name,
                   },
@@ -421,7 +422,7 @@ export default {
               name: this.parentFolders.parent.parent.name,
               //  to: {query: {dir: this.parentFolders.parent.parent.id}}
               to: {
-                name: "ShopCategoryPage",
+                name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                 params: {
                   category_name: this.parentFolders.parent.parent.name,
                 },
@@ -438,7 +439,7 @@ export default {
             name: this.parentFolders.parent.name,
             //to: {query: {dir: this.parentFolders.parent.id}}
             to: {
-              name: "ShopCategoryPage",
+              name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
               params: { category_name: this.parentFolders.parent.name },
             },
             icon: this.parentFolders.parent.icon,
@@ -459,7 +460,7 @@ export default {
               name: folder.name,
               // to: {query: {dir: folder.id}}
               to: {
-                name: "ShopCategoryPage",
+                name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                 params: { category_name: folder.name },
               },
               icon: folder.icon,
@@ -474,7 +475,7 @@ export default {
           children: children,
           //to: {query: {dir: this.parentFolders.id}},
           to: {
-            name: "ShopCategoryPage",
+            name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
             params: { category_name: this.parentFolders.name },
           },
           current: true,
@@ -497,7 +498,7 @@ export default {
               name: folder.name,
               //to: {query: {dir: folder.id}}
               to: {
-                name: "ShopCategoryPage",
+                name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                 params: { category_name: folder.name },
               },
             });
@@ -509,7 +510,7 @@ export default {
           name: "home",
           children: children,
           //to: {query: {dir: ''}}
-          to: { name: StorefrontRoutesName.SHOP_PAGE },
+          to: { name: window.$storefront.routes.SHOP_PAGE },
         });
       }
 
@@ -617,7 +618,7 @@ export default {
           this.getShop(),
           this.GetUserSelectedCurrency().code,
           item.currency,
-          null,
+          null
         );
         //if (!rate) return;
         // console.log("*** rate",rate)

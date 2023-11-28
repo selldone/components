@@ -41,7 +41,7 @@
             key="a"
             class="view-basket-btn"
             @click="
-              $router.push({ name: 'BasketPage', params: { type: type } })
+              $router.push({ name: window.$storefront.routes.BASKET_PAGE, params: { type: type } })
             "
           >
             <h2 class="text-uppercase font-weight-medium">
@@ -137,7 +137,7 @@
         @click="
           in_current_basket_page
             ? undefined
-            : $router.push({ name: 'BasketPage', params: { type: type } })
+            : $router.push({ name: window.$storefront.routes.BASKET_PAGE, params: { type: type } })
         "
       >
         {{ more_items_count }}
@@ -150,7 +150,7 @@
         class="shop-basket-button fadeIn"
         @click="
           () => {
-            $router.push({ name: 'BasketPage', params: { type: type } });
+            $router.push({ name: window.$storefront.routes.BASKET_PAGE, params: { type: type } });
             $emit('close');
           }
         "
@@ -198,7 +198,7 @@ export default {
 
     in_current_basket_page() {
       return (
-        this.$route.name === "BasketPage" &&
+        this.$route.name === window.$storefront.routes.BASKET_PAGE &&
         this.$route.params.type === this.type
       );
     },

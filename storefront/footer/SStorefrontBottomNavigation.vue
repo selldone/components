@@ -96,7 +96,7 @@
       <v-btn
         value="basket"
         :to="{
-          name: 'BasketPage',
+          name: window.$storefront.routes.BASKET_PAGE,
           params: { type: current_product_type_in_basket },
         }"
         min-width="60"
@@ -126,7 +126,7 @@
         :to="
           USER()
             ? {
-                name: 'HistoryOrdersPhysical',
+                name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL,
               }
             : undefined
         "
@@ -149,7 +149,7 @@
 
       <v-btn
         value="profile"
-        v-bind="USER() ? { to: { name: 'UserProfilePage' } } : undefined"
+        v-bind="USER() ? { to: { name: window.$storefront.routes.USER_PROFILE_PAGE } } : undefined"
         @click="USER() ? null : NeedLogin()"
         min-width="60"
         class="zoomIn delay_400"
@@ -226,7 +226,6 @@
 
 <script>
 import SStorefrontSearchBox from "@components/storefront/search/SStorefrontSearchBox.vue";
-import { StorefrontRoutesName } from "@core/enums/route/StorefrontRoutesName";
 export default {
   name: "SStorefrontBottomNavigation",
   components: { SStorefrontSearchBox },
@@ -266,11 +265,11 @@ export default {
     },
 
     tab() {
-      if (this.$route.name === StorefrontRoutesName.SHOP_PAGE) return "home";
-      else if (this.$route.name === "UserFavoritesPage") return "favorite";
-      else if (this.$route.name === "BasketPage") return "basket";
-      else if (this.$route.name === "UserProfilePage") return "profile";
-      else if (this.$route.name === "HistoryOrdersPhysical")
+      if (this.$route.name === window.$storefront.routes.SHOP_PAGE) return "home";
+      else if (this.$route.name === window.$storefront.routes.USER_FAVORITES_PAGE) return "favorite";
+      else if (this.$route.name === window.$storefront.routes.BASKET_PAGE) return "basket";
+      else if (this.$route.name === window.$storefront.routes.USER_PROFILE_PAGE) return "profile";
+      else if (this.$route.name === window.$storefront.routes.HISTORY_ORDERS_PHYSICAL)
         return "notification";
 
       return "home";
@@ -280,10 +279,10 @@ export default {
       return this.$route.name === "CustomHomePage";
     },
     in_product() {
-      return this.$route.name === "ProductPage";
+      return this.$route.name === window.$storefront.routes.PRODUCT_PAGE;
     },
     in_category() {
-      return this.$route.name === "ShopCategoryPage";
+      return this.$route.name === window.$storefront.routes.SHOP_CATEGORY_PAGE;
     },
 
     total_items_in_carts() {
@@ -330,9 +329,9 @@ export default {
   watch: {
     $route(new_route, old_route) {
       const home_names = [
-        StorefrontRoutesName.SHOP_PAGE,
-        "ShopCategoryPage",
-        "ProductPage",
+        window.$storefront.routes.SHOP_PAGE,
+        window.$storefront.routes.SHOP_CATEGORY_PAGE,
+        window.$storefront.routes.PRODUCT_PAGE,
       ];
 
       if (
@@ -349,8 +348,8 @@ export default {
 
       // When user enter a product from a category:
       if (
-        old_route.name === "ShopCategoryPage" &&
-        new_route.name === "ProductPage" &&
+        old_route.name === window.$storefront.routes.SHOP_CATEGORY_PAGE &&
+        new_route.name === window.$storefront.routes.PRODUCT_PAGE &&
         old_route.params.category_name
       ) {
         this.last_home_route = old_route; // Save to retrieve in back!
@@ -415,17 +414,17 @@ export default {
     // --------------- Search ------------
     onSearch(event) {
       this.$router.push({
-        name: StorefrontRoutesName.SHOP_PAGE,
+        name: window.$storefront.routes.SHOP_PAGE,
         params: { shop_name: this.shop.shop_name },
         query: { search: event.search, search_type: event.search_type },
       });
     },
 
     onClear() {
-      if (this.$route.name === StorefrontRoutesName.SHOP_PAGE)
+      if (this.$route.name === window.$storefront.routes.SHOP_PAGE)
         //Only in shop page clear => show all products!
         this.$router.push({
-          name: StorefrontRoutesName.SHOP_PAGE,
+          name: window.$storefront.routes.SHOP_PAGE,
           params: { shop_name: this.shop.shop_name },
         });
     },

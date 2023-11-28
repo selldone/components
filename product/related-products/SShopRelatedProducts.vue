@@ -70,7 +70,7 @@
             }"
           >
             <router-link
-              :to="{ name: 'ProductPage', params: { product_id: item.id } }"
+              :to="{ name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: item.id } }"
             >
               <v-img
                 aspect-ratio="1"

@@ -71,7 +71,10 @@
           :href="testMode ? null : notification.url"
           :to="
             pageName && !notification.url && !testMode
-              ? { name: 'PageRender', params: { page_name: pageName } }
+              ? {
+                  name: window.$storefront.routes.PAGE_RENDER,
+                  params: { page_name: pageName },
+                }
               : null
           "
           :target="preview || !pageName ? '_blank' : ''"
@@ -98,6 +101,7 @@ import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
 
 export default {
   name: "SStorefrontCampaignNotification",
+  computed: {},
   props: {
     notification: {
       require: true,
@@ -126,6 +130,7 @@ export default {
 
   data() {
     return {
+
       can_show: true,
     };
   },

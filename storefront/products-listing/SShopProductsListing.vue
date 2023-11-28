@@ -185,7 +185,7 @@
                 viewOnly || window.ExternalWidget
                   ? undefined
                   : {
-                      name: 'ShopCategoryPage',
+                      name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                       params: { category_name: category.name },
                     }
               "
@@ -215,7 +215,7 @@
                 viewOnly || window.ExternalWidget
                   ? undefined
                   : {
-                      name: 'ProductPage',
+                      name: window.$storefront.routes.PRODUCT_PAGE,
                       params: {
                         product_id: product.id,
                       },
@@ -622,7 +622,7 @@ export default {
         this.parent_folders,
         this.getShop().name,
         null,
-        "shopping_bag",
+        "shopping_bag"
       );
     },
 
@@ -766,9 +766,9 @@ export default {
       localStorage.setItem(
         LocalStorages.GetUserShopViewModePath(
           this.$localstorage_base_path(),
-          this.template_device,
+          this.template_device
         ),
-        mode_view.code,
+        mode_view.code
       );
     },
 
@@ -777,7 +777,7 @@ export default {
     },
 
     forcePackage: {
-      handler: function (newValue) {
+      handler: function () {
         //console.log('fetch list : change package');
 
         this.fetchData(false);
@@ -789,7 +789,7 @@ export default {
       // console.log('===========forceModeView=============')
       if (this.forceModeView) {
         this.mode_view = Object.values(ModeView).find(
-          (i) => i.code === this.forceModeView,
+          (i) => i.code === this.forceModeView
         );
       }
     },
@@ -806,7 +806,7 @@ export default {
           this.show_filter_menu &&
             this.has_filter &&
             !this.parent_folders
-              ?.page /*In custom page show on the top of the page, the side bar filter is limited and has no overlap with top menu!*/,
+              ?.page /*In custom page show on the top of the page, the side bar filter is limited and has no overlap with top menu!*/
         );
     },
     has_filter() {
@@ -816,7 +816,7 @@ export default {
       )
         this.$store.commit(
           "setShowFilterMenu",
-          this.show_filter_menu && this.has_filter,
+          this.show_filter_menu && this.has_filter
         );
     },
     //-------------------------------------------------------
@@ -836,8 +836,8 @@ export default {
     code = localStorage.getItem(
       LocalStorages.GetUserShopViewModePath(
         this.$localstorage_base_path(),
-        this.template_device,
-      ),
+        this.template_device
+      )
     );
     if (!code && this.theme && this.theme[this.template_device]) {
       code = this.theme[this.template_device];
@@ -940,8 +940,7 @@ export default {
       this.busy_fetch_product = true;
       this.spec_array = null;
 
-
-      const handleSuccessResponse=({ product }) => {
+      const handleSuccessResponse = ({ product }) => {
         this.selected_product = product;
 
         if (Array.isArray(this.selected_product.spec))
@@ -949,21 +948,23 @@ export default {
         //Old version:
         else
           this.spec_array = SpecHelper.CONVERT_SPEC_JSON_TO_ARRAY(
-              this.selected_product.spec,
-              this.selected_product.spec_order,
+            this.selected_product.spec,
+            this.selected_product.spec_order
           );
         GtagEcommerce.MeasuringViewsOfProductDetails(
-            this.shop,
-            product,
-            this.GetUserSelectedCurrency().code,
-            "quick-view",
+          this.shop,
+          product,
+          this.GetUserSelectedCurrency().code,
+          "quick-view"
         );
-      }
+      };
 
-      window.$storefront.products.optimize(60).getInfo(product.id,{
-        no_article: true,
-      })
-          .cache(handleSuccessResponse)
+      window.$storefront.products
+        .optimize(60)
+        .getInfo(product.id, {
+          no_article: true,
+        })
+        .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
           this.showLaravelError(error);
@@ -979,7 +980,7 @@ export default {
         product,
         this.GetUserSelectedCurrency().code,
         index + 1,
-        this.parent_folders,
+        this.parent_folders
       );
     },
 
@@ -1085,7 +1086,7 @@ export default {
           products,
           this.GetUserSelectedCurrency().code,
           this.$route.query.search ? "Search Results" : null,
-          parent,
+          parent
         );
       };
 
@@ -1139,16 +1140,14 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--products-list{
-
+.s--products-list {
 }
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-
-.s--products-list{
+.s--products-list {
   .product-filter-menu {
     z-index: 100;
     border-radius: 8px;
@@ -1176,20 +1175,18 @@ export default {
     }
   }
 
-
-  &.rtl{
+  &.rtl {
     .products-container {
       &.container-expanded-side-menu {
         padding-left: 0px !important;
         padding-right: var(--products-filter-width) !important;
         @media (max-width: 800px) {
           padding-right: 0 !important;
-          transform: translateX(- var(--products-filter-width));
+          transform: translateX(-var(--products-filter-width));
         }
       }
     }
   }
-
 
   //─────────── Free mode view ───────────
   .free-mode {

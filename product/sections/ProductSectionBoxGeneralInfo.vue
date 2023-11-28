@@ -14,7 +14,6 @@
 
 <template>
   <div class="px-2 mb-4 d-flex flex-grow-0">
-
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Type ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
     <div class="flex-grow-0 flex-sm-grow-1 pe-1">
       <!-- <span class="hide-on-small-900 me-1">{{ $t("product_info.type") }}:</span>-->
@@ -24,15 +23,15 @@
         width="16"
         class="m-1 me-2"
       />
-      <span class="d-none d-sm-inline-block">{{ getProductTypeName(product.type) }}</span>
-
+      <span class="d-none d-sm-inline-block">{{
+        getProductTypeName(product.type)
+      }}</span>
     </div>
-
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Brand ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <div v-if="product.brand" class="flex-grow-1 pe-1"  style="max-width: 50%"
-      ><!--<span class="hide-on-small-900 me-1">{{ $t("product_info.brand") }}:</span>-->
+    <div v-if="product.brand" class="flex-grow-1 pe-1" style="max-width: 50%">
+      <!--<span class="hide-on-small-900 me-1">{{ $t("product_info.brand") }}:</span>-->
       <component
         :is="!window.ExternalWidget ? 'router-link' : 'a'"
         :to="{
@@ -50,7 +49,6 @@
             : {}
         "
         class="link-underlined single-line d-inline-block"
-
         :title="$t('product_info.brand')"
         >{{ product.brand }}</component
       >
@@ -81,7 +79,7 @@
             :to="
               !window.ExternalWidget
                 ? {
-                    name: 'ShopCategoryPage',
+                    name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                     params: {
                       category_name: product.category.name,
                     },
@@ -91,7 +89,7 @@
             v-bind="
               window.ExternalWidget
                 ? {
-                    href: getCategoryLink(shop,product.category.name),
+                    href: getCategoryLink(shop, product.category.name),
                     target: '_blank',
                   }
                 : {}
@@ -112,9 +110,13 @@
 import CircleImage from "@components/ui/image/CircleImage.vue";
 export default {
   name: "ProductSectionBoxGeneralInfo",
+  data: () => ({
+
+  }),
+  computed: {},
   components: { CircleImage },
   props: {
-    shop:{
+    shop: {
       required: true,
       type: Object,
     },

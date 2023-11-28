@@ -665,7 +665,7 @@ export default {
           if (this.is_express) {
             // Redirect user to the checkout page after click add to cart
             this.$router.push({
-              name: "BasketPage",
+              name: window.$storefront.routes.BASKET_PAGE,
               params: { type: this.product.type },
             });
           } else {

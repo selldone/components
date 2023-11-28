@@ -46,14 +46,14 @@ export default Vue.extend({
 
     to() {
       return {
-        name: "BasketPage",
+        name: window.$storefront.routes.BASKET_PAGE,
         params: { type: this.current_product_type_in_basket },
       };
     },
 
     availableInBasketCount() {
       if (
-        this.$route.name !== "ProductPage" ||
+        this.$route.name !== window.$storefront.routes.PRODUCT_PAGE ||
         !this.getId(this.$route.params.product_id)
       )
         return null;

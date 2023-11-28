@@ -184,7 +184,7 @@
           <component
             :is="topic ? 'router-link' : 'span'"
             :to="{
-              name: 'CommunityCategoryPage',
+              name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
               params: {
                 category_id: category.id,
                 category_slug: slugify(category.title),
@@ -209,7 +209,7 @@
           <component
             :is="post ? 'router-link' : 'span'"
             :to="{
-              name: 'CommunityTopicPage',
+              name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
               params: {
                 category_id: category.id,
                 category_slug: slugify(category.title),

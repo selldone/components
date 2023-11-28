@@ -37,7 +37,7 @@
           :to="
             it.path
               ? {
-                  name: 'IncludePageRender',
+                  name: window.$storefront.routes.INCLUDE_PAGE_RENDER,
                   params: { path: it.path, include_id: it.id },
                 }
               : undefined
@@ -86,7 +86,7 @@
         :to="
           it.path
             ? {
-                name: 'IncludePageRender',
+                name: window.$storefront.routes.INCLUDE_PAGE_RENDER,
                 params: { path: it.path, include_id: it.id },
               }
             : undefined

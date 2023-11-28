@@ -17,7 +17,7 @@
     <v-card
       class="c-widget -hover flex-grow-1"
       :to="{
-        name: 'CommunityCategoryPage',
+        name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
         params: {
           category_id: category.id,
           category_slug: slugify(category.title),

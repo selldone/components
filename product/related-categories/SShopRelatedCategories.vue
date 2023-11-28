@@ -28,7 +28,7 @@
           <div class="-category-card" v-for="item in categories" :key="item.id">
             <router-link
               :to="{
-                name: 'ShopCategoryPage',
+                name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                 params: { category_name: item.name },
               }"
             >
@@ -75,7 +75,9 @@ export default {
   },
 
   data: function () {
-    return {};
+    return {
+
+    };
   },
 
   computed: {},
@@ -88,7 +90,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -100,12 +101,11 @@ export default {
 .s--shop-related-categories {
   --card-background: #fff;
 
-  --card-width:380px;
-  --padding-x:10vw; // 10vw: Add overscroll on sides
+  --card-width: 380px;
+  --padding-x: 10vw; // 10vw: Add overscroll on sides
 
   min-height: 30vh;
-  margin: 15vh 0 15vh  0;
-
+  margin: 15vh 0 15vh 0;
 
   // Define breakpoint values
   $breakpoint-mobile: 480px;
@@ -113,29 +113,27 @@ export default {
   $breakpoint-desktop: 1024px;
 
   // Mobile styles
-  @media screen and  (max-width: $breakpoint-tablet) {
+  @media screen and (max-width: $breakpoint-tablet) {
     .-categories-container {
-      --padding-x:0;
-      --card-width:75vw;
+      --padding-x: 0;
+      --card-width: 75vw;
     }
-
   }
 
   // Tablet styles
-  @media screen and  (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop - 1px) {
+  @media screen and (min-width: $breakpoint-tablet) and (max-width: $breakpoint-desktop - 1px) {
     .-categories-container {
-      --padding-x:12px;
+      --padding-x: 12px;
       --card-width: min(35vw, 380px);
     }
   }
 
   // Desktop styles
-  @media screen and  (min-width: $breakpoint-desktop) {
+  @media screen and (min-width: $breakpoint-desktop) {
     .-categories-container {
       --card-width: min(25vw, 380px);
     }
   }
-
 
   .-categories-container {
     display: flex;
@@ -144,7 +142,6 @@ export default {
     padding: 36px var(--padding-x); // 10vw: Add overscroll on sides
 
     min-width: max-content;
-
 
     .-category-card {
       text-align: start;
@@ -158,7 +155,7 @@ export default {
       .-card-img {
         display: flex;
         align-items: center;
-      //  justify-content: center;
+        //  justify-content: center;
         padding: 32px;
 
         &:after {

@@ -574,7 +574,7 @@ export default {
           if (force_reset_payment && data.reset) {
             this.fetchBasketAndShop();
             this.$router.push({
-              name: "BasketPage",
+              name: window.$storefront.routes.BASKET_PAGE,
               params: { type: data.order.type },
             });
             this.showSuccessAlert(

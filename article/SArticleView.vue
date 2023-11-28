@@ -835,7 +835,7 @@
 
                 <router-link
                   :to="{
-                    name: 'AuthorPage',
+                    name: window.$storefront.routes.AUTHOR_PAGE,
                     params: { author: slugify(user.name), author_id: user.id },
                   }"
                 >
@@ -1007,7 +1007,7 @@
             <h3 class="author-name mt-5">
               <router-link
                 :to="{
-                  name: 'AuthorPage',
+                  name: window.$storefront.routes.AUTHOR_PAGE,
                   params: { author: slugify(user.name), author_id: user.id },
                 }"
               >
@@ -2415,7 +2415,7 @@ export default {
         return { name: "Help", params: { help_id: target_id } };
       } else if (this.articleType === ArticleTypes.Product.code) {
       } else if (this.is_shop_blog) {
-        return { name: "ShopBlogPage", params: { blog_id: target_id } };
+        return { name: window.$storefront.routes.SHOP_BLOG_PAGE, params: { blog_id: target_id } };
       } else if (this.articleType === ArticleTypes.Company.code) {
       }
     },

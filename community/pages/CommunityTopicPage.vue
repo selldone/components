@@ -125,7 +125,7 @@
               ({ post, topic_removed }) => {
                 topic.question = null;
                 if (topic_removed)
-                  $router.push({ name: 'CommunityCategoryPage' });
+                  $router.push({ name: window.$community.routes.COMMUNITY_CATEGORY_PAGE });
               }
             "
             question
@@ -190,7 +190,7 @@
                 ({ post, topic_removed }) => {
                   DeleteItemByID(posts, post.id);
                   if (topic_removed)
-                    $router.push({ name: 'CommunityCategoryPage' });
+                    $router.push({ name: window.$community.routes.COMMUNITY_CATEGORY_PAGE });
                 }
               "
               class="fadeInUp"
@@ -219,7 +219,7 @@
                 ({ post, topic_removed }) => {
                   DeleteItemByID(posts, post.id);
                   if (topic_removed)
-                    $router.push({ name: 'CommunityCategoryPage' });
+                    $router.push({ name: window.$community.routes.COMMUNITY_CATEGORY_PAGE });
                 }
               "
               class="fadeInUp"
@@ -556,7 +556,7 @@ export default {
             )
             .then(({ data }) => {
               if (!data.error) {
-                this.$router.push({ name: "CommunityCategoryPage" });
+                this.$router.push({ name: window.$community.routes.COMMUNITY_CATEGORY_PAGE });
               } else {
                 this.showErrorAlert(null, data.error_msg);
               }

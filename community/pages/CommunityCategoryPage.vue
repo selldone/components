@@ -110,15 +110,22 @@
                 {{ $t("community.category.remove_msg") }}
               </v-subheader>
 
-              <s-smart-check-verify-action v-model="check_delete" true-title="Verify delete category" :true-description="$t('community.category.delete_dialog.message')" color="red" false-gray class="my-3">
-
+              <s-smart-check-verify-action
+                v-model="check_delete"
+                true-title="Verify delete category"
+                :true-description="
+                  $t('community.category.delete_dialog.message')
+                "
+                color="red"
+                false-gray
+                class="my-3"
+              >
               </s-smart-check-verify-action>
-
 
               <div class="widget-buttons">
                 <v-btn
                   depressed
-                  :class="{disabled:!check_delete}"
+                  :class="{ disabled: !check_delete }"
                   color="red"
                   dark
                   x-large
@@ -187,7 +194,7 @@
             @add:topic="
               (topic) =>
                 $router.push({
-                  name: 'CommunityTopicPage',
+                  name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
                   params: {
                     category_id: category.id,
                     category_slug: slugify(category.title),
@@ -409,7 +416,7 @@ export default {
       busy_edit: false,
       busy_delete: false,
       show_critic: false,
-      check_delete:false,
+      check_delete: false,
 
       //---------------------------------
       show_cross: false,
@@ -519,7 +526,7 @@ export default {
       }
 
       const arr = this.cross_topic_id.split("/");
-     // console.log("arr", arr);
+      // console.log("arr", arr);
       if (arr.length !== 2) {
         this.cross_preview = null;
         return;
@@ -578,7 +585,7 @@ export default {
             const topic = data.topic;
 
             this.$router.push({
-              name: "CommunityTopicPage",
+              name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
               params: {
                 category_id: this.category.id,
                 category_slug: this.slugify(this.category.title),

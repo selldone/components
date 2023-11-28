@@ -67,7 +67,7 @@
         <circle-button
           v-if="show_top_cart && !isMobile"
           class="mx-3 fadeIn delay_300"
-          :to="{ name: 'HistoryOrdersPhysical' }"
+          :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }"
           icon="local_mall"
           :tooltip="$t('global.commons.orders')"
           exact
@@ -273,7 +273,7 @@
                       <v-btn
                         icon
                         large
-                        :to="{ name: 'HyperPage' }"
+                        :to="{ name: window.$storefront.routes.HYPER_PAGE }"
                         class="sub-caption"
                         :caption="$t('global.commons.hyper')"
                       >
@@ -401,7 +401,6 @@ import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import SShopMainHeaderLogo from "@components/storefront/header/SShopMainHeaderLogo.vue";
-import { StorefrontRoutesName } from "@core/enums/route/StorefrontRoutesName";
 
 const BOTTOM_PADDING_CONTAINER = "82px";
 export default {
@@ -481,7 +480,7 @@ export default {
 
     availableInBasketCount() {
       if (
-        this.$route.name !== "ProductPage" ||
+        this.$route.name !== window.$storefront.routes.PRODUCT_PAGE ||
         !this.getId(this.$route.params.product_id)
       )
         return null;
@@ -528,9 +527,9 @@ export default {
         return "0";
       } else {
         if (
-          this.$route.name === "PageRender" ||
+          this.$route.name === window.$storefront.routes.PAGE_RENDER ||
           this.$route.name === "CustomHomePage" ||
-          this.$route.name === "IncludePageRender"
+          this.$route.name === window.$storefront.routes.INCLUDE_PAGE_RENDER
         ) {
           return 0;
         } else {
@@ -620,9 +619,9 @@ export default {
   watch: {
     $route(to, from) {
       if (
-        this.$route.name !== "PageRender" &&
+        this.$route.name !== window.$storefront.routes.PAGE_RENDER &&
         this.$route.name !== "CustomHomePage" &&
-        this.$route.name !== "IncludePageRender"
+        this.$route.name !== window.$storefront.routes.INCLUDE_PAGE_RENDER
       ) {
         this.transparentHeader = null;
         this.darkHeader = null; // Default value is null!

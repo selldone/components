@@ -66,7 +66,7 @@
         :key="post.id"
         style="color: #111"
         :to="{
-          name: 'CommunityTopicPage',
+          name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
           params: {
             category_id: post.topic.category.id,
             category_slug: slugify(post.topic.category.title),
@@ -286,7 +286,8 @@ export default {
         this.has_more = more;
       };
 
-      window.$community.post.optimize(60)
+      window.$community.post
+        .optimize(60)
         .searchPosts(this.community.id, this.offset, this.limit, this.search)
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)

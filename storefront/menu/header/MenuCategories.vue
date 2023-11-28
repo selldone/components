@@ -32,7 +32,7 @@
               <div v-for="(cat, j) in group" :key="j" class="mb-5">
                 <router-link
                   :to="{
-                    name: 'ShopCategoryPage',
+                    name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                     params: { category_name: cat.name },
                   }"
                   @mouseenter.native="selected_category = cat"
@@ -72,7 +72,7 @@
                             ? {}
                             : {
                                 to: {
-                                  name: 'ShopCategoryPage',
+                                  name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                                   params: { category_name: _child.name },
                                 },
                               }
@@ -90,7 +90,7 @@
                             ? {}
                             : {
                                 to: {
-                                  name: 'ShopCategoryPage',
+                                  name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                                   params: { category_name: child.name },
                                 },
                               }
@@ -122,7 +122,7 @@
                         ? {}
                         : {
                             to: {
-                              name: 'ShopCategoryPage',
+                              name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                               params: { category_name: child.name },
                             },
                           }
@@ -144,7 +144,7 @@
                       ? {}
                       : {
                           to: {
-                            name: 'ShopCategoryPage',
+                            name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                             params: { category_name: cat.name },
                           },
                         }
@@ -196,7 +196,7 @@
           >
             <router-link
               :to="{
-                name: 'ShopCategoryPage',
+                name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                 params: { category_name: cat.name },
               }"
               :class="{ pen: preview }"
@@ -247,10 +247,12 @@ export default {
     },
   },
   data: () => ({
+
     selected_category: null,
   }),
 
   computed: {
+
     small_mode() {
       return this.$vuetify.breakpoint.smAndDown;
     },

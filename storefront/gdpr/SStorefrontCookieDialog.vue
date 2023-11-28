@@ -43,7 +43,7 @@
         class="my-3 tnt"
         block
         outlined
-        :to="!preview ? { name: 'ShopProfilePage_Privacy' } : null"
+        :to="!preview ? { name: window.$storefront.routes.SHOP_PROFILE_PAGE_PRIVACY } : null"
         @click="hide = !preview"
       >
         {{ $t("global.cookie.preferences_action") }}</v-btn

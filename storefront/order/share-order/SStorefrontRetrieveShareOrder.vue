@@ -52,11 +52,16 @@
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title>
-                    <router-link :to="{name:'ProductPage',params:{product_id:item.product_id},query:{variant_id:item.variant_id}}" target="_blank">
-
-                    <b>{{ item.product.title }}</b>
+                    <router-link
+                      :to="{
+                        name: window.$storefront.routes.PRODUCT_PAGE,
+                        params: { product_id: item.product_id },
+                        query: { variant_id: item.variant_id },
+                      }"
+                      target="_blank"
+                    >
+                      <b>{{ item.product.title }}</b>
                     </router-link>
-
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     {{ item.product.title_en }}
@@ -197,11 +202,12 @@ export default {
               "Items in your cart has been replaced by new items."
             );
             this.show = false;
-            this.$router.push({name:'BasketPage',params:{type:data.basket.type}})
+            this.$router.push({
+              name: window.$storefront.routes.BASKET_PAGE,
+              params: { type: data.basket.type },
+            });
 
             this.fetchBasketAndShop();
-
-
           } else {
             this.showErrorAlert(null, data.error_msg);
           }
