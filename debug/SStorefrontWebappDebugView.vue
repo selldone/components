@@ -67,7 +67,10 @@
           label="Local dev server"
           append-icon="cloud_sync"
           persistent-placeholder
-          @blur="getValidateDevPack(dev_url)"
+          @blur="
+            fixDevUrl();
+            getValidateDevPack(dev_url);
+          "
         ></v-text-field>
 
         <div class="widget-buttons">
@@ -385,7 +388,15 @@ export default {
       }
     },
 
+    fixDevUrl() {
+      if (this.dev_url && !this.dev_url.startsWith("http")) {
+        this.dev_url = "https://" + this.dev_url;
+      }
+    },
+
     async setLocalDevServer(dev_url) {
+      this.fixDevUrl();
+
       console.log("Dev host", dev_url);
       const currentUrl = new URL(window.location.href);
 
