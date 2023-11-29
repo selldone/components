@@ -4,7 +4,9 @@
 
 * **Mode:** 🌍 Public
 * **Use case:** Pre built Vue commerce components for both storefront and backoffice.
+* **Project Type:** Vue Components Library
 
+🛍️ Go to the [**Full Storefront Project ▶**](https://github.com/selldone/storefront)
 
 # Use
 ```
