@@ -339,6 +339,8 @@ export default {
       this.error_dev_serve = null;
       this.pack_dev_server = null;
 
+      if(!url)return ;
+
       try {
         // Fetch the HTML content from the URL
         const response = await fetch(url);
@@ -359,9 +361,8 @@ export default {
         if (targetScript) {
           // Extract the 'XXX' part from the src attribute
           const src = targetScript.src;
-          const matches = src.match(
-            /http[s]?:\/\/[^\/]+\/(.*?)\/(v\d+)\/shop\.js/
-          );
+          const regex = /https?:\/\/[^\/]+\/(layouts)\/(v\d+\/app)\/shop\.js/;
+          const matches = src.match(regex  );
 
           console.log("matches", src, matches);
 
