@@ -1,3 +1,6 @@
+![License](https://img.shields.io/github/license/selldone/components.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/78c73a7be7d5452bbb8a66e4e41941b0)](https://app.codacy.com/gh/selldone/components/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 ![Selldone Official Storefront App](_docs/images/banner-components.jpg)
 
 # Selldone ® Business OS | Open Source Commerce Components
