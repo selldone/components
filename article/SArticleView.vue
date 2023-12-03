@@ -835,7 +835,7 @@
 
                 <router-link
                   :to="{
-                    name: window.$storefront.routes.AUTHOR_PAGE,
+                    name: 'AuthorPage',
                     params: { author: slugify(user.name), author_id: user.id },
                   }"
                 >
@@ -1007,7 +1007,7 @@
             <h3 class="author-name mt-5">
               <router-link
                 :to="{
-                  name: window.$storefront.routes.AUTHOR_PAGE,
+                  name: 'AuthorPage',
                   params: { author: slugify(user.name), author_id: user.id },
                 }"
               >
