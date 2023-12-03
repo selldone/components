@@ -212,7 +212,7 @@
                       item.data &&
                       (item.data.delivery_user_id || item.data.delivery_user_id)
                     "
-                    src="../../../assets/icons/wire.svg"
+                    src="../../assets/icons/wire.svg"
                     width="16"
                     height="16"
                     class="mx-2"
@@ -349,7 +349,7 @@
           <span v-html="email_title"></span>
         </v-card-title>
 
-        <loading css-mode v-if="busy_email" light></loading>
+        <s-loading css-mode v-if="busy_email" light></s-loading>
         <v-card-text>
           <div
             v-html="email_html"
@@ -388,7 +388,7 @@ import TimelineStatus from "@core/enums/timeline/TimelineStatus";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
 
 export default {
-  name: "OrderTimeline",
+  name: "SBackofficeOrderTimeline",
   components: {
     SSmartMenu,
     GeoNavigationButton,

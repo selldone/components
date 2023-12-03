@@ -241,7 +241,7 @@
                 }
               "
             >
-              <loading light css-mode v-if="busy_posts"></loading>
+              <s-loading light css-mode v-if="busy_posts"></s-loading>
             </v-col>
           </template>
 

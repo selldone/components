@@ -347,7 +347,7 @@
             }
           "
         >
-          <loading light css-mode v-if="busy"></loading>
+          <s-loading light css-mode v-if="busy"></s-loading>
         </v-col>
       </v-row>
     </v-container>

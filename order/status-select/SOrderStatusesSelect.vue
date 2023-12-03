@@ -41,7 +41,7 @@
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
 
 export default {
-  name: "OrderStatusesSelect",
+  name: "SOrderStatusesSelect",
 
   props: {
     value: {},

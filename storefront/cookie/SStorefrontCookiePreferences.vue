@@ -112,7 +112,7 @@
 
 <script>
 export default {
-  name: "SShopCookiePreferences",
+  name: "SStorefrontCookiePreferences",
   props: {
     shop: {
       type: Object,

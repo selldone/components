@@ -143,7 +143,7 @@ import { ReturnOrderReason } from "@core/enums/basket/ReturnOrderReason";
 import { ProductType } from "@core/enums/product/ProductType";
 
 export default {
-  name: "ReturnRequestsList",
+  name: "SBackofficeReturnRequestsList",
   components: { VariantItemViewMicro },
   props: {
     url: {

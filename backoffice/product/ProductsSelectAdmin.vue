@@ -717,7 +717,7 @@
       </template>
     </v-fade-transition>
 
-    <loading css-mode light v-if="busy_load_more"></loading>
+    <s-loading css-mode light v-if="busy_load_more"></s-loading>
 
     <v-btn
       v-if="has_more"
@@ -1540,7 +1540,7 @@ import CircleButton from "@components/ui/button/CircleButton.vue";
 import CircleImage from "@components/ui/image/CircleImage.vue";
 import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
 import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
-import Loading from "@components/ui/loading/loading.vue";
+import SLoading from "@components/ui/loading/SLoading.vue";
 import AddButtonGreen from "@components/ui/button/AddButtonGreen.vue";
 import AddCategory from "@components/backoffice/category/AddCategory.vue";
 import FolderCardMini from "@components/backoffice/product/widgets/FolderCardMini.vue";
@@ -1587,7 +1587,7 @@ export default {
     FolderCardMini,
     AddCategory,
     AddButtonGreen,
-    Loading,
+    SLoading,
     SBreadcrumbImage,
     CircleImage,
     CircleButton,

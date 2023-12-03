@@ -108,17 +108,14 @@
 
 <script>
 export default {
-  name: "WalletCreationDialog",
+  name: "SBackofficeWalletCreationDialog",
   props: {
     value: {},
-      gateway:{
-        require:true
-      },
-      shopGateway:{
-
-      },
+    gateway: {
+      require: true,
+    },
+    shopGateway: {},
   },
-
 
   data: function () {
     return {
@@ -132,7 +129,6 @@ export default {
       gen_phrases_random: null,
       verify_phrases: [],
       step: 1,
-
 
       //-----------------------
       busy_create: false,
@@ -166,21 +162,23 @@ export default {
 
       axios
         .post(
-
-            this.shopGateway?window.API.POST_GATEWAY_SHOP_GENERATE_BLOCKCHAIN_RECOVERY_PHRASES(this.shopGateway.shop_id,this.gateway.code):
-          window.ADMIN_API.POST_GATEWAY_SELLDONE_GENERATE_BLOCKCHAIN_RECOVERY_PHRASES(
-            this.gateway.id
-          )
+          this.shopGateway
+            ? window.API.POST_GATEWAY_SHOP_GENERATE_BLOCKCHAIN_RECOVERY_PHRASES(
+                this.shopGateway.shop_id,
+                this.gateway.code
+              )
+            : window.ADMIN_API.POST_GATEWAY_SELLDONE_GENERATE_BLOCKCHAIN_RECOVERY_PHRASES(
+                this.gateway.id
+              )
         )
         .then(({ data }) => {
           if (!data.error) {
             this.verify_phrases = Object.assign([], data.recovery);
 
             this.gen_phrases = data.recovery;
-            this.gen_phrases_random = Object.assign(
-              [],
-              data.recovery
-            ).sort(() => (Math.random() > 0.5 ? 1 : -1));
+            this.gen_phrases_random = Object.assign([], data.recovery).sort(
+              () => (Math.random() > 0.5 ? 1 : -1)
+            );
 
             this.showSuccessAlert();
           } else {
@@ -200,8 +198,14 @@ export default {
 
       axios
         .post(
-            this.shopGateway?window.API.POST_GATEWAY_SHOP_ADD_BLOCKCHAIN_WALLET(this.shopGateway.shop_id,this.gateway.code):
-          window.ADMIN_API.POST_GATEWAY_SELLDONE_ADD_BLOCKCHAIN_WALLET(this.gateway.id),
+          this.shopGateway
+            ? window.API.POST_GATEWAY_SHOP_ADD_BLOCKCHAIN_WALLET(
+                this.shopGateway.shop_id,
+                this.gateway.code
+              )
+            : window.ADMIN_API.POST_GATEWAY_SELLDONE_ADD_BLOCKCHAIN_WALLET(
+                this.gateway.id
+              ),
           {
             recovery: this.gen_phrases
               ? this.verify_phrases.join(" ")
@@ -210,8 +214,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-
-            this.$emit('input',data.wallet)
+            this.$emit("input", data.wallet);
             this.show_create_wallet = false;
 
             this.showSuccessAlert();

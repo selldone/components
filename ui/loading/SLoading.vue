@@ -13,28 +13,42 @@
   -->
 
 <template>
-  <span v-if="statusObject">
-    <v-icon class="me-1" :color="status === 'Succeeded' ? 'green' : ''">{{
-      statusObject.icon
-    }}</v-icon>
-
-    <small>{{ $t(statusObject.name) }}</small>
-  </span>
+  <div class="text-center">
+    <lottie
+      v-if="!cssMode"
+      :options="{ animationData: animation, loop: true }"
+      :height="height"
+      width="200px"
+      :speed="1"
+    />
+    <div v-else class="lds-ellipsis" :class="{ light: light }">
+      <div />
+      <div />
+      <div />
+      <div />
+    </div>
+  </div>
 </template>
 
 <script>
-import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
-
 export default {
-  name: "PaymentStatusView",
+  name: "SLoading",
   props: {
-    status: {
-      require: true,
+    height: {
+      default: "84px",
+    },
+    cssMode: {
+      type: Boolean,
+      default: false,
+    },
+    light: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
-    statusObject() {
-      return TransactionStatus[this.status];
+    animation() {
+      return require("./719-loading.json");
     },
   },
 };

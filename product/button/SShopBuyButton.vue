@@ -34,7 +34,7 @@
   <div v-else style="min-height: 56px" class="position-relative">
     <!-- 🞇 Loading -->
 
-    <loading
+    <s-loading
       v-show="
         busy /*default_mode || changed to number input!*/ &&
         selected_order_count <= 1 /*Show loading for first action!*/
@@ -60,7 +60,7 @@
       "
       v-bind="
         window.ExternalWidget
-          ? { href: getProductLink(shop,product.id), target: '_blank' }
+          ? { href: getProductLink(shop, product.id), target: '_blank' }
           : {}
       "
       min-width="220"
@@ -223,21 +223,19 @@
       @click.stop="physicalBuyAction(1)"
       v-bind="
         window.ExternalWidget
-          ? { href: getProductLink(shop,product.id), target: '' }
+          ? { href: getProductLink(shop, product.id), target: '' }
           : {}
       "
     >
       <v-icon v-if="action_icon" class="me-2"> {{ action_icon }} </v-icon>
       {{ action_text }}
     </v-btn>
-
-
   </div>
 </template>
 
 <script>
 import { ProductType } from "@core/enums/product/ProductType";
-import Loading from "@components/ui/loading/loading.vue";
+import SLoading from "@components/ui/loading/SLoading.vue";
 import GtagEcommerce from "@components/plugins/gtag/GtagEcommerce";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import { BusinessModel } from "@core/enums/shop/BusinessModel";
@@ -250,7 +248,7 @@ import _ from "lodash-es";
 
 export default {
   name: "SShopBuyButton",
-  components: { SShopSubscribeButton, SNumberInput, Loading },
+  components: { SShopSubscribeButton, SNumberInput, SLoading },
   props: {
     product: {
       required: true,
@@ -500,7 +498,7 @@ export default {
     },
 
     currentVariant() {
-         this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
       this.pre_order_count = this.selected_order_count;
     },
     product() {

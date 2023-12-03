@@ -316,12 +316,12 @@
 
         <v-expand-transition>
           <div v-if="page">
-            <augment-form
+            <s-backoffice-page-augment-form
               v-model="augment"
               class="my-10"
               @change="changed = true"
               :loading="busy_load"
-            ></augment-form>
+            ></s-backoffice-page-augment-form>
           </div>
         </v-expand-transition>
       </div>
@@ -390,7 +390,7 @@ import CircleImage from "@components/ui/image/CircleImage.vue";
 import SImageUploader from "@components/uploader/SImageUploader.vue";
 import CategorySelect from "./CategorySelect.vue";
 import SSmartCheckVerifyAction from "@components/smart/SSmartCheckVerifyAction.vue";
-import AugmentForm from "../augment/AugmentForm.vue";
+import SBackofficePageAugmentForm from "../augment/SBackofficePageAugmentForm.vue";
 import PageInputField from "@components/ui/input/page/PageInputField.vue";
 import STranslationsButtonCategory from "@components/translation/STranslationsButtonCategory.vue";
 
@@ -399,7 +399,7 @@ export default {
   components: {
     STranslationsButtonCategory,
     PageInputField,
-    AugmentForm,
+    SBackofficePageAugmentForm,
     SSmartCheckVerifyAction,
     CategorySelect,
     SImageUploader,

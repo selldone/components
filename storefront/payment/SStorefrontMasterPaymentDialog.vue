@@ -91,7 +91,7 @@
         ><v-icon>close</v-icon></v-btn
       >
       <div class="widget rounded-18px p-5 min-width-200">
-        <loading css-mode light></loading>
+        <s-loading css-mode light></s-loading>
         {{ $t("global.commons.waiting_connecting_payment") }}
       </div>
     </div>

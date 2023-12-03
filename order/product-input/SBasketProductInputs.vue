@@ -43,7 +43,6 @@
         menu-props="auto"
         :label="item.title"
         @input="$emit('input', message)"
-
         :style="{ 'animation-delay': `${index * 150}ms` }"
         :readonly="readonly"
         :disabled="readonly"
@@ -63,10 +62,8 @@
         class="mx-3 mt-3 mb-5"
         :true-title="$t('global.actions.yes')"
         :false-title="$t('global.actions.no')"
-
         :true-description="item.hint_true"
         :false-description="item.hint_false"
-
         true-icon="check"
         false-icon="close"
         :readonly="readonly"

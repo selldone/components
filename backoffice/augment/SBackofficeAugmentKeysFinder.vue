@@ -13,46 +13,44 @@
   -->
 
 <template>
-  <div class="text-center">
-    <lottie
-      v-if="!cssMode"
-      :options="{ animationData: animation, loop: true }"
-      :height="height"
-      width="200px"
-      :speed="1"
-    />
-    <div v-else class="lds-ellipsis" :class="{ light: light }">
-      <div />
-      <div />
-      <div />
-      <div />
+  <fade-scroll class="text-start">
+    <div class="d-flex" title="Dynamic values auto fill by augmentation.">
+      <v-chip label v-for="it in array" :key="it" x-small class="me-1">{{
+        it
+      }}</v-chip>
     </div>
-  </div>
+  </fade-scroll>
 </template>
 
 <script>
+import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 
 export default {
-  name: "Loading",
+  name: "SBackofficeAugmentKeysFinder",
+  components: { FadeScroll },
   props: {
-    height: {
-      default: "84px",
-    },
-    cssMode: {
-      type: Boolean,
-      default: false,
-    },
-    light: {
-      type: Boolean,
-      default: false,
-    },
+    value: {},
+  },
+
+  data: function () {
+    return {
+      show_add: false,
+    };
   },
   computed: {
-    animation() {
-      return require('./719-loading.json');
+    array() {
+      return this.value?.findAllDynamicAugmentKeys().unique(); // Find all {{key}}
     },
   },
+
+  watch: {},
+
+  created() {
+
+  },
+
+  methods: {},
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss"></style>

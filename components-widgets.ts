@@ -80,8 +80,8 @@ Vue.component("price-view", PriceView);
 
 //---------------- Loading --------------
 
-import Loading from "@components/ui/loading/loading.vue";
-Vue.component("loading", Loading);
+import SLoading from "@components/ui/loading/SLoading.vue";
+Vue.component(SLoading.name, SLoading);
 
 import ProgressLoading from "@components/ui/loading/ProgressLoading.vue";
 Vue.component(ProgressLoading.name, ProgressLoading);

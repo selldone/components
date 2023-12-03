@@ -210,7 +210,7 @@ import * as h337 from "heatmap.js";
 import _ from "lodash-es";
 
 export default {
-  name: "InstagramView",
+  name: "SInstagramView",
   components: {
     InstagramViewHighlights,
     InstagramViewMedias,

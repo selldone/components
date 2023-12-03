@@ -415,7 +415,7 @@
         </div>
       </div>
 
-      <loading css-mode light v-if="method === 'login'" class="m-4"> </loading>
+      <s-loading css-mode light v-if="method === 'login'" class="m-4"> </s-loading>
     </v-card-text>
   </v-card>
 </template>

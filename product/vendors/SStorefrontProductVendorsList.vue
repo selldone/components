@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-container class="s--shop-product-vendors-list">
+  <v-container class="s--storefront-product-vendors-list">
     <v-row justify="start">
       <v-col
         v-for="vendor in vendors"
@@ -53,7 +53,7 @@
 import _ from "lodash-es";
 
 export default {
-  name: "ShopVendorsListView",
+  name: "SStorefrontProductVendorsList",
   props: {
     shop: {
       required: true,
@@ -71,7 +71,6 @@ export default {
   },
 
   data: () => ({
-
     busy: false,
     vendors: [],
 
@@ -149,7 +148,7 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-product-vendors-list {
+.s--storefront-product-vendors-list {
   .vnd-card {
     min-height: 100%;
   }

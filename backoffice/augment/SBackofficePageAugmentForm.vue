@@ -22,7 +22,7 @@
       icon="extension"
     >
       <template v-slot:append-title>
-        <v-btn icon class="mx-1" @click="help_dialog=true">
+        <v-btn icon class="mx-1" @click="help_dialog = true">
           <v-icon>help</v-icon>
         </v-btn>
       </template>
@@ -144,12 +144,12 @@
 
     <!-- █████████████████████ Help Dialog █████████████████████ -->
     <v-dialog
-        v-model="help_dialog"
-        fullscreen
-        transition="dialog-bottom-transition"
-        scrollable
+      v-model="help_dialog"
+      fullscreen
+      transition="dialog-bottom-transition"
+      scrollable
     >
-      <v-card class="text-start" >
+      <v-card class="text-start">
         <v-card-title>
           <v-icon class="me-1" color="#111">help</v-icon>
           How to use dynamic content
@@ -157,34 +157,66 @@
 
         <v-card-text>
           <v-container class="typo-body">
-
             <p>
-              In the landing pages, you have the flexibility to designate dynamic placeholders for both text and images. These placeholders serve a significant role in customizing the content according to the context.
+              In the landing pages, you have the flexibility to designate
+              dynamic placeholders for both text and images. These placeholders
+              serve a significant role in customizing the content according to
+              the context.
             </p>
             <p>
-              The dynamic nature of these placeholders allows them to be populated by augmentation values, which can vary based on different factors. For example, the augmentation values might be different for each product or category.
+              The dynamic nature of these placeholders allows them to be
+              populated by augmentation values, which can vary based on
+              different factors. For example, the augmentation values might be
+              different for each product or category.
             </p>
             <p>
-              The real advantage of this feature comes into play when you have a variety of items with differing attributes. You can effectively utilize these dynamic placeholders to personalize and enhance the display of each item, thereby creating a unique and interactive experience on your landing pages.
+              The real advantage of this feature comes into play when you have a
+              variety of items with differing attributes. You can effectively
+              utilize these dynamic placeholders to personalize and enhance the
+              display of each item, thereby creating a unique and interactive
+              experience on your landing pages.
             </p>
-            <v-img :src="require('./assets/agument-1.png')" :aspect-ratio="2000/1290" class="mb-5"></v-img>
+            <v-img
+              :src="require('./assets/agument-1.png')"
+              :aspect-ratio="2000 / 1290"
+              class="mb-5"
+            ></v-img>
             <p>
-              To assign dynamic values to images, click on the feeder button located on the left side of the section.
+              To assign dynamic values to images, click on the feeder button
+              located on the left side of the section.
             </p>
-            <v-img :src="require('./assets/agument-2.png')" :aspect-ratio="2000/1290" class="mb-5"></v-img>
+            <v-img
+              :src="require('./assets/agument-2.png')"
+              :aspect-ratio="2000 / 1290"
+              class="mb-5"
+            ></v-img>
             <p>
-              You now have the ability to modify the image URL and assign it a dynamic value.
+              You now have the ability to modify the image URL and assign it a
+              dynamic value.
             </p>
-            <v-img :src="require('./assets/agument-3.png')" :aspect-ratio="2000/1290" class="mb-5"></v-img>
+            <v-img
+              :src="require('./assets/agument-3.png')"
+              :aspect-ratio="2000 / 1290"
+              class="mb-5"
+            ></v-img>
             <p>
-              For every product, you have the ability to assign dedicated key-value pairs.
+              For every product, you have the ability to assign dedicated
+              key-value pairs.
             </p>
-            <v-img :src="require('./assets/agument-4.png')" :aspect-ratio="2000/1290" class="mb-5"></v-img>
+            <v-img
+              :src="require('./assets/agument-4.png')"
+              :aspect-ratio="2000 / 1290"
+              class="mb-5"
+            ></v-img>
             <p>
-              This is the final outcome of the page, where placeholders have been substituted with augmented values.
+              This is the final outcome of the page, where placeholders have
+              been substituted with augmented values.
             </p>
-            <v-img :src="require('./assets/agument-5.png')" :aspect-ratio="2000/1290" class="mb-5"></v-img>
-
+            <v-img
+              :src="require('./assets/agument-5.png')"
+              :aspect-ratio="2000 / 1290"
+              class="mb-5"
+            ></v-img>
           </v-container>
         </v-card-text>
 
@@ -198,7 +230,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
   </div>
 </template>
 
@@ -206,18 +237,17 @@
 import SImageUploader from "@components/uploader/SImageUploader.vue";
 
 export default {
-  name: "AugmentForm",
-  components: {SImageUploader },
+  name: "SBackofficePageAugmentForm",
+  components: { SImageUploader },
   props: {
     value: {},
-    loading:{type:Boolean}
+    loading: { type: Boolean },
   },
 
   data: function () {
     return {
       show_add: false,
-      help_dialog:false,
-
+      help_dialog: false,
     };
   },
   computed: {

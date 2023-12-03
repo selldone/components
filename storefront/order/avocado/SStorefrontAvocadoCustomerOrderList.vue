@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--shop-avocado-customer-order-list border-between-vertical">
+  <div class="s--storefront-avocado-customer-order-list border-between-vertical">
     <p v-if="orders.length" class="subtitle-2 text-start border-0">
       {{ $t("avocado.last_orders") }}
       :
@@ -21,9 +21,14 @@
     <router-link
       v-for="item in orders"
       :key="item.id"
-      class="subtitle-2 px-1 py-1 row-hover pointer-pointer d-flex flex-column justify-content-center"
+      class="subtitle-2 px-1 row-hover pointer-pointer d-flex flex-column justify-content-center"
       :to="{ name: 'AvocadoOrderPage', params: { hash: item.hash } }"
-      style="min-height: 120px;color: #000;"
+      style="
+        min-height: 120px;
+        color: #000;
+        padding-top: 32px;
+        padding-bottom: 32px;
+      "
     >
       <div class="d-flex align-items-center">
         <img
@@ -38,7 +43,9 @@
           <span class="small d-block text-ellipsis">{{ item.message }}</span>
 
           <div class="border-between d-flex text-center my-1">
-            <b class="w-50 english-field avocado-order-code highlight-yellow">AVO-{{ item.id }}</b>
+            <b class="w-50 english-field avocado-order-code highlight-yellow"
+              >AVO-{{ item.id }}</b
+            >
 
             <small class="w-50" :title="getLocalTimeString(item.created_at)">{{
               getFromNowString(item.created_at)
@@ -56,9 +63,8 @@
           </v-progress-linear>
         </div>
 
-
         <div class="flex-grow-1 text-center px-1" style="min-width: 50px">
-          <order-status-view :status="item.status"></order-status-view>
+          <s-order-status-view :status="item.status"></s-order-status-view>
         </div>
         <div
           class="font-weight-black flex-grow-1 text-center"
@@ -105,7 +111,11 @@
         </div>
       </div>
 
-      <products-dense-images-circles raw-images-path v-if="item.items && item.items.some(i=>i.image)"     :ids="getItemsImages(item)"></products-dense-images-circles>
+      <products-dense-images-circles
+        raw-images-path
+        v-if="item.items && item.items.some((i) => i.image)"
+        :ids="getItemsImages(item)"
+      ></products-dense-images-circles>
 
       <status-stepper
         v-if="item.status === BasketStatus.Payed.code"
@@ -119,15 +129,14 @@
 </template>
 
 <script>
-import OrderStatusView from "@components/backoffice/basket/OrderStatusView.vue";
+import SOrderStatusView from "@components/order/order-status/SOrderStatusView.vue";
 import { AvocadoOrderStates } from "@core/enums/avocado/AvocadoOrderStates";
 import StatusStepper from "@components/storefront/order/order-status/StatusStepper.vue";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
-import ProductsDenseImagesCircles
-  from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 export default {
-  name: "SShopAvocadoCustomerOrderList",
-  components: {ProductsDenseImagesCircles, StatusStepper, OrderStatusView },
+  name: "SStorefrontAvocadoCustomerOrderList",
+  components: { ProductsDenseImagesCircles, StatusStepper, SOrderStatusView },
   props: {
     orders: {},
   },
@@ -141,10 +150,9 @@ export default {
   methods: {
     getItemsImages(basket) {
       const out = [];
-        basket.items.forEach((item) => {
-          if(item.image)
-          out.push(item.image);
-        });
+      basket.items.forEach((item) => {
+        if (item.image) out.push(item.image);
+      });
       return out;
     },
   },
@@ -152,27 +160,23 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--shop-avocado-customer-order-list{
+.s--storefront-avocado-customer-order-list {
 
 }
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-avocado-customer-order-list{
-  .avocado-order-code{
+.s--storefront-avocado-customer-order-list {
+  .avocado-order-code {
     min-width: min-content;
 
     font-weight: 300;
     font-size: 1.2rem;
   }
 }
-
-
 </style>

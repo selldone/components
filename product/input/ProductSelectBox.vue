@@ -163,7 +163,7 @@
     </div>
 
     <div v-if="busy_fetch" class="text-center">
-      <loading css-mode light></loading>
+      <s-loading css-mode light></s-loading>
     </div>
 
     <div
@@ -229,11 +229,11 @@
 import ProductsSelectAdmin from "@components/backoffice/product/ProductsSelectAdmin.vue";
 import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
-import Loading from "@components/ui/loading/loading.vue";
+import SLoading from "@components/ui/loading/SLoading.vue";
 export default {
   name: "ProductSelectBox",
   components: {
-    Loading,
+    SLoading,
     ProductVariantsView,
     VariantItemMini,
     ProductsSelectAdmin,

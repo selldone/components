@@ -32,6 +32,7 @@
     :height="
       $vuetify.breakpoint.mdAndDown ? 'calc(100% - 48px)' : 'calc(100% - 16px)'
     "
+    class="s--storefront-products-filter-menu"
   >
     <v-list dense nav class="py-0">
       <v-list-item two-line>
@@ -205,7 +206,7 @@ import { ProductVariants } from "@core/enums/product/ProductVariants";
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
 
 export default {
-  name: "ProductFilterMenu",
+  name: "SStorefrontProductsFilterMenu",
   components: { SSmartToggle, SelectionList },
   props: {
     value: {},
@@ -660,4 +661,17 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--storefront-products-filter-menu {
+}
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--storefront-products-filter-menu{
+
+}
+</style>

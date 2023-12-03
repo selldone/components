@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--shop-avocado-customer-order-form">
+  <div class="s--storefront-avocado-customer-order-form">
     <!-- ................ Show Avocado Details ................ -->
     <div class="text-start">
       <h1>{{ shop_avocado.title }}</h1>
@@ -91,7 +91,11 @@
       </div>
 
       <p class="mb-0 mt-4 subtitle-2">{{ $t("avocado.items_list") }}:</p>
-      <s-shop-avocado-customer-order-items :avocado="avocado" :items="items" class="my-5">
+      <s-shop-avocado-customer-order-items
+        :avocado="avocado"
+        :items="items"
+        class="my-5"
+      >
       </s-shop-avocado-customer-order-items>
 
       <div v-if="need_address" class="mb-12">
@@ -180,7 +184,7 @@ import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SShopCustomerReceiverInfoWidget from "../delivery/SShopCustomerReceiverInfoWidget.vue";
 import CurrencyList from "@components/ui/currency/CurrencyList.vue";
 export default {
-  name: "SShopAvocadoCustomerOrderForm",
+  name: "SStorefrontAvocadoCustomerOrderForm",
   components: {
     CurrencyList,
     SShopCustomerReceiverInfoWidget,
@@ -280,14 +284,13 @@ export default {
     saveInfo(info) {
       this.busy_save = true;
 
-
-      window.$storefront.avocado.updateReceiverInfo(this.avocado.hash,info)
+      window.$storefront.avocado
+        .updateReceiverInfo(this.avocado.hash, info)
         .then(({ avocado }) => {
-            this.avocado.receiver_info = avocado.receiver_info;
-            this.random = Math.random();
+          this.avocado.receiver_info = avocado.receiver_info;
+          this.random = Math.random();
 
-            this.$forceUpdate();
-
+          this.$forceUpdate();
         })
         .catch((error) => {
           this.showLaravelError(error);
@@ -300,19 +303,24 @@ export default {
     addItem() {
       this.busy_save_items = true;
 
-
-
-      window.$storefront.avocado.addItem(this.avocado.hash,this.title,this.message,this.link,this.selected_file,this.count)
+      window.$storefront.avocado
+        .addItem(
+          this.avocado.hash,
+          this.title,
+          this.message,
+          this.link,
+          this.selected_file,
+          this.count
+        )
 
         .then(({ item }) => {
-            this.AddOrUpdateItemByID(this.avocado.items, item);
+          this.AddOrUpdateItemByID(this.avocado.items, item);
 
-            this.title = null;
-            this.message = null;
-            this.link = null;
-            this.selected_file = null;
-            this.count = 1;
-
+          this.title = null;
+          this.message = null;
+          this.link = null;
+          this.selected_file = null;
+          this.count = 1;
         })
         .catch((error) => {
           this.showLaravelError(error);
@@ -325,14 +333,15 @@ export default {
     reserveAvocado() {
       this.busy_submit = true;
 
-      window.$storefront.avocado.submitOrder(this.avocado.hash,this.avocado.currency)
+      window.$storefront.avocado
+        .submitOrder(this.avocado.hash, this.avocado.currency)
         .then(({ avocado }) => {
-            this.$emit("add", avocado);
+          this.$emit("add", avocado);
 
-            this.showSuccessAlert(
-              null,
-              this.$t("avocado.notifications.order_success")
-            );
+          this.showSuccessAlert(
+            null,
+            this.$t("avocado.notifications.order_success")
+          );
         })
         .catch((error) => {
           this.showLaravelError(error);
@@ -349,15 +358,12 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-avocado-customer-order-form{
-
+.s--storefront-avocado-customer-order-form {
 }
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-avocado-customer-order-form{
-
+.s--storefront-avocado-customer-order-form {
 }
 </style>

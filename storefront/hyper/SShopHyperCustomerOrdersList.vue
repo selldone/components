@@ -21,9 +21,9 @@
     <router-link
       v-for="item in orders"
       :key="item.id"
-      class="subtitle-2 px-1 py-1 row-hover pointer-pointer black--text d-flex flex-column justify-content-center"
+      class="subtitle-2 px-1 row-hover pointer-pointer black--text d-flex flex-column justify-content-center"
       :to="{ name: 'HyperOrderPage', params: { basket_id: item.id } }"
-      style="min-height: 120px"
+      style="min-height: 120px;padding-top: 32px;padding-bottom: 32px"
     >
       <div class="d-flex align-items-center">
         <img
@@ -38,7 +38,9 @@
           <span class="small d-block text-ellipsis">{{ item.message }}</span>
 
           <div class="border-between d-flex text-center my-1">
-            <b class="w-50 english-field avocado-code highlight-yellow">HYP-{{ item.id }}</b>
+            <b class="w-50 english-field avocado-code highlight-yellow"
+              >HYP-{{ item.id }}</b
+            >
 
             <small class="w-50" :title="getLocalTimeString(item.created_at)">{{
               getFromNowString(item.created_at)
@@ -56,7 +58,7 @@
           </v-progress-linear>
         </div>
         <div class="flex-grow-1 text-center px-1" style="min-width: 50px">
-          <order-status-view :status="item.status"></order-status-view>
+          <s-order-status-view :status="item.status"></s-order-status-view>
         </div>
         <div
           class="font-weight-black flex-grow-1 text-center"
@@ -102,8 +104,9 @@
           >
         </div>
       </div>
-      <products-dense-images-circles    :ids="getProductsIDs(item)"></products-dense-images-circles>
-
+      <products-dense-images-circles
+        :ids="getProductsIDs(item)"
+      ></products-dense-images-circles>
 
       <status-stepper
         v-if="item.status === BasketStatus.Payed.code"
@@ -117,16 +120,15 @@
 </template>
 
 <script>
-import OrderStatusView from "@components/backoffice/basket/OrderStatusView.vue";
+import SOrderStatusView from "@components/order/order-status/SOrderStatusView.vue";
 import { AvocadoOrderStates } from "@core/enums/avocado/AvocadoOrderStates";
 import StatusStepper from "@components/storefront/order/order-status/StatusStepper.vue";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
-import ProductsDenseImagesCircles
-  from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopHyperCustomerOrdersList",
-  components: {ProductsDenseImagesCircles, StatusStepper, OrderStatusView },
+  components: { ProductsDenseImagesCircles, StatusStepper, SOrderStatusView },
   props: {
     orders: {},
   },
@@ -140,39 +142,32 @@ export default {
   methods: {
     getProductsIDs(basket) {
       const out = [];
-        basket.items.forEach((item) => {
-          if (!out.includes("" + item.product_id))
-            out.push("" + item.product_id);
-        });
+      basket.items.forEach((item) => {
+        if (!out.includes("" + item.product_id)) out.push("" + item.product_id);
+      });
       return out;
     },
-
   },
 };
 </script>
 
 <style scoped lang="scss">
-
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-hyper-customer-orders-list{
-
+.s--shop-hyper-customer-orders-list {
 }
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--shop-hyper-customer-orders-list{
-  .avocado-code{
+.s--shop-hyper-customer-orders-list {
+  .avocado-code {
     min-width: min-content;
 
     font-weight: 300;
     font-size: 1.2rem;
   }
 }
-
 </style>

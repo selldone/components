@@ -26,7 +26,7 @@ import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import { ProductType } from "@core/enums/product/ProductType";
 
 export default {
-  name: "BasketCodeView",
+  name: "SOrderCodeView",
   props: {
     basket: {},
     isFulfilment: {

@@ -60,7 +60,7 @@
       </v-col>
     </v-row>
 
-    <loading css-mode v-if="busy_fetch" light></loading>
+    <s-loading css-mode v-if="busy_fetch" light></s-loading>
 
     <!-- Dialog : Post -->
 

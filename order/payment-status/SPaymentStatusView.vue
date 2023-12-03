@@ -13,44 +13,41 @@
   -->
 
 <template>
-  <fade-scroll class="text-start">
-    <div class="d-flex" title="Dynamic values auto fill by augmentation.">
-      <v-chip label v-for="it in array" :key="it" x-small class="me-1">{{
-        it
-      }}</v-chip>
-    </div>
-  </fade-scroll>
+  <span v-if="statusObject">
+    <v-icon class="me-1" :color="status === 'Succeeded' ? 'green' : ''">{{
+      statusObject.icon
+    }}</v-icon>
+
+    <small>{{ $t(statusObject.name) }}</small>
+  </span>
 </template>
 
 <script>
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
 
 export default {
-  name: "AugmentKeysFinder",
-  components: { FadeScroll },
+  name: "SPaymentStatusView",
   props: {
-    value: {},
-  },
-
-  data: function () {
-    return {
-      show_add: false,
-    };
-  },
-  computed: {
-    array() {
-      return this.value?.findAllDynamicAugmentKeys().unique(); // Find all {{key}}
+    status: {
+      require: true,
     },
   },
-
-  watch: {},
-
-  created() {
-
+  computed: {
+    statusObject() {
+      return TransactionStatus[this.status];
+    },
   },
-
-  methods: {},
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--payment-status-view {
+}
+</style>

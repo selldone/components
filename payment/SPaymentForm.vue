@@ -389,12 +389,12 @@
               <v-expansion-panel class="border rounded-18px">
                 <v-expansion-panel-header>
                   <span>Secure Payment Form</span>
-                  <loading
+                  <s-loading
                     light
                     css-mode
                     v-if="!paypal_js_loaded || busy_get_paypal_client_token"
                   >
-                  </loading>
+                  </s-loading>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content style="border-radius: 12px">
                   <div>

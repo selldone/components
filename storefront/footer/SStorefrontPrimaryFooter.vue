@@ -380,18 +380,18 @@
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Shop Settings Dialog For Customer ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
     <v-dialog v-model="apps_dialog" max-width="720px">
-      <s-shop-cookie-preferences
+      <s-storefront-cookie-preferences
         :shop="shop"
         has-close
         @close="apps_dialog = false"
-      ></s-shop-cookie-preferences>
+      ></s-storefront-cookie-preferences>
     </v-dialog>
   </v-sheet>
 </template>
 
 <script>
 import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
-import SShopCookiePreferences from "../cookie/SShopCookiePreferences.vue";
+import SStorefrontCookiePreferences from "../cookie/SStorefrontCookiePreferences.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 
 import SetupService from "@core/server/SetupService";
@@ -403,7 +403,7 @@ export default {
     SShopLanguageSelector,
 
     SStorefrontSocialButtons,
-    SShopCookiePreferences,
+    SStorefrontCookiePreferences,
     SCurrencySelector,
   },
   props: {

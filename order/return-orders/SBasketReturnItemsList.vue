@@ -254,7 +254,7 @@ import VariantItemViewMicro from "@components/product/variant/VariantItemViewMic
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
 
 export default {
-  name: "BasketReturnItemsRequestView",
+  name: "SBasketReturnItemsList",
   components: {
     SValueDashed,
     VariantItemViewMicro,

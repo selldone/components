@@ -51,7 +51,7 @@
           :shop="shop"
         ></s-shop-main-header-logo>
 
-        <loading css-mode v-else-if="!shop"></loading>
+        <s-loading css-mode v-else-if="!shop"></s-loading>
 
         <v-spacer />
 
@@ -391,7 +391,7 @@
 
 <script>
 import BasketTopMenu from "../order/basket/BasketTopMenu.vue";
-import Loading from "@components/ui/loading/loading.vue";
+import SLoading from "@components/ui/loading/SLoading.vue";
 
 import WheelOfFortune from "@components/storefront/incentives/lottery/WheelOfFortune.vue";
 import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
@@ -413,7 +413,7 @@ export default {
     SCurrencySelector,
 
     WheelOfFortune,
-    Loading,
+    SLoading,
 
     BasketTopMenu,
   },

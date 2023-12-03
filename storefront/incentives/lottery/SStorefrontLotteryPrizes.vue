@@ -16,7 +16,7 @@
   <v-container
     v-if="lotteries && lotteries.length"
     fluid
-    class="s--shop-lottery-prizes"
+    class="s--storefront-lottery-prizes"
   >
     <widget-header
       :title="$t('global.commons.Prizes')"
@@ -144,7 +144,7 @@
 import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 import _ from "lodash-es";
 export default {
-  name: "SShopLotteryPrizes",
+  name: "SStorefrontLotteryPrizes",
   components: { FadeScroll },
   props: {
     productId: {},
@@ -251,7 +251,7 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-lottery-prizes {
+.s--storefront-lottery-prizes {
   text-align: start;
 
   .prize-slide {

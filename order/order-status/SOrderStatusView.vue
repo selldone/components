@@ -54,7 +54,7 @@ import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import TimeProgressBar from "../../ui/calendar/TimeProgressBar.vue";
 
 export default {
-  name: "OrderStatusView",
+  name: "SOrderStatusView",
   components: { TimeProgressBar },
   props: {
     status: {

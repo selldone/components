@@ -75,7 +75,7 @@
 
 <script>
 export default {
-  name: "GatewayNetworkStatus",
+  name: "SBackofficeGatewayNetworkStatus",
   props: {
     network: {},
   },

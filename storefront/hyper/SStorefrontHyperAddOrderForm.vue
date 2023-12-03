@@ -144,7 +144,7 @@ import Stamp from "@components/ui/stamp/Stamp.vue";
 import _ from "lodash-es";
 
 export default {
-  name: "SShopHyperAddOrderForm",
+  name: "SStorefrontHyperAddOrderForm",
   components: {
     Stamp,
     SShopHyperProductView,

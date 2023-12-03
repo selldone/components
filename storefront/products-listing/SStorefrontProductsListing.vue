@@ -24,7 +24,7 @@
 
     <!-- ███████████████████ Products & Categories List ███████████████████ -->
     <div
-      class="s--products-list"
+      class="s--storefront-products-listing"
       :class="{
         rtl: $vuetify.rtl,
         'position-relative':
@@ -258,10 +258,9 @@
           >{{ remains_count }} {{ $t("global.actions.more") }}</v-btn
         >
 
-        <product-filter-menu
+        <s-storefront-products-filter-menu
           v-if="has_filter"
           v-model="show_filter_menu"
-          class="product-filter-menu"
           :folders="folders"
           :parent-folders="parent_folders"
           @change-filter="setFilter"
@@ -335,7 +334,7 @@ import SShopProductCard from "@components/product/card/SShopProductCard.vue";
 import SProductsSortView from "@components/product/sort/SProductsSortView.vue";
 import CategoryCard from "@components/backoffice/category/CategoryCard.vue";
 import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
-import ProductFilterMenu from "@components/storefront/filter/ProductFilterMenu.vue";
+import SStorefrontProductsFilterMenu from "@components/storefront/filter/SStorefrontProductsFilterMenu.vue";
 import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
 import GtagEcommerce from "@components/plugins/gtag/GtagEcommerce";
 import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
@@ -347,13 +346,13 @@ import { ModeView } from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
 
 export default {
-  name: "SShopProductsListing",
+  name: "SStorefrontProductsListing",
   components: {
     ProductInfoLoadingView,
     SBreadcrumbImage,
     ProductSpecView,
     SShopProductMainCard,
-    ProductFilterMenu,
+    SStorefrontProductsFilterMenu,
     CategoryCard,
     SProductsSortView,
     SShopProductCard,
@@ -1140,15 +1139,15 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--products-list {
+.s--storefront-products-listing {
 }
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--products-list {
-  .product-filter-menu {
+.s--storefront-products-listing {
+  .s--storefront-products-filter-menu {
     z-index: 100;
     border-radius: 8px;
   }

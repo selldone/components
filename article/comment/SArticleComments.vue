@@ -142,7 +142,7 @@
           />
         </transition-group>
 
-        <loading v-if="busy" css-mode light></loading>
+        <s-loading v-if="busy" css-mode light></s-loading>
         <v-btn
           v-if="more && !busy"
           depressed

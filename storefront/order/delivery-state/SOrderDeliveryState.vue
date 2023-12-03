@@ -224,7 +224,7 @@ import CountDown from "@components/ui/count-down/CountDown.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 
 export default {
-  name: "SShopDeliveryState",
+  name: "SOrderDeliveryState",
   components: { CountDown },
   props: {
     basket: {

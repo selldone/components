@@ -16,7 +16,7 @@
   <v-container
     v-if="(coupons && coupons.length) || forceShow"
     fluid
-    class="s--coupons-list"
+    class="s--storefront-coupons"
   >
     <p v-if="!forceShow" class="small font-weight-bold">
       <v-btn
@@ -126,7 +126,7 @@ import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
 import _ from "lodash-es";
 
 export default {
-  name: "SCoupons",
+  name: "SStorefrontCoupons",
   components: { FadeScroll, SCoupon },
   props: {
     productId: {},
@@ -345,7 +345,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.s--coupons-list {
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--storefront-coupons {
   text-align: start;
   .coupon-slide {
     width: 220px;

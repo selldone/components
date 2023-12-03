@@ -143,7 +143,7 @@
       :class="{ full: !hasBottomBar }"
     >
       <!-- Pre loading -->
-      <loading css-mode light v-if="!map_box" class="center-absolute"></loading>
+      <s-loading css-mode light v-if="!map_box" class="center-absolute"></s-loading>
       <!-- MAP -->
       <div
         :id="`map_box${map_id}`"

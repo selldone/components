@@ -246,7 +246,7 @@
 
 <script>
 import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
-import BasketItemUserMessageForm from "@components/backoffice/basket/BasketItemUserMessageForm.vue";
+import BasketItemUserMessageForm from "@components/order/product-input/BasketItemUserMessageForm.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import SShopBasketItemCountSelect from "./SShopBasketItemCountSelect.vue";
 import ServiceOrderView from "@components/product/service/ServiceOrderView.vue";

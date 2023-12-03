@@ -97,7 +97,7 @@
           class="flex-grow-1"
         >
           <template v-slot:loading>
-            <loading css-mode light></loading>
+            <s-loading css-mode light></s-loading>
           </template>
           <template v-slot:no-data>
             <v-icon size="80" color="#ddd" class="center-absolute"
