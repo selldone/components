@@ -38,13 +38,13 @@
         {{ $t("global.service.appointment.message") }}
       </p>
 
-      <week-day-time-table
+      <s-week-day-time-picker
         editable
         v-model="preferences.days"
         :restrictions="outputs.days"
         class="my-2 max-width-field-large mx-auto"
         @change="onChange"
-      ></week-day-time-table>
+      ></s-week-day-time-picker>
     </div>
 
     <!-- ----------------------- Booking ----------------------- -->
@@ -108,12 +108,12 @@
 
 <script>
 import { ServiceTypes } from "@core/enums/product/ServiceTypes";
-import WeekDayTimeTable from "@components/ui/calendar/WeekDayTimeTable.vue";
+import SWeekDayTimePicker from "@components/ui/calendar/week-time-picker/SWeekDayTimePicker.vue";
 import _ from "lodash-es";
 
 export default {
   name: "ServiceOrderView",
-  components: { WeekDayTimeTable },
+  components: { SWeekDayTimePicker },
   props: {
     product: {
       require: true,

@@ -234,7 +234,7 @@
             </p>
           </div>
           <div class="w-50 pt-2">
-            <time-progress-bar
+            <s-time-progress-bar
               class="mx-auto"
               :created-time="product.created_at"
               :start-time="product.dis_start"
@@ -450,14 +450,14 @@
 
 <script>
 import CircleImage from "@components/ui/image/CircleImage.vue";
-import TimeProgressBar from "@components/ui/calendar/TimeProgressBar.vue";
+import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
 import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import { ProductCondition } from "@core/enums/product/ProductCondition";
 import { PricingTypes } from "@core/enums/product/PricingTypes";
 export default {
   name: "WidgetProductCard",
-  components: { ProductVariantsView, TimeProgressBar, CircleImage },
+  components: { ProductVariantsView, STimeProgressBar, CircleImage },
   props: {
     product: {
       required: true,

@@ -15,7 +15,7 @@
 <template>
   <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Icon Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
   <div v-if="iconOnly" class="inline-block">
-    <circle-button
+    <s-circle-button
       dense
       :color="iconColor"
       :tooltip="selectedCurrency"
@@ -30,7 +30,7 @@
       <template v-slot:tooltip>
         <flag :iso="GetCurrency(selectedCurrency).flag" :squared="false" />
       </template>
-    </circle-button>
+    </s-circle-button>
 
     <v-dialog
       v-model="dialog"

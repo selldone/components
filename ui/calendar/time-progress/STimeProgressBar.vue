@@ -80,7 +80,7 @@
 import { DateConverter } from "@core/helper/date/DateConverter";
 
 export default {
-  name: "TimeProgressBar",
+  name: "STimeProgressBar",
 
   props: {
     createdTime: {},

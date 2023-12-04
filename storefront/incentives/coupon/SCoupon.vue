@@ -36,11 +36,11 @@
       <p class="coupon-description">{{ coupon.description }}</p>
 
       <v-spacer></v-spacer>
-      <time-progress-bar
+      <s-time-progress-bar
         :start-time="coupon.start"
         :end-time="coupon.end"
         small
-      ></time-progress-bar>
+      ></s-time-progress-bar>
 
       <p class="m-0 mt-1" v-if="coupon.charge">
         <v-icon small class="me-1" color="#333">card_giftcard add</v-icon>
@@ -123,10 +123,10 @@
 </template>
 
 <script>
-import TimeProgressBar from "@components/ui/calendar/TimeProgressBar.vue";
+import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
 export default {
   name: "SCoupon",
-  components: { TimeProgressBar },
+  components: { STimeProgressBar },
   props: {
     coupon: {
       require: true,

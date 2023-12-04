@@ -38,24 +38,24 @@
     </div>
 
     <small class="d-block text-ellipsis">{{ title }}</small>
-    <time-progress-bar
+    <s-time-progress-bar
       v-if="gatewayProcessing"
       class="min-width-100"
       small
       :created-time="gatewayProcessing.created_at"
       :start-time="gatewayProcessing.issued_at"
       :end-time="gatewayProcessing.expire_at"
-    ></time-progress-bar>
+    ></s-time-progress-bar>
   </span>
 </template>
 
 <script>
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
-import TimeProgressBar from "../../ui/calendar/TimeProgressBar.vue";
+import STimeProgressBar from "../../ui/calendar/time-progress/STimeProgressBar.vue";
 
 export default {
   name: "SOrderStatusView",
-  components: { TimeProgressBar },
+  components: { STimeProgressBar },
   props: {
     status: {
       require: true,

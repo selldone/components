@@ -62,7 +62,7 @@
           </v-card>
         </v-col>
         <v-col key="new" cols="12" md="4" style="font-size: 12px">
-          <add-button-green
+          <s-add-button-green
             icon="add"
             class="rounded-18px"
             :caption="$t('global.json.add')"
@@ -70,7 +70,7 @@
             @click="showDialog()"
             min-height="160px"
           >
-          </add-button-green>
+          </s-add-button-green>
         </v-col>
       </v-scroll-y-transition>
     </div>
@@ -178,12 +178,12 @@
 </template>
 
 <script>
-import AddButtonGreen from "../ui/button/AddButtonGreen.vue";
+import SAddButtonGreen from "../ui/button/add/SAddButtonGreen.vue";
 import SStructureDataInput from "./SStructureDataInput.vue";
 
 export default {
   name: "SArticleStructuredData",
-  components: { SStructureDataInput, AddButtonGreen },
+  components: { SStructureDataInput, SAddButtonGreen },
 
   props: {
     value: {},

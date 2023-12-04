@@ -81,7 +81,7 @@
 
 <script>
 export default {
-  name: "WidgetInfoBox",
+  name: "SWidgetBox",
   components: {},
   props: {
     title: {

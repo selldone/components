@@ -128,7 +128,7 @@
       prepend-icon="account_balance_wallet"
       rounded
     ></currency-list>
-    <date-time-picker-global
+    <s-date-input
       v-else-if="type === 'date'"
       class="max-width-field mb-3"
       :label="name"
@@ -137,7 +137,7 @@
       @input="(val) => $emit('input', val)"
       format="YYYY-MM-DDTHH:mm:ssZ"
       rounded
-    ></date-time-picker-global>
+    ></s-date-input>
 
     <div v-else-if="type === 'duration'" class="mb-3">
       <v-text-field
@@ -203,7 +203,7 @@
 <script>
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
 import CurrencyList from "@components/ui/currency/CurrencyList.vue";
-import DateTimePickerGlobal from "../ui/calendar/dateTimePickerGlobal.vue";
+import SDateInput from "../ui/calendar/date-input/SDateInput.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 const ActionPlatform = [
   "http://schema.org/DesktopWebPlatform",
@@ -239,7 +239,7 @@ export default {
   name: "SStructureDataInput",
   components: {
     SNumberInput,
-    DateTimePickerGlobal,
+    SDateInput,
     CurrencyList,
     SPriceInput,
   },

@@ -29,7 +29,7 @@
 import { StringToColour } from "@core/helper/color/ColorGenerator";
 
 export default {
-  name: "VTextAvatar",
+  name: "STextAvatar",
   props: {
     name: { required: true },
     size: {},

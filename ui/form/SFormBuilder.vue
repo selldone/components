@@ -41,7 +41,7 @@
             messages="Allowed tags: <h1>...<h5>, <br>, <b>, <i>, <a>,<ol>,<ul>, <li>, <hr>, <img>"
             color="primary"
           />
-          <circle-button
+          <s-circle-button
             icon="close"
             :title="$t('global.actions.delete')"
             color="#D32F2F"
@@ -86,7 +86,7 @@
             />
           </div>
 
-          <circle-button
+          <s-circle-button
             icon="close"
             :title="$t('global.actions.delete')"
             color="#D32F2F"
@@ -247,11 +247,10 @@
 </template>
 
 <script>
-import CircleButton from "@components/ui/button/CircleButton.vue";
 import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 export default {
   name: "SFormBuilder",
-  components: { SSmartSwitch, CircleButton },
+  components: { SSmartSwitch },
   props: {
     structure: {
       required: false,

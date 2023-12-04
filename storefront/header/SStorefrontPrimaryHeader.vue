@@ -64,7 +64,7 @@
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Orders history ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <circle-button
+        <s-circle-button
           v-if="show_top_cart && !isMobile"
           class="mx-3 fadeIn delay_300"
           :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }"
@@ -74,11 +74,11 @@
           dense
           :color="is_light_header ? '#333' : '#fff'"
         >
-        </circle-button>
+        </s-circle-button>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Basket Top Menu ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <circle-button
+        <s-circle-button
           v-if="show_top_cart && !isMobile"
           class="mx-3 fadeIn delay_300"
           @click="show_basket = true"
@@ -91,7 +91,7 @@
           badge-color="teal"
           :color="is_light_header ? '#333' : '#fff'"
         >
-        </circle-button>
+        </s-circle-button>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User Badges ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 

@@ -26,13 +26,13 @@
     <div
       v-for="day in WeekDays"
       :key="day.value"
-      class="t-d "
+      class="t-d"
       @click="onClick"
       @mousedown="onDragstart"
       @mouseup="onDragend"
       @mousemove="onDragover"
-      :class="{'pointer-event-none':!editable}"
-      :style="{'--dis-color':disColor,'--active-color':activeColor}"
+      :class="{ 'pointer-event-none': !editable }"
+      :style="{ '--dis-color': disColor, '--active-color': activeColor }"
     >
       <div
         class="th-h -name"
@@ -51,7 +51,7 @@
             inDragMode(day.value, h),
           '-now': isNow(day.value, h),
           '-green': isPointed(day.value, h),
-          '-dis':!isAllowed(day.value, h)
+          '-dis': !isAllowed(day.value, h),
         }"
       ></div>
     </div>
@@ -63,41 +63,37 @@ import { WeekDays } from "@core/enums/logistic/WeekDays";
 import { DateConverter } from "@core/helper/date/DateConverter";
 
 export default {
-  name: "WeekDayTimeTable",
+  name: "SWeekDayTimePicker",
   props: {
-    value: {
-
-    },
+    value: {},
     pointedTimeUtc: {},
     editable: {
       type: Boolean,
       default: false,
     },
-    restrictions:{},  // Available times. Ex. {"Thursday": [ 14, ... ], "Friday": [ 14, ... ], "Saturday": [ 10 ] }
-    disColor:{
-      default:'#666'
+    restrictions: {}, // Available times. Ex. {"Thursday": [ 14, ... ], "Friday": [ 14, ... ], "Saturday": [ 10 ] }
+    disColor: {
+      default: "#666",
     },
-    activeColor:{
-      default:'#0288d1'
+    activeColor: {
+      default: "#0288d1",
     },
   },
 
   data: () => ({
-   // WeekDays: WeekDays,
-
     drag_day: null,
     drag_hour: null,
     drag_day_end: null,
     drag_hour_end: null,
   }),
   computed: {
-    day_offset(){
-      return this.getCurrentLanguage().calendar.first_day_of_week
+    day_offset() {
+      return this.getCurrentLanguage().calendar.first_day_of_week;
     },
 
-    WeekDays(){
-      return Object.values(WeekDays).rotateRight(this.day_offset)
-    }
+    WeekDays() {
+      return Object.values(WeekDays).rotateRight(this.day_offset);
+    },
   },
   watch: {},
   created() {
@@ -118,11 +114,11 @@ export default {
       else if (!this.value[day].includes(hour)) this.value[day].push(hour);
       else this.remove(this.value[day], hour);
 
-      const new_val=Object.assign(this.value);
-      this.$emit("input",new_val );
+      const new_val = Object.assign(this.value);
+      this.$emit("input", new_val);
 
       this.$forceUpdate();
-      this.$emit('change',new_val)
+      this.$emit("change", new_val);
       //console.log("onClick", day, hour, this.value);
     },
 
@@ -184,9 +180,8 @@ export default {
       for (let d = d_s; d <= d_e; d++) {
         const day = Object.keys(WeekDays)[d];
         for (let hour = h_s; hour <= h_e; hour++) {
-
           // Check allowed:
-          if(!this.isAllowed(day,hour)){
+          if (!this.isAllowed(day, hour)) {
             //console.log('isAllowed' , false)
             continue;
           }
@@ -197,13 +192,13 @@ export default {
         }
       }
 
-      const new_val=Object.assign(this.value);
+      const new_val = Object.assign(this.value);
 
       this.$emit("input", new_val);
       this.$forceUpdate();
       this.resetDrag();
 
-      this.$emit('change',new_val)
+      this.$emit("change", new_val);
 
       //console.log("onDragend", e,day,hour);
     },
@@ -246,12 +241,12 @@ export default {
       const date = DateConverter.convertToLocalTime(this.pointedTimeUtc);
       const day_i = Object.keys(WeekDays).indexOf(day);
 
-     // console.log(date);
+      // console.log(date);
       return date.getDay() === day_i && date.getHours() === hour;
     },
     //--------------------------------------------------------
     toggleDay(day) {
-      if(!this.editable)return;
+      if (!this.editable) return;
       if (
         !this.value[day] ||
         !Array.isArray(this.value[day]) ||
@@ -262,30 +257,26 @@ export default {
       } else {
         this.value[day] = null;
       }
-      const new_val=Object.assign(this.value);
+      const new_val = Object.assign(this.value);
 
       this.$emit("input", new_val);
       this.$forceUpdate();
-      this.$emit('change',new_val)
-
+      this.$emit("change", new_val);
     },
 
     resetAll() {
-      const new_val={};
+      const new_val = {};
 
       this.$emit("input", new_val);
       this.$forceUpdate();
-      this.$emit('change',new_val)
-
+      this.$emit("change", new_val);
     },
 
     //--------------------------------------------------------
     isAllowed(day, hour) {
-
-      if(!this.restrictions)return true;
-      return this.restrictions[day] && this.restrictions[day].includes(hour)
-    }
-
+      if (!this.restrictions) return true;
+      return this.restrictions[day] && this.restrictions[day].includes(hour);
+    },
   },
 };
 </script>
@@ -330,7 +321,7 @@ export default {
         background-color: #eee;
       }
       &.-active {
-        background-color:  var(--active-color);
+        background-color: var(--active-color);
         color: #fff;
       }
       &.-now,
@@ -351,7 +342,7 @@ export default {
         }
       }
 
-      &.-dis{
+      &.-dis {
         background-color: var(--dis-color);
         pointer-events: none;
       }

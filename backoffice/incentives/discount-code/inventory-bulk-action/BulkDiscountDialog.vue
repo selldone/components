@@ -22,11 +22,18 @@
       scrollable
       transition="dialog-bottom-transition"
     >
-      <v-card >
+      <v-card>
         <v-card-title>
-          <template v-if="category /*Only for this category! In the admin select products view.*/">
+          <template
+            v-if="
+              category /*Only for this category! In the admin select products view.*/
+            "
+          >
             <v-avatar size="36" class="me-2">
-              <img v-if="category.icon" :src="getShopImagePath(category.icon, 64)" />
+              <img
+                v-if="category.icon"
+                :src="getShopImagePath(category.icon, 64)"
+              />
               <v-icon v-else>folder</v-icon>
             </v-avatar>
 
@@ -37,9 +44,10 @@
         </v-card-title>
         <v-card-text class="text-start">
           <div class="widget-box mb-5">
-
-
-            <widget-header :title="$t('global.commons.discount')" icon="discount"></widget-header>
+            <widget-header
+              :title="$t('global.commons.discount')"
+              icon="discount"
+            ></widget-header>
 
             <h2 class="text-center mt-2 mb-5 display-1">
               {{ $t("global.commons.price") }} <v-icon>close</v-icon> %{{
@@ -62,7 +70,7 @@
               class="strong-field"
             ></s-number-input>
 
-            <date-time-picker-global
+            <s-date-input
               return-utc
               v-model="dis_start"
               :max="dis_end"
@@ -73,7 +81,7 @@
               :placeholder="$t('add_product.pricing.start_input_placeholder')"
               prepend-inner-icon="play_arrow"
             />
-            <date-time-picker-global
+            <s-date-input
               return-utc
               v-model="dis_end"
               class="mt-2"
@@ -86,7 +94,7 @@
               prepend-inner-icon="stop"
             />
 
-            <time-progress-bar
+            <s-time-progress-bar
               class="my-2"
               :created-time="new Date()"
               :start-time="dis_start"
@@ -95,12 +103,17 @@
           </div>
 
           <div class="widget-box mb-5">
-
-            <widget-header :title="$t('global.commons.category')" icon="snippet_folder"></widget-header>
-<v-subheader>Limit bulk action to a category and all subcategories.</v-subheader>
+            <widget-header
+              :title="$t('global.commons.category')"
+              icon="snippet_folder"
+            ></widget-header>
+            <v-subheader
+              >Limit bulk action to a category and all
+              subcategories.</v-subheader
+            >
 
             <category-select
-                v-if="!category"
+              v-if="!category"
               v-model="bulk_category"
               :placeholder="$t('global.commons.all') + ' *.*'"
               persistent-placeholder
@@ -109,29 +122,29 @@
               no-home
               :messages="$t('inventory_list.category_filter_msg')"
               @input="fetchReport"
-
             >
             </category-select>
 
-
-          <!-- The category has been selected before! -->
+            <!-- The category has been selected before! -->
             <div v-else class="d-flex align-center text-start">
               <v-avatar :size="32" class="me-2">
-                <img v-if="category.icon" :src="getShopImagePath(category.icon, 64)" />
+                <img
+                  v-if="category.icon"
+                  :src="getShopImagePath(category.icon, 64)"
+                />
                 <v-icon v-else>folder</v-icon>
               </v-avatar>
 
               <div class="flex-grow-1 overflow-hidden">
                 <b>{{ category.title }}</b>
                 <category-parents-view
-                    :category="category"
-                    small
-                    class="d-block"
+                  :category="category"
+                  small
+                  class="d-block"
                 >
                 </category-parents-view>
               </div>
             </div>
-
 
             <!-- ━━━━━━━━━━━━━━━━━━ 📊 Report ━━━━━━━━━━━━━━━━━━ -->
             <s-progress-loading v-if="busy_report"></s-progress-loading>
@@ -175,7 +188,7 @@
               @click="showPreviewList()"
               x-large
             >
-              {{$t('global.actions.show_preview')}}
+              {{ $t("global.actions.show_preview") }}
 
               <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
             </v-btn>
@@ -192,12 +205,11 @@
       transition="dialog-bottom-transition"
       fullscreen
     >
-      <v-card     v-if="dialog_pre">
+      <v-card v-if="dialog_pre">
         <v-card-title> </v-card-title>
 
         <v-card-text>
           <bulk-preview
-
             :url="list_url"
             :shop="shop"
             has-currency
@@ -238,8 +250,8 @@
 </template>
 
 <script>
-import DateTimePickerGlobal from "@components/ui/calendar/dateTimePickerGlobal.vue";
-import TimeProgressBar from "@components/ui/calendar/TimeProgressBar.vue";
+import SDateInput from "@components/ui/calendar/date-input/SDateInput.vue";
+import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
 import CategorySelect from "@components/backoffice/category/CategorySelect.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
@@ -257,8 +269,8 @@ export default {
     WidgetHeader,
     BulkPreview,
     SValueDashed,
-    TimeProgressBar,
-    DateTimePickerGlobal,
+    STimeProgressBar,
+    SDateInput,
     CategorySelect,
 
     SNumberInput,
@@ -269,10 +281,9 @@ export default {
       required: true,
       type: Object,
     },
-    category:{
+    category: {
       // Optional ! Only for this category!
     },
-
   },
   data: () => ({
     bulk_category: null,
@@ -300,7 +311,7 @@ export default {
   watch: {
     value(value) {
       if (value) {
-           this.resetToDefault();      // 🞇 Reset to default
+        this.resetToDefault(); // 🞇 Reset to default
 
         this.$nextTick(() => {
           this.fetchReport();
@@ -308,29 +319,24 @@ export default {
       }
     },
 
-    category(val){
-      this.bulk_category=val?.id
-
-    }
+    category(val) {
+      this.bulk_category = val?.id;
+    },
   },
   created() {
-
-    this.bulk_category=this.category?.id
-    if(this.category){
+    this.bulk_category = this.category?.id;
+    if (this.category) {
       this.fetchReport();
     }
   },
   methods: {
-
-    showPreviewList(){
+    showPreviewList() {
       this.dialog_pre = false;
       this.$nextTick(() => {
         this.dialog_pre = true;
         this.preview = true;
       });
     },
-
-
 
     setBulkDiscount() {
       this.busy_bulk = true;
@@ -363,7 +369,8 @@ export default {
 
     fetchReport: _.throttle(function () {
       this.report = null;
-      this.$nextTick(() => {// Make sure all params updated!
+      this.$nextTick(() => {
+        // Make sure all params updated!
 
         this.busy_report = true;
         axios

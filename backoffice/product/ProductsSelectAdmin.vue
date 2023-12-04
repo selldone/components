@@ -45,7 +45,7 @@
         @dragenter="onDropEnterDuplicate()"
         @dragleave="onDropLeaveDuplicate()"
       >
-        <circle-button
+        <s-circle-button
           class="center"
           icon="fas fa-copy"
           :tooltip="$t('global.actions.copy')"
@@ -691,7 +691,7 @@
           xl="3"
           class="p-2 d-flex flex-column"
         >
-          <add-button-green
+          <s-add-button-green
             icon="library_add"
             :caption="$t('add_product.title_new')"
             message="⌘Ctrl + P"
@@ -700,8 +700,8 @@
             class="mb-1 flex-grow-1"
             :fillHeight="false"
             small
-          ></add-button-green>
-          <add-button-green
+          ></s-add-button-green>
+          <s-add-button-green
             class="mt-1 flex-grow-1"
             icon="flash_on"
             :caption="$t('add_product.title_new')"
@@ -710,7 +710,7 @@
             min-height="100px"
             :fillHeight="false"
             small
-          ></add-button-green>
+          ></s-add-button-green>
         </v-col>
 
         <slot name="append-products"></slot>
@@ -1536,12 +1536,12 @@
 import WidgetProductCard from "@components/backoffice/product/widgets/WidgetProductCard.vue";
 import SProductsSortView from "@components/product/sort/SProductsSortView.vue";
 import WidgetFolderCard from "@components/backoffice/product/widgets/WidgetFolderCard.vue";
-import CircleButton from "@components/ui/button/CircleButton.vue";
+
 import CircleImage from "@components/ui/image/CircleImage.vue";
 import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
 import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
 import SLoading from "@components/ui/loading/SLoading.vue";
-import AddButtonGreen from "@components/ui/button/AddButtonGreen.vue";
+import SAddButtonGreen from "@components/ui/button/add/SAddButtonGreen.vue";
 import AddCategory from "@components/backoffice/category/AddCategory.vue";
 import FolderCardMini from "@components/backoffice/product/widgets/FolderCardMini.vue";
 import ProductCardMini from "@components/backoffice/product/widgets/ProductCardMini.vue";
@@ -1586,11 +1586,11 @@ export default {
     ProductCardMini,
     FolderCardMini,
     AddCategory,
-    AddButtonGreen,
+    SAddButtonGreen,
     SLoading,
     SBreadcrumbImage,
     CircleImage,
-    CircleButton,
+
     WidgetFolderCard,
     SProductsSortView,
     WidgetProductCard,

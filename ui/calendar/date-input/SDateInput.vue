@@ -14,30 +14,6 @@
 
 <template>
   <div>
-    <!--   date_time: {{date_time}}<br>
-      value: {{value}}<br>
-     <date-picker
-              class="data-picker-field-rounded"
-              :class="{ 'not-round': !rounded, dense: dense }"
-              :value="value"
-              :label="label"
-              :placeholder="placeholder"
-              :color="color"
-              :min="min"
-              :max="max"
-              :disabled="disabled"
-              :disable="disable"
-              :type="type"
-              :format="format"
-              :display-format="displayFormat"
-              :clearable="clearable"
-              :locale="window.$language.local"
-              :jump-minute="jumpMinute"
-              :round-minute="!!jumpMinute"
-              @change="$emit('change')"
-              append-to="body"
-  
-      />-->
     <v-text-field
       :rounded="rounded"
       :filled="filled"
@@ -165,10 +141,8 @@
 </template>
 
 <script>
-import { DateConverter } from "@core/helper/date/DateConverter";
-
 export default {
-  name: "dateTimePickerGlobal",
+  name: "SDateInput",
   props: {
     value: {},
     label: {},
@@ -180,10 +154,6 @@ export default {
     jumpMinute: {},
     disable: {}, // Disable date! Ex. "['1397/05/06', /1397\/05\/1(.*)/]" or "['1397/05/07', '1397/05/08', 'Friday']"  or function
 
-    /*range: {
-      type: Boolean,
-      default: false,
-    },*/
     solo: {
       type: Boolean,
       default: false,
@@ -265,7 +235,6 @@ export default {
       if (!this.min || !this.date) return null;
       let d1 = new Date(this.min);
       let d2 = new Date(this.date);
-      // if (!DateConverter.InSameDay(d1, d2)) return null;
       if (d2.getTime() >= d1.getTime()) return null;
 
       // console.log('Selected date is before the min date!',d1,d2);
@@ -280,7 +249,6 @@ export default {
       if (!this.max || !this.date) return null;
       let d1 = new Date(this.max);
       let d2 = new Date(this.date);
-      // if (!DateConverter.InSameDay(d1, d2)) return null;
       if (d2.getTime() <= d1.getTime()) return null;
 
       return d1.toLocaleString("default", {
@@ -293,36 +261,10 @@ export default {
     language() {
       return this.getCurrentLanguage();
     },
+  },
+  watch: {},
 
-    displayFormat() {
-      return this.type === "date"
-        ? window.$language.calendar.displayFormatDateOnly
-        : window.$language.calendar.displayFormat;
-    },
-  },
-  watch: {
-    /* date_time(val) {
-      if (this.returnUtc) {
-        this.$emit("input", this.convertLocalTimeStringToUTCString(val));
-      } else {
-        this.$emit("input", val);
-      }
-    },*/
-    /*   value(){
-      this.refresh()
-    },*/
-    /*  value(val) {
-      if(this.returnUtc){
-        this.date_time =  this. convertUTCStringToLocalTimeString(val)
-      }else {
-        this.date_time = val;
-      }
-    }*/
-  },
-
-  created() {
-    //this.refresh()
-  },
+  created() {},
   methods: {
     clear() {
       this.$emit("input", null);
@@ -350,22 +292,6 @@ export default {
 
       this.dialog = true;
     },
-    /* setNewValue(val) {
-      if (this.returnUtc) {
-        this.$emit("input", this.convertLocalTimeStringToUTCString(val));
-      } else {
-        this.$emit("input", val);
-      }
-    },
-
-
-    refresh(){
-      if (this.returnUtc) {
-        this.date_time = this.convertUTCStringToLocalTimeString(this.value);
-      } else {
-        this.date_time = this.value;
-      }
-    }*/
   },
 };
 </script>

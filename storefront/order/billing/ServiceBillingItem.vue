@@ -39,8 +39,6 @@
         </div>
 
         <v-row no-gutters align="center">
-
-
           <price-view
             v-if="service_item?.price"
             :amount="service_item.price"
@@ -99,7 +97,7 @@
           >
           </widget-header>
 
-          <date-time-picker-global
+          <s-date-input
             v-model="reserved_at"
             color="#2196f3"
             rounded
@@ -109,15 +107,15 @@
             class="max-width-field mx-auto mb-3"
             :jump-minute="15"
           >
-          </date-time-picker-global>
+          </s-date-input>
 
-          <week-day-time-table
+          <s-week-day-time-picker
             v-model="preferences.days"
             :restrictions="outputs.days"
             :pointed-time-utc="reserved_at"
             class="my-2 max-width-field-large mx-auto"
             dis-color="#ddd"
-          ></week-day-time-table>
+          ></s-week-day-time-picker>
         </div>
 
         <!-- ----------------------- Booking ----------------------- -->
@@ -144,7 +142,6 @@
           <div
             class="subtitle-2 d-flex text-center border-between checks justify-content-center"
           >
-
             <!-- Checkin Date -->
 
             <div class="flex-grow-1">
@@ -170,7 +167,7 @@
                     }}
 
                     <v-btn
-                        v-if="editing"
+                      v-if="editing"
                       icon
                       @click="start_at = preferences.dates[0]"
                       class="mx-1"
@@ -209,32 +206,31 @@
 
               {{ $t("service_bill.booking.selected_checkout") }}:
 
-
               <div v-if="preferences.dates[1]" class="mt-1">
                 <div>
                   <div
-                      v-if="
+                    v-if="
                       getLocalDateString(end_at) !==
                       getLocalDateString(preferences.dates[1])
                     "
-                      style="text-decoration-line: line-through"
-                      title="User selected this date but you change it!"
+                    style="text-decoration-line: line-through"
+                    title="User selected this date but you change it!"
                   >
                     {{
                       getLocalTimeString(
-                          preferences.dates[1],
-                          false,
-                          false,
-                          true
+                        preferences.dates[1],
+                        false,
+                        false,
+                        true
                       )
                     }}
 
                     <v-btn
-                        v-if="editing"
-                        icon
-                        @click="end_at = preferences.dates[1]"
-                        class="mx-1"
-                        :title="
+                      v-if="editing"
+                      icon
+                      @click="end_at = preferences.dates[1]"
+                      class="mx-1"
+                      :title="
                         'Reset to user selected date: ' +
                         getLocalTimeString(preferences.dates[1])
                       "
@@ -249,7 +245,7 @@
                     <span class="ms-5">
                       {{ $t("global.commons.time") }}:
                       <b v-if="outputs.checkout" dir="ltr"
-                      >{{ outputs.checkout["HH"] }} :
+                        >{{ outputs.checkout["HH"] }} :
                         {{ outputs.checkout["mm"] }}</b
                       >
                     </span>
@@ -257,12 +253,9 @@
                 </div>
               </div>
               <div v-else class="mt-1">
-
                 <v-icon color="#111" small class="me-1">help_center</v-icon>
                 {{ $t("global.commons.not_selected") }}
               </div>
-
-
             </div>
             <!-- Days -->
 
@@ -286,7 +279,7 @@
               <v-container v-if="change_dates">
                 <v-row class="m-0">
                   <v-col cols="12" sm="6">
-                    <date-time-picker-global
+                    <s-date-input
                       v-model="start_at"
                       color="#2196f3"
                       rounded
@@ -297,10 +290,10 @@
                       format="YYYY-MM-DD"
                       type="date"
                     >
-                    </date-time-picker-global>
+                    </s-date-input>
                   </v-col>
                   <v-col cols="12" sm="6">
-                    <date-time-picker-global
+                    <s-date-input
                       v-model="end_at"
                       color="#2196f3"
                       rounded
@@ -311,7 +304,7 @@
                       format="YYYY-MM-DD"
                       type="date"
                     >
-                    </date-time-picker-global>
+                    </s-date-input>
                   </v-col>
                 </v-row>
               </v-container>
@@ -325,12 +318,12 @@
               <v-card class="rounded-t-xl" tile>
                 <v-card-title> </v-card-title>
                 <v-card-text>
-                  <calendar-table
+                  <s-calendar-view
                     :disabled="outputs.disabled"
                     :new-event="new_event"
                     day-level
                     class="my-3"
-                  ></calendar-table>
+                  ></s-calendar-view>
                 </v-card-text>
                 <v-card-actions>
                   <div class="widget-buttons">
@@ -449,11 +442,11 @@
 </template>
 
 <script>
-import DateTimePickerGlobal from "@components/ui/calendar/dateTimePickerGlobal.vue";
+import SDateInput from "@components/ui/calendar/date-input/SDateInput.vue";
 import ExpertContractTasks from "@components/ui/tasks/ExpertContractTasks.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
-import CalendarTable from "@components/ui/calendar/CalendarTable.vue";
-import WeekDayTimeTable from "@components/ui/calendar/WeekDayTimeTable.vue";
+import SCalendarView from "@components/ui/calendar/clendar-view/SCalendarView.vue";
+import SWeekDayTimePicker from "@components/ui/calendar/week-time-picker/SWeekDayTimePicker.vue";
 import { ServiceTypes } from "@core/enums/product/ServiceTypes";
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
 import { Currency } from "@core/enums/payment/Currency";
@@ -465,11 +458,11 @@ export default {
   components: {
     WidgetHeader,
     SPriceInput,
-    WeekDayTimeTable,
-    CalendarTable,
+    SWeekDayTimePicker,
+    SCalendarView,
     SNumberInput,
     ExpertContractTasks,
-    DateTimePickerGlobal,
+    SDateInput,
   },
   props: {
     shop: {

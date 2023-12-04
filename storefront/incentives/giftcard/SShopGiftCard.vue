@@ -19,8 +19,8 @@
         <div
           v-if="front"
           class="card card--front widget-hover-dark"
-          :style="`background-image:url(${(
-            getShopImagePath(giftCard.gift_type.bg)
+          :style="`background-image:url(${getShopImagePath(
+            giftCard.gift_type.bg
           )}); --background:${giftCard.gift_type.color}`"
         >
           <h2 class="card-title">
@@ -65,10 +65,13 @@
             }}</span>
           </div>
 
+          <currency-icon
+            class="card__logo"
+            :currency="giftCard.currency"
+            flag
+          ></currency-icon>
 
-          <currency-icon  class="card__logo" :currency="giftCard.currency" flag></currency-icon>
-
-          <circle-button
+          <s-circle-button
             class="card__flip"
             icon="card_membership"
             :tooltip="$t('global.gift_card.transfer')"
@@ -83,11 +86,16 @@
           v-if="!front"
           class="card card--back text-center widget-hover-dark"
         >
-          <div class="card__strip p-2 d-flex align-center justify-center" dir="ltr">
-            <div><span class="small">CVV: </span><b>{{ giftCard.cvv }}</b></div>
+          <div
+            class="card__strip p-2 d-flex align-center justify-center"
+            dir="ltr"
+          >
+            <div>
+              <span class="small">CVV: </span><b>{{ giftCard.cvv }}</b>
+            </div>
           </div>
 
-          <circle-button
+          <s-circle-button
             v-if="false"
             icon="send"
             :tooltip="$t('global.gift_card.send_to_friend')"
@@ -95,7 +103,7 @@
             disabled
           />
 
-          <circle-button
+          <s-circle-button
             class="card__flip"
             icon="fas fa-credit-card"
             adjust-for-font-awesome
@@ -110,12 +118,10 @@
 </template>
 
 <script>
-
-import CircleButton from "@components/ui/button/CircleButton.vue";
 import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
 export default {
   name: "SShopGiftCard",
-  components: {CurrencyIcon, CircleButton },
+  components: { CurrencyIcon },
   props: {
     giftCard: {
       require: true,

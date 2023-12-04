@@ -49,7 +49,7 @@
 
 <script>
 export default {
-  name: "FeatureButton",
+  name: "SFeatureButton",
   props: {
     href: {},
     to: {},

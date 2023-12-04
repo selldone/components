@@ -56,7 +56,7 @@
 -->
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Icon Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-    <circle-button
+    <s-circle-button
       v-if="iconOnly"
       dense
       :color="iconColor"
@@ -64,7 +64,7 @@
       :tooltip="selected_language_object?.title"
       @click="readonly ? undefined : showDialog()"
       :title="`Change language | ${selected_language_object?.title}`"
-    ></circle-button>
+    ></s-circle-button>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Normal Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 

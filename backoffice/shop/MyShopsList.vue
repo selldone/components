@@ -115,23 +115,23 @@
       v-if="USER() && !shops.length && home"
       :to="{ name: 'ShopsListPage' }"
     >
-      <add-button-green
+      <s-add-button-green
         :caption="$t('home.s1.domain_input.action')"
         icon="add_business"
         class="max-width-field mx-auto"
       >
-      </add-button-green>
+      </s-add-button-green>
     </router-link>
   </v-container>
 </template>
 
 <script>
 import { ShopPermissions } from "@core/enums/permission/ShopPermissions";
-import AddButtonGreen from "@components/ui/button/AddButtonGreen.vue";
+import SAddButtonGreen from "@components/ui/button/add/SAddButtonGreen.vue";
 
 export default {
   name: "MyShopsList",
-  components: { AddButtonGreen },
+  components: { SAddButtonGreen },
   props: {
     link: {
       default: false,

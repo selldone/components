@@ -14,11 +14,7 @@
 
 <template>
   <div>
-    <!--
-    <circle-button @click="dialog = true" v-if="available_lotories" :src="require('./asset/pattern-empty-fortune.jpg')" :tooltip="$t('global.commons.lottery')" dense color="#fff">
 
-
-    </circle-button>-->
 
     <v-btn
       @click="dialog = true"

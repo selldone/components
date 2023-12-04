@@ -41,7 +41,7 @@
 
 <script>
 export default {
-  name: "IosBigButtonRow",
+  name: "SFeatureRowButton",
   props: {
     icon: {},
     title: {},

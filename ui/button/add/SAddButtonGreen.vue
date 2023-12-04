@@ -14,24 +14,29 @@
 
 <template>
   <div
-    class="add-new-btn-widget position-relative "
-    :class="{ 'no-fade': !src, 'widget-hover': !small, disabled: loading ,'h-100':fillHeight}"
+    class="add-new-btn-widget position-relative"
+    :class="{
+      'no-fade': !src,
+      'widget-hover': !small,
+      disabled: loading,
+      'h-100': fillHeight,
+    }"
     @click.stop="$emit('click')"
     :style="{ 'border-radius': radius, minHeight: minHeight, height: height }"
   >
     <v-img :src="src" contain class="sprite flip-image-rtl"> </v-img>
     <div class="center-content px-2">
-      <v-icon
-        dark
-        :class="{ 'mb-3': !small }"
-        :size="small ? 24 : 36"
-        v-text="icon"
-      >
+      <v-icon dark :class="{ 'mb-3': !small }" :size="small ? 24 : 36"
+        >{{ icon }}
       </v-icon>
       <div class="-title" :class="{ small: small, 'inline-block': horizontal }">
         {{ caption }}
       </div>
-      <p class="-message" v-if="message" :class="`${space ? 'mt-5' : ''} ${classMessage}`">
+      <p
+        class="-message"
+        v-if="message"
+        :class="`${space ? 'mt-5' : ''} ${classMessage}`"
+      >
         {{ message }}
       </p>
       <slot></slot>
@@ -45,7 +50,7 @@
 
 <script>
 export default {
-  name: "AddButtonGreen",
+  name: "SAddButtonGreen",
 
   props: {
     icon: {},

@@ -82,12 +82,12 @@
             class="disabled"
           ></price-view>
 
-          <time-progress-bar
+          <s-time-progress-bar
             small
             :start-time="item.dis_start"
             :end-time="item.dis_end"
             class="disabled"
-          ></time-progress-bar>
+          ></s-time-progress-bar>
 
           <template
             v-if="
@@ -105,11 +105,11 @@
               :currency="item.currency"
             ></price-view>
 
-            <time-progress-bar
+            <s-time-progress-bar
               small
               :start-time="item.new_dis_start"
               :end-time="item.new_dis_end"
-            ></time-progress-bar>
+            ></s-time-progress-bar>
           </template>
         </div>
       </template>
@@ -123,11 +123,11 @@
 
 <script>
 import CurrencyList from "@components/ui/currency/CurrencyList.vue";
-import TimeProgressBar from "@components/ui/calendar/TimeProgressBar.vue";
+import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
 import _ from "lodash-es";
 export default {
   name: "BulkPreview",
-  components: { TimeProgressBar, CurrencyList },
+  components: { STimeProgressBar, CurrencyList },
   props: {
     url: {
       required: true,

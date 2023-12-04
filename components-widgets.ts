@@ -191,8 +191,8 @@ import "swiper/css/swiper.css"; // require styles
 
 Vue.use(VueAwesomeSwiper /* { default global options } */);
 
-import CircleButton from "./ui/button/CircleButton.vue";
-Vue.component(CircleButton.name, CircleButton);
+import SCircleButton from "@components/ui/button/circle/SCircleButton.vue";
+Vue.component(SCircleButton.name, SCircleButton);
 
 import SimpleInnerTitle from "./depricated/SimpleInnerTitle.vue";
 Vue.component(SimpleInnerTitle.name, SimpleInnerTitle);

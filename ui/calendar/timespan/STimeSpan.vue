@@ -18,7 +18,11 @@
       <small class="not-selectable">{{ $t("time_spans.days_range") }}:</small>
       <v-spacer></v-spacer>
 
-      <time-spans-text-selector :date-range="date_range" :max-days="maxDays" @select="setTimeSpan"></time-spans-text-selector>
+      <s-time-span-selector
+        :date-range="date_range"
+        :max-days="maxDays"
+        @select="setTimeSpan"
+      ></s-time-span-selector>
     </div>
 
     <v-range-slider
@@ -56,12 +60,12 @@
 
 <script>
 import { DateConverter } from "@core/helper/date/DateConverter";
-import TimeSpansTextSelector from "./TimeSpansTextSelector.vue";
+import STimeSpanSelector from "./STimeSpanSelector.vue";
 import _ from "lodash-es";
 
 export default {
-  name: "TimeSpan",
-  components: {TimeSpansTextSelector},
+  name: "STimeSpan",
+  components: { STimeSpanSelector },
   props: {
     startDate: {},
     endDate: {},
@@ -105,8 +109,6 @@ export default {
     date_range: [0, 30],
   }),
   computed: {
-
-
     start_date() {
       return DateConverter.GetStartOfDateBefore(
         this.date_range[1],
@@ -119,7 +121,6 @@ export default {
         this.originDate
       );
     },
-
   },
 
   watch: {
@@ -173,7 +174,6 @@ export default {
         this.emitValues();
       }
     },
-
   },
   created() {
     if (this.offset !== undefined && this.days !== undefined) {
@@ -192,15 +192,7 @@ export default {
     } else {
       this.setTimeSpan({ title: "time_spans.last_30", from: 30, to: 0 });
     }
-
-
-
   },
-
-
-
-
-
 };
 </script>
 

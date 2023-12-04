@@ -27,7 +27,7 @@
 
 <script>
 export default {
-  name: "Calendly",
+  name: "SCalendly",
   props: {
     dataUrl: {
       required: true,

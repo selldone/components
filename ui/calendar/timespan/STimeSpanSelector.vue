@@ -34,7 +34,7 @@
 
 <script>
 export default {
-  name: "TimeSpansTextSelector",
+  name: "STimeSpanSelector",
   props: {
     dateRange: {
       type: Array,

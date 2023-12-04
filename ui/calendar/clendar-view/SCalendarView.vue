@@ -103,10 +103,9 @@
             :class="{ pen: past }"
             fab
             :color="
-            isReserved(date)?'#1976D2':
-
-
-              past
+              isReserved(date)
+                ? '#1976D2'
+                : past
                 ? 'transparent'
                 : notAvailable(date)
                 ? 'rgba(211,47,47,0.24)'
@@ -115,7 +114,9 @@
             depressed
             small
             light
-            :style="{ color:isReserved(date)?'#fff': past ? '#999' : '#555' }"
+            :style="{
+              color: isReserved(date) ? '#fff' : past ? '#999' : '#555',
+            }"
             :title="notAvailable(date) ? 'Unavailable' : 'Available'"
           >
             {{ day }}
@@ -129,18 +130,13 @@
             >circle</v-icon
           >
 
-
           <small
-              v-if="notAvailable(date)"
-              class="absolute-top-center mt-n1 x-small"
-          >Unavailable</small
+            v-if="notAvailable(date)"
+            class="absolute-top-center mt-n1 x-small"
+            >Unavailable</small
           >
-
         </template>
-
-
       </v-calendar>
-
     </v-sheet>
   </div>
 </template>
@@ -150,7 +146,7 @@ import { WeekDays } from "@core/enums/logistic/WeekDays";
 import { DateConverter } from "@core/helper/date/DateConverter";
 
 export default {
-  name: "CalendarTable",
+  name: "SCalendarView",
   props: {
     canDisable: { type: Boolean, default: false },
     dayLevel: { type: Boolean, default: false },
@@ -174,13 +170,10 @@ export default {
 
     mode: "stack",
 
-
-
     calendar_value: "",
 
     current_range_month: null,
     current_range_start_date: null,
-
 
     //---------------------------------------------
     no_available: [],
@@ -234,7 +227,6 @@ export default {
   },
 
   methods: {
-
     viewDay({ date, past, present, future }) {
       if (this.dayLevel) {
         // Make toggle disable easy in day mode!
@@ -248,8 +240,6 @@ export default {
       this.calendar_value = date;
       this.type = "day";
     },
-
-
 
     onChangeDaysRange({ start, end }) {
       this.current_range_month = start.month;
@@ -321,6 +311,14 @@ export default {
 </script>
 
 <style lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+
 .s--calendar-table {
   min-height: 450px !important;
   background: transparent !important;
@@ -397,9 +395,8 @@ export default {
     align-items: center;
     justify-content: center;
     border-right: unset !important;
-
   }
-  .v-calendar-weekly__week:last-child{
+  .v-calendar-weekly__week:last-child {
     .v-calendar-weekly__day {
       border-bottom: unset !important;
     }

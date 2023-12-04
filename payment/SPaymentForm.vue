@@ -58,7 +58,7 @@
         height="32px"
       />
 
-      <circle-button
+      <s-circle-button
         class="z2"
         icon="close"
         :tooltip="$t('global.actions.close')"
@@ -699,7 +699,7 @@
 </template>
 
 <script>
-import CircleButton from "@components/ui/button/CircleButton.vue";
+
 
 import SPaymentStripe from "./stripe/SPaymentStripe.vue";
 import PaymentButton from "./widgets/PaymentButton.vue";
@@ -727,7 +727,7 @@ export default {
     SelectGiftCards,
     PaymentButton,
     SPaymentStripe,
-    CircleButton,
+
   },
   props: {
     isOfficialSamin: {

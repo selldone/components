@@ -27,9 +27,9 @@
           :small="small"
           :x-small="xSmall"
           ><img
-            src="@components/assets/tradmark/whatsapp.svg"
-            :height="xSmall?12:small ? 18 : 20"
-            :width="xSmall?12:small ? 18 : 20"
+            src="../../../assets/tradmark/whatsapp.svg"
+            :height="xSmall ? 12 : small ? 18 : 20"
+            :width="xSmall ? 12 : small ? 18 : 20"
         /></v-btn>
       </template>
       <v-sheet dark class="text-start p-4">
@@ -47,10 +47,13 @@
 </template>
 
 <script>
-import { CreateSocialConnectLink, SocialNetwork } from "@core/enums/social/SocialNetwork";
+import {
+  CreateSocialConnectLink,
+  SocialNetwork,
+} from "@core/enums/social/SocialNetwork";
 
 export default {
-  name: "WhatsappCallButton",
+  name: "SWhatsappCallButton",
   props: {
     user: {
       required: true,
@@ -71,7 +74,7 @@ export default {
     message() {
       return this.$t("global.instance_message", {
         name: this.user.name,
-        author: this.USER()?this.USER().name:'',
+        author: this.USER() ? this.USER().name : "",
         company: this.shop ? this.shop.title : this.$t("global.selldone"),
       });
     },

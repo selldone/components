@@ -16,7 +16,7 @@
   <v-container class="text-start">
     <h2 class="fadeIn">{{ title }}</h2>
 
-    <time-span
+    <s-time-span
       :offset.sync="timeSeries.offset"
       :days.sync="timeSeries.days"
       @onChange="({ offset, days }) => timeSeries.fetch(offset, days)"
@@ -27,7 +27,7 @@
       dense
       ref="timespan"
       class="fadeIn delay_100"
-    ></time-span>
+    ></s-time-span>
 
     <v-row>
       <v-col v-if="isCommunity" cols="6" sm="4" md="3" class="fadeIn delay_200">
@@ -142,7 +142,7 @@
 </template>
 
 <script>
-import TimeSpan from "../../../ui/calendar/TimeSpan.vue";
+import STimeSpan from "../../../ui/calendar/timespan/STimeSpan.vue";
 import SAreaChart from "@components/chart/area/SAreaChart.vue";
 import SLineChart from "@components/chart/line/SLineChart.vue";
 import TrendSparkline from "./TrendSparkline.vue";
@@ -153,7 +153,7 @@ export default {
   name: "CommunityStatisticView",
   mixins: [IntersectMixin],
 
-  components: { TimeSpan, SAreaChart, SLineChart, TrendSparkline },
+  components: { STimeSpan, SAreaChart, SLineChart, TrendSparkline },
   props: {
     title: {},
 

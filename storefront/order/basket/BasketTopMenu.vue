@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="shopping-basket d-flex flex-column">
     <div class="text-center pt-2" v-if="filtered_types.length > 1">
-      <circle-button
+      <s-circle-button
         v-for="item in filtered_types"
         :key="item.code"
         :src="item.image"

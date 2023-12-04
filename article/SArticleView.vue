@@ -358,13 +358,13 @@
                         >
                         {{ $t("global.article.schedule_action") }}
                       </div>
-                      <time-progress-bar
+                      <s-time-progress-bar
                         v-if="article && schedule_at"
                         :created-time="article.created_at"
                         :start-time="schedule_at"
                         small
                         class="max-w-250 mt-2"
-                      ></time-progress-bar>
+                      ></s-time-progress-bar>
                     </div>
 
                     <v-spacer></v-spacer>
@@ -377,7 +377,7 @@
                   </div>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <date-time-picker-global
+                  <s-date-input
                     v-model="schedule_at"
                     return-utc
                     class="max-widget-width mx-auto mt-5"
@@ -1281,7 +1281,7 @@ import { ArticleTypes } from "@core/enums/article/ArticleTypes";
 import { PermissionNames } from "@core/enums/admin/permission/PermissionNames";
 import { PermissionLevels } from "@core/enums/admin/permission/PermissionLevels";
 import { HelpCategories } from "@core/enums/admin/help/HelpCategories";
-import DateTimePickerGlobal from "../ui/calendar/dateTimePickerGlobal.vue";
+import SDateInput from "../ui/calendar/date-input/SDateInput.vue";
 import SArticlesTimeline from "@components/article/timeline/SArticlesTimeline.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SLanguageInput from "@components/ui/input/language/SLanguageInput.vue";
@@ -1291,7 +1291,7 @@ import SArticleTagsEditor from "./SArticleTagsEditor.vue";
 import SContentViolationReportDialog from "../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
 import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
-import TimeProgressBar from "../ui/calendar/TimeProgressBar.vue";
+import STimeProgressBar from "../ui/calendar/time-progress/STimeProgressBar.vue";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import AiButton from "@components/ui/button/ai/AiButton.vue";
@@ -1304,7 +1304,7 @@ export default {
     ClusterSelect,
     AiButton,
     SArticleSearchConsole,
-    TimeProgressBar,
+    STimeProgressBar,
     SSmartMenu,
     UserEmailInput,
     SContentViolationReportDialog,
@@ -1314,7 +1314,7 @@ export default {
     SLanguageInput,
     SNumberInput,
     SArticlesTimeline,
-    DateTimePickerGlobal,
+    SDateInput,
     SArticleSeoEditor,
     SArticleEditor,
     SArticleComments,

@@ -39,7 +39,7 @@ const DEFAULT_OPTIONS = {
 };
 
 export default {
-  name: "VueTimepicker",
+  name: "STimepicker",
   props: {
     value: { type: [Object, String] },
     format: { type: String },

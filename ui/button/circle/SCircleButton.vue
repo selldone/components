@@ -116,7 +116,7 @@ import numeral from "numeral";
 import SetupService from "@core/server/SetupService";
 
 export default {
-  name: "CircleButton",
+  name: "SCircleButton",
   props: {
     icon: {
       required: false,
