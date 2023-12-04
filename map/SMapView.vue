@@ -143,7 +143,12 @@
       :class="{ full: !hasBottomBar }"
     >
       <!-- Pre loading -->
-      <s-loading css-mode light v-if="!map_box" class="center-absolute"></s-loading>
+      <s-loading
+        css-mode
+        light
+        v-if="!map_box"
+        class="center-absolute"
+      ></s-loading>
       <!-- MAP -->
       <div
         :id="`map_box${map_id}`"
@@ -156,7 +161,6 @@
         :class="{ mini: last_selected_position }"
         @click.stop="getAddressStringOfCenter"
       >
-
         <img
           width="64px"
           :src="
@@ -911,7 +915,7 @@ export default {
       if (!this.selected_country_detail?.states?.length) return null;
 
       const found = this.selected_country_detail?.states?.find(
-        (i) => i.name === this.state,
+        (i) => i.name === this.state
       );
       if (found) {
         // console.log("State Code", found.code);
@@ -994,9 +998,6 @@ export default {
       this.$emit("zoom", zoom);
     },
     centerUpdated(center) {
-      //   this.center.lat = center.lat;
-      //   this.center.lng = center.lng ? center.lng : center.lon;
-      // console.log("centerUpdated", center);
       this.$emit("update:center", center);
     },
 
@@ -1015,15 +1016,6 @@ export default {
       this.$emit("location", this.last_selected_position);
       this.addCurrentToDestinationList(this.last_selected_position);
       this.mode_bottom_card = "default";
-
-      /*  $.get(
-        `https://map.ir/reverse?lat=${this.last_selected_position.lat}&lon=${this.last_selected_position.lng}`,
-        data => {
-          this.address = data.address_compact; //address_compact
-          this.loading_address = false;
-          this.$emit("address", this.address);
-        }
-      );*/
 
       axios
         .get(window.ADDRESS_API.GET_GEO_TO_ADDRESS(), {
@@ -1051,7 +1043,7 @@ export default {
               // Force to select state by state code: Maybe miss match state name with local
 
               const found = this.selected_country_detail.states.find(
-                (i) => i.code === data.state_code,
+                (i) => i.code === data.state_code
               );
               if (found) this.state = found.name;
             }
@@ -1069,37 +1061,6 @@ export default {
         .finally(() => {
           this.loading_address = false;
         });
-
-      /*
-      $.get(
-               window.ADDRESS_API.GET_GEO_TO_ADDRESS(), //
-              {
-
-
-                        //  'x-api-key':'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjA5NmY3YjBiNjIwNTZmNzVjYjhjNjMxZmUzNTZiNzEzN2M4ZjllMTgwZWFiMDI2MTRlNmFkMzIzODFmMzMxYzJlZDVkZmRiZWM2MDYxNGU3In0.eyJhdWQiOiI0ODg2IiwianRpIjoiMDk2ZjdiMGI2MjA1NmY3NWNiOGM2MzFmZTM1NmI3MTM3YzhmOWUxODBlYWIwMjYxNGU2YWQzMjM4MWYzMzFjMmVkNWRmZGJlYzYwNjE0ZTciLCJpYXQiOjE1NjQ5MDQwOTAsIm5iZiI6MTU2NDkwNDA5MCwiZXhwIjoxNTY3NTgyNDg5LCJzdWIiOiIiLCJzY29wZXMiOlsiYmFzaWMiXX0.qX3KVUEdd4RzadWfc5WNTv4PgsOCwX8ko7a1N9B2YduH5UOd6YMqkdMbjz3tWngR60hZgpFDyIvxAgYHH2lhbCN-GTwY9493kbT6SVsqdRlQmv8XJeEPkCACSoWloSZ4UHq4fWHMsHoysmFS9N32R36J4Y6w637-GO7swTxqLEWOq-cHcdaozIE3M5gIBgLVh5ZFlxKG4XLz1dUmw7FyKGWuXrp9A_-42dlXlvy7xtEmT3xxgp9j7JIeg5FcOLoVn7q5D_X-9woEWrTn3F6RVcjUIOkurwa53gckh3Unmj3gvqH-HLNeGzCcJBUD9e63hWnPKvLmvoylChlb8nydag',
-                          lat : this.center.lat,
-                          lon:  this.center.lng,
-                local: this.getCurrentLanguage().local, // For Auto select service!
-              },
-              data => {
-                console.log(data);
-                this.country=data.country;
-
-                this.address = data.address; //address_compact
-
-                if(! this. details_number)
-                this. details_number=data.no;
-
-                if(! this. postal)
-                  this. postal=data.postal;
-
-                this.$emit("address", this.address);
-              }
-      ).always(()=> {
-        this.loading_address = false;
-      });
-
-*/
     },
 
     addCurrentToDestinationList(selected_position) {
@@ -1108,12 +1069,6 @@ export default {
       this.current_markers.forEach((marker) => {
         marker.remove();
       });
-      /*
-                const el = document.createElement('img');
-                el.className = 'marker marker-samin';
-                el.src =  require('@components/assets/icons/user-marker.svg');
-                el.style.width = '20px';
-                el.style.height = '20px';*/
 
       if (selected_position && selected_position.lng && selected_position.lat) {
         if (this.map_box) {
@@ -1136,58 +1091,21 @@ export default {
 
           this.current_markers.push(marker);
         }
-
-        /*
-                  var markerx = new Mapbox.Marker()
-                      .setLngLat([selected_position.lng, selected_position.lat])
-                      .addTo(this.map_box);
-                this.current_markers.push(markerx);*/
       }
     },
-    /*    handlePermission() {
-
-       if(!navigator.geolocation) {
-         this.showErrorAlert(null,'Geolocation is not supported by your browser')
-         return
-       }
-
-  navigator.permissions.query({name:'geolocation'}).then((result)=> {
-    console.log('result.state',result.state)
-    if (result.state === 'granted') {
-
-
-
-    } else if (result.state === 'prompt') {
-
-
-    } else if (result.state === 'denied') {
-    }
-
-    this.goToMyLocation()
-
-    result.onchange = ()=> {
-      //report(result.state);
-      if (result.state === 'granted') {
-        this.goToMyLocation()
-      }
-    }
-  });
-},*/
 
     goToMyLocation() {
       navigator.geolocation.getCurrentPosition((location, error) => {
-        //  console.log("---location---", location, "error", error);
-
-        //this.center={lat:location.coords.latitude,lng:location.coords.longitude}
+        if (error) {
+          console.error("Get current location", error);
+          return;
+        }
 
         this.$emit("update:center", {
           lat: location.coords.latitude,
           lng: location.coords.longitude,
         });
-        //this.center.lat = location.coords.latitude;
-        // this.center.lng = location.coords.longitude;
 
-        // console.log("---------- location:", location);
         this.current_zoom = 17;
 
         /** if (this.canSelectAddress) this.getAddressStringOfCenter(); // hanuz center update nashode! bayad ba delay ejra beshe in!
@@ -1287,7 +1205,7 @@ export default {
           if (!response.data.error) {
             this.showSuccessAlert(
               null,
-              this.$t("global.map_view.notifications.save_in_list"),
+              this.$t("global.map_view.notifications.save_in_list")
             );
             this.AddOrUpdateItemByID(this.address_book, response.data.address);
             this.selected_address_from_list = null;
@@ -1347,7 +1265,7 @@ export default {
             .catch((error) => {
               this.showLaravelError(error);
             });
-        },
+        }
       );
     },
 
@@ -1358,7 +1276,7 @@ export default {
           window.ADDRESS_API.PUT_ADDRESS(
             this.selectedAddressId
               ? this.selectedAddressId
-              : this.selected_address_from_list.id,
+              : this.selected_address_from_list.id
           ),
           {
             title: this.selectedAddressTitle
@@ -1377,7 +1295,7 @@ export default {
             phone: this.phone_number,
             message: this.details_message,
             postal: this.postal,
-          },
+          }
         )
         .then((response) => {
           if (!response.data.error) {
@@ -1386,7 +1304,7 @@ export default {
               null,
               this.$t("global.map_view.notifications.edit_success", {
                 title: response.data.address.title,
-              }),
+              })
             );
           } else {
             this.showErrorAlert(null, response.data.error_msg);

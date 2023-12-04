@@ -54,6 +54,7 @@ import _ from "lodash-es";
 
 export default {
   name: "SStorefrontProductVendorsList",
+  emits: ["fetch-vendors", "vendor-hover:enter", "vendor-hover:leave"],
   props: {
     shop: {
       required: true,

@@ -14,7 +14,7 @@
 
 <template>
   <apexchart
-      v-if="chart_option"
+    v-if="chart_option"
     class="areachart"
     dir="ltr"
     :type="type"
@@ -130,7 +130,7 @@ export default {
 
   methods: {
     init() {
-      this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
 
       if (!this.timeSeries) return;
 
@@ -277,7 +277,7 @@ export default {
           },
         },
         xaxis: {
-      //    categories: this.timeSeries.arrayOfTimeAbsoluteForceInterpolateZero("created_at"),
+          //    categories: this.timeSeries.arrayOfTimeAbsoluteForceInterpolateZero("created_at"),
           tickAmount: 4,
           type: "datetime",
           labels: {

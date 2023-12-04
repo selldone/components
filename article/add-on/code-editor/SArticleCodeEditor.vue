@@ -71,8 +71,6 @@
 </template>
 
 <script>
-
-
 import SArticleEditorComponentToolbar from "../toolbar/SArticleEditorComponentToolbar.vue";
 export default {
   name: "SArticleCodeEditor",
@@ -110,9 +108,7 @@ export default {
 
       dark: false,
 
-      element:null,
-
-
+      element: null,
     };
   },
   computed: {
@@ -145,22 +141,19 @@ export default {
     if (!this.$vuetify.breakpoint) this.$vuetify.breakpoint = {};
   },
   mounted() {
-    this.element=this.$el
-
+    this.element = this.$el;
 
     if (!this.lang_code && this.tabs_active.length > 0)
       this.lang_code = this.tabs_active[0];
 
     const available = Object.keys(this.codes).find((x) => this.codes[x]);
-   // console.log("available", available, this.selected_lang, this.codes);
+    // console.log("available", available, this.selected_lang, this.codes);
     if (available) {
       this.lang_code = available;
       this.selected_lang = available;
     }
   },
   methods: {
-
-
     setLanguageCode(lang_code) {
       this.lang_code = lang_code;
     },
@@ -256,8 +249,6 @@ export default {
     }
 
     // ---------------------------- Past form github ----------------------------
-
-   
 
     //---------------------------------------------------------------------------------------
   }
