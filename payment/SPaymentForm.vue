@@ -69,7 +69,7 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Loading View ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <div v-if="busy" class="py-8 text-muted">
-      <progress-loading> </progress-loading>
+      <s-progress-loading> </s-progress-loading>
 
       <b class="d-block text-success mb-1">
         <v-icon class="me-1" color="success">shield</v-icon>

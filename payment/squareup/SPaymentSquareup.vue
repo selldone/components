@@ -170,10 +170,10 @@
       class="m-3"
     ></v-progress-circular>
 
-    <progress-loading
+    <s-progress-loading
       v-if="!square_js_loaded || busy_submit"
       color="#000"
-    ></progress-loading>
+    ></s-progress-loading>
   </div>
 </template>
 

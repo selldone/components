@@ -54,7 +54,7 @@
       </drop>
     </v-slide-y-transition>
 
-    <progress-loading v-if="busy_fetch"></progress-loading>
+    <s-progress-loading v-if="busy_fetch"></s-progress-loading>
 
     <!-- ██████████████████ Top Helper Container ██████████████████ -->
     <v-slide-y-transition hide-on-leave>

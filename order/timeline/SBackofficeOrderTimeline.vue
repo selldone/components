@@ -14,10 +14,10 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
-    <progress-loading
+    <s-progress-loading
       v-if="busy || busy_delete"
       :color="busy_delete ? 'red' : undefined"
-    ></progress-loading>
+    ></s-progress-loading>
     <div class="widget-buttons">
       <v-btn
         @click="show_add = true"
@@ -386,6 +386,7 @@ import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
 import GeoNavigationButton from "@components/map/GeoNavigationButton.vue";
 import TimelineStatus from "@core/enums/timeline/TimelineStatus";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
+import {TimelineEmailType} from "@core/enums/timeline/TimelineEmailType";
 
 export default {
   name: "SBackofficeOrderTimeline",
@@ -548,9 +549,9 @@ export default {
 
     clickItem(item) {
       if (
-        item.type === "email-buy" ||
-        item.type === "email-payment" ||
-        item.type === "email-vendor"
+        item.type === TimelineEmailType.EMAIL_BUY ||
+        item.type === TimelineEmailType.EMAIL_PAYMENT ||
+        item.type === TimelineEmailType.EMAIL_VENDOR
       ) {
         this.showEmailView(item);
       }

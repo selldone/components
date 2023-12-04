@@ -65,7 +65,7 @@
           </template>
         </v-autocomplete>
 
-        <progress-loading v-if="busy_location"></progress-loading>
+        <s-progress-loading v-if="busy_location"></s-progress-loading>
       </v-sheet>
     </div>
 

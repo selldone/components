@@ -143,7 +143,7 @@
             </category-select>
 
             <!-- ━━━━━━━━━━━━━━━━━━ 📊 Report ━━━━━━━━━━━━━━━━━━ -->
-            <progress-loading v-if="busy_report"></progress-loading>
+            <s-progress-loading v-if="busy_report"></s-progress-loading>
             <v-expand-transition
               v-if="!need_currency_in_params || bulk_currency"
             >

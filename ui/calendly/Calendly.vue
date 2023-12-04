@@ -21,7 +21,7 @@
       data-auto-load="false"
     />
 
-    <progress-loading v-if="busy"></progress-loading>
+    <s-progress-loading v-if="busy"></s-progress-loading>
   </div>
 </template>
 

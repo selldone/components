@@ -134,7 +134,7 @@
 
 
             <!-- ━━━━━━━━━━━━━━━━━━ 📊 Report ━━━━━━━━━━━━━━━━━━ -->
-            <progress-loading v-if="busy_report"></progress-loading>
+            <s-progress-loading v-if="busy_report"></s-progress-loading>
             <v-expand-transition>
               <div v-if="report">
                 <div class="py-3">

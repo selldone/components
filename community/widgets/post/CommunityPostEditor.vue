@@ -600,7 +600,7 @@
       </div>
     </div>
 
-    <progress-loading v-if="busy_link" style="top: -8px"></progress-loading>
+    <s-progress-loading v-if="busy_link" style="top: -8px"></s-progress-loading>
 
     <!-- ----------------------- Preview dialog ----------------------- -->
     <v-dialog v-if="false" v-model="preview" max-width="620" scrollable>

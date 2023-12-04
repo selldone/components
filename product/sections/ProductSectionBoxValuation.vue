@@ -33,7 +33,7 @@
       {{ selected_values }}
     </div>
 -->
-    <progress-loading v-if="busy_save"></progress-loading>
+    <s-progress-loading v-if="busy_save"></s-progress-loading>
     <div
       v-for="(item, index) in structure"
       :key="index"

@@ -23,7 +23,14 @@
     >
       <v-list-item-avatar class="rounded-lg">
         <v-img
-          :src="item.product.icon?getShopImagePath(item.variant?.image?item.variant?.image:item.product.icon,64):getProductImage(item.product_id)"
+          :src="
+            item.product.icon
+              ? getShopImagePath(
+                  item.variant?.image ? item.variant?.image : item.product.icon,
+                  64
+                )
+              : getProductImage(item.product_id)
+          "
           @click="goToProduct(item.product_id)"
         />
       </v-list-item-avatar>
@@ -56,7 +63,7 @@
               outlined
               v-if="
                 conditionObject(item.product.condition) &&
-                item.product.condition != ProductCondition.NEW.code
+                item.product.condition !== ProductCondition.NEW.code
               "
               x-small
               class="m-1 text-uppercase px-2"
@@ -95,8 +102,10 @@
           @change="(count) => spinnerSelectAction(item, count)"
           :min="0"
           :loading="busyAdd === item.product_id + '-' + item.variant_id"
-          no-unit dark
-          background-color="#111" filled
+          no-unit
+          dark
+          background-color="#111"
+          filled
         ></s-shop-basket-item-count-select>
       </v-list-item-content>
 

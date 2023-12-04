@@ -104,7 +104,7 @@
     </v-simple-table>
 
     <v-expand-transition>
-      <progress-loading v-if="loading" relative></progress-loading>
+      <s-progress-loading v-if="loading" relative></s-progress-loading>
     </v-expand-transition>
 
     <v-bottom-sheet

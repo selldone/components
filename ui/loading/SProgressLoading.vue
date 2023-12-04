@@ -13,51 +13,31 @@
   -->
 
 <template>
-  <v-btn
-    depressed
-    :color="busy ? 'default' : color"
-    dark
+  <v-progress-linear
+    indeterminate
+    class="loader-to-bar"
+    :class="{ '-relative': relative }"
+    :color="color"
     rounded
-    :class="{ disabled: disabled }"
-    @click="busy ? '' : $emit('click')"
-  >
-    <slot v-if="!this.busy" />
-
-    <lottie
-      v-else
-      :options="{ path: '/animation/719-loading.json', loop: true }"
-      height="84px"
-      width="100px"
-      :speed="1"
-    />
-  </v-btn>
+  ></v-progress-linear>
 </template>
 
 <script>
+import SetupService from "@core/server/SetupService";
+
 export default {
-  name: "LoadingButton",
-
+  name: "SProgressLoading",
   props: {
-    busy: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-
-    disabled: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
     color: {
-      required: false,
-      default: "success"
-    }
+      default: "success",
+    },
+    relative: { type: Boolean },
   },
-
-  data: () => ({}),
-
-  computed: {}
+  computed: {
+    animation() {
+      return SetupService.MainServiceUrl() + "/animation/719-loading.json";
+    },
+  },
 };
 </script>
 

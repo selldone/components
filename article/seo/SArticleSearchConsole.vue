@@ -19,7 +19,7 @@
       Google Search</b
     >
 
-    <progress-loading v-if="busy"></progress-loading>
+    <s-progress-loading v-if="busy"></s-progress-loading>
 
     <div v-if="busy">
       <v-skeleton-loader

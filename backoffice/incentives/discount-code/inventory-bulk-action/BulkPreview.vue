@@ -26,7 +26,7 @@
         flat
       ></currency-list>
     </div>
-    <progress-loading v-if="busy_fetch"></progress-loading>
+    <s-progress-loading v-if="busy_fetch"></s-progress-loading>
     <v-data-table
       :headers="headers"
       :items="products"

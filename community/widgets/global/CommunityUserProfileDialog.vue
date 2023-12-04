@@ -36,7 +36,7 @@
         {{ profile.description }}
       </div>
 
-      <progress-loading v-if="busy"></progress-loading>
+      <s-progress-loading v-if="busy"></s-progress-loading>
     </v-card>
 
     <v-card v-if="full_profile && !busy" class="text-center bg-white">

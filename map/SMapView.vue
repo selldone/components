@@ -71,7 +71,7 @@
       </v-slide-item>
     </v-slide-group>
 
-    <progress-loading v-if="busy_fetch"></progress-loading>
+    <s-progress-loading v-if="busy_fetch"></s-progress-loading>
 
     <div
       v-if="hasAddressBook"
@@ -156,12 +156,7 @@
         :class="{ mini: last_selected_position }"
         @click.stop="getAddressStringOfCenter"
       >
-        <!--   <lottie
-             :options="{ path: '/animation/695-bouncy-mapmaker.json', loop: true }"
-             height="64px"
-             width="64px"
-             :speed="1"
-           />-->
+
         <img
           width="64px"
           :src="

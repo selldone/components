@@ -33,7 +33,7 @@
           : $t('product_info.waiting_for_auction')
       "
     >
-      <progress-loading v-if="busy_track_price"></progress-loading>
+      <s-progress-loading v-if="busy_track_price"></s-progress-loading>
       <img
         class="fadeIn float-start me-1"
         src="@components/assets/icons/track-price.svg"

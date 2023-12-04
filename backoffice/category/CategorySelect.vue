@@ -111,7 +111,7 @@
     <!-- ―――――――――――――――――― prepend-item ―――――――――――――――――― -->
 
     <template v-slot:prepend-item>
-      <progress-loading v-if="busy"></progress-loading>
+      <s-progress-loading v-if="busy"></s-progress-loading>
       <div
         v-if="
           !multiple /*Only in the single mode*/ &&

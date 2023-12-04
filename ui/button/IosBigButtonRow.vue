@@ -21,7 +21,7 @@
     @click="$emit('click')"
     :style="color ? `border-color: ${color} !important; color: ${color}` : null"
   >
-    <progress-loading v-if="loading"></progress-loading>
+    <s-progress-loading v-if="loading"></s-progress-loading>
     <v-icon v-if="icon" class="me-1" :color="color">{{ icon }}</v-icon>
     <v-spacer></v-spacer>
 

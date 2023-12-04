@@ -28,7 +28,7 @@
       :caption="$t('global.commons.lottery')"
       class="sub-caption -hover -white"
     >
-      <lottie
+      <s-lottie
         :options="{ path: '/animation/happy_birthday.json', loop: true }"
         height="44px"
         width="44px"
@@ -87,7 +87,7 @@
             >
               <!-------------------- Play game result ------------------------->
               <div v-if="win" class="center-absolute" style="width: 70%">
-                <lottie
+                <s-lottie
                   :options="{
                     path: '/animation/gift-box-white.json',
                     loop: true,

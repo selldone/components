@@ -21,7 +21,7 @@
       :timeSeries="timeseries"
       is-community
     ></community-statistic-view>
-    <progress-loading v-if="busy"></progress-loading>
+    <s-progress-loading v-if="busy"></s-progress-loading>
   </div>
 </template>
 

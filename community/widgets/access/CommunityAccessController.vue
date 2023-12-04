@@ -90,7 +90,7 @@
           </div>
 
           <div class="widget-box mb-5 min-height-20vh">
-            <progress-loading v-if="busy_fetch"></progress-loading>
+            <s-progress-loading v-if="busy_fetch"></s-progress-loading>
             <widget-header
               title="Moderators list"
               icon="supervisor_account"

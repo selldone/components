@@ -50,7 +50,7 @@
             {{ $t("share_order.message") }}
           </p>
 
-          <progress-loading v-if="busy_share"></progress-loading>
+          <s-progress-loading v-if="busy_share"></s-progress-loading>
 
           <s-smart-switch
             v-model="share_address"

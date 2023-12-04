@@ -16,7 +16,7 @@
   <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ Container ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
   <div>
-    <progress-loading v-if="busy"></progress-loading>
+    <s-progress-loading v-if="busy"></s-progress-loading>
     <v-timeline v-else :dense="$vuetify.breakpoint.mdAndDown">
       <v-timeline-item
         v-for="_article in timeline"
@@ -206,8 +206,8 @@ export default {
             )
           : window.ARTICLE_API.GET_SHOP_ARTICLES_TIMELINE(this.shopId);
       else if (
-        this.articleType === ArticleTypes.SaminHelp.code ||
-        this.articleType === ArticleTypes.SaminBlog.code
+        this.articleType === ArticleTypes.SelldoneHelp.code ||
+        this.articleType === ArticleTypes.SelldoneBlog.code
       )
         url = window.ADMIN_API.GET_SAMIN_ARTICLES_TIMELINE();
 
@@ -245,12 +245,12 @@ export default {
           name: "ShopBlogEditPage",
           params: { blog_id: article.parent_id }, // Shop blog param is article_id!
         };
-      else if (article.parent_type === ArticleTypes.SaminBlog.code)
+      else if (article.parent_type === ArticleTypes.SelldoneBlog.code)
         return {
           name: "Blog",
           params: { blog_id: article.parent_id },
         };
-      else if (article.parent_type === ArticleTypes.SaminHelp.code)
+      else if (article.parent_type === ArticleTypes.SelldoneHelp.code)
         return {
           name: "Help",
           params: { help_id: article.parent_id },

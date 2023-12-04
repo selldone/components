@@ -14,7 +14,7 @@
 
 <template>
   <div class="text-center">
-    <lottie
+    <s-lottie
       v-if="!cssMode"
       :options="{ animationData: animation, loop: true }"
       :height="height"

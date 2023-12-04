@@ -57,7 +57,7 @@
       </router-link>
 
       <template v-slot:actions>
-        <lottie
+        <s-lottie
           :options="{ path: banner.anim, loop: true }"
           :height="banner.anim_height"
           :width="banner.anim_width"

@@ -83,8 +83,8 @@ Vue.component("price-view", PriceView);
 import SLoading from "@components/ui/loading/SLoading.vue";
 Vue.component(SLoading.name, SLoading);
 
-import ProgressLoading from "@components/ui/loading/ProgressLoading.vue";
-Vue.component(ProgressLoading.name, ProgressLoading);
+import SProgressLoading from "@components/ui/loading/SProgressLoading.vue";
+Vue.component(SProgressLoading.name, SProgressLoading);
 
 //---------------- Map --------------
 Vue.component(
@@ -96,9 +96,9 @@ Vue.component(
 //---------------- Lottie Animation View for Vue --------------
 
 Vue.component(
-  "lottie",
+  "s-lottie",
   // A dynamic import returns a Promise.
-  () => import(/* webpackChunkName: "plug-lottie" */ "./ui/animation/lottie.vue")
+  () => import(/* webpackChunkName: "plug-lottie" */ "./ui/animation/SLottie.vue")
 );
 //---------------- Miscellaneous --------------
 

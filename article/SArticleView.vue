@@ -16,8 +16,8 @@
   <div class="master-article-container">
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Loading animation ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-    <progress-loading v-if="inLoading" />
-    <progress-loading v-if="busy_fix" color="#673AB7" />
+    <s-progress-loading v-if="inLoading" />
+    <s-progress-loading v-if="busy_fix" color="#673AB7" />
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Not found article ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -557,7 +557,7 @@
             <v-row dense class="mb-2 z1">
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
               <v-select
-                v-if="articleType === ArticleTypes.SaminHelp.code && categories"
+                v-if="articleType === ArticleTypes.SelldoneHelp.code && categories"
                 v-model="category"
                 class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px bg-white"
                 :items="categories"
@@ -573,7 +573,7 @@
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
               <v-select
                 v-else-if="
-                  articleType === ArticleTypes.SaminBlog.code && categories
+                  articleType === ArticleTypes.SelldoneBlog.code && categories
                 "
                 v-model="category"
                 class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
@@ -662,7 +662,7 @@
 
               <v-autocomplete
                 v-if="
-                  articleType === ArticleTypes.SaminHelp.code &&
+                  articleType === ArticleTypes.SelldoneHelp.code &&
                   menu &&
                   parent_helps_canidates
                 "
@@ -682,7 +682,7 @@
               />
 
               <s-number-input
-                v-if="articleType === ArticleTypes.SaminHelp.code && menu"
+                v-if="articleType === ArticleTypes.SelldoneHelp.code && menu"
                 messages="Order"
                 v-model="menu.order"
                 solo
@@ -695,7 +695,7 @@
 
               <div
                 v-if="
-                  articleType === ArticleTypes.SaminHelp.code &&
+                  articleType === ArticleTypes.SelldoneHelp.code &&
                   menu &&
                   is_editing
                 "
@@ -722,7 +722,7 @@
               <v-spacer></v-spacer>
               <template
                 v-if="
-                  articleType === ArticleTypes.SaminBlog.code &&
+                  articleType === ArticleTypes.SelldoneBlog.code &&
                   HasPermission(
                     permissions.Content,
                     permissionLevels.FULL_ACCESS
@@ -1779,7 +1779,7 @@ export default {
       if (!this.canEdit) return;
 
       // Selldone Blog:
-      if (this.articleType === ArticleTypes.SaminBlog.code) {
+      if (this.articleType === ArticleTypes.SelldoneBlog.code) {
         this.busy_categories = true;
 
         axios
@@ -1815,7 +1815,7 @@ export default {
       }
 
       // Samin help:
-      if (this.articleType === ArticleTypes.SaminHelp.code) {
+      if (this.articleType === ArticleTypes.SelldoneHelp.code) {
         this.categories = Object.keys(HelpCategories);
       }
     },
@@ -1952,13 +1952,13 @@ export default {
             // --------------------------------- After Action ---------------------------------
             if (this.isNew) {
               // Need navigate to new URL!
-              if (this.articleType === ArticleTypes.SaminHelp.code) {
+              if (this.articleType === ArticleTypes.SelldoneHelp.code) {
                 this.$router.replace({ params: { help_id: data.help_id } });
-              } else if (this.articleType === ArticleTypes.SaminBlog.code) {
+              } else if (this.articleType === ArticleTypes.SelldoneBlog.code) {
                 this.$router.replace({ params: { blog_id: data.blog_id } });
               }
             } else {
-              if (this.articleType === ArticleTypes.SaminHelp.code) {
+              if (this.articleType === ArticleTypes.SelldoneHelp.code) {
                 this.menu = data.menu;
 
                 this.getHelpParentCandidatesList();
@@ -2088,7 +2088,7 @@ export default {
 
       if (this.$refs.editorContainer) this.$refs.editorContainer.setDirection();
 
-      if (this.articleType === ArticleTypes.SaminHelp.code) {
+      if (this.articleType === ArticleTypes.SelldoneHelp.code) {
         this.getHelpParentCandidatesList();
       }
 
@@ -2406,12 +2406,12 @@ export default {
 
     getArticlePageTo(target) {
       const target_id = target.id;
-      if (this.articleType === ArticleTypes.SaminBlog.code) {
+      if (this.articleType === ArticleTypes.SelldoneBlog.code) {
         return {
           name: "BlogSlug",
           params: { blog_id: target_id, slug: target.article.slug },
         };
-      } else if (this.articleType === ArticleTypes.SaminHelp.code) {
+      } else if (this.articleType === ArticleTypes.SelldoneHelp.code) {
         return { name: "Help", params: { help_id: target_id } };
       } else if (this.articleType === ArticleTypes.Product.code) {
       } else if (this.is_shop_blog) {

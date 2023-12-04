@@ -14,7 +14,7 @@
 
 <template>
   <div v-if="show" class="text-start position-relative pt-2">
-    <progress-loading v-if="busy"></progress-loading>
+    <s-progress-loading v-if="busy"></s-progress-loading>
     <!-- ----------------------- Tasks ----------------------- -->
 
     <div v-if="has_tasks" class="tasks mb-2">

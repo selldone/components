@@ -50,7 +50,7 @@
           </v-btn>
         </v-card-title>
 
-        <progress-loading v-if="busy"></progress-loading>
+        <s-progress-loading v-if="busy"></s-progress-loading>
 
         <product-comparison-list
           v-if="!need_updates.length"

@@ -324,7 +324,7 @@
         </v-card>
       </v-bottom-sheet>
 
-      <progress-loading v-if="busy_fetch"></progress-loading>
+      <s-progress-loading v-if="busy_fetch"></s-progress-loading>
     </div>
   </div>
 </template>

@@ -67,7 +67,7 @@
 
     <!-- ***************** Processing ************************ -->
 
-    <progress-loading v-if="loading_form || busy_pay"></progress-loading>
+    <s-progress-loading v-if="loading_form || busy_pay"></s-progress-loading>
   </div>
 </template>
 
