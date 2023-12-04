@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div>
+  <div class="s--line-chart">
     <apexchart
       v-if="chart_option"
       dir="ltr"
@@ -32,7 +32,7 @@ import numeral from "numeral";
 import { ChartAnnotations } from "../helper/ChartAnnotations";
 
 export default {
-  name: "LineChart",
+  name: "SLineChart",
   props: {
     type: {
       required: false,
@@ -124,12 +124,11 @@ export default {
   },
 
   mounted() {
-
-      this.init();
+    this.init();
   },
   methods: {
     init() {
-      this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
 
       if (!this.timeSeries) return;
 
@@ -258,7 +257,7 @@ export default {
           },
         },
         xaxis: {
-         // categories: this.timeSeries.arrayOfTimeAbsoluteForceInterpolateZero("created_at"),
+          // categories: this.timeSeries.arrayOfTimeAbsoluteForceInterpolateZero("created_at"),
           type: "datetime",
           labels: {
             show: true,
@@ -304,4 +303,7 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.s--line-chart {
+}
+</style>

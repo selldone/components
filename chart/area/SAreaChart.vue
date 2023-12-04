@@ -15,7 +15,7 @@
 <template>
   <apexchart
     v-if="chart_option"
-    class="areachart"
+    class="s--area-chart"
     dir="ltr"
     :type="type"
     :height="height"
@@ -32,7 +32,7 @@ import { colorSet1 } from "@core/helper/color/ColorGenerator";
 import { ChartAnnotations } from "@components/chart/helper/ChartAnnotations";
 
 export default {
-  name: "AreaChart",
+  name: "SAreaChart",
   props: {
     type: {
       required: false,
@@ -342,7 +342,7 @@ export default {
 </script>
 
 <style lang="scss">
-.areachart {
+.s--area-chart {
   .apexcharts-theme-dark {
     background: transparent !important;
   }

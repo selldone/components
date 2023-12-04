@@ -93,7 +93,7 @@
           v-intersect.once="(e) => OnIntersectLoad(e, 1)"
           class="mh250 border rounded-18px p-2"
         >
-          <line-chart
+          <s-line-chart
             v-if="IsLoaded(1)"
             :time-series="timeSeries"
             :y-label="$t('community.commons.user_reactions')"
@@ -116,7 +116,7 @@
           v-intersect.once="(e) => OnIntersectLoad(e, 2)"
           class="mh250 border rounded-18px p-2"
         >
-          <area-chart
+          <s-area-chart
             v-if="IsLoaded(2)"
             class="fadeIn"
             y-label="Media types"
@@ -133,7 +133,7 @@
             :colors="['#C2185B', '#03A9F4', '#009688', '#FFC107', '#673AB7']"
             height="240px"
             :opacity="0.5"
-          ></area-chart>
+          ></s-area-chart>
         </div>
       </v-col>
     </v-row>
@@ -143,17 +143,17 @@
 
 <script>
 import TimeSpan from "../../../ui/calendar/TimeSpan.vue";
-import AreaChart from "@components/chart/area/AreaChart.vue";
-import LineChart from "@components/chart/line/LineChart.vue";
+import SAreaChart from "@components/chart/area/SAreaChart.vue";
+import SLineChart from "@components/chart/line/SLineChart.vue";
 import TrendSparkline from "./TrendSparkline.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
-import {IntersectMixin} from "@components/mixin/IntersectMixin";
+import { IntersectMixin } from "@components/mixin/IntersectMixin";
 
 export default {
   name: "CommunityStatisticView",
-  mixins:[IntersectMixin],
+  mixins: [IntersectMixin],
 
-  components: { TimeSpan, AreaChart, LineChart, TrendSparkline },
+  components: { TimeSpan, SAreaChart, SLineChart, TrendSparkline },
   props: {
     title: {},
 
@@ -226,7 +226,10 @@ export default {
       ];
 
       if (this.isCommunity || this.isCategory)
-        out.unshift({ key: "topics", title: this.$t("community.commons.topics") });
+        out.unshift({
+          key: "topics",
+          title: this.$t("community.commons.topics"),
+        });
 
       return out;
     },

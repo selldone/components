@@ -15,12 +15,12 @@
 <template>
   <div class="cdc-container" :style="placementStyles.container">
     <div class="cdc" ref="donut" :style="donutStyles">
-      <donut-sections
+      <s-donut-chart-sections
         v-on="sectionListeners"
         :sections="donutSections"
         :start-angle="startAngle"
       >
-      </donut-sections>
+      </s-donut-chart-sections>
       <div class="cdc-overlay" :style="overlayStyles">
         <div class="cdc-text" :style="donutTextStyles">
           <slot>{{ text }}</slot>
@@ -48,12 +48,14 @@
 import { nativeSectionEvents } from "./utils/events";
 import defaultColors from "./utils/colors";
 import { placement, placementStyles, sectionValidator } from "./utils/misc";
-import DonutSections from "./DonutSections.vue";
+import SDonutChartSections from "./SDonutChartSections.vue";
 
 import "@components/chart/donut/styles/main.scss";
 
 export default {
-  name: "vc-donut",
+  name: "SDonutChart",
+  components: { SDonutChartSections },
+
   props: {
     // diameter of the donut
     size: { type: Number, default: 250, validator: (v) => v > 0 },
@@ -286,6 +288,5 @@ export default {
   beforeDestroy() {
     window.removeEventListener("resize", this.resizeListener);
   },
-  components: { DonutSections },
 };
 </script>
