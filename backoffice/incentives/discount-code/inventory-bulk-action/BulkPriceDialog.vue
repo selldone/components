@@ -47,7 +47,7 @@
             <v-tab-item>
               <div class="widget-box mb-5">
 
-                <widget-header :title="$t('global.commons.price')" icon="price_change"></widget-header>
+                <s-widget-header :title="$t('global.commons.price')" icon="price_change"></s-widget-header>
 
 
 
@@ -85,12 +85,12 @@
                   {{ Math.abs(bulk_constant) }}
                 </h2>
 
-                <currency-list
+                <s-currency-input
                   v-model="bulk_currency"
                   :return-object="false"
                   :active-currencies="shop.currencies"
                   @change="fetchReport"
-                ></currency-list>
+                ></s-currency-input>
 
                 <s-price-input
                   v-model="bulk_constant"
@@ -108,12 +108,12 @@
                   {{ bulk_ending }}
                 </h2>
 
-                <currency-list
+                <s-currency-input
                   v-model="bulk_currency"
                   :return-object="false"
                   :active-currencies="shop.currencies"
                   @change="fetchReport"
-                ></currency-list>
+                ></s-currency-input>
 
                 <s-price-input
                   v-model="bulk_ending"
@@ -126,7 +126,7 @@
 
           <div class="widget-box mb-5">
 
-            <widget-header :title="$t('global.commons.category')" icon="snippet_folder"></widget-header>
+            <s-widget-header :title="$t('global.commons.category')" icon="snippet_folder"></s-widget-header>
             <v-subheader>Limit bulk action to a category and all subcategories.</v-subheader>
 
 
@@ -250,22 +250,22 @@
 
 <script>
 import CategorySelect from "@components/backoffice/category/CategorySelect.vue";
-import CurrencyList from "@components/ui/currency/CurrencyList.vue";
+import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
 import BulkPreview from "@components/backoffice/incentives/discount-code/inventory-bulk-action/BulkPreview.vue";
-import WidgetHeader from "@components/widget/WidgetHeader.vue";
+
 import _ from "lodash-es";
 
 export default {
   name: "BulkPriceDialog",
   components: {
-    WidgetHeader,
+
     BulkPreview,
     SValueDashed,
     CategorySelect,
-    CurrencyList,
+    SCurrencyInput,
     SPriceInput,
     SNumberInput,
   },

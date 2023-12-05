@@ -28,7 +28,9 @@
         </v-avatar>
         <p class="font-weight-black mt-1 single-line mb-1">
           {{ profile.name }}
-          <v-icon v-if="profile.verified" small color="blue" class="ms-1">verified</v-icon>
+          <v-icon v-if="profile.verified" small color="blue" class="ms-1"
+            >verified</v-icon
+          >
         </p>
       </div>
 
@@ -61,7 +63,9 @@
             </v-avatar>
             <p class="font-weight-black mt-1 single-line mb-1">
               {{ profile.name }}
-              <v-icon v-if="profile.verified" small color="blue" class="ms-1">verified</v-icon>
+              <v-icon v-if="profile.verified" small color="blue" class="ms-1"
+                >verified</v-icon
+              >
             </p>
             <small class="d-block mt-3">follow you</small>
           </div>
@@ -98,13 +102,15 @@
         </div>
       </v-card-text>
 
-      <v-card-actions  class="justify-center">
+      <v-card-actions class="justify-center">
         <v-btn text class="flex-grow-1 text-lowercase"
-          ><b class="me-1">{{full_profile.followers_count}}</b> followers</v-btn
+          ><b class="me-1">{{ full_profile.followers_count }}</b>
+          followers</v-btn
         >
 
         <v-btn text class="flex-grow-1 text-lowercase"
-          ><b class="me-1">{{full_profile.following_count}}</b> following</v-btn
+          ><b class="me-1">{{ full_profile.following_count }}</b>
+          following</v-btn
         >
       </v-card-actions>
 
@@ -114,32 +120,29 @@
         </div>
 
         <div v-if="mutual_ids" class="d-flex align-center text-start mt-5">
-          <users-dense-images-circles
+          <s-dense-images-circles-users
             class="overflow-visible"
             :ids="mutual_ids"
             :size="32"
-          ></users-dense-images-circles>
+          ></s-dense-images-circles-users>
 
           <p class="m-0 flex-grow-1">
             Mutual followers
-            <b class="text-capitalize"
-              >{{mutual_names}}
-            </b>
-            <template v-if="mutual_ids.length>=4">
-              and <b>...</b>
-            </template>
-
+            <b class="text-capitalize">{{ mutual_names }} </b>
+            <template v-if="mutual_ids.length >= 4"> and <b>...</b> </template>
           </p>
         </div>
 
-        <div  class="d-flex align-center mt-5">
+        <div class="d-flex align-center mt-5">
           <v-avatar v-if="nominator" size="32" color="#fafafa">
             <img :src="getUserAvatar(nominator.id)" />
           </v-avatar>
           <div class="mx-2 text-start">
-            <p class="m-0">{{getLocalTimeString(profile.created_at,true)}}</p>
+            <p class="m-0">
+              {{ getLocalTimeString(profile.created_at, true) }}
+            </p>
             <template v-if="nominator">
-              Nominated by <b class="text-capitalize">{{nominator.name}}</b>
+              Nominated by <b class="text-capitalize">{{ nominator.name }}</b>
             </template>
           </div>
         </div>
@@ -164,11 +167,11 @@
 
 <script>
 import SetupService from "@core/server/SetupService";
-import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 
 export default {
   name: "CommunityUserProfileDialog",
-  components: { UsersDenseImagesCircles },
+  components: { SDenseImagesCirclesUsers },
   props: {
     community: {
       type: Object,
@@ -189,18 +192,22 @@ export default {
     service_country() {
       return SetupService.LocalServiceCountry();
     },
-    mutuals(){
-      return this.full_profile && this.full_profile.mutuals && this.full_profile.mutuals
+    mutuals() {
+      return (
+        this.full_profile &&
+        this.full_profile.mutuals &&
+        this.full_profile.mutuals
+      );
     },
-    mutual_ids(){
-      return this.mutuals &&  this.mutuals.map(i=>i.user_id)
+    mutual_ids() {
+      return this.mutuals && this.mutuals.map((i) => i.user_id);
     },
-    mutual_names(){
-      return this.mutuals &&  this.mutuals.map(i=>i.name).join(', ')
+    mutual_names() {
+      return this.mutuals && this.mutuals.map((i) => i.name).join(", ");
     },
-    nominator(){
-      return this.full_profile && this.full_profile.nominator
-    }
+    nominator() {
+      return this.full_profile && this.full_profile.nominator;
+    },
   },
 
   methods: {
@@ -209,13 +216,12 @@ export default {
       if (
         this.full_profile &&
         this.full_profile.user_id === this.profile.user_id
-      )
-      {
-        this.profile=this.full_profile;
+      ) {
+        this.profile = this.full_profile;
         return;
       }
 
-      this.full_profile=null;
+      this.full_profile = null;
       this.busy = true;
 
       axios
@@ -223,7 +229,7 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.full_profile = data.profile;
-            this.profile=data.profile;
+            this.profile = data.profile;
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

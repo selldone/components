@@ -390,7 +390,7 @@
 </template>
 
 <script>
-import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
+import SCurrencySelector from "@components/ui/currency/selector/SCurrencySelector.vue";
 import SStorefrontCookiePreferences from "../cookie/SStorefrontCookiePreferences.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 

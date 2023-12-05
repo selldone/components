@@ -36,7 +36,7 @@
     </p>
 
     <v-expand-transition leave-absolute hide-on-leave>
-      <fade-scroll v-if="show_coupons" show-arrow small-arrow>
+      <s-fade-scroll v-if="show_coupons" show-arrow small-arrow>
         <div class="d-flex align-stretch">
           <div v-for="coupon in coupons" :key="coupon.id" class="coupon-slide">
             <s-coupon
@@ -77,7 +77,7 @@
             </v-btn>
           </div>
         </div>
-      </fade-scroll>
+      </s-fade-scroll>
     </v-expand-transition>
 
     <v-dialog v-model="dialog" max-width="480" content-class="no-shadow-dialog">
@@ -122,12 +122,12 @@
 <script>
 import SCoupon from "./SCoupon.vue";
 import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import _ from "lodash-es";
 
 export default {
   name: "SStorefrontCoupons",
-  components: { FadeScroll, SCoupon },
+  components: { SFadeScroll, SCoupon },
   props: {
     productId: {},
     VariantId: {},

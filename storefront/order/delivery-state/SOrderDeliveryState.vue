@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--shop-delivery-state  container px-1 px-sm-3">
+  <div class="s--shop-delivery-state container px-1 px-sm-3">
     <div class="arrows mx-0 mx-sm-2" :class="{ rtl: $vuetify.rtl }">
       <ul>
         <!-- CheckQueue -->
@@ -206,26 +206,25 @@
       <small class="text-white"
         ><i class="fas fa-stopwatch"></i> Time to cancel:
       </small>
-      <count-down
+      <s-count-down
         v-if="basket.reject_at"
         :end="endOfRejectPeriod"
         class="me-2 p-0"
-      ></count-down>
+      ></s-count-down>
       <p>{{ reject_reason }}</p>
     </div>
-
   </div>
 </template>
 
 <script>
 import { BasketRejectReasons } from "@core/enums/basket/BasketRejectReasons";
 import { DateConverter } from "@core/helper/date/DateConverter";
-import CountDown from "@components/ui/count-down/CountDown.vue";
+import SCountDown from "@components/ui/count-down/SCountDown.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 
 export default {
   name: "SOrderDeliveryState",
-  components: { CountDown },
+  components: { SCountDown },
   props: {
     basket: {
       required: true,
@@ -373,21 +372,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-delivery-state{
-
+.s--shop-delivery-state {
 }
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--shop-delivery-state{
-text-align: center;
+.s--shop-delivery-state {
+  text-align: center;
   position: relative;
 
   .arrows {
@@ -522,5 +518,4 @@ text-align: center;
     }
   }
 }
-
 </style>

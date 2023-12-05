@@ -131,7 +131,7 @@
       </div>
 
       <div v-if="!need_address || address_entered">
-        <currency-list
+        <s-currency-input
           v-if="shop.currencies.length > 1"
           class="my-5"
           dense
@@ -141,7 +141,7 @@
           :label="$t('global.commons.currency')"
           :messages="$t('avocado.currency_msg')"
         >
-        </currency-list>
+        </s-currency-input>
 
         <p class="subtitle-2 mb-3">
           {{ $t("avocado.step2") }}
@@ -182,11 +182,11 @@
 import SShopAvocadoCustomerOrderItems from "./SShopAvocadoCustomerOrderItems.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SShopCustomerReceiverInfoWidget from "../delivery/SShopCustomerReceiverInfoWidget.vue";
-import CurrencyList from "@components/ui/currency/CurrencyList.vue";
+import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 export default {
   name: "SStorefrontAvocadoCustomerOrderForm",
   components: {
-    CurrencyList,
+    SCurrencyInput,
     SShopCustomerReceiverInfoWidget,
     SNumberInput,
     SShopAvocadoCustomerOrderItems,

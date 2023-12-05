@@ -65,11 +65,11 @@
             }}</span>
           </div>
 
-          <currency-icon
+          <s-currency-icon
             class="card__logo"
             :currency="giftCard.currency"
             flag
-          ></currency-icon>
+          ></s-currency-icon>
 
           <s-circle-button
             class="card__flip"
@@ -118,10 +118,10 @@
 </template>
 
 <script>
-import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
+import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 export default {
   name: "SShopGiftCard",
-  components: { CurrencyIcon },
+  components: { SCurrencyIcon },
   props: {
     giftCard: {
       require: true,

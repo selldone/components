@@ -68,7 +68,7 @@
 <script>
 import PaymentCard from "@components/payment/widgets/PaymentCard.vue";
 import SPaymentBillingDetails from "@components/payment/widgets/SPaymentBillingDetails.vue";
-import SCountryWorldMap from "@components/map/SCountryWorldMap.vue";
+import SCountryWorldMap from "@components/map/countries-svg/SCountryWorldMap.vue";
 export default {
   name: "SShopRowCustomerPaymentRecord",
   components: { SCountryWorldMap, SPaymentBillingDetails, PaymentCard },

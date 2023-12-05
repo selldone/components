@@ -20,7 +20,7 @@
     :class="{ disabled: loading }"
   >
     <div class="box">
-      <Widget
+      <s-widget
         class="text-start card"
         style="border-radius: 8px"
         :class="{ 'm-1': small, compact: compactMode }"
@@ -141,7 +141,7 @@
             </p>
           </div>
         </div>
-      </Widget>
+      </s-widget>
     </div>
 
     <v-progress-circular

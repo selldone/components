@@ -103,11 +103,11 @@
 
         <v-spacer></v-spacer>
 
-        <users-dense-images-circles
+        <s-dense-images-circles-users
           v-if="topic.contributors"
           :ids="topic.contributors"
           :size="32"
-        ></users-dense-images-circles>
+        ></s-dense-images-circles-users>
 
         <div class="subtitle-2 d-flex align-center op-0-7">
           <v-spacer></v-spacer>
@@ -167,7 +167,7 @@
 </template>
 
 <script>
-import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 import CommunityImage from "../image/CommunityImage.vue";
 import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
 import { TopicTrialType } from "@core/enums/community/TopicTrialType";
@@ -180,7 +180,7 @@ export default {
     TrendSparkline,
     Ribbon,
     CommunityImage,
-    UsersDenseImagesCircles,
+    SDenseImagesCirclesUsers,
   },
   props: {
     community: {

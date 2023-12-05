@@ -74,11 +74,11 @@
                 :src="subLabelImages[j]"
                 class="d-block mx-auto"
               />
-              <currency-icon
+              <s-currency-icon
                 v-else-if="isCurrency"
                 :currency="GetCurrency(subLabel)"
                 small
-              ></currency-icon>
+              ></s-currency-icon>
               <span v-else>{{ subLabel }}:</span>
               <span
                 class="percentage__list-label"
@@ -131,11 +131,11 @@ import {
 } from "funnel-graph-js/src/js/graph";
 import "funnel-graph-js/src/scss/main.scss";
 import "funnel-graph-js/src/scss/theme.scss";
-import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
+import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 
 export default {
   name: "SFunnelGraph",
-  components: { CurrencyIcon },
+  components: { SCurrencyIcon },
   props: {
     animated: {
       type: Boolean,

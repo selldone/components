@@ -35,10 +35,10 @@
               <h3 class="display-1">
                 {{ item.count | numeralFormat("0.[00]a") }}
               </h3>
-              <users-dense-images-circles
+              <s-dense-images-circles-users
                 :ids="item.users"
                 :size="$vuetify.breakpoint.xsOnly ? 32 : 42"
-              ></users-dense-images-circles>
+              ></s-dense-images-circles-users>
             </div>
             <p class="d-block m-0">
               {{ $t(ArticleReport[item.report].title) }}
@@ -61,11 +61,11 @@
 
 <script>
 import { ArticleReport } from "@core/enums/article/ArticleReport";
-import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 
 export default {
   name: "CommunityCommentReportsDialog",
-  components: { UsersDenseImagesCircles },
+  components: { SDenseImagesCirclesUsers },
   props: {
     community: {
       type: Object,

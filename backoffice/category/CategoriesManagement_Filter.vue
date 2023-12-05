@@ -98,7 +98,15 @@
             <v-icon left :color="val">brightness_1</v-icon>
             {{ coloName(val) }}</span
           >
-          <template v-else> <variant-asset-view :shop-id="category.shop_id" :value="val" class="pen me-1" :size="16"></variant-asset-view>  {{ val?.removeVariantAsset() }}</template>
+          <template v-else>
+            <variant-asset-view
+              :shop-id="category.shop_id"
+              :value="val"
+              class="pen me-1"
+              :size="16"
+            ></variant-asset-view>
+            {{ val?.removeVariantAsset() }}</template
+          >
         </v-chip>
       </v-chip-group>
     </div>
@@ -115,12 +123,11 @@
         class="mx-2"
         color="#fafafa"
       >
-        <currency-icon
-            :currency="price.currency"
-            flag
-            caption
-        ></currency-icon>
-
+        <s-currency-icon
+          :currency="price.currency"
+          flag
+          caption
+        ></s-currency-icon>
 
         <span class="mx-1"
           ><small> {{ $t("add_category.edit_filter.min") }}: </small>
@@ -162,11 +169,11 @@
 <script>
 import { ProductVariants } from "@core/enums/product/ProductVariants";
 import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
-import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
+import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 
 export default {
   name: "CategoriesManagementFilter",
-  components: {CurrencyIcon, VariantAssetView },
+  components: { SCurrencyIcon, VariantAssetView },
 
   props: {
     category: {

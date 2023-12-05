@@ -18,12 +18,12 @@
     fluid
     class="s--storefront-lottery-prizes"
   >
-    <widget-header
+    <s-widget-header
       :title="$t('global.commons.Prizes')"
       icon="casino"
       icon-color="#333"
     >
-    </widget-header>
+    </s-widget-header>
     <v-subheader>
       {{ $t("lottery_prizes.message") }}
     </v-subheader>
@@ -42,7 +42,7 @@
     </p>
 
     <v-expand-transition leave-absolute hide-on-leave>
-      <fade-scroll v-if="show_prizes" show-arrow small-arrow>
+      <s-fade-scroll v-if="show_prizes" show-arrow small-arrow>
         <div class="d-flex align-stretch">
           <div v-for="prize in lotteries" :key="prize.id" class="prize-slide">
             <div
@@ -135,17 +135,17 @@
             </div>
           </div>
         </div>
-      </fade-scroll>
+      </s-fade-scroll>
     </v-expand-transition>
   </v-container>
 </template>
 
 <script>
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import _ from "lodash-es";
 export default {
   name: "SStorefrontLotteryPrizes",
-  components: { FadeScroll },
+  components: { SFadeScroll },
   props: {
     productId: {},
     VariantId: {},

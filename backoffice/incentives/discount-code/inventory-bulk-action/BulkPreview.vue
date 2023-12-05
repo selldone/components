@@ -16,7 +16,7 @@
   <div class="widget-box -large min-height-50vh">
     <div v-if="hasCurrency" class="d-flex">
       <v-spacer></v-spacer>
-      <currency-list
+      <s-currency-input
         v-model="currency"
         :active-currencies="currencies"
         :return-object="false"
@@ -24,7 +24,7 @@
         class="max-width-field-mini"
         solo
         flat
-      ></currency-list>
+      ></s-currency-input>
     </div>
     <s-progress-loading v-if="busy_fetch"></s-progress-loading>
     <v-data-table
@@ -122,12 +122,12 @@
 </template>
 
 <script>
-import CurrencyList from "@components/ui/currency/CurrencyList.vue";
+import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
 import _ from "lodash-es";
 export default {
   name: "BulkPreview",
-  components: { STimeProgressBar, CurrencyList },
+  components: { STimeProgressBar, SCurrencyInput },
   props: {
     url: {
       required: true,

@@ -359,7 +359,7 @@ import SShopProductRatingView from "@components/product/rating/SShopProductRatin
 import BasketItemUserMessageForm from "@components/order/product-input/BasketItemUserMessageForm.vue";
 import SStorefrontCoupons from "@components/storefront/incentives/coupon/SStorefrontCoupons.vue";
 import { ProductVariants } from "@core/enums/product/ProductVariants";
-import SSmartSelectVendor from "@components/vendor/SSmartSelectVendor.vue";
+import SSmartSelectVendor from "@components/vendor/selector/SSmartSelectVendor.vue";
 import ProductSectionBoxGeneralInfo from "@components/product/sections/ProductSectionBoxGeneralInfo.vue";
 import ProductSectionBoxCondition from "@components/product/sections/ProductSectionBoxCondition.vue";
 import ProductSectionBoxService from "@components/product/sections/ProductSectionBoxService.vue";

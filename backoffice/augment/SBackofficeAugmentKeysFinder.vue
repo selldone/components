@@ -13,21 +13,21 @@
   -->
 
 <template>
-  <fade-scroll class="text-start">
+  <s-fade-scroll class="text-start">
     <div class="d-flex" title="Dynamic values auto fill by augmentation.">
       <v-chip label v-for="it in array" :key="it" x-small class="me-1">{{
         it
       }}</v-chip>
     </div>
-  </fade-scroll>
+  </s-fade-scroll>
 </template>
 
 <script>
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 
 export default {
   name: "SBackofficeAugmentKeysFinder",
-  components: { FadeScroll },
+  components: { SFadeScroll },
   props: {
     value: {},
   },

@@ -17,7 +17,7 @@
     <v-container fluid>
       <v-subheader> ● Order {{ product.title }} with </v-subheader>
 
-      <fade-scroll v-model="index">
+      <s-fade-scroll v-model="index">
         <div class="-cards-wrap">
           <div
             v-for="cross_sell in cross_sells"
@@ -145,21 +145,21 @@
             </div>
           </div>
         </div>
-      </fade-scroll>
+      </s-fade-scroll>
     </v-container>
   </div>
 </template>
 
 <script>
 import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import { BasketHelper } from "@core/helper/shop/BasketHelper";
 import CrossSellActionType from "@core/enums/product/CrossSellActionType";
 import {ShopOptionsHelper} from "@core/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "SShopProductCrossSellList",
-  components: { FadeScroll, ProductVariantsView },
+  components: { SFadeScroll, ProductVariantsView },
   props: {
     shop: {
       required: true,

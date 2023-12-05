@@ -18,8 +18,8 @@
     :class="{ 'pointer-event-none': community && !access.admin }"
   >
     <div class="widget-box">
-      <widget-header title="Telegram channel" icon="fab fa-telegram">
-      </widget-header>
+      <s-widget-header title="Telegram channel" icon="fab fa-telegram">
+      </s-widget-header>
 
       <p dir="ltr" class="mt-3">
         Auto publish post on your Telegram channel. <br />

@@ -21,7 +21,7 @@
     </v-container>
 
     <v-container class="my-5 py-5" style="max-width: 1720px">
-      <fade-scroll center>
+      <s-fade-scroll center>
         <div class="-categories-container">
           <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ Categories List ━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
@@ -51,13 +51,13 @@
             </router-link>
           </div>
         </div>
-      </fade-scroll>
+      </s-fade-scroll>
     </v-container>
   </div>
 </template>
 
 <script>
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 
 export default {
   name: "SShopRelatedCategories",
@@ -71,13 +71,11 @@ export default {
     categories: { require: true, type: Array },
   },
   components: {
-    FadeScroll,
+    SFadeScroll,
   },
 
   data: function () {
-    return {
-
-    };
+    return {};
   },
 
   computed: {},

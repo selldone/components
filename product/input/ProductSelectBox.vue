@@ -195,7 +195,7 @@
           </v-card-title>
 
           <v-card-text>
-            <products-select-admin
+            <s-backoffice-products-management-view
               v-if="dialog"
               :shop="shop"
               @select="selectProduct"
@@ -226,7 +226,7 @@
 </template>
 
 <script>
-import ProductsSelectAdmin from "@components/backoffice/product/ProductsSelectAdmin.vue";
+import SBackofficeProductsManagementView from "@components/backoffice/product/SBackofficeProductsManagementView.vue";
 import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
 import SLoading from "@components/ui/loading/SLoading.vue";
@@ -236,7 +236,7 @@ export default {
     SLoading,
     ProductVariantsView,
     VariantItemMini,
-    ProductsSelectAdmin,
+    SBackofficeProductsManagementView,
   },
   props: {
     value: {},

@@ -13,13 +13,23 @@
   -->
 
 <template>
-  <div class="s--shop-customer-delivery-info-widget widget shadow my-3 mx-0 mx-md-3">
+  <div
+    class="s--shop-customer-delivery-info-widget widget shadow my-3 mx-0 mx-md-3"
+  >
     <h2 class="d-flex align-center">
-      <v-icon class="me-1" color="#111">{{has_goods_delivery?'local_shipping':'switch_access_shortcut_add'}}</v-icon>
+      <v-icon class="me-1" color="#111">{{
+        has_goods_delivery ? "local_shipping" : "switch_access_shortcut_add"
+      }}</v-icon>
       {{ $t("physical_order_page.delivery.title") }}
 
-      <v-chip v-if="is_pickup" class="skew-n20 ms-2"  color="success" dark label>{{$t('global.commons.pickup')}}</v-chip>
-
+      <v-chip
+        v-if="is_pickup"
+        class="skew-n20 ms-2"
+        color="success"
+        dark
+        label
+        >{{ $t("global.commons.pickup") }}</v-chip
+      >
 
       <v-spacer></v-spacer>
     </h2>
@@ -52,7 +62,7 @@
       ></basket-auto-complete-count-down>
     </div>
 
-    <v-row v-if="has_delivery_info ">
+    <v-row v-if="has_delivery_info">
       <!-- ========================================= BILLING ========================================= -->
 
       <v-col cols="12" sm="6" md="4" class="border-end-grater-md">
@@ -125,7 +135,9 @@
       <v-col cols="12" sm="6" md="4" class=" ">
         <p class="font-weight-bold">
           {{ $t("global.basket_order_info_summery.address") }}
-          <span v-if="is_pickup" class="mx-2">({{$t('global.commons.pickup')}})</span>
+          <span v-if="is_pickup" class="mx-2"
+            >({{ $t("global.commons.pickup") }})</span
+          >
         </p>
 
         <p class="mb-1" v-if="receiver_info.name">
@@ -176,9 +188,8 @@
           >{{ receiver_info.message }}
         </p>
 
-        <div     v-if="can_edit_address && !is_pickup" class="d-flex justify-end">
+        <div v-if="can_edit_address && !is_pickup" class="d-flex justify-end">
           <v-btn
-
             depressed
             @click="showEditAddress"
             :loading="busy_edit_receiver"
@@ -188,14 +199,17 @@
           >
         </div>
 
-        <p v-else-if="is_pickup" class="mb-1" >
-          <small><v-icon small class="me-1">pin_drop</v-icon>
-            {{$t('global.commons.pickup')}}: </small
-          >                   <geo-navigation-button  class="my-1" :location="receiver_info.location">  </geo-navigation-button>
-
+        <p v-else-if="is_pickup" class="mb-1">
+          <small
+            ><v-icon small class="me-1">pin_drop</v-icon>
+            {{ $t("global.commons.pickup") }}:
+          </small>
+          <s-geo-navigation-button
+            class="my-1"
+            :location="receiver_info.location"
+          >
+          </s-geo-navigation-button>
         </p>
-
-
 
         <!-- ========================================= RECEIVER ========================================= -->
 
@@ -225,7 +239,7 @@
 
       <v-col cols="12" sm="12" md="4" class="">
         <s-map-view
-            v-if="receiver_info.location"
+          v-if="receiver_info.location"
           v-model="receiver_info"
           :zoom="15"
           :center="center"
@@ -285,8 +299,10 @@
           {{ $t("physical_order_page.delivery.order_delivered") }}
         </span>
       </p>
-      <p class="small m-0" :title="$t('physical_order_page.delivery.delivery_time')">
-
+      <p
+        class="small m-0"
+        :title="$t('physical_order_page.delivery.delivery_time')"
+      >
         <v-icon small class="me-1">access_time</v-icon>
 
         <b> {{ getFromNowString(basket.delivery_at) }}</b>
@@ -337,14 +353,13 @@ import BasketBillingWidget from "@components/storefront/order/order-billing/Bask
 import { ProductType } from "@core/enums/product/ProductType";
 import BasketAutoCompleteCountDown from "@components/storefront/order/delivery/BasketAutoCompleteCountDown.vue";
 import DeliveryTimelineTransportationOrder from "@components/storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
-import {ShopTransportations} from "@core/enums/logistic/ShopTransportations";
-import GeoNavigationButton
-  from "@components/map/GeoNavigationButton.vue";
+import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
+import SGeoNavigationButton from "@components/map/geo-button/SGeoNavigationButton.vue";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
   components: {
-    GeoNavigationButton,
+    SGeoNavigationButton,
     DeliveryTimelineTransportationOrder,
     BasketAutoCompleteCountDown,
     BasketBillingWidget,
@@ -385,7 +400,6 @@ export default {
   },
 
   computed: {
-
     isPhysical() {
       return this.basket.type === ProductType.PHYSICAL.code;
     },
@@ -399,25 +413,27 @@ export default {
     },
 
     isAvocado() {
-      return this.basket.type === 'AVO';
+      return this.basket.type === "AVO";
     },
 
     isSubscription() {
       return this.basket.type === ProductType.SUBSCRIPTION.code;
     },
 
-
-    has_goods_delivery(){
-      return this.isPhysical || this.isSubscription
+    has_goods_delivery() {
+      return this.isPhysical || this.isSubscription;
     },
-    has_address(){
-      return this.isPhysical || this.isService || this.isSubscription
+    has_address() {
+      return this.isPhysical || this.isService || this.isSubscription;
     },
-    has_delivery_info(){
-      return this.isPhysical || this.isService || (this.isAvocado && this.receiver_info) || this.isSubscription
+    has_delivery_info() {
+      return (
+        this.isPhysical ||
+        this.isService ||
+        (this.isAvocado && this.receiver_info) ||
+        this.isSubscription
+      );
     },
-
-
 
     canConfirmReceived() {
       if (this.has_goods_delivery) {
@@ -434,11 +450,17 @@ export default {
     },
 
     receiver_info() {
-      return this.basket.receiver_info?this.basket.receiver_info:{}/*Fix bug when seller disable ask for shipping address*/;
+      return this.basket.receiver_info
+        ? this.basket.receiver_info
+        : {} /*Fix bug when seller disable ask for shipping address*/;
     },
 
     is_pickup() {
-      return this.delivery_info && this.delivery_info.type===ShopTransportations.Pickup.code && this.receiver_info.pickup;
+      return (
+        this.delivery_info &&
+        this.delivery_info.type === ShopTransportations.Pickup.code &&
+        this.receiver_info.pickup
+      );
     },
 
     delivery_info() {
@@ -446,7 +468,9 @@ export default {
     },
 
     billing() {
-      return this.basket.billing?this.basket.billing:{}/*Fix bug when seller disable ask for shipping address*/;
+      return this.basket.billing
+        ? this.basket.billing
+        : {} /*Fix bug when seller disable ask for shipping address*/;
     },
 
     can_edit_address() {
@@ -478,7 +502,7 @@ export default {
           {
             receiver_info: info,
 
-            code:this.basket.code/*🥶 Guest*/,
+            code: this.basket.code /*🥶 Guest*/,
           }
         )
         .then(({ data }) => {
@@ -578,7 +602,6 @@ export default {
 </script>
 
 <style scoped>
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -586,7 +609,7 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-customer-delivery-info-widget{
+.s--shop-customer-delivery-info-widget {
   text-align: start;
 }
 </style>

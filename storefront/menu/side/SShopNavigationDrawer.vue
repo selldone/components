@@ -251,7 +251,7 @@
 <script>
 import SShopUserMenuList from "../user/SShopUserMenuList.vue";
 import MenuCategories from "@components/storefront/menu/header/MenuCategories.vue";
-import SCurrencySelector from "@components/ui/currency/SCurrencySelector.vue";
+import SCurrencySelector from "@components/ui/currency/selector/SCurrencySelector.vue";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 export default {

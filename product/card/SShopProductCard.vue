@@ -101,14 +101,14 @@
             <b>{{ Number(product.rate).toFixed(1) }}</b>
           </v-chip>
           <div v-if="colors && colors.length" class="p-1">
-            <color-circle
+            <s-color-circle
               v-for="color in colors.slice(0, 5)"
               :key="color"
               :color="color"
               class="mr-1"
               :size="14"
             >
-            </color-circle>
+            </s-color-circle>
             <v-icon v-if="colors.length > 5" class="mr-1">more_horiz</v-icon>
           </div>
         </div>
@@ -217,14 +217,14 @@
                 v-if="colors && colors.length"
                 class="p-1 overflow-hidden single-line"
               >
-                <color-circle
+                <s-color-circle
                   v-for="color in colors.slice(0, 5)"
                   :key="color"
                   :color="color"
                   class="mr-1"
                   :size="14"
                 >
-                </color-circle>
+                </s-color-circle>
                 <v-icon v-if="colors.length > 5" class="mr-1"
                   >more_horiz
                 </v-icon>
@@ -315,7 +315,7 @@
         v-if="hasDiscountCountDown"
         class="count-down-container fadeIn delay_400"
       >
-        <count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
+        <s-count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
         <p v-else class="discount-not-end">
           {{ $t("product_info.action") }}
         </p>
@@ -469,7 +469,7 @@
         v-if="hasDiscountCountDown"
         class="count-down-container fadeIn delay_400"
       >
-        <count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
+        <s-count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
         <p v-else class="discount-not-end">
           {{ $t("product_info.action") }}
         </p>
@@ -481,13 +481,13 @@
 <script>
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
 import PriceView from "@components/ui/price/PriceView.vue";
-import CountDown from "@components/ui/count-down/CountDown.vue";
+import CountDown from "@components/ui/count-down/SCountDown.vue";
 import { ProductType } from "@core/enums/product/ProductType";
-import ColorCircle from "@components/ui/color/ColorCircle.vue";
+import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 
 export default {
   name: "SShopProductCard",
-  components: { ColorCircle, CountDown, PriceView, ProductVariantsView },
+  components: { SColorCircle, CountDown, PriceView, ProductVariantsView },
   props: {
     product: {
       required: true,

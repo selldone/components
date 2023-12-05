@@ -14,13 +14,13 @@
 
 <template>
   <v-flex class="product-variant-card-micro" style="position: relative">
-    <color-circle
+    <s-color-circle
       v-if="color"
       :color="color"
       class="mr-1"
       :size="14"
     >
-    </color-circle>
+    </s-color-circle>
 
     <span v-if="volume" class="card-badge-info">
       <variant-asset-view
@@ -71,11 +71,11 @@
 
 <script>
 import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
-import ColorCircle from "@components/ui/color/ColorCircle.vue";
+import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 
 export default {
   name: "VariantItemViewMicro",
-  components: {ColorCircle, VariantAssetView },
+  components: {SColorCircle, VariantAssetView },
   props: {
     productVariant: {
       required: true,

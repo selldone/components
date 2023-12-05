@@ -49,7 +49,7 @@
     </v-container>
 
     <v-container class="my-16 position-relative">
-      <expand-view
+      <s-expand-view
         class="master-article-container"
         max-height="50vh"
         min-height="30vh"
@@ -58,13 +58,13 @@
           :files="files"
           :purchased="product.buy_file"
         ></s-shop-product-files-list>
-      </expand-view>
+      </s-expand-view>
     </v-container>
   </div>
 </template>
 
 <script>
-import ExpandView from "@components/ui/expand-view/ExpandView.vue";
+import SExpandView from "@components/ui/expand-view/SExpandView.vue";
 import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 
@@ -80,7 +80,7 @@ export default {
   },
   components: {
     SShopProductFilesList,
-    ExpandView,
+    SExpandView,
   },
 
   data: function () {

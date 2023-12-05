@@ -27,7 +27,7 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Top Bar ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-toolbar v-if="!busy && !qrCode" flat color="transparent">
-      <currency-icon :currency="currency" gradient></currency-icon>
+      <s-currency-icon :currency="currency" gradient></s-currency-icon>
 
       <v-toolbar-title class="body-title px-3">
         {{ $t("global.payment_form.title") }}
@@ -706,7 +706,7 @@ import PaymentButton from "./widgets/PaymentButton.vue";
 import SelectGiftCards from "@components/backoffice/incentives/gift-card/SelectGiftCards.vue";
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 import TimeLapse from "@components/ui/time-lapse/timeLapse.vue";
-import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
+import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 import SPaymentRazorpay from "./razorpay/SPaymentRazorpay.vue";
 import SPaymentPaypalStandard from "./paypal-standard/SPaymentPaypalStandard.vue";
 import SPaymentMercadopago from "./mercadopago/SPaymentMercadopago.vue";
@@ -721,7 +721,7 @@ export default {
     SPaymentMercadopago,
     SPaymentPaypalStandard,
     SPaymentRazorpay,
-    CurrencyIcon,
+    SCurrencyIcon,
     TimeLapse,
     SValueCopyBox,
     SelectGiftCards,

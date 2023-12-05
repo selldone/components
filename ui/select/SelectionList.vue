@@ -27,8 +27,8 @@
       filter
       :value="item"
     >
-      <color-circle v-if="isColor" :color="item" :size="16" class="ms-n2 me-1">
-      </color-circle>
+      <s-color-circle v-if="isColor" :color="item" :size="16" class="ms-n2 me-1">
+      </s-color-circle>
 
       <span v-if="isColor"> {{ coloName(item) }}</span>
 
@@ -47,12 +47,12 @@
 </template>
 
 <script>
-import ColorCircle from "@components/ui/color/ColorCircle.vue";
+import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
 
 export default {
   name: "SelectionList",
-  components: { VariantAssetView, ColorCircle },
+  components: { VariantAssetView, SColorCircle },
   props: {
     isColor: {
       type: Boolean,

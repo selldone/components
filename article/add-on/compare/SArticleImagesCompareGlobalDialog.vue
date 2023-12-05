@@ -54,7 +54,7 @@
         <v-tabs-items v-model="tab" class="bg-transparent">
           <v-tab-item>
             <div dir="ltr" class="widget-box -large mb-5">
-              <widget-header title="Images" icon="image"></widget-header>
+              <s-widget-header title="Images" icon="image"></s-widget-header>
               <v-subheader>
                 <div>
                   You have the option to upload a pair of images to form a
@@ -89,10 +89,10 @@
           </v-tab-item>
           <v-tab-item>
             <div class="widget-box -large mb-5">
-              <widget-header
+              <s-widget-header
                 title="Relative image size"
                 icon="fit_screen"
-              ></widget-header>
+              ></s-widget-header>
               <v-subheader>
                 <div>
                   <b>Unit: em</b>, An em is a unit in the field of typography,

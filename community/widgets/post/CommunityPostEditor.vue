@@ -68,7 +68,7 @@
           ></v-select>
 
           <template v-if="subscription">
-            <currency-list
+            <s-currency-input
               v-model="currency"
               :activeCurrencies="currencies"
               icon-only
@@ -306,11 +306,11 @@
           >
           </s-mentionable-input>
 
-          <users-dense-images-circles
+          <s-dense-images-circles-users
             v-if="mentions && mentions.users"
             :ids="mentions.users"
             :size="32"
-          ></users-dense-images-circles>
+          ></s-dense-images-circles-users>
 
           <!-- Poll , tips: can not edit poll after create! -->
 
@@ -376,7 +376,11 @@
                 ref="video_view"
                 style="max-height: 400px; background-color: #000"
               >
-                <source :src="video" id="video_here"  :type="VideoHelper.GetMime(video)"/>
+                <source
+                  :src="video"
+                  id="video_here"
+                  :type="VideoHelper.GetMime(video)"
+                />
               </video>
 
               <div class="absolute-top-end">
@@ -468,33 +472,33 @@
           </div>
         </div>
 
-
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Attach Files ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div v-else-if="tab === 'attach'">
           <community-attach-editor
-              v-if=" !post"
-              :community="community"
-              v-model="attach_files"
-              class="my-4"
-
+            v-if="!post"
+            :community="community"
+            v-model="attach_files"
+            class="my-4"
           >
           </community-attach-editor>
 
           <template v-else>
-            <community-attach-view v-if="post?.attachments?.length"  :post="post" :files="post?.attachments" view-only >
-
+            <community-attach-view
+              v-if="post?.attachments?.length"
+              :post="post"
+              :files="post?.attachments"
+              view-only
+            >
             </community-attach-view>
             <v-subheader>
               <div>
-                <v-icon class="me-1">warning_amber</v-icon> You can not edit attachments after sending them. If you remove post, attachments will be deleted.
+                <v-icon class="me-1">warning_amber</v-icon> You can not edit
+                attachments after sending them. If you remove post, attachments
+                will be deleted.
               </div>
             </v-subheader>
           </template>
-
         </div>
-
-
-
       </v-slide-y-transition>
 
       <!-- Buttons to select image / video / link -->
@@ -665,11 +669,11 @@ import RoundedTabs from "@components/ui/tab/RoundedTabs.vue";
 import GlobalRules from "@core/helper/rules/GlobalRules";
 import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
 import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
-import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 import { Screenshot } from "@core/helper/canvas/Screenshot";
 import { FileHelper } from "@core/helper/converters/FileHelper";
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
-import CurrencyList from "@components/ui/currency/CurrencyList.vue";
+import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
 import { TopicTrialType } from "@core/enums/community/TopicTrialType";
 import { Currency } from "@core/enums/payment/Currency";
@@ -701,9 +705,9 @@ export default {
     CommunityProductView,
     CommunityProductEditor,
     CommunityPoll,
-    CurrencyList,
+    SCurrencyInput,
     SPriceInput,
-    UsersDenseImagesCircles,
+    SDenseImagesCirclesUsers,
     SMentionableInput,
     RoundedTabs,
     VoiceRecorder,
@@ -743,15 +747,11 @@ export default {
       type: Boolean,
       default: false,
     },
-
-
-
   },
 
   data() {
     return {
       VideoHelper: VideoHelper,
-
 
       title: null,
       body: null,
@@ -818,8 +818,7 @@ export default {
 
       product_id: null,
 
-
-      attach_files:[],
+      attach_files: [],
       //--------------------
       busy: false,
       progress: 0, // Upload progress
@@ -827,7 +826,6 @@ export default {
   },
 
   computed: {
-
     post_restricted() {
       // If true user can not send post!
       return (
@@ -877,7 +875,7 @@ export default {
           check: !!this.product_id,
         });
       }
-      if (this.access.attach ) {
+      if (this.access.attach) {
         out.push({
           title: this.$t("community.commons.attach_file"),
           value: "attach",
@@ -886,7 +884,6 @@ export default {
           check: this.attach_files?.length,
         });
       }
-
 
       if (this.topicMode) {
         out.push({
@@ -1320,19 +1317,12 @@ export default {
         formData.append("product_id", this.product_id);
       }
 
-
       // Attach files:
-    if(this.attach_files?.length){
-      this.attach_files.forEach(file=>{
-        formData.append("attaches[]", file);
-
-      })
-    }
-
-
-
-
-
+      if (this.attach_files?.length) {
+        this.attach_files.forEach((file) => {
+          formData.append("attaches[]", file);
+        });
+      }
 
       const config = {
         headers: {
@@ -1403,14 +1393,14 @@ export default {
                 this.$emit("update:topic", data.topic);
               } else {
                 this.$emit("add:topic", data.topic);
-                   this.resetToDefault();      // 🞇 Reset to default
+                this.resetToDefault(); // 🞇 Reset to default
               }
             } else {
               if (this.post) {
                 this.$emit("update:post", data.post);
               } else {
                 this.$emit("add:post", data.post);
-                   this.resetToDefault();      // 🞇 Reset to default
+                this.resetToDefault(); // 🞇 Reset to default
               }
             }
           } else {

@@ -17,10 +17,10 @@
 
   <div>
     <div v-if="chat" class="widget-box -large mb-5">
-      <widget-header
+      <s-widget-header
         :title="$t('global.commons.messages')"
         icon="3p"
-      ></widget-header>
+      ></s-widget-header>
       <v-subheader>
         {{
           isAdmin
@@ -42,10 +42,10 @@
     </div>
 
     <div class="widget-box -large mb-5">
-      <widget-header
+      <s-widget-header
         :title="$t('global.actions.add_new_message')"
         icon="add_comment"
-      ></widget-header>
+      ></s-widget-header>
       <v-subheader></v-subheader>
 
       <div class="d-flex align-center mt-3">

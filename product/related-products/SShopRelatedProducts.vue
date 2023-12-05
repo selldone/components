@@ -21,7 +21,7 @@
     </v-container>
 
     <div class="my-5 py-5">
-      <fade-scroll show-arrow center stick-class="-product-card">
+      <s-fade-scroll show-arrow center stick-class="-product-card">
         <div class="-product-container">
           <div class="-product-card d-flex align-center flex-column pa-5">
             <div class="ma-auto">
@@ -141,13 +141,13 @@
             </div>
           </template>
         </div>
-      </fade-scroll>
+      </s-fade-scroll>
     </div>
   </div>
 </template>
 
 <script>
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
 import SCloudTagsView from "@components/ui/tag/SCloudTagsView.vue";
 import _ from "lodash-es";
@@ -165,7 +165,7 @@ export default {
   components: {
     SCloudTagsView,
     ProductVariantsView,
-    FadeScroll,
+    SFadeScroll,
   },
 
   data: function () {

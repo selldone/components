@@ -13,9 +13,12 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-show="isMembershipSubscription" class="s-shop-product-subscription-membership">
+  <div
+    v-show="isMembershipSubscription"
+    class="s-shop-product-subscription-membership"
+  >
     <v-container class="my-16 position-relative">
-      <expand-view
+      <s-expand-view
         class="master-article-container"
         max-height="60vh"
         min-height="40vh"
@@ -35,14 +38,13 @@
             After subscribing, you will have access to the contents here.
           </div>
         </div>
-      </expand-view>
+      </s-expand-view>
     </v-container>
   </div>
 </template>
 
 <script>
-
-import ExpandView from "@components/ui/expand-view/ExpandView.vue";
+import SExpandView from "@components/ui/expand-view/SExpandView.vue";
 import SShopProductMembershipContentViewer from "@components/product/subscription/SShopProductMembershipContentViewer.vue";
 import { SubscriptionMode } from "@core/enums/subscription/SubscriptionMode";
 import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
@@ -59,7 +61,7 @@ export default {
   },
   components: {
     SShopProductMembershipContentViewer,
-    ExpandView,
+    SExpandView,
   },
 
   data: function () {
@@ -96,6 +98,5 @@ export default {
  */
 
 .s-shop-product-subscription-membership {
-
 }
 </style>

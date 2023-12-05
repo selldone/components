@@ -27,13 +27,14 @@
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Login button ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
         <v-btn
-            v-if="!USER()"
-            icon
-            @click="NeedLogin()"
-            class="me-2 ms-sm-n2"
-            :class="{'absolute-top-end':$vuetify.breakpoint.xsOnly}"
-            :small="!$vuetify.breakpoint.xsOnly"
-        ><v-icon>person</v-icon></v-btn>
+          v-if="!USER()"
+          icon
+          @click="NeedLogin()"
+          class="me-2 ms-sm-n2"
+          :class="{ 'absolute-top-end': $vuetify.breakpoint.xsOnly }"
+          :small="!$vuetify.breakpoint.xsOnly"
+          ><v-icon>person</v-icon></v-btn
+        >
 
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ User menu ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
@@ -161,7 +162,6 @@
           </v-sheet>
         </v-menu>
 
-
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Home ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
         <router-link
           :to="{ name: 'CommunityHomePage' }"
@@ -263,7 +263,10 @@
         :title="$t('global.social_network.telegram')"
         :href="`https://t.me/${bot_telegram.channel}`"
         target="_blank"
-        ><img width="16" height="16" src="../../../assets/tradmark/telegram.svg"
+        ><img
+          width="16"
+          height="16"
+          src="../../../assets/tradmark/telegram.svg"
       /></v-btn>
 
       <template v-if="access.admin">
@@ -398,7 +401,7 @@
       >{{ $t("community.commons.blocked_message") }}:
       {{ getLocalTimeString(block_at) }}
       <br />
-      <count-down :end="block_at_date"></count-down>
+      <s-count-down :end="block_at_date"></s-count-down>
     </v-alert>
 
     <!-- ████████████████████ Rule Dialog ████████████████████ -->
@@ -422,7 +425,6 @@
           class="text-start"
           v-html="rule_html"
         >
-
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -564,18 +566,18 @@
 import CommunityURLs from "../../helper/CommunityURLs";
 import SSocialShareButtons from "../../../ui/button/share/SSocialShareButtons.vue";
 import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
-import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 import CommunityAccessController from "../access/CommunityAccessController.vue";
-import CountDown from "@components/ui/count-down/CountDown.vue";
+import SCountDown from "@components/ui/count-down/SCountDown.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
-import {SmartConvertTextToHtml} from "@core/helper/html/HtmlHelper";
+import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "CommunityBreadcrumb",
   components: {
-    CountDown,
+    SCountDown,
     CommunityAccessController,
-    UsersDenseImagesCircles,
+    SDenseImagesCirclesUsers,
     UserEmailInput,
     SSocialShareButtons,
   },
@@ -706,9 +708,9 @@ export default {
       return this.community.bots && this.community.bots["Telegram"];
     },
 
-    rule_html(){
-      return this.community.rule && SmartConvertTextToHtml(this.community.rule)
-    }
+    rule_html() {
+      return this.community.rule && SmartConvertTextToHtml(this.community.rule);
+    },
   },
 
   methods: {

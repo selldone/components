@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <Widget
+  <s-widget
     :product-id="product.id"
     class="text-start overflow-hidden"
     style="border-radius: 8px"
@@ -445,7 +445,7 @@
         >settings_backup_restore</v-icon
       >
     </v-progress-circular>
-  </Widget>
+  </s-widget>
 </template>
 
 <script>

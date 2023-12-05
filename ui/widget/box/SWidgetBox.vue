@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <Widget
+  <s-widget
     class="text-start font-weight-normal"
     :title="title"
     :subTitle="subTitle"
@@ -76,7 +76,7 @@
 
       <slot name="footer" />
     </div>
-  </Widget>
+  </s-widget>
 </template>
 
 <script>

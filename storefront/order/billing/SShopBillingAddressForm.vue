@@ -72,7 +72,7 @@
           @change="updateValue"
         ></v-text-field>
 
-        <country-list
+        <s-country-select
           v-model="billing_country"
           item-value="alpha2"
           required
@@ -85,7 +85,7 @@
           "
           :loading="busy_regions"
           @change="updateValue()"
-        ></country-list>
+        ></s-country-select>
 
         <v-select
           v-if="tax_regions && tax_regions.length"
@@ -113,13 +113,13 @@
 </template>
 
 <script>
-import CountryList from "@components/ui/country/country-list/CountryList.vue";
+import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
 import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 import { MapHelper } from "@core/helper/map/MapHelper";
 export default {
   name: "SShopBillingAddressForm",
-  components: { SSmartSwitch, SSmartToggle, CountryList },
+  components: { SSmartSwitch, SSmartToggle, SCountrySelect },
   props: {
     value: {},
     receiverInfo: {},
@@ -189,8 +189,6 @@ export default {
 
   created() {
     this.loadValue();
-
-
   },
   mounted() {
     if (this.forceShowForm) {
@@ -254,7 +252,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -262,7 +259,6 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-billing-address-form{
-
+.s--shop-billing-address-form {
 }
 </style>

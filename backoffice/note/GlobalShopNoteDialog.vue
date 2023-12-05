@@ -70,11 +70,11 @@
           :mentions.sync="mentions"
         ></s-mentionable-input>
 
-        <users-dense-images-circles
+        <s-dense-images-circles-users
           v-if="mentions && mentions.users"
           :ids="mentions.users"
           :size="32"
-        ></users-dense-images-circles>
+        ></s-dense-images-circles-users>
 
         <div class="widget-buttons">
           <v-btn
@@ -93,14 +93,13 @@
 </template>
 
 <script>
-import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
 import NoteView from "./NoteView.vue";
 
-
 export default {
   name: "GlobalShopNoteDialog",
-  components: { NoteView, SMentionableInput, UsersDenseImagesCircles },
+  components: { NoteView, SMentionableInput, SDenseImagesCirclesUsers },
 
   props: {
     shop: {

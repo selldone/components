@@ -14,36 +14,41 @@
 
 <template>
   <div class="pt-5 pb-3 text-start">
-    <widget-header
+    <s-widget-header
       :title="$t('community.access.admins')"
       icon="fas fa-crown"
       :add-caption="shop ? $t('community.access.manage_admins') : undefined"
       :href="admins_url"
       target="_blank"
-    ></widget-header>
-<v-subheader>
-  Administrators have unrestricted access to every component of the community. They are essentially part of your business staff.
-</v-subheader>
-    <users-dense-images-circles
+    ></s-widget-header>
+    <v-subheader>
+      Administrators have unrestricted access to every component of the
+      community. They are essentially part of your business staff.
+    </v-subheader>
+    <s-dense-images-circles-users
       class="fadeIn delay_100"
       v-if="community.admins_list"
       :ids="community.admins_list"
-    ></users-dense-images-circles>
+    ></s-dense-images-circles-users>
 
-    <widget-header
+    <s-widget-header
       :title="$t('community.access.moderators')"
       icon="admin_panel_settings"
       :add-caption="$t('community.access.manage_moderators')"
       @click:add="showModerators"
       class="mt-4"
-    ></widget-header>
-    <v-subheader>Moderators are granted limited access to oversee the community. They are not privy to your business's shop dashboard or any other related information.</v-subheader>
+    ></s-widget-header>
+    <v-subheader
+      >Moderators are granted limited access to oversee the community. They are
+      not privy to your business's shop dashboard or any other related
+      information.</v-subheader
+    >
 
-    <users-dense-images-circles
+    <s-dense-images-circles-users
       class="fadeIn delay_400"
       v-if="community.moderators_list"
       :ids="community.moderators_list"
-    ></users-dense-images-circles>
+    ></s-dense-images-circles-users>
 
     <!-- -------------------- Dialog ----------------------- -->
     <v-dialog
@@ -53,16 +58,15 @@
       transition="dialog-bottom-transition"
     >
       <v-card class="position-relative text-start">
-
         <v-card-title>
           {{ $t("community.access.manage_moderators") }}
         </v-card-title>
         <v-card-text>
           <div class="widget-box mb-5">
-            <widget-header
+            <s-widget-header
               title="Add new moderator"
               icon="person_add_alt"
-            ></widget-header>
+            ></s-widget-header>
             <v-subheader
               >1. Make sure the user previously registered on
               Selldone.</v-subheader
@@ -91,10 +95,10 @@
 
           <div class="widget-box mb-5 min-height-20vh">
             <s-progress-loading v-if="busy_fetch"></s-progress-loading>
-            <widget-header
+            <s-widget-header
               title="Moderators list"
               icon="supervisor_account"
-            ></widget-header>
+            ></s-widget-header>
 
             <v-list class="border-between-vertical my-3 bg-transparent" dense>
               <v-list-item v-for="item in moderators" :key="item.user_id">
@@ -130,8 +134,11 @@
               </v-list-item>
             </v-list>
 
-            <div v-if="(!moderators || !moderators.length ) && !busy_fetch" class="py-5 display-1 font-weight-thin text-center op-0-5">
-              {{$t('global.commons.empty')}}
+            <div
+              v-if="(!moderators || !moderators.length) && !busy_fetch"
+              class="py-5 display-1 font-weight-thin text-center op-0-5"
+            >
+              {{ $t("global.commons.empty") }}
             </div>
 
             <div
@@ -160,11 +167,11 @@
 </template>
 
 <script>
-import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
 export default {
   name: "CommunityAccessController",
-  components: {  UserEmailInput, UsersDenseImagesCircles },
+  components: { UserEmailInput, SDenseImagesCirclesUsers },
   props: {
     shop: {},
 

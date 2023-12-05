@@ -38,10 +38,10 @@
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
-          <widget-header
+          <s-widget-header
             :title="$t('global.commons.code')"
             icon="code"
-          ></widget-header>
+          ></s-widget-header>
           <v-subheader>
             <div>
               This section used to just show codes in your article. Use cases

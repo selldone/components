@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--form-builder widget-box">
-    <widget-header :title="title" :icon="icon"></widget-header>
+    <s-widget-header :title="title" :icon="icon"></s-widget-header>
     <v-subheader>{{ hint }}</v-subheader>
 
     <v-scale-transition group tag="div">

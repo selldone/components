@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="text-start">
-    <widget-header
+    <s-widget-header
       title="Augmentation"
       add-text
       add-caption="Add New Item"
@@ -26,7 +26,7 @@
           <v-icon>help</v-icon>
         </v-btn>
       </template>
-    </widget-header>
+    </s-widget-header>
 
     <v-subheader>
       Input the key that will be swapped with its corresponding value in the

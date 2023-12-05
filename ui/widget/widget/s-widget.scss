@@ -1,0 +1,369 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+
+@import 'mixins';
+@import 'variables';
+
+@mixin clearfix() {
+  &::after {
+    display: block;
+    clear: both;
+    content: "";
+  }
+}
+
+$enable-transitions: true !default;
+$transition-base: all .2s ease-in-out !default;
+$enable-prefers-reduced-motion-media-query: true !default;
+
+// stylelint-disable property-blacklist
+@mixin transition($transition...) {
+  @if $enable-transitions {
+    @if length($transition) == 0 {
+      transition: $transition-base;
+    } @else {
+      transition: $transition;
+    }
+  }
+
+  @if $enable-prefers-reduced-motion-media-query {
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}
+
+
+.title-widget {
+  margin-top: 0;
+
+  color: $widget-title-color;
+  // font-family: var(--font) !important;
+  font-weight: 500;
+  @include clearfix();
+
+  .small,small{
+    font-weight: 400;
+    font-size: 12px;
+    display: block;
+    color: #aaa;
+  }
+}
+// Widgets:
+
+
+.widget {
+//  display: block;
+  position: relative;
+  margin-bottom: 0;
+  padding: $widget-padding-vertical $widget-padding-horizontal;
+  background: var(--widget-background-color);
+  box-shadow: $widget-shadow;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+
+  .widget-body{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    .widget-buttons{
+      width: 100%; // Fix buttons width
+    }
+  }
+
+
+  header.title-widget, .title-widget h5{
+    font-size: 24px;
+    font-weight: 400;
+    text-transform: capitalize;
+    @media only screen and (max-width: 600px) {
+      font-size: 20px;
+    }
+  }
+  header.subtitle-widget{
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: -18px;
+  }
+
+
+  &.v-sheet.v-card:not(.v-sheet--outlined) { // Fix card shadow not applied problem!
+    box-shadow: $widget-shadow;
+  }
+
+  @media only screen and (max-width: 460px) {
+    padding: 5px 12px;
+
+  }
+
+  &.h100 {
+    min-height: 100% !important; // I added to fix same height
+
+  }
+
+  > header {
+    margin: (-$widget-padding-vertical) (-$widget-padding-horizontal);
+    padding: $widget-padding-vertical $widget-padding-horizontal;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0;
+    }
+
+
+  }
+
+  :global {
+    .loader {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      .spinner {
+        position: absolute;
+        top: 50%;
+        width: 100%; //ie fix
+        margin-top: -10px;
+        font-size: 20px;
+        text-align: center;
+      }
+    }
+
+    .widget-body.p-0 {
+      margin: $widget-padding-vertical (-$widget-padding-horizontal) (-$widget-padding-vertical);
+
+      + footer {
+        margin-top: $widget-padding-vertical;
+      }
+    }
+  }
+
+  &:global.bg-transparent {
+    box-shadow: none;
+  }
+
+  &.widget-dark {
+    color: white;
+
+    header {
+      color: white;
+    }
+
+    h4 {
+      color: white;
+    }
+
+    h5 {
+      color: white;
+    }
+
+    small {
+      color: white;
+    }
+
+    .small {
+      color: #eee;
+    }
+
+    .text-muted {
+      color: #eee !important;
+    }
+
+  }
+
+  transition: all 0.4s;
+
+  &.-activated {
+    box-shadow: 0 5px 40px 15px rgba(166, 166, 166, 0.57) !important;
+    z-index: 1;
+    border-radius: 18px;
+  }
+
+  button {
+    transition: all 0.35s;
+  }
+}
+
+
+.widgetBody {
+  @include clearfix();
+
+  > footer {
+    margin: 0.5rem (-$widget-padding-horizontal) (-$widget-padding-vertical);
+    padding: 10px 20px;
+  }
+}
+
+.widgetControls + .widgetBody {
+  margin-top: $widget-padding-vertical;
+}
+
+.widgetControls,
+:global(.widget-controls) {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  padding: 14px;
+  font-size: $font-size-sm;
+
+  a {
+    padding: 1px 4px;
+    border-radius: 4px;
+    color: rgba($black, 0.4);
+
+    @include transition(color 0.15s ease-in-out);
+
+    &:hover {
+      color: rgba($black, 0.1);
+      text-decoration: none;
+    }
+
+    .la {
+      position: relative;
+      top: 2px;
+    }
+
+    .glyphicon {
+      font-size: 0.7rem;
+    }
+  }
+}
+
+.inverse {
+  top: 2px;
+  position: relative;
+  margin-left: 3px;
+
+  :global {
+    .glyphicon {
+      vertical-align: baseline;
+    }
+  }
+}
+
+:global {
+  .widget-image {
+    position: relative;
+    overflow: hidden;
+    margin: (-$widget-padding-vertical) (-$widget-padding-horizontal);
+    border-radius: $border-radius;
+
+    > img {
+      max-width: 100%;
+      border-radius: $border-radius $border-radius 0 0;
+      transition: transform 0.15s ease;
+    }
+
+    &:hover > img {
+      transform: scale(1.1, 1.1);
+    }
+
+    .title {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 20px;
+    }
+
+    .info {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 20px;
+    }
+  }
+
+  .widget-footer-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .widget-sm {
+    height: 230px;
+  }
+
+  .widget-md {
+    height: 373px;
+  }
+
+  .widget-padding-md {
+    padding: $widget-padding-vertical $widget-padding-horizontal;
+  }
+
+  .widget-padding-lg {
+    padding: $widget-padding-vertical*2 $widget-padding-horizontal*2;
+  }
+
+  .widget-body-container {
+    position: relative;
+    height: 100%;
+  }
+
+  .widget-top-overflow,
+  .widget-middle-overflow {
+    position: relative;
+    margin: 0 (-$widget-padding-horizontal);
+
+    > img {
+      max-width: 100%;
+    }
+  }
+
+  .widget-top-overflow {
+    margin-top: (-$widget-padding-vertical);
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
+    overflow: hidden;
+
+    > img {
+      border-top-left-radius: $border-radius;
+      border-top-right-radius: $border-radius;
+    }
+
+    > .btn-toolbar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 1;
+      margin-right: $widget-padding-horizontal;
+
+      /*  @include media-breakpoint-up(md) {
+          top: auto;
+          bottom: 0;
+        }*/
+    }
+  }
+
+  .widget-icon {
+    opacity: 0.5;
+    font-size: 42px;
+    height: 60px;
+    line-height: 45px;
+    display: inline-block;
+  }
+
+
+}
+

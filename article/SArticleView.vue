@@ -642,7 +642,7 @@
                 </template>
               </v-select>
 
-              <cluster-select
+              <s-cluster-select
                 v-if="ArticleTypes.Blog.code && $route.params.shop_id"
                 v-model="cluster_id"
                 :return-object="false"
@@ -656,7 +656,7 @@
                 label="Resource Cluster"
                 icon="workspaces_outline"
                 class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
-              ></cluster-select>
+              ></s-cluster-select>
 
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help parent ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -1295,13 +1295,13 @@ import STimeProgressBar from "../ui/calendar/time-progress/STimeProgressBar.vue"
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import AiButton from "@components/ui/button/ai/AiButton.vue";
-import ClusterSelect from "@components/cluster/ClusterSelect.vue";
+import SClusterSelect from "@components/cluster/SClusterSelect.vue";
 import _ from "lodash-es";
 
 export default {
   name: "SArticleView",
   components: {
-    ClusterSelect,
+    SClusterSelect,
     AiButton,
     SArticleSearchConsole,
     STimeProgressBar,

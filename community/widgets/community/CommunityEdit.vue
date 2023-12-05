@@ -25,10 +25,10 @@
 
     <!-- General -->
     <div class="widget-box mb-5">
-      <widget-header
+      <s-widget-header
         :title="$t('global.commons.general_config')"
         icon="tune"
-      ></widget-header>
+      ></s-widget-header>
 
       <v-subheader>Assign a name to your community and provide a brief description outlining its purpose and value. </v-subheader>
       <v-text-field
@@ -68,10 +68,10 @@
 
     <!-- image -->
     <div class="widget-box mb-5">
-      <widget-header
+      <s-widget-header
         :title="$t('global.commons.image')"
         icon="image"
-      ></widget-header>
+      ></s-widget-header>
 
       <v-subheader> You can upload and modify the logo of your community here.</v-subheader>
       <div class="text-center">
@@ -89,10 +89,10 @@
 
     <!-- SEO -->
     <div class="widget-box mb-5">
-      <widget-header
+      <s-widget-header
         :title="$t('global.commons.seo')"
         icon="track_changes"
-      ></widget-header>
+      ></s-widget-header>
 
       <v-subheader> This is the default SEO configuration for your community. Please note that SEO settings can also be adjusted at the topic and category level.</v-subheader>
 
@@ -107,10 +107,10 @@
 
     <!-- Cross Community -->
     <div class="widget-box mb-5">
-      <widget-header
+      <s-widget-header
         :title="$t('community.commons.cross_community')"
         icon="leak_add"
-      ></widget-header>
+      ></s-widget-header>
 
       <v-subheader>Can other communities embed your topics? </v-subheader>
 
@@ -124,10 +124,10 @@
 
     <!-- Access -->
     <div class="widget-box mb-5">
-      <widget-header
+      <s-widget-header
         :title="$t('global.commons.access')"
         icon="private_connectivity"
-      ></widget-header>
+      ></s-widget-header>
 
       <v-subheader>Define the access level and status of your community here. The structure of the community follows this hierarchy: Your Community > Categories > Topics > Posts. </v-subheader>
 
@@ -156,8 +156,8 @@
 
     <!-- Access -->
     <div class="widget-box mb-5">
-      <widget-header title="File Attachment" icon="attach_file"
-        ></widget-header
+      <s-widget-header title="File Attachment" icon="attach_file"
+        ></s-widget-header
       >
 
       <v-subheader> You can add the attachment option in your community. Your customers can
@@ -208,8 +208,8 @@
     <div class="widget-box mb-5">
 
 
-      <widget-header :title="$t('global.commons.rules')" icon="settings_accessibility"
-      ></widget-header
+      <s-widget-header :title="$t('global.commons.rules')" icon="settings_accessibility"
+      ></s-widget-header
       >
 
       <v-subheader>Draft a concise set of guidelines for your community. </v-subheader>

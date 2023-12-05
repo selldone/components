@@ -25,7 +25,7 @@
         :color="buy_color"
         dark
       >
-        <country-list
+        <s-country-select
           v-model="selected_country"
           placeholder="Select a country..."
           item-value="alpha2"
@@ -37,7 +37,7 @@
           flat
           transparent
           :dense="$vuetify.breakpoint.xsOnly"
-        ></country-list>
+        ></s-country-select>
         <v-autocomplete
           v-model="selected_postal"
           placeholder="Select ZIP/PIN Code..."
@@ -203,10 +203,10 @@
 import SShopBuyButton from "../button/SShopBuyButton.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
-import CountryList from "@components/ui/country/country-list/CountryList.vue";
+import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 export default {
   name: "ProductSectionBoxBuyButton",
-  components: { CountryList, SShopProductFilesList, SShopBuyButton },
+  components: { SCountrySelect, SShopProductFilesList, SShopBuyButton },
   props: {
     shop: {
       required: true,

@@ -65,7 +65,7 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ TAB > Warranty ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <v-container v-if="warranty_article" class="my-16 position-relative">
-      <expand-view
+      <s-expand-view
         class="master-article-container"
         max-height="60vh"
         min-height="100px"
@@ -80,7 +80,7 @@
         >
           <template v-slot:after-title> </template>
         </s-article-editor>
-      </expand-view>
+      </s-expand-view>
 
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
 
@@ -111,7 +111,7 @@
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ TAB > Return Policy ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
     <v-container v-if="return_policy_article" class="my-16 position-relative">
-      <expand-view
+      <s-expand-view
         class="master-article-container"
         max-height="60vh"
         min-height="100px"
@@ -124,7 +124,7 @@
           :edit="false"
           suffix-id="return"
         ></s-article-editor>
-      </expand-view>
+      </s-expand-view>
 
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
 
@@ -158,7 +158,7 @@
 import SArticleEditor from "@components/article/SArticleEditor.vue";
 import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
 import SetupService from "@core/server/SetupService";
-import ExpandView from "@components/ui/expand-view/ExpandView.vue";
+import SExpandView from "@components/ui/expand-view/SExpandView.vue";
 
 export default {
   name: "SShopProductWarranty",
@@ -171,7 +171,7 @@ export default {
     },
   },
   components: {
-    ExpandView,
+    SExpandView,
     SArticleEditor,
   },
 

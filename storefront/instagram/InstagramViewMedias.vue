@@ -442,7 +442,7 @@
               :rules="[GlobalRules.required()]"
             >
               <template v-slot:append>
-                <currency-list
+                <s-currency-input
                   v-model="in_currency"
                   :activeCurrencies="shop.currencies"
                   icon-only
@@ -516,7 +516,7 @@ import DragablePins from "@components/storefront/instagram/DragablePins.vue";
 import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
-import CurrencyList from "@components/ui/currency/CurrencyList.vue";
+import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import { Currency } from "@core/enums/payment/Currency";
 import { ProductCondition } from "@core/enums/product/ProductCondition";
 import { ProductType } from "@core/enums/product/ProductType";
@@ -525,7 +525,7 @@ import _ from "lodash-es";
 export default {
   name: "InstagramViewMedias",
   components: {
-    CurrencyList,
+    SCurrencyInput,
     SPriceInput,
     SNumberInput,
     DragablePins,

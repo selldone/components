@@ -27,7 +27,7 @@
     <v-col v-if="color" align-center justify-center class="p-1 text-nowrap">
       <v-icon :color="icon_color" class="me-1" small> palette </v-icon>
 
-      <color-circle :color="color" class="mr-1" :size="16">  </color-circle>
+      <s-color-circle :color="color" class="mr-1" :size="16">  </s-color-circle>
 
       <span class="small mr-1">{{ coloName }}</span>
     </v-col>
@@ -77,11 +77,11 @@
 </template>
 
 <script>
-import ColorCircle from "@components/ui/color/ColorCircle.vue";
+import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 
 export default {
   name: "VariantItemMini",
-  components: {ColorCircle},
+  components: {SColorCircle},
   props: {
     productVariant: {
       required: true,

@@ -86,22 +86,22 @@
       >{{ receiverInfo.message }}
     </p>
 
-    <geo-navigation-button
+    <s-geo-navigation-button
       v-if="receiverInfo.location"
       :location="receiverInfo.location"
       :transportation-type="receiverInfo.type"
       :large="large"
-    ></geo-navigation-button>
+    ></s-geo-navigation-button>
 
     <slot name="append-buttons"></slot>
   </div>
 </template>
 
 <script>
-import GeoNavigationButton from "@components/map/GeoNavigationButton.vue";
+import SGeoNavigationButton from "@components/map/geo-button/SGeoNavigationButton.vue";
 export default {
   name: "receiverInfoWidget",
-  components: { GeoNavigationButton },
+  components: { SGeoNavigationButton },
   props: {
     userId: {
       require: true,

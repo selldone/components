@@ -96,7 +96,7 @@
     </v-container>
 
     <div v-if="product?.article_pack" class="s--product-section-comments">
-      <expand-view max-height="80vh" min-height="30vh">
+      <s-expand-view max-height="80vh" min-height="30vh">
         <s-article-comments
           is-shop
           class="min-height-20vh"
@@ -104,13 +104,13 @@
           :article-id="product.article_pack.article.id"
           for-product
         />
-      </expand-view>
+      </s-expand-view>
     </div>
   </div>
 </template>
 
 <script>
-import ExpandView from "@components/ui/expand-view/ExpandView.vue";
+import SExpandView from "@components/ui/expand-view/SExpandView.vue";
 import SArticleComments from "@components/article/comment/SArticleComments.vue";
 import SShopProductRatingView from "@components/product/rating/SShopProductRatingView.vue";
 import { FontSizeHelper } from "@core/helper/style/FontSizeHelper";
@@ -128,7 +128,7 @@ export default {
   components: {
     SShopProductRatingView,
     SArticleComments,
-    ExpandView,
+    SExpandView,
   },
 
   data: function () {

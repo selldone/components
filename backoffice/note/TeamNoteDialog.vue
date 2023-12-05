@@ -69,10 +69,10 @@
         </div>
 
         <div class="c-bubble mb-5 mt-12 max-widget-width">
-          <widget-header
+          <s-widget-header
             :title="$t('global.actions.add_new_message')"
             icon="chat_bubble"
-          ></widget-header>
+          ></s-widget-header>
           <div class="d-flex align-center mt-3">
             <v-avatar :size="32" class="avatar-gradient -thin -user me-2">
               <v-img :src="getUserAvatar(USER_ID())" />
@@ -121,13 +121,13 @@
 
 <script>
 
-import WidgetHeader from "@components/widget/WidgetHeader.vue";
+
 
 export default {
   name: "TeamNoteDialog",
 
   components: {
-    WidgetHeader,
+
   },
 
   props: {

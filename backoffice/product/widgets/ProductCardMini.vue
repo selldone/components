@@ -78,13 +78,13 @@
 
       <!-- Colors -->
       <div class="colors">
-        <color-circle
+        <s-color-circle
           v-for="(c, i) in colors"
           :key="i"
           :color="c"
           :size="8"
           border-less
-        ></color-circle>
+        ></s-color-circle>
       </div>
 
       <v-chip
@@ -243,11 +243,11 @@ import CircleImage from "@components/ui/image/CircleImage.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
 import { GetArrayOfValuesInVariants } from "@core/enums/product/ProductVariants";
-import ColorCircle from "@components/ui/color/ColorCircle.vue";
+import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 import { ProductStatus } from "@core/enums/product/ProductStatus";
 export default {
   name: "ProductCardMini",
-  components: { ColorCircle, ProductVariantsView, CircleImage },
+  components: { SColorCircle, ProductVariantsView, CircleImage },
   props: {
     shop: {
       required: true,

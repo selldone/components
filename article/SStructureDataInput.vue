@@ -116,7 +116,7 @@
       prepend-icon="attach_money"
       rounded
     ></s-price-input>
-    <currency-list
+    <s-currency-input
       v-else-if="type === 'currency'"
       class="max-width-field"
       :label="name"
@@ -127,7 +127,7 @@
       :returnObject="false"
       prepend-icon="account_balance_wallet"
       rounded
-    ></currency-list>
+    ></s-currency-input>
     <s-date-input
       v-else-if="type === 'date'"
       class="max-width-field mb-3"
@@ -202,7 +202,7 @@
 
 <script>
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
-import CurrencyList from "@components/ui/currency/CurrencyList.vue";
+import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import SDateInput from "../ui/calendar/date-input/SDateInput.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 const ActionPlatform = [
@@ -240,7 +240,7 @@ export default {
   components: {
     SNumberInput,
     SDateInput,
-    CurrencyList,
+    SCurrencyInput,
     SPriceInput,
   },
   props: {

@@ -88,11 +88,11 @@
                     fetchpriority="high"
                     class="-var-image"
                   >
-                      <color-circle :color="selection" :size="12" class="-var-image-color"></color-circle>
+                      <s-color-circle :color="selection" :size="12" class="-var-image-color"></s-color-circle>
                   </v-img>
                 </template>
                 <template v-else>
-                  <color-circle :color="selection"></color-circle>
+                  <s-color-circle :color="selection"></s-color-circle>
 
                   <small>{{ GetNameOfColor(selection) }}</small>
                 </template>
@@ -128,11 +128,11 @@ import VariantFilter from "../variant/variant-filter/VariantFilter.vue";
 import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
 import { ProductVariants } from "@core/enums/product/ProductVariants";
 import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
-import ColorCircle from "@components/ui/color/ColorCircle.vue";
+import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 export default {
   name: "ProductSectionBoxVariants",
   components: {
-    ColorCircle,
+    SColorCircle,
     VariantAssetView,
     VariantItemMini,
     VariantFilter,

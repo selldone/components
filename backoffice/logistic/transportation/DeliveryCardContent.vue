@@ -34,7 +34,11 @@
     <div class="d-flex align-items-center">
       <img
         class="me-2"
-        :src="transportation.logo?getShopImagePath(transportation.logo): transportationObj.icon"
+        :src="
+          transportation.logo
+            ? getShopImagePath(transportation.logo)
+            : transportationObj.icon
+        "
         width="48"
         height="48"
         :class="{ 'img-grayscale': !transportation.enable }"
@@ -43,26 +47,26 @@
       <div class="flex-grow-1">
         <p class="m-1 small">
           {{ $t("global.commons.distance") }}:
-          <b>{{ transportation.distance| numeralFormat("0,0") }} Km</b>
+          <b>{{ transportation.distance | numeralFormat("0,0") }} Km</b>
         </p>
 
         <p class="m-1 small">
           {{ $t("global.commons.weight") }}:
-          <b>{{ transportation.max_weight| numeralFormat("0,0") }} Kg</b>
+          <b>{{ transportation.max_weight | numeralFormat("0,0") }} Kg</b>
         </p>
         <p class="m-1 small">
           {{ $t("global.commons.size") }}:
           <span dir="ltr">
             <b :title="$t('global.commons.width')"
-              >{{ transportation.max_w| numeralFormat("0,0") }} cm
+              >{{ transportation.max_w | numeralFormat("0,0") }} cm
             </b>
             <v-icon class="mx-1" small>fas fa-times</v-icon>
             <b :title="$t('global.commons.length')"
-              >{{ transportation.max_l| numeralFormat("0,0") }} cm
+              >{{ transportation.max_l | numeralFormat("0,0") }} cm
             </b>
             <v-icon class="mx-1" small>fas fa-times</v-icon>
             <b :title="$t('global.commons.height')"
-              >{{ transportation.max_h| numeralFormat("0,0") }} cm
+              >{{ transportation.max_h | numeralFormat("0,0") }} cm
             </b></span
           >
         </p>
@@ -70,13 +74,13 @@
     </div>
     <hr />
     <p class="mb-1">
-      <small  class="me-1">{{ $t("global.commons.days") }}:</small>
+      <small class="me-1">{{ $t("global.commons.days") }}:</small>
       <b>{{
         transportation.days.map((it) => $t(WeekDays[it].name)).join(" , ")
       }}</b>
     </p>
     <p class="mb-1">
-      <small  class="me-1">{{ $t("global.commons.timespan") }}:</small>
+      <small class="me-1">{{ $t("global.commons.timespan") }}:</small>
       <img
         v-for="timespan in transportation.time_spans"
         :key="timespan"
@@ -88,14 +92,14 @@
       />
     </p>
     <p class="mb-1">
-      <small  class="me-1">{{ $t("global.commons.holiday") }}:</small>
+      <small class="me-1">{{ $t("global.commons.holiday") }}:</small>
       <check :value="transportation.holidays"></check>
     </p>
     <hr />
 
     <div class="d-flex">
       <p class="mb-1 w-50">
-        <small  class="me-1">{{ $t("global.commons.cod") }}:</small>
+        <small class="me-1">{{ $t("global.commons.cod") }}:</small>
         <img
           v-if="transportation.cod"
           src="../../../assets/icons/pos.svg"
@@ -105,14 +109,14 @@
         /><check v-else :value="transportation.cod"></check>
       </p>
       <p class="mb-1 w-50">
-        <small  class="me-1">{{ $t("global.commons.sod") }}:</small>
+        <small class="me-1">{{ $t("global.commons.sod") }}:</small>
         <check :value="transportation.sod"></check>
       </p>
     </div>
 
     <div class="d-flex" v-if="!transportation.sod">
       <p class="mb-1 w-50">
-        <small  class="me-1">{{ $t("global.commons.free_shipping") }}:</small>
+        <small class="me-1">{{ $t("global.commons.free_shipping") }}:</small>
         <check :value="transportation.free_shipping"></check>
       </p>
       <p class="mb-1 w-50" v-if="transportation.free_shipping">
@@ -133,7 +137,7 @@
         <v-icon class="me-1">people</v-icon>
         {{ $t("global.commons.delivery_persons") }}:</small
       >
-      <users-dense-images-circles
+      <s-dense-images-circles-users
         :ids="user_ids"
         :limit="10"
         :add="showButtons"
@@ -143,16 +147,20 @@
             params: { transportation_id: transportation.id },
           })
         "
-      ></users-dense-images-circles>
+      ></s-dense-images-circles-users>
     </div>
 
     <div v-if="showButtons" class="widget-buttons">
       <v-btn
         x-large
-        color="#111" dark
+        color="#111"
+        dark
         :outlined="outlined"
         depressed
-        :to="{ name: 'AdminShopTransportationPage_Persons',params:{transportation_id:transportation.id} }"
+        :to="{
+          name: 'AdminShopTransportationPage_Persons',
+          params: { transportation_id: transportation.id },
+        }"
       >
         {{ $t("transportation_page.go_to_courier_list") }}
         <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
@@ -176,7 +184,7 @@
           class="me-2"
         />
         <v-btn
-            v-if="showButtons"
+          v-if="showButtons"
           icon
           class="ms-2"
           color="success"
@@ -193,10 +201,14 @@
       <div v-if="showButtons" class="widget-buttons">
         <v-btn
           x-large
-          color="#111" dark
+          color="#111"
+          dark
           :outlined="outlined"
           depressed
-          :to="{ name: 'AdminShopTransportationPage_Services',params:{transportation_id:transportation.id} }"
+          :to="{
+            name: 'AdminShopTransportationPage_Services',
+            params: { transportation_id: transportation.id },
+          }"
         >
           {{ $t("transportation_page.go_to_service_list") }}
           <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
@@ -210,17 +222,16 @@
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import { WeekDays } from "@core/enums/logistic/WeekDays";
 import { TimeSpans } from "@core/enums/logistic/TimeSpans";
-import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 export default {
   name: "DeliveryCardContent",
   components: {
-    UsersDenseImagesCircles,
+    SDenseImagesCirclesUsers,
   },
   props: {
     transportation: { require: true },
-    outlined:{type:Boolean,default:false},
-    showButtons:{type:Boolean,default:true},
-
+    outlined: { type: Boolean, default: false },
+    showButtons: { type: Boolean, default: true },
   },
 
   data() {

@@ -71,8 +71,8 @@
           :class="{ 'border-bottom': editing }"
           class="widget-box -large mb-5"
         >
-          <widget-header :title="$t('service_bill.task.title')" icon="rule">
-          </widget-header>
+          <s-widget-header :title="$t('service_bill.task.title')" icon="rule">
+          </s-widget-header>
 
           <v-subheader>
             {{ $t("service_bill.task.message") }}
@@ -91,11 +91,11 @@
           :class="{ 'border-bottom': editing }"
           class="widget-box -large mb-5"
         >
-          <widget-header
+          <s-widget-header
             :title="$t('global.service.appointment.title')"
             icon="event_available"
           >
-          </widget-header>
+          </s-widget-header>
 
           <s-date-input
             v-model="reserved_at"
@@ -124,7 +124,7 @@
           class="widget-box -large mb-5"
           :class="{ 'border-bottom': editing }"
         >
-          <widget-header
+          <s-widget-header
             :title="$t('service_bill.booking.title')"
             icon="date_range"
             :add-caption="
@@ -134,7 +134,7 @@
             add-text
             add-icon="calendar_today"
           >
-          </widget-header>
+          </s-widget-header>
           <v-subheader>
             {{ $t("service_bill.booking.message") }}
           </v-subheader>
@@ -342,11 +342,11 @@
           :class="{ 'border-bottom': editing }"
           class="widget-box -large mb-5"
         >
-          <widget-header
+          <s-widget-header
             :title="$t('service_bill.subscription.title')"
             icon="extension"
           >
-          </widget-header>
+          </s-widget-header>
           <v-subheader>
             {{ $t("service_bill.subscription.message") }}
           </v-subheader>
@@ -371,11 +371,11 @@
           :class="{ 'border-bottom': editing }"
           class="widget-box -large mb-5"
         >
-          <widget-header
+          <s-widget-header
             :title="$t('service_bill.charge.title')"
             icon="generating_tokens"
           >
-          </widget-header>
+          </s-widget-header>
           <v-subheader>
             {{ $t("service_bill.charge.message") }}
           </v-subheader>
@@ -397,11 +397,11 @@
         <!-- ----------------------- Set Price ----------------------- -->
 
         <div v-if="editing" class="widget-box -large mb-5">
-          <widget-header
+          <s-widget-header
             :title="$t('service_bill.pricing.title')"
             icon="price_change"
           >
-          </widget-header>
+          </s-widget-header>
           <v-subheader>
             {{ $t("service_bill.pricing.message") }}
           </v-subheader>
@@ -450,13 +450,13 @@ import SWeekDayTimePicker from "@components/ui/calendar/week-time-picker/SWeekDa
 import { ServiceTypes } from "@core/enums/product/ServiceTypes";
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
 import { Currency } from "@core/enums/payment/Currency";
-import WidgetHeader from "@components/widget/WidgetHeader.vue";
+
 import _ from "lodash-es";
 
 export default {
   name: "ServiceBillingItem",
   components: {
-    WidgetHeader,
+
     SPriceInput,
     SWeekDayTimePicker,
     SCalendarView,

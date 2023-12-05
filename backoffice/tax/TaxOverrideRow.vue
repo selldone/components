@@ -19,7 +19,7 @@
   >
     <td class="min-width-250">
       <div class="d-flex align-center">
-        <state-flag
+        <s-state-flag
           v-if="vat.region"
           :country="vat.country"
           :region="vat.region"
@@ -182,8 +182,8 @@ export default {
   components: {
     TaxRegionTypeView,
     SNumberInput,
-    StateFlag: () =>
-      import("@components/ui/country/state-flag/StateFlag.vue") /*Dynamic load flags*/,
+    SStateFlag: () =>
+      import("@components/ui/country/state-flag/SStateFlag.vue") /*Dynamic load flags*/,
   },
   props: {
     shop: { required: true, type: Object },

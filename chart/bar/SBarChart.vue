@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <fade-scroll>
+    <s-fade-scroll>
       <div
         no-gutters
         v-if="legend && labels"
@@ -83,7 +83,7 @@
           {{ labels[i - 1] }}
         </div>
       </div>
-    </fade-scroll>
+    </s-fade-scroll>
 
     <div class="d-flex p-2">
       <small v-if="startDate">{{ start_date }}</small>
@@ -118,11 +118,11 @@
 
 <script>
 import { DateConverter } from "@core/helper/date/DateConverter";
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 
 export default {
   name: "SBarChart",
-  components: { FadeScroll },
+  components: { SFadeScroll },
   props: {
     startDate: {},
     endDate: {},

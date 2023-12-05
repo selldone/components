@@ -78,10 +78,10 @@
         <v-card-text>
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Shipping ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
           <div v-if="has_shipping" class="widget-box mb-5 mt-5">
-            <widget-header
+            <s-widget-header
               title="Delivery Address"
               icon="place"
-            ></widget-header>
+            ></s-widget-header>
             <v-subheader> </v-subheader>
 
             <div class="mb-4">
@@ -126,10 +126,10 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Billing ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div v-if="has_billing" class="widget-box mb-5 mt-5">
-            <widget-header
+            <s-widget-header
               title="Billing Address"
               icon="receipt"
-            ></widget-header>
+            ></s-widget-header>
             <v-subheader> </v-subheader>
             <s-shop-billing-address-form
               v-model="billing"
@@ -141,7 +141,7 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Plans / Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div class="widget-box mb-5">
-            <widget-header title="Payment" icon="payment"></widget-header>
+            <s-widget-header title="Payment" icon="payment"></s-widget-header>
             <v-subheader> </v-subheader>
 
             <s-subscription-price-select

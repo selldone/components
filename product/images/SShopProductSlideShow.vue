@@ -16,7 +16,7 @@
   <div class="s--product-images" :class="{ '-vertical': vertical }">
     <!--  ▃▃▃▃▃▃▃▃▃▃ Gallery > Thumbs Swiper ▃▃▃▃▃▃▃▃▃▃ -->
 
-    <fade-scroll class="gallery-thumbs" :class="{ '-vertical': vertical }" style="max-height: 600px">
+    <s-fade-scroll class="gallery-thumbs" :class="{ '-vertical': vertical }" style="max-height: 600px">
       <div class="gallery-thumbs-wrap">
         <div v-for="(item, i) in images_list_embedded" :key="item.key">
           <!--  ▃▃▃▃▃▃▃▃▃▃ Thumbnails > Image ▃▃▃▃▃▃▃▃▃▃ -->
@@ -59,7 +59,7 @@
           </div>
         </div>
       </div>
-    </fade-scroll>
+    </s-fade-scroll>
 
 
     <!--  ▃▃▃▃▃▃▃▃▃▃ Gallery > Main Swiper ▃▃▃▃▃▃▃▃▃▃ -->
@@ -202,11 +202,11 @@
 
 <script>
 import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 
 export default {
   name: "SShopProductSlideShow",
-  components: { FadeScroll, VariantItemViewMicro },
+  components: { SFadeScroll, VariantItemViewMicro },
   props: {
     shop: {
       required: true,

@@ -25,7 +25,7 @@
         :squared="false"
         class="mx-1"
       />
-      <country-list
+      <s-country-select
         v-else
         v-model="receiverInfo.country"
         item-value="alpha2"
@@ -35,7 +35,7 @@
         rounded
         class="max-width-field-mini"
         @change="(val) => $emit('update:country', val)"
-      ></country-list>
+      ></s-country-select>
 
       <span class="field-value" @click.stop="$emit('show:map')">
         {{
@@ -98,9 +98,9 @@
       v-if="!noMap"
       @click="$emit('show:map')"
       width="100%"
-      :max-width=" receiverInfo.location?640:64"
+      :max-width="receiverInfo.location ? 640 : 64"
       height="auto"
-      :min-height="receiverInfo.location?250:undefined"
+      :min-height="receiverInfo.location ? 250 : undefined"
       class="map-view-box -jumping pointer-pointer fadeIn delay_300 rounded-18px mx-auto"
       :src="
         receiverInfo.location
@@ -108,20 +108,20 @@
           : require('@components/assets/icons/map-shop.svg')
       "
     >
-      <location-marker
+      <s-map-location-marker
         v-if="receiverInfo.location"
         class="map-pointer"
-      ></location-marker>
+      ></s-map-location-marker>
     </v-img>
   </div>
 </template>
 
 <script>
-import CountryList from "@components/ui/country/country-list/CountryList.vue";
-import LocationMarker from "@components/map/widgets/LocationMarker.vue";
+import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
+import SMapLocationMarker from "@components/map/market/SMapLocationMarker.vue";
 export default {
   name: "SShopCustomerReceiverInfoWidget",
-  components: { LocationMarker, CountryList },
+  components: { SMapLocationMarker, SCountrySelect },
   props: {
     receiverInfo: {
       require: true,
@@ -144,7 +144,6 @@ export default {
     },
 
     selected_country_detail() {
-
       return (
         this.receiverInfo.country &&
         this.countries &&
@@ -160,13 +159,12 @@ export default {
   },
 
   created() {
-    this.fetchCountries()
-  }
+    this.fetchCountries();
+  },
 };
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

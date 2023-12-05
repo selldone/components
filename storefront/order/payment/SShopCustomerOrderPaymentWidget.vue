@@ -29,7 +29,7 @@
       {{ $t("physical_order_page.payment.title") }}
 
       <v-spacer></v-spacer>
-      <currency-icon :currency="order.currency" gradient></currency-icon>
+      <s-currency-icon :currency="order.currency" gradient></s-currency-icon>
     </h2>
 
     <v-subheader v-if="payment" class="px-0">
@@ -647,7 +647,7 @@ import SShopRowCustomerPaymentGiftCard from "@components/storefront/order/paymen
 import SShopRowCustomerPaymentRecord from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
 import SShopRowCustomerPendingPayment from "@components/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
 import { ProductType } from "@core/enums/product/ProductType";
-import CurrencyIcon from "@components/ui/currency/CurrencyIcon.vue";
+import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 import PaymentCard from "@components/payment/widgets/PaymentCard.vue";
 import { URLHelper } from "@core/helper/url/URLHelper";
 
@@ -655,7 +655,7 @@ export default {
   name: "SShopCustomerOrderPaymentWidget",
   components: {
     PaymentCard,
-    CurrencyIcon,
+    SCurrencyIcon,
     SShopRowCustomerPendingPayment,
     SShopRowCustomerPaymentRecord,
     SShopRowCustomerPaymentGiftCard,

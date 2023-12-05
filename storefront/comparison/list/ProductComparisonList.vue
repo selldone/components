@@ -212,13 +212,13 @@
               {{ $t("global.variants.color") }}
             </td>
             <td v-for="product in shown_products" :key="product.key">
-              <color-circle
+              <s-color-circle
                 v-if="product.variant && product.variant.color"
                 :color="product.variant.color"
                 class="mr-1 hover-scale"
                 :size="14"
               >
-              </color-circle>
+              </s-color-circle>
             </td>
           </tr>
 
@@ -424,12 +424,12 @@
 <script>
 import SShopProductRatingView from "@components/product/rating/SShopProductRatingView.vue";
 import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
-import ColorCircle from "@components/ui/color/ColorCircle.vue";
+import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 
 export default {
   name: "ProductComparisonList",
-  components: { SValueCopyBox, ColorCircle, SShopBuyButton, SShopProductRatingView },
+  components: { SValueCopyBox, SColorCircle, SShopBuyButton, SShopProductRatingView },
 
   props: {
     products: {

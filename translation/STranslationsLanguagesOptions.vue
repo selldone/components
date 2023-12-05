@@ -14,7 +14,7 @@
 
 <template>
   <div v-if="languages?.length" class="d-flex align-center">
-    <fade-scroll class="flex-grow-1">
+    <s-fade-scroll class="flex-grow-1">
       <div class="d-flex">
         <v-btn
           key="default"
@@ -56,7 +56,7 @@
           </div>
         </v-btn>
       </div>
-    </fade-scroll>
+    </s-fade-scroll>
 
     <s-smart-menu
       v-if="!!value"
@@ -77,12 +77,12 @@
 
 <script>
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
 
 export default {
   name: "STranslationsLanguagesOptions",
-  components: { SSmartMenu, FadeScroll },
+  components: { SSmartMenu, SFadeScroll },
   props: {
     shop: { required: true, type: Object },
     value: {},

@@ -32,7 +32,7 @@
     >
       <v-icon :color="icon_color" class="me-1" small> palette </v-icon>
 
-      <color-circle
+      <s-color-circle
         v-for="color in colors"
         :key="color"
         :color="color"
@@ -46,7 +46,7 @@
           hoverable ? $emit('update:selected-variant', null) : undefined
         "
       >
-      </color-circle>
+      </s-color-circle>
     </v-flex>
 
     <v-flex
@@ -234,11 +234,11 @@
 <script>
 import { GetArrayOfValuesInVariants } from "@core/enums/product/ProductVariants";
 import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
-import ColorCircle from "@components/ui/color/ColorCircle.vue";
+import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 
 export default {
   name: "ProductVariantsView",
-  components: { ColorCircle, VariantAssetView },
+  components: { SColorCircle, VariantAssetView },
   props: {
     variants: {
       required: true,

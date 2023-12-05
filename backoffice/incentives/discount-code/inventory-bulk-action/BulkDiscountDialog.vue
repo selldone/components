@@ -44,10 +44,10 @@
         </v-card-title>
         <v-card-text class="text-start">
           <div class="widget-box mb-5">
-            <widget-header
+            <s-widget-header
               :title="$t('global.commons.discount')"
               icon="discount"
-            ></widget-header>
+            ></s-widget-header>
 
             <h2 class="text-center mt-2 mb-5 display-1">
               {{ $t("global.commons.price") }} <v-icon>close</v-icon> %{{
@@ -103,10 +103,10 @@
           </div>
 
           <div class="widget-box mb-5">
-            <widget-header
+            <s-widget-header
               :title="$t('global.commons.category')"
               icon="snippet_folder"
-            ></widget-header>
+            ></s-widget-header>
             <v-subheader
               >Limit bulk action to a category and all
               subcategories.</v-subheader
@@ -256,7 +256,7 @@ import CategorySelect from "@components/backoffice/category/CategorySelect.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
 import BulkPreview from "@components/backoffice/incentives/discount-code/inventory-bulk-action/BulkPreview.vue";
-import WidgetHeader from "@components/widget/WidgetHeader.vue";
+
 import SSmartCheckVerifyAction from "@components/smart/SSmartCheckVerifyAction.vue";
 import CategoryParentsView from "@components/backoffice/category/CategoryParentsView.vue";
 import _ from "lodash-es";
@@ -266,7 +266,7 @@ export default {
   components: {
     CategoryParentsView,
     SSmartCheckVerifyAction,
-    WidgetHeader,
+
     BulkPreview,
     SValueDashed,
     STimeProgressBar,

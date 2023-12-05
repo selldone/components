@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <dimension-selector
+  <s-dimension-selector
     v-if="no_number_cal"
     v-model="dim_val"
     :label="label"
@@ -36,7 +36,7 @@
     <template v-slot:append>
       <div style="min-height: 38px"></div>
     </template>
-  </dimension-selector>
+  </s-dimension-selector>
   <s-number-input
     v-else
     v-model="number_val"
@@ -68,7 +68,7 @@
     :lock="lock"
   >
     <template v-slot:append>
-      <dimension-selector
+      <s-dimension-selector
         v-model="dim_val"
         hide-details
         :readonly="readonly"
@@ -85,17 +85,17 @@
         }"
         :rounded="rounded && solo"
       >
-      </dimension-selector>
+      </s-dimension-selector>
     </template>
   </s-number-input>
 </template>
 
 <script>
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
-import DimensionSelector from "./DimensionSelector.vue";
+import SDimensionSelector from "./SDimensionSelector.vue";
 export default {
   name: "SNumberDimensionInput",
-  components: { DimensionSelector, SNumberInput },
+  components: { SDimensionSelector, SNumberInput },
   props: {
     value: {},
 
@@ -182,7 +182,6 @@ export default {
     appendIcon: {},
     prependInnerIcon: {},
 
-
     lock: {
       // Has lock mode and the default is locked.
       type: Boolean,
@@ -261,7 +260,7 @@ export default {
 
         ////  console.log("Text:" + dim + " & Number:" + num);
       } catch (e) {
-       // console.error(e);
+        // console.error(e);
       }
 
       this.number_val = num;

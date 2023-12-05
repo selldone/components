@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <fade-scroll class="sx-menu">
+  <s-fade-scroll class="sx-menu">
     <v-tabs
       :vertical="$vuetify.breakpoint.mdAndUp"
       :value="value"
@@ -31,15 +31,15 @@
         <v-icon v-if="item.warning" color="orange" small class="mx-1">warning</v-icon>
       </v-tab>
     </v-tabs>
-  </fade-scroll>
+  </s-fade-scroll>
 </template>
 
 <script>
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 
 export default {
   name: "FloatSmartTabs",
-  components: { FadeScroll },
+  components: { SFadeScroll },
   props: {
     value: {},
     items: { required: true, type: Array },

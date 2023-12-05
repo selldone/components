@@ -72,7 +72,8 @@
                             ? {}
                             : {
                                 to: {
-                                  name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+                                  name: window.$storefront.routes
+                                    .SHOP_CATEGORY_PAGE,
                                   params: { category_name: _child.name },
                                 },
                               }
@@ -90,7 +91,8 @@
                             ? {}
                             : {
                                 to: {
-                                  name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+                                  name: window.$storefront.routes
+                                    .SHOP_CATEGORY_PAGE,
                                   params: { category_name: child.name },
                                 },
                               }
@@ -122,7 +124,8 @@
                         ? {}
                         : {
                             to: {
-                              name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+                              name: window.$storefront.routes
+                                .SHOP_CATEGORY_PAGE,
                               params: { category_name: child.name },
                             },
                           }
@@ -182,7 +185,7 @@
         </v-col>
       </v-row>
       <v-spacer></v-spacer>
-      <fade-scroll>
+      <s-fade-scroll>
         <div class="d-flex flex-grow-0 mt-12 text-center">
           <v-col
             v-for="cat in selected_categories"
@@ -225,17 +228,17 @@
             </div>
           </v-col>
         </div>
-      </fade-scroll>
+      </s-fade-scroll>
     </v-container>
   </div>
 </template>
 
 <script>
-import FadeScroll from "@components/ui/fade-scroll/FadeScroll.vue";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 
 export default {
   name: "MenuCategories",
-  components: { FadeScroll },
+  components: { SFadeScroll },
   props: {
     categories: {
       require: true,
@@ -247,12 +250,10 @@ export default {
     },
   },
   data: () => ({
-
     selected_category: null,
   }),
 
   computed: {
-
     small_mode() {
       return this.$vuetify.breakpoint.smAndDown;
     },
@@ -429,21 +430,20 @@ export default {
     min-height: var(--item-heigh);
     height: var(--item-heigh);
   }
-  .cat-hover{
-
-    .v-image__image{
+  .cat-hover {
+    .v-image__image {
       transition: all 0.3s ease-in-out;
     }
 
-  &:hover{
-    .v-image__image{
-      transform: scale(1.2);
+    &:hover {
+      .v-image__image {
+        transform: scale(1.2);
+      }
     }
   }
-  }
 
-  .v-expansion-panels{
-    .v-expansion-panel{
+  .v-expansion-panels {
+    .v-expansion-panel {
       background: transparent; // Override default expansion headers
     }
   }

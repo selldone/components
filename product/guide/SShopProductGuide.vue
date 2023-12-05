@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div v-if="guide_article" class="s--shop-product-guide">
     <v-container class="my-16 position-relative">
-      <expand-view
+      <s-expand-view
         class="master-article-container"
         max-height="60vh"
         min-height="100px"
@@ -29,7 +29,7 @@
           suffix-id="guide"
         >
         </s-article-editor>
-      </expand-view>
+      </s-expand-view>
 
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
       <div
@@ -62,7 +62,7 @@ import SArticleEditor from "@components/article/SArticleEditor.vue";
 import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
 import SetupService from "@core/server/SetupService";
 
-import ExpandView from "@components/ui/expand-view/ExpandView.vue";
+import SExpandView from "@components/ui/expand-view/SExpandView.vue";
 
 export default {
   name: "SShopProductGuide",
@@ -75,7 +75,7 @@ export default {
     },
   },
   components: {
-    ExpandView,
+    SExpandView,
     SArticleEditor,
   },
 

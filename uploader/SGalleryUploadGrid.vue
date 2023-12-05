@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
-    <muuri-grid
+    <s-grid-draggable-view
       v-if="show_images"
       :style="{ 'background-color': bgColor }"
       @layoutEnd="updateOrder"
@@ -114,16 +114,16 @@
         >
         </s-image-uploader>
       </div>
-    </muuri-grid>
+    </s-grid-draggable-view>
   </div>
 </template>
 
 <script>
 import SImageUploader from "./SImageUploader.vue";
-import MuuriGrid from "@components/ui/grid/MurriGrid.vue";
+import SGridDraggableView from "@components/ui/grid/draggable-view/SGridDraggableView.vue";
 export default {
   name: "SGalleryUploadGrid",
-  components: { MuuriGrid, SImageUploader },
+  components: { SGridDraggableView, SImageUploader },
   props: {
     uploadPath: {
       required: true,

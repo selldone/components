@@ -32,7 +32,7 @@
       ></s-shop-hyper-product-view>
 
 
-      <currency-list
+      <s-currency-input
           v-if="shop.currencies.length > 1"
           class="mt-2 mb-3 max-width-field-mini"
           :shop="shop"
@@ -44,7 +44,7 @@
           :label="$t('global.commons.currency')"
           :messages="$t('hyper.currency_msg')"
       >
-      </currency-list>
+      </s-currency-input>
 
 
       <hr />
@@ -135,7 +135,7 @@
 </template>
 
 <script>
-import CurrencyList from "@components/ui/currency/CurrencyList.vue";
+import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import SShopHyperItemsList from "./SShopHyperItemsList.vue";
 import SShopHyperProductView from "./SShopHyperProductView.vue";
 import GtagEcommerce from "@components/plugins/gtag/GtagEcommerce";
@@ -149,7 +149,7 @@ export default {
     Stamp,
     SShopHyperProductView,
     SShopHyperItemsList,
-    CurrencyList,
+    SCurrencyInput,
   },
   props: {
     shop: { required: true },

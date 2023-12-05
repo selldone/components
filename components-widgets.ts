@@ -67,8 +67,6 @@ require("@components/style/selldone/general_animates.scss");
 import VueNumerals from "vue-numerals";
 Vue.use(VueNumerals);
 
-
-
 //---------------- Check --------------
 import Check from "@components/ui/icon/Check.vue";
 Vue.component("Check", Check);
@@ -90,7 +88,7 @@ Vue.component(SProgressLoading.name, SProgressLoading);
 Vue.component(
   "s-map-view",
   // A dynamic import returns a Promise.
-  () => import(/* webpackChunkName: "plug-map" */ "./map/SMapView.vue")
+  () => import(/* webpackChunkName: "plug-map" */ "./map/map-view/SMapView.vue")
 );
 
 //---------------- Lottie Animation View for Vue --------------
@@ -98,7 +96,8 @@ Vue.component(
 Vue.component(
   "s-lottie",
   // A dynamic import returns a Promise.
-  () => import(/* webpackChunkName: "plug-lottie" */ "./ui/animation/SLottie.vue")
+  () =>
+    import(/* webpackChunkName: "plug-lottie" */ "./ui/animation/SLottie.vue")
 );
 //---------------- Miscellaneous --------------
 
@@ -176,8 +175,6 @@ Vue.use(SocialSharing);
 import Clipboard from "v-clipboard";
 Vue.use(Clipboard);
 
-
-
 //---------------- prototypes --------------
 
 //Vue.prototype.window_portal = window;
@@ -194,15 +191,11 @@ Vue.use(VueAwesomeSwiper /* { default global options } */);
 import SCircleButton from "@components/ui/button/circle/SCircleButton.vue";
 Vue.component(SCircleButton.name, SCircleButton);
 
-import SimpleInnerTitle from "./depricated/SimpleInnerTitle.vue";
-Vue.component(SimpleInnerTitle.name, SimpleInnerTitle);
-
 import TipsButton from "./ui/tips/TipsButton.vue";
 Vue.component(TipsButton.name, TipsButton);
 
 //---------------- Medium Editor --------------
 import "medium-editor";
-
 
 import "@components/article/add-on/code-editor/CodeEditorMediumPlugin";
 import "@components/article/add-on/compare/ImagesCompareMediumPlugin";
@@ -221,13 +214,10 @@ import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css";
 Vue.component("prism-editor", PrismEditor);
 
-
-
 //---------------- Widget --------------
 
-import Widget from "@components/widget/Widget.vue";
-Vue.component(Widget.name, Widget);
+import SWidget from "@components/ui/widget/widget/SWidget.vue";
+Vue.component(SWidget.name, SWidget);
 
-import WidgetHeader from "@components/widget/WidgetHeader.vue";
-Vue.component(WidgetHeader.name, WidgetHeader);
-
+import SWidgetHeader from "@components/ui/widget/header/SWidgetHeader.vue";
+Vue.component(SWidgetHeader.name, SWidgetHeader);

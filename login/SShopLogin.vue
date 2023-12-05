@@ -125,11 +125,11 @@
 
         <div class="py-3">
           <v-expand-transition>
-            <count-down
+            <s-count-down
               v-if="countdown_end && !show_resend"
               :end="countdown_end"
               @end="show_resend = true"
-            ></count-down>
+            ></s-count-down>
             <v-btn
               v-else-if="show_resend"
               color="#0061e0"
@@ -422,7 +422,7 @@
 
 <script>
 import { SoundHelper } from "@core/helper/sound/SoundHelper";
-import CountDown from "@components/ui/count-down/CountDown.vue";
+import SCountDown from "@components/ui/count-down/SCountDown.vue";
 import SetupService from "@core/server/SetupService";
 import { SuccessVerifyMethod } from "@sdk-storefront/auth/XapiAuthSMS";
 import { XapiAuth } from "@sdk-storefront/auth/XapiAuth";
@@ -431,7 +431,7 @@ export default {
   name: "SShopLogin",
   components: {
     ShopEmailLogin,
-    CountDown,
+    SCountDown,
   },
   props: {
     show: {

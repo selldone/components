@@ -71,14 +71,14 @@
     <!-- ███████████████████████████ Setting ███████████████████████████ -->
     <div v-if="tab === 'setting'" class="py-10">
       <div class="widget-box mb-5">
-        <widget-header
+        <s-widget-header
           :title="
             category
               ? $t('add_category.title_edit')
               : $t('add_category.title_update')
           "
           icon="tune"
-        ></widget-header>
+        ></s-widget-header>
 
         <v-subheader>
           Categories simplify product management for you and expedite product
@@ -283,7 +283,7 @@
 
     <div v-if="tab === 'template' && category" class="py-10">
       <div class="widget-box mb-5">
-        <widget-header
+        <s-widget-header
           title="Template"
           icon="layers"
           :add-caption="page ? 'Edit Page' : 'List of Pages'"
@@ -294,7 +294,7 @@
               ? { name: 'ShopPageBuilderPage', params: { page_id: page.id } }
               : { name: 'PagesManagement_CustomPages' }
           "
-        ></widget-header>
+        ></s-widget-header>
 
         <v-subheader>
           You have the capability to overlay a page on your category page for
@@ -343,11 +343,11 @@
 
     <div v-if="tab === 'critical' && category" class="py-10">
       <div class="widget-box mb-5">
-        <widget-header
+        <s-widget-header
           icon="warning_amber"
           :title="$t('global.commons.critical_zone')"
         >
-        </widget-header>
+        </s-widget-header>
         <v-subheader>
           <div>
             Removing a category will move its subcategories and products to the

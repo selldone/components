@@ -43,11 +43,11 @@
         ></s-mentionable-input>
 
         <v-expand-transition>
-          <users-dense-images-circles
+          <s-dense-images-circles-users
             v-if="mentions && mentions.users"
             :ids="mentions.users"
             :size="32"
-          ></users-dense-images-circles>
+          ></s-dense-images-circles-users>
         </v-expand-transition>
 
         <div class="widget-buttons">
@@ -248,25 +248,25 @@
                       <v-icon small color="red">close</v-icon>
                       <small>{{ $t("global.commons.old") }}:</small>
                       <b>{{ generateFullAddress(item.data.old) }}</b>
-                      <geo-navigation-button
+                      <s-geo-navigation-button
                         v-if="item.data.old && item.data.old.location"
                         :location="item.data.old.location"
                         :icon="true"
                         class="ms-1"
                         small
-                      ></geo-navigation-button>
+                      ></s-geo-navigation-button>
                     </div>
                     <div class="mt-2">
                       <v-icon small color="green">check</v-icon>
                       <small>{{ $t("global.commons.new") }}:</small>
                       <b>{{ generateFullAddress(item.data.new) }}</b>
-                      <geo-navigation-button
+                      <s-geo-navigation-button
                         v-if="item.data.new && item.data.new.location"
                         :location="item.data.new.location"
                         :icon="true"
                         class="ms-1"
                         small
-                      ></geo-navigation-button>
+                      ></s-geo-navigation-button>
                     </div>
                   </div>
                 </span>
@@ -377,13 +377,13 @@
 
 <script>
 import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
-import UsersDenseImagesCircles from "@components/user/UsersDenseImagesCircles.vue";
+import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import { Reactions } from "@core/enums/support/Reactions";
 import { Brands } from "@core/enums/social/Brands";
 import { CampaignMedium } from "@core/enums/campaign/CampaignMedium";
 import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
-import GeoNavigationButton from "@components/map/GeoNavigationButton.vue";
+import SGeoNavigationButton from "@components/map/geo-button/SGeoNavigationButton.vue";
 import TimelineStatus from "@core/enums/timeline/TimelineStatus";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
 import {TimelineEmailType} from "@core/enums/timeline/TimelineEmailType";
@@ -392,8 +392,8 @@ export default {
   name: "SBackofficeOrderTimeline",
   components: {
     SSmartMenu,
-    GeoNavigationButton,
-    UsersDenseImagesCircles,
+    SGeoNavigationButton,
+    SDenseImagesCirclesUsers,
     SMentionableInput,
   },
   props: {
