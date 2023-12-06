@@ -16,7 +16,7 @@
   <v-container
     v-if="lotteries && lotteries.length"
     fluid
-    class="s--storefront-lottery-prizes"
+    class="s--storefront-lottery-prizes-list"
   >
     <s-widget-header
       :title="$t('global.commons.Prizes')"
@@ -144,7 +144,7 @@
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import _ from "lodash-es";
 export default {
-  name: "SStorefrontLotteryPrizes",
+  name: "SStorefrontLotteryPrizesList",
   components: { SFadeScroll },
   props: {
     productId: {},
@@ -251,7 +251,7 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--storefront-lottery-prizes {
+.s--storefront-lottery-prizes-list {
   text-align: start;
 
   .prize-slide {

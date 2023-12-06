@@ -96,7 +96,7 @@
 <script>
 import WidgetProductCard from "@components/backoffice/product/widgets/WidgetProductCard.vue";
 export default {
-  name: "SLotteryPrizeForWinner",
+  name: "SStorefrontLotteryPrizeDetail",
   components: { WidgetProductCard },
   props: {
     lottery: {

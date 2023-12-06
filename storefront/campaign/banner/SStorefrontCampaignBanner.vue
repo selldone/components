@@ -73,9 +73,8 @@
 </template>
 
 <script>
-
 export default {
-  name: "SStorefrontTopBanner",
+  name: "SStorefrontCampaignBanner",
 
   props: {
     shop: {

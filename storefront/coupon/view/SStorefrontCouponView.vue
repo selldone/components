@@ -125,7 +125,7 @@
 <script>
 import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
 export default {
-  name: "SCoupon",
+  name: "SStorefrontCouponView",
   components: { STimeProgressBar },
   props: {
     coupon: {

@@ -81,7 +81,7 @@
 import _ from "lodash-es";
 
 export default {
-  name: "DiscountField",
+  name: "SStorefrontDiscountCodeInput",
 
   props: ["value", "basket", "loadId", "currency"],
 

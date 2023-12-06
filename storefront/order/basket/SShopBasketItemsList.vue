@@ -88,7 +88,7 @@
                 ></i>
               </template>
               <span
-                >{{ $t("physical_order_page.basket_items.original_warranty") }}
+                >{{ $t("order_page.basket_items.original_warranty") }}
               </span>
             </v-tooltip>
 
@@ -240,7 +240,7 @@
                 : "keyboard_return"
             }}
           </v-icon>
-          {{ $t("physical_order_page.basket_items.return") }}
+          {{ $t("order_page.basket_items.return") }}
         </v-btn>
       </template>
     </v-data-table>
@@ -402,35 +402,35 @@ export default {
       const out = [
         { text: "", align: "center", sortable: false, value: "product_id" },
         {
-          text: this.$t("physical_order_page.basket_items.table.product"),
+          text: this.$t("order_page.basket_items.table.product"),
           align: "start",
           value: "product.title",
         },
         {
-          text: this.$t("physical_order_page.basket_items.table.count"),
+          text: this.$t("order_page.basket_items.table.count"),
           align: "start",
           value: "count",
         },
 
         {
-          text: this.$t("physical_order_page.basket_items.table.unit_price"),
+          text: this.$t("order_page.basket_items.table.unit_price"),
           align: "center",
           value: "price",
           sortable: true,
         },
         {
-          text: this.$t("physical_order_page.basket_items.table.total_price"),
+          text: this.$t("order_page.basket_items.table.total_price"),
           align: "center",
           sortable: false,
           value: "total_price",
         },
         {
-          text: this.$t("physical_order_page.basket_items.table.discount"),
+          text: this.$t("order_page.basket_items.table.discount"),
           align: "center",
           value: "dis",
         },
         {
-          text: this.$t("physical_order_page.basket_items.table.final_price"),
+          text: this.$t("order_page.basket_items.table.final_price"),
           align: "center",
           value: "final_price",
           sortable: false,
@@ -439,7 +439,7 @@ export default {
 
       if (this.isPhysical) {
         out.push({
-          text: this.$t("physical_order_page.basket_items.table.returned"),
+          text: this.$t("order_page.basket_items.table.returned"),
           align: "center",
           value: "return_request",
           sortable: true,

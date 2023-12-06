@@ -26,7 +26,7 @@
   >
     <h2 class="d-flex align-center">
       <v-icon class="me-1" color="#111">payment</v-icon>
-      {{ $t("physical_order_page.payment.title") }}
+      {{ $t("order_page.payment.title") }}
 
       <v-spacer></v-spacer>
       <s-currency-icon :currency="order.currency" gradient></s-currency-icon>
@@ -107,13 +107,13 @@
           <thead>
             <tr>
               <th class="text-start min-width-200">
-                {{ $t("physical_order_page.payment.table.title") }}
+                {{ $t("order_page.payment.table.title") }}
               </th>
               <th class="text-left min-width-150">
-                {{ $t("physical_order_page.payment.table.amount") }}
+                {{ $t("order_page.payment.table.amount") }}
               </th>
               <th class="text-start min-width-300">
-                {{ $t("physical_order_page.payment.table.description") }}
+                {{ $t("order_page.payment.table.description") }}
               </th>
             </tr>
           </thead>
@@ -128,7 +128,7 @@
                   class="mx-2"
                   src="../../../assets/icons/baskets.svg"
                 />
-                {{ $t("physical_order_page.payment.total_price") }}
+                {{ $t("order_page.payment.total_price") }}
               </td>
               <td class="text-left">
                 <price-view
@@ -153,7 +153,7 @@
                   class="mx-2"
                   src="../../../assets/icons/product-discount-outline.svg"
                 />
-                {{ $t("physical_order_page.payment.total_items_discount") }}
+                {{ $t("order_page.payment.total_items_discount") }}
               </td>
               <td class="text-left">
                 <price-view
@@ -214,7 +214,7 @@
                   class="mx-2"
                   src="../../../assets/icons/discount-code-outline.svg"
                 />
-                {{ $t("physical_order_page.payment.discount_code") }}
+                {{ $t("order_page.payment.discount_code") }}
               </td>
               <td class="text-left">
                 <price-view
@@ -373,7 +373,7 @@
                   class="mx-2"
                   src="../../../assets/icons/shipping-outline.svg"
                 />
-                {{ $t("physical_order_page.payment.delivery_fee") }}
+                {{ $t("order_page.payment.delivery_fee") }}
               </td>
               <td class="text-left">
                 <price-view
@@ -383,7 +383,7 @@
                 ></price-view>
 
                 <span v-else>{{
-                  $t("physical_order_page.payment.delivery_fee_after")
+                  $t("order_page.payment.delivery_fee_after")
                 }}</span>
               </td>
               <td />
@@ -495,26 +495,51 @@
                 </td>
 
                 <td class="text-start">
-                  <v-btn
+                  <div
                     v-if="
+                      bill.payment?.status ===
+                      TransactionStatus.RequireCapture.code
+                    "
+                    class="small"
+                  >
+                    <v-icon small class="me-1">check</v-icon>
+                    {{
+                      $t(
+                        "order_page.payment.payment_is_in_require_capture_message"
+                      )
+                    }}
+                  </div>
+                  <div
+                    v-else-if="
                       !isSubscription /*Manual payment not supported for subscription!*/ &&
                       bill.status === BillStatus.PENDING.code
                     "
-                    color="success"
-                    :large="current_bill_waiting === bill"
-                    :depressed="current_bill_waiting !== bill"
-                    :disabled="current_bill_waiting !== bill"
-                    @click.stop="goToPaymentBill(bill)"
-                    class="my-2"
+                    class="widget-buttons my-1"
                   >
-                    <v-icon
+                    <v-btn
                       v-if="current_bill_waiting === bill"
-                      small
-                      class="me-1 blink-me"
-                      >lens</v-icon
+                      color="success"
+                      :x-large="current_bill_waiting === bill"
+                      :depressed="current_bill_waiting !== bill"
+                      :disabled="current_bill_waiting !== bill"
+                      @click.stop="goToPaymentBill(bill)"
                     >
-                    {{ $t("global.actions.pay_now") }}
-                  </v-btn>
+                      <v-icon
+                        v-if="current_bill_waiting === bill"
+                        small
+                        class="me-1 blink-me"
+                        >lens</v-icon
+                      >
+
+                      {{ $t("global.actions.pay_now") }}
+                    </v-btn>
+                    <small v-else>
+                      {{
+                        $t("order_page.payment.settle_the_earlier_bill_first")
+                      }}</small
+                    >
+                  </div>
+
                   <div v-if="bill.payment?.card" class="d-inline-block">
                     <payment-card
                       :method="bill.payment.method"
@@ -610,7 +635,7 @@
       <v-row class="border-top bg-light" no-gutters>
         <v-col cols="12" sm="6" class="p-2">
           <p class="font-weight-bold text-muted small my-1">
-            {{ $t("physical_order_page.payment.total_order_price_before_tax") }}
+            {{ $t("order_page.payment.total_order_price_before_tax") }}
           </p>
 
           <price-view
@@ -621,7 +646,7 @@
 
         <v-col v-if="isPayed" cols="12" sm="6" class="p-2">
           <p class="font-weight-bold text-muted small my-1">
-            {{ $t("physical_order_page.payment.buyer_payment") }}
+            {{ $t("order_page.payment.buyer_payment") }}
             <span v-if="order.tax">+ {{ $t("global.commons.tax") }}</span>
           </p>
 
@@ -650,6 +675,7 @@ import { ProductType } from "@core/enums/product/ProductType";
 import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 import PaymentCard from "@components/payment/widgets/PaymentCard.vue";
 import { URLHelper } from "@core/helper/url/URLHelper";
+import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",
@@ -670,6 +696,7 @@ export default {
 
   data: function () {
     return {
+      TransactionStatus: TransactionStatus,
       PhysicalOrderStates: PhysicalOrderStates,
       BillStatus: BillStatus,
 
@@ -825,7 +852,7 @@ export default {
     },
 
     bills() {
-      return this.order.bills;
+      return this.order.bills?.sortByKey("id", true);
     },
 
     current_bill_waiting() {

@@ -99,9 +99,9 @@
                   {{ $t("global.wheel_fortune.win_message") }}
                 </h3>
 
-                <s-lottery-prize-for-winner
+                <s-storefront-lottery-prize-detail
                   :lottery="win"
-                ></s-lottery-prize-for-winner>
+                ></s-storefront-lottery-prize-detail>
               </div>
               <div v-else class="center-absolute" style="width: 70%">
                 <h3 class="text-white zoomIn user-select-none">
@@ -247,12 +247,12 @@
 </template>
 
 <script>
-import SLotteryPrizeForWinner from "./SLotteryPrizeForWinner.vue";
+import SStorefrontLotteryPrizeDetail from "@components/storefront/lottery/prize-detail/SStorefrontLotteryPrizeDetail.vue";
 import { SoundHelper } from "@core/helper/sound/SoundHelper";
 
 export default {
-  name: "WheelOfFortune",
-  components: { SLotteryPrizeForWinner },
+  name: "SStorefrontLotteryWheelOfFortune",
+  components: { SStorefrontLotteryPrizeDetail },
   data: () => ({
     dialog: false,
 

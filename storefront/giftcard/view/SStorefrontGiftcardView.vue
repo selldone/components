@@ -120,7 +120,7 @@
 <script>
 import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 export default {
-  name: "SShopGiftCard",
+  name: "SStorefrontGiftcardView",
   components: { SCurrencyIcon },
   props: {
     giftCard: {

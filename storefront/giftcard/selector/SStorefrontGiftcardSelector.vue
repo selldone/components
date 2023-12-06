@@ -37,7 +37,7 @@
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Add card  ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-      <s-shop-gift-card-add-dialog
+      <s-storefront-giftcard-add-dialog
         v-model="dialog"
         @add="
           (gift_card) => {
@@ -45,7 +45,7 @@
             dialog = false;
           }
         "
-      ></s-shop-gift-card-add-dialog>
+      ></s-storefront-giftcard-add-dialog>
     </template>
     <template v-slot:selection="{ item, index }">
       <v-chip
@@ -57,11 +57,7 @@
       >
         <v-avatar v-if="item.gift_type.bg" left>
           <img
-            :src="
-              (
-                getShopImagePath(item.gift_type.bg, IMAGE_SIZE_SMALL)
-              )
-            "
+            :src="getShopImagePath(item.gift_type.bg, IMAGE_SIZE_SMALL)"
             alt="trevor"
           />
         </v-avatar>
@@ -73,14 +69,10 @@
         >(+{{ value.length - 1 }} {{ $t("global.payment_form.more") }} )</span
       >
     </template>
-    <template v-slot:item="{ parent, item }">
+    <template v-slot:item="{ item }">
       <img
         v-if="item.gift_type.bg"
-        :src="
-          (
-            getShopImagePath(item.gift_type.bg, IMAGE_SIZE_SMALL)
-          )
-        "
+        :src="getShopImagePath(item.gift_type.bg, IMAGE_SIZE_SMALL)"
         height="24"
         width="36"
         class="rounded me-2"
@@ -90,8 +82,10 @@
 
       <v-spacer></v-spacer>
 
-      {{ FormatNumberCurrency(item.balance, item.gift_type.currency) }}
-      {{ GetUserSelectedCurrencyName(item.gift_type.currency) }}
+      <price-view
+        :amount="item.balance"
+        :currency="item.gift_type.currency"
+      ></price-view>
     </template>
 
     <template v-slot:append>
@@ -105,10 +99,10 @@
 </template>
 
 <script>
-import SShopGiftCardAddDialog from "@components/storefront/incentives/giftcard/SShopGiftCardAddDialog.vue";
+import SStorefrontGiftcardAddDialog from "@components/storefront/giftcard/add-dialog/SStorefrontGiftcardAddDialog.vue";
 export default {
-  name: "SelectGiftCards",
-  components: { SShopGiftCardAddDialog },
+  name: "SStorefrontGiftcardSelector",
+  components: { SStorefrontGiftcardAddDialog },
   props: {
     value: {},
     giftCards: {},

@@ -42,16 +42,14 @@
         >
           <v-list-item-avatar tile>
             <v-img
-              :src="
-                (
-                  getShopImagePath(category.icon, IMAGE_SIZE_SMALL)
-                )
-              "
+              :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
               class="rounded -cat"
             ></v-img>
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title>{{ category.title?.limitWords(7) }}</v-list-item-title>
+            <v-list-item-title>{{
+              category.title?.limitWords(7)
+            }}</v-list-item-title>
             <v-list-item-subtitle
               >{{ category.description?.limitWords(20) }}
             </v-list-item-subtitle>
@@ -91,16 +89,14 @@
             <v-list-item three-line dense class="ps-0">
               <v-list-item-avatar tile>
                 <v-img
-                  :src="
-                    (
-                      getShopImagePath(product.icon, IMAGE_SIZE_SMALL)
-                    )
-                  "
+                  :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
                   class="rounded"
                 ></v-img>
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title>{{ product.title?.limitWords(7) }}</v-list-item-title>
+                <v-list-item-title>{{
+                  product.title?.limitWords(7)
+                }}</v-list-item-title>
 
                 <v-list-item-subtitle class="d-flex"
                   ><span v-if="product.sku" class="w-50"
@@ -310,7 +306,7 @@ export default {
     value(value) {
       if (value === this.value_local) return; // The value change by this component!
       console.log("CHANGE!", value);
-         this.resetToDefault();      // 🞇 Reset to default
+      this.resetToDefault(); // 🞇 Reset to default
 
       this.value_local = this.value;
       this.fetchProductsList();
@@ -468,7 +464,7 @@ export default {
             window.___CACHED_LOADED_PRDUCTS_LIST_1["" + p.id] = p;
           });
         })
-           .catch( (error) =>{})
+        .catch((error) => {})
         .finally(() => {
           this.busy_fetch = false;
         });
@@ -502,7 +498,7 @@ export default {
         .then(({ data }) => {
           this.categories_detail = data.categories;
         })
-           .catch( (error) =>{})
+        .catch((error) => {})
         .finally(() => {
           this.busy_fetch = false;
         });

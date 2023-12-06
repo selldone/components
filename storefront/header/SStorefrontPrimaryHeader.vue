@@ -57,10 +57,10 @@
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Lottery ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <wheel-of-fortune
+        <s-storefront-lottery-wheel-of-fortune
           v-if="USER() && shop && shop.lottery && shop.lottery.enable"
           class="fadeIn delay_200"
-        ></wheel-of-fortune>
+        ></s-storefront-lottery-wheel-of-fortune>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Orders history ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
@@ -393,7 +393,7 @@
 import BasketTopMenu from "../order/basket/BasketTopMenu.vue";
 import SLoading from "@components/ui/loading/SLoading.vue";
 
-import WheelOfFortune from "@components/storefront/incentives/lottery/WheelOfFortune.vue";
+import SStorefrontLotteryWheelOfFortune from "@components/storefront/lottery/wheel-of-fortune/SStorefrontLotteryWheelOfFortune.vue";
 import SCurrencySelector from "@components/ui/currency/selector/SCurrencySelector.vue";
 import SShopNavigationDrawer from "@components/storefront/menu/side/SShopNavigationDrawer.vue";
 import SShopUserMenuList from "@components/storefront/menu/user/SShopUserMenuList.vue";
@@ -412,7 +412,7 @@ export default {
     SShopNavigationDrawer,
     SCurrencySelector,
 
-    WheelOfFortune,
+    SStorefrontLotteryWheelOfFortune,
     SLoading,
 
     BasketTopMenu,

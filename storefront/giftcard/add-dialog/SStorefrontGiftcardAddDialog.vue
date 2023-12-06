@@ -73,7 +73,7 @@
 
 <script>
 export default {
-  name: "SShopGiftCardAddDialog",
+  name: "SStorefrontGiftcardAddDialog",
   props: {
     value: {},
   },

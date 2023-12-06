@@ -20,7 +20,7 @@
       <v-icon class="me-1" color="#111">{{
         has_goods_delivery ? "local_shipping" : "switch_access_shortcut_add"
       }}</v-icon>
-      {{ $t("physical_order_page.delivery.title") }}
+      {{ $t("order_page.delivery.title") }}
 
       <v-chip
         v-if="is_pickup"
@@ -35,7 +35,7 @@
     </h2>
 
     <v-subheader class="px-0">
-      {{ $t("physical_order_page.delivery.subtitle") }}
+      {{ $t("order_page.delivery.subtitle") }}
     </v-subheader>
 
     <div v-if="canConfirmReceived" class="mt-3 mb-5 p-2">
@@ -48,12 +48,12 @@
           :loading="busy_receive"
         >
           <v-icon small class="me-1 blink-me">lens</v-icon>
-          {{ $t("physical_order_page.delivery.confirm_received_action") }}
+          {{ $t("order_page.delivery.confirm_received_action") }}
         </v-btn>
       </div>
       <p v-if="has_goods_delivery" class="text-start">
         <i class="fas fa-info-circle text-primary" />
-        {{ $t("physical_order_page.delivery.confirm_received_info") }}
+        {{ $t("order_page.delivery.confirm_received_info") }}
       </p>
 
       <!-- Auto complete count down - 2 days after last updated_at -->
@@ -141,50 +141,50 @@
         </p>
 
         <p class="mb-1" v-if="receiver_info.name">
-          <small>{{ $t("physical_order_page.delivery.name") }} : </small
+          <small>{{ $t("order_page.delivery.name") }} : </small
           >{{ receiver_info.name }}
         </p>
 
         <p class="mb-1" v-if="receiver_info.phone">
-          <small>{{ $t("physical_order_page.delivery.tel") }} : </small
+          <small>{{ $t("order_page.delivery.tel") }} : </small
           >{{ receiver_info.phone }}
         </p>
         <p class="mb-1" v-if="receiver_info.email">
-          <small>{{ $t("physical_order_page.delivery.email") }} : </small
+          <small>{{ $t("order_page.delivery.email") }} : </small
           >{{ receiver_info.email }}
         </p>
         <p class="mb-1" v-if="receiver_info.country">
-          <small>{{ $t("physical_order_page.delivery.country") }} : </small>
+          <small>{{ $t("order_page.delivery.country") }} : </small>
           <flag :iso="receiver_info.country" :squared="false" />
           {{ getCountryName(receiver_info.country) }}
         </p>
         <p class="mb-1" v-if="receiver_info.state">
-          <small>{{ $t("physical_order_page.delivery.state") }} : </small
+          <small>{{ $t("order_page.delivery.state") }} : </small
           >{{ receiver_info.state }}
           <span class="mx-2"
-            ><small>{{ $t("physical_order_page.delivery.city") }} : </small
+            ><small>{{ $t("order_page.delivery.city") }} : </small
             >{{ receiver_info.city }}</span
           >
         </p>
         <p class="mb-1" v-if="receiver_info.address">
-          <small>{{ $t("physical_order_page.delivery.address") }} : </small
+          <small>{{ $t("order_page.delivery.address") }} : </small
           >{{ receiver_info.address }}
         </p>
         <p class="mb-1" v-if="receiver_info.no">
-          <small>{{ $t("physical_order_page.delivery.building_no") }} : </small
+          <small>{{ $t("order_page.delivery.building_no") }} : </small
           >{{ receiver_info.no }}
           <span class="mx-2"
-            ><small>{{ $t("physical_order_page.delivery.unit_no") }} : </small
+            ><small>{{ $t("order_page.delivery.unit_no") }} : </small
             >{{ receiver_info.unit }}</span
           >
         </p>
         <p class="mb-1" v-if="receiver_info.postal">
-          <small>{{ $t("physical_order_page.delivery.postal_code") }} : </small
+          <small>{{ $t("order_page.delivery.postal_code") }} : </small
           >{{ receiver_info.postal }}
         </p>
 
         <p class="mb-1" v-if="receiver_info.postal">
-          <small>{{ $t("physical_order_page.delivery.description") }} : </small
+          <small>{{ $t("order_page.delivery.description") }} : </small
           >{{ receiver_info.message }}
         </p>
 
@@ -259,7 +259,7 @@
           <hr />
           <div v-if="delivery_info.tracking_code" class="mb-3">
             <small
-              >{{ $t("physical_order_page.delivery.tracking_code") }} :
+              >{{ $t("order_page.delivery.tracking_code") }} :
             </small>
             <span class="font-weight-bold" v-copy>{{
               delivery_info.tracking_code
@@ -272,7 +272,7 @@
                 target="_blank"
                 class="ms-2"
                 ><v-icon class="me-1">gps_fixed</v-icon>
-                {{ $t("physical_order_page.delivery.tracking_url") }}</v-btn
+                {{ $t("order_page.delivery.tracking_url") }}</v-btn
               >
             </div>
           </div>
@@ -296,12 +296,12 @@
     >
       <p class="m-0">
         <span>
-          {{ $t("physical_order_page.delivery.order_delivered") }}
+          {{ $t("order_page.delivery.order_delivered") }}
         </span>
       </p>
       <p
         class="small m-0"
-        :title="$t('physical_order_page.delivery.delivery_time')"
+        :title="$t('order_page.delivery.delivery_time')"
       >
         <v-icon small class="me-1">access_time</v-icon>
 
@@ -580,7 +580,7 @@ export default {
             this.showSuccessAlert(
               null,
               this.$t(
-                "physical_order_page.delivery.notifications.confirm_delivery"
+                "order_page.delivery.notifications.confirm_delivery"
               )
             );
             this.basket.delivery_state = data.delivery_state;

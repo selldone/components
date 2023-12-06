@@ -115,7 +115,7 @@
     >
       <div>
         <!-- Gift Cards -->
-        <select-gift-cards
+        <s-storefront-giftcard-selector
           class="mt-3"
           v-model="selected_gift_cards"
           v-if="hasGiftCardField && !isFree"
@@ -126,7 +126,7 @@
           filled
           :loading="busy_gift_cards"
         >
-        </select-gift-cards>
+        </s-storefront-giftcard-selector>
 
         <div class="text-start">
           <small>{{ $t("global.commons.total_payment") }} </small>
@@ -699,11 +699,9 @@
 </template>
 
 <script>
-
-
 import SPaymentStripe from "./stripe/SPaymentStripe.vue";
 import PaymentButton from "./widgets/PaymentButton.vue";
-import SelectGiftCards from "@components/backoffice/incentives/gift-card/SelectGiftCards.vue";
+import SStorefrontGiftcardSelector from "@components/storefront/giftcard/selector/SStorefrontGiftcardSelector.vue";
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 import TimeLapse from "@components/ui/time-lapse/timeLapse.vue";
 import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
@@ -724,10 +722,9 @@ export default {
     SCurrencyIcon,
     TimeLapse,
     SValueCopyBox,
-    SelectGiftCards,
+    SStorefrontGiftcardSelector,
     PaymentButton,
     SPaymentStripe,
-
   },
   props: {
     isOfficialSamin: {

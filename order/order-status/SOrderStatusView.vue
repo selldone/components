@@ -20,6 +20,8 @@
         :src="
           gatewayProcessing
             ? require('@components/assets/icons/gateway-processing.svg')
+            : paymentRequireCapture
+            ? require('@components/assets/icons/require_capture.svg')
             : statusObject.src
         "
         width="24"
@@ -34,6 +36,14 @@
       >
       <v-icon small v-else-if="canceled" class="sup-icon" color="red"
         >cancel</v-icon
+      >
+
+      <v-icon
+        small
+        v-if="paymentRequireCapture"
+        class="sup-icon fa-pulse"
+        color="success"
+        >fas fa-spinner</v-icon
       >
     </div>
 
@@ -61,6 +71,11 @@ export default {
       require: true,
     },
     gatewayProcessing: {},
+    payment: {},
+    paymentRequireCapture: {
+      default: false,
+      type: Boolean,
+    },
   },
   computed: {
     statusObject() {
@@ -83,6 +98,9 @@ export default {
       return !!this.gatewayProcessing;
     },
     title() {
+      if (this.paymentRequireCapture)
+        return this.$t("global.basket_status.payment_require_capture");
+
       if (
         this.gatewayProcessing &&
         this.gatewayProcessing.transaction_type === "dir"

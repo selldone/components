@@ -261,10 +261,10 @@
 
             <!-- ▁▁▁▁▁▁ 🞇 Coupon 🞇 ▁▁▁▁▁▁ -->
 
-            <s-storefront-coupons
+            <s-storefront-coupons-list
               :product-id="product.id"
               :variant-id="current_variant ? current_variant.id : undefined"
-            ></s-storefront-coupons>
+            ></s-storefront-coupons-list>
 
             <!--
                   █████████████████████████████████████████████████████████████
@@ -357,7 +357,7 @@
 <script>
 import SShopProductRatingView from "@components/product/rating/SShopProductRatingView.vue";
 import BasketItemUserMessageForm from "@components/order/product-input/BasketItemUserMessageForm.vue";
-import SStorefrontCoupons from "@components/storefront/incentives/coupon/SStorefrontCoupons.vue";
+import SStorefrontCouponsList from "@components/storefront/coupon/list/SStorefrontCouponsList.vue";
 import { ProductVariants } from "@core/enums/product/ProductVariants";
 import SSmartSelectVendor from "@components/vendor/selector/SSmartSelectVendor.vue";
 import ProductSectionBoxGeneralInfo from "@components/product/sections/ProductSectionBoxGeneralInfo.vue";
@@ -401,7 +401,7 @@ export default {
     ProductSectionBoxCondition,
     ProductSectionBoxGeneralInfo,
     SSmartSelectVendor,
-    SStorefrontCoupons,
+    SStorefrontCouponsList,
     BasketItemUserMessageForm,
     SShopProductRatingView,
   },

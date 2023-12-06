@@ -39,7 +39,7 @@
       <s-fade-scroll v-if="show_coupons" show-arrow small-arrow>
         <div class="d-flex align-stretch">
           <div v-for="coupon in coupons" :key="coupon.id" class="coupon-slide">
-            <s-coupon
+            <s-storefront-coupon-view
               :coupon="coupon"
               class="-coupon"
               width="220px"
@@ -59,7 +59,7 @@
                 returnObject ? value?.id === coupon.id : value === coupon.id
               "
             >
-            </s-coupon>
+            </s-storefront-coupon-view>
           </div>
 
           <div key="new" class="coupon-slide">
@@ -120,14 +120,14 @@
 </template>
 
 <script>
-import SCoupon from "./SCoupon.vue";
+import SStorefrontCouponView from "../view/SStorefrontCouponView.vue";
 import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import _ from "lodash-es";
 
 export default {
-  name: "SStorefrontCoupons",
-  components: { SFadeScroll, SCoupon },
+  name: "SStorefrontCouponsList",
+  components: { SFadeScroll, SStorefrontCouponView },
   props: {
     productId: {},
     VariantId: {},
@@ -157,7 +157,6 @@ export default {
   data: () => ({
     show_coupons: true,
 
-
     // -------- Add coupon --------
     code_input: null,
     busy_add: false,
@@ -171,8 +170,6 @@ export default {
         new_val
       );
     },
-
-
   },
 
   computed: {
@@ -225,14 +222,11 @@ export default {
   },
 
   created() {
-
     if (!this.forceShow)
       this.show_coupons =
         localStorage.getItem(
           LocalStorages.GetShopCouponsViewMode(this.$localstorage_base_path())
         ) !== "false";
-
-
   },
   methods: {
     showAddMode() {
@@ -244,7 +238,7 @@ export default {
       if (this.basket) {
         let total = 0;
         this.basket.items.forEach((item) => {
-          total += item.count * this.getBasketItemPrice(this.shop,item);
+          total += item.count * this.getBasketItemPrice(this.shop, item);
         });
         // Other constraints check in back-end (except products limitation that handle in above filter)
         return total >= coupon.min_purchase;
@@ -345,7 +339,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
