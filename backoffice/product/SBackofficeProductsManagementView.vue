@@ -577,7 +577,7 @@
             "
             :restoring="product.id === busy_restore"
             :selected="selected_products.includes(product.id)"
-            :shortcut="current_dir_id && product.category_id !== current_dir_id"
+            :shortcut="!busy_fetch && current_dir_id && product.category_id !== current_dir_id"
           >
           </product-card-mini>
 

@@ -13,7 +13,9 @@
   -->
 
 <template>
-  <div class="d-flex align-stretch align-sm-start flex-column flex-sm-row s-widget-header">
+  <div
+    class="d-flex align-stretch align-sm-start flex-column flex-sm-row s-widget-header"
+  >
     <div class="d-flex align-center flex-grow-1">
       <h2 class="d-flex align-center">
         <v-icon
@@ -88,6 +90,7 @@
 <script>
 export default {
   name: "SWidgetHeader",
+  emits: ["click:add"],
   props: {
     icon: {},
     iconColor: {},
