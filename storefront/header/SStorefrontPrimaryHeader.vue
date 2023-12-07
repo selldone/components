@@ -529,7 +529,7 @@ export default {
         if (
           this.$route.name === window.$storefront.routes.PAGE_RENDER ||
           this.$route.name === "CustomHomePage" ||
-          this.$route.name === window.$storefront.routes.INCLUDE_PAGE_RENDER
+          this.$route.name === window.$storefront?.routes.INCLUDE_PAGE_RENDER
         ) {
           return 0;
         } else {
@@ -621,7 +621,7 @@ export default {
       if (
         this.$route.name !== window.$storefront.routes.PAGE_RENDER &&
         this.$route.name !== "CustomHomePage" &&
-        this.$route.name !== window.$storefront.routes.INCLUDE_PAGE_RENDER
+        this.$route.name !== window.$storefront?.routes.INCLUDE_PAGE_RENDER
       ) {
         this.transparentHeader = null;
         this.darkHeader = null; // Default value is null!
