@@ -32,7 +32,12 @@
         <!-- Mount the Payment Element here -->
       </div>
 
-      <v-alert v-if="!!error_message" type="error" class="my-3 text-start" dense>
+      <v-alert
+        v-if="!!error_message"
+        type="error"
+        class="my-3 text-start"
+        dense
+      >
         {{ error_message }}
       </v-alert>
 
@@ -188,7 +193,22 @@ export default {
         name: shop?.title ? shop.title : "Selldone",
       },
     });
-    const paymentElement = this.elements.create("payment");
+
+    const _billingDetails = {};
+    if (this.billingName) _billingDetails.name = this.billingName;
+    if (this.billingEmail) _billingDetails.email = this.billingEmail;
+    if (this.billingPhone) _billingDetails.phone = this.billingPhone;
+
+    let _defaultValues = {};
+    if (Object.values(_billingDetails).length > 0) {
+      _defaultValues = {
+        billingDetails: _billingDetails,
+      };
+    }
+
+    const paymentElement = this.elements.create("payment", {
+      defaultValues: _defaultValues,
+    });
     paymentElement.mount("#payment-element");
 
     paymentElement.on("ready", (event) => {
