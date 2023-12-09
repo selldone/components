@@ -693,6 +693,9 @@ export default {
             console.log("In site payment form.");
           }
         })
+        .catch((e) => {
+          this.showLaravelError(e);
+        })
         .finally(() => {
           this.busy_loading_payment = null;
         });
@@ -1066,8 +1069,6 @@ export default {
 
 .s--storefront-master-payment-dialog {
   position: relative;
-
-
 }
 .s--storefront-master-payment-circle-progress {
   user-select: none;
@@ -1088,5 +1089,4 @@ export default {
     z-index: 101;
   }
 }
-
 </style>
