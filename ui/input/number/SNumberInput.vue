@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import NumberHelper from "@core/helper/number/NumberHelper";
+import { NumberHelper } from "@core/helper/number/NumberHelper";
 
 export default {
   name: "SNumberInput",
@@ -346,7 +346,7 @@ export default {
       if (this.max === undefined || this.newValue < this.max) {
         this.newValue = NumberHelper.toEnglishFloat(
           NumberHelper.toEnglishFloat(this.newValue, this.decimal) + this.step,
-          this.decimal,
+          this.decimal
         );
         this.$emit("input", this.newValue);
         this.$emit("change", this.newValue);
@@ -356,7 +356,7 @@ export default {
       if (this.newValue > this.min) {
         this.newValue = NumberHelper.toEnglishFloat(
           NumberHelper.toEnglishFloat(this.newValue, this.decimal) - this.step,
-          this.decimal,
+          this.decimal
         );
         this.$emit("input", this.newValue);
         this.$emit("change", this.newValue);

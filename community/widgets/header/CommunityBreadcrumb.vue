@@ -563,7 +563,7 @@
 </template>
 
 <script>
-import CommunityURLs from "../../helper/CommunityURLs";
+import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 import SSocialShareButtons from "../../../ui/button/share/SSocialShareButtons.vue";
 import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
 import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";

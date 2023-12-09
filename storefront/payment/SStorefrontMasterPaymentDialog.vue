@@ -121,7 +121,7 @@ import SPaymentForm from "@components/payment/SPaymentForm.vue";
 import RadialProgressBar from "@components/ui/progress/RadialProgressBar.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
 import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
-import SetupService from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 import { ProductType } from "@core/enums/product/ProductType";
 import _ from "lodash-es";
 import { BasketHelper } from "@core/helper/shop/BasketHelper";

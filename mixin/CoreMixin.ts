@@ -14,7 +14,7 @@
 
 import Vue from "vue";
 import type { VueConstructor } from "vue";
-import SetupService from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 import { ProductType } from "@core/enums/product/ProductType";
 import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
 import { DateConverter } from "@core/helper/date/DateConverter";
@@ -31,7 +31,7 @@ import { ReturnItemStates } from "@core/enums/basket/ReturnItemStates";
 import { FileExtensions } from "@core/enums/file/FileExtensions";
 import GlobalRules from "@core/helper/rules/GlobalRules";
 import { SocialNetwork } from "@core/enums/social/SocialNetwork";
-import ShopURLs from "@core/helper/url/ShopURLs";
+import { ShopURLs } from "@core/helper/url/ShopURLs";
 import { ColorHelper } from "@core/helper/color/ColorHelper";
 import EventBusTriggers from "@core/enums/event-bus/EventBusTriggers";
 

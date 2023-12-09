@@ -394,7 +394,7 @@ import SCurrencySelector from "@components/ui/currency/selector/SCurrencySelecto
 import SStorefrontCookiePreferences from "../cookie/SStorefrontCookiePreferences.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 
-import SetupService from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 
 export default {

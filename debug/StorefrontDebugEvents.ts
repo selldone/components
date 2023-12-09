@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-export default class StorefrontDebugEvents {
+export class StorefrontDebugEvents {
   public static WARNING_EVENT = "warning";
   public static INFO_EVENT = "info";
 

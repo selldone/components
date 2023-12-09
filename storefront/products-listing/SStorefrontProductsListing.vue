@@ -336,7 +336,7 @@ import CategoryCard from "@components/backoffice/category/CategoryCard.vue";
 import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
 import SStorefrontProductsFilterMenu from "@components/storefront/filter/SStorefrontProductsFilterMenu.vue";
 import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
-import GtagEcommerce from "@components/plugins/gtag/GtagEcommerce";
+import {GtagEcommerce} from "@components/plugins/gtag/GtagEcommerce";
 import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
 import ProductSpecView from "../product/spec/ProductSpecView.vue";

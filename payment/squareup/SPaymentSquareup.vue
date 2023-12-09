@@ -178,7 +178,7 @@
 </template>
 
 <script>
-import SetupService from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 
 export default {
   name: "SPaymentSquareup",

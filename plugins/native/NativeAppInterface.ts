@@ -13,7 +13,7 @@
  */
 
 import { XapiUser } from "@sdk-storefront/user/XapiUser";
-import ShopApplicationInterface from "@core/enums/application/ShopApplicationInterface";
+import { ShopApplicationInterface } from "@core/enums/application/ShopApplicationInterface";
 import { ShopEventsName } from "@core/enums/application/ShopEventsName";
 import { Shop } from "@core/models/shop/shop.model";
 

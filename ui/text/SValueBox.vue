@@ -14,7 +14,7 @@
 
 <template>
   <div class="s--value-box">
-    <div class="flex-grow-1 border-end text-start">
+    <div class="flex-grow-1 border-end text-start pe-1 me-1">
       <v-icon v-if="icon" class="me-1">{{ icon }}</v-icon> {{ label }}
     </div>
     <div class="-val subtitle-2" :class="{ vb50: vb50 }">

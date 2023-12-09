@@ -962,7 +962,7 @@
 </template>
 
 <script>
-import SetupService from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 import SAppLanguageSelector from "@components/ui/input/language/SAppLanguageSelector.vue";
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
 import { TrackEventOnboarding } from "@core/enums/gtag/TrackEvents";

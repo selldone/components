@@ -117,12 +117,13 @@
         v-html="smartText(post.body)"
       ></div>
 
-
       <!-- Attachment files -->
-    <community-attach-view   v-if="post?.attachments?.length" :post="post" :files="post?.attachments">
-
-    </community-attach-view>
-
+      <community-attach-view
+        v-if="post?.attachments?.length"
+        :post="post"
+        :files="post?.attachments"
+      >
+      </community-attach-view>
 
       <!-- Poll -->
       <community-poll
@@ -154,7 +155,10 @@
         preload="metadata"
         muted="muted"
       >
-        <source :src="getVideoUrl(post.video)"  :type="VideoHelper.GetMime(post.video)" />
+        <source
+          :src="getVideoUrl(post.video)"
+          :type="VideoHelper.GetMime(post.video)"
+        />
       </video>
 
       <!-- Voice -->
@@ -341,7 +345,7 @@ import Ribbon from "@components/ui/ribbon/Ribbon.vue";
 import CommunityPoll from "./post/CommunityPoll.vue";
 import CommunityProductView from "./product/CommunityProductView.vue";
 import CommunityAttachView from "./attach/CommunityAttachView.vue";
-import VideoHelper from "@core/helper/video/VideoHelper";
+import { VideoHelper } from "@core/helper/video/VideoHelper";
 
 export default {
   name: "CommunityWidget",
@@ -392,7 +396,6 @@ export default {
   data() {
     return {
       VideoHelper: VideoHelper,
-
 
       show_comments: false,
 
@@ -467,7 +470,7 @@ export default {
       return SmartConvertTextToHtmlHashtags(text, false, true);
     },
     share(e) {
-      this.showCommunitySharePost(e.target,this.shop, this.topic, this.post);
+      this.showCommunitySharePost(e.target, this.shop, this.topic, this.post);
     },
     //――――――――――――――――――――――――― Set post reaction ―――――――――――――――――――――――――
 

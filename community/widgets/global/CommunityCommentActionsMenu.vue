@@ -93,7 +93,7 @@
 <script>
 import { ArticleReport } from "@core/enums/article/ArticleReport";
 import SContentViolationReportDialog from "../../../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
-import CommunityURLs from "../../helper/CommunityURLs";
+import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 import _ from "lodash-es";
 
 export default {

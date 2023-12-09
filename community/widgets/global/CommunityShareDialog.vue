@@ -44,7 +44,7 @@
 
 <script>
 import SSocialShareButtons from "../../../ui/button/share/SSocialShareButtons.vue";
-import CommunityURLs from "../../helper/CommunityURLs";
+import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 
 export default {
   name: "CommunityShareDialog",
@@ -69,6 +69,7 @@ export default {
 
   computed: {
     url() {
+      console.log("CommunityURLs", CommunityURLs);
       return CommunityURLs.PostUrl(this.shop, this.post);
     },
 

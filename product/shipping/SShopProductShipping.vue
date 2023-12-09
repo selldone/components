@@ -128,7 +128,7 @@
 import SArticleEditor from "@components/article/SArticleEditor.vue";
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
-import SetupService from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 import { ProductType } from "@core/enums/product/ProductType";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import { MapHelper } from "@core/helper/map/MapHelper";

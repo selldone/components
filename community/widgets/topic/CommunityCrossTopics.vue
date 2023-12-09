@@ -19,24 +19,20 @@
     >
 
     <v-row no-gutters class="flex-grow-1" justify="end">
-
       <v-btn
-              v-if="main_community"
-              key="m"
-              :href="getUrl(main_community)"
-              target="_blank"
-              large
-              class="m-2"
-              icon
-              :title="main_community.title"
+        v-if="main_community"
+        key="m"
+        :href="getUrl(main_community)"
+        target="_blank"
+        large
+        class="m-2"
+        icon
+        :title="main_community.title"
       >
-
         <v-avatar>
-          <img :src="getShopImagePath(main_community.image)">
+          <img :src="getShopImagePath(main_community.image)" />
         </v-avatar>
       </v-btn>
-
-
 
       <v-btn
         v-for="item in cross_communities"
@@ -47,14 +43,12 @@
         class="m-2"
         icon
         :title="item.title"
-        >
-
-       <v-avatar>
-         <img :src="getShopImagePath(item.image)">
-       </v-avatar>
+      >
+        <v-avatar>
+          <img :src="getShopImagePath(item.image)" />
+        </v-avatar>
       </v-btn>
     </v-row>
-
 
     <v-btn icon v-if="false"><v-icon>more_horiz</v-icon></v-btn>
 
@@ -89,7 +83,7 @@
 </template>
 
 <script>
-import CommunityURLs from "../../helper/CommunityURLs";
+import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 
 export default {
   name: "CommunityCrossTopics",

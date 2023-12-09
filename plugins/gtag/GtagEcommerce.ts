@@ -31,7 +31,7 @@ declare global {
   }
 }
 
-export default class GtagEcommerce {
+export class GtagEcommerce {
   /**
    * To measure product impressions, send a view_item_list with the product information:
    * @param shop

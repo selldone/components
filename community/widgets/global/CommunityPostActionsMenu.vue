@@ -117,7 +117,7 @@
 import CommunityPostEditor from "../post/CommunityPostEditor.vue";
 import SContentViolationReportDialog from "../../../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
 import { ArticleReport } from "@core/enums/article/ArticleReport";
-import CommunityURLs from "../../helper/CommunityURLs";
+import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 import _ from "lodash-es";
 
 export default {
@@ -225,7 +225,7 @@ export default {
           click: this.editPost,
         });
       }
-   
+
       // Author and admin:
       if (
         this.access.admin ||
@@ -286,8 +286,13 @@ export default {
                   this.delete_callback(this.post, data.topic_removed);
                 }
                 // Errors in removing files on disk:
-                if(data.errors){
-                  this.showWarningAlert(null,'There is some issue with removing files: <ul>'+data.errors.map(e=>'<li>'+e+'</li>').join(' ')+'</ul>')
+                if (data.errors) {
+                  this.showWarningAlert(
+                    null,
+                    "There is some issue with removing files: <ul>" +
+                      data.errors.map((e) => "<li>" + e + "</li>").join(" ") +
+                      "</ul>"
+                  );
                 }
               } else {
                 this.showErrorAlert(null, data.error_msg);

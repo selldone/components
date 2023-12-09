@@ -143,8 +143,8 @@
 <script>
 import { LRUCache } from "@core/helper/cache/LRUCache";
 import { StorefrontDebugLogType } from "@components/debug/StorefrontDebugLogType";
-import StorefrontDebugEvents from "@components/debug/StorefrontDebugEvents";
-import SetupService from "@core/server/SetupService";
+import { StorefrontDebugEvents } from "@components/debug/StorefrontDebugEvents";
+import { SetupService } from "@core/server/SetupService";
 import _ from "lodash-es";
 
 export default {
@@ -339,7 +339,7 @@ export default {
       this.error_dev_serve = null;
       this.pack_dev_server = null;
 
-      if(!url)return ;
+      if (!url) return;
 
       try {
         // Fetch the HTML content from the URL
@@ -362,7 +362,7 @@ export default {
           // Extract the 'XXX' part from the src attribute
           const src = targetScript.src;
           const regex = /https?:\/\/[^\/]+\/(layouts)\/(v\d+\/app)\/shop\.js/;
-          const matches = src.match(regex  );
+          const matches = src.match(regex);
 
           console.log("matches", src, matches);
 

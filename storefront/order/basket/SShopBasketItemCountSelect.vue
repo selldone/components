@@ -73,7 +73,11 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Remove Button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <template v-slot:prepend-inner v-if="hasDelete">
-      <div class="delete-button-con" :style="{ '--delete-width':dense?'32px': '48px'}" :class="{ 'me-2': solo,'-rtl': $vuetify.rtl}">
+      <div
+        class="delete-button-con"
+        :style="{ '--delete-width': dense ? '32px' : '48px' }"
+        :class="{ 'me-2': solo, '-rtl': $vuetify.rtl }"
+      >
         <v-btn
           title="Remove item from the cart."
           :loading="loadingDelete"
@@ -91,7 +95,7 @@
 </template>
 
 <script>
-import NumberHelper from "@core/helper/number/NumberHelper";
+import { NumberHelper } from "@core/helper/number/NumberHelper";
 
 export default {
   name: "SShopBasketItemCountSelect",
@@ -118,7 +122,7 @@ export default {
     },
     loadingDelete: { type: Boolean },
 
-    color:{},
+    color: {},
     backgroundColor: {},
     dark: {
       type: Boolean,
@@ -181,9 +185,8 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-basket-item-count-select {
-  --delete-width:48px;
-  --border-radius:12px;
-
+  --delete-width: 48px;
+  --border-radius: 12px;
 }
 
 /*
@@ -199,7 +202,7 @@ export default {
     width: 100%;
   }
 
-  .delete-button-con{
+  .delete-button-con {
     width: var(--delete-width);
 
     .delete-button {
@@ -213,13 +216,12 @@ export default {
       height: 100% !important;
     }
 
-    &.-rtl{
+    &.-rtl {
       .delete-button {
         left: unset;
         right: 0;
       }
     }
   }
-
 }
 </style>

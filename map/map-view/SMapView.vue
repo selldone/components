@@ -580,7 +580,7 @@ import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 
 //―――――――――――――――――――――― Mapbox ――――――――――――――――――――
 import Mapbox from "../plugins/MapBox";
-import SetupService from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 import SAddressInput from "@components/ui/input/address/SAddressInput.vue";
 
 export default {

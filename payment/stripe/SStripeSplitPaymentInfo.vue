@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import SetupService from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 import { ProductType } from "@core/enums/product/ProductType";
 
 export default {

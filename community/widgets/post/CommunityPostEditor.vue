@@ -681,11 +681,11 @@ import CommunityPoll from "./CommunityPoll.vue";
 import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
 import CommunityProductEditor from "../product/CommunityProductEditor.vue";
 import CommunityProductView from "../product/CommunityProductView.vue";
-import ImageDimension from "@core/helper/image/ImageDimension";
+import { ImageDimension } from "@core/helper/image/ImageDimension";
 import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 import CommunityAttachEditor from "../attach/CommunityAttachEditor.vue";
 import CommunityAttachView from "../attach/CommunityAttachView.vue";
-import VideoHelper from "@core/helper/video/VideoHelper";
+import { VideoHelper } from "@core/helper/video/VideoHelper";
 import _ from "lodash-es";
 
 /**

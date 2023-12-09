@@ -13,72 +13,55 @@
   -->
 
 <template>
-  <v-dialog
+  <v-bottom-sheet
     v-model="dialog"
-    max-width="480"
+    max-width="640"
+    width="98vw"
+    content-class="rounded-t-xl"
     :fullscreen="$vuetify.breakpoint.mdAndDown"
   >
     <v-card
-      v-if="!full_profile && profile"
-      class="text-center bg-white position-relative py-4"
+      v-if="profile"
+      class="py-4 position-relative"
+      rounded="t-xl"
+      min-height="40vh"
     >
-      <div class="text-center">
-        <v-avatar size="64" color="#fafafa" class="hover-scale force-top">
-          <img :src="getUserAvatar(profile.user_id)" />
-        </v-avatar>
-        <p class="font-weight-black mt-1 single-line mb-1">
-          {{ profile.name }}
-          <v-icon v-if="profile.verified" small color="blue" class="ms-1"
-            >verified</v-icon
-          >
-        </p>
-      </div>
-
-      <div class="mx-4 my-2 text-start">
-        {{ profile.description }}
-      </div>
-
-      <s-progress-loading v-if="busy"></s-progress-loading>
-    </v-card>
-
-    <v-card v-if="full_profile && !busy" class="text-center bg-white">
       <v-card-title>
         <v-btn text @click="dialog = false">
-          <v-icon class="me-1" small>{{ $t("icons.arrow_back") }}</v-icon>
-          {{ $t("global.actions.back") }}</v-btn
+          <v-icon class="me-1" small>close</v-icon>
+          {{ $t("global.actions.close") }}</v-btn
         >
 
         <v-spacer></v-spacer>
-
-        <v-btn icon title="Full profile">
-          <v-icon small>open_in_new</v-icon>
-        </v-btn>
-      </v-card-title>
-
-      <v-card-text>
-        <div class="d-flex justify-center mt-2">
-          <div class="w-50">
-            <v-avatar size="64" color="#fafafa" class="hover-scale force-top">
-              <img :src="getUserAvatar(profile.user_id)" />
-            </v-avatar>
-            <p class="font-weight-black mt-1 single-line mb-1">
-              {{ profile.name }}
-              <v-icon v-if="profile.verified" small color="blue" class="ms-1"
-                >verified</v-icon
-              >
-            </p>
-            <small class="d-block mt-3">follow you</small>
-          </div>
-
-          <div>
-            <v-icon>cloud_queue</v-icon><br />
-            <flag
+        <div>
+          <flag
               v-if="service_country"
               :iso="service_country"
               :squared="false"
-            ></flag>
-            <v-icon v-else color="blue">public</v-icon>
-          </div>
+          ></flag>
+          <v-icon v-else color="#111" title="Global community account.">public</v-icon>
+        </div>
+        <!--
+        <v-btn icon title="Full profile">
+          <v-icon small>open_in_new</v-icon>
+        </v-btn>-->
+      </v-card-title>
+
+      <v-card-text class="text-center">
+        <div class="max-widget-width mx-auto">
+          <s-progress-loading v-if="busy"></s-progress-loading>
+
+          <v-avatar size="64" color="#fafafa" class="hover-scale force-top">
+            <img :src="getUserAvatar(profile.user_id)" />
+          </v-avatar>
+          <p class="font-weight-black mt-1 single-line mb-1">
+            {{ profile.name }}
+            <v-icon v-if="profile.verified" small color="blue" class="ms-1"
+              >verified</v-icon
+            >
+          </p>
+
+
 
           <div v-if="USER_ID() && USER_ID() !== profile.user_id" class="w-50">
             <v-avatar size="64" color="#fafafa">
@@ -99,79 +82,67 @@
               </v-avatar>
             </v-btn>
           </div>
-        </div>
-      </v-card-text>
 
-      <v-card-actions class="justify-center">
-        <v-btn text class="flex-grow-1 text-lowercase"
-          ><b class="me-1">{{ full_profile.followers_count }}</b>
-          followers</v-btn
-        >
+          <v-row v-if="full_profile" no-gutters class="justify-center">
+            <s-value-box
+              label="Followers"
+              :value="full_profile.followers_count"
+            ></s-value-box>
 
-        <v-btn text class="flex-grow-1 text-lowercase"
-          ><b class="me-1">{{ full_profile.following_count }}</b>
-          following</v-btn
-        >
-      </v-card-actions>
+            <s-value-box
+              label="Following"
+              :value="full_profile.following_count"
+            ></s-value-box>
+          </v-row>
 
-      <v-card-text>
-        <div class="mx-4 my-2 text-start">
-          {{ profile.description }}
-        </div>
+          <div v-if="profile.description" class="mx-4 my-2 text-start">
+            {{ profile.description }}
+          </div>
 
-        <div v-if="mutual_ids" class="d-flex align-center text-start mt-5">
-          <s-dense-images-circles-users
-            class="overflow-visible"
-            :ids="mutual_ids"
-            :size="32"
-          ></s-dense-images-circles-users>
+          <div v-if="mutual_ids" class="d-flex align-center text-start mt-5">
+            <s-dense-images-circles-users
+              class="overflow-visible"
+              :ids="mutual_ids"
+              :size="32"
+            ></s-dense-images-circles-users>
 
-          <p class="m-0 flex-grow-1">
-            Mutual followers
-            <b class="text-capitalize">{{ mutual_names }} </b>
-            <template v-if="mutual_ids.length >= 4"> and <b>...</b> </template>
-          </p>
-        </div>
-
-        <div class="d-flex align-center mt-5">
-          <v-avatar v-if="nominator" size="32" color="#fafafa">
-            <img :src="getUserAvatar(nominator.id)" />
-          </v-avatar>
-          <div class="mx-2 text-start">
-            <p class="m-0">
-              {{ getLocalTimeString(profile.created_at, true) }}
+            <p class="m-0 flex-grow-1">
+              Mutual followers
+              <b class="text-capitalize">{{ mutual_names }} </b>
+              <template v-if="mutual_ids.length >= 4">
+                and <b>...</b>
+              </template>
             </p>
-            <template v-if="nominator">
-              Nominated by <b class="text-capitalize">{{ nominator.name }}</b>
-            </template>
+          </div>
+
+          <div class="d-flex align-center mt-5">
+            <v-avatar v-if="nominator" size="32" color="#fafafa">
+              <img :src="getUserAvatar(nominator.id)" />
+            </v-avatar>
+            <div class="mx-2 text-start">
+              <p class="m-0">
+                ● Joined {{ getFromNowString(profile.created_at) }}
+              </p>
+              <template v-if="nominator">
+                ● Nominated by
+                <b class="text-capitalize">{{ nominator.name }}</b>
+              </template>
+            </div>
           </div>
         </div>
       </v-card-text>
-
-      <v-card-actions v-if="false" class="justify-center">
-        <v-btn text class="flex-grow-1 text-capitalize">Posts</v-btn>
-
-        <v-divider vertical class="mx-1"></v-divider>
-
-        <v-btn text class="flex-grow-1 text-capitalize">Communities</v-btn>
-
-        <v-divider vertical class="mx-1"></v-divider>
-
-        <v-btn text class="flex-grow-1 text-capitalize" color="success"
-          >Grant <v-icon class="ms-1">attach_money</v-icon></v-btn
-        >
-      </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 </template>
 
 <script>
-import SetupService from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
+import SValueBox from "@components/ui/text/SValueBox.vue";
 
 export default {
   name: "CommunityUserProfileDialog",
-  components: { SDenseImagesCirclesUsers },
+  components: { SValueBox, SDenseImagesCirclesUsers },
   props: {
     community: {
       type: Object,

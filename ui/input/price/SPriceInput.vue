@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import NumberHelper from "@core/helper/number/NumberHelper";
+import { NumberHelper } from "@core/helper/number/NumberHelper";
 
 function tryParseFloat(str, defaultValue) {
   let retValue = defaultValue;
@@ -201,8 +201,8 @@ export default {
 
       this.numberValue = parseFloat(
         parsed.toFixed(
-          this.currency_obj ? this.currency_obj.floats : this.decimal,
-        ),
+          this.currency_obj ? this.currency_obj.floats : this.decimal
+        )
       );
     },
     updateModel() {
