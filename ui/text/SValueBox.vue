@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--value-box">
+  <div class="s--value-box" :style="{height:height}">
     <div class="flex-grow-1 border-end text-start pe-1 me-1">
       <v-icon v-if="icon" class="me-1">{{ icon }}</v-icon> {{ label }}
     </div>
@@ -37,6 +37,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    height:{},
   },
 };
 </script>

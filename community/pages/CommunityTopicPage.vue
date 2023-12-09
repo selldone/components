@@ -343,7 +343,7 @@ export default {
     },
 
     has_suggestion() {
-      return this.USER() && Math.random() < 0.1; // Chance of show follow suggestion!
+      return true
     },
     target_post(){
       const query_post_id = parseInt(this.$route.query.post);

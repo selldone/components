@@ -35,11 +35,13 @@
         <v-spacer></v-spacer>
         <div>
           <flag
-              v-if="service_country"
-              :iso="service_country"
-              :squared="false"
+            v-if="service_country"
+            :iso="service_country"
+            :squared="false"
           ></flag>
-          <v-icon v-else color="#111" title="Global community account.">public</v-icon>
+          <v-icon v-else color="#111" title="Global community account."
+            >public</v-icon
+          >
         </div>
         <!--
         <v-btn icon title="Full profile">
@@ -61,45 +63,53 @@
             >
           </p>
 
-
-
-          <div v-if="USER_ID() && USER_ID() !== profile.user_id" class="w-50">
-            <v-avatar size="64" color="#fafafa">
-              <img :src="getUserAvatar(USER_ID())" />
-            </v-avatar>
-            <p class="font-weight-black mt-1 single-line mb-1">You</p>
-            <v-btn
-              class="text-lowercase"
-              small
-              depressed
-              color="blue"
-              dark
-              rounded
-              >following
-
-              <v-avatar size="20" color="#fafafa" class="ms-2 me-n2">
-                <img :src="getUserAvatar(USER_ID())" />
-              </v-avatar>
-            </v-btn>
-          </div>
-
-          <v-row v-if="full_profile" no-gutters class="justify-center">
+          <v-row v-if="full_profile" no-gutters class="justify-center" align="center">
             <s-value-box
               label="Followers"
               :value="full_profile.followers_count"
+              height="44px"
+              class="flex-grow-1 ma-1"
             ></s-value-box>
 
             <s-value-box
               label="Following"
               :value="full_profile.following_count"
+              height="44px"
+              class="flex-grow-1 ma-1"
             ></s-value-box>
+
+            <div v-if="USER_ID() && USER_ID() !== profile.user_id" class="widget-buttons flex-grow-1">
+              <v-btn
+                small
+                depressed
+                :outlined="!profile.follow"
+                :color="profile.follow ? 'blue' : '#111'"
+                dark
+                :loading="busy_follow"
+                @click="follow(!profile.follow)"
+                large
+              >
+                {{
+                  profile.follow
+                    ? $t("community.commons.following_action")
+                    : $t("community.commons.follow_action")
+                }}
+
+                <v-avatar size="28" color="#fafafa" class="ms-2 avatar-gradient -blue -thin">
+                  <img :src="getUserAvatar(USER_ID())" />
+                </v-avatar>
+              </v-btn>
+            </div>
           </v-row>
 
           <div v-if="profile.description" class="mx-4 my-2 text-start">
             {{ profile.description }}
           </div>
 
-          <div v-if="mutual_ids" class="d-flex align-center text-start mt-5">
+          <div
+            v-if="mutual_ids?.length"
+            class="d-flex align-center text-start mt-5"
+          >
             <s-dense-images-circles-users
               class="overflow-visible"
               :ids="mutual_ids"
@@ -124,7 +134,7 @@
                 ● Joined {{ getFromNowString(profile.created_at) }}
               </p>
               <template v-if="nominator">
-                ● Nominated by
+                Nominated by
                 <b class="text-capitalize">{{ nominator.name }}</b>
               </template>
             </div>
@@ -156,6 +166,8 @@ export default {
 
       full_profile: null,
       busy: false,
+
+      busy_follow: false,
     };
   },
 
@@ -210,6 +222,30 @@ export default {
         })
         .finally(() => {
           this.busy = false;
+        });
+    },
+
+    //――――――――――――――――――――――― Follow ―――――――――――――――――――――――
+    follow(follow) {
+      this.busy_follow = true;
+
+      axios
+        .post(window.CAPI.POST_FOLLOW(this.community.id), {
+          user_id: this.profile.user_id,
+          follow: follow,
+        })
+        .then(({ data }) => {
+          if (data.error) {
+            return this.showErrorAlert(null, data.error_msg);
+          }
+          this.profile.follow = data.follow; // Indicate followed now!
+
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_follow = false;
         });
     },
   },

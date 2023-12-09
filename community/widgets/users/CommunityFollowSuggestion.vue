@@ -46,22 +46,24 @@
                 <small v-if="profile.mutual" class="ms-1">2th</small>
               </div>
               <v-spacer></v-spacer>
-              <v-btn
-                color="#1976D2"
-                dark
-                width="100%"
-                :small="$vuetify.breakpoint.xsOnly"
-                @click="follow(profile)"
-                :loading="busy_follow === profile.user_id"
-                :class="{ disabled: profile.follow }"
-              >
-                <v-icon v-if="profile.follow" class="me-1">check</v-icon>
-                {{
-                  profile.follow
-                    ? $t("community.commons.following_action")
-                    : $t("community.commons.follow_action")
-                }}</v-btn
-              >
+             <div class="widget-buttons w-100">
+               <v-btn
+                   color="#1976D2"
+                   dark
+                   width="100%"
+                   :small="$vuetify.breakpoint.xsOnly"
+                   @click="follow(profile, !profile.follow)"
+                   :loading="busy_follow === profile.user_id"
+                   :outlined="!profile.follow"
+               >
+                 <v-icon v-if="profile.follow" class="me-1">check</v-icon>
+                 {{
+                   profile.follow
+                       ? $t("community.commons.following_action")
+                       : $t("community.commons.follow_action")
+                 }}</v-btn
+               >
+             </div>
             </v-card-text>
           </v-card>
         </v-slide-item>
@@ -124,20 +126,23 @@ export default {
     },
 
     //――――――――――――――――――――――― Follow ―――――――――――――――――――――――
-    follow(profile) {
+    follow(profile, follow) {
       this.busy_follow = profile.user_id;
 
       axios
         .post(window.CAPI.POST_FOLLOW(this.community.id), {
           user_id: profile.user_id,
+          follow: follow,
         })
         .then(({ data }) => {
-          if (!data.error) {
-            profile.follow = true; // Indicate followed now!
+          if (data.error) {
+            return this.showErrorAlert(null, data.error_msg);
           }
+
+          profile.follow = data.follow; // Indicate followed now!
         })
         .catch((error) => {
-          this.showErrorAlert(error);
+          this.showLaravelError(error);
         })
         .finally(() => {
           this.busy_follow = false;
