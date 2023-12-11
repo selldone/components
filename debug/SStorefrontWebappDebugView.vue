@@ -13,131 +13,147 @@
   -->
 
 <template>
-  <v-navigation-drawer
-    v-model="dialog"
-    fixed
-    width="640"
-    color="#fafaf6"
-    class="s--webapp-debug-view"
-    touchless
-  >
-    <div class="widget-buttons">
-      <v-btn @click="dialog = false" text x-large
-        ><v-icon class="me-2">close</v-icon> {{ $t("global.actions.close") }}
-      </v-btn>
-      <v-btn
-        @click="show_settings = !show_settings"
-        text
-        x-large
-        title="Advanced settings"
-        max-width="100px"
-      >
-        <v-icon>{{ show_settings ? "settings_suggest" : "settings" }}</v-icon>
-      </v-btn>
-    </div>
-
-    <v-expand-transition>
-      <div v-if="pack_dev_server">
-        <div class="py-2 px-5">
-          <small class="me-1">Dev Server: </small>
-          <v-icon class="blink-me me-2" small color="green">circle</v-icon>
-          <span class="me-2"
-            >Path: <b>{{ pack_dev_server.path }} </b></span
-          >
-          <span
-            >Version: <b>{{ pack_dev_server.version }}</b></span
-          >
-        </div>
-      </div>
-    </v-expand-transition>
-    <v-expand-transition>
-      <div v-if="show_settings">
-        <v-subheader style="height: unset" class="my-3">
-          To execute your development storefront web application in a live
-          storefront environment in real-time, initiate the process by running
-          yarn serv. Afterward, enter the development URL in the provided field
-          and click 'Save' to proceed.
-        </v-subheader>
-
-        <v-text-field
-          v-model="dev_url"
-          placeholder="https://localhost:8080"
-          clearable
-          class="mx-5"
-          label="Local dev server"
-          append-icon="cloud_sync"
-          persistent-placeholder
-          @blur="
-            fixDevUrl();
-            getValidateDevPack(dev_url);
-          "
-        ></v-text-field>
-
-        <div class="widget-buttons">
-          <v-btn
-            x-large
-            color="primary"
-            @click="setLocalDevServer(dev_url)"
-            :loading="busy_dev_server"
-            :class="{ disable: count_down_refresh }"
-          >
-            <template v-if="count_down_refresh">
-              Auto refresh after 5 seconds...
-            </template>
-            <template v-else>
-              <v-icon class="me-1">save</v-icon>
-              {{ $t("global.actions.save") }}
-            </template>
-          </v-btn>
-        </div>
-
-        <v-expand-transition>
-          <div v-if="error_dev_serve" class="red--text px-5">
-            {{ error_dev_serve }}
-          </div>
-        </v-expand-transition>
-      </div>
-    </v-expand-transition>
-
-    <v-list class="" three-line>
-      <v-subheader>
-        This is a debug window designed to log errors and key messages. It's
-        intended solely for debugging purposes and is primarily useful for shop
-        owners, developers, and technically savvy users.
-      </v-subheader>
-      <v-list-item
-        v-for="(item, key) in errors.entries()"
-        :key="key"
-        class="--item"
-      >
-        <v-list-item-content>
-          <v-list-item-title>
-            <v-icon :color="item[1].type.color" class="me-1" small>{{
-              item[1].type.icon
-            }}</v-icon>
-            {{ item[0] }}
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            {{ item[1].message }}
-          </v-list-item-subtitle>
-          <v-list-item-subtitle v-if="item[1].request">
-            <b> {{ item[1].request.status }}</b> ●
-            {{ item[1].request.statusText }}
-          </v-list-item-subtitle>
-
-          <v-list-item-subtitle v-if="item[1].target">
-            {{ item[1].target }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-    </v-list>
-    <p
-      v-if="!errors.length()"
-      class="display-1 font-weight-thin te text-center my-16"
+  <div>
+    <v-navigation-drawer
+      v-model="dialog"
+      fixed
+      width="640"
+      color="#fafaf6"
+      class="s--webapp-debug-view"
+      touchless
     >
-      {{ $t("global.commons.empty") }}
-    </p>
-  </v-navigation-drawer>
+      <div class="widget-buttons">
+        <v-btn @click="dialog = false" text x-large
+          ><v-icon class="me-2">close</v-icon> {{ $t("global.actions.close") }}
+        </v-btn>
+        <v-btn
+          @click="show_settings = !show_settings"
+          text
+          x-large
+          title="Advanced settings"
+          max-width="100px"
+        >
+          <v-icon>{{ show_settings ? "settings_suggest" : "settings" }}</v-icon>
+        </v-btn>
+      </div>
+
+      <v-expand-transition>
+        <div v-if="pack_dev_server">
+          <div class="py-2 px-5">
+            <small class="me-1">Dev Server: </small>
+            <v-icon class="blink-me me-2" small color="green">circle</v-icon>
+            <span class="me-2"
+              >Path: <b>{{ pack_dev_server.path }} </b></span
+            >
+            <span
+              >Version: <b>{{ pack_dev_server.version }}</b></span
+            >
+          </div>
+        </div>
+      </v-expand-transition>
+      <v-expand-transition>
+        <div v-if="show_settings">
+          <v-subheader style="height: unset" class="my-3">
+            To execute your development storefront web application in a live
+            storefront environment in real-time, initiate the process by running
+            yarn serv. Afterward, enter the development URL in the provided
+            field and click 'Save' to proceed.
+          </v-subheader>
+
+          <v-text-field
+            v-model="dev_url"
+            placeholder="https://localhost:8080"
+            clearable
+            class="mx-5"
+            label="Local dev server"
+            append-icon="cloud_sync"
+            persistent-placeholder
+            @blur="
+              fixDevUrl();
+              getValidateDevPack(dev_url);
+            "
+          ></v-text-field>
+
+          <div class="widget-buttons">
+            <v-btn
+              x-large
+              color="primary"
+              @click="setLocalDevServer(dev_url)"
+              :loading="busy_dev_server"
+              :class="{ disable: count_down_refresh }"
+            >
+              <template v-if="count_down_refresh">
+                Auto refresh after 5 seconds...
+              </template>
+              <template v-else>
+                <v-icon class="me-1">save</v-icon>
+                {{ $t("global.actions.save") }}
+              </template>
+            </v-btn>
+          </div>
+
+          <v-expand-transition>
+            <div v-if="error_dev_serve" class="red--text px-5">
+              {{ error_dev_serve }}
+            </div>
+          </v-expand-transition>
+        </div>
+      </v-expand-transition>
+
+
+      <s-value-box v-if="layout_package" label="Operator" :value="layout_package"></s-value-box>
+      <s-value-box v-if="layout_version" label="Operator" :value="layout_version"></s-value-box>
+      <s-value-box v-if="layout_operator" label="Operator" :value="layout_operator"></s-value-box>
+
+      <v-list class="" three-line>
+        <v-subheader>
+          This is a debug window designed to log errors and key messages. It's
+          intended solely for debugging purposes and is primarily useful for
+          shop owners, developers, and technically savvy users.
+        </v-subheader>
+        <v-list-item
+          v-for="(item, key) in errors.entries()"
+          :key="key"
+          class="--item"
+        >
+          <v-list-item-content>
+            <v-list-item-title>
+              <v-icon :color="item[1].type.color" class="me-1" small>{{
+                item[1].type.icon
+              }}</v-icon>
+              {{ item[0] }}
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ item[1].message }}
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-if="item[1].request">
+              <b> {{ item[1].request.status }}</b> ●
+              {{ item[1].request.statusText }}
+            </v-list-item-subtitle>
+
+            <v-list-item-subtitle v-if="item[1].target">
+              {{ item[1].target }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <p
+        v-if="!errors.length()"
+        class="display-1 font-weight-thin te text-center my-16"
+      >
+        {{ $t("global.commons.empty") }}
+      </p>
+    </v-navigation-drawer>
+
+    <div v-if="in_layout_dev_mode" class="s--webapp-debug-view-dev-badge">
+      <v-icon>developer_mode</v-icon>
+      <span>Dev</span>
+    </div>
+    <div v-else-if="in_layout_test_mode" class="s--webapp-debug-view-dev-badge">
+      <v-icon>developer_mode</v-icon>
+      <span>Test</span>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -146,10 +162,11 @@ import { StorefrontDebugLogType } from "@components/debug/StorefrontDebugLogType
 import { StorefrontDebugEvents } from "@components/debug/StorefrontDebugEvents";
 import { SetupService } from "@core/server/SetupService";
 import _ from "lodash-es";
+import SValueBox from "@components/ui/text/SValueBox.vue";
 
 export default {
   name: "SStorefrontWebappDebugView",
-  components: {},
+  components: {SValueBox},
   props: {},
   data() {
     return {
@@ -173,7 +190,27 @@ export default {
       count_down_refresh: false,
     };
   },
-  computed: {},
+  computed: {
+    layout_image() {
+      return SetupService.GetLayoutImage();
+    },
+
+    layout_version() {
+      return SetupService.GetLayoutVersion();
+    },
+    layout_package() {
+      return SetupService.GetLayoutPackage();
+    },
+    layout_operator() {
+      return SetupService.GetLayoutOperator(); // official | test | dev
+    },
+    in_layout_dev_mode() {
+      return this.layout_operator === "dev";
+    },
+    in_layout_test_mode() {
+      return this.layout_operator === "test";
+    },
+  },
   mounted() {
     console.log("Debug view is enable. Press ⌘Ctrl + d");
 
@@ -458,5 +495,15 @@ export default {
     margin: 4px;
     border-radius: 12px;
   }
+}
+.s--webapp-debug-view-dev-badge {
+  position: fixed;
+  bottom: 25vh;
+  right: 0;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

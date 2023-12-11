@@ -145,7 +145,7 @@
                 :to-category="
                   (id) => {
                     return {
-                      name: 'ProductsManagement',
+                      name: 'BackofficeProductsManagementPage',
                       query: { dir: id, shop_id: item.data.shop?.id },
                     };
                   }

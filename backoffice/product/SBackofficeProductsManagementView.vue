@@ -199,7 +199,7 @@
           :shop="shop"
           v-model="filters"
           @change="onFilterChange"
-          class="max-w-300"
+          class="max-w-300 min-width-200"
           dense
         >
         </admin-products-filter-input>
@@ -213,7 +213,7 @@
           :shop="shop"
           placeholder="Filter vendor..."
           prepend-inner-icon="storefront"
-          class="max-w-300"
+          class="max-w-300 min-width-200"
           solo
           flat
           dense

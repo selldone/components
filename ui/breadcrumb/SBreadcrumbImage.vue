@@ -15,9 +15,9 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--breadcrumb-image">
     <v-breadcrumbs
+      v-if="$vuetify.breakpoint.smAndUp"
       :items="hierarchyItems"
       divider="/"
-      v-if="$vuetify.breakpoint.smAndUp"
       class="single-line overflow-auto thin-scroll"
       :class="{ 'flex-mode': flexMode }"
     >
@@ -60,35 +60,62 @@
     </v-breadcrumbs>
 
     <!--  Small screen -->
-    <v-menu v-else transition="slide-y-transition" bottom offset-y rounded="xl">
-      <template v-slot:activator="{ on }">
-        <v-btn text v-on="on" class="w-100" x-large>
+    <v-expand-transition v-else>
+      <div v-if="hierarchyItems.length > 1">
+        <v-btn text @click="dialog = true" class="w-100" x-large>
           {{ $t("global.commons.category") }}
           <v-icon class="ms-1" x-small>expand_more</v-icon>
         </v-btn>
-      </template>
+      </div>
+    </v-expand-transition>
 
-      <v-list class="text-start">
-        <v-list-item
-          selectable
-          v-for="(item, i) in hierarchyItems"
-          :key="i"
-          :to="item.disabled ? undefined : item.to"
-          exact
-        >
-          <v-list-item-avatar :tile="!!item.icon">
-            <img
-              v-if="item.image"
-              :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
-            />
-            <v-icon v-else-if="item.icon" class="me-1">{{ item.icon }}</v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.text }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+    <v-bottom-sheet
+      v-if="!$vuetify.breakpoint.smAndUp"
+      v-model="dialog"
+      max-width="98vw"
+      width="480"
+      content-class="rounded-t-xl"
+      inset
+      scrollable
+    >
+      <v-card rounded="t-xl" min-height="40vh">
+        <v-card-text class="pb-16">
+          <v-list class="text-start">
+            <v-list-item
+              selectable
+              v-for="(item, i) in hierarchyItems"
+              :key="i"
+              :to="item.disabled ? undefined : item.to"
+              exact
+              @click="dialog = false"
+            >
+              <v-list-item-avatar :tile="!!item.icon">
+                <img
+                  v-if="item.image"
+                  :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
+                />
+                <v-icon v-else-if="item.icon" class="me-1">{{
+                  item.icon
+                }}</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ item.text }} </v-list-item-title>
+                <v-list-item-subtitle>
+                  <v-chip
+                    v-if="i === hierarchyItems.length - 1"
+                    label
+                    color="#111"
+                    dark
+                    x-small
+                    >{{ $t("global.commons.current") }}</v-chip
+                  >
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+      </v-card>
+    </v-bottom-sheet>
   </div>
 </template>
 
@@ -121,7 +148,7 @@ export default {
   },
   data: function () {
     return {
-
+      dialog: false,
     };
   },
 };
@@ -132,12 +159,10 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 .s--breadcrumb-image {
-
 }
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-
 
 .s--breadcrumb-image {
   width: 100%;
@@ -151,6 +176,5 @@ export default {
     display: flex;
     overflow: visible !important;
   }
-
 }
 </style>

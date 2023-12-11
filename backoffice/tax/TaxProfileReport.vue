@@ -21,7 +21,7 @@
       class="mx-2 tnt"
       small
       text
-      :to="{name:'ProductsManagement',query:{search:'tax:'+profile.name}}"
+      :to="{name:'BackofficeProductsManagementPage',query:{search:'tax:'+profile.name}}"
       target="_blank"
       title="Show products with this tax profile."
     >

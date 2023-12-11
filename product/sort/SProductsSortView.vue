@@ -118,7 +118,7 @@
         prepend-inner-icon="search"
         hide-details
         :placeholder="$t('global.commons.search')"
-        class="search-box me-1"
+        class="search-box me-1 min-width-200"
         :class="{ 'my-2 my-md-0': !twoLine, 'my-2': twoLine }"
         clearable
       >
@@ -288,6 +288,7 @@ export default {
   display: flex;
   align-items: center;
   min-height: 54px;
+  overflow: auto;
 
   .search-box {
     max-width: 360px;
