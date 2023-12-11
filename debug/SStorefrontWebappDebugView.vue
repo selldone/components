@@ -100,10 +100,23 @@
         </div>
       </v-expand-transition>
 
-
-      <s-value-box v-if="layout_package" label="Operator" :value="layout_package"></s-value-box>
-      <s-value-box v-if="layout_version" label="Operator" :value="layout_version"></s-value-box>
-      <s-value-box v-if="layout_operator" label="Operator" :value="layout_operator"></s-value-box>
+      <div v-if="layout_package" class="px-3">
+        <s-value-box
+          label="Package"
+          :value="layout_package"
+          icon="widgets"
+        ></s-value-box>
+        <s-value-box
+          label="Version"
+          :value="layout_version"
+          icon="manage_history"
+        ></s-value-box>
+        <s-value-box
+          label="Operator"
+          :value="layout_operator"
+          icon="earbuds"
+        ></s-value-box>
+      </div>
 
       <v-list class="" three-line>
         <v-subheader>
@@ -145,13 +158,25 @@
       </p>
     </v-navigation-drawer>
 
-    <div v-if="in_layout_dev_mode" class="s--webapp-debug-view-dev-badge">
-      <v-icon>developer_mode</v-icon>
-      <span>Dev</span>
+    <div
+      v-if="show_dev_badge && in_layout_dev_mode"
+      class="s--webapp-debug-view-dev-badge"
+      @click.stop="show_dev_badge = false"
+    >
+      <div>
+        <v-icon dark>developer_mode</v-icon>
+        <div>Dev</div>
+      </div>
     </div>
-    <div v-else-if="in_layout_test_mode" class="s--webapp-debug-view-dev-badge">
-      <v-icon>developer_mode</v-icon>
-      <span>Test</span>
+    <div
+      v-else-if="show_dev_badge && in_layout_test_mode"
+      class="s--webapp-debug-view-dev-badge -blue"
+      @click.stop="show_dev_badge = false"
+    >
+      <div>
+        <v-icon dark>developer_mode</v-icon>
+        <div>Test</div>
+      </div>
     </div>
   </div>
 </template>
@@ -166,7 +191,7 @@ import SValueBox from "@components/ui/text/SValueBox.vue";
 
 export default {
   name: "SStorefrontWebappDebugView",
-  components: {SValueBox},
+  components: { SValueBox },
   props: {},
   data() {
     return {
@@ -188,6 +213,8 @@ export default {
       busy_dev_server: false,
       pack_dev_server: null,
       count_down_refresh: false,
+
+      show_dev_badge: true,
     };
   },
   computed: {
@@ -196,12 +223,15 @@ export default {
     },
 
     layout_version() {
+      return "234";
       return SetupService.GetLayoutVersion();
     },
     layout_package() {
+      return "sdfsdf.sdfsdf";
       return SetupService.GetLayoutPackage();
     },
     layout_operator() {
+      return "test";
       return SetupService.GetLayoutOperator(); // official | test | dev
     },
     in_layout_dev_mode() {
@@ -500,10 +530,21 @@ export default {
   position: fixed;
   bottom: 25vh;
   right: 0;
-  width: 46px;
-  height: 46px;
+  min-width: 46px;
+  min-height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #009688;
+  border-radius: 10px 0 0 12px;
+  color: #fff;
+  padding: 4px;
+  font-size: 12px;
+  user-select: none;
+  cursor: pointer;
+
+  &.-blue {
+    background-color: #0288d1;
+  }
 }
 </style>
