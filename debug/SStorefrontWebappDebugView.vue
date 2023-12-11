@@ -223,15 +223,12 @@ export default {
     },
 
     layout_version() {
-      return "234";
       return SetupService.GetLayoutVersion();
     },
     layout_package() {
-      return "sdfsdf.sdfsdf";
       return SetupService.GetLayoutPackage();
     },
     layout_operator() {
-      return "test";
       return SetupService.GetLayoutOperator(); // official | test | dev
     },
     in_layout_dev_mode() {
