@@ -19,8 +19,8 @@
     :style="{
       '--top': fadeTop,
       '--bottom': fadeBottom,
-      '--left': fadeLeft,
-      '--right': fadeRight,
+      '--left':$vuetify.rtl?fadeRight: fadeLeft,
+      '--right':$vuetify.rtl?fadeLeft:  fadeRight,
     }"
   >
     <div
