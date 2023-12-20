@@ -188,7 +188,6 @@
           :can-buy="canBuy"
           :preferences="preferences"
           class="mx-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
-          ref="buy_button"
           style="min-height: 72px"
           :vendor-product="selectedVendorProduct"
           :selected-subscription-price="selectedSubscriptionPrice"

@@ -744,7 +744,7 @@ export default {
       // If current variant (product) exist in the basket we send a request to server to update vendor of the item!
       if (found) {
         this.$nextTick(() => {
-          this.$refs.buy_button.buyAddAction();
+          this.$refs.buy_section.triggerBuyButton(found.count);
         });
       }
     },
