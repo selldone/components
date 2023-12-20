@@ -202,7 +202,7 @@
             @click="showGoogleSearch()"
             title="Show Google Search Rank."
           >
-            <img src="../assets/tradmark/google.svg" width="24" height="24" />
+            <img src="../assets/trademark/google.svg" width="24" height="24" />
           </v-btn>
 
           <v-slide-y-transition>

@@ -315,7 +315,7 @@ export default {
         out.push({
           to: { name: window.$storefront.routes.INSTAGRAM_PAGE },
           name: this.$t("global.commons.instagram"),
-          src: require("@components/assets/tradmark/instagram.svg"),
+          src: require("@components/assets/trademark/instagram.svg"),
         });
       }
 

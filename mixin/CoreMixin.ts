@@ -813,16 +813,16 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       if (!code) return null;
       code = code.toLowerCase();
       if (code === "firefox")
-        return require("@components/assets/tradmark/firefox.svg");
+        return require("@components/assets/trademark/firefox.svg");
       if (code === "chrome")
-        return require("@components/assets/tradmark/chrome.svg");
+        return require("@components/assets/trademark/chrome.svg");
       if (code === "opera")
-        return require("@components/assets/tradmark/opera.svg");
+        return require("@components/assets/trademark/opera.svg");
       if (code === "internet-explorer")
-        return require("@components/assets/tradmark/internet-explorer.svg");
+        return require("@components/assets/trademark/internet-explorer.svg");
       if (code === "safari")
-        return require("@components/assets/tradmark/safari.svg");
-      else return require("@components/assets/tradmark/information.svg");
+        return require("@components/assets/trademark/safari.svg");
+      else return require("@components/assets/trademark/information.svg");
     },
 
     //―――――――――――――――――――――― Basket > Reject ――――――――――――――――――――

@@ -27,7 +27,7 @@
           :small="small"
           :x-small="xSmall"
           ><img
-            src="../../../assets/tradmark/whatsapp.svg"
+            src="../../../assets/trademark/whatsapp.svg"
             :height="xSmall ? 12 : small ? 18 : 20"
             :width="xSmall ? 12 : small ? 18 : 20"
         /></v-btn>

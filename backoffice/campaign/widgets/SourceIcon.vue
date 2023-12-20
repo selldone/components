@@ -40,7 +40,7 @@ export default {
 
       return found
         ? found.icon
-        : require("@components/assets/tradmark/default.svg");
+        : require("@components/assets/trademark/default.svg");
     },
   },
   methods: {},

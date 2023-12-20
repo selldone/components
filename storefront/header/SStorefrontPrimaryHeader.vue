@@ -293,7 +293,7 @@
                         :caption="$t('global.commons.instashop')"
                       >
                         <img
-                          src="../../assets/tradmark/instagram.svg"
+                          src="../../assets/trademark/instagram.svg"
                           width="24"
                           height="24"
                         />

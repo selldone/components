@@ -15,7 +15,7 @@
 <template>
   <div class="text-start position-relative pa-3">
     <b class="small pen"
-      ><img src="../../assets/tradmark/google.svg" width="16" height="16" />
+      ><img src="../../assets/trademark/google.svg" width="16" height="16" />
       Google Search</b
     >
 

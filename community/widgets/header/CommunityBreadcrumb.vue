@@ -266,7 +266,7 @@
         ><img
           width="16"
           height="16"
-          src="../../../assets/tradmark/telegram.svg"
+          src="../../../assets/trademark/telegram.svg"
       /></v-btn>
 
       <template v-if="access.admin">

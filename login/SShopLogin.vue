@@ -309,7 +309,7 @@
             large
           >
             <v-avatar size="32" class="float-start ms-n2" color="#fff"
-              ><img class="p-2" src="../assets/tradmark/google.svg"
+              ><img class="p-2" src="../assets/trademark/google.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{
               $t("global.need_login.login_google")
@@ -333,7 +333,7 @@
             dark
           >
             <v-avatar size="32" class="float-start ms-n2" color="#fff"
-              ><img class="p-2" src="../assets/tradmark/apple-b.svg"
+              ><img class="p-2" src="../assets/trademark/apple-b.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{
               $t("global.need_login.login_apple")
@@ -365,7 +365,7 @@
             large
           >
             <v-avatar size="32" class="float-start ms-n2" color="#fff"
-              ><img class="p-2" src="../assets/tradmark/meta.png"
+              ><img class="p-2" src="../assets/trademark/meta.png"
             /></v-avatar>
             <span class="flex-grow-1">{{
               $t("global.need_login.login_facebook")
@@ -388,7 +388,7 @@
             @mouseenter="tick()"
           >
             <v-avatar size="32" class="float-start ms-n2" color="#fff">
-              <img class="p-2" src="../assets/tradmark/selldone.svg" />
+              <img class="p-2" src="../assets/trademark/selldone.svg" />
             </v-avatar>
             <span class="flex-grow-1">{{
               $t("global.need_login.login_account")

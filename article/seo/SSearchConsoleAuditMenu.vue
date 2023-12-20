@@ -22,12 +22,12 @@
         v-on="on"
         :title="`${keywords}\n\nClick to view details...`"
       >
-        <img src="../../assets/tradmark/google.svg" width="16" height="16" />
+        <img src="../../assets/trademark/google.svg" width="16" height="16" />
       </v-btn>
     </template>
     <v-sheet class="pa-2 small text-start" color="#fafafa">
 
-      <img src="../../assets/tradmark/google.svg" width="16" height="16" class="me-1" />
+      <img src="../../assets/trademark/google.svg" width="16" height="16" class="me-1" />
       <b>Google Search Console</b>
 
       <div v-if="queries" class="my-2">

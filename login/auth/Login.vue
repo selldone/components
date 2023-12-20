@@ -223,7 +223,7 @@
             <v-avatar size="28" class="float-start ms-n2" color="#ffffff"
               ><img
                 class="pa-1"
-                src="../../assets/tradmark/google.svg"
+                src="../../assets/trademark/google.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_google") }}</span>
           </v-btn>
@@ -244,7 +244,7 @@
             <v-avatar size="28" class="float-start ms-n2" color="#111"
               ><img
                 class="pa-1"
-                src="../../assets/tradmark/apple.svg"
+                src="../../assets/trademark/apple.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_apple") }}</span>
           </v-btn>
@@ -263,7 +263,7 @@
             <v-avatar size="28" class="float-start ms-n2" color="#fff"
               ><img
                 class="pa-1"
-                src="../../assets/tradmark/linkedin-circle.svg"
+                src="../../assets/trademark/linkedin-circle.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_linkedin") }}</span>
           </v-btn>
@@ -282,7 +282,7 @@
             <v-avatar size="28" class="float-start ms-n2" color="#fff"
               ><img
                 class="pa-1"
-                src="../../assets/tradmark/meta.png"
+                src="../../assets/trademark/meta.png"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_facebook") }}</span>
           </v-btn>
@@ -301,7 +301,7 @@
             <v-avatar size="28" class="float-start ms-n2" color="#fff"
               ><img
                 class="pa-1"
-                src="../../assets/tradmark/github.svg"
+                src="../../assets/trademark/github.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_github") }}</span>
           </v-btn>
@@ -328,12 +328,12 @@
               <v-avatar size="28" class="float-start ms-n2" color="#fff"
                 ><img
                   class="pa-1"
-                  src="../../assets/tradmark/stripe-icon.png"
+                  src="../../assets/trademark/stripe-icon.png"
               /></v-avatar>
               <div class="flex-grow-1">
                 {{ $t("login.continue_with") }}
                 <img
-                  src="../../assets/tradmark/stripe-white.svg"
+                  src="../../assets/trademark/stripe-white.svg"
                   height="24"
                 />
                 <small class="d-block white--text"
@@ -494,7 +494,7 @@
               <v-avatar size="28" class="float-start ms-n2" color="#ffffff"
                 ><img
                   class="pa-1"
-                  src="../../assets/tradmark/google.svg"
+                  src="../../assets/trademark/google.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_google") }}</span>
             </v-btn>
@@ -515,7 +515,7 @@
               <v-avatar size="28" class="float-start ms-n2" color="#111"
                 ><img
                   class="pa-1"
-                  src="../../assets/tradmark/apple.svg"
+                  src="../../assets/trademark/apple.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.register_apple") }}</span>
             </v-btn>
@@ -534,7 +534,7 @@
               <v-avatar size="28" class="float-start ms-n2" color="#fff"
                 ><img
                   class="pa-1"
-                  src="../../assets/tradmark/linkedin-circle.svg"
+                  src="../../assets/trademark/linkedin-circle.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_linkedin") }}</span>
             </v-btn>
@@ -553,7 +553,7 @@
               <v-avatar size="28" class="float-start ms-n2" color="#fff"
                 ><img
                   class="pa-1"
-                  src="../../assets/tradmark/meta.png"
+                  src="../../assets/trademark/meta.png"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_facebook") }}</span>
             </v-btn>
@@ -572,7 +572,7 @@
               <v-avatar size="28" class="float-start ms-n2" color="#fff"
                 ><img
                   class="pa-1"
-                  src="../../assets/tradmark/github.svg"
+                  src="../../assets/trademark/github.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_github") }}</span>
             </v-btn>
@@ -601,12 +601,12 @@
                 <v-avatar size="28" class="float-start ms-n2" color="#fff"
                   ><img
                     class="pa-1"
-                    src="../../assets/tradmark/stripe-icon.png"
+                    src="../../assets/trademark/stripe-icon.png"
                 /></v-avatar>
                 <div class="flex-grow-1">
                   {{ $t("login.continue_with") }}
                   <img
-                    src="../../assets/tradmark/stripe-white.svg"
+                    src="../../assets/trademark/stripe-white.svg"
                     height="24"
                   />
                   <small class="d-block white--text"
