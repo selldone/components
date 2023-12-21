@@ -63,7 +63,7 @@
           <!--  ▃▃▃▃▃▃▃▃▃▃ Product Title En (Small) ▃▃▃▃▃▃▃▃▃▃ -->
 
           <div
-            class="s--title-en d-flex flex-column flex-sm-row align-start align-sm-center"
+            class="s--title-en d-flex flex-column flex-sm-row align-start align-sm-center mb-2"
           >
             <div class="d-flex align-center">
               <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Type ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div>
+  <div v-if="load">
     <v-navigation-drawer
       v-model="dialog"
       fixed
@@ -197,6 +197,7 @@ export default {
     return {
       key_listener_keydown: null,
       dialog: false,
+      load:false,
 
       globalErrorHandler: null,
       promiseRejectionHandler: null,
@@ -346,7 +347,11 @@ export default {
             activeElement.tagName !== "TEXTAREA" &&
             activeElement.contentEditable !== "true")
         ) {
-          this.dialog = !this.dialog;
+          this.load=true;
+          this.$nextTick(() => {
+            this.dialog = !this.dialog;
+          });
+
           event.preventDefault();
           return false;
         }
