@@ -77,6 +77,7 @@
 <script>
 export default {
   name: "SDropZone",
+  emits: ["select:file", "select:files", "update:acceptedFiles", "update:uploadedFiles", "update:failedFiles"],
   delimiters: ["${", "}"], // Avoid Twig conflicts
 
   props: {

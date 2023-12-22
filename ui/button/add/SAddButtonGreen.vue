@@ -22,7 +22,7 @@
       'h-100': fillHeight,
     }"
     @click.stop="$emit('click')"
-    :style="{ 'border-radius': radius, minHeight: minHeight, height: height }"
+    :style="{ 'border-radius': radius, minHeight: minHeight, height: height,'--bg-color': color, '--hover-bg-color': hoverColor }"
   >
     <v-img :src="src" contain class="sprite flip-image-rtl"> </v-img>
     <div class="center-content px-2">
@@ -51,6 +51,7 @@
 <script>
 export default {
   name: "SAddButtonGreen",
+  emits: ["click"],
 
   props: {
     icon: {},
@@ -87,8 +88,75 @@ export default {
       default: false,
     },
     classMessage: {},
+
+    color: {
+      default: "#009688",
+    },
+    hoverColor: {
+      default: "#00a89a",
+    },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.add-new-btn-widget {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+
+  min-height: 200px;
+
+  // margin: 8px;
+  background: var(--bg-color);
+  color: white;
+  border-radius: 8px;
+  text-align: center;
+  column-fill: balance;
+
+  &:hover {
+    background: var(--hover-bg-color);
+  }
+
+  &:hover:not(.no-fade) {
+    .sprite {
+      opacity: 0.5;
+    }
+
+    .center-content {
+      opacity: 0;
+    }
+  }
+
+  .center-content {
+    display: block;
+    transition: all 0.35s;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .-title {
+    font-size: 1.3rem !important;
+
+    &.small {
+      font-size: 0.9rem !important;
+    }
+  }
+
+  .-message {
+    margin: auto;
+  }
+
+  .sprite {
+    transition: all 0.35s;
+
+    width: 100%;
+    height: auto;
+    opacity: 0;
+  }
+}
+</style>

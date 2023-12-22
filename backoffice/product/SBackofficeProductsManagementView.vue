@@ -577,7 +577,11 @@
             "
             :restoring="product.id === busy_restore"
             :selected="selected_products.includes(product.id)"
-            :shortcut="!busy_fetch && current_dir_id && product.category_id !== current_dir_id"
+            :shortcut="
+              !busy_fetch &&
+              current_dir_id &&
+              product.category_id !== current_dir_id
+            "
           >
           </product-card-mini>
 
@@ -697,7 +701,7 @@
             message="⌘Ctrl + P"
             @click="$emit('click:add')"
             min-height="100px"
-            class="mb-1 flex-grow-1"
+            class="flex-grow-1"
             :fillHeight="false"
             small
           ></s-add-button-green>
@@ -710,6 +714,20 @@
             min-height="100px"
             :fillHeight="false"
             small
+          ></s-add-button-green>
+          <s-add-button-green
+            class="mt-1 flex-grow-1"
+            icon="auto_fix_high"
+            caption="AI Product Assistance"
+            message="⌘Ctrl + X"
+            @click="
+          $emit('click:ai-add')
+            "
+            min-height="100px"
+            :fillHeight="false"
+            small
+            color="#516ad6"
+            hover-color="#667eea"
           ></s-add-button-green>
         </v-col>
 
@@ -1567,6 +1585,15 @@ import _ from "lodash-es";
 
 export default {
   name: "SBackofficeProductsManagementView",
+  emits: [
+    "click:ai-add",
+    "change:folders",
+    "change:parent-folder",
+    "select-category",
+    "select",
+    "click:add",
+    "click:fast-add",
+  ],
   components: {
     SFadeScroll,
     AdminProductsFilterInput,
@@ -1612,15 +1639,6 @@ export default {
       type: Boolean,
       default: false,
     },
-
-    /**
-     * Hahs used to push query route!
-     */
-    /*   hash: {
-                required: false,
-                type: String,
-                default: "#products"
-            },*/
 
     draggable: {
       required: false,
@@ -1800,6 +1818,8 @@ export default {
   }),
 
   computed: {
+
+
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -2810,6 +2830,14 @@ export default {
         .finally(() => {
           this.status_busy = false;
         });
+    },
+
+    /**
+     * Do not change! Called externally.
+     * ex. $refs.products_list?.onAddORUpdateProduct
+     */
+    onAddORUpdateProduct(product) {
+      this.AddOrUpdateItemByID(this.products, product);
     },
   },
 };

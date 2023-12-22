@@ -20,6 +20,8 @@
       :style="leftImageStyle"
       class="left-image"
       ref="leftImageRef"
+      :class="leftImageClass"
+      @load="$emit('loaded:left')"
     />
     <div :style="leftImageStyle" class="left-label">{{ leftLabel }}</div>
 
@@ -28,6 +30,9 @@
       :src="rightImage"
       class="right-image"
       ref="rightImageRef"
+      :class="rightImageClass"
+      :style="{'--max-height':maxHeight}"
+      @load="$emit('loaded:right')"
     />
     <div :style="rightLabelStyle" ref="rightLabelRef" class="right-label">
       {{ rightLabel }}
@@ -48,6 +53,7 @@
 import ResizeSensor from "./ResizeSensor";
 export default {
   name: "VueCompareImage",
+  emits: ["loaded:left", "loaded:right"],
 
   mounted() {
     // get and set `imageWidth` when the container size changed
@@ -80,6 +86,7 @@ export default {
       type: String,
       default: "",
     },
+    leftImageClass: {},
     leftImageAlt: {
       type: String,
       default: null,
@@ -93,6 +100,7 @@ export default {
       type: String,
       default: "",
     },
+    rightImageClass: {},
     rightImageAlt: {
       type: String,
       default: null,
@@ -117,6 +125,7 @@ export default {
       type: Number,
       default: 0.5,
     },
+    maxHeight:{},
   },
   methods: {
     getAndSetImageWidth() {
@@ -241,6 +250,8 @@ export default {
   display: block;
   height: auto; // Respect the aspect ratio
   width: 100%;
+  max-height: var(--max-height);
+  object-fit: cover;
 }
 .right-label {
   position: absolute;

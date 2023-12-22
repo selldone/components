@@ -124,6 +124,7 @@
             "
             credits="false"
             :allowImageTransform="allowImageTransform"
+            @addfile="(error,file) => ($emit('onAddFile',{error,file}))"
           />
 
           <p class="small file-size-limit">
@@ -155,6 +156,7 @@
 <script>
 export default {
   name: "SImageUploader",
+  emits: ["response", "new-path", "new-url", "onClear"],
   props: {
     label: {
       required: false,
@@ -255,6 +257,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    headers: {}, // Add extra headers
   },
 
   data: () => ({
@@ -293,17 +296,24 @@ export default {
     server_credential() {
       const token = document.head.querySelector('meta[name="csrf-token"]');
 
+      const headers = {
+        "X-CSRF-TOKEN": token ? token.content : "",
+        Authorization: window.axios.defaults.headers.common["Authorization"], // fix upload image in chrome!
+      };
+
+      if (this.headers) {
+        Object.keys(this.headers).forEach((key) => {
+          if (this.headers[key]) headers[key] = this.headers[key];
+        });
+      }
+
       return {
         url: this.server,
         process: {
           method: "POST",
           withCredentials: true,
 
-          headers: {
-            "X-CSRF-TOKEN": token ? token.content : "",
-            Authorization:
-              window.axios.defaults.headers.common["Authorization"], // fix upload image in chrome!
-          },
+          headers: headers,
         },
         revert: null,
       };
@@ -366,12 +376,12 @@ export default {
 
         if (Array.isArray(response.files)) {
           response.files.forEach((file) => {
-            console.log("done", file.path);
+            //console.log("done", file.path);
             this.$emit("new-path", file.path);
             this.$emit("new-url", file.url);
           });
         } else {
-          console.log("done", response.files.path);
+          //console.log("done", response.files.path);
           this.$emit("new-path", response.files.path);
           this.$emit("new-url", response.files.url);
 

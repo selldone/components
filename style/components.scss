@@ -2023,74 +2023,7 @@ Paragraphs
 }
 
 
-/**
-Add new card
- */
 
-.add-new-btn-widget {
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-
-  min-height: 200px;
-
-  // margin: 8px;
-  background: #009688;
-  color: white;
-  border-radius: 8px;
-  text-align: center;
-  column-fill: balance;
-
-  &:hover {
-    background: #00a89a;
-
-  }
-
-  &:hover:not(.no-fade) {
-
-    .sprite {
-      opacity: 0.5;
-    }
-
-    .center-content {
-      opacity: 0;
-    }
-
-  }
-
-  .center-content {
-    display: block;
-    transition: all 0.35s;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .-title {
-
-    font-size: 1.3rem !important;
-
-    &.small {
-      font-size: 0.9rem !important;
-    }
-  }
-
-  .-message {
-
-    margin: auto;
-  }
-
-  .sprite {
-    transition: all 0.35s;
-
-    width: 100%;
-    height: auto;
-    opacity: 0.0;
-  }
-}
 
 
 /**
