@@ -125,6 +125,8 @@
             credits="false"
             :allowImageTransform="allowImageTransform"
             @addfile="(error,file) => ($emit('onAddFile',{error,file}))"
+            @processfilestart="e=>$emit('onProcessFileStart',e)"
+            @processfileabort="e=>$emit('onProcessFileAbort',e)"
           />
 
           <p class="small file-size-limit">
@@ -156,7 +158,7 @@
 <script>
 export default {
   name: "SImageUploader",
-  emits: ["response", "new-path", "new-url", "onClear"],
+  emits: ["response", "new-path", "new-url", "onClear", "onError", "onAddFile", "onProcessFileStart", "onProcessFileAbort"],
   props: {
     label: {
       required: false,
@@ -358,7 +360,8 @@ export default {
       this.focused = entries[0].isIntersecting;
     },
 
-    handleFilePondError(error) {
+    handleFilePondError(error,file,status) {
+      this.$emit('onError',error)
       if (error.main && error.sub)
         return this.showErrorAlert(error.main, error.sub);
       else if (error.main) return this.showErrorAlert(null, error.main);
