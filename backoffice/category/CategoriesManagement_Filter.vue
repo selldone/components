@@ -24,7 +24,7 @@
       class="m-2"
     >
       <span class="me-2">
-        <v-icon left>{{ item.icon }}</v-icon>
+        <v-icon left small>{{ item.icon }}</v-icon>
         {{ item.text }}
       </span>
     </v-chip>
@@ -174,7 +174,7 @@ import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 export default {
   name: "CategoriesManagementFilter",
   components: { SCurrencyIcon, VariantAssetView },
-
+emits: ["edit-filters"],
   props: {
     category: {
       required: true,
@@ -274,6 +274,8 @@ export default {
     },
 
     getCategoryFilter() {
+      this.filters=this.category.filters;
+
       this.busy_get_specs = true;
       axios
         .get(

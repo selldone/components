@@ -209,6 +209,10 @@ export default {
   name: "SStorefrontProductsFilterMenu",
   components: { SSmartToggle, SelectionList },
   props: {
+    shop: {
+      required: true,
+      type: Object,
+    },
     value: {},
     folders: {},
     parentFolders: {},
@@ -223,7 +227,6 @@ export default {
 
       drawer: true,
 
-      //color: 'primary',
 
       miniVariant: false,
       expandOnHover: false,
@@ -245,37 +248,9 @@ export default {
 
       // Brands:
       selected_brands: [],
-      /*
-      // Colors:
-      selected_colors: [],
-      colors: [
-        "#FFFFFF",
-        "#000",
-        "#C2185B",
-        "#512DA8",
-        "#1976D2",
-        "#0097A7",
-        "#689F38",
-        "#FBC02D",
-        "#E64A19",
-        "#5D4037",
-        "#FFD700",
-      ],*/
+
 
       reserved_names: ["prices", "brands"],
-
-      /*  suggested_list: [
-                    //    {value: "brands", text: "برند", icon: 'fas fa-braille'},
-
-                    {value: "colors", text: "رنگ", icon: ProductVariants.color.icon},
-                    {value: "styles", text: "طرح", icon: ProductVariants.style.icon},
-
-                    {value: "volumes", text: "حجم", icon: ProductVariants.volume.icon},
-                    {value: "weights", text: "وزن", icon: ProductVariants.weight.icon},
-
-                    {value: "packs", text: "تعداد در بسته", icon: ProductVariants.pack.icon},
-                    {value: "types", text: "نوع", icon: ProductVariants.type.icon},
-                ],*/
 
       update_values_time_ms: 0, // Prevent trigger by watcher!
     };
@@ -333,7 +308,14 @@ export default {
     },
 
     filters() {
-      if (!this.parentFolders || !this.parentFolders.filters) return null;
+
+      // Root category:
+      if(!this.parentFolders){
+        return this.shop.filters;
+      }
+
+      // In a category:
+      if (!this.parentFolders?.filters) return null;
       return this.parentFolders.filters;
     },
     present_variants_in_filter() {

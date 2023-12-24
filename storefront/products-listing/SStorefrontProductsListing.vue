@@ -28,7 +28,7 @@
       :class="{
         rtl: $vuetify.rtl,
         'position-relative':
-          parent_folders?.page /*Only in custom page mode! otherwise menu should fill top to buttom of window.*/,
+          parent_folders?.page /*Only in custom page mode! otherwise menu should fill top to bottom of window.*/,
       }"
     >
       <div>
@@ -261,6 +261,7 @@
         <s-storefront-products-filter-menu
           v-if="has_filter"
           v-model="show_filter_menu"
+          :shop="shop"
           :folders="folders"
           :parent-folders="parent_folders"
           @change-filter="setFilter"
@@ -627,7 +628,8 @@ export default {
 
     has_filter() {
       return (
-        this.hasFilter && this.parent_folders && this.parent_folders.filters
+        this.hasFilter &&
+        (this.parent_folders?.filters/*Current category filter*/ || (!this.parent_folders && this.shop.filters)/*Root filter*/)
       );
     },
 

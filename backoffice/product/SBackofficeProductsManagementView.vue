@@ -720,9 +720,7 @@
             icon="auto_fix_high"
             caption="AI Product Assistance"
             message="⌘Ctrl + X"
-            @click="
-          $emit('click:ai-add')
-            "
+            @click="$emit('click:ai-add')"
             min-height="100px"
             :fillHeight="false"
             small
@@ -732,6 +730,56 @@
         </v-col>
 
         <slot name="append-products"></slot>
+
+        <v-col
+          v-if="!IS_VENDOR_PANEL && (shop.filters || products?.length > 1) && !parent_folders/*Show just in the root*/"
+          key="root-filters"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="3"
+          xl="3"
+          class="p-2 d-flex flex-column"
+        >
+          <div
+            class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+          >
+            <div>
+              <s-dense-images-circles :images="products?.map(p=>getShopImagePath(p.icon,IMAGE_SIZE_SMALL))" :limit="5" class="justify-center"></s-dense-images-circles>
+
+              <h3   v-if="shop.filters">
+                <v-icon    class="me-1 zoomIn" color="green">check_circle</v-icon>
+                You set filters for root category.
+              </h3>
+              <h3 v-else>
+                You have products in root but no filter.
+              </h3>
+
+              <small class="d-block">You can set filters.</small>
+
+              <v-btn
+                @click="dialog_root_filter = true"
+                color="primary"
+                class="tnt ma-1"
+                small
+              >
+                <v-icon class="me-1" small>filter_alt</v-icon>
+                Edit Root Filters
+              </v-btn>
+              <v-btn
+                v-if="shop.filters"
+                @click="showClearRootFiltersDialog()"
+                :loading="busy_clear_root_filter"
+                class="tnt ma-1"
+                small
+                outlined
+              >
+                <v-icon class="me-1" small>filter_alt_off</v-icon>
+                Clear Root Filters
+              </v-btn>
+            </div>
+          </div>
+        </v-col>
       </template>
     </v-fade-transition>
 
@@ -1155,6 +1203,29 @@
           </template>
         </v-list>
 
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Right click on no product or category ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+        <v-list
+          v-if="
+            !currentProductForMenu &&
+            !currentCategoryForMenu &&
+            !IS_VENDOR_PANEL
+          "
+          class="text-start py-0"
+          dense
+        >
+          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Past Product (copy) ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+          <v-list-item @click="dialog_root_filter = true">
+            <v-list-item-icon class="me-2">
+              <v-icon small>filter_alt</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title> Set Root Filter </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For all ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <v-list class="text-start py-0" dense>
@@ -1547,6 +1618,60 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- ████████████████████ Dialog > Edit shop root filters ████████████████████ -->
+    <v-dialog
+      v-if="!IS_VENDOR_PANEL"
+      v-model="dialog_root_filter"
+      fullscreen
+      transition="dialog-bottom-transition" scrollable
+    >
+      <v-card>
+        <v-card-title>
+          <v-avatar class="avatar-gradient -thin -shop me-2" size="38">
+            <img :src="getShopImagePath(shop.icon)" />
+          </v-avatar>
+
+          {{ shop.title }}
+        </v-card-title>
+        <v-card-text>
+          <div class="widget-box mb-5">
+            <s-widget-header
+              :title="$t('add_category.filter.title')"
+              icon="filter_alt"
+            ></s-widget-header>
+            <v-subheader>
+              {{ $t("add_category.filter.sub_title") }}
+            </v-subheader>
+
+            <p>
+              {{ $t("add_category.filter.message") }}
+            </p>
+
+            <categories-management-filter
+              :category="{
+                id: 'root',
+                shop_id: shop.id,
+                filters: shop.filters,
+              }"
+              @edit-filters="
+                (_filters) => {
+                  shop.filters = _filters;
+                }
+              "
+            />
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <div class="widget-buttons">
+            <v-btn @click="dialog_root_filter = false" text x-large>
+              <v-icon class="me-1">close</v-icon>
+              {{ $t("global.actions.close") }}
+            </v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -1582,6 +1707,8 @@ import SSmartSelect from "@components/smart/SSmartSelect.vue";
 import AdminProductsFilterInput from "@components/backoffice/product/products-filter/AdminProductsFilterInput.vue";
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import _ from "lodash-es";
+import CategoriesManagementFilter from "@components/backoffice/category/CategoriesManagement_Filter.vue";
+import SDenseImagesCircles from "@components/ui/image/SDenseImagesCircles.vue";
 
 export default {
   name: "SBackofficeProductsManagementView",
@@ -1595,6 +1722,8 @@ export default {
     "click:fast-add",
   ],
   components: {
+    SDenseImagesCircles,
+    CategoriesManagementFilter,
     SFadeScroll,
     AdminProductsFilterInput,
     SSmartSelect,
@@ -1815,11 +1944,13 @@ export default {
     tax_profile: null,
     valuation_filter: null,
     time_filter: null, // timespan search: ?search=new~2023-08-10T20%3A00%3A00.000Z~2023-08-11T19%3A59%3A59.000Z
+
+    //━━━━━━━━━━━━━━━━ Root shop filters ━━━━━━━━━━━━
+    dialog_root_filter: false,
+    busy_clear_root_filter: false,
   }),
 
   computed: {
-
-
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -2838,6 +2969,39 @@ export default {
      */
     onAddORUpdateProduct(product) {
       this.AddOrUpdateItemByID(this.products, product);
+    },
+
+    showClearRootFiltersDialog() {
+      this.openConfirmationAlert(
+        "Remove Root Filter",
+        "Do you want to clear filter of root category?",
+        "Clear filters",
+        () => {
+          this.clearRootFilters();
+        }
+      );
+    },
+    clearRootFilters() {
+      this.busy_clear_root_filter = true;
+      axios
+        .delete(window.API.DELETE_CATEGORY_FILTER(this.shop.id, "root"))
+        .then(({ data }) => {
+          if (!data.error) {
+            this.showSuccessAlert(
+              null,
+              "Root filters has been removed successfully."
+            );
+            this.shop.filters = data.filters;
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((e) => {
+          this.showLaravelError(e);
+        })
+        .finally(() => {
+          this.busy_clear_root_filter = false;
+        });
     },
   },
 };
