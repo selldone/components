@@ -34,169 +34,194 @@
     "
     class="s--storefront-products-filter-menu"
   >
-    <v-list dense nav class="py-0">
-      <v-list-item two-line>
-        <v-list-item-avatar v-if="category_image">
-          <img :src="category_image" />
-        </v-list-item-avatar>
+    <div ref="list_container">
+      <v-list dense nav class="py-0">
+        <v-list-item two-line>
+          <v-list-item-avatar v-if="category_image">
+            <img :src="category_image" />
+          </v-list-item-avatar>
 
-        <v-list-item-content class="text-start">
-          <v-list-item-title>{{ category_title }}</v-list-item-title>
-          <v-list-item-subtitle>{{
-            category_description
-          }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
+          <v-list-item-content class="text-start">
+            <v-list-item-title>{{ category_title }}</v-list-item-title>
+            <v-list-item-subtitle>{{
+              category_description
+            }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
 
-      <v-divider />
-
-      <v-treeview
-        ref="treeview"
-        :items="categories_item"
-        dense
-        hoverable
-        color="accent"
-        rounded
-        item-text="title"
-        class="text-start hover-smart-tree"
-        item-key="id"
-        return-object
-        open-all
-      >
-        <template v-slot:label="{ item }">
-          <p
-            class="m-0 text-ellipsis"
-            :class="{
-              'pointer-pointer': !item.current,
-              'amber--text font-weight-bold': item.current,
-            }"
-            @click="clickTreeView(item)"
-          >
-            <v-avatar v-if="item.icon" class="me-1" size="28" color="primary">
-              <img :src="getShopImagePath(item.icon)" />
-            </v-avatar>
-            {{ item.title }}
-          </p>
-        </template>
-      </v-treeview>
-
-      <v-divider />
-
-      <s-smart-toggle
-        v-model="only_is_original"
-        :true-title="$t('product_filter_menu.only_original')"
-        false-gray
-        true-icon="verified"
-        :dark="!light"
-      />
-
-      <v-divider />
-
-      <s-smart-toggle
-        v-model="only_has_discount"
-        :true-title="$t('product_filter_menu.only_has_discount')"
-        false-gray
-        true-icon="local_offer"
-        :dark="!light"
-      />
-
-      <!-- =========================================== Price =========================================== -->
-      <div v-if="max_price">
         <v-divider />
 
-        <v-subheader class="pb-3">{{
-          $t("product_filter_menu.price_range")
-        }}</v-subheader>
-
-        <v-range-slider
-          v-model="price_range"
-          :max="max_price"
-          :min="min_price"
-          hide-details
-          class="align-center text-dark mt-5 mx-2"
-          thumb-label="always"
-          :tick-size="8"
-          @end="onChangeFilter"
-          @start="price_range_changed = true"
+        <v-treeview
+          ref="treeview"
+          :items="categories_item"
+          dense
+          hoverable
+          color="accent"
+          rounded
+          item-text="title"
+          class="text-start hover-smart-tree"
+          item-key="id"
+          return-object
+          open-all
         >
-          <template v-slot:thumb-label="">
-            <v-icon small color="accent"> star </v-icon>
+          <template v-slot:label="{ item }">
+            <p
+              class="m-0 text-ellipsis"
+              :class="{
+                'pointer-pointer': !item.current,
+                'amber--text font-weight-bold': item.current,
+              }"
+              @click="clickTreeView(item)"
+            >
+              <v-avatar v-if="item.icon" class="me-1" size="28" color="primary">
+                <img :src="getShopImagePath(item.icon)" />
+              </v-avatar>
+              {{ item.title }}
+            </p>
           </template>
-        </v-range-slider>
+        </v-treeview>
 
-        <v-layout row wrap>
-          <v-flex xs6 class="p-2">
-            {{ FormatNumberCurrency(price_range[0]) }}
-            <br />
-            <small>{{ GetUserSelectedCurrencyName() }}</small>
-          </v-flex>
-          <v-flex xs6 class="p-2">
-            {{ FormatNumberCurrency(price_range[1]) }}
-            <br />
-            <small>{{ GetUserSelectedCurrencyName() }}</small>
-          </v-flex>
-        </v-layout>
+        <template v-if="!ignore?.includes('original')">
+          <v-divider />
+          <s-smart-toggle
+            v-model="only_is_original"
+            :true-title="$t('product_filter_menu.only_original')"
+            false-gray
+            true-icon="verified"
+            :dark="!light"
+          />
+        </template>
+
+        <template v-if="!ignore?.includes('discount')">
+          <v-divider />
+
+          <s-smart-toggle
+            v-model="only_has_discount"
+            :true-title="$t('product_filter_menu.only_has_discount')"
+            false-gray
+            true-icon="local_offer"
+            :dark="!light"
+          />
+        </template>
+        <!-- =========================================== Price =========================================== -->
+        <div v-if="!ignore?.includes('price') && max_price">
+          <v-divider />
+
+          <div class="s-filter-header">
+            {{ $t("product_filter_menu.price_range") }}
+          </div>
+
+          <v-range-slider
+            v-model="price_range"
+            :max="max_price"
+            :min="min_price"
+            hide-details
+            class="align-center text-dark mt-5 mx-2"
+            thumb-label="always"
+            :tick-size="8"
+            @end="onChangeFilter"
+            @start="price_range_changed = true"
+          >
+            <template v-slot:thumb-label="">
+              <v-icon small color="accent"> star </v-icon>
+            </template>
+          </v-range-slider>
+
+          <v-layout row wrap>
+            <v-flex xs6 class="p-2">
+              {{ FormatNumberCurrency(price_range[0]) }}
+              <br />
+              <small>{{ GetUserSelectedCurrencyName() }}</small>
+            </v-flex>
+            <v-flex xs6 class="p-2">
+              {{ FormatNumberCurrency(price_range[1]) }}
+              <br />
+              <small>{{ GetUserSelectedCurrencyName() }}</small>
+            </v-flex>
+          </v-layout>
+        </div>
+      </v-list>
+
+      <!-- =========================================== Brands =========================================== -->
+
+      <div v-if="brands && brands.length > 0">
+        <v-divider />
+
+        <div class="s-filter-header">
+          <v-icon style="color: currentColor"> fas fa-braille </v-icon>
+          <span class="mx-2">{{ $t("product_filter_menu.brands") }} </span>
+        </div>
+        <selection-list
+          class="px-1"
+          v-model="selected_brands"
+          :list="brands"
+          @change="onChangeFilter"
+          :light="light"
+        />
       </div>
-    </v-list>
 
-    <!-- =========================================== Brands =========================================== -->
+      <!-- =========================================== Variants =========================================== -->
 
-    <div v-if="brands && brands.length > 0">
-      <v-divider />
-
-      <v-subheader>
-        <v-icon small> fas fa-braille </v-icon>
-        <span class="mx-2">{{ $t("product_filter_menu.brands") }} </span>
-      </v-subheader>
-      <selection-list
-        class="px-1"
-        v-model="selected_brands"
-        :list="brands"
-        @change="onChangeFilter"
-        :light="light"
+      <v-divider
+        v-if="
+          present_variants_in_filter && present_variants_in_filter.length > 0
+        "
       />
+
+      <div v-for="item in present_variants_in_filter" :key="item.code">
+        <div class="s-filter-header">
+          <v-icon style="color: currentColor">
+            {{ item.icon }}
+          </v-icon>
+          <span class="mx-2"> {{ $t(item.name) }}</span>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-if="selected_variants[item.code + 's']"
+            @click="selected_variants[item.code + 's'] = []"
+            :title="`Reset filter: ${$t(item.name)}`"
+            icon
+            ><v-icon>close</v-icon>
+          </v-btn>
+        </div>
+        <selection-list
+          class="px-1"
+          v-model="selected_variants[item.code + 's']"
+          :is-color="item.code === 'color'"
+          :list="getList(item.code + 's')"
+          @change="onChangeFilter"
+          :light="light"
+        />
+      </div>
+
+      <!-- =========================================== Specs =========================================== -->
+      <v-divider v-if="other_filters && other_filters.length > 0" />
+
+      <div v-for="item in other_filters" :key="item">
+        <div class="s-filter-header">
+          <v-icon style="color: currentColor"> arrow_drop_down </v-icon>
+
+          <span class="mx-2"> {{ item }}</span>
+
+          <v-spacer></v-spacer>
+          <v-btn
+            v-if="selected_spec[item]"
+            @click="selected_spec[item] = []"
+            :title="`Reset filter: ${$t(item)}`"
+            icon
+            ><v-icon>close</v-icon>
+          </v-btn>
+        </div>
+        <selection-list
+          class="px-1"
+          v-model="selected_spec[item]"
+          :list="getList(item)"
+          @change="onChangeFilter"
+          :light="light"
+        />
+      </div>
+
+      <div style="min-height: 84px; height: 15vh" />
     </div>
-
-    <!-- =========================================== Variants =========================================== -->
-
-    <v-divider
-      v-if="present_variants_in_filter && present_variants_in_filter.length > 0"
-    />
-
-    <div v-for="item in present_variants_in_filter" :key="item.code">
-      <v-subheader>
-        <v-icon small>
-          {{ item.icon }}
-        </v-icon>
-        <span class="mx-2"> {{ $t(item.name) }}</span>
-      </v-subheader>
-      <selection-list
-        class="px-1"
-        v-model="selected_variants[item.code + 's']"
-        :is-color="item.code === 'color'"
-        :list="getList(item.code + 's')"
-        @change="onChangeFilter"
-        :light="light"
-      />
-    </div>
-
-    <!-- =========================================== Specs =========================================== -->
-    <v-divider v-if="other_filters && other_filters.length > 0" />
-
-    <div v-for="item in other_filters" :key="item">
-      <v-subheader>
-        <span class="mx-2"> {{ item }}</span>
-      </v-subheader>
-      <selection-list
-        class="px-1"
-        v-model="selected_spec[item]"
-        :list="getList(item)"
-        @change="onChangeFilter"
-        :light="light"
-      />
-    </div>
-
-    <div style="min-height: 84px; height: 15vh" />
   </v-navigation-drawer>
 </template>
 
@@ -208,6 +233,7 @@ import SSmartToggle from "@components/smart/SSmartToggle.vue";
 export default {
   name: "SStorefrontProductsFilterMenu",
   components: { SSmartToggle, SelectionList },
+  emits: ["change-filter", "change-height"],
   props: {
     shop: {
       required: true,
@@ -220,13 +246,10 @@ export default {
 
   data() {
     return {
-
-
       selected_spec: {},
       selected_variants: {},
 
       drawer: true,
-
 
       miniVariant: false,
       expandOnHover: false,
@@ -249,10 +272,11 @@ export default {
       // Brands:
       selected_brands: [],
 
-
-      reserved_names: ["prices", "brands"],
+      reserved_names: ["prices", "brands", "ignore"],
 
       update_values_time_ms: 0, // Prevent trigger by watcher!
+
+      cal_height: null,
     };
   },
 
@@ -308,9 +332,8 @@ export default {
     },
 
     filters() {
-
       // Root category:
-      if(!this.parentFolders){
+      if (!this.parentFolders) {
         return this.shop.filters;
       }
 
@@ -342,7 +365,9 @@ export default {
     brands() {
       return this.filters?.brands;
     },
-
+    ignore() {
+      return this.filters?.ignore;
+    },
     category_image() {
       if (!this.shop) return null;
       if (this.parentFolders) {
@@ -511,7 +536,8 @@ export default {
     parentFolders() {
       this.change_not_user = new Date().getTime();
 
-      (this.price_range_changed = false), (this.selected_spec = {});
+      this.price_range_changed = false;
+      this.selected_spec = {};
       this.selected_variants = {};
       this.selected_brands = [];
       this.only_is_original = false;
@@ -520,6 +546,11 @@ export default {
 
       this.$nextTick(function () {
         this.$refs.treeview.updateAll(true);
+      });
+
+      // Watch a reactive property that changes when the content changes
+      this.$nextTick(() => {
+        this.updateHeight();
       });
     },
 
@@ -530,9 +561,6 @@ export default {
     only_has_discount() {
       this.onChangeFilter();
     },
-
-
-
   },
 
   created() {
@@ -630,6 +658,15 @@ export default {
       }
       // console.log(list)
     },
+
+    updateHeight() {
+      this.cal_height = this.$refs.list_container.clientHeight;
+      this.$emit("change-height", this.cal_height);
+      console.debug("Filter menu height", this.cal_height);
+    },
+  },
+  mounted() {
+    this.updateHeight();
   },
 };
 </script>
@@ -644,7 +681,14 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--storefront-products-filter-menu{
-
+.s--storefront-products-filter-menu {
+  .s-filter-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: start;
+  }
 }
 </style>

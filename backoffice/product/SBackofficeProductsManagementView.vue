@@ -1635,18 +1635,7 @@
           {{ shop.title }}
         </v-card-title>
         <v-card-text>
-          <div class="widget-box mb-5">
-            <s-widget-header
-              :title="$t('add_category.filter.title')"
-              icon="filter_alt"
-            ></s-widget-header>
-            <v-subheader>
-              {{ $t("add_category.filter.sub_title") }}
-            </v-subheader>
 
-            <p>
-              {{ $t("add_category.filter.message") }}
-            </p>
 
             <categories-management-filter
               :category="{
@@ -1660,7 +1649,6 @@
                 }
               "
             />
-          </div>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">

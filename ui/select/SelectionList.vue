@@ -95,6 +95,10 @@ export default {
       },
       deep: true,
     },
+
+    value(value){
+      this.selected_list=value
+    }
   },
 
   methods: {

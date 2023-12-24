@@ -13,26 +13,47 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
-    <!-- ███████████████████████████ Variants ███████████████████████████ -->
 
+    <div class="widget-box mb-5">
+
+      <s-widget-header :title="$t('add_category.filter.title')" icon="filter_alt"></s-widget-header>
+      <v-subheader>
+        {{ $t("add_category.filter.sub_title") }}
+
+      </v-subheader>
+
+
+
+      <!-- ███████████████████████████ Variants ███████████████████████████ -->
     <v-chip
       v-for="item in present_variants_in_filter"
       :key="item.value"
-      :color="SaminColorDark"
-      dark
+      :color="ignore.includes(item.value) ? '#aaa' : 'success'"
       class="m-2"
+      @click="ignore.toggle(item.value)"
+      title="Make this variant active/inactive in filter"
+      :outlined="ignore.includes(item.value)"
+      :dark="!ignore.includes(item.value)"
+      label
+
     >
       <span class="me-2">
         <v-icon left small>{{ item.icon }}</v-icon>
         {{ item.text }}
+        <v-icon small right>{{
+          ignore.includes(item.value) ? "cancel" : "check_circle"
+        }}</v-icon>
       </span>
     </v-chip>
     <!-- ███████████████████████████ Spec List ███████████████████████████ -->
 
+    <s-widget-header :title="$t('add_category.edit_filter.spec_input')" icon="summarize" class="mt-5"></s-widget-header>
+      <v-subheader>
+        {{ $t("add_category.filter.message") }}
+
+      </v-subheader>
     <v-select
       v-model="list"
-      :label="$t('add_category.edit_filter.spec_input')"
       :messages="$t('add_category.edit_filter.spec_input_message')"
       chips
       clearable
@@ -40,13 +61,13 @@
       :items="spec_keys"
       :loading="busy_get_specs"
       :disabled="busy_get_specs"
-      class="my-3"
+      placeholder="Select specs to show in filter..."
     >
       <template v-slot:selection="{ item, selected }">
         <v-chip
           :input-value="selected"
           close
-          :color="SaminColorDark"
+          color="#111"
           dark
           @click:close="removeChip(list, item)"
         >
@@ -55,7 +76,7 @@
       </template>
     </v-select>
 
-    <div class="widget-buttons">
+    <div class="widget-buttons mt-5">
       <v-btn
         depressed
         color="primary"
@@ -79,12 +100,12 @@
 
     <hr />
     <div v-for="item in suggested_list_presented" :key="'_' + item.value">
-      <v-subheader>
-        <v-icon small>
+      <div class="s-filter-header">
+        <v-icon small style="color: currentColor">
           {{ item.icon }}
         </v-icon>
         <span class="mx-2">{{ item.text }}</span>
-      </v-subheader>
+      </div>
 
       <v-chip-group v-if="filters && filters[item.value]" show-arrows>
         <v-chip
@@ -111,45 +132,53 @@
       </v-chip-group>
     </div>
 
-    <v-subheader>
-      <v-icon small> fas fa-money-bill-wave-alt </v-icon>
-      <span class="mx-2">{{ $t("add_category.edit_filter.price") }}</span>
-    </v-subheader>
-    <v-chip-group>
-      <v-chip
-        v-for="price in prices"
-        :key="price.currency"
-        small
-        class="mx-2"
-        color="#fafafa"
-      >
-        <s-currency-icon
-          :currency="price.currency"
-          flag
-          caption
-        ></s-currency-icon>
-
-        <span class="mx-1"
-          ><small> {{ $t("add_category.edit_filter.min") }}: </small>
-          <b>{{ FormatNumberCurrency(price.min, price.currency) }}</b></span
+    <template v-if="!ignore?.includes('price') && !busy_get_specs">
+      <div class="s-filter-header">
+        <v-icon small style="color: currentColor">
+          fas fa-money-bill-wave-alt
+        </v-icon>
+        <span class="mx-2">{{ $t("add_category.edit_filter.price") }}</span>
+      </div>
+      <v-chip-group>
+        <v-chip
+          v-for="price in prices"
+          :key="price.currency"
+          small
+          class="mx-2"
+          color="#fafafa"
         >
-        <span class="mx-1">
-          <small>{{ $t("add_category.edit_filter.max") }}: </small>
-          <b>{{ FormatNumberCurrency(price.max, price.currency) }}</b></span
-        >
+          <s-currency-icon
+            :currency="price.currency"
+            flag
+            caption
+          ></s-currency-icon>
 
-        {{ getCurrencyName(price.currency) }}
-      </v-chip>
-    </v-chip-group>
+          <span class="mx-1"
+            ><small> {{ $t("add_category.edit_filter.min") }}: </small>
+            <b>{{ FormatNumberCurrency(price.min, price.currency) }}</b></span
+          >
+          <span class="mx-1">
+            <small>{{ $t("add_category.edit_filter.max") }}: </small>
+            <b>{{ FormatNumberCurrency(price.max, price.currency) }}</b></span
+          >
+
+          {{ getCurrencyName(price.currency) }}
+        </v-chip>
+      </v-chip-group>
+    </template>
 
     <div v-for="item in list" :key="'__' + item">
-      <v-subheader
-        >{{ item }}
+      <div class="s-filter-header">
+        <v-icon small style="color: currentColor">
+          arrow_drop_down
+        </v-icon>
+
+        {{ item }}
         <v-spacer></v-spacer>
         <v-btn icon color="red" @click="remove(list, item)" class="ms-1"
           ><v-icon>close</v-icon></v-btn
         >
-      </v-subheader>
+      </div>
 
       <v-chip-group v-if="filters && filters[item]" show-arrows>
         <v-chip
@@ -174,7 +203,7 @@ import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 export default {
   name: "CategoriesManagementFilter",
   components: { SCurrencyIcon, VariantAssetView },
-emits: ["edit-filters"],
+  emits: ["edit-filters"],
   props: {
     category: {
       required: true,
@@ -190,6 +219,8 @@ emits: ["edit-filters"],
     spec_keys: [],
 
     list: [],
+
+    ignore: [], // Ignored variants to show in filter
   }),
   computed: {
     suggested_list() {
@@ -199,37 +230,55 @@ emits: ["edit-filters"],
           text: this.$t("add_category.edit_filter.suggested_list.brand"),
           icon: "fas fa-braille",
         },
+        {
+          value: "price",
+          text: this.$t("global.commons.price"),
+          icon: "price_change",
+          force: true, // Always show
+        },
+        {
+          value: "discount",
+          text: this.$t("global.commons.discount"),
+          icon: "local_offer",
+          force: true, // Always show
+        },
+        {
+          value: "original",
+          text: this.$t("global.commons.original"),
+          icon: "verified",
+          force: true, // Always show
+        },
 
         {
           value: "colors",
-          text: this.$t("add_category.edit_filter.suggested_list.colors"),
+          text: this.$t(ProductVariants.color.name),
           icon: ProductVariants.color.icon,
         },
         {
           value: "styles",
-          text: this.$t("add_category.edit_filter.suggested_list.styles"),
+          text: this.$t(ProductVariants.style.name),
           icon: ProductVariants.style.icon,
         },
 
         {
           value: "volumes",
-          text: this.$t("add_category.edit_filter.suggested_list.volumes"),
+          text: this.$t(ProductVariants.volume.name),
           icon: ProductVariants.volume.icon,
         },
         {
           value: "weights",
-          text: this.$t("add_category.edit_filter.suggested_list.weights"),
+          text: this.$t(ProductVariants.weight.name),
           icon: ProductVariants.weight.icon,
         },
 
         {
           value: "packs",
-          text: this.$t("add_category.edit_filter.suggested_list.packs"),
+          text: this.$t(ProductVariants.pack.name),
           icon: ProductVariants.pack.icon,
         },
         {
           value: "types",
-          text: this.$t("add_category.edit_filter.suggested_list.types"),
+          text: this.$t(ProductVariants.type.name),
           icon: ProductVariants.type.icon,
         },
       ];
@@ -237,7 +286,13 @@ emits: ["edit-filters"],
     present_variants_in_filter() {
       if (!this.filters) return [];
       return this.suggested_list.filter((item) => {
-        return this.filters[item.value];
+        return (
+          item.force ||
+          this.filters[item.value] ||
+          this.ignore?.includes(
+            item.value
+          ) /*Force to show variants in the ignore list!*/
+        );
       });
     },
     prices() {
@@ -252,16 +307,19 @@ emits: ["edit-filters"],
   },
 
   watch: {
-    filters(val_filters) {
+    filters(filters) {
       let _list = [];
-      for (let prop in val_filters) {
+      for (let prop in filters) {
         if (
           !this.suggested_list.some((item) => item.value === prop) &&
-          prop !== "prices"
+          prop !== "prices" &&
+          prop !== "ignore"
         )
           _list.push(prop);
       }
       this.list = _list;
+      this.ignore = filters?.ignore;
+      if (!this.ignore || !Array.isArray(this.ignore)) this.ignore = [];
     },
   },
 
@@ -274,7 +332,9 @@ emits: ["edit-filters"],
     },
 
     getCategoryFilter() {
-      this.filters=this.category.filters;
+      this.filters = this.category.filters;
+      this.ignore = this.filters?.ignore;
+      if (!this.ignore || !Array.isArray(this.ignore)) this.ignore = [];
 
       this.busy_get_specs = true;
       axios
@@ -310,6 +370,7 @@ emits: ["edit-filters"],
           ),
           {
             list: this.list,
+            ignore: this.ignore,
           }
         )
         .then(({ data }) => {
@@ -340,4 +401,20 @@ emits: ["edit-filters"],
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s-filter-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: start;
+}
+</style>

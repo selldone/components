@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div>
+  <div :style="{minHeight:min_height && show_filter_menu && has_filter && !$vuetify.breakpoint.mdAndDown ?((min_height +256/*Apx. top bars height*/) +'px'):undefined}">
     <!-- ████████████████████ Custom Page ███████████████████ -->
     <SPageRender
       v-if="parent_folders?.page"
@@ -265,6 +265,7 @@
           :folders="folders"
           :parent-folders="parent_folders"
           @change-filter="setFilter"
+          @change-height="h=>min_height=h"
           :style="{
             borderRadius: $vuetify.breakpoint.mdAndDown ? '32px' : '32px',
           }"
@@ -536,6 +537,7 @@ export default {
     insta_size: "200px",
     spacer_w: 0,
 
+    min_height:null, // Set min heigh to prevent scrollable filters.
     //--------------------
     prevent_refetch: false,
 
@@ -727,6 +729,7 @@ export default {
 
       const _query = Object.assign(Object.assign({}, this.$route.query), {
         filter: _filter_query,
+        'no-scroll':true, // Prevent auto scroll to top page!
       }); // Create full query - keep previous!
       if (this.updateRoute) this.$router.replace({ query: _query });
       // console.log("filter", _filter_query);
@@ -1221,7 +1224,7 @@ export default {
         padding-right: var(--products-filter-width) !important;
         @media (max-width: 800px) {
           padding-right: 0 !important;
-          transform: translateX(-var(--products-filter-width));
+          transform: translateX(- var(--products-filter-width));
         }
       }
     }
