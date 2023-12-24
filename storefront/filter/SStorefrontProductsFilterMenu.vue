@@ -258,7 +258,7 @@ export default {
 
   computed: {
     theme() {
-      return this.getShop().theme;
+      return this.shop.theme;
     },
 
     light() {
@@ -275,7 +275,7 @@ export default {
 
       this.filters.prices.forEach((item) => {
         const rate = this.getExchangeRateValue(
-          this.getShop(),
+          this.shop,
           item.currency,
           this.GetUserSelectedCurrency().code,
           null
@@ -294,7 +294,7 @@ export default {
 
       this.filters.prices.forEach((item) => {
         const rate = this.getExchangeRateValue(
-          this.getShop(),
+          this.shop,
           item.currency,
           this.GetUserSelectedCurrency().code,
           null
@@ -315,8 +315,7 @@ export default {
       }
 
       // In a category:
-      if (!this.parentFolders?.filters) return null;
-      return this.parentFolders.filters;
+      return this.parentFolders?.filters;
     },
     present_variants_in_filter() {
       if (!this.filters) return [];
@@ -341,31 +340,30 @@ export default {
     },
 
     brands() {
-      if (!this.parentFolders || !this.parentFolders.filters) return null;
-      return this.parentFolders.filters.brands;
+      return this.filters?.brands;
     },
 
     category_image() {
-      if (!this.getShop()) return null;
+      if (!this.shop) return null;
       if (this.parentFolders) {
         return this.getShopImagePath(
           this.parentFolders.icon,
           this.IMAGE_SIZE_SMALL
         );
       }
-      return this.getShopIcon(this.getShop().id);
+      return this.getShopIcon(this.shop.id);
     },
 
     category_title() {
-      if (!this.getShop()) return null;
+      if (!this.shop) return null;
 
       if (this.parentFolders) {
         return this.parentFolders.title;
       }
-      return this.getShop().title;
+      return this.shop.title;
     },
     category_description() {
-      if (!this.getShop()) return null;
+      if (!this.shop) return null;
 
       if (this.parentFolders) {
         return this.parentFolders.description;
@@ -478,6 +476,7 @@ export default {
             children.push({
               id: id++,
               title: folder.title,
+              icon: folder.icon,
               name: folder.name,
               //to: {query: {dir: folder.id}}
               to: {
@@ -531,17 +530,9 @@ export default {
     only_has_discount() {
       this.onChangeFilter();
     },
-    price_range() {
-      ///////   this.onChangeFilter();
-    },
 
-    /*
-                        selected: {
-                            handler: function (val) {
-                                this.onChangeFilter();
-                            },
-                            deep: true
-                        },*/
+
+
   },
 
   created() {
@@ -598,7 +589,7 @@ export default {
         // console.log("*** item",item)
 
         const rate = this.getExchangeRateValue(
-          this.getShop(),
+          this.shop,
           this.GetUserSelectedCurrency().code,
           item.currency,
           null
@@ -618,8 +609,8 @@ export default {
     },
 
     getList(name) {
-      if (!this.parentFolders || !this.parentFolders.filters) return null;
-      let out = this.parentFolders.filters[name];
+      if (!this.filters) return null;
+      let out = this.filters[name];
 
       if (!out) return null;
       if (!Array.isArray(out)) {

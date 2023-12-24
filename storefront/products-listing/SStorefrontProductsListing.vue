@@ -337,7 +337,7 @@ import CategoryCard from "@components/backoffice/category/CategoryCard.vue";
 import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
 import SStorefrontProductsFilterMenu from "@components/storefront/filter/SStorefrontProductsFilterMenu.vue";
 import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
-import {GtagEcommerce} from "@components/plugins/gtag/GtagEcommerce";
+import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
 import ProductSpecView from "../product/spec/ProductSpecView.vue";
@@ -540,6 +540,9 @@ export default {
     prevent_refetch: false,
 
     show_categories: false,
+
+    //---------------- Key board -------------
+    key_listener_keydown: null,
   }),
 
   computed: {
@@ -629,7 +632,8 @@ export default {
     has_filter() {
       return (
         this.hasFilter &&
-        (this.parent_folders?.filters/*Current category filter*/ || (!this.parent_folders && this.shop.filters)/*Root filter*/)
+        (this.parent_folders?.filters /*Current category filter*/ ||
+          (!this.parent_folders && this.shop.filters)) /*Root filter*/
       );
     },
 
@@ -895,6 +899,40 @@ export default {
     this.$nextTick(() => {
       this.prevent_refetch = false;
     });
+  },
+
+  mounted() {
+    this.key_listener_keydown = (event) => {
+      // Back press (go back)
+      if (event.key === "Backspace") {
+        // Check if there's any input or textarea in focus
+        const activeElement = document.activeElement;
+        if (
+          !activeElement ||
+          (activeElement.tagName !== "INPUT" &&
+            activeElement.tagName !== "TEXTAREA")
+        ) {
+          const _to_category = this.parent_folders?.parent;
+          if (
+            this.busy_fetch ||
+            (!this.$route.params.category_name && !_to_category) ||
+            (_to_category &&
+              this.$route.params.category_name === _to_category?.name)
+          )
+            return;
+
+          this.$router.push({
+            name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+            params: { category_name: _to_category?.name },
+          });
+        }
+      }
+    };
+
+    document.addEventListener("keydown", this.key_listener_keydown);
+  },
+  beforeDestroy() {
+    document.removeEventListener("keydown", this.key_listener_keydown);
   },
 
   methods: {
