@@ -99,9 +99,8 @@
 
     <i v-else class="m-1 small text-muted">
       <v-icon small class="me-1">credit_card_off</v-icon>
-      {{
-      $t("global.commons.no_credit_card_info")
-    }}</i>
+      {{ $t("global.commons.no_credit_card_info") }}</i
+    >
   </div>
 </template>
 
@@ -116,7 +115,8 @@ export default {
     return {};
   },
   props: {
-    method:{}, // String , method code (optional)
+    method: {}, // String , method code (optional)
+    store: {}, // Can be appstore or google play for in app purchases!
     card: {},
     horizontal: {
       type: Boolean,
@@ -130,6 +130,12 @@ export default {
   },
   computed: {
     image() {
+      // In-app purchase:
+      if (this.store?.toLowerCase() === "appstore")
+        return require("@components/assets/trademark/apple-b.svg");
+      else if (this.store?.toLowerCase() === "googleplay")
+        return require("@components/assets/trademark/googleplay.svg");
+
       if (this.card && this.card.blockchain)
         return require("@components/assets/icons/blockchain.svg");
 
@@ -149,7 +155,6 @@ export default {
       if (!out && this.method) {
         out = SVGs[this.method.toLowerCase()];
       }
-
 
       return out ? out : Cards.card;
     },
