@@ -616,12 +616,28 @@ export default {
           // * Fill payment form:
           this.fillPaymentForm(data);
 
-          // Billing extract:// TODO: must receive a billing info from server and add this step to dropshipping and basket payment! Feed billing info to stripe!
+          // Billing extract:must receive a billing info from server and add this step to dropshipping and basket payment! Feed billing info to stripe!
+
+          /**
+           * We try to set billing info from provided 'billing' object in response.
+           * Billing info is important in some payment gateways like stripe especially for countries like India.
+           */
+          if (data.billing) {
+            this.billingName = data.billing.name;
+            this.billingEmail = data.billing.email;
+            this.billingPhone = data.billing.phone;
+            this.billingAddress = data.billing; // Pass object!
+          }
+
+          /**
+           * If billing info is not provided, we try to set billing info from user info.
+           */
           if (this.USER()) {
-            this.billingName = this.USER().name;
-            this.billingEmail = this.USER().email;
-            this.billingPhone = this.USER().phone;
-            this.billingAddress = null;
+            if (!this.billingName) this.billingName = this.USER().name;
+
+            if (!this.billingEmail) this.billingEmail = this.USER().email;
+
+            if (!this.billingPhone) this.billingPhone = this.USER().phone;
           }
 
           // Set redirect URL:
@@ -769,12 +785,28 @@ export default {
             // * Fill payment form:
             this.fillPaymentForm(data);
 
-            // Billing extract:// TODO: must receive a billing info from server and add this step to dropshipping and basket payment! Feed billing info to stripe!
+            // Billing extract:must receive a billing info from server and add this step to dropshipping and basket payment! Feed billing info to stripe!
+
+            /**
+             * We try to set billing info from provided 'billing' object in response.
+             * Billing info is important in some payment gateways like stripe especially for countries like India.
+             */
+            if (data.billing) {
+              this.billingName = data.billing.name;
+              this.billingEmail = data.billing.email;
+              this.billingPhone = data.billing.phone;
+              this.billingAddress = data.billing; // Pass object!
+            }
+
+            /**
+             * If billing info is not provided, we try to set billing info from user info.
+             */
             if (this.USER()) {
-              this.billingName = this.USER().name;
-              this.billingEmail = this.USER().email;
-              this.billingPhone = this.USER().phone;
-              this.billingAddress = null;
+              if (!this.billingName) this.billingName = this.USER().name;
+
+              if (!this.billingEmail) this.billingEmail = this.USER().email;
+
+              if (!this.billingPhone) this.billingPhone = this.USER().phone;
             }
 
             // Set redirect URL:

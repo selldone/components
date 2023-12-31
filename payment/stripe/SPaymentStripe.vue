@@ -77,13 +77,15 @@
 </template>
 
 <script>
-import { SetupService } from "@core/server/SetupService";
-
 export default {
   name: "SPaymentStripe",
   components: {},
 
   props: {
+    theme: {
+      type: Object,
+    },
+
     publicKey: {
       require: true,
       type: String,
@@ -116,7 +118,11 @@ export default {
     billingName: {},
     billingEmail: {},
     billingPhone: {},
-    billingAddress: {},
+
+    /**
+     * {'name' => $name, 'phone' => $phone, 'email' => $email, 'country' => $country, 'state' => $state, 'city' => $city, 'address' => $address, 'no' => $no, 'unit' => $unit, 'postal' => $postal, 'ip' => $ip}
+     */
+    billingAddress: {}, //Object
   },
 
   data: () => ({
@@ -130,10 +136,18 @@ export default {
   }),
 
   computed: {
-    country_code() {
-      if (this.billingAddress && this.billingAddress.country_code)
-        return this.billingAddress.country_code;
-      return SetupService.DefaultCountry();
+    address_for_stripe() {
+      if (!this.billingAddress?.address || !this.billingAddress?.country)
+        return null;
+      return {
+        line1: this.billingAddress.address,
+        line2:
+          "No " + this.billingAddress.no + " Unit " + this.billingAddress.unit,
+        city: this.billingAddress.city,
+        state: this.billingAddress.state,
+        country: this.billingAddress.country,
+        postal_code: this.billingAddress.postal,
+      };
     },
   },
 
@@ -144,42 +158,59 @@ export default {
   mounted() {
     this.stripe = Stripe(this.publicKey);
 
-    const appearance = {
-      theme: "none",
-      variables: {
-        fontFamily: ' "Gill Sans", sans-serif',
-        fontLineHeight: "1.5",
-        borderRadius: "10px",
-        colorBackground: "#F6F8FA",
-      },
-      rules: {
-        ".Input": {
-          border: "none",
-        },
-        ".Input:disabled, .Input--invalid:disabled": {
-          color: "lightgray",
-        },
-        ".Tab": {
-          padding: "10px 12px 8px 12px",
-          border: "none",
-        },
-        ".Tab:hover": {
-          border: "none",
-          boxShadow:
-            "0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 7px rgba(18, 42, 66, 0.04)",
-        },
-        ".Tab--selected, .Tab--selected:focus, .Tab--selected:hover": {
-          border: "none",
-          backgroundColor: "#fff",
-          boxShadow:
-            "0 0 0 1.5px #262626, 0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 7px rgba(18, 42, 66, 0.04)",
-          color: "#262626",
-        },
-        ".Label": {
-          fontWeight: "500",
-        },
-      },
+    const is_custom_theme = !!this.theme?.theme;
+
+    let appearance = {
+      theme: this.theme?.theme ? this.theme.theme : "none",
+      layout: this.theme?.layout ? this.theme.layout : "tabs", // Can be tabs , accordion
+      labels: this.theme?.labels ? this.theme.labels : "above", // Enables switching between labels above form fields and floating labels within the form fields; it can be either above or floating
+      variables:
+        is_custom_theme || this.theme?.variables
+          ? this.theme?.variables
+          : {
+              fontFamily: ' "Gill Sans", sans-serif',
+              fontLineHeight: "1.5",
+              borderRadius: "10px",
+              colorBackground: "#F6F8FA",
+            },
+      rules:
+        is_custom_theme || this.theme?.rules
+          ? this.theme?.rules
+          : {
+              ".Input": {
+                border: "none",
+              },
+              ".Input:disabled, .Input--invalid:disabled": {
+                color: "lightgray",
+              },
+              ".Tab": {
+                padding: "10px 12px 8px 12px",
+                border: "none",
+              },
+              ".Tab:hover": {
+                border: "none",
+                boxShadow:
+                  "0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 7px rgba(18, 42, 66, 0.04)",
+              },
+              ".Tab--selected, .Tab--selected:focus, .Tab--selected:hover": {
+                border: "none",
+                backgroundColor: "#fff",
+                boxShadow:
+                  "0 0 0 1.5px #262626, 0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 7px rgba(18, 42, 66, 0.04)",
+                color: "#262626",
+              },
+              ".Label": {
+                fontWeight: "500",
+              },
+            },
     };
+
+    // Remove null values:
+    appearance = Object.fromEntries(
+      Object.entries(appearance).filter(
+        ([key, value]) => value !== null && value !== undefined
+      )
+    );
 
     const shop = this.getShop();
 
@@ -198,6 +229,8 @@ export default {
     if (this.billingName) _billingDetails.name = this.billingName;
     if (this.billingEmail) _billingDetails.email = this.billingEmail;
     if (this.billingPhone) _billingDetails.phone = this.billingPhone;
+    if (this.address_for_stripe)
+      _billingDetails.address = this.address_for_stripe;
 
     let _defaultValues = {};
     if (Object.values(_billingDetails).length > 0) {
@@ -250,6 +283,7 @@ export default {
           //Stripe can send an email receipt to your customer using your brand logo and color theme, which are configurable in the Dashboard.
         })
         .then(({ error }) => {
+
           this.busy_pay = false;
 
           if (error) {

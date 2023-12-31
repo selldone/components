@@ -624,6 +624,8 @@
         :billingEmail="billingEmail"
         :billingPhone="billingPhone"
         :billingAddress="billingAddress"
+
+        :theme="availableGateways.find(g=>g.code===`stripe_${currency.code.toLowerCase()}`)?.theme"
       ></s-payment-stripe>
     </v-card-text>
 
@@ -809,6 +811,8 @@ export default {
     billingEmail: {},
     billingPhone: {},
     billingAddress: {},
+
+
   },
 
   data: () => ({
