@@ -40,20 +40,19 @@
         ></s-country-select>
         <v-autocomplete
           v-model="selected_postal"
-          placeholder="Select ZIP/PIN Code..."
+          :placeholder="$t('buy_button.zip_pin_placeholder')"
           :items="locations[selected_country]"
           :disabled="!locations[selected_country]"
           solo
           hide-details
           flat
           background-color="transparent"
-          class="min-width-150"
           :dense="$vuetify.breakpoint.xsOnly"
-          no-data-text="Not available in this location!"
+          :no-data-text="$t('buy_button.zip_pin_not_available_msg')"
           @change="setMyLocation"
         >
           <template v-slot:prepend-inner>
-            <span class="small me-2 single-line">ZIP / PIN </span>
+            <span class="small me-2 single-line" style="line-height: normal;">{{$t('buy_button.zip_pin_input')}} </span>
           </template>
           <template v-slot:append>
             <v-icon

@@ -70,7 +70,7 @@
 <script>
 export default {
   name: "SCountrySelect",
-
+emits: ["change", "input"],
   props: {
     value: {},
     label: {},

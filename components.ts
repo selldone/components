@@ -95,6 +95,9 @@ Vue.mixin(CoreMixin);
 import CopyDirective from "./directives/CopyDirective";
 Vue.directive("copy", CopyDirective);
 
+import TrackDirective from "@components/directives/TrackDirective";
+Vue.directive("track", TrackDirective);
+
 import DynamicScriptDirective from "./directives/DynamicScriptDirective";
 Vue.directive("dynamic-scripts", DynamicScriptDirective);
 
