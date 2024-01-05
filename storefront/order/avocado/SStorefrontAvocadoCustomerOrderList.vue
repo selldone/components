@@ -32,7 +32,7 @@
     >
       <div class="d-flex align-items-center">
         <img
-          src="@core/enums/product/assets/product-types/basket-avocado.svg"
+          src="@core/assets/order-types/basket-avocado.svg"
           width="48"
           height="48"
           class="ms-1 me-2 flex-grow-0 my-3"
