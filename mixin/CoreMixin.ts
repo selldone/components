@@ -20,10 +20,7 @@ import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
 import { DateConverter } from "@core/helper/date/DateConverter";
 import { Currency } from "@core/enums/payment/Currency";
 import type { ICurrency } from "@core/enums/payment/Currency";
-import {
-  type ILanguage,
-  Language,
-} from "@core/enums/language/Language";
+import { type ILanguage, Language } from "@core/enums/language/Language";
 import { ShopLicense } from "@core/enums/shop/ShopLicense";
 import { Scopes } from "@core/enums/permission/Scopes";
 
@@ -688,13 +685,13 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
     },
     getBasketTypeImage(type: string) {
       if (type === "POS")
-        return require("@core/enums/product/assets/product-types/basket-pos.svg");
+        return require("@core/assets/order-types/basket-pos.svg");
       else if (type === "FUL")
-        return require("@core/enums/product/assets/product-types/basket-drop-shipping.svg");
+        return require("@core/assets/order-types/basket-drop-shipping.svg");
       else if (type === "AVO")
-        return require("@core/enums/product/assets/product-types/basket-avocado.svg");
+        return require("@core/assets/order-types/basket-avocado.svg");
       else if (type === "HYP")
-        return require("@core/enums/product/assets/product-types/basket-hyper.svg");
+        return require("@core/assets/order-types/basket-hyper.svg");
 
       return ProductType[type] ? ProductType[type].basket : "";
     },
@@ -1257,23 +1254,38 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
     },
 
     //―――――――――――――――――――――― Logistic > Basket Helpers ――――――――――――――――――――
-    getBasketOrderCode(basket: IOrder) {
-      if (basket.type === "AVO") {
-        return `AVO-${basket.id}`;
-      } else if (basket.type === "FUL") {
-        return `DS-${basket.id}`;
-      } else if (basket.type === "POS") {
-        return `POS-${basket.id}`;
-      } else if (basket.type === "HYP") {
-        return `HYP-${basket.id}`;
-      } else if (basket.type === "BILL") {
-        return `BILL-${basket.id}`;
+    getBasketOrderCode(order: IOrder) {
+
+      if(order.label){
+        return order.label //🍁 Custom order label
       }
 
-      const productType = ProductType[basket.type];
-      if (!productType) return basket.id;
-      return productType.basket_code + "-" + basket.id;
+      if (order.type === "AVO") {
+        return `AVO-${order.id}`;
+      } else if (order.type === "FUL") {
+        return `DS-${order.id}`;
+      } else if (order.type === "POS") {
+        return `POS-${order.id}`;
+      } else if (order.type === "HYP") {
+        return `HYP-${order.id}`;
+      } else if (order.type === "BILL") {
+        return `BILL-${order.id}`;
+      }
+
+      const productType = ProductType[order.type];
+      if (!productType) return order.id;
+
+      if (order.vendor_id) {
+        return productType.basket_code + "-" + order.basket_id;
+      }
+
+      return productType.basket_code + "-" + order.id;
     },
+
+    getVendorOrderCode(order: IOrder) {
+      return `VND-${order.id}`;
+    },
+
     getBasketOrderImage(basket: Basket) {
       const productType = ProductType[basket.type];
       if (!productType) return null;

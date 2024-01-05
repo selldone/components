@@ -1191,7 +1191,7 @@ export default {
 
 .s--storefront-products-listing {
   .s--storefront-products-filter-menu {
-    z-index: 100;
+    z-index: 5; //More than 6 overlap with other drawers!
     border-radius: 8px;
   }
 

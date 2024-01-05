@@ -39,7 +39,7 @@
 
           <div class="border-between d-flex text-center my-1">
             <b class="w-50 english-field avocado-code highlight-yellow"
-              >HYP-{{ item.id }}</b
+              >{{ getBasketOrderCode(item) }}</b
             >
 
             <small class="w-50" :title="getLocalTimeString(item.created_at)">{{
