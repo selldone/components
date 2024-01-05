@@ -23,11 +23,11 @@
       :key="item.id"
       class="subtitle-2 px-1 row-hover pointer-pointer black--text d-flex flex-column justify-content-center"
       :to="{ name: 'HyperOrderPage', params: { basket_id: item.id } }"
-      style="min-height: 120px;padding-top: 32px;padding-bottom: 32px"
+      style="min-height: 120px; padding-top: 32px; padding-bottom: 32px"
     >
       <div class="d-flex align-items-center">
         <img
-          src="@core/enums/product/assets/product-types/basket-hyper.svg"
+          src="@core/assets/order-types/basket-hyper.svg"
           width="48"
           height="48"
           class="ms-1 me-2 flex-grow-0 my-3"
@@ -38,9 +38,9 @@
           <span class="small d-block text-ellipsis">{{ item.message }}</span>
 
           <div class="border-between d-flex text-center my-1">
-            <b class="w-50 english-field avocado-code highlight-yellow"
-              >{{ getBasketOrderCode(item) }}</b
-            >
+            <b class="w-50 english-field avocado-code highlight-yellow">{{
+              getBasketOrderCode(item)
+            }}</b>
 
             <small class="w-50" :title="getLocalTimeString(item.created_at)">{{
               getFromNowString(item.created_at)
