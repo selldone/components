@@ -13,7 +13,17 @@
   -->
 
 <template>
-  <div :style="{minHeight:min_height && show_filter_menu && has_filter && !$vuetify.breakpoint.mdAndDown ?((min_height +256/*Apx. top bars height*/) +'px'):undefined}">
+  <div
+    :style="{
+      minHeight:
+        min_height &&
+        show_filter_menu &&
+        has_filter &&
+        !$vuetify.breakpoint.mdAndDown
+          ? min_height + 256 /*Apx. top bars height*/ + 'px'
+          : undefined,
+    }"
+  >
     <!-- ████████████████████ Custom Page ███████████████████ -->
     <SPageRender
       v-if="parent_folders?.page"
@@ -176,7 +186,10 @@
             <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
 
             <category-card
-              v-for="category in folders"
+              v-for="category in folders.slice(
+                (folder_page - 1) * max_folders_per_page,
+                folder_page * max_folders_per_page
+              )"
               :key="'f' + category.id"
               class="flex m-0"
               :class="[class_items_categories]"
@@ -202,6 +215,19 @@
               key="breaker"
               class="w-100 mt-16"
             ></v-spacer>
+
+            <v-col
+              v-if="folder_pages_count > 1"
+              key="pagination-categoreis"
+              cols="12"
+            >
+              <v-pagination
+                v-model="folder_page"
+                :length="folder_pages_count"
+                circle
+              ></v-pagination>
+            </v-col>
+
             <!-- ⬬⬬⬬⬬ Products ⬬⬬⬬⬬ -->
 
             <s-shop-product-card
@@ -265,7 +291,7 @@
           :folders="folders"
           :parent-folders="parent_folders"
           @change-filter="setFilter"
-          @change-height="h=>min_height=h"
+          @change-height="(h) => (min_height = h)"
           :style="{
             borderRadius: $vuetify.breakpoint.mdAndDown ? '32px' : '32px',
           }"
@@ -537,7 +563,7 @@ export default {
     insta_size: "200px",
     spacer_w: 0,
 
-    min_height:null, // Set min heigh to prevent scrollable filters.
+    min_height: null, // Set min heigh to prevent scrollable filters.
     //--------------------
     prevent_refetch: false,
 
@@ -545,6 +571,9 @@ export default {
 
     //---------------- Key board -------------
     key_listener_keydown: null,
+
+    // Pagination:
+    folder_page: 1,
   }),
 
   computed: {
@@ -681,6 +710,30 @@ export default {
       }
       return "pc";
     },
+
+    /**
+     * Limit showing categories
+     * @return {*}
+     */
+    max_folders_per_page() {
+      let limit = 20;
+
+      if (this.mode_view.code === ModeView.NORMAL.code) limit = 4 * 5;
+      else if (this.mode_view.code === ModeView.GRID.code) limit = 4 * 6;
+      else if (this.mode_view.code === ModeView.LIST.code) limit = 5 * 4;
+      else if (this.mode_view.code === ModeView.INSTA.code) limit = 4 * 6;
+
+      const multiple=this.$vuetify.breakpoint.lgAndUp?2:1 // Show more on PC
+
+      return multiple*limit;
+    },
+
+    folder_pages_count() {
+      return (
+        this.folders &&
+        Math.ceil(this.folders.length / this.max_folders_per_page)
+      );
+    },
   },
   watch: {
     $route(to, from) {
@@ -729,7 +782,7 @@ export default {
 
       const _query = Object.assign(Object.assign({}, this.$route.query), {
         filter: _filter_query,
-        'no-scroll':true, // Prevent auto scroll to top page!
+        "no-scroll": true, // Prevent auto scroll to top page!
       }); // Create full query - keep previous!
       if (this.updateRoute) this.$router.replace({ query: _query });
       // console.log("filter", _filter_query);
@@ -1108,6 +1161,8 @@ export default {
         } else {
           this.products = products;
           this.folders = folders;
+          this.folder_page = 1; // Reset to first page!
+
           if (with_parent) {
             this.parent_folders = parent;
             if (parent) {
@@ -1224,7 +1279,7 @@ export default {
         padding-right: var(--products-filter-width) !important;
         @media (max-width: 800px) {
           padding-right: 0 !important;
-          transform: translateX(- var(--products-filter-width));
+          transform: translateX(-var(--products-filter-width));
         }
       }
     }

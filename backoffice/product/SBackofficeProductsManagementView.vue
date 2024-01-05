@@ -406,7 +406,10 @@
       <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Folders ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
       <v-col
-        v-for="category in folders"
+        v-for="category in folders.slice(
+          (folder_page - 1) * max_folders_per_page,
+          folder_page * max_folders_per_page
+        )"
         :key="'f' + category.id"
         :cols="mini ? 4 : 12"
         :sm="mini ? 3 : 6"
@@ -508,10 +511,25 @@
         ></team-note-button>
       </v-col>
 
+      <v-col
+        v-if="folder_pages_count > 1"
+        key="pagination-categoreis"
+        cols="12"
+      >
+        <v-pagination
+          v-model="folder_page"
+          :length="folder_pages_count"
+          circle
+        ></v-pagination>
+      </v-col>
+
       <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Products ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
       <v-col
-        v-for="product in products"
+        v-for="product in products.slice(
+          (product_page - 1) * max_products_per_page,
+          product_page * max_products_per_page
+        )"
         :key="product.id"
         :cols="mini ? 4 : 12"
         :sm="mini ? 3 : 6"
@@ -671,6 +689,14 @@
 
       <div v-if="mini" key="spx" style="flex-grow: 12" class="pen"></div>
 
+      <v-col v-if="product_pages_count > 1" key="pagination-products" cols="12">
+        <v-pagination
+          v-model="product_page"
+          :length="product_pages_count"
+          circle
+        ></v-pagination>
+      </v-col>
+
       <!-- ⬬⬬⬬ Add Mode ⬬⬬⬬ -->
       <template
         v-if="
@@ -683,6 +709,8 @@
         <!-- ⬬⬬⬬ Force new line in mini mode ⬬⬬⬬ -->
 
         <v-col key="spacer" v-if="mini" cols="12"></v-col>
+
+
 
         <!-- ⬬⬬⬬ Add button ⬬⬬⬬ -->
 
@@ -732,7 +760,11 @@
         <slot name="append-products"></slot>
 
         <v-col
-          v-if="!IS_VENDOR_PANEL && (shop.filters || products?.length > 1) && !parent_folders/*Show just in the root*/"
+          v-if="
+            !IS_VENDOR_PANEL &&
+            (shop.filters || products?.length > 1) &&
+            !parent_folders /*Show just in the root*/
+          "
           key="root-filters"
           cols="12"
           sm="6"
@@ -745,15 +777,21 @@
             class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
           >
             <div>
-              <s-dense-images-circles :images="products?.map(p=>getShopImagePath(p.icon,IMAGE_SIZE_SMALL))" :limit="5" class="justify-center"></s-dense-images-circles>
+              <s-dense-images-circles
+                :images="
+                  products?.map((p) =>
+                    getShopImagePath(p.icon, IMAGE_SIZE_SMALL)
+                  )
+                "
+                :limit="5"
+                class="justify-center"
+              ></s-dense-images-circles>
 
-              <h3   v-if="shop.filters">
-                <v-icon    class="me-1 zoomIn" color="green">check_circle</v-icon>
+              <h3 v-if="shop.filters">
+                <v-icon class="me-1 zoomIn" color="green">check_circle</v-icon>
                 You set filters for root category.
               </h3>
-              <h3 v-else>
-                You have products in root but no filter.
-              </h3>
+              <h3 v-else>You have products in root but no filter.</h3>
 
               <small class="d-block">You can set filters.</small>
 
@@ -784,18 +822,27 @@
     </v-fade-transition>
 
     <s-loading css-mode light v-if="busy_load_more"></s-loading>
+    <div  v-if="has_more" class="widget-buttons">
+      <v-btn
 
-    <v-btn
-      v-if="has_more"
-      @click="fetchData(true)"
-      v-intersect="onIntersect"
-      :loading="busy_fetch"
-      color="blue"
-      text
-      x-large
-      class="m-3"
-      >{{ remains_count }} {{ $t("global.actions.more") }}
-    </v-btn>
+          @click="fetchData(true)"
+          v-intersect="onIntersect"
+          :loading="busy_fetch"
+          color="blue"
+          text
+          x-large
+          class="m-3"
+      >
+        <v-icon class="me-1">autorenew</v-icon>
+        <div>
+          <b>{{ remains_count }} {{ $t("global.actions.more") }}</b>
+          <div class="small mt-1">
+            More products are available in this category; click to load additional items.
+          </div>
+        </div>
+
+      </v-btn>
+    </div>
 
     <!-- ███████████████████████ Context Menu ███████████████████████ -->
     <v-menu
@@ -1624,7 +1671,8 @@
       v-if="!IS_VENDOR_PANEL"
       v-model="dialog_root_filter"
       fullscreen
-      transition="dialog-bottom-transition" scrollable
+      transition="dialog-bottom-transition"
+      scrollable
     >
       <v-card>
         <v-card-title>
@@ -1635,20 +1683,18 @@
           {{ shop.title }}
         </v-card-title>
         <v-card-text>
-
-
-            <categories-management-filter
-              :category="{
-                id: 'root',
-                shop_id: shop.id,
-                filters: shop.filters,
-              }"
-              @edit-filters="
-                (_filters) => {
-                  shop.filters = _filters;
-                }
-              "
-            />
+          <categories-management-filter
+            :category="{
+              id: 'root',
+              shop_id: shop.id,
+              filters: shop.filters,
+            }"
+            @edit-filters="
+              (_filters) => {
+                shop.filters = _filters;
+              }
+            "
+          />
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -1854,6 +1900,13 @@ export default {
 
     show_spirit_container: false,
 
+    // Pagination:
+    folder_page: 1,
+    product_page: 1,
+
+    max_folders_per_page: 48,
+    max_products_per_page: 100,
+
     //-----------------------------------------
     showProductMenu: false,
     currentProductForMenu: null,
@@ -2053,6 +2106,19 @@ export default {
           ? [ProductStatus.Pending, ProductStatus.Rejected]
           : []),
       ];
+    },
+
+    folder_pages_count() {
+      return (
+        this.folders &&
+        Math.ceil(this.folders.length / this.max_folders_per_page)
+      );
+    },
+    product_pages_count() {
+      return (
+        this.products &&
+        Math.ceil(this.products.length / this.max_products_per_page)
+      );
     },
   },
   watch: {
@@ -2492,6 +2558,10 @@ export default {
           this.tax_profile = tax_profile;
           this.valuation_filter = valuation;
           this.time_filter = time_filter;
+
+          // Reset to firts page:
+          this.folder_page = 1;
+          this.product_page = 1;
 
           this.$emit("change:folders", this.folders);
           this.$emit("change:parent-folder", this.parent_folders);
