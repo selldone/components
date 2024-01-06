@@ -15,7 +15,9 @@
 <template>
   <div v-if="cross_sells?.length" class="s--shop-product-cross-sell-list">
     <v-container fluid>
-      <v-subheader> ● Order {{ product.title }} with </v-subheader>
+      <v-subheader>
+        ● {{ $t("cross_selling.title", { product: product.title }) }}
+      </v-subheader>
 
       <s-fade-scroll v-model="index">
         <div class="-cards-wrap">
@@ -61,7 +63,9 @@
                     name: window.$storefront.routes.PRODUCT_PAGE,
                     params: { product_id: cross_sell.target?.id },
                   }"
-                  :title="`${$t('global.actions.view_now')} ● ${cross_sell.target.title}`"
+                  :title="`${$t('global.actions.view_now')} ● ${
+                    cross_sell.target.title
+                  }`"
                 >
                   {{ cross_sell.target.title }}
                 </router-link>
@@ -113,7 +117,7 @@
                       CrossSellActionType.ViewProduct.code ||
                     cross_sell.target.type === ProductType.SUBSCRIPTION.code
                   "
-                  :href="getProductLink(shop,cross_sell.target_id)"
+                  :href="getProductLink(shop, cross_sell.target_id)"
                   target="_blank"
                   depressed
                   rounded
@@ -155,7 +159,7 @@ import ProductVariantsView from "@components/product/variant/ProductVariantsView
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import { BasketHelper } from "@core/helper/shop/BasketHelper";
 import CrossSellActionType from "@core/enums/product/CrossSellActionType";
-import {ShopOptionsHelper} from "@core/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "SShopProductCrossSellList",
@@ -188,20 +192,30 @@ export default {
     },
   },
 
-  created() {
-    this.cross_sells?.forEach((c) => {
-      const product = c.target;
-      // Autos elect a variant:
-      if (product.product_variants?.length && !c.selected_variant) {
-        c.selected_variant = product.product_variants[0];
-        // console.log('Auto select variant',c.selected_variant)
-      }
+  watch: {
+    product() {
+      this.autoSelectInitialVariants();
+    },
+  },
 
-      // Check in basket:
-      this.checkInBasket(c);
-    });
+  created() {
+    this.autoSelectInitialVariants();
   },
   methods: {
+    autoSelectInitialVariants() {
+      this.cross_sells?.forEach((c) => {
+        const product = c.target;
+        // Autos elect a variant:
+        if (product.product_variants?.length && !c.selected_variant) {
+          c.selected_variant = product.product_variants[0];
+          // console.log('Auto select variant',c.selected_variant)
+        }
+
+        // Check in basket:
+        this.checkInBasket(c);
+      });
+    },
+
     /**
      * Check item is in basket or not.
      * @param cross_sell
@@ -220,8 +234,8 @@ export default {
      */
     addToCardCrossSelling(cross_sell) {
       if (
-          !this.USER() &&
-          !ShopOptionsHelper.HasGuestCheckout(this.shop) /*🥶 Guest*/
+        !this.USER() &&
+        !ShopOptionsHelper.HasGuestCheckout(this.shop) /*🥶 Guest*/
       ) {
         this.NeedLogin();
         return;
@@ -299,9 +313,9 @@ export default {
       min-height: 100%;
       flex-direction: column;
       flex-grow: 1;
-      a{
+      a {
         color: currentColor;
-        &:hover{
+        &:hover {
           color: var(--theme-info);
         }
       }

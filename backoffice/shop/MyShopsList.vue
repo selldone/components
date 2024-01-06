@@ -42,7 +42,7 @@
         <v-card
           width="96"
           height="96"
-          class="d-flex align-center justify-center rounded-2rem widget-hover"
+          class="d-flex align-center justify-center rounded-2rem widget-hover position-relative"
           outlined
         >
           <img
@@ -56,6 +56,11 @@
             class="rounded-18px"
             @click="selected_shop = shop.id"
           />
+          <v-avatar class="absolute-bottom-end"  size="30" color="#fff">
+            <v-avatar color="#FFF" size="24">
+              <v-img :src="getShopLicenseIcon(shop.license)"></v-img>
+            </v-avatar>
+          </v-avatar>
         </v-card>
 
         <v-progress-circular
