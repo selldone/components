@@ -24,7 +24,7 @@
     >
       <div
         v-for="(image, index) in images"
-        :key="image.path"
+        :key="image.id"
         class="item-grid white"
         :style="style_value"
         ref="items"
@@ -59,8 +59,8 @@
                   image.size > 1024 * 1024
                     ? 'red'
                     : image.size > 512 * 1024
-                    ? 'amber'
-                    : 'green'
+                      ? 'amber'
+                      : 'green'
                 "
                 :value="(100 * image.size) / (1024 * 1024)"
                 height="2"
@@ -71,36 +71,39 @@
             </div>
           </div>
 
-          <div  class="absolute-bottom-end d-flex flex-column">
+          <div class="absolute-bottom-end d-flex flex-column">
             <v-btn
-                v-if="hasAiBackgroundRemove"
-                title="AI Remove Background"
-                color="rgba(10,20,60)"
-                depressed
-                dark
-                small
-                @click.stop="$emit('click:bg-remove', image)" class="mb-1"
+              v-if="hasAiBackgroundRemove"
+              title="AI Remove Background"
+              color="rgba(10,20,60)"
+              depressed
+              dark
+              small
+              @click.stop="$emit('click:bg-remove', image)"
+              class="mb-1"
             >
-              <v-icon  class="me-1" x-small>{{image.path?.endsWith('--transparent.png')?'check_circle':'auto_fix_high'}}</v-icon>
-
+              <v-icon class="me-1" x-small>{{
+                image.path?.endsWith("--transparent.png")
+                  ? "check_circle"
+                  : "auto_fix_high"
+              }}</v-icon>
 
               BGR
-            </v-btn
-            >
+            </v-btn>
 
             <v-btn
-                v-if="hasAlt"
-                title="Set Alt Text"
-                color="rgba(10,20,60)"
-                depressed
-                dark
-                small
-                @click.stop="$emit('click:alt', image)"
-            ><v-icon v-if="image.alt" class="me-1" x-small>check_circle</v-icon
-            >ALT</v-btn
+              v-if="hasAlt"
+              title="Set Alt Text"
+              color="rgba(10,20,60)"
+              depressed
+              dark
+              small
+              @click.stop="$emit('click:alt', image)"
+              ><v-icon v-if="image.alt" class="me-1" x-small
+                >check_circle</v-icon
+              >ALT</v-btn
             >
           </div>
-
         </v-img>
 
         <v-btn
@@ -142,7 +145,13 @@ import SGridDraggableView from "@components/ui/grid/draggable-view/SGridDraggabl
 export default {
   name: "SGalleryUploadGrid",
   components: { SGridDraggableView, SImageUploader },
-  emits: ["update:images", "add:image", "delete:image", "click:alt", "click:bg-remove"],
+  emits: [
+    "update:images",
+    "add:image",
+    "delete:image",
+    "click:alt",
+    "click:bg-remove",
+  ],
   props: {
     uploadPath: {
       required: true,
@@ -282,7 +291,7 @@ export default {
             this.$emit("delete:image", data.id);
 
             this.$refs.grid_container.remove(
-              this.$refs.grid_container.getItems(index)
+              this.$refs.grid_container.getItems(index),
             );
 
             /* this.$nextTick( () =>{
@@ -291,7 +300,7 @@ export default {
 
             this.showSuccessAlert(
               "Delete image",
-              "Image removed successfully."
+              "Image removed successfully.",
             );
           }
         })
