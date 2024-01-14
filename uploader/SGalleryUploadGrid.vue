@@ -71,18 +71,36 @@
             </div>
           </div>
 
-          <v-btn
-            v-if="hasAlt"
-            title="Set Alt text"
-            color="rgba(10,20,60)"
-            depressed
-            dark
-            class="absolute-bottom-end"
-            small
-            @click.stop="$emit('click:alt', image)"
+          <div  class="absolute-bottom-end d-flex flex-column">
+            <v-btn
+                v-if="hasAiBackgroundRemove"
+                title="AI Remove Background"
+                color="rgba(10,20,60)"
+                depressed
+                dark
+                small
+                @click.stop="$emit('click:bg-remove', image)" class="mb-1"
+            >
+              <v-icon  class="me-1" x-small>{{image.path?.endsWith('--transparent.png')?'check_circle':'auto_fix_high'}}</v-icon>
+
+
+              BGR
+            </v-btn
+            >
+
+            <v-btn
+                v-if="hasAlt"
+                title="Set Alt Text"
+                color="rgba(10,20,60)"
+                depressed
+                dark
+                small
+                @click.stop="$emit('click:alt', image)"
             ><v-icon v-if="image.alt" class="me-1" x-small>check_circle</v-icon
             >ALT</v-btn
-          >
+            >
+          </div>
+
         </v-img>
 
         <v-btn
@@ -124,6 +142,7 @@ import SGridDraggableView from "@components/ui/grid/draggable-view/SGridDraggabl
 export default {
   name: "SGalleryUploadGrid",
   components: { SGridDraggableView, SImageUploader },
+  emits: ["update:images", "add:image", "delete:image", "click:alt", "click:bg-remove"],
   props: {
     uploadPath: {
       required: true,
@@ -148,6 +167,10 @@ export default {
     },
     maxFileSize: {
       default: "2MB",
+    },
+    hasAiBackgroundRemove: {
+      type: Boolean,
+      default: false,
     },
   },
 
