@@ -62,6 +62,9 @@
             product.title + (product.title_en ? ` | ${product.title_en}` : '')
           "
         >
+          <slot name="dynamic-background-layout" >
+
+          </slot>
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
               <v-progress-circular
@@ -912,6 +915,11 @@ export default {
       height: var(--image-center-height-contain);
       top: var(--header-size);
     }
+    ::v-deep .v-image__image{ // Force to show image on top of the dynamic background layout
+      z-index: 1;
+    }
+
+
   }
 
   .card {
