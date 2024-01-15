@@ -71,7 +71,7 @@
             </div>
           </div>
 
-          <div class="absolute-bottom-end d-flex flex-column">
+          <div class="absolute-bottom-end d-flex flex-column no-drag">
             <v-btn
               v-if="hasAiBackgroundRemove"
               title="AI Remove Background"
@@ -113,7 +113,7 @@
           fab
           small
           dark
-          class="m-2 absolute-top-end"
+          class="m-2 absolute-top-end no-drag" title="Remove image"
           @click="deleteAppImage(image, index)"
           :loading="busy_delete === index"
         >

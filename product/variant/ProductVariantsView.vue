@@ -23,12 +23,10 @@
     ]"
     @click="$emit('select')"
   >
-    <v-flex
+    <div
       v-if="colors.length"
-      align-center
-      justify-center
-      class="p-1"
-      :class="{ dense: dense }"
+      class="p-1 d-flex align-center  flex-wrap"
+      :class="{ dense: dense  ,'-ultra-dense':isUltraDense(colors)  }"
     >
       <v-icon :color="icon_color" class="me-1" small> palette </v-icon>
 
@@ -47,14 +45,12 @@
         "
       >
       </s-color-circle>
-    </v-flex>
+    </div>
 
-    <v-flex
+    <div
       v-if="volumes.length"
-      align-center
-      justify-center
-      class="p-1"
-      :class="{ dense: dense }"
+      class="p-1 d-flex align-center  flex-wrap"
+      :class="{ dense: dense ,'-ultra-dense':isUltraDense(volumes) }"
     >
       <v-icon :color="icon_color" class="me-1" small> equalizer </v-icon>
 
@@ -73,14 +69,12 @@
         ></variant-asset-view>
         {{ volume?.removeVariantAsset() }}
       </span>
-    </v-flex>
+    </div>
 
-    <v-flex
+    <div
       v-if="packs.length"
-      align-center
-      justify-center
-      class="p-1"
-      :class="{ dense: dense }"
+      class="p-1 d-flex align-center  flex-wrap"
+      :class="{ dense: dense ,'-ultra-dense':isUltraDense(packs) }"
     >
       <v-icon :color="icon_color" class="me-1" small> all_inbox </v-icon>
 
@@ -99,14 +93,12 @@
         ></variant-asset-view>
         {{ pack?.removeVariantAsset() }}<span class="text-muted">x</span>
       </span>
-    </v-flex>
+    </div>
 
-    <v-flex
+    <div
       v-if="weights.length"
-      align-center
-      justify-center
-      class="p-1"
-      :class="{ dense: dense }"
+      class="p-1 d-flex align-center  flex-wrap"
+      :class="{ dense: dense  ,'-ultra-dense':isUltraDense(weights)}"
     >
       <v-icon :color="icon_color" class="me-1" small>
         fas fa-weight-hanging
@@ -127,14 +119,12 @@
         ></variant-asset-view>
         {{ weight?.removeVariantAsset() }}
       </span>
-    </v-flex>
+    </div>
 
-    <v-flex
+    <div
       v-if="types.length"
-      align-center
-      justify-center
-      class="p-1"
-      :class="{ dense: dense }"
+      class="p-1 d-flex align-center  flex-wrap"
+      :class="{ dense: dense   ,'-ultra-dense':isUltraDense(types)}"
     >
       <v-icon :color="icon_color" class="me-1" small> fas fa-toolbox </v-icon>
       <span
@@ -152,15 +142,12 @@
         ></variant-asset-view>
         {{ type?.removeVariantAsset() }}
       </span>
-    </v-flex>
+    </div>
 
-    <v-flex
+    <div
       v-if="styles.length"
-      xs12
-      align-center
-      justify-center
-      class="p-1"
-      :class="{ dense: dense }"
+      class="p-1 d-flex align-center  flex-wrap"
+      :class="{ dense: dense  ,'-ultra-dense':isUltraDense(styles) }"
     >
       <v-icon :color="icon_color" class="me-1" small> style </v-icon>
 
@@ -179,14 +166,11 @@
         ></variant-asset-view>
         {{ style?.removeVariantAsset() }}
       </span>
-    </v-flex>
+    </div>
 
-    <v-flex
+    <div
       v-if="!small && variants && variants.some((v) => v.price && v.currency)"
-      xs12
-      align-center
-      justify-center
-      class="p-1 m-0"
+      class="p-1 d-flex align-center  flex-wrap"
       :class="{ dense: dense }"
     >
       <p class="m-0">
@@ -205,15 +189,12 @@
           ></span
         >
       </p>
-    </v-flex>
+    </div>
 
-    <v-flex
+    <div
       v-if="!small && quantitys && variants.some((v) => v.quantity || v === 0)"
-      xs6
-      md4
-      align-center
-      justify-center
-      class="p-1 m-0"
+
+      class="p-1 d-flex align-center  flex-wrap"
       :class="{ dense: dense }"
     >
       <p class="m-0">
@@ -227,7 +208,7 @@
           {{ quantity | numeralFormat("0,0") }}
         </span>
       </p>
-    </v-flex>
+    </div>
   </v-row>
 </template>
 
@@ -353,6 +334,10 @@ export default {
         this.$forceUpdate();
       });
     },
+
+    isUltraDense(items){
+      return items?.join(' ').length >50
+    }
   },
 };
 </script>
@@ -426,5 +411,9 @@ export default {
 .dense {
   max-width: max-content !important;
   margin: 2px 6px;
+}
+.-ultra-dense{
+  font-size: 0.5rem;
+
 }
 </style>

@@ -230,7 +230,7 @@
         small
         dense
         :variants="product.variants"
-        center
+
         dark
         class="tsec"
       ></product-variants-view>

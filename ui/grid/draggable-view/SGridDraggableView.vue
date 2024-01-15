@@ -45,6 +45,27 @@ export default {
             fillGaps: true,
             rounding: false,
           },
+
+          dragStartPredicate: function (item, event) {
+            let element = event.target;
+            let foundNoDrag = false;
+
+            while (
+              element &&
+              element !== document &&
+              !element.classList.contains("item-grid")
+            ) {
+              if (element.matches(".no-drag")) {
+                foundNoDrag = true;
+                break;
+              }
+              element = element.parentElement;
+            }
+            console.log("isNoDrag", foundNoDrag, event.target);
+
+            // If a .no-drag-initiator was found and we didn't reach an .item-grid element, prevent dragging
+            return !foundNoDrag;
+          },
         };
       },
     },

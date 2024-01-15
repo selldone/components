@@ -13,12 +13,12 @@
   -->
 
 <template>
-  <v-flex class="product-variant-card-micro" style="position: relative">
+  <div class="product-variant-card-micro" style="position: relative">
     <s-color-circle
       v-if="color"
       :color="color"
-      class="mr-1"
-      :size="14"
+      class="me-1"
+      :size="20"
     >
     </s-color-circle>
 
@@ -66,7 +66,7 @@
       ></variant-asset-view>
       {{ type?.removeVariantAsset() }}
     </span>
-  </v-flex>
+  </div>
 </template>
 
 <script>
@@ -124,6 +124,8 @@ export default {
 
 <style scoped lang="scss">
 .product-variant-card-micro {
+  display: flex;
+  align-items: center;
   padding: 3px;
   border-radius: 4px;
   font-weight: 500;

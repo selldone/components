@@ -25,7 +25,7 @@
     >
       <v-avatar
         size="36"
-        class="me-2 ai-btn-large"
+        class="me-2 ai-btn-large position-relative"
         color="#512DA8"
         :class="{ '-loading': loading }"
       >
@@ -35,6 +35,13 @@
           :height="32"
           class="z1"
         />
+        <v-progress-circular
+          v-if="loading"
+          indeterminate
+          :size="28"
+          color="#FFF"
+          class="center-absolute"
+        ></v-progress-circular>
       </v-avatar>
 
       <div class="pe-2 me-2 border-end display-1">AI</div>

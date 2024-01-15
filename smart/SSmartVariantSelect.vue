@@ -21,7 +21,7 @@
       tag="div"
       group
       class="border-between-vertical rounded-card"
-      :class="{ 'disabled pen': disabled, border: border, 'white--text': dark }"
+      :class="{ pen: disabled, border: border, 'white--text': dark }"
       hide-on-leave
     >
       <div
@@ -42,8 +42,8 @@
                 ? null
                 : val(task)
               : !isUnset(value)
-              ? null
-              : val(task)
+                ? null
+                : val(task),
           );
           $emit(
             'change',
@@ -52,8 +52,8 @@
                 ? null
                 : val(task)
               : !isUnset(value)
-              ? null
-              : val(task)
+                ? null
+                : val(task),
           );
           signalUpdate();
         "
@@ -73,40 +73,85 @@
             >
           </div>
           <div class="flex-grow-1">
-            <span v-if="task.color">
+            <span v-if="task.color" class="me-1">
               <v-icon small>{{ ProductVariants.color.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.color.name) }}</small>
               <b>{{ GetNameOfColor(task.color) }}</b>
             </span>
 
-            <span v-if="task.style">
+            <span v-if="task.style" class="me-1">
               <v-icon small>{{ ProductVariants.style.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.style.name) }}</small>
-              <b>{{ task.style }}</b>
+
+              <variant-asset-view
+                :shop-id="shop.id"
+                :value="task.style"
+                :size="24"
+              ></variant-asset-view>
+
+              <b>
+                {{ task.style.removeVariantAsset() }}
+              </b>
             </span>
 
-            <span v-if="task.volume">
+            <span v-if="task.volume" class="me-1">
               <v-icon small>{{ ProductVariants.volume.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.volume.name) }}</small>
-              <b>{{ task.volume }}</b>
+
+              <variant-asset-view
+                :shop-id="shop.id"
+                :value="task.volume"
+                :size="24"
+              ></variant-asset-view>
+
+              <b>
+                {{ task.volume.removeVariantAsset() }}
+              </b>
             </span>
 
-            <span v-if="task.weight">
+            <span v-if="task.weight" class="me-1">
               <v-icon small>{{ ProductVariants.weight.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.weight.name) }}</small>
-              <b>{{ task.weight }}</b>
+
+              <variant-asset-view
+                :shop-id="shop.id"
+                :value="task.weight"
+                :size="24"
+              ></variant-asset-view>
+
+              <b>
+                {{ task.weight.removeVariantAsset() }}
+              </b>
             </span>
 
-            <span v-if="task.pack">
+            <span v-if="task.pack" class="me-1">
               <v-icon small>{{ ProductVariants.pack.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.pack.name) }}</small>
-              <b>{{ task.pack }}</b>
+
+              <variant-asset-view
+                :shop-id="shop.id"
+                :value="task.pack"
+                :size="24"
+              ></variant-asset-view>
+
+              <b>
+                {{ task.pack.removeVariantAsset() }}
+              </b>
             </span>
 
-            <span v-if="task.type">
+            <span v-if="task.type" class="me-1">
               <v-icon small>{{ ProductVariants.type.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.type.name) }}</small>
-              <b>{{ task.type }}</b>
+
+              <variant-asset-view
+                :shop-id="shop.id"
+                :value="task.type"
+                :size="24"
+              ></variant-asset-view>
+
+              <b>
+                {{ task.type.removeVariantAsset() }}
+              </b>
             </span>
 
             <small
@@ -123,8 +168,15 @@
               color.
             </small>
           </div>
+          <v-icon x-small v-if="disabled" class="ma-1">lock</v-icon>
 
-          <v-icon v-if="task.color" :color="task.color">circle</v-icon>
+          <s-color-circle
+            v-if="task.color"
+            :color="task.color"
+            class="circle-border m-1"
+            :size="24"
+          >
+          </s-color-circle>
         </div>
       </div>
     </v-slide-y-transition>
@@ -133,10 +185,17 @@
 
 <script>
 import { ProductVariants } from "@core/enums/product/ProductVariants";
+import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
+import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 
 export default {
   name: "SSmartVariantSelect",
+  components: { SColorCircle, VariantAssetView },
   props: {
+    shop: {
+      require: true,
+      type: Object,
+    },
     value: {},
 
     variants: {

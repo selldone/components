@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ dark: dark }" class="text-start">
+  <div :class="{ dark: dark }" class="s--smart-select-vendor">
     <h3 v-if="label" class="my-2">
       <v-icon class="me-1" :color="dark ? '#fff' : '#111'">storefront</v-icon>
       {{ label }}
@@ -30,7 +30,7 @@
       <div
         v-for="vendor in items_show"
         :key="vendor.id"
-        class="p-2 pp row-hover usn border mb-1"
+        class="s--smart-select-vendor-item row-hover usn border"
         :class="{
           'bg-dark': dark,
           'bg-white': !dark,
@@ -41,7 +41,7 @@
           $emit('change', forceShowAll ? vendor.id : value ? null : vendor.id);
         "
       >
-        <div class="d-flex align-center mnh">
+        <div class="s--smart-select-vendor-content">
           <div class="flex-grow-0 me-2">
             <v-icon color="primary" :large="vendor.id === value">{{
               vendor.id === value ? "lens" : "radio_button_unchecked"
@@ -54,12 +54,13 @@
                 name: window.$storefront.routes.PAGE_RENDER,
                 params: { page_name: vendor.page.name },
               }"
-              class="font-weight-bold tnt text-primary"
+              class="s--smart-select-vendor-link tnt"
               exact
               title="Go to the store page."
+              target="_blank"
             >
-              View store of {{ vendor.name }}
-              <v-icon class="ms-1 text-primary" small
+              {{$t('select_vendor.item_title',{vendor:vendor.name})}}
+              <v-icon class="ms-1" small color="primary"
                 >launch</v-icon
               ></router-link
             >
@@ -89,7 +90,6 @@
 </template>
 
 <script>
-
 export default {
   name: "SSmartSelectVendor",
   props: {
@@ -114,9 +114,7 @@ export default {
     },
   },
   data() {
-    return {
-
-    };
+    return {};
   },
 
   computed: {
@@ -141,7 +139,27 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.mnh {
-  min-height: 40px;
+.s--smart-select-vendor {
+  text-align: start;
+
+  .s--smart-select-vendor-item {
+    padding: 8px;
+    cursor:pointer;
+    margin-bottom: 4px;
+
+
+    .s--smart-select-vendor-content {
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+
+      .s--smart-select-vendor-link {
+        font-weight: 700;
+        &:hover {
+          font-weight: 900;
+        }
+      }
+    }
+  }
 }
 </style>
