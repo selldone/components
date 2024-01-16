@@ -37,7 +37,10 @@
         @click="show_pass = true"
         >CLICK TO SHOW</span
       >
-      <span v-else class="-link"> {{ value }}</span>
+      <div v-else class="-link" :class="contentClass">
+        <slot name="prepend-value"></slot>
+        <span  > {{ value }}</span>
+      </div>
       <v-spacer></v-spacer>
 
       <img
@@ -70,6 +73,8 @@ export default {
     smallWidthMode: { default: false, type: Boolean }, // Small width with large content! Rounded button!
 
     border: { default: true, type: Boolean },
+
+    contentClass:{}
   },
   data: () => ({
     show_pass: false,
