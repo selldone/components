@@ -14,49 +14,19 @@
 
 <template>
   <div>
-    <!--
-    <v-autocomplete
-      v-model="select_language"
-      :items="languages"
-      item-value="code"
-      item-text="title"
-      :hide-details="!messages"
-      :messages="messages"
-      :return-object="false"
-      :style="{ 'max-width': maxWidth }"
-      solo
-      flat
-      :rounded="rounded"
-      :dense="dense"
-      :outlined="outlined"
-      :background-color="backgroundColor"
-      @click.stop="show_dialog=true"
-    >
-      <template v-slot:item="data">
 
-        <span class="px-3">{{ data.item.title }}</span>
-      </template>
-
-      <template v-slot:selection>
-
-        <span class="px-3" :class="{ 'hide-on-small-600': autoSmall }">{{
-          selected_language_object.title
-        }}</span>
-      </template>
-    </v-autocomplete>
--->
 
     <v-text-field
-      :value="selected_language_object.title"
+      :model-value="selected_language_object.title"
       :hide-details="!messages"
       :messages="messages"
       :style="{ 'max-width': maxWidth }"
-      solo
+      :variant="variant?variant:outlined?'outlined':'underlined'"
       flat
       :rounded="rounded"
-      :dense="dense"
+      :density="dense? 'compact':undefined"
       :outlined="outlined"
-      :background-color="backgroundColor"
+      :bg-color="backgroundColor"
       @click.stop="show_dialog = true"
       readonly
       prepend-inner-icon="translate"
@@ -65,11 +35,11 @@
 
     <s-languages-dialog
       v-model="show_dialog"
-      :selected-language.sync="select_language"
+      v-model:selected-language="select_language"
     ></s-languages-dialog>
 
     <component
-      :is="$vuetify.breakpoint.xsOnly ? 'v-bottom-sheet' : 'v-dialog'"
+      :is="$vuetify.display.xsOnly ? 'v-bottom-sheet' : 'v-dialog'"
       v-model="show_warning"
       max-width="1080"
       width="90vw"
@@ -78,11 +48,11 @@
     >
       <v-card
         color="#f9f9f9"
-        :rounded="$vuetify.breakpoint.xsOnly ? 't-xl b-0' : 'lg'"
+        :rounded="$vuetify.display.xsOnly ? 't-xl b-0' : 'lg'"
         flat
       >
         <v-card-title class="text-capitalize" style="min-height: 100px">
-          <v-btn fab depressed @click="reject_change()" color="#fff"
+          <v-btn icon="" variant="flat" @click="reject_change()" color="#fff"
             ><v-icon>close</v-icon></v-btn
           >
         </v-card-title>
@@ -90,11 +60,11 @@
           class="d-flex flex-column"
           style="color: #222222"
           :style="
-            $vuetify.breakpoint.xsOnly ? '' : 'height: 60vh;max-height: 460px'
+            $vuetify.display.xsOnly ? '' : 'height: 60vh;max-height: 460px'
           "
         >
           <div
-            class="absolute-top-center mt-6 typo-body font-weight-black black--text d-flex d-sm-block flex-column align-center"
+            class="absolute-top-center mt-6 typo-body font-weight-black text-black d-flex d-sm-block flex-column align-center"
           >
             <b
               :title="$t('global.commons.language')"
@@ -115,7 +85,7 @@
           <div style="max-width: 640px" class="mx-auto mt-12 mt-sm-5">
             <h2
               class="text-center font-weight-bold lhn text-capitalize"
-              :class="$vuetify.breakpoint.xsOnly ? 'display-1' : 'display-3'"
+              :class="$vuetify.display.xsOnly ? 'text-h4' : 'text-h2'"
             >
               {{ $t("home.select_language_dialog_title") }}
             </h2>
@@ -136,13 +106,13 @@
 
           <div class="widget-buttons">
             <v-btn
-              x-large
+              size="x-large"
               href="https://github.com/selldone/translate"
               target="_blank"
-              outlined
+              variant="outlined"
               class="my-3 tnt"
             >
-              <v-icon class="me-1">fab fa-github</v-icon>
+              <v-icon class="me-1">fa:fab fa-github</v-icon>
               Help us in translation {{ selected_language_object.title }}
             </v-btn>
           </div>
@@ -150,12 +120,12 @@
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn x-large  text @click="reject_change()">
+            <v-btn size="x-large"  variant="text" @click="reject_change()">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.cancel") }}
             </v-btn>
 
-            <v-btn x-large color="primary" @click="accept_change()" >
+            <v-btn size="x-large" color="primary" @click="accept_change()" >
               <v-icon class="me-1">check</v-icon>
               Let's go
               {{ selected_language_object.title }} *
@@ -182,6 +152,7 @@ export default {
       default: false,
     },
     messages: {},
+    variant:{},
     dense: {
       type: Boolean,
       default: false,
@@ -195,7 +166,7 @@ export default {
     },
     rounded: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     backgroundColor: {},
   },

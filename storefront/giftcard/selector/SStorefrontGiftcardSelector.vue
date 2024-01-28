@@ -88,7 +88,7 @@
       ></price-view>
     </template>
 
-    <template v-slot:append>
+    <template v-slot:append-inner>
       <v-progress-circular
         v-if="loading"
         indeterminate

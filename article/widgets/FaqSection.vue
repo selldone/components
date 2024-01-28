@@ -29,7 +29,7 @@
       accordion
       multiple
       flat
-      class="justify-content-start mb-12"
+      class="justify-start mb-12"
       :readonly="editMode"
       :dark="dark"
     >
@@ -185,7 +185,7 @@ export default {
   methods: {
     all() {
       if (!this.faqs) return;
-      if (this.$vuetify.breakpoint.mdAndUp)
+      if (this.$vuetify.display.mdAndUp)
         // Expand in large screens
         this.panel = [...this.faqs.keys()];
       //     console.log('this.panel',this.panel)
@@ -249,7 +249,7 @@ export default {
     font-size: 1.1rem;
     text-align: justify;
   }
-  ::v-deep > div {
+  ::v-deep(> div) {
     padding: 12px !important;
   }
 }
@@ -277,10 +277,10 @@ export default {
   margin: 12px auto;
   padding: 16px 0;
 
-  ::v-deep ul,::v-deep ol{
+  ::v-deep(ul),::v-deep(ol){
     margin: 8px 4px;
   }
-  ::v-deep li{
+  ::v-deep(li){
     padding: 0;
     &:before{
       margin: 0 8px;
@@ -297,7 +297,7 @@ export default {
 
 
   }
-  ::v-deep ol{
+  ::v-deep(ol){
     li{
       &:before{
         content: counter(li) '.';

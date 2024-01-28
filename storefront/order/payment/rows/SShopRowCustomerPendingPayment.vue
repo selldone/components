@@ -68,7 +68,7 @@
           "
           class="mx-2 my-1"
         >
-          <v-icon small class="me-1">fas fa-shopping-bag</v-icon>
+          <v-icon small class="me-1">fa:fas fa-shopping-bag</v-icon>
           {{ $t("global.actions.pay_now") }}
           <img
             v-if="transaction.icon"
@@ -86,7 +86,7 @@
           @click="changePaymentMethod(transaction)"
           class="mx-2 my-1"
         >
-          <v-icon small class="me-1">fas fa-credit-card</v-icon>
+          <v-icon small class="me-1">fa:fas fa-credit-card</v-icon>
           {{ $t("global.actions.change_payment_method") }}
         </v-btn>
       </div>
@@ -149,7 +149,7 @@
               {{ extractLabel(val, key) }}:
             </div>
 
-            <qrcode
+            <vue-qrcode
               :value="extractValue(val)"
               :options="{
                 width: 280,

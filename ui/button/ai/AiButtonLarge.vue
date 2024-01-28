@@ -44,7 +44,7 @@
         ></v-progress-circular>
       </v-avatar>
 
-      <div class="pe-2 me-2 border-end display-1">AI</div>
+      <div class="pe-2 me-2 border-end text-h4">AI</div>
 
       <div class="flex-grow-1">
         <div class="font-weight-black">

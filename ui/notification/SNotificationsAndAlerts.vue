@@ -26,7 +26,6 @@
             width="36"
             height="36"
             class="float-start m-2 rounded"
-            contain
             :src="item.data.img"
           ></v-img>
 
@@ -35,22 +34,22 @@
               item.data?.icon
                 ? item.data.icon
                 : item.type === "error"
-                ? "error"
-                : item.type === "warn"
-                ? "warning"
-                : item.type === "award"
-                ? "card_giftcard"
-                : item.type === "success"
-                ? "check_circle"
-                : item.type === "message"
-                ? "message"
-                : "info"
+                  ? "error"
+                  : item.type === "warn"
+                    ? "warning"
+                    : item.type === "award"
+                      ? "card_giftcard"
+                      : item.type === "success"
+                        ? "check_circle"
+                        : item.type === "message"
+                          ? "message"
+                          : "info"
             }}
           </v-icon>
 
           <b class="font-weight-bold" v-html="item.title"> </b>
 
-          <v-btn icon class="float-end" dark @click="close" small>
+          <v-btn icon class="float-end" @click="close" size="small">
             <v-icon>close</v-icon>
           </v-btn>
 
@@ -64,7 +63,7 @@
       :max-width="
         Math.max(
           480,
-          (alert_dialog_accept_button + alert_dialog_reject_button).length * 11
+          (alert_dialog_accept_button + alert_dialog_reject_button).length * 11,
         )
       "
       scrollable
@@ -82,12 +81,22 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn color="#333" text @click="alert_dialog = false" x-large>
+            <v-btn
+              color="#333"
+              variant="text"
+              @click="alert_dialog = false"
+              size="x-large"
+            >
               <v-icon class="me-1">close</v-icon>
               {{ alert_dialog_reject_button }}
             </v-btn>
 
-            <v-btn :color="color" depressed dark @click="onAccept" x-large>
+            <v-btn
+              :color="color"
+              variant="flat"
+              @click="onAccept"
+              size="x-large"
+            >
               <v-icon class="me-1">check</v-icon>
               {{ alert_dialog_accept_button }}
             </v-btn>
@@ -125,11 +134,11 @@ export default {
         this.alert_dialog_callback = callback;
         this.alert_dialog = true;
         this.color = color;
-      }
+      },
     );
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("alert-dialog");
   },
   methods: {
@@ -147,7 +156,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

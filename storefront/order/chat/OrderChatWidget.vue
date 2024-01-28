@@ -21,13 +21,13 @@
         :title="$t('global.commons.messages')"
         icon="3p"
       ></s-widget-header>
-      <v-subheader>
+      <v-list-subheader>
         {{
           isAdmin
             ? "Here, you have the ability to directly exchange messages with customers."
             : "Here, you have the ability to directly communicate with the seller by sending messages."
         }}
-      </v-subheader>
+      </v-list-subheader>
       <order-chat-message
         v-for="(message, i) in chat"
         :key="i"
@@ -46,7 +46,7 @@
         :title="$t('global.actions.add_new_message')"
         icon="add_comment"
       ></s-widget-header>
-      <v-subheader></v-subheader>
+      <v-list-subheader></v-list-subheader>
 
       <div class="d-flex align-center mt-3">
         <v-avatar :size="32" class="avatar-gradient -thin -user me-2">

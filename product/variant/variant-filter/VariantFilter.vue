@@ -14,7 +14,7 @@
 
 <template>
   <v-flex d-inline-flex style="">
-    <v-btn class="ml-2" icon @click="show_filter = !show_filter">
+    <v-btn class="ms-2" icon @click="show_filter = !show_filter">
       <v-icon class="crossRotate">
         {{ show_filter ? "close" : "more_vert" }}
       </v-icon>
@@ -88,7 +88,7 @@
 
         <text-select-slider
           v-if="weights.length"
-          icon="fas fa-weight-hanging"
+          icon="fa:fas fa-weight-hanging"
           :list="weights"
           :value="null"
           :close="mode !== 'weights'"
@@ -106,7 +106,7 @@
 
         <text-select-slider
           v-if="types.length"
-          icon="fas fa-toolbox"
+          icon="fa:fas fa-toolbox"
           :list="types"
           :value="null"
           :close="mode !== 'types'"

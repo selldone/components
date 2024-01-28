@@ -87,7 +87,7 @@ export default {
   }),
   computed: {
     size() {
-      return this.$vuetify.breakpoint.xs ? 56 : 72;
+      return this.$vuetify.display.xs ? 56 : 72;
     },
   },
   watch: {

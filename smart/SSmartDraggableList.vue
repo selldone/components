@@ -15,7 +15,7 @@
 <template>
   <div :class="{ dark: dark }" class="text-start">
     <h3 v-if="label" class="my-2">{{ label }}</h3>
-    <v-subheader v-if="hint">{{ hint }}</v-subheader>
+    <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <draggable
       v-model="list"
@@ -86,7 +86,7 @@
           </div>
         </div>
 
-        <slot name="append"></slot>
+        <slot name="append-inner"></slot>
       </transition-group>
     </draggable>
   </div>

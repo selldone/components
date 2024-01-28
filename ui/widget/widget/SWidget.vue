@@ -40,9 +40,9 @@
       :style="$vuetify.rtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
     />
 
-    <v-subheader v-if="subTitle" :dark="dark">
+    <v-list-subheader v-if="subTitle" :dark="dark">
       {{ subTitle }}
-    </v-subheader>
+    </v-list-subheader>
 
     <div
       v-if="!customControls && mainControls"

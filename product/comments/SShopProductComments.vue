@@ -23,8 +23,8 @@
       <v-row align="center">
         <v-col cols="12" sm="6" md="3" order="1" order-sm="2" order-md="1">
           <div class="my-8">
-            <span class="display-4 font-weight-black">
-              {{ product.rate | numeralFormat("0.0") }}
+            <span class="text-h1 font-weight-black">
+              {{   numeralFormat(product.rate,"0.0") }}
             </span>
             <b class="mx-1">/ 5</b>
             <div class="mt-4">

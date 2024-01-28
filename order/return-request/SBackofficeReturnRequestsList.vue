@@ -15,32 +15,35 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <s-progress-loading v-if="busy_fetch"></s-progress-loading>
-    <v-data-table
+    <v-data-table-server
       :headers="headers"
       :items="return_requests"
       item-key="id"
       hide-default-footer
-      :server-items-length="totalItems"
-      :options.sync="options"
-      :page.sync="page"
+      :items-length="totalItems"
+      v-model:options="options"
+      v-model:page="page"
       :items-per-page="itemsPerPage"
       :loading-text="$t('global.commons.waiting_load_data')"
       @page-count="pageCount = $event"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :item-class="(item) => 'row-hover'"
-      @click:row="(item) => $emit('select', item)"
       class="bg-transparent dense-padding min-height-60vh"
+      @click:row="(_, r) => $emit('select', r.item)"
+      hover
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
         <div v-if="!busy_fetch" class="py-5 usn text-center fadeIn">
           <img
-            :src="require('@components/assets/guides/returned-orders-empty.png')"
+            :src="
+              require('@components/assets/guides/returned-orders-empty.png')
+            "
             width="85%"
             class="m-3 op-0-3"
             style="max-height: 400px; object-fit: contain"
           />
-          <h2 class="display-1 font-weight-thin">List of returned orders...</h2>
+          <h2 class="text-h4 font-weight-thin">List of returned orders...</h2>
         </div>
         <div v-else class="text-center px-3 py-5 text-muted">
           <v-icon class="me-1">sentiment_dissatisfied</v-icon>
@@ -95,7 +98,10 @@
 
       <template v-slot:item.state="{ item }">
         <p class="m-1">
-          <v-icon small :color="getReturnRequestStateObject(item.state).color">
+          <v-icon
+            size="small"
+            :color="getReturnRequestStateObject(item.state).color"
+          >
             {{ getReturnRequestStateObject(item.state).icon }}
           </v-icon>
           {{ $t(getReturnRequestStateObject(item.state).name) }}
@@ -109,7 +115,7 @@
           </p>
           <small
             >{{ $t("global.return_request_list.count") }}:
-            {{ item.count | numeralFormat("0,0") }}
+            {{ numeralFormat(item.count, "0,0") }}
           </small>
         </div>
       </template>
@@ -129,10 +135,10 @@
         </div>
       </template>
 
-      <template v-slot:footer>
-        <v-pagination v-model="page" circle :length="pageCount" />
+      <template v-slot:bottom>
+        <v-pagination v-model="page" rounded :length="pageCount" />
       </template>
-    </v-data-table>
+    </v-data-table-server>
   </div>
 </template>
 
@@ -170,44 +176,39 @@ export default {
     headers() {
       return [
         {
-          align: "center",
-          sortable: false,
-          value: "product_id",
-        },
-        {
-          text: this.$t("global.return_request_list.table.code"),
+          title: this.$t("global.return_request_list.table.code"),
           align: "center",
           sortable: false,
           value: "basket_id",
         },
         {
-          text: this.$t("global.return_request_list.table.product"),
+          title: this.$t("global.return_request_list.table.product"),
           align: "start",
           sortable: false,
           value: "product_name",
         },
         {
-          text: this.$t("global.return_request_list.table.delivery_at"),
+          title: this.$t("global.return_request_list.table.delivery_at"),
           align: "start",
           sortable: false,
           value: "delivery_at",
         },
         {
-          text: this.$t("global.return_request_list.table.state"),
+          title: this.$t("global.return_request_list.table.state"),
           align: "center",
           value: "state",
           sortable: false,
         },
         {
-          text: this.$t("global.return_request_list.table.reason"),
+          title: this.$t("global.return_request_list.table.reason"),
           align: "center",
           value: "reason",
           sortable: false,
         },
 
         {
-          text: this.$t(
-            "global.return_request_list.table.return_warranty_period"
+          title: this.$t(
+            "global.return_request_list.table.return_warranty_period",
           ),
           align: "center",
           value: "return_warranty",

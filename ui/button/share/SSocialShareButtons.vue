@@ -13,169 +13,31 @@
   -->
 
 <template>
-  <v-flex align-center justify-center row style="display: inline-block">
-    <a
-      v-if="telegramRhash && false"
-      class="ml-2"
-      @click="
-        $clipboard(`https://t.me/iv?url=${url}x&rhash=${telegramRhash}`);
-        showSuccessAlert('Copied', 'Past into your Telegram and share.');
-      "
-      ><i class="fab fa-telegram text-danger" title="Copy instance view link"
-    /></a>
+  <div class="d-inline-flex flex-row align-center justify-center" >
 
-    <social-sharing
-      ref="networking"
-      :url="url"
-      :title="title"
-      :description="description"
-      :quote="quote"
-      :hashtags="hashtags ? hashtags.replace(/-/g, '_') : ''"
-      :media="media"
-      :twitter-user="SetupService.GetTwitterAccount()"
-      inline-template
-    >
-      <div v-if="false">
-        <network network="email" class="mouse-pointer-hand m-1">
-          <i class="fab fa-envelope" title="Email" />
-        </network>
-        <network network="facebook" class="mouse-pointer-hand m-1">
-          <i class="fab fa-facebook" title="Facebook" />
-        </network>
-        <network network="googleplus" class="mouse-pointer-hand m-1">
-          <i class="fab fa-google-plus" title="Google" />
-        </network>
-        <network network="linkedin" class="mouse-pointer-hand m-1">
-          <i class="fab fa-linkedin" title="Linkedin" />
-        </network>
-        <network network="odnoklassniki" class="mouse-pointer-hand m-1">
-          <i class="fab fa-odnoklassniki" title="Odnoklassniki" />
-        </network>
-        <network network="pinterest" class="mouse-pointer-hand m-1">
-          <i class="fab fa-pinterest" title="Pinterest" />
-        </network>
-        <network network="reddit" class="mouse-pointer-hand m-1">
-          <i class="fab fa-reddit" title="Reddit" />
-        </network>
-        <network network="skype" class="mouse-pointer-hand m-1">
-          <i class="fab fa-skype" title="Skype" />
-        </network>
-        <network network="sms" class="mouse-pointer-hand m-1">
-          <i class="fab fa-commenting-o" title="SMS" />
-        </network>
-        <network network="telegram" class="mouse-pointer-hand m-1">
-          <i class="fab fa-telegram" title="Telegram" />
-        </network>
-        <network network="twitter" class="mouse-pointer-hand m-1">
-          <i class="fab fa-twitter" title="Twitter" />
-        </network>
-        <network network="vk" class="mouse-pointer-hand m-1">
-          <i class="fab fa-vk" title="VKontakte" />
-        </network>
-        <network network="weibo" class="mouse-pointer-hand m-1">
-          <i class="fab fa-weibo" title="Weibo" />
-        </network>
-        <network network="whatsapp" class="mouse-pointer-hand m-1">
-          <i class="fab fa-whatsapp" title="Whatsapp" />
-        </network>
-      </div>
-    </social-sharing>
+
+
 
     <div class="social-btns" :class="{ '-small': small, '-large': forceLarge }">
-      <a
-        class="btn facebook"
-        @click="
-          $refs.networking.share('facebook');
-          $emit('share', 'facebook');
+
+      <share-network
+          v-for="item in items" :key="item.code"
+          :network="item.code"
+          v-bind="commonProps"
+      >
+        <a
+            :class="`btn ${item.code}`"
+            @click="
+          $emit('share', item.code);
         "
-        ><i class="fab fa-facebook"
-      /></a>
+        ><i :class="item.icon"/></a>
+
+      </share-network>
+
+
 
       <a
-        class="btn twitter"
-        @click="
-          $refs.networking.share('twitter');
-          $emit('share', 'twitter');
-        "
-        ><i class="fab fa-twitter"
-      /></a>
-      <a
-        class="btn linkedin"
-        @click="
-          $refs.networking.share('linkedin');
-          $emit('share', 'linkedin');
-        "
-        ><i class="fab fa-linkedin"
-      /></a>
-      <a
-        class="btn line"
-        @click="
-          $refs.networking.share('line');
-          $emit('share', 'line');
-        "
-        ><i class="fab fa-line"
-      /></a>
-
-      <a
-        class="btn pinterest"
-        @click="
-          $refs.networking.share('pinterest');
-          $emit('share', 'pinterest');
-        "
-        ><i class="fab fa-pinterest"
-      /></a>
-      <a
-        class="btn reddit"
-        @click="
-          $refs.networking.share('reddit');
-          $emit('share', 'reddit');
-        "
-        ><i class="fab fa-reddit"
-      /></a>
-
-      <a
-        class="btn telegram"
-        @click="
-          $refs.networking.share('telegram');
-          $emit('share', 'telegram');
-        "
-        ><i class="fab fa-telegram"
-      /></a>
-      <a
-        class="btn whatsapp"
-        @click="
-          $refs.networking.share('whatsapp');
-          $emit('share', 'whatsapp');
-        "
-        ><i class="fab fa-whatsapp"
-      /></a>
-      <a
-        class="btn skype"
-        @click="
-          $refs.networking.share('skype');
-          $emit('share', 'skype');
-        "
-        ><i class="fab fa-skype"
-      /></a>
-      <a
-        class="btn sms"
-        @click="
-          $refs.networking.share('sms');
-          $emit('share', 'sms');
-        "
-        ><i class="fas fa-sms"
-      /></a>
-      <a
-        class="btn email"
-        @click="
-          $refs.networking.share('email');
-          $emit('share', 'email');
-        "
-        ><i class="fas fa-envelope"
-      /></a>
-
-      <a
-        v-if="embedCode"
+        v-if="networks.includes('embed') && embedCode"
         class="btn embed"
         @click="
           copyToClipboard(embedCode);
@@ -185,7 +47,7 @@
       /></a>
 
       <a
-        v-if="url"
+        v-if="networks.includes('copy') && url"
         class="btn copy"
         @click="
           copyToClipboard(url);
@@ -194,14 +56,35 @@
         ><i class="fas fa-copy"
       /></a>
     </div>
-  </v-flex>
+  </div>
 </template>
 
 <script>
+import {SetupService} from "@core/server/SetupService";
+
 export default {
   name: "SSocialShareButtons",
 
   props: {
+    networks: {
+      type: Array,
+      default: () => [
+        "facebook",
+        "twitter",
+        "linkedin",
+        "line",
+        "pinterest",
+        "reddit",
+        "telegram",
+        "whatsapp",
+        "skype",
+        "sms",
+        "email",
+        "embed",
+        "copy",
+      ],
+    },
+
     url: {
       required: true,
       type: String,
@@ -242,7 +125,64 @@ export default {
   data: function () {
     return {};
   },
-  computed: {},
+  computed: {
+
+    items(){
+      const out=[];
+      if(this.networks.includes('facebook')){
+        out.push({code:'facebook',icon:'fab fa-facebook'});
+      }
+      if(this.networks.includes('twitter')){
+        out.push({code:'twitter',icon:'fab fa-twitter'});
+      }
+      if(this.networks.includes('linkedin')){
+        out.push({code:'linkedin',icon:'fab fa-linkedin'});
+      }
+      if(this.networks.includes('line')){
+        out.push({code:'line',icon:'fab fa-line'});
+      }
+      if(this.networks.includes('pinterest')){
+        out.push({code:'pinterest',icon:'fab fa-pinterest'});
+      }
+      if(this.networks.includes('reddit')){
+        out.push({code:'reddit',icon:'fab fa-reddit'});
+      }
+      if(this.networks.includes('telegram')){
+        out.push({code:'telegram',icon:'fab fa-telegram'});
+      }
+      if(this.networks.includes('whatsapp')){
+        out.push({code:'whatsapp',icon:'fab fa-whatsapp'});
+      }
+      if(this.networks.includes('skype')){
+        out.push({code:'skype',icon:'fab fa-skype'});
+      }
+      if(this.networks.includes('sms')){
+        out.push({code:'sms',icon:'fas fa-sms'});
+      }
+      if(this.networks.includes('email')){
+        out.push({code:'email',icon:'fas fa-envelope'});
+      }
+
+
+
+
+      return out;
+    },
+
+    commonProps() {
+      return {
+
+        url: this.url,
+            title: this.title,
+          description: this.description,
+          quote: this.quote,
+          hashtags: this.hashtags ? this.hashtags.replace(/-/g, '_') : '',
+          media: this.media,
+          twitterUser: SetupService.GetTwitterAccount() // Assuming this function returns a string
+
+      };
+    },
+  },
   methods: {},
 };
 </script>

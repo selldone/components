@@ -29,87 +29,66 @@
  * @author [Your Name]
  */
 
-import type { VNode, DirectiveBinding } from "vue";
+import { ObjectDirective } from 'vue';
 
-export default {
+const LoadScriptsDirective: ObjectDirective<HTMLElement & { loadedScripts?: string[] }> = {
   /**
-   * Called when the directive is inserted into the DOM.
+   * Called when the directive is mounted to the DOM.
    */
-  inserted: function (
-    el: HTMLElement,
-    binding: DirectiveBinding<any>,
-    vnode: VNode
-  ) {
-    // Check if the directive should run
-    if (!binding.value) {
-      return;
-    }
-
-    // Extract all script tags from the raw HTML
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = el.innerHTML;
-    const scripts = tempDiv.getElementsByTagName("script");
-
-    // Initialize a property on the element to hold the loaded scripts
-    el.loadedScripts = [];
-
-    // Iterate over all scripts
-    for (const script of scripts) {
-      const scriptSrc = script.getAttribute("src");
-      if (scriptSrc && !el.loadedScripts.includes(scriptSrc)) {
-        // Create a new script element and copy the attributes
-        const newScript = document.createElement("script");
-        Array.from(script.attributes).forEach((attr) =>
-          newScript.setAttribute(attr.name, attr.value)
-        );
-        newScript.onload = function () {
-          el.loadedScripts?.push(scriptSrc);
-        };
-        document.head.appendChild(newScript);
+  mounted(el, binding) {
+    // Function to load scripts
+    const loadScripts = () => {
+      if (!binding.value) {
+        return;
       }
+
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = el.innerHTML;
+      const scripts = tempDiv.getElementsByTagName('script');
+
+      el.loadedScripts = el.loadedScripts || [];
+
+      for (const script of scripts) {
+        const scriptSrc = script.getAttribute('src');
+        if (scriptSrc && !el.loadedScripts.includes(scriptSrc)) {
+          const newScript = document.createElement('script');
+          Array.from(script.attributes).forEach(attr =>
+              newScript.setAttribute(attr.name, attr.value)
+          );
+          newScript.onload = () => {
+            el.loadedScripts?.push(scriptSrc);
+          };
+          document.head.appendChild(newScript);
+        }
+      }
+    };
+
+    loadScripts();
+  },
+
+  /**
+   * Called when the directive's element is updated in the DOM.
+   */
+  updated(el, binding) {
+    if (binding.value !== binding.oldValue) {
+      // Repeat the same steps as in mounted if necessary
     }
   },
 
   /**
    * Called when the directive's element is removed from the DOM.
    */
-  unbind: function (el: HTMLElement) {
-    // Remove scripts when the directive is unbound
-    if (el.loadedScripts)
+  unmounted(el) {
+    if (el.loadedScripts) {
       for (const script of el.loadedScripts) {
-        const scriptElement = document.head.querySelector(
-          `script[src="${script}"]`
-        );
+        const scriptElement = document.head.querySelector(`script[src="${script}"]`);
         if (scriptElement) {
           document.head.removeChild(scriptElement);
         }
       }
-    el.loadedScripts = [];
-  },
-
-  /**
-   * Called when the value passed to the directive changes.
-   */
-  update: function (el: HTMLElement, binding: DirectiveBinding<any>) {
-    // Repeat same steps as in inserted
-    if (!binding.value) {
-      return;
+      el.loadedScripts = [];
     }
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = el.innerHTML;
-    const scripts = tempDiv.getElementsByTagName("script");
-    for (const script of scripts) {
-      const scriptSrc = script.getAttribute("src");
-      if (scriptSrc && !el.loadedScripts?.includes(scriptSrc)) {
-        const newScript = document.createElement("script");
-        Array.from(script.attributes).forEach((attr) =>
-          newScript.setAttribute(attr.name, attr.value)
-        );
-        newScript.onload = function () {
-          el.loadedScripts?.push(scriptSrc);
-        };
-        document.head.appendChild(newScript);
-      }
-    }
-  },
+  }
 };
+
+export default LoadScriptsDirective;

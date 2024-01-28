@@ -16,102 +16,123 @@
   <v-autocomplete
     v-model="currency"
     :items="currencies"
-    :item-text="(i) => $t(i.name) + ' ' + i.code + ' ' + i.country"
+    :item-title="(i) => $t(i.name)"
     item-value="code"
     :label="label"
     :messages="messages"
     :color="color"
     :rounded="rounded"
-    :outlined="outlined"
-    :dark="dark"
+    :theme="dark ? 'dark' : 'light'"
     :return-object="returnObject"
     :disabled="disabled"
     :hide-details="hideDetails"
-    :solo="solo"
-    :dense="dense"
-    :filled="filled"
+    :density="dense ? 'compact' : undefined"
+    :variant="
+      variant
+        ? variant
+        : solo && filled
+          ? 'solo-filled'
+          : filled
+            ? 'filled'
+            : solo
+              ? 'solo'
+              : outlined
+                ? 'outlined'
+                : 'underlined'
+    "
     :class="{ 'icon-only-cur': iconOnly, 'small-field': small }"
     :flat="flat"
-    @change="(val) => $emit('change', val)"
+    @update:model-value="(val) => $emit('change', val)"
     :prepend-icon="prependIcon"
     :prepend-inner-icon="prependInnerIcon"
     :clearable="clearable"
-    :menu-props="{ minWidth: '200px' }"
+
     :loading="loading"
     :placeholder="placeholder"
-    :background-color="transparent ? 'transparent' : undefined"
+    :bg-color="transparent ? 'transparent' : undefined"
     :multiple="multiple"
     :chips="chips"
   >
-    <template v-slot:item="{ item }">
-      <span>{{ $t(item.name) }}</span>
-      <flag v-if="item.flag" class="ms-2" :iso="item.flag" :squared="false" />
-      <img
-        v-else-if="item.icon"
-        class="ms-2"
-        :src="item.icon"
-        width="20"
-        height="20"
-      />
+    <template v-slot:item="{ item, props }">
+      <v-list-item v-bind="props" :title="$t(item.raw.name)" :subtitle="$t(item.raw.country)" class="text-start" >
+        <template v-slot:prepend>
+          <flag
+            v-if="item.raw.flag"
+            class="me-3"
+            :iso="item.raw.flag"
+            :squared="false"
+          />
+          <img
+            v-else-if="item.raw.icon"
+            class="me-3"
+            :src="item.raw.icon"
+            width="20"
+            height="20"
+          />
+        </template>
 
-      <v-spacer />
-
-      <s-currency-icon :currency="item" class="mx-1" small></s-currency-icon>
+        <template v-slot:append>
+          <s-currency-icon
+            :currency="item.raw"
+            class="mx-1"
+            small
+          ></s-currency-icon>
+        </template>
+      </v-list-item>
     </template>
 
-    <template v-slot:selection="{ item, parent }">
+    <template v-slot:chip="{ item, parent }">
       <v-chip
         v-if="chips"
-        close
-        @click:close="parent.selectItem(item)"
+        closable
+        @click:close="parent.selectItem(item.raw)"
         class="ma-1"
-        :color="dark?'#111':'#fff'"
-        :dark="dark"
+        :color="dark ? '#111' : '#fff'"
       >
-        <span v-if="item && !hideText">
-          {{ $t(item.name) }}
-        </span>
-
         <flag
-          v-if="item.flag"
-          class="ms-2"
-          :iso="item.flag"
+          v-if="item.raw.flag"
+          class="me-2"
+          :iso="item.raw.flag"
           :squared="false"
           style="min-width: 16px"
         />
         <img
-          v-else-if="item.icon"
-          class="ms-2"
-          :src="item.icon"
+          v-else-if="item.raw.icon"
+          class="me-2"
+          :src="item.raw.icon"
           width="20"
           height="20"
         />
+
+        <span>
+          {{ $t(item.raw.name) }}
+        </span>
       </v-chip>
       <template v-else>
-        <span v-if="item && !hideText">
-          {{ $t(item.name) }}
-        </span>
-
         <flag
-          v-if="item.flag"
-          class="ms-2"
-          :iso="item.flag"
+          v-if="item.raw.flag"
+          class="me-2"
+          :iso="item.raw.flag"
           :squared="false"
           style="min-width: 16px"
         />
         <img
-          v-else-if="item.icon"
-          class="ms-2"
-          :src="item.icon"
+          v-else-if="item.raw.icon"
+          class="me-2"
+          :src="item.raw.icon"
           width="20"
           height="20"
         />
+
+        <span>
+          {{ $t(item.raw.name) }}
+        </span>
       </template>
     </template>
 
-    <template v-slot:append>
+    <template v-slot:append-inner>
       <s-currency-icon
-        v-if="!multiple && currencyObject"
+        v-if="!multiple && currencyObject && showCurrencySign"
         :currency="currencyObject"
         small
       ></s-currency-icon>
@@ -127,7 +148,7 @@ export default {
   name: "SCurrencyInput",
   components: { SCurrencyIcon },
   props: {
-    value: {},
+    modelValue: {},
     label: {},
     messages: {},
     color: {},
@@ -171,10 +192,15 @@ export default {
       default: false,
       type: Boolean,
     },
-    hideText: {
+    showCurrencySign: {
       default: false,
       type: Boolean,
     },
+    variant: {
+      //type: String as () => NonNullable<"flat" | "text" | "elevated" | "tonal" | "outlined" | "plain">,
+      //default: null,
+    },
+
     solo: {
       default: false,
       type: Boolean,
@@ -251,19 +277,27 @@ export default {
 
   watch: {
     currency(currency) {
-      this.$emit("input", currency);
+      this.$emit("update:modelValue", currency);
     },
-    value(currency) {
+    modelValue(currency) {
       this.currency = currency;
     },
   },
   created() {
-    this.currency = this.value;
+    this.currency = this.modelValue;
   },
 };
 </script>
 
 <style lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+
 :not(.v-application--is-rtl) {
   .icon-only-cur {
     .v-input__control {

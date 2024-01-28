@@ -56,7 +56,7 @@
       </span>
       <span v-if="!receiverInfo.postal" class="ms-4 red--text text-lowercase">
         <v-icon small color="red" class="me-1 blink-me"
-          >fas fa-exclamation-circle</v-icon
+          >fa:fas fa-exclamation-circle</v-icon
         >
         {{ $t("global.commons.mandatory") }}!
       </span>
@@ -76,7 +76,7 @@
 
       <span v-if="!receiverInfo.phone" class="ms-4 red--text text-lowercase">
         <v-icon small color="red" class="me-1 blink-me"
-          >fas fa-exclamation-circle</v-icon
+          >fa:fas fa-exclamation-circle</v-icon
         >
         {{ $t("global.commons.mandatory") }}!
       </span>

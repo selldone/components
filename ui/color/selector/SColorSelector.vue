@@ -19,20 +19,20 @@
       <span class="dashed-flex-space"></span>
     </template>
 
-    <v-btn icon @click.stop="show_picker = true" style="background: #9d9d9d33" class="mx-auto">
+    <v-btn icon variant="flat" color="#9d9d9d33" :size="30" @click.stop="show_picker = true"  class="mx-auto">
       <v-icon
-        :large="icon === 'lens'"
-        :color="(nullable && !value )?'transparent':value"
+        :size="icon === 'lens'? 'large':undefined"
+        :color="(nullable && !modelValue )?'transparent':modelValue"
         :class="{ 'bg-tiny-checkers rounded-circle': !noBg }"
-        >{{ (!value )?'cancel':icon }}</v-icon
+        >{{ (!modelValue )?'cancel':icon }}</v-icon
       >
     </v-btn>
 
     <v-btn
       v-if="nullable"
-      icon
+      icon variant="text" :size="30"
       @click.stop="
-        $emit('input', null);
+        $emit('update:modelValue', null);
         $emit('change', null);
         $emit('clear');
       "
@@ -43,7 +43,7 @@
 
     <v-dialog v-model="show_picker" max-width="360" :dark="dark" scrollable>
       <v-card v-if="show_picker" :color="color">
-        <v-card-title>
+        <v-card-title class="d-flex align-center">
           <v-icon class="me-1">palette</v-icon>
           <span class="small" v-html="title"></span>
         </v-card-title>
@@ -51,12 +51,13 @@
         <v-card-text>
           <v-color-picker
             @click.stop
-            :value="value ? value : '#FFFFFFFF'"
-            @input="updateValue"
+            :model-value="modelValue ? modelValue : '#FFFFFFFF'"
+            @update:model-value="updateValue"
             class="mx-auto bg-transparent"
             show-swatches
             :mode="mode"
-            flat
+            elevation="0"
+
           />
         </v-card-text>
 
@@ -69,7 +70,10 @@
 <script>
 export default {
   name: "SColorSelector",
+  emits: ["update:modelValue", "change", "clear"],
   props: {
+    modelValue: {},
+
     icon: { default: "lens" },
     noBg: { type: Boolean, default: false },
 
@@ -77,7 +81,6 @@ export default {
     dark: { type: Boolean, default: false },
 
     title: {},
-    value: {},
     default: {},
     nullable: { type: Boolean, default: false },
     mode: {
@@ -93,42 +96,41 @@ export default {
   },
 
   watch: {
-    /* show_picker() {
-      this.$emit("change", this.value);
-    },*/
+
+
   },
   created() {
-    this.old_val = this.value;
+    this.old_val = this.modelValue;
 
-    if (!this.value && !this.nullable) {
-      this.$emit("input", this.default ? this.default : "#333333FF");
+    if (!this.modelValue && !this.nullable) {
+      this.$emit("update:modelValue", this.default ? this.default : "#333333FF");
     }
 
     // Correction of rgb value bug: (Specially in get style color in page builder)
-    if (this.value && this.value.startsWith("rgb(")) {
-      this.$emit("input", rgb2hex(this.value));
-    } else if (this.value && this.value.startsWith("rgba(")) {
-      this.$emit("input", rgba2hexa(this.value));
+    if (this.modelValue && this.modelValue.startsWith("rgb(")) {
+      this.$emit("update:modelValue", rgb2hex(this.value));
+    } else if (this.modelValue && this.modelValue.startsWith("rgba(")) {
+      this.$emit("update:modelValue", rgba2hexa(this.value));
     } else if (
-      this.value &&
-      this.value.startsWith("#") &&
-      this.value.length < 9
+      this.modelValue &&
+      this.modelValue.startsWith("#") &&
+      this.modelValue.length < 9
     ) {
       // Force Alpha chanel!
       let val = "#ffffffff";
-      if (this.value.length === 4) {
-        val = this.value.replaceAll(
+      if (this.modelValue.length === 4) {
+        val = this.modelValue.replaceAll(
           "#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])",
           "#$1$1$2$2$3$3"
         );
-      } else if (this.value.length === 7) {
+      } else if (this.modelValue.length === 7) {
         if (this.noAlpha) {
-          val = this.value;
+          val = this.modelValue;
         } else {
-          val = this.value + "ff";
+          val = this.modelValue + "ff";
         }
       }
-      this.$emit("input", val);
+      this.$emit("update:modelValue", val);
     }
   },
 
@@ -137,7 +139,7 @@ export default {
       const value = val && val.hexa ? val.hexa : val;
       if (this.old_val === value) return;
 
-      this.$emit("input", value);
+      this.$emit("update:modelValue", value);
       this.$emit("change", value);
       this.old_val = value;
     },

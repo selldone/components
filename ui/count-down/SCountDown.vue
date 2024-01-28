@@ -16,7 +16,7 @@
   <ul class="vuejs-countdown" dir="ltr">
     <li v-if="days > 0">
       <p class="digit">
-        {{ days | twoDigits }}
+        {{ twoDigits(days) }}
       </p>
       <p class="text">
         {{ $t("global.count_down.days") }}
@@ -24,7 +24,7 @@
     </li>
     <li>
       <p class="digit">
-        {{ hours | twoDigits }}
+        {{ twoDigits(hours) }}
       </p>
       <p class="text">
         {{ $t("global.count_down.hours") }}
@@ -32,7 +32,7 @@
     </li>
     <li>
       <p class="digit">
-        {{ minutes | twoDigits }}
+        {{ twoDigits(minutes) }}
       </p>
       <p class="text">
         {{ $t("global.count_down.minutes") }}
@@ -40,7 +40,7 @@
     </li>
     <li>
       <p class="digit">
-        {{ seconds | twoDigits }}
+        {{ twoDigits(seconds) }}
       </p>
       <p class="text">
         {{ $t("global.count_down.seconds") }}
@@ -53,14 +53,7 @@
 let interval = null;
 export default {
   name: "SCountDown",
-  filters: {
-    twoDigits(value) {
-      if (value.toString().length <= 1) {
-        return "0" + value.toString();
-      }
-      return value.toString();
-    },
-  },
+
   props: {
     end: {
       type: Date,
@@ -119,6 +112,13 @@ export default {
     clearInterval(interval);
   },
   methods: {
+    twoDigits(value) {
+      if (value.toString().length <= 1) {
+        return "0" + value.toString();
+      }
+      return value.toString();
+    },
+
     updateView() {
       this.diff = this.date - this.now;
       if (this.diff <= 0 || this.stop) {

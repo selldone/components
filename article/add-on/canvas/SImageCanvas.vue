@@ -53,11 +53,11 @@
           hide-details
           color="#fff"
         >
-          <template slot="prepend">
+          <template v-slot:prepend>
             <span class="small text-nowrap text-white">Aspect ratio: </span>
           </template>
 
-          <template slot="append">
+          <template v-slot:append>
             <input
               :value="ratio"
               @input="(val) => $emit('update:ratio', val)"

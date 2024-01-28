@@ -66,9 +66,9 @@
                 <v-icon class="me-1" small>warning</v-icon>
                 {{ $t("global.commons.critical_zone") }}
               </h2>
-              <v-subheader>
+              <v-list-subheader>
                 {{ $t("community.topic.remove_msg") }}
-              </v-subheader>
+              </v-list-subheader>
               <div class="widget-buttons">
                 <v-btn
                   color="red"
@@ -236,8 +236,8 @@
               v-if="has_more"
               style="height: 50vh"
               v-intersect.quiet="
-                (entries) => {
-                  if (entries[0].isIntersecting) fetchPosts(page + 1);
+                (isIntersecting) => {
+                  if (isIntersecting) fetchPosts(page + 1);
                 }
               "
             >
@@ -263,6 +263,7 @@ import CommunityTopicSubscribe from "../widgets/topic/CommunityTopicSubscribe.vu
 import CommunityFollowSuggestion from "../widgets/users/CommunityFollowSuggestion.vue";
 import CommunityTopicStatistic from "../widgets/topic/CommunityTopicStatistic.vue";
 import _ from "lodash-es";
+import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 
 export default {
   name: "CommunityTopicPage",
@@ -372,6 +373,7 @@ export default {
     },
 
     search: _.debounce(function (newVal, oldVal) {
+      if(!newVal && !oldVal) return;
       this.fetchPosts(1);
     }, 1500),
   },
@@ -526,18 +528,15 @@ export default {
     },
     //――――――――――――――――――――――― Scroll ―――――――――――――――――――――――
     ScrollToPost(post_id) {
-      this.$vuetify.goTo("#post-" + post_id, {
-        duration: 1800,
-        offset: 250,
-        easing: "easeInOutQuad",
-      });
+      ScrollHelper.scrollToElement("#post-" + post_id,250,'smooth')
+
+
     },
     ScrollToComment(comment_id) {
-      this.$vuetify.goTo("#comment-" + comment_id, {
-        duration: 1800,
-        offset: 250,
-        easing: "easeInOutQuad",
-      });
+      ScrollHelper.scrollToElement("#comment-" + comment_id,250,'smooth')
+
+
+
     },
     //――――――――――――――――――――――― Remove topic ―――――――――――――――――――――――
     removeTopic() {

@@ -33,10 +33,9 @@
 </template>
 
 <script>
-import Vue from "vue";
 import { ProductType } from "@core/enums/product/ProductType";
 
-export default Vue.extend({
+export default {
   name: "SStorefrontProductInBasketIndicator",
 
   computed: {
@@ -87,7 +86,7 @@ export default Vue.extend({
   },
 
   methods: {},
-});
+};
 </script>
 
 <style lang="scss">

@@ -15,33 +15,33 @@
 <template>
   <!-- ---------------- Product Info ---------------- -->
   <div class="position-relative mh200 hide-scroll">
-    <s-shop-product-main-card
-      v-if="product && !busy"
-      :product="product"
-      :can-buy="product.shop_id === community.shop_id"
-      show-cover
-      vertical
-      class="blur-animate"
-      :class="{ 'blured-lg pointer-event-none': show_spec }"
-    >
-      <template slot="top-buttons">
-        <div
-          v-if="spec_array && spec_array.length"
-          key="sp"
-          class="widget-hover rounded-18px pointer-pointer p-2 widget text-center ms-2"
-          @click="show_spec = !show_spec"
-        >
-          <v-img
-            height="42"
-            width="64"
-            contain
-            :src="require('@components/assets/icons/spec.svg')"
-            class="mx-auto"
-          ></v-img>
-          <small>Spec</small>
-        </div>
-      </template>
-    </s-shop-product-main-card>
+    <div v-if="product && !busy">
+      <s-shop-product-main-card
+        :product="product"
+        :can-buy="product.shop_id === community.shop_id"
+        show-cover
+        vertical
+        class="blur-animate"
+      >
+      </s-shop-product-main-card>
+
+      <v-expansion-panels
+        v-if="spec_array && Object.keys(spec_array).length > 0"
+        flat
+      >
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <div>
+              <v-icon class="me-1">bubble_chart</v-icon>
+              <b>{{ $t("product.spec") }} </b>
+            </div>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <product-spec-view :spec="spec_array"></product-spec-view>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </div>
 
     <v-skeleton-loader
       v-else-if="busy"
@@ -49,29 +49,13 @@
       max-width="300"
       type="card"
     ></v-skeleton-loader>
-
-    <product-spec-view
-      v-if="show_spec"
-      :spec="spec_array"
-      class="position-absolute w-100 h-100 bg-white overflow-y-auto"
-      style="top: 0; left: 0; z-index: 10; opacity: 0.96"
-    ></product-spec-view>
-
-    <v-btn
-      v-if="show_spec"
-      class="absolute-top-end z99"
-      @click="show_spec = false"
-      large
-      icon
-      ><v-icon class="me-1">close</v-icon></v-btn
-    >
   </div>
 </template>
 
 <script>
 import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
-import {GtagEcommerce} from "@components/plugins/gtag/GtagEcommerce";
+import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import ProductSpecView from "@components/storefront/product/spec/ProductSpecView.vue";
 
 export default {
@@ -94,8 +78,6 @@ export default {
   data: () => ({
     busy: false,
 
-    show_spec: false,
-
     //-------------------
 
     product: null,
@@ -111,27 +93,22 @@ export default {
   computed: {},
 
   created() {
-    if(this.productId)
-    this.getProductInfo(this.productId);
+    if (this.productId) this.getProductInfo(this.productId);
   },
 
   methods: {
     //------------------------------------------------------------------
 
     getProductInfo(product_id) {
-
       // No change:
       if (this.product && this.product.id === product_id) return;
 
       this.product = null;
       this.spec_array = null;
-      this.show_spec = false;
 
-      if(!product_id)return;
-
+      if (!product_id) return;
 
       this.busy = true;
-
 
       axios
         .get(window.XAPI.GET_PRODUCT_INFO(this.shop.name, product_id), {
@@ -140,10 +117,8 @@ export default {
           },
         })
         .then(({ data }) => {
-
-
-          if(data.error){
-            this.showErrorAlert(null,data.error_msg)
+          if (data.error) {
+            this.showErrorAlert(null, data.error_msg);
             return;
           }
 
@@ -155,13 +130,13 @@ export default {
           else
             this.spec_array = SpecHelper.CONVERT_SPEC_JSON_TO_ARRAY(
               this.product.spec,
-              this.product.spec_order
+              this.product.spec_order,
             );
           GtagEcommerce.MeasuringViewsOfProductDetails(
             this.shop,
             data.product,
-              this.GetUserSelectedCurrency().code,
-            "quick-view"
+            this.GetUserSelectedCurrency().code,
+            "quick-view",
           );
         })
         .catch((error) => {

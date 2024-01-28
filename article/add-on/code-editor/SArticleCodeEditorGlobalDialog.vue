@@ -42,14 +42,14 @@
             :title="$t('global.commons.code')"
             icon="code"
           ></s-widget-header>
-          <v-subheader>
+          <v-list-subheader>
             <div>
               This section used to just show codes in your article. Use cases
               are in writing help, blog about programming, learning, etc. To
               embed code in your article use
               <b>Youtube / ULR / Embed</b> instead.
             </div>
-          </v-subheader>
+          </v-list-subheader>
           <prism-editor
             v-model="code"
             contenteditable="false"

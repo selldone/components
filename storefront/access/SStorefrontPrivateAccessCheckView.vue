@@ -14,7 +14,7 @@
 
 <template>
   <div class="s--storefront-private-access-check-view d-flex">
-    <div class="m-auto pa-3">
+    <div class="ma-auto pa-3">
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Shop Info ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
       <div>
@@ -29,7 +29,7 @@
       <v-expand-transition>
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Busy User ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div v-if="busy_user" class="display-1" key="1">
+        <div v-if="busy_user" class="text-h4" key="1">
           {{ $t("check_access.waiting_message") }}
         </div>
 
@@ -37,7 +37,7 @@
 
         <div v-else key="2">
           <div
-            class="display-1 mb-3"
+            class="text-h4 mb-3"
             v-html="$t('check_access.no_access_message')"
           ></div>
 

@@ -20,17 +20,17 @@
     :dark="dark"
     height="auto"
     :style="`border-radius: ${radius};padding:${padding}`"
-    :extended="$vuetify.breakpoint.smAndDown"
+    :extended="$vuetify.display.smAndDown"
     extension-height="68"
   >
-    <v-spacer v-if="center && $vuetify.breakpoint.mdAndUp"></v-spacer>
+    <v-spacer v-if="center && $vuetify.display.mdAndUp"></v-spacer>
 
-    <template v-if="has_sort && $vuetify.breakpoint.mdAndUp">
+    <template v-if="has_sort && $vuetify.display.mdAndUp">
       <v-btn-toggle
-        :value="sortBy"
-        @change="(val) => $emit('update:sort-by', val)"
+        :model-value="sortBy"
+        @update:model-value="(val) => $emit('update:sort-by', val)"
         class="rounded-group ms-2"
-        active-class="dark-flat"
+        selected-class="dark-flat"
         borderless
         light
       >
@@ -40,7 +40,7 @@
           :key="index.value"
           :small="small"
           class="tnt"
-          depressed
+          variant="flat"
         >
           {{ $t(item.label) }}
         </v-btn>
@@ -48,17 +48,17 @@
 
       <v-btn-toggle
         :dark="dark"
-        :value="sortDesc"
-        @change="(value) => $emit('update:sortDesc', value)"
+        :model-value="sortDesc"
+        @update:model-value="(value) => $emit('update:sortDesc', value)"
         mandatory
         class="mx-2"
-        active-class="dark-flat"
+        selected-class="dark-flat"
         borderless
       >
-        <v-btn :value="false" :small="small" depressed>
+        <v-btn :value="false" :small="small" variant="flat">
           <v-icon>keyboard_arrow_up</v-icon>
         </v-btn>
-        <v-btn :value="true" :small="small" depressed>
+        <v-btn :value="true" :small="small" variant="flat">
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
       </v-btn-toggle>
@@ -66,11 +66,17 @@
 
     <slot></slot>
 
-    <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
+    <v-spacer v-if="$vuetify.display.mdAndUp"></v-spacer>
 
-    <v-menu offset-y v-if="$vuetify.breakpoint.smAndUp" open-on-hover>
-      <template v-slot:activator="{ on }">
-        <v-btn v-on="on" class="mx-2" :dark="dark" icon :title="itemsPerPage">
+    <v-menu offset-y v-if="$vuetify.display.smAndUp" open-on-hover>
+      <template v-slot:activator="{ props }">
+        <v-btn
+          v-bind="props"
+          class="mx-2"
+          :dark="dark"
+          icon
+          :title="itemsPerPage"
+        >
           <v-icon>view_module</v-icon>
         </v-btn>
       </template>
@@ -87,34 +93,34 @@
       </v-list>
     </v-menu>
     <v-text-field
-      :value="search"
-      @input="(value) => $emit('update:search', value)"
+      :model-value="search"
+      @update:model-value="(value) => $emit('update:search', value)"
       clearable
-      solo
+      variant="solo"
       flat
       hide-details
       prepend-inner-icon="search"
       :placeholder="$t('global.commons.search')"
       class="max-width-field"
-      :dense="dense"
+      :density="dense && 'compact'"
       :single-line="true"
-      background-color="transparent"
+      bg-color="transparent"
     >
     </v-text-field>
 
-    <template slot="extension" v-if="has_sort && $vuetify.breakpoint.smAndDown">
+    <template v-slot:extension v-if="has_sort && $vuetify.display.smAndDown">
       <v-menu offset-y>
-        <template v-slot:activator="{ on }">
+        <template v-slot:activator="{ props }">
           <v-btn
-            v-on="on"
+            v-bind="props"
             :dark="dark"
             :close="!!sortBy"
             @click:close="$emit('update:sort-by', null)"
             class="mx-2 tnt"
             height="48"
-            depressed
+            variant="flat"
           >
-            <v-icon left small>sort</v-icon>
+            <v-icon start size="small">sort</v-icon>
             {{
               sortBy_object
                 ? $t(sortBy_object.label)
@@ -126,7 +132,7 @@
           <v-list-item
             v-for="(item, index) in sortKeys"
             :key="index.value"
-            dense
+            density="compact"
             @click="$emit('update:sort-by', item.value)"
           >
             <v-list-item-title>{{ $t(item.label) }}</v-list-item-title>
@@ -136,10 +142,10 @@
 
       <v-btn-toggle
         :dark="dark"
-        :value="sortDesc"
-        @change="(value) => $emit('update:sortDesc', value)"
+        :model-value="sortDesc"
+        @update:model-value="(value) => $emit('update:sortDesc', value)"
         mandatory
-        active-class="dark-flat"
+        selected-class="dark-flat"
         class="rounded-group mx-2"
         borderless
       >

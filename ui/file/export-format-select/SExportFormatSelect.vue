@@ -14,69 +14,56 @@
 
 <template>
   <v-list
-    :three-line="!dense"
+    :lines="!dense && 'three'"
     class="bg-transparent border-between-vertical rounded-18px overflow-hidden"
   >
     <!-- --------------------------------------- PDF --------------------------------------- -->
-    <v-list-item v-if="pdf" :href="pdf" target="_blank">
-      <v-list-item-avatar tile>
-        <v-img
-          :src="require('@components/assets/icons/pdf.svg')"
-          contain
-        ></v-img>
-      </v-list-item-avatar>
-
-      <v-list-item-content>
-        <v-list-item-title> {{ type }} PDF </v-list-item-title>
-        <v-list-item-subtitle>
-          {{ pdfMessage }}
-        </v-list-item-subtitle>
-      </v-list-item-content>
-      <v-list-item-icon class="align-self-center m-auto">
-        <v-icon>download</v-icon>
-      </v-list-item-icon>
+    <v-list-item
+      v-if="pdf"
+      :href="pdf"
+      target="_blank"
+      :title="`${type} PDF`"
+      :subtitle="pdfMessage"
+      append-icon="download"
+    >
+      <template v-slot:prepend>
+        <v-avatar rounded="0">
+          <v-img :src="require('@components/assets/icons/pdf.svg')"></v-img>
+        </v-avatar>
+      </template>
     </v-list-item>
 
     <!-- --------------------------------------- Excel --------------------------------------- -->
-    <v-list-item v-if="excel" :href="excel" target="_blank">
-      <v-list-item-avatar tile>
-        <v-img
-          :src="require('@components/assets/file/excel.svg')"
-          contain
-        ></v-img>
-      </v-list-item-avatar>
-
-      <v-list-item-content>
-        <v-list-item-title> {{ type }} Excel </v-list-item-title>
-        <v-list-item-subtitle>
-          {{ excelMessage }}
-        </v-list-item-subtitle>
-      </v-list-item-content>
-      <v-list-item-icon class="align-self-center m-auto">
-        <v-icon>download</v-icon>
-      </v-list-item-icon>
+    <v-list-item
+      v-if="excel"
+      :href="excel"
+      target="_blank"
+      :title="`${type} Excel`"
+      :subtitle="excelMessage"
+      append-icon="download"
+    >
+      <template v-slot:prepend>
+        <v-avatar rounded="0">
+          <v-img :src="require('@components/assets/file/excel.svg')"></v-img>
+        </v-avatar>
+      </template>
     </v-list-item>
 
     <!-- --------------------------------------- CSV --------------------------------------- -->
 
-    <v-list-item v-if="csv" :href="csv" target="_blank">
-      <v-list-item-avatar tile>
-        <v-img
-          :src="require('@components/assets/file/csv.svg')"
-          contain
-        ></v-img>
-      </v-list-item-avatar>
-
-      <v-list-item-content>
-        <v-list-item-title> {{ type }} CSV </v-list-item-title>
-        <v-list-item-subtitle>
-          {{ csvMessage }}
-        </v-list-item-subtitle>
-      </v-list-item-content>
-
-      <v-list-item-icon class="align-self-center m-auto">
-        <v-icon>download</v-icon>
-      </v-list-item-icon>
+    <v-list-item
+      v-if="csv"
+      :href="csv"
+      target="_blank"
+      :title="`${type} CSV`"
+      :subtitle="csvMessage"
+      append-icon="download"
+    >
+      <template v-slot:prepend>
+        <v-avatar rounded="0">
+          <v-img :src="require('@components/assets/file/csv.svg')"></v-img>
+        </v-avatar>
+      </template>
     </v-list-item>
   </v-list>
 </template>

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-list :dense="$vuetify.breakpoint.smAndUp" class="s--shop-user-menu-list">
+  <v-list :dense="$vuetify.display.smAndUp" class="s--shop-user-menu-list">
     <v-list-item
       :to="{
         name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL,
@@ -25,7 +25,7 @@
           color="red"
           overlap
           :value="sum_orders_badges > 0"
-          :content="sum_orders_badges | numeralFormat('0a')"
+          :content=" numeralFormat(sum_orders_badges,'0a')"
         >
           <v-icon>history</v-icon>
         </v-badge>
@@ -122,7 +122,7 @@
         <v-badge
           color="teal"
           overlap
-          :content="total_items_in_carts | numeralFormat('0a')"
+          :content="  numeralFormat(total_items_in_carts,'0a')"
         >
           <v-icon>shopping_cart</v-icon>
         </v-badge>

@@ -16,7 +16,7 @@
   <div class="map" @click="$emit('click')">
     <v-slide-group
       v-if="hasAddressBook"
-      :value="selected_address_from_list"
+      :model-value="selected_address_from_list"
       class="pa-4 center-items"
       show-arrows
       center-active
@@ -30,7 +30,7 @@
         width: 100%;
       "
     >
-      <v-slide-item v-for="item in address_book" :key="item.id">
+      <v-slide-group-item v-for="item in address_book" :key="item.id">
         <v-sheet
           :color="selected_address_from_list === item ? '#1976d2' : '#fff'"
           :dark="selected_address_from_list === item"
@@ -49,12 +49,12 @@
               @click.stop="deleteAddressBook(item)"
               :title="$t('global.actions.delete')"
             >
-              <v-icon>close</v-icon></v-btn
-            >
+              <v-icon>close</v-icon>
+            </v-btn>
           </div>
           <div>
             <div class="small single-line text-start">
-              <v-icon class="me-1" small>map</v-icon>
+              <v-icon class="me-1" size="small">map</v-icon>
               <flag
                 v-if="item.country"
                 :iso="item.country"
@@ -64,11 +64,11 @@
 
               {{ item.address }}
             </div>
-            <v-icon v-if="item.phone" small> phone </v-icon>
-            <v-icon v-if="item.location" small> pin_drop </v-icon>
+            <v-icon v-if="item.phone" size="small"> phone</v-icon>
+            <v-icon v-if="item.location" size="small"> pin_drop</v-icon>
           </div>
         </v-sheet>
-      </v-slide-item>
+      </v-slide-group-item>
     </v-slide-group>
 
     <s-progress-loading v-if="busy_fetch"></s-progress-loading>
@@ -80,8 +80,9 @@
       <div class="mb-5">
         <v-btn
           v-if="mode_bottom_card !== 'detail'"
-          fab
-          small
+          variant="elevated"
+          icon
+          size="small"
           @click="
             () => {
               $emit('close');
@@ -94,31 +95,32 @@
         </v-btn>
       </div>
 
-      <div v-if="$vuetify.breakpoint.mdAndUp" class="mb-5">
+      <div v-if="$vuetify.display.mdAndUp" class="mb-5">
         <v-btn
           v-if="canSaveAddress"
           class="sub-caption b-16px -black zoomIn"
           :caption="$t('global.actions.add')"
-          fab
-          small
+          variant="elevated"
+          icon
+          size="small"
           color="#1976D2"
-          dark
           @click="dialog_add_to_address_book = true"
         >
           <v-icon>add</v-icon>
         </v-btn>
       </div>
-      <div v-if="$vuetify.breakpoint.mdAndUp" class="mb-5">
+      <div v-if="$vuetify.display.mdAndUp" class="mb-5">
         <v-btn
           v-if="canSaveUpdate"
           class="sub-caption b-16px -black zoomIn"
           :caption="$t('global.actions.update')"
-          fab
-          small
+          variant="elevated"
+          icon
+          size="small"
           @click="updateAddressBook"
           :loading="busy_update_book"
         >
-          <v-icon color="#1976D2"> save </v-icon>
+          <v-icon color="#1976D2"> save</v-icon>
         </v-btn>
       </div>
     </div>
@@ -127,15 +129,15 @@
 
     <v-btn
       v-if="clearable"
-      small
-      depressed
+      size="small"
+      variant="flat"
       color="red"
-      dark
       class="absolute-bottom-center z2 m-1"
       @click.stop="$emit('clear', null)"
-      ><v-icon small class="me-1">close</v-icon>
-      {{ $t("global.actions.clear") }}</v-btn
     >
+      <v-icon size="small" class="me-1">close</v-icon>
+      {{ $t("global.actions.clear") }}
+    </v-btn>
     <div
       v-if="!noMap"
       :style="freeze ? 'pointer-events: none' : ''"
@@ -196,18 +198,18 @@
         group
         tag="v-row"
         class="mobile-toolbar"
-        v-if="$vuetify.breakpoint.smAndDown"
+        v-if="$vuetify.display.smAndDown"
         :style="$vuetify.rtl ? 'flex-direction: row-reverse;' : ''"
       >
         <v-btn
           v-if="canSaveAddress"
           class="sub-caption b-16px -black mx-2"
           :caption="$t('global.actions.add')"
-          fab
-          small
+          variant="elevated"
+          icon
+          size="small"
           key="mt-1"
           color="#1976D2"
-          dark
           @click="dialog_add_to_address_book = true"
         >
           <v-icon>add</v-icon>
@@ -217,13 +219,14 @@
           v-if="canSaveUpdate"
           class="sub-caption b-16px -black mx-2"
           :caption="$t('global.actions.edit')"
-          fab
-          small
+          variant="elevated"
+          icon
+          size="small"
           key="mt-2"
           @click="updateAddressBook"
           :loading="busy_update_book"
         >
-          <v-icon color="#1976D2"> save </v-icon>
+          <v-icon color="#1976D2"> save</v-icon>
         </v-btn>
 
         <v-spacer key="mt-s"></v-spacer>
@@ -253,11 +256,11 @@
               :style="isMobile ? 'position: absolute;bottom: 0' : ''"
             >
               <div v-if="address && !country">
-                <v-icon class="me-1" color="red" small>warning</v-icon>
+                <v-icon class="me-1" color="red" size="small">warning</v-icon>
                 {{ $t("global.notification.country_invalid") }}
               </div>
               <div v-if="address && !postal && has_postcode">
-                <v-icon class="me-1" color="red" small>warning</v-icon>
+                <v-icon class="me-1" color="red" size="small">warning</v-icon>
                 {{ $t("global.notification.postal_code_invalid") }}
               </div>
             </div>
@@ -266,7 +269,7 @@
 
             <s-address-input
               v-model="address"
-              :is-focus.sync="isFocus"
+              v-model:is-focus="isFocus"
               @select:address="(it) => onSelectAddress(it)"
               :center="center"
               :top="!isMobile"
@@ -277,20 +280,25 @@
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Actions ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <div class="widget-buttons">
-              <v-btn dark outlined x-large color="primary" @click="showDetails">
-                <v-icon class="me-1" small> fas fa-edit </v-icon>
+              <v-btn
+                variant="outlined"
+                size="x-large"
+                color="primary"
+                @click="showDetails"
+              >
+                <v-icon class="me-1" size="small"> edit_square</v-icon>
                 {{ $t("global.map_view.address_detail") }}
                 <v-icon
                   v-if="address && ((has_postcode && !postal) || !country)"
-                  x-small
+                  size="x-small"
                   color="red"
                   class="ms-1 blink-me-linear"
-                  >fas fa-exclamation-circle</v-icon
-                >
+                  >fa:fas fa-exclamation-circle
+                </v-icon>
               </v-btn>
 
-              <v-btn dark color="primary" x-large @click="clickSetLocation">
-                <v-icon class="me-1"> done </v-icon>
+              <v-btn color="primary" size="x-large" @click="clickSetLocation">
+                <v-icon class="me-1"> done</v-icon>
                 {{ confirmText }}
               </v-btn>
             </div>
@@ -309,7 +317,7 @@
                   v-model="address"
                   prepend-inner-icon="local_shipping"
                   :readonly="viewOnly"
-                  :dense="isMobile"
+                  :density="isMobile && 'compact'"
                   :label="`▼ ${title}`"
                   :placeholder="$t('global.map_view.enter_your_address')"
                   color="green"
@@ -322,7 +330,7 @@
                 <s-address-input
                   v-else
                   v-model="address"
-                  :is-focus.sync="isFocus"
+                  v-model:is-focus="isFocus"
                   @select:address="(it) => onSelectAddress(it)"
                   :center="center"
                   bottom
@@ -339,7 +347,7 @@
                   :label="$t('global.map_view.building_number')"
                   prepend-inner-icon="apartment"
                   :readonly="viewOnly"
-                  :dense="isMobile"
+                  :density="isMobile && 'compact'"
                 />
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Unit No ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -351,7 +359,7 @@
                   :label="$t('global.map_view.building_unit')"
                   prepend-inner-icon="roofing"
                   :readonly="viewOnly"
-                  :dense="isMobile"
+                  :density="isMobile && 'compact'"
                 />
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Full Name ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -367,7 +375,7 @@
                   "
                   prepend-inner-icon="perm_identity"
                   :readonly="viewOnly"
-                  :dense="isMobile"
+                  :density="isMobile && 'compact'"
                 />
               </v-col>
 
@@ -416,7 +424,7 @@
                   v-model="city"
                   :label="$t('global.address_info.city')"
                   :readonly="viewOnly"
-                  :dense="isMobile"
+                  :density="isMobile && 'compact'"
                 >
                 </v-text-field>
               </v-col>
@@ -429,9 +437,9 @@
                   :label="$t('global.map_view.postal_code')"
                   prepend-inner-icon="markunread_mailbox"
                   :readonly="viewOnly"
-                  :dense="isMobile"
+                  :density="isMobile && 'compact'"
                 >
-                  <template v-slot:append>
+                  <template v-slot:append-inner>
                     <v-fade-transition leave-absolute>
                       <v-icon v-if="validPostalCode" color="success">
                         check_circle
@@ -449,9 +457,9 @@
                   :label="$t('global.map_view.phone_input')"
                   prepend-inner-icon="phone"
                   :readonly="viewOnly"
-                  :dense="isMobile"
+                  :density="isMobile && 'compact'"
                 >
-                  <template v-slot:append>
+                  <template v-slot:append-inner>
                     <v-fade-transition leave-absolute>
                       <v-icon v-if="validPhoneNumber" color="success">
                         check_circle
@@ -470,7 +478,7 @@
                   :rows="1"
                   auto-grow
                   :readonly="viewOnly"
-                  :dense="isMobile"
+                  :density="isMobile && 'compact'"
                   prepend-inner-icon="sticky_note_2"
                 />
               </v-col>
@@ -479,8 +487,8 @@
               <v-col cols="12" class="text-center">
                 <div class="widget-buttons">
                   <v-btn
-                    x-large
-                    text
+                    size="x-large"
+                    variant="text"
                     color="primary"
                     @click="
                       () => {
@@ -498,18 +506,16 @@
 
                   <v-btn
                     v-if="noMap"
-                    dark
                     color="primary"
-                    x-large
+                    size="x-large"
                     @click="clickSetLocation"
                   >
-                    <v-icon class="me-1"> done </v-icon>
+                    <v-icon class="me-1"> done</v-icon>
                     {{ confirmText }}
                   </v-btn>
                   <v-btn
                     v-else
-                    x-large
-                    dark
+                    size="x-large"
                     color="primary"
                     @click="showDefault()"
                   >
@@ -538,7 +544,7 @@
             :color="SaminColorLight"
             class="text-start mx-2"
             :label="$t('global.map_view.address_title_input')"
-            prepend-inner-icon="fas fa-tag"
+            prepend-inner-icon="fa:fas fa-tag"
           >
             <template v-slot:prepend-inner>
               <v-fade-transition leave-absolute>
@@ -553,8 +559,7 @@
           <div class="widget-buttons">
             <v-btn
               color="primary"
-              dark
-              x-large
+              size="x-large"
               :class="{ disabled: !new_address_title }"
               @click="saveCurrentPosition"
               :loading="busy_save"
@@ -562,7 +567,11 @@
               <v-icon class="me-1">save</v-icon>
               {{ $t("global.actions.save") }}
             </v-btn>
-            <v-btn text x-large @click="dialog_add_to_address_book = false">
+            <v-btn
+              variant="text"
+              size="x-large"
+              @click="dialog_add_to_address_book = false"
+            >
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.cancel") }}
             </v-btn>
@@ -586,8 +595,16 @@ import SAddressInput from "@components/ui/input/address/SAddressInput.vue";
 export default {
   name: "SMapView",
   components: { SAddressInput, SCountrySelect },
+  emits: [
+    "update:modelValue",
+    "close",
+    "select",
+    "clear",
+    "postalCode",
+    "phoneNumber",
+  ],
   props: {
-    value: {
+    modelValue: {
       type: Object,
     },
 
@@ -794,7 +811,7 @@ export default {
     };
   },
   watch: {
-    value(val) {
+    modelValue(val) {
       if (val) this.center_clicked = false;
     },
 
@@ -915,7 +932,7 @@ export default {
       if (!this.selected_country_detail?.states?.length) return null;
 
       const found = this.selected_country_detail?.states?.find(
-        (i) => i.name === this.state
+        (i) => i.name === this.state,
       );
       if (found) {
         // console.log("State Code", found.code);
@@ -949,7 +966,7 @@ export default {
             this.map_box.addControl(this.locateControl);
 
             // Add zoom and rotation controls to the map.
-            if (this.$vuetify.breakpoint.mdAndUp) {
+            if (this.$vuetify.display.mdAndUp) {
               this.map_box.addControl(new Mapbox.NavigationControl());
 
               this.map_box.addControl(new Mapbox.FullscreenControl());
@@ -1043,7 +1060,7 @@ export default {
               // Force to select state by state code: Maybe miss match state name with local
 
               const found = this.selected_country_detail.states.find(
-                (i) => i.code === data.state_code
+                (i) => i.code === data.state_code,
               );
               if (found) this.state = found.name;
             }
@@ -1110,9 +1127,9 @@ export default {
 
         /** if (this.canSelectAddress) this.getAddressStringOfCenter(); // hanuz center update nashode! bayad ba delay ejra beshe in!
 
-        if (this.showUserLocation) {
-          this.user_location = Object.assign({}, {lat:location.coords.latitude,lng:location.coords.longitude});
-        }*/
+         if (this.showUserLocation) {
+         this.user_location = Object.assign({}, {lat:location.coords.latitude,lng:location.coords.longitude});
+         }*/
       });
     },
 
@@ -1132,7 +1149,7 @@ export default {
       out.message = this.details_message;
       out.postal = this.postal;
 
-      this.$emit("input", out);
+      this.$emit("update:modelValue", out);
       this.$emit("clickSetLocation", out);
     },
 
@@ -1205,7 +1222,7 @@ export default {
           if (!response.data.error) {
             this.showSuccessAlert(
               null,
-              this.$t("global.map_view.notifications.save_in_list")
+              this.$t("global.map_view.notifications.save_in_list"),
             );
             this.AddOrUpdateItemByID(this.address_book, response.data.address);
             this.selected_address_from_list = null;
@@ -1265,7 +1282,7 @@ export default {
             .catch((error) => {
               this.showLaravelError(error);
             });
-        }
+        },
       );
     },
 
@@ -1276,7 +1293,7 @@ export default {
           window.ADDRESS_API.PUT_ADDRESS(
             this.selectedAddressId
               ? this.selectedAddressId
-              : this.selected_address_from_list.id
+              : this.selected_address_from_list.id,
           ),
           {
             title: this.selectedAddressTitle
@@ -1295,7 +1312,7 @@ export default {
             phone: this.phone_number,
             message: this.details_message,
             postal: this.postal,
-          }
+          },
         )
         .then((response) => {
           if (!response.data.error) {
@@ -1304,7 +1321,7 @@ export default {
               null,
               this.$t("global.map_view.notifications.edit_success", {
                 title: response.data.address.title,
-              })
+              }),
             );
           } else {
             this.showErrorAlert(null, response.data.error_msg);
@@ -1319,26 +1336,26 @@ export default {
     },
 
     assignDataFromValue() {
-      if (!this.value) return;
+      if (!this.modelValue) return;
 
       //console.log("assignDataFromValue  old:" + this.last_selected_position);
-      this.location = this.value.location;
-      this.last_selected_position = this.value.location;
+      this.location = this.modelValue.location;
+      this.last_selected_position = this.modelValue.location;
 
-      this.country = this.value.country
-        ? this.value.country
+      this.country = this.modelValue.country
+        ? this.modelValue.country
         : SetupService.DefaultCountry();
-      this.state = this.value.state;
-      this.city = this.value.city;
+      this.state = this.modelValue.state;
+      this.city = this.modelValue.city;
 
-      this.address = this.value.address;
-      this.postal = this.value.postal;
-      this.phone_number = this.value.phone;
+      this.address = this.modelValue.address;
+      this.postal = this.modelValue.postal;
+      this.phone_number = this.modelValue.phone;
 
-      this.details_number = this.value.no;
-      this.details_unit = this.value.unit;
-      this.details_full_name = this.value.name;
-      this.details_message = this.value.message;
+      this.details_number = this.modelValue.no;
+      this.details_unit = this.modelValue.unit;
+      this.details_full_name = this.modelValue.name;
+      this.details_message = this.modelValue.message;
 
       //console.log("assignDataFromValue  new:" + this.last_selected_position);
     },
@@ -1436,12 +1453,14 @@ export default {
   margin-right: auto;
 
   max-height: calc(100% - 120px);
+
   &.is-mobile {
     padding-bottom: 80px !important;
     max-height: calc(100% - 20px);
     max-width: calc(100% - 8px);
 
     transition: all 0.4s ease-in-out;
+
     &.is-full-h {
       min-height: calc(100% - 120px);
     }

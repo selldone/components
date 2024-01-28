@@ -23,10 +23,10 @@
       >
       {{ label }}
     </h3>
-    <v-subheader v-if="hint">{{ hint }}</v-subheader>
+    <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <div
-      class="p-2 usn"
+      class="pa-2 usn"
       :class="{ disabled: disabled, pp: !readonly && !loading, pen: loading }"
       @click="toggle"
     >
@@ -34,21 +34,22 @@
         <!-- ------- Toggle ------- -->
 
         <div
-          style="min-width: 28px"
+          style="min-width: 32px;min-height: 32px"
           class="flex-grow-0 d-flex align-center justify-center me-2"
         >
           <div
-            :class="{ 'avatar-gradient': value }"
-            class="-thin -gray position-relative"
+            :class="{ 'avatar-gradient': modelValue }"
+            class="-thin -gray position-relative d-flex align-center justify-center"
+
           >
             <!-- Toggle Icon -->
-            <v-icon :color="falseGray && !value ? '#666' : color">
-              {{ value ? "lens" : "radio_button_unchecked" }}</v-icon
+            <v-icon :color="falseGray && !modelValue ? '#666' : color"  size="24">
+              {{ modelValue ? "lens" : "radio_button_unchecked" }}</v-icon
             >
             <!-- Loading -->
             <v-progress-circular
               v-if="loading"
-              :color="value ? '#fff' : color"
+              :color="modelValue ? '#fff' : color"
               class="center-absolute"
               indeterminate
               :size="14"
@@ -60,16 +61,16 @@
         <div class="flex-grow-1">
           <b>
             <span v-html="title"></span>
-            <v-icon v-if="readonly" x-small :color="dark ? '#fff' : '#111'"
+            <v-icon v-if="readonly" size="x-small" :color="dark ? '#fff' : '#111'"
               >lock</v-icon
             >
           </b>
-          <v-subheader v-if="description" style="height: auto" class="p-0">
+          <div v-if="description"  class="op-0-7 small">
             <span v-html="description"></span>
-          </v-subheader>
+          </div>
         </div>
 
-        <v-icon v-if="icon" :small="smallIcon">{{ icon }}</v-icon>
+        <v-icon v-if="icon" :size="smallIcon? 'small':undefined">{{ icon }}</v-icon>
       </div>
     </div>
   </div>
@@ -79,8 +80,9 @@
 export default {
   name: "SSmartToggle",
   components: {},
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
 
     label: {},
     hint: {},
@@ -126,7 +128,7 @@ export default {
   },
   computed: {
     icon() {
-      return this.value
+      return this.modelValue
         ? this.trueIcon
         : this.falseIcon
         ? this.falseIcon
@@ -134,14 +136,14 @@ export default {
     },
 
     description() {
-      return this.value
+      return this.modelValue
         ? this.trueDescription
         : this.falseDescription
         ? this.falseDescription
         : this.trueDescription;
     },
     title() {
-      return this.value
+      return this.modelValue
         ? this.trueTitle
         : this.falseTitle
         ? this.falseTitle
@@ -152,8 +154,8 @@ export default {
   methods: {
     toggle() {
       if (this.readonly) return;
-      const val = !this.value;
-      this.$emit("input", val);
+      const val = !this.modelValue;
+      this.$emit("update:modelValue", val);
 
       this.$nextTick(() => {
         this.$emit("change", val);

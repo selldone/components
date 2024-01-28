@@ -58,19 +58,19 @@
 
       <span
         v-if="card.sender"
-        class="d-block limited-text-150px m-auto"
+        class="d-block limited-text-150px ma-auto"
         :title="'Sender address: ' + card.sender"
       >
-        <v-icon small class="mr-2"> alternate_email </v-icon>
+        <v-icon small class="me-2"> alternate_email </v-icon>
         <small class="hover-b pp" v-copy>{{ card.sender }}</small>
       </span>
 
       <span
         v-if="card.hash"
-        class="d-block limited-text-150px m-auto"
+        class="d-block limited-text-150px ma-auto"
         :title="'Transaction hash: ' + card.hash"
       >
-        <v-icon small class="mr-2"> tag </v-icon>
+        <v-icon small class="me-2"> tag </v-icon>
         <small class="hover-b pp" v-copy>{{ card.hash }}</small>
       </span>
     </div>

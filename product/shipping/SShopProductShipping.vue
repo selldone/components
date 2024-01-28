@@ -17,8 +17,8 @@
     <v-container v-if="has_pickup" fluid class="my-16">
       <v-row align="center">
         <v-col cols="12" md="6" class="text-start">
-          <v-subheader>● Pickup {{ product.title }}</v-subheader>
-          <h2 class="display-2 line-height-normal font-weight-black">
+          <v-list-subheader>● Pickup {{ product.title }}</v-list-subheader>
+          <h2 class="text-h3 line-height-normal font-weight-black">
             {{ shipping_article?.title ? shipping_article.title : "Shipping" }}
           </h2>
         </v-col>
@@ -100,7 +100,7 @@
 
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
       <div
-        v-if="$vuetify.breakpoint.mdAndUp && admin_url_shipping"
+        v-if="$vuetify.display.mdAndUp && admin_url_shipping"
         class="text-end"
       >
         <v-btn

@@ -16,35 +16,30 @@
   <v-menu
     v-model="menu"
     v-if="notifications?.length || mode === 'unread'"
-    offset-y
-    rounded="xl"
-    max-width="820"
-    nudge-width="460"
+    width="560"
   >
-    <template v-slot:activator="{ on, attrs }">
-      <v-badge
-        :value="unread_count > 0"
-        :content="unread_count | numeralFormat('0a')"
-        overlap
-        color="red"
-        offset-y="20"
-        offset-x="20"
+    <template v-slot:activator="{ props }">
+      <v-btn
+        :color="unread_count > 0 ? 'amber' : '#eee'"
+        icon
+        variant="text"
+        :loading="busy"
+        class="mx-2"
+        size="48"
+        v-bind="props"
       >
-        <v-btn
-          :color="unread_count > 0 ? 'amber' : '#eee'"
-          dark
-          v-bind="attrs"
-          v-on="on"
-          icon
-          :loading="busy"
-          class="mx-2"
+        <v-badge
+          :model-value="unread_count > 0"
+          :content="numeralFormat(unread_count, '0a')"
+          color="red"
+          location="top end"
         >
-          <v-icon>notifications</v-icon>
-        </v-btn>
-      </v-badge>
+          <v-icon size="28">notifications</v-icon>
+        </v-badge>
+      </v-btn>
     </template>
 
-    <v-sheet class="text-start" max-width="100vw">
+    <v-sheet class="text-start" max-width="100vw" rounded="xl">
       <div class="px-6 pt-3">
         <h2 class="font-weight-black my-1">Notifications</h2>
 
@@ -52,47 +47,50 @@
           <v-btn
             class="me-1 tnt"
             :color="mode === 'new' ? 'primary' : '#111'"
-            text
+            variant="text"
             @click.stop="mode = 'new'"
             rounded
             :loading="busy && mode === 'new'"
-            >New</v-btn
-          >
+            >New
+          </v-btn>
           <v-btn
             class="me-1 tnt"
             :color="mode === 'unread' ? 'primary' : '#111'"
-            text
+            variant="text"
             @click.stop="mode = 'unread'"
             rounded
             :loading="busy && mode === 'unread'"
-            >Unread</v-btn
-          >
+            >Unread
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn
             v-if="shop_id"
             class="tnt"
-            text
+            variant="text"
             rounded
             :to="{ name: 'ShopNotificationsRepositoryList' }"
             exact
-            >See All</v-btn
-          >
+            >See All
+          </v-btn>
         </v-row>
       </div>
 
-      <v-list class="d--notification-repository border-between-vertical" dense>
+      <v-list
+        class="d--notification-repository border-between-vertical"
+        density="compact"
+      >
         <v-list-item
           v-for="(item, index) in notifications"
           :key="index"
           :to="helper.getTo(item)"
           exact
-          @click.native="onClickNotification(item)"
+          @click="onClickNotification(item)"
         >
-          <v-list-item-icon>
+          <template v-slot:prepend>
             <v-badge
-              :value="item.count > 1"
-              :content="item.count | numeralFormat('0a')"
-              bottom
+              :model-value="item.count > 1"
+              :content="numeralFormat(item.count, '0a')"
+              location="bottom"
               :color="item.read_at ? '#aaa' : helper.getColor(item)"
               offset-x="12"
               offset-y="8"
@@ -102,14 +100,14 @@
                 size="40"
               >
                 <v-avatar size="36" color="#fff">
-                  <v-icon :color="item.read_at ? '#aaa' : '#111'">{{
-                    helper.getIcon(item)
-                  }}</v-icon>
+                  <v-icon :color="item.read_at ? '#aaa' : '#111'"
+                    >{{ helper.getIcon(item) }}
+                  </v-icon>
                 </v-avatar>
               </v-avatar>
             </v-badge>
-          </v-list-item-icon>
-          <v-list-item-content
+          </template>
+          <div
             :class="{ 'op-0-8 text-muted': item.read_at || item.local_read }"
           >
             <v-list-item-title
@@ -145,7 +143,7 @@
                 :to-category="
                   (id) => {
                     return {
-                      name: 'BackofficeProductsManagementPage',
+                      name: 'BPageShopProductsList',
                       query: { dir: id, shop_id: item.data.shop?.id },
                     };
                   }
@@ -153,21 +151,27 @@
                 class="pa-1"
               ></products-dense-images-circles-links>
             </v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-list-item-action-text>
-              <small> {{ getFromNowString(item.created_at) }} ●</small>
-            </v-list-item-action-text>
-            <v-icon v-if="!item.read_at" class="mx-auto" x-small color="red"
-              >circle</v-icon
-            >
-          </v-list-item-action>
+          </div>
+          <template v-slot:append>
+            <v-list-item-action>
+              <v-icon
+                v-if="!item.read_at"
+                class="mx-auto"
+                size="x-small"
+                color="red"
+                >circle
+              </v-icon>
+              <small class="d-block">
+                {{ getFromNowString(item.created_at) }} ●</small
+              >
+            </v-list-item-action>
+          </template>
         </v-list-item>
       </v-list>
 
       <div
         v-if="!notifications?.length"
-        class="pa-5 display-1 font-weight-light text-center op-0-4"
+        class="pa-5 text-h4 font-weight-light text-center op-0-4"
       >
         Empty!
       </div>
@@ -219,7 +223,7 @@ export default {
           (n) =>
             !n.read_at &&
             !n.local_read &&
-            !NotificationRepositoryType[n.type]?.to // Auto read notifications without link!
+            !NotificationRepositoryType[n.type]?.to, // Auto read notifications without link!
         )
         .map((n) => n.id);
     },

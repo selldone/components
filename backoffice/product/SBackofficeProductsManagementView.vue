@@ -25,15 +25,15 @@
       :hierarchy-items="hierarchy_items"
       :replace="dialogMode"
       v-intersect="
-        (e) => {
-          fixed = !e[0].isIntersecting;
+        (isIntersecting, entries, observer) => {
+          fixed = !isIntersecting;
         }
       "
     />
 
     <!-- ██████████████████ Clone Product ██████████████████ -->
     <v-slide-y-transition hide-on-leave>
-      <drop
+      <s-drop
         v-if="current_dragged_product"
         class="clone-area shadow-small"
         :class="{
@@ -47,25 +47,24 @@
       >
         <s-circle-button
           class="center"
-          icon="fas fa-copy"
+          icon="fa:fas fa-copy"
           :tooltip="$t('global.actions.copy')"
           color="#fff"
         />
-      </drop>
+      </s-drop>
     </v-slide-y-transition>
 
     <s-progress-loading v-if="busy_fetch"></s-progress-loading>
 
     <!-- ██████████████████ Top Helper Container ██████████████████ -->
     <v-slide-y-transition hide-on-leave>
-      <drop
+      <s-drop
         v-if="
           current_dragged_product ||
           current_dragged_folder ||
           held_folders.length ||
           held_items.length
         "
-        xs12
         class="top-drop-container"
         :class="{ focus: dragOverHolder, 'fixed slideInDown': fixed }"
         @drop="(data) => handleDropInHolder(data)"
@@ -81,31 +80,19 @@
           :key="'f' + category.id"
           class="item"
         >
-          <drag
+          <s-drag
             :draggable="draggable"
             :transfer-data="{ category: category }"
             @drag="onDragStart({ category: category }, true, ...arguments)"
             @dragend="onDragEnd"
+            :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
+            :drag-image-html="
+              $t('products_select.move_category', {
+                category: category.title.limitWords(2),
+              })
+            "
+            drag-image-color="#FFA000"
           >
-            <template slot="image">
-              <div class="drag-category-container" v-if="!hide_spirits">
-                <img
-                  v-if="category.icon"
-                  width="86"
-                  height="86"
-                  :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
-                />
-
-                <p
-                  v-html="
-                    $t('products_select.move_category', {
-                      category: category.title.limitWords(2),
-                    })
-                  "
-                ></p>
-              </div>
-            </template>
-
             <circle-image
               v-if="category.icon"
               :size="60"
@@ -116,39 +103,26 @@
               v-else
               class="hover-scale-tiny"
               :size="60"
-              icon="fas fa-shapes"
+              icon="fa:fas fa-shapes"
             />
-          </drag>
+          </s-drag>
         </div>
 
         <!-- ⬬⬬⬬⬬ ▓▓▓▓▓▓▓▓▓ HOLDER > Products ▓▓▓▓▓▓▓▓▓ ⬬⬬⬬⬬ -->
 
         <div v-for="product in held_items" :key="'p' + product.id" class="item">
-          <drag
+          <s-drag
             :draggable="draggable"
             :transfer-data="{ product: product }"
             @drag="onDragStart({ product: product }, true, ...arguments)"
             @dragend="onDragEnd"
+            :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+            :drag-image-html="
+              $t('products_select.move_product', {
+                category: product.title.limitWords(2),
+              })
+            "
           >
-            <template slot="image">
-              <div class="drag-product-container" v-if="!hide_spirits">
-                <img
-                  v-if="product.icon"
-                  width="86"
-                  height="86"
-                  :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
-                />
-
-                <p
-                  v-html="
-                    $t('products_select.move_product', {
-                      category: product.title.limitWords(2),
-                    })
-                  "
-                ></p>
-              </div>
-            </template>
-
             <circle-image
               v-if="product.icon"
               :size="60"
@@ -159,11 +133,11 @@
               v-else
               class="hover-scale-tiny"
               :size="60"
-              icon="fas fa-box"
+              icon="fa:fas fa-box"
             />
-          </drag>
+          </s-drag>
         </div>
-      </drop>
+      </s-drop>
     </v-slide-y-transition>
 
     <!-- ██████████████████ Sort tools ██████████████████ -->
@@ -171,7 +145,7 @@
       <s-products-sort-view
         v-model="sort"
         class="w-100"
-        :only-available.sync="only_available"
+        v-model:only-available="only_available"
         has-search
         @update:search="
           (val) => {
@@ -183,7 +157,7 @@
       >
         <v-btn
           @click="toggleViewMode"
-          tile
+          variant="text"
           icon
           title="Change view mode"
           :class="{ 'ripple-focus': !local_view_mode }"
@@ -199,16 +173,14 @@
           :shop="shop"
           v-model="filters"
           @change="onFilterChange"
-          class="max-w-300 min-width-200"
+          class="min-width-200 pa-0"
           dense
         >
         </admin-products-filter-input>
 
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Filter by vendor ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
         <vendor-input-field
-          v-if="
-            IS_MARKETPLACE && !IS_VENDOR_PANEL && $vuetify.breakpoint.mdAndUp
-          "
+          v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL && $vuetify.display.mdAndUp"
           v-model="vendor_filter"
           :shop="shop"
           placeholder="Filter vendor..."
@@ -224,7 +196,7 @@
     </v-row>
     <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Filter by vendor ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
     <vendor-input-field
-      v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL && !$vuetify.breakpoint.mdAndUp"
+      v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL && !$vuetify.display.mdAndUp"
       v-model="vendor_filter"
       :shop="shop"
       placeholder="Filter vendor..."
@@ -273,7 +245,7 @@
             v-for="it in valuation_filter.structure"
             :key="it.id"
             label
-            x-small
+            size="x-small"
             class="ma-1 pa-1"
             >{{ it.title }}
           </v-chip>
@@ -287,28 +259,26 @@
           <small>{{ $t("global.commons.from") }} </small>
           <v-chip
             v-if="time_filter.start"
-            x-small
+            size="x-small"
             class="ma-1 min-width-max-content"
             color="#111"
-            dark
             >{{ getLocalTimeStringSmall(time_filter.start) }} 🞄
             {{ getFromNowString(time_filter.start) }}
           </v-chip>
-          <v-chip v-else x-small class="ma-1 pa-1" color="primary" dark
+          <v-chip v-else size="x-small" class="ma-1 pa-1" color="primary"
             >-
           </v-chip>
           <v-icon>{{ $t("icons.chevron_next") }}</v-icon>
           <small>{{ $t("global.commons.to") }} </small>
           <v-chip
             v-if="time_filter.end"
-            x-small
+            size="x-small"
             class="ma-1 min-width-max-content"
             color="#111"
-            dark
             >{{ getLocalTimeStringSmall(time_filter.end) }} 🞄
             {{ getFromNowString(time_filter.end) }}
           </v-chip>
-          <v-chip v-else x-small class="ma-1 pa-1" color="primary" dark
+          <v-chip v-else size="x-small" class="ma-1 pa-1" color="primary"
             >{{ $t("global.commons.today") }}
           </v-chip>
         </div>
@@ -318,13 +288,12 @@
     <!-- ██████████████████ List ██████████████████ -->
 
     <v-fade-transition
-      tag="v-row"
+      id="manage-panel"
       group
-      class="m-0"
-      no-gutters
       origin="center center"
       hide-on-leave
-      id="manage-panel"
+      tag="div"
+      class="v-row v-row--dense"
     >
       <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Spirit Container ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
@@ -337,7 +306,7 @@
         v-if="show_spirit_container"
         key="drop-box"
       >
-        <drop
+        <s-drop
           class="spirit-container"
           :class="{
             'drop-safe': inDragState,
@@ -349,8 +318,13 @@
           @drop="(data) => handleDropInFolder(data, { id: current_dir_id })"
           @dragenter="onDropEnter({ id: current_dir_id })"
         >
-          <v-icon class="center" size="64px"> add</v-icon>
-        </drop>
+          <div class="center-absolute text-center">
+            <v-icon size="64px"> add</v-icon>
+            <div class="my-2 small">
+              Drop here if you want to move it to current category.
+            </div>
+          </div>
+        </s-drop>
       </v-col>
 
       <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Back Button ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
@@ -364,7 +338,7 @@
         v-if="parent_folders"
       >
         <div
-          class="position-relative d-flex flex-column align-center justify-center transition-ease-in-out hover-up"
+          class="position-relative d-flex flex-column align-center justify-center hover-up"
           @click="selectFolder(parent_folders.parent)"
           :class="{ disabled: busy_fetch, 'h-100': !mini }"
           :title="`Back to ${
@@ -380,8 +354,8 @@
               >folder
             </v-icon>
             <v-icon :size="mini ? 100 : 200" color="amber" class="no-inv z1"
-              >folder</v-icon
-            >
+              >folder
+            </v-icon>
           </div>
 
           <div class="mt-n1 center-absolute" style="z-index: 2">
@@ -391,7 +365,7 @@
               v-if="parent_folders.parent?.icon"
               ><img :src="getShopImagePath(parent_folders.parent?.icon, 128)"
             /></v-avatar>
-            <v-icon x-large class="z1" color="#fff"
+            <v-icon size="x-large" class="z1" color="#fff"
               >{{ $t("icons.chevron_back") }}
             </v-icon>
           </div>
@@ -408,7 +382,7 @@
       <v-col
         v-for="category in folders.slice(
           (folder_page - 1) * max_folders_per_page,
-          folder_page * max_folders_per_page
+          folder_page * max_folders_per_page,
         )"
         :key="'f' + category.id"
         :cols="mini ? 4 : 12"
@@ -419,7 +393,7 @@
         class="position-relative"
         @contextmenu="showMenu($event, null, category)"
       >
-        <drag
+        <s-drag
           :draggable="draggable"
           :transfer-data="{ category: category }"
           @drag="onDragStart({ category: category }, false, ...arguments)"
@@ -431,19 +405,11 @@
               current_dragged_folder &&
               arrange_categories_target === category,
           }"
+          :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
+          :drag-image-html="category.title.limitWords(3)"
+          drag-image-color="#FFA000"
         >
-          <template slot="image">
-            <div class="drag-category-container" v-if="!hide_spirits">
-              <img
-                v-if="category.icon"
-                width="86"
-                height="86"
-                :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
-              />
-            </div>
-          </template>
-
-          <drop
+          <s-drop
             :class="{
               'drop-safe': inDragState,
               'rotate-7deg': arrange_folder_mode,
@@ -487,18 +453,18 @@
               v-if="selectMode && canSelectCategory"
               @click.stop="$emit('select-category', category)"
               icon
-              large
+              size="large"
               class="absolute-top-end selected-icon m-2"
               style="z-index: 50"
             >
               <v-icon
                 :color="isSelected('c-' + category.id) ? '#689F38' : '#ccc'"
-                large
+                size="large"
                 >check_circle
               </v-icon>
             </v-btn>
-          </drop>
-        </drag>
+          </s-drop>
+        </s-drag>
 
         <!-- Add Note Button -->
         <team-note-button
@@ -519,7 +485,7 @@
         <v-pagination
           v-model="folder_page"
           :length="folder_pages_count"
-          circle
+          rounded
         ></v-pagination>
       </v-col>
 
@@ -528,7 +494,7 @@
       <v-col
         v-for="product in products.slice(
           (product_page - 1) * max_products_per_page,
-          product_page * max_products_per_page
+          product_page * max_products_per_page,
         )"
         :key="product.id"
         :cols="mini ? 4 : 12"
@@ -550,7 +516,7 @@
           }
         "
       >
-        <drag
+        <s-drag
           :draggable="draggable"
           :transfer-data="{ product: product }"
           @drag="onDragStart({ product: product }, false, ...arguments)"
@@ -559,23 +525,14 @@
           :class="{
             'arrange-side':
               current_dragged_product && arrange_products_target === product,
-            pen: press_ctrl,
+
             'bundle-mode':
               drag_bundle_products && selected_products.includes(product.id),
           }"
+          :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+          :drag-image-html="product.title.limitWords(3)"
+          drag-image-color="#1976D2"
         >
-          <template slot="image"
-            ><!-- Do not convert it to v-slot:image! return error! -->
-            <div class="drag-product-container" v-if="!hide_spirits">
-              <img
-                v-if="product.icon"
-                width="86"
-                height="86"
-                :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
-              />
-            </div>
-          </template>
-
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product > Mini ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
           <product-card-mini
             v-if="mini"
@@ -600,6 +557,11 @@
               current_dir_id &&
               product.category_id !== current_dir_id
             "
+            :show-notes="showNotes"
+            @onShowNote="showNoteProduct(product)"
+            :show-select="press_ctrl"
+            :i-selected="selected_products.includes(product.id)"
+            @onSelect="toggleProductsSelect(product)"
           >
           </product-card-mini>
 
@@ -607,7 +569,7 @@
 
           <widget-product-card
             v-else
-            class="item h-100"
+            class="item h-100 ma-2"
             :class="{
               'not-drop-able':
                 current_dragged_product || current_dragged_folder,
@@ -629,7 +591,7 @@
                 $router.push({
                   name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
                     ? 'Vendor_AddProduct'
-                    : 'AddProduct',
+                    : 'BProductAdd',
                   params: { product_id: product.id },
                   hash: '#images',
                 });
@@ -638,53 +600,23 @@
             "
             :selected="selected_products.includes(product.id)"
             :shortcut="current_dir_id && product.category_id !== current_dir_id"
+            :show-notes="showNotes"
+            @onShowNote="showNoteProduct(product)"
+            :show-select="press_ctrl"
+            :i-selected="selected_products.includes(product.id)"
+            @onSelect="toggleProductsSelect(product)"
           />
+
           <v-scale-transition leave-absolute origin="center center">
             <v-icon
               color="#689F38"
-              large
+              size="large"
               class="absolute-top-end z2 selected-icon"
               v-if="selectMode && canSelectProduct && isSelected(product.id)"
               >check_circle
             </v-icon>
           </v-scale-transition>
-        </drag>
-
-        <!-- Selectable -->
-        <template v-if="press_ctrl">
-          <v-icon
-            class="absolute-top-end pp"
-            style="z-index: 10"
-            :color="selected_products.includes(product.id) ? 'primary' : '#333'"
-            @click.stop="toggleProductsSelect(product)"
-            >{{
-              selected_products.includes(product.id)
-                ? "circle"
-                : "radio_button_unchecked"
-            }}
-          </v-icon>
-          <div
-            style="
-              position: absolute;
-              left: 0;
-              top: 0;
-              width: 100%;
-              height: 100%;
-            "
-            class="pp"
-            @click="toggleProductsSelect(product)"
-          ></div>
-        </template>
-
-        <!-- Add Note Button -->
-        <team-note-button
-          v-if="showNotes || (product.note && product.note.length)"
-          class="absolute-top-start z2"
-          :note="product.note"
-          @click="showNoteProduct(product)"
-          style="top: 0; left: 0"
-          :activeColor="showNotes ? undefined : '#333'"
-        ></team-note-button>
+        </s-drag>
       </v-col>
 
       <div v-if="mini" key="spx" style="flex-grow: 12" class="pen"></div>
@@ -693,7 +625,7 @@
         <v-pagination
           v-model="product_page"
           :length="product_pages_count"
-          circle
+          rounded
         ></v-pagination>
       </v-col>
 
@@ -709,8 +641,6 @@
         <!-- ⬬⬬⬬ Force new line in mini mode ⬬⬬⬬ -->
 
         <v-col key="spacer" v-if="mini" cols="12"></v-col>
-
-
 
         <!-- ⬬⬬⬬ Add button ⬬⬬⬬ -->
 
@@ -780,7 +710,7 @@
               <s-dense-images-circles
                 :images="
                   products?.map((p) =>
-                    getShopImagePath(p.icon, IMAGE_SIZE_SMALL)
+                    getShopImagePath(p.icon, IMAGE_SIZE_SMALL),
                   )
                 "
                 :limit="5"
@@ -799,9 +729,9 @@
                 @click="dialog_root_filter = true"
                 color="primary"
                 class="tnt ma-1"
-                small
+                size="small"
               >
-                <v-icon class="me-1" small>filter_alt</v-icon>
+                <v-icon class="me-1" size="small">filter_alt</v-icon>
                 Edit Root Filters
               </v-btn>
               <v-btn
@@ -809,10 +739,10 @@
                 @click="showClearRootFiltersDialog()"
                 :loading="busy_clear_root_filter"
                 class="tnt ma-1"
-                small
-                outlined
+                size="small"
+                variant="outlined"
               >
-                <v-icon class="me-1" small>filter_alt_off</v-icon>
+                <v-icon class="me-1" size="small">filter_alt_off</v-icon>
                 Clear Root Filters
               </v-btn>
             </div>
@@ -822,545 +752,564 @@
     </v-fade-transition>
 
     <s-loading css-mode light v-if="busy_load_more"></s-loading>
-    <div  v-if="has_more" class="widget-buttons">
+    <div v-if="has_more" class="widget-buttons">
       <v-btn
-
-          @click="fetchData(true)"
-          v-intersect="onIntersect"
-          :loading="busy_fetch"
-          color="blue"
-          text
-          x-large
-          class="m-3"
+        @click="fetchData(true)"
+        v-intersect="onIntersect"
+        :loading="busy_fetch"
+        color="blue"
+        variant="text"
+        size="x-large"
+        class="m-3"
       >
         <v-icon class="me-1">autorenew</v-icon>
         <div>
           <b>{{ remains_count }} {{ $t("global.actions.more") }}</b>
           <div class="small mt-1">
-            More products are available in this category; click to load additional items.
+            More products are available in this category; click to load
+            additional items.
           </div>
         </div>
-
       </v-btn>
     </div>
 
     <!-- ███████████████████████ Context Menu ███████████████████████ -->
     <v-menu
       v-model="showProductMenu"
-      :position-x="x"
-      :position-y="y"
+      :target="[x, y]"
       absolute
-      offset-y
       transition="slide-y-transition"
-      rounded="lg"
+
     >
-      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For products (Right-click on a selected item) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+      <v-sheet rounded="lg" class="text-start">
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For products (Right-click on a selected item) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-      <v-list
-        v-if="is_menu_multi_select_product"
-        class="text-start py-0"
-        dens
-        color="primary"
-        dark
-      >
-        <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Assign Vendor ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-        <v-list-item
-          v-if="
-            IS_MARKETPLACE &&
-            !IS_VENDOR_PANEL /*Only in marketplace panel*/ &&
-            !menu_add_vendor_error
-          "
-          @click="showAssignVendor(currentProductForMenu)"
+        <v-list
+          v-if="is_menu_multi_select_product"
+          class="py-0"
+          color="primary"
+          density="compact"
         >
-          <v-list-item-icon class="me-2">
-            <v-icon small>add_business</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            {{ $t("marketplace.add_vendor") }}
-            <v-chip label x-small color="#fff" light class="mx-2"
-              >+ multi
-            </v-chip>
-          </v-list-item-title>
-        </v-list-item>
+          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Assign Vendor ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-        <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Quick Actions ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-        <template v-if="!IS_VENDOR_PANEL /*Only shop admin!*/">
           <v-list-item
-            @click="
-              showChangeStatusProduct(
-                ...products.filter((p) => selected_products?.includes(p.id))
-              )
+            v-if="
+              IS_MARKETPLACE &&
+              !IS_VENDOR_PANEL /*Only in marketplace panel*/ &&
+              !menu_add_vendor_error
             "
+            @click="showAssignVendor(currentProductForMenu)"
           >
-            <v-list-item-icon class="me-2">
-              <v-icon small>nat</v-icon>
-            </v-list-item-icon>
+            <template v-slot:prepend>
+              <v-icon size="small" >add_business</v-icon>
+            </template>
             <v-list-item-title>
-              {{ $t("add_product.menu.change_status") }} |
-              <v-icon
-                x-small
-                :color="ProductStatus[currentProductForMenu?.status]?.color"
-                >circle
-              </v-icon>
-              {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
+              {{ $t("marketplace.add_vendor") }}
+              <v-chip label size="x-small" color="#fff" class="mx-2"
+                >+ multi
+              </v-chip>
             </v-list-item-title>
           </v-list-item>
-        </template>
 
-        <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Delete All selected Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Quick Actions ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-        <v-divider class="my-0"></v-divider>
-
-        <v-list-item @click="deleteAllSelectedProduct(selected_products)">
-          <v-list-item-icon class="me-2">
-            <v-icon small color="red">fas fa-trash</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            {{ $t("global.actions.delete_all") }}
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-
-      <template v-else>
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For products only ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-        <v-list v-if="currentProductForMenu" class="text-start py-0" dense>
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Open public product page ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-          <template v-if="!currentProductForMenu.deleted_at">
+          <template v-if="!IS_VENDOR_PANEL /*Only shop admin!*/">
             <v-list-item
-              :href="
-                getProductLink(
-                  shop,
-                  currentProductForMenu.id,
-                  slugify(currentProductForMenu.title)
+              @click="
+                showChangeStatusProduct(
+                  ...products.filter((p) => selected_products?.includes(p.id)),
                 )
               "
-              target="_blank"
-              dark
-              style="background-color: #1976d2"
             >
-              <v-list-item-icon class="me-2">
-                <v-icon small>open_in_new</v-icon>
-              </v-list-item-icon>
+              <template v-slot:prepend>
+                <v-icon size="small" >nat</v-icon>
+              </template>
               <v-list-item-title>
-                {{
-                  $t("global.actions.open") +
-                  " " +
-                  currentProductForMenu.title.limitWords(3)
-                }}
+                {{ $t("add_product.menu.change_status") }} |
+                <v-icon
+                  size="x-small"
+                  :color="ProductStatus[currentProductForMenu?.status]?.color"
+                  >circle
+                </v-icon>
+                {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
               </v-list-item-title>
             </v-list-item>
           </template>
 
-          <template v-if="CAN_ADD_PRODUCT && !currentProductForMenu.deleted_at">
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Assign Vendor ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Delete All selected Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-            <v-list-item
-              v-if="
-                IS_MARKETPLACE &&
-                !IS_VENDOR_PANEL /*Only in marketplace panel*/ &&
-                !menu_add_vendor_error
-              "
-              @click="showAssignVendor(currentProductForMenu)"
-              dark
-              style="background-color: #512da8"
-            >
-              <v-list-item-icon class="me-2">
-                <v-icon small>add_business</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ $t("marketplace.add_vendor") }}
-              </v-list-item-title>
-            </v-list-item>
-            <small
-              v-else-if="menu_add_vendor_error"
-              class="max-w-250 mx-auto pa-2 d-block border-bottom"
-            >
-              <v-icon small class="me-1">add_business</v-icon>
-              {{ menu_add_vendor_error }}</small
-            >
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Edit Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+          <v-divider class="my-0"></v-divider>
 
-            <v-list-item
-              v-if="CAN_ADD_PRODUCT"
-              :to="{
-                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                  ? 'Vendor_AddProduct'
-                  : 'AddProduct',
-                params: { product_id: currentProductForMenu.id },
-                hash: '#general',
-              }"
-            >
-              <v-list-item-icon class="me-2">
-                <v-icon small>fas fa-edit</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ $t("global.actions.edit") }}
-              </v-list-item-title>
-              <v-list-item-avatar size="24" :key="currentProductForMenu.id">
-                <img
-                  v-if="currentProductForMenu.icon"
-                  :src="getShopImagePath(currentProductForMenu.icon, 128)"
-                />
-                <v-icon v-else>inventory</v-icon>
-              </v-list-item-avatar>
-            </v-list-item>
+          <v-list-item @click="deleteAllSelectedProduct(selected_products)">
+            <template v-slot:prepend>
+              <v-icon size="small" color="red"
+                >fa:fas fa-trash
+              </v-icon>
+            </template>
+            <v-list-item-title>
+              {{ $t("global.actions.delete_all") }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
 
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Dashboard ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-            <v-list-item
-              :to="{
-                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                  ? 'Vendor_ProductDashboard'
-                  : 'ProductDashboard',
-                params: { product_id: currentProductForMenu.id },
-                /*   hash: '#dashboard'*/
-              }"
-            >
-              <v-list-item-icon class="me-2">
-                <v-icon small>dashboard</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ $t("products_select.product_menu.dashboard") }}
-              </v-list-item-title>
-            </v-list-item>
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Inventory ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+        <template v-else>
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For products only ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <v-list v-if="currentProductForMenu" class="py-0" density="compact">
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Open public product page ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-            <v-list-item
-              :to="{
-                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                  ? 'Vendor_ProductInventoryPage'
-                  : 'ProductInventoryPage',
-                params: { product_id: currentProductForMenu.id },
-                /*   hash: '#all-items'*/
-              }"
-            >
-              <v-list-item-icon class="me-2">
-                <v-icon small>fas fa-boxes</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ $t("products_select.product_menu.inventory") }}
-              </v-list-item-title>
-            </v-list-item>
-
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Images ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-            <v-list-item
-              :to="{
-                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                  ? 'Vendor_AddProduct'
-                  : 'AddProduct',
-                params: { product_id: currentProductForMenu.id },
-                hash: '#images',
-              }"
-            >
-              <v-list-item-icon class="me-2">
-                <v-icon small>fas fa-image</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ $t("add_product.menu.images") }}
-              </v-list-item-title>
-            </v-list-item>
-
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Quick Actions ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-            <template v-if="!IS_VENDOR_PANEL /*Only shop admin!*/">
+            <template v-if="!currentProductForMenu.deleted_at">
               <v-list-item
-                @click="showChangeStatusProduct(currentProductForMenu)"
+                :href="
+                  getProductLink(
+                    shop,
+                    currentProductForMenu.id,
+                    slugify(currentProductForMenu.title),
+                  )
+                "
+                target="_blank"
+                base-color="#1976d2"
+                theme="dark"
+                variant="flat"
               >
-                <v-list-item-icon class="me-2">
-                  <v-icon small>nat</v-icon>
-                </v-list-item-icon>
+                <template v-slot:prepend>
+                  <v-icon size="small" >open_in_new</v-icon>
+                </template>
                 <v-list-item-title>
-                  {{ $t("add_product.menu.change_status") }} |
-                  <v-icon
-                    x-small
-                    :color="ProductStatus[currentProductForMenu?.status]?.color"
-                    >circle
-                  </v-icon>
-                  {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
+                  {{
+                    $t("global.actions.open") +
+                    " " +
+                    currentProductForMenu.title.limitWords(3)
+                  }}
                 </v-list-item-title>
               </v-list-item>
             </template>
 
+            <template
+              v-if="CAN_ADD_PRODUCT && !currentProductForMenu.deleted_at"
+            >
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Assign Vendor ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <v-list-item
+                v-if="
+                  IS_MARKETPLACE &&
+                  !IS_VENDOR_PANEL /*Only in marketplace panel*/ &&
+                  !menu_add_vendor_error
+                "
+                @click="showAssignVendor(currentProductForMenu)"
+                variant="flat"
+                theme="dark"
+                base-color="#512da8"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="small" >add_business</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t("marketplace.add_vendor") }}
+                </v-list-item-title>
+              </v-list-item>
+              <small
+                v-else-if="menu_add_vendor_error"
+                class="max-w-250 mx-auto pa-2 d-block border-bottom"
+              >
+                <v-icon size="small" class="me-1">add_business</v-icon>
+                {{ menu_add_vendor_error }}</small
+              >
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Edit Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <v-list-item
+                v-if="CAN_ADD_PRODUCT"
+                :to="{
+                  name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                    ? 'Vendor_AddProduct'
+                    : 'BProductAdd',
+                  params: { product_id: currentProductForMenu.id },
+                  hash: '#general',
+                }"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="small" >edit_square</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t("global.actions.edit") }}
+                </v-list-item-title>
+                <template v-slot:append>
+                  <v-avatar size="24" :key="currentProductForMenu.id">
+                    <img
+                      v-if="currentProductForMenu.icon"
+                      :src="getShopImagePath(currentProductForMenu.icon, 128)"
+                    />
+                    <v-icon v-else>inventory</v-icon>
+                  </v-avatar>
+                </template>
+              </v-list-item>
+
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Dashboard ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+              <v-list-item
+                :to="{
+                  name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                    ? 'Vendor_ProductDashboard'
+                    : 'ProductDashboard',
+                  params: { product_id: currentProductForMenu.id },
+                  /*   hash: '#dashboard'*/
+                }"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="small" >dashboard</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t("products_select.product_menu.dashboard") }}
+                </v-list-item-title>
+              </v-list-item>
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Inventory ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <v-list-item
+                :to="{
+                  name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                    ? 'Vendor_ProductInventoryPage'
+                    : 'ProductInventoryPage',
+                  params: { product_id: currentProductForMenu.id },
+                  /*   hash: '#all-items'*/
+                }"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="small" >fa:fas fa-boxes</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t("products_select.product_menu.inventory") }}
+                </v-list-item-title>
+              </v-list-item>
+
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Images ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <v-list-item
+                :to="{
+                  name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                    ? 'Vendor_AddProduct'
+                    : 'BProductAdd',
+                  params: { product_id: currentProductForMenu.id },
+                  hash: '#images',
+                }"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="small">fa:fas fa-image</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t("add_product.menu.images") }}
+                </v-list-item-title>
+              </v-list-item>
+
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Quick Actions ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <template v-if="!IS_VENDOR_PANEL /*Only shop admin!*/">
+                <v-list-item
+                  @click="showChangeStatusProduct(currentProductForMenu)"
+                >
+                  <template v-slot:prepend>
+                    <v-icon size="small" >nat</v-icon>
+                  </template>
+                  <v-list-item-title>
+                    {{ $t("add_product.menu.change_status") }} |
+                    <v-icon
+                      size="x-small"
+                      :color="
+                        ProductStatus[currentProductForMenu?.status]?.color
+                      "
+                      >circle
+                    </v-icon>
+                    {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
+                  </v-list-item-title>
+                </v-list-item>
+              </template>
+
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Add Note ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <template>
+                <v-list-item @click="showNoteProduct(currentProductForMenu)">
+                  <template v-slot:prepend>
+                    <v-icon size="small" >edit_note</v-icon>
+                  </template>
+                  <v-list-item-title>
+                    {{ $t("notes.add_action") }}
+                  </v-list-item-title>
+                </v-list-item>
+              </template>
+
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Delete Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <template v-if="CAN_ADD_PRODUCT">
+                <v-divider class="my-0"></v-divider>
+
+                <v-list-item @click="deleteProduct(currentProductForMenu)">
+                  <template v-slot:prepend>
+                    <v-icon size="small" color="red"
+                      >fa:fas fa-trash
+                    </v-icon>
+                  </template>
+                  <v-list-item-title>
+                    {{ $t("global.actions.delete") }}
+                  </v-list-item-title>
+                </v-list-item>
+              </template>
+            </template>
+
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Restore Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+            <v-list-item
+              v-else-if="CAN_ADD_PRODUCT"
+              @click="restoreProduct(currentProductForMenu)"
+            >
+              <template v-slot:prepend>
+                <v-icon size="small" color="green"
+                  >fa:fas fa-trash-restore
+                </v-icon>
+              </template>
+              <v-list-item-title>
+                {{ $t("global.actions.restore") }}
+              </v-list-item-title>
+            </v-list-item>
+
+            <template v-if="CAN_ADD_PRODUCT">
+              <v-divider class="my-0"></v-divider>
+
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Cut Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <v-list-item @click="cutProduct(currentProductForMenu)">
+                <template v-slot:prepend>
+                  <v-icon size="small" >fa:fas fa-cut</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t("global.actions.cut") }}
+                </v-list-item-title>
+              </v-list-item>
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Copy Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <v-list-item @click="copyProduct(currentProductForMenu)">
+                <template v-slot:prepend>
+                  <v-icon size="small">fa:fas fa-copy</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t("global.actions.copy") }}
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+          </v-list>
+
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For category ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <v-list
+            v-if="CAN_ADD_CATEGORY && currentCategoryForMenu"
+            class="py-0"
+            density="compact"
+          >
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Open public product page ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+            <v-list-item
+              :href="getCategoryLink(shop, currentCategoryForMenu.name)"
+              target="_blank"
+              variant="flat"
+              theme="dark"
+              base-color="#1976d2"
+            >
+              <template v-slot:prepend>
+                <v-icon size="small" >open_in_new</v-icon>
+              </template>
+              <v-list-item-title>
+                {{
+                  $t("global.actions.open") +
+                  " " +
+                  currentCategoryForMenu.title.limitWords(3)
+                }}
+              </v-list-item-title>
+            </v-list-item>
+
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category Edit ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+            <v-list-item @click="showEditCategory(currentCategoryForMenu)">
+              <template v-slot:prepend>
+                <v-icon size="small" >edit</v-icon>
+              </template>
+
+              <v-list-item-title>
+                {{ $t("add_category.edit_action") }}
+              </v-list-item-title>
+
+              <template v-slot:append>
+                <v-avatar size="24" :key="currentCategoryForMenu.id">
+                  <img
+                    v-if="currentCategoryForMenu.icon"
+                    :src="getShopImagePath(currentCategoryForMenu.icon, 128)"
+                  />
+                  <v-icon v-else>folder</v-icon>
+                </v-avatar>
+              </template>
+            </v-list-item>
+
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Add Note ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <template>
-              <v-list-item @click="showNoteProduct(currentProductForMenu)">
-                <v-list-item-icon class="me-2">
-                  <v-icon small>edit_note</v-icon>
-                </v-list-item-icon>
+              <v-list-item @click="showNoteCategory(currentCategoryForMenu)">
+                <template v-slot:prepend>
+                  <v-icon size="small" >edit_note</v-icon>
+                </template>
                 <v-list-item-title>
                   {{ $t("notes.add_action") }}
                 </v-list-item-title>
               </v-list-item>
             </template>
 
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Delete Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Set Bulk Profiles ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-            <template v-if="CAN_ADD_PRODUCT">
+            <template v-if="!IS_VENDOR_PANEL /*Not supported yet!*/">
               <v-divider class="my-0"></v-divider>
 
-              <v-list-item @click="deleteProduct(currentProductForMenu)">
-                <v-list-item-icon class="me-2">
-                  <v-icon small color="red">fas fa-trash</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>
-                  {{ $t("global.actions.delete") }}
-                </v-list-item-title>
-              </v-list-item>
-            </template>
-          </template>
+              <v-list-item
+                @click="showSetBulkCategoryProfile(currentCategoryForMenu)"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="small"
+                    >assignment_turned_in
+                  </v-icon>
+                </template>
 
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Restore Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-          <v-list-item
-            v-else-if="CAN_ADD_PRODUCT"
-            @click="restoreProduct(currentProductForMenu)"
-          >
-            <v-list-item-icon class="me-2">
-              <v-icon small color="green">fas fa-trash-restore</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>
-              {{ $t("global.actions.restore") }}
-            </v-list-item-title>
-          </v-list-item>
-
-          <template v-if="CAN_ADD_PRODUCT">
-            <v-divider class="my-0"></v-divider>
-
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Cut Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-            <v-list-item @click="cutProduct(currentProductForMenu)">
-              <v-list-item-icon class="me-2">
-                <v-icon small>fas fa-cut</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ $t("global.actions.cut") }}
-              </v-list-item-title>
-            </v-list-item>
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Copy Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-            <v-list-item @click="copyProduct(currentProductForMenu)">
-              <v-list-item-icon class="me-2">
-                <v-icon small>fas fa-copy</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ $t("global.actions.copy") }}
-              </v-list-item-title>
-            </v-list-item>
-          </template>
-        </v-list>
-
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For category ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-        <v-list
-          v-if="CAN_ADD_CATEGORY && currentCategoryForMenu"
-          class="text-start py-0"
-          dense
-        >
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Open public product page ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-          <v-list-item
-            :href="getCategoryLink(shop, currentCategoryForMenu.name)"
-            target="_blank"
-            dark
-            style="background-color: #1976d2"
-          >
-            <v-list-item-icon class="me-2">
-              <v-icon small>open_in_new</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>
-              {{
-                $t("global.actions.open") +
-                " " +
-                currentCategoryForMenu.title.limitWords(3)
-              }}
-            </v-list-item-title>
-          </v-list-item>
-
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category Edit ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-          <v-list-item @click="showEditCategory(currentCategoryForMenu)">
-            <v-list-item-icon class="me-2">
-              <v-icon small>edit</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ $t("add_category.edit_action") }}
-              </v-list-item-title>
-            </v-list-item-content>
-
-            <v-list-item-avatar size="24" :key="currentCategoryForMenu.id">
-              <img
-                v-if="currentCategoryForMenu.icon"
-                :src="getShopImagePath(currentCategoryForMenu.icon, 128)"
-              />
-              <v-icon v-else>folder</v-icon>
-            </v-list-item-avatar>
-          </v-list-item>
-
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Add Note ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-          <template>
-            <v-list-item @click="showNoteCategory(currentCategoryForMenu)">
-              <v-list-item-icon class="me-2">
-                <v-icon small>edit_note</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>
-                {{ $t("notes.add_action") }}
-              </v-list-item-title>
-            </v-list-item>
-          </template>
-
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Set Bulk Profiles ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-          <template v-if="!IS_VENDOR_PANEL /*Not supported yet!*/">
-            <v-divider class="my-0"></v-divider>
-
-            <v-list-item
-              @click="showSetBulkCategoryProfile(currentCategoryForMenu)"
-            >
-              <v-list-item-icon class="me-2">
-                <v-icon small>assignment_turned_in</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
                 <v-list-item-title>
                   Assign profile to products in the category
                 </v-list-item-title>
                 <v-list-item-subtitle
                   >Tax, Shipping, Guide, Warranty, ...
                 </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
+              </v-list-item>
 
-            <v-list-item
-              @click="showCategoryBulkDiscount(currentCategoryForMenu)"
-            >
-              <v-list-item-icon class="me-2">
-                <v-icon small>local_offer</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
+              <v-list-item
+                @click="showCategoryBulkDiscount(currentCategoryForMenu)"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="small" >local_offer</v-icon>
+                </template>
+
                 <v-list-item-title> Bulk discount</v-list-item-title>
                 <v-list-item-subtitle
                   >Apply discount on all products.
                 </v-list-item-subtitle>
-              </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list>
+
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Right click on no product or category ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+          <v-list
+            v-if="
+              !currentProductForMenu &&
+              !currentCategoryForMenu &&
+              !IS_VENDOR_PANEL
+            "
+            class="py-0"
+            density="compact"
+          >
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Past Product (copy) ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+            <v-list-item @click="dialog_root_filter = true">
+              <template v-slot:prepend>
+                <v-icon size="small" >filter_alt</v-icon>
+              </template>
+
+              <v-list-item-title> Set Root Filter</v-list-item-title>
             </v-list-item>
-          </template>
-        </v-list>
+          </v-list>
 
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Right click on no product or category ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For all ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <v-list
-          v-if="
-            !currentProductForMenu &&
-            !currentCategoryForMenu &&
-            !IS_VENDOR_PANEL
-          "
-          class="text-start py-0"
-          dense
-        >
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Past Product (copy) ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+          <v-list class="text-start py-0" density="compact">
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Past Product (copy) ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-          <v-list-item @click="dialog_root_filter = true">
-            <v-list-item-icon class="me-2">
-              <v-icon small>filter_alt</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title> Set Root Filter </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+            <v-list-item v-if="copy_product" @click="pastProduct(copy_product)">
+              <template v-slot:prepend>
+                <v-icon
+                  size="small"
+                  v-if="!copy_product || !copy_product.icon"
+                  >fa:fas fa-paste
+                </v-icon>
+                <v-avatar v-else size="24"
+                  ><img
+                    :src="
+                      getShopImagePath(copy_product.icon, IMAGE_SIZE_SMALL)
+                    "
+                /></v-avatar>
+              </template>
 
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For all ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-        <v-list class="text-start py-0" dense>
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Past Product (copy) ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-          <v-list-item v-if="copy_product" @click="pastProduct(copy_product)">
-            <v-list-item-icon class="me-2">
-              <v-icon small v-if="!copy_product || !copy_product.icon"
-                >fas fa-paste
-              </v-icon>
-              <v-avatar v-else size="24"
-                ><img
-                  :src="getShopImagePath(copy_product.icon, IMAGE_SIZE_SMALL)"
-              /></v-avatar>
-            </v-list-item-icon>
-            <v-list-item-content>
               <v-list-item-title>
                 {{ $t("global.actions.paste") }}
               </v-list-item-title>
               <v-list-item-subtitle>
                 {{ copy_product.title }}
               </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+            </v-list-item>
 
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Move Product (Cut) ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Move Product (Cut) ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-          <v-list-item
-            v-if="cut_product"
-            @click="
-              handleDropInFolder(
-                { product: cut_product },
-                { id: current_dir_id }
-              )
-            "
-          >
-            <v-list-item-icon class="me-2">
-              <v-icon small v-if="!cut_product || !cut_product.icon"
-                >fas fa-paste
-              </v-icon>
-              <v-avatar v-else size="24"
-                ><img
-                  :src="getShopImagePath(cut_product.icon, IMAGE_SIZE_SMALL)"
-              /></v-avatar>
-            </v-list-item-icon>
-            <v-list-item-content>
+            <v-list-item
+              v-if="cut_product"
+              @click="
+                handleDropInFolder(
+                  { product: cut_product },
+                  { id: current_dir_id },
+                )
+              "
+            >
+              <template v-slot:prepend>
+                <v-icon
+                  size="small"
+                  v-if="!cut_product || !cut_product.icon"
+                  >fa:fas fa-paste
+                </v-icon>
+                <v-avatar v-else size="24"
+                  ><img
+                    :src="getShopImagePath(cut_product.icon, IMAGE_SIZE_SMALL)"
+                /></v-avatar>
+              </template>
+
               <v-list-item-title> Move here</v-list-item-title>
               <v-list-item-subtitle>
                 {{ cut_product.title }}
               </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+            </v-list-item>
 
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ New Category ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ New Category ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-          <template v-if="CAN_ADD_CATEGORY">
-            <v-divider class="my-0"></v-divider>
+            <template v-if="CAN_ADD_CATEGORY">
+              <v-divider class="my-0"></v-divider>
 
-            <v-list-item @click="showEditCategory(null)">
-              <v-list-item-icon class="me-2">
-                <v-icon small color="amber">create_new_folder</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
+              <v-list-item @click="showEditCategory(null)">
+                <template v-slot:prepend>
+                  <v-icon size="small"  color="amber"
+                    >create_new_folder
+                  </v-icon>
+                </template>
+
                 <v-list-item-title>
                   {{ $t("admin_shop.categories.menu.add_new") }}
                 </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+              </v-list-item>
 
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category Arrange Mode ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-            <!-- Enable / Disable Categories arrangement -->
-            <v-list-item @click="arrange_folder_mode = !arrange_folder_mode">
-              <v-list-item-icon class="me-2">
-                <v-icon small :color="arrange_folder_mode ? 'primary' : '#333'"
-                  >{{
-                    arrange_folder_mode ? "circle" : "radio_button_unchecked"
-                  }}
-                </v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category Arrange Mode ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+              <!-- Enable / Disable Categories arrangement -->
+              <v-list-item @click="arrange_folder_mode = !arrange_folder_mode">
+                <template v-slot:prepend>
+                  <v-icon
+                    size="small"
+                    :color="arrange_folder_mode ? 'primary' : '#333'"
+                    >{{
+                      arrange_folder_mode ? "circle" : "radio_button_unchecked"
+                    }}
+                  </v-icon>
+                </template>
+
                 <v-list-item-title>
                   Arrange / Sort Categories
                 </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </template>
-        </v-list>
-      </template>
+              </v-list-item>
+            </template>
+          </v-list>
+        </template>
+      </v-sheet>
     </v-menu>
 
     <!-- ████████████████████ Dialog > Edit category ████████████████████ -->
@@ -1368,52 +1317,44 @@
       v-model="dialog_cat"
       fullscreen
       transition="dialog-bottom-transition"
+      scrollable
     >
-      <v-card>
-        <v-card-text>
-          <add-category
-            v-if="dialog_pre"
-            :shop="shop"
-            :vendor="vendor"
-            :category="selected_cat"
-            :categories="null"
-            :parent-folder="parent_folders"
-            @back="dialog_cat = false"
-            @add="
-              (item) =>
-                item.parent_id === current_dir_id
-                  ? folders.push(item)
-                  : undefined
-            "
-            @edit="
-              (item) =>
-                item.parent_id !== current_dir_id
-                  ? DeleteItemByID(folders, item.id)
-                  : UpdateItemByID(folders, item)
-            "
-            @delete="
-              (id) => {
-                DeleteItemByID(folders, id);
-                fetchData(
-                  false,
-                  true /*Force fetch items -> because inside folders and products return to current location*/
-                );
-              }
-            "
-          />
-        </v-card-text>
-      </v-card>
+      <s-shop-category-add
+        v-if="dialog_pre"
+        :shop="shop"
+        :vendor="vendor"
+        :category="selected_cat"
+        :categories="null"
+        :parent-folder="parent_folders"
+        @back="dialog_cat = false"
+        @add="
+          (item) =>
+            item.parent_id === current_dir_id ? folders.push(item) : undefined
+        "
+        @edit="
+          (item) =>
+            item.parent_id !== current_dir_id
+              ? DeleteItemByID(folders, item.id)
+              : UpdateItemByID(folders, item)
+        "
+        @delete="
+          (id) => {
+            DeleteItemByID(folders, id);
+            fetchData(
+              false,
+              true /*Force fetch items -> because inside folders and products return to current location*/,
+            );
+          }
+        "
+      />
     </v-dialog>
 
     <!-- ████████████████████ Dialog > Assign Vendor to Product ████████████████████ -->
     <v-dialog
       v-model="dialog_vendors"
       transition="dialog-bottom-transition"
-      :content-class="
-        !$vuetify.breakpoint.mdAndDown ? 'rounded-28px' : undefined
-      "
-      :overlay-opacity="0.9"
-      :fullscreen="$vuetify.breakpoint.mdAndDown"
+      :content-class="!$vuetify.display.mdAndDown ? 'rounded-28px' : undefined"
+      :fullscreen="$vuetify.display.mdAndDown"
       max-width="1080"
       scrollable
     >
@@ -1425,10 +1366,10 @@
           <div class="widget-box mb-5">
             <s-widget-header title="Vendor" icon="admin_panel_settings">
             </s-widget-header>
-            <v-subheader
+            <v-list-subheader
               >This vendor will be added to selected products for all their
               variants.
-            </v-subheader>
+            </v-list-subheader>
 
             <products-dense-images-circles
               :ids="assign_vendor_product_ids"
@@ -1458,11 +1399,11 @@
           <div class="widget-box mb-5">
             <s-widget-header title="Marketplace pricing" icon="price_change">
             </s-widget-header>
-            <v-subheader
+            <v-list-subheader
               >Select a marketplace pricing model to assign to the selected
               product. If you leave it empty, the product pricing will be set as
               vendor price, and the marketplace commission will assume as zero.
-            </v-subheader>
+            </v-list-subheader>
 
             <vendor-pricing-input-field
               v-model="pricing_id"
@@ -1477,10 +1418,10 @@
               icon="inventory"
               title="Vendor Inventory"
             ></s-widget-header>
-            <v-subheader
+            <v-list-subheader
               >Set as the inventory for each item. No effect on the File-type
               products.
-            </v-subheader>
+            </v-list-subheader>
 
             <s-number-input
               class="my-3 strong-field"
@@ -1499,17 +1440,21 @@
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn @click="dialog_vendors = false" text x-large>
+            <v-btn
+              @click="dialog_vendors = false"
+              variant="text"
+              size="x-large"
+            >
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
 
             <v-btn
               color="primary"
-              depressed
+              variant="flat"
               @click="assignVendor()"
               :loading="busy_assign_vendor"
-              x-large
+              size="x-large"
               :class="{
                 disabled:
                   !check_bulk_vendor || (!vendor_id_input && !clear_other),
@@ -1521,8 +1466,8 @@
                 clear_other && vendor_id_input
                   ? "Set selected and remove other vendors"
                   : clear_other
-                  ? "Clear all vendors"
-                  : $t("global.actions.set")
+                    ? "Clear all vendors"
+                    : $t("global.actions.set")
               }}
             </v-btn>
           </div>
@@ -1544,7 +1489,7 @@
           IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.POST_MY_VENDOR_PRODUCT_ADD_NOTE(
                 vendor.id,
-                note_product_item.id
+                note_product_item.id,
               )
             : window.API.POST_PRODUCT_ADD_NOTE(shop.id, note_product_item.id)
       "
@@ -1554,12 +1499,12 @@
             ? window.VAPI.DELETE_MY_VENDOR_PRODUCT_NOTE(
                 vendor.id,
                 note_product_item.id,
-                index
+                index,
               )
             : window.API.DELETE_PRODUCT_NOTE(
                 shop.id,
                 note_product_item.id,
-                index
+                index,
               )
       "
     ></team-note-dialog>
@@ -1580,7 +1525,7 @@
           IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.POST_MY_VENDOR_CATEGORY_ADD_NOTE(
                 vendor.id,
-                note_category_item.id
+                note_category_item.id,
               )
             : window.API.POST_CATEGORY_ADD_NOTE(shop.id, note_category_item.id)
       "
@@ -1590,12 +1535,12 @@
             ? window.VAPI.DELETE_MY_VENDOR_CATEGORY_NOTE(
                 vendor.id,
                 note_category_item.id,
-                index
+                index,
               )
             : window.API.DELETE_CATEGORY_NOTE(
                 shop.id,
                 note_category_item.id,
-                index
+                index,
               )
       "
     ></team-note-dialog>
@@ -1657,7 +1602,11 @@
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn @click="status_product_dialog = false" text x-large>
+            <v-btn
+              @click="status_product_dialog = false"
+              variant="text"
+              size="x-large"
+            >
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -1683,7 +1632,8 @@
           {{ shop.title }}
         </v-card-title>
         <v-card-text>
-          <categories-management-filter
+          <s-shop-category-filter
+            :shop="shop"
             :category="{
               id: 'root',
               shop_id: shop.id,
@@ -1698,7 +1648,11 @@
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn @click="dialog_root_filter = false" text x-large>
+            <v-btn
+              @click="dialog_root_filter = false"
+              variant="text"
+              size="x-large"
+            >
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -1719,7 +1673,7 @@ import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
 import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
 import SLoading from "@components/ui/loading/SLoading.vue";
 import SAddButtonGreen from "@components/ui/button/add/SAddButtonGreen.vue";
-import AddCategory from "@components/backoffice/category/AddCategory.vue";
+import SShopCategoryAdd from "@components/shop/category/add/SShopCategoryAdd.vue";
 import FolderCardMini from "@components/backoffice/product/widgets/FolderCardMini.vue";
 import ProductCardMini from "@components/backoffice/product/widgets/ProductCardMini.vue";
 import { BusinessModel } from "@core/enums/shop/BusinessModel";
@@ -1741,7 +1695,7 @@ import SSmartSelect from "@components/smart/SSmartSelect.vue";
 import AdminProductsFilterInput from "@components/backoffice/product/products-filter/AdminProductsFilterInput.vue";
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import _ from "lodash-es";
-import CategoriesManagementFilter from "@components/backoffice/category/CategoriesManagement_Filter.vue";
+import SShopCategoryFilter from "@components/shop/category/filter/SShopCategoryFilter.vue";
 import SDenseImagesCircles from "@components/ui/image/SDenseImagesCircles.vue";
 
 export default {
@@ -1757,7 +1711,7 @@ export default {
   ],
   components: {
     SDenseImagesCircles,
-    CategoriesManagementFilter,
+    SShopCategoryFilter,
     SFadeScroll,
     AdminProductsFilterInput,
     SSmartSelect,
@@ -1775,7 +1729,7 @@ export default {
     VendorInputField,
     ProductCardMini,
     FolderCardMini,
-    AddCategory,
+    SShopCategoryAdd,
     SAddButtonGreen,
     SLoading,
     SBreadcrumbImage,
@@ -1918,8 +1872,6 @@ export default {
     search: null,
     vendor_filter: null,
     filters: [],
-    //-----------------------------------------
-    hide_spirits: false,
 
     //-----------------------------------------
     busy_delete: null,
@@ -2044,7 +1996,7 @@ export default {
         true,
         this.dialogMode,
         null,
-        this.IS_VENDOR_PANEL
+        this.IS_VENDOR_PANEL,
       );
     },
 
@@ -2136,10 +2088,6 @@ export default {
       this.fetchData();
     },
 
-    busy_fetch(busy) {
-      this.fix_spirit_show_bug(busy);
-    },
-
     showDeletes() {
       this.fetchData();
     },
@@ -2202,7 +2150,7 @@ export default {
     document.addEventListener("keyup", this.key_listener_up);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener("keydown", this.key_listener_keydown);
     document.removeEventListener("keyup", this.key_listener_up);
   },
@@ -2226,24 +2174,9 @@ export default {
     },
     //------------------------------ Internal methods ------------------------------
 
-    fix_spirit_show_bug(busy) {
-      // Note: This process & delay because of bug in re sort cards and images in spirit of drag suddenly appear!
-
-      if (this.timeout) clearTimeout(this.timeout);
-      this.timeout = null;
-
-      if (busy) this.hide_spirits = true;
-      else {
-        this.timeout = setTimeout(() => {
-          this.hide_spirits = false;
-        }, 800);
-      }
-    },
-
-    onIntersect(entries, observer) {
+    onIntersect(isIntersecting, entries, observer) {
       // More information about these options
       // is located here: https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-      const isIntersecting = entries[0].isIntersecting;
       // console.log('------- END -------',isIntersecting)
 
       if (isIntersecting && !this.busy_fetch && this.has_more) {
@@ -2255,7 +2188,7 @@ export default {
 
     isSelected(item_id) {
       return Object.keys(this.selectedList).some(
-        (item) => item === "" + item_id
+        (item) => item === "" + item_id,
       ); //int & string support!
     },
 
@@ -2263,7 +2196,7 @@ export default {
       dragged,
       show_spirit_container = false,
       transferData,
-      nativeEvent
+      nativeEvent,
     ) {
       // ━━━━━━━━━━━━━━━━ product dragging ━━━━━━━━━━━━━━━━
       if (dragged.product) {
@@ -2276,10 +2209,7 @@ export default {
       }
 
       if (show_spirit_container)
-        // Bug only in re-arrange after show show_spirit_container
-        this.fix_spirit_show_bug(true);
-
-      this.show_spirit_container = show_spirit_container;
+        this.show_spirit_container = show_spirit_container;
     },
 
     handleDropInFolder(data, category_target) {
@@ -2338,7 +2268,7 @@ export default {
         () => {
           this.current_drop_enter_folder = category;
         },
-        this.show_spirit_container ? 500 : 0
+        this.show_spirit_container ? 500 : 0,
       ); // Solve jumping on drag over before animation ended!
     },
 
@@ -2393,7 +2323,7 @@ export default {
           {
             product_id: product_id,
             category_id: category_id,
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -2401,7 +2331,7 @@ export default {
           } else {
             this.showSuccessAlert(
               null,
-              this.$t("products_select.notifications.copy_success")
+              this.$t("products_select.notifications.copy_success"),
             );
             this.AddOrUpdateItemByID(this.products, data.product);
           }
@@ -2421,13 +2351,13 @@ export default {
             this.vendor.id,
             product_id,
             category_id,
-            bundle
+            bundle,
           )
         : window.$backoffice.product.changeCategory(
             this.shop.id,
             product_id,
             category_id,
-            bundle
+            bundle,
           )
       )
 
@@ -2436,7 +2366,7 @@ export default {
 
           this.showSuccessAlert(
             null,
-            this.$t("products_select.notifications.change_category_success")
+            this.$t("products_select.notifications.change_category_success"),
           );
 
           if (bundle) {
@@ -2461,13 +2391,13 @@ export default {
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.PUT_MY_VENDOR_SET_CATEGORY_PARENT(
                 this.vendor.id,
-                category_id
+                category_id,
               )
             : window.API.PUT_SET_CATEGORY_PARENT(this.shop.id, category_id),
 
           {
             parent_id: parent_id,
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -2476,7 +2406,7 @@ export default {
             if (success_callback) success_callback();
             this.showSuccessAlert(
               null,
-              this.$t("products_select.notifications.change_category_success")
+              this.$t("products_select.notifications.change_category_success"),
             );
           }
         })
@@ -2576,7 +2506,7 @@ export default {
               this.vendor.id,
               more ? this.products.length : 0,
               this.mini ? 5 * 12 : 20,
-              params
+              params,
             )
         : window.$backoffice.product
             .optimize(30)
@@ -2585,7 +2515,7 @@ export default {
               this.shop.id,
               more ? this.products.length : 0,
               this.mini ? 5 * 12 : 20,
-              params
+              params,
             )
       )
 
@@ -2648,9 +2578,9 @@ export default {
               this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
                 ? window.VAPI.DELETE_MY_VENDOR_PRODUCT(
                     this.vendor.id,
-                    product.id
+                    product.id,
                   )
-                : window.API.DELETE_PRODUCT(this.shop.id, product.id)
+                : window.API.DELETE_PRODUCT(this.shop.id, product.id),
             )
             .then(({ data }) => {
               if (data.error) {
@@ -2672,7 +2602,7 @@ export default {
             .finally(() => {
               this.busy_delete = false;
             });
-        }
+        },
       );
     },
 
@@ -2696,7 +2626,7 @@ export default {
                 : window.API.DELETE_PRODUCTS_BULK(this.shop.id),
               {
                 params: { ids: selected_products },
-              }
+              },
             )
             .then(({ data }) => {
               if (data.error) {
@@ -2704,7 +2634,7 @@ export default {
               } else {
                 this.showSuccessAlert(
                   `<b>${data.ids.length}</b>×  Removed`,
-                  `Selected products has been removed successfully.`
+                  `Selected products has been removed successfully.`,
                 );
                 // this.$emit("delete", product);
 
@@ -2730,7 +2660,7 @@ export default {
             .finally(() => {
               this.busy_delete = false;
             });
-        }
+        },
       );
     },
 
@@ -2741,9 +2671,9 @@ export default {
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.POST_MY_VENDOR_RESTORE_DELETED_PRODUCT(
                 this.vendor.id,
-                product.id
+                product.id,
               )
-            : window.API.POST_RESTORE_DELETED_PRODUCT(this.shop.id, product.id)
+            : window.API.POST_RESTORE_DELETED_PRODUCT(this.shop.id, product.id),
         )
         .then(({ data }) => {
           if (data.error) {
@@ -2778,7 +2708,6 @@ export default {
 
     toggleViewMode() {
       this.mini = !this.mini;
-      this.fix_spirit_show_bug(true);
       this.local_view_mode = this.mini ? "mini" : "normal";
       localStorage.setItem("products-view-mode", this.local_view_mode);
     },
@@ -2793,8 +2722,6 @@ export default {
 
       this.arrange_products_target = null;
       this.arrange_categories_target = null;
-
-      this.fix_spirit_show_bug(false);
     },
 
     // ██████████████████████ Products Arrangement ██████████████████████
@@ -2832,16 +2759,16 @@ export default {
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.POST_MY_VENDOR_CATEGORY_MOVE_PRODUCTS_ORDER(
                 this.vendor.id,
-                this.current_dir_id
+                this.current_dir_id,
               )
             : window.API.POST_CATEGORY_MOVE_PRODUCTS_ORDER(
                 this.shop.id,
-                this.current_dir_id
+                this.current_dir_id,
               ),
           {
             origin: this.current_dragged_product.id,
             target: product.id,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -2883,16 +2810,16 @@ export default {
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.POST_MY_VENDOR_CATEGORY_MOVE_CATEGORIES_ORDER(
                 this.vendor.id,
-                this.current_dir_id
+                this.current_dir_id,
               )
             : window.API.POST_CATEGORY_MOVE_CATEGORIES_ORDER(
                 this.shop.id,
-                this.current_dir_id
+                this.current_dir_id,
               ),
           {
             origin: this.current_dragged_folder.id,
             target: category.id,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -2917,7 +2844,7 @@ export default {
       this.assign_vendor_product_ids =
         this.selected_products &&
         this.selected_products.includes(
-          product.id
+          product.id,
         ) /*Right click on selected item!*/
           ? this.selected_products
           : [product.id];
@@ -2939,7 +2866,7 @@ export default {
           if (!data.error) {
             this.showSuccessAlert(
               null,
-              "Vendors have been added to selected products."
+              "Vendors have been added to selected products.",
             );
             this.dialog_vendors = false;
 
@@ -3005,7 +2932,7 @@ export default {
           if (!data.error) {
             this.showSuccessAlert(
               null,
-              "Product(s) status has been updated successfully."
+              "Product(s) status has been updated successfully.",
             );
             this.status_product_dialog = false;
             products.forEach((p) => (p.status = status)); // Update status of products in local.
@@ -3023,10 +2950,23 @@ export default {
 
     /**
      * Do not change! Called externally.
-     * ex. $refs.products_list?.onAddORUpdateProduct
+     * ex. $refs.products_list?.onAddOrUpdateProduct
      */
-    onAddORUpdateProduct(product) {
+    onAddOrUpdateProduct(product) {
       this.AddOrUpdateItemByID(this.products, product);
+    },
+    /**
+     * Do not change! Called externally.
+     * ex. $refs.products_list?.onAddOrUpdateCategory
+     */
+    onAddOrUpdateCategory(category) {
+      if (category.parent_id !== this.current_dir_id) {
+        // Category's parent changed! Remove from current category:
+        this.DeleteItemByID(this.folders, category.id);
+      } else {
+        // Add or update in current category:
+        this.AddOrUpdateItemByID(this.folders, category);
+      }
     },
 
     showClearRootFiltersDialog() {
@@ -3036,7 +2976,7 @@ export default {
         "Clear filters",
         () => {
           this.clearRootFilters();
-        }
+        },
       );
     },
     clearRootFilters() {
@@ -3047,7 +2987,7 @@ export default {
           if (!data.error) {
             this.showSuccessAlert(
               null,
-              "Root filters has been removed successfully."
+              "Root filters has been removed successfully.",
             );
             this.shop.filters = data.filters;
           } else {

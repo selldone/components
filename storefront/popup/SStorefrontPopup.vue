@@ -69,15 +69,15 @@
       dir="ltr"
     >
       <v-chip v-if="popup.delay" label color="green" class="m-1" small dark
-        ><v-icon class="mr-1" small>motion_photos_on</v-icon>
+        ><v-icon class="me-1" small>motion_photos_on</v-icon>
         {{ popup.delay }} s</v-chip
       >
       <v-chip v-if="popup.hide" label color="red" class="m-1" small dark
-        ><v-icon class="mr-1" small>hourglass_bottom</v-icon>
+        ><v-icon class="me-1" small>hourglass_bottom</v-icon>
         {{ popup.hide }} s</v-chip
       >
       <v-chip v-if="popup.transition" label color="blue" class="m-1" small dark
-        ><v-icon class="mr-1" small>timelapse</v-icon>
+        ><v-icon class="me-1" small>timelapse</v-icon>
         {{ getName(popup.transition) }}</v-chip
       >
     </v-row>

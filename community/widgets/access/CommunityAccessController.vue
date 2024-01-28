@@ -16,15 +16,15 @@
   <div class="pt-5 pb-3 text-start">
     <s-widget-header
       :title="$t('community.access.admins')"
-      icon="fas fa-crown"
+      icon="fa:fas fa-crown"
       :add-caption="shop ? $t('community.access.manage_admins') : undefined"
       :href="admins_url"
       target="_blank"
     ></s-widget-header>
-    <v-subheader>
+    <v-list-subheader>
       Administrators have unrestricted access to every component of the
       community. They are essentially part of your business staff.
-    </v-subheader>
+    </v-list-subheader>
     <s-dense-images-circles-users
       class="fadeIn delay_100"
       v-if="community.admins_list"
@@ -38,10 +38,10 @@
       @click:add="showModerators"
       class="mt-4"
     ></s-widget-header>
-    <v-subheader
+    <v-list-subheader
       >Moderators are granted limited access to oversee the community. They are
       not privy to your business's shop dashboard or any other related
-      information.</v-subheader
+      information.</v-list-subheader
     >
 
     <s-dense-images-circles-users
@@ -67,11 +67,11 @@
               title="Add new moderator"
               icon="person_add_alt"
             ></s-widget-header>
-            <v-subheader
+            <v-list-subheader
               >1. Make sure the user previously registered on
-              Selldone.</v-subheader
+              Selldone.</v-list-subheader
             >
-            <v-subheader>2. Enter the correct email address.</v-subheader>
+            <v-list-subheader>2. Enter the correct email address.</v-list-subheader>
 
             <user-email-input
               with-profile
@@ -136,7 +136,7 @@
 
             <div
               v-if="(!moderators || !moderators.length) && !busy_fetch"
-              class="py-5 display-1 font-weight-thin text-center op-0-5"
+              class="py-5 text-h4 font-weight-thin text-center op-0-5"
             >
               {{ $t("global.commons.empty") }}
             </div>
@@ -145,8 +145,8 @@
               v-if="has_more"
               style="height: 120px"
               v-intersect.quiet="
-                (entries) => {
-                  if (entries[0].isIntersecting) getMore();
+                (isIntersecting) => {
+                  if (isIntersecting) getMore();
                 }
               "
             ></div>

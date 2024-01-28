@@ -13,48 +13,50 @@
   -->
 
 <template>
-  <div class="pt-2">
-    <div class="d-flex mt-2 text-start">
-      <small class="not-selectable">{{ $t("time_spans.days_range") }}:</small>
+  <div class="s--time-span">
+    <div class="d-flex align-center mt-2 text-start">
+      <small class="not-selectable">{{ $t("time_spans.days_range") }}</small>
       <v-spacer></v-spacer>
 
       <s-time-span-selector
         :date-range="date_range"
         :max-days="maxDays"
         @select="setTimeSpan"
+        variant="text"
       ></s-time-span-selector>
     </div>
 
     <v-range-slider
       v-show="!loading"
-      :dark="dark"
       v-model="date_range"
       min="0"
       :max="maxDays"
+      :step="1"
       :tick-size="8"
       thumb-color="#c27800"
-      dense
+      density="compact"
       hide-details
       color="amber"
-      class="mx-auto"
       thumb-label
-      :loading="softLoading"
-      @change="onChange"
+      @end="onChange"
+
     ></v-range-slider>
     <v-progress-linear
       v-show="loading"
-      color="deep-purple accent-4"
+      color="deep-purple-accent-4"
       class="my-2"
       indeterminate
       rounded
       height="6"
     ></v-progress-linear>
 
-    <div class="d-flex not-selectable" :class="{ dense: dense }">
-      <small>{{ getLocalTimeString(end_date, false, false, true) }}</small>
+    <div class="d-flex not-selectable text-center" :class="{ dense: dense,'small-width':smallWidth }">
+      <small>{{ getLocalTimeString(end_date, false, dense, true) }}</small>
       <v-spacer></v-spacer>
-      <small>{{ getLocalTimeString(start_date, false, false, true) }}</small>
+      <small>{{ getLocalTimeString(start_date, false, dense, true) }}</small>
     </div>
+
+    <s-progress-loading v-if="softLoading"></s-progress-loading>
   </div>
 </template>
 
@@ -66,6 +68,7 @@ import _ from "lodash-es";
 export default {
   name: "STimeSpan",
   components: { STimeSpanSelector },
+  emits: ["onChange", "update:startDate", "update:endDate", "update:dateRange"],
   props: {
     startDate: {},
     endDate: {},
@@ -104,6 +107,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    smallWidth: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     date_range: [0, 30],
@@ -112,28 +119,18 @@ export default {
     start_date() {
       return DateConverter.GetStartOfDateBefore(
         this.date_range[1],
-        this.originDate
+        this.originDate,
       );
     },
     end_date() {
       return DateConverter.GetEndOfDateBefore(
         this.date_range[0],
-        this.originDate
+        this.originDate,
       );
     },
   },
 
   watch: {
-    /*  start_date(val) {
-      this.$emit("update:startDate", val);
-    },
-    end_date(val) {
-      this.$emit("update:endDate", val);
-    },*/
-    /*  date_range(val){
-
-      },*/
-
     date_range: _.throttle(function (newVal, oldVal) {
       if (this.triggerOnEnd) return;
       this.emitValues();
@@ -147,6 +144,7 @@ export default {
     },
 
     emitValues() {
+      //console.log('emitValues',this.date_range)
       const offset = this.date_range[0];
       const days = this.date_range[1] - this.date_range[0];
 
@@ -163,12 +161,7 @@ export default {
 
     setTimeSpan(item) {
       this.date_range = [item.to, item.from];
-      /* console.log(
-        "Timespan > Emit new value > this.date_range",
-        this.date_range,
-        "item",
-        item
-      );*/
+      //  console.log("Timespan > Emit new value > this.date_range", this.date_range, "item", item);
 
       if (this.triggerOnEnd) {
         this.emitValues();
@@ -197,7 +190,25 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.dense {
-  margin-top: -7px;
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s--time-span{
+  position: relative;
+
+  .dense {
+    margin-top: -7px;
+  }
+  .small-width{
+    font-size: 12px;
+  }
+
 }
+
+
 </style>

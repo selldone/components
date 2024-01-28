@@ -21,7 +21,7 @@
         icon="tune"
       ></s-widget-header>
 
-      <v-subheader> Set a title and provide a concise description for the category.</v-subheader>
+      <v-list-subheader> Set a title and provide a concise description for the category.</v-list-subheader>
 
       <v-text-field
         v-model="title"
@@ -45,7 +45,7 @@
         :title="$t('global.commons.image')"
         icon="image"
       ></s-widget-header>
-      <v-subheader>You have the option to assign an image to the category.</v-subheader>
+      <v-list-subheader>You have the option to assign an image to the category.</v-list-subheader>
       <image-input
         v-model="image_file"
         :src="image && getShopImagePath(image)"
@@ -59,7 +59,7 @@
         icon="track_changes"
       ></s-widget-header>
 
-      <v-subheader>Here, you can adjust the SEO configurations specifically at the category level. </v-subheader>
+      <v-list-subheader>Here, you can adjust the SEO configurations specifically at the category level. </v-list-subheader>
       <s-smart-toggle
         v-model="nofollow"
         true-title="No follow links"
@@ -76,7 +76,7 @@
         icon="leak_add"
       ></s-widget-header>
 
-      <v-subheader>Categories can be cross-linked and integrated into other communities. </v-subheader>
+      <v-list-subheader>Categories can be cross-linked and integrated into other communities. </v-list-subheader>
       <s-smart-toggle
         v-model="cross"
         :true-title="$t('community.commons.crossable')"
@@ -92,7 +92,7 @@
         icon="private_connectivity"
       ></s-widget-header>
 
-      <v-subheader>Determine whether customers are permitted to create new topics in this category. </v-subheader>
+      <v-list-subheader>Determine whether customers are permitted to create new topics in this category. </v-list-subheader>
       <s-smart-toggle
         v-model="restrict"
         :true-title="$t('community.category.restrict')"
@@ -107,6 +107,7 @@
 <script>
 import ImageInput from "../image/ImageInput.vue";
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
+import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 export default {
   name: "CommunityCategoryEdit",
   components: { SSmartToggle, ImageInput },
@@ -206,11 +207,7 @@ export default {
             if (this.category) {
               this.$emit("update:category", data.category);
 
-              this.$vuetify.goTo(0, {
-                duration: 800,
-                offset: 0,
-                easing: "easeInOutQuad",
-              });
+              ScrollHelper.scrollToTop(0,'smooth')
             } else {
               this.$emit("add", data.category);
                  this.resetToDefault();      // 🞇 Reset to default

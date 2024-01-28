@@ -23,13 +23,13 @@
       :key="connect_shipping_option.connect_id"
     >
 
-      <v-subheader  class="my-2">
+      <v-list-subheader  class="my-2">
 
         {{ $t("global.commons.shipping") }}
         <products-dense-images-circles inline raw-images-path :ids="basket.items.filter(i=>i.connect_id===connect_shipping_option.connect_id).map(i=>getShopImagePath(i.variant?.image?i.variant.image:i.product.icon,128))"></products-dense-images-circles>
 
 
-      </v-subheader>
+      </v-list-subheader>
 
 
       <template v-if="connect_shipping_option.error">

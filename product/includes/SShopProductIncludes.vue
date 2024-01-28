@@ -15,10 +15,10 @@
 <template>
   <v-container v-if="includes?.length" class="s--shop-product-includes">
     <h2>{{ $t("global.commons.included_in_the_product") }}</h2>
-    <v-subheader class="justify-center">
+    <v-list-subheader class="justify-center">
       {{ $t("global.commons.included_in_the_product_description") }}
-    </v-subheader>
-    <v-row v-if="$vuetify.breakpoint.mdAndUp" align="start" justify="center">
+    </v-list-subheader>
+    <v-row v-if="$vuetify.display.mdAndUp" align="start" justify="center">
       <v-col v-for="it in includes" :key="it.id" cols="3">
         <a v-if="it.url && !it.path" :target="'_blank'" :href="it.url">
           <img

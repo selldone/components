@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
+import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
 
 export default {
   name: "SStorefrontCampaignNotification",
@@ -138,7 +138,7 @@ export default {
     if (!this.forceShow && !this.preview && !this.notification.persist) {
       if (
         localStorage.getItem(
-          LocalStorages.GetShopNotificationViewed(
+          StorefrontLocalStorages.GetShopNotificationViewed(
             this.$localstorage_base_path()
           )
         ) === "true"
@@ -154,7 +154,7 @@ export default {
 
       if (!this.preview && !this.notification.persist) {
         localStorage.setItem(
-          LocalStorages.GetShopNotificationViewed(
+          StorefrontLocalStorages.GetShopNotificationViewed(
             this.$localstorage_base_path()
           ),
           "true"

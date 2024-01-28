@@ -22,7 +22,7 @@
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Not found article ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
     <div v-if="NOT_FOUND_ARTICLE">
-      <div class="text-center font-weight-thin display-1 my-16">Not Found</div>
+      <div class="text-center font-weight-thin text-h4 my-16">Not Found</div>
 
       <h2 class="text-secondary text-center">
         {{ error_msg }}
@@ -32,7 +32,7 @@
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Need login ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
     <div v-if="NEED_LOGIN">
-      <div class="text-center font-weight-thin display-1 my-16">Private</div>
+      <div class="text-center font-weight-thin text-h4 my-16">Private</div>
 
       <h2 class="text-secondary text-center">
         {{ $t("global.article.login_to_see_error") }}
@@ -109,7 +109,7 @@
             @click="published_state = !published_state"
             :class="{ pen: !is_editing, disabled: !!schedule_at }"
           >
-            <v-icon color="green" small> fas fa-rss </v-icon>
+            <v-icon color="green" small> fa:fas fa-rss </v-icon>
           </v-btn>
           <v-btn
             v-if="!published_state"
@@ -120,7 +120,7 @@
             @click="published_state = !published_state"
             :class="{ pen: !is_editing, disabled: !!schedule_at }"
           >
-            <v-icon color="#FFA000" small> fas fa-pencil-ruler </v-icon>
+            <v-icon color="#FFA000" small> fa:fas fa-pencil-ruler </v-icon>
           </v-btn>
 
           <v-btn
@@ -132,7 +132,7 @@
             :caption="$t('global.article.private')"
             :class="{ pen: !is_editing }"
           >
-            <v-icon small color="red"> fas fa-user-lock </v-icon>
+            <v-icon small color="red"> fa:fas fa-user-lock </v-icon>
           </v-btn>
           <v-btn
             v-if="!isPrivate"
@@ -143,7 +143,7 @@
             :caption="$t('global.article.public')"
             :class="{ pen: !is_editing }"
           >
-            <v-icon small color="blue"> fas fa-globe </v-icon>
+            <v-icon small color="blue"> fa:fas fa-globe </v-icon>
           </v-btn>
 
           <!-------------------------------------------------------------------------->
@@ -642,7 +642,7 @@
                 </template>
               </v-select>
 
-              <s-cluster-select
+              <b-cluster-input
                 v-if="ArticleTypes.Blog.code && $route.params.shop_id"
                 v-model="cluster_id"
                 :return-object="false"
@@ -656,7 +656,7 @@
                 label="Resource Cluster"
                 icon="workspaces_outline"
                 class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
-              ></s-cluster-select>
+              ></b-cluster-input>
 
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help parent ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -916,7 +916,7 @@
             "
           >
             <template v-slot:badge>
-              {{ article.power | numeralFormat("0.[0] a") }}</template
+              {{  numeralFormat(article.power ,"0.[0] a") }}</template
             >
 
             <v-btn
@@ -934,7 +934,7 @@
               fab
             >
               <v-icon class="mx-2" :class="{ bounceIn: catch_power }">
-                fas fa-sign-language
+                fa:fas fa-sign-language
               </v-icon>
             </v-btn>
           </v-badge>
@@ -954,14 +954,14 @@
               }}
             </v-icon>
             <small>
-              {{ article.like | numeralFormat("0.[0] a") }}
+              {{   numeralFormat(article.like,"0.[0] a") }}
               {{ $t("global.article.likes") }}
             </small>
           </div>
 
           <div
             v-if="hasFavorite && USER()"
-            class="ml-4 float-left pointer-pointer"
+            class="ms-4 float-left pointer-pointer"
             @click="starArticle"
             :class="{ bounceIn: isStared }"
           >
@@ -1044,7 +1044,7 @@
 
                   {{ getLocalTimeString(article.updated_at) }}
                 </time>
-                <v-icon class="me-1" small> fas fa-feather </v-icon>
+                <v-icon class="me-1" small> fa:fas fa-feather </v-icon>
               </template>
               {{
                 $t("global.article.wrote_at") +
@@ -1103,11 +1103,11 @@
             "
             cols="12"
           >
-            <v-subheader>
+            <v-list-subheader>
               {{ $t("global.article.author_socials") }}
 
               :
-            </v-subheader>
+            </v-list-subheader>
             <v-btn
               v-if="socials.linkedin"
               depressed
@@ -1166,7 +1166,7 @@
               target="_blank"
               :title="`@${socials.selldone}`"
             >
-              <v-icon small> fas fa-store </v-icon>
+              <v-icon small> fa:fas fa-store </v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -1295,13 +1295,13 @@ import STimeProgressBar from "../ui/calendar/time-progress/STimeProgressBar.vue"
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import AiButton from "@components/ui/button/ai/AiButton.vue";
-import SClusterSelect from "@components/cluster/SClusterSelect.vue";
+import BClusterInput from "@components/backoffice/cluster/BClusterInput.vue";
 import _ from "lodash-es";
 
 export default {
   name: "SArticleView",
   components: {
-    SClusterSelect,
+    BClusterInput,
     AiButton,
     SArticleSearchConsole,
     STimeProgressBar,

@@ -14,8 +14,15 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-select
-    :value="value"
-    @input="(val) => $emit('input', val)"
+    :model-value="modelValue"
+    @update:model-value="
+      (val) => {
+        $emit('update:modelValue', val);
+         $nextTick(() => {
+        $emit('change',val);
+      })
+      }
+    "
     :items="[
       ...Object.values(ProductType).map((t) => {
         return { value: t.code, obj: t };
@@ -27,51 +34,56 @@
     item-value="value"
     multiple
     chips
-    small-chips
-    solo
-    flat
     placeholder="Select Filter *.*"
-    prepend-icon="filter_alt"
-    background-color="transparent"
+    prepend-inner-icon="filter_alt"
+    bg-color="transparent"
     hide-details
-    @change="  $nextTick(() => {$emit('change')})"
     clearable
-    append-icon=""
-    :dense="dense"
+    :density="dense?'compact':undefined"
+    variant="solo"
+    flat
+
   >
-    <template v-slot:item="{ item }">
-      <div class="d-flex align-center">
-        <v-img
-          v-if="item.obj.image"
-          :src="item.obj.image"
-          width="16"
-          height="16"
-          class="me-2"
-        ></v-img>
-        <v-icon v-else class="me-2" small>{{ item.obj.icon }}</v-icon>
-        {{ $t(item.obj.name) }}
-      </div>
+    <template v-slot:item="{ item,props }">
+      <v-list-item v-bind="props" class="d-flex align-center text-start"  >
+        <template v-slot:title>
+          <span style="display: inline-block;min-width: 58px"><v-img
+              v-if="item.raw.obj.image"
+              :src="item.raw.obj.image"
+              width="16"
+              height="16"
+              class="me-2"
+          ></v-img>
+          <v-icon v-else class="me-2" size="small">{{ item.raw.obj.icon }}</v-icon></span>
+
+          {{$t(item.raw.obj.name)}}
+        </template>
+
+      </v-list-item>
     </template>
 
-    <template v-slot:selection="{ attrs, item, parent, selected }">
+    <template v-slot:chip="{ attrs, item, parent, selected }">
       <v-chip
         class="ma-1 font-weight-bold"
-        close
-        :input-value="selected"
+        closable
+        :model-value="selected"
         v-bind="attrs"
         @click:close="parent.selectItem(item)"
         color="#fafafa"
-        :x-small="dense"
+        theme="light" variant="flat"
+        :size="dense ? 'x-small' : undefined"
       >
         <v-img
-          v-if="item.obj.image"
-          :src="item.obj.image"
+          v-if="item.raw.obj.image"
+          :src="item.raw.obj.image"
           width="16"
           height="16"
           class="me-1"
         ></v-img>
-        <v-icon v-else left small class="me-1">{{ item.obj.icon }}</v-icon>
-        {{ $t(item.obj.name) }}
+        <v-icon v-else start size="small" class="me-1">{{
+          item.raw.obj.icon
+        }}</v-icon>
+        {{ $t(item.raw.obj.name) }}
       </v-chip>
     </template>
   </v-select>
@@ -83,13 +95,14 @@ import { ProductStatus } from "@core/enums/product/ProductStatus";
 export default {
   name: "AdminProductsFilterInput",
   components: {},
+  emits: ["update:modelValue", "change"],
   props: {
     shop: {
       required: true,
       type: Object,
     },
-    value: {},
-    dense:{type:Boolean}
+    modelValue: {},
+    dense: { type: Boolean },
   },
   data: function () {
     return {

@@ -34,7 +34,7 @@
         {{ $t("community.commons.categories") }}
 
         <small class="d-block">{{ $t("community.commons.total") }}</small>
-        <h3>{{ target.total_categories | numeralFormat("0.[0]a") }}</h3>
+        <h3>{{   numeralFormat(target.total_categories,"0.[0]a") }}</h3>
       </v-col>
       <v-col
         v-if="isCommunity || isCategory"
@@ -46,19 +46,19 @@
         {{ $t("community.commons.topics") }}
         <small class="d-block">{{ $t("community.commons.total") }}</small>
 
-        <h3>{{ target.total_topics | numeralFormat("0.[0]a") }}</h3>
+        <h3>{{   numeralFormat(target.total_topics,"0.[0]a") }}</h3>
       </v-col>
       <v-col cols="6" sm="4" md="3" class="fadeIn delay_400">
         {{ $t("community.commons.posts") }}
         <small class="d-block">{{ $t("community.commons.total") }}</small>
 
-        <h3>{{ target.total_posts | numeralFormat("0.[0]a") }}</h3>
+        <h3>{{  numeralFormat(target.total_posts ,"0.[0]a") }}</h3>
       </v-col>
       <v-col cols="6" sm="4" md="3" class="fadeIn delay_500">
         {{ $t("community.commons.comments") }}
         <small class="d-block">{{ $t("community.commons.total") }}</small>
 
-        <h3>{{ target.total_comments | numeralFormat("0.[0]a") }}</h3>
+        <h3>{{   numeralFormat(target.total_comments,"0.[0]a") }}</h3>
       </v-col>
 
       <v-col cols="12"><hr /></v-col>
@@ -90,7 +90,7 @@
     <v-row>
       <v-col cols="12" md="6">
         <div
-          v-intersect.once="(e) => OnIntersectLoad(e, 1)"
+          v-intersect.once="(isIntersecting) => OnIntersectLoad(isIntersecting, 1)"
           class="mh250 border rounded-18px p-2"
         >
           <s-line-chart
@@ -113,7 +113,7 @@
 
       <v-col cols="12" md="6">
         <div
-          v-intersect.once="(e) => OnIntersectLoad(e, 2)"
+          v-intersect.once="(isIntersecting) => OnIntersectLoad(isIntersecting, 2)"
           class="mh250 border rounded-18px p-2"
         >
           <s-area-chart

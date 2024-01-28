@@ -36,8 +36,8 @@
         </v-icon>
       </component>
 
-      <v-btn v-if="hasEditButton" icon @click="$emit('edit')">
-        <v-icon small> fas fa-edit </v-icon>
+      <v-btn v-if="hasEditButton" icon variant="plain" @click="$emit('edit')" size="small">
+        <v-icon > edit_square </v-icon>
       </v-btn>
 
       <v-avatar v-if="src" size="24" tile><v-img :src="src"></v-img></v-avatar>
@@ -69,12 +69,13 @@
 
     <slot />
 
-    <v-flex d-flex wrap class="justify-content-between" />
+    <div   class="d-flex flex-wrap justify-content-between" />
 
     <div class="border-top mt-3" v-if="extended">
       <v-spacer></v-spacer>
 
       <slot name="footer" />
+      <slot name="bottom" />
     </div>
   </s-widget>
 </template>
@@ -165,7 +166,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep h6 {
+::v-deep(h6) {
   font-size: 1.1rem;
 }
 .-hover {

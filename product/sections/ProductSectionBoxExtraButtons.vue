@@ -32,7 +32,7 @@
         <div
           style="max-width: 20vw"
           class="single-line overflow-hidden d-block"
-          :class="{ small: $vuetify.breakpoint.xsOnly }"
+          :class="{ small: $vuetify.display.xsOnly }"
         >
           {{
             productsCountInComparisonList >= 10

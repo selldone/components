@@ -31,7 +31,7 @@
           @click="state = state === 'editing' ? 'default' : 'editing'"
           :title="$t('global.commons.edit')"
         >
-          <span class="fas fa-edit" />
+          <span class="edit_square" />
         </div>
 
         <v-chip

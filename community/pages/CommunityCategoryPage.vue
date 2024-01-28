@@ -106,9 +106,9 @@
                 <v-icon class="me-1" small>warning</v-icon>
                 {{ $t("global.commons.critical_zone") }}
               </h2>
-              <v-subheader>
+              <v-list-subheader>
                 {{ $t("community.category.remove_msg") }}
-              </v-subheader>
+              </v-list-subheader>
 
               <s-smart-check-verify-action
                 v-model="check_delete"
@@ -216,13 +216,13 @@
     >
       <v-btn
         @click="NeedLogin()"
-        class="m-auto"
+        class="ma-auto"
         color="blue"
         dark
         x-large
         depressed
         rounded
-        ><span class="me-2 display-1">👋</span>
+        ><span class="me-2 text-h4">👋</span>
         <div class="text-start">
           {{ $t("global.actions.login_now") }}
           <small class="d-block white--text">{{
@@ -271,13 +271,13 @@
               <div
                 v-if="cross_preview"
                 class="d-flex"
-                :class="{ 'flex-column': $vuetify.breakpoint.xs }"
+                :class="{ 'flex-column': $vuetify.display.xs }"
               >
                 <community-image
                   :src="getShopImagePath(cross_preview.image)"
-                  :width="$vuetify.breakpoint.xs ? '100%' : 200"
-                  :min-height="$vuetify.breakpoint.xs ? undefined : 200"
-                  :height="$vuetify.breakpoint.xs ? '140px' : 'auto'"
+                  :width="$vuetify.display.xs ? '100%' : 200"
+                  :min-height="$vuetify.display.xs ? undefined : 200"
+                  :height="$vuetify.display.xs ? '140px' : 'auto'"
                   class="rounded-18px"
                 ></community-image>
                 <div class="ps-3 pe-2 mt-4 text-justify overflow-hidden">
@@ -342,8 +342,8 @@
           v-if="has_more"
           style="height: 50vh"
           v-intersect.quiet="
-            (entries) => {
-              if (entries[0].isIntersecting) fetchTopics(page + 1);
+            (isIntersecting, entries, observer) => {
+              if (isIntersecting) fetchTopics(page + 1);
             }
           "
         >

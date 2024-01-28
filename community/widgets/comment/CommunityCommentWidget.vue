@@ -32,8 +32,8 @@
 
       <div class="d-flex mx-4">
         <v-spacer></v-spacer>
-        <div class="m-1 p-2"><v-icon small class="me-1">thumb_down</v-icon> {{comment.disagrees | numeralFormat("0.[0]a") }}</div>
-        <div class="m-1 p-2"><v-icon small class="me-1">thumb_up</v-icon> {{comment.agrees | numeralFormat("0.[0]a") }}</div>
+        <div class="m-1 p-2"><v-icon small class="me-1">thumb_down</v-icon> {{  numeralFormat(comment.disagrees,"0.[0]a") }}</div>
+        <div class="m-1 p-2"><v-icon small class="me-1">thumb_up</v-icon> {{  numeralFormat(comment.agrees,"0.[0]a") }}</div>
       </div>
 
 

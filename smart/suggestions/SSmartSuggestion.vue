@@ -15,27 +15,26 @@
 <template>
   <div v-if="Array.isArray(samples) && samples?.length">
     <v-slide-group show-arrows>
-      <v-slide-item key="o">
+      <v-slide-group-item key="o">
         <v-btn
-          small
-          tile
-          icon
+          size="small"
+          variant="text"
           title="View list of suggestions."
           @click="showDialog"
-          ><v-icon>pin_invoke</v-icon></v-btn
         >
-      </v-slide-item>
-      <v-slide-item v-for="n in samples_processed" :key="n" :title="n">
-        <v-chip
-          class="me-2 text-muted"
-          label
+          <v-icon>pin_invoke</v-icon>
+        </v-btn>
+      </v-slide-group-item>
+      <v-slide-group-item v-for="n in samples_processed" :key="n" :title="n">
+        <v-btn
+          class="tnt"
+          variant="plain"
           @click="$emit('select', n)"
-          small
-          color="#fafafa"
+          size="small"
         >
           {{ n.limitWords(4) }}
-        </v-chip>
-      </v-slide-item>
+        </v-btn>
+      </v-slide-group-item>
     </v-slide-group>
 
     <!-- ██████████████████████ Dialog ██████████████████████ -->
@@ -50,8 +49,8 @@
       <v-card>
         <v-card-text class="py-16">
           <v-list
-            class="max-widget-width mx-auto text-start border-between-vertical"
-            two-line
+            class="max-widget-width mx-auto text-start border-between-vertical overflow-visible"
+            lines="two"
           >
             <v-list-item
               v-for="n in samples_processed"
@@ -71,7 +70,7 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn text x-large @click="closeDialog">
+            <v-btn variant="text" size="x-large" @click="closeDialog">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -111,7 +110,7 @@ export default defineComponent({
 
         // Get current season
         const found = Object.values(Seasons).find((s) =>
-          s.months.includes(month)
+          s.months.includes(month),
         );
         const currentSeason = found ? this.$t(found.name) : "";
 

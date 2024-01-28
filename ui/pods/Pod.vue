@@ -25,6 +25,7 @@
       'rounded-circle': circlePod,
       '-dashed': dashed,
       'hover-scale-small force-top': hover,
+      '-large':large
     }"
   >
     <img
@@ -45,9 +46,10 @@
       class="mb-1 pod-icon"
       >{{ icon }}</v-icon
     >
+    <slot></slot>
 
     <small class="d-block" :title="title">
-      <v-icon v-if="titleIcon" x-small :color="titleIconColor">{{
+      <v-icon v-if="titleIcon" size="x-small" :color="titleIconColor">{{
         titleIcon
       }}</v-icon>
       {{ title }}</small
@@ -89,6 +91,10 @@ export default {
     },
 
     hover: {
+      type: Boolean,
+      default: false,
+    },
+    large: {
       type: Boolean,
       default: false,
     },

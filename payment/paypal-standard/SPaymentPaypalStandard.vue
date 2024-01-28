@@ -20,7 +20,7 @@
     <div id="paypal-button-container" ></div>
 
 
-    <div v-if="busy_verify" class="v-msg display-1">
+    <div v-if="busy_verify" class="v-msg text-h4">
       <s-progress-loading ></s-progress-loading>
       Verifying Payment...
     </div>

@@ -15,20 +15,20 @@
 <template>
   <v-dialog
     fullscreen
-    :value="value"
-    @input="(val) => $emit('input', val)"
+    :model-value="modelValue"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
     transition="dialog-bottom-transition"
     scrollable
   >
     <v-card>
-      <v-card-title
+      <v-card-title class="d-flex"
         ><v-icon class="me-1">translate</v-icon>
         {{ $t("global.commons.language") }}
 
         <v-spacer></v-spacer>
         <v-text-field
           flat
-          solo
+          variant="solo"
           hide-details
           v-model="search"
           :placeholder="$t('global.commons.search')"
@@ -47,7 +47,7 @@
               sm="4"
               md="3"
             >
-              <v-btn @click="select(lan)" text class="font-weight-bold">
+              <v-btn @click="select(lan)" variant="text" class="font-weight-bold">
                 <v-icon
                   v-if="
                     selectedLanguage === lan.code ||
@@ -61,7 +61,7 @@
                 <v-icon
                   v-if="checkedLanguages && checkedLanguages.includes(lan.code)"
                   color="primary"
-                  small
+                  size="small"
                   class="ms-1"
                   >check_circle</v-icon
                 >
@@ -84,22 +84,22 @@
 
           <div class="text-start mt-5">
             <v-chip @click="show_flags = !show_flags" color="#fafafa">
-              <v-icon left :color="show_flags ? 'primary' : undefined">{{
+              <v-icon start :color="show_flags ? 'primary' : undefined">{{
                 show_flags ? "radio_button_checked" : "radio_button_unchecked"
               }}</v-icon>
               Show flags
             </v-chip>
           </div>
-          <v-subheader class="my-5"
+          <v-list-subheader class="my-5"
             >*Countries are random! Do you have an opinion on languages and
-            countries? Please email us.</v-subheader
+            countries? Please email us.</v-list-subheader
           >
         </v-container>
       </v-card-text>
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn x-large text @click="$emit('input', false)">
+          <v-btn size="x-large" variant="text" @click="$emit('update:modelValue', false)">
             <v-icon class="me-1">close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -115,9 +115,9 @@ import { SetupService } from "@core/server/SetupService";
 
 export default {
   name: "SLanguagesDialog",
-
+emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
     selectedLanguage: {},
     availableLanguages: {},
     checkedLanguages: {
@@ -168,7 +168,7 @@ export default {
       } else {
         this.$emit("update:selectedLanguage", lan.code);
         this.$emit("change", lan.code);
-        this.$emit("input", false);
+        this.$emit("update:modelValue", false);
       }
     },
   },

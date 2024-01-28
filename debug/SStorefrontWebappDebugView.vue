@@ -53,12 +53,12 @@
       </v-expand-transition>
       <v-expand-transition>
         <div v-if="show_settings">
-          <v-subheader style="height: unset" class="my-3">
+          <v-list-subheader style="height: unset" class="my-3">
             To execute your development storefront web application in a live
             storefront environment in real-time, initiate the process by running
             yarn serv. Afterward, enter the development URL in the provided
             field and click 'Save' to proceed.
-          </v-subheader>
+          </v-list-subheader>
 
           <v-text-field
             v-model="dev_url"
@@ -119,11 +119,11 @@
       </div>
 
       <v-list class="" three-line>
-        <v-subheader>
+        <v-list-subheader>
           This is a debug window designed to log errors and key messages. It's
           intended solely for debugging purposes and is primarily useful for
           shop owners, developers, and technically savvy users.
-        </v-subheader>
+        </v-list-subheader>
         <v-list-item
           v-for="(item, key) in errors.entries()"
           :key="key"
@@ -152,7 +152,7 @@
       </v-list>
       <p
         v-if="!errors.length()"
-        class="display-1 font-weight-thin te text-center my-16"
+        class="text-h4 font-weight-thin te text-center my-16"
       >
         {{ $t("global.commons.empty") }}
       </p>

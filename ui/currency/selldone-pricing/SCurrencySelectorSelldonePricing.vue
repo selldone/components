@@ -20,6 +20,7 @@
     :outlined="outlined"
     :solo="solo"
     :singleLine="singleLine"
+    :variant="variant"
     :filled="filled"
     :dense="dense"
     :noRouteQuery="noRouteQuery"
@@ -29,8 +30,8 @@
     @change="setUserCurrency"
     :save-local-storage="false"
     :hideDetails="hideDetails"
-    :maxWidth="maxWidth"
-    :flagMode="flagMode"
+    :max-width="maxWidth"
+    :flag-mode="flagMode"
     :flat="flat"
     flag
     :background-color="backgroundColor"
@@ -44,6 +45,7 @@ import SCurrencySelector from "../selector/SCurrencySelector.vue";
 export default {
   name: "SCurrencySelectorSelldonePricing",
   components: { SCurrencySelector },
+  emits: ["change"],
 
   props: {
     dark: {
@@ -54,6 +56,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    variant:{},
     outlined: {
       type: Boolean,
       default: false,

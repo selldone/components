@@ -29,18 +29,18 @@
       v-for="item in tabsNotNull"
       :key="'tab-' + item.title"
       :color="item.color"
-      @click="$emit('input', item.value)"
+      @click="$emit('update:modelValue', item.value)"
       class="nav-item"
-      :class="{ 'is-active': value === item.value, small: small }"
+      :class="{ 'is-active': modelValue === item.value, small: small }"
       :style="``"
       :active-color="item.color"
     >
       <v-icon
         v-if="item.icon"
-        :color="value === item.value ? item.color : ''"
+        :color="modelValue === item.value ? item.color : ''"
         style="pointer-events: none"
         class="me-1"
-        :small="window.innerWidth < 900 || small"
+        :size="window.innerWidth < 900 || small ? 'small':undefined"
         >{{ item.icon }}</v-icon
       >
       <v-img
@@ -50,13 +50,12 @@
         class="me-1"
         :width="window.innerWidth < 900 || small ? 20 : 28"
         aspect-ratio="1"
-        contain
         >{{ item.icon }}</v-img
       >
 
       {{ item.title }}
 
-      <v-icon v-if="item.check" class="ms-1 zoomIn" small color="success"
+      <v-icon v-if="item.check" class="ms-1 zoomIn" size="small" color="success"
         >check_circle</v-icon
       >
     </div>
@@ -68,8 +67,9 @@
 <script>
 export default {
   name: "RoundedTabs",
+  emits: ["update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
 
     tabs: {
       type: Array,
@@ -107,25 +107,16 @@ export default {
   },
 
   watch: {
-    value() {
-      /* this.$nextTick(() => {
-        this.redrawActiveItem();
-      });*/
-    },
+
   },
 
   mounted() {
-    //this.redrawActiveItem();
-    // setTimeout(() => {        this.redrawActiveItem()}, 300);
+
   },
   created() {},
   methods: {
     redrawActiveItem() {
-      /*    const element = document.querySelector(".nav-item.is-active");
-      if (!element) return;
 
-      const item = this.tabsNotNull.find((item) => item.value === this.value);
-*/
     },
   },
 };

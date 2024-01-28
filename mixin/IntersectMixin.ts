@@ -12,14 +12,13 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import Vue, { type VueConstructor } from "vue";
 import _ from "lodash-es";
 
 /**
  * IntersectMixin provides inline editing capabilities.
  * @mixin IntersectMixin
  */
-export const IntersectMixin: VueConstructor<Vue> = Vue.extend({
+export const IntersectMixin = ({
   data() {
     return {
       intersects: [] as string[],
@@ -35,14 +34,14 @@ export const IntersectMixin: VueConstructor<Vue> = Vue.extend({
      * @returns {void}
      */
     OnIntersectLoad(
-      e: IntersectionObserverEntry[],
+        isIntersecting: boolean,
       key: string,
       delay: number = 0
     ): void {
       if (!this.intersects)
         return console.error("ERROR! Register var: _intersects!");
 
-      if (e[0].isIntersecting) {
+      if (isIntersecting) {
         if (delay) {
           _.delay(() => {
             this.intersects.push(key);

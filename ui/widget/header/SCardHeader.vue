@@ -32,9 +32,9 @@
       :dot="dot"
       :dotColor="dotColor"
     ></s-widget-header>
-    <v-subheader class="expandable px-0">
+    <v-list-subheader class="expandable px-0">
       {{ subtitle }}
-    </v-subheader>
+    </v-list-subheader>
   </div>
 </template>
 

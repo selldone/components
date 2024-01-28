@@ -163,9 +163,9 @@ export default {
 
     type: "month",
     types: {
-      month: "fas fa-calendar-alt",
-      week: "fas fa-calendar-week",
-      day: "fas fa-calendar-day",
+      month: "fa:fas fa-calendar-alt",
+      week: "fa:fas fa-calendar-week",
+      day: "fa:fas fa-calendar-day",
     },
 
     mode: "stack",

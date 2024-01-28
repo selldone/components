@@ -19,15 +19,19 @@
     :style="{
       '--top': fadeTop,
       '--bottom': fadeBottom,
-      '--left':$vuetify.rtl?fadeRight: fadeLeft,
-      '--right':$vuetify.rtl?fadeLeft:  fadeRight,
+      '--left': $vuetify.rtl ? fadeRight : fadeLeft,
+      '--right': $vuetify.rtl ? fadeLeft : fadeRight,
     }"
+
+
   >
     <div
-      class="--scroll"
+      class="--scroll" :class="{usn:dragScroll}"
       ref="scroll"
       v-scroll.self="(ev) => onScroll(ev.target)"
       v-intersect="onIntersect"
+
+      v-dragscroll="dragScroll"
     >
       <slot></slot>
     </div>
@@ -36,12 +40,12 @@
         <v-btn
           v-if="fadeLeft && fadeLeft !== '0'"
           @click="scrollLeft"
-          fab
-          depressed
-          :x-large="!smallArrow"
+          icon
+          variant="flat"
+          :size="!smallArrow ? 'large' : undefined"
           class="-arrow-btn"
         >
-          <v-icon x-large>{{ $t("icons.navigate_before") }}</v-icon>
+          <v-icon size="x-large">{{ $t("icons.navigate_before") }}</v-icon>
         </v-btn>
       </v-slide-x-transition>
       <v-spacer></v-spacer>
@@ -49,12 +53,12 @@
         <v-btn
           v-if="fadeRight && fadeRight !== '0'"
           @click="scrollRight"
-          fab
-          depressed
-          :x-large="!smallArrow"
+          icon
+          variant="flat"
+          :size="!smallArrow ? 'large' : undefined"
           class="-arrow-btn"
         >
-          <v-icon x-large>{{ $t("icons.navigate_next") }}</v-icon>
+          <v-icon size="x-large">{{ $t("icons.navigate_next") }}</v-icon>
         </v-btn>
       </v-slide-x-reverse-transition>
     </div>
@@ -82,12 +86,20 @@ export default {
     stickScrollOffset: {
       default: 24, // Add offset to scroll to child
     },
+
+    dragScroll:Boolean
   },
   data: () => ({
     fadeTop: "0",
     fadeBottom: "0",
     fadeLeft: "0",
     fadeRight: "0",
+
+
+    isDragging: false,
+    pan_start_x: 0,
+    pan_scroll_left: 0,
+
   }),
 
   mounted() {
@@ -141,7 +153,7 @@ export default {
     scrollToTheNextChild() {
       const container = this.$refs.scroll;
       const items = Array.from(
-        this.$refs.scroll.querySelectorAll(`.${this.stickClass}`)
+        this.$refs.scroll.querySelectorAll(`.${this.stickClass}`),
       );
       let nextItem = null;
 
@@ -177,7 +189,7 @@ export default {
     scrollToThePreviousChild() {
       const container = this.$refs.scroll;
       const items = Array.from(
-        this.$refs.scroll.querySelectorAll(`.${this.stickClass}`)
+        this.$refs.scroll.querySelectorAll(`.${this.stickClass}`),
       ).reverse();
       let previousItem = null;
 
@@ -217,11 +229,26 @@ export default {
       }
       return false;
     },
+
+
+
+
+  },
+
+  beforeUnmount() {
+
   },
 };
 </script>
 
 <style scoped lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
 .s-fade-scroll {
   position: relative;
 
@@ -231,6 +258,7 @@ export default {
   }
 
   .--scroll {
+    white-space: nowrap; /*Force inline items be scrollable*/
     scrollbar-width: none;
     -ms-overflow-style: none; /* Hide scrollbar for Edge */
     &::-webkit-scrollbar {
@@ -241,6 +269,8 @@ export default {
     overscroll-behavior-x: contain;
     overflow: auto;
     max-height: inherit;
+
+
   }
 
   &:after {
@@ -261,8 +291,11 @@ export default {
 
     background-position: top, bottom, left, right;
     background-repeat: no-repeat;
-    background-size: 100% var(--top, 0), 100% var(--bottom, 0),
-      var(--left, 0) 100%, var(--right, 0) 100%;
+    background-size:
+      100% var(--top, 0),
+      100% var(--bottom, 0),
+      var(--left, 0) 100%,
+      var(--right, 0) 100%;
   }
 
   .-arrows {

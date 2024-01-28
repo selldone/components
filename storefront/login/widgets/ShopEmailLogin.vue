@@ -55,7 +55,7 @@
             <p class="typo-body">
               {{ $t("global.need_login.email_login_step_2") }}
             </p>
-            <div class="display-1 font-weight-thin text-center py-3">
+            <div class="text-h4 font-weight-thin text-center py-3">
               {{ email }}
             </div>
           </template>

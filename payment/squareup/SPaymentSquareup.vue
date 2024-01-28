@@ -21,7 +21,7 @@
         :amount="amount"
         :currency="currency.toUpperCase()"
         x-large
-        class="display-2"
+        class="text-h3"
       ></price-view>
     </div>
 
@@ -29,7 +29,7 @@
 
     <div
       v-if="success_payment"
-      class="pa-3 display-1 center-absolute text-center zoomIn"
+      class="pa-3 text-h4 center-absolute text-center zoomIn"
     >
       Payment Successful
     </div>
@@ -37,7 +37,7 @@
     <form
       :class="{
         disabled: busy_submit || success_payment,
-        'blured-lg': success_payment,
+        'blurred-lg': success_payment,
       }"
       id="payment-form"
       class="blur-animate"

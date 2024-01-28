@@ -82,7 +82,7 @@
 
       <v-list-item-action style="flex-basis: 50px">
         <v-list-item-action-text dir="ltr" class="text-center english-field">
-          {{ (file.size * 1024) | numeralFormat("0.[0] b") }}
+          {{  numeralFormat((file.size * 1024) ,"0.[0] b") }}
         </v-list-item-action-text>
 
         <v-btn

@@ -43,7 +43,7 @@
           width="96"
           height="96"
           class="d-flex align-center justify-center rounded-2rem widget-hover position-relative"
-          outlined
+          variant="outlined" color="#999"
         >
           <img
             :src="
@@ -56,8 +56,8 @@
             class="rounded-18px"
             @click="selected_shop = shop.id"
           />
-          <v-avatar class="absolute-bottom-end"  size="30" color="#fff">
-            <v-avatar color="#FFF" size="24">
+          <v-avatar class="absolute-bottom-end" size="30" :color="dark?'#000':'#fff'">
+            <v-avatar  size="24">
               <v-img :src="getShopLicenseIcon(shop.license)"></v-img>
             </v-avatar>
           </v-avatar>
@@ -75,17 +75,17 @@
         <div class="text-ellipsis">
           <v-icon
             v-if="!shop.shop_permissions || !shop.shop_permissions.length"
-            x-small
+            size="x-small"
             color="amber"
             class="me-1"
             :title="$t('shop_permissions.ADMIN.text')"
-            >fas fa-crown</v-icon
+            >fa:fas fa-crown</v-icon
           >
 
-          <v-tooltip v-else bottom :max-width="480" color="#111">
-            <template v-slot:activator="{ on }">
-              <v-icon v-on="on" x-small color="#03A9F4" class="me-1"
-                >fas fa-user</v-icon
+          <v-tooltip v-else location="bottom" :max-width="480" color="#111">
+            <template v-slot:activator="{ props }">
+              <v-icon v-bind="props" size="x-small" color="#03A9F4" class="me-1"
+                >fa:fas fa-user</v-icon
               >
             </template>
             <div class="text-start">
@@ -152,6 +152,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    dark:Boolean
   },
 
   data() {

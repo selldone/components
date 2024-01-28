@@ -105,7 +105,7 @@
 
           <s-circle-button
             class="card__flip"
-            icon="fas fa-credit-card"
+            icon="fa:fas fa-credit-card"
             adjust-for-font-awesome
             :tooltip="$t('global.actions.close')"
             color="#fff"

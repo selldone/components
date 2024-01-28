@@ -15,10 +15,10 @@
 <template>
   <span>
     <v-icon v-if="value > 0" :color="green" :small="small">
-      fas fa-caret-up
+      fa:fas fa-caret-up
     </v-icon>
     <v-icon v-else-if="value < 0" :color="red" :small="small">
-      fas fa-caret-down
+      fa:fas fa-caret-down
     </v-icon>
   </span>
 </template>

@@ -196,7 +196,7 @@
 </template>
 
 <script>
-import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
+import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
 
 export default {
   name: "SStorefrontSearchBox",
@@ -374,7 +374,7 @@ export default {
     this.force_show = this.expandInput;
 
     let history = localStorage.getItem(
-      LocalStorages.GetUserShopSearchHistory(this.$localstorage_base_path())
+      StorefrontLocalStorages.GetUserShopSearchHistory(this.$localstorage_base_path())
     );
     if (history) this.old_items = JSON.parse(history);
     if (!this.old_items || !Array.isArray(this.old_items)) this.old_items = [];
@@ -408,7 +408,7 @@ export default {
         );
 
         localStorage.setItem(
-          LocalStorages.GetUserShopSearchHistory(
+          StorefrontLocalStorages.GetUserShopSearchHistory(
             this.$localstorage_base_path()
           ),
           JSON.stringify(this.old_items)

@@ -13,18 +13,16 @@
   -->
 
 <template>
-  <div class="text-center">
+  <div class="d-flex flex-column align-center justify-center">
     <v-rating
       v-if="!noStars"
-      :value="value"
-      @input="(val) => $emit('input', val)"
-      color="yellow darken-3"
-      background-color="grey darken-1"
-      empty-icon="$ratingFull"
+      :model-value="modelValue"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
+      active-color="amber-darken-3"
+      color="grey-darken-1"
       hover
-      :x-large="!small"
-      :small="xSmall"
-      :dense="dense"
+      :size="xSmall?'x-small':small?'small':'x-large'"
+      :density="dense? 'compact':undefined"
       :calss="{ disabled: loading }"
       @change="(val) => $emit('change', val)"
       :readonly="readOnly"
@@ -38,7 +36,7 @@
       :height="xSmall ? 24 : small ? 42 : 68"
       class="face"
       :class="{
-        '-vertical': value === 5,
+        '-vertical': modelValue === 5,
         'my-2': !dense,
         'mx-2': horizontal,
         'mx-auto': !horizontal,
@@ -50,8 +48,9 @@
 <script>
 export default {
   name: "EmojiRating",
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
     small: { default: false, type: Boolean },
     xSmall: { default: false, type: Boolean },
     loading: { default: false, type: Boolean },
@@ -64,15 +63,15 @@ export default {
 
   computed: {
     emoji() {
-      if (this.value === 1)
+      if (this.modelValue === 1)
         return require("./assets/rate-1.svg");
-      if (this.value === 2)
+      if (this.modelValue === 2)
         return require("./assets/rate-2.svg");
-      if (this.value === 3)
+      if (this.modelValue === 3)
         return require("./assets/rate-3.svg");
-      if (this.value === 4)
+      if (this.modelValue === 4)
         return require("./assets/rate-4.svg");
-      if (this.value === 5)
+      if (this.modelValue === 5)
         return require("./assets/rate-5.svg");
 
       return require("./assets/rate-no.svg");

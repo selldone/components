@@ -15,21 +15,32 @@
 <template>
   <div class="text-start">
     <h3 v-if="label" class="my-2">{{ label }}</h3>
-    <v-subheader v-if="hint">{{ hint }}</v-subheader>
+    <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <div class="p-2 pp usn" :class="{ disabled: disabled }" @click="toggle">
       <div class="d-flex align-center mnh">
-        <v-icon
-          :color="falseGray && !value?'#33':color"
-          class="me-2 -thin -gray flex-grow-0"
-          :class="{ 'avatar-gradient': value }"
-          >{{ value ? "lens" : "radio_button_unchecked" }}</v-icon
+        <div
+          style="min-width: 32px"
+          class="position-relative me-2"
+          :class="{
+            'interactive-zoom-in': modelValue,
+          }"
         >
+          <v-icon
+            :color="falseGray && !modelValue ? '#33' : color"
+            size="24"
+            class="-thin -gray flex-grow-0 h-auto center-absolute"
+            :class="{
+              'avatar-gradient': modelValue,
+            }"
+            >{{ modelValue ? "lens" : "radio_button_unchecked" }}
+          </v-icon>
+        </div>
         <div class="flex-grow-1 ok">
           <b> {{ trueTitle }} </b>
-          <v-subheader v-if="description" style="height: auto" class="p-0">
+          <div v-if="description" class="op-0-7 small mt-1">
             {{ description }}
-          </v-subheader>
+          </div>
         </div>
         <v-avatar size="32" class="me-1 avatar-gradient -thin -user">
           <img :src="getUserAvatar(USER_ID())" />
@@ -45,8 +56,9 @@
 export default {
   name: "SSmartCheckVerifyAction",
   components: {},
+  emits: ["update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
 
     label: {},
     hint: {},
@@ -77,30 +89,44 @@ export default {
   },
   computed: {
     icon() {
-      return this.value
+      return this.modelValue
         ? this.trueIcon
         : this.falseIcon
-        ? this.falseIcon
-        : this.trueIcon;
+          ? this.falseIcon
+          : this.trueIcon;
     },
 
     description() {
-      return this.value
+      return this.modelValue
         ? this.trueDescription
         : this.falseDescription
-        ? this.falseDescription
-        : this.trueDescription;
+          ? this.falseDescription
+          : this.trueDescription;
     },
   },
 
   methods: {
     toggle() {
-      const val = !this.value;
-      this.$emit("input", val);
-      this.$emit("change", val);
+      const val = !this.modelValue;
+      this.$emit("update:modelValue", val);
     },
   },
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@keyframes interactiveZoomAnimation {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.interactive-zoom-in {
+  animation: interactiveZoomAnimation 0.25s;
+}
+
+
+</style>

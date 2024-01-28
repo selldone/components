@@ -27,10 +27,10 @@
       'scrollable-element-dark': !light,
       'scrollable-element-light': light,
     }"
-    :fixed="$vuetify.breakpoint.smAndDown"
-    :absolute="$vuetify.breakpoint.mdAndUp"
+    :fixed="$vuetify.display.smAndDown"
+    :absolute="$vuetify.display.mdAndUp"
     :height="
-      $vuetify.breakpoint.mdAndDown ? 'calc(100% - 48px)' : 'calc(100% - 16px)'
+      $vuetify.display.mdAndDown ? 'calc(100% - 48px)' : 'calc(100% - 16px)'
     "
     class="s--storefront-products-filter-menu"
   >
@@ -116,6 +116,7 @@
             :max="max_price"
             :min="min_price"
             hide-details
+            :step="1"
             class="align-center text-dark mt-5 mx-2"
             thumb-label="always"
             :tick-size="8"
@@ -148,7 +149,7 @@
         <v-divider />
 
         <div class="s-filter-header">
-          <v-icon style="color: currentColor"> fas fa-braille </v-icon>
+          <v-icon style="color: currentColor"> fa:fas fa-braille </v-icon>
           <span class="mx-2">{{ $t("product_filter_menu.brands") }} </span>
         </div>
         <selection-list

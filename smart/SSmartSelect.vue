@@ -15,7 +15,7 @@
 <template>
   <div :class="{ dark: dark, pen: readonly }" class="text-start">
     <h3 v-if="label" class="my-2">{{ label }}</h3>
-    <v-subheader v-if="hint">{{ hint }}</v-subheader>
+    <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
       tag="div"
@@ -25,7 +25,8 @@
         'disabled pen': disabled,
         border: border,
         'white--text': dark,
-        'shadow-colored -no-after position-relative s--shadow-no-padding': decorative,
+        'shadow-colored -no-after position-relative s--shadow-no-padding':
+          decorative,
         pen: loading,
       }"
       hide-on-leave
@@ -38,42 +39,18 @@
           'bg-dark': dark && !backgroundColor,
           'bg-white': !dark && !backgroundColor,
           'disabled pen': task.disabled,
-          pen: !clearable && forceShowAll && value === val(task),
+          pen: !clearable && forceShowAll && localModelValue === val(task),
         }"
         :style="{ backgroundColor: backgroundColor }"
-        @click="
-          $emit(
-            'input',
-            forceShowAll
-              ? clearable && value === val(task)
-                ? null
-                : val(task)
-              : !isUnset(value)
-              ? null
-              : val(task)
-          );
-          $nextTick(() => {
-            $emit(
-              'change',
-              forceShowAll
-                ? clearable && value === val(task)
-                  ? null
-                  : val(task)
-                : !isUnset(value)
-                ? null
-                : val(task)
-            );
-          });
-          signalUpdate();
-        "
+        @click="onClickItem(task)"
       >
         <div class="d-flex align-center mnh">
           <div
             class="me-2 -thin -gray flex-grow-0"
-            :class="{ 'avatar-gradient': val(task) === value }"
+            :class="{ 'avatar-gradient': val(task) === localModelValue }"
           >
             <v-sheet
-              v-if="val(task) === value"
+              v-if="val(task) === localModelValue"
               class="circle-check zoomIn"
               :color="color"
             >
@@ -97,17 +74,16 @@
             <slot name="prepend-title" :item="task"> </slot>
             <b v-html="title(task)"> </b>
             <slot name="append-title" :item="task"> </slot>
-            <v-subheader
+            <div
               v-if="itemDescription"
-              style="height: auto"
-              class="p-0"
+              class="op-0-7 small"
             >
               {{
                 isFunction(itemDescription)
                   ? itemDescription(task)
-                  : $t(task[itemDescription])
+                  : $t(task[itemDescription]??'')
               }}
-            </v-subheader>
+            </div>
 
             <slot name="description" :item="task"> </slot>
           </div>
@@ -126,7 +102,7 @@
             v-if="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
             size="24"
             :rounded="rounded"
-            >
+          >
             <img
               :src="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
           /></v-avatar>
@@ -137,106 +113,100 @@
 </template>
 
 <script>
+import { ref, computed, watch, nextTick } from "vue";
+
 export default {
   name: "SSmartSelect",
+  emits: ["change", "update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
     items: { type: Array },
-    itemValue: {
-      required: false,
-    },
-    itemText: {
-      // can be string or function
-      required: false,
-    },
-    itemDescription: {}, // can be string or function
+    itemValue: {},
+    itemText: {},
+    itemDescription: {},
     itemIcon: {},
     itemImage: {},
     label: {},
     hint: {},
-
-    forceShowAll: {
-      default: false,
-      type: Boolean,
-    },
-    disabled: {
-      default: false,
-      type: Boolean,
-    },
-    dark: {
-      default: false,
-      type: Boolean,
-    },
+    forceShowAll: { default: false, type: Boolean },
+    disabled: { default: false, type: Boolean },
+    dark: { default: false, type: Boolean },
     color: { default: "primary" },
-    grayUnselected: {
-      default: false,
-      type: Boolean,
-    },
-    readonly: {
-      default: false,
-      type: Boolean,
-    },
-    border: {
-      default: false,
-      type: Boolean,
-    },
-    rounded: {
-      // Rounded avatar
-      default: false,
-      type: Boolean,
-    },
-
-    clearable: {
-      default: false,
-      type: Boolean,
-    },
-    decorative: {
-      default: false,
-      type: Boolean,
-    },
-
+    grayUnselected: { default: false, type: Boolean },
+    readonly: { default: false, type: Boolean },
+    border: { default: false, type: Boolean },
+    rounded: { default: false, type: Boolean },
+    clearable: { default: false, type: Boolean },
+    decorative: { default: false, type: Boolean },
     backgroundColor: {},
-    loading: {
-      default: false,
-      type: Boolean,
-    },
+    loading: { default: false, type: Boolean },
   },
+  setup(props, { emit }) {
+    // Local reactive state that mirrors `modelValue`
+    const localModelValue = ref(props.modelValue);
 
-  data: function () {
-    return {};
-  },
-
-  computed: {
-    items_show() {
-      if (this.forceShowAll) return this.items;
-      if (this.isUnset(this.value)) return this.items;
-      const out = this.items.filter((item) => this.val(item) === this.value);
-      return out.length ? out : this.items;
-    },
-  },
-  watch: {},
-
-  methods: {
-    signalUpdate() {
-      this.$nextTick(() => {
-        this.$forceUpdate();
+    // Watch for changes in `modelValue` prop and update local state
+    watch(
+      () => props.modelValue,
+      (newValue) => {
+        localModelValue.value = newValue;
+      },
+    );
+    // Update `modelValue` when local state changes
+    const updateModelValue = (newValue) => {
+      localModelValue.value = newValue;
+      emit("update:modelValue", newValue);
+      nextTick(() => {
+        emit("change", newValue);
       });
-    },
+    };
 
-    val(task) {
-      return this.itemValue ? task[this.itemValue] : task;
-    },
-    title(task) {
-      return !this.itemText
+    const items_show = computed(() => {
+      if (props.forceShowAll) return props.items;
+      if (isUnset(localModelValue)) return props.items;
+      const out = props.items.filter(
+        (item) => val(item) === localModelValue.value,
+      );
+      return out.length ? out : props.items;
+    });
+
+    const val = (task) => {
+      return props.itemValue ? task[props.itemValue] : task;
+    };
+
+    const title = (task) => {
+
+      return !props.itemText
         ? task
-        : typeof this.itemText === "function"
-        ? this.itemText(task)
-        : this.$t(task[this.itemText]);
-    },
+        : typeof props.itemText === "function"
+          ? props.itemText(task)
+          : $t(task[props.itemText]);
+    };
 
-    isUnset(value) {
+    const isUnset = (value) => {
       return value === null || value === undefined;
-    },
+    };
+
+    const onClickItem = (task) => {
+      const _new_value = props.forceShowAll
+        ? props.clearable && localModelValue.value === val(task)
+          ? null
+          : val(task)
+        : !isUnset(localModelValue.value)
+          ? null
+          : val(task);
+
+      updateModelValue(_new_value);
+    };
+
+    return {
+      localModelValue,
+      items_show,
+      val,
+      title,
+      isUnset,
+      onClickItem,
+    };
   },
 };
 </script>

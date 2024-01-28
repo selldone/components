@@ -110,7 +110,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .uploader-container-file {
+::v-deep(.uploader-container-file) {
   .filepond--drop-label {
     p {
       margin: 0 !important;

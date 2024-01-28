@@ -58,7 +58,7 @@
               >
 
               <div v-if="gen_phrases && step === 1">
-                <h4 class="display-1 my-3 border rounded p-3">
+                <h4 class="text-h4 my-3 border rounded p-3">
                   {{ gen_phrases.join("  ") }}
                 </h4>
 
@@ -68,7 +68,7 @@
 
               <div v-else-if="gen_phrases">
                 <h4
-                  class="display-1 my-3 border rounded p-3"
+                  class="text-h4 my-3 border rounded p-3"
                   style="min-height: 64px"
                 >
                   {{ verify_phrases.join("  ") }}

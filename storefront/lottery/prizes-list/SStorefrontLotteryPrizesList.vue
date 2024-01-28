@@ -24,9 +24,9 @@
       icon-color="#333"
     >
     </s-widget-header>
-    <v-subheader>
+    <v-list-subheader>
       {{ $t("lottery_prizes.message") }}
-    </v-subheader>
+    </v-list-subheader>
 
     <p v-if="!forceShow" class="small font-weight-bold">
       <v-btn

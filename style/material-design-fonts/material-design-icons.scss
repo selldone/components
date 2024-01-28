@@ -12,6 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
+
 @import 'variables';
 @import 'mixins';
 
@@ -66,5 +67,30 @@ $material-design-icons-class-icons-prefix: '' !default;
       }
     }
   }
+
+
 }
+// Fix icon size:
+
+  .v-icon--size-x-small {
+    font-size: calc(var(--v-icon-size-multiplier) * 1em) !important;
+  }
+
+  .v-icon--size-small {
+    font-size: calc(var(--v-icon-size-multiplier) * 1.25em) !important;
+  }
+
+  .v-icon--size-default {
+    font-size: calc(var(--v-icon-size-multiplier) * 1.5em) !important;
+  }
+
+  .v-icon--size-large {
+    font-size: calc(var(--v-icon-size-multiplier) * 1.75em) !important;
+  }
+
+  .v-icon--size-large {
+    font-size: calc(var(--v-icon-size-multiplier) * 2em) !important;
+  }
+
+
 

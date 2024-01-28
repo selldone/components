@@ -16,8 +16,8 @@
   <div
     class="c-container pa-3 -force-rounded"
     v-intersect.quiet.once="
-      (entries) => {
-        if (entries[0].isIntersecting) onCommunityPostImpression(topic, post);
+      (isIntersecting) => {
+        if (isIntersecting) onCommunityPostImpression(topic, post);
       }
     "
     :id="'post-' + post.id"
@@ -223,13 +223,13 @@
 
           <!-- Users reactions -->
 
-          <template v-for="(item, i) in reactions">
+          <template v-for="(item, i) in reactions" :key="'i-' + i">
             <span
-              :key="'i-' + i"
+
               class="pp hover-blue"
               @click="showCommunityPostReactions(post, item.act.code)"
               ><img :src="item.act.image" width="16" height="16" />
-              {{ item.value | numeralFormat("0.[0]a") }}
+              {{   numeralFormat(item.value,"0.[0]a") }}
               <span v-if="i < 3" class="text-lowercase">{{
                 $t(item.act.name)
               }}</span></span
@@ -306,7 +306,7 @@
           {{ $t("community.commons.comment") }}
 
           <span v-if="post.total_comments" class="ms-1"
-            >({{ post.total_comments | numeralFormat("0.[0]a") }})</span
+            >({{   numeralFormat(post.total_comments,"0.[0]a") }})</span
           >
         </v-btn>
 
@@ -325,14 +325,14 @@
     </div>
 
     <!-- Trend -->
-    <ribbon v-if="!simpleMode && is_trend" red top680="13px" left680="3px">
+    <s-ribbon v-if="!simpleMode && is_trend" red top680="13px" left680="3px">
       <v-icon small dark>local_fire_department</v-icon>
       {{ $t("community.commons.trend") }}
-    </ribbon>
+    </s-ribbon>
     <!-- Approved -->
-    <ribbon v-else-if="post.approved" green top680="13px" left680="3px">
+    <s-ribbon v-else-if="post.approved" green top680="13px" left680="3px">
       {{ $t("community.commons.approved") }}
-    </ribbon>
+    </s-ribbon>
   </div>
 </template>
 
@@ -341,7 +341,7 @@ import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
 import CommunityComments from "./comment/CommunityComments.vue";
 import CommunityImage from "./image/CommunityImage.vue";
 import { PostReaction } from "@core/enums/community/PostReaction";
-import Ribbon from "@components/ui/ribbon/Ribbon.vue";
+import SRibbon from "@components/ui/ribbon/SRibbon.vue";
 import CommunityPoll from "./post/CommunityPoll.vue";
 import CommunityProductView from "./product/CommunityProductView.vue";
 import CommunityAttachView from "./attach/CommunityAttachView.vue";
@@ -353,7 +353,7 @@ export default {
     CommunityAttachView,
     CommunityProductView,
     CommunityPoll,
-    Ribbon,
+    SRibbon,
     CommunityImage,
     CommunityComments,
   },

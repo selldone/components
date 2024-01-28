@@ -27,7 +27,8 @@ span {  // Fix Bug: in RTL hover not show underline! width=100% not work properl
   }
 }
 
-.animate-underline {
+
+.animate-underline:not(.v-btn) {
   position: relative;
   text-decoration: none;
   padding-bottom: 8px;

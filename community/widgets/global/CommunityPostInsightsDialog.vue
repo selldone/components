@@ -18,7 +18,7 @@
     v-model="dialog"
     max-width="560"
     scrollable
-    :fullscreen="$vuetify.breakpoint.mdAndDown"
+    :fullscreen="$vuetify.display.mdAndDown"
   >
     <v-card>
       <v-card-title>
@@ -42,7 +42,7 @@
               ><br />
               {{ $t(item.name) }}</small
             >
-            <b>{{ post[item.code] | numeralFormat("0.[00]a") }}</b>
+            <b>{{   numeralFormat(post[item.code],"0.[00]a") }}</b>
           </v-col>
         </v-row>
         <hr />
@@ -58,7 +58,7 @@
               ><img width="24" height="24" :src="item.image" /><br />
               {{ $t(item.name) }}</small
             >
-            <b>{{ post[item.column] | numeralFormat("0.[00]a") }}</b>
+            <b>{{   numeralFormat(post[item.column],"0.[00]a") }}</b>
           </v-col>
         </v-row>
       </v-card-text>

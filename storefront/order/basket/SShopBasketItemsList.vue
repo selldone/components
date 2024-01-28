@@ -20,7 +20,7 @@
       <v-spacer></v-spacer>
     </h2>
 
-    <v-subheader class="px-0"></v-subheader>
+    <v-list-subheader class="px-0"></v-list-subheader>
 
     <v-data-table
       v-model="selected"
@@ -399,38 +399,37 @@ export default {
     },
 
     headers() {
-      const out = [
-        { text: "", align: "center", sortable: false, value: "product_id" },
+      return [
         {
-          text: this.$t("order_page.basket_items.table.product"),
+          title: this.$t("order_page.basket_items.table.product"),
           align: "start",
           value: "product.title",
         },
         {
-          text: this.$t("order_page.basket_items.table.count"),
+          title: this.$t("order_page.basket_items.table.count"),
           align: "start",
           value: "count",
         },
 
         {
-          text: this.$t("order_page.basket_items.table.unit_price"),
+          title: this.$t("order_page.basket_items.table.unit_price"),
           align: "center",
           value: "price",
           sortable: true,
         },
         {
-          text: this.$t("order_page.basket_items.table.total_price"),
+          title: this.$t("order_page.basket_items.table.total_price"),
           align: "center",
           sortable: false,
           value: "total_price",
         },
         {
-          text: this.$t("order_page.basket_items.table.discount"),
+          title: this.$t("order_page.basket_items.table.discount"),
           align: "center",
           value: "dis",
         },
         {
-          text: this.$t("order_page.basket_items.table.final_price"),
+          title: this.$t("order_page.basket_items.table.final_price"),
           align: "center",
           value: "final_price",
           sortable: false,

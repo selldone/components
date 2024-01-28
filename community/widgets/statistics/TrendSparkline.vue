@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-sparkline
+  <s-sparkline
     v-if="value && value.length"
     :smooth="smooth"
     :gradient="
@@ -29,12 +29,15 @@
     stroke-linecap="round"
     :fill="fill"
   >
-  </v-sparkline>
+  </s-sparkline>
 </template>
 
 <script>
+import SSparkline from "@components/chart/sparkline/SSparkline.vue";
+
 export default {
   name: "TrendSparkline",
+  components: {SSparkline},
   props: {
     value: {
       type: Array,

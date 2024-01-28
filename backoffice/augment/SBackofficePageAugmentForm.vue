@@ -22,18 +22,18 @@
       icon="extension"
     >
       <template v-slot:append-title>
-        <v-btn icon class="mx-1" @click="help_dialog = true">
+        <v-btn icon variant="text" class="mx-1" @click="help_dialog = true">
           <v-icon>help</v-icon>
         </v-btn>
       </template>
     </s-widget-header>
 
-    <v-subheader>
+    <v-list-subheader>
       Input the key that will be swapped with its corresponding value in the
       page content. Keys should be max 32 characters.
-    </v-subheader>
+    </v-list-subheader>
 
-    <v-simple-table class="bg-transparent min-height-10vh">
+    <v-table class="bg-transparent min-height-10vh">
       <template v-slot:default>
         <thead>
           <tr>
@@ -48,14 +48,14 @@
               <v-text-field
                 v-model="item.key"
                 title="Key"
-                solo
+                variant="solo"
                 flat
                 :counter="32"
-                dense
+                density="compact"
                 hide-details
                 :rules="[GlobalRules.counter(32)]"
                 placeholder="Enter a key..."
-                background-color="transparent"
+                bg-color="transparent"
                 @change="$emit('change')"
               ></v-text-field>
             </td>
@@ -82,13 +82,13 @@
                 v-else
                 v-model="item.value"
                 title="Value"
-                solo
+                variant="solo"
                 flat
-                dense
+                density="compact"
                 hide-details
                 :counter="64"
                 placeholder="Enter a value..."
-                background-color="transparent"
+                bg-color="transparent"
                 @change="$emit('change')"
               ></v-text-field>
             </td>
@@ -101,7 +101,7 @@
           </tr>
         </tbody>
       </template>
-    </v-simple-table>
+    </v-table>
 
     <v-expand-transition>
       <s-progress-loading v-if="loading" relative></s-progress-loading>
@@ -118,24 +118,20 @@
         <v-card-title> Select input type</v-card-title>
         <v-card-text>
           <v-list>
-            <v-list-item @click="addTextItem">
-              <v-list-item-icon><v-icon>title</v-icon></v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Text & Html</v-list-item-title>
-                <v-list-item-subtitle
-                  >The item's value can be designated as either text or
-                  HTML.</v-list-item-subtitle
-                >
-              </v-list-item-content>
+            <v-list-item @click="addTextItem" prepend-icon="title">
+
+              <v-list-item-title>Text & Html</v-list-item-title>
+              <v-list-item-subtitle
+                >The item's value can be designated as either text or
+                HTML.</v-list-item-subtitle
+              >
             </v-list-item>
-            <v-list-item @click="addImageItem">
-              <v-list-item-icon><v-icon>image</v-icon></v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Image</v-list-item-title>
-                <v-list-item-subtitle
-                  >You can upload an image.</v-list-item-subtitle
-                >
-              </v-list-item-content>
+            <v-list-item @click="addImageItem" prepend-icon="image">
+
+              <v-list-item-title>Image</v-list-item-title>
+              <v-list-item-subtitle
+                >You can upload an image.</v-list-item-subtitle
+              >
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -156,7 +152,7 @@
         </v-card-title>
 
         <v-card-text>
-          <v-container class="typo-body">
+          <v-container class="typo-body max-width-container-1280px">
             <p>
               In the landing pages, you have the flexibility to designate
               dynamic placeholders for both text and images. These placeholders
@@ -179,7 +175,7 @@
             <v-img
               :src="require('./assets/agument-1.png')"
               :aspect-ratio="2000 / 1290"
-              class="mb-5"
+              class="my-10 mx-auto" max-width="640"
             ></v-img>
             <p>
               To assign dynamic values to images, click on the feeder button
@@ -188,7 +184,7 @@
             <v-img
               :src="require('./assets/agument-2.png')"
               :aspect-ratio="2000 / 1290"
-              class="mb-5"
+              class="my-10 mx-auto" max-width="640"
             ></v-img>
             <p>
               You now have the ability to modify the image URL and assign it a
@@ -197,7 +193,7 @@
             <v-img
               :src="require('./assets/agument-3.png')"
               :aspect-ratio="2000 / 1290"
-              class="mb-5"
+              class="my-10 mx-auto" max-width="640"
             ></v-img>
             <p>
               For every product, you have the ability to assign dedicated
@@ -206,7 +202,7 @@
             <v-img
               :src="require('./assets/agument-4.png')"
               :aspect-ratio="2000 / 1290"
-              class="mb-5"
+              class="my-10 mx-auto" max-width="640"
             ></v-img>
             <p>
               This is the final outcome of the page, where placeholders have
@@ -215,14 +211,14 @@
             <v-img
               :src="require('./assets/agument-5.png')"
               :aspect-ratio="2000 / 1290"
-              class="mb-5"
+              class="my-10 mx-auto" max-width="640"
             ></v-img>
           </v-container>
         </v-card-text>
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn x-large @click="help_dialog = false" text>
+            <v-btn size="x-large" @click="help_dialog = false" variant="text">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -253,7 +249,7 @@ export default {
   computed: {
     upload_server() {
       return window.API.POST_SHOP_AUGMENT_UPLOAD_IMAGE(
-        this.$route.params.shop_id
+        this.$route.params.shop_id,
       );
     },
   },

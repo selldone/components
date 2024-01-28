@@ -23,8 +23,8 @@
       'border-start': productOnly && socials.length,
     }"
     v-intersect="
-      (e) => {
-        visible = e[0].isIntersecting;
+      (isIntersecting) => {
+        visible = isIntersecting;
       }
     "
   >

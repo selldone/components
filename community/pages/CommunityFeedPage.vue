@@ -50,8 +50,8 @@
           v-if="has_more"
           style="height: 50vh"
           v-intersect.quiet="
-            (entries) => {
-              if (entries[0].isIntersecting) fetchFeed(page + 1);
+            (isIntersecting, entries, observer) => {
+              if (isIntersecting) fetchFeed(page + 1);
             }
           "
         >

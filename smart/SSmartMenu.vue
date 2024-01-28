@@ -14,16 +14,9 @@
 
 <template>
   <span>
-    <v-menu offset-y rounded="lg" min-width="240">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          icon
-          v-bind="attrs"
-          v-on="on"
-          :loading="loading"
-          class="z1"
-          :title="title"
-        >
+    <v-menu content-class="rounded-lg" min-width="240">
+      <template v-slot:activator="{ props }">
+        <v-btn icon variant="text" v-bind="props" :loading="loading" class="z1" :title="title">
           <v-icon>{{ icon }}</v-icon>
         </v-btn>
       </template>
@@ -40,32 +33,24 @@
           :href="item.href"
           :target="item.target"
           :disabled="!!item.disabled"
+          :prepend-icon="item.icon"
         >
-          <v-list-item-icon v-if="item.icon" class="me-3"
-            ><v-icon>{{ item.icon }}</v-icon></v-list-item-icon
-          >
-          <v-list-item-content>
-            <v-list-item-title class="d-flex align-center"
-              ><span>{{ item.title }}</span>
+          <v-list-item-title class="d-flex align-center"
+            ><span>{{ item.title }}</span>
 
-              <v-spacer></v-spacer>
-              <img v-if="item.image" :src="item.image" width="24" height="24" />
-            </v-list-item-title>
-            <v-list-item-subtitle v-if="item.subtitle">
-              {{ item.subtitle }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
+            <v-spacer></v-spacer>
+            <img v-if="item.image" :src="item.image" width="24" height="24" />
+          </v-list-item-title>
+          <div v-if="item.subtitle" class="op-0-7 small mt-1">
+            {{ item.subtitle }}
+          </div>
         </v-list-item>
 
         <v-list-item
           v-if="hasWithTrashed"
           @click="$emit('update:withTrashed', !withTrashed)"
+          :prepend-icon="withTrashed ? 'circle' : 'radio_button_unchecked'"
         >
-          <v-list-item-icon class="me-3"
-            ><v-icon color="primary">{{
-              withTrashed ? "circle" : "radio_button_unchecked"
-            }}</v-icon></v-list-item-icon
-          >
           <v-list-item-title class="d-flex align-center"
             >Show deleted items
             <v-spacer></v-spacer>

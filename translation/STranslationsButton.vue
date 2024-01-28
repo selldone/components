@@ -17,6 +17,8 @@
     <v-btn
       @click="showTranslations()"
       icon
+      variant="text"
+      size="var(--append-inner-button-size)"
       :title="`Set other languages for ${getName(translationKey)}`"
       class="position-relative"
     >
@@ -50,14 +52,13 @@
             @click="is_premium ? autoTranslate() : showNeedSubscribePremium()"
             :loading="busy_auto_translate"
             color="primary"
-            dark
-            large
+            size="large"
           >
             <v-icon class="me-1">g_translate</v-icon>
             <div class="d-block text-start">
               Auto Translate
               <span class="d-block small tnt mt-1"
-                ><v-icon x-small>star</v-icon> Premium Users</span
+                ><v-icon size="x-small">star</v-icon> Premium Users</span
               >
             </div>
           </v-btn>
@@ -69,35 +70,38 @@
           </p>
           <v-list class="max-widget-width mx-auto">
             <v-list-item v-for="language in languages" :key="language">
-              <v-list-item-content>
-                <v-text-field
-                  :label="getLanguageName(language)"
-                  v-if="isStringMode"
-                  v-model="pack[language]"
-                  hide-details
-                  outlined
-                >
-                  <template v-slot:append>
-                    <v-scale-transition>
-                      <v-icon v-if="pack[language]" color="green"
-                        >check_circle</v-icon
-                      >
-                    </v-scale-transition>
-                  </template>
-                </v-text-field>
-              </v-list-item-content>
+              <v-text-field
+                :label="getLanguageName(language)"
+                v-if="isStringMode"
+                v-model="pack[language]"
+                hide-details
+                variant="outlined"
+              >
+                <template v-slot:append-inner>
+                  <v-scale-transition>
+                    <v-icon v-if="pack[language]" color="green"
+                      >check_circle</v-icon
+                    >
+                  </v-scale-transition>
+                </template>
+              </v-text-field>
             </v-list-item>
           </v-list>
         </v-card-text>
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn @click="dialog = false" text x-large>
+            <v-btn @click="dialog = false" variant="text" size="x-large">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}</v-btn
             >
 
-            <v-btn :loading="busy" color="primary" @click="save()" x-large>
+            <v-btn
+              :loading="busy"
+              color="primary"
+              @click="save()"
+              size="x-large"
+            >
               <v-icon class="me-1">save</v-icon> Save</v-btn
             >
           </div>
@@ -113,6 +117,7 @@ import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 export default {
   name: "STranslationsButton",
   components: {},
+  emits: ["update:translations"],
   props: {
     shop: { required: true, type: Object },
     label: {},
@@ -156,7 +161,7 @@ export default {
 
     languages() {
       return ShopOptionsHelper.GetLanguages(this.shop).filter(
-        (l) => l !== this.shop_default_language
+        (l) => l !== this.shop_default_language,
       );
     },
     shop_default_language() {
@@ -244,7 +249,7 @@ export default {
 
     autoTranslate() {
       const to_languages = this.languages.filter(
-        (_lang) => !this.getTranslatedLanguagesInPack().includes(_lang)
+        (_lang) => !this.getTranslatedLanguagesInPack().includes(_lang),
       );
       if (!to_languages.length) {
         this.pack = Object.assign({}, this.pack); // Force update!

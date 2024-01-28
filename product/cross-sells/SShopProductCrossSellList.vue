@@ -15,9 +15,9 @@
 <template>
   <div v-if="cross_sells?.length" class="s--shop-product-cross-sell-list">
     <v-container fluid>
-      <v-subheader>
+      <v-list-subheader>
         ● {{ $t("cross_selling.title", { product: product.title }) }}
-      </v-subheader>
+      </v-list-subheader>
 
       <s-fade-scroll v-model="index">
         <div class="-cards-wrap">

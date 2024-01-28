@@ -29,7 +29,7 @@
       />
 
       <v-icon small v-if="processing" class="sup-icon fa-spin" color="blue"
-        >fas fa-cog</v-icon
+        >fa:fas fa-cog</v-icon
       >
       <v-icon small v-else-if="ticked" class="sup-icon" color="success"
         >check_circle</v-icon
@@ -43,7 +43,7 @@
         v-if="paymentRequireCapture"
         class="sup-icon fa-pulse"
         color="success"
-        >fas fa-spinner</v-icon
+        >fa:fas fa-spinner</v-icon
       >
     </div>
 

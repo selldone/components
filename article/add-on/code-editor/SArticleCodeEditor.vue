@@ -138,7 +138,7 @@ export default {
     // Fix bug: (important)
     if (!this.$vuetify.theme) this.$vuetify.theme = {};
     if (!this.$vuetify.icons) this.$vuetify.icons = {};
-    if (!this.$vuetify.breakpoint) this.$vuetify.breakpoint = {};
+    if (!this.$vuetify.display) this.$vuetify.display = {};
   },
   mounted() {
     this.element = this.$el;

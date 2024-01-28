@@ -11,40 +11,66 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+import {createVuetify, VuetifyOptions} from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
 
-import Vue from "vue";
-import Vuetify from "vuetify";
-import "vuetify/dist/vuetify.min.css";
-import { SetupService } from "@core/server/SetupService";
-import type { UserVuetifyPreset } from "vuetify/types/services/presets";
-// Import the Vuetify CSS. Ensure you have configured css-loader.
+//import "vuetify/styles"; // Import Vuetify styles
+import "./vuetify-override.scss";
+import {SetupService} from "@core/server/SetupService";
+import {aliases, md} from "vuetify/iconsets/md";
 
-Vue.use(Vuetify);
+import "@fortawesome/fontawesome-free/css/all.css"; // Ensure your project is capable of handling css files
+import {fa} from "vuetify/iconsets/fa";
 
 // Define the Vuetify options.
-const opts: Partial<UserVuetifyPreset> = {
+const vuetifyOptions: VuetifyOptions = {
+  components,
+  directives,
+
   theme: {
-    dark: false, // Set the theme to light mode.
+    defaultTheme: "light", // Set the default theme
     themes: {
       light: {
-        // Define primary, secondary, accent, error, info, success, and warning colors.
-        primary: SetupService.SaminColorLight(),
-        secondary: SetupService.SaminColorDark(),
-        accent: "#FFA000",
-        error: "#FF5252",
-        info: "#9964e3",
-        success: "#4CAF50",
-        warning: "#FFC107",
+        dark: false,
+        colors: {
+          //   'on-background': '#000',
+          //   'on-surface': '#000',
+
+          // Define primary, secondary, accent, error, info, success, and warning colors.
+          primary: SetupService.SaminColorLight(),
+          secondary: SetupService.SaminColorDark(),
+          accent: "#FFA000",
+          error: "#FF5252",
+          info: "#9964e3",
+          success: "#4CAF50",
+          warning: "#FFC107",
+        },
+      },
+      dark: {
+        dark: true,
+        colors: {
+          // Define primary, secondary, accent, error, info, success, and warning colors.
+          primary: SetupService.SaminColorLight(),
+          secondary: SetupService.SaminColorDark(),
+          accent: "#FFA000",
+          error: "#FF5252",
+          info: "#9964e3",
+          success: "#4CAF50",
+          warning: "#FFC107",
+        },
       },
     },
   },
-
   icons: {
-    iconfont: "md", // Specify the icon font. Options: 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4'
+    defaultSet: "md",
+    aliases,
+    sets: {
+      md,
+      fa,
+    },
   },
-
-  rtl: false, // Set RTL (right-to-left) mode to false.
 };
 
-// Create and export a new Vuetify instance with the defined options.
-export default new Vuetify(opts);
+// Create and export a Vuetify instance with the defined options.
+export default createVuetify(vuetifyOptions);

@@ -15,41 +15,30 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
     class="circle-button-selldone"
-    :class="{ '-small': dense ,'--wrap':wrap}"
+    :class="{ '-small': dense, '--wrap': wrap }"
     @mouseenter="(val) => $emit('mouseenter', val)"
     @mouseleave="(val) => $emit('mouseleave', val)"
     :key="key"
   >
-    <v-badge
-      :value="badge_value"
-      :color="badgeColor"
-      :icon="badgeIcon"
-      :content="formatedNumberValue"
-      overlap
-      offset-y="15px"
-      offset-x="15px"
-      :dot="dot"
-    >
+
       <v-btn
         :to="to"
         :href="href"
-        :depressed="isCurrent"
+        :variant="isFilled ? 'flat' : 'text'"
         :color="
           isCurrent
             ? activeColor
               ? activeColor
               : color
             : fill
-            ? color
-            : 'default'
+              ? color
+              : 'default'
         "
-        :dark="isCurrent"
         :target="target"
         class="mx-1 mx-sm-2"
         :width="large ? 72 : 38"
         :height="large ? 72 : 38"
-        :fab="fill || isCurrent"
-        :icon="!fill && !isCurrent"
+        :icon="true"
         @click="
           () => {
             onClick();
@@ -57,22 +46,29 @@
           }
         "
         @click.stop
-        exact
+        :exact="true"
         :class="{ disabled: disabled }"
         :loading="(loading || in_loading) && !beInCurrentRoute"
       >
+        <v-badge
+            :model-value="badge_value"
+            :color="badgeColor"
+            :icon="badgeIcon"
+            :content="formatedNumberValue"
+            :dot="dot"
+            floating
+        >
         <!-- ------------------------ HAS BADGE   :disabled="disabled || beInCurrentRoute" ------------------------ -->
 
         <v-icon
           v-if="icon"
           :small="small"
-          :size="adjustForFontAwesome ? 20 : null"
+          :size="adjustForFontAwesome ? 20 : undefined"
           :color="
             !fill && !isCurrent ? (iconColor ? iconColor : color) : '#fff'
           "
-          class="transition-ease-in-out"
+          :icon="icon"
         >
-          {{ icon }}
         </v-icon>
 
         <v-avatar
@@ -81,15 +77,14 @@
             (imageSize
               ? imageSize
               : large
-              ? 56
-              : isCurrent || forceFill
-              ? 32
-              : 26) * (small ? 0.7 : 1)
+                ? 56
+                : isCurrent || forceFill
+                  ? 32
+                  : 26) * (small ? 0.7 : 1)
           "
           v-else-if="src"
-          :tile="tile && !isCurrent"
+          :rounded="tile && !isCurrent?'lg':'circle'"
           :class="isCurrent ? '' : '-scale'"
-          class="transition-ease-in-out"
         >
           <img
             :src="src"
@@ -97,8 +92,11 @@
           />
         </v-avatar>
         <slot v-else></slot>
-      </v-btn>
+
+
     </v-badge>
+
+    </v-btn>
 
     <span
       class="mini-name"
@@ -278,6 +276,9 @@ export default {
     isCurrent() {
       return this.outline || this.beInCurrentRoute;
     },
+    isFilled() {
+      return this.fill || this.isCurrent;
+    },
 
     formatedNumberValue() {
       if (this.badgeIcon) return null;
@@ -308,7 +309,8 @@ export default {
       if (!this.autoDisabledRouteName || !this.to) return false;
       return this.$route.matched.some(
         (item) =>
-          item.name === this.autoDisabledRouteName || item.name === this.to.name
+          item.name === this.autoDisabledRouteName ||
+          item.name === this.to.name,
       );
     },
   },
@@ -388,9 +390,9 @@ export default {
     }
   }
 
-  &.--wrap{
+  &.--wrap {
     .mini-name {
-      white-space:normal;
+      white-space: normal;
     }
   }
 }
@@ -403,16 +405,8 @@ export default {
   border-radius: 50%;
   margin: 7%;
 }
-::v-deep.circle-button-selldone {
-  .v-badge__badge {
-    .v-icon {
-      font-size: 14px;
-      vertical-align: initial;
-      color: #fff !important;
-    }
-  }
 
-}
+
 </style>
 
 <style lang="scss"></style>

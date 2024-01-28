@@ -17,8 +17,8 @@
     <div
       class="c-widget d-sm-flex align-center nopx overflow-x-auto -header py-2 thin-scroll position-relative"
       :class="{
-        'text-center': $vuetify.breakpoint.xsOnly,
-        'rounded-28px': !$vuetify.breakpoint.xsOnly,
+        'text-center': $vuetify.display.xsOnly,
+        'rounded-28px': !$vuetify.display.xsOnly,
       }"
     >
       <div
@@ -31,8 +31,8 @@
           icon
           @click="NeedLogin()"
           class="me-2 ms-sm-n2"
-          :class="{ 'absolute-top-end': $vuetify.breakpoint.xsOnly }"
-          :small="!$vuetify.breakpoint.xsOnly"
+          :class="{ 'absolute-top-end': $vuetify.display.xsOnly }"
+          :small="!$vuetify.display.xsOnly"
           ><v-icon>person</v-icon></v-btn
         >
 
@@ -51,9 +51,9 @@
             <v-avatar
               v-bind="attrs"
               v-on="on"
-              :size="$vuetify.breakpoint.xsOnly ? 48 : 36"
+              :size="$vuetify.display.xsOnly ? 48 : 36"
               class="me-2 ms-sm-n2 avatar-gradient -thin -user"
-              :class="{ 'float-start': $vuetify.breakpoint.xsOnly }"
+              :class="{ 'float-start': $vuetify.display.xsOnly }"
             >
               <v-img :src="getUserAvatar(USER_ID())" />
             </v-avatar>
@@ -68,7 +68,7 @@
                   }}</v-list-item-title>
                   <v-list-item-icon
                     ><v-icon color="amber" small
-                      >fas fa-crown</v-icon
+                      >fa:fas fa-crown</v-icon
                     ></v-list-item-icon
                   >
                 </v-list-item>
@@ -167,8 +167,8 @@
           :to="{ name: 'CommunityHomePage' }"
           class="d-block text-start"
           :class="{
-            'limited-text-300px': $vuetify.breakpoint.xsOnly,
-            'limited-text-150px': !$vuetify.breakpoint.xsOnly,
+            'limited-text-300px': $vuetify.display.xsOnly,
+            'limited-text-150px': !$vuetify.display.xsOnly,
           }"
           exact
           >{{ $t("community.commons.categories") }}</router-link
@@ -192,8 +192,8 @@
             }"
             class="d-block text-start"
             :class="{
-              'limited-text-300px': $vuetify.breakpoint.xsOnly,
-              'limited-text-150px': !$vuetify.breakpoint.xsOnly,
+              'limited-text-300px': $vuetify.display.xsOnly,
+              'limited-text-150px': !$vuetify.display.xsOnly,
             }"
             >{{ category.title }}</component
           >
@@ -219,8 +219,8 @@
             }"
             class="d-block text-start"
             :class="{
-              'limited-text-300px': $vuetify.breakpoint.xsOnly,
-              'limited-text-150px': !$vuetify.breakpoint.xsOnly,
+              'limited-text-300px': $vuetify.display.xsOnly,
+              'limited-text-150px': !$vuetify.display.xsOnly,
             }"
             >{{ topic.title }}</component
           >
@@ -241,8 +241,8 @@
           <span
             class="d-block text-start"
             :class="{
-              'limited-text-300px': $vuetify.breakpoint.xsOnly,
-              'limited-text-150px': !$vuetify.breakpoint.xsOnly,
+              'limited-text-300px': $vuetify.display.xsOnly,
+              'limited-text-150px': !$vuetify.display.xsOnly,
             }"
           >
             {{ $t("community.commons.post") }}
@@ -283,7 +283,7 @@
             $emit('update:showEdit', false);
           "
           :color="showBot ? 'blue' : undefined"
-          ><v-icon small>fas fa-robot</v-icon></v-btn
+          ><v-icon small>fa:fas fa-robot</v-icon></v-btn
         >
 
         <!-- Moderators -->
@@ -410,7 +410,7 @@
       v-model="dialog_rule"
       max-width="640"
       scrollable
-      :fullscreen="$vuetify.breakpoint.smAndDown"
+      :fullscreen="$vuetify.display.smAndDown"
     >
       <v-card min-height="420">
         <v-card-title>
@@ -435,7 +435,7 @@
       v-model="show_invite"
       max-width="820"
       scrollable
-      :fullscreen="$vuetify.breakpoint.smAndDown"
+      :fullscreen="$vuetify.display.smAndDown"
     >
       <v-card min-height="420">
         <v-card-title
@@ -485,7 +485,7 @@
       v-model="show_nominate"
       max-width="640"
       scrollable
-      :fullscreen="$vuetify.breakpoint.smAndDown"
+      :fullscreen="$vuetify.display.smAndDown"
     >
       <v-card min-height="420">
         <v-card-title>
@@ -505,7 +505,7 @@
 
           <p>
             {{ $t("community.nominate.remains_credit") }}
-            :<br /><span class="display-2 text-success"
+            :<br /><span class="text-h3 text-success"
               >{{ profile_credit }}x</span
             >
           </p>

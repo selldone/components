@@ -24,15 +24,15 @@
       dashed ? '-dashed' : '',
       hover ? 'pointer-pointer' : '',
       product.deleted_at ? 'op-0-7 -deleted' : '',
-      selected ? 'border-selected ' : '',
+      selected || iSelected ? 'border-selected ' : '',
       shortcut ? '-shortcut' : '',
     ]"
     :deleted_at="getFromNowString(product.deleted_at)"
     :style="`background: ${color}`"
-    :title="`<h5 class='align-items-center pb-1'  style='font-size: 1.16rem;min-height: 42px'>    <span class='circle ${state_class} mr-sm' style='font-size: 6px;'></span>  ${product.title?.limitWords(
-      12
+    :title="`<h5 class='align-items-center pb-1'  style='font-size: 1.16rem;min-height: 42px'>    <span class='circle ${state_class}' style='font-size: 6px;'></span>  ${product.title?.limitWords(
+      12,
     )}  </h5>`"
-    body-class="p-0 mt"
+    body-class="pa-0"
     custom-header
     @click="$emit('select')"
     :h100="false"
@@ -41,23 +41,57 @@
       <v-btn
         v-if="showEditButton"
         icon
+        variant="text"
         :to="{
-          name: 'AddProduct',
+          name: 'BProductAdd',
           params: { product_id: product.id },
           hash: '#general',
         }"
-        class="z2"
+        class="z2 mx-1"
         @click.stop
         title="Edit product."
+        size="small"
       >
-        <v-icon small> fas fa-edit </v-icon>
+        <v-icon size="24"> edit_square</v-icon>
       </v-btn>
+
+      <!-- Add Note Button -->
+      <team-note-button
+        v-if="showNotes || (product.note && product.note.length)"
+        class="z2 mx-1"
+        :note="product.note"
+        @click="$emit('onShowNote', product)"
+        :activeColor="showNotes ? undefined : '#333'"
+      ></team-note-button>
+
+      <!-- Selectable -->
+      <template v-if="showSelect">
+        <v-icon class="mx-1" :color="iSelected ? 'primary' : '#333'" size="24"
+          >{{ iSelected ? "circle" : "radio_button_unchecked" }}
+        </v-icon>
+      </template>
 
       <circle-image
         v-if="compactMode"
         :size="64"
         :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
       ></circle-image>
+    </template>
+
+    <!-- Selectable -->
+    <template v-if="showSelect">
+      <div
+        style="
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10;
+        "
+        class="pp usall"
+        @click.stop="$emit('onSelect', product)"
+      ></div>
     </template>
 
     <div v-if="add_by_dropShipping" class="drop-shipping-mode">
@@ -76,7 +110,7 @@
         :src="getProductTypeImage(product.type)"
         height="16px"
         :title="`${$t(
-          'admin_shop.products.product_widget.product_type'
+          'admin_shop.products.product_widget.product_type',
         )}: ${getProductTypeName(product.type)}`"
       />
       <h6
@@ -84,9 +118,17 @@
         style="min-height: 21px"
         :class="small ? 'small' : ''"
       >
-        <v-chip v-if="shortcut" label color="#009688" dark x-small class="me-1" title="Originally, this product belongs to a different category."
-          ><v-icon left size="9">snippet_folder</v-icon> Shortcut</v-chip
+        <v-chip
+          v-if="shortcut"
+          label
+          color="#009688"
+          size="x-small"
+          class="me-1"
+          title="Originally, this product belongs to a different category."
         >
+          <v-icon start size="9">snippet_folder</v-icon>
+          Shortcut
+        </v-chip>
         <v-avatar v-if="product.connect_id" size="24" rounded class="me-1"
           ><img :src="getConnectIcon(product.connect_id)"
         /></v-avatar>
@@ -125,7 +167,7 @@
         :class="v.enable ? '-blue' : '-red'"
         :title="v.name"
         ><img v-if="v.icon" :src="getShopImagePath(v.icon, 64)" />
-        <v-icon v-else small>storefront</v-icon>
+        <v-icon v-else size="small">storefront</v-icon>
       </v-avatar>
     </div>
 
@@ -147,7 +189,7 @@
       @click.stop="
         showEditButton
           ? $router.push({
-              name: 'AddProduct',
+              name: 'BProductAdd',
               params: { product_id: product.id },
               hash: '#price',
             })
@@ -171,13 +213,13 @@
       <v-icon
         v-if="!price_converted || price_converted <= 0"
         class="ms-2 mb-2 blink-me"
-        small
+        size="small"
         color="red"
         :title="
           product.price > 0 ? 'Exchange rate not valid!' : 'Price not valid!'
         "
-        >fas fa-exclamation-triangle</v-icon
-      >
+        >fa:fas fa-exclamation-triangle
+      </v-icon>
 
       <small v-if="product.unit" class="ms-2">/ {{ product.unit }}</small>
     </p>
@@ -191,7 +233,7 @@
           class="d-flex align-center"
         >
           <div class="w-50 pt-2">
-            <p class="subtitle-2 my-1">
+            <p class="text-subtitle-2 my-1">
               {{ $t(pricing.title) }}
             </p>
             <p class="mb-1">
@@ -249,8 +291,8 @@
           >
             <v-avatar
               :size="60"
-              color="grey lighten-4"
-              class="transition-fast-in-fast-out hover-scale-small force-top"
+              color="grey-lighten-4"
+              class="hover-scale-small force-top"
               drop-image="true"
               @click="(e) => $emit('click:image', e)"
               ><!-- dro-image : active drop area for images fast upload -->
@@ -258,43 +300,47 @@
                 v-if="product.icon"
                 :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
                 aspect-ratio="1"
-                class="grey lighten-2"
+                class="bg-grey-lighten-2"
               >
                 <template v-slot:placeholder>
-                  <v-layout fill-height align-center justify-center ma-0>
-                    <v-progress-circular indeterminate color="grey lighten-5" />
-                  </v-layout>
+                  <v-progress-circular
+                    indeterminate
+                    color="grey-lighten-5"
+                    class="center-absolute"
+                  />
                 </template>
                 <v-progress-circular
                   v-if="uploading"
-                  :value="uploading.progress"
+                  :model-value="uploading.progress"
                   class="center-absolute"
                   color="blue"
                 ></v-progress-circular>
               </v-img>
             </v-avatar>
 
-            <v-rating
-              v-if="showRatting"
-              v-model="product.rate"
-              dir="ltr"
-              color="yellow darken-3"
-              background-color="grey darken-1"
-              empty-icon="$vuetify.icons.ratingFull"
-              half-increments
-              small
-              readonly
-              dense
-            />
+            <template v-if="showRatting && product.rate_count">
+              <v-rating
+                :model-value="product.rate"
+                color="grey-darken-1"
+                active-color="yellow-darken-3"
+                half-increments
+                size="small"
+                readonly
+                density="compact"
+              />
 
-            <span v-if="showRatting && product.rate_count">
-              <span dir="ltr" class="small m-0">{{
-                product.rate_count | numeralFormat("0,0a")
-              }}</span>
-              <span class="text-muted small mr-1 ml-2 mt-0 mb-0">
-                {{ $t("admin_shop.products.product_widget.review_unit") }}
-              </span>
-            </span>
+              <div>
+                <span class="small m-0">{{
+                  numeralFormat(product.rate_count, "0,0a")
+                }}</span>
+                <span class="text-muted small me-1 ms-2 mt-0 mb-0">
+                  {{ $t("admin_shop.products.product_widget.review_unit") }}
+                </span>
+              </div>
+            </template>
+            <small v-else-if="showRatting" class="d-block mt-2"
+              >No Review</small
+            >
           </div>
           <div
             v-if="showStatistics && !show_price_detail"
@@ -312,7 +358,7 @@
                 {{ $t("global.commons.infinite") }}
               </small>
               <span v-else-if="quantity">
-                {{ quantity | numeralFormat("0,0a") }}
+                {{ numeralFormat(quantity, "0,0a") }}
                 <span class="small">{{
                   $t("admin_shop.products.product_widget.product_unit")
                 }}</span>
@@ -326,9 +372,9 @@
                 v-if="quantity > 0 && quantity < 5"
                 class="ms-2"
                 :title="$t('global.commons.low_inventory_warning')"
-                small
-                >fas fa-exclamation-circle</v-icon
-              >
+                size="small"
+                >fa:fas fa-exclamation-circle
+              </v-icon>
             </p>
 
             <p class="mb-1">
@@ -336,7 +382,7 @@
               <small class="mx-1"
                 >{{ $t("admin_shop.products.product_widget.total_sell") }}:
               </small>
-              {{ product.sells | numeralFormat("0,0a") }}
+              {{ numeralFormat(product.sells, "0,0a") }}
               <span class="small">{{
                 $t("admin_shop.products.product_widget.product_unit")
               }}</span>
@@ -347,7 +393,7 @@
               <small class="mx-1"
                 >{{ $t("admin_shop.products.product_widget.total_view") }}:
               </small>
-              {{ product.visits | numeralFormat("0,0a") }}
+              {{ numeralFormat(product.visits, "0,0a") }}
               <span class="small">{{
                 $t("admin_shop.products.product_widget.view_unit")
               }}</span>
@@ -355,25 +401,25 @@
 
             <v-row no-gutters>
               <v-chip
-                outlined
+                variant="outlined"
                 v-if="!product.original"
                 color="red"
                 class="m-1 text-uppercase px-2"
-                x-small
+                size="x-small"
                 pill
-                >{{ $t("global.commons.fake") }}</v-chip
-              >
+                >{{ $t("global.commons.fake") }}
+              </v-chip>
               <v-chip
-                outlined
+                variant="outlined"
                 v-if="
                   conditionObject &&
                   product.condition != ProductCondition.NEW.code
                 "
-                x-small
+                size="x-small"
                 class="m-1 text-uppercase px-2"
                 pill
-                >{{ $t(conditionObject.title) }}</v-chip
-              >
+                >{{ $t(conditionObject.title) }}
+              </v-chip>
 
               <router-link
                 v-if="product.ar_src"
@@ -388,7 +434,6 @@
                 <v-img
                   height="24"
                   width="24"
-                  contain
                   :src="require('@components/assets/icons/3d.svg')"
                   class=""
                 ></v-img>
@@ -398,7 +443,7 @@
                 v-if="product.video"
                 title="Video"
                 :to="{
-                  name: 'AddProduct',
+                  name: 'BProductAdd',
                   params: { product_id: product.id },
                   hash: '#images',
                 }"
@@ -406,8 +451,8 @@
                 @click.stop
               >
                 <v-icon size="24" width="24" class="" color="#D93F21"
-                  >fab fa-youtube</v-icon
-                >
+                  >fa:fab fa-youtube
+                </v-icon>
               </router-link>
 
               <router-link
@@ -442,8 +487,8 @@
     >
       <v-icon v-if="deleting" color="red">delete</v-icon>
       <v-icon v-else-if="restoring" color="green"
-        >settings_backup_restore</v-icon
-      >
+        >settings_backup_restore
+      </v-icon>
     </v-progress-circular>
   </s-widget>
 </template>
@@ -455,9 +500,17 @@ import ProductVariantsView from "@components/product/variant/ProductVariantsView
 import { ProductType } from "@core/enums/product/ProductType";
 import { ProductCondition } from "@core/enums/product/ProductCondition";
 import { PricingTypes } from "@core/enums/product/PricingTypes";
+import TeamNoteButton from "@components/backoffice/note/TeamNoteButton.vue";
+
 export default {
   name: "WidgetProductCard",
-  components: { ProductVariantsView, STimeProgressBar, CircleImage },
+  components: {
+    TeamNoteButton,
+    ProductVariantsView,
+    STimeProgressBar,
+    CircleImage,
+  },
+  emits: ["select", "click:image", "onShowNote", "onSelect"],
   props: {
     product: {
       required: true,
@@ -545,6 +598,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    showNotes: Boolean,
+    showSelect: Boolean,
+    iSelected: Boolean,
   },
 
   data() {
@@ -577,13 +633,13 @@ export default {
         return this.CalcPriceProductCurrentCurrency(
           this.shop,
           this.filterVariant,
-          null
+          null,
         );
 
       return this.CalcPriceProductCurrentCurrency(
         this.shop,
         this.product,
-        null
+        null,
       );
     },
     discount_percent() {
@@ -594,12 +650,12 @@ export default {
       return this.product.status === "Close"
         ? "bg-danger"
         : this.quantity || this.product.type === ProductType.FILE.code
-        ? "bg-success"
-        : "bg-warning";
+          ? "bg-success"
+          : "bg-warning";
     },
     conditionObject() {
       return Object.values(ProductCondition).find(
-        (item) => item.code === this.product.condition
+        (item) => item.code === this.product.condition,
       );
     },
 
@@ -613,7 +669,7 @@ export default {
     // -------- Uploading image: --------
     uploading() {
       const found = Object.values(this.$store.getters.getUploadingKeeper).find(
-        (it) => it.target && it.target.product === this.product.id
+        (it) => it.target && it.target.product === this.product.id,
       );
       return found ? found : null;
     },
@@ -647,6 +703,7 @@ export default {
     .drop-shipping-mode {
       height: 32px;
       background-color: rgba(104, 159, 56, 0.89);
+
       img,
       span {
         transition-delay: 0.25s;
@@ -675,6 +732,7 @@ a {
   pointer-events: none;
 
   color: #fff;
+
   img,
   span {
     transition: all 0.15s;
@@ -685,6 +743,7 @@ a {
 
 .-deleted {
   border-color: red !important;
+
   &:after {
     position: absolute;
     bottom: 0;
@@ -698,16 +757,19 @@ a {
     text-align: center;
   }
 }
+
 .v-t {
   vertical-align: text-top;
 }
 
 .border-selected {
-  border: solid #0061e0 4px;
+  border: solid #0061e0 4px !important;
 }
+
 .-dashed {
-  border: #444 dashed 2px;
+  border: #444 dashed thin;
 }
+
 .-shortcut {
   border-color: #009688 !important;
 }

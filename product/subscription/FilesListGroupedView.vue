@@ -26,13 +26,13 @@
           class="hover-scale"
           style="vertical-align: top"
         />
-        {{ val | numeralFormat("0.[0] a") }}🞬
+        {{numeralFormat(val,"0.[0] a") }}🞬
       </div>
     </v-row>
 
     <div class="my-1 small font-weight-bold" title="Total files size">
       <v-icon small class="me-1">storage</v-icon>
-      {{ files_size | numeralFormat("0.[0] b") }}
+      {{   numeralFormat(files_size,"0.[0] b") }}
     </div>
   </div>
 </template>

@@ -20,7 +20,7 @@
       class="mx-2 mt-1 p-3 rounded-18px position-relative pp"
       :class="{
         'small-label': vertical,
-        'align-self-end': $vuetify.breakpoint.xsOnly,
+        'align-self-end': $vuetify.display.xsOnly,
       }"
       :color="forAuction ? '#333' : 'fff'"
       :dark="forAuction"

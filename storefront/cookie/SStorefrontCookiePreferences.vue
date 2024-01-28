@@ -54,12 +54,12 @@
         </v-list-item-content>
       </v-list-item>
 
-      <v-list v-if="apps?.lenght" flat subheader three-line>
+      <v-list v-if="apps?.length" flat subheader three-line>
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Application ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-        <v-subheader>
+        <v-list-subheader>
           {{ $t("footer.dialog_setting.app_list") }}
-        </v-subheader>
+        </v-list-subheader>
 
         <v-list-item v-for="app in apps" :key="app.code">
           <v-list-item-avatar tile>

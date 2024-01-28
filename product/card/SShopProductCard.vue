@@ -108,11 +108,11 @@
               v-for="color in colors.slice(0, 5)"
               :key="color"
               :color="color"
-              class="mr-1"
+              class="me-1"
               :size="14"
             >
             </s-color-circle>
-            <v-icon v-if="colors.length > 5" class="mr-1">more_horiz</v-icon>
+            <v-icon v-if="colors.length > 5" class="me-1">more_horiz</v-icon>
           </div>
         </div>
         <!-- ============== Extra info on hover ================ -->
@@ -120,7 +120,7 @@
         <div
           v-if="
             !window.ExternalWidget &&
-            (!isInsta || $vuetify.breakpoint.lgAndUp) &&
+            (!isInsta || $vuetify.display.lgAndUp) &&
             quickBuy &&
             (product.quantity || isFile)
           "
@@ -132,7 +132,7 @@
             color="primary"
             dark
             tile
-            :large="$vuetify.breakpoint.mdAndUp && !isInsta"
+            :large="$vuetify.display.mdAndUp && !isInsta"
             :fab="isInsta"
             :small="isInsta"
             width="100%"
@@ -153,7 +153,7 @@
             icon
             tile
             block
-            :large="$vuetify.breakpoint.mdAndUp && !isInsta"
+            :large="$vuetify.display.mdAndUp && !isInsta"
             :fab="isInsta"
             :small="isInsta"
             :title="$t('global.commons.compare')"
@@ -211,7 +211,7 @@
                   Number(product.rate).toFixed(1)
                 }}</b>
                 <small>
-                  ● {{ product.rate_count | numeralFormat("0,0") }}
+                  ● {{   numeralFormat(product.rate_count,"0,0") }}
                   {{ $t("product_card.review_unit") }}
                 </small>
               </div>
@@ -224,11 +224,11 @@
                   v-for="color in colors.slice(0, 5)"
                   :key="color"
                   :color="color"
-                  class="mr-1"
+                  class="me-1"
                   :size="14"
                 >
                 </s-color-circle>
-                <v-icon v-if="colors.length > 5" class="mr-1"
+                <v-icon v-if="colors.length > 5" class="me-1"
                   >more_horiz
                 </v-icon>
               </div>
@@ -274,7 +274,7 @@
                   <!-- Coupon -->
                   <span v-if="hasCoupon">
                     <v-icon x-small color="#D32F2F" class="mx-1"
-                      >fas fa-plus</v-icon
+                      >fa:fas fa-plus</v-icon
                     >
                     <img
                       src="@components/assets/icons/coupon.svg"
@@ -336,8 +336,8 @@
         <v-row dense style="flex-wrap: nowrap;">
           <v-img
             :src="product_image"
-            :height="$vuetify.breakpoint.smAndDown ? 64 : 84"
-            :width="$vuetify.breakpoint.smAndDown ? 64 : 84"
+            :height="$vuetify.display.smAndDown ? 64 : 84"
+            :width="$vuetify.display.smAndDown ? 64 : 84"
             class="flex-grow-0 rounded me-0 me-sm-2"
             :alt="
               product.title + (product.title_en ? ` | ${product.title_en}` : '')
@@ -348,7 +348,7 @@
           <div
             class="text-start px-2 flex-grow-1"
             :style="{
-              'max-width': $vuetify.breakpoint.smAndDown
+              'max-width': $vuetify.display.smAndDown
                 ? 'calc(100% - 195px)'
                 : 'calc(100% - 210px)',
             }"
@@ -375,7 +375,7 @@
             </v-chip>
 
             <span class="mx-2" v-if="product.rate_count"
-              >{{ product.rate_count | numeralFormat("0,0") }}
+              >{{  numeralFormat(product.rate_count ,"0,0") }}
 
               <small>{{ $t("product_card.review_unit") }}</small>
             </span>
@@ -395,7 +395,7 @@
           <div
             class="text-end align-self-center flex-grow-1"
             style="flex-basis: 110px"
-            :class="{ small: $vuetify.breakpoint.smAndDown }"
+            :class="{ small: $vuetify.display.smAndDown }"
           >
             <div v-if="product.quantity || isFile" class="main-price-label p-0">
               <p v-if="discount > 0">
@@ -416,7 +416,7 @@
                   title="Has extra coupon!"
                 />
                 <v-icon v-if="hasCoupon" x-small color="#D32F2F" class="mx-1"
-                  >fas fa-plus
+                  >fa:fas fa-plus
                 </v-icon>
                 <!-- Price label -->
                 <span v-if="product.price_label" class="mx-1 price-label">{{
@@ -444,7 +444,7 @@
               depressed
               color="#000"
               dark
-              :large="$vuetify.breakpoint.mdAndUp"
+              :large="$vuetify.display.mdAndUp"
               small
               class="align-self-center flex-grow-0 ms-2 tnt"
             >
@@ -915,7 +915,7 @@ export default {
       height: var(--image-center-height-contain);
       top: var(--header-size);
     }
-    ::v-deep .v-image__image{ // Force to show image on top of the dynamic background layout
+    ::v-deep(.v-img__image){ // Force to show image on top of the dynamic background layout
       z-index: 1;
     }
 

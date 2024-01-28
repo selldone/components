@@ -24,7 +24,7 @@
         >
           <v-row align="center">
             <v-col cols="12" md="6" class="text-start" order="2" order-md="1">
-              <v-subheader>
+              <v-list-subheader>
                 ●
                 {{
                   $t("product_info.offer_message", {
@@ -32,8 +32,8 @@
                     percent: offer.percent,
                   })
                 }}
-              </v-subheader>
-              <h2 class="display-2 line-height-normal font-weight-black">
+              </v-list-subheader>
+              <h2 class="text-h3 line-height-normal font-weight-black">
                 {{ offer.title }}
               </h2>
 
@@ -46,7 +46,7 @@
                 :to-category="toCategory"
                 :ids="Object.keys(offer.get_products)"
                 link
-                :size="$vuetify.breakpoint.smAndUp ? 84 : 46"
+                :size="$vuetify.display.smAndUp ? 84 : 46"
                 class="flex-grow-1"
               ></products-dense-images-circles-links>
             </v-col>
@@ -63,7 +63,7 @@
                     class="d-flex align-center justify-center"
                   >
                     <div class="-highlight">
-                      <span class="display-2 font-weight-black">
+                      <span class="text-h3 font-weight-black">
                         {{
                           offer.percent === 100
                             ? $t("product_info.get_free")

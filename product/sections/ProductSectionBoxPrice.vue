@@ -164,7 +164,7 @@ export default {
 
     revers_col() {
       return (
-        this.$vuetify.breakpoint.xsOnly &&
+        this.$vuetify.display.xsOnly &&
         this.calculated_price * this.price_multi > 9999999
       ); /*Long number!*/
     },

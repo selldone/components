@@ -19,7 +19,7 @@
         min_height &&
         show_filter_menu &&
         has_filter &&
-        !$vuetify.breakpoint.mdAndDown
+        !$vuetify.display.mdAndDown
           ? min_height + 256 /*Apx. top bars height*/ + 'px'
           : undefined,
     }"
@@ -48,13 +48,13 @@
             v-if="
               hasBreadcrumb &&
               hierarchy_items.length > 1 &&
-              $vuetify.breakpoint.smAndUp
+              $vuetify.display.smAndUp
             "
           >
             <s-breadcrumb-image
               :hierarchy-items="hierarchy_items"
               :class="
-                $vuetify.breakpoint.mdAndUp
+                $vuetify.display.mdAndUp
                   ? {
                       'add-marginal-side-menu-open':
                         show_filter_menu && has_filter,
@@ -79,7 +79,7 @@
             class="w-100 overflow-x-auto"
             :class="{
               'add-marginal-side-menu-open':
-                show_filter_menu && has_filter && $vuetify.breakpoint.smAndUp,
+                show_filter_menu && has_filter && $vuetify.display.smAndUp,
             }"
             v-model="sort"
             :only-available.sync="only_available"
@@ -89,7 +89,7 @@
           >
             <!-- ............................ Categories > Small screen ............................ -->
             <v-btn
-              v-if="$vuetify.breakpoint.xs && hierarchy_items.length > 1"
+              v-if="$vuetify.display.xs && hierarchy_items.length > 1"
               text
               tile
               height="46px"
@@ -124,7 +124,7 @@
         <v-expand-transition>
           <div
             v-if="
-              $vuetify.breakpoint.xs &&
+              $vuetify.display.xs &&
               hierarchy_items.length > 1 &&
               show_categories
             "
@@ -293,11 +293,11 @@
           @change-filter="setFilter"
           @change-height="(h) => (min_height = h)"
           :style="{
-            borderRadius: $vuetify.breakpoint.mdAndDown ? '32px' : '32px',
+            borderRadius: $vuetify.display.mdAndDown ? '32px' : '32px',
           }"
           :class="{
-            'ms-2 mt-2': $vuetify.breakpoint.mdAndDown,
-            'm-2': !$vuetify.breakpoint.mdAndDown,
+            'ms-2 mt-2': $vuetify.display.mdAndDown,
+            'm-2': !$vuetify.display.mdAndDown,
           }"
         />
       </div>
@@ -307,7 +307,7 @@
         v-if="hover_actions"
         v-model="quick_buy"
         max-width="1480px"
-        :fullscreen="$vuetify.breakpoint.mdAndDown"
+        :fullscreen="$vuetify.display.mdAndDown"
         scrollable
         content-class="no-shadow-dialog"
       >
@@ -339,7 +339,7 @@
             </v-btn>
           </v-card-text>
           <v-card-actions
-            v-if="$vuetify.breakpoint.mdAndDown"
+            v-if="$vuetify.display.mdAndDown"
             class="border-top mb-16"
           >
             <div class="widget-buttons mb-4">
@@ -363,7 +363,7 @@ import SProductsSortView from "@components/product/sort/SProductsSortView.vue";
 import CategoryCard from "@components/backoffice/category/CategoryCard.vue";
 import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
 import SStorefrontProductsFilterMenu from "@components/storefront/filter/SStorefrontProductsFilterMenu.vue";
-import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
+import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
@@ -678,11 +678,11 @@ export default {
     limit() {
       let limit = 20;
 
-      if (this.$vuetify.breakpoint.xs) limit = 6;
-      else if (this.$vuetify.breakpoint.sm) limit = 10;
-      else if (this.$vuetify.breakpoint.md) limit = 16;
-      else if (this.$vuetify.breakpoint.lg) limit = 20;
-      else if (this.$vuetify.breakpoint.xl) limit = 25;
+      if (this.$vuetify.display.xs) limit = 6;
+      else if (this.$vuetify.display.sm) limit = 10;
+      else if (this.$vuetify.display.md) limit = 16;
+      else if (this.$vuetify.display.lg) limit = 20;
+      else if (this.$vuetify.display.xl) limit = 25;
 
       if (this.freeMode) return limit;
 
@@ -695,16 +695,16 @@ export default {
 
     // Device by screen size:
     template_device() {
-      if (this.$vuetify.breakpoint.xsOnly) {
+      if (this.$vuetify.display.xsOnly) {
         return "mobile";
       } else if (
-        this.$vuetify.breakpoint.smOnly ||
-        this.$vuetify.breakpoint.mdOnly
+        this.$vuetify.display.smOnly ||
+        this.$vuetify.display.mdOnly
       ) {
         return "tablet";
       } else if (
-        this.$vuetify.breakpoint.lgOnly ||
-        this.$vuetify.breakpoint.xlOnly
+        this.$vuetify.display.lgOnly ||
+        this.$vuetify.display.xlOnly
       ) {
         return "pc";
       }
@@ -723,7 +723,7 @@ export default {
       else if (this.mode_view.code === ModeView.LIST.code) limit = 5 * 4;
       else if (this.mode_view.code === ModeView.INSTA.code) limit = 4 * 6;
 
-      const multiple=this.$vuetify.breakpoint.lgAndUp?2:1 // Show more on PC
+      const multiple=this.$vuetify.display.lgAndUp?2:1 // Show more on PC
 
       return multiple*limit;
     },
@@ -825,7 +825,7 @@ export default {
     mode_view(mode_view) {
       if (this.forceModeView) return; // Do not save mode view in local storage! (Show in landing pages)
       localStorage.setItem(
-        LocalStorages.GetUserShopViewModePath(
+        StorefrontLocalStorages.GetUserShopViewModePath(
           this.$localstorage_base_path(),
           this.template_device
         ),
@@ -895,7 +895,7 @@ export default {
     // ............... Apply customized template ...............
 
     code = localStorage.getItem(
-      LocalStorages.GetUserShopViewModePath(
+      StorefrontLocalStorages.GetUserShopViewModePath(
         this.$localstorage_base_path(),
         this.template_device
       )
@@ -992,12 +992,10 @@ export default {
   },
 
   methods: {
-    onIntersect(entries, observer) {
+    onIntersect(isIntersecting) {
       if (!this.loadMore) return;
       // More information about these options
       // is located here: https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-      const isIntersecting = entries[0].isIntersecting;
-      // console.log('------- END -------',isIntersecting)
 
       if (isIntersecting && !this.busy_fetch && this.has_more) {
         console.log("⏺ Fetch more data...");
@@ -1009,7 +1007,7 @@ export default {
     onResize() {
       let real_w =
         Math.min(window.innerWidth, 1720) -
-        (this.$vuetify.breakpoint.mdAndUp &&
+        (this.$vuetify.display.mdAndUp &&
         this.show_filter_menu &&
         this.has_filter
           ? 256

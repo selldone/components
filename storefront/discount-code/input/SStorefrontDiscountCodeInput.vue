@@ -30,7 +30,7 @@
       "
     >
       <v-icon v-if="!value || show_discount_code_input" class="mx-2">
-        {{ show_discount_code_input ? "done" : "fas fa-percentage" }}
+        {{ show_discount_code_input ? "done" : "fa:fas fa-percentage" }}
       </v-icon>
       <span v-if="!show_discount_code_input">
         <span v-if="value">

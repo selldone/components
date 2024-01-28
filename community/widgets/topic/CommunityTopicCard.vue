@@ -22,7 +22,7 @@
 
     <router-link
       class="c-widget -hover d-flex black--text"
-      :class="{ 'flex-column': $vuetify.breakpoint.xs }"
+      :class="{ 'flex-column': $vuetify.display.xs }"
       :to="{
         name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
         params: { topic_id: topic.id, topic_slug: slugify(topic.title) },
@@ -31,9 +31,9 @@
       <community-image
         v-if="topic.image"
         :src="getShopImagePath(topic.image)"
-        :height="$vuetify.breakpoint.xs ? '100px' : 'auto'"
-        :width="$vuetify.breakpoint.xs ? '100%' : 200"
-        :min-height="$vuetify.breakpoint.xs ? 100 : 200"
+        :height="$vuetify.display.xs ? '100px' : 'auto'"
+        :width="$vuetify.display.xs ? '100%' : 200"
+        :min-height="$vuetify.display.xs ? 100 : 200"
       ></community-image>
 
       <div
@@ -159,10 +159,10 @@
     </router-link>
 
     <!-- Trend -->
-    <ribbon v-if="topic.trend" red>
+    <s-ribbon v-if="topic.trend" red>
       <v-icon small dark>local_fire_department</v-icon>
       {{ $t("community.commons.trend") }}
-    </ribbon>
+    </s-ribbon>
   </v-col>
 </template>
 
@@ -171,14 +171,14 @@ import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImage
 import CommunityImage from "../image/CommunityImage.vue";
 import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
 import { TopicTrialType } from "@core/enums/community/TopicTrialType";
-import Ribbon from "@components/ui/ribbon/Ribbon.vue";
+import SRibbon from "@components/ui/ribbon/SRibbon.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
 import { TimeSeries } from "@core/timeserie/TimeSeries";
 export default {
   name: "CommunityTopicCard",
   components: {
     TrendSparkline,
-    Ribbon,
+    SRibbon,
     CommunityImage,
     SDenseImagesCirclesUsers,
   },

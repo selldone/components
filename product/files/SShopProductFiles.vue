@@ -17,8 +17,8 @@
     <v-container class="my-16">
       <v-row align="center" justify="space-between">
         <v-col cols="12" :md="free_files.length?6:12" class="text-start">
-          <v-subheader>● Files included in {{ product.title }}</v-subheader>
-          <h2 class="display-2 line-height-normal font-weight-black">
+          <v-list-subheader>● Files included in {{ product.title }}</v-list-subheader>
+          <h2 class="text-h3 line-height-normal font-weight-black">
             {{ $t("global.commons.files_list") }}
           </h2>
           <v-row no-gutters class="mt-2">
@@ -32,14 +32,14 @@
                 width="20"
                 style="vertical-align: top"
               />
-              {{ val | numeralFormat("0.[0] a") }}🞬
+              {{   numeralFormat(val,"0.[0] a") }}🞬
             </div>
           </v-row>
         </v-col>
 
         <v-col v-if="free_files.length" cols="12" sm="6" md="3">
           <div class="-highlight">
-            <span class="display-2 font-weight-black">{{
+            <span class="text-h3 font-weight-black">{{
               free_files.length
             }}</span>
           </div>

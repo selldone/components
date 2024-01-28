@@ -15,7 +15,7 @@
 <template>
   <v-dialog
     v-model="dialog"
-    :fullscreen="$vuetify.breakpoint.mdAndDown"
+    :fullscreen="$vuetify.display.mdAndDown"
     max-width="1200"
     content-class="thin-scroll"
   >

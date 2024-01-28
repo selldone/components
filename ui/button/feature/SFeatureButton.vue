@@ -16,7 +16,7 @@
   <div class="d-flex flex-column align-center">
     <component
       :is="to ? 'router-link' : href ? 'a' : 'div'"
-      class="c-it black--text"
+      class="c-it text-black"
       :class="{
         '-large': large,
         placeholder: placeholder,
@@ -35,15 +35,16 @@
     </component>
     <v-btn
       v-if="toSetting"
-      x-small
-      outlined
+      size="small"
+      variant="plain"
       @click.stop
       :to="toSetting"
-      class="op-0-6 op1h nbt"
+      class="tnt"
       exact
-      ><v-icon x-small class="me-1">settings</v-icon>
-      {{ $t("global.commons.setting") }}</v-btn
     >
+      <v-icon start>settings</v-icon>
+      {{ $t("global.commons.setting") }}
+    </v-btn>
   </div>
 </template>
 

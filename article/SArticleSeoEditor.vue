@@ -57,7 +57,7 @@
               counter="128"
               messages="Use a clear and short URL, You can change it without worrying about the link being broken."
             >
-              <template v-slot:append>
+              <template v-slot:append-inner>
                 <score-indicator :value="$SEO.GetPageURLScore(slug)" class="mt-n1"></score-indicator>
               </template>
             </v-text-field>
@@ -71,7 +71,7 @@
               counter="128"
               messages="Leave it empty to set the page title the same as the article title."
             >
-              <template v-slot:append>
+              <template v-slot:append-inner>
                 <score-indicator :value="$SEO.GetPageTitleScore(page_title)" class="mt-n1"></score-indicator>
               </template>
             </v-text-field>
@@ -83,7 +83,7 @@
               class="m-3"
               :label="$t('global.article.edit_window.digest')"
             >
-              <template v-slot:append>
+              <template v-slot:append-inner>
                 <score-indicator :value="$SEO.GetPageDescription(description)" class="mt-n1"></score-indicator>
               </template>
             </v-textarea>

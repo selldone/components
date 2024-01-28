@@ -39,7 +39,7 @@
           class="hover-scale"
           >circle</v-icon
         >
-        {{ max | numeralFormat("0.[0]a") }}
+        {{   numeralFormat(max,"0.[0]a") }}
       </span>
     </div>
 

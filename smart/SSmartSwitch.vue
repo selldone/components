@@ -14,8 +14,8 @@
 
 <template>
   <s-smart-select
-    :value="value"
-    @input="(val) => $emit('input', val)"
+    :model-value="localModelValue"
+    @update:model-value="updateModelValue"
     :items="items"
     item-value="id"
     item-text="title"
@@ -24,9 +24,9 @@
     :label="label"
     :hint="hint"
     :force-show-all="forceShowAll"
-    @change="(val) => $nextTick(() => {$emit('change', val)})"
+    @change="handleChange"
     :disabled="disabled"
-    :color="falseGray && !value ? '#666' : color"
+    :color="falseGray && !localModelValue ? '#666' : color"
     :readonly="readonly"
     :dark="dark"
     :border="border"
@@ -38,88 +38,79 @@
 </template>
 
 <script>
+import { ref, watch, nextTick } from "vue";
 import SSmartSelect from "./SSmartSelect.vue";
 
 export default {
   name: "SSmartSwitch",
+  emits: ["update:modelValue", "change"],
   components: { SSmartSelect },
   props: {
-    value: {},
-
+    modelValue: {},
     label: {},
     hint: {},
-
     trueTitle: {},
     falseTitle: {},
-
     trueDescription: {},
     falseDescription: {},
-
     trueIcon: {},
     falseIcon: {},
-    forceShowAll: {
-      default: true,
-      type: Boolean,
-    },
-    disabled: {
-      default: false,
-      type: Boolean,
-    },
-    falseGray: {
-      default: false,
-      type: Boolean,
-    },
-    border: {
-      default: false,
-      type: Boolean,
-    },
-
-    trueDisabled: {
-      default: false,
-      type: Boolean,
-    },
-    falseDisabled: {
-      default: false,
-      type: Boolean,
-    },
-    readonly: {
-      default: false,
-      type: Boolean,
-    },
+    forceShowAll: { default: true, type: Boolean },
+    disabled: { default: false, type: Boolean },
+    falseGray: { default: false, type: Boolean },
+    border: { default: false, type: Boolean },
+    trueDisabled: { default: false, type: Boolean },
+    falseDisabled: { default: false, type: Boolean },
+    readonly: { default: false, type: Boolean },
     color: { default: "primary" },
-    dark: {
-      default: false,
-      type: Boolean,
-    },
-
-    clearable: {
-      default: false,
-      type: Boolean,
-    },
-    loading: {
-      default: false,
-      type: Boolean,
-    },
+    dark: { default: false, type: Boolean },
+    clearable: { default: false, type: Boolean },
+    loading: { default: false, type: Boolean },
   },
-  computed: {
-    items() {
-      return [
-        {
-          id: true,
-          title: this.trueTitle,
-          icon: this.trueIcon,
-          description: this.trueDescription,
-          disabled: this.trueDisabled,
-        },
-        {
-          id: false,
-          title: this.falseTitle,
-          icon: this.falseIcon,
-          description: this.falseDescription,
-          disabled: this.falseDisabled,
-        },
-      ];
-    },
+  setup(props, { emit }) {
+    const localModelValue = ref(props.modelValue);
+
+    watch(
+      () => props.modelValue,
+      (newVal) => {
+        localModelValue.value = newVal;
+      },
+    );
+
+    const updateModelValue = (newVal) => {
+      localModelValue.value = newVal;
+      emit("update:modelValue", newVal);
+    };
+
+    const handleChange = (val) => {
+      nextTick(() => {
+        emit("change", val);
+      });
+    };
+
+    const items = ref([
+      {
+        id: true,
+        title: props.trueTitle,
+        icon: props.trueIcon,
+        description: props.trueDescription,
+        disabled: props.trueDisabled,
+      },
+      {
+        id: false,
+        title: props.falseTitle,
+        icon: props.falseIcon,
+        description: props.falseDescription,
+        disabled: props.falseDisabled,
+      },
+    ]);
+
+    return {
+      localModelValue,
+      updateModelValue,
+      handleChange,
+      items,
+    };
   },
 };
 </script>

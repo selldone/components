@@ -180,7 +180,7 @@
                     }}</v-icon>
                     {{ $t("community.commons.disagree") }}
                     <b v-if="com.disagrees" class="ms-1"
-                      >({{ com.disagrees | numeralFormat("0.[0]a") }})</b
+                      >({{   numeralFormat(com.disagrees,"0.[0]a") }})</b
                     ></v-btn
                   >
 
@@ -213,7 +213,7 @@
                     }}</v-icon>
                     {{ $t("community.commons.agree") }}
                     <b v-if="com.agrees" class="ms-1"
-                      >({{ com.agrees | numeralFormat("0.[0]a") }})</b
+                      >({{  numeralFormat(com.agrees ,"0.[0]a") }})</b
                     ></v-btn
                   >
                 </div>
@@ -313,12 +313,12 @@
         focus_me = false;
       "
     >
-      <template slot="prepend-inner">
+      <template v-slot:prepend-inner>
         <v-avatar size="2.4em" color="#fafafa" class="margin-n7px ms-n4 me-2">
           <v-img :src="getUserAvatar(USER_ID())"></v-img>
         </v-avatar>
       </template>
-      <template slot="append">
+      <template v-slot:append-inner>
         <v-btn icon class="margin-n7px me-2" @click="showSelectImage()">
           <v-icon>add_a_photo</v-icon>
         </v-btn>

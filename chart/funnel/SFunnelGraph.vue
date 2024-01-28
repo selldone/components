@@ -55,8 +55,9 @@
         :class="`label-${index + 1}`"
         v-for="(value, index) in valuesFormatted"
         :key="labels[index].toLowerCase().split(' ').join('-')"
+        :style="{maxWidth:(100/labels.length)+'%'}"
       >
-        <div class="label__value">{{ value }}</div>
+        <div class="label__value">{{ value  }}</div>
         <div class="label__title" v-if="labels">{{ labels[index] }}</div>
         <div
           class="label__percentage"
@@ -86,10 +87,10 @@
                 >{{ twoDimPercentages()[index][j] }}%</span
               >
               <span v-else-if="actualValue"
-                >{{ actualValue(index, j, values[index][j]) | format }}
+                >{{ numeralFormat(actualValue(index, j, values[index][j]),"0.[0]a")  }}
               </span>
               <span class="percentage__list-label" v-else>{{
-                values[index][j] | format
+                  numeralFormat( values[index][j] ,"0.[0]a")
               }}</span>
             </li>
           </ul>
@@ -123,16 +124,15 @@
 <script>
 import { interpolate } from "polymorph-js";
 import TWEEN from "@tweenjs/tween.js";
-import FunnelGraph from "funnel-graph-js";
-import { formatNumber } from "funnel-graph-js/src/js/number";
-import {
-  getDefaultColors,
-  generateLegendBackground,
-} from "funnel-graph-js/src/js/graph";
-import "funnel-graph-js/src/scss/main.scss";
-import "funnel-graph-js/src/scss/theme.scss";
-import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 
+
+
+import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
+import numeral from "numeral";
+import FunnelGraph from "@components/chart/funnel/core/js/main";
+import {generateLegendBackground, getDefaultColors} from "@components/chart/funnel/core/js/graph";
+import "@components/chart/funnel/core/scss/main.scss";
+import "@components/chart/funnel/core/scss/theme.scss";
 export default {
   name: "SFunnelGraph",
   components: { SCurrencyIcon },
@@ -182,6 +182,7 @@ export default {
   },
   data() {
     return {
+
       paths: [],
       prevPaths: [], // paths before update, used for animations
       graph: null,
@@ -192,9 +193,9 @@ export default {
   computed: {
     valuesFormatted() {
       if (this.graph.is2d()) {
-        return this.graph.getValues2d().map((value) => formatNumber(value));
+        return this.graph.getValues2d().map((value) =>numeral( value).format("0.[0]a") );
       }
-      return this.values.map((value) => formatNumber(value));
+      return this.values.map((value) => numeral( value).format("0.[0]a") );
     },
 
     colorSet() {
@@ -377,15 +378,19 @@ export default {
       this.drawPaths();
     },
   },
-  filters: {
-    format: function (value) {
-      return formatNumber(value);
-    },
-  },
+
 };
 </script>
 
 <style scoped lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+
 .appear-enter-active,
 .appear-leave-active {
   transition: all 0.7s ease-in-out;
@@ -419,4 +424,6 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
+
+
 </style>

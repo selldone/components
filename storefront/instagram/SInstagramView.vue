@@ -19,7 +19,7 @@
         <v-row>
           <v-col cols="2" md="4" class="text-center avatar-con">
             <v-avatar
-              :size="$vuetify.breakpoint.smAndDown ? 77 : 168"
+              :size="$vuetify.display.smAndDown ? 77 : 168"
               class="story-border"
             >
               <img :src="profile_image" />
@@ -32,7 +32,7 @@
                 {{ instagram.userName }}
                 <v-icon
                   v-if="instagram.verified"
-                  class="ml-2"
+                  class="ms-2"
                   color="blue"
                   size="18"
                   >verified</v-icon
@@ -50,7 +50,7 @@
                   small
                   color="primary"
                   dark
-                  class="ml-2"
+                  class="ms-2"
                   :to="editable ? undefined : { name: window.$storefront.routes.BASKET_PAGE }"
                 >
                   <v-icon>shopping_cart</v-icon>
@@ -61,19 +61,19 @@
               <ul class="list">
                 <li class="list_item">
                   <span>{{
-                    instagram.mediaCount | numeralFormat("0.[0]a")
+                    numeralFormat(instagram.mediaCount ,"0.[0]a")
                   }}</span
                   >posts
                 </li>
                 <li class="list_item">
                   <span>{{
-                    instagram.followers | numeralFormat("0.[0]a")
+                     numeralFormat( instagram.followers,"0.[0]a")
                   }}</span
                   >followers
                 </li>
                 <li class="list_item">
                   <span>{{
-                    instagram.following | numeralFormat("0.[0]a")
+                    numeralFormat(instagram.following ,"0.[0]a")
                   }}</span
                   >following
                 </li>
@@ -91,7 +91,7 @@
     </v-container>
     <!-- Place holder -->
     <v-container v-if="busy_fetch && !medias.length">
-      <v-row :dense="$vuetify.breakpoint.smAndDown">
+      <v-row :dense="$vuetify.display.smAndDown">
         <v-col cols="12" key="h" class="d-flex py-12 px-10 border-bottom">
           <div v-for="i in 4" :key="i" class="m-3">
             <v-avatar color="#eee" class="mb-2" size="72"></v-avatar>

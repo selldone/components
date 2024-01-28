@@ -13,7 +13,20 @@
   -->
 
 <template>
+  <div v-if="viewOnly"   class="font-weight-bold inline-block"   :class="{ 'text-success': shop.license !== 'FREE', small: small ,'pen':viewOnly}"
+       :title="$t('admin_shop.dashboard.info.license')">
+    <img
+        :width="small ? 20 : vertical ? 46 : 24"
+        :height="small ? 20 : vertical ? 46 : 24"
+        :src="getShopLicenseIcon(shop.license)"
+        :class="vertical ? 'mb-1' : 'me-1'"
+    />
+    <br v-if="vertical" />
+    {{ getShopLicenseName(shop.license) }}
+    {{ getShopLicenseObject(shop.license)?.wage_percent }}%
+  </div>
   <router-link
+      v-else
     :to="{ name: 'ShopEdit_License' }"
     class="font-weight-bold inline-block"
     :class="{ 'text-success': shop.license !== 'FREE', small: small ,'pen':viewOnly}"
@@ -48,6 +61,7 @@ export default {
       default: false,
       type: Boolean,
     },
+
   },
 };
 </script>

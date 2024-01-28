@@ -31,7 +31,7 @@
       :headers="headers"
       :items="products"
       hide-default-footer
-      :server-items-length="totalItems"
+      :items-length="totalItems"
       :options.sync="options"
       :page.sync="page"
       :items-per-page="itemsPerPage"
@@ -114,7 +114,7 @@
         </div>
       </template>
 
-      <template slot="footer">
+      <template v-slot:bottom>
         <v-pagination v-model="page" circle :length="pageCount" class="my-3" />
       </template>
     </v-data-table>
@@ -189,6 +189,7 @@ export default {
 
   watch: {
     search: _.throttle(function (newVal, oldVal) {
+      if(!newVal && !oldVal) return;
       this.options.page = 1;
       this.fetchEligibleProducts(this.page, this.sortBy);
     }, window.SERACH_THROTTLE),

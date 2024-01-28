@@ -15,12 +15,12 @@
 <template>
   <s-fade-scroll class="sx-menu">
     <v-tabs
-      :vertical="$vuetify.breakpoint.mdAndUp"
+      :vertical="$vuetify.display.mdAndUp"
       :value="value"
       @change="(val) => $emit('input', val)"
       slider-size="7"
       :style="{
-        'min-width': $vuetify.breakpoint.mdAndUp ? undefined : 'max-content',
+        'min-width': $vuetify.display.mdAndUp ? undefined : 'max-content',
       }"
     >
       <v-tab v-for="(item, i) in items" :key="i" class="sx-item">

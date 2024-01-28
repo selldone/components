@@ -66,16 +66,17 @@ import type { BasketItem } from "@core/models/shop/order/basket/basket_item.mode
 import type { gapi } from "@core/gapi/requests/gapi.countries.get";
 import type { User } from "@core/models/user/user.model";
 import { XapiUser } from "@sdk-storefront/user/XapiUser";
+import ScrollHelper from "@core/utils/scroll/ScrollHelper";
+import {BackofficeLocalStorages} from "@core/helper/local-storage/BackofficeLocalStorages";
 
 //――― User Device Preferences ―――
-let IMAGE_SIZE_SMALL = localStorage.getItem("boost-mode") ? 64 : 128; // Can be 64 (low speed networks) or 128
 
 function isString(value: any): value is string {
   if (!value) return true;
   return typeof value === "string" || value instanceof String;
 }
 
-const CoreMixin: VueConstructor<Vue> = Vue.extend({
+const CoreMixin = ({
   data() {
     return {
       // Customizable theme:
@@ -105,12 +106,12 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       SUB_TOOLBAR_CONFIG: {
         flat: true,
         color: "transparent",
-        class: "overflow-x-auto overflow-y-hidden thin-scroll",
+        class: "overflow-x-auto overflow-y-hidden thin-scroll  pb-4",
         "min-height": "84px",
       },
 
       //――― Images ―――
-      IMAGE_SIZE_SMALL: IMAGE_SIZE_SMALL,
+      IMAGE_SIZE_SMALL: BackofficeLocalStorages.IMAGE_SIZE_SMALL,
       IMAGE_SIZE_BLOG: 256,
 
       //――― Validation Rules ―――
@@ -121,7 +122,7 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
   },
   computed: {
     isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
+      return this.$vuetify.display.smAndDown;
     },
     is_standalone() {
       // Detects if device is in standalone mode
@@ -429,12 +430,12 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
     },
     getStatusIcon(status: string) {
       if (!status) return "";
-      if (status === "Unpaid") return "fas fa-question ";
-      else if (status === "Paid" || status === "Payed") return "fas fa-check ";
-      else if (status === "Canceled") return "fas fa-times ";
-      else if (status === "Completed") return "fas fa-check-double ";
-      else if (status === "Reserved") return "fas fa-hourglass-start ";
-      else if (status === "COD") return "fas fa-hand-holding-usd";
+      if (status === "Unpaid") return "fa:fas fa-question ";
+      else if (status === "Paid" || status === "Payed") return "fa:fas fa-check ";
+      else if (status === "Canceled") return "fa:fas fa-times ";
+      else if (status === "Completed") return "fa:fas fa-check-double ";
+      else if (status === "Reserved") return "fa:fas fa-hourglass-start ";
+      else if (status === "COD") return "fa:fas fa-hand-holding-usd";
     },
 
     getDeliveryStateString(state: keyof typeof PhysicalOrderStates | null) {
@@ -599,7 +600,7 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       page_id: string | number,
       popup_id: string | number
     ) {
-      this.EventBus.$emit("show:GlobalShopNoteDialog", {
+      this.EventBus.$emit("show:ShopNoteDialog", {
         notes,
         element_id,
         page_id,
@@ -1543,13 +1544,13 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       if (!color || !this.isString(color)) return null;
 
       const colors = ColorHelper.ExtractColors(color);
+
       return colors
         ?.map((color) =>
-          ColorHelper.getNameOfColor(this.$t("global.colors") as {}, color)
+          ColorHelper.getNameOfColor(this.$tm("global.colors") as {}, color)
         )
         .join(" / ");
 
-      //return ColorHelper.getNameOfColor(this.$t("global.colors"), color);
     },
     getName(val: any) {
       if (!val) return "";
@@ -1570,13 +1571,8 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
     },
 
     //―――――――――――――――――――――― Images ――――――――――――――――――――
-    setBoostMode(boost_mode: boolean) {
-      if (boost_mode) localStorage.setItem("boost-mode", "true");
-      else localStorage.removeItem("boost-mode");
-      IMAGE_SIZE_SMALL = boost_mode ? 64 : 128;
-    },
 
-    getShopIcon(shop_id: number | string, size = IMAGE_SIZE_SMALL) {
+    getShopIcon(shop_id: number | string, size = BackofficeLocalStorages.IMAGE_SIZE_SMALL) {
       return window.CDN.GET_SHOP_ICON(shop_id, size);
     },
     getShopImagePath(file_name: string, size = null, random_fill = false) {
@@ -1590,15 +1586,15 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
       return window.CDN.GET_SHOP_JSON_PATH(file_name);
     },
 
-    getCategoryIcon(category_id: string | number, size = IMAGE_SIZE_SMALL) {
+    getCategoryIcon(category_id: string | number, size = BackofficeLocalStorages.IMAGE_SIZE_SMALL) {
       return window.CDN.GET_CATEGORY_ICON(category_id, size);
     },
-    getProductImage(product_id: string | number, size = IMAGE_SIZE_SMALL) {
+    getProductImage(product_id: string | number, size = BackofficeLocalStorages.IMAGE_SIZE_SMALL) {
       return window.CDN.GET_PRODUCT_IMAGE(product_id, size);
     },
     getDeliveryServiceIcon(
       delivery_service_id: string | number,
-      size = IMAGE_SIZE_SMALL
+      size = BackofficeLocalStorages.IMAGE_SIZE_SMALL
     ) {
       return window.CDN.GET_DELIVERY_SERVICE_ICON(delivery_service_id, size);
     },
@@ -1787,11 +1783,7 @@ const CoreMixin: VueConstructor<Vue> = Vue.extend({
     //―――――――――――――――――――――― Page Scroll Helper ――――――――――――――――――――
     GoToTopPage() {
       this.$nextTick(() => {
-        this.$vuetify.goTo(0, {
-          duration: 800,
-          offset: 0,
-          easing: "easeInOutQuad",
-        });
+        ScrollHelper.scrollToTop(0,'smooth')
       });
     },
 

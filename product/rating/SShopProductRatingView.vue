@@ -21,7 +21,7 @@
       @click="edit_mode = !edit_mode"
       title="Rate this product"
       class="absolute-top-end"
-      ><v-icon small>{{ edit_mode ? "close" : "fas fa-poll-h" }}</v-icon></v-btn
+      ><v-icon small>{{ edit_mode ? "close" : "fa:fas fa-poll-h" }}</v-icon></v-btn
     >
 
     <v-expand-transition>
@@ -48,7 +48,7 @@
         </v-btn>
       </div>
       <div v-else-if="product.rate_count" key="view">
-        <div class="d-flex align-items-baseline justify-content-center">
+        <div class="d-flex align-items-baseline justify-center">
           <v-rating
             v-model="product.rate"
             class="my-2 text-center"
@@ -62,7 +62,7 @@
             :dense="small || dense"
           />
           <small class="mx-2" v-if="product.rate_count"
-            >({{ product.rate_count | numeralFormat("0,0") }})</small
+            >({{   numeralFormat(product.rate_count,"0,0") }})</small
           >
         </div>
 

@@ -21,7 +21,7 @@
     :class="selected ? 'active' : ''"
     @click="toggle()"
   >
-    <v-icon color="#fff" class="ml-1" small>
+    <v-icon color="#fff" class="ms-1" small>
       {{ icon }}
     </v-icon>
 

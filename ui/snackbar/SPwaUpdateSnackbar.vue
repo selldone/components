@@ -16,7 +16,7 @@
   <v-snackbar
     v-model="new_version"
     multi-line
-    :vertical="$vuetify.breakpoint.smAndDown"
+    :vertical="$vuetify.display.smAndDown"
     :timeout="60000"
     @click="new_version = false"
   >

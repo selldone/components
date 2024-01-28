@@ -20,7 +20,7 @@
     <v-container v-if="has_big_header" fluid class="my-16">
       <v-row align="center" justify="space-between">
         <v-col cols="12" md="6" class="text-start">
-          <v-subheader>
+          <v-list-subheader>
             <span v-if="has_return_warranty" class="me-2">
               ●
               {{
@@ -30,9 +30,9 @@
               }}
             </span>
             <span v-if="product.warranty"> ● {{ product.warranty }} </span>
-          </v-subheader>
+          </v-list-subheader>
 
-          <h2 class="display-2 line-height-normal font-weight-black">
+          <h2 class="text-h3 line-height-normal font-weight-black">
             {{
               warranty_article?.title
                 ? warranty_article.title
@@ -43,7 +43,7 @@
 
         <v-col v-if="product.warranty" cols="12" sm="6" md="3">
           <div class="-highlight">
-            <span class="display-2 font-weight-black">{{
+            <span class="text-h3 font-weight-black">{{
               product.warranty
             }}</span>
           </div>
@@ -52,7 +52,7 @@
 
         <v-col v-if="has_return_warranty" cols="12" sm="6" md="3">
           <div class="-highlight">
-            <span class="display-4 font-weight-black">{{
+            <span class="text-h1 font-weight-black">{{
               product.return_warranty
             }}</span>
             <b class="mx-a">/ {{ $t("global.commons.days") }}</b>
@@ -85,7 +85,7 @@
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
 
       <div
-        v-if="$vuetify.breakpoint.mdAndUp && admin_url_warranty"
+        v-if="$vuetify.display.mdAndUp && admin_url_warranty"
         class="text-end"
       >
         <v-btn
@@ -129,7 +129,7 @@
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
 
       <div
-        v-if="$vuetify.breakpoint.mdAndUp && admin_url_return_policy"
+        v-if="$vuetify.display.mdAndUp && admin_url_return_policy"
         class="text-end"
       >
         <v-btn

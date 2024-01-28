@@ -126,11 +126,11 @@
                   </div>
                 </template>
               </td>
-              <td>{{ item.impressions | numeralFormat("0.[0]a") }}</td>
-              <td>{{ item.clicks | numeralFormat("0.[0]a") }}</td>
+              <td>{{   numeralFormat(item.impressions,"0.[0]a") }}</td>
+              <td>{{numeralFormat( item.clicks ,"0.[0]a") }}</td>
               <td>
                 <div>
-                  {{ item.ctr | numeralFormat("%0.[00]") }}
+                  {{   numeralFormat(item.ctr,"%0.[00]") }}
                   <span class="mx-1">
                     <score-indicator
                       :value="$SEO.CTRScore(item.ctr)"
@@ -140,7 +140,7 @@
                   ></span>
                 </div>
               </td>
-              <td>{{ item.position | numeralFormat("0.[0]") }}</td>
+              <td>{{  numeralFormat(item.position ,"0.[0]") }}</td>
             </tr>
           </tbody>
         </template>

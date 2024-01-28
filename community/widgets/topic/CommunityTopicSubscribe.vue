@@ -27,7 +27,7 @@
       <div class="d-flex border-between text-center my-2">
         <div class="w-50 p-1">
           <span class="d-block">Duration</span>
-          <span class="d-block display-1"
+          <span class="d-block text-h4"
             ><span class="small">{{ $t(subscription.name) }}</span></span
           >
         </div>
@@ -42,7 +42,7 @@
         <div v-if="trial" class="w-50 p-1">
           <span class="d-block">Trial</span>
 
-          <span class="d-block display-1"
+          <span class="d-block text-h4"
             >{{ trial.days }} <span class="small">days</span></span
           >
         </div>
@@ -51,13 +51,13 @@
       <div v-if="access.admin" class="d-flex text-center my-2">
         <div class="w-50">
           <span class="d-block">Subscribers</span>
-          <span class="d-block display-1"
+          <span class="d-block text-h4"
           >{{ topic.total_subscribers }} </span
           >
         </div>
         <div class="w-50">
           <span class="d-block">Total sells</span>
-          <span class="d-block display-1"
+          <span class="d-block text-h4"
           >{{ topic.total_sells }} </span
           >
         </div>

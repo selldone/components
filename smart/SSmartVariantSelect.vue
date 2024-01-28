@@ -15,7 +15,7 @@
 <template>
   <div :class="{ dark: dark, pen: readonly }" class="text-start">
     <h3 v-if="label" class="my-2">{{ label }}</h3>
-    <v-subheader v-if="hint">{{ hint }}</v-subheader>
+    <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
       tag="div"

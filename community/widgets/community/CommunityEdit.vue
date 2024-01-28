@@ -30,21 +30,21 @@
         icon="tune"
       ></s-widget-header>
 
-      <v-subheader>Assign a name to your community and provide a brief description outlining its purpose and value. </v-subheader>
+      <v-list-subheader>Assign a name to your community and provide a brief description outlining its purpose and value. </v-list-subheader>
       <v-text-field
         v-model="name"
         :label="$t('community.community.name')"
         :placeholder="$t('community.community.name_plc')"
         :messages="$t('community.community.name_msg')"
         :counter="64"
-        :append-icon="lock ? 'lock' : 'lock_open'"
-        @click:append="lock = !lock"
+        :append-inner-icon="lock ? 'lock' : 'lock_open'"
+        @click:append-inner="lock = !lock"
         :readonly="lock"
         :loading="busy_name"
         @input="checkName"
         :error-messages="name_error"
       >
-        <template slot="append">
+        <template v-slot:append-inner>
           <v-icon color="success" v-if="valid_name === name">check</v-icon>
         </template>
       </v-text-field>
@@ -73,7 +73,7 @@
         icon="image"
       ></s-widget-header>
 
-      <v-subheader> You can upload and modify the logo of your community here.</v-subheader>
+      <v-list-subheader> You can upload and modify the logo of your community here.</v-list-subheader>
       <div class="text-center">
         <image-input
           class="d-inline-block"
@@ -94,7 +94,7 @@
         icon="track_changes"
       ></s-widget-header>
 
-      <v-subheader> This is the default SEO configuration for your community. Please note that SEO settings can also be adjusted at the topic and category level.</v-subheader>
+      <v-list-subheader> This is the default SEO configuration for your community. Please note that SEO settings can also be adjusted at the topic and category level.</v-list-subheader>
 
       <s-smart-toggle
         v-model="nofollow"
@@ -112,7 +112,7 @@
         icon="leak_add"
       ></s-widget-header>
 
-      <v-subheader>Can other communities embed your topics? </v-subheader>
+      <v-list-subheader>Can other communities embed your topics? </v-list-subheader>
 
       <s-smart-toggle
         v-model="cross"
@@ -129,7 +129,7 @@
         icon="private_connectivity"
       ></s-widget-header>
 
-      <v-subheader>Define the access level and status of your community here. The structure of the community follows this hierarchy: Your Community > Categories > Topics > Posts. </v-subheader>
+      <v-list-subheader>Define the access level and status of your community here. The structure of the community follows this hierarchy: Your Community > Categories > Topics > Posts. </v-list-subheader>
 
       <s-smart-select
         v-model="stage"
@@ -160,8 +160,8 @@
         ></s-widget-header
       >
 
-      <v-subheader> You can add the attachment option in your community. Your customers can
-        attach up to 3 files, each 8MB, in their posts.</v-subheader>
+      <v-list-subheader> You can add the attachment option in your community. Your customers can
+        attach up to 3 files, each 8MB, in their posts.</v-list-subheader>
 
       <s-smart-select
         v-model="attachment"
@@ -212,7 +212,7 @@
       ></s-widget-header
       >
 
-      <v-subheader>Draft a concise set of guidelines for your community. </v-subheader>
+      <v-list-subheader>Draft a concise set of guidelines for your community. </v-list-subheader>
 
       <v-textarea
         v-model="rule"
@@ -252,6 +252,7 @@ import SSmartToggle from "@components/smart/SSmartToggle.vue";
 import SSmartSelect from "@components/smart/SSmartSelect.vue";
 import { CommunityAttachmentAccess } from "@core/enums/community/CommunityAttachmentAccess";
 import _ from "lodash-es";
+import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 export default {
   name: "CommunityEdit",
   components: {  SSmartSelect, SSmartToggle, ImageInput },
@@ -397,11 +398,7 @@ export default {
               Object.assign(this.community, data.community);
               this.$emit("update:community", this.community);
 
-              this.$vuetify.goTo(0, {
-                duration: 800,
-                offset: 0,
-                easing: "easeInOutQuad",
-              });
+              ScrollHelper.scrollToTop(0,'smooth')
             } else {
               // Add mode
               this.$emit("add:community", data.community);

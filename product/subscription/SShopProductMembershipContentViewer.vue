@@ -13,7 +13,9 @@
   -->
 
 <template>
-  <v-container class="s--shop-product-membership-content-viewer p-lg-5 p-md-4 p-3 master-article-container">
+  <v-container
+    class="s--shop-product-membership-content-viewer p-lg-5 p-md-4 p-3 master-article-container"
+  >
     <s-progress-loading v-if="busy_fetch"></s-progress-loading>
 
     <!-- ███████████████████████ Folders ███████████████████████ -->
@@ -26,20 +28,17 @@
 
       <v-row no-gutters class="my-3">
         <v-spacer></v-spacer>
+
         <v-text-field
-          v-model="search"
-          dense
           prepend-inner-icon="search"
-          solo
-          flat
-          background-color="transparent"
-          hide-details
           :label="$t('global.commons.search')"
-          single-line
-          class="min-width-150 max-width-field"
+          v-model="search"
           clearable
-        >
-        </v-text-field>
+          variant="plain"
+          single-line
+          hide-details
+          class="min-width-150 max-width-field"
+        ></v-text-field>
       </v-row>
 
       <v-slide-y-transition
@@ -52,24 +51,27 @@
         <v-list-item
           v-for="content in contents"
           :key="content.id"
-          @click="selected_content = content;current_rate=content.rate"
+          @click="
+            selected_content = content;
+            current_rate = content.rate;
+          "
           class="bg-white"
         >
           <v-list-item-icon>
-            <v-icon color="amber" large>folder</v-icon>
+            <v-icon color="amber" size="large">folder</v-icon>
           </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>
-              <b>{{ content.title }}</b>
-            </v-list-item-title>
-            <v-list-item-subtitle class="small">
-              <b>{{ getFromNowString(content.created_at) }}</b> ●
-              {{ getLocalDateString(content.created_at) }}
-            </v-list-item-subtitle>
-            <v-list-item-subtitle>
-              {{ content.description }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
+
+          <v-list-item-title>
+            <b>{{ content.title }}</b>
+          </v-list-item-title>
+          <v-list-item-subtitle class="small">
+            <b>{{ getFromNowString(content.created_at) }}</b> ●
+            {{ getLocalDateString(content.created_at) }}
+          </v-list-item-subtitle>
+          <v-list-item-subtitle>
+            {{ content.description }}
+          </v-list-item-subtitle>
+
           <v-list-item-action>
             <files-list-grouped-view
               :files="content.files"
@@ -82,7 +84,7 @@
       <div class="my-3">
         <v-pagination
           v-model="page"
-          circle
+          rounded
           :length="pageCount"
           @change="(val) => fetchContents(val)"
         />
@@ -100,10 +102,10 @@
 
       <v-row no-gutters class="my-3">
         <v-btn
-          text
+          variant="text"
           @click="selected_content = null"
           class="tnt fadeIn"
-          large
+          size="large"
           color="#1976D2"
         >
           <v-icon class="me-1">{{ $t("icons.chevron_back") }}</v-icon>
@@ -115,13 +117,13 @@
           v-model="current_rate"
           class="mb-2"
           dir="ltr"
-          color="yellow darken-3"
+          color="yellow-darken-3"
           background-color="grey darken-1"
           empty-icon="$vuetify.icons.ratingFull"
           hover
-          :small="$vuetify.breakpoint.smAndDown"
-          dense
-          @input="(val) => setMyRate(selected_content, val)"
+          :size="$vuetify.display.smAndDown && 'small'"
+          density="compact"
+          @update:model-value="(val) => setMyRate(selected_content, val)"
           :class="{ disabled: busy_rate }"
         />
       </v-row>
@@ -162,7 +164,7 @@ export default {
     options: { sortDesc: [true] },
 
     selected_content: null,
-    current_rate:1,
+    current_rate: 1,
 
     busy_rate: false,
   }),
@@ -175,6 +177,7 @@ export default {
 
   watch: {
     search: _.throttle(function (newVal, oldVal) {
+      if (!newVal && !oldVal) return;
       this.page = 1;
       this.fetchContents(this.page);
     }, window.SERACH_THROTTLE),
@@ -188,21 +191,24 @@ export default {
     fetchContents(page, sortBy = "id", sortDesc = true) {
       this.busy_fetch = true;
 
-
-      const handleSuccessResponse=({contents, total }) => {
+      const handleSuccessResponse = ({ contents, total }) => {
         this.totalItems = total;
         this.contents = contents;
-      }
+      };
 
-      window.$storefront.products.subscription.optimize(60).getContents(this.product.id,(page - 1) * this.itemsPerPage,this.itemsPerPage,
+      window.$storefront.products.subscription
+        .optimize(60)
+        .getContents(
+          this.product.id,
+          (page - 1) * this.itemsPerPage,
+          this.itemsPerPage,
           {
             search: this.search,
             sortBy: sortBy,
             sortDesc: sortDesc,
-          }
-
-      )
-          .cache(handleSuccessResponse)
+          },
+        )
+        .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
           this.showLaravelError(error);
@@ -220,21 +226,21 @@ export default {
           window.XAPI.POST_PRODUCT_MEMBERSHIP_CONTENTS_SEND_MY_RATING(
             this.getShop().name,
             this.product.id,
-            content.id
+            content.id,
           ),
           {
             rate: rate,
             // TODO: add 'review' message in the future if seller wants it! Available in database.
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
-            content.rate=data.rate
-            content.rate_count=data.rate_count
+            content.rate = data.rate;
+            content.rate_count = data.rate_count;
 
             this.showSuccessAlert(
               null,
-              "Thanks for your feedback. We received your content quality rating."
+              "Thanks for your feedback. We received your content quality rating.",
             );
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -252,17 +258,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-product-membership-content-viewer{
-
+.s--shop-product-membership-content-viewer {
 }
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-product-membership-content-viewer{
-
+.s--shop-product-membership-content-viewer {
 }
 </style>

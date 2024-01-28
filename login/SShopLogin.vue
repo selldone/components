@@ -49,7 +49,7 @@
       <!-- ====================================== Request ====================================== -->
       <div v-if="method === 'request'" class="fst" :class="{ '-focus': tel_f }">
         <div class="max-width-field mx-auto">
-          <vue-tel-input
+          <s-tel-input
             v-model="phone"
             @country-changed="(val) => (country = val)"
             enabledCountryCode
@@ -67,7 +67,7 @@
                 ? requestSendCode()
                 : undefined
             "
-          ></vue-tel-input>
+          ></s-tel-input>
 
           <div class="widget-buttons">
             <v-btn
@@ -181,9 +181,9 @@
           class="max-width-field mx-auto border-between-vertical text-start"
           color="transparent"
         >
-          <template v-for="(user, index) in users">
+          <template v-for="(user, index) in users"  :key="user.id">
             <v-list-item
-              :key="user.id"
+
               @click.stop="loginSelectUser(user)"
               class="zoomIn"
               :style="`animation-delay: ${index * 100}ms`"
@@ -234,8 +234,8 @@
           v-model="password"
           id="in_password"
           :rules="[GlobalRules.required(), GlobalRules.minLength(8)]"
-          :append-icon="password_show ? 'visibility' : 'visibility_off'"
-          @click:append="password_show = !password_show"
+          :append-inner-icon="password_show ? 'visibility' : 'visibility_off'"
+          @click:append-inner="password_show = !password_show"
           :type="password_show ? 'text' : 'password'"
         >
         </v-text-field>
@@ -281,7 +281,7 @@
       <!-- ====================================== Fast ====================================== -->
       <div v-if="method === 'fast'">
         <div class="-msg">
-          <div class="d-flex align-items-center justify-content-center">
+          <div class="d-flex align-items-center justify-center">
             <v-avatar><img :src="getShopIcon(shop.id)" /></v-avatar>
             <p class="subtitle-2 mx-2 my-2">{{ shop.title }}</p>
           </div>

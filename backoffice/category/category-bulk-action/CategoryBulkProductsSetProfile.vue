@@ -27,7 +27,7 @@
 
       <div class="widget-box mb-5">
         <s-widget-header title="Profile" icon="assignment"> </s-widget-header>
-        <v-subheader
+        <v-list-subheader
           ><ul>
             <li>
               The selected profile will be assigned to all products in the
@@ -36,7 +36,7 @@
             <li>
               Products in the <b>sub categories</b> will <b>not be affected</b>.
             </li>
-          </ul></v-subheader
+          </ul></v-list-subheader
         >
         <s-smart-select
           v-model="type"
@@ -84,7 +84,7 @@
         <v-expand-transition>
           <div v-if="!value">
             <div
-              class="min-height-20vh pa-2 d-flex align-center justify-center display-1 font-weight-light"
+              class="min-height-20vh pa-2 d-flex align-center justify-center text-h4 font-weight-light"
             >
               Clear profile for products!
             </div>

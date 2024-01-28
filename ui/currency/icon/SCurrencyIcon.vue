@@ -22,7 +22,7 @@
       '-small': small,
       '--s1': currency_obj.unicode.length > 1 || currency_obj.unicode === '﷼',
       'sub-caption b-12px': caption,
-      '--flag': flag||flagOnly,
+      '--flag': flag || flagOnly,
     }"
     :title="currency_obj.code"
     :style="
@@ -40,7 +40,7 @@
       class="me-1 -flag"
     />
 
-    {{ flagOnly?'':currency_obj.unicode }}
+    {{ flagOnly ? "" : currency_obj.unicode }}
   </span>
 </template>
 
@@ -98,9 +98,11 @@ export default {
     font-weight: 700;
     line-height: normal;
   }
+
   &.--s1 {
     font-size: 16px;
     font-weight: 800;
+
     &.-small {
       font-size: 12px;
       font-weight: 800;

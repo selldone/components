@@ -105,7 +105,7 @@
             <div style="min-height: 48px">
               <v-img
                 v-if="imagePath"
-                class="m-auto"
+                class="ma-auto"
                 :src="imagePath"
                 :width="48"
                 :height="48"
@@ -117,7 +117,7 @@
               class="mt-2"
               name="photo"
               ref="pond_profile"
-              :label-idle="`<i class='fas fa-image'></i>  Image`"
+              :label-idle="`<i class='fa:fas fa-image'></i>  Image`"
               allow-multiple="false"
               accepted-file-types="image/jpeg, image/png"
               :server="serverOptionsImage"
@@ -133,7 +133,7 @@
             <div style="min-height: 48px">
               <v-img
                 v-if="videoPath"
-                class="m-auto"
+                class="ma-auto"
                 :src="require('@components/assets/icons/film.svg')"
                 :width="48"
                 :height="48"
@@ -145,7 +145,7 @@
               class="mt-2"
               name="photo"
               :label-idle="
-                `<i class='fas fa-video'></i> ${$t('return_request.video')}`
+                `<i class='fa:fas fa-video'></i> ${$t('return_request.video')}`
               "
               allow-multiple="false"
               accepted-file-types="mp4,avi,mov,mpg"
@@ -162,7 +162,7 @@
             <div style="min-height: 48px">
               <v-img
                 v-if="voicePath"
-                class="m-auto"
+                class="ma-auto"
                 :src="require('@components/assets/icons/voice.svg')"
                 :width="48"
                 :height="48"
@@ -173,7 +173,7 @@
               class="mt-2"
               name="photo"
               :label-idle="
-                `<i class='fas fa-microphone'></i>  ${$t(
+                `<i class='fa:fas fa-microphone'></i>  ${$t(
                   'return_request.voice'
                 )}`
               "

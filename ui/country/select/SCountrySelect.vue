@@ -15,53 +15,73 @@
 <template>
   <v-autocomplete
     :label="label"
-    :value="value"
-    @input="(val) => $emit('input', val)"
+    :model-value="modelValue"
+    @update:model-value="
+      (val) => {
+        $emit('update:modelValue', val);
+        $emit('change', val);
+      }
+    "
     :items="countries"
-    item-text="name"
+    item-title="name"
     :item-value="itemValue"
     :messages="messages"
     :rounded="rounded"
-    :outlined="outlined"
     :return-object="returnObject"
     :disabled="disabled || !countries || !countries.length"
-    :dark="dark"
     :color="color"
     :flat="flat"
-    :filled="filled"
     :prepend-inner-icon="prependInnerIcon"
     :append-icon="appendIcon"
     :multiple="multiple"
     :chips="chips"
-    :dense="dense"
+    :density="dense ? 'compact' : undefined"
     :rules="required ? [GlobalRules.required()] : []"
     :readonly="readonly"
     :error-messages="errorMessages"
     :loading="loading"
-    @change="(val) => $emit('change', val)"
-    :solo="solo"
+    :variant="
+      variant
+        ? variant
+        : solo
+          ? 'solo'
+          : filled
+            ? 'filled'
+            : outlined
+              ? 'outlined'
+              : 'underlined'
+    "
     :hide-details="hideDetails"
     :clearable="clearable"
     :placeholder="placeholder"
-    :background-color="transparent ? 'transparent' : undefined"
+    :bg-color="transparent ? 'transparent' : undefined"
     :autocomplete="autocomplete"
   >
-    <template v-slot:item="{ item }">
-      <flag :iso="item.alpha2" :squared="false" />
-      <span class="px-3">{{ item.name }}</span>
+    <template v-slot:item="{ item, props }">
+      <v-list-item v-bind="props" :title="item.raw.name" class="text-start">
+        <template v-slot:prepend>
+          <flag :iso="item.raw.alpha2" :squared="false" class="me-2" />
+        </template>
+      </v-list-item>
     </template>
 
-    <template v-slot:selection="{ item }">
-      <component :is="chips ? 'v-chip' : 'span'" class="m-1">
-        <flag :iso="item.alpha2" :squared="false" />
-        <span v-if="!noCountryName" class="px-3 small">{{ item.name }}</span>
+    <template v-slot:chip="{ item, props }">
+      <component :is="chips ? 'v-chip' : 'span'" class="m-1" v-bind="props">
+        <flag :iso="item.raw.alpha2" :squared="false" />
+        <span v-if="!noCountryName" class="px-3 small">{{
+          item.raw.name
+        }}</span>
       </component>
     </template>
-    <template v-slot:prepend-inner
-      ><slot name="prepend-inner"></slot>
+    <template v-slot:prepend-inner>
+      <slot name="prepend-inner"></slot>
       <!-- Show value if countries not loaded yet! -->
-      <span v-if="value && isString(value) && !countries.length" class="single-line ms-1 me-2">
-        <flag :iso="value" :squared="false" class="me-2" /> {{ value }}
+      <span
+        v-if="modelValue && isString(modelValue) && !countries.length"
+        class="single-line ms-1 me-2"
+      >
+        <flag :iso="modelValue" :squared="false" class="me-2" />
+        {{ modelValue }}
       </span>
     </template>
   </v-autocomplete>
@@ -70,9 +90,9 @@
 <script>
 export default {
   name: "SCountrySelect",
-emits: ["change", "input"],
+  emits: ["change", "update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
     label: {},
     messages: {},
     errorMessages: {},
@@ -147,7 +167,7 @@ emits: ["change", "input"],
       default: false,
       type: Boolean,
     },
-
+    variant: {},
     solo: {
       default: false,
       type: Boolean,
@@ -177,7 +197,7 @@ emits: ["change", "input"],
 
       if (this.filter) {
         return this.$store.getters.getCountries.filter((it) =>
-          this.filter.includes(it.alpha2)
+          this.filter.includes(it.alpha2),
         );
       }
       return this.$store.getters.getCountries;

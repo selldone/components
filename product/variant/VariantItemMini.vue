@@ -27,9 +27,9 @@
     <v-col v-if="color" align-center justify-center class="p-1 text-nowrap">
       <v-icon :color="icon_color" class="me-1" small> palette </v-icon>
 
-      <s-color-circle :color="color" class="mr-1" :size="16">  </s-color-circle>
+      <s-color-circle :color="color" class="me-1" :size="16">  </s-color-circle>
 
-      <span class="small mr-1">{{ coloName }}</span>
+      <span class="small me-1">{{ coloName }}</span>
     </v-col>
 
     <v-col v-if="volume" class="p-1 text-nowrap">
@@ -48,7 +48,7 @@
 
     <v-col v-if="weight" class="p-1 text-nowrap">
       <v-icon :color="icon_color" class="me-1" small>
-        fas fa-weight-hanging
+        fa:fas fa-weight-hanging
       </v-icon>
 
       <span class="card-badge-info"> {{ weight }} </span>
@@ -61,7 +61,7 @@
     </v-col>
 
     <v-col v-if="type" class="p-1 text-nowrap">
-      <v-icon :color="icon_color" class="me-1" small> fas fa-toolbox </v-icon>
+      <v-icon :color="icon_color" class="me-1" small> fa:fas fa-toolbox </v-icon>
       <span class="card-badge-info"> {{ type }} </span>
     </v-col>
 

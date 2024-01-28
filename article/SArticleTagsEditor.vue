@@ -14,10 +14,10 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
-    <v-subheader>
+    <v-list-subheader>
       Allocate tags to blog articles or products to easily locate or filter them
       in various areas, such as the page builder, to showcase specific articles.
-    </v-subheader>
+    </v-list-subheader>
     <v-combobox
       :value="tags"
       @input="(val) => (tags = val.length > 5 ? val.slice(0, 5) : val)"
@@ -66,10 +66,10 @@
         <v-card-text class="text-start">
           <div class="widget-box my-5">
             <s-widget-header :title="`Old Tag: ${editing_tag_new}`" icon="label"></s-widget-header>
-            <v-subheader>
+            <v-list-subheader>
               Please proceed to modify this tag name. Be aware: The rest of the
               article tags will be automatically updated!
-            </v-subheader>
+            </v-list-subheader>
 
             <v-text-field v-model="editing_tag_new" label="New tag name">
             </v-text-field>

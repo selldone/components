@@ -49,7 +49,7 @@
               icon="discount"
             ></s-widget-header>
 
-            <h2 class="text-center mt-2 mb-5 display-1">
+            <h2 class="text-center mt-2 mb-5 text-h4">
               {{ $t("global.commons.price") }} <v-icon>close</v-icon> %{{
                 bulk_percent
               }}
@@ -60,7 +60,7 @@
             </p>
 
             <s-number-input
-              prepend-inner-icon="fas fa-percent"
+              prepend-inner-icon="fa:fas fa-percent"
               v-model="bulk_percent"
               :min="0"
               :max="90"
@@ -107,12 +107,12 @@
               :title="$t('global.commons.category')"
               icon="snippet_folder"
             ></s-widget-header>
-            <v-subheader
+            <v-list-subheader
               >Limit bulk action to a category and all
-              subcategories.</v-subheader
+              subcategories.</v-list-subheader
             >
 
-            <category-select
+            <b-shop-category-input
               v-if="!category"
               v-model="bulk_category"
               :placeholder="$t('global.commons.all') + ' *.*'"
@@ -123,7 +123,7 @@
               :messages="$t('inventory_list.category_filter_msg')"
               @input="fetchReport"
             >
-            </category-select>
+            </b-shop-category-input>
 
             <!-- The category has been selected before! -->
             <div v-else class="d-flex align-center text-start">
@@ -252,7 +252,7 @@
 <script>
 import SDateInput from "@components/ui/calendar/date-input/SDateInput.vue";
 import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
-import CategorySelect from "@components/backoffice/category/CategorySelect.vue";
+import BShopCategoryInput from "@components/backoffice/shop/category/input/BShopCategoryInput.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
 import BulkPreview from "@components/backoffice/incentives/discount-code/inventory-bulk-action/BulkPreview.vue";
@@ -271,7 +271,7 @@ export default {
     SValueDashed,
     STimeProgressBar,
     SDateInput,
-    CategorySelect,
+    BShopCategoryInput,
 
     SNumberInput,
   },

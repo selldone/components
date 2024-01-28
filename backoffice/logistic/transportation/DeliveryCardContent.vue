@@ -47,26 +47,26 @@
       <div class="flex-grow-1">
         <p class="m-1 small">
           {{ $t("global.commons.distance") }}:
-          <b>{{ transportation.distance | numeralFormat("0,0") }} Km</b>
+          <b>{{   numeralFormat(transportation.distance,"0,0") }} Km</b>
         </p>
 
         <p class="m-1 small">
           {{ $t("global.commons.weight") }}:
-          <b>{{ transportation.max_weight | numeralFormat("0,0") }} Kg</b>
+          <b>{{  numeralFormat(transportation.max_weight ,"0,0") }} Kg</b>
         </p>
         <p class="m-1 small">
           {{ $t("global.commons.size") }}:
           <span dir="ltr">
             <b :title="$t('global.commons.width')"
-              >{{ transportation.max_w | numeralFormat("0,0") }} cm
+              >{{   numeralFormat(transportation.max_w,"0,0") }} cm
             </b>
-            <v-icon class="mx-1" small>fas fa-times</v-icon>
+            <v-icon class="mx-1" small>fa:fas fa-times</v-icon>
             <b :title="$t('global.commons.length')"
-              >{{ transportation.max_l | numeralFormat("0,0") }} cm
+              >{{  numeralFormat(transportation.max_l,"0,0") }} cm
             </b>
-            <v-icon class="mx-1" small>fas fa-times</v-icon>
+            <v-icon class="mx-1" small>fa:fas fa-times</v-icon>
             <b :title="$t('global.commons.height')"
-              >{{ transportation.max_h | numeralFormat("0,0") }} cm
+              >{{  numeralFormat(transportation.max_h,"0,0") }} cm
             </b></span
           >
         </p>

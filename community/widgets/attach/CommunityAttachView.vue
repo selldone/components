@@ -24,7 +24,7 @@
             <b>{{ file.name }}</b>
           </v-list-item-title>
           <v-list-item-subtitle>
-            {{ file.size | numeralFormat("0.[0] b") }}
+            {{  numeralFormat(file.size ,"0.[0] b") }}
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>

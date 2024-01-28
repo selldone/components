@@ -31,7 +31,7 @@
               <b>{{ file.name }}</b>
             </v-list-item-title>
             <v-list-item-subtitle>
-              {{ file.size | numeralFormat("0.[0] b") }}
+              {{   numeralFormat(file.size,"0.[0] b") }}
             </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
@@ -57,7 +57,7 @@
           class="mt-3 mx-3"
         ></v-file-input>
 
-        <v-subheader>
+        <v-list-subheader>
           <div>
             Acceptable files:
             <span v-if="mims">
@@ -65,7 +65,7 @@
             </span>
             <span v-else>*.*</span>
           </div>
-        </v-subheader>
+        </v-list-subheader>
       </div>
     </v-expand-transition>
   </div>

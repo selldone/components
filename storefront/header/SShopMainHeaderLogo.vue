@@ -57,7 +57,7 @@
       </v-avatar>
     </component>
 
-    <template v-if="shop && $vuetify.breakpoint.smAndUp">
+    <template v-if="shop && $vuetify.display.smAndUp">
       <span
         v-if="isMobile"
         class="z2 ms-2 font-weight-bold zoomIn d-block single-line"

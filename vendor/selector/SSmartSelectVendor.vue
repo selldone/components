@@ -18,7 +18,7 @@
       <v-icon class="me-1" :color="dark ? '#fff' : '#111'">storefront</v-icon>
       {{ label }}
     </h3>
-    <v-subheader v-if="hint">{{ hint }}</v-subheader>
+    <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
       tag="div"
@@ -67,9 +67,9 @@
             <b v-else>
               {{ vendor.name }}
             </b>
-            <v-subheader style="height: auto" class="p-0">
+            <v-list-subheader style="height: auto" class="p-0">
               {{ vendor.description }}
-            </v-subheader>
+            </v-list-subheader>
           </div>
 
           <div class="min-width-100">

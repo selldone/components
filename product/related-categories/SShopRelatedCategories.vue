@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div v-if="categories?.length > 0" class="s--shop-related-categories">
     <v-container>
-      <h2 class="font-weight-black display-3 text-start">
+      <h2 class="font-weight-black text-h2 text-start">
         {{ $t("product.related_categories_title") }}
       </h2>
     </v-container>

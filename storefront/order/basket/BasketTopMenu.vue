@@ -82,7 +82,7 @@
           >
             <v-list-item-avatar
               rounded
-              :size="$vuetify.breakpoint.mdAndUp ? 64 : 48"
+              :size="$vuetify.display.mdAndUp ? 64 : 48"
             >
               <v-img
                 aspect-ratio="1"

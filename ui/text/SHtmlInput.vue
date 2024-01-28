@@ -13,7 +13,8 @@
   -->
 
 <template>
-  <p
+  <div
+    v-once
     ref="textarea"
     contenteditable="true"
     @input="updateHTML"
@@ -21,7 +22,7 @@
     @blur="updateMentions"
     :data-placeholder="placeholder ? placeholder : label"
     @paste="onPast"
-  ></p>
+  ></div>
 </template>
 
 <script>
@@ -31,7 +32,7 @@ export default {
   name: "SHtmlInput",
 
   props: {
-    value: {},
+    modelValue: {},
     label: {},
     placeholder: {},
     mentions: {},
@@ -39,7 +40,7 @@ export default {
   },
 
   watch: {
-    value(value) {
+    modelValue(value) {
       if (!value) {
         console.log("Change mention text value", value);
         this.$el.innerHTML = value;
@@ -47,7 +48,8 @@ export default {
     },
   },
   mounted() {
-    this.$el.innerHTML = this.value;
+
+    this.$el.innerHTML = this.modelValue;
 
     $(this.$el).on("click", (evt) => {
       // console.log('click',evt.target)
@@ -83,7 +85,7 @@ export default {
       if (this.$refs.textarea.innerHTML === "<br>")
         this.$refs.textarea.innerHTML = ""; // Show empty place holder!
       // trim html output:
-      this.$emit("input", this.$refs.textarea.innerHTML);
+      this.$emit("update:modelValue", this.$refs.textarea.innerHTML);
       this.$emit("update:text", this.$refs.textarea.innerText);
     },
     updateMentions() {
@@ -133,10 +135,12 @@ export default {
     margin-bottom: 4px;
     animation: all 0.3s ease;
   }
+
   &:empty::before {
     content: attr(data-placeholder);
     font-size: 16px;
     opacity: 0.3;
+    pointer-events: none;
   }
 
   &:after {

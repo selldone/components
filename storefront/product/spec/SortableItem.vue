@@ -110,7 +110,7 @@
               placeholder="Value of spec.."
               @keypress.enter.stop="addInnerItem(item, i)"
             >
-              <template v-slot:append>
+              <template v-slot:append-inner>
                 <v-btn
                   v-if="i !== 1"
                   small

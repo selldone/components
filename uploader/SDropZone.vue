@@ -42,7 +42,7 @@
       <div>Drop landing page file here or click top input.</div>
       <v-spacer></v-spacer>
       <template v-if="multiple">
-        <h3 class="display-3 font-weight-black mt-3">
+        <h3 class="text-h2 font-weight-black mt-3">
           <span class="text-success">{{ uploaded_count }}</span>
           <span class="mx-1 text-muted font-weight-thin">/</span>
           {{ accepted_count }}

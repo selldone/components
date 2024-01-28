@@ -22,22 +22,22 @@
       <h4 class="mx-3">{{ $t("community.commons.suggestion_list") }}</h4>
 
       <v-slide-group show-arrows class="center-items">
-        <v-slide-item
+        <v-slide-group-item
           v-for="profile in profiles"
           :key="profile.user_id"
           v-slot="{}"
         >
           <v-card
             class="ma-2 ma-sm-3 ma-md-4 user-select-none"
-            :height="$vuetify.breakpoint.xsOnly ? 160 : 200"
-            :width="$vuetify.breakpoint.xsOnly ? 100 : 150"
+            :height="$vuetify.display.xsOnly ? 160 : 200"
+            :width="$vuetify.display.xsOnly ? 100 : 150"
             outlined
             rounded
           >
             <v-card-text
               class="d-flex align-center justify-center flex-column h-100"
             >
-              <v-avatar :size="$vuetify.breakpoint.xsOnly ? 64 : 86">
+              <v-avatar :size="$vuetify.display.xsOnly ? 64 : 86">
                 <img :src="getUserAvatar(profile.user_id)" />
               </v-avatar>
 
@@ -51,7 +51,7 @@
                    color="#1976D2"
                    dark
                    width="100%"
-                   :small="$vuetify.breakpoint.xsOnly"
+                   :small="$vuetify.display.xsOnly"
                    @click="follow(profile, !profile.follow)"
                    :loading="busy_follow === profile.user_id"
                    :outlined="!profile.follow"
@@ -66,7 +66,7 @@
              </div>
             </v-card-text>
           </v-card>
-        </v-slide-item>
+        </v-slide-group-item>
       </v-slide-group>
     </div>
   </v-col>

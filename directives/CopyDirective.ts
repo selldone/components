@@ -30,50 +30,60 @@
  * @author [Your Name]
  */
 
-import type { VNode, DirectiveBinding } from "vue";
+import { DirectiveBinding, ObjectDirective } from 'vue';
 
-export default {
+/**
+ * A Vue directive to copy text to the clipboard when an element is clicked.
+ * It adds an 'animate-underline' class to the element and listens for click events.
+ * On click, it either copies the directive's value or the element's innerText.
+ *
+ * Usage: v-copy-to-clipboard="textToCopy"
+ *
+ * @module CopyToClipboardDirective
+ */
+const CopyToClipboardDirective: ObjectDirective<HTMLElement & { __copy_click__?: (event: Event) => void }> = {
   /**
-   * Called when the directive is bound to the DOM.
+   * Called when the directive is mounted to the DOM.
+   * Adds an underline animation class and sets up a click event listener.
+   *
+   * @param {HTMLElement} el - The element the directive is bound to.
+   * @param {DirectiveBinding} binding - An object containing the directive's value and arguments.
    */
-  bind: function (
-    el: HTMLElement,
-    binding: DirectiveBinding<any>,
-    vnode: VNode
-  ) {
-    // Add underline animation class
+  mounted(el, binding: DirectiveBinding<string>) {
     el.classList.add("animate-underline");
 
-    // Attach event listener
-    el.addEventListener("click", function (event: Event) {
-      const valueToCopy = binding.value
-        ? binding.value
-        : (event.target as HTMLElement).innerText;
+    el.__copy_click__ = (event: Event) => {
+      const valueToCopy = binding.value ? binding.value : (event.target as HTMLElement).innerText;
 
-      if (
-        vnode.context &&
-        typeof (vnode.context as any).copyToClipboard === "function"
-      ) {
-        (vnode.context as any).copyToClipboard(valueToCopy);
+      if (binding.instance && typeof binding.instance.copyToClipboard === 'function') {
+        binding.instance.copyToClipboard(valueToCopy);
       }
-    });
+    };
+
+    el.addEventListener("click", el.__copy_click__);
   },
 
   /**
-   * Called when the directive's value is updated.
-   * Currently, this is empty since the binding value is not dynamic.
+   * Optional: Called when the directive's element is updated in the DOM.
+   *
+   * @param {HTMLElement} el - The element the directive is bound to.
+   * @param {DirectiveBinding} binding - An object containing the directive's value and arguments.
    */
-  update: function (newValue: any, oldValue: any) {},
+  updated(el, binding: DirectiveBinding<string>) {
+    // Implementation if needed for updates
+  },
 
   /**
-   * Called when the directive's element is removed from the DOM.
-   * This can be used to cleanup any event listeners or perform other cleanup tasks.
+   * Called when the directive's element is unmounted from the DOM.
+   * Cleans up by removing the click event listener.
+   *
+   * @param {HTMLElement} el - The element the directive is bound to.
    */
-  unbind: function (
-    el: HTMLElement,
-    binding: DirectiveBinding<any>,
-    vnode: VNode
-  ) {
-    // Cleanup tasks (if needed)
+  unmounted(el) {
+    if (el.__copy_click__) {
+      el.removeEventListener("click", el.__copy_click__);
+    }
   },
 };
+
+export default CopyToClipboardDirective;

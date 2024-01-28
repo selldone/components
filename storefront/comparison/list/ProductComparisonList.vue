@@ -41,7 +41,7 @@
               style="border-radius: 12px"
               width="48px"
               height="48px"
-              class="m-auto"
+              class="ma-auto"
             />
 
             <span>{{ product.title?.limitWords(5) }}</span>
@@ -64,7 +64,7 @@
                 style="border-radius: 18px"
                 min-width="240px"
                 width="160px"
-                class="m-auto pp z1"
+                class="ma-auto pp z1"
                 @click="
                   () => {
                     goToProduct(product.id);
@@ -191,7 +191,7 @@
               {{ $t("product_comparison.list.warranty") }}
             </td>
             <td v-for="product in shown_products" :key="product.key">
-              <v-icon v-if="product.warranty" color="#444" class="ml-2">
+              <v-icon v-if="product.warranty" color="#444" class="ms-2">
                 verified_user
               </v-icon>
               <span v-if="product.warranty">{{ product.warranty }}</span>
@@ -215,7 +215,7 @@
               <s-color-circle
                 v-if="product.variant && product.variant.color"
                 :color="product.variant.color"
-                class="mr-1 hover-scale"
+                class="me-1 hover-scale"
                 :size="14"
               >
               </s-color-circle>
@@ -328,7 +328,7 @@
                 class="text-start"
               >
                 <v-icon color="#aaa" size="12px" class="vertical-align-middle">
-                  fas fa-plus
+                  fa:fas fa-plus
                 </v-icon>
                 {{ key }}: <b v-html="dictionarySpec(pro)" />
               </p>
@@ -358,7 +358,7 @@
                 class="text-start"
               >
                 <v-icon color="#aaa" size="12px" class="vertical-align-middle">
-                  fas fa-minus
+                  fa:fas fa-minus
                 </v-icon>
 
                 {{ key }}: <b v-html="dictionarySpec(con)" />
@@ -396,7 +396,7 @@
               {{ $t("product_comparison.list.rating_count") }}
             </td>
             <td v-for="product in shown_products" :key="product.key">
-              {{ product.rate_count | numeralFormat("0,0a") }}
+              {{  numeralFormat(product.rate_count ,"0,0a") }}
             </td>
           </tr>
         </tbody>
@@ -524,7 +524,7 @@ export default {
     },
 
     compact_mode() {
-      return this.$vuetify.breakpoint.smAndDown;
+      return this.$vuetify.display.smAndDown;
     },
 
     shown_products() {

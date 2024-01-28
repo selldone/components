@@ -18,7 +18,7 @@
     :class="{ 'pointer-event-none': community && !access.admin }"
   >
     <div class="widget-box">
-      <s-widget-header title="Telegram channel" icon="fab fa-telegram">
+      <s-widget-header title="Telegram channel" icon="fa:fab fa-telegram">
       </s-widget-header>
 
       <p dir="ltr" class="mt-3">

@@ -15,7 +15,7 @@
 <template>
   <div :class="{ dark: dark }" class="text-start">
     <h3 v-if="label" class="my-2">{{ label }}</h3>
-    <v-subheader v-if="hint">{{ hint }}</v-subheader>
+    <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
       tag="div"
@@ -32,25 +32,29 @@
         @click="toggle(task[itemValue])"
       >
         <div class="d-flex align-center mnh">
-          <v-icon
-            color="primary"
-            class="me-2 -thin -gray flex-grow-0"
-            :class="{ 'avatar-gradient': value.includes(task[itemValue]) }"
-            >{{
-              value.includes(task[itemValue])
-                ? "lens"
-                : "radio_button_unchecked"
-            }}</v-icon
-          >
+          <div style="min-width: 32px" class="position-relative me-2">
+            <v-icon
+              color="primary"
+              class="-thin -gray flex-grow-0 h-auto center-absolute"
+              size="24"
+              :class="{ 'avatar-gradient': value.includes(task[itemValue]) }"
+              >{{
+                value.includes(task[itemValue])
+                  ? "lens"
+                  : "radio_button_unchecked"
+              }}
+            </v-icon>
+          </div>
+
           <div class="flex-grow-1">
             <b v-html="$t(task[itemText])"> </b>
-            <v-subheader
+            <v-list-subheader
               v-if="itemDescription"
               style="height: auto"
               class="p-0"
             >
               {{ $t(task[itemDescription]) }}
-            </v-subheader>
+            </v-list-subheader>
           </div>
 
           <v-icon v-if="itemIcon">{{ task[itemIcon] }}</v-icon>

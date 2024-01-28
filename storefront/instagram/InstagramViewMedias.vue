@@ -44,14 +44,14 @@
             <v-row no-gutters class="card-hover-icons">
               <div class="p-1">
                 <v-icon dark>favorite</v-icon
-                ><span class="ml-2">{{
-                  media.likes | numeralFormat("0.[0]a")
+                ><span class="ms-2">{{
+                    numeralFormat(media.likes,"0.[0]a")
                 }}</span>
               </div>
               <div class="p-1">
                 <v-icon dark>mode_comment</v-icon
-                ><span class="ml-2">{{
-                  media.comments | numeralFormat("0.[0]a")
+                ><span class="ms-2">{{
+                   numeralFormat(media.comments,"0.[0]a")
                 }}</span>
               </div>
             </v-row>
@@ -67,7 +67,7 @@
     <v-dialog
       v-model="dialog_media"
       max-width="935"
-      :fullscreen="$vuetify.breakpoint.smAndDown && window.innerWidth < 760"
+      :fullscreen="$vuetify.display.smAndDown && window.innerWidth < 760"
       @input="
         (val) => {
           if (!val) {
@@ -79,7 +79,7 @@
       retain-focus
     >
       <!-- Header > Master Top (Mobile only) -->
-      <header v-if="$vuetify.breakpoint.mdAndDown" class="master-header">
+      <header v-if="$vuetify.display.mdAndDown" class="master-header">
         <v-btn icon @click="dialog_media = false" tile
           ><v-icon>arrow_back_ios</v-icon></v-btn
         >
@@ -106,17 +106,17 @@
                 <img :src="profile_image"
               /></v-avatar>
               <div class="w-100">
-                <div class="d-flex justify-content-center align-items-center">
+                <div class="d-flex justify-center align-items-center">
                   <span class="user-id">{{ instagram.userName }}</span>
                   <v-spacer></v-spacer>
                   <v-btn
                     v-if="editable"
                     @click="showCreateProduct(selected_media)"
-                    class="ml-2 default-font tnt"
+                    class="ms-2 default-font tnt"
                     color="primary"
                     dark
                     small
-                    ><v-icon class="mr-1" small>add</v-icon>
+                    ><v-icon class="me-1" small>add</v-icon>
                     <b>{{ $t("instagram.create_product") }}</b></v-btn
                   >
                 </div>
@@ -146,13 +146,13 @@
 
             <div class="post-caption-content">
               <v-avatar
-                v-if="!$vuetify.breakpoint.mdAndDown"
+                v-if="!$vuetify.display.mdAndDown"
                 size="32"
                 class="item avatar"
                 ><img :src="caption_image"
               /></v-avatar>
               <div class="item flex-grow-1">
-                <span class="user-id mr-2">{{ caption_name }}</span>
+                <span class="user-id me-2">{{ caption_name }}</span>
 
                 <p
                   v-if="editable && focus_caption && !product_data"
@@ -303,7 +303,7 @@
                 ></span>
               </div>
               <div class="like-count">
-                {{ selected_media.likes | numeralFormat("0,0") }} likes
+                {{   numeralFormat(selected_media.likes,"0,0") }} likes
               </div>
               <time
                 class="post-time"
@@ -370,12 +370,12 @@
 
           <!-- Header > User (Mobile only) -->
 
-          <header v-if="$vuetify.breakpoint.mdAndDown" class="post-header">
+          <header v-if="$vuetify.display.mdAndDown" class="post-header">
             <v-avatar size="32" class="avatar"
               ><img :src="getShopImagePath(instagram.picture)"
             /></v-avatar>
             <div>
-              <div class="d-flex justify-content-center align-items-center">
+              <div class="d-flex justify-center align-items-center">
                 <span class="user-id">{{ instagram.userName }}</span>
               </div>
               <span class="caption">{{
@@ -386,16 +386,16 @@
             <v-btn
               v-if="editable"
               @click="showCreateProduct(selected_media)"
-              class="ml-2 default-font tnt"
+              class="ms-2 default-font tnt"
               color="primary"
               dark
               small
-              ><v-icon class="mr-1" small>add</v-icon>
+              ><v-icon class="me-1" small>add</v-icon>
               <b>{{ $t("instagram.create_product") }}</b></v-btn
             >
           </header>
 
-          <div v-if="$vuetify.breakpoint.mdAndDown" style="padding-top: 58px">
+          <div v-if="$vuetify.display.mdAndDown" style="padding-top: 58px">
             <!-- Spacer for master top header -->
           </div>
         </div>
@@ -408,7 +408,7 @@
       v-model="new_product_dialog"
       max-width="480"
       scrollable
-      :fullscreen="$vuetify.breakpoint.smAndDown && window.innerWidth < 760"
+      :fullscreen="$vuetify.display.smAndDown && window.innerWidth < 760"
     >
       <v-card>
         <v-img
@@ -441,7 +441,7 @@
               :disabled="!in_currency"
               :rules="[GlobalRules.required()]"
             >
-              <template v-slot:append>
+              <template v-slot:append-inner>
                 <s-currency-input
                   v-model="in_currency"
                   :activeCurrencies="shop.currencies"

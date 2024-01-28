@@ -47,7 +47,7 @@
             </v-col>
 
             <!-- background chart -->
-            <v-sparkline
+            <s-sparkline
               :smooth="20"
               color="#29323977"
               :line-width="2"
@@ -66,7 +66,7 @@
               "
               class="fadeIn delay_500"
             >
-            </v-sparkline>
+            </s-sparkline>
           </v-row>
         </v-fade-transition>
       </community-image>
@@ -98,9 +98,10 @@
 import CommunityImage from "../image/CommunityImage.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
 import { TimeSeries } from "@core/timeserie/TimeSeries";
+import SSparkline from "@components/chart/sparkline/SSparkline.vue";
 export default {
   name: "CommunityCategoryCard",
-  components: { TrendSparkline, CommunityImage },
+  components: {SSparkline, TrendSparkline, CommunityImage },
   props: {
     category: {
       required: true,

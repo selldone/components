@@ -34,9 +34,9 @@
       <v-spacer></v-spacer>
     </h2>
 
-    <v-subheader class="px-0">
+    <v-list-subheader class="px-0">
       {{ $t("order_page.delivery.subtitle") }}
-    </v-subheader>
+    </v-list-subheader>
 
     <div v-if="canConfirmReceived" class="mt-3 mb-5 p-2">
       <div class="widget-buttons">
@@ -247,7 +247,7 @@
           :marker-position="receiver_info.location"
           show-user-location
           class="blur-animate rounded-28px overflow-hidden"
-          :class="{ blured: busy_edit_receiver }"
+          :class="{ blurred: busy_edit_receiver }"
         />
 
         <div

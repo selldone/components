@@ -14,7 +14,7 @@
 
 <template>
   <div class="position-relative min-height-10vh my-5">
-    <div class="v-msg display-1">{{$t('global.commons.waiting_for_payment')}}</div>
+    <div class="v-msg text-h4">{{$t('global.commons.waiting_for_payment')}}</div>
   </div>
 </template>
 

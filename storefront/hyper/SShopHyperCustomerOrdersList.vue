@@ -21,7 +21,7 @@
     <router-link
       v-for="item in orders"
       :key="item.id"
-      class="subtitle-2 px-1 row-hover pointer-pointer black--text d-flex flex-column justify-content-center"
+      class="subtitle-2 px-1 row-hover pointer-pointer black--text d-flex flex-column justify-center"
       :to="{ name: 'HyperOrderPage', params: { basket_id: item.id } }"
       style="min-height: 120px; padding-top: 32px; padding-bottom: 32px"
     >

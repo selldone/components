@@ -38,8 +38,8 @@
           v-if="has_more"
           style="height: 50vh"
           v-intersect.quiet="
-            (entries) => {
-              if (entries[0].isIntersecting) fetchComments(page + 1);
+            (isIntersecting) => {
+              if (isIntersecting) fetchComments(page + 1);
             }
           "
         >

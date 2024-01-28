@@ -136,7 +136,7 @@
             <price-view
               :amount="total_amount_remain_for_pay"
               :currency="currency.code"
-              class="display-2"
+              class="text-h3"
             ></price-view>
 
             <v-chip
@@ -177,7 +177,7 @@
 
                     <tr v-if="bill.items_discount">
                       <td>
-                        <v-icon small>fas fa-gift</v-icon>
+                        <v-icon small>fa:fas fa-gift</v-icon>
                         {{ $t("global.commons.discount") }}
                       </td>
 
@@ -191,7 +191,7 @@
 
                     <tr v-if="bill.offer">
                       <td>
-                        <v-icon small>fas fa-gift</v-icon>
+                        <v-icon small>fa:fas fa-gift</v-icon>
                         {{ $t("global.commons.offer") }}
                       </td>
 
@@ -205,7 +205,7 @@
 
                     <tr v-if="bill.delivery_price !== null">
                       <td>
-                        <v-icon small>fas fa-shipping-fast</v-icon>
+                        <v-icon small>fa:fas fa-shipping-fast</v-icon>
                         {{ $t("global.commons.shipping") }}
                       </td>
 
@@ -221,7 +221,7 @@
 
                     <tr v-if="bill.discount_code">
                       <td>
-                        <v-icon small>fas fa-percentage</v-icon>
+                        <v-icon small>fa:fas fa-percentage</v-icon>
                         {{ $t("global.commons.discount_code") }}
                       </td>
                       <td>
@@ -233,7 +233,7 @@
                     </tr>
                     <tr v-if="bill.club">
                       <td>
-                        <v-icon small>fas fa-gem</v-icon>
+                        <v-icon small>fa:fas fa-gem</v-icon>
                         {{ $t("global.commons.customer_club") }}
                       </td>
                       <td>
@@ -245,7 +245,7 @@
                     </tr>
                     <tr v-if="bill.coupon">
                       <td>
-                        <v-icon small>fas fa-ticket-alt</v-icon>
+                        <v-icon small>fa:fas fa-ticket-alt</v-icon>
                         {{ $t("global.commons.coupon") }}
                       </td>
                       <td>
@@ -258,7 +258,7 @@
 
                     <tr v-if="bill.lottery">
                       <td>
-                        <v-icon small>fas fa-dice</v-icon>
+                        <v-icon small>fa:fas fa-dice</v-icon>
                         {{ $t("global.commons.prize") }}
                       </td>
                       <td>
@@ -271,7 +271,7 @@
 
                     <tr v-if="bill.tax">
                       <td>
-                        <v-icon small>fas fa-coins</v-icon>
+                        <v-icon small>fa:fas fa-coins</v-icon>
                         {{ $t("global.commons.tax") }}
                       </td>
                       <td>
@@ -320,8 +320,8 @@
           <i
             class="text-success mx-1"
             :class="{
-              'fas fa-circle-notch': total_amount_remain_for_pay > 0,
-              'fas fa-circle': total_amount_remain_for_pay === 0,
+              'fa:fas fa-circle-notch': total_amount_remain_for_pay > 0,
+              'fa:fas fa-circle': total_amount_remain_for_pay === 0,
             }"
           />
           {{ $t("global.payment_form.pay_amount_by_gift_cards") }}
@@ -346,7 +346,7 @@
           </p>
 
           <payment-button
-            class="m-auto pointer-pointer"
+            class="ma-auto pointer-pointer"
             pos=""
             small
             purple
@@ -446,7 +446,7 @@
                 sm="6"
               >
                 <payment-button
-                  class="m-auto pointer-pointer"
+                  class="ma-auto pointer-pointer"
                   :pos="GetUserSelectedCurrencyName(gateway.currency, true)"
                   small
                   :blue="gateway.cod"
@@ -509,7 +509,7 @@
             </p>
 
             <payment-button
-              class="m-auto pointer-pointer"
+              class="ma-auto pointer-pointer"
               pos=""
               small
               purple
@@ -563,16 +563,16 @@
       >
 
       <div class="position-relative">
-        <qrcode
+        <vue-qrcode
           class="my-6 mx-auto zoomIn delay_300 blur-animate"
-          :class="{ blured: success_end_countdown }"
+          :class="{ blurred: success_end_countdown }"
           :value="qrCode"
           :options="{
             width: 300,
             color: { light: '#fff', dark: '#000' },
           }"
         >
-        </qrcode>
+        </vue-qrcode>
 
         <v-icon
           v-if="success_end_countdown"

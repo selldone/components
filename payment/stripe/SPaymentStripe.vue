@@ -21,7 +21,7 @@
         :amount="amount"
         :currency="currency.toUpperCase()"
         x-large
-        class="display-2"
+        class="text-h3"
       ></price-view>
     </div>
 

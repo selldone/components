@@ -28,7 +28,7 @@
       </div>
 
       <v-btn
-        icon
+        icon variant="text"
         color="red"
         v-if="clearable && last_image"
         @click.stop="
@@ -39,19 +39,21 @@
         "
         title="Clear image"
         class="ms-1"
-        ><v-icon>close</v-icon></v-btn
       >
+        <v-icon>close</v-icon>
+      </v-btn>
 
       <v-btn
-        icon
+        icon variant="text"
         class="ms-1"
         @click="
           force_edit = !force_edit;
           last_image = null;
         "
         :title="$t('global.actions.edit')"
-        ><v-icon>edit</v-icon></v-btn
       >
+        <v-icon>edit</v-icon>
+      </v-btn>
     </div>
     <!-- --------- Normal mode --------- -->
 
@@ -84,10 +86,10 @@
             v-if="focused && !disablePast"
             class="fadeIn absolute-top-start"
             style="z-index: 1"
-            small
+            size="small"
             :dark="dark"
-            >fas fa-paste</v-icon
-          >
+            >fa:fas fa-paste
+          </v-icon>
           <file-pond
             v-if="!clearable || !last_image"
             v-intersect="onIntersect"
@@ -99,8 +101,8 @@
               (placeholderImage && !last_image
                 ? `<img src='${placeholderImage}' class='placeholder'>`
                 : '') +
-              `<p class='text-dark m-0'><i class='fas fa-plus text-success ml-2'></i> ${$t(
-                'global.image_uploader.label'
+              `<p class='text-dark m-0'><i class='fa:fas fa-plus text-success ms-2'></i> ${$t(
+                'global.image_uploader.label',
               )}  </p>`
             "
             :allow-multiple="allowMultiple"
@@ -124,9 +126,9 @@
             "
             credits="false"
             :allowImageTransform="allowImageTransform"
-            @addfile="(error,file) => ($emit('onAddFile',{error,file}))"
-            @processfilestart="e=>$emit('onProcessFileStart',e)"
-            @processfileabort="e=>$emit('onProcessFileAbort',e)"
+            @addfile="(error, file) => $emit('onAddFile', { error, file })"
+            @processfilestart="(e) => $emit('onProcessFileStart', e)"
+            @processfileabort="(e) => $emit('onProcessFileAbort', e)"
           />
 
           <p class="small file-size-limit">
@@ -134,9 +136,9 @@
           </p>
 
           <v-btn
-            fab
-            depressed
-            small
+            variant="flat"
+            icon
+            size="small"
             v-if="clearable && last_image"
             @click.stop="
               () => {
@@ -147,8 +149,9 @@
             "
             title="Clear image"
             class="absolute-top-end m-2 z2"
-            ><v-icon>close</v-icon></v-btn
           >
+            <v-icon>close</v-icon>
+          </v-btn>
         </div>
       </div>
     </v-expand-transition>
@@ -158,7 +161,16 @@
 <script>
 export default {
   name: "SImageUploader",
-  emits: ["response", "new-path", "new-url", "onClear", "onError", "onAddFile", "onProcessFileStart", "onProcessFileAbort"],
+  emits: [
+    "response",
+    "new-path",
+    "new-url",
+    "onClear",
+    "onError",
+    "onAddFile",
+    "onProcessFileStart",
+    "onProcessFileAbort",
+  ],
   props: {
     label: {
       required: false,
@@ -349,19 +361,19 @@ export default {
     //――――――――――――――――――――――  END Editor key listener ――――――――――――――――――――
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     //――――――――――――――――――――――  REMOVE key listener ――――――――――――――――――――
     document.removeEventListener("keydown", this.key_listener_keydown);
     document.removeEventListener("keyup", this.key_listener_keyup);
   },
 
   methods: {
-    onIntersect(entries, observer) {
-      this.focused = entries[0].isIntersecting;
+    onIntersect(isIntersecting) {
+      this.focused = isIntersecting;
     },
 
-    handleFilePondError(error,file,status) {
-      this.$emit('onError',error)
+    handleFilePondError(error, file, status) {
+      this.$emit("onError", error);
       if (error.main && error.sub)
         return this.showErrorAlert(error.main, error.sub);
       else if (error.main) return this.showErrorAlert(null, error.main);

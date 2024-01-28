@@ -1058,7 +1058,7 @@ export default {
             },
             embeds: {
               label:
-                '<span class="fab fa-youtube"></span> Youtube / URL / HTML', // (string) A label for an embeds addon
+                '<span class="fa:fab fa-youtube"></span> Youtube / URL / HTML', // (string) A label for an embeds addon
               placeholder: this.$t("global.article.editor.embed_placeholder"), // (string) Placeholder displayed when entering URL to embed
               oembedProxy:
                 //"iframe.ly/api/oembed?api_key=5d9cb4c1e4895409be3d1f&iframe=1",

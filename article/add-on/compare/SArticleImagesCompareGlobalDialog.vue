@@ -52,10 +52,10 @@
       </v-card-title>
       <v-card-text>
         <v-tabs-items v-model="tab" class="bg-transparent">
-          <v-tab-item>
+          <v-window-item>
             <div dir="ltr" class="widget-box -large mb-5">
               <s-widget-header title="Images" icon="image"></s-widget-header>
-              <v-subheader>
+              <v-list-subheader>
                 <div>
                   You have the option to upload a pair of images to form a
                   comparative element in your article. The system takes care of
@@ -63,7 +63,7 @@
                   establish a default width, navigate to the 'size' tab. Please
                   select your two images here.
                 </div>
-              </v-subheader>
+              </v-list-subheader>
 
               <v-row dense>
                 <v-col cols="12" md="6">
@@ -86,21 +86,21 @@
                 </v-col>
               </v-row>
             </div>
-          </v-tab-item>
-          <v-tab-item>
+          </v-window-item>
+          <v-window-item>
             <div class="widget-box -large mb-5">
               <s-widget-header
                 title="Relative image size"
                 icon="fit_screen"
               ></s-widget-header>
-              <v-subheader>
+              <v-list-subheader>
                 <div>
                   <b>Unit: em</b>, An em is a unit in the field of typography,
                   equal to the currently specified point size. For example, one
                   em in a 16-point typeface is 16 points. Therefore, this unit
                   is the same for all typefaces at a given point size.
                 </div>
-              </v-subheader>
+              </v-list-subheader>
 
               <v-slider
                 v-model="pack.max_width"
@@ -117,7 +117,7 @@
                 </template>
               </v-slider>
             </div>
-          </v-tab-item>
+          </v-window-item>
         </v-tabs-items>
       </v-card-text>
       <v-card-actions>

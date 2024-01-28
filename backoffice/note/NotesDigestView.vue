@@ -14,8 +14,8 @@
 
 <template>
   <div v-if="notes?.length" class="d--notes-digest-view">
-    <v-list class="border-between-vertical" two-line>
-      <note-view
+    <v-list class="border-between-vertical" lines="two">
+      <b-shop-note-view
         v-for="note in notes.sortByKey('id', false).limit(limit)"
         :key="note.id"
         :shop="shop"
@@ -23,24 +23,27 @@
         :note="note"
         class="fadeIn pp"
         :class="{ 'hover-scale-small force-top bg-white border-0': hoverAble }"
-        @click.native="show(note)"
+        @click="show(note)"
         @delete="DeleteItemByID(notes, note.id)"
       >
-      </note-view>
+      </b-shop-note-view>
     </v-list>
-    <div v-if="limit && notes.length>limit" class="blue--text pa-2 pp" @click="show(notes[0])">
-      {{$t("global.commons.more")}}...
+    <div
+      v-if="limit && notes.length > limit"
+      class="text-blue pa-2 pp"
+      @click="show(notes[0])"
+    >
+      {{ $t("global.commons.more") }}...
     </div>
   </div>
 </template>
 
 <script>
-
-import NoteView from "./NoteView.vue";
+import BShopNoteView from "../shop/note/view/BShopNoteView.vue";
 
 export default {
   name: "NotesDigestView",
-  components: { NoteView },
+  components: { BShopNoteView },
 
   props: {
     shop: {
@@ -55,13 +58,12 @@ export default {
     },
     limit: {},
 
-    page:{
+    page: {
       // Assigned target.
     },
-    popup:{
+    popup: {
       // Assigned target.
     },
-
   },
   data: () => ({}),
 
@@ -70,12 +72,17 @@ export default {
   watch: {},
   created() {},
   mounted() {},
-  beforeDestroy() {},
+  beforeUnmount() {},
 
   methods: {
-    show(note){
-      this.showGlobalShopNoteDialog(this.notes,note.element_id,this.page?.id,this.popup?.id)
-    }
+    show(note) {
+      this.showGlobalShopNoteDialog(
+        this.notes,
+        note.element_id,
+        this.page?.id,
+        this.popup?.id,
+      );
+    },
   },
 };
 </script>

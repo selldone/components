@@ -71,10 +71,10 @@
             :border="false"
           ></s-value-copy-box>
 
-          <v-subheader>
+          <v-list-subheader>
             <v-icon color="green" class="me-1" small>check_circle</v-icon>
             {{ $t("share_order.valid_period") }}
-          </v-subheader>
+          </v-list-subheader>
         </v-card-text>
 
         <v-card-actions>

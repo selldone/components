@@ -86,22 +86,30 @@
     ///  background: rgba(255, 255, 255, 0.8);
     text-align: center;
   }
-  .filepond--drop-label {
-    height: auto !important;
-    position: relative !important;
-    margin: 8px;
-    border: none !important;
 
-    .placeholder {
+  .filepond--root{
+    .filepond--drop-label {
+      height: auto !important;
+      position: relative !important;
       margin: 8px;
-      max-height: 130px;
-    }
-    p {
-      margin: 0 !important;
-      font-weight: 700;
-      color: #333 !important;
+      border: none !important;
+
+      label{
+        margin: auto;
+      }
+
+      .placeholder {
+        margin: 8px;
+        max-height: 130px;
+      }
+      p {
+        margin: 0 !important;
+        font-weight: 700;
+        color: #333 !important;
+      }
     }
   }
+
 
   &.has-value {
     .filepond--drop-label {

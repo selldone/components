@@ -18,7 +18,7 @@
     class="loader-to-bar"
     :class="{ '-relative': relative }"
     :color="color"
-    rounded
+    rounded rounded-bar  :height="height" :stream="stream"
   ></v-progress-linear>
 </template>
 
@@ -32,6 +32,9 @@ export default {
       default: "success",
     },
     relative: { type: Boolean },
+    height:{},
+    stream:Boolean,
+
   },
   computed: {
     animation() {

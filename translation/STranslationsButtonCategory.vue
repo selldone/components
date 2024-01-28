@@ -18,7 +18,7 @@
     :label="label"
     :default-value="category[translationKey]"
 
-    :translations.sync="category.translations"
+    v-model:translations="category.translations"
     :translation-key="translationKey"
     :url="
       IS_VENDOR_PANEL

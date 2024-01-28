@@ -30,10 +30,10 @@
         approved</small
       >
     </div>
-    <v-subheader class="px-0">
+    <v-list-subheader class="px-0">
       {{ $t("global.virtual_item_info.title") }} <span class="mx-2">|</span>
       <b>VIT-{{ virtualItem.id }}</b>
-    </v-subheader>
+    </v-list-subheader>
 
     <!-- ================== OUTPUT VALUES (SECRETS) =========================-->
 

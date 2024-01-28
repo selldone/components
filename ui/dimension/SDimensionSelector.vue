@@ -37,8 +37,8 @@
     :height="height"
     :background-color="backgroundColor"
   >
-    <template v-slot:append>
-      <slot name="append"></slot>
+    <template v-slot:append-inner>
+      <slot name="append-inner"></slot>
     </template>
   </v-select>
 </template>

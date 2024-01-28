@@ -19,7 +19,7 @@
     <v-container fluid>
       <v-row>
         <!--  ▃▃▃▃▃▃▃▃▃▃ Product Title (Large) ▃▃▃▃▃▃▃▃▃▃ -->
-        <v-col v-if="!$vuetify.breakpoint.lgAndUp" cols="12">
+        <v-col v-if="!$vuetify.display.lgAndUp" cols="12">
           <h1>
             {{ product.title }}
             <v-chip
@@ -29,7 +29,7 @@
               dark
               class="mx-2"
             >
-              <v-icon x-small left>fas fa-exclamation</v-icon>
+              <v-icon x-small left>fa:fas fa-exclamation</v-icon>
               {{ $t("product_info.fake") }}
             </v-chip>
           </h1>
@@ -49,7 +49,7 @@
             :shop="shop"
             :product="product"
             :current-variant="current_variant"
-            :vertical="$vuetify.breakpoint.smAndUp"
+            :vertical="$vuetify.display.smAndUp"
           ></s-shop-product-slide-show>
         </v-col>
 
@@ -121,7 +121,7 @@
 
             <template v-if="product.rate_count && product.rate">
               <b class="mx-2 -rate-value">{{
-                product.rate | numeralFormat("0.0")
+                 numeralFormat(product.rate ,"0.0")
               }}</b>
 
               <v-rating
@@ -139,7 +139,7 @@
 
           <!--  ▃▃▃▃▃▃▃▃▃▃ Product Title (Large) ▃▃▃▃▃▃▃▃▃▃ -->
 
-          <h1 v-if="$vuetify.breakpoint.lgAndUp">
+          <h1 v-if="$vuetify.display.lgAndUp">
             {{ product.title }}
             <v-chip
               v-if="!has_original_warranty"
@@ -148,7 +148,7 @@
               dark
               class="mx-2"
             >
-              <v-icon x-small left>fas fa-exclamation</v-icon>
+              <v-icon x-small left>fa:fas fa-exclamation</v-icon>
               {{ $t("product_info.fake") }}
             </v-chip>
           </h1>

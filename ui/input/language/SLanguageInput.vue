@@ -15,45 +15,6 @@
 <template>
   <div :style="`max-width: ${maxWidth}`" :class="{ 'v-input': !iconOnly }">
     <!-- v-input : css of widget-box same effect like normal inputs -->
-    <!--
-  <v-autocomplete
-      v-model="select_language"
-      :items="languages"
-      item-value="code"
-      item-text="title"
-      :hide-details="hideDetails"
-      :return-object="false"
-      :style="`max-width: ${maxWidth}`"
-      :rounded="rounded"
-      :placeholder="
-      placeholder ? placeholder : $t('global.placeholders.language')
-    "
-      :label="label ? label : $t('global.commons.language')"
-      :messages="messages"
-      :dense="dense"
-      :outlined="outlined"
-      :filled="filled"
-      @change="(v) => $emit('change', v)"
-      :readonly="readonly"
-      :multiple="multiple"
-      :solo="solo"
-      :clearable="clearable"
-      :color="color"
-      :flat="flat"
-      :disabled="disabled"
-      :background-color="transparent?'transparent':undefined"
-  >
-    <template v-slot:item="data">
-      <span class="px-3">{{ data.item.title }}</span>
-    </template>
-
-    <template v-slot:selection="data">
-      <span :class="{ 'vertical-block': isVertical }">
-        <span class="px-3" v-if="!menu">{{ data.item.title }}</span>
-      </span>
-    </template>
-  </v-autocomplete>
--->
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Icon Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
     <s-circle-button
@@ -70,7 +31,7 @@
 
     <v-text-field
       v-else
-      :value="multiple?select_language?.map(l=>getLanguageName(l)).join(', '): selected_language_object?.title"
+      :modelValue="multiple?select_language?.map(l=>getLanguageName(l)).join(', '): selected_language_object?.title"
       :hide-details="hideDetails"
       :rounded="rounded"
       :placeholder="
@@ -79,7 +40,7 @@
       :persistent-placeholder="persistentPlaceholder"
       :label="label ? label : $t('global.commons.language')"
       :messages="messages"
-      :dense="dense"
+      :density="dense?'compact':undefined"
       :outlined="outlined"
       :filled="filled"
       readonly
@@ -89,8 +50,8 @@
       :color="color"
       :flat="flat"
       :disabled="disabled"
-      :background-color="transparent ? 'transparent' : undefined"
-      @click.native="readonly || disabled ? undefined : showDialog()"
+      :bg-color="transparent ? 'transparent' : undefined"
+      @click="readonly || disabled ? undefined : showDialog()"
       @click:clear="
         select_language = null;
         $nextTick(() => {
@@ -100,8 +61,9 @@
       :prepend-inner-icon="prependInnerIcon"
       :append-icon="appendIcon"
       :suffix="suffix"
+      variant="underlined"
     >
-      <template v-slot:append-outer>
+      <template v-slot:append>
         <slot name="append-outer"></slot>
       </template>
 
@@ -112,7 +74,7 @@
       v-if="dialog_pre"
       v-model="show_dialog"
       :available-languages="availableLanguages"
-      :selected-language.sync="select_language"
+      v-model:selected-language="select_language"
       @change="
         (val) =>
           $nextTick(() => {
@@ -132,9 +94,10 @@ import SLanguagesDialog from "./SLanguagesDialog.vue";
 
 export default {
   name: "SLanguageInput",
+  emits: ["change", "update:modelValue"],
   components: { SLanguagesDialog },
   props: {
-    value: {
+    modelValue: {
       // type: String
     },
     color: {},
@@ -243,15 +206,15 @@ export default {
   },
   watch: {
     select_language(local) {
-      this.$emit("input", local);
+      this.$emit("update:modelValue", local);
     },
-    value(language) {
+    modelValue(language) {
       this.select_language = language;
     },
   },
 
   created() {
-    this.select_language = this.value;
+    this.select_language = this.modelValue;
   },
 
   methods: {

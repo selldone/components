@@ -120,11 +120,12 @@ import { Currency } from "@core/enums/payment/Currency";
 import SPaymentForm from "@components/payment/SPaymentForm.vue";
 import RadialProgressBar from "@components/ui/progress/RadialProgressBar.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
-import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
+import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
 import { SetupService } from "@core/server/SetupService";
 import { ProductType } from "@core/enums/product/ProductType";
 import _ from "lodash-es";
 import { BasketHelper } from "@core/helper/shop/BasketHelper";
+import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 
 export default {
   name: "SStorefrontMasterPaymentDialog",
@@ -288,7 +289,7 @@ export default {
           // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
           if (!this.USER()) {
             // Save array of guest codes in local storage:
-            LocalStorages.AddCurrentGuestCodeToHistory(
+            StorefrontLocalStorages.AddCurrentGuestCodeToHistory(
               type,
               bill.order_id,
               code
@@ -558,7 +559,7 @@ export default {
           {
             params: {
               code: !this.USER()
-                ? LocalStorages.GetShopHistoryGuestCodeOfOrder(
+                ? StorefrontLocalStorages.GetShopHistoryGuestCodeOfOrder(
                     order_id
                   ) /*🥶 Guest*/
                 : undefined,
@@ -730,7 +731,7 @@ export default {
     ) {
       this.busy_buy = true;
       // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
-      let guest_code = LocalStorages.GetShopGuestCode(); // Auto set in headers!
+      let guest_code = StorefrontLocalStorages.GetShopGuestCode(); // Auto set in headers!
 
       let url = window.XAPI.POST_BUY_BASKET(this.shop_name, this.type, gateway);
 
@@ -747,7 +748,7 @@ export default {
           gateway
         );
         // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
-        guest_code = LocalStorages.GetShopHistoryGuestCodeOfOrder(
+        guest_code = StorefrontLocalStorages.GetShopHistoryGuestCodeOfOrder(
           this.shop_bill.order_id
         ); // Service payments are after basket reservation! (Bills payments)
       } else if (this.type === "AVOCADO") {
@@ -951,11 +952,7 @@ export default {
           this.delayedHide();
 
           // Scroll to top page:
-          this.$vuetify.goTo(0, {
-            duration: 800,
-            offset: 0,
-            easing: "easeInOutQuad",
-          });
+          ScrollHelper.scrollToTop(0,'smooth')
         })
         .finally(() => {
           this.busy_buy = false;
@@ -1044,11 +1041,7 @@ export default {
       }
 
       // Scroll to top page:
-      this.$vuetify.goTo(0, {
-        duration: 800,
-        offset: 0,
-        easing: "easeInOutQuad",
-      });
+      ScrollHelper.scrollToTop(0,'smooth')
 
       _.delay(() => {
         this.exist_payment_form = false;

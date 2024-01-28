@@ -17,7 +17,7 @@
     v-model="newValue"
     :rounded="rounded"
     :outlined="outlined"
-    :dense="dense"
+    :density="dense && 'compact'"
     :class="{
       'center-input': textCenter,
       'no-padding-nf': noPadding,
@@ -25,7 +25,7 @@
     :label="label /*+ focus + '  ' + newValue*/"
     :placeholder="placeholder"
     persistent-placeholder
-    :append-outer-icon="icon"
+    :append-icon="icon"
     :filled="filled"
     :single-line="singleLine"
     :hide-details="hideDetails && !messages"
@@ -54,12 +54,10 @@
       }
     "
     :loading="loading"
-    :solo="solo"
-    :flat="flat"
+    :variant="variant?variant:solo?'solo':flat?'flat':'underlined'"
+
     :readonly="readonly || is_locked"
-    :shaped="shaped"
-    :background-color="backgroundColor"
-    :dark="dark"
+    :bg-color="backgroundColor"
     @keyup.enter="
       (e) => {
         if (!newValue) {
@@ -70,7 +68,7 @@
     "
     :disabled="disabled"
   >
-    <template v-slot:append>
+    <template v-slot:append-inner>
       <v-btn
         v-if="lock"
         class="me-2"
@@ -86,11 +84,11 @@
         v-if="hasAlternativeButton && !readonly"
         :disabled="is_locked"
         @click.stop="newValue = alternativeButtonValue"
-        depressed
+        variant="flat"
         :color="newValue === alternativeButtonValue ? 'success' : 'default'"
         :class="dense ? '' : 'margin-n7px'"
         :rounded="rounded"
-        :small="dense"
+        :size="dense? 'small':undefined"
       >
         {{ alternativeButtonText }}
       </v-btn>
@@ -101,11 +99,11 @@
         @click.stop="mpminus()"
         :disabled="is_locked"
       >
-        <v-icon small> fas fa-minus </v-icon>
+        <v-icon size="small"> fa:fas fa-minus </v-icon>
       </v-btn>
       <v-icon v-if="appendIcon">{{ appendIcon }}</v-icon>
 
-      <slot name="append"></slot>
+      <slot name="append-inner"></slot>
 
       <v-btn
         v-if="clearable"
@@ -128,7 +126,7 @@
         icon
         @click.stop="mpplus()"
       >
-        <v-icon small> fas fa-plus </v-icon>
+        <v-icon size="small"> fa:fas fa-plus </v-icon>
       </v-btn>
       <v-icon v-if="prependInnerIcon">{{ prependInnerIcon }}</v-icon>
 
@@ -263,11 +261,6 @@ export default {
       default: false,
     },
 
-    shaped: {
-      type: Boolean,
-      default: false,
-    },
-
     alternativeButtonText: {},
     alternativeButtonValue: {},
     appendIcon: {},
@@ -346,7 +339,7 @@ export default {
       if (this.max === undefined || this.newValue < this.max) {
         this.newValue = NumberHelper.toEnglishFloat(
           NumberHelper.toEnglishFloat(this.newValue, this.decimal) + this.step,
-          this.decimal
+          this.decimal,
         );
         this.$emit("input", this.newValue);
         this.$emit("change", this.newValue);
@@ -356,7 +349,7 @@ export default {
       if (this.newValue > this.min) {
         this.newValue = NumberHelper.toEnglishFloat(
           NumberHelper.toEnglishFloat(this.newValue, this.decimal) - this.step,
-          this.decimal
+          this.decimal,
         );
         this.$emit("input", this.newValue);
         this.$emit("change", this.newValue);

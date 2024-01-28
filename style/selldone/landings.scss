@@ -49,7 +49,6 @@ $mod_2: 1.5; // desktop
 
 
   h1 {
-    color: #252528;
     font-size: $mod_1*$mod_1*$mod_1*$mod_1 *1rem;
     @include fluid-type($min_width, $max_width, $mod_1*$mod_1*$mod_1 *$min_font, $mod_2*$mod_2*$mod_2 *$min_font);
 
@@ -57,7 +56,6 @@ $mod_2: 1.5; // desktop
   }
 
   h2 {
-    color: #252528;
     font-size: $mod_1*$mod_1*$mod_1 *1rem;
     @include fluid-type($min_width, $max_width, $mod_1*$mod_1*$mod_1 *$min_font, $mod_2*$mod_2*$mod_2 *$min_font);
 
@@ -65,7 +63,6 @@ $mod_2: 1.5; // desktop
   }
 
   h3 {
-    color: #252528;
     font-size: $mod_1*$mod_1 *1rem;
     @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
 
@@ -73,14 +70,12 @@ $mod_2: 1.5; // desktop
   }
 
   h4 {
-    color: #252528;
     font-size: $mod_1*$mod_1 *0.9rem;
     @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
     line-height: 140%;
   }
 
   h5 {
-    color: #252528;
     font-size: $mod_1*$mod_1 *0.75rem;
     @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
     line-height: 140%;
@@ -162,7 +157,6 @@ $mod_2: 1.5; // desktop
       }
     }
     p {
-      color: #252528;
       font-size: 1.1rem;
     }
 
@@ -238,14 +232,12 @@ $mod_2: 1.5; // desktop
 
 
 .h1-big {
-  color: #252528;
   font-size: $mod_1*$mod_1*$mod_1*$mod_1 *1rem;
   @include fluid-type($min_width, 1200px, 28px, 90px);
 
   line-height: 140%;
 }
 .h1-medium {
-  color: #252528;
   font-size: $mod_1*$mod_1*$mod_1 *1.2rem;
   @include fluid-type($min_width, $max_width, 24px, 48px);
 

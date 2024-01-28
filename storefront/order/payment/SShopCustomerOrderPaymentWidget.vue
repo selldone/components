@@ -32,14 +32,14 @@
       <s-currency-icon :currency="order.currency" gradient></s-currency-icon>
     </h2>
 
-    <v-subheader v-if="payment" class="px-0">
+    <v-list-subheader v-if="payment" class="px-0">
       <v-icon x-small :color="payment.livemode ? 'green' : 'amber'" class="me-1"
-        >fas fa-circle</v-icon
+        >fa:fas fa-circle</v-icon
       >
       {{
         payment.livemode ? $t("global.status.live") : $t("global.status.test")
       }}
-    </v-subheader>
+    </v-list-subheader>
 
     <!-- Step 1 : بررسی پرداخت -->
     <div class="text-start">
@@ -98,8 +98,8 @@
     <div
       class="mt-5 overflow-hidden"
       :class="{
-        'mx-n5': $vuetify.breakpoint.smAndDown,
-        'rounded-xl mb-4 border': !$vuetify.breakpoint.smAndDown,
+        'mx-n5': $vuetify.display.smAndDown,
+        'rounded-xl mb-4 border': !$vuetify.display.smAndDown,
       }"
     >
       <v-simple-table>
@@ -445,9 +445,9 @@
 
             <!------------ Bills (For service or subscriptions) ------------>
 
-            <template v-for="(bill, index) in bills">
+            <template v-for="(bill, index) in bills" :key="'bl-' + index">
               <tr
-                :key="'bl-' + index"
+
                 :class="{
                   'border-start-blue': bill.status === BillStatus.PENDING.code,
                   'border-start-green no-border-bottom-tr':

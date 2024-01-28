@@ -142,13 +142,13 @@
           >
             <circle-image
               v-if="getImagePath(item.return_request)"
-              class="m-auto"
+              class="ma-auto"
               :src="getImagePath(item.return_request)"
               :size="48"
             />
             <v-img
               v-else
-              class="m-auto"
+              class="ma-auto"
               :src="require('@components/assets/icons/camera.svg')"
               :width="48"
               :height="48"
@@ -171,7 +171,7 @@
             :class="{ disabled: !getVideoPath(item.return_request) }"
           >
             <v-img
-              class="m-auto"
+              class="ma-auto"
               :src="require('@components/assets/icons/film.svg')"
               :width="48"
               :height="48"
@@ -192,7 +192,7 @@
             :class="{ disabled: !getVoicePath(item.return_request) }"
           >
             <v-img
-              class="m-auto"
+              class="ma-auto"
               :src="require('@components/assets/icons/voice.svg')"
               :width="48"
               :height="48"
@@ -238,7 +238,7 @@
         </div>
 
         <p class="text-start mt-3">
-          <i class="fas fa-exclamation-triangle ml-1" />
+          <i class="fas fa-exclamation-triangle ms-1" />
           {{ $t("global.basket_return_request_view.message_for_admin") }}
         </p>
       </div>

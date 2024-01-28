@@ -164,13 +164,13 @@
                 <b>
                   {{ f.filename }}
                 </b>
-                <v-subheader style="height: auto" class="p-0">
+                <v-list-subheader style="height: auto" class="p-0">
                   {{ f.size | numeralFormat("0.[0] b") }}
                   <span class="mx-1">/</span>
                   <span :title="getLocalTimeString(f.created_at)">{{
                     getFromNowString(f.created_at)
                   }}</span>
-                </v-subheader>
+                </v-list-subheader>
               </div>
 
 

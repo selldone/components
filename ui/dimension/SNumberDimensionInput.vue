@@ -33,7 +33,7 @@
     :rounded="rounded"
     :background-color="backgroundColor"
   >
-    <template v-slot:append>
+    <template v-slot:append-inner>
       <div style="min-height: 38px"></div>
     </template>
   </s-dimension-selector>
@@ -67,7 +67,7 @@
     :background-color="backgroundColor"
     :lock="lock"
   >
-    <template v-slot:append>
+    <template v-slot:append-inner>
       <s-dimension-selector
         v-model="dim_val"
         hide-details

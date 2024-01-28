@@ -19,7 +19,7 @@
       $emit('select');
       clicked = true;
     "
-    class="position-relative d-flex flex-column align-center justify-center transition-ease-in-out hover-up"
+    class="position-relative d-flex flex-column align-center justify-center hover-up"
     :class="{ disabled: clicked }"
   >
     <div class="position-relative">
@@ -57,31 +57,27 @@
           :size="16"
           :src="getShopImagePath(category.vendor.icon, 64)"
         ></circle-image>
-        <v-icon v-else small>r_mobiledata</v-icon>
+        <v-icon v-else size="small">r_mobiledata</v-icon>
       </div>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Products Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div
-        class="bottom-r small white--text"
+        class="bottom-r small text-white"
         :title="$t('admin_shop.products.folder_widget.products')"
       >
-        <v-icon x-small dark>fas fa-box</v-icon>
-        {{ category.products | numeralFormat("0,0a") }}
+        <v-icon size="x-small" dark>fa:fas fa-box</v-icon>
+        {{ numeralFormat(category.products, "0,0a") }}
       </div>
-
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Custom Page ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div
-          v-if="category.page_id"
-          class="bottom-l"
-          :title="`Has custom page | ${category.page_id}.`"
+        v-if="category.page_id"
+        class="bottom-l"
+        :title="`Has custom page | ${category.page_id}.`"
       >
-        <v-icon small dark>layers</v-icon>
+        <v-icon size="small" dark>layers</v-icon>
       </div>
-
-
-
     </div>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Title ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -96,13 +92,9 @@
       class="small text-muted"
       :title="$t('admin_shop.products.folder_widget.views')"
     >
-      <v-icon class="me-1" x-small>fas fa-eye</v-icon>
-      {{ category.visits | numeralFormat("0,0a") }}
+      <v-icon class="me-1" size="x-small">fa:fas fa-eye</v-icon>
+      {{ numeralFormat(category.visits, "0,0a") }}
     </div>
-
-
-
-
   </div>
 </template>
 
@@ -150,7 +142,7 @@ export default {
   right: 12px;
 }
 
-.bottom-l{
+.bottom-l {
   position: absolute;
   top: 62px;
   left: 12px;

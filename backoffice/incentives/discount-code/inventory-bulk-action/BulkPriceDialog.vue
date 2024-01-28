@@ -44,14 +44,14 @@
           </v-tabs>
 
           <v-tabs-items v-model="tab" class="mt-3">
-            <v-tab-item>
+            <v-window-item>
               <div class="widget-box mb-5">
 
                 <s-widget-header :title="$t('global.commons.price')" icon="price_change"></s-widget-header>
 
 
 
-                <h2 class="text-center mt-2 mb-5 display-1">
+                <h2 class="text-center mt-2 mb-5 text-h4">
                   ####### <v-icon>close</v-icon> (1 <v-icon>add</v-icon> %{{
                     bulk_percent
                   }})
@@ -62,7 +62,7 @@
                 </p>
 
                 <s-number-input
-                  prepend-inner-icon="fas fa-percent"
+                  prepend-inner-icon="fa:fas fa-percent"
                   v-model="bulk_percent"
                   :min="-90"
                   :max="90"
@@ -72,10 +72,10 @@
                   class="strong-field"
                 ></s-number-input>
               </div>
-            </v-tab-item>
-            <v-tab-item>
+            </v-window-item>
+            <v-window-item>
               <div class="widget-box mb-5">
-                <h2 class="text-center mt-2 mb-5 display-1">
+                <h2 class="text-center mt-2 mb-5 text-h4">
                   #######
                   <v-icon
                     @click="bulk_constant = -bulk_constant"
@@ -99,11 +99,11 @@
                   allow-negative
                 ></s-price-input>
               </div>
-            </v-tab-item>
+            </v-window-item>
 
-            <v-tab-item>
+            <v-window-item>
               <div class="widget-box mb-5">
-                <h2 class="text-center mt-2 mb-5 display-1">
+                <h2 class="text-center mt-2 mb-5 text-h4">
                   {{ "#".repeat(12 - ("" + bulk_ending).length) }}
                   {{ bulk_ending }}
                 </h2>
@@ -121,16 +121,16 @@
                   :currency="bulk_currency"
                 ></s-price-input>
               </div>
-            </v-tab-item>
+            </v-window-item>
           </v-tabs-items>
 
           <div class="widget-box mb-5">
 
             <s-widget-header :title="$t('global.commons.category')" icon="snippet_folder"></s-widget-header>
-            <v-subheader>Limit bulk action to a category and all subcategories.</v-subheader>
+            <v-list-subheader>Limit bulk action to a category and all subcategories.</v-list-subheader>
 
 
-            <category-select
+            <b-shop-category-input
               v-model="bulk_category"
               :placeholder="$t('global.commons.all') + ' *.*'"
               persistent-placeholder
@@ -140,7 +140,7 @@
               :messages="$t('inventory_list.category_filter_msg')"
               @change="fetchReport"
             >
-            </category-select>
+            </b-shop-category-input>
 
             <!-- ━━━━━━━━━━━━━━━━━━ 📊 Report ━━━━━━━━━━━━━━━━━━ -->
             <s-progress-loading v-if="busy_report"></s-progress-loading>
@@ -249,7 +249,7 @@
 </template>
 
 <script>
-import CategorySelect from "@components/backoffice/category/CategorySelect.vue";
+import BShopCategoryInput from "@components/backoffice/shop/category/input/BShopCategoryInput.vue";
 import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
@@ -264,7 +264,7 @@ export default {
 
     BulkPreview,
     SValueDashed,
-    CategorySelect,
+    BShopCategoryInput,
     SCurrencyInput,
     SPriceInput,
     SNumberInput,

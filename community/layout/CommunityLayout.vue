@@ -200,6 +200,7 @@ export default {
   },
   watch: {
     search: _.debounce(function (newVal, oldVal) {
+      if(!newVal && !oldVal) return;
       this.searchPosts(1);
     }, 1500),
   },

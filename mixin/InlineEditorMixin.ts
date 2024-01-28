@@ -12,13 +12,12 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import Vue from "vue";
 
 /**
  * Mixin to provide inline editing capabilities.
  * @mixin InlineEditorMixin
  */
-export const InlineEditorMixin = Vue.extend({
+export const InlineEditorMixin =({
   props: {},
   data() {
     return {};

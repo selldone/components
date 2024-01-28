@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div v-if="products?.length > 0 || busy" class="s--shop-related-products">
     <v-container>
-      <h2 class="font-weight-black display-3 text-start">
+      <h2 class="font-weight-black text-h2 text-start">
         {{ $t("product.related_products_title") }}
       </h2>
     </v-container>
@@ -25,7 +25,7 @@
         <div class="-product-container">
           <div class="-product-card d-flex align-center flex-column pa-5">
             <div class="ma-auto">
-              <h3 class="display-3 font-weight-thin mb-2 text-muted">
+              <h3 class="text-h2 font-weight-thin mb-2 text-muted">
                 {{ $t("related_products.card.title") }}
               </h3>
 
@@ -95,7 +95,7 @@
               <div class="-card-title">
                 <span class="flex-grow-1">{{ item.title }}</span>
                 <span v-if="item.rate_count" class="-rate-view">
-                  {{ item.rate | numeralFormat("0.0") }}
+                  {{  numeralFormat(item.rate ,"0.0") }}
 
                   <v-rating
                     v-model="item.rate"

@@ -34,14 +34,16 @@
 @import "selldone/text-shadow";
 @import "selldone/html-style";
 @import "selldone/scale";
+@import "selldone/cursor";
 
 @import "../article/Article";
+@import "selldone/pages/pages";
 
 
 
 @import "../community/style/community";
 
-@import "material-design-fonts/material-design-icons";
+@import "material-design-fonts/material-design-icons" ;
 
 @import "lang-fa-iransans/lang-fa-iransans.css";
 @import "./../uploader/style/uploader";
@@ -55,8 +57,6 @@
 
 html {
   height: 100vh !important;
-  //overflow: scroll!important;
-  font-size: 14px !important;
   overflow: auto !important;
 
   img {
@@ -64,6 +64,7 @@ html {
   }
 
   --theme-info: #0288d1;
+  --append-inner-button-size:36px;
 }
 
 // Fix confettie z index:
@@ -115,7 +116,7 @@ html {
   }
 
   .v-application--wrap {
-    .display-1, .display-2, .display-3, .display-4 {
+    .text-h4, .text-h3, .text-h2, .text-h1 {
       font-family: var(--font) !important;
     }
 
@@ -632,25 +633,43 @@ a {
 
 
 // Card windows general
-.card--flex-toolbar {
+
+.s--card-window-content {
   width: auto !important; // Important when child is container!!!
   background-color: #fff;
 
-  padding-bottom: 24px !important;
-
-  border-radius: 42px !important;
+  border-radius: 42px;
 
   margin-top: -48px;
-  margin-left: 26px;
-  margin-right: 26px;
 
   min-height: 60vh;
 
   // Fix top flicker bug some times:
   z-index: 1;
   position: relative;
-  // ------------------------------
 
+  margin-right: 12px ;
+  margin-left: 12px ;
+}
+
+.card--flex-toolbar { //TODO: Replace with s--card-window-content
+  width: auto !important; // Important when child is container!!!
+  background-color: #fff;
+
+  padding-bottom: 24px ;
+
+  border-radius: 42px ;
+
+  margin-top: -48px;
+
+  min-height: 60vh;
+
+  // Fix top flicker bug some times:
+  z-index: 1;
+  position: relative;
+
+  margin-right: 12px ;
+  margin-left: 12px ;
 }
 
 
@@ -684,6 +703,9 @@ a {
 
 .max-width-container-1280px {
   max-width: 1280px !important;
+}
+.max-width-container-1140px {
+  max-width: 1140px !important;
 }
 
 .max-width-container-850px {
@@ -1202,14 +1224,7 @@ table.v-table {
 
 
 
-/**
-Hide scrollbar in fullscreen dialogs!
-dialoga dige scroll nemishan!
- */
-/*.v-dialog--fullscreen{
-  overflow-y: hidden !important;
-}
-*/
+
 
 
 .bottom-sheet-dark {
@@ -1493,17 +1508,7 @@ Extra helper classes
   }
 }
 
-.samin-list-dense {
-  .v-list-item {
-    .v-list-item__action {
-      margin: 6px 0 !important;
-    }
 
-    .v-list-item__content {
-      margin-right: 8px;
-    }
-  }
-}
 
 
 /************
@@ -1837,6 +1842,12 @@ header {
     left: 50%;
     transform: translateX(-50%) !important;
   }
+  &.-font-7{
+    &:after {
+      font-size: 7px;
+    }
+
+  }
 
   &.-black {
     &:after {
@@ -1914,6 +1925,12 @@ header {
 
 }
 
+/**
+
+e.g.:
+Sales Chanel
+────────────────────────────────
+ */
 .sup-caption {
   &:after {
     bottom: unset;
@@ -2156,12 +2173,12 @@ Image loading (scale down)
  */
 .image-loading {
 
-  .v-image__image--contain {
+  .v-img__image--contain {
     transition: all 0.5s;
   }
 
   &.loading {
-    .v-image__image--contain {
+    .v-img__image--contain {
       transform: scale(0.4);
     }
   }
@@ -2182,7 +2199,7 @@ Image loading (scale down)
 // Main content container in shop-admin pages (shops, shop admin, account page,...)
 .admin-shop-container, .admin-user-container, .admin-account-container,.admin-administrators-container {
   padding-bottom: 14px;
-  border-radius: 16px !important;
+  border-radius: 16px 16px 42px 42px !important;
   background: var(--theme-deep-dark) !important;
 
   // Add extra padding in sides!
@@ -2204,7 +2221,7 @@ Smart invert
     border-radius: 16px 16px 48px 48px !important; // Fix bottom curve on dark mode.
   }
 
-  .card--flex-toolbar, footer {
+  .card--flex-toolbar,.s--card-window-content, footer {
     box-shadow: 0px 10px 50px 5px rgba(242, 242, 242, 0.84) !important;
     filter: invert(1);
 
@@ -2217,7 +2234,7 @@ Smart invert
         filter: invert(0);
       }
 
-      .v-image {
+      .v-img {
         filter: invert(0);
       }
     }
@@ -2231,7 +2248,7 @@ Smart invert
         filter: invert(0);
       }
 
-      .v-image {
+      .v-img {
         filter: invert(0);
       }
     }
@@ -2241,7 +2258,7 @@ Smart invert
       filter: invert(1);
     }
 
-    .v-image {
+    .v-img {
       filter: invert(1);
     }
 
@@ -2878,6 +2895,17 @@ Fix snaky chart overflow problem!
   .text-muted, small, .small, .option-btn {
     color: #fff !important;
   }
+}
+
+
+.bg-selldone-gradient {
+  background-image: linear-gradient(
+                  -225deg,
+                  #65379b 0%,
+                  #886aea 53%,
+                  #6457c6 100%
+  ) !important;
+  color: #fff;
 }
 
 
@@ -3616,11 +3644,11 @@ Fix snaky chart overflow problem!
   //animation: blur 1s ease;
   transition: all 1s;
 
-  &.blured {
+  &.blurred {
     filter: blur(6px);
   }
 
-  &.blured-lg {
+  &.blurred-lg {
     filter: blur(16px);
   }
 }
@@ -3780,7 +3808,7 @@ Fix snaky chart overflow problem!
 //---------------------------------------------------------------------
 .loader-to-bar {
   position: absolute !important;
-  top: 4px;
+  top: 4px !important;
   left: 40px;
   width: calc(100% - 80px) !important;
   max-width: calc(100% - 80px);
@@ -4421,10 +4449,13 @@ canvas.heatmap-canvas {
     --border-radious: 63px  40px 6px 48px;
   }
 
-  &.-shop, &.-staff {
+  &.-shop {
     background: radial-gradient(circle at 33% 100%, #F44336 4%, #E91E63 30%, #C2185B 62%, #FF9800 85%, #FFA000);
   }
 
+   &.-staff {
+    background: linear-gradient(45deg, #ffc22e 4%, #41d506 30%, #18c2ae 62%, #1e9ebb 85%, #FFA000);
+  }
   &.-officer {
     background-image: linear-gradient(45deg, #cc208e 0%, #6713d2 100%);
   }
@@ -4480,30 +4511,38 @@ canvas.heatmap-canvas {
   &.v-avatar {
     align-items: stretch !important;
 
-    img, .v-image { // Force fill on render!
+    img, .v-img { // Force fill on render!
       height: auto;
       width: auto;
       flex-grow: 1;
-      //max-width: 100%;
       max-width: 100%;
       max-height: 100%;
     }
+    .v-img {
+      .v-img__placeholder{
+display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
 
-    :not(img, .v-image) { // Force be on center! (text, icon, ...)
-      margin: auto;
+
+    :not(img, .v-img) { // Force be on center! (text, icon, ...)
+     // margin: auto;
+      align-self: center;
     }
   }
 
   &.-thin {
     padding: 2px;
 
-    img, .v-image {
+    img, .v-img {
       padding: 2px;
 
     }
   }
 
-  img, .v-image {
+  img, .v-img {
     border-radius: var(--border-radious);
     margin: 0;
     // border: solid 3px #fff;
@@ -4515,8 +4554,27 @@ canvas.heatmap-canvas {
 
 }
 
+// Fix issue in using <img> in v-avatar:
+.v-avatar {
+  img{
+    max-width: 100%;
+    max-height: 100%;
+    height: inherit;
+    width: inherit;
+  }
+}
+
 .folder-avatar {
   border: solid #FFA000 2px !important;
+}
+
+// Fix issue showing inputs that should not be shown when an inout be in another inout like a v-rating in the v-select!
+.v-input{
+  .v-rating{
+    input{
+      opacity: 0;
+    }
+  }
 }
 
 //----------------------------------------------------------------------------------------------
@@ -4611,6 +4669,9 @@ canvas.heatmap-canvas {
 
 // Add margin for pagination's:
 .widget, .widget-box {
+
+  background: var(--background);
+
   .v-data-table, .v-data-iterator {
     .v-pagination {
       margin-top: 20px;
@@ -4618,13 +4679,21 @@ canvas.heatmap-canvas {
     }
   }
 
-  .v-subheader {
+  .v-list-subheader {
     height: auto;
     padding: 10px 8px;
+    .v-list-subheader__text{
+      white-space: normal;
+    }
+  }
+
+  // Fix inside table headers:
+  .v-table.v-table--fixed-header.bg-transparent > .v-table__wrapper > table > thead > tr > th{
+    background: var(--background);
   }
 }
 
-.v-subheader.expandable {
+.v-list-subheader.expandable {
   height: auto;
   padding: 10px 8px;
 }
@@ -4673,7 +4742,7 @@ canvas.heatmap-canvas {
   margin: 12px;
   background-color: #fafafa;
   display: flex !important; // V-toggle is inline flex! so we consider this as default!
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   transition: all 0.3s ease-in-out;
   font-weight: 500;

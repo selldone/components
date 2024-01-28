@@ -33,7 +33,7 @@
 
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
       <div
-        v-if="$vuetify.breakpoint.mdAndUp && admin_url_guide"
+        v-if="$vuetify.display.mdAndUp && admin_url_guide"
         class="text-end"
       >
         <v-btn

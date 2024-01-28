@@ -37,30 +37,7 @@
     transform: scale(1.2, 1.2);
   }
 
-  .drag-product-container {
-    background-color: white;
-    border-radius: 18px;
-    padding: 16px;
-    max-width: 260px;
-    border: solid 3px #333;
 
-    text-align: center;
-    &.hide-spirits {
-      display: none !important;
-    }
-
-    img {
-      border-radius: 14px;
-      overflow: hidden;
-    }
-
-    p {
-      margin: 6px;
-      max-width: 86px;
-      font-size: 10px;
-      font-weight: 500;
-    }
-  }
 
   .drag-category-container {
     background-color: var(--theme-dark);
@@ -146,10 +123,11 @@
     position: relative;
     padding: 8px;
     border-style: dashed;
-    border-width: 2px;
+    border-width: thin;
     border-radius: 12px;
-    margin-top: 5%;
+    margin: 5%;
     height: 80%;
+
 
     &.now-drop-enter {
       background-color: gold;

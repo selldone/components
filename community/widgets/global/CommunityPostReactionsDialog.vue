@@ -18,7 +18,7 @@
     v-model="dialog"
     max-width="560"
     scrollable
-    :fullscreen="$vuetify.breakpoint.mdAndDown"
+    :fullscreen="$vuetify.display.mdAndDown"
   >
     <v-card class="text-start rcard">
       <v-card-title>
@@ -38,7 +38,7 @@
             @click="loadData(item.act.code)"
           >
             <img :src="item.act.image" width="24" height="24" class="me-1" />
-            <b>{{ item.value | numeralFormat("0.[0]a") }}</b>
+            <b>{{   numeralFormat(item.value,"0.[0]a") }}</b>
           </v-tab>
         </v-tabs>
       </div>
@@ -72,8 +72,8 @@
           v-if="has_more"
           style="height: 120px"
           v-intersect.quiet="
-            (entries) => {
-              if (entries[0].isIntersecting) getMore();
+            (isIntersecting) => {
+              if (isIntersecting) getMore();
             }
           "
         ></div>

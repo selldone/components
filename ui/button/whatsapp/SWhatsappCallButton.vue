@@ -14,32 +14,32 @@
 
 <template>
   <span>
-    <v-menu offset-y open-on-hover max-width="240" rounded="xl">
-      <template v-slot:activator="{ on, attrs }">
+    <v-menu open-on-hover max-width="240" >
+      <template v-slot:activator="{ props }">
         <v-btn
           v-if="user.phone"
-          icon
+          icon variant="text"
           :href="link"
           target="_blank"
           @click.stop
-          v-bind="attrs"
-          v-on="on"
-          :small="small"
-          :x-small="xSmall"
+
+          v-bind="props"
+          :size="xSmall?'x-small':small?'small':null"
+
           ><img
             src="../../../assets/trademark/whatsapp.svg"
             :height="xSmall ? 12 : small ? 18 : 20"
             :width="xSmall ? 12 : small ? 18 : 20"
         /></v-btn>
       </template>
-      <v-sheet dark class="text-start p-4">
+      <v-sheet dark class="text-start p-4" rounded="xl">
         <div class="mb-3 small">{{ $t("global.instance_message_title") }}:</div>
         <div class="mb-2">
-          <v-icon small class="me-1">phone</v-icon>
+          <v-icon size="small" class="me-1">phone</v-icon>
 
           {{ user.phone }}
         </div>
-        <v-icon small class="me-1">message</v-icon>
+        <v-icon size="small" class="me-1">message</v-icon>
         {{ message }}
       </v-sheet>
     </v-menu>

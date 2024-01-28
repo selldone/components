@@ -72,7 +72,7 @@
                   {{ error_message }}
                 </p>
 
-                <label class="inline-error fas fa-warning">
+                <label class="inline-error fa:fas fa-warning">
                   {{ $t("global.comments.body_is_empty_error") }}
                 </label>
               </div>
@@ -86,13 +86,13 @@
           <!-- Shop Login -->
           <s-shop-login v-if="isShop" class="mt-16"></s-shop-login>
           <!-- Selldone Login -->
-          <login-page
+          <b-login-form
             v-if="isSelldone"
             inlineMode
             no-header
             flat
             no-redirect
-          ></login-page>
+          ></b-login-form>
         </div>
       </div>
 
@@ -167,13 +167,13 @@
 <script>
 import SArticleComment from "./SArticleComment.vue";
 import SShopLogin from "@components/login/SShopLogin.vue";
-import LoginPage from "@components/login/auth/Login.vue";
+import BLoginForm from "@components/backoffice/auth/form/BLoginForm.vue";
 
 export default {
   name: "SArticleComments",
 
   components: {
-    LoginPage,
+    BLoginForm,
     SShopLogin,
     SArticleComment,
   },

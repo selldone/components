@@ -14,7 +14,7 @@
 
 <template>
   <div class="text-center">
-    <span class="display-1 my-3">Waiting for payment...</span>
+    <span class="text-h4 my-3">Waiting for payment...</span>
   </div>
 </template>
 

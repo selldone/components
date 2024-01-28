@@ -58,7 +58,7 @@
         <v-btn v-if="editable" icon color="red" @click="remove(value, item)"
           ><v-icon>close</v-icon></v-btn
         >
-        <span v-else>{{ item.value | numeralFormat("0.[0]a") }}</span>
+        <span v-else>{{  numeralFormat(item.value ,"0.[0]a") }}</span>
       </div>
     </div>
 

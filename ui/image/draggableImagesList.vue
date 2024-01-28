@@ -37,12 +37,15 @@
       </li>
     </transition-group>
 
-    <div class="py-2" slot="footer">
-      <v-btn v-if="hasAdd" @click.stop="$emit('add-click')" depressed rounded>
-        <v-icon>add</v-icon>
-        Add
-      </v-btn>
-    </div>
+    <template v-slot:footer>
+      <div class="py-2" >
+        <v-btn v-if="hasAdd" @click.stop="$emit('add-click')" depressed rounded>
+          <v-icon>add</v-icon>
+          Add
+        </v-btn>
+      </div>
+    </template>
+
   </draggable>
 </template>
 

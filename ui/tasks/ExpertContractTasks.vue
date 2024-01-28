@@ -34,11 +34,11 @@
           solo
           hide-details
         >
-          <template slot="prepend">
+          <template v-slot:prepend>
             <v-icon class="handle"  :style="{cursor:editable?'move':undefined}"> unfold_more </v-icon>
           </template>
 
-          <template slot="append-outer">
+          <template v-slot:append>
             <v-btn
               icon
               @click="deleteItem(index)"
@@ -69,17 +69,22 @@
       </li>
     </transition-group>
 
-    <div  v-if="editable" class="widget-buttons" slot="footer">
-      <v-btn
 
-          @click="addItem"
-          x-large
-          outlined
-      >
-        <v-icon class="me-1">add</v-icon>
-        {{$t('global.actions.add')}}
-      </v-btn>
-    </div>
+    <template v-slot:bottom>
+      <div  v-if="editable" class="widget-buttons" >
+        <v-btn
+
+            @click="addItem"
+            x-large
+            outlined
+        >
+          <v-icon class="me-1">add</v-icon>
+          {{$t('global.actions.add')}}
+        </v-btn>
+      </div>
+    </template>
+
+
   </draggable>
 </template>
 

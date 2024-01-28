@@ -168,7 +168,7 @@
           </v-row>
         </v-col>
 
-        <v-col v-if="selected_category && $vuetify.breakpoint.lgAndUp" cols="2">
+        <v-col v-if="selected_category && $vuetify.display.lgAndUp" cols="2">
           <div class="pa-2">
             <v-img
               v-if="selected_category.icon"
@@ -255,7 +255,7 @@ export default {
 
   computed: {
     small_mode() {
-      return this.$vuetify.breakpoint.smAndDown;
+      return this.$vuetify.display.smAndDown;
     },
     selected_categories() {
       return this.flattenCategories(this.categories)
@@ -431,12 +431,12 @@ export default {
     height: var(--item-heigh);
   }
   .cat-hover {
-    .v-image__image {
+    .v-img__image {
       transition: all 0.3s ease-in-out;
     }
 
     &:hover {
-      .v-image__image {
+      .v-img__image {
         transform: scale(1.2);
       }
     }

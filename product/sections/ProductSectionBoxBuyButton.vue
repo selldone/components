@@ -32,11 +32,11 @@
           :filter="Object.keys(locations)"
           solo
           hide-details
-          :no-country-name="$vuetify.breakpoint.xsOnly"
-          :style="$vuetify.breakpoint.xsOnly ? 'max-width:80px' : ''"
+          :no-country-name="$vuetify.display.xsOnly"
+          :style="$vuetify.display.xsOnly ? 'max-width:80px' : ''"
           flat
           transparent
-          :dense="$vuetify.breakpoint.xsOnly"
+          :dense="$vuetify.display.xsOnly"
         ></s-country-select>
         <v-autocomplete
           v-model="selected_postal"
@@ -47,14 +47,14 @@
           hide-details
           flat
           background-color="transparent"
-          :dense="$vuetify.breakpoint.xsOnly"
+          :dense="$vuetify.display.xsOnly"
           :no-data-text="$t('buy_button.zip_pin_not_available_msg')"
           @change="setMyLocation"
         >
           <template v-slot:prepend-inner>
             <span class="small me-2 single-line" style="line-height: normal;">{{$t('buy_button.zip_pin_input')}} </span>
           </template>
-          <template v-slot:append>
+          <template v-slot:append-inner>
             <v-icon
               v-if="selected_country && !selected_postal"
               color="primary"
@@ -121,9 +121,9 @@
 
         <v-card-text>
           <div class="widget-box mb-5">
-            <v-subheader
+            <v-list-subheader
               ><v-icon class="me-1" small>warning_amber</v-icon> After
-              downloading files, check those with your antivirus.</v-subheader
+              downloading files, check those with your antivirus.</v-list-subheader
             >
 
             <s-shop-product-files-list
@@ -153,7 +153,7 @@
         hssStickyButButton &&
         !(
           (
-            $vuetify.breakpoint.mdAndDown && corresponding_basket_item
+            $vuetify.display.mdAndDown && corresponding_basket_item
           ) /*Don't show in small screen if exist in cart!*/
         )
       "
@@ -409,8 +409,8 @@ export default {
       this.$refs.buy_button.physicalBuyAction(count);
     },
 
-    onIntersect(entries, observer) {
-      this.isIntersecting = entries[0].isIntersecting;
+    onIntersect(isIntersecting) {
+      this.isIntersecting = isIntersecting;
     },
   },
 };

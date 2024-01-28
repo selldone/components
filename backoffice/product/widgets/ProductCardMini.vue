@@ -19,7 +19,7 @@
       $emit('select');
       clicked = true;
     "
-    class="position-relative d-flex flex-column align-center justify-center transition-ease-in-out hover-up tooltip-con"
+    class="position-relative d-flex flex-column align-center justify-center hover-up tooltip-con"
     :class="{ 'op-0-5 ': product.deleted_at }"
   >
     <!-- Icons -->
@@ -44,7 +44,7 @@
 
         <v-icon
           v-if="!product.original"
-          x-small
+          size="x-small"
           :title="$t('global.commons.fake')"
         >
           report
@@ -52,7 +52,7 @@
 
         <v-icon
           v-if="quantity < 5"
-          x-small
+          size="x-small"
           :title="'Quantity: ' + quantity"
           :color="quantity === 0 ? 'red' : 'amber'"
         >
@@ -63,15 +63,15 @@
       <!-- Bottom icons -->
 
       <div class="bottom-b">
-        <v-icon v-if="product.ar_src" x-small title="AR \ 3D">
+        <v-icon v-if="product.ar_src" size="x-small" title="AR \ 3D">
           3d_rotation
         </v-icon>
 
-        <v-icon v-if="product.video" x-small title="Video">
-          fab fa-youtube
+        <v-icon v-if="product.video" size="x-small" title="Video">
+          fa:fab fa-youtube
         </v-icon>
 
-        <v-icon v-if="product.reselling" x-small title="Drop shipping">
+        <v-icon v-if="product.reselling" size="x-small" title="Drop shipping">
           airline_stops
         </v-icon>
       </div>
@@ -89,14 +89,16 @@
 
       <v-chip
         v-if="status_obj && status_obj.code !== ProductStatus.Open.code"
-        x-small
+        size="x-small"
         class="product-status px-1"
         label
         :color="status_obj.color"
-        :dark="status_obj.code !== ProductStatus.Pending.code"
+        :theme="
+          status_obj.code !== ProductStatus.Pending.code ? 'dark' : 'light'
+        "
         :title="$t(status_obj.description)"
-        >{{ $t(status_obj.name) }}</v-chip
-      >
+        >{{ $t(status_obj.name) }}
+      </v-chip>
 
       <!-- Image -->
 
@@ -150,8 +152,8 @@
       >
         <v-icon v-if="deleting" color="red">delete</v-icon>
         <v-icon v-else-if="restoring" color="green"
-          >settings_backup_restore</v-icon
-        >
+          >settings_backup_restore
+        </v-icon>
       </v-progress-circular>
     </div>
 
@@ -164,9 +166,13 @@
         :class="vendor.enable ? '-blue' : '-red'"
         :title="vendor.name"
         ><img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 64)" />
-        <v-icon v-else x-small color="#fff" style="height: 16px !important"
-          >storefront</v-icon
-        >
+        <v-icon
+          v-else
+          size="x-small"
+          color="#fff"
+          style="height: 16px !important"
+          >storefront
+        </v-icon>
       </v-avatar>
       {{ product.title.limitWords(3) }}</small
     >
@@ -180,9 +186,13 @@
         :class="v.enable ? '-blue' : '-red'"
         :title="v.name"
         ><img v-if="v.icon" :src="getShopImagePath(v.icon, 64)" />
-        <v-icon v-else x-small color="#fff" style="height: 16px !important"
-          >storefront</v-icon
-        >
+        <v-icon
+          v-else
+          size="x-small"
+          color="#fff"
+          style="height: 16px !important"
+          >storefront
+        </v-icon>
       </v-avatar>
     </div>
 
@@ -193,13 +203,15 @@
 
       <v-chip
         v-if="discount_percent"
-        x-small
+        size="x-small"
         color="#C2185B"
-        dark
         class="px-1 ms-1"
-        label
-        >{{ discount_percent }}%</v-chip
-      >
+        label variant="flat"
+        ><div style="line-height: normal;">
+        {{ discount_percent }}%
+        <span class="d-block" style="font-size: 5.5px;">{{$t('global.commons.discount')}}</span>
+      </div>
+      </v-chip>
     </div>
 
     <div
@@ -209,7 +221,7 @@
     >
       <div
         v-if="vendor"
-        class="pa-2 white--text text-start mb-1 tsec d-flex align-center small"
+        class="pa-2 text-white text-start mb-1 tsec d-flex align-center small"
       >
         <div class="flex-grow-1">
           <small class="d-block">{{ $t("global.commons.vendor") }}</small>
@@ -230,11 +242,43 @@
         small
         dense
         :variants="product.variants"
-
         dark
         class="tsec"
       ></product-variants-view>
     </div>
+
+    <!-- Add Note Button -->
+    <team-note-button
+      v-if="showNotes || (product.note && product.note.length)"
+      class="absolute-top-start z2"
+      :note="product.note"
+      @click="$emit('onShowNote', product)"
+      style="top: -6px; left: -6px"
+      :activeColor="showNotes ? undefined : '#333'"
+    ></team-note-button>
+
+    <!-- Selectable -->
+    <template v-if="showSelect">
+      <v-icon
+        class="absolute-top-end pp"
+        style="z-index: 10"
+        :color="iSelected ? 'primary' : '#333'"
+        @click.stop="$emit('onSelect', product)"
+        >{{ iSelected ? "circle" : "radio_button_unchecked" }}
+      </v-icon>
+      <div
+        style="
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10;
+        "
+        class="pp usall"
+        @click.stop="$emit('onSelect', product)"
+      ></div>
+    </template>
   </div>
 </template>
 
@@ -245,9 +289,12 @@ import ProductVariantsView from "@components/product/variant/ProductVariantsView
 import { GetArrayOfValuesInVariants } from "@core/enums/product/ProductVariants";
 import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 import { ProductStatus } from "@core/enums/product/ProductStatus";
+import TeamNoteButton from "@components/backoffice/note/TeamNoteButton.vue";
+
 export default {
   name: "ProductCardMini",
-  components: { SColorCircle, ProductVariantsView, CircleImage },
+  components: {TeamNoteButton, SColorCircle, ProductVariantsView, CircleImage },
+  emits: ["select", "onShowNote", "onSelect"],
   props: {
     shop: {
       required: true,
@@ -273,6 +320,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    showNotes: Boolean,
+    showSelect: Boolean,
+    iSelected: Boolean,
   },
   data() {
     return {
@@ -311,7 +361,7 @@ export default {
         return this.CalcPriceProductCurrentCurrency(
           this.shop,
           this.product,
-          null
+          null,
         );
       } catch (e) {
         return "🚨";
@@ -344,6 +394,7 @@ export default {
 
   &.-available {
     border-color: #689f38 !important;
+
     &.-dropshipping {
       border-color: #1976d2 !important;
     }
@@ -352,20 +403,25 @@ export default {
   &.-close {
     border-color: #512da8 !important;
   }
+
   &.-deleted {
     border-color: #d32f2f !important;
   }
+
   &.-pending {
     border-color: #ffa000 !important;
   }
+
   &.-rejected {
     border-color: #212121 !important;
   }
 }
+
 .top-b {
   position: absolute;
   top: 16px;
   left: 14px;
+
   .v-icon {
     margin: 0 1px;
   }
@@ -382,17 +438,21 @@ export default {
   position: absolute;
   top: 63px;
   right: 12px;
+
   .v-icon {
     margin: 0 1px;
   }
 }
+
 .tooltip-con {
   display: none;
   z-index: 1;
 
   .tooltip {
     opacity: 0;
-    transition: opacity 0.3s, top 0.4s;
+    transition:
+      opacity 0.3s,
+      top 0.4s;
     position: absolute;
     max-width: 200px;
 
@@ -418,6 +478,7 @@ export default {
 
   &:hover {
     z-index: 10;
+
     .tooltip {
       top: 120px;
       opacity: 1;
@@ -425,16 +486,19 @@ export default {
     }
   }
 }
+
 .colors {
   display: flex;
   flex-direction: column;
   position: absolute;
   left: 12px;
   bottom: 20px;
+
   .v-icon {
     margin: 0 0 1px 0;
   }
 }
+
 .product-status {
   position: absolute;
   right: 12px;

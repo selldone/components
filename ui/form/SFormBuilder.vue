@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--form-builder widget-box">
     <s-widget-header :title="title" :icon="icon"></s-widget-header>
-    <v-subheader>{{ hint }}</v-subheader>
+    <v-list-subheader>{{ hint }}</v-list-subheader>
 
     <v-scale-transition group tag="div">
       <div
@@ -279,24 +279,24 @@ export default {
         {
           title: this.$t("global.form_builder.types.simple"),
           value: null,
-          icon: "fas fa-paragraph",
+          icon: "fa:fas fa-paragraph",
         },
         {
           title: this.$t("global.form_builder.types.selective"),
           value: "select",
-          icon: "fas fa-list-ul",
+          icon: "fa:fas fa-list-ul",
         },
         {
           title: this.$t("global.form_builder.types.switch"),
           value: "switch",
-          icon: "fas fa-toggle-on",
+          icon: "fa:fas fa-toggle-on",
         },
         ...(this.hasFile
           ? [
               {
                 title: this.$t("global.form_builder.types.file"),
                 value: "file",
-                icon: "fas fa-file",
+                icon: "fa:fas fa-file",
               },
             ]
           : []),
@@ -304,7 +304,7 @@ export default {
         {
           title: this.$t("global.commons.note"),
           value: "note",
-          icon: "fas fa-sticky-note",
+          icon: "fa:fas fa-sticky-note",
         },
       ];
     },

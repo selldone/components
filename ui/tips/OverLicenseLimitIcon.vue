@@ -13,15 +13,18 @@
   -->
 
 <template>
-    <v-icon  color="red" class="blink-me ms-1" :title="$t('global.notification.over_license_limit')">warning</v-icon>
+  <v-icon
+    color="red"
+    class="blink-me ms-1 hover-scale-small"
+    :title="$t('global.notification.over_license_limit')"
+    >warning</v-icon
+  >
 </template>
 
 <script>
-    export default {
-        name: "OverLicenseLimitIcon"
-    }
+export default {
+  name: "OverLicenseLimitIcon",
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -28,7 +28,7 @@
       class="bg-white z2 blur-animate nopx overflow-visible"
       :class="{
         'c-widget': body || title,
-        'blured pointer-event-none': !can_post,
+        'blurred pointer-event-none': !can_post,
         'overflow-y-auto': scrollable,
       }"
     >
@@ -50,13 +50,13 @@
           v-if="tab === 'monetize'"
           class="px-4 py-2 max-widget-width mx-auto disabled"
         >
-          <v-subheader>
+          <v-list-subheader>
             <span>
               <v-icon class="me-1" color="red">warning_amber</v-icon> Available
               by your request. Please send it to support@selldone.com or Tweet
               it!
             </span>
-          </v-subheader>
+          </v-list-subheader>
           <v-select
             v-model="subscription"
             :items="Object.values(TopicSubscriptionType)"
@@ -210,10 +210,10 @@
             flat
             :value="title_page_auto ? title : title_page"
             @input="(val) => (title_page = val)"
-            :append-icon="title_page_auto ? 'lock' : 'lock_open '"
+            :append-inner-icon="title_page_auto ? 'lock' : 'lock_open '"
             rows="1"
             auto-grow
-            @click:append="
+            @click:append-inner="
               title_page_auto = !title_page_auto;
               title_page = !title_page_auto ? title : title_page;
             "
@@ -233,10 +233,10 @@
             flat
             :value="desc_auto ? body_text : desc"
             @input="(val) => (desc = val)"
-            :append-icon="desc_auto ? 'lock' : 'lock_open '"
+            :append-inner-icon="desc_auto ? 'lock' : 'lock_open '"
             rows="1"
             auto-grow
-            @click:append="
+            @click:append-inner="
               desc_auto = !desc_auto;
               desc = !desc_auto ? body_text : desc;
             "
@@ -430,8 +430,8 @@
                 v-model="link"
                 clearable
                 @keydown.enter="submitLink()"
-                append-icon="check"
-                @click:append="submitLink()"
+                append-inner-icon="check"
+                @click:append-inner="submitLink()"
                 @blur="submitLink()"
                 :readonly="in_edit_mode"
               >
@@ -490,13 +490,13 @@
               view-only
             >
             </community-attach-view>
-            <v-subheader>
+            <v-list-subheader>
               <div>
                 <v-icon class="me-1">warning_amber</v-icon> You can not edit
                 attachments after sending them. If you remove post, attachments
                 will be deleted.
               </div>
-            </v-subheader>
+            </v-list-subheader>
           </template>
         </div>
       </v-slide-y-transition>
@@ -509,7 +509,7 @@
             depressed
             text
             tile
-            :large="$vuetify.breakpoint.smAndUp"
+            :large="$vuetify.display.smAndUp"
             class="w-25"
             @click="showSelectImage()"
           >
@@ -522,7 +522,7 @@
             depressed
             text
             tile
-            :large="$vuetify.breakpoint.smAndUp"
+            :large="$vuetify.display.smAndUp"
             class="w-25"
             @click="showSelectVideo()"
           >
@@ -536,7 +536,7 @@
             depressed
             text
             tile
-            :large="$vuetify.breakpoint.smAndUp"
+            :large="$vuetify.display.smAndUp"
             class="w-25"
           >
             <v-icon class="me-1">add_link</v-icon>
@@ -556,7 +556,7 @@
           color="blue"
           dark
           tile
-          :large="$vuetify.breakpoint.smAndUp"
+          :large="$vuetify.display.smAndUp"
           class="w-25"
           @click="sendPost()"
           :loading="busy"
@@ -575,13 +575,13 @@
       <v-btn
         v-if="!USER()"
         @click="NeedLogin()"
-        class="m-auto"
+        class="ma-auto"
         color="blue"
         dark
         x-large
         depressed
         rounded
-        ><span class="me-2 display-1">👋</span>
+        ><span class="me-2 text-h4">👋</span>
         <div class="text-start">
           {{ $t("global.actions.login_now") }}
           <small class="d-block white--text">{{
@@ -590,7 +590,7 @@
         </div></v-btn
       >
 
-      <div v-else class="m-auto">
+      <div v-else class="ma-auto">
         <v-list-item v-for="(item, i) in checklist" :key="i" dense>
           <v-list-item-icon>
             <v-icon :color="item.check ? 'success' : '#333'" size="36">{{
@@ -1434,7 +1434,7 @@ export default {
   z-index: 3;
 }
 
-::v-deep .embed-video-view {
+::v-deep(.embed-video-view) {
   iframe {
     width: 100%;
     min-height: 420px;

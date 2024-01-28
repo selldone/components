@@ -20,7 +20,7 @@
 
     <div
       style="overflow-x: auto"
-      class="m-auto p-3 text-center"
+      class="ma-auto p-3 text-center"
       :class="{ 'disabled-no-filter': readonly }"
     >
       <v-btn-toggle

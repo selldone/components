@@ -12,9 +12,8 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import type { VNode, DirectiveBinding } from "vue";
 import { TrackUser } from "@core/enums/gtag/TrackUser";
-
+import type { ObjectDirective, DirectiveBinding } from 'vue';
 /**
  * This directive allows for tracking user clicks on elements.
  * Use case example in Vue template: v-track:click="Home Storefront Preview ● Open Live Product"
@@ -28,24 +27,33 @@ interface TrackClickDirectiveArgs {
   // Add other arguments as needed
 }
 
-export default {
+const TrackClickDirective: ObjectDirective<HTMLElement, TrackClickDirectiveArgs> = {
   /**
-   * Called when the directive is bound to the element in the DOM.
+   * Called when the directive is mounted to the element in the DOM.
    * Attaches a click event listener to the element, triggering TrackUser.onClick with the provided label.
    *
    * @param {HTMLElement} el - The DOM element the directive is bound to.
    * @param {DirectiveBinding<TrackClickDirectiveArgs>} binding - An object containing the directive's value and arguments.
-   * @param {VNode} vnode - The virtual node produced by Vue.
    */
-  bind: function (
-    el: HTMLElement,
-    binding: DirectiveBinding<TrackClickDirectiveArgs>,
-    vnode: VNode
-  ) {
-    if (binding.arg === "click" && binding.value) {
-      el.addEventListener("click", () => {
-        TrackUser.onClick("" + binding.value);
+  mounted(el, binding: DirectiveBinding<TrackClickDirectiveArgs>) {
+    if (binding.arg === 'click' && binding.value) {
+      el.addEventListener('click', () => {
+        TrackUser.onClick('' + binding.value);
       });
     }
   },
+
+  /**
+   * Optional: Called when the element is unmounted from the DOM.
+   * It's a good practice to remove event listeners to prevent memory leaks.
+   *
+   * @param {HTMLElement} el - The DOM element the directive is bound to.
+   */
+  unmounted(el) {
+    // Clean up event listener here if necessary
+    // For example: el.removeEventListener('click', clickHandler);
+  },
 };
+
+export default TrackClickDirective;
+

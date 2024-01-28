@@ -106,7 +106,7 @@
         <v-badge
           :value="total_items_in_carts > 0"
           color="teal"
-          :content="total_items_in_carts | numeralFormat('0a')"
+          :content="  numeralFormat(total_items_in_carts,'0a')"
           offset-y="10"
         >
           <img
@@ -139,7 +139,7 @@
           color="red"
           offset-y="10"
           :value="sum_orders_badges > 0"
-          :content="sum_orders_badges | numeralFormat('0a')"
+          :content="  numeralFormat(sum_orders_badges,'0a')"
         >
           <v-icon>notifications</v-icon>
         </v-badge>
@@ -165,7 +165,7 @@
             <v-img :src="getUserAvatar(USER_ID())"></v-img>
           </v-avatar>
 
-          <template slot="badge">
+          <template v-slot:badge>
             <img
               v-if="getClub()"
               :src="getCustomerClubLevel(getClub().level).icon"
@@ -316,7 +316,7 @@ export default {
       return null;
     },
     channel_entry_page_icon() {
-      if (this.channel_entry === "instagram") return "fab fa-instagram";
+      if (this.channel_entry === "instagram") return "fa:fab fa-instagram";
       return null;
     },
   },

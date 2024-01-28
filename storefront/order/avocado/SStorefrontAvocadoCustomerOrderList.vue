@@ -21,7 +21,7 @@
     <router-link
       v-for="item in orders"
       :key="item.id"
-      class="subtitle-2 px-1 row-hover pointer-pointer d-flex flex-column justify-content-center"
+      class="subtitle-2 px-1 row-hover pointer-pointer d-flex flex-column justify-center"
       :to="{ name: 'AvocadoOrderPage', params: { hash: item.hash } }"
       style="
         min-height: 120px;

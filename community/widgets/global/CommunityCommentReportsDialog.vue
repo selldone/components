@@ -18,7 +18,7 @@
     v-model="dialog"
     max-width="560"
     scrollable
-    :fullscreen="$vuetify.breakpoint.mdAndDown"
+    :fullscreen="$vuetify.display.mdAndDown"
   >
     <v-card min-height="220">
       <v-card-title>
@@ -32,12 +32,12 @@
         <v-row>
           <v-col v-for="item in reports" :key="item.report" cols="12">
             <div class="d-flex align-center">
-              <h3 class="display-1">
-                {{ item.count | numeralFormat("0.[00]a") }}
+              <h3 class="text-h4">
+                {{  numeralFormat(item.count ,"0.[00]a") }}
               </h3>
               <s-dense-images-circles-users
                 :ids="item.users"
-                :size="$vuetify.breakpoint.xsOnly ? 32 : 42"
+                :size="$vuetify.display.xsOnly ? 32 : 42"
               ></s-dense-images-circles-users>
             </div>
             <p class="d-block m-0">
@@ -47,7 +47,7 @@
           <v-col
             v-if="!busy && (!reports || !reports.length)"
             cols="12"
-            class="text-center display-1"
+            class="text-center text-h4"
           >
             No report!
           </v-col>

@@ -21,7 +21,7 @@
     :class="selected ? 'active' : ''"
     @click="toggle()"
   >
-    <v-icon :color="selected ? '#444' : '#fff'" class="ml-1 no-inv" small>
+    <v-icon :color="selected ? '#444' : '#fff'" class="ms-1 no-inv" small>
       {{ icon }}
     </v-icon>
 
@@ -30,7 +30,7 @@
         v-for="item in list"
         :key="item"
         :color="item"
-        class="mr-1  hover-scale"
+        class="me-1  hover-scale"
         small
         @click="select(item)"
         @click.stop

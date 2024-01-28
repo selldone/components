@@ -14,9 +14,9 @@
 
 <template>
   <div>
-    <v-subheader
+    <v-list-subheader
       >Shipping services available depend on the provided size and
-      weight.</v-subheader
+      weight.</v-list-subheader
     >
     <v-row no-gutters class="py-3">
       <div

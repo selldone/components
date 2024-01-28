@@ -16,19 +16,18 @@
   <span>
     <v-tooltip
       v-if="note && note.length"
-      bottom
       color="#111"
       max-width="460"
       min-width="240"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template v-slot:activator="{ props }">
         <v-btn
-          v-bind="attrs"
-          v-on="on"
-          icon
+
+          v-bind="props"
+          icon variant="text" size="36"
           :color="activeColor"
           @click.stop="$emit('click')"
-          ><v-icon>sticky_note_2</v-icon></v-btn
+          ><v-icon size="24">sticky_note_2</v-icon></v-btn
         >
       </template>
       <div class="pa-2 text-start rounded-lg">
@@ -53,10 +52,10 @@
 
     <v-btn
       v-else
-      icon
+      icon variant="text" size="small"
       @click.stop="$emit('click')"
       :title="$t('notes.add_action')"
-      ><v-icon>edit_note</v-icon></v-btn
+      ><v-icon size="24">edit_note</v-icon></v-btn
     >
   </span>
 </template>

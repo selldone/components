@@ -32,7 +32,7 @@
       </div>
     </div>
     <v-dialog v-model="dialog" fullscreen>
-      <v-sheet dark height="100%" class="d-flex justify-content-center">
+      <v-sheet dark height="100%" class="d-flex justify-center">
         <div
           style="
             align-self: center;
@@ -349,9 +349,9 @@ export default {
 
   computed: {
     aspect() {
-      return this.$vuetify.breakpoint.xsOnly
+      return this.$vuetify.display.xsOnly
         ? 0.8
-        : this.$vuetify.breakpoint.smOnly
+        : this.$vuetify.display.smOnly
         ? 1.4
         : 1.7;
     },
@@ -366,7 +366,7 @@ export default {
     },
 
     max_width() {
-      if (this.$vuetify.breakpoint.mdAndDown) return this.windowSize.x;
+      if (this.$vuetify.display.mdAndDown) return this.windowSize.x;
 
       return this.aspect * this.max_height;
     },

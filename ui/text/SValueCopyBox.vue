@@ -13,24 +13,27 @@
   -->
 
 <template>
-  <div class="s--value-copy-box" :class="{ '-limited-width': !fullWidth }" @click.stop>
+  <div
+    class="s--value-copy-box"
+    :class="{ '-limited-width': !fullWidth, '-small': small ,'-text-start':textStart}"
+    @click.stop
+  >
     <div
       class="link-box"
       :style="{ backgroundColor: backgroundColor }"
       :class="{ border: border, 'rounded-18px': smallWidthMode }"
     >
       <v-btn
-        min-height="64"
+        :min-height="small ? 24 : 64"
         class="-btn"
         :color="color"
-        dark
         @click.stop="copyToClipboard(value)"
-        tile
-        :class="{ 'ma-2 rounded-18px': smallWidthMode }"
+        :size="small ? 'small' : undefined"
+        :class="{ 'rounded-18px': smallWidthMode ,'ma-2':!small,'ma-1':small }"
       >
-        <v-icon>{{ icon }}</v-icon></v-btn
-      >
-      <v-spacer></v-spacer>
+        <v-icon>{{ icon }}</v-icon>
+      </v-btn>
+
       <span
         v-if="password && !show_pass"
         class="-link text-muted pp"
@@ -39,20 +42,21 @@
       >
       <div v-else class="-link" :class="contentClass">
         <slot name="prepend-value"></slot>
-        <span  > {{ value }}</span>
+        <span> {{ value }}</span>
       </div>
-      <v-spacer></v-spacer>
-
+      <slot name="append-value"></slot>
       <img
         v-if="image"
-        width="46"
+        :width="small ? 18 : 46"
         height="auto"
         :src="image"
         class="ms-2 px-2 border-start"
       />
+
     </div>
-    <p v-if="message" class="subtitle-2 text-start my-1">
-      <v-icon class="me-1" small>info</v-icon> {{ message }}
+    <p v-if="message" class="text-subtitle-2 text-start my-1">
+      <v-icon class="me-1" size="small">info</v-icon>
+      {{ message }}
     </p>
   </div>
 </template>
@@ -63,7 +67,7 @@ export default {
   props: {
     value: {},
     message: {},
-    icon: { default: "fas fa-copy" },
+    icon: { default: "fa:fas fa-copy" },
     image: {},
     color: { default: "primary" },
     backgroundColor: { default: "#fff" },
@@ -74,7 +78,9 @@ export default {
 
     border: { default: true, type: Boolean },
 
-    contentClass:{}
+    contentClass: {},
+    small: Boolean,
+    textStart: Boolean,
   },
   data: () => ({
     show_pass: false,
@@ -90,11 +96,29 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--value-copy-box{
-
+.s--value-copy-box {
   &.-limited-width {
     max-width: 1000px;
     margin: 0 auto 12px auto;
+  }
+
+  &.-small {
+    .link-box {
+      min-height: 24px;
+      .-link {
+        font-size: 1rem;
+      }
+    }
+
+
+  }
+  &.-text-start{
+    .link-box {
+      .-link {
+        text-align: start;
+      }
+    }
+
   }
 
   .link-box {
@@ -109,13 +133,13 @@ export default {
     .-btn {
       flex-grow: 0;
     }
+
     .-link {
-      margin: 4px 8px;
       flex-grow: 1;
+      margin: 4px 8px;
       direction: ltr;
       text-align: center;
       font-size: 1.1rem;
-      max-width: calc(100% - 130px);
 
       @media only screen and (max-width: 850px) {
         font-size: 0.8rem;
@@ -126,5 +150,4 @@ export default {
     }
   }
 }
-
 </style>

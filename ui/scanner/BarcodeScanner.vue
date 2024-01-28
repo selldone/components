@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import * as ZXing from "@zxing/library";
-const { BarcodeFormat } = require("@zxing/library/esm5"); // use this path since v0.5.1
+import {MultiFormatReader, BarcodeFormat, BrowserMultiFormatReader, DecodeHintType} from '@zxing/library';
+
 
 export default {
   name: "BarcodeScanner",
@@ -84,10 +84,9 @@ export default {
         ]
       );
 
-    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
 
-    this.codeReader = new ZXing.BrowserMultiFormatReader(hints);
-    // this. codeReader = new ZXing.BrowserBarcodeReader();
+    this.codeReader = new BrowserMultiFormatReader(hints);
 
     this.codeReader
       .listVideoInputDevices()

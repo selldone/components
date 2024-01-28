@@ -31,7 +31,7 @@
           <span
             >{{$t('global.commons.ends_in')}}
             <v-icon>{{
-              $vuetify.breakpoint.smAndUp ? "arrow_right" : "arrow_drop_down"
+              $vuetify.display.smAndUp ? "arrow_right" : "arrow_drop_down"
             }}</v-icon></span
           >
           <s-count-down :end="end_date" class="mx-2"></s-count-down>
@@ -41,7 +41,7 @@
           v-if="action_text"
           :href="action_url"
           class="ms-0 ms-sm-5 my-3 my-sm-0"
-          outlined
+          variant="outlined"
           target="_blank"
         >
           <span v-html="action_text"></span>

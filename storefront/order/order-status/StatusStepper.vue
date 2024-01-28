@@ -52,7 +52,7 @@
             active: activeIndex >= index,
             'sub-caption b-16px -no-wrap': showCaption,
             '-black': showCaption && dark,
-            '-hover': $vuetify.breakpoint.xs,
+            '-hover': $vuetify.display.xs,
           }"
           :style="`width:${100 / length}%`"
           :title="$t(item.name)"

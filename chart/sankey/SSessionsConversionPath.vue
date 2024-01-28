@@ -17,12 +17,13 @@
     class="snaky-chart"
     :style="`height:${height}`"
     :data="chartData"
-    :config="chartConfig"
+    :config="(c)=>chartConfig(c)"
   />
 </template>
 
 <script>
-import { ChartSankey } from "vue-d2b";
+
+import ChartSankey from "@components/chart/sankey/core/components/ChartSankey.vue";
 
 export default {
   name: "SessionsConversionPath",
@@ -34,7 +35,7 @@ export default {
     search: {},
     other: {},
 
-    SocialDetails: {},
+    socialDetails: {},
 
     height: {
       require: false,
@@ -110,13 +111,13 @@ export default {
         },
       ];
 
-      if (this.SocialDetails) {
-        Object.keys(this.SocialDetails).forEach((network) => {
+      if (this.socialDetails) {
+        Object.keys(this.socialDetails).forEach((network) => {
           this.chartData.nodes.push({ name: network });
           this.chartData.links.push({
             source: this.$t("global.commons.social"),
             target: network,
-            value: this.SocialDetails[network],
+            value: this.socialDetails[network],
           });
         });
       }

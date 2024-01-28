@@ -13,9 +13,9 @@
  */
 
 
-
 .v-application{
-  .display-1, .display-2, .display-3, .display-4 {
+
+  .text-h4, .text-h3, .text-h2, .text-h1 {
     letter-spacing: -.018em !important;
   }
 }
@@ -253,7 +253,6 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
 
     thead {
-      .tbody{
         tr {
           th {
             padding: 0 8px !important;
@@ -280,11 +279,11 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
           }
         }
-      }
+
 
     }
 
-    & > .v-data-table__wrapper > table > tbody > tr > td {
+    table > tbody > tr > td {
       padding: 0 8px !important;
     }
 
@@ -556,7 +555,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 .font--20{
   font-size: 20px;
 }
-
+/*
 .v-input{
   &.small-field{
     .v-input__control{
@@ -570,13 +569,19 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
       }
     }
   }
-}
+}*/
 
-// ----------------------- Fix dialog width ----------------------
-.v-dialog{
-  width: 100%;
+.v-bottom-sheet{
+  .v-overlay__content{
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
 }
-
+.v-input{
+  .v-field__append-inner{
+    pointer-events: all ;
+  }
+}
 // ----------------------- Draw an outline around the badge ----------------------
 
 .badge-border{
@@ -639,7 +644,8 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
    input {
     font-size: 22px;
     font-weight: 900;
-    min-height: 44px;
+    min-height: 64px;
+     padding-top: 16px;
   }
   .v-select__selections {
     font-size: 22px;
@@ -661,3 +667,73 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 
+.v-list-item .v-list-item__content{
+  padding: 0; // Solve issue when setting custom content in v-list-item the default padding (12px) prevent having compact mode!
+}
+
+.v-icon{
+  min-width: max-content; // Fixe issue in show more than one icons in v-icon
+}
+
+
+// Fix img border radius in v-avatar:
+.v-avatar{
+  img{
+    border-radius: inherit;
+  }
+}
+
+// Fix v-input font size is 16px and we override it to 14px in html level { $font-size-root: 14px }! but we want all fonts for input be in big size (16px):
+.v-input{
+
+    .v-field__field{
+      label{
+        font-size: 16px;
+      }
+    }
+
+
+}
+
+// Fix v-container:
+.v-application,.v-overlay-container{
+
+  @media (min-width: 2560px) {
+    .v-container:not(.v-container--fluid) {
+      max-width: 1200px;
+    }
+  }
+  @media (min-width: 1920px) {
+    .v-container:not(.v-container--fluid) {
+      max-width: 1200px;
+    }
+  }
+}
+
+
+// Fix button with append image and full width (like login buttons)
+.s--login-btn{
+  display: flex;
+  align-items: center;
+  .v-btn__content{
+    flex-grow: 1;
+  }
+}
+
+
+// Fix .v-pagination issue show invalid shadow:
+.v-pagination{
+  .v-pagination__item{
+    background: unset;
+    box-shadow:unset;
+    width:unset;
+    padding:unset;
+    min-width:unset;
+    height:unset;
+  }
+}
+
+// Fix v-dialog v-bottom-sheet bottom padding!
+.v-overlay.v-dialog.v-bottom-sheet{
+  max-height: 100%;
+}

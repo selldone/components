@@ -67,7 +67,7 @@
           </v-row>
           <div class="min-height-10vh"></div>
         </v-card-text>
-        <v-card-actions> </v-card-actions>
+        <v-card-actions></v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -80,46 +80,71 @@
     :label="$t('global.currency_selector.label')"
     :hide-details="hideDetails"
     :rounded="rounded"
-    :style="{ 'max-width': maxWidth }"
-    @change="selectCurrency"
+    :style="{ 'max-width': maxWidth, 'min-width': minWidth }"
+    @update:model-value="selectCurrency"
     item-value="code"
-    :item-text="(i) => $t(i.name) + ' ' + i.code + ' ' + i.country"
+    item-title="code"
     :return-object="false"
-    :dark="dark"
-    :light="light"
-    :solo="solo"
-    :filled="filled"
-    :dense="dense"
-    :outlined="outlined"
-    :background-color="backgroundColor"
+    :theme="dark ? 'dark' : 'light'"
+    :variant="
+      variant
+        ? variant
+        : solo
+          ? 'solo'
+          : filled
+            ? 'filled'
+            : outlined
+              ? 'outlined'
+              : undefined
+    "
+    :density="dense ? 'compact' : 'default'"
+    :bg-color="backgroundColor"
     :single-line="singleLine"
     :loading="loading"
     :multiple="false"
     :flat="flat"
     :color="color"
-    :class="{ 'small-field': small }"
+    :class="{ '-small': small }"
     :menu-props="{ minWidth: '200px' }"
-    class="fix-new-line-input"
+    class="s--currency-selector"
   >
-    <template v-slot:item="{ item }">
-      <s-currency-icon :currency="item" class="mx-1" small></s-currency-icon>
-      <span class="px-3"> {{ $t(item.name) }}</span>
+    <template v-slot:item="{ item, props }">
+      <v-list-item v-bind="props" :title="$t(item.raw.name)">
+        <template v-slot:prepend>
+          <s-currency-icon
+            :currency="item.raw"
+            class="me-3"
+            small
+          ></s-currency-icon>
+        </template>
 
-      <v-spacer></v-spacer>
-      <flag v-if="item.flag" class="ms-2" :iso="item.flag" :squared="false" />
-      <img
-        v-else-if="item.icon"
-        class="ms-2"
-        :src="item.icon"
-        width="20"
-        height="20"
-      />
+        <template v-slot:append>
+          <flag
+            v-if="item.raw.flag"
+            class="ms-2"
+            :iso="item.raw.flag"
+            :squared="false"
+          />
+          <img
+            v-else-if="item.raw.icon"
+            class="ms-2"
+            :src="item.raw.icon"
+            width="20"
+            height="20"
+          />
+        </template>
+      </v-list-item>
     </template>
 
     <template v-slot:selection="{ item }">
-      <s-currency-icon small :currency="item" :flag="flag || flagMode" class="mx-1" :flag-only="flagMode" />
+      <s-currency-icon
+        small
+        :currency="item.raw"
+        :flag="flag || flagMode"
+        :flag-only="flagMode"
+      />
 
-      <span v-if="!icon" class="px-3">{{ $t(item.name) }}</span>
+      <span v-if="!icon" class="ms-3">{{ $t(item.raw.name) }}</span>
     </template>
   </v-autocomplete>
 </template>
@@ -131,6 +156,7 @@ import SCurrencyIcon from "../icon/SCurrencyIcon.vue";
 export default {
   name: "SCurrencySelector",
   components: { SCurrencyIcon },
+  emits: ["change"],
   props: {
     value: {},
     shop: {},
@@ -186,6 +212,9 @@ export default {
     maxWidth: {
       default: "220px",
     },
+    minWidth: {
+      default: "120px",
+    },
     backgroundColor: {},
 
     saveLocalStorage: {
@@ -212,6 +241,11 @@ export default {
 
     iconOnly: { type: Boolean, default: false }, // Show circle button (shop top header)
     iconColor: {},
+
+    variant: {
+      type: String,
+      //ts  type: String as () => NonNullable<"flat" | "text" | "elevated" | "tonal" | "outlined" | "plain">,
+    },
   },
 
   data: () => ({
@@ -261,10 +295,13 @@ export default {
     selectCurrency(currency) {
       console.log("currency", currency);
 
-      if (this.saveLocalStorage){
-        if( this.SetUserSelectedCurrency) this.SetUserSelectedCurrency(currency); // Backoffice (Deprecated we should change it!)
-        if( window.$storefront) window.$storefront.currency=this.isObject(currency)?currency:Currency[currency];// Storefront
-
+      if (this.saveLocalStorage) {
+        if (this.SetUserSelectedCurrency)
+          this.SetUserSelectedCurrency(currency); // Backoffice (Deprecated we should change it!)
+        if (window.$storefront)
+          window.$storefront.currency = this.isObject(currency)
+            ? currency
+            : Currency[currency]; // Storefront
       }
 
       let query = {};
@@ -303,9 +340,23 @@ export default {
 </script>
 
 <style lang="scss">
-.fix-new-line-input.v-autocomplete.v-input--is-focused {
-  input {
-    min-width: 44px !important; // Prevent new line in narrow field when a value selected before!
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+
+.s--currency-selector {
+  &.-small {
+    .v-field {
+      --v-field-input-padding-top: 1px;
+      --v-field-input-padding-bottom: 1px;
+      --v-field-padding-start: 2px;
+      --v-input-control-height: 36px;
+      font-size: 14px;
+    }
   }
 }
 </style>

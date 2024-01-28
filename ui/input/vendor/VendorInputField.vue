@@ -14,37 +14,39 @@
 
 <template>
   <v-combobox
-    :value="value"
-    @input="
+    :model-value="modelValue"
+    @update:model-value="
       (val) => {
-        $emit('input', val);
+        $emit('update:modelValue', val);
+        $nextTick(() => {
+       $emit('change',val)
+      });
       }
     "
     :items="vendors"
     :loading="busy"
     :label="label"
     item-value="id"
-    item-text="name"
+    item-title="name"
     :return-object="false"
     clearable
-    @change="$emit('change')"
     @click:clear="
       $emit('click:clear');
       getVendors();
     "
-    :search-input.sync="search"
-    :filter="() => true"
+    v-model:search="search"
+    :customFilter="() => true"
     messages=" "
     :disabled="disabled || IS_VENDOR_PANEL"
     :placeholder="placeholder"
-    :solo="solo"
     :flat="flat"
-    :dense="dense"
-    :background-color="backgroundColor"
+    :density="dense?'compact':undefined"
+    :bg-color="backgroundColor"
     :hide-details="hideDetails"
     :prepend-inner-icon="prependInnerIcon"
     :rounded="rounded"
     @focus="onFocus"
+    :variant="solo?'solo':'underlined'"
   >
     <template v-slot:selection="{}">
       <template v-if="selected_vendor">
@@ -58,16 +60,16 @@
         </v-avatar>
         <b>{{ selected_vendor.name }}</b>
       </template>
-      <small v-else-if="value">Loading...</small>
+      <small v-else-if="modelValue">Loading...</small>
     </template>
 
     <template v-slot:message>
-      <template v-if="selected_vendor && selected_vendor.user" class="pen">
-        <v-avatar size="24" left class="avatar-gradient -thin -user me-1">
+      <div v-if="selected_vendor && selected_vendor.user" class="pen">
+        <v-avatar size="24" start class="avatar-gradient -thin -user me-1">
           <img :src="getUserAvatar(selected_vendor.user_id)" />
         </v-avatar>
         {{ selected_vendor.user.name }}
-      </template>
+      </div>
     </template>
 
     <template v-slot:item="{ item }">
@@ -78,7 +80,7 @@
         <b>{{ item.name }}</b>
         <v-spacer></v-spacer>
         <v-chip v-if="item.user" class="mx-1 pen" color="#fafafa">
-          <v-avatar size="24" left class="avatar-gradient -thin -user">
+          <v-avatar size="24" start class="avatar-gradient -thin -user">
             <img :src="getUserAvatar(item.user_id)" />
           </v-avatar>
           <span class="small">{{ item.user.name }}</span>
@@ -94,13 +96,14 @@ import _ from "lodash-es";
 export default {
   name: "VendorInputField",
   components: {},
+  emits: ["update:modelValue", "change", "click:clear"],
   props: {
     shop: {
       require: true,
       type: Object,
     },
 
-    value: {},
+    modelValue: {},
     activeOnly: { default: false, type: Boolean },
 
     defaultVendor: {}, // Default value object
@@ -144,20 +147,21 @@ export default {
     },
 
     selected_vendor() {
-      let out = this.vendors.find((vendor) => vendor.id === this.value);
-      if (!out && this.value) return this.defaultVendor; // Return default value object
+      let out = this.vendors.find((vendor) => vendor.id === this.modelValue);
+      if (!out && this.modelValue) return this.defaultVendor; // Return default value object
       return out;
     },
   },
 
   watch: {
     search: _.throttle(function (newVal, oldVal) {
+      if(!newVal && !oldVal) return;
       this.getVendors();
     }, window.SERACH_THROTTLE),
   },
 
   created() {
-    if (this.value) {
+    if (this.modelValue) {
       this.getVendors();
     }
   },
@@ -181,9 +185,9 @@ export default {
           params: {
             // Must contain this id:
             contain:
-              this.value && this.isObject(this.value)
-                ? this.value.id
-                : this.value,
+              this.modelValue && this.isObject(this.modelValue)
+                ? this.modelValue.id
+                : this.modelValue,
             search: this.search,
 
             offset: 0,

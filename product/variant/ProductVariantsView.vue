@@ -36,7 +36,7 @@
         :color="color"
         :size="small ? 14 : 18"
         :border-less="small"
-        class="mr-1 hover-scale card-badge-color"
+        class="me-1 hover-scale card-badge-color"
         :class="{ '-selected': selectedVariant?.color === color }"
         @click.native="onSelect('color', color)"
         @mouseenter.native="hoverable ? onSelect('color', color) : undefined"
@@ -101,7 +101,7 @@
       :class="{ dense: dense  ,'-ultra-dense':isUltraDense(weights)}"
     >
       <v-icon :color="icon_color" class="me-1" small>
-        fas fa-weight-hanging
+        fa:fas fa-weight-hanging
       </v-icon>
 
       <span
@@ -126,7 +126,7 @@
       class="p-1 d-flex align-center  flex-wrap"
       :class="{ dense: dense   ,'-ultra-dense':isUltraDense(types)}"
     >
-      <v-icon :color="icon_color" class="me-1" small> fas fa-toolbox </v-icon>
+      <v-icon :color="icon_color" class="me-1" small> fa:fas fa-toolbox </v-icon>
       <span
         v-for="type in types"
         :key="type"
@@ -181,10 +181,10 @@
           :key="variant.id"
           class="card-badge-info text-success hover-scale"
         >
-          {{ variant.price | numeralFormat("0,0") }}
+          {{   numeralFormat(variant.price,"0,0") }}
           {{ getCurrencyName(variant.currency) }}
           <small
-            >({{ variant.discount | numeralFormat("0,0") }}
+            >({{   numeralFormat(variant.discount,"0,0") }}
             {{ $t("variants_view.discount") }})</small
           ></span
         >
@@ -205,7 +205,7 @@
           :key="quantity"
           class="card-badge-info text-success hover-scale"
         >
-          {{ quantity | numeralFormat("0,0") }}
+          {{   numeralFormat(quantity,"0,0") }}
         </span>
       </p>
     </div>

@@ -113,6 +113,7 @@ export default {
 
   watch: {
     search: _.throttle(function (newVal, oldVal) {
+      if(!newVal && !oldVal) return;
       this.getPricings();
     }, window.SERACH_THROTTLE),
 

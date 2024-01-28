@@ -54,6 +54,7 @@
 
 <script>
 import _ from "lodash-es";
+import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 
 export default {
   name: "SArticleTableOfContents",
@@ -149,20 +150,23 @@ export default {
       }
     },
 
-    onIntersect(entries, observer) {
+    onIntersect(isIntersecting, entries, observer) {
       // More information about these options
       // is located here: https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-      this.isIntersecting = entries[0].isIntersecting;
+      this.isIntersecting = isIntersecting;
     },
 
     goTo(item) {
       const currentScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
       const diff = Math.abs(item.offset - currentScrollY);
 
+      ScrollHelper.scrollToElement(`#${item.id}`,120/*to safe full view on top fix header!*/,'smooth')
+
+      /*
       this.$vuetify.goTo(`#${item.id}`, {
         duration: diff,
-        offset: 120 /*to safe full view on top fix header!*/,
-      });
+        offset: 120 ,
+      });*/
     },
   },
 };

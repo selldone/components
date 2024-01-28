@@ -282,7 +282,7 @@
           solo
           row-height="10px"
         >
-          <template v-slot:append-outer>
+          <template v-slot:append>
             <v-btn
               @click="sendResponse()"
               :loading="busy_contact"

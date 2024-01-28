@@ -105,7 +105,7 @@
         <variant-item-view-micro v-if="variant" :product-variant="variant" />
 
         <p class="offer" v-if="offer">
-          <v-icon small color="#00a89a" class="me-1">fas fa-gift</v-icon>
+          <v-icon small color="#00a89a" class="me-1">fa:fas fa-gift</v-icon>
           <span v-if="offer.percent !== 100">{{
             $t("basket_items.offer", {
               count: basketItem.offer_count,
@@ -167,7 +167,7 @@
               label
               class="mx-2 p-1"
               ><v-icon small>arrow_drop_up</v-icon>
-              {{ price_error_percent | numeralFormat("0,0") }}%</v-chip
+              {{  numeralFormat(price_error_percent,"0,0") }}%</v-chip
             >
             <v-chip
               v-if="price_error_percent < -1"
@@ -177,7 +177,7 @@
               label
               class="mx-2 p-1"
               ><v-icon small>arrow_drop_down</v-icon>
-              {{ price_error_percent | numeralFormat("0,0") }}%</v-chip
+              {{   numeralFormat(price_error_percent,"0,0") }}%</v-chip
             >
           </p>
           <v-btn
@@ -214,9 +214,9 @@
           flat
           dark
           background-color="#111"
-          :dense="$vuetify.breakpoint.smAndDown"
-          :solo="$vuetify.breakpoint.xsOnly"
-          :has-delete="$vuetify.breakpoint.smAndUp"
+          :dense="$vuetify.display.smAndDown"
+          :solo="$vuetify.display.xsOnly"
+          :has-delete="$vuetify.display.smAndUp"
           @click:delete="buyRemoveAction()"
           :loading-delete="busy_delete"
         ></s-shop-basket-item-count-select>

@@ -170,7 +170,7 @@
 
     <div class="products-box-add row-hover" @click.stop="dialog = true">
       <div class="center-absolute text-center">
-        <v-icon large>fas fa-plus</v-icon>
+        <v-icon large>fa:fas fa-plus</v-icon>
         <div>
           <slot></slot>
         </div>

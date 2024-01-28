@@ -13,15 +13,16 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-tooltip bottom :max-width="480" color="#000">
-    <template v-slot:activator="{ on }">
+  <v-tooltip location="bottom" :max-width="480" color="#000">
+    <template v-slot:activator="{ props }">
       <v-btn
         color="primary"
         class="margin-n7px hover-alpha"
-        dark
-        v-on="on"
+        v-bind="props"
         icon
         @click="$emit('click')"
+        variant="plain"
+size="36"
       >
         <v-icon color="#000"> {{icon}} </v-icon>
       </v-btn>
@@ -36,6 +37,7 @@
  */
 export default {
   name: "TipsButton",
+  emits: ["click"],
   props: {
     message: {},
     icon:{default:'help'}
@@ -44,6 +46,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+
+
 .hover-alpha {
   opacity: 0.4;
   transition: all 0.3s;

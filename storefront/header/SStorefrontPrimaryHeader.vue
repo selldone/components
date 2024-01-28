@@ -333,7 +333,7 @@
               key="kav2"
               class="s--storefront-primary-header-login-button"
             >
-              <v-icon small class="me-2"> fas fa-sign-in-alt </v-icon>
+              <v-icon small class="me-2"> login </v-icon>
               <div v-if="!!shop">
                 <span class="hide-on-small-600"
                   >{{ $t("layout_shop.login_to_shop") }}
@@ -365,7 +365,7 @@
       :right="!$vuetify.rtl"
       color="#fff"
       class="s--storefront-primary-header-basket-navigation"
-      :width="$vuetify.breakpoint.mdAndUp ? 640 : 360"
+      :width="$vuetify.display.mdAndUp ? 640 : 360"
       temporary
     >
       <div class="d-flex flex-column" style="min-height: 100%">
@@ -540,7 +540,7 @@ export default {
 
     top_menu() {
       return (
-        this.$vuetify.breakpoint.mdAndUp &&
+        this.$vuetify.display.mdAndUp &&
         this.shop &&
         this.shop.menus &&
         this.shop.menus.find((it) => it.type === "HEADER")

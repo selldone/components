@@ -18,7 +18,7 @@
     max-width="640"
     width="98vw"
     content-class="rounded-t-xl"
-    :fullscreen="$vuetify.breakpoint.mdAndDown"
+    :fullscreen="$vuetify.display.mdAndDown"
   >
     <v-card
       v-if="profile"

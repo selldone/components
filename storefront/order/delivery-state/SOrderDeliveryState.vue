@@ -56,7 +56,7 @@
               {{
                 getLocalTimeString(
                   basket.reserved_at,
-                  $vuetify.breakpoint.smAndDown
+                  $vuetify.display.smAndDown
                 )
               }}
             </small>
@@ -188,7 +188,7 @@
               {{
                 getLocalTimeString(
                   basket.delivery_at,
-                  $vuetify.breakpoint.smAndDown
+                  $vuetify.display.smAndDown
                 )
               }}
             </small>
@@ -352,14 +352,14 @@ export default {
       const per = Math.round(100 / this.list.length);
       return (
         `max-width: ${per}%;` +
-        (this.$vuetify.breakpoint.smAndDown
+        (this.$vuetify.display.smAndDown
           ? `font-size:9px;`
           : "font-size:12px")
       );
     },
 
     icon_size() {
-      return this.$vuetify.breakpoint.smAndUp ? 16 : 12;
+      return this.$vuetify.display.smAndUp ? 16 : 12;
     },
   },
   watch: {},

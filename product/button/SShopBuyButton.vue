@@ -40,7 +40,7 @@
         selected_order_count <= 1 /*Show loading for first action!*/
       "
       height="50px"
-      class="m-auto"
+      class="ma-auto"
     />
 
     <!-- 🞇 Finished -->
@@ -134,7 +134,7 @@
       >
         <template v-slot:item="{ item }">
           <p v-if="item" class="options">
-            <span class="float-left mr-1">{{ unit }}</span>
+            <span class="float-left me-1">{{ unit }}</span>
             {{ item }}
           </p>
           <p v-else class="options">

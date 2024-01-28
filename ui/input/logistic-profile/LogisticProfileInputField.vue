@@ -118,6 +118,7 @@ export default {
 
   watch: {
     search: _.throttle(function (newVal, oldVal) {
+      if(!newVal && !oldVal) return;
       this.getProfiles();
     }, window.SERACH_THROTTLE),
 

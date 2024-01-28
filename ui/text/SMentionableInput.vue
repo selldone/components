@@ -21,27 +21,26 @@
     <s-html-input
       ref="area"
       class="flex-grow-1"
-      :outlined="outlined"
       :label="label"
       :placeholder="placeholder"
-      :value="value"
+      :modelValue="modelValue"
       @update:text="(val) => $emit('update:text', val)"
-      @input="(val) => $emit('input', val)"
+      @update:modelValue="(val) => $emit('update:modelValue', val)"
       :auto-grow="autoGrow"
       :messages="messages"
       :mentions="mentions"
       @update:mentions="(val) => $emit('update:mentions', val)"
-      @focus.native="$emit('focus')"
-      @blur.native="$emit('blur')"
+      @focus="$emit('focus')"
+      @blur="$emit('blur')"
     ></s-html-input>
 
-    <v-menu offset-y top :close-on-content-click="false">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn icon v-bind="attrs" v-on="on" retain-focus-on-click>
+    <v-menu location="top" :close-on-content-click="false" max-width="420" >
+      <template v-slot:activator="{ props }">
+        <v-btn icon v-bind="props" variant="text">
           <v-icon>sentiment_satisfied_alt</v-icon>
         </v-btn>
       </template>
-      <VEmojiPicker @select="selectEmoji" :emojiWithBorder="false" />
+        <EmojiPicker @select="selectEmoji" :native="true"  hide-group-names disable-skin-tones />
     </v-menu>
   </div>
 </template>
@@ -49,18 +48,18 @@
 <script>
 import Tribute from "tributejs";
 import SHtmlInput from "./SHtmlInput.vue";
-import { VEmojiPicker } from "v-emoji-picker";
+import EmojiPicker from "vue3-emoji-picker";
+import "vue3-emoji-picker/css";
 
 export default {
   name: "SMentionableInput",
-  components: { SHtmlInput, VEmojiPicker },
+  components: { SHtmlInput, EmojiPicker },
 
   props: {
-    value: {},
+    modelValue: {},
     text: {},
     messages: { default: "**bold**    __italic__   @user" },
     autoGrow: { type: Boolean, default: false },
-    outlined: { type: Boolean, default: false },
     label: {},
     shopId: {},
     mentions: {},
@@ -72,6 +71,7 @@ export default {
   },
   mounted() {
     let t = this;
+
     function remoteSearch(text, cb) {
       if (!text) return;
       axios
@@ -114,7 +114,7 @@ export default {
               item.original.id
             }" type="user" class="chip-user" contenteditable="false"><img src="${t.getUserAvatar(
               item.original.id,
-              64
+              64,
             )}"> <span>@${item.original.name}</span><i></i></span>`;
           },
 
@@ -202,8 +202,8 @@ export default {
 
   methods: {
     selectEmoji(emoji) {
-      this.$refs.area.$el.insertAtCaret(emoji.data);
-      this.$emit("input", this.$refs.area.$el.innerHTML);
+      this.$refs.area.$el.insertAtCaret(emoji.i);
+      this.$emit("update:modelValue", this.$refs.area.$el.innerHTML);
     },
   },
 };
@@ -217,10 +217,10 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--mentionable-input{
+.s--mentionable-input {
   display: flex;
   font-size: 16px;
-  line-height: 1.6em
+  line-height: 1.6em;
 }
 
 .s--mentionable-input-menu {
@@ -233,7 +233,18 @@ export default {
   overflow: auto;
   display: block;
   z-index: 999999;
-  font-family: "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" ;
+  font-family:
+    "Graphik",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol";
   border-radius: 8px;
 
   ul {
@@ -244,7 +255,7 @@ export default {
     min-width: 210px;
     border: solid #e6e6e6 thin;
     display: grid;
-   //// font-family: var(--font);
+    //// font-family: var(--font);
     font-size: 1.1rem;
     font-weight: 500;
   }
@@ -255,6 +266,7 @@ export default {
     display: flex;
     align-items: center;
     padding: 8px 12px;
+
     div {
       flex-grow: 1;
       padding: 0 4px;
@@ -269,6 +281,7 @@ export default {
       font-size: 0.9em;
       font-weight: 500;
     }
+
     img {
       vertical-align: middle;
       margin-right: 4px;
@@ -276,6 +289,7 @@ export default {
       width: 30px;
       border-radius: 50%;
     }
+
     small {
       display: block;
     }

@@ -87,7 +87,7 @@
           :sort-by="sortBy"
           :sort-desc="sortDesc"
           hide-default-footer
-          :server-items-length="totalItems"
+          :items-length="totalItems"
           :options.sync="options"
           :page.sync="page"
           :items-per-page="itemsPerPage"
@@ -252,7 +252,7 @@
             </v-fade-transition>
           </template>
 
-          <template v-slot:footer>
+          <template v-slot:bottom>
             <v-pagination
               v-if="pageCount > 1"
               v-model="page"
@@ -281,7 +281,7 @@
             solo
             row-height="10px"
           >
-            <template v-slot:append-outer>
+            <template v-slot:append>
               <v-btn
                 @click="sendForm()"
                 :loading="busy_send"
@@ -418,58 +418,58 @@ export default {
     headers() {
       return [
         {
-          text: "Shop",
+          title: "Shop",
           align: "center",
           sortable: true,
           value: "shop_id",
         },
         {
-          text: "User",
+          title: "User",
           align: "start",
           sortable: true,
           value: "user_id",
         },
         {
-          text: "Date",
+          title: "Date",
           align: "start",
           sortable: true,
           value: "created_at",
         },
         {
-          text: "Closed",
+          title: "Closed",
           align: "start",
           sortable: true,
           value: "closed_at",
         },
         {
-          text: "Last message",
+          title: "Last message",
           align: "start",
           sortable: true,
           value: "messages",
         },
 
         {
-          text: "Status",
+          title: "Status",
           align: "center",
           sortable: false,
         },
 
         {
-          text: "Officer",
+          title: "Officer",
           align: "center",
           sortable: true,
           value: "officer_id",
         },
 
         {
-          text: "Mention",
+          title: "Mention",
           align: "center",
           sortable: true,
           value: "mention_id",
         },
 
         {
-          text: "Link",
+          title: "Link",
           align: "center",
           sortable: true,
           value: "shop_id",
@@ -489,6 +489,7 @@ export default {
     },
 
     search: _.throttle(function (newVal, oldVal) {
+      if(!newVal && !oldVal) return;
       //  console.log("search", newVal);
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
       this.fetchSupports(1, sortBy ? sortBy[0] : null, sortDesc[0], false);

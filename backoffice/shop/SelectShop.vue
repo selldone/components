@@ -42,7 +42,7 @@
         x-small
         color="amber"
         title="Owner"
-        >fas fa-crown</v-icon
+        >fa:fas fa-crown</v-icon
       >
     </template>
 
@@ -58,7 +58,7 @@
         x-small
         color="amber"
         title="Owner"
-        >fas fa-crown</v-icon
+        >fa:fas fa-crown</v-icon
       >
     </template>
 

@@ -14,20 +14,27 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-text-field
-    ref="field"
     v-model="model"
     :suffix="suffix ? suffix : currency_obj ? $t(currency_obj.name) : undefined"
     :error-messages="errorMessages"
-    v-bind="$attrs"
     @focus="onFocus"
     @keyup="onKeyUp"
     @change="onChange"
     @blur="onBlur"
     :rounded="rounded"
-    :outlined="outlined"
-    :dense="dense"
+    :density="dense ? 'compact' : undefined"
     :clearable="clearable"
-    :filled="filled"
+    :variant="
+      variant
+        ? variant
+        : solo
+          ? 'solo'
+          : filled
+            ? 'filled'
+            : outlined
+              ? 'outlined'
+              : 'underlined'
+    "
     :label="label"
     :hint="hint"
     :disabled="disabled"
@@ -35,15 +42,15 @@
     :messages="messages"
     :prepend-icon="prependIcon"
     :prepend-inner-icon="prependInnerIcon"
-    :background-color="backgroundColor"
+    :bg-color="backgroundColor"
     :hide-details="hideDetails"
-    :solo="solo"
     :flat="flat"
     @keydown.enter="$emit('enter')"
     @click:clear="$emit('click:clear')"
+    v-model:focused="focused"
   >
-    <template v-slot:append>
-      <slot name="append"></slot>
+    <template v-slot:append-inner>
+      <slot name="append-inner"></slot>
     </template>
   </v-text-field>
 </template>
@@ -62,10 +69,12 @@ function tryParseFloat(str, defaultValue) {
   }
   return retValue;
 }
+
 export default {
   name: "SPriceInput",
+  emits: ["update:modelValue", "blur", "change", "enter", "click:clear"],
   props: {
-    value: null,
+    modelValue: null,
     messages: {},
     errorMessages: null,
     allowNegative: {
@@ -109,6 +118,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    variant: {},
     dense: {
       type: Boolean,
       default: false,
@@ -144,11 +154,14 @@ export default {
   },
   data() {
     return {
-      numberValue: this.value,
-      model: this.value,
+      numberValue: this.modelValue,
+      model: this.modelValue,
       isMasked: true,
       thousandsSeparatorRegex: new RegExp(`\\${this.thousandsSeparator}`, "g"),
       decimalSeparatorRegex: new RegExp(`\\${this.decimalSeparator}`, "g"),
+
+      focused:false,
+
     };
   },
 
@@ -160,11 +173,11 @@ export default {
   },
   watch: {
     numberValue(v) {
-      this.$emit("input", v);
+      this.$emit("update:modelValue", v);
     },
-    value(v) {
+    modelValue(v) {
       this.numberValue = v;
-      if (!this.$refs.field.isFocused) {
+      if (!this.focused) {
         this.format();
       }
     },
@@ -178,7 +191,7 @@ export default {
       this.updateModel();
     },
     onBlur() {
-      if (this.$listeners.blur) this.$listeners.blur();
+      this.$emit('blur')
       this.isMasked = true;
       this.format();
     },
@@ -186,7 +199,7 @@ export default {
       this.updateNumberValue();
     },
     onChange() {
-      if (this.$listeners.change) this.$listeners.change();
+      this.$emit('change')
     },
     updateNumberValue() {
       let v = NumberHelper.toEnglishDigits(this.model);
@@ -201,8 +214,8 @@ export default {
 
       this.numberValue = parseFloat(
         parsed.toFixed(
-          this.currency_obj ? this.currency_obj.floats : this.decimal
-        )
+          this.currency_obj ? this.currency_obj.floats : this.decimal,
+        ),
       );
     },
     updateModel() {

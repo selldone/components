@@ -42,10 +42,10 @@
       :title="$t('global.commons.price')"
     >
       <div dir="ltr">
-        <b>{{ network.price | numeralFormat("0,0.[0000]")  }}</b>
+        <b>{{   numeralFormat(network.price,"0,0.[0000]")  }}</b>
         USD
       </div>
-      <v-sparkline
+      <s-sparkline
         v-if="network.history.length"
         :smooth="3"
         :gradient="
@@ -60,7 +60,7 @@
         padding="3"
         stroke-linecap="round"
       >
-      </v-sparkline>
+      </s-sparkline>
     </v-col>
 
     <v-col v-if="network.error" cols="12" :title="network.error" class="text-start">
@@ -74,8 +74,11 @@
 </template>
 
 <script>
+import SSparkline from "@components/chart/sparkline/SSparkline.vue";
+
 export default {
   name: "SBackofficeGatewayNetworkStatus",
+  components: {SSparkline},
   props: {
     network: {},
   },

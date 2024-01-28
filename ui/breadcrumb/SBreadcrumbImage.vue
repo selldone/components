@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--breadcrumb-image">
     <v-breadcrumbs
-      v-if="$vuetify.breakpoint.smAndUp"
+      v-if="$vuetify.display.smAndUp"
       :items="hierarchyItems"
       divider="/"
       class="single-line overflow-auto thin-scroll"
@@ -70,7 +70,7 @@
     </v-expand-transition>
 
     <v-bottom-sheet
-      v-if="!$vuetify.breakpoint.smAndUp"
+      v-if="!$vuetify.display.smAndUp"
       v-model="dialog"
       max-width="98vw"
       width="480"

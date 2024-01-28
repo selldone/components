@@ -58,7 +58,7 @@
       v-model="show_cross"
       max-width="640"
       scrollable
-      :fullscreen="$vuetify.breakpoint.smAndDown"
+      :fullscreen="$vuetify.display.smAndDown"
     >
       <v-card min-height="420">
         <v-card-title
@@ -72,7 +72,7 @@
         <v-card-text class="text-start d-flex flex-column">
           <p>Copy and past this code in your community's category</p>
 
-          <h2 class="text-center m-auto display-3 text-success">
+          <h2 class="text-center ma-auto text-h2 text-success">
             <span v-copy>{{ community.id }}/{{ topic.id }}</span>
           </h2>
         </v-card-text>

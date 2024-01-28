@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="blur-animate" :class="{ blured: busy }">
+  <div class="blur-animate" :class="{ blurred: busy }">
     <v-icon small>inventory</v-icon> <small>Products:</small>
     <v-btn
       v-if="statistic?.products > 0"
@@ -21,11 +21,11 @@
       class="mx-2 tnt"
       small
       text
-      :to="{name:'BackofficeProductsManagementPage',query:{search:'tax:'+profile.name}}"
+      :to="{name:'BPageShopProductsList',query:{search:'tax:'+profile.name}}"
       target="_blank"
       title="Show products with this tax profile."
     >
-      <b class="me-2">{{ statistic?.products | numeralFormat("0,0") }}🞬 </b>
+      <b class="me-2">{{  numeralFormat(statistic?.products ,"0,0") }}🞬 </b>
       View list <v-icon small class="ms-1">open_in_new</v-icon></v-btn
     >
     <small v-else class="mx-2">{{ $t("global.commons.empty") }}!</small>

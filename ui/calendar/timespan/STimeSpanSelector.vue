@@ -13,14 +13,14 @@
   -->
 
 <template>
-  <v-menu offset-y>
-    <template v-slot:activator="{ on }">
-      <v-btn class="nbt"  v-on="on" small>
-        <v-icon left small>arrow_drop_down</v-icon>
+  <v-menu>
+    <template v-slot:activator="{ props }">
+      <v-btn class="tnt"  v-bind="props" :size="size" :class="buttonClass" :variant="variant">
         {{ $t(selected_timespan) }}
+        <v-icon end >arrow_drop_down</v-icon>
       </v-btn>
     </template>
-    <v-list dense>
+    <v-list density="compact">
       <v-list-item
         v-for="(item, index) in items"
         :key="index"
@@ -32,14 +32,25 @@
   </v-menu>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "STimeSpanSelector",
+  emits: ["select"],
   props: {
     dateRange: {
       type: Array,
     },
-    maxDays: { default: 30 },
+    maxDays: {
+      type: Number,
+      default: 30,
+    },
+
+    variant: {
+      type: String as () => NonNullable<"flat" | "text" | "elevated" | "tonal" | "outlined" | "plain">,
+      default: null,
+    },
+    size: [Number, String],
+    buttonClass:{},
   },
   data: () => ({}),
   computed: {
@@ -70,4 +81,12 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+</style>

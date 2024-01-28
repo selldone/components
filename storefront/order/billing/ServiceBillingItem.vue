@@ -64,7 +64,7 @@
 
     <v-expand-transition>
       <div v-if="expand">
-        <v-subheader> </v-subheader>
+        <v-list-subheader> </v-list-subheader>
         <!-- ----------------------- Tasks ----------------------- -->
         <div
           v-if="has_tasks"
@@ -74,9 +74,9 @@
           <s-widget-header :title="$t('service_bill.task.title')" icon="rule">
           </s-widget-header>
 
-          <v-subheader>
+          <v-list-subheader>
             {{ $t("service_bill.task.message") }}
-          </v-subheader>
+          </v-list-subheader>
 
           <expert-contract-tasks
             v-model="tasks"
@@ -135,12 +135,12 @@
             add-icon="calendar_today"
           >
           </s-widget-header>
-          <v-subheader>
+          <v-list-subheader>
             {{ $t("service_bill.booking.message") }}
-          </v-subheader>
+          </v-list-subheader>
 
           <div
-            class="subtitle-2 d-flex text-center border-between checks justify-content-center"
+            class="subtitle-2 d-flex text-center border-between checks justify-center"
           >
             <!-- Checkin Date -->
 
@@ -260,7 +260,7 @@
             <!-- Days -->
 
             <div class="flex-grow-0 p-3">
-              <h2 class="display-1">{{ Math.round(diff_days) }}</h2>
+              <h2 class="text-h4">{{ Math.round(diff_days) }}</h2>
               <small>{{ $t("global.commons.days") }}</small>
             </div>
           </div>
@@ -347,9 +347,9 @@
             icon="extension"
           >
           </s-widget-header>
-          <v-subheader>
+          <v-list-subheader>
             {{ $t("service_bill.subscription.message") }}
-          </v-subheader>
+          </v-list-subheader>
 
           <s-number-input
             v-model="subscription"
@@ -376,9 +376,9 @@
             icon="generating_tokens"
           >
           </s-widget-header>
-          <v-subheader>
+          <v-list-subheader>
             {{ $t("service_bill.charge.message") }}
-          </v-subheader>
+          </v-list-subheader>
 
           <s-number-input
             v-model="charge"
@@ -402,9 +402,9 @@
             icon="price_change"
           >
           </s-widget-header>
-          <v-subheader>
+          <v-list-subheader>
             {{ $t("service_bill.pricing.message") }}
-          </v-subheader>
+          </v-list-subheader>
 
           <s-price-input
             v-model="price"

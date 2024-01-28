@@ -33,7 +33,7 @@
           class="min-height-40vh d-flex pa-2 align-center justify-center flex-column"
         >
           <v-icon x-large color="#111">lock</v-icon>
-          <div class="display-2 font-weight-light my-2">Locked content!</div>
+          <div class="text-h3 font-weight-light my-2">Locked content!</div>
           <div>
             After subscribing, you will have access to the contents here.
           </div>

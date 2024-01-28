@@ -32,7 +32,7 @@
       >
         <v-img
           :src="getShopImagePath(image.path)"
-          :aspect-ratio="$vuetify.breakpoint.smAndUp ? 1 : 2"
+          :aspect-ratio="$vuetify.display.smAndUp ? 1 : 2"
           class="m-2"
         >
           <template v-slot:placeholder>
@@ -52,7 +52,7 @@
               >{{ `${image.width}px ✕ ${image.height}px` }}</span
             >
             <div v-if="image.size" class="d-flex align-center">
-              <b>{{ image.size | numeralFormat("0.[0] b") }} </b>
+              <b>{{  numeralFormat(image.size ,"0.[0] b") }} </b>
 
               <v-progress-linear
                 :color="
@@ -205,9 +205,9 @@ export default {
 
   computed: {
     style_value() {
-      if (this.$vuetify.breakpoint.mdAndUp)
+      if (this.$vuetify.display.mdAndUp)
         return "width: 30%;height: auto;margin: 1.5%";
-      if (this.$vuetify.breakpoint.smAndUp)
+      if (this.$vuetify.display.smAndUp)
         return "width: 44%;height: auto;margin: 2%";
       return "width: 94%;height: auto;margin: 3%";
     },
@@ -328,7 +328,7 @@ export default {
 .item-grid {
   cursor: move;
   border-radius: 12px;
-  .v-image {
+  .v-img {
     border-radius: 12px;
   }
 }

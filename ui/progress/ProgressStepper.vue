@@ -19,12 +19,12 @@
     </h3>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <v-btn text rounded :disabled="!previous" @click="$emit('previous')">
+      <v-btn variant="text" rounded :disabled="!previous" @click="$emit('previous')">
         <v-icon> {{ $t("icons.chevron_back") }}</v-icon>
         {{ $t("global.actions.previous") }}
       </v-btn>
 
-      <v-btn text rounded :disabled="!next" @click="$emit('next')">
+      <v-btn variant="text" rounded :disabled="!next" @click="$emit('next')">
         {{ $t("global.actions.next") }}
 
         <v-icon>{{ $t("icons.chevron_next") }}</v-icon>
@@ -55,7 +55,7 @@
         class="progress-xyz-value"
         :style="{ color: color, 'border-color': color }"
       >
-        <v-icon :color="color" small style="margin-bottom: 6px">
+        <v-icon :color="color" size="small" style="margin-bottom: 6px">
           {{ icon }}
         </v-icon>
       </div>
@@ -70,7 +70,7 @@ export default {
   name: "ProgressXyzStepper",
   components: {},
   props: {
-    value:{},
+    modelValue:{},
     title: {
       required: false,
       type: String,
@@ -119,14 +119,14 @@ export default {
   },
 
   watch: {
-    // Whenever `props.value` changes, update the tween.
-    value(newVal, oldVal) {
+
+    modelValue(newVal, oldVal) {
       this.tween(oldVal, newVal);
     },
   },
 
   mounted() {
-    this.tween(0, this.value);
+    this.tween(0, this.modelValue);
   },
   methods: {
     // This is our main logic block. It handles tweening from a start value to an end value.

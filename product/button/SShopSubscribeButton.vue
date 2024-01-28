@@ -82,7 +82,7 @@
               title="Delivery Address"
               icon="place"
             ></s-widget-header>
-            <v-subheader> </v-subheader>
+            <v-list-subheader> </v-list-subheader>
 
             <div class="mb-4">
               <div v-if="!receiver_info">
@@ -130,7 +130,7 @@
               title="Billing Address"
               icon="receipt"
             ></s-widget-header>
-            <v-subheader> </v-subheader>
+            <v-list-subheader> </v-list-subheader>
             <s-shop-billing-address-form
               v-model="billing"
               :receiver-info="receiver_info"
@@ -142,7 +142,7 @@
 
           <div class="widget-box mb-5">
             <s-widget-header title="Payment" icon="payment"></s-widget-header>
-            <v-subheader> </v-subheader>
+            <v-list-subheader> </v-list-subheader>
 
             <s-subscription-price-select
               v-model="selected_price_id"

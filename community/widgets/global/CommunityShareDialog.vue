@@ -15,19 +15,19 @@
 <template>
   <component
     v-if="topic && post"
-    :is="$vuetify.breakpoint.xs ? 'v-bottom-sheet' : 'v-menu'"
+    :is="$vuetify.display.xs ? 'v-bottom-sheet' : 'v-menu'"
     :activator="activator"
     top
     offset-y
     v-model="value"
-    :max-width="$vuetify.breakpoint.xs ? undefined : 360"
+    :max-width="$vuetify.display.xs ? undefined : 360"
     rounded="xl"
   >
     <div class="p-3 bg-white">
       <s-social-share-buttons
         class="m-0"
-        :small="!$vuetify.breakpoint.xs"
-        :force-large="$vuetify.breakpoint.xs"
+        :small="!$vuetify.display.xs"
+        :force-large="$vuetify.display.xs"
         :title="topic.title"
         :description="post.body"
         :url="url"

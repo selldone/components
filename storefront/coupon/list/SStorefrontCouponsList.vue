@@ -121,7 +121,7 @@
 
 <script>
 import SStorefrontCouponView from "../view/SStorefrontCouponView.vue";
-import { LocalStorages } from "@core/helper/local-storage/LocalStorages";
+import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import _ from "lodash-es";
 
@@ -166,7 +166,7 @@ export default {
   watch: {
     show_coupons(new_val) {
       localStorage.setItem(
-        LocalStorages.GetShopCouponsViewMode(this.$localstorage_base_path()),
+        StorefrontLocalStorages.GetShopCouponsViewMode(this.$localstorage_base_path()),
         new_val
       );
     },
@@ -225,7 +225,7 @@ export default {
     if (!this.forceShow)
       this.show_coupons =
         localStorage.getItem(
-          LocalStorages.GetShopCouponsViewMode(this.$localstorage_base_path())
+          StorefrontLocalStorages.GetShopCouponsViewMode(this.$localstorage_base_path())
         ) !== "false";
   },
   methods: {

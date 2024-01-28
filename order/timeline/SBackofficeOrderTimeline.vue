@@ -26,7 +26,7 @@
         color="primary"
         :disabled="show_add"
       >
-        <v-icon small class="me-2">fas fa-sticky-note</v-icon>
+        <v-icon small class="me-2">fa:fas fa-sticky-note</v-icon>
         {{ $t("global.commons.add_note") }}
       </v-btn>
     </div>
@@ -151,7 +151,7 @@
                   small
                   v-text="
                     item.pin
-                      ? 'fas fa-thumbtack'
+                      ? 'fa:fas fa-thumbtack'
                       : getTimelineStatus(item.type).icon
                   "
                 ></v-icon>
@@ -345,7 +345,7 @@
     >
       <v-card>
         <v-card-title>
-          <v-icon class="me-2">fas fa-envelope</v-icon>
+          <v-icon class="me-2">fa:fas fa-envelope</v-icon>
           <span v-html="email_title"></span>
         </v-card-title>
 
@@ -365,7 +365,7 @@
             >
 
             <v-btn text @click="copyToClipboard(email_html)" x-large>
-              <v-icon class="me-1">fab fa-html5</v-icon>
+              <v-icon class="me-1">fa:fab fa-html5</v-icon>
               {{ $t("order_timeline.copy_html") }}</v-btn
             >
           </div>

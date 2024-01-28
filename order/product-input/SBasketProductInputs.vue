@@ -27,8 +27,8 @@
         @input="$emit('input', message)"
         :style="{ 'animation-delay': `${index * 150}ms` }"
         :readonly="readonly"
-        append-icon="fas fa-copy"
-        @click:append="copyToClipboard(message[item.name])"
+        append-inner-icon="fa:fas fa-copy"
+        @click:append-inner="copyToClipboard(message[item.name])"
         outlined
         :placeholder="item.hint"
         :persistent-placeholder="!!item.hint"
@@ -119,13 +119,13 @@
               <b>
                 {{ f.filename }}
               </b>
-              <v-subheader style="height: auto" class="p-0">
-                {{ f.size | numeralFormat("0.[0] b") }}
+              <v-list-subheader style="height: auto" class="p-0">
+                {{  numeralFormat(f.size ,"0.[0] b") }}
                 <span class="mx-1">/</span>
                 <span :title="getLocalTimeString(f.created_at)">{{
                   getFromNowString(f.created_at)
                 }}</span>
-              </v-subheader>
+              </v-list-subheader>
             </div>
 
             <!-- Delete -->

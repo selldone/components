@@ -19,7 +19,7 @@
         {{ $t("global.commons.sub_total") }}
       </template>
       <price-view
-        class="font-weight-bold ml-1"
+        class="font-weight-bold ms-1"
         :amount="bill.items_price"
         :currency="bill.currency"
       ></price-view>
