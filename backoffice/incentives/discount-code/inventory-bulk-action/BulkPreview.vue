@@ -27,15 +27,15 @@
       ></s-currency-input>
     </div>
     <s-progress-loading v-if="busy_fetch"></s-progress-loading>
-    <v-data-table
+    <v-data-table-server
       :headers="headers"
       :items="products"
       hide-default-footer
       :items-length="totalItems"
-      :options.sync="options"
-      :page.sync="page"
+      v-model:options="options"
+      v-model:page="page"
+      :sort-by="[{ key: null, order: 'desc' }]"
       :items-per-page="itemsPerPage"
-      @page-count="pageCount = $event"
       class="bg-transparent dense-padding"
     >
       <template v-slot:item.icon="{ item }">
@@ -65,7 +65,7 @@
           ></price-view>
 
           <template v-if="item.new_price && item.new_price !== item.price">
-            <v-icon class="my-n1" small>expand_more</v-icon>
+            <v-icon class="my-n1" size="small">expand_more</v-icon>
             <price-view
               :amount="item.new_price"
               :currency="item.currency"
@@ -98,7 +98,7 @@
                 item.new_discount !== item.discount)
             "
           >
-            <v-icon class="my-n1" small>expand_more</v-icon>
+            <v-icon class="my-n1" size="small">expand_more</v-icon>
 
             <price-view
               :amount="item.new_discount"
@@ -115,9 +115,9 @@
       </template>
 
       <template v-slot:bottom>
-        <v-pagination v-model="page" circle :length="pageCount" class="my-3" />
+        <v-pagination v-model="page" rounded :length="pageCount" class="my-3" />
       </template>
-    </v-data-table>
+    </v-data-table-server>
   </div>
 </template>
 
@@ -173,15 +173,17 @@ export default {
 
     // Pagination:
     page: 1,
-    pageCount: 0,
     itemsPerPage: 10,
     totalItems: 0,
-    options: { sortDesc: [true] },
+    options: {},
 
     search: "",
     pending: false,
   }),
   computed: {
+    pageCount() {
+      return Math.ceil(this.totalItems / this.itemsPerPage);
+    },
     currencies() {
       return this.shop.currencies;
     },
@@ -189,7 +191,7 @@ export default {
 
   watch: {
     search: _.throttle(function (newVal, oldVal) {
-      if(!newVal && !oldVal) return;
+      if (!newVal && !oldVal) return;
       this.options.page = 1;
       this.fetchEligibleProducts(this.page, this.sortBy);
     }, window.SERACH_THROTTLE),

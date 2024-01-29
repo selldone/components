@@ -199,7 +199,7 @@
                 >
                   <i
                     v-if="!recaptcha_response"
-                    class="fa-solid fa-circle-notch fa-spin"
+                    class="fa:fas fa-circle-notch fa-spin"
                   ></i>
 
                   <span class="ms-1">{{ $t("login.register_action") }}</span>
@@ -479,7 +479,7 @@
             >
               <i
                 v-if="!recaptcha_response"
-                class="fa-solid fa-circle-notch fa-spin"
+                class="fa:fas fa-circle-notch fa-spin"
               ></i>
               <span class="ms-1">{{ $t("login.login_button") }}</span>
               <v-icon class="ms-2">login</v-icon>

@@ -43,7 +43,7 @@
         icon
         variant="text"
         :to="{
-          name: 'BProductAdd',
+          name: 'BProductAddFull',
           params: { product_id: product.id },
           hash: '#general',
         }"
@@ -189,7 +189,7 @@
       @click.stop="
         showEditButton
           ? $router.push({
-              name: 'BProductAdd',
+              name: 'BProductAddFull',
               params: { product_id: product.id },
               hash: '#price',
             })
@@ -443,7 +443,7 @@
                 v-if="product.video"
                 title="Video"
                 :to="{
-                  name: 'BProductAdd',
+                  name: 'BProductAddFull',
                   params: { product_id: product.id },
                   hash: '#images',
                 }"

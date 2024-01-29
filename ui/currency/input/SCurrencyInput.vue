@@ -284,7 +284,7 @@ export default {
     },
   },
   created() {
-    this.currency = this.modelValue;
+    this.currency = this.GetCurrency(this.modelValue);
   },
 };
 </script>

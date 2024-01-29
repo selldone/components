@@ -44,7 +44,7 @@ require("@components/style/selldone/general_animates.scss");
 import VueNumerals from "vue-numerals";
 
 //---------------- Check --------------
-import Check from "@components/ui/icon/Check.vue";
+import SCheck from "@components/ui/check/SCheck.vue";
 
 //---------------- Price view --------------
 
@@ -130,7 +130,7 @@ export function installGlobalComponents(app: App) {
   app.use(VueNotifications);
 
   app.use(VueNumerals);
-  app.component("Check", Check);
+  app.component("SCheck", SCheck);
   app.component("price-view", PriceView);
   app.component(SLoading.name, SLoading);
   app.component(SProgressLoading.name, SProgressLoading);

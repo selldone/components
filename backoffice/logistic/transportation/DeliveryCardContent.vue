@@ -93,7 +93,7 @@
     </p>
     <p class="mb-1">
       <small class="me-1">{{ $t("global.commons.holiday") }}:</small>
-      <check :value="transportation.holidays"></check>
+      <s-check :value="transportation.holidays"></s-check>
     </p>
     <hr />
 
@@ -106,18 +106,18 @@
           width="24"
           height="24"
           class="ms-1"
-        /><check v-else :value="transportation.cod"></check>
+        /><s-check v-else :value="transportation.cod"></s-check>
       </p>
       <p class="mb-1 w-50">
         <small class="me-1">{{ $t("global.commons.sod") }}:</small>
-        <check :value="transportation.sod"></check>
+        <s-check :value="transportation.sod"></s-check>
       </p>
     </div>
 
     <div class="d-flex" v-if="!transportation.sod">
       <p class="mb-1 w-50">
         <small class="me-1">{{ $t("global.commons.free_shipping") }}:</small>
-        <check :value="transportation.free_shipping"></check>
+        <s-check :value="transportation.free_shipping"></s-check>
       </p>
       <p class="mb-1 w-50" v-if="transportation.free_shipping">
         <small class="me-1">{{ $t("global.commons.min_purchase") }}:</small>

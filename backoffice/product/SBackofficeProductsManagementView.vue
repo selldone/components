@@ -591,7 +591,7 @@
                 $router.push({
                   name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
                     ? 'Vendor_AddProduct'
-                    : 'BProductAdd',
+                    : 'BProductAddFull',
                   params: { product_id: product.id },
                   hash: '#images',
                 });
@@ -921,7 +921,7 @@
                 :to="{
                   name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
                     ? 'Vendor_AddProduct'
-                    : 'BProductAdd',
+                    : 'BProductAddFull',
                   params: { product_id: currentProductForMenu.id },
                   hash: '#general',
                 }"
@@ -985,7 +985,7 @@
                 :to="{
                   name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
                     ? 'Vendor_AddProduct'
-                    : 'BProductAdd',
+                    : 'BProductAddFull',
                   params: { product_id: currentProductForMenu.id },
                   hash: '#images',
                 }"

@@ -14,16 +14,16 @@
 
 <template>
   <v-item-group
-    :value="value"
-    @change="(val) => $emit('input', val)"
+    :model-value="modelValue"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
     :multiple="multiple"
   >
     <v-container>
       <v-row>
         <v-col v-for="level in CustomerClubLevels" :key="level.code">
-          <v-item v-slot="{ active, toggle }" :value="level.code">
+          <v-item v-slot="{ isSelected, toggle }" :value="level.code">
             <v-card
-              :color="active ? 'primary' : ''"
+              :color="isSelected ? 'primary' : ''"
               class="d-flex align-center justify-center flex-column p-2 min-h-100"
               dark
               @click="toggle"
@@ -35,9 +35,9 @@
         </v-col>
 
         <v-col v-if="noClub" key="no">
-          <v-item v-slot="{ active, toggle }" value="no-club">
+          <v-item v-slot="{ isSelected, toggle }" value="no-club">
             <v-card
-              :color="active ? 'primary' : ''"
+              :color="isSelected ? 'primary' : ''"
               class="d-flex align-center justify-center flex-column p-2 min-h-100"
               dark
               @click="toggle"
@@ -50,12 +50,12 @@
 
         <v-col v-if="clearable" key="all">
           <v-card
-            :color="!value ? 'primary' : ''"
+            :color="!modelValue ? 'primary' : ''"
             class="d-flex align-center justify-center flex-column p-2 min-h-100"
             dark
-            @click="$emit('input', null)"
+            @click="$emit('update:modelValue', null)"
           >
-            {{clearText? clearText:'-' }}
+            {{ clearText ? clearText : "-" }}
           </v-card>
         </v-col>
       </v-row>
@@ -68,8 +68,9 @@ import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
 
 export default {
   name: "SelectCustomerClub",
+  emits: ["update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
     multiple: {
       type: Boolean,
       default: false,
@@ -79,9 +80,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    clearText(){
-
-    },
+    clearText() {},
     noClub: {
       type: Boolean,
       default: false,

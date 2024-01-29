@@ -16,15 +16,15 @@
   <div class="c-container -force-rounded p-2 m-0 d-inline-block w-auto">
     <v-btn-toggle
       v-model="toggle_multiple"
-      dense
+      density="compact"
       mandatory
       multiple
       rounded
       class="rounded-group c-widget"
-      active-class="blue-flat"
-      @change="
+      selected-class="blue-flat"
+      @update:model-value="
         () => {
-          $emit('input', toggle_multiple);
+          $emit('update:modelValue', toggle_multiple);
           $emit('change', toggle_multiple);
         }
       "
@@ -42,9 +42,9 @@ import { BasketStatus } from "@core/enums/basket/BasketStatus";
 
 export default {
   name: "SOrderStatusesSelect",
-
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
 
     hasCod: {
       default: false,
@@ -92,7 +92,7 @@ export default {
   },
   watch: {},
   created() {
-    this.toggle_multiple = this.value;
+    this.toggle_multiple = this.modelValue;
   },
 };
 </script>

@@ -13,16 +13,21 @@
   -->
 
 <template>
-  <span v-if="value !== null && value!==undefined">
+  <span v-if="modelValue !== null && modelValue !== undefined">
     <v-icon
-      v-if="value"
-      color="green"
-      :small="small"
-      @click="$emit('input', !value)"
+      v-if="modelValue"
+      :color="trueColor"
+      :size="size ? size : small ? 'small' : undefined"
+      @click="$emit('update:modelValue', !modelValue)"
     >
       {{ trueIcon }}
     </v-icon>
-    <v-icon v-else color="red" :small="small" @click="$emit('input', !value)">
+    <v-icon
+      v-else
+      :color="falseColor"
+      :size="size ? size : small ? 'small' : undefined"
+      @click="$emit('update:modelValue', !modelValue)"
+    >
       {{ falseIcon }}
     </v-icon>
   </span>
@@ -30,9 +35,12 @@
 
 <script>
 export default {
-  name: "Check",
+  name: "SCheck",
   props: {
-    value: {},
+    modelValue: {},
+    size: {},
+    trueColor: { default: "green" },
+    falseColor: { default: "red" },
     small: {
       type: Boolean,
       default: false,

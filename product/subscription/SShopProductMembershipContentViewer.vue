@@ -161,7 +161,6 @@ export default {
     page: 1,
     itemsPerPage: 10,
     totalItems: 0,
-    options: { sortDesc: [true] },
 
     selected_content: null,
     current_rate: 1,

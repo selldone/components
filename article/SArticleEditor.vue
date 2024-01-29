@@ -66,7 +66,7 @@
           <div class="center-absolute p-3">
             <div>
               <v-icon size="64" color="#fff" class="m-2"
-                >fa-solid fa-file-word</v-icon
+                >fa:fas fa-file-word</v-icon
               >
             </div>
             <b>Drop Word file here!</b>

@@ -26,6 +26,7 @@
       @click:clear="clear()"
       :class="{ pp: !disable }"
       @click="showDialog()"
+      @click:append-inner.stop="showDialog()"
       readonly
       :model-value="getLocalTimeString(modelValue, false, false, this.dateOnly)"
       :disable="disable"
@@ -51,28 +52,28 @@
       scrollable
       :fullscreen="$vuetify.display.smAndDown"
     >
-      <v-card>
-        <v-card-title>
-          {{ getLocalTimeString(date_time) }}
-          <v-spacer></v-spacer>
-          <v-btn
-            v-if="clearable"
-            color="red"
-            variant="text"
-            class="ms-1"
-            @click="
+      <v-card class="text-start">
+        <v-card-title >
+         <v-row no-gutters align="center">
+           {{ getLocalTimeString(date_time) }}
+           <v-spacer></v-spacer>
+           <v-btn
+               v-if="clearable"
+               color="red"
+               variant="text" size="x-large"
+               class="ma-1 tnt"
+               @click="
               clear();
               dialog = false;
             "
-          >
-            <v-icon size="small" class="me-1">close</v-icon>
+           >
+             <v-icon size="small" class="me-1">close</v-icon>
 
-            {{ $t("global.actions.clear") }}
-          </v-btn>
+             {{ $t("global.actions.clear") }}
+           </v-btn>
+         </v-row>
         </v-card-title>
-        <v-card-subtitle class="text-start">
-          {{ getFromNowString(date_time) }}
-        </v-card-subtitle>
+
         <v-card-text>
           <v-row no-gutters justify="space-around">
             <v-date-picker
@@ -92,13 +93,15 @@
               :min="min_time"
               :max="max_time"
             ></v-time-picker>
+            <v-col cols="12" class="text-end text-muted">
+              {{ getFromNowString(date_time) }}
+            </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions class="border-top">
           <div class="widget-buttons">
             <v-btn
               @click="dialog = false"
-              class="tnt"
               variant="text"
               size="x-large"
               >{{ $t("global.actions.close") }}
@@ -114,7 +117,6 @@
                   hour12: false,
                 });
               "
-              class="tnt"
               variant="text"
             >
               <v-icon class="me-1">today</v-icon>
@@ -122,7 +124,7 @@
             </v-btn>
             <v-btn
               size="x-large"
-              color="primary"
+              color="primary" variant="elevated"
               @click="
                 $emit('update:modelValue', date_time);
 
@@ -132,7 +134,6 @@
                 });
               "
               :class="{ disabled: !date_time }"
-              class="tnt"
             >
               <v-icon class="me-1">done</v-icon>
               {{ $t("global.actions.set") }}

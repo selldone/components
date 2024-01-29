@@ -23,9 +23,9 @@
       :items-length="totalItems"
       v-model:options="options"
       v-model:page="page"
+      :sort-by="[{ key: null, order: 'desc' }]"
       :items-per-page="itemsPerPage"
       :loading-text="$t('global.commons.waiting_load_data')"
-      @page-count="pageCount = $event"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :item-class="(item) => 'row-hover'"
       class="bg-transparent dense-padding min-height-60vh"
@@ -166,13 +166,15 @@ export default {
 
       // Pagination:
       page: 1,
-      pageCount: 0,
       itemsPerPage: 10,
       totalItems: 0,
-      options: { sortDesc: [true] },
+      options: {},
     };
   },
   computed: {
+    pageCount() {
+      return Math.ceil(this.totalItems / this.itemsPerPage);
+    },
     headers() {
       return [
         {

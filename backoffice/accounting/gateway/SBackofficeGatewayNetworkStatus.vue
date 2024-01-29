@@ -16,11 +16,11 @@
   <v-row v-if="network" dense class="gns text-center">
     <v-col cols="3">
       <small>{{ $t("global.commons.active") }}</small>
-      <check :value="network.active"></check>
+      <s-check :value="network.active"></s-check>
     </v-col>
     <v-col v-if="isBlockchain" cols="3">
       <small>{{ $t("global.commons.sync") }}</small>
-      <check :value="network.synced"></check>
+      <s-check :value="network.synced"></s-check>
     </v-col>
     <v-col v-if="isBlockchain" cols="3">
       <small>{{ $t("global.commons.diff_time") }}</small>

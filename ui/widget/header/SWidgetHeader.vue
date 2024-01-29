@@ -78,9 +78,9 @@
       </div>
       <span v-else>
         {{ addCaption }}
-        <small v-if="addSubCaption" class="d-block tnt">{{
+        <span  v-if="addSubCaption" class="d-block tnt small op-0-8">{{
           addSubCaption
-        }}</small>
+        }}</span>
       </span>
     </v-btn>
 

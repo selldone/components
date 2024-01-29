@@ -62,7 +62,7 @@
           <v-icon
             v-if="activeIndex > index"
             color="#fff"
-            small
+            size="small"
             class="hide-on-hover"
           >
             check_circle
@@ -71,7 +71,7 @@
           <v-icon
             v-else-if="activeIndex === index"
             color="#fff"
-            small
+            size="small"
             class="hide-on-hover"
           >
             {{ item.icon ? item.icon : "radio_button_unchecked" }}
@@ -80,14 +80,14 @@
             v-else-if="item.icon"
             color="#ccc"
             class="op-0-6 hide-on-hover"
-            small
+            size="small"
           >
             {{ item.icon }}
           </v-icon>
 
           <v-icon
             :color="activeIndex >= index ? '#fff' : '#ccc'"
-            small
+            size="small"
             class="show-on-hover"
           >
             {{ item.icon ? item.icon : "radio_button_unchecked" }}
@@ -100,19 +100,19 @@
         class="top-chain"
         :class="{ '-rtl': $vuetify.rtl }"
       >
-        <v-icon small class="-ic-1">shortcut</v-icon>
+        <v-icon size="small" class="-ic-1">shortcut</v-icon>
 
         <span class="-br"></span>
         <span v-if="isSubscribed">
-          <v-icon color="green" x-small>check_circle</v-icon>
+          <v-icon color="green" size="x-small">check_circle</v-icon>
           subscribed
         </span>
         <span v-else>
-          <v-icon color="red" x-small>cancel</v-icon>
+          <v-icon color="red" size="x-small">cancel</v-icon>
           unsubscribed
         </span>
         <span class="-br"></span>
-        <v-icon small class="-ic-2">{{
+        <v-icon size="small" class="-ic-2">{{
           isSubscribed ? "swipe_left_alt" : "credit_card_off"
         }}</v-icon>
       </div>
@@ -130,6 +130,7 @@ export default {
     },
     states: {
       required: true,
+      type:Array
     },
     state: {},
     color: {

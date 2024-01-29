@@ -24,11 +24,11 @@
       >
         <s-data-iterator-toolbar-small
           :sort-keys="keys"
-          :search.sync="search"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
+          v-model:search="search"
+          v-model:sort-by="sortBy.key"
+          v-model:sort-desc="sortBy.order"
           :base-items-count="6"
-          :items-per-page.sync="itemsPerPage"
+          v-model:items-per-page="itemsPerPage"
           :dark="isSmall"
           style="margin: 0 !important"
           :color="isSmall ? SaminColorDark : undefined"
@@ -40,8 +40,8 @@
             :close-on-content-click="false"
             z-index="99999999"
           >
-            <template v-slot:activator="{ on }">
-              <v-btn v-on="on" icon small>
+            <template v-slot:activator="{ props }">
+              <v-btn v-bind="props" icon size="small">
                 <v-icon>more_vert</v-icon>
               </v-btn>
             </template>
@@ -60,7 +60,7 @@
                 :label="$t('global.commons.show_details')"
                 color="blue"
                 inset
-                dense
+                density="compact"
                 hide-details
               ></v-switch>
 
@@ -84,14 +84,13 @@
           :items="contacts"
           :loading="busy_fetch"
           :search="search"
-          :sort-by="sortBy"
+          v-model:sort-by="sortBy"
           :sort-desc="sortDesc"
           hide-default-footer
           :items-length="totalItems"
-          :options.sync="options"
-          :page.sync="page"
+          v-model:options="options"
+          v-model:page="page"
           :items-per-page="itemsPerPage"
-          @page-count="pageCount = $event"
           no-data-text=""
           :class="{ 'chats-list-popup': small_mode }"
           class="flex-grow-1"
@@ -156,7 +155,7 @@
                           {{ getLastMessage(item).message }}
                         </span>
                         <span v-else-if="getLastMessage(item).product">
-                          <v-icon small>local_mall</v-icon>
+                          <v-icon size="small">local_mall</v-icon>
                           {{ $t("global.commons.product") }}
                         </span>
                       </small>
@@ -186,11 +185,15 @@
                   </v-badge>
 
                   <v-chip
-                    x-small
+                    size="x-small"
                     v-if="item.waiting"
                     color="transparent"
                     class="absolute-top-start"
-                    ><v-icon x-small class="blink-me" left color="#CDDC39"
+                    ><v-icon
+                      size="x-small"
+                      class="blink-me"
+                      start
+                      color="#CDDC39"
                       >lens</v-icon
                     >
                     {{ $t("global.commons.waiting") }}
@@ -200,7 +203,9 @@
                     getFromNowString(item.updated_at)
                   }}</small>
                   <small v-else class="absolute-top-end ch-time text-success">
-                    <v-icon small class="me-1" color="success">done_all</v-icon>
+                    <v-icon size="small" class="me-1" color="success"
+                      >done_all</v-icon
+                    >
                     {{ getFromNowString(item.closed_at) }}</small
                   >
                 </v-card-title>
@@ -208,13 +213,13 @@
                 <v-card-text v-if="details">
                   <div class="d-flex text-center mb-1">
                     <div class="w-50 mb-1 p-1">
-                      <v-icon class="me-2" small>mail</v-icon
+                      <v-icon class="me-2" size="small">mail</v-icon
                       ><span v-copy
                         >{{ item.user ? item.user.email : item.email }}
                       </span>
                     </div>
                     <div class="w-50 mb-1 p-1">
-                      <v-icon class="me-2" small>phone</v-icon
+                      <v-icon class="me-2" size="small">phone</v-icon
                       ><span v-copy
                         >{{ item.user ? item.user.phone : item.phone }}
                       </span>
@@ -256,7 +261,7 @@
             <v-pagination
               v-if="pageCount > 1"
               v-model="page"
-              circle
+              rounded
               :length="pageCount"
             />
           </template>
@@ -273,12 +278,12 @@
             :rows="1"
             auto-grow
             :rules="[GlobalRules.counter(1024)]"
-            dense
+            density="compact"
             hide-details
             :placeholder="$t('global.commons.message')"
             class="small-textarea"
             flat
-            solo
+            variant="solo"
             row-height="10px"
           >
             <template v-slot:append>
@@ -287,7 +292,7 @@
                 :loading="busy_send"
                 rounded
                 :class="{ disabled: !message }"
-                depressed
+                variant="flat"
                 color="blue"
                 dark
                 :title="$t('global.actions.send')"
@@ -315,9 +320,9 @@
           @click:close="$emit('update:selectedContact', null)"
         ></contact-conversation-box>
         <div class="widget-buttons">
-          <v-btn x-large text @click="showContact(null)">
+          <v-btn size="x-large" variant="text" @click="showContact(null)">
             <v-icon class="me-1">{{ $t("icons.chevron_back") }}</v-icon>
-            {{$t('global.actions.back')}}
+            {{ $t("global.actions.back") }}
           </v-btn>
         </div>
       </v-col>
@@ -333,7 +338,11 @@ import SDataIteratorToolbarSmall from "@components/ui/toolbar/SDataIteratorToolb
 import _ from "lodash-es";
 export default {
   name: "ShopChatsList",
-  components: { SDataIteratorToolbarSmall, ContactConversationBox, EmojiRating },
+  components: {
+    SDataIteratorToolbarSmall,
+    ContactConversationBox,
+    EmojiRating,
+  },
 
   props: {
     shop: {
@@ -367,14 +376,13 @@ export default {
     search: "",
     filter: {},
     sortDesc: true,
-    sortBy: null,
+    sortBy: [{ key: null, order: "desc" }],
 
     // Pagination:
     page: 1,
-    pageCount: 0,
     itemsPerPage: 10,
     totalItems: 0,
-    options: { sortDesc: [true] },
+    options: {},
 
     //------------------
 
@@ -395,6 +403,9 @@ export default {
   }),
 
   computed: {
+    pageCount() {
+      return Math.ceil(this.totalItems / this.itemsPerPage);
+    },
     keys() {
       if (this.isAdmin) {
         return [
@@ -489,7 +500,7 @@ export default {
     },
 
     search: _.throttle(function (newVal, oldVal) {
-      if(!newVal && !oldVal) return;
+      if (!newVal && !oldVal) return;
       //  console.log("search", newVal);
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
       this.fetchSupports(1, sortBy ? sortBy[0] : null, sortDesc[0], false);
@@ -524,7 +535,7 @@ export default {
 
               categories: this.categories,
             },
-          }
+          },
         )
         .then(({ data }) => {
           this.contacts = data.contacts;
@@ -579,7 +590,7 @@ export default {
 
             this.showSuccessAlert(
               null,
-              this.$t("contact_us_form.notifications.success")
+              this.$t("contact_us_form.notifications.success"),
             );
           } else {
             this.showErrorAlert(null, data.error_msg);

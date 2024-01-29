@@ -119,8 +119,8 @@ export default {
       }
 
       if (
-        this.product?.type === ProductType.SUBSCRIPTION ||
-        this.basket?.type === ProductType.SUBSCRIPTION
+        this.product?.type === ProductType.SUBSCRIPTION.code ||
+        this.basket?.type === ProductType.SUBSCRIPTION.code
       )
         return;
 
