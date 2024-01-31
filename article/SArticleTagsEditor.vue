@@ -168,6 +168,9 @@ export default {
         .then(({ tags }) => {
           this.shop_tags = tags;
         })
+          .catch((error) => {
+            this.showLaravelError(error);
+          })
         .finally(() => {
           this.busy_fetch = false;
         });

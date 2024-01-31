@@ -32,6 +32,11 @@
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
       }"
     >
+      <template v-slot:extension>
+        <div style="height: 64px"></div>
+      </template>
+
+
       <template v-if="!isMobile || !searchMode">
         <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
         <v-btn

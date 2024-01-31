@@ -18,6 +18,8 @@ $stripe-color-2: transparent;
 .inactive-overlay {
   position: relative;
 
+
+
   &::after {
     content: "";
     position: absolute;
@@ -25,10 +27,20 @@ $stripe-color-2: transparent;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(135deg, $stripe-color-1 25%, $stripe-color-2 25%, $stripe-color-2 50%, $stripe-color-1 50%, $stripe-color-1 75%, $stripe-color-2 75%, $stripe-color-2);
+    background-image: linear-gradient(135deg, var(--color-1,$stripe-color-1) 25%, var(--color-2,$stripe-color-2) 25%, var(--color-2,$stripe-color-2) 50%, var(--color-1,$stripe-color-1) 50%, var(--color-1,$stripe-color-1) 75%, var(--color-2,$stripe-color-2) 75%, var(--color-2,$stripe-color-2));
     background-size: 40px 40px;
     opacity: 0.2;
     pointer-events: none;
     background-repeat: repeat;
+  }
+
+  &.-red{
+    --color-1: #f00;
+  }
+  &.-green{
+    --color-1: #009688;
+  }
+  &.-amber{
+    --color-1: #FFC107;
   }
 }

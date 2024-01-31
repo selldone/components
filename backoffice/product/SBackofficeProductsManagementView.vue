@@ -948,7 +948,7 @@
                 :to="{
                   name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
                     ? 'Vendor_ProductDashboard'
-                    : 'ProductDashboard',
+                    : 'BPageProductDashboard',
                   params: { product_id: currentProductForMenu.id },
                   /*   hash: '#dashboard'*/
                 }"

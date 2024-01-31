@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="product-variant-card-micro" style="position: relative">
+  <div class="product-variant-card-micro" :class="{'-center':center}" style="position: relative">
     <s-color-circle
       v-if="color"
       :color="color"
@@ -81,6 +81,7 @@ export default {
       required: true,
       type: Object,
     },
+    center:Boolean
   },
   data() {
     return {
@@ -116,7 +117,8 @@ export default {
 
     shop_id(){
       return this.getShop()?.id
-    }
+    },
+
   },
   methods: {},
 };
@@ -126,6 +128,7 @@ export default {
 .product-variant-card-micro {
   display: flex;
   align-items: center;
+  justify-content: start;
   padding: 3px;
   border-radius: 4px;
   font-weight: 500;
@@ -138,6 +141,10 @@ export default {
 
   p {
     margin: 0 !important;
+  }
+
+  &.-center{
+    justify-content: center;
   }
 }
 

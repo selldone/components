@@ -38,12 +38,12 @@
           v-if="comment.deleted_at"
           label
           class="mx-2"
-          small
+          size="small"
           :title="'Deleted: ' + getLocalTimeString(comment.deleted_at)"
-          dark
+
           color="red"
         >
-          <v-icon small left>delete</v-icon>
+          <v-icon size="small" start>delete</v-icon>
           {{ getFromNowString(comment.deleted_at) }}</v-chip
         >
 
@@ -96,17 +96,16 @@
 
                 <v-col cols="12" sm="6">
                   <v-rating
-                    :value="calculateRate"
+                    :model-value="calculateRate"
                     class="text-center"
-                    color="yellow darken-3"
-                    background-color="grey darken-1"
-                    empty-icon="$vuetify.icons.ratingFull"
+                    active-color="yellow-darken-3"
+                    color="grey-darken-1"
                     half-increments
                     :readonly="true"
-                    small
+                    size="small"
                   />
-                  <v-chip small color="success" dark>
-                    <v-icon left x-small> shopping_basket</v-icon>
+                  <v-chip size="small" color="success" >
+                    <v-icon start size="x-small"> shopping_basket</v-icon>
                     {{ $t("global.comments.product_buyer") }}</v-chip
                   >
                 </v-col>
@@ -126,7 +125,7 @@
                 class="mt-3 pa-3 pa-3 rounded-lg text-start"
               >
                 <v-avatar class="me-1" color="#fff" size="24">
-                  <v-icon small>storefront</v-icon>
+                  <v-icon size="small">storefront</v-icon>
                 </v-avatar>
                 <b> {{ $t("global.commons.merchant") }}</b>
                 <v-expand-transition>
@@ -146,10 +145,10 @@
                       v-if="!show_reply"
                       @click="show_reply = true"
                       color="primary"
-                      :text="!!comment.reply"
+                      :variant="!!comment.reply && 'text'"
                       class="tnt"
                     >
-                      <v-icon class="me-1" small>edit</v-icon>
+                      <v-icon class="me-1" size="small">edit</v-icon>
                       {{
                         comment.reply ? "Edit reply" : "Write the answer"
                       }}</v-btn
@@ -160,7 +159,7 @@
                         auto-grow
                         v-model="reply_input"
                         dir="auto"
-                        dense
+                        density="compact"
                         rounded
                         placeholder="Write your message here..."
                         class="m-2"
@@ -168,11 +167,19 @@
                       </v-textarea>
 
                       <div class="widget-buttons">
-                        <v-btn x-large text @click="show_reply = false">
+                        <v-btn
+                          size="x-large"
+                          variant="text"
+                          @click="show_reply = false"
+                        >
                           <v-icon class="me-1">close</v-icon>
                           {{ $t("global.actions.close") }}
                         </v-btn>
-                        <v-btn x-large color="primary" @click="sendReply()">
+                        <v-btn
+                          size="x-large"
+                          color="primary"
+                          @click="sendReply()"
+                        >
                           <v-icon class="me-1">save</v-icon>
                           {{ $t("global.actions.save") }}
                         </v-btn>
@@ -193,23 +200,21 @@
                 auto-grow
                 v-model="data.body"
                 dir="auto"
-                dense
+                density="compact"
                 rounded
                 :placeholder="$t('global.comments.edit_comment')"
                 class="m-2"
               />
 
               <div class="widget-buttons">
-                <v-btn text x-large @click="resetEdit">
+                <v-btn variant="text" size="x-large" @click="resetEdit">
                   <v-icon class="me-1">close</v-icon>
                   {{ $t("global.actions.cancel") }}
                 </v-btn>
                 <v-btn
                   color="#333"
-                  dark
-                  outlined
-                  depressed
-                  x-large
+                  variant="flat"
+                  size="x-large"
                   @click="deleteComment"
                 >
                   <v-icon class="me-1">delete</v-icon>
@@ -217,10 +222,8 @@
                 </v-btn>
                 <v-btn
                   color="#333"
-                  dark
-                  small
-                  x-large
-                  depressed
+                  size="x-large"
+                  variant="flat"
                   @click="saveEdit"
                   :loading="loading"
                 >

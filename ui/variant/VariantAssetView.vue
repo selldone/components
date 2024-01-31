@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-img
+  <img
     v-if="shopId && value && name"
     :src="src"
     :width="background ? '100%' : size"
@@ -24,7 +24,7 @@
       'hover-scale vertical-align-middle rounded': !background,
       '-selected': selected,
     }"
-  ></v-img>
+  >
 </template>
 
 <script>

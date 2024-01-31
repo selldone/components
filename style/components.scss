@@ -1515,7 +1515,7 @@ Extra helper classes
 /************
 Vue Notifications
  */
-.vue-samin-notification {
+.s--notifications-notify {
   padding: 10px;
   margin: 0 5px 5px;
 
@@ -1557,8 +1557,9 @@ Vue Notifications
   li {
     margin-left: 8px;
     margin-right: 8px;
-
-
+  }
+  ul,ol{
+    margin:  8px 0;
   }
 
 
@@ -1829,6 +1830,7 @@ header {
 
 .sup-caption, .sub-caption {
   position: relative;
+  display: inline-block;
 
   &:after {
     text-transform: capitalize;
@@ -4508,6 +4510,10 @@ canvas.heatmap-canvas {
   &.-black, &.-agency {
     background-image: linear-gradient(120deg, #000 0%, #222 100%);
   }
+  &.-vendor{
+    background-image: linear-gradient(120deg, #F44336 0%, #673AB7 100%);
+
+  }
 
   &.v-avatar {
     align-items: stretch !important;
@@ -4651,10 +4657,15 @@ display: flex;
     //...............................
   }
 
-  // Fix vuetify:
+  // ............. Fix vuetify .............
   .v-messages__message { // Input message fields.
     line-height: normal !important;
   }
+
+  .v-list{
+    overflow: visible; // Show hover shadow correctly!
+  }
+  // .......................................
 
 
   div {

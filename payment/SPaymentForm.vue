@@ -563,7 +563,7 @@
       >
 
       <div class="position-relative">
-        <vue-qrcode
+        <s-qrcode
           class="my-6 mx-auto zoomIn delay_300 blur-animate"
           :class="{ blurred: success_end_countdown }"
           :value="qrCode"
@@ -572,7 +572,7 @@
             color: { light: '#fff', dark: '#000' },
           }"
         >
-        </vue-qrcode>
+        </s-qrcode>
 
         <v-icon
           v-if="success_end_countdown"

@@ -75,10 +75,10 @@
             :caption="$t('global.article.menu.edit')"
             dark
             color="primary"
-            depressed
+            variant="flat"
             min-width="64"
           >
-            <v-icon small>edit</v-icon>
+            <v-icon size="small">edit</v-icon>
           </v-btn>
 
           <v-btn
@@ -88,10 +88,10 @@
             :caption="$t('global.article.menu.view_mode')"
             light
             color="#fff"
-            depressed
+            variant="flat"
             min-width="64"
           >
-            <v-icon small>visibility</v-icon>
+            <v-icon size="small">visibility</v-icon>
           </v-btn>
 
           <v-divider vertical class="my-0 mx-3"></v-divider>
@@ -109,7 +109,7 @@
             @click="published_state = !published_state"
             :class="{ pen: !is_editing, disabled: !!schedule_at }"
           >
-            <v-icon color="green" small> fa:fas fa-rss </v-icon>
+            <v-icon color="green" size="small"> fa:fas fa-rss </v-icon>
           </v-btn>
           <v-btn
             v-if="!published_state"
@@ -120,7 +120,9 @@
             @click="published_state = !published_state"
             :class="{ pen: !is_editing, disabled: !!schedule_at }"
           >
-            <v-icon color="#FFA000" small> fa:fas fa-pencil-ruler </v-icon>
+            <v-icon color="#FFA000" size="small">
+              fa:fas fa-pencil-ruler
+            </v-icon>
           </v-btn>
 
           <v-btn
@@ -132,7 +134,7 @@
             :caption="$t('global.article.private')"
             :class="{ pen: !is_editing }"
           >
-            <v-icon small color="red"> fa:fas fa-user-lock </v-icon>
+            <v-icon size="small" color="red"> fa:fas fa-user-lock </v-icon>
           </v-btn>
           <v-btn
             v-if="!isPrivate"
@@ -143,7 +145,7 @@
             :caption="$t('global.article.public')"
             :class="{ pen: !is_editing }"
           >
-            <v-icon small color="blue"> fa:fas fa-globe </v-icon>
+            <v-icon size="small" color="blue"> fa:fas fa-globe </v-icon>
           </v-btn>
 
           <!-------------------------------------------------------------------------->
@@ -160,7 +162,7 @@
               getLocalTimeString(article.schedule_at)
             "
           >
-            <v-icon small color="pink"> timeline </v-icon>
+            <v-icon size="small" color="pink"> timeline </v-icon>
           </v-btn>
 
           <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Language ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -232,7 +234,7 @@
               "
               dark
               :loading="state === 'saving'"
-              :text="state === 'no-change'"
+              :variant="state === 'no-change' && 'text'"
               :class="{
                 disabled:
                   state === 'saving' ||
@@ -241,25 +243,25 @@
                     isPrivate === article.private),
               }"
               @click="saveChange(null)"
-              depressed
+              variant="flat"
             >
-              <v-icon class="me-2" small>
+              <v-icon class="me-2" size="small">
                 {{
                   state === "changed"
                     ? "save"
                     : state === "saving"
-                    ? "refresh"
-                    : published_state
-                    ? "local_cafe"
-                    : "save"
+                      ? "refresh"
+                      : published_state
+                        ? "local_cafe"
+                        : "save"
                 }}
               </v-icon>
               {{
                 state === "saving"
                   ? $t("global.article.saving")
                   : published_state
-                  ? $t("global.article.save_and_publish_action")
-                  : $t("global.article.save_draft_action")
+                    ? $t("global.article.save_and_publish_action")
+                    : $t("global.article.save_draft_action")
               }}
             </v-btn>
 
@@ -307,7 +309,7 @@
               :suffix="` (${multiLanguageAvailable.length})`"
               :checked-languages="multiLanguageAvailable"
               :title="`Available languages: ${multiLanguageAvailable.join(
-                ', '
+                ', ',
               )} + Add more languages...`"
             >
             </s-language-input>
@@ -337,7 +339,7 @@
               flat
             >
               <v-expansion-panel>
-                <v-expansion-panel-header
+                <v-expansion-panel-title
                   :color="schedule_at ? '#0288D1' : undefined"
                   :class="{ 'white--text': !!schedule_at }"
                   class="py-3"
@@ -370,13 +372,13 @@
                     <v-spacer></v-spacer>
                     <div class="my-1">
                       {{ getFromNowString(schedule_at) }}
-                      <span class="subtitle-2 d-block mt-1">{{
+                      <span class="text-subtitle-2 d-block mt-1">{{
                         getLocalTimeString(schedule_at)
                       }}</span>
                     </div>
                   </div>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
                   <s-date-input
                     v-model="schedule_at"
                     return-utc
@@ -392,16 +394,16 @@
                   <div class="widget-buttons">
                     <v-btn
                       @click.stop="showTimeline()"
-                      text
+                      variant="text"
                       color="primary"
                       class="tnt"
-                      x-large
+                      size="x-large"
                     >
                       <v-icon class="me-2">timeline</v-icon>
                       {{ $t("global.article.schedule_view_action") }}
                     </v-btn>
                   </div>
-                </v-expansion-panel-content>
+                </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
 
@@ -413,15 +415,15 @@
               flat
             >
               <v-expansion-panel>
-                <v-expansion-panel-header class="py-3" style="min-height: 60px">
+                <v-expansion-panel-title class="py-3" style="min-height: 60px">
                   <span>
                     <v-icon class="me-1">translate</v-icon>
                     Multi Languages
                   </span>
 
                   <v-spacer></v-spacer>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
                   <div class="max-widget-width">
                     <v-list class="border-between-vertical">
                       <v-list-item
@@ -444,45 +446,43 @@
                             class="mt-1"
                           />
                         </v-list-item-icon>
-                        <v-list-item-content>
-                          <v-list-item-title class="d-flex align-center">
-                            <b>
-                              {{
-                                getLanguageObject(lang)
-                                  ? getLanguageObject(lang).title
-                                  : lang
-                              }}</b
-                            >
-                            <v-chip
-                              v-if="
-                                shop &&
-                                lang.toLowerCase() ===
-                                  shop.language.toLowerCase()
-                              "
-                              label
-                              small
-                              class="px-1 mx-1"
-                              outlined
-                              title="Default article (Shop main language)"
-                              >{{ $t("global.commons.default") }}</v-chip
-                            >
-                            <v-spacer></v-spacer>
-                          </v-list-item-title>
-                        </v-list-item-content>
+
+                        <v-list-item-title class="d-flex align-center">
+                          <b>
+                            {{
+                              getLanguageObject(lang)
+                                ? getLanguageObject(lang).title
+                                : lang
+                            }}</b
+                          >
+                          <v-chip
+                            v-if="
+                              shop &&
+                              lang.toLowerCase() === shop.language.toLowerCase()
+                            "
+                            label
+                            size="small"
+                            class="px-1 mx-1"
+                            variant="outlined"
+                            title="Default article (Shop main language)"
+                            >{{ $t("global.commons.default") }}</v-chip
+                          >
+                          <v-spacer></v-spacer>
+                        </v-list-item-title>
 
                         <v-list-item-action class="my-2">
                           <v-btn
                             v-if="
                               multiLanguageAvailable &&
                               !multiLanguageAvailable.includes(
-                                lang.toLowerCase()
+                                lang.toLowerCase(),
                               )
                             "
                             @click.stop="$emit('request-auto-translate', lang)"
                             fab
                             color="primary"
                             dark
-                            small
+                            size="small"
                             class="rounded-14-12"
                             :title="$t('global.commons.translate')"
                           >
@@ -491,7 +491,7 @@
 
                           <v-icon
                             v-else-if="multiLanguageAvailable"
-                            small
+                            size="small"
                             color="success"
                             class="mx-1"
                             title="Article exist"
@@ -520,7 +520,7 @@
                       </v-list-item>
                     </v-list>
                   </div>
-                </v-expansion-panel-content>
+                </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
 
@@ -532,14 +532,14 @@
               flat
             >
               <v-expansion-panel>
-                <v-expansion-panel-header style="min-height: 60px">
+                <v-expansion-panel-title style="min-height: 60px">
                   <span class="flex-grow-0 me-2">
                     <v-icon class="me-1">bookmark</v-icon>
                     {{ $t("global.commons.tags") }}
                   </span>
                   <div class="flex-grow-1">
                     <v-chip
-                      x-small
+                      size="x-small"
                       label
                       v-for="tag in article.tags"
                       :key="tag"
@@ -547,27 +547,29 @@
                       >{{ tag }}</v-chip
                     >
                   </div>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
                   <s-article-tags-editor :shop="shop" :article="article" />
-                </v-expansion-panel-content>
+                </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
 
             <v-row dense class="mb-2 z1">
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
               <v-select
-                v-if="articleType === ArticleTypes.SelldoneHelp.code && categories"
+                v-if="
+                  articleType === ArticleTypes.SelldoneHelp.code && categories
+                "
                 v-model="category"
                 class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px bg-white"
                 :items="categories"
                 :label="$t('global.article.category_input')"
                 :messages="$t('global.article.category_input_message')"
-                solo
+                variant="solo"
                 flat
                 clearable
                 :disabled="!!menu && !!menu.parent_id"
-                @change="state = 'changed'"
+                @update:model-value="state = 'changed'"
               >
               </v-select>
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -580,26 +582,26 @@
                 flat
                 :items="categories"
                 item-value="category"
-                item-text="category"
+                item-title="category"
                 :label="$t('global.article.category_input')"
                 :messages="$t('global.article.category_input_message')"
-                solo
+                variant="solo"
                 clearable
                 :disabled="(!!menu && !!menu.parent_id) || busy_categories"
-                @change="state = 'changed'"
+                @update:model-value="state = 'changed'"
                 :loading="busy_categories"
               >
                 <template v-slot:item="{ item }">
                   <v-avatar rounded class="me-2" v-if="item.icon" size="28"
                     ><img :src="getShopImagePath(item.icon)"
                   /></v-avatar>
-                  <span class="subtitle-2">{{ item.category }}</span>
+                  <span class="text-subtitle-2">{{ item.category }}</span>
                 </template>
                 <template v-slot:selection="{ item }">
                   <v-avatar rounded class="me-2" v-if="item.icon" size="28"
                     ><img :src="getShopImagePath(item.icon)"
                   /></v-avatar>
-                  <span class="subtitle-2">{{ item.category }}</span>
+                  <span class="text-subtitle-2">{{ item.category }}</span>
                 </template>
               </v-select>
 
@@ -608,36 +610,38 @@
                 v-else-if="articleType === ArticleTypes.Blog.code && categories"
                 v-model="category"
                 item-value="id"
-                item-text="category"
+                item-title="category"
                 class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
-                flat
-                rounded
                 :items="categories"
                 :label="$t('global.article.category_input')"
                 :messages="$t('global.article.category_input_message')"
-                solo
+                variant="plain"
                 clearable
-                @change="state = 'changed'"
+                @update:model-value="state = 'changed'"
                 :loading="busy_categories"
                 :disabled="busy_categories"
                 :prepend-inner-icon="category ? undefined : 'tab'"
               >
-                <template v-slot:item="{ item }">
-                  <v-avatar rounded class="me-2" v-if="item.icon" size="28"
-                    ><img :src="getShopImagePath(item.icon)"
-                  /></v-avatar>
-                  <div class="flex-grow-1 text-start">
-                    <div class="subtitle-2">{{ item.category }}</div>
-                    <small>{{ item.description }}</small>
-                  </div>
+                <template v-slot:item="{ item ,props}">
+                  <v-list-item v-bind="props" :title="item.raw.category " :subtitle="item.raw.description" class="text-start">
+                    <template v-slot:prepend>
+                      <v-avatar rounded  size="28"
+                      ><img v-if="item.raw.icon" :src="getShopImagePath(item.raw.icon)"
+                      />
+                      <v-icon v-else>folder</v-icon>
+                      </v-avatar>
+                    </template>
+
+                  </v-list-item>
+
                 </template>
                 <template v-slot:selection="{ item }">
-                  <v-avatar rounded class="me-2" v-if="item.icon" size="28"
-                    ><img :src="getShopImagePath(item.icon)"
+                  <v-avatar rounded class="me-2" v-if="item.raw.icon" size="28"
+                    ><img :src="getShopImagePath(item.raw.icon)"
                   /></v-avatar>
                   <div class="flex-grow-1 text-start">
-                    <div class="subtitle-2">{{ item.category }}</div>
-                    <small>{{ item.description }}</small>
+                    <div class="text-subtitle-2">{{ item.raw.category }}</div>
+                    <small>{{ item.raw.description }}</small>
                   </div>
                 </template>
               </v-select>
@@ -671,14 +675,14 @@
                 :items="parent_helps_canidates"
                 :label="$t('global.article.parent_input')"
                 :messages="$t('global.article.parent_input_message')"
-                solo
+                variant="solo"
                 flat
                 rounded
-                item-text="title"
+                item-title="title"
                 item-value="blog_id"
                 :return-object="false"
                 clearable
-                @change="state = 'changed'"
+                @update:model-value="state = 'changed'"
               />
 
               <s-number-input
@@ -710,7 +714,7 @@
                       state = 'changed';
                     }
                   "
-                  large
+                  size="large"
                 >
                   <v-icon>{{ menu.star ? "star" : "star_border" }}</v-icon>
                 </v-btn>
@@ -725,24 +729,24 @@
                   articleType === ArticleTypes.SelldoneBlog.code &&
                   HasPermission(
                     permissions.Content,
-                    permissionLevels.FULL_ACCESS
+                    permissionLevels.FULL_ACCESS,
                   )
                 "
               >
                 <v-btn
                   @click="change_author_dialog = true"
                   color="primary"
-                  depressed
+                  variant="flat"
                   style="align-self: baseline"
                   dark
                   class="m-2 tnt"
                   rounded
-                  large
+                  size="large"
                 >
                   <v-avatar v-if="article" size="28" class="ms-n2"
                     ><img :src="getUserAvatar(article.user_id)"
                   /></v-avatar>
-                  <span class="subtitle-2 mx-1">Change author</span>
+                  <span class="text-subtitle-2 mx-1">Change author</span>
                 </v-btn>
 
                 <v-dialog v-model="change_author_dialog" max-width="480">
@@ -759,12 +763,14 @@
                       </user-email-input>
                     </v-card-text>
                     <v-card-actions>
-                      <v-btn text @click="change_author_dialog = false">{{
-                        $t("global.actions.cancel")
-                      }}</v-btn>
+                      <v-btn
+                        variant="text"
+                        @click="change_author_dialog = false"
+                        >{{ $t("global.actions.cancel") }}</v-btn
+                      >
                       <v-spacer></v-spacer>
                       <v-btn
-                        depressed
+                        variant="flat"
                         color="primary"
                         @click="changeAuthor()"
                         :loading="busy_change_author"
@@ -809,8 +815,8 @@
           class="p-lg-5 p-md-4 p-3 samin-article-content"
           :only-view="!canEdit"
           :edit="is_editing"
-          :title.sync="article.title"
-          :body.sync="article.body"
+          v-model:title="article.title"
+          v-model:body="article.body"
           :upload-url="upload_url"
           :word-converter-url="word_converter_url"
           @change="onChangeNote"
@@ -872,7 +878,7 @@
               v-if="showAuthorInfo && reading_time"
               class="text-start ms-10 mt-1 reading-time"
             >
-              <v-icon small class="me-1">timelapse</v-icon>
+              <v-icon size="small" class="me-1">timelapse</v-icon>
               {{ $t("global.article.read_time") }}
               :
               <span> {{ reading_time }}</span>
@@ -885,7 +891,7 @@
 
             <faq-section
               :editMode="edit"
-              :faqs.sync="article.faqs"
+              v-model:faqs="article.faqs"
               @change="onChangeNote"
             ></faq-section>
 
@@ -916,7 +922,7 @@
             "
           >
             <template v-slot:badge>
-              {{  numeralFormat(article.power ,"0.[0] a") }}</template
+              {{ numeralFormat(article.power, "0.[0] a") }}</template
             >
 
             <v-btn
@@ -925,11 +931,11 @@
                 'disabled-no-filter': catch_power || power_busy || !USER(),
               }"
               :color="catch_power ? '#025185' : '#0288D1'"
-              depressed
+              variant="flat"
               dark
               rounded
               @click="getPower"
-              :outlined="!catch_power"
+              :variant="!catch_power && 'outlined'"
               :loading="power_busy"
               fab
             >
@@ -945,7 +951,7 @@
             @click="likeArticle"
           >
             <v-icon
-              :large="!!USER()"
+              :size="!!USER() && 'large'"
               :color="!USER() ? '#c2185b' : isLiked ? '#c2185b' : 'gray'"
               :class="{ bounceIn: isLiked }"
             >
@@ -954,7 +960,7 @@
               }}
             </v-icon>
             <small>
-              {{   numeralFormat(article.like,"0.[0] a") }}
+              {{ numeralFormat(article.like, "0.[0] a") }}
               {{ $t("global.article.likes") }}
             </small>
           </div>
@@ -965,7 +971,7 @@
             @click="starArticle"
             :class="{ bounceIn: isStared }"
           >
-            <v-icon large :color="isStared ? '#fbc02d' : 'gray'">
+            <v-icon size="large" :color="isStared ? '#fbc02d' : 'gray'">
               {{ isStared ? "star" : "star_border" }}
             </v-icon>
           </div>
@@ -1016,12 +1022,12 @@
 
               <v-btn
                 v-if="canFollow"
-                depressed
+                variant="flat"
                 rounded
                 :color="isFollow ? 'success' : 'default'"
                 :dark="isFollow"
                 class="ms-2"
-                small
+                size="small"
                 @click="followUser"
               >
                 <span v-if="isFollow" class="fas fa-check-circle me-2" />
@@ -1037,14 +1043,18 @@
               {{ author_description }}
             </p>
 
-            <v-tooltip v-if="article.updated_at" bottom color="success">
-              <template v-slot:activator="{ on }">
-                <time class="small author-time" v-on="on">
+            <v-tooltip
+              v-if="article.updated_at"
+              location="bottom"
+              color="success"
+            >
+              <template v-slot:activator="{ props }">
+                <time class="small author-time" v-bind="props">
                   {{ $t("global.article.updated_at") }}
 
                   {{ getLocalTimeString(article.updated_at) }}
                 </time>
-                <v-icon class="me-1" small> fa:fas fa-feather </v-icon>
+                <v-icon class="me-1" size="small"> fa:fas fa-feather </v-icon>
               </template>
               {{
                 $t("global.article.wrote_at") +
@@ -1061,9 +1071,9 @@
             <!-- Report & Delete Article -->
             <v-btn
               v-if="(canDelete || canReport) && !reported"
-              text
+              variant="text"
               rounded
-              small
+              size="small"
               class="m-1"
               :color="canDelete ? '#D32F2F' : '#444'"
               @click.stop="popupActiveReport = true"
@@ -1083,8 +1093,8 @@
               :value="reported"
               color="error"
               icon="new_releases"
-              border="left"
-              dense
+              border="start"
+              density="compact"
               dark
               class="mt-5 text-start pp"
               @click="popupActiveReport = true"
@@ -1110,63 +1120,63 @@
             </v-list-subheader>
             <v-btn
               v-if="socials.linkedin"
-              depressed
+              variant="flat"
               color="blue"
               class="m-2"
               dark
               dir="ltr"
-              small
+              size="small"
               icon
               :href="`https://www.linkedin.com/in/${socials.linkedin}`"
               target="_blank"
             >
-              <v-icon small> fab fa-linkedin </v-icon>
+              <v-icon size="small"> fab fa-linkedin </v-icon>
             </v-btn>
 
             <v-btn
               v-if="socials.twitter"
-              depressed
+              variant="flat"
               color="cyan"
               class="m-2"
               dark
               dir="ltr"
-              small
+              size="small"
               icon
               :href="`https://twitter.com/${socials.twitter}`"
               target="_blank"
             >
-              <v-icon small> fab fa-twitter </v-icon>
+              <v-icon size="small"> fab fa-twitter </v-icon>
             </v-btn>
 
             <v-btn
               v-if="socials.medium"
-              depressed
+              variant="flat"
               color="black"
               class="m-2"
               dark
               dir="ltr"
-              small
+              size="small"
               icon
               :href="`https://medium.com/@${socials.medium}`"
               target="_blank"
             >
-              <v-icon small> fab fa-medium </v-icon>
+              <v-icon size="small"> fab fa-medium </v-icon>
             </v-btn>
 
             <v-btn
               v-if="socials.selldone"
-              depressed
+              variant="flat"
               color="#70557e"
               class="m-2"
               dark
               dir="ltr"
-              small
+              size="small"
               icon
               :href="`${SetupService.MainServiceUrl()}/@${socials.selldone}`"
               target="_blank"
               :title="`@${socials.selldone}`"
             >
-              <v-icon small> fa:fas fa-store </v-icon>
+              <v-icon size="small"> fa:fas fa-store </v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -1257,7 +1267,11 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn text x-large @click="dialog_timeline = false">
+            <v-btn
+              variant="text"
+              size="x-large"
+              @click="dialog_timeline = false"
+            >
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -1580,10 +1594,10 @@ export default {
       return this.$route.params.shop_id
         ? this.$route.params.shop_id
         : this.shopId
-        ? this.shopId
-        : this.getShop()
-        ? this.getShop().id
-        : null;
+          ? this.shopId
+          : this.getShop()
+            ? this.getShop().id
+            : null;
     },
     /*  author_id() {
       return this.article.user_id;
@@ -1626,11 +1640,11 @@ export default {
         return this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
           ? window.VAPI.UPLOAD_MY_VENDOR_ARTICLE_IMAGE(
               this.$route.params.vendor_id,
-              this.articleType
+              this.articleType,
             )
           : window.ARTICLE_API.UPLOAD_ARTICLE_IMAGE(
               this.articleType,
-              this.shop_id
+              this.shop_id,
             );
       }
       // Shop Blogs:
@@ -1645,7 +1659,7 @@ export default {
       // Vendor panel:
       if (this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/) {
         return window.VAPI.POST_MY_VENDOR_CONVERTER_WORD_HTML(
-          this.$route.params.vendor_id
+          this.$route.params.vendor_id,
         );
       }
 
@@ -1682,7 +1696,7 @@ export default {
         this.HasPermission /*Available only in official selldone*/ &&
         this.HasPermission(
           this.permissions.Content,
-          this.permissionLevels.DELETE_ACCESS
+          this.permissionLevels.DELETE_ACCESS,
         )
       );
     },
@@ -1702,7 +1716,7 @@ export default {
         this.categories &&
         this.category &&
         this.categories.find(
-          (it) => it.category === this.category || it.id === this.category
+          (it) => it.category === this.category || it.id === this.category,
         )
       );
     },
@@ -1760,7 +1774,7 @@ export default {
       } catch (e) {
         console.warn(
           "Invalid article body. Auto-fix applied by SD.",
-          this.article.body
+          this.article.body,
         );
         text = this.article.body;
         this.article.body = "<p>" + this.article.body + "</p>";
@@ -1875,7 +1889,7 @@ export default {
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.POST_MY_VENDOR_ADD_EDIT_ARTICLE(
                 this.$route.params.vendor_id,
-                this.articleType
+                this.articleType,
               )
             : window.ARTICLE_API.POST_ADD_EDIT_ARTICLE(this.articleType),
           {
@@ -1906,7 +1920,7 @@ export default {
 
             // Schedule at:
             schedule_at: this.convertLocalTimeStringToUTCString(
-              this.schedule_at
+              this.schedule_at,
             ),
 
             // Selldone Help:
@@ -1921,7 +1935,7 @@ export default {
 
             // Shop Cluster
             cluster_id: this.cluster_id,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -1943,7 +1957,7 @@ export default {
 
             this.showSuccessAlert(
               this.$t("global.article.notifications.update_success_title"),
-              this.$t("global.article.notifications.update_success")
+              this.$t("global.article.notifications.update_success"),
             );
             if (callback_success) callback_success();
 
@@ -1973,7 +1987,7 @@ export default {
                 ? this.isString(data.error_msg)
                   ? data.error_msg
                   : JSON.stringify(data.error_msg)
-                : this.$t("global.article.notifications.update_error")
+                : this.$t("global.article.notifications.update_error"),
             );
           }
         })
@@ -2180,7 +2194,7 @@ export default {
             this.isLiked ? this.article.like++ : this.article.like--;
           }
         })
-           .catch( (error) =>{
+        .catch((error) => {
           console.log(error);
           this.isLiked = !this.isLiked;
           this.isLiked ? this.article.like++ : this.article.like--;
@@ -2202,7 +2216,7 @@ export default {
             this.isStared = !this.isStared;
           }
         })
-           .catch( (error) =>{
+        .catch((error) => {
           console.log(error);
           this.isStared = !this.isStared;
         });
@@ -2221,7 +2235,7 @@ export default {
             t.isFollow = !t.isFollow;
           }
         })
-           .catch( (error) =>{
+        .catch((error) => {
           console.log(error);
           t.isFollow = !t.isFollow;
         });
@@ -2272,7 +2286,7 @@ export default {
         this.$t("global.article.alert.delete_article.action"),
         () => {
           this.deleteArticle();
-        }
+        },
       );
     },
 
@@ -2283,12 +2297,12 @@ export default {
             ? window.VAPI.DELETE_MY_VENDOR_ARTICLE(
                 this.$route.params.vendor_id,
                 this.articleType,
-                this.article.id
+                this.article.id,
               )
             : window.ARTICLE_API.DELETE_ARTICLE(
                 this.articleType,
-                this.article.id
-              )
+                this.article.id,
+              ),
         )
         .then(({ data }) => {
           if (data.error) {
@@ -2297,7 +2311,7 @@ export default {
               null,
               data.error_msg
                 ? data.error_msg
-                : this.$t("global.article.notifications.delete_error")
+                : this.$t("global.article.notifications.delete_error"),
             );
 
             return;
@@ -2320,7 +2334,7 @@ export default {
             : window.ARTICLE_API.POST_ARTICLE_BODY_AUTO_FIX(),
           {
             body: this.article.body,
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -2346,7 +2360,7 @@ export default {
       this.busy_report = true;
       axios
         .delete(
-          window.ADMIN_API.DELETE_ARTICLE_BY_ADMIN(this.article.id, report)
+          window.ADMIN_API.DELETE_ARTICLE_BY_ADMIN(this.article.id, report),
         )
         .then(({ data }) => {
           if (data.error) {
@@ -2355,7 +2369,7 @@ export default {
               null,
               data.error_msg
                 ? data.error_msg
-                : this.$t("global.article.notifications.delete_error")
+                : this.$t("global.article.notifications.delete_error"),
             );
             return;
           }
@@ -2363,11 +2377,11 @@ export default {
           this.popupActiveReport = false;
           this.showSuccessAlert(
             this.$t(
-              "global.article.notifications.report_and_delete_success_title"
+              "global.article.notifications.report_and_delete_success_title",
             ),
             this.$t(
-              "global.article.notifications.report_and_delete_success_message"
-            )
+              "global.article.notifications.report_and_delete_success_message",
+            ),
           );
           this.$router.go(-1);
         })
@@ -2392,7 +2406,7 @@ export default {
           this.popupActiveReport = false;
           this.showSuccessAlert(
             this.$t("global.article.notifications.report_success_title"),
-            this.$t("global.article.notifications.report_success_message")
+            this.$t("global.article.notifications.report_success_message"),
           );
           this.reported = true;
         })
@@ -2415,7 +2429,10 @@ export default {
         return { name: "Help", params: { help_id: target_id } };
       } else if (this.articleType === ArticleTypes.Product.code) {
       } else if (this.is_shop_blog) {
-        return { name: window.$storefront.routes.SHOP_BLOG_PAGE, params: { blog_id: target_id } };
+        return {
+          name: window.$storefront.routes.SHOP_BLOG_PAGE,
+          params: { blog_id: target_id },
+        };
       } else if (this.articleType === ArticleTypes.Company.code) {
       }
     },
@@ -2427,11 +2444,11 @@ export default {
         .put(
           window.ADMIN_API.PUT_SET_ARTICLE_AUTHOR(
             "blogs",
-            this.article.parent_id
+            this.article.parent_id,
           ),
           {
             email: this.user_email,
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -2444,7 +2461,7 @@ export default {
 
             this.showSuccessAlert(
               null,
-              `Change author to ${data.author.name}.`
+              `Change author to ${data.author.name}.`,
             );
           }
         })
@@ -2482,7 +2499,7 @@ export default {
       if (this.shop_id)
         url = window.API.POST_AI_ARTICLE_AUTO_GENERATE(
           this.shop_id,
-          this.article.id
+          this.article.id,
         );
       else {
         return;
@@ -2505,7 +2522,7 @@ export default {
               () => {
                 this.autoGenerate(false);
               },
-              data.retry_ms ? data.retry_ms : 2 * 60000
+              data.retry_ms ? data.retry_ms : 2 * 60000,
             );
             return;
           }
@@ -2520,7 +2537,7 @@ export default {
 
             this.showSuccessAlert(
               "Write completed",
-              "Article successfully auto created and loaded."
+              "Article successfully auto created and loaded.",
             );
           }
         })

@@ -149,7 +149,7 @@
               {{ extractLabel(val, key) }}:
             </div>
 
-            <vue-qrcode
+            <s-qrcode
               :value="extractValue(val)"
               :options="{
                 width: 280,

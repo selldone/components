@@ -249,38 +249,10 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
 }
 @media only screen and (min-width: 600px) {
-  .dense-padding.v-data-table {
+  .dense-padding.v-data-table/*Deprecated*/ ,.v-data-table.v-table--density-compact/*Fix compact tables*/{
 
-
-    thead {
-        tr {
-          th {
+    thead > tr > th{
             padding: 0 8px !important;
-            .v-icon {
-              display: inline-block;
-              margin: auto;
-            }
-
-            &.sortable {
-              span {
-                white-space: nowrap;
-                display: block; // Force header be two line (+ sort icon)
-              }
-            }
-
-            &:not(.sortable) {
-              span {
-                white-space: nowrap;
-                min-height: 36px; // Force header be two line (- sort icon)
-                display: block;
-              }
-            }
-
-
-          }
-        }
-
-
     }
 
     table > tbody > tr > td {
@@ -736,4 +708,16 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 // Fix v-dialog v-bottom-sheet bottom padding!
 .v-overlay.v-dialog.v-bottom-sheet{
   max-height: 100%;
+}
+
+
+// Fix chips avatar overflow issue:
+.v-input{
+  .v-combobox__selection{
+    .v-chip{
+      .v-chip__content{
+        overflow: visible;
+      }
+    }
+  }
 }

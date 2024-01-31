@@ -21,8 +21,8 @@
       active-color="amber-darken-3"
       color="grey-darken-1"
       hover
-      :size="xSmall?'x-small':small?'small':'x-large'"
-      :density="dense? 'compact':undefined"
+      :size="xSmall ? 'x-small' : small ? 'small' : 'x-large'"
+      :density="dense ? 'compact' : undefined"
       :calss="{ disabled: loading }"
       @change="(val) => $emit('change', val)"
       :readonly="readOnly"
@@ -63,16 +63,11 @@ export default {
 
   computed: {
     emoji() {
-      if (this.modelValue === 1)
-        return require("./assets/rate-1.svg");
-      if (this.modelValue === 2)
-        return require("./assets/rate-2.svg");
-      if (this.modelValue === 3)
-        return require("./assets/rate-3.svg");
-      if (this.modelValue === 4)
-        return require("./assets/rate-4.svg");
-      if (this.modelValue === 5)
-        return require("./assets/rate-5.svg");
+      if (this.modelValue === 1) return require("./assets/rate-1.svg");
+      if (this.modelValue === 2) return require("./assets/rate-2.svg");
+      if (this.modelValue === 3) return require("./assets/rate-3.svg");
+      if (this.modelValue === 4) return require("./assets/rate-4.svg");
+      if (this.modelValue === 5) return require("./assets/rate-5.svg");
 
       return require("./assets/rate-no.svg");
     },

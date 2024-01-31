@@ -13,34 +13,45 @@
   -->
 
 <template>
-  <div
-    class="d-flex align-center mx-n3 "
-    :class="{ 'stop-animations disabled': disabled,'py-11 overflow-auto thin-scroll':!dense ,'px-11':!small,'px-6' :small,'pods-small':small}"
-    :style="{
-      '--pod-color': color,
-      '--pod-dot-color': dotColor,
-      '--pod-badge-text-color': badgeTextColor,
-    }"
-  >
-    <slot></slot>
+  <div class="pod-toggle">
+    <div class="-nut">
+      <swiper :options="{ loop: true, autoplay: { delay: 2700 } }">
+        <swiper-slide v-for="k in payment_keys" :key="k">
+          <span v-html="SVGs[k]"></span>
+        </swiper-slide>
+      </swiper>
+    </div>
+    <v-icon class="my-2" color="#333">payment</v-icon>
   </div>
 </template>
 
 <script>
+import SVGs from "@core/enums/payment/stripe/SVGs";
+import { Swiper, SwiperSlide } from "swiper/vue";
+
 export default {
-  name: "Pods",
-  props: {
+  name: "SPodTogglePayment",
+  components: { Swiper, SwiperSlide },
 
-    dense: { type: Boolean, default: false },
-    small: { type: Boolean, default: false },
-
-
-    disabled: { type: Boolean, default: false },
-
-    color: {},
-    dotColor: {},
-    badgeTextColor: {},
-  },
+  data: () => ({
+    payment_keys: [
+      "apple_pay",
+      "google_pay",
+      "afterpay_clearpay",
+      "alipay",
+      "eps",
+      "ideal",
+      "giropay",
+      "klarna",
+      "oxxo",
+      "p24",
+      "sepa_debit",
+      "sofort",
+      "grabpay",
+      "wechat",
+    ],
+    SVGs: SVGs,
+  }),
 };
 </script>
 

@@ -166,25 +166,25 @@ export function installGlobalComponents(app: App) {
 
 
   // + QR Code:
-  const VueQrcode = defineAsyncComponent(
+  const SQrcode = defineAsyncComponent(
     () =>
       import(
         // @ts-ignore
-        /* webpackChunkName: "plug-miscellaneous" */ "@chenfengyuan/vue-qrcode"
+        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/qrcode"
       ),
   );
-  app.component('vue-qrcode', VueQrcode);
+  app.component('s-qrcode', SQrcode);
 
   // + Bar Code:
 
-  const VueBarcode = defineAsyncComponent(
+  const SBarcode = defineAsyncComponent(
     () =>
       import(
         // @ts-ignore
-        /* webpackChunkName: "plug-miscellaneous" */ "vue-barcode"
+        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/barcode/SBarcode.vue"
       ),
   );
-  app.component("barcode", VueBarcode);
+  app.component("s-barcode", SBarcode);
 
   app.use(VueYoutube);
 

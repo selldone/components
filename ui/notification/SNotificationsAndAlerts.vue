@@ -20,7 +20,7 @@
       style="z-index: 9999999"
     >
       <template v-slot:body="{ item, close }">
-        <div class="vue-samin-notification" :class="item.type">
+        <div class="s--notifications-notify" :class="item.type">
           <v-img
             v-if="item.data?.img"
             width="36"
@@ -29,7 +29,7 @@
             :src="item.data.img"
           ></v-img>
 
-          <v-icon v-else class="float-start m-2" dark>
+          <v-icon v-else class="me-2" dark>
             {{
               item.data?.icon
                 ? item.data.icon
@@ -49,11 +49,11 @@
 
           <b class="font-weight-bold" v-html="item.title"> </b>
 
-          <v-btn icon class="float-end" @click="close" size="small">
+          <v-btn icon class="float-end" @click.stop="close" size="small" variant="text">
             <v-icon>close</v-icon>
           </v-btn>
 
-          <div class="text-start" v-html="item.text"></div>
+          <div class="text-start px-1" v-html="item.text"></div>
         </div>
       </template>
     </notifications>

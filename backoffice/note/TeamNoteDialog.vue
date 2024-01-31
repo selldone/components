@@ -22,8 +22,8 @@
     scrollable
     content-class="rounded-t-xl overflow-hidden"
   >
-    <v-card flat color="#f9f9f9" tile>
-      <v-card-title>
+    <v-card flat color="#f9f9f9" rounded="0">
+      <v-card-title class="d-flex align-center">
         <v-avatar v-if="icon" size="24" class="me-2" rounded>
           <img :src="icon" />
         </v-avatar>
@@ -55,7 +55,7 @@
                 color="red"
                 :title="$t('global.actions.delete')"
                 @click="deleteMessage(i)"
-                icon
+                icon variant="text"
                 :loading="busy_delete_message === i"
                 :class="{ disabled: busy_delete_message !== null }"
               >
@@ -88,15 +88,14 @@
             auto-grow
             label="Message"
             v-model="body_input"
-            :counter="1024"
+            :counter="1024" variant="underlined"
           ></v-textarea>
 
           <div class="widget-buttons">
             <v-btn
               color="primary"
-              dark
-              x-large
-              depressed
+              size="x-large"
+              variant="flat"
               @click="addNote"
               :loading="busy_add"
               :class="{ disabled: !body_input }"
@@ -109,7 +108,7 @@
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn text x-large @click="$emit('input', false)">
+          <v-btn variant="text" size="x-large" @click="$emit('input', false)">
             <v-icon class="me-1">close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -120,22 +119,16 @@
 </template>
 
 <script>
-
-
-
 export default {
   name: "TeamNoteDialog",
 
-  components: {
-
-  },
+  components: {},
 
   props: {
     value: {},
 
     addUrl: { type: Function },
     deleteUrl: { type: Function },
-
 
     icon: {},
     title: {},
@@ -174,7 +167,7 @@ export default {
             this.target.note = data.note;
             this.showSuccessAlert(
               null,
-              this.$t("notes.notifications.success_add")
+              this.$t("notes.notifications.success_add"),
             );
           }
         })
@@ -197,7 +190,7 @@ export default {
             this.target.note = data.note;
             this.showSuccessAlert(
               null,
-              this.$t("notes.notifications.success_delete")
+              this.$t("notes.notifications.success_delete"),
             );
           }
         })

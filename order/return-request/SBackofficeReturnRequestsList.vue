@@ -27,10 +27,18 @@
       :items-per-page="itemsPerPage"
       :loading-text="$t('global.commons.waiting_load_data')"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
-      :item-class="(item) => 'row-hover'"
-      class="bg-transparent dense-padding min-height-60vh"
+      class="bg-transparent  min-height-60vh"
       @click:row="(_, r) => $emit('select', r.item)"
-      hover
+
+
+      density="compact"
+      :row-props="
+      (_data) => {
+        return { class: 'row-hover' };
+      }
+    "
+
+
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>

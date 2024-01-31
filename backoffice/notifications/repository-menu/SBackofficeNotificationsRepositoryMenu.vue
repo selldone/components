@@ -127,7 +127,7 @@
                 :to-product="
                   (id) => {
                     return {
-                      name: 'ProductDashboard',
+                      name: 'BPageProductDashboard',
                       params: { product_id: id, shop_id: item.data.shop?.id },
                     };
                   }

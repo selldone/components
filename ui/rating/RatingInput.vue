@@ -63,7 +63,7 @@ export default {
   }),
   computed: {
     ticksLabels() {
-      return this.$t("global.rating_labels");
+      return this.$tm("global.rating_labels");
     },
   },
   watch: {

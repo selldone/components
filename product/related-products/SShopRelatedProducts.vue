@@ -70,7 +70,10 @@
             }"
           >
             <router-link
-              :to="{ name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: item.id } }"
+              :to="{
+                name: window.$storefront.routes.PRODUCT_PAGE,
+                params: { product_id: item.id },
+              }"
             >
               <v-img
                 aspect-ratio="1"
@@ -95,17 +98,16 @@
               <div class="-card-title">
                 <span class="flex-grow-1">{{ item.title }}</span>
                 <span v-if="item.rate_count" class="-rate-view">
-                  {{  numeralFormat(item.rate ,"0.0") }}
+                  {{ numeralFormat(item.rate, "0.0") }}
 
                   <v-rating
                     v-model="item.rate"
                     dir="ltr"
-                    color="yellow darken-3"
-                    background-color="grey darken-1"
-                    empty-icon="$vuetify.icons.ratingFull"
+                    active-color="yellow-darken-3"
+                    color="grey-darken-1"
                     half-increments
                     readonly
-                    dense
+                    density="compact"
                     :length="1"
                     class="d-inline"
                   />

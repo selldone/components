@@ -24,7 +24,7 @@
         <v-badge
           color="red"
           overlap
-          :value="sum_orders_badges > 0"
+          :model-value="sum_orders_badges > 0"
           :content=" numeralFormat(sum_orders_badges,'0a')"
         >
           <v-icon>history</v-icon>

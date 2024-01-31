@@ -104,7 +104,7 @@
         retain-focus-on-click
       >
         <v-badge
-          :value="total_items_in_carts > 0"
+          :model-value="total_items_in_carts > 0"
           color="teal"
           :content="  numeralFormat(total_items_in_carts,'0a')"
           offset-y="10"
@@ -138,7 +138,7 @@
         <v-badge
           color="red"
           offset-y="10"
-          :value="sum_orders_badges > 0"
+          :model-value="sum_orders_badges > 0"
           :content="  numeralFormat(sum_orders_badges,'0a')"
         >
           <v-icon>notifications</v-icon>
@@ -157,7 +157,7 @@
       >
         <v-badge
           v-if="USER_ID()"
-          :value="!!getClub()"
+          :model-value="!!getClub()"
           color="transparent"
           offset-y="10"
         >

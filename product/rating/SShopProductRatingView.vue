@@ -16,12 +16,14 @@
   <div v-if="product.ratings?.length" class="s--shop-product-rating-view">
     <v-btn
       v-if="show_edit_btn"
-      small
+      size="small"
       icon
       @click="edit_mode = !edit_mode"
       title="Rate this product"
       class="absolute-top-end"
-      ><v-icon small>{{ edit_mode ? "close" : "fa:fas fa-poll-h" }}</v-icon></v-btn
+      ><v-icon size="small">{{
+        edit_mode ? "close" : "fa:fas fa-poll-h"
+      }}</v-icon></v-btn
     >
 
     <v-expand-transition>
@@ -39,7 +41,7 @@
         <v-btn
           rounded
           color="blue"
-          depressed
+          variant="flat"
           dark
           @click="setMyRating"
           :loading="busy"
@@ -52,17 +54,16 @@
           <v-rating
             v-model="product.rate"
             class="my-2 text-center"
-            color="yellow darken-3"
-            background-color="grey darken-1"
-            empty-icon="$vuetify.icons.ratingFull"
+            active-color="yellow-darken-3"
+            color="grey-darken-1"
             half-increments
             hover
             readonly
             :small="small"
-            :dense="small || dense"
+            :density="small || (dense && 'compact')"
           />
           <small class="mx-2" v-if="product.rate_count"
-            >({{   numeralFormat(product.rate_count,"0,0") }})</small
+            >({{ numeralFormat(product.rate_count, "0,0") }})</small
           >
         </div>
 
@@ -142,7 +143,7 @@ export default {
       // not null => user can rate to this product.
       this.product.ratings.forEach((rating) => {
         let val = this.product.my_ratings.find(
-          (item) => item.rate_id === rating.id
+          (item) => item.rate_id === rating.id,
         );
         this.user_rating[rating.id] = val ? val.value : 3;
       });
@@ -153,21 +154,21 @@ export default {
     setMyRating() {
       this.busy = true;
 
-      window.$storefront.products.rate.submitMyRate(this.product.id,this.user_rating)
+      window.$storefront.products.rate
+        .submitMyRate(this.product.id, this.user_rating)
 
-        .then(({my_ratings,ratings,rate_count,rate}) => {
-            this.showSuccessAlert(
-              this.$t("product_rating_view.notification.title"),
-              this.$t("product_rating_view.notification.message")
-            );
-            this.product.my_ratings = my_ratings;
-            this.product.ratings = ratings;
-            this.product.rate_count = rate_count;
-            this.product.rate = rate;
-            this.edit_mode = false;
+        .then(({ my_ratings, ratings, rate_count, rate }) => {
+          this.showSuccessAlert(
+            this.$t("product_rating_view.notification.title"),
+            this.$t("product_rating_view.notification.message"),
+          );
+          this.product.my_ratings = my_ratings;
+          this.product.ratings = ratings;
+          this.product.rate_count = rate_count;
+          this.product.rate = rate;
+          this.edit_mode = false;
 
-            this.$forceUpdate(); // Force refresh component!
-
+          this.$forceUpdate(); // Force refresh component!
         })
         .catch((error) => {
           this.showLaravelError(error);
@@ -184,13 +185,12 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-product-rating-view{
-
+.s--shop-product-rating-view {
 }
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-product-rating-view{
+.s--shop-product-rating-view {
   position: relative;
   text-align: start;
 }

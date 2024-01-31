@@ -29,7 +29,7 @@
       :items-per-page="10"
       :hide-default-footer="!items || items.length <= 10"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
-      class="bg-transparent dense-padding"
+      class="bg-transparent "      density="compact"
     >
       <template v-slot:item.product_id="{ item }">
         <div class="d-flex align-center">

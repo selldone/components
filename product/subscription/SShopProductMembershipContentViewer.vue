@@ -57,9 +57,9 @@
           "
           class="bg-white"
         >
-          <v-list-item-icon>
+          <template v-slot:prepend>
             <v-icon color="amber" size="large">folder</v-icon>
-          </v-list-item-icon>
+          </template>
 
           <v-list-item-title>
             <b>{{ content.title }}</b>
@@ -117,9 +117,8 @@
           v-model="current_rate"
           class="mb-2"
           dir="ltr"
-          color="yellow-darken-3"
-          background-color="grey darken-1"
-          empty-icon="$vuetify.icons.ratingFull"
+          active-color="yellow-darken-3"
+          color="grey-darken-1"
           hover
           :size="$vuetify.display.smAndDown && 'small'"
           density="compact"

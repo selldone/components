@@ -456,6 +456,7 @@ const CoreMixin = ({
       detail: string | null = null,
       duration: number = 6000
     ) {
+      if(!this.$t)return;
       if (!title) title = this.$t("global.notification.error") as string;
 
       this.$notify({
@@ -474,6 +475,7 @@ const CoreMixin = ({
       duration = 3000,
       img = null
     ) {
+      if(!this.$t)return;
       if (!title) title = this.$t("global.notification.confirm") as string;
 
       this.$notify({
@@ -489,6 +491,7 @@ const CoreMixin = ({
     },
 
     showWarningAlert(title: string | null, message?: string, duration = 6000) {
+      if(!this.$t)return;
       if (!title) title = this.$t("global.notification.warning") as string;
 
       this.$notify({
@@ -501,6 +504,7 @@ const CoreMixin = ({
     },
 
     showAwardAlert(title: string | null, message?: string) {
+      if(!this.$t)return;
       if (!title) title = this.$t("global.notification.award") as string;
 
       this.$notify({
@@ -519,6 +523,7 @@ const CoreMixin = ({
       img = null,
       duration = 30000
     ) {
+      if(!this.$t)return;
       if (!title) title = this.$t("global.notification.caution") as string;
 
       this.$notify({
@@ -1426,9 +1431,10 @@ const CoreMixin = ({
 
           if (Array.isArray(val)) {
             val.forEach((er) => {
-              error_msg += `<li>${er}</li>`;
+              error_msg += `<li><b style="text-transform: capitalize">${key}: </b> ${er}</li>`;
             });
           }
+          error_msg=`<ul>${error_msg}</ul>`
         }
         this.showErrorAlert(
           this.$t("global.notification.error") + " " + error.response.status,

@@ -43,7 +43,7 @@
           <component
             :is="!viewOnly ? 'router-link' : 'div'"
             :to="{
-              name: 'ProductDashboard',
+              name: 'BPageProductDashboard',
               params: { product_id: item.product.id },
             }"
             class="text-dark"

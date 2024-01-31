@@ -36,7 +36,7 @@
       v-model:page="page"
       :sort-by="[{ key: null, order: 'desc' }]"
       :items-per-page="itemsPerPage"
-      class="bg-transparent dense-padding"
+      class="bg-transparent "      density="compact"
     >
       <template v-slot:item.icon="{ item }">
         <v-img

@@ -680,7 +680,7 @@ export default {
     },
 
     unit_items() {
-      return this.$t("global.units");
+      return this.$tm("global.units");
     },
   },
 

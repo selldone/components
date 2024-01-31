@@ -24,12 +24,12 @@
             {{ product.title }}
             <v-chip
               v-if="!has_original_warranty"
-              small
+              size="small"
               color="red"
               dark
               class="mx-2"
             >
-              <v-icon x-small left>fa:fas fa-exclamation</v-icon>
+              <v-icon size="x-small" start>fa:fas fa-exclamation</v-icon>
               {{ $t("product_info.fake") }}
             </v-chip>
           </h1>
@@ -107,8 +107,8 @@
               <v-btn
                 v-if="product.title_en?.wordsCount() > 20"
                 @click="limit_title_en = limit_title_en > 20 ? 20 : 2000"
-                small
-                text
+                size="small"
+                variant="text"
                 color="#111"
                 class="tnt"
                 >{{
@@ -121,18 +121,17 @@
 
             <template v-if="product.rate_count && product.rate">
               <b class="mx-2 -rate-value">{{
-                 numeralFormat(product.rate ,"0.0")
+                numeralFormat(product.rate, "0.0")
               }}</b>
 
               <v-rating
                 v-model="product.rate"
-                color="yellow darken-3"
-                background-color="grey darken-1"
-                empty-icon="$vuetify.icons.ratingFull"
+                active-color="yellow-darken-3"
+                color="grey-darken-1"
                 half-increments
                 readonly
-                small
-                dense
+                size="small"
+                density="compact"
               />
             </template>
           </div>
@@ -143,12 +142,12 @@
             {{ product.title }}
             <v-chip
               v-if="!has_original_warranty"
-              small
+              size="small"
               color="red"
               dark
               class="mx-2"
             >
-              <v-icon x-small left>fa:fas fa-exclamation</v-icon>
+              <v-icon size="x-small" start>fa:fas fa-exclamation</v-icon>
               {{ $t("product_info.fake") }}
             </v-chip>
           </h1>
@@ -191,16 +190,16 @@
             <product-section-box-variants
               :shop="shop"
               :product="product"
-              :filter.sync="filter"
-              :current-variant.sync="current_variant"
-              :selection-values.sync="selection_values"
+              v-model:filter="filter"
+              v-model:current-variant="current_variant"
+              v-model:selection-values="selection_values"
             ></product-section-box-variants>
 
             <!-- ▁▁▁▁▁▁ 🞇 Service 🞇 ▁▁▁▁▁▁ -->
             <product-section-box-service
               :shop="shop"
               :product="product"
-              :preferences.sync="preferences"
+              v-model:preferences="preferences"
             ></product-section-box-service>
 
             <v-spacer></v-spacer>
@@ -489,7 +488,7 @@ export default {
         (item) =>
           item.product_id === this.product.id &&
           item.variant_id ===
-            (this.current_variant ? this.current_variant.id : null)
+            (this.current_variant ? this.current_variant.id : null),
       );
     },
 
@@ -519,7 +518,7 @@ export default {
         this.product.vendors &&
         this.product.vendors.filter(
           (v) =>
-            v.variant_id === (this.current_variant && this.current_variant.id)
+            v.variant_id === (this.current_variant && this.current_variant.id),
         )
       );
     },
@@ -529,7 +528,7 @@ export default {
         this.selected_vendor_product_id &&
         this.product.vendors &&
         this.product.vendors.find(
-          (v) => v.id === this.selected_vendor_product_id
+          (v) => v.id === this.selected_vendor_product_id,
         )
       );
     },
@@ -594,7 +593,7 @@ export default {
   mounted() {
     //  this.assignValuesByCurrentItemInBasket();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.$store.commit("setCurrentSelectedVariant", null); // Reset
   },
 

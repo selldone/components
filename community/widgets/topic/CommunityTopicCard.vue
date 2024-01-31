@@ -120,7 +120,7 @@
             {{ topic.total_posts }}
 
             <v-badge
-              :value="todayData && todayData.posts > 0"
+              :model-value="todayData && todayData.posts > 0"
               color="#D32F2F"
               :content="
                 todayData && todayData.posts
@@ -140,7 +140,7 @@
             {{ topic.total_comments }}
 
             <v-badge
-              :value="todayData && todayData.comments > 0"
+              :model-value="todayData && todayData.comments > 0"
               color="#D32F2F"
               :content="
                 todayData && todayData.comments

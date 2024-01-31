@@ -91,9 +91,8 @@
           <v-chip v-if="product.rate_count" color="#fafafa" class="mx-2">
             <v-rating
               :value="product.rate"
-              color="yellow darken-3"
-              background-color="grey darken-1"
-              empty-icon="$vuetify.icons.ratingFull"
+              active-color="yellow-darken-3"
+              color="grey-darken-1"
               half-increments
               small
               readonly
@@ -196,9 +195,8 @@
               <div v-if="product.rate_count">
                 <v-rating
                   :value="product.rate"
-                  color="yellow darken-3"
-                  background-color="grey darken-1"
-                  empty-icon="$vuetify.icons.ratingFull"
+                  active-color="yellow-darken-3"
+                  color="grey-darken-1"
                   half-increments
                   small
                   readonly
@@ -363,9 +361,8 @@
             >
               <v-rating
                 :value="product.rate"
-                color="yellow darken-3"
-                background-color="grey darken-1"
-                empty-icon="$vuetify.icons.ratingFull"
+                active-color="yellow-darken-3"
+                color="grey-darken-1"
                 half-increments
                 x-small
                 readonly

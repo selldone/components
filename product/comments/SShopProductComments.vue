@@ -24,7 +24,7 @@
         <v-col cols="12" sm="6" md="3" order="1" order-sm="2" order-md="1">
           <div class="my-8">
             <span class="text-h1 font-weight-black">
-              {{   numeralFormat(product.rate,"0.0") }}
+              {{ numeralFormat(product.rate, "0.0") }}
             </span>
             <b class="mx-1">/ 5</b>
             <div class="mt-4">
@@ -60,24 +60,23 @@
             <v-rating
               v-model="product.rate"
               class="absolute-top-center op-0-2"
-              color="#AAA"
-              background-color="grey darken-1"
-              empty-icon="$vuetify.icons.ratingFull"
+              active-color="#AAA"
+              color="grey-darken-1"
               half-increments
               readonly
               size="36"
-              dense
+              density="compact"
             />
 
             <div class="ma-auto z1">
-              <v-icon color="#fff" x-large class="mb-2">{{
+              <v-icon color="#fff" size="x-large" class="mb-2">{{
                 product.rate > 4
                   ? "hotel_class"
                   : product.rate > 3.5
-                  ? "star_rate"
-                  : product.rate > 2.5
-                  ? "star_half"
-                  : "star_border"
+                    ? "star_rate"
+                    : product.rate > 2.5
+                      ? "star_half"
+                      : "star_border"
               }}</v-icon>
               <div>{{ buyer_rating_statement }}</div>
             </div>
@@ -138,7 +137,8 @@ export default {
   computed: {
     buyer_rating_statement() {
       const rate = this.product.rate;
-      if (rate < 1) return ""; // Invalid rate!
+      if (rate < 1)
+        return ""; // Invalid rate!
       else if (rate < 2)
         return this.$t("global.buyer_rating_statement.between1_2");
       else if (rate < 3)
@@ -155,7 +155,7 @@ export default {
         this.buyer_rating_statement,
         200,
         120,
-        0.7
+        0.7,
       );
     },
   },

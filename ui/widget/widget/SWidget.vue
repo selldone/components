@@ -13,13 +13,14 @@
   -->
 
 <template>
-  <section
+  <v-sheet
     ref="widget"
     :class="{ className, h100: h100 }"
     v-bind="dataWidgster"
     @click="$emit('click')"
     class="widget"
     :style="{'--background':'var(--widget-background-color)'}"
+    :theme="dark?'dark':'light'"
   >
     <div class="top-left-container">
       <slot name="top-left" />
@@ -145,7 +146,7 @@
     <div :class="`widgetBody widget-body ${bodyClass}`">
       <slot />
     </div>
-  </section>
+  </v-sheet>
 </template>
 
 <script>
