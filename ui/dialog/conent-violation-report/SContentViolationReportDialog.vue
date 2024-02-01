@@ -14,8 +14,8 @@
 
 <template>
   <v-bottom-sheet
-    :value="value"
-    @input="
+    :model-value="value"
+    @update:model-value="
       (val) => {
         $emit('input', val);
         if (!val) report = null;

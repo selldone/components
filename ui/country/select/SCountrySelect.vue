@@ -137,10 +137,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    loading: {
-      default: false,
-      type: Boolean,
-    },
+
 
     returnObject: {
       default: false,
@@ -190,7 +187,9 @@ export default {
     autocomplete: {},
   },
 
-  data: () => ({}),
+  data: () => ({
+    loading:false,
+  }),
   computed: {
     countries() {
       if (!this.$store.getters.getCountries) return null;
@@ -207,7 +206,10 @@ export default {
   methods: {},
   created() {
     if (!this.countries || !this.countries.length) {
-      this.fetchCountries();
+      this.loading=true;
+      this.fetchCountries(()=>{
+        this.loading=false;
+      });
     }
   },
 };

@@ -18,7 +18,7 @@
       <v-icon v-if="icon" class="me-1">{{ icon }}</v-icon> {{ label }}
     </div>
     <div class="-val subtitle-2" :class="{ vb50: vb50 }">
-      <s-check v-if="isBoolean(value)" :value="value"></s-check>
+      <s-check v-if="isBoolean(value)" :value="value" read-only></s-check>
       <span v-else>{{ value }}</span>
       <slot name="value"></slot>
       <slot></slot>

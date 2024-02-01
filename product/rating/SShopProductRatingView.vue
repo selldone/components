@@ -50,7 +50,7 @@
         </v-btn>
       </div>
       <div v-else-if="product.rate_count" key="view">
-        <div class="d-flex align-items-baseline justify-center">
+        <div class="d-flex align-center justify-center">
           <v-rating
             v-model="product.rate"
             class="my-2 text-center"

@@ -656,16 +656,16 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 // Fix v-input font size is 16px and we override it to 14px in html level { $font-size-root: 14px }! but we want all fonts for input be in big size (16px):
-.v-input{
+/***.v-input{
 
-    .v-field__field{
-      label{
+    .v-label.v-field-label{
+
         font-size: 16px;
-      }
+
     }
 
 
-}
+}*/
 
 // Fix v-container:
 .v-application,.v-overlay-container{

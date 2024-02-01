@@ -837,9 +837,9 @@ const CoreMixin = ({
 
     //―――――――――――――――――――――― Currency ――――――――――――――――――――
 
-    GetCurrency(currency: keyof typeof Currency) {
+    GetCurrency(currency: keyof typeof Currency | ICurrency) {
       if (!currency) return null;
-      return Currency[currency];
+      return Currency[this.isObject(currency)?(currency as ICurrency).code : currency];
     },
 
     /**

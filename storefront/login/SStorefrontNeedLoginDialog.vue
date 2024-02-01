@@ -27,7 +27,7 @@
     >
 
     <s-shop-login
-      :show.sync="show_dialog"
+      v-model:show="show_dialog"
       :color="SaminColorDarkDeep"
       class="rounded-0"
     ></s-shop-login>
@@ -54,7 +54,7 @@ export default {
       "need-login",
       _.throttle((show) => {
         this.show_dialog = show;
-      }, 800)
+      }, 800),
     );
   },
 
@@ -63,7 +63,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

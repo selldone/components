@@ -966,7 +966,7 @@
                 :to="{
                   name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
                     ? 'Vendor_ProductInventoryPage'
-                    : 'ProductInventoryPage',
+                    : 'BPageProductInventory',
                   params: { product_id: currentProductForMenu.id },
                   /*   hash: '#all-items'*/
                 }"

@@ -376,7 +376,8 @@ export default {
         .easing(TWEEN.Easing.Cubic.InOut)
         .onUpdate(() => {
           for (let index = 0; index < this.paths.length; index++) {
-            this.$set(this.paths, index, interpolators[index](position.value));
+           // this.$set(this.paths, index, interpolators[index](position.value));
+            this.paths[index] = interpolators[index](position.value);
           }
         });
 

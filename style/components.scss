@@ -4699,6 +4699,7 @@ display: flex;
   .v-list-subheader {
     height: auto;
     padding: 10px 8px;
+    background: unset; // Default is inherent!
     .v-list-subheader__text{
       white-space: normal;
     }
@@ -4782,7 +4783,12 @@ display: flex;
       flex-direction: column;
       align-items: stretch;
 
+      min-height: max-content;
+      height: max-content;
+
       & > .v-btn {
+        min-height: 32px;
+
         &:first-child {
           border-top-left-radius: 18px !important;
           border-top-right-radius: 18px !important;

@@ -17,9 +17,8 @@
     <v-btn
       @click="$emit('click')"
       :color="loading ? '#512DA8' : '#673AB7'"
-      dark
-      x-large
-      depressed
+      size="x-large"
+      variant="flat"
       block
       :class="{ pen: loading }"
     >

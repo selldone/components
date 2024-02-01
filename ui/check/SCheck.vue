@@ -13,12 +13,12 @@
   -->
 
 <template>
-  <span v-if="modelValue !== null && modelValue !== undefined">
+  <span>
     <v-icon
-      v-if="modelValue"
+      v-if="checked"
       :color="trueColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click="$emit('update:modelValue', !modelValue)"
+      @click.stop="readOnly?undefined:set(false)"
     >
       {{ trueIcon }}
     </v-icon>
@@ -26,7 +26,7 @@
       v-else
       :color="falseColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click="$emit('update:modelValue', !modelValue)"
+      @click.stop="readOnly?undefined:set(true)"
     >
       {{ falseIcon }}
     </v-icon>
@@ -36,6 +36,7 @@
 <script>
 export default {
   name: "SCheck",
+  emits: ["update:modelValue"],
   props: {
     modelValue: {},
     size: {},
@@ -47,6 +48,27 @@ export default {
     },
     trueIcon: { default: "check" },
     falseIcon: { default: "close" },
+
+    readOnly:Boolean
+  },
+  data: () => ({
+    checked: false,
+  }),
+
+  watch: {
+    modelValue(val) {
+      this.checked = val;
+    },
+  },
+
+  created() {
+    this.checked = this.modelValue;
+  },
+  methods: {
+    set(checked) {
+      this.checked = checked;
+      this.$emit("update:modelValue", checked);
+    },
   },
 };
 </script>

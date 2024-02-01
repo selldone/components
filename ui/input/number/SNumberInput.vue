@@ -54,8 +54,7 @@
       }
     "
     :loading="loading"
-    :variant="variant?variant:solo?'solo':flat?'flat':'underlined'"
-
+    :variant="variant ? variant : solo ? 'solo' : flat ? 'flat' : 'underlined'"
     :readonly="readonly || is_locked"
     :bg-color="backgroundColor"
     @keyup.enter="
@@ -72,7 +71,7 @@
       <v-btn
         v-if="lock"
         class="me-2"
-        icon
+        icon variant="text"
         @click="is_locked = !is_locked"
         :title="lock ? 'Click to edit value.' : 'Click to lock input'"
       >
@@ -88,18 +87,17 @@
         :color="newValue === alternativeButtonValue ? 'success' : 'default'"
         :class="dense ? '' : 'margin-n7px'"
         :rounded="rounded"
-        :size="dense? 'small':undefined"
+        :size="dense ? 'small' : undefined"
       >
         {{ alternativeButtonText }}
       </v-btn>
       <v-btn
         v-if="showButtons"
-        :style="btn_style"
-        icon
+        icon variant="text"
         @click.stop="mpminus()"
         :disabled="is_locked"
       >
-        <v-icon size="small"> fa:fas fa-minus </v-icon>
+        <v-icon size="small"> fa:fas fa-minus</v-icon>
       </v-btn>
       <v-icon v-if="appendIcon">{{ appendIcon }}</v-icon>
 
@@ -107,26 +105,26 @@
 
       <v-btn
         v-if="clearable"
-        icon
+        icon variant="text"
         @click="
           newValue = 0;
           $emit('clear');
         "
         class="mt-n1"
         :title="$t('buy_button.remove')"
-        ><v-icon>close</v-icon></v-btn
       >
+        <v-icon>close</v-icon>
+      </v-btn>
     </template>
 
     <template v-slot:prepend-inner>
       <v-btn
         v-if="showButtons && !readonly"
         :disabled="is_locked"
-        :style="btn_style"
-        icon
+        icon variant="text"
         @click.stop="mpplus()"
       >
-        <v-icon size="small"> fa:fas fa-plus </v-icon>
+        <v-icon size="small"> fa:fas fa-plus</v-icon>
       </v-btn>
       <v-icon v-if="prependInnerIcon">{{ prependInnerIcon }}</v-icon>
 
@@ -140,9 +138,9 @@ import { NumberHelper } from "@core/helper/number/NumberHelper";
 
 export default {
   name: "SNumberInput",
-
+  emits: ["update:modelValue", "change", "clear", "blur"],
   props: {
-    value: {
+    modelValue: {
       default: 0,
     },
     min: {
@@ -289,13 +287,10 @@ export default {
       return this.alternativeButtonText && this.alternativeButtonValue;
     },
 
-    btn_style() {
-      if (this.label) return "margin-top:-7px";
-      return "margin-top:-7px";
-    },
+
   },
   watch: {
-    value: {
+    modelValue: {
       handler: function (newVal, oldVal) {
         if (this.focus) return;
         //  console.log("handler",newVal)
@@ -311,7 +306,7 @@ export default {
       if (this.min !== undefined && newValue < this.min) newValue = this.min;
 
       // console.log('newValue',newValue)
-      this.$emit("input", newValue);
+      this.$emit("update:modelValue", newValue);
 
       if (this.focus) return;
 
@@ -321,11 +316,11 @@ export default {
     },
   },
   created() {
-    if (!this.value) {
-      this.$emit("input", 0);
+    if (!this.modelValue) {
+      this.$emit("update:modelValue", 0);
       this.newValue = 0;
     } else {
-      this.newValue = this.value;
+      this.newValue = this.modelValue;
     }
 
     this.is_locked = this.lock;
@@ -341,7 +336,7 @@ export default {
           NumberHelper.toEnglishFloat(this.newValue, this.decimal) + this.step,
           this.decimal,
         );
-        this.$emit("input", this.newValue);
+        this.$emit("update:modelValue", this.newValue);
         this.$emit("change", this.newValue);
       }
     },
@@ -351,7 +346,7 @@ export default {
           NumberHelper.toEnglishFloat(this.newValue, this.decimal) - this.step,
           this.decimal,
         );
-        this.$emit("input", this.newValue);
+        this.$emit("update:modelValue", this.newValue);
         this.$emit("change", this.newValue);
       }
     },

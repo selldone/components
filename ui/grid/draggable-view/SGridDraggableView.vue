@@ -192,16 +192,7 @@ export default {
   position: relative;
   display: block;
 
-  .item-grid {
-    //   display: block;
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    //    margin: 1%;
-    z-index: 1;
-    //  background: #000;
-    // color: #fff;
-  }
+
   .muuri-item-dragging {
     z-index: 3;
 

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-flex d-flex align-center justify-start>
+  <v-row no-gutters align="center" justify="center">
     <p
       class="m-0 small text-muted text-truncate flex-grow-1"
       style="width: 40%"
@@ -45,7 +45,7 @@
     </div>
 
     <small class="ms-4" style="width: 20%">{{ rating_name }}</small>
-  </v-flex>
+  </v-row>
 </template>
 
 <script>
@@ -80,11 +80,11 @@ export default {
     },
 
     rating_name() {
-      if (this.rating_percent < 30) return this.$t("surveys")[0];
-      if (this.rating_percent < 50) return this.$t("surveys")[1];
-      if (this.rating_percent < 70) return this.$t("surveys")[2];
-      if (this.rating_percent < 90) return this.$t("surveys")[3];
-      return this.$t("surveys")[4];
+      if (this.rating_percent < 30) return this.$tm("surveys")[0];
+      if (this.rating_percent < 50) return this.$tm("surveys")[1];
+      if (this.rating_percent < 70) return this.$tm("surveys")[2];
+      if (this.rating_percent < 90) return this.$tm("surveys")[3];
+      return this.$tm("surveys")[4];
     },
   },
   watch: {},

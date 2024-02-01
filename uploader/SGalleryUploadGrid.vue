@@ -25,7 +25,7 @@
       <div
         v-for="(image, index) in images"
         :key="image.id"
-        class="item-grid white"
+        class="item-grid "
         :style="style_value"
         ref="items"
         :image_id="image.id"
@@ -43,7 +43,7 @@
 
           <div
             v-if="(image.width && image.height) || image.size"
-            class="absolute-bottom-start x-small white--text text-nowrap pen usn rounded-lg pa-1"
+            class="absolute-bottom-start x-small text-white text-nowrap pen usn rounded-lg pa-1"
             style="background-color: rgba(10, 20, 60, 0.21)"
           >
             <span
@@ -52,7 +52,7 @@
               >{{ `${image.width}px ✕ ${image.height}px` }}</span
             >
             <div v-if="image.size" class="d-flex align-center">
-              <b>{{  numeralFormat(image.size ,"0.[0] b") }} </b>
+              <b>{{ numeralFormat(image.size, "0.[0] b") }} </b>
 
               <v-progress-linear
                 :color="
@@ -62,7 +62,7 @@
                       ? 'amber'
                       : 'green'
                 "
-                :value="(100 * image.size) / (1024 * 1024)"
+                :model-value="(100 * image.size) / (1024 * 1024)"
                 height="2"
                 rounded
                 style="max-width: 64px"
@@ -76,13 +76,12 @@
               v-if="hasAiBackgroundRemove"
               title="AI Remove Background"
               color="rgba(10,20,60)"
-              depressed
-              dark
-              small
+              variant="flat"
+              size="small"
               @click.stop="$emit('click:bg-remove', image)"
               class="mb-1"
             >
-              <v-icon class="me-1" x-small>{{
+              <v-icon class="me-1" size="x-small">{{
                 image.path?.endsWith("--transparent.png")
                   ? "check_circle"
                   : "auto_fix_high"
@@ -95,11 +94,10 @@
               v-if="hasAlt"
               title="Set Alt Text"
               color="rgba(10,20,60)"
-              depressed
-              dark
-              small
+              variant="flat"
+              size="small"
               @click.stop="$emit('click:alt', image)"
-              ><v-icon v-if="image.alt" class="me-1" x-small
+              ><v-icon v-if="image.alt" class="me-1" size="x-small"
                 >check_circle</v-icon
               >ALT</v-btn
             >
@@ -109,11 +107,10 @@
         <v-btn
           :title="$t('global.actions.delete')"
           color="#D32F2F"
-          depressed
-          fab
-          small
-          dark
-          class="m-2 absolute-top-end no-drag" title="Remove image"
+          variant="flat"
+          icon=""
+          size="small"
+          class="m-2 absolute-top-end no-drag"
           @click="deleteAppImage(image, index)"
           :loading="busy_delete === index"
         >
@@ -121,7 +118,7 @@
         </v-btn>
       </div>
 
-      <div class="p-2 item-grid white" :style="style_value">
+      <div class="p-2 item-grid " :style="style_value">
         <s-image-uploader
           class="marginal-center"
           label="Upload images"
@@ -328,6 +325,12 @@ export default {
 .item-grid {
   cursor: move;
   border-radius: 12px;
+
+  display: block;
+  position: absolute;
+  z-index: 1;
+  background: #fff;
+
   .v-img {
     border-radius: 12px;
   }

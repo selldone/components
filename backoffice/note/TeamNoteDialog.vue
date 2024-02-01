@@ -16,8 +16,8 @@
   <!-- █████████████████████ Dialog > Note Messages █████████████████████ -->
 
   <v-bottom-sheet
-    :value="value"
-    @input="(v) => $emit('input', v)"
+    :model-value="value"
+    @update:model-value="(v) => $emit('input', v)"
     max-width="820"
     scrollable
     content-class="rounded-t-xl overflow-hidden"
