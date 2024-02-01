@@ -43,6 +43,7 @@
         ></path>
       </svg>
     </div>
+
     <transition-group
       class="svg-funnel-js__labels"
       name="appear"
@@ -55,9 +56,11 @@
         :class="`label-${index + 1}`"
         v-for="(value, index) in valuesFormatted"
         :key="labels[index].toLowerCase().split(' ').join('-')"
-        :style="{maxWidth:(100/labels.length)+'%'}"
       >
-        <div class="label__value">{{ value  }}</div>
+        <div v-if="labelValueCurrency" class="label__value"><price-view :amount="value" :currency="labelValueCurrency"></price-view></div>
+        <div v-else class="label__value">{{ value }}</div>
+
+
         <div class="label__title" v-if="labels">{{ labels[index] }}</div>
         <div
           class="label__percentage"
@@ -65,33 +68,59 @@
         >
           {{ percentages()[index] }}%
         </div>
-        <div class="label__segment-percentages" v-if="is2d()">
+        <div
+          class="label__segment-percentages" style="min-width: max-content;"
+          v-if="
+            is2d() && (!filterZeros || values[index].some((x) => x > 0.0001))
+          "
+        >
           <ul class="segment-percentage__list">
             <li v-for="(subLabel, j) in subLabels" :key="j">
-              <img
-                v-if="subLabelImages && subLabelImages.length > j"
-                width="16"
-                height="16"
-                :src="subLabelImages[j]"
-                class="d-block mx-auto"
-              />
-              <s-currency-icon
-                v-else-if="isCurrency"
-                :currency="GetCurrency(subLabel)"
-                small
-              ></s-currency-icon>
-              <span v-else>{{ subLabel }}:</span>
-              <span
-                class="percentage__list-label"
-                v-if="subLabelValue === 'percent'"
-                >{{ twoDimPercentages()[index][j] }}%</span
-              >
-              <span v-else-if="actualValue"
-                >{{ numeralFormat(actualValue(index, j, values[index][j]),"0.[0]a")  }}
-              </span>
-              <span class="percentage__list-label" v-else>{{
-                  numeralFormat( values[index][j] ,"0.[0]a")
-              }}</span>
+              <template v-if="!filterZeros || values[index][j] > 0.0001">
+                <img
+                  v-if="subLabelImages && subLabelImages.length > j"
+                  width="16"
+                  height="16"
+                  :src="subLabelImages[j]"
+                  class="d-block mx-auto"
+                />
+
+                <div v-if="isCurrency" class="d-flex flex-column py-1">
+                  <s-currency-icon
+                    :currency="GetCurrency(subLabel)"
+                    small
+                    flag
+                    class="mb-1"
+                  ></s-currency-icon>
+
+                  <price-view
+                    :amount="values[index][j]"
+                    :currency="subLabel"
+                    class="body-title"
+                  ></price-view>
+                </div>
+
+                <template v-else>
+                  {{ subLabel }}:
+
+                  <span
+                    class="percentage__list-label"
+                    v-if="subLabelValue === 'percent'"
+                    >{{ twoDimPercentages()[index][j] }}%</span
+                  >
+                  <span v-else-if="actualValue"
+                    >{{
+                      numeralFormat(
+                        actualValue(index, j, values[index][j]),
+                        "0.[0]a",
+                      )
+                    }}
+                  </span>
+                  <span class="percentage__list-label" v-else>{{
+                    numeralFormat(values[index][j], "0.[0]a")
+                  }}</span>
+                </template>
+              </template>
             </li>
           </ul>
         </div>
@@ -125,14 +154,16 @@
 import { interpolate } from "polymorph-js";
 import TWEEN from "@tweenjs/tween.js";
 
-
-
 import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
 import numeral from "numeral";
 import FunnelGraph from "@components/chart/funnel/core/js/main";
-import {generateLegendBackground, getDefaultColors} from "@components/chart/funnel/core/js/graph";
+import {
+  generateLegendBackground,
+  getDefaultColors,
+} from "@components/chart/funnel/core/js/graph";
 import "@components/chart/funnel/core/scss/main.scss";
 import "@components/chart/funnel/core/scss/theme.scss";
+
 export default {
   name: "SFunnelGraph",
   components: { SCurrencyIcon },
@@ -176,13 +207,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    filterZeros: {
+      // Do not show zero values on hover
+      type: Boolean,
+      default: false,
+    },
     actualValue: {
       // function return action value to show (not normalized value) in currency mode : function(row,col,value)
     },
+
+    labelValueCurrency:{}
   },
   data() {
     return {
-
       paths: [],
       prevPaths: [], // paths before update, used for animations
       graph: null,
@@ -191,11 +228,20 @@ export default {
     };
   },
   computed: {
+    is_vertical() {
+      return this.direction === "vertical";
+    },
+    is_horizontal() {
+      return this.direction === "horizontal";
+    },
+
     valuesFormatted() {
       if (this.graph.is2d()) {
-        return this.graph.getValues2d().map((value) =>numeral( value).format("0.[0]a") );
+        return this.graph
+          .getValues2d()
+          .map((value) => numeral(value).format("0.[0]a"));
       }
-      return this.values.map((value) => numeral( value).format("0.[0]a") );
+      return this.values.map((value) => numeral(value).format("0.[0]a"));
     },
 
     colorSet() {
@@ -244,8 +290,8 @@ export default {
         return [...this.colors].concat(
           [...this.defaultColors].splice(
             this.paths.length,
-            this.paths.length - this.colors.length
-          )
+            this.paths.length - this.colors.length,
+          ),
         );
       }
       return this.colors;
@@ -281,7 +327,7 @@ export default {
       }
       return generateLegendBackground(
         this.getColors[index],
-        this.gradientDirection
+        this.gradientDirection,
       );
     },
     offsetColor(index, length) {
@@ -378,7 +424,6 @@ export default {
       this.drawPaths();
     },
   },
-
 };
 </script>
 
@@ -424,6 +469,4 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
-
-
 </style>

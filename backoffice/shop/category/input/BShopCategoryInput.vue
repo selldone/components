@@ -92,8 +92,12 @@
 
     <template v-if="!multiple /*Only in the single mode*/" v-slot:prepend-inner>
       <circle-image
-        v-if="category"
-        :src="getCategoryIcon(returnObject ? category.id : category)"
+        v-if="category_obj"
+        :src="
+          category_obj?.icon
+            ? getShopImagePath(category_obj.icon, IMAGE_SIZE_SMALL)
+            : getCategoryIcon(isObject(modelValue) ? modelValue.id : modelValue)
+        "
         :size="32"
         class="mb-1 me-1 hover-scale force-top"
       />
@@ -229,14 +233,26 @@ export default {
 
     category_obj() {
       if (!this.category) return null;
-      return this.isObject(this.category)
-        ? this.category
-        : this.categories.find((i) => i.id === this.category);
+      return this.categories.find(
+        (i) =>
+          i.id ===
+          parseInt(
+            this.isObject(this.category) ? this.category.id : this.category,
+          ),
+      );
     },
   },
   watch: {
     search: threads.debounceSearch(function (val) {
-      if (!this.menu || val === this.$t("global.commons.home")) return; // Search only if menu is open!
+      if (
+        !this.menu ||
+        val === this.$t("global.commons.home") ||
+        (val &&
+          val ===
+            this.category_obj
+              ?.title) /*Prevent search when user first focus on input!*/
+      )
+        return; // Search only if menu is open!
       this.fetchCategories();
     }),
 
@@ -248,7 +264,18 @@ export default {
     },
   },
   created() {
-    this.category = this.modelValue;
+    // Fix some possible issues in setting v-model initial value:
+    if (this.modelValue) {
+      if (this.returnObject) {
+        this.category = this.isObject(this.modelValue) ? this.modelValue : null;
+      } else {
+        this.category = this.isObject(this.modelValue)
+          ? null
+          : parseInt(this.modelValue);
+      }
+    } else {
+      this.category = null;
+    }
 
     this.fetchCategories();
   },
@@ -287,6 +314,7 @@ export default {
               title: this.$t("global.commons.home"),
             });
         })
+
         .catch((error) => {
           this.showLaravelError(error);
         })
