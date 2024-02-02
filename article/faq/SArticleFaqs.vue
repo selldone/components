@@ -26,80 +26,81 @@
 
     <v-expansion-panels
       v-model="panel"
-      accordion
+      variant="accordion"
       multiple
-      flat
       class="justify-start mb-12"
       :readonly="editMode"
       :dark="dark"
+
     >
-      <v-expansion-panel
-        v-for="(faq, i) in faqs"
-        :key="i"
-        class="faq-item fadeInUp bg-transparent"
-        :style="{ 'animation-delay': 100 + i * 50 + 'ms' }"
-      >
-        <v-expansion-panel-header class="question mb-1" hide-actions>
-          <div
-            v-text="faq.question"
-            :contenteditable="editMode"
-            :class="{ editable: editMode }"
-            @blur="
-              (e) => {
-                innerUpdate(e, 'question', faq);
-                onChange();
-              }
-            "
-          ></div>
-          <div
-            v-if="editMode"
-            class="flex-grow-0"
-            style="min-width: max-content"
-          >
-            <v-btn
-              class="sub-caption -hover mx-1"
-              caption="Move Down"
-              @click="moveDown(faq)"
-              icon
-              :disabled="i === faqs.length - 1"
-            >
-              <v-icon>keyboard_arrow_down</v-icon></v-btn
-            >
-            <v-btn
-              class="sub-caption -hover mx-1 flex-grow-0"
-              caption="Move Up"
-              @click="moveUp(faq)"
-              icon
-              :disabled="i === 0"
-            >
-              <v-icon>keyboard_arrow_up</v-icon></v-btn
-            >
-            <v-btn
-              icon
-              color="red"
-              class="mx-1 flex-grow-0 sub-caption -hover"
-              :caption="$t('global.actions.delete')"
-              @click.stop="remove(faqs, faq)"
-              ><v-icon>delete</v-icon></v-btn
-            >
-          </div>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content class="answer">
-          <div
-            v-if="editMode"
-            v-text="faq.answer"
-            :contenteditable="true"
-            class="editable"
-            @blur="
-              (e) => {
-                innerUpdate(e, 'answer', faq, true);
-                onChange();
-              }
-            "
-          ></div>
-          <div v-else v-html="faq.answer"></div>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+      <v-slide-y-reverse-transition group hide-on-leave>
+        <v-expansion-panel
+          v-for="(faq, i) in faqs"
+          :key="i"
+          class="faq-item"
+          elevation="0"
+        >
+          <v-expansion-panel-title class="question" hide-actions>
+            <v-text-field
+              v-if="editMode"
+              v-model="faq.question"
+              variant="solo"
+              flat
+              placeholder="Write question..."
+              single-line
+              hide-details
+            ></v-text-field>
+            <div v-else v-text="faq.question"></div>
+            <div v-if="editMode" style="min-width: max-content">
+              <v-btn
+                class="mx-1"
+                title="Move Down"
+                @click="moveDown(faq)"
+                icon
+                variant="text"
+                :disabled="i === faqs.length - 1"
+              >
+                <v-icon>keyboard_arrow_down</v-icon>
+              </v-btn>
+              <v-btn
+                class="mx-1"
+                title="Move Up"
+                @click="moveUp(faq)"
+                icon
+                variant="text"
+                :disabled="i === 0"
+              >
+                <v-icon>keyboard_arrow_up</v-icon>
+              </v-btn>
+              <v-btn
+                class="mx-1"
+                icon
+                variant="text"
+                color="red"
+                :title="$t('global.actions.delete')"
+                @click.stop="remove(faqs, faq)"
+              >
+                <v-icon>close</v-icon>
+              </v-btn>
+            </div>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text class="answer">
+            <div
+              v-if="editMode"
+              v-text="faq.answer"
+              :contenteditable="true"
+              class="editable"
+              @blur="
+                (e) => {
+                  innerUpdate(e, 'answer', faq, true);
+                  onChange();
+                }
+              "
+            ></div>
+            <div v-else v-html="faq.answer"></div>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-slide-y-reverse-transition>
     </v-expansion-panels>
 
     <!--- Add New --->
@@ -111,25 +112,27 @@
       <v-text-field
         v-model="question"
         :label="$t('global.commons.question')"
+        variant="underlined"
       ></v-text-field>
       <v-textarea
         v-model="answer"
         rows="3"
         auto-grow
+        variant="underlined"
         :label="$t('global.commons.answer')"
         messages="Allowed: <h1>...<h6>, <br>, <ol>, <ul>, <li>, <a>, <p>, <div>, <b>, <strong>, <i>"
       ></v-textarea>
 
-      <div class="d-flex">
-        <v-spacer></v-spacer>
+      <div class="widget-buttons">
         <v-btn
           color="primary"
-          large
-          depressed
+          size="x-large"
+          variant="elevated"
           @click="add"
           :disabled="!question || !answer"
         >
-          <v-icon class="me-1">add</v-icon> {{ $t("global.actions.add") }}
+          <v-icon class="me-1">add</v-icon>
+          {{ $t("global.actions.add") }}
         </v-btn>
       </div>
     </div>
@@ -137,11 +140,11 @@
 </template>
 
 <script>
-import {InlineEditorMixin} from "@components/mixin/InlineEditorMixin";
+import { InlineEditorMixin } from "@components/mixin/InlineEditorMixin";
 
 export default {
-  name: "FaqSection",
-  mixins:[InlineEditorMixin],
+  name: "SArticleFaqs",
+  mixins: [InlineEditorMixin],
   props: {
     editMode: {
       type: Boolean,
@@ -235,11 +238,16 @@ export default {
   border-radius: 0;
   min-height: 44px;
 
+  ::v-deep(.v-expansion-panel-title__overlay) {
+    background: transparent !important;
+  }
+
   @media only screen and (max-width: 900px) {
     font-size: 1.1rem;
     font-weight: 800;
   }
 }
+
 .answer {
   font-size: 17px;
   line-height: 1.7em;
@@ -249,6 +257,7 @@ export default {
     font-size: 1.1rem;
     text-align: justify;
   }
+
   ::v-deep(> div) {
     padding: 12px !important;
   }
@@ -259,6 +268,7 @@ export default {
     border-left: none;
     border-right: solid medium #544d4d;
   }
+
   .answer {
     border-left: none;
     border-right: dashed thin #544d4d;
@@ -277,15 +287,22 @@ export default {
   margin: 12px auto;
   padding: 16px 0;
 
-  ::v-deep(ul),::v-deep(ol){
+  &:after{
+    content: none; // Remove top border in vuetiry!
+  }
+
+  ::v-deep(ul),
+  ::v-deep(ol) {
     margin: 8px 4px;
   }
-  ::v-deep(li){
+
+  ::v-deep(li) {
     padding: 0;
-    &:before{
+
+    &:before {
       margin: 0 8px;
       color: #222;
-      position:relative;
+      position: relative;
       border: none;
       width: unset;
       height: unset;
@@ -294,17 +311,14 @@ export default {
       left: unset;
       right: unset;
     }
-
-
   }
-  ::v-deep(ol){
-    li{
-      &:before{
-        content: counter(li) '.';
+
+  ::v-deep(ol) {
+    li {
+      &:before {
+        content: counter(li) ".";
       }
     }
   }
 }
-
-
 </style>

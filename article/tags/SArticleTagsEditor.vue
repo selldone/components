@@ -13,14 +13,19 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
+  <div class="text-start">
     <v-list-subheader>
       Allocate tags to blog articles or products to easily locate or filter them
       in various areas, such as the page builder, to showcase specific articles.
     </v-list-subheader>
     <v-combobox
-      :value="tags"
-      @input="(val) => (tags = val.length > 5 ? val.slice(0, 5) : val)"
+      :model-value="tags"
+      @update:model-value="
+        (val) => {
+          tags = val.length > 5 ? val.slice(0, 5) : val;
+          setTags();
+        }
+      "
       :items="shop_tags"
       :placeholder="$t('global.article_tags.tags_input')"
       :messages="$t('global.article_tags.tags_input_message')"
@@ -31,21 +36,13 @@
       :disabled="busy_fetch"
       :counter="5"
       :rules="[GlobalRules.counter(5)]"
-      @change="setTags"
+      variant="underlined"
+      closable-chips
     >
-      <template v-slot:selection="data">
-        <v-chip
-          :input-value="data.selected"
-          close
-          color="primary"
-          dark
-          @click:close="removeChip(tags, data.item)"
-          @click.stop
-        >
-          <v-btn icon small @click.prevent="showEditTag(data.item)"
-            ><v-icon small>edit</v-icon></v-btn
-          >
-          <span class="me-2">{{ data.item }}</span>
+      <template v-slot:chip="{ item, props }">
+        <v-chip v-bind="props">
+          <v-icon start @click.prevent="showEditTag(item.raw)" title="Edit tag" class="hover-scale-small">edit</v-icon>
+          {{ item.raw }}
         </v-chip>
       </template>
     </v-combobox>
@@ -58,14 +55,18 @@
       content-class="rounded-t-xl"
     >
       <v-card rounded="t-xl">
-        <v-card-title
-          ><v-icon class="me-1" color="#111">edit</v-icon> Edit tag
+        <v-card-title>
+          <v-icon class="me-1" color="#111">edit</v-icon>
+          Edit tag
           {{ editing_tag }}
         </v-card-title>
 
         <v-card-text class="text-start">
           <div class="widget-box my-5">
-            <s-widget-header :title="`Old Tag: ${editing_tag_new}`" icon="label"></s-widget-header>
+            <s-widget-header
+              :title="`Old Tag: ${editing_tag_new}`"
+              icon="label"
+            ></s-widget-header>
             <v-list-subheader>
               Please proceed to modify this tag name. Be aware: The rest of the
               article tags will be automatically updated!
@@ -78,7 +79,7 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn text @click="show_edit_tag = false" x-large>
+            <v-btn variant="text" @click="show_edit_tag = false" size="x-large">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -86,7 +87,7 @@
             <v-btn
               :loading="loading_edit_tag"
               color="primary"
-              x-large
+              size="x-large"
               @click="editTag(editing_tag, editing_tag_new)"
             >
               <v-icon class="me-1">save</v-icon>
@@ -105,6 +106,7 @@ import _ from "lodash-es";
 export default {
   name: "SArticleTagsEditor",
   components: {},
+
   props: {
     shop: {
       required: true,
@@ -157,20 +159,20 @@ export default {
 
       (this.IS_VENDOR_PANEL
         ? window.$vendor.article.tags.getTags(
-            this.$route.params.vendor_id
+            this.$route.params.vendor_id,
           ) /*🟢 Vendor Panel 🟢*/
         : window.$backoffice
-        ? window.$backoffice.article.tags.getTags(
-            this.shop.id
-          ) /*In the back office*/
-        : window.$storefront.article.tags.getTags(this.shop.id)
+          ? window.$backoffice.article.tags.getTags(
+              this.shop.id,
+            ) /*In the back office*/
+          : window.$storefront.article.tags.getTags(this.shop.id)
       ) /*In the storefront*/
         .then(({ tags }) => {
           this.shop_tags = tags;
         })
-          .catch((error) => {
-            this.showLaravelError(error);
-          })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
         .finally(() => {
           this.busy_fetch = false;
         });
@@ -188,12 +190,12 @@ export default {
         ? window.$backoffice.article.tags.updateTag(
             this.shop.id,
             old_tag,
-            new_tag
+            new_tag,
           ) /*In the back office*/
         : window.$storefront.article.tags.updateTag(
             this.shop.id,
             old_tag,
-            new_tag
+            new_tag,
           )
       ) /*In the storefront*/
 
@@ -234,19 +236,19 @@ export default {
         ? window.$vendor.article.tags.setArticleTags(
             this.$route.params.vendor_id,
             this.article.id,
-            this.tags
+            this.tags,
           ) /*🟢 Vendor Panel 🟢*/
         : window.$backoffice
-        ? window.$backoffice.article.tags.setArticleTags(
-            this.shop.id,
-            this.article.id,
-            this.tags
-          ) /*In Backoffice*/
-        : window.$storefront.article.tags.setArticleTags(
-            this.shop.id,
-            this.article.id,
-            this.tags
-          )
+          ? window.$backoffice.article.tags.setArticleTags(
+              this.shop.id,
+              this.article.id,
+              this.tags,
+            ) /*In Backoffice*/
+          : window.$storefront.article.tags.setArticleTags(
+              this.shop.id,
+              this.article.id,
+              this.tags,
+            )
       ) /*In Storefront*/
 
         .then(({ tags }) => {
@@ -254,7 +256,7 @@ export default {
             null,
             this.$t("global.article_tags.notification.add_success") +
               ": <br>" +
-              tags.join(", ")
+              tags.join(", "),
           );
           this.article.tags = tags;
         })

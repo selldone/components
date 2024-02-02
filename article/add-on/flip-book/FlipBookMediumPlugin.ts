@@ -111,7 +111,7 @@
   };
 
   CustomAddon.prototype.pastAction = function(e) {
-    console.log("pastAction", e);
+   // console.log("pastAction", e);
     e.preventDefault();
   };
 

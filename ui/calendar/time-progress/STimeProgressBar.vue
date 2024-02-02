@@ -20,19 +20,20 @@
 
     <v-tooltip
       v-if="has_progress_to_end"
-      bottom
+      location="bottom"
       :color="SaminColorDarkDeep"
       dark
     >
-      <template v-slot:activator="{ on }">
+      <template v-slot:activator="{ props }">
         <v-progress-linear
           class="my-1"
           :color="activeColor"
+          :bg-color="bgColor"
           :height="small ? 6 : 10"
-          :value="passed_percent"
+          :model-value="passed_percent"
           striped
-          rounded
-          v-on="on"
+          rounded rounded-bar
+          v-bind="props"
         />
       </template>
       <p class="font-weight-bold">{{ title }}</p>
@@ -45,19 +46,20 @@
 
     <v-tooltip
       v-if="has_progress_to_start"
-      bottom
+      location="bottom"
       :color="SaminColorDarkDeep"
       dark
     >
-      <template v-slot:activator="{ on }">
+      <template v-slot:activator="{ props }">
         <v-progress-linear
           class="my-1"
           :color="waitingColor"
+          :bg-color="bgColor"
           :height="small ? 6 : 10"
-          :value="till_start_percent"
+          :model-value="till_start_percent"
           striped
-          rounded
-          v-on="on"
+          rounded rounded-bar
+          v-bind="props"
         />
       </template>
       <p class="font-weight-bold">{{ title }}</p>
@@ -95,9 +97,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    activeColor:{default:'light-blue'},
-    waitingColor:{default:'amber'},
-
+    activeColor: { default: "light-blue" },
+    waitingColor: { default: "amber" },
+    bgColor:{},
   },
   computed: {
     has_progress_to_end() {
@@ -160,7 +162,7 @@ export default {
       return DateConverter.inBetweenDates(
         new Date(),
         this.convertToLocalTime(this.startTime),
-        this.convertToLocalTime(this.endTime)
+        this.convertToLocalTime(this.endTime),
       );
     },
   },

@@ -14,7 +14,7 @@
 
 <template>
   <div
-    class="s--article-seo-editor  s--shadow-no-padding  p-3"
+    class="s--article-seo-editor s--shadow-no-padding p-3"
     :class="{ 'pointer-pointer': !opened }"
     @click.stop="
       () => {
@@ -25,16 +25,26 @@
     <small class="absolute-top-end m-3 m-small" style="line-height: normal"
       >SEO</small
     >
-    <v-btn v-if="opened" @click.stop="opened=false" icon small class="fadeIn absolute-top-start"><v-icon small>close</v-icon></v-btn>
+    <v-btn
+      v-if="opened"
+      @click.stop="opened = false"
+      icon
+      variant="text"
+      size="small"
+      class="fadeIn absolute-top-start"
+    >
+      <v-icon size="small">close</v-icon>
+    </v-btn>
 
     <div class="article-edit-form">
       <v-expand-transition>
         <div v-if="!opened" class="article-edit-placeholder d-flex text-start">
           <v-avatar class="rounded-18px" size="48">
-            <v-img v-if="article.image" :src="article.image"></v-img>
+            <v-img v-if="article.image" :src="article.image" cover></v-img>
+            <v-icon v-else>image</v-icon>
           </v-avatar>
           <div
-            class="subtitle-2 flex-grow-1 px-3"
+            class="text-subtitle-2 flex-grow-1 px-3"
             style="max-width: calc(100% - 80px)"
           >
             <b class="d-block single-line">{{ article.description }}</b>
@@ -51,6 +61,7 @@
             <v-text-field
               v-model="slug"
               @change="onChange()"
+              variant="underlined"
               label="URL"
               prepend-inner-icon="link"
               class="m-3 english-field"
@@ -58,13 +69,17 @@
               messages="Use a clear and short URL, You can change it without worrying about the link being broken."
             >
               <template v-slot:append-inner>
-                <score-indicator :value="$SEO.GetPageURLScore(slug)" class="mt-n1"></score-indicator>
+                <score-indicator
+                  :value="$SEO.GetPageURLScore(slug)"
+                  class="mt-n1"
+                ></score-indicator>
               </template>
             </v-text-field>
 
             <v-text-field
               v-model="page_title"
               @change="onChange"
+              variant="underlined"
               label="Page title"
               prepend-inner-icon="arrow_right"
               class="m-3 english-field"
@@ -72,7 +87,10 @@
               messages="Leave it empty to set the page title the same as the article title."
             >
               <template v-slot:append-inner>
-                <score-indicator :value="$SEO.GetPageTitleScore(page_title)" class="mt-n1"></score-indicator>
+                <score-indicator
+                  :value="$SEO.GetPageTitleScore(page_title)"
+                  class="mt-n1"
+                ></score-indicator>
               </template>
             </v-text-field>
 
@@ -80,22 +98,57 @@
               v-model="description"
               @change="onChange"
               counter="256"
+              variant="underlined"
               class="m-3"
+              :rows="3"
+              auto-grow
               :label="$t('global.article.edit_window.digest')"
             >
               <template v-slot:append-inner>
-                <score-indicator :value="$SEO.GetPageDescription(description)" class="mt-n1"></score-indicator>
+                <score-indicator
+                  :value="$SEO.GetPageDescription(description)"
+                  class="mt-n1"
+                ></score-indicator>
               </template>
             </v-textarea>
 
-            <vue-select-image
-              v-if="hasImage"
-              :data-images="dataImages"
-              h="84px"
-              :selected-images="initialSelected"
-              @onselectimage="onSelectImage"
-            />
 
+            <v-slide-group
+              v-if="hasImage"
+              :model-value="coverImage"
+              @update:model-value="onSelectImage"
+              class="pa-4"
+              selected-class="bg-success border-lg"
+              show-arrows mandatory
+            >
+              <v-slide-group-item
+                v-for="item in images"
+                :key="item"
+                :value="item"
+                v-slot="{ isSelected, toggle, selectedClass }"
+              >
+                <v-card
+                  color="grey-lighten-1"
+                  :class="['ma-4', selectedClass]"
+                  height="100"
+                  width="100"
+                  rounded="xl"
+                  @click="toggle"
+                  :image="item"
+                >
+                  <div class="d-flex fill-height align-center justify-center">
+                    <v-scale-transition>
+                      <v-icon
+                        v-if="isSelected"
+                        color="success"
+                        size="48"
+                        icon="check_circle"
+                      ></v-icon>
+                    </v-scale-transition>
+                  </div>
+                </v-card>
+              </v-slide-group-item>
+            </v-slide-group>
           </form>
         </div>
       </v-expand-transition>
@@ -104,7 +157,6 @@
 </template>
 
 <script>
-import VueSelectImage from "vue-select-image";
 import ScoreIndicator from "@components/ui/progress/score-indicator/ScoreIndicator.vue";
 
 require("vue-select-image/dist/vue-select-image.css");
@@ -114,14 +166,14 @@ export default {
 
   components: {
     ScoreIndicator,
-    VueSelectImage,
   },
+  emits: ["open-menu", "change"],
   props: {
     article: {
       required: true,
       type: Object,
     },
-    dataImages: {
+    images: {
       required: true,
       type: Array,
     },
@@ -135,19 +187,13 @@ export default {
       slug: "",
       page_title: "",
 
-      initialSelected: [],
-
       hasImage: false, // trigger images to show selected image correctly!
       opened: false,
     };
   },
-  computed: {
-    counterDanger() {
-      return this.description.length > 256;
-    },
-  },
+  computed: {},
   watch: {
-    dataImages: function (newVal, oldVal) {
+    images: function (newVal, oldVal) {
       this.refresh();
     },
   },
@@ -164,17 +210,7 @@ export default {
       this.$emit("open-menu");
     },
 
-    saveEdit() {
-      this.article.description = this.description;
-      this.article.image = this.coverImage;
-      this.article.slug = this.slug;
-      this.article.page_title = this.page_title;
-
-      this.closeNewComment();
-      this.$emit("save-change");
-    },
-
-    onChange(){
+    onChange() {
       this.article.description = this.description;
       this.article.image = this.coverImage;
       this.article.slug = this.slug;
@@ -183,9 +219,8 @@ export default {
       this.$emit("change");
     },
 
-
     onSelectImage(image) {
-      this.coverImage = image.src;
+      this.coverImage = image;
       this.onChange();
     },
 
@@ -200,40 +235,25 @@ export default {
       // 🞇 Refresh cover image.
       this.hasImage = false;
       // Find selected image.
-      let index = this.imageIndex(this.article.image);
-      if (index < 0) index = 0;
-      if (this.dataImages.length > 0) {
-        this.coverImage = this.dataImages[index].src;
-        this.initialSelected = [this.dataImages[index]];
-        this.hasImage = true;
+      this.coverImage = this.article.image;
+
+      // Add cover image to images list if not exists.
+      if (!this.images.includes(this.coverImage)) {
+        this.images.unshift(this.coverImage);
       }
-    },
-    //――――――――――――――――――――――― Helper Methods ―――――――――――――――――――――――
 
-    startEditing() {
-      this.state = "editing";
-    },
-    stopEditing() {
-      this.state = "default";
-      this.data.body = "";
-    },
+      this.hasImage = this.images.length > 0;
 
-    imageIndex(src) {
-      return this.dataImages.findIndex((element) => {
-        return element.src === src;
-      });
-    },
-
-    closeNewComment() {
-      this.opened = false;
-
+      if (!this.coverImage && this.images.length) {
+        // Auto select first image.
+        this.coverImage = this.images[0];
+      }
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -242,8 +262,8 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--article-seo-editor{
-  border-radius: 28px ;
+.s--article-seo-editor {
+  border-radius: 28px;
   text-align: center;
   position: relative;
 
@@ -256,5 +276,4 @@ export default {
     border-radius: 16px;
   }
 }
-
 </style>

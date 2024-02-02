@@ -325,47 +325,14 @@
     }
 }
 
-.comment-form .comment-input {
-    display: none;
-}
 
-.comment-form input,
-.comment-form textarea {
-    font-family: inherit;
-    background: #fff;
-    border: 0 none;
-    display: block;
-    width: 100%;
-    padding: 0;
-    margin-bottom: 4px;
-    resize: none;
-}
 
-.comment-form input {
-    font-size: 1em;
-    font-weight: bold;
-}
-
-.comment-form textarea {
-    resize: none;
-    font-size: 1rem;
-    color: #555;
-}
 
 .comment-form .inline-error {
     color: #E74C3C;
     font-size: 0.8em;
     margin-left: 15px;
     display: none;
-}
-
-.link-button {
-    font-size: 0.9em;
-    padding: 2px 20px;
-    border: 1px solid #2ECC71;
-    border-radius: 40px;
-    color: #2ECC71;
-    cursor: pointer;
 }
 
 
@@ -391,41 +358,8 @@
     color: #555;
 }
 
-.delete-comment {
-    float: left;
-    width: 24px;
-    height: 24px;
-    line-height: 28px;
-    color: #999;
-    text-align: center;
-    cursor: pointer;
-    opacity: 0.5;
-}
-
-.delete-comment:hover,
-.delete-comment:active {
-    color: #D32F2F;
-    opacity: 1;
-}
 
 
-
-.edit-comment {
-    float: left;
-    width: 24px;
-    height: 24px;
-    line-height: 28px;
-    color: #999;
-    text-align: center;
-    cursor: pointer;
-    opacity: 0.5;
-}
-
-.edit-comment:hover,
-.edit-comment:active {
-    color: #00796B;
-    opacity: 1;
-}
 
 
 /* === Model Dialogs - Login, Register, Profile === */
@@ -504,53 +438,8 @@
     margin: 10px 0 20px 0;
 }
 
-.model-body {
-    margin-top: 10px;
-}
 
-.model-body input,
-.model-body textarea,
-.model-body div.editable {
-    width: 100%;
-    padding: 0;
-    font-size: 1.1em;
-    line-height: 1.6em;
-    background: #fff;
-    border: 0 none;
-    border-bottom: 1px solid #ddd;
-    margin-top: 20px;
-    font-family: inherit;
-}
 
-.model-body div.editable {
-    color: #555;
-    outline: 0 none;
-    overflow: hidden;
-}
-
-.model-body div.editable:empty:before{
-    content: attr(placeholder);
-    display: block; /* For Firefox */
-    color: #999;
-}
-
-.model-body input:required,
-.model-body textarea:required {
-    box-shadow: none;
-}
-
-.model-body button {
-    font-family: inherit;
-    margin-top: 40px;
-    background: #3498DB;
-    color: #fff;
-    border: 0 none;
-    width: 100%;
-    font-size: 1.1em;
-    padding: 15px 0;
-    cursor: pointer;
-    outline: 0 none;
-}
 
 .model .error-message {
     font-size: 0.65em;
@@ -798,7 +687,7 @@ input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 30px white inset;
 }
 
-a, span.link, span.link-button {
+a, span.link {
     -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 

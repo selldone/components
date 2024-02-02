@@ -34,12 +34,14 @@
     :multiple="multiple"
     :chips="chips"
     :disabled="disabled"
-    :variant="variant?variant:solo?'solo':filled?'filled':'underlined'"
+    :variant="
+      variant ? variant : solo ? 'solo' : filled ? 'filled' : 'underlined'
+    "
     :flat="flat"
     :append-icon="appendIcon"
     :bg-color="backgroundColor"
     :hide-details="hideDetails"
-
+    class="text-start"
   >
     <!-- ―――――――――――――――――― message ―――――――――――――――――― -->
 
@@ -61,7 +63,10 @@
       <v-list-item v-bind="props" class="text-start" :title="item.raw.name">
         <template v-slot:prepend>
           <v-avatar :size="32">
-            <img v-if="item.raw.icon" :src="getShopImagePath(item.raw.icon, 64)" />
+            <img
+              v-if="item.raw.icon"
+              :src="getShopImagePath(item.raw.icon, 64)"
+            />
             <v-icon v-else>folder</v-icon>
           </v-avatar>
         </template>
@@ -91,7 +96,10 @@
         @click:close="parent.selectItem(item.raw)"
       >
         <v-avatar start>
-          <v-img v-if="item.raw.icon" :src="getShopImagePath(item.raw.icon, 64)" />
+          <v-img
+            v-if="item.raw.icon"
+            :src="getShopImagePath(item.raw.icon, 64)"
+          />
           <v-icon v-else>folder</v-icon>
         </v-avatar>
 
@@ -196,7 +204,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    variant:{},
+    variant: {},
     solo: { type: Boolean },
     flat: { type: Boolean },
     appendIcon: {},
@@ -211,7 +219,7 @@ export default {
     total: 0,
     busy: false,
 
-    search: '',
+    search: "",
 
     busy_create: false,
   }),

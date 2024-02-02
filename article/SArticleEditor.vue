@@ -72,8 +72,8 @@
             <b>Drop Word file here!</b>
             <div>
               Supported formats:
-              <v-chip small color="amber" class="m-1">.docx</v-chip> ,
-              <v-chip small color="amber" class="m-1">.odt</v-chip>
+              <v-chip size="small" color="amber" class="m-1">.docx</v-chip> ,
+              <v-chip size="small" color="amber" class="m-1">.odt</v-chip>
             </div>
           </div>
         </div>
@@ -298,6 +298,8 @@ const OPTIONS_BODY = {
 
 export default {
   name: "SArticleEditor",
+  emits: ["change", "update:title", "update:body", "update:images"],
+
   components: {
     SArticleTableOfContents,
     SArticleImagesCompareGlobalDialog,
@@ -383,8 +385,6 @@ export default {
 
       state: "no-change", //changed    saving   no-change
 
-      images_in_article: [],
-
       //----------------------------
       show_table_of_content: false,
 
@@ -421,11 +421,11 @@ export default {
     });
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     // Purge all excess elements:
 
     $(
-      `#${this.MASTER_ID} ` + 'select[id^="medium-editor-anchor-preview-"]'
+      `#${this.MASTER_ID} ` + 'select[id^="medium-editor-anchor-preview-"]',
     ).remove();
     $(`#${this.MASTER_ID} ` + 'select[id^="medium-editor-toolbar-"]').remove();
     $(`#${this.MASTER_ID} ` + ".medium-editor-toolbar").remove();
@@ -502,7 +502,7 @@ export default {
       // Word File:
       if (
         Object.values(event.dataTransfer.items).some((i) =>
-          i.type.includes("application/vnd")
+          i.type.includes("application/vnd"),
         )
       ) {
         this.show_drop = true;
@@ -552,7 +552,7 @@ export default {
         ) {
           this.showErrorAlert(
             null,
-            "Only docx and odt file format supported.!"
+            "Only docx and odt file format supported.!",
           );
           return;
         }
@@ -581,10 +581,10 @@ export default {
               console.log("🍒 Load word completed ");
               this.showSuccessAlert(
                 "Magical word converter",
-                "Your file has been converted to article successfully, enjoy it!"
+                "Your file has been converted to article successfully, enjoy it!",
               );
             });
-          }
+          },
         );
       }
     },
@@ -595,9 +595,9 @@ export default {
         console.log("🍯 Re-render body | Assign fullscreen images");
         $(
           `#${this.MASTER_ID} ` +
-            ".review-style .medium-insert-images-mediumImage>figure"
+            ".review-style .medium-insert-images-mediumImage>figure",
         ).click(
-          this.showFullscreen
+          this.showFullscreen,
           // Deprecated:
           /* function () {
             $(this).toggleClass("fullscreen");
@@ -779,23 +779,21 @@ export default {
 
           //――――――――――――――――――――――― 💡 Re insert html to run embed scripts! ( important! ) ―――――――――――――――――――――――
 
-          $(`#${this.MASTER_ID} ` + ".medium-insert-embed").each(function (
-            index,
-            element
-          ) {
-            let html = $('<div class="medium-insert-embed">');
-            html.html($(this).html());
+          $(`#${this.MASTER_ID} ` + ".medium-insert-embed").each(
+            function (index, element) {
+              let html = $('<div class="medium-insert-embed">');
+              html.html($(this).html());
 
-            $(this).replaceWith(html);
-          });
+              $(this).replaceWith(html);
+            },
+          );
 
           //――――――――――――――――――――――― 💡 Add controller to videos (Maybe added by embed) ―――――――――――――――――――――――
-          $(`#${this.MASTER_ID} ` + ".medium-insert-embed").each(function (
-            index,
-            element
-          ) {
-            $(element).find("video").attr("controls", true);
-          });
+          $(`#${this.MASTER_ID} ` + ".medium-insert-embed").each(
+            function (index, element) {
+              $(element).find("video").attr("controls", true);
+            },
+          );
         }, 50); // important: Load with delay to work properly.
       });
     },
@@ -811,7 +809,7 @@ export default {
       this.applyDirection(
         element,
         null,
-        document.getElementById(this.REVIEW_TITLE_ID)
+        document.getElementById(this.REVIEW_TITLE_ID),
       );
     },
 
@@ -822,7 +820,7 @@ export default {
       this.applyDirection(
         element,
         null,
-        document.getElementById(this.REVIEW_BODY_ID)
+        document.getElementById(this.REVIEW_BODY_ID),
       );
 
       // this.$emit('update:body',this.purifyBody())
@@ -845,11 +843,11 @@ export default {
         if (this.enableTitle)
           this.applyDirection(
             document.getElementById(this.REVIEW_TITLE_ID),
-            this.title
+            this.title,
           );
         this.applyDirection(
           document.getElementById(this.REVIEW_BODY_ID),
-          this.body
+          this.body,
         );
 
         //console.log("===== END =====");
@@ -859,11 +857,11 @@ export default {
         if (this.enableTitle)
           this.applyDirection(
             document.getElementById(this.EDITABLE_TITLE_ID),
-            this.title
+            this.title,
           );
         this.applyDirection(
           document.getElementById(this.EDITABLE_BODY_ID),
-          this.body
+          this.body,
         );
       });
     },
@@ -874,7 +872,7 @@ export default {
       console.log(
         "☀ Refresh editor   only view=" + this.onlyView,
         "no tools",
-        this.noMediumInsert
+        this.noMediumInsert,
       );
       // 🞇 Reset to default
       this.resetToDefault();
@@ -888,24 +886,24 @@ export default {
       //console.log('EDITABLE_BODY_ID -->',"#"+this.EDITABLE_BODY_ID,document.getElementById(this.EDITABLE_BODY_ID))
       this.editor_body = new MediumEditor(
         "#" + this.EDITABLE_BODY_ID,
-        this.options_body
+        this.options_body,
       );
       this.editor_body.subscribe("editableInput", (event) =>
         this.processEditOperationBody({
           event,
           element: this.$refs.editable_body,
-        })
+        }),
       );
 
       this.editable_title = new MediumEditor(
         "#" + this.EDITABLE_TITLE_ID,
-        this.options_title
+        this.options_title,
       );
       this.editable_title.subscribe("editableInput", (event) =>
         this.processEditOperationTitle({
           event,
           element: this.$refs.editable_title,
-        })
+        }),
       );
 
       //console.log('this.$refs.editable_title',this.$refs.editable_title)
@@ -946,7 +944,7 @@ export default {
               preview: true, // (boolean) Show an image before it is uploaded (only in browsers that support this feature)
               captions: true, // (boolean) Enable captions
               captionPlaceholder: this.$t(
-                "global.article.editor.images_caption_placeholder"
+                "global.article.editor.images_caption_placeholder",
               ), // (string) Caption placeholder
               autoGrid: 3, // (integer) Min number of images that automatically form a grid
 
@@ -1016,10 +1014,10 @@ export default {
 
               messages: {
                 acceptFileTypesError: this.$t(
-                  "global.article.editor.accept_file_types_error"
+                  "global.article.editor.accept_file_types_error",
                 ),
                 maxFileSizeError: this.$t(
-                  "global.article.editor.max_file_size_error"
+                  "global.article.editor.max_file_size_error",
                 ),
               },
 
@@ -1028,8 +1026,8 @@ export default {
                 current_instance.showSuccessAlert(
                   null,
                   this.$t(
-                    "global.article.editor.notifications.image_uploaded_success"
-                  )
+                    "global.article.editor.notifications.image_uploaded_success",
+                  ),
                 );
                 current_instance.onEdited();
                 current_instance.findAllImages();
@@ -1041,8 +1039,8 @@ export default {
                 current_instance.showErrorAlert(
                   null,
                   this.$t(
-                    "global.article.editor.notifications.image_uploaded_failed"
-                  )
+                    "global.article.editor.notifications.image_uploaded_failed",
+                  ),
                 );
 
                 /* current_instance.showErrorAlert(
@@ -1058,7 +1056,7 @@ export default {
             },
             embeds: {
               label:
-                '<span class="fa:fab fa-youtube"></span> Youtube / URL / HTML', // (string) A label for an embeds addon
+                '<span class="fab fa-youtube"></span> Youtube / URL / HTML', // (string) A label for an embeds addon
               placeholder: this.$t("global.article.editor.embed_placeholder"), // (string) Placeholder displayed when entering URL to embed
               oembedProxy:
                 //"iframe.ly/api/oembed?api_key=5d9cb4c1e4895409be3d1f&iframe=1",
@@ -1066,7 +1064,7 @@ export default {
                 window.ARTICLE_API.GET_LINK_PREVIEW(),
               captions: true, // (boolean) Enable captions
               captionPlaceholder: this.$t(
-                "global.article.editor.embed_caption_placeholder"
+                "global.article.editor.embed_caption_placeholder",
               ), // (string) Caption placeholder
 
               storeMeta: false,
@@ -1116,19 +1114,12 @@ export default {
       let images = $("#" + this.EDITABLE_BODY_ID)
         .find("img")
         .map(function (index, element) {
-          return {
-            id: index,
-            src: element.src,
-            alt: element,
-          };
+          return element.src;
         })
         .get();
       //console.log(images);
-      this.images_in_article = images;
 
-      this.$emit("images", {
-        images: this.images_in_article,
-      });
+      this.$emit("update:images", images);
     },
 
     //――――――――――――――――――――――― Helper Methods ―――――――――――――――――――――――
@@ -1177,7 +1168,7 @@ export default {
 
         // console.log('text',text)
         parent.replaceWith(
-          `<replace type="${replacer_type}">${replace_key}</replace>`
+          `<replace type="${replacer_type}">${replace_key}</replace>`,
         );
       });
       div.find(".images-compare").each(function () {
@@ -1190,7 +1181,7 @@ export default {
         const replacer_type = "images-compare";
         // console.log("replacer_type", replacer_type);
         parent.replaceWith(
-          `<replace type="${replacer_type}">${replace_key}</replace>`
+          `<replace type="${replacer_type}">${replace_key}</replace>`,
         );
       });
 
@@ -1203,7 +1194,7 @@ export default {
         const replacer_type = "flip-book";
         // console.log("replacer_type", replacer_type);
         parent.replaceWith(
-          `<replace type="${replacer_type}">${replace_key}</replace>`
+          `<replace type="${replacer_type}">${replace_key}</replace>`,
         );
       });
       div.find(".image-overlay-canvas").each(function () {
@@ -1215,7 +1206,7 @@ export default {
         const replacer_type = "image-overlay-canvas";
         //   console.log("replacer_type", replacer_type);
         parent.replaceWith(
-          `<replace type="${replacer_type}">${replace_key}</replace>`
+          `<replace type="${replacer_type}">${replace_key}</replace>`,
         );
       });
 
@@ -1231,7 +1222,7 @@ export default {
       div
         .find("*")
         .not(
-          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,iframe,strike,blockquote,script,span,table,tbody,tr,td,th,br,style"
+          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,iframe,strike,blockquote,script,span,table,tbody,tr,td,th,br,style",
         ) // script: for embed link!
         .each(function () {
           if (!$(this).closest(".medium-insert-embed").length)
@@ -1322,8 +1313,8 @@ export default {
 
         $(this).replaceWith(
           `<${replacer_type} style="visibility: hidden">${encodeURIComponent(
-            replacer[replace_key]
-          )}</${replacer_type}>`
+            replacer[replace_key],
+          )}</${replacer_type}>`,
         );
       });
 
@@ -1354,7 +1345,7 @@ export default {
           // Safe wrap classes!
 
           const code = `<div class="medium-insert-images"><figure contenteditable="false">${$(
-            this
+            this,
           ).html()}</figure></div>`;
 
           console.error("Solve image re-editable problem ---> error ", code);
@@ -1474,7 +1465,7 @@ export default {
 
     isUnicode(str) {
       return /[\u0590-\u07FF\u200F\u202B\u202E\uFB1D-\uFDFD\uFE70-\uFEFC]/.test(
-        str
+        str,
       );
     },
   },

@@ -14,7 +14,7 @@
 
 <template>
   <div
-    class="add-new-btn-widget position-relative"
+    class="s--add-button-green"
     :class="{
       'no-fade': !src,
       'widget-hover': !small,
@@ -22,9 +22,9 @@
       'h-100': fillHeight,
     }"
     @click.stop="$emit('click')"
-    :style="{ 'border-radius': radius, minHeight: minHeight, height: height,'--bg-color': color, '--hover-bg-color': hoverColor }"
+    :style="{ 'border-radius': radius, minHeight: minHeight, height: height,'--btn-bg-color': color, '--btn-hover-bg-color': hoverColor }"
   >
-    <v-img :src="src" contain class="sprite flip-image-rtl"> </v-img>
+    <v-img :src="src"  class="sprite flip-image-rtl"> </v-img>
     <div class="center-content px-2">
       <v-icon dark :class="{ 'mb-3': !small }" :size="small ? 24 : 36"
         >{{ icon }}
@@ -100,7 +100,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.add-new-btn-widget {
+.s--add-button-green {
   cursor: pointer;
   user-select: none;
   position: relative;
@@ -108,14 +108,14 @@ export default {
   min-height: 200px;
 
   // margin: 8px;
-  background: var(--bg-color);
+  background: var(--btn-bg-color);
   color: white;
   border-radius: 8px;
   text-align: center;
   column-fill: balance;
 
   &:hover {
-    background: var(--hover-bg-color);
+    background: var(--btn-hover-bg-color);
   }
 
   &:hover:not(.no-fade) {

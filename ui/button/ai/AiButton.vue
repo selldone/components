@@ -15,25 +15,28 @@
 <template>
   <v-btn
     icon
-    class="sub-caption b4px ai-btn"
-    caption="AI"
+    class="ai-btn"
     :loading="loading"
     :class="{ '-loading': loading }"
-    :dark="loading"
-    :x-large="xLarge"
-    v-on="$listeners"
+    :size="xLarge ? 'x-large' : undefined"
+    @click="$emit('click')"
+    variant="text"
   >
     <img
       src="@components/assets/icons/ci-logo.png"
       :width="xLarge ? 36 : 24"
       :height="xLarge ? 36 : 24"
     />
+    <v-tooltip activator="parent" max-width="360" location="top">
+      <b>AI</b> | Automatically generate contents or do process.
+    </v-tooltip>
   </v-btn>
 </template>
 
 <script>
 export default {
   name: "AiButton",
+  emits: ["click"],
   props: {
     loading: {},
     xLarge: { type: Boolean, default: false },
@@ -56,6 +59,7 @@ export default {
     filter: blur(5px);
     transform-origin: center;
   }
+
   &.-loading {
     &:before {
       background-image: linear-gradient(
@@ -66,7 +70,8 @@ export default {
         #23d5ab
       );
       background-size: 400% 400%;
-      animation: gradient 15s ease infinite,
+      animation:
+        gradient 15s ease infinite,
         scale-infinite 2s ease-in-out infinite;
 
       opacity: 1;

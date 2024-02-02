@@ -2269,7 +2269,7 @@ Smart invert
       filter: invert(1);
     }
 
-    .add-new-btn-widget {
+    .s--add-button-green {
       filter: invert(1);
     }
 
@@ -4519,7 +4519,7 @@ canvas.heatmap-canvas {
     align-items: stretch !important;
 
     img, .v-img { // Force fill on render!
-      height: auto;
+      height: inherit;
       width: auto;
       flex-grow: 1;
       max-width: 100%;

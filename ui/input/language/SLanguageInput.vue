@@ -31,7 +31,11 @@
 
     <v-text-field
       v-else
-      :modelValue="multiple?select_language?.map(l=>getLanguageName(l)).join(', '): selected_language_object?.title"
+      :modelValue="
+        multiple
+          ? select_language?.map((l) => getLanguageName(l)).join(', ')
+          : selected_language_object?.title
+      "
       :hide-details="hideDetails"
       :rounded="rounded"
       :placeholder="
@@ -40,12 +44,22 @@
       :persistent-placeholder="persistentPlaceholder"
       :label="label ? label : $t('global.commons.language')"
       :messages="messages"
-      :density="dense?'compact':undefined"
-      :outlined="outlined"
-      :filled="filled"
+      :density="dense ? 'compact' : undefined"
+      :variant="
+        variant
+          ? variant
+          : outlined
+            ? 'outlined'
+            : filled
+              ? 'filled'
+              : solo
+                ? 'solo'
+                : 'underlined'
+      "
+      :single-line="singleLine"
       readonly
+      class="pp"
       :multiple="multiple"
-      :solo="solo"
       :clearable="clearable"
       :color="color"
       :flat="flat"
@@ -61,13 +75,12 @@
       :prepend-inner-icon="prependInnerIcon"
       :append-icon="appendIcon"
       :suffix="suffix"
-      variant="underlined"
     >
       <template v-slot:append>
         <slot name="append-outer"></slot>
       </template>
-
     </v-text-field>
+    <slot></slot>
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Dialog > Selector ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <s-languages-dialog
@@ -131,6 +144,8 @@ export default {
     readonly: { type: Boolean, default: false },
 
     multiple: { type: Boolean, default: false },
+    variant: {},
+    singleLine: Boolean,
     solo: {
       default: false,
       type: Boolean,
@@ -145,10 +160,6 @@ export default {
       type: Boolean,
     },
 
-    menu: {
-      default: false,
-      type: Boolean,
-    },
     flat: {
       default: false,
       type: Boolean,
@@ -164,14 +175,11 @@ export default {
     iconOnly: { type: Boolean, default: false }, // Show circle button (shop top header)
     iconColor: {},
 
-
-
-    suffix:{},
+    suffix: {},
 
     checkedLanguages: {
       // Show a tick after language (Use case: in multi languages articles to show which language exists!)
     },
-
   },
 
   data: () => ({
@@ -187,22 +195,21 @@ export default {
     languages() {
       if (this.availableLanguages) {
         return Object.values(Language).filter((i) =>
-          this.availableLanguages.includes(i.code)
+          this.availableLanguages.includes(i.code),
         );
       }
       return Object.values(Language).filter(
-        (i) => i.vip || !SetupService.LocalServiceCountry()
+        (i) => i.vip || !SetupService.LocalServiceCountry(),
       );
     },
 
     selected_language_object() {
-      if(this.multiple)return null;
+      if (this.multiple) return null;
       let out = this.getLanguageObject(this.select_language);
       if (!out && !this.clearable) return Language.en; // Just show english!
 
       return out;
     },
-
   },
   watch: {
     select_language(local) {
@@ -227,8 +234,6 @@ export default {
         });
       });
     },
-
-
   },
 };
 </script>

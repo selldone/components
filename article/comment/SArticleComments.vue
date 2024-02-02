@@ -16,69 +16,77 @@
   <div style="line-height: normal">
     <div class="mx-auto">
       <div v-if="user" class="comment-form">
-        <div
-          class="comment-placeholder"
-          :class="{ disabled: !can_send_comment }"
-        >
-          <div class="pa-5" @click="expand()">
-            <v-icon class="me-1">add_comment</v-icon>
-            {{ $t("global.comments.new_action") }}
+        <v-expand-transition>
+          <div
+            v-if="!expand"
+            class="comment-placeholder"
+            :class="{ disabled: !can_send_comment }"
+          >
+            <div class="pa-5" @click="expand = true">
+              <v-icon class="me-1">add_comment</v-icon>
+              {{ $t("global.comments.new_action") }}
 
-            <div v-if="!can_send_comment" class="py-2 small">
-              <v-icon class="me-1" small>warning_amber</v-icon> Each user can
-              send only one comment for an article or product. Please edit your
-              previous comment.
+              <div v-if="!can_send_comment" class="py-2 small">
+                <v-icon class="me-1" size="small">warning_amber</v-icon>
+                Each user can send only one comment for an article or product.
+                Please edit your previous comment.
+              </div>
             </div>
           </div>
-        </div>
+        </v-expand-transition>
 
-        <div class="comment-input">
-          <div class="pa-5">
-            <form id="comment-form ">
-              <v-textarea
-                v-model="data.body"
-                dir="auto"
-                class="w-100"
-                rows="3"
-                :placeholder="$t('global.comments.body_placeholder')"
-                name="comment"
-                flat
-                solo
-                single-line
-                auto-grow
-              />
+        <v-expand-transition>
+          <div v-if="expand">
+            <div class="pa-5">
+              <form id="comment-form ">
+                <v-textarea
+                  v-model="data.body"
+                  dir="auto"
+                  rows="3"
+                  :placeholder="$t('global.comments.body_placeholder')"
+                  name="comment"
+                  variant="plain"
+                  single-line
+                  auto-grow
+                  hide-details
+                />
 
-              <div class="widget-buttons">
-                <v-btn rounded x-large light depressed @click="closeNewComment">
-                  <v-icon class="me-1">close</v-icon>
-                  {{ $t("global.actions.cancel") }}
-                </v-btn>
-                <v-btn
-                  rounded
-                  color="primary"
-                  x-large
-                  dark
-                  depressed
-                  @click="saveComment"
-                  :loading="busy_send"
-                >
-                  {{ $t("global.comments.send_action") }}
-                  <v-icon class="ms-2">send</v-icon>
-                </v-btn>
-              </div>
-              <div>
-                <p v-if="error" class="text-danger mt-2">
-                  <i class="fas fa-warning" />
-                  {{ error_message }}
-                </p>
+                <div class="widget-buttons">
+                  <v-btn
+                    rounded
+                    size="x-large"
+                    variant="flat"
+                    @click="closeNewComment"
+                  >
+                    <v-icon class="me-1">close</v-icon>
+                    {{ $t("global.actions.cancel") }}
+                  </v-btn>
+                  <v-btn
+                    rounded
+                    color="primary"
+                    size="x-large"
+                    variant="flat"
+                    @click="saveComment"
+                    :loading="busy_send"
+                  >
+                    {{ $t("global.comments.send_action") }}
+                    <v-icon class="ms-2">send</v-icon>
+                  </v-btn>
+                </div>
+                <div>
+                  <p v-if="error" class="text-danger mt-2">
+                    <i class="fas fa-warning" />
+                    {{ error_message }}
+                  </p>
 
-                <label class="inline-error fa:fas fa-warning">
-                  {{ $t("global.comments.body_is_empty_error") }}
-                </label>
-              </div>
-            </form>
+                  <label class="inline-error fa:fas fa-warning">
+                    {{ $t("global.comments.body_is_empty_error") }}
+                  </label>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
+        </v-expand-transition>
       </div>
 
       <div v-else class="mb-16">
@@ -98,7 +106,7 @@
 
       <div
         v-if="!busy && comments_count === 0"
-        class="subtitle-2 text-muted text-uppercase text-center"
+        class="text-subtitle-2 text-muted text-uppercase text-center"
       >
         {{ $t("global.comments.no_comments") }}
       </div>
@@ -145,7 +153,7 @@
         <s-loading v-if="busy" css-mode light></s-loading>
         <v-btn
           v-if="more && !busy"
-          depressed
+          variant="flat"
           rounded
           @click="fetchComments(false)"
           v-intersect.quiet="
@@ -233,6 +241,8 @@ export default {
       busy_update: null,
 
       remain_auto_fetch: 1,
+
+      expand: false,
     };
   },
   computed: {
@@ -266,13 +276,6 @@ export default {
     // this.initScroll();
   },
   methods: {
-    expand() {
-      $(".comment-input").slideDown();
-      $(".comment-placeholder").hide();
-      $("#comment-form textarea").fadeIn();
-      $("#comment-form textarea").focus();
-    },
-
     getRates(user_id) {
       if (!this.forProduct) return null;
       return this.user_rates.filter((item) => {
@@ -353,7 +356,7 @@ export default {
       axios
         .put(
           window.ARTICLE_API.PUT_SHOP_COMMENT_REPLY(this.shop.id, comment_id),
-          { reply: reply }
+          { reply: reply },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -380,7 +383,7 @@ export default {
       if (this.data.body === "") {
         this.error = true;
         this.error_message = this.$t(
-          "global.comment_manager.comment_input_empty"
+          "global.comment_manager.comment_input_empty",
         );
         return;
       }
@@ -388,7 +391,7 @@ export default {
       if (this.articleId === "") {
         this.error = true;
         this.error_message = this.$t(
-          "global.comment_manager.article_not_saved"
+          "global.comment_manager.article_not_saved",
         );
         return;
       }
@@ -430,7 +433,7 @@ export default {
         this.$t("global.comments.delete_alert.title"),
         this.$t("global.comments.delete_alert.message"),
         this.$t("global.comments.delete_alert.action"),
-        this.deleteComment
+        this.deleteComment,
       );
     },
 
@@ -442,7 +445,7 @@ export default {
             // Error!
             this.error = true;
             this.error_message = this.$t(
-              "global.comments.cant_remove_this_comment"
+              "global.comments.cant_remove_this_comment",
             );
             this.showErrorAlert("Error!", data.error_msg);
             return;
@@ -451,7 +454,7 @@ export default {
           this.comments.splice(this.commentIndex(data.comment.id), 1);
           this.showSuccessAlert(
             this.$t("global.comments.delete_alert.title"),
-            this.$t("global.comments.notifications.delete_success")
+            this.$t("global.comments.notifications.delete_success"),
           );
         })
         .catch((error) => {
@@ -476,9 +479,7 @@ export default {
     },
 
     closeNewComment() {
-      $(".comment-input").slideUp();
-      $(".comment-placeholder").fadeIn();
-      $("#comment-form textarea").fadeOut();
+      this.expand = false;
     },
 
     //――――――――――――――――――――――― Scroll ―――――――――――――――――――――――

@@ -29,12 +29,12 @@
             :size="_article.id !== currentArticleId ? 48 : 76"
             class="hover-scale"
             :class="{
-              'avatar-gradient -thin -current':
-                _article.id === currentArticleId,
+              'avatar-gradient -thin -current':_article.id === currentArticleId,
               'avatar-gradient -thin -gray': _article.id !== currentArticleId,
             }"
+            :image="_article.image"
+            icon="circle"
           >
-            <v-img v-if="_article.image" :src="_article.image" />
           </v-avatar>
         </template>
 
@@ -103,7 +103,7 @@
             <v-avatar start class="hover-scale" size="24">
               <v-img
                 v-if="_article.parent_id"
-                :src="getProductImage(_article.parent_id)"
+                :src="getProductImage(_article.parent_id)" cover
               />
             </v-avatar>
             Article For Product : P-{{ _article.parent_id }}
@@ -117,7 +117,7 @@
               :to="getArticleLink(_article)"
               :disabled="_article.id === currentArticleId"
             >
-              {{ $t("global.article.schedule_dialog.view_action") }}
+              {{_article.id === currentArticleId?'Current Article': $t("global.article.schedule_dialog.view_action") }}
               <v-icon size="small" class="ms-2">{{
                 $t("icons.navigate_next")
               }}</v-icon>
@@ -227,7 +227,7 @@ export default {
       if (!type) return "#333";
 
       let obj = Object.values(ArticleTypes).find((val) => {
-        console.log("type", type);
+       // console.log("type", type);
         return val.code === type;
       });
       return obj ? obj.color : "#eee";

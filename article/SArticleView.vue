@@ -43,7 +43,6 @@
       v-if="can_edit && can_create_new"
       rounded
       color="primary"
-      dark
       @click="
         () => {
           can_create_new = false;
@@ -64,154 +63,220 @@
         flat
         color="transparent"
         class="overflow-x-auto"
-        height="62"
-        min-height="62"
+        :height="62"
+        :extended="12"
       >
+        <template v-slot:extension>
+          <div style="height: 12px"></div>
+        </template>
+
         <v-toolbar-items>
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ Change Mode ━━━━━━━━━━━━━━━━━━━━━━ -->
+
           <v-btn
-            v-if="render_state === 'review'"
+            v-if="in_view_mode"
             @click="render_state = 'editing'"
-            class="sub-caption b4px rounded"
-            :caption="$t('global.article.menu.edit')"
-            dark
             color="primary"
-            variant="flat"
+            variant="elevated"
             min-width="64"
+            rounded="lg"
+            class="ma-1" stacked
           >
-            <v-icon size="small">edit</v-icon>
+            <v-icon size="24">edit</v-icon>
+            <div class="x-small mt-1 tnt">{{$t('global.actions.edit')}}</div>
+
+            <v-tooltip activator="parent" max-width="360" location="top">
+              <b>{{ $t("global.article.menu.edit") }}</b>
+              <div>Click to edit article.</div>
+            </v-tooltip>
           </v-btn>
 
           <v-btn
-            v-if="is_editing"
+            v-if="in_edit_mode"
             @click="render_state = 'review'"
-            class="sub-caption b4px rounded"
-            :caption="$t('global.article.menu.view_mode')"
-            light
-            color="#fff"
+
             variant="flat"
             min-width="64"
+            rounded="lg"
+            class="ma-1" stacked
           >
-            <v-icon size="small">visibility</v-icon>
+            <v-icon size="24">visibility</v-icon>
+            <div class="x-small mt-1 tnt">{{$t('global.actions.view')}}</div>
+
+
+            <v-tooltip activator="parent" max-width="360" location="top">
+              <b>{{ $t("global.article.menu.view_mode") }}</b>
+              <div>Click to see article in the view mode.</div>
+            </v-tooltip>
           </v-btn>
 
           <v-divider vertical class="my-0 mx-3"></v-divider>
         </v-toolbar-items>
 
         <v-toolbar-items>
-          <!-------------------------- Toggles -------------------------->
-
-          <v-btn
-            v-if="published_state"
-            icon
-            key="pls"
-            class="sub-caption b4px"
-            :caption="$t('global.article.published')"
-            @click="published_state = !published_state"
-            :class="{ pen: !is_editing, disabled: !!schedule_at }"
-          >
-            <v-icon color="green" size="small"> fa:fas fa-rss </v-icon>
-          </v-btn>
-          <v-btn
-            v-if="!published_state"
-            icon
-            key="dra"
-            class="sub-caption b4px"
-            :caption="$t('global.article.draft')"
-            @click="published_state = !published_state"
-            :class="{ pen: !is_editing, disabled: !!schedule_at }"
-          >
-            <v-icon color="#FFA000" size="small">
-              fa:fas fa-pencil-ruler
-            </v-icon>
-          </v-btn>
-
-          <v-btn
-            v-if="isPrivate"
-            icon
-            @click="isPrivate = !isPrivate"
-            class="sub-caption b4px"
-            key="pri"
-            :caption="$t('global.article.private')"
-            :class="{ pen: !is_editing }"
-          >
-            <v-icon size="small" color="red"> fa:fas fa-user-lock </v-icon>
-          </v-btn>
-          <v-btn
-            v-if="!isPrivate"
-            icon
-            @click="isPrivate = !isPrivate"
-            class="sub-caption b4px"
-            key="pub"
-            :caption="$t('global.article.public')"
-            :class="{ pen: !is_editing }"
-          >
-            <v-icon size="small" color="blue"> fa:fas fa-globe </v-icon>
-          </v-btn>
-
-          <!-------------------------------------------------------------------------->
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ Schedule At ━━━━━━━━━━━━━━━━━━━━━━ -->
 
           <v-btn
             v-if="article.schedule_at"
             icon
+            variant="text"
             @click="showTimeline()"
-            class="sub-caption b4px"
-            :caption="$t('global.article.schedule_input')"
             :title="
               $t('global.article.publish_at') +
               ' : ' +
               getLocalTimeString(article.schedule_at)
             "
+            stacked
           >
-            <v-icon size="small" color="pink"> timeline </v-icon>
+            <v-icon size="24" > timeline</v-icon>
+            <div class="x-small pt-1 tnt"><v-icon size="6" color="pink">circle</v-icon> {{ $t("global.commons.timeline") }}</div>
+
+            <v-tooltip
+              activator="parent"
+              max-width="360"
+              location="top"
+              content-class="text-start"
+            >
+              {{ $t("global.article.schedule_input") }}
+              <div v-if="article.schedule_at">
+                {{ $t("global.article.publish_at") }}:
+                <b>{{ getLocalTimeString(article.schedule_at) }}</b>
+              </div>
+            </v-tooltip>
           </v-btn>
 
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Language ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ Publish State ━━━━━━━━━━━━━━━━━━━━━━ -->
+
+          <v-btn
+            v-else-if="published_state"
+            icon
+            variant="text"
+            key="pls"
+            @click="published_state = !published_state"
+            :class="{ pen: !in_edit_mode, disabled: !!schedule_at }"
+            stacked
+          >
+            <v-icon  size="20" class="ma-1"> fa:fas fa-rss</v-icon>
+            <div class="x-small pt-1 tnt"><v-icon size="6" color="green">circle</v-icon> {{ $t("global.article.published") }}</div>
+
+            <v-tooltip activator="parent" max-width="360" location="top">
+              {{ $t("global.article.published") }} /     {{ $t("global.article.draft") }}
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            v-else
+            icon
+            variant="text"
+            key="dra"
+            @click="published_state = !published_state"
+            :class="{ pen: !in_edit_mode, disabled: !!schedule_at }"
+            stacked
+          >
+            <v-icon  size="20" class="ma-1"> fa:fas fa-pencil-ruler</v-icon>
+            <div class="x-small pt-1 tnt"><v-icon size="6" color="#FFA000">circle</v-icon> {{ $t("global.article.draft") }}</div>
+
+            <v-tooltip activator="parent" max-width="360" location="top">
+              {{ $t("global.article.published") }} /     {{ $t("global.article.draft") }}
+            </v-tooltip>
+          </v-btn>
+
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ Private / Public ━━━━━━━━━━━━━━━━━━━━━━ -->
+
+          <v-btn
+            v-if="isPrivate"
+            icon
+            variant="text"
+            @click="isPrivate = !isPrivate"
+            key="pri"
+            :class="{ pen: !in_edit_mode }"
+            stacked
+          >
+            <v-icon size="20" class="ma-1" > fa:fas fa-user-lock</v-icon>
+            <div class="x-small pt-1 tnt"><v-icon size="6" color="red">circle</v-icon> {{ $t("global.article.private") }}</div>
+
+            <v-tooltip activator="parent" max-width="360" location="top">
+              {{ $t("global.article.private") }}
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            v-else
+            icon
+            variant="text"
+            @click="isPrivate = !isPrivate"
+            key="pub"
+            :class="{ pen: !in_edit_mode }"
+            stacked
+          >
+            <v-icon size="20" class="ma-1" > fa:fas fa-globe</v-icon>
+            <div class="x-small pt-1 tnt"><v-icon size="6" color="green">circle</v-icon> {{ $t("global.article.public") }}</div>
+
+            <v-tooltip activator="parent" max-width="360" location="top">
+              {{ $t("global.article.public") }}
+            </v-tooltip>
+          </v-btn>
+
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ Language ━━━━━━━━━━━━━━━━━━━━━━ -->
 
           <s-language-input
             v-model="article.lang"
             dense
             :title="$t('global.commons.language')"
             @change="onChangeNote()"
-            class="mx-2 mt-4 overflow-hidden"
-            menu
-            max-width="130px"
-            solo
+            class="mx-2 mt-4 overflow-hidden min-width-150"
+            max-width="150px"
+            variant="solo-filled"
             flat
-            :disabled="!is_editing || !!forceLanguage"
+            single-line
+            :disabled="!in_edit_mode || !!forceLanguage"
             prepend-inner-icon="translate"
-            :class="{ pen: !is_editing }"
+            :class="{ pen: !in_edit_mode }"
           >
+            <v-tooltip activator="parent" max-width="360" location="top">
+              Change the language of this article.
+            </v-tooltip>
           </s-language-input>
 
           <v-divider vertical class="my-0 mx-2"></v-divider>
 
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ Import Word ━━━━━━━━━━━━━━━━━━━━━━ -->
+
           <v-btn
             icon
+            variant="text"
             @click="$refs.editorContainer.showSelectWord()"
-            title="Import word (.docx)"
-            :class="{ pen: !is_editing }"
+            :class="{ pen: !in_edit_mode }"
           >
             <img
               src="@core/enums/file/assets/extensions/docx.svg"
               width="24"
               height="24"
             />
+
+            <v-tooltip activator="parent" max-width="360" location="top">
+              Import word (.docx)
+            </v-tooltip>
           </v-btn>
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ Google ━━━━━━━━━━━━━━━━━━━━━━ -->
 
           <v-btn
             v-if="article?.id && !IS_VENDOR_PANEL"
             icon
+            variant="text"
             @click="showGoogleSearch()"
-            title="Show Google Search Rank."
           >
             <img src="../assets/trademark/google.svg" width="24" height="24" />
+
+            <v-tooltip activator="parent" max-width="360" location="top">
+              Show Google Search Rank.
+            </v-tooltip>
           </v-btn>
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ AI ━━━━━━━━━━━━━━━━━━━━━━ -->
 
           <v-slide-y-transition>
             <ai-button
               v-if="
                 articleType === ArticleTypes.Product.code &&
-                is_editing &&
+                in_edit_mode &&
                 !IS_VENDOR_PANEL
               "
               title="Write article - 😈 Beta version | ⚡ Due to high demand and limited resources, there may be errors. Please try again later after 60sec."
@@ -225,100 +290,116 @@
         <v-spacer />
 
         <v-toolbar-items class="pt-1 pt-md-3">
-          <template v-if="is_editing">
-            <v-btn
-              rounded
-              class="mx-2"
-              :color="
-                published_state ? 'success' : schedule_at ? 'blue' : 'amber'
-              "
-              dark
-              :loading="state === 'saving'"
-              :variant="state === 'no-change' && 'text'"
-              :class="{
-                disabled:
-                  state === 'saving' ||
-                  (state === 'no-change' &&
-                    published_state === article.published &&
-                    isPrivate === article.private),
-              }"
-              @click="saveChange(null)"
-              variant="flat"
-            >
-              <v-icon class="me-2" size="small">
-                {{
-                  state === "changed"
-                    ? "save"
-                    : state === "saving"
-                      ? "refresh"
-                      : published_state
-                        ? "local_cafe"
-                        : "save"
-                }}
-              </v-icon>
-              {{
-                state === "saving"
-                  ? $t("global.article.saving")
-                  : published_state
-                    ? $t("global.article.save_and_publish_action")
-                    : $t("global.article.save_draft_action")
-              }}
-            </v-btn>
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ Switch language ━━━━━━━━━━━━━━━━━━━━━━ -->
 
-            <s-smart-menu
-              :items="[
-                ...(can_auto_translate
-                  ? [
-                      {
-                        title: `Auto translate to ${forceLanguage.toUpperCase()}`,
-                        icon: 'flash_on',
-                        click: () =>
-                          $emit('request-auto-translate', forceLanguage),
-                      },
-                    ]
-                  : []),
-
-                {
-                  title: 'Auto fix article',
-                  icon: 'auto_fix_high',
-                  click: () => autoFixArticle(),
-                  disabled: !article?.body,
-                },
-
-                {
-                  title: $t('global.article.menu.delete'),
-                  icon: 'delete',
-                  click: () => openDeleteArticleAlert(),
-                  disabled: !article || !article.id,
-                },
-              ]"
-            >
-            </s-smart-menu>
-          </template>
-
-          <template v-if="canEdit && !is_editing && languages && multiLanguage">
+          <template
+            v-if="canEdit && !in_edit_mode && languages && multiLanguage"
+          >
             <s-language-input
               :value="article.lang"
               @input="(lang) => loadArticleLanguage(lang)"
-              flat
-              solo
+              single-line
+              variant="plain"
               prepend-inner-icon="post_add"
               :available-languages="languages"
               hide-details
-              class="overflow-hidden"
+              class="min-width-150"
               :suffix="` (${multiLanguageAvailable.length})`"
               :checked-languages="multiLanguageAvailable"
-              :title="`Available languages: ${multiLanguageAvailable.join(
-                ', ',
-              )} + Add more languages...`"
             >
+              <v-tooltip
+                activator="parent"
+                max-width="360"
+                location="top"
+                content-class="text-start"
+              >
+                <b>Multi Languages</b>
+                <div>
+                  Switch between articles. Available languages:
+                  {{ multiLanguageAvailable.join(", ") }}
+                  + Add more languages...
+                </div>
+              </v-tooltip>
             </s-language-input>
           </template>
         </v-toolbar-items>
+
+        <!-- ━━━━━━━━━━━━━━━━━━━━━━ Save Button ━━━━━━━━━━━━━━━━━━━━━━ -->
+
+        <template v-if="in_edit_mode">
+          <v-btn
+            rounded
+            class="mx-2 tnt"
+            :color="
+              published_state ? 'success' : schedule_at ? 'primary' : 'amber'
+            "
+            :loading="state === 'saving'"
+            :variant="state === 'no-change' ? 'text' : 'elevated'"
+            :class="{
+              disabled:
+                state === 'saving' ||
+                (state === 'no-change' &&
+                  published_state === article.published &&
+                  isPrivate === article.private),
+            }"
+            @click="saveChange(null)"
+            size="x-large"
+          >
+            <v-icon class="me-2" start>
+              {{
+                state === "changed"
+                  ? "save"
+                  : state === "saving"
+                    ? "refresh"
+                    : published_state
+                      ? "local_cafe"
+                      : "save"
+              }}
+            </v-icon>
+            {{
+              state === "saving"
+                ? $t("global.article.saving")
+                : published_state
+                  ? $t("global.article.save_and_publish_action")
+                  : $t("global.article.save_draft_action")
+            }}
+          </v-btn>
+          <!-- ━━━━━━━━━━━━━━━━━━━━━━ Menu ━━━━━━━━━━━━━━━━━━━━━━ -->
+
+          <s-smart-menu
+            :items="[
+              ...(can_auto_translate
+                ? [
+                    {
+                      title: `Auto translate to ${forceLanguage.toUpperCase()}`,
+                      icon: 'flash_on',
+                      click: () =>
+                        $emit('request-auto-translate', forceLanguage),
+                    },
+                  ]
+                : []),
+
+              {
+                title: 'Auto fix article',
+                icon: 'auto_fix_high',
+                click: () => autoFixArticle(),
+                disabled: !article?.body,
+              },
+
+              {
+                title: $t('global.article.menu.delete'),
+                icon: 'delete',
+                click: () => openDeleteArticleAlert(),
+                disabled: !article || !article.id,
+              },
+            ]"
+          >
+          </s-smart-menu>
+        </template>
       </v-toolbar>
 
       <v-expand-transition>
-        <div v-if="is_editing">
+        <div v-if="in_edit_mode">
           <v-container>
             <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Article Edit Top Menu ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
@@ -327,55 +408,49 @@
               class="my-2"
               :article="article"
               @change="state = 'changed'"
-              :data-images="images_in_article"
+              :images="images_in_article"
               @open-menu="$refs.editorContainer.findAllImages()"
-              @save-change="saveChange"
             />
 
             <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Schedule At ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
             <v-expansion-panels
               class="my-2 s--shadow-no-padding rounded-28px overflow-hidden"
-              flat
             >
-              <v-expansion-panel>
+              <v-expansion-panel elevation="0">
                 <v-expansion-panel-title
                   :color="schedule_at ? '#0288D1' : undefined"
                   :class="{ 'white--text': !!schedule_at }"
-                  class="py-3"
+                  class="py-3 d-flex align-start align-sm-center flex-column flex-sm-row"
                   style="min-height: 60px"
                   :title="$t('global.article.schedule_title')"
                 >
-                  <div
-                    class="d-flex align-start align-sm-center flex-column flex-sm-row"
-                  >
+                  <div>
                     <div>
-                      <div>
-                        <v-icon
-                          class="me-1"
-                          :color="schedule_at ? '#fff' : undefined"
-                          >{{
-                            schedule_at ? "watch_later" : "schedule"
-                          }}</v-icon
-                        >
-                        {{ $t("global.article.schedule_action") }}
-                      </div>
-                      <s-time-progress-bar
-                        v-if="article && schedule_at"
-                        :created-time="article.created_at"
-                        :start-time="schedule_at"
-                        small
-                        class="max-w-250 mt-2"
-                      ></s-time-progress-bar>
+                      <v-icon
+                        class="me-1"
+                        :color="schedule_at ? '#fff' : undefined"
+                        >{{ schedule_at ? "watch_later" : "schedule" }}
+                      </v-icon>
+                      {{ $t("global.article.schedule_action") }}
                     </div>
+                    <s-time-progress-bar
+                      v-if="article && schedule_at"
+                      :start-time="article.created_at"
+                      :end-time="schedule_at"
+                      small
+                      active-color="#FFA000"
+                      bg-color="#fff"
+                      class="max-w-250 mt-2"
+                    ></s-time-progress-bar>
+                  </div>
 
-                    <v-spacer></v-spacer>
-                    <div class="my-1">
-                      {{ getFromNowString(schedule_at) }}
-                      <span class="text-subtitle-2 d-block mt-1">{{
-                        getLocalTimeString(schedule_at)
-                      }}</span>
-                    </div>
+                  <v-spacer></v-spacer>
+                  <div class="my-1">
+                    {{ getFromNowString(schedule_at) }}
+                    <span class="text-subtitle-2 d-block mt-1">{{
+                      getLocalTimeString(schedule_at)
+                    }}</span>
                   </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
@@ -412,9 +487,8 @@
             <v-expansion-panels
               v-if="multiLanguage"
               class="my-2 s--shadow-no-padding rounded-28px overflow-hidden"
-              flat
             >
-              <v-expansion-panel>
+              <v-expansion-panel elevation="0">
                 <v-expansion-panel-title class="py-3" style="min-height: 60px">
                   <span>
                     <v-icon class="me-1">translate</v-icon>
@@ -438,14 +512,14 @@
                             article.lang.toLowerCase() === lang.toLowerCase(),
                         }"
                       >
-                        <v-list-item-icon>
+                        <template v-slot:prepend>
                           <flag
                             v-if="getLanguageObject(lang)"
                             :iso="getLanguageObject(lang).flag"
                             :squared="false"
-                            class="mt-1"
+                            class="me-2"
                           />
-                        </v-list-item-icon>
+                        </template>
 
                         <v-list-item-title class="d-flex align-center">
                           <b>
@@ -465,8 +539,8 @@
                             class="px-1 mx-1"
                             variant="outlined"
                             title="Default article (Shop main language)"
-                            >{{ $t("global.commons.default") }}</v-chip
-                          >
+                            >{{ $t("global.commons.default") }}
+                          </v-chip>
                           <v-spacer></v-spacer>
                         </v-list-item-title>
 
@@ -479,9 +553,9 @@
                               )
                             "
                             @click.stop="$emit('request-auto-translate', lang)"
-                            fab
+                            variant="elevated"
                             color="primary"
-                            dark
+                            icon
                             size="small"
                             class="rounded-14-12"
                             :title="$t('global.commons.translate')"
@@ -495,11 +569,11 @@
                             color="success"
                             class="mx-1"
                             title="Article exist"
-                            >check_circle</v-icon
-                          >
+                            >check_circle
+                          </v-icon>
                         </v-list-item-action>
 
-                        <v-list-item-icon>
+                        <template v-slot:append>
                           <v-icon
                             :color="
                               article &&
@@ -514,9 +588,9 @@
                               article.lang.toLowerCase() === lang.toLowerCase()
                                 ? "circle"
                                 : "radio_button_unchecked"
-                            }}</v-icon
-                          >
-                        </v-list-item-icon>
+                            }}
+                          </v-icon>
+                        </template>
                       </v-list-item>
                     </v-list>
                   </div>
@@ -529,9 +603,8 @@
             <v-expansion-panels
               v-if="article?.id /*Should be saved!*/ && is_shop_blog"
               class="my-2 s--shadow-no-padding rounded-28px overflow-hidden"
-              flat
             >
-              <v-expansion-panel>
+              <v-expansion-panel elevation="0">
                 <v-expansion-panel-title style="min-height: 60px">
                   <span class="flex-grow-0 me-2">
                     <v-icon class="me-1">bookmark</v-icon>
@@ -544,8 +617,8 @@
                       v-for="tag in article.tags"
                       :key="tag"
                       class="ma-1"
-                      >{{ tag }}</v-chip
-                    >
+                      >{{ tag }}
+                    </v-chip>
                   </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
@@ -556,24 +629,22 @@
 
             <v-row dense class="mb-2 z1">
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-              <v-select
+              <o-article-selldone-help-category-input
                 v-if="
                   articleType === ArticleTypes.SelldoneHelp.code && categories
                 "
                 v-model="category"
                 class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px bg-white"
-                :items="categories"
-                :label="$t('global.article.category_input')"
-                :messages="$t('global.article.category_input_message')"
                 variant="solo"
                 flat
                 clearable
+                rounded
                 :disabled="!!menu && !!menu.parent_id"
                 @update:model-value="state = 'changed'"
               >
-              </v-select>
+              </o-article-selldone-help-category-input>
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-              <v-select
+              <o-article-selldone-blog-category-input
                 v-else-if="
                   articleType === ArticleTypes.SelldoneBlog.code && categories
                 "
@@ -581,70 +652,29 @@
                 class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
                 flat
                 :items="categories"
-                item-value="category"
-                item-title="category"
-                :label="$t('global.article.category_input')"
-                :messages="$t('global.article.category_input_message')"
                 variant="solo"
                 clearable
+                rounded
                 :disabled="(!!menu && !!menu.parent_id) || busy_categories"
                 @update:model-value="state = 'changed'"
-                :loading="busy_categories"
               >
-                <template v-slot:item="{ item }">
-                  <v-avatar rounded class="me-2" v-if="item.icon" size="28"
-                    ><img :src="getShopImagePath(item.icon)"
-                  /></v-avatar>
-                  <span class="text-subtitle-2">{{ item.category }}</span>
-                </template>
-                <template v-slot:selection="{ item }">
-                  <v-avatar rounded class="me-2" v-if="item.icon" size="28"
-                    ><img :src="getShopImagePath(item.icon)"
-                  /></v-avatar>
-                  <span class="text-subtitle-2">{{ item.category }}</span>
-                </template>
-              </v-select>
+              </o-article-selldone-blog-category-input>
 
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Shop Blog Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-              <v-select
+              <s-article-category-shop-blog-input
                 v-else-if="articleType === ArticleTypes.Blog.code && categories"
+                :shop="shop"
                 v-model="category"
-                item-value="id"
-                item-title="category"
-                class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
-                :items="categories"
-                :label="$t('global.article.category_input')"
-                :messages="$t('global.article.category_input_message')"
-                variant="plain"
-                clearable
-                @update:model-value="state = 'changed'"
                 :loading="busy_categories"
                 :disabled="busy_categories"
-                :prepend-inner-icon="category ? undefined : 'tab'"
+                variant="solo"
+                flat
+                clearable
+                rounded
+                class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
+                @update:model-value="state = 'changed'"
               >
-                <template v-slot:item="{ item ,props}">
-                  <v-list-item v-bind="props" :title="item.raw.category " :subtitle="item.raw.description" class="text-start">
-                    <template v-slot:prepend>
-                      <v-avatar rounded  size="28"
-                      ><img v-if="item.raw.icon" :src="getShopImagePath(item.raw.icon)"
-                      />
-                      <v-icon v-else>folder</v-icon>
-                      </v-avatar>
-                    </template>
-
-                  </v-list-item>
-
-                </template>
-                <template v-slot:selection="{ item }">
-                  <v-avatar rounded class="me-2" v-if="item.raw.icon" size="28"
-                    ><img :src="getShopImagePath(item.raw.icon)"
-                  /></v-avatar>
-                  <div class="flex-grow-1 text-start">
-                    <div class="text-subtitle-2">{{ item.raw.category }}</div>
-                    <small>{{ item.raw.description }}</small>
-                  </div>
-                </template>
-              </v-select>
+              </s-article-category-shop-blog-input>
 
               <b-cluster-input
                 v-if="ArticleTypes.Blog.code && $route.params.shop_id"
@@ -701,7 +731,7 @@
                 v-if="
                   articleType === ArticleTypes.SelldoneHelp.code &&
                   menu &&
-                  is_editing
+                  in_edit_mode
                 "
                 class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px bg-white z1 py-1 px-4"
               >
@@ -738,7 +768,6 @@
                   color="primary"
                   variant="flat"
                   style="align-self: baseline"
-                  dark
                   class="m-2 tnt"
                   rounded
                   size="large"
@@ -766,16 +795,16 @@
                       <v-btn
                         variant="text"
                         @click="change_author_dialog = false"
-                        >{{ $t("global.actions.cancel") }}</v-btn
-                      >
+                        >{{ $t("global.actions.cancel") }}
+                      </v-btn>
                       <v-spacer></v-spacer>
                       <v-btn
                         variant="flat"
                         color="primary"
                         @click="changeAuthor()"
                         :loading="busy_change_author"
-                        >{{ $t("global.actions.change") }}</v-btn
-                      >
+                        >{{ $t("global.actions.change") }}
+                      </v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
@@ -814,13 +843,13 @@
           ref="editorContainer"
           class="p-lg-5 p-md-4 p-3 samin-article-content"
           :only-view="!canEdit"
-          :edit="is_editing"
+          :edit="in_edit_mode"
           v-model:title="article.title"
           v-model:body="article.body"
           :upload-url="upload_url"
           :word-converter-url="word_converter_url"
           @change="onChangeNote"
-          @images="onChangeImages"
+          @update:images="onChangeImages"
           :has-table-of-content="hasTableOfContent"
           :enable-title="showTitle"
           :hide-title="hideTitle"
@@ -889,15 +918,15 @@
           <template v-slot:end="{ edit }">
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article FAQ ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-            <faq-section
+            <s-article-faqs
               :editMode="edit"
               v-model:faqs="article.faqs"
               @change="onChangeNote"
-            ></faq-section>
+            ></s-article-faqs>
 
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Structured Data ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
             <s-article-structured-data
-              v-if="is_editing"
+              v-if="in_edit_mode"
               :editMode="edit"
               v-model="article.structures"
             ></s-article-structured-data>
@@ -912,7 +941,6 @@
         <div v-if="showUserFeedbackButtons && !isNew" style="min-height: 64px">
           <v-badge
             class="m-2 float-right"
-            overlap
             offset-x="16"
             :color="catch_power ? '#025185' : '#0288D1'"
             :title="
@@ -922,8 +950,8 @@
             "
           >
             <template v-slot:badge>
-              {{ numeralFormat(article.power, "0.[0] a") }}</template
-            >
+              {{ numeralFormat(article.power, "0.[0] a") }}
+            </template>
 
             <v-btn
               v-if="!isNew"
@@ -931,13 +959,10 @@
                 'disabled-no-filter': catch_power || power_busy || !USER(),
               }"
               :color="catch_power ? '#025185' : '#0288D1'"
-              variant="flat"
-              dark
-              rounded
               @click="getPower"
-              :variant="!catch_power && 'outlined'"
+              :variant="!catch_power ? 'outlined' : 'flat'"
               :loading="power_busy"
-              fab
+              icon
             >
               <v-icon class="mx-2" :class="{ bounceIn: catch_power }">
                 fa:fas fa-sign-language
@@ -978,23 +1003,6 @@
         </div>
       </div>
 
-      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Share Buttons ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-      <!--
-      <div v-if="showShareButtons && !isNew" class="mt-5 mb-3 mx-2">
-        <small class="text-muted d-block mb-3"
-          ><span class="fas fa-share-alt" />
-          {{ $t("global.article.share") }}
-        </small>
-        <social-share-buttons
-          :url="decodeURIComponent(window.location.href)"
-          :title="article.title"
-          :description="article.description"
-          :quote="article.description"
-          :hashtags="`${tags}`"
-          telegram-rhash="7d46cf37f04f81"
-        />
-      </div>-->
-
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ author info + Edit / Follow / Save ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
       <v-container
@@ -1025,7 +1033,6 @@
                 variant="flat"
                 rounded
                 :color="isFollow ? 'success' : 'default'"
-                :dark="isFollow"
                 class="ms-2"
                 size="small"
                 @click="followUser"
@@ -1054,7 +1061,7 @@
 
                   {{ getLocalTimeString(article.updated_at) }}
                 </time>
-                <v-icon class="me-1" size="small"> fa:fas fa-feather </v-icon>
+                <v-icon class="me-1" size="small"> fa:fas fa-feather</v-icon>
               </template>
               {{
                 $t("global.article.wrote_at") +
@@ -1095,7 +1102,6 @@
               icon="new_releases"
               border="start"
               density="compact"
-              dark
               class="mt-5 text-start pp"
               @click="popupActiveReport = true"
             >
@@ -1123,14 +1129,13 @@
               variant="flat"
               color="blue"
               class="m-2"
-              dark
               dir="ltr"
               size="small"
               icon
               :href="`https://www.linkedin.com/in/${socials.linkedin}`"
               target="_blank"
             >
-              <v-icon size="small"> fab fa-linkedin </v-icon>
+              <v-icon size="small"> fab fa-linkedin</v-icon>
             </v-btn>
 
             <v-btn
@@ -1145,7 +1150,7 @@
               :href="`https://twitter.com/${socials.twitter}`"
               target="_blank"
             >
-              <v-icon size="small"> fab fa-twitter </v-icon>
+              <v-icon size="small"> fab fa-twitter</v-icon>
             </v-btn>
 
             <v-btn
@@ -1160,7 +1165,7 @@
               :href="`https://medium.com/@${socials.medium}`"
               target="_blank"
             >
-              <v-icon size="small"> fab fa-medium </v-icon>
+              <v-icon size="small"> fab fa-medium</v-icon>
             </v-btn>
 
             <v-btn
@@ -1176,7 +1181,7 @@
               target="_blank"
               :title="`@${socials.selldone}`"
             >
-              <v-icon size="small"> fa:fas fa-store </v-icon>
+              <v-icon size="small"> fa:fas fa-store</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -1294,14 +1299,13 @@ import SArticleEditor from "./SArticleEditor.vue";
 import { ArticleTypes } from "@core/enums/article/ArticleTypes";
 import { PermissionNames } from "@core/enums/admin/permission/PermissionNames";
 import { PermissionLevels } from "@core/enums/admin/permission/PermissionLevels";
-import { HelpCategories } from "@core/enums/admin/help/HelpCategories";
 import SDateInput from "../ui/calendar/date-input/SDateInput.vue";
 import SArticlesTimeline from "@components/article/timeline/SArticlesTimeline.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SLanguageInput from "@components/ui/input/language/SLanguageInput.vue";
-import FaqSection from "./widgets/FaqSection.vue";
+import SArticleFaqs from "./faq/SArticleFaqs.vue";
 import SArticleStructuredData from "./SArticleStructuredData.vue";
-import SArticleTagsEditor from "./SArticleTagsEditor.vue";
+import SArticleTagsEditor from "./tags/SArticleTagsEditor.vue";
 import SContentViolationReportDialog from "../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
 import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
@@ -1311,10 +1315,16 @@ import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import AiButton from "@components/ui/button/ai/AiButton.vue";
 import BClusterInput from "@components/backoffice/cluster/BClusterInput.vue";
 import _ from "lodash-es";
+import SArticleCategoryShopBlogInput from "@components/article/category/shop-blog/SArticleCategoryShopBlogInput.vue";
+import OArticleSelldoneHelpCategoryInput from "@components/article/category/selldone-help/OArticleSelldoneHelpCategoryInput.vue";
+import OArticleSelldoneBlogCategoryInput from "@components/article/category/selldone-blog/OArticleSelldoneBlogCategoryInput.vue";
 
 export default {
   name: "SArticleView",
   components: {
+    OArticleSelldoneBlogCategoryInput,
+    OArticleSelldoneHelpCategoryInput,
+    SArticleCategoryShopBlogInput,
     BClusterInput,
     AiButton,
     SArticleSearchConsole,
@@ -1324,7 +1334,7 @@ export default {
     SContentViolationReportDialog,
     SArticleTagsEditor,
     SArticleStructuredData,
-    FaqSection,
+    SArticleFaqs,
     SLanguageInput,
     SNumberInput,
     SArticlesTimeline,
@@ -1707,8 +1717,11 @@ export default {
         this.USER() && this.article && this.article.user_id !== this.USER_ID()
       );
     },
-    is_editing() {
+    in_edit_mode() {
       return this.render_state === "editing";
+    },
+    in_view_mode() {
+      return this.render_state === "review";
     },
 
     category_obj() {
@@ -1726,7 +1739,6 @@ export default {
     targetId(to, from) {
       const force = !(this.multiLanguage && this.forceLanguage); // Prevent reload page in multi-language edit mode!
       this.updateArticlePage(force);
-      this.getCategories();
     },
 
     schedule_at() {
@@ -1738,10 +1750,6 @@ export default {
         this.onChangeNote();
       },
       deep: true,
-    },
-
-    canEdit() {
-      this.getCategories();
     },
 
     // ―――― Multi Language ――――
@@ -1762,8 +1770,6 @@ export default {
 
   mounted() {
     this.updateArticlePage();
-
-    this.getCategories();
   },
 
   methods: {
@@ -1789,51 +1795,6 @@ export default {
       this.dialog_timeline = true;
     },
 
-    getCategories() {
-      if (!this.canEdit) return;
-
-      // Selldone Blog:
-      if (this.articleType === ArticleTypes.SelldoneBlog.code) {
-        this.busy_categories = true;
-
-        axios
-          .get(window.ADMIN_API.GET_SAMIN_BLOG_TAGS())
-          .then(({ data }) => {
-            if (!data.error) {
-              this.categories = data.categories;
-            } else {
-              this.showErrorAlert(null, data.error_msg);
-            }
-          })
-          .finally(() => {
-            this.busy_categories = false;
-          });
-      }
-
-      // Shop Blog:
-      if (this.is_shop_blog) {
-        this.busy_categories = true;
-
-        axios
-          .get(window.ARTICLE_API.GET_SHOP_BLOG_CATEGORIES(this.shop_id))
-          .then(({ data }) => {
-            if (!data.error) {
-              this.categories = data.categories;
-            } else {
-              this.showErrorAlert(null, data.error_msg);
-            }
-          })
-          .finally(() => {
-            this.busy_categories = false;
-          });
-      }
-
-      // Samin help:
-      if (this.articleType === ArticleTypes.SelldoneHelp.code) {
-        this.categories = Object.keys(HelpCategories);
-      }
-    },
-
     getHelpParentCandidatesList() {
       if (!this.can_edit || this.targetId === "new") return;
 
@@ -1855,11 +1816,11 @@ export default {
     //――――――――――――――――――――――― Change listeners ―――――――――――――――――――――――
 
     onChangeNote($event = null) {
-      if (this.is_editing) this.state = "changed";
+      if (this.in_edit_mode) this.state = "changed";
     },
 
-    onChangeImages($event) {
-      this.images_in_article = $event.images;
+    onChangeImages(images) {
+      this.images_in_article = images;
     },
 
     saveChange(callback_success = null) {
@@ -2124,7 +2085,6 @@ export default {
     },
 
     prepareCreateNew() {
-      console.log("---prepareCreateNew----");
       // 🞇 Reset to default
       this.resetToDefault(); // 🞇 Reset to default
 
@@ -2620,6 +2580,7 @@ export default {
 
 .article-card {
   min-height: 100%;
+
   .tit {
     font-size: 1.45rem;
     color: #4f4f4f;
@@ -2631,6 +2592,7 @@ export default {
       font-size: 1.3rem;
     }
   }
+
   .desc {
     //margin-top: 1.5625rem;
     font-size: 0.9375rem;

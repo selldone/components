@@ -16,23 +16,26 @@
   <div>
     <div class="comment-item pa-5">
       <v-row no-gutters align="center">
-        <div
+        <v-btn
           v-if="canDelete"
-          class="delete-comment"
+          icon
+          variant="text"
           :title="$t('global.commons.delete')"
           @click="deleteComment"
+          color="red"
         >
-          <span class="fas fa-ban" />
-        </div>
+          <v-icon>close</v-icon>
+        </v-btn>
 
-        <div
+        <v-btn
           v-if="editable"
-          class="edit-comment"
+          icon
+          variant="text"
           @click="state = state === 'editing' ? 'default' : 'editing'"
           :title="$t('global.commons.edit')"
         >
-          <span class="edit_square" />
-        </div>
+          <v-icon>edit</v-icon>
+        </v-btn>
 
         <v-chip
           v-if="comment.deleted_at"
@@ -40,12 +43,11 @@
           class="mx-2"
           size="small"
           :title="'Deleted: ' + getLocalTimeString(comment.deleted_at)"
-
           color="red"
         >
           <v-icon size="small" start>delete</v-icon>
-          {{ getFromNowString(comment.deleted_at) }}</v-chip
-        >
+          {{ getFromNowString(comment.deleted_at) }}
+        </v-chip>
 
         <v-spacer></v-spacer>
 
@@ -54,8 +56,8 @@
 
           <time
             >{{ $t("global.comments.comment_at") }}
-            {{ getLocalTimeString(comment.updated_at) }}</time
-          >
+            {{ getLocalTimeString(comment.updated_at) }}
+          </time>
 
           <transition name="bounce">
             <i
@@ -104,10 +106,10 @@
                     :readonly="true"
                     size="small"
                   />
-                  <v-chip size="small" color="success" >
+                  <v-chip size="small" color="success">
                     <v-icon start size="x-small"> shopping_basket</v-icon>
-                    {{ $t("global.comments.product_buyer") }}</v-chip
-                  >
+                    {{ $t("global.comments.product_buyer") }}
+                  </v-chip>
                 </v-col>
               </v-row>
 
@@ -149,10 +151,8 @@
                       class="tnt"
                     >
                       <v-icon class="me-1" size="small">edit</v-icon>
-                      {{
-                        comment.reply ? "Edit reply" : "Write the answer"
-                      }}</v-btn
-                    >
+                      {{ comment.reply ? "Edit reply" : "Write the answer" }}
+                    </v-btn>
                     <div v-else>
                       <v-textarea
                         flat
@@ -242,6 +242,7 @@
 <script>
 import RatingBar from "@components/ui/rating/RatingBar.vue";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
+
 export default {
   name: "SArticleComment",
   components: { RatingBar },
