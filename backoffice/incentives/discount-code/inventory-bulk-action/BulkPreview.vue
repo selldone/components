@@ -199,8 +199,8 @@ export default {
     // Pagination:
     options: {
       handler() {
-        const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-        this.fetchEligibleProducts(page, sortBy[0], sortDesc[0]);
+        const { sortBy, page, itemsPerPage } = this.options;
+        this.fetchEligibleProducts(page, sortBy[0]?.key, sortBy[0]?.order==='desc');
       },
       deep: true,
     },

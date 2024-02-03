@@ -16,7 +16,14 @@
   <span>
     <v-menu content-class="rounded-lg" min-width="240">
       <template v-slot:activator="{ props }">
-        <v-btn icon variant="text" v-bind="props" :loading="loading" class="z1" :title="title">
+        <v-btn
+          icon
+          variant="text"
+          v-bind="props"
+          :loading="loading"
+          class="z1"
+          :title="title"
+        >
           <v-icon>{{ icon }}</v-icon>
         </v-btn>
       </template>

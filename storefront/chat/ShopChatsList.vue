@@ -493,8 +493,8 @@ export default {
     // Pagination:
     options: {
       handler() {
-        const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-        this.fetchSupports(page, sortBy[0], sortDesc[0]);
+        const { sortBy, page, itemsPerPage } = this.options;
+        this.fetchSupports(page, sortBy[0]?.key, sortBy[0]?.order==='desc');
       },
       deep: true,
     },
@@ -502,13 +502,13 @@ export default {
     search: _.throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       //  console.log("search", newVal);
-      const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-      this.fetchSupports(1, sortBy ? sortBy[0] : null, sortDesc[0], false);
+      const { sortBy, page, itemsPerPage } = this.options;
+      this.fetchSupports(1, sortBy[0]?.key, sortBy[0]?.order==='desc', false);
     }, window.SERACH_THROTTLE),
 
     categories() {
-      const { sortBy, sortDesc, page, itemsPerPage } = this.options;
-      this.fetchSupports(1, sortBy ? sortBy[0] : null, sortDesc[0], false);
+      const { sortBy, page, itemsPerPage } = this.options;
+      this.fetchSupports(1, sortBy[0]?.key, sortBy[0]?.order==='desc', false);
     },
   },
 

@@ -424,7 +424,7 @@
               <router-link
                 v-if="product.ar_src"
                 :to="{
-                  name: 'Product3DPage',
+                  name: 'BPageProduct3D',
                   params: { product_id: product.id },
                 }"
                 class="row-hover mx-auto"

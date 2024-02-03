@@ -13,13 +13,12 @@
   -->
 
 <template>
-  <div class="product-variant-card-micro" :class="{'-center':center}" style="position: relative">
-    <s-color-circle
-      v-if="color"
-      :color="color"
-      class="me-1"
-      :size="20"
-    >
+  <div
+    class="product-variant-card-micro"
+    :class="{ '-center': center }"
+    style="position: relative"
+  >
+    <s-color-circle v-if="color" :color="color" class="me-1" :size="20">
     </s-color-circle>
 
     <span v-if="volume" class="card-badge-info">
@@ -75,13 +74,13 @@ import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 
 export default {
   name: "VariantItemViewMicro",
-  components: {SColorCircle, VariantAssetView },
+  components: { SColorCircle, VariantAssetView },
   props: {
     productVariant: {
       required: true,
       type: Object,
     },
-    center:Boolean
+    center: Boolean,
   },
   data() {
     return {
@@ -114,11 +113,9 @@ export default {
       return this.productVariant.type;
     },
 
-
-    shop_id(){
-      return this.getShop()?.id
+    shop_id() {
+      return this.getShop()?.id;
     },
-
   },
   methods: {},
 };
@@ -143,7 +140,7 @@ export default {
     margin: 0 !important;
   }
 
-  &.-center{
+  &.-center {
     justify-content: center;
   }
 }

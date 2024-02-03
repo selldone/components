@@ -155,14 +155,14 @@
                     </v-btn>
                     <div v-else>
                       <v-textarea
-                        flat
                         auto-grow
+                        :rows="3"
                         v-model="reply_input"
                         dir="auto"
-                        density="compact"
-                        rounded
                         placeholder="Write your message here..."
-                        class="m-2"
+                        class="ma-2"
+                        variant="plain"
+
                       >
                       </v-textarea>
 
@@ -196,14 +196,13 @@
           <div v-if="state === 'editing'">
             <div class="comment-body">
               <v-textarea
-                flat
                 auto-grow
                 v-model="data.body"
                 dir="auto"
-                density="compact"
-                rounded
                 :placeholder="$t('global.comments.edit_comment')"
-                class="m-2"
+                class="ma-2"
+                variant="plain"
+
               />
 
               <div class="widget-buttons">

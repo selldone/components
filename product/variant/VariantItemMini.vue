@@ -14,8 +14,8 @@
 
 <template>
   <v-row
+      no-gutters
     class="product-variant-card-mini"
-    style="position: relative"
     :class="[
       quantity || forceEnable ? '' : 'disabled',
       selected ? 'selected' : '',
@@ -24,52 +24,88 @@
     @click="$emit('select')"
     :style="{ '--theme-dark': activeColor ? activeColor : SaminColorDark }"
   >
-    <v-col v-if="color" align-center justify-center class="p-1 text-nowrap">
-      <v-icon :color="icon_color" class="me-1" small> palette </v-icon>
+    <div v-if="color" align-center justify-center class="--item p-1 text-nowrap ">
+      <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
 
-      <s-color-circle :color="color" class="me-1" :size="16">  </s-color-circle>
+      <s-color-circle :color="color" class="me-1" :size="16"></s-color-circle>
 
       <span class="small me-1">{{ coloName }}</span>
-    </v-col>
+    </div>
 
-    <v-col v-if="volume" class="p-1 text-nowrap">
-      <v-icon :color="icon_color" class="me-1" small> equalizer </v-icon>
-
-      <span class="card-badge-info"> {{ volume }} </span>
-    </v-col>
-
-    <v-col v-if="pack" class="p-1 text-nowrap">
-      <v-icon :color="icon_color" class="me-1" small> all_inbox </v-icon>
+    <div v-if="volume" class="--item p-1 text-nowrap">
+      <v-icon :color="icon_color" class="me-1" size="small"> equalizer</v-icon>
 
       <span class="card-badge-info">
-        {{ pack }}<span class="text-muted">x</span>
-      </span>
-    </v-col>
+        {{ volume.removeVariantAsset() }}
 
-    <v-col v-if="weight" class="p-1 text-nowrap">
-      <v-icon :color="icon_color" class="me-1" small>
+        <variant-asset-view
+          :shop-id="productVariant.shop_id"
+          :value="volume"
+          :size="24"
+        ></variant-asset-view>
+      </span>
+    </div>
+
+    <div v-if="pack" class="--item p-1 text-nowrap">
+      <v-icon :color="icon_color" class="me-1" size="small"> all_inbox</v-icon>
+
+      <span class="card-badge-info">
+        {{ pack.removeVariantAsset() }}
+        <variant-asset-view
+          :shop-id="productVariant.shop_id"
+          :value="pack"
+          :size="24"
+        ></variant-asset-view>
+        <span class="text-muted">x</span>
+      </span>
+    </div>
+
+    <div v-if="weight" class="--item p-1 text-nowrap">
+      <v-icon :color="icon_color" class="me-1" size="small">
         fa:fas fa-weight-hanging
       </v-icon>
 
-      <span class="card-badge-info"> {{ weight }} </span>
-    </v-col>
+      <span class="card-badge-info">
+        {{ weight.removeVariantAsset() }}
+        <variant-asset-view
+          :shop-id="productVariant.shop_id"
+          :value="weight"
+          :size="24"
+        ></variant-asset-view>
+      </span>
+    </div>
 
-    <v-col v-if="style" class="p-1 text-nowrap">
-      <v-icon :color="icon_color" class="me-1" small> style </v-icon>
+    <div v-if="style" class="--item p-1 text-nowrap">
+      <v-icon :color="icon_color" class="me-1" size="small"> style</v-icon>
 
-      <span class="card-badge-info"> {{ style }} </span>
-    </v-col>
+      <span class="card-badge-info">
+        {{ style.removeVariantAsset() }}
+        <variant-asset-view
+          :shop-id="productVariant.shop_id"
+          :value="style"
+          :size="24"
+        ></variant-asset-view>
+      </span>
+    </div>
 
-    <v-col v-if="type" class="p-1 text-nowrap">
-      <v-icon :color="icon_color" class="me-1" small> fa:fas fa-toolbox </v-icon>
-      <span class="card-badge-info"> {{ type }} </span>
-    </v-col>
+    <div v-if="type" class="--item p-1 text-nowrap">
+      <v-icon :color="icon_color" class="me-1" size="small">
+        fa:fas fa-toolbox
+      </v-icon>
+      <span class="card-badge-info">
+        {{ type.removeVariantAsset() }}
+        <variant-asset-view
+          :shop-id="productVariant.shop_id"
+          :value="type"
+          :size="24"
+        ></variant-asset-view>
+      </span>
+    </div>
 
-    <div v-if="has_ar" class="d-flex align-items-center text-nowrap me-5 ms-2">
+    <div v-if="has_ar" class="--item text-nowrap me-5 ms-2">
       <v-img
         height="20"
         width="20"
-        contain
         :src="require('@components/assets/icons/3d.svg')"
       ></v-img>
     </div>
@@ -78,10 +114,11 @@
 
 <script>
 import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
+import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
 
 export default {
   name: "VariantItemMini",
-  components: {SColorCircle},
+  components: { VariantAssetView, SColorCircle },
   props: {
     productVariant: {
       required: true,
@@ -147,13 +184,14 @@ export default {
 
 <style scoped lang="scss">
 .product-variant-card-mini {
-  background: #fafafa;
+  //background: #fafafa;
   padding: 3px;
   border-radius: 4px;
   font-weight: 500;
   cursor: pointer;
+  position: relative;
 
-  .col{
+  .--item {
     display: flex;
     align-items: center;
   }
@@ -166,9 +204,11 @@ export default {
   &.selected {
     color: #fff;
     background: var(--theme-dark);
+
     .card-badge-info {
       color: white;
     }
+
     .text-muted {
       color: #ddd !important;
     }
@@ -177,12 +217,14 @@ export default {
   p {
     margin: 0 !important;
   }
+
   &:hover {
     background: #efefef;
 
     &.disable {
       background: #ddd;
     }
+
     &.selected {
       background: var(--theme-dark);
     }
