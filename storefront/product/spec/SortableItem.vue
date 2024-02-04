@@ -27,7 +27,7 @@
         v-model="item.group"
         type="text"
         flat
-        solo
+        variant="solo"
         hide-details
         placeholder="Spec category title"
         @keypress.enter.stop="editing = false"
@@ -53,20 +53,20 @@
         <v-btn
           class="section-action"
           :color="editing ? 'primary' : '#444'"
-          small
+          size="small"
           icon
           @click="editing = !editing"
         >
-          <v-icon small> edit </v-icon>
+          <v-icon size="small"> edit </v-icon>
         </v-btn>
         <v-btn
           class="section-action"
-          small
+          size="small"
           icon
           color="#444"
           @click="$emit('delete')"
         >
-          <v-icon small> delete </v-icon>
+          <v-icon size="small"> delete </v-icon>
         </v-btn>
       </template>
     </div>
@@ -85,7 +85,7 @@
             v-if="editing && !minimize"
             v-model="item[0]"
             type="text"
-            solo
+            variant="solo"
             flat
             hide-details
             placeholder="Name of spec.."
@@ -104,7 +104,7 @@
               v-model="item[i]"
               type="text"
               class="my-1"
-              solo
+              variant="solo"
               flat
               hide-details
               placeholder="Value of spec.."
@@ -113,7 +113,7 @@
               <template v-slot:append-inner>
                 <v-btn
                   v-if="i !== 1"
-                  small
+                  size="small"
                   icon
                   @click.stop="
                     () => {
@@ -149,11 +149,11 @@
             <v-btn
               class="section-action"
               :color="editing ? 'primary' : '#444'"
-              small
+              size="small"
               icon
               @click="editing = !editing && editable"
             >
-              <v-icon :small="!editing">
+              <v-icon :size="!editing && 'small'">
                 {{ editing ? "check" : "edit" }}
               </v-icon>
             </v-btn>
@@ -161,12 +161,12 @@
             <!-- Delete button -->
             <v-btn
               class="section-action"
-              small
+              size="small"
               icon
               color="#444"
               @click="$emit('delete')"
             >
-              <v-icon small> delete </v-icon>
+              <v-icon size="small"> delete </v-icon>
             </v-btn>
           </template>
         </template>

@@ -19,8 +19,6 @@
 
     <draggable
       v-model="list"
-      tag="div"
-      v-bind="dragOptions"
       @start="drag = true"
       @end="drag = false"
       @change="
@@ -30,52 +28,62 @@
         });
       "
       filter=".ignore"
+
+
+      tag="transition-group"
+      :component-data="{
+          tag: 'ul',
+          type: 'transition-group',
+          name: !drag ? 'flip-list' : 'fade',
+        }"
+      v-bind="dragOptions"
+      style="list-style-type: none"
+
+
     >
-      <transition-group
-        type="transition"
-        :name="!drag ? 'flip-list' : null"
-        class="border-between-vertical rounded-card"
-      >
+      <template v-slot:item="{ element }">
         <div
-          v-for="item in list"
-          :key="isString(item)?item:JSON.stringify(item)"
-          class="p-2 row-hover usn cursor-move"
-          :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: disabled }"
+            :key="isString(element)?element:JSON.stringify(element)"
+            class="p-2 row-hover usn cursor-move"
+            :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: disabled }"
         >
           <div class="d-flex align-center mnh">
-            <v-icon v-if="itemIcon" class="me-1"> {{ itemIcon(item) }} </v-icon>
+            <v-icon v-if="itemIcon" class="me-1"> {{ itemIcon(element) }} </v-icon>
             <v-img
-              v-if="itemImage && itemImage(item)"
-              width="24"
-              height="24"
-              class="me-1 flex-grow-0"
-              :src="itemImage(item)"
+                v-if="itemImage && itemImage(element)"
+                width="24"
+                height="24"
+                class="me-1 flex-grow-0"
+                :src="itemImage(element)"
             >
             </v-img>
 
             <b
-              class="text-capitalize flex-grow-1 me-2 ms-2"
-              v-text="itemLabel ? itemLabel(item) : item"
+                class="text-capitalize flex-grow-1 me-2 ms-2"
+                v-text="itemLabel ? itemLabel(element) : element"
             ></b>
 
             <span class="me-2">
               <s-smart-menu
-                v-if="itemMenu"
-                :items="itemMenu"
-                :return-click-value="item"
+                  v-if="itemMenu"
+                  :items="itemMenu"
+                  :return-click-value="element"
               ></s-smart-menu
-            ></span>
+              ></span>
 
             <v-icon> menu </v-icon>
           </div>
         </div>
+      </template>
 
+
+      <template v-bind:footer>
         <div
-          v-if="hasAdd"
-          key="_add"
-          class="p-2 pp row-hover usn ignore"
-          :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: disabled }"
-          @click="$emit('click:add')"
+            v-if="hasAdd"
+            key="_add"
+            class="p-2 pp row-hover usn ignore"
+            :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: disabled }"
+            @click="$emit('click:add')"
         >
           <div class="d-flex align-center mnh justify-center">
             <v-icon class="me-1"> add_box </v-icon>
@@ -87,7 +95,12 @@
         </div>
 
         <slot name="append-inner"></slot>
-      </transition-group>
+      </template>
+
+
+
+
+
     </draggable>
   </div>
 </template>

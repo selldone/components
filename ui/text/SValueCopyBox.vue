@@ -29,7 +29,7 @@
         :color="color"
         @click.stop="copyToClipboard(value)"
         :size="small ? 'small' : undefined"
-        :class="{ 'rounded-18px': smallWidthMode ,'ma-2':!small,'ma-1':small }"
+        :class="{ 'rounded-18px': smallWidthMode ,'ma-2':!small && smallWidthMode,'ma-1':small && smallWidthMode}"
       >
         <v-icon>{{ icon }}</v-icon>
       </v-btn>

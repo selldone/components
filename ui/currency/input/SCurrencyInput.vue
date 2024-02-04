@@ -147,6 +147,8 @@ import SCurrencyIcon from "../icon/SCurrencyIcon.vue";
 export default {
   name: "SCurrencyInput",
   components: { SCurrencyIcon },
+
+  emits: ["update:modelValue", "change"],
   props: {
     modelValue: {},
     label: {},

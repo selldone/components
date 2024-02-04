@@ -611,7 +611,7 @@
             <v-icon
               color="#689F38"
               size="large"
-              class="absolute-top-end z2 selected-icon"
+              class="absolute-top-end z2 selected-icon h-auto"
               v-if="selectMode && canSelectProduct && isSelected(product.id)"
               >check_circle
             </v-icon>
@@ -2949,6 +2949,11 @@ export default {
     },
 
     /**
+     * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     * 🛑 DO NOT CHANGE IT!
+     * This function is called externally.
+     * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     *
      * Do not change! Called externally.
      * ex. $refs.products_list?.onAddOrUpdateProduct
      */
@@ -2956,6 +2961,12 @@ export default {
       this.AddOrUpdateItemByID(this.products, product);
     },
     /**
+     * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     * 🛑 DO NOT CHANGE IT!
+     * This function is called externally.
+     * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     *
+     *
      * Do not change! Called externally.
      * ex. $refs.products_list?.onAddOrUpdateCategory
      */

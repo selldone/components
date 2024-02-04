@@ -15,7 +15,7 @@
 <template>
   <s-fade-scroll class="text-start">
     <div class="d-flex" title="Dynamic values auto fill by augmentation.">
-      <v-chip label v-for="it in array" :key="it" x-small class="me-1">{{
+      <v-chip label v-for="it in array" :key="it" size="x-small" class="me-1">{{
         it
       }}</v-chip>
     </div>
@@ -45,9 +45,7 @@ export default {
 
   watch: {},
 
-  created() {
-
-  },
+  created() {},
 
   methods: {},
 };

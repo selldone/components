@@ -15,27 +15,38 @@
 <template>
   <draggable
     v-model="list"
-    tag="ul"
-    v-bind="dragOptions"
     @start="drag = true"
     @end="drag = false"
     @change="$emit('input', list)"
     handle=".handle"
+    tag="transition-group"
+    :component-data="{
+      tag: 'ul',
+      type: 'transition-group',
+      name: !drag ? 'flip-list' : 'fade',
+    }"
+    v-bind="dragOptions"
+    style="list-style-type: none"
   >
-    <transition-group type="transition" name="flip-list">
-      <li v-for="(item, index) in list" :key="index" class="list-group-item bg-transparent">
+    <template v-slot:item="{ element }">
+      <li class="list-group-item bg-transparent">
         <v-text-field
           v-if="editable"
-          v-model="item.title"
+          v-model="element.title"
           class="task-title"
           placeholder="Task title..."
           single-line
           flat
-          solo
+          variant="solo"
           hide-details
         >
           <template v-slot:prepend>
-            <v-icon class="handle"  :style="{cursor:editable?'move':undefined}"> unfold_more </v-icon>
+            <v-icon
+              class="handle"
+              :style="{ cursor: editable ? 'move' : undefined }"
+            >
+              unfold_more
+            </v-icon>
           </template>
 
           <template v-slot:append>
@@ -50,41 +61,35 @@
           </template>
         </v-text-field>
 
-        <p v-else v-text="item.title" class="task-title"></p>
+        <p v-else v-text="element.title" class="task-title"></p>
 
         <v-progress-linear
-          v-model="item.progress"
-          @change="item.progress=Math.round(item.progress);$emit('change')"
+          v-model="element.progress"
+          @update:model-value="
+            element.progress = Math.round(element.progress);
+            $emit('change');
+          "
           height="18"
           color="blue"
           rounded
           striped
-          background-color="#eee"
+          bg-color="#eee"
           class="pointer-pointer my-2"
           :reverse="$vuetify.rtl"
-          :class="{'pointer-event-none':viewOnlyProgress}"
-
+          :class="{ 'pointer-event-none': viewOnlyProgress }"
         >
         </v-progress-linear>
       </li>
-    </transition-group>
+    </template>
 
-
-    <template v-slot:bottom>
-      <div  v-if="editable" class="widget-buttons" >
-        <v-btn
-
-            @click="addItem"
-            x-large
-            outlined
-        >
+    <template v-slot:footer>
+      <div v-if="editable" class="widget-buttons">
+        <v-btn @click="addItem" size="x-large" variant="outlined">
           <v-icon class="me-1">add</v-icon>
-          {{$t('global.actions.add')}}
+          {{ $t("global.actions.add") }}
         </v-btn>
       </div>
     </template>
-
-
   </draggable>
 </template>
 
@@ -93,7 +98,7 @@ import draggable from "vuedraggable";
 
 export default {
   name: "ExpertContractTasks",
-  components: {  draggable },
+  components: { draggable },
   props: {
     value: {},
     editable: {
@@ -130,19 +135,18 @@ export default {
   },
 
   created() {
-    this.list = this.value && Array.isArray(this.value)?this.value:[];
+    this.list = this.value && Array.isArray(this.value) ? this.value : [];
   },
   methods: {
     deleteItem(index) {
       this.list.splice(index, 1);
       this.$emit("input", this.list);
-      this.$emit('change')
+      this.$emit("change");
     },
     addItem() {
       this.list.push({ title: "", progress: 0 });
       this.$emit("input", this.list);
-      this.$emit('change')
-
+      this.$emit("change");
     },
   },
 };

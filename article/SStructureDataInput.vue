@@ -110,8 +110,8 @@
       :label="name"
       filled
       dense
-      :value="value"
-      @input="(val) => $emit('input', val)"
+      :model-value="value"
+      @update:model-value="(val) => $emit('input', val)"
       :decimal="2"
       prepend-icon="attach_money"
       rounded

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -18,6 +18,7 @@
       title="Augmentation"
       add-text
       add-caption="Add New Item"
+      add-sub-caption="Add custom key-value pair."
       @click:add="show_add = true"
       icon="extension"
     >
@@ -43,7 +44,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, i) in value" :key="i">
+          <tr v-for="(item, i) in modelValue" :key="i">
             <td>
               <v-text-field
                 v-model="item.key"
@@ -94,7 +95,7 @@
             </td>
 
             <td>
-              <v-btn icon color="red" @click="remove(value, item)">
+              <v-btn icon variant="text" color="red" @click="remove(modelValue, item)">
                 <v-icon>close</v-icon>
               </v-btn>
             </td>
@@ -119,19 +120,16 @@
         <v-card-text>
           <v-list>
             <v-list-item @click="addTextItem" prepend-icon="title">
-
               <v-list-item-title>Text & Html</v-list-item-title>
               <v-list-item-subtitle
-                >The item's value can be designated as either text or
-                HTML.</v-list-item-subtitle
-              >
+                >The item's value can be designated as either text or HTML.
+              </v-list-item-subtitle>
             </v-list-item>
             <v-list-item @click="addImageItem" prepend-icon="image">
-
               <v-list-item-title>Image</v-list-item-title>
               <v-list-item-subtitle
-                >You can upload an image.</v-list-item-subtitle
-              >
+                >You can upload an image.
+              </v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -173,45 +171,50 @@
               experience on your landing pages.
             </p>
             <v-img
-              :src="require('./assets/agument-1.png')"
+              :src="require('../../../augment/assets/agument-1.png')"
               :aspect-ratio="2000 / 1290"
-              class="my-10 mx-auto" max-width="640"
+              class="my-10 mx-auto"
+              max-width="640"
             ></v-img>
             <p>
               To assign dynamic values to images, click on the feeder button
               located on the left side of the section.
             </p>
             <v-img
-              :src="require('./assets/agument-2.png')"
+              :src="require('../../../augment/assets/agument-2.png')"
               :aspect-ratio="2000 / 1290"
-              class="my-10 mx-auto" max-width="640"
+              class="my-10 mx-auto"
+              max-width="640"
             ></v-img>
             <p>
               You now have the ability to modify the image URL and assign it a
               dynamic value.
             </p>
             <v-img
-              :src="require('./assets/agument-3.png')"
+              :src="require('../../../augment/assets/agument-3.png')"
               :aspect-ratio="2000 / 1290"
-              class="my-10 mx-auto" max-width="640"
+              class="my-10 mx-auto"
+              max-width="640"
             ></v-img>
             <p>
               For every product, you have the ability to assign dedicated
               key-value pairs.
             </p>
             <v-img
-              :src="require('./assets/agument-4.png')"
+              :src="require('../../../augment/assets/agument-4.png')"
               :aspect-ratio="2000 / 1290"
-              class="my-10 mx-auto" max-width="640"
+              class="my-10 mx-auto"
+              max-width="640"
             ></v-img>
             <p>
               This is the final outcome of the page, where placeholders have
               been substituted with augmented values.
             </p>
             <v-img
-              :src="require('./assets/agument-5.png')"
+              :src="require('../../../augment/assets/agument-5.png')"
               :aspect-ratio="2000 / 1290"
-              class="my-10 mx-auto" max-width="640"
+              class="my-10 mx-auto"
+              max-width="640"
             ></v-img>
           </v-container>
         </v-card-text>
@@ -233,10 +236,11 @@
 import SImageUploader from "@components/uploader/SImageUploader.vue";
 
 export default {
-  name: "SBackofficePageAugmentForm",
+  name: "BPageAugmentForm",
   components: { SImageUploader },
+  emits: ["change", "update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
     loading: { type: Boolean },
   },
 
@@ -262,16 +266,17 @@ export default {
 
   methods: {
     init() {
-      if (!this.value || !Array.isArray(this.value)) this.$emit("input", []);
+      if (!this.modelValue || !Array.isArray(this.modelValue))
+        this.$emit("update:modelValue", []);
     },
     addTextItem() {
-      this.value.push({ key: "", value: null, type: "text" });
+      this.modelValue.push({ key: "", value: null, type: "text" });
       this.show_add = false;
       this.$forceUpdate();
       this.$emit("change");
     },
     addImageItem() {
-      this.value.push({ key: "", value: null, type: "image" });
+      this.modelValue.push({ key: "", value: null, type: "image" });
       this.show_add = false;
       this.$forceUpdate();
       this.$emit("change");

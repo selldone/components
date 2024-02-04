@@ -459,7 +459,7 @@
                 v-if="product.reselling"
                 title="Drop shipping"
                 :to="{
-                  name: 'ProductDropShippingPage',
+                  name: 'BPageProductDropshipping',
                   params: { product_id: product.id },
                 }"
                 class="row-hover mx-auto"

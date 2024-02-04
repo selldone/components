@@ -32,32 +32,46 @@
             else $emit('update', list);
           }
         "
-        v-bind="dragOptions"
-        tag="div"
         @start="drag = true"
         @end="drag = false"
         :class="{ 'border-between-vertical': editable }"
+
+        tag="transition-group"
+        :component-data="{
+          tag: 'ul',
+          type: 'transition-group',
+          name: !drag ? 'flip-list' : 'fade',
+        }"
+        v-bind="dragOptions"
+        style="list-style-type: none"
+
+
       >
-        <div v-for="(item, index) in spec" :key="index">
+        <template v-slot:item="{ element,index }">
           <sortable-item
-            v-if="item"
-            :item="item"
-            :editable="editable"
-            @delete="$emit('click-delete', index)"
-            :minimize="drag"
-            :class="{
+              v-if="element"
+              :item="element"
+              :editable="editable"
+              @delete="$emit('click-delete', element)"
+              :minimize="drag"
+              :class="{
               '-border': !(
                 index >= spec.length - 1 ||
-                spec[index].group /*It's group!*/ ||
+                element.group /*It's group!*/ ||
                 spec[index + 1].group
               ) /*NExt is group so it's last item!*/,
             }"
           />
+        </template>
 
+
+
+        <template #footer>
           <p v-if="!item" class="bg-danger p-3 text--white">
             Error! item is null!
           </p>
-        </div>
+        </template>
+
       </draggable>
     </template>
 

@@ -16,36 +16,49 @@
   <draggable
     v-model="list"
     class="list-group list-group-flush"
-    tag="ul"
-    v-bind="dragOptions"
     @start="drag = true"
     @end="drag = false"
     @change="$emit('input', list)"
+    tag="transition-group"
+    :component-data="{
+      tag: 'ul',
+      type: 'transition-group',
+      name: !drag ? 'flip-list' : 'fade',
+    }"
+    v-bind="dragOptions"
+    style="list-style-type: none"
   >
-    <transition-group type="transition" :name="!drag ? 'flip-list' : null">
-      <li v-for="(item, index) in list" :key="item" class="list-group-item" :style="{'background-image': `url('${item}')`}">
-
+    <template v-slot:item="{ element }">
+      <li
+        :key="item"
+        class="list-group-item"
+        :style="{ 'background-image': `url('${element}')` }"
+      >
         <v-btn
           class="delete-button"
           icon
+          variant="text"
+          size="small"
           @click.stop="deleteItem(index)"
         >
-          <v-icon color="red">
-            close
-          </v-icon>
+          <v-icon color="red"> close </v-icon>
         </v-btn>
       </li>
-    </transition-group>
+    </template>
 
     <template v-slot:footer>
-      <div class="py-2" >
-        <v-btn v-if="hasAdd" @click.stop="$emit('add-click')" depressed rounded>
+      <div class="py-2">
+        <v-btn
+          v-if="hasAdd"
+          @click.stop="$emit('add-click')"
+          variant="flat"
+          rounded
+        >
           <v-icon>add</v-icon>
           Add
         </v-btn>
       </div>
     </template>
-
   </draggable>
 </template>
 
@@ -58,14 +71,14 @@ export default {
     value: {},
     hasAdd: {
       default: true,
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
 
   data: () => ({
     drag: false,
     index: 0,
-    list: []
+    list: [],
   }),
 
   computed: {
@@ -74,15 +87,15 @@ export default {
         animation: 200,
         group: "description",
         disabled: false,
-        ghostClass: "ghost"
+        ghostClass: "ghost",
       };
-    }
+    },
   },
 
   watch: {
     value() {
       this.list = this.value;
-    }
+    },
   },
 
   created() {
@@ -92,8 +105,8 @@ export default {
     deleteItem(index) {
       this.list.splice(index, 1);
       this.$emit("input", this.list);
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -157,7 +170,7 @@ export default {
       color: #fff;
     }
 
-    transition: all  0.5s !important;
+    transition: all 0.5s !important;
 
     &:hover {
       transform: translateY(-2px);
@@ -175,14 +188,14 @@ export default {
   }
 }
 
-  .for-rtl{
-    .list-group {
-      .list-group-item {
-        .delete-button {
-          left: 8px;
-          right: unset;
-        }
+.for-rtl {
+  .list-group {
+    .list-group-item {
+      .delete-button {
+        left: 8px;
+        right: unset;
       }
     }
   }
+}
 </style>

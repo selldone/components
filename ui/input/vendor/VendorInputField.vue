@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-combobox
+  <v-autocomplete
     :model-value="modelValue"
     @update:model-value="
       (val) => {
@@ -52,7 +52,7 @@
       <template v-if="selected_vendor">
         <v-avatar
           v-if="selected_vendor.icon"
-          :size="dense ? 24 : 32"
+          :size="dense ? 20 : 24"
           rounded
           class="ma-1 me-2"
         >
@@ -72,22 +72,30 @@
       </div>
     </template>
 
-    <template v-slot:item="{ item }">
-      <v-row no-gutters align="center">
-        <v-avatar v-if="item.icon" size="32" rounded class="ma-1 me-2">
-          <img :src="getShopImagePath(item.icon, 64)" />
-        </v-avatar>
-        <b>{{ item.name }}</b>
-        <v-spacer></v-spacer>
-        <v-chip v-if="item.user" class="mx-1 pen" color="#fafafa">
-          <v-avatar size="24" start class="avatar-gradient -thin -user">
-            <img :src="getUserAvatar(item.user_id)" />
+    <template v-slot:item="{ item ,props}">
+      <v-list-item v-bind="props">
+        <template v-slot:prepend>
+          <v-avatar size="32" rounded>
+            <img  v-if="item.raw.icon" :src="getShopImagePath(item.raw.icon, 64)" />
+            <v-icon v-else>storefront</v-icon>
           </v-avatar>
-          <span class="small">{{ item.user.name }}</span>
-        </v-chip>
-      </v-row>
+        </template>
+
+        <template v-slot:title>
+          <v-row no-gutters align="center">
+            <b>{{ item.raw.name }}</b>
+            <v-spacer></v-spacer>
+            <v-chip v-if="item.raw.user" class="mx-1 pen"  size="small">
+              <v-avatar start class="avatar-gradient -thin -user">
+                <img :src="getUserAvatar(item.raw.user_id)" />
+              </v-avatar>
+              <span class="small">{{ item.raw.user.name }}</span>
+            </v-chip>
+          </v-row>
+        </template>
+      </v-list-item>
     </template>
-  </v-combobox>
+  </v-autocomplete>
 </template>
 
 <script>

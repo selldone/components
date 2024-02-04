@@ -17,7 +17,7 @@
     :shop="shop"
     :label="label"
     :default-value="crossSell[translationKey]"
-    :translations.sync="crossSell.translations"
+    v-model:translations="crossSell.translations"
     :translation-key="translationKey"
     :url="
       IS_VENDOR_PANEL
@@ -25,13 +25,13 @@
             $route.params.vendor_id,
             crossSell.product_id,
             crossSell.id,
-            translationKey
+            translationKey,
           )
         : window.API.PUT_CROSS_SELL_SET_TRANSLATIONS(
             shop.id,
             crossSell.product_id,
             crossSell.id,
-            translationKey
+            translationKey,
           )
     "
     is-string-mode

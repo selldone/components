@@ -13,26 +13,23 @@
   -->
 
 <template>
-  <v-menu offset-y :disabled="disabled">
-    <template v-slot:activator="{ on, attrs }">
-      <div v-on="on" v-bind="attrs" class="position-relative">
+  <v-menu :disabled="disabled">
+    <template v-slot:activator="{ props }">
+      <div v-bind="props" class="position-relative">
         <variant-item-mini
-                v-if="value"
+          v-if="modelValue"
           class="m-2"
-          :product-variant="value"
+          :product-variant="modelValue"
           selected
           force-enable
           :active-color="activeColor"
           :bordered="bordered"
         />
 
-        <div v-else class="text-muted p-2">
-          Select one variant!
-        </div>
+        <div v-else class="text-muted p-2">Select one variant!</div>
 
         <v-icon class="absolute-top-end" dark> arrow_drop_down</v-icon>
       </div>
-
     </template>
     <v-sheet color="#fff" class="py-2">
       <variant-item-mini
@@ -40,8 +37,8 @@
         :key="index"
         class="m-2"
         :product-variant="product_variant"
-        :selected="product_variant === value"
-        @select="$emit('input', product_variant)"
+        :selected="product_variant === modelValue"
+        @select="$emit('update:modelValue', product_variant)"
         :active-color="activeColor"
       />
     </v-sheet>
@@ -53,22 +50,21 @@ import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
 export default {
   name: "VariantSelectorMenu",
   components: { VariantItemMini },
+  emits: ["update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
     variants: {
       require: true,
     },
-    activeColor:{
-      default:undefined
+    activeColor: {
+      default: undefined,
     },
-    bordered:{type:Boolean,default:false},
+    bordered: { type: Boolean, default: false },
 
-    disabled : {
+    disabled: {
       default: false,
       type: Boolean,
     },
-
-
   },
 };
 </script>

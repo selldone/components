@@ -35,29 +35,31 @@
       >
       <v-list color="transparent" class="border-between-vertical">
         <v-list-item
-          three-line
-          dense
+          lines="three"
+          density="compact"
           v-for="category in categories_detail"
           :key="category.id"
         >
-          <v-list-item-avatar tile>
-            <v-img
-              :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
-              class="rounded -cat"
-            ></v-img>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title>{{
-              category.title?.limitWords(7)
-            }}</v-list-item-title>
-            <v-list-item-subtitle
-              >{{ category.description?.limitWords(20) }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
+          <template v-slot:prepend>
+            <v-avatar rounded="lg">
+              <v-img
+                :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
+                class="rounded -cat"
+              ></v-img>
+            </v-avatar>
+          </template>
+
+          <v-list-item-title
+            >{{ category.title?.limitWords(7) }}
+          </v-list-item-title>
+          <v-list-item-subtitle
+            >{{ category.description?.limitWords(20) }}
+          </v-list-item-subtitle>
+
           <v-list-item-action>
-            <v-btn icon @click.stop="deleteCategory(category.id)"
-              ><v-icon>close</v-icon></v-btn
-            >
+            <v-btn icon @click.stop="deleteCategory(category.id)">
+              <v-icon>close</v-icon>
+            </v-btn>
           </v-list-item-action>
         </v-list-item>
       </v-list>
@@ -73,10 +75,12 @@
       <b v-if="!simpleMode" class="mx-2"
         >{{ $t("global.commons.products") }}:</b
       >
+
       <v-list
         :class="{ 'no-action': singleProductSelect }"
-        color="transparent"
-        class="border-between-vertical"
+        bg-color="transparent"
+        class="border-between-vertical text-start"
+        v-model:opened="open"
       >
         <v-list-group
           v-for="product in products_detail"
@@ -84,66 +88,85 @@
           :append-icon="
             product.product_variants.length ? 'keyboard_arrow_down' : ' '
           "
+          :value="product.id"
         >
-          <template v-slot:activator>
-            <v-list-item three-line dense class="ps-0">
-              <v-list-item-avatar tile>
-                <v-img
-                  :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
-                  class="rounded"
-                ></v-img>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>{{
-                  product.title?.limitWords(7)
-                }}</v-list-item-title>
+          <template v-slot:activator="{ props, isOpen }">
+            <v-list-item
+              lines="three"
+              density="compact"
+              class="ps-0"
+              v-bind="props"
+            >
+              <template v-slot:prepend>
+                <v-avatar rounded="lg">
+                  <v-img
+                    :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+                  ></v-img>
+                </v-avatar>
+              </template>
 
-                <v-list-item-subtitle class="d-flex"
-                  ><span v-if="product.sku" class="w-50"
-                    >SKU: {{ product.sku }}
-                  </span>
-                  <span v-if="product.mpn" class="w-50"
-                    >MPN: {{ product.mpn }}
-                  </span>
-                </v-list-item-subtitle>
+              <v-list-item-title
+                >{{ product.title?.limitWords(7) }}
+              </v-list-item-title>
 
-                <product-variants-view
-                  :variants="product.product_variants"
-                  small
-                  center
-                  dense
-                />
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-btn icon @click.stop="deleteProduct(product.id)"
-                  ><v-icon>close</v-icon></v-btn
-                >
-              </v-list-item-action>
+              <v-list-item-subtitle class="d-flex"
+                ><span v-if="product.sku" class="w-50"
+                  >SKU: {{ product.sku }}
+                </span>
+                <span v-if="product.mpn" class="w-50"
+                  >MPN: {{ product.mpn }}
+                </span>
+              </v-list-item-subtitle>
+
+              <product-variants-view
+                :variants="product.product_variants"
+                small
+                center
+                dense
+              />
+
+              <template v-slot:append>
+                <v-list-item-action end>
+                  <v-icon
+                    v-if="product.product_variants?.length"
+                    class="mx-1"
+                    :class="{ 'rotate-180': isOpen }"
+                  >
+                    expand_more
+                  </v-icon>
+                  <v-btn
+                    icon
+                    @click.stop="deleteProduct(product.id)"
+                    variant="text"
+                  >
+                    <v-icon>close</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </template>
             </v-list-item>
           </template>
 
           <template v-if="!singleProductSelect">
-            <v-list-item-group
+            <v-list-item
               v-for="variant in product.product_variants"
               :key="'var_' + variant.id"
-              class="mb-1 mt-3 mx-4"
             >
               <variant-item-mini
                 :product-variant="variant"
                 :selected="
-                  !forceNoVariants && value[product.id].includes(variant.id)
+                  !forceNoVariants &&
+                  modelValue[product.id].includes(variant.id)
                 "
                 @select="toggleVariant(product.id, variant.id)"
                 :class="{ pen: forceNoVariants }"
               ></variant-item-mini>
-            </v-list-item-group>
+            </v-list-item>
           </template>
 
           <template v-if="singleProductVariantSelect">
-            <v-list-item-group
+            <v-list-item
               v-for="variant in product.product_variants"
               :key="'var_' + variant.id"
-              class="my-1 mx-4"
             >
               <variant-item-mini
                 :product-variant="variant"
@@ -152,7 +175,7 @@
                   $emit('update:variantId', variantId ? null : variant.id)
                 "
               ></variant-item-mini>
-            </v-list-item-group>
+            </v-list-item>
           </template>
         </v-list-group>
       </v-list>
@@ -170,7 +193,7 @@
 
     <div class="products-box-add row-hover" @click.stop="dialog = true">
       <div class="center-absolute text-center">
-        <v-icon large>fa:fas fa-plus</v-icon>
+        <v-icon size="large">fa:fas fa-plus</v-icon>
         <div>
           <slot></slot>
         </div>
@@ -185,7 +208,7 @@
         scrollable
       >
         <v-card>
-          <v-card-title>
+          <v-card-title class="d-flex align-center">
             <v-icon class="me-2">view_comfy</v-icon>
             Select products & Categories
           </v-card-title>
@@ -198,7 +221,7 @@
               withFullVariant
               dialog-mode
               select-mode
-              :selected-list="value ? value : []"
+              :selected-list="modelValue ? modelValue : []"
               :can-select-category="!singleProductSelect && !productsOnly"
               @select-category="selectCategory"
             />
@@ -208,7 +231,12 @@
 
           <v-card-actions>
             <div class="widget-buttons">
-              <v-btn color="primary" text @click="dialog = false" x-large>
+              <v-btn
+                color="primary"
+                variant="text"
+                @click="dialog = false"
+                size="x-large"
+              >
                 <v-icon class="me-1">close</v-icon>
 
                 {{ $t("global.actions.close") }}
@@ -226,6 +254,7 @@ import SBackofficeProductsManagementView from "@components/backoffice/product/SB
 import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
 import SLoading from "@components/ui/loading/SLoading.vue";
+
 export default {
   name: "ProductSelectBox",
   components: {
@@ -234,8 +263,9 @@ export default {
     VariantItemMini,
     SBackofficeProductsManagementView,
   },
+  emits: ["update:modelValue", "change", "update:variantId"],
   props: {
-    value: {},
+    modelValue: {},
     shop: {
       require: true,
       type: Object,
@@ -279,6 +309,8 @@ export default {
     },
   },
   data: () => ({
+    open: [],
+
     dialog: false,
 
     products_detail: [],
@@ -291,40 +323,43 @@ export default {
 
   computed: {
     product_ids_list() {
-      if (this.singleProductSelect) return this.value ? [this.value] : [];
-      return Object.keys(this.value).filter((item) => !item.startsWith("c-"));
+      if (this.singleProductSelect)
+        return this.modelValue ? [this.modelValue] : [];
+      return Object.keys(this.modelValue).filter(
+        (item) => !item.startsWith("c-"),
+      );
     },
 
     category_ids_list() {
       if (this.singleProductSelect) return [];
-      return Object.keys(this.value)
+      return Object.keys(this.modelValue)
         .filter((item) => item.startsWith("c-"))
         .map((item) => item.replace("c-", ""));
     },
   },
   watch: {
-    value(value) {
+    modelValue(value) {
       if (value === this.value_local) return; // The value change by this component!
       console.log("CHANGE!", value);
       this.resetToDefault(); // 🞇 Reset to default
 
-      this.value_local = this.value;
+      this.value_local = this.modelValue;
       this.fetchProductsList();
       this.fetchCategoriesList();
     },
   },
   created() {
-    this.value_local = this.value;
+    this.value_local = this.modelValue;
 
     this.fetchProductsList();
     this.fetchCategoriesList();
 
-    if (this.autoOpenDialog && !this.value) this.dialog = true;
+    if (this.autoOpenDialog && !this.modelValue) this.dialog = true;
   },
   methods: {
     updateValue(value) {
       this.value_local = value;
-      this.$emit("input", value);
+      this.$emit("update:modelValue", value);
     },
 
     selectProduct(product_selected) {
@@ -337,12 +372,12 @@ export default {
         return;
       }
 
-      let obj = Object.assign({}, this.value); // Reset to default!
+      let obj = Object.assign({}, this.modelValue); // Reset to default!
 
       //console.log('=========>',obj)
-      if (!this.value[product_selected.id]) {
+      if (!this.modelValue[product_selected.id]) {
         obj["" + product_selected.id] = product_selected.product_variants.map(
-          (a) => a.id
+          (a) => a.id,
         );
         this.AddOrUpdateItemByID(this.products_detail, product_selected);
       } else {
@@ -360,9 +395,9 @@ export default {
         return;
       }
       //console.log("category_selected", category_selected);
-      let obj = Object.assign({}, this.value); // Reset to default!
+      let obj = Object.assign({}, this.modelValue); // Reset to default!
 
-      if (!this.value["c-" + category_selected.id]) {
+      if (!this.modelValue["c-" + category_selected.id]) {
         obj["c-" + category_selected.id] = {};
         this.AddOrUpdateItemByID(this.categories_detail, category_selected);
       } else {
@@ -383,8 +418,8 @@ export default {
       if (this.singleProductSelect) {
         this.updateValue(null);
       } else {
-        delete this.value["c-" + category_id];
-        this.updateValue(Object.assign({}, this.value));
+        delete this.modelValue["c-" + category_id];
+        this.updateValue(Object.assign({}, this.modelValue));
       }
       this.$emit("change");
     },
@@ -394,8 +429,8 @@ export default {
       if (this.singleProductSelect) {
         this.updateValue(null);
       } else {
-        delete this.value[product_id];
-        this.updateValue(Object.assign({}, this.value));
+        delete this.modelValue[product_id];
+        this.updateValue(Object.assign({}, this.modelValue));
       }
       this.$emit("change");
     },
@@ -404,7 +439,7 @@ export default {
       if (this.forceNoVariants) return;
       // console.log('=====>',this.value[product_id])
 
-      let obj = Object.assign({}, this.value); // Reset to default!
+      let obj = Object.assign({}, this.modelValue); // Reset to default!
       const index = obj[product_id].indexOf(variant_id);
       if (index >= 0) {
         obj[product_id].splice(index, 1);
@@ -412,14 +447,14 @@ export default {
         obj[product_id].push(variant_id);
       }
 
-      this.updateValue(this.value);
+      this.updateValue(this.modelValue);
       this.$emit("change");
     },
 
     fetchProductsList() {
       if (
         !this.singleProductSelect &&
-        (!this.value || Array.isArray(this.value))
+        (!this.modelValue || Array.isArray(this.modelValue))
       )
         return this.updateValue({});
 
@@ -433,7 +468,7 @@ export default {
         window.___CACHED_LOADED_PRDUCTS_LIST_1 = {}; // Keep products prevent over loading!
       if (
         !this.product_ids_list.some(
-          (id) => !window.___CACHED_LOADED_PRDUCTS_LIST_1["" + id]
+          (id) => !window.___CACHED_LOADED_PRDUCTS_LIST_1["" + id],
         )
       ) {
         // All ids exists!
@@ -449,14 +484,14 @@ export default {
       axios
         .get(
           window.API.GET_ALL_MY_PRODUCTS_LIST_BY_PARAMS(
-            this.$route.params.shop_id
+            this.$route.params.shop_id,
           ),
           {
             params: {
               params: ["title", "icon", "sku", "mpn", "quantity"],
               list: this.product_ids_list,
             },
-          }
+          },
         )
         .then(({ data }) => {
           this.products_detail = data.products;
@@ -473,7 +508,7 @@ export default {
     fetchCategoriesList() {
       if (
         !this.singleProductSelect &&
-        (!this.value || Array.isArray(this.value))
+        (!this.modelValue || Array.isArray(this.modelValue))
       )
         return this.updateValue({});
 
@@ -486,14 +521,14 @@ export default {
       axios
         .get(
           window.API.GET_ALL_MY_CATEGORIES_LIST_BY_PARAMS(
-            this.$route.params.shop_id
+            this.$route.params.shop_id,
           ),
           {
             params: {
               params: ["title", "description", "icon"],
               list: this.category_ids_list,
             },
-          }
+          },
         )
         .then(({ data }) => {
           this.categories_detail = data.categories;
@@ -512,6 +547,7 @@ export default {
   font-size: 12px;
   font-weight: 500;
 }
+
 .products-box {
   position: relative;
   border: #aaa solid 1px;
@@ -521,6 +557,7 @@ export default {
     border: none !important;
   }
 }
+
 .products-box-add {
   position: relative;
   border: #aaa dashed 1px;
@@ -536,11 +573,13 @@ export default {
 .-cat-box {
   border-left: #ffa000 solid 3px;
 }
+
 .v-application--is-rtl {
   .-cat-box {
     border-left: unset;
     border-right: #ffa000 solid 3px;
   }
+
   .-prod-box {
     border-left: unset;
     border-right: #673ab7 solid 3px;
