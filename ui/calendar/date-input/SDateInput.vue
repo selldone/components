@@ -288,9 +288,9 @@ export default {
       // Set initial value:
       if (this.modelValue) {
         let date = new Date(this.modelValue);   // Wed Nov 29 2023 18:00:00 GMT-0600
-        const adapter = useDate()
 
-        this.date = adapter.parseISO(date)    // Thu Nov 30 2023 00:00:00 GMT-0600
+        this.date = date.toISOString().slice(0, 10);
+
         this.time = date.toLocaleString("default", {
           hour: "numeric",
           minute: "numeric",

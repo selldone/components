@@ -88,6 +88,8 @@ import Seasons from "./Seasons.ts";
 export default defineComponent({
   name: "SSmartSuggestion",
   components: {},
+
+  emits: ["select"],
   props: {
     samples: {},
     addSession: { type: Boolean },

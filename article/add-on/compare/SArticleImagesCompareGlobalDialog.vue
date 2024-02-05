@@ -26,9 +26,9 @@
 
         <v-spacer> </v-spacer>
         <v-btn
-          text
+          variant="text"
           color="red"
-          x-large
+          size="x-large"
           @click="
             deleteCallback();
             show_dialog = false;
@@ -38,8 +38,7 @@
           >{{ $t("global.actions.delete") }}</v-btn
         >
 
-        <v-tabs v-model="tab" align-with-title background-color="transparent">
-          <v-tabs-slider color="primary"></v-tabs-slider>
+        <v-tabs v-model="tab" align-tabs="title" bg-color="transparent" slider-color="primary">
           <v-tab>
             <v-icon class="me-1">image</v-icon>
             {{ $t("global.commons.image") }}
@@ -51,7 +50,7 @@
         </v-tabs>
       </v-card-title>
       <v-card-text>
-        <v-tabs-items v-model="tab" class="bg-transparent">
+        <v-window v-model="tab" class="bg-transparent">
           <v-window-item>
             <div dir="ltr" class="widget-box -large mb-5">
               <s-widget-header title="Images" icon="image"></s-widget-header>
@@ -118,16 +117,21 @@
               </v-slider>
             </div>
           </v-window-item>
-        </v-tabs-items>
+        </v-window>
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn text @click="show_dialog = false" x-large>
+          <v-btn variant="text" @click="show_dialog = false" size="x-large">
             <v-icon class="me-1">close</v-icon>
 
             {{ $t("global.actions.close") }}</v-btn
           >
-          <v-btn depressed color="primary" @click="setValue" x-large>
+          <v-btn
+            variant="flat"
+            color="primary"
+            @click="setValue"
+            size="x-large"
+          >
             <v-icon class="me-1">check</v-icon
             >{{ $t("global.actions.set") }}</v-btn
           >
@@ -143,7 +147,7 @@ import { EventName } from "@core/events/EventBus";
 
 export default {
   name: "SArticleImagesCompareGlobalDialog",
-  components: {SImageUploader },
+  components: { SImageUploader },
 
   props: {
     masterId: {
@@ -213,10 +217,10 @@ export default {
         this.tab = tab ? ["image", "size"].indexOf(tab) : 0;
 
         this.showDialog();
-      }
+      },
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off(EventName.ARTICLE_COMPARE_IMAGES_SHOW);
   },
 

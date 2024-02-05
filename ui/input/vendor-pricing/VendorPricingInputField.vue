@@ -13,11 +13,11 @@
   -->
 
 <template>
-  <v-combobox
-    :value="value"
-    @input="
+  <v-autocomplete
+    :model-value="modelValue"
+    @update:model-value="
       (val) => {
-        $emit('input', val);
+        $emit('update:modelValue', val);
       }
     "
     :items="pricings"
@@ -26,19 +26,18 @@
     placeholder="Select a pricing model ... (opt)"
     persistent-placeholder
     item-value="id"
-    item-text="name"
+    item-title="title"
     :return-object="false"
     clearable
-    @change="$emit('change')"
     @click:clear="
       $emit('click:clear');
       getPricings();
     "
-    :search-input.sync="search"
-    :filter="() => true"
-    :messages="selected_pricing && selected_pricing.description"
+    v-model:search="search"
+    :customFilter="() => true"
+    :messages="selected_pricing?.description?selected_pricing?.description:undefined"
     :disabled="disabled || IS_VENDOR_PANEL"
-
+    :variant="variant"
   >
     <template v-slot:selection="{}">
       <template v-if="selected_pricing">
@@ -46,17 +45,21 @@
 
         <b class="mx-2">{{ selected_pricing.commission }}%</b>
       </template>
-      <small v-else-if="value">Loading...</small>
+      <small v-else-if="modelValue">Loading...</small>
     </template>
 
-    <template v-slot:item="{ item }">
-      <v-row no-gutters align="center">
-        {{ item.title }}
-        <v-spacer></v-spacer>
-        <b class="mx-2">{{ item.commission }}%</b>
-      </v-row>
+    <template v-slot:item="{ item, props }">
+      <v-list-item v-bind="props">
+        <template v-slot:title>
+          <v-row no-gutters align="center">
+            {{ item.raw.title }}
+            <v-spacer></v-spacer>
+            <b class="mx-2">{{ item.raw.commission }}%</b>
+          </v-row>
+        </template>
+      </v-list-item>
     </template>
-  </v-combobox>
+  </v-autocomplete>
 </template>
 
 <script>
@@ -65,21 +68,24 @@ import _ from "lodash-es";
 export default {
   name: "VendorPricingInputField",
   components: {},
+  emits: ["update:modelValue", "click:clear"],
   props: {
     shop: {
       require: true,
       type: Object,
     },
 
-    value: {},
+    modelValue: {},
     defaultPricing: {}, // Default value object
 
-
-    disabled : {
+    disabled: {
       default: false,
       type: Boolean,
     },
 
+    variant: {
+      default: "underlined",
+    },
   },
 
   data() {
@@ -94,26 +100,24 @@ export default {
   },
 
   computed: {
-
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
 
-
     selected_pricing() {
-      let out = this.pricings.find((vendor) => vendor.id === this.value);
-      if (!out && this.value) return this.defaultPricing; // Return default value object
+      let out = this.pricings.find((vendor) => vendor.id === this.modelValue);
+      if (!out && this.modelValue) return this.defaultPricing; // Return default value object
       return out;
     },
   },
 
   watch: {
     search: _.throttle(function (newVal, oldVal) {
-      if(!newVal && !oldVal) return;
+      if (!newVal && !oldVal) return;
       this.getPricings();
     }, window.SERACH_THROTTLE),
 
@@ -123,7 +127,7 @@ export default {
   },
 
   created() {
-    if(!this.IS_VENDOR_PANEL) {
+    if (!this.IS_VENDOR_PANEL) {
       // Just marketplace has access to list of vendors!
       this.getPricings();
     }
@@ -137,9 +141,9 @@ export default {
           params: {
             // Must contain this id:
             contain:
-              this.value && this.isObject(this.value)
-                ? this.value.id
-                : this.value,
+              this.modelValue && this.isObject(this.modelValue)
+                ? this.modelValue.id
+                : this.modelValue,
             search: this.search,
 
             offset: 0,

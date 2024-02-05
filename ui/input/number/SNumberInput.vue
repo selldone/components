@@ -271,6 +271,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    variant:{}
   },
 
   data() {

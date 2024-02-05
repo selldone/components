@@ -15,20 +15,22 @@
 <template>
   <s-fade-scroll class="sx-menu">
     <v-tabs
-      :vertical="$vuetify.display.mdAndUp"
-      :value="value"
-      @change="(val) => $emit('input', val)"
+      :direction="$vuetify.display.mdAndUp ? 'vertical' : 'horizontal'"
+      :model-value="modelValue"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
       slider-size="7"
       :style="{
         'min-width': $vuetify.display.mdAndUp ? undefined : 'max-content',
       }"
     >
-      <v-tab v-for="(item, i) in items" :key="i" class="sx-item">
-        <v-icon left>
+      <v-tab v-for="(item, i) in items" :key="i" class="sx-item" :value="i">
+        <v-icon start>
           {{ item.icon }}
         </v-icon>
         {{ item.title }}
-        <v-icon v-if="item.warning" color="orange" small class="mx-1">warning</v-icon>
+        <v-icon v-if="item.warning" color="orange" size="small" class="mx-1"
+          >warning
+        </v-icon>
       </v-tab>
     </v-tabs>
   </s-fade-scroll>
@@ -40,8 +42,9 @@ import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 export default {
   name: "FloatSmartTabs",
   components: { SFadeScroll },
+  emits: ["update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
     items: { required: true, type: Array },
   },
 };
@@ -57,6 +60,7 @@ export default {
     font-weight: 500;
     justify-content: flex-start !important;
   }
+
   @media only screen and (min-width: 1100px) {
     position: absolute;
     left: 8px;

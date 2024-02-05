@@ -54,12 +54,13 @@
       }}</v-icon>
       {{ title }}</small
     >
+    <slot></slot>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Pod",
+  name: "SPod",
   props: {
     icon: {},
     image: {},

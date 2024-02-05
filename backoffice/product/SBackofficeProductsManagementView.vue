@@ -179,7 +179,7 @@
         </admin-products-filter-input>
 
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Filter by vendor ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
-        <vendor-input-field
+        <b-vendor-input
           v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL && $vuetify.display.mdAndUp"
           v-model="vendor_filter"
           :shop="shop"
@@ -191,11 +191,11 @@
           dense
           hide-details
           @change="fetchData()"
-        ></vendor-input-field>
+        ></b-vendor-input>
       </s-products-sort-view>
     </v-row>
     <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Filter by vendor ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
-    <vendor-input-field
+    <b-vendor-input
       v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL && !$vuetify.display.mdAndUp"
       v-model="vendor_filter"
       :shop="shop"
@@ -206,7 +206,7 @@
       dense
       hide-details
       @change="fetchData()"
-    ></vendor-input-field>
+    ></b-vendor-input>
 
     <!-- ██████████████████ 🞧 Extra objects return by special search ██████████████████ -->
 
@@ -1375,13 +1375,13 @@
               :ids="assign_vendor_product_ids"
             ></products-dense-images-circles>
 
-            <vendor-input-field
+            <b-vendor-input
               v-model="vendor_id_input"
               active-only
               :shop="shop"
               label="Vendor"
               placeholder="Filter by vendor..."
-            ></vendor-input-field>
+            ></b-vendor-input>
 
             <s-smart-switch
               class="mt-5"
@@ -1677,7 +1677,7 @@ import SShopCategoryAdd from "@components/shop/category/add/SShopCategoryAdd.vue
 import FolderCardMini from "@components/backoffice/product/widgets/FolderCardMini.vue";
 import ProductCardMini from "@components/backoffice/product/widgets/ProductCardMini.vue";
 import { BusinessModel } from "@core/enums/shop/BusinessModel";
-import VendorInputField from "@components/ui/input/vendor/VendorInputField.vue";
+import BVendorInput from "@components/backoffice/vendor/input/BVendorInput.vue";
 
 import VendorPricingInputField from "@components/ui/input/vendor-pricing/VendorPricingInputField.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
@@ -1726,7 +1726,7 @@ export default {
     SNumberInput,
     VendorPricingInputField,
 
-    VendorInputField,
+    BVendorInput,
     ProductCardMini,
     FolderCardMini,
     SShopCategoryAdd,

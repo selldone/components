@@ -16,19 +16,21 @@
   <v-row
     :justify="center ? 'center' : null"
     class="product-variant-view"
-    :class="[
-      center ? ['text-center', 'small'] : '',
-      dark ? 'dark' : '',
-      { '-selectable': selectable },
-    ]"
+    :class="{
+      '-selectable': selectable,
+      '-dense': dense,
+      dark: dark,
+      'text-center': center,
+      '-small': small,
+    }"
     @click="$emit('select')"
   >
     <div
       v-if="colors.length"
-      class="p-1 d-flex align-center  flex-wrap"
-      :class="{ dense: dense  ,'-ultra-dense':isUltraDense(colors)  }"
+      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense, '-ultra-dense': isUltraDense(colors) }"
     >
-      <v-icon :color="icon_color" class="me-1" small> palette </v-icon>
+      <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
 
       <s-color-circle
         v-for="color in colors"
@@ -38,9 +40,9 @@
         :border-less="small"
         class="me-1 hover-scale card-badge-color"
         :class="{ '-selected': selectedVariant?.color === color }"
-        @click.native="onSelect('color', color)"
-        @mouseenter.native="hoverable ? onSelect('color', color) : undefined"
-        @mouseleave.native="
+        @click="onSelect('color', color)"
+        @mouseenter="hoverable ? onSelect('color', color) : undefined"
+        @mouseleave="
           hoverable ? $emit('update:selected-variant', null) : undefined
         "
       >
@@ -49,10 +51,10 @@
 
     <div
       v-if="volumes.length"
-      class="p-1 d-flex align-center  flex-wrap"
-      :class="{ dense: dense ,'-ultra-dense':isUltraDense(volumes) }"
+      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense, '-ultra-dense': isUltraDense(volumes) }"
     >
-      <v-icon :color="icon_color" class="me-1" small> equalizer </v-icon>
+      <v-icon :color="icon_color" class="me-1" size="small"> equalizer</v-icon>
 
       <span
         v-for="volume in volumes"
@@ -73,10 +75,10 @@
 
     <div
       v-if="packs.length"
-      class="p-1 d-flex align-center  flex-wrap"
-      :class="{ dense: dense ,'-ultra-dense':isUltraDense(packs) }"
+      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense, '-ultra-dense': isUltraDense(packs) }"
     >
-      <v-icon :color="icon_color" class="me-1" small> all_inbox </v-icon>
+      <v-icon :color="icon_color" class="me-1" size="small"> all_inbox</v-icon>
 
       <span
         v-for="pack in packs"
@@ -97,10 +99,10 @@
 
     <div
       v-if="weights.length"
-      class="p-1 d-flex align-center  flex-wrap"
-      :class="{ dense: dense  ,'-ultra-dense':isUltraDense(weights)}"
+      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense, '-ultra-dense': isUltraDense(weights) }"
     >
-      <v-icon :color="icon_color" class="me-1" small>
+      <v-icon :color="icon_color" class="me-1" size="small">
         fa:fas fa-weight-hanging
       </v-icon>
 
@@ -123,10 +125,12 @@
 
     <div
       v-if="types.length"
-      class="p-1 d-flex align-center  flex-wrap"
-      :class="{ dense: dense   ,'-ultra-dense':isUltraDense(types)}"
+      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense, '-ultra-dense': isUltraDense(types) }"
     >
-      <v-icon :color="icon_color" class="me-1" small> fa:fas fa-toolbox </v-icon>
+      <v-icon :color="icon_color" class="me-1" size="small">
+        fa:fas fa-toolbox
+      </v-icon>
       <span
         v-for="type in types"
         :key="type"
@@ -146,10 +150,10 @@
 
     <div
       v-if="styles.length"
-      class="p-1 d-flex align-center  flex-wrap"
-      :class="{ dense: dense  ,'-ultra-dense':isUltraDense(styles) }"
+      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense, '-ultra-dense': isUltraDense(styles) }"
     >
-      <v-icon :color="icon_color" class="me-1" small> style </v-icon>
+      <v-icon :color="icon_color" class="me-1" size="small"> style</v-icon>
 
       <span
         v-for="style in styles"
@@ -170,7 +174,7 @@
 
     <div
       v-if="!small && variants && variants.some((v) => v.price && v.currency)"
-      class="p-1 d-flex align-center  flex-wrap"
+      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense }"
     >
       <p class="m-0">
@@ -181,10 +185,10 @@
           :key="variant.id"
           class="card-badge-info text-success hover-scale"
         >
-          {{   numeralFormat(variant.price,"0,0") }}
+          {{ numeralFormat(variant.price, "0,0") }}
           {{ getCurrencyName(variant.currency) }}
           <small
-            >({{   numeralFormat(variant.discount,"0,0") }}
+            >({{ numeralFormat(variant.discount, "0,0") }}
             {{ $t("variants_view.discount") }})</small
           ></span
         >
@@ -193,8 +197,7 @@
 
     <div
       v-if="!small && quantitys && variants.some((v) => v.quantity || v === 0)"
-
-      class="p-1 d-flex align-center  flex-wrap"
+      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense }"
     >
       <p class="m-0">
@@ -205,7 +208,7 @@
           :key="quantity"
           class="card-badge-info text-success hover-scale"
         >
-          {{   numeralFormat(quantity,"0,0") }}
+          {{ numeralFormat(quantity, "0,0") }}
         </span>
       </p>
     </div>
@@ -335,9 +338,9 @@ export default {
       });
     },
 
-    isUltraDense(items){
-      return items?.join(' ').length >50
-    }
+    isUltraDense(items) {
+      return items?.join(" ").length > 50;
+    },
   },
 };
 </script>
@@ -351,10 +354,15 @@ export default {
   margin: 4px;
   font-weight: 500;
 
-  &.small {
+  &.-dense {
+    padding: 4px;
+    margin: 0;
+    font-size: 12px !important;
+  }
+
+  &.-small {
     padding: 0px;
     margin: 0;
-
     font-size: 11px !important;
   }
 
@@ -388,11 +396,13 @@ export default {
     color: #fff;
     background: #000;
     border-radius: 4px;
+
     &:hover {
       background: #6b809b;
     }
   }
 }
+
 .card-badge-color {
   &.-selected {
     border-radius: 50%;
@@ -402,18 +412,20 @@ export default {
 
 .hover-scale {
   user-select: none;
+
   &:hover {
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0, 1);
     transform: scale(1.4, 1.4);
     font-size: 1.03em;
   }
 }
+
 .dense {
   max-width: max-content !important;
   margin: 2px 6px;
 }
-.-ultra-dense{
-  font-size: 0.5rem;
 
+.-ultra-dense {
+  font-size: 0.5rem;
 }
 </style>

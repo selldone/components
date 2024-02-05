@@ -84,7 +84,7 @@
 
       <v-date-picker
         v-model="preferences.dates"
-        range
+        multiple="range"
         show-current
         :min="new Date().toISOString()"
         :locale="!en_cal ? getCurrentLanguage().full_local : undefined"

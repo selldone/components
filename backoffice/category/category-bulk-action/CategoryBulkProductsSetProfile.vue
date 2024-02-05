@@ -63,20 +63,20 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Tax ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div v-else-if="type === 'MAP'">
-              <map-tag-input-field
+              <b-map-tag-input
                 :shop="shop"
                 v-model="value"
-              ></map-tag-input-field>
+              ></b-map-tag-input>
             </div>
 
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Logistic ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div v-else-if="type && LogisticProfileType[type]">
-              <logistic-profile-input-field
+              <b-logistic-profile-input
                 :shop="shop"
                 v-model="value"
                 :type="LogisticProfileType[type]"
-              ></logistic-profile-input-field>
+              ></b-logistic-profile-input>
             </div>
           </v-expand-transition>
         </div>
@@ -128,16 +128,16 @@
 import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
 import SSmartSelect from "@components/smart/SSmartSelect.vue";
 import ShopTaxProfileSelect from "@components/backoffice/tax/ShopTaxProfileSelect.vue";
-import LogisticProfileInputField from "@components/ui/input/logistic-profile/LogisticProfileInputField.vue";
-import MapTagInputField from "@components/ui/input/map-tag/MapTagInputField.vue";
+import BLogisticProfileInput from "@components/backoffice/logistic/profile/input/BLogisticProfileInput.vue";
+import BMapTagInput from "@components/backoffice/map-tag/input/BMapTagInput.vue";
 import SSmartCheckVerifyAction from "@components/smart/SSmartCheckVerifyAction.vue";
 
 export default {
   name: "CategoryBulkProductsSetProfile",
   components: {
     SSmartCheckVerifyAction,
-    MapTagInputField,
-    LogisticProfileInputField,
+    BMapTagInput,
+    BLogisticProfileInput,
     ShopTaxProfileSelect,
     SSmartSelect,
   },

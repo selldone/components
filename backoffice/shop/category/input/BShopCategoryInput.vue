@@ -36,7 +36,8 @@
     :multiple="multiple"
     :chips="chips"
     :disabled="disabled"
-    :variant="filled ? 'filled' : 'underlined'"
+    :variant="variant?variant:filled ? 'filled' : 'underlined'"
+    :single-line="singleLine"
   >
     <!-- ―――――――――――――――――― message ―――――――――――――――――― -->
 
@@ -138,7 +139,7 @@
       </v-list-item>
     </template>
     <template v-slot:append-inner>
-      <slot name="append"></slot>
+      <slot name="append-inner"></slot>
     </template>
   </v-autocomplete>
 </template>
@@ -209,6 +210,11 @@ export default {
     defaultIcon: {
       default: "home",
     },
+    variant:{
+
+    },
+    singleLine:Boolean,
+
   },
   data: () => ({
     category: null,

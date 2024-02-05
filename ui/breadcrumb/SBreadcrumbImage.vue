@@ -60,14 +60,17 @@
     </v-breadcrumbs>
 
     <!--  Small screen -->
-    <v-expand-transition v-else>
-      <div v-if="hierarchyItems.length > 1">
-        <v-btn text @click="dialog = true" class="w-100" x-large>
+      <div v-else-if="hierarchyItems.length > 0">
+        <v-btn
+          variant="text"
+          @click="dialog = true"
+          class="w-100"
+          size="x-large"
+        >
           {{ $t("global.commons.category") }}
-          <v-icon class="ms-1" x-small>expand_more</v-icon>
+          <v-icon class="ms-1" size="x-small">expand_more</v-icon>
         </v-btn>
       </div>
-    </v-expand-transition>
 
     <v-bottom-sheet
       v-if="!$vuetify.display.smAndUp"
@@ -82,35 +85,34 @@
         <v-card-text class="pb-16">
           <v-list class="text-start">
             <v-list-item
-              selectable
               v-for="(item, i) in hierarchyItems"
               :key="i"
               :to="item.disabled ? undefined : item.to"
               exact
               @click="dialog = false"
             >
-              <v-list-item-avatar :tile="!!item.icon">
-                <img
-                  v-if="item.image"
-                  :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
-                />
-                <v-icon v-else-if="item.icon" class="me-1">{{
-                  item.icon
-                }}</v-icon>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>{{ item.text }} </v-list-item-title>
-                <v-list-item-subtitle>
-                  <v-chip
-                    v-if="i === hierarchyItems.length - 1"
-                    label
-                    color="#111"
-                    dark
-                    x-small
-                    >{{ $t("global.commons.current") }}</v-chip
-                  >
-                </v-list-item-subtitle>
-              </v-list-item-content>
+              <template v-slot:prepend>
+                <v-avatar :tile="!!item.icon">
+                  <img
+                    v-if="item.image"
+                    :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
+                  />
+                  <v-icon v-else-if="item.icon" class="me-1"
+                    >{{ item.icon }}
+                  </v-icon>
+                </v-avatar>
+              </template>
+
+              <v-list-item-title>{{ item.text }}</v-list-item-title>
+              <v-list-item-subtitle>
+                <v-chip
+                  v-if="i === hierarchyItems.length - 1"
+                  label
+                  color="#111"
+                  size="x-small"
+                  >{{ $t("global.commons.current") }}
+                </v-chip>
+              </v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -121,6 +123,7 @@
 
 <script>
 import CircleImage from "@components/ui/image/CircleImage.vue";
+
 export default {
   name: "SBreadcrumbImage",
   components: { CircleImage },
@@ -160,6 +163,7 @@ export default {
  */
 .s--breadcrumb-image {
 }
+
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */

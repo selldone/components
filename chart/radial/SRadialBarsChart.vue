@@ -57,7 +57,14 @@ export default {
       chartOptions: {
         chart: {
           fontFamily: "var(--font)",
+          height: this.height,
+          sparkline: {
+            enabled: true
+          },
+
         },
+
+
         plotOptions: {
           radialBar: {
             startAngle: -135,

@@ -19,8 +19,8 @@
       (val) => {
         $emit('update:modelValue', val);
         $nextTick(() => {
-       $emit('change',val)
-      });
+          $emit('change', val);
+        });
       }
     "
     :items="vendors"
@@ -35,18 +35,20 @@
       getVendors();
     "
     v-model:search="search"
+    v-model:menu="menu"
     :customFilter="() => true"
     messages=" "
     :disabled="disabled || IS_VENDOR_PANEL"
     :placeholder="placeholder"
     :flat="flat"
-    :density="dense?'compact':undefined"
+    :density="dense ? 'compact' : undefined"
     :bg-color="backgroundColor"
     :hide-details="hideDetails"
     :prepend-inner-icon="prependInnerIcon"
     :rounded="rounded"
     @focus="onFocus"
-    :variant="solo?'solo':'underlined'"
+    :variant="variant ? variant : solo ? 'solo' : 'underlined'"
+    :single-line="singleLine"
   >
     <template v-slot:selection="{}">
       <template v-if="selected_vendor">
@@ -72,11 +74,14 @@
       </div>
     </template>
 
-    <template v-slot:item="{ item ,props}">
+    <template v-slot:item="{ item, props }">
       <v-list-item v-bind="props">
         <template v-slot:prepend>
           <v-avatar size="32" rounded>
-            <img  v-if="item.raw.icon" :src="getShopImagePath(item.raw.icon, 64)" />
+            <img
+              v-if="item.raw.icon"
+              :src="getShopImagePath(item.raw.icon, 64)"
+            />
             <v-icon v-else>storefront</v-icon>
           </v-avatar>
         </template>
@@ -85,7 +90,7 @@
           <v-row no-gutters align="center">
             <b>{{ item.raw.name }}</b>
             <v-spacer></v-spacer>
-            <v-chip v-if="item.raw.user" class="mx-1 pen"  size="small">
+            <v-chip v-if="item.raw.user" class="mx-1 pen" size="small">
               <v-avatar start class="avatar-gradient -thin -user">
                 <img :src="getUserAvatar(item.raw.user_id)" />
               </v-avatar>
@@ -99,10 +104,10 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import threads from "@core/utils/thread/threads";
 
 export default {
-  name: "VendorInputField",
+  name: "BVendorInput",
   components: {},
   emits: ["update:modelValue", "change", "click:clear"],
   props: {
@@ -130,6 +135,8 @@ export default {
     hideDetails: { default: false, type: Boolean },
     backgroundColor: {},
     prependInnerIcon: {},
+    variant: {},
+    singleLine: Boolean,
   },
 
   data() {
@@ -139,7 +146,8 @@ export default {
       total: false,
 
       busy: false,
-      search: null,
+      search: "",
+      menu: false,
 
       focused: false, // Prevent load in the first initialize!
     };
@@ -162,10 +170,18 @@ export default {
   },
 
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
-      if(!newVal && !oldVal) return;
+    search: threads.debounceSearch(function (val) {
+      if (
+        !this.menu || // Search only if menu is open!
+        (val &&
+          val ===
+            this.selected_vendor
+              ?.name) /*Prevent search when user first focus on input!*/
+      )
+        return;
+
       this.getVendors();
-    }, window.SERACH_THROTTLE),
+    }),
   },
 
   created() {
@@ -188,26 +204,32 @@ export default {
       if (this.IS_VENDOR_PANEL) return;
 
       this.busy = true;
-      axios
-        .get(window.API.GET_SHOP_VENDORS(this.shop.id), {
-          params: {
-            // Must contain this id:
-            contain:
-              this.modelValue && this.isObject(this.modelValue)
-                ? this.modelValue.id
-                : this.modelValue,
-            search: this.search,
 
-            offset: 0,
-            count: this.disabled ? 0 : 20,
+      const params = {
+        // Must contain this id:
+        contain:
+          this.modelValue && this.isObject(this.modelValue)
+            ? this.modelValue.id
+            : this.modelValue,
+        search: this.search,
 
-            active_only: this.activeOnly,
-            compact: true,
-          },
-        })
-        .then(({ data }) => {
-          this.vendors = data.vendors;
-          this.total = data.total;
+        active_only: this.activeOnly,
+        compact: true,
+      };
+
+      const handleSuccessResponse = ({ vendors, total }) => {
+        this.vendors = vendors;
+        this.total = total;
+      };
+
+      window.$backoffice.vendor
+        .optimize(60)
+        .cancellation()
+        .list(this.shop.id, 0, this.disabled ? 0 : 20, params)
+        .cache(handleSuccessResponse)
+        .then(handleSuccessResponse)
+        .catch((error) => {
+          this.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

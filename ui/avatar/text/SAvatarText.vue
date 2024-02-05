@@ -15,9 +15,9 @@
 <template>
   <v-avatar :size="size">
     <v-avatar
-      :size="size - Math.min(8,size/6)"
+      :size="size - Math.min(8, size / 6)"
       :color="color"
-      class="white--text text-uppercase"
+      class="text-white text-uppercase"
       :style="{ 'font-size': size * 0.32 + 'px' }"
     >
       {{ text }}
@@ -29,7 +29,7 @@
 import { StringToColour } from "@core/helper/color/ColorGenerator";
 
 export default {
-  name: "STextAvatar",
+  name: "SAvatarText",
   props: {
     name: { required: true },
     size: {},
