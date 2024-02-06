@@ -73,7 +73,7 @@
         });
       "
       :prepend-inner-icon="prependInnerIcon"
-      :append-icon="appendIcon"
+      :append-inner-icon="appendIcon"
       :suffix="suffix"
     >
       <template v-slot:append>

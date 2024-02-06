@@ -33,7 +33,7 @@
       :prepend-inner-icon="prependInnerIcon"
       persistent-placeholder
       class="pp"
-      append-icon="today"
+      append-inner-icon="today"
       :flat="flat"
       :hide-details="hideDetails"
       :variant="

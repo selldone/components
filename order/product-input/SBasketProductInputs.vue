@@ -24,12 +24,12 @@
         v-else-if="!item.type || item.type === 'text'"
         v-model="message[item.name]"
         :label="item.title"
-        @input="$emit('input', message)"
+        @update:model-value="$emit('input', message)"
         :style="{ 'animation-delay': `${index * 150}ms` }"
         :readonly="readonly"
         append-inner-icon="fa:fas fa-copy"
         @click:append-inner="copyToClipboard(message[item.name])"
-        outlined
+        variant="outlined"
         :placeholder="item.hint"
         :persistent-placeholder="!!item.hint"
       />
@@ -42,13 +42,13 @@
         :items="item.selects"
         menu-props="auto"
         :label="item.title"
-        @input="$emit('input', message)"
+        @update:model-value="$emit('input', message)"
         :style="{ 'animation-delay': `${index * 150}ms` }"
         :readonly="readonly"
         :disabled="readonly"
         :multiple="item.multiple"
         :chips="item.multiple"
-        outlined
+        variant="outlined"
         :placeholder="item.hint"
         :persistent-placeholder="!!item.hint"
       />
@@ -82,7 +82,7 @@
         :rules="[]"
         menu-props="auto"
         :label="item.title"
-        @input="$emit('input', message)"
+        @update:model-value="$emit('input', message)"
         single-line
         :style="{ 'animation-delay': `${index * 150}ms` }"
         :multiple="item.multiple"
@@ -90,8 +90,8 @@
         messages="Max file size: 20MB"
         show-size
         prepend-icon=""
-        append-icon="attach_file"
-        outlined
+        append-inner-icon="attach_file"
+        variant="outlined"
         :placeholder="item.hint"
         :persistent-placeholder="!!item.hint"
       />
@@ -120,7 +120,7 @@
                 {{ f.filename }}
               </b>
               <v-list-subheader style="height: auto" class="p-0">
-                {{  numeralFormat(f.size ,"0.[0] b") }}
+                {{ numeralFormat(f.size, "0.[0] b") }}
                 <span class="mx-1">/</span>
                 <span :title="getLocalTimeString(f.created_at)">{{
                   getFromNowString(f.created_at)
@@ -235,8 +235,8 @@ export default {
           window.XAPI.DELETE_BASKET_ITEM_FILE(
             this.getShop().name,
             file_item.basket_id,
-            file_item.id
-          )
+            file_item.id,
+          ),
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -264,8 +264,8 @@ export default {
           window.API.GET_BASKET_ITEM_FILE_DOWNLOAD_LINK(
             this.getShop().id,
             file_item.basket_id,
-            file_item.id
-          )
+            file_item.id,
+          ),
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -273,7 +273,7 @@ export default {
 
             this.showSuccessAlert(
               null,
-              "The secure download link has been generated successfully!"
+              "The secure download link has been generated successfully!",
             );
           } else {
             this.showErrorAlert(null, data.error_msg);

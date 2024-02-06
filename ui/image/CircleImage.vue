@@ -20,7 +20,7 @@
     @error="loading = false"
     @load="loading = false"
   >
-    <v-img v-if="src" :src="src" aspect-ratio="1">
+    <v-img v-if="src" :src="src" aspect-ratio="1" cover>
       <template v-slot:placeholder>
         <v-progress-circular
           v-if="loading"

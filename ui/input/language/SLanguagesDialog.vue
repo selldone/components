@@ -32,7 +32,7 @@
           hide-details
           v-model="search"
           :placeholder="$t('global.commons.search')"
-          append-icon="search"
+          append-inner-icon="search"
           class="max-width-field-mini"
           clearable
         ></v-text-field>

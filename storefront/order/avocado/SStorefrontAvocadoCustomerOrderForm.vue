@@ -51,7 +51,7 @@
           v-model="link"
           :label="$t('global.commons.link')"
           :placeholder="$t('avocado.link_plc')"
-          append-icon="link"
+          append-inner-icon="link"
         >
         </v-text-field>
 
@@ -59,7 +59,7 @@
           v-model="selected_file"
           :label="$t('avocado.image')"
           :messages="$t('avocado.image_msg')"
-          append-icon="image"
+          append-inner-icon="image"
           accept="image/*"
           prepend-icon=""
         />
@@ -208,7 +208,7 @@ export default {
     message: null,
     link: null,
     count: 1,
-    selected_file: null,
+    selected_file: [],
 
     //-----------------------
     busy_submit: false,
@@ -309,7 +309,7 @@ export default {
           this.title,
           this.message,
           this.link,
-          this.selected_file,
+          this.selected_file?.length ? this.selected_file[0] : null,
           this.count
         )
 
@@ -319,7 +319,7 @@ export default {
           this.title = null;
           this.message = null;
           this.link = null;
-          this.selected_file = null;
+          this.selected_file = [];
           this.count = 1;
         })
         .catch((error) => {

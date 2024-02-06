@@ -12,10 +12,9 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import Vue, { App, defineAsyncComponent } from "vue";
+import {App, defineAsyncComponent} from "vue";
 
 //---------------- Vue FilePond --------------
-
 // Import Vue FilePond
 import vueFilePond from "vue-filepond";
 
@@ -33,12 +32,7 @@ import FilePondPluginImageResize from "filepond-plugin-image-resize";
 import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 
 //―――――――――――――――――――――― Vue Notification ――――――――――――――――――――
-
 import VueNotifications from "@kyvg/vue3-notification";
-
-require("@components/style/animation/vue2-animate.scss");
-require("@components/style/selldone/general_animates.scss");
-
 //---------------- Number format --------------
 // @ts-ignore
 import VueNumerals from "vue-numerals";
@@ -47,11 +41,9 @@ import VueNumerals from "vue-numerals";
 import SCheck from "@components/ui/check/SCheck.vue";
 
 //---------------- Price view --------------
-
 import PriceView from "@components/ui/price/PriceView.vue";
 
 //---------------- Loading --------------
-
 import SLoading from "@components/ui/loading/SLoading.vue";
 
 import SProgressLoading from "@components/ui/loading/SProgressLoading.vue";
@@ -72,14 +64,7 @@ import VueTheMask from "vue-the-mask";
 import FlagIcon from "vue-flag-icon";
 
 //---------------- Social Share --------------
-import VueSocialSharing from 'vue-social-sharing'
-
-//---------------- prototypes --------------
-
-require("@core/prototypes/Prototypes");
-
-
-
+import VueSocialSharing from "vue-social-sharing";
 import SCircleButton from "@components/ui/button/circle/SCircleButton.vue";
 
 import TipsButton from "./ui/tips/TipsButton.vue";
@@ -93,18 +78,15 @@ import "@components/article/add-on/flip-book/FlipBookMediumPlugin";
 import "@components/article/add-on/canvas/ImageOverlayCanvasMediumPlugin";
 
 // @ts-ignore
-import { MediumInsert } from "@components/article/insert/SelldoneEditorInsert";
-window.MediumInsert = MediumInsert;
-
+import {MediumInsert} from "@components/article/insert/SelldoneEditorInsert";
 //―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
 import "prismjs";
 import "prismjs/themes/prism.css";
 
-import { PrismEditor } from "vue-prism-editor";
+import {PrismEditor} from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css";
 
 //---------------- Widget --------------
-
 import SWidget from "@components/ui/widget/widget/SWidget.vue";
 
 import SWidgetHeader from "@components/ui/widget/header/SWidgetHeader.vue";
@@ -113,7 +95,14 @@ import VueConfetti from "@components/ui/confeti";
 import SDrag from "@components/ui/drag-drop/SDrag.vue";
 import SDrop from "@components/ui/drag-drop/SDrop.vue";
 
+require("@components/style/animation/vue2-animate.scss");
+require("@components/style/selldone/general_animates.scss");
 
+//---------------- prototypes --------------
+
+require("@core/prototypes/Prototypes");
+
+window.MediumInsert = MediumInsert;
 
 export function installGlobalComponents(app: App) {
   // Create component
@@ -153,17 +142,28 @@ export function installGlobalComponents(app: App) {
   );
   app.component("s-lottie", SLottie);
 
+  //---------------- State Flags --------------
+
+  const SStateFlag = defineAsyncComponent(
+    () =>
+      import(
+        /* webpackChunkName: "plug-flag" */ "@components/ui/country/state-flag/SStateFlag.vue"
+      ),
+  );
+  app.component("s-state-flag", SStateFlag);
+
   //---------------- Miscellaneous --------------
 
   // + Chart:
 
-
   // Define the async component globally
-  app.component('apexchart', defineAsyncComponent(() =>
-      import(/* webpackChunkName: "plug-miscellaneous" */'vue3-apexcharts')
-  ));
-
-
+  app.component(
+    "apexchart",
+    defineAsyncComponent(
+      () =>
+        import(/* webpackChunkName: "plug-miscellaneous" */ "vue3-apexcharts"),
+    ),
+  );
 
   // + QR Code:
   const SQrcode = defineAsyncComponent(
@@ -173,7 +173,7 @@ export function installGlobalComponents(app: App) {
         /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/qrcode"
       ),
   );
-  app.component('s-qrcode', SQrcode);
+  app.component("s-qrcode", SQrcode);
 
   // + Bar Code:
 
@@ -213,8 +213,6 @@ export function installGlobalComponents(app: App) {
   //Vue.prototype.window = window;
   app.config.globalProperties.window = window; // 🌴 Global object in vue components
 
-
   app.component(SDrag.name, SDrag);
   app.component(SDrop.name, SDrop);
-
 }

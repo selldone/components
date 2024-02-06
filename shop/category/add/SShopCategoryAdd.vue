@@ -156,7 +156,7 @@
             class="mt-5"
             :label="$t('add_category.image_input')"
             :placeholder="$t('add_category.image_input_placeholder')"
-            append-icon="attach_file"
+            append-inner-icon="attach_file"
             prepend-icon=""
             accept="image/*"
             variant="underlined"

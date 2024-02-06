@@ -25,7 +25,7 @@
     :label="label /*+ focus + '  ' + newValue*/"
     :placeholder="placeholder"
     persistent-placeholder
-    :append-icon="icon"
+    :append-inner-icon="icon"
     :filled="filled"
     :single-line="singleLine"
     :hide-details="hideDetails && !messages"
@@ -54,7 +54,8 @@
       }
     "
     :loading="loading"
-    :variant="variant ? variant : solo ? 'solo' : flat ? 'flat' : 'underlined'"
+    :variant="variant ? variant : solo ? 'solo' : 'underlined'"
+    :flat="flat"
     :readonly="readonly || is_locked"
     :bg-color="backgroundColor"
     @keyup.enter="
@@ -66,12 +67,14 @@
       }
     "
     :disabled="disabled"
+    :prefix="prefix"
   >
     <template v-slot:append-inner>
       <v-btn
         v-if="lock"
         class="me-2"
-        icon variant="text"
+        icon
+        variant="text"
         @click="is_locked = !is_locked"
         :title="lock ? 'Click to edit value.' : 'Click to lock input'"
       >
@@ -93,7 +96,8 @@
       </v-btn>
       <v-btn
         v-if="showButtons"
-        icon variant="text"
+        icon
+        variant="text"
         @click.stop="mpminus()"
         :disabled="is_locked"
       >
@@ -105,7 +109,8 @@
 
       <v-btn
         v-if="clearable"
-        icon variant="text"
+        icon
+        variant="text"
         @click="
           newValue = 0;
           $emit('clear');
@@ -121,7 +126,8 @@
       <v-btn
         v-if="showButtons && !readonly"
         :disabled="is_locked"
-        icon variant="text"
+        icon
+        variant="text"
         @click.stop="mpplus()"
       >
         <v-icon size="small"> fa:fas fa-plus</v-icon>
@@ -166,6 +172,7 @@ export default {
       type: Boolean,
     },
 
+    prefix: {},
     label: {
       type: String,
       default: null,
@@ -271,7 +278,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    variant:{}
+    variant: {},
   },
 
   data() {
@@ -287,8 +294,6 @@ export default {
     hasAlternativeButton() {
       return this.alternativeButtonText && this.alternativeButtonValue;
     },
-
-
   },
   watch: {
     modelValue: {

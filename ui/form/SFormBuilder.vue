@@ -82,7 +82,7 @@
               hint="Ex: name, state, desc, ... Only lowercase Latin characters and numbers are permitted, and no whitespace is allowed."
               color="primary"
               :disabled="item.locked"
-              :append-icon="item.locked ? 'lock' : undefined"
+              :append-inner-icon="item.locked ? 'lock' : undefined"
             />
           </div>
 

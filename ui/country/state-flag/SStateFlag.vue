@@ -50,7 +50,7 @@ export default {
       }
       // India
       else if (this.country.toLowerCase() === "in") {
-          return this.find(IndiaState);
+        return this.find(IndiaState);
       }
       return null;
     },
@@ -62,7 +62,7 @@ export default {
       return array.find(
         (item) =>
           item.code.toLowerCase() === region ||
-          item.name.toLowerCase() === region
+          item.name.toLowerCase() === region,
       );
     },
   },

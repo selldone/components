@@ -25,7 +25,7 @@
       class="z2 position-relative mx-4 english-field"
       clearable
       messages="Only show in this community"
-      append-icon="local_mall"
+      append-inner-icon="local_mall"
     ></v-text-field>
 
     <div class="text-muted text-center">

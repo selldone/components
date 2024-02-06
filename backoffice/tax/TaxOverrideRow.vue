@@ -17,6 +17,7 @@
     @click="edit_mode = true"
     :title="edit_mode ? undefined : 'Click to edit!'"
   >
+
     <td class="min-width-250">
       <div class="d-flex align-center">
         <s-state-flag
@@ -54,7 +55,7 @@
           </div>
         </div>
 
-        <b v-if="override_rule" class="ms-1 cyan--text small"> ● Override</b>
+        <v-chip v-if="override_rule" class="ms-1" size="small" color="cyan" pill> ● Override</v-chip>
       </div>
     </td>
 
@@ -63,11 +64,10 @@
         v-if="edit_mode"
         v-model="label_value"
         label="Label"
-        dense
-        solo
+        density="compact"
+        variant="solo"
         hide-details
         flat
-        filled
       ></v-text-field>
       <span v-else class="typo-body">
         {{ label_value }}
@@ -150,24 +150,23 @@
         v-if="edited"
         @click.stop="setOverrideTax()"
         :loading="busy_set"
-        color="primary"
-        class="m-1"
+        color="primary"  variant="elevated"
+        class="ma-1"
         title="Save my tax rule."
       >
-        <v-icon class="me-1" small>save</v-icon
+        <v-icon class="me-1" size="small">save</v-icon
         >{{ $t("global.actions.save") }}</v-btn
       >
       <v-btn
         v-else-if="override_rule"
-        depressed
+        variant="elevated"
         @click.stop="deleteOverride()"
         :loading="busy_delete"
-        class="m-1"
-        text
+        class="ma-1"
         color="primary"
         title="Remove my custom rule (Override)."
       >
-        <v-icon class="me-1" small>refresh</v-icon>
+        <v-icon class="me-1" size="small">refresh</v-icon>
         {{ $t("global.actions.reset_default") }}</v-btn
       >
     </td>
@@ -177,13 +176,13 @@
 <script>
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import TaxRegionTypeView from "@components/backoffice/tax/TaxRegionTypeView.vue";
+
+
 export default {
   name: "TaxOverrideRow",
   components: {
     TaxRegionTypeView,
     SNumberInput,
-    SStateFlag: () =>
-      import("@components/ui/country/state-flag/SStateFlag.vue") /*Dynamic load flags*/,
   },
   props: {
     shop: { required: true, type: Object },
@@ -277,7 +276,7 @@ export default {
             bvat: this.bvat_value,
             label: this.label_value,
             shipping: this.shipping_value,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -285,7 +284,7 @@ export default {
             this.$emit("set", data.override);
             this.showSuccessAlert(
               null,
-              "The overriding rule has been updated successfully."
+              "The overriding rule has been updated successfully.",
             );
 
             this.edit_mode = false;
@@ -319,7 +318,7 @@ export default {
             this.$emit("delete", data.id);
             this.showSuccessAlert(
               null,
-              "The overriding rule has been removed successfully."
+              "The overriding rule has been removed successfully.",
             );
             this.edit_mode = false;
           } else {

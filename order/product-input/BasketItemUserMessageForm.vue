@@ -45,8 +45,8 @@
     </div>
 
     <v-icon class="absolute-top-end" :class="{ 'fa-rotate-180': show }"
-      >keyboard_arrow_down</v-icon
-    >
+      >keyboard_arrow_down
+    </v-icon>
 
     <v-expand-transition>
       <div v-if="show">
@@ -75,8 +75,8 @@
       >
         <v-icon class="me-1">save</v-icon>
 
-        {{ $t("global.basket_item_message.save_actions") }}</v-btn
-      >
+        {{ $t("global.basket_item_message.save_actions") }}
+      </v-btn>
     </div>
   </v-sheet>
   <div v-else-if="show_inputs_preview" class="text-start">
@@ -106,6 +106,7 @@ import {
   FORM_BUILDER_TAGS,
   SmartConvertTextToHtml,
 } from "@core/helper/html/HtmlHelper";
+
 export default {
   name: "BasketItemUserMessageForm",
   components: { SBasketProductInputs },
@@ -145,7 +146,7 @@ export default {
     inputs_length() {
       // Just editable fields
       return this.product.inputs?.filter((i) =>
-        ["text", "select", "switch", "file", null].includes(i.type)
+        ["text", "select", "switch", "file", null].includes(i.type),
       ).length;
     },
 
@@ -159,7 +160,7 @@ export default {
       return this.basket.items.find(
         (item) =>
           item.product_id === this.product.id &&
-          item.variant_id === this.variantId
+          item.variant_id === this.variantId,
       );
     },
 
@@ -223,7 +224,8 @@ export default {
 
       if (this.files) {
         Object.keys(this.files).forEach((key) => {
-          const val = this.files[key];
+          let val = this.files[key];
+          if (val && Array.isArray(val)) val = val.length ? val[0] : null; // <v-file-input> return array!
           // console.log("file", val);
 
           if (val) {
@@ -246,17 +248,17 @@ export default {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
           /* {
-            basket_id: this.basket.id,
-            variant_id: variant_id,
-            message: this.message,
-          }*/
+                basket_id: this.basket.id,
+                variant_id: variant_id,
+                message: this.message,
+              }*/
         )
         .then(({ data }) => {
           if (!data.error) {
             let basket_item = this.basket.items.find(
-              (item) => item.id === data.item.id
+              (item) => item.id === data.item.id,
             );
             if (!basket_item)
               this.AddOrUpdateItemByID(this.basket.items, data.item);
@@ -277,7 +279,7 @@ export default {
 
             this.showSuccessAlert(
               null,
-              this.$t("global.basket_item_message.notifications.success")
+              this.$t("global.basket_item_message.notifications.success"),
             );
           } else {
             this.showErrorAlert(null, data.error_msg);

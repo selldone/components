@@ -767,7 +767,7 @@
               v-model="in_email"
               id="in_email"
               :rules="[GlobalRules.required(), GlobalRules.email()]"
-              append-icon="account_circle"
+              append-inner-icon="account_circle"
             >
             </v-text-field>
             <v-text-field

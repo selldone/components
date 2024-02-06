@@ -53,6 +53,7 @@
           </div>
         </v-list-item>
 
+        <v-divider v-if="hasWithTrashed && items?.length"></v-divider>
         <v-list-item
           v-if="hasWithTrashed"
           @click="$emit('update:withTrashed', !withTrashed)"
@@ -66,6 +67,7 @@
         </v-list-item>
       </v-list>
     </v-menu>
+    <slot></slot>
   </span>
 </template>
 

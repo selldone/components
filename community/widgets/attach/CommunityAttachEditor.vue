@@ -26,14 +26,14 @@
           <v-list-item-avatar tile>
             <img :src="getFileExtensionImage(file.name)" />
           </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title>
-              <b>{{ file.name }}</b>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{   numeralFormat(file.size,"0.[0] b") }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
+
+          <v-list-item-title>
+            <b>{{ file.name }}</b>
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ numeralFormat(file.size, "0.[0] b") }}
+          </v-list-item-subtitle>
+
           <v-list-item-action>
             <v-btn color="red" icon @click="remove(files, file)">
               <v-icon>close</v-icon>
@@ -48,12 +48,12 @@
       <div v-if="files?.length < 3">
         <v-file-input
           v-model="selected_file"
-          @change="selectFile"
+          @update:model-value="selectFile"
           multiple
           clearable
-          solo
+          variant="solo"
           placeholder="Select files... max 3 files limited to 8MB each file."
-          append-icon="add_box"
+          append-inner-icon="add_box"
           class="mt-3 mx-3"
         ></v-file-input>
 
@@ -61,7 +61,15 @@
           <div>
             Acceptable files:
             <span v-if="mims">
-              <span v-for="m in mims" :key="m" class="mx-1"><img :src="getFileExtensionImage(m)" width="16" height="16" class="hover-scale" > {{m}}</span>
+              <span v-for="m in mims" :key="m" class="mx-1"
+                ><img
+                  :src="getFileExtensionImage(m)"
+                  width="16"
+                  height="16"
+                  class="hover-scale"
+                />
+                {{ m }}</span
+              >
             </span>
             <span v-else>*.*</span>
           </div>
@@ -78,7 +86,6 @@ export default {
   name: "CommunityAttachEditor",
   components: {},
   props: {
-
     community: {
       require: true,
       type: Object,
@@ -88,7 +95,7 @@ export default {
   },
 
   data: () => ({
-    selected_file: null,
+    selected_file: [],
     files: [],
   }),
 
@@ -99,9 +106,9 @@ export default {
   },
 
   computed: {
-    mims(){
-      return this.community.mims
-    }
+    mims() {
+      return this.community.mims;
+    },
   },
 
   created() {
@@ -125,7 +132,7 @@ export default {
         if (file.size > 8 * 1024 * 1024) {
           return this.showErrorAlert(
             file.name + " size is " + numeral(file.size).format("0.[0] b"),
-            "The file size is limited to 8MB."
+            "The file size is limited to 8MB.",
           );
         }
 
@@ -134,7 +141,7 @@ export default {
         if (this.files.some((f) => f.key === file.key)) {
           return this.showErrorAlert(
             "Duplicated file | " + file.name,
-            "This file exists in your attachment list."
+            "This file exists in your attachment list.",
           );
         }
 

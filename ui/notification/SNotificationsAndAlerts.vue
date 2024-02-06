@@ -49,7 +49,13 @@
 
           <b class="font-weight-bold" v-html="item.title"> </b>
 
-          <v-btn icon class="float-end" @click.stop="close" size="small" variant="text">
+          <v-btn
+            icon
+            class="float-end"
+            @click.stop="close"
+            size="small"
+            variant="text"
+          >
             <v-icon>close</v-icon>
           </v-btn>
 
@@ -70,10 +76,12 @@
       content-class="no-shadow-dialog"
     >
       <v-card class="text-start rounded-28px" :min-height="240" color="#e5e5e5">
-        <v-card-title class="dialog-title d-flex align-center">
-          <div class="pe-2 flex-grow-1" v-html="alert_dialog_title"></div>
-          <v-icon color="#bbb">error_outline</v-icon>
-        </v-card-title>
+        <template v-slot:title>
+          <div class="text-wrap d-flex align-start">
+            <div class="pe-2 flex-grow-1" v-html="alert_dialog_title"></div>
+            <v-icon color="#bbb">error_outline</v-icon>
+          </div>
+        </template>
 
         <v-card-text class="typo-body">
           <div v-html="alert_dialog_message"></div>

@@ -54,10 +54,10 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Tax ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div v-if="type === 'TAX'">
-              <shop-tax-profile-select
+              <b-tax-profile-input
                 :shop="shop"
                 v-model="value"
-              ></shop-tax-profile-select>
+              ></b-tax-profile-input>
             </div>
 
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Tax ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -127,7 +127,7 @@
 <script>
 import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
 import SSmartSelect from "@components/smart/SSmartSelect.vue";
-import ShopTaxProfileSelect from "@components/backoffice/tax/ShopTaxProfileSelect.vue";
+import BTaxProfileInput from "@components/backoffice/tax/profile/input/BTaxProfileInput.vue";
 import BLogisticProfileInput from "@components/backoffice/logistic/profile/input/BLogisticProfileInput.vue";
 import BMapTagInput from "@components/backoffice/map-tag/input/BMapTagInput.vue";
 import SSmartCheckVerifyAction from "@components/smart/SSmartCheckVerifyAction.vue";
@@ -138,7 +138,7 @@ export default {
     SSmartCheckVerifyAction,
     BMapTagInput,
     BLogisticProfileInput,
-    ShopTaxProfileSelect,
+    BTaxProfileInput,
     SSmartSelect,
   },
   props: {

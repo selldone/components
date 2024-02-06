@@ -64,7 +64,7 @@
         <v-text-field
           :value="search"
           @input="(val) => $emit('update:search', val)"
-          append-icon="search"
+          append-inner-icon="search"
           single-line
           solo
           flat

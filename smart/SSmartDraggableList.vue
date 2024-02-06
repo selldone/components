@@ -22,97 +22,98 @@
       @start="drag = true"
       @end="drag = false"
       @change="
-        $emit('input', list);
+        $emit('update:modelValue', list);
         $nextTick(() => {
           $emit('change', list);
         });
       "
       filter=".ignore"
-
-
       tag="transition-group"
       :component-data="{
-          tag: 'ul',
-          type: 'transition-group',
-          name: !drag ? 'flip-list' : 'fade',
-        }"
+        tag: 'ul',
+        type: 'transition-group',
+        name: !drag ? 'flip-list' : 'fade',
+      }"
       v-bind="dragOptions"
       style="list-style-type: none"
-
-
+      :class="{
+        'rounded-list-xl': rounded,
+        'border-between-vertical': borderBetween,
+      }"
     >
       <template v-slot:item="{ element }">
-        <div
-            :key="isString(element)?element:JSON.stringify(element)"
-            class="p-2 row-hover usn cursor-move"
-            :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: disabled }"
+        <li
+          :key="isString(element) ? element : JSON.stringify(element)"
+          class="p-2 row-hover usn cursor-move"
+          :class="{
+            'bg-dark': dark,
+            'bg-white': !dark,
+            disabled: disabled,
+
+          }"
         >
           <div class="d-flex align-center mnh">
-            <v-icon v-if="itemIcon" class="me-1"> {{ itemIcon(element) }} </v-icon>
+            <v-icon v-if="itemIcon" class="me-1">
+              {{ itemIcon(element) }}
+            </v-icon>
             <v-img
-                v-if="itemImage && itemImage(element)"
-                width="24"
-                height="24"
-                class="me-1 flex-grow-0"
-                :src="itemImage(element)"
+              v-if="itemImage && itemImage(element)"
+              width="24"
+              height="24"
+              class="me-1 flex-grow-0"
+              :src="itemImage(element)"
             >
             </v-img>
 
             <b
-                class="text-capitalize flex-grow-1 me-2 ms-2"
-                v-text="itemLabel ? itemLabel(element) : element"
+              class="text-capitalize flex-grow-1 me-2 ms-2"
+              v-text="itemLabel ? itemLabel(element) : element"
             ></b>
 
             <span class="me-2">
               <s-smart-menu
-                  v-if="itemMenu"
-                  :items="itemMenu"
-                  :return-click-value="element"
+                v-if="itemMenu"
+                :items="itemMenu"
+                :return-click-value="element"
               ></s-smart-menu
-              ></span>
+            ></span>
 
-            <v-icon> menu </v-icon>
+            <v-icon> menu</v-icon>
           </div>
-        </div>
+        </li>
       </template>
-
-
-      <template v-bind:footer>
-        <div
-            v-if="hasAdd"
-            key="_add"
-            class="p-2 pp row-hover usn ignore"
-            :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: disabled }"
-            @click="$emit('click:add')"
-        >
-          <div class="d-flex align-center mnh justify-center">
-            <v-icon class="me-1"> add_box </v-icon>
-
-            <b class="text-capitalize me-2 ms-2">
-              {{ $t("global.actions.add") }}
-            </b>
-          </div>
-        </div>
-
-        <slot name="append-inner"></slot>
-      </template>
-
-
-
-
-
     </draggable>
+
+    <div
+      v-if="hasAdd"
+      key="_add"
+      class="p-2 pp row-hover usn ignore d-flex align-center  justify-center"
+      :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: disabled , 'rounded-xl my-2': rounded,}"
+      @click="$emit('click:add')" style="min-height: 70px"
+    >
+      <div>
+        <v-icon class="me-1"> add_box</v-icon>
+
+        <b class="text-capitalize me-2 ms-2">
+          {{ $t("global.actions.add") }}
+        </b>
+      </div>
+    </div>
+
+    <slot name="append-inner"></slot>
   </div>
 </template>
 
 <script>
 import draggable from "vuedraggable";
 import SSmartMenu from "./SSmartMenu.vue";
+
 export default {
   name: "SSmartDraggableList",
   components: { SSmartMenu, draggable },
+  emits: ["update:modelValue", "change", "click:add"],
   props: {
-    value: {},
+    modelValue: {},
     itemLabel: { type: Function },
     itemIcon: { type: Function },
     itemImage: { type: Function },
@@ -134,6 +135,8 @@ export default {
       default: false,
       type: Boolean,
     },
+    rounded: Boolean,
+    borderBetween: Boolean,
   },
 
   data: () => ({
@@ -154,22 +157,21 @@ export default {
   },
 
   watch: {
-    value() {
-      this.list = this.value;
+    modelValue() {
+      this.list = this.modelValue;
     },
   },
 
   created() {
-    this.list = this.value;
+    this.list = this.modelValue;
   },
   methods: {
     deleteItem(index) {
       this.list.splice(index, 1);
-      this.$emit("input", this.list);
+      this.$emit("update:modelValue", this.list);
     },
   },
 };
-
 </script>
 
 <style scoped lang="scss">

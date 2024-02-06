@@ -14,21 +14,30 @@
 
 <template>
   <div class="blur-animate" :class="{ blurred: busy }">
-    <v-icon small>inventory</v-icon> <small>Products:</small>
     <v-btn
       v-if="statistic?.products > 0"
       color="primary"
       class="mx-2 tnt"
-      small
-      text
-      :to="{name:'BPageShopProductsList',query:{search:'tax:'+profile.name}}"
+      variant="text"
+      :to="{
+        name: 'BPageShopProductsList',
+        query: { search: 'tax:' + profile.name },
+      }"
       target="_blank"
       title="Show products with this tax profile."
     >
-      <b class="me-2">{{  numeralFormat(statistic?.products ,"0,0") }}🞬 </b>
-      View list <v-icon small class="ms-1">open_in_new</v-icon></v-btn
+      <v-icon start>inventory</v-icon>
+
+      <b class="me-2">{{ numeralFormat(statistic?.products, "0,0") }}🞬 </b>
+      {{ $t("global.commons.products") }}
+
+      <v-icon size="small" end>open_in_new</v-icon>
+    </v-btn>
+    <small v-else class="mx-2">
+      <v-icon size="small" class="me-1">inventory</v-icon>
+      {{ $t("global.commons.products") }}:
+      {{ $t("global.commons.empty") }}!</small
     >
-    <small v-else class="mx-2">{{ $t("global.commons.empty") }}!</small>
   </div>
 </template>
 
@@ -73,8 +82,8 @@ export default {
         .get(
           window.API.GET_SHOP_TAX_PROFILE_STATISTIC(
             this.shop.id,
-            this.profile.id
-          )
+            this.profile.id,
+          ),
         )
         .then(({ data }) => {
           if (!data.error) {

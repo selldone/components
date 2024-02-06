@@ -25,7 +25,7 @@
     >
       <v-text-field
         v-model="search"
-        append-icon="search"
+        append-inner-icon="search"
         @keydown.enter="searchPosts(1)"
         :loading="busy_search"
         single-line

@@ -350,10 +350,16 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 .icon-side{
-  left: -12px;
   height: 100% !important;
   min-width: 30px !important;
   color: #fff !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   &.-purple{
     background: #847;
   }
@@ -373,7 +379,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 .v-application--is-rtl {
   .icon-side{
     left: unset;
-    right: -12px;
+    right: 0;
   }
 }
 
@@ -616,8 +622,8 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
    input {
     font-size: 22px;
     font-weight: 900;
-    min-height: 64px;
-     padding-top: 16px;
+   // min-height: 64px;
+    // padding-top: 16px;
   }
   .v-select__selections {
     font-size: 22px;

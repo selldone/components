@@ -40,7 +40,7 @@
         v-else
         key="2"
         :model-value="file"
-        @change="(val) => $emit('update:file', val)"
+        @update:model-value="(val) => $emit('update:file', val)"
         color="primary"
         :label="label"
         :placeholder="hint"

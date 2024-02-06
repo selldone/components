@@ -43,7 +43,7 @@
                       MapHelper.GetMapImage(
                         pickup.location.lng,
                         pickup.location.lat,
-                        18
+                        18,
                       )
                     "
                     class="hover-scale"
@@ -104,7 +104,6 @@
         class="text-end"
       >
         <v-btn
-          dark
           :href="admin_url_shipping"
           target="_blank"
           class="tnt fadeIn"
@@ -117,7 +116,8 @@
             class="me-1"
           />
 
-          Edit Shipping <v-icon class="mx-1" small>open_in_new</v-icon></v-btn
+          Edit Shipping
+          <v-icon class="mx-1" size="small">open_in_new</v-icon></v-btn
         >
       </div>
     </v-container>
@@ -170,7 +170,7 @@ export default {
     },
     transportations_free_shipping() {
       return this.transportations?.filter(
-        (t) => t.free_shipping && t.type !== ShopTransportations.Pickup.code
+        (t) => t.free_shipping && t.type !== ShopTransportations.Pickup.code,
       );
     },
     images() {
@@ -181,7 +181,7 @@ export default {
     },
     transportation_with_min_free_shipping_limit() {
       return this.transportations_free_shipping?.minByKey(
-        "free_shipping_limit"
+        "free_shipping_limit",
       );
     },
 
@@ -190,7 +190,7 @@ export default {
         this.is_physical &&
         this.transportations?.find(
           (t) =>
-            t.type === ShopTransportations.Pickup.code && t.pickups?.length > 0
+            t.type === ShopTransportations.Pickup.code && t.pickups?.length > 0,
         )
       );
     },
@@ -205,7 +205,7 @@ export default {
         this.product &&
         this.product.profiles &&
         this.product.profiles.find(
-          (p) => p.type === LogisticProfileType.SHIPPING.value
+          (p) => p.type === LogisticProfileType.SHIPPING.value,
         )
       );
     },
@@ -234,7 +234,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

@@ -20,15 +20,15 @@
 
       <div
         :style="{ 'max-height': included ? '20px' : '0' }"
-        class="transition-ease-in-out position-relative"
+        class="position-relative -trans"
       >
         <v-chip
           :color="included ? '#FFC107' : '#8BC34A'"
-          x-small
-          label
-          :style="{ bottom: included ? '0' : '-26px' }"
-          class="transition-ease-in-out"
-          ><v-icon x-small left>loupe</v-icon>Tax</v-chip
+          size="x-small"
+          label variant="flat"
+          :style="{ bottom: included ? '0' : '-30px' }"
+          class="-trans"
+          ><v-icon start>loupe</v-icon>Tax</v-chip
         >
       </div>
     </div>
@@ -37,11 +37,15 @@
 
 <script>
 export default {
-  name: "TaxIncludePodView",
+  name: "BTaxProfileIncludePod",
   props: {
     included: {},
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.-trans{
+  transition: all 0.3s ease-in-out;
+}
+</style>

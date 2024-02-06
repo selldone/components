@@ -26,18 +26,18 @@
         :chips="!!multiple"
         :multiple="multiple"
         class="w-px h-px opacity-0 overflow-hidden absolute flex-grow-0"
-        @change="(files) => processFile(files, '')"
+        @update:model-value="(files) => processFile(files, '')"
         :accept="extension"
         flat
-        solo
+        variant="solo"
         :label="label"
         v-model="filelist"
-        background-color="transparent"
+        bg-color="transparent"
       />
 
       <v-spacer></v-spacer>
       <div>
-        <v-icon size="64" color="#fff" class="m-2">{{icon}}</v-icon>
+        <v-icon size="64" color="#fff" class="m-2">{{ icon }}</v-icon>
       </div>
       <div>Drop landing page file here or click top input.</div>
       <v-spacer></v-spacer>
@@ -51,22 +51,22 @@
           color="light-green"
           class="my-3"
           height="10"
-          :value="(100 * uploaded_count) / accepted_count"
+          :model-value="(100 * uploaded_count) / accepted_count"
           striped
           rounded
         ></v-progress-linear>
 
         <v-btn
           v-if="failed_count"
-          x-large
-          depressed
+          size="x-large"
+          variant="flat"
           dark
           color="red"
           @click="resendFailed"
           >Resend {{ failed_count }} failed files</v-btn
         >
 
-        <v-btn depressed small color="blue" dark @click="resetCount"
+        <v-btn variant="flat" size="small" color="blue" dark @click="resetCount"
           ><v-icon>clear</v-icon> Reset</v-btn
         >
       </template>
@@ -77,7 +77,13 @@
 <script>
 export default {
   name: "SDropZone",
-  emits: ["select:file", "select:files", "update:acceptedFiles", "update:uploadedFiles", "update:failedFiles"],
+  emits: [
+    "select:file",
+    "select:files",
+    "update:acceptedFiles",
+    "update:uploadedFiles",
+    "update:failedFiles",
+  ],
   delimiters: ["${", "}"], // Avoid Twig conflicts
 
   props: {
@@ -92,8 +98,8 @@ export default {
     acceptedFiles: {},
     uploadedFiles: {},
     failedFiles: {},
-    icon:{default:'file_present'},
-    hint:{}
+    icon: { default: "file_present" },
+    hint: {},
   },
   data: () => ({
     filelist: [], // Store our uploaded files
@@ -173,7 +179,7 @@ export default {
         ) {
           this.showErrorAlert(
             null,
-            `Acceptable file format is ${this.extension}!`
+            `Acceptable file format is ${this.extension}!`,
           );
           return;
         }
@@ -181,8 +187,8 @@ export default {
           this.showErrorAlert(
             null,
             `Maximum file size limited to ${Math.round(
-              maxFileSize / (1024 * 1024)
-            )} MB!`
+              maxFileSize / (1024 * 1024),
+            )} MB!`,
           );
           return;
         }

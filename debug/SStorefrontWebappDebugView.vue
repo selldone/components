@@ -66,7 +66,7 @@
             clearable
             class="mx-5"
             label="Local dev server"
-            append-icon="cloud_sync"
+            append-inner-icon="cloud_sync"
             persistent-placeholder
             @blur="
               fixDevUrl();
