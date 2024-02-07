@@ -16,6 +16,7 @@
   <v-avatar
     class="s---category"
     :class="{ 'bg-amber-soft': isAmber }"
+    :style="{ backgroundImage: bg }"
     :size="size"
     rounded="xl"
   >
@@ -23,15 +24,16 @@
       <v-img v-if="src" :src="getShopImagePath(src)">
         <template v-slot:placeholder>
           <s-image-placeholder
-            :color="isAmber ? '#de8e07' : undefined"
-            :bg-color="isAmber ? 'amber' : undefined"
+            :color="color2"
+            :bg-color="color1"
           ></s-image-placeholder>
         </template>
       </v-img>
       <v-icon v-else>camera</v-icon>
     </v-avatar>
     <v-icon
-      class="absolute-bottom-end bg-amber-soft rounded-ts-circle h-auto w-auto pa-1 ma-n1"
+      class="absolute-bottom-end rounded-ts-circle h-auto w-auto pa-1 ma-n1"
+      :style="{ backgroundImage: bg }" style="background-size: 300% 300%;"
       color="#fff"
     >
       {{ sideIcon }}
@@ -44,6 +46,17 @@
     >
       {{ caption }}
     </div>
+    <v-progress-circular
+      v-if="loading"
+      :color="color1"
+      class="center-absolute"
+    ></v-progress-circular>
+
+    <slot></slot>
+
+    <v-tooltip activator="parent">
+      {{tooltip}}
+    </v-tooltip>
   </v-avatar>
 </template>
 
@@ -57,6 +70,9 @@ export default defineComponent({
   props: {
     src: {},
     isAmber: Boolean,
+    isBlue: Boolean,
+    isRed: Boolean,
+    isPink: Boolean,
     size: {
       default: 62,
     },
@@ -67,6 +83,21 @@ export default defineComponent({
       default: "devices_fold",
     },
     caption: {},
+    loading: Boolean,
+    tooltip:{},
+  },
+
+  computed: {
+    bg() {
+      return `linear-gradient(45deg, ${this.color1}, ${this.color2})`;
+    },
+
+    color1() {
+      return this.isAmber ? "#FFA000" : this.isBlue ? "#64B5F6" :this.isRed?'#F44336':this.isPink?'#E91E63': "#000";
+    },
+    color2() {
+      return this.isAmber ? "#de8e07" : this.isBlue ? "#1976D2" : this.isRed?'#D32F2F':this.isPink?'#C2185B':"#000";
+    },
   },
 });
 </script>

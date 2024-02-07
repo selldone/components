@@ -48,9 +48,6 @@ import SLoading from "@components/ui/loading/SLoading.vue";
 
 import SProgressLoading from "@components/ui/loading/SProgressLoading.vue";
 
-// + Youtube Player:
-// @ts-ignore
-import VueYoutube from "vue-youtube-vue-3";
 
 // + Tel input:
 // @ts-ignore
@@ -186,7 +183,6 @@ export function installGlobalComponents(app: App) {
   );
   app.component("s-barcode", SBarcode);
 
-  app.use(VueYoutube);
 
   //---------------- Barcode Scanner --------------
   app.component(

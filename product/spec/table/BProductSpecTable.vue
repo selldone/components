@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -20,13 +20,14 @@
       <s-smart-toggle
         v-model="auto_save"
         :true-title="$t('spec_view.auto_save_input')"
+        true-description="Changes will be saved automatically."
         color="green"
       ></s-smart-toggle>
 
       <draggable
-        :value="spec"
+        :model-value="spec"
         :press-delay="150"
-        @input="
+        @update:modelValue="
           (list) => {
             if (auto_save) $emit('save', list);
             else $emit('update', list);
@@ -35,7 +36,6 @@
         @start="drag = true"
         @end="drag = false"
         :class="{ 'border-between-vertical': editable }"
-
         tag="transition-group"
         :component-data="{
           tag: 'ul',
@@ -44,34 +44,25 @@
         }"
         v-bind="dragOptions"
         style="list-style-type: none"
-
-
       >
-        <template v-slot:item="{ element,index }">
-          <sortable-item
-              v-if="element"
-              :item="element"
-              :editable="editable"
-              @delete="$emit('click-delete', element)"
-              :minimize="drag"
-              :class="{
+        <template v-slot:item="{ element ,index}">
+
+          <b-product-spec-row
+            v-if="element"
+            :key="index"
+            :item="element"
+            :editable="editable"
+            @delete="$emit('click-delete', element)"
+            :minimize="drag"
+            :class="{
               '-border': !(
                 index >= spec.length - 1 ||
                 element.group /*It's group!*/ ||
                 spec[index + 1].group
-              ) /*NExt is group so it's last item!*/,
+              ) /*Next is group so it's last item!*/,
             }"
           />
         </template>
-
-
-
-        <template #footer>
-          <p v-if="!item" class="bg-danger p-3 text--white">
-            Error! item is null!
-          </p>
-        </template>
-
       </draggable>
     </template>
 
@@ -85,7 +76,7 @@
           v-for="(item, index) in spec_grouped"
           :key="'g' + index"
         >
-          <sortable-item
+          <b-product-spec-row
             v-if="item.group"
             :item="item.group"
             @update:collapse="collapses.toggle(index)"
@@ -93,7 +84,7 @@
           />
           <v-expand-transition>
             <div class="-list-items" v-if="!collapses.includes(index)">
-              <sortable-item
+              <b-product-spec-row
                 v-for="(item, j) in item.items"
                 :key="j"
                 :item="item"
@@ -104,20 +95,21 @@
         </v-col>
       </v-row>
     </v-container>
+
   </div>
 </template>
 
 <script>
-import SortableItem from "./SortableItem.vue";
+import BProductSpecRow from "../BProductSpecRow.vue";
 
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
 import draggable from "vuedraggable";
 
 export default {
-  name: "ProductSpecView",
+  name: "BProductSpecTable",
   components: {
     SSmartToggle,
-    SortableItem,
+    BProductSpecRow,
     draggable,
   },
   event: "click-delete",
@@ -208,6 +200,7 @@ export default {
     border-radius: 0;
     background: none;
   }
+
   .-border {
     border-bottom: solid thin #ccc;
   }

@@ -18,7 +18,7 @@
     class="list-group list-group-flush"
     @start="drag = true"
     @end="drag = false"
-    @change="$emit('input', list)"
+    @update:modelValue="$emit('input', list)"
     tag="transition-group"
     :component-data="{
       tag: 'ul',

@@ -24,15 +24,15 @@
     @click="$emit('select')"
     :style="{ '--theme-dark': activeColor ? activeColor : SaminColorDark }"
   >
-    <div v-if="color" align-center justify-center class="--item p-1 text-nowrap ">
+    <div v-if="color" align-center justify-center class="--item pa-1 text-nowrap ">
       <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
 
       <s-color-circle :color="color" class="me-1" :size="16"></s-color-circle>
 
-      <span class="small me-1">{{ coloName }}</span>
+      <span class="small mx-1">{{ coloName }}</span>
     </div>
 
-    <div v-if="volume" class="--item p-1 text-nowrap">
+    <div v-if="volume" class="--item pa-1 text-nowrap">
       <v-icon :color="icon_color" class="me-1" size="small"> equalizer</v-icon>
 
       <span class="card-badge-info">
@@ -46,7 +46,7 @@
       </span>
     </div>
 
-    <div v-if="pack" class="--item p-1 text-nowrap">
+    <div v-if="pack" class="--item pa-1 text-nowrap">
       <v-icon :color="icon_color" class="me-1" size="small"> all_inbox</v-icon>
 
       <span class="card-badge-info">
@@ -60,7 +60,7 @@
       </span>
     </div>
 
-    <div v-if="weight" class="--item p-1 text-nowrap">
+    <div v-if="weight" class="--item pa-1 text-nowrap">
       <v-icon :color="icon_color" class="me-1" size="small">
         fa:fas fa-weight-hanging
       </v-icon>
@@ -75,7 +75,7 @@
       </span>
     </div>
 
-    <div v-if="style" class="--item p-1 text-nowrap">
+    <div v-if="style" class="--item pa-1 text-nowrap">
       <v-icon :color="icon_color" class="me-1" size="small"> style</v-icon>
 
       <span class="card-badge-info">
@@ -88,7 +88,7 @@
       </span>
     </div>
 
-    <div v-if="type" class="--item p-1 text-nowrap">
+    <div v-if="type" class="--item pa-1 text-nowrap">
       <v-icon :color="icon_color" class="me-1" size="small">
         fa:fas fa-toolbox
       </v-icon>
@@ -186,10 +186,11 @@ export default {
 .product-variant-card-mini {
   //background: #fafafa;
   padding: 3px;
-  border-radius: 4px;
+  border-radius: 18px;
   font-weight: 500;
   cursor: pointer;
   position: relative;
+  min-height: 48px;
 
   .--item {
     display: flex;

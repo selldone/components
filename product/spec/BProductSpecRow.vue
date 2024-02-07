@@ -16,6 +16,7 @@
   <li
     :class="$vuetify.rtl ? 'text-right' : 'text-left'"
     :dir="$vuetify.rtl ? 'rtl' : 'ltr'"
+    style="list-style-type: none"
   >
     <!-- ████████████████████ Group Title ████████████████████ -->
 
@@ -38,9 +39,17 @@
         class="flex-grow-1 py-1"
         :class="{ 'editable-blue': editable }"
       >
-        <v-icon color="#333" v-if="editable"> expand_more </v-icon>
-        <v-btn v-else @click="$emit('update:collapse', !collapse)" icon>
-          <v-icon color="#333" :class="{ 'rotate-180': collapse }">
+        <v-icon color="#333" v-if="editable"> expand_more</v-icon>
+        <v-btn
+          v-else
+          @click="
+            local_collapse = !local_collapse;
+            $emit('update:collapse', local_collapse);
+          "
+          icon
+          variant="text"
+        >
+          <v-icon color="#333" :class="{ 'rotate-180': local_collapse }">
             expand_more
           </v-icon>
         </v-btn>
@@ -55,18 +64,20 @@
           :color="editing ? 'primary' : '#444'"
           size="small"
           icon
+          variant="text"
           @click="editing = !editing"
         >
-          <v-icon size="small"> edit </v-icon>
+          <v-icon> edit</v-icon>
         </v-btn>
         <v-btn
           class="section-action"
           size="small"
           icon
+          variant="text"
           color="#444"
           @click="$emit('delete')"
         >
-          <v-icon size="small"> delete </v-icon>
+          <v-icon> delete</v-icon>
         </v-btn>
       </template>
     </div>
@@ -115,6 +126,8 @@
                   v-if="i !== 1"
                   size="small"
                   icon
+                  variant="text"
+                  :title="`Remove item ${item}`"
                   @click.stop="
                     () => {
                       if (item.length > 2) item.splice(i, 1);
@@ -125,6 +138,7 @@
                 </v-btn>
               </template>
             </v-text-field>
+            <div class="py-1 small">Press Enter to add new row.</div>
           </div>
           <div
             v-else
@@ -151,9 +165,10 @@
               :color="editing ? 'primary' : '#444'"
               size="small"
               icon
+              variant="text"
               @click="editing = !editing && editable"
             >
-              <v-icon :size="!editing && 'small'">
+              <v-icon>
                 {{ editing ? "check" : "edit" }}
               </v-icon>
             </v-btn>
@@ -163,10 +178,11 @@
               class="section-action"
               size="small"
               icon
+              variant="text"
               color="#444"
               @click="$emit('delete')"
             >
-              <v-icon size="small"> delete </v-icon>
+              <v-icon> delete</v-icon>
             </v-btn>
           </template>
         </template>
@@ -177,11 +193,11 @@
 
 <script>
 // ―――――――――――――――― A set of vue mixins to turn any list into an animated sortable list ――――――――――――――――
-//import { ContainerMixin, ElementMixin } from "vue-slicksort";
 
 export default {
-  name: "SortableItem",
-  //mixins: [ElementMixin],
+  name: "BProductSpecRow",
+  components: {},
+  emits: ["update:collapse"],
   props: {
     item: {},
     editable: {
@@ -205,6 +221,7 @@ export default {
 
   data: () => ({
     editing: false,
+    local_collapse: false,
   }),
 
   computed: {
@@ -217,7 +234,14 @@ export default {
     },
   },
 
-  watch: {},
+  watch: {
+    collapse(val) {
+      this.local_collapse = val;
+    },
+  },
+  created() {
+    this.local_collapse = this.collapse;
+  },
 
   methods: {
     addInnerItem(item, index) {
@@ -232,6 +256,7 @@ export default {
 .rtl {
   direction: rtl !important;
 }
+
 .list-item {
   position: relative;
   min-height: 42px;
@@ -244,6 +269,7 @@ export default {
     cursor: move;
     user-select: none;
   }
+
   width: 100%;
 
   .grid {
@@ -284,6 +310,7 @@ export default {
       display: flex !important;
       flex-wrap: wrap;
       flex-direction: row;
+
       & > * {
         padding: 6px;
       }
@@ -301,6 +328,7 @@ export default {
       margin: 0;
       padding: 6px;
     }
+
     &.has-splitter {
       :not(:first-child) {
         padding-top: 8px;
@@ -308,6 +336,7 @@ export default {
       }
     }
   }
+
   .sec2 {
     // width: 50%;
     display: flex;
@@ -328,6 +357,7 @@ export default {
     cursor: move;
     user-select: none;
   }
+
   p {
     margin: 0;
   }

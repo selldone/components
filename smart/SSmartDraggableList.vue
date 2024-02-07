@@ -21,7 +21,7 @@
       v-model="list"
       @start="drag = true"
       @end="drag = false"
-      @change="
+      @update:modelValue="
         $emit('update:modelValue', list);
         $nextTick(() => {
           $emit('change', list);

@@ -17,7 +17,7 @@
     v-model="list"
     @start="drag = true"
     @end="drag = false"
-    @change="$emit('input', list)"
+    @update:modelValue="$emit('update:modelValue', list)"
     handle=".handle"
     tag="transition-group"
     :component-data="{
@@ -100,7 +100,7 @@ export default {
   name: "ExpertContractTasks",
   components: { draggable },
   props: {
-    value: {},
+    modelValue: {},
     editable: {
       default: false,
       type: Boolean,
@@ -129,23 +129,23 @@ export default {
   },
 
   watch: {
-    value() {
-      this.list = this.value;
+    modelValue() {
+      this.list = this.modelValue;
     },
   },
 
   created() {
-    this.list = this.value && Array.isArray(this.value) ? this.value : [];
+    this.list = this.modelValue && Array.isArray(this.modelValue) ? this.modelValue : [];
   },
   methods: {
     deleteItem(index) {
       this.list.splice(index, 1);
-      this.$emit("input", this.list);
+      this.$emit("update:modelValue", this.list);
       this.$emit("change");
     },
     addItem() {
       this.list.push({ title: "", progress: 0 });
-      this.$emit("input", this.list);
+      this.$emit("update:modelValue", this.list);
       this.$emit("change");
     },
   },

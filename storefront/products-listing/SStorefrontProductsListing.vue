@@ -327,7 +327,7 @@
                 quick-buy-mode
               />
 
-              <product-spec-view v-if="spec_array" :spec="spec_array" />
+              <b-product-spec-table v-if="spec_array" :spec="spec_array" />
               <div class="min-height-10vh"></div>
             </template>
             <v-btn
@@ -367,7 +367,7 @@ import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLo
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
-import ProductSpecView from "../product/spec/ProductSpecView.vue";
+import BProductSpecTable from "../../product/spec/table/BProductSpecTable.vue";
 import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
 import ProductInfoLoadingView from "@components/product/loading/ProductInfoLoadingView.vue";
 import { ModeView } from "@core/enums/shop/ModeView";
@@ -378,7 +378,7 @@ export default {
   components: {
     ProductInfoLoadingView,
     SBreadcrumbImage,
-    ProductSpecView,
+    BProductSpecTable,
     SShopProductMainCard,
     SStorefrontProductsFilterMenu,
     CategoryCard,

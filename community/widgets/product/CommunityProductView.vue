@@ -27,18 +27,17 @@
 
       <v-expansion-panels
         v-if="spec_array && Object.keys(spec_array).length > 0"
-        flat
       >
-        <v-expansion-panel>
-          <v-expansion-panel-header>
+        <v-expansion-panel elevation="0">
+          <v-expansion-panel-title>
             <div>
               <v-icon class="me-1">bubble_chart</v-icon>
               <b>{{ $t("product.spec") }} </b>
             </div>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <product-spec-view :spec="spec_array"></product-spec-view>
-          </v-expansion-panel-content>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <b-product-spec-table :spec="spec_array"></b-product-spec-table>
+          </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
     </div>
@@ -56,11 +55,11 @@
 import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
-import ProductSpecView from "@components/storefront/product/spec/ProductSpecView.vue";
+import BProductSpecTable from "@components/product/spec/table/BProductSpecTable.vue";
 
 export default {
   name: "CommunityProductView",
-  components: { ProductSpecView, SShopProductMainCard },
+  components: { BProductSpecTable, SShopProductMainCard },
   props: {
     shop: {
       require: true,

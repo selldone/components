@@ -21,35 +21,38 @@
       variant="flat"
       block
       :class="{ pen: loading }"
+      class="s--ai-button-large"
     >
-      <v-avatar
-        size="36"
-        class="me-2 ai-btn-large position-relative"
-        color="#512DA8"
-        :class="{ '-loading': loading }"
-      >
-        <img
-          src="@components/assets/icons/ci-logo.png"
-          :width="32"
-          :height="32"
-          class="z1"
-        />
-        <v-progress-circular
-          v-if="loading"
-          indeterminate
-          :size="28"
-          color="#FFF"
-          class="center-absolute"
-        ></v-progress-circular>
-      </v-avatar>
+      <div class="flex-grow-0 d-flex align-center">
+        <v-avatar
+          size="36"
+          class="me-2 -avatar position-relative"
+          color="#512DA8"
+          :class="{ '-loading': loading }"
+        >
+          <img
+            src="@components/assets/icons/ci-logo.png"
+            :width="32"
+            :height="32"
+            class="z1"
+          />
+          <v-progress-circular
+            v-if="loading"
+            indeterminate
+            :size="28"
+            color="#FFF"
+            class="center-absolute"
+          ></v-progress-circular>
+        </v-avatar>
 
-      <div class="pe-2 me-2 border-end text-h4">AI</div>
+        <div class="pe-2 me-2 border-end text-h4">AI</div>
+      </div>
 
-      <div class="flex-grow-1">
-        <div class="font-weight-black">
+      <div class="flex-grow-1 text-center">
+        <div>
           {{ title }}
         </div>
-        <div>
+        <div class="small mt-1">
           {{ subTitle }}
         </div>
       </div>
@@ -62,7 +65,7 @@ export default {
   name: "AiButtonLarge",
   emits: ["click"],
   props: {
-    loading: {},
+    loading: Boolean,
     title: {},
     subTitle: {},
   },
@@ -70,49 +73,57 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.ai-btn-large {
-  overflow: visible;
-  &:before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 36px;
-    height: 36px;
-    opacity: 0;
-    border-radius: 50%;
-    filter: blur(5px);
-    transform-origin: center;
+.s--ai-button-large {
+  ::v-deep(.v-btn__content) {
+    width: 100%;
   }
-  &.-loading {
-    &:before {
-      background-image: linear-gradient(
-        -45deg,
-        #ee7752,
-        #e73c7e,
-        #23a6d5,
-        #23d5ab
-      );
-      background-size: 400% 400%;
-      animation:
-        gradient 15s ease infinite,
-        scale-infinite 2s ease-in-out infinite;
 
-      opacity: 1;
+  .-avatar {
+    overflow: visible;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 36px;
+      height: 36px;
+      opacity: 0;
+      border-radius: 50%;
+      filter: blur(5px);
+      transform-origin: center;
+    }
+
+    &.-loading {
+      &:before {
+        background-image: linear-gradient(
+          -45deg,
+          #ee7752,
+          #e73c7e,
+          #23a6d5,
+          #23d5ab
+        );
+        background-size: 400% 400%;
+        animation:
+          gradient 15s ease infinite,
+          scale-infinite 2s ease-in-out infinite;
+
+        opacity: 1;
+      }
     }
   }
-}
 
-@keyframes scale-infinite {
-  0% {
-    transform: scale(1.15) translate(-45%, -45%);
-  }
-  50% {
-    transform: scale(1) translate(-50%, -50%);
-  }
-  100% {
-    transform: scale(1.15) translate(-45%, -45%); //fix un center bug!
+  @keyframes scale-infinite {
+    0% {
+      transform: scale(1.15) translate(-45%, -45%);
+    }
+    50% {
+      transform: scale(1) translate(-50%, -50%);
+    }
+    100% {
+      transform: scale(1.15) translate(-45%, -45%); //fix un center bug!
+    }
   }
 }
 </style>

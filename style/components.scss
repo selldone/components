@@ -4683,7 +4683,16 @@ display: flex;
       font-size: 14px;
     }
   }
+
+
+
 }
+.dashed-hr {
+  border-top: dashed 1.6px #fff;
+  margin-left: -20px;
+  margin-right: -20px;
+}
+
 
 // Add margin for pagination's:
 .widget, .widget-box {

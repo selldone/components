@@ -13,132 +13,134 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
-    <s-grid-draggable-view
-      v-if="show_images"
-      :style="{ 'background-color': bgColor }"
-      @layoutEnd="updateOrder"
-      @dragEnd="dragEnd"
-      ref="grid_container"
-      class="rounded-18px"
+  <s-grid-draggable-view
+    v-if="show_images"
+    :style="{ 'background-color': bgColor }"
+    @layoutEnd="updateOrder"
+    @dragEnd="dragEnd"
+    ref="grid_container"
+    class="b--gallery-grid rounded-18px"
+  >
+    <div
+      v-for="(image, index) in images"
+      :key="image.id"
+      class="item-grid"
+      :style="style_value"
+      ref="items"
+      :image_id="image.id"
     >
-      <div
-        v-for="(image, index) in images"
-        :key="image.id"
-        class="item-grid "
-        :style="style_value"
-        ref="items"
-        :image_id="image.id"
+      <v-img
+        :src="getShopImagePath(image.path)"
+        :aspect-ratio="$vuetify.display.smAndUp ? 1 : 2"
+        class="m-2"
       >
-        <v-img
-          :src="getShopImagePath(image.path)"
-          :aspect-ratio="$vuetify.display.smAndUp ? 1 : 2"
-          class="m-2"
+        <template v-slot:placeholder>
+          <v-layout fill-height align-center justify-center ma-0>
+            <v-progress-circular indeterminate color="primary" />
+          </v-layout>
+        </template>
+
+        <div
+          v-if="(image.width && image.height) || image.size"
+          class="absolute-bottom-start x-small text-white text-nowrap usn rounded-lg pa-1 -spec"
         >
-          <template v-slot:placeholder>
-            <v-layout fill-height align-center justify-center ma-0>
-              <v-progress-circular indeterminate color="primary" />
-            </v-layout>
-          </template>
+          <span v-if="image.width && image.height && image.size" class="me-1">{{
+            `${image.width}px ✕ ${image.height}px`
+          }}</span>
+          <div v-if="image.size" class="d-flex align-center">
+            <b>{{ numeralFormat(image.size, "0.[0] b") }} </b>
 
-          <div
-            v-if="(image.width && image.height) || image.size"
-            class="absolute-bottom-start x-small text-white text-nowrap pen usn rounded-lg pa-1"
-            style="background-color: rgba(10, 20, 60, 0.21)"
-          >
-            <span
-              v-if="image.width && image.height && image.size"
-              class="me-1"
-              >{{ `${image.width}px ✕ ${image.height}px` }}</span
-            >
-            <div v-if="image.size" class="d-flex align-center">
-              <b>{{ numeralFormat(image.size, "0.[0] b") }} </b>
-
-              <v-progress-linear
-                :color="
-                  image.size > 1024 * 1024
-                    ? 'red'
-                    : image.size > 512 * 1024
-                      ? 'amber'
-                      : 'green'
-                "
-                :model-value="(100 * image.size) / (1024 * 1024)"
-                height="2"
-                rounded
-                style="max-width: 64px"
-                class="mx-1"
-              ></v-progress-linear>
-            </div>
+            <v-progress-linear
+              :color="
+                image.size > 1024 * 1024
+                  ? 'red'
+                  : image.size > 512 * 1024
+                    ? 'amber'
+                    : 'green'
+              "
+              :model-value="(100 * image.size) / (1024 * 1024)"
+              bg-color="#000"
+              height="2"
+              rounded
+              style="max-width: 64px"
+              location="start"
+              class="mx-1"
+            ></v-progress-linear>
           </div>
+        </div>
 
-          <div class="absolute-bottom-end d-flex flex-column no-drag">
-            <v-btn
-              v-if="hasAiBackgroundRemove"
-              title="AI Remove Background"
-              color="rgba(10,20,60)"
-              variant="flat"
-              size="small"
-              @click.stop="$emit('click:bg-remove', image)"
-              class="mb-1"
-            >
-              <v-icon class="me-1" size="x-small">{{
+        <div class="absolute-bottom-end d-flex flex-column no-drag">
+          <v-btn
+            v-if="hasAiBackgroundRemove"
+            title="AI Remove Background"
+            color="rgba(10,20,60)"
+            variant="flat"
+            size="small"
+            @click.stop="$emit('click:bg-remove', image)"
+            class="mb-1"
+          >
+            <v-icon class="me-1" size="x-small"
+              >{{
                 image.path?.endsWith("--transparent.png")
                   ? "check_circle"
                   : "auto_fix_high"
-              }}</v-icon>
+              }}
+            </v-icon>
 
-              BGR
-            </v-btn>
+            BGR
+          </v-btn>
 
-            <v-btn
-              v-if="hasAlt"
-              title="Set Alt Text"
-              color="rgba(10,20,60)"
-              variant="flat"
-              size="small"
-              @click.stop="$emit('click:alt', image)"
-              ><v-icon v-if="image.alt" class="me-1" size="x-small"
-                >check_circle</v-icon
-              >ALT</v-btn
-            >
-          </div>
-        </v-img>
+          <v-btn
+            v-if="hasAlt"
+            title="Set Alt Text"
+            color="rgba(10,20,60)"
+            variant="flat"
+            size="small"
+            @click.stop="$emit('click:alt', image)"
+          >
+            <v-icon v-if="image.alt" class="me-1" size="x-small"
+              >check_circle
+            </v-icon>
+            ALT
+          </v-btn>
+        </div>
+      </v-img>
 
-        <v-btn
-          :title="$t('global.actions.delete')"
-          color="#D32F2F"
-          variant="flat"
-          icon=""
-          size="small"
-          class="m-2 absolute-top-end no-drag"
-          @click="deleteAppImage(image, index)"
-          :loading="busy_delete === index"
-        >
-          <v-icon>delete_outline</v-icon>
-        </v-btn>
-      </div>
+      <v-btn
+        :title="$t('global.actions.delete')"
+        color="#D32F2F"
+        variant="flat"
+        icon=""
+        size="small"
+        class="m-2 absolute-top-end no-drag"
+        @click="deleteAppImage(image, index)"
+        :loading="busy_delete === index"
+      >
+        <v-icon>delete_outline</v-icon>
+      </v-btn>
+    </div>
 
-      <div class="p-2 item-grid " :style="style_value">
-        <s-image-uploader
-          class="marginal-center"
-          label="Upload images"
-          :server="uploadPath"
-          :max-file-size="maxFileSize"
-          @response="handleUploadAppImages"
-          allow-multiple
-          :max-files="20"
-          dense
-          disable-past
-        >
-        </s-image-uploader>
-      </div>
-    </s-grid-draggable-view>
-  </div>
+    <div class="p-2 item-grid" :style="style_value">
+      <s-image-uploader
+        class="marginal-center"
+        label="Upload images"
+        :server="uploadPath"
+        :max-file-size="maxFileSize"
+        @response="handleUploadAppImages"
+        allow-multiple
+        :max-files="20"
+        dense
+        disable-past
+      >
+      </s-image-uploader>
+    </div>
+  </s-grid-draggable-view>
 </template>
 
 <script>
 import SImageUploader from "./SImageUploader.vue";
 import SGridDraggableView from "@components/ui/grid/draggable-view/SGridDraggableView.vue";
+
 export default {
   name: "SGalleryUploadGrid",
   components: { SGridDraggableView, SImageUploader },
@@ -292,8 +294,8 @@ export default {
             );
 
             /* this.$nextTick( () =>{
-              this.$refs.grid_container.layout();
-            });*/
+                this.$refs.grid_container.layout();
+              });*/
 
             this.showSuccessAlert(
               "Delete image",
@@ -314,25 +316,28 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.hover-image-gallery {
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    transform: scale(0.9, 0.9) !important;
-  }
-}
-
-.item-grid {
-  cursor: move;
-  border-radius: 12px;
-
-  display: block;
-  position: absolute;
-  z-index: 1;
-  background: #fff;
-
-  .v-img {
+.b--gallery-grid {
+  .item-grid {
+    cursor: move;
     border-radius: 12px;
+
+    display: block;
+    position: absolute;
+    z-index: 1;
+    background: #fff;
+
+    .v-img {
+      border-radius: 12px;
+    }
+  }
+
+  .-spec {
+    background-color: rgba(10, 20, 60, 0.3);
+    transition: all 0.4s;
+
+    &:hover {
+      background-color: rgba(10, 20, 60, 0.9);
+    }
   }
 }
 </style>

@@ -15,35 +15,41 @@
 <template>
   <div v-if="is_valid">
     <v-list-item>
-      <v-list-item-avatar rounded>
-        <v-img :src="thumbnail_url"></v-img>
-      </v-list-item-avatar>
-      <v-list-item-content>
-        <v-list-item-title class="font-weight-bold">
-          {{ title }}
-        </v-list-item-title>
-        <v-list-item-subtitle>
-          {{ author_name }}
-        </v-list-item-subtitle>
-      </v-list-item-content>
-      <v-list-item-action>
-        <v-btn
-          :href="`https://www.youtube.com/watch?v=${videoId}`"
-          target="_blank"
-          title="View video on youtube."
-          icon
-        >
-          <v-icon small>open_in_new</v-icon>
-        </v-btn>
-      </v-list-item-action>
+      <template v-slot:prepend>
+        <s-avatar-folder is-red side-icon="smart_display" :src="thumbnail_url">
+        </s-avatar-folder>
+      </template>
+
+      <v-list-item-title class="font-weight-bold">
+        {{ title }}
+      </v-list-item-title>
+      <v-list-item-subtitle>
+        {{ author_name }}
+      </v-list-item-subtitle>
+
+      <template v-slot:append>
+        <v-list-item-action end>
+          <v-btn
+            :href="`https://www.youtube.com/watch?v=${videoId}`"
+            target="_blank"
+            title="View video on youtube."
+            icon
+            variant="text"
+          >
+            <v-icon size="small">open_in_new</v-icon>
+          </v-btn>
+        </v-list-item-action>
+      </template>
     </v-list-item>
   </div>
 </template>
 
 <script>
+import SAvatarFolder from "@components/ui/avatar/folder/SAvatarFolder.vue";
+
 export default {
   name: "SYoutubeVideoPreview",
-  components: {},
+  components: {SAvatarFolder},
   props: {
     videoId: {
       required: false,
