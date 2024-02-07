@@ -39,6 +39,7 @@
       :variant="
         variant ? variant : solo ? 'solo' : outlined ? 'outlined' : 'underlined'
       "
+      :messages="getFromNowString(modelValue)"
     >
       <template v-slot:prepend-inner>
         <slot name="prepend-inner"></slot>
@@ -51,66 +52,62 @@
       max-width="700"
       scrollable
       :fullscreen="$vuetify.display.smAndDown"
+      theme="light"
     >
-      <v-card class="text-start">
-        <v-card-title >
-         <v-row no-gutters align="center">
-           {{ getLocalTimeString(date_time) }}
-           <v-spacer></v-spacer>
-           <v-btn
-               v-if="clearable"
-               color="red"
-               variant="text" size="x-large"
-               class="ma-1 tnt"
-               @click="
-              clear();
-              dialog = false;
-            "
-           >
-             <v-icon size="small" class="me-1">close</v-icon>
-
-             {{ $t("global.actions.clear") }}
-           </v-btn>
-         </v-row>
-        </v-card-title>
-
+      <v-card
+        class="text-start"
+        rounded="xl"
+        prepend-icon="calendar_today"
+        :title="getLocalTimeString(date_time)"
+      >
         <v-card-text>
           <v-row no-gutters justify="space-around">
             <v-date-picker
               v-model="date"
-
-
               :min="min instanceof Date ? min.toISOString() : min"
               :max="max instanceof Date ? max.toISOString() : max"
-              class="picker-style"
+              show-adjacent-months
+
             ></v-date-picker>
 
             <v-time-picker
               v-if="!dateOnly /** TODO: NOt added yet! I should add this!*/"
               v-model="time"
-              class="picker-style"
               ampm-in-title
               :min="min_time"
               :max="max_time"
             ></v-time-picker>
-            <v-col cols="12" class="text-end text-muted">
-              {{ getFromNowString(date_time) }}
-            </v-col>
           </v-row>
+
+          <div v-if="clearable" class="text-end">
+            <v-btn
+              rounded="xl"
+              color="red"
+              variant="text"
+              size="x-large"
+              class="ma-1 tnt"
+              @click="
+                clear();
+                dialog = false;
+              "
+            >
+              <v-icon start>delete</v-icon>
+
+              {{ $t("global.actions.clear") }}
+            </v-btn>
+          </div>
         </v-card-text>
         <v-card-actions class="border-top">
           <div class="widget-buttons">
-            <v-btn
-              @click="dialog = false"
-              variant="text"
-              size="x-large"
-              >{{ $t("global.actions.close") }}
+            <v-btn @click="dialog = false" variant="text" size="x-large">
+              <v-icon start>close</v-icon>
+              {{ $t("global.actions.close") }}
             </v-btn>
 
             <v-btn
               size="x-large"
               @click="
-                date = new Date().toISOString().slice(0, 10);
+                date = new Date();
                 time = new Date().toLocaleString('default', {
                   hour: 'numeric',
                   minute: 'numeric',
@@ -119,12 +116,13 @@
               "
               variant="text"
             >
-              <v-icon class="me-1">today</v-icon>
+              <v-icon start>today</v-icon>
               {{ $t("global.commons.now") }}
             </v-btn>
             <v-btn
               size="x-large"
-              color="primary" variant="elevated"
+              color="primary"
+              variant="elevated"
               @click="
                 $emit('update:modelValue', date_time);
 
@@ -135,8 +133,14 @@
               "
               :class="{ disabled: !date_time }"
             >
-              <v-icon class="me-1">done</v-icon>
-              {{ $t("global.actions.set") }}
+              <v-icon start>done</v-icon>
+
+              <div>
+                {{ $t("global.actions.set") }}
+                <div class="small mt-1">
+                  {{ getFromNowString(date_time) }}
+                </div>
+              </div>
             </v-btn>
           </div>
         </v-card-actions>
@@ -146,8 +150,6 @@
 </template>
 
 <script>
-import { useDate } from 'vuetify'
-
 export default {
   name: "SDateInput",
   emits: ["update:modelValue", "change", "enter", "click:clear"],
@@ -234,11 +236,17 @@ export default {
   computed: {
     date_time() {
       if (!this.date) return null;
-      let str = "";
-      if (this.date) str = this.date;
-      if (this.time) str += " " + this.time;
 
-      return new Date(str).toISOString(); // date time string assume as local time zone! So created date will be valid time data in UTC format.
+      let combinedDateTime = new Date(this.date); // Clone the date to avoid modifying the original date
+
+      if (this.time) {
+        const [hours, minutes] = this.time.split(":").map(Number); // Split the time string into hours and minutes and convert to numbers
+        combinedDateTime.setHours(hours, minutes, 0, 0); // Set hours and minutes to the date object
+      }
+
+      return combinedDateTime.toISOString(); // Return the combined date and time in ISO 8601 format
+
+      // date time string assume as local time zone! So created date will be valid time data in UTC format.
     },
     min_time() {
       if (!this.min || !this.date) return null;
@@ -287,9 +295,9 @@ export default {
 
       // Set initial value:
       if (this.modelValue) {
-        let date = new Date(this.modelValue);   // Wed Nov 29 2023 18:00:00 GMT-0600
+        let date = new Date(this.modelValue); // Wed Nov 29 2023 18:00:00 GMT-0600
 
-        this.date = date.toISOString().slice(0, 10);
+        this.date = date;
 
         this.time = date.toLocaleString("default", {
           hour: "numeric",

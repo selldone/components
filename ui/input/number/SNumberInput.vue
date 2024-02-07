@@ -16,8 +16,7 @@
   <v-text-field
     v-model="newValue"
     :rounded="rounded"
-    :outlined="outlined"
-    :density="dense && 'compact'"
+    :density="dense? 'compact':undefined"
     :class="{
       'center-input': textCenter,
       'no-padding-nf': noPadding,
@@ -26,7 +25,6 @@
     :placeholder="placeholder"
     persistent-placeholder
     :append-inner-icon="icon"
-    :filled="filled"
     :single-line="singleLine"
     :hide-details="hideDetails && !messages"
     @keypress="isNumber($event)"
@@ -54,7 +52,7 @@
       }
     "
     :loading="loading"
-    :variant="variant ? variant : solo ? 'solo' : 'underlined'"
+    :variant="variant ? variant : solo ? 'solo':filled?'filled':outlined?'outlined' : 'underlined'"
     :flat="flat"
     :readonly="readonly || is_locked"
     :bg-color="backgroundColor"

@@ -483,44 +483,6 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
 }
 
-// ----------------------- Stylish Data picker / Time picker ----------------------
-
-
-
-.v-picker.picker-style {
-  background: transparent !important;
-
-  .v-picker__body{
-    background: transparent;
-  }
-  .v-picker__title {
-    background: transparent !important;
-    .v-time-picker-title,
-    .v-date-picker-title {
-      color: #333 !important;
-      .v-time-picker-title__time,
-      .v-picker__title__btn {
-        & > div,
-        span {
-          font-size: 18px !important;
-          font-weight: 600;
-        }
-      }
-      .v-time-picker-title__time {
-        .v-picker__title__btn,
-        span {
-          height: unset !important;
-        }
-      }
-    }
-  }
-  .theme--light.v-time-picker-clock {
-   // background: #fafafa;
-    background: #fff;
-    background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
-  }
-}
-
 
 
 

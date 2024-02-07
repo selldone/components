@@ -33,7 +33,8 @@
     </v-avatar>
     <v-icon
       class="absolute-bottom-end rounded-ts-circle h-auto w-auto pa-1 ma-n1"
-      :style="{ backgroundImage: bg }" style="background-size: 300% 300%;"
+      :style="{ backgroundImage: bg }"
+      style="background-size: 300% 300%"
       color="#fff"
     >
       {{ sideIcon }}
@@ -54,8 +55,8 @@
 
     <slot></slot>
 
-    <v-tooltip activator="parent">
-      {{tooltip}}
+    <v-tooltip v-if="tooltip" activator="parent">
+      {{ tooltip }}
     </v-tooltip>
   </v-avatar>
 </template>
@@ -84,7 +85,7 @@ export default defineComponent({
     },
     caption: {},
     loading: Boolean,
-    tooltip:{},
+    tooltip: {},
   },
 
   computed: {
@@ -93,10 +94,26 @@ export default defineComponent({
     },
 
     color1() {
-      return this.isAmber ? "#FFA000" : this.isBlue ? "#64B5F6" :this.isRed?'#F44336':this.isPink?'#E91E63': "#000";
+      return this.isAmber
+        ? "#FFA000"
+        : this.isBlue
+          ? "#64B5F6"
+          : this.isRed
+            ? "#F44336"
+            : this.isPink
+              ? "#E91E63"
+              : "#000";
     },
     color2() {
-      return this.isAmber ? "#de8e07" : this.isBlue ? "#1976D2" : this.isRed?'#D32F2F':this.isPink?'#C2185B':"#000";
+      return this.isAmber
+        ? "#de8e07"
+        : this.isBlue
+          ? "#1976D2"
+          : this.isRed
+            ? "#D32F2F"
+            : this.isPink
+              ? "#C2185B"
+              : "#000";
     },
   },
 });
