@@ -108,7 +108,7 @@
         :ids="getProductsIDs(item)"
       ></products-dense-images-circles>
 
-      <status-stepper
+      <s-order-delivery-status-stepper
         v-if="item.status === BasketStatus.Payed.code"
         :states="AvocadoOrderStates"
         :state="item.delivery_state"
@@ -122,13 +122,13 @@
 <script>
 import SOrderStatusView from "@components/order/order-status/SOrderStatusView.vue";
 import { AvocadoOrderStates } from "@core/enums/avocado/AvocadoOrderStates";
-import StatusStepper from "@components/storefront/order/order-status/StatusStepper.vue";
+import SOrderDeliveryStatusStepper from "@components/order/delivery/status/stepper/SOrderDeliveryStatusStepper.vue";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopHyperCustomerOrdersList",
-  components: { ProductsDenseImagesCircles, StatusStepper, SOrderStatusView },
+  components: { ProductsDenseImagesCircles, SOrderDeliveryStatusStepper, SOrderStatusView },
   props: {
     orders: {},
   },

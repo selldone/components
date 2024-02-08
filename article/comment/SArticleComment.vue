@@ -147,7 +147,7 @@
                       v-if="!show_reply"
                       @click="show_reply = true"
                       color="primary"
-                      :variant="!!comment.reply && 'text'"
+                      :variant="!!comment.reply ? 'text':undefined"
                       class="tnt"
                     >
                       <v-icon class="me-1" size="small">edit</v-icon>

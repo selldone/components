@@ -60,7 +60,7 @@
             hover
             readonly
             :small="small"
-            :density="small || (dense && 'compact')"
+            :density="(small || dense) ? 'compact':undefined"
           />
           <small class="mx-2" v-if="product.rate_count"
             >({{ numeralFormat(product.rate_count, "0,0") }})</small

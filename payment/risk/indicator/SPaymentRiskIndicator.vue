@@ -26,7 +26,7 @@
 import chroma from "chroma-js";
 
 export default {
-  name: "PaymentRisk",
+  name: "SPaymentRiskIndicator",
 
   data: function() {
     return {

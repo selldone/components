@@ -84,10 +84,10 @@ export default {
 
   created() {
     // Fix bug: (important)
-    if (!this.$vuetify.theme) this.$vuetify.theme = {};
+    /*if (!this.$vuetify.theme) this.$vuetify.theme = {};
     if (!this.$vuetify.icons) this.$vuetify.icons = {};
     if (!this.$vuetify.display) this.$vuetify.display = {};
-
+*/
     if (this.pack) {
       this.rects = this.pack.rects;
       this.bg = this.pack.bg;

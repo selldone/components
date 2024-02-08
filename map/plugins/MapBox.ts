@@ -14,13 +14,14 @@
 
 import Mapbox from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { SetupService } from "@core/server/SetupService";
+import {SetupService} from "@core/server/SetupService";
+
 Mapbox.accessToken = SetupService.MapToken()!;
 Mapbox.setRTLTextPlugin(
   "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js",
   (error: Error) => {
-    console.error(error);
-  }
+    if (error) console.error(error);
+  },
 );
 
 export default Mapbox;

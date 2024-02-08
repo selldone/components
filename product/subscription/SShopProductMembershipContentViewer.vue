@@ -120,7 +120,7 @@
           active-color="yellow-darken-3"
           color="grey-darken-1"
           hover
-          :size="$vuetify.display.smAndDown && 'small'"
+          :size="$vuetify.display.smAndDown ? 'small':undefined"
           density="compact"
           @update:model-value="(val) => setMyRate(selected_content, val)"
           :class="{ disabled: busy_rate }"

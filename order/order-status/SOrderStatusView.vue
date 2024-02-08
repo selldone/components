@@ -21,25 +21,29 @@
           gatewayProcessing
             ? require('@components/assets/icons/gateway-processing.svg')
             : paymentRequireCapture
-            ? require('@components/assets/icons/require_capture.svg')
-            : statusObject.src
+              ? require('@components/assets/icons/require_capture.svg')
+              : statusObject.src
         "
         width="24"
         height="24"
       />
 
-      <v-icon small v-if="processing" class="sup-icon fa-spin" color="blue"
+      <v-icon
+        size="small"
+        v-if="processing"
+        class="sup-icon fa-spin"
+        color="blue"
         >fa:fas fa-cog</v-icon
       >
-      <v-icon small v-else-if="ticked" class="sup-icon" color="success"
+      <v-icon size="small" v-else-if="ticked" class="sup-icon" color="success"
         >check_circle</v-icon
       >
-      <v-icon small v-else-if="canceled" class="sup-icon" color="red"
+      <v-icon size="small" v-else-if="canceled" class="sup-icon" color="red"
         >cancel</v-icon
       >
 
       <v-icon
-        small
+        size="small"
         v-if="paymentRequireCapture"
         class="sup-icon fa-pulse"
         color="success"
@@ -81,7 +85,7 @@ export default {
     statusObject() {
       // Tips: For billing status is: PENDING , PAYED , CANCELED  (Is upper case!) TODO: Correct it!
       return Object.values(BasketStatus).find(
-        (i) => i.code.toLowerCase() === this.status.toLowerCase()
+        (i) => i.code.toLowerCase() === this.status.toLowerCase(),
       );
     },
     ticked() {

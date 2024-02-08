@@ -100,7 +100,7 @@
 <script>
 import SGeoNavigationButton from "@components/map/geo-button/SGeoNavigationButton.vue";
 export default {
-  name: "receiverInfoWidget",
+  name: "SOrderReceiverInfoCard",
   components: { SGeoNavigationButton },
   props: {
     userId: {

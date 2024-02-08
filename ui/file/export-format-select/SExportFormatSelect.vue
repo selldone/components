@@ -14,7 +14,7 @@
 
 <template>
   <v-list
-    :lines="!dense && 'three'"
+    :lines="!dense ? 'three':undefined"
     class="bg-transparent border-between-vertical rounded-18px overflow-hidden"
   >
     <!-- --------------------------------------- PDF --------------------------------------- -->

@@ -3626,21 +3626,7 @@ Fix snaky chart overflow problem!
   }
 }
 
-.fade-border-vertical {
-  > :not(:last-child) {
-    animation: fade-border-vertical 0.5s linear;
-  }
-}
 
-@keyframes fade-border-vertical {
-  0% {
-    border-bottom-color: transparent;
-  }
-  100% {
-    border-bottom-color: inherit;
-
-  }
-}
 
 //------------------------- Blur animate -------------------------
 

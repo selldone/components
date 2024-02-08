@@ -976,7 +976,7 @@
             @click="likeArticle"
           >
             <v-icon
-              :size="!!USER() && 'large'"
+              :size="!!USER() ? 'large':undefined"
               :color="!USER() ? '#c2185b' : isLiked ? '#c2185b' : 'gray'"
               :class="{ bounceIn: isLiked }"
             >

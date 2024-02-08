@@ -28,13 +28,13 @@
           <v-chip
             v-if="type"
             label
-            x-small
+            size="x-small"
             class="ma-1"
             :title="$t(type.desc)"
             >{{ $t(type.title) }}</v-chip
           >
         </div>
-        <div class="subtitle-2 m-0">
+        <div class="text-subtitle-2 m-0">
           {{ product.title_en }}
         </div>
 
@@ -49,11 +49,11 @@
           <small v-else class="me-2">Not pricing yet!</small>
 
           <div v-if="start_at" class="ma-1" title="Checkin date.">
-            <v-icon small class="mx-1">login</v-icon>
+            <v-icon size="small" class="mx-1">login</v-icon>
             {{ getLocalDateString(start_at) }}
           </div>
           <div v-if="end_at" class="ma-1" title="Checkout date.">
-            <v-icon small class="mx-1">logout</v-icon>
+            <v-icon size="small" class="mx-1">logout</v-icon>
             {{ getLocalDateString(end_at) }}
           </div>
         </v-row>
@@ -140,12 +140,12 @@
           </v-list-subheader>
 
           <div
-            class="subtitle-2 d-flex text-center border-between checks justify-center"
+            class="text-subtitle-2 d-flex text-center border-between checks justify-center"
           >
             <!-- Checkin Date -->
 
             <div class="flex-grow-1">
-              <v-icon color="#111" small class="me-1">login</v-icon>
+              <v-icon color="#111" size="small" class="me-1">login</v-icon>
               {{ $t("service_bill.booking.selected_checkin") }}:
               <div v-if="preferences.dates[0]" class="mt-1">
                 <div>
@@ -162,7 +162,7 @@
                         preferences.dates[0],
                         false,
                         false,
-                        true
+                        true,
                       )
                     }}
 
@@ -176,7 +176,7 @@
                         getLocalTimeString(preferences.dates[0])
                       "
                     >
-                      <v-icon small>autorenew</v-icon>
+                      <v-icon size="small">autorenew</v-icon>
                     </v-btn>
                   </div>
 
@@ -194,7 +194,9 @@
                 </div>
               </div>
               <div v-else class="mt-1">
-                <v-icon color="#111" small class="me-1">help_center</v-icon>
+                <v-icon color="#111" size="small" class="me-1"
+                  >help_center</v-icon
+                >
 
                 {{ $t("global.commons.not_selected") }}
               </div>
@@ -202,7 +204,7 @@
 
             <!-- Checkout Date -->
             <div class="flex-grow-1">
-              <v-icon color="#111" small class="me-1">logout</v-icon>
+              <v-icon color="#111" size="small" class="me-1">logout</v-icon>
 
               {{ $t("service_bill.booking.selected_checkout") }}:
 
@@ -221,7 +223,7 @@
                         preferences.dates[1],
                         false,
                         false,
-                        true
+                        true,
                       )
                     }}
 
@@ -235,7 +237,7 @@
                         getLocalTimeString(preferences.dates[1])
                       "
                     >
-                      <v-icon small>autorenew</v-icon>
+                      <v-icon size="small">autorenew</v-icon>
                     </v-btn>
                   </div>
 
@@ -253,7 +255,9 @@
                 </div>
               </div>
               <div v-else class="mt-1">
-                <v-icon color="#111" small class="me-1">help_center</v-icon>
+                <v-icon color="#111" size="small" class="me-1"
+                  >help_center</v-icon
+                >
                 {{ $t("global.commons.not_selected") }}
               </div>
             </div>
@@ -269,8 +273,14 @@
             <p>
               {{ $t("service_bill.booking.change_days_question") }}
 
-              <v-btn color="primary" text @click="change_dates = !change_dates">
-                <v-icon small class="me-1">published_with_changes</v-icon>
+              <v-btn
+                color="primary"
+                variant="text"
+                @click="change_dates = !change_dates"
+              >
+                <v-icon size="small" class="me-1"
+                  >published_with_changes</v-icon
+                >
                 {{ $t("global.actions.click_here") }}
               </v-btn>
             </p>
@@ -315,7 +325,7 @@
               max-width="840"
               content-class="rounded-t-xl"
             >
-              <v-card class="rounded-t-xl" tile>
+              <v-card class="rounded-t-xl" rounded="0">
                 <v-card-title> </v-card-title>
                 <v-card-text>
                   <s-calendar-view
@@ -327,7 +337,10 @@
                 </v-card-text>
                 <v-card-actions>
                   <div class="widget-buttons">
-                    <v-btn x-large text @click="show_cal = false"
+                    <v-btn
+                      size="x-large"
+                      variant="text"
+                      @click="show_cal = false"
                       ><v-icon class="me-1">close</v-icon> Close</v-btn
                     >
                   </div>
@@ -423,11 +436,11 @@
             <v-btn
               :color="service_item ? 'primary' : 'success'"
               dark
-              x-large
+              size="x-large"
               :loading="busy_set"
               @click="setServiceItem"
-              :large="!service_item"
-              :depressed="!!service_item"
+              :size="!service_item && 'large'"
+              :variant="!!service_item && 'flat'"
             >
               <v-icon class="me-1">{{
                 service_item ? "save" : "check"
@@ -456,7 +469,6 @@ import _ from "lodash-es";
 export default {
   name: "ServiceBillingItem",
   components: {
-
     SPriceInput,
     SWeekDayTimePicker,
     SCalendarView,
@@ -634,7 +646,7 @@ export default {
           window.API.PUT_SERVICE_ITEM(
             this.shop.id,
             this.basket.id,
-            this.item.id
+            this.item.id,
           ),
           {
             price: this.price,
@@ -645,7 +657,7 @@ export default {
             charge: this.charge,
             start_at: this.start_at,
             end_at: this.end_at,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -656,7 +668,7 @@ export default {
 
             this.showSuccessAlert(
               null,
-              "Your service order billing has been saved."
+              "Your service order billing has been saved.",
             );
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -684,16 +696,16 @@ export default {
                 /*🟢 Vendor Panel 🟢*/
                 this.$route.params.vendor_id,
                 this.basket.id, // Vendor order ID
-                this.item.id
+                this.item.id,
               )
             : window.API.PUT_SERVICE_ITEM_TASKS(
                 this.shop.id,
                 this.basket.id,
-                this.item.id
+                this.item.id,
               ),
           {
             tasks: this.tasks,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {

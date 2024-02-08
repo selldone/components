@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -37,9 +37,9 @@
     <!-- Blockchain -->
 
     <div v-if="card && card.blockchain" dir="ltr" class="m-1 flex-grow-1">
-      <span class="d-block subtitle-2"> {{ card.network }}</span>
+      <span class="d-block text-subtitle-2"> {{ card.network }}</span>
 
-      <div class="d-flex subtitle-2">
+      <div class="d-flex text-subtitle-2">
         <div class="w-50" title="Address balance">
           <price-view
             :amount="card.balance"
@@ -61,7 +61,7 @@
         class="d-block limited-text-150px ma-auto"
         :title="'Sender address: ' + card.sender"
       >
-        <v-icon small class="me-2"> alternate_email </v-icon>
+        <v-icon size="small" class="me-2"> alternate_email </v-icon>
         <small class="hover-b pp" v-copy>{{ card.sender }}</small>
       </span>
 
@@ -70,7 +70,7 @@
         class="d-block limited-text-150px ma-auto"
         :title="'Transaction hash: ' + card.hash"
       >
-        <v-icon small class="me-2"> tag </v-icon>
+        <v-icon size="small" class="me-2"> tag </v-icon>
         <small class="hover-b pp" v-copy>{{ card.hash }}</small>
       </span>
     </div>
@@ -87,7 +87,7 @@
         />
 
         <span dir="ltr">{{ card.card_no }}</span>
-        <v-icon small class="mx-2"> lock </v-icon>
+        <v-icon size="small" class="mx-2"> lock </v-icon>
       </div>
       <!--
       <div v-if="card.bank" title="Bank" class="my-1">
@@ -98,7 +98,7 @@
     <!-- Not available -->
 
     <i v-else class="m-1 small text-muted">
-      <v-icon small class="me-1">credit_card_off</v-icon>
+      <v-icon size="small" class="me-1">credit_card_off</v-icon>
       {{ $t("global.commons.no_credit_card_info") }}</i
     >
   </div>
@@ -109,7 +109,7 @@ import { Cards } from "@core/enums/payment/Cards";
 import SVGs from "@core/enums/payment/stripe/SVGs";
 
 export default {
-  name: "PaymentCard",
+  name: "SPaymentCard",
 
   data: function () {
     return {};

@@ -317,13 +317,13 @@
                   v-model="address"
                   prepend-inner-icon="local_shipping"
                   :readonly="viewOnly"
-                  :density="isMobile && 'compact'"
+                  :density="isMobile ? 'compact' : undefined"
                   :label="`▼ ${title}`"
                   :placeholder="$t('global.map_view.enter_your_address')"
                   color="green"
                   persistent-placeholder
                   rows="2"
-                  auto-grow
+                  auto-grow variant="underlined"
                 />
                 <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ No Map Mode > Address input (Auto complete) ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -347,7 +347,7 @@
                   :label="$t('global.map_view.building_number')"
                   prepend-inner-icon="apartment"
                   :readonly="viewOnly"
-                  :density="isMobile && 'compact'"
+                  :density="isMobile ? 'compact' : undefined" variant="underlined"
                 />
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Unit No ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -359,7 +359,7 @@
                   :label="$t('global.map_view.building_unit')"
                   prepend-inner-icon="roofing"
                   :readonly="viewOnly"
-                  :density="isMobile && 'compact'"
+                  :density="isMobile ? 'compact' : undefined" variant="underlined"
                 />
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Full Name ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -375,7 +375,7 @@
                   "
                   prepend-inner-icon="perm_identity"
                   :readonly="viewOnly"
-                  :density="isMobile && 'compact'"
+                  :density="isMobile ? 'compact' : undefined" variant="underlined"
                 />
               </v-col>
 
@@ -401,7 +401,7 @@
                   :label="state_label"
                   :readonly="viewOnly"
                   :dense="isMobile"
-                  :items="states ? states : []"
+                  :items="states ? states : []" variant="underlined"
                 >
                   <template v-slot:prepend-inner v-if="state_code">
                     <b
@@ -424,7 +424,7 @@
                   v-model="city"
                   :label="$t('global.address_info.city')"
                   :readonly="viewOnly"
-                  :density="isMobile && 'compact'"
+                  :density="isMobile ? 'compact' : undefined" variant="underlined"
                 >
                 </v-text-field>
               </v-col>
@@ -437,7 +437,7 @@
                   :label="$t('global.map_view.postal_code')"
                   prepend-inner-icon="markunread_mailbox"
                   :readonly="viewOnly"
-                  :density="isMobile && 'compact'"
+                  :density="isMobile ? 'compact' : undefined" variant="underlined"
                 >
                   <template v-slot:append-inner>
                     <v-fade-transition leave-absolute>
@@ -457,7 +457,7 @@
                   :label="$t('global.map_view.phone_input')"
                   prepend-inner-icon="phone"
                   :readonly="viewOnly"
-                  :density="isMobile && 'compact'"
+                  :density="isMobile ? 'compact' : undefined" variant="underlined"
                 >
                   <template v-slot:append-inner>
                     <v-fade-transition leave-absolute>
@@ -478,8 +478,8 @@
                   :rows="1"
                   auto-grow
                   :readonly="viewOnly"
-                  :density="isMobile && 'compact'"
-                  prepend-inner-icon="sticky_note_2"
+                  :density="isMobile ? 'compact' : undefined"
+                  prepend-inner-icon="sticky_note_2" variant="underlined"
                 />
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Actions ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -544,7 +544,7 @@
             :color="SaminColorLight"
             class="text-start mx-2"
             :label="$t('global.map_view.address_title_input')"
-            prepend-inner-icon="fa:fas fa-tag"
+            prepend-inner-icon="fa:fas fa-tag" variant="underlined"
           >
             <template v-slot:prepend-inner>
               <v-fade-transition leave-absolute>
@@ -583,7 +583,7 @@
 </template>
 
 <script>
-import Vue from "vue";
+import { h, render } from "vue";
 import SMapLocationMarker from "../market/SMapLocationMarker.vue";
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 
@@ -591,6 +591,9 @@ import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 import Mapbox from "../plugins/MapBox";
 import { SetupService } from "@core/server/SetupService";
 import SAddressInput from "@components/ui/input/address/SAddressInput.vue";
+
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 export default {
   name: "SMapView",
@@ -719,6 +722,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    showSearchBox:Boolean,
     freeze: {
       type: Boolean,
       default: false,
@@ -954,6 +958,14 @@ export default {
             center: [this.center.lng, this.center.lat],
             zoom: this.zoom,
           });
+
+
+          if(this.showSearchBox){
+            // Add the control to the map.
+            this.map_box.addControl(new MapboxGeocoder({ }));
+          }
+
+
           if (!this.hideLocationButtons) {
             // Add geolocate control to the map.
 
@@ -972,6 +984,7 @@ export default {
               this.map_box.addControl(new Mapbox.FullscreenControl());
             }
           }
+
 
           this.map_box.on("load", () => {
             if (this.markerPosition)
@@ -1089,19 +1102,15 @@ export default {
 
       if (selected_position && selected_position.lng && selected_position.lat) {
         if (this.map_box) {
+          const el = document.createElement("div");
           //Only if loaded map!
-          const ComponentClass = Vue.extend(SMapLocationMarker);
-
-          const instance = new ComponentClass({
-            propsData: {
-              pinImage: this.pinImage,
-              pinIcon: this.pinIcon,
-            },
+          const vnode = h(SMapLocationMarker, {
+            pinImage: this.pinImage,
+            pinIcon: this.pinIcon,
           });
+          render(vnode, el);
 
-          instance.$mount(); // pass nothing
-
-          const marker = new Mapbox.Marker(instance.$el)
+          const marker = new Mapbox.Marker(el)
             .setOffset([0, -32])
             .setLngLat([selected_position.lng, selected_position.lat])
             .addTo(this.map_box);

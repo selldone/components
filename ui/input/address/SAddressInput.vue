@@ -15,30 +15,29 @@
 <template>
   <v-menu
     max-height="40vh"
-    offset-y
     :top="top"
     :bottom="bottom"
-    rounded="xl"
-    :value="
+    :model-value="
       auto_complete_address /*Disable after user click on an item*/ &&
       suggestion_menu &&
       search_results &&
       search_results.length
     "
-    @input="(val) => (suggestion_menu = val)"
+    @update:model-value="(val) => (suggestion_menu = val)"
     :disabled="!auto_complete_address"
+    variant="underlined"
   >
-    <template v-slot:activator="{ on }">
+    <template v-slot:activator="{ props }">
       <v-textarea
-        v-on="on"
-        :value="value"
+        v-bind="props"
+        :model-value="modelValue"
         :label="`▼ ${title}`"
         :placeholder="$t('global.map_view.enter_your_address')"
         color="green"
-        @input="
+        @update:model-value="
           (val) => {
             search_address = val;
-            $emit('input', val);
+            $emit('update:modelValue', val);
           }
         "
         :loading="search_busy"
@@ -55,38 +54,42 @@
         :hide-details="hideDetails"
       >
         <template v-slot:prepend-inner>
-          <v-icon :color="prependIconColor"> {{ prependIcon }} </v-icon>
+          <v-icon :color="prependIconColor"> {{ prependIcon }}</v-icon>
         </template>
       </v-textarea>
     </template>
 
-    <v-list two-line style="line-height: 1.5em" dense>
+    <v-list
+      lines="two"
+      style="line-height: 1.5em"
+      density="compact"
+      rounded="xl"
+    >
       <v-list-item
         v-for="(item, index) in search_results"
         :key="index"
         @click="
-          auto_complete_address = !autoDisableAutoComplete /*Now user can edit address manually!*/;
+          auto_complete_address =
+            !autoDisableAutoComplete /*Now user can edit address manually!*/;
           $emit('select:address', item);
         "
         class="text-start"
       >
-        <v-list-item-content>
-          <b class="me-2 small font-weight-bold text-muted">
-            <flag
-              v-if="item.country"
-              :iso="item.country"
-              :squared="false"
-              class="me-1"
-            />
-
-            {{ item.title }}</b
-          >
-          <p
-            style="line-height: 1.5em"
-            class="text-start m-0"
-            v-text="item.address"
+        <b class="me-2 small font-weight-bold text-muted">
+          <flag
+            v-if="item.country"
+            :iso="item.country"
+            :squared="false"
+            class="me-1"
           />
-        </v-list-item-content>
+
+          {{ item.title }}</b
+        >
+        <p
+          style="line-height: 1.5em"
+          class="text-start m-0"
+          v-text="item.address"
+        />
       </v-list-item>
     </v-list>
   </v-menu>
@@ -97,9 +100,9 @@ import _ from "lodash-es";
 
 export default {
   name: "SAddressInput",
-
+  emits: ["update:modelValue", "select:address", "update:isFocus"],
   props: {
-    value: {},
+    modelValue: {},
 
     viewOnly: {
       type: Boolean,
@@ -145,11 +148,11 @@ export default {
     prependIcon: { default: "local_shipping" },
     prependIconColor: { default: "#00796B" },
 
-    autoDisableAutoComplete: {  // Used to permit user edit address manually
+    autoDisableAutoComplete: {
+      // Used to permit user edit address manually
       type: Boolean,
       default: false,
     },
-
   },
 
   data() {

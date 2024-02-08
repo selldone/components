@@ -3,16 +3,16 @@
 </template>
 
 <script>
-import { select, selectAll } from 'd3-selection';
-import 'd3-transition';
-import { id} from 'd2b';
+import { select, selectAll } from "d3-selection";
+import "d3-transition";
+import { id } from "d2b";
 
 export default {
-  name: 'Generator',
+  name: "Generator",
   props: {
     data: {
       type: Object,
-      required: true
+      required: true,
     },
     generator: {
       type: Function,
@@ -20,21 +20,21 @@ export default {
     config: Function,
     duration: {
       type: Number,
-      default: 250
+      default: 250,
     },
     id: {
       type: Function,
-      default: id
+      default: id,
     },
     advanced: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
-      name: 'generator',
-      unwatch: () => {}
+      name: "generator",
+      unwatch: () => {},
     };
   },
   computed: {
@@ -42,14 +42,14 @@ export default {
       return {
         generator: this.generator,
         data: this.data,
-        config: this.config
+        config: this.config,
       };
-    }
+    },
   },
   methods: {
     update(options = { skipTransition: false }) {
       this.unwatcher();
-      this.$emit('beforeRender', this.$el, this.generator);
+      this.$emit("beforeRender", this.$el, this.generator);
 
       const data = this.data;
 
@@ -58,7 +58,9 @@ export default {
       }
 
       const el = select(this.$el);
-      const generator = this.advanced ? this.generator.advanced : this.generator;
+      const generator = this.advanced
+        ? this.generator.advanced
+        : this.generator;
 
       el.datum(data);
       if (options.skipTransition) {
@@ -67,7 +69,7 @@ export default {
         el.transition().duration(this.duration).call(generator);
       }
 
-      this.$emit('rendered', this.$el, this.generator);
+      this.$emit("rendered", this.$el, this.generator);
       this.watcher();
     },
     updateNow() {
@@ -86,17 +88,17 @@ export default {
 
     watcher() {
       this.unwatcher();
-      this.unwatch = this.$watch('properties', this.update, { deep: true });
-    }
+      this.unwatch = this.$watch("properties", this.update, { deep: true });
+    },
   },
   mounted() {
     this.updateDefer();
     select(window).on(`resize.${this.id}`, this.updateDefer);
   },
   unmounted() {
-    selectAll('.d2b-tooltip').remove();
+    selectAll(".d2b-tooltip").remove();
     select(window).on(`resize.${this.id}`, null);
-  }
+  },
 };
 </script>
 

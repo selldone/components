@@ -121,7 +121,7 @@
 </template>
 <script>
 export default {
-  name: "StatusStepper",
+  name: "SOrderDeliveryStatusStepper",
 
   props: {
     dark: {

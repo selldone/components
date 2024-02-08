@@ -16,7 +16,7 @@
   <v-dialog
     v-model="map_dialog"
     fullscreen
-    hide-overlay
+    :scrim="false"
     transition="dialog-bottom-transition"
     content-class="bg-map"
   >
@@ -24,7 +24,7 @@
       v-if="map_load"
       v-model="map_location"
       :color="SaminColorDark"
-      :center.sync="center"
+      v-model:center="center"
       :zoom="17"
       style="width: 100%; height: 100%"
       :startup-mode="startup_mode_map_dialog"
@@ -39,6 +39,7 @@
       @close="map_dialog = false"
       @clickSetLocation="onClickSetLocation"
       :viewOnly="view_only"
+      show-search-box
     />
   </v-dialog>
 </template>
@@ -98,7 +99,7 @@ export default {
         this.onClickSetLocation = selectCallback;
         this.map_dialog = true;
         this.view_only = viewOnly;
-      }
+      },
     );
     this.EventBus.$on(EventName.HIDE_MAP, () => {
       this.map_dialog = false;
@@ -108,7 +109,7 @@ export default {
     });
   },
   mounted() {},
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off(EventName.SHOW_MAP);
     this.EventBus.$off(EventName.HIDE_MAP);
   },

@@ -34,13 +34,18 @@
       @blur="$emit('blur')"
     ></s-html-input>
 
-    <v-menu location="top" :close-on-content-click="false" max-width="420" >
+    <v-menu location="top" :close-on-content-click="false" max-width="420">
       <template v-slot:activator="{ props }">
         <v-btn icon v-bind="props" variant="text">
           <v-icon>sentiment_satisfied_alt</v-icon>
         </v-btn>
       </template>
-        <EmojiPicker @select="selectEmoji" :native="true"  hide-group-names disable-skin-tones />
+      <EmojiPicker
+        @select="selectEmoji"
+        :native="true"
+        hide-group-names
+        disable-skin-tones
+      />
     </v-menu>
   </div>
 </template>
@@ -54,7 +59,13 @@ import "vue3-emoji-picker/css";
 export default {
   name: "SMentionableInput",
   components: { SHtmlInput, EmojiPicker },
-
+  emits: [
+    "update:modelValue",
+    "update:text",
+    "update:mentions",
+    "focus",
+    "blur",
+  ],
   props: {
     modelValue: {},
     text: {},

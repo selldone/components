@@ -20,7 +20,7 @@
 import { Brands } from "@core/enums/social/Brands";
 
 export default {
-  name: "SourceIcon",
+  name: "SCampaignSourceIcon",
 
   props: {
     value: {},

@@ -56,7 +56,7 @@
               {{
                 getLocalTimeString(
                   basket.reserved_at,
-                  $vuetify.display.smAndDown
+                  $vuetify.display.smAndDown,
                 )
               }}
             </small>
@@ -184,11 +184,13 @@
 
             <!-- end -->
             <small v-if="basket.delivery_at" class="d-block">
-              <v-icon x-small class="mb-1" color="#fff">where_to_vote</v-icon>
+              <v-icon size="x-small" class="mb-1" color="#fff"
+                >where_to_vote</v-icon
+              >
               {{
                 getLocalTimeString(
                   basket.delivery_at,
-                  $vuetify.display.smAndDown
+                  $vuetify.display.smAndDown,
                 )
               }}
             </small>
@@ -291,7 +293,7 @@ export default {
         this.isAvocado ||
         this.isFulfillment ||
         [ProductType.PHYSICAL.code, ProductType.SUBSCRIPTION.code].includes(
-          this.basket.type
+          this.basket.type,
         )
       );
     },
@@ -352,9 +354,7 @@ export default {
       const per = Math.round(100 / this.list.length);
       return (
         `max-width: ${per}%;` +
-        (this.$vuetify.display.smAndDown
-          ? `font-size:9px;`
-          : "font-size:12px")
+        (this.$vuetify.display.smAndDown ? `font-size:9px;` : "font-size:12px")
       );
     },
 

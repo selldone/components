@@ -541,12 +541,12 @@
                   </div>
 
                   <div v-if="bill.payment?.card" class="d-inline-block">
-                    <payment-card
+                    <s-payment-card
                       :method="bill.payment.method"
                       :card="bill.payment.card"
                       :currency="bill.payment.currency"
                       horizontal
-                    ></payment-card>
+                    ></s-payment-card>
                   </div>
 
                   <v-icon
@@ -673,14 +673,14 @@ import SShopRowCustomerPaymentRecord from "@components/storefront/order/payment/
 import SShopRowCustomerPendingPayment from "@components/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
-import PaymentCard from "@components/payment/widgets/PaymentCard.vue";
+import SPaymentCard from "@components/payment/card/SPaymentCard.vue";
 import { URLHelper } from "@core/helper/url/URLHelper";
 import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",
   components: {
-    PaymentCard,
+    SPaymentCard,
     SCurrencyIcon,
     SShopRowCustomerPendingPayment,
     SShopRowCustomerPaymentRecord,

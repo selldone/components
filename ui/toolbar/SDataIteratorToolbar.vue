@@ -102,18 +102,17 @@
       prepend-inner-icon="search"
       :placeholder="$t('global.commons.search')"
       class="max-width-field"
-      :density="dense && 'compact'"
+      :density="dense ? 'compact':undefined"
       :single-line="true"
       bg-color="transparent"
     >
     </v-text-field>
 
     <template v-slot:extension v-if="has_sort && $vuetify.display.smAndDown">
-      <v-menu offset-y>
+      <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn
             v-bind="props"
-            :dark="dark"
             :close="!!sortBy"
             @click:close="$emit('update:sort-by', null)"
             class="mx-2 tnt"

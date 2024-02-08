@@ -39,7 +39,9 @@
 </template>
 
 <script>
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
   name: "SMapLocationMarker",
   props: {
     pinImage: {
@@ -56,10 +58,8 @@ export default {
   },
 
   created() {
-    // Fix dynamic creation bug:
-    if(!this.$vuetify.icons)this.$vuetify.icons={}
   }
-};
+});
 </script>
 
 <style scoped lang="scss">

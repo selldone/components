@@ -21,7 +21,7 @@
       v-if="location && iphone"
       :href="`http://maps.apple.com/?sll=${location.lat},${location.lng}`"
       target="_blank"
-      depressed
+      variant="flat"
       :icon="icon"
       @click.stop
       :small="small"
@@ -36,7 +36,7 @@
       v-else-if="location && android"
       :href="`maps://maps.google.com/maps?daddr=${location.lat},${location.lng}`"
       target="_blank"
-      depressed
+      variant="flat"
       :icon="icon"
       :small="small"
       :text="text"
@@ -51,7 +51,7 @@
       :large="large"
       :href="`https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}&travelmode=${travelmode}`"
       target="_blank"
-      depressed
+      variant="flat"
       :small="small"
       :icon="icon"
       :text="text"
