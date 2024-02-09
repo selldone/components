@@ -76,7 +76,7 @@
             {{
               getFromOtherTimeString(
                 item.return_request.created_at,
-                basket.delivery_at
+                basket.delivery_at,
               )
             }}</span
           >
@@ -98,7 +98,7 @@
             {{
               $t(
                 getReturnBasketItemReasonObject(item.return_request.reason)
-                  .title
+                  .title,
               )
             }}
           </b>
@@ -121,7 +121,7 @@
             }}
             <v-icon
               class="me-2"
-              small
+              size="small"
               :color="
                 getReturnRequestStateObject(item.return_request.state).color
               "
@@ -211,28 +211,26 @@
       <div v-if="isAdmin || isRole" class="admin">
         <div class="widget-buttons">
           <v-btn
-            depressed
+            variant="flat"
             color="#388E3C"
-            dark
-            x-large
+            size="x-large"
             @click="updateReturnState(item, 'Accepted')"
             :class="{ disabled: item.return_request.state === 'Accepted' }"
             :loading="busy_item === 'Accepted' + item.id"
           >
-            <v-icon class="me-1">check</v-icon>
+            <v-icon start>check</v-icon>
             {{ $t("global.basket_return_request_view.accept_by_admin_action") }}
           </v-btn>
 
           <v-btn
-            depressed
+            variant="flat"
             color="#D32F2F"
-            dark
-            x-large
+            size="x-large"
             @click="updateReturnState(item, 'Rejected')"
             :class="{ disabled: item.return_request.state === 'Rejected' }"
             :loading="busy_item === 'Rejected' + item.id"
           >
-            <v-icon class="me-1">close</v-icon>
+            <v-icon start>close</v-icon start>
             {{ $t("global.basket_return_request_view.reject_by_admin_action") }}
           </v-btn>
         </div>
@@ -254,7 +252,7 @@ import VariantItemViewMicro from "@components/product/variant/VariantItemViewMic
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
 
 export default {
-  name: "SBasketReturnItemsList",
+  name: "SOrderBasketReturn",
   components: {
     SValueDashed,
     VariantItemViewMicro,
@@ -339,13 +337,13 @@ export default {
         url = window.API.POST_UPDATE_RETURN_REQUEST_STATE(
           this.$route.params.shop_id,
           this.$route.params.basket_id,
-          item.id
+          item.id,
         );
       } else if (this.isRole) {
         url = window.API.POST_MY_ROLE_TASK_ACTION(
           this.role.id,
           this.basket.id,
-          "return-request"
+          "return-request",
         );
       }
 
@@ -361,8 +359,8 @@ export default {
             this.showSuccessAlert(
               null,
               this.$t(
-                "global.basket_return_request_view.notifications.update_status_success"
-              )
+                "global.basket_return_request_view.notifications.update_status_success",
+              ),
             );
             item.return_request = data.return_request;
           }

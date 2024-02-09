@@ -66,13 +66,14 @@
           <div class="center-absolute p-3">
             <div>
               <v-icon size="64" color="#fff" class="m-2"
-                >fa:fas fa-file-word</v-icon
-              >
+                >fa:fas fa-file-word
+              </v-icon>
             </div>
             <b>Drop Word file here!</b>
             <div>
               Supported formats:
-              <v-chip size="small" color="amber" class="m-1">.docx</v-chip> ,
+              <v-chip size="small" color="amber" class="m-1">.docx</v-chip>
+              ,
               <v-chip size="small" color="amber" class="m-1">.odt</v-chip>
             </div>
           </div>
@@ -140,19 +141,20 @@
 </template>
 
 <script>
-import SArticleCodeEditor from "./add-on/code-editor/SArticleCodeEditor.vue";
+import SArticleAddonCodeEditor from "./add-on/code-editor/SArticleAddonCodeEditor.vue";
 
 import MediumEditor from "medium-editor";
 
-import Vue from "vue";
-import SArticleImagesCompare from "./add-on/compare/SArticleImagesCompare.vue";
-import SArticleFlipBook from "./add-on/flip-book/SArticleFlipBook.vue";
-import SArticleImageOverlayCanvas from "./add-on/canvas/SArticleImageOverlayCanvas.vue";
-import SArticleCodeEditorGlobalDialog from "./add-on/code-editor/SArticleCodeEditorGlobalDialog.vue";
-import SArticleFlipBookGlobalDialog from "./add-on/flip-book/SArticleFlipBookGlobalDialog.vue";
-import SArticleImagesCompareGlobalDialog from "./add-on/compare/SArticleImagesCompareGlobalDialog.vue";
+import { createApp, defineComponent, h } from "vue";
+import SArticleAddonComparison from "./add-on/comparison/SArticleAddonComparison.vue";
+import SArticleFlipBook from "@components/article/add-on/catalog/SArticleFlipBook.vue";
+import SArticleAddonCanvas from "./add-on/canvas/SArticleAddonCanvas.vue";
+import SArticleAddonCodeEditorDialog from "./add-on/code-editor/dialog/SArticleAddonCodeEditorDialog.vue";
+import SArticleFlipBookGlobalDialog from "@components/article/add-on/catalog/SArticleFlipBookGlobalDialog.vue";
+import SArticleAddonComparisonDialog from "./add-on/comparison/dialog/SArticleAddonComparisonDialog.vue";
 import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
 import { FileFormatConverterOnline } from "@core/helper/converters/FileFormatConverterOnline";
+import { installGlobalComponents } from "@components/components-mandetory";
 
 const OPTIONS_TITLE = {
   buttonLabels: "fontawesome",
@@ -296,15 +298,15 @@ const OPTIONS_BODY = {
   },
 };
 
-export default {
+export default defineComponent({
   name: "SArticleEditor",
   emits: ["change", "update:title", "update:body", "update:images"],
 
   components: {
     SArticleTableOfContents,
-    SArticleImagesCompareGlobalDialog,
+    SArticleAddonComparisonDialog,
     SArticleFlipBookGlobalDialog,
-    SArticleCodeEditorGlobalDialog,
+    SArticleAddonCodeEditorDialog,
   },
 
   props: {
@@ -600,8 +602,8 @@ export default {
           this.showFullscreen,
           // Deprecated:
           /* function () {
-            $(this).toggleClass("fullscreen");
-          }*/
+                        $(this).toggleClass("fullscreen");
+                      }*/
         );
       }, 1000);
     },
@@ -623,145 +625,194 @@ export default {
           const i18n = this.geti18n();
           //――――――――――――――――――――――― 💡 Mega Replacer ▶ Code Editor ▶ Render Mode ―――――――――――――――――――――――
 
-          $(`#${this.MASTER_ID} ` + "code-editor") // Find code editors:
-            .each(function () {
-              const data = $(this).html();
-              //   const data=$(this).attr('data');
+          // Get all elements with class 'code-editor'
+          const codeEditorElements = document.querySelectorAll(
+            `#${this.MASTER_ID} code-editor`,
+          );
 
-              //console.log('data: ',data)
+          // Iterate over each element
+          codeEditorElements.forEach((element) => {
+            const data = element.innerHTML;
+            let data_json = {};
+            if (data) {
+              try {
+                data_json = JSON.parse(decodeURIComponent(data));
+              } catch (e) {
+                console.error(e);
+              }
+            }
 
-              let data_json = {};
-              if (data)
-                try {
-                  data_json = JSON.parse(decodeURIComponent(data));
-                } catch (e) {
-                  console.error(e);
-                }
-              ///console.log('data_json: ',data_json)
+            const editable =
+              element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
 
-              const editable =
-                $(this).closest("#" + t.EDITABLE_BODY_ID).length > 0;
-              //console.log('has editable_body: ',editable)
-
-              let ComponentClass = Vue.extend(SArticleCodeEditor);
-
-              const vuetify = Vue.prototype.$vuetify;
-
-              let instance = new ComponentClass({
-                i18n,
-                vuetify,
-                propsData: {
+            // Create a new Vue app with the SArticleAddonCodeEditor component
+            const app = createApp({
+              render: () =>
+                h(SArticleAddonCodeEditor, {
                   codes: data_json,
                   editable: editable,
                   masterId: t.MASTER_ID /*Point which dialog open!*/,
-                },
-              });
-              let element_code = instance.$mount().$el;
-              //$(this).html('');
-              $(this).replaceWith(element_code);
+                }),
             });
+            // Use Vuetify and i18n instances
+            app.use(window.$global_vuetify);
+            app.use(i18n);
+            installGlobalComponents(app);
+
+            // Create a temporary element to mount the app
+            const tempElement = document.createElement("div");
+            app.mount(tempElement);
+
+            // Replace the original element with the new one
+            element.parentNode.replaceChild(
+              tempElement.firstElementChild,
+              element,
+            );
+          });
 
           //――――――――――――――――――――――― 💡 Mega Replacer ▶ Images Compare ▶ Render Mode ―――――――――――――――――――――――
 
-          $(`#${this.MASTER_ID} ` + "images-compare") // Find code editors:
-            .each(function () {
-              const data = $(this).html();
-              let data_json = {};
-              if (data)
-                try {
-                  data_json = JSON.parse(decodeURIComponent(data));
-                } catch (e) {
-                  console.error(e);
-                }
+          // Get all elements with class 'images-compare'
+          const imageCompareElements = document.querySelectorAll(
+            `#${this.MASTER_ID} images-compare`,
+          );
 
-              const editable =
-                $(this).closest("#" + t.EDITABLE_BODY_ID).length > 0;
+          // Iterate over each element
+          imageCompareElements.forEach((element) => {
+            const data = element.innerHTML;
+            let data_json = {};
+            if (data) {
+              try {
+                data_json = JSON.parse(decodeURIComponent(data));
+              } catch (e) {
+                console.error(e);
+              }
+            }
 
-              let ComponentClass = Vue.extend(SArticleImagesCompare);
+            const editable =
+              element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
 
-              const vuetify = Vue.prototype.$vuetify;
-
-              let instance = new ComponentClass({
-                i18n,
-                vuetify,
-                propsData: {
+            // Create a new Vue app with the SArticleAddonComparison component
+            const app = createApp({
+              render: () =>
+                h(SArticleAddonComparison, {
                   images: data_json,
                   editable: editable,
-                  uploadUrl: t.uploadUrl,
-                  masterId: t.MASTER_ID /*Point which dialog open!*/,
-                },
-              });
-              let element_code = instance.$mount().$el;
-              $(this).replaceWith(element_code);
+                  uploadUrl: this.uploadUrl,
+                  masterId: this.MASTER_ID,
+                }),
             });
+            // Use Vuetify and i18n instances
+            app.use(window.$global_vuetify);
+            app.use(i18n);
+            installGlobalComponents(app);
+
+            // Create a temporary element to mount the app
+            const tempElement = document.createElement("div");
+            app.mount(tempElement);
+
+            // Replace the original element with the new one
+            element.parentNode.replaceChild(
+              tempElement.firstElementChild,
+              element,
+            );
+          });
 
           //――――――――――――――――――――――― 💡 Mega Replacer ▶ Flip Book ▶ Render Mode ―――――――――――――――――――――――
 
-          $(`#${this.MASTER_ID} ` + "flip-book") // Find code editors:
-            .each(function () {
-              const data = $(this).html();
-              let data_json = {};
-              if (data)
-                try {
-                  data_json = JSON.parse(decodeURIComponent(data));
-                } catch (e) {
-                  console.error(e);
-                }
+          // Get all elements with class 'flip-book'
+          const flipBookElements = document.querySelectorAll(
+            `#${this.MASTER_ID} flip-book`,
+          );
 
-              const editable =
-                $(this).closest("#" + t.EDITABLE_BODY_ID).length > 0;
+          // Iterate over each element
+          flipBookElements.forEach((element) => {
+            const data = element.innerHTML;
+            let data_json = {};
+            if (data) {
+              try {
+                data_json = JSON.parse(decodeURIComponent(data));
+              } catch (e) {
+                console.error(e);
+              }
+            }
 
-              let ComponentClass = Vue.extend(SArticleFlipBook);
+            const editable =
+              element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
 
-              const vuetify = Vue.prototype.$vuetify;
-
-              let instance = new ComponentClass({
-                i18n,
-                vuetify,
-                propsData: {
+            // Create a new Vue app with the SArticleFlipBook component
+            const app = createApp({
+              render: () =>
+                h(SArticleFlipBook, {
                   pack: data_json,
                   editable: editable,
                   uploadUrl: t.uploadUrl,
                   masterId: t.MASTER_ID /*Point which dialog open!*/,
-                },
-              });
-              let element_code = instance.$mount().$el;
-              $(this).replaceWith(element_code);
+                }),
             });
+            // Use Vuetify and i18n instances
+            app.use(window.$global_vuetify);
+            app.use(i18n);
+            installGlobalComponents(app);
 
-          //――――――――――――――――――――――― 💡 Mega Replacer ▶ IMage Overlay Canvas ▶ Render Mode ―――――――――――――――――――――――
+            // Create a temporary element to mount the app
+            const tempElement = document.createElement("div");
+            app.mount(tempElement);
 
-          $(`#${this.MASTER_ID} ` + "image-overlay-canvas") // Find code editors:
-            .each(function () {
-              const data = $(this).html();
-              let data_json = {};
-              if (data)
-                try {
-                  data_json = JSON.parse(decodeURIComponent(data));
-                } catch (e) {
-                  console.error(e);
-                }
+            // Replace the original element with the new one
+            element.parentNode.replaceChild(
+              tempElement.firstElementChild,
+              element,
+            );
+          });
 
-              const editable =
-                $(this).closest("#" + t.EDITABLE_BODY_ID).length > 0;
+          //――――――――――――――――――――――― 💡 Mega Replacer ▶ Image Overlay Canvas ▶ Render Mode ―――――――――――――――――――――――
 
-              let ComponentClass = Vue.extend(SArticleImageOverlayCanvas);
+          // Get all elements with class 'image-overlay-canvas'
+          const imageOverlayElements = document.querySelectorAll(
+            `#${this.MASTER_ID} image-overlay-canvas`,
+          );
 
-              const vuetify = Vue.prototype.$vuetify;
+          // Iterate over each element
+          imageOverlayElements.forEach((element) => {
+            const data = element.innerHTML;
+            let data_json = {};
+            if (data) {
+              try {
+                data_json = JSON.parse(decodeURIComponent(data));
+              } catch (e) {
+                console.error(e);
+              }
+            }
 
-              let instance = new ComponentClass({
-                i18n,
-                vuetify,
-                propsData: {
+            const editable =
+              element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
+
+            // Create a new Vue app with the SArticleAddonCanvas component
+            const app = createApp({
+              render: () =>
+                h(SArticleAddonCanvas, {
                   pack: data_json,
                   editable: editable,
                   uploadUrl: t.uploadUrl,
                   masterId: t.MASTER_ID /*Point which dialog open!*/,
-                },
-              });
-              let element_code = instance.$mount().$el;
-              $(this).replaceWith(element_code);
+                }),
             });
+            // Use Vuetify and i18n instances
+            app.use(window.$global_vuetify);
+            app.use(i18n);
+            installGlobalComponents(app);
+
+            // Create a temporary element to mount the app
+            const tempElement = document.createElement("div");
+            app.mount(tempElement);
+
+            // Replace the original element with the new one
+            element.parentNode.replaceChild(
+              tempElement.firstElementChild,
+              element,
+            );
+          });
 
           //――――――――――――――――――――――― 💡 Mega Replacer ▶ Embed ▶ Render Mode ―――――――――――――――――――――――
 
@@ -953,11 +1004,11 @@ export default {
                 acceptFileTypes:
                   /(\.|\/)(gif|jpe?g|png|svg\+xml|webp)$/i /*   /(\.|\/)(gif|jpe?g|png|svg+xml|webp)$/i     */,
                 /*{
-                test:function(name){
-                  console.log('name',name)
-                  return true
-                }
-              }*/ maxFileSize: 2 * 1024 * 1024,
+                    test:function(name){
+                      console.log('name',name)
+                      return true
+                    }
+                  }*/ maxFileSize: 2 * 1024 * 1024,
                 headers: {
                   "X-CSRF-TOKEN": csrf_token,
                   Authorization:
@@ -988,8 +1039,8 @@ export default {
                   added: function ($el) {
                     // Initialize slideshow
                     /* $el.cycle({
-                    slides: 'figure'
-                  });*/
+                        slides: 'figure'
+                      });*/
                   },
                   removed: function ($el) {
                     // Destroy slideshow
@@ -1044,9 +1095,9 @@ export default {
                 );
 
                 /* current_instance.showErrorAlert(
-                                   "Upload failed!",
-                                   uploadErrors[0]
-                                 );*/
+                                       "Upload failed!",
+                                       uploadErrors[0]
+                                     );*/
               },
 
               deleteMethod: "POST",
@@ -1421,8 +1472,8 @@ export default {
       if (sample_text && !element) {
         try {
           /*doc = new DOMParser()
-                          .parseFromString(sample_text, "text/xml")
-                          .innerText.substring(0, 20);*/
+                              .parseFromString(sample_text, "text/xml")
+                              .innerText.substring(0, 20);*/
           doc = sample_text.substring(0, 200);
         } catch (e) {
           doc = sample_text;
@@ -1469,7 +1520,7 @@ export default {
       );
     },
   },
-};
+});
 </script>
 
 <style lang="scss">
@@ -1538,6 +1589,7 @@ export default {
       padding: 0;
       margin-bottom: 0 !important;
       border: none;
+
       &:before {
         content: none;
       }
@@ -1545,8 +1597,9 @@ export default {
 
     a {
       border: none;
+
       &:hover {
-        color: #3d80b4 !important ;
+        color: #3d80b4 !important;
       }
     }
   }
@@ -1563,35 +1616,44 @@ export default {
     margin: 0 auto;
     position: relative;
   }
+
   table * {
     position: relative;
   }
+
   table td,
   table th {
     padding-left: 8px;
   }
+
   table thead tr {
     height: 60px;
     background: #3a3a3a;
   }
+
   table tbody tr {
     height: 50px;
   }
+
   table tbody tr:last-child {
     border: 0;
   }
+
   table td,
   table th {
     text-align: left;
   }
+
   table td.l,
   table th.l {
     text-align: right;
   }
+
   table td.c,
   table th.c {
     text-align: center;
   }
+
   table td.r,
   table th.r {
     text-align: center;
@@ -1710,6 +1772,7 @@ export default {
   &:visited {
     color: #19538d !important;
   }
+
   &:hover {
     text-decoration: none;
     color: #fff !important;
@@ -1729,6 +1792,7 @@ export default {
 .s--article-editor-container {
   .link-preview a {
     border-bottom: unset !important;
+
     &:hover {
       color: #3f51b5 !important;
     }
@@ -2030,6 +2094,7 @@ export default {
 
         &:hover {
           transform: scale(1.6, 1.6);
+
           &.medium-insert-buttons-rotate {
             transform: scale(1.6, 1.6) rotate(45deg);
           }
@@ -2055,6 +2120,7 @@ Start Underline gradient
     background-position: 0 88%;
     transition: background-size 0.25s ease-in;
     text-decoration: none;
+
     &:hover {
       background-size: 100% 88%;
     }
@@ -2075,6 +2141,7 @@ End Underline gradient
     //height: inherit; // Bad show iframe embed that has height!
   }
 }
+
 // Custom embed code:
 p iframe {
   margin: auto;
@@ -2110,12 +2177,14 @@ p iframe {
       border-right: solid cadetblue medium;
       border-left: unset;
     }
+
     pre {
       border-right: solid #ffa000 medium;
       border-left: unset;
     }
   }
 }
+
 .medium-insert-embeds {
   @media only screen and (max-width: 600px) {
     min-width: 100% !important;
@@ -2124,8 +2193,10 @@ p iframe {
   // By embed link:
   .medium-insert-embed {
     max-width: 1200px;
+
     .link-preview {
       border-radius: 16px !important;
+
       .row {
         .section-image {
           flex: unset !important;
@@ -2267,6 +2338,7 @@ p iframe {
     overflow: hidden;
     position: relative;
     padding-top: 61%;
+
     iframe {
       //  height: 480px;
       // max-width: 772px;
@@ -2294,7 +2366,9 @@ p iframe {
   .embed-raw-html {
     text-align: start;
   }
-} // End: .medium-insert-embeds
+}
+
+// End: .medium-insert-embeds
 
 .medium-insert-images-safe,
 .medium-insert-images {
@@ -2310,6 +2384,7 @@ p iframe {
     box-shadow: 0 0 50px 3px rgba(68, 68, 68, 0.22) !important;
     transition: all 0.4s;
     margin: auto auto 16px;
+
     figure {
       max-width: 640px;
     }
@@ -2334,8 +2409,10 @@ p iframe {
       background-color: #3d80b4;
       line-height: 16px;
     }
+
     &:hover {
       box-shadow: 0px 3px 20px 2px rgba(68, 68, 68, 0.22) !important;
+
       &:after {
         transform: scale(1);
       }
@@ -2347,9 +2424,11 @@ p iframe {
       &:visited {
         color: #333 !important;
       }
+
       color: #333 !important;
       border-bottom-color: #333;
       pointer-events: all !important;
+
       &:hover {
         color: #fff !important;
         background: linear-gradient(to right, #0288d1, #3f51b5);

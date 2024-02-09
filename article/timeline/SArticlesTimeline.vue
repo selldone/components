@@ -17,12 +17,14 @@
 
   <div>
     <s-progress-loading v-if="busy"></s-progress-loading>
-    <v-timeline v-else :density="$vuetify.display.mdAndDown ? 'compact':undefined">
+    <v-timeline v-else :density="$vuetify.display.mdAndDown ? 'compact':undefined" >
       <v-timeline-item
         v-for="_article in timeline"
         :key="_article.id"
         :dot-color="getArticleTypeColor(_article.parent_type)"
         :size="_article.id !== currentArticleId ? 'small':undefined"
+
+
       >
         <template v-slot:icon>
           <v-avatar

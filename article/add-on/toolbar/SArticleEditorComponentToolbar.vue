@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-toolbar dense outlined rounded flat class="my-3">
+  <v-toolbar dense rounded flat class="my-3">
     <v-icon color="#999">more_vert</v-icon>
     <v-toolbar-title class="text-uppercase font-weight-normal"
       ><small>{{ title }}</small></v-toolbar-title

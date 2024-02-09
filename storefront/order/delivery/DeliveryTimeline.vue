@@ -106,8 +106,8 @@
         </v-avatar>
       </template>
 
-      <delivery-service-rate-view v-if="rate" :rate="rate">
-      </delivery-service-rate-view>
+      <b-transportation-service-rate v-if="rate" :rate="rate">
+      </b-transportation-service-rate>
       <div class="flex-grow-1 d-flex align-center py-1">
         {{ deliveryService.name }}
         <span class="dashed-flex-space"></span>
@@ -298,11 +298,11 @@
 
 <script>
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
-import DeliveryServiceRateView from "@components/storefront/order/delivery/DeliveryServiceRateView.vue";
+import BTransportationServiceRate from "@app-backoffice/components/transportation/service/rate/BTransportationServiceRate.vue";
 
 export default {
   name: "DeliveryTimeline",
-  components: { DeliveryServiceRateView },
+  components: { BTransportationServiceRate },
   props: {
     sendAt: {},
     returnAt: {},

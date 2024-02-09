@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -31,23 +31,21 @@
         <v-chip
           v-if="!isAdmin && message.officer"
           color="#F44336"
-          dark
           label
-          x-small
+          size="x-small"
           class="mx-2"
         >
-          {{$t('global.commons.admin')}}
+          {{ $t("global.commons.admin") }}
         </v-chip>
         <!-- Show it from customer to admin -->
         <v-chip
           v-else-if="isAdmin && !message.officer"
           color="#1976D2"
-          dark
           label
-          x-small
+          size="x-small"
           class="mx-2"
         >
-          {{$t('global.commons.customer')}}
+          {{ $t("global.commons.customer") }}
         </v-chip>
 
         <small class="d-block"
@@ -64,9 +62,9 @@
         color="red"
         :title="$t('global.actions.delete')"
         @click="deleteMessage()"
-        icon
+        icon variant="text"
         :loading="busy_delete_message"
-        :class="{ disabled: busy_delete_message}"
+        :class="{ disabled: busy_delete_message }"
       >
         <v-icon>close</v-icon>
       </v-btn>
@@ -79,7 +77,8 @@
 
 <script>
 export default {
-  name: "OrderChatMessage",
+  name: "SOrderChatMessage",
+  emits: ["showSuccessAlert", "showErrorAlert", "showLaravelError"],
   props: {
     shop: {
       require: true,
@@ -120,13 +119,13 @@ export default {
             ? window.XAPI.DELETE_CUSTOMER_BASKET_CHAT_MESSAGE(
                 this.shop.name,
                 this.basket.id,
-                index
+                index,
               )
             : window.API.DELETE_BASKET_CHAT_MESSAGE(
                 this.shop.id,
                 this.basket.id,
-                index
-              )
+                index,
+              ),
         )
         .then(({ data }) => {
           if (data.error) {
@@ -135,7 +134,7 @@ export default {
             this.basket.chat = data.chat;
             this.showSuccessAlert(
               null,
-              "Message has been deleted successfully."
+              "Message has been deleted successfully.",
             );
           }
         })

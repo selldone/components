@@ -341,7 +341,7 @@ export default {
   &.-small {
     padding: 0 4px;
     .mini-name {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
     }
   }
 
@@ -365,7 +365,7 @@ export default {
     // opacity: 0.9;
     width: 100%;
     user-select: none;
-    font-size: 0.77rem;
+    font-size: 0.72rem;
     //letter-spacing: 0.35px;
     line-height: 1.4em;
     position: absolute;
@@ -386,7 +386,7 @@ export default {
     }
 
     @media (max-width: 960px) {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
     }
   }
 
@@ -398,7 +398,7 @@ export default {
 }
 
 .small-badge {
-  font-size: 0.8em;
+  font-size: 0.76em;
 }
 
 .circle-image-internal {

@@ -11,12 +11,14 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+//import "vuetify/styles"; // Import Vuetify styles
+import "./vuetify-override.scss";
+
 import {createVuetify, VuetifyOptions} from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 
-//import "vuetify/styles"; // Import Vuetify styles
-import "./vuetify-override.scss";
+
 import {SetupService} from "@core/server/SetupService";
 import {aliases, md} from "vuetify/iconsets/md";
 

@@ -24,9 +24,9 @@
         v-else-if="!item.type || item.type === 'text'"
         v-model="message[item.name]"
         :label="item.title"
-        @update:model-value="$emit('input', message)"
+        @update:model-value="$emit('update:modelValue', message)"
         :style="{ 'animation-delay': `${index * 150}ms` }"
-        :readonly="readonly"
+        :disabled="readonly"
         append-inner-icon="fa:fas fa-copy"
         @click:append-inner="copyToClipboard(message[item.name])"
         variant="outlined"
@@ -42,9 +42,8 @@
         :items="item.selects"
         menu-props="auto"
         :label="item.title"
-        @update:model-value="$emit('input', message)"
+        @update:model-value="$emit('update:modelValue', message)"
         :style="{ 'animation-delay': `${index * 150}ms` }"
-        :readonly="readonly"
         :disabled="readonly"
         :multiple="item.multiple"
         :chips="item.multiple"
@@ -66,7 +65,7 @@
         :false-description="item.hint_false"
         true-icon="check"
         false-icon="close"
-        :readonly="readonly"
+        :disabled="readonly"
         @change="$forceUpdate()"
       >
       </s-smart-switch>
@@ -82,7 +81,7 @@
         :rules="[]"
         menu-props="auto"
         :label="item.title"
-        @update:model-value="$emit('input', message)"
+        @update:model-value="$emit('update:modelValue', message)"
         single-line
         :style="{ 'animation-delay': `${index * 150}ms` }"
         :multiple="item.multiple"
@@ -112,8 +111,8 @@
               class="me-2 -thin -gray flex-grow-0"
             />
             <v-icon v-else color="primary" class="me-2 -thin -gray flex-grow-0"
-              >attach_file</v-icon
-            >
+              >attach_file
+            </v-icon>
 
             <div class="flex-grow-1">
               <b>
@@ -132,6 +131,7 @@
             <v-btn
               v-if="!readonly"
               icon
+              variant="text"
               color="red"
               @click="deleteFile(f)"
               :loading="busy_delete === f.id"
@@ -143,6 +143,7 @@
             <v-btn
               v-if="isAdmin"
               icon
+              variant="text"
               color="primary"
               @click="downloadFile(f)"
               :loading="busy_download === f.id"
@@ -167,8 +168,10 @@ import {
 export default {
   name: "SBasketProductInputs",
   components: { SSmartSwitch },
+
+  emits: ["update:modelValue", "update:files", "onDeleteFile"],
   props: {
-    value: {},
+    modelValue: {},
     product: {
       require: true,
       type: Object,
@@ -193,13 +196,13 @@ export default {
   }),
 
   watch: {
-    value() {
-      this.message = this.value;
+    modelValue() {
+      this.message = this.modelValue;
     },
   },
 
   created() {
-    this.message = this.value;
+    this.message = this.modelValue;
 
     let files = {};
 

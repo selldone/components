@@ -20,7 +20,7 @@
     transition="dialog-bottom-transition"
   >
     <v-card>
-      <v-card-title
+      <v-card-title class="d-flex align-center"
         ><v-icon class="me-1">import_contacts</v-icon>
         {{ $t("global.commons.catalog") }}
 
@@ -97,7 +97,7 @@
                 v-model="pack.max_height"
                 :min="10"
                 :max="100"
-                @change="onChange"
+                @update:model-value="onChange"
                 :tick-size="12"
                 thumb-label="always"
                 density="compact"

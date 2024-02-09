@@ -34,15 +34,19 @@
       <div class="laser"></div>
     </div>
 
-    <v-alert outlined v-if="error" type="error">{{ error }}</v-alert>
+    <v-alert variant="outlined" v-if="error" type="error">{{ error }}</v-alert>
 
     <div class="text-success font-weight-black">{{ result }}</div>
   </div>
 </template>
 
 <script>
-import {MultiFormatReader, BarcodeFormat, BrowserMultiFormatReader, DecodeHintType} from '@zxing/library';
-
+import {
+  MultiFormatReader,
+  BarcodeFormat,
+  BrowserMultiFormatReader,
+  DecodeHintType,
+} from "@zxing/library";
 
 export default {
   name: "BarcodeScanner",
@@ -81,7 +85,7 @@ export default {
           BarcodeFormat.PDF_417,
           BarcodeFormat.UPC_A,
           BarcodeFormat.UPC_E,
-        ]
+        ],
       );
 
     hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
@@ -93,7 +97,7 @@ export default {
       .then((videoInputDevices) => {
         this.videoInputDevices = videoInputDevices;
         videoInputDevices.forEach((device) =>
-          console.log(`${device.label}, ${device.deviceId}`)
+          console.log(`${device.label}, ${device.deviceId}`),
         );
         if (videoInputDevices.length === 0) {
           this.error = "Camera not found!";
@@ -107,13 +111,13 @@ export default {
       })
       .catch((err) => console.error(err));
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (!this.codeReader) return;
     this.codeReader.stopAsyncDecode();
     this.codeReader.stopContinuousDecode();
     this.codeReader.stopStreams();
     this.codeReader.reset();
-    this.codeReader=null;
+    this.codeReader = null;
   },
 
   methods: {
@@ -137,10 +141,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  video{
-    background-color: #000;
-    object-fit: cover;
-  }
+video {
+  background-color: #000;
+  object-fit: cover;
+}
 .laser {
   width: 100%;
   margin-left: 0;

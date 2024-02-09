@@ -69,10 +69,10 @@ import TipsButton from "./ui/tips/TipsButton.vue";
 //---------------- Medium Editor --------------
 import "medium-editor";
 
-import "@components/article/add-on/code-editor/CodeEditorMediumPlugin";
-import "@components/article/add-on/compare/ImagesCompareMediumPlugin";
-import "@components/article/add-on/flip-book/FlipBookMediumPlugin";
-import "@components/article/add-on/canvas/ImageOverlayCanvasMediumPlugin";
+import "@components/article/add-on/code-editor/plugin/ArticleAddonCodeEditorPlugin";
+import "@components/article/add-on/comparison/plugin/ArticleAddonComparisonPlugin";
+import "@components/article/add-on/catalog/plugin/ArticleAddonCatalogPlugin";
+import "@components/article/add-on/canvas/plugin/ArticleAddonCanvasPlugin";
 
 // @ts-ignore
 import {MediumInsert} from "@components/article/insert/SelldoneEditorInsert";

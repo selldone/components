@@ -28,10 +28,10 @@
     </s-article-editor-component-toolbar>
 
     <s-image-canvas
-      :image.sync="bg"
-      :rects.sync="rects"
+      v-model:image="bg"
+      v-model:rects="rects"
       :upload-url="uploadUrl"
-      :ratio.sync="ratio"
+      v-model:ratio="ratio"
       :editable="edit_mode"
     >
     </s-image-canvas>
@@ -43,7 +43,7 @@ import SImageCanvas from "./SImageCanvas.vue";
 import SArticleEditorComponentToolbar from "../toolbar/SArticleEditorComponentToolbar.vue";
 
 export default {
-  name: "SArticleImageOverlayCanvas",
+  name: "SArticleAddonCanvas",
   components: { SArticleEditorComponentToolbar, SImageCanvas },
   props: {
     pack: {},
@@ -69,7 +69,7 @@ export default {
       bg: null,
       ratio: 1,
 
-      element:null,
+      element: null,
     };
   },
   computed: {
@@ -96,7 +96,7 @@ export default {
     if (!this.rects) this.rects = [];
   },
   mounted() {
-    this.element=this.$el
+    this.element = this.$el;
   },
   methods: {},
 };
@@ -104,6 +104,7 @@ export default {
 
 <style lang="scss" scoped>
 .image-overlay-canvas {
-  overflow: auto;
+
+
 }
 </style>

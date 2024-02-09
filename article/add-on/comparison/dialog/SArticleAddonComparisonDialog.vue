@@ -20,7 +20,7 @@
     transition="dialog-bottom-transition"
   >
     <v-card>
-      <v-card-title
+      <v-card-title class="d-flex align-center"
         ><v-icon class="me-1">compare</v-icon>
         {{ $t("global.commons.images_compare") }}
 
@@ -72,6 +72,7 @@
                     label="Select image A"
                     :image="original_image"
                     @new-url="(url) => setOriginal(url)"
+                    max-file-size="2MB"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
@@ -81,6 +82,7 @@
                     label="Select image B"
                     :image="compared_image"
                     @new-url="(url) => setCompare(url)"
+                    max-file-size="2MB"
                   />
                 </v-col>
               </v-row>
@@ -106,6 +108,7 @@
                 :min="10"
                 :max="max_slider"
                 :tick-size="16"
+                :step="0.1"
                 thumb-label="always"
                 thumb-color="primary"
                 track-fill-color="primary"
@@ -122,7 +125,7 @@
       <v-card-actions>
         <div class="widget-buttons">
           <v-btn variant="text" @click="show_dialog = false" size="x-large">
-            <v-icon class="me-1">close</v-icon>
+            <v-icon start>close</v-icon>
 
             {{ $t("global.actions.close") }}</v-btn
           >
@@ -132,7 +135,7 @@
             @click="setValue"
             size="x-large"
           >
-            <v-icon class="me-1">check</v-icon
+            <v-icon start>check</v-icon
             >{{ $t("global.actions.set") }}</v-btn
           >
         </div>
@@ -146,7 +149,7 @@ import SImageUploader from "@components/uploader/SImageUploader.vue";
 import { EventName } from "@core/events/EventBus";
 
 export default {
-  name: "SArticleImagesCompareGlobalDialog",
+  name: "SArticleAddonComparisonDialog",
   components: { SImageUploader },
 
   props: {

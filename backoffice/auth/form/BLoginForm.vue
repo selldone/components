@@ -199,7 +199,7 @@
                 >
                   <i
                     v-if="!recaptcha_response"
-                    class="fa:fas fa-circle-notch fa-spin"
+                    class="fas fa-circle-notch fa-spin"
                   ></i>
 
                   <span class="ms-1">{{ $t("login.register_action") }}</span>
@@ -472,14 +472,13 @@
               block
               class="my-2 untransform"
               color="primary"
-              dark
               :loading="login_busy"
               :class="{ disabled: !can_login }"
               @click="login"
             >
               <i
                 v-if="!recaptcha_response"
-                class="fa:fas fa-circle-notch fa-spin"
+                class="fas fa-circle-notch fa-spin"
               ></i>
               <span class="ms-1">{{ $t("login.login_button") }}</span>
               <v-icon class="ms-2">login</v-icon>

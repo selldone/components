@@ -17,29 +17,25 @@
     <!-- iOS -->
     <v-btn
       class="rounded-8px tnt m-1"
-      :large="large"
+      :size="large?'large':small?'small':undefined"
       v-if="location && iphone"
       :href="`http://maps.apple.com/?sll=${location.lat},${location.lng}`"
       target="_blank"
-      variant="flat"
       :icon="icon"
       @click.stop
-      :small="small"
-      :text="text"
+      :variant="icon?'text':text?'text':'flat'"
       ><v-icon class="me-1" color="blue">near_me</v-icon>
       {{ !icon ? $t("global.commons.navigation_app") : "" }}</v-btn
     >
     <!-- Android -->
     <v-btn
       class="rounded-8px tnt m-1"
-      :large="large"
+      :size="large?'large':small?'small':undefined"
       v-else-if="location && android"
       :href="`maps://maps.google.com/maps?daddr=${location.lat},${location.lng}`"
       target="_blank"
-      variant="flat"
       :icon="icon"
-      :small="small"
-      :text="text"
+      :variant="icon?'text':text?'text':'flat'"
       @click.stop
       ><v-icon class="me-1" color="green">near_me</v-icon>
       {{ !icon ? $t("global.commons.navigation_app") : "" }}</v-btn
@@ -48,13 +44,11 @@
     <v-btn
       v-if="!onlyOne || (!iphone && !android)"
       class="rounded-8px tnt m-1"
-      :large="large"
+      :size="large?'large':small?'small':undefined"
       :href="`https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}&travelmode=${travelmode}`"
       target="_blank"
-      variant="flat"
-      :small="small"
       :icon="icon"
-      :text="text"
+      :variant="icon?'text':text?'text':'flat'"
       :title="$t('global.commons.map')"
       @click.stop
       ><img src="../../assets/icons/google-map.svg" width="20" height="20" />

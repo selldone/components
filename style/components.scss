@@ -58,8 +58,14 @@
 
 
 html {
+
+  --base-font-standard:15px;
+  --base-font-low-vision:17px;
+
+
   height: 100vh !important;
   overflow: auto !important;
+  font-size:var(--base-font-standard);
 
   img {
     vertical-align: middle;

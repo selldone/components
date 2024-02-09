@@ -689,3 +689,23 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     }
   }
 }
+
+
+// TODO: Fix v-textarea padding issue:
+.v-textarea textarea {
+  padding-top: var(--v-field-input-padding-top);
+  padding-bottom: var(--v-field-input-padding-bottom);
+  padding-inline: var(--v-field-padding-start) var(--v-field-padding-end);
+}
+// TODO: Fix v-timeline size issue!
+.v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item--after .v-timeline-item__body,
+.v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item:nth-child(odd):not(.v-timeline-item--before) .v-timeline-item__body {
+   max-width:unset ;
+}
+.v-timeline-item__opposite {
+  max-width:unset ;
+}
+.v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item--before .v-timeline-item__body,
+.v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item:nth-child(2n):not(.v-timeline-item--after) .v-timeline-item__body {
+  max-width:unset ;
+}

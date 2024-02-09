@@ -103,7 +103,7 @@
 
         <v-alert
           v-if="reported"
-          :value="reported"
+          :model-value="reported"
           color="error"
           icon="new_releases"
           border="start"

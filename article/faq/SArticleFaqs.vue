@@ -286,9 +286,13 @@ export default {
   text-align: start;
   margin: 12px auto;
   padding: 16px 0;
+  box-shadow: none;
 
   &:after{
     content: none; // Remove top border in vuetiry!
+  }
+  &:before {
+    box-shadow: none;
   }
 
   ::v-deep(ul),

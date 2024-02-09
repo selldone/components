@@ -20,7 +20,7 @@
     :size="size"
     rounded="xl"
   >
-    <v-avatar :size="size - borderSize" class="rounded-18px" color="#fff">
+    <v-avatar :size="size - borderSize" rounded="xl" color="#fff">
       <v-img v-if="src" :src="getShopImagePath(src)">
         <template v-slot:placeholder>
           <s-image-placeholder

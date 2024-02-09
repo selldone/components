@@ -20,17 +20,16 @@
     transition="dialog-bottom-transition"
   >
     <v-card>
-      <v-card-title>
+      <v-card-title class="d-flex align-center">
         <v-spacer></v-spacer>
         <v-btn
-          text
+          variant="text"
           color="red"
-          dark
           @click="
             deleteCallback();
             show_dialog = false;
           "
-          x-large
+          size="x-large"
         >
           <v-icon class="me-1">delete</v-icon
           >{{ $t("global.actions.delete") }}</v-btn
@@ -63,11 +62,16 @@
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn text @click="show_dialog = false" x-large>
+          <v-btn variant="text" @click="show_dialog = false" size="x-large">
             <v-icon class="me-1">close</v-icon
             >{{ $t("global.actions.close") }}</v-btn
           >
-          <v-btn depressed color="primary" @click="setValue" x-large>
+          <v-btn
+            variant="flat"
+            color="primary"
+            @click="setValue"
+            size="x-large"
+          >
             <v-icon class="me-1">check</v-icon
             >{{ $t("global.actions.set") }}</v-btn
           >
@@ -81,7 +85,7 @@
 import { EventName } from "@core/events/EventBus";
 
 export default {
-  name: "SArticleCodeEditorGlobalDialog",
+  name: "SArticleAddonCodeEditorDialog",
   components: {},
   props: {
     masterId: {
@@ -124,10 +128,10 @@ export default {
         this.deleteCallback = deleteCallback;
 
         this.showDialog();
-      }
+      },
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off(EventName.ARTICLE_CODE_EDITOR_SHOW);
   },
 
@@ -136,7 +140,7 @@ export default {
       return Prism.highlight(
         code,
         Prism.languages.js,
-        this.language ? this.language : "js"
+        this.language ? this.language : "js",
       );
     },
 

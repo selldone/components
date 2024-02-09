@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -24,11 +24,11 @@
       <v-list-subheader>
         {{
           isAdmin
-            ? "Here, you have the ability to directly exchange messages with customers."
-            : "Here, you have the ability to directly communicate with the seller by sending messages."
+            ? "Messages history between you and the customer."
+            : "Messages history between you and the seller."
         }}
       </v-list-subheader>
-      <order-chat-message
+      <s-order-chat-message
         v-for="(message, i) in chat"
         :key="i"
         class="my-2 c-bubble"
@@ -38,7 +38,7 @@
         :message="message"
         has-delete
       >
-      </order-chat-message>
+      </s-order-chat-message>
     </div>
 
     <div class="widget-box -large mb-5">
@@ -46,7 +46,14 @@
         :title="$t('global.actions.add_new_message')"
         icon="add_comment"
       ></s-widget-header>
-      <v-list-subheader></v-list-subheader>
+      <v-list-subheader>
+        {{
+          isAdmin
+              ? "Here, you have the ability to directly exchange messages with customers."
+              : "Here, you have the ability to directly communicate with the seller by sending messages."
+        }}
+
+      </v-list-subheader>
 
       <div class="d-flex align-center mt-3">
         <v-avatar :size="32" class="avatar-gradient -thin -user me-2">
@@ -60,24 +67,23 @@
       </div>
 
       <v-textarea
-        :rows="3"
         auto-grow
         :label="$t('global.commons.message')"
         v-model="body_input"
         :counter="1024"
+        variant="solo-filled" flat bg-color="#fafafa"
       ></v-textarea>
 
       <div class="widget-buttons">
         <v-btn
           color="primary"
-          dark
-          x-large
-          depressed
+          size="x-large"
+          variant="flat"
           @click="addChat"
           :loading="busy_add"
           :class="{ disabled: !body_input }"
         >
-          <v-icon class="me-1">add</v-icon>
+          <v-icon start>add</v-icon>
           {{ $t("global.actions.add") }}
         </v-btn>
       </div>
@@ -86,13 +92,13 @@
 </template>
 
 <script>
-import OrderChatMessage from "./OrderChatMessage.vue";
+import SOrderChatMessage from "../message/SOrderChatMessage.vue";
 
 export default {
-  name: "OrderChatWidget",
+  name: "SOrderChatBox",
 
   components: {
-    OrderChatMessage,
+    SOrderChatMessage,
   },
 
   props: {
@@ -138,15 +144,15 @@ export default {
           !this.isAdmin
             ? window.XAPI.POST_CUSTOMER_BASKET_CHAT_ADD_MESSAGE(
                 this.shop.name,
-                this.basket.id
+                this.basket.id,
               )
             : window.API.POST_BASKET_CHAT_ADD_MESSAGE(
                 this.shop.id,
-                this.basket.id
+                this.basket.id,
               ),
           {
             body: this.body_input,
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {

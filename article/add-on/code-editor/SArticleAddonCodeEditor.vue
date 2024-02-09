@@ -28,27 +28,27 @@
 
     <div class="text-left py-1 d-flex align-center" dir="ltr">
       <v-btn-toggle
+        v-if="tabs_active?.length || editable"
         v-model="selected_lang"
         rounded
-        active-class="blue-flat"
-        dense
+        selected-class="blue-flat"
+        density="compact"
         mandatory
-        borderless
         class="widget-toggle flex-grow-0"
       >
         <v-btn
           v-for="lang in tabs_active"
           :key="lang"
           :value="lang"
-          depressed
+          variant="flat"
           @click="setLanguageCode(lang)"
         >
           {{ lang.toUpperCase() }}
         </v-btn>
       </v-btn-toggle>
       <v-spacer></v-spacer>
-      <v-btn @click="dark = !dark" icon class="mx-1"
-        ><v-slide-y-reverse-transition leave-absolute>
+      <v-btn @click="dark = !dark" icon class="mx-1" variant="text">
+        <v-slide-y-reverse-transition leave-absolute>
           <v-icon v-if="dark" color="blue" key="1">dark_mode</v-icon>
           <v-icon v-else color="amber" key="2">light_mode</v-icon>
         </v-slide-y-reverse-transition>
@@ -72,9 +72,13 @@
 
 <script>
 import SArticleEditorComponentToolbar from "../toolbar/SArticleEditorComponentToolbar.vue";
+import { ArticleMixin } from "@components/mixin/ArticleMixin";
+import { PrismEditor } from "vue-prism-editor";
+
 export default {
-  name: "SArticleCodeEditor",
-  components: { SArticleEditorComponentToolbar },
+  name: "SArticleAddonCodeEditor",
+  mixins: [ArticleMixin],
+  components: { PrismEditor, SArticleEditorComponentToolbar },
   props: {
     codes: {},
     editable: {
@@ -136,7 +140,7 @@ export default {
 
   created() {
     // Fix bug: (important)
-  /*  if (!this.$vuetify.theme) this.$vuetify.theme = {};
+    /*  if (!this.$vuetify.theme) this.$vuetify.theme = {};
     if (!this.$vuetify.icons) this.$vuetify.icons = {};
     if (!this.$vuetify.display) this.$vuetify.display = {};*/
   },
@@ -151,6 +155,8 @@ export default {
     if (available) {
       this.lang_code = available;
       this.selected_lang = available;
+    } else {
+      this.selected_lang = this.tabs[0];
     }
   },
   methods: {
@@ -163,11 +169,15 @@ export default {
       return Prism.highlight(
         code,
         Prism.languages.js,
-        this.lang ? this.lang : "js"
+        this.lang ? this.lang : "js",
       );
     },
 
     showEdit() {
+      if (!this.selected_lang) {
+        this.showErrorAlert(null, "Please select a language to edit code!");
+        return;
+      }
       if (!this.editable) return;
       this.ShowCodeEditorGlobalDialog(
         this.codes[this.selected_lang],
@@ -180,7 +190,7 @@ export default {
         () => {
           this.$el.remove();
         },
-        this.masterId
+        this.masterId,
       );
     },
   },
@@ -209,12 +219,15 @@ export default {
 
     .prism-editor__container {
       min-height: 100%;
+
       textarea {
         line-height: 1.2em !important;
+
         &::selection {
           background: #c0d9ef;
         }
       }
+
       pre {
         border: none !important;
         // background: #fcfcfc !important;
@@ -253,12 +266,14 @@ export default {
     //---------------------------------------------------------------------------------------
   }
 }
+
 .code-editor {
   &.editor-window {
     background-color: #fafafa;
     border-radius: 8px;
     padding-bottom: 24px;
   }
+
   &.-dark {
     background-color: #1a1a1a;
     color: #fff;

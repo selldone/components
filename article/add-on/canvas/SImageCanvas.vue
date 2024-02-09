@@ -19,37 +19,43 @@
   >
     <v-fade-transition>
       <div v-if="editable && show_menu" class="toolbar-op">
-        <v-btn @click="clearAll" tile outlined small class="m-1" dark
+        <v-btn
+          @click="clearAll"
+
+          variant="outlined"
+          size="small"
+          class="m-1"
+
           >Clear all</v-btn
         >
         <v-btn
           v-if="selected_rect"
-          tile
+
           @click="RemoveSelected"
-          outlined
-          dark
-          small
+          variant="outlined"
+
+          size="small"
           class="m-1"
           >Remove selected</v-btn
         >
 
         <v-btn
           @click="show_upload = !show_upload"
-          tile
-          dark
-          outlined
-          small
+
+
+          variant="outlined"
+          size="small"
           class="m-1"
           >{{ show_upload ? "Back" : "Upload Image" }}</v-btn
         >
         <v-slider
-          :value="ratio"
-          @input="(val) => $emit('update:ratio', val)"
+          :model-value="ratio"
+          @update:model-value="(val) => $emit('update:ratio', val)"
           :step="0.01"
           :min="0.5"
           :max="2"
           class="mt-1"
-          dense
+          density="compact"
           hide-details
           color="#fff"
         >
@@ -92,10 +98,9 @@
 
     <v-btn
       v-if="editable"
-      icon
+      icon variant="text" title="Show/hide setting bar."
       @click="show_menu = !show_menu"
       class="absolute-top-end z2"
-      dark
       ><v-icon>{{ show_menu ? "close" : "settings" }}</v-icon>
     </v-btn>
 
@@ -114,6 +119,7 @@
         :server="uploadUrl"
         :image="bg_image"
         @new-url="(url) => setBg(url)"
+        max-file-size="2MB"
       />
     </div>
 
@@ -123,9 +129,12 @@
 
 <script>
 import SImageUploader from "@components/uploader/SImageUploader.vue";
+import { ArticleMixin } from "@components/mixin/ArticleMixin";
 export default {
   name: "SImageCanvas",
-  components: {SImageUploader },
+  emits: ["update:image", "update:rects", "update:ratio"],
+  mixins: [ArticleMixin],
+  components: { SImageUploader },
   props: {
     ratio: {
       default: 1.6,
@@ -309,7 +318,7 @@ export default {
           rect.h * this.scale,
           12 * this.scale,
           true,
-          false
+          false,
         );
 
         if (rect.caption) {
@@ -319,7 +328,7 @@ export default {
           ctx.fillText(
             rect.caption,
             rect.startX * this.scale,
-            (rect.startY + rect.h + 12) * this.scale
+            (rect.startY + rect.h + 12) * this.scale,
           );
         }
 
@@ -331,7 +340,7 @@ export default {
           ctx.fillText(
             rect.header,
             (rect.startX + rect.w / 2) * this.scale,
-            (rect.startY + rect.h / 2 + 12) * this.scale
+            (rect.startY + rect.h / 2 + 12) * this.scale,
           );
         }
       });
@@ -378,7 +387,7 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
     x + width,
     y + height,
     x + width - radius.br,
-    y + height
+    y + height,
   );
   ctx.lineTo(x + radius.bl, y + height);
   ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
@@ -420,7 +429,7 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
   //  border: rgb(204, 214, 221) solid 1px;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 0 50px 3px rgba(68, 68, 68, 0.22) !important;
+ // box-shadow: 0 0 50px 3px rgba(68, 68, 68, 0.22) !important;
   transition: all 0.4s;
   margin: auto auto 16px;
 

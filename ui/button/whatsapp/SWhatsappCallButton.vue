@@ -24,7 +24,7 @@
           @click.stop
 
           v-bind="props"
-          :size="xSmall?'x-small':small?'small':null"
+          :size="xSmall?'24':small?'28':null"
 
           ><img
             src="../../../assets/trademark/whatsapp.svg"

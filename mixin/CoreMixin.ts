@@ -1807,7 +1807,7 @@ const CoreMixin = ({
     setHtmlFontSize(low_vision: boolean) {
       document.documentElement.style.setProperty(
         "font-size",
-        low_vision ? "16px" : "",
+        low_vision ? "var(--base-font-low-vision)" : "var(--base-font-standard)",
         "important"
       );
     },
@@ -1848,54 +1848,7 @@ const CoreMixin = ({
       return found ? found.image : null;
     },
 
-    // ――――― Article Editor Container ―――――
 
-    ShowCodeEditorGlobalDialog(
-      code: string,
-      language: keyof typeof Language,
-      callback: () => void,
-      deleteCallback: () => void,
-      masterId = null /*Point which dialog open!*/
-    ) {
-      this.EventBus.$emit(EventName.ARTICLE_CODE_EDITOR_SHOW, {
-        code,
-        language,
-        callback,
-        deleteCallback,
-        masterId,
-      });
-    },
-
-    ShowFlipBookGlobalDialog(
-      pack: any,
-      callback: () => void,
-      deleteCallback: () => void,
-      tab = null,
-      masterId = null /*Point which dialog open!*/
-    ) {
-      this.EventBus.$emit(EventName.ARTICLE_FLIP_BOOK_SHOW, {
-        pack,
-        callback,
-        deleteCallback,
-        tab,
-        masterId,
-      });
-    },
-    ShowImagesCompareGlobalDialog(
-      pack: any,
-      callback: () => void,
-      deleteCallback: () => void,
-      tab = null,
-      masterId = null /*Point which dialog open!*/
-    ) {
-      this.EventBus.$emit(EventName.ARTICLE_COMPARE_IMAGES_SHOW, {
-        pack,
-        callback,
-        deleteCallback,
-        tab,
-        masterId,
-      });
-    },
 
     //――――――――――――――――――――――――― Home Image Helper ―――――――――――――――――――――――――
     GetDomainHomeIcon: function (home: string) {

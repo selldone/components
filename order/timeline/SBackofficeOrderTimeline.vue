@@ -27,7 +27,12 @@
         :disabled="show_add"
       >
         <v-icon start>fa:fas fa-sticky-note</v-icon>
-        {{ $t("global.commons.add_note") }}
+        <div>
+          {{ $t("global.commons.add_note") }}
+          <div class="small mt-1">
+            Write a message and mention your colleagues.
+          </div>
+        </div>
       </v-btn>
     </div>
 
@@ -192,15 +197,17 @@
               </v-list-item-subtitle>
 
               <v-list-item-subtitle
-                class=" text-muted"
+                class="text-muted"
                 style="display: contents"
               >
-
-
                 <div class="d-flex align-center py-1">
-
-
-                  <v-chip v-if="item.by" class="overflow-visible me-2" variant="flat" size="small" color="#fff">
+                  <v-chip
+                    v-if="item.by"
+                    class="overflow-visible me-2"
+                    variant="flat"
+                    size="small"
+                    color="#fff"
+                  >
                     <v-avatar start class="hover-scale">
                       <v-img :src="getUserAvatar(item.by.id)" />
                     </v-avatar>
@@ -213,8 +220,6 @@
                   <span class="mx-2 font-weight-bold">{{
                     getFromNowString(item.created_at)
                   }}</span>
-
-
                 </div>
 
                 <span class="flex-grow-1">
@@ -346,7 +351,14 @@
             </v-list-item>
           </v-fade-transition>
         </div>
-        <hr v-if="i < timelines.length - 1" class="ma-0 fadeIn delay_1s" />
+        <hr
+          v-if="i < timelines.length - 1"
+          class="ma-0 fadeIn"
+          :style="{
+            'animation-delay': 500 + i * 50 + 'ms',
+            cursor: isEmail(item) ? undefined : 'initial',
+          }"
+        />
       </template>
     </v-fade-transition>
   </div>
@@ -359,7 +371,7 @@
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card>
+    <v-card class="text-start">
       <v-card-title>
         <v-icon class="me-2">fa:fas fa-envelope</v-icon>
         <span v-html="email_title"></span>
@@ -875,15 +887,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-.-timeline-list-item{
+.-timeline-list-item {
   padding-top: 0;
   padding-bottom: 0;
-  ::v-deep(.v-list-item__content){
+
+  ::v-deep(.v-list-item__content) {
     padding-top: 8px;
     padding-bottom: 8px;
     overflow: visible;
   }
 }
-
 </style>

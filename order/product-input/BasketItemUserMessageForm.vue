@@ -24,29 +24,31 @@
     }"
     :color="color"
   >
-    <div v-if="!forceShow" @click.stop="show = !show" class="pointer-pointer">
-      <p class="small m-0 not-selectable">
-        {{ $t("global.basket_item_message.title") }}
-        <v-progress-linear
-          v-if="has_fields"
-          :value="fill_percent"
-          rounded
-          striped
-          color="#000"
-          style="max-width: 166px"
-        ></v-progress-linear>
-      </p>
+    <template v-if="!forceShow">
+      <div @click.stop="show = !show" class="pointer-pointer">
+        <p class="small m-0 not-selectable">
+          {{ $t("global.basket_item_message.title") }}
+          <v-progress-linear
+            v-if="has_fields"
+            :model-value="fill_percent"
+            rounded
+            striped
+            color="#000"
+            style="max-width: 166px"
+          ></v-progress-linear>
+        </p>
 
-      <div
-        v-if="show"
-        v-html="convertToHtml(product.message)"
-        class="mb-3 me-5 mt-3 fadeIn typo-body"
-      ></div>
-    </div>
+        <div
+          v-if="show"
+          v-html="convertToHtml(product.message)"
+          class="mb-3 me-5 mt-3 fadeIn typo-body"
+        ></div>
+      </div>
 
-    <v-icon class="absolute-top-end" :class="{ 'fa-rotate-180': show }"
-      >keyboard_arrow_down
-    </v-icon>
+      <v-icon class="absolute-top-end" :class="{ 'fa-rotate-180': show }"
+        >keyboard_arrow_down
+      </v-icon>
+    </template>
 
     <v-expand-transition>
       <div v-if="show">
@@ -55,7 +57,7 @@
           ref="form"
           v-model="message"
           :product="product"
-          :files.sync="files"
+          v-model:files="files"
           :uploadedFiles="uploaded_files"
           @onDeleteFile="onDeleteFile"
           :is-admin="isAdmin"
@@ -68,12 +70,11 @@
       <v-btn
         v-if="show && !readonly && has_fields"
         @click="saveBasketItemMessage(product.id, variantId)"
-        x-large
+        size="x-large"
         color="#000"
-        dark
         :loading="busy"
       >
-        <v-icon class="me-1">save</v-icon>
+        <v-icon start>save</v-icon>
 
         {{ $t("global.basket_item_message.save_actions") }}
       </v-btn>
@@ -250,10 +251,10 @@ export default {
             },
           },
           /* {
-                basket_id: this.basket.id,
-                variant_id: variant_id,
-                message: this.message,
-              }*/
+                    basket_id: this.basket.id,
+                    variant_id: variant_id,
+                    message: this.message,
+                  }*/
         )
         .then(({ data }) => {
           if (!data.error) {

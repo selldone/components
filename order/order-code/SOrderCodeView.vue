@@ -42,22 +42,22 @@ export default {
       return this.basket.type === ProductType.PHYSICAL.code
         ? "SM"
         : this.basket.type === ProductType.VIRTUAL.code
-        ? "SV"
-        : this.basket.type === ProductType.FILE.code
-        ? "SF"
-        : this.basket.type === ProductType.SERVICE.code
-        ? "SS"
-        : this.basket.type === ProductType.SUBSCRIPTION.code
-        ? "SN"
-        : this.basket.type === "POS"
-        ? "POS"
-        : this.isFulfilment
-        ? "DS"
-        : this.basket.type === "AVO"
-        ? "SVO"
-        : this.basket.type === "HYP"
-        ? "HYP"
-        : null;
+          ? "SV"
+          : this.basket.type === ProductType.FILE.code
+            ? "SF"
+            : this.basket.type === ProductType.SERVICE.code
+              ? "SS"
+              : this.basket.type === ProductType.SUBSCRIPTION.code
+                ? "SN"
+                : this.basket.type === "POS"
+                  ? "POS"
+                  : this.isFulfilment
+                    ? "DS"
+                    : this.basket.type === "AVO"
+                      ? "SVO"
+                      : this.basket.type === "HYP"
+                        ? "HYP"
+                        : null;
     },
   },
 };

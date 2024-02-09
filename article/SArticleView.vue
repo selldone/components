@@ -1080,13 +1080,13 @@
           {{ $t("global.article.schedule_dialog.title") }}
         </v-card-title>
         <v-card-text>
-          <v-container>
-            <s-articles-timeline
-              :shop-id="shopId"
-              :article-type="articleType"
-              :current-article-id="article.id"
-            ></s-articles-timeline>
-          </v-container>
+           <v-container>
+             <s-articles-timeline
+                 :shop-id="shopId"
+                 :article-type="articleType"
+                 :current-article-id="article.id"
+             ></s-articles-timeline>
+           </v-container>
         </v-card-text>
 
         <v-card-actions>
