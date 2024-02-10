@@ -18,19 +18,19 @@
     :loading="loading"
     :items="items"
     no-filter
-    :search-input.sync="search"
-    :filter="() => true"
+    v-model:search-input="search"
+    :customFilter="() => true"
     :flat="flat"
     hide-no-data
     return-object
-    item-text="name"
+    item-title="name"
     item-value="email"
     :label="label"
-    :solo-inverted="soloInverted"
+    :variant="soloInverted && 'solo-inverted'"
     :rounded="rounded"
     :filled="filled"
     :outlined="outlined"
-    :dense="dense"
+    :density="dense ? 'compact' : undefined"
     clearable
     :placeholder="placeholder"
     @click:clear="
@@ -43,57 +43,63 @@
     :readonly="readonly"
     :messages="messages"
   >
-    <template v-slot:selection="data">
+    <template v-slot:chip="{ item, props }">
       <v-chip
-        v-bind="data.attrs"
-        :input-value="data.selected"
-        :color="data.item.add ? 'primary' : 'transparent'"
-        @click="data.select"
-        :title="data.item.email"
+        v-bind="props"
+        :color="item.raw.add ? 'primary' : 'transparent'"
+        :title="item.raw.email"
       >
-        <v-avatar left>
+        <v-avatar start>
           <v-img
-            v-if="!data.item.add && data.item.id"
-            :src="getUserAvatar(data.item.id)"
+            v-if="!item.raw.add && item.raw.id"
+            :src="getUserAvatar(item.raw.id)"
           ></v-img>
           <v-icon v-else>person_add</v-icon>
         </v-avatar>
-        {{ data.item.name }}
+        {{ item.raw.name }}
 
-        <span v-if="data.item.add"
-          ><v-icon small class="ms-3 me-1">email</v-icon>
-          {{ data.item.email }}</span
+        <span v-if="item.raw.add"
+          ><v-icon size="small" class="ms-3 me-1">email</v-icon>
+          {{ item.raw.email }}</span
         >
       </v-chip>
     </template>
 
-    <template v-slot:item="{ item }">
-      <v-list-item-avatar>
-        <v-icon v-if="item.add" color="success">add</v-icon>
-        <img v-else-if="item.id" :src="getUserAvatar(item.id)" />
-        <v-icon v-else>account_circle</v-icon>
-      </v-list-item-avatar>
-      <v-list-item-content class="text-start">
-        <v-list-item-title>
-          {{ item.name }}
-          <v-icon
-            v-if="item.profile && item.profile.verified"
-            class="ms-1"
-            small
-            color="blue"
-            >verified</v-icon
-          ></v-list-item-title
-        >
-        <v-list-item-subtitle v-text="item.email"></v-list-item-subtitle>
-      </v-list-item-content>
-      <v-list-item-icon v-if="withProfile && item.profile">
-        <div v-if="item.profile.nominated_id">
-          <v-avatar size="2em">
-            <v-img :src="getUserAvatar(item.profile.nominated_id)"></v-img>
+    <template v-slot:item="{ item, props }">
+      <v-list-item v-bind="props" class="text-start">
+        <template v-slot:prepend>
+          <v-avatar>
+            <v-icon v-if="item.raw.add" color="success">add</v-icon>
+            <img v-else-if="item.raw.id" :src="getUserAvatar(item.raw.id)" />
+            <v-icon v-else>account_circle</v-icon>
           </v-avatar>
-          <small class="d-block mt-1">nominated</small>
-        </div>
-      </v-list-item-icon>
+        </template>
+        <template v-slot:title>
+          <v-list-item-title>
+            {{ item.raw.name }}
+            <v-icon
+              v-if="item.raw.profile && item.raw.profile.verified"
+              class="ms-1"
+              size="small"
+              color="blue"
+              >verified
+            </v-icon>
+          </v-list-item-title>
+        </template>
+        <template v-slot:subtitle>
+          <v-list-item-subtitle v-text="item.raw.email"></v-list-item-subtitle>
+        </template>
+        <template v-slot:append v-if="withProfile && item.raw.profile">
+          <div v-if="item.raw.profile.nominated_id">
+            <v-avatar size="2em">
+              <v-img
+                :src="getUserAvatar(item.raw.profile.nominated_id)"
+              ></v-img>
+            </v-avatar>
+            <small class="d-block mt-1">nominated</small>
+          </div>
+        </template>
+      </v-list-item>
     </template>
   </v-combobox>
 </template>
@@ -101,8 +107,9 @@
 <script>
 export default {
   name: "UserEmailInput",
+  emits: ["update:modelValue", "update:user-id", "update:user"],
   props: {
-    value: {},
+    modelValue: {},
 
     withProfile: {
       type: Boolean,
@@ -127,7 +134,7 @@ export default {
       default: "User email address",
     },
     placeholder: {
-      default:'john@testmail.com'
+      default: "john@testmail.com",
     },
 
     rounded: {
@@ -211,7 +218,7 @@ export default {
 
     select(select) {
       if (!select) {
-        this.$emit("input", null);
+        this.$emit("update:modelValue", null);
         this.$emit("update:user-id", null);
         this.$emit("update:user", null);
         return;
@@ -225,17 +232,17 @@ export default {
         this.items.push(obj);
         this.select = obj;
       } else {
-        this.$emit("input", select.email);
+        this.$emit("update:modelValue", select.email);
         this.$emit("update:user-id", select.id);
         this.$emit("update:user", select);
       }
     },
-    value(value) {
-      if (!value) this.select = this.value;
+    modelValue(value) {
+      if (!value) this.select = this.modelValue;
     },
   },
   created() {
-    this.select = this.value;
+    this.select = this.modelValue;
   },
   methods: {
     querySelections(v) {

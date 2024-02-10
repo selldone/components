@@ -14,10 +14,10 @@
 
 <template>
   <s-translations-button
-    :shop="shop"
-    :label="label"
-    :default-value="crossSell[translationKey]"
     v-model:translations="crossSell.translations"
+    :default-value="crossSell[translationKey]"
+    :label="label"
+    :shop="shop"
     :translation-key="translationKey"
     :url="
       IS_VENDOR_PANEL

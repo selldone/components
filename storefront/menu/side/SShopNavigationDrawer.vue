@@ -14,11 +14,11 @@
 
 <template>
   <v-navigation-drawer
-    :value="value"
-    @input="(val) => $emit('input', val)"
+    :model-value="value"
+    @update:model-value="(val) => $emit('input', val)"
     app
     temporary
-    :right="$vuetify.rtl"
+    :location="$vuetify.rtl && 'right'"
     class="text-start pt-5"
     style="border-radius: 24px; margin: 8px; height: calc(100vh - 100px)"
     width="90vw"
@@ -27,7 +27,7 @@
       <div class="d-flex align-center pa-2">
         <div v-if="!USER()">
           <v-btn
-            large
+            size="large"
             color="#111"
             dark
             class="tnt"
@@ -35,7 +35,7 @@
             min-width="200"
             max-width="80vw"
           >
-            <v-icon class="me-1" small>login</v-icon>
+            <v-icon class="me-1" size="small">login</v-icon>
             {{ $t("global.actions.login") }}
           </v-btn>
         </div>
@@ -69,63 +69,64 @@
           />
         </template>
 
-        <v-spacer> </v-spacer>
+        <v-spacer></v-spacer>
 
-        <v-btn @click="$emit('input', false)" icon color="#000"
-          ><v-icon>close</v-icon></v-btn
-        >
+        <v-btn @click="$emit('input', false)" icon color="#000">
+          <v-icon>close</v-icon>
+        </v-btn>
       </div>
       <v-expansion-panels flat class="border-between-vertical">
         <!-- ――――――――――――――――――――― Shop User Menu List ――――――――――――――――――――― -->
 
         <v-expansion-panel v-if="USER()">
-          <v-expansion-panel-header class="p-0 pe-3">
+          <v-expansion-panel-title class="p-0 pe-3">
             <v-list-item>
-              <v-list-item-avatar class="avatar-gradient -thin -user">
-                <v-img :src="getUserAvatar(USER_ID())"></v-img>
-              </v-list-item-avatar>
+              <template v-slot:prepend>
+                <v-avatar class="avatar-gradient -thin -user">
+                  <v-img :src="getUserAvatar(USER_ID())"></v-img>
+                </v-avatar>
+              </template>
 
-              <v-list-item-content>
-                <v-list-item-title class="font-weight-bold">{{
-                  USER().name
-                }}</v-list-item-title>
-                <v-list-item-subtitle class="mt-1">{{
-                  USER().email
-                }}</v-list-item-subtitle>
-              </v-list-item-content>
+              <v-list-item-title class="font-weight-bold"
+                >{{ USER().name }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="mt-1"
+                >{{ USER().email }}
+              </v-list-item-subtitle>
             </v-list-item>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <s-shop-user-menu-list :shop="shop" navigation></s-shop-user-menu-list>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <s-shop-user-menu-list
+              :shop="shop"
+              navigation
+            ></s-shop-user-menu-list>
 
             <!-- ――――――――――――――――――――― Logout Button ――――――――――――――――――――― -->
 
             <v-list-item>
-              <v-list-item-content>
-                <v-btn
-                  outlined
-                  large
-                  color="#333"
-                  class="tnt"
-                  @click="
-                    busy_logout = true;
-                    Logout(() => (busy_logout = false));
-                  "
-                  :loading="busy_logout"
-                >
-                  <v-icon class="me-1" small>logout</v-icon>
-                  {{ $t("global.actions.logout") }}
-                </v-btn>
-              </v-list-item-content>
+              <v-btn
+                variant="outlined"
+                size="large"
+                color="#333"
+                class="tnt"
+                @click="
+                  busy_logout = true;
+                  Logout(() => (busy_logout = false));
+                "
+                :loading="busy_logout"
+              >
+                <v-icon class="me-1" size="small">logout</v-icon>
+                {{ $t("global.actions.logout") }}
+              </v-btn>
             </v-list-item>
-          </v-expansion-panel-content>
+          </v-expansion-panel-text>
         </v-expansion-panel>
 
         <!-- ――――――――――――――――――――― Header Menu ――――――――――――――――――――― -->
 
         <template
           v-for="(tab, index) in tabs.filter((t) =>
-            ['link', 'default', 'category'].includes(t.type)
+            ['link', 'default', 'category'].includes(t.type),
           )"
         >
           <v-list-item
@@ -137,37 +138,41 @@
             <v-list-item-title>
               {{ tab.title }}
             </v-list-item-title>
-            <v-list-item-icon>
+            <template v-slot:append>
               <v-icon
                 v-if="tab.icon"
-                :small="tab.icon_size === 'small'"
-                :large="tab.icon_size === 'large'"
-                >{{ tab.icon }}</v-icon
-              >
-              <v-icon v-else-if="tab.link?.startsWith('http')" small
-                >open_in_new</v-icon
-              >
-            </v-list-item-icon>
+                :size="tab.icon_size === 'small' ?'small':tab.icon_size === 'large'?'large':undefined"
+                >{{ tab.icon }}
+              </v-icon>
+              <v-icon v-else-if="tab.link?.startsWith('http')" size="small"
+                >open_in_new
+              </v-icon>
+            </template>
           </v-list-item>
 
           <v-expansion-panel v-else :key="'m-' + index">
-            <v-expansion-panel-header class="p-0 pe-3">
+            <v-expansion-panel-title class="p-0 pe-3">
               <v-list-item :href="tab.link" text>
                 <v-list-item-title>
                   {{ tab.title }}
                 </v-list-item-title>
-                <v-list-item-icon v-if="tab.icon">
+                <template v-slot:append v-if="tab.icon">
                   <v-icon
-                    :small="tab.icon_size === 'small'"
-                    :large="tab.icon_size === 'large'"
-                    >{{ tab.icon }}</v-icon
-                  >
-                </v-list-item-icon>
+                    :size="
+                      tab.icon_size === 'small'
+                        ? 'small'
+                        : tab.icon_size === 'large'
+                          ? 'large'
+                          : undefined
+                    "
+                    >{{ tab.icon }}
+                  </v-icon>
+                </template>
               </v-list-item>
-            </v-expansion-panel-header>
+            </v-expansion-panel-title>
 
             <!-- Menu > default -->
-            <v-expansion-panel-content>
+            <v-expansion-panel-text>
               <div v-if="tab.type === 'default'">
                 <div v-for="(col, i) in tab.cols" :key="i">
                   <v-list-item
@@ -191,9 +196,7 @@
                 :categories="tab.categories"
                 style="--item-heigh: 42px"
               ></menu-categories>
-
-
-            </v-expansion-panel-content>
+            </v-expansion-panel-text>
           </v-expansion-panel>
         </template>
 
@@ -219,15 +222,15 @@
       <v-sheet class="border-top mt-16" color="#fafafa">
         <div v-if="info" class="pa-2">
           <div v-if="info.phone" class="pa-1">
-            <v-icon small class="me-1">phone</v-icon>
+            <v-icon size="small" class="me-1">phone</v-icon>
             <span v-copy>{{ info.phone }}</span>
           </div>
           <div v-if="info.email" class="pa-1">
-            <v-icon small class="me-1">email</v-icon>
+            <v-icon size="small" class="me-1">email</v-icon>
             <span v-copy>{{ info.email }}</span>
           </div>
           <div v-if="info.address" class="pa-1">
-            <v-icon small class="me-1">place</v-icon>
+            <v-icon size="small" class="me-1">place</v-icon>
 
             <flag
               v-if="info.country_code"
@@ -254,6 +257,7 @@ import MenuCategories from "@components/storefront/menu/header/MenuCategories.vu
 import SCurrencySelector from "@components/ui/currency/selector/SCurrencySelector.vue";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
+
 export default {
   name: "SShopNavigationDrawer",
   components: {
@@ -352,7 +356,7 @@ export default {
               to: { name: window.$storefront.routes.SHOP_BLOGS_PAGE },
               name: this.$t("global.commons.blog"),
             },
-          ]
+          ],
         );
       }
 
@@ -363,12 +367,9 @@ export default {
 </script>
 
 <style lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
@@ -388,6 +389,7 @@ export default {
   .v-list-item__title {
     font-weight: 500;
   }
+
   .v-list-item__icon {
     .v-icon {
       color: currentColor;

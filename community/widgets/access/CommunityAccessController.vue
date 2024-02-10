@@ -41,8 +41,8 @@
     <v-list-subheader
       >Moderators are granted limited access to oversee the community. They are
       not privy to your business's shop dashboard or any other related
-      information.</v-list-subheader
-    >
+      information.
+    </v-list-subheader>
 
     <s-dense-images-circles-users
       class="fadeIn delay_400"
@@ -68,10 +68,11 @@
               icon="person_add_alt"
             ></s-widget-header>
             <v-list-subheader
-              >1. Make sure the user previously registered on
-              Selldone.</v-list-subheader
-            >
-            <v-list-subheader>2. Enter the correct email address.</v-list-subheader>
+              >1. Make sure the user previously registered on Selldone.
+            </v-list-subheader>
+            <v-list-subheader
+              >2. Enter the correct email address.
+            </v-list-subheader>
 
             <user-email-input
               with-profile
@@ -82,7 +83,7 @@
             <div class="widget-buttons">
               <v-btn
                 color="primary"
-                x-large
+                size="x-large"
                 :loading="busy_add"
                 :disabled="!user_email"
                 @click="addModerator"
@@ -100,36 +101,43 @@
               icon="supervisor_account"
             ></s-widget-header>
 
-            <v-list class="border-between-vertical my-3 bg-transparent" dense>
+            <v-list
+              class="border-between-vertical my-3 bg-transparent"
+              density="compact"
+            >
               <v-list-item v-for="item in moderators" :key="item.user_id">
-                <v-list-item-avatar
-                  size="48"
-                  class="my-0 avatar-gradient -thin"
-                >
-                  <v-img :src="getUserAvatar(item.user_id)"> </v-img>
-                </v-list-item-avatar>
-                <v-list-item-content class="p-0">
-                  <v-list-item-title class="font-weight-bold"
-                    >{{ item.name }}
-                    <v-icon v-if="item.verified" small color="blue" class="ms-1"
-                      >verified</v-icon
-                    ></v-list-item-title
-                  >
-                  <v-list-item-subtitle v-if="item.email" class="my-1">{{
-                    item.email
-                  }}</v-list-item-subtitle>
-                  <v-list-item-subtitle class="my-1">{{
-                    item.description
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <template v-slot:prepend>
+                  <v-avatar size="48" class="my-0 avatar-gradient -thin">
+                    <v-img :src="getUserAvatar(item.user_id)"></v-img>
+                  </v-avatar>
+                </template>
+
+                <v-list-item-title class="font-weight-bold"
+                  >{{ item.name }}
+                  <v-icon
+                    v-if="item.verified"
+                    size="small"
+                    color="blue"
+                    class="ms-1"
+                    >verified
+                  </v-icon>
+                </v-list-item-title>
+                <v-list-item-subtitle v-if="item.email" class="my-1"
+                  >{{ item.email }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle class="my-1"
+                  >{{ item.description }}
+                </v-list-item-subtitle>
+
                 <v-list-item-action>
                   <v-btn
                     icon
                     @click="removeModerator(item)"
                     :loading="busy_remove === item.user_id"
                     title="Remove moderator"
-                    ><v-icon>close</v-icon></v-btn
                   >
+                    <v-icon>close</v-icon>
+                  </v-btn>
                 </v-list-item-action>
               </v-list-item>
             </v-list>
@@ -154,11 +162,11 @@
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn text @click="dialog = false" x-large>
+            <v-btn variant="text" @click="dialog = false" size="x-large">
               <v-icon class="me-1">close</v-icon>
 
-              {{ $t("global.actions.close") }}</v-btn
-            >
+              {{ $t("global.actions.close") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -169,6 +177,7 @@
 <script>
 import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
+
 export default {
   name: "CommunityAccessController",
   components: { UserEmailInput, SDenseImagesCirclesUsers },
@@ -270,14 +279,14 @@ export default {
               this.moderators,
               data.moderator,
               "user_id",
-              false
+              false,
             );
             this.user_email = null;
             Object.assign(this.community, data.community); // Update moderators_list
 
             this.showSuccessAlert(
               "Add moderator",
-              "A new moderator has been added successfully."
+              "A new moderator has been added successfully.",
             );
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -299,8 +308,8 @@ export default {
         .delete(
           window.CAPI.DELETE_COMMUNITY_MODERATOR(
             this.community.id,
-            moderator.user_id
-          )
+            moderator.user_id,
+          ),
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -310,7 +319,7 @@ export default {
 
             this.showSuccessAlert(
               "Remove moderator",
-              "The moderator has been removed successfully."
+              "The moderator has been removed successfully.",
             );
           } else {
             this.showErrorAlert(null, data.error_msg);

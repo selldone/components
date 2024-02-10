@@ -82,21 +82,21 @@
                 show_filter_menu && has_filter && $vuetify.display.smAndUp,
             }"
             v-model="sort"
-            :only-available.sync="only_available"
+            v-model:only-available="only_available"
             :has-view-mode="!freeMode /*Don't show view modes in map view!*/"
-            :viewMode.sync="mode_view"
+            v-model:viewMode="mode_view"
             :mandatory="false"
           >
             <!-- ............................ Categories > Small screen ............................ -->
             <v-btn
               v-if="$vuetify.display.xs && hierarchy_items.length > 1"
-              text
+              variant="text"
               tile
               height="46px"
               @click="show_categories = !show_categories"
             >
               {{ $t("global.commons.category") }}
-              <v-icon class="ms-1" x-small>expand_more</v-icon>
+              <v-icon class="ms-1" size="x-small">expand_more</v-icon>
             </v-btn>
             <!-- .................................................................................... -->
 
@@ -106,14 +106,14 @@
             <v-btn
               class="border-start position-absolute bg-white"
               :style="$vuetify.rtl ? 'left: 0' : 'right: 0'"
-              text
+              variant="text"
               tile
               height="46px"
               v-if="has_filter"
               absolute
               @click="show_filter_menu = !show_filter_menu"
               >{{ $t("shop.products_filter") }}
-              <v-icon class="ms-1" small>{{
+              <v-icon class="ms-1" size="small">{{
                 show_filter_menu ? "close" : "filter_alt"
               }}</v-icon></v-btn
             >
@@ -139,18 +139,19 @@
                 exact
                 active-class="bg-primary white--text"
               >
-                <v-list-item-avatar :tile="!!item.icon">
-                  <img
-                    v-if="item.image"
-                    :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
-                  />
-                  <v-icon v-else-if="item.icon" class="me-1">{{
-                    item.icon
-                  }}</v-icon>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>{{ item.text }}</v-list-item-title>
-                </v-list-item-content>
+                <template v-slot:prepend>
+                  <v-avatar :tile="!!item.icon">
+                    <img
+                      v-if="item.image"
+                      :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
+                    />
+                    <v-icon v-else-if="item.icon" class="me-1">{{
+                      item.icon
+                    }}</v-icon>
+                  </v-avatar>
+                </template>
+
+                <v-list-item-title>{{ item.text }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </div>
@@ -188,7 +189,7 @@
             <category-card
               v-for="category in folders.slice(
                 (folder_page - 1) * max_folders_per_page,
-                folder_page * max_folders_per_page
+                folder_page * max_folders_per_page,
               )"
               :key="'f' + category.id"
               class="flex m-0"
@@ -224,7 +225,7 @@
               <v-pagination
                 v-model="folder_page"
                 :length="folder_pages_count"
-                circle
+                rounded
               ></v-pagination>
             </v-col>
 
@@ -278,8 +279,8 @@
           v-intersect="onIntersect"
           :loading="busy_fetch"
           color="blue"
-          text
-          x-large
+          variant="text"
+          size="x-large"
           class="m-3"
           >{{ remains_count }} {{ $t("global.actions.more") }}</v-btn
         >
@@ -333,7 +334,7 @@
             <v-btn
               class="absolute-top-end z1"
               icon
-              large
+              size="large"
               @click="quick_buy = false"
               ><v-icon>close</v-icon>
             </v-btn>
@@ -343,7 +344,7 @@
             class="border-top mb-16"
           >
             <div class="widget-buttons mb-4">
-              <v-btn text @click="quick_buy = false" x-large
+              <v-btn variant="text" @click="quick_buy = false" size="x-large"
                 ><v-icon class="me-1">close</v-icon
                 >{{ $t("global.actions.close") }}</v-btn
               >
@@ -656,7 +657,7 @@ export default {
         this.parent_folders,
         this.getShop().name,
         null,
-        "shopping_bag"
+        "shopping_bag",
       );
     },
 
@@ -697,15 +698,9 @@ export default {
     template_device() {
       if (this.$vuetify.display.xsOnly) {
         return "mobile";
-      } else if (
-        this.$vuetify.display.smOnly ||
-        this.$vuetify.display.mdOnly
-      ) {
+      } else if (this.$vuetify.display.smOnly || this.$vuetify.display.mdOnly) {
         return "tablet";
-      } else if (
-        this.$vuetify.display.lgOnly ||
-        this.$vuetify.display.xlOnly
-      ) {
+      } else if (this.$vuetify.display.lgOnly || this.$vuetify.display.xlOnly) {
         return "pc";
       }
       return "pc";
@@ -723,9 +718,9 @@ export default {
       else if (this.mode_view.code === ModeView.LIST.code) limit = 5 * 4;
       else if (this.mode_view.code === ModeView.INSTA.code) limit = 4 * 6;
 
-      const multiple=this.$vuetify.display.lgAndUp?2:1 // Show more on PC
+      const multiple = this.$vuetify.display.lgAndUp ? 2 : 1; // Show more on PC
 
-      return multiple*limit;
+      return multiple * limit;
     },
 
     folder_pages_count() {
@@ -827,9 +822,9 @@ export default {
       localStorage.setItem(
         StorefrontLocalStorages.GetUserShopViewModePath(
           this.$localstorage_base_path(),
-          this.template_device
+          this.template_device,
         ),
-        mode_view.code
+        mode_view.code,
       );
     },
 
@@ -850,7 +845,7 @@ export default {
       // console.log('===========forceModeView=============')
       if (this.forceModeView) {
         this.mode_view = Object.values(ModeView).find(
-          (i) => i.code === this.forceModeView
+          (i) => i.code === this.forceModeView,
         );
       }
     },
@@ -867,7 +862,7 @@ export default {
           this.show_filter_menu &&
             this.has_filter &&
             !this.parent_folders
-              ?.page /*In custom page show on the top of the page, the side bar filter is limited and has no overlap with top menu!*/
+              ?.page /*In custom page show on the top of the page, the side bar filter is limited and has no overlap with top menu!*/,
         );
     },
     has_filter() {
@@ -877,7 +872,7 @@ export default {
       )
         this.$store.commit(
           "setShowFilterMenu",
-          this.show_filter_menu && this.has_filter
+          this.show_filter_menu && this.has_filter,
         );
     },
     //-------------------------------------------------------
@@ -897,8 +892,8 @@ export default {
     code = localStorage.getItem(
       StorefrontLocalStorages.GetUserShopViewModePath(
         this.$localstorage_base_path(),
-        this.template_device
-      )
+        this.template_device,
+      ),
     );
     if (!code && this.theme && this.theme[this.template_device]) {
       code = this.theme[this.template_device];
@@ -987,7 +982,7 @@ export default {
 
     document.addEventListener("keydown", this.key_listener_keydown);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener("keydown", this.key_listener_keydown);
   },
 
@@ -1042,13 +1037,13 @@ export default {
         else
           this.spec_array = SpecHelper.CONVERT_SPEC_JSON_TO_ARRAY(
             this.selected_product.spec,
-            this.selected_product.spec_order
+            this.selected_product.spec_order,
           );
         GtagEcommerce.MeasuringViewsOfProductDetails(
           this.shop,
           product,
           this.GetUserSelectedCurrency().code,
-          "quick-view"
+          "quick-view",
         );
       };
 
@@ -1073,7 +1068,7 @@ export default {
         product,
         this.GetUserSelectedCurrency().code,
         index + 1,
-        this.parent_folders
+        this.parent_folders,
       );
     },
 
@@ -1181,7 +1176,7 @@ export default {
           products,
           this.GetUserSelectedCurrency().code,
           this.$route.query.search ? "Search Results" : null,
-          parent
+          parent,
         );
       };
 

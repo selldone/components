@@ -16,31 +16,30 @@
   <div>
     <v-menu
       :activator="activator"
-      left
-      bottom
-      offset-y
-      offset-x
+      location="left bottom"
+
       v-model="value"
       max-width="360"
-      rounded="xl"
+
     >
-      <div class="p-3 bg-white">
+      <v-sheet class="p-3" color="#fff"  rounded="xl">
         <v-list class="text-start">
           <v-list-item
             v-for="(item, index) in items"
             :key="index"
             @click="item.click"
           >
-            <v-list-item-avatar tile>
-              <v-icon :color="item.color">{{ item.icon }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-              <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-avatar tile>
+                <v-icon :color="item.color">{{ item.icon }}</v-icon>
+              </v-avatar>
+            </template>
+
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
           </v-list-item>
         </v-list>
-      </div>
+      </v-sheet>
     </v-menu>
 
     <!-- ------------------ Embed post dialog ------------------------ -->
@@ -53,7 +52,7 @@
       <v-card class="d-flex flex-column text-start">
         <v-card-title
           >{{ $t("community.post_actions.embed") }} <v-spacer></v-spacer
-          ><v-btn large icon @click="embed_dialog = false"
+          ><v-btn size="large" icon @click="embed_dialog = false"
             ><v-icon>close</v-icon></v-btn
           ></v-card-title
         >
@@ -65,8 +64,11 @@
             class="border my-3 hover-editable px-2 py-4 rounded"
           ></div>
 
-          <v-btn text @click="copyToClipboard(embed_code)" color="blue"
-            ><v-icon small class="me-1">content_copy</v-icon>
+          <v-btn
+            variant="text"
+            @click="copyToClipboard(embed_code)"
+            color="blue"
+            ><v-icon size="small" class="me-1">content_copy</v-icon>
             {{ $t("community.embed.copy_code") }}</v-btn
           >
           <hr class="mb-4" />
@@ -84,7 +86,11 @@
       content-class="no-shadow-dialog"
       scrollable
     >
-      <v-btn large icon @click="edit_dialog = false" class="absolute-top-end"
+      <v-btn
+        size="large"
+        icon
+        @click="edit_dialog = false"
+        class="absolute-top-end"
         ><v-icon>close</v-icon></v-btn
       >
 
@@ -277,8 +283,8 @@ export default {
               window.CAPI.DELETE_COMMUNITY_TOPIC_POST(
                 this.post.community_id,
                 this.post.topic_id,
-                this.post.id
-              )
+                this.post.id,
+              ),
             )
             .then(({ data }) => {
               if (!data.error) {
@@ -291,7 +297,7 @@ export default {
                     null,
                     "There is some issue with removing files: <ul>" +
                       data.errors.map((e) => "<li>" + e + "</li>").join(" ") +
-                      "</ul>"
+                      "</ul>",
                   );
                 }
               } else {
@@ -304,7 +310,7 @@ export default {
             .finally(() => {
               this.busy = false;
             });
-        }
+        },
       );
     },
 
@@ -318,11 +324,11 @@ export default {
           window.CAPI.POST_COMMUNITY_TOPIC_POST_SAVE(
             this.post.community_id,
             this.post.topic_id,
-            this.post.id
+            this.post.id,
           ),
           {
             save: !(this.post.action && this.post.action.save),
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -349,11 +355,11 @@ export default {
           window.CAPI.POST_COMMUNITY_TOPIC_POST_APPROVED(
             this.post.community_id,
             this.post.topic_id,
-            this.post.id
+            this.post.id,
           ),
           {
             approved: !this.post.approved,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -390,11 +396,11 @@ export default {
           window.CAPI.POST_COMMUNITY_TOPIC_POST_REPORT(
             this.post.community_id,
             this.post.topic_id,
-            this.post.id
+            this.post.id,
           ),
           {
             report: report,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -449,10 +455,10 @@ export default {
             this.value = true;
           });
         }
-      }
+      },
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("community:post-actions-menu");
   },
 };

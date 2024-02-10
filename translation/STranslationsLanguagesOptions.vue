@@ -18,11 +18,11 @@
       <div class="d-flex">
         <v-btn
           key="default"
-          @click="select(null)"
-          :depressed="!!value"
-          :dark="!value"
           :color="!value ? 'primary' : undefined"
+          :dark="!value"
+          :variant="!!value && 'flat'"
           class="ma-1"
+          @click="select(null)"
         >
           <div class="d-flex flex-column">
             {{ shop_default_language }}
@@ -33,11 +33,11 @@
         <v-btn
           v-for="language in languages"
           :key="language"
-          @click="select(language)"
-          :depressed="language !== value"
-          :dark="language === value"
           :color="language === value ? 'primary' : undefined"
+          :dark="language === value"
+          :variant="language !== value && 'flat'"
           class="ma-1"
+          @click="select(language)"
         >
           <div class="d-flex flex-column">
             <span>
@@ -46,8 +46,8 @@
                 <v-icon
                   v-if="availableTranslations?.includes(language)"
                   :color="language !== value ? 'green' : '#ff'"
-                  x-small
                   class="ms-1"
+                  size="x-small"
                   >check_circle</v-icon
                 >
               </v-scale-transition>
@@ -95,7 +95,7 @@ export default {
   computed: {
     languages() {
       return ShopOptionsHelper.GetLanguages(this.shop).filter(
-        (l) => l !== this.shop_default_language
+        (l) => l !== this.shop_default_language,
       );
     },
     shop_default_language() {

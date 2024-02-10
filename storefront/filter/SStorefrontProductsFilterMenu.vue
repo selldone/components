@@ -17,11 +17,11 @@
     v-model="drawer"
     :color="light ? '#fafafa' : SaminColorDarkDeep"
     :expand-on-hover="expandOnHover"
-    :mini-variant="miniVariant"
+    :rail="miniVariant"
     :width="300"
     :right="right"
     :dark="!light"
-    hide-overlay
+    :scrim="false"
     floating
     :class="{
       'scrollable-element-dark': !light,
@@ -35,11 +35,13 @@
     class="s--storefront-products-filter-menu"
   >
     <div ref="list_container">
-      <v-list dense nav class="py-0">
-        <v-list-item two-line>
-          <v-list-item-avatar v-if="category_image">
+      <v-list density="compact" nav class="py-0">
+        <v-list-item lines="two">
+          <template v-slot:prepend>
+          <v-avatar v-if="category_image">
             <img :src="category_image" />
-          </v-list-item-avatar>
+          </v-avatar>
+          </template>
 
           <v-list-item-content class="text-start">
             <v-list-item-title>{{ category_title }}</v-list-item-title>
@@ -124,7 +126,7 @@
             @start="price_range_changed = true"
           >
             <template v-slot:thumb-label="">
-              <v-icon small color="accent"> star </v-icon>
+              <v-icon size="small" color="accent"> star </v-icon>
             </template>
           </v-range-slider>
 
@@ -303,7 +305,7 @@ export default {
           this.shop,
           item.currency,
           this.GetUserSelectedCurrency().code,
-          null
+          null,
         );
         if (!rate) return;
 
@@ -322,7 +324,7 @@ export default {
           this.shop,
           item.currency,
           this.GetUserSelectedCurrency().code,
-          null
+          null,
         );
         if (!rate) return;
 
@@ -354,7 +356,7 @@ export default {
       for (let prop in this.filters) {
         if (
           !Object.values(ProductVariants).some(
-            (item) => item.code + "s" === prop
+            (item) => item.code + "s" === prop,
           ) &&
           !this.reserved_names.includes(prop)
         )
@@ -374,7 +376,7 @@ export default {
       if (this.parentFolders) {
         return this.getShopImagePath(
           this.parentFolders.icon,
-          this.IMAGE_SIZE_SMALL
+          this.IMAGE_SIZE_SMALL,
         );
       }
       return this.getShopIcon(this.shop.id);
@@ -621,7 +623,7 @@ export default {
           this.shop,
           this.GetUserSelectedCurrency().code,
           item.currency,
-          null
+          null,
         );
         //if (!rate) return;
         // console.log("*** rate",rate)

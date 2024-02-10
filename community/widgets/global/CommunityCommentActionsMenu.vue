@@ -17,28 +17,26 @@
     <v-menu
       :activator="activator"
       v-if="comment"
-      left
-      bottom
-      offset-y
-      offset-x
+      location="left bottom"
       v-model="value"
       max-width="320"
-      rounded="xl"
+
     >
       <div>
-        <v-list class="text-start">
+        <v-list class="text-start"   rounded="xl">
           <v-list-item
             v-for="(item, index) in items"
             :key="index"
             @click="item.click"
           >
-            <v-list-item-avatar tile>
-              <v-icon :color="item.color">{{ item.icon }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-              <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-avatar tile>
+                <v-icon :color="item.color">{{ item.icon }}</v-icon>
+              </v-avatar>
+            </template>
+
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
           </v-list-item>
         </v-list>
       </div>
@@ -57,7 +55,7 @@
           {{ $t("community.comment_actions.edit") }}
 
           <v-spacer></v-spacer>
-          <v-btn large icon @click="edit_dialog = false"
+          <v-btn size="large" icon @click="edit_dialog = false"
             ><v-icon>close</v-icon></v-btn
           >
         </v-card-title>
@@ -68,7 +66,7 @@
           <div class="widget-buttons">
             <v-btn
               color="primary"
-              x-large
+              size="x-large"
               @click="editComment"
               :loading="busy_edit"
             >
@@ -205,11 +203,11 @@ export default {
             this.post.community_id,
             this.post.topic_id,
             this.post.id,
-            this.comment.id
+            this.comment.id,
           ),
           {
             body: this.comment_body,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -243,8 +241,8 @@ export default {
                 this.post.community_id,
                 this.post.topic_id,
                 this.post.id,
-                this.comment.id
-              )
+                this.comment.id,
+              ),
             )
             .then(({ data }) => {
               if (!data.error) {
@@ -262,7 +260,7 @@ export default {
             .finally(() => {
               this.busy = false;
             });
-        }
+        },
       );
     },
 
@@ -279,11 +277,11 @@ export default {
             this.post.community_id,
             this.post.topic_id,
             this.post.id,
-            this.comment.id
+            this.comment.id,
           ),
           {
             report: report,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -333,10 +331,10 @@ export default {
             this.value = true;
           });
         }
-      }
+      },
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("community:comment-actions-menu");
   },
 };

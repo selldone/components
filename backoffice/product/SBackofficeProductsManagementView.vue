@@ -781,7 +781,7 @@
       transition="slide-y-transition"
 
     >
-      <v-sheet rounded="lg" class="text-start">
+      <v-sheet rounded="lg" class="text-start" >
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For products (Right-click on a selected item) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <v-list

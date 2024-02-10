@@ -14,26 +14,26 @@
 
 <template>
   <s-translations-button
-    :shop="shop"
-    :label="label"
+    v-model:translations="product.translations"
     :default-value="product[translationKey]"
-    :translations.sync="product.translations"
+    :is-product-spec-mode="isSpec"
+    :is-string-mode="!isSpec"
+    :label="label"
+    :shop="shop"
     :translation-key="translationKey"
     :url="
       IS_VENDOR_PANEL
         ? window.VAPI.PUT_MY_VENDOR_PRODUCT_SET_TRANSLATIONS(
             $route.params.vendor_id,
             product.id,
-            translationKey
+            translationKey,
           )
         : window.API.PUT_PRODUCT_SET_TRANSLATIONS(
             shop.id,
             product.id,
-            translationKey
+            translationKey,
           )
     "
-    :is-string-mode="!isSpec"
-    :is-product-spec-mode="isSpec"
     @update:translations="
       (_translations) => {
         $emit('update:translations', _translations);

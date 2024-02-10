@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-dialog fullscreen v-model="dialog" :transition="null">
+  <v-dialog fullscreen v-model="dialog" :transition="false">
     <div
       :style="stylex"
       :class="classx"
@@ -23,12 +23,11 @@
         max-height: 100vh;
         cursor: zoom-out;
         overflow-y: auto;
+        transition: all 0.3s ease-in-out;
       "
-      class="transition-fast-out-slow-in no-scroll d-flex flex-column align-center safe-con pointer-zoom-out"
+      class="no-scroll d-flex flex-column align-center safe-con pointer-zoom-out"
       v-html="html"
-    >
-
-    </div>
+    ></div>
   </v-dialog>
 </template>
 
@@ -96,7 +95,7 @@ export default {
       setTimeout(() => {
         this.dialog = false;
         this.html = null;
-      }, 290);
+      }, 300);
     },
   },
 
@@ -109,7 +108,7 @@ export default {
       this.selectImage(event);
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("show:fullscreen");
   },
 };
@@ -134,14 +133,14 @@ export default {
     }
   }
 }
-  .safe-con{
-    :first-child{
-      width: 100% !important;
-      height: auto !important;
-      border-radius: unset !important;
-      margin: auto !important;
-      flex-grow:0 !important;
-      max-height: unset !important;
-    }
+.safe-con {
+  :first-child {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: unset !important;
+    margin: auto !important;
+    flex-grow: 0 !important;
+    max-height: unset !important;
   }
+}
 </style>

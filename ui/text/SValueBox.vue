@@ -13,11 +13,11 @@
   -->
 
 <template>
-  <div class="s--value-box" :style="{height:height}">
+  <div class="s--value-box" :style="{ height: height }">
     <div class="flex-grow-1 border-end text-start pe-1 me-1">
       <v-icon v-if="icon" class="me-1">{{ icon }}</v-icon> {{ label }}
     </div>
-    <div class="-val subtitle-2" :class="{ vb50: vb50 }">
+    <div class="-val text-subtitle-2" :class="{ vb50: vb50 }">
       <s-check v-if="isBoolean(value)" :value="value" read-only></s-check>
       <span v-else>{{ value }}</span>
       <slot name="value"></slot>
@@ -37,7 +37,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    height:{},
+    height: {},
   },
 };
 </script>

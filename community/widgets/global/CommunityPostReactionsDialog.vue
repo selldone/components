@@ -25,7 +25,9 @@
         Reactions
 
         <v-spacer></v-spacer>
-        <v-btn icon large @click="dialog = false"><v-icon>close</v-icon></v-btn>
+        <v-btn icon size="large" @click="dialog = false"
+          ><v-icon>close</v-icon></v-btn
+        >
       </v-card-title>
       <div>
         <v-tabs v-model="reaction" slider-size="4">
@@ -38,26 +40,32 @@
             @click="loadData(item.act.code)"
           >
             <img :src="item.act.image" width="24" height="24" class="me-1" />
-            <b>{{   numeralFormat(item.value,"0.[0]a") }}</b>
+            <b>{{ numeralFormat(item.value, "0.[0]a") }}</b>
           </v-tab>
         </v-tabs>
       </div>
       <hr />
       <v-card-text>
-        <v-list two-line class="border-between-vertical">
+        <v-list lines="two" class="border-between-vertical">
           <v-list-item v-for="item in filtered_reactions" :key="item.user_id">
-            <v-list-item-avatar size="56" class="my-0">
+            <template v-slot:prepend>
+            <v-avatar size="56" >
               <v-img
                 :src="getUserAvatar(item.user_id)"
                 class="position-relative"
               >
                 <img :src="PostReaction[item.reaction].image" class="ubadg" />
               </v-img>
-            </v-list-item-avatar>
+            </v-avatar>
+            </template>
             <v-list-item-content class="p-0">
               <v-list-item-title class="uname"
                 >{{ item.name }}
-                <v-icon v-if="item.verified" small color="blue" class="ms-1"
+                <v-icon
+                  v-if="item.verified"
+                  size="small"
+                  color="blue"
+                  class="ms-1"
                   >verified</v-icon
                 ></v-list-item-title
               >
@@ -182,7 +190,7 @@ export default {
           window.CAPI.GET_COMMUNITY_TOPIC_POST_REACTIONS(
             this.post.community_id,
             this.post.topic_id,
-            this.post.id
+            this.post.id,
           ),
           {
             params: {
@@ -191,7 +199,7 @@ export default {
               offset: (this.page - 1) * this.itemsPerPage,
               limit: this.itemsPerPage,
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -238,7 +246,7 @@ export default {
       this.getPostReactionsDetail();
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("community:show-post-reactions");
   },
 };

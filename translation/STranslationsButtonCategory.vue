@@ -14,23 +14,22 @@
 
 <template>
   <s-translations-button
-    :shop="shop"
-    :label="label"
-    :default-value="category[translationKey]"
-
     v-model:translations="category.translations"
+    :default-value="category[translationKey]"
+    :label="label"
+    :shop="shop"
     :translation-key="translationKey"
     :url="
       IS_VENDOR_PANEL
         ? window.VAPI.PUT_MY_VENDOR_CATEGORY_SET_TRANSLATIONS(
             $route.params.vendor_id,
             category.id,
-            translationKey
+            translationKey,
           )
         : window.API.PUT_CATEGORY_SET_TRANSLATIONS(
             shop.id,
             category.id,
-            translationKey
+            translationKey,
           )
     "
     is-string-mode
@@ -63,8 +62,6 @@ export default {
       type: String,
     },
     label: {},
-
-
   },
   data: () => ({}),
   computed: {

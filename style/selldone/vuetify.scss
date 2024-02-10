@@ -709,3 +709,12 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 .v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item:nth-child(2n):not(.v-timeline-item--after) .v-timeline-item__body {
   max-width:unset ;
 }
+
+
+
+:root {
+  .v-theme--light{
+    --v-medium-emphasis-opacity: 0.9;
+  }
+
+}

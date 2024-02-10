@@ -17,15 +17,13 @@
     <v-btn
       v-if="isMobile && !force_show"
       class="collapse-button"
-      fab
       :color="color ? color : SaminColorLight"
-      :dark="dark"
-      depressed
+      variant="flat"
       @click.stop
-      small
+      size="small"
       @click="force_show = true"
     >
-      <v-icon> search </v-icon>
+      <v-icon> search</v-icon>
     </v-btn>
 
     <v-autocomplete
@@ -35,8 +33,8 @@
       class="search-box"
       :items="items"
       :loading="isLoading"
-      :search-input.sync="search"
-      :filter="() => true"
+      v-model:search-input="search"
+      :customFilter="() => true"
       :placeholder="placeholder ? placeholder : $t('global.commons.search')"
       return-object
       clearable
@@ -46,17 +44,17 @@
       :label="current_label"
       :messages="messages"
       :hint="hint"
-      @change="goToResult"
+      @update:model-value="goToResult"
       :solo="solo"
       :flat="flat"
       autocomplete
       :single-line="singleLine"
       :rounded="rounded"
       :filled="filled"
-      :dark="dark"
-      :dense="dense"
+      :theme="dark ? 'dark' : 'light'"
+      :density="dense ? 'compact' : 'default'"
       :readonly="readonly"
-      :background-color="backgroundColor"
+      :bg-color="backgroundColor"
       :color="color"
       :outlined="outlined"
       v-on:keyup.enter="
@@ -64,10 +62,8 @@
           search ? goToResult({ title: search }) : undefined;
         }
       "
-      :append-outer-icon="
-        isMobile && noClose ? $t('icons.navigate_next') : undefined
-      "
-      @click:append-outer="force_show = false"
+      :append-icon="isMobile && noClose ? $t('icons.navigate_next') : undefined"
+      @click:append="force_show = false"
       prepend-inner-icon="search"
       :persistentPlaceholder="persistentPlaceholder"
     >
@@ -78,7 +74,6 @@
           icon
           :class="negativeQrMargin ? 'mt-n3' : ''"
           class="hoverable-icon zoomIn delay_500"
-          :dark="dark"
         >
           <v-icon>qr_code_scanner</v-icon>
         </v-btn>
@@ -97,11 +92,11 @@
           </v-list-item-title>
         </v-list-item>
 
-        <v-list dense>
+        <v-list density="compact">
           <v-list-item
             v-for="old_item in old_items"
             :key="old_item"
-            dense
+            density="compact"
             :disabled="$route.query.search === old_item.replace('%c-', '')"
             @click="
               goToResult({
@@ -110,18 +105,16 @@
               })
             "
           >
-            <v-list-item-icon>
+            <template v-slot:prepend>
               <v-icon v-if="old_item.startsWith('%c-')" color="amber"
-                >folder</v-icon
-              >
+                >folder
+              </v-icon>
               <v-icon v-else>search</v-icon>
-            </v-list-item-icon>
+            </template>
 
-            <v-list-item-content>
-              <v-list-item-title>{{
-                old_item.replace("%c-", "")
-              }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title
+              >{{ old_item.replace("%c-", "") }}
+            </v-list-item-title>
           </v-list-item>
         </v-list>
 
@@ -130,8 +123,12 @@
       </template>
 
       <template v-slot:selection="{ item, selected }">
-        <v-chip :input-value="selected" class="subtitle-2" outlined>
-          <v-avatar v-if="item.icon" left>
+        <v-chip
+          :model-value="selected"
+          class="text-subtitle-2"
+          variant="outlined"
+        >
+          <v-avatar v-if="item.icon" start>
             <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)" />
           </v-avatar>
 
@@ -142,31 +139,32 @@
         </v-chip>
       </template>
 
-      <template v-slot:item="{ item }">
-        <v-list-item-avatar v-if="item.icon">
-          <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)">
-            <template v-slot:placeholder>
-              <v-layout fill-height align-center justify-center ma-0>
-                <v-progress-circular indeterminate color="grey lighten-5" />
-              </v-layout>
-            </template>
-          </v-img>
-        </v-list-item-avatar>
+      <template v-slot:item="{ item, props }">
+        <v-list-item v-bind="props" class="text-start" :title="item.title">
+          <template v-slot:prepend>
+            <v-avatar v-if="item.icon">
+              <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)">
+                <template v-slot:placeholder>
+                  <v-layout fill-height align-center justify-center ma-0>
+                    <v-progress-circular indeterminate color="grey-lighten-5" />
+                  </v-layout>
+                </template>
+              </v-img>
+            </v-avatar>
+            <v-icon v-if="item.query">search</v-icon>
+          </template>
 
-        <v-list-item-icon v-if="item.query">
-          <v-icon>search</v-icon>
-        </v-list-item-icon>
-
-        <v-list-item-content>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-list-item-content>
-
-        <v-list-item-action>
-          <v-list-item-action-text v-if="item.cat">
-            {{ $t("global.search_box.category") }}
-          </v-list-item-action-text>
-          <v-icon v-if="item.cat" color="amber" class="mx-auto">folder</v-icon>
-        </v-list-item-action>
+          <template v-slot:append>
+            <v-list-item-action>
+              <div class="small" v-if="item.cat">
+                {{ $t("global.search_box.category") }}
+              </div>
+              <v-icon v-if="item.cat" color="amber" class="mx-auto"
+                >folder</v-icon
+              >
+            </v-list-item-action>
+          </template>
+        </v-list-item>
       </template>
     </v-autocomplete>
 
@@ -186,9 +184,9 @@
           ></barcode-scanner>
         </v-card-text>
         <v-card-actions>
-          <v-btn text @click="show_scanner = false">{{
-            $t("global.actions.close")
-          }}</v-btn>
+          <v-btn variant="text" @click="show_scanner = false"
+            >{{ $t("global.actions.close") }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -329,7 +327,7 @@ export default {
         .get(
           this.shopName
             ? window.XAPI.GET_SEARCH_QUERY(this.shopName, val)
-            : window.API.GET_SEARCH_QUERY_ADMIN(this.shopId, val)
+            : window.API.GET_SEARCH_QUERY_ADMIN(this.shopId, val),
         )
         .then(({ data }) => {
           this.items = data.items;
@@ -352,7 +350,7 @@ export default {
         () => {
           this.$emit("update:expandInput", force_show);
         },
-        force_show ? 0 : 300
+        force_show ? 0 : 300,
       ); // Delayed in hide for smooth animation in shop page!
     },
   },
@@ -374,7 +372,9 @@ export default {
     this.force_show = this.expandInput;
 
     let history = localStorage.getItem(
-      StorefrontLocalStorages.GetUserShopSearchHistory(this.$localstorage_base_path())
+      StorefrontLocalStorages.GetUserShopSearchHistory(
+        this.$localstorage_base_path(),
+      ),
     );
     if (history) this.old_items = JSON.parse(history);
     if (!this.old_items || !Array.isArray(this.old_items)) this.old_items = [];
@@ -404,14 +404,15 @@ export default {
 
         let count = 0;
         this.old_items = this.old_items.filter(
-          (item, index) => this.old_items.indexOf(item) === index && count++ < 4
+          (item, index) =>
+            this.old_items.indexOf(item) === index && count++ < 4,
         );
 
         localStorage.setItem(
           StorefrontLocalStorages.GetUserShopSearchHistory(
-            this.$localstorage_base_path()
+            this.$localstorage_base_path(),
           ),
-          JSON.stringify(this.old_items)
+          JSON.stringify(this.old_items),
         );
       } else {
         this.$emit("onClear");
@@ -486,6 +487,7 @@ export default {
       //transform: translateX(-50%);
     }
   }
+
   .block {
     .collapse-button {
       position: relative;

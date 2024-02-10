@@ -27,62 +27,63 @@
       "
     >
       <!--    v-bind="file.download_link ? { href: file.download_link } : undefined" -->
-      <v-list-item-avatar tile>
-        <img :src="getFileExtensionImage(file.name)" />
-      </v-list-item-avatar>
-      <v-list-item-content>
-        <v-list-item-title class="subtitle-2 py-1 d-flex align-center">
-          <div
-            class="flex-grow-1 single-line inline-block font-weight-black"
-            :title="file.name"
-          >
-            {{ file.name }}
-          </div>
+      <template v-slot:prepend>
+        <v-avatar tile>
+          <img :src="getFileExtensionImage(file.name)" />
+        </v-avatar>
+      </template>
 
-          <v-chip
-            v-if="file.sample"
-            label
-            small
-            color="#009688"
-            dark
-            class="mx-2"
-            style="min-width: 68px"
-            >Sample</v-chip
-          >
-          <v-chip
-            v-else
-            label
-            small
-            color="#673AB7"
-            dark
-            class="mx-2"
-            style="min-width: 68px"
-            ><v-icon left small>diamond</v-icon> Paid</v-chip
-          >
-        </v-list-item-title>
-        <v-list-item-subtitle>
-          <v-btn
-            v-if="file.download_link"
-            @click.stop="
-              copyToClipboard(file.download_link);
-              copied_items.add(file.id);
-            "
-            :color="copied_items.includes(file.id) ? 'green' : 'primary'"
-            text
-            small
-            title="Copy download link."
-          >
-            <v-icon small class="me-1">{{
-              copied_items.includes(file.id) ? "check_circle" : "file_copy"
-            }}</v-icon>
-            {{ $t("global.commons.download_link") }}</v-btn
-          >
-        </v-list-item-subtitle>
-      </v-list-item-content>
+      <v-list-item-title class="text-subtitle-2 py-1 d-flex align-center">
+        <div
+          class="flex-grow-1 single-line inline-block font-weight-black"
+          :title="file.name"
+        >
+          {{ file.name }}
+        </div>
+
+        <v-chip
+          v-if="file.sample"
+          label
+          size="small"
+          color="#009688"
+          dark
+          class="mx-2"
+          style="min-width: 68px"
+          >Sample</v-chip
+        >
+        <v-chip
+          v-else
+          label
+          size="small"
+          color="#673AB7"
+          dark
+          class="mx-2"
+          style="min-width: 68px"
+          ><v-icon start size="small">diamond</v-icon> Paid</v-chip
+        >
+      </v-list-item-title>
+      <v-list-item-subtitle>
+        <v-btn
+          v-if="file.download_link"
+          @click.stop="
+            copyToClipboard(file.download_link);
+            copied_items.add(file.id);
+          "
+          :color="copied_items.includes(file.id) ? 'green' : 'primary'"
+          variant="text"
+          size="small"
+          title="Copy download link."
+        >
+          <v-icon size="small" class="me-1">{{
+            copied_items.includes(file.id) ? "check_circle" : "file_copy"
+          }}</v-icon>
+          {{ $t("global.commons.download_link") }}</v-btn
+        >
+      </v-list-item-subtitle>
 
       <v-list-item-action style="flex-basis: 50px">
         <v-list-item-action-text dir="ltr" class="text-center english-field">
-          {{  numeralFormat((file.size * 1024) ,"0.[0] b") }}
+          {{ numeralFormat(file.size * 1024, "0.[0] b") }}
         </v-list-item-action-text>
 
         <v-btn
@@ -156,13 +157,13 @@ export default {
           window.XAPI.GENERATE_DOWNLOAD_PRODUCT_FILE_TEMP_URL(
             this.shop_name,
             file.product_id,
-            file.id
+            file.id,
           ),
           {
             params: {
               code: this.basket?.code /*🥶 Guest*/,
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -195,15 +196,12 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-product-files-list{
-
+.s--shop-product-files-list {
 }
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-product-files-list{
-
+.s--shop-product-files-list {
 }
 </style>

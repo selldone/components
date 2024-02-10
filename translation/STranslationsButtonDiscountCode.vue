@@ -14,16 +14,16 @@
 
 <template>
   <s-translations-button
-    :shop="shop"
-    :label="label"
+    v-model:translations="discountCode.translations"
     :default-value="discountCode[translationKey]"
-    :translations.sync="discountCode.translations"
+    :label="label"
+    :shop="shop"
     :translation-key="translationKey"
     :url="
       window.API.PUT_DISCOUNT_CODE_SET_TRANSLATIONS(
         shop.id,
         discountCode.id,
-        translationKey
+        translationKey,
       )
     "
     is-string-mode

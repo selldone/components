@@ -22,7 +22,7 @@
           transportation_with_min_free_shipping_limit?.free_shipping_limit > 0
         "
         class="mx-1"
-        >(<v-icon color="success" small>shopping_bag</v-icon>
+        >(<v-icon color="success" size="small">shopping_bag</v-icon>
         {{ $t("global.commons.over") }}
         <price-view
           :amount="
@@ -44,10 +44,10 @@
     </span>
 
     <template v-if="pickup_transportation">
-      <v-menu bottom max-width="460" open-on-hover offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-chip label v-bind="attrs" small color="#fff" v-on="on">
-            <v-icon small left>place</v-icon>
+      <v-menu location="bottom" max-width="460" open-on-hover >
+        <template v-slot:activator="{ props }">
+          <v-chip label size="small" color="#fff" v-bind="props">
+            <v-icon size="small" start>place</v-icon>
             {{
               pickup_transportation.title
                 ? pickup_transportation.title
@@ -56,7 +56,7 @@
           >
         </template>
         <v-sheet dark color="#000" class="text-start">
-          <v-list three-line class="bg-transparent" dark>
+          <v-list lines="three" class="bg-transparent" dark>
             <v-list-item
               v-for="(pickup, i) in pickup_transportation.pickups"
               :key="i"
@@ -64,33 +64,34 @@
               title="Open direction to the pickup store on the map."
               target="_blank"
             >
-              <v-list-item-avatar rounded size="64" class="hover-scale-small">
-                <img
-                  v-if="pickup.location?.lng && pickup.location?.lat"
-                  :src="
-                    MapHelper.GetMapImage(
-                      pickup.location.lng,
-                      pickup.location.lat,
-                      18
-                    )
-                  "
-                />
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ pickup.name }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <flag
-                    v-if="pickup.country"
-                    :iso="pickup.country"
-                    class="me-1"
-                    :squared="false"
-                  ></flag>
+              <template v-slot:prepend>
+                <v-avatar rounded size="64" class="hover-scale-small">
+                  <img
+                    v-if="pickup.location?.lng && pickup.location?.lat"
+                    :src="
+                      MapHelper.GetMapImage(
+                        pickup.location.lng,
+                        pickup.location.lat,
+                        18,
+                      )
+                    "
+                  />
+                </v-avatar>
+              </template>
 
-                  {{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
+              <v-list-item-title>
+                {{ pickup.name }}
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                <flag
+                  v-if="pickup.country"
+                  :iso="pickup.country"
+                  class="me-1"
+                  :squared="false"
+                ></flag>
+
+                {{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}
+              </v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-sheet>
@@ -133,7 +134,7 @@ export default {
       return BasketHelper.FindItem(
         this.basket,
         this.product,
-        this.currentVariant
+        this.currentVariant,
       );
     },
 
@@ -165,7 +166,7 @@ export default {
           }` +
           (this.tax.fix_shipping
             ? `<div> + ${this.tax.fix_shipping}% ${this.$t(
-                "global.commons.tax_shipping"
+                "global.commons.tax_shipping",
               )}</div>`
             : "")
         );
@@ -182,7 +183,7 @@ export default {
     },
     transportations_free_shipping() {
       return this.transportations?.filter(
-        (t) => t.free_shipping && t.type !== ShopTransportations.Pickup.code
+        (t) => t.free_shipping && t.type !== ShopTransportations.Pickup.code,
       );
     },
     images() {
@@ -193,7 +194,7 @@ export default {
     },
     transportation_with_min_free_shipping_limit() {
       return this.transportations_free_shipping?.minByKey(
-        "free_shipping_limit"
+        "free_shipping_limit",
       );
     },
 
@@ -202,7 +203,7 @@ export default {
         this.is_physical &&
         this.transportations?.find(
           (t) =>
-            t.type === ShopTransportations.Pickup.code && t.pickups?.length > 0
+            t.type === ShopTransportations.Pickup.code && t.pickups?.length > 0,
         )
       );
     },

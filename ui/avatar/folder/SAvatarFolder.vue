@@ -20,7 +20,11 @@
     :size="size"
     rounded="xl"
   >
-    <v-avatar :size="size - borderSize" rounded="xl" color="#fff">
+    <v-avatar
+      :size="size - borderSize"
+      style="border-radius: 22px"
+      color="#fff"
+    >
       <v-img v-if="src" :src="getShopImagePath(src)">
         <template v-slot:placeholder>
           <s-image-placeholder
@@ -29,16 +33,19 @@
           ></s-image-placeholder>
         </template>
       </v-img>
-      <v-icon v-else>camera</v-icon>
+      <v-icon v-else>{{ placeholderIcon }}</v-icon>
     </v-avatar>
-    <v-icon
+
+    <div
       class="absolute-bottom-end rounded-ts-circle h-auto w-auto pa-1 ma-n1"
-      :style="{ backgroundImage: bg }"
       style="background-size: 300% 300%"
-      color="#fff"
+      :style="{ backgroundImage: bg }"
     >
-      {{ sideIcon }}
-    </v-icon>
+      <v-img v-if="sideImage" :src="sideImage" width="24" height="24"> </v-img>
+      <v-icon v-else color="#fff">
+        {{ sideIcon }}
+      </v-icon>
+    </div>
 
     <div
       v-if="caption"
@@ -83,9 +90,14 @@ export default defineComponent({
     sideIcon: {
       default: "devices_fold",
     },
+    sideImage: {},
+
     caption: {},
     loading: Boolean,
     tooltip: {},
+    placeholderIcon: {
+      default: "camera",
+    },
   },
 
   computed: {

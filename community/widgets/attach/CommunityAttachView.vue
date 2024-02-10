@@ -15,22 +15,29 @@
 <template>
   <v-list class="bg-transparent border-between-vertical text-start">
     <v-list-item v-for="file in files" :key="file.key">
-      <template>
-        <v-list-item-avatar tile>
+      <template v-slot:prepend>
+        <v-avatar tile>
           <img :src="getFileExtensionImage(file.name)" />
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title>
-            <b>{{ file.name }}</b>
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            {{  numeralFormat(file.size ,"0.[0] b") }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
+        </v-avatar>
+      </template>
+
+      <template v-slot:title>
+        <v-list-item-title>
+          <b>{{ file.name }}</b>
+        </v-list-item-title>
+      </template>
+
+      <template v-slot:subtitle>
+        <v-list-item-subtitle>
+          {{ numeralFormat(file.size, "0.[0] b") }}
+        </v-list-item-subtitle>
+      </template>
+
+      <template v-slot:append>
         <v-list-item-action>
           <v-btn
             color="#1976D2"
-            text
+            variant="text"
             class="tnt"
             @click="downloadAttachment(file)"
             :loading="busy_ids.includes(file.id)"
@@ -57,10 +64,10 @@ export default {
     files: {
       type: Array,
     },
-    viewOnly:{
-      type:Boolean,
-      default:false
-    }
+    viewOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
@@ -87,21 +94,21 @@ export default {
           window.CAPI.POST_GENERATE_DOWNLOAD_ATTACHMENT_URL(
             this.post.community_id,
             this.post.id,
-            file.id
-          )
+            file.id,
+          ),
         )
         .then(({ data }) => {
           if (!data.error) {
             this.showSuccessAlert(
               "Download start...",
-              "The secure download link has been generated successfully!"
+              "The secure download link has been generated successfully!",
             );
             try {
               window.open(data.url, "_blank").focus();
             } catch (e) {
               this.showWarningAlert(
                 "Popup blocked!",
-                "Please permit the browser to open the popup to start the download."
+                "Please permit the browser to open the popup to start the download.",
               );
             }
           } else {

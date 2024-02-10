@@ -22,24 +22,24 @@
       class="bg-transparent border-between-vertical"
     >
       <v-list-item v-for="file in files" :key="file.key">
-        <template>
-          <v-list-item-avatar tile>
+        <template v-slot:prepend>
+          <v-avatar tile>
             <img :src="getFileExtensionImage(file.name)" />
-          </v-list-item-avatar>
-
-          <v-list-item-title>
-            <b>{{ file.name }}</b>
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            {{ numeralFormat(file.size, "0.[0] b") }}
-          </v-list-item-subtitle>
-
-          <v-list-item-action>
-            <v-btn color="red" icon @click="remove(files, file)">
-              <v-icon>close</v-icon>
-            </v-btn>
-          </v-list-item-action>
+          </v-avatar>
         </template>
+
+        <v-list-item-title>
+          <b>{{ file.name }}</b>
+        </v-list-item-title>
+        <v-list-item-subtitle>
+          {{ numeralFormat(file.size, "0.[0] b") }}
+        </v-list-item-subtitle>
+
+        <v-list-item-action>
+          <v-btn color="red" icon @click="remove(files, file)">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-list-item-action>
       </v-list-item>
     </v-slide-y-transition>
     <!-- ████████████████ Add ████████████████ -->

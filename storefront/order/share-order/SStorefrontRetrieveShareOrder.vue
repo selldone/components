@@ -43,36 +43,37 @@
 
             <v-list class="border-between-vertical">
               <v-list-item v-for="item in items" :key="item.id">
-                <v-list-item-avatar tile>
-                  <v-img
-                    v-if="item.product.icon"
-                    :src="getShopImagePath(item.product.icon, 64)"
-                  ></v-img>
-                  <v-icon v-else color="#ddd">inventory</v-icon>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <router-link
-                      :to="{
-                        name: window.$storefront.routes.PRODUCT_PAGE,
-                        params: { product_id: item.product_id },
-                        query: { variant_id: item.variant_id },
-                      }"
-                      target="_blank"
-                    >
-                      <b>{{ item.product.title }}</b>
-                    </router-link>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    {{ item.product.title_en }}
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle>
-                    <variant-item-view-micro
-                      v-if="item.variant"
-                      :product-variant="item.variant"
-                    ></variant-item-view-micro>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
+                <template v-slot:prepend>
+                  <v-avatar tile>
+                    <v-img
+                      v-if="item.product.icon"
+                      :src="getShopImagePath(item.product.icon, 64)"
+                    ></v-img>
+                    <v-icon v-else color="#ddd">inventory</v-icon>
+                  </v-avatar>
+                </template>
+
+                <v-list-item-title>
+                  <router-link
+                    :to="{
+                      name: window.$storefront.routes.PRODUCT_PAGE,
+                      params: { product_id: item.product_id },
+                      query: { variant_id: item.variant_id },
+                    }"
+                    target="_blank"
+                  >
+                    <b>{{ item.product.title }}</b>
+                  </router-link>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ item.product.title_en }}
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  <variant-item-view-micro
+                    v-if="item.variant"
+                    :product-variant="item.variant"
+                  ></variant-item-view-micro>
+                </v-list-item-subtitle>
 
                 <v-list-item-action>
                   <b>{{ item.count }}</b>
@@ -98,7 +99,7 @@
                 color="primary"
                 @click="importOrder"
                 :loading="busy_import"
-                x-large
+                size="x-large"
               >
                 <v-icon class="me-1">shopping_cart_checkout</v-icon>
                 {{ $t("share_order.import_order_action") }}</v-btn
@@ -109,7 +110,7 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn text @click="show = false" x-large>
+            <v-btn variant="text" @click="show = false" size="x-large">
               <v-icon class="me-1">close</v-icon
               >{{ $t("global.actions.close") }}</v-btn
             >
@@ -199,7 +200,7 @@ export default {
           if (!data.error) {
             this.showSuccessAlert(
               "Import completed",
-              "Items in your cart has been replaced by new items."
+              "Items in your cart has been replaced by new items.",
             );
             this.show = false;
             this.$router.push({

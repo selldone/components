@@ -14,16 +14,16 @@
 
 <template>
   <s-translations-button
-    :shop="shop"
-    :label="label"
+    v-model:translations="giftCardType.translations"
     :default-value="giftCardType[translationKey]"
-    :translations.sync="giftCardType.translations"
+    :label="label"
+    :shop="shop"
     :translation-key="translationKey"
     :url="
       window.API.PUT_GIFT_CARD_SET_TRANSLATIONS(
         shop.id,
         giftCardType.id,
-        translationKey
+        translationKey,
       )
     "
     is-string-mode

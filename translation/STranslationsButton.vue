@@ -15,44 +15,44 @@
 <template>
   <div v-if="languages?.length">
     <v-btn
-      @click="showTranslations()"
-      icon
-      variant="text"
-      size="var(--append-inner-button-size)"
       :title="`Set other languages for ${getName(translationKey)}`"
       class="position-relative"
+      icon
+      size="var(--append-inner-button-size)"
+      variant="text"
+      @click="showTranslations()"
     >
       <v-icon>translate</v-icon>
       <div
         v-if="number_translated > 0"
-        class="s-lang-completed"
         :style="{
           '--percent':
             Math.round((number_translated * 100) / languages.length) + '%',
           '--color':
             number_translated >= languages.length ? '#4CAF50' : '#0b6aaa',
         }"
+        class="s-lang-completed"
       ></div>
     </v-btn>
     <v-bottom-sheet
       v-model="dialog"
-      max-width="860"
-      width="90%"
-      scrollable
       content-class="no-shadow-dialog"
+      max-width="860"
+      scrollable
+      width="90%"
     >
       <v-card class="rounded-t-xl rounded-b-0">
-        <v-card-title>
+        <v-card-title class="d-flex align-center">
           <v-icon class="me-1" color="#333">translate</v-icon>
           Multi Language | {{ label }}
           <v-spacer></v-spacer>
           <v-btn
             v-if="defaultValue && number_translated_in_pack < languages.length"
-            class="rounded-18px"
-            @click="is_premium ? autoTranslate() : showNeedSubscribePremium()"
             :loading="busy_auto_translate"
+            class="rounded-18px"
             color="primary"
             size="large"
+            @click="is_premium ? autoTranslate() : showNeedSubscribePremium()"
           >
             <v-icon class="me-1">g_translate</v-icon>
             <div class="d-block text-start">
@@ -71,17 +71,17 @@
           <v-list class="max-widget-width mx-auto">
             <v-list-item v-for="language in languages" :key="language">
               <v-text-field
-                :label="getLanguageName(language)"
                 v-if="isStringMode"
                 v-model="pack[language]"
+                :label="getLanguageName(language)"
                 hide-details
                 variant="outlined"
               >
                 <template v-slot:append-inner>
                   <v-scale-transition>
                     <v-icon v-if="pack[language]" color="green"
-                      >check_circle</v-icon
-                    >
+                      >check_circle
+                    </v-icon>
                   </v-scale-transition>
                 </template>
               </v-text-field>
@@ -91,19 +91,20 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn @click="dialog = false" variant="text" size="x-large">
+            <v-btn size="x-large" variant="text" @click="dialog = false">
               <v-icon class="me-1">close</v-icon>
-              {{ $t("global.actions.close") }}</v-btn
-            >
+              {{ $t("global.actions.close") }}
+            </v-btn>
 
             <v-btn
               :loading="busy"
               color="primary"
-              @click="save()"
               size="x-large"
+              @click="save()"
             >
-              <v-icon class="me-1">save</v-icon> Save</v-btn
-            >
+              <v-icon class="me-1">save</v-icon>
+              Save
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -284,7 +285,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s-lang-completed {
   position: absolute;
   right: 0;
@@ -295,6 +296,7 @@ export default {
   width: 3px;
   height: 100%;
   overflow: hidden;
+
   &:after {
     position: absolute;
     bottom: 0;

@@ -22,7 +22,7 @@
           code = null;
           phone = null;
         "
-        text
+        variant="text"
         color="blue"
         class="zoomIn"
       >
@@ -35,7 +35,7 @@
 
       <v-btn
         v-if="current_step"
-        text
+        variant="text"
         class="pointer-event-none zoomIn delay_400"
       >
         {{ current_step }}
@@ -73,11 +73,11 @@
             <v-btn
               class="my-3 -btn tnt fadeIn delay_100"
               :class="{ disabled: !country || !phone || phone.length < 7 }"
-              :depressed="!country || !phone || phone.length < 7"
+              :variant="!country || !phone || (phone.length < 7 && 'flat')"
               @click.stop="requestSendCode()"
               :loading="busy_login"
               color="#0061e0"
-              x-large
+              size="x-large"
               dark
               >{{ $t("global.actions.get_sms_code") }}</v-btn
             >
@@ -90,7 +90,7 @@
 
           <v-checkbox
             color="#0061e0"
-            :input-value="true"
+            :model-value="true"
             readonly
             @click="show_sms_agreement = !show_sms_agreement"
             :label="$t('global.commons.accept_agreement')"
@@ -121,7 +121,7 @@
           width="128px"
           :speed="0.4"
         />
-        <div class="body-2">{{ phone_number }}</div>
+        <div class="text-body-2">{{ phone_number }}</div>
 
         <div class="py-3">
           <v-expand-transition>
@@ -133,7 +133,7 @@
             <v-btn
               v-else-if="show_resend"
               color="#0061e0"
-              plain
+              variant="plain"
               class="tnt"
               @click.stop="requestSendCode()"
               >{{ $t("global.actions.resend_code") }}</v-btn
@@ -156,7 +156,7 @@
         <div class="widget-buttons">
           <v-btn
             class="fadeIn"
-            x-large
+            size="x-large"
             block
             :class="{
               disabled: !verification_code || verification_code.length !== 6,
@@ -176,28 +176,27 @@
       <div v-if="method === 'select'">
         <v-list
           v-if="method === 'select' && users"
-          two-line
+          lines="two"
           :class="{ disabled: busy_login, 'pointer-event-none': after_login }"
           class="max-width-field mx-auto border-between-vertical text-start"
           color="transparent"
         >
-          <template v-for="(user, index) in users"  :key="user.id">
+          <template v-for="(user, index) in users" :key="user.id">
             <v-list-item
-
               @click.stop="loginSelectUser(user)"
               class="zoomIn"
               :style="`animation-delay: ${index * 100}ms`"
             >
-              <v-list-item-avatar>
-                <v-img :src="getUserAvatar(user.id)"></v-img>
-              </v-list-item-avatar>
+              <template v-slot:prepend>
+                <v-avatar>
+                  <v-img :src="getUserAvatar(user.id)"></v-img>
+                </v-avatar>
+              </template>
 
-              <v-list-item-content>
-                <v-list-item-title class="font-weight-bold">{{
-                  user.name
-                }}</v-list-item-title>
-                <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
-              </v-list-item-content>
+              <v-list-item-title class="font-weight-bold">{{
+                user.name
+              }}</v-list-item-title>
+              <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
             </v-list-item>
           </template>
         </v-list>
@@ -253,7 +252,7 @@
             @click.stop="loginNewUser()"
             :loading="busy_login"
             :color="after_login ? 'success' : '#0061e0'"
-            x-large
+            size="x-large"
             dark
             >{{ $t("global.actions.verify") }}</v-btn
           >
@@ -268,9 +267,9 @@
             @click.stop="no_email_mode = !no_email_mode"
             color="#0061e0"
             dark
-            text
+            variant="text"
             min-width="200"
-            x-large
+            size="x-large"
           >
             <v-icon v-if="no_email_mode" class="zoomIn me-1">check</v-icon>
             {{ $t("global.actions.register_no_mail") }}</v-btn
@@ -283,7 +282,7 @@
         <div class="-msg">
           <div class="d-flex align-items-center justify-center">
             <v-avatar><img :src="getShopIcon(shop.id)" /></v-avatar>
-            <p class="subtitle-2 mx-2 my-2">{{ shop.title }}</p>
+            <p class="text-subtitle-2 mx-2 my-2">{{ shop.title }}</p>
           </div>
           <h2>{{ $t("global.need_login.msg_title") }}</h2>
           <p>{{ $t("global.need_login.msg_body") }}</p>
@@ -295,7 +294,7 @@
           <!-- 1. Google login -->
           <v-btn
             v-if="login_modes && login_modes.includes('google')"
-            depressed
+            variant="flat"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
             @mouseenter="tick()"
@@ -306,7 +305,7 @@
             :loading="busy_redirect === 'google'"
             color="#4285f4"
             dark
-            large
+            size="large"
           >
             <v-avatar size="32" class="float-start ms-n2" color="#fff"
               ><img class="p-2" src="../assets/trademark/google.svg"
@@ -319,7 +318,7 @@
           <!-- 2. Apple login -->
           <v-btn
             v-if="login_modes && login_modes.includes('apple')"
-            depressed
+            variant="flat"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
             @mouseenter="tick()"
@@ -328,7 +327,7 @@
               LoginShop(null, 'apple', false);
             "
             :loading="busy_redirect === 'apple'"
-            large
+            size="large"
             color="#111"
             dark
           >
@@ -353,7 +352,7 @@
           <!-- 2. Facebook login -->
           <v-btn
             v-if="login_modes && login_modes.includes('facebook')"
-            depressed
+            variant="flat"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
             @mouseenter="tick()"
@@ -362,7 +361,7 @@
               LoginShop(null, 'facebook', false);
             "
             :loading="busy_redirect === 'facebook'"
-            large
+            size="large"
           >
             <v-avatar size="32" class="float-start ms-n2" color="#fff"
               ><img class="p-2" src="../assets/trademark/meta.png"
@@ -376,8 +375,8 @@
 
           <v-btn
             v-if="login_modes && login_modes.includes('selldone')"
-            depressed
-            large
+            variant="flat"
+            size="large"
             block
             class="my-2 untransform fadeIn delay_300 d-flex align-items-center tnt"
             @click="
@@ -398,12 +397,12 @@
           <!-- 4. Phone login -->
           <v-btn
             v-if="login_modes && login_modes.includes('sms')"
-            depressed
+            variant="flat"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
             @mouseenter="tick()"
             @click.stop="method = 'request'"
-            large
+            size="large"
           >
             <v-avatar size="32" class="float-start ms-n2" color="#fff">
               <v-icon size="20">phone_iphone</v-icon>
@@ -415,7 +414,8 @@
         </div>
       </div>
 
-      <s-loading css-mode light v-if="method === 'login'" class="m-4"> </s-loading>
+      <s-loading css-mode light v-if="method === 'login'" class="m-4">
+      </s-loading>
     </v-card-text>
   </v-card>
 </template>
@@ -512,7 +512,7 @@ export default {
   created() {
     this.EventBus.$on("get-me:error", this.resetState);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("get-me:error");
   },
   methods: {
@@ -556,7 +556,7 @@ export default {
           this.country.iso2,
           this.phone,
           this.verification_code,
-          this.source
+          this.source,
         )
 
         .then((data) => {
@@ -611,7 +611,7 @@ export default {
           this.email,
           this.password,
           this.no_email_mode,
-          this.source
+          this.source,
         )
         .then((data) => {
           // User has been login and get token

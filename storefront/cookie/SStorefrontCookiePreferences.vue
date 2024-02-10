@@ -33,28 +33,28 @@
       </div>
 
       <v-list-item class="text-start">
-        <v-list-item-avatar tile>
-          <v-img
-            :src="require('@components/assets/icons/europe.svg')"
-            width="48"
-            height="48"
-            contain
-          ></v-img>
-        </v-list-item-avatar>
+        <template v-slot:prepend>
+          <v-avatar tile>
+            <v-img
+              :src="require('@components/assets/icons/europe.svg')"
+              width="48"
+              height="48"
+              contain
+            ></v-img>
+          </v-avatar>
+        </template>
 
-        <v-list-item-content dir="ltr">
           <v-list-item-title>GDPR</v-list-item-title>
           <v-list-item-subtitle
             >General Data Protection Regulation
           </v-list-item-subtitle>
           <v-list-item-subtitle class="text-success"
             >Europe data privacy regulation
-            <v-icon color="success" small>check</v-icon>
+            <v-icon color="success" size="small">check</v-icon>
           </v-list-item-subtitle>
-        </v-list-item-content>
       </v-list-item>
 
-      <v-list v-if="apps?.length" flat subheader three-line>
+      <v-list v-if="apps?.length" flat subheader lines="three">
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Application ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
         <v-list-subheader>
@@ -62,30 +62,42 @@
         </v-list-subheader>
 
         <v-list-item v-for="app in apps" :key="app.code">
-          <v-list-item-avatar tile>
+          <template v-slot:prepend>
+          <v-avatar tile>
             <v-img :src="getShopImagePath(app.icon)" contain />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title>{{ app.name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ app.description }}</v-list-item-subtitle>
-          </v-list-item-content>
+          </v-avatar>
+          </template>
+
+          <v-list-item-title>{{ app.name }}</v-list-item-title>
+          <v-list-item-subtitle>{{ app.description }}</v-list-item-subtitle>
 
           <v-list-item-action>
             <v-switch
               v-model="app.active"
               color="success"
-              @change="setShopAppCustomerActiveState(app, app.active)"
+              @update:model-value="
+                setShopAppCustomerActiveState(app, app.active)
+              "
             />
-            <v-list-item-action-text class="mx-auto">
-              {{ app.active ? $t('global.commons.active') : $t('global.commons.inactive') }}
-            </v-list-item-action-text>
+              <div class="mx-auto small">
+                {{
+                  app.active
+                      ? $t("global.commons.active")
+                      : $t("global.commons.inactive")
+                }}
+              </div>
           </v-list-item-action>
         </v-list-item>
       </v-list>
     </v-card-text>
     <v-card-actions>
       <div class="widget-buttons">
-        <v-btn v-if="hasClose" depressed text x-large @click="$emit('close')">
+        <v-btn
+          v-if="hasClose"
+          variant="text"
+          size="x-large"
+          @click="$emit('close')"
+        >
           <v-icon class="me-1">close</v-icon>
           {{ $t("global.actions.close") }}
         </v-btn>
@@ -93,14 +105,13 @@
         <v-btn
           v-if="showCookieAccept"
           color="primary"
-          x-large
-          depressed
+          size="x-large"
+          variant="flat"
           @click="
             setCookieAccept(true);
             accepted = true;
-            $emit('close')
+            $emit('close');
           "
-          dark
           ><v-icon class="me-1">check</v-icon>
 
           I Agree</v-btn
@@ -138,7 +149,7 @@ export default {
         if (!this.USER()) {
           app.blocked =
             localStorage.getItem(
-              `shop:${this.shop.id}-app:${app.code}:blocked`
+              `shop:${this.shop.id}-app:${app.code}:blocked`,
             ) === "1";
         }
 
@@ -157,16 +168,19 @@ export default {
           .post(
             window.XAPI.POST_SET_SHOP_APP_STATUS_BY_CUSTOMER(
               this.shop.name,
-              app.code
+              app.code,
             ),
             {
               active: active,
-            }
+            },
           )
           .then(({ data }) => {
             if (!data.error) {
               app.blocked = !active;
-              t.showSuccessAlert(null, `Application status has been updated successfully.`);
+              t.showSuccessAlert(
+                null,
+                `Application status has been updated successfully.`,
+              );
             } else {
               t.showErrorAlert(null, data.error_msg);
             }
@@ -179,12 +193,12 @@ export default {
         // GDPR: Save in local storage if user not login!
         if (active)
           localStorage.removeItem(
-            `shop:${this.shop.id}-app:${app.code}:blocked`
+            `shop:${this.shop.id}-app:${app.code}:blocked`,
           );
         else
           localStorage.setItem(
             `shop:${this.shop.id}-app:${app.code}:blocked`,
-            "1"
+            "1",
           );
       }
     },

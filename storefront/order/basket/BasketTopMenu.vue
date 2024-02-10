@@ -41,7 +41,10 @@
             key="a"
             class="view-basket-btn"
             @click="
-              $router.push({ name: window.$storefront.routes.BASKET_PAGE, params: { type: type } })
+              $router.push({
+                name: window.$storefront.routes.BASKET_PAGE,
+                params: { type: type },
+              })
             "
           >
             <h2 class="text-uppercase font-weight-medium">
@@ -66,11 +69,24 @@
           </v-avatar>
         </v-scale-transition>
 
-        <div v-if="current_basket.receiver_info?.country" class="text-start pa-3">
-          <flag :iso="current_basket.receiver_info.country" :squared="false" class="me-1" />
-          <span class="me-2">{{ getCountryName(current_basket.receiver_info.country) }}</span>
+        <div
+          v-if="current_basket.receiver_info?.country"
+          class="text-start pa-3"
+        >
+          <flag
+            :iso="current_basket.receiver_info.country"
+            :squared="false"
+            class="me-1"
+          />
+          <span class="me-2">{{
+            getCountryName(current_basket.receiver_info.country)
+          }}</span>
 
-          {{MapHelper.GenerateFullAddressFromMapInfo(current_basket.receiver_info)}}
+          {{
+            MapHelper.GenerateFullAddressFromMapInfo(
+              current_basket.receiver_info,
+            )
+          }}
         </div>
         <div style="background: #333; height: 3px"></div>
 
@@ -80,37 +96,35 @@
             :key="index"
             @click="goToProduct(item.product.id)"
           >
-            <v-list-item-avatar
-              rounded
-              :size="$vuetify.display.mdAndUp ? 64 : 48"
-            >
-              <v-img
-                aspect-ratio="1"
-                :src="
-                  getShopImagePath(
-                    item.variant?.image
-                      ? item.variant.image
-                      : item.product.icon,
-                    128
-                  )
-                "
-                class="rounded-14-12"
-              />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <p class="shop-item-title font-weight-bold">
-                {{ item.product.title }}
-              </p>
-              <v-spacer></v-spacer>
-              <p class="mini-info">
-                <span>{{ item.count }} {{ $t("basket_top_menu.items") }}</span>
-              </p>
+            <template v-slot:prepend>
+              <v-avatar rounded :size="$vuetify.display.mdAndUp ? 64 : 48">
+                <v-img
+                  aspect-ratio="1"
+                  :src="
+                    getShopImagePath(
+                      item.variant?.image
+                        ? item.variant.image
+                        : item.product.icon,
+                      128,
+                    )
+                  "
+                  class="rounded-14-12"
+                />
+              </v-avatar>
+            </template>
 
-              <variant-item-view-micro
-                v-if="item.variant"
-                :product-variant="item.variant"
-              />
-            </v-list-item-content>
+            <p class="shop-item-title font-weight-bold">
+              {{ item.product.title }}
+            </p>
+            <v-spacer></v-spacer>
+            <p class="mini-info">
+              <span>{{ item.count }} {{ $t("basket_top_menu.items") }}</span>
+            </p>
+
+            <variant-item-view-micro
+              v-if="item.variant"
+              :product-variant="item.variant"
+            />
 
             <v-list-item-action>
               <v-btn
@@ -118,10 +132,8 @@
                 @click="deleteItemFromBasket(item)"
                 :loading="busy_remove === item.id"
                 class="nbt"
-                depressed
                 icon
-                outlined
-                tile
+                variant="outlined"
                 title="Remove from cart."
               >
                 <v-icon> close </v-icon>
@@ -137,7 +149,10 @@
         @click="
           in_current_basket_page
             ? undefined
-            : $router.push({ name: window.$storefront.routes.BASKET_PAGE, params: { type: type } })
+            : $router.push({
+                name: window.$storefront.routes.BASKET_PAGE,
+                params: { type: type },
+              })
         "
       >
         {{ more_items_count }}
@@ -150,7 +165,10 @@
         class="shop-basket-button fadeIn"
         @click="
           () => {
-            $router.push({ name: window.$storefront.routes.BASKET_PAGE, params: { type: type } });
+            $router.push({
+              name: window.$storefront.routes.BASKET_PAGE,
+              params: { type: type },
+            });
             $emit('close');
           }
         "
@@ -165,7 +183,7 @@
 <script>
 import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
 import { ProductType } from "@core/enums/product/ProductType";
-import {MapHelper} from "@core/helper/map/MapHelper";
+import { MapHelper } from "@core/helper/map/MapHelper";
 export default {
   name: "BasketTopMenu",
   components: { VariantItemViewMicro },
@@ -184,7 +202,7 @@ export default {
   }),
   computed: {
     MapHelper() {
-      return MapHelper
+      return MapHelper;
     },
     shop() {
       return this.getShop();
@@ -229,7 +247,7 @@ export default {
 
       let total = 0;
       this.current_basket.items.forEach((item) => {
-        total += item.count * this.getBasketItemPrice(this.shop,item);
+        total += item.count * this.getBasketItemPrice(this.shop, item);
       });
       return total;
     },
@@ -278,7 +296,7 @@ export default {
         },
         (basket) => {
           this.busy_remove = null;
-        }
+        },
       );
     },
   },

@@ -14,16 +14,16 @@
 
 <template>
   <s-translations-button
-    :shop="shop"
-    :label="label"
     :default-value="lottery[translationKey]"
-    :translations.sync="lottery.translations"
+    :label="label"
+    :shop="shop"
     :translation-key="translationKey"
+    v-model:translations="lottery.translations"
     :url="
       window.API.PUT_LOTTERY_SET_TRANSLATIONS(
         shop.id,
         lottery.id,
-        translationKey
+        translationKey,
       )
     "
     is-string-mode
