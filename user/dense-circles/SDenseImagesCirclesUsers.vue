@@ -25,8 +25,9 @@
       @click="$emit('click:item', id)"
       :class="{ 'pointer-pointer': link }"
       :color="color"
+      style="padding: 2px"
     >
-      <img :src="getUserAvatar(id, IMAGE_SIZE_SMALL)" style="padding: 2px" />
+      <v-img :src="getUserAvatar(id, IMAGE_SIZE_SMALL)" cover color="#ffffffbb" class="rounded-card"  />
     </v-avatar>
 
     <span v-if="more_items > 0" class="more-items">

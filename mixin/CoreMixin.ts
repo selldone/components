@@ -12,60 +12,57 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import Vue from "vue";
-import type { VueConstructor } from "vue";
-import { SetupService } from "@core/server/SetupService";
-import { ProductType } from "@core/enums/product/ProductType";
-import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
-import { DateConverter } from "@core/helper/date/DateConverter";
-import { Currency } from "@core/enums/payment/Currency";
-import type { ICurrency } from "@core/enums/payment/Currency";
-import { type ILanguage, Language } from "@core/enums/language/Language";
-import { ShopLicense } from "@core/enums/shop/ShopLicense";
-import { Scopes } from "@core/enums/permission/Scopes";
+import {SetupService} from "@core/server/SetupService";
+import {ProductType} from "@core/enums/product/ProductType";
+import {PhysicalOrderStates} from "@core/enums/basket/PhysicalOrderStates";
+import {DateConverter} from "@core/helper/date/DateConverter";
+import type {ICurrency} from "@core/enums/payment/Currency";
+import {Currency} from "@core/enums/payment/Currency";
+import {type ILanguage, Language} from "@core/enums/language/Language";
+import {ShopLicense} from "@core/enums/shop/ShopLicense";
+import {Scopes} from "@core/enums/permission/Scopes";
 
-import { ReturnItemStates } from "@core/enums/basket/ReturnItemStates";
-import { FileExtensions } from "@core/enums/file/FileExtensions";
+import {ReturnItemStates} from "@core/enums/basket/ReturnItemStates";
+import {FileExtensions} from "@core/enums/file/FileExtensions";
 import GlobalRules from "@core/helper/rules/GlobalRules";
-import { SocialNetwork } from "@core/enums/social/SocialNetwork";
-import { ShopURLs } from "@core/helper/url/ShopURLs";
-import { ColorHelper } from "@core/helper/color/ColorHelper";
+import {SocialNetwork} from "@core/enums/social/SocialNetwork";
+import {ShopURLs} from "@core/helper/url/ShopURLs";
+import {ColorHelper} from "@core/helper/color/ColorHelper";
 import EventBusTriggers from "@core/enums/event-bus/EventBusTriggers";
 
-import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
-import { CurrencyHelper } from "@core/helper/currency/CurrencyHelper";
-import { PriceHelper } from "@core/helper/price/PriceHelper";
-import { LogesticHelper } from "@core/helper/logistic/LogesticHelper";
-import { GiftStatus } from "@core/enums/wallet/gift/GiftStatus";
-import { GiftStProgramTypes } from "@core/enums/wallet/gift/GiftStProgramTypes";
-import { MapHelper } from "@core/helper/map/MapHelper";
+import {CustomerClubLevels} from "@core/enums/customer/CustomerClubLevels";
+import {CurrencyHelper} from "@core/helper/currency/CurrencyHelper";
+import {PriceHelper} from "@core/helper/price/PriceHelper";
+import {LogesticHelper} from "@core/helper/logistic/LogesticHelper";
+import {GiftStatus} from "@core/enums/wallet/gift/GiftStatus";
+import {GiftStProgramTypes} from "@core/enums/wallet/gift/GiftStProgramTypes";
+import {MapHelper} from "@core/helper/map/MapHelper";
 import numeral from "numeral";
 import _ from "lodash-es";
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-import { EventBus, EventName } from "@core/events/EventBus";
+import {EventBus, EventName} from "@core/events/EventBus";
 
 //―――――――――――――――――――――― Country ――――――――――――――――――――
-
-import { getCountryName } from "@core/enums/country/country-list";
-import type { Note } from "@core/models/shop/note/note.model";
-import { Shop } from "@core/models/shop/shop.model";
-import type { ProductVariant } from "@core/models/shop/product/product_variant.model";
-import { Product } from "@core/models/shop/product/product.model";
-import { XapiShop } from "@sdk-storefront/shop/XapiShop";
-import type { Basket } from "@core/models/shop/order/basket/basket.model";
-import type { IAddress } from "@core/models/traits/address.model";
-import type { CommunityTopic } from "@core/models/community/community.topic.model";
-import type { CommunityPost } from "@core/models/community/community.post.model";
-import type { CommunityComment } from "@core/models/community/community.comment.model";
-import type { Guild } from "@core/models/guild/guild.model";
-import type { IOrder } from "@core/models/traits/order.model";
-import type { Avocado } from "@core/models/shop/order/avocado/avocado.order";
-import type { IReturn } from "@core/types/route/return.type";
-import type { ICountryCode } from "@core/enums/country/CountriesListEnum";
-import type { BasketItem } from "@core/models/shop/order/basket/basket_item.model";
-import type { gapi } from "@core/gapi/requests/gapi.countries.get";
-import type { User } from "@core/models/user/user.model";
-import { XapiUser } from "@sdk-storefront/user/XapiUser";
+import {getCountryName} from "@core/enums/country/country-list";
+import type {Note} from "@core/models/shop/note/note.model";
+import {Shop} from "@core/models/shop/shop.model";
+import type {ProductVariant} from "@core/models/shop/product/product_variant.model";
+import {Product} from "@core/models/shop/product/product.model";
+import {XapiShop} from "@sdk-storefront/shop/XapiShop";
+import type {Basket} from "@core/models/shop/order/basket/basket.model";
+import type {IAddress} from "@core/models/traits/address.model";
+import type {CommunityTopic} from "@core/models/community/community.topic.model";
+import type {CommunityPost} from "@core/models/community/community.post.model";
+import type {CommunityComment} from "@core/models/community/community.comment.model";
+import type {Guild} from "@core/models/guild/guild.model";
+import type {IOrder} from "@core/models/traits/order.model";
+import type {Avocado} from "@core/models/shop/order/avocado/avocado.order";
+import type {IReturn} from "@core/types/route/return.type";
+import type {ICountryCode} from "@core/enums/country/CountriesListEnum";
+import type {BasketItem} from "@core/models/shop/order/basket/basket_item.model";
+import type {gapi} from "@core/gapi/requests/gapi.countries.get";
+import type {User} from "@core/models/user/user.model";
+import {XapiUser} from "@sdk-storefront/user/XapiUser";
 import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 import {BackofficeLocalStorages} from "@core/helper/local-storage/BackofficeLocalStorages";
 
@@ -76,7 +73,7 @@ function isString(value: any): value is string {
   return typeof value === "string" || value instanceof String;
 }
 
-const CoreMixin = ({
+const CoreMixin = {
   data() {
     return {
       // Customizable theme:
@@ -131,7 +128,7 @@ const CoreMixin = ({
       let isInWebAppChrome = false;
       try {
         isInWebAppChrome = window.matchMedia(
-          "(display-mode: standalone)"
+          "(display-mode: standalone)",
         ).matches;
       } catch (e) {}
 
@@ -164,13 +161,13 @@ const CoreMixin = ({
     resetToDefault(): void {
       Object.assign(
         this.$data,
-        (this.$options?.data as () => Array<any>)?.call(this)
+        (this.$options?.data as () => Array<any>)?.call(this),
       );
     },
 
     //―――――――――――――――――――――― Get Countries List ――――――――――――――――――――
     fetchCountries(
-      callback?: (countries: gapi.countries.get.ICountry[]) => void
+      callback?: (countries: gapi.countries.get.ICountry[]) => void,
     ) {
       const fun = _.debounce((callback = null) => {
         const countries = this.$store.getters.getCountries;
@@ -200,11 +197,11 @@ const CoreMixin = ({
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-          return DateConverter.convertLocalTimeToUTC(datetimeStr);
-        },*/
+              return DateConverter.convertLocalTimeToUTC(datetimeStr);
+            },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
-      datetimeStr: string | number
+      datetimeStr: string | number,
     ) {
       if (!datetimeStr) return "";
       try {
@@ -219,14 +216,14 @@ const CoreMixin = ({
         } as Intl.DateTimeFormatOptions;
         return Intl.DateTimeFormat(
           window.$language?.full_local,
-          options
+          options,
         ).format(new Date(datetimeStr));
       } catch (e) {
         console.error(e);
       }
     },
     getLocalDateString: function getLocalDateString(
-      datetimeStr: string | null
+      datetimeStr: string | null,
     ) {
       if (!datetimeStr) return "";
       try {
@@ -238,14 +235,14 @@ const CoreMixin = ({
         } as Intl.DateTimeFormatOptions;
         return Intl.DateTimeFormat(
           window.$language?.full_local,
-          options
+          options,
         ).format(new Date(datetimeStr));
       } catch (e) {
         console.error(datetimeStr, e);
       }
     },
     getLocalTimeOnlyString: function getLocalDateString(
-      datetimeStr: string | null
+      datetimeStr: string | null,
     ) {
       if (!datetimeStr) return "";
       try {
@@ -257,7 +254,7 @@ const CoreMixin = ({
         } as Intl.DateTimeFormatOptions;
         return Intl.DateTimeFormat(
           window.$language?.full_local,
-          options
+          options,
         ).format(new Date(datetimeStr));
       } catch (e) {
         console.error(datetimeStr, e);
@@ -268,14 +265,14 @@ const CoreMixin = ({
       datetimeStr: string,
       isShort = false,
       isMicro = false,
-      noTime = false
+      noTime = false,
     ) {
       return DateConverter.GetLocalTimeString(
         datetimeStr,
         0,
         isShort,
         isMicro,
-        noTime
+        noTime,
       );
     },
 
@@ -284,39 +281,39 @@ const CoreMixin = ({
       added_seconds: number,
       isShort = false,
       isMicro = false,
-      noTime = false
+      noTime = false,
     ) {
       return DateConverter.GetLocalTimeString(
         datetimeStr,
         added_seconds,
         isShort,
         isMicro,
-        noTime
+        noTime,
       );
     },
 
     getFromNowString: function getFromNowString(
       datetimeStr: string,
       local = null,
-      abstract = false
+      abstract = false,
     ) {
       return DateConverter.getFromNowString(datetimeStr, local, abstract);
     },
 
     getFromOtherTimeString: function getFromOtherTimeString(
       datetimeStr: string,
-      datetime_end: string
+      datetime_end: string,
     ) {
       return DateConverter.getFromOtherTimeString(datetimeStr, datetime_end);
     },
 
     getDurationOtherTimeString: function getDurationOtherTimeString(
       datetimeStr: string,
-      datetime_end: string
+      datetime_end: string,
     ) {
       return DateConverter.getDurationOtherTimeString(
         datetimeStr,
-        datetime_end
+        datetime_end,
       );
     },
 
@@ -326,7 +323,7 @@ const CoreMixin = ({
     inDayRange: function inDayRange(
       created_at: string,
       days: number,
-      offset = 0
+      offset = 0,
     ) {
       return DateConverter.inDayRange(created_at, days, offset);
     },
@@ -367,10 +364,10 @@ const CoreMixin = ({
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-          return Num2persian(number);
-        },*/
+              return Num2persian(number);
+            },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
-      digit: string | number
+      digit: string | number,
     ) {
       digit = "" + digit;
       return digit.replace(/\d+/g, function (digit) {
@@ -386,7 +383,7 @@ const CoreMixin = ({
     //―――――――――――――――――――――― 🌍 Time ▶ Get Currency ――――――――――――――――――――
 
     getCurrencyName: function getCurrencyName(
-      currency_code: keyof typeof Currency
+      currency_code: keyof typeof Currency,
     ) {
       if (!currency_code) return "";
 
@@ -431,7 +428,8 @@ const CoreMixin = ({
     getStatusIcon(status: string) {
       if (!status) return "";
       if (status === "Unpaid") return "fa:fas fa-question ";
-      else if (status === "Paid" || status === "Payed") return "fa:fas fa-check ";
+      else if (status === "Paid" || status === "Payed")
+        return "fa:fas fa-check ";
       else if (status === "Canceled") return "fa:fas fa-times ";
       else if (status === "Completed") return "fa:fas fa-check-double ";
       else if (status === "Reserved") return "fa:fas fa-hourglass-start ";
@@ -454,9 +452,9 @@ const CoreMixin = ({
       title: string | null,
       message: string | null = null,
       detail: string | null = null,
-      duration: number = 6000
+      duration: number = 6000,
     ) {
-      if(!this.$t)return;
+      if (!this.$t) return;
       if (!title) title = this.$t("global.notification.error") as string;
 
       this.$notify({
@@ -473,9 +471,9 @@ const CoreMixin = ({
       message: string | null,
       icon = "done",
       duration = 3000,
-      img = null
+      img = null,
     ) {
-      if(!this.$t)return;
+      if (!this.$t) return;
       if (!title) title = this.$t("global.notification.confirm") as string;
 
       this.$notify({
@@ -491,7 +489,7 @@ const CoreMixin = ({
     },
 
     showWarningAlert(title: string | null, message?: string, duration = 6000) {
-      if(!this.$t)return;
+      if (!this.$t) return;
       if (!title) title = this.$t("global.notification.warning") as string;
 
       this.$notify({
@@ -504,7 +502,7 @@ const CoreMixin = ({
     },
 
     showAwardAlert(title: string | null, message?: string) {
-      if(!this.$t)return;
+      if (!this.$t) return;
       if (!title) title = this.$t("global.notification.award") as string;
 
       this.$notify({
@@ -521,9 +519,9 @@ const CoreMixin = ({
       icon?: string | null,
       color?: string | null,
       img = null,
-      duration = 30000
+      duration = 30000,
     ) {
-      if(!this.$t)return;
+      if (!this.$t) return;
       if (!title) title = this.$t("global.notification.caution") as string;
 
       this.$notify({
@@ -543,7 +541,8 @@ const CoreMixin = ({
       title: string | null,
       message: string,
       accept: string,
-      callback: () => void
+      callback: () => void,
+      color: string = "red",
     ) {
       this.EventBus.$emit("alert-dialog", {
         title,
@@ -551,7 +550,7 @@ const CoreMixin = ({
         accept,
         reject: this.$t("global.actions.cancel"),
         callback,
-        color: "red",
+        color: color,
       });
     },
 
@@ -559,7 +558,7 @@ const CoreMixin = ({
       title: string,
       message: string,
       accept: string,
-      callback: () => void
+      callback: () => void,
     ) {
       this.EventBus.$emit("alert-dialog", {
         title,
@@ -603,7 +602,7 @@ const CoreMixin = ({
       notes: Note.INote[],
       element_id: string,
       page_id: string | number,
-      popup_id: string | number
+      popup_id: string | number,
     ) {
       this.EventBus.$emit("show:ShopNoteDialog", {
         notes,
@@ -633,7 +632,7 @@ const CoreMixin = ({
     getExchangeRate: function getExchangeRate(
       shop: Shop,
       from: keyof typeof Currency,
-      to: keyof typeof Currency
+      to: keyof typeof Currency,
     ) {
       return PriceHelper.getExchangeRate(shop, from, to);
     },
@@ -642,7 +641,7 @@ const CoreMixin = ({
       shop: Shop,
       from: keyof typeof Currency,
       to: keyof typeof Currency,
-      default_rate?: number | null
+      default_rate?: number | null,
     ) {
       return PriceHelper.getExchangeRateValue(shop, from, to, default_rate);
     },
@@ -651,7 +650,7 @@ const CoreMixin = ({
     getBuyRateValue(
       shop: Shop,
       from_currency: keyof typeof Currency,
-      to_currency: keyof typeof Currency
+      to_currency: keyof typeof Currency,
     ) {
       return PriceHelper.getBuyRateValue(shop, from_currency, to_currency);
     },
@@ -706,7 +705,7 @@ const CoreMixin = ({
     FindItemByID: function UpdateItemByID(
       items: [],
       item_id: number | string,
-      id: string = "id"
+      id: string = "id",
     ) {
       if (!items) return null;
       return items.find((element) => element[id] === Number(item_id));
@@ -714,7 +713,7 @@ const CoreMixin = ({
     FindItemByKeyValue: function <T extends object, K extends keyof T>(
       items: T[],
       item_value: T[K],
-      item_key: K
+      item_key: K,
     ): T | undefined {
       return items.find((element) => element[item_key] === item_value);
     },
@@ -727,10 +726,10 @@ const CoreMixin = ({
     DeleteItemByID: function <T extends Record<string, any>>(
       items: T[],
       item_id: number | string,
-      id_key: keyof T = "id" as keyof T
+      id_key: keyof T = "id" as keyof T,
     ): void {
       const foundIndex = items.findIndex(
-        (element) => element[id_key] === item_id
+        (element) => element[id_key] === item_id,
       );
       if (foundIndex >= 0) items.splice(foundIndex, 1);
     },
@@ -739,11 +738,11 @@ const CoreMixin = ({
       items: T[],
       item: T,
       id_key = "id",
-      add_to_end = true
+      add_to_end = true,
     ) {
       if (!item || !items) return null;
       const foundIndex = items.findIndex(
-        (element) => element[id_key] === item[id_key]
+        (element) => element[id_key] === item[id_key],
       );
       if (foundIndex >= 0) {
         items.splice(foundIndex, 1, item);
@@ -758,7 +757,7 @@ const CoreMixin = ({
     GetIndex: function <T extends Record<string, any>>(
       items: T[],
       item_id: number | string,
-      id_key: string = "id"
+      id_key: string = "id",
     ) {
       return items.findIndex((element) => element[id_key] === item_id);
     },
@@ -839,7 +838,9 @@ const CoreMixin = ({
 
     GetCurrency(currency: keyof typeof Currency | ICurrency) {
       if (!currency) return null;
-      return Currency[this.isObject(currency)?(currency as ICurrency).code : currency];
+      return Currency[
+        this.isObject(currency) ? (currency as ICurrency).code : currency
+      ];
     },
 
     /**
@@ -868,7 +869,7 @@ const CoreMixin = ({
      * @constructor
      */
     GetUserSelectedCurrencyFactor(
-      opt_currency: ICurrency | keyof typeof Currency | null = null
+      opt_currency: ICurrency | keyof typeof Currency | null = null,
     ): number {
       if (!isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
@@ -882,20 +883,20 @@ const CoreMixin = ({
      */
     GetUserSelectedCurrencyName(
       opt_currency: ICurrency | keyof typeof Currency | null = null,
-      unicode = false
+      unicode = false,
     ): String {
       if (!isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
       return this.$t(
-        CurrencyHelper.GetUserSelectedCurrencyName(this, opt_currency, unicode)
+        CurrencyHelper.GetUserSelectedCurrencyName(this, opt_currency, unicode),
       ) as string;
     },
     /**
      * @return {number}
      */
     GetUserSelectedCurrencyFloats(
-      opt_currency: ICurrency | keyof typeof Currency | null = null
+      opt_currency: ICurrency | keyof typeof Currency | null = null,
     ) {
       if (!isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
@@ -909,14 +910,14 @@ const CoreMixin = ({
      * @constructor
      */
     GetUserSelectedCurrencyRoundFactor(
-      opt_currency: ICurrency | keyof typeof Currency | null = null
+      opt_currency: ICurrency | keyof typeof Currency | null = null,
     ) {
       if (!isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
       return CurrencyHelper.GetUserSelectedCurrencyRoundFactor(
         this,
-        opt_currency
+        opt_currency,
       );
     },
 
@@ -926,7 +927,7 @@ const CoreMixin = ({
      * @constructor
      */
     GetUserSelectedCurrencyFormat(
-      opt_currency: ICurrency | null | string = null
+      opt_currency: ICurrency | null | string = null,
     ) {
       if (opt_currency && !isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
@@ -956,7 +957,7 @@ const CoreMixin = ({
     ConvertPriceToString(
       amount: number,
       currency: keyof typeof Currency,
-      local: string = "en-US"
+      local: string = "en-US",
     ) {
       return CurrencyHelper.ConvertToString(amount, currency, local);
     },
@@ -1000,7 +1001,7 @@ const CoreMixin = ({
       preferences = null,
       valuation = null,
       subscription_price = null, // 🎗️ Subscription
-      current_extra_pricing = null // 🌸 Add extra pricing 🌸
+      current_extra_pricing = null, // 🌸 Add extra pricing 🌸
     ) {
       //console.log('CalcPriceProductCurrentCurrency',product,variant)
       const to_currency = this.GetUserSelectedCurrency().code;
@@ -1012,7 +1013,7 @@ const CoreMixin = ({
         preferences,
         valuation,
         subscription_price,
-        current_extra_pricing
+        current_extra_pricing,
       );
     },
     priceProductByCurrency(
@@ -1023,7 +1024,7 @@ const CoreMixin = ({
       preferences = null,
       valuation = null,
       subscription_price = null, // 🎗️ Subscription
-      current_extra_pricing = null // 🌸 Add extra pricing 🌸
+      current_extra_pricing = null, // 🌸 Add extra pricing 🌸
     ) {
       try {
         return PriceHelper.priceProductByCurrency(
@@ -1034,12 +1035,12 @@ const CoreMixin = ({
           preferences,
           valuation,
           subscription_price,
-          current_extra_pricing
+          current_extra_pricing,
         );
       } catch (e) {
         console.error(
           e,
-          "⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate."
+          "⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",
         );
         return "🚨";
       }
@@ -1058,21 +1059,21 @@ const CoreMixin = ({
         shop,
         product,
         variant,
-        to_currency
+        to_currency,
       );
     },
     getProductDiscountAmountByCurrency(
       shop: Shop,
       product: Product,
       variant: ProductVariant | null = null,
-      to_currency: keyof typeof Currency
+      to_currency: keyof typeof Currency,
     ) {
       try {
         return PriceHelper.getProductDiscountAmountByCurrency(
           shop,
           product,
           variant,
-          to_currency
+          to_currency,
         );
       } catch (e) {
         console.error(e);
@@ -1084,7 +1085,7 @@ const CoreMixin = ({
       shop: Shop,
       product: Product,
       variant: ProductVariant | null = null,
-      to_currency?: keyof typeof Currency | null
+      to_currency?: keyof typeof Currency | null,
     ) {
       if (!to_currency) to_currency = product.currency; // It's percent!
 
@@ -1092,7 +1093,7 @@ const CoreMixin = ({
         shop,
         product,
         variant,
-        to_currency!
+        to_currency!,
       );
     },
 
@@ -1107,14 +1108,14 @@ const CoreMixin = ({
 
     HasDiscountCountDownMode(
       product: Product,
-      variant: ProductVariant | null = null
+      variant: ProductVariant | null = null,
     ) {
       return PriceHelper.HasDiscountCountDownMode(product, variant);
     },
 
     GetEndOfDiscountDate(
       product: Product,
-      variant: ProductVariant | null = null
+      variant: ProductVariant | null = null,
     ) {
       return PriceHelper.GetEndOfDiscountDate(product, variant);
     },
@@ -1129,7 +1130,7 @@ const CoreMixin = ({
       mode: string,
       location: Basket.IReceiverInfo,
       selectCallback: () => void,
-      viewOnly: boolean = false
+      viewOnly: boolean = false,
     ) {
       this.EventBus.$emit(EventName.SHOW_MAP, {
         center,
@@ -1166,7 +1167,7 @@ const CoreMixin = ({
       activator: Element,
       shop: Shop,
       topic: CommunityTopic,
-      post: CommunityPost
+      post: CommunityPost,
     ) {
       this.EventBus.$emit("community:share:post", {
         activator,
@@ -1188,7 +1189,7 @@ const CoreMixin = ({
       activator: Element,
       topic: CommunityTopic,
       post: CommunityPost,
-      delete_callback: () => void
+      delete_callback: () => void,
     ) {
       this.EventBus.$emit("community:post-actions-menu", {
         activator,
@@ -1207,7 +1208,7 @@ const CoreMixin = ({
       shop: Shop,
       post: CommunityPost,
       comment: CommunityComment,
-      delete_callback: () => void
+      delete_callback: () => void,
     ) {
       this.EventBus.$emit("community:comment-actions-menu", {
         activator,
@@ -1261,9 +1262,8 @@ const CoreMixin = ({
 
     //―――――――――――――――――――――― Logistic > Basket Helpers ――――――――――――――――――――
     getBasketOrderCode(order: IOrder) {
-
-      if(order.label){
-        return order.label //🍁 Custom order label
+      if (order.label) {
+        return order.label; //🍁 Custom order label
       }
 
       if (order.type === "AVO") {
@@ -1308,7 +1308,7 @@ const CoreMixin = ({
 
     calculateDistanceBasket(
       origin: XapiShop.ILocation,
-      target: XapiShop.ILocation
+      target: XapiShop.ILocation,
     ) {
       return LogesticHelper.calculateDistanceBasket(origin, target);
     },
@@ -1316,7 +1316,7 @@ const CoreMixin = ({
       lat1: number,
       lon1: number,
       lat2: number,
-      lon2: number
+      lon2: number,
     ) {
       return LogesticHelper.GPSCalculateDistance(lat1, lon1, lat2, lon2);
     },
@@ -1334,15 +1334,15 @@ const CoreMixin = ({
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-          PushNotification.AskForPermission();
-        },*/
+              PushNotification.AskForPermission();
+            },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 
     copyToClipboard(
       str: string,
       title: string | null = null,
-      message: string = "Copied successfully."
+      message: string = "Copied successfully.",
     ) {
       //console.log('copyToClipboard',str)
       const el = document.createElement("textarea");
@@ -1358,13 +1358,13 @@ const CoreMixin = ({
     //―――――――――――――――――――――― Laravel validation error handler ――――――――――――――――――――
 
     showLaravelError(
-      error: string | { error: true; error_msg: string; code?: number } | any
+      error: string | { error: true; error_msg: string; code?: number } | any,
     ) {
       if (!error) return;
       if (this.isString(error)) {
         this.showErrorAlert(
           this.$t("global.notification.error") as string,
-          error
+          error,
         );
         return;
       }
@@ -1372,7 +1372,7 @@ const CoreMixin = ({
       if (error?.error_msg /*Errors in the response with 2xx code*/) {
         this.showErrorAlert(
           this.$t("global.notification.error") as string,
-          error.error_msg
+          error.error_msg,
         );
         return;
       }
@@ -1382,12 +1382,12 @@ const CoreMixin = ({
         if (error.message) {
           this.showErrorAlert(
             this.$t("global.notification.error") as string,
-            `<div dir="ltr" class="text-left">${error.message}</div>`
+            `<div dir="ltr" class="text-left">${error.message}</div>`,
           );
         } else if (error.body) {
           this.showErrorAlert(
             this.$t("global.notification.error") as string,
-            `<div dir="ltr" class="text-left">${error.body}</div>`
+            `<div dir="ltr" class="text-left">${error.body}</div>`,
           );
         }
         return;
@@ -1402,7 +1402,7 @@ const CoreMixin = ({
             " | CSRF token mismatch.",
           `<div class="text-start">${this.$t("global.errors.419")}</div>`,
           null,
-          60000
+          60000,
         );
         return;
       }
@@ -1413,14 +1413,14 @@ const CoreMixin = ({
         error.response.status,
         data,
         "response",
-        error.response
+        error.response,
       );
 
       if (data?.error_msg) {
         // Normal laravel app level errors
         this.showErrorAlert(
           this.$t("global.notification.error") + " " + data.code,
-          `<div class="text-start">${data.error_msg}</div>`
+          `<div class="text-start">${data.error_msg}</div>`,
         );
       } else if (data?.errors) {
         let error_msg = "";
@@ -1434,35 +1434,35 @@ const CoreMixin = ({
               error_msg += `<li><b style="text-transform: capitalize">${key}: </b> ${er}</li>`;
             });
           }
-          error_msg=`<ul>${error_msg}</ul>`
+          error_msg = `<ul>${error_msg}</ul>`;
         }
         this.showErrorAlert(
           this.$t("global.notification.error") + " " + error.response.status,
-          `<div class="text-start">${error_msg}</div>`
+          `<div class="text-start">${error_msg}</div>`,
         );
       } else if (data?.message) {
         this.showErrorAlert(
           this.$t("global.notification.error") + " " + error.response.status,
-          `<div class="text-start">${data.message}</div>`
+          `<div class="text-start">${data.message}</div>`,
         );
       } else {
         this.showErrorAlert(
           this.$t("global.notification.error") + " " + error.response.status,
-          this.$t("global.notification.error_message") as string
+          this.$t("global.notification.error_message") as string,
         );
       }
     },
 
     FormatNumberCurrency(
       _value: number,
-      _currency: keyof typeof Currency | ICurrency | null = null
+      _currency: keyof typeof Currency | ICurrency | null = null,
     ) {
       const currency_obj =
         _currency && _currency instanceof Object
           ? _currency
           : _currency
-          ? Currency[_currency]
-          : this.GetUserSelectedCurrency();
+            ? Currency[_currency]
+            : this.GetUserSelectedCurrency();
 
       if (!currency_obj) return `${_currency} Not exist 🚨!`;
       const value =
@@ -1493,13 +1493,13 @@ const CoreMixin = ({
 
     //―――――――――――――――――――――― Language & Local ――――――――――――――――――――
     getLanguageObject<T extends string | null>(
-      lang: T
+      lang: T,
     ): T extends string ? ILanguage : null {
       if (!lang) return null as any;
       if (Language[lang]) return Language[lang] as any;
 
       const result = Object.values(Language).find(
-        (l) => l.code.toLowerCase() === lang!.toLowerCase()
+        (l) => l.code.toLowerCase() === lang!.toLowerCase(),
       );
 
       return (result || null) as any;
@@ -1530,7 +1530,7 @@ const CoreMixin = ({
       console.log(
         "========== start setCurrentLanguage CORE !!! ============",
         local,
-        window.$language
+        window.$language,
       );
     },
 
@@ -1553,10 +1553,9 @@ const CoreMixin = ({
 
       return colors
         ?.map((color) =>
-          ColorHelper.getNameOfColor(this.$tm("global.colors") as {}, color)
+          ColorHelper.getNameOfColor(this.$tm("global.colors") as {}, color),
         )
         .join(" / ");
-
     },
     getName(val: any) {
       if (!val) return "";
@@ -1578,7 +1577,10 @@ const CoreMixin = ({
 
     //―――――――――――――――――――――― Images ――――――――――――――――――――
 
-    getShopIcon(shop_id: number | string, size = BackofficeLocalStorages.IMAGE_SIZE_SMALL) {
+    getShopIcon(
+      shop_id: number | string,
+      size = BackofficeLocalStorages.IMAGE_SIZE_SMALL,
+    ) {
       return window.CDN.GET_SHOP_ICON(shop_id, size);
     },
     getShopImagePath(file_name: string, size = null, random_fill = false) {
@@ -1592,15 +1594,21 @@ const CoreMixin = ({
       return window.CDN.GET_SHOP_JSON_PATH(file_name);
     },
 
-    getCategoryIcon(category_id: string | number, size = BackofficeLocalStorages.IMAGE_SIZE_SMALL) {
+    getCategoryIcon(
+      category_id: string | number,
+      size = BackofficeLocalStorages.IMAGE_SIZE_SMALL,
+    ) {
       return window.CDN.GET_CATEGORY_ICON(category_id, size);
     },
-    getProductImage(product_id: string | number, size = BackofficeLocalStorages.IMAGE_SIZE_SMALL) {
+    getProductImage(
+      product_id: string | number,
+      size = BackofficeLocalStorages.IMAGE_SIZE_SMALL,
+    ) {
       return window.CDN.GET_PRODUCT_IMAGE(product_id, size);
     },
     getDeliveryServiceIcon(
       delivery_service_id: string | number,
-      size = BackofficeLocalStorages.IMAGE_SIZE_SMALL
+      size = BackofficeLocalStorages.IMAGE_SIZE_SMALL,
     ) {
       return window.CDN.GET_DELIVERY_SERVICE_ICON(delivery_service_id, size);
     },
@@ -1617,14 +1625,14 @@ const CoreMixin = ({
       product_id: number,
       variant_id: number | null,
       folder_name: string,
-      file_name: string
+      file_name: string,
     ) {
       return window.CDN.GET_SHOP_3D_MODEL_PATH(
         shop_name,
         product_id,
         variant_id,
         folder_name,
-        file_name
+        file_name,
       );
     },
 
@@ -1675,7 +1683,7 @@ const CoreMixin = ({
     downloadText(
       filename: string,
       text: string,
-      data_uri = "data:text/plain;charset=utf-8,"
+      data_uri = "data:text/plain;charset=utf-8,",
     ) {
       const element = document.createElement("a");
       element.setAttribute("href", data_uri + encodeURIComponent(text));
@@ -1692,7 +1700,7 @@ const CoreMixin = ({
     getFileExtensionImage(filename: string) {
       const extension = filename.split(".").pop();
       const out = FileExtensions.find((item) =>
-        item.ex.includes(extension as string)
+        item.ex.includes(extension as string),
       );
       return out
         ? out.src
@@ -1703,7 +1711,7 @@ const CoreMixin = ({
 
     remove<T>(array: T[], valueToRemove: T) {
       const foundIndex = array.findIndex(
-        (element) => element === valueToRemove
+        (element) => element === valueToRemove,
       );
       // console.log('foundIndex',foundIndex,array,valueToRemove)
       if (foundIndex >= 0) array.splice(foundIndex, 1);
@@ -1749,7 +1757,7 @@ const CoreMixin = ({
     getShopPageLink(
       shop: Shop,
       query: { [key: string]: string },
-      path: string = ""
+      path: string = "",
     ) {
       const queryString = Object.keys(query)
         .map(function (key) {
@@ -1789,7 +1797,7 @@ const CoreMixin = ({
     //―――――――――――――――――――――― Page Scroll Helper ――――――――――――――――――――
     GoToTopPage() {
       this.$nextTick(() => {
-        ScrollHelper.scrollToTop(0,'smooth')
+        ScrollHelper.scrollToTop(0, "smooth");
       });
     },
 
@@ -1807,8 +1815,10 @@ const CoreMixin = ({
     setHtmlFontSize(low_vision: boolean) {
       document.documentElement.style.setProperty(
         "font-size",
-        low_vision ? "var(--base-font-low-vision)" : "var(--base-font-standard)",
-        "important"
+        low_vision
+          ? "var(--base-font-low-vision)"
+          : "var(--base-font-standard)",
+        "important",
       );
     },
 
@@ -1843,80 +1853,54 @@ const CoreMixin = ({
 
     getSocialIcon(social: string) {
       const found = Object.values(SocialNetwork).find(
-        (it) => it.code.toLowerCase() === social.toLowerCase()
+        (it) => it.code.toLowerCase() === social.toLowerCase(),
       );
       return found ? found.image : null;
     },
-
-
 
     //――――――――――――――――――――――――― Home Image Helper ―――――――――――――――――――――――――
     GetDomainHomeIcon: function (home: string) {
       return home === "shop"
         ? require("@components/assets/icons/store.svg")
         : home === "avocado"
-        ? require("@components/assets/icons/avocado.svg")
-        : home === "blog"
-        ? require("@components/assets/icons/blog.svg")
-        : home === "hyper"
-        ? require("@components/assets/icons/hyper.svg")
-        : home === "community"
-        ? require("@components/assets/icons/community.png")
-        : home === "map"
-        ? require("@components/assets/icons/map-tag.svg")
-        : ("" + home).startsWith("/")
-        ? require("@components/assets/icons/static-pages.svg")
-        : home
-        ? require("@components/assets/icons/landing-page.svg")
-        : require("@components/assets/icons/store.svg");
+          ? require("@components/assets/icons/avocado.svg")
+          : home === "blog"
+            ? require("@components/assets/icons/blog.svg")
+            : home === "hyper"
+              ? require("@components/assets/icons/hyper.svg")
+              : home === "community"
+                ? require("@components/assets/icons/community.png")
+                : home === "map"
+                  ? require("@components/assets/icons/map-tag.svg")
+                  : ("" + home).startsWith("/")
+                    ? require("@components/assets/icons/static-pages.svg")
+                    : home
+                      ? require("@components/assets/icons/landing-page.svg")
+                      : require("@components/assets/icons/store.svg");
     },
     GetDomainHomeName(home: string) {
       return home === "shop"
         ? this.$t("global.commons.shop")
         : home === "avocado"
-        ? this.$t("global.commons.avocado")
-        : home === "blog"
-        ? this.$t("global.commons.blog")
-        : home === "hyper"
-        ? this.$t("global.commons.hyper")
-        : home === "community"
-        ? this.$t("global.commons.community")
-        : home === "map"
-        ? this.$t("global.commons.map")
-        : ("" + home).startsWith("/")
-        ? this.$t("global.commons.static_page")
-        : home
-        ? this.$t("global.commons.landing_page")
-        : this.$t("global.commons.store");
+          ? this.$t("global.commons.avocado")
+          : home === "blog"
+            ? this.$t("global.commons.blog")
+            : home === "hyper"
+              ? this.$t("global.commons.hyper")
+              : home === "community"
+                ? this.$t("global.commons.community")
+                : home === "map"
+                  ? this.$t("global.commons.map")
+                  : ("" + home).startsWith("/")
+                    ? this.$t("global.commons.static_page")
+                    : home
+                      ? this.$t("global.commons.landing_page")
+                      : this.$t("global.commons.store");
     },
 
-    //―――――――――――――――――――――― Route ――――――――――――――――――――
 
-    /**
-     * Build return route to highlight last selected item on return to orders list , etc.
-     *
-     * @param default_route_name
-     * @param  RETURN                  {name,params,KEEP (item id to highlight),...other statuses}
-     * @returns {{name: *, params: any}}
-     */
-    buildReturnRoute(default_route_name: string, RETURN: IReturn | null) {
-      RETURN = RETURN ? Object.assign({}, RETURN) : null; // Make a clone!
-      // Important: STATE on params may exist! So override it after get RETURN.params!
-      const params =
-        RETURN && RETURN.params ? Object.assign({}, RETURN.params) : {};
-      if (RETURN) {
-        RETURN.params = undefined; // Prevent cyclic object value!
-        params.STATE = RETURN;
-      }
-
-      //  console.log('buildReturnRoute',params,RETURN)
-      return {
-        name: RETURN && RETURN.return ? RETURN.return : default_route_name,
-        params: params,
-      };
-    },
   },
-});
+};
 
 export default CoreMixin;
 

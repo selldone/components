@@ -41,13 +41,13 @@
     <div v-if="canConfirmReceived" class="mt-3 mb-5 p-2">
       <div class="widget-buttons">
         <v-btn
-          x-large
+          size="x-large"
           color="primary"
           dark
           @click="confirmReceivedOrder"
           :loading="busy_receive"
         >
-          <v-icon small class="me-1 blink-me">lens</v-icon>
+          <v-icon size="small" class="me-1 blink-me">lens</v-icon>
           {{ $t("order_page.delivery.confirm_received_action") }}
         </v-btn>
       </div>
@@ -57,9 +57,9 @@
       </p>
 
       <!-- Auto complete count down - 2 days after last updated_at -->
-      <basket-auto-complete-count-down
+      <s-order-delivery-auto-complete
         :basket="basket"
-      ></basket-auto-complete-count-down>
+      ></s-order-delivery-auto-complete>
     </div>
 
     <v-row v-if="has_delivery_info">
@@ -67,18 +67,18 @@
 
       <v-col cols="12" sm="6" md="4" class="border-end-grater-md">
         <div v-if="!edit_billing">
-          <basket-billing-widget
+          <s-order-bill-card
             :basket="basket"
             :billing="billing"
-          ></basket-billing-widget>
+          ></s-order-bill-card>
           <div class="d-flex justify-end">
             <v-btn
               v-if="can_edit_address"
-              depressed
+              variant="flat"
               @click="showEditBilling()"
               :loading="busy_edit_receiver"
               class="nbt"
-              ><v-icon small class="me-1">edit</v-icon>
+              ><v-icon size="small" class="me-1">edit</v-icon>
               {{ $t("global.actions.edit") }}</v-btn
             >
           </div>
@@ -103,24 +103,24 @@
               <v-text-field
                 v-model="billing_name"
                 :label="$t('global.address_info.name')"
-                dense
+                density="compact"
                 flat
               ></v-text-field>
 
               <v-text-field
                 v-model="billing_address"
                 :label="$t('global.address_info.address')"
-                dense
+                density="compact"
                 flat
               ></v-text-field>
             </div>
           </v-expand-transition>
 
-          <v-btn text class="m-1" @click="edit_billing = false">{{
+          <v-btn variant="text" class="m-1" @click="edit_billing = false">{{
             $t("global.actions.close")
           }}</v-btn>
           <v-btn
-            depressed
+            variant="flat"
             color="success"
             @click="onClickSetBilling"
             class="m-1"
@@ -190,18 +190,18 @@
 
         <div v-if="can_edit_address && !is_pickup" class="d-flex justify-end">
           <v-btn
-            depressed
+            variant="flat"
             @click="showEditAddress"
             :loading="busy_edit_receiver"
             class="nbt"
-            ><v-icon small class="me-1">edit</v-icon>
+            ><v-icon size="small" class="me-1">edit</v-icon>
             {{ $t("global.actions.edit") }}</v-btn
           >
         </div>
 
         <p v-else-if="is_pickup" class="mb-1">
           <small
-            ><v-icon small class="me-1">pin_drop</v-icon>
+            ><v-icon size="small" class="me-1">pin_drop</v-icon>
             {{ $t("global.commons.pickup") }}:
           </small>
           <s-geo-navigation-button
@@ -258,9 +258,7 @@
         >
           <hr />
           <div v-if="delivery_info.tracking_code" class="mb-3">
-            <small
-              >{{ $t("order_page.delivery.tracking_code") }} :
-            </small>
+            <small>{{ $t("order_page.delivery.tracking_code") }} : </small>
             <span class="font-weight-bold" v-copy>{{
               delivery_info.tracking_code
             }}</span>
@@ -299,11 +297,8 @@
           {{ $t("order_page.delivery.order_delivered") }}
         </span>
       </p>
-      <p
-        class="small m-0"
-        :title="$t('order_page.delivery.delivery_time')"
-      >
-        <v-icon small class="me-1">access_time</v-icon>
+      <p class="small m-0" :title="$t('order_page.delivery.delivery_time')">
+        <v-icon size="small" class="me-1">access_time</v-icon>
 
         <b> {{ getFromNowString(basket.delivery_at) }}</b>
 
@@ -317,7 +312,7 @@
       v-if="has_address"
       v-model="map_dialog"
       fullscreen
-      hide-overlay
+      :scrim="false"
       transition="dialog-bottom-transition"
     >
       <v-sheet color="#fff" width="100%" height="100%">
@@ -325,7 +320,7 @@
           v-if="map_dialog"
           v-model="receiver_info_edit"
           :color="SaminColorDark"
-          :center.sync="center_edit"
+          v-model:center="center_edit"
           :hide="!map_dialog"
           :zoom="17"
           style="width: 100%; height: 100%"
@@ -349,9 +344,9 @@
 
 <script>
 import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
-import BasketBillingWidget from "@components/storefront/order/order-billing/BasketBillingWidget.vue";
+import SOrderBillCard from "@components/order/bill/card/SOrderBillCard.vue";
 import { ProductType } from "@core/enums/product/ProductType";
-import BasketAutoCompleteCountDown from "@components/storefront/order/delivery/BasketAutoCompleteCountDown.vue";
+import SOrderDeliveryAutoComplete from "@components/order/delivery/auto-complete/SOrderDeliveryAutoComplete.vue";
 import DeliveryTimelineTransportationOrder from "@components/storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import SGeoNavigationButton from "@components/map/geo-button/SGeoNavigationButton.vue";
@@ -361,8 +356,8 @@ export default {
   components: {
     SGeoNavigationButton,
     DeliveryTimelineTransportationOrder,
-    BasketAutoCompleteCountDown,
-    BasketBillingWidget,
+    SOrderDeliveryAutoComplete,
+    SOrderBillCard,
   },
   props: {
     basket: {
@@ -497,13 +492,13 @@ export default {
         .put(
           window.XAPI.PUT_ORDER_EDIT_RECEIVER_INFO(
             this.shop_name,
-            this.$route.params.basket_id
+            this.$route.params.basket_id,
           ),
           {
             receiver_info: info,
 
             code: this.basket.code /*🥶 Guest*/,
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -538,13 +533,13 @@ export default {
         .put(
           window.XAPI.PUT_ORDER_EDIT_BILLING(
             this.shop_name,
-            this.$route.params.basket_id
+            this.$route.params.basket_id,
           ),
           {
             custom: !this.same_billing,
             name: this.billing_name,
             address: this.billing_address,
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -571,7 +566,7 @@ export default {
       axios
         .post(
           window.XAPI.POST_ORDER_BASKET_CONFIRM_RECEIVED(shop_name, basket_id),
-          {}
+          {},
         )
         .then(({ data }) => {
           if (data.error) {
@@ -579,9 +574,7 @@ export default {
           } else {
             this.showSuccessAlert(
               null,
-              this.$t(
-                "order_page.delivery.notifications.confirm_delivery"
-              )
+              this.$t("order_page.delivery.notifications.confirm_delivery"),
             );
             this.basket.delivery_state = data.delivery_state;
           }

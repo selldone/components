@@ -23,7 +23,7 @@
       <div
         v-for="item in filtered_items"
         :key="item.id"
-        class="d-flex subtitle-2 py-1 align-items-center s--shop-avocado-customer-order-items px-1"
+        class="d-flex text-subtitle-2 py-1 align-items-center s--shop-avocado-customer-order-items px-1"
         :class="{
           'img-grayscale op-0-5':
             !isReserved &&
@@ -39,23 +39,28 @@
           "
           width="56"
           height="56"
-          class="rounded-18px me-2 ms-1 flex-grow-0 pointer-zoom-in"
+          class="rounded-18px me-2 ms-1 flex-grow-0 pointer-zoom-in border"
           :class="{ 'pointer-event-none': !item.image }"
           @click="showFullscreen"
         >
         </v-img>
         <div class="flex-grow-1 w-50">
           <b class="d-block">{{ item.title }}</b>
-          <span class="small d-block">{{ item.message }}</span>
-          <v-btn
-            v-if="item.link"
-            small
-            color="blue"
-            :href="item.link"
-            target="_blank"
-            text
-            ><v-icon small>link</v-icon> {{ $t("global.commons.link") }}
-          </v-btn>
+          <div class="small d-block">
+            {{ item.message }}
+            <v-btn
+              v-if="item.link"
+              size="small"
+              color="blue"
+              :href="item.link"
+              target="_blank"
+              variant="text"
+              class="float-end"
+            >
+              <v-icon start>link</v-icon>
+              {{ $t("global.commons.link") }}
+            </v-btn>
+          </div>
         </div>
         <div class="flex-grow-1 text-center">
           <b>{{ item.count }}</b
@@ -74,10 +79,12 @@
           @click="deleteItem(item)"
           :loading="busy_delete === item.id"
           icon
+          variant="text"
           color="red"
           title="Delete"
-          ><v-icon>close</v-icon></v-btn
         >
+          <v-icon>close</v-icon>
+        </v-btn>
 
         <!-- status -->
         <div
@@ -99,16 +106,19 @@
       </div>
     </v-fade-transition>
 
+  <div class="text-end">
     <v-btn
-      v-if="viewOnly"
-      @click="show_all = !show_all"
-      small
-      text
-      color="primary"
-      class="my-2"
+        v-if="viewOnly"
+        @click="show_all = !show_all"
+        size="small"
+        variant="text"
+        color="#000"
+        class="my-2 tnt"
     >
+      <v-icon start>visibility</v-icon>
       {{ show_all ? $t("avocado.show_accepted") : $t("avocado.show_all") }}
     </v-btn>
+  </div>
   </div>
 </template>
 
@@ -147,7 +157,7 @@ export default {
     filtered_items() {
       if (!this.viewOnly || this.show_all) return this.items;
       return this.items.filter(
-        (it) => it.status === AvocadoItemStatus.ACCEPTED.code
+        (it) => it.status === AvocadoItemStatus.ACCEPTED.code,
       );
     },
   },
@@ -166,8 +176,8 @@ export default {
               window.XAPI.DELETE_OPEN_AVOCADO_ITEM(
                 this.shop_name,
                 this.avocado.hash,
-                item.id
-              )
+                item.id,
+              ),
             )
             .then(({ data }) => {
               if (!data.error) {
@@ -176,7 +186,7 @@ export default {
 
                 this.showSuccessAlert(
                   null,
-                  this.$t("avocado.notifications.delete_success")
+                  this.$t("avocado.notifications.delete_success"),
                 );
               } else {
                 this.showErrorAlert(null, data.error_msg);
@@ -188,7 +198,7 @@ export default {
             .finally(() => {
               this.busy_delete = null;
             });
-        }
+        },
       );
     },
   },
@@ -196,16 +206,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-
 
 .s--shop-avocado-customer-order-items {
   position: relative;
@@ -235,12 +242,13 @@ export default {
     transition: all 0.3s;
     pointer-events: none;
   }
+
   .pending-over {
     background: rgba(11, 119, 191, 0.8);
   }
+
   .reject-over {
     background: rgba(230, 74, 25, 0.8);
   }
 }
-
 </style>

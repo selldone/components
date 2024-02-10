@@ -166,7 +166,7 @@
 <script>
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
 export default {
-  name: "BasketBillingWidget",
+  name: "SOrderBillCard",
   components: { SValueDashed },
   props: {
     basket: {

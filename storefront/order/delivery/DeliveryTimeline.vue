@@ -82,7 +82,7 @@
 
     <v-timeline-item v-if="person" size="small">
       <template v-slot:icon>
-        <v-avatar size="36" class="avatar-gradient -thin -role">
+        <v-avatar size="36" class="avatar-gradient -thin -role hover-scale">
           <img :src="getUserAvatar(person.user_id)" />
         </v-avatar>
       </template>
@@ -92,7 +92,10 @@
         <br />
         <a :href="`tel:${person.user.phone}`" class="link-dash"
           ><v-icon class="me-1" size="small">phone</v-icon>
-          {{ person.user.phone }}</a
+          {{ person.user.phone }}
+
+          <v-tooltip activator="parent">Courier phone</v-tooltip>
+        </a
         >
       </div>
     </v-timeline-item>

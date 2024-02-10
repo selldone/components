@@ -111,7 +111,7 @@ export default {
 
   mounted() {},
 
-  destroyed() {},
+
 
   methods: {}
 };

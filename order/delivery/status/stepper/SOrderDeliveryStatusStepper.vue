@@ -100,19 +100,19 @@
         class="top-chain"
         :class="{ '-rtl': $vuetify.rtl }"
       >
-        <v-icon size="small" class="-ic-1">shortcut</v-icon>
+        <v-icon size="16" class="-ic-1">shortcut</v-icon>
 
         <span class="-br"></span>
         <span v-if="isSubscribed">
-          <v-icon color="green" size="x-small">check_circle</v-icon>
+          <v-icon color="green" size="12">check_circle</v-icon>
           subscribed
         </span>
         <span v-else>
-          <v-icon color="red" size="x-small">cancel</v-icon>
+          <v-icon color="red" size="12">cancel</v-icon>
           unsubscribed
         </span>
         <span class="-br"></span>
-        <v-icon size="small" class="-ic-2">{{
+        <v-icon size="16" class="-ic-2">{{
           isSubscribed ? "swipe_left_alt" : "credit_card_off"
         }}</v-icon>
       </div>

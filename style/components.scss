@@ -41,11 +41,9 @@
 @import "selldone/animations/transitions";
 @import "selldone/border/rounded";
 
-
-
 @import "../community/style/community";
 
-@import "material-design-fonts/material-design-icons" ;
+@import "material-design-fonts/material-design-icons";
 
 @import "lang-fa-iransans/lang-fa-iransans.css";
 @import "./../uploader/style/uploader";
@@ -59,20 +57,20 @@
 
 html {
 
-  --base-font-standard:15px;
-  --base-font-low-vision:17px;
+  --base-font-standard: 15px;
+  --base-font-low-vision: 17px;
 
 
   height: 100vh !important;
   overflow: auto !important;
-  font-size:var(--base-font-standard);
+  font-size: var(--base-font-standard);
 
   img {
     vertical-align: middle;
   }
 
   --theme-info: #0288d1;
-  --append-inner-button-size:36px;
+  --append-inner-button-size: 36px;
 }
 
 // Fix confettie z index:
@@ -109,7 +107,7 @@ html {
 }
 
 
-.v-application {
+.v-application, .v-overlay-container {
   --font-default: 'Inter', sans-serif, "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --font: 'Inter', sans-serif, "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
@@ -656,17 +654,17 @@ a {
   z-index: 1;
   position: relative;
 
-  margin-right: 12px ;
-  margin-left: 12px ;
+  margin-right: 12px;
+  margin-left: 12px;
 }
 
 .card--flex-toolbar { //TODO: Replace with s--card-window-content
   width: auto !important; // Important when child is container!!!
   background-color: #fff;
 
-  padding-bottom: 24px ;
+  padding-bottom: 24px;
 
-  border-radius: 42px ;
+  border-radius: 42px;
 
   margin-top: -48px;
 
@@ -676,8 +674,8 @@ a {
   z-index: 1;
   position: relative;
 
-  margin-right: 12px ;
-  margin-left: 12px ;
+  margin-right: 12px;
+  margin-left: 12px;
 }
 
 
@@ -712,6 +710,7 @@ a {
 .max-width-container-1280px {
   max-width: 1280px !important;
 }
+
 .max-width-container-1140px {
   max-width: 1140px !important;
 }
@@ -1051,7 +1050,7 @@ $size: 2.8rem;
 /**
 Table helper width
  */
-.min-width-max-content{
+.min-width-max-content {
   min-width: max-content;
 }
 
@@ -1229,12 +1228,6 @@ table.v-table {
 }
 
 
-
-
-
-
-
-
 .bottom-sheet-dark {
   background-color: var(--theme-dark) !important;
 }
@@ -1299,12 +1292,14 @@ table.v-table {
 
 
 .hover-scale {
-  transition: all 0.3s ease-in-out;
+  --scale: 3;
+  --duration: 0.3s;
 
+  transition: all var(--duration) ease-in-out;
 
   &:hover {
     position: relative;
-    transform: scale(3, 3);
+    transform: scale(var(--scale), var(--scale));
     z-index: 1;
 
     &.force-top {
@@ -1314,15 +1309,42 @@ table.v-table {
   }
 
   &.-fast {
+    --duration: 0.2s;
     transition-duration: 0.2s !important;
+  }
+
+  // Create double animation effect on avatar
+  &.v-avatar {
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); // Customize this for your bounce effect
+    &:hover {
+      > img, > .v-avatar {
+        animation: hover-bounce calc(var(--duration) * 0.6) ease-in-out;
+      }
+    }
   }
 }
 
+@keyframes hover-bounce {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(0.7); // Scale up more than the original for the bounce effect
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
 .hover-scale-small {
-  transition: all 0.3s ease-in-out;
+  --scale: 1.4;
+  --duration: 0.3s;
+
+  transition: all var(--duration) ease-in-out;
 
   &:hover {
-    transform: scale(1.4, 1.4);
+    transform: scale(var(--scale), var(--scale));
     z-index: 1;
 
     &.force-top {
@@ -1341,6 +1363,23 @@ table.v-table {
     &.force-top {
       z-index: 20;
     }
+  }
+}
+
+.hover-scale-y-2x {
+  transition: all 0.3s linear;
+  --scale: 2;
+
+  &:hover {
+    transform: scale(1, var(--scale));
+  }
+}
+.hover-scale-y-3x {
+  transition: all 0.3s linear;
+  --scale: 2;
+
+  &:hover {
+    transform: scale(1, var(--scale));
   }
 }
 
@@ -1517,8 +1556,6 @@ Extra helper classes
 }
 
 
-
-
 /************
 Vue Notifications
  */
@@ -1565,8 +1602,9 @@ Vue Notifications
     margin-left: 8px;
     margin-right: 8px;
   }
-  ul,ol{
-    margin:  8px 0;
+
+  ul, ol {
+    margin: 8px 0;
   }
 
 
@@ -1852,7 +1890,8 @@ header {
     left: 50%;
     transform: translateX(-50%) !important;
   }
-  &.-font-7{
+
+  &.-font-7 {
     &:after {
       font-size: 7px;
     }
@@ -2051,9 +2090,6 @@ Paragraphs
 }
 
 
-
-
-
 /**
 Inline editable
  */
@@ -2205,9 +2241,8 @@ Image loading (scale down)
 }
 
 
-
 // Main content container in shop-admin pages (shops, shop admin, account page,...)
-.admin-shop-container, .admin-user-container, .admin-account-container,.admin-administrators-container {
+.admin-shop-container, .admin-user-container, .admin-account-container, .admin-administrators-container {
   padding-bottom: 14px;
   border-radius: 16px 16px 42px 42px !important;
   background: var(--theme-deep-dark) !important;
@@ -2231,7 +2266,7 @@ Smart invert
     border-radius: 16px 16px 48px 48px !important; // Fix bottom curve on dark mode.
   }
 
-  .card--flex-toolbar,.s--card-window-content, footer {
+  .card--flex-toolbar, .s--card-window-content, footer {
     box-shadow: 0px 10px 50px 5px rgba(242, 242, 242, 0.84) !important;
     filter: invert(1);
 
@@ -3626,12 +3661,12 @@ Fix snaky chart overflow problem!
 
   }
 }
+
 .border-between-vertical-white-space {
   > :not(:last-child) {
     border-bottom: solid 6px #fff;
   }
 }
-
 
 
 //------------------------- Blur animate -------------------------
@@ -3810,7 +3845,8 @@ Fix snaky chart overflow problem!
   max-width: calc(100% - 80px);
   right: 40px;
   z-index: 1;
-  &.-relative{
+
+  &.-relative {
     position: relative !important;
   }
 }
@@ -3824,6 +3860,7 @@ Fix snaky chart overflow problem!
 .min-h-6rem { // Approximately 3 lines
   min-height: 6rem;
 }
+
 .min-h-8rem { // Approximately 4 lines
   min-height: 8rem;
 }
@@ -4017,6 +4054,13 @@ Fix snaky chart overflow problem!
 
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+
+  &.v-toolbar {
+    .v-toolbar__content {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
 }
 
 .bg-header-dropshipping {
@@ -4438,20 +4482,22 @@ canvas.heatmap-canvas {
   padding: 4px;
   display: inline-flex;
 
-  &.-shape-bin-l{
+  &.-shape-bin-l {
     --border-radious: 40px 48px 63px 6px;
   }
-  &.-shape-bin-r{
-    --border-radious: 63px  40px 6px 48px;
+
+  &.-shape-bin-r {
+    --border-radious: 63px 40px 6px 48px;
   }
 
   &.-shop {
     background: radial-gradient(circle at 33% 100%, #F44336 4%, #E91E63 30%, #C2185B 62%, #FF9800 85%, #FFA000);
   }
 
-   &.-staff {
+  &.-staff {
     background: linear-gradient(45deg, #ffc22e 4%, #41d506 30%, #18c2ae 62%, #1e9ebb 85%, #FFA000);
   }
+
   &.-officer {
     background-image: linear-gradient(45deg, #cc208e 0%, #6713d2 100%);
   }
@@ -4503,7 +4549,8 @@ canvas.heatmap-canvas {
   &.-black, &.-agency {
     background-image: linear-gradient(120deg, #000 0%, #222 100%);
   }
-  &.-vendor{
+
+  &.-vendor {
     background-image: linear-gradient(120deg, #F44336 0%, #673AB7 100%);
 
   }
@@ -4518,9 +4565,10 @@ canvas.heatmap-canvas {
       max-width: 100%;
       max-height: 100%;
     }
+
     .v-img {
-      .v-img__placeholder{
-display: flex;
+      .v-img__placeholder {
+        display: flex;
         align-items: center;
         justify-content: center;
       }
@@ -4528,7 +4576,7 @@ display: flex;
 
 
     :not(img, .v-img) { // Force be on center! (text, icon, ...)
-     // margin: auto;
+      // margin: auto;
       align-self: center;
     }
   }
@@ -4541,7 +4589,8 @@ display: flex;
 
     }
   }
-  &.-no-gap{
+
+  &.-no-gap {
     img, .v-img {
       padding: 0 !important;
     }
@@ -4553,7 +4602,7 @@ display: flex;
     // border: solid 3px #fff;
     padding: 3px;
 
-    background-color: var(--background,#fff);
+    background-color: var(--background, #fff);
     aspect-ratio: 1;
   }
 
@@ -4561,7 +4610,7 @@ display: flex;
 
 // Fix issue in using <img> in v-avatar:
 .v-avatar {
-  img{
+  img {
     max-width: 100%;
     max-height: 100%;
     height: inherit;
@@ -4574,9 +4623,9 @@ display: flex;
 }
 
 // Fix issue showing inputs that should not be shown when an inout be in another inout like a v-rating in the v-select!
-.v-input{
-  .v-rating{
-    input{
+.v-input {
+  .v-rating {
+    input {
       opacity: 0;
     }
   }
@@ -4590,7 +4639,7 @@ display: flex;
   background-color: var(--background) !important;
   padding: 12px 14px;
   margin: auto;
-  max-width: min(580px , 98%);
+  max-width: min(580px, 98%);
   text-align: start;
   border-radius: 28px;
   // overflow: hidden;
@@ -4600,12 +4649,12 @@ display: flex;
 
   &.-large {
     //  max-width: 960px;
-    max-width: min(1040px , 98%);
+    max-width: min(1040px, 98%);
   }
 
   &.-x-large {
     //  max-width: 960px;
-    max-width: min(1600px , 98%);
+    max-width: min(1600px, 98%);
   }
 
   &.-red {
@@ -4655,9 +4704,10 @@ display: flex;
     line-height: normal !important;
   }
 
-  .v-list{
+  .v-list {
     overflow: visible; // Show hover shadow correctly!
   }
+
   // .......................................
 
 
@@ -4677,8 +4727,8 @@ display: flex;
   }
 
 
-
 }
+
 .dashed-hr {
   border-top: dashed 1.6px #fff;
   margin-left: -20px;
@@ -4702,13 +4752,13 @@ display: flex;
     height: auto;
     padding: 10px 8px;
     background: unset; // Default is inherent!
-    .v-list-subheader__text{
+    .v-list-subheader__text {
       white-space: normal;
     }
   }
 
   // Fix inside table headers:
-  .v-table.v-table--fixed-header.bg-transparent > .v-table__wrapper > table > thead > tr > th{
+  .v-table.v-table--fixed-header.bg-transparent > .v-table__wrapper > table > thead > tr > th {
     background: var(--background);
   }
 }
@@ -5000,8 +5050,6 @@ display: flex;
 }
 
 
-
-
 .app-box {
   --bapp-size: 90px;
   font-family: sans-serif;
@@ -5026,7 +5074,7 @@ display: flex;
 }
 
 
-.fw-semi-bold{
+.fw-semi-bold {
   font-weight: 500;
 }
 

@@ -13,7 +13,10 @@
   -->
 
 <template>
-  <div class="circles-container" :style="{ padding: `${Math.round(size / 3)}px` }">
+  <div
+    class="circles-container"
+    :style="{ padding: `${Math.round(size / 3)}px` }"
+  >
     <v-avatar
       :size="size"
       v-for="img in images_limited"
@@ -22,16 +25,25 @@
       @click="$emit('click:item', img)"
       :class="{ 'pointer-pointer': link }"
       :color="color"
+      style="padding: 2px"
     >
-      <img :src="getShopImagePath(img)" style="padding: 2px;" />
+      <v-img :src="getShopImagePath(img)"  cover color="#ffffffbb" class="rounded-card" />
     </v-avatar>
 
     <span v-if="more_items > 0" class="more-items">
-      <v-icon small>more_horiz</v-icon>
+      <v-icon size="small">more_horiz</v-icon>
       (+{{ more_items }})
     </span>
 
-    <v-btn icon dark v-if="add" class="more-items" color="success"  depressed @click.stop="$emit('click:add')"><v-icon>add</v-icon></v-btn>
+    <v-btn
+      icon
+      v-if="add"
+      class="more-items"
+      color="success"
+      variant="flat"
+      @click.stop="$emit('click:add')"
+      ><v-icon>add</v-icon></v-btn
+    >
   </div>
 </template>
 
@@ -58,14 +70,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    color:{
-      default:'#00a89a'
-    }
+    color: {
+      default: "#00a89a",
+    },
   },
 
   computed: {
     images_limited() {
-      return this.images.slice(0, this.limit).filter(i=>!!i);
+      return this.images.slice(0, this.limit).filter((i) => !!i);
     },
     more_items() {
       return this.images.length - this.images_limited.length;
@@ -100,7 +112,7 @@ export default {
     margin-left: 8px;
     font-size: 10px;
     font-weight: 600;
-    color: #999 ;
+    color: #999;
     display: flex;
     align-items: center;
   }
@@ -109,11 +121,9 @@ export default {
 .v-application--is-rtl {
   .circles-container {
     .citm {
-
       &:not(:first-child) {
         margin-right: -12px;
         margin-left: unset;
-
       }
 
       &:hover {
@@ -130,6 +140,5 @@ export default {
       margin-right: 8px;
     }
   }
-
 }
 </style>

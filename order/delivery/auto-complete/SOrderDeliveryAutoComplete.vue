@@ -14,7 +14,7 @@
 
 <template>
   <div v-if="auto_complete_at" class="py-3 text-start small">
-    <v-icon class="me-1" small>hourglass_top</v-icon>
+    <v-icon class="me-1" size="small">hourglass_top</v-icon>
     {{ $t("global.commons.auto_complete") }}:<br />
     <s-count-down
       :end="auto_complete_at"
@@ -28,7 +28,7 @@ import { DateConverter } from "@core/helper/date/DateConverter";
 import SCountDown from "@components/ui/count-down/SCountDown.vue";
 
 export default {
-  name: "BasketAutoCompleteCountDown",
+  name: "SOrderDeliveryAutoComplete",
   components: { SCountDown },
   props: {
     basket: {
