@@ -1,3 +1,12 @@
-
-
-<svg height="512pt" viewBox="0 -64 512 512" width="512pt" xmlns="http://www.w3.org/2000/svg"><path d="m448 310.191406-128-42.65625v-215.070312l128-42.65625zm0 0" fill="#badb31"/><path d="m64 310.191406v-300.382812l128 42.65625v215.070312zm0 0" fill="#badb31"/><path d="m160 0h192v320h-192zm0 0" fill="#ceed5f"/><path d="m480 0h32v320h-32zm0 0" fill="#77959e"/><path d="m0 0h32v320h-32zm0 0" fill="#77959e"/><g fill="#badb31"><path d="m176 352h32v32h-32zm0 0"/><path d="m240 352h32v32h-32zm0 0"/><path d="m304 352h32v32h-32zm0 0"/></g></svg>
+<svg height="512pt" viewBox="0 -64 512 512" width="512pt" xmlns="http://www.w3.org/2000/svg">
+    <path d="m448 310.191406-128-42.65625v-215.070312l128-42.65625zm0 0" fill="#badb31"/>
+    <path d="m64 310.191406v-300.382812l128 42.65625v215.070312zm0 0" fill="#badb31"/>
+    <path d="m160 0h192v320h-192zm0 0" fill="#ceed5f"/>
+    <path d="m480 0h32v320h-32zm0 0" fill="#77959e"/>
+    <path d="m0 0h32v320h-32zm0 0" fill="#77959e"/>
+    <g fill="#badb31">
+        <path d="m176 352h32v32h-32zm0 0"/>
+        <path d="m240 352h32v32h-32zm0 0"/>
+        <path d="m304 352h32v32h-32zm0 0"/>
+    </g>
+</svg>

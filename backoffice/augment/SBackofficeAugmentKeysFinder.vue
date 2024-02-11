@@ -15,9 +15,9 @@
 <template>
   <s-fade-scroll class="text-start">
     <div class="d-flex" title="Dynamic values auto fill by augmentation.">
-      <v-chip label v-for="it in array" :key="it" size="x-small" class="me-1">{{
-        it
-      }}</v-chip>
+      <v-chip v-for="it in array" :key="it" class="me-1" label size="x-small"
+        >{{ it }}
+      </v-chip>
     </div>
   </s-fade-scroll>
 </template>
@@ -51,4 +51,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

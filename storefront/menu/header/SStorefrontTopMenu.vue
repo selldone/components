@@ -14,14 +14,13 @@
 
 <template>
   <v-toolbar
-    :rounded="rounded"
-    :flat="flat"
-    :light="!dark"
-    :dark="dark"
     :color="transparent ? 'transparent' : dark ? 'var(--theme-dark)' : null"
-    :outlined="outlined"
-    class="s--storefront-top-menu"
+    :flat="flat"
+    :theme="dark ? 'dark' : 'light'"
+    :border="outlined"
+    :rounded="rounded"
     :style="{ '--justify': center ? 'center' : 'start' }"
+    class="s--storefront-top-menu"
   >
     <s-fade-scroll class="overflow-auto">
       <div class="text-no-wrap">
@@ -29,15 +28,20 @@
           <span v-if="tab.type === 'link'" :key="'l' + index">
             <v-btn
               :href="preview ? undefined : tab.link"
-              text
-              class="me-2"
               :target="tab.link?.startsWith('http') ? '_blank' : undefined"
+              class="me-2"
+              variant="text"
             >
               <v-icon
                 v-if="tab.icon"
-                left
-                :small="tab.icon_size === 'small'"
-                :large="tab.icon_size === 'large'"
+                :size="
+                  tab.icon_size === 'large'
+                    ? 'large'
+                    : tab.icon_size === 'small'
+                      ? 'small'
+                      : undefined
+                "
+                start
                 >{{ tab.icon }}</v-icon
               >
 
@@ -47,92 +51,96 @@
 
           <v-menu
             v-else
-            offset-y
             :key="'m' + index"
-            :min-width="window.innerWidth - 24"
-            :max-width="window.innerWidth - 24"
-            close-delay="0"
-            :open-on-hover="tab.hover"
-            open-delay="0"
-            :rounded="tab.rounded"
-            :transition="tab.transition"
-            content-class="bg-white shadow-box"
-            :left="$vuetify.rtl"
-            max-height="90vh"
             v-model="visibles[index]"
+            :location="$vuetify.rtl && 'left'"
+            :max-width="window.innerWidth - 24"
+            :min-width="window.innerWidth - 24"
+            :open-on-hover="tab.hover"
+            :transition="tab.transition"
             :z-index="100"
+            close-delay="0"
+            content-class="bg-white shadow-box"
+            max-height="90vh"
+            open-delay="0"
           >
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ props }">
               <v-btn
-                v-bind="attrs"
-                v-on="on"
-                text
-                class="me-2"
                 :ref="`tab_${index}`"
+                class="me-2"
+                v-bind="props"
+                variant="text"
               >
                 <v-icon
                   v-if="tab.icon"
-                  left
-                  :small="tab.icon_size === 'small'"
-                  :large="tab.icon_size === 'large'"
-                >{{tab.icon}}</v-icon>
+                  :size="
+                    tab.icon_size === 'large'
+                      ? 'large'
+                      : tab.icon_size === 'small'
+                        ? 'small'
+                        : undefined
+                  "
+                  start
+                  >{{ tab.icon }}
+                </v-icon>
 
                 {{ tab.title }}
               </v-btn>
             </template>
 
             <!-- Menu > default -->
-
-            <v-container
-              v-if="tab.type === 'default'"
-              class="py-12 text-start"
-              fluid
-            >
-              <v-row>
-                <v-col
-                  v-for="(col, i) in tab.cols"
-                  :key="i"
-                  :style="{
-                    width: 100 / columns_count + '%',
-                    flex: 100 / columns_count + '%',
-                    'max-width': 100 / columns_count + '%',
-                  }"
-                >
-                  <v-list-item
-                    v-for="(item, index) in col"
-                    :key="index"
-                    :to="preview ? undefined : item.to"
-                    :href="preview ? undefined : item.href"
-                    :target="item.target"
-                    exact
+            <v-sheet :rounded="tab.rounded">
+              <v-container
+                v-if="tab.type === 'default'"
+                class="py-12 text-start"
+                fluid
+              >
+                <v-row>
+                  <v-col
+                    v-for="(col, i) in tab.cols"
+                    :key="i"
+                    :style="{
+                      width: 100 / columns_count + '%',
+                      flex: 100 / columns_count + '%',
+                      'max-width': 100 / columns_count + '%',
+                    }"
                   >
-                    <v-list-item-title class="list-menu-item">{{
-                      item.name
-                    }}</v-list-item-title>
-                  </v-list-item>
-                </v-col>
-              </v-row>
-            </v-container>
+                    <v-list-item
+                      v-for="(item, index) in col"
+                      :key="index"
+                      :href="preview ? undefined : item.href"
+                      :target="item.target"
+                      :to="preview ? undefined : item.to"
+                      exact
+                    >
+                      <v-list-item-title class="list-menu-item"
+                        >{{ item.name }}
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-col>
+                </v-row>
+              </v-container>
 
-            <!-- Menu > category -->
-            <menu-categories
-              v-if="tab.type === 'category' && tab.categories"
-              :categories="tab.categories"
-              :preview="preview"
-              class="my-2 ms-2"
-            ></menu-categories>
+              <!-- Menu > category -->
+              <menu-categories
+                v-if="tab.type === 'category' && tab.categories"
+                :categories="tab.categories"
+                :preview="preview"
+                class="my-2 ms-2"
+              ></menu-categories>
 
-            <!-- Menu > Custom -->
+              <!-- Menu > Custom -->
 
-            <SPageRenderMenu
-              v-if="
-                tab.type === 'custom' &&
-                tab.page &&
-                tab.page.content &&
-                visibles[index]
-              "
-              :data="tab.page.content"
-            />
+              <SPageRenderMenu
+                v-if="
+                  tab.type === 'custom' &&
+                  tab.page &&
+                  tab.page.content &&
+                  visibles[index]
+                "
+                :data="tab.page.content"
+              />
+            </v-sheet>
           </v-menu>
         </template>
       </div>
@@ -143,6 +151,7 @@
 <script>
 import MenuCategories from "./MenuCategories.vue";
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+
 export default {
   name: "SStorefrontTopMenu",
   components: { SFadeScroll, MenuCategories },

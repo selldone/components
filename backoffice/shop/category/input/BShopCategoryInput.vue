@@ -15,29 +15,29 @@
 <template>
   <v-autocomplete
     v-model="category"
-    class="m-2"
+    v-model:menu="menu"
+    v-model:search="search"
+    :chips="chips"
+    :class="{ disabled: modelValue && busy && !category_obj }"
+    :clearable="clearable"
+    :customFilter="() => true"
+    :disabled="disabled"
     :items="categories"
+    :label="label"
+    :multiple="multiple"
+    :no-data-text="placeholder"
+    :outlined="outlined"
+    :persistent-placeholder="persistentPlaceholder"
+    :placeholder="placeholder"
+    :return-object="returnObject"
+    :rounded="rounded"
+    :single-line="singleLine"
+    :variant="variant ? variant : filled ? 'filled' : 'underlined'"
+    class="m-2"
     item-title="title"
     item-value="id"
-    :label="label"
-    :rounded="rounded"
-    :outlined="outlined"
     messages=" "
-    :return-object="returnObject"
-    :clearable="clearable"
-    :placeholder="placeholder"
-    :no-data-text="placeholder"
-    :persistent-placeholder="persistentPlaceholder"
-    v-model:search="search"
-    v-model:menu="menu"
-    :customFilter="() => true"
-    :class="{ disabled: modelValue && busy && !category_obj }"
     @update:model-value="$emit('change')"
-    :multiple="multiple"
-    :chips="chips"
-    :disabled="disabled"
-    :variant="variant?variant:filled ? 'filled' : 'underlined'"
-    :single-line="singleLine"
   >
     <!-- ―――――――――――――――――― message ―――――――――――――――――― -->
 
@@ -47,8 +47,8 @@
           !multiple /*Show the category detail on the single mode!*/ &&
           category_obj
         "
-        class="ms-2 fadeIn"
         :category="category_obj"
+        class="ms-2 fadeIn"
       >
       </category-parents-view>
       <div v-if="messages">{{ messages }}</div>
@@ -57,22 +57,22 @@
     <!-- ―――――――――――――――――― items ―――――――――――――――――― -->
     <template v-slot:item="{ props, item }">
       <v-list-item
-        v-bind="props"
         :prepend-avatar="
           item.raw.icon
             ? getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)
             : null
         "
         :prepend-icon="item.raw.icon ? null : 'folder'"
-        :title="item.raw.title"
         :subtitle="item.raw.description?.limitWords(8)"
+        :title="item.raw.title"
         class="text-start"
+        v-bind="props"
       >
         <template
           v-if="multiple /*Show the category detail on the multiple mode!*/"
           v-slot:subtitle
         >
-          <category-parents-view :category="item.raw" small class="d-block">
+          <category-parents-view :category="item.raw" class="d-block" small>
           </category-parents-view>
         </template>
       </v-list-item>
@@ -82,9 +82,9 @@
     <template v-slot:chip="{ props, item }">
       <v-chip
         v-if="multiple"
-        v-bind="props"
         :prepend-avatar="getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)"
         :text="item.raw.title"
+        v-bind="props"
       ></v-chip>
       <span v-else>{{ item.raw.title }}</span>
     </template>
@@ -94,12 +94,12 @@
     <template v-if="!multiple /*Only in the single mode*/" v-slot:prepend-inner>
       <circle-image
         v-if="category_obj"
+        :size="32"
         :src="
           category_obj?.icon
             ? getShopImagePath(category_obj.icon, IMAGE_SIZE_SMALL)
             : getCategoryIcon(isObject(modelValue) ? modelValue.id : modelValue)
         "
-        :size="32"
         class="mb-1 me-1 hover-scale force-top"
       />
       <v-avatar v-else :size="32">
@@ -126,10 +126,10 @@
         <template v-slot:append>
           <v-list-item-action end>
             <v-btn
+              :loading="busy_create"
               class="nbt-colored ms-1"
               color="primary"
               @click="createCategory(search)"
-              :loading="busy_create"
             >
               <v-icon start>add_box</v-icon>
               {{ $t("global.actions.create") }}
@@ -210,11 +210,8 @@ export default {
     defaultIcon: {
       default: "home",
     },
-    variant:{
-
-    },
-    singleLine:Boolean,
-
+    variant: {},
+    singleLine: Boolean,
   },
   data: () => ({
     category: null,

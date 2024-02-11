@@ -65,8 +65,8 @@
       v-if="payment_receipt"
       :src="getShopImagePath(payment_receipt)"
       class="pointer-zoom-in rounded-2rem my-1 mx-auto"
-      @click="showFullscreen"
       width="120"
+      @click="showFullscreen"
     ></v-img>
   </div>
 </template>

@@ -14,40 +14,40 @@
 
 <template>
   <v-combobox
-    :value="value"
-    @input="(val) => $emit('input', correctValue(val))"
-    :items="items"
-    :placeholder="$t('global.commons.count')"
-    :label="$t('global.commons.count')"
-    :filled="filled"
-    :solo="solo"
-    :flat="flat"
-    :loading="loading"
+    ref="self"
+    v-model:search-input="search"
+    :bg-color="backgroundColor"
     :color="color"
-    :hide-details="value <= max"
+    :customFilter="() => true"
+    :dark="dark"
+    :dense="dense"
+    :disabled="disabled || loadingDelete"
     :error-messages="value > max ? $t('global.commons.not_in_stock') : null"
+    :filled="filled"
+    :flat="flat"
+    :hide-details="value <= max"
+    :items="items"
+    :label="$t('global.commons.count')"
+    :loading="loading"
+    :model-value="value"
+    :placeholder="$t('global.commons.count')"
+    :solo="solo"
+    class="s--shop-basket-item-count-select"
+    @blur="focus = false"
     @change="
       (val) => {
         $emit('change', correctValue(val));
         $refs.self.blur();
       }
     "
+    @click="focus = true"
+    @focus="focus = true"
+    @update:model-value="(val) => $emit('input', correctValue(val))"
     @keydown.enter="
       () => {
         $refs.self.blur();
       }
     "
-    @focus="focus = true"
-    @blur="focus = false"
-    :search-input.sync="search"
-    :filter="() => true"
-    class="s--shop-basket-item-count-select"
-    :dark="dark"
-    :background-color="backgroundColor"
-    @click="focus = true"
-    ref="self"
-    :disabled="disabled || loadingDelete"
-    :dense="dense"
   >
     <template v-slot:item="{ item }">
       <span v-if="item">
@@ -72,20 +72,20 @@
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Remove Button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <template v-slot:prepend-inner v-if="hasDelete">
+    <template v-if="hasDelete" v-slot:prepend-inner>
       <div
-        class="delete-button-con"
-        :style="{ '--delete-width': dense ? '32px' : '48px' }"
         :class="{ 'me-2': solo, '-rtl': $vuetify.rtl }"
+        :style="{ '--delete-width': dense ? '32px' : '48px' }"
+        class="delete-button-con"
       >
         <v-btn
-          title="Remove item from the cart."
-          :loading="loadingDelete"
-          @click.stop="$emit('click:delete')"
-          class="delete-button border-end"
-          depressed
           :color="backgroundColor"
+          :loading="loadingDelete"
+          class="delete-button border-end"
           tile
+          title="Remove item from the cart."
+          variant="flat"
+          @click.stop="$emit('click:delete')"
         >
           <v-icon>close</v-icon>
         </v-btn>

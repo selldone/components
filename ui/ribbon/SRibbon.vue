@@ -14,6 +14,7 @@
 
 <template>
   <div
+    :class="{ '-no-res': !top680 }"
     :style="{
       '--top': top,
       '--left': left,
@@ -21,11 +22,12 @@
       '--left-s': left680 ? left680 : left,
     }"
     class="ribbon"
-    :class="{ '-no-res': !top680 }"
   >
     <img :src="src" class="approved-bg" />
 
-    <div class="approved-container single-line"><slot></slot></div>
+    <div class="approved-container single-line">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -73,8 +75,8 @@ export default {
     width: 100px;
     pointer-events: none;
     transform: scaleX(-1);
-
   }
+
   .approved-container {
     pointer-events: none;
     position: absolute;
@@ -99,7 +101,7 @@ export default {
   }
 
   // Change in small screen:
- /* &:not(.-no-res) {
+  /* &:not(.-no-res) {
     @media only screen and (max-width: 680px) {
       .approved-container {
         top: 18px;

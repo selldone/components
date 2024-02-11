@@ -15,15 +15,15 @@
 <template>
   <v-menu :disabled="disabled">
     <template v-slot:activator="{ props }">
-      <div v-bind="props" class="position-relative">
+      <div class="position-relative" v-bind="props">
         <variant-item-mini
           v-if="modelValue"
-          class="m-2"
-          :product-variant="modelValue"
-          selected
-          force-enable
           :active-color="activeColor"
           :bordered="bordered"
+          :product-variant="modelValue"
+          class="m-2"
+          force-enable
+          selected
         />
 
         <div v-else class="text-muted p-2">Select one variant!</div>
@@ -31,15 +31,15 @@
         <v-icon class="absolute-top-end" dark> arrow_drop_down</v-icon>
       </div>
     </template>
-    <v-sheet color="#fff" class="py-2">
+    <v-sheet class="py-2" color="#fff">
       <variant-item-mini
         v-for="(product_variant, index) in variants"
         :key="index"
-        class="m-2"
+        :active-color="activeColor"
         :product-variant="product_variant"
         :selected="product_variant === modelValue"
+        class="m-2"
         @select="$emit('update:modelValue', product_variant)"
-        :active-color="activeColor"
       />
     </v-sheet>
   </v-menu>
@@ -47,6 +47,7 @@
 
 <script>
 import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
+
 export default {
   name: "VariantSelectorMenu",
   components: { VariantItemMini },

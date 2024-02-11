@@ -14,35 +14,35 @@
 
 <template>
   <div
+    :class="popup.position"
     class="popup-dialog-container"
     @click="$emit('close')"
-    :class="popup.position"
   >
     <div
-      class="position-relative"
-      style="max-height: 100%; max-width: 100%"
       :class="[popup.transition]"
       :style="{
         transformOrigin: popup.position
           ? popup.position.replace('-', ' ')
           : 'center',
       }"
+      class="position-relative"
+      style="max-height: 100%; max-width: 100%"
     >
       <v-card
-        :height="style && style.h ? style.h : Math.min(window.innerHeight, 800)"
-        :width="style && style.w ? style.w : Math.min(window.innerWidth, 800)"
-        color="#fff"
-        class="pop-card overflow-hidden d-flex pa-1 pa-sm-2 pa-md-3"
-        @click.stop
         :class="[{ 's--shadow-no-padding': style && style.s }]"
+        :flat="!style || !style.s"
+        :height="style && style.h ? style.h : Math.min(window.innerHeight, 800)"
+        :ripple="false"
         :style="{
           borderRadius: style && style.r ? style.r : undefined,
         }"
+        :width="style && style.w ? style.w : Math.min(window.innerWidth, 800)"
+        class="pop-card overflow-hidden d-flex pa-1 pa-sm-2 pa-md-3"
+        color="#fff"
         max-height="100%"
         max-width="100%"
-        :flat="!style || !style.s"
-        :ripple="false"
         style="cursor: initial"
+        @click.stop
       >
         <s-page-render-popup
           v-if="popup.content"
@@ -53,33 +53,48 @@
       </v-card>
 
       <v-btn
-        @click="$emit('close')"
         class="absolute-top-end zoomIn delay_500"
-        fab
-        depressed
         color="#fff"
-        ><v-icon>close</v-icon></v-btn
+        fab
+        variant="flat"
+        @click="$emit('close')"
       >
+        <v-icon>close</v-icon>
+      </v-btn>
     </div>
 
     <v-row
       v-if="preview"
       class="bottom-bar fadeIn delay_1s"
-      no-gutters
       dir="ltr"
+      no-gutters
     >
-      <v-chip v-if="popup.delay" label color="green" class="m-1" small dark
-        ><v-icon class="me-1" small>motion_photos_on</v-icon>
-        {{ popup.delay }} s</v-chip
+      <v-chip
+        v-if="popup.delay"
+        class="m-1"
+        color="green"
+        dark
+        label
+        size="small"
       >
-      <v-chip v-if="popup.hide" label color="red" class="m-1" small dark
-        ><v-icon class="me-1" small>hourglass_bottom</v-icon>
-        {{ popup.hide }} s</v-chip
+        <v-icon class="me-1" size="small">motion_photos_on</v-icon>
+        {{ popup.delay }} s
+      </v-chip>
+      <v-chip v-if="popup.hide" class="m-1" color="red" dark label size="small">
+        <v-icon class="me-1" size="small">hourglass_bottom</v-icon>
+        {{ popup.hide }} s
+      </v-chip>
+      <v-chip
+        v-if="popup.transition"
+        class="m-1"
+        color="blue"
+        dark
+        label
+        size="small"
       >
-      <v-chip v-if="popup.transition" label color="blue" class="m-1" small dark
-        ><v-icon class="me-1" small>timelapse</v-icon>
-        {{ getName(popup.transition) }}</v-chip
-      >
+        <v-icon class="me-1" size="small">timelapse</v-icon>
+        {{ getName(popup.transition) }}
+      </v-chip>
     </v-row>
   </div>
 </template>
@@ -109,7 +124,7 @@ export default {
 
   created() {},
 
-  beforeDestroy() {},
+  beforeUnmount() {},
 
   methods: {},
 };
@@ -135,34 +150,42 @@ export default {
   left: 0;
   transition: all 0.5s;
   flex-direction: column;
+
   .pop-card {
     position: relative;
     overflow-y: auto;
   }
+
   &.top-left {
     justify-content: flex-start;
     align-items: flex-start;
   }
+
   &.top-center {
     justify-content: flex-start;
     align-items: center;
   }
+
   &.top-right {
     justify-content: flex-start;
     align-items: flex-end;
   }
+
   &.left-center {
     justify-content: center;
     align-items: flex-start;
   }
+
   &.right-center {
     justify-content: center;
     align-items: flex-end;
   }
+
   &.bottom-right {
     justify-content: flex-end;
     align-items: flex-end;
   }
+
   &.bottom-center {
     justify-content: flex-end;
     align-items: center;

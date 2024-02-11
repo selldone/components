@@ -14,12 +14,12 @@
 
 <template>
   <div
-    class="nav"
     :class="{ 'is-table': scrollable, disabled: disabled }"
     :style="{ '--radius': radius }"
+    class="nav"
   >
     <div v-if="src" class="nav-icon">
-      <img height="24" :src="src" class="rounded" />
+      <img :src="src" class="rounded" height="24" />
     </div>
     <div v-else-if="icon" class="nav-icon">
       <v-icon>{{ icon }}</v-icon>
@@ -28,36 +28,36 @@
     <div
       v-for="item in tabsNotNull"
       :key="'tab-' + item.title"
-      :color="item.color"
-      @click="$emit('update:modelValue', item.value)"
-      class="nav-item"
-      :class="{ 'is-active': modelValue === item.value, small: small }"
-      :style="``"
       :active-color="item.color"
+      :class="{ 'is-active': modelValue === item.value, small: small }"
+      :color="item.color"
+      :style="``"
+      class="nav-item"
+      @click="$emit('update:modelValue', item.value)"
     >
       <v-icon
         v-if="item.icon"
         :color="modelValue === item.value ? item.color : ''"
-        style="pointer-events: none"
+        :size="window.innerWidth < 900 || small ? 'small' : undefined"
         class="me-1"
-        :size="window.innerWidth < 900 || small ? 'small':undefined"
-        >{{ item.icon }}</v-icon
-      >
+        style="pointer-events: none"
+        >{{ item.icon }}
+      </v-icon>
       <v-img
         v-if="item.src"
         :src="item.src"
-        style="pointer-events: none"
-        class="me-1"
         :width="window.innerWidth < 900 || small ? 20 : 28"
         aspect-ratio="1"
-        >{{ item.icon }}</v-img
-      >
+        class="me-1"
+        style="pointer-events: none"
+        >{{ item.icon }}
+      </v-img>
 
       {{ item.title }}
 
-      <v-icon v-if="item.check" class="ms-1 zoomIn" size="small" color="success"
-        >check_circle</v-icon
-      >
+      <v-icon v-if="item.check" class="ms-1 zoomIn" color="success" size="small"
+        >check_circle
+      </v-icon>
     </div>
 
     <slot></slot>
@@ -106,23 +106,17 @@ export default {
     },
   },
 
-  watch: {
+  watch: {},
 
-  },
-
-  mounted() {
-
-  },
+  mounted() {},
   created() {},
   methods: {
-    redrawActiveItem() {
-
-    },
+    redrawActiveItem() {},
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .nav {
   display: flex;
   min-width: min-content;
@@ -206,6 +200,7 @@ export default {
   }
 
   border-radius: 36px;
+
   &.is-active {
     box-shadow: 0px 7px 15px 8px rgba(113, 112, 112, 0.24);
   }

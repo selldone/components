@@ -15,12 +15,12 @@
 <template>
   <apexchart
     v-if="series && series.length"
+    :height="fullDetails ? 160 : 120"
+    :options="options"
+    :series="series"
     class="mt-2 mt-sm-0"
     type="donut"
     width="100%"
-    :options="options"
-    :height="fullDetails ? 160 : 120"
-    :series="series"
   />
 </template>
 
@@ -61,7 +61,6 @@ export default {
 
         dataLabels: {
           enabled: false,
-
         },
 
         plotOptions: {

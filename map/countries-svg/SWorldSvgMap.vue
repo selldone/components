@@ -95,7 +95,7 @@ export default {
       const dynamicMapCss = getDynamicMapCss(
         this.map_id,
         this.countryData,
-        this.chromaScale
+        this.chromaScale,
       );
       this.css = getCombinedCssString(baseCss, dynamicMapCss);
     },

@@ -14,8 +14,8 @@
 
 <template>
   <div
-    class="container-btn border"
     :class="{ '-small': small, '-blue': blue, '-purple': purple }"
+    class="container-btn border"
     @click="$emit('click')"
   >
     <div class="left-side">
@@ -65,7 +65,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .container-btn {
   --background: #33837e;
   --left-side: #5de2a3;
@@ -223,7 +223,8 @@ export default {
   -moz-box-shadow: 9px 9px 9px -2px var(--card-shadow);
   -webkit-box-shadow: 9px 9px 9px -2px var(--card-shadow);
 
-  box-shadow: inset 0 -3em 3em rgba(255, 255, 255, 0.26),
+  box-shadow:
+    inset 0 -3em 3em rgba(255, 255, 255, 0.26),
     0 5px 50px 4px rgb(58, 44, 65) !important;
 }
 
@@ -252,7 +253,8 @@ export default {
   width: calc(8px / var(--scale-factor));
   height: calc(8px / var(--scale-factor));
   background-color: var(--button-color-2);
-  box-shadow: 0 calc(-10px / var(--scale-factor)) 0 0 var(--button-color-3),
+  box-shadow:
+    0 calc(-10px / var(--scale-factor)) 0 0 var(--button-color-3),
     0 calc(10px / var(--scale-factor)) 0 0 var(--button-color-1);
   border-radius: 50%;
   margin-top: calc(5px / var(--scale-factor));
@@ -333,7 +335,8 @@ export default {
   width: calc(12px / var(--scale-factor));
   height: calc(12px / var(--scale-factor));
   background-color: var(--numbers);
-  box-shadow: 0 calc(-18px / var(--scale-factor)) 0 0 var(--numbers),
+  box-shadow:
+    0 calc(-18px / var(--scale-factor)) 0 0 var(--numbers),
     0 calc(18px / var(--scale-factor)) 0 0 var(--numbers);
   border-radius: calc(2px / var(--scale-factor));
   position: absolute;
@@ -346,7 +349,8 @@ export default {
   width: calc(12px / var(--scale-factor));
   height: calc(12px / var(--scale-factor));
   background-color: var(--numbers-2);
-  box-shadow: 0 calc(-18px / var(--scale-factor)) 0 0 var(--numbers-2),
+  box-shadow:
+    0 calc(-18px / var(--scale-factor)) 0 0 var(--numbers-2),
     0 calc(18px / var(--scale-factor)) 0 0 var(--numbers-2);
   border-radius: calc(2px / var(--scale-factor));
   position: absolute;

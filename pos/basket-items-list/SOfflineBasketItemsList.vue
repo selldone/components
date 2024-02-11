@@ -18,8 +18,8 @@
       v-for="(item, index) in items"
       :key="index"
       class="text-start row-hover border-bottom flex-wrap"
-      style="cursor: default"
       density="compact"
+      style="cursor: default"
     >
       <template v-slot:prepend>
         <v-avatar class="rounded-lg">
@@ -41,8 +41,8 @@
 
       <v-row no-gutters>
         <div
-          class=""
           :class="{ 'col-9 col-sm-4 col-md-3 col-lg-4 constrained': !viewOnly }"
+          class=""
         >
           <v-list-item-title class="ptitle">
             <component
@@ -56,23 +56,23 @@
               {{ item.product.title?.limitWords(7) }}
 
               <v-chip
-                variant="outlined"
                 v-if="!item.product.original"
-                color="red"
                 class="m-1 text-uppercase px-2"
-                size="x-small"
+                color="red"
                 pill
+                size="x-small"
+                variant="outlined"
                 >{{ $t("global.commons.fake") }}
               </v-chip>
               <v-chip
-                variant="outlined"
                 v-if="
                   conditionObject(item.product.condition) &&
                   item.product.condition !== ProductCondition.NEW.code
                 "
-                size="x-small"
                 class="m-1 text-uppercase px-2"
                 pill
+                size="x-small"
+                variant="outlined"
                 >{{ $t(conditionObject.title) }}
               </v-chip>
             </component>
@@ -91,8 +91,8 @@
 
         <div
           v-if="viewOnly"
-          style="max-width: max-content"
           class="text-center px-2 col-2 col-sm-4"
+          style="max-width: max-content"
         >
           <b>{{ item.count }}</b>
         </div>
@@ -100,14 +100,14 @@
         <div v-if="!viewOnly" class="col-5 col-sm-3 col-md-3 col-lg-3">
           <s-shop-basket-item-count-select
             v-model="item.count"
-            :max="availableQuantity(item)"
-            @change="(count) => spinnerSelectAction(item, count)"
-            :min="0"
             :loading="busyAdd === item.product_id + '-' + item.variant_id"
-            no-unit
-            dark
+            :max="availableQuantity(item)"
+            :min="0"
             background-color="#111"
+            dark
             filled
+            no-unit
+            @change="(count) => spinnerSelectAction(item, count)"
           ></s-shop-basket-item-count-select>
         </div>
 
@@ -127,11 +127,11 @@
       <template v-slot:append>
         <v-list-item-action v-if="!viewOnly" class="text-center m-0">
           <v-btn
+            :caption="$t('global.actions.delete')"
+            :loading="busyDelete === item.id"
+            class="sub-caption -hover b-12px"
             icon
             @click.stop="$emit('delete', item.id)"
-            :loading="busyDelete === item.id"
-            :caption="$t('global.actions.delete')"
-            class="sub-caption -hover b-12px"
           >
             <v-icon> close</v-icon>
           </v-btn>
@@ -222,7 +222,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .price {
   font-weight: 600;
   font-size: 1.1rem;

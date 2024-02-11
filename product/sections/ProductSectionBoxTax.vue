@@ -15,7 +15,7 @@
 <template>
   <div class="px-2 mb-2 d-flex flex-grow-0">
     <span v-html="tax_string"></span>
-    <span class="text-success mx-2" v-if="has_free_shipping">
+    <span v-if="has_free_shipping" class="text-success mx-2">
       ● {{ $t("global.commons.free_shipping") }}
       <span
         v-if="
@@ -35,37 +35,37 @@
 
       <img
         v-for="im in images"
-        :src="getShopImagePath(im)"
         :key="im"
-        width="16"
-        height="16"
+        :src="getShopImagePath(im)"
         class="ms-1"
+        height="16"
+        width="16"
       />
     </span>
 
     <template v-if="pickup_transportation">
-      <v-menu location="bottom" max-width="460" open-on-hover >
+      <v-menu location="bottom" max-width="460" open-on-hover>
         <template v-slot:activator="{ props }">
-          <v-chip label size="small" color="#fff" v-bind="props">
+          <v-chip color="#fff" label size="small" v-bind="props">
             <v-icon size="small" start>place</v-icon>
             {{
               pickup_transportation.title
                 ? pickup_transportation.title
                 : $t("global.transportation_type.pickup")
-            }}</v-chip
-          >
+            }}
+          </v-chip>
         </template>
-        <v-sheet dark color="#000" class="text-start">
-          <v-list lines="three" class="bg-transparent" dark>
+        <v-sheet class="text-start" color="#000" dark>
+          <v-list class="bg-transparent" dark lines="three">
             <v-list-item
               v-for="(pickup, i) in pickup_transportation.pickups"
               :key="i"
               :href="MapHelper.GetMapDirectionUrl(pickup.location, true)"
-              title="Open direction to the pickup store on the map."
               target="_blank"
+              title="Open direction to the pickup store on the map."
             >
               <template v-slot:prepend>
-                <v-avatar rounded size="64" class="hover-scale-small">
+                <v-avatar class="hover-scale-small" rounded size="64">
                   <img
                     v-if="pickup.location?.lng && pickup.location?.lat"
                     :src="
@@ -86,8 +86,8 @@
                 <flag
                   v-if="pickup.country"
                   :iso="pickup.country"
-                  class="me-1"
                   :squared="false"
+                  class="me-1"
                 ></flag>
 
                 {{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}
@@ -214,4 +214,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

@@ -24,13 +24,13 @@
           $route.params.page_name === banner.page_name
         )
       "
-      class="s--storefront-top-banner"
+      :class="{ '-bg-repeat': banner.repeat }"
       :dark="banner.dark"
       :style="{
         'background-color': banner.bg,
         'background-image': `url(${banner.bg_image})`,
       }"
-      :class="{ '-bg-repeat': banner.repeat }"
+      class="s--storefront-top-banner"
       single-line
     >
       <template v-slot:icon>
@@ -42,6 +42,7 @@
       </template>
 
       <router-link
+        :class="{ pen: developerMode }"
         :to="
           banner.page_name
             ? {
@@ -50,7 +51,6 @@
               }
             : {}
         "
-        :class="{ pen: developerMode }"
         class="flex-grow-1"
       >
         <div v-html="banner.message"></div>
@@ -58,13 +58,13 @@
 
       <template v-slot:actions>
         <s-lottie
-          :options="{ path: banner.anim, loop: true }"
           :height="banner.anim_height"
-          :width="banner.anim_width"
+          :options="{ path: banner.anim, loop: true }"
           :speed="1"
+          :width="banner.anim_width"
           class="mx-1 flex-grow-0"
         />
-        <v-btn icon @click.stop="dismiss" class="mx-1 flex-grow-0">
+        <v-btn class="mx-1 flex-grow-0" icon @click.stop="dismiss">
           <v-icon>close</v-icon>
         </v-btn>
       </template>
@@ -142,6 +142,7 @@ html {
   z-index: 100;
   height: var(--s--top-banner-heigh);
   text-align: start;
+
   a {
     color: currentColor !important;
   }

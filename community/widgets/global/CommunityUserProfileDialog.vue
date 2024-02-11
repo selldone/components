@@ -15,22 +15,22 @@
 <template>
   <v-bottom-sheet
     v-model="dialog"
+    :fullscreen="$vuetify.display.mdAndDown"
+    content-class="rounded-t-xl"
     max-width="640"
     width="98vw"
-    content-class="rounded-t-xl"
-    :fullscreen="$vuetify.display.mdAndDown"
   >
     <v-card
       v-if="profile"
       class="py-4 position-relative"
-      rounded="t-xl"
       min-height="40vh"
+      rounded="t-xl"
     >
       <v-card-title>
-        <v-btn text @click="dialog = false">
-          <v-icon class="me-1" small>close</v-icon>
-          {{ $t("global.actions.close") }}</v-btn
-        >
+        <v-btn variant="text" @click="dialog = false">
+          <v-icon class="me-1" size="small">close</v-icon>
+          {{ $t("global.actions.close") }}
+        </v-btn>
 
         <v-spacer></v-spacer>
         <div>
@@ -40,8 +40,8 @@
             :squared="false"
           ></flag>
           <v-icon v-else color="#111" title="Global community account."
-            >public</v-icon
-          >
+            >public
+          </v-icon>
         </div>
         <!--
         <v-btn icon title="Full profile">
@@ -53,41 +53,50 @@
         <div class="max-widget-width mx-auto">
           <s-progress-loading v-if="busy"></s-progress-loading>
 
-          <v-avatar size="64" color="#fafafa" class="hover-scale force-top">
+          <v-avatar class="hover-scale force-top" color="#fafafa" size="64">
             <img :src="getUserAvatar(profile.user_id)" />
           </v-avatar>
           <p class="font-weight-black mt-1 single-line mb-1">
             {{ profile.name }}
-            <v-icon v-if="profile.verified" small color="blue" class="ms-1"
-              >verified</v-icon
-            >
+            <v-icon
+              v-if="profile.verified"
+              class="ms-1"
+              color="blue"
+              size="small"
+              >verified
+            </v-icon>
           </p>
 
-          <v-row v-if="full_profile" no-gutters class="justify-center" align="center">
+          <v-row
+            v-if="full_profile"
+            align="center"
+            class="justify-center"
+            no-gutters
+          >
             <s-value-box
-              label="Followers"
               :value="full_profile.followers_count"
-              height="44px"
               class="flex-grow-1 ma-1"
+              height="44px"
+              label="Followers"
             ></s-value-box>
 
             <s-value-box
-              label="Following"
               :value="full_profile.following_count"
-              height="44px"
               class="flex-grow-1 ma-1"
+              height="44px"
+              label="Following"
             ></s-value-box>
 
-            <div v-if="USER_ID() && USER_ID() !== profile.user_id" class="widget-buttons flex-grow-1">
+            <div
+              v-if="USER_ID() && USER_ID() !== profile.user_id"
+              class="widget-buttons flex-grow-1"
+            >
               <v-btn
-                small
-                depressed
-                :outlined="!profile.follow"
                 :color="profile.follow ? 'blue' : '#111'"
-                dark
                 :loading="busy_follow"
+                :variant="!profile.follow ? 'outlined':'flat'"
+                size="large"
                 @click="follow(!profile.follow)"
-                large
               >
                 {{
                   profile.follow
@@ -95,7 +104,11 @@
                     : $t("community.commons.follow_action")
                 }}
 
-                <v-avatar size="28" color="#fafafa" class="ms-2 avatar-gradient -blue -thin">
+                <v-avatar
+                  class="ms-2 avatar-gradient -blue -thin"
+                  color="#fafafa"
+                  size="28"
+                >
                   <img :src="getUserAvatar(USER_ID())" />
                 </v-avatar>
               </v-btn>
@@ -111,9 +124,9 @@
             class="d-flex align-center text-start mt-5"
           >
             <s-dense-images-circles-users
-              class="overflow-visible"
               :ids="mutual_ids"
               :size="32"
+              class="overflow-visible"
             ></s-dense-images-circles-users>
 
             <p class="m-0 flex-grow-1">
@@ -126,7 +139,7 @@
           </div>
 
           <div class="d-flex align-center mt-5">
-            <v-avatar v-if="nominator" size="32" color="#fafafa">
+            <v-avatar v-if="nominator" color="#fafafa" size="32">
               <img :src="getUserAvatar(nominator.id)" />
             </v-avatar>
             <div class="mx-2 text-start">
@@ -239,7 +252,6 @@ export default {
             return this.showErrorAlert(null, data.error_msg);
           }
           this.profile.follow = data.follow; // Indicate followed now!
-
         })
         .catch((error) => {
           this.showLaravelError(error);
@@ -261,7 +273,7 @@ export default {
       this.dialog = true;
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("community:show-profile");
   },
 };

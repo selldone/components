@@ -13,25 +13,24 @@
   -->
 
 <template>
-  <v-row no-gutters align="center" justify="center">
+  <v-row align="center" justify="center" no-gutters>
     <p
+      :title="title"
       class="m-0 small text-muted text-truncate flex-grow-1"
       style="width: 40%"
-      :title="title"
     >
       {{ title }}
     </p>
-    <div style="max-width: 112px; width: 40%" class="position-relative">
+    <div class="position-relative" style="max-width: 112px; width: 40%">
       <v-progress-linear
         v-model="rating_percent"
-        color="#1976D2"
         class="m-1"
+        color="#1976D2"
         rounded
         style="pointer-events: none"
       />
       <v-avatar
         v-if="userRate"
-        size="18"
         :style="{
           left: $vuetify.rtl ? undefined : `calc(${userRate * 20}% - 9px)`,
           right: !$vuetify.rtl ? undefined : `calc(${userRate * 20}% - 9px)`,
@@ -39,6 +38,7 @@
         }"
         class="position-absolute"
         color="#1976D2"
+        size="18"
       >
         <img :src="getUserAvatar(USER_ID())" style="padding: 2px" />
       </v-avatar>

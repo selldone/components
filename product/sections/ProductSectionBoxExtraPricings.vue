@@ -19,18 +19,18 @@
     <v-col
       v-for="(extra_pricing, i) in extra_pricings"
       :key="extra_pricing.id"
-      cols="6"
-      sm="4"
-      md="3"
       :class="{ disabled: total_quantity < extra_pricing.min }"
+      cols="6"
+      md="3"
+      sm="4"
       @click="
         $emit('select', extra_pricing);
         selected_id = extra_pricing.id;
       "
     >
       <div
-        class="ex-price"
         :class="{ '-selected': current_extra_pricing?.id === extra_pricing.id }"
+        class="ex-price"
       >
         <price-view :amount="calculatedPrice(extra_pricing)"></price-view>
         <small> {{ intervals_string[i] }}</small>
@@ -38,10 +38,10 @@
           v-if="
             total_quantity > 0 && (quantity >= 0 || isLoading(extra_pricing))
           "
-          :value="Math.min((100 * quantity) / extra_pricing.min, 100)"
-          class="ex-prog"
           :color="default_color"
           :indeterminate="isLoading(extra_pricing)"
+          :model-value="Math.min((100 * quantity) / extra_pricing.min, 100)"
+          class="ex-prog"
         ></v-progress-linear>
       </div>
     </v-col>
@@ -85,13 +85,13 @@ export default {
       return ExtraPricingHelper.GetListOfExtraPricings(
         this.product,
         this.currentVariant,
-        this.selectedVendorProduct
+        this.selectedVendorProduct,
       );
     },
     current_extra_pricing() {
       return ExtraPricingHelper.FindMatchInList(
         this.extra_pricings,
-        this.quantity
+        this.quantity,
       );
     },
 
@@ -121,7 +121,7 @@ export default {
         let max = nextMin - 1;
         if (max > min && nextMin !== Infinity) {
           result.push(
-            `${numeral(min).format("0,0")} ~ ${numeral(max).format("0,0")}`
+            `${numeral(min).format("0,0")} ~ ${numeral(max).format("0,0")}`,
           );
         } else {
           result.push(`+ ${numeral(min).format("0,0")}`);
@@ -152,14 +152,14 @@ export default {
         extra_pricing,
         null,
         this.preferences,
-        this.product.valuation
+        this.product.valuation,
       );
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .ex-price {
   border: thin #eee solid;
   border-radius: 6px;
@@ -173,12 +173,15 @@ export default {
   position: relative;
   transition: all 0.25s;
   overflow: hidden;
+
   &:hover {
     box-shadow: 0px 7px 15px 8px rgba(113, 112, 112, 0.24);
   }
+
   &.-selected {
     box-shadow: 0px 7px 15px 8px rgba(113, 112, 112, 0.24);
   }
+
   .ex-prog {
     position: absolute;
     left: 0;

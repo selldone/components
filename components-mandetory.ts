@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {App, defineAsyncComponent} from "vue";
+import { App, defineAsyncComponent } from "vue";
 
 //---------------- Vue FilePond --------------
 // Import Vue FilePond
@@ -48,7 +48,6 @@ import SLoading from "@components/ui/loading/SLoading.vue";
 
 import SProgressLoading from "@components/ui/loading/SProgressLoading.vue";
 
-
 // + Tel input:
 // @ts-ignore
 import STelInput from "@components/ui/tel-input";
@@ -75,12 +74,12 @@ import "@components/article/add-on/catalog/plugin/ArticleAddonCatalogPlugin";
 import "@components/article/add-on/canvas/plugin/ArticleAddonCanvasPlugin";
 
 // @ts-ignore
-import {MediumInsert} from "@components/article/insert/SelldoneEditorInsert";
+import { MediumInsert } from "@components/article/insert/SelldoneEditorInsert";
 //―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
 import "prismjs";
 import "prismjs/themes/prism.css";
 
-import {PrismEditor} from "vue-prism-editor";
+import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css";
 
 //---------------- Widget --------------
@@ -89,8 +88,8 @@ import SWidget from "@components/ui/widget/widget/SWidget.vue";
 import SWidgetHeader from "@components/ui/widget/header/SWidgetHeader.vue";
 
 import VueConfetti from "@components/ui/confeti";
-import SDrag from "@components/ui/drag-drop/SDrag.vue";
-import SDrop from "@components/ui/drag-drop/SDrop.vue";
+import SDrag from "@components/ui/drag/core/SDrag.vue";
+import SDrop from "@components/ui/drag/core/SDrop.vue";
 
 require("@components/style/animation/vue2-animate.scss");
 require("@components/style/selldone/general_animates.scss");
@@ -182,7 +181,6 @@ export function installGlobalComponents(app: App) {
       ),
   );
   app.component("s-barcode", SBarcode);
-
 
   //---------------- Barcode Scanner --------------
   app.component(

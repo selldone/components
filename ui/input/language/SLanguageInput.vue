@@ -13,38 +13,48 @@
   -->
 
 <template>
-  <div :style="`max-width: ${maxWidth}`" :class="{ 'v-input': !iconOnly }">
+  <div :class="{ 'v-input': !iconOnly }" :style="`max-width: ${maxWidth}`">
     <!-- v-input : css of widget-box same effect like normal inputs -->
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Icon Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
     <s-circle-button
       v-if="iconOnly"
-      dense
       :color="iconColor"
       :icon="prependInnerIcon"
-      :tooltip="selected_language_object?.title"
-      @click="readonly ? undefined : showDialog()"
       :title="`Change language | ${selected_language_object?.title}`"
+      :tooltip="selected_language_object?.title"
+      dense
+      @click="readonly ? undefined : showDialog()"
     ></s-circle-button>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Normal Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <v-text-field
       v-else
+      :append-inner-icon="appendIcon"
+      :bg-color="transparent ? 'transparent' : undefined"
+      :clearable="clearable"
+      :color="color"
+      :density="dense ? 'compact' : undefined"
+      :disabled="disabled"
+      :flat="flat"
+      :hide-details="hideDetails"
+      :label="label ? label : $t('global.commons.language')"
+      :messages="messages"
       :modelValue="
         multiple
           ? select_language?.map((l) => getLanguageName(l)).join(', ')
           : selected_language_object?.title
       "
-      :hide-details="hideDetails"
-      :rounded="rounded"
+      :multiple="multiple"
+      :persistent-placeholder="persistentPlaceholder"
       :placeholder="
         placeholder ? placeholder : $t('global.placeholders.language')
       "
-      :persistent-placeholder="persistentPlaceholder"
-      :label="label ? label : $t('global.commons.language')"
-      :messages="messages"
-      :density="dense ? 'compact' : undefined"
+      :prepend-inner-icon="prependInnerIcon"
+      :rounded="rounded"
+      :single-line="singleLine"
+      :suffix="suffix"
       :variant="
         variant
           ? variant
@@ -56,15 +66,8 @@
                 ? 'solo'
                 : 'underlined'
       "
-      :single-line="singleLine"
-      readonly
       class="pp"
-      :multiple="multiple"
-      :clearable="clearable"
-      :color="color"
-      :flat="flat"
-      :disabled="disabled"
-      :bg-color="transparent ? 'transparent' : undefined"
+      readonly
       @click="readonly || disabled ? undefined : showDialog()"
       @click:clear="
         select_language = null;
@@ -72,9 +75,6 @@
           $emit('change', null);
         });
       "
-      :prepend-inner-icon="prependInnerIcon"
-      :append-inner-icon="appendIcon"
-      :suffix="suffix"
     >
       <template v-slot:append>
         <slot name="append-outer"></slot>
@@ -86,16 +86,16 @@
     <s-languages-dialog
       v-if="dialog_pre"
       v-model="show_dialog"
-      :available-languages="availableLanguages"
       v-model:selected-language="select_language"
+      :available-languages="availableLanguages"
+      :checked-languages="checkedLanguages"
+      :multiple="multiple"
       @change="
         (val) =>
           $nextTick(() => {
             $emit('change', val);
           })
       "
-      :checked-languages="checkedLanguages"
-      :multiple="multiple"
     ></s-languages-dialog>
   </div>
 </template>
@@ -238,7 +238,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .vertical-block {
   display: block;
   padding: 4px 0;

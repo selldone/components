@@ -15,38 +15,43 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
     :category-id="category.id"
+    :class="{ disabled: loading }"
     class="widget-folder-root pointer-pointer"
     @click="$emit('select')"
-    :class="{ disabled: loading }"
   >
     <div class="box">
       <s-widget
-        class="text-start card"
-        style="border-radius: 8px"
         :class="{ 'm-1': small, compact: compactMode }"
         :title="`<h5 class='align-items-center pb-1 text-white '  style='font-size: 1.16rem;font-weight: 500'>    <span class=' ${star_class} mr-sm text-warning' style='font-size: 12px;'></span>  ${category.title}  </h5>`"
         body-class="p-0 mt"
+        class="text-start card"
         custom-header
+        style="border-radius: 8px"
       >
         <template v-slot:top-left>
-          <v-btn v-if="showEditButton" icon variant="text" @click.stop="$emit('click:edit')">
-            <v-icon size="small" color="#fff"> edit_square</v-icon>
+          <v-btn
+            v-if="showEditButton"
+            icon
+            variant="text"
+            @click.stop="$emit('click:edit')"
+          >
+            <v-icon color="#fff" size="small"> edit_square</v-icon>
           </v-btn>
           <circle-image
             v-if="compactMode"
             :size="64"
-            dark
             :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
             class="float-left"
+            dark
           ></circle-image>
         </template>
 
         <p
-          class="fw-semi-bold mb-1 small folder-description"
           :class="small ? 'small' : ''"
           :title="category.description"
+          class="fw-semi-bold mb-1 small folder-description"
         >
-          <v-avatar v-if="category.connect_id" size="24" rounded class="me-1"
+          <v-avatar v-if="category.connect_id" class="me-1" rounded size="24"
             ><img :src="getConnectIcon(category.connect_id)"
           /></v-avatar>
 
@@ -59,17 +64,17 @@
         >
           <div class="w-50 border-end p-1 text-center">
             <v-avatar
-              :size="70"
               :color="SaminColorDarkDeep"
+              :size="70"
               class="folder-icon"
               drop-image="true"
               ><!-- dro-image : active drop area for images fast upload -->
               <v-img :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)">
                 <template v-slot:placeholder>
                   <v-progress-circular
-                    indeterminate
                     :color="SaminColorDark"
                     class="center-absolute"
+                    indeterminate
                   />
                 </template>
                 <v-progress-circular
@@ -84,8 +89,8 @@
 
           <div class="w-50 p-3 px-4 text-start" style="font-size: 12px">
             <p
-              class="mb-1"
               :title="$t('admin_shop.products.folder_widget.products')"
+              class="mb-1"
             >
               <i class="fas fa-box text-muted me-2" />
 
@@ -103,8 +108,8 @@
             </p>
 
             <p
-              class="mb-1"
               :title="$t('admin_shop.products.folder_widget.sub_categories')"
+              class="mb-1"
             >
               <i class="fas fa-shapes text-muted me-2" />
 
@@ -122,8 +127,8 @@
             </p>
 
             <p
-              class="mb-1"
               :title="$t('admin_shop.products.folder_widget.views')"
+              class="mb-1"
             >
               <i class="fas fa-eye text-muted me-2" />
               <!-- <small class="text-muted mb-0 mx-2"

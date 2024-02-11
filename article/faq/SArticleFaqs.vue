@@ -16,22 +16,21 @@
   <div :class="{ rtl: $vuetify.rtl }">
     <p
       v-if="editMode || (faqs && faqs.length)"
-      class="hr-text my-10"
       :data-content="$t('global.commons.faq')"
       :style="{
         '--bg-color': color,
         '--text-color': dark ? '#fff' : '#818078',
       }"
+      class="hr-text my-10"
     ></p>
 
     <v-expansion-panels
       v-model="panel"
-      variant="accordion"
-      multiple
-      class="justify-start mb-12"
-      :readonly="editMode"
       :dark="dark"
-
+      :readonly="editMode"
+      class="justify-start mb-12"
+      multiple
+      variant="accordion"
     >
       <v-slide-y-reverse-transition group hide-on-leave>
         <v-expansion-panel
@@ -44,40 +43,40 @@
             <v-text-field
               v-if="editMode"
               v-model="faq.question"
-              variant="solo"
               flat
+              hide-details
               placeholder="Write question..."
               single-line
-              hide-details
+              variant="solo"
             ></v-text-field>
             <div v-else v-text="faq.question"></div>
             <div v-if="editMode" style="min-width: max-content">
               <v-btn
-                class="mx-1"
-                title="Move Down"
-                @click="moveDown(faq)"
-                icon
-                variant="text"
                 :disabled="i === faqs.length - 1"
+                class="mx-1"
+                icon
+                title="Move Down"
+                variant="text"
+                @click="moveDown(faq)"
               >
                 <v-icon>keyboard_arrow_down</v-icon>
               </v-btn>
               <v-btn
-                class="mx-1"
-                title="Move Up"
-                @click="moveUp(faq)"
-                icon
-                variant="text"
                 :disabled="i === 0"
+                class="mx-1"
+                icon
+                title="Move Up"
+                variant="text"
+                @click="moveUp(faq)"
               >
                 <v-icon>keyboard_arrow_up</v-icon>
               </v-btn>
               <v-btn
+                :title="$t('global.actions.delete')"
                 class="mx-1"
+                color="red"
                 icon
                 variant="text"
-                color="red"
-                :title="$t('global.actions.delete')"
                 @click.stop="remove(faqs, faq)"
               >
                 <v-icon>close</v-icon>
@@ -87,7 +86,6 @@
           <v-expansion-panel-text class="answer">
             <div
               v-if="editMode"
-              v-text="faq.answer"
               :contenteditable="true"
               class="editable"
               @blur="
@@ -96,6 +94,7 @@
                   onChange();
                 }
               "
+              v-text="faq.answer"
             ></div>
             <div v-else v-html="faq.answer"></div>
           </v-expansion-panel-text>
@@ -116,20 +115,20 @@
       ></v-text-field>
       <v-textarea
         v-model="answer"
-        rows="3"
-        auto-grow
-        variant="underlined"
         :label="$t('global.commons.answer')"
+        auto-grow
         messages="Allowed: <h1>...<h6>, <br>, <ol>, <ul>, <li>, <a>, <p>, <div>, <b>, <strong>, <i>"
+        rows="3"
+        variant="underlined"
       ></v-textarea>
 
       <div class="widget-buttons">
         <v-btn
+          :disabled="!question || !answer"
           color="primary"
           size="x-large"
           variant="elevated"
           @click="add"
-          :disabled="!question || !answer"
         >
           <v-icon class="me-1">add</v-icon>
           {{ $t("global.actions.add") }}
@@ -228,7 +227,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .question {
   font-size: 17px;
   padding: 12px;
@@ -288,9 +287,10 @@ export default {
   padding: 16px 0;
   box-shadow: none;
 
-  &:after{
+  &:after {
     content: none; // Remove top border in vuetiry!
   }
+
   &:before {
     box-shadow: none;
   }

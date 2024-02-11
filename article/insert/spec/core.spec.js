@@ -36,7 +36,7 @@ describe("Core", function () {
     var textareaId;
 
     $("#fixtures").html(
-      '<div medium-editor-textarea-id="123"></div><textarea id="textarea" medium-editor-textarea-id="123">test</textarea>'
+      '<div medium-editor-textarea-id="123"></div><textarea id="textarea" medium-editor-textarea-id="123">test</textarea>',
     );
     this.$el = $("#textarea");
 
@@ -47,7 +47,7 @@ describe("Core", function () {
     expect(
       this.$el
         .siblings('[medium-editor-textarea-id="' + textareaId + '"]')
-        .hasClass("medium-editor-insert-plugin")
+        .hasClass("medium-editor-insert-plugin"),
     ).toBe(true);
   });
 
@@ -109,7 +109,7 @@ describe("Core", function () {
 
   it("shows plugin's buttons after clicking on empty paragraph", function () {
     this.$el.html(
-      '<p id="paragraph">&nbsp;</p><p id="paragraph2" class="medium-insert-active">test</p>'
+      '<p id="paragraph">&nbsp;</p><p id="paragraph2" class="medium-insert-active">test</p>',
     );
 
     this.$el.mediumInsert();
@@ -121,19 +121,19 @@ describe("Core", function () {
     jasmine.clock().tick(1);
 
     expect(this.$el.find(".medium-insert-buttons").css("display")).toBe(
-      "block"
+      "block",
     );
     expect(this.$el.find("#paragraph").hasClass("medium-insert-active")).toBe(
-      true
+      true,
     );
     expect(this.$el.find("#paragraph2").hasClass("medium-insert-active")).toBe(
-      false
+      false,
     );
   });
 
   it("shows only addon button after clicking on addon paragraph", function () {
     this.$el.html(
-      '<p id="paragraph" class="medium-insert-images">&nbsp;</p><p id="paragraph2" class="medium-insert-active">test</p>'
+      '<p id="paragraph" class="medium-insert-images">&nbsp;</p><p id="paragraph2" class="medium-insert-active">test</p>',
     );
 
     this.$el.mediumInsert();
@@ -145,13 +145,13 @@ describe("Core", function () {
     jasmine.clock().tick(101);
 
     expect(this.$el.find(".medium-insert-buttons").css("display")).toBe(
-      "block"
+      "block",
     );
     expect(
       this.$el
         .find('.medium-insert-buttons button[data-addon="embeds"]')
         .parent()
-        .css("display")
+        .css("display"),
     ).toBe("none");
   });
 
@@ -180,12 +180,12 @@ describe("Core", function () {
     this.$el.find(".medium-insert-buttons-show").click();
 
     expect(this.$el.find(".medium-insert-buttons-addons").css("display")).toBe(
-      "block"
+      "block",
     );
     expect(
       this.$el
         .find(".medium-insert-buttons-show")
-        .hasClass("medium-insert-buttons-rotate")
+        .hasClass("medium-insert-buttons-rotate"),
     ).toBe(true);
 
     this.$el.find(".medium-insert-buttons-show").click();
@@ -193,7 +193,7 @@ describe("Core", function () {
     expect(
       !this.$el
         .find(".medium-insert-buttons-show")
-        .hasClass("medium-insert-buttons-rotate")
+        .hasClass("medium-insert-buttons-rotate"),
     ).toBe(true);
   });
 

@@ -15,22 +15,22 @@
 <template>
   <div class="px-6 text-start">
     <s-widget-header
-      :title="title"
+      :addCaption="addCaption"
+      :addIcon="addIcon"
+      :addLoading="addLoading"
+      :addText="addText"
+      :buttonColor="buttonColor"
+      :disabled="disabled"
+      :disabledReason="disabledReason"
+      :dot="dot"
+      :dotColor="dotColor"
+      :href="href"
       :icon="icon"
       :iconColor="iconColor"
       :src="src"
-      :addCaption="addCaption"
-      :addIcon="addIcon"
-      :addText="addText"
-      :to="to"
-      :disabled="disabled"
-      :addLoading="addLoading"
-      :disabledReason="disabledReason"
-      :href="href"
       :target="target"
-      :buttonColor="buttonColor"
-      :dot="dot"
-      :dotColor="dotColor"
+      :title="title"
+      :to="to"
     ></s-widget-header>
     <v-list-subheader class="expandable px-0">
       {{ subtitle }}
@@ -72,8 +72,8 @@ export default {
       return this.isString(this.dot)
         ? this.dot
         : Array.isArray(this.dot)
-        ? this.dot.join(", ")
-        : null;
+          ? this.dot.join(", ")
+          : null;
     },
   },
 };

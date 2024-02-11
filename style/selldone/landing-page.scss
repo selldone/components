@@ -225,13 +225,15 @@
       padding-bottom: 30px !important;
     }
   }
+
   // -------------------------------------------
   // Dark mode page:
   &.dark-mode {
     .window-mode {
       background-color: #00000017;
     }
-    .text-muted{
+
+    .text-muted {
       color: rgba(255, 255, 255, 0.93) !important;
     }
   }

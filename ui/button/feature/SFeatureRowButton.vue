@@ -15,18 +15,18 @@
 <template>
   <component
     :is="to ? 'router-link' : 'div'"
+    :class="{ disabled: disabled }"
+    :style="color ? `border-color: ${color} !important; color: ${color}` : null"
     :to="to"
     class="row-hover rounded-xl border px-5 py-7 d-flex m-2 bg-gray"
-    :class="{ disabled: disabled }"
     @click="$emit('click')"
-    :style="color ? `border-color: ${color} !important; color: ${color}` : null"
   >
     <s-progress-loading v-if="loading"></s-progress-loading>
-    <v-icon v-if="icon" class="me-1" :color="color">{{ icon }}</v-icon>
+    <v-icon v-if="icon" :color="color" class="me-1">{{ icon }}</v-icon>
     <v-spacer></v-spacer>
 
     <span
-      ><v-icon v-if="titleIcon" class="me-1" :color="color ? color : '#111'">{{
+      ><v-icon v-if="titleIcon" :color="color ? color : '#111'" class="me-1">{{
         titleIcon
       }}</v-icon>
       {{ title }}<br />

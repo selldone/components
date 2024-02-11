@@ -20,32 +20,33 @@
         v-model="currency"
         :active-currencies="currencies"
         :return-object="false"
-        transparent
         class="max-width-field-mini"
-        solo
         flat
+        solo
+        transparent
       ></s-currency-input>
     </div>
     <s-progress-loading v-if="busy_fetch"></s-progress-loading>
     <v-data-table-server
-      :headers="headers"
-      :items="products"
-      hide-default-footer
-      :items-length="totalItems"
       v-model:options="options"
       v-model:page="page"
-      :sort-by="[{ key: null, order: 'desc' }]"
+      :headers="headers"
+      :items="products"
+      :items-length="totalItems"
       :items-per-page="itemsPerPage"
-      class="bg-transparent "      density="compact"
+      :sort-by="[{ key: null, order: 'desc' }]"
+      class="bg-transparent"
+      density="compact"
+      hide-default-footer
     >
       <template v-slot:item.icon="{ item }">
         <v-img
-          :src="getShopImagePath(item.icon, 128)"
           :aspect-ratio="1"
           :height="48"
+          :src="getShopImagePath(item.icon, 128)"
           :width="48"
-          contain
           class="rounded my-1 border"
+          contain
         />
       </template>
 
@@ -83,10 +84,10 @@
           ></price-view>
 
           <s-time-progress-bar
-            small
-            :start-time="item.dis_start"
             :end-time="item.dis_end"
+            :start-time="item.dis_start"
             class="disabled"
+            small
           ></s-time-progress-bar>
 
           <template
@@ -106,16 +107,16 @@
             ></price-view>
 
             <s-time-progress-bar
-              small
-              :start-time="item.new_dis_start"
               :end-time="item.new_dis_end"
+              :start-time="item.new_dis_start"
+              small
             ></s-time-progress-bar>
           </template>
         </div>
       </template>
 
       <template v-slot:bottom>
-        <v-pagination v-model="page" rounded :length="pageCount" class="my-3" />
+        <v-pagination v-model="page" :length="pageCount" class="my-3" rounded />
       </template>
     </v-data-table-server>
   </div>
@@ -125,6 +126,7 @@
 import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
 import _ from "lodash-es";
+
 export default {
   name: "BulkPreview",
   components: { STimeProgressBar, SCurrencyInput },
@@ -200,7 +202,11 @@ export default {
     options: {
       handler() {
         const { sortBy, page, itemsPerPage } = this.options;
-        this.fetchEligibleProducts(page, sortBy[0]?.key, sortBy[0]?.order==='desc');
+        this.fetchEligibleProducts(
+          page,
+          sortBy[0]?.key,
+          sortBy[0]?.order === "desc",
+        );
       },
       deep: true,
     },
@@ -252,7 +258,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .fxcol0 {
   display: flex;
   flex-direction: column;

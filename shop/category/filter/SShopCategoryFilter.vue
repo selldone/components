@@ -28,14 +28,14 @@
         v-for="item in present_variants_in_filter"
         :key="item.value"
         :color="ignore.includes(item.value) ? '#aaa' : '#111'"
-        class="m-2"
-        @click="ignore.toggle(item.value)"
-        title="Make this variant active/inactive in filter"
         :variant="ignore.includes(item.value) ? 'outlined' : 'flat'"
+        class="m-2"
+        title="Make this variant active/inactive in filter"
+        @click="ignore.toggle(item.value)"
       >
-        <v-icon class="me-2" start>{{
-          ignore.includes(item.value) ? "cancel" : "check_circle"
-        }}</v-icon>
+        <v-icon class="me-2" start
+          >{{ ignore.includes(item.value) ? "cancel" : "check_circle" }}
+        </v-icon>
 
         <v-icon class="me-2">{{ item.icon }}</v-icon>
         {{ item.text }}
@@ -45,24 +45,24 @@
 
       <s-widget-header
         :title="$t('add_category.edit_filter.spec_input')"
-        icon="summarize"
         class="mt-5"
+        icon="summarize"
       ></s-widget-header>
       <v-list-subheader>
         {{ $t("add_category.filter.message") }}
       </v-list-subheader>
       <v-select
         v-model="selected_specs"
+        :disabled="busy_get_specs"
+        :items="spec_keys"
+        :loading="busy_get_specs"
         :messages="$t('add_category.edit_filter.spec_input_message')"
         chips
         clearable
+        closable-chips
         multiple
-        :items="spec_keys"
-        :loading="busy_get_specs"
-        :disabled="busy_get_specs"
         placeholder="Select specs to show in filter..."
         variant="underlined"
-        closable-chips
       >
       </v-select>
 
@@ -92,15 +92,15 @@
             variant="tonal"
           >
             <span v-if="item.value === 'colors'">
-              <v-icon start :color="val">brightness_1</v-icon>
+              <v-icon :color="val" start>brightness_1</v-icon>
               {{ coloName(val) }}</span
             >
             <template v-else>
               <variant-asset-view
                 :shop-id="category.shop_id"
+                :size="16"
                 :value="val"
                 class="pen me-1"
-                :size="16"
               ></variant-asset-view>
               {{ val?.removeVariantAsset() }}
             </template>
@@ -119,15 +119,15 @@
           <v-chip
             v-for="price in prices"
             :key="price.currency"
-            size="small"
             class="mx-2"
             color="#fafafa"
+            size="small"
           >
             <s-currency-icon
               :currency="price.currency"
-              flag
               caption
               class="ms-n1"
+              flag
             ></s-currency-icon>
 
             <span class="mx-1"
@@ -154,12 +154,12 @@
             {{ item }}
             <v-spacer></v-spacer>
             <v-btn
-              icon
-              variant="text"
-              color="red"
-              @click="remove(selected_specs, item)"
               class="ms-1"
+              color="red"
+              icon
               title="Remove this spec from the filter list."
+              variant="text"
+              @click="remove(selected_specs, item)"
             >
               <v-icon>close</v-icon>
             </v-btn>
@@ -184,11 +184,11 @@
   <v-card-actions>
     <div class="widget-buttons">
       <v-btn
-        variant="elevated"
+        :loading="busy_edit"
         color="primary"
         size="x-large"
+        variant="elevated"
         @click="editCategoryFilter"
-        :loading="busy_edit"
       >
         <v-icon class="me-1">save</v-icon>
         {{ $t("global.actions.save") }} /
@@ -372,12 +372,9 @@ export default {
 
       axios
         .put(
-          window.API.PUT_EDIT_CATEGORY_FILTER(
-            this.shop.id,
-            this.category.id,
-          ),
+          window.API.PUT_EDIT_CATEGORY_FILTER(this.shop.id, this.category.id),
           {
-            list: this.selected_specs.map(i=>i.toString()),
+            list: this.selected_specs.map((i) => i.toString()),
             ignore: this.ignore,
           },
         )
@@ -400,12 +397,11 @@ export default {
           this.busy_edit = false;
         });
     },
-
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

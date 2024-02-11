@@ -14,12 +14,12 @@
 
 <template>
   <span
-    class="stamp"
     :class="{
       'is-nope': isDeclined,
       'is-approved': isApproved,
       'is-draft': isDraft,
     }"
+    class="stamp"
   >
     <slot></slot>
   </span>
@@ -45,7 +45,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .stamp {
   transform: rotate(12deg);
   color: #555;

@@ -14,15 +14,14 @@
 
 <template>
   <chart-sankey
-    class="snaky-chart"
-    :style="`height:${height}`"
+    :config="(c) => chartConfig(c)"
     :data="chartData"
-    :config="(c)=>chartConfig(c)"
+    :style="`height:${height}`"
+    class="snaky-chart"
   />
 </template>
 
 <script>
-
 import ChartSankey from "@components/chart/sankey/core/components/ChartSankey.vue";
 
 export default {
@@ -86,7 +85,6 @@ export default {
         { name: this.$t("global.commons.other") },
       ];
       this.chartData.links = [
-
         {
           source: this.$t("global.commons.sessions"),
           target: this.$t("global.commons.direct"),
@@ -126,7 +124,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .snaky-chart {
   width: 100%;
   height: 500px;

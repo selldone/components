@@ -17,8 +17,8 @@
     <s-shop-basket-item
       v-for="(item, index) in items"
       :key="index"
-      :shop="shop"
       :basket-item="item"
+      :shop="shop"
     >
     </s-shop-basket-item>
   </div>
@@ -51,7 +51,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

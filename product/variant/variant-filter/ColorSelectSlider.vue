@@ -14,14 +14,18 @@
 
 <template>
   <v-flex
-    d-flex
-    align-center
-    justify-center
-    class="slider-container pointer-pointer"
     :class="selected ? 'active' : ''"
+    align-center
+    class="slider-container pointer-pointer"
+    d-flex
+    justify-center
     @click="toggle()"
   >
-    <v-icon :color="selected ? '#444' : '#fff'" class="ms-1 no-inv" small>
+    <v-icon
+      :color="selected ? '#444' : '#fff'"
+      class="ms-1 no-inv"
+      size="small"
+    >
       {{ icon }}
     </v-icon>
 
@@ -30,8 +34,8 @@
         v-for="item in list"
         :key="item"
         :color="item"
-        class="me-1  hover-scale"
-        small
+        class="me-1 hover-scale"
+        size="small"
         @click="select(item)"
         @click.stop
         >brightness_1</v-icon
@@ -43,14 +47,16 @@
         @click="select(null)"
         @click.stop
       >
-        {{$t('global.commons.all')}}
+        {{ $t("global.commons.all") }}
       </span>
     </span>
-    <span v-else :color="selected" >
-      <v-icon v-if="selected" :color="selected" class=" hover-scale" small
+    <span v-else :color="selected">
+      <v-icon v-if="selected" :color="selected" class="hover-scale" size="small"
         >brightness_1</v-icon
       >
-      <span v-else class="card-badge-info">{{$t('global.variants.color')}}</span>
+      <span v-else class="card-badge-info">{{
+        $t("global.variants.color")
+      }}</span>
     </span>
   </v-flex>
 </template>
@@ -62,28 +68,28 @@ export default {
     icon: {
       required: false,
       type: String,
-      default: "palette"
+      default: "palette",
     },
     list: {
       required: true,
-      type: Array
+      type: Array,
     },
     value: {
       required: false,
-      default: null
+      default: null,
     },
 
     close: {
       required: false,
-      default: true
-    }
+      default: true,
+    },
   },
 
   data() {
     return {
       show: false,
 
-      selected: null
+      selected: null,
     };
   },
   watch: {
@@ -92,7 +98,7 @@ export default {
     },
     close() {
       this.show = !this.close;
-    }
+    },
   },
   created() {
     this.selected = this.value;
@@ -109,12 +115,12 @@ export default {
       this.selected = item;
       this.$emit("select", item);
       this.show = null;
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .slider-container {
   user-select: none;
 

@@ -16,12 +16,14 @@
   <div v-if="isFile && files" class="s--shop-product-files">
     <v-container class="my-16">
       <v-row align="center" justify="space-between">
-        <v-col cols="12" :md="free_files.length?6:12" class="text-start">
-          <v-list-subheader>● Files included in {{ product.title }}</v-list-subheader>
+        <v-col :md="free_files.length ? 6 : 12" class="text-start" cols="12">
+          <v-list-subheader
+            >● Files included in {{ product.title }}
+          </v-list-subheader>
           <h2 class="text-h3 line-height-normal font-weight-black">
             {{ $t("global.commons.files_list") }}
           </h2>
-          <v-row no-gutters class="mt-2">
+          <v-row class="mt-2" no-gutters>
             <div
               v-for="(val, extension) in files_grouped"
               :key="extension"
@@ -29,15 +31,15 @@
             >
               <img
                 :src="getFileExtensionImage(extension)"
-                width="20"
                 style="vertical-align: top"
+                width="20"
               />
-              {{   numeralFormat(val,"0.[0] a") }}🞬
+              {{ numeralFormat(val, "0.[0] a") }}🞬
             </div>
           </v-row>
         </v-col>
 
-        <v-col v-if="free_files.length" cols="12" sm="6" md="3">
+        <v-col v-if="free_files.length" cols="12" md="3" sm="6">
           <div class="-highlight">
             <span class="text-h3 font-weight-black">{{
               free_files.length
@@ -123,8 +125,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

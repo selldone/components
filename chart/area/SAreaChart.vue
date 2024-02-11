@@ -15,12 +15,12 @@
 <template>
   <apexchart
     v-if="chart_option"
-    class="s--area-chart"
-    dir="ltr"
-    :type="type"
     :height="height"
     :options="chart_option"
     :series="series"
+    :type="type"
+    class="s--area-chart"
+    dir="ltr"
   />
 </template>
 
@@ -143,7 +143,7 @@ export default {
           data: this.timeSeries.arrayOfForceInterpolateZero(
             item,
             true,
-            "created_at"
+            "created_at",
           ),
         });
         i++;
@@ -158,7 +158,7 @@ export default {
           this.timeSeries,
           this.keys,
           this.labelsData,
-          this.colors
+          this.colors,
         );
       }
 
@@ -346,6 +346,7 @@ export default {
   .apexcharts-theme-dark {
     background: transparent !important;
   }
+
   width: 100%;
 }
 </style>

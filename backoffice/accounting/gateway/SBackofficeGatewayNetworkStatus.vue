@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-row v-if="network" dense class="gns text-center">
+  <v-row v-if="network" class="gns text-center" dense>
     <v-col cols="3">
       <small>{{ $t("global.commons.active") }}</small>
       <s-check :model-value="network.active" read-only></s-check>
@@ -38,34 +38,39 @@
 
     <v-col
       v-if="network.history && Array.isArray(network.history)"
-      cols="12"
       :title="$t('global.commons.price')"
+      cols="12"
     >
       <div dir="ltr">
-        <b>{{   numeralFormat(network.price,"0,0.[0000]")  }}</b>
+        <b>{{ numeralFormat(network.price, "0,0.[0000]") }}</b>
         USD
       </div>
       <s-sparkline
         v-if="network.history.length"
-        :smooth="3"
         :gradient="
           network.history[network.history.length - 1] >= network.history[0]
             ? ['#2f976e', '#1ca2d7']
             : ['#847', '#F48']
         "
+        :height="20"
         :line-width="1"
+        :smooth="3"
         :value="network.history"
         auto-draw
-        :height="20"
         padding="3"
         stroke-linecap="round"
       >
       </s-sparkline>
     </v-col>
 
-    <v-col v-if="network.error" cols="12" :title="network.error" class="text-start">
-      <small
-        ><v-icon color="red" small>error</v-icon>
+    <v-col
+      v-if="network.error"
+      :title="network.error"
+      class="text-start"
+      cols="12"
+    >
+      <small>
+        <v-icon color="red" size="small">error</v-icon>
         {{ $t("global.commons.error") }}</small
       >
       {{ network.error?.limitWords(12) }}
@@ -78,7 +83,7 @@ import SSparkline from "@components/chart/sparkline/SSparkline.vue";
 
 export default {
   name: "SBackofficeGatewayNetworkStatus",
-  components: {SSparkline},
+  components: { SSparkline },
   props: {
     network: {},
   },
@@ -90,7 +95,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .gns {
   small {
     display: block;

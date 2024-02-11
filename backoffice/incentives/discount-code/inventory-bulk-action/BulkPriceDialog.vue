@@ -15,18 +15,18 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <v-dialog
-      :value="value"
-      @input="(v) => $emit('input', v)"
+      :model-value="value"
       fullscreen
       scrollable
       transition="dialog-bottom-transition"
+      @update:model-value="(v) => $emit('input', v)"
     >
-      <v-card >
+      <v-card>
         <v-card-title>
           {{ $t("inventory_list.bulk_price_dialog.title") }}
         </v-card-title>
         <v-card-text class="text-start">
-          <v-tabs v-model="tab" align-with-title>
+          <v-tabs v-model="tab" align-tabs="title">
             <v-tabs-slider color="primary"></v-tabs-slider>
 
             <v-tab>
@@ -46,30 +46,32 @@
           <v-tabs-items v-model="tab" class="mt-3">
             <v-window-item>
               <div class="widget-box mb-5">
-
-                <s-widget-header :title="$t('global.commons.price')" icon="price_change"></s-widget-header>
-
-
+                <s-widget-header
+                  :title="$t('global.commons.price')"
+                  icon="price_change"
+                ></s-widget-header>
 
                 <h2 class="text-center mt-2 mb-5 text-h4">
-                  ####### <v-icon>close</v-icon> (1 <v-icon>add</v-icon> %{{
-                    bulk_percent
-                  }})
+                  #######
+                  <v-icon>close</v-icon>
+                  (1
+                  <v-icon>add</v-icon>
+                  %{{ bulk_percent }})
                 </h2>
 
-                <p class="subtitle-2">
+                <p class="text-subtitle-2">
                   {{ $t("inventory_list.bulk_price_dialog.message") }}
                 </p>
 
                 <s-number-input
-                  prepend-inner-icon="fa:fas fa-percent"
                   v-model="bulk_percent"
-                  :min="-90"
-                  :max="90"
-                  :step="0.5"
                   :decimal="1"
-                  show-buttons
+                  :max="90"
+                  :min="-90"
+                  :step="0.5"
                   class="strong-field"
+                  prepend-inner-icon="fa:fas fa-percent"
+                  show-buttons
                 ></s-number-input>
               </div>
             </v-window-item>
@@ -78,25 +80,25 @@
                 <h2 class="text-center mt-2 mb-5 text-h4">
                   #######
                   <v-icon
-                    @click="bulk_constant = -bulk_constant"
                     :color="bulk_constant >= 0 ? 'green' : 'red'"
-                    >{{ bulk_constant >= 0 ? "add" : "remove" }}</v-icon
-                  >
+                    @click="bulk_constant = -bulk_constant"
+                    >{{ bulk_constant >= 0 ? "add" : "remove" }}
+                  </v-icon>
                   {{ Math.abs(bulk_constant) }}
                 </h2>
 
                 <s-currency-input
                   v-model="bulk_currency"
-                  :return-object="false"
                   :active-currencies="shop.currencies"
+                  :return-object="false"
                   @change="fetchReport"
                 ></s-currency-input>
 
                 <s-price-input
                   v-model="bulk_constant"
-                  class="strong-field"
                   :currency="bulk_currency"
                   allow-negative
+                  class="strong-field"
                 ></s-price-input>
               </div>
             </v-window-item>
@@ -110,34 +112,37 @@
 
                 <s-currency-input
                   v-model="bulk_currency"
-                  :return-object="false"
                   :active-currencies="shop.currencies"
+                  :return-object="false"
                   @change="fetchReport"
                 ></s-currency-input>
 
                 <s-price-input
                   v-model="bulk_ending"
-                  class="strong-field"
                   :currency="bulk_currency"
+                  class="strong-field"
                 ></s-price-input>
               </div>
             </v-window-item>
           </v-tabs-items>
 
           <div class="widget-box mb-5">
-
-            <s-widget-header :title="$t('global.commons.category')" icon="snippet_folder"></s-widget-header>
-            <v-list-subheader>Limit bulk action to a category and all subcategories.</v-list-subheader>
-
+            <s-widget-header
+              :title="$t('global.commons.category')"
+              icon="snippet_folder"
+            ></s-widget-header>
+            <v-list-subheader
+              >Limit bulk action to a category and all subcategories.
+            </v-list-subheader>
 
             <b-shop-category-input
               v-model="bulk_category"
-              :placeholder="$t('global.commons.all') + ' *.*'"
-              persistent-placeholder
-              clearable
               :label="$t('global.commons.category')"
-              no-home
               :messages="$t('inventory_list.category_filter_msg')"
+              :placeholder="$t('global.commons.all') + ' *.*'"
+              clearable
+              no-home
+              persistent-placeholder
               @change="fetchReport"
             >
             </b-shop-category-input>
@@ -150,12 +155,12 @@
               <div v-if="report">
                 <div class="py-3">
                   <s-value-dashed>
-                    <template v-slot:label> Total products </template>
+                    <template v-slot:label> Total products</template>
                     {{ report.count_products }}
                   </s-value-dashed>
 
                   <s-value-dashed>
-                    <template v-slot:label> Total variants </template>
+                    <template v-slot:label> Total variants</template>
                     {{ report.count_variants }}
                   </s-value-dashed>
                 </div>
@@ -165,8 +170,8 @@
             <!-- ━━━━━━━━━━━━━━━━━━ Confirmation ━━━━━━━━━━━━━━━━━━ -->
 
             <v-checkbox
-              :label="$t('inventory_list.bulk_price_dialog.check')"
               v-model="bulk_check"
+              :label="$t('inventory_list.bulk_price_dialog.check')"
               color="success"
             >
             </v-checkbox>
@@ -175,19 +180,19 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn @click="$emit('input', false)" text x-large>
+            <v-btn size="x-large" variant="text" @click="$emit('input', false)">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
 
             <v-btn
+              :class="{ disabled: !bulk_check }"
               color="primary"
               dark
-              :class="{ disabled: !bulk_check }"
+              size="x-large"
               @click="preview = true"
-              x-large
             >
-              {{$t('global.actions.show_preview')}}
+              {{ $t("global.actions.show_preview") }}
 
               <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
             </v-btn>
@@ -200,44 +205,44 @@
 
     <v-dialog
       v-model="preview"
+      fullscreen
       scrollable
       transition="dialog-bottom-transition"
-      fullscreen
     >
       <v-card min-height="60vh">
-        <v-card-title> </v-card-title>
+        <v-card-title></v-card-title>
 
         <v-card-text>
           <bulk-preview
             v-if="preview"
-            :url="list_url"
-            :shop="shop"
             :has-currency="!need_currency_in_params"
             :params="params"
+            :shop="shop"
+            :url="list_url"
           ></bulk-preview>
         </v-card-text>
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn @click="preview = false" text x-large>
+            <v-btn size="x-large" variant="text" @click="preview = false">
               <v-icon class="me-1">{{ $t("icons.chevron_back") }}</v-icon>
               {{ $t("global.actions.back") }}
             </v-btn>
 
             <v-btn
-              color="success"
               :disabled="!bulk_check"
-              @click="setBulkPrice"
               :loading="busy_bulk"
-              x-large
+              color="success"
+              size="x-large"
+              @click="setBulkPrice"
             >
               {{ $t("global.actions.apply_change") }}
 
-              <b class="ms-2" v-if="tab === 0">%{{ bulk_percent }}</b>
-              <b class="ms-2" v-else-if="tab === 1"
+              <b v-if="tab === 0" class="ms-2">%{{ bulk_percent }}</b>
+              <b v-else-if="tab === 1" class="ms-2"
                 >+ {{ bulk_constant }} {{ bulk_currency }}</b
               >
-              <b class="ms-2" v-else-if="tab === 2"
+              <b v-else-if="tab === 2" class="ms-2"
                 >{{ bulk_ending }} ####{{ bulk_currency }}</b
               >
             </v-btn>
@@ -261,7 +266,6 @@ import _ from "lodash-es";
 export default {
   name: "BulkPriceDialog",
   components: {
-
     BulkPreview,
     SValueDashed,
     BShopCategoryInput,
@@ -298,7 +302,7 @@ export default {
     },
     list_url() {
       return window.API.POST_SHOP_WAREHOUSE_BULK_CHANGE_PRICE_LIST(
-        this.shop.id
+        this.shop.id,
       );
     },
     params() {
@@ -320,20 +324,18 @@ export default {
   watch: {
     value(value) {
       if (value) {
-           this.resetToDefault();      // 🞇 Reset to default
+        this.resetToDefault(); // 🞇 Reset to default
         if (this.shop.currencies && this.shop.currencies.length)
           this.bulk_currency = this.shop.currencies[0];
         this.fetchReport();
       }
     },
-    need_currency_in_params(){
-      this.fetchReport()
-    }
+    need_currency_in_params() {
+      this.fetchReport();
+    },
   },
   created() {
-
-
-   // console.log("currencies", this.shop.currencies, this.bulk_currency);
+    // console.log("currencies", this.shop.currencies, this.bulk_currency);
   },
   methods: {
     setBulkPrice() {
@@ -341,7 +343,7 @@ export default {
       axios
         .post(
           window.API.POST_SHOP_WAREHOUSE_BULK_CHANGE_PRICE(this.shop.id),
-          this.params
+          this.params,
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -363,20 +365,20 @@ export default {
     fetchReport: _.throttle(function () {
       this.report = null;
 
-      this.$nextTick(() => {     // Make sure all params updated!
+      this.$nextTick(() => {
+        // Make sure all params updated!
         if (this.need_currency_in_params && !this.bulk_currency) return;
 
         this.busy_report = true;
 
-
         axios
           .get(
             window.API.POST_SHOP_WAREHOUSE_BULK_CHANGE_PRICE_REPORT(
-              this.shop.id
+              this.shop.id,
             ),
             {
               params: this.params,
-            }
+            },
           )
           .then(({ data }) => {
             if (!data.error) {
@@ -397,4 +399,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

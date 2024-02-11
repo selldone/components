@@ -14,31 +14,31 @@
 
 <template>
   <v-toolbar
-    class="my-2 overflow-auto"
-    flat
     :color="color"
     :dark="dark"
-    height="auto"
-    :style="`border-radius: ${radius};padding:${padding}`"
     :extended="$vuetify.display.smAndDown"
+    :style="`border-radius: ${radius};padding:${padding}`"
+    class="my-2 overflow-auto"
     extension-height="68"
+    flat
+    height="auto"
   >
     <v-spacer v-if="center && $vuetify.display.mdAndUp"></v-spacer>
 
     <template v-if="has_sort && $vuetify.display.mdAndUp">
       <v-btn-toggle
         :model-value="sortBy"
-        @update:model-value="(val) => $emit('update:sort-by', val)"
-        class="rounded-group ms-2"
-        selected-class="dark-flat"
         borderless
+        class="rounded-group ms-2"
         light
+        selected-class="dark-flat"
+        @update:model-value="(val) => $emit('update:sort-by', val)"
       >
         <v-btn
-          :value="item.value"
           v-for="(item, index) in sortKeys"
           :key="index.value"
           :small="small"
+          :value="item.value"
           class="tnt"
           variant="flat"
         >
@@ -49,16 +49,16 @@
       <v-btn-toggle
         :dark="dark"
         :model-value="sortDesc"
-        @update:model-value="(value) => $emit('update:sortDesc', value)"
-        mandatory
-        class="mx-2"
-        selected-class="dark-flat"
         borderless
+        class="mx-2"
+        mandatory
+        selected-class="dark-flat"
+        @update:model-value="(value) => $emit('update:sortDesc', value)"
       >
-        <v-btn :value="false" :small="small" variant="flat">
+        <v-btn :small="small" :value="false" variant="flat">
           <v-icon>keyboard_arrow_up</v-icon>
         </v-btn>
-        <v-btn :value="true" :small="small" variant="flat">
+        <v-btn :small="small" :value="true" variant="flat">
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
       </v-btn-toggle>
@@ -68,14 +68,14 @@
 
     <v-spacer v-if="$vuetify.display.mdAndUp"></v-spacer>
 
-    <v-menu offset-y v-if="$vuetify.display.smAndUp" open-on-hover>
+    <v-menu v-if="$vuetify.display.smAndUp" offset-y open-on-hover>
       <template v-slot:activator="{ props }">
         <v-btn
-          v-bind="props"
-          class="mx-2"
           :dark="dark"
-          icon
           :title="itemsPerPage"
+          class="mx-2"
+          icon
+          v-bind="props"
         >
           <v-icon>view_module</v-icon>
         </v-btn>
@@ -93,33 +93,33 @@
       </v-list>
     </v-menu>
     <v-text-field
+      :density="dense ? 'compact' : undefined"
       :model-value="search"
-      @update:model-value="(value) => $emit('update:search', value)"
+      :placeholder="$t('global.commons.search')"
+      :single-line="true"
+      bg-color="transparent"
+      class="max-width-field"
       clearable
-      variant="solo"
       flat
       hide-details
       prepend-inner-icon="search"
-      :placeholder="$t('global.commons.search')"
-      class="max-width-field"
-      :density="dense ? 'compact':undefined"
-      :single-line="true"
-      bg-color="transparent"
+      variant="solo"
+      @update:model-value="(value) => $emit('update:search', value)"
     >
     </v-text-field>
 
-    <template v-slot:extension v-if="has_sort && $vuetify.display.smAndDown">
+    <template v-if="has_sort && $vuetify.display.smAndDown" v-slot:extension>
       <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn
-            v-bind="props"
             :close="!!sortBy"
-            @click:close="$emit('update:sort-by', null)"
             class="mx-2 tnt"
             height="48"
+            v-bind="props"
             variant="flat"
+            @click:close="$emit('update:sort-by', null)"
           >
-            <v-icon start size="small">sort</v-icon>
+            <v-icon size="small" start>sort</v-icon>
             {{
               sortBy_object
                 ? $t(sortBy_object.label)
@@ -142,11 +142,11 @@
       <v-btn-toggle
         :dark="dark"
         :model-value="sortDesc"
-        @update:model-value="(value) => $emit('update:sortDesc', value)"
+        borderless
+        class="rounded-group mx-2"
         mandatory
         selected-class="dark-flat"
-        class="rounded-group mx-2"
-        borderless
+        @update:model-value="(value) => $emit('update:sortDesc', value)"
       >
         <v-btn :value="false">
           <v-icon>keyboard_arrow_up</v-icon>

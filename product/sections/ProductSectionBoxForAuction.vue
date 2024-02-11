@@ -13,38 +13,38 @@
   -->
 
 <template>
-  <div >
+  <div>
     <!-- ********************* 🞇 Discount inform ********************* -->
     <v-sheet
       v-if="!discount_percent && !window.ExternalWidget"
-      class="mx-2 mt-1 p-3 rounded-18px position-relative pp"
       :class="{
         'small-label': vertical,
         'align-self-end': $vuetify.display.xsOnly,
       }"
       :color="forAuction ? '#333' : 'fff'"
       :dark="forAuction"
-      @click.stop="
-        forAuction ? delete_from_auction() : put_to_waiting_for_auction()
-      "
       :title="
         forAuction
           ? $t('product_info.inform_auction')
           : $t('product_info.waiting_for_auction')
       "
+      class="mx-2 mt-1 p-3 rounded-18px position-relative pp"
+      @click.stop="
+        forAuction ? delete_from_auction() : put_to_waiting_for_auction()
+      "
     >
       <s-progress-loading v-if="busy_track_price"></s-progress-loading>
       <img
+        :class="{ 'img-grayscale': !forAuction }"
         class="fadeIn float-start me-1"
+        height="28"
         src="@components/assets/icons/track-price.svg"
         width="28"
-        height="28"
-        :class="{ 'img-grayscale': !forAuction }"
       />
       <div class="font-weight-black single-line">
         {{ $t("product_info.track_price") }}
       </div>
-      <div class="body-2 single-line">
+      <div class="text-body-2 single-line">
         {{
           forAuction
             ? $t("product_info.inform_auction")
@@ -82,13 +82,12 @@ export default {
   }),
 
   computed: {
-
     inform() {
       if (!this.product.informs) return null;
       return this.product.informs.find((item) => {
         return (
-            item.variant_id ===
-            (this.currentVariant ? this.currentVariant.id : null)
+          item.variant_id ===
+          (this.currentVariant ? this.currentVariant.id : null)
         );
       });
     },
@@ -101,7 +100,7 @@ export default {
       return this.discountProductPercent(
         this.shop,
         this.product,
-        this.currentVariant
+        this.currentVariant,
       );
     },
   },
@@ -118,17 +117,17 @@ export default {
         .put(
           window.XAPI.PUT_TO_WAITING_FOR_AUCTION(
             this.shop.name,
-            this.product.id
+            this.product.id,
           ),
           {
             variant_id: this.currentVariant ? this.currentVariant.id : null,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
             this.showSuccessAlert(
               this.$t("product_info.notifications.congratulation"),
-              this.$t("product_info.notifications.waiting_list_add_success")
+              this.$t("product_info.notifications.waiting_list_add_success"),
             );
             this.product.informs = data.informs;
             this.$forceUpdate();
@@ -150,19 +149,19 @@ export default {
         .delete(
           window.XAPI.DELETE_FROM_WAITING_FOR_AUCTION(
             this.shop.name,
-            this.product.id
+            this.product.id,
           ),
           {
             params: {
               variant_id: this.currentVariant ? this.currentVariant.id : null,
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
             this.showSuccessAlert(
               null,
-              this.$t("product_info.notifications.waiting_list_delete_success")
+              this.$t("product_info.notifications.waiting_list_delete_success"),
             );
             this.product.informs = data.informs;
           } else {
@@ -180,4 +179,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

@@ -22,7 +22,9 @@
         <v-icon color="black">playlist_add_check</v-icon>
         {{ $t("global.service.task.title") }}
       </p>
-      <p class="subtitle-2 mb-1">{{ $t("global.service.task.message") }}</p>
+      <p class="text-subtitle-2 mb-1">
+        {{ $t("global.service.task.message") }}
+      </p>
       <p v-for="(task, i) in outputs.tasks" :key="i" class="-item">
         {{ task.title }}
       </p>
@@ -34,15 +36,15 @@
         <v-icon color="black">date_range</v-icon>
         {{ $t("global.service.appointment.title") }}
       </p>
-      <p class="subtitle-2 mb-1">
+      <p class="text-subtitle-2 mb-1">
         {{ $t("global.service.appointment.message") }}
       </p>
 
       <s-week-day-time-picker
-        editable
         v-model="preferences.days"
         :restrictions="outputs.days"
         class="my-2 max-width-field-large mx-auto"
+        editable
         @change="onChange"
       ></s-week-day-time-picker>
     </div>
@@ -54,28 +56,30 @@
 
         {{ $t("global.service.booking.title") }}
       </p>
-      <p class="subtitle-2 mb-1">{{ $t("global.service.booking.message") }}</p>
+      <p class="text-subtitle-2 mb-1">
+        {{ $t("global.service.booking.message") }}
+      </p>
 
       <div class="d-flex border-between text-center align-items-center my-2">
         <div class="p-2">
-          <v-btn @click="en_cal = !en_cal" icon>
+          <v-btn icon @click="en_cal = !en_cal">
             <flag
               :iso="en_cal ? 'gb' : getCurrentLanguage().flag"
               :squared="false"
-          /></v-btn>
+            />
+          </v-btn>
         </div>
         <div v-if="hasTime(outputs.checkin)" class="flex-grow-1 p-2">
-          <span class="text-muted text-uppercase subtitle-2">Check-in</span
+          <span class="text-muted text-uppercase text-subtitle-2">Check-in</span
           ><br />
           <b dir="ltr"
             >{{ outputs.checkin["HH"] }} : {{ outputs.checkin["mm"] }}</b
           >
         </div>
-        <div
-          v-if="hasTime(outputs.checkout)"
-          class="flex-grow-1 p-2"
-        >
-          <span class="text-muted text-uppercase subtitle-2">Check-out</span><br />
+        <div v-if="hasTime(outputs.checkout)" class="flex-grow-1 p-2">
+          <span class="text-muted text-uppercase text-subtitle-2"
+            >Check-out</span
+          ><br />
           <b dir="ltr"
             >{{ outputs.checkout["HH"] }} : {{ outputs.checkout["mm"] }}</b
           >
@@ -84,21 +88,21 @@
 
       <v-date-picker
         v-model="preferences.dates"
-        multiple="range"
-        show-current
-        :min="new Date().toISOString()"
-        :locale="!en_cal ? getCurrentLanguage().full_local : undefined"
+        :allowed-dates="isAllowed"
+        :events="isDisabled"
         :first-day-of-week="
           !en_cal ? getCurrentLanguage().calendar.first_day_of_week : undefined
         "
+        :locale="!en_cal ? getCurrentLanguage().full_local : undefined"
+        :min="new Date().toISOString()"
         color="blue"
-        header-color="primary"
-        no-title
-        show-adjacent-months
-        :allowed-dates="isAllowed"
-        :events="isDisabled"
         event-color="red"
         full-width
+        header-color="primary"
+        multiple="range"
+        no-title
+        show-adjacent-months
+        show-current
         @change="onChange"
       >
       </v-date-picker>
@@ -140,11 +144,9 @@ export default {
     show() {
       return (
         this.preferences &&
-        (this.has_tasks ||
-          this.has_reserve ||
-          this.has_booking /* ||
+        (this.has_tasks || this.has_reserve || this.has_booking) /* ||
          this.has_subscription ||
-          this.has_charge*/)
+          this.has_charge*/
       );
     },
 
@@ -238,18 +240,18 @@ export default {
         .put(
           window.XAPI.PUT_BASKET_ITEM_PREFERENCES(
             this.getShop().name,
-            this.product.id
+            this.product.id,
           ),
           {
             basket_id: this.basket.id,
             variant_id: null,
             preferences: this.preferences,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
             let basket_item = this.basket.items.find(
-              (item) => item.id === data.item.id
+              (item) => item.id === data.item.id,
             );
             //  basket_item.preferences = data.item.preferences;
             Object.assign(basket_item, data.item);
@@ -261,7 +263,7 @@ export default {
 
             this.showSuccessAlert(
               null,
-              this.$t("global.basket_item_message.notifications.success")
+              this.$t("global.basket_item_message.notifications.success"),
             );
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -299,11 +301,12 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .tasks {
   p {
     margin: 2px 0;
   }
+
   .-item {
     &:before {
       content: "⬤ ";
@@ -315,6 +318,7 @@ export default {
     }
   }
 }
+
 .v-application--is-rtl {
   .tasks {
     .-item {

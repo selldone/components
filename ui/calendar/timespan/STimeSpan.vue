@@ -21,36 +21,38 @@
       <s-time-span-selector
         :date-range="date_range"
         :max-days="maxDays"
-        @select="setTimeSpan"
         variant="text"
+        @select="setTimeSpan"
       ></s-time-span-selector>
     </div>
 
     <v-range-slider
       v-show="!loading"
       v-model="date_range"
-      min="0"
       :max="maxDays"
       :step="1"
       :tick-size="8"
-      thumb-color="#c27800"
+      color="amber"
       density="compact"
       hide-details
-      color="amber"
+      min="0"
+      thumb-color="#c27800"
       thumb-label
       @end="onChange"
-
     ></v-range-slider>
     <v-progress-linear
       v-show="loading"
-      color="deep-purple-accent-4"
       class="my-2"
+      color="deep-purple-accent-4"
+      height="6"
       indeterminate
       rounded
-      height="6"
     ></v-progress-linear>
 
-    <div class="d-flex not-selectable text-center" :class="{ dense: dense,'small-width':smallWidth }">
+    <div
+      :class="{ dense: dense, 'small-width': smallWidth }"
+      class="d-flex not-selectable text-center"
+    >
       <small>{{ getLocalTimeString(end_date, false, dense, true) }}</small>
       <v-spacer></v-spacer>
       <small>{{ getLocalTimeString(start_date, false, dense, true) }}</small>
@@ -189,8 +191,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -198,17 +199,15 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--time-span{
+.s--time-span {
   position: relative;
 
   .dense {
     margin-top: -7px;
   }
-  .small-width{
+
+  .small-width {
     font-size: 12px;
   }
-
 }
-
-
 </style>

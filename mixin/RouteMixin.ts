@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import type {IReturn} from "@core/types/route/return.type";
+import type { IReturn } from "@core/types/route/return.type";
 
 declare global {
   interface Window {

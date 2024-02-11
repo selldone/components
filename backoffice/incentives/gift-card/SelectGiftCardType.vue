@@ -15,23 +15,23 @@
 <template>
   <v-select
     v-model="gift_type_selected"
-    class="m-2"
-    :items="gift_card_types"
-    item-text="account_number"
-    item-value="id"
-    :label="$t('gift_card_types_list.label')"
-    :messages="$t('gift_card_types_list.message')"
-    :return-object="returnObject"
-    :outlined="outlined"
-    :rounded="rounded"
-    :filled="filled"
     :dense="dense"
+    :filled="filled"
+    :items="gift_card_types"
+    :label="$t('gift_card_types_list.label')"
     :loading="busy"
+    :messages="$t('gift_card_types_list.message')"
+    :outlined="outlined"
+    :return-object="returnObject"
+    :rounded="rounded"
+    class="m-2"
+    item-title="account_number"
+    item-value="id"
   >
     <template v-slot:item="{ item }">
       <span>{{ item.title }}</span>
 
-      <v-avatar class="mx-1" size="24" :color="item.color">
+      <v-avatar :color="item.color" class="mx-1" size="24">
         <img :src="getShopImagePath(item.bg)" />
       </v-avatar>
 
@@ -43,8 +43,8 @@
             ? item === gift_type_selected
             : item.id === gift_type_selected
         "
-        color="green"
         class="mx-1"
+        color="green"
       >
         check
       </v-icon>
@@ -54,14 +54,14 @@
       <v-chip v-if="chip" color="#fafafa" light>
         <b>{{ item.title }}</b>
 
-        <v-avatar right size="20" :color="item.color">
+        <v-avatar :color="item.color" end size="20">
           <img :src="getShopImagePath(item.bg)" />
         </v-avatar>
       </v-chip>
       <span v-else class="small">
         <b>{{ item.title }}</b>
 
-        <v-avatar class="mx-1" size="20" :color="item.color">
+        <v-avatar :color="item.color" class="mx-1" size="20">
           <img :src="getShopImagePath(item.bg)" />
         </v-avatar>
       </span>
@@ -143,7 +143,7 @@ export default {
               sortDesc: true,
               search: null,
             },
-          }
+          },
         )
         .then(({ data }) => {
           this.gift_card_types = data.gift_card_types;

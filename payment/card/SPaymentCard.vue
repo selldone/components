@@ -21,22 +21,22 @@
   >
     <span
       v-if="card && image.startsWith('<svg')"
-      class="mx-auto d-block flex-grow-0"
       :title="card.brand"
+      class="mx-auto d-block flex-grow-0"
       style="width: 24px; height: auto"
       v-html="image"
     />
     <img
       v-else-if="card"
       :src="image"
-      height="24"
-      class="mx-auto d-block flex-grow-0"
       :title="card.brand"
+      class="mx-auto d-block flex-grow-0"
+      height="24"
     />
 
     <!-- Blockchain -->
 
-    <div v-if="card && card.blockchain" dir="ltr" class="m-1 flex-grow-1">
+    <div v-if="card && card.blockchain" class="m-1 flex-grow-1" dir="ltr">
       <span class="d-block text-subtitle-2"> {{ card.network }}</span>
 
       <div class="d-flex text-subtitle-2">
@@ -58,20 +58,20 @@
 
       <span
         v-if="card.sender"
-        class="d-block limited-text-150px ma-auto"
         :title="'Sender address: ' + card.sender"
+        class="d-block limited-text-150px ma-auto"
       >
-        <v-icon size="small" class="me-2"> alternate_email </v-icon>
-        <small class="hover-b pp" v-copy>{{ card.sender }}</small>
+        <v-icon class="me-2" size="small"> alternate_email </v-icon>
+        <small v-copy class="hover-b pp">{{ card.sender }}</small>
       </span>
 
       <span
         v-if="card.hash"
-        class="d-block limited-text-150px ma-auto"
         :title="'Transaction hash: ' + card.hash"
+        class="d-block limited-text-150px ma-auto"
       >
-        <v-icon size="small" class="me-2"> tag </v-icon>
-        <small class="hover-b pp" v-copy>{{ card.hash }}</small>
+        <v-icon class="me-2" size="small"> tag </v-icon>
+        <small v-copy class="hover-b pp">{{ card.hash }}</small>
       </span>
     </div>
 
@@ -87,7 +87,7 @@
         />
 
         <span dir="ltr">{{ card.card_no }}</span>
-        <v-icon size="small" class="mx-2"> lock </v-icon>
+        <v-icon class="mx-2" size="small"> lock</v-icon>
       </div>
       <!--
       <div v-if="card.bank" title="Bank" class="my-1">
@@ -98,7 +98,7 @@
     <!-- Not available -->
 
     <i v-else class="m-1 small text-muted">
-      <v-icon size="small" class="me-1">credit_card_off</v-icon>
+      <v-icon class="me-1" size="small">credit_card_off</v-icon>
       {{ $t("global.commons.no_credit_card_info") }}</i
     >
   </div>

@@ -17,7 +17,7 @@
     <!-- ................ Show Avocado Details ................ -->
     <div class="text-start">
       <h1>{{ shop_avocado.title }}</h1>
-      <p class="subtitle-2 my-1">{{ shop_avocado.message }}</p>
+      <p class="text-subtitle-2 my-1">{{ shop_avocado.message }}</p>
 
       <small :title="getLocalTimeString(avocado.updated_at)">
         {{ $t("avocado.last_update") }}:
@@ -25,7 +25,7 @@
       >
       <hr />
 
-      <p class="subtitle-2 my-1">
+      <p class="text-subtitle-2 my-1">
         {{ $t("avocado.step1") }}
       </p>
 
@@ -39,11 +39,11 @@
         </v-text-field>
 
         <v-textarea
-          rows="2"
-          auto-grow
           v-model="message"
           :label="$t('global.commons.description')"
           :placeholder="$t('avocado.description_plc')"
+          auto-grow
+          rows="2"
         >
         </v-textarea>
 
@@ -59,8 +59,8 @@
           v-model="selected_file"
           :label="$t('avocado.image')"
           :messages="$t('avocado.image_msg')"
-          append-inner-icon="image"
           accept="image/*"
+          append-inner-icon="image"
           prepend-icon=""
         />
 
@@ -68,29 +68,29 @@
           v-model="count"
           :label="$t('global.commons.count')"
           :min="1"
-          show-buttons
           class="mt-5"
+          show-buttons
         >
         </s-number-input>
 
         <div class="widget-buttons">
           <v-btn
-            @click="addItem()"
-            class="-add-btn"
-            :loading="busy_save_items"
-            color="success"
-            rounded
             :class="{ disabled: !title && !message && !link }"
-            x-large
+            :loading="busy_save_items"
+            class="-add-btn"
+            color="success"
             dark
+            rounded
+            size="x-large"
+            @click="addItem()"
           >
-            <v-icon small class="me-1">add</v-icon>
+            <v-icon class="me-1" size="small">add</v-icon>
             {{ $t("avocado.add_item") }}
           </v-btn>
         </div>
       </div>
 
-      <p class="mb-0 mt-4 subtitle-2">{{ $t("avocado.items_list") }}:</p>
+      <p class="mb-0 mt-4 text-subtitle-2">{{ $t("avocado.items_list") }}:</p>
       <s-shop-avocado-customer-order-items
         :avocado="avocado"
         :items="items"
@@ -101,14 +101,14 @@
       <div v-if="need_address" class="mb-12">
         <div v-if="!address_entered" class="widget-buttons">
           <v-btn
-            color="#03A9F4"
             class="-delivery-btn"
+            color="#03A9F4"
             dark
             rounded
-            x-large
+            size="x-large"
             @click="showMapSelect"
           >
-            <v-icon small class="me-1 blink-me">lens</v-icon>
+            <v-icon class="me-1 blink-me" size="small">lens</v-icon>
             {{ $t("global.commons.select_address") }}
           </v-btn>
         </div>
@@ -133,32 +133,33 @@
       <div v-if="!need_address || address_entered">
         <s-currency-input
           v-if="shop.currencies.length > 1"
-          class="my-5"
-          dense
-          :shop="shop"
           v-model="avocado.currency"
-          :return-object="false"
           :label="$t('global.commons.currency')"
           :messages="$t('avocado.currency_msg')"
+          :return-object="false"
+          :shop="shop"
+          class="my-5"
+          dense
         >
         </s-currency-input>
 
-        <p class="subtitle-2 mb-3">
+        <p class="text-subtitle-2 mb-3">
           {{ $t("avocado.step2") }}
         </p>
 
         <div class="widget-buttons">
           <v-btn
             :class="{ disabled: !can_submit }"
-            color="#03A9F4"
-            class="-delivery-btn"
-            dark
-            rounded
-            x-large
-            @click="reserveAvocado"
             :loading="busy_submit"
+            class="-delivery-btn"
+            color="#03A9F4"
+            rounded
+            size="x-large"
+            @click="reserveAvocado"
           >
-            <v-icon v-if="can_submit" small class="me-1 blink-me">lens</v-icon>
+            <v-icon v-if="can_submit" class="me-1 blink-me" size="small"
+              >lens
+            </v-icon>
             {{ $t("avocado.order_action") }}
           </v-btn>
         </div>
@@ -171,9 +172,9 @@
 
     <v-progress-linear
       v-if="busy_save"
-      indeterminate
       class="loader-to-bar"
       color="success"
+      indeterminate
     ></v-progress-linear>
   </div>
 </template>
@@ -183,6 +184,7 @@ import SShopAvocadoCustomerOrderItems from "./SShopAvocadoCustomerOrderItems.vue
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SShopCustomerReceiverInfoWidget from "../delivery/SShopCustomerReceiverInfoWidget.vue";
 import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
+
 export default {
   name: "SStorefrontAvocadoCustomerOrderForm",
   components: {
@@ -265,7 +267,7 @@ export default {
         this.startup_mode_map_dialog,
         this.map_location,
         this.onClickSetLocation,
-        false
+        false,
       );
     },
 
@@ -310,7 +312,7 @@ export default {
           this.message,
           this.link,
           this.selected_file?.length ? this.selected_file[0] : null,
-          this.count
+          this.count,
         )
 
         .then(({ item }) => {
@@ -340,7 +342,7 @@ export default {
 
           this.showSuccessAlert(
             null,
-            this.$t("avocado.notifications.order_success")
+            this.$t("avocado.notifications.order_success"),
           );
         })
         .catch((error) => {
@@ -354,7 +356,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

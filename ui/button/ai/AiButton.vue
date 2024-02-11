@@ -14,20 +14,20 @@
 
 <template>
   <v-btn
-    icon
-    class="ai-btn"
-    :loading="loading"
     :class="{ '-loading': loading }"
+    :loading="loading"
     :size="xLarge ? 'x-large' : undefined"
-    @click="$emit('click')"
+    class="ai-btn"
+    icon
     variant="text"
+    @click="$emit('click')"
   >
     <img
-      src="@components/assets/icons/ci-logo.png"
-      :width="xLarge ? 36 : 24"
       :height="xLarge ? 36 : 24"
+      :width="xLarge ? 36 : 24"
+      src="@components/assets/icons/ci-logo.png"
     />
-    <v-tooltip activator="parent" max-width="360" location="top">
+    <v-tooltip activator="parent" location="top" max-width="360">
       <b>AI</b> | Automatically generate contents or do process.
     </v-tooltip>
   </v-btn>
@@ -44,7 +44,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .ai-btn {
   &:before {
     content: "";

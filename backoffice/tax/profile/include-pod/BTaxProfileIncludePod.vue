@@ -24,12 +24,15 @@
       >
         <v-chip
           :color="included ? '#FFC107' : '#8BC34A'"
-          size="x-small"
-          label variant="flat"
           :style="{ bottom: included ? '0' : '-30px' }"
           class="-trans"
-          ><v-icon start>loupe</v-icon>Tax</v-chip
+          label
+          size="x-small"
+          variant="flat"
         >
+          <v-icon start>loupe</v-icon>
+          Tax
+        </v-chip>
       </div>
     </div>
   </div>
@@ -44,8 +47,8 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.-trans{
+<style lang="scss" scoped>
+.-trans {
   transition: all 0.3s ease-in-out;
 }
 </style>

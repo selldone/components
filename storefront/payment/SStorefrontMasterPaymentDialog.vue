@@ -18,61 +18,61 @@
 
     <v-bottom-sheet
       v-model="showSelectGateway"
-      inset
       :max-width="640"
       content-class="s--storefront-master-payment-dialog"
-      scrollable
+      inset
       persistent
+      scrollable
     >
       <s-payment-form
         v-if="exist_payment_form"
         ref="payment_form"
-        :mode="special_payment_mode"
-        :bill="bill"
-        :pack="pack"
-        :currency="currency"
+        :accept-c-o-d="acceptCOD"
         :address="payment_form_address"
         :amount="payment_form_amount"
-        :qr-code="payment_form_qr_code"
-        :payment-amount="bill ? bill.sum : 0"
+        :available-gateways="available_gateways"
+        :bill="bill"
+        :billingAddress="billingAddress"
+        :billingEmail="billingEmail"
+        :billingName="billingName"
+        :billingPhone="billingPhone"
+        :currency="currency"
         :has-gift-card-field="
           type !== 'AVOCADO' &&
           type !== 'HYPER' &&
           !!USER() &&
           type !== 'SUBSCRIPTION'
         "
-        :available-gateways="available_gateways"
-        @select-gateway="buy"
-        @close="delayedHide()"
-        has-club
-        :accept-c-o-d="acceptCOD"
-        :timeout="timeout"
-        @onEndPayment="(data) => onFinishPayment(data)"
+        :mode="special_payment_mode"
         :order-url="order_url"
-        :billingName="billingName"
-        :billingEmail="billingEmail"
-        :billingPhone="billingPhone"
-        :billingAddress="billingAddress"
+        :pack="pack"
+        :payment-amount="bill ? bill.sum : 0"
+        :qr-code="payment_form_qr_code"
+        :timeout="timeout"
+        has-club
+        @close="delayedHide()"
+        @onEndPayment="(data) => onFinishPayment(data)"
+        @select-gateway="buy"
       />
     </v-bottom-sheet>
 
     <radial-progress-bar
       v-for="(item, index) in paymentQue"
       :key="index"
-      class="widget-hover s--storefront-master-payment-circle-progress"
-      :style="{ top: `${index * 55 + 120}px` }"
-      :diameter="size"
-      :completed-steps="item.progress"
-      :total-steps="item.steps"
-      start-color="#E64A19"
-      stop-color="#FFA000"
-      :inner-stroke-color="SaminColorDark"
-      :stroke-width="size / 6"
-      @click="getPendingPaymentInfo(item.gateway, item.id, item.order_id)"
-      :loading="busy_loading_payment === item.id"
       :class="{
         disabled: busy_loading_payment && busy_loading_payment !== item.id,
       }"
+      :completed-steps="item.progress"
+      :diameter="size"
+      :inner-stroke-color="SaminColorDark"
+      :loading="busy_loading_payment === item.id"
+      :stroke-width="size / 6"
+      :style="{ top: `${index * 55 + 120}px` }"
+      :total-steps="item.steps"
+      class="widget-hover s--storefront-master-payment-circle-progress"
+      start-color="#E64A19"
+      stop-color="#FFA000"
+      @click="getPendingPaymentInfo(item.gateway, item.id, item.order_id)"
     >
       <img
         :src="getShopImagePath(item.icon)"
@@ -84,12 +84,13 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Redirect loading dialog ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
     <div v-if="redirect_loading" class="blocking-dialog">
       <v-btn
-        @click="redirect_loading = false"
         class="absolute-top-end"
-        icon
         dark
-        ><v-icon>close</v-icon></v-btn
+        icon
+        @click="redirect_loading = false"
       >
+        <v-icon>close</v-icon>
+      </v-btn>
       <div class="widget rounded-18px p-5 min-width-200">
         <s-loading css-mode light></s-loading>
         {{ $t("global.commons.waiting_connecting_payment") }}
@@ -107,9 +108,9 @@
       <input
         v-for="(item, key) in payment_fields"
         :key="key"
-        type="hidden"
         :name="key"
         :value="item"
+        type="hidden"
       />
     </form>
   </div>
@@ -219,7 +220,7 @@ export default {
     available_gateways() {
       if (this.type === ProductType.SUBSCRIPTION.code) {
         return this.shop.gateways.filter((g) =>
-          this.subscription_gateway_codes.includes(g.code)
+          this.subscription_gateway_codes.includes(g.code),
         );
       }
       return this.shop.gateways;
@@ -292,14 +293,14 @@ export default {
             StorefrontLocalStorages.AddCurrentGuestCodeToHistory(
               type,
               bill.order_id,
-              code
+              code,
             );
           }
 
           //console.log("======payment-form=========",'acceptCOD',acceptCOD);
         },
-        800
-      )
+        800,
+      ),
     );
     //―――――――――――――――――――――― 🎗️ Subscription ――――――――――――――――――――
 
@@ -330,7 +331,7 @@ export default {
         this.exist_payment_form = true;
 
         this.subscription_gateway_codes = gateway_codes;
-      }, 800)
+      }, 800),
     );
 
     // Try to pay pending transactions:
@@ -347,11 +348,11 @@ export default {
             gateway,
             transaction_id,
             order_id,
-            force_reset_payment
+            force_reset_payment,
           );
         },
-        800
-      )
+        800,
+      ),
     );
 
     // Payment of bill:
@@ -393,7 +394,7 @@ export default {
 
         this.showSelectGateway = true;
         this.exist_payment_form = true;
-      }, 800)
+      }, 800),
     );
 
     // Payment of avocado:
@@ -435,7 +436,7 @@ export default {
 
         this.showSelectGateway = true;
         this.exist_payment_form = true;
-      }, 800)
+      }, 800),
     );
 
     // Payment of hyper:
@@ -476,7 +477,7 @@ export default {
 
         this.showSelectGateway = true;
         this.exist_payment_form = true;
-      }, 800)
+      }, 800),
     );
   },
 
@@ -508,7 +509,7 @@ export default {
     }
     // ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.interval) clearInterval(this.interval);
 
     this.EventBus.$off("payment-form-basket");
@@ -525,7 +526,7 @@ export default {
         amount_check,
         gift_cards,
         params,
-        callback_paypal
+        callback_paypal,
       );
 
       /*   if (this.type === "Physical") this.buyBasketProduct(gateway, gift_cards);
@@ -545,7 +546,7 @@ export default {
       gateway,
       transaction_id,
       order_id,
-      force_reset_payment = false
+      force_reset_payment = false,
     ) {
       this.busy_loading_payment = transaction_id;
 
@@ -554,19 +555,19 @@ export default {
           window.XAPI.GET_PENDING_PAYMENT_INFO(
             this.shop_name,
             gateway,
-            transaction_id
+            transaction_id,
           ),
           {
             params: {
               code: !this.USER()
                 ? StorefrontLocalStorages.GetShopHistoryGuestCodeOfOrder(
-                    order_id
+                    order_id,
                   ) /*🥶 Guest*/
                 : undefined,
 
               force_reset_payment: force_reset_payment,
             },
-          }
+          },
         )
         .then(({ data }) => {
           console.log("Received information...", data);
@@ -580,7 +581,7 @@ export default {
             });
             this.showSuccessAlert(
               "Reopen Order",
-              "We've successfully reopened this order, allowing you to attempt payment with a different method."
+              "We've successfully reopened this order, allowing you to attempt payment with a different method.",
             );
             return;
           }
@@ -595,12 +596,12 @@ export default {
           if (data.success) {
             this.showSuccessAlert(
               this.$t("master_payment.notifications.payment_success_title"),
-              this.$t("master_payment.notifications.payment_success")
+              this.$t("master_payment.notifications.payment_success"),
             );
 
             const _refreshing_page = this.goToOrderInfo(
               data.order_type,
-              data.order_id
+              data.order_id,
             );
             if (!_refreshing_page) {
               this.fetchBasketAndShop(); // Refresh!
@@ -647,7 +648,7 @@ export default {
           if (data.status === "Processing") {
             this.showWarningAlert(
               "Processing",
-              "Payment on processing, require no more actions."
+              "Payment on processing, require no more actions.",
             );
           }
           // ―――――――― Direct payment  ――――――――
@@ -674,7 +675,7 @@ export default {
                   data.transaction_id,
                   data.unique_id,
                   data.timeout * 1000,
-                  data.interval * 1000
+                  data.interval * 1000,
                 );
             }, 1000);
           }
@@ -727,7 +728,7 @@ export default {
       amount_check,
       gift_cards,
       params,
-      callback_paypal
+      callback_paypal,
     ) {
       this.busy_buy = true;
       // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
@@ -737,7 +738,7 @@ export default {
 
       if (
         BasketHelper.IsServiceAndNeedPricing(
-          this.order
+          this.order,
         ) /*this.type === "SERVICE"*/
       ) {
         console.log("It needs pricing by the seller after checkout.");
@@ -745,17 +746,17 @@ export default {
           this.shop_name,
           this.shop_bill.order_id,
           this.shop_bill.id,
-          gateway
+          gateway,
         );
         // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
         guest_code = StorefrontLocalStorages.GetShopHistoryGuestCodeOfOrder(
-          this.shop_bill.order_id
+          this.shop_bill.order_id,
         ); // Service payments are after basket reservation! (Bills payments)
       } else if (this.type === "AVOCADO") {
         url = window.XAPI.POST_PAY_AVOCADO(
           this.shop_name,
           this.shop_avocado.hash,
-          gateway
+          gateway,
         );
       } else if (this.type === "HYPER") {
         url = window.XAPI.POST_PAY_HYPER(this.shop_name, gateway);
@@ -819,7 +820,7 @@ export default {
               pending_transactions.push(data.que);
               this.$store.commit(
                 "setPendingTransactions",
-                pending_transactions
+                pending_transactions,
               );
             }
 
@@ -838,7 +839,7 @@ export default {
                 data.transaction_id,
                 data.unique_id,
                 data.timeout * 1000,
-                data.interval * 1000
+                data.interval * 1000,
               );
             }
 
@@ -846,7 +847,7 @@ export default {
             if (data.payed_by_gift_card) {
               this.showSuccessAlert(
                 this.$t("master_payment.notifications.buy_title"),
-                this.$t("master_payment.notifications.pay_by_giftcards")
+                this.$t("master_payment.notifications.pay_by_giftcards"),
               );
 
               this.onFinishPayment(data);
@@ -858,7 +859,7 @@ export default {
             else if (data.free_order) {
               this.showSuccessAlert(
                 this.$t("master_payment.notifications.buy_title"),
-                this.$t("master_payment.notifications.free_order")
+                this.$t("master_payment.notifications.free_order"),
               );
               this.onFinishPayment(data);
 
@@ -869,7 +870,7 @@ export default {
             else if (data.cod) {
               this.showSuccessAlert(
                 this.$t("master_payment.notifications.buy_title"),
-                this.$t("master_payment.notifications.pay_by_cod")
+                this.$t("master_payment.notifications.pay_by_cod"),
               );
               this.onFinishPayment(data);
 
@@ -880,7 +881,7 @@ export default {
             else if (data.dir) {
               this.showSuccessAlert(
                 this.$t("master_payment.notifications.buy_title"),
-                this.$t("master_payment.notifications.pay_by_dir")
+                this.$t("master_payment.notifications.pay_by_dir"),
               );
               this.onFinishPayment(data);
 
@@ -896,7 +897,7 @@ export default {
               // 2. Show success alert:
               this.showSuccessAlert(
                 this.$t("master_payment.notifications.pay_title"),
-                this.$t("master_payment.notifications.qr_code_payment")
+                this.$t("master_payment.notifications.qr_code_payment"),
               );
 
               // 3. Show qr code:
@@ -928,8 +929,8 @@ export default {
               this.showSuccessAlert(
                 this.$t("master_payment.notifications.pay_title"),
                 this.$t(
-                  "master_payment.notifications.connecting_to_online_gateway"
-                )
+                  "master_payment.notifications.connecting_to_online_gateway",
+                ),
               );
               // Now redirect by auto form submit...
             }
@@ -952,7 +953,7 @@ export default {
           this.delayedHide();
 
           // Scroll to top page:
-          ScrollHelper.scrollToTop(0,'smooth')
+          ScrollHelper.scrollToTop(0, "smooth");
         })
         .finally(() => {
           this.busy_buy = false;
@@ -1013,7 +1014,7 @@ export default {
           this.getPendingPaymentInfo(
             item.gateway,
             item.id,
-            item.order_id /*Order ID*/
+            item.order_id /*Order ID*/,
           );
         } catch (e) {
           console.error(e);
@@ -1041,7 +1042,7 @@ export default {
       }
 
       // Scroll to top page:
-      ScrollHelper.scrollToTop(0,'smooth')
+      ScrollHelper.scrollToTop(0, "smooth");
 
       _.delay(() => {
         this.exist_payment_form = false;
@@ -1095,6 +1096,7 @@ export default {
 .s--storefront-master-payment-dialog {
   position: relative;
 }
+
 .s--storefront-master-payment-circle-progress {
   user-select: none;
   position: fixed;

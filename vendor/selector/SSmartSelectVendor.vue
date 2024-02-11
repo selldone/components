@@ -15,27 +15,27 @@
 <template>
   <div :class="{ dark: dark }" class="s--smart-select-vendor">
     <h3 v-if="label" class="my-2">
-      <v-icon class="me-1" :color="dark ? '#fff' : '#111'">storefront</v-icon>
+      <v-icon :color="dark ? '#fff' : '#111'" class="me-1">storefront</v-icon>
       {{ label }}
     </h3>
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
-      tag="div"
-      group
-      class="border-between-vertical rounded-card"
       :class="{ disabled: disabled, '-rounded-8px': items_show.length <= 1 }"
+      class="border-between-vertical rounded-card"
+      group
       hide-on-leave
+      tag="div"
     >
       <div
         v-for="vendor in items_show"
         :key="vendor.id"
-        class="s--smart-select-vendor-item row-hover usn border"
         :class="{
           'bg-dark': dark,
           'bg-white': !dark,
           's--shadow-no-padding z1 my-2': vendor.id === value,
         }"
+        class="s--smart-select-vendor-item row-hover usn border"
         @click="
           $emit('input', forceShowAll ? vendor.id : value ? null : vendor.id);
           $emit('change', forceShowAll ? vendor.id : value ? null : vendor.id);
@@ -43,9 +43,9 @@
       >
         <div class="s--smart-select-vendor-content">
           <div class="flex-grow-0 me-2">
-            <v-icon color="primary" :large="vendor.id === value">{{
-              vendor.id === value ? "lens" : "radio_button_unchecked"
-            }}</v-icon>
+            <v-icon :size="vendor.id === value && 'large'" color="primary"
+              >{{ vendor.id === value ? "lens" : "radio_button_unchecked" }}
+            </v-icon>
           </div>
           <div class="flex-grow-1">
             <router-link
@@ -56,30 +56,28 @@
               }"
               class="s--smart-select-vendor-link tnt"
               exact
-              title="Go to the store page."
               target="_blank"
+              title="Go to the store page."
             >
-              {{$t('select_vendor.item_title',{vendor:vendor.name})}}
-              <v-icon class="ms-1" small color="primary"
-                >launch</v-icon
-              ></router-link
-            >
+              {{ $t("select_vendor.item_title", { vendor: vendor.name }) }}
+              <v-icon class="ms-1" color="primary" size="small">launch </v-icon>
+            </router-link>
             <b v-else>
               {{ vendor.name }}
             </b>
-            <v-list-subheader style="height: auto" class="p-0">
+            <v-list-subheader class="p-0" style="height: auto">
               {{ vendor.description }}
             </v-list-subheader>
           </div>
 
           <div class="min-width-100">
             <price-view
-              :currency="GetUserSelectedCurrency()"
               :amount="calcVendorPrice(vendor)"
+              :currency="GetUserSelectedCurrency()"
             ></price-view>
           </div>
 
-          <v-avatar rounded color="#fafafa">
+          <v-avatar color="#fafafa" rounded>
             <img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 128)" />
             <v-icon v-else>storefront</v-icon>
           </v-avatar>
@@ -138,15 +136,14 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--smart-select-vendor {
   text-align: start;
 
   .s--smart-select-vendor-item {
     padding: 8px;
-    cursor:pointer;
+    cursor: pointer;
     margin-bottom: 4px;
-
 
     .s--smart-select-vendor-content {
       display: flex;
@@ -155,6 +152,7 @@ export default {
 
       .s--smart-select-vendor-link {
         font-weight: 700;
+
         &:hover {
           font-weight: 900;
         }

@@ -23,7 +23,7 @@
         <v-icon size="small">{{
           cluster.parent_id ? "more_horiz" : "home"
         }}</v-icon>
-        <v-icon class="mx-1" :small="small">{{
+        <v-icon :small="small" class="mx-1">{{
           $t("icons.chevron_next")
         }}</v-icon>
       </span>
@@ -33,20 +33,20 @@
         ><img :src="getShopImagePath(cluster.parent.icon, 64)" class="me-1"
       /></v-avatar>
       <!-- Parent has no image  -->
-      <v-icon v-else size="small" class="me-1">folder</v-icon>
+      <v-icon v-else class="me-1" size="small">folder</v-icon>
 
       {{ cluster.parent.name }}
     </span>
 
     <!-- 1. Parent > Not exist -->
     <span v-else>
-      <v-icon size="small" class="me-1">home</v-icon>
+      <v-icon class="me-1" size="small">home</v-icon>
       {{ $t("global.commons.home") }}
     </span>
 
     <!-- -------------------- Current -------------------- -->
 
-    <v-icon class="mx-1" :small="small">{{ $t("icons.chevron_next") }}</v-icon>
+    <v-icon :small="small" class="mx-1">{{ $t("icons.chevron_next") }}</v-icon>
 
     <v-avatar v-if="cluster.icon" :size="small ? 16 : 24"
       ><img :src="getShopImagePath(cluster.icon, 64)" class="me-1"

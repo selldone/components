@@ -21,37 +21,35 @@
         min-height="100px"
       >
         <s-article-editor
-          class="article samin-article-content my-4 text-start"
-          :title="guide_article.title"
           :body="guide_article.body"
-          :only-view="true"
           :edit="false"
+          :only-view="true"
+          :title="guide_article.title"
+          class="article samin-article-content my-4 text-start"
           suffix-id="guide"
         >
         </s-article-editor>
       </s-expand-view>
 
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
-      <div
-        v-if="$vuetify.display.mdAndUp && admin_url_guide"
-        class="text-end"
-      >
+      <div v-if="$vuetify.display.mdAndUp && admin_url_guide" class="text-end">
         <v-btn
-          dark
           :href="admin_url_guide"
-          target="_blank"
           class="tnt fadeIn"
+          dark
+          target="_blank"
           title="Open product admin panel"
         >
           <img
+            class="me-1"
+            height="16"
             src="../../assets/selldone-logo/logo-mini-white.svg"
             width="16"
-            height="16"
-            class="me-1"
           />
 
-          Edit Guide <v-icon class="mx-1" small>open_in_new</v-icon></v-btn
-        >
+          Edit Guide
+          <v-icon class="mx-1" size="small">open_in_new</v-icon>
+        </v-btn>
       </div>
     </v-container>
   </div>
@@ -91,7 +89,7 @@ export default {
         this.product &&
         this.product.profiles &&
         this.product.profiles.find(
-          (p) => p.type === LogisticProfileType.GUIDE.value
+          (p) => p.type === LogisticProfileType.GUIDE.value,
         )
       );
     },
@@ -119,13 +117,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-product-guide {
-
 }
 
 /*
@@ -133,6 +129,5 @@ export default {
  */
 
 .s--shop-product-guide {
-
 }
 </style>

@@ -14,30 +14,32 @@
 
 <template>
   <v-autocomplete
+    v-model:search="search"
+    :customFilter="() => true"
+    :disabled="disabled || IS_VENDOR_PANEL"
+    :items="pricings"
+    :loading="busy"
+    :messages="
+      selected_pricing?.description ? selected_pricing?.description : undefined
+    "
     :model-value="modelValue"
+    :return-object="false"
+    :variant="variant"
+    clearable
+    item-title="title"
+    item-value="id"
+    label="Pricing model"
+    persistent-placeholder
+    placeholder="Select a pricing model ... (opt)"
     @update:model-value="
       (val) => {
         $emit('update:modelValue', val);
       }
     "
-    :items="pricings"
-    :loading="busy"
-    label="Pricing model"
-    placeholder="Select a pricing model ... (opt)"
-    persistent-placeholder
-    item-value="id"
-    item-title="title"
-    :return-object="false"
-    clearable
     @click:clear="
       $emit('click:clear');
       getPricings();
     "
-    v-model:search="search"
-    :customFilter="() => true"
-    :messages="selected_pricing?.description?selected_pricing?.description:undefined"
-    :disabled="disabled || IS_VENDOR_PANEL"
-    :variant="variant"
   >
     <template v-slot:selection="{}">
       <template v-if="selected_pricing">
@@ -51,7 +53,7 @@
     <template v-slot:item="{ item, props }">
       <v-list-item v-bind="props">
         <template v-slot:title>
-          <v-row no-gutters align="center">
+          <v-row align="center" no-gutters>
             {{ item.raw.title }}
             <v-spacer></v-spacer>
             <b class="mx-2">{{ item.raw.commission }}%</b>
@@ -162,4 +164,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

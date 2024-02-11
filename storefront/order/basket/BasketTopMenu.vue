@@ -14,19 +14,19 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="shopping-basket d-flex flex-column">
-    <div class="text-center pt-2" v-if="filtered_types.length > 1">
+    <div v-if="filtered_types.length > 1" class="text-center pt-2">
       <s-circle-button
         v-for="item in filtered_types"
         :key="item.code"
-        :src="item.image"
-        @click="type = item.code"
-        :tooltip="$t(item.name)"
+        :badge-number="getCount(item.code)"
         :disabled="!item.enable"
         :outline="type === item.code"
-        has-badge
-        :badge-number="getCount(item.code)"
+        :src="item.image"
+        :tooltip="$t(item.name)"
         class="mb-6"
+        has-badge
         persist-badge
+        @click="type = item.code"
       />
     </div>
 
@@ -52,18 +52,18 @@
             </h2>
 
             <price-view
-              :title="$t('basket_top_menu.total_price')"
               :amount="total_price"
-              large
+              :title="$t('basket_top_menu.total_price')"
               class="my-2"
+              large
             ></price-view>
           </div>
           <v-avatar
             v-else
             key="b"
             :size="64"
-            @click="$router.push({ name: 'ShopPage' })"
             class="pointer-pointer row-hover mx-auto d-block"
+            @click="$router.push({ name: 'ShopPage' })"
           >
             <img :src="getShopImagePath(shop.icon)" />
           </v-avatar>
@@ -97,9 +97,8 @@
             @click="goToProduct(item.product.id)"
           >
             <template v-slot:prepend>
-              <v-avatar rounded :size="$vuetify.display.mdAndUp ? 64 : 48">
+              <v-avatar :size="$vuetify.display.mdAndUp ? 64 : 48" rounded>
                 <v-img
-                  aspect-ratio="1"
                   :src="
                     getShopImagePath(
                       item.variant?.image
@@ -108,6 +107,7 @@
                       128,
                     )
                   "
+                  aspect-ratio="1"
                   class="rounded-14-12"
                 />
               </v-avatar>
@@ -128,15 +128,15 @@
 
             <v-list-item-action>
               <v-btn
-                @click.stop
-                @click="deleteItemFromBasket(item)"
                 :loading="busy_remove === item.id"
                 class="nbt"
                 icon
-                variant="outlined"
                 title="Remove from cart."
+                variant="outlined"
+                @click="deleteItemFromBasket(item)"
+                @click.stop
               >
-                <v-icon> close </v-icon>
+                <v-icon> close</v-icon>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -184,6 +184,7 @@
 import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import { MapHelper } from "@core/helper/map/MapHelper";
+
 export default {
   name: "BasketTopMenu",
   components: { VariantItemViewMicro },
@@ -303,7 +304,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .shopping-basket {
   font-size: 0.857rem;
   font-weight: 500;
@@ -351,6 +352,7 @@ export default {
     &:hover {
       background: #f3f3f3;
     }
+
     .cap {
     }
   }
@@ -361,6 +363,7 @@ export default {
     text-align: center;
     padding: 12px 12px;
     transition: background-color 0.3s ease-in-out;
+
     &:hover {
       background: #f3f3f3;
     }
@@ -370,6 +373,7 @@ export default {
 .shop-basket-btn {
   font-weight: 400;
   border-radius: 8px;
+
   .items-count {
     color: #fff;
   }

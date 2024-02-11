@@ -15,7 +15,6 @@
 <template>
   <div
     v-if="value && can_show"
-    class="s--storefront-campaign-notification p-2 fadeInUpBig"
     :class="{ preview: preview }"
     :style="{
       'background-image': notification.bg
@@ -30,13 +29,13 @@
       'animation-delay':
         (notification.delay && !testMode ? notification.delay : 0) + 's',
     }"
+    class="s--storefront-campaign-notification p-2 fadeInUpBig"
   >
     <v-img
       v-if="notification.image"
       :src="getShopImagePath(notification.image)"
-      height="96"
       class="mx-auto my-2"
-      contain
+      height="96"
     ></v-img>
     <p
       v-if="notification.title"
@@ -44,11 +43,11 @@
       v-html="notification.title"
     ></p>
     <p
-      class="text-start mx-2"
       :style="{
         'padding-left': notification.radius + 'px',
         'padding-right': notification.radius + 'px',
       }"
+      class="text-start mx-2"
       v-html="notification.message"
     ></p>
     <v-spacer></v-spacer>
@@ -56,19 +55,24 @@
     <div>
       <div class="widget-buttons">
         <v-btn
-          depressed
           :color="notification.text_color"
-          text
           class="m-2"
+          variant="text"
           @click="close()"
         >
           {{ $t("global.actions.close") }}
         </v-btn>
 
         <v-btn
-          :url="notification.url"
           v-if="notification.action"
+          :color="notification.btn_color ? notification.btn_color : undefined"
           :href="testMode ? null : notification.url"
+          :style="{
+            color: notification.btn_text_color
+              ? notification.btn_text_color
+              : undefined,
+          }"
+          :target="preview || !pageName ? '_blank' : ''"
           :to="
             pageName && !notification.url && !testMode
               ? {
@@ -77,18 +81,12 @@
                 }
               : null
           "
-          :target="preview || !pageName ? '_blank' : ''"
-          depressed
-          large
-          :color="notification.btn_color ? notification.btn_color : undefined"
+          :url="notification.url"
           class="m-2"
-          v-html="notification.action"
+          size="large"
+          variant="flat"
           @click="close()"
-          :style="{
-            color: notification.btn_text_color
-              ? notification.btn_text_color
-              : undefined,
-          }"
+          v-html="notification.action"
         >
         </v-btn>
       </div>
@@ -130,7 +128,6 @@ export default {
 
   data() {
     return {
-
       can_show: true,
     };
   },
@@ -139,8 +136,8 @@ export default {
       if (
         localStorage.getItem(
           StorefrontLocalStorages.GetShopNotificationViewed(
-            this.$localstorage_base_path()
-          )
+            this.$localstorage_base_path(),
+          ),
         ) === "true"
       ) {
         this.can_show = false;
@@ -155,9 +152,9 @@ export default {
       if (!this.preview && !this.notification.persist) {
         localStorage.setItem(
           StorefrontLocalStorages.GetShopNotificationViewed(
-            this.$localstorage_base_path()
+            this.$localstorage_base_path(),
           ),
-          "true"
+          "true",
         );
       }
     },
@@ -165,7 +162,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--storefront-campaign-notification {
   filter: drop-shadow(3px 13px 11px rgba(0, 0, 0, 0.13));
   min-height: 200px;
@@ -183,6 +180,7 @@ export default {
   bottom: 48px;
 
   z-index: 999999;
+
   &.preview {
     position: initial;
     z-index: 1;

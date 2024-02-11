@@ -14,28 +14,26 @@
 
 <template>
   <div>
-
-
     <v-btn
-      @click="dialog = true"
       v-if="available_lotories"
-      :loading="busy_fetch"
-      icon
       :caption="$t('global.commons.lottery')"
+      :loading="busy_fetch"
       class="sub-caption -hover -white"
+      icon
+      @click="dialog = true"
     >
       <s-lottie
         :options="{ path: '/animation/happy_birthday.json', loop: true }"
+        :speed="1"
         height="44px"
         width="44px"
-        :speed="1"
       />
     </v-btn>
 
     <v-dialog
-      max-width="860"
       v-model="dialog"
       content-class="dialog-rounded-card"
+      max-width="860"
       scrollable
     >
       <v-card>
@@ -44,12 +42,13 @@
 
           <v-spacer></v-spacer>
           <v-btn
-            @click="dialog = false"
-            icon
-            class="sub-caption -hover"
             :caption="$t('global.actions.close')"
-            ><v-icon>close</v-icon></v-btn
+            class="sub-caption -hover"
+            icon
+            @click="dialog = false"
           >
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-card-title>
 
         <v-card-text>
@@ -61,25 +60,25 @@
           <div class="position-relative">
             <img
               v-if="!(game_has_result && !play)"
-              src="../../../login/assets/arrow.svg"
               class="arrow"
-              width="64"
               height="64"
+              src="../../../login/assets/arrow.svg"
+              width="64"
             />
             <ul
               v-if="game_has_result && !play"
-              class="menu"
               :class="
                 win
                   ? win.discount
                     ? '-discount'
                     : win.product_id
-                    ? '-product'
-                    : win.card_type_id
-                    ? '-gift-card'
-                    : '-amount'
+                      ? '-product'
+                      : win.card_type_id
+                        ? '-gift-card'
+                        : '-amount'
                   : '-lose'
               "
+              class="menu"
             >
               <!-------------------- Play game result ------------------------->
               <div v-if="win" class="center-absolute" style="width: 70%">
@@ -88,11 +87,11 @@
                     path: '/animation/gift-box-white.json',
                     loop: true,
                   }"
-                  height="120px"
-                  width="120px"
                   :speed="2"
-                  style="margin-top: -140px"
                   class="zoomIn"
+                  height="120px"
+                  style="margin-top: -140px"
+                  width="120px"
                 />
 
                 <h3 class="text-white zoomIn">
@@ -108,26 +107,26 @@
                   {{ $t("global.wheel_fortune.lost_message") }}
                 </h3>
                 <v-btn
-                  color="success"
                   v-if="has_over_10chip"
                   class="m-2 zoomIn"
+                  color="success"
                   @click="reset()"
-                  >{{ $t("global.wheel_fortune.try_again") }}</v-btn
-                >
+                  >{{ $t("global.wheel_fortune.try_again") }}
+                </v-btn>
               </div>
             </ul>
-            <ul v-else class="menu" :class="{ disabled: !available_lotories }">
+            <ul v-else :class="{ disabled: !available_lotories }" class="menu">
               <!--------------------------------------------->
 
               <li
                 v-for="(lottery, index) in lotteries"
                 :key="index"
-                class="slice pointer-pointer"
                 :style="`--deg:${
                   (index * 360) / count + p_deg + arrow_offset
                 }deg; --color:${
                   lottery.color ? lottery.color : '#FFA000'
                 } ; --step-deg:${360 / count}deg `"
+                class="slice pointer-pointer"
                 @click="selected_lottery = lottery"
               >
                 <v-img
@@ -140,10 +139,10 @@
               <!--------------------- Empty ----------------->
               <li
                 v-if="has_empty"
-                class="slice pointer-pointer"
                 :style="`--deg:${
                   ((count - 1) * 360) / count + p_deg + arrow_offset
                 }deg; --color:#FFA000 ; --step-deg:${360 / count}deg `"
+                class="slice pointer-pointer"
                 @click="selected_lottery = null"
               >
                 <v-img
@@ -160,23 +159,23 @@
               <div
                 v-for="(lottery, index) in lotteries"
                 :key="'l-' + index"
-                class="slice-label"
                 :style="`--deg:${
                   (index * 360) / count + p_deg + arrow_offset - 180 / count
                 }deg`"
+                class="slice-label"
               >
                 {{ lottery.title }}
               </div>
 
               <div
                 v-if="has_empty"
-                class="slice-label"
                 :style="`--deg:${
                   ((count - 1) * 360) / count +
                   p_deg +
                   arrow_offset -
                   180 / count
                 }deg`"
+                class="slice-label"
               >
                 {{ $t("global.commons.empty") }}
               </div>
@@ -186,43 +185,43 @@
               <div
                 v-for="(lottery, index) in lotteries"
                 :key="'b-' + index"
-                class="slice-border"
                 :style="`--deg:${
                   (index * 360) / count + p_deg + arrow_offset
                 }deg`"
+                class="slice-border"
               ></div>
 
               <div
                 v-if="has_empty"
-                class="slice-border"
                 :style="`--deg:${
                   ((count - 1) * 360) / count + p_deg + arrow_offset
                 }deg`"
+                class="slice-border"
               ></div>
 
               <!--------------------------------------------->
 
               <div
-                class="center"
-                @click="playNow()"
                 :class="{
                   'pointer-event-none': busy_play || busy_fetch || play,
                 }"
+                class="center"
+                @click="playNow()"
               >
-                <v-icon class="spin">refresh</v-icon
-                ><span class="-on-hover">{{ $t("global.actions.play") }}</span>
+                <v-icon class="spin">refresh </v-icon>
+                <span class="-on-hover">{{ $t("global.actions.play") }}</span>
               </div>
             </ul>
 
             <svg height="0" width="0">
               <defs>
-                <clipPath clipPathUnits="objectBoundingBox" id="sector">
+                <clipPath id="sector" clipPathUnits="objectBoundingBox">
                   <path
+                    :d="path"
+                    class="sector"
                     fill="none"
                     stroke="#111"
                     stroke-width="1"
-                    class="sector"
-                    :d="path"
                   ></path>
                 </clipPath>
               </defs>
@@ -477,7 +476,7 @@ export default {
             }
 
             const target_index = this.lotteries.findIndex(
-              (it) => it.id === data.win.id
+              (it) => it.id === data.win.id,
             );
             console.log("target_index", target_index);
             if (target_index >= 0) {
@@ -505,7 +504,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .menu {
   padding: 0;
   list-style: none;
@@ -521,6 +520,7 @@ export default {
 
   transition: all 0.35s ease-in-out;
   overflow: hidden;
+
   &:hover {
     border: solid #f9f9f9 40px;
   }
@@ -528,9 +528,11 @@ export default {
   &.-discount {
     background-image: linear-gradient(120deg, #cc208e 0%, #6713d2 100%);
   }
+
   &.-product {
     background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
   }
+
   &.-gift-card {
     background-image: linear-gradient(
       -225deg,
@@ -539,9 +541,11 @@ export default {
       #625eb1 100%
     );
   }
+
   &.-amount {
     background-image: linear-gradient(120deg, #50cc7f 0%, #f5d100 100%);
   }
+
   &.-lose {
     background-image: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
   }
@@ -557,6 +561,7 @@ export default {
     padding: 0;
   }
 }
+
 @media all and (min-width: 700px) {
   .menu {
     width: 500px;
@@ -564,6 +569,7 @@ export default {
     padding: 0;
   }
 }
+
 .menu li {
   position: absolute;
   top: 0;
@@ -603,6 +609,7 @@ export default {
 
 .slice {
   transform: rotate(var(--deg));
+
   &:hover {
     .image {
       transition: all 0.35s ease-in-out;
@@ -636,6 +643,7 @@ export default {
     .spin {
       animation: spin 2s linear infinite;
     }
+
     .-on-hover {
       opacity: 1;
       transition-delay: 0.3s;

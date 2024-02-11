@@ -38,8 +38,8 @@
     typeof window != "undefined" && window.Math == Math
       ? window
       : typeof self != "undefined" && self.Math == Math
-      ? self
-      : Function("return this")();
+        ? self
+        : Function("return this")();
   // Only used for the dirty checking, so the event callback count is limited to max 1 call per fps per sensor.
   // In combination with the event based resize sensor this saves cpu time, because the sensor is too fast and
   // would generate too many unnecessary events.
@@ -269,7 +269,7 @@
                 function () {
                   lastAnimationFrameForInvisibleCheck = 0;
                   reset();
-                }
+                },
               );
             }
 

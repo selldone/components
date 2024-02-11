@@ -14,23 +14,23 @@
 
 <template>
   <v-menu
-    v-model="menu"
     v-if="notifications?.length || mode === 'unread'"
+    v-model="menu"
     width="560"
   >
     <template v-slot:activator="{ props }">
       <v-btn
         :color="unread_count > 0 ? 'amber' : '#eee'"
-        icon
-        variant="text"
         :loading="busy"
         class="mx-2"
+        icon
         size="48"
         v-bind="props"
+        variant="text"
       >
         <v-badge
-          :model-value="unread_count > 0"
           :content="numeralFormat(unread_count, '0a')"
+          :model-value="unread_count > 0"
           color="red"
           location="top end"
         >
@@ -45,31 +45,31 @@
 
         <v-row no-gutters>
           <v-btn
-            class="me-1 tnt"
             :color="mode === 'new' ? 'primary' : '#111'"
+            :loading="busy && mode === 'new'"
+            class="me-1 tnt"
+            rounded
             variant="text"
             @click.stop="mode = 'new'"
-            rounded
-            :loading="busy && mode === 'new'"
             >New
           </v-btn>
           <v-btn
-            class="me-1 tnt"
             :color="mode === 'unread' ? 'primary' : '#111'"
+            :loading="busy && mode === 'unread'"
+            class="me-1 tnt"
+            rounded
             variant="text"
             @click.stop="mode = 'unread'"
-            rounded
-            :loading="busy && mode === 'unread'"
             >Unread
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
             v-if="shop_id"
-            class="tnt"
-            variant="text"
-            rounded
             :to="{ name: 'ShopNotificationsRepositoryList' }"
+            class="tnt"
             exact
+            rounded
+            variant="text"
             >See All
           </v-btn>
         </v-row>
@@ -88,10 +88,10 @@
         >
           <template v-slot:prepend>
             <v-badge
-              :model-value="item.count > 1"
-              :content="numeralFormat(item.count, '0a')"
-              location="bottom"
               :color="item.read_at ? '#aaa' : helper.getColor(item)"
+              :content="numeralFormat(item.count, '0a')"
+              :model-value="item.count > 1"
+              location="bottom"
               offset-x="12"
               offset-y="8"
             >
@@ -99,7 +99,7 @@
                 :color="item.read_at ? '#eee' : helper.getColor(item)"
                 size="40"
               >
-                <v-avatar size="36" color="#fff">
+                <v-avatar color="#fff" size="36">
                   <v-icon :color="item.read_at ? '#aaa' : '#111'"
                     >{{ helper.getIcon(item) }}
                   </v-icon>
@@ -157,8 +157,8 @@
               <v-icon
                 v-if="!item.read_at"
                 class="mx-auto"
-                size="x-small"
                 color="red"
+                size="x-small"
                 >circle
               </v-icon>
               <small class="d-block">
@@ -299,7 +299,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .d--notification-repository {
   text-align: start;
 }

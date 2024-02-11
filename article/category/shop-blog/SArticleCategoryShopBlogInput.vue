@@ -14,28 +14,28 @@
 
 <template>
   <v-select
-    :model-value="modelValue"
-    @update:modelValue="(v) => $emit('update:modelValue', v)"
-    item-value="id"
-    item-title="category"
+    :clearable="clearable"
+    :disabled="disabled"
+    :flat="flat"
     :items="categories"
     :label="$t('global.article.category_input')"
-    :messages="$t('global.article.category_input_message')"
-    :variant="variant"
-    :clearable="clearable"
     :loading="busy"
-    :disabled="disabled"
+    :messages="$t('global.article.category_input_message')"
+    :model-value="modelValue"
     :prepend-inner-icon="modelValue ? undefined : 'tab'"
-    :flat="flat"
-    class="text-start"
     :rounded="rounded"
+    :variant="variant"
+    class="text-start"
+    item-title="category"
+    item-value="id"
+    @update:modelValue="(v) => $emit('update:modelValue', v)"
   >
     <template v-slot:item="{ item, props }">
       <v-list-item
-        v-bind="props"
-        :title="item.raw.category"
         :subtitle="item.raw.description"
+        :title="item.raw.category"
         class="text-start"
+        v-bind="props"
       >
         <template v-slot:prepend>
           <v-avatar rounded size="28"
@@ -46,7 +46,7 @@
       </v-list-item>
     </template>
     <template v-slot:selection="{ item }">
-      <v-avatar rounded class="me-2" v-if="item.raw.icon" size="28"
+      <v-avatar v-if="item.raw.icon" class="me-2" rounded size="28"
         ><img :src="getShopImagePath(item.raw.icon)"
       /></v-avatar>
       <div class="flex-grow-1 text-start">
@@ -106,4 +106,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

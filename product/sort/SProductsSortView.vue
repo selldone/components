@@ -17,10 +17,10 @@
     <!-- ███████████████████ Only available ███████████████████ -->
 
     <v-btn
+      class="tnt"
+      height="46"
       variant="text"
       @click="$emit('update:only-available', !onlyAvailable)"
-      height="46"
-      class="tnt"
     >
       <div class="d-flex flex-column small">
         <v-icon class="mb-1" size="24"
@@ -36,11 +36,11 @@
 
     <v-btn
       v-if="hasViewMode"
-      @click="toggleModeView"
-      variant="text"
       :title="$t(viewMode.title)"
-      height="46"
       class="tnt"
+      height="46"
+      variant="text"
+      @click="toggleModeView"
     >
       <div class="d-flex flex-column small">
         <v-icon class="mb-1" size="24">{{ viewMode.icon }}</v-icon>
@@ -52,37 +52,34 @@
 
     <v-btn-toggle
       v-if="!forceCollapse"
-      :model-value="modelValue"
-      @update:model-value="(val) => $emit('update:modelValue', val)"
-      class="hide-on-small-900 mx-2"
-      :selected-class="activeClass"
       :mandatory="mandatory"
+      :model-value="modelValue"
+      :selected-class="activeClass"
       border="0"
+      class="hide-on-small-900 mx-2"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     >
       <v-btn
-        :value="item.val"
         v-for="item in items"
-        :loading="loading && modelValue === item.val && !search"
-        variant="text"
         :key="item.val"
-        height="46" border="0"
+        :loading="loading && modelValue === item.val && !search"
+        :value="item.val"
+        border="0"
+        height="46"
+        variant="text"
       >
         {{ item.name }}
       </v-btn>
     </v-btn-toggle>
 
     <!-- Small screen -->
-    <v-menu
-      transition="slide-y-transition"
-      location="bottom"
-
-    >
+    <v-menu location="bottom" transition="slide-y-transition">
       <template v-slot:activator="{ props }">
         <v-btn
           :class="{ 'show-on-small-900': !forceCollapse }"
-          variant="text"
-          v-bind="props"
           height="46"
+          v-bind="props"
+          variant="text"
         >
           {{ sort_title }}
           <v-icon class="ms-1" size="x-small">expand_more</v-icon>
@@ -90,12 +87,13 @@
       </template>
 
       <v-list class="text-start text-uppercase">
-        <v-list-item rounded="xl"
+        <v-list-item
           v-for="item in items"
           :key="item.val"
           :color="modelValue === item.val ? 'blue' : undefined"
-          @click="(val) => $emit('update:modelValue', item.val)"
           exact
+          rounded="xl"
+          @click="(val) => $emit('update:modelValue', item.val)"
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>
@@ -111,28 +109,33 @@
     <template v-if="hasSearch">
       <v-spacer></v-spacer>
       <v-text-field
-        variant="solo"
-        flat
-
+        v-model="search"
         :autofocus="
           $vuetify.display
             .lgAndUp /*Prevent opening keyboard on phone and tablets!*/
         "
-        v-model="search"
-        single-line
+        :class="{ 'my-2 my-md-0': !twoLine, 'my-2': twoLine }"
         :loading="loading && !!search"
-        density="compact"
-        prepend-inner-icon="search"
-        hide-details
         :placeholder="$t('global.commons.search')"
         class="search-box me-1 min-width-200 pa-0"
-        :class="{ 'my-2 my-md-0': !twoLine, 'my-2': twoLine }"
         clearable
+        density="compact"
+        flat
+        hide-details
+        prepend-inner-icon="search"
+        single-line
+        variant="solo"
       >
         <template v-slot:append-inner>
-          <v-tooltip location="bottom" color="#000">
+          <v-tooltip color="#000" location="bottom">
             <template v-slot:activator="{ props }">
-              <v-btn color="#aaa"  v-bind="props" icon variant="text" size="small">
+              <v-btn
+                color="#aaa"
+                icon
+                size="small"
+                v-bind="props"
+                variant="text"
+              >
                 <v-icon size="small">info</v-icon>
               </v-btn>
             </template>
@@ -177,7 +180,7 @@ import _ from "lodash-es";
 export default {
   name: "SProductsSortView",
   components: {},
-emits: ["update:modelValue", "update:search", "update:view-mode"],
+  emits: ["update:modelValue", "update:search", "update:view-mode"],
 
   props: {
     modelValue: {
@@ -253,7 +256,7 @@ emits: ["update:modelValue", "update:search", "update:view-mode"],
   },
   watch: {
     search: _.throttle(function (newVal, oldVal) {
-      if(!newVal && !oldVal) return;
+      if (!newVal && !oldVal) return;
       this.$emit("update:search", newVal);
     }, window.SERACH_THROTTLE),
 
@@ -284,7 +287,7 @@ emits: ["update:modelValue", "update:search", "update:view-mode"],
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

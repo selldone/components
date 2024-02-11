@@ -14,38 +14,40 @@
 
 <template>
   <delivery-timeline
-    :status="transportationOrder.status"
-    :send-at="transportationOrder.send_at"
-    :return-at="transportationOrder.return_at"
-    :payment-at="transportationOrder.payment_at"
     :deliver-at="transportationOrder.deliver_at"
-    :updated-at="transportationOrder.updated_at"
-    :transportation-type="deliveryInfo ? deliveryInfo.type : null"
-    :person="transportationOrder.person"
-    :service="transportationOrder.service"
     :delivery-service="
-      transportationOrder.service && delivery_services &&
+      transportationOrder.service &&
+      delivery_services &&
       delivery_services.find(
-        (i) => i.id === transportationOrder.service.service_id
+        (i) => i.id === transportationOrder.service.service_id,
       )
     "
-    :rate="transportationOrder.rate"
-    :transportation-order="transportationOrder"
-    @refresh-service=" callback=>$emit('refresh-service', callback)"
     :history="transportationOrder.history"
+    :payment-at="transportationOrder.payment_at"
+    :person="transportationOrder.person"
+    :rate="transportationOrder.rate"
+    :return-at="transportationOrder.return_at"
+    :send-at="transportationOrder.send_at"
+    :service="transportationOrder.service"
+    :status="transportationOrder.status"
+    :transportation-order="transportationOrder"
+    :transportation-type="deliveryInfo ? deliveryInfo.type : null"
+    :updated-at="transportationOrder.updated_at"
+    @refresh-service="(callback) => $emit('refresh-service', callback)"
   >
   </delivery-timeline>
 </template>
 
 <script>
 import DeliveryTimeline from "@components/storefront/order/delivery/DeliveryTimeline.vue";
+
 export default {
   name: "DeliveryTimelineTransportationOrder",
-  components: {DeliveryTimeline},
+  components: { DeliveryTimeline },
   props: {
     shop: { required: true },
     transportationOrder: { required: true },
-    deliveryInfo:{},
+    deliveryInfo: {},
   },
 
   data: function () {

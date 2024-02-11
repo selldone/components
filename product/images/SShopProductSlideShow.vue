@@ -13,34 +13,38 @@
   -->
 
 <template>
-  <div class="s--product-images" :class="{ '-vertical': vertical }">
+  <div :class="{ '-vertical': vertical }" class="s--product-images">
     <!--  ▃▃▃▃▃▃▃▃▃▃ Gallery > Thumbs Swiper ▃▃▃▃▃▃▃▃▃▃ -->
 
-    <s-fade-scroll class="gallery-thumbs" :class="{ '-vertical': vertical }" style="max-height: 600px">
+    <s-fade-scroll
+      :class="{ '-vertical': vertical }"
+      class="gallery-thumbs"
+      style="max-height: 600px"
+    >
       <div class="gallery-thumbs-wrap">
         <div v-for="(item, i) in images_list_embedded" :key="item.key">
           <!--  ▃▃▃▃▃▃▃▃▃▃ Thumbnails > Image ▃▃▃▃▃▃▃▃▃▃ -->
 
           <v-img
             v-if="item.image"
-            @click="index = i"
-            class="-slide"
-            aspect-ratio="1"
-            :src="getShopImagePath(item.image.path, IMAGE_SIZE_SMALL)"
             :alt="item.image.alt"
+            :src="getShopImagePath(item.image.path, IMAGE_SIZE_SMALL)"
+            aspect-ratio="1"
+            class="-slide"
+            @click="index = i"
           />
 
           <!--  ━━━━━━━━━━━━ Thumbnails > Video ━━━━━━━━━━━━ -->
 
           <div
             v-else-if="item.video"
+            :class="{ '-video-active': index === i }"
             class="-slide -video"
             @click="index = i"
-            :class="{ '-video-active': index === i }"
           >
             <div class="ma-auto">
-              <v-icon color="#fff" class="mb-1">smart_display</v-icon>
-              <div>{{$t('global.commons.video')}}</div>
+              <v-icon class="mb-1" color="#fff">smart_display</v-icon>
+              <div>{{ $t("global.commons.video") }}</div>
             </div>
           </div>
 
@@ -48,12 +52,12 @@
 
           <div
             v-else-if="item.ar"
+            :class="{ '-ar-active': index === i }"
             class="-slide -ar"
             @click="index = i"
-            :class="{ '-ar-active': index === i }"
           >
             <div class="ma-auto">
-              <v-icon color="#fff" class="mb-1">view_in_ar</v-icon>
+              <v-icon class="mb-1" color="#fff">view_in_ar</v-icon>
               <div>3D / AR</div>
             </div>
           </div>
@@ -61,26 +65,25 @@
       </div>
     </s-fade-scroll>
 
-
     <!--  ▃▃▃▃▃▃▃▃▃▃ Gallery > Main Swiper ▃▃▃▃▃▃▃▃▃▃ -->
 
     <v-carousel
       :key="product.id + '-' + currentVariant?.id"
       v-model="index"
-      class="gallery-top"
       :class="{
         '-bg-white': isStyleContain,
         '-vertical': vertical,
       }"
       :show-arrows="true"
-      hide-delimiter-background
-      height="100%"
-      show-arrows-on-hover
-      hide-delimiters
       :style="{
         '--circle-left': `${circleX}px`,
         '--circle-top': `${circleY}px`,
       }"
+      class="gallery-top"
+      height="100%"
+      hide-delimiter-background
+      hide-delimiters
+      show-arrows="hover"
     >
       <v-carousel-item
         v-for="item in images_list_embedded"
@@ -106,16 +109,15 @@
           />
 
           <v-img
-            class="swiper-slide-image pointer-zoom-in ma-auto pointer-zoom-in"
-            width="calc(100% - 8px)"
-            height="auto"
-            aspect-ratio="1"
-            :src="getShopImagePath(item.image.path)"
             :alt="item.image.alt"
-            @click="showFullscreen"
             :contain="!!isStyleContain"
-
+            :src="getShopImagePath(item.image.path)"
+            aspect-ratio="1"
+            class="swiper-slide-image pointer-zoom-in ma-auto pointer-zoom-in"
             eager
+            height="auto"
+            width="calc(100% - 8px)"
+            @click="showFullscreen"
             @mousemove.native="updateCirclePosition"
             @mouseleave.native="show_circle = false"
           >
@@ -125,9 +127,8 @@
 
         <!--  ━━━━━━━━━━━━ Main > Video ━━━━━━━━━━━━ -->
         <template v-else-if="item.video">
-          <v-responsive class="position-relative" aspect-ratio="1">
+          <v-responsive aspect-ratio="1" class="position-relative">
             <s-youtube
-              style="border-radius: 8px"
               :player-vars="{
                 color: 'white',
                 controls: 1,
@@ -135,8 +136,9 @@
                 rel: 0,
               }"
               :video-id="item.video"
-              width="100%"
               height="100%"
+              style="border-radius: 8px"
+              width="100%"
             ></s-youtube>
           </v-responsive>
         </template>
@@ -144,12 +146,11 @@
         <!--  ━━━━━━━━━━━━ AR / 3D ━━━━━━━━━━━━ -->
 
         <template v-else-if="item.ar">
-          <v-responsive class="position-relative" aspect-ratio="1">
+          <v-responsive aspect-ratio="1" class="position-relative">
             <iframe
-              allowfullscreen="1"
-              title="3D View"
               :src="item.ar"
-              width="100%"
+              allowfullscreen="1"
+              class="w-100 h-100 position-absolute"
               frameborder="0"
               scrolling="no"
               style="
@@ -158,7 +159,8 @@
                 z-index: 1;
                 background-color: #fff;
               "
-              class="w-100 h-100 position-absolute"
+              title="3D View"
+              width="100%"
             ></iframe>
           </v-responsive>
         </template>
@@ -167,9 +169,9 @@
       <template v-slot:prev="{ on }">
         <v-avatar
           v-if="prev_item"
+          class="pp hover-scale-small"
           size="84"
           v-on="on"
-          class="pp hover-scale-small"
         >
           <img
             v-if="prev_item.image"
@@ -183,9 +185,9 @@
       <template v-slot:next="{ on }">
         <v-avatar
           v-if="next_item"
+          class="pp hover-scale-small"
           size="84"
           v-on="on"
-          class="pp hover-scale-small"
         >
           <img
             v-if="next_item.image"
@@ -207,7 +209,7 @@ import SYoutube from "@components/ui/youtube/SYoutube";
 
 export default {
   name: "SShopProductSlideShow",
-  components: {SYoutube, SFadeScroll, VariantItemViewMicro },
+  components: { SYoutube, SFadeScroll, VariantItemViewMicro },
   props: {
     shop: {
       required: true,
@@ -274,7 +276,7 @@ export default {
       if (
         this.product.icon &&
         !out.some(
-          (i) => i.path === this.product.icon
+          (i) => i.path === this.product.icon,
         ) /*Prevent duplicate images - Specially external images in connect*/
       ) {
         if (has_variant_image) out.push({ path: this.product.icon });
@@ -287,7 +289,7 @@ export default {
       const out = [];
 
       this.images_list.forEach((image) => {
-        out.push({ image: image, key: image.path,alt:image.alt });
+        out.push({ image: image, key: image.path, alt: image.alt });
       });
 
       if (this.ar_url) {
@@ -319,14 +321,14 @@ export default {
           this.shop_name,
           this.product.id,
           this.currentVariant.id,
-          this.currentVariant.ar.src
+          this.currentVariant.ar.src,
         );
       else if (this.product.ar)
         return this.window.URLS.ARViewURL(
           this.shop_name,
           this.product.id,
           "default",
-          this.product.ar.src
+          this.product.ar.src,
         );
 
       return null;
@@ -383,14 +385,14 @@ export default {
     // Add the keydown event listener when the component is mounted
     window.addEventListener("keydown", this.handleKeyPress);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // Remove the keydown event listener when the component is destroyed
     window.removeEventListener("keydown", this.handleKeyPress);
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--product-images {
   --size-thumbnail: 64px;
   --gap-vertical-thumbnail: 10px;
@@ -499,10 +501,12 @@ export default {
       font-size: 12px;
       background-color: #333;
     }
+
     &.-video-active {
       background: #d93f21;
       border-color: #b4351c;
     }
+
     &.-ar-active {
       background: #4895ff;
       border-color: #3069b7;

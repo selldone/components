@@ -31,11 +31,11 @@
       <s-order-chat-message
         v-for="(message, i) in chat"
         :key="i"
-        class="my-2 c-bubble"
-        :shop="shop"
         :basket="basket"
         :is-admin="isAdmin"
         :message="message"
+        :shop="shop"
+        class="my-2 c-bubble"
         has-delete
       >
       </s-order-chat-message>
@@ -49,10 +49,9 @@
       <v-list-subheader>
         {{
           isAdmin
-              ? "Here, you have the ability to directly exchange messages with customers."
-              : "Here, you have the ability to directly communicate with the seller by sending messages."
+            ? "Here, you have the ability to directly exchange messages with customers."
+            : "Here, you have the ability to directly communicate with the seller by sending messages."
         }}
-
       </v-list-subheader>
 
       <div class="d-flex align-center mt-3">
@@ -67,21 +66,23 @@
       </div>
 
       <v-textarea
-        auto-grow
-        :label="$t('global.commons.message')"
         v-model="body_input"
         :counter="1024"
-        variant="solo-filled" flat bg-color="#fafafa"
+        :label="$t('global.commons.message')"
+        auto-grow
+        bg-color="#fafafa"
+        flat
+        variant="solo-filled"
       ></v-textarea>
 
       <div class="widget-buttons">
         <v-btn
+          :class="{ disabled: !body_input }"
+          :loading="busy_add"
           color="primary"
           size="x-large"
           variant="flat"
           @click="addChat"
-          :loading="busy_add"
-          :class="{ disabled: !body_input }"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.add") }}
@@ -174,7 +175,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .c-bubble {
   background-color: #fff;
   border-radius: 18px;

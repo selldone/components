@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <img :src="icon" :height="size" :width="size" :title="value" />
+  <img :height="size" :src="icon" :title="value" :width="size" />
 </template>
 
 <script>
@@ -31,10 +31,11 @@ export default {
 
   computed: {
     icon() {
-      if(this.value==='direct')return  require("@components/assets/icons/direct-enter.svg");
+      if (this.value === "direct")
+        return require("@components/assets/icons/direct-enter.svg");
       const found = this.value
         ? Brands.find(
-            (item) => item.name.toLowerCase() === this.value.toLowerCase()
+            (item) => item.name.toLowerCase() === this.value.toLowerCase(),
           )
         : null;
 

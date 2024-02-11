@@ -30,7 +30,7 @@
  * @author [Your Name]
  */
 
-import { DirectiveBinding, ObjectDirective } from 'vue';
+import { DirectiveBinding, ObjectDirective } from "vue";
 
 /**
  * A Vue directive to copy text to the clipboard when an element is clicked.
@@ -41,7 +41,9 @@ import { DirectiveBinding, ObjectDirective } from 'vue';
  *
  * @module CopyToClipboardDirective
  */
-const CopyToClipboardDirective: ObjectDirective<HTMLElement & { __copy_click__?: (event: Event) => void }> = {
+const CopyToClipboardDirective: ObjectDirective<
+  HTMLElement & { __copy_click__?: (event: Event) => void }
+> = {
   /**
    * Called when the directive is mounted to the DOM.
    * Adds an underline animation class and sets up a click event listener.
@@ -53,9 +55,14 @@ const CopyToClipboardDirective: ObjectDirective<HTMLElement & { __copy_click__?:
     el.classList.add("animate-underline");
 
     el.__copy_click__ = (event: Event) => {
-      const valueToCopy = binding.value ? binding.value : (event.target as HTMLElement).innerText;
+      const valueToCopy = binding.value
+        ? binding.value
+        : (event.target as HTMLElement).innerText;
 
-      if (binding.instance && typeof binding.instance.copyToClipboard === 'function') {
+      if (
+        binding.instance &&
+        typeof binding.instance.copyToClipboard === "function"
+      ) {
         binding.instance.copyToClipboard(valueToCopy);
       }
     };

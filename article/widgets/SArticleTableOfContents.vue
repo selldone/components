@@ -15,14 +15,14 @@
 <template>
   <div>
     <v-expand-transition>
-      <div v-if="has_list" class="s--table-content" v-intersect="onIntersect">
+      <div v-if="has_list" v-intersect="onIntersect" class="s--table-content">
         <h2>{{ $t("global.commons.table_of_contents") }}</h2>
         <ul>
           <li
             v-for="item in items"
             :key="item.id"
-            @click="goTo(item)"
             :class="{ '-small': item.tag === 'h3' }"
+            @click="goTo(item)"
           >
             {{ item.title }}
           </li>
@@ -37,13 +37,19 @@
       >
         <div class="--content">
           <span
-            class="--item"
             v-for="item in items"
             :key="item.id"
-            @click="goTo(item)"
             :class="{ '-small': item.tag === 'h3' }"
+            class="--item"
+            @click="goTo(item)"
           >
-            <v-icon v-if="item.tag === 'h2'" x-small class="me-1" color="#111">circle</v-icon>
+            <v-icon
+              v-if="item.tag === 'h2'"
+              class="me-1"
+              color="#111"
+              size="x-small"
+              >circle</v-icon
+            >
             {{ item.title }}
           </span>
         </div>
@@ -98,7 +104,7 @@ export default {
     // Start observing the target element
     this.observer.observe(this.target);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // Disconnect the observer when the component is destroyed
     if (this.observer) {
       this.observer.disconnect();
@@ -157,10 +163,17 @@ export default {
     },
 
     goTo(item) {
-      const currentScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+      const currentScrollY =
+        window.scrollY ||
+        window.pageYOffset ||
+        document.documentElement.scrollTop;
       const diff = Math.abs(item.offset - currentScrollY);
 
-      ScrollHelper.scrollToElement(`#${item.id}`,120/*to safe full view on top fix header!*/,'smooth')
+      ScrollHelper.scrollToElement(
+        `#${item.id}`,
+        120 /*to safe full view on top fix header!*/,
+        "smooth",
+      );
 
       /*
       this.$vuetify.goTo(`#${item.id}`, {
@@ -172,15 +185,18 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--table-content {
   text-align: start;
+
   h2 {
     font-size: 80%;
   }
+
   ul {
     margin-top: 12px;
     margin-bottom: 16px;
+
     li {
       font-size: 90%;
       cursor: pointer;
@@ -199,12 +215,14 @@ export default {
       &:hover {
         font-weight: 700;
         color: #0f75ac !important;
+
         &:before {
           font-size: 20px;
           z-index: 1;
           background: linear-gradient(to right bottom, #6cb9cd, #1c6eaa);
         }
       }
+
       &:before {
         transition: all 0.35s;
         content: "•";
@@ -266,6 +284,7 @@ export default {
       font-weight: 700;
       color: #0f75ac;
     }
+
     &.-small {
       font-size: 12px;
       padding: 4px;

@@ -15,20 +15,20 @@
 <template>
   <div
     :category-id="category.id"
+    :class="{ disabled: clicked }"
+    class="position-relative d-flex flex-column align-center justify-center hover-up"
     @click="
       $emit('select');
       clicked = true;
     "
-    class="position-relative d-flex flex-column align-center justify-center hover-up"
-    :class="{ disabled: clicked }"
   >
     <div class="position-relative">
-      <v-icon size="100" color="amber" class="no-inv">folder</v-icon>
+      <v-icon class="no-inv" color="amber" size="100">folder</v-icon>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Connect service icon (top - Right) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div v-if="category.connect_id" class="top-r">
-        <v-avatar size="16" rounded
+        <v-avatar rounded size="16"
           ><img :src="getConnectIcon(category.connect_id)"
         /></v-avatar>
       </div>
@@ -46,11 +46,11 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Vendor Folder ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div
         v-if="category.vendor_id"
-        class="top-l"
         :title="
           'Created by ' +
           (category.vendor ? category.vendor.name : $t('global.commons.vendor'))
         "
+        class="top-l"
       >
         <circle-image
           v-if="category.vendor && category.vendor.icon"
@@ -63,20 +63,20 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Products Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div
-        class="bottom-r small text-white"
         :title="$t('admin_shop.products.folder_widget.products')"
+        class="bottom-r small text-white"
       >
-        <v-icon size="x-small" dark>fa:fas fa-box</v-icon>
+        <v-icon dark size="x-small">fa:fas fa-box</v-icon>
         {{ numeralFormat(category.products, "0,0a") }}
       </div>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Custom Page ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div
         v-if="category.page_id"
-        class="bottom-l"
         :title="`Has custom page | ${category.page_id}.`"
+        class="bottom-l"
       >
-        <v-icon size="small" dark>layers</v-icon>
+        <v-icon dark size="small">layers</v-icon>
       </div>
     </div>
 
@@ -89,8 +89,8 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Visits Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div
-      class="small text-muted"
       :title="$t('admin_shop.products.folder_widget.views')"
+      class="small text-muted"
     >
       <v-icon class="me-1" size="x-small">fa:fas fa-eye</v-icon>
       {{ numeralFormat(category.visits, "0,0a") }}
@@ -100,6 +100,7 @@
 
 <script>
 import CircleImage from "@components/ui/image/CircleImage.vue";
+
 export default {
   name: "FolderCardMini",
   components: { CircleImage },
@@ -117,10 +118,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .pos-img {
   border: solid 2px #fff;
 }
+
 .bottom-r {
   position: absolute;
   top: 64px;
@@ -131,11 +133,13 @@ export default {
     vertical-align: baseline;
   }
 }
+
 .top-l {
   position: absolute;
   top: 16px;
   left: 12px;
 }
+
 .top-r {
   position: absolute;
   top: 25px;

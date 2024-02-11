@@ -13,13 +13,17 @@
   -->
 
 <template>
-  <canvas :width="width" :height="height"
-          v-if="points" v-render="points"></canvas>
+  <canvas
+    v-if="points"
+    v-render="points"
+    :height="height"
+    :width="width"
+  ></canvas>
 </template>
 
 <script>
 export default {
-  name: 'spectrum-analyser',
+  name: "spectrum-analyser",
   props: {
     width: {
       type: Number,
@@ -31,22 +35,20 @@ export default {
     },
     fillStyle: {
       type: String,
-      default: '#000',
+      default: "#000",
     },
-    play:{
-type:Boolean,
-      default:false
-    }
+    play: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       spectrum: null,
 
-
-      context:null,
-      analyser:null,
-      dataArray:null,
-
+      context: null,
+      analyser: null,
+      dataArray: null,
     };
   },
   computed: {
@@ -57,7 +59,8 @@ type:Boolean,
 
       const points = [];
 
-      const dataLength = this.spectrum.length || Object.keys(this.spectrum).length;
+      const dataLength =
+        this.spectrum.length || Object.keys(this.spectrum).length;
       const sliceWidth = (this.width * 1.0) / dataLength;
 
       let x = 0;
@@ -72,15 +75,15 @@ type:Boolean,
     },
   },
 
-  watch:{
-    play(){
+  watch: {
+    play() {
       this.updateData();
-    }
+    },
   },
   directives: {
     render: {
       update(canvasElement, binding, vnode) {
-        const context = canvasElement.getContext('2d');
+        const context = canvasElement.getContext("2d");
 
         const width = canvasElement.width;
         const height = canvasElement.height;
@@ -92,14 +95,14 @@ type:Boolean,
         context.clearRect(0, 0, width, height);
         context.beginPath();
 
-        context.moveTo(points[0][0], (height / 2) + (points[0][1] / 2));
+        context.moveTo(points[0][0], height / 2 + points[0][1] / 2);
 
         for (let i = 1; i < points.length; i += 1) {
-          context.lineTo(points[i][0], (height / 2) + (points[i][1] / 2));
+          context.lineTo(points[i][0], height / 2 + points[i][1] / 2);
         }
 
         for (let i = points.length - 1; i >= 0; i -= 1) {
-          context.lineTo(points[i][0], (height / 2) - (points[i][1] / 2));
+          context.lineTo(points[i][0], height / 2 - points[i][1] / 2);
         }
 
         context.fill();
@@ -113,40 +116,32 @@ type:Boolean,
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (error) {
-      this.$emit('error', '`navigator.mediaDevices.getUserMedia()` failed.');
+      this.$emit("error", "`navigator.mediaDevices.getUserMedia()` failed.");
       return Promise.resolve();
     }
 
-    this. context = new AudioContext();
+    this.context = new AudioContext();
 
-    this. analyser = this.context.createAnalyser();
-    this. dataArray = new Uint8Array( this.analyser.frequencyBinCount);
+    this.analyser = this.context.createAnalyser();
+    this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
 
     const source = this.context.createMediaStreamSource(stream);
-    source.connect( this.analyser);
-
-
+    source.connect(this.analyser);
 
     this.updateData();
   },
 
-  methods:{
-    updateData(){
+  methods: {
+    updateData() {
+      this.analyser.getByteFrequencyData(this.dataArray);
+      this.spectrum = this.dataArray.slice();
 
-        this.analyser.getByteFrequencyData( this.dataArray);
-        this.spectrum =  this.dataArray.slice();
-
-        if(this.play)
-          requestAnimationFrame(this.updateData);
-
-    }
+      if (this.play) requestAnimationFrame(this.updateData);
+    },
   },
 
-  beforeDestroy() {
-    if(this. context)
-    this. context.close()
-  }
-
+  beforeUnmount() {
+    if (this.context) this.context.close();
+  },
 };
 </script>
-

@@ -13,20 +13,22 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-card tile class="s--shop-basket-item-return-form">
+  <v-card class="s--shop-basket-item-return-form" rounded="0">
     <v-card-title>
       {{ $t("return_request.title") }}
       <v-spacer></v-spacer>
-      <v-btn icon @click="$emit('onClose')"><v-icon>close</v-icon></v-btn>
+      <v-btn icon @click="$emit('onClose')">
+        <v-icon>close</v-icon>
+      </v-btn>
     </v-card-title>
     <v-card-text>
-      <div class="item-return ">
+      <div class="item-return">
         <v-img
+          :src="getProductImage(basketItem.product_id)"
+          aspect-ratio="1"
           class="image"
           height="42px"
           width="42px"
-          aspect-ratio="1"
-          :src="getProductImage(basketItem.product_id)"
         />
         <div>
           <p class="m-0 font-weight-medium">
@@ -52,16 +54,16 @@
       </div>
 
       <v-container fluid>
-        <v-layout row wrap align-center justify-center>
-          <v-flex v-if="step === 1" xs12 md6>
+        <v-layout align-center justify-center row wrap>
+          <v-flex v-if="step === 1" md6 xs12>
             <p class="action-title text-start m-2">
               <s-number-input
-                :label="$t('return_request.count_input')"
                 v-model="count"
-                class="max-width-field mx-auto "
-                :min="1"
+                :label="$t('return_request.count_input')"
                 :max="basketItem.count"
                 :messages="$t('return_request.count_input_message')"
+                :min="1"
+                class="max-width-field mx-auto"
                 filled
                 rounded
               />
@@ -69,122 +71,118 @@
 
             <v-select
               v-model="reason"
-              :items="items"
-              :label="$t('return_request.reason_input')"
-              :item-text="
-                item => {
+              :item-title="
+                (item) => {
                   return $t(item.title);
                 }
               "
-              item-value="value"
-              class="max-width-field mx-auto "
-              filled
-              rounded
+              :items="items"
+              :label="$t('return_request.reason_input')"
               :messages="$t('return_request.reason_input_message')"
+              class="max-width-field mx-auto"
+              item-value="value"
+              rounded
+              variant="filled"
             />
 
             <v-textarea
               v-model="note"
-              name="input-7-1"
-              :label="$t('return_request.note_input')"
               :hint="$t('return_request.note_input_hint')"
-              :rows="2"
-              filled
-              rounded
+              :label="$t('return_request.note_input')"
               :messages="$t('return_request.note_input_message')"
+              :rows="2"
+              name="input-7-1"
+              rounded
+              variant="filled"
             />
           </v-flex>
 
-          <v-flex v-if="step === 2" xs12 class="p-2">
+          <v-flex v-if="step === 2" class="p-2" xs12>
             <p class="text-start">
               {{ $t("return_request.media_message") }}
             </p>
           </v-flex>
 
-          <v-flex v-if="step === 2" xs12 md3 class="p-2 text-center">
+          <v-flex v-if="step === 2" class="p-2 text-center" md3 xs12>
             <div style="min-height: 48px">
               <v-img
                 v-if="imagePath"
-                class="ma-auto"
+                :height="48"
                 :src="imagePath"
                 :width="48"
-                :height="48"
+                class="ma-auto"
                 contain
               />
             </div>
 
             <file-pond
-              class="mt-2"
-              name="photo"
               ref="pond_profile"
               :label-idle="`<i class='fa:fas fa-image'></i>  Image`"
-              allow-multiple="false"
-              accepted-file-types="image/jpeg, image/png"
-              :server="serverOptionsImage"
-              maxFileSize="1MB"
-              @processfile="handleProcessFileImage"
               :max-files="1"
+              :server="serverOptionsImage"
+              accepted-file-types="image/jpeg, image/png"
+              allow-multiple="false"
               check-validity="true"
+              class="mt-2"
               credits="false"
+              maxFileSize="1MB"
+              name="photo"
+              @processfile="handleProcessFileImage"
             />
           </v-flex>
 
-          <v-flex v-if="step === 2" xs12 md3 class="p-2 text-center">
+          <v-flex v-if="step === 2" class="p-2 text-center" md3 xs12>
             <div style="min-height: 48px">
               <v-img
                 v-if="videoPath"
-                class="ma-auto"
+                :height="48"
                 :src="require('@components/assets/icons/film.svg')"
                 :width="48"
-                :height="48"
+                class="ma-auto"
               />
             </div>
 
             <file-pond
               ref="pond_profile"
-              class="mt-2"
-              name="photo"
-              :label-idle="
-                `<i class='fa:fas fa-video'></i> ${$t('return_request.video')}`
-              "
-              allow-multiple="false"
-              accepted-file-types="mp4,avi,mov,mpg"
-              :server="serverOptionsVideo"
-              maxFileSize="10MB"
+              :label-idle="`<i class='fa:fas fa-video'></i> ${$t('return_request.video')}`"
               :max-files="1"
+              :server="serverOptionsVideo"
+              accepted-file-types="mp4,avi,mov,mpg"
+              allow-multiple="false"
               check-validity="true"
-              @processfile="handleProcessFileVideo"
+              class="mt-2"
               credits="false"
+              maxFileSize="10MB"
+              name="photo"
+              @processfile="handleProcessFileVideo"
             />
           </v-flex>
 
-          <v-flex v-if="step === 2" xs12 md3 class="p-2 text-center">
+          <v-flex v-if="step === 2" class="p-2 text-center" md3 xs12>
             <div style="min-height: 48px">
               <v-img
                 v-if="voicePath"
-                class="ma-auto"
+                :height="48"
                 :src="require('@components/assets/icons/voice.svg')"
                 :width="48"
-                :height="48"
+                class="ma-auto"
               />
             </div>
             <file-pond
               ref="pond_profile"
-              class="mt-2"
-              name="photo"
-              :label-idle="
-                `<i class='fa:fas fa-microphone'></i>  ${$t(
-                  'return_request.voice'
-                )}`
-              "
-              allow-multiple="false"
-              accepted-file-types="mp3,wav"
-              :server="serverOptionsVoice"
-              maxFileSize="5MB"
+              :label-idle="`<i class='fa:fas fa-microphone'></i>  ${$t(
+                'return_request.voice',
+              )}`"
               :max-files="1"
+              :server="serverOptionsVoice"
+              accepted-file-types="mp3,wav"
+              allow-multiple="false"
               check-validity="true"
-              @processfile="handleProcessFileVoice"
+              class="mt-2"
               credits="false"
+              maxFileSize="5MB"
+              name="photo"
+              @processfile="handleProcessFileVoice"
             />
           </v-flex>
         </v-layout>
@@ -192,20 +190,20 @@
     </v-card-text>
     <v-card-actions class="pb-2">
       <v-spacer></v-spacer>
-      <v-btn v-if="step === 2" class="m-1" depressed @click="step = 1">
+      <v-btn v-if="step === 2" class="m-1" variant="flat" @click="step = 1">
         {{ $t("global.actions.back") }}
       </v-btn>
 
-      <v-btn depressed class="m-1" @click="$emit('onClose')">
+      <v-btn class="m-1" variant="flat" @click="$emit('onClose')">
         {{ $t("global.actions.close") }}
       </v-btn>
 
       <v-btn
         v-if="step === 1"
-        depressed
-        color="#C2185B"
         class="m-1"
+        color="#C2185B"
         dark
+        variant="flat"
         @click="addReturnItemRequest()"
       >
         {{ $t("return_request.add_action") }}
@@ -224,14 +222,14 @@ export default {
   name: "SShopBasketItemReturnForm",
   components: {
     SNumberInput,
-    VariantItemViewMicro
+    VariantItemViewMicro,
   },
 
   props: {
-    basketItem: {}
+    basketItem: {},
   },
 
-  data: function() {
+  data: function () {
     return {
       step: 1,
 
@@ -244,7 +242,7 @@ export default {
 
       reason: null,
 
-      items: ReturnOrderReason.physical
+      items: ReturnOrderReason.physical,
     };
   },
   computed: {
@@ -283,21 +281,21 @@ export default {
           this.shop_name,
           this.$route.params.basket_id,
           this.basketItem.id,
-          "image"
+          "image",
         ),
         process: {
           url: "",
           headers: {
-            Authorization: "Bearer " + window.$cookies.get("access_token")
-          }
+            Authorization: "Bearer " + window.$cookies.get("access_token"),
+          },
         },
 
         revert: {
           url: "",
           headers: {
-            Authorization: "Bearer " + window.$cookies.get("access_token")
-          }
-        }
+            Authorization: "Bearer " + window.$cookies.get("access_token"),
+          },
+        },
       };
     },
     serverOptionsVideo() {
@@ -306,21 +304,21 @@ export default {
           this.shop_name,
           this.$route.params.basket_id,
           this.basketItem.id,
-          "video"
+          "video",
         ),
         process: {
           url: "",
           headers: {
-            Authorization: "Bearer " + window.$cookies.get("access_token")
-          }
+            Authorization: "Bearer " + window.$cookies.get("access_token"),
+          },
         },
 
         revert: {
           url: "",
           headers: {
-            Authorization: "Bearer " + window.$cookies.get("access_token")
-          }
-        }
+            Authorization: "Bearer " + window.$cookies.get("access_token"),
+          },
+        },
       };
     },
 
@@ -330,29 +328,29 @@ export default {
           this.shop_name,
           this.$route.params.basket_id,
           this.basketItem.id,
-          "voice"
+          "voice",
         ),
         process: {
           url: "",
           headers: {
-            Authorization: "Bearer " + window.$cookies.get("access_token")
-          }
+            Authorization: "Bearer " + window.$cookies.get("access_token"),
+          },
         },
 
         revert: {
           url: "",
           headers: {
-            Authorization: "Bearer " + window.$cookies.get("access_token")
-          }
-        }
+            Authorization: "Bearer " + window.$cookies.get("access_token"),
+          },
+        },
       };
-    }
+    },
   },
 
   watch: {
     basketItem(val) {
       this.load_default();
-    }
+    },
   },
   created() {
     this.load_default();
@@ -385,23 +383,23 @@ export default {
           window.XAPI.POST_BASKET_ITEM_RETURN_REQUEST(
             shop_name,
             basket_id,
-            item_id
+            item_id,
           ),
           {
             reason: this.reason,
             count: this.count,
-            note: this.note
+            note: this.note,
             /*image: this.image,
-                            video: this.video,
-                            voice: this.voice*/
-          }
+                                video: this.video,
+                                voice: this.voice*/
+          },
         )
         .then(({ data }) => {
           console.log(data);
           if (!data.error) {
             t.showSuccessAlert(
               null,
-              this.$t("return_request.notifications.add_success")
+              this.$t("return_request.notifications.add_success"),
             );
             t.basketItem.return_request = data.return_request;
             t.step = 2;
@@ -409,7 +407,7 @@ export default {
             t.showErrorAlert(null, data.error_msg);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
           t.showLaravelError(error);
         })
@@ -422,7 +420,7 @@ export default {
       this.image = path;
     },*/
 
-    handleProcessFileImage: function(error, file) {
+    handleProcessFileImage: function (error, file) {
       if (!error) {
         let response = JSON.parse(file.serverId);
         this.image = response.files.path;
@@ -430,26 +428,25 @@ export default {
       }
     },
 
-    handleProcessFileVideo: function(error, file) {
+    handleProcessFileVideo: function (error, file) {
       if (!error) {
         let response = JSON.parse(file.serverId);
         this.video = response.files.path;
         return true;
       }
     },
-    handleProcessFileVoice: function(error, file) {
+    handleProcessFileVoice: function (error, file) {
       if (!error) {
         let response = JSON.parse(file.serverId);
         this.voice = response.files.path;
         return true;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -457,7 +454,7 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-basket-item-return-form{
+.s--shop-basket-item-return-form {
   .item-return {
     min-height: 52px;
     text-align: right;
@@ -476,5 +473,4 @@ export default {
     }
   }
 }
-
 </style>

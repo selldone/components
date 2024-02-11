@@ -20,19 +20,20 @@
 
     <v-tooltip
       v-if="has_progress_to_end"
-      location="bottom"
       :color="SaminColorDarkDeep"
       dark
+      location="bottom"
     >
       <template v-slot:activator="{ props }">
         <v-progress-linear
-          class="my-1"
-          :color="activeColor"
           :bg-color="bgColor"
+          :color="activeColor"
           :height="small ? 6 : 10"
           :model-value="passed_percent"
+          class="my-1"
+          rounded
+          rounded-bar
           striped
-          rounded rounded-bar
           v-bind="props"
         />
       </template>
@@ -46,19 +47,20 @@
 
     <v-tooltip
       v-if="has_progress_to_start"
-      location="bottom"
       :color="SaminColorDarkDeep"
       dark
+      location="bottom"
     >
       <template v-slot:activator="{ props }">
         <v-progress-linear
-          class="my-1"
-          :color="waitingColor"
           :bg-color="bgColor"
+          :color="waitingColor"
           :height="small ? 6 : 10"
           :model-value="till_start_percent"
+          class="my-1"
+          rounded
+          rounded-bar
           striped
-          rounded rounded-bar
           v-bind="props"
         />
       </template>
@@ -99,7 +101,7 @@ export default {
     },
     activeColor: { default: "light-blue" },
     waitingColor: { default: "amber" },
-    bgColor:{},
+    bgColor: {},
   },
   computed: {
     has_progress_to_end() {

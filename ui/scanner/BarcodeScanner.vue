@@ -28,13 +28,13 @@
       <video
         v-if="!camera_not_exist"
         id="video"
-        width="100%"
         height="100%"
+        width="100%"
       ></video>
       <div class="laser"></div>
     </div>
 
-    <v-alert variant="outlined" v-if="error" type="error">{{ error }}</v-alert>
+    <v-alert v-if="error" type="error" variant="outlined">{{ error }}</v-alert>
 
     <div class="text-success font-weight-black">{{ result }}</div>
   </div>
@@ -140,11 +140,12 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 video {
   background-color: #000;
   object-fit: cover;
 }
+
 .laser {
   width: 100%;
   margin-left: 0;

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <section class="border-bottom" v-resize="onResize">
+  <section v-resize="onResize" class="border-bottom">
     <div class="stories">
       <div
         v-for="(highlight, i) in highlights"
@@ -32,8 +32,9 @@
       </div>
     </div>
     <v-dialog v-model="dialog" fullscreen>
-      <v-sheet dark height="100%" class="d-flex justify-center">
+      <v-sheet class="d-flex justify-center" dark height="100%">
         <div
+          :style="`max-width: ${max_width}px; max-height: ${max_height}px;`"
           style="
             align-self: center;
             height: 100%;
@@ -41,19 +42,18 @@
             position: relative;
             width: 100%;
           "
-          :style="`max-width: ${max_width}px; max-height: ${max_height}px;`"
         >
           <div class="stories-con">
             <div
               v-for="(highlight, i) in highlights"
               :key="'h' + i"
+              :class="{ '-active': index === i }"
               :style="{
                 width: width + 'px',
                 height: height + 'px',
                 transform: calcTransform(i),
               }"
               class="-box"
-              :class="{ '-active': index === i }"
               @click="
                 index = i;
                 setCurrentStory();
@@ -62,23 +62,23 @@
               <!-- ---------------- Main Image ---------------- -->
 
               <v-img
-                class="-img"
                 :src="
                   index === i && product_data
                     ? getShopImagePath(product_data.icon)
                     : highlight.index < highlight.stories.length
-                    ? getShopImagePath(
-                        highlight.stories[highlight.index].display
-                      )
-                    : getShopImagePath(highlight.cover)
+                      ? getShopImagePath(
+                          highlight.stories[highlight.index].display,
+                        )
+                      : getShopImagePath(highlight.cover)
                 "
-                width="100%"
+                class="-img"
                 height="100%"
+                width="100%"
                 @click="showNormalPost()"
               >
                 <!-- ---------------- User avatar center ---------------- -->
 
-                <v-col cols="2" md="4" class="avatar-center">
+                <v-col class="avatar-center" cols="2" md="4">
                   <v-avatar :size="56" class="story-border -dense -black">
                     <img :src="profile_image" />
                   </v-avatar>
@@ -88,25 +88,25 @@
                       getFromNowString(
                         highlight.stories[highlight.index].date,
                         null,
-                        true
+                        true,
                       )
                     }}</span
                   >
                 </v-col>
 
                 <!-- ---------------- Pin products ---------------- -->
-                <dragable-pins
+                <s-drag-pins
                   v-if="index === i && in_main_post && selected_story"
                   v-model="selected_story.products"
+                  :editable="editable"
+                  :initial-y="10"
                   class="pins"
+                  @change="onChange"
                   @click:product="showProduct"
                   @click:category="showCategory"
-                  @change="onChange"
                   @update:tags="(tags) => (selected_story.products.tags = tags)"
-                  :initial-y="10"
-                  :editable="editable"
                 >
-                </dragable-pins>
+                </s-drag-pins>
               </v-img>
 
               <!-- ---------------- Header ---------------- -->
@@ -121,8 +121,8 @@
                         (highlight.index < j
                           ? 0
                           : highlight.index > j
-                          ? 100
-                          : 50) + '%',
+                            ? 100
+                            : 50) + '%',
                     }"
                   ></div>
                 </div>
@@ -139,23 +139,23 @@
                         getFromNowString(
                           highlight.stories[highlight.index].date,
                           null,
-                          true
+                          true,
                         )
                       }}</span
                     >
                   </div>
                   <v-spacer></v-spacer>
-                  <v-btn icon style="pointer-events: auto"
-                    ><v-icon>play_arrow</v-icon></v-btn
-                  >
+                  <v-btn icon style="pointer-events: auto">
+                    <v-icon>play_arrow</v-icon>
+                  </v-btn>
                 </div>
 
                 <v-progress-linear
-                  indeterminate
                   v-if="busy"
                   class="-loading"
-                  height="2"
                   color="blue"
+                  height="2"
+                  indeterminate
                 ></v-progress-linear>
               </header>
 
@@ -176,7 +176,7 @@
                   ></variant-selector-menu>
                 </div>
 
-                <v-row align="center" dense class="mx-0">
+                <v-row align="center" class="mx-0" dense>
                   <!-- Price -->
 
                   <v-col cols="12" md="6">
@@ -187,7 +187,11 @@
                         line-through
                       ></price-view>
 
-                      <v-chip small color="red" dark class="mx-1 float-end"
+                      <v-chip
+                        class="mx-1 float-end"
+                        color="red"
+                        dark
+                        size="small"
                         >{{ discount_percent }} %
                       </v-chip>
                     </p>
@@ -198,11 +202,11 @@
 
                   <!-- Buy button -->
 
-                  <v-col cols="12" md="6" class="text-center">
+                  <v-col class="text-center" cols="12" md="6">
                     <s-shop-buy-button
+                      :current-variant="selected_variant"
                       :product="product_data"
                       can-buy
-                      :current-variant="selected_variant"
                     ></s-shop-buy-button>
                   </v-col>
                 </v-row>
@@ -210,12 +214,12 @@
                 <!-- Variants -->
                 <product-variants-view
                   v-if="hasVariant"
-                  class="p-0"
-                  style="font-size: 9px"
                   :variants="product_data.variants"
-                  small
-                  dense
+                  class="p-0"
                   dark
+                  dense
+                  small
+                  style="font-size: 9px"
                 />
                 <!-- Pros & Cons -->
                 <div v-if="product_data.pros" class="-pros-list">
@@ -249,13 +253,13 @@
                   class="default-font zoomIn"
                 >
                   <products-dense-images-circles
-                    :ids="Object.keys(selected_story.products.list)"
                     :has-add="editable"
+                    :ids="Object.keys(selected_story.products.list)"
+                    :size="48"
+                    link
                     @click:add="showSelectProducts(selected_story)"
                     @click:category="showCategory"
                     @click:item="showProduct"
-                    :size="48"
-                    link
                   ></products-dense-images-circles>
                 </div>
               </div>
@@ -263,28 +267,35 @@
               <v-btn
                 class="-back"
                 fab
-                x-small
-                depressed
                 light
+                size="x-small"
+                variant="flat"
                 @click="preStory(highlight)"
-                ><v-icon large>chevron_left</v-icon></v-btn
               >
+                <v-icon size="large">chevron_left</v-icon>
+              </v-btn>
               <v-btn
                 class="-next"
                 fab
-                x-small
-                depressed
                 light
+                size="x-small"
+                variant="flat"
                 @click="nextStory(highlight)"
-                ><v-icon large>chevron_right</v-icon></v-btn
               >
+                <v-icon size="large">chevron_right</v-icon>
+              </v-btn>
             </div>
           </div>
         </div>
 
-        <v-btn class="absolute-top-right" icon large @click="dialog = false"
-          ><v-icon large>close</v-icon></v-btn
+        <v-btn
+          class="absolute-top-right"
+          icon
+          size="large"
+          @click="dialog = false"
         >
+          <v-icon size="large">close</v-icon>
+        </v-btn>
       </v-sheet>
     </v-dialog>
   </section>
@@ -293,7 +304,7 @@
 <script>
 import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
-import DragablePins from "@components/storefront/instagram/DragablePins.vue";
+import SDragPins from "@components/ui/drag/pins/SDragPins.vue";
 import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
 import VariantSelectorMenu from "@components/ui/variant/VariantSelectorMenu.vue";
 import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
@@ -305,7 +316,7 @@ export default {
     SShopBuyButton,
     VariantSelectorMenu,
     ProductVariantsView,
-    DragablePins,
+    SDragPins,
     ProductsDenseImagesCircles,
   },
   props: {
@@ -352,8 +363,8 @@ export default {
       return this.$vuetify.display.xsOnly
         ? 0.8
         : this.$vuetify.display.smOnly
-        ? 1.4
-        : 1.7;
+          ? 1.4
+          : 1.7;
     },
     width() {
       return this.height * 0.562;
@@ -413,14 +424,14 @@ export default {
       return this.CalcPriceProductCurrentCurrency(
         this.shop,
         this.product_data,
-        this.selected_variant
+        this.selected_variant,
       );
     },
     discount_percent() {
       return this.discountProductPercent(
         this.shop,
         this.product_data,
-        this.selected_variant
+        this.selected_variant,
       );
     },
 
@@ -428,7 +439,7 @@ export default {
       return this.getProductDiscountAmount(
         this.shop,
         this.product_data,
-        this.selected_variant
+        this.selected_variant,
       );
     },
 
@@ -518,7 +529,7 @@ export default {
     },
 
     showCategory(id) {
-      window.open(this.getCategoryLink(this.shop,id), "_blank");
+      window.open(this.getCategoryLink(this.shop, id), "_blank");
       this.showNormalPost();
     },
     showProduct(id) {
@@ -570,7 +581,7 @@ export default {
           window.API.PUT_INSTAGRAM_STORY_SET_PRODUCTS(this.shop.id, story.id),
           {
             products: story.products,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -589,18 +600,20 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 section {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE 10+ */
   overflow-y: auto;
 }
+
 .stories,
 .story {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
+
 .story {
   width: 60px;
   padding: 10px 5px;
@@ -616,6 +629,7 @@ section {
   flex-direction: column;
   cursor: pointer;
 }
+
 .story-img-wrapper {
   width: 56px;
   height: 56px;
@@ -624,18 +638,21 @@ section {
   border: 1px solid #ccc;
   padding: 2px;
 }
+
 .story-img-wrapper img {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   background-color: #eee;
 }
+
 .story-title {
   padding-top: 8px;
   font-size: 12px;
   color: #262626;
   max-width: 100%;
 }
+
 @media (min-width: 768px) {
   .stories {
     padding: 50px 48px;
@@ -653,6 +670,7 @@ section {
     font-size: 14px;
   }
 }
+
 //-------------------------------------------------------------
 .stories-con {
   display: flex;
@@ -662,6 +680,7 @@ section {
   height: 100%;
   transition: all;
 }
+
 .-box {
   position: absolute;
   left: 0;
@@ -675,20 +694,24 @@ section {
     .-img {
       border-radius: 8px;
     }
+
     .-next,
     .-back {
       display: block;
     }
+
     .avatar-center {
       display: none;
     }
   }
+
   &:not(.-active) {
     .footer,
     .header {
       display: none;
     }
   }
+
   .-img {
     overflow: hidden;
     border-radius: 20px;
@@ -708,9 +731,11 @@ section {
     top: 50%;
     transition: opacity 0.1s ease-in;
   }
+
   .-back {
     left: -40px;
   }
+
   .-next {
     right: -40px;
   }
@@ -722,6 +747,7 @@ section {
     }
   }
 }
+
 header {
   padding: 20px 16px 32px;
   direction: ltr;
@@ -736,6 +762,7 @@ header {
   width: 100%;
   z-index: 999;
 }
+
 .story-bar {
   display: flex;
   position: relative;
@@ -806,6 +833,7 @@ header {
   height: 100%;
   z-index: 999;
 }
+
 .product-box {
   position: absolute;
   bottom: 160px;
@@ -830,10 +858,12 @@ header {
 
   .-pros-list {
     padding: 2px 12px;
+
     p {
       font-weight: 600;
       font-size: 0.85em;
     }
+
     li {
       font-size: 0.9em;
       font-weight: 400;

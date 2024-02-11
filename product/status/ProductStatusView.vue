@@ -13,8 +13,8 @@
   -->
 
 <template>
-  <div class="inline-block text-center" :title="$t(status_obj.description)">
-    <v-icon :color="status_obj.color" small>
+  <div :title="$t(status_obj.description)" class="inline-block text-center">
+    <v-icon :color="status_obj.color" size="small">
       {{ status_obj.icon }}
     </v-icon>
 

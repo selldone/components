@@ -2,15 +2,16 @@
 
 ## Overview
 
-The `SStorefrontCampaignBanner` component is designed to display banners created within campaigns. These campaigns can be crafted and
+The `SStorefrontCampaignBanner` component is designed to display banners created within campaigns. These campaigns can
+be crafted and
 managed via the shop dashboard under the path: `Shop dashboard > Marketing > Campaign tab`.
 
 ## 🪄 Dashboard Magic Link
 
 https://selldone.com/magic-links/shop:campaigns
 
-
 ## Structure
+
 This represents the sample structure of the banner data within the `campaign.banner` object: .
 
 ```json

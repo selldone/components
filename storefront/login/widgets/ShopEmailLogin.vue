@@ -15,17 +15,16 @@
 <template>
   <div>
     <v-btn
-      depressed
       block
       class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
-      @mouseenter="tick()"
+      size="large"
+      variant="flat"
       @click="show()"
-      large
-
+      @mouseenter="tick()"
     >
-      <v-avatar size="32" class="float-start ms-n2" color="#fff"
-        ><v-icon>alternate_email</v-icon></v-avatar
-      >
+      <v-avatar class="float-start ms-n2" color="#fff" size="32">
+        <v-icon>alternate_email</v-icon>
+      </v-avatar>
       <span class="flex-grow-1">{{ $t("global.need_login.login_email") }}</span>
     </v-btn>
 
@@ -33,8 +32,8 @@
 
     <v-dialog v-model="dialog" max-width="640">
       <v-card>
-        <v-card-title
-          ><v-icon class="me-1" color="#333">account_circle</v-icon>
+        <v-card-title>
+          <v-icon class="me-1" color="#333">account_circle</v-icon>
           {{ $t("global.need_login.title") }}
         </v-card-title>
         <v-card-text class="text-start">
@@ -44,10 +43,10 @@
             </p>
             <v-text-field
               v-model="email"
-              outlined
               :placeholder="$t('global.placeholders.email')"
               :rules="[GlobalRules.required(), GlobalRules.email()]"
               class="strong-field"
+              variant="outlined"
             ></v-text-field>
           </template>
 
@@ -66,54 +65,62 @@
             </p>
             <v-otp-input
               v-model="otp"
-              length="8"
-              @finish="confirmOtp()"
-              type="number"
               class="strong-field"
+              length="8"
+              type="number"
+              @finish="confirmOtp()"
             ></v-otp-input>
           </template>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn v-if="step === 2" x-large @click="step = 1" text>
-              <v-icon left>{{ $t("icons.chevron_back") }}</v-icon>
-              {{ $t("global.actions.back") }}</v-btn
+            <v-btn
+              v-if="step === 2"
+              size="x-large"
+              variant="text"
+              @click="step = 1"
             >
+              <v-icon start>{{ $t("icons.chevron_back") }}</v-icon>
+              {{ $t("global.actions.back") }}
+            </v-btn>
 
-            <v-btn v-else x-large @click="dialog = false" text>
-              <v-icon left>close</v-icon>
-              {{ $t("global.actions.close") }}</v-btn
-            >
+            <v-btn v-else size="x-large" variant="text" @click="dialog = false">
+              <v-icon start>close</v-icon>
+              {{ $t("global.actions.close") }}
+            </v-btn>
 
             <v-btn
-              x-large
               v-if="step === 1"
-              @click="step = 2"
-              :loading="busy"
-              color="primary"
               :class="{ disabled: !is_valid_email }"
-              >{{ $t("global.actions.next") }}
-              <v-icon right>{{ $t("icons.chevron_next") }}</v-icon></v-btn
-            >
-            <v-btn
-              x-large
-              v-else-if="step === 2"
-              @click="sendEmail()"
               :loading="busy"
               color="primary"
-              ><v-icon left>check</v-icon> {{ $t("global.actions.yes") }}</v-btn
+              size="x-large"
+              @click="step = 2"
+              >{{ $t("global.actions.next") }}
+              <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
+            </v-btn>
+            <v-btn
+              v-else-if="step === 2"
+              :loading="busy"
+              color="primary"
+              size="x-large"
+              @click="sendEmail()"
             >
+              <v-icon start>check</v-icon>
+              {{ $t("global.actions.yes") }}
+            </v-btn>
 
             <v-btn
-              x-large
               v-else-if="step === 3"
-              @click="confirmOtp()"
+              :class="{ disabled: !is_valid_otp }"
               :loading="busy"
               color="primary"
-              :class="{ disabled: !is_valid_otp }"
-              ><v-icon left>check</v-icon>
-              {{ $t("global.actions.confirm") }}</v-btn
+              size="x-large"
+              @click="confirmOtp()"
             >
+              <v-icon start>check</v-icon>
+              {{ $t("global.actions.confirm") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>

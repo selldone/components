@@ -13,28 +13,28 @@
   -->
 
 <template>
-  <div class="vci-container" ref="containerRef">
+  <div ref="containerRef" class="vci-container">
     <img
+      ref="leftImageRef"
       :alt="leftImageAlt"
+      :class="leftImageClass"
       :src="leftImage"
       :style="leftImageStyle"
       class="left-image"
-      ref="leftImageRef"
-      :class="leftImageClass"
       @load="$emit('loaded:left')"
     />
     <div :style="leftImageStyle" class="left-label">{{ leftLabel }}</div>
 
     <img
-      :alt="rightImageAlt"
-      :src="rightImage"
-      class="right-image"
       ref="rightImageRef"
+      :alt="rightImageAlt"
       :class="rightImageClass"
-      :style="{'--max-height':maxHeight}"
+      :src="rightImage"
+      :style="{ '--max-height': maxHeight }"
+      class="right-image"
       @load="$emit('loaded:right')"
     />
-    <div :style="rightLabelStyle" ref="rightLabelRef" class="right-label">
+    <div ref="rightLabelRef" :style="rightLabelStyle" class="right-label">
       {{ rightLabel }}
     </div>
 
@@ -51,6 +51,7 @@
 
 <script>
 import ResizeSensor from "./ResizeSensor";
+
 export default {
   name: "VueCompareImage",
   emits: ["loaded:left", "loaded:right"],
@@ -76,7 +77,7 @@ export default {
       window.addEventListener("mouseup", this.finishSliding);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.finishSliding();
     window.removeEventListener("mouseup", this.finishSliding);
     window.removeEventListener("touchend", this.finishSliding);
@@ -125,7 +126,7 @@ export default {
       type: Number,
       default: 0.5,
     },
-    maxHeight:{},
+    maxHeight: {},
   },
   methods: {
     getAndSetImageWidth() {
@@ -182,7 +183,7 @@ export default {
     rightLabelStyle() {
       const cutLeft = Math.max(
         0,
-        this.rightLabelWidth + this.imageWidth * (this.positionPct - 1)
+        this.rightLabelWidth + this.imageWidth * (this.positionPct - 1),
       );
       return {
         clip: `rect(auto, auto, auto, ${cutLeft}px)`,
@@ -225,13 +226,14 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .vci-container {
   box-sizing: border-box;
   position: relative;
   width: 100%;
   overflow: hidden;
 }
+
 .left-image {
   display: block;
   height: 100%; // fit to the height of under image
@@ -240,12 +242,14 @@ export default {
   top: 0;
   width: 100%;
 }
+
 .left-label {
   position: absolute;
   top: 0px;
   left: 0px;
   padding: 10px;
 }
+
 .right-image {
   display: block;
   height: auto; // Respect the aspect ratio
@@ -253,12 +257,14 @@ export default {
   max-height: var(--max-height);
   object-fit: cover;
 }
+
 .right-label {
   position: absolute;
   top: 0px;
   right: 0px;
   padding: 10px;
 }
+
 .vci-slider {
   align-items: center;
   display: flex;
@@ -267,27 +273,35 @@ export default {
   justify-content: center;
   position: absolute;
   top: 0;
+
   .line {
     background: white;
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-      0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    box-shadow:
+      0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+      0px 1px 5px 0px rgba(0, 0, 0, 0.12);
     flex: 0 1 auto;
     height: 100%;
   }
+
   .handle {
     align-items: center;
     border-radius: 100%;
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-      0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    box-shadow:
+      0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+      0px 1px 5px 0px rgba(0, 0, 0, 0.12);
     box-sizing: border-box;
     display: flex;
     flex: 1 0 auto;
     justify-content: center;
   }
+
   .left-arrow {
     height: 0px;
     width: 0px;
   }
+
   .right-arrow {
     height: 0px;
     width: 0px;

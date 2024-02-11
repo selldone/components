@@ -16,7 +16,6 @@
   <span v-if="statusObject" class="position-relative text-center">
     <div class="inline-block position-relative">
       <img
-        class="me-1"
         :src="
           gatewayProcessing
             ? require('@components/assets/icons/gateway-processing.svg')
@@ -24,29 +23,30 @@
               ? require('@components/assets/icons/require_capture.svg')
               : statusObject.src
         "
-        width="24"
+        class="me-1"
         height="24"
+        width="24"
       />
 
       <v-icon
-        size="small"
         v-if="processing"
         class="sup-icon fa-spin"
         color="blue"
+        size="small"
         >fa:fas fa-cog</v-icon
       >
-      <v-icon size="small" v-else-if="ticked" class="sup-icon" color="success"
+      <v-icon v-else-if="ticked" class="sup-icon" color="success" size="small"
         >check_circle</v-icon
       >
-      <v-icon size="small" v-else-if="canceled" class="sup-icon" color="red"
+      <v-icon v-else-if="canceled" class="sup-icon" color="red" size="small"
         >cancel</v-icon
       >
 
       <v-icon
-        size="small"
         v-if="paymentRequireCapture"
         class="sup-icon fa-pulse"
         color="success"
+        size="small"
         >fa:fas fa-spinner</v-icon
       >
     </div>
@@ -54,11 +54,11 @@
     <small class="d-block text-ellipsis">{{ title }}</small>
     <s-time-progress-bar
       v-if="gatewayProcessing"
+      :created-time="gatewayProcessing.created_at"
+      :end-time="gatewayProcessing.expire_at"
+      :start-time="gatewayProcessing.issued_at"
       class="min-width-100"
       small
-      :created-time="gatewayProcessing.created_at"
-      :start-time="gatewayProcessing.issued_at"
-      :end-time="gatewayProcessing.expire_at"
     ></s-time-progress-bar>
   </span>
 </template>
@@ -119,4 +119,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

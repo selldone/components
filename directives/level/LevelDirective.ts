@@ -12,9 +12,9 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {ObjectDirective} from 'vue';
-import {AppLevel} from '@core/enums/application/AppLevel';
-import {Store} from 'vuex'; // Import Vuex Store type
+import { ObjectDirective } from "vue";
+import { AppLevel } from "@core/enums/application/AppLevel";
+import { Store } from "vuex"; // Import Vuex Store type
 
 /**
  * Directive to conditionally hide elements based on user's app level.

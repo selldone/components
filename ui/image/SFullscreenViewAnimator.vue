@@ -13,11 +13,11 @@
   -->
 
 <template>
-  <v-dialog fullscreen v-model="dialog" :transition="false">
+  <v-dialog v-model="dialog" :transition="false" fullscreen>
     <div
-      :style="stylex"
       :class="classx"
-      @click="closeImage()"
+      :style="stylex"
+      class="no-scroll d-flex flex-column align-center safe-con pointer-zoom-out"
       style="
         background-color: #fff;
         max-height: 100vh;
@@ -25,7 +25,7 @@
         overflow-y: auto;
         transition: all 0.3s ease-in-out;
       "
-      class="no-scroll d-flex flex-column align-center safe-con pointer-zoom-out"
+      @click="closeImage()"
       v-html="html"
     ></div>
   </v-dialog>
@@ -133,6 +133,7 @@ export default {
     }
   }
 }
+
 .safe-con {
   :first-child {
     width: 100% !important;

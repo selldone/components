@@ -14,8 +14,7 @@
 
 <template>
   <div
-    class="s-expand-view"
-    :class="{ '-expanded': expanded}"
+    :class="{ '-expanded': expanded }"
     :style="{
       '--top': fadeTop,
       '--bottom': fadeBottom,
@@ -24,18 +23,19 @@
       'max-height': expanded ? scrollHeight : maxHeight,
       'min-height': minHeight,
     }"
+    class="s-expand-view"
   >
     <div
-      class="--scroll"
       ref="scroll"
-      v-scroll.self="(ev) => onScroll(ev.target)"
       v-mutate="onMutate"
+      v-scroll.self="(ev) => onScroll(ev.target)"
+      class="--scroll"
     >
       <slot></slot>
     </div>
 
     <div v-if="had_scroll" class="-expand-button">
-      <v-btn @click="expanded = !expanded" text x-large
+      <v-btn size="x-large" variant="text" @click="expanded = !expanded"
         >{{
           expanded
             ? $t("global.actions.collapse")
@@ -43,8 +43,8 @@
         }}
 
         <v-icon :class="{ 'rotate-180': expanded }" class="mx-2"
-          >expand_more</v-icon
-        >
+          >expand_more
+        </v-icon>
       </v-btn>
     </div>
   </div>
@@ -122,7 +122,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s-expand-view {
   position: relative;
   transition: all 1s ease 0s;
@@ -139,7 +139,6 @@ export default {
     overflow: hidden;
     max-height: inherit;
   }
-
 
   &:not(.-expanded) {
     &:after {
@@ -164,8 +163,11 @@ export default {
 
       background-position: top, bottom, left, right;
       background-repeat: no-repeat;
-      background-size: 100% var(--top, 0), 100% var(--bottom, 0),
-        var(--left, 0) 100%, var(--right, 0) 100%;
+      background-size:
+        100% var(--top, 0),
+        100% var(--bottom, 0),
+        var(--left, 0) 100%,
+        var(--right, 0) 100%;
     }
   }
 
@@ -177,7 +179,8 @@ export default {
     z-index: 3;
     transition: all 0.3s;
   }
-  &.-expanded{
+
+  &.-expanded {
     .-expand-button {
       bottom: -64px;
     }

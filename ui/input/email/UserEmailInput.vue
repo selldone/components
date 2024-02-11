@@ -15,39 +15,39 @@
 <template>
   <v-combobox
     v-model="select"
-    :loading="loading"
-    :items="items"
-    no-filter
     v-model:search-input="search"
     :customFilter="() => true"
+    :density="dense ? 'compact' : undefined"
+    :filled="filled"
     :flat="flat"
+    :hide-details="hideDetails"
+    :items="items"
+    :label="label"
+    :loading="loading"
+    :messages="messages"
+    :outlined="outlined"
+    :placeholder="placeholder"
+    :prepend-inner-icon="!noIcon && !select ? 'account_circle' : undefined"
+    :readonly="readonly"
+    :rounded="rounded"
+    :rules="rules"
+    :variant="soloInverted && 'solo-inverted'"
+    clearable
     hide-no-data
-    return-object
     item-title="name"
     item-value="email"
-    :label="label"
-    :variant="soloInverted && 'solo-inverted'"
-    :rounded="rounded"
-    :filled="filled"
-    :outlined="outlined"
-    :density="dense ? 'compact' : undefined"
-    clearable
-    :placeholder="placeholder"
+    no-filter
+    return-object
     @click:clear="
       $emit('update:user-id', null);
       $emit('update:user', null);
     "
-    :hide-details="hideDetails"
-    :rules="rules"
-    :prepend-inner-icon="!noIcon && !select ? 'account_circle' : undefined"
-    :readonly="readonly"
-    :messages="messages"
   >
     <template v-slot:chip="{ item, props }">
       <v-chip
-        v-bind="props"
         :color="item.raw.add ? 'primary' : 'transparent'"
         :title="item.raw.email"
+        v-bind="props"
       >
         <v-avatar start>
           <v-img
@@ -59,14 +59,14 @@
         {{ item.raw.name }}
 
         <span v-if="item.raw.add"
-          ><v-icon size="small" class="ms-3 me-1">email</v-icon>
+          ><v-icon class="ms-3 me-1" size="small">email</v-icon>
           {{ item.raw.email }}</span
         >
       </v-chip>
     </template>
 
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" class="text-start">
+      <v-list-item class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar>
             <v-icon v-if="item.raw.add" color="success">add</v-icon>
@@ -80,8 +80,8 @@
             <v-icon
               v-if="item.raw.profile && item.raw.profile.verified"
               class="ms-1"
-              size="small"
               color="blue"
+              size="small"
               >verified
             </v-icon>
           </v-list-item-title>
@@ -89,7 +89,7 @@
         <template v-slot:subtitle>
           <v-list-item-subtitle v-text="item.raw.email"></v-list-item-subtitle>
         </template>
-        <template v-slot:append v-if="withProfile && item.raw.profile">
+        <template v-if="withProfile && item.raw.profile" v-slot:append>
           <div v-if="item.raw.profile.nominated_id">
             <v-avatar size="2em">
               <v-img

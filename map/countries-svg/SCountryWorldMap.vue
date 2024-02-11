@@ -14,7 +14,11 @@
 
 <template>
   <div class="text-center small">
-    <s-world-svg-map v-if="mapData" :country-data="mapData" style="height: 84px" />
+    <s-world-svg-map
+      v-if="mapData"
+      :country-data="mapData"
+      style="height: 84px"
+    />
 
     <flag :iso="country" :squared="false" />
     {{ getCountryName(country) }}
@@ -23,6 +27,7 @@
 
 <script>
 import SWorldSvgMap from "@components/map/countries-svg/SWorldSvgMap.vue";
+
 export default {
   name: "SCountryWorldMap",
   components: { SWorldSvgMap },

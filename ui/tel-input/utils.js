@@ -1,13 +1,13 @@
-import allCountries from './assets/all-countries';
+import allCountries from "./assets/all-countries";
 
 export function getCountry() {
-  return fetch('https://ip2c.org/s')
+  return fetch("https://ip2c.org/s")
     .then((response) => response.text())
     .then((response) => {
-      const result = (response || '').toString();
+      const result = (response || "").toString();
 
-      if (!result || result[0] !== '1') {
-        throw new Error('unable to fetch the country');
+      if (!result || result[0] !== "1") {
+        throw new Error("unable to fetch the country");
       }
 
       return result.substr(2, 2);
@@ -25,128 +25,132 @@ export function setCaretPosition(ctrl, pos) {
   } else if (ctrl.createTextRange) {
     const range = ctrl.createTextRange();
     range.collapse(true);
-    range.moveEnd('character', pos);
-    range.moveStart('character', pos);
+    range.moveEnd("character", pos);
+    range.moveStart("character", pos);
     range.select();
   }
 }
 
 export const allProps = [
   {
-    name: 'allCountries',
+    name: "allCountries",
     type: Array,
     default: allCountries,
-    description: 'All countries that are used in <code>libphonenumber-js</code>, can be overridden by this prop',
+    description:
+      "All countries that are used in <code>libphonenumber-js</code>, can be overridden by this prop",
     inDemo: false,
   },
   {
-    name: 'autoFormat',
+    name: "autoFormat",
     type: Boolean,
     default: true,
-    description: 'Auto update the input to the formatted phone number when it\'s valid',
+    description:
+      "Auto update the input to the formatted phone number when it's valid",
     inDemo: true,
   },
   {
-    name: 'customValidate',
+    name: "customValidate",
     type: [Boolean, RegExp],
     default: false,
-    description: 'Custom validation RegExp for input',
+    description: "Custom validation RegExp for input",
     inDemo: false,
   },
   {
-    name: 'defaultCountry',
-    default: '',
+    name: "defaultCountry",
+    default: "",
     type: [String, Number],
-    description: 'Default country (by iso2 or dialCode), will override the country fetched from IP address of user',
+    description:
+      "Default country (by iso2 or dialCode), will override the country fetched from IP address of user",
     inDemo: false,
   },
   {
-    name: 'disabled',
+    name: "disabled",
     default: false,
     type: Boolean,
-    description: 'Disable <code>s-tel-input</code>, including the input & flag dropdown',
+    description:
+      "Disable <code>s-tel-input</code>, including the input & flag dropdown",
     inDemo: false,
   },
   {
-    name: 'autoDefaultCountry',
+    name: "autoDefaultCountry",
     default: true,
     type: Boolean,
-    description: 'To fetch default country based on IP address of user',
+    description: "To fetch default country based on IP address of user",
     inDemo: false,
   },
   {
-    name: 'dropdownOptions',
+    name: "dropdownOptions",
     type: Object,
-    description: 'Options for dropdown, see below',
+    description: "Options for dropdown, see below",
     inDemo: false,
   },
   {
-    name: 'dropdownOptions.disabled',
+    name: "dropdownOptions.disabled",
     default: false,
     type: Boolean,
-    description: 'Disable dropdown',
+    description: "Disable dropdown",
     inDemo: false,
   },
   {
-    name: 'dropdownOptions.showDialCodeInList',
+    name: "dropdownOptions.showDialCodeInList",
     default: true,
     type: Boolean,
-    description: 'Show dial code in the dropdown list',
+    description: "Show dial code in the dropdown list",
     inDemo: true,
   },
   {
-    name: 'dropdownOptions.showDialCodeInSelection',
+    name: "dropdownOptions.showDialCodeInSelection",
     default: false,
     type: Boolean,
-    description: 'Show dial code in the dropdown selection',
+    description: "Show dial code in the dropdown selection",
     inDemo: true,
   },
   {
-    name: 'dropdownOptions.showFlags',
+    name: "dropdownOptions.showFlags",
     default: true,
     type: Boolean,
-    description: 'Show flags in the dropdown selection and list',
+    description: "Show flags in the dropdown selection and list",
     inDemo: true,
   },
   {
-    name: 'dropdownOptions.showSearchBox',
+    name: "dropdownOptions.showSearchBox",
     default: false,
     type: Boolean,
-    description: 'Show country search box',
+    description: "Show country search box",
     inDemo: true,
   },
   {
-    name: 'dropdownOptions.tabindex',
+    name: "dropdownOptions.tabindex",
     default: 0,
     type: Number,
-    description: 'Native dropdown <code>tabindex</code> attribute',
+    description: "Native dropdown <code>tabindex</code> attribute",
     inDemo: false,
   },
   {
-    name: 'ignoredCountries',
+    name: "ignoredCountries",
     default: [],
     type: Array,
-    description: 'List of countries will NOT be shown on the dropdown',
+    description: "List of countries will NOT be shown on the dropdown",
     inDemo: false,
   },
   {
-    name: 'inputOptions',
+    name: "inputOptions",
     type: Object,
-    description: 'Options for input, see below',
+    description: "Options for input, see below",
     inDemo: false,
   },
   {
-    name: 'inputOptions.autocomplete',
+    name: "inputOptions.autocomplete",
     type: String,
-    default: 'on',
-    description: 'Native input <code>autocomplete</code> attribute',
+    default: "on",
+    description: "Native input <code>autocomplete</code> attribute",
     inDemo: false,
   },
   {
-    name: 'inputOptions.autofocus',
+    name: "inputOptions.autofocus",
     type: Boolean,
     default: false,
-    description: 'Native input <code>autofocus</code> attribute',
+    description: "Native input <code>autofocus</code> attribute",
     inDemo: false,
   },
   // {
@@ -157,141 +161,142 @@ export const allProps = [
   //   inDemo: false,
   // },
   {
-    name: 'inputOptions.aria-describedby',
-    default: '',
+    name: "inputOptions.aria-describedby",
+    default: "",
     type: String,
-    description: 'Native input <code>aria-describedby</code> attribute',
+    description: "Native input <code>aria-describedby</code> attribute",
     inDemo: false,
   },
   {
-    name: 'inputOptions.id',
-    default: '',
+    name: "inputOptions.id",
+    default: "",
     type: String,
-    description: 'Native input <code>id</code> attribute',
+    description: "Native input <code>id</code> attribute",
     inDemo: false,
   },
   {
-    name: 'inputOptions.maxlength',
+    name: "inputOptions.maxlength",
     default: 25,
     type: Number,
-    description: 'Native input <code>maxlength</code> attribute',
+    description: "Native input <code>maxlength</code> attribute",
     inDemo: false,
   },
   {
-    name: 'inputOptions.name',
-    default: 'telephone',
+    name: "inputOptions.name",
+    default: "telephone",
     type: String,
-    description: 'Native input <code>name</code> attribute',
+    description: "Native input <code>name</code> attribute",
     inDemo: false,
   },
   {
-    name: 'inputOptions.showDialCode',
+    name: "inputOptions.showDialCode",
     default: false,
     type: Boolean,
-    description: 'Show dial code in input',
+    description: "Show dial code in input",
     inDemo: false,
   },
   {
-    name: 'inputOptions.placeholder',
-    default: 'Enter a phone number',
+    name: "inputOptions.placeholder",
+    default: "Enter a phone number",
     type: String,
-    description: 'Placeholder for the input',
+    description: "Placeholder for the input",
     inDemo: false,
   },
   {
-    name: 'inputOptions.readonly',
+    name: "inputOptions.readonly",
     default: false,
     type: Boolean,
-    description: 'Native input <code>readonly</code> attribute',
+    description: "Native input <code>readonly</code> attribute",
     inDemo: false,
   },
   {
-    name: 'inputOptions.required',
+    name: "inputOptions.required",
     default: false,
     type: Boolean,
-    description: 'Native input <code>required</code> attribute',
+    description: "Native input <code>required</code> attribute",
     inDemo: false,
   },
   {
-    name: 'inputOptions.tabindex',
+    name: "inputOptions.tabindex",
     default: 0,
     type: Number,
-    description: 'Native input <code>tabindex</code> attribute',
+    description: "Native input <code>tabindex</code> attribute",
     inDemo: false,
   },
   {
-    name: 'inputOptions.type',
-    default: 'tel',
+    name: "inputOptions.type",
+    default: "tel",
     type: String,
-    description: 'Native input <code>type</code> attribute',
+    description: "Native input <code>type</code> attribute",
     inDemo: false,
   },
   {
-    name: 'inputOptions.styleClasses',
-    default: '',
+    name: "inputOptions.styleClasses",
+    default: "",
     type: [String, Array, Object],
-    description: 'Custom classes for the <code>input</code>',
+    description: "Custom classes for the <code>input</code>",
     inDemo: false,
   },
   {
-    name: 'invalidMsg',
-    default: '',
+    name: "invalidMsg",
+    default: "",
     type: String,
-    description: '',
+    description: "",
     inDemo: false,
   },
   {
-    name: 'mode',
-    default: 'auto',
+    name: "mode",
+    default: "auto",
     type: String,
-    description: 'Allowed values: <code>\'auto\'</code> (Default set by phone),  <code>\'international\'</code> (Format number with the dial code i.e. + 61), <code>\'national\'</code> (Format number without dial code i.e. 0321232)',
+    description:
+      "Allowed values: <code>'auto'</code> (Default set by phone),  <code>'international'</code> (Format number with the dial code i.e. + 61), <code>'national'</code> (Format number without dial code i.e. 0321232)",
     inDemo: true,
-    options: ['auto', 'national', 'international'],
+    options: ["auto", "national", "international"],
   },
   {
-    name: 'onlyCountries',
+    name: "onlyCountries",
     default: [],
     type: Array,
-    description: 'List of countries will be shown on the dropdown',
+    description: "List of countries will be shown on the dropdown",
     inDemo: false,
   },
   {
-    name: 'preferredCountries',
+    name: "preferredCountries",
     default: [],
     type: Array,
-    description: 'Preferred countries list, will be on top of the dropdown',
+    description: "Preferred countries list, will be on top of the dropdown",
     inDemo: false,
   },
   {
-    name: 'styleClasses',
-    default: '',
+    name: "styleClasses",
+    default: "",
     type: [String, Array, Object],
-    description: 'Custom classes for the wrapper',
+    description: "Custom classes for the wrapper",
     inDemo: false,
   },
   {
-    name: 'validCharactersOnly',
+    name: "validCharactersOnly",
     default: false,
     type: Boolean,
-    description: 'Only allow valid characters in a phone number (will also verify in <code>mounted</code>, so phone number with invalid characters will be shown as an empty string)',
+    description:
+      "Only allow valid characters in a phone number (will also verify in <code>mounted</code>, so phone number with invalid characters will be shown as an empty string)",
     inDemo: false,
   },
 ];
 
-export const defaultOptions = [...allProps]
-  .reduce((prv, crr) => {
-    if (crr.name.includes('.')) {
-      const [key, nestedKey] = crr.name.split('.');
-      if (prv[key]) {
-        Object.assign(prv[key], { [nestedKey]: crr.default });
-      } else {
-        Object.assign(prv, { [key]: { [nestedKey]: crr.default } });
-      }
+export const defaultOptions = [...allProps].reduce((prv, crr) => {
+  if (crr.name.includes(".")) {
+    const [key, nestedKey] = crr.name.split(".");
+    if (prv[key]) {
+      Object.assign(prv[key], { [nestedKey]: crr.default });
     } else {
-      Object.assign(prv, { [crr.name]: crr.default });
+      Object.assign(prv, { [key]: { [nestedKey]: crr.default } });
     }
-    return prv;
-  }, {});
+  } else {
+    Object.assign(prv, { [crr.name]: crr.default });
+  }
+  return prv;
+}, {});
 
 export default {
   options: { ...defaultOptions },

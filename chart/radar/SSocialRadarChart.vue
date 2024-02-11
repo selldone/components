@@ -15,12 +15,12 @@
 <template>
   <apexchart
     v-if="series && series.length"
+    :height="(fullDetails ? 480 : 210) / (small ? 2 : 1)"
+    :options="options"
+    :series="series"
     class="mt-2 mt-sm-0 mx-auto"
     type="radar"
     width="100%"
-    :options="options"
-    :height="(fullDetails ? 480 : 210)/(small?2:1)"
-    :series="series"
   />
 </template>
 
@@ -84,13 +84,13 @@ export default {
         legend: {
           show: this.fullDetails,
           position: "bottom",
-          fontSize:this.small?'9px': '11px',
+          fontSize: this.small ? "9px" : "11px",
           fontWeight: 600,
         },
 
         plotOptions: {
           radar: {
-            size: (this.fullDetails ? 140 : 80)/(this.small?2:1),
+            size: (this.fullDetails ? 140 : 80) / (this.small ? 2 : 1),
             polygons: {
               strokeColors: "#e9e9e9",
               fill: {
@@ -102,7 +102,7 @@ export default {
         colors: ["#0097A7"],
 
         markers: {
-          size: this.small?2:4,
+          size: this.small ? 2 : 4,
           colors: ["#fff"],
           strokeColor: "#1976D2",
           strokeWidth: 2,
@@ -133,7 +133,6 @@ export default {
 
         dataLabels: {
           enabled: false,
-
         },
       };
     },

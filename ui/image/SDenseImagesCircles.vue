@@ -14,20 +14,25 @@
 
 <template>
   <div
-    class="circles-container"
     :style="{ padding: `${Math.round(size / 3)}px` }"
+    class="circles-container"
   >
     <v-avatar
-      :size="size"
       v-for="img in images_limited"
       :key="img"
-      class="citm"
-      @click="$emit('click:item', img)"
       :class="{ 'pointer-pointer': link }"
       :color="color"
+      :size="size"
+      class="citm"
       style="padding: 2px"
+      @click="$emit('click:item', img)"
     >
-      <v-img :src="getShopImagePath(img)"  cover color="#ffffffbb" class="rounded-card" />
+      <v-img
+        :src="getShopImagePath(img)"
+        class="rounded-card"
+        color="#ffffffbb"
+        cover
+      />
     </v-avatar>
 
     <span v-if="more_items > 0" class="more-items">
@@ -36,14 +41,15 @@
     </span>
 
     <v-btn
-      icon
       v-if="add"
       class="more-items"
       color="success"
+      icon
       variant="flat"
       @click.stop="$emit('click:add')"
-      ><v-icon>add</v-icon></v-btn
     >
+      <v-icon>add</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -86,7 +92,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .circles-container {
   display: flex;
   overflow: auto;
@@ -102,12 +108,14 @@ export default {
       &:not(:first-child) {
         margin-left: 10px;
       }
+
       margin-right: 22px;
 
       transform: scale(1.5);
       z-index: 1;
     }
   }
+
   .more-items {
     margin-left: 8px;
     font-size: 10px;
@@ -131,10 +139,12 @@ export default {
           margin-right: 10px;
           margin-left: unset;
         }
+
         margin-left: 22px;
         margin-right: unset;
       }
     }
+
     .more-items {
       margin-left: unset;
       margin-right: 8px;

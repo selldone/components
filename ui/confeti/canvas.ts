@@ -22,17 +22,17 @@ export default class Canvas {
    *   An optional HTMLCanvasElement to override the default.
    */
   constructor(canvasElement) {
-    const defaultCanvasId = 'confetti-canvas';
+    const defaultCanvasId = "confetti-canvas";
 
     if (canvasElement && !(canvasElement instanceof HTMLCanvasElement)) {
-      throw new Error('Element is not a valid HTMLCanvasElement');
+      throw new Error("Element is not a valid HTMLCanvasElement");
     }
 
     this.isDefault = !canvasElement;
 
     this.canvas = canvasElement || Canvas.createDefaultCanvas(defaultCanvasId);
 
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext("2d");
   }
 
   /**
@@ -41,15 +41,15 @@ export default class Canvas {
    *   A full-screen canvas.
    */
   static createDefaultCanvas(id) {
-    const canvas = document.createElement('canvas');
-    canvas.style.display = 'block';
-    canvas.style.position = 'fixed';
-    canvas.style.pointerEvents = 'none';
+    const canvas = document.createElement("canvas");
+    canvas.style.display = "block";
+    canvas.style.position = "fixed";
+    canvas.style.pointerEvents = "none";
     canvas.style.top = 0;
-    canvas.style.width = '100vw';
-    canvas.style.height = '100vh';
+    canvas.style.width = "100vw";
+    canvas.style.height = "100vh";
     canvas.id = id;
-    document.querySelector('body').appendChild(canvas);
+    document.querySelector("body").appendChild(canvas);
     return canvas;
   }
 
@@ -87,7 +87,10 @@ export default class Canvas {
       return;
     }
 
-    if (this.width !== window.innerWidth || this.height !== window.innerHeight) {
+    if (
+      this.width !== window.innerWidth ||
+      this.height !== window.innerHeight
+    ) {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
     }

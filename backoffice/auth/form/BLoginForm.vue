@@ -35,108 +35,104 @@
       >
         <v-img
           :src="require('@components/assets/selldone-logo/app-icon.png')"
-          width="84"
-          height="84"
           class="rounded-28px"
+          height="84"
+          width="84"
         >
         </v-img>
       </div>
 
       <template v-if="APP_IMAGE">
-        <img
-          src="../../../assets/icons/wire.svg"
-          width="16"
-          class="mx-3"
-        />
+        <img class="mx-3" src="../../../assets/icons/wire.svg" width="16" />
 
         <div
           class="bg-white rounded-28px flex-grow-0 pa-2"
           style="box-shadow: 0px -15px 15px -12px rgba(113, 112, 112, 0.2)"
         >
-          <v-img :src="APP_IMAGE" width="84" height="84" class="rounded-28px">
+          <v-img :src="APP_IMAGE" class="rounded-28px" height="84" width="84">
           </v-img>
         </div>
       </template>
     </div>
 
     <!-- Main login form -->
-    <div class="login-form" :class="{ 'shadow-paper': !flat, dark: dark }">
+    <div :class="{ 'shadow-paper': !flat, dark: dark }" class="login-form">
       <template v-if="!noHeader">
         <div class="header-place"></div>
 
         <v-img
           :src="`/images/weekly-reports/${weeksIntoYear}.jpg`"
-          width="100%"
-          height="190"
           class="-header-img"
           cover
+          height="190"
+          width="100%"
         />
       </template>
 
       <v-expand-transition>
         <!------------------------------ Register ------------------------------>
 
-        <div key="register" v-if="mode === 'register'">
+        <div v-if="mode === 'register'" key="register">
           <div class="text-start mt-3">
-            <h3 v-html="$t('login.register_title')" class="mb-2"></h3>
-            <p v-html="$t('login.register_subtitle')" class="mb-6"></p>
+            <h3 class="mb-2" v-html="$t('login.register_title')"></h3>
+            <p class="mb-6" v-html="$t('login.register_subtitle')"></p>
           </div>
 
-          <v-expansion-panels variant="accordion" class="rounded-xl">
+          <v-expansion-panels class="rounded-xl" variant="accordion">
             <v-expansion-panel elevation="0">
               <v-expansion-panel-title class="rounded-xl text-uppercase">
                 <v-icon class="flex-grow-0 me-2">admin_panel_settings</v-icon>
                 {{ $t("login.create_your_account") }}
               </v-expansion-panel-title>
               <v-expansion-panel-text
-                eager
                 class="no-x-padding-expansion-panel pt-2"
+                eager
               >
                 <v-text-field
-                  autocomplete="name"
                   v-model="register_name"
-                  variant="underlined"
-                  flat
-                  density="compact"
                   :label="$t('login.name_placeholder')"
                   :placeholder="$t('global.placeholders.name')"
+                  autocomplete="name"
+                  density="compact"
+                  flat
+                  variant="underlined"
                 ></v-text-field>
                 <v-text-field
-                  autocomplete="username"
-                  variant="underlined"
                   v-model="register_username"
-                  density="compact"
                   :label="$t('login.email_placeholder')"
                   :placeholder="$t('global.placeholders.email')"
-                  class="english-field"
                   :rules="[GlobalRules.email()]"
+                  autocomplete="username"
+                  class="english-field"
+                  density="compact"
+                  variant="underlined"
                 ></v-text-field>
                 <v-text-field
-                  autocomplete="new-password"
-                  variant="underlined"
                   v-model="register_password"
-                  density="compact"
-                  :label="$t('login.password_placeholder')"
-                  class="english-field"
                   :append-inner-icon="
                     register_Password_show ? 'visibility' : 'visibility_off'
                   "
+                  :label="$t('login.password_placeholder')"
                   :type="register_Password_show ? 'text' : 'password'"
+                  autocomplete="new-password"
+                  class="english-field"
+                  density="compact"
+                  variant="underlined"
                   @click:append-inner="
                     register_Password_show = !register_Password_show
                   "
                 ></v-text-field>
                 <v-text-field
-                  autocomplete="new-password"
-                  variant="underlined"
                   v-model="register_password_re"
-                  density="compact"
-                  :label="$t('login.re_password_placeholder')"
-                  class="english-field"
                   :append-inner-icon="
                     register_Password_2_show ? 'visibility' : 'visibility_off'
                   "
+                  :label="$t('login.re_password_placeholder')"
                   :type="register_Password_2_show ? 'text' : 'password'"
+                  autocomplete="new-password"
+                  class="english-field"
+                  density="compact"
+                  variant="underlined"
                   @click:append-inner="
                     register_Password_2_show = !register_Password_2_show
                   "
@@ -165,37 +161,37 @@
 
                 <v-checkbox
                   v-model="accept_terms"
-                  color="green"
                   class="small-label"
+                  color="green"
                 >
                   <template v-slot:label>
                     <span
+                      class="text-start success-links"
                       @click="fetchTerms"
                       v-html="$t('login.privacy_agreement')"
-                      class="text-start success-links"
                     ></span>
                   </template>
                 </v-checkbox>
 
                 <v-alert
                   :model-value="!!errorMessage_register"
+                  class="small"
                   color="#C2185B"
                   density="compact"
-                  class="small"
                 >
                   {{ errorMessage_register }}
                 </v-alert>
 
                 <v-btn
-                  variant="flat"
+                  :class="{ disabled: !can_register }"
+                  :loading="register_busy"
+                  :rounded="rounded"
                   block
                   class="untransform"
                   color="primary"
                   size="large"
-                  :rounded="rounded"
-                  :class="{ disabled: !can_register }"
+                  variant="flat"
                   @click="register"
-                  :loading="register_busy"
                 >
                   <i
                     v-if="!recaptcha_response"
@@ -209,63 +205,59 @@
           </v-expansion-panels>
 
           <p
-            class="hr-text my-4"
             :class="{ '-black': dark }"
             :data-content="$t('global.commons.or')"
+            class="hr-text my-4"
           ></p>
 
           <v-btn
             v-if="login_modes.includes('google')"
-            @click="busy_redirect = 'google'"
             :loading="busy_redirect === 'google'"
-            variant="flat"
+            :rounded="rounded"
             block
             class="my-2 untransform fadeIn delay_100 s--login-btn"
-            href="/login/google"
             color="#0061e0"
+            href="/login/google"
             size="large"
-            :rounded="rounded"
+            variant="flat"
+            @click="busy_redirect = 'google'"
           >
-            <v-avatar size="28" class="ms-n2" color="#ffffff"
-              ><img
-                class="pa-1"
-                src="../../../assets/trademark/google.svg"
+            <v-avatar class="ms-n2" color="#ffffff" size="28"
+              ><img class="pa-1" src="../../../assets/trademark/google.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_google") }}</span>
           </v-btn>
 
           <v-btn
             v-if="login_modes.includes('apple')"
-            @click="busy_redirect = 'apple'"
             :loading="busy_redirect === 'apple'"
-            variant="flat"
+            :rounded="rounded"
             block
             class="my-2 untransform fadeIn delay_200 s--login-btn"
-            href="/login/apple"
             color="#000"
+            href="/login/apple"
             size="large"
-            :rounded="rounded"
+            variant="flat"
+            @click="busy_redirect = 'apple'"
           >
-            <v-avatar size="28" class="ms-n2" color="#111"
-              ><img
-                class="pa-1"
-                src="../../../assets/trademark/apple.svg"
+            <v-avatar class="ms-n2" color="#111" size="28"
+              ><img class="pa-1" src="../../../assets/trademark/apple.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_apple") }}</span>
           </v-btn>
 
           <v-btn
             v-if="login_modes.includes('linkedin')"
-            @click="busy_redirect = 'linkedin'"
             :loading="busy_redirect === 'linkedin'"
             :rounded="rounded"
-            variant="flat"
-            size="large"
             block
             class="my-2 untransform fadeIn delay_300 s--login-btn"
             href="/login/linkedin"
+            size="large"
+            variant="flat"
+            @click="busy_redirect = 'linkedin'"
           >
-            <v-avatar size="28" class="ms-n2" color="#fff"
+            <v-avatar class="ms-n2" color="#fff" size="28"
               ><img
                 class="pa-1"
                 src="../../../assets/trademark/linkedin-circle.svg"
@@ -275,61 +267,57 @@
 
           <v-btn
             v-if="login_modes.includes('facebook')"
-            @click="busy_redirect = 'facebook'"
             :loading="busy_redirect === 'facebook'"
             :rounded="rounded"
-            variant="flat"
-            size="large"
             block
             class="my-2 untransform fadeIn delay_400 s--login-btn"
             href="/login/facebook"
+            size="large"
+            variant="flat"
+            @click="busy_redirect = 'facebook'"
           >
-            <v-avatar size="28" class="ms-n2" color="#fff"
-              ><img
-                class="pa-1"
-                src="../../../assets/trademark/meta.png"
+            <v-avatar class="ms-n2" color="#fff" size="28"
+              ><img class="pa-1" src="../../../assets/trademark/meta.png"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_facebook") }}</span>
           </v-btn>
 
           <v-btn
             v-if="login_modes.includes('github')"
-            @click="busy_redirect = 'github'"
             :loading="busy_redirect === 'github'"
-            variant="flat"
             :rounded="rounded"
-            size="large"
             block
             class="my-2 untransform fadeIn delay_500 s--login-btn"
             href="/login/github"
+            size="large"
+            variant="flat"
+            @click="busy_redirect = 'github'"
           >
-            <v-avatar size="28" class="ms-n2" color="#fff"
-              ><img
-                class="pa-1"
-                src="../../../assets/trademark/github.svg"
+            <v-avatar class="ms-n2" color="#fff" size="28"
+              ><img class="pa-1" src="../../../assets/trademark/github.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_github") }}</span>
           </v-btn>
 
           <template v-if="login_modes.includes('stripe') && !LOGIN_POPUP_LOGIN">
             <p
-              class="hr-text my-4"
               :class="{ '-black': dark }"
               :data-content="$t('global.commons.or')"
+              class="hr-text my-4"
             ></p>
 
             <v-btn
-              @click="busy_redirect = 'stripe'"
               :loading="busy_redirect === 'stripe'"
-              variant="flat"
+              :rounded="rounded"
               block
               class="my-2 untransform fadeIn delay_100 s--login-btn"
-              href="/stripe/login"
               color="#635BFF"
+              href="/stripe/login"
               size="large"
-              :rounded="rounded"
+              variant="flat"
+              @click="busy_redirect = 'stripe'"
             >
-              <v-avatar size="28" class="ms-n2" color="#fff"
+              <v-avatar class="ms-n2" color="#fff" size="28"
                 ><img
                   class="pa-1"
                   src="../../../assets/trademark/stripe-icon.png"
@@ -337,8 +325,8 @@
               <div class="flex-grow-1">
                 {{ $t("login.continue_with") }}
                 <img
-                  src="../../../assets/trademark/stripe-white.svg"
                   height="24"
+                  src="../../../assets/trademark/stripe-white.svg"
                 />
                 <small class="d-block text-white"
                   >+ {{ $t("login.auto_create_shop") }}</small
@@ -355,7 +343,7 @@
             <v-expansion-panel elevation="0">
               <v-expansion-panel-title>
                 <div class="line-height-normal">
-                  <v-icon color="success" size="small" class="me-1"
+                  <v-icon class="me-1" color="success" size="small"
                     >check
                   </v-icon>
                   <span v-html="$t('global.reed_agree_terms')"></span>
@@ -374,16 +362,16 @@
           <!----- Footer ------>
 
           <p class="mt-5 text-start fadeIn delay_500">
-            <v-icon color="blue" size="small" class="me-1"
+            <v-icon class="me-1" color="blue" size="small"
               >fiber_manual_record
             </v-icon>
             {{ $t("login.already_signup") }}
 
             <v-btn
-              variant="text"
-              @click="setMode('login')"
               class="untransform"
               color="primary"
+              variant="text"
+              @click="setMode('login')"
             >
               {{ $t("login.login_action") }}
             </v-btn>
@@ -392,13 +380,13 @@
 
         <!------------------------------ Login ------------------------------>
 
-        <div key="login" v-else>
+        <div v-else key="login">
           <v-btn
-            size="large"
-            @click="setMode('register')"
             block
             class="m-2 untransform font-weight-black"
+            size="large"
             variant="text"
+            @click="setMode('register')"
           >
             <v-icon>{{ $t("icons.chevron_back") }}</v-icon>
 
@@ -409,71 +397,71 @@
 
           <div v-if="!login_step2_mode" class="pt-2">
             <v-text-field
-              autocomplete="username"
-              variant="underlined"
-              type="email"
               v-model="login_username"
-              name="email"
               :disabled="ValidateEmail($route.query.email)"
-              density="compact"
               :label="$t('login.email_or_username_placeholder')"
+              autocomplete="username"
               class="english-field"
+              density="compact"
+              name="email"
+              type="email"
+              variant="underlined"
             ></v-text-field>
             <v-text-field
-              autocomplete="current-password"
-              variant="underlined"
               v-model="login_password"
-              name="password"
-              density="compact"
-              :label="$t('login.password_placeholder')"
-              class="english-field"
               :append-inner-icon="
                 login_Password_show ? 'visibility' : 'visibility_off'
               "
+              :label="$t('login.password_placeholder')"
               :type="login_Password_show ? 'text' : 'password'"
-              @click:append-inner="login_Password_show = !login_Password_show"
+              autocomplete="current-password"
+              class="english-field"
+              density="compact"
               hide-details
+              name="password"
+              variant="underlined"
+              @click:append-inner="login_Password_show = !login_Password_show"
             >
             </v-text-field>
 
             <div class="text-end">
               <v-btn
+                class="untransform"
+                color="primary"
+                size="small"
                 variant="text"
                 @click.stop="showResetPass"
-                class="untransform"
-                size="small"
-                color="primary"
               >
                 {{ $t("login.forgot_password") }}
               </v-btn>
             </div>
 
             <v-alert
-              color="#C2185B"
-              density="compact"
               :model-value="!!errorMessage"
               class="small"
+              color="#C2185B"
+              density="compact"
             >
               {{ errorMessage }}
             </v-alert>
 
             <s-smart-toggle
               v-model="remember"
-              color="primary"
-              class="small-label"
               :true-title="$t('login.remember_me')"
+              class="small-label"
+              color="primary"
             >
             </s-smart-toggle>
 
             <v-btn
-              variant="flat"
-              size="large"
+              :class="{ disabled: !can_login }"
+              :loading="login_busy"
               :rounded="rounded"
               block
               class="my-2 untransform"
               color="primary"
-              :loading="login_busy"
-              :class="{ disabled: !can_login }"
+              size="large"
+              variant="flat"
               @click="login"
             >
               <i
@@ -485,62 +473,58 @@
             </v-btn>
 
             <p
-              class="hr-text my-6"
               :class="{ '-black': dark }"
               :data-content="$t('global.commons.or')"
+              class="hr-text my-6"
             ></p>
 
             <v-btn
               v-if="login_modes.includes('google')"
-              @click="busy_redirect = 'google'"
               :loading="busy_redirect === 'google'"
-              variant="flat"
               :rounded="rounded"
               block
               class="my-2 untransform fadeIn delay_100 s--login-btn"
-              href="/login/google"
               color="#0061e0"
+              href="/login/google"
               size="large"
+              variant="flat"
+              @click="busy_redirect = 'google'"
             >
-              <v-avatar size="28" class="ms-n2" color="#ffffff"
-                ><img
-                  class="pa-1"
-                  src="../../../assets/trademark/google.svg"
+              <v-avatar class="ms-n2" color="#ffffff" size="28"
+                ><img class="pa-1" src="../../../assets/trademark/google.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_google") }}</span>
             </v-btn>
 
             <v-btn
               v-if="login_modes.includes('apple')"
-              @click="busy_redirect = 'apple'"
               :loading="busy_redirect === 'apple'"
-              variant="flat"
+              :rounded="rounded"
               block
               class="my-2 untransform fadeIn delay_200 s--login-btn"
-              href="/login/apple"
               color="#000"
+              href="/login/apple"
               size="large"
-              :rounded="rounded"
+              variant="flat"
+              @click="busy_redirect = 'apple'"
             >
-              <v-avatar size="28" class="ms-n2" color="#111"
-                ><img
-                  class="pa-1"
-                  src="../../../assets/trademark/apple.svg"
+              <v-avatar class="ms-n2" color="#111" size="28"
+                ><img class="pa-1" src="../../../assets/trademark/apple.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.register_apple") }}</span>
             </v-btn>
 
             <v-btn
               v-if="login_modes.includes('linkedin')"
-              @click="busy_redirect = 'linkedin'"
               :loading="busy_redirect === 'linkedin'"
-              variant="flat"
-              size="large"
               :rounded="rounded"
               class="my-2 untransform fadeIn delay_300 s--login-btn"
               href="/login/linkedin"
+              size="large"
+              variant="flat"
+              @click="busy_redirect = 'linkedin'"
             >
-              <v-avatar size="28" class="ms-n2" color="#fff"
+              <v-avatar class="ms-n2" color="#fff" size="28"
                 ><img
                   class="pa-1"
                   src="../../../assets/trademark/linkedin-circle.svg"
@@ -550,38 +534,34 @@
 
             <v-btn
               v-if="login_modes.includes('facebook')"
-              @click="busy_redirect = 'facebook'"
               :loading="busy_redirect === 'facebook'"
-              variant="flat"
-              size="large"
               :rounded="rounded"
               block
               class="my-2 untransform fadeIn delay_400 s--login-btn"
               href="/login/facebook"
+              size="large"
+              variant="flat"
+              @click="busy_redirect = 'facebook'"
             >
-              <v-avatar size="28" class="ms-n2" color="#fff"
-                ><img
-                  class="pa-1"
-                  src="../../../assets/trademark/meta.png"
+              <v-avatar class="ms-n2" color="#fff" size="28"
+                ><img class="pa-1" src="../../../assets/trademark/meta.png"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_facebook") }}</span>
             </v-btn>
 
             <v-btn
               v-if="login_modes.includes('github')"
-              @click="busy_redirect = 'github'"
               :loading="busy_redirect === 'github'"
-              variant="flat"
-              size="large"
               :rounded="rounded"
               block
               class="my-2 untransform fadeIn delay_500 s--login-btn"
               href="/login/github"
+              size="large"
+              variant="flat"
+              @click="busy_redirect = 'github'"
             >
-              <v-avatar size="28" class="-start ms-n2" color="#fff"
-                ><img
-                  class="pa-1"
-                  src="../../../assets/trademark/github.svg"
+              <v-avatar class="-start ms-n2" color="#fff" size="28"
+                ><img class="pa-1" src="../../../assets/trademark/github.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_github") }}</span>
             </v-btn>
@@ -590,23 +570,23 @@
               v-if="login_modes.includes('stripe') && !LOGIN_POPUP_LOGIN"
             >
               <p
-                class="hr-text my-4"
                 :class="{ '-black': dark }"
                 :data-content="$t('global.commons.or')"
+                class="hr-text my-4"
               ></p>
 
               <v-btn
-                @click="busy_redirect = 'stripe'"
                 :loading="busy_redirect === 'stripe'"
-                variant="flat"
+                :rounded="rounded"
                 block
                 class="my-2 untransform fadeIn delay_100 s--login-btn"
-                href="/stripe/login"
                 color="#635BFF"
+                href="/stripe/login"
                 size="large"
-                :rounded="rounded"
+                variant="flat"
+                @click="busy_redirect = 'stripe'"
               >
-                <v-avatar size="28" class="ms-n2" color="#fff"
+                <v-avatar class="ms-n2" color="#fff" size="28"
                   ><img
                     class="pa-1"
                     src="../../../assets/trademark/stripe-icon.png"
@@ -614,8 +594,8 @@
                 <div class="flex-grow-1">
                   {{ $t("login.continue_with") }}
                   <img
-                    src="../../../assets/trademark/stripe-white.svg"
                     height="24"
+                    src="../../../assets/trademark/stripe-white.svg"
                   />
                   <small class="d-block text-white"
                     >+ {{ $t("login.auto_create_shop") }}</small
@@ -630,35 +610,35 @@
           <div v-else class="mt-2">
             <v-text-field
               v-model="login_step2_code"
-              variant="outlined"
-              density="compact"
-              label="Activation Code"
-              placeholder="X X X X X X"
-              persistent-placeholder
               class="m-2"
+              density="compact"
               hide-details
+              label="Activation Code"
+              persistent-placeholder
+              placeholder="X X X X X X"
+              variant="outlined"
             ></v-text-field>
 
             <p class="text-start my-3 small">
               {{ $t("login.two_step_problem") }}
 
               <v-btn
+                class="tnt my-1"
+                color="primary"
+                href="/security/reset"
                 size="small"
                 variant="text"
-                color="primary"
-                class="tnt my-1"
-                href="/security/reset"
               >
                 {{ $t("login.two_step_problem_action") }}
               </v-btn>
             </p>
 
             <v-btn
+              :disabled="!login_step2_code"
+              :loading="busy_2fa"
               class="my-2"
               color="primary"
-              :disabled="!login_step2_code"
               @click="loginStep2"
-              :loading="busy_2fa"
             >
               {{ $t("login.two_step_confirm") }}
             </v-btn>
@@ -667,17 +647,17 @@
           <!----- Footer ------>
 
           <p class="mt-5 text-start fadeIn delay_500">
-            <v-icon color="green" size="small" class="me-1"
+            <v-icon class="me-1" color="green" size="small"
               >fiber_manual_record
             </v-icon>
 
             {{ $t("login.new_in_samin") }}
 
             <v-btn
-              variant="text"
-              @click="setMode('register')"
               class="untransform"
               color="green"
+              variant="text"
+              @click="setMode('register')"
             >
               {{ $t("login.signup_free") }}
             </v-btn>
@@ -686,9 +666,9 @@
       </v-expand-transition>
 
       <v-row
-        no-gutters
         class="mt-5 small font-weight-bold pt-5"
         justify="space-around"
+        no-gutters
       >
         <a href="/privacy" target="_blank">Privacy Policy</a>
         <a href="/terms" target="_blank">Terms of Use</a>
@@ -697,12 +677,12 @@
 
     <div style="min-height: 42px">
       <v-chip
-        pill
-        size="small"
         v-if="!recaptcha_response"
+        class="m-2"
         color="#0097A7"
         dark
-        class="m-2"
+        pill
+        size="small"
         >{{ $t("login.checking_robot_message") }}
       </v-chip>
     </div>
@@ -725,7 +705,7 @@
           <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Phone Recovery ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
           <template v-if="recover_mode === 'phone'">
-            <v-btn variant="text" color="primary" @click="recover_mode = null">
+            <v-btn color="primary" variant="text" @click="recover_mode = null">
               <v-icon class="me-1" size="small">email</v-icon>
 
               {{ $t("global.actions.reset_by_mail") }}
@@ -733,15 +713,15 @@
 
             <s-tel-input
               v-model="phone"
-              @country-changed="(val) => (country = val)"
-              enabledCountryCode
+              :defaultCountry="defaultCountry"
               :inputOptions="{
                 placeholder: $t('global.need_login.mobile_input'),
               }"
+              class="stylish-phone-input my-3 max-width-field mx-auto zoomIn"
+              enabledCountryCode
               required
               validCharactersOnly
-              class="stylish-phone-input my-3 max-width-field mx-auto zoomIn"
-              :defaultCountry="defaultCountry"
+              @country-changed="(val) => (country = val)"
             ></s-tel-input>
           </template>
 
@@ -754,33 +734,33 @@
               v-model="in_code"
               :length="6"
               autofocus
-              @finish="(val) => (in_code = val)"
               class="zoomIn max-width-field mx-auto text-center mb-12"
+              @finish="(val) => (in_code = val)"
             />
 
             <v-text-field
-              autocomplete="username"
-              type="email"
-              class="zoomIn delay_100 max-width-field mx-auto english-field"
-              :label="$t('global.commons.email')"
-              v-model="in_email"
               id="in_email"
+              v-model="in_email"
+              :label="$t('global.commons.email')"
               :rules="[GlobalRules.required(), GlobalRules.email()]"
               append-inner-icon="account_circle"
+              autocomplete="username"
+              class="zoomIn delay_100 max-width-field mx-auto english-field"
+              type="email"
             >
             </v-text-field>
             <v-text-field
-              autocomplete="new-password"
-              class="zoomIn delay_200 max-width-field mx-auto english-field"
-              :label="$t('global.commons.password')"
-              v-model="in_password"
               id="in_password"
-              :rules="[GlobalRules.required(), GlobalRules.minLength(8)]"
+              v-model="in_password"
               :append-inner-icon="
                 password_show ? 'visibility' : 'visibility_off'
               "
-              @click:append-inner="password_show = !password_show"
+              :label="$t('global.commons.password')"
+              :rules="[GlobalRules.required(), GlobalRules.minLength(8)]"
               :type="password_show ? 'text' : 'password'"
+              autocomplete="new-password"
+              class="zoomIn delay_200 max-width-field mx-auto english-field"
+              @click:append-inner="password_show = !password_show"
             >
             </v-text-field>
           </template>
@@ -788,8 +768,8 @@
           <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Email Recovery ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
           <template v-else>
             <v-btn
-              variant="text"
               color="primary"
+              variant="text"
               @click="recover_mode = 'phone'"
             >
               <v-icon class="me-1" size="small">phone</v-icon>
@@ -798,9 +778,9 @@
 
             <v-text-field
               v-model="reset_password_email"
-              class="mt-3 mx-auto english-field max-width-field zoomIn strong-field"
               :placeholder="$t('login.email')"
               append-icon="mail_outline"
+              class="mt-3 mx-auto english-field max-width-field zoomIn strong-field"
             />
           </template>
         </v-card-text>
@@ -811,12 +791,12 @@
           <div class="widget-buttons">
             <v-btn
               v-if="recover_mode !== 'set-mail'"
-              size="x-large"
+              :class="{ disabled: !can_request_reset }"
+              :loading="busy_reset"
               color="primary"
               dark
-              :class="{ disabled: !can_request_reset }"
+              size="x-large"
               @click.stop="requestResetPassword()"
-              :loading="busy_reset"
             >
               <v-icon class="me-1">send</v-icon>
               {{ $t("login.password_recovery_action") }}
@@ -824,7 +804,6 @@
 
             <v-btn
               v-else
-              size="x-large"
               :class="{
                 disabled:
                   !in_code ||
@@ -833,10 +812,11 @@
                   !in_password ||
                   in_password.length < 8,
               }"
-              @click.stop="setUserEmail()"
               :loading="busy_set_mail"
               color="primary"
               dark
+              size="x-large"
+              @click.stop="setUserEmail()"
             >
               <v-icon class="me-1">check</v-icon>
 
@@ -850,31 +830,31 @@
     <!-- ███████████████████ Terms dialog ███████████████████ -->
     <v-dialog
       v-model="show_terms_privacy"
-      scrollable
       fullscreen
+      scrollable
       transition="dialog-bottom-transition"
     >
       <v-card rounded="0">
         <v-card-title>
           <v-btn
-            size="x-large"
-            variant="text"
-            color="primary"
-            @click="fetchTerms"
             :disabled="dialog_tab === 'terms'"
             :loading="busy_terms"
+            color="primary"
+            size="x-large"
+            variant="text"
+            @click="fetchTerms"
           >
             <v-icon class="me-1" size="small">gavel</v-icon>
             Terms of Use
           </v-btn>
           <v-btn
-            size="x-large"
-            variant="text"
-            color="primary"
-            class="mx-3"
-            @click="fetchPrivacy"
             :disabled="dialog_tab === 'privacy'"
             :loading="busy_privacy"
+            class="mx-3"
+            color="primary"
+            size="x-large"
+            variant="text"
+            @click="fetchPrivacy"
           >
             <v-icon class="me-1" size="small">policy</v-icon>
             Privacy Policy
@@ -904,9 +884,9 @@
             </v-btn>
 
             <v-btn
-              size="x-large"
-              dark
               color="success"
+              dark
+              size="x-large"
               @click="
                 () => {
                   show_terms_privacy = false;
@@ -924,9 +904,9 @@
 
     <v-footer
       v-if="LOGIN_POPUP_LOGIN"
-      min-height="25vh"
       class="border-top"
       light
+      min-height="25vh"
     >
       <v-container class="text-start">
         <h3 class="text-h4 my-2">
@@ -946,21 +926,21 @@
           <v-col cols="12" sm="4">
             <s-app-language-selector rounded></s-app-language-selector>
           </v-col>
-          <v-col cols="12" sm="8" class="text-end">
+          <v-col class="text-end" cols="12" sm="8">
             <v-btn
-              variant="text"
-              href="/privacy"
-              color="primary"
               class="m-1 tnt"
+              color="primary"
+              href="/privacy"
               target="_blank"
+              variant="text"
               >Privacy Policy
             </v-btn>
             <v-btn
-              variant="text"
-              href="/terms"
-              color="primary"
               class="m-1 tnt"
+              color="primary"
+              href="/terms"
               target="_blank"
+              variant="text"
               >Terms of Use
             </v-btn>
           </v-col>
@@ -1270,7 +1250,6 @@ export default {
           this.reCAPTCHA_execute();
         })
         .finally(() => {
-
           this.login_busy = false;
         });
     },

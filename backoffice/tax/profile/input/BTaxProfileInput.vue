@@ -14,28 +14,28 @@
 
 <template>
   <v-select
-    :model-value="modelValue"
-    @update:model-value="(val) => $emit('update:modelValue', val)"
+    :bg-color="backgroundColor"
+    :flat="flat"
     :items="tax_profiles"
-    label="Tax profile"
-    item-value="id"
-    item-title="name"
-    :return-object="returnObject"
-    clearable
-    placeholder="Default"
-    persistent-placeholder
     :messages="
       !modelValue
         ? 'The default tax rules will be applied to all products without a dedicated tax profile.'
         : undefined
     "
+    :model-value="modelValue"
+    :return-object="returnObject"
     :solo="solo"
-    :flat="flat"
-    :bg-color="backgroundColor"
     :variant="variant"
+    clearable
+    item-title="name"
+    item-value="id"
+    label="Tax profile"
+    persistent-placeholder
+    placeholder="Default"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template v-slot:selection="{ item }">
-      <v-icon class="me-2" v-if="item.raw.icon" color="#333"
+      <v-icon v-if="item.raw.icon" class="me-2" color="#333"
         >{{ item.raw.icon }}
       </v-icon>
       <b>{{ item.raw.name }}</b>
@@ -47,22 +47,22 @@
         >
       </span>
       <span v-else class="ms-2">
-        | <v-icon size="small" class="me-1">share_location</v-icon>
+        | <v-icon class="me-1" size="small">share_location</v-icon>
         <small>Location-Based Tax</small></span
       >
       <v-chip
         :color="item.raw.included ? '#FFC107' : '#8BC34A'"
-        size="x-small"
-        label
-        variant="flat"
         class="mx-2"
+        label
+        size="x-small"
+        variant="flat"
         >{{ item.raw.included ? "inclusive" : "exclusive" }}
       </v-chip>
     </template>
     <template v-slot:item="{ item, props }">
       <v-list-item v-bind="props">
         <template v-slot:prepend>
-          <v-icon class="me-2" v-if="item.raw.icon" color="#333"
+          <v-icon v-if="item.raw.icon" class="me-2" color="#333"
             >{{ item.raw.icon }}
           </v-icon>
         </template>
@@ -77,7 +77,7 @@
               >
             </span>
             <span v-else class="ms-2">
-              | <v-icon size="small" class="me-1">share_location</v-icon>
+              | <v-icon class="me-1" size="small">share_location</v-icon>
               <small>Location-Based Tax</small></span
             >
           </v-list-item-title>
@@ -85,10 +85,10 @@
         <template v-slot:append>
           <v-chip
             :color="item.raw.included ? '#FFC107' : '#8BC34A'"
-            size="x-small"
-            label
-            variant="flat"
             class="mx-2"
+            label
+            size="x-small"
+            variant="flat"
             >{{ item.raw.included ? "inclusive" : "exclusive" }}
           </v-chip>
         </template>

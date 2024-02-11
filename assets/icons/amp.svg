@@ -3,10 +3,11 @@
 
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="296px" height="296px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 9.99 9.99"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xodm="http://www.corel.com/coreldraw/odm/2003" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="296px"
+     height="296px"
+     version="1.1"
+     style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+     viewBox="0 0 9.99 9.99">
  <defs>
   <style type="text/css">
    <![CDATA[
@@ -15,9 +16,10 @@ viewBox="0 0 9.99 9.99"
    ]]>
   </style>
  </defs>
- <g id="Layer_x0020_1">
+    <g id="Layer_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <circle class="fil0" cx="5" cy="5" r="5"/>
-  <path class="fil1" d="M4.5 5.86l-0.35 2.58c0.51,0.03 0.4,0.03 0.93,-0.85l1.31 -2.2c0.18,-0.33 0.68,-0.84 0.56,-1.18 -0.27,-0.24 -1.1,-0.08 -1.5,-0.1 0.01,-0.74 0.45,-2.01 0.37,-2.56l-0.37 -0.01 -1.55 2.55c-0.27,0.45 -0.54,0.82 -0.78,1.28 -0.37,0.7 0.38,0.41 1.38,0.49z"/>
+        <circle class="fil0" cx="5" cy="5" r="5"/>
+        <path class="fil1"
+              d="M4.5 5.86l-0.35 2.58c0.51,0.03 0.4,0.03 0.93,-0.85l1.31 -2.2c0.18,-0.33 0.68,-0.84 0.56,-1.18 -0.27,-0.24 -1.1,-0.08 -1.5,-0.1 0.01,-0.74 0.45,-2.01 0.37,-2.56l-0.37 -0.01 -1.55 2.55c-0.27,0.45 -0.54,0.82 -0.78,1.28 -0.37,0.7 0.38,0.41 1.38,0.49z"/>
  </g>
 </svg>

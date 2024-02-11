@@ -15,14 +15,14 @@
 <template>
   <div class="discount-code-row">
     <v-btn
-      :loading="busy"
-      class="mx-1 animated-all-normal"
-      rounded
-      depressed
-      :fab="show_discount_code_input"
       :color="show_discount_code_input ? SaminColorLight : SaminColorDark"
+      :fab="show_discount_code_input"
+      :loading="busy"
+      :size="show_discount_code_input && 'small'"
+      class="mx-1 animated-all-normal"
       dark
-      :small="show_discount_code_input"
+      rounded
+      variant="flat"
       @click="
         show_discount_code_input
           ? setDiscountCode()
@@ -53,8 +53,8 @@
     <v-btn
       v-if="show_discount_code_input"
       class="mx-1 animated-all-normal"
-      small
       icon
+      size="small"
       @click="show_discount_code_input = false"
     >
       <v-icon>close</v-icon>
@@ -64,13 +64,13 @@
       <v-text-field
         v-if="show_discount_code_input"
         v-model="discount_code_code"
-        rounded
-        flat
-        filled
         :label="$t('global.discount_input.code_input')"
-        style="max-width: 180px"
         class="font-weight-bold mx-1 animated-all-normal"
+        flat
         hide-details
+        rounded
+        style="max-width: 180px"
+        variant="filled"
         @keydown.enter="setDiscountCode"
       />
     </v-slide-x-reverse-transition>
@@ -124,7 +124,7 @@ export default {
     },
     setDiscountCode: _.throttle(function setDiscountCode(
       with_error_notification = true,
-      force = false
+      force = false,
     ) {
       if (
         !force &&
@@ -154,7 +154,7 @@ export default {
                 : null;
               this.showSuccessAlert(
                 null,
-                this.$t("global.discount_input.notifications.add_success")
+                this.$t("global.discount_input.notifications.add_success"),
               );
             }
 
@@ -175,8 +175,7 @@ export default {
           this.busy = false;
           this.$emit("loading", false);
         });
-    },
-    3000),
+    }, 3000),
 
     tryAssignByCampaign() {
       if (this.getShop().campaign && this.getShop().campaign.discount_code) {
@@ -190,7 +189,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .discount-code-row {
   display: flex;
   padding: 6px 0;

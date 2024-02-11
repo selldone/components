@@ -13,15 +13,17 @@
   -->
 
 <template>
-  <div :class="{disabled:busy}" class="position-relative min-height-10vh my-5">
+  <div
+    :class="{ disabled: busy }"
+    class="position-relative min-height-10vh my-5"
+  >
     <s-progress-loading v-if="busy" color="blue"></s-progress-loading>
 
     <!-- Set up a container element for the button -->
-    <div id="paypal-button-container" ></div>
-
+    <div id="paypal-button-container"></div>
 
     <div v-if="busy_verify" class="v-msg text-h4">
-      <s-progress-loading ></s-progress-loading>
+      <s-progress-loading></s-progress-loading>
       Verifying Payment...
     </div>
   </div>
@@ -81,20 +83,17 @@ export default {
         this.busy = false;
         console.style(`✔ ❰ PayPal ❱  Script exist.`);
 
-          this.initilize();
-
-
+        this.initilize();
       } catch (e) {
         // Load dynamically:
         $.cachedScript(this.pack.script)
           .done(function (script, textStatus) {
             console.style(
-              `🔔 ❰ PayPal ❱  Load script file start... ▶ status: ${textStatus}`
+              `🔔 ❰ PayPal ❱  Load script file start... ▶ status: ${textStatus}`,
             );
             t.paypal_js_loaded = true;
             t.busy = false;
             console.style(`🔔 ❰ PayPal ❱  Load script file end`);
-
 
             t.$nextTick(() => {
               t.initilize();
@@ -104,7 +103,7 @@ export default {
             t.busy = false;
             console.errorStyle(
               `⚠ ❰ PayPal ❱  Failed to load script file: `,
-              exception
+              exception,
             );
             this.showErrorAlert(null, "Can not load script!");
           });
@@ -128,23 +127,20 @@ export default {
               .post(
                 window.XAPI.POST_PAYMENTS_PAYPAL_STANDARD_VERIFY(t.shopName),
                 {
-
-                    unique_id: data.orderID,
-
-                }
+                  unique_id: data.orderID,
+                },
               )
               .then(({ data }) => {
-                if(data.error)return t.showErrorAlert(null,data.error_msg)
-
+                if (data.error) return t.showErrorAlert(null, data.error_msg);
 
                 t.showSuccessAlert(
                   "Payment completed",
-                  "We received your payment successfully."
+                  "We received your payment successfully.",
                 );
                 // Successful capture! For dev/demo purposes:
                 console.log("Capture result", data);
 
-                actions.redirect(data.order_url)
+                actions.redirect(data.order_url);
 
                 // actions.redirect('thank_you.html')
 
@@ -158,7 +154,7 @@ export default {
                 t.showLaravelError(error);
               })
               .finally(() => {
-               // t.busy_verify = false;  Not needed! page will be redirected!
+                // t.busy_verify = false;  Not needed! page will be redirected!
               });
           },
         })
@@ -168,8 +164,8 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.v-msg{
+<style lang="scss" scoped>
+.v-msg {
   position: absolute;
   left: 0;
   right: 0;

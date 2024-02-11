@@ -19,43 +19,43 @@
   >
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <community-breadcrumb
-      class="breadcrumb-max-w mb-12"
-      :shop="shop"
       :community="community"
+      :shop="shop"
+      class="breadcrumb-max-w mb-12"
     ></community-breadcrumb>
 
     <v-container class="c-max-w">
-      <v-row justify="center" align="start">
+      <v-row align="start" justify="center">
         <community-widget
           v-for="(post, i) in posts"
           :key="post.id"
           :community="community"
-          :topic="post.topic"
-          show-topic-title
           :post="post"
           :shop="shop"
+          :style="{ 'animation-delay': 50 * (i % itemsPerPage) + 'ms' }"
+          :topic="post.topic"
+          class="fadeInUp"
+          show-topic-title
           @delete="
             () => {
               DeleteItemByID(posts, post.id);
             }
           "
-          class="fadeInUp"
-          :style="{ 'animation-delay': 50 * (i % itemsPerPage) + 'ms' }"
         ></community-widget>
 
         <!-- Auto load more -->
 
         <v-col
-          cols="12"
           v-if="has_more"
-          style="height: 50vh"
           v-intersect.quiet="
             (isIntersecting, entries, observer) => {
               if (isIntersecting) fetchFeed(page + 1);
             }
           "
+          cols="12"
+          style="height: 50vh"
         >
-          <s-loading light css-mode v-if="busy"></s-loading>
+          <s-loading v-if="busy" css-mode light></s-loading>
         </v-col>
       </v-row>
     </v-container>
@@ -160,4 +160,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

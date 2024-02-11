@@ -15,17 +15,17 @@
 <template>
   <s-language-input
     v-if="is_multi_language"
-    :value="language"
     :available-languages="languages"
     :filled="filled"
-    :rounded="rounded"
-    :hide-details="hideDetails"
-    @change="(lang) => (lang ? setCurrentLanguage(lang, true) : undefined)"
-    prepend-inner-icon="translate"
-    :iconOnly="iconOnly"
     :flat="flat"
-    :solo="solo"
+    :hide-details="hideDetails"
     :iconColor="iconColor"
+    :iconOnly="iconOnly"
+    :rounded="rounded"
+    :solo="solo"
+    :value="language"
+    prepend-inner-icon="translate"
+    @change="(lang) => (lang ? setCurrentLanguage(lang, true) : undefined)"
   />
 </template>
 
@@ -72,9 +72,7 @@ export default {
     },
   },
 
-  watch: {
-
-  },
+  watch: {},
 
   created() {},
 };

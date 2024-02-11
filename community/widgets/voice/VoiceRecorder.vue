@@ -23,45 +23,45 @@
 
     <template v-else>
       <dictaphone
-        @stop="handleRecording"
-        @error="handleError"
         mime-type="audio/mp3"
+        @error="handleError"
+        @stop="handleRecording"
       >
         <template v-slot="{ isRecording, startRecording, stopRecording }">
-          <v-slide-x-reverse-transition hide-on-leave >
+          <v-slide-x-reverse-transition hide-on-leave>
             <!--  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Mode > Ready to record ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <v-avatar
               v-if="!isRecording"
               class="mt-3 avatar-gradient -thin -blue"
               size="64"
-
             >
               <v-btn
                 class="border-w-medium"
-                @click="startRecording"
                 fab
-                depressed
+                variant="flat"
+                @click="startRecording"
               >
                 <v-icon>mic</v-icon>
               </v-btn>
             </v-avatar>
 
             <!--  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Mode > In Recording ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-            <div v-else >
+            <div v-else>
               <v-avatar class="mt-3 avatar-gradient -thin -red" size="64">
                 <v-btn
-                  @click="stopRecording"
+                  class="border-w-medium"
                   color="#FFCDD2"
                   fab
-                  class="border-w-medium"
-                  ><v-icon>stop</v-icon></v-btn
+                  @click="stopRecording"
                 >
+                  <v-icon>stop</v-icon>
+                </v-btn>
               </v-avatar>
 
-              <span class="ms-2 subtitle-2 fadeIn"
+              <span class="ms-2 text-subtitle-2 fadeIn"
                 >Recording
-                <v-icon small class="ms-2 blink-me-linear" color="red"
+                <v-icon class="ms-2 blink-me-linear" color="red" size="small"
                   >lens</v-icon
                 ></span
               >
@@ -72,21 +72,23 @@
 
           <div style="min-height: 128px">
             <spectrum-analyser
-              :style="{ opacity: isRecording ? 1 : 0.5, display: 'block' }"
               :play="isRecording"
+              :style="{ opacity: isRecording ? 1 : 0.5, display: 'block' }"
               class="mx-auto"
             />
           </div>
         </template>
       </dictaphone>
 
-      <div class="d-flex align-center" v-if="value">
+      <div v-if="value" class="d-flex align-center">
         <audio
           :src="value"
-          controls
           class="my-1 flex-grow-1 rounded me-1"
+          controls
         ></audio>
-        <v-btn large tile icon @click="clear()"><v-icon>close</v-icon></v-btn>
+        <v-btn icon size="large" tile @click="clear()">
+          <v-icon>close</v-icon>
+        </v-btn>
       </div>
     </template>
   </div>
@@ -129,4 +131,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

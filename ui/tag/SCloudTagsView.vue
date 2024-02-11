@@ -13,28 +13,33 @@
   -->
 
 <template>
-    <ul class="s--cloud-tags-view">
-        <li v-for="(tag,i) in tags" :key="i" :style="getStyle(tag,i)">{{getName(tag)}}</li>
-
-    </ul>
-
+  <ul class="s--cloud-tags-view">
+    <li v-for="(tag, i) in tags" :key="i" :style="getStyle(tag, i)">
+      {{ getName(tag) }}
+    </li>
+  </ul>
 </template>
 
 <script>
 export default {
-    name: "SCloudTagsView",
-    props:{
-        tags:{}
+  name: "SCloudTagsView",
+  props: {
+    tags: {},
+  },
+  methods: {
+    getStyle(tag, i) {
+      return {
+        fontSize: 1 + Math.round(Math.random() * 10) / 10 + "rem",
+        fontWeight: [300, 400, 500, 600, 700, 800][
+          Math.floor(Math.random() * 6)
+        ],
+      };
     },
-    methods:{
-        getStyle(tag,i){
-            return {fontSize: (1+ Math.round(Math.random()*10)/10)+'rem',fontWeight:[300,400,500,600,700,800][Math.floor(Math.random()*6)]}
-        }
-    }
-}
+  },
+};
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--cloud-tags-view {
   list-style: none;
   margin: 0 auto;
@@ -46,10 +51,5 @@ export default {
     display: inline-block;
     vertical-align: middle;
   }
-
-
 }
-
-
-
 </style>

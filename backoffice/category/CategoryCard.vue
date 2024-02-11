@@ -15,24 +15,21 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <component
     :is="to ? 'router-link' : href ? 'a' : 'div'"
-    v-bind="to ? { to: to } : { href: href }"
     class="s--category-card"
+    v-bind="to ? { to: to } : { href: href }"
     @click="$emit('click')"
   >
     <div class="category-card-root">
       <div class="box">
         <div
-          class="folder-card"
           :class="{ '-small-mode': smallMode, '-static': static }"
+          class="folder-card"
         >
           <div class="imgBx">
             <p class="category-title text-nowrap text-ellipsis">
               {{ category.title }}
             </p>
-            <img
-              :src="(getShopImagePath(category.icon))"
-              alt=""
-            />
+            <img :src="getShopImagePath(category.icon)" alt="" />
           </div>
           <div class="details">
             <b>{{ category.title }}</b
@@ -92,7 +89,6 @@ export default {
 </script>
 
 <style lang="scss">
-
 /**
 Npt scoped: in landing builder show wrong style for insta-card (global style to override)
  */
@@ -127,6 +123,7 @@ Npt scoped: in landing builder show wrong style for insta-card (global style to 
       .details {
         h2 {
           font-size: 14px;
+
           span {
             font-size: 0.9rem;
           }
@@ -174,6 +171,7 @@ Npt scoped: in landing builder show wrong style for insta-card (global style to 
         }
       }
     }
+
     // --------------------- end hover ---------------------
 
     .imgBx {
@@ -228,7 +226,9 @@ Npt scoped: in landing builder show wrong style for insta-card (global style to 
         }
       }
     }
-  } // end folder-card
+  }
+
+  // end folder-card
 
   .box {
     z-index: 5;

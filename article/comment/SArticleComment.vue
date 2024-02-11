@@ -15,35 +15,35 @@
 <template>
   <div>
     <div class="comment-item pa-5">
-      <v-row no-gutters align="center">
+      <v-row align="center" no-gutters>
         <v-btn
           v-if="canDelete"
+          :title="$t('global.commons.delete')"
+          color="red"
           icon
           variant="text"
-          :title="$t('global.commons.delete')"
           @click="deleteComment"
-          color="red"
         >
           <v-icon>close</v-icon>
         </v-btn>
 
         <v-btn
           v-if="editable"
+          :title="$t('global.commons.edit')"
           icon
           variant="text"
           @click="state = state === 'editing' ? 'default' : 'editing'"
-          :title="$t('global.commons.edit')"
         >
           <v-icon>edit</v-icon>
         </v-btn>
 
         <v-chip
           v-if="comment.deleted_at"
-          label
-          class="mx-2"
-          size="small"
           :title="'Deleted: ' + getLocalTimeString(comment.deleted_at)"
+          class="mx-2"
           color="red"
+          label
+          size="small"
         >
           <v-icon size="small" start>delete</v-icon>
           {{ getFromNowString(comment.deleted_at) }}
@@ -62,20 +62,20 @@
           <transition name="bounce">
             <i
               v-if="comment.created_at !== comment.updated_at"
-              class="fas fa-refresh ms-2"
               :title="
                 $t('global.comments.first_send') +
                 ' : ' +
                 getLocalTimeString(comment.created_at)
               "
+              class="fas fa-refresh ms-2"
             ></i>
           </transition>
         </div>
 
         <v-avatar
+          class="m-2 avatar-gradient -thin -user hover-scale force-top"
           color="#fff"
           size="38"
-          class="m-2 avatar-gradient -thin -user hover-scale force-top"
         >
           <v-img :src="getUserAvatar(comment.user.id)" />
         </v-avatar>
@@ -86,45 +86,45 @@
           <div v-if="state === 'default'">
             <div class="comment-body">
               <v-row v-if="buy_product" align="center">
-                <v-col cols="12" sm="6" class="text-start">
+                <v-col class="text-start" cols="12" sm="6">
                   <rating-bar
                     v-for="(item, index) in rates"
                     :key="index"
-                    :value="item.value"
                     :max="5"
                     :title="item.name"
+                    :value="item.value"
                   />
                 </v-col>
 
                 <v-col cols="12" sm="6">
                   <v-rating
                     :model-value="calculateRate"
-                    class="text-center"
+                    :readonly="true"
                     active-color="yellow-darken-3"
+                    class="text-center"
                     color="grey-darken-1"
                     half-increments
-                    :readonly="true"
                     size="small"
                   />
-                  <v-chip size="small" color="success">
-                    <v-icon start size="x-small"> shopping_basket</v-icon>
+                  <v-chip color="success" size="small">
+                    <v-icon size="x-small" start> shopping_basket</v-icon>
                     {{ $t("global.comments.product_buyer") }}
                   </v-chip>
                 </v-col>
               </v-row>
 
               <p
+                :class="{ 'op-0-5': comment.deleted_at }"
+                class="mt-3 typo-body"
                 dir="auto"
                 style="text-align: justify"
-                class="mt-3 typo-body"
-                :class="{ 'op-0-5': comment.deleted_at }"
                 v-html="comment_html"
               ></p>
 
               <v-sheet
                 v-if="reply_html || isAdmin"
-                color="#fafafa"
                 class="mt-3 pa-3 pa-3 rounded-lg text-start"
+                color="#fafafa"
               >
                 <v-avatar class="me-1" color="#fff" size="24">
                   <v-icon size="small">storefront</v-icon>
@@ -133,9 +133,9 @@
                 <v-expand-transition>
                   <div v-if="!show_reply">
                     <p
+                      class="typo-body mt-2 mb-0"
                       dir="auto"
                       style="text-align: justify"
-                      class="typo-body mt-2 mb-0"
                       v-html="reply_html"
                     ></p>
                   </div>
@@ -145,24 +145,23 @@
                   <v-expand-transition>
                     <v-btn
                       v-if="!show_reply"
-                      @click="show_reply = true"
-                      color="primary"
-                      :variant="!!comment.reply ? 'text':undefined"
+                      :variant="!!comment.reply ? 'text' : undefined"
                       class="tnt"
+                      color="primary"
+                      @click="show_reply = true"
                     >
                       <v-icon class="me-1" size="small">edit</v-icon>
                       {{ comment.reply ? "Edit reply" : "Write the answer" }}
                     </v-btn>
                     <div v-else>
                       <v-textarea
-                        auto-grow
-                        :rows="3"
                         v-model="reply_input"
+                        :rows="3"
+                        auto-grow
+                        class="ma-2"
                         dir="auto"
                         placeholder="Write your message here..."
-                        class="ma-2"
                         variant="plain"
-
                       >
                       </v-textarea>
 
@@ -176,8 +175,8 @@
                           {{ $t("global.actions.close") }}
                         </v-btn>
                         <v-btn
-                          size="x-large"
                           color="primary"
+                          size="x-large"
                           @click="sendReply()"
                         >
                           <v-icon class="me-1">save</v-icon>
@@ -196,35 +195,34 @@
           <div v-if="state === 'editing'">
             <div class="comment-body">
               <v-textarea
-                auto-grow
                 v-model="data.body"
-                dir="auto"
                 :placeholder="$t('global.comments.edit_comment')"
+                auto-grow
                 class="ma-2"
+                dir="auto"
                 variant="plain"
-
               />
 
               <div class="widget-buttons">
-                <v-btn variant="text" size="x-large" @click="resetEdit">
+                <v-btn size="x-large" variant="text" @click="resetEdit">
                   <v-icon class="me-1">close</v-icon>
                   {{ $t("global.actions.cancel") }}
                 </v-btn>
                 <v-btn
                   color="#333"
-                  variant="flat"
                   size="x-large"
+                  variant="flat"
                   @click="deleteComment"
                 >
                   <v-icon class="me-1">delete</v-icon>
                   {{ $t("global.actions.delete") }}
                 </v-btn>
                 <v-btn
+                  :loading="loading"
                   color="#333"
                   size="x-large"
                   variant="flat"
                   @click="saveEdit"
-                  :loading="loading"
                 >
                   <v-icon class="me-1">save</v-icon>
                   {{ $t("global.actions.save") }}

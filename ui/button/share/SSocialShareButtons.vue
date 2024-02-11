@@ -13,28 +13,18 @@
   -->
 
 <template>
-  <div class="d-inline-flex flex-row align-center justify-center" >
-
-
-
-
-    <div class="social-btns" :class="{ '-small': small, '-large': forceLarge }">
-
+  <div class="d-inline-flex flex-row align-center justify-center">
+    <div :class="{ '-small': small, '-large': forceLarge }" class="social-btns">
       <share-network
-          v-for="item in items" :key="item.code"
-          :network="item.code"
-          v-bind="commonProps"
+        v-for="item in items"
+        :key="item.code"
+        :network="item.code"
+        v-bind="commonProps"
       >
-        <a
-            :class="`btn ${item.code}`"
-            @click="
-          $emit('share', item.code);
-        "
-        ><i :class="item.icon"/></a>
-
+        <a :class="`btn ${item.code}`" @click="$emit('share', item.code)"
+          ><i :class="item.icon"
+        /></a>
       </share-network>
-
-
 
       <a
         v-if="networks.includes('embed') && embedCode"
@@ -60,7 +50,7 @@
 </template>
 
 <script>
-import {SetupService} from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService";
 
 export default {
   name: "SSocialShareButtons",
@@ -126,60 +116,54 @@ export default {
     return {};
   },
   computed: {
-
-    items(){
-      const out=[];
-      if(this.networks.includes('facebook')){
-        out.push({code:'facebook',icon:'fab fa-facebook'});
+    items() {
+      const out = [];
+      if (this.networks.includes("facebook")) {
+        out.push({ code: "facebook", icon: "fab fa-facebook" });
       }
-      if(this.networks.includes('twitter')){
-        out.push({code:'twitter',icon:'fab fa-twitter'});
+      if (this.networks.includes("twitter")) {
+        out.push({ code: "twitter", icon: "fab fa-twitter" });
       }
-      if(this.networks.includes('linkedin')){
-        out.push({code:'linkedin',icon:'fab fa-linkedin'});
+      if (this.networks.includes("linkedin")) {
+        out.push({ code: "linkedin", icon: "fab fa-linkedin" });
       }
-      if(this.networks.includes('line')){
-        out.push({code:'line',icon:'fab fa-line'});
+      if (this.networks.includes("line")) {
+        out.push({ code: "line", icon: "fab fa-line" });
       }
-      if(this.networks.includes('pinterest')){
-        out.push({code:'pinterest',icon:'fab fa-pinterest'});
+      if (this.networks.includes("pinterest")) {
+        out.push({ code: "pinterest", icon: "fab fa-pinterest" });
       }
-      if(this.networks.includes('reddit')){
-        out.push({code:'reddit',icon:'fab fa-reddit'});
+      if (this.networks.includes("reddit")) {
+        out.push({ code: "reddit", icon: "fab fa-reddit" });
       }
-      if(this.networks.includes('telegram')){
-        out.push({code:'telegram',icon:'fab fa-telegram'});
+      if (this.networks.includes("telegram")) {
+        out.push({ code: "telegram", icon: "fab fa-telegram" });
       }
-      if(this.networks.includes('whatsapp')){
-        out.push({code:'whatsapp',icon:'fab fa-whatsapp'});
+      if (this.networks.includes("whatsapp")) {
+        out.push({ code: "whatsapp", icon: "fab fa-whatsapp" });
       }
-      if(this.networks.includes('skype')){
-        out.push({code:'skype',icon:'fab fa-skype'});
+      if (this.networks.includes("skype")) {
+        out.push({ code: "skype", icon: "fab fa-skype" });
       }
-      if(this.networks.includes('sms')){
-        out.push({code:'sms',icon:'fas fa-sms'});
+      if (this.networks.includes("sms")) {
+        out.push({ code: "sms", icon: "fas fa-sms" });
       }
-      if(this.networks.includes('email')){
-        out.push({code:'email',icon:'fas fa-envelope'});
+      if (this.networks.includes("email")) {
+        out.push({ code: "email", icon: "fas fa-envelope" });
       }
-
-
-
 
       return out;
     },
 
     commonProps() {
       return {
-
         url: this.url,
-            title: this.title,
-          description: this.description,
-          quote: this.quote,
-          hashtags: this.hashtags ? this.hashtags.replace(/-/g, '_') : '',
-          media: this.media,
-          twitterUser: SetupService.GetTwitterAccount() // Assuming this function returns a string
-
+        title: this.title,
+        description: this.description,
+        quote: this.quote,
+        hashtags: this.hashtags ? this.hashtags.replace(/-/g, "_") : "",
+        media: this.media,
+        twitterUser: SetupService.GetTwitterAccount(), // Assuming this function returns a string
       };
     },
   },
@@ -189,12 +173,10 @@ export default {
 
 <style lang="stylus" scoped>
 
-  btn-size = 70px
+btn-size = 70px
 
 
-
-
-  sites = {
+sites = {
   'facebook': #3B5998
   'twitter': #3CF
   'google': #DC4A38
@@ -214,7 +196,7 @@ export default {
 
 }
 
-  $animate {
+$animate {
     transition: all .35s
     transition-timing-function: cubic-bezier(
             0.310,
@@ -224,53 +206,69 @@ export default {
     )
   }
 
-  $btn__inactive
-    &:before
-      top: 90%
-      left: -110%
-    .fab
-      transform: scale(.8)
-    .fas
-      transform: scale(.8)
-    for name, color in sites    // variants
-      &.{name}
-        &:before
-          background-color: color
-        .fab
-          color: color
-        .fas
-          color: color
+$btn__inactive
+  &:before
+    top: 90%
+    left: -110%
+
+  .fab
+    transform: scale(.8)
+
+  .fas
+    transform: scale(.8)
+  for name, color in sites // variants
+    &.{name}
+      &:before
+        background-color: color
+
+      .fab
+        color: color
+
+      .fas
+        color: color
 
 
+$btn__active
+  &:before
+    top: -10%
+    left: -10%
+
+  .fab
+    color: #fff
+    transform: scale(1)
+
+  .fas
+    color: #fff
+    transform: scale(1)
 
 
+.social-btns {
+  // height: btn-size
+  margin: auto
+  font-size: 0
+  text-align: center
+  position: relative
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
 
-  $btn__active
-    &:before
-      top: -10%
-      left: -10%
-    .fab
-      color: #fff
-      transform: scale(1)
-    .fas
-      color: #fff
-      transform: scale(1)
+  &.-small {
+    .btn {
+      width: 42px
+      height: 42px
+      line-height: 42px
+      margin: 6px !important
 
+      .fab, .fas {
+        font-size: 18px
+      }
+    }
+  }
 
-
-  .social-btns {
-   // height: btn-size
-    margin: auto
-    font-size: 0
-    text-align: center
-    position: relative
-    top: 0
-    bottom: 0
-    left: 0
-    right: 0
-
-    &.-small{
-      .btn {
+  &:not(.-large) {
+    .btn {
+      @media only screen and (max-width: 600px) {
         width: 42px
         height: 42px
         line-height: 42px
@@ -281,69 +279,50 @@ export default {
         }
       }
     }
-
-    &:not(.-large){
-      .btn {
-        @media only screen and (max-width: 600px) {
-          width: 42px
-          height: 42px
-          line-height: 42px
-          margin:6px !important
-
-          .fab,.fas {
-            font-size: 18px
-          }
-        }
-      }
-    }
-
-    .btn {
-      @extends $btn__inactive
-      @extends $animate
-      margin:4px 10px !important
-      display: inline-block
-      background-color: #fff
-      width: btn-size
-      height: btn-size
-      line-height: btn-size
-
-
-
-      text-align: center
-      position: relative
-      overflow: hidden
-      border-radius: 28%
-      box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.1)!important
-      //overflow bug fix
-      opacity: .99
-
-      &:before {
-        @extends $animate
-        content: ''
-        width: 120%
-        height: 120%
-        position: absolute
-        transform: rotate(45deg)
-      }
-
-
-      .fab,.fas {
-        @extends $animate
-        font-size: 38px
-        vertical-align middle
-      }
-
-
-
-
-
-
-      &:focus,
-      &:hover {
-        @extends $btn__active
-      }
-    }
-
-
   }
+
+  .btn {
+    @extends $btn__inactive
+    @extends $animate
+    margin: 4px 10px !important
+    display: inline-block
+    background-color: #fff
+    width: btn-size
+    height: btn-size
+    line-height: btn-size
+
+
+    text-align: center
+    position: relative
+    overflow: hidden
+    border-radius: 28%
+    box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.1) !important
+    //overflow bug fix
+    opacity: .99
+
+    &:before {
+      @extends $animate
+      content: ''
+      width: 120%
+      height: 120%
+      position: absolute
+      transform: rotate(45deg)
+    }
+
+
+    .fab, .fas {
+      @extends $animate
+      font-size: 38px
+      vertical-align middle
+    }
+
+
+    &:focus,
+    &:hover {
+      @extends $btn__active
+    }
+  }
+
+
+}
 </style>

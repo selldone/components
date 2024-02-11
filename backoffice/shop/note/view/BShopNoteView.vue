@@ -16,11 +16,11 @@
   <v-list-item>
     <template v-slot:prepend>
       <v-avatar
-        class="avatar-gradient -thin"
         :class="{
           '-user': note.user_id !== USER_ID(),
           '-current': note.user_id === USER_ID(),
         }"
+        class="avatar-gradient -thin"
       >
         <v-img :src="getUserAvatar(note.user_id)" />
       </v-avatar>
@@ -32,31 +32,31 @@
     </v-list-item-title>
     <v-list-item-subtitle
       v-if="note.created_at === note.updated_at"
-      title="Write date"
       class="text-end"
+      title="Write date"
     >
       {{ getFromNowString(note.created_at) }} ●
       {{ getLocalDateString(note.created_at) }}
     </v-list-item-subtitle>
-    <v-list-item-subtitle v-else title="Last update date" class="text-end">
+    <v-list-item-subtitle v-else class="text-end" title="Last update date">
       {{ getFromNowString(note.updated_at) }} ●
       {{ getLocalDateString(note.updated_at) }}
       <v-icon
-        size="small"
-        class="mx-1"
         :title="`Created at ${getLocalDateString(note.updated_at)}`"
-        >edit</v-icon
-      >
+        class="mx-1"
+        size="small"
+        >edit
+      </v-icon>
     </v-list-item-subtitle>
 
     <template v-slot:append>
       <v-list-item-action end>
         <v-btn
-          icon
+          :loading="delete_busy === note"
           color="red"
+          icon
           title="Remove note."
           @click="removeNote(note)"
-          :loading="delete_busy === note"
         >
           <v-icon>close</v-icon>
         </v-btn>
@@ -176,4 +176,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

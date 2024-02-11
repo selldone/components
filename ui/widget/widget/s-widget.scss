@@ -12,7 +12,6 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-
 @import 'mixins';
 @import 'variables';
 
@@ -54,18 +53,19 @@ $enable-prefers-reduced-motion-media-query: true !default;
   font-weight: 500;
   @include clearfix();
 
-  .small,small{
+  .small, small {
     font-weight: 400;
     font-size: 12px;
     display: block;
     color: #aaa;
   }
 }
+
 // Widgets:
 
 
 .widget {
-//  display: block;
+  //  display: block;
   position: relative;
   margin-bottom: 0;
   padding: $widget-padding-vertical $widget-padding-horizontal;
@@ -75,18 +75,18 @@ $enable-prefers-reduced-motion-media-query: true !default;
   display: flex;
   flex-direction: column;
 
-  .widget-body{
+  .widget-body {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
 
-    .widget-buttons{
+    .widget-buttons {
       width: 100%; // Fix buttons width
     }
   }
 
 
-  header.title-widget, .title-widget h5{
+  header.title-widget, .title-widget h5 {
     font-size: 24px;
     font-weight: 400;
     text-transform: capitalize;
@@ -94,7 +94,8 @@ $enable-prefers-reduced-motion-media-query: true !default;
       font-size: 20px;
     }
   }
-  header.subtitle-widget{
+
+  header.subtitle-widget {
     font-size: 13px;
     font-weight: 500;
     margin-top: -18px;

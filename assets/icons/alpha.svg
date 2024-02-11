@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 
-
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
-<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0" y1="258" x2="512" y2="258" gradientTransform="matrix(1 0 0 -1 0 514)">
-	<stop  offset="0" style="stop-color:#00F2FE"/>
-	<stop  offset="0.021" style="stop-color:#03EFFE"/>
-	<stop  offset="0.293" style="stop-color:#24D2FE"/>
-	<stop  offset="0.554" style="stop-color:#3CBDFE"/>
-	<stop  offset="0.796" style="stop-color:#4AB0FE"/>
-	<stop  offset="1" style="stop-color:#4FACFE"/>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px"
+     y="0px"
+     viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0" y1="258" x2="512" y2="258"
+                gradientTransform="matrix(1 0 0 -1 0 514)">
+	<stop offset="0" style="stop-color:#00F2FE"/>
+    <stop offset="0.021" style="stop-color:#03EFFE"/>
+    <stop offset="0.293" style="stop-color:#24D2FE"/>
+    <stop offset="0.554" style="stop-color:#3CBDFE"/>
+    <stop offset="0.796" style="stop-color:#4AB0FE"/>
+    <stop offset="1" style="stop-color:#4FACFE"/>
 </linearGradient>
-<path style="fill:url(#SVGID_1_);" d="M492,422c-11.046,0-20,8.954-20,20c0,30-10.684,30-16.423,30
+    <path style="fill:url(#SVGID_1_);" d="M492,422c-11.046,0-20,8.954-20,20c0,30-10.684,30-16.423,30
 	c-26.598,0-40.134-73.657-51.75-154.36c13.692-38.993,24.902-83.268,33.531-132.637c13.904-79.55,15.571-141.896,15.636-144.512
 	c0.271-11.042-8.461-20.214-19.504-20.485c-0.167-0.004-0.333-0.006-0.5-0.006c-10.817,0-19.718,8.634-19.984,19.509
 	c-0.035,1.435-2.475,86.079-23.47,180.976c-11.582-61.016-32.176-112.317-60.155-149.447C294.36,24.565,247.893,0,195,0
@@ -26,34 +27,34 @@
 	c6.096,0,12.115-2.776,16.042-8.037c10.554-14.137,20.404-29.911,29.542-47.277c3.626,19.704,7.593,37.481,12.258,52.94
 	c5.42,17.96,21.916,72.616,69.074,72.616c25.21,0,38.673-13.077,45.527-24.046C508.334,476.384,512,460.923,512,442
 	C512,430.954,503.046,422,492,422z"/>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
 </svg>

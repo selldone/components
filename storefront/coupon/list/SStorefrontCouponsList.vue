@@ -15,17 +15,17 @@
 <template>
   <v-container
     v-if="(coupons && coupons.length) || forceShow"
-    fluid
     class="s--storefront-coupons"
+    fluid
   >
     <p v-if="!forceShow" class="small font-weight-bold">
       <v-btn
-        small
-        @click="show_coupons = !show_coupons"
-        depressed
-        :outlined="show_coupons"
         :color="show_coupons ? '#666' : 'green'"
+        :variant="show_coupons && 'outlined'"
         dark
+        size="small"
+        variant="flat"
+        @click="show_coupons = !show_coupons"
         ><i class="fas fa-ticket-alt me-2"></i>
         {{
           show_coupons
@@ -35,12 +35,17 @@
       </v-btn>
     </p>
 
-    <v-expand-transition leave-absolute hide-on-leave>
+    <v-expand-transition hide-on-leave leave-absolute>
       <s-fade-scroll v-if="show_coupons" show-arrow small-arrow>
         <div class="d-flex align-stretch">
           <div v-for="coupon in coupons" :key="coupon.id" class="coupon-slide">
             <s-storefront-coupon-view
               :coupon="coupon"
+              :disabled="!canUse(coupon)"
+              :selectable="selectable"
+              :selected="
+                returnObject ? value?.id === coupon.id : value === coupon.id
+              "
               class="-coupon"
               width="220px"
               @click="
@@ -48,16 +53,11 @@
                   ? selectCoupon(
                       value?.id === coupon.id || value === coupon.id
                         ? null
-                        : coupon
+                        : coupon,
                     )
                   : undefined
               "
-              :selectable="selectable"
-              :disabled="!canUse(coupon)"
               @delete="deleteCoupon"
-              :selected="
-                returnObject ? value?.id === coupon.id : value === coupon.id
-              "
             >
             </s-storefront-coupon-view>
           </div>
@@ -65,14 +65,14 @@
           <div key="new" class="coupon-slide">
             <v-btn
               class="slideInLeft"
-              width="200"
               height="64px"
-              @click="showAddMode"
-              depressed
-              rounded
               min-height="100%"
+              rounded
+              variant="flat"
+              width="200"
+              @click="showAddMode"
             >
-              <v-icon small class="me-1">add_box</v-icon>
+              <v-icon class="me-1" size="small">add_box</v-icon>
               {{ $t("coupons.add_coupon") }}
             </v-btn>
           </div>
@@ -80,38 +80,44 @@
       </s-fade-scroll>
     </v-expand-transition>
 
-    <v-dialog v-model="dialog" max-width="480" content-class="no-shadow-dialog">
+    <v-dialog v-model="dialog" content-class="no-shadow-dialog" max-width="480">
       <v-card class="rounded-28px">
-        <v-card-title
-          ><v-icon class="me-1">confirmation_number</v-icon>
+        <v-card-title>
+          <v-icon class="me-1">confirmation_number</v-icon>
           {{ $t("coupons.add_coupon") }}
         </v-card-title>
         <v-card-text>
           <v-text-field
             v-model="code_input"
             :label="$t('coupons.coupon_code')"
-            @keydown.enter="addCoupon(code_input)"
             class="strong-field"
+            @keydown.enter="addCoupon(code_input)"
           >
           </v-text-field>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn class="m-1" x-large text @click="dialog = false">
+            <v-btn
+              class="m-1"
+              size="x-large"
+              variant="text"
+              @click="dialog = false"
+            >
               <v-icon class="me-1">close</v-icon>
 
-              {{ $t("global.actions.close") }}</v-btn
-            >
+              {{ $t("global.actions.close") }}
+            </v-btn>
 
             <v-btn
-              x-large
-              outlined
-              @click="addCoupon(code_input)"
-              :loading="busy_add"
               :class="{ disabled: !code_input }"
-              ><v-icon class="me-1">add</v-icon>
-              {{ $t("global.actions.add") }}</v-btn
+              :loading="busy_add"
+              size="x-large"
+              variant="outlined"
+              @click="addCoupon(code_input)"
             >
+              <v-icon class="me-1">add</v-icon>
+              {{ $t("global.actions.add") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -166,8 +172,10 @@ export default {
   watch: {
     show_coupons(new_val) {
       localStorage.setItem(
-        StorefrontLocalStorages.GetShopCouponsViewMode(this.$localstorage_base_path()),
-        new_val
+        StorefrontLocalStorages.GetShopCouponsViewMode(
+          this.$localstorage_base_path(),
+        ),
+        new_val,
       );
     },
   },
@@ -209,7 +217,7 @@ export default {
               (coupon.products[product_id] &&
                 (!item.variant_id ||
                   coupon.products[product_id].includes(
-                    item.variant_id
+                    item.variant_id,
                   ))) /* check product:*/ ||
               coupon.products["c-" + category_id] /* check category:*/
             );
@@ -225,7 +233,9 @@ export default {
     if (!this.forceShow)
       this.show_coupons =
         localStorage.getItem(
-          StorefrontLocalStorages.GetShopCouponsViewMode(this.$localstorage_base_path())
+          StorefrontLocalStorages.GetShopCouponsViewMode(
+            this.$localstorage_base_path(),
+          ),
         ) !== "false";
   },
   methods: {
@@ -338,7 +348,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -348,10 +358,12 @@ export default {
  */
 .s--storefront-coupons {
   text-align: start;
+
   .coupon-slide {
     width: 220px;
     min-width: max-content;
     padding: 12px;
+
     .-coupon {
       min-height: 100%;
     }

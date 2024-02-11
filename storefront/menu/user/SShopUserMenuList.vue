@@ -13,7 +13,10 @@
   -->
 
 <template>
-  <v-list :dense="$vuetify.display.smAndUp" class="s--shop-user-menu-list">
+  <v-list
+    :density="$vuetify.display.smAndUp && 'compact'"
+    class="s--shop-user-menu-list"
+  >
     <v-list-item
       :to="{
         name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL,
@@ -22,19 +25,18 @@
     >
       <v-list-item-icon>
         <v-badge
+          :content="numeralFormat(sum_orders_badges, '0a')"
+          :model-value="sum_orders_badges > 0"
           color="red"
           overlap
-          :model-value="sum_orders_badges > 0"
-          :content=" numeralFormat(sum_orders_badges,'0a')"
         >
           <v-icon>history</v-icon>
         </v-badge>
       </v-list-item-icon>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("layout_shop.shop_menu.orders_history") }}
-        </v-list-item-title>
-      </v-list-item-content>
+
+      <v-list-item-title>
+        {{ $t("layout_shop.shop_menu.orders_history") }}
+      </v-list-item-title>
     </v-list-item>
 
     <v-list-item
@@ -44,11 +46,10 @@
       <v-list-item-icon>
         <v-icon>person</v-icon>
       </v-list-item-icon>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("layout_shop.shop_menu.profile") }}
-        </v-list-item-title>
-      </v-list-item-content>
+
+      <v-list-item-title>
+        {{ $t("layout_shop.shop_menu.profile") }}
+      </v-list-item-title>
     </v-list-item>
 
     <v-list-item
@@ -59,11 +60,10 @@
       <v-list-item-icon>
         <v-icon>forum</v-icon>
       </v-list-item-icon>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("global.commons.community") }}
-        </v-list-item-title>
-      </v-list-item-content>
+
+      <v-list-item-title>
+        {{ $t("global.commons.community") }}
+      </v-list-item-title>
     </v-list-item>
 
     <v-list-item
@@ -73,25 +73,23 @@
       <v-list-item-icon>
         <v-icon>favorite</v-icon>
       </v-list-item-icon>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("layout_shop.shop_menu.favorites") }}
-        </v-list-item-title>
-      </v-list-item-content>
+
+      <v-list-item-title>
+        {{ $t("layout_shop.shop_menu.favorites") }}
+      </v-list-item-title>
     </v-list-item>
 
     <v-list-item
-      :to="{ name:  window.$storefront.routes.USER_GIFTCARDS_PAGE }"
+      :to="{ name: window.$storefront.routes.USER_GIFTCARDS_PAGE }"
       active-class="bg-primary text-white"
     >
       <v-list-item-icon>
         <v-icon>card_giftcard</v-icon>
       </v-list-item-icon>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("layout_shop.shop_menu.gift_cards") }}
-        </v-list-item-title>
-      </v-list-item-content>
+
+      <v-list-item-title>
+        {{ $t("layout_shop.shop_menu.gift_cards") }}
+      </v-list-item-title>
     </v-list-item>
 
     <v-list-item
@@ -103,11 +101,10 @@
       <v-list-item-icon>
         <v-icon>wifi_protected_setup</v-icon>
       </v-list-item-icon>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("layout_shop.shop_menu.return_requests") }}
-        </v-list-item-title>
-      </v-list-item-content>
+
+      <v-list-item-title>
+        {{ $t("layout_shop.shop_menu.return_requests") }}
+      </v-list-item-title>
     </v-list-item>
 
     <v-list-item
@@ -120,18 +117,17 @@
     >
       <v-list-item-icon>
         <v-badge
+          :content="numeralFormat(total_items_in_carts, '0a')"
           color="teal"
           overlap
-          :content="  numeralFormat(total_items_in_carts,'0a')"
         >
           <v-icon>shopping_cart</v-icon>
         </v-badge>
       </v-list-item-icon>
-      <v-list-item-content>
-        <v-list-item-title>
-          {{ $t("layout_shop.shop_menu.basket") }}
-        </v-list-item-title>
-      </v-list-item-content>
+
+      <v-list-item-title>
+        {{ $t("layout_shop.shop_menu.basket") }}
+      </v-list-item-title>
     </v-list-item>
 
     <template v-if="!navigation && shop.user_id === USER_ID()">
@@ -139,8 +135,8 @@
 
       <v-list-item
         :href="window.URLS.AdminShopsURL()"
-        target="_blank"
         active-class="bg-primary text-white"
+        target="_blank"
       >
         <v-list-item-icon>
           <v-icon>shop</v-icon>
@@ -151,18 +147,18 @@
           </v-list-item-title>
         </v-list-item-content>
         <v-list-item-action>
-          <v-icon color="green" x-small>shield</v-icon>
+          <v-icon color="green" size="x-small">shield</v-icon>
         </v-list-item-action>
       </v-list-item>
 
       <v-list-item
         v-if="shop.user_id === USER_ID()"
         :href="window.URLS.AdminShopURL(shop.id)"
-        target="_blank"
         active-class="bg-primary text-white"
+        target="_blank"
       >
         <v-list-item-icon>
-          <v-icon> settings </v-icon>
+          <v-icon> settings</v-icon>
         </v-list-item-icon>
         <v-list-item-content class="text-start">
           <v-list-item-title>
@@ -174,29 +170,29 @@
           </v-list-item-title>
         </v-list-item-content>
         <v-list-item-action>
-          <v-icon color="green" x-small>shield</v-icon>
+          <v-icon color="green" size="x-small">shield</v-icon>
         </v-list-item-action>
       </v-list-item>
     </template>
 
     <template v-if="!navigation">
-      <v-divider class="mb-0"/>
+      <v-divider class="mb-0" />
 
       <div class="text-center">
         <v-btn
-          @click="$emit('click:logout')"
-          text
-          color="#444"
-          class="tnt"
           block
+          class="tnt"
+          color="#444"
           min-height="48"
+          variant="text"
+          @click="$emit('click:logout')"
         >
           {{
             $t("layout_shop.user_menu.exit_from", {
               shop_name: shop.title,
             })
           }}
-          <v-icon class="ms-1" small> logout</v-icon>
+          <v-icon class="ms-1" size="small"> logout</v-icon>
         </v-btn>
       </div>
     </template>
@@ -240,21 +236,17 @@ export default {
 </script>
 
 <style scoped>
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 
-
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-user-menu-list{
+.s--shop-user-menu-list {
   padding-top: 0;
   padding-bottom: 0;
   background-color: transparent !important;
   text-align: start;
-
 }
 </style>

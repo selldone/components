@@ -18,8 +18,8 @@
       <v-slide-group-item key="o">
         <v-btn
           size="small"
-          variant="text"
           title="View list of suggestions."
+          variant="text"
           @click="showDialog"
         >
           <v-icon>pin_invoke</v-icon>
@@ -28,9 +28,9 @@
       <v-slide-group-item v-for="n in samples_processed" :key="n" :title="n">
         <v-btn
           class="tnt"
+          size="small"
           variant="plain"
           @click="$emit('select', n)"
-          size="small"
         >
           {{ n.limitWords(4) }}
         </v-btn>
@@ -70,7 +70,7 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn variant="text" size="x-large" @click="closeDialog">
+            <v-btn size="x-large" variant="text" @click="closeDialog">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -140,4 +140,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

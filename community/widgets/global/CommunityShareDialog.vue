@@ -14,28 +14,28 @@
 
 <template>
   <component
-    v-if="topic && post"
     :is="$vuetify.display.xs ? 'v-bottom-sheet' : 'v-menu'"
-    :activator="activator"
-    top
-    offset-y
+    v-if="topic && post"
     v-model="value"
+    :activator="activator"
     :max-width="$vuetify.display.xs ? undefined : 360"
+    offset-y
     rounded="xl"
+    top
   >
     <div class="p-3 bg-white">
       <s-social-share-buttons
-        class="m-0"
-        :small="!$vuetify.display.xs"
-        :force-large="$vuetify.display.xs"
-        :title="topic.title"
         :description="post.body"
-        :url="url"
-        :quote="topic.desc"
+        :force-large="$vuetify.display.xs"
         :hashtags="hashtags"
         :media="media"
-        @share="onCommunityPostShare(topic, post)"
+        :quote="topic.desc"
+        :small="!$vuetify.display.xs"
+        :title="topic.title"
+        :url="url"
+        class="m-0"
         @embed="onCommunityPostEmbed(topic, post)"
+        @share="onCommunityPostShare(topic, post)"
       >
       </s-social-share-buttons>
     </div>
@@ -77,10 +77,10 @@ export default {
       return this.post.video
         ? this.getVideoUrl(this.post.video)
         : this.post.voice
-        ? this.getVoiceUrl(this.post.voice)
-        : this.post.image
-        ? this.getShopImagePath(this.post.image)
-        : null;
+          ? this.getVoiceUrl(this.post.voice)
+          : this.post.image
+            ? this.getShopImagePath(this.post.image)
+            : null;
     },
     hashtags() {
       return this.post.tags && this.post.tags.join(",");
@@ -105,10 +105,10 @@ export default {
         this.$nextTick(() => {
           this.value = true;
         });
-      }
+      },
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("community:share:post");
   },
 };

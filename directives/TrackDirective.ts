@@ -13,7 +13,8 @@
  */
 
 import { TrackUser } from "@core/enums/gtag/TrackUser";
-import type { ObjectDirective, DirectiveBinding } from 'vue';
+import type { ObjectDirective, DirectiveBinding } from "vue";
+
 /**
  * This directive allows for tracking user clicks on elements.
  * Use case example in Vue template: v-track:click="Home Storefront Preview ● Open Live Product"
@@ -27,7 +28,10 @@ interface TrackClickDirectiveArgs {
   // Add other arguments as needed
 }
 
-const TrackClickDirective: ObjectDirective<HTMLElement, TrackClickDirectiveArgs> = {
+const TrackClickDirective: ObjectDirective<
+  HTMLElement,
+  TrackClickDirectiveArgs
+> = {
   /**
    * Called when the directive is mounted to the element in the DOM.
    * Attaches a click event listener to the element, triggering TrackUser.onClick with the provided label.
@@ -36,9 +40,9 @@ const TrackClickDirective: ObjectDirective<HTMLElement, TrackClickDirectiveArgs>
    * @param {DirectiveBinding<TrackClickDirectiveArgs>} binding - An object containing the directive's value and arguments.
    */
   mounted(el, binding: DirectiveBinding<TrackClickDirectiveArgs>) {
-    if (binding.arg === 'click' && binding.value) {
-      el.addEventListener('click', () => {
-        TrackUser.onClick('' + binding.value);
+    if (binding.arg === "click" && binding.value) {
+      el.addEventListener("click", () => {
+        TrackUser.onClick("" + binding.value);
       });
     }
   },
@@ -56,4 +60,3 @@ const TrackClickDirective: ObjectDirective<HTMLElement, TrackClickDirectiveArgs>
 };
 
 export default TrackClickDirective;
-

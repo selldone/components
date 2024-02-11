@@ -14,8 +14,8 @@
 
 <template>
   <v-col
-    cols="12"
     class="c-container -force-rounded position-relative border-top-thick -amber"
+    cols="12"
   >
     <div class="bg-white z2 c-widget p-3">
       <h2 class="text-uppercase">Subscribe to continue</h2>
@@ -34,9 +34,9 @@
         <div class="w-50 p-1">
           <span class="d-block">Price</span>
           <price-view
-            x-large
             :amount="topic.price"
             :currency="topic.currency"
+            x-large
           ></price-view>
         </div>
         <div v-if="trial" class="w-50 p-1">
@@ -51,32 +51,28 @@
       <div v-if="access.admin" class="d-flex text-center my-2">
         <div class="w-50">
           <span class="d-block">Subscribers</span>
-          <span class="d-block text-h4"
-          >{{ topic.total_subscribers }} </span
-          >
+          <span class="d-block text-h4">{{ topic.total_subscribers }} </span>
         </div>
         <div class="w-50">
           <span class="d-block">Total sells</span>
-          <span class="d-block text-h4"
-          >{{ topic.total_sells }} </span
-          >
+          <span class="d-block text-h4">{{ topic.total_sells }} </span>
         </div>
       </div>
 
       <div class="d-flex justify-end">
         <v-btn
-          x-large
-          depressed
-          color="success"
-          @click="subscribe()"
           class="m-2"
+          color="success"
+          size="x-large"
+          variant="flat"
+          @click="subscribe()"
           >Subscribe now just for
           <price-view
-            class="ms-2"
             :amount="topic.price"
             :currency="topic.currency"
-          ></price-view
-        ></v-btn>
+            class="ms-2"
+          ></price-view>
+        </v-btn>
       </div>
     </div>
   </v-col>
@@ -98,7 +94,6 @@ export default {
       required: true,
       type: Object,
     },
-
   },
 
   data() {
@@ -106,8 +101,8 @@ export default {
   },
 
   computed: {
-    access(){
-      return this.community.access
+    access() {
+      return this.community.access;
     },
 
     trial() {
@@ -131,4 +126,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

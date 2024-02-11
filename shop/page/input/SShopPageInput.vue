@@ -14,39 +14,39 @@
 
 <template>
   <v-autocomplete
+    v-model:menu="menu"
+    v-model:search="search"
+    :clearable="clearable"
+    :items="pages"
+    :label="$t('campaign.setting.general_setting.page_input')"
+    :loading="busy"
+    :messages="modelValue ? `https://.../pages/${modelValue.name}` : ''"
     :model-value="modelValue"
+    item-title="title"
+    no-filter
+    return-object
+    variant="underlined"
     @update:model-value="
       (val) => {
         $emit('update:modelValue', val);
       }
     "
-    :items="pages"
-    :loading="busy"
-    :label="$t('campaign.setting.general_setting.page_input')"
-    item-title="title"
-    :messages="modelValue ? `https://.../pages/${modelValue.name}` : ''"
     @click:clear="$emit('click:clear')"
-    v-model:search="search"
-    v-model:menu="menu"
-    no-filter
-    return-object
-    variant="underlined"
-    :clearable="clearable"
   >
     <template
-      v-slot:append-inner
       v-if="modelValue?.id && $route.params.shop_id"
+      v-slot:append-inner
     >
       <v-btn
-        icon
-        variant="text"
-        size="var(--append-inner-button-size)"
         :to="{
           name: 'ShopPageBuilderPage',
           params: { page_id: modelValue.id },
         }"
-        title="Edit page"
+        icon
+        size="var(--append-inner-button-size)"
         target="_blank"
+        title="Edit page"
+        variant="text"
       >
         <v-icon>edit</v-icon>
       </v-btn>
@@ -54,30 +54,30 @@
 
     <template v-slot:chip="{ item }">
       <div class="mb-n3">
-        <v-avatar :color="item.raw.color" size="32" class="me-2">
+        <v-avatar :color="item.raw.color" class="me-2" size="32">
           <img v-if="item.raw.image" :src="getShopImagePath(item.raw.image)" />
-          <v-icon v-else size="small" dark>architecture</v-icon>
+          <v-icon v-else dark size="small">architecture</v-icon>
         </v-avatar>
         {{ item.raw.title }}
 
         <v-icon
           v-if="item.raw.color"
-          size="x-small"
           :color="item.raw.color"
           class="mx-1"
+          size="x-small"
           >circle
         </v-icon>
         <v-chip
-          size="small"
-          color="red"
-          class="mx-2"
           v-if="item.raw.published === false"
+          class="mx-2"
+          color="red"
+          size="small"
           >{{ $t("global.commons.draft") }}
         </v-chip>
 
         <v-avatar
-          size="24"
           class="avatar-gradient -thin -staff d-inline-flex me-2"
+          size="24"
         >
           <img :src="getUserAvatar(item.raw.user_id)" />
         </v-avatar>
@@ -86,27 +86,27 @@
 
     <template v-slot:item="{ props, item }">
       <v-list-item
-        v-bind="props"
         :prepend-avatar="
           item.raw.image ? getShopImagePath(item.raw.image) : null
         "
         :prepend-icon="item.raw.image ? null : 'architecture'"
         :title="item.raw.title"
         class="text-start"
+        v-bind="props"
       >
         <template v-slot:subtitle>
           <v-icon
             v-if="item.raw.color"
-            size="16"
             :color="item.raw.color"
             class="me-2"
+            size="16"
             >circle
           </v-icon>
           <v-chip
-            size="small"
-            color="red"
-            class="me-2"
             v-if="item.raw.published === false"
+            class="me-2"
+            color="red"
+            size="small"
             >{{ $t("global.commons.draft") }}
           </v-chip>
           {{ item.raw.note?.limitWords(10) }}
@@ -115,8 +115,8 @@
         <template v-slot:append>
           <v-avatar
             v-if="item.raw.user_id"
-            size="24"
             class="avatar-gradient -thin -staff ms-2"
+            size="24"
           >
             <img :src="getUserAvatar(item.raw.user_id)" />
           </v-avatar>
@@ -161,10 +161,9 @@ export default {
   },
   watch: {
     search: threads.debounceSearch(function () {
-      if (!this.menu ) return; // Search only if menu is open!
+      if (!this.menu) return; // Search only if menu is open!
       this.getPages();
     }),
-
   },
 
   created() {
@@ -213,9 +212,9 @@ export default {
         })
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
-          .catch((error) => {
-            this.showLaravelError(error);
-          })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
         .finally(() => {
           this.busy = false;
         });
@@ -224,4 +223,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

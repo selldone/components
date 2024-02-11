@@ -15,16 +15,16 @@
 <template>
   <img
     v-if="shopId && value && name"
-    :src="src"
-    :width="background ? '100%' : size"
-    :height="background ? '100%' : size"
     :class="{
       'inline-block': !block && !background,
       background: background,
       'hover-scale vertical-align-middle rounded': !background,
       '-selected': selected,
     }"
-  >
+    :height="background ? '100%' : size"
+    :src="src"
+    :width="background ? '100%' : size"
+  />
 </template>
 
 <script>
@@ -68,16 +68,16 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.background{
+<style lang="scss" scoped>
+.background {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-
 }
-.-selected{
+
+.-selected {
   transition: none;
   border: solid 4px #000;
 }

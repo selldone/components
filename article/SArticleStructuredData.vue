@@ -14,12 +14,11 @@
 
 <template>
   <div>
-    <div class="widget-box -large" >
-      <h3 class="my-2 widget-title"
-      >
+    <div class="widget-box -large">
+      <h3 class="my-2 widget-title">
         <v-icon class="me-1">post_add</v-icon>
-        Structured data</h3
-      >
+        Structured data
+      </h3>
 
       <v-scroll-y-transition group tag="v-row">
         <v-col
@@ -36,8 +35,8 @@
               <div class="text-center mb-2">
                 <img
                   :src="findType(structure).image"
-                  width="60%"
                   height="auto"
+                  width="60%"
                 />
               </div>
               <b class="text-uppercase">{{ $t(findType(structure).title) }}</b>
@@ -52,23 +51,24 @@
             <span v-else class="p-3">Invalid data!</span>
 
             <v-btn
-              icon
-              color="red"
-              @click.stop="remove(value, structure)"
-              class="absolute-top-end sub-caption -hover"
               :caption="$t('global.actions.delete')"
-              ><v-icon>close</v-icon></v-btn
+              class="absolute-top-end sub-caption -hover"
+              color="red"
+              icon
+              @click.stop="remove(value, structure)"
             >
+              <v-icon>close</v-icon>
+            </v-btn>
           </v-card>
         </v-col>
         <v-col key="new" cols="12" md="4" style="font-size: 12px">
           <s-add-button-green
-            icon="add"
-            class="rounded-18px"
             :caption="$t('global.json.add')"
             :message="$t('global.json.add_message')"
-            @click="showDialog()"
+            class="rounded-18px"
+            icon="add"
             min-height="160px"
+            @click="showDialog()"
           >
           </s-add-button-green>
         </v-col>
@@ -79,8 +79,8 @@
       <v-card>
         <v-card-title>
           <span
-            @click="selected_type = null"
             :class="{ 'pointer-pointer': selected_type }"
+            @click="selected_type = null"
             >{{ $t("global.json.structures") }}</span
           >
           <span v-if="selected_type"
@@ -95,7 +95,7 @@
             <v-row>
               <v-col cols="12" md="6" order="2">
                 <div class="text-center">
-                  <img :src="selected_type.image" width="240px" height="auto" />
+                  <img :src="selected_type.image" height="auto" width="240px" />
                 </div>
 
                 <b>{{ $t(selected_type.title) }}</b>
@@ -103,8 +103,8 @@
 
                 <pre
                   v-copy
-                  dir="ltr"
                   class="p-3 rounded dashed overflow-hidden"
+                  dir="ltr"
                   v-text="structure_data_pretty"
                 ></pre>
               </v-col>
@@ -117,8 +117,8 @@
 
                   <s-structure-data-input
                     v-model="structure_data[name]"
-                    :type="type"
                     :name="name"
+                    :type="type"
                   ></s-structure-data-input>
                 </div>
               </v-col>
@@ -142,7 +142,7 @@
                   >
                     <v-card-text>
                       <div class="text-center mb-2">
-                        <img :src="type.image" width="80%" height="auto" />
+                        <img :src="type.image" height="auto" width="80%" />
                       </div>
 
                       <b>{{ $t(type.title) }}</b>
@@ -158,19 +158,23 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            text
+            class="m-1"
+            variant="text"
             @click="
               () => {
                 dialog = false;
                 selected_type = null;
               }
             "
+            >{{ $t("global.actions.close") }}
+          </v-btn>
+          <v-btn
             class="m-1"
-            >{{ $t("global.actions.close") }}</v-btn
-          >
-          <v-btn depressed @click="saveChange()" color="success" class="m-1">{{
-            $t("global.actions.save")
-          }}</v-btn>
+            color="success"
+            variant="flat"
+            @click="saveChange()"
+            >{{ $t("global.actions.save") }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

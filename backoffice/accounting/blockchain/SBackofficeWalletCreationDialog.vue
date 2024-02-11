@@ -13,13 +13,18 @@
   -->
 
 <template>
-  <div dir="ltr" class="text-center">
-    <v-btn color="success" depressed @click="showAddWallet()" x-large>
-      <v-icon class="me-1">add</v-icon>
-      Set new wallet</v-btn
+  <div class="text-center" dir="ltr">
+    <v-btn
+      color="success"
+      size="x-large"
+      variant="flat"
+      @click="showAddWallet()"
     >
+      <v-icon class="me-1">add</v-icon>
+      Set new wallet
+    </v-btn>
 
-    <v-dialog max-width="860" scrollable v-model="show_create_wallet">
+    <v-dialog v-model="show_create_wallet" max-width="860" scrollable>
       <v-card class="text-start">
         <v-card-title>Link wallet</v-card-title>
         <v-card-text>
@@ -31,7 +36,8 @@
                 generate root key for derivation address generation and will not
                 save on server.
               </p>
-              <v-text-field outlined v-model="phrases"> </v-text-field>
+              <v-text-field v-model="phrases" variant="outlined">
+              </v-text-field>
             </div>
           </v-expand-transition>
 
@@ -45,25 +51,25 @@
               </p>
 
               <v-btn
+                :loading="busy_gen"
+                :variant="!!gen_phrases && 'text'"
                 color="blue"
                 dark
-                depressed
-                :text="!!gen_phrases"
-                large
-                :loading="busy_gen"
+                size="large"
+                variant="flat"
                 @click="generatePhrasesSet()"
                 >{{
                   gen_phrases ? "Regenerate new phrases" : "Create a new wallet"
-                }}</v-btn
-              >
+                }}
+              </v-btn>
 
               <div v-if="gen_phrases && step === 1">
                 <h4 class="text-h4 my-3 border rounded p-3">
-                  {{ gen_phrases.join("  ") }}
+                  {{ gen_phrases.join(" ") }}
                 </h4>
 
                 <p class="my-2">Do you write these phrases in a safe place?</p>
-                <v-btn @click="step = 2" color="success">Next</v-btn>
+                <v-btn color="success" @click="step = 2">Next</v-btn>
               </div>
 
               <div v-else-if="gen_phrases">
@@ -71,16 +77,16 @@
                   class="text-h4 my-3 border rounded p-3"
                   style="min-height: 64px"
                 >
-                  {{ verify_phrases.join("  ") }}
+                  {{ verify_phrases.join(" ") }}
                 </h4>
 
                 <v-chip-group v-model="verify_phrases" column multiple>
                   <v-chip
                     v-for="item in gen_phrases_random"
                     :key="item"
-                    filter
-                    outlined
                     :value="item"
+                    filter
+                    variant="outlined"
                   >
                     {{ item }}
                   </v-chip>
@@ -91,15 +97,15 @@
         </v-card-text>
         <v-card-actions>
           <v-btn
+            :class="{ disabled: !can_create_wallet }"
+            :loading="busy_create"
             color="success"
             dark
-            depressed
-            large
+            size="large"
+            variant="flat"
             @click="createNewBlockchainWallet()"
-            :loading="busy_create"
-            :class="{ disabled: !can_create_wallet }"
-            >Create a new wallet</v-btn
-          >
+            >Create a new wallet
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -165,11 +171,11 @@ export default {
           this.shopGateway
             ? window.API.POST_GATEWAY_SHOP_GENERATE_BLOCKCHAIN_RECOVERY_PHRASES(
                 this.shopGateway.shop_id,
-                this.gateway.code
+                this.gateway.code,
               )
             : window.ADMIN_API.POST_GATEWAY_SELLDONE_GENERATE_BLOCKCHAIN_RECOVERY_PHRASES(
-                this.gateway.id
-              )
+                this.gateway.id,
+              ),
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -177,7 +183,7 @@ export default {
 
             this.gen_phrases = data.recovery;
             this.gen_phrases_random = Object.assign([], data.recovery).sort(
-              () => (Math.random() > 0.5 ? 1 : -1)
+              () => (Math.random() > 0.5 ? 1 : -1),
             );
 
             this.showSuccessAlert();
@@ -201,16 +207,16 @@ export default {
           this.shopGateway
             ? window.API.POST_GATEWAY_SHOP_ADD_BLOCKCHAIN_WALLET(
                 this.shopGateway.shop_id,
-                this.gateway.code
+                this.gateway.code,
               )
             : window.ADMIN_API.POST_GATEWAY_SELLDONE_ADD_BLOCKCHAIN_WALLET(
-                this.gateway.id
+                this.gateway.id,
               ),
           {
             recovery: this.gen_phrases
               ? this.verify_phrases.join(" ")
               : this.phrases,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {

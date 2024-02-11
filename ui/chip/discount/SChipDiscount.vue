@@ -15,11 +15,11 @@
 <template>
   <v-chip
     v-if="percent"
-    :size="size"
     :color="color"
-    variant="flat"
-    title="Discount percent"
+    :size="size"
     label
+    title="Discount percent"
+    variant="flat"
   >
     <v-icon start>fa:fas fa-percentage</v-icon>
 
@@ -41,12 +41,12 @@ export default defineComponent({
   name: "SChipDiscount",
   props: {
     percent: {},
-    size:{},
-    color:{
-      default:'#C2185B'
-    }
+    size: {},
+    color: {
+      default: "#C2185B",
+    },
   },
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

@@ -14,7 +14,7 @@
 
 <template>
   <div>
-    <v-simple-table v-if="product.pros" class="table-features">
+    <v-table v-if="product.pros" class="table-features">
       <thead>
         <tr>
           <th colspan="2">
@@ -33,9 +33,9 @@
           <td>{{ value }}</td>
         </tr>
       </tbody>
-    </v-simple-table>
+    </v-table>
 
-    <v-simple-table v-if="product.cons" class="table-features">
+    <v-table v-if="product.cons" class="table-features">
       <thead>
         <tr>
           <th colspan="2">
@@ -53,7 +53,7 @@
           <td>{{ value }}</td>
         </tr>
       </tbody>
-    </v-simple-table>
+    </v-table>
   </div>
 </template>
 
@@ -80,7 +80,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -89,19 +89,21 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-
 .table-features {
   text-align: start;
   background: #e5e5e5 !important;
   border-radius: 12px;
   margin: 12px;
+
   tr {
     th {
       font-weight: 300;
     }
+
     td:first-child {
       font-weight: 800;
     }
+
     td:last-child {
       color: #666;
     }

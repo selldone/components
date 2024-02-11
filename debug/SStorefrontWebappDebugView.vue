@@ -16,22 +16,23 @@
   <div v-if="load">
     <v-navigation-drawer
       v-model="dialog"
-      fixed
-      width="640"
-      color="#fafaf6"
       class="s--webapp-debug-view"
+      color="#fafaf6"
+      fixed
       touchless
+      width="640"
     >
       <div class="widget-buttons">
-        <v-btn @click="dialog = false" text x-large
-          ><v-icon class="me-2">close</v-icon> {{ $t("global.actions.close") }}
+        <v-btn size="x-large" variant="text" @click="dialog = false">
+          <v-icon class="me-2">close</v-icon>
+          {{ $t("global.actions.close") }}
         </v-btn>
         <v-btn
-          @click="show_settings = !show_settings"
-          text
-          x-large
-          title="Advanced settings"
           max-width="100px"
+          size="x-large"
+          title="Advanced settings"
+          variant="text"
+          @click="show_settings = !show_settings"
         >
           <v-icon>{{ show_settings ? "settings_suggest" : "settings" }}</v-icon>
         </v-btn>
@@ -41,7 +42,9 @@
         <div v-if="pack_dev_server">
           <div class="py-2 px-5">
             <small class="me-1">Dev Server: </small>
-            <v-icon class="blink-me me-2" small color="green">circle</v-icon>
+            <v-icon class="blink-me me-2" color="green" size="small"
+              >circle
+            </v-icon>
             <span class="me-2"
               >Path: <b>{{ pack_dev_server.path }} </b></span
             >
@@ -53,7 +56,7 @@
       </v-expand-transition>
       <v-expand-transition>
         <div v-if="show_settings">
-          <v-list-subheader style="height: unset" class="my-3">
+          <v-list-subheader class="my-3" style="height: unset">
             To execute your development storefront web application in a live
             storefront environment in real-time, initiate the process by running
             yarn serv. Afterward, enter the development URL in the provided
@@ -62,12 +65,12 @@
 
           <v-text-field
             v-model="dev_url"
-            placeholder="https://localhost:8080"
-            clearable
-            class="mx-5"
-            label="Local dev server"
             append-inner-icon="cloud_sync"
+            class="mx-5"
+            clearable
+            label="Local dev server"
             persistent-placeholder
+            placeholder="https://localhost:8080"
             @blur="
               fixDevUrl();
               getValidateDevPack(dev_url);
@@ -76,11 +79,11 @@
 
           <div class="widget-buttons">
             <v-btn
-              x-large
-              color="primary"
-              @click="setLocalDevServer(dev_url)"
-              :loading="busy_dev_server"
               :class="{ disable: count_down_refresh }"
+              :loading="busy_dev_server"
+              color="primary"
+              size="x-large"
+              @click="setLocalDevServer(dev_url)"
             >
               <template v-if="count_down_refresh">
                 Auto refresh after 5 seconds...
@@ -93,7 +96,7 @@
           </div>
 
           <v-expand-transition>
-            <div v-if="error_dev_serve" class="red--text px-5">
+            <div v-if="error_dev_serve" class="text-red px-5">
               {{ error_dev_serve }}
             </div>
           </v-expand-transition>
@@ -102,23 +105,23 @@
 
       <div v-if="layout_package" class="px-3">
         <s-value-box
-          label="Package"
           :value="layout_package"
           icon="widgets"
+          label="Package"
         ></s-value-box>
         <s-value-box
-          label="Version"
           :value="layout_version"
           icon="manage_history"
+          label="Version"
         ></s-value-box>
         <s-value-box
-          label="Operator"
           :value="layout_operator"
           icon="earbuds"
+          label="Operator"
         ></s-value-box>
       </div>
 
-      <v-list class="" three-line>
+      <v-list class="" lines="three">
         <v-list-subheader>
           This is a debug window designed to log errors and key messages. It's
           intended solely for debugging purposes and is primarily useful for
@@ -129,25 +132,23 @@
           :key="key"
           class="--item"
         >
-          <v-list-item-content>
-            <v-list-item-title>
-              <v-icon :color="item[1].type.color" class="me-1" small>{{
-                item[1].type.icon
-              }}</v-icon>
-              {{ item[0] }}
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              {{ item[1].message }}
-            </v-list-item-subtitle>
-            <v-list-item-subtitle v-if="item[1].request">
-              <b> {{ item[1].request.status }}</b> ●
-              {{ item[1].request.statusText }}
-            </v-list-item-subtitle>
+          <v-list-item-title>
+            <v-icon :color="item[1].type.color" class="me-1" size="small"
+              >{{ item[1].type.icon }}
+            </v-icon>
+            {{ item[0] }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ item[1].message }}
+          </v-list-item-subtitle>
+          <v-list-item-subtitle v-if="item[1].request">
+            <b> {{ item[1].request.status }}</b> ●
+            {{ item[1].request.statusText }}
+          </v-list-item-subtitle>
 
-            <v-list-item-subtitle v-if="item[1].target">
-              {{ item[1].target }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
+          <v-list-item-subtitle v-if="item[1].target">
+            {{ item[1].target }}
+          </v-list-item-subtitle>
         </v-list-item>
       </v-list>
       <p
@@ -197,7 +198,7 @@ export default {
     return {
       key_listener_keydown: null,
       dialog: false,
-      load:false,
+      load: false,
 
       globalErrorHandler: null,
       promiseRejectionHandler: null,
@@ -260,7 +261,7 @@ export default {
           : StorefrontDebugLogType.EXTERNAL_ERROR,
         _key,
         `Exception: ${message} at ${source}:${lineno}:${colno}`,
-        target
+        target,
       );
       return true; // true: prevents the default browser action
     };
@@ -272,7 +273,7 @@ export default {
     };
     window.addEventListener(
       StorefrontDebugEvents.WARNING_EVENT,
-      this.warning_event_handler
+      this.warning_event_handler,
     );
     // ----------------------------- Global info handler -----------------------------
     this.info_event_handler = ({ detail: { key, message } }) => {
@@ -280,7 +281,7 @@ export default {
     };
     window.addEventListener(
       StorefrontDebugEvents.INFO_EVENT,
-      this.info_event_handler
+      this.info_event_handler,
     );
 
     // ----------------------------- Promise rejection handler -----------------------------
@@ -326,10 +327,10 @@ export default {
           {
             status: error.response?.status,
             statusText: error.response?.statusText,
-          }
+          },
         );
         return Promise.reject(error);
-      }
+      },
     );
 
     //――――――――――――――――――――――  START Editor key listener ――――――――――――――――――――
@@ -347,7 +348,7 @@ export default {
             activeElement.tagName !== "TEXTAREA" &&
             activeElement.contentEditable !== "true")
         ) {
-          this.load=true;
+          this.load = true;
           this.$nextTick(() => {
             this.dialog = !this.dialog;
           });
@@ -365,22 +366,22 @@ export default {
       this.getValidateDevPack(this.dev_url);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     // Remove global error handler
     window.removeEventListener("error", this.globalErrorHandler);
     window.removeEventListener(
       StorefrontDebugEvents.WARNING_EVENT,
-      this.globalErrorHandler
+      this.globalErrorHandler,
     );
     window.removeEventListener(
       StorefrontDebugEvents.INFO_EVENT,
-      this.globalErrorHandler
+      this.globalErrorHandler,
     );
 
     // Remove promise rejection handler
     window.removeEventListener(
       "unhandledrejection",
-      this.promiseRejectionHandler
+      this.promiseRejectionHandler,
     );
 
     // Remove Axios interceptor
@@ -395,7 +396,7 @@ export default {
       key,
       message,
       target /*Element*/,
-      request /*API Request error*/
+      request /*API Request error*/,
     ) {
       // For demonstration purposes, we'll just log to the console
       // In a real-world scenario, you might want to send this information to a server
@@ -424,7 +425,7 @@ export default {
 
         // Filter the script with the specific src attribute
         const targetScript = scripts.find((script) =>
-          script.src.includes("shop.js")
+          script.src.includes("shop.js"),
         );
 
         if (targetScript) {
@@ -511,7 +512,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -522,12 +523,14 @@ export default {
 .s--webapp-debug-view {
   text-align: start;
   z-index: 100;
+
   .--item {
     background: #fff;
     margin: 4px;
     border-radius: 12px;
   }
 }
+
 .s--webapp-debug-view-dev-badge {
   position: fixed;
   bottom: 25vh;

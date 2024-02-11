@@ -23,7 +23,7 @@
   }
 }
 
-.svg-heart-animate{
+.svg-heart-animate {
   animation: svg-heart-animate 3s linear alternate infinite;
   transform-origin: center;
 }
@@ -38,25 +38,23 @@
 }
 
 
-
-
-.svg-scale-fade-animate{
+.svg-scale-fade-animate {
   animation: svg-scale-fade-animate 6s linear forwards infinite;
   transform-origin: center;
   animation-delay: 0.5s;
 
-  &:nth-child(3n){
+  &:nth-child(3n) {
     animation-delay: 0.5s;
   }
-  &:nth-child(3n+1){
+
+  &:nth-child(3n+1) {
     animation-delay: 0.8s;
   }
-  &:nth-child(3n+2){
+
+  &:nth-child(3n+2) {
     animation-delay: 1s;
   }
 }
-
-
 
 
 @keyframes svg-scale-fade-animate {

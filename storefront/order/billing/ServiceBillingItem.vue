@@ -17,9 +17,9 @@
     <div class="d-flex align-items-center pp" @click="expand = !expand">
       <v-img
         :src="getProductImage(product.id, IMAGE_SIZE_SMALL)"
-        width="64"
-        height="64"
         class="rounded-18px flex-grow-0"
+        height="64"
+        width="64"
       >
       </v-img>
       <div class="flex-grow-1 ps-3">
@@ -27,18 +27,18 @@
           <b>{{ product.title }}</b>
           <v-chip
             v-if="type"
+            :title="$t(type.desc)"
+            class="ma-1"
             label
             size="x-small"
-            class="ma-1"
-            :title="$t(type.desc)"
-            >{{ $t(type.title) }}</v-chip
-          >
+            >{{ $t(type.title) }}
+          </v-chip>
         </div>
         <div class="text-subtitle-2 m-0">
           {{ product.title_en }}
         </div>
 
-        <v-row no-gutters align="center">
+        <v-row align="center" no-gutters>
           <price-view
             v-if="service_item?.price"
             :amount="service_item.price"
@@ -49,11 +49,11 @@
           <small v-else class="me-2">Not pricing yet!</small>
 
           <div v-if="start_at" class="ma-1" title="Checkin date.">
-            <v-icon size="small" class="mx-1">login</v-icon>
+            <v-icon class="mx-1" size="small">login</v-icon>
             {{ getLocalDateString(start_at) }}
           </div>
           <div v-if="end_at" class="ma-1" title="Checkout date.">
-            <v-icon size="small" class="mx-1">logout</v-icon>
+            <v-icon class="mx-1" size="small">logout</v-icon>
             {{ getLocalDateString(end_at) }}
           </div>
         </v-row>
@@ -64,7 +64,7 @@
 
     <v-expand-transition>
       <div v-if="expand">
-        <v-list-subheader> </v-list-subheader>
+        <v-list-subheader></v-list-subheader>
         <!-- ----------------------- Tasks ----------------------- -->
         <div
           v-if="has_tasks"
@@ -81,8 +81,8 @@
           <expert-contract-tasks
             v-model="tasks"
             :editable="editing"
-            @change="updateTasks"
             :view-only-progress="viewOnlyProgress"
+            @change="updateTasks"
           />
         </div>
         <!-- ----------------------- Date ----------------------- -->
@@ -99,20 +99,20 @@
 
           <s-date-input
             v-model="reserved_at"
-            color="#2196f3"
-            rounded
-            return-utc
-            :min="new Date().toISOString()"
-            label="Appointment"
-            class="max-width-field mx-auto mb-3"
             :jump-minute="15"
+            :min="new Date().toISOString()"
+            class="max-width-field mx-auto mb-3"
+            color="#2196f3"
+            label="Appointment"
+            return-utc
+            rounded
           >
           </s-date-input>
 
           <s-week-day-time-picker
             v-model="preferences.days"
-            :restrictions="outputs.days"
             :pointed-time-utc="reserved_at"
+            :restrictions="outputs.days"
             class="my-2 max-width-field-large mx-auto"
             dis-color="#ddd"
           ></s-week-day-time-picker>
@@ -121,18 +121,18 @@
         <!-- ----------------------- Booking ----------------------- -->
         <div
           v-if="has_booking"
-          class="widget-box -large mb-5"
           :class="{ 'border-bottom': editing }"
+          class="widget-box -large mb-5"
         >
           <s-widget-header
-            :title="$t('service_bill.booking.title')"
-            icon="date_range"
             :add-caption="
               editing ? $t('service_bill.booking.show_calendar') : undefined
             "
-            @click:add="show_cal = !show_cal"
-            add-text
+            :title="$t('service_bill.booking.title')"
             add-icon="calendar_today"
+            add-text
+            icon="date_range"
+            @click:add="show_cal = !show_cal"
           >
           </s-widget-header>
           <v-list-subheader>
@@ -145,7 +145,7 @@
             <!-- Checkin Date -->
 
             <div class="flex-grow-1">
-              <v-icon color="#111" size="small" class="me-1">login</v-icon>
+              <v-icon class="me-1" color="#111" size="small">login</v-icon>
               {{ $t("service_bill.booking.selected_checkin") }}:
               <div v-if="preferences.dates[0]" class="mt-1">
                 <div>
@@ -168,13 +168,13 @@
 
                     <v-btn
                       v-if="editing"
-                      icon
-                      @click="start_at = preferences.dates[0]"
-                      class="mx-1"
                       :title="
                         'Reset to user selected date: ' +
                         getLocalTimeString(preferences.dates[0])
                       "
+                      class="mx-1"
+                      icon
+                      @click="start_at = preferences.dates[0]"
                     >
                       <v-icon size="small">autorenew</v-icon>
                     </v-btn>
@@ -194,9 +194,9 @@
                 </div>
               </div>
               <div v-else class="mt-1">
-                <v-icon color="#111" size="small" class="me-1"
-                  >help_center</v-icon
-                >
+                <v-icon class="me-1" color="#111" size="small"
+                  >help_center
+                </v-icon>
 
                 {{ $t("global.commons.not_selected") }}
               </div>
@@ -204,7 +204,7 @@
 
             <!-- Checkout Date -->
             <div class="flex-grow-1">
-              <v-icon color="#111" size="small" class="me-1">logout</v-icon>
+              <v-icon class="me-1" color="#111" size="small">logout</v-icon>
 
               {{ $t("service_bill.booking.selected_checkout") }}:
 
@@ -229,13 +229,13 @@
 
                     <v-btn
                       v-if="editing"
-                      icon
-                      @click="end_at = preferences.dates[1]"
-                      class="mx-1"
                       :title="
                         'Reset to user selected date: ' +
                         getLocalTimeString(preferences.dates[1])
                       "
+                      class="mx-1"
+                      icon
+                      @click="end_at = preferences.dates[1]"
                     >
                       <v-icon size="small">autorenew</v-icon>
                     </v-btn>
@@ -255,9 +255,9 @@
                 </div>
               </div>
               <div v-else class="mt-1">
-                <v-icon color="#111" size="small" class="me-1"
-                  >help_center</v-icon
-                >
+                <v-icon class="me-1" color="#111" size="small"
+                  >help_center
+                </v-icon>
                 {{ $t("global.commons.not_selected") }}
               </div>
             </div>
@@ -278,9 +278,9 @@
                 variant="text"
                 @click="change_dates = !change_dates"
               >
-                <v-icon size="small" class="me-1"
-                  >published_with_changes</v-icon
-                >
+                <v-icon class="me-1" size="small"
+                  >published_with_changes
+                </v-icon>
                 {{ $t("global.actions.click_here") }}
               </v-btn>
             </p>
@@ -291,13 +291,13 @@
                   <v-col cols="12" sm="6">
                     <s-date-input
                       v-model="start_at"
-                      color="#2196f3"
-                      rounded
-                      return-utc
                       :min="new Date().toISOString()"
-                      label="Check-in"
                       class="max-width-field mx-auto border rounded-lg pt-5 bg-white widget-hover"
+                      color="#2196f3"
                       format="YYYY-MM-DD"
+                      label="Check-in"
+                      return-utc
+                      rounded
                       type="date"
                     >
                     </s-date-input>
@@ -305,13 +305,13 @@
                   <v-col cols="12" sm="6">
                     <s-date-input
                       v-model="end_at"
-                      color="#2196f3"
-                      rounded
-                      return-utc
                       :min="start_at"
-                      label="Check-out"
                       class="max-width-field mx-auto border rounded-lg pt-5 bg-white widget-hover"
+                      color="#2196f3"
                       format="YYYY-MM-DD"
+                      label="Check-out"
+                      return-utc
+                      rounded
                       type="date"
                     >
                     </s-date-input>
@@ -322,17 +322,17 @@
 
             <v-bottom-sheet
               v-model="show_cal"
-              max-width="840"
               content-class="rounded-t-xl"
+              max-width="840"
             >
               <v-card class="rounded-t-xl" rounded="0">
-                <v-card-title> </v-card-title>
+                <v-card-title></v-card-title>
                 <v-card-text>
                   <s-calendar-view
                     :disabled="outputs.disabled"
                     :new-event="new_event"
-                    day-level
                     class="my-3"
+                    day-level
                   ></s-calendar-view>
                 </v-card-text>
                 <v-card-actions>
@@ -341,8 +341,10 @@
                       size="x-large"
                       variant="text"
                       @click="show_cal = false"
-                      ><v-icon class="me-1">close</v-icon> Close</v-btn
                     >
+                      <v-icon class="me-1">close</v-icon>
+                      Close
+                    </v-btn>
                   </div>
                 </v-card-actions>
               </v-card>
@@ -367,13 +369,13 @@
           <s-number-input
             v-model="subscription"
             :decimal="0"
-            :min="0"
             :label="$t('service_bill.subscription.duration')"
-            placeholder="Ex. 90 days"
-            filled
-            rounded
+            :min="0"
             :suffix="$t('global.commons.days')"
             class="max-width-field mx-auto"
+            filled
+            placeholder="Ex. 90 days"
+            rounded
           >
           </s-number-input>
         </div>
@@ -396,13 +398,13 @@
           <s-number-input
             v-model="charge"
             :decimal="0"
-            :min="0"
             :label="$t('service_bill.subscription.charge')"
-            placeholder="Ex. 2000 units"
-            filled
-            rounded
+            :min="0"
             :suffix="$t('global.commons.units')"
             class="max-width-field mx-auto"
+            filled
+            placeholder="Ex. 2000 units"
+            rounded
           >
           </s-number-input>
         </div>
@@ -421,30 +423,30 @@
 
           <s-price-input
             v-model="price"
-            class="max-width-field mx-auto my-2 strong-field"
-            :label="$t('add_product.pricing.price_input')"
-            placeholder="0.00"
-            required
             :decimal="currency.floats"
             :disabled="!currency"
+            :label="$t('add_product.pricing.price_input')"
             :rules="[GlobalRules.required()]"
             :suffix="$t(currency.name)"
+            class="max-width-field mx-auto my-2 strong-field"
+            placeholder="0.00"
+            required
           >
           </s-price-input>
 
           <div class="widget-buttons">
             <v-btn
               :color="service_item ? 'primary' : 'success'"
-              dark
-              size="x-large"
               :loading="busy_set"
-              @click="setServiceItem"
               :size="!service_item && 'large'"
               :variant="!!service_item && 'flat'"
+              dark
+              size="x-large"
+              @click="setServiceItem"
             >
-              <v-icon class="me-1">{{
-                service_item ? "save" : "check"
-              }}</v-icon>
+              <v-icon class="me-1"
+                >{{ service_item ? "save" : "check" }}
+              </v-icon>
               {{ $t("service_bill.save_item") }}
             </v-btn>
           </div>
@@ -728,13 +730,15 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @media only screen and (max-width: 600px) {
   .checks {
     font-size: 10px !important;
+
     p,
     button {
       font-size: 9px !important;
+
       span,
       i {
         font-size: 9px !important;

@@ -17,9 +17,9 @@
     v-if="warranty_article || return_policy_article"
     class="s--shop-product-warranty"
   >
-    <v-container v-if="has_big_header" fluid class="my-16">
+    <v-container v-if="has_big_header" class="my-16" fluid>
       <v-row align="center" justify="space-between">
-        <v-col cols="12" md="6" class="text-start">
+        <v-col class="text-start" cols="12" md="6">
           <v-list-subheader>
             <span v-if="has_return_warranty" class="me-2">
               ●
@@ -41,7 +41,7 @@
           </h2>
         </v-col>
 
-        <v-col v-if="product.warranty" cols="12" sm="6" md="3">
+        <v-col v-if="product.warranty" cols="12" md="3" sm="6">
           <div class="-highlight">
             <span class="text-h3 font-weight-black">{{
               product.warranty
@@ -50,7 +50,7 @@
           <div>Product Warranty!</div>
         </v-col>
 
-        <v-col v-if="has_return_warranty" cols="12" sm="6" md="3">
+        <v-col v-if="has_return_warranty" cols="12" md="3" sm="6">
           <div class="-highlight">
             <span class="text-h1 font-weight-black">{{
               product.return_warranty
@@ -71,14 +71,14 @@
         min-height="100px"
       >
         <s-article-editor
-          class="article samin-article-content my-4 text-start"
-          :title="has_big_header ? null : warranty_article.title"
           :body="warranty_article.body"
-          :only-view="true"
           :edit="false"
+          :only-view="true"
+          :title="has_big_header ? null : warranty_article.title"
+          class="article samin-article-content my-4 text-start"
           suffix-id="shipping"
         >
-          <template v-slot:after-title> </template>
+          <template v-slot:after-title></template>
         </s-article-editor>
       </s-expand-view>
 
@@ -89,22 +89,22 @@
         class="text-end"
       >
         <v-btn
-          dark
           :href="admin_url_warranty"
-          target="_blank"
           class="tnt fadeIn"
+          dark
+          target="_blank"
           title="Open product admin panel"
         >
           <img
+            class="me-1"
+            height="16"
             src="../../assets/selldone-logo/logo-mini-white.svg"
             width="16"
-            height="16"
-            class="me-1"
           />
 
           Edit Warranty
 
-          <v-icon class="mx-1" small>open_in_new</v-icon>
+          <v-icon class="mx-1" size="small">open_in_new</v-icon>
         </v-btn>
       </div>
     </v-container>
@@ -117,11 +117,11 @@
         min-height="100px"
       >
         <s-article-editor
-          class="article samin-article-content my-4 text-start"
-          :title="return_policy_article.title"
           :body="return_policy_article.body"
-          :only-view="true"
           :edit="false"
+          :only-view="true"
+          :title="return_policy_article.title"
+          class="article samin-article-content my-4 text-start"
           suffix-id="return"
         ></s-article-editor>
       </s-expand-view>
@@ -133,22 +133,22 @@
         class="text-end"
       >
         <v-btn
-          dark
           :href="admin_url_return_policy"
-          target="_blank"
           class="tnt fadeIn"
+          dark
+          target="_blank"
           title="Open product admin panel"
         >
           <img
+            class="me-1"
+            height="16"
             src="../../assets/selldone-logo/logo-mini-white.svg"
             width="16"
-            height="16"
-            class="me-1"
           />
 
           Edit Return Policy
-          <v-icon class="mx-1" small>open_in_new</v-icon></v-btn
-        >
+          <v-icon class="mx-1" size="small">open_in_new</v-icon>
+        </v-btn>
       </div>
     </v-container>
   </div>
@@ -195,7 +195,7 @@ export default {
         this.product &&
         this.product.profiles &&
         this.product.profiles.find(
-          (p) => p.type === LogisticProfileType.WARRANTY.value
+          (p) => p.type === LogisticProfileType.WARRANTY.value,
         )
       );
     },
@@ -223,7 +223,7 @@ export default {
         this.product &&
         this.product.profiles &&
         this.product.profiles.find(
-          (p) => p.type === LogisticProfileType.RETURN_POLICY.value
+          (p) => p.type === LogisticProfileType.RETURN_POLICY.value,
         )
       );
     },
@@ -254,7 +254,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

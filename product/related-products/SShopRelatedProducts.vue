@@ -21,7 +21,7 @@
     </v-container>
 
     <div class="my-5 py-5">
-      <s-fade-scroll show-arrow center stick-class="-product-card">
+      <s-fade-scroll center show-arrow stick-class="-product-card">
         <div class="-product-container">
           <div class="-product-card d-flex align-center flex-column pa-5">
             <div class="ma-auto">
@@ -62,12 +62,12 @@
           <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ Products List ━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
           <div
-            class="-product-card -hover"
             v-for="item in products"
             :key="item.id"
             :class="{
               disabled: item.id === product.id,
             }"
+            class="-product-card -hover"
           >
             <router-link
               :to="{
@@ -76,20 +76,20 @@
               }"
             >
               <v-img
-                aspect-ratio="1"
-                width="100%"
-                fetchpriority="low"
-                :src="getShopImagePath(item.icon)"
-                :lazy-src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)"
-                :contain="item.style && item.style.contain"
                 :alt="item.title"
+                :contain="item.style && item.style.contain"
+                :lazy-src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)"
+                :src="getShopImagePath(item.icon)"
+                aspect-ratio="1"
                 class="-img-banner"
+                fetchpriority="low"
+                width="100%"
               >
                 <template v-slot:placeholder>
-                  <v-layout fill-height align-center justify-center ma-0>
+                  <v-layout align-center fill-height justify-center ma-0>
                     <v-progress-circular
-                      indeterminate
                       :color="SaminColorLight"
+                      indeterminate
                     />
                   </v-layout>
                 </template>
@@ -102,14 +102,14 @@
 
                   <v-rating
                     v-model="item.rate"
-                    dir="ltr"
+                    :length="1"
                     active-color="yellow-darken-3"
+                    class="d-inline"
                     color="grey-darken-1"
+                    density="compact"
+                    dir="ltr"
                     half-increments
                     readonly
-                    density="compact"
-                    :length="1"
-                    class="d-inline"
                   />
                 </span>
               </div>
@@ -124,19 +124,19 @@
 
             <div class="-card-content">
               <price-view
-                large
                 :amount="CalcPriceProductCurrentCurrency(getShop(), item)"
+                large
               ></price-view>
             </div>
           </div>
 
           <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ Loading Placeholder ━━━━━━━━━━━━━━━━━━━━━━━━ -->
           <template v-if="busy">
-            <div class="-product-card" v-for="i in 6" :key="'_' + i">
+            <div v-for="i in 6" :key="'_' + i" class="-product-card">
               <div class="pa-3">
                 <v-skeleton-loader
-                  max-width="100%"
                   height="600"
+                  max-width="100%"
                   type="image,card-heading, paragraph"
                 ></v-skeleton-loader>
               </div>
@@ -226,7 +226,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -285,6 +285,7 @@ export default {
       overflow: hidden;
       min-width: var(--card-width);
       max-width: var(--card-width);
+
       .-card-title {
         display: flex;
         align-items: center;
@@ -293,9 +294,11 @@ export default {
         color: #222;
         font-size: 1.2rem;
       }
+
       .-card-content {
         padding: 0 28px 32px 28px;
       }
+
       transition: all 0.3s;
 
       .-rate-view {

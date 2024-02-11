@@ -13,44 +13,44 @@
   -->
 
 <template>
-  <v-container fluid v-resize="onResize" class="p-0">
+  <v-container v-resize="onResize" class="p-0" fluid>
     <v-row :no-gutters="small_mode" style="min-height: 100%">
       <v-col
         v-if="!selectedContact || !small_mode"
-        cols="12"
-        :md="small_mode ? 12 : 3"
         :class="small_mode ? '' : 'border-end'"
+        :md="small_mode ? 12 : 3"
         class="d-flex flex-column min-height-60vh"
+        cols="12"
       >
         <s-data-iterator-toolbar-small
-          :sort-keys="keys"
+          v-model:items-per-page="itemsPerPage"
           v-model:search="search"
           v-model:sort-by="sortBy.key"
           v-model:sort-desc="sortBy.order"
           :base-items-count="6"
-          v-model:items-per-page="itemsPerPage"
-          :dark="isSmall"
-          style="margin: 0 !important"
           :color="isSmall ? SaminColorDark : undefined"
+          :dark="isSmall"
+          :sort-keys="keys"
           class="flex-grow-0"
+          style="margin: 0 !important"
         >
           <v-menu
             v-if="isAdmin"
-            offset-y
             :close-on-content-click="false"
+            offset-y
             z-index="99999999"
           >
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon size="small">
+              <v-btn icon size="small" v-bind="props">
                 <v-icon>more_vert</v-icon>
               </v-btn>
             </template>
 
             <v-sheet
-              color="#fff"
               class="p-2 text-start small-label"
-              rounded
+              color="#fff"
               min-width="220"
+              rounded
             >
               <small class="font-weight-bold">
                 {{ $t("global.commons.options") }}
@@ -59,19 +59,19 @@
                 v-model="details"
                 :label="$t('global.commons.show_details')"
                 color="blue"
-                inset
                 density="compact"
                 hide-details
+                inset
               ></v-switch>
 
               <v-checkbox
-                v-model="categories"
                 v-for="(category, key) in SupportCategory"
                 :key="key"
-                :value="category.code"
+                v-model="categories"
                 :label="$t(category.name)"
-                hide-details
+                :value="category.code"
                 dense
+                hide-details
               >
               </v-checkbox>
             </v-sheet>
@@ -81,27 +81,27 @@
         <!------------------------------- List ----------------------------------->
 
         <v-data-iterator
-          :items="contacts"
-          :loading="busy_fetch"
-          :search="search"
-          v-model:sort-by="sortBy"
-          :sort-desc="sortDesc"
-          hide-default-footer
-          :items-length="totalItems"
           v-model:options="options"
           v-model:page="page"
-          :items-per-page="itemsPerPage"
-          no-data-text=""
+          v-model:sort-by="sortBy"
           :class="{ 'chats-list-popup': small_mode }"
+          :items="contacts"
+          :items-length="totalItems"
+          :items-per-page="itemsPerPage"
+          :loading="busy_fetch"
+          :search="search"
+          :sort-desc="sortDesc"
           class="flex-grow-1"
+          hide-default-footer
+          no-data-text=""
         >
           <template v-slot:loading>
             <s-loading css-mode light></s-loading>
           </template>
           <template v-slot:no-data>
-            <v-icon size="80" color="#ddd" class="center-absolute"
-              >add_comment</v-icon
-            >
+            <v-icon class="center-absolute" color="#ddd" size="80"
+              >add_comment
+            </v-icon>
           </template>
 
           <template v-slot:default="{ items }">
@@ -109,14 +109,14 @@
               <v-card
                 v-for="item in items"
                 :key="item.id"
-                class="support-item text-nowrap"
                 :class="{ '-active': item === selectedContact }"
-                @click="showContact(item)"
-                :dark="item === selectedContact"
                 :color="item === selectedContact ? SaminColorDark : ''"
+                :dark="item === selectedContact"
+                class="support-item text-nowrap"
+                @click="showContact(item)"
               >
                 <v-card-title>
-                  <v-avatar size="36" class="me-2 hover-scale-small">
+                  <v-avatar class="me-2 hover-scale-small" size="36">
                     <img
                       :src="
                         item.user_id
@@ -133,11 +133,11 @@
                     <emoji-rating
                       v-if="item.closed"
                       v-model="item.rate"
-                      x-small
-                      dense
                       class="ms-1 inline-block"
-                      read-only
+                      dense
                       no-stars
+                      read-only
+                      x-small
                     ></emoji-rating>
 
                     <p v-if="getLastMessage(item)" class="m-0">
@@ -164,20 +164,20 @@
 
                   <v-spacer></v-spacer>
 
-                  <v-badge v-if="item.mention_id" dot color="#C2185B" overlap>
+                  <v-badge v-if="item.mention_id" color="#C2185B" dot overlap>
                     <v-avatar
-                      size="24"
                       class="hover-scale-small me-1"
+                      size="24"
                       title="Mention"
                     >
                       <img :src="getUserAvatar(item.mention_id)" />
                     </v-avatar>
                   </v-badge>
 
-                  <v-badge v-if="item.officer_id" dot color="blue" overlap>
+                  <v-badge v-if="item.officer_id" color="blue" dot overlap>
                     <v-avatar
-                      size="24"
                       class="hover-scale-small"
+                      size="24"
                       title="Officer"
                     >
                       <img :src="getUserAvatar(item.officer_id)" />
@@ -185,17 +185,18 @@
                   </v-badge>
 
                   <v-chip
-                    size="x-small"
                     v-if="item.waiting"
-                    color="transparent"
                     class="absolute-top-start"
-                    ><v-icon
-                      size="x-small"
+                    color="transparent"
+                    size="x-small"
+                  >
+                    <v-icon
                       class="blink-me"
-                      start
                       color="#CDDC39"
-                      >lens</v-icon
-                    >
+                      size="x-small"
+                      start
+                      >lens
+                    </v-icon>
                     {{ $t("global.commons.waiting") }}
                   </v-chip>
 
@@ -203,9 +204,9 @@
                     getFromNowString(item.updated_at)
                   }}</small>
                   <small v-else class="absolute-top-end ch-time text-success">
-                    <v-icon size="small" class="me-1" color="success"
-                      >done_all</v-icon
-                    >
+                    <v-icon class="me-1" color="success" size="small"
+                      >done_all
+                    </v-icon>
                     {{ getFromNowString(item.closed_at) }}</small
                   >
                 </v-card-title>
@@ -213,14 +214,14 @@
                 <v-card-text v-if="details">
                   <div class="d-flex text-center mb-1">
                     <div class="w-50 mb-1 p-1">
-                      <v-icon class="me-2" size="small">mail</v-icon
-                      ><span v-copy
+                      <v-icon class="me-2" size="small">mail </v-icon>
+                      <span v-copy
                         >{{ item.user ? item.user.email : item.email }}
                       </span>
                     </div>
                     <div class="w-50 mb-1 p-1">
-                      <v-icon class="me-2" size="small">phone</v-icon
-                      ><span v-copy
+                      <v-icon class="me-2" size="small">phone </v-icon>
+                      <span v-copy
                         >{{ item.user ? item.user.phone : item.phone }}
                       </span>
                     </div>
@@ -232,9 +233,9 @@
                     <div class="w-50 p-1">
                       <emoji-rating
                         v-model="item.rate"
-                        x-small
                         dense
                         read-only
+                        x-small
                       ></emoji-rating>
                     </div>
 
@@ -261,8 +262,8 @@
             <v-pagination
               v-if="pageCount > 1"
               v-model="page"
-              rounded
               :length="pageCount"
+              rounded
             />
           </template>
         </v-data-iterator>
@@ -275,29 +276,29 @@
         >
           <v-textarea
             v-model="message"
-            :rows="1"
-            auto-grow
-            :rules="[GlobalRules.counter(1024)]"
-            density="compact"
-            hide-details
             :placeholder="$t('global.commons.message')"
+            :rows="1"
+            :rules="[GlobalRules.counter(1024)]"
+            auto-grow
             class="small-textarea"
+            density="compact"
             flat
-            variant="solo"
+            hide-details
             row-height="10px"
+            variant="solo"
           >
             <template v-slot:append>
               <v-btn
-                @click="sendForm()"
-                :loading="busy_send"
-                rounded
                 :class="{ disabled: !message }"
-                variant="flat"
+                :loading="busy_send"
+                :title="$t('global.actions.send')"
+                class="mt-n1"
                 color="blue"
                 dark
-                :title="$t('global.actions.send')"
                 icon
-                class="mt-n1"
+                rounded
+                variant="flat"
+                @click="sendForm()"
               >
                 <v-icon class="flip-image-rtl">send</v-icon>
               </v-btn>
@@ -306,17 +307,17 @@
         </v-card-actions>
       </v-col>
 
-      <v-col v-if="selectedContact" cols="12" :md="small_mode ? 12 : 9">
+      <v-col v-if="selectedContact" :md="small_mode ? 12 : 9" cols="12">
         <!------------------------------- Chat ----------------------------------->
         <contact-conversation-box
           :is-admin="isAdmin"
-          :shop="shop"
-          :selected-contact="selectedContact"
           :popup="isSmall"
+          :selected-contact="selectedContact"
+          :shop="shop"
+          @update="(support) => AddOrUpdateItemByID(contacts, support)"
           @update:selectedContact="
             (val) => $emit('update:selectedContact', val)
           "
-          @update="(support) => AddOrUpdateItemByID(contacts, support)"
           @click:close="$emit('update:selectedContact', null)"
         ></contact-conversation-box>
         <div class="widget-buttons">
@@ -336,6 +337,7 @@ import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
 import ContactConversationBox from "./ContactConversationBox.vue";
 import SDataIteratorToolbarSmall from "@components/ui/toolbar/SDataIteratorToolbarSmall.vue";
 import _ from "lodash-es";
+
 export default {
   name: "ShopChatsList",
   components: {
@@ -494,7 +496,7 @@ export default {
     options: {
       handler() {
         const { sortBy, page, itemsPerPage } = this.options;
-        this.fetchSupports(page, sortBy[0]?.key, sortBy[0]?.order==='desc');
+        this.fetchSupports(page, sortBy[0]?.key, sortBy[0]?.order === "desc");
       },
       deep: true,
     },
@@ -503,12 +505,12 @@ export default {
       if (!newVal && !oldVal) return;
       //  console.log("search", newVal);
       const { sortBy, page, itemsPerPage } = this.options;
-      this.fetchSupports(1, sortBy[0]?.key, sortBy[0]?.order==='desc', false);
+      this.fetchSupports(1, sortBy[0]?.key, sortBy[0]?.order === "desc", false);
     }, window.SERACH_THROTTLE),
 
     categories() {
       const { sortBy, page, itemsPerPage } = this.options;
-      this.fetchSupports(1, sortBy[0]?.key, sortBy[0]?.order==='desc', false);
+      this.fetchSupports(1, sortBy[0]?.key, sortBy[0]?.order === "desc", false);
     },
   },
 
@@ -609,7 +611,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .support-item {
   text-align: start;
   padding: 4px 8px 0 8px;
@@ -624,6 +626,7 @@ export default {
     border-radius: 8px;
     z-index: 2;
   }
+
   .-officer {
     border: solid #0f75ac 4px;
   }
@@ -631,21 +634,26 @@ export default {
   .-mention {
     border: solid #8fc108 4px;
   }
+
   &.-active {
     box-shadow: 0px 10px 50px 0px rgba(96, 96, 96, 0.2) !important;
     color: #fff !important;
     border-radius: 8px;
+
     small {
       color: rgba(255, 255, 255, 0.93);
     }
+
     .v-card__title {
       .cap {
         color: #fff;
       }
     }
   }
+
   .v-card__title {
     font-size: 1.1rem;
+
     .v-avatar {
       margin: 4px;
     }
@@ -660,6 +668,7 @@ export default {
     }
   }
 }
+
 .chats-list-popup {
   //height: 550px;
   // max-height: calc(100vh - 180px);
@@ -670,6 +679,7 @@ export default {
   padding-bottom: 60px;
   min-height: 50vh;
 }
+
 .ch-time {
   font-size: 0.6em !important;
 }

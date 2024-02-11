@@ -25,14 +25,14 @@
       >
         <s-shop-product-membership-content-viewer
           v-if="membership_subscribed_plan"
-          class="min-height-60vh"
           :product="product"
+          class="min-height-60vh"
         ></s-shop-product-membership-content-viewer>
         <div
           v-else
           class="min-height-40vh d-flex pa-2 align-center justify-center flex-column"
         >
-          <v-icon x-large color="#111">lock</v-icon>
+          <v-icon color="#111" size="x-large">lock</v-icon>
           <div class="text-h3 font-weight-light my-2">Locked content!</div>
           <div>
             After subscribing, you will have access to the contents here.
@@ -88,7 +88,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

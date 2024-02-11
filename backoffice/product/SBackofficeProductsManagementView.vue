@@ -22,34 +22,34 @@
     <!-- ⬬⬬⬬⬬ Breadcrumbs ⬬⬬⬬⬬ -->
 
     <s-breadcrumb-image
-      :hierarchy-items="hierarchy_items"
-      :replace="dialogMode"
       v-intersect="
         (isIntersecting, entries, observer) => {
           fixed = !isIntersecting;
         }
       "
+      :hierarchy-items="hierarchy_items"
+      :replace="dialogMode"
     />
 
     <!-- ██████████████████ Clone Product ██████████████████ -->
     <v-slide-y-transition hide-on-leave>
       <s-drop
         v-if="current_dragged_product"
-        class="clone-area shadow-small"
         :class="{
           'drop-safe': inDragState,
 
           'now-drop-enter': dragOverClone,
         }"
-        @drop="(data) => handleDropInDuplicate(data)"
+        class="clone-area shadow-small"
         @dragenter="onDropEnterDuplicate()"
         @dragleave="onDropLeaveDuplicate()"
+        @drop="(data) => handleDropInDuplicate(data)"
       >
         <s-circle-button
-          class="center"
-          icon="fa:fas fa-copy"
           :tooltip="$t('global.actions.copy')"
+          class="center"
           color="#fff"
+          icon="fa:fas fa-copy"
         />
       </s-drop>
     </v-slide-y-transition>
@@ -65,11 +65,11 @@
           held_folders.length ||
           held_items.length
         "
-        class="top-drop-container"
         :class="{ focus: dragOverHolder, 'fixed slideInDown': fixed }"
-        @drop="(data) => handleDropInHolder(data)"
+        class="top-drop-container"
         @dragenter="show_spirit_container ? undefined : onDropEnterHolder()"
         @dragleave="show_spirit_container ? undefined : onDropLeaveHolder()"
+        @drop="(data) => handleDropInHolder(data)"
       >
         <!-- Holder zone -->
 
@@ -81,28 +81,28 @@
           class="item"
         >
           <s-drag
-            :draggable="draggable"
-            :transfer-data="{ category: category }"
-            @drag="onDragStart({ category: category }, true, ...arguments)"
-            @dragend="onDragEnd"
-            :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
             :drag-image-html="
               $t('products_select.move_category', {
                 category: category.title.limitWords(2),
               })
             "
+            :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
+            :draggable="draggable"
+            :transfer-data="{ category: category }"
             drag-image-color="#FFA000"
+            @drag="onDragStart({ category: category }, true, ...arguments)"
+            @dragend="onDragEnd"
           >
             <circle-image
               v-if="category.icon"
               :size="60"
-              class="hover-scale-tiny folder"
               :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
+              class="hover-scale-tiny folder"
             />
             <circle-image
               v-else
-              class="hover-scale-tiny"
               :size="60"
+              class="hover-scale-tiny"
               icon="fa:fas fa-shapes"
             />
           </s-drag>
@@ -112,27 +112,27 @@
 
         <div v-for="product in held_items" :key="'p' + product.id" class="item">
           <s-drag
-            :draggable="draggable"
-            :transfer-data="{ product: product }"
-            @drag="onDragStart({ product: product }, true, ...arguments)"
-            @dragend="onDragEnd"
-            :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
             :drag-image-html="
               $t('products_select.move_product', {
                 category: product.title.limitWords(2),
               })
             "
+            :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+            :draggable="draggable"
+            :transfer-data="{ product: product }"
+            @drag="onDragStart({ product: product }, true, ...arguments)"
+            @dragend="onDragEnd"
           >
             <circle-image
               v-if="product.icon"
               :size="60"
-              class="hover-scale-tiny"
               :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+              class="hover-scale-tiny"
             />
             <circle-image
               v-else
-              class="hover-scale-tiny"
               :size="60"
+              class="hover-scale-tiny"
               icon="fa:fas fa-box"
             />
           </s-drag>
@@ -144,8 +144,9 @@
     <v-row no-gutters>
       <s-products-sort-view
         v-model="sort"
-        class="w-100"
         v-model:only-available="only_available"
+        :loading="busy_fetch"
+        class="w-100"
         has-search
         @update:search="
           (val) => {
@@ -153,14 +154,13 @@
             fetchData();
           }
         "
-        :loading="busy_fetch"
       >
         <v-btn
-          @click="toggleViewMode"
-          variant="text"
+          :class="{ 'ripple-focus': !local_view_mode }"
           icon
           title="Change view mode"
-          :class="{ 'ripple-focus': !local_view_mode }"
+          variant="text"
+          @click="toggleViewMode"
         >
           <v-icon>{{ mini ? "folder" : "view_comfy" }}</v-icon>
         </v-btn>
@@ -170,11 +170,11 @@
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Filter by Status & Types ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <admin-products-filter-input
-          :shop="shop"
           v-model="filters"
-          @change="onFilterChange"
+          :shop="shop"
           class="min-width-200 pa-0"
           dense
+          @change="onFilterChange"
         >
         </admin-products-filter-input>
 
@@ -183,13 +183,13 @@
           v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL && $vuetify.display.mdAndUp"
           v-model="vendor_filter"
           :shop="shop"
+          class="max-w-300 min-width-200"
+          dense
+          flat
+          hide-details
           placeholder="Filter vendor..."
           prepend-inner-icon="storefront"
-          class="max-w-300 min-width-200"
           solo
-          flat
-          dense
-          hide-details
           @change="fetchData()"
         ></b-vendor-input>
       </s-products-sort-view>
@@ -199,12 +199,12 @@
       v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL && !$vuetify.display.mdAndUp"
       v-model="vendor_filter"
       :shop="shop"
+      dense
+      flat
+      hide-details
       placeholder="Filter vendor..."
       prepend-inner-icon="storefront"
       solo
-      flat
-      dense
-      hide-details
       @change="fetchData()"
     ></b-vendor-input>
 
@@ -214,16 +214,16 @@
       <div v-if="tax_profile">
         <div class="d-flex align-center pa-2 text-start">
           <img
+            class="me-1"
+            height="16"
             src="../../assets/icons/tax-3d.svg"
             width="16"
-            height="16"
-            class="me-1"
           />
           <small>{{ $t("global.commons.tax") }} </small>
           <v-icon>{{ $t("icons.chevron_next") }}</v-icon>
           <tax-profile-view
-            :shop="shop"
             :profile="tax_profile"
+            :shop="shop"
           ></tax-profile-view>
         </div>
       </div>
@@ -232,10 +232,10 @@
       <div v-if="valuation_filter">
         <div class="d-flex align-center pa-2 text-start">
           <img
+            class="me-1"
+            height="16"
             src="../../assets/icons/valuation.svg"
             width="16"
-            height="16"
-            class="me-1"
           />
           <small>{{ $t("global.commons.valuation") }} </small>
           <v-icon>{{ $t("icons.chevron_next") }}</v-icon>
@@ -244,9 +244,9 @@
           <v-chip
             v-for="it in valuation_filter.structure"
             :key="it.id"
+            class="ma-1 pa-1"
             label
             size="x-small"
-            class="ma-1 pa-1"
             >{{ it.title }}
           </v-chip>
         </div>
@@ -255,30 +255,30 @@
     <v-expand-transition>
       <s-fade-scroll v-if="time_filter">
         <div class="d-flex align-center pa-2 text-start">
-          <v-icon size="16" class="me-1" color="#111">date_range</v-icon>
+          <v-icon class="me-1" color="#111" size="16">date_range</v-icon>
           <small>{{ $t("global.commons.from") }} </small>
           <v-chip
             v-if="time_filter.start"
-            size="x-small"
             class="ma-1 min-width-max-content"
             color="#111"
+            size="x-small"
             >{{ getLocalTimeStringSmall(time_filter.start) }} 🞄
             {{ getFromNowString(time_filter.start) }}
           </v-chip>
-          <v-chip v-else size="x-small" class="ma-1 pa-1" color="primary"
+          <v-chip v-else class="ma-1 pa-1" color="primary" size="x-small"
             >-
           </v-chip>
           <v-icon>{{ $t("icons.chevron_next") }}</v-icon>
           <small>{{ $t("global.commons.to") }} </small>
           <v-chip
             v-if="time_filter.end"
-            size="x-small"
             class="ma-1 min-width-max-content"
             color="#111"
+            size="x-small"
             >{{ getLocalTimeStringSmall(time_filter.end) }} 🞄
             {{ getFromNowString(time_filter.end) }}
           </v-chip>
-          <v-chip v-else size="x-small" class="ma-1 pa-1" color="primary"
+          <v-chip v-else class="ma-1 pa-1" color="primary" size="x-small"
             >{{ $t("global.commons.today") }}
           </v-chip>
         </div>
@@ -289,25 +289,24 @@
 
     <v-fade-transition
       id="manage-panel"
-      group
-      origin="center center"
-      hide-on-leave
-      tag="div"
       class="v-row v-row--dense"
+      group
+      hide-on-leave
+      origin="center center"
+      tag="div"
     >
       <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Spirit Container ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
       <v-col
-        cols="12"
-        sm="6"
-        md="4"
-        lg="3"
-        xl="3"
         v-if="show_spirit_container"
         key="drop-box"
+        cols="12"
+        lg="3"
+        md="4"
+        sm="6"
+        xl="3"
       >
         <s-drop
-          class="spirit-container"
           :class="{
             'drop-safe': inDragState,
 
@@ -315,8 +314,9 @@
               current_drop_enter_folder &&
               current_drop_enter_folder.id === current_dir_id,
           }"
-          @drop="(data) => handleDropInFolder(data, { id: current_dir_id })"
+          class="spirit-container"
           @dragenter="onDropEnter({ id: current_dir_id })"
+          @drop="(data) => handleDropInFolder(data, { id: current_dir_id })"
         >
           <div class="center-absolute text-center">
             <v-icon size="64px"> add</v-icon>
@@ -329,43 +329,43 @@
 
       <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Back Button ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
       <v-col
+        v-if="parent_folders"
         key="back"
         :cols="mini ? 4 : 12"
-        :sm="mini ? 3 : 6"
-        :md="mini ? 2 : 4"
         :lg="mini ? 1 : 3"
+        :md="mini ? 2 : 4"
+        :sm="mini ? 3 : 6"
         :xl="mini ? 1 : 3"
-        v-if="parent_folders"
       >
         <div
-          class="position-relative d-flex flex-column align-center justify-center hover-up"
-          @click="selectFolder(parent_folders.parent)"
           :class="{ disabled: busy_fetch, 'h-100': !mini }"
           :title="`Back to ${
             parent_folders.parent ? parent_folders.parent.title : 'Home'
           } | Press 🠨 backspace`"
+          class="position-relative d-flex flex-column align-center justify-center hover-up"
+          @click="selectFolder(parent_folders.parent)"
         >
           <div class="position-relative">
             <v-icon
+              :size="mini ? 100 : 200"
               class="no-inv"
               color="#dcab19"
-              :size="mini ? 100 : 200"
               style="position: absolute; top: -4px; left: -5px"
               >folder
             </v-icon>
-            <v-icon :size="mini ? 100 : 200" color="amber" class="no-inv z1"
+            <v-icon :size="mini ? 100 : 200" class="no-inv z1" color="amber"
               >folder
             </v-icon>
           </div>
 
           <div class="mt-n1 center-absolute" style="z-index: 2">
             <v-avatar
-              size="40"
-              class="center-absolute"
               v-if="parent_folders.parent?.icon"
+              class="center-absolute"
+              size="40"
               ><img :src="getShopImagePath(parent_folders.parent?.icon, 128)"
             /></v-avatar>
-            <v-icon size="x-large" class="z1" color="#fff"
+            <v-icon class="z1" color="#fff" size="x-large"
               >{{ $t("icons.chevron_back") }}
             </v-icon>
           </div>
@@ -386,28 +386,28 @@
         )"
         :key="'f' + category.id"
         :cols="mini ? 4 : 12"
-        :sm="mini ? 3 : 6"
-        :md="mini ? 2 : 4"
         :lg="mini ? 1 : 3"
+        :md="mini ? 2 : 4"
+        :sm="mini ? 3 : 6"
         :xl="mini ? 1 : 3"
         class="position-relative"
         @contextmenu="showMenu($event, null, category)"
       >
         <s-drag
-          :draggable="draggable"
-          :transfer-data="{ category: category }"
-          @drag="onDragStart({ category: category }, false, ...arguments)"
-          @dragend="onDragEnd"
-          class="h-100 position-relative"
           :class="{
             'arrange-side':
               arrange_folder_mode &&
               current_dragged_folder &&
               arrange_categories_target === category,
           }"
-          :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
           :drag-image-html="category.title.limitWords(3)"
+          :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
+          :draggable="draggable"
+          :transfer-data="{ category: category }"
+          class="h-100 position-relative"
           drag-image-color="#FFA000"
+          @drag="onDragStart({ category: category }, false, ...arguments)"
+          @dragend="onDragEnd"
         >
           <s-drop
             :class="{
@@ -415,21 +415,21 @@
               'rotate-7deg': arrange_folder_mode,
             }"
             class="f-anim"
-            @drop="(data) => handleDropInFolder(data, category)"
             @dragenter="
               show_spirit_container ? undefined : onDropEnter(category)
             "
             @dragleave="onDropLeave()"
+            @drop="(data) => handleDropInFolder(data, category)"
           >
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category > Mini ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
             <folder-card-mini
               v-if="mini"
               :category="category"
-              @select="selectFolder(category)"
               :class="{
                 'not-drop-able': current_dragged_folder === category,
                 'now-drop-enter': current_drop_enter_folder === category,
               }"
+              @select="selectFolder(category)"
             >
             </folder-card-mini>
 
@@ -437,25 +437,25 @@
 
             <widget-folder-card
               v-else
-              class="item h-100"
+              :category="category"
               :class="{
                 'not-drop-able': current_dragged_folder === category,
                 'now-drop-enter': current_drop_enter_folder === category,
               }"
-              :show-edit-button="showEditButton"
-              :category="category"
               :compact-mode="compactMode"
-              @select="selectFolder(category)"
               :loading="loading_cat === category"
+              :show-edit-button="showEditButton"
+              class="item h-100"
+              @select="selectFolder(category)"
               @click:edit="showEditCategory(category)"
             />
             <v-btn
               v-if="selectMode && canSelectCategory"
-              @click.stop="$emit('select-category', category)"
+              class="absolute-top-end selected-icon m-2"
               icon
               size="large"
-              class="absolute-top-end selected-icon m-2"
               style="z-index: 50"
+              @click.stop="$emit('select-category', category)"
             >
               <v-icon
                 :color="isSelected('c-' + category.id) ? '#689F38' : '#ccc'"
@@ -469,11 +469,11 @@
         <!-- Add Note Button -->
         <team-note-button
           v-if="showNotes || (category.note && category.note.length)"
-          class="absolute-top-start z2"
-          :note="category.note"
-          @click="showNoteCategory(category)"
-          style="top: 0; left: 0"
           :activeColor="showNotes ? undefined : '#333'"
+          :note="category.note"
+          class="absolute-top-start z2"
+          style="top: 0; left: 0"
+          @click="showNoteCategory(category)"
         ></team-note-button>
       </v-col>
 
@@ -497,31 +497,26 @@
           product_page * max_products_per_page,
         )"
         :key="product.id"
-        :cols="mini ? 4 : 12"
-        :sm="mini ? 3 : 6"
-        :md="mini ? 2 : 4"
-        :lg="mini ? 1 : 3"
-        :xl="mini ? 1 : 3"
         :class="{
           'op-0-3': cut_product === product,
           'op-0-1 pen': arrange_folder_mode,
         }"
-        @contextmenu="showMenu($event, product, null)"
-        @dragenter.self="dragenterProduct(product)"
+        :cols="mini ? 4 : 12"
+        :lg="mini ? 1 : 3"
+        :md="mini ? 2 : 4"
+        :sm="mini ? 3 : 6"
+        :xl="mini ? 1 : 3"
         class="position-relative"
-        @drop="onDropArrangeProduct(product)"
+        @contextmenu="showMenu($event, product, null)"
         @dragover="
           (e) => {
             current_dragged_product && e.preventDefault();
           }
         "
+        @drop="onDropArrangeProduct(product)"
+        @dragenter.self="dragenterProduct(product)"
       >
         <s-drag
-          :draggable="draggable"
-          :transfer-data="{ product: product }"
-          @drag="onDragStart({ product: product }, false, ...arguments)"
-          @dragend="onDragEnd"
-          class="h-100 position-relative"
           :class="{
             'arrange-side':
               current_dragged_product && arrange_products_target === product,
@@ -529,16 +524,18 @@
             'bundle-mode':
               drag_bundle_products && selected_products.includes(product.id),
           }"
-          :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
           :drag-image-html="product.title.limitWords(3)"
+          :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+          :draggable="draggable"
+          :transfer-data="{ product: product }"
+          class="h-100 position-relative"
           drag-image-color="#1976D2"
+          @drag="onDragStart({ product: product }, false, ...arguments)"
+          @dragend="onDragEnd"
         >
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product > Mini ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
           <product-card-mini
             v-if="mini"
-            :shop="shop"
-            :product="product"
-            @select="$emit('select', product)"
             :class="{
               'not-drop-able':
                 current_dragged_product || current_dragged_folder,
@@ -550,18 +547,21 @@
               (busy_delete === 'selected' &&
                 selected_products.includes(product.id))
             "
+            :i-selected="selected_products.includes(product.id)"
+            :product="product"
             :restoring="product.id === busy_restore"
             :selected="selected_products.includes(product.id)"
+            :shop="shop"
             :shortcut="
               !busy_fetch &&
               current_dir_id &&
               product.category_id !== current_dir_id
             "
             :show-notes="showNotes"
-            @onShowNote="showNoteProduct(product)"
             :show-select="press_ctrl"
-            :i-selected="selected_products.includes(product.id)"
             @onSelect="toggleProductsSelect(product)"
+            @onShowNote="showNoteProduct(product)"
+            @select="$emit('select', product)"
           >
           </product-card-mini>
 
@@ -569,23 +569,30 @@
 
           <widget-product-card
             v-else
-            class="item h-100 ma-2"
             :class="{
               'not-drop-able':
                 current_dragged_product || current_dragged_folder,
 
               disabled: disableTypes?.includes(product.type),
             }"
-            :product="product"
-            :shop="shop"
-            :show-edit-button="showEditButton"
-            :show-ratting="showRatting"
-            :show-statistics="showStatistics"
-            :show-price="showPrice"
             :compact-mode="compactMode"
-            @select="$emit('select', product)"
             :deleting="product.id === busy_delete"
+            :i-selected="selected_products.includes(product.id)"
+            :product="product"
             :restoring="product.id === busy_restore"
+            :selected="selected_products.includes(product.id)"
+            :shop="shop"
+            :shortcut="current_dir_id && product.category_id !== current_dir_id"
+            :show-edit-button="showEditButton"
+            :show-notes="showNotes"
+            :show-price="showPrice"
+            :show-ratting="showRatting"
+            :show-select="press_ctrl"
+            :show-statistics="showStatistics"
+            class="item h-100 ma-2"
+            @onSelect="toggleProductsSelect(product)"
+            @onShowNote="showNoteProduct(product)"
+            @select="$emit('select', product)"
             @click:image="
               (e) => {
                 $router.push({
@@ -598,28 +605,21 @@
                 e.preventDefault();
               }
             "
-            :selected="selected_products.includes(product.id)"
-            :shortcut="current_dir_id && product.category_id !== current_dir_id"
-            :show-notes="showNotes"
-            @onShowNote="showNoteProduct(product)"
-            :show-select="press_ctrl"
-            :i-selected="selected_products.includes(product.id)"
-            @onSelect="toggleProductsSelect(product)"
           />
 
           <v-scale-transition leave-absolute origin="center center">
             <v-icon
+              v-if="selectMode && canSelectProduct && isSelected(product.id)"
+              class="absolute-top-end z2 selected-icon h-auto"
               color="#689F38"
               size="large"
-              class="absolute-top-end z2 selected-icon h-auto"
-              v-if="selectMode && canSelectProduct && isSelected(product.id)"
               >check_circle
             </v-icon>
           </v-scale-transition>
         </s-drag>
       </v-col>
 
-      <div v-if="mini" key="spx" style="flex-grow: 12" class="pen"></div>
+      <div v-if="mini" key="spx" class="pen" style="flex-grow: 12"></div>
 
       <v-col v-if="product_pages_count > 1" key="pagination-products" cols="12">
         <v-pagination
@@ -640,50 +640,50 @@
       >
         <!-- ⬬⬬⬬ Force new line in mini mode ⬬⬬⬬ -->
 
-        <v-col key="spacer" v-if="mini" cols="12"></v-col>
+        <v-col v-if="mini" key="spacer" cols="12"></v-col>
 
         <!-- ⬬⬬⬬ Add button ⬬⬬⬬ -->
 
         <v-col
           key="new"
-          cols="12"
-          sm="6"
-          md="4"
-          lg="3"
-          xl="3"
           class="p-2 d-flex flex-column"
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
+          xl="3"
         >
           <s-add-button-green
-            icon="library_add"
             :caption="$t('add_product.title_new')"
-            message="⌘Ctrl + P"
-            @click="$emit('click:add')"
-            min-height="100px"
-            class="flex-grow-1"
             :fillHeight="false"
+            class="flex-grow-1"
+            icon="library_add"
+            message="⌘Ctrl + P"
+            min-height="100px"
             small
+            @click="$emit('click:add')"
           ></s-add-button-green>
           <s-add-button-green
+            :caption="$t('add_product.title_new')"
+            :fillHeight="false"
             class="mt-1 flex-grow-1"
             icon="flash_on"
-            :caption="$t('add_product.title_new')"
             message="Fast Mode"
-            @click="$emit('click:fast-add')"
             min-height="100px"
-            :fillHeight="false"
             small
+            @click="$emit('click:fast-add')"
           ></s-add-button-green>
           <s-add-button-green
-            class="mt-1 flex-grow-1"
-            icon="auto_fix_high"
-            caption="AI Product Assistance"
-            message="⌘Ctrl + X"
-            @click="$emit('click:ai-add')"
-            min-height="100px"
             :fillHeight="false"
-            small
+            caption="AI Product Assistance"
+            class="mt-1 flex-grow-1"
             color="#516ad6"
             hover-color="#667eea"
+            icon="auto_fix_high"
+            message="⌘Ctrl + X"
+            min-height="100px"
+            small
+            @click="$emit('click:ai-add')"
           ></s-add-button-green>
         </v-col>
 
@@ -696,12 +696,12 @@
             !parent_folders /*Show just in the root*/
           "
           key="root-filters"
-          cols="12"
-          sm="6"
-          md="4"
-          lg="3"
-          xl="3"
           class="p-2 d-flex flex-column"
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
+          xl="3"
         >
           <div
             class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
@@ -726,21 +726,21 @@
               <small class="d-block">You can set filters.</small>
 
               <v-btn
-                @click="dialog_root_filter = true"
-                color="primary"
                 class="tnt ma-1"
+                color="primary"
                 size="small"
+                @click="dialog_root_filter = true"
               >
                 <v-icon class="me-1" size="small">filter_alt</v-icon>
                 Edit Root Filters
               </v-btn>
               <v-btn
                 v-if="shop.filters"
-                @click="showClearRootFiltersDialog()"
                 :loading="busy_clear_root_filter"
                 class="tnt ma-1"
                 size="small"
                 variant="outlined"
+                @click="showClearRootFiltersDialog()"
               >
                 <v-icon class="me-1" size="small">filter_alt_off</v-icon>
                 Clear Root Filters
@@ -751,16 +751,16 @@
       </template>
     </v-fade-transition>
 
-    <s-loading css-mode light v-if="busy_load_more"></s-loading>
+    <s-loading v-if="busy_load_more" css-mode light></s-loading>
     <div v-if="has_more" class="widget-buttons">
       <v-btn
-        @click="fetchData(true)"
         v-intersect="onIntersect"
         :loading="busy_fetch"
-        color="blue"
-        variant="text"
-        size="x-large"
         class="m-3"
+        color="blue"
+        size="x-large"
+        variant="text"
+        @click="fetchData(true)"
       >
         <v-icon class="me-1">autorenew</v-icon>
         <div>
@@ -779,9 +779,8 @@
       :target="[x, y]"
       absolute
       transition="slide-y-transition"
-
     >
-      <v-sheet rounded="lg" class="text-start" >
+      <v-sheet class="text-start" rounded="lg">
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For products (Right-click on a selected item) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <v-list
@@ -801,11 +800,11 @@
             @click="showAssignVendor(currentProductForMenu)"
           >
             <template v-slot:prepend>
-              <v-icon size="small" >add_business</v-icon>
+              <v-icon size="small">add_business</v-icon>
             </template>
             <v-list-item-title>
               {{ $t("marketplace.add_vendor") }}
-              <v-chip label size="x-small" color="#fff" class="mx-2"
+              <v-chip class="mx-2" color="#fff" label size="x-small"
                 >+ multi
               </v-chip>
             </v-list-item-title>
@@ -822,13 +821,13 @@
               "
             >
               <template v-slot:prepend>
-                <v-icon size="small" >nat</v-icon>
+                <v-icon size="small">nat</v-icon>
               </template>
               <v-list-item-title>
                 {{ $t("add_product.menu.change_status") }} |
                 <v-icon
-                  size="x-small"
                   :color="ProductStatus[currentProductForMenu?.status]?.color"
+                  size="x-small"
                   >circle
                 </v-icon>
                 {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
@@ -842,9 +841,7 @@
 
           <v-list-item @click="deleteAllSelectedProduct(selected_products)">
             <template v-slot:prepend>
-              <v-icon size="small" color="red"
-                >fa:fas fa-trash
-              </v-icon>
+              <v-icon color="red" size="small">fa:fas fa-trash</v-icon>
             </template>
             <v-list-item-title>
               {{ $t("global.actions.delete_all") }}
@@ -866,13 +863,13 @@
                     slugify(currentProductForMenu.title),
                   )
                 "
-                target="_blank"
                 base-color="#1976d2"
+                target="_blank"
                 theme="dark"
                 variant="flat"
               >
                 <template v-slot:prepend>
-                  <v-icon size="small" >open_in_new</v-icon>
+                  <v-icon size="small">open_in_new</v-icon>
                 </template>
                 <v-list-item-title>
                   {{
@@ -895,13 +892,13 @@
                   !IS_VENDOR_PANEL /*Only in marketplace panel*/ &&
                   !menu_add_vendor_error
                 "
-                @click="showAssignVendor(currentProductForMenu)"
-                variant="flat"
-                theme="dark"
                 base-color="#512da8"
+                theme="dark"
+                variant="flat"
+                @click="showAssignVendor(currentProductForMenu)"
               >
                 <template v-slot:prepend>
-                  <v-icon size="small" >add_business</v-icon>
+                  <v-icon size="small">add_business</v-icon>
                 </template>
                 <v-list-item-title>
                   {{ $t("marketplace.add_vendor") }}
@@ -911,7 +908,7 @@
                 v-else-if="menu_add_vendor_error"
                 class="max-w-250 mx-auto pa-2 d-block border-bottom"
               >
-                <v-icon size="small" class="me-1">add_business</v-icon>
+                <v-icon class="me-1" size="small">add_business</v-icon>
                 {{ menu_add_vendor_error }}</small
               >
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Edit Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -927,13 +924,13 @@
                 }"
               >
                 <template v-slot:prepend>
-                  <v-icon size="small" >edit_square</v-icon>
+                  <v-icon size="small">edit_square</v-icon>
                 </template>
                 <v-list-item-title>
                   {{ $t("global.actions.edit") }}
                 </v-list-item-title>
                 <template v-slot:append>
-                  <v-avatar size="24" :key="currentProductForMenu.id">
+                  <v-avatar :key="currentProductForMenu.id" size="24">
                     <img
                       v-if="currentProductForMenu.icon"
                       :src="getShopImagePath(currentProductForMenu.icon, 128)"
@@ -954,7 +951,7 @@
                 }"
               >
                 <template v-slot:prepend>
-                  <v-icon size="small" >dashboard</v-icon>
+                  <v-icon size="small">dashboard</v-icon>
                 </template>
                 <v-list-item-title>
                   {{ $t("products_select.product_menu.dashboard") }}
@@ -972,7 +969,7 @@
                 }"
               >
                 <template v-slot:prepend>
-                  <v-icon size="small" >fa:fas fa-boxes</v-icon>
+                  <v-icon size="small">fa:fas fa-boxes</v-icon>
                 </template>
                 <v-list-item-title>
                   {{ $t("products_select.product_menu.inventory") }}
@@ -1005,15 +1002,15 @@
                   @click="showChangeStatusProduct(currentProductForMenu)"
                 >
                   <template v-slot:prepend>
-                    <v-icon size="small" >nat</v-icon>
+                    <v-icon size="small">nat</v-icon>
                   </template>
                   <v-list-item-title>
                     {{ $t("add_product.menu.change_status") }} |
                     <v-icon
-                      size="x-small"
                       :color="
                         ProductStatus[currentProductForMenu?.status]?.color
                       "
+                      size="x-small"
                       >circle
                     </v-icon>
                     {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
@@ -1026,7 +1023,7 @@
               <template>
                 <v-list-item @click="showNoteProduct(currentProductForMenu)">
                   <template v-slot:prepend>
-                    <v-icon size="small" >edit_note</v-icon>
+                    <v-icon size="small">edit_note</v-icon>
                   </template>
                   <v-list-item-title>
                     {{ $t("notes.add_action") }}
@@ -1041,9 +1038,7 @@
 
                 <v-list-item @click="deleteProduct(currentProductForMenu)">
                   <template v-slot:prepend>
-                    <v-icon size="small" color="red"
-                      >fa:fas fa-trash
-                    </v-icon>
+                    <v-icon color="red" size="small">fa:fas fa-trash</v-icon>
                   </template>
                   <v-list-item-title>
                     {{ $t("global.actions.delete") }}
@@ -1059,7 +1054,7 @@
               @click="restoreProduct(currentProductForMenu)"
             >
               <template v-slot:prepend>
-                <v-icon size="small" color="green"
+                <v-icon color="green" size="small"
                   >fa:fas fa-trash-restore
                 </v-icon>
               </template>
@@ -1075,7 +1070,7 @@
 
               <v-list-item @click="cutProduct(currentProductForMenu)">
                 <template v-slot:prepend>
-                  <v-icon size="small" >fa:fas fa-cut</v-icon>
+                  <v-icon size="small">fa:fas fa-cut</v-icon>
                 </template>
                 <v-list-item-title>
                   {{ $t("global.actions.cut") }}
@@ -1104,13 +1099,13 @@
 
             <v-list-item
               :href="getCategoryLink(shop, currentCategoryForMenu.name)"
-              target="_blank"
-              variant="flat"
-              theme="dark"
               base-color="#1976d2"
+              target="_blank"
+              theme="dark"
+              variant="flat"
             >
               <template v-slot:prepend>
-                <v-icon size="small" >open_in_new</v-icon>
+                <v-icon size="small">open_in_new</v-icon>
               </template>
               <v-list-item-title>
                 {{
@@ -1125,7 +1120,7 @@
 
             <v-list-item @click="showEditCategory(currentCategoryForMenu)">
               <template v-slot:prepend>
-                <v-icon size="small" >edit</v-icon>
+                <v-icon size="small">edit</v-icon>
               </template>
 
               <v-list-item-title>
@@ -1133,7 +1128,7 @@
               </v-list-item-title>
 
               <template v-slot:append>
-                <v-avatar size="24" :key="currentCategoryForMenu.id">
+                <v-avatar :key="currentCategoryForMenu.id" size="24">
                   <img
                     v-if="currentCategoryForMenu.icon"
                     :src="getShopImagePath(currentCategoryForMenu.icon, 128)"
@@ -1148,7 +1143,7 @@
             <template>
               <v-list-item @click="showNoteCategory(currentCategoryForMenu)">
                 <template v-slot:prepend>
-                  <v-icon size="small" >edit_note</v-icon>
+                  <v-icon size="small">edit_note</v-icon>
                 </template>
                 <v-list-item-title>
                   {{ $t("notes.add_action") }}
@@ -1165,9 +1160,7 @@
                 @click="showSetBulkCategoryProfile(currentCategoryForMenu)"
               >
                 <template v-slot:prepend>
-                  <v-icon size="small"
-                    >assignment_turned_in
-                  </v-icon>
+                  <v-icon size="small">assignment_turned_in</v-icon>
                 </template>
 
                 <v-list-item-title>
@@ -1182,7 +1175,7 @@
                 @click="showCategoryBulkDiscount(currentCategoryForMenu)"
               >
                 <template v-slot:prepend>
-                  <v-icon size="small" >local_offer</v-icon>
+                  <v-icon size="small">local_offer</v-icon>
                 </template>
 
                 <v-list-item-title> Bulk discount</v-list-item-title>
@@ -1208,7 +1201,7 @@
 
             <v-list-item @click="dialog_root_filter = true">
               <template v-slot:prepend>
-                <v-icon size="small" >filter_alt</v-icon>
+                <v-icon size="small">filter_alt</v-icon>
               </template>
 
               <v-list-item-title> Set Root Filter</v-list-item-title>
@@ -1222,9 +1215,7 @@
 
             <v-list-item v-if="copy_product" @click="pastProduct(copy_product)">
               <template v-slot:prepend>
-                <v-icon
-                  size="small"
-                  v-if="!copy_product || !copy_product.icon"
+                <v-icon v-if="!copy_product || !copy_product.icon" size="small"
                   >fa:fas fa-paste
                 </v-icon>
                 <v-avatar v-else size="24"
@@ -1255,9 +1246,7 @@
               "
             >
               <template v-slot:prepend>
-                <v-icon
-                  size="small"
-                  v-if="!cut_product || !cut_product.icon"
+                <v-icon v-if="!cut_product || !cut_product.icon" size="small"
                   >fa:fas fa-paste
                 </v-icon>
                 <v-avatar v-else size="24"
@@ -1279,9 +1268,7 @@
 
               <v-list-item @click="showEditCategory(null)">
                 <template v-slot:prepend>
-                  <v-icon size="small"  color="amber"
-                    >create_new_folder
-                  </v-icon>
+                  <v-icon color="amber" size="small">create_new_folder</v-icon>
                 </template>
 
                 <v-list-item-title>
@@ -1294,8 +1281,8 @@
               <v-list-item @click="arrange_folder_mode = !arrange_folder_mode">
                 <template v-slot:prepend>
                   <v-icon
-                    size="small"
                     :color="arrange_folder_mode ? 'primary' : '#333'"
+                    size="small"
                     >{{
                       arrange_folder_mode ? "circle" : "radio_button_unchecked"
                     }}
@@ -1316,27 +1303,21 @@
     <v-dialog
       v-model="dialog_cat"
       fullscreen
-      transition="dialog-bottom-transition"
       scrollable
+      transition="dialog-bottom-transition"
     >
       <s-shop-category-add
         v-if="dialog_pre"
+        :categories="null"
+        :category="selected_cat"
+        :parent-folder="parent_folders"
         :shop="shop"
         :vendor="vendor"
-        :category="selected_cat"
-        :categories="null"
-        :parent-folder="parent_folders"
-        @back="dialog_cat = false"
         @add="
           (item) =>
             item.parent_id === current_dir_id ? folders.push(item) : undefined
         "
-        @edit="
-          (item) =>
-            item.parent_id !== current_dir_id
-              ? DeleteItemByID(folders, item.id)
-              : UpdateItemByID(folders, item)
-        "
+        @back="dialog_cat = false"
         @delete="
           (id) => {
             DeleteItemByID(folders, id);
@@ -1346,17 +1327,23 @@
             );
           }
         "
+        @edit="
+          (item) =>
+            item.parent_id !== current_dir_id
+              ? DeleteItemByID(folders, item.id)
+              : UpdateItemByID(folders, item)
+        "
       />
     </v-dialog>
 
     <!-- ████████████████████ Dialog > Assign Vendor to Product ████████████████████ -->
     <v-dialog
       v-model="dialog_vendors"
-      transition="dialog-bottom-transition"
       :content-class="!$vuetify.display.mdAndDown ? 'rounded-28px' : undefined"
       :fullscreen="$vuetify.display.mdAndDown"
       max-width="1080"
       scrollable
+      transition="dialog-bottom-transition"
     >
       <v-card>
         <v-card-title>Bulk actions > Assign vendor</v-card-title>
@@ -1364,7 +1351,7 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Vendor ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div class="widget-box mb-5">
-            <s-widget-header title="Vendor" icon="admin_panel_settings">
+            <s-widget-header icon="admin_panel_settings" title="Vendor">
             </s-widget-header>
             <v-list-subheader
               >This vendor will be added to selected products for all their
@@ -1377,27 +1364,27 @@
 
             <b-vendor-input
               v-model="vendor_id_input"
-              active-only
               :shop="shop"
+              active-only
               label="Vendor"
               placeholder="Filter by vendor..."
             ></b-vendor-input>
 
             <s-smart-switch
-              class="mt-5"
               v-model="clear_other"
-              true-title="Add / Update + Clear other vendors"
+              class="mt-5"
+              false-description="Add selected vendor."
+              false-title="Add / Update"
               true-description="Other assigned vendors will be removed from selected products."
               true-icon="cleaning_services"
-              false-title="Add / Update"
-              false-description="Add selected vendor."
+              true-title="Add / Update + Clear other vendors"
             >
             </s-smart-switch>
           </div>
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ price (Calculated / Manual price) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
           <div class="widget-box mb-5">
-            <s-widget-header title="Marketplace pricing" icon="price_change">
+            <s-widget-header icon="price_change" title="Marketplace pricing">
             </s-widget-header>
             <v-list-subheader
               >Select a marketplace pricing model to assign to the selected
@@ -1424,11 +1411,11 @@
             </v-list-subheader>
 
             <s-number-input
-              class="my-3 strong-field"
               v-model="quantity"
-              :min="0"
               :label="$t('global.commons.quantity')"
+              :min="0"
               :step="1"
+              class="my-3 strong-field"
             />
           </div>
 
@@ -1441,24 +1428,24 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
-              @click="dialog_vendors = false"
-              variant="text"
               size="x-large"
+              variant="text"
+              @click="dialog_vendors = false"
             >
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
 
             <v-btn
-              color="primary"
-              variant="flat"
-              @click="assignVendor()"
-              :loading="busy_assign_vendor"
-              size="x-large"
               :class="{
                 disabled:
                   !check_bulk_vendor || (!vendor_id_input && !clear_other),
               }"
+              :loading="busy_assign_vendor"
+              color="primary"
+              size="x-large"
+              variant="flat"
+              @click="assignVendor()"
             >
               <v-icon class="me-1">save</v-icon>
 
@@ -1479,11 +1466,6 @@
 
     <team-note-dialog
       v-model="note_product_dialog"
-      :icon="
-        note_product_item ? getShopImagePath(note_product_item.icon, 128) : null
-      "
-      :title="note_product_item && note_product_item.title"
-      :target="note_product_item"
       :add-url="
         () =>
           IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -1507,19 +1489,17 @@
                 index,
               )
       "
+      :icon="
+        note_product_item ? getShopImagePath(note_product_item.icon, 128) : null
+      "
+      :target="note_product_item"
+      :title="note_product_item && note_product_item.title"
     ></team-note-dialog>
 
     <!-- █████████████████████ Dialog > Category Note Messages █████████████████████ -->
 
     <team-note-dialog
       v-model="note_category_dialog"
-      :icon="
-        note_category_item
-          ? getShopImagePath(note_category_item.icon, 128)
-          : null
-      "
-      :title="note_category_item && note_category_item.title"
-      :target="note_category_item"
       :add-url="
         () =>
           IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -1543,21 +1523,28 @@
                 index,
               )
       "
+      :icon="
+        note_category_item
+          ? getShopImagePath(note_category_item.icon, 128)
+          : null
+      "
+      :target="note_category_item"
+      :title="note_category_item && note_category_item.title"
     ></team-note-dialog>
 
     <!-- █████████████████████ Dialog > Category > Bulk set profile █████████████████████ -->
 
     <v-dialog
       v-model="bulk_profile_dialog"
-      scrollable
       fullscreen
+      scrollable
       transition="dialog-bottom-transition"
     >
       <category-bulk-products-set-profile
         v-if="selected_category_bulk_profile"
+        :category="selected_category_bulk_profile"
         :shop="shop"
         :vendor="vendor"
-        :category="selected_category_bulk_profile"
         @close="bulk_profile_dialog = false"
       ></category-bulk-products-set-profile>
     </v-dialog>
@@ -1567,16 +1554,16 @@
     <bulk-discount-dialog
       v-if="selected_category_bulk_discount"
       v-model="bulk_discount_dialog"
-      :shop="shop"
       :category="selected_category_bulk_discount"
+      :shop="shop"
     ></bulk-discount-dialog>
 
     <!-- █████████████████████ Dialog > Product > Change Status █████████████████████ -->
 
-    <v-dialog v-model="status_product_dialog" scrollable max-width="640">
+    <v-dialog v-model="status_product_dialog" max-width="640" scrollable>
       <v-card v-if="status_product_items?.length">
         <v-card-title>
-          <v-icon color="#111" class="me-1">nat</v-icon>
+          <v-icon class="me-1" color="#111">nat</v-icon>
           Change Product Status
         </v-card-title>
         <v-card-text>
@@ -1586,26 +1573,26 @@
 
           <s-smart-select
             v-model="product_status_input"
-            :items="status_list"
-            class="my-8"
-            item-value="code"
-            item-text="title"
-            item-description="description"
-            force-show-all
-            item-icon="icon"
             :color="ProductStatus[status_product_items[0].status]?.color"
-            gray-unselected
-            @change="(val) => setBulkProductStatus(val, status_product_items)"
+            :items="status_list"
             :loading="status_busy"
+            class="my-8"
+            force-show-all
+            gray-unselected
+            item-description="description"
+            item-icon="icon"
+            item-text="title"
+            item-value="code"
+            @change="(val) => setBulkProductStatus(val, status_product_items)"
           >
           </s-smart-select>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
-              @click="status_product_dialog = false"
-              variant="text"
               size="x-large"
+              variant="text"
+              @click="status_product_dialog = false"
             >
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
@@ -1620,8 +1607,8 @@
       v-if="!IS_VENDOR_PANEL"
       v-model="dialog_root_filter"
       fullscreen
-      transition="dialog-bottom-transition"
       scrollable
+      transition="dialog-bottom-transition"
     >
       <v-card>
         <v-card-title>
@@ -1633,12 +1620,12 @@
         </v-card-title>
         <v-card-text>
           <s-shop-category-filter
-            :shop="shop"
             :category="{
               id: 'root',
               shop_id: shop.id,
               filters: shop.filters,
             }"
+            :shop="shop"
             @edit-filters="
               (_filters) => {
                 shop.filters = _filters;
@@ -1649,9 +1636,9 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
-              @click="dialog_root_filter = false"
-              variant="text"
               size="x-large"
+              variant="text"
+              @click="dialog_root_filter = false"
             >
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
@@ -3016,4 +3003,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss" src="./style.scss"></style>
+<style lang="scss" scoped src="./style.scss"></style>

@@ -15,8 +15,8 @@
 <template>
   <v-container
     v-if="lotteries && lotteries.length"
-    fluid
     class="s--storefront-lottery-prizes-list"
+    fluid
   >
     <s-widget-header
       :title="$t('global.commons.Prizes')"
@@ -30,42 +30,42 @@
 
     <p v-if="!forceShow" class="small font-weight-bold">
       <v-btn
-        small
-        @click="show_prizes = !show_prizes"
-        depressed
-        :outlined="show_prizes"
+        :variant="show_prizes && 'outlined'"
         color="green"
         dark
+        size="small"
+        variant="flat"
+        @click="show_prizes = !show_prizes"
         ><i class="fas fa-ticket-alt me-2"></i>
         {{ show_prizes ? "Hide Prizes" : "Show Prizes" }}
       </v-btn>
     </p>
 
-    <v-expand-transition leave-absolute hide-on-leave>
+    <v-expand-transition hide-on-leave leave-absolute>
       <s-fade-scroll v-if="show_prizes" show-arrow small-arrow>
         <div class="d-flex align-stretch">
           <div v-for="prize in lotteries" :key="prize.id" class="prize-slide">
             <div
-              :prize="prize"
-              class="-prize"
-              @click="
-                selectable
-                  ? selectLottery(
-                      value?.id === prize.id || value === prize.id
-                        ? null
-                        : prize
-                    )
-                  : undefined
-              "
               :class="{
                 selected: returnObject
                   ? value?.id === prize.id
                   : value === prize.id,
               }"
+              :prize="prize"
+              class="-prize"
               style="width: 220px"
+              @click="
+                selectable
+                  ? selectLottery(
+                      value?.id === prize.id || value === prize.id
+                        ? null
+                        : prize,
+                    )
+                  : undefined
+              "
             >
               <p class="font-weight-bold mx-2 my-1">{{ prize.title }}</p>
-              <p class="mx-2 my-1 small" :title="prize.description">
+              <p :title="prize.description" class="mx-2 my-1 small">
                 {{ prize.description?.limitWords(10) }}
               </p>
 
@@ -143,6 +143,7 @@
 <script>
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import _ from "lodash-es";
+
 export default {
   name: "SStorefrontLotteryPrizesList",
   components: { SFadeScroll },
@@ -241,9 +242,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -258,6 +257,7 @@ export default {
     width: 220px;
     min-width: max-content;
     padding: 12px;
+
     .-prize {
       min-height: 100%;
       user-select: none;
@@ -277,6 +277,7 @@ export default {
         small {
           color: #fff;
         }
+
         hr {
           border-color: rgba(255, 255, 255, 0.78);
         }

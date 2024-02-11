@@ -14,8 +14,8 @@
 
 <template>
   <div
-    class="s--article-seo-editor s--shadow-no-padding p-3"
     :class="{ 'pointer-pointer': !opened }"
+    class="s--article-seo-editor s--shadow-no-padding p-3"
     @click.stop="
       () => {
         if (!opened) openMenu();
@@ -27,11 +27,11 @@
     >
     <v-btn
       v-if="opened"
-      @click.stop="opened = false"
-      icon
-      variant="text"
-      size="small"
       class="fadeIn absolute-top-start"
+      icon
+      size="small"
+      variant="text"
+      @click.stop="opened = false"
     >
       <v-icon size="small">close</v-icon>
     </v-btn>
@@ -60,13 +60,13 @@
           <form id="article-edit-form">
             <v-text-field
               v-model="slug"
-              @change="onChange()"
-              variant="underlined"
-              label="URL"
-              prepend-inner-icon="link"
               class="m-3 english-field"
               counter="128"
+              label="URL"
               messages="Use a clear and short URL, You can change it without worrying about the link being broken."
+              prepend-inner-icon="link"
+              variant="underlined"
+              @change="onChange()"
             >
               <template v-slot:append-inner>
                 <score-indicator
@@ -78,13 +78,13 @@
 
             <v-text-field
               v-model="page_title"
-              @change="onChange"
-              variant="underlined"
-              label="Page title"
-              prepend-inner-icon="arrow_right"
               class="m-3 english-field"
               counter="128"
+              label="Page title"
               messages="Leave it empty to set the page title the same as the article title."
+              prepend-inner-icon="arrow_right"
+              variant="underlined"
+              @change="onChange"
             >
               <template v-slot:append-inner>
                 <score-indicator
@@ -96,13 +96,13 @@
 
             <v-textarea
               v-model="description"
-              @change="onChange"
-              counter="256"
-              variant="underlined"
-              class="m-3"
+              :label="$t('global.article.edit_window.digest')"
               :rows="3"
               auto-grow
-              :label="$t('global.article.edit_window.digest')"
+              class="m-3"
+              counter="256"
+              variant="underlined"
+              @change="onChange"
             >
               <template v-slot:append-inner>
                 <score-indicator
@@ -112,37 +112,37 @@
               </template>
             </v-textarea>
 
-
             <v-slide-group
               v-if="hasImage"
               :model-value="coverImage"
-              @update:model-value="onSelectImage"
               class="pa-4"
+              mandatory
               selected-class="bg-success border-lg"
-              show-arrows mandatory
+              show-arrows
+              @update:model-value="onSelectImage"
             >
               <v-slide-group-item
                 v-for="item in images"
                 :key="item"
-                :value="item"
                 v-slot="{ isSelected, toggle, selectedClass }"
+                :value="item"
               >
                 <v-card
-                  color="grey-lighten-1"
                   :class="['ma-4', selectedClass]"
-                  height="100"
-                  width="100"
-                  rounded="xl"
-                  @click="toggle"
                   :image="item"
+                  color="grey-lighten-1"
+                  height="100"
+                  rounded="xl"
+                  width="100"
+                  @click="toggle"
                 >
                   <div class="d-flex fill-height align-center justify-center">
                     <v-scale-transition>
                       <v-icon
                         v-if="isSelected"
                         color="success"
-                        size="48"
                         icon="check_circle"
+                        size="48"
                       ></v-icon>
                     </v-scale-transition>
                   </div>
@@ -253,7 +253,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

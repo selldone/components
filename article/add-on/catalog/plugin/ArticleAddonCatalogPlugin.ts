@@ -16,7 +16,7 @@
  * https://github.com/orthes/medium-editor-insert-plugin/blob/master/src/js/images.js
  *
  */
-(function($, window, document, undefined) {
+(function ($, window, document, undefined) {
   "use strict";
 
   const ComponentElementName = "flip-book";
@@ -38,14 +38,14 @@
       actions: {
         remove: {
           label: '<span class="fas fa-times"></span>',
-          clicked: function() {
+          clicked: function () {
             const $event = $.Event("delete");
 
             $event.which = 8; // Simulate delete button keydown!
             $(document).trigger($event);
-          }
-        }
-      }
+          },
+        },
+      },
     };
 
   /**
@@ -79,7 +79,7 @@
    * @return {void}
    */
 
-  CustomAddon.prototype.init = function() {
+  CustomAddon.prototype.init = function () {
     this.events();
   };
 
@@ -89,7 +89,7 @@
    * @return {void}
    */
 
-  CustomAddon.prototype.events = function() {
+  CustomAddon.prototype.events = function () {
     $(document)
       .on("delete", $.proxy(this, "deleteAction"))
 
@@ -101,7 +101,7 @@
       .on(
         "click",
         ".medium-insert-images-toolbar2 .medium-editor-action",
-        $.proxy(this, "toolbar2Action")
+        $.proxy(this, "toolbar2Action"),
       )
 
       .on("click", $.proxy(this, "unselectAction"));
@@ -110,8 +110,8 @@
     // .on('paste', $.proxy(this, 'pastAction'))
   };
 
-  CustomAddon.prototype.pastAction = function(e) {
-   // console.log("pastAction", e);
+  CustomAddon.prototype.pastAction = function (e) {
+    // console.log("pastAction", e);
     e.preventDefault();
   };
 
@@ -119,22 +119,21 @@
    * ――――――――――――――――――――――― Event ▶ Key down ―――――――――――――――――――――――
    * @param e
    */
-  CustomAddon.prototype.keydownAction = function(e) {
+  CustomAddon.prototype.keydownAction = function (e) {
     const $el = $(e.target);
     // e.preventDefault();
-  /////  e.stopPropagation();
+    /////  e.stopPropagation();
   };
 
   /**
    * ――――――――――――――――――――――― Event ▶ Click ▶ Unselect action ―――――――――――――――――――――――
    * @param e
    */
-  CustomAddon.prototype.unselectAction = function(e) {
-    let $el = $(e.target).closest(RootClassName),
+  CustomAddon.prototype.unselectAction = function (e) {
+    const $el = $(e.target).closest(RootClassName),
       $image = this.$el.find(ActiveClassNameSelector);
 
     if ($el) {
-
       $image.not($el).removeClass(ActiveClassName);
       $(".medium-insert-images-toolbar2").remove();
 
@@ -146,8 +145,7 @@
    * ――――――――――――――――――――――― Event ▶ Click ▶ Select action ―――――――――――――――――――――――
    * @param e
    */
-  CustomAddon.prototype.selectAction = function(e) {
-
+  CustomAddon.prototype.selectAction = function (e) {
     let that = this,
       $image;
 
@@ -159,16 +157,15 @@
       // Hide keyboard on mobile devices
       this.$el.blur();
 
-
       $image.addClass(ActiveClassName);
       //$image.closest('.medium-insert-images').addClass('medium-insert-active');
 
-      setTimeout(function() {
+      setTimeout(function () {
         that.addToolbar();
         /*
-                        if (that.options.captions) {
-                          that.core.addCaption($image.parent().closest('div'), that.options.captionPlaceholder);
-                        }*/
+                                if (that.options.captions) {
+                                  that.core.addCaption($image.parent().closest('div'), that.options.captionPlaceholder);
+                                }*/
       }, 50);
     }
   };
@@ -180,7 +177,7 @@
    * @returns {void}
    */
 
-  CustomAddon.prototype.addToolbar = function() {
+  CustomAddon.prototype.addToolbar = function () {
     let $image = this.$el,
       mediumEditor = this.core.getEditor(),
       toolbarContainer = mediumEditor.options.elementsContainer || "body",
@@ -189,8 +186,8 @@
     $(toolbarContainer).append(
       this.templates["src/js/templates/images-toolbar.hbs"]({
         styles: this.options.styles,
-        actions: this.options.actions
-      }).trim()
+        actions: this.options.actions,
+      }).trim(),
     );
 
     $toolbar2 = $(".medium-insert-images-toolbar2");
@@ -200,20 +197,20 @@
     $toolbar2.fadeIn();
   };
 
-  CustomAddon.prototype.autoRepositionToolbars = function() {
+  CustomAddon.prototype.autoRepositionToolbars = function () {
     setTimeout(
-      function() {
+      function () {
         this.repositionToolbars();
         this.repositionToolbars();
       }.bind(this),
-      0
+      0,
     );
   };
 
   /**
    * ――――――――――――――――――――――― Toolbar ▶ Position ―――――――――――――――――――――――
    */
-  CustomAddon.prototype.repositionToolbars = function() {
+  CustomAddon.prototype.repositionToolbars = function () {
     let $toolbar2 = $(".medium-insert-images-toolbar2"),
       $image = this.$el.find(ActiveClassNameSelector),
       elementsContainer = this.core.getEditor().options.elementsContainer,
@@ -221,7 +218,7 @@
         ["absolute", "fixed"].indexOf(
           window
             .getComputedStyle(elementsContainer)
-            .getPropertyValue("position")
+            .getPropertyValue("position"),
         ) > -1,
       elementsContainerBoundary = elementsContainerAbsolute
         ? elementsContainer.getBoundingClientRect()
@@ -253,17 +250,15 @@
    * ――――――――――――――――――――――― Toolbar ▶ Delete Action ―――――――――――――――――――――――
    * @param e
    */
-  CustomAddon.prototype.deleteAction = function(e) {
-
+  CustomAddon.prototype.deleteAction = function (e) {
     let images = [],
       $selectedImage = this.$el.find(ActiveClassNameSelector),
       $empty,
       selectedHtml,
       i;
 
-    if(!$selectedImage ||  !$selectedImage.length)return;
+    if (!$selectedImage || !$selectedImage.length) return;
     console.log("-----deleteAction FlipBook-----");
-
 
     if (e.which === 8 || e.which === 46) {
       if ($selectedImage.length) {
@@ -292,17 +287,15 @@
    * ――――――――――――――――――――――― Toolbar ―――――――――――――――――――――――
    * @param e
    */
-  CustomAddon.prototype.toolbar2Action = function(e) {
-
+  CustomAddon.prototype.toolbar2Action = function (e) {
     let $button, callback;
 
     if (this.$currentImage === null) {
       return;
     }
 
-    const current_items=  this.$el.find(ActiveClassNameSelector);
-    if(!current_items || !current_items.length)return;
-
+    const current_items = this.$el.find(ActiveClassNameSelector);
+    if (!current_items || !current_items.length) return;
 
     $button = $(e.target).is("button")
       ? $(e.target)
@@ -327,11 +320,11 @@
    * @return {void}
    */
 
-  CustomAddon.prototype.add = function() {
+  CustomAddon.prototype.add = function () {
     let $place = this.$el.find(".medium-insert-active");
 
     $place.replaceWith(
-      `<${ComponentElementName} class="medium-insert-active"></${ComponentElementName}>`
+      `<${ComponentElementName} class="medium-insert-active"></${ComponentElementName}>`,
     );
 
     console.log("$place", $place);
@@ -359,13 +352,13 @@
    * Addon initialization
    */
 
-  $.fn[pluginName + addonName] = function(options) {
-    return this.each(function() {
+  $.fn[pluginName + addonName] = function (options) {
+    return this.each(function () {
       if (!$.data(this, "plugin_" + pluginName + addonName)) {
         $.data(
           this,
           "plugin_" + pluginName + addonName,
-          new CustomAddon(this, options)
+          new CustomAddon(this, options),
         );
       }
     });
@@ -376,7 +369,7 @@
    *
    * @return {object} Core object
    */
-  CustomAddon.prototype.getCore = function() {
+  CustomAddon.prototype.getCore = function () {
     return this.core;
   };
 })(jQuery, window, document);

@@ -20,13 +20,13 @@
       style="z-index: 9999999"
     >
       <template v-slot:body="{ item, close }">
-        <div class="s--notifications-notify" :class="item.type">
+        <div :class="item.type" class="s--notifications-notify">
           <v-img
             v-if="item.data?.img"
-            width="36"
-            height="36"
-            class="float-start m-2 rounded"
             :src="item.data.img"
+            class="float-start m-2 rounded"
+            height="36"
+            width="36"
           ></v-img>
 
           <v-icon v-else class="me-2" dark>
@@ -50,11 +50,11 @@
           <b class="font-weight-bold" v-html="item.title"> </b>
 
           <v-btn
-            icon
             class="float-end"
-            @click.stop="close"
+            icon
             size="small"
             variant="text"
+            @click.stop="close"
           >
             <v-icon>close</v-icon>
           </v-btn>
@@ -72,10 +72,10 @@
           (alert_dialog_accept_button + alert_dialog_reject_button).length * 11,
         )
       "
-      scrollable
       content-class="no-shadow-dialog"
+      scrollable
     >
-      <v-card class="text-start rounded-28px" :min-height="240" color="#e5e5e5">
+      <v-card :min-height="240" class="text-start rounded-28px" color="#e5e5e5">
         <template v-slot:title>
           <div class="text-wrap d-flex align-start">
             <div class="pe-2 flex-grow-1" v-html="alert_dialog_title"></div>
@@ -91,9 +91,9 @@
           <div class="widget-buttons">
             <v-btn
               color="#333"
+              size="x-large"
               variant="text"
               @click="alert_dialog = false"
-              size="x-large"
             >
               <v-icon class="me-1">close</v-icon>
               {{ alert_dialog_reject_button }}
@@ -101,9 +101,9 @@
 
             <v-btn
               :color="color"
+              size="x-large"
               variant="flat"
               @click="onAccept"
-              size="x-large"
             >
               <v-icon class="me-1">check</v-icon>
               {{ alert_dialog_accept_button }}

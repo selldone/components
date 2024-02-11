@@ -18,7 +18,7 @@
       v-if="checked"
       :color="trueColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click.stop="readOnly?undefined:set(false)"
+      @click.stop="readOnly ? undefined : set(false)"
     >
       {{ trueIcon }}
     </v-icon>
@@ -26,7 +26,7 @@
       v-else
       :color="falseColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click.stop="readOnly?undefined:set(true)"
+      @click.stop="readOnly ? undefined : set(true)"
     >
       {{ falseIcon }}
     </v-icon>
@@ -49,7 +49,7 @@ export default {
     trueIcon: { default: "check" },
     falseIcon: { default: "close" },
 
-    readOnly:Boolean
+    readOnly: Boolean,
   },
   data: () => ({
     checked: false,

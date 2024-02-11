@@ -15,31 +15,31 @@
 <template>
   <v-col
     v-if="!post_restricted"
-    cols="12"
-    class="c-container -force-rounded position-relative bg-white nopx"
     :class="{
       my10vh:
         body || video || voice || image || title || focus || tab !== 'text',
       'border-top-thick -red': private,
     }"
+    class="c-container -force-rounded position-relative bg-white nopx"
+    cols="12"
   >
     <!-- tips: overflow-visible: show discount ribbon of product -->
     <div
-      class="bg-white z2 blur-animate nopx overflow-visible"
       :class="{
         'c-widget': body || title,
         'blurred pointer-event-none': !can_post,
         'overflow-y-auto': scrollable,
       }"
+      class="bg-white z2 blur-animate nopx overflow-visible"
     >
-      <div style="overflow-x: auto; overflow-y: visible" class="pb-2">
+      <div class="pb-2" style="overflow-x: auto; overflow-y: visible">
         <rounded-tabs
-          :tabs="tabs"
           v-model="tab"
-          small
+          :radius="'50px'"
+          :tabs="tabs"
           class="m-2"
           scrollable
-          :radius="'50px'"
+          small
         >
         </rounded-tabs>
       </div>
@@ -59,45 +59,45 @@
           </v-list-subheader>
           <v-select
             v-model="subscription"
+            :item-title="(v) => $t(v.name)"
             :items="Object.values(TopicSubscriptionType)"
-            :item-text="(v) => $t(v.name)"
-            item-value="code"
-            clearable
-            title="Subscription type"
             :placeholder="$t('community.editor.no_subscription')"
+            clearable
+            item-value="code"
+            title="Subscription type"
           ></v-select>
 
           <template v-if="subscription">
             <s-currency-input
               v-model="currency"
               :activeCurrencies="currencies"
-              icon-only
-              class="delay_100"
-              placeholder="Select a currency..."
               :title="$t('global.commons.price')"
+              class="delay_100"
+              icon-only
+              placeholder="Select a currency..."
             />
 
             <s-price-input
               v-model="price"
-              class="delay_200 strong-field"
-              :title="$t('global.commons.currency')"
-              :label="$t('community.commons.subscription_fee')"
-              placeholder="0.00"
               :decimal="currency ? currency.floats : 0"
+              :label="$t('community.commons.subscription_fee')"
               :rules="[GlobalRules.required()]"
               :suffix="currency ? currency.code : undefined"
+              :title="$t('global.commons.currency')"
+              class="delay_200 strong-field"
+              placeholder="0.00"
             >
             </s-price-input>
 
             <v-select
               v-model="trial"
+              :item-title="(v) => $t(v.name)"
               :items="Object.values(TopicTrialType)"
-              :item-text="(v) => $t(v.name)"
-              item-value="code"
-              clearable
-              :title="$t('community.commons.trial_mode')"
               :placeholder="$t('community.commons.no_trial_mode')"
+              :title="$t('community.commons.trial_mode')"
               class="fadeIn delay_300"
+              clearable
+              item-value="code"
             ></v-select>
           </template>
         </div>
@@ -106,119 +106,120 @@
         <div v-if="tab === 'config'" class="px-4 py-2">
           <s-smart-switch
             v-model="nofollow"
-            label="Follow / Nofollow links"
-            :true-title="$t('community.commons.nofollow')"
             :true-description="$t('community.editor.nofollow_msg')"
-            false-title="Follow links"
+            :true-title="$t('community.commons.nofollow')"
             border
             class="my-3"
+            false-title="Follow links"
+            label="Follow / Nofollow links"
           ></s-smart-switch>
           <s-smart-switch
             v-model="cross"
-            label="Crossable topic by other communities"
-            :true-title="$t('community.commons.cross')"
-            :true-description="$t('community.editor.cross_msg')"
-            true-icon="shuffle"
             :false-title="$t('global.commons.disable')"
-            false-gray
+            :true-description="$t('community.editor.cross_msg')"
+            :true-title="$t('community.commons.cross')"
             border
             class="my-3"
+            false-gray
+            label="Crossable topic by other communities"
+            true-icon="shuffle"
           ></s-smart-switch>
           <s-smart-switch
             v-model="pin"
-            label="Pin topic"
-            :true-title="$t('community.commons.pin')"
             :true-description="$t('community.editor.pin_msg')"
-            true-icon="push_pin"
-            false-title="Normal topic"
-            false-gray
+            :true-title="$t('community.commons.pin')"
             border
             class="my-3"
+            false-gray
+            false-title="Normal topic"
+            label="Pin topic"
+            true-icon="push_pin"
           ></s-smart-switch>
           <s-smart-switch
             v-model="private"
-            color="red"
-            label="Who can see this topic?"
-            :true-title="$t('community.commons.private')"
-            :true-description="$t('community.editor.private_on_msg')"
-            true-icon="admin_panel_settings"
-            :false-title="$t('community.commons.public')"
             :false-description="$t('community.editor.private_off_msg')"
-            false-icon="public"
+            :false-title="$t('community.commons.public')"
+            :true-description="$t('community.editor.private_on_msg')"
+            :true-title="$t('community.commons.private')"
             border
             class="my-3"
+            color="red"
+            false-icon="public"
+            label="Who can see this topic?"
+            true-icon="admin_panel_settings"
           ></s-smart-switch>
 
           <s-smart-switch
             v-model="lock_post"
-            label="Who can send new posts?"
-            true-title="Lock posts"
-            true-description="Only moderators can post."
-            true-icon="lock"
-            false-title="Anyone"
-            false-description="Anyone can send a post here."
             border
             class="my-3"
+            false-description="Anyone can send a post here."
+            false-title="Anyone"
+            label="Who can send new posts?"
+            true-description="Only moderators can post."
+            true-icon="lock"
+            true-title="Lock posts"
           ></s-smart-switch>
 
           <s-smart-switch
             v-model="lock_comment"
-            label="Who can send new comments?"
-            true-title="Lock comments"
-            true-description="No one can comment."
-            true-icon="lock"
-            false-title="Anyone"
-            false-description="Anyone can send a comment here."
             border
             class="my-3"
+            false-description="Anyone can send a comment here."
+            false-title="Anyone"
+            label="Who can send new comments?"
+            true-description="No one can comment."
+            true-icon="lock"
+            true-title="Lock comments"
           ></s-smart-switch>
         </div>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ SEO ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div v-if="tab === 'seo'" class="px-4 py-2">
           <v-img
-            width="128"
-            height="128"
-            class="rounded-18px mb-2 zoomIn"
             :src="cover ? cover : image"
+            class="rounded-18px mb-2 zoomIn"
+            height="128"
+            width="128"
           >
             <v-btn
               class="center-absolute"
               icon
-              large
-              tile
+              variant="text"
+              size="large"
               @click="showSelectCover"
-              ><v-icon>camera</v-icon></v-btn
             >
+              <v-icon>camera</v-icon>
+            </v-btn>
           </v-img>
 
           <input
-            type="file"
             ref="cover_input"
-            hidden="hidden"
-            @change="onSelectCover"
             accept="image/*"
+            hidden="hidden"
+            type="file"
+            @change="onSelectCover"
           />
 
           <small class="fadeIn delay_100">{{
             $t("community.editor.topic_title")
           }}</small>
           <v-textarea
-            :placeholder="$t('community.editor.topic_placeholder')"
-            class="font-weight-bold fadeIn delay_200"
-            solo
-            flat
-            :value="title_page_auto ? title : title_page"
-            @input="(val) => (title_page = val)"
             :append-inner-icon="title_page_auto ? 'lock' : 'lock_open '"
-            rows="1"
+            :model-value="title_page_auto ? title : title_page"
+            :placeholder="$t('community.editor.topic_placeholder')"
+            :readonly="title_page_auto"
             auto-grow
+            class="font-weight-bold fadeIn delay_200"
+            counter="128"
+            flat
+            rows="1"
+            variant="solo"
+            @update:model-value="(val) => (title_page = val)"
             @click:append-inner="
               title_page_auto = !title_page_auto;
               title_page = !title_page_auto ? title : title_page;
             "
-            :readonly="title_page_auto"
-            counter="128"
           ></v-textarea>
 
           <small class="fadeIn delay_300">{{
@@ -226,38 +227,38 @@
           }}</small>
 
           <v-textarea
-            :placeholder="$t('community.editor.desc_placeholder')"
-            :disabled="!can_edit_body"
-            class="fadeIn delay_400"
-            solo
-            flat
-            :value="desc_auto ? body_text : desc"
-            @input="(val) => (desc = val)"
             :append-inner-icon="desc_auto ? 'lock' : 'lock_open '"
-            rows="1"
+            :disabled="!can_edit_body"
+            :model-value="desc_auto ? body_text : desc"
+            :placeholder="$t('community.editor.desc_placeholder')"
+            :readonly="desc_auto"
             auto-grow
+            class="fadeIn delay_400"
+            counter="256"
+            flat
+            rows="1"
+            variant="solo"
+            @update:model-value="(val) => (desc = val)"
             @click:append-inner="
               desc_auto = !desc_auto;
               desc = !desc_auto ? body_text : desc;
             "
-            :readonly="desc_auto"
-            counter="256"
           ></v-textarea>
         </div>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product post ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div v-else-if="tab === 'product'">
           <community-product-editor
             v-if="shop && !post"
-            :shop="shop"
-            :community="community"
             v-model="product_id"
+            :community="community"
+            :shop="shop"
             class="my-4"
           >
           </community-product-editor>
           <community-product-view
             v-else-if="shop"
-            :shop="shop"
             :community="community"
+            :shop="shop"
             class="my-4"
           >
           </community-product-view>
@@ -267,7 +268,7 @@
         <voice-recorder
           v-else-if="tab === 'voice'"
           v-model="voice"
-          :voice-file.sync="voice_file"
+          v-model:voice-file="voice_file"
           class="m-4"
         ></voice-recorder>
 
@@ -276,33 +277,33 @@
           <v-textarea
             v-if="topicMode"
             v-model="title"
-            @focus="focus = true"
-            @blur="focus = false"
-            rows="1"
-            auto-grow
-            class="font-weight-black mx-4"
-            :placeholder="$t('community.editor.title_placeholder')"
-            solo
-            flat
             :error-messages="
               body && !title ? 'Enter a title to continue.' : undefined
             "
+            :placeholder="$t('community.editor.title_placeholder')"
+            auto-grow
+            class="font-weight-black mx-4"
+            flat
+            rows="1"
+            variant="solo"
+            @blur="focus = false"
+            @focus="focus = true"
           ></v-textarea>
 
           <s-mentionable-input
-            outlined
-            v-model="body"
-            :text.sync="body_text"
             ref="textarea"
-            rows="4"
-            auto-grow
-            solo
-            flat
-            class="my-2 mx-3"
+            v-model="body"
+            v-model:mentions="mentions"
+            v-model:text="body_text"
             :placeholder="$t('community.editor.body_placeholder')"
-            :mentions.sync="mentions"
-            @focus="focus = true"
+            auto-grow
+            class="my-2 mx-3"
+            flat
+            outlined
+            rows="4"
+            solo
             @blur="focus = false"
+            @focus="focus = true"
           >
           </s-mentionable-input>
 
@@ -322,13 +323,13 @@
             ></community-poll>
             <v-btn
               v-if="topic && topic.poll"
-              @click="poll = null"
-              color="red"
-              small
               class="m-2 zoomIn"
-              text
-              >{{ $t("community.editor.remove_poll") }}</v-btn
-            >
+              color="red"
+              size="small"
+              variant="text"
+              @click="poll = null"
+              >{{ $t("community.editor.remove_poll") }}
+            </v-btn>
           </template>
 
           <!-- image -->
@@ -336,49 +337,48 @@
             <v-img
               v-if="image"
               ref="post_image"
-              width="100%"
+              :aspect-ratio="in_edit_mode ? aspect : undefined"
+              :src="image"
+              class="position-relative"
               height="auto"
               max-height="800"
-              :src="image"
-              :aspect-ratio="in_edit_mode ? aspect : undefined"
-              class="position-relative"
-              contain
+              width="100%"
               @load="setImageRation"
             >
               <v-btn
                 v-if="!in_edit_mode"
                 class="absolute-top-end"
-                depressed
-                tile
+                variant="flat"
                 @click="
                   image = null;
                   image_file = null;
                 "
-                ><v-icon>close</v-icon></v-btn
               >
+                <v-icon>close</v-icon>
+              </v-btn>
             </v-img>
           </v-expand-transition>
 
           <input
-            type="file"
             ref="image_input"
-            hidden="hidden"
-            @change="onSelectImage"
             accept="image/*"
+            hidden="hidden"
+            type="file"
+            @change="onSelectImage"
           />
 
           <!-- Video -->
           <v-expand-transition>
             <div v-show="video" class="position-relative">
               <video
-                width="100%"
-                controls
                 ref="video_view"
+                controls
                 style="max-height: 400px; background-color: #000"
+                width="100%"
               >
                 <source
-                  :src="video"
                   id="video_here"
+                  :src="video"
                   :type="VideoHelper.GetMime(video)"
                 />
               </video>
@@ -386,11 +386,10 @@
               <div class="absolute-top-end">
                 <v-btn
                   v-if="topicMode && !busy"
-                  class="m-1"
-                  depressed
-                  tile
-                  @click="screenshot(true)"
                   :title="$t('community.editor.take_screenshot')"
+                  class="m-1"
+                  variant="flat"
+                  @click="screenshot(true)"
                 >
                   <v-icon>camera</v-icon>
                 </v-btn>
@@ -398,42 +397,42 @@
                 <v-btn
                   v-if="!busy && !in_edit_mode"
                   class="m-1"
-                  depressed
-                  tile
+                  variant="flat"
                   @click="
                     video = null;
                     video_file = null;
                   "
-                  ><v-icon>close</v-icon></v-btn
                 >
+                  <v-icon>close</v-icon>
+                </v-btn>
               </div>
             </div>
           </v-expand-transition>
 
           <input
-            type="file"
             ref="video_input"
-            hidden="hidden"
-            @change="onSelectVideo"
             accept="video/*"
+            hidden="hidden"
+            type="file"
+            @change="onSelectVideo"
           />
 
           <!-- Link -->
           <v-expand-transition>
             <div v-if="link_mode && !video && !image && !link_preview">
               <v-text-field
+                v-model="link"
                 :disabled="busy_link"
                 :loading="busy_link"
-                placeholder="https://..."
                 :messages="$t('community.editor.take_link_msg')"
-                class="mx-2 mb-2"
-                v-model="link"
-                clearable
-                @keydown.enter="submitLink()"
-                append-inner-icon="check"
-                @click:append-inner="submitLink()"
-                @blur="submitLink()"
                 :readonly="in_edit_mode"
+                append-inner-icon="check"
+                class="mx-2 mb-2"
+                clearable
+                placeholder="https://..."
+                @blur="submitLink()"
+                @keydown.enter="submitLink()"
+                @click:append-inner="submitLink()"
               >
               </v-text-field>
             </div>
@@ -449,14 +448,14 @@
             <v-btn
               v-if="!busy && !in_edit_mode"
               class="absolute-top-end"
-              depressed
-              tile
+              variant="flat"
               @click="
                 link = null;
                 link_preview = null;
               "
-              ><v-icon>close</v-icon></v-btn
             >
+              <v-icon>close</v-icon>
+            </v-btn>
           </div>
 
           <!-- Upload progress -->
@@ -464,10 +463,10 @@
           <div style="min-height: 12px">
             <v-progress-linear
               v-if="busy"
-              :value="progress"
+              :model-value="progress"
+              class="fadeIn mt-1"
               color="blue"
               height="4px"
-              class="fadeIn mt-1"
             ></v-progress-linear>
           </div>
         </div>
@@ -476,8 +475,8 @@
         <div v-else-if="tab === 'attach'">
           <community-attach-editor
             v-if="!post"
-            :community="community"
             v-model="attach_files"
+            :community="community"
             class="my-4"
           >
           </community-attach-editor>
@@ -485,16 +484,16 @@
           <template v-else>
             <community-attach-view
               v-if="post?.attachments?.length"
-              :post="post"
               :files="post?.attachments"
+              :post="post"
               view-only
             >
             </community-attach-view>
             <v-list-subheader>
               <div>
-                <v-icon class="me-1">warning_amber</v-icon> You can not edit
-                attachments after sending them. If you remove post, attachments
-                will be deleted.
+                <v-icon class="me-1">warning_amber</v-icon>
+                You can not edit attachments after sending them. If you remove
+                post, attachments will be deleted.
               </div>
             </v-list-subheader>
           </template>
@@ -506,11 +505,9 @@
         <template v-if="tab === 'text'">
           <v-btn
             :disabled="!can_add_media"
-            depressed
-            text
-            tile
-            :large="$vuetify.display.smAndUp"
+            :size="$vuetify.display.smAndUp ? 'large' : undefined"
             class="w-25"
+            variant="text"
             @click="showSelectImage()"
           >
             <v-icon class="me-1">add_a_photo</v-icon>
@@ -519,11 +516,9 @@
 
           <v-btn
             :disabled="!can_add_media"
-            depressed
-            text
-            tile
-            :large="$vuetify.display.smAndUp"
+            :size="$vuetify.display.smAndUp ? 'large' : undefined"
             class="w-25"
+            variant="text"
             @click="showSelectVideo()"
           >
             <v-icon class="me-1">video_call</v-icon>
@@ -532,12 +527,10 @@
 
           <v-btn
             :disabled="!can_add_media"
-            @click="link_mode = !link_mode"
-            depressed
-            text
-            tile
-            :large="$vuetify.display.smAndUp"
+            :size="$vuetify.display.smAndUp ? 'large':undefined"
             class="w-25"
+            variant="text"
+            @click="link_mode = !link_mode"
           >
             <v-icon class="me-1">add_link</v-icon>
             <span class="-ah">{{
@@ -550,16 +543,13 @@
         <v-spacer v-else></v-spacer>
 
         <v-btn
-          depressed
           :class="{ disabled: !can_send }"
-          :text="!body"
-          color="blue"
-          dark
-          tile
-          :large="$vuetify.display.smAndUp"
-          class="w-25"
-          @click="sendPost()"
           :loading="busy"
+          :size="$vuetify.display.smAndUp && 'large'"
+          :variant="!body ? 'text' : 'flat'"
+          class="w-25"
+          color="blue"
+          @click="sendPost()"
         >
           <span class="-ah">{{ $t("community.editor.send_post") }}</span>
           <v-icon class="ms-1 flip-rtl">send</v-icon>
@@ -574,29 +564,29 @@
 
       <v-btn
         v-if="!USER()"
-        @click="NeedLogin()"
         class="ma-auto"
         color="blue"
-        dark
-        x-large
-        depressed
+
         rounded
+        size="x-large"
+        variant="flat"
+        @click="NeedLogin()"
         ><span class="me-2 text-h4">👋</span>
         <div class="text-start">
           {{ $t("global.actions.login_now") }}
-          <small class="d-block white--text">{{
+          <small class="d-block text-white">{{
             $t("community.commons.login_msg")
           }}</small>
-        </div></v-btn
-      >
+        </div>
+      </v-btn>
 
       <div v-else class="ma-auto">
-        <v-list-item v-for="(item, i) in checklist" :key="i" dense>
-          <v-list-item-icon>
-            <v-icon :color="item.check ? 'success' : '#333'" size="36">{{
-              item.check ? "check_circle" : "check_circle_outline"
-            }}</v-icon>
-          </v-list-item-icon>
+        <v-list-item v-for="(item, i) in checklist" :key="i" density="compact">
+          <template v-slot:prepend>
+            <v-icon :color="item.check ? 'success' : '#333'" size="36"
+              >{{ item.check ? "check_circle" : "check_circle_outline" }}
+            </v-icon>
+          </template>
           <v-list-item-title>
             {{ item.title }}
           </v-list-item-title>
@@ -612,29 +602,28 @@
         <v-card-title class="font-weight-black">{{ title }}</v-card-title>
         <v-card-text>
           <div
-            v-html="purify(body)"
-            class="html-style black--text"
+            class="html-style text-black"
             style="font-size: 16px; line-height: 1.6em"
+            v-html="purify(body)"
           ></div>
         </v-card-text>
         <!-- image -->
         <v-img
           v-if="image"
-          width="100%"
-          height="auto"
-          max-height="800"
           :src="image"
           class="position-relative"
-          contain
+          height="auto"
+          max-height="800"
+          width="100%"
         >
         </v-img>
         <!-- Video -->
         <video
           v-if="video"
-          width="100%"
-          controls
           ref="video_view_prev"
+          controls
           style="max-height: 400px; background-color: #000"
+          width="100%"
         >
           <source :src="video" :type="VideoHelper.GetMime(video)" />
         </video>
@@ -649,14 +638,18 @@
         </div>
 
         <v-card-actions>
-          <v-btn text @click="preview = false" large>{{
-            $t("global.actions.back")
-          }}</v-btn>
+          <v-btn size="large" variant="text" @click="preview = false"
+            >{{ $t("global.actions.back") }}
+          </v-btn>
           <v-spacer></v-spacer>
-          <v-btn depressed color="success" @click="sendPost()" :loading="busy"
+          <v-btn
+            :loading="busy"
+            color="success"
+            variant="flat"
+            @click="sendPost()"
             >{{ $t("global.actions.send") }}
-            <v-icon class="ms-1" small>send</v-icon></v-btn
-          >
+            <v-icon class="ms-1" size="small">send</v-icon>
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -1209,7 +1202,7 @@ export default {
         this.submitLink();
         this.showWarningAlert(
           "Submit link",
-          "The link preview must first be created correctly."
+          "The link preview must first be created correctly.",
         );
         return;
       }
@@ -1240,7 +1233,7 @@ export default {
           this.desc
             .replace(/__+/g, " ")
             .replace(/\*\*+/g, " ")
-            .substring(0, 256)
+            .substring(0, 256),
         ); // Remove markdown chars!
 
         // Set topic image:
@@ -1248,7 +1241,7 @@ export default {
           formData.append(
             "cover",
             this.cover_file,
-            this.cover_file.name ? this.cover_file.name : "cover.jpg"
+            this.cover_file.name ? this.cover_file.name : "cover.jpg",
           );
 
         // ⛔ Admin configuration:
@@ -1344,17 +1337,17 @@ export default {
           promise = axios.post(
             window.CAPI.POST_COMMUNITY_TOPIC_EDIT(
               this.topic.community_id,
-              this.topic.id
+              this.topic.id,
             ),
             formData,
-            config
+            config,
           );
         } else {
           // NEW POST
           promise = axios.post(
             window.CAPI.POST_COMMUNITY_TOPIC_CREATE(this.community.id),
             formData,
-            config
+            config,
           );
         }
       }
@@ -1367,20 +1360,20 @@ export default {
             window.CAPI.POST_COMMUNITY_TOPIC_POST_EDIT(
               this.post.community_id,
               this.post.topic_id,
-              this.post.id
+              this.post.id,
             ),
             formData,
-            config
+            config,
           );
         } else {
           // NEW POST
           promise = axios.post(
             window.CAPI.POST_COMMUNITY_TOPIC_POST_CREATE(
               this.community.id,
-              this.topic.id
+              this.topic.id,
             ),
             formData,
-            config
+            config,
           );
         }
       }
@@ -1418,7 +1411,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .my10vh {
   margin-top: 100px;
   margin-bottom: 10vh;
@@ -1440,6 +1433,7 @@ export default {
     min-height: 420px;
   }
 }
+
 /*.brt12px {
   @media only screen and (max-width: 600px) {
     border-radius: 12px 12px 0 0;

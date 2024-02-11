@@ -80,7 +80,7 @@
                 : alias2),
             typeof helper === alias3
               ? helper.call(alias1, { name: "key", hash: {}, data: data })
-              : helper)
+              : helper),
           ) +
           '" data-action="add" class="medium-insert-action" type="button">' +
           ((stack1 =
@@ -113,7 +113,7 @@
               fn: container.program(1, data, 0),
               inverse: container.noop,
               data: data,
-            }
+            },
           )) != null
             ? stack1
             : "") +
@@ -141,9 +141,9 @@
             typeof helper === "function"
               ? helper.call(
                   depth0 != null ? depth0 : container.nullContext || {},
-                  { name: "placeholder", hash: {}, data: data }
+                  { name: "placeholder", hash: {}, data: data },
                 )
-              : helper)
+              : helper),
           ) +
           '"></figcaption>'
         );
@@ -176,7 +176,7 @@
               fn: container.program(2, data, 0),
               inverse: container.noop,
               data: data,
-            }
+            },
           )) != null
             ? stack1
             : "") +
@@ -195,7 +195,7 @@
             fn: container.program(3, data, 0),
             inverse: container.noop,
             data: data,
-          }
+          },
         )) != null
           ? stack1
           : "";
@@ -216,7 +216,7 @@
                 : alias2),
             typeof helper === alias3
               ? helper.call(alias1, { name: "key", hash: {}, data: data })
-              : helper)
+              : helper),
           ) +
           '">' +
           ((stack1 =
@@ -248,7 +248,7 @@
               fn: container.program(2, data, 0),
               inverse: container.noop,
               data: data,
-            }
+            },
           )) != null
             ? stack1
             : "") +
@@ -270,7 +270,7 @@
               fn: container.program(1, data, 0),
               inverse: container.noop,
               data: data,
-            }
+            },
           )) != null
             ? stack1
             : "") +
@@ -284,7 +284,7 @@
               fn: container.program(5, data, 0),
               inverse: container.noop,
               data: data,
-            }
+            },
           )) != null
             ? stack1
             : "")
@@ -310,7 +310,7 @@
             typeof helper === "function"
               ? helper.call(
                   depth0 != null ? depth0 : container.nullContext || {},
-                  { name: "html", hash: {}, data: data }
+                  { name: "html", hash: {}, data: data },
                 )
               : helper)) != null
             ? stack1
@@ -351,7 +351,7 @@
                 : helpers.helperMissing),
             typeof helper === "function"
               ? helper.call(alias1, { name: "img", hash: {}, data: data })
-              : helper)
+              : helper),
           ) +
           '" alt="" />\n' +
           ((stack1 = helpers["if"].call(
@@ -363,7 +363,7 @@
               fn: container.program(1, data, 0),
               inverse: container.noop,
               data: data,
-            }
+            },
           )) != null
             ? stack1
             : "") +
@@ -396,7 +396,7 @@
             fn: container.program(2, data, 0),
             inverse: container.noop,
             data: data,
-          }
+          },
         )) != null
           ? stack1
           : "";
@@ -417,7 +417,7 @@
                 : alias2),
             typeof helper === alias3
               ? helper.call(alias1, { name: "key", hash: {}, data: data })
-              : helper)
+              : helper),
           ) +
           '">' +
           ((stack1 =
@@ -449,7 +449,7 @@
               fn: container.program(5, data, 0),
               inverse: container.noop,
               data: data,
-            }
+            },
           )) != null
             ? stack1
             : "") +
@@ -468,7 +468,7 @@
             fn: container.program(6, data, 0),
             inverse: container.noop,
             data: data,
-          }
+          },
         )) != null
           ? stack1
           : "";
@@ -489,7 +489,7 @@
                 : alias2),
             typeof helper === alias3
               ? helper.call(alias1, { name: "key", hash: {}, data: data })
-              : helper)
+              : helper),
           ) +
           '">' +
           ((stack1 =
@@ -523,7 +523,7 @@
               fn: container.program(1, data, 0),
               inverse: container.noop,
               data: data,
-            }
+            },
           )) != null
             ? stack1
             : "") +
@@ -537,7 +537,7 @@
               fn: container.program(4, data, 0),
               inverse: container.noop,
               data: data,
-            }
+            },
           )) != null
             ? stack1
             : "")
@@ -624,7 +624,7 @@
           this.options.editor.getExtensionByName("placeholder") !== undefined
         ) {
           this.options.editor.getExtensionByName(
-            "placeholder"
+            "placeholder",
           ).updatePlaceholder = this.editorUpdatePlaceholder;
         }
       }
@@ -668,12 +668,12 @@
         .on(
           "selectstart mousedown",
           ".medium-insert, .medium-insert-buttons",
-          $.proxy(this, "disableSelection")
+          $.proxy(this, "disableSelection"),
         )
         .on(
           "click",
           ".medium-insert-buttons-show",
-          $.proxy(this, "toggleAddons")
+          $.proxy(this, "toggleAddons"),
         )
         .on("click", ".medium-insert-action", $.proxy(this, "addonAction"))
         .on("paste", ".medium-insert-caption-placeholder", function (e) {
@@ -867,7 +867,7 @@
 
         that.$el[addonName](options);
         that.options.addons[addon] = that.$el.data(
-          "plugin_" + addonName
+          "plugin_" + addonName,
         ).options;
       });
     };
@@ -890,7 +890,7 @@
 
       if (this.$el.html().length === 0) {
         this.$el.html(
-          this.templates["src/js/templates/core-empty-line.hbs"]().trim()
+          this.templates["src/js/templates/core-empty-line.hbs"]().trim(),
         );
       }
 
@@ -920,7 +920,7 @@
         $lastEl.attr("class").match(/medium\-insert(?!\-active)/)
       ) {
         $buttons.before(
-          this.templates["src/js/templates/core-empty-line.hbs"]().trim()
+          this.templates["src/js/templates/core-empty-line.hbs"]().trim(),
         );
       }
     };
@@ -1032,7 +1032,7 @@
               that.positionButtons(activeAddon);
               that.showButtons(activeAddon);
             },
-            activeAddon ? 100 : 0
+            activeAddon ? 100 : 0,
           );
         } else {
           this.hideButtons();
@@ -1099,7 +1099,7 @@
           ["absolute", "fixed"].indexOf(
             window
               .getComputedStyle(elementsContainer)
-              .getPropertyValue("position")
+              .getPropertyValue("position"),
           ) > -1,
         position = {};
 
@@ -1123,13 +1123,13 @@
           position.left +=
             -parseInt(
               $buttons.find(".medium-insert-buttons-addons").css("left"),
-              10
+              10,
             ) -
             parseInt(
               $buttons
                 .find(".medium-insert-buttons-addons button:first")
                 .css("margin-left"),
-              10
+              10,
             );
           position.top += parseInt($p.css("margin-top"), 10);
         }
@@ -1244,7 +1244,7 @@
         $el.append(
           this.templates["src/js/templates/core-caption.hbs"]({
             placeholder: placeholder,
-          })
+          }),
         );
       }
     };
@@ -1427,12 +1427,12 @@
         .on(
           "click",
           ".medium-insert-embeds-toolbar .medium-editor-action",
-          $.proxy(this, "toolbarAction")
+          $.proxy(this, "toolbarAction"),
         )
         .on(
           "click",
           ".medium-insert-embeds-toolbar2 .medium-editor-action",
-          $.proxy(this, "toolbar2Action")
+          $.proxy(this, "toolbar2Action"),
         );
 
       this.$el
@@ -1441,12 +1441,12 @@
         .on(
           "click",
           ".medium-insert-embeds-overlay",
-          $.proxy(this, "selectEmbed")
+          $.proxy(this, "selectEmbed"),
         )
         .on(
           "contextmenu",
           ".medium-insert-embeds-placeholder",
-          $.proxy(this, "fixRightClickOnPlaceholder")
+          $.proxy(this, "fixRightClickOnPlaceholder"),
         );
 
       if (this.options.parseOnPaste) {
@@ -1475,7 +1475,7 @@
           $(this).after(
             that.templates["src/js/templates/embeds-wrapper.hbs"]({
               html: $(this).html(),
-            })
+            }),
           );
           $(this).remove();
         }
@@ -1517,21 +1517,21 @@
       // Fix #132
       // Make sure that the content of the paragraph is empty and <br> is wrapped in <p></p> to avoid Firefox problems
       $place.html(
-        this.templates["src/js/templates/core-empty-line.hbs"]().trim()
+        this.templates["src/js/templates/core-empty-line.hbs"]().trim(),
       );
 
       // Replace paragraph with div to prevent #124 issue with pasting in Chrome,
       // because medium editor wraps inserted content into paragraph and paragraphs can't be nested
       if ($place.is("p")) {
         $place.replaceWith(
-          '<div class="medium-insert-active">' + $place.html() + "</div>"
+          '<div class="medium-insert-active">' + $place.html() + "</div>",
         );
         $place = this.$el.find(".medium-insert-active");
         this.core.moveCaret($place);
       }
 
       $place.addClass(
-        "medium-insert-embeds medium-insert-embeds-input medium-insert-embeds-active"
+        "medium-insert-embeds medium-insert-embeds-input medium-insert-embeds-active",
       );
 
       this.togglePlaceholder({ target: $place.get(0) });
@@ -1683,7 +1683,7 @@
 
       if (!isValidUrl(url) && false) {
         console.log(
-          "🟤 Insert > It's not a url, so we parse it as custom HTML code."
+          "🟤 Insert > It's not a url, so we parse it as custom HTML code.",
         );
         $.proxy(that, "convertBadEmbed", url)();
         return;
@@ -1736,7 +1736,7 @@
             console.log(
               (responseJSON && responseJSON.error) ||
                 jqXHR.status ||
-                errorThrown.message
+                errorThrown.message,
             );
           } else {
             window.alert(
@@ -1746,7 +1746,7 @@
                 errorThrown +
                 " (response status: " +
                 jqXHR.status +
-                ")"
+                ")",
             );
           }
 
@@ -1777,7 +1777,7 @@
             "instagram",
             "twitter",
             "facebook",
-          ].join("|")
+          ].join("|"),
         ).test(url)
       ) {
         $.proxy(this, "convertBadEmbed", url)();
@@ -1788,23 +1788,23 @@
         .replace(/\n?/g, "")
         .replace(
           /^((http(s)?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|v\/)?)([a-zA-Z0-9\-_]+)(.*)?$/,
-          '<div class="video video-youtube"><iframe width="420" height="315" src="//www.youtube.com/embed/$7" frameborder="0" allowfullscreen></iframe></div>'
+          '<div class="video video-youtube"><iframe width="420" height="315" src="//www.youtube.com/embed/$7" frameborder="0" allowfullscreen></iframe></div>',
         )
         .replace(
           /^https?:\/\/vimeo\.com(\/.+)?\/([0-9]+)$/,
-          '<div class="video video-vimeo"><iframe src="//player.vimeo.com/video/$2" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>'
+          '<div class="video video-vimeo"><iframe src="//player.vimeo.com/video/$2" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>',
         )
         .replace(
           /^https:\/\/twitter\.com\/(\w+)\/status\/(\d+)\/?$/,
-          '<blockquote class="twitter-tweet" align="center" lang="en"><a href="https://twitter.com/$1/statuses/$2"></a></blockquote><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>'
+          '<blockquote class="twitter-tweet" align="center" lang="en"><a href="https://twitter.com/$1/statuses/$2"></a></blockquote><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>',
         )
         .replace(
           /^(https:\/\/www\.facebook\.com\/(.*))$/,
-          '<script src="//connect.facebook.net/en_US/sdk.js#xfbml=1&amp;version=v2.2" async></script><div class="fb-post" data-href="$1"><div class="fb-xfbml-parse-ignore"><a href="$1">Loading Facebook post...</a></div></div>'
+          '<script src="//connect.facebook.net/en_US/sdk.js#xfbml=1&amp;version=v2.2" async></script><div class="fb-post" data-href="$1"><div class="fb-xfbml-parse-ignore"><a href="$1">Loading Facebook post...</a></div></div>',
         )
         .replace(
           /^https?:\/\/instagram\.com\/p\/(.+)\/?$/,
-          '<span class="instagram"><iframe src="//instagram.com/p/$1/embed/" width="612" height="710" frameborder="0" scrolling="no" allowtransparency="true"></iframe></span>'
+          '<span class="instagram"><iframe src="//instagram.com/p/$1/embed/" width="612" height="710" frameborder="0" scrolling="no" allowtransparency="true"></iframe></span>',
         );
 
       if (this.options.storeMeta) {
@@ -1870,14 +1870,14 @@
           $place.after(
             this.templates["src/js/templates/embeds-wrapper.hbs"]({
               html: html,
-            })
+            }),
           );
           $place.text($place.text().replace(pastedUrl, ""));
         } else {
           $place.after(
             this.templates["src/js/templates/embeds-wrapper.hbs"]({
               html: html,
-            })
+            }),
           );
           $place.remove();
         }
@@ -1952,7 +1952,7 @@
           if (that.options.captions) {
             that.core.addCaption(
               $embed.find("figure"),
-              that.options.captionPlaceholder
+              that.options.captionPlaceholder,
             );
           }
         }, 50);
@@ -1975,7 +1975,7 @@
       if ($el.hasClass("medium-insert-embeds-selected")) {
         $embed.not($el).removeClass("medium-insert-embeds-selected");
         $(
-          ".medium-insert-embeds-toolbar, .medium-insert-embeds-toolbar2"
+          ".medium-insert-embeds-toolbar, .medium-insert-embeds-toolbar2",
         ).remove();
         this.core.removeCaptions($el.find("figcaption"));
 
@@ -1991,7 +1991,7 @@
 
       $embed.removeClass("medium-insert-embeds-selected");
       $(
-        ".medium-insert-embeds-toolbar, .medium-insert-embeds-toolbar2"
+        ".medium-insert-embeds-toolbar, .medium-insert-embeds-toolbar2",
       ).remove();
 
       if ($(e.target).is(".medium-insert-caption-placeholder")) {
@@ -2018,11 +2018,11 @@
           e.preventDefault();
 
           $(
-            ".medium-insert-embeds-toolbar, .medium-insert-embeds-toolbar2"
+            ".medium-insert-embeds-toolbar, .medium-insert-embeds-toolbar2",
           ).remove();
 
           $empty = $(
-            this.templates["src/js/templates/core-empty-line.hbs"]().trim()
+            this.templates["src/js/templates/core-empty-line.hbs"]().trim(),
           );
           $embed.before($empty);
           $embed.remove();
@@ -2061,7 +2061,7 @@
         this.templates["src/js/templates/embeds-toolbar.hbs"]({
           styles: this.options.styles,
           actions: this.options.actions,
-        }).trim()
+        }).trim(),
       );
 
       $toolbar = $(".medium-insert-embeds-toolbar");
@@ -2089,7 +2089,7 @@
           this.repositionToolbars();
           this.repositionToolbars();
         }.bind(this),
-        0
+        0,
       );
     };
 
@@ -2102,7 +2102,7 @@
           ["absolute", "fixed"].indexOf(
             window
               .getComputedStyle(elementsContainer)
-              .getPropertyValue("position")
+              .getPropertyValue("position"),
           ) > -1,
         elementsContainerBoundary = elementsContainerAbsolute
           ? elementsContainer.getBoundingClientRect()
@@ -2220,7 +2220,7 @@
           $.data(
             this,
             "plugin_" + pluginName + addonName,
-            new Embeds(this, options)
+            new Embeds(this, options),
           );
         }
       });
@@ -2373,18 +2373,18 @@
         .on(
           "click",
           ".medium-insert-images-toolbar .medium-editor-action",
-          $.proxy(this, "toolbarAction")
+          $.proxy(this, "toolbarAction"),
         )
         .on(
           "click",
           ".medium-insert-images-toolbar2 .medium-editor-action",
-          $.proxy(this, "toolbar2Action")
+          $.proxy(this, "toolbar2Action"),
         );
 
       this.$el.on(
         "click",
         ".medium-insert-images img",
-        $.proxy(this, "selectImage")
+        $.proxy(this, "selectImage"),
       );
 
       $(window).on("resize", $.proxy(this, "autoRepositionToolbars"));
@@ -2466,7 +2466,7 @@
       }
 
       $file.fileupload(
-        $.extend(true, {}, this.options.fileUploadOptions, fileUploadOptions)
+        $.extend(true, {}, this.options.fileUploadOptions, fileUploadOptions),
       );
 
       $file.click();
@@ -2492,7 +2492,7 @@
 
       if (acceptFileTypes && !acceptFileTypes.test(file.type)) {
         uploadErrors.push(
-          this.options.messages.acceptFileTypesError + file.name
+          this.options.messages.acceptFileTypesError + file.name,
         );
       } else if (maxFileSize && file.size > maxFileSize) {
         uploadErrors.push(this.options.messages.maxFileSizeError + file.name);
@@ -2517,7 +2517,7 @@
       // Replace paragraph with div, because figure elements can't be inside paragraph
       if ($place.is("p")) {
         $place.replaceWith(
-          '<div class="medium-insert-active">' + $place.html() + "</div>"
+          '<div class="medium-insert-active">' + $place.html() + "</div>",
         );
         $place = this.$el.find(".medium-insert-active");
         if ($place.next().is("p")) {
@@ -2536,7 +2536,7 @@
         new XMLHttpRequest().upload
       ) {
         $place.append(
-          this.templates["src/js/templates/images-progressbar.hbs"]()
+          this.templates["src/js/templates/images-progressbar.hbs"](),
         );
       }
 
@@ -2666,7 +2666,7 @@
           this.templates["src/js/templates/images-image.hbs"]({
             img: img,
             progress: this.options.preview,
-          })
+          }),
         ).appendTo($place);
 
         $place.find("br").remove();
@@ -2738,7 +2738,7 @@
           if (that.options.captions) {
             that.core.addCaption(
               $image.closest("figure"),
-              that.options.captionPlaceholder
+              that.options.captionPlaceholder,
             );
           }
         }, 50);
@@ -2759,7 +2759,7 @@
       if ($el.is("img") && $el.hasClass("medium-insert-image-active")) {
         $image.not($el).removeClass("medium-insert-image-active");
         $(
-          ".medium-insert-images-toolbar, .medium-insert-images-toolbar2"
+          ".medium-insert-images-toolbar, .medium-insert-images-toolbar2",
         ).remove();
         this.core.removeCaptions($el);
         return;
@@ -2767,7 +2767,7 @@
 
       $image.removeClass("medium-insert-image-active");
       $(
-        ".medium-insert-images-toolbar, .medium-insert-images-toolbar2"
+        ".medium-insert-images-toolbar, .medium-insert-images-toolbar2",
       ).remove();
 
       if ($el.is(".medium-insert-caption-placeholder")) {
@@ -2914,7 +2914,7 @@
                 $empty = $(
                   this.templates[
                     "src/js/templates/core-empty-line.hbs"
-                  ]().trim()
+                  ]().trim(),
                 );
                 $parent.before($empty);
               }
@@ -2930,7 +2930,7 @@
           }
 
           $(
-            ".medium-insert-images-toolbar, .medium-insert-images-toolbar2"
+            ".medium-insert-images-toolbar, .medium-insert-images-toolbar2",
           ).remove();
           this.core.triggerInput();
 
@@ -2964,8 +2964,8 @@
                 type: this.options.deleteMethod || "POST",
                 data: { file: file },
               },
-              this.options.fileDeleteOptions
-            )
+              this.options.fileDeleteOptions,
+            ),
           );
         }
       }
@@ -2990,7 +2990,7 @@
         this.templates["src/js/templates/images-toolbar.hbs"]({
           styles: this.options.styles,
           actions: this.options.actions,
-        }).trim()
+        }).trim(),
       );
 
       $toolbar = $(".medium-insert-images-toolbar");
@@ -3019,7 +3019,7 @@
           this.repositionToolbars();
           this.repositionToolbars();
         }.bind(this),
-        0
+        0,
       );
     };
 
@@ -3032,7 +3032,7 @@
           ["absolute", "fixed"].indexOf(
             window
               .getComputedStyle(elementsContainer)
-              .getPropertyValue("position")
+              .getPropertyValue("position"),
           ) > -1,
         elementsContainerBoundary = elementsContainerAbsolute
           ? elementsContainer.getBoundingClientRect()
@@ -3186,7 +3186,7 @@
           $.data(
             this,
             "plugin_" + pluginName + addonName,
-            new Images(this, options)
+            new Images(this, options),
           );
         }
       });

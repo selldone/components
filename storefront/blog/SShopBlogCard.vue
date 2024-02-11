@@ -14,7 +14,10 @@
 
 <template>
   <v-card
-    class="s--shop-blog-card d-flex flex-column"
+    :class="{ '-flat': flat, '-rect': rect }"
+    :color="color"
+    :dark="dark"
+    :rounded="rect && '0'"
     :to="
       !window.ExternalWidget
         ? is_product
@@ -28,6 +31,7 @@
             }
         : undefined
     "
+    class="s--shop-blog-card d-flex flex-column"
     v-bind="
       window.ExternalWidget
         ? {
@@ -38,45 +42,41 @@
           }
         : {}
     "
-    :class="{ '-flat': flat, '-rect': rect }"
-    :dark="dark"
-    :color="color"
-    :tile="rect"
   >
     <div style="min-height: 180px">
       <v-img
-        class="blog-card-header"
         v-if="article.image"
-        height="180"
         :src="getShopImagePath(article.image)"
+        class="blog-card-header"
+        height="180"
       >
         <template v-slot:placeholder>
           <v-progress-circular
             :size="60"
-            indeterminate
             class="center-absolute"
+            indeterminate
           />
         </template>
       </v-img>
     </div>
     <v-icon v-if="is_product" class="absolute-top-end" dark
-      >shopping_bag</v-icon
-    >
+      >shopping_bag
+    </v-icon>
 
     <v-card-title>
       {{ article.title }}
     </v-card-title>
     <v-card-text class="text-start">
       <s-blog-user-category-view
-        :user="article.user"
         :categories="categories"
         :category-name="article.parent ? article.parent.category_id : null"
         :dark="dark"
+        :user="article.user"
       ></s-blog-user-category-view>
     </v-card-text>
 
     <v-card-text
-      class="flex-grow-1 text-justify subtitle-2 pt-0"
+      class="flex-grow-1 text-justify text-subtitle-2 pt-0"
       v-text="article.description"
     >
     </v-card-text>
@@ -84,12 +84,12 @@
     <p class="text-end mx-3 mb-2 x-small op-0-6">
       {{ getLocalTimeString(article.created_at, false, true, true) }}
 
-      <v-tooltip bottom>
+      <v-tooltip location="bottom">
         <template
-          v-slot:activator="{ on }"
           v-if="article.created_at !== article.updated_at"
+          v-slot:activator="{ props }"
         >
-          <v-icon v-on="on" small class="mx-2">refresh</v-icon>
+          <v-icon class="mx-2" size="small" v-bind="props">refresh</v-icon>
         </template>
         <span>{{
           getLocalTimeString(article.updated_at, false, true, true)
@@ -101,6 +101,7 @@
 
 <script>
 import SBlogUserCategoryView from "./SBlogUserCategoryView.vue";
+
 export default {
   name: "SShopBlogCard",
   components: { SBlogUserCategoryView },
@@ -130,7 +131,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--shop-blog-card {
   --shadow: 0px 2px 40px 0px rgba(0, 0, 0, 0.1);
   --radius: 14px;
@@ -158,6 +159,7 @@ export default {
   &.-flat {
     --shadow: none;
   }
+
   &.-rect {
     --radius: 0;
   }

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <img :src="icon" :height="size" :title="value" />
+  <img :height="size" :src="icon" :title="value" />
 </template>
 
 <script>
@@ -24,23 +24,25 @@ export default {
 
   props: {
     value: {},
-    size:{
-      default:16
-    }
+    size: {
+      default: 16,
+    },
   },
 
   computed: {
     icon() {
       const found = this.value
         ? CampaignMedium.find(
-            item => item.name.toLowerCase() === this.value.toLowerCase()
+            (item) => item.name.toLowerCase() === this.value.toLowerCase(),
           )
         : null;
 
-      return found ? found.icon : require("@core/enums/campaign/assets/mediums/default.svg");
-    }
+      return found
+        ? found.icon
+        : require("@core/enums/campaign/assets/mediums/default.svg");
+    },
   },
-  methods: {}
+  methods: {},
 };
 </script>
 

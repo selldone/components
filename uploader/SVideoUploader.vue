@@ -16,46 +16,47 @@
   <div>
     <!-- --------- Compact mode --------- -->
     <div v-if="on_compact" class="d-flex align-center py-5">
-      <v-avatar size="64" rounded="lg" class="me-2 border">
-        <v-icon x-large>smart_display</v-icon>
+      <v-avatar class="me-2 border" rounded="lg" size="64">
+        <v-icon size="x-large">smart_display</v-icon>
       </v-avatar>
       <div class="flex-grow-1">
         <b>{{ label }}</b>
-        <div class="small" v-if="video">{{ video }}</div>
+        <div v-if="video" class="small">{{ video }}</div>
       </div>
 
       <v-btn
-        icon
-        color="red"
         v-if="clearable && last_video"
+        class="ms-1"
+        color="red"
+        icon
+        title="Clear image"
         @click.stop="
           () => {
             last_video = null;
             $emit('onClear');
           }
         "
-        title="Clear image"
-        class="ms-1"
-        ><v-icon>close</v-icon></v-btn
       >
+        <v-icon>close</v-icon>
+      </v-btn>
 
       <v-btn
-        icon
+        :title="$t('global.actions.edit')"
         class="ms-1"
+        icon
         @click="
           force_edit = !force_edit;
           last_video = null;
         "
-        :title="$t('global.actions.edit')"
-        ><v-icon>edit</v-icon></v-btn
       >
+        <v-icon>edit</v-icon>
+      </v-btn>
     </div>
     <v-expand-transition>
       <div v-if="!on_compact">
         <div class="label-top" v-html="label"></div>
 
         <div
-          class="uploader-container mx-auto rounded-18px overflow-hidden"
           :class="{
             dense: dense,
             dark: dark,
@@ -63,30 +64,32 @@
             'has-value': true,
             ctrl: ctrl,
           }"
+          class="uploader-container mx-auto rounded-18px overflow-hidden"
         >
           <v-slide-y-transition>
             <div class="small">
-              <v-icon large class="me-1">smart_display</v-icon> {{ last_video }}
+              <v-icon class="me-1" size="large">smart_display</v-icon>
+              {{ last_video }}
             </div>
           </v-slide-y-transition>
 
           <file-pond
             v-if="!clearable || !last_video"
             ref="pond"
-            class="pointer-pointer fadeIn filepond-style"
-            :name="paramName"
-            style="min-height: 84px"
-            label-idle="Upload video file"
-            :allow-multiple="false"
             :accepted-file-types="acceptedFileTypes"
-            :server="server_credential"
+            :allow-multiple="false"
             :files="logo"
-            :maxFileSize="maxFileSize"
             :max-files="maxFiles"
+            :maxFileSize="maxFileSize"
+            :name="paramName"
+            :server="server_credential"
             check-validity="true"
-            @processfile="handleProcessFile"
-            @error="handleFilePondError"
+            class="pointer-pointer fadeIn filepond-style"
             credits="false"
+            label-idle="Upload video file"
+            style="min-height: 84px"
+            @error="handleFilePondError"
+            @processfile="handleProcessFile"
           />
 
           <p class="small file-size-limit">
@@ -94,19 +97,20 @@
           </p>
 
           <v-btn
-            fab
-            depressed
-            small
             v-if="clearable && last_video"
+            class="absolute-top-end m-2 z2"
+            fab
+            size="small"
+            variant="flat"
             @click.stop="
               () => {
                 last_video = null;
                 $emit('onClear');
               }
             "
-            class="absolute-top-end m-2 z2"
-            ><v-icon>close</v-icon></v-btn
           >
+            <v-icon>close</v-icon>
+          </v-btn>
         </div>
       </div>
     </v-expand-transition>
@@ -231,7 +235,7 @@ export default {
 
   mounted() {},
 
-  beforeDestroy() {},
+  beforeUnmount() {},
 
   methods: {
     handleFilePondError(error) {

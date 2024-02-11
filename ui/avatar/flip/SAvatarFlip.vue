@@ -14,22 +14,22 @@
 
 <template>
   <div
+    :style="{ '--size': size + 'px' }"
     class="flip-container"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
-    :style="{ '--size':size+'px' }"
   >
-    <div class="flipper" :class="{ flip: hover }">
+    <div :class="{ flip: hover }" class="flipper">
       <div class="-front">
         <!-- Front Content -->
-        <v-avatar rounded="lg" class="me-2" :size="size">
+        <v-avatar :size="size" class="me-2" rounded="lg">
           <v-img :src="src"></v-img>
         </v-avatar>
       </div>
-      <router-link class="-back" :to="to" target="_blank">
+      <router-link :to="to" class="-back" target="_blank">
         <!-- Back Content -->
         <v-icon size="14">open_in_new</v-icon>
-        <small>{{$t('global.actions.open')}}</small>
+        <small>{{ $t("global.actions.open") }}</small>
       </router-link>
     </div>
   </div>
@@ -43,7 +43,7 @@ export default defineComponent({
   props: {
     src: {},
     to: {},
-    size:{default:40}
+    size: { default: 40 },
   },
   data() {
     return {
@@ -54,7 +54,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .flip-container {
   perspective: 1000px;
 
@@ -97,7 +97,6 @@ export default defineComponent({
       color: #fff;
       border-radius: 12px;
       font-size: 10px;
-
     }
   }
 

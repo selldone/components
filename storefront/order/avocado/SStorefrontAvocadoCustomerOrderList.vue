@@ -13,16 +13,18 @@
   -->
 
 <template>
-  <div class="s--storefront-avocado-customer-order-list border-between-vertical">
-    <p v-if="orders.length" class="subtitle-2 text-start border-0">
+  <div
+    class="s--storefront-avocado-customer-order-list border-between-vertical"
+  >
+    <p v-if="orders.length" class="text-subtitle-2 text-start border-0">
       {{ $t("avocado.last_orders") }}
       :
     </p>
     <router-link
       v-for="item in orders"
       :key="item.id"
-      class="subtitle-2 px-1 row-hover pointer-pointer d-flex flex-column justify-center"
       :to="{ name: 'AvocadoOrderPage', params: { hash: item.hash } }"
+      class="text-subtitle-2 px-1 row-hover pointer-pointer d-flex flex-column justify-center"
       style="
         min-height: 120px;
         color: #000;
@@ -32,10 +34,10 @@
     >
       <div class="d-flex align-items-center">
         <img
+          class="ms-1 me-2 flex-grow-0 my-3"
+          height="48"
           src="@core/assets/order-types/basket-avocado.svg"
           width="48"
-          height="48"
-          class="ms-1 me-2 flex-grow-0 my-3"
         />
 
         <div class="flex-grow-1 w-50 text-start">
@@ -47,18 +49,18 @@
               >AVO-{{ item.id }}</b
             >
 
-            <small class="w-50" :title="getLocalTimeString(item.created_at)">{{
+            <small :title="getLocalTimeString(item.created_at)" class="w-50">{{
               getFromNowString(item.created_at)
             }}</small>
           </div>
           <v-progress-linear
             v-if="item.progress > 1"
-            :value="item.progress"
-            height="8"
+            :model-value="item.progress"
+            bg-color="#eee"
             color="blue"
+            height="8"
             rounded
             striped
-            background-color="#eee"
           >
           </v-progress-linear>
         </div>
@@ -73,8 +75,8 @@
           <price-view
             :amount="item.price"
             :currency="item.currency"
-            not-show-zero
             class="d-block"
+            not-show-zero
           ></price-view>
 
           <span
@@ -87,40 +89,40 @@
 
           <v-btn
             v-else-if="item.status === BasketStatus.Reserved.code && item.price"
-            x-small
-            depressed
             color="success"
+            size="x-small"
+            variant="flat"
           >
-            <v-icon size="7" class="blink-me me-1">lens</v-icon>
+            <v-icon class="blink-me me-1" size="7">lens</v-icon>
 
             {{ $t("avocado.check_now") }}
           </v-btn>
 
           <v-icon
             v-if="item.status === BasketStatus.Payed.code"
-            color="success"
             class="ms-1"
-            >check</v-icon
-          >
+            color="success"
+            >check
+          </v-icon>
           <v-icon
             v-if="item.status === BasketStatus.Canceled.code"
-            color="red"
             class="ms-1"
-            >highlight_off</v-icon
-          >
+            color="red"
+            >highlight_off
+          </v-icon>
         </div>
       </div>
 
       <products-dense-images-circles
-        raw-images-path
         v-if="item.items && item.items.some((i) => i.image)"
         :ids="getItemsImages(item)"
+        raw-images-path
       ></products-dense-images-circles>
 
       <s-order-delivery-status-stepper
         v-if="item.status === BasketStatus.Payed.code"
-        :states="AvocadoOrderStates"
         :state="item.delivery_state"
+        :states="AvocadoOrderStates"
         class="w-100 mb-5 mt-2"
         show-caption
       />
@@ -134,9 +136,14 @@ import { AvocadoOrderStates } from "@core/enums/avocado/AvocadoOrderStates";
 import SOrderDeliveryStatusStepper from "@components/order/delivery/status/stepper/SOrderDeliveryStatusStepper.vue";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+
 export default {
   name: "SStorefrontAvocadoCustomerOrderList",
-  components: { ProductsDenseImagesCircles, SOrderDeliveryStatusStepper, SOrderStatusView },
+  components: {
+    ProductsDenseImagesCircles,
+    SOrderDeliveryStatusStepper,
+    SOrderStatusView,
+  },
   props: {
     orders: {},
   },
@@ -159,13 +166,12 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 
 .s--storefront-avocado-customer-order-list {
-
 }
 
 /*

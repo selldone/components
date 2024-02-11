@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--shop-buyer-receiver-info-widget" :class="{ dark: dark }">
+  <div :class="{ dark: dark }" class="s--shop-buyer-receiver-info-widget">
     <p class="text-start-dir">
       <i class="fas fa-truck me-1" />
       {{ $t("global.receiver_info.address") }}
@@ -28,12 +28,12 @@
       <s-country-select
         v-else
         v-model="receiverInfo.country"
-        item-value="alpha2"
-        required
-        label="Select your country"
-        filled
-        rounded
         class="max-width-field-mini"
+        filled
+        item-value="alpha2"
+        label="Select your country"
+        required
+        rounded
         @change="(val) => $emit('update:country', val)"
       ></s-country-select>
 
@@ -54,8 +54,8 @@
           receiverInfo.postal ? receiverInfo.postal : $t("global.commons.empty")
         }}
       </span>
-      <span v-if="!receiverInfo.postal" class="ms-4 red--text text-lowercase">
-        <v-icon small color="red" class="me-1 blink-me"
+      <span v-if="!receiverInfo.postal" class="ms-4 text-red text-lowercase">
+        <v-icon class="me-1 blink-me" color="red" size="small"
           >fa:fas fa-exclamation-circle</v-icon
         >
         {{ $t("global.commons.mandatory") }}!
@@ -74,8 +74,8 @@
         {{ receiverInfo.full_name }}
       </span>
 
-      <span v-if="!receiverInfo.phone" class="ms-4 red--text text-lowercase">
-        <v-icon small color="red" class="me-1 blink-me"
+      <span v-if="!receiverInfo.phone" class="ms-4 text-red text-lowercase">
+        <v-icon class="me-1 blink-me" color="red" size="small"
           >fa:fas fa-exclamation-circle</v-icon
         >
         {{ $t("global.commons.mandatory") }}!
@@ -96,17 +96,17 @@
 
     <v-img
       v-if="!noMap"
-      @click="$emit('show:map')"
-      width="100%"
       :max-width="receiverInfo.location ? 640 : 64"
-      height="auto"
       :min-height="receiverInfo.location ? 250 : undefined"
-      class="map-view-box -jumping pointer-pointer fadeIn delay_300 rounded-18px mx-auto"
       :src="
         receiverInfo.location
           ? `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${receiverInfo.location.lng},${receiverInfo.location.lat},17,0,0/800x400?access_token=pk.eyJ1IjoicGFqdWhhYW4iLCJhIjoiY2sxaHNtbnU3MDFjcjNta2V0OTZ0d2ExYiJ9.YKRh0EP7NnhbmuSil7AvSw`
           : require('@components/assets/icons/map-shop.svg')
       "
+      class="map-view-box -jumping pointer-pointer fadeIn delay_300 rounded-18px mx-auto"
+      height="auto"
+      width="100%"
+      @click="$emit('show:map')"
     >
       <s-map-location-marker
         v-if="receiverInfo.location"
@@ -119,6 +119,7 @@
 <script>
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 import SMapLocationMarker from "@components/map/market/SMapLocationMarker.vue";
+
 export default {
   name: "SShopCustomerReceiverInfoWidget",
   components: { SMapLocationMarker, SCountrySelect },
@@ -164,7 +165,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -179,6 +180,7 @@ export default {
       border-bottom: 1px dotted rgba(255, 255, 255, 0.78);
     }
   }
+
   .field-value {
     font-size: 0.9em;
     font-weight: 500;

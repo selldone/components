@@ -16,26 +16,26 @@
   <span>
     <!-- iOS -->
     <v-btn
-      class="rounded-8px tnt m-1"
-      :size="large?'large':small?'small':undefined"
       v-if="location && iphone"
       :href="`http://maps.apple.com/?sll=${location.lat},${location.lng}`"
-      target="_blank"
       :icon="icon"
+      :size="large ? 'large' : small ? 'small' : undefined"
+      :variant="icon ? 'text' : text ? 'text' : 'flat'"
+      class="rounded-8px tnt m-1"
+      target="_blank"
       @click.stop
-      :variant="icon?'text':text?'text':'flat'"
       ><v-icon class="me-1" color="blue">near_me</v-icon>
       {{ !icon ? $t("global.commons.navigation_app") : "" }}</v-btn
     >
     <!-- Android -->
     <v-btn
-      class="rounded-8px tnt m-1"
-      :size="large?'large':small?'small':undefined"
       v-else-if="location && android"
       :href="`maps://maps.google.com/maps?daddr=${location.lat},${location.lng}`"
-      target="_blank"
       :icon="icon"
-      :variant="icon?'text':text?'text':'flat'"
+      :size="large ? 'large' : small ? 'small' : undefined"
+      :variant="icon ? 'text' : text ? 'text' : 'flat'"
+      class="rounded-8px tnt m-1"
+      target="_blank"
       @click.stop
       ><v-icon class="me-1" color="green">near_me</v-icon>
       {{ !icon ? $t("global.commons.navigation_app") : "" }}</v-btn
@@ -43,15 +43,15 @@
     <!-- Default -->
     <v-btn
       v-if="!onlyOne || (!iphone && !android)"
-      class="rounded-8px tnt m-1"
-      :size="large?'large':small?'small':undefined"
       :href="`https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}&travelmode=${travelmode}`"
-      target="_blank"
       :icon="icon"
-      :variant="icon?'text':text?'text':'flat'"
+      :size="large ? 'large' : small ? 'small' : undefined"
       :title="$t('global.commons.map')"
+      :variant="icon ? 'text' : text ? 'text' : 'flat'"
+      class="rounded-8px tnt m-1"
+      target="_blank"
       @click.stop
-      ><img src="../../assets/icons/google-map.svg" width="20" height="20" />
+      ><img height="20" src="../../assets/icons/google-map.svg" width="20" />
       <span v-if="!icon" class="ms-1">{{
         $t("global.commons.navigation")
       }}</span>

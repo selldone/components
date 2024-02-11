@@ -18,19 +18,19 @@
       <v-scale-transition hide-on-leave>
         <div
           v-if="front"
-          class="card card--front widget-hover-dark"
           :style="`background-image:url(${getShopImagePath(
-            giftCard.gift_type.bg
+            giftCard.gift_type.bg,
           )}); --background:${giftCard.gift_type.color}`"
+          class="card card--front widget-hover-dark"
         >
           <h2 class="card-title">
             {{ giftCard.gift_type.title }}
 
-            <v-tooltip v-if="giftCard.title || giftCard.note" bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn color="#fff" v-bind="attrs" v-on="on" icon
-                  ><v-icon>info</v-icon></v-btn
-                >
+            <v-tooltip v-if="giftCard.title || giftCard.note" location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-btn color="#fff" icon v-bind="props">
+                  <v-icon>info</v-icon>
+                </v-btn>
               </template>
               <div class="text-start">
                 <p v-if="giftCard.title" class="m-1 font-weight-bold">
@@ -66,16 +66,16 @@
           </div>
 
           <s-currency-icon
-            class="card__logo"
             :currency="giftCard.currency"
+            class="card__logo"
             flag
           ></s-currency-icon>
 
           <s-circle-button
-            class="card__flip"
-            icon="card_membership"
             :tooltip="$t('global.gift_card.transfer')"
+            class="card__flip"
             color="#fff"
+            icon="card_membership"
             @click="front = !front"
           />
         </div>
@@ -97,18 +97,18 @@
 
           <s-circle-button
             v-if="false"
-            icon="send"
             :tooltip="$t('global.gift_card.send_to_friend')"
             color="#fff"
             disabled
+            icon="send"
           />
 
           <s-circle-button
-            class="card__flip"
-            icon="fa:fas fa-credit-card"
-            adjust-for-font-awesome
             :tooltip="$t('global.actions.close')"
+            adjust-for-font-awesome
+            class="card__flip"
             color="#fff"
+            icon="fa:fas fa-credit-card"
             @click="front = !front"
           />
         </div>
@@ -119,6 +119,7 @@
 
 <script>
 import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
+
 export default {
   name: "SStorefrontGiftcardView",
   components: { SCurrencyIcon },
@@ -135,7 +136,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .card {
   position: relative;
   display: inline-block;
@@ -158,6 +159,7 @@ export default {
 
   background-size: cover;
   font-weight: 300;
+
   &__number {
     font-size: 24px;
     padding: 90px 0 15px;
@@ -244,6 +246,7 @@ export default {
     color: white;
     font-size: 1rem;
     border-radius: 6px;
+
     p {
       margin: 0;
       text-align: center;

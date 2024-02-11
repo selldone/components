@@ -16,16 +16,18 @@
   <v-dialog
     v-if="comment"
     v-model="dialog"
+    :fullscreen="$vuetify.display.mdAndDown"
     max-width="560"
     scrollable
-    :fullscreen="$vuetify.display.mdAndDown"
   >
     <v-card min-height="220">
       <v-card-title>
         Comment reports
 
         <v-spacer></v-spacer>
-        <v-btn icon large @click="dialog = false"><v-icon>close</v-icon></v-btn>
+        <v-btn icon size="large" @click="dialog = false">
+          <v-icon>close</v-icon>
+        </v-btn>
       </v-card-title>
 
       <v-card-text class="text-start">
@@ -33,7 +35,7 @@
           <v-col v-for="item in reports" :key="item.report" cols="12">
             <div class="d-flex align-center">
               <h3 class="text-h4">
-                {{  numeralFormat(item.count ,"0.[00]a") }}
+                {{ numeralFormat(item.count, "0.[00]a") }}
               </h3>
               <s-dense-images-circles-users
                 :ids="item.users"
@@ -46,8 +48,8 @@
           </v-col>
           <v-col
             v-if="!busy && (!reports || !reports.length)"
-            cols="12"
             class="text-center text-h4"
+            cols="12"
           >
             No report!
           </v-col>
@@ -99,8 +101,8 @@ export default {
         .get(
           window.CAPI.GET_COMMUNITY_COMMENT_REPORTS(
             this.community.id,
-            this.comment.id
-          )
+            this.comment.id,
+          ),
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -130,7 +132,7 @@ export default {
       this.getCommentReports();
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("community:show-comment-reports");
   },
 };

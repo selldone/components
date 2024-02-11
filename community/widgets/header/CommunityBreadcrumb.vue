@@ -15,11 +15,11 @@
 <template>
   <v-col cols="12">
     <div
-      class="c-widget d-sm-flex align-center nopx overflow-x-auto -header py-2 thin-scroll position-relative"
       :class="{
         'text-center': $vuetify.display.xsOnly,
         'rounded-28px': !$vuetify.display.xsOnly,
       }"
+      class="c-widget d-sm-flex align-center nopx overflow-x-auto -header py-2 thin-scroll position-relative"
     >
       <div
         class="flex-grow-1 px-4 py-2 d-block d-sm-flex align-center c-breadcrumb"
@@ -28,63 +28,61 @@
 
         <v-btn
           v-if="!USER()"
+          :class="{ 'absolute-top-end': $vuetify.display.xsOnly }"
+          :size="!$vuetify.display.xsOnly && 'small'"
+          class="me-2 ms-sm-n2"
           icon
           @click="NeedLogin()"
-          class="me-2 ms-sm-n2"
-          :class="{ 'absolute-top-end': $vuetify.display.xsOnly }"
-          :small="!$vuetify.display.xsOnly"
-          ><v-icon>person</v-icon></v-btn
         >
+          <v-icon>person</v-icon>
+        </v-btn>
 
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ User menu ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
         <v-menu
           v-if="USER()"
-          offset-y
-          min-width="220"
-          rounded="lg"
-          open-on-hover
-          open-on-click
           close-delay="300ms"
+          min-width="220"
+          offset-y
+          open-on-click
+          open-on-hover
+          rounded="lg"
         >
-          <template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ props }">
             <v-avatar
-              v-bind="attrs"
-              v-on="on"
+              :class="{ 'float-start': $vuetify.display.xsOnly }"
               :size="$vuetify.display.xsOnly ? 48 : 36"
               class="me-2 ms-sm-n2 avatar-gradient -thin -user"
-              :class="{ 'float-start': $vuetify.display.xsOnly }"
+              v-bind="props"
             >
               <v-img :src="getUserAvatar(USER_ID())" />
             </v-avatar>
           </template>
 
           <v-sheet class="text-start">
-            <v-list dense>
+            <v-list density="compact">
               <template v-if="access.admin">
                 <v-list-item>
-                  <v-list-item-title class="text-uppercase">{{
-                    $t("community.commons.you_are_admin")
-                  }}</v-list-item-title>
-                  <v-list-item-icon
-                    ><v-icon color="amber" small
-                      >fa:fas fa-crown</v-icon
-                    ></v-list-item-icon
-                  >
+                  <v-list-item-title class="text-uppercase"
+                    >{{ $t("community.commons.you_are_admin") }}
+                  </v-list-item-title>
+                  <v-list-item-icon>
+                    <v-icon color="amber" size="small">fa:fas fa-crown </v-icon>
+                  </v-list-item-icon>
                 </v-list-item>
 
                 <v-divider></v-divider>
               </template>
 
               <v-list-item v-else-if="access.moderator">
-                <v-list-item-title class="text-uppercase">{{
-                  $t("community.commons.you_are_moderator")
-                }}</v-list-item-title>
-                <v-list-item-icon
-                  ><v-icon color="success" small
-                    >admin_panel_settings</v-icon
-                  ></v-list-item-icon
-                >
+                <v-list-item-title class="text-uppercase"
+                  >{{ $t("community.commons.you_are_moderator") }}
+                </v-list-item-title>
+                <v-list-item-icon>
+                  <v-icon color="success" size="small"
+                    >admin_panel_settings
+                  </v-icon>
+                </v-list-item-icon>
               </v-list-item>
 
               <!-- profile -->
@@ -107,30 +105,29 @@
               <!-- Invite -->
 
               <v-list-item @click="show_invite = true">
-                <v-list-item-title>{{
-                  $t("community.commons.invite_friend")
-                }}</v-list-item-title>
+                <v-list-item-title
+                  >{{ $t("community.commons.invite_friend") }}
+                </v-list-item-title>
               </v-list-item>
 
               <!-- Nominate -->
 
               <v-list-item
-                @click="show_nominate = true"
                 :disabled="!is_verified_user"
+                @click="show_nominate = true"
               >
-                <v-list-item-content>
-                  <v-list-item-title
-                    >{{ $t("community.commons.nominate_friend") }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle v-if="!is_verified_user">{{
-                    $t("community.commons.request_nominate")
-                  }}</v-list-item-subtitle>
-                </v-list-item-content>
+                <v-list-item-title
+                  >{{ $t("community.commons.nominate_friend") }}
+                </v-list-item-title>
+                <v-list-item-subtitle v-if="!is_verified_user"
+                  >{{ $t("community.commons.request_nominate") }}
+                </v-list-item-subtitle>
+
                 <v-list-item-icon
                   v-if="is_verified_user"
                   class="text-success font-weight-bold"
-                  >{{ profile_credit }}x</v-list-item-icon
-                >
+                  >{{ profile_credit }}x
+                </v-list-item-icon>
               </v-list-item>
 
               <template v-if="access.admin || access.moderator">
@@ -141,11 +138,11 @@
                       !community_config.show_deletes
                   "
                 >
-                  <v-list-item-title>{{
-                    $t("community.commons.show_deleted_posts")
-                  }}</v-list-item-title>
-                  <v-list-item-icon
-                    ><v-icon
+                  <v-list-item-title
+                    >{{ $t("community.commons.show_deleted_posts") }}
+                  </v-list-item-title>
+                  <v-list-item-icon>
+                    <v-icon
                       :color="
                         community_config.show_deletes ? 'success' : undefined
                       "
@@ -153,9 +150,9 @@
                         community_config.show_deletes
                           ? "radio_button_checked"
                           : "radio_button_unchecked"
-                      }}</v-icon
-                    ></v-list-item-icon
-                  >
+                      }}
+                    </v-icon>
+                  </v-list-item-icon>
                 </v-list-item>
               </template>
             </v-list>
@@ -164,25 +161,29 @@
 
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Home ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
         <router-link
-          :to="{ name: 'CommunityHomePage' }"
-          class="d-block text-start"
           :class="{
             'limited-text-300px': $vuetify.display.xsOnly,
             'limited-text-150px': !$vuetify.display.xsOnly,
           }"
+          :to="{ name: 'CommunityHomePage' }"
+          class="d-block text-start"
           exact
-          >{{ $t("community.commons.categories") }}</router-link
-        >
+          >{{ $t("community.commons.categories") }}
+        </router-link>
 
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Category ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
         <template v-if="category">
-          <v-icon small class="mx-1 d-none d-sm-block">{{
-            $t("icons.chevron_next")
-          }}</v-icon>
+          <v-icon class="mx-1 d-none d-sm-block" size="small"
+            >{{ $t("icons.chevron_next") }}
+          </v-icon>
 
           <component
             :is="topic ? 'router-link' : 'span'"
+            :class="{
+              'limited-text-300px': $vuetify.display.xsOnly,
+              'limited-text-150px': !$vuetify.display.xsOnly,
+            }"
             :to="{
               name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
               params: {
@@ -191,23 +192,23 @@
               },
             }"
             class="d-block text-start"
-            :class="{
-              'limited-text-300px': $vuetify.display.xsOnly,
-              'limited-text-150px': !$vuetify.display.xsOnly,
-            }"
-            >{{ category.title }}</component
-          >
+            >{{ category.title }}
+          </component>
         </template>
 
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Topic ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
         <template v-if="topic">
-          <v-icon small class="mx-1 d-none d-sm-block">{{
-            $t("icons.chevron_next")
-          }}</v-icon>
+          <v-icon class="mx-1 d-none d-sm-block" size="small"
+            >{{ $t("icons.chevron_next") }}
+          </v-icon>
 
           <component
             :is="post ? 'router-link' : 'span'"
+            :class="{
+              'limited-text-300px': $vuetify.display.xsOnly,
+              'limited-text-150px': !$vuetify.display.xsOnly,
+            }"
             :to="{
               name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
               params: {
@@ -218,19 +219,15 @@
               },
             }"
             class="d-block text-start"
-            :class="{
-              'limited-text-300px': $vuetify.display.xsOnly,
-              'limited-text-150px': !$vuetify.display.xsOnly,
-            }"
-            >{{ topic.title }}</component
-          >
+            >{{ topic.title }}
+          </component>
         </template>
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Post ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
         <template v-if="post">
-          <v-icon small class="mx-1 d-none d-sm-block">{{
-            $t("icons.chevron_next")
-          }}</v-icon>
+          <v-icon class="mx-1 d-none d-sm-block" size="small"
+            >{{ $t("icons.chevron_next") }}
+          </v-icon>
           <v-avatar
             :size="24"
             class="hover-scale avatar-gradient -thin -black me-1"
@@ -239,18 +236,22 @@
           </v-avatar>
 
           <span
-            class="d-block text-start"
             :class="{
               'limited-text-300px': $vuetify.display.xsOnly,
               'limited-text-150px': !$vuetify.display.xsOnly,
             }"
+            class="d-block text-start"
           >
             {{ $t("community.commons.post") }}
 
-            <v-icon v-if="post.video" small color="#111">smart_display</v-icon>
-            <v-icon v-if="post.voice" small color="#111">graphic_eq</v-icon>
-            <v-icon v-if="post.image" small color="#111">image</v-icon>
-            <v-icon v-if="post.link" small color="#111">link</v-icon>
+            <v-icon v-if="post.video" color="#111" size="small"
+              >smart_display</v-icon
+            >
+            <v-icon v-if="post.voice" color="#111" size="small"
+              >graphic_eq</v-icon
+            >
+            <v-icon v-if="post.image" color="#111" size="small">image</v-icon>
+            <v-icon v-if="post.link" color="#111" size="small">link</v-icon>
           </span>
         </template>
       </div>
@@ -258,15 +259,15 @@
       <!-- Other social channels -->
       <v-btn
         v-if="bot_telegram && bot_telegram.enable"
-        icon
-        class="me-1 sub-caption -hover"
-        :title="$t('global.social_network.telegram')"
         :href="`https://t.me/${bot_telegram.channel}`"
+        :title="$t('global.social_network.telegram')"
+        class="me-1 sub-caption -hover"
+        icon
         target="_blank"
         ><img
-          width="16"
           height="16"
           src="../../../assets/trademark/telegram.svg"
+          width="16"
       /></v-btn>
 
       <template v-if="access.admin">
@@ -274,109 +275,117 @@
 
         <v-btn
           v-if="hasBot"
-          icon
-          class="me-1 sub-caption -hover"
           :caption="$t('global.commons.bot')"
+          :color="showBot ? 'blue' : undefined"
+          class="me-1 sub-caption -hover"
+          icon
           @click="
             $emit('update:showBot', !showBot);
             $emit('update:showReport', false);
             $emit('update:showEdit', false);
           "
-          :color="showBot ? 'blue' : undefined"
-          ><v-icon small>fa:fas fa-robot</v-icon></v-btn
         >
+          <v-icon size="small">fa:fas fa-robot</v-icon>
+        </v-btn>
 
         <!-- Moderators -->
         <v-btn
-          icon
-          class="me-1 sub-caption -hover"
-          @click="show_access = !show_access"
-          :color="show_access ? 'blue' : undefined"
           :caption="$t('community.commons.moderators')"
-          ><v-icon small>add_moderator</v-icon></v-btn
+          :color="show_access ? 'blue' : undefined"
+          class="me-1 sub-caption -hover"
+          icon
+          @click="show_access = !show_access"
         >
+          <v-icon size="small">add_moderator</v-icon>
+        </v-btn>
 
         <!-- Report / Statistics -->
 
         <v-btn
           v-if="hasReport"
-          icon
-          class="me-1 sub-caption -hover"
           :caption="$t('community.commons.analytics')"
+          :color="showReport ? 'blue' : undefined"
+          class="me-1 sub-caption -hover"
+          icon
           @click="
             $emit('update:showReport', !showReport);
             $emit('update:showEdit', false);
             $emit('update:showBot', false);
           "
-          :color="showReport ? 'blue' : undefined"
-          ><v-icon small>donut_small</v-icon></v-btn
         >
+          <v-icon size="small">donut_small</v-icon>
+        </v-btn>
         <!-- Edit -->
 
         <v-btn
           v-if="hasEdit"
-          icon
-          class="me-1 sub-caption -hover"
           :caption="$t('community.commons.edit')"
+          :color="showEdit ? 'blue' : undefined"
+          class="me-1 sub-caption -hover"
+          icon
           @click="
             $emit('update:showEdit', !showEdit);
             $emit('update:showReport', false);
             $emit('update:showBot', false);
           "
-          :color="showEdit ? 'blue' : undefined"
-          ><v-icon small>edit</v-icon></v-btn
         >
+          <v-icon size="small">edit</v-icon>
+        </v-btn>
 
-        <v-divider vertical class="my-0 mx-1"></v-divider>
+        <v-divider class="my-0 mx-1" vertical></v-divider>
       </template>
 
       <!-- Notification -->
 
       <v-btn
         v-if="is_topic && USER()"
-        icon
+        :caption="$t('community.commons.notify')"
+        :color="notify ? 'amber' : undefined"
         :loading="busy_notify"
         class="me-1 sub-caption -hover"
-        :caption="$t('community.commons.notify')"
+        icon
         @click="toggleNotify()"
-        :color="notify ? 'amber' : undefined"
-        ><v-icon small>{{
-          notify ? "notifications_active" : "notifications_none"
-        }}</v-icon></v-btn
       >
+        <v-icon size="small"
+          >{{ notify ? "notifications_active" : "notifications_none" }}
+        </v-icon>
+      </v-btn>
       <!-- Rule -->
 
       <v-btn
         v-if="is_topic && USER()"
-        icon
-        class="me-1 sub-caption -hover"
         :caption="$t('community.commons.rules')"
-        @click="dialog_rule = true"
         :color="showRule ? 'blue' : undefined"
-        ><v-icon small>gavel</v-icon></v-btn
+        class="me-1 sub-caption -hover"
+        icon
+        @click="dialog_rule = true"
       >
+        <v-icon size="small">gavel</v-icon>
+      </v-btn>
 
       <!-- Feeds -->
       <v-btn
         v-if="USER()"
-        icon
-        class="me-1 sub-caption -hover"
         :caption="$t('community.commons.explore')"
         :to="{ name: 'CommunityFeedPage' }"
+        class="me-1 sub-caption -hover"
         exact
-        ><v-icon small>explore</v-icon></v-btn
+        icon
       >
+        <v-icon size="small">explore</v-icon>
+      </v-btn>
 
       <!-- Comments (Replies) -->
       <v-btn
         v-if="USER()"
-        icon
-        class="me-1 sub-caption -hover"
         :caption="$t('community.commons.my_feed')"
         :to="{ name: 'CommunityMyCommentsPage' }"
+        class="me-1 sub-caption -hover"
         exact
-        ><v-icon small>question_answer</v-icon></v-btn
+        icon
       >
+        <v-icon size="small">question_answer</v-icon>
+      </v-btn>
     </div>
 
     <!-- ------------------------------------ Moderators / Admins ------------------------------------ -->
@@ -384,8 +393,8 @@
     <v-expand-transition>
       <div v-if="show_access">
         <community-access-controller
-          :shop="shop"
           :community="community"
+          :shop="shop"
         ></community-access-controller>
       </div>
     </v-expand-transition>
@@ -393,11 +402,11 @@
     <!-- ------------------------------------ Blocked user ------------------------------------ -->
     <v-alert
       v-if="block_at"
-      class="mt-8 subtitle-2"
-      dense
+      border="start"
+      class="mt-8 text-subtitle-2"
       color="red"
       colored-border
-      border="left"
+      density="compact"
       >{{ $t("community.commons.blocked_message") }}:
       {{ getLocalTimeString(block_at) }}
       <br />
@@ -408,21 +417,21 @@
     <v-dialog
       v-if="dialog_rule"
       v-model="dialog_rule"
+      :fullscreen="$vuetify.display.smAndDown"
       max-width="640"
       scrollable
-      :fullscreen="$vuetify.display.smAndDown"
     >
       <v-card min-height="420">
         <v-card-title>
           {{ $t("community.commons.rules") }}
           <v-spacer></v-spacer>
-          <v-btn icon large @click="dialog_rule = false"
-            ><v-icon>close</v-icon></v-btn
-          >
+          <v-btn icon size="large" @click="dialog_rule = false">
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-card-title>
         <v-card-text
-          style="font-size: 16px; line-height: normal; color: #333"
           class="text-start"
+          style="font-size: 16px; line-height: normal; color: #333"
           v-html="rule_html"
         >
         </v-card-text>
@@ -433,29 +442,29 @@
     <v-dialog
       v-if="show_invite"
       v-model="show_invite"
+      :fullscreen="$vuetify.display.smAndDown"
       max-width="820"
       scrollable
-      :fullscreen="$vuetify.display.smAndDown"
     >
       <v-card min-height="420">
         <v-card-title
           >{{ $t("community.commons.invite_friend") }}
           <v-spacer></v-spacer>
-          <v-btn icon large @click="show_invite = false"
-            ><v-icon>close</v-icon></v-btn
-          >
+          <v-btn icon size="large" @click="show_invite = false">
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-card-title>
 
         <v-card-text
-          style="font-size: 16px; line-height: normal; color: #333"
           class="text-start"
+          style="font-size: 16px; line-height: normal; color: #333"
         >
           <p>{{ $t("community.invite.send_invite_msg") }}:</p>
 
           <div
+            v-copy="invite_message + '\n\n' + invite_link"
             class="editable p-3 my-3"
             style="line-height: 1.8em"
-            v-copy="invite_message + '\n\n' + invite_link"
           >
             {{ invite_message }}
             <br />
@@ -464,14 +473,14 @@
 
           <div class="text-center">
             <s-social-share-buttons
-              class="mt-3"
-              :title="`Invite you to ${
-                community.name
-              } ${SetupService.GetTwitterAccount()}`"
               :description="invite_message + '\n\n' + invite_link"
               :hashtags="`${community.name}`"
               :quote="invite_message"
+              :title="`Invite you to ${
+                community.name
+              } ${SetupService.GetTwitterAccount()}`"
               :url="invite_link"
+              class="mt-3"
               small
             ></s-social-share-buttons>
           </div>
@@ -483,23 +492,23 @@
     <v-dialog
       v-if="show_nominate"
       v-model="show_nominate"
+      :fullscreen="$vuetify.display.smAndDown"
       max-width="640"
       scrollable
-      :fullscreen="$vuetify.display.smAndDown"
     >
       <v-card min-height="420">
         <v-card-title>
           {{ $t("community.nominate.title") }}
 
           <v-spacer></v-spacer>
-          <v-btn icon large @click="show_nominate = false"
-            ><v-icon>close</v-icon></v-btn
-          >
+          <v-btn icon size="large" @click="show_nominate = false">
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-card-title>
 
         <v-card-text
-          style="font-size: 16px; line-height: normal; color: #333"
           class="text-start"
+          style="font-size: 16px; line-height: normal; color: #333"
         >
           <p>{{ $t("community.nominate.note") }}</p>
 
@@ -510,51 +519,49 @@
             >
           </p>
 
-          <v-alert type="info" v-if="profile_credit <= 0">
-            {{ $t("community.nominate.no_credit_message") }}</v-alert
-          >
+          <v-alert v-if="profile_credit <= 0" type="info">
+            {{ $t("community.nominate.no_credit_message") }}
+          </v-alert>
 
           <user-email-input
-            :user.sync="user_nominate"
-            class="mt-3"
+            v-model:user="user_nominate"
+            :class="{ disabled: profile_credit <= 0 }"
             :label="$t('community.nominate.user_nominate')"
-            with-profile
+            class="mt-3"
             exclude-me
             no-icon
-            :class="{ disabled: profile_credit <= 0 }"
+            with-profile
           ></user-email-input>
 
-          <v-alert
-            v-if="user_nominate && !user_nominate.profile"
-            type="error"
-            >{{ $t("community.invite.not_have_profile_error") }}</v-alert
-          >
+          <v-alert v-if="user_nominate && !user_nominate.profile" type="error"
+            >{{ $t("community.invite.not_have_profile_error") }}
+          </v-alert>
           <v-alert
             v-else-if="user_nominate && user_nominate.profile.nominated_id"
             type="error"
-            >{{ $t("community.invite.nominated_before_error") }}</v-alert
-          >
+            >{{ $t("community.invite.nominated_before_error") }}
+          </v-alert>
           <v-alert
             v-else-if="user_nominate && user_nominate.profile.verified"
             type="error"
-            >{{ $t("community.invite.verified_before_error") }}</v-alert
-          >
+            >{{ $t("community.invite.verified_before_error") }}
+          </v-alert>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
-              color="primary"
-              x-large
-              depressed
               :disabled="!can_nominate"
-              @click="nominateUser()"
               :loading="busy_nominate"
+              color="primary"
+              size="x-large"
+              variant="flat"
+              @click="nominateUser()"
             >
               <v-icon class="me-1">group_add</v-icon>
 
               {{ $t("community.nominate.action") }}
-              {{ user_nominate ? user_nominate.email : "" }}</v-btn
-            >
+              {{ user_nominate ? user_nominate.email : "" }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -748,11 +755,11 @@ export default {
         .post(
           window.CAPI.POST_COMMUNITY_TOPIC_NOTIFY(
             this.community.id,
-            this.topic.id
+            this.topic.id,
           ),
           {
             notify: !this.notify,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -773,12 +780,13 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .c-breadcrumb {
   a {
     color: #0b6aaa;
   }
 }
+
 .-header {
   min-height: 74px;
   font-size: 14px;

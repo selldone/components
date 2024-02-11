@@ -14,37 +14,45 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    class="images-compare"
     :data="json_data"
-    spellcheck="false"
+    class="images-compare"
     contenteditable="false"
+    spellcheck="false"
   >
     <s-article-editor-component-toolbar
       v-if="editable"
-      @click:edit="showEdit()"
       :element="element"
       :title="$t('global.commons.images_compare')"
       edit-icon="add_photo_alternate"
+      @click:edit="showEdit()"
     >
       <v-btn
-        @click="showEdit('size')"
-        variant="text"
         class="text-body-2 border-end pe-2 text-capitalize"
+        variant="text"
+        @click="showEdit('size')"
         >{{ $t("global.commons.max_height") }}: <b>{{ max_width }}</b></v-btn
       >
     </s-article-editor-component-toolbar>
 
     <vue-compare-image
       v-if="muted_images && show"
-      style="direction: ltr; min-height: 64px"
+      :handle-size="40"
+      :left-image="
+        muted_images.original
+          ? muted_images.original
+          : require('@components/article/add-on/comparison/asset/image-placeholder.svg')
+      "
+      :right-image="
+        muted_images.compare
+          ? muted_images.compare
+          : require('@components/article/add-on/comparison/asset/image-placeholder.svg')
+      "
+      :slider-line-width="2"
+      :slider-position-percentage="0.5"
       :style="{ 'max-width': `${max_width}` }"
       class="mx-auto"
-      :left-image="muted_images.original?muted_images.original:require('@components/article/add-on/comparison/asset/image-placeholder.svg')"
-      :right-image="muted_images.compare?muted_images.compare:require('@components/article/add-on/comparison/asset/image-placeholder.svg')"
-      :handle-size="40"
-      :slider-line-width="2"
       hover
-      :slider-position-percentage="0.5"
+      style="direction: ltr; min-height: 64px"
     />
   </div>
 </template>
@@ -93,8 +101,7 @@ export default {
       return JSON.stringify(this.muted_images);
     },
     max_width() {
-      if (!this.muted_images.max_width || !this.muted_images.dim)
-        return "20em";
+      if (!this.muted_images.max_width || !this.muted_images.dim) return "20em";
       return `${this.muted_images.max_width}${this.muted_images.dim}`;
     },
   },

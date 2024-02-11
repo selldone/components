@@ -17,35 +17,31 @@
     <!-- ................ Show Hyper Details ................ -->
     <div class="text-start">
       <h1>{{ $t("hyper.title") }}</h1>
-      <p class="subtitle-2 my-1">
+      <p class="text-subtitle-2 my-1">
         {{ $t("hyper.message") }}
       </p>
 
-
-
       <s-shop-hyper-product-view
-        :shop="shop"
-        :hyper="hyper"
-        @click:add="addHyperItem"
         :busy-add="busy_add"
+        :hyper="hyper"
+        :shop="shop"
         class="mb-3"
+        @click:add="addHyperItem"
       ></s-shop-hyper-product-view>
 
-
       <s-currency-input
-          v-if="shop.currencies.length > 1"
-          class="mt-2 mb-3 max-width-field-mini"
-          :shop="shop"
-          v-model="currency"
-          solo
-          @change="setCurrencyHyper"
-          :loading="busy_currency"
-          :return-object="false"
-          :label="$t('global.commons.currency')"
-          :messages="$t('hyper.currency_msg')"
+        v-if="shop.currencies.length > 1"
+        v-model="currency"
+        :label="$t('global.commons.currency')"
+        :loading="busy_currency"
+        :messages="$t('hyper.currency_msg')"
+        :return-object="false"
+        :shop="shop"
+        class="mt-2 mb-3 max-width-field-mini"
+        solo
+        @change="setCurrencyHyper"
       >
       </s-currency-input>
-
 
       <hr />
 
@@ -55,10 +51,10 @@
 
       <s-shop-hyper-items-list
         :hyper="hyper"
-        @update:hyper="(val) => $emit('update:hyper', val)"
         :items="items"
-        class="my-3"
         :view-only="!isOpen"
+        class="my-3"
+        @update:hyper="(val) => $emit('update:hyper', val)"
       >
       </s-shop-hyper-items-list>
 
@@ -90,16 +86,16 @@
       <hr />
       <div class="py-3">
         <price-view
-          large
           :amount="sum"
           :currency="hyper.currency"
+          large
           not-show-zero
         >
         </price-view>
-        <stamp v-if="isPayed" is-approved class="float-end">
+        <stamp v-if="isPayed" class="float-end" is-approved>
           {{ $t("global.status.paid") }}
         </stamp>
-        <stamp v-if="isCanceled" is-declined class="float-end">
+        <stamp v-if="isCanceled" class="float-end" is-declined>
           {{ $t("global.status.canceled") }}
         </stamp>
       </div>
@@ -108,28 +104,26 @@
         {{ $t("global.commons.payment") }}
       </h2>
 
-
-
       <v-btn
         :class="{ disabled: !can_submit }"
-        color="#03A9F4"
+        :loading="busy_submit"
         class="-delivery-btn"
+        color="#03A9F4"
         dark
         rounded
-        x-large
+        size="x-large"
         @click="goToPaymentBasket"
-        :loading="busy_submit"
       >
-        <v-icon small class="me-1 blink-me">lens</v-icon>
+        <v-icon class="me-1 blink-me" size="small">lens</v-icon>
         {{ $t("hyper.order_action") }}
       </v-btn>
     </div>
 
     <v-progress-linear
       v-if="busy_add"
-      indeterminate
       class="loader-to-bar"
       color="success"
+      indeterminate
     ></v-progress-linear>
   </div>
 </template>
@@ -138,7 +132,7 @@
 import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import SShopHyperItemsList from "./SShopHyperItemsList.vue";
 import SShopHyperProductView from "./SShopHyperProductView.vue";
-import {GtagEcommerce} from "@components/plugins/gtag/GtagEcommerce";
+import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import Stamp from "@components/ui/stamp/Stamp.vue";
 import _ from "lodash-es";
@@ -161,14 +155,13 @@ export default {
     busy_submit: false,
 
     //-----------------------
-    currency:null,
+    currency: null,
 
     busy_add: false,
 
     random: 0,
 
-    busy_currency:false,
-
+    busy_currency: false,
   }),
   computed: {
     items() {
@@ -202,8 +195,8 @@ export default {
   },
 
   created() {
-    this.currency=this.hyper.currency;
-    if(!this.currency)this.currency=this.shop.currencies[0];
+    this.currency = this.hyper.currency;
+    if (!this.currency) this.currency = this.shop.currencies[0];
   },
   methods: {
     setCurrencyHyper(currency) {
@@ -217,7 +210,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.hyper.currency=data.hyper.currency;
+            this.hyper.currency = data.hyper.currency;
             this.$emit("update:hyper", data.hyper);
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -233,11 +226,10 @@ export default {
 
     addHyperItem: _.throttle(function (
       { product_id, variant_id, count },
-      oldVal
+      oldVal,
     ) {
       this.addHyperItemNow(product_id, variant_id, count);
-    },
-    1000),
+    }, 1000),
 
     addHyperItemNow(product_id, variant_id, count) {
       //console.log("********************* Add Item **********************");
@@ -269,28 +261,27 @@ export default {
 
     goToPaymentBasket() {
       this.ShowPaymentDialogHyper(this.hyper, () => {
-        this.$router.push({name:'HyperOrderPage',params:{basket_id:this.hyper.id}})
+        this.$router.push({
+          name: "HyperOrderPage",
+          params: { basket_id: this.hyper.id },
+        });
       });
-      GtagEcommerce.MeasuringCheckoutSteps( this.hyper, 2, null);
+      GtagEcommerce.MeasuringCheckoutSteps(this.hyper, 2, null);
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-hyper-add-order-form{
-
+.s--shop-hyper-add-order-form {
 }
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-hyper-add-order-form{
-
+.s--shop-hyper-add-order-form {
 }
 </style>

@@ -15,23 +15,22 @@
 <template>
   <div>
     <v-list-subheader
-      >Shipping services available depend on the provided size and
-      weight.</v-list-subheader
-    >
-    <v-row no-gutters class="py-3">
+      >Shipping services available depend on the provided size and weight.
+    </v-list-subheader>
+    <v-row class="py-3" no-gutters>
       <div
         v-for="transportation in eligible_transportations"
         :key="transportation.id"
-        class="usn pp small -transportation-item"
         :class="{ 'img-grayscale': !transportation.enable }"
-        @click.stop="(e) => setActivator(e.target, transportation)"
         :title="`Show detail of ${
           transportation.title
             ? transportation.title
             : $t(ShopTransportations[transportation.type]?.name)
         }`"
+        class="usn pp small -transportation-item"
+        @click.stop="(e) => setActivator(e.target, transportation)"
       >
-        <v-avatar size="16" rounded left>
+        <v-avatar rounded size="16" start>
           <v-img
             :src="
               transportation.logo
@@ -49,17 +48,17 @@
     </v-row>
 
     <v-menu
-      v-model="menu"
       v-if="activator_item"
+      v-model="menu"
       :activator="activator"
+      location="bottom"
       offset-y
       rounded="xl"
-      bottom
     >
-      <v-sheet dark color="#111" class="pa-3">
+      <v-sheet class="pa-3" color="#111" dark>
         <delivery-card-content
-          :transportation="activator_item"
           :show-buttons="false"
+          :transportation="activator_item"
         ></delivery-card-content>
       </v-sheet>
     </v-menu>
@@ -125,11 +124,12 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.-transportation-item{
+<style lang="scss" scoped>
+.-transportation-item {
   margin: 4px;
-  transition:all 0.3s ease-in-out;
-  &:hover{
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
     color: #000;
     font-weight: bolder;
   }

@@ -12,14 +12,14 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-.border-w-medium{
+.border-w-medium {
   border: solid #fff 4px !important;
 }
 
-.h--top-dash-group{
+.h--top-dash-group {
   position: relative;
   --color: rgba(255, 255, 255, 0.6);
-  --bg-color:transparent;
+  --bg-color: transparent;
 
   border-top: dotted thin var(--color);
   white-space: nowrap; // Very important! To prevent inline blocks become more than one line!
@@ -36,7 +36,7 @@
     height: 8px;
     line-height: 5px;
 
-    color:  var(--color);
+    color: var(--color);
     font-size: 9px;
     font-weight: 500;
     border-radius: 2px;

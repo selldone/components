@@ -15,28 +15,29 @@
 <template>
   <community-image
     :aspect-ratio="aspectRatio"
-    :width="width"
     :height="height"
     :src="cover ? cover : src"
+    :width="width"
     class="position-relative"
   >
     <v-btn
       v-if="edit"
       class="center-absolute dashed rounded z1"
-      style="background-color: rgba(255, 255, 255, 0.7)"
       icon
-      x-large
+      size="x-large"
+      style="background-color: rgba(255, 255, 255, 0.7)"
       tile
       @click.stop="showSelectCover"
-      ><v-icon>camera</v-icon></v-btn
     >
+      <v-icon>camera</v-icon>
+    </v-btn>
     <input
       v-if="edit"
-      type="file"
       ref="cover_input"
-      hidden="hidden"
-      @change="onSelectCover"
       accept="image/*"
+      hidden="hidden"
+      type="file"
+      @change="onSelectCover"
     />
     <slot></slot>
   </community-image>
@@ -44,6 +45,7 @@
 
 <script>
 import CommunityImage from "@components/community/widgets/image/CommunityImage.vue";
+
 export default {
   name: "SCommunityImageUploader",
   components: { CommunityImage },

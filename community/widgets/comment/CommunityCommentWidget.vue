@@ -13,48 +13,54 @@
   -->
 
 <template>
-  <v-col
-    cols="12"
-    class="c-container"
-  >
+  <v-col class="c-container" cols="12">
     <div class="c-widget bg-white">
-
       <!-- Post Message -->
       <small class="mx-2 mt-4 d-block">Context:</small>
-      <div class="mx-4 c-body html-style" v-html="smartText(comment.post.body)"></div>
+      <div
+        class="mx-4 c-body html-style"
+        v-html="smartText(comment.post.body)"
+      ></div>
 
       <!-- My Comment -->
 
-      <small class="mx-2 mt-4 d-block">Your comment: {{getFromNowString(comment.created_at)}}</small>
+      <small class="mx-2 mt-4 d-block"
+        >Your comment: {{ getFromNowString(comment.created_at) }}</small
+      >
 
-      <p class="mx-4 c-body font-weight-bold">{{comment.body}}</p>
-
+      <p class="mx-4 c-body font-weight-bold">{{ comment.body }}</p>
 
       <div class="d-flex mx-4">
         <v-spacer></v-spacer>
-        <div class="m-1 p-2"><v-icon small class="me-1">thumb_down</v-icon> {{  numeralFormat(comment.disagrees,"0.[0]a") }}</div>
-        <div class="m-1 p-2"><v-icon small class="me-1">thumb_up</v-icon> {{  numeralFormat(comment.agrees,"0.[0]a") }}</div>
+        <div class="m-1 p-2">
+          <v-icon class="me-1" size="small">thumb_down</v-icon>
+          {{ numeralFormat(comment.disagrees, "0.[0]a") }}
+        </div>
+        <div class="m-1 p-2">
+          <v-icon class="me-1" size="small">thumb_up</v-icon>
+          {{ numeralFormat(comment.agrees, "0.[0]a") }}
+        </div>
       </div>
 
-
-      <community-comments :shop="shop" :post="comment.post" :parent="comment" show class="mx-4">
+      <community-comments
+        :parent="comment"
+        :post="comment.post"
+        :shop="shop"
+        class="mx-4"
+        show
+      >
       </community-comments>
     </div>
-
-
-
   </v-col>
 </template>
 
 <script>
-
-
 import CommunityComments from "./CommunityComments.vue";
-import {SmartConvertTextToHtmlHashtags} from "@core/helper/html/HtmlHelper";
+import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "CommunityCommentWidget",
-  components: {CommunityComments },
+  components: { CommunityComments },
   props: {
     community: {
       required: true,
@@ -67,20 +73,13 @@ export default {
       required: true,
       type: Object,
     },
-
-
   },
 
   data() {
-    return {
-
-
-    };
+    return {};
   },
 
-  computed: {
-
-  },
+  computed: {},
 
   mounted() {},
 
@@ -88,10 +87,8 @@ export default {
     smartText(text) {
       return SmartConvertTextToHtmlHashtags(text);
     },
-  }
+  },
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

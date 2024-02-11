@@ -15,12 +15,12 @@
 <template>
   <div>
     <v-sheet class="pb-6" color="transparent">
-      <v-toolbar flat color="transparent">
+      <v-toolbar color="transparent" flat>
         <v-btn
+          color="grey-darken-2"
           icon
-          color="grey darken-2"
-          @click="$refs.calendar.prev()"
           title="Previous month"
+          @click="$refs.calendar.prev()"
         >
           <v-icon>
             {{ $t("icons.navigate_before") }}
@@ -38,10 +38,10 @@
         </v-toolbar-title>
 
         <v-btn
+          color="grey-darken-2"
           icon
-          color="grey darken-2"
-          @click="$refs.calendar.next()"
           title="Next month"
+          @click="$refs.calendar.next()"
         >
           <v-icon>
             {{ $t("icons.navigate_next") }}
@@ -52,44 +52,44 @@
 
         <v-btn
           class="me-4 tnt"
-          color="grey darken-2"
-          @click="calendar_value = ''"
-          text
+          color="grey-darken-2"
           title="Show today!"
+          variant="text"
+          @click="calendar_value = ''"
         >
-          <v-icon x-small color="#1976D2" class="me-1">circle</v-icon>
+          <v-icon class="me-1" color="#1976D2" size="x-small">circle</v-icon>
           Today
         </v-btn>
 
         <v-btn-toggle
           v-if="!dayLevel"
           v-model="type"
-          rounded
-          active-class="blue-flat"
-          mandatory
           class="m-1"
+          mandatory
+          rounded
+          selected-class="blue-flat"
         >
           <v-btn
             v-for="(icon, val) in types"
             :key="val"
-            :value="val"
             :title="val"
+            :value="val"
             color="#fff"
           >
-            <v-icon small>{{ icon }}</v-icon>
+            <v-icon size="small">{{ icon }}</v-icon>
           </v-btn>
         </v-btn-toggle>
       </v-toolbar>
 
       <v-calendar
         ref="calendar"
-        class="s--calendar-table my-3"
         v-model="calendar_value"
-        :weekdays="weekday"
-        :type="type"
         :locale="getCurrentLanguage().full_local"
-        short-months
+        :type="type"
+        :weekdays="weekday"
+        class="s--calendar-table my-3"
         color="#1976D2"
+        short-months
         @change="onChangeDaysRange"
       >
         <template
@@ -97,38 +97,38 @@
         >
           <v-btn
             v-if="current_range_month === month"
-            @click="
-              past ? undefined : viewDay({ past, date, present, future, day })
-            "
             :class="{ pen: past }"
-            fab
             :color="
               isReserved(date)
                 ? '#1976D2'
                 : past
-                ? 'transparent'
-                : notAvailable(date)
-                ? 'rgba(211,47,47,0.24)'
-                : 'transparent'
+                  ? 'transparent'
+                  : notAvailable(date)
+                    ? 'rgba(211,47,47,0.24)'
+                    : 'transparent'
             "
-            depressed
-            small
-            light
             :style="{
               color: isReserved(date) ? '#fff' : past ? '#999' : '#555',
             }"
             :title="notAvailable(date) ? 'Unavailable' : 'Available'"
+            fab
+            light
+            size="small"
+            variant="flat"
+            @click="
+              past ? undefined : viewDay({ past, date, present, future, day })
+            "
           >
             {{ day }}
           </v-btn>
           <v-icon
             v-if="present"
-            size="6"
-            color="#1976D2"
             class="absolute-bottom-center"
+            color="#1976D2"
+            size="6"
             title="Today"
-            >circle</v-icon
-          >
+            >circle
+          </v-icon>
 
           <small
             v-if="notAvailable(date)"
@@ -359,15 +359,18 @@ export default {
       height: 60%;
       top: 20%;
     }
+
     &.start-bg {
       width: 40%;
       border-radius: 8px 0 0 8px;
     }
+
     &.end-bg {
       width: 40%;
       right: 60%;
       border-radius: 0 8px 8px 0;
     }
+
     &.one-day-bg {
       right: 20%;
       left: 20%;
@@ -396,6 +399,7 @@ export default {
     justify-content: center;
     border-right: unset !important;
   }
+
   .v-calendar-weekly__week:last-child {
     .v-calendar-weekly__day {
       border-bottom: unset !important;

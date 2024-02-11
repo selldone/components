@@ -1,6 +1,6 @@
 # SBarcode
 
-Add barcodes to your Vue application super easily with SBarcode! 
+Add barcodes to your Vue application super easily with SBarcode!
 
 Supported barcode formats:
 `CODE128`
@@ -19,11 +19,13 @@ Supported barcode formats:
 It is a light wrapper for the [JsBarcode](https://github.com/lindell/JsBarcode) barcode library.
 
 ## Install
+
 ````
 npm install s-barcode
 ````
 
 ## Use
+
 #### 1. Add VueBarcode as a component
 
 ````javascript
@@ -35,6 +37,7 @@ new Vue({
   }
 })
 ````
+
 #### 2. Use it
 
 ````html
@@ -44,7 +47,9 @@ new Vue({
 ````
 
 ## Example
+
 Simple example with input binding. [Try it out with this JsFiddle!](http://jsfiddle.net/hfgan035/4/)
+
 ````html
 <div id="app">
   <input v-model="barcodeValue" /><br>
@@ -69,6 +74,7 @@ var app = new Vue({
 ````
 
 # Options
+
 All options:
 
 `format`
@@ -90,6 +96,5 @@ All options:
 `margin-right`
 `display-value`
 `ean128`
-
 
 For more information, see the [JsBarcode documentation](https://github.com/lindell/JsBarcode/wiki/Options).

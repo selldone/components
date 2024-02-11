@@ -12,8 +12,6 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-
-
 @import './insert/sass/medium-editor-insert-plugin';
 
 @import '~medium-editor/dist/css/themes/default.css';
@@ -21,8 +19,7 @@
 @import 'comment/comment-style';
 
 
-
-.master-article-container{
+.master-article-container {
 
   position: relative;
 
@@ -46,22 +43,23 @@
   .medium-insert-embeds.medium-insert-embeds-grid figure {
     max-width: 680px;
     margin: auto;
-    box-shadow: inset 0 -3em 3em rgba(0, 0, 0, 0.01),0 5px 50px 4px rgba(166, 166, 166, 0.37) !important;
+    box-shadow: inset 0 -3em 3em rgba(0, 0, 0, 0.01), 0 5px 50px 4px rgba(166, 166, 166, 0.37) !important;
     padding: 18px;
     border-radius: 16px;
-    .card{
+
+    .card {
       border: none;
     }
-    iframe{
+
+    iframe {
       border-radius: 18px;
     }
-    .section-text{
+
+    .section-text {
       flex: 0 0 100%;
       max-width: 100%;
     }
   }
-
-
 
 
   .article {
@@ -75,29 +73,30 @@
     word-wrap: break-word;
 
 
-    .h1{
+    .h1 {
       font-size: 3.2rem !important;
       font-weight: 900;
       margin-bottom: 1.9rem;
       line-height: 1.4em;
     }
 
-    h2{
+    h2 {
       font-size: 1.8rem !important;
       font-weight: 700;
       margin-top: 2.8rem;
     }
 
-    h3{
+    h3 {
       font-size: 1.5rem !important;
       font-weight: 600;
       margin-top: 2rem;
     }
 
-    ol{
+    ol {
       font-size: 100%;
     }
-    ul{
+
+    ul {
       font-size: 100%;
     }
 
@@ -112,48 +111,51 @@
 
   }
 
-// Solve img size in imported table by word in blogs
+  // Solve img size in imported table by word in blogs
   @media all and (max-width: 800px) {
-    .article-container table{
+    .article-container table {
       display: block;
       overflow-x: auto;
       white-space: nowrap;
     }
   }
-  .article-container table tr td{
+
+  .article-container table tr td {
     padding: 4px 16px;
   }
-  .article-container table p{
+
+  .article-container table p {
     margin: 0;
   }
 
-  .article-container table td div{
+  .article-container table td div {
     display: inline-block;
     margin: 0;
   }
-  .article-container table td figure{
+
+  .article-container table td figure {
     max-width: 36px !important;
     max-height: 36px !important;
     object-fit: contain;
   }
-  //-----------------------------------------
 
+  //-----------------------------------------
 
 
   @media screen and (max-width: 1000px) {
     .article {
 
-      .h1{
+      .h1 {
         font-size: 1.9rem !important;
       }
-      h2{
+
+      h2 {
         font-size: 1.6rem !important;
       }
 
-      h3{
+      h3 {
         font-size: 1.4rem !important;
       }
-
 
 
     }
@@ -163,24 +165,22 @@
     }
 
 
-
-
-
   }
 
   @media screen and (max-width: 600px) {
     .article {
 
-      .h1{
+      .h1 {
         font-size: 2rem !important;
 
       }
-      h2{
+
+      h2 {
         font-size: 1.6rem !important;
 
       }
 
-      h3{
+      h3 {
         font-size: 1.4rem !important;
 
 
@@ -206,25 +206,25 @@
 Article component editor:
  */
 
-  .component-editor-header{ // TODO : DELETE THIS !!!!!!!!!!!!!!!
+  .component-editor-header { // TODO : DELETE THIS !!!!!!!!!!!!!!!
     background-color: var(--theme-deep-dark) !important;
     position: relative;
     line-height: normal;
     text-align: center;
 
     border-radius: 24px;
-    margin: 8px  auto 8px auto ;
+    margin: 8px auto 8px auto;
     padding: 12px 8px 8px 8px;
     transition: all 0.45s !important;
-   // cursor: pointer;
+    // cursor: pointer;
 
     &:hover {
       background-color: #2b1d32 !important;
       box-shadow: 0 10px 50px 0 rgba(0, 0, 0, 0.2);
-      z-index:3;
+      z-index: 3;
     }
 
-    .comp-title{
+    .comp-title {
       font-size: 10px;
       color: #fff;
       top: 6px;
@@ -235,7 +235,7 @@ Article component editor:
   }
 
 
-  .component-editor-container{
+  .component-editor-container {
     background: #fcfcfc;
     border-radius: 24px;
     margin: 8px auto;
@@ -263,20 +263,15 @@ Article component editor:
     }
 
   }
+
   //------------------------------------------------------------------------------
 
 
 }
 
 
-
-
-
-
-
-
-.circular-ribbons,.medium-insert-images-progress {
-  direction: ltr ;
+.circular-ribbons, .medium-insert-images-progress {
+  direction: ltr;
   background: #fafafa !important;
   width: 100%;
 
@@ -374,8 +369,9 @@ Article component editor:
 
 
 .v-application--is-rtl {
-  .circular-ribbons,.medium-insert-images-progress {
+  .circular-ribbons, .medium-insert-images-progress {
     direction: rtl !important;
+
     .loader {
       margin: -75px  -75px 0 0;
       left: unset;
@@ -387,13 +383,12 @@ Article component editor:
 }
 
 
-
-
 // Adjust tools for small screens:
-.medium-editor-toolbar{
+.medium-editor-toolbar {
   background: #242424;
-  .medium-editor-toolbar-actions{
-    li button{
+
+  .medium-editor-toolbar-actions {
+    li button {
       padding: 8px;
       font-size: 11px;
       min-width: 40px;

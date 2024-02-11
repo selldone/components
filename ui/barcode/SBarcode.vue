@@ -2,9 +2,9 @@
   <div>
     <component
       :is="elementTag"
+      ref="barcode"
       :style="{ display: valid ? undefined : 'none' }"
       class="vue-barcode-element"
-      ref="barcode"
     >
     </component>
     <div v-if="!valid">

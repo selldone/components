@@ -16,19 +16,19 @@
   <div class="marker-samin">
     <div class="market-pin">
       <img
-        width="64px"
         :src="require('@components/assets/icons/location-center-icon.svg')"
+        width="64px"
       />
       <img
         v-if="pinImage"
+        :src="pinImage"
         style="position: absolute; top: 15px; left: 23px"
         width="18px"
-        :src="pinImage"
       />
       <v-icon
         v-if="pinIcon"
-        style="position: absolute; top: 15px; left: 23px"
         size="18"
+        style="position: absolute; top: 15px; left: 23px"
       >
         {{ pinIcon }}
       </v-icon>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "SMapLocationMarker",
@@ -57,12 +57,11 @@ export default defineComponent({
     },
   },
 
-  created() {
-  }
+  created() {},
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .marker-samin {
   width: 64px;
   height: 64px;
@@ -81,6 +80,7 @@ export default defineComponent({
   transform: rotateX(55deg);
   z-index: -2;
 }
+
 .pulse:after {
   content: "";
   border-radius: 50%;
@@ -96,6 +96,7 @@ export default defineComponent({
   left: -13px;
   top: -13px;
 }
+
 @-moz-keyframes pulsate {
   0% {
     transform: scale(0.1, 0.1);
@@ -109,6 +110,7 @@ export default defineComponent({
     opacity: 0;
   }
 }
+
 @-webkit-keyframes pulsate {
   0% {
     transform: scale(0.1, 0.1);
@@ -122,6 +124,7 @@ export default defineComponent({
     opacity: 0;
   }
 }
+
 @-o-keyframes pulsate {
   0% {
     transform: scale(0.1, 0.1);
@@ -135,6 +138,7 @@ export default defineComponent({
     opacity: 0;
   }
 }
+
 @keyframes pulsate {
   0% {
     transform: scale(0.1, 0.1);
@@ -148,6 +152,7 @@ export default defineComponent({
     opacity: 0;
   }
 }
+
 @-moz-keyframes bounce {
   0% {
     opacity: 0;
@@ -164,6 +169,7 @@ export default defineComponent({
     transform: translateY(0) rotate(-45deg);
   }
 }
+
 @-webkit-keyframes bounce {
   0% {
     opacity: 0;
@@ -180,6 +186,7 @@ export default defineComponent({
     transform: translateY(0) rotate(-45deg);
   }
 }
+
 @-o-keyframes bounce {
   0% {
     opacity: 0;
@@ -196,6 +203,7 @@ export default defineComponent({
     transform: translateY(0) rotate(-45deg);
   }
 }
+
 @keyframes bounce {
   0% {
     opacity: 0;

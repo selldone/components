@@ -25,10 +25,10 @@ Use case:
 -->
 <template>
   <v-progress-circular
-    :color="color"
     :bg-color="bgColor"
-    indeterminate
+    :color="color"
     class="center-absolute"
+    indeterminate
   />
 </template>
 
@@ -50,4 +50,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

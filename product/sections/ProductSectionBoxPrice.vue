@@ -15,8 +15,8 @@
 <template>
   <div
     v-if="!isService || calculated_price"
-    class="px-2 mt-2 d-flex flex-grow-0"
     :class="{ 'flex-column-reverse': revers_col }"
+    class="px-2 mt-2 d-flex flex-grow-0"
   >
     <div class="price">
       <p v-if="discount_value" class="m-0">
@@ -30,11 +30,11 @@
       <!-- ..................... Tips of pricing ..................... -->
       <v-tooltip
         v-if="product.pricing === PricingTypes.ESTIMATION.code"
-        top
+        location="top"
         max-width="420"
       >
-        <template v-slot:activator="{ on, attrs }">
-          <span v-bind="attrs" v-on="on" class="d-block">
+        <template v-slot:activator="{ props }">
+          <span class="d-block" v-bind="props">
             {{ $t("global.commons.starting_price") }}
           </span>
         </template>
@@ -42,19 +42,19 @@
           {{ $t(PricingTypes.ESTIMATION.message) }}
           <v-img
             :src="PricingTypes.ESTIMATION.image"
-            max-width="250"
             class="mx-auto"
+            max-width="250"
           ></v-img>
         </div>
       </v-tooltip>
 
       <v-tooltip
         v-if="product.pricing === PricingTypes.AGREEMENT.code"
-        top
+        location="top"
         max-width="420"
       >
-        <template v-slot:activator="{ on, attrs }">
-          <span v-bind="attrs" v-on="on" class="d-block">
+        <template v-slot:activator="{ props }">
+          <span class="d-block" v-bind="props">
             {{ $t("global.commons.starting_price") }}
           </span>
         </template>
@@ -62,8 +62,8 @@
           {{ $t(PricingTypes.AGREEMENT.message) }}
           <v-img
             :src="PricingTypes.AGREEMENT.image"
-            max-width="250"
             class="mx-auto"
+            max-width="250"
           ></v-img>
         </div>
       </v-tooltip>
@@ -76,7 +76,7 @@
 
       <small v-if="product.unit" class="ms-2">/ {{ product.unit }}</small>
 
-      <span class="mx-1" v-if="price_label">{{ price_label }}</span>
+      <span v-if="price_label" class="mx-1">{{ price_label }}</span>
 
       <span
         v-if="
@@ -87,8 +87,8 @@
         class="mx-1"
         >(
         <s-product-price
-          :shop="shop"
           :product="product"
+          :shop="shop"
           :variant="currentVariant"
         ></s-product-price>
         )</span
@@ -100,15 +100,15 @@
 
     <div
       v-if="discount_percent"
-      class="mx-3"
       :style="revers_col ? 'align-self: self-end' : ''"
+      class="mx-3"
     >
       <p class="discount-text m-2 text-left">
         {{ $t("product_info.discount") }}
       </p>
       <span class="discount-percent text-nowrap"
         >{{ discount_percent }} %
-        <v-icon class="ms-1" color="white" small>insert_emoticon</v-icon>
+        <v-icon class="ms-1" color="white" size="small">insert_emoticon</v-icon>
       </span>
     </div>
     <v-spacer></v-spacer>
@@ -116,11 +116,11 @@
     <!-- ▁▁▁▁▁▁ 🞇 For Auction Inform 🞇 ▁▁▁▁▁▁ -->
 
     <product-section-box-for-auction
+      :current-variant="currentVariant"
+      :product="product"
+      :shop="shop"
       class="mb-2 min-width-200"
       style="max-width: 70%"
-      :shop="shop"
-      :product="product"
-      :current-variant="currentVariant"
     ></product-section-box-for-auction>
   </div>
 </template>
@@ -188,7 +188,7 @@ export default {
           this.preferences,
           this.product.valuation,
           null,
-          this.current_extra_pricing
+          this.current_extra_pricing,
         );
       } else {
         out = this.CalcPriceProductCurrentCurrency(
@@ -198,7 +198,7 @@ export default {
           this.preferences,
           this.product.valuation,
           null,
-          this.current_extra_pricing
+          this.current_extra_pricing,
         );
       }
 
@@ -220,7 +220,7 @@ export default {
       return this.getProductDiscountAmount(
         this.shop,
         this.product,
-        this.currentVariant
+        this.currentVariant,
       );
     },
 
@@ -228,7 +228,7 @@ export default {
       return this.discountProductPercent(
         this.shop,
         this.product,
-        this.currentVariant
+        this.currentVariant,
       );
     },
 
@@ -273,13 +273,13 @@ export default {
       return ExtraPricingHelper.GetListOfExtraPricings(
         this.product,
         this.currentVariant,
-        this.selectedVendorProduct
+        this.selectedVendorProduct,
       );
     },
     current_extra_pricing() {
       return ExtraPricingHelper.FindMatchInList(
         this.extra_pricings,
-        this.corresponding_item_in_basket?.count
+        this.corresponding_item_in_basket?.count,
       );
     },
 
@@ -287,7 +287,7 @@ export default {
       return BasketHelper.FindItem(
         this.basket,
         this.product,
-        this.currentVariant
+        this.currentVariant,
       );
     },
 
@@ -312,7 +312,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .discount-value {
   color: #222;
   font-size: 1.4rem;

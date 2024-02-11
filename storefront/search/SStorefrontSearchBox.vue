@@ -16,12 +16,12 @@
   <div :class="{ block: block }" class="s--storefront-search-box">
     <v-btn
       v-if="isMobile && !force_show"
-      class="collapse-button"
       :color="color ? color : SaminColorLight"
-      variant="flat"
-      @click.stop
+      class="collapse-button"
       size="small"
+      variant="flat"
       @click="force_show = true"
+      @click.stop
     >
       <v-icon> search</v-icon>
     </v-btn>
@@ -29,51 +29,51 @@
     <v-autocomplete
       v-if="!block || !isMobile || force_show"
       v-model="model"
-      :class="{ 'is-mobile': isMobile, force_show: force_show, shadow: shadow }"
-      class="search-box"
-      :items="items"
-      :loading="isLoading"
       v-model:search-input="search"
+      :append-icon="isMobile && noClose ? $t('icons.navigate_next') : undefined"
+      :bg-color="backgroundColor"
+      :class="{ 'is-mobile': isMobile, force_show: force_show, shadow: shadow }"
+      :color="color"
       :customFilter="() => true"
+      :density="dense ? 'compact' : 'default'"
+      :filled="filled"
+      :flat="flat"
+      :hint="hint"
+      :items="items"
+      :label="current_label"
+      :loading="isLoading"
+      :messages="messages"
+      :outlined="outlined"
+      :persistentPlaceholder="persistentPlaceholder"
       :placeholder="placeholder ? placeholder : $t('global.commons.search')"
-      return-object
+      :readonly="readonly"
+      :rounded="rounded"
+      :single-line="singleLine"
+      :solo="solo"
+      :theme="dark ? 'dark' : 'light'"
+      autocomplete
+      class="search-box"
       clearable
       hide-details
       hide-selected
       no-filter
-      :label="current_label"
-      :messages="messages"
-      :hint="hint"
+      prepend-inner-icon="search"
+      return-object
       @update:model-value="goToResult"
-      :solo="solo"
-      :flat="flat"
-      autocomplete
-      :single-line="singleLine"
-      :rounded="rounded"
-      :filled="filled"
-      :theme="dark ? 'dark' : 'light'"
-      :density="dense ? 'compact' : 'default'"
-      :readonly="readonly"
-      :bg-color="backgroundColor"
-      :color="color"
-      :outlined="outlined"
       v-on:keyup.enter="
         () => {
           search ? goToResult({ title: search }) : undefined;
         }
       "
-      :append-icon="isMobile && noClose ? $t('icons.navigate_next') : undefined"
       @click:append="force_show = false"
-      prepend-inner-icon="search"
-      :persistentPlaceholder="persistentPlaceholder"
     >
       <template v-slot:prepend>
         <v-btn
           v-if="!noQr"
-          @click="showQRScanner"
-          icon
           :class="negativeQrMargin ? 'mt-n3' : ''"
           class="hoverable-icon zoomIn delay_500"
+          icon
+          @click="showQRScanner"
         >
           <v-icon>qr_code_scanner</v-icon>
         </v-btn>
@@ -96,8 +96,8 @@
           <v-list-item
             v-for="old_item in old_items"
             :key="old_item"
-            density="compact"
             :disabled="$route.query.search === old_item.replace('%c-', '')"
+            density="compact"
             @click="
               goToResult({
                 title: old_item.replace('%c-', ''),
@@ -140,13 +140,13 @@
       </template>
 
       <template v-slot:item="{ item, props }">
-        <v-list-item v-bind="props" class="text-start" :title="item.title">
+        <v-list-item :title="item.title" class="text-start" v-bind="props">
           <template v-slot:prepend>
             <v-avatar v-if="item.icon">
               <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)">
                 <template v-slot:placeholder>
-                  <v-layout fill-height align-center justify-center ma-0>
-                    <v-progress-circular indeterminate color="grey-lighten-5" />
+                  <v-layout align-center fill-height justify-center ma-0>
+                    <v-progress-circular color="grey-lighten-5" indeterminate />
                   </v-layout>
                 </template>
               </v-img>
@@ -156,12 +156,12 @@
 
           <template v-slot:append>
             <v-list-item-action>
-              <div class="small" v-if="item.cat">
+              <div v-if="item.cat" class="small">
                 {{ $t("global.search_box.category") }}
               </div>
-              <v-icon v-if="item.cat" color="amber" class="mx-auto"
-                >folder</v-icon
-              >
+              <v-icon v-if="item.cat" class="mx-auto" color="amber"
+                >folder
+              </v-icon>
             </v-list-item-action>
           </template>
         </v-list-item>
@@ -171,16 +171,16 @@
     <!-- ---------------------------------------------------------- -->
     <v-dialog
       v-model="show_scanner"
-      max-width="680"
       content-class="no-shadow-dialog"
+      max-width="680"
     >
       <v-card class="rounded-28px">
         <v-card-title>{{ $t("global.commons.barcode_scanner") }}</v-card-title>
         <v-card-text v-if="show_scanner">
           <barcode-scanner
-            @on-scan="onScan"
-            qr-code
             other-codes
+            qr-code
+            @on-scan="onScan"
           ></barcode-scanner>
         </v-card-text>
         <v-card-actions>

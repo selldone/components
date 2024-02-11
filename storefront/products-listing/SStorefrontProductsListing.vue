@@ -27,19 +27,19 @@
     <!-- ████████████████████ Custom Page ███████████████████ -->
     <SPageRender
       v-if="parent_folders?.page"
-      :data="parent_folders.page.content"
       :augment="parent_folders.augment"
+      :data="parent_folders.page.content"
       :style="parent_folders.page.background"
     />
 
     <!-- ███████████████████ Products & Categories List ███████████████████ -->
     <div
-      class="s--storefront-products-listing"
       :class="{
         rtl: $vuetify.rtl,
         'position-relative':
           parent_folders?.page /*Only in custom page mode! otherwise menu should fill top to bottom of window.*/,
       }"
+      class="s--storefront-products-listing"
     >
       <div>
         <!-- ━━━━━━━ Breadcrumbs ━━━━━━━ -->
@@ -52,7 +52,6 @@
             "
           >
             <s-breadcrumb-image
-              :hierarchy-items="hierarchy_items"
               :class="
                 $vuetify.display.mdAndUp
                   ? {
@@ -62,6 +61,7 @@
                     }
                   : {}
               "
+              :hierarchy-items="hierarchy_items"
               class="flex-grow-1"
               style="max-width: inherit"
             />
@@ -69,30 +69,30 @@
         </v-expand-transition>
         <v-toolbar
           v-if="hasBreadcrumb || has_filter"
-          flat
-          color="transparent"
           class="position-relative"
+          color="transparent"
+          flat
         >
           <!-- ━━━━━━━ Sort tools ━━━━━━━ -->
           <s-products-sort-view
             v-if="hasSort"
-            class="w-100 overflow-x-auto"
+            v-model="sort"
+            v-model:only-available="only_available"
+            v-model:viewMode="mode_view"
             :class="{
               'add-marginal-side-menu-open':
                 show_filter_menu && has_filter && $vuetify.display.smAndUp,
             }"
-            v-model="sort"
-            v-model:only-available="only_available"
             :has-view-mode="!freeMode /*Don't show view modes in map view!*/"
-            v-model:viewMode="mode_view"
             :mandatory="false"
+            class="w-100 overflow-x-auto"
           >
             <!-- ............................ Categories > Small screen ............................ -->
             <v-btn
               v-if="$vuetify.display.xs && hierarchy_items.length > 1"
-              variant="text"
-              tile
               height="46px"
+              tile
+              variant="text"
               @click="show_categories = !show_categories"
             >
               {{ $t("global.commons.category") }}
@@ -104,19 +104,19 @@
 
             <div style="min-width: 100px; height: 1px"></div>
             <v-btn
-              class="border-start position-absolute bg-white"
-              :style="$vuetify.rtl ? 'left: 0' : 'right: 0'"
-              variant="text"
-              tile
-              height="46px"
               v-if="has_filter"
+              :style="$vuetify.rtl ? 'left: 0' : 'right: 0'"
               absolute
+              class="border-start position-absolute bg-white"
+              height="46px"
+              tile
+              variant="text"
               @click="show_filter_menu = !show_filter_menu"
               >{{ $t("shop.products_filter") }}
-              <v-icon class="ms-1" size="small">{{
-                show_filter_menu ? "close" : "filter_alt"
-              }}</v-icon></v-btn
-            >
+              <v-icon class="ms-1" size="small"
+                >{{ show_filter_menu ? "close" : "filter_alt" }}
+              </v-icon>
+            </v-btn>
           </s-products-sort-view>
         </v-toolbar>
 
@@ -132,12 +132,12 @@
           >
             <v-list class="text-start">
               <v-list-item
-                selectable
                 v-for="(item, i) in hierarchy_items"
                 :key="i"
                 :to="item.disabled ? undefined : item.to"
-                exact
                 active-class="bg-primary white--text"
+                exact
+                selectable
               >
                 <template v-slot:prepend>
                   <v-avatar :tile="!!item.icon">
@@ -145,9 +145,9 @@
                       v-if="item.image"
                       :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
                     />
-                    <v-icon v-else-if="item.icon" class="me-1">{{
-                      item.icon
-                    }}</v-icon>
+                    <v-icon v-else-if="item.icon" class="me-1"
+                      >{{ item.icon }}
+                    </v-icon>
                   </v-avatar>
                 </template>
 
@@ -161,28 +161,28 @@
         <!-- -------------------------- Container -------------------------------- -->
 
         <v-container
-          fluid
-          class="products-container"
           :class="{
             'container-expanded-side-menu': show_filter_menu && has_filter,
             'p-3': !hasSelfeItemSpacing,
             'p-1': hasSelfeItemSpacing,
           }"
+          class="products-container"
+          fluid
         >
           <v-fade-transition
-            tag="v-row"
-            group
-            class="products-layout"
-            hide-on-leave
-            :style="{ '--insta-size': insta_size }"
             v-resize="onResize"
+            :align="align"
             :class="[
               class_row_products,
               align ? 'align-' + align : undefined,
               justify ? 'justify-' + justify : undefined,
             ]"
-            :align="align"
             :justify="justify"
+            :style="{ '--insta-size': insta_size }"
+            class="products-layout"
+            group
+            hide-on-leave
+            tag="v-row"
           >
             <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
 
@@ -192,9 +192,9 @@
                 folder_page * max_folders_per_page,
               )"
               :key="'f' + category.id"
-              class="flex m-0"
-              :class="[class_items_categories]"
               :category="category"
+              :class="[class_items_categories]"
+              :static="no_animation"
               :to="
                 viewOnly || window.ExternalWidget
                   ? undefined
@@ -203,12 +203,12 @@
                       params: { category_name: category.name },
                     }
               "
+              class="flex m-0"
               v-bind="
                 !viewOnly && window.ExternalWidget
                   ? { href: getCategoryLink(shop, category.name), target: '' }
                   : {}
               "
-              :static="no_animation"
             />
 
             <v-spacer
@@ -234,10 +234,15 @@
             <s-shop-product-card
               v-for="(product, index) in products"
               :key="product.id"
-              class="flex"
               :class="[class_items_products]"
+              :dense="show_filter_menu"
+              :is-row="isRow"
               :is-small="isSmallItem"
+              :isInsta="isInsta"
               :product="product"
+              :quick-buy="hover_actions"
+              :rounded="freeMode"
+              :static="no_animation"
               :to="
                 viewOnly || window.ExternalWidget
                   ? undefined
@@ -248,19 +253,14 @@
                       },
                     }
               "
+              class="flex"
               v-bind="
                 !viewOnly && window.ExternalWidget
                   ? { href: getProductLink(shop, product.id), target: '' }
                   : {}
               "
               @click.native="onClickProduct(product, index)"
-              :is-row="isRow"
-              :quick-buy="hover_actions"
               @quick-buy="quickBuy(product)"
-              :dense="show_filter_menu"
-              :isInsta="isInsta"
-              :static="no_animation"
-              :rounded="freeMode"
               @mouseenter.native="$emit('product-hover:enter', product)"
               @mouseleave.native="$emit('product-hover:leave', product)"
             />
@@ -275,31 +275,31 @@
 
         <v-btn
           v-if="has_more"
-          @click="fetchData(false, true)"
           v-intersect="onIntersect"
           :loading="busy_fetch"
-          color="blue"
-          variant="text"
-          size="x-large"
           class="m-3"
-          >{{ remains_count }} {{ $t("global.actions.more") }}</v-btn
-        >
+          color="blue"
+          size="x-large"
+          variant="text"
+          @click="fetchData(false, true)"
+          >{{ remains_count }} {{ $t("global.actions.more") }}
+        </v-btn>
 
         <s-storefront-products-filter-menu
           v-if="has_filter"
           v-model="show_filter_menu"
-          :shop="shop"
-          :folders="folders"
-          :parent-folders="parent_folders"
-          @change-filter="setFilter"
-          @change-height="(h) => (min_height = h)"
-          :style="{
-            borderRadius: $vuetify.display.mdAndDown ? '32px' : '32px',
-          }"
           :class="{
             'ms-2 mt-2': $vuetify.display.mdAndDown,
             'm-2': !$vuetify.display.mdAndDown,
           }"
+          :folders="folders"
+          :parent-folders="parent_folders"
+          :shop="shop"
+          :style="{
+            borderRadius: $vuetify.display.mdAndDown ? '32px' : '32px',
+          }"
+          @change-filter="setFilter"
+          @change-height="(h) => (min_height = h)"
         />
       </div>
       <!-- ██████████████████████ Dialog > Quick Buy ██████████████████████ -->
@@ -307,10 +307,10 @@
       <v-bottom-sheet
         v-if="hover_actions"
         v-model="quick_buy"
-        max-width="1480px"
         :fullscreen="$vuetify.display.mdAndDown"
-        scrollable
         content-class="no-shadow-dialog"
+        max-width="1480px"
+        scrollable
       >
         <v-card
           class="position-relative rounded-t-xl rounded-b-0 overflow-hidden"
@@ -324,8 +324,8 @@
               <s-shop-product-main-card
                 :product="selected_product"
                 can-buy
-                show-cover
                 quick-buy-mode
+                show-cover
               />
 
               <b-product-spec-table v-if="spec_array" :spec="spec_array" />
@@ -336,7 +336,8 @@
               icon
               size="large"
               @click="quick_buy = false"
-              ><v-icon>close</v-icon>
+            >
+              <v-icon>close</v-icon>
             </v-btn>
           </v-card-text>
           <v-card-actions
@@ -344,10 +345,10 @@
             class="border-top mb-16"
           >
             <div class="widget-buttons mb-4">
-              <v-btn variant="text" @click="quick_buy = false" size="x-large"
-                ><v-icon class="me-1">close</v-icon
-                >{{ $t("global.actions.close") }}</v-btn
-              >
+              <v-btn size="x-large" variant="text" @click="quick_buy = false">
+                <v-icon start>close </v-icon>
+                {{ $t("global.actions.close") }}
+              </v-btn>
             </div>
           </v-card-actions>
         </v-card>
@@ -1321,6 +1322,7 @@ export default {
         }
       }
     }
+
     .category-card-root {
       .folder-card {
         // Fix Flickering in Safari in Safari: (Apple bug)
@@ -1474,33 +1476,40 @@ export default {
       .card__info-hover {
         display: none;
       }
+
       .card__img--hover {
         top: 0 !important;
         bottom: 0;
         height: 100% !important;
       }
+
       .top-title {
         background: transparent;
+
         h3 {
           font-size: 0.8rem !important;
           margin: 4px !important;
           white-space: nowrap;
         }
       }
+
       .count-down-bg {
         transition: all 0.5s !important;
       }
+
       &:hover {
         transform: scale(1.2, 1.2) !important;
         z-index: 20;
 
         .card__info {
         }
+
         // Hide discount bar on hover:
         .count-down-bg {
           transform: scale(0);
           transform-origin: top right;
         }
+
         .count-down-container {
           opacity: 0 !important;
         }
@@ -1527,6 +1536,7 @@ export default {
         .sec--rate-variants {
           display: none;
         }
+
         .sec--price {
           flex-grow: 1;
           max-width: 100%;
@@ -1534,12 +1544,15 @@ export default {
           .main-price-label {
             font-size: 1rem;
             margin: 3px !important;
+
             p {
               min-height: 0 !important;
             }
+
             .mt-2 {
               margin: 0 !important;
             }
+
             .price-view.large {
               font-size: 1rem !important;
             }
@@ -1559,9 +1572,11 @@ export default {
           .sec--price {
             .main-price-label {
               padding: 4px !important;
+
               .dis-val {
                 display: none;
               }
+
               .price-view.large {
                 font-size: 0.9rem !important;
               }
@@ -1573,6 +1588,7 @@ export default {
               padding: 0 !important;
               font-size: 8px;
             }
+
             .v-icon {
               font-size: 9px !important;
             }

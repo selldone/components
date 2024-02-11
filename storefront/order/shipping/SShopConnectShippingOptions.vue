@@ -13,55 +13,64 @@
   -->
 
 <template>
-  <div v-if="connect_shipping_options?.length" class="s--shop-connect-shipping-options border-between-vertical">
-
-
-
-
+  <div
+    v-if="connect_shipping_options?.length"
+    class="s--shop-connect-shipping-options border-between-vertical"
+  >
     <div
       v-for="connect_shipping_option in connect_shipping_options"
       :key="connect_shipping_option.connect_id"
     >
-
-      <v-list-subheader  class="my-2">
-
+      <v-list-subheader class="my-2">
         {{ $t("global.commons.shipping") }}
-        <products-dense-images-circles inline raw-images-path :ids="basket.items.filter(i=>i.connect_id===connect_shipping_option.connect_id).map(i=>getShopImagePath(i.variant?.image?i.variant.image:i.product.icon,128))"></products-dense-images-circles>
-
-
+        <products-dense-images-circles
+          :ids="
+            basket.items
+              .filter(
+                (i) => i.connect_id === connect_shipping_option.connect_id,
+              )
+              .map((i) =>
+                getShopImagePath(
+                  i.variant?.image ? i.variant.image : i.product.icon,
+                  128,
+                ),
+              )
+          "
+          inline
+          raw-images-path
+        ></products-dense-images-circles>
       </v-list-subheader>
-
 
       <template v-if="connect_shipping_option.error">
         <div class="font-weight-bold d-flex align-center my-3">
           <img
             :src="getConnectIcon(connect_shipping_option.connect_id)"
-            width="16"
-            height="16"
             class="me-2"
+            height="16"
+            width="16"
           />
           {{ connect_shipping_option.connect_name }}
         </div>
-        <div class="my-1 amber--text">
-          <v-icon color="amber" class="me-1" small>warning_amber</v-icon>
+        <div class="my-1 text-amber">
+          <v-icon class="me-1" color="amber" size="small">warning_amber</v-icon>
           {{ connect_shipping_option.error }}
         </div>
       </template>
 
       <template v-else-if="connect_shipping_option.options?.length">
         <s-smart-select
+          :background-color="dark ? SaminColorDark : '#fafafa'"
+          :dark="dark"
+          :items="connect_shipping_option.options"
           :value="
             findSelectedConnectShipping(connect_shipping_option)?.shipping_id
           "
-          :dark="dark"
-          :items="connect_shipping_option.options"
+          class="my-3"
+          force-show-all
           item-description="message"
           item-text="name"
           item-value="id"
           @input="(val) => selectOption(connect_shipping_option, val)"
-          force-show-all
-          :background-color="dark?SaminColorDark:'#fafafa'"
-class="my-3"
         >
           <template v-slot:prepend-title="{ item }">
             <price-view
@@ -78,12 +87,11 @@ class="my-3"
 
 <script>
 import SSmartSelect from "@components/smart/SSmartSelect.vue";
-import ProductsDenseImagesCircles
-  from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopConnectShippingOptions",
-  components: {ProductsDenseImagesCircles, SSmartSelect },
+  components: { ProductsDenseImagesCircles, SSmartSelect },
   props: {
     shop: {
       required: true,
@@ -105,7 +113,7 @@ export default {
   }),
 
   watch: {
-   /* bill(){
+    /* bill(){
       this.init();
     }*/
   },
@@ -124,12 +132,11 @@ export default {
   },
 
   methods: {
-
-    init(){
+    init() {
       // Create clone:
       this.connect_shippings = Object.assign(
-          [],
-          this.basket.delivery_info?.connect_shippings
+        [],
+        this.basket.delivery_info?.connect_shippings,
       );
 
       if (!this.connect_shippings || !Array.isArray(this.connect_shippings)) {
@@ -153,15 +160,14 @@ export default {
 
     findSelectedConnectShipping(connect_shipping_option) {
       return this.connect_shippings?.find(
-        (x) => x.connect_id === connect_shipping_option.connect_id
+        (x) => x.connect_id === connect_shipping_option.connect_id,
       );
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -169,7 +175,6 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-connect-shipping-options{
-
+.s--shop-connect-shipping-options {
 }
 </style>

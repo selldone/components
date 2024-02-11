@@ -53,7 +53,7 @@ export function NativeInterfaceShop(shop: Shop): void {
  * @param user - The User data.
  */
 export function NativeInterfaceUser(
-  user: XapiUser.IMeServerResponse | null
+  user: XapiUser.IMeServerResponse | null,
 ): void {
   try {
     if (typeof Android !== "undefined" && Android !== null) {

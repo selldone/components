@@ -19,9 +19,9 @@
       <div class="s--vendor-view d-flex align-center text-start pa-3">
         <v-avatar class="me-2 flex-grow-0">
           <img
-              v-if="vendor.icon"
-              :src="getShopImagePath(vendor.icon, 64)"
-              :alt="vendor.name"
+            v-if="vendor.icon"
+            :alt="vendor.name"
+            :src="getShopImagePath(vendor.icon, 64)"
           />
           <v-icon v-else>storefront</v-icon>
         </v-avatar>
@@ -34,69 +34,64 @@
       </div>
     </div>
   </v-expand-transition>
-
 </template>
 
 <script>
-
 export default {
   name: "SShopVendorHeader",
   props: {
-    shop:{
-      require:true
+    shop: {
+      require: true,
     },
-    vendorId: {}
+    vendorId: {},
   },
   components: {},
   data: () => ({
     vendor: null, // Show vendor info if this page is for vendor!
   }),
 
-  computed: {
-
-  },
+  computed: {},
   watch: {
     vendorId() {
       this.fetchVendorInfo();
-    }
+    },
   },
   created() {
     this.fetchVendorInfo();
-
   },
   methods: {
     fetchVendorInfo() {
-      this.vendor = null
+      this.vendor = null;
       if (!this.vendorId) return;
 
       this.busy = true;
 
-      window.$storefront.vendor.getVendor(this.vendorId)
-          .then(({vendor}) => {
-            this.vendor = vendor;
-          })
-          .catch((error) => {
-            this.showLaravelError(error);
-          })
-          .finally(() => {
-            this.busy = false;
-          });
+      window.$storefront.vendor
+        .getVendor(this.vendorId)
+        .then(({ vendor }) => {
+          this.vendor = vendor;
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy = false;
+        });
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--vendor-view{
-
+.s--vendor-view {
 }
+
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--vendor-view{
-
+.s--vendor-view {
 }
 </style>

@@ -27,9 +27,9 @@ const createSVGElement = (element, container, attributes) => {
 };
 
 const generateLegendBackground = (color, direction = "horizontal") => {
-  if(!color){
+  if (!color) {
     console.error("Funnel Graph > color is not defined");
-    return '';
+    return "";
   }
   if (typeof color === "string") {
     return `background-color: ${color}`;

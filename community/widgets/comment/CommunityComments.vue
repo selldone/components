@@ -19,8 +19,8 @@
     <v-expand-transition>
       <div
         v-if="show || fake_show"
-        class="my-2"
         :class="{ 'mx-4': !parent, 'ms-4': parent }"
+        class="my-2"
       >
         <s-loading v-if="busy_fetch && page === 1" css-mode light></s-loading>
 
@@ -31,42 +31,42 @@
 
         <!-- No comments -->
         <v-scroll-y-reverse-transition group hide-on-leave>
-          <div v-for="com in comments" :key="com.id" :id="'comment-' + com.id">
+          <div v-for="com in comments" :id="'comment-' + com.id" :key="com.id">
             <div class="d-flex">
               <!-- User Avatar -->
               <v-avatar
                 :size="parent ? '2.2em' : '2.6em'"
-                color="#fafafa"
                 class="me-2"
+                color="#fafafa"
               >
                 <v-img :src="getUserAvatar(com.user_id)"></v-img>
               </v-avatar>
 
               <!-- Author name / description -->
               <div
-                class="flex-grow-1 p-2 cmt-body overflow-hidden bgc"
                 :class="{ '-blue': focus === com.id }"
+                class="flex-grow-1 p-2 cmt-body overflow-hidden bgc"
               >
                 <div class="d-flex align-center">
                   <b class="d-block text-capitalize flex-grow-1"
                     >{{ com.profile.name }}
                     <v-icon
                       v-if="com.profile.verified"
-                      small
-                      color="blue"
                       class="ms-1"
-                      >verified</v-icon
-                    >
+                      color="blue"
+                      size="small"
+                      >verified
+                    </v-icon>
 
                     <v-chip
                       v-if="com.user_id === post.user_id"
-                      x-small
-                      color="#333"
-                      dark
-                      pill
                       class="mx-1"
-                      >{{ $t("community.commons.author") }}</v-chip
-                    >
+                      color="#333"
+
+                      pill
+                      size="x-small"
+                      >{{ $t("community.commons.author") }}
+                    </v-chip>
                   </b>
                   <small
                     >{{ getFromNowString(com.created_at) }}
@@ -75,9 +75,9 @@
                     ></small
                   >
                   <v-btn
-                    icon
                     class="ms-2"
-                    small
+                    icon
+                    size="small"
                     @click="
                       (e) =>
                         showCommunityCommentActionsMenu(
@@ -87,11 +87,12 @@
                           com,
                           () => {
                             DeleteItemByID(comments, com.id);
-                          }
+                          },
                         )
                     "
-                    ><v-icon>more_horiz</v-icon></v-btn
                   >
+                    <v-icon>more_horiz</v-icon>
+                  </v-btn>
                 </div>
                 <small class="d-block single-line mb-2">{{
                   com.profile.description
@@ -102,24 +103,25 @@
                 <community-image
                   v-if="com.image"
                   :src="getShopImagePath(com.image)"
-                  width="240"
-                  max-height="480"
-                  height="auto"
                   class="rounded-18px"
                   fullscreen
+                  height="auto"
+                  max-height="480"
+                  width="240"
                 >
                 </community-image>
 
                 <!-- Comment body -->
                 <v-btn
                   v-if="com.offensive"
-                  small
-                  text
                   color="red"
+                  size="small"
+                  variant="text"
                   @click="force_show = !force_show && com.id"
-                  ><v-icon class="me-1" small>warning</v-icon> This comment is
-                  offensive!</v-btn
                 >
+                  <v-icon class="me-1" size="small">warning</v-icon>
+                  This comment is offensive!
+                </v-btn>
                 <p
                   v-if="!com.offensive || force_show === com.id"
                   class="my-2"
@@ -127,13 +129,13 @@
                 ></p>
 
                 <!-- Show reports to admin -->
-                <div class="subtitle-2 mb-1 d-flex justify-end">
+                <div class="text-subtitle-2 mb-1 d-flex justify-end">
                   <span
                     v-if="com.reports"
-                    class="red--text pp"
+                    class="text-red pp"
                     @click="showCommunityCommentReportsMenu(com)"
                   >
-                    <v-icon small color="red">report</v-icon>
+                    <v-icon color="red" size="small">report</v-icon>
                     {{ com.reports }} {{ $t("community.commons.reports") }}
                   </span>
                 </div>
@@ -141,10 +143,11 @@
                 <!-- actions -->
                 <div class="d-flex">
                   <v-btn
-                    text
-                    @click="showReplies(com, 1)"
                     :disabled="show_replies_id === com.id"
-                    ><v-icon small class="me-1">question_answer</v-icon>
+                    variant="text"
+                    @click="showReplies(com, 1)"
+                  >
+                    <v-icon class="me-1" size="small">question_answer</v-icon>
                     {{ $t("community.commons.reply") }}
                     <b v-if="com.replies">({{ com.replies }})</b></v-btn
                   >
@@ -159,28 +162,30 @@
                         ? '#9C27B0'
                         : undefined
                     "
-                    text
-                    depressed
+                    :loading="busy_reaction === com.id + 'DISAGREE'"
                     :style="{
                       '--size':
                         Math.round(
                           60 *
                             (com.disagrees /
-                              (com.agrees + com.disagrees + 10)) /*bias*/
+                              (com.agrees + com.disagrees + 10)) /*bias*/,
                         ) + 'px',
                     }"
                     class="m-1 cc-d"
-                    small
+                    size="small"
+                    variant="text"
                     @click="sendCommentReaction(com, 'DISAGREE')"
-                    :loading="busy_reaction === com.id + 'DISAGREE'"
-                    ><v-icon small class="me-1">{{
-                      com.action && com.action.reaction === "DISAGREE"
-                        ? "thumb_down"
-                        : "thumb_down_off_alt"
-                    }}</v-icon>
+                  >
+                    <v-icon class="me-1" size="small"
+                      >{{
+                        com.action && com.action.reaction === "DISAGREE"
+                          ? "thumb_down"
+                          : "thumb_down_off_alt"
+                      }}
+                    </v-icon>
                     {{ $t("community.commons.disagree") }}
                     <b v-if="com.disagrees" class="ms-1"
-                      >({{   numeralFormat(com.disagrees,"0.[0]a") }})</b
+                      >({{ numeralFormat(com.disagrees, "0.[0]a") }})</b
                     ></v-btn
                   >
 
@@ -192,28 +197,30 @@
                         ? 'success'
                         : undefined
                     "
-                    text
-                    depressed
+                    :loading="busy_reaction === com.id + 'AGREE'"
                     :style="{
                       '--size':
                         Math.round(
                           60 *
                             (com.agrees /
-                              (com.agrees + com.disagrees + 10)) /*bias*/
+                              (com.agrees + com.disagrees + 10)) /*bias*/,
                         ) + 'px',
                     }"
                     class="m-1 cc-a"
-                    small
+                    size="small"
+                    variant="text"
                     @click="sendCommentReaction(com, 'AGREE')"
-                    :loading="busy_reaction === com.id + 'AGREE'"
-                    ><v-icon small class="me-1">{{
-                      com.action && com.action.reaction === "AGREE"
-                        ? "thumb_up"
-                        : "thumb_up_off_alt"
-                    }}</v-icon>
+                  >
+                    <v-icon class="me-1" size="small"
+                      >{{
+                        com.action && com.action.reaction === "AGREE"
+                          ? "thumb_up"
+                          : "thumb_up_off_alt"
+                      }}
+                    </v-icon>
                     {{ $t("community.commons.agree") }}
                     <b v-if="com.agrees" class="ms-1"
-                      >({{  numeralFormat(com.agrees ,"0.[0]a") }})</b
+                      >({{ numeralFormat(com.agrees, "0.[0]a") }})</b
                     ></v-btn
                   >
                 </div>
@@ -224,22 +231,22 @@
             <div v-if="show_replies_id === com.id">
               <v-btn
                 v-if="com.replies"
-                small
-                text
-                color="blue"
                 class="text-capitalize"
+                color="blue"
+                size="small"
+                variant="text"
                 @click="show_replies_messages = !show_replies_messages"
                 >{{
                   show_replies_messages ? "Hide replies" : "Show replies"
                 }}
-                ({{ com.replies }})</v-btn
-              >
+                ({{ com.replies }})
+              </v-btn>
               <community-comments
-                :post="post"
                 :parent="com"
+                :post="post"
                 :show="show_replies_messages"
-                @focus="focus = com.id"
                 @blur="focus = null"
+                @focus="focus = com.id"
               >
               </community-comments>
             </div>
@@ -248,12 +255,12 @@
 
         <v-btn
           v-if="has_more"
-          text
-          @click="fetchComments(page + 1)"
-          class="my-2"
           :loading="busy_fetch"
-          >{{ $t("community.commons.show_more") }}</v-btn
-        >
+          class="my-2"
+          variant="text"
+          @click="fetchComments(page + 1)"
+          >{{ $t("community.commons.show_more") }}
+        </v-btn>
       </div>
     </v-expand-transition>
 
@@ -261,20 +268,21 @@
     <v-expand-transition>
       <div v-show="image">
         <v-img
-          width="320"
-          max-width="90%"
-          height="200"
           :src="image"
           class="position-relative rounded-18px mx-4 my-2"
+          height="200"
+          max-width="90%"
+          width="320"
         >
           <v-btn
             class="absolute-top-end"
-            depressed
+
+            size="small"
+            variant="flat"
             @click="clearImage"
-            fab
-            small
-            ><v-icon>close</v-icon></v-btn
           >
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-img>
       </div>
     </v-expand-transition>
@@ -283,19 +291,12 @@
 
     <v-textarea
       v-model="body"
-      rows="1"
-      auto-grow
-      rounded
-      solo
-      flat
-      class="my-2"
       :class="{
         border: !parent || focus_me,
         'mx-4': !parent,
         'ms-4': parent,
         opx: !show,
       }"
-      hide-details
       :placeholder="
         parent
           ? $t('community.comment.comment_response_plc', {
@@ -303,36 +304,41 @@
             })
           : $t('community.comment.comment_plc')
       "
+      auto-grow
+      class="my-2"
       color="#ddd"
-      @focus="
-        $emit('focus');
-        focus_me = true;
-      "
+      flat
+      hide-details
+      rounded
+      rows="1"
+      variant="solo"
       @blur="
         $emit('blur');
         focus_me = false;
       "
+      @focus="
+        $emit('focus');
+        focus_me = true;
+      "
     >
       <template v-slot:prepend-inner>
-        <v-avatar size="2.4em" color="#fafafa" class="margin-n7px ms-n4 me-2">
+        <v-avatar class="margin-n7px ms-n4 me-2" color="#fafafa" size="2.4em">
           <v-img :src="getUserAvatar(USER_ID())"></v-img>
         </v-avatar>
       </template>
       <template v-slot:append-inner>
-        <v-btn icon class="margin-n7px me-2" @click="showSelectImage()">
+        <v-btn class="margin-n7px me-2" icon @click="showSelectImage()">
           <v-icon>add_a_photo</v-icon>
         </v-btn>
 
         <v-btn
-          :depressed="!!body"
           :class="{ disabled: !body }"
-          :icon="!body"
-          :fab="!!body"
-          :small="!!body"
           :color="body ? 'blue' : '#666'"
-          dark
-          class="margin-n7px me-n3"
+          :icon="!body"
           :loading="busy"
+          :size="!!body && 'small'"
+          :variant="!!body ? 'flat':undefined"
+          class="margin-n7px me-n3"
           @click="sendComment"
         >
           <v-icon class="flip-rtl">send</v-icon>
@@ -341,11 +347,11 @@
     </v-textarea>
 
     <input
-      type="file"
       ref="image_input"
-      hidden="hidden"
-      @change="onSelectImage"
       accept="image/*"
+      hidden="hidden"
+      type="file"
+      @change="onSelectImage"
     />
   </div>
 </template>
@@ -353,6 +359,7 @@
 <script>
 import CommunityImage from "../image/CommunityImage.vue";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
+
 export default {
   name: "CommunityComments",
   components: { CommunityImage },
@@ -498,7 +505,7 @@ export default {
           window.CAPI.GET_COMMUNITY_TOPIC_POST_COMMENTS(
             this.post.community_id,
             this.post.topic_id,
-            this.post.id
+            this.post.id,
           ),
           {
             params: {
@@ -510,7 +517,7 @@ export default {
               offset: (this.page - 1) * this.itemsPerPage,
               limit: this.itemsPerPage,
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -557,14 +564,14 @@ export default {
           window.CAPI.POST_COMMUNITY_TOPIC_POST_COMMENT_CREATE(
             this.post.community_id,
             this.post.topic_id,
-            this.post.id
+            this.post.id,
           ),
           formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -623,11 +630,11 @@ export default {
             this.post.community_id,
             this.post.topic_id,
             this.post.id,
-            comment.id
+            comment.id,
           ),
           {
             reaction: reaction,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -652,17 +659,21 @@ export default {
 .bgc {
   background-color: #f8f9fa75;
   transition: all 0.3s ease;
+
   &.-blue {
     background-color: #0b77bf;
     color: #fff;
+
     small {
       color: #eee !important;
     }
   }
 }
+
 .cc-a,
 .cc-d {
   position: relative;
+
   &:after {
     content: "";
     position: absolute;
@@ -682,12 +693,14 @@ export default {
     --size: 0 !important;
   }
 }
+
 .cc-a {
   &:after {
     background-color: #4fb053;
     opacity: 0.3;
   }
 }
+
 .cc-d {
   &:after {
     background-color: #ac59ba;

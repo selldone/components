@@ -14,33 +14,41 @@
 
 <template>
   <s-widget
-    class="text-start font-weight-normal"
-    :title="title"
-    :subTitle="subTitle"
-    body-class="p-0 mt"
-    custom-header
     :class="[small ? 'm-1' : '', dark ? 'widget-dark' : '']"
-    :style="`background: ${color}`"
     :dark="dark"
+    :style="`background: ${color}`"
+    :subTitle="subTitle"
+    :title="title"
+    body-class="p-0 mt"
+    class="text-start font-weight-normal"
+    custom-header
   >
     <template v-slot:top-left>
       <component v-bind:is="iconTo ? 'router-link' : 'span'" :to="iconTo">
         <v-icon
           v-if="icon"
+          :class="{ '-hover': iconTo }"
+          :color="dark ? '#fff' : iconColor"
           :size="small ? '16px' : '24px'"
           class="mx-2"
-          :color="dark ? '#fff' : iconColor"
-          :class="{ '-hover': iconTo }"
         >
           {{ icon }}
         </v-icon>
       </component>
 
-      <v-btn v-if="hasEditButton" icon variant="plain" @click="$emit('edit')" size="small">
-        <v-icon > edit_square </v-icon>
+      <v-btn
+        v-if="hasEditButton"
+        icon
+        size="small"
+        variant="plain"
+        @click="$emit('edit')"
+      >
+        <v-icon> edit_square</v-icon>
       </v-btn>
 
-      <v-avatar v-if="src" size="24" tile><v-img :src="src"></v-img></v-avatar>
+      <v-avatar v-if="src" size="24" tile>
+        <v-img :src="src"></v-img>
+      </v-avatar>
 
       <slot name="top-left" />
     </template>
@@ -48,19 +56,19 @@
     <h4 v-if="!active">Waiting...</h4>
 
     <router-link v-if="badge" :to="toBadge">
-      <v-badge v-if="small" pill class="float-right p-1 small" color="primary">
+      <v-badge v-if="small" class="float-right p-1 small" color="primary" pill>
         {{ badge }}
       </v-badge>
 
-      <v-badge v-else pill class="float-right p-2" color="primary">
+      <v-badge v-else class="float-right p-2" color="primary" pill>
         {{ badge }}
       </v-badge>
     </router-link>
 
     <h4
       v-if="titleBig"
-      class="fw-semi-bold ml-lg mb-lg"
       :class="small ? 'small' : ''"
+      class="fw-semi-bold ml-lg mb-lg"
     >
       <span v-html="titleBig" />
       <small class="me-2">{{ titleBigSpan }}</small>
@@ -69,9 +77,9 @@
 
     <slot />
 
-    <div   class="d-flex flex-wrap justify-content-between" />
+    <div class="d-flex flex-wrap justify-content-between" />
 
-    <div class="border-top mt-3" v-if="extended">
+    <div v-if="extended" class="border-top mt-3">
       <v-spacer></v-spacer>
 
       <slot name="footer" />
@@ -169,8 +177,10 @@ export default {
 ::v-deep(h6) {
   font-size: 1.1rem;
 }
+
 .-hover {
   transition: color 0.3s ease-in-out;
+
   &:hover {
     color: #0f75ac !important;
   }

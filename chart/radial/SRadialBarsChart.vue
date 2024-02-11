@@ -14,12 +14,12 @@
 
 <template>
   <apexchart
-    class="mx-auto d-inline-block"
-    type="radialBar"
     :height="height"
-    :width="height"
     :options="chartOptions"
     :series="series"
+    :width="height"
+    class="mx-auto d-inline-block"
+    type="radialBar"
   />
 </template>
 
@@ -59,11 +59,9 @@ export default {
           fontFamily: "var(--font)",
           height: this.height,
           sparkline: {
-            enabled: true
+            enabled: true,
           },
-
         },
-
 
         plotOptions: {
           radialBar: {

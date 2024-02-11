@@ -19,9 +19,9 @@
       <!-- <span class="hide-on-small-900 me-1">{{ $t("product_info.type") }}:</span>-->
       <img
         :src="getProductTypeImage(product.type)"
+        class="m-1 me-2"
         height="16"
         width="16"
-        class="m-1 me-2"
       />
       <span class="d-none d-sm-inline-block">{{
         getProductTypeName(product.type)
@@ -34,10 +34,12 @@
       <!--<span class="hide-on-small-900 me-1">{{ $t("product_info.brand") }}:</span>-->
       <component
         :is="!window.ExternalWidget ? 'router-link' : 'a'"
+        :title="$t('product_info.brand')"
         :to="{
           name: 'ShopPage',
           query: { search: product.brand },
         }"
+        class="link-underlined single-line d-inline-block"
         v-bind="
           window.ExternalWidget
             ? {
@@ -48,29 +50,27 @@
               }
             : {}
         "
-        class="link-underlined single-line d-inline-block"
-        :title="$t('product_info.brand')"
-        >{{ product.brand }}</component
-      >
+        >{{ product.brand }}
+      </component>
     </div>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Category ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <v-tooltip
       v-if="product.category"
-      bottom
-      max-width="460px"
+      :disabled="!product.category.description"
       class="flex-grow-1"
       color="#111"
-      :disabled="!product.category.description"
+      location="bottom"
+      max-width="460px"
     >
-      <template v-slot:activator="{ on }">
-        <div class="mx-3 single-line" v-on="on">
+      <template v-slot:activator="{ props }">
+        <div class="mx-3 single-line" v-bind="props">
           <!--  <span class="hide-on-small-900 me-1">{{ $t("product_info.category") }}:</span>-->
           <circle-image
             v-if="product.category.icon"
-            :src="getShopImagePath(product.category.icon, 128)"
             :size="20"
+            :src="getShopImagePath(product.category.icon, 128)"
             scale-on-hover
           />
 
@@ -86,6 +86,7 @@
                   }
                 : undefined
             "
+            class="mx-1 link-underlined"
             v-bind="
               window.ExternalWidget
                 ? {
@@ -94,13 +95,12 @@
                   }
                 : {}
             "
-            class="mx-1 link-underlined"
           >
             {{ product.category.title }}
           </component>
         </div>
       </template>
-      <v-icon small dark class="mx-2"> info </v-icon>
+      <v-icon class="mx-2" dark size="small"> info</v-icon>
       <span>{{ product.category.description }}</span>
     </v-tooltip>
   </div>
@@ -108,11 +108,10 @@
 
 <script>
 import CircleImage from "@components/ui/image/CircleImage.vue";
+
 export default {
   name: "ProductSectionBoxGeneralInfo",
-  data: () => ({
-
-  }),
+  data: () => ({}),
   computed: {},
   components: { CircleImage },
   props: {
@@ -128,7 +127,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .link-underlined {
   color: #1ca2bd !important;
 

@@ -20,7 +20,7 @@
       '--step-color-dark': darkColor ? darkColor : SaminColorDarkDeep,
     }"
   >
-    <div class="container-stepper" :class="{ 'mt-5': hasSubscription }">
+    <div :class="{ 'mt-5': hasSubscription }" class="container-stepper">
       <div
         :style="`height: 2px;width: ${100 - 100 / length}%;left: ${
           50 / length
@@ -48,6 +48,8 @@
         <li
           v-for="(item, _key, index) in states"
           :key="_key"
+          :ref="_key === 'ToCustomer' ? 'target' : undefined"
+          :caption="$t(item.name)"
           :class="{
             active: activeIndex >= index,
             'sub-caption b-16px -no-wrap': showCaption,
@@ -56,30 +58,28 @@
           }"
           :style="`width:${100 / length}%`"
           :title="$t(item.name)"
-          :caption="$t(item.name)"
-          :ref="_key === 'ToCustomer' ? 'target' : undefined"
         >
           <v-icon
             v-if="activeIndex > index"
+            class="hide-on-hover"
             color="#fff"
             size="small"
-            class="hide-on-hover"
           >
             check_circle
           </v-icon>
 
           <v-icon
             v-else-if="activeIndex === index"
+            class="hide-on-hover"
             color="#fff"
             size="small"
-            class="hide-on-hover"
           >
             {{ item.icon ? item.icon : "radio_button_unchecked" }}
           </v-icon>
           <v-icon
             v-else-if="item.icon"
-            color="#ccc"
             class="op-0-6 hide-on-hover"
+            color="#ccc"
             size="small"
           >
             {{ item.icon }}
@@ -87,8 +87,8 @@
 
           <v-icon
             :color="activeIndex >= index ? '#fff' : '#ccc'"
-            size="small"
             class="show-on-hover"
+            size="small"
           >
             {{ item.icon ? item.icon : "radio_button_unchecked" }}
           </v-icon>
@@ -97,10 +97,10 @@
 
       <div
         v-if="hasSubscription"
-        class="top-chain"
         :class="{ '-rtl': $vuetify.rtl }"
+        class="top-chain"
       >
-        <v-icon size="16" class="-ic-1">shortcut</v-icon>
+        <v-icon class="-ic-1" size="16">shortcut</v-icon>
 
         <span class="-br"></span>
         <span v-if="isSubscribed">
@@ -112,9 +112,9 @@
           unsubscribed
         </span>
         <span class="-br"></span>
-        <v-icon size="16" class="-ic-2">{{
-          isSubscribed ? "swipe_left_alt" : "credit_card_off"
-        }}</v-icon>
+        <v-icon class="-ic-2" size="16"
+          >{{ isSubscribed ? "swipe_left_alt" : "credit_card_off" }}
+        </v-icon>
       </div>
     </div>
   </div>
@@ -130,7 +130,7 @@ export default {
     },
     states: {
       required: true,
-      type:Array
+      type: Array,
     },
     state: {},
     color: {
@@ -176,7 +176,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $color_1: var(--step-color);
 $color_2: white;
 $border_color_1: var(--step-color-dark);
@@ -204,6 +204,7 @@ $border_color_1: var(--step-color-dark);
     text-align: center;
 
     transition: all 0.15s ease-in-out;
+
     &:hover {
       transform: scale(1.5, 1.5);
       z-index: 1;
@@ -211,6 +212,7 @@ $border_color_1: var(--step-color-dark);
       .show-on-hover {
         display: block !important;
       }
+
       .hide-on-hover {
         display: none !important;
       }
@@ -247,6 +249,7 @@ $border_color_1: var(--step-color-dark);
       text-align: center;
       font-weight: bold;
     }
+
     /*
         &:after {
           transition: all 0.15s step-end;
@@ -306,16 +309,19 @@ $border_color_1: var(--step-color-dark);
   align-items: center;
   font-weight: 600;
   color: var(--chain-color);
+
   .-br {
     margin: 0 3px;
     flex-grow: 1;
     height: 1px;
     background-color: var(--chain-color);
   }
+
   .-ic-1 {
     transform: rotate(-90deg) scaleX(-1) translateX(5px);
     color: var(--chain-color) !important;
   }
+
   .-ic-2 {
     color: var(--chain-color) !important;
   }
@@ -362,6 +368,7 @@ $border_color_1_dark: #fff;
       }
     }
   }
+
   .top-chain {
     --chain-color: #fff;
   }

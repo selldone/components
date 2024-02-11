@@ -15,10 +15,10 @@
 <template>
   <div>
     <apexchart
-      :type="type"
       :height="height"
       :options="chartOptions"
       :series="series"
+      :type="type"
     ></apexchart>
   </div>
 </template>
@@ -73,7 +73,7 @@ export default defineComponent({
         {
           name: this.name,
           data: this.value,
-          color:this.color
+          color: this.color,
         },
       ],
       chartOptions: {},
@@ -141,11 +141,9 @@ export default defineComponent({
               },
             },
 
-              formatter: function (value, timestamp, index) {
-                return numeral(value).format("0.[0]a");
-              },
-
-
+            formatter: function (value, timestamp, index) {
+              return numeral(value).format("0.[0]a");
+            },
           },
           marker: {
             show: false,
@@ -155,7 +153,6 @@ export default defineComponent({
         yaxis: {
           reversed: this.reversed,
         },
-
       };
     },
   },
@@ -165,4 +162,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

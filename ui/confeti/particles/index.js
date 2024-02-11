@@ -12,14 +12,9 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import CircleParticle from './circle';
-import RectParticle from './rect';
-import HeartParticle from './heart';
-import ImageParticle from './image';
+import CircleParticle from "./circle";
+import RectParticle from "./rect";
+import HeartParticle from "./heart";
+import ImageParticle from "./image";
 
-export {
-  CircleParticle,
-  RectParticle,
-  HeartParticle,
-  ImageParticle,
-};
+export { CircleParticle, RectParticle, HeartParticle, ImageParticle };

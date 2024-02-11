@@ -17,14 +17,14 @@
 
   <v-bottom-sheet
     :model-value="value"
-    @update:model-value="(v) => $emit('input', v)"
+    content-class="rounded-t-xl overflow-hidden"
     max-width="820"
     scrollable
-    content-class="rounded-t-xl overflow-hidden"
+    @update:model-value="(v) => $emit('input', v)"
   >
-    <v-card flat color="#f9f9f9" rounded="0">
+    <v-card color="#f9f9f9" flat rounded="0">
       <v-card-title class="d-flex align-center">
-        <v-avatar v-if="icon" size="24" class="me-2" rounded>
+        <v-avatar v-if="icon" class="me-2" rounded size="24">
           <img :src="icon" />
         </v-avatar>
 
@@ -36,8 +36,8 @@
           <div
             v-for="(message, i) in notes"
             :key="i"
-            class="my-2 c-bubble"
             :class="{ disabled: busy_delete_message === i }"
+            class="my-2 c-bubble"
           >
             <div class="d-flex align-center">
               <v-avatar :size="32" class="avatar-gradient -thin -staff me-2">
@@ -52,12 +52,13 @@
               </div>
 
               <v-btn
-                color="red"
-                :title="$t('global.actions.delete')"
-                @click="deleteMessage(i)"
-                icon variant="text"
-                :loading="busy_delete_message === i"
                 :class="{ disabled: busy_delete_message !== null }"
+                :loading="busy_delete_message === i"
+                :title="$t('global.actions.delete')"
+                color="red"
+                icon
+                variant="text"
+                @click="deleteMessage(i)"
               >
                 <v-icon>close</v-icon>
               </v-btn>
@@ -84,21 +85,22 @@
           </div>
 
           <v-textarea
+            v-model="body_input"
+            :counter="1024"
             :rows="3"
             auto-grow
             label="Message"
-            v-model="body_input"
-            :counter="1024" variant="underlined"
+            variant="underlined"
           ></v-textarea>
 
           <div class="widget-buttons">
             <v-btn
+              :class="{ disabled: !body_input }"
+              :loading="busy_add"
               color="primary"
               size="x-large"
               variant="flat"
               @click="addNote"
-              :loading="busy_add"
-              :class="{ disabled: !body_input }"
             >
               <v-icon class="me-1">add</v-icon>
               {{ $t("global.actions.add") }}
@@ -108,7 +110,7 @@
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn variant="text" size="x-large" @click="$emit('input', false)">
+          <v-btn size="x-large" variant="text" @click="$emit('input', false)">
             <v-icon class="me-1">close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -205,7 +207,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .c-bubble {
   background-color: #fff;
   border-radius: 18px;

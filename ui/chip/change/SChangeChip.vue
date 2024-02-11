@@ -14,20 +14,22 @@
 
 <template>
   <v-chip
-    pill
     :color="value > 0 ? '#255e27' : value === 0 ? '#888' : '#922222'"
-    :style="{backgroundColor:value > 0 ? '#F0F4C3' : value === 0 ? '#eee' : '#FFCDD2'}"
-    label
-    class="s--change-chip"
-    variant="text"
-    :size="size"
     :density="density"
+    :size="size"
+    :style="{
+      backgroundColor: value > 0 ? '#F0F4C3' : value === 0 ? '#eee' : '#FFCDD2',
+    }"
+    class="s--change-chip"
+    label
+    pill
+    variant="text"
   >
     <v-icon
       v-if="value"
       :color="value > 0 ? '#255e27' : '#922222'"
       size="small"
-       start
+      start
     >
       {{ value > 0 ? "fa:fas fa-caret-up" : "fa:fas fa-caret-down" }}
     </v-icon>
@@ -37,7 +39,7 @@
       :amount="value"
       :currency="currency"
     ></price-view>
-    <span v-else>{{   numeralFormat(value,"0.[00]a") }}</span>
+    <span v-else>{{ numeralFormat(value, "0.[00]a") }}</span>
 
     <slot></slot>
   </v-chip>
@@ -50,14 +52,13 @@ export default {
   props: {
     value: {},
     currency: {},
-    size:{},
-    density:{}
+    size: {},
+    density: {},
   },
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -67,11 +68,9 @@ export default {
  */
 
 .s--change-chip {
-
   font-size: 12px;
   unicode-bidi: plaintext;
   white-space: nowrap;
   font-weight: 600;
-
 }
 </style>

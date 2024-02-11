@@ -23,13 +23,9 @@ import DynamicScriptDirective from "./directives/DynamicScriptDirective";
 import DragScrollDirective from "./directives/dragscroll/DragScrollDirective";
 import { App } from "vue";
 
-export function installGlobalDirectives(app: App){
-
+export function installGlobalDirectives(app: App) {
   app.directive("copy", CopyDirective);
   app.directive("track", TrackDirective);
   app.directive("dynamic-scripts", DynamicScriptDirective);
   app.directive("dragscroll", DragScrollDirective);
-
-
 }
-

@@ -17,7 +17,7 @@
     <div class="-nut">
       <swiper :options="{ loop: true, autoplay: { delay: 2500 } }">
         <swiper-slide v-for="(k, i) in shippings" :key="i">
-          <img :src="k" width="42" height="42" />
+          <img :src="k" height="42" width="42" />
         </swiper-slide>
       </swiper>
     </div>
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import {Swiper, SwiperSlide} from "swiper/vue";
+import { Swiper, SwiperSlide } from "swiper/vue";
 
 export default {
   name: "SPodToggleShipping",

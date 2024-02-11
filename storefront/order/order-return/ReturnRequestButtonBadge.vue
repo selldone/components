@@ -13,27 +13,27 @@
   -->
 
 <template>
-  <v-tooltip bottom>
-    <template v-slot:activator="{ on }">
+  <v-tooltip location="bottom">
+    <template v-slot:activator="{ props }">
       <v-badge
         v-if="basketItemReturns.length"
-        bordered
         :color="getDotColorOfReturnRequests(basketItemReturns)"
-        overlap
+        bordered
         dot
+        overlap
       >
-        <v-btn v-on="on" tile icon
+        <v-btn icon tile v-bind="props"
           ><img
             src="../../../assets/icons/return-box.svg"
             width="24"
-            @click.stop
             @click="$emit('click:return')"
+            @click.stop
         /></v-btn>
       </v-badge>
     </template>
     <p class="font-weight-bold border-bottom border-white">Return items</p>
 
-    <v-simple-table dense dark>
+    <v-table dark dense>
       <template v-slot:default>
         <thead>
           <tr>
@@ -55,11 +55,11 @@
                 :color="
                   getReturnRequestStateObject(basket_item_return.state).color
                 "
-                small
+                size="small"
                 >{{
                   getReturnRequestStateObject(basket_item_return.state).icon
-                }}</v-icon
-              >
+                }}
+              </v-icon>
               {{
                 $t(getReturnRequestStateObject(basket_item_return.state).name)
               }}
@@ -71,13 +71,13 @@
                   basket_item_return.created_at !==
                   basket_item_return.updated_at
                 "
-                >refresh</v-icon
-              >
+                >refresh
+              </v-icon>
             </td>
           </tr>
         </tbody>
       </template>
-    </v-simple-table>
+    </v-table>
   </v-tooltip>
 </template>
 
@@ -95,14 +95,14 @@ export default {
     getDotColorOfReturnRequests(basket_item_returns) {
       if (
         basket_item_returns.some(
-          (item) => item.state === ReturnItemStates.Pending.code
+          (item) => item.state === ReturnItemStates.Pending.code,
         )
       )
         return "red";
 
       if (
         basket_item_returns.some(
-          (item) => item.state === ReturnItemStates.Rejected.code
+          (item) => item.state === ReturnItemStates.Rejected.code,
         )
       )
         return "amber";

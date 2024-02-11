@@ -15,16 +15,16 @@
 <template>
   <v-bottom-sheet
     v-model="show_dialog"
-    inset
     :max-width="640"
-    width="90%"
-    scrollable
     content-class="s--storefront-need-login-dialog"
+    inset
     persistent
+    scrollable
+    width="90%"
   >
-    <v-btn icon class="absolute-top-end m-3 z2" @click="show_dialog = false"
-      ><v-icon>close</v-icon></v-btn
-    >
+    <v-btn class="absolute-top-end m-3 z2" icon @click="show_dialog = false">
+      <v-icon>close</v-icon>
+    </v-btn>
 
     <s-shop-login
       v-model:show="show_dialog"
@@ -37,6 +37,7 @@
 <script>
 import SShopLogin from "@components/login/SShopLogin.vue";
 import _ from "lodash-es";
+
 export default {
   name: "SStorefrontNeedLoginDialog",
   components: { SShopLogin },

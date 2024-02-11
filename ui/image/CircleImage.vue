@@ -14,9 +14,9 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-avatar
-    :size="size"
-    :color="transparent ? 'transparent' : dark ? SaminColorDarkDeep : '#fafafa'"
     :class="{ 'hover-scale': scaleOnHover }"
+    :color="transparent ? 'transparent' : dark ? SaminColorDarkDeep : '#fafafa'"
+    :size="size"
     @error="loading = false"
     @load="loading = false"
   >
@@ -25,9 +25,9 @@
         <v-progress-circular
           v-if="loading"
           :size="size > 32 ? 24 : size * 0.7"
-          indeterminate
-          color="#eee"
           class="center-absolute"
+          color="#eee"
+          indeterminate
         />
       </template>
     </v-img>
@@ -80,4 +80,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

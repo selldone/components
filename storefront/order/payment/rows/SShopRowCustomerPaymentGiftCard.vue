@@ -15,11 +15,13 @@
 <template>
   <tr class="s--shop-row-customer-payment-gift-card">
     <td>
-      <v-icon v-if="sub" class="ms-5 flip-ltr" color="black">keyboard_return</v-icon>
+      <v-icon v-if="sub" class="ms-5 flip-ltr" color="black"
+        >keyboard_return
+      </v-icon>
       <img
-        src="../../../../assets/icons/gift-card.svg"
-        height="24"
         class="mx-2"
+        height="24"
+        src="../../../../assets/icons/gift-card.svg"
       />
 
       {{ $t("global.commons.gift_card") }}
@@ -30,7 +32,7 @@
         :currency="giftcard.currency"
       ></price-view>
     </td>
-    <td class="subtitle-2">
+    <td class="text-subtitle-2">
       {{ formatCard(giftcard.number) }}
     </td>
   </tr>
@@ -45,14 +47,13 @@ export default {
     },
     sub: {
       default: false,
-      type:Boolean
+      type: Boolean,
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -60,7 +61,7 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-row-customer-payment-gift-card{
+.s--shop-row-customer-payment-gift-card {
   text-align: start;
 }
 </style>

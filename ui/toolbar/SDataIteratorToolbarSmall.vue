@@ -14,48 +14,48 @@
 
 <template>
   <v-toolbar
-    class="my-2 overflow-hidden"
-    flat
     :color="color"
     :dark="dark"
-    height="auto"
     :style="`border-radius: ${radius};padding:${padding}`"
+    class="my-2 overflow-hidden"
+    flat
+    height="auto"
   >
     <v-text-field
       v-if="show_search"
-      :model-value="search"
-      @update:model-value="(value) => $emit('update:search', value)"
-      variant="filled"
-      rounded
-      hide-details
-      prepend-inner-icon="search"
       :label="$t('global.data_toolbar.search')"
+      :model-value="search"
+      append-inner-icon="arrow_back"
       class="max-width-field mb-2 zoomIn"
       density="compact"
+      hide-details
+      prepend-inner-icon="search"
+      rounded
       single-line
-      append-inner-icon="arrow_back"
+      variant="filled"
+      @update:model-value="(value) => $emit('update:search', value)"
       @click:append-inner="show_search = false"
     >
     </v-text-field>
 
     <template v-if="has_sort && !show_search">
-      <v-btn @click="show_search = true" icon class="me-1"
-        ><v-icon>search</v-icon></v-btn
-      >
+      <v-btn class="me-1" icon @click="show_search = true">
+        <v-icon>search</v-icon>
+      </v-btn>
       <v-menu offset-y z-index="99999999">
         <template v-slot:activator="{ props }">
           <v-btn
-            v-bind="props"
+            :close="!!sortBy"
             :color="sortBy ? 'blue' : undefined"
             :dark="!!sortBy"
-            :close="!!sortBy"
-            @click:close="$emit('update:sort-by', null)"
-            class="mx-2"
-            variant="flat"
-            rounded
-            :title="$t('global.data_toolbar.sort_by')"
-            size="small"
             :icon="!sortBy"
+            :title="$t('global.data_toolbar.sort_by')"
+            class="mx-2"
+            rounded
+            size="small"
+            v-bind="props"
+            variant="flat"
+            @click:close="$emit('update:sort-by', null)"
           >
             <v-icon class="me-1">sort</v-icon>
             {{ sortBy_object ? $t(sortBy_object.label) : "" }}
@@ -74,16 +74,16 @@
       </v-menu>
 
       <v-btn
-        size="small"
-        rounded
-        variant="flat"
         dark
-        @click="(value) => $emit('update:sortDesc', !sortDesc)"
         icon
+        rounded
+        size="small"
+        variant="flat"
+        @click="(value) => $emit('update:sortDesc', !sortDesc)"
       >
-        <v-icon>{{
-          sortDesc ? "keyboard_arrow_down" : "keyboard_arrow_up"
-        }}</v-icon>
+        <v-icon
+          >{{ sortDesc ? "keyboard_arrow_down" : "keyboard_arrow_up" }}
+        </v-icon>
       </v-btn>
 
       <v-spacer></v-spacer>

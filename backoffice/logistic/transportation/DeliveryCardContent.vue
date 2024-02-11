@@ -26,47 +26,47 @@
           })
         "
       >
-        <v-icon small> edit </v-icon>
+        <v-icon size="small"> edit</v-icon>
       </v-btn>
     </div>
 
     <!-- Play / Pause Mode & Create dates -->
     <div class="d-flex align-items-center">
       <img
-        class="me-2"
+        :class="{ 'img-grayscale': !transportation.enable }"
         :src="
           transportation.logo
             ? getShopImagePath(transportation.logo)
             : transportationObj.icon
         "
-        width="48"
+        class="me-2"
         height="48"
-        :class="{ 'img-grayscale': !transportation.enable }"
+        width="48"
       />
 
       <div class="flex-grow-1">
         <p class="m-1 small">
           {{ $t("global.commons.distance") }}:
-          <b>{{   numeralFormat(transportation.distance,"0,0") }} Km</b>
+          <b>{{ numeralFormat(transportation.distance, "0,0") }} Km</b>
         </p>
 
         <p class="m-1 small">
           {{ $t("global.commons.weight") }}:
-          <b>{{  numeralFormat(transportation.max_weight ,"0,0") }} Kg</b>
+          <b>{{ numeralFormat(transportation.max_weight, "0,0") }} Kg</b>
         </p>
         <p class="m-1 small">
           {{ $t("global.commons.size") }}:
           <span dir="ltr">
             <b :title="$t('global.commons.width')"
-              >{{   numeralFormat(transportation.max_w,"0,0") }} cm
+              >{{ numeralFormat(transportation.max_w, "0,0") }} cm
             </b>
-            <v-icon class="mx-1" small>fa:fas fa-times</v-icon>
+            <v-icon class="mx-1" size="small">fa:fas fa-times</v-icon>
             <b :title="$t('global.commons.length')"
-              >{{  numeralFormat(transportation.max_l,"0,0") }} cm
+              >{{ numeralFormat(transportation.max_l, "0,0") }} cm
             </b>
-            <v-icon class="mx-1" small>fa:fas fa-times</v-icon>
+            <v-icon class="mx-1" size="small">fa:fas fa-times</v-icon>
             <b :title="$t('global.commons.height')"
-              >{{  numeralFormat(transportation.max_h,"0,0") }} cm
+              >{{ numeralFormat(transportation.max_h, "0,0") }} cm
             </b></span
           >
         </p>
@@ -84,11 +84,11 @@
       <img
         v-for="timespan in transportation.time_spans"
         :key="timespan"
-        width="24"
-        height="24"
-        class="mx-2"
         :src="TimeSpans[timespan].icon"
         :title="$t(TimeSpans[timespan].name)"
+        class="mx-2"
+        height="24"
+        width="24"
       />
     </p>
     <p class="mb-1">
@@ -102,11 +102,12 @@
         <small class="me-1">{{ $t("global.commons.cod") }}:</small>
         <img
           v-if="transportation.cod"
+          class="ms-1"
+          height="24"
           src="../../../assets/icons/pos.svg"
           width="24"
-          height="24"
-          class="ms-1"
-        /><s-check v-else :value="transportation.cod" read-only></s-check>
+        />
+        <s-check v-else :value="transportation.cod" read-only></s-check>
       </p>
       <p class="mb-1 w-50">
         <small class="me-1">{{ $t("global.commons.sod") }}:</small>
@@ -114,12 +115,15 @@
       </p>
     </div>
 
-    <div class="d-flex" v-if="!transportation.sod">
+    <div v-if="!transportation.sod" class="d-flex">
       <p class="mb-1 w-50">
         <small class="me-1">{{ $t("global.commons.free_shipping") }}:</small>
-        <s-check :model-value="transportation.free_shipping" read-only></s-check>
+        <s-check
+          :model-value="transportation.free_shipping"
+          read-only
+        ></s-check>
       </p>
-      <p class="mb-1 w-50" v-if="transportation.free_shipping">
+      <p v-if="transportation.free_shipping" class="mb-1 w-50">
         <small class="me-1">{{ $t("global.commons.min_purchase") }}:</small>
         <price-view
           :amount="transportation.free_shipping_limit"
@@ -138,9 +142,9 @@
         {{ $t("global.commons.delivery_persons") }}:</small
       >
       <s-dense-images-circles-users
+        :add="showButtons"
         :ids="user_ids"
         :limit="10"
-        :add="showButtons"
         @click:add="
           $router.push({
             name: 'AdminShopTransportationPage_Persons',
@@ -152,15 +156,15 @@
 
     <div v-if="showButtons" class="widget-buttons">
       <v-btn
-        x-large
-        color="#111"
-        dark
         :outlined="outlined"
-        depressed
         :to="{
           name: 'AdminShopTransportationPage_Persons',
           params: { transportation_id: transportation.id },
         }"
+        color="#111"
+        dark
+        size="x-large"
+        variant="flat"
       >
         {{ $t("transportation_page.go_to_courier_list") }}
         <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
@@ -179,36 +183,37 @@
           v-for="id in service_ids"
           :key="id"
           :src="getDeliveryServiceIcon(id, IMAGE_SIZE_SMALL)"
-          width="32"
-          height="32"
           class="me-2"
+          height="32"
+          width="32"
         />
         <v-btn
           v-if="showButtons"
-          icon
-          class="ms-2"
-          color="success"
-          dark
-          depressed
           :to="{
             name: 'AdminShopTransportationPage_Services',
             params: { transportation_id: transportation.id },
           }"
-          ><v-icon>add</v-icon></v-btn
+          class="ms-2"
+          color="success"
+          dark
+          icon
+          variant="flat"
         >
+          <v-icon>add</v-icon>
+        </v-btn>
       </div>
 
       <div v-if="showButtons" class="widget-buttons">
         <v-btn
-          x-large
-          color="#111"
-          dark
           :outlined="outlined"
-          depressed
           :to="{
             name: 'AdminShopTransportationPage_Services',
             params: { transportation_id: transportation.id },
           }"
+          color="#111"
+          dark
+          size="x-large"
+          variant="flat"
         >
           {{ $t("transportation_page.go_to_service_list") }}
           <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
@@ -223,6 +228,7 @@ import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import { WeekDays } from "@core/enums/logistic/WeekDays";
 import { TimeSpans } from "@core/enums/logistic/TimeSpans";
 import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
+
 export default {
   name: "DeliveryCardContent",
   components: {
@@ -260,4 +266,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

@@ -20,25 +20,30 @@
     transition="dialog-bottom-transition"
   >
     <v-card>
-      <v-card-title class="d-flex align-center"
-        ><v-icon class="me-1">compare</v-icon>
+      <v-card-title class="d-flex align-center">
+        <v-icon class="me-1">compare</v-icon>
         {{ $t("global.commons.images_compare") }}
 
-        <v-spacer> </v-spacer>
+        <v-spacer></v-spacer>
         <v-btn
-          variant="text"
           color="red"
           size="x-large"
+          variant="text"
           @click="
             deleteCallback();
             show_dialog = false;
           "
         >
-          <v-icon class="me-1">delete</v-icon
-          >{{ $t("global.actions.delete") }}</v-btn
-        >
+          <v-icon class="me-1">delete </v-icon>
+          {{ $t("global.actions.delete") }}
+        </v-btn>
 
-        <v-tabs v-model="tab" align-tabs="title" bg-color="transparent" slider-color="primary">
+        <v-tabs
+          v-model="tab"
+          align-tabs="title"
+          bg-color="transparent"
+          slider-color="primary"
+        >
           <v-tab>
             <v-icon class="me-1">image</v-icon>
             {{ $t("global.commons.image") }}
@@ -52,8 +57,8 @@
       <v-card-text>
         <v-window v-model="tab" class="bg-transparent">
           <v-window-item>
-            <div dir="ltr" class="widget-box -large mb-5">
-              <s-widget-header title="Images" icon="image"></s-widget-header>
+            <div class="widget-box -large mb-5" dir="ltr">
+              <s-widget-header icon="image" title="Images"></s-widget-header>
               <v-list-subheader>
                 <div>
                   You have the option to upload a pair of images to form a
@@ -67,22 +72,22 @@
               <v-row dense>
                 <v-col cols="12" md="6">
                   <s-image-uploader
-                    contenteditable="false"
-                    :server="uploadUrl"
-                    label="Select image A"
                     :image="original_image"
-                    @new-url="(url) => setOriginal(url)"
+                    :server="uploadUrl"
+                    contenteditable="false"
+                    label="Select image A"
                     max-file-size="2MB"
+                    @new-url="(url) => setOriginal(url)"
                   />
                 </v-col>
                 <v-col cols="12" md="6">
                   <s-image-uploader
-                    contenteditable="false"
-                    :server="uploadUrl"
-                    label="Select image B"
                     :image="compared_image"
-                    @new-url="(url) => setCompare(url)"
+                    :server="uploadUrl"
+                    contenteditable="false"
+                    label="Select image B"
                     max-file-size="2MB"
+                    @new-url="(url) => setCompare(url)"
                   />
                 </v-col>
               </v-row>
@@ -91,8 +96,8 @@
           <v-window-item>
             <div class="widget-box -large mb-5">
               <s-widget-header
-                title="Relative image size"
                 icon="fit_screen"
+                title="Relative image size"
               ></s-widget-header>
               <v-list-subheader>
                 <div>
@@ -105,14 +110,14 @@
 
               <v-slider
                 v-model="pack.max_width"
-                :min="10"
                 :max="max_slider"
-                :tick-size="16"
+                :min="10"
                 :step="0.1"
-                thumb-label="always"
-                thumb-color="primary"
-                track-fill-color="primary"
+                :tick-size="16"
                 class="mt-12"
+                thumb-color="primary"
+                thumb-label="always"
+                track-fill-color="primary"
               >
                 <template v-slot:prepend>
                   <small class="single-line"> Width {{ pack.dim }} </small>
@@ -124,20 +129,20 @@
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn variant="text" @click="show_dialog = false" size="x-large">
+          <v-btn size="x-large" variant="text" @click="show_dialog = false">
             <v-icon start>close</v-icon>
 
-            {{ $t("global.actions.close") }}</v-btn
-          >
+            {{ $t("global.actions.close") }}
+          </v-btn>
           <v-btn
-            variant="flat"
             color="primary"
-            @click="setValue"
             size="x-large"
+            variant="flat"
+            @click="setValue"
           >
-            <v-icon start>check</v-icon
-            >{{ $t("global.actions.set") }}</v-btn
-          >
+            <v-icon start>check</v-icon>
+            {{ $t("global.actions.set") }}
+          </v-btn>
         </div>
       </v-card-actions>
     </v-card>

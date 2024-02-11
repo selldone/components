@@ -1374,6 +1374,7 @@ table.v-table {
     transform: scale(1, var(--scale));
   }
 }
+
 .hover-scale-y-3x {
   transition: all 0.3s linear;
   --scale: 2;
@@ -1875,7 +1876,7 @@ header {
 
 .sup-caption, .sub-caption {
   position: relative;
-  display: inline-block;
+  //display: inline-block;
 
   &:after {
     text-transform: capitalize;
@@ -4729,6 +4730,7 @@ canvas.heatmap-canvas {
 
 }
 
+
 .dashed-hr {
   border-top: dashed 1.6px #fff;
   margin-left: -20px;
@@ -4738,6 +4740,7 @@ canvas.heatmap-canvas {
 
 // Add margin for pagination's:
 .widget, .widget-box {
+
 
   background: var(--background);
 
@@ -4761,6 +4764,13 @@ canvas.heatmap-canvas {
   .v-table.v-table--fixed-header.bg-transparent > .v-table__wrapper > table > thead > tr > th {
     background: var(--background);
   }
+
+
+  hr {
+    border-top: 1.4px dashed rgba(0, 0, 0, 0.25);
+  }
+
+
 }
 
 .v-list-subheader.expandable {
@@ -5099,3 +5109,6 @@ canvas.heatmap-canvas {
 }
 
 
+ol,ul{
+  list-style-position: inside;
+}

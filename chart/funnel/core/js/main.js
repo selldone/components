@@ -1,8 +1,14 @@
 /* eslint-disable no-trailing-spaces */
 /* global HTMLElement */
-import {formatNumber, roundPoint} from "./number";
-import {createPath, createVerticalPath} from "./path";
-import {createSVGElement, generateLegendBackground, getDefaultColors, removeAttrs, setAttrs,} from "./graph";
+import { formatNumber, roundPoint } from "./number";
+import { createPath, createVerticalPath } from "./path";
+import {
+  createSVGElement,
+  generateLegendBackground,
+  getDefaultColors,
+  removeAttrs,
+  setAttrs,
+} from "./graph";
 import generateRandomIdString from "./random";
 
 class FunnelGraph {
@@ -525,8 +531,8 @@ class FunnelGraph {
   }
 
   /*
-        Methods
-     */
+          Methods
+       */
 
   makeVertical() {
     if (this.direction === "vertical") return true;

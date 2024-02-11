@@ -101,7 +101,7 @@
       .on(
         "click",
         ".medium-insert-images-toolbar2 .medium-editor-action",
-        $.proxy(this, "toolbar2Action")
+        $.proxy(this, "toolbar2Action"),
       )
 
       .on("click", $.proxy(this, "unselectAction"));
@@ -163,9 +163,9 @@
       setTimeout(function () {
         that.addToolbar();
         /*
-                        if (that.options.captions) {
-                          that.core.addCaption($image.parent().closest('div'), that.options.captionPlaceholder);
-                        }*/
+                                if (that.options.captions) {
+                                  that.core.addCaption($image.parent().closest('div'), that.options.captionPlaceholder);
+                                }*/
       }, 50);
     }
   };
@@ -185,7 +185,7 @@
       this.templates["src/js/templates/images-toolbar.hbs"]({
         styles: this.options.styles,
         actions: this.options.actions,
-      }).trim()
+      }).trim(),
     );
 
     const $toolbar2 = $(".medium-insert-images-toolbar2");
@@ -201,7 +201,7 @@
         this.repositionToolbars();
         this.repositionToolbars();
       }.bind(this),
-      0
+      0,
     );
   };
 
@@ -216,7 +216,7 @@
     const elementsContainer = this.core.getEditor().options.elementsContainer;
     const elementsContainerAbsolute =
       ["absolute", "fixed"].indexOf(
-        window.getComputedStyle(elementsContainer).getPropertyValue("position")
+        window.getComputedStyle(elementsContainer).getPropertyValue("position"),
       ) > -1;
     const elementsContainerBoundary = elementsContainerAbsolute
       ? elementsContainer.getBoundingClientRect()
@@ -314,7 +314,7 @@
     let $place = this.$el.find(".medium-insert-active");
 
     $place.replaceWith(
-      `<${ComponentElementName} class="medium-insert-active"></${ComponentElementName}>`
+      `<${ComponentElementName} class="medium-insert-active"></${ComponentElementName}>`,
     );
 
     console.log("$place", $place);
@@ -348,7 +348,7 @@
         $.data(
           this,
           "plugin_" + pluginName + addonName,
-          new CustomAddon(this, options)
+          new CustomAddon(this, options),
         );
       }
     });

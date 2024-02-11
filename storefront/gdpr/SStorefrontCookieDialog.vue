@@ -13,41 +13,50 @@
   -->
 
 <template>
-  <div class="s--storefront-cookie-dialog slideInUp" :class="{preview: preview,'is-mobile': isMobile , delay_4s: !preview }">
+  <div
+    :class="{ preview: preview, 'is-mobile': isMobile, delay_4s: !preview }"
+    class="s--storefront-cookie-dialog slideInUp"
+  >
     <v-sheet
       v-if="show"
-      color="#fafafa"
+      :class="{}"
       class="content s--shadow-no-padding border rounded-t-xl"
-      :class="{  }"
+      color="#fafafa"
     >
-      <h5 class="typo-body mb-2 font-weight-bold text-uppercase">{{ $t("global.cookie.title") }}</h5>
+      <h5 class="typo-body mb-2 font-weight-bold text-uppercase">
+        {{ $t("global.cookie.title") }}
+      </h5>
       <p>
         {{ $t("global.cookie.message") }}
       </p>
       <v-btn
         v-if="!hide"
-        color="black"
-        dark
         block
         class="my-3 tnt"
-        depressed
+        color="black"
+        dark
+        variant="flat"
         @click="
           () => {
             setCookieAccept(true);
             hide = !preview;
           }
         "
-        >{{ $t("global.cookie.agree_action") }}</v-btn
-      >
+        >{{ $t("global.cookie.agree_action") }}
+      </v-btn>
       <v-btn
-        class="my-3 tnt"
+        :to="
+          !preview
+            ? { name: window.$storefront.routes.SHOP_PROFILE_PAGE_PRIVACY }
+            : null
+        "
         block
-        outlined
-        :to="!preview ? { name: window.$storefront.routes.SHOP_PROFILE_PAGE_PRIVACY } : null"
+        class="my-3 tnt"
+        variant="outlined"
         @click="hide = !preview"
       >
-        {{ $t("global.cookie.preferences_action") }}</v-btn
-      >
+        {{ $t("global.cookie.preferences_action") }}
+      </v-btn>
     </v-sheet>
   </div>
 </template>
@@ -78,7 +87,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -92,6 +101,7 @@ export default {
   left: 0;
   width: 100%;
   z-index: 9999;
+
   &.preview {
     position: unset;
   }

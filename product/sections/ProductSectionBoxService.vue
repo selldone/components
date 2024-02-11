@@ -15,7 +15,7 @@
 <template>
   <!-- █████████████████████ 🞇 Service █████████████████████ -->
 
-  <div v-if="isService" style="min-height: 1rem" class="flex-grow-0">
+  <div v-if="isService" class="flex-grow-0" style="min-height: 1rem">
     <service-order-view
       :basket="basket"
       :product="product"
@@ -27,6 +27,7 @@
 <script>
 import ServiceOrderView from "../service/ServiceOrderView.vue";
 import { ProductType } from "@core/enums/product/ProductType";
+
 export default {
   name: "ProductSectionBoxService",
   components: {
@@ -43,15 +44,9 @@ export default {
       type: Object,
     },
     preferences: {},
-
-
-
   },
 
-  data: () => ({
-
-
-  }),
+  data: () => ({}),
 
   computed: {
     isService() {
@@ -66,4 +61,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

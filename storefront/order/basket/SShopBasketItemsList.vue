@@ -24,12 +24,13 @@
 
     <v-data-table
       v-model="selected"
+      :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
+      :hide-default-footer="!items || items.length <= 10"
       :items="items"
       :items-per-page="10"
-      :hide-default-footer="!items || items.length <= 10"
-      :header-props="{ sortByText: $t('global.commons.sort_by') }"
-      class="bg-transparent "      density="compact"
+      class="bg-transparent"
+      density="compact"
     >
       <template v-slot:item.product_id="{ item }">
         <div class="d-flex align-center">
@@ -42,35 +43,36 @@
             }"
           >
             <v-img
-              class="mx-auto my-2 rounded pointer-pointer"
               :max-height="isFile ? '42px' : '84px'"
               :max-width="isFile ? '42px' : '84px'"
-              min-height="42px"
-              min-width="42px"
-              aspect-ratio="1"
               :src="
                 item.product.icon
                   ? getShopImagePath(
                       item.variant?.image
                         ? item.variant?.image
                         : item.product.icon,
-                      64
+                      64,
                     )
                   : getProductImage(item.product_id)
               "
+              aspect-ratio="1"
+              class="mx-auto my-2 rounded pointer-pointer"
+              min-height="42px"
+              min-width="42px"
             />
           </router-link>
           <v-btn
             v-if="isFile && isPayed"
-            large
-            depressed
+            class="mx-2"
             color="green"
             dark
-            class="mx-2"
+            size="large"
+            variant="flat"
             @click="$emit('show-download-list', item)"
-            ><v-icon class="me-2">cloud_download</v-icon>
-            {{ $t("global.actions.download") }}</v-btn
           >
+            <v-icon class="me-2">cloud_download</v-icon>
+            {{ $t("global.actions.download") }}
+          </v-btn>
         </div>
       </template>
 
@@ -79,12 +81,12 @@
           <p class="m-0">
             <b>{{ item.product.title }}</b>
 
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
                 <i
                   v-if="item.product.original"
                   class="fas fa-certificate text-primary mx-2"
-                  v-on="on"
+                  v-bind="props"
                 ></i>
               </template>
               <span
@@ -92,12 +94,12 @@
               </span>
             </v-tooltip>
 
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
                 <i
                   v-if="item.product.warranty"
                   class="fas fa-shield-alt text-success mx-2"
-                  v-on="on"
+                  v-bind="props"
                 ></i>
               </template>
               <span> {{ item.product.warranty }}</span>
@@ -119,12 +121,12 @@
           "
         >
           <v-btn
-            color="primary"
             class="tnt ma-1"
-            small
+            color="primary"
+            size="small"
             @click="showCustomizeDetail(item)"
-            >Customized</v-btn
-          >
+            >Customized
+          </v-btn>
         </div>
       </template>
 
@@ -135,25 +137,27 @@
         <i v-else class="fas fa-times-circle text-danger" />
         <div v-if="item.product.inputs && item.product.inputs.length">
           <v-btn
+            class="tnt my-1"
             color="success"
             dark
-            small
+            size="small"
             @click.stop="
               () => {
                 selected_item = item;
                 bottom_sheet_user_message = true;
               }
             "
-            class="tnt my-1"
-            ><v-icon class="me-1" small>add</v-icon>User data form
+          >
+            <v-icon class="me-1" size="small">add</v-icon>
+            User data form
           </v-btn>
           <v-progress-linear
-            :value="getFilledPercent(item)"
+            :model-value="getFilledPercent(item)"
+            class="mt-1"
+            color="#AFB42B"
             rounded
             striped
-            color="#AFB42B"
             style="max-width: 166px"
-            class="mt-1"
           ></v-progress-linear>
         </div>
       </template>
@@ -180,8 +184,8 @@
         ></price-view>
 
         <div v-if="item.offer_amount">
-          <v-chip title="Offer" small color="blue" dark
-            ><v-icon left small>add</v-icon>
+          <v-chip color="blue" dark size="small" title="Offer">
+            <v-icon size="small" start>add</v-icon>
             <price-view
               :amount="-item.offer_amount"
               :currency="item.currency"
@@ -203,9 +207,9 @@
       <template v-if="isPhysical" v-slot:item.return_request="{ item }">
         <p v-if="item.return_request">
           <v-icon
-            class="me-2"
-            small
             :color="getStateItemStateObject(item.return_request.state).color"
+            class="me-2"
+            size="small"
           >
             {{ getStateItemStateObject(item.return_request.state).icon }}
           </v-icon>
@@ -219,13 +223,15 @@
             inDayRange(basket.delivery_at, item.product.return_warranty) &&
             (!item.return_request || item.return_request.state === 'Pending')
           "
-          rounded
-          color="red"
-          depressed
-          dark
-          :small="
-            item.return_request && item.return_request.state === 'Pending'
+          :size="
+            item.return_request &&
+            item.return_request.state === 'Pending' &&
+            'small'
           "
+          color="red"
+          dark
+          rounded
+          variant="flat"
           @click.stop="
             () => {
               selected_item = item;
@@ -247,7 +253,7 @@
 
     <!-- -------------------------- Return request-------------------------- -->
 
-    <v-bottom-sheet v-model="bottom_sheet" inset scrollable persistent>
+    <v-bottom-sheet v-model="bottom_sheet" inset persistent scrollable>
       <s-shop-basket-item-return-form
         v-if="selected_item"
         :basket-item="selected_item"
@@ -281,16 +287,17 @@
                 v-if="selected_item.variant"
                 :product-variant="selected_item.variant"
                 class="mx-2 inline-block p-0"
-            /></small>
+              />
+            </small>
           </div>
         </v-card-title>
 
         <v-card-text>
           <v-container>
             <basket-item-user-message-form
+              :basket="basket"
               :product="selected_item.product"
               :variant-id="selected_item.variant_id"
-              :basket="basket"
               force-show
             />
           </v-container>
@@ -298,10 +305,14 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn @click="bottom_sheet_user_message = false" text x-large>
-              <v-icon class="me-1">close</v-icon>
-              {{ $t("global.actions.close") }}</v-btn
+            <v-btn
+              size="x-large"
+              variant="text"
+              @click="bottom_sheet_user_message = false"
             >
+              <v-icon class="me-1">close</v-icon>
+              {{ $t("global.actions.close") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -316,22 +327,26 @@
       transition="dialog-bottom-transition"
     >
       <v-card>
-        <v-card-title> </v-card-title>
+        <v-card-title></v-card-title>
         <v-card-text v-if="selected_item">
           <product-section-box-valuation
-            :shop="getShop()"
-            :product="selected_item.product"
             :current-variant="selected_item.variant"
             :preferences="selected_item.preferences"
+            :product="selected_item.product"
+            :shop="getShop()"
             readonly
           ></product-section-box-valuation>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn @click="customize_detail_dialog = false" text x-large>
-              <v-icon class="me-1">close</v-icon>
-              {{ $t("global.actions.close") }}</v-btn
+            <v-btn
+              size="x-large"
+              variant="text"
+              @click="customize_detail_dialog = false"
             >
+              <v-icon class="me-1">close</v-icon>
+              {{ $t("global.actions.close") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -482,20 +497,16 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-basket-items-list{
-
+.s--shop-basket-items-list {
 }
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-basket-items-list{
-
+.s--shop-basket-items-list {
 }
-
 </style>

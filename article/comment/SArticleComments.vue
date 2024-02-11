@@ -19,8 +19,8 @@
         <v-expand-transition>
           <div
             v-if="!expand"
-            class="comment-placeholder"
             :class="{ disabled: !can_send_comment }"
+            class="comment-placeholder"
           >
             <div class="pa-5" @click="expand = true">
               <v-icon class="me-1">add_comment</v-icon>
@@ -41,14 +41,14 @@
               <form id="comment-form ">
                 <v-textarea
                   v-model="data.body"
-                  dir="auto"
-                  rows="3"
                   :placeholder="$t('global.comments.body_placeholder')"
-                  name="comment"
-                  variant="plain"
-                  single-line
                   auto-grow
+                  dir="auto"
                   hide-details
+                  name="comment"
+                  rows="3"
+                  single-line
+                  variant="plain"
                 />
 
                 <div class="widget-buttons">
@@ -62,12 +62,12 @@
                     {{ $t("global.actions.cancel") }}
                   </v-btn>
                   <v-btn
-                    rounded
+                    :loading="busy_send"
                     color="primary"
+                    rounded
                     size="x-large"
                     variant="flat"
                     @click="saveComment"
-                    :loading="busy_send"
                   >
                     {{ $t("global.comments.send_action") }}
                     <v-icon class="ms-2">send</v-icon>
@@ -96,9 +96,9 @@
           <!-- Selldone Login -->
           <b-login-form
             v-if="isSelldone"
+            flat
             inlineMode
             no-header
-            flat
             no-redirect
           ></b-login-form>
         </div>
@@ -119,13 +119,13 @@
             v-for="(comment, index) in my_comments"
             :key="comment.id"
             :article-user-id="articleUserId"
-            :comment="comment"
-            :rates="getRates(comment.user_id)"
             :class="[index === comments.length - 1 ? '' : 'mb-6']"
+            :comment="comment"
+            :loading="busy_update === comment.id"
+            :rates="getRates(comment.user_id)"
+            :style="{ 'animation-delay': (index % 10) * 100 + 'ms' }"
             @comment-updated="updateComment($event)"
             @comment-deleted="openDeleteAlert($event)"
-            :loading="busy_update === comment.id"
-            :style="{ 'animation-delay': (index % 10) * 100 + 'ms' }"
           />
         </transition-group>
       </div>
@@ -138,14 +138,14 @@
             v-for="(comment, index) in other_comments"
             :key="comment.id"
             :article-user-id="articleUserId"
-            :comment="comment"
-            :rates="getRates(comment.user_id)"
             :class="[index === comments.length - 1 ? '' : 'mb-6']"
+            :comment="comment"
+            :is-admin="isAdmin"
+            :loading="busy_update === comment.id"
+            :rates="getRates(comment.user_id)"
+            :style="{ 'animation-delay': (index % 10) * 100 + 'ms' }"
             @comment-updated="updateComment($event)"
             @comment-deleted="openDeleteAlert($event)"
-            :loading="busy_update === comment.id"
-            :style="{ 'animation-delay': (index % 10) * 100 + 'ms' }"
-            :is-admin="isAdmin"
             @comment-reply="replyComment"
           />
         </transition-group>
@@ -153,9 +153,6 @@
         <s-loading v-if="busy" css-mode light></s-loading>
         <v-btn
           v-if="more && !busy"
-          variant="flat"
-          rounded
-          @click="fetchComments(false)"
           v-intersect.quiet="
             () => {
               if (remain_auto_fetch > 0) {
@@ -164,6 +161,9 @@
               }
             }
           "
+          rounded
+          variant="flat"
+          @click="fetchComments(false)"
         >
           {{ $t("global.comments.load_more_action") }}
         </v-btn>

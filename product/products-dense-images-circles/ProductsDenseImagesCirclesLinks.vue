@@ -14,9 +14,9 @@
 
 <template>
   <div
-    class="circles-container"
     :class="{ '-inline': inline }"
     :style="{ padding: `${size / 3}px` }"
+    class="circles-container"
   >
     <router-link
       v-for="(id, index) in ids.limit(maxCount)"
@@ -30,9 +30,9 @@
       @click.stop
     >
       <v-avatar
-        :size="size"
         :class="{ 'pointer-pointer': link, 'big-scale': bigScale }"
         :color="id.toString().startsWith('c-') ? 'amber' : '#ffffffbb'"
+        :size="size"
       >
         <img
           v-if="!rawImagesPath && id.toString().startsWith('c-')"
@@ -54,18 +54,18 @@
     <v-icon v-if="ids.length > maxCount">more_horiz</v-icon>
 
     <v-btn
-      fab
-      :style="{ width: size + 'px', height: size + 'px' }"
-      depressed
       v-if="hasAdd"
       key="add"
-      class="citm"
-      @click="$emit('click:add')"
       :class="{ 'pointer-pointer': link, 'big-scale': bigScale }"
+      :style="{ width: size + 'px', height: size + 'px' }"
+      class="citm"
       color="primary"
       dark
+      fab
+      variant="flat"
+      @click="$emit('click:add')"
     >
-      <v-icon small>add</v-icon>
+      <v-icon size="small">add</v-icon>
     </v-btn>
   </div>
 </template>
@@ -118,7 +118,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .circles-container {
   display: flex;
   overflow: visible;
@@ -139,6 +139,7 @@ export default {
       &:not(:first-child) {
         margin-left: 10px;
       }
+
       margin-right: 22px;
 
       transform: scale(1.5);
@@ -168,10 +169,12 @@ export default {
           margin-right: 10px;
           margin-left: unset;
         }
+
         margin-left: 22px;
         margin-right: unset;
       }
     }
+
     .more-items {
       margin-right: unset;
       margin-left: 24px;

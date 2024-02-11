@@ -17,9 +17,9 @@
     <v-slide-group
       v-if="hasAddressBook"
       :model-value="selected_address_from_list"
+      center-active
       class="pa-4 center-items"
       show-arrows
-      center-active
       style="
         position: absolute;
         top: 4px;
@@ -32,22 +32,22 @@
     >
       <v-slide-group-item v-for="item in address_book" :key="item.id">
         <v-sheet
+          :class="{ 'op-0-5': !noMap, 'op-0-9': noMap }"
           :color="selected_address_from_list === item ? '#1976d2' : '#fff'"
           :dark="selected_address_from_list === item"
+          :title="item.address"
           class="ma-1 pa-2 position-relative opacity-1-hover pp usn"
-          :class="{ 'op-0-5': !noMap, 'op-0-9': noMap }"
           width="180"
           @click="clickOnAddressItem(item)"
-          :title="item.address"
         >
           <div class="font-weight-bold single-line d-flex align-center">
             {{ item.title }}
             <v-spacer></v-spacer>
             <v-btn
-              class="float-end"
-              icon
-              @click.stop="deleteAddressBook(item)"
               :title="$t('global.actions.delete')"
+              class="float-end"
+              icon variant="text"
+              @click.stop="deleteAddressBook(item)"
             >
               <v-icon>close</v-icon>
             </v-btn>
@@ -80,16 +80,16 @@
       <div class="mb-5">
         <v-btn
           v-if="mode_bottom_card !== 'detail'"
-          variant="elevated"
+          :caption="$t('global.actions.close')"
+          class="sub-caption -hover b-16px -black"
           icon
           size="small"
+          variant="elevated"
           @click="
             () => {
               $emit('close');
             }
           "
-          class="sub-caption -hover b-16px -black"
-          :caption="$t('global.actions.close')"
         >
           <v-icon>arrow_downward</v-icon>
         </v-btn>
@@ -98,12 +98,12 @@
       <div v-if="$vuetify.display.mdAndUp" class="mb-5">
         <v-btn
           v-if="canSaveAddress"
-          class="sub-caption b-16px -black zoomIn"
           :caption="$t('global.actions.add')"
-          variant="elevated"
+          class="sub-caption b-16px -black zoomIn"
+          color="#1976D2"
           icon
           size="small"
-          color="#1976D2"
+          variant="elevated"
           @click="dialog_add_to_address_book = true"
         >
           <v-icon>add</v-icon>
@@ -112,13 +112,13 @@
       <div v-if="$vuetify.display.mdAndUp" class="mb-5">
         <v-btn
           v-if="canSaveUpdate"
-          class="sub-caption b-16px -black zoomIn"
           :caption="$t('global.actions.update')"
-          variant="elevated"
+          :loading="busy_update_book"
+          class="sub-caption b-16px -black zoomIn"
           icon
           size="small"
+          variant="elevated"
           @click="updateAddressBook"
-          :loading="busy_update_book"
         >
           <v-icon color="#1976D2"> save</v-icon>
         </v-btn>
@@ -129,27 +129,27 @@
 
     <v-btn
       v-if="clearable"
+      class="absolute-bottom-center z2 m-1"
+      color="red"
       size="small"
       variant="flat"
-      color="red"
-      class="absolute-bottom-center z2 m-1"
       @click.stop="$emit('clear', null)"
     >
-      <v-icon size="small" class="me-1">close</v-icon>
+      <v-icon class="me-1" size="small">close</v-icon>
       {{ $t("global.actions.clear") }}
     </v-btn>
     <div
       v-if="!noMap"
+      :class="{ full: !hasBottomBar }"
       :style="freeze ? 'pointer-events: none' : ''"
       class="map-container"
-      :class="{ full: !hasBottomBar }"
     >
       <!-- Pre loading -->
       <s-loading
-        css-mode
-        light
         v-if="!map_box"
         class="center-absolute"
+        css-mode
+        light
       ></s-loading>
       <!-- MAP -->
       <div
@@ -159,16 +159,16 @@
 
       <div
         v-if="canSelectAddress && !center_clicked"
-        class="center-map-view"
         :class="{ mini: last_selected_position }"
+        class="center-map-view"
         @click.stop="getAddressStringOfCenter"
       >
         <img
-          width="64px"
+          :class="{ jump: !last_selected_position }"
           :src="
             require('@components/assets/icons/location-center-icon-blue.svg')
           "
-          :class="{ jump: !last_selected_position }"
+          width="64px"
         />
         <span class="label-icon text-nowrap">
           <span v-if="last_selected_position">
@@ -184,32 +184,32 @@
 
     <div
       v-if="hasBottomBar"
-      class="bottom-card thin-scroll text-start d-flex flex-column"
       :class="{
         '-detail': mode_bottom_card === 'detail',
         'is-mobile': isMobile,
         'is-full-h': /* isFocus ||*/ mode_bottom_card === 'detail',
         'has-addresses': address_book && address_book.length,
       }"
+      class="bottom-card thin-scroll text-start d-flex flex-column"
     >
       <!-- --------- Tab Search address --------- -->
 
       <v-slide-y-reverse-transition
-        group
-        tag="v-row"
-        class="mobile-toolbar"
         v-if="$vuetify.display.smAndDown"
         :style="$vuetify.rtl ? 'flex-direction: row-reverse;' : ''"
+        class="mobile-toolbar"
+        group
+        tag="v-row"
       >
         <v-btn
           v-if="canSaveAddress"
-          class="sub-caption b-16px -black mx-2"
+          key="mt-1"
           :caption="$t('global.actions.add')"
-          variant="elevated"
+          class="sub-caption b-16px -black mx-2"
+          color="#1976D2"
           icon
           size="small"
-          key="mt-1"
-          color="#1976D2"
+          variant="elevated"
           @click="dialog_add_to_address_book = true"
         >
           <v-icon>add</v-icon>
@@ -217,14 +217,14 @@
 
         <v-btn
           v-if="canSaveUpdate"
-          class="sub-caption b-16px -black mx-2"
+          key="mt-2"
           :caption="$t('global.actions.edit')"
-          variant="elevated"
+          :loading="busy_update_book"
+          class="sub-caption b-16px -black mx-2"
           icon
           size="small"
-          key="mt-2"
+          variant="elevated"
           @click="updateAddressBook"
-          :loading="busy_update_book"
         >
           <v-icon color="#1976D2"> save</v-icon>
         </v-btn>
@@ -236,24 +236,24 @@
 
       <v-progress-circular
         v-if="loading_address"
-        class="loading"
-        size="24"
         :color="SaminColorLight"
+        class="loading"
         indeterminate
+        size="24"
       />
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Tab Default ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <v-expand-transition>
         <div
-          key="m_1"
           v-if="mode_bottom_card === 'default' && !loading_address"
+          key="m_1"
         >
           <v-container>
             <!-- Uncompleted fields errors -->
             <div
               v-if="!isFocus"
-              class="mb-4"
               :style="isMobile ? 'position: absolute;bottom: 0' : ''"
+              class="mb-4"
             >
               <div v-if="address && !country">
                 <v-icon class="me-1" color="red" size="small">warning</v-icon>
@@ -270,29 +270,29 @@
             <s-address-input
               v-model="address"
               v-model:is-focus="isFocus"
-              @select:address="(it) => onSelectAddress(it)"
+              :bottom="isMobile"
               :center="center"
               :top="!isMobile"
-              :bottom="isMobile"
               auto-disable-auto-complete
+              @select:address="(it) => onSelectAddress(it)"
             ></s-address-input>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Actions ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <div class="widget-buttons">
               <v-btn
-                variant="outlined"
-                size="x-large"
                 color="primary"
+                size="x-large"
+                variant="outlined"
                 @click="showDetails"
               >
                 <v-icon class="me-1" size="small"> edit_square</v-icon>
                 {{ $t("global.map_view.address_detail") }}
                 <v-icon
                   v-if="address && ((has_postcode && !postal) || !country)"
-                  size="x-small"
-                  color="red"
                   class="ms-1 blink-me-linear"
+                  color="red"
+                  size="x-small"
                   >fa:fas fa-exclamation-circle
                 </v-icon>
               </v-btn>
@@ -306,24 +306,25 @@
         </div>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Tab Detail ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-        <div key="m_2" v-else-if="mode_bottom_card === 'detail'">
+        <div v-else-if="mode_bottom_card === 'detail'" key="m_2">
           <v-container>
             <v-row dense>
-              <v-col cols="12" class="pt-4">
+              <v-col class="pt-4" cols="12">
                 <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Has Map Mode > Address input ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
                 <v-textarea
                   v-if="!noMap"
                   v-model="address"
-                  prepend-inner-icon="local_shipping"
-                  :readonly="viewOnly"
                   :density="isMobile ? 'compact' : undefined"
                   :label="`▼ ${title}`"
                   :placeholder="$t('global.map_view.enter_your_address')"
+                  :readonly="viewOnly"
+                  auto-grow
                   color="green"
                   persistent-placeholder
+                  prepend-inner-icon="local_shipping"
                   rows="2"
-                  auto-grow variant="underlined"
+                  variant="underlined"
                 />
                 <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ No Map Mode > Address input (Auto complete) ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -331,11 +332,11 @@
                   v-else
                   v-model="address"
                   v-model:is-focus="isFocus"
-                  @select:address="(it) => onSelectAddress(it)"
                   :center="center"
+                  auto-disable-auto-complete
                   bottom
                   clearable
-                  auto-disable-auto-complete
+                  @select:address="(it) => onSelectAddress(it)"
                 ></s-address-input>
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Building No ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -344,10 +345,11 @@
                 <v-text-field
                   v-model="details_number"
                   :color="SaminColorLight"
+                  :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.building_number')"
-                  prepend-inner-icon="apartment"
                   :readonly="viewOnly"
-                  :density="isMobile ? 'compact' : undefined" variant="underlined"
+                  prepend-inner-icon="apartment"
+                  variant="underlined"
                 />
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Unit No ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -356,10 +358,11 @@
                 <v-text-field
                   v-model="details_unit"
                   :color="SaminColorLight"
+                  :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.building_unit')"
-                  prepend-inner-icon="roofing"
                   :readonly="viewOnly"
-                  :density="isMobile ? 'compact' : undefined" variant="underlined"
+                  prepend-inner-icon="roofing"
+                  variant="underlined"
                 />
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Full Name ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -368,14 +371,15 @@
                 <v-text-field
                   v-model="details_full_name"
                   :color="SaminColorLight"
+                  :density="isMobile ? 'compact' : undefined"
                   :label="
                     $t('global.map_view.full_name_input', {
                       type: receptorType,
                     })
                   "
-                  prepend-inner-icon="perm_identity"
                   :readonly="viewOnly"
-                  :density="isMobile ? 'compact' : undefined" variant="underlined"
+                  prepend-inner-icon="perm_identity"
+                  variant="underlined"
                 />
               </v-col>
 
@@ -384,26 +388,27 @@
               <v-col cols="12" md="6" sm="6">
                 <s-country-select
                   v-model="country"
-                  item-value="alpha2"
-                  required
-                  :label="$t('global.address_info.country')"
-                  :readonly="viewOnly"
                   :dense="isMobile"
                   :filter="availableCountries"
+                  :label="$t('global.address_info.country')"
+                  :readonly="viewOnly"
+                  item-value="alpha2"
+                  required
                 ></s-country-select>
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ State ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-              <v-col cols="6" :sm="6">
+              <v-col :sm="6" cols="6">
                 <component
                   :is="states && states.length ? 'v-combobox' : 'v-text-field'"
                   v-model="state"
+                  :dense="isMobile"
+                  :items="states ? states : []"
                   :label="state_label"
                   :readonly="viewOnly"
-                  :dense="isMobile"
-                  :items="states ? states : []" variant="underlined"
+                  variant="underlined"
                 >
-                  <template v-slot:prepend-inner v-if="state_code">
+                  <template v-if="state_code" v-slot:prepend-inner>
                     <b
                       style="
                         background-color: #000;
@@ -419,12 +424,13 @@
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ City ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-              <v-col cols="6" :sm="6">
+              <v-col :sm="6" cols="6">
                 <v-text-field
                   v-model="city"
+                  :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.address_info.city')"
                   :readonly="viewOnly"
-                  :density="isMobile ? 'compact' : undefined" variant="underlined"
+                  variant="underlined"
                 >
                 </v-text-field>
               </v-col>
@@ -434,10 +440,11 @@
                 <v-text-field
                   v-model="postal"
                   :color="SaminColorLight"
+                  :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.postal_code')"
-                  prepend-inner-icon="markunread_mailbox"
                   :readonly="viewOnly"
-                  :density="isMobile ? 'compact' : undefined" variant="underlined"
+                  prepend-inner-icon="markunread_mailbox"
+                  variant="underlined"
                 >
                   <template v-slot:append-inner>
                     <v-fade-transition leave-absolute>
@@ -454,10 +461,11 @@
                 <v-text-field
                   v-model="phone_number"
                   :color="SaminColorLight"
+                  :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.phone_input')"
-                  prepend-inner-icon="phone"
                   :readonly="viewOnly"
-                  :density="isMobile ? 'compact' : undefined" variant="underlined"
+                  prepend-inner-icon="phone"
+                  variant="underlined"
                 >
                   <template v-slot:append-inner>
                     <v-fade-transition leave-absolute>
@@ -474,22 +482,23 @@
                 <v-textarea
                   v-model="details_message"
                   :color="SaminColorLight"
+                  :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.more_detail_input')"
+                  :readonly="viewOnly"
                   :rows="1"
                   auto-grow
-                  :readonly="viewOnly"
-                  :density="isMobile ? 'compact' : undefined"
-                  prepend-inner-icon="sticky_note_2" variant="underlined"
+                  prepend-inner-icon="sticky_note_2"
+                  variant="underlined"
                 />
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Actions ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-              <v-col cols="12" class="text-center">
+              <v-col class="text-center" cols="12">
                 <div class="widget-buttons">
                   <v-btn
+                    color="primary"
                     size="x-large"
                     variant="text"
-                    color="primary"
                     @click="
                       () => {
                         if (noMap) {
@@ -515,8 +524,8 @@
                   </v-btn>
                   <v-btn
                     v-else
-                    size="x-large"
                     color="primary"
+                    size="x-large"
                     @click="showDefault()"
                   >
                     <v-icon class="me-1">save</v-icon>
@@ -535,16 +544,17 @@
     <v-dialog v-model="dialog_add_to_address_book" max-width="500px">
       <v-card>
         <v-card-title>
-          <v-icon color="#333" class="me-2">map</v-icon>
+          <v-icon class="me-2" color="#333">map</v-icon>
           {{ $t("global.map_view.add_address_to_list") }}
         </v-card-title>
         <v-card-text>
           <v-text-field
             v-model="new_address_title"
             :color="SaminColorLight"
-            class="text-start mx-2"
             :label="$t('global.map_view.address_title_input')"
-            prepend-inner-icon="fa:fas fa-tag" variant="underlined"
+            class="text-start mx-2"
+            prepend-inner-icon="fa:fas fa-tag"
+            variant="underlined"
           >
             <template v-slot:prepend-inner>
               <v-fade-transition leave-absolute>
@@ -558,18 +568,18 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
+              :class="{ disabled: !new_address_title }"
+              :loading="busy_save"
               color="primary"
               size="x-large"
-              :class="{ disabled: !new_address_title }"
               @click="saveCurrentPosition"
-              :loading="busy_save"
             >
               <v-icon class="me-1">save</v-icon>
               {{ $t("global.actions.save") }}
             </v-btn>
             <v-btn
-              variant="text"
               size="x-large"
+              variant="text"
               @click="dialog_add_to_address_book = false"
             >
               <v-icon class="me-1">close</v-icon>
@@ -593,7 +603,7 @@ import { SetupService } from "@core/server/SetupService";
 import SAddressInput from "@components/ui/input/address/SAddressInput.vue";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 export default {
   name: "SMapView",
@@ -722,7 +732,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    showSearchBox:Boolean,
+    showSearchBox: Boolean,
     freeze: {
       type: Boolean,
       default: false,
@@ -959,12 +969,10 @@ export default {
             zoom: this.zoom,
           });
 
-
-          if(this.showSearchBox){
+          if (this.showSearchBox) {
             // Add the control to the map.
-            this.map_box.addControl(new MapboxGeocoder({ }));
+            this.map_box.addControl(new MapboxGeocoder({}));
           }
-
 
           if (!this.hideLocationButtons) {
             // Add geolocate control to the map.
@@ -984,7 +992,6 @@ export default {
               this.map_box.addControl(new Mapbox.FullscreenControl());
             }
           }
-
 
           this.map_box.on("load", () => {
             if (this.markerPosition)
@@ -1380,7 +1387,7 @@ export default {
 }
 </style>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .map-container {
   display: block;
   position: relative;

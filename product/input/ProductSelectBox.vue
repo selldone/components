@@ -27,18 +27,18 @@
 
     <div
       v-if="categories_detail.length && !busy_fetch"
-      style="max-height: 480px; overflow-y: auto"
       class="px-1 thin-scroll -cat-box"
+      style="max-height: 480px; overflow-y: auto"
     >
       <b v-if="!simpleMode" class="mx-2"
         >{{ $t("global.commons.categories") }}:</b
       >
-      <v-list color="transparent" class="border-between-vertical">
+      <v-list class="border-between-vertical" color="transparent">
         <v-list-item
-          lines="three"
-          density="compact"
           v-for="category in categories_detail"
           :key="category.id"
+          density="compact"
+          lines="three"
         >
           <template v-slot:prepend>
             <v-avatar rounded="lg">
@@ -69,18 +69,18 @@
 
     <div
       v-if="products_detail.length && !busy_fetch"
-      style="max-height: 480px; overflow-y: auto"
       class="px-1 thin-scroll -prod-box"
+      style="max-height: 480px; overflow-y: auto"
     >
       <b v-if="!simpleMode" class="mx-2"
         >{{ $t("global.commons.products") }}:</b
       >
 
       <v-list
+        v-model:opened="open"
         :class="{ 'no-action': singleProductSelect }"
         bg-color="transparent"
         class="border-between-vertical text-start"
-        v-model:opened="open"
       >
         <v-list-group
           v-for="product in products_detail"
@@ -92,9 +92,9 @@
         >
           <template v-slot:activator="{ props, isOpen }">
             <v-list-item
-              lines="three"
-              density="compact"
               class="ps-0"
+              density="compact"
+              lines="three"
               v-bind="props"
             >
               <template v-slot:prepend>
@@ -120,24 +120,24 @@
 
               <product-variants-view
                 :variants="product.product_variants"
-                small
                 center
                 dense
+                small
               />
 
               <template v-slot:append>
                 <v-list-item-action end>
                   <v-icon
                     v-if="product.product_variants?.length"
-                    class="mx-1"
                     :class="{ 'rotate-180': isOpen }"
+                    class="mx-1"
                   >
                     expand_more
                   </v-icon>
                   <v-btn
                     icon
-                    @click.stop="deleteProduct(product.id)"
                     variant="text"
+                    @click.stop="deleteProduct(product.id)"
                   >
                     <v-icon>close</v-icon>
                   </v-btn>
@@ -152,13 +152,13 @@
               :key="'var_' + variant.id"
             >
               <variant-item-mini
+                :class="{ pen: forceNoVariants }"
                 :product-variant="variant"
                 :selected="
                   !forceNoVariants &&
                   modelValue[product.id].includes(variant.id)
                 "
                 @select="toggleVariant(product.id, variant.id)"
-                :class="{ pen: forceNoVariants }"
               ></variant-item-mini>
             </v-list-item>
           </template>
@@ -204,8 +204,8 @@
       <v-dialog
         v-model="dialog"
         fullscreen
-        transition="dialog-bottom-transition"
         scrollable
+        transition="dialog-bottom-transition"
       >
         <v-card>
           <v-card-title class="d-flex align-center">
@@ -216,13 +216,13 @@
           <v-card-text>
             <s-backoffice-products-management-view
               v-if="dialog"
+              :can-select-category="!singleProductSelect && !productsOnly"
+              :selected-list="modelValue ? modelValue : []"
               :shop="shop"
-              @select="selectProduct"
-              withFullVariant
               dialog-mode
               select-mode
-              :selected-list="modelValue ? modelValue : []"
-              :can-select-category="!singleProductSelect && !productsOnly"
+              withFullVariant
+              @select="selectProduct"
               @select-category="selectCategory"
             />
           </v-card-text>
@@ -233,9 +233,9 @@
             <div class="widget-buttons">
               <v-btn
                 color="primary"
+                size="x-large"
                 variant="text"
                 @click="dialog = false"
-                size="x-large"
               >
                 <v-icon class="me-1">close</v-icon>
 
@@ -542,7 +542,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .label-field {
   font-size: 12px;
   font-weight: 500;

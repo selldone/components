@@ -15,31 +15,31 @@
 <template>
   <v-dialog
     v-model="map_dialog"
-    fullscreen
     :scrim="false"
-    transition="dialog-bottom-transition"
     content-class="bg-map"
+    fullscreen
+    transition="dialog-bottom-transition"
   >
     <s-map-view
       v-if="map_load"
       v-model="map_location"
-      :color="SaminColorDark"
       v-model:center="center"
-      :zoom="17"
-      style="width: 100%; height: 100%"
-      :startup-mode="startup_mode_map_dialog"
-      has-top-bar
-      :can-select-address="!view_only"
-      has-bottom-bar
-      :has-address-book="!view_only"
-      :title="$t('global.map.title')"
-      :confirm-text="$t('global.map.confirm')"
       :address-type="$t('global.map.address')"
+      :can-select-address="!view_only"
+      :color="SaminColorDark"
+      :confirm-text="$t('global.map.confirm')"
+      :has-address-book="!view_only"
       :receptor-type="$t('global.map.receptor')"
-      @close="map_dialog = false"
-      @clickSetLocation="onClickSetLocation"
+      :startup-mode="startup_mode_map_dialog"
+      :title="$t('global.map.title')"
       :viewOnly="view_only"
+      :zoom="17"
+      has-bottom-bar
+      has-top-bar
       show-search-box
+      style="width: 100%; height: 100%"
+      @clickSetLocation="onClickSetLocation"
+      @close="map_dialog = false"
     />
   </v-dialog>
 </template>

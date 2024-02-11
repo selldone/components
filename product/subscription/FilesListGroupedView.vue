@@ -14,7 +14,7 @@
 
 <template>
   <div>
-    <v-row no-gutters class="my-1" align="center" justify="center">
+    <v-row align="center" class="my-1" justify="center" no-gutters>
       <div
         v-for="(val, extension) in files_grouped"
         :key="extension"
@@ -22,17 +22,17 @@
       >
         <img
           :src="getFileExtensionImage(extension)"
-          width="20"
           class="hover-scale"
           style="vertical-align: top"
+          width="20"
         />
-        {{numeralFormat(val,"0.[0] a") }}🞬
+        {{ numeralFormat(val, "0.[0] a") }}🞬
       </div>
     </v-row>
 
     <div class="my-1 small font-weight-bold" title="Total files size">
-      <v-icon small class="me-1">storage</v-icon>
-      {{   numeralFormat(files_size,"0.[0] b") }}
+      <v-icon class="me-1" size="small">storage</v-icon>
+      {{ numeralFormat(files_size, "0.[0] b") }}
     </div>
   </div>
 </template>

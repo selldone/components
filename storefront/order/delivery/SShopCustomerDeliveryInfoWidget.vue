@@ -17,19 +17,16 @@
     class="s--shop-customer-delivery-info-widget widget shadow my-3 mx-0 mx-md-3"
   >
     <h2 class="d-flex align-center">
-      <v-icon class="me-1" color="#111">{{
-        has_goods_delivery ? "local_shipping" : "switch_access_shortcut_add"
-      }}</v-icon>
+      <v-icon class="me-1" color="#111"
+        >{{
+          has_goods_delivery ? "local_shipping" : "switch_access_shortcut_add"
+        }}
+      </v-icon>
       {{ $t("order_page.delivery.title") }}
 
-      <v-chip
-        v-if="is_pickup"
-        class="skew-n20 ms-2"
-        color="success"
-        dark
-        label
-        >{{ $t("global.commons.pickup") }}</v-chip
-      >
+      <v-chip v-if="is_pickup" class="skew-n20 ms-2" color="success" dark label
+        >{{ $t("global.commons.pickup") }}
+      </v-chip>
 
       <v-spacer></v-spacer>
     </h2>
@@ -41,13 +38,13 @@
     <div v-if="canConfirmReceived" class="mt-3 mb-5 p-2">
       <div class="widget-buttons">
         <v-btn
-          size="x-large"
+          :loading="busy_receive"
           color="primary"
           dark
+          size="x-large"
           @click="confirmReceivedOrder"
-          :loading="busy_receive"
         >
-          <v-icon size="small" class="me-1 blink-me">lens</v-icon>
+          <v-icon class="me-1 blink-me" size="small">lens</v-icon>
           {{ $t("order_page.delivery.confirm_received_action") }}
         </v-btn>
       </div>
@@ -65,7 +62,7 @@
     <v-row v-if="has_delivery_info">
       <!-- ========================================= BILLING ========================================= -->
 
-      <v-col cols="12" sm="6" md="4" class="border-end-grater-md">
+      <v-col class="border-end-grater-md" cols="12" md="4" sm="6">
         <div v-if="!edit_billing">
           <s-order-bill-card
             :basket="basket"
@@ -74,28 +71,29 @@
           <div class="d-flex justify-end">
             <v-btn
               v-if="can_edit_address"
-              variant="flat"
-              @click="showEditBilling()"
               :loading="busy_edit_receiver"
               class="nbt"
-              ><v-icon size="small" class="me-1">edit</v-icon>
-              {{ $t("global.actions.edit") }}</v-btn
+              variant="flat"
+              @click="showEditBilling()"
             >
+              <v-icon class="me-1" size="small">edit</v-icon>
+              {{ $t("global.actions.edit") }}
+            </v-btn>
           </div>
         </div>
         <div v-else>
           <div class="spacer-line-dotted mt-5 mb-2"></div>
 
           <v-checkbox
-            class="text-start-dir"
             v-model="same_billing"
-            dense
-            color="success"
             :label="
               same_billing
                 ? $t('basket_page.same_billing_address')
                 : $t('basket_page.custom_billing_info')
             "
+            class="text-start-dir"
+            color="success"
+            dense
           ></v-checkbox>
 
           <v-expand-transition>
@@ -116,15 +114,15 @@
             </div>
           </v-expand-transition>
 
-          <v-btn variant="text" class="m-1" @click="edit_billing = false">{{
-            $t("global.actions.close")
-          }}</v-btn>
+          <v-btn class="m-1" variant="text" @click="edit_billing = false"
+            >{{ $t("global.actions.close") }}
+          </v-btn>
           <v-btn
-            variant="flat"
-            color="success"
-            @click="onClickSetBilling"
-            class="m-1"
             :loading="busy_edit_billing"
+            class="m-1"
+            color="success"
+            variant="flat"
+            @click="onClickSetBilling"
             >{{ $t("global.actions.save") }}
           </v-btn>
         </div>
@@ -132,7 +130,7 @@
 
       <!-- ========================================= ADDRESS ========================================= -->
 
-      <v-col cols="12" sm="6" md="4" class=" ">
+      <v-col class=" " cols="12" md="4" sm="6">
         <p class="font-weight-bold">
           {{ $t("global.basket_order_info_summery.address") }}
           <span v-if="is_pickup" class="mx-2"
@@ -140,25 +138,25 @@
           >
         </p>
 
-        <p class="mb-1" v-if="receiver_info.name">
+        <p v-if="receiver_info.name" class="mb-1">
           <small>{{ $t("order_page.delivery.name") }} : </small
           >{{ receiver_info.name }}
         </p>
 
-        <p class="mb-1" v-if="receiver_info.phone">
+        <p v-if="receiver_info.phone" class="mb-1">
           <small>{{ $t("order_page.delivery.tel") }} : </small
           >{{ receiver_info.phone }}
         </p>
-        <p class="mb-1" v-if="receiver_info.email">
+        <p v-if="receiver_info.email" class="mb-1">
           <small>{{ $t("order_page.delivery.email") }} : </small
           >{{ receiver_info.email }}
         </p>
-        <p class="mb-1" v-if="receiver_info.country">
+        <p v-if="receiver_info.country" class="mb-1">
           <small>{{ $t("order_page.delivery.country") }} : </small>
           <flag :iso="receiver_info.country" :squared="false" />
           {{ getCountryName(receiver_info.country) }}
         </p>
-        <p class="mb-1" v-if="receiver_info.state">
+        <p v-if="receiver_info.state" class="mb-1">
           <small>{{ $t("order_page.delivery.state") }} : </small
           >{{ receiver_info.state }}
           <span class="mx-2"
@@ -166,11 +164,11 @@
             >{{ receiver_info.city }}</span
           >
         </p>
-        <p class="mb-1" v-if="receiver_info.address">
+        <p v-if="receiver_info.address" class="mb-1">
           <small>{{ $t("order_page.delivery.address") }} : </small
           >{{ receiver_info.address }}
         </p>
-        <p class="mb-1" v-if="receiver_info.no">
+        <p v-if="receiver_info.no" class="mb-1">
           <small>{{ $t("order_page.delivery.building_no") }} : </small
           >{{ receiver_info.no }}
           <span class="mx-2"
@@ -178,35 +176,36 @@
             >{{ receiver_info.unit }}</span
           >
         </p>
-        <p class="mb-1" v-if="receiver_info.postal">
+        <p v-if="receiver_info.postal" class="mb-1">
           <small>{{ $t("order_page.delivery.postal_code") }} : </small
           >{{ receiver_info.postal }}
         </p>
 
-        <p class="mb-1" v-if="receiver_info.postal">
+        <p v-if="receiver_info.postal" class="mb-1">
           <small>{{ $t("order_page.delivery.description") }} : </small
           >{{ receiver_info.message }}
         </p>
 
         <div v-if="can_edit_address && !is_pickup" class="d-flex justify-end">
           <v-btn
-            variant="flat"
-            @click="showEditAddress"
             :loading="busy_edit_receiver"
             class="nbt"
-            ><v-icon size="small" class="me-1">edit</v-icon>
-            {{ $t("global.actions.edit") }}</v-btn
+            variant="flat"
+            @click="showEditAddress"
           >
+            <v-icon class="me-1" size="small">edit</v-icon>
+            {{ $t("global.actions.edit") }}
+          </v-btn>
         </div>
 
         <p v-else-if="is_pickup" class="mb-1">
-          <small
-            ><v-icon size="small" class="me-1">pin_drop</v-icon>
+          <small>
+            <v-icon class="me-1" size="small">pin_drop</v-icon>
             {{ $t("global.commons.pickup") }}:
           </small>
           <s-geo-navigation-button
-            class="my-1"
             :location="receiver_info.location"
+            class="my-1"
           >
           </s-geo-navigation-button>
         </p>
@@ -237,17 +236,17 @@
 
       <!-- ========================================= MAP ========================================= -->
 
-      <v-col cols="12" sm="12" md="4" class="">
+      <v-col class="" cols="12" md="4" sm="12">
         <s-map-view
           v-if="receiver_info.location"
           v-model="receiver_info"
-          :zoom="15"
           :center="center"
-          style="width: 100%; height: 350px"
-          :marker-position="receiver_info.location"
-          show-user-location
-          class="blur-animate rounded-28px overflow-hidden"
           :class="{ blurred: busy_edit_receiver }"
+          :marker-position="receiver_info.location"
+          :zoom="15"
+          class="blur-animate rounded-28px overflow-hidden"
+          show-user-location
+          style="width: 100%; height: 350px"
         />
 
         <div
@@ -259,7 +258,7 @@
           <hr />
           <div v-if="delivery_info.tracking_code" class="mb-3">
             <small>{{ $t("order_page.delivery.tracking_code") }} : </small>
-            <span class="font-weight-bold" v-copy>{{
+            <span v-copy class="font-weight-bold">{{
               delivery_info.tracking_code
             }}</span>
 
@@ -267,38 +266,39 @@
               <v-btn
                 v-if="delivery_info.tracking_url"
                 :href="delivery_info.tracking_url"
-                target="_blank"
                 class="ms-2"
-                ><v-icon class="me-1">gps_fixed</v-icon>
-                {{ $t("order_page.delivery.tracking_url") }}</v-btn
+                target="_blank"
               >
+                <v-icon class="me-1">gps_fixed</v-icon>
+                {{ $t("order_page.delivery.tracking_url") }}
+              </v-btn>
             </div>
           </div>
         </div>
 
         <delivery-timeline-transportation-order
           v-if="transportation_order"
+          :delivery-info="delivery_info"
           :shop="getShop()"
           :transportation-order="transportation_order"
-          :delivery-info="delivery_info"
         >
         </delivery-timeline-transportation-order>
       </v-col>
     </v-row>
 
     <v-alert
-      icon="check"
       v-if="basket.delivery_state === PhysicalOrderStates.ToCustomer.code"
-      type="success"
       class="mt-2"
+      icon="check"
+      type="success"
     >
       <p class="m-0">
         <span>
           {{ $t("order_page.delivery.order_delivered") }}
         </span>
       </p>
-      <p class="small m-0" :title="$t('order_page.delivery.delivery_time')">
-        <v-icon size="small" class="me-1">access_time</v-icon>
+      <p :title="$t('order_page.delivery.delivery_time')" class="small m-0">
+        <v-icon class="me-1" size="small">access_time</v-icon>
 
         <b> {{ getFromNowString(basket.delivery_at) }}</b>
 
@@ -311,31 +311,31 @@
     <v-dialog
       v-if="has_address"
       v-model="map_dialog"
-      fullscreen
       :scrim="false"
+      fullscreen
       transition="dialog-bottom-transition"
     >
-      <v-sheet color="#fff" width="100%" height="100%">
+      <v-sheet color="#fff" height="100%" width="100%">
         <s-map-view
           v-if="map_dialog"
           v-model="receiver_info_edit"
-          :color="SaminColorDark"
           v-model:center="center_edit"
-          :hide="!map_dialog"
-          :zoom="17"
-          style="width: 100%; height: 100%"
-          startup-mode="default"
-          has-top-bar
-          can-select-address
-          has-bottom-bar
-          has-address-book
-          :title="$t('global.receiver_info.map.title')"
-          :confirm-text="$t('global.receiver_info.map.confirm')"
           :address-type="$t('global.receiver_info.map.address_type')"
-          :receptor-type="$t('global.receiver_info.map.receptor_type')"
-          @close="map_dialog = false"
-          @clickSetLocation="onClickSetLocation"
+          :color="SaminColorDark"
+          :confirm-text="$t('global.receiver_info.map.confirm')"
           :delay-load="1000"
+          :hide="!map_dialog"
+          :receptor-type="$t('global.receiver_info.map.receptor_type')"
+          :title="$t('global.receiver_info.map.title')"
+          :zoom="17"
+          can-select-address
+          has-address-book
+          has-bottom-bar
+          has-top-bar
+          startup-mode="default"
+          style="width: 100%; height: 100%"
+          @clickSetLocation="onClickSetLocation"
+          @close="map_dialog = false"
         />
       </v-sheet>
     </v-dialog>

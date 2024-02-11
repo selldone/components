@@ -16,11 +16,11 @@
   <div
     v-once
     ref="textarea"
-    contenteditable="true"
-    @input="updateHTML"
-    class="s--html-input html-style"
-    @blur="updateMentions"
     :data-placeholder="placeholder ? placeholder : label"
+    class="s--html-input html-style"
+    contenteditable="true"
+    @blur="updateMentions"
+    @input="updateHTML"
     @paste="onPast"
   ></div>
 </template>
@@ -48,7 +48,6 @@ export default {
     },
   },
   mounted() {
-
     this.$el.innerHTML = this.modelValue;
 
     $(this.$el).on("click", (evt) => {

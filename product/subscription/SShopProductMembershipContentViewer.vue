@@ -26,36 +26,36 @@
     >
       <div class="h1 px-2">Contents list</div>
 
-      <v-row no-gutters class="my-3">
+      <v-row class="my-3" no-gutters>
         <v-spacer></v-spacer>
 
         <v-text-field
-          prepend-inner-icon="search"
-          :label="$t('global.commons.search')"
           v-model="search"
-          clearable
-          variant="plain"
-          single-line
-          hide-details
+          :label="$t('global.commons.search')"
           class="min-width-150 max-width-field"
+          clearable
+          hide-details
+          prepend-inner-icon="search"
+          single-line
+          variant="plain"
         ></v-text-field>
       </v-row>
 
       <v-slide-y-transition
-        tag="v-list"
+        class="border-between-vertical"
         group
         leave-absolute
+        tag="v-list"
         three-line
-        class="border-between-vertical"
       >
         <v-list-item
           v-for="content in contents"
           :key="content.id"
+          class="bg-white"
           @click="
             selected_content = content;
             current_rate = content.rate;
           "
-          class="bg-white"
         >
           <template v-slot:prepend>
             <v-icon color="amber" size="large">folder</v-icon>
@@ -84,8 +84,8 @@
       <div class="my-3">
         <v-pagination
           v-model="page"
-          rounded
           :length="pageCount"
+          rounded
           @change="(val) => fetchContents(val)"
         />
       </div>
@@ -100,13 +100,13 @@
         {{ $t("global.commons.files_list") }}
       </div>
 
-      <v-row no-gutters class="my-3">
+      <v-row class="my-3" no-gutters>
         <v-btn
+          class="tnt fadeIn"
+          color="#1976D2"
+          size="large"
           variant="text"
           @click="selected_content = null"
-          class="tnt fadeIn"
-          size="large"
-          color="#1976D2"
         >
           <v-icon class="me-1">{{ $t("icons.chevron_back") }}</v-icon>
           Back to contents list
@@ -115,15 +115,15 @@
         <v-spacer></v-spacer>
         <v-rating
           v-model="current_rate"
-          class="mb-2"
-          dir="ltr"
-          active-color="yellow-darken-3"
-          color="grey-darken-1"
-          hover
-          :size="$vuetify.display.smAndDown ? 'small':undefined"
-          density="compact"
-          @update:model-value="(val) => setMyRate(selected_content, val)"
           :class="{ disabled: busy_rate }"
+          :size="$vuetify.display.smAndDown ? 'small' : undefined"
+          active-color="yellow-darken-3"
+          class="mb-2"
+          color="grey-darken-1"
+          density="compact"
+          dir="ltr"
+          hover
+          @update:model-value="(val) => setMyRate(selected_content, val)"
         />
       </v-row>
 
@@ -139,6 +139,7 @@
 import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
 import FilesListGroupedView from "@components/product/subscription/FilesListGroupedView.vue";
 import _ from "lodash-es";
+
 export default {
   name: "MembershipContentViewer",
   components: { FilesListGroupedView, SShopProductFilesList },
@@ -255,12 +256,13 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-product-membership-content-viewer {
 }
+
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */

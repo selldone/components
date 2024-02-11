@@ -16,9 +16,9 @@
   <div>
     <community-statistic-view
       v-if="timeseries"
-      :title="$t('community.community.statistics')"
       :community="community"
       :timeSeries="timeseries"
+      :title="$t('community.community.statistics')"
       is-community
     ></community-statistic-view>
     <s-progress-loading v-if="busy"></s-progress-loading>
@@ -89,7 +89,7 @@ export default {
                 data.data,
                 "Community Data",
                 this.offset,
-                this.days
+                this.days,
               );
 
             // Register fetch callback (Use to refresh by change time span)

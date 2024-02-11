@@ -24,10 +24,10 @@
             {{ product.title }}
             <v-chip
               v-if="!has_original_warranty"
-              size="small"
+              class="mx-2"
               color="red"
               dark
-              class="mx-2"
+              size="small"
             >
               <v-icon size="x-small" start>fa:fas fa-exclamation</v-icon>
               {{ $t("product_info.fake") }}
@@ -39,16 +39,16 @@
 
         <v-col
           v-if="showCover"
-          cols="12"
           :lg="vertical ? 12 : 6"
           class="image-gallery-root"
+          cols="12"
         >
           <!-- ▁▁▁▁▁▁ 🞇 Slide Show 🞇 ▁▁▁▁▁▁ -->
 
           <s-shop-product-slide-show
-            :shop="shop"
-            :product="product"
             :current-variant="current_variant"
+            :product="product"
+            :shop="shop"
             :vertical="$vuetify.display.smAndUp"
           ></s-shop-product-slide-show>
         </v-col>
@@ -56,9 +56,9 @@
         <!--  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <v-col
-          cols="12"
           :lg="vertical ? 12 : 6"
           class="text-start d-flex flex-column ps-3 ps-sm-6 ps-md-16"
+          cols="12"
         >
           <!--  ▃▃▃▃▃▃▃▃▃▃ Product Title En (Small) ▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -70,21 +70,23 @@
 
               <img
                 :src="getProductTypeImage(product.type)"
+                :title="getProductTypeName(product.type)"
+                class="m-1 me-2 flex-grow-0"
                 height="16"
                 width="16"
-                class="m-1 me-2 flex-grow-0"
-                :title="getProductTypeName(product.type)"
               />
 
               <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Brand ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
               <component
-                v-if="product.brand"
                 :is="!window.ExternalWidget ? 'router-link' : 'a'"
+                v-if="product.brand"
+                :title="$t('product_info.brand')"
                 :to="{
                   name: 'ShopPage',
                   query: { search: product.brand },
                 }"
+                class="link-underlined single-line d-inline-block flex-grow-0 me-2"
                 v-bind="
                   window.ExternalWidget
                     ? {
@@ -95,8 +97,6 @@
                       }
                     : {}
                 "
-                class="link-underlined single-line d-inline-block flex-grow-0 me-2"
-                :title="$t('product_info.brand')"
                 ><b>{{ product.brand }}</b>
                 <span class="mx-1 d-none d-sm-inline">/</span>
               </component>
@@ -106,17 +106,17 @@
               {{ product.title_en?.limitWords(limit_title_en) }}
               <v-btn
                 v-if="product.title_en?.wordsCount() > 20"
-                @click="limit_title_en = limit_title_en > 20 ? 20 : 2000"
+                class="tnt"
+                color="#111"
                 size="small"
                 variant="text"
-                color="#111"
-                class="tnt"
+                @click="limit_title_en = limit_title_en > 20 ? 20 : 2000"
                 >{{
                   limit_title_en > 20
                     ? $t("global.actions.collapse")
                     : $t("global.actions.view_all")
-                }}...</v-btn
-              >
+                }}...
+              </v-btn>
             </div>
 
             <template v-if="product.rate_count && product.rate">
@@ -128,10 +128,10 @@
                 v-model="product.rate"
                 active-color="yellow-darken-3"
                 color="grey-darken-1"
+                density="compact"
                 half-increments
                 readonly
                 size="small"
-                density="compact"
               />
             </template>
           </div>
@@ -142,10 +142,10 @@
             {{ product.title }}
             <v-chip
               v-if="!has_original_warranty"
-              size="small"
+              class="mx-2"
               color="red"
               dark
-              class="mx-2"
+              size="small"
             >
               <v-icon size="x-small" start>fa:fas fa-exclamation</v-icon>
               {{ $t("product_info.fake") }}
@@ -161,8 +161,8 @@
 
           <!-- ▁▁▁▁▁▁ 🞇 Badges 🞇 ▁▁▁▁▁▁ -->
           <s-shop-product-section-box-badges
-            :shop="shop"
             :product="product"
+            :shop="shop"
             :vertical="vertical"
             class="mt-5"
           ></s-shop-product-section-box-badges>
@@ -170,7 +170,7 @@
           <hr />
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-          <v-container fluid class="pt-0 pb-0 flex-grow-1 d-flex flex-column">
+          <v-container class="pt-0 pb-0 flex-grow-1 d-flex flex-column" fluid>
             <!--  ▃▃▃▃▃▃▃▃▃▃ Section 1 > Product General inf (Type, Category, Brand,...) ▃▃▃▃▃▃▃▃▃▃ -->
 
             <!-- ▁▁▁▁▁▁ 🞇 General info 🞇 ▁▁▁▁▁▁ -->
@@ -188,18 +188,18 @@
 
             <!-- ▁▁▁▁▁▁ 🞇 Variants 🞇 ▁▁▁▁▁▁ -->
             <product-section-box-variants
-              :shop="shop"
-              :product="product"
-              v-model:filter="filter"
               v-model:current-variant="current_variant"
+              v-model:filter="filter"
               v-model:selection-values="selection_values"
+              :product="product"
+              :shop="shop"
             ></product-section-box-variants>
 
             <!-- ▁▁▁▁▁▁ 🞇 Service 🞇 ▁▁▁▁▁▁ -->
             <product-section-box-service
-              :shop="shop"
-              :product="product"
               v-model:preferences="preferences"
+              :product="product"
+              :shop="shop"
             ></product-section-box-service>
 
             <v-spacer></v-spacer>
@@ -208,52 +208,52 @@
 
             <product-section-box-valuation
               v-if="preferences && preferences.valuation"
-              :shop="shop"
-              :product="product"
+              :correspondingBasketItem="corresponding_basket_item"
               :current-variant="current_variant"
               :preferences="preferences"
-              :correspondingBasketItem="corresponding_basket_item"
+              :product="product"
+              :shop="shop"
             ></product-section-box-valuation>
 
             <!-- ▁▁▁▁▁▁ 🞇 🎗️ Subscription Price 🞇 ▁▁▁▁▁▁ -->
             <s-subscription-price-select
               v-if="isSubscription"
               v-model="selected_subscription_price"
-              :subscription-prices="subscription_prices"
-              class="my-3"
-              return-object
               :class="{
                 pen:
                   !!corresponding_basket_item?.subscription_price_id /*An item exists in the basket*/ ||
                   !!membership_subscribed_plan /* 🦄 Membership > Subscribed before*/,
               }"
               :disabled="!product.quantity"
+              :subscription-prices="subscription_prices"
+              class="my-3"
+              return-object
             ></s-subscription-price-select>
 
             <!-- ▁▁▁▁▁▁ 🞇 Price 🞇 ▁▁▁▁▁▁ -->
             <product-section-box-price
               v-else
-              :shop="shop"
-              :product="product"
               :current-variant="current_variant"
-              :selected-vendor-product="selected_vendor_product"
               :preferences="preferences"
+              :product="product"
+              :selected-vendor-product="selected_vendor_product"
+              :shop="shop"
             ></product-section-box-price>
 
             <!-- ▁▁▁▁▁▁ 🞇 Tax + Shipping 🞇 ▁▁▁▁▁▁ -->
             <product-section-box-tax
-              :shop="shop"
               :product="product"
+              :shop="shop"
             ></product-section-box-tax>
 
             <!-- ▁▁▁▁▁▁ 🞇 Extra Pricings 🞇 ▁▁▁▁▁▁ -->
             <product-section-box-extra-pricings
-              :shop="shop"
-              :product="product"
               :current-variant="current_variant"
-              :selected-vendor-product="selected_vendor_product"
               :preferences="preferences"
+              :product="product"
               :quantity="corresponding_basket_item?.count"
+              :selected-vendor-product="selected_vendor_product"
+              :shop="shop"
               @select="(val) => $refs.buy_section.triggerBuyButton(val.min)"
             >
             </product-section-box-extra-pricings>
@@ -274,15 +274,15 @@
             <!-- ▁▁▁▁▁▁ 🞇 Buy Button 🞇 ▁▁▁▁▁▁ -->
             <product-section-box-buy-button
               ref="buy_section"
-              :shop="shop"
-              :product="product"
-              :current-variant="current_variant"
-              :preferences="preferences"
               :can-buy="canBuy"
-              :selected-vendor-product="selected_vendor_product"
-              :selected-subscription-price="selected_subscription_price"
-              :quick-buy-mode="quickBuyMode"
+              :current-variant="current_variant"
               :hss-sticky-but-button="hssStickyButButton"
+              :preferences="preferences"
+              :product="product"
+              :quick-buy-mode="quickBuyMode"
+              :selected-subscription-price="selected_subscription_price"
+              :selected-vendor-product="selected_vendor_product"
+              :shop="shop"
               class="mt-3 mb-3"
             ></product-section-box-buy-button>
             <!-- ▁▁▁▁▁▁ 🞇 Embed Mode 🞇 ▁▁▁▁▁▁ -->
@@ -291,15 +291,15 @@
               class="mx-2 widget-buttons mt-3 mb-3 d-flex flex-column flex-grow-0"
             >
               <v-btn
-                :href="getProductLink(shop, product.id, product.slug)"
-                min-width="220"
-                dark
-                min-height="72"
-                target="_blank"
                 :color="
                   shop.theme?.color_buy ? shop.theme.color_buy : '#0061e0'
                 "
+                :href="getProductLink(shop, product.id, product.slug)"
+                dark
+                min-height="72"
+                min-width="220"
                 style="font-size: 18px"
+                target="_blank"
               >
                 {{ $t("global.actions.buy") }}
                 <v-icon class="mx-1">open_in_new</v-icon>
@@ -307,14 +307,14 @@
             </div>
 
             <s-stripe-split-payment-info
-              :product="product"
-              :variant="current_variant"
-              :vendor-product="selected_vendor_product"
-              :preferences="preferences"
-              :selected-vendor-product="selected_vendor_product"
-              :selected-subscription-price="selected_subscription_price"
               :basket="corresponding_basket_item ? basket : null"
               :country-code="basket?.receiver_info?.country"
+              :preferences="preferences"
+              :product="product"
+              :selected-subscription-price="selected_subscription_price"
+              :selected-vendor-product="selected_vendor_product"
+              :variant="current_variant"
+              :vendor-product="selected_vendor_product"
             ></s-stripe-split-payment-info>
           </v-container>
         </v-col>
@@ -326,10 +326,10 @@
     <v-container v-if="vendors && vendors.length" class="my-0 my-sm-5 my-md-10">
       <s-smart-select-vendor
         v-model="selected_vendor_product_id"
+        :hint="$t('product_info.select_a_vendor_message')"
+        :label="$t('global.commons.vendors')"
         :vendors="vendors"
         force-show-all
-        :label="$t('global.commons.vendors')"
-        :hint="$t('product_info.select_a_vendor_message')"
         @change="changeVendor"
       >
       </s-smart-select-vendor>
@@ -339,11 +339,11 @@
 
     <v-container>
       <basket-item-user-message-form
-        class="my-10"
         v-if="basket"
         :basket="basket"
         :product="product"
         :variant-id="current_variant ? current_variant.id : null"
+        class="my-10"
       ></basket-item-user-message-form>
     </v-container>
 

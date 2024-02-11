@@ -13,45 +13,48 @@
   -->
 
 <template>
-  <v-container class="instagram">
+  <v-container v-bind="$attrs" class="instagram">
     <v-row>
       <v-col
-        cols="4"
         v-for="media in medias"
         :key="media.id"
         class="icard"
+        cols="4"
         @click="showPost(media)"
       >
         <v-img
           :src="getShopImagePath(media.thumbnail)"
           aspect-ratio="1"
-          width="100%"
           class="-img"
+          width="100%"
+          cover
         >
-          <v-icon class="absolute-top-right" dark>{{
-            getProductsCount(media)
-              ? "shopping_bag"
-              : media.video
-              ? "videocam"
-              : media.igtv
-              ? "live_tv"
-              : media.typeName === "GraphSidecar"
-              ? "auto_awesome_motion"
-              : ""
-          }}</v-icon>
+          <v-icon class="absolute-top-right" dark
+            >{{
+              getProductsCount(media)
+                ? "shopping_bag"
+                : media.video
+                  ? "videocam"
+                  : media.igtv
+                    ? "live_tv"
+                    : media.typeName === "GraphSidecar"
+                      ? "auto_awesome_motion"
+                      : ""
+            }}
+          </v-icon>
 
           <div class="card-hover">
-            <v-row no-gutters class="card-hover-icons">
+            <v-row class="card-hover-icons" no-gutters>
               <div class="p-1">
-                <v-icon dark>favorite</v-icon
-                ><span class="ms-2">{{
-                    numeralFormat(media.likes,"0.[0]a")
+                <v-icon dark>favorite</v-icon>
+                <span class="ms-2">{{
+                  numeralFormat(media.likes, "0.[0]a")
                 }}</span>
               </div>
               <div class="p-1">
-                <v-icon dark>mode_comment</v-icon
-                ><span class="ms-2">{{
-                   numeralFormat(media.comments,"0.[0]a")
+                <v-icon dark>mode_comment</v-icon>
+                <span class="ms-2">{{
+                  numeralFormat(media.comments, "0.[0]a")
                 }}</span>
               </div>
             </v-row>
@@ -60,447 +63,439 @@
       </v-col>
     </v-row>
 
-    <s-loading css-mode v-if="busy_fetch" light></s-loading>
+    <s-loading v-if="busy_fetch" css-mode light></s-loading>
+  </v-container>
 
-    <!-- Dialog : Post -->
+  <!-- Dialog : Post -->
 
-    <v-dialog
-      v-model="dialog_media"
-      max-width="935"
-      :fullscreen="$vuetify.display.smAndDown && window.innerWidth < 760"
-      @input="
-        (val) => {
-          if (!val) {
-            saveMediaProductInfo(selected_media);
-            reset();
-          }
+  <v-dialog
+    v-model="dialog_media"
+    :fullscreen="$vuetify.display.smAndDown && window.innerWidth < 760"
+    max-width="935"
+    retain-focus
+    @update:model-value="
+      (val) => {
+        if (!val) {
+          saveMediaProductInfo(selected_media);
+          reset();
         }
-      "
-      retain-focus
-    >
-      <!-- Header > Master Top (Mobile only) -->
-      <header v-if="$vuetify.display.mdAndDown" class="master-header">
-        <v-btn icon @click="dialog_media = false" tile
-          ><v-icon>arrow_back_ios</v-icon></v-btn
-        >
-        <div class="flex-grow-1">
-          <div class="-name">{{ instagram.userName }}</div>
-          <b>Posts</b>
-        </div>
-      </header>
+      }
+    "
+  >
+    <!-- Header > Master Top (Mobile only) -->
+    <header v-if="$vuetify.display.mdAndDown" class="master-header">
+      <v-btn icon @click="dialog_media = false" variant="text">
+        <v-icon>arrow_back_ios</v-icon>
+      </v-btn>
+      <div class="flex-grow-1">
+        <div class="-name">{{ instagram.userName }}</div>
+        <b>Posts</b>
+      </div>
+    </header>
 
-      <div ref="post_content">
-        <!-- important: Add this div to solve initial scroll 0 (top) problem ( by: flex-direction: column-reverse;) -->
-        <div v-if="selected_media" class="post-content">
-          <v-progress-linear
-            indeterminate
-            v-if="busy"
-            class="-loading"
-            height="2"
-            color="blue"
-          ></v-progress-linear>
+    <div ref="post_content">
+      <!-- important: Add this div to solve initial scroll 0 (top) problem ( by: flex-direction: column-reverse;) -->
+      <div v-if="selected_media" class="post-content">
+        <v-progress-linear
+          v-if="busy"
+          class="-loading"
+          color="blue"
+          height="2"
+          indeterminate
+        ></v-progress-linear>
 
-          <div class="post-caption">
-            <header class="post-header md">
-              <v-avatar size="32" class="avatar">
-                <img :src="profile_image"
-              /></v-avatar>
-              <div class="w-100">
-                <div class="d-flex justify-center align-items-center">
-                  <span class="user-id">{{ instagram.userName }}</span>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    v-if="editable"
-                    @click="showCreateProduct(selected_media)"
-                    class="ms-2 default-font tnt"
-                    color="primary"
-                    dark
-                    small
-                    ><v-icon class="me-1" small>add</v-icon>
-                    <b>{{ $t("instagram.create_product") }}</b></v-btn
-                  >
-                </div>
-                <span class="caption">{{
-                  selected_media.location ? selected_media.location.name : ""
-                }}</span>
-              </div>
-            </header>
-
-            <div
-              v-if="selected_media.products && selected_media.products.list"
-              class="border-bottom default-font"
-            >
-              <products-dense-images-circles
-                :ids="Object.keys(selected_media.products.list)"
-                :has-add="editable"
-                @click:add="showSelectProducts(selected_media)"
-                @click:category="showCategory"
-                @click:item="showProduct"
-                :size="48"
-                link
-              ></products-dense-images-circles>
-            </div>
-
-            <!-- ............................................................................................ -->
-            <!-- Caption -->
-
-            <div class="post-caption-content">
-              <v-avatar
-                v-if="!$vuetify.display.mdAndDown"
-                size="32"
-                class="item avatar"
-                ><img :src="caption_image"
-              /></v-avatar>
-              <div class="item flex-grow-1">
-                <span class="user-id me-2">{{ caption_name }}</span>
-
-                <p
-                  v-if="editable && focus_caption && !product_data"
-                  class="editable"
-                  v-html="selected_media.caption"
-                  @blur="
-                    (e) => updateCaption(selected_media, e.target.innerHTML)
-                  "
-                  contenteditable="true"
-                  :class="{ disabled: busy_save }"
-                  key="c1"
-                ></p>
-                <p
-                  v-else
-                  key="c2"
-                  :class="{ 'hover-editable': editable }"
-                  v-html="caption_html"
-                  @click="focus_caption = true"
-                ></p>
-
-                <div v-if="product_data" class="default-font">
-                  <!-- Variants -->
-                  <product-variants-view
-                    v-if="hasVariant"
-                    class="p-0"
-                    style="font-size: 9px"
-                    :variants="product_data.variants"
-                    small
-                    dense
-                  />
-                  <!-- Pros & Cons -->
-                  <div v-if="product_data.pros" class="-pros-list">
-                    <p class="my-1">{{ $t("product_info.pros") }}</p>
-                    <ul>
-                      <li v-for="(pro, key) in product_data.pros" :key="key">
-                        <span>{{ key }} : </span> <b>{{ pro }}</b>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div v-if="product_data.cons" class="-pros-list">
-                    <p class="my-1">{{ $t("product_info.cons") }}</p>
-                    <ul>
-                      <li v-for="(con, key) in product_data.cons" :key="key">
-                        <span>{{ key }} : </span> <b> {{ con }}</b>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- ............................................................................................ -->
-
-            <!-- Caption: Product info -->
-            <footer
-              class="post-footer default-font"
-              v-if="product_data"
-              @click.stop
-            >
-              <variant-selector-menu
-                v-if="has_available_variants"
-                v-model="selected_variant"
-                :variants="product_variants"
-              ></variant-selector-menu>
-
-              <div>
-                <div>
-                  <p v-if="discount > 0">
-                    <price-view
-                      :amount="price + discount"
-                      class="text-muted"
-                      line-through
-                    ></price-view>
-
-                    <v-chip small color="red" dark class="mx-1 float-end"
-                      >{{ discount_percent }} %
-                    </v-chip>
-                  </p>
-                  <p class="-price">
-                    <price-view :amount="price"></price-view>
-                  </p>
-                </div>
-
-                <div class="text-center py-5">
-                  <s-shop-buy-button
-                    :product="product_data"
-                    can-buy
-                    :current-variant="selected_variant"
-                  ></s-shop-buy-button>
-                </div>
-              </div>
-            </footer>
-
-            <footer v-else class="post-footer">
-              <div class="post-icons">
-                <span class="item"
-                  ><svg
-                    aria-label="Like"
-                    fill="#262626"
-                    height="24"
-                    viewBox="0 0 48 48"
-                    width="24"
-                  >
-                    <path
-                      d="M34.6 6.1c5.7 0 10.4 5.2 10.4 11.5 0 6.8-5.9 11-11.5 16S25 41.3 24 41.9c-1.1-.7-4.7-4-9.5-8.3-5.7-5-11.5-9.2-11.5-16C3 11.3 7.7 6.1 13.4 6.1c4.2 0 6.5 2 8.1 4.3 1.9 2.6 2.2 3.9 2.5 3.9.3 0 .6-1.3 2.5-3.9 1.6-2.3 3.9-4.3 8.1-4.3m0-3c-4.5 0-7.9 1.8-10.6 5.6-2.7-3.7-6.1-5.5-10.6-5.5C6 3.1 0 9.6 0 17.6c0 7.3 5.4 12 10.6 16.5.6.5 1.3 1.1 1.9 1.7l2.3 2c4.4 3.9 6.6 5.9 7.6 6.5.5.3 1.1.5 1.6.5.6 0 1.1-.2 1.6-.5 1-.6 2.8-2.2 7.8-6.8l2-1.8c.7-.6 1.3-1.2 2-1.7C42.7 29.6 48 25 48 17.6c0-8-6-14.5-13.4-14.5z"
-                    ></path>
-                  </svg>
-                </span>
-                <span class="item"
-                  ><svg
-                    aria-label="Comment"
-                    fill="#262626"
-                    height="24"
-                    viewBox="0 0 48 48"
-                    width="24"
-                  >
-                    <path
-                      clip-rule="evenodd"
-                      d="M47.5 46.1l-2.8-11c1.8-3.3 2.8-7.1 2.8-11.1C47.5 11 37 .5 24 .5S.5 11 .5 24 11 47.5 24 47.5c4 0 7.8-1 11.1-2.8l11 2.8c.8.2 1.6-.6 1.4-1.4zm-3-22.1c0 4-1 7-2.6 10-.2.4-.3.9-.2 1.4l2.1 8.4-8.3-2.1c-.5-.1-1-.1-1.4.2-1.8 1-5.2 2.6-10 2.6-11.4 0-20.6-9.2-20.6-20.5S12.7 3.5 24 3.5 44.5 12.7 44.5 24z"
-                      fill-rule="evenodd"
-                    ></path>
-                  </svg>
-                </span>
-                <span class="item"
-                  ><svg
-                    aria-label="Share Post"
-                    fill="#262626"
-                    height="24"
-                    viewBox="0 0 48 48"
-                    width="24"
-                  >
-                    <path
-                      d="M47.8 3.8c-.3-.5-.8-.8-1.3-.8h-45C.9 3.1.3 3.5.1 4S0 5.2.4 5.7l15.9 15.6 5.5 22.6c.1.6.6 1 1.2 1.1h.2c.5 0 1-.3 1.3-.7l23.2-39c.4-.4.4-1 .1-1.5zM5.2 6.1h35.5L18 18.7 5.2 6.1zm18.7 33.6l-4.4-18.4L42.4 8.6 23.9 39.7z"
-                    ></path>
-                  </svg> </span
-                ><span class="item ml-auto"
-                  ><svg
-                    aria-label="Save"
-                    fill="#262626"
-                    height="24"
-                    viewBox="0 0 48 48"
-                    width="24"
-                  >
-                    <path
-                      d="M43.5 48c-.4 0-.8-.2-1.1-.4L24 29 5.6 47.6c-.4.4-1.1.6-1.6.3-.6-.2-1-.8-1-1.4v-45C3 .7 3.7 0 4.5 0h39c.8 0 1.5.7 1.5 1.5v45c0 .6-.4 1.2-.9 1.4-.2.1-.4.1-.6.1zM24 26c.8 0 1.6.3 2.2.9l15.8 16V3H6v39.9l15.8-16c.6-.6 1.4-.9 2.2-.9z"
-                    ></path></svg
-                ></span>
-              </div>
-              <div class="like-count">
-                {{   numeralFormat(selected_media.likes,"0,0") }} likes
-              </div>
-              <time
-                class="post-time"
-                :datetime="selected_media.date"
-                :title="getLocalTimeString(selected_media.date)"
-              >
-                {{ getFromNowString(selected_media.date, "en", true) }}
-              </time>
-            </footer>
-          </div>
-
-          <!-- Start Main Image -->
-          <v-img
-            :class="{ 'post-img': !zoom }"
-            aspect-ratio="1.17"
-            :src="post_image"
-            @click="showNormalPost()"
-          >
-            <!--
-             @contextmenu="show"
-               -->
-            <v-alert
-              v-if="error_msg"
-              type="error"
-              color="red"
-              dense
-              class="absolute-bottom-center"
-            >
-              {{ error_msg }}
-            </v-alert>
-
-            <dragable-pins
-              v-model="selected_media.products"
-              v-if="in_main_post"
-              class="pins"
-              @click:product="showProduct"
-              @click:category="showCategory"
-              @change="onChange"
-              @update:tags="(tags) => (selected_media.products.tags = tags)"
-              big-scale
-              :editable="editable"
-            >
-            </dragable-pins>
-          </v-img>
-          <!--
-          <v-menu
-            v-model="showMenu"
-            :position-x="x"
-            :position-y="y"
-            absolute
-            offset-y
-          >
-            <v-list>
-              <v-list-item>
-                <v-list-item-title>Add product</v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>Add category</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-          -->
-          <!-- End Main Image -->
-
-          <!-- Header > User (Mobile only) -->
-
-          <header v-if="$vuetify.display.mdAndDown" class="post-header">
-            <v-avatar size="32" class="avatar"
-              ><img :src="getShopImagePath(instagram.picture)"
+        <div class="post-caption">
+          <header class="post-header md">
+            <v-avatar class="avatar" size="32">
+              <img :src="profile_image"
             /></v-avatar>
-            <div>
+            <div class="w-100">
               <div class="d-flex justify-center align-items-center">
                 <span class="user-id">{{ instagram.userName }}</span>
+                <v-spacer></v-spacer>
+                <v-btn
+                  v-if="editable"
+                  class="ms-2 default-font tnt"
+                  color="primary"
+                  size="small"
+                  @click="showCreateProduct(selected_media)"
+                >
+                  <v-icon start>add</v-icon>
+                  <b>{{ $t("instagram.create_product") }}</b></v-btn
+                >
               </div>
-              <span class="caption">{{
+              <span class="text-caption">{{
                 selected_media.location ? selected_media.location.name : ""
               }}</span>
             </div>
-            <v-spacer></v-spacer>
-            <v-btn
-              v-if="editable"
-              @click="showCreateProduct(selected_media)"
-              class="ms-2 default-font tnt"
-              color="primary"
-              dark
-              small
-              ><v-icon class="me-1" small>add</v-icon>
-              <b>{{ $t("instagram.create_product") }}</b></v-btn
-            >
           </header>
 
-          <div v-if="$vuetify.display.mdAndDown" style="padding-top: 58px">
-            <!-- Spacer for master top header -->
+          <div
+            v-if="selected_media.products && selected_media.products.list"
+            class="border-bottom default-font"
+          >
+            <products-dense-images-circles
+              :has-add="editable"
+              :ids="Object.keys(selected_media.products.list)"
+              :size="48"
+              link
+              @click:add="showSelectProducts(selected_media)"
+              @click:category="showCategory"
+              @click:item="showProduct"
+            ></products-dense-images-circles>
           </div>
+
+          <!-- ............................................................................................ -->
+          <!-- Caption -->
+
+          <div class="post-caption-content">
+            <v-avatar
+              v-if="!$vuetify.display.mdAndDown"
+              class="item avatar"
+              size="32"
+              ><img :src="caption_image"
+            /></v-avatar>
+            <div class="item flex-grow-1">
+              <span class="user-id me-2">{{ caption_name }}</span>
+
+              <p
+                v-if="editable && focus_caption && !product_data"
+                key="c1"
+                :class="{ disabled: busy_save }"
+                class="editable"
+                contenteditable="true"
+                @blur="(e) => updateCaption(selected_media, e.target.innerHTML)"
+                v-html="selected_media.caption"
+              ></p>
+              <p
+                v-else
+                key="c2"
+                :class="{ 'hover-editable': editable }"
+                @click="focus_caption = true"
+                v-html="caption_html"
+              ></p>
+
+              <div v-if="product_data" class="default-font">
+                <!-- Variants -->
+                <product-variants-view
+                  v-if="hasVariant"
+                  :variants="product_data.variants"
+                  class="p-0"
+                  dense
+                  small
+                  style="font-size: 9px"
+                />
+                <!-- Pros & Cons -->
+                <div v-if="product_data.pros" class="-pros-list">
+                  <p class="my-1">{{ $t("product_info.pros") }}</p>
+                  <ul>
+                    <li v-for="(pro, key) in product_data.pros" :key="key">
+                      <span>{{ key }} : </span> <b>{{ pro }}</b>
+                    </li>
+                  </ul>
+                </div>
+
+                <div v-if="product_data.cons" class="-pros-list">
+                  <p class="my-1">{{ $t("product_info.cons") }}</p>
+                  <ul>
+                    <li v-for="(con, key) in product_data.cons" :key="key">
+                      <span>{{ key }} : </span> <b> {{ con }}</b>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ............................................................................................ -->
+
+          <!-- Caption: Product info -->
+          <footer
+            v-if="product_data"
+            class="post-footer default-font"
+            @click.stop
+          >
+            <variant-selector-menu
+              v-if="has_available_variants"
+              v-model="selected_variant"
+              :variants="product_variants"
+            ></variant-selector-menu>
+
+            <div>
+              <div>
+                <p v-if="discount > 0">
+                  <price-view
+                    :amount="price + discount"
+                    class="text-muted"
+                    line-through
+                  ></price-view>
+
+                  <v-chip class="mx-1 float-end" color="red"  size="small"
+                    >{{ discount_percent }} %
+                  </v-chip>
+                </p>
+                <p class="-price">
+                  <price-view :amount="price"></price-view>
+                </p>
+              </div>
+
+              <div class="text-center py-5">
+                <s-shop-buy-button
+                  :current-variant="selected_variant"
+                  :product="product_data"
+                  can-buy
+                ></s-shop-buy-button>
+              </div>
+            </div>
+          </footer>
+
+          <footer v-else class="post-footer">
+            <div class="post-icons">
+              <span class="item"
+                ><svg
+                  aria-label="Like"
+                  fill="#262626"
+                  height="24"
+                  viewBox="0 0 48 48"
+                  width="24"
+                >
+                  <path
+                    d="M34.6 6.1c5.7 0 10.4 5.2 10.4 11.5 0 6.8-5.9 11-11.5 16S25 41.3 24 41.9c-1.1-.7-4.7-4-9.5-8.3-5.7-5-11.5-9.2-11.5-16C3 11.3 7.7 6.1 13.4 6.1c4.2 0 6.5 2 8.1 4.3 1.9 2.6 2.2 3.9 2.5 3.9.3 0 .6-1.3 2.5-3.9 1.6-2.3 3.9-4.3 8.1-4.3m0-3c-4.5 0-7.9 1.8-10.6 5.6-2.7-3.7-6.1-5.5-10.6-5.5C6 3.1 0 9.6 0 17.6c0 7.3 5.4 12 10.6 16.5.6.5 1.3 1.1 1.9 1.7l2.3 2c4.4 3.9 6.6 5.9 7.6 6.5.5.3 1.1.5 1.6.5.6 0 1.1-.2 1.6-.5 1-.6 2.8-2.2 7.8-6.8l2-1.8c.7-.6 1.3-1.2 2-1.7C42.7 29.6 48 25 48 17.6c0-8-6-14.5-13.4-14.5z"
+                  ></path>
+                </svg>
+              </span>
+              <span class="item"
+                ><svg
+                  aria-label="Comment"
+                  fill="#262626"
+                  height="24"
+                  viewBox="0 0 48 48"
+                  width="24"
+                >
+                  <path
+                    clip-rule="evenodd"
+                    d="M47.5 46.1l-2.8-11c1.8-3.3 2.8-7.1 2.8-11.1C47.5 11 37 .5 24 .5S.5 11 .5 24 11 47.5 24 47.5c4 0 7.8-1 11.1-2.8l11 2.8c.8.2 1.6-.6 1.4-1.4zm-3-22.1c0 4-1 7-2.6 10-.2.4-.3.9-.2 1.4l2.1 8.4-8.3-2.1c-.5-.1-1-.1-1.4.2-1.8 1-5.2 2.6-10 2.6-11.4 0-20.6-9.2-20.6-20.5S12.7 3.5 24 3.5 44.5 12.7 44.5 24z"
+                    fill-rule="evenodd"
+                  ></path>
+                </svg>
+              </span>
+              <span class="item"
+                ><svg
+                  aria-label="Share Post"
+                  fill="#262626"
+                  height="24"
+                  viewBox="0 0 48 48"
+                  width="24"
+                >
+                  <path
+                    d="M47.8 3.8c-.3-.5-.8-.8-1.3-.8h-45C.9 3.1.3 3.5.1 4S0 5.2.4 5.7l15.9 15.6 5.5 22.6c.1.6.6 1 1.2 1.1h.2c.5 0 1-.3 1.3-.7l23.2-39c.4-.4.4-1 .1-1.5zM5.2 6.1h35.5L18 18.7 5.2 6.1zm18.7 33.6l-4.4-18.4L42.4 8.6 23.9 39.7z"
+                  ></path>
+                </svg> </span
+              ><span class="item ml-auto"
+                ><svg
+                  aria-label="Save"
+                  fill="#262626"
+                  height="24"
+                  viewBox="0 0 48 48"
+                  width="24"
+                >
+                  <path
+                    d="M43.5 48c-.4 0-.8-.2-1.1-.4L24 29 5.6 47.6c-.4.4-1.1.6-1.6.3-.6-.2-1-.8-1-1.4v-45C3 .7 3.7 0 4.5 0h39c.8 0 1.5.7 1.5 1.5v45c0 .6-.4 1.2-.9 1.4-.2.1-.4.1-.6.1zM24 26c.8 0 1.6.3 2.2.9l15.8 16V3H6v39.9l15.8-16c.6-.6 1.4-.9 2.2-.9z"
+                  ></path></svg
+              ></span>
+            </div>
+            <div class="like-count">
+              {{ numeralFormat(selected_media.likes, "0,0") }} likes
+            </div>
+            <time
+              :datetime="selected_media.date"
+              :title="getLocalTimeString(selected_media.date)"
+              class="post-time"
+            >
+              {{ getFromNowString(selected_media.date, "en", true) }}
+            </time>
+          </footer>
+        </div>
+
+        <!-- Start Main Image -->
+        <v-img
+          :class="{ 'post-img': !zoom }"
+          :src="post_image"
+          aspect-ratio="1.17"
+          cover
+          @click="showNormalPost()"
+        >
+
+          <v-alert
+            v-if="error_msg"
+            class="absolute-bottom-center"
+            color="red"
+            density="compact"
+            type="error"
+          >
+            {{ error_msg }}
+          </v-alert>
+
+          <s-drag-pins
+            v-if="in_main_post"
+            v-model="selected_media.products"
+            :editable="editable"
+            big-scale
+            class="pins"
+            @change="onChange"
+            @click:product="showProduct"
+            @click:category="showCategory"
+            @update:tags="(tags) => (selected_media.products.tags = tags)"
+          >
+          </s-drag-pins>
+        </v-img>
+
+
+        <!-- Header > User (Mobile only) -->
+
+        <header v-if="$vuetify.display.mdAndDown" class="post-header">
+          <v-avatar class="avatar" size="32"
+            ><img :src="getShopImagePath(instagram.picture)"
+          /></v-avatar>
+          <div>
+            <div class="d-flex justify-center align-items-center">
+              <span class="user-id">{{ instagram.userName }}</span>
+            </div>
+            <span class="text-caption">{{
+              selected_media.location ? selected_media.location.name : ""
+            }}</span>
+          </div>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-if="editable"
+            class="ms-2 default-font tnt"
+            color="primary"
+            size="small"
+            @click="showCreateProduct(selected_media)"
+          >
+            <v-icon class="me-1" size="small">add</v-icon>
+            <b>{{ $t("instagram.create_product") }}</b></v-btn
+          >
+        </header>
+
+        <div v-if="$vuetify.display.mdAndDown" style="padding-top: 58px">
+          <!-- Spacer for master top header -->
         </div>
       </div>
-    </v-dialog>
+    </div>
+  </v-dialog>
 
-    <!-- Create New Product Dialog -->
-    <v-dialog
-      v-if="editable"
-      v-model="new_product_dialog"
-      max-width="480"
-      scrollable
-      :fullscreen="$vuetify.display.smAndDown && window.innerWidth < 760"
-    >
-      <v-card>
+  <!-- Create New Product Dialog -->
+  <v-dialog
+    v-if="editable"
+    v-model="new_product_dialog"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <v-card>
+
+      <v-card-text>
         <v-img
-          v-if="selected_media"
-          :src="getShopImagePath(selected_media.display)"
-          aspect-ratio="2.2"
-          width="100%"
-          class="mb-4"
+            v-if="selected_media"
+            :src="getShopImagePath(selected_media.display)"
+            aspect-ratio="1"
+            class="mb-5 mx-auto"
+            width="100%"
+            max-width="240"
+            rounded="xl"
+cover
         ></v-img>
-        <v-card-text>
-          <div class="widget-box">
-            <v-text-field
-              v-model="in_title"
-              :label="$t('add_product.edit_info.product_name')"
-              :placeholder="
-                $t('add_product.edit_info.product_name_placeholder')
-              "
-              class="max-width-field mx-auto my-2"
-              :counter="120"
-              :rules="[GlobalRules.required(), GlobalRules.counter(120)]"
-            ></v-text-field>
 
-            <s-price-input
-              v-model="in_price"
-              class="max-width-field mx-auto my-2"
-              :label="$t('add_product.pricing.price_input')"
-              placeholder="0.00"
-              required
-              :decimal="in_currency ? in_currency.floats : 0"
-              :disabled="!in_currency"
-              :rules="[GlobalRules.required()]"
-            >
-              <template v-slot:append-inner>
-                <s-currency-input
-                  v-model="in_currency"
-                  :activeCurrencies="shop.currencies"
-                  icon-only
-                  dense
-                  hide-details
-                  style="max-width: 84px"
-                  class="margin-n7px"
-                />
-              </template>
-            </s-price-input>
 
-            <v-combobox
-              v-model="in_unit"
-              :counter="16"
-              :label="$t('add_product.edit_info.unit')"
-              :hint="$t('add_product.edit_info.unit_message')"
-              class="max-width-field mx-auto my-2"
-              :placeholder="
-                $t('global.commons.default') +
-                ' : ' +
-                $t('buy_button.count_unit')
-              "
-              :rules="[GlobalRules.counter(16)]"
-              :items="unit_items"
-              persistent-hint
-            />
+        <div class="widget-box">
 
-            <s-number-input
-              v-model="in_quantity"
-              :min="0"
-              :label="$t('product_admin.inventory.variants.count_input')"
-              class="max-width-field mx-auto my-2"
-            >
-            </s-number-input>
-          </div>
-        </v-card-text>
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn text @click="new_product_dialog = false" x-large>
-              <v-icon class="me-1">close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
-            <v-btn
-              color="success"
-              dark
-              @click="addProduct()"
-              x-large
-              :loading="busy_new_product"
-              :class="{ disabled: !in_title || !in_price || !in_currency }"
-            >
-              <v-icon class="me-1">add</v-icon
-              >{{ $t("instagram.add_product") }}</v-btn
-            >
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-container>
+
+
+          <v-text-field
+            v-model="in_title"
+            :counter="120"
+            :label="$t('add_product.edit_info.product_name')"
+            :placeholder="$t('add_product.edit_info.product_name_placeholder')"
+            :rules="[GlobalRules.required(), GlobalRules.counter(120)]"
+            class="max-width-field mx-auto my-2"
+            variant="underlined"
+          ></v-text-field>
+
+          <s-price-input
+            v-model="in_price"
+            :decimal="in_currency ? in_currency.floats : 0"
+            :disabled="!in_currency"
+            :label="$t('add_product.pricing.price_input')"
+            :rules="[GlobalRules.required()]"
+            class="max-width-field mx-auto my-2"
+            placeholder="0.00"
+            required
+            variant="underlined"
+          >
+            <template v-slot:append-inner>
+              <s-currency-input
+                v-model="in_currency"
+                :activeCurrencies="shop.currencies"
+                class="margin-n7px"
+                dense
+                hide-details
+                icon-only
+                style="max-width: 84px"
+                variant="underlined"
+              />
+            </template>
+          </s-price-input>
+
+          <v-combobox
+            v-model="in_unit"
+            :counter="16"
+            :hint="$t('add_product.edit_info.unit_message')"
+            :items="unit_items"
+            :label="$t('add_product.edit_info.unit')"
+            :placeholder="
+              $t('global.commons.default') + ' : ' + $t('buy_button.count_unit')
+            "
+            :rules="[GlobalRules.counter(16)]"
+            class="max-width-field mx-auto my-2"
+            persistent-hint
+            variant="underlined"
+          />
+
+          <s-number-input
+            v-model="in_quantity"
+            :label="$t('product_admin.inventory.variants.count_input')"
+            :min="0"
+            class="max-width-field mx-auto my-2"
+          >
+          </s-number-input>
+        </div>
+      </v-card-text>
+
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="new_product_dialog = false"
+          >
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+          <v-btn
+            :class="{ disabled: !in_title || !in_price || !in_currency }"
+            :loading="busy_new_product"
+            color="success"
+            size="x-large"
+            @click="addProduct()"
+          >
+            <v-icon start>add</v-icon>
+            {{ $t("instagram.add_product") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -512,7 +507,7 @@ import ProductsDenseImagesCircles from "@components/product/products-dense-image
 import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
 import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
 import VariantSelectorMenu from "@components/ui/variant/VariantSelectorMenu.vue";
-import DragablePins from "@components/storefront/instagram/DragablePins.vue";
+import SDragPins from "@components/ui/drag/pins/SDragPins.vue";
 import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
@@ -528,7 +523,7 @@ export default {
     SCurrencyInput,
     SPriceInput,
     SNumberInput,
-    DragablePins,
+    SDragPins,
     VariantSelectorMenu,
     SShopBuyButton,
     ProductVariantsView,
@@ -631,7 +626,7 @@ export default {
         ? `${this.product_data.title_en ? this.product_data.title_en : ""}`
         : this.SmartConvertTextToHtmlHashtags(
             this.selected_media.caption,
-            this.selected_media.hashtags
+            this.selected_media.hashtags,
           );
     },
 
@@ -652,14 +647,14 @@ export default {
       return this.CalcPriceProductCurrentCurrency(
         this.shop,
         this.product_data,
-        this.selected_variant
+        this.selected_variant,
       );
     },
     discount_percent() {
       return this.discountProductPercent(
         this.shop,
         this.product_data,
-        this.selected_variant
+        this.selected_variant,
       );
     },
 
@@ -667,7 +662,7 @@ export default {
       return this.getProductDiscountAmount(
         this.shop,
         this.product_data,
-        this.selected_variant
+        this.selected_variant,
       );
     },
 
@@ -754,7 +749,7 @@ export default {
     },
 
     showCategory(id) {
-      window.open(this.getCategoryLink(this.shop,id), "_blank");
+      window.open(this.getCategoryLink(this.shop, id), "_blank");
       this.showNormalPost();
     },
     showProduct(id) {
@@ -805,7 +800,7 @@ export default {
           window.API.PUT_INSTAGRAM_MEDIA_SET_PRODUCTS(this.shop.id, media.id),
           {
             products: media.products,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -833,7 +828,7 @@ export default {
           window.API.PUT_INSTAGRAM_MEDIA_SET_CAPTION(this.shop.id, media.id),
           {
             caption: SmartConvertTextToHtml(caption),
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -939,12 +934,18 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .instagram {
   direction: ltr;
   color: #262626;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
   line-height: 18px;
   font-size: 14px;
   text-align: left;
@@ -963,15 +964,18 @@ export default {
 .icard {
   cursor: pointer;
   padding: 1.5px;
+
   &:hover {
     .card-hover {
       opacity: 1;
     }
   }
+
   .-img {
     background-color: #eee;
   }
 }
+
 .card-hover {
   position: absolute;
   right: 0;
@@ -985,6 +989,7 @@ export default {
   -o-transition: opacity 0.1s ease-out;
   transition: opacity 0.1s ease-out;
 }
+
 .card-hover-icons {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1057,10 +1062,12 @@ export default {
     height: 32px;
     margin: 0 10px;
   }
+
   img {
     width: 100%;
     height: 100%;
   }
+
   .-loading {
     position: absolute;
     left: 0;
@@ -1074,6 +1081,7 @@ export default {
     }
   }
 }
+
 @media (min-width: 768px) {
   .post-content {
     -webkit-box-orient: horizontal;
@@ -1099,19 +1107,28 @@ export default {
   flex-basis: 60%;
   height: max-content;
 }
+
 .post-caption {
   flex-basis: 40%;
   position: relative;
   flex-direction: column-reverse;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
 }
+
 .post-caption,
 .post-header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
+
 .post-header {
   height: 72px;
   padding: 16px;
@@ -1123,9 +1140,11 @@ export default {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
+
 .post-header.md {
   display: none;
 }
+
 @media (min-width: 768px) {
   .post-header.md {
     display: -webkit-box;
@@ -1144,12 +1163,14 @@ export default {
     flex-direction: column;
   }
 }
+
 .user-follow {
   color: #0095f6;
   margin-left: 20px;
   position: relative;
   font-weight: 600;
 }
+
 .user-follow:before {
   content: " ";
   display: block;
@@ -1161,6 +1182,7 @@ export default {
   left: -10px;
   top: 50%;
 }
+
 .post-caption-content {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1172,12 +1194,15 @@ export default {
   scrollbar-width: none;
   flex-grow: 1;
 }
+
 .post-footer {
   padding: 8px 8px 12px;
   border-top: 1px solid #eee;
+
   p {
     margin: 0;
   }
+
   .post-icons {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -1198,16 +1223,19 @@ export default {
     left: 0;
   }
 }
+
 .like-count {
   color: #262626;
   font-weight: 600;
 }
+
 .post-time {
   font-size: 10px;
   letter-spacing: 0.2px;
   color: #8e8e8e;
   text-transform: uppercase;
 }
+
 .black-wrapper {
   position: fixed;
   right: 0;
@@ -1219,6 +1247,7 @@ export default {
   z-index: 100;
   display: none;
 }
+
 .close-icon {
   outline: none;
   width: 25px;
@@ -1233,6 +1262,7 @@ export default {
   top: 15px;
   right: 5px;
 }
+
 .close-icon-line {
   display: block;
   height: 3px;
@@ -1241,19 +1271,23 @@ export default {
   margin-bottom: 4px;
   border-radius: 2px;
 }
+
 .close-icon-line-1 {
   -webkit-transform: translateY(4px) rotate(-135deg);
   -ms-transform: translateY(4px) rotate(-135deg);
   transform: translateY(4px) rotate(-135deg);
 }
+
 .close-icon-line-2 {
   -webkit-transform: translateY(-3px) rotate(135deg);
   -ms-transform: translateY(-3px) rotate(135deg);
   transform: translateY(-3px) rotate(135deg);
 }
+
 .black-wrapper.active {
   display: block;
 }
+
 .mobile-close-section {
   padding: 16px;
   cursor: pointer;
@@ -1269,10 +1303,12 @@ export default {
   box-sizing: border-box;
   display: none;
 }
+
 .back-arrow,
 .mobile-close-section.active {
   display: block;
 }
+
 .back-arrow {
   width: 10px;
   height: 10px;
@@ -1292,10 +1328,12 @@ export default {
 
 .-pros-list {
   padding: 2px 12px;
+
   p {
     font-weight: 600;
     font-size: 0.85em;
   }
+
   li {
     font-size: 0.9em;
     font-weight: 400;

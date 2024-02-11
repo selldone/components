@@ -16,18 +16,18 @@
   <v-dialog
     v-if="post"
     v-model="dialog"
+    :fullscreen="$vuetify.display.mdAndDown"
     max-width="560"
     scrollable
-    :fullscreen="$vuetify.display.mdAndDown"
   >
     <v-card class="text-start rcard">
       <v-card-title>
         Reactions
 
         <v-spacer></v-spacer>
-        <v-btn icon size="large" @click="dialog = false"
-          ><v-icon>close</v-icon></v-btn
-        >
+        <v-btn icon size="large" @click="dialog = false">
+          <v-icon>close</v-icon>
+        </v-btn>
       </v-card-title>
       <div>
         <v-tabs v-model="reaction" slider-size="4">
@@ -39,51 +39,51 @@
             :href="`#${item.act.code}`"
             @click="loadData(item.act.code)"
           >
-            <img :src="item.act.image" width="24" height="24" class="me-1" />
+            <img :src="item.act.image" class="me-1" height="24" width="24" />
             <b>{{ numeralFormat(item.value, "0.[0]a") }}</b>
           </v-tab>
         </v-tabs>
       </div>
       <hr />
       <v-card-text>
-        <v-list lines="two" class="border-between-vertical">
+        <v-list class="border-between-vertical" lines="two">
           <v-list-item v-for="item in filtered_reactions" :key="item.user_id">
             <template v-slot:prepend>
-            <v-avatar size="56" >
-              <v-img
-                :src="getUserAvatar(item.user_id)"
-                class="position-relative"
-              >
-                <img :src="PostReaction[item.reaction].image" class="ubadg" />
-              </v-img>
-            </v-avatar>
+              <v-avatar size="56">
+                <v-img
+                  :src="getUserAvatar(item.user_id)"
+                  class="position-relative"
+                >
+                  <img :src="PostReaction[item.reaction].image" class="ubadg" />
+                </v-img>
+              </v-avatar>
             </template>
             <v-list-item-content class="p-0">
               <v-list-item-title class="uname"
                 >{{ item.name }}
                 <v-icon
                   v-if="item.verified"
-                  size="small"
-                  color="blue"
                   class="ms-1"
-                  >verified</v-icon
-                ></v-list-item-title
-              >
-              <v-list-item-subtitle class="udesc my-1">{{
-                item.description
-              }}</v-list-item-subtitle>
+                  color="blue"
+                  size="small"
+                  >verified
+                </v-icon>
+              </v-list-item-title>
+              <v-list-item-subtitle class="udesc my-1"
+                >{{ item.description }}
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
 
         <div
           v-if="has_more"
-          style="height: 120px"
           v-intersect.quiet="
             (isIntersecting) => {
               if (isIntersecting) getMore();
             }
           "
+          style="height: 120px"
         ></div>
       </v-card-text>
 
@@ -257,11 +257,13 @@ export default {
   font-size: 16px;
   font-weight: 600;
 }
+
 .udesc {
   font-size: 14px;
   font-weight: 400;
   white-space: normal !important;
 }
+
 .ubadg {
   position: absolute;
   right: 8px;
@@ -271,6 +273,7 @@ export default {
   padding: 4px;
   background-color: #fff;
 }
+
 .rcard {
   min-height: 570px;
 }

@@ -14,7 +14,9 @@
 
 <template>
   <div
-    v-if="structure && preferences_valuation && product.price_input === 'custom'"
+    v-if="
+      structure && preferences_valuation && product.price_input === 'custom'
+    "
     class="widget-box w-100 py-3 mt-5 pricing-form strong-field"
   >
     <!--
@@ -44,14 +46,16 @@
         v-if="!item.type"
         v-model="preferences_valuation[item.name]"
         :label="item.title"
-        :placeholder="item.placeholder"
         :persistent-placeholder="!!item.placeholder"
-        @input="$emit('update:preferences', preferences);$forceUpdate()"
+        :placeholder="item.placeholder"
         :readonly="readonly"
-        @blur="debounceSavePreferences()"
-
-        background-color="transparent"
+        bg-color="transparent"
         class="mx-4"
+        @blur="debounceSavePreferences()"
+        @update:model-value="
+          $emit('update:preferences', preferences);
+          $forceUpdate();
+        "
       >
       </v-text-field>
 
@@ -60,13 +64,12 @@
         v-else-if="item.type === 'number'"
         v-model="preferences_valuation[item.name]"
         :label="item.title"
-        @input="$emit('update:preferences', preferences)"
-        :readonly="readonly"
-        @blur="debounceSavePreferences()"
-
-        background-color="transparent"
         :min="0"
+        :readonly="readonly"
+        background-color="transparent"
         class="mx-4"
+        @blur="debounceSavePreferences()"
+        @input="$emit('update:preferences', preferences)"
       >
       </s-number-input>
 
@@ -74,46 +77,51 @@
       <v-select
         v-else-if="item.type === 'select'"
         v-model="preferences_valuation[item.name]"
-        :items="filterSelects(item.selects, preferences_valuation[item.name])"
-        menu-props="auto"
-        :label="item.title"
-        :placeholder="item.placeholder"
-        :persistent-placeholder="!!item.placeholder"
-        :readonly="readonly"
-        :disabled="readonly"
-        :multiple="item.multiple"
         :chips="item.multiple"
-        clearable
-        @click:clear="preferences_valuation[item.name] = null"
-        @change="$emit('update:preferences', preferences);$forceUpdate();debounceSavePreferences()"
-
-        background-color="transparent"
+        :disabled="readonly"
+        :items="filterSelects(item.selects, preferences_valuation[item.name])"
+        :label="item.title"
+        :multiple="item.multiple"
+        :persistent-placeholder="!!item.placeholder"
+        :placeholder="item.placeholder"
+        :readonly="readonly"
+        bg-color="transparent"
         class="mx-4"
+        clearable
+        menu-props="auto"
+        @click:clear="preferences_valuation[item.name] = null"
+        @update:model-value="
+          $emit('update:preferences', preferences);
+          $forceUpdate();
+          debounceSavePreferences();
+        "
       >
       </v-select>
       <!-- switch -->
       <s-smart-switch
         v-else-if="item.type === 'switch'"
         v-model="preferences_valuation[item.name]"
-        :label="item.title"
-        @input="$emit('update:preferences', preferences);$forceUpdate()"
-        :true-title="
-          item.true_title ? item.true_title : $t('global.actions.yes')
-        "
-        :true-description="item.true_desc"
+        :false-description="item.false_desc"
+        :false-disabled="!checkAvailable(`${item.name}-FALSE`)"
         :false-title="
           item.false_title ? item.false_title : $t('global.actions.no')
         "
-        :false-description="item.false_desc"
-        true-icon="check"
+        :label="item.title"
+        :readonly="readonly"
+        :true-description="item.true_desc"
+        :true-disabled="!checkAvailable(`${item.name}-TRUE`)"
+        :true-title="
+          item.true_title ? item.true_title : $t('global.actions.yes')
+        "
+        class="mx-4 mb-5"
         false-icon="close"
         solo
-        :true-disabled="!checkAvailable(`${item.name}-TRUE`)"
-        :false-disabled="!checkAvailable(`${item.name}-FALSE`)"
+        true-icon="check"
         @change="debounceSavePreferences"
-        class="mx-4 mb-5"
-        :readonly="readonly"
-
+        @input="
+          $emit('update:preferences', preferences);
+          $forceUpdate();
+        "
       >
       </s-smart-switch>
 
@@ -200,15 +208,14 @@
       </template>
       -->
       <v-icon
-        color="#1976D2"
         v-if="index_blink === index"
         class="blink-me-linear indic"
-        x-small
-        >circle</v-icon
-      >
+        color="#1976D2"
+        size="x-small"
+        >circle
+      </v-icon>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -284,23 +291,18 @@ export default {
 
     index_blink() {
       return this.structure.findIndex(
-        (row) =>row.type!=='switch' && !this.preferences_valuation[row.name]
+        (row) => row.type !== "switch" && !this.preferences_valuation[row.name],
       );
     },
-
-
   },
 
   watch: {
-
     preferences: {
       handler() {
         this.assignPreferences();
       },
       deep: true,
     },
-
-
   },
 
   created() {
@@ -309,20 +311,13 @@ export default {
 
   methods: {
     assignPreferences() {
-
-
-
-  this.preferences_valuation = this.preferences.valuation;
-
-
-
-
+      this.preferences_valuation = this.preferences.valuation;
     },
 
     filterSelects(items, ignore_current_val) {
       if (!this.unavailable || !this.unavailable.length) return items;
       return items.filter(
-        (item) => item === ignore_current_val || this.checkAvailable(item)
+        (item) => item === ignore_current_val || this.checkAvailable(item),
       );
     },
     checkAvailable(item) {
@@ -356,8 +351,8 @@ export default {
           window.XAPI.DELETE_BASKET_ITEM_FILE(
             this.shop.name,
             file_item.basket_id,
-            file_item.id
-          )
+            file_item.id,
+          ),
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -385,8 +380,8 @@ export default {
           window.API.GET_BASKET_ITEM_FILE_DOWNLOAD_LINK(
             this.shop.id,
             file_item.basket_id,
-            file_item.id
-          )
+            file_item.id,
+          ),
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -394,7 +389,7 @@ export default {
 
             this.showSuccessAlert(
               null,
-              "The secure download link has been generated successfully!"
+              "The secure download link has been generated successfully!",
             );
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -414,7 +409,7 @@ export default {
         this.saveBasketItemPreferences();
       },
       1000,
-      { maxWait: 3000, trailing: true }
+      { maxWait: 3000, trailing: true },
     ),
 
     saveBasketItemPreferences() {
@@ -427,18 +422,18 @@ export default {
         .put(
           window.XAPI.PUT_BASKET_ITEM_PREFERENCES(
             this.shop.name,
-            this.product.id
+            this.product.id,
           ),
           {
             basket_id: this.basket.id,
             variant_id: this.currentVariant ? this.currentVariant.id : null,
             preferences: this.preferences,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
             let basket_item = this.basket.items.find(
-              (item) => item.id === data.item.id
+              (item) => item.id === data.item.id,
             );
             // basket_item.preferences = data.item.preferences;
 
@@ -446,7 +441,7 @@ export default {
 
             this.showSuccessAlert(
               null,
-              this.$t("global.basket_item_message.notifications.success")
+              this.$t("global.basket_item_message.notifications.success"),
             );
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -464,9 +459,8 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .pricing-form {
-
   .indic {
     position: absolute !important;
     top: 50%;

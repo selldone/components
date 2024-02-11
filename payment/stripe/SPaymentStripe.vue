@@ -16,12 +16,13 @@
   <div class="pt-3">
     <div class="text-start mb-6">
       <small>{{ $t("global.commons.total_payment") }} </small>
-      <v-icon x-small>arrow_drop_down</v-icon><br />
+      <v-icon size="x-small">arrow_drop_down</v-icon>
+      <br />
       <price-view
         :amount="amount"
         :currency="currency.toUpperCase()"
-        x-large
         class="text-h3"
+        x-large
       ></price-view>
     </div>
 
@@ -34,24 +35,24 @@
 
       <v-alert
         v-if="!!error_message"
-        type="error"
         class="my-3 text-start"
-        dense
+        density="compact"
+        type="error"
       >
         {{ error_message }}
       </v-alert>
 
       <v-btn
         v-if="!loading_form"
-        color="#0061e0"
-        dark
-        x-large
+        id="submit"
+        :class="{ disabled: !form_completed }"
+        :loading="busy_pay"
         block
         class="mb-3 mt-8 zoomIn"
-        id="submit"
+        color="#0061e0"
+        dark
+        size="x-large"
         @click="confirmPayment"
-        :loading="busy_pay"
-        :class="{ disabled: !form_completed }"
         >{{ $t("global.actions.pay") }}
         <price-view
           :amount="amount"
@@ -65,9 +66,9 @@
 
     <v-progress-circular
       v-if="loading_form"
+      class="m-3"
       indeterminate
       size="48"
-      class="m-3"
     ></v-progress-circular>
 
     <!-- ***************** Processing ************************ -->
@@ -208,8 +209,8 @@ export default {
     // Remove null values:
     appearance = Object.fromEntries(
       Object.entries(appearance).filter(
-        ([key, value]) => value !== null && value !== undefined
-      )
+        ([key, value]) => value !== null && value !== undefined,
+      ),
     );
 
     const shop = this.getShop();
@@ -283,7 +284,6 @@ export default {
           //Stripe can send an email receipt to your customer using your brand logo and color theme, which are configurable in the Dashboard.
         })
         .then(({ error }) => {
-
           this.busy_pay = false;
 
           if (error) {

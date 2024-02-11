@@ -14,32 +14,30 @@
 
 <template>
   <v-autocomplete
-    :label="label"
-    :model-value="modelValue"
-    @update:model-value="
-      (val) => {
-        $emit('update:modelValue', val);
-        $emit('change', val);
-      }
-    "
-    :items="countries"
-    item-title="name"
-    :item-value="itemValue"
-    :messages="messages"
-    :rounded="rounded"
-    :return-object="returnObject"
-    :disabled="disabled || !countries || !countries.length"
-    :color="color"
-    :flat="flat"
-    :prepend-inner-icon="prependInnerIcon"
     :append-icon="appendIcon"
-    :multiple="multiple"
+    :autocomplete="autocomplete"
+    :bg-color="transparent ? 'transparent' : undefined"
     :chips="chips"
+    :clearable="clearable"
+    :color="color"
     :density="dense ? 'compact' : undefined"
-    :rules="required ? [GlobalRules.required()] : []"
-    :readonly="readonly"
+    :disabled="disabled || !countries || !countries.length"
     :error-messages="errorMessages"
+    :flat="flat"
+    :hide-details="hideDetails"
+    :item-value="itemValue"
+    :items="countries"
+    :label="label"
     :loading="loading"
+    :messages="messages"
+    :model-value="modelValue"
+    :multiple="multiple"
+    :placeholder="placeholder"
+    :prepend-inner-icon="prependInnerIcon"
+    :readonly="readonly"
+    :return-object="returnObject"
+    :rounded="rounded"
+    :rules="required ? [GlobalRules.required()] : []"
     :variant="
       variant
         ? variant
@@ -51,14 +49,16 @@
               ? 'outlined'
               : 'underlined'
     "
-    :hide-details="hideDetails"
-    :clearable="clearable"
-    :placeholder="placeholder"
-    :bg-color="transparent ? 'transparent' : undefined"
-    :autocomplete="autocomplete"
+    item-title="name"
+    @update:model-value="
+      (val) => {
+        $emit('update:modelValue', val);
+        $emit('change', val);
+      }
+    "
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" :title="item.raw.name" class="text-start">
+      <v-list-item :title="item.raw.name" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <flag :iso="item.raw.alpha2" :squared="false" class="me-2" />
         </template>
@@ -138,7 +138,6 @@ export default {
       type: Boolean,
     },
 
-
     returnObject: {
       default: false,
       type: Boolean,
@@ -188,7 +187,7 @@ export default {
   },
 
   data: () => ({
-    loading:false,
+    loading: false,
   }),
   computed: {
     countries() {
@@ -206,9 +205,9 @@ export default {
   methods: {},
   created() {
     if (!this.countries || !this.countries.length) {
-      this.loading=true;
-      this.fetchCountries(()=>{
-        this.loading=false;
+      this.loading = true;
+      this.fetchCountries(() => {
+        this.loading = false;
       });
     }
   },

@@ -16,41 +16,41 @@
   <div class="s--shop-billing-address-form">
     <s-smart-toggle
       v-if="!forceShowForm"
-      class="text-start-dir"
       v-model="same_billing"
-      color="success"
+      :dark="dark"
+      :false-description="$t('basket_page.custom_billing_info_desc')"
+      :false-title="$t('basket_page.custom_billing_info')"
+      :true-description="
+        no_billing_mode
+          ? $t('basket_page.no_billing_desc')
+          : receiverInfo?.address
+            ? MapHelper.GenerateFullAddressFromMapInfo(receiverInfo)
+            : $t('basket_page.same_billing_address_desc')
+      "
       :true-title="
         no_billing_mode
           ? $t('basket_page.no_billing_title')
           : $t('basket_page.same_billing_address')
       "
-      :true-description="
-        no_billing_mode
-          ? $t('basket_page.no_billing_desc')
-          : receiverInfo?.address
-          ? MapHelper.GenerateFullAddressFromMapInfo(receiverInfo)
-          : $t('basket_page.same_billing_address_desc')
-      "
-      :false-title="$t('basket_page.custom_billing_info')"
-      :false-description="$t('basket_page.custom_billing_info_desc')"
+      class="text-start-dir"
+      color="success"
       @change="updateValue"
-      :dark="dark"
     ></s-smart-toggle>
 
     <v-expand-transition>
-      <v-container fluid v-if="!same_billing">
+      <v-container v-if="!same_billing" fluid>
         <s-smart-switch
           v-model="billing_business"
-          rounded
-          class="my-3"
-          @change="updateValue"
-          :true-title="$t('global.commons.business')"
+          :dark="dark"
+          :false-description="$t('basket_page.billing_personal_desc')"
           :false-title="$t('global.commons.personal')"
           :true-description="$t('basket_page.billing_business_desc')"
-          :false-description="$t('basket_page.billing_personal_desc')"
-          true-icon="business"
+          :true-title="$t('global.commons.business')"
+          class="my-3"
           false-icon="person"
-          :dark="dark"
+          rounded
+          true-icon="business"
+          @change="updateValue"
         >
         </s-smart-switch>
 
@@ -58,8 +58,8 @@
           <div v-if="billing_business">
             <v-text-field
               v-model="billing_tax_id"
-              label="Tax ID"
               flat
+              label="Tax ID"
               @change="updateValue"
             ></v-text-field>
           </div>
@@ -74,30 +74,30 @@
 
         <s-country-select
           v-model="billing_country"
-          item-value="alpha2"
-          required
-          :label="$t('global.address_info.country')"
-          flat
           :errorMessages="
             !billing_country
               ? $t('basket_page.errors.select_billing_country')
               : ''
           "
+          :label="$t('global.address_info.country')"
           :loading="busy_regions"
+          flat
+          item-value="alpha2"
+          required
           @change="updateValue()"
         ></s-country-select>
 
         <v-select
           v-if="tax_regions && tax_regions.length"
           v-model="billing_state"
-          :label="$t('global.address_info.state')"
-          flat
-          required
-          :items="tax_regions"
           :errorMessages="
             !billing_state ? $t('basket_page.errors.select_billing_state') : ''
           "
-          @change="updateValue"
+          :items="tax_regions"
+          :label="$t('global.address_info.state')"
+          flat
+          required
+          @update:model-value="updateValue"
         >
         </v-select>
 
@@ -117,6 +117,7 @@ import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
 import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 import { MapHelper } from "@core/helper/map/MapHelper";
+
 export default {
   name: "SShopBillingAddressForm",
   components: { SSmartSwitch, SSmartToggle, SCountrySelect },
@@ -251,7 +252,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

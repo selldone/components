@@ -19,24 +19,24 @@
     </p>
 
     <div
-      style="overflow-x: auto"
-      class="ma-auto p-3 text-center"
       :class="{ 'disabled-no-filter': readonly }"
+      class="ma-auto p-3 text-center"
+      style="overflow-x: auto"
     >
       <v-btn-toggle
         v-model="transportation"
-        :class="{vertical:vertical}"
-        :rounded="!vertical"
-        active-class="black-flat"
-        borderless
-        :multiple="multiple"
+        :class="{ vertical: vertical }"
         :mandatory="mandatory"
-        @change="(val) => $emit('change', val)"
-        @blur="(val) => $emit('blur', val)"
+        :multiple="multiple"
+        :rounded="!vertical"
+        borderless
         class="widget-toggle overflow-auto align-items-stretch"
+        selected-class="black-flat"
+        @blur="(val) => $emit('blur', val)"
+        @update:model-value="(val) => $emit('change', val)"
       >
         <v-btn v-for="item in transportTypes" :key="item" :value="item">
-          <img width="24px" :src="getShopTransportationObject(item).icon" />
+          <img :src="getShopTransportationObject(item).icon" width="24px" />
           <span class="px-1">{{
             $t(getShopTransportationObject(item).name)
           }}</span>
@@ -115,12 +115,13 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.vertical{
+<style lang="scss" scoped>
+.vertical {
   flex-direction: column;
   width: 100%;
   background: transparent !important;
-  button{
+
+  button {
     border-radius: 8px !important;
     margin: 2px 0;
     border: solid thin #eee !important;

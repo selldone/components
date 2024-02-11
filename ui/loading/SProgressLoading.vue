@@ -14,11 +14,14 @@
 
 <template>
   <v-progress-linear
-    indeterminate
-    class="loader-to-bar"
     :class="{ '-relative': relative }"
     :color="color"
-    rounded rounded-bar  :height="height" :stream="stream"
+    :height="height"
+    :stream="stream"
+    class="loader-to-bar"
+    indeterminate
+    rounded
+    rounded-bar
   ></v-progress-linear>
 </template>
 
@@ -32,9 +35,8 @@ export default {
       default: "success",
     },
     relative: { type: Boolean },
-    height:{},
-    stream:Boolean,
-
+    height: {},
+    stream: Boolean,
   },
   computed: {
     animation() {

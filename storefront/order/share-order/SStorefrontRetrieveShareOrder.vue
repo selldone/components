@@ -17,8 +17,8 @@
     <!-- ███████████████████████ Dialog ███████████████████████ -->
     <v-dialog
       v-model="show"
-      scrollable
       fullscreen
+      scrollable
       transition="dialog-bottom-transition"
     >
       <v-card class="text-start">
@@ -96,24 +96,24 @@
 
             <div class="widget-buttons my-5">
               <v-btn
-                color="primary"
-                @click="importOrder"
                 :loading="busy_import"
+                color="primary"
                 size="x-large"
+                @click="importOrder"
               >
                 <v-icon class="me-1">shopping_cart_checkout</v-icon>
-                {{ $t("share_order.import_order_action") }}</v-btn
-              >
+                {{ $t("share_order.import_order_action") }}
+              </v-btn>
             </div>
           </v-container>
         </v-card-text>
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn variant="text" @click="show = false" size="x-large">
-              <v-icon class="me-1">close</v-icon
-              >{{ $t("global.actions.close") }}</v-btn
-            >
+            <v-btn size="x-large" variant="text" @click="show = false">
+              <v-icon start>close </v-icon>
+              {{ $t("global.actions.close") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -125,6 +125,7 @@
 import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
 import SShopCustomerReceiverInfoWidget from "@components/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
+
 export default {
   name: "SStorefrontRetrieveShareOrder",
   components: { SShopCustomerReceiverInfoWidget, VariantItemViewMicro },

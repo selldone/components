@@ -101,7 +101,7 @@
       .on(
         "click",
         ".medium-insert-images-toolbar2 .medium-editor-action",
-        $.proxy(this, "toolbar2Action")
+        $.proxy(this, "toolbar2Action"),
       )
 
       .on("click", $.proxy(this, "unselectAction"));
@@ -130,11 +130,10 @@
    * @param e
    */
   CustomAddon.prototype.unselectAction = function (e) {
-    let $el = $(e.target).closest(RootClassName),
+    const $el = $(e.target).closest(RootClassName),
       $image = this.$el.find(ActiveClassNameSelector);
 
     if ($el) {
-
       $image.not($el).removeClass(ActiveClassName);
       $(".medium-insert-images-toolbar2").remove();
 
@@ -147,7 +146,6 @@
    * @param e
    */
   CustomAddon.prototype.selectAction = function (e) {
-
     let that = this,
       $image;
 
@@ -159,16 +157,15 @@
       // Hide keyboard on mobile devices
       this.$el.blur();
 
-
       $image.addClass(ActiveClassName);
       //$image.closest('.medium-insert-images').addClass('medium-insert-active');
 
       setTimeout(function () {
         that.addToolbar();
         /*
-                        if (that.options.captions) {
-                          that.core.addCaption($image.parent().closest('div'), that.options.captionPlaceholder);
-                        }*/
+                                if (that.options.captions) {
+                                  that.core.addCaption($image.parent().closest('div'), that.options.captionPlaceholder);
+                                }*/
       }, 50);
     }
   };
@@ -190,7 +187,7 @@
       this.templates["src/js/templates/images-toolbar.hbs"]({
         styles: this.options.styles,
         actions: this.options.actions,
-      }).trim()
+      }).trim(),
     );
 
     $toolbar2 = $(".medium-insert-images-toolbar2");
@@ -206,7 +203,7 @@
         this.repositionToolbars();
         this.repositionToolbars();
       }.bind(this),
-      0
+      0,
     );
   };
 
@@ -221,7 +218,7 @@
         ["absolute", "fixed"].indexOf(
           window
             .getComputedStyle(elementsContainer)
-            .getPropertyValue("position")
+            .getPropertyValue("position"),
         ) > -1,
       elementsContainerBoundary = elementsContainerAbsolute
         ? elementsContainer.getBoundingClientRect()
@@ -327,7 +324,7 @@
     let $place = this.$el.find(".medium-insert-active");
 
     $place.replaceWith(
-      `<${ComponentElementName} class="medium-insert-active"></${ComponentElementName}>`
+      `<${ComponentElementName} class="medium-insert-active"></${ComponentElementName}>`,
     );
 
     //console.log("$place", $place);
@@ -361,7 +358,7 @@
         $.data(
           this,
           "plugin_" + pluginName + addonName,
-          new CustomAddon(this, options)
+          new CustomAddon(this, options),
         );
       }
     });

@@ -108,7 +108,7 @@ export default {
       this.now = Math.trunc(new Date().getTime() / 1000);
     }, 1000);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(interval);
   },
   methods: {
@@ -136,15 +136,18 @@ export default {
   padding: 0 !important;
   margin: 0;
 }
+
 .vuejs-countdown li {
   display: inline-block;
   margin: 0 8px;
   text-align: center;
   position: relative;
 }
+
 .vuejs-countdown li p {
   margin: 0;
 }
+
 .vuejs-countdown li:after {
   content: ":";
   position: absolute;
@@ -152,15 +155,19 @@ export default {
   right: -13px;
   font-size: 1.4rem;
 }
+
 .vuejs-countdown li:first-of-type {
   margin-left: 0;
 }
+
 .vuejs-countdown li:last-of-type {
   margin-right: 0;
 }
+
 .vuejs-countdown li:last-of-type:after {
   content: "";
 }
+
 .vuejs-countdown .digit {
   font-size: 1.4rem;
   font-weight: 600;
@@ -171,6 +178,7 @@ export default {
     font-size: 1.1rem;
   }
 }
+
 .vuejs-countdown .text {
   text-transform: capitalize;
   margin-bottom: 0;

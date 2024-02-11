@@ -21,8 +21,8 @@
   <s-shop-subscribe-button
     v-if="isSubscription && !isCartSubscriptionMode"
     :product="product"
-    :vendor-product="vendorProduct"
     :selected-subscription-price="selectedSubscriptionPrice"
+    :vendor-product="vendorProduct"
   >
   </s-shop-subscribe-button>
 
@@ -31,7 +31,7 @@
   ―――――――――――――――― Buy ▶ Normal ―――――――――――――
   █████████████████████████████████████████████████████████████
   -->
-  <div v-else style="min-height: 56px" class="position-relative">
+  <div v-else class="position-relative" style="min-height: 56px">
     <!-- 🞇 Loading -->
 
     <s-loading
@@ -39,35 +39,35 @@
         busy /*default_mode || changed to number input!*/ &&
         selected_order_count <= 1 /*Show loading for first action!*/
       "
-      height="50px"
       class="ma-auto"
+      height="50px"
     />
 
     <!-- 🞇 Finished -->
 
     <v-btn
       v-if="!quantity && !busy"
-      class="s--shop-buy-button px-2"
       :class="{ 'waiting-mode': forAvailable }"
-      rounded
       :color="forAvailable ? default_color : '#eee'"
-      depressed
       :dark="forAvailable"
-      @click.stop="
-        forAvailable
-          ? delete_from_waiting_when_available()
-          : put_to_waiting_when_available()
-      "
+      class="s--shop-buy-button px-2"
+      min-width="220"
+      rounded
       v-bind="
         window.ExternalWidget
           ? { href: getProductLink(shop, product.id), target: '_blank' }
           : {}
       "
-      min-width="220"
+      variant="flat"
+      @click.stop="
+        forAvailable
+          ? delete_from_waiting_when_available()
+          : put_to_waiting_when_available()
+      "
     >
       <img
-        src="@components/assets/icons/available-notify.svg"
         class="ms-2"
+        src="@components/assets/icons/available-notify.svg"
         width="28"
       />
       <span v-if="forAvailable" class="mx-2">
@@ -93,7 +93,7 @@
             padding: 2px 12px;
           "
         >
-          <v-icon class="me-1" small>check_circle</v-icon>
+          <v-icon class="me-1" size="small">check_circle</v-icon>
           {{ $t("global.commons.saved") }}
         </v-sheet>
       </div>
@@ -116,21 +116,21 @@
       <s-number-input
         v-if="default_mode || custom_mode"
         v-model="selected_order_count"
-        class="extendable select-order-count"
-        :items="order_counts"
-        :placeholder="$t('buy_button.quantity')"
-        :label="$t('buy_button.quantity_in_basket')"
-        filled
-        hide-details
-        dark
-        :color="default_color"
         :background-color="default_color"
-        @change="lock ? undefined : debounceSpinnerSelectAction()"
-        flat
+        :color="default_color"
+        :items="order_counts"
+        :label="$t('buy_button.quantity_in_basket')"
         :max="quantity"
-        @clear="buyRemoveAction"
+        :placeholder="$t('buy_button.quantity')"
+        class="extendable select-order-count"
         clearable
+        dark
+        filled
+        flat
+        hide-details
         hot-update-mode
+        @change="lock ? undefined : debounceSpinnerSelectAction()"
+        @clear="buyRemoveAction"
       >
         <template v-slot:item="{ item }">
           <p v-if="item" class="options">
@@ -155,52 +155,52 @@
       <div v-else-if="area_mode || volume_mode" class="d-flex align-center">
         <s-number-input
           v-model="dim_1"
-          class="extendable select-order-count"
-          :placeholder="$t('buy_button.quantity')"
+          :background-color="default_color"
+          :color="default_color"
           :label="$t('global.commons.width')"
+          :placeholder="$t('buy_button.quantity')"
+          class="extendable select-order-count"
+          clearable
+          dark
           filled
           hide-details
-          dark
-          :color="default_color"
-          :background-color="default_color"
-          @change="lock ? undefined : calculatorCall()"
-          @blur="calculatorCall"
-          clearable
           hot-update-mode
+          @blur="calculatorCall"
+          @change="lock ? undefined : calculatorCall()"
         >
         </s-number-input>
         <s-number-input
           v-model="dim_2"
-          class="extendable select-order-count"
-          :placeholder="$t('buy_button.quantity')"
+          :background-color="default_color"
+          :color="default_color"
           :label="$t('global.commons.length')"
+          :placeholder="$t('buy_button.quantity')"
+          class="extendable select-order-count"
+          clearable
+          dark
           filled
           hide-details
-          dark
-          :color="default_color"
-          :background-color="default_color"
-          @change="lock ? undefined : calculatorCall()"
-          @blur="calculatorCall"
-          clearable
           hot-update-mode
+          @blur="calculatorCall"
+          @change="lock ? undefined : calculatorCall()"
         >
         </s-number-input>
 
         <s-number-input
           v-if="volume_mode"
           v-model="dim_3"
-          class="extendable select-order-count"
-          :placeholder="$t('buy_button.quantity')"
+          :background-color="default_color"
+          :color="default_color"
           :label="$t('global.commons.height')"
+          :placeholder="$t('buy_button.quantity')"
+          class="extendable select-order-count"
+          clearable
+          dark
           filled
           hide-details
-          dark
-          :color="default_color"
-          :background-color="default_color"
-          @change="lock ? undefined : calculatorCall()"
-          @blur="calculatorCall"
-          clearable
           hot-update-mode
+          @blur="calculatorCall"
+          @change="lock ? undefined : calculatorCall()"
         >
         </s-number-input>
       </div>
@@ -215,19 +215,19 @@
 
     <v-btn
       v-if="canBuy && quantity && !busy && !find_existed_in_basket"
-      class="s--shop-buy-button"
-      rounded
       :color="default_color"
-      min-width="220"
+      class="s--shop-buy-button"
       dark
-      @click.stop="physicalBuyAction(1)"
+      min-width="220"
+      rounded
       v-bind="
         window.ExternalWidget
           ? { href: getProductLink(shop, product.id), target: '' }
           : {}
       "
+      @click.stop="physicalBuyAction(1)"
     >
-      <v-icon v-if="action_icon" class="me-2"> {{ action_icon }} </v-icon>
+      <v-icon v-if="action_icon" class="me-2"> {{ action_icon }}</v-icon>
       {{ action_text }}
     </v-btn>
   </div>
@@ -236,7 +236,7 @@
 <script>
 import { ProductType } from "@core/enums/product/ProductType";
 import SLoading from "@components/ui/loading/SLoading.vue";
-import {GtagEcommerce} from "@components/plugins/gtag/GtagEcommerce";
+import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import { BusinessModel } from "@core/enums/shop/BusinessModel";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
@@ -435,7 +435,7 @@ export default {
       let found = BasketHelper.FindItem(
         this.basket,
         this.product,
-        this.currentVariant
+        this.currentVariant,
       );
 
       // 🞇 If change found item in basket change => set select order count
@@ -483,7 +483,7 @@ export default {
           this.product,
           this.currentVariant,
           new_value - old_value,
-          this.GetUserSelectedCurrency().code
+          this.GetUserSelectedCurrency().code,
         );
       else if (old_value > new_value)
         GtagEcommerce.RemovingProductFromShoppingCart(
@@ -491,7 +491,7 @@ export default {
           this.product,
           this.currentVariant,
           old_value - new_value,
-          this.GetUserSelectedCurrency().code
+          this.GetUserSelectedCurrency().code,
         );
 
       //    this.pre_order_count = new_value;
@@ -556,7 +556,7 @@ export default {
         this.spinnerSelectAction();
       },
       1000,
-      { maxWait: 3000, trailing: true }
+      { maxWait: 3000, trailing: true },
     ),
 
     spinnerSelectAction() {
@@ -592,7 +592,7 @@ export default {
         this.calculateNow();
       },
       1000,
-      { maxWait: 3000, trailing: true }
+      { maxWait: 3000, trailing: true },
     ),
 
     calculateNow() {
@@ -680,7 +680,7 @@ export default {
         },
         preferences,
         this.vendorProduct, // 🟣 Marketplace 🟣
-        this.selectedSubscriptionPrice // 🎗️ Subscription
+        this.selectedSubscriptionPrice, // 🎗️ Subscription
       );
     },
     buyRemoveAction() {
@@ -696,7 +696,7 @@ export default {
         },
         (basket) => {
           this.busy = false;
-        }
+        },
       );
     },
 
@@ -734,23 +734,23 @@ export default {
         .put(
           window.XAPI.PUT_TO_WAITING_FOR_BE_AVAILABLE(
             this.getShop().name,
-            this.product.id
+            this.product.id,
           ),
           {
             variant_id: this.currentVariant ? this.currentVariant.id : null,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
             this.showSuccessAlert(
               this.$t("global.notification.congratulation"),
-              this.$t("buy_button.notifications.inform_add_success")
+              this.$t("buy_button.notifications.inform_add_success"),
             );
             this.product.informs = data.informs;
           } else {
             this.showErrorAlert(
               this.$t("global.notification.error"),
-              data.error_msg
+              data.error_msg,
             );
           }
         })
@@ -769,25 +769,25 @@ export default {
         .delete(
           window.XAPI.DELETE_FROM_WAITING_FOR_BE_AVAILABLE(
             this.getShop().name,
-            this.product.id
+            this.product.id,
           ),
           {
             params: {
               variant_id: this.currentVariant ? this.currentVariant.id : null,
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
             this.showSuccessAlert(
               this.$t("global.notification.confirm"),
-              this.$t("buy_button.notifications.inform_remove_success")
+              this.$t("buy_button.notifications.inform_remove_success"),
             );
             this.product.informs = data.informs;
           } else {
             this.showErrorAlert(
               this.$t("global.notification.error"),
-              data.error_msg
+              data.error_msg,
             );
           }
         })
@@ -802,7 +802,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -820,7 +820,9 @@ export default {
   transition: all 0.4s;
 
   &.waiting-mode {
-    box-shadow: 20px 5px 40px #cf77f3, 0px 5px 40px #009bff,
+    box-shadow:
+      20px 5px 40px #cf77f3,
+      0px 5px 40px #009bff,
       -20px 5px 40px #2ac9db !important;
     background-image: linear-gradient(
       -90deg,

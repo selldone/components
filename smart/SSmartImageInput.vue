@@ -13,9 +13,9 @@
   -->
 
 <template>
-  <div class="text-start" :class="{ disabled: disabled }">
+  <div :class="{ disabled: disabled }" class="text-start">
     <v-expand-transition>
-      <v-list-item v-if="value" :dark="dark" key="1">
+      <v-list-item v-if="value" key="1" :dark="dark">
         <template v-slot:prepend>
           <v-avatar rounded="lg">
             <v-img :src="getShopImagePath(value)"></v-img>
@@ -27,9 +27,9 @@
         <template v-slot:append>
           <v-list-item-action end>
             <v-btn
-              @click="$emit('input', null) /*Clear image*/"
-              icon
               color="red"
+              icon
+              @click="$emit('input', null) /*Clear image*/"
             >
               <v-icon>close</v-icon>
             </v-btn>
@@ -39,16 +39,16 @@
       <v-file-input
         v-else
         key="2"
-        :model-value="file"
-        @update:model-value="(val) => $emit('update:file', val)"
-        color="primary"
         :label="label"
-        :placeholder="hint"
-        prepend-inner-icon="image"
-        prepend-icon=""
-        accept="image/*"
-        show-size
         :messages="message"
+        :model-value="file"
+        :placeholder="hint"
+        accept="image/*"
+        color="primary"
+        prepend-icon=""
+        prepend-inner-icon="image"
+        show-size
+        @update:model-value="(val) => $emit('update:file', val)"
       />
     </v-expand-transition>
   </div>
@@ -82,4 +82,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

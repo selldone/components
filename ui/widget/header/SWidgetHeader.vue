@@ -20,52 +20,52 @@
       <h2 class="d-flex align-center">
         <v-icon
           v-if="icon"
-          class="me-1 flex-grow-0 --icon"
           :color="iconColor"
           :size="font_size"
-          >{{ icon }}</v-icon
-        >
+          class="me-1 flex-grow-0 --icon"
+          >{{ icon }}
+        </v-icon>
         <img
           v-if="src"
           :src="src"
-          width="24"
+          class="me-2 flex-grow-0 rounded"
           height="24"
-          class="me-1 flex-grow-0 rounded"
+          width="24"
         />
         <slot name="icon"></slot>
         {{ title }}
         <sup
           v-if="dot"
-          class="mx-1"
-          :title="dot_msg"
           :class="{ 'hover-scale-small': dot_msg }"
+          :title="dot_msg"
+          class="mx-1"
         >
-          <v-icon size="12" :color="dotColor">circle</v-icon>
+          <v-icon :color="dotColor" size="12">circle</v-icon>
         </sup>
       </h2>
       <slot name="append-title"></slot>
 
-      <v-spacer> </v-spacer>
+      <v-spacer></v-spacer>
       <slot name="icon-actions"></slot>
       <slot v-if="$vuetify.display.xs" name="actions"></slot>
     </div>
     <v-btn
       v-if="addCaption"
-      size="large"
-      :color="buttonColor"
       :block="$vuetify.display.xs"
+      :class="{ disabled: disabled }"
+      :color="buttonColor"
+      :href="href"
+      :loading="addLoading"
+      :target="target"
+      :to="to"
+      :variant="addText ? 'text' : 'elevated'"
       class="mt-2 mt-sm-0 rounded-18px"
+      min-width="200"
+      size="large"
       style="font-size: 0.875rem"
       @click="$emit('click:add')"
-      min-width="200"
-      :to="to"
-      :href="href"
-      :target="target"
-      :class="{ disabled: disabled }"
-      :loading="addLoading"
-      :variant="addText ? 'text' : 'elevated'"
     >
-      <v-icon class="me-1" :size="20">{{ addIcon }}</v-icon>
+      <v-icon :size="20" class="me-1">{{ addIcon }}</v-icon>
 
       <div v-if="disabled">
         {{ addCaption }}
@@ -78,7 +78,7 @@
       </div>
       <span v-else>
         {{ addCaption }}
-        <span  v-if="addSubCaption" class="d-block tnt small op-0-8">{{
+        <span v-if="addSubCaption" class="d-block tnt small op-0-8">{{
           addSubCaption
         }}</span>
       </span>
@@ -134,7 +134,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -142,10 +142,9 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--widget-header{
-  .--icon{
+.s--widget-header {
+  .--icon {
     min-width: 26px;
   }
 }
-
 </style>

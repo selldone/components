@@ -15,9 +15,9 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-flex align-center justify-start>
     <small class="m-0 float-end text-center" style="min-width: 74px">
-      <v-icon :color="ticksColor[value_clone - 1]">{{
-        tickIcons[value_clone - 1]
-      }}</v-icon>
+      <v-icon :color="ticksColor[value_clone - 1]"
+        >{{ tickIcons[value_clone - 1] }}
+      </v-icon>
       <br />
       {{ ticksLabels[value_clone - 1] }}
     </small>
@@ -26,19 +26,19 @@
 
     <v-slider
       v-model="value_clone"
-      style="border-radius: 4px; max-width: 240px"
-      reverse
       :max="5"
       :min="1"
-      step="1"
-      ticks="always"
-      tick-size="4"
-      @change="$emit('input', value_clone)"
+      color="blue-darken-3"
       hide-details
-      color="blue darken-3"
+      reverse
+      step="1"
+      style="border-radius: 4px; max-width: 240px"
+      thumb-color="blue darken-3"
+      tick-size="4"
+      ticks="always"
       track-color="#ddd"
       track-fill-color="blue darken-3"
-      thumb-color="blue darken-3"
+      @change="$emit('input', value_clone)"
     />
   </v-flex>
 </template>

@@ -15,16 +15,18 @@
 <template>
   <div>
     <community-statistic-view
-      :title="$t('community.category.statistics')"
       v-if="timeSeries && category"
+      :category="category"
       :community="community"
       :timeSeries="timeSeries"
-      is-category
-      :category="category"
+      :title="$t('community.category.statistics')"
       class="fadeIn"
+      is-category
     ></community-statistic-view>
 
-    <community-statistic-view-skeleton v-else></community-statistic-view-skeleton>
+    <community-statistic-view-skeleton
+      v-else
+    ></community-statistic-view-skeleton>
 
     <div style="height: 5vh"></div>
   </div>
@@ -34,9 +36,10 @@
 import CommunityStatisticView from "../statistics/CommunityStatisticView.vue";
 import { TimeSeries } from "@core/timeserie/TimeSeries";
 import CommunityStatisticViewSkeleton from "../statistics/CommunityStatisticViewSkeleton.vue";
+
 export default {
   name: "CommunityCategoryStatistic",
-  components: {CommunityStatisticViewSkeleton, CommunityStatisticView },
+  components: { CommunityStatisticViewSkeleton, CommunityStatisticView },
   props: {
     community: {
       required: true,
@@ -81,14 +84,14 @@ export default {
         .get(
           window.CAPI.GET_COMMUNITY_CATEGORY_DATA(
             this.community.id,
-            this.categoryId
-          ), {
-                  params: {
-                    offset: this.offset,
-                    days: this.days,
-
-                  }
-                }
+            this.categoryId,
+          ),
+          {
+            params: {
+              offset: this.offset,
+              days: this.days,
+            },
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -104,7 +107,7 @@ export default {
               data.data,
               "Category Data",
               this.offset,
-              this.days
+              this.days,
             );
 
           // Register fetch callback (Use to refresh by change time span)

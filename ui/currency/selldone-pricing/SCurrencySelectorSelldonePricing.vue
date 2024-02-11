@@ -15,26 +15,26 @@
 <template>
   <s-currency-selector
     v-model="user_currency"
+    :background-color="backgroundColor"
     :dark="dark"
-    :light="light"
-    :outlined="outlined"
-    :solo="solo"
-    :singleLine="singleLine"
-    :variant="variant"
-    :filled="filled"
     :dense="dense"
-    :noRouteQuery="noRouteQuery"
-    :icon="icon"
-    :rounded="rounded"
-    :loading="busy_currency"
-    @change="setUserCurrency"
-    :save-local-storage="false"
-    :hideDetails="hideDetails"
-    :max-width="maxWidth"
+    :filled="filled"
     :flag-mode="flagMode"
     :flat="flat"
+    :hideDetails="hideDetails"
+    :icon="icon"
+    :light="light"
+    :loading="busy_currency"
+    :max-width="maxWidth"
+    :noRouteQuery="noRouteQuery"
+    :outlined="outlined"
+    :rounded="rounded"
+    :save-local-storage="false"
+    :singleLine="singleLine"
+    :solo="solo"
+    :variant="variant"
     flag
-    :background-color="backgroundColor"
+    @change="setUserCurrency"
   ></s-currency-selector>
 </template>
 
@@ -56,7 +56,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    variant:{},
+    variant: {},
     outlined: {
       type: Boolean,
       default: false,
@@ -149,7 +149,7 @@ export default {
           (preferences) => {},
           () => {
             this.busy_currency = false;
-          }
+          },
         );
       }
     },

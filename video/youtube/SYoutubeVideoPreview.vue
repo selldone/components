@@ -16,7 +16,7 @@
   <div v-if="is_valid">
     <v-list-item>
       <template v-slot:prepend>
-        <s-avatar-folder is-red side-icon="smart_display" :src="thumbnail_url">
+        <s-avatar-folder :src="thumbnail_url" is-red side-icon="smart_display">
         </s-avatar-folder>
       </template>
 
@@ -31,9 +31,9 @@
         <v-list-item-action end>
           <v-btn
             :href="`https://www.youtube.com/watch?v=${videoId}`"
+            icon
             target="_blank"
             title="View video on youtube."
-            icon
             variant="text"
           >
             <v-icon size="small">open_in_new</v-icon>
@@ -49,7 +49,7 @@ import SAvatarFolder from "@components/ui/avatar/folder/SAvatarFolder.vue";
 
 export default {
   name: "SYoutubeVideoPreview",
-  components: {SAvatarFolder},
+  components: { SAvatarFolder },
   props: {
     videoId: {
       required: false,
@@ -110,4 +110,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

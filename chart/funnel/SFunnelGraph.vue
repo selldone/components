@@ -14,32 +14,32 @@
 
 <template>
   <div
-    class="funnel svg-funnel-js"
     :class="{ 'svg-funnel-js--vertical': direction === 'vertical' }"
+    class="funnel svg-funnel-js"
   >
     <div class="svg-funnel-js__container">
-      <svg :width="width" :height="height">
+      <svg :height="height" :width="width">
         <defs>
           <linearGradient
             v-for="(colors, index) in gradientSet"
-            :key="index"
             :id="colors.grad_id"
+            :key="index"
             :gradientTransform="gradientAngle"
           >
             <stop
-              :stop-color="color"
-              :offset="offsetColor(index, colors.values.length)"
               v-for="(color, index) in colors.values"
               :key="index"
+              :offset="offsetColor(index, colors.values.length)"
+              :stop-color="color"
             ></stop>
           </linearGradient>
         </defs>
         <path
           v-for="(path, index) in paths"
           :key="index"
+          :d="path"
           :fill="colorSet[index].fill"
           :stroke="colorSet[index].fill"
-          :d="path"
         ></path>
       </svg>
     </div>
@@ -52,45 +52,50 @@
       v-on:leave="leaveTransition"
     >
       <div
-        class="svg-funnel-js__label"
-        :class="`label-${index + 1}`"
         v-for="(value, index) in valuesFormatted"
         :key="labels[index].toLowerCase().split(' ').join('-')"
+        :class="`label-${index + 1}`"
+        class="svg-funnel-js__label"
       >
-        <div v-if="labelValueCurrency" class="label__value"><price-view :amount="value" :currency="labelValueCurrency"></price-view></div>
+        <div v-if="labelValueCurrency" class="label__value">
+          <price-view
+            :amount="value"
+            :currency="labelValueCurrency"
+          ></price-view>
+        </div>
         <div v-else class="label__value">{{ value }}</div>
 
-
-        <div class="label__title" v-if="labels">{{ labels[index] }}</div>
+        <div v-if="labels" class="label__title">{{ labels[index] }}</div>
         <div
-          class="label__percentage"
           v-if="displayPercentage && percentages()[index] !== 100"
+          class="label__percentage"
         >
           {{ percentages()[index] }}%
         </div>
         <div
-          class="label__segment-percentages" style="min-width: max-content;"
           v-if="
             is2d() && (!filterZeros || values[index].some((x) => x > 0.0001))
           "
+          class="label__segment-percentages"
+          style="min-width: max-content"
         >
           <ul class="segment-percentage__list">
             <li v-for="(subLabel, j) in subLabels" :key="j">
               <template v-if="!filterZeros || values[index][j] > 0.0001">
                 <img
                   v-if="subLabelImages && subLabelImages.length > j"
-                  width="16"
-                  height="16"
                   :src="subLabelImages[j]"
                   class="d-block mx-auto"
+                  height="16"
+                  width="16"
                 />
 
                 <div v-if="isCurrency" class="d-flex flex-column py-1">
                   <s-currency-icon
                     :currency="GetCurrency(subLabel)"
-                    small
-                    flag
                     class="mb-1"
+                    flag
+                    small
                   ></s-currency-icon>
 
                   <price-view
@@ -104,8 +109,8 @@
                   {{ subLabel }}:
 
                   <span
-                    class="percentage__list-label"
                     v-if="subLabelValue === 'percent'"
+                    class="percentage__list-label"
                     >{{ twoDimPercentages()[index][j] }}%</span
                   >
                   <span v-else-if="actualValue"
@@ -116,7 +121,7 @@
                       )
                     }}
                   </span>
-                  <span class="percentage__list-label" v-else>{{
+                  <span v-else class="percentage__list-label">{{
                     numeralFormat(values[index][j], "0.[0]a")
                   }}</span>
                 </template>
@@ -131,17 +136,17 @@
       v-on:enter="enterTransition"
       v-on:leave="leaveTransition"
     >
-      <div class="svg-funnel-js__subLabels" v-if="is2d()">
+      <div v-if="is2d()" class="svg-funnel-js__subLabels">
         <div
+          v-for="(subLabel, index) in subLabels"
+          :key="index"
           :class="`svg-funnel-js__subLabel svg-funnel-js__subLabel-${
             index + 1
           }`"
-          v-for="(subLabel, index) in subLabels"
-          :key="index"
         >
           <div
-            class="svg-funnel-js__subLabel--color"
             :style="subLabelBackgrounds(index)"
+            class="svg-funnel-js__subLabel--color"
           ></div>
           <div class="svg-funnel-js__subLabel--title">{{ subLabel }}</div>
         </div>
@@ -216,7 +221,7 @@ export default {
       // function return action value to show (not normalized value) in currency mode : function(row,col,value)
     },
 
-    labelValueCurrency:{}
+    labelValueCurrency: {},
   },
   data() {
     return {
@@ -376,7 +381,7 @@ export default {
         .easing(TWEEN.Easing.Cubic.InOut)
         .onUpdate(() => {
           for (let index = 0; index < this.paths.length; index++) {
-           // this.$set(this.paths, index, interpolators[index](position.value));
+            // this.$set(this.paths, index, interpolators[index](position.value));
             this.paths[index] = interpolators[index](position.value);
           }
         });
@@ -428,7 +433,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

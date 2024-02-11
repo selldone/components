@@ -14,6 +14,7 @@
 
 import Confetti from "./confetti";
 import { App, Plugin } from "vue";
+
 export { Confetti };
 
 const ConfettiPlugin: Plugin = {

@@ -14,26 +14,30 @@
 
 <template>
   <div>
-
-
     <v-text-field
       v-model="product_url"
-      placeholder="Past product id / url... + Press enter"
-      @blur="process(product_url)"
-      @keydown.enter="process(product_url)"
-      solo
+      append-inner-icon="local_mall"
       class="z2 position-relative mx-4 english-field"
       clearable
       messages="Only show in this community"
-      append-inner-icon="local_mall"
+      placeholder="Past product id / url... + Press enter"
+      variant="solo"
+      @blur="process(product_url)"
+      @keydown.enter="process(product_url)"
     ></v-text-field>
 
     <div class="text-muted text-center">
-      {{$t('global.commons.or')}}
+      {{ $t("global.commons.or") }}
     </div>
 
     <div class="widget-buttons mb-3">
-      <v-btn @click="showQRScanner" color="primary" dark depressed x-large>
+      <v-btn
+        color="primary"
+        dark
+        size="x-large"
+        variant="flat"
+        @click="showQRScanner"
+      >
         <v-icon class="me-1">qr_code_scanner</v-icon>
         {{ $t("global.commons.scan_qr_code") }}
       </v-btn>
@@ -42,8 +46,8 @@
     <!-- ---------------- Product Info ---------------- -->
     <community-product-view
       :community="community"
-      :shop="shop"
       :product-id="product_id"
+      :shop="shop"
       class="fadeIn"
     >
     </community-product-view>
@@ -51,23 +55,23 @@
     <!-- ████████████████ Dialog > Scan ████████████████ -->
     <v-dialog
       v-model="show_scanner"
-      max-width="680"
       content-class="no-shadow-dialog"
+      max-width="680"
     >
       <v-card class="rounded-28px">
         <v-card-title>
           <v-icon class="me-1">qr_code_scanner</v-icon>
-          {{ $t("global.commons.barcode_scanner") }}</v-card-title
-        >
+          {{ $t("global.commons.barcode_scanner") }}
+        </v-card-title>
         <v-card-text v-if="show_scanner">
-          <barcode-scanner @on-scan="onScan" qr-code></barcode-scanner>
+          <barcode-scanner qr-code @on-scan="onScan"></barcode-scanner>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn text @click="show_scanner = false" x-large>
+            <v-btn size="x-large" variant="text" @click="show_scanner = false">
               <v-icon class="me-1">close</v-icon>
-              {{ $t("global.actions.close") }}</v-btn
-            >
+              {{ $t("global.actions.close") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>

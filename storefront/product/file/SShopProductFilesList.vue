@@ -35,65 +35,68 @@
 
       <v-list-item-title class="text-subtitle-2 py-1 d-flex align-center">
         <div
-          class="flex-grow-1 single-line inline-block font-weight-black"
           :title="file.name"
+          class="flex-grow-1 single-line inline-block font-weight-black"
         >
           {{ file.name }}
         </div>
 
         <v-chip
           v-if="file.sample"
-          label
-          size="small"
+          class="mx-2"
           color="#009688"
           dark
-          class="mx-2"
-          style="min-width: 68px"
-          >Sample</v-chip
-        >
-        <v-chip
-          v-else
           label
           size="small"
+          style="min-width: 68px"
+          >Sample
+        </v-chip>
+        <v-chip
+          v-else
+          class="mx-2"
           color="#673AB7"
           dark
-          class="mx-2"
+          label
+          size="small"
           style="min-width: 68px"
-          ><v-icon start size="small">diamond</v-icon> Paid</v-chip
         >
+          <v-icon size="small" start>diamond</v-icon>
+          Paid
+        </v-chip>
       </v-list-item-title>
       <v-list-item-subtitle>
         <v-btn
           v-if="file.download_link"
+          :color="copied_items.includes(file.id) ? 'green' : 'primary'"
+          size="small"
+          title="Copy download link."
+          variant="text"
           @click.stop="
             copyToClipboard(file.download_link);
             copied_items.add(file.id);
           "
-          :color="copied_items.includes(file.id) ? 'green' : 'primary'"
-          variant="text"
-          size="small"
-          title="Copy download link."
         >
-          <v-icon size="small" class="me-1">{{
-            copied_items.includes(file.id) ? "check_circle" : "file_copy"
-          }}</v-icon>
-          {{ $t("global.commons.download_link") }}</v-btn
-        >
+          <v-icon class="me-1" size="small"
+            >{{ copied_items.includes(file.id) ? "check_circle" : "file_copy" }}
+          </v-icon>
+          {{ $t("global.commons.download_link") }}
+        </v-btn>
       </v-list-item-subtitle>
 
       <v-list-item-action style="flex-basis: 50px">
-        <v-list-item-action-text dir="ltr" class="text-center english-field">
+        <v-list-item-action-text class="text-center english-field" dir="ltr">
           {{ numeralFormat(file.size * 1024, "0.[0] b") }}
         </v-list-item-action-text>
 
         <v-btn
           v-if="canDownload(file)"
           :loading="busy_get_file === file"
-          icon
           color="#1976D2"
+          icon
           title="Download"
-          ><v-icon>cloud_download</v-icon></v-btn
         >
+          <v-icon>cloud_download</v-icon>
+        </v-btn>
       </v-list-item-action>
     </v-list-item>
   </v-list>
@@ -192,7 +195,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

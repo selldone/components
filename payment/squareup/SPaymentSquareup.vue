@@ -16,12 +16,13 @@
   <div class="pt-3">
     <div class="text-start mb-6">
       <small>{{ $t("global.commons.total_payment") }} </small>
-      <v-icon x-small>arrow_drop_down</v-icon><br />
+      <v-icon size="x-small">arrow_drop_down</v-icon>
+      <br />
       <price-view
         :amount="amount"
         :currency="currency.toUpperCase()"
-        x-large
         class="text-h3"
+        x-large
       ></price-view>
     </div>
 
@@ -35,14 +36,14 @@
     </div>
 
     <form
+      id="payment-form"
       :class="{
         disabled: busy_submit || success_payment,
         'blurred-lg': success_payment,
       }"
-      id="payment-form"
       class="blur-animate"
     >
-      <v-tabs v-model="tab" light icons-and-text class="mx-n5 mb-6" height="84">
+      <v-tabs v-model="tab" class="mx-n5 mb-6" height="84" light stacked>
         <v-tabs-slider></v-tabs-slider>
 
         <v-tab
@@ -55,9 +56,9 @@
           {{ item.title }}
           <img
             :src="item.image"
+            height="28"
             style="object-fit: contain"
             width="28"
-            height="28"
           />
         </v-tab>
       </v-tabs>
@@ -70,14 +71,14 @@
         <div id="card-container"></div>
         <v-btn
           v-if="square_js_loaded"
-          color="#0061e0"
-          dark
-          x-large
+          id="submit"
+          :loading="busy_submit"
           block
           class="mb-3 mt-8"
-          id="submit"
+          color="#0061e0"
+          dark
+          size="x-large"
           @click="handlePaymentSubmit(card)"
-          :loading="busy_submit"
           >{{ $t("global.actions.pay") }}
           <price-view
             :amount="amount"
@@ -91,14 +92,14 @@
         <div id="gift-card-container"></div>
 
         <v-btn
-          color="#0061e0"
-          dark
-          x-large
+          id="submit"
+          :loading="busy_submit"
           block
           class="mb-3 mt-8"
-          id="submit"
+          color="#0061e0"
+          dark
+          size="x-large"
           @click="handlePaymentSubmit(giftCard)"
-          :loading="busy_submit"
           >Pay with Gift Card
           <price-view
             :amount="amount"
@@ -111,37 +112,37 @@
       <div v-show="tab === 'ACH'">
         <fieldset class="buyer-inputs">
           <input
-            type="text"
-            autocomplete="given-name"
-            aria-required="true"
             aria-label="First Name"
-            required="required"
-            placeholder="Given Name"
+            aria-required="true"
+            autocomplete="given-name"
             name="givenName"
+            placeholder="Given Name"
+            required="required"
             spellcheck="false"
+            type="text"
           />
 
           <input
-            type="text"
-            autocomplete="family-name"
-            aria-required="true"
             aria-label="Last Name"
-            required="required"
-            placeholder="Family Name"
+            aria-required="true"
+            autocomplete="family-name"
             name="familyName"
+            placeholder="Family Name"
+            required="required"
             spellcheck="false"
+            type="text"
           />
         </fieldset>
 
         <v-btn
-          color="#0061e0"
-          dark
-          x-large
+          id="submit"
+          :loading="busy_submit"
           block
           class="mb-3 mt-8"
-          id="submit"
+          color="#0061e0"
+          dark
+          size="x-large"
           @click="achClick()"
-          :loading="busy_submit"
           >Pay with Bank Account
           <price-view
             :amount="amount"
@@ -153,9 +154,9 @@
 
       <v-alert
         v-if="!!error_message"
-        type="error"
         class="my-3 text-start"
-        dense
+        density="compact"
+        type="error"
       >
         {{ error_message }}
       </v-alert>
@@ -165,9 +166,9 @@
 
     <v-progress-circular
       v-if="!square_js_loaded || !card"
+      class="m-3"
       indeterminate
       size="48"
-      class="m-3"
     ></v-progress-circular>
 
     <s-progress-loading
@@ -308,7 +309,7 @@ export default {
         $.cachedScript(this.script)
           .done(function (script, textStatus) {
             console.style(
-              `🔔 ❰ Square ❱  Load script file start... ▶ status: ${textStatus}`
+              `🔔 ❰ Square ❱  Load script file start... ▶ status: ${textStatus}`,
             );
             t.square_js_loaded = true;
             t.busy = false;
@@ -318,7 +319,7 @@ export default {
           .fail(function (jqxhr, settings, exception) {
             console.errorStyle(
               `⚠ ❰ Square ❱  Failed to load script file: `,
-              exception
+              exception,
             );
             this.showErrorAlert(null, "Can not load script!");
           });
@@ -439,7 +440,7 @@ export default {
       // It is expected that the developer performs form field validation
       // which does not occur in this example.
       const accountHolderName = `${formData.get("givenName")} ${formData.get(
-        "familyName"
+        "familyName",
       )}`;
 
       try {

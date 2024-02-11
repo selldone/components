@@ -14,25 +14,25 @@
 
 <template>
   <v-img
-    @click="
-      (e) => {
-        fullscreen && success ? showFullscreen(e) : undefined;
-      }
-    "
-    :src="src"
-    :width="width"
-    :height="height"
     :aspect-ratio="aspectRatio"
-    :max-height="maxHeight"
-    :min-height="minHeight"
     :class="{
       'fullscreen-able-icon': fullscreen && success,
       'circular-ribbons': !success && !error,
       'error-load-image': error,
     }"
-    @load="success = true"
-    @error="error = true"
+    :height="height"
+    :max-height="maxHeight"
+    :min-height="minHeight"
+    :src="src"
+    :width="width"
     class="flex-grow-0"
+    @click="
+      (e) => {
+        fullscreen && success ? showFullscreen(e) : undefined;
+      }
+    "
+    @error="error = true"
+    @load="success = true"
   >
     <div class="loader"></div>
     <slot v-if="success || error || !src"></slot>
@@ -50,10 +50,10 @@ export default {
     },
     src: {},
     aspectRatio: {},
-    width:{},
-    height:{},
-    maxHeight:{},
-    minHeight:{},
+    width: {},
+    height: {},
+    maxHeight: {},
+    minHeight: {},
   },
 
   data() {

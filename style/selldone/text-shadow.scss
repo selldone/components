@@ -12,22 +12,26 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-.text-flaming{
+.text-flaming {
   text-shadow: 0 -1px 4px #FFF, 0 -2px 10px #ff0, 0 -10px 20px #ff8000, 0 -18px 40px #F00;
 }
-.text-neon{
+
+.text-neon {
   text-shadow: #FFF 0px 0px 5px, #FFF 0px 0px 10px, #FFF 0px 0px 15px, #FF2D95 0px 0px 20px, #FF2D95 0px 0px 30px, #FF2D95 0px 0px 40px, #FF2D95 0px 0px 50px, #FF2D95 0px 0px 75px;
 }
-.text-press{
-  text-shadow: 3px 2px 3px rgba(255,255,255,.2);
+
+.text-press {
+  text-shadow: 3px 2px 3px rgba(255, 255, 255, .2);
 }
-.text-emboss{
-  text-shadow: 2px 8px 6px rgba(0,0,0,0.2), 0px -5px 35px rgba(255,255,255,0.3);
+
+.text-emboss {
+  text-shadow: 2px 8px 6px rgba(0, 0, 0, 0.2), 0px -5px 35px rgba(255, 255, 255, 0.3);
 }
-.text-retro{
+
+.text-retro {
   text-shadow: 4px 3px 0 #7A7A7A;
 }
 
-.text-inset{
+.text-inset {
   text-shadow: #e0e0e0 1px 1px 0;
 }

@@ -14,9 +14,6 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <s-widget
-    :product-id="product.id"
-    class="text-start overflow-hidden"
-    style="border-radius: 8px"
     :class="[
       small ? 'm-1' : '',
       dark ? 'widget-dark' : '',
@@ -28,29 +25,32 @@
       shortcut ? '-shortcut' : '',
     ]"
     :deleted_at="getFromNowString(product.deleted_at)"
+    :h100="false"
+    :product-id="product.id"
     :style="`background: ${color}`"
     :title="`<h5 class='align-items-center pb-1'  style='font-size: 1.16rem;min-height: 42px'>    <span class='circle ${state_class}' style='font-size: 6px;'></span>  ${product.title?.limitWords(
       12,
     )}  </h5>`"
     body-class="pa-0"
+    class="text-start overflow-hidden"
     custom-header
+    style="border-radius: 8px"
     @click="$emit('select')"
-    :h100="false"
   >
     <template v-slot:top-left>
       <v-btn
         v-if="showEditButton"
-        icon
-        variant="text"
         :to="{
           name: 'BProductAddFull',
           params: { product_id: product.id },
           hash: '#general',
         }"
         class="z2 mx-1"
-        @click.stop
-        title="Edit product."
+        icon
         size="small"
+        title="Edit product."
+        variant="text"
+        @click.stop
       >
         <v-icon size="24"> edit_square</v-icon>
       </v-btn>
@@ -58,15 +58,15 @@
       <!-- Add Note Button -->
       <team-note-button
         v-if="showNotes || (product.note && product.note.length)"
-        class="z2 mx-1"
-        :note="product.note"
-        @click="$emit('onShowNote', product)"
         :activeColor="showNotes ? undefined : '#333'"
+        :note="product.note"
+        class="z2 mx-1"
+        @click="$emit('onShowNote', product)"
       ></team-note-button>
 
       <!-- Selectable -->
       <template v-if="showSelect">
-        <v-icon class="mx-1" :color="iSelected ? 'primary' : '#333'" size="24"
+        <v-icon :color="iSelected ? 'primary' : '#333'" class="mx-1" size="24"
           >{{ iSelected ? "circle" : "radio_button_unchecked" }}
         </v-icon>
       </template>
@@ -81,6 +81,7 @@
     <!-- Selectable -->
     <template v-if="showSelect">
       <div
+        class="pp usall"
         style="
           position: absolute;
           left: 0;
@@ -89,16 +90,15 @@
           height: 100%;
           z-index: 10;
         "
-        class="pp usall"
         @click.stop="$emit('onSelect', product)"
       ></div>
     </template>
 
     <div v-if="add_by_dropShipping" class="drop-shipping-mode">
       <img
-        width="24"
         height="24"
         src="../../../assets/icons/dropshipping-w.svg"
+        width="24"
       />
       <span>{{ $t("global.commons.drop_shipping") }}</span>
     </div>
@@ -106,30 +106,30 @@
     <div>
       <img
         v-if="!compactMode"
-        class="float-end"
         :src="getProductTypeImage(product.type)"
-        height="16px"
         :title="`${$t(
           'admin_shop.products.product_widget.product_type',
         )}: ${getProductTypeName(product.type)}`"
+        class="float-end"
+        height="16px"
       />
       <h6
+        :class="small ? 'small' : ''"
         class="fw-semi-bold mb-1 small"
         style="min-height: 21px"
-        :class="small ? 'small' : ''"
       >
         <v-chip
           v-if="shortcut"
-          label
-          color="#009688"
-          size="x-small"
           class="me-1"
+          color="#009688"
+          label
+          size="x-small"
           title="Originally, this product belongs to a different category."
         >
-          <v-icon start size="9">snippet_folder</v-icon>
+          <v-icon size="9" start>snippet_folder</v-icon>
           Shortcut
         </v-chip>
-        <v-avatar v-if="product.connect_id" size="24" rounded class="me-1"
+        <v-avatar v-if="product.connect_id" class="me-1" rounded size="24"
           ><img :src="getConnectIcon(product.connect_id)"
         /></v-avatar>
 
@@ -140,14 +140,14 @@
     <!-- Vendor owner -->
     <div
       v-if="vendor"
-      class="pa-1 text-start d-flex align-center small"
       :title="$t('global.commons.vendor')"
+      class="pa-1 text-start d-flex align-center small"
     >
       <v-avatar
         v-if="vendor"
-        size="30"
-        class="avatar-gradient -thin me-2 hover-scale"
         :class="vendor.enable ? '-blue' : '-red'"
+        class="avatar-gradient -thin me-2 hover-scale"
+        size="30"
         ><img :src="getShopImagePath(vendor.icon, 64)"
       /></v-avatar>
 
@@ -162,10 +162,10 @@
       <v-avatar
         v-for="v in vendors"
         :key="v.id"
-        size="30"
-        class="avatar-gradient -thin me-1 hover-scale"
         :class="v.enable ? '-blue' : '-red'"
         :title="v.name"
+        class="avatar-gradient -thin me-1 hover-scale"
+        size="30"
         ><img v-if="v.icon" :src="getShopImagePath(v.icon, 64)" />
         <v-icon v-else size="small">storefront</v-icon>
       </v-avatar>
@@ -174,18 +174,18 @@
     <product-variants-view
       v-if="product.variants"
       :variants="filterVariant ? [filterVariant] : product.variants"
-      small
       center
       class="flex-grow-0 mb-2"
+      small
     />
 
     <p
       v-if="showPrice"
-      @mouseover="show_price_detail = true"
-      @mouseleave="show_price_detail = false"
-      class="m-0 px-2"
       :class="{ 'editable-click': showEditButton }"
+      class="m-0 px-2"
       title="Edit price"
+      @mouseleave="show_price_detail = false"
+      @mouseover="show_price_detail = true"
       @click.stop="
         showEditButton
           ? $router.push({
@@ -201,8 +201,8 @@
       </small>
 
       <price-view
-        class="font-weight-medium hover-able mx-1"
         :amount="price_converted"
+        class="font-weight-medium hover-able mx-1"
         large
       ></price-view>
 
@@ -212,12 +212,12 @@
 
       <v-icon
         v-if="!price_converted || price_converted <= 0"
-        class="ms-2 mb-2 blink-me"
-        size="small"
-        color="red"
         :title="
           product.price > 0 ? 'Exchange rate not valid!' : 'Price not valid!'
         "
+        class="ms-2 mb-2 blink-me"
+        color="red"
+        size="small"
         >fa:fas fa-exclamation-triangle
       </v-icon>
 
@@ -243,9 +243,9 @@
               </small>
 
               <price-view
-                class="text-success"
                 :amount="product.price"
                 :currency="product.currency"
+                class="text-success"
               ></price-view>
             </p>
 
@@ -256,9 +256,9 @@
               </small>
 
               <price-view
-                class="text-success"
                 :amount="product.commission"
                 :currency="product.currency"
+                class="text-success"
               ></price-view>
             </p>
 
@@ -269,18 +269,18 @@
               </small>
 
               <price-view
-                class="text-success"
                 :amount="product.discount"
                 :currency="product.currency"
+                class="text-success"
               ></price-view>
             </p>
           </div>
           <div class="w-50 pt-2">
             <s-time-progress-bar
-              class="mx-auto"
               :created-time="product.created_at"
-              :start-time="product.dis_start"
               :end-time="product.dis_end"
+              :start-time="product.dis_start"
+              class="mx-auto"
             />
           </div>
         </div>
@@ -291,8 +291,8 @@
           >
             <v-avatar
               :size="60"
-              color="grey-lighten-4"
               class="hover-scale-small force-top"
+              color="grey-lighten-4"
               drop-image="true"
               @click="(e) => $emit('click:image', e)"
               ><!-- dro-image : active drop area for images fast upload -->
@@ -304,9 +304,9 @@
               >
                 <template v-slot:placeholder>
                   <v-progress-circular
-                    indeterminate
-                    color="grey-lighten-5"
                     class="center-absolute"
+                    color="grey-lighten-5"
+                    indeterminate
                   />
                 </template>
                 <v-progress-circular
@@ -321,12 +321,12 @@
             <template v-if="showRatting && product.rate_count">
               <v-rating
                 :model-value="product.rate"
-                color="grey-darken-1"
                 active-color="yellow-darken-3"
-                half-increments
-                size="small"
-                readonly
+                color="grey-darken-1"
                 density="compact"
+                half-increments
+                readonly
+                size="small"
               />
 
               <div>
@@ -348,8 +348,8 @@
           >
             <p class="mb-1">
               <i
-                class="fas fa-boxes"
                 :class="quantity ? 'text-success' : 'text-muted'"
+                class="fas fa-boxes"
               />
               <small class="mx-1">
                 {{ $t("admin_shop.products.product_widget.in_stock") }}:
@@ -368,10 +368,10 @@
               }}</b>
 
               <v-icon
-                color="amber"
                 v-if="quantity > 0 && quantity < 5"
-                class="ms-2"
                 :title="$t('global.commons.low_inventory_warning')"
+                class="ms-2"
+                color="amber"
                 size="small"
                 >fa:fas fa-exclamation-circle
               </v-icon>
@@ -401,23 +401,23 @@
 
             <v-row no-gutters>
               <v-chip
-                variant="outlined"
                 v-if="!product.original"
-                color="red"
                 class="m-1 text-uppercase px-2"
-                size="x-small"
+                color="red"
                 pill
+                size="x-small"
+                variant="outlined"
                 >{{ $t("global.commons.fake") }}
               </v-chip>
               <v-chip
-                variant="outlined"
                 v-if="
                   conditionObject &&
                   product.condition != ProductCondition.NEW.code
                 "
-                size="x-small"
                 class="m-1 text-uppercase px-2"
                 pill
+                size="x-small"
+                variant="outlined"
                 >{{ $t(conditionObject.title) }}
               </v-chip>
 
@@ -432,45 +432,45 @@
                 @click.stop
               >
                 <v-img
-                  height="24"
-                  width="24"
                   :src="require('@components/assets/icons/3d.svg')"
                   class=""
+                  height="24"
+                  width="24"
                 ></v-img>
               </router-link>
 
               <router-link
                 v-if="product.video"
-                title="Video"
                 :to="{
                   name: 'BProductAddFull',
                   params: { product_id: product.id },
                   hash: '#images',
                 }"
                 class="row-hover mx-auto"
+                title="Video"
                 @click.stop
               >
-                <v-icon size="24" width="24" class="" color="#D93F21"
+                <v-icon class="" color="#D93F21" size="24" width="24"
                   >fa:fab fa-youtube
                 </v-icon>
               </router-link>
 
               <router-link
                 v-if="product.reselling"
-                title="Drop shipping"
                 :to="{
                   name: 'BPageProductDropshipping',
                   params: { product_id: product.id },
                 }"
                 class="row-hover mx-auto"
+                title="Drop shipping"
                 @click.stop
               >
                 <img
-                  width="24"
-                  height="24"
                   :src="
                     require('@components/assets/icons/dropshipping-green.svg')
                   "
+                  height="24"
+                  width="24"
                 />
               </router-link>
             </v-row>

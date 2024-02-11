@@ -18,10 +18,7 @@
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
-        tag="div"
-        group
-        class="border-between-vertical rounded-card"
-        :class="{
+      :class="{
         'disabled pen': disabled,
         border: border,
         'white--text': dark,
@@ -29,84 +26,85 @@
           decorative,
         pen: loading,
       }"
-        hide-on-leave
+      class="border-between-vertical rounded-card"
+      group
+      hide-on-leave
+      tag="div"
     >
       <div
-          v-for="(task, i) in items_show"
-          :key="val(task) && isString(val(task)) ? val(task) : i"
-          class="p-2 pp row-hover usn"
-          :class="{
+        v-for="(task, i) in items_show"
+        :key="val(task) && isString(val(task)) ? val(task) : i"
+        :class="{
           'bg-dark': dark && !backgroundColor,
           'bg-white': !dark && !backgroundColor,
           'disabled pen': task.disabled,
           pen: !clearable && forceShowAll && modelValue === val(task),
         }"
-          :style="{ backgroundColor: backgroundColor }"
-          @click="onClickItem(task)"
+        :style="{ backgroundColor: backgroundColor }"
+        class="p-2 pp row-hover usn"
+        @click="onClickItem(task)"
       >
         <div class="d-flex align-center mnh">
           <div
-              class="me-2 -thin -gray flex-grow-0"
-              :class="{ 'avatar-gradient': val(task) === modelValue }"
+            :class="{ 'avatar-gradient': val(task) === modelValue }"
+            class="me-2 -thin -gray flex-grow-0"
           >
             <v-sheet
-                v-if="val(task) === modelValue"
-                class="circle-check zoomIn"
-                :color="color"
+              v-if="val(task) === modelValue"
+              :color="color"
+              class="circle-check zoomIn"
             >
               <!-- Loading -->
               <v-progress-circular
-                  v-if="loading"
-                  :color="'#fff'"
-                  class="center-absolute"
-                  indeterminate
-                  :size="14"
-                  :width="3"
+                v-if="loading"
+                :color="'#fff'"
+                :size="14"
+                :width="3"
+                class="center-absolute"
+                indeterminate
               ></v-progress-circular>
             </v-sheet>
             <v-icon
-                v-else
-                :color="dark ? '#fff' : grayUnselected ? '#333' : color"
-            >radio_button_unchecked</v-icon
-            >
+              v-else
+              :color="dark ? '#fff' : grayUnselected ? '#333' : color"
+              >radio_button_unchecked
+            </v-icon>
           </div>
           <div class="flex-grow-1">
-            <slot name="prepend-title" :item="task"> </slot>
+            <slot :item="task" name="prepend-title"></slot>
             <b v-html="title(task)"> </b>
-            <slot name="append-title" :item="task"> </slot>
+            <slot :item="task" name="append-title"></slot>
             <v-list-subheader
-                v-if="itemDescription"
-                style="height: auto"
-                class="p-0"
+              v-if="itemDescription"
+              class="p-0"
+              style="height: auto"
             >
               {{
                 isFunction(itemDescription)
-                    ? itemDescription(task)
-                    : $t(task[itemDescription])
+                  ? itemDescription(task)
+                  : $t(task[itemDescription])
               }}
             </v-list-subheader>
 
-            <slot name="description" :item="task"> </slot>
+            <slot :item="task" name="description"></slot>
           </div>
 
           <v-icon
-              v-if="
+            v-if="
               itemIcon &&
               (isFunction(itemIcon) ? itemIcon(task) : task[itemIcon])
             "
-              :dark="dark"
-          >{{
-              isFunction(itemIcon) ? itemIcon(task) : task[itemIcon]
-            }}</v-icon
-          >
+            :dark="dark"
+            >{{ isFunction(itemIcon) ? itemIcon(task) : task[itemIcon] }}
+          </v-icon>
           <v-avatar
-              v-if="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
-              size="24"
-              :rounded="rounded"
+            v-if="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
+            :rounded="rounded"
+            size="24"
           >
             <img
-                :src="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
-            /></v-avatar>
+              :src="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
+          /></v-avatar>
         </div>
       </div>
     </v-slide-y-transition>
@@ -189,7 +187,7 @@ export default {
       if (this.forceShowAll) return this.items;
       if (this.isUnset(this.modelValue)) return this.items;
       const out = this.items.filter(
-          (item) => this.val(item) === this.modelValue,
+        (item) => this.val(item) === this.modelValue,
       );
       return out.length ? out : this.items;
     },
@@ -208,10 +206,10 @@ export default {
     },
     title(task) {
       return !this.itemText
-          ? task
-          : typeof this.itemText === "function"
-              ? this.itemText(task)
-              : this.$t(task[this.itemText]);
+        ? task
+        : typeof this.itemText === "function"
+          ? this.itemText(task)
+          : this.$t(task[this.itemText]);
     },
 
     isUnset(value) {
@@ -219,12 +217,12 @@ export default {
     },
     onClickItem(task) {
       const _new_value = this.forceShowAll
-          ? this.clearable && this.modelValue === this.val(task)
-              ? null
-              : this.val(task)
-          : !this.isUnset(this.modelValue)
-              ? null
-              : this.val(task);
+        ? this.clearable && this.modelValue === this.val(task)
+          ? null
+          : this.val(task)
+        : !this.isUnset(this.modelValue)
+          ? null
+          : this.val(task);
 
       this.$emit("update:modelValue", _new_value);
       this.$nextTick(() => {
@@ -232,17 +230,15 @@ export default {
       });
       this.signalUpdate();
     },
-
   },
-
-
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .mnh {
   min-height: 40px;
 }
+
 .circle-check {
   animation-duration: 250ms;
   width: 20px;

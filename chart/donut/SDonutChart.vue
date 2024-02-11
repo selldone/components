@@ -13,30 +13,30 @@
   -->
 
 <template>
-  <div class="cdc-container" :style="placementStyles.container">
-    <div class="cdc" ref="donut" :style="donutStyles">
+  <div :style="placementStyles.container" class="cdc-container">
+    <div ref="donut" :style="donutStyles" class="cdc">
       <s-donut-chart-sections
-        v-on="sectionListeners"
         :sections="donutSections"
         :start-angle="startAngle"
+        v-on="sectionListeners"
       >
       </s-donut-chart-sections>
-      <div class="cdc-overlay" :style="overlayStyles">
-        <div class="cdc-text" :style="donutTextStyles">
+      <div :style="overlayStyles" class="cdc-overlay">
+        <div :style="donutTextStyles" class="cdc-text">
           <slot>{{ text }}</slot>
         </div>
       </div>
     </div>
 
     <slot name="legend">
-      <div class="cdc-legend" v-if="hasLegend" :style="placementStyles.legend">
+      <div v-if="hasLegend" :style="placementStyles.legend" class="cdc-legend">
         <span
-          class="cdc-legend-item"
           v-for="(item, idx) in legend"
           :key="idx"
           :title="item.percent"
+          class="cdc-legend-item"
         >
-          <span class="cdc-legend-item-color" :style="item.styles"></span>
+          <span :style="item.styles" class="cdc-legend-item-color"></span>
           <span>{{ item.label }}</span>
         </span>
       </div>
@@ -158,7 +158,7 @@ export default {
         degreeArr.forEach((degree) => {
           // limit to 2 decimal digits to avoid floating point arithmetic issues
           const consumedWithCurrent = Number(
-            (consumedDegrees + degree).toFixed(2)
+            (consumedDegrees + degree).toFixed(2),
           );
           if (consumedWithCurrent > degreesInASection) {
             const remainingDegreesInCurrentSection =
@@ -176,7 +176,7 @@ export default {
                 degree: degree - remainingDegreesInCurrentSection,
                 color,
                 $section: section,
-              }
+              },
             );
           } else {
             sections.push({ ...section, degree, color, $section: section });
@@ -244,7 +244,7 @@ export default {
           [sectionEventName]: (...args) =>
             this.emitSectionEvent(sectionEventName, ...args),
         }),
-        {}
+        {},
       );
     },
   },
@@ -285,7 +285,7 @@ export default {
       window.addEventListener("resize", this.resizeListener);
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("resize", this.resizeListener);
   },
 };

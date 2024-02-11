@@ -17,17 +17,22 @@
     v-model="selected_list"
     column
     multiple
-    active-class="accent-chip"
+    selected-class="accent-chip"
   >
     <v-chip
       v-for="item in list"
       :key="item"
       :color="light ? '#fff' : SaminColorDark"
-      small
-      filter
       :value="item"
+      filter
+      size="small"
     >
-      <s-color-circle v-if="isColor" :color="item" :size="16" class="ms-n2 me-1">
+      <s-color-circle
+        v-if="isColor"
+        :color="item"
+        :size="16"
+        class="ms-n2 me-1"
+      >
       </s-color-circle>
 
       <span v-if="isColor"> {{ coloName(item) }}</span>
@@ -36,12 +41,12 @@
         <variant-asset-view
           v-if="shop"
           :shop-id="shop.id"
+          :size="16"
           :value="item"
           class="pen me-1"
-          :size="16"
         ></variant-asset-view>
-        {{ item?.removeVariantAsset() }}</template
-      >
+        {{ item?.removeVariantAsset() }}
+      </template>
     </v-chip>
   </v-chip-group>
 </template>
@@ -96,9 +101,9 @@ export default {
       deep: true,
     },
 
-    value(value){
-      this.selected_list=value
-    }
+    value(value) {
+      this.selected_list = value;
+    },
   },
 
   methods: {

@@ -20,11 +20,11 @@
     ></s-progress-loading>
     <div class="widget-buttons">
       <v-btn
-        @click="show_add = true"
-        variant="text"
-        size="x-large"
-        color="primary"
         :disabled="show_add"
+        color="primary"
+        size="x-large"
+        variant="text"
+        @click="show_add = true"
       >
         <v-icon start>fa:fas fa-sticky-note</v-icon>
         <div>
@@ -37,14 +37,14 @@
     </div>
 
     <v-expand-transition>
-      <div class="px-3 py-2" v-if="show_add">
+      <div v-if="show_add" class="px-3 py-2">
         <s-mentionable-input
-          :shop-id="shop.id"
-          :label="$t('order_timeline.message_input')"
           v-model="message"
+          v-model:mentions="mentions"
+          :label="$t('order_timeline.message_input')"
+          :shop-id="shop.id"
           auto-grow
           class="mb-2"
-          v-model:mentions="mentions"
         ></s-mentionable-input>
 
         <v-expand-transition>
@@ -56,16 +56,16 @@
         </v-expand-transition>
 
         <div class="widget-buttons">
-          <v-btn @click="show_add = false" size="x-large" variant="text">
+          <v-btn size="x-large" variant="text" @click="show_add = false">
             <v-icon class="me-1">close</v-icon>
             {{ $t("global.actions.cancel") }}
           </v-btn>
           <v-btn
+            :loading="saving"
+            color="primary"
             size="x-large"
             variant="flat"
-            color="primary"
             @click="addNewNote()"
-            :loading="saving"
           >
             <v-icon class="me-1">add_box</v-icon>
             {{ $t("global.actions.add") }}
@@ -74,11 +74,11 @@
       </div>
     </v-expand-transition>
     <v-fade-transition
+      class="bg-transparent"
       group
+      hide-on-leave
       tag="v-list"
       two-line
-      hide-on-leave
-      class="bg-transparent"
     >
       <template v-for="(item, i) in timelines" :key="item.id">
         <div
@@ -91,33 +91,33 @@
           <v-fade-transition hide-on-leave>
             <div
               v-if="getTimelineStatus(item.type).editable && item.editing"
-              class="px-3 py-2"
               key="x1"
+              class="px-3 py-2"
             >
               <s-mentionable-input
-                outlined
-                auto-grow
-                :label="$t('order_timeline.message_input')"
                 v-model="item.data.message"
+                :label="$t('order_timeline.message_input')"
+                auto-grow
                 class="mb-2"
+                outlined
               ></s-mentionable-input>
 
-              <v-row no-gutters justify="end">
+              <v-row justify="end" no-gutters>
                 <v-btn
                   :loading="busy_edit === item"
-                  size="small"
-                  variant="flat"
                   class="m-1"
                   color="primary"
+                  size="small"
+                  variant="flat"
                   @click="editNote(item)"
                 >
                   <v-icon class="me-1" size="small">save</v-icon>
                   {{ $t("global.actions.save") }}
                 </v-btn>
                 <v-btn
+                  class="m-1"
                   size="small"
                   variant="outlined"
-                  class="m-1"
                   @click="showEdit(item, false)"
                 >
                   <v-icon class="me-1" size="small">close</v-icon>
@@ -130,25 +130,25 @@
               v-else
               key="x2"
               :class="{ 'row-hover': isEmail(item) }"
-              @click.stop="isEmail(item) ? clickItem(item) : undefined"
-              lines="two"
-              class="fadeInUp -timeline-list-item"
               :style="{
                 'animation-delay': 100 + i * 50 + 'ms',
                 cursor: isEmail(item) ? undefined : 'initial',
               }"
+              class="fadeInUp -timeline-list-item"
+              lines="two"
+              @click.stop="isEmail(item) ? clickItem(item) : undefined"
             >
               <template v-slot:prepend>
                 <v-avatar
-                  size="42"
+                  :class="!item.pin && getTimelineStatus(item.type).iclass"
                   :color="
                     item.pin ? '#607D8B' : getTimelineStatus(item.type).color
                   "
-                  :class="!item.pin && getTimelineStatus(item.type).iclass"
                   :style="{ 'animation-delay': 350 + i * 50 + 'ms' }"
                   class="zoomIn p-1"
+                  size="42"
                 >
-                  <v-avatar size="36" color="#fff">
+                  <v-avatar color="#fff" size="36">
                     <!-- 1. Custom image url -->
                     <v-img
                       v-if="item.data && item.data.image"
@@ -204,11 +204,11 @@
                   <v-chip
                     v-if="item.by"
                     class="overflow-visible me-2"
-                    variant="flat"
-                    size="small"
                     color="#fff"
+                    size="small"
+                    variant="flat"
                   >
-                    <v-avatar start class="hover-scale">
+                    <v-avatar class="hover-scale" start>
                       <v-img :src="getUserAvatar(item.by.id)" />
                     </v-avatar>
                     {{ item.by.name }}
@@ -229,15 +229,15 @@
                       item.data &&
                       (item.data.delivery_user_id || item.data.delivery_user_id)
                     "
+                    class="mx-2"
+                    height="16"
                     src="../../assets/icons/wire.svg"
                     width="16"
-                    height="16"
-                    class="mx-2"
                   />
                   <v-avatar
                     v-if="item.data && item.data.delivery_service_id"
-                    size="18"
                     class="mx-1 hover-scale"
+                    size="18"
                     tile
                   >
                     <v-img
@@ -249,8 +249,8 @@
 
                   <v-avatar
                     v-if="item.data && item.data.delivery_user_id"
-                    size="18"
                     class="mx-1 hover-scale"
+                    size="18"
                   >
                     <v-img :src="getUserAvatar(item.data.delivery_user_id)" />
                   </v-avatar>
@@ -262,25 +262,25 @@
                     class="mt-2 pt-2 border-top-dashed"
                   >
                     <div>
-                      <v-icon size="small" color="red">close</v-icon>
+                      <v-icon color="red" size="small">close</v-icon>
                       <small>{{ $t("global.commons.old") }}:</small>
                       <b>{{ generateFullAddress(item.data.old) }}</b>
                       <s-geo-navigation-button
                         v-if="item.data.old && item.data.old.location"
-                        :location="item.data.old.location"
                         :icon="true"
+                        :location="item.data.old.location"
                         class="ms-1"
                         small
                       ></s-geo-navigation-button>
                     </div>
                     <div class="mt-2">
-                      <v-icon size="small" color="green">check</v-icon>
+                      <v-icon color="green" size="small">check</v-icon>
                       <small>{{ $t("global.commons.new") }}:</small>
                       <b>{{ generateFullAddress(item.data.new) }}</b>
                       <s-geo-navigation-button
                         v-if="item.data.new && item.data.new.location"
-                        :location="item.data.new.location"
                         :icon="true"
+                        :location="item.data.new.location"
                         class="ms-1"
                         small
                       ></s-geo-navigation-button>
@@ -293,7 +293,6 @@
                 <v-list-item-action style="min-width: 36px">
                   <s-smart-menu
                     v-if="getTimelineStatus(item.type).editable"
-                    icon="more_horiz"
                     :items="[
                       {
                         icon: 'push_pin',
@@ -314,6 +313,7 @@
                         click: () => showDeleteNoteDialog(item),
                       },
                     ]"
+                    icon="more_horiz"
                   >
                   </s-smart-menu>
 
@@ -323,12 +323,12 @@
                       (item.data.can_resend || item.data.resend)
                     "
                     :class="{ disabled: !!item.data.resend }"
-                    variant="flat"
-                    color="primary"
-                    @click.stop="resendEmail(item)"
                     :loading="busy_resend === item.id"
                     class="m-1"
+                    color="primary"
                     size="small"
+                    variant="flat"
+                    @click.stop="resendEmail(item)"
                   >
                     <v-icon start>send</v-icon>
                     {{
@@ -342,9 +342,9 @@
                   <v-img
                     v-if="item.data && item.data.connect_id"
                     :src="getConnectIcon(item.data.connect_id)"
-                    width="24"
-                    height="24"
                     class="m-1"
+                    height="24"
+                    width="24"
                   ></v-img>
                 </v-list-item-action>
               </template>
@@ -353,11 +353,11 @@
         </div>
         <hr
           v-if="i < timelines.length - 1"
-          class="ma-0 fadeIn"
           :style="{
             'animation-delay': 500 + i * 50 + 'ms',
             cursor: isEmail(item) ? undefined : 'initial',
           }"
+          class="ma-0 fadeIn"
         />
       </template>
     </v-fade-transition>
@@ -377,25 +377,25 @@
         <span v-html="email_title"></span>
       </v-card-title>
 
-      <s-loading css-mode v-if="busy_email" light></s-loading>
+      <s-loading v-if="busy_email" css-mode light></s-loading>
       <v-card-text>
         <div
-          v-html="email_html"
           class="widget-box -large mb-5 min-height-60vh"
+          v-html="email_html"
         ></div>
       </v-card-text>
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn variant="text" @click="show_email = false" size="x-large">
+          <v-btn size="x-large" variant="text" @click="show_email = false">
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
 
           <v-btn
+            size="x-large"
             variant="text"
             @click="copyToClipboard(email_html)"
-            size="x-large"
           >
             <v-icon start>fa:fab fa-html5</v-icon>
             {{ $t("order_timeline.copy_html") }}
@@ -886,7 +886,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .-timeline-list-item {
   padding-top: 0;
   padding-bottom: 0;

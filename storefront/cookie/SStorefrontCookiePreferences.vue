@@ -37,24 +37,24 @@
           <v-avatar tile>
             <v-img
               :src="require('@components/assets/icons/europe.svg')"
-              width="48"
-              height="48"
               contain
+              height="48"
+              width="48"
             ></v-img>
           </v-avatar>
         </template>
 
-          <v-list-item-title>GDPR</v-list-item-title>
-          <v-list-item-subtitle
-            >General Data Protection Regulation
-          </v-list-item-subtitle>
-          <v-list-item-subtitle class="text-success"
-            >Europe data privacy regulation
-            <v-icon color="success" size="small">check</v-icon>
-          </v-list-item-subtitle>
+        <v-list-item-title>GDPR</v-list-item-title>
+        <v-list-item-subtitle
+          >General Data Protection Regulation
+        </v-list-item-subtitle>
+        <v-list-item-subtitle class="text-success"
+          >Europe data privacy regulation
+          <v-icon color="success" size="small">check</v-icon>
+        </v-list-item-subtitle>
       </v-list-item>
 
-      <v-list v-if="apps?.length" flat subheader lines="three">
+      <v-list v-if="apps?.length" flat lines="three" subheader>
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Application ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
         <v-list-subheader>
@@ -63,9 +63,9 @@
 
         <v-list-item v-for="app in apps" :key="app.code">
           <template v-slot:prepend>
-          <v-avatar tile>
-            <v-img :src="getShopImagePath(app.icon)" contain />
-          </v-avatar>
+            <v-avatar tile>
+              <v-img :src="getShopImagePath(app.icon)" contain />
+            </v-avatar>
           </template>
 
           <v-list-item-title>{{ app.name }}</v-list-item-title>
@@ -79,13 +79,13 @@
                 setShopAppCustomerActiveState(app, app.active)
               "
             />
-              <div class="mx-auto small">
-                {{
-                  app.active
-                      ? $t("global.commons.active")
-                      : $t("global.commons.inactive")
-                }}
-              </div>
+            <div class="mx-auto small">
+              {{
+                app.active
+                  ? $t("global.commons.active")
+                  : $t("global.commons.inactive")
+              }}
+            </div>
           </v-list-item-action>
         </v-list-item>
       </v-list>
@@ -94,8 +94,8 @@
       <div class="widget-buttons">
         <v-btn
           v-if="hasClose"
-          variant="text"
           size="x-large"
+          variant="text"
           @click="$emit('close')"
         >
           <v-icon class="me-1">close</v-icon>
@@ -112,10 +112,11 @@
             accepted = true;
             $emit('close');
           "
-          ><v-icon class="me-1">check</v-icon>
-
-          I Agree</v-btn
         >
+          <v-icon class="me-1">check</v-icon>
+
+          I Agree
+        </v-btn>
       </div>
     </v-card-actions>
   </v-card>

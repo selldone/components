@@ -14,22 +14,30 @@
 
 <template>
   <div
+    :class="{
+      '-limited-width': !fullWidth,
+      '-small': small,
+      '-text-start': textStart,
+    }"
     class="s--value-copy-box"
-    :class="{ '-limited-width': !fullWidth, '-small': small ,'-text-start':textStart}"
     @click.stop
   >
     <div
-      class="link-box"
-      :style="{ backgroundColor: backgroundColor }"
       :class="{ border: border, 'rounded-18px': smallWidthMode }"
+      :style="{ backgroundColor: backgroundColor }"
+      class="link-box"
     >
       <v-btn
-        :min-height="small ? 24 : 64"
-        class="-btn"
+        :class="{
+          'rounded-18px': smallWidthMode,
+          'ma-2': !small && smallWidthMode,
+          'ma-1': small && smallWidthMode,
+        }"
         :color="color"
-        @click.stop="copyToClipboard(value)"
+        :min-height="small ? 24 : 64"
         :size="small ? 'small' : undefined"
-        :class="{ 'rounded-18px': smallWidthMode ,'ma-2':!small && smallWidthMode,'ma-1':small && smallWidthMode}"
+        class="-btn"
+        @click.stop="copyToClipboard(value)"
       >
         <v-icon>{{ icon }}</v-icon>
       </v-btn>
@@ -40,19 +48,18 @@
         @click="show_pass = true"
         >CLICK TO SHOW</span
       >
-      <div v-else class="-link" :class="contentClass">
+      <div v-else :class="contentClass" class="-link">
         <slot name="prepend-value"></slot>
         <span> {{ value }}</span>
       </div>
       <slot name="append-value"></slot>
       <img
         v-if="image"
-        :width="small ? 18 : 46"
-        height="auto"
         :src="image"
+        :width="small ? 18 : 46"
         class="ms-2 px-2 border-start"
+        height="auto"
       />
-
     </div>
     <p v-if="message" class="text-subtitle-2 text-start my-1">
       <v-icon class="me-1" size="small">info</v-icon>
@@ -88,7 +95,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -105,20 +112,19 @@ export default {
   &.-small {
     .link-box {
       min-height: 24px;
+
       .-link {
-        font-size: 1rem;
+        font-size: 0.8rem;
       }
     }
-
-
   }
-  &.-text-start{
+
+  &.-text-start {
     .link-box {
       .-link {
         text-align: start;
       }
     }
-
   }
 
   .link-box {
@@ -139,7 +145,8 @@ export default {
       margin: 4px 8px;
       direction: ltr;
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1rem;
+      overflow: hidden;
 
       @media only screen and (max-width: 850px) {
         font-size: 0.8rem;

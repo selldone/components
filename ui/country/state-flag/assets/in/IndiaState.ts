@@ -189,8 +189,4 @@ export default [
     name: "West Bengal",
     src: require("./WB.png"),
   },
-
 ];
-
-
-

@@ -15,18 +15,27 @@
 <template>
   <v-autocomplete
     v-model="currency"
-    :items="currencies"
-    :item-title="(i) => $t(i.name)"
-    item-value="code"
-    :label="label"
-    :messages="messages"
+    :bg-color="transparent ? 'transparent' : undefined"
+    :chips="chips"
+    :class="{ 'icon-only-cur': iconOnly, 'small-field': small }"
+    :clearable="clearable"
     :color="color"
+    :density="dense ? 'compact' : undefined"
+    :disabled="disabled"
+    :flat="flat"
+    :hide-details="hideDetails"
+    :item-title="(i) => $t(i.name)"
+    :items="currencies"
+    :label="label"
+    :loading="loading"
+    :messages="messages"
+    :multiple="multiple"
+    :placeholder="placeholder"
+    :prepend-icon="prependIcon"
+    :prepend-inner-icon="prependInnerIcon"
+    :return-object="returnObject"
     :rounded="rounded"
     :theme="dark ? 'dark' : 'light'"
-    :return-object="returnObject"
-    :disabled="disabled"
-    :hide-details="hideDetails"
-    :density="dense ? 'compact' : undefined"
     :variant="
       variant
         ? variant
@@ -40,34 +49,29 @@
                 ? 'outlined'
                 : 'underlined'
     "
-    :class="{ 'icon-only-cur': iconOnly, 'small-field': small }"
-    :flat="flat"
+    item-value="code"
     @update:model-value="(val) => $emit('change', val)"
-    :prepend-icon="prependIcon"
-    :prepend-inner-icon="prependInnerIcon"
-    :clearable="clearable"
-
-    :loading="loading"
-    :placeholder="placeholder"
-    :bg-color="transparent ? 'transparent' : undefined"
-    :multiple="multiple"
-    :chips="chips"
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" :title="$t(item.raw.name)" :subtitle="$t(item.raw.country)" class="text-start" >
+      <v-list-item
+        :subtitle="$t(item.raw.country)"
+        :title="$t(item.raw.name)"
+        class="text-start"
+        v-bind="props"
+      >
         <template v-slot:prepend>
           <flag
             v-if="item.raw.flag"
-            class="me-3"
             :iso="item.raw.flag"
             :squared="false"
+            class="me-3"
           />
           <img
             v-else-if="item.raw.icon"
-            class="me-3"
             :src="item.raw.icon"
-            width="20"
+            class="me-3"
             height="20"
+            width="20"
           />
         </template>
 
@@ -84,24 +88,24 @@
     <template v-slot:chip="{ item, parent }">
       <v-chip
         v-if="chips"
+        :color="dark ? '#111' : '#fff'"
+        class="ma-1"
         closable
         @click:close="parent.selectItem(item.raw)"
-        class="ma-1"
-        :color="dark ? '#111' : '#fff'"
       >
         <flag
           v-if="item.raw.flag"
-          class="me-2"
           :iso="item.raw.flag"
           :squared="false"
+          class="me-2"
           style="min-width: 16px"
         />
         <img
           v-else-if="item.raw.icon"
-          class="me-2"
           :src="item.raw.icon"
-          width="20"
+          class="me-2"
           height="20"
+          width="20"
         />
 
         <span>
@@ -111,17 +115,17 @@
       <template v-else>
         <flag
           v-if="item.raw.flag"
-          class="me-2"
           :iso="item.raw.flag"
           :squared="false"
+          class="me-2"
           style="min-width: 16px"
         />
         <img
           v-else-if="item.raw.icon"
-          class="me-2"
           :src="item.raw.icon"
-          width="20"
+          class="me-2"
           height="20"
+          width="20"
         />
 
         <span>
@@ -307,6 +311,7 @@ export default {
         .v-select__selections {
           margin-left: -8px !important;
         }
+
         .v-input__append-inner {
           margin-right: -16px !important;
         }
@@ -323,6 +328,7 @@ export default {
           margin-right: -8px !important;
           margin-left: auto !important;
         }
+
         .v-input__append-inner {
           margin-left: -16px !important;
           margin-right: auto !important;

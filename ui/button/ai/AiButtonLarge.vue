@@ -15,33 +15,33 @@
 <template>
   <div class="widget-buttons">
     <v-btn
-      @click="$emit('click')"
+      :class="{ pen: loading }"
       :color="loading ? '#512DA8' : '#673AB7'"
+      block
+      class="s--ai-button-large"
       size="x-large"
       variant="flat"
-      block
-      :class="{ pen: loading }"
-      class="s--ai-button-large"
+      @click="$emit('click')"
     >
       <div class="flex-grow-0 d-flex align-center">
         <v-avatar
-          size="36"
+          :class="{ '-loading': loading }"
           class="me-2 -avatar position-relative"
           color="#512DA8"
-          :class="{ '-loading': loading }"
+          size="36"
         >
           <img
-            src="@components/assets/icons/ci-logo.png"
-            :width="32"
             :height="32"
+            :width="32"
             class="z1"
+            src="@components/assets/icons/ci-logo.png"
           />
           <v-progress-circular
             v-if="loading"
-            indeterminate
             :size="28"
-            color="#FFF"
             class="center-absolute"
+            color="#FFF"
+            indeterminate
           ></v-progress-circular>
         </v-avatar>
 
@@ -72,7 +72,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--ai-button-large {
   ::v-deep(.v-btn__content) {
     width: 100%;

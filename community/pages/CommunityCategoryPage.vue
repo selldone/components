@@ -16,14 +16,14 @@
   <v-container class="--add-extra-top-header">
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <community-breadcrumb
-      :shop="shop"
-      :community="community"
+      v-model:show-edit="show_edit"
+      v-model:show-report="show_report"
       :category="category"
+      :community="community"
+      :shop="shop"
       class="mb-6 breadcrumb-max-w"
-      :show-report.sync="show_report"
-      :show-edit.sync="show_edit"
-      has-report
       has-edit
+      has-report
     ></community-breadcrumb>
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Title ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -34,12 +34,13 @@
           {{ category.desc.substring(0, more ? 256 : 80) }}
           <v-btn
             v-if="!more && category.desc.length > 80"
-            @click="more = true"
-            text
-            small
             icon
-            ><v-icon>more_horiz </v-icon></v-btn
+            size="small"
+            variant="text"
+            @click="more = true"
           >
+            <v-icon>more_horiz</v-icon>
+          </v-btn>
         </p>
       </div>
     </v-expand-transition>
@@ -49,8 +50,8 @@
     <v-expand-transition>
       <div v-if="show_report">
         <community-category-statistic
-          :community="community"
           :category-id="category.id"
+          :community="community"
           @busy="(v) => $emit('busy', v)"
         ></community-category-statistic>
       </div>
@@ -60,10 +61,10 @@
     <v-expand-transition>
       <div v-if="show_edit" class="c-max-w">
         <community-category-edit
-          :class="{ 'pointer-event-none': !access.admin }"
           ref="editor"
+          v-model:category="category"
+          :class="{ 'pointer-event-none': !access.admin }"
           :community="community"
-          :category.sync="category"
           @update:category="
             (cat) => {
               show_edit = false;
@@ -74,36 +75,37 @@
 
         <div v-if="access.admin" class="my-3 widget-buttons">
           <v-btn
-            depressed
+            :loading="busy_edit"
             color="primary"
-            x-large
+            size="x-large"
+            variant="flat"
             @click="
               $refs.editor.save((val) => {
                 busy_edit = val;
               })
             "
-            :loading="busy_edit"
           >
             <v-icon class="me-1">save</v-icon>
-            {{ $t("global.actions.save") }}</v-btn
-          >
+            {{ $t("global.actions.save") }}
+          </v-btn>
         </div>
 
         <div class="text-end py-5">
           <v-btn
-            @click="show_critic = !show_critic"
-            color="red"
-            text
             class="m-2"
-            ><v-icon class="me-1" small>warning</v-icon>
-            {{ $t("global.commons.critical_zone") }}</v-btn
+            color="red"
+            variant="text"
+            @click="show_critic = !show_critic"
           >
+            <v-icon class="me-1" size="small">warning</v-icon>
+            {{ $t("global.commons.critical_zone") }}
+          </v-btn>
         </div>
         <v-expand-transition>
           <div v-if="show_critic">
             <div class="widget-box mb-5">
               <h2>
-                <v-icon class="me-1" small>warning</v-icon>
+                <v-icon class="me-1" size="small">warning</v-icon>
                 {{ $t("global.commons.critical_zone") }}
               </h2>
               <v-list-subheader>
@@ -112,29 +114,29 @@
 
               <s-smart-check-verify-action
                 v-model="check_delete"
-                true-title="Verify delete category"
                 :true-description="
                   $t('community.category.delete_dialog.message')
                 "
+                class="my-3"
                 color="red"
                 false-gray
-                class="my-3"
+                true-title="Verify delete category"
               >
               </s-smart-check-verify-action>
 
               <div class="widget-buttons">
                 <v-btn
-                  depressed
                   :class="{ disabled: !check_delete }"
+                  :loading="busy_delete"
                   color="red"
                   dark
-                  x-large
+                  size="x-large"
+                  variant="flat"
                   @click="removeCategory()"
-                  :loading="busy_delete"
                 >
                   <v-icon class="me-1">delete</v-icon>
-                  {{ $t("global.actions.delete") }}</v-btn
-                >
+                  {{ $t("global.actions.delete") }}
+                </v-btn>
               </div>
             </div>
           </div>
@@ -151,11 +153,11 @@
     >
       <div class="c-container -force-rounded p-3">
         <div
-          class="c-widget d-flex black--text pp usn"
-          @click="showAddTopic()"
           :class="{ '-hover': !show_new_post }"
+          class="c-widget d-flex text-black pp usn"
+          @click="showAddTopic()"
         >
-          <v-avatar :size="64" tile height="100%">
+          <v-avatar :size="64" height="100%" tile>
             <v-icon color="success" size="48">add</v-icon>
           </v-avatar>
           <div
@@ -167,13 +169,13 @@
             <p class="d-block m-0">
               {{ $t("community.topic.add_topic_desc") }}
             </p>
-            <div class="d-flex subtitle-2 mt-2">
+            <div class="d-flex text-subtitle-2 mt-2">
               <v-spacer></v-spacer>
               {{ $t("community.topic.can_create") }}:
-              <b class="blue--text mx-1">
-                <v-icon v-if="category.restrict" x-small color="red"
-                  >lock</v-icon
-                >
+              <b class="text-blue mx-1">
+                <v-icon v-if="category.restrict" color="red" size="x-small"
+                  >lock
+                </v-icon>
                 {{
                   category.restrict
                     ? $t("community.stage_level.PRIVATE")
@@ -188,8 +190,8 @@
       <v-expand-transition>
         <div v-show="show_new_post && !show_report" class="c-max-w">
           <community-post-editor
-            :community="community"
             :category="category"
+            :community="community"
             topic-mode
             @add:topic="
               (topic) =>
@@ -215,21 +217,21 @@
       class="d-flex flex-column mx-auto c-max-w p-3 mb-6"
     >
       <v-btn
-        @click="NeedLogin()"
         class="ma-auto"
         color="blue"
         dark
-        x-large
-        depressed
         rounded
+        size="x-large"
+        variant="flat"
+        @click="NeedLogin()"
         ><span class="me-2 text-h4">👋</span>
         <div class="text-start">
           {{ $t("global.actions.login_now") }}
-          <small class="d-block white--text">{{
+          <small class="d-block text-white">{{
             $t("community.commons.login_msg")
           }}</small>
-        </div></v-btn
-      >
+        </div>
+      </v-btn>
     </div>
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Cross topic ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -237,11 +239,11 @@
     <template v-if="access.cross">
       <div class="c-container -force-rounded p-3">
         <div
-          class="c-widget d-flex black--text pp usn"
           :class="{ '-hover': !show_cross }"
+          class="c-widget d-flex text-black pp usn"
           @click="showCrossTopic()"
         >
-          <v-avatar :size="64" tile height="100%">
+          <v-avatar :size="64" height="100%" tile>
             <v-icon color="success" size="48">alt_route</v-icon>
           </v-avatar>
           <div
@@ -253,10 +255,10 @@
             <p class="d-block m-0">
               {{ $t("community.topic.add_cross_desc") }}
             </p>
-            <div class="d-flex subtitle-2 mt-2">
+            <div class="d-flex text-subtitle-2 mt-2">
               <v-spacer></v-spacer>
               {{ $t("community.topic.can_create") }}:
-              <b class="blue--text mx-1"
+              <b class="text-blue mx-1"
                 >{{ $t("community.topic.admins_moderators") }}
               </b>
             </div>
@@ -270,22 +272,22 @@
             <div class="c-widget p-3">
               <div
                 v-if="cross_preview"
-                class="d-flex"
                 :class="{ 'flex-column': $vuetify.display.xs }"
+                class="d-flex"
               >
                 <community-image
+                  :height="$vuetify.display.xs ? '140px' : 'auto'"
+                  :min-height="$vuetify.display.xs ? undefined : 200"
                   :src="getShopImagePath(cross_preview.image)"
                   :width="$vuetify.display.xs ? '100%' : 200"
-                  :min-height="$vuetify.display.xs ? undefined : 200"
-                  :height="$vuetify.display.xs ? '140px' : 'auto'"
                   class="rounded-18px"
                 ></community-image>
                 <div class="ps-3 pe-2 mt-4 text-justify overflow-hidden">
                   <h2>{{ cross_preview.title }}</h2>
                   <p class="single-line">{{ cross_preview.desc }}</p>
 
-                  <p class="m-0 subtitle-2">
-                    <v-avatar size="24" class="me-1"
+                  <p class="m-0 text-subtitle-2">
+                    <v-avatar class="me-1" size="24"
                       ><img
                         :src="getShopImagePath(cross_preview.community.image)"
                     /></v-avatar>
@@ -296,23 +298,23 @@
 
               <v-text-field
                 v-model="cross_topic_id"
+                :loading="busy_pre"
+                class="mt-4"
                 label="Cross topic code"
                 placeholder="XXX/XXX"
-                class="mt-4"
                 @blur="fetchCrossPreview"
                 @keydown.enter="fetchCrossPreview"
-                :loading="busy_pre"
               ></v-text-field>
               <v-btn
+                :class="{ disabled: !cross_preview }"
                 :loading="busy_cross"
-                @click="crossTopic"
+                class="m-2"
                 color="blue"
                 dark
-                depressed
-                class="m-2"
-                :class="{ disabled: !cross_preview }"
-                >Add topic</v-btn
-              >
+                variant="flat"
+                @click="crossTopic"
+                >Add topic
+              </v-btn>
             </div>
           </div>
         </div>
@@ -322,32 +324,32 @@
     <v-container class="c-max-w">
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Topics ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-      <v-row justify="center" align="start">
+      <v-row align="start" justify="center">
         <!-- Topic -->
 
         <community-topic-card
           v-for="(topic, i) in topics"
           :key="topic.id"
           :community="community"
+          :show-report="show_report"
+          :style="{ 'animation-delay': 50 * (i % itemsPerPage) + 'ms' }"
           :topic="topic"
           class="fadeInUp"
-          :style="{ 'animation-delay': 50 * (i % itemsPerPage) + 'ms' }"
-          :show-report="show_report"
         ></community-topic-card>
 
         <!-- Auto load more -->
 
         <v-col
-          cols="12"
           v-if="has_more"
-          style="height: 50vh"
           v-intersect.quiet="
             (isIntersecting, entries, observer) => {
               if (isIntersecting) fetchTopics(page + 1);
             }
           "
+          cols="12"
+          style="height: 50vh"
         >
-          <s-loading light css-mode v-if="busy"></s-loading>
+          <s-loading v-if="busy" css-mode light></s-loading>
         </v-col>
       </v-row>
     </v-container>
@@ -449,7 +451,7 @@ export default {
   created() {
     // Try to pre load category data:
     this.category = this.categories.find(
-      (c) => c.id === parseInt(this.$route.params.category_id)
+      (c) => c.id === parseInt(this.$route.params.category_id),
     );
 
     this.search = this.$route.query.search ? this.$route.query.search : "";
@@ -473,7 +475,7 @@ export default {
         .get(
           window.CAPI.GET_COMMUNITY_CATEGORY_TOPICS(
             this.community.id,
-            this.$route.params.category_id
+            this.$route.params.category_id,
           ),
           {
             params: {
@@ -485,7 +487,7 @@ export default {
 
               search: this.search,
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -618,14 +620,14 @@ export default {
             .delete(
               window.CAPI.DELETE_COMMUNITY_EDIT_CATEGORY(
                 this.community.id,
-                this.category.id
-              )
+                this.category.id,
+              ),
             )
             .then(({ data }) => {
               if (!data.error) {
                 this.showSuccessAlert(
                   "Remove category",
-                  this.category.title + " has been removed successfully!"
+                  this.category.title + " has been removed successfully!",
                 );
                 this.DeleteItemByID(this.categories, this.category.id);
                 this.$router.push({ name: "CommunityHomePage" });
@@ -639,11 +641,11 @@ export default {
             .finally(() => {
               this.busy_delete = false;
             });
-        }
+        },
       );
     },
   },
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

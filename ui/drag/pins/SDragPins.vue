@@ -13,17 +13,15 @@
   -->
 
 <template>
-  <component
-    :is="editable ? 'drop' : 'div'"
+  <s-drop
+    id="drop_area"
     class="pins-list"
     @drop="onDrop"
-    id="drop_area"
+
   >
-    <component
-      :is="editable ? 'drag' : 'div'"
+    <s-drag
       v-for="(item, key) in items"
       :key="key + '-' + item.id"
-      class="-pin zoomIn"
       :class="{ '-drag': editable }"
       :style="{
         left: item.x + '%',
@@ -31,8 +29,16 @@
         'animation-delay': 50 + key * 100 + 'ms',
       }"
       :transfer-data="item.id"
+      class="-pin zoomIn"
+      :draggable="editable"
     >
       <v-avatar
+        :class="{
+          pp: !editable,
+          'big-scale': true,
+          '-cat': item.id.startsWith('c-'),
+        }"
+        :color="item.id.startsWith('c-') ? 'amber' : '#ffffffbb'"
         :size="size"
         class="citm"
         @click.stop="
@@ -40,12 +46,6 @@
             ? $emit('click:category', item.id.replace('c-', ''))
             : $emit('click:product', item.id)
         "
-        :class="{
-          'pp': !editable,
-          'big-scale': true,
-          '-cat': item.id.startsWith('c-'),
-        }"
-        :color="item.id.startsWith('c-') ? 'amber' : '#ffffffbb'"
       >
         <img
           v-if="item.id.startsWith('c-')"
@@ -53,15 +53,16 @@
         />
         <img v-else :src="getProductImage(item.id, IMAGE_SIZE_SMALL)" />
       </v-avatar>
-    </component>
-  </component>
+    </s-drag>
+  </s-drop>
 </template>
 
 <script>
 export default {
-  name: "DragablePins",
+  name: "SDragPins",
+  emits: ["click:product", "click:category", "click:add", "change", "update:tags"],
   props: {
-    value: {},
+    modelValue: {},
     initialX: {
       // Percent
       default: 0,
@@ -91,7 +92,7 @@ export default {
     },
   },
   watch: {
-    "value.list"() {
+    "modelValue.list"() {
       this.refreshData();
     },
   },
@@ -103,12 +104,12 @@ export default {
     refreshData() {
       //console.log("Pins: refresh data");
 
-      if (this.value && this.value.list) {
+      if (this.modelValue && this.modelValue.list) {
         this.items = [];
         let i = 0;
-        Object.keys(this.value.list).forEach((id) => {
+        Object.keys(this.modelValue.list).forEach((id) => {
           const pre_tag =
-            this.value.tags && this.value.tags.find((it) => it.id === id);
+            this.modelValue.tags && this.modelValue.tags.find((it) => it.id === id);
 
           this.items.push({
             id: id,
@@ -117,23 +118,15 @@ export default {
           });
           i++;
         });
-        this.value.tags = this.items;
-        this.$emit("input", this.value);
+        this.modelValue.tags = this.items;
+        this.$emit("update:modelValue", this.modelValue);
       }
     },
-    /* myListener(myArg, transferData, nativeEvent) {
-      //console.log('myListener',myArg, transferData, nativeEvent)
-    },
-    onDragover(transferData, e) {
-      // console.log('onDragover',transferData,e)
-    },
-    onDragend(transferData, e) {
-      //console.log('onDragend',transferData,e)
-    },*/
+
 
     onDrop(transferData, e) {
       // console.log("onDrop", transferData, e);
-      if (e.target.id !== "drop_area") return; // Prevent drop on itself!
+      if (e?.target?.id !== "drop_area") return; // Prevent drop on itself!
       const item = this.items.find((it) => it.id === transferData);
       if (item) {
         const width = e.target.clientWidth;
@@ -149,18 +142,22 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .pins-list {
   z-index: 1;
+  width: 100%;
+  height: 100%;
+
   .-pin {
     position: absolute;
   }
+
   .-drag {
     .citm {
       cursor: move !important;
     }
-
   }
+
   .citm {
     transition: all 0.5s;
     background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
@@ -182,6 +179,7 @@ export default {
 
     &:hover {
       transform: scale(1.5);
+
       &.big-scale {
         transform: scale(2.2);
       }

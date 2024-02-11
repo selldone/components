@@ -25,7 +25,7 @@
         <div class="-categories-container">
           <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ Categories List ━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
-          <div class="-category-card" v-for="item in categories" :key="item.id">
+          <div v-for="item in categories" :key="item.id" class="-category-card">
             <router-link
               :to="{
                 name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
@@ -33,11 +33,11 @@
               }"
             >
               <v-img
-                aspect-ratio="1"
-                width="100%"
-                :src="getShopImagePath(item.icon)"
                 :alt="item.title"
+                :src="getShopImagePath(item.icon)"
+                aspect-ratio="1"
                 class="-card-img"
+                width="100%"
               >
                 <div class="-card-content">
                   <div class="-card-title">
@@ -87,7 +87,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -178,6 +178,7 @@ export default {
         position: relative;
         z-index: 1;
       }
+
       .-card-title {
         font-weight: 800;
         margin-bottom: 16px;
@@ -185,6 +186,7 @@ export default {
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         text-transform: capitalize;
       }
+
       .-card-desc {
         opacity: 0;
         max-height: 0;
@@ -192,13 +194,16 @@ export default {
       }
 
       transition: all 0.3s;
+
       &:hover {
         .-card-img {
           transform: scale(1.1);
+
           &:after {
             opacity: 1;
           }
         }
+
         .-card-desc {
           opacity: 1;
           max-height: 380px;

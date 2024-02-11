@@ -46,7 +46,7 @@ export default {
         this.shop,
         this.product,
         this.variant,
-        this.currency
+        this.currency,
       );
     },
 

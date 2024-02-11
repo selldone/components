@@ -15,81 +15,76 @@
 <template>
   <v-row justify="center" no-gutters>
     <v-btn
-      class="m-1 shadow-box"
-      rounded
-      :outlined="!noClub"
-      depressed
+      :class="{ 'img-grayscale': !noClub }"
       :color="noClub ? '#222' : '#aaa'"
       :dark="noClub"
-      :class="{ 'img-grayscale': !noClub }"
-      @click="$emit('update:noClub',!noClub)"
-
-    >{{ $t("global.commons.no_club") }}</v-btn
-    >
-    <v-btn
+      :variant="!noClub && 'outlined'"
       class="m-1 shadow-box"
       rounded
-      :outlined="!bronzeClub"
-      depressed
+      variant="flat"
+      @click="$emit('update:noClub', !noClub)"
+      >{{ $t("global.commons.no_club") }}
+    </v-btn>
+    <v-btn
+      :class="{ 'img-grayscale': !bronzeClub }"
       :color="bronzeClub ? '#222' : '#aaa'"
       :dark="bronzeClub"
-      :class="{ 'img-grayscale': !bronzeClub }"
-      @click="$emit('update:bronzeClub',!bronzeClub)"
-
-    ><img :src="CustomerClubLevels.BRONZE.icon" width="24" class="me-2" />
-      {{ $t(CustomerClubLevels.BRONZE.name) }}</v-btn
-    >
-    <v-btn
+      :variant="!bronzeClub && 'outlined'"
       class="m-1 shadow-box"
       rounded
-      :outlined="!silverClub"
-      depressed
+      variant="flat"
+      @click="$emit('update:bronzeClub', !bronzeClub)"
+      ><img :src="CustomerClubLevels.BRONZE.icon" class="me-2" width="24" />
+      {{ $t(CustomerClubLevels.BRONZE.name) }}
+    </v-btn>
+    <v-btn
+      :class="{ 'img-grayscale': !silverClub }"
       :color="silverClub ? '#222' : '#aaa'"
       :dark="silverClub"
-      :class="{ 'img-grayscale': !silverClub }"
-      @click="$emit('update:silverClub',!silverClub)"
-
-    ><img :src="CustomerClubLevels.SILVER.icon" width="24" class="me-2" />
-      {{ $t(CustomerClubLevels.SILVER.name) }}</v-btn
-    >
-    <v-btn
+      :variant="!silverClub && 'outlined'"
       class="m-1 shadow-box"
       rounded
-      :outlined="!goldClub"
-      depressed
+      variant="flat"
+      @click="$emit('update:silverClub', !silverClub)"
+      ><img :src="CustomerClubLevels.SILVER.icon" class="me-2" width="24" />
+      {{ $t(CustomerClubLevels.SILVER.name) }}
+    </v-btn>
+    <v-btn
+      :class="{ 'img-grayscale': !goldClub }"
       :color="goldClub ? '#222' : '#aaa'"
       :dark="goldClub"
-      :class="{ 'img-grayscale': !goldClub }"
-      @click="$emit('update:goldClub',!goldClub)"
-      ><img :src="CustomerClubLevels.GOLD.icon" width="24" class="me-2" />
-      {{ $t(CustomerClubLevels.GOLD.name) }}</v-btn
-    >
-    <v-btn
+      :variant="!goldClub && 'outlined'"
       class="m-1 shadow-box"
       rounded
-      :outlined="!platinumClub"
-      depressed
+      variant="flat"
+      @click="$emit('update:goldClub', !goldClub)"
+      ><img :src="CustomerClubLevels.GOLD.icon" class="me-2" width="24" />
+      {{ $t(CustomerClubLevels.GOLD.name) }}
+    </v-btn>
+    <v-btn
+      :class="{ 'img-grayscale': !platinumClub }"
       :color="platinumClub ? '#222' : '#aaa'"
       :dark="platinumClub"
-      :class="{ 'img-grayscale': !platinumClub }"
-      @click="$emit('update:platinumClub',!platinumClub)"
-
-    ><img :src="CustomerClubLevels.PLATINUM.icon" width="24" class="me-2" />
-      {{ $t(CustomerClubLevels.PLATINUM.name) }}</v-btn
-    >
-    <v-btn
+      :variant="!platinumClub && 'outlined'"
       class="m-1 shadow-box"
       rounded
-      :outlined="!diamondClub"
-      depressed
+      variant="flat"
+      @click="$emit('update:platinumClub', !platinumClub)"
+      ><img :src="CustomerClubLevels.PLATINUM.icon" class="me-2" width="24" />
+      {{ $t(CustomerClubLevels.PLATINUM.name) }}
+    </v-btn>
+    <v-btn
+      :class="{ 'img-grayscale': !diamondClub }"
       :color="diamondClub ? '#222' : '#aaa'"
       :dark="diamondClub"
-      :class="{ 'img-grayscale': !diamondClub }"
-      @click="$emit('update:diamondClub',!diamondClub)"
-
-    ><img :src="CustomerClubLevels.DIAMOND.icon" width="24" class="me-2" />
-      {{ $t(CustomerClubLevels.DIAMOND.name) }}</v-btn
-    >
+      :variant="!diamondClub && 'outlined'"
+      class="m-1 shadow-box"
+      rounded
+      variant="flat"
+      @click="$emit('update:diamondClub', !diamondClub)"
+      ><img :src="CustomerClubLevels.DIAMOND.icon" class="me-2" width="24" />
+      {{ $t(CustomerClubLevels.DIAMOND.name) }}
+    </v-btn>
   </v-row>
 </template>
 

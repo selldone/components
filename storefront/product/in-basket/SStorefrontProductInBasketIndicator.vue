@@ -16,9 +16,9 @@
   <v-slide-y-reverse-transition>
     <router-link
       v-if="availableInBasketCount"
-      class="s--storefront-product-in-basket-indicator in-basket"
       :class="{ 'is-mobile': isMobile, '-up': bottom_nav_show }"
       :to="to"
+      class="s--storefront-product-in-basket-indicator in-basket"
     >
       <p class="m-0">
         <i class="fas fa-shopping-basket me-2" />
@@ -117,9 +117,11 @@ export default {
   transition: all 0.35s linear;
   background: #2ab27b;
   min-height: 48px;
+
   p {
     padding: 10px;
   }
+
   &.is-mobile {
     p {
       font-size: 0.9rem;

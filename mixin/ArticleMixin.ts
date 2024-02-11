@@ -12,8 +12,8 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {EventBus, EventName} from "@core/events/EventBus";
-import {Language} from "@core/enums/language/Language";
+import { EventBus, EventName } from "@core/events/EventBus";
+import { Language } from "@core/enums/language/Language";
 
 export const ArticleMixin = {
   props: {},

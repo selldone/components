@@ -16,42 +16,42 @@
   <div class="s--breadcrumb-image">
     <v-breadcrumbs
       v-if="$vuetify.display.smAndUp"
-      :items="hierarchyItems"
-      divider="/"
-      class="single-line overflow-auto thin-scroll"
       :class="{ 'flex-mode': flexMode }"
+      :items="hierarchyItems"
+      class="single-line overflow-auto thin-scroll"
+      divider="/"
     >
       <template v-slot:item="{ item }">
         <router-link
           v-if="!item.disabled"
-          :to="item.to"
           :replace="replace"
           :target="target"
+          :to="item.to"
         >
           <span class="font-weight-medium">
-            <v-icon v-if="item.icon" class="me-1" :color="SaminInfoColor">{{
+            <v-icon v-if="item.icon" :color="SaminInfoColor" class="me-1">{{
               item.icon
             }}</v-icon>
             <circle-image
               v-if="item.image"
-              :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
               :size="imageSize"
-              scale-on-hover
+              :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
               class="me-1"
+              scale-on-hover
             />
 
-            <span class="link-dash" :title="item.text">{{
+            <span :title="item.text" class="link-dash">{{
               item.text?.limitWords(4)
             }}</span>
           </span>
         </router-link>
-        <span v-else class="font-weight-medium" :title="item.text">
+        <span v-else :title="item.text" class="font-weight-medium">
           <circle-image
             v-if="item.image"
-            :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
             :size="imageSize"
-            scale-on-hover
+            :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
             class="me-1"
+            scale-on-hover
           />
 
           {{ item.text?.limitWords(4) }}</span
@@ -60,28 +60,23 @@
     </v-breadcrumbs>
 
     <!--  Small screen -->
-      <div v-else-if="hierarchyItems.length > 0">
-        <v-btn
-          variant="text"
-          @click="dialog = true"
-          class="w-100"
-          size="x-large"
-        >
-          {{ $t("global.commons.category") }}
-          <v-icon class="ms-1" size="x-small">expand_more</v-icon>
-        </v-btn>
-      </div>
+    <div v-else-if="hierarchyItems.length > 0">
+      <v-btn class="w-100" size="x-large" variant="text" @click="dialog = true">
+        {{ $t("global.commons.category") }}
+        <v-icon class="ms-1" size="x-small">expand_more</v-icon>
+      </v-btn>
+    </div>
 
     <v-bottom-sheet
       v-if="!$vuetify.display.smAndUp"
       v-model="dialog"
-      max-width="98vw"
-      width="480"
       content-class="rounded-t-xl"
       inset
+      max-width="98vw"
       scrollable
+      width="480"
     >
-      <v-card rounded="t-xl" min-height="40vh">
+      <v-card min-height="40vh" rounded="t-xl">
         <v-card-text class="pb-16">
           <v-list class="text-start">
             <v-list-item
@@ -107,8 +102,8 @@
               <v-list-item-subtitle>
                 <v-chip
                   v-if="i === hierarchyItems.length - 1"
-                  label
                   color="#111"
+                  label
                   size="x-small"
                   >{{ $t("global.commons.current") }}
                 </v-chip>
@@ -157,7 +152,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

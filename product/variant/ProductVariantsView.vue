@@ -14,8 +14,6 @@
 
 <template>
   <v-row
-    :justify="center ? 'center' : null"
-    class="product-variant-view"
     :class="{
       '-selectable': selectable,
       '-dense': dense,
@@ -23,23 +21,25 @@
       'text-center': center,
       '-small': small,
     }"
+    :justify="center ? 'center' : null"
+    class="product-variant-view"
     @click="$emit('select')"
   >
     <div
       v-if="colors.length"
-      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense, '-ultra-dense': isUltraDense(colors) }"
+      class="p-1 d-flex align-center flex-wrap"
     >
       <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
 
       <s-color-circle
         v-for="color in colors"
         :key="color"
+        :border-less="small"
+        :class="{ '-selected': selectedVariant?.color === color }"
         :color="color"
         :size="small ? 14 : 18"
-        :border-less="small"
         class="me-1 hover-scale card-badge-color"
-        :class="{ '-selected': selectedVariant?.color === color }"
         @click="onSelect('color', color)"
         @mouseenter="hoverable ? onSelect('color', color) : undefined"
         @mouseleave="
@@ -51,23 +51,23 @@
 
     <div
       v-if="volumes.length"
-      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense, '-ultra-dense': isUltraDense(volumes) }"
+      class="p-1 d-flex align-center flex-wrap"
     >
       <v-icon :color="icon_color" class="me-1" size="small"> equalizer</v-icon>
 
       <span
         v-for="volume in volumes"
         :key="volume"
+        :class="{ '-selected': selectedVariant?.volume === volume }"
         class="card-badge-info hover-scale"
         dir="auto"
-        :class="{ '-selected': selectedVariant?.volume === volume }"
         @click="onSelect('volume', volume)"
       >
         <variant-asset-view
           :shop-id="shop_id"
-          :value="volume"
           :size="16"
+          :value="volume"
         ></variant-asset-view>
         {{ volume?.removeVariantAsset() }}
       </span>
@@ -75,23 +75,23 @@
 
     <div
       v-if="packs.length"
-      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense, '-ultra-dense': isUltraDense(packs) }"
+      class="p-1 d-flex align-center flex-wrap"
     >
       <v-icon :color="icon_color" class="me-1" size="small"> all_inbox</v-icon>
 
       <span
         v-for="pack in packs"
         :key="pack"
+        :class="{ '-selected': selectedVariant?.pack === pack }"
         class="card-badge-info hover-scale"
         dir="auto"
-        :class="{ '-selected': selectedVariant?.pack === pack }"
         @click="onSelect('pack', pack)"
       >
         <variant-asset-view
           :shop-id="shop_id"
-          :value="pack"
           :size="16"
+          :value="pack"
         ></variant-asset-view>
         {{ pack?.removeVariantAsset() }}<span class="text-muted">x</span>
       </span>
@@ -99,8 +99,8 @@
 
     <div
       v-if="weights.length"
-      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense, '-ultra-dense': isUltraDense(weights) }"
+      class="p-1 d-flex align-center flex-wrap"
     >
       <v-icon :color="icon_color" class="me-1" size="small">
         fa:fas fa-weight-hanging
@@ -109,15 +109,15 @@
       <span
         v-for="weight in weights"
         :key="weight"
+        :class="{ '-selected': selectedVariant?.weight === weight }"
         class="card-badge-info hover-scale"
         dir="auto"
-        :class="{ '-selected': selectedVariant?.weight === weight }"
         @click="onSelect('weight', weight)"
       >
         <variant-asset-view
           :shop-id="shop_id"
-          :value="weight"
           :size="16"
+          :value="weight"
         ></variant-asset-view>
         {{ weight?.removeVariantAsset() }}
       </span>
@@ -125,8 +125,8 @@
 
     <div
       v-if="types.length"
-      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense, '-ultra-dense': isUltraDense(types) }"
+      class="p-1 d-flex align-center flex-wrap"
     >
       <v-icon :color="icon_color" class="me-1" size="small">
         fa:fas fa-toolbox
@@ -134,15 +134,15 @@
       <span
         v-for="type in types"
         :key="type"
+        :class="{ '-selected': selectedVariant?.type === type }"
         class="card-badge-info hover-scale"
         dir="auto"
-        :class="{ '-selected': selectedVariant?.type === type }"
         @click="onSelect('type', type)"
       >
         <variant-asset-view
           :shop-id="shop_id"
-          :value="type"
           :size="16"
+          :value="type"
         ></variant-asset-view>
         {{ type?.removeVariantAsset() }}
       </span>
@@ -150,23 +150,23 @@
 
     <div
       v-if="styles.length"
-      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense, '-ultra-dense': isUltraDense(styles) }"
+      class="p-1 d-flex align-center flex-wrap"
     >
       <v-icon :color="icon_color" class="me-1" size="small"> style</v-icon>
 
       <span
         v-for="style in styles"
         :key="style"
+        :class="{ '-selected': selectedVariant?.style === style }"
         class="card-badge-info hover-scale"
         dir="auto"
-        :class="{ '-selected': selectedVariant?.style === style }"
         @click="onSelect('style', style)"
       >
         <variant-asset-view
           :shop-id="shop_id"
-          :value="style"
           :size="16"
+          :value="style"
         ></variant-asset-view>
         {{ style?.removeVariantAsset() }}
       </span>
@@ -174,8 +174,8 @@
 
     <div
       v-if="!small && variants && variants.some((v) => v.price && v.currency)"
-      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense }"
+      class="p-1 d-flex align-center flex-wrap"
     >
       <p class="m-0">
         {{ $t("variants_view.prices") }}
@@ -197,8 +197,8 @@
 
     <div
       v-if="!small && quantitys && variants.some((v) => v.quantity || v === 0)"
-      class="p-1 d-flex align-center flex-wrap"
       :class="{ dense: dense }"
+      class="p-1 d-flex align-center flex-wrap"
     >
       <p class="m-0">
         {{ $t("variants_view.inventory") }}
@@ -345,7 +345,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .product-variant-view {
   color: #444;
   font-size: 12px;

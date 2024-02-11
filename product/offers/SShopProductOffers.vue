@@ -19,11 +19,11 @@
         <v-container
           v-for="offer in offers"
           :key="offer.id"
-          fluid
           class="-offer-item"
+          fluid
         >
           <v-row align="center">
-            <v-col cols="12" md="6" class="text-start" order="2" order-md="1">
+            <v-col class="text-start" cols="12" md="6" order="2" order-md="1">
               <v-list-subheader>
                 ●
                 {{
@@ -42,25 +42,25 @@
               </div>
 
               <products-dense-images-circles-links
-                :to-product="toProduct"
-                :to-category="toCategory"
                 :ids="Object.keys(offer.get_products)"
-                link
                 :size="$vuetify.display.smAndUp ? 84 : 46"
+                :to-category="toCategory"
+                :to-product="toProduct"
                 class="flex-grow-1"
+                link
               ></products-dense-images-circles-links>
             </v-col>
             <v-col cols="12" md="6" order="1" order-md="2">
               <div class="d-flex justify-center justify-md-end align-center">
                 <v-sheet
+                  class="pa-3 rounded-lg position-relative"
                   color="#6ac174"
                   dark
-                  class="pa-3 rounded-lg position-relative"
                 >
                   <v-responsive
                     aspect-ratio="1"
-                    max-width="240"
                     class="d-flex align-center justify-center"
+                    max-width="240"
                   >
                     <div class="-highlight">
                       <span class="text-h3 font-weight-black">
@@ -82,9 +82,9 @@
 
                   <img
                     class="absolute-top-end"
+                    height="32"
                     src="../../assets/icons/gift-w.svg"
                     width="32"
-                    height="32"
                   />
                 </v-sheet>
               </div>
@@ -115,22 +115,20 @@ export default {
     currentVariant: {},
   },
 
-  data: () => ({
-
-  }),
+  data: () => ({}),
 
   computed: {
     hasOffer() {
       return this.hasOfferThisProduct(
         this.product.id,
-        this.currentVariant ? this.currentVariant.id : null
+        this.currentVariant ? this.currentVariant.id : null,
       );
     },
 
     offers() {
       return this.getOffersBuyProduct(
         this.product.id,
-        this.currentVariant ? this.currentVariant.id : null
+        this.currentVariant ? this.currentVariant.id : null,
       );
     },
   },
@@ -151,7 +149,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--shop-product-offers {
   .-offer-item:not(:first-child) {
     border-top: dotted #aaa thin;

@@ -14,7 +14,6 @@
 
 <template>
   <div
-    class="s-fade-scroll"
     :class="{ '-center': center }"
     :style="{
       '--top': fadeTop,
@@ -22,16 +21,15 @@
       '--left': $vuetify.rtl ? fadeRight : fadeLeft,
       '--right': $vuetify.rtl ? fadeLeft : fadeRight,
     }"
-
-
+    class="s-fade-scroll"
   >
     <div
-      class="--scroll" :class="{usn:dragScroll}"
       ref="scroll"
-      v-scroll.self="(ev) => onScroll(ev.target)"
-      v-intersect="onIntersect"
-
       v-dragscroll="dragScroll"
+      v-intersect="onIntersect"
+      v-scroll.self="(ev) => onScroll(ev.target)"
+      :class="{ usn: dragScroll }"
+      class="--scroll"
     >
       <slot></slot>
     </div>
@@ -39,11 +37,11 @@
       <v-slide-x-transition>
         <v-btn
           v-if="fadeLeft && fadeLeft !== '0'"
-          @click="scrollLeft"
-          icon
-          variant="flat"
           :size="!smallArrow ? 'large' : undefined"
           class="-arrow-btn"
+          icon
+          variant="flat"
+          @click="scrollLeft"
         >
           <v-icon size="x-large">{{ $t("icons.navigate_before") }}</v-icon>
         </v-btn>
@@ -52,11 +50,11 @@
       <v-slide-x-reverse-transition>
         <v-btn
           v-if="fadeRight && fadeRight !== '0'"
-          @click="scrollRight"
-          icon
-          variant="flat"
           :size="!smallArrow ? 'large' : undefined"
           class="-arrow-btn"
+          icon
+          variant="flat"
+          @click="scrollRight"
         >
           <v-icon size="x-large">{{ $t("icons.navigate_next") }}</v-icon>
         </v-btn>
@@ -87,7 +85,7 @@ export default {
       default: 24, // Add offset to scroll to child
     },
 
-    dragScroll:Boolean
+    dragScroll: Boolean,
   },
   data: () => ({
     fadeTop: "0",
@@ -95,11 +93,9 @@ export default {
     fadeLeft: "0",
     fadeRight: "0",
 
-
     isDragging: false,
     pan_start_x: 0,
     pan_scroll_left: 0,
-
   }),
 
   mounted() {
@@ -229,19 +225,13 @@ export default {
       }
       return false;
     },
-
-
-
-
   },
 
-  beforeUnmount() {
-
-  },
+  beforeUnmount() {},
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -269,8 +259,6 @@ export default {
     overscroll-behavior-x: contain;
     overflow: auto;
     max-height: inherit;
-
-
   }
 
   &:after {
@@ -312,11 +300,13 @@ export default {
     user-select: none;
     pointer-events: none;
     z-index: 9;
+
     .-arrow-btn {
       box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.05);
       pointer-events: all;
     }
   }
+
   &:hover {
     .-arrows {
       .-arrow-btn {

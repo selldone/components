@@ -15,20 +15,20 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card>
     <v-card-title>
-      <v-avatar size="36" class="me-2">
+      <v-avatar class="me-2" size="36">
         <img v-if="category.icon" :src="getShopImagePath(category.icon, 64)" />
         <v-icon v-else>folder</v-icon>
       </v-avatar>
 
-      {{ category.title }} > Bulk set profile</v-card-title
-    >
+      {{ category.title }} > Bulk set profile
+    </v-card-title>
     <v-card-text>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Category ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div class="widget-box mb-5">
-        <s-widget-header title="Profile" icon="assignment"> </s-widget-header>
-        <v-list-subheader
-          ><ul>
+        <s-widget-header icon="assignment" title="Profile"></s-widget-header>
+        <v-list-subheader>
+          <ul>
             <li>
               The selected profile will be assigned to all products in the
               category.
@@ -36,17 +36,17 @@
             <li>
               Products in the <b>sub categories</b> will <b>not be affected</b>.
             </li>
-          </ul></v-list-subheader
-        >
+          </ul>
+        </v-list-subheader>
         <s-smart-select
           v-model="type"
           :items="profile_types"
-          item-value="value"
-          item-text="title"
+          class="my-3"
           item-description="desc"
           item-icon="icon"
+          item-text="title"
+          item-value="value"
           @change="value = null"
-          class="my-3"
         ></s-smart-select>
 
         <div class="py-3">
@@ -55,26 +55,23 @@
 
             <div v-if="type === 'TAX'">
               <b-tax-profile-input
-                :shop="shop"
                 v-model="value"
+                :shop="shop"
               ></b-tax-profile-input>
             </div>
 
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Tax ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div v-else-if="type === 'MAP'">
-              <b-map-tag-input
-                :shop="shop"
-                v-model="value"
-              ></b-map-tag-input>
+              <b-map-tag-input v-model="value" :shop="shop"></b-map-tag-input>
             </div>
 
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Logistic ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div v-else-if="type && LogisticProfileType[type]">
               <b-logistic-profile-input
-                :shop="shop"
                 v-model="value"
+                :shop="shop"
                 :type="LogisticProfileType[type]"
               ></b-logistic-profile-input>
             </div>
@@ -99,20 +96,20 @@
     </v-card-text>
     <v-card-actions>
       <div class="widget-buttons">
-        <v-btn @click="$emit('close')" text x-large>
+        <v-btn size="x-large" variant="text" @click="$emit('close')">
           <v-icon class="me-1">close</v-icon>
-          {{ $t("global.actions.close") }}</v-btn
-        >
+          {{ $t("global.actions.close") }}
+        </v-btn>
 
         <v-btn
-          color="primary"
-          depressed
-          @click="assignProfile()"
-          :loading="busy"
-          x-large
           :class="{
             disabled: !check,
           }"
+          :loading="busy"
+          color="primary"
+          size="x-large"
+          variant="flat"
+          @click="assignProfile()"
         >
           <v-icon class="me-1">save</v-icon>
           {{
@@ -205,17 +202,17 @@ export default {
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/ // NOT SUPPORTED FOR VENDOR YET!
             ? window.VAPI.POST_MY_VENDOR_ASSIGN_PROFILE_TO_PRODUCTS_IN_CATEGORY(
                 this.vendor.id,
-                this.category.id
+                this.category.id,
               )
             : window.API.POST_ASSIGN_PROFILE_TO_PRODUCTS_IN_CATEGORY(
                 this.shop.id,
-                this.category.id
+                this.category.id,
               ),
 
           {
             type: this.type,
             value: this.value,
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -225,7 +222,7 @@ export default {
             this.showSuccessAlert(
               null,
               "Bulk profile assignment task completed." +
-                (data.message ? data.message : "")
+                (data.message ? data.message : ""),
             );
           }
         })

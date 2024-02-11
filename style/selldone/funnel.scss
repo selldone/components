@@ -57,14 +57,14 @@
   }
 
 
-  .label__segment-percentages{
+  .label__segment-percentages {
     border-radius: 18px;
     top: 0 !important;
     bottom: unset !important;
     transform: none !important;
-    border: 1px solid #f0f0f0 ;
+    border: 1px solid #f0f0f0;
     min-height: calc(100% - 56px);
-    box-shadow: 0px 5px 20px 6px rgb(255, 255, 255) ;
+    box-shadow: 0px 5px 20px 6px rgb(255, 255, 255);
 
     .segment-percentage__list {
       color: #444 !important;
@@ -211,8 +211,8 @@
 
   }
 
-  &.no-legend{
-    .svg-funnel-js__subLabels{
+  &.no-legend {
+    .svg-funnel-js__subLabels {
       display: none !important;
     }
   }
@@ -239,7 +239,7 @@
           min-height: 100%;
           overflow: auto;
 
-          li{
+          li {
             flex-direction: column;
             display: flex;
           }
@@ -275,13 +275,14 @@
   }
 
   // Dashed horizontal on vertical chart only:
-  &.svg-funnel-js--vertical{
+  &.svg-funnel-js--vertical {
     .svg-funnel-js__label:not(:first-child) {
       border-top: 1px dashed #7777777a !important;
     }
   }
+
   // Dashed horizontal on horizontal chart only:
-  &:not(.svg-funnel-js--vertical){
+  &:not(.svg-funnel-js--vertical) {
     .svg-funnel-js__label:not(:first-child) {
       border-left: 1px dashed #7777777a !important;
     }

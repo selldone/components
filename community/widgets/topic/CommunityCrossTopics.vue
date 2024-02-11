@@ -13,21 +13,28 @@
   -->
 
 <template>
-  <v-col cols="12" class="c-max-w d-flex align-center">
-    <v-btn @click="show_cross = true" color="success" dark depressed fab small
-      ><v-icon>add</v-icon></v-btn
+  <v-col class="c-max-w d-flex align-center" cols="12">
+    <v-btn
+      color="success"
+      dark
+      fab
+      size="small"
+      variant="flat"
+      @click="show_cross = true"
     >
+      <v-icon>add</v-icon>
+    </v-btn>
 
-    <v-row no-gutters class="flex-grow-1" justify="end">
+    <v-row class="flex-grow-1" justify="end" no-gutters>
       <v-btn
         v-if="main_community"
         key="m"
         :href="getUrl(main_community)"
-        target="_blank"
-        large
+        :title="main_community.title"
         class="m-2"
         icon
-        :title="main_community.title"
+        size="large"
+        target="_blank"
       >
         <v-avatar>
           <img :src="getShopImagePath(main_community.image)" />
@@ -38,11 +45,11 @@
         v-for="item in cross_communities"
         :key="item.id"
         :href="getUrl(item)"
-        target="_blank"
-        large
+        :title="item.title"
         class="m-2"
         icon
-        :title="item.title"
+        size="large"
+        target="_blank"
       >
         <v-avatar>
           <img :src="getShopImagePath(item.image)" />
@@ -50,23 +57,25 @@
       </v-btn>
     </v-row>
 
-    <v-btn icon v-if="false"><v-icon>more_horiz</v-icon></v-btn>
+    <v-btn v-if="false" icon>
+      <v-icon>more_horiz</v-icon>
+    </v-btn>
 
     <!-- ------------------------------------ Cross Dialog ------------------------------------ -->
     <v-dialog
       v-if="show_cross"
       v-model="show_cross"
+      :fullscreen="$vuetify.display.smAndDown"
       max-width="640"
       scrollable
-      :fullscreen="$vuetify.display.smAndDown"
     >
       <v-card min-height="420">
         <v-card-title
           >Create cross topic
           <v-spacer></v-spacer>
-          <v-btn icon large @click="show_cross = false"
-            ><v-icon>close</v-icon></v-btn
-          >
+          <v-btn icon size="large" @click="show_cross = false">
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-card-title>
 
         <v-card-text class="text-start d-flex flex-column">
@@ -76,7 +85,7 @@
             <span v-copy>{{ community.id }}/{{ topic.id }}</span>
           </h2>
         </v-card-text>
-        <v-card-actions> </v-card-actions>
+        <v-card-actions></v-card-actions>
       </v-card>
     </v-dialog>
   </v-col>
@@ -119,4 +128,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

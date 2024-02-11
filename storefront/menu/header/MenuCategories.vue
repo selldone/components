@@ -14,13 +14,13 @@
 
 <template>
   <div class="s--top-menu-categories">
-    <v-container @click.stop class="-container">
+    <v-container class="-container" @click.stop>
       <v-row>
-        <v-col cols="12" lg="10" class="-categories-wrap">
+        <v-col class="-categories-wrap" cols="12" lg="10">
           <v-row>
             <v-col
               v-for="(group, k) in categories_balanced.filter(
-                (g) => !!g?.length
+                (g) => !!g?.length,
               )"
               :key="k"
               :style="{
@@ -31,20 +31,20 @@
             >
               <div v-for="(cat, j) in group" :key="j" class="mb-5">
                 <router-link
+                  :class="{ pen: preview }"
                   :to="{
                     name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                     params: { category_name: cat.name },
                   }"
-                  @mouseenter.native="selected_category = cat"
                   class="-category-header -route"
-                  :class="{ pen: preview }"
+                  @mouseenter.native="selected_category = cat"
                 >
                   <span>{{ cat.title }}</span>
 
                   <v-avatar
                     v-if="cat.icon"
-                    size="24"
                     class="hover-scale force-top me-2"
+                    size="24"
                   >
                     <img :src="getShopImagePath(cat.icon, 64)" />
                   </v-avatar>
@@ -56,13 +56,13 @@
                       .limit(6) /*Only has children*/"
                     :key="child.id"
                   >
-                    <v-expansion-panel-header
-                      @mouseenter="selected_category = child"
+                    <v-expansion-panel-title
                       class="parent-cat"
+                      @mouseenter="selected_category = child"
                     >
                       {{ child.title }}
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
+                    </v-expansion-panel-title>
+                    <v-expansion-panel-text>
                       <v-list-item
                         v-for="_child in child.children"
                         :key="'_' + _child.id"
@@ -86,6 +86,7 @@
 
                       <!-- View all categories in a this category -->
                       <v-list-item
+                        class="-route"
                         v-bind="
                           preview
                             ? {}
@@ -98,17 +99,16 @@
                               }
                         "
                         @mouseenter="selected_category = cat"
-                        class="-route"
                       >
                         <v-list-item-title>
                           {{ $t("global.actions.view_all") }}
                         </v-list-item-title>
 
                         <v-list-item-icon class="my-auto">
-                          <v-icon small color="#333">more_horiz</v-icon>
+                          <v-icon color="#333" size="small">more_horiz</v-icon>
                         </v-list-item-icon>
                       </v-list-item>
-                    </v-expansion-panel-content>
+                    </v-expansion-panel-text>
                   </v-expansion-panel>
                 </v-expansion-panels>
 
@@ -119,6 +119,7 @@
                   :key="child.id"
                 >
                   <v-list-item
+                    class="-route"
                     v-bind="
                       preview
                         ? {}
@@ -130,7 +131,6 @@
                             },
                           }
                     "
-                    class="-route"
                     @mouseenter="selected_category = child"
                   >
                     <v-list-item-title class="parent-cat">
@@ -142,6 +142,7 @@
                 <!-- View all categories in a main category -->
                 <v-list-item
                   v-if="cat.children?.length > 6"
+                  class="-route"
                   v-bind="
                     preview
                       ? {}
@@ -152,7 +153,6 @@
                           },
                         }
                   "
-                  class="-route"
                   @mouseenter="selected_category = cat"
                 >
                   <v-list-item-title class="parent-cat text-capitalize">
@@ -160,7 +160,7 @@
                   </v-list-item-title>
 
                   <v-list-item-icon class="my-auto">
-                    <v-icon small color="#333">more_horiz</v-icon>
+                    <v-icon color="#333" size="small">more_horiz</v-icon>
                   </v-list-item-icon>
                 </v-list-item>
               </div>
@@ -172,10 +172,10 @@
           <div class="pa-2">
             <v-img
               v-if="selected_category.icon"
-              :src="getShopImagePath(selected_category.icon)"
               :lazy-src="getShopImagePath(selected_category.icon, 64)"
-              class="rounded"
+              :src="getShopImagePath(selected_category.icon)"
               aspect-ratio="1"
+              class="rounded"
             ></v-img>
             <h3 class="mt-2 mb-1">{{ selected_category.title }}</h3>
             <p class="typo-body">
@@ -198,20 +198,20 @@
             }"
           >
             <router-link
+              :class="{ pen: preview }"
               :to="{
                 name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
                 params: { category_name: cat.name },
               }"
-              :class="{ pen: preview }"
             >
               <v-img
-                :aspect-ratio="small_mode ? 1 : 3 / 2"
-                :src="getShopImagePath(cat.icon)"
                 :alt="cat.description"
-                :gradient="'to top, rgba(0,0,0,0.4), rgba(0,0,0,0)'"
-                content-class="d-flex flex-column"
-                class="cat-hover"
+                :aspect-ratio="small_mode ? 1 : 3 / 2"
                 :class="{ 'rounded-circle': small_mode, rounded: !small_mode }"
+                :gradient="'to top, rgba(0,0,0,0.4), rgba(0,0,0,0)'"
+                :src="getShopImagePath(cat.icon)"
+                class="cat-hover"
+                content-class="d-flex flex-column"
               >
                 <v-spacer></v-spacer>
                 <div
@@ -297,7 +297,7 @@ export default {
             const total = groups[i].reduce(
               (sum, c) =>
                 sum + (c.children?.length ? c.children.length : 0) + 1,
-              0
+              0,
             );
             if (total <= minTotal) {
               minIndex = i;
@@ -375,6 +375,7 @@ export default {
   font-size: var(--font-size);
   display: flex;
   flex-direction: column;
+
   .-container {
     flex-grow: 1;
     max-width: 90vw !important;
@@ -389,6 +390,7 @@ export default {
   .parent-cat {
     font-weight: 500;
   }
+
   .-categories-wrap {
     .-category-header {
       font-size: var(--font-size);
@@ -402,6 +404,7 @@ export default {
       max-height: var(--item-heigh);
       margin-bottom: 4px;
       overflow: visible;
+
       span {
         max-width: calc(100% - 42px);
         white-space: nowrap;
@@ -422,6 +425,7 @@ export default {
       }
     }
   }
+
   .-route {
     border-radius: 8px;
     overflow: hidden;
@@ -430,6 +434,7 @@ export default {
     min-height: var(--item-heigh);
     height: var(--item-heigh);
   }
+
   .cat-hover {
     .v-img__image {
       transition: all 0.3s ease-in-out;

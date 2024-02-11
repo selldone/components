@@ -16,22 +16,22 @@
   <s-dimension-selector
     v-if="no_number_cal"
     v-model="dim_val"
-    :label="label"
-    :suffix="suffix"
-    :prependIcon="prependIcon"
-    :hideDetails="hideDetails"
-    :messages="messages"
-    :filled="filled"
-    :single-line="singleLine"
-    :hide-details="hideDetails && !messages"
-    :prepend-icon="prependIcon"
-    :loading="loading"
-    :solo="solo"
-    :flat="flat"
-    :readonly="readonly"
-    :disabled="disabled || lock"
-    :rounded="rounded"
     :background-color="backgroundColor"
+    :disabled="disabled || lock"
+    :filled="filled"
+    :flat="flat"
+    :hide-details="hideDetails && !messages"
+    :hideDetails="hideDetails"
+    :label="label"
+    :loading="loading"
+    :messages="messages"
+    :prepend-icon="prependIcon"
+    :prependIcon="prependIcon"
+    :readonly="readonly"
+    :rounded="rounded"
+    :single-line="singleLine"
+    :solo="solo"
+    :suffix="suffix"
   >
     <template v-slot:append-inner>
       <div style="min-height: 38px"></div>
@@ -40,50 +40,50 @@
   <s-number-input
     v-else
     v-model="number_val"
-    :step="1"
+    :background-color="backgroundColor"
+    :clearable="clearable"
     :decimal="3"
     :disabled="disabled"
-    :min="-99999"
-    :max="99999"
-    :icon="icon"
-    :textCenter="true"
-    :clearable="clearable"
-    @clear="dim_val = 'unset'"
-    :readonly="readonly"
-    :label="label"
-    :suffix="suffix"
-    :prependIcon="prependIcon"
-    :hideDetails="hideDetails"
-    :messages="messages"
     :filled="filled"
-    :single-line="singleLine"
-    :hide-details="hideDetails && !messages"
-    :prepend-icon="prependIcon"
-    :loading="loading"
-    :solo="solo"
     :flat="flat"
-    :rounded="rounded"
-    @blur="$emit('blur')"
-    :background-color="backgroundColor"
+    :hide-details="hideDetails && !messages"
+    :hideDetails="hideDetails"
+    :icon="icon"
+    :label="label"
+    :loading="loading"
     :lock="lock"
+    :max="99999"
+    :messages="messages"
+    :min="-99999"
+    :prepend-icon="prependIcon"
+    :prependIcon="prependIcon"
+    :readonly="readonly"
+    :rounded="rounded"
+    :single-line="singleLine"
+    :solo="solo"
+    :step="1"
+    :suffix="suffix"
+    :textCenter="true"
+    @blur="$emit('blur')"
+    @clear="dim_val = 'unset'"
   >
     <template v-slot:append-inner>
       <s-dimension-selector
         v-model="dim_val"
-        hide-details
-        :readonly="readonly"
         :disabled="disabled || lock"
-        :shaped="!rounded"
         :height="40"
-        dense
-        solo
-        flat
+        :readonly="readonly"
+        :rounded="rounded && solo"
+        :shaped="!rounded"
         :style="{
           width: rounded && solo ? '110px' : '84px',
           marginTop:
             rounded && solo ? '-7px' : rounded && !solo ? '-14px' : undefined,
         }"
-        :rounded="rounded && solo"
+        dense
+        flat
+        hide-details
+        solo
       >
       </s-dimension-selector>
     </template>
@@ -93,6 +93,7 @@
 <script>
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SDimensionSelector from "./SDimensionSelector.vue";
+
 export default {
   name: "SNumberDimensionInput",
   components: { SDimensionSelector, SNumberInput },
@@ -270,4 +271,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

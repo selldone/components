@@ -14,7 +14,7 @@
 
 <template>
   <div class="position-relative min-height-60vh my-5">
-    <v-tabs v-model="tab" light icons-and-text class="mx-n5" height="84">
+    <v-tabs v-model="tab" class="mx-n5" height="84" light stacked>
       <v-tabs-slider></v-tabs-slider>
 
       <v-tab
@@ -27,9 +27,9 @@
         {{ item.title }}
         <img
           :src="item.image"
+          height="28"
           style="object-fit: contain"
           width="28"
-          height="28"
         />
       </v-tab>
     </v-tabs>
@@ -40,9 +40,9 @@
           <v-card-text>
             <iframe
               :src="item.url"
-              width="100%"
-              style="border: none; border-radius: inherit"
               :style="{ height: item.height }"
+              style="border: none; border-radius: inherit"
+              width="100%"
             ></iframe>
           </v-card-text>
         </v-card>
@@ -150,4 +150,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

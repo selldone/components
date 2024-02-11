@@ -3,10 +3,11 @@
 
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="1715px" height="1162px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 209.32 141.75"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xodm="http://www.corel.com/coreldraw/odm/2003" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="1715px"
+     height="1162px"
+     version="1.1"
+     style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+     viewBox="0 0 209.32 141.75">
  <defs>
   <style type="text/css">
    <![CDATA[
@@ -16,17 +17,17 @@ viewBox="0 0 209.32 141.75"
    ]]>
   </style>
  </defs>
- <g id="Layer_x0020_1">
+    <g id="Layer_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <rect class="fil0" width="209.32" height="141.75"/>
-  <rect class="fil0 str0" x="6.4" y="6.31" width="196.51" height="129.14" rx="9.48" ry="7.64"/>
-  <rect class="fil1" x="99.87" y="24.82" width="91.68" height="9.08" rx="1.72" ry="2.88"/>
-  <rect class="fil1" x="42.74" y="68.6" width="27.46" height="11.06" rx="2.41" ry="2.88"/>
-  <rect class="fil1" x="74.57" y="68.52" width="27.46" height="11.06" rx="2.41" ry="2.88"/>
-  <rect class="fil1" x="106.4" y="68.37" width="27.46" height="11.06" rx="2.41" ry="2.88"/>
-  <rect class="fil1" x="138.23" y="68.14" width="27.46" height="11.06" rx="2.41" ry="2.88"/>
-  <rect class="fil1" x="67.83" y="96.21" width="80.24" height="6.97" rx="1.96" ry="2.88"/>
-  <rect class="fil1" x="145.55" y="113.6" width="42.79" height="11.06" rx="3.76" ry="2.88"/>
-  <circle class="fil1" cx="29.01" cy="26.45" r="7.93"/>
+        <rect class="fil0" width="209.32" height="141.75"/>
+        <rect class="fil0 str0" x="6.4" y="6.31" width="196.51" height="129.14" rx="9.48" ry="7.64"/>
+        <rect class="fil1" x="99.87" y="24.82" width="91.68" height="9.08" rx="1.72" ry="2.88"/>
+        <rect class="fil1" x="42.74" y="68.6" width="27.46" height="11.06" rx="2.41" ry="2.88"/>
+        <rect class="fil1" x="74.57" y="68.52" width="27.46" height="11.06" rx="2.41" ry="2.88"/>
+        <rect class="fil1" x="106.4" y="68.37" width="27.46" height="11.06" rx="2.41" ry="2.88"/>
+        <rect class="fil1" x="138.23" y="68.14" width="27.46" height="11.06" rx="2.41" ry="2.88"/>
+        <rect class="fil1" x="67.83" y="96.21" width="80.24" height="6.97" rx="1.96" ry="2.88"/>
+        <rect class="fil1" x="145.55" y="113.6" width="42.79" height="11.06" rx="3.76" ry="2.88"/>
+        <circle class="fil1" cx="29.01" cy="26.45" r="7.93"/>
  </g>
 </svg>

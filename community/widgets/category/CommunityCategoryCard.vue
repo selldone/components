@@ -15,7 +15,6 @@
 <template>
   <div class="c-container -force-rounded pa-2 pa-sm-3 d-flex flex-column">
     <v-card
-      class="c-widget -hover flex-grow-1"
       :to="{
         name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
         params: {
@@ -23,19 +22,20 @@
           category_slug: slugify(category.title),
         },
       }"
+      class="c-widget -hover flex-grow-1"
     >
       <!-- Image -->
       <community-image
-        :src="getShopImagePath(category.image)"
         :aspect-ratio="1"
+        :src="getShopImagePath(category.image)"
         width="100%"
       >
         <v-fade-transition>
           <v-row v-if="showReport && timeSeries" class="sta">
             <!-- Value charts -->
 
-            <v-col cols="6" v-for="item in keys" :key="item.key">
-              <span class="subtitle-2"> {{ item.title }}</span>
+            <v-col v-for="item in keys" :key="item.key" cols="6">
+              <span class="text-subtitle-2"> {{ item.title }}</span>
               <small class="d-block">in last 7 days</small>
 
               <h3>{{ timeSeries.totalOf(item.key) }}</h3>
@@ -48,15 +48,16 @@
 
             <!-- background chart -->
             <s-sparkline
-              :smooth="20"
-              color="#29323977"
+              :height="150"
               :line-width="2"
+              :padding="0"
+              :smooth="20"
               :value="timeSeries.arrayOfForceInterpolateZero('impressions')"
               auto-draw
-              :height="150"
-              :padding="0"
-              stroke-linecap="round"
+              class="fadeIn delay_500"
+              color="#29323977"
               fill
+              stroke-linecap="round"
               style="
                 position: absolute;
                 left: 0;
@@ -64,33 +65,44 @@
                 z-index: -1;
                 width: 100%;
               "
-              class="fadeIn delay_500"
             >
             </s-sparkline>
           </v-row>
         </v-fade-transition>
       </community-image>
 
-      <div v-if="todayData && todayData.topics" class="absolute-bottom-end subtitle-2 text-success" title="New topics today">
-        <v-icon color="#0ba360" x-small>lens</v-icon> {{todayData.topics}}
+      <div
+        v-if="todayData && todayData.topics"
+        class="absolute-bottom-end text-subtitle-2 text-success"
+        title="New topics today"
+      >
+        <v-icon color="#0ba360" size="x-small">lens</v-icon>
+        {{ todayData.topics }}
       </div>
 
-      <div v-if="todayData && todayData.comments" class="absolute-bottom-center subtitle-2 blue--text" title="New comments today">
-        <v-icon color="blue" x-small>comment</v-icon> {{todayData.comments}}
+      <div
+        v-if="todayData && todayData.comments"
+        class="absolute-bottom-center text-subtitle-2 text-blue"
+        title="New comments today"
+      >
+        <v-icon color="blue" size="x-small">comment</v-icon>
+        {{ todayData.comments }}
       </div>
 
-      <div v-if="todayData && todayData.posts" class="absolute-bottom-start subtitle-2 red--text" title="New posts today">
-        <v-icon color="red" x-small>person</v-icon> {{todayData.posts}}
+      <div
+        v-if="todayData && todayData.posts"
+        class="absolute-bottom-start text-subtitle-2 text-red"
+        title="New posts today"
+      >
+        <v-icon color="red" size="x-small">person</v-icon>
+        {{ todayData.posts }}
       </div>
 
       <v-card-title>{{ category.title }}</v-card-title>
       <v-card-subtitle style="min-height: 60px"
         >{{ category.desc }}
       </v-card-subtitle>
-
     </v-card>
-
-
   </div>
 </template>
 
@@ -99,9 +111,10 @@ import CommunityImage from "../image/CommunityImage.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
 import { TimeSeries } from "@core/timeserie/TimeSeries";
 import SSparkline from "@components/chart/sparkline/SSparkline.vue";
+
 export default {
   name: "CommunityCategoryCard",
-  components: {SSparkline, TrendSparkline, CommunityImage },
+  components: { SSparkline, TrendSparkline, CommunityImage },
   props: {
     category: {
       required: true,
@@ -126,7 +139,7 @@ export default {
     };
   },
 
-  computed:{
+  computed: {
     todayData() {
       return this.timeSeries && this.timeSeries.todayData();
     },
@@ -139,15 +152,15 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .sta {
   width: 100%;
   background: #ffffffd9;
   height: 100%;
   margin: 0;
+
   small {
     font-weight: 400;
   }
 }
-
 </style>

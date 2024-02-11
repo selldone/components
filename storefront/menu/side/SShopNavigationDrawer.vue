@@ -14,26 +14,26 @@
 
 <template>
   <v-navigation-drawer
-    :model-value="value"
-    @update:model-value="(val) => $emit('input', val)"
-    app
-    temporary
     :location="$vuetify.rtl && 'right'"
+    :model-value="value"
+    app
     class="text-start pt-5"
     style="border-radius: 24px; margin: 8px; height: calc(100vh - 100px)"
+    temporary
     width="90vw"
+    @update:model-value="(val) => $emit('input', val)"
   >
     <div class="s--shop-navigation-drawer">
       <div class="d-flex align-center pa-2">
         <div v-if="!USER()">
           <v-btn
-            size="large"
+            class="tnt"
             color="#111"
             dark
-            class="tnt"
-            @click="NeedLogin()"
-            min-width="200"
             max-width="80vw"
+            min-width="200"
+            size="large"
+            @click="NeedLogin()"
           >
             <v-icon class="me-1" size="small">login</v-icon>
             {{ $t("global.actions.login") }}
@@ -46,8 +46,8 @@
             :shop="shop"
             class="mx-3"
             hide-details
-            icon-only
             icon-color="#111"
+            icon-only
           ></s-shop-language-selector>
 
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
@@ -57,10 +57,10 @@
               shop.currencies &&
               shop.currencies.length > 1
             "
-            icon-only
-            icon-color="#111"
-            hide-details
             :shop="shop"
+            hide-details
+            icon-color="#111"
+            icon-only
             @change="
               () => {
                 onChangeUserSelectedCurrency();
@@ -71,11 +71,11 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn @click="$emit('input', false)" icon color="#000">
+        <v-btn color="#000" icon @click="$emit('input', false)">
           <v-icon>close</v-icon>
         </v-btn>
       </div>
-      <v-expansion-panels flat class="border-between-vertical">
+      <v-expansion-panels class="border-between-vertical" flat>
         <!-- ――――――――――――――――――――― Shop User Menu List ――――――――――――――――――――― -->
 
         <v-expansion-panel v-if="USER()">
@@ -105,15 +105,15 @@
 
             <v-list-item>
               <v-btn
-                variant="outlined"
-                size="large"
-                color="#333"
+                :loading="busy_logout"
                 class="tnt"
+                color="#333"
+                size="large"
+                variant="outlined"
                 @click="
                   busy_logout = true;
                   Logout(() => (busy_logout = false));
                 "
-                :loading="busy_logout"
               >
                 <v-icon class="me-1" size="small">logout</v-icon>
                 {{ $t("global.actions.logout") }}
@@ -141,7 +141,13 @@
             <template v-slot:append>
               <v-icon
                 v-if="tab.icon"
-                :size="tab.icon_size === 'small' ?'small':tab.icon_size === 'large'?'large':undefined"
+                :size="
+                  tab.icon_size === 'small'
+                    ? 'small'
+                    : tab.icon_size === 'large'
+                      ? 'large'
+                      : undefined
+                "
                 >{{ tab.icon }}
               </v-icon>
               <v-icon v-else-if="tab.link?.startsWith('http')" size="small"
@@ -156,7 +162,7 @@
                 <v-list-item-title>
                   {{ tab.title }}
                 </v-list-item-title>
-                <template v-slot:append v-if="tab.icon">
+                <template v-if="tab.icon" v-slot:append>
                   <v-icon
                     :size="
                       tab.icon_size === 'small'
@@ -178,12 +184,12 @@
                   <v-list-item
                     v-for="(item, index) in col"
                     :key="index"
-                    :to="item.to"
                     :href="item.href"
                     :target="item.target"
-                    exact
-                    class="list-menu-item"
+                    :to="item.to"
                     active-class="bg-primary text-white"
+                    class="list-menu-item"
+                    exact
                   >
                     <v-list-item-title>{{ item.name }}</v-list-item-title>
                   </v-list-item>
@@ -205,14 +211,14 @@
         <v-list-item
           v-for="(item, i) in menu"
           :key="'f-' + i"
-          link
           :to="item.to"
-          exact
           active-class="bg-primary text-white"
+          exact
+          link
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
           <v-list-item-icon v-if="item.src"
-            ><img :src="item.src" width="24" height="24"
+            ><img :src="item.src" height="24" width="24"
           /></v-list-item-icon>
         </v-list-item>
       </v-expansion-panels>
@@ -222,15 +228,15 @@
       <v-sheet class="border-top mt-16" color="#fafafa">
         <div v-if="info" class="pa-2">
           <div v-if="info.phone" class="pa-1">
-            <v-icon size="small" class="me-1">phone</v-icon>
+            <v-icon class="me-1" size="small">phone</v-icon>
             <span v-copy>{{ info.phone }}</span>
           </div>
           <div v-if="info.email" class="pa-1">
-            <v-icon size="small" class="me-1">email</v-icon>
+            <v-icon class="me-1" size="small">email</v-icon>
             <span v-copy>{{ info.email }}</span>
           </div>
           <div v-if="info.address" class="pa-1">
-            <v-icon size="small" class="me-1">place</v-icon>
+            <v-icon class="me-1" size="small">place</v-icon>
 
             <flag
               v-if="info.country_code"

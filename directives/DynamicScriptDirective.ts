@@ -29,9 +29,11 @@
  * @author [Your Name]
  */
 
-import { ObjectDirective } from 'vue';
+import { ObjectDirective } from "vue";
 
-const LoadScriptsDirective: ObjectDirective<HTMLElement & { loadedScripts?: string[] }> = {
+const LoadScriptsDirective: ObjectDirective<
+  HTMLElement & { loadedScripts?: string[] }
+> = {
   /**
    * Called when the directive is mounted to the DOM.
    */
@@ -42,18 +44,18 @@ const LoadScriptsDirective: ObjectDirective<HTMLElement & { loadedScripts?: stri
         return;
       }
 
-      const tempDiv = document.createElement('div');
+      const tempDiv = document.createElement("div");
       tempDiv.innerHTML = el.innerHTML;
-      const scripts = tempDiv.getElementsByTagName('script');
+      const scripts = tempDiv.getElementsByTagName("script");
 
       el.loadedScripts = el.loadedScripts || [];
 
       for (const script of scripts) {
-        const scriptSrc = script.getAttribute('src');
+        const scriptSrc = script.getAttribute("src");
         if (scriptSrc && !el.loadedScripts.includes(scriptSrc)) {
-          const newScript = document.createElement('script');
-          Array.from(script.attributes).forEach(attr =>
-              newScript.setAttribute(attr.name, attr.value)
+          const newScript = document.createElement("script");
+          Array.from(script.attributes).forEach((attr) =>
+            newScript.setAttribute(attr.name, attr.value),
           );
           newScript.onload = () => {
             el.loadedScripts?.push(scriptSrc);
@@ -81,14 +83,16 @@ const LoadScriptsDirective: ObjectDirective<HTMLElement & { loadedScripts?: stri
   unmounted(el) {
     if (el.loadedScripts) {
       for (const script of el.loadedScripts) {
-        const scriptElement = document.head.querySelector(`script[src="${script}"]`);
+        const scriptElement = document.head.querySelector(
+          `script[src="${script}"]`,
+        );
         if (scriptElement) {
           document.head.removeChild(scriptElement);
         }
       }
       el.loadedScripts = [];
     }
-  }
+  },
 };
 
 export default LoadScriptsDirective;

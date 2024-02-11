@@ -14,28 +14,34 @@
 
 <template>
   <div
-    class="s--add-button-green"
     :class="{
       'no-fade': !src,
       'widget-hover': !small,
       disabled: loading,
       'h-100': fillHeight,
     }"
+    :style="{
+      'border-radius': radius,
+      minHeight: minHeight,
+      height: height,
+      '--btn-bg-color': color,
+      '--btn-hover-bg-color': hoverColor,
+    }"
+    class="s--add-button-green"
     @click.stop="$emit('click')"
-    :style="{ 'border-radius': radius, minHeight: minHeight, height: height,'--btn-bg-color': color, '--btn-hover-bg-color': hoverColor }"
   >
-    <v-img :src="src"  class="sprite flip-image-rtl"> </v-img>
+    <v-img :src="src" class="sprite flip-image-rtl"></v-img>
     <div class="center-content px-2">
-      <v-icon dark :class="{ 'mb-3': !small }" :size="small ? 24 : 36"
+      <v-icon :class="{ 'mb-3': !small }" :size="small ? 24 : 36" dark
         >{{ icon }}
       </v-icon>
-      <div class="-title" :class="{ small: small, 'inline-block': horizontal }">
+      <div :class="{ small: small, 'inline-block': horizontal }" class="-title">
         {{ caption }}
       </div>
       <p
-        class="-message"
         v-if="message"
         :class="`${space ? 'mt-5' : ''} ${classMessage}`"
+        class="-message"
       >
         {{ message }}
       </p>
@@ -99,7 +105,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--add-button-green {
   cursor: pointer;
   user-select: none;

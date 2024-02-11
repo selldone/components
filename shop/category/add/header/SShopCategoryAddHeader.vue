@@ -13,8 +13,8 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-toolbar flat color="#fff">
-    <v-btn @click="$emit('back')" variant="text" size="x-large">
+  <v-toolbar color="#fff" flat>
+    <v-btn size="x-large" variant="text" @click="$emit('back')">
       <v-icon class="me-1">{{ $t("icons.arrow_back") }}</v-icon>
       {{ $t("add_category.menu.back") }}
     </v-btn>
@@ -22,11 +22,15 @@
     <v-btn
       v-if="category"
       :href="`${getShopMainUrl(shop)}/${category.name}-category`"
-      variant="text"
       target="_blank"
+      variant="text"
     >
-      <v-avatar v-if="category.icon" class="me-2 avatar-gradient -thin -category" size="24">
-        <v-img :src="getShopImagePath(category.icon,64)"></v-img>
+      <v-avatar
+        v-if="category.icon"
+        class="me-2 avatar-gradient -thin -category"
+        size="24"
+      >
+        <v-img :src="getShopImagePath(category.icon, 64)"></v-img>
       </v-avatar>
 
       Open Category Page
@@ -37,28 +41,29 @@
   <div v-if="category" class="max-widget-width mt-5">
     <v-btn-toggle
       :model-value="tab"
-      @update:model-value="v=>$emit('update:tab', v)"
       class="widget-toggle mx-0"
-      rounded
       mandatory
-      selected-class="blue-flat" style="height: 64px"
+      rounded
+      selected-class="blue-flat"
+      style="height: 64px"
+      @update:model-value="(v) => $emit('update:tab', v)"
     >
-      <v-btn value="setting" >
+      <v-btn value="setting">
         <v-icon class="me-1">settings</v-icon>
         {{ $t("add_category.menu.settings") }}
       </v-btn>
 
-      <v-btn value="filter" >
+      <v-btn value="filter">
         <v-icon class="me-1">filter_list</v-icon>
         {{ $t("add_category.menu.filter") }}
       </v-btn>
 
-      <v-btn value="template" >
+      <v-btn value="template">
         <v-icon class="me-1">architecture</v-icon>
         {{ $t("global.commons.template") }}
       </v-btn>
 
-      <v-btn value="critical" >
+      <v-btn value="critical">
         <v-icon class="me-1">warning_amber</v-icon>
         {{ $t("global.commons.critical_zone") }}
       </v-btn>

@@ -14,35 +14,35 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--form-builder widget-box">
-    <s-widget-header :title="title" :icon="icon"></s-widget-header>
+    <s-widget-header :icon="icon" :title="title"></s-widget-header>
     <v-list-subheader>{{ hint }}</v-list-subheader>
     <draggable
-      :list="structure"
-      @update:model-value="(val) => $emit('update:structure', val)"
-      :model-value="structure"
-      @start="drag = true"
-      @end="drag = false"
-      tag="transition-group"
+      :animation="200"
       :component-data="{
         tag: 'ul',
         type: 'transition-group',
         name: !drag ? 'scale' : 'fade',
       }"
-      :animation="200"
-      group="description"
       :disabled="false"
+      :list="structure"
+      :model-value="structure"
       ghostClass="ghost"
-      style="list-style-type: none"
+      group="description"
       handle=".drag--handle"
+      style="list-style-type: none"
+      tag="transition-group"
+      @end="drag = false"
+      @start="drag = true"
+      @update:model-value="(val) => $emit('update:structure', val)"
     >
       <template v-slot:item="{ element, index }">
         <s-form-builder-row
           :key="index"
+          :collapse="drag"
           :item="element"
           :item-types="item_types"
           class="mt-6"
           @remove="removeField(index)"
-          :collapse="drag"
         >
         </s-form-builder-row>
       </template>
@@ -51,7 +51,7 @@
     <div class="text-end m-3">
       <v-menu :min-width="120">
         <template v-slot:activator="{ props }">
-          <v-btn variant="flat" color="primary" v-bind="props">
+          <v-btn color="primary" v-bind="props" variant="flat">
             <v-icon start>add</v-icon>
             {{ $t("global.form_builder.add_item_action") }}
           </v-btn>
@@ -60,9 +60,9 @@
           <v-list-item
             v-for="(item_type, index) in item_types"
             :key="index"
-            @click="addField(item_type.value)"
             :prepend-icon="item_type.icon"
             :title="item_type.title"
+            @click="addField(item_type.value)"
           >
           </v-list-item>
         </v-list>
@@ -160,7 +160,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

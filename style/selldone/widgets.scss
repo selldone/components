@@ -13,8 +13,8 @@
  */
 
 
-html{
-  --widget-background-color: #f0f0f0;  // All widget background color
+html {
+  --widget-background-color: #f0f0f0; // All widget background color
 
 }
 
@@ -28,7 +28,7 @@ html{
     transition: all 0.5s;
     z-index: 2;
 
-    &.theme--dark{
+    &.theme--dark {
       box-shadow: 0px 10px 50px 0px rgba(255, 255, 255, 0.2) !important;
     }
 
@@ -43,7 +43,7 @@ html{
     opacity: 0.15;
   }
 
-  &.-gray-bg{
+  &.-gray-bg {
     &:hover {
       background: #c8c8c8;
     }
@@ -60,7 +60,6 @@ html{
     z-index: 2;
   }
 }
-
 
 
 // Checkable widget round

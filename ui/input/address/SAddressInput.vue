@@ -14,44 +14,44 @@
 
 <template>
   <v-menu
-    max-height="40vh"
-    :top="top"
     :bottom="bottom"
+    :disabled="!auto_complete_address"
     :model-value="
       auto_complete_address /*Disable after user click on an item*/ &&
       suggestion_menu &&
       search_results &&
       search_results.length
     "
-    @update:model-value="(val) => (suggestion_menu = val)"
-    :disabled="!auto_complete_address"
+    :top="top"
+    max-height="40vh"
     variant="underlined"
+    @update:model-value="(val) => (suggestion_menu = val)"
   >
     <template v-slot:activator="{ props }">
       <v-textarea
-        v-bind="props"
-        :model-value="modelValue"
+        :hide-details="hideDetails"
         :label="`▼ ${title}`"
+        :loading="search_busy"
+        :model-value="modelValue"
         :placeholder="$t('global.map_view.enter_your_address')"
+        :readonly="viewOnly"
+        :rounded="rounded"
+        :rows="rows"
+        :variant="variant ? variant : solo ? 'solo' : 'underlined'"
+        auto-grow
+        clearable
         color="green"
+        persistent-placeholder
+        v-bind="props"
+        @blur="$emit('update:isFocus', false)"
+        @focus="$emit('update:isFocus', true)"
         @update:model-value="
           (val) => {
             search_address = val;
             $emit('update:modelValue', val);
           }
         "
-        :loading="search_busy"
-        :readonly="viewOnly"
-        persistent-placeholder
-        :rows="rows"
-        auto-grow
-        @focus="$emit('update:isFocus', true)"
-        @blur="$emit('update:isFocus', false)"
-        clearable
         @click:clear="auto_complete_address = true"
-        :rounded="rounded"
-        :solo="solo"
-        :hide-details="hideDetails"
       >
         <template v-slot:prepend-inner>
           <v-icon :color="prependIconColor"> {{ prependIcon }}</v-icon>
@@ -60,20 +60,20 @@
     </template>
 
     <v-list
-      lines="two"
-      style="line-height: 1.5em"
       density="compact"
+      lines="two"
       rounded="xl"
+      style="line-height: 1.5em"
     >
       <v-list-item
         v-for="(item, index) in search_results"
         :key="index"
+        class="text-start"
         @click="
           auto_complete_address =
             !autoDisableAutoComplete /*Now user can edit address manually!*/;
           $emit('select:address', item);
         "
-        class="text-start"
       >
         <b class="me-2 small font-weight-bold text-muted">
           <flag
@@ -86,8 +86,8 @@
           {{ item.title }}</b
         >
         <p
-          style="line-height: 1.5em"
           class="text-start m-0"
+          style="line-height: 1.5em"
           v-text="item.address"
         />
       </v-list-item>
@@ -144,6 +144,7 @@ export default {
       default: false,
     },
     rows: { default: 2 },
+    variant: {},
 
     prependIcon: { default: "local_shipping" },
     prependIconColor: { default: "#00796B" },

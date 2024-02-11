@@ -14,21 +14,21 @@
 
 <template>
   <div
-    class="s--shop-service-tasks widget shadow my-3 mx-0 mx-md-3"
     :class="{ '-activated my-12': in_this_step }"
+    class="s--shop-service-tasks widget shadow my-3 mx-0 mx-md-3"
   >
     <div class="border-between-vertical">
       <service-billing-item
         v-for="item in items"
         :key="item.id"
-        :shop="getShop()"
         :basket="basket"
-        :item="item"
-        :product="item.product"
         :initial-expand="
           in_this_step ||
           basket.delivery_state === ServiceOrderStates.ToCustomer.code
         "
+        :item="item"
+        :product="item.product"
+        :shop="getShop()"
         view-only-progress
       ></service-billing-item>
     </div>
@@ -39,6 +39,7 @@
 import ServiceBillingItem from "@components/storefront/order/billing/ServiceBillingItem.vue";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import { ServiceOrderStates } from "@core/enums/basket/ServiceOrderStates";
+
 export default {
   name: "SShopServiceTasks",
   components: { ServiceBillingItem },
@@ -73,20 +74,16 @@ export default {
 </script>
 
 <style scoped>
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-service-tasks{
-
+.s--shop-service-tasks {
 }
-
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--shop-service-tasks{
-
+.s--shop-service-tasks {
 }
 </style>

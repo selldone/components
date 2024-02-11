@@ -15,7 +15,7 @@
 <template>
   <div>
     <div v-if="products.length === 0">
-      <v-icon size="64" class="m-3"> change_history </v-icon>
+      <v-icon class="m-3" size="64"> change_history</v-icon>
       <p class="text-muted">
         {{ $t("product_comparison.list.no_data") }}
       </p>
@@ -26,22 +26,18 @@
         <li
           v-for="(product, i) in products"
           :key="product.key"
-          class="min-width-150"
           :class="{ active: selected_index === i }"
+          class="min-width-150"
           @click="showIndex(i)"
         >
           <button class="button-header">
             <v-img
-              :src="
-                (
-                  getShopImagePath(product.icon, IMAGE_SIZE_SMALL)
-                )
-              "
               :aspect-ratio="1"
+              :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+              class="ma-auto"
+              height="48px"
               style="border-radius: 12px"
               width="48px"
-              height="48px"
-              class="ma-auto"
             />
 
             <span>{{ product.title?.limitWords(5) }}</span>
@@ -59,12 +55,12 @@
               class="c-header-top"
             >
               <v-img
-                :src="(getShopImagePath(product.icon))"
                 :aspect-ratio="1"
-                style="border-radius: 18px"
-                min-width="240px"
-                width="160px"
+                :src="getShopImagePath(product.icon)"
                 class="ma-auto pp z1"
+                min-width="240px"
+                style="border-radius: 18px"
+                width="160px"
                 @click="
                   () => {
                     goToProduct(product.id);
@@ -83,7 +79,7 @@
               class="c-header-bottom"
             >
               <div class="z1">
-                <p class="m-1" :title="product.title">
+                <p :title="product.title" class="m-1">
                   {{ product.title?.limitWords(5) }}
                 </p>
                 <small :title="product.title_en">{{
@@ -99,20 +95,20 @@
             <td v-for="product in shown_products" :key="product.key">
               <v-btn
                 v-if="canRemoveFromList"
-                icon
-                color="#D32F2F"
-                small
                 class="mx-1"
+                color="#D32F2F"
+                icon
+                size="small"
                 @click="removeFromProductComparison(product, product.variant)"
               >
                 <v-icon>close</v-icon>
               </v-btn>
 
               <v-btn
-                icon
-                color="#444"
-                small
                 class="mx-1"
+                color="#444"
+                icon
+                size="small"
                 @click="
                   () => {
                     goToProduct(product.id);
@@ -128,14 +124,14 @@
             <td style="border: unset" />
             <td v-for="product in shown_products" :key="product.key">
               <!--
-            █████████████████████████████████████████████████████████████
-            ―――――――――――――――――――――――― Buy Button ―――――――――――――――――――――――
-            █████████████████████████████████████████████████████████████
-            -->
+          █████████████████████████████████████████████████████████████
+          ―――――――――――――――――――――――― Buy Button ―――――――――――――――――――――――
+          █████████████████████████████████████████████████████████████
+          -->
               <s-shop-buy-button
-                :product="product"
-                :current-variant="product.variant"
                 :can-buy="true"
+                :current-variant="product.variant"
+                :product="product"
                 @start-buy-virtual="
                   $router.push({
                     name: window.$storefront.routes.PRODUCT_PAGE,
@@ -155,7 +151,7 @@
                     CalcPriceProductCurrentCurrency(
                       getShop(),
                       product,
-                      product.variant
+                      product.variant,
                     )
                   "
                 ></price-view>
@@ -170,8 +166,8 @@
             <td v-for="product in shown_products" :key="product.key">
               <img
                 :src="getProductTypeImage(product.type)"
-                height="16px"
                 class="m-1"
+                height="16px"
               />
               {{ getProductTypeName(product.type) }}
             </td>
@@ -191,7 +187,7 @@
               {{ $t("product_comparison.list.warranty") }}
             </td>
             <td v-for="product in shown_products" :key="product.key">
-              <v-icon v-if="product.warranty" color="#444" class="ms-2">
+              <v-icon v-if="product.warranty" class="ms-2" color="#444">
                 verified_user
               </v-icon>
               <span v-if="product.warranty">{{ product.warranty }}</span>
@@ -215,8 +211,8 @@
               <s-color-circle
                 v-if="product.variant && product.variant.color"
                 :color="product.variant.color"
-                class="me-1 hover-scale"
                 :size="14"
+                class="me-1 hover-scale"
               >
               </s-color-circle>
             </td>
@@ -327,7 +323,7 @@
                 :key="product.key + key"
                 class="text-start"
               >
-                <v-icon color="#aaa" size="12px" class="vertical-align-middle">
+                <v-icon class="vertical-align-middle" color="#aaa" size="12px">
                   fa:fas fa-plus
                 </v-icon>
                 {{ key }}: <b v-html="dictionarySpec(pro)" />
@@ -357,7 +353,7 @@
                 :key="product.key + key"
                 class="text-start"
               >
-                <v-icon color="#aaa" size="12px" class="vertical-align-middle">
+                <v-icon class="vertical-align-middle" color="#aaa" size="12px">
                   fa:fas fa-minus
                 </v-icon>
 
@@ -396,7 +392,7 @@
               {{ $t("product_comparison.list.rating_count") }}
             </td>
             <td v-for="product in shown_products" :key="product.key">
-              {{  numeralFormat(product.rate_count ,"0,0a") }}
+              {{ numeralFormat(product.rate_count, "0,0a") }}
             </td>
           </tr>
         </tbody>
@@ -409,11 +405,11 @@
         </p>
 
         <s-value-copy-box
-          :value="comparison_link"
-          small-width-mode
-          :message="$t('product_comparison.list.copy_action')"
           :image="getShopImagePath(getShop()?.icon, 128)"
+          :message="$t('product_comparison.list.copy_action')"
+          :value="comparison_link"
           class="my-5"
+          small-width-mode
         >
         </s-value-copy-box>
       </div>
@@ -429,7 +425,12 @@ import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 
 export default {
   name: "ProductComparisonList",
-  components: { SValueCopyBox, SColorCircle, SShopBuyButton, SShopProductRatingView },
+  components: {
+    SValueCopyBox,
+    SColorCircle,
+    SShopBuyButton,
+    SShopProductRatingView,
+  },
 
   props: {
     products: {
@@ -611,7 +612,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .price-table {
   max-width: 1380px;
   margin: 12px auto 0 auto;
@@ -648,6 +649,7 @@ export default {
       border-radius: 10px;
 
       color: #999;
+
       span {
         height: 80px;
         line-height: 16px;
@@ -686,13 +688,16 @@ export default {
       background: #fafafa;
     }
   }
+
   .c-header-top {
     &:before {
       border-radius: 16px 16px 0 0;
     }
   }
+
   .c-header-bottom {
     padding-bottom: 24px !important;
+
     &:before {
       bottom: 12px;
       border-radius: 0 0 16px 16px;
@@ -704,10 +709,12 @@ export default {
   th {
     text-align: start;
   }
+
   td + td,
   th + th {
     text-align: center;
   }
+
   td.default {
     display: table-cell;
   }
@@ -716,15 +723,18 @@ export default {
     font-size: 28px;
     font-weight: bold;
   }
+
   .txt-top {
     position: relative;
     top: -9px;
     left: -2px;
   }
+
   .tick {
     font-size: 18px;
     color: #2ca01c;
   }
+
   .c-header {
     font-weight: 800;
     border-left: unset;
@@ -735,6 +745,7 @@ export default {
 .vertical-align-middle {
   vertical-align: middle;
 }
+
 .vertical-align-top {
   vertical-align: top;
 }

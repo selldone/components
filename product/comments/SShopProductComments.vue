@@ -21,7 +21,7 @@
       class="my-16"
     >
       <v-row align="center">
-        <v-col cols="12" sm="6" md="3" order="1" order-sm="2" order-md="1">
+        <v-col cols="12" md="3" order="1" order-md="1" order-sm="2" sm="6">
           <div class="my-8">
             <span class="text-h1 font-weight-black">
               {{ numeralFormat(product.rate, "0.0") }}
@@ -37,47 +37,49 @@
             </div>
           </div>
         </v-col>
-        <v-col cols="12" sm="12" md="6" order="2" order-sm="1" order-md="2">
+        <v-col cols="12" md="6" order="2" order-md="2" order-sm="1" sm="12">
           <s-shop-product-rating-view
-            class="my-8"
-            style="font-size: 17px"
             :product="product"
+            class="my-8"
             dense
+            style="font-size: 17px"
           />
         </v-col>
 
-        <v-col cols="12" sm="6" md="3" order="3" order-sm="3" order-md="3">
+        <v-col cols="12" md="3" order="3" order-md="3" order-sm="3" sm="6">
           <v-sheet
             :color="SaminColorDarkDeep"
-            dark
-            class="my-8 bg-shade-dark pa-6 d-flex flex-column align-center rounded-lg mx-auto position-relative overflow-hidden line-height-normal"
             :style="{
               fontSize: statement_size,
             }"
+            class="my-8 bg-shade-dark pa-6 d-flex flex-column align-center rounded-lg mx-auto position-relative overflow-hidden line-height-normal"
+            dark
             max-width="240"
             style="aspect-ratio: 1"
           >
             <v-rating
               v-model="product.rate"
-              class="absolute-top-center op-0-2"
               active-color="#AAA"
+              class="absolute-top-center op-0-2"
               color="grey-darken-1"
+              density="compact"
               half-increments
               readonly
               size="36"
-              density="compact"
             />
 
             <div class="ma-auto z1">
-              <v-icon color="#fff" size="x-large" class="mb-2">{{
-                product.rate > 4
-                  ? "hotel_class"
-                  : product.rate > 3.5
-                    ? "star_rate"
-                    : product.rate > 2.5
-                      ? "star_half"
-                      : "star_border"
-              }}</v-icon>
+              <v-icon class="mb-2" color="#fff" size="x-large"
+                >{{
+                  product.rate > 4
+                    ? "hotel_class"
+                    : product.rate > 3.5
+                      ? "star_rate"
+                      : product.rate > 2.5
+                        ? "star_half"
+                        : "star_border"
+                }}
+              </v-icon>
               <div>{{ buyer_rating_statement }}</div>
             </div>
           </v-sheet>
@@ -87,21 +89,21 @@
 
     <v-container v-else-if="product.my_ratings">
       <s-shop-product-rating-view
-        class="my-8"
-        style="font-size: 17px"
         :product="product"
+        class="my-8"
         dense
+        style="font-size: 17px"
       />
     </v-container>
 
     <div v-if="product?.article_pack" class="s--product-section-comments">
       <s-expand-view max-height="80vh" min-height="30vh">
         <s-article-comments
-          is-shop
-          class="min-height-20vh"
-          :article-user-id="product.user_id"
           :article-id="product.article_pack.article.id"
+          :article-user-id="product.user_id"
+          class="min-height-20vh"
           for-product
+          is-shop
         />
       </s-expand-view>
     </div>
@@ -167,7 +169,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--shop-product-comments {
   margin-top: 5vh;
   margin-bottom: 5vh;

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-toolbar dense rounded flat class="my-3">
+  <v-toolbar class="my-3" dense flat rounded>
     <v-icon color="#999">more_vert</v-icon>
     <v-toolbar-title class="text-uppercase font-weight-normal"
       ><small>{{ title }}</small></v-toolbar-title
@@ -22,17 +22,17 @@
     <v-toolbar-items>
       <slot></slot>
 
-      <v-btn v-if="editButton" @click="$emit('click:edit')" icon
-        ><v-icon>{{ editIcon }}</v-icon></v-btn
-      >
+      <v-btn v-if="editButton" icon @click="$emit('click:edit')">
+        <v-icon>{{ editIcon }}</v-icon>
+      </v-btn>
 
-      <v-btn @click="addEnterBefore()" title="Add line before" icon
-        ><v-icon>subdirectory_arrow_left</v-icon></v-btn
-      >
+      <v-btn icon title="Add line before" @click="addEnterBefore()">
+        <v-icon>subdirectory_arrow_left</v-icon>
+      </v-btn>
 
-      <v-btn @click="addEnterAfter()" title="Add line after" icon
-        ><v-icon>subdirectory_arrow_right</v-icon></v-btn
-      >
+      <v-btn icon title="Add line after" @click="addEnterAfter()">
+        <v-icon>subdirectory_arrow_right</v-icon>
+      </v-btn>
     </v-toolbar-items>
   </v-toolbar>
 </template>

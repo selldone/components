@@ -24,23 +24,29 @@
           {{ $t("shop.native.message") }}
         </p>
         <p class="font-weight-bold">
-          <v-icon color="green" class="mx-1">security</v-icon>
+          <v-icon class="mx-1" color="green">security</v-icon>
           {{ $t("shop.native.message_bold") }}
         </p>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn rounded text @click="rejectLoginNativeApp()" class="mx-1" large>
+        <v-btn
+          class="mx-1"
+          rounded
+          size="large"
+          variant="text"
+          @click="rejectLoginNativeApp()"
+        >
           {{ $t("global.actions.no") }}
         </v-btn>
 
         <v-btn
-          large
-          dark
-          color="green darken-1"
-          depressed
           class="mx-1"
+          color="green-darken-1"
+          dark
+          size="large"
+          variant="flat"
           @click="sendTokenToNativeApp()"
         >
           {{ $t("global.actions.accept") }}
@@ -86,7 +92,7 @@ export default {
     sendTokenToNativeApp() {
       this.login_to_app_dialog = false;
       window.location = `${this.nativeApp.app}?token=${window.$cookies.get(
-        "access_token"
+        "access_token",
       )}`;
     },
     rejectLoginNativeApp() {

@@ -14,11 +14,11 @@
 
 <template>
   <v-icon
-    color="red"
-    class="blink-me ms-1 hover-scale-small"
     :title="$t('global.notification.over_license_limit')"
-    >warning</v-icon
-  >
+    class="blink-me ms-1 hover-scale-small"
+    color="red"
+    >warning
+  </v-icon>
 </template>
 
 <script>

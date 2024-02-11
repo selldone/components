@@ -41,16 +41,16 @@
 
     <widget-product-card
       v-else-if="lottery.product_id"
+      :compact-mode="true"
+      :filter-variant="lottery.variant"
+      :hover="false"
       :product="lottery.product"
       :shop="getShop()"
       :show-edit-button="false"
+      :show-price="true"
       :show-ratting="false"
       :show-statistics="false"
-      :show-price="true"
-      :compact-mode="true"
       class="my-3"
-      :hover="false"
-      :filter-variant="lottery.variant"
     />
 
     <!-- ===================== Discount ==================== -->
@@ -95,6 +95,7 @@
 
 <script>
 import WidgetProductCard from "@components/backoffice/product/widgets/WidgetProductCard.vue";
+
 export default {
   name: "SStorefrontLotteryPrizeDetail",
   components: { WidgetProductCard },

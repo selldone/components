@@ -14,25 +14,25 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    class="image-overlay-canvas"
     :data="json_data"
-    spellcheck="false"
+    class="image-overlay-canvas"
     contenteditable="false"
+    spellcheck="false"
   >
     <s-article-editor-component-toolbar
       v-if="editable"
+      :edit-button="false"
       :element="element"
       :title="$t('global.commons.canvas')"
-      :edit-button="false"
     >
     </s-article-editor-component-toolbar>
 
     <s-image-canvas
       v-model:image="bg"
-      v-model:rects="rects"
-      :upload-url="uploadUrl"
       v-model:ratio="ratio"
+      v-model:rects="rects"
       :editable="edit_mode"
+      :upload-url="uploadUrl"
     >
     </s-image-canvas>
   </div>
@@ -104,7 +104,5 @@ export default {
 
 <style lang="scss" scoped>
 .image-overlay-canvas {
-
-
 }
 </style>

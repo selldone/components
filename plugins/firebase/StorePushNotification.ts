@@ -64,7 +64,7 @@ export class StorePushNotification {
       //console.log("Message received - Foreground. ", payload);
       StorePushNotification.EventBus.$emit(
         EventName.FIREBASE_RECEIVE_MESSAGE,
-        payload
+        payload,
       );
     });
 
@@ -106,12 +106,12 @@ export class StorePushNotification {
           // Send the token to your server and update the UI if necessary
           StorePushNotification.EventBus.$emit(
             EventName.FIREBASE_GET_TOKEN,
-            currentToken
+            currentToken,
           );
         } else {
           // Show permission request UI
           console.log(
-            "No Instance ID token available. Request permission to generate one."
+            "No Instance ID token available. Request permission to generate one.",
           );
         }
       })

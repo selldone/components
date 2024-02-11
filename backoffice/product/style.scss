@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-.s--backoffice-products-management-view{
+.s--backoffice-products-management-view {
   user-select: none !important;
 
 
@@ -38,7 +38,6 @@
   }
 
 
-
   .drag-category-container {
     background-color: var(--theme-dark);
     color: white;
@@ -49,9 +48,11 @@
     border: solid 3px #333;
 
     text-align: center;
+
     &.hide-spirits {
       display: none !important;
     }
+
     img {
       border-radius: 14px;
       overflow: hidden;
@@ -207,14 +208,16 @@
       left: -8px;
     }
   }
-  .rotate-7deg{
+
+  .rotate-7deg {
     transform: rotate(7deg);
   }
-  .f-anim{
+
+  .f-anim {
     transition: transform 0.3s ease-in-out;
   }
 
-  .bundle-mode{
+  .bundle-mode {
     opacity: 0.1;
     transform: scale(0.8);
     transition: transform 0.4s;

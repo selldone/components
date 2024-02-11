@@ -12,12 +12,11 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-
 /**
  * Mixin to provide inline editing capabilities.
  * @mixin InlineEditorMixin
  */
-export const InlineEditorMixin =({
+export const InlineEditorMixin = {
   props: {},
   data() {
     return {};
@@ -35,7 +34,7 @@ export const InlineEditorMixin =({
       e: FocusEvent,
       property: string,
       variable: Record<string, any>,
-      force_text: boolean = false
+      force_text: boolean = false,
     ) {
       const target = e.target as HTMLInputElement;
 
@@ -49,4 +48,4 @@ export const InlineEditorMixin =({
         variable[props[0]][props[1]][props[2]] = value;
     },
   },
-});
+};

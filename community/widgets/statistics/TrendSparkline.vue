@@ -15,19 +15,19 @@
 <template>
   <s-sparkline
     v-if="value && value.length"
-    :smooth="smooth"
+    :auto-draw="autoDraw"
+    :fill="fill"
     :gradient="
       (value[value.length - 1] >= value[0]) ^ reverse
         ? ['#2f976e', '#1ca2d7']
         : ['#847', '#F48']
     "
-    :line-width="2"
-    :value="value"
-    :auto-draw="autoDraw"
     :height="height"
+    :line-width="2"
+    :smooth="smooth"
+    :value="value"
     padding="3"
     stroke-linecap="round"
-    :fill="fill"
   >
   </s-sparkline>
 </template>
@@ -37,7 +37,7 @@ import SSparkline from "@components/chart/sparkline/SSparkline.vue";
 
 export default {
   name: "TrendSparkline",
-  components: {SSparkline},
+  components: { SSparkline },
   props: {
     value: {
       type: Array,

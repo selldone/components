@@ -46,12 +46,10 @@ function emitEvent(vnode: any, eventName: string, eventDetail?: any) {
 }
 
 const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
-
   if (binding.value === false) {
     return;
   }
   // console.log("Initialize drag scroll directive!");
-
 
   // Default parameters
   let target = el as any; // the element to apply the dragscroll on
@@ -118,9 +116,8 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
     let isDragging = false;
     // let isClick = false // workaround to handle click event from touch
 
-
     // Add 'cursor-pan-all' class on init
-    target.classList.add('cursor-grab');
+    target.classList.add("cursor-grab");
 
     target.md = function (e: {
       pageX: any;
@@ -130,7 +127,7 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
       clientX: any;
       clientY: any;
     }) {
-       e.preventDefault()
+      e.preventDefault();
       const isMouseEvent = e instanceof window.MouseEvent;
       // The coordinates of the mouse pointer compared to the page when the mouse button is clicked on an element
       const pageX = isMouseEvent ? e.pageX : e.touches[0].pageX;
@@ -289,7 +286,7 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
 
 const destroy = (el: any) => {
   const target = el;
-  target.classList.remove('cursor-grab');
+  target.classList.remove("cursor-grab");
   removeEventListeners(target, POINTER_START_EVENTS, target.md);
   removeEventListeners(window, POINTER_END_EVENTS, target.mu);
   removeEventListeners(window, POINTER_MOVE_EVENTS, target.mm);

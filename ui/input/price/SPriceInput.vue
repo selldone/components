@@ -15,15 +15,22 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-text-field
     v-model="model"
-    :suffix="suffix ? suffix : currency_obj ? $t(currency_obj.name) : undefined"
-    :error-messages="errorMessages"
-    @focus="onFocus"
-    @keyup="onKeyUp"
-    @change="onChange"
-    @blur="onBlur"
-    :rounded="rounded"
-    :density="dense ? 'compact' : undefined"
+    v-model:focused="focused"
+    :bg-color="backgroundColor"
     :clearable="clearable"
+    :density="dense ? 'compact' : undefined"
+    :disabled="disabled"
+    :error-messages="errorMessages"
+    :flat="flat"
+    :hide-details="hideDetails"
+    :hint="hint"
+    :label="label"
+    :messages="messages"
+    :prepend-icon="prependIcon"
+    :prepend-inner-icon="prependInnerIcon"
+    :rounded="rounded"
+    :rules="rules"
+    :suffix="suffix ? suffix : currency_obj ? $t(currency_obj.name) : undefined"
     :variant="
       variant
         ? variant
@@ -35,19 +42,12 @@
               ? 'outlined'
               : 'underlined'
     "
-    :label="label"
-    :hint="hint"
-    :disabled="disabled"
-    :rules="rules"
-    :messages="messages"
-    :prepend-icon="prependIcon"
-    :prepend-inner-icon="prependInnerIcon"
-    :bg-color="backgroundColor"
-    :hide-details="hideDetails"
-    :flat="flat"
+    @blur="onBlur"
+    @change="onChange"
+    @focus="onFocus"
+    @keyup="onKeyUp"
     @keydown.enter="$emit('enter')"
     @click:clear="$emit('click:clear')"
-    v-model:focused="focused"
   >
     <template v-slot:append-inner>
       <slot name="append-inner"></slot>
@@ -160,8 +160,7 @@ export default {
       thousandsSeparatorRegex: new RegExp(`\\${this.thousandsSeparator}`, "g"),
       decimalSeparatorRegex: new RegExp(`\\${this.decimalSeparator}`, "g"),
 
-      focused:false,
-
+      focused: false,
     };
   },
 
@@ -191,7 +190,7 @@ export default {
       this.updateModel();
     },
     onBlur() {
-      this.$emit('blur')
+      this.$emit("blur");
       this.isMasked = true;
       this.format();
     },
@@ -199,7 +198,7 @@ export default {
       this.updateNumberValue();
     },
     onChange() {
-      this.$emit('change')
+      this.$emit("change");
     },
     updateNumberValue() {
       let v = NumberHelper.toEnglishDigits(this.model);

@@ -13,522 +13,513 @@
  */
 
 
-
 /* ---------------------------------  Vue list transition  -------------------------------- */
 .list-item {
-    transition: all 1s;
-    display: inline-block;
-    margin-right: 10px;
+  transition: all 1s;
+  display: inline-block;
+  margin-right: 10px;
 }
+
 .list-enter-active, .list-leave-active {
-    transition: all 1s;
+  transition: all 1s;
 }
-.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
-    opacity: 0;
-    transform: translateY(30px);
+
+.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */
+{
+  opacity: 0;
+  transform: translateY(30px);
 }
 
 /* ---------------------------------  End Vue list transition -------------------------------- */
 
 
-
 /* ---------------------------------  Slide transiotion  -------------------------------- */
 .slide-toggle-enter-active,
 .slide-toggle-leave-active {
-    overflow: hidden;
+  overflow: hidden;
 
-    transition: max-height 0.7s cubic-bezier(0, 1, 0, 1);
+  transition: max-height 0.7s cubic-bezier(0, 1, 0, 1);
 
 }
 
 
-
 .slide-toggle-enter-active {
-    max-height: 2000px;
-    transition: max-height 1s ease-in-out;
+  max-height: 2000px;
+  transition: max-height 1s ease-in-out;
 }
 
 .slide-toggle-enter,
 .slide-toggle-leave-active {
-    max-height: 0;
+  max-height: 0;
 
 }
 
 .slide-toggle-leave {
-    max-height: 2000px;
+  max-height: 2000px;
 
 }
-
-
 
 
 /* === Content (Post List & Layout) ===*/
 
 #main {
-    padding-bottom: 100px;
+  padding-bottom: 100px;
 }
 
 .post-list {
-    width: 1000px;
-    margin: 2em auto;
-    overflow: hidden;
+  width: 1000px;
+  margin: 2em auto;
+  overflow: hidden;
 }
 
 .search-title {
-    color: #999;
-    margin: 0 0 20px 0;
-    padding: 0 0 10px 0;
-    border-bottom: 1px solid #eee;
-    font-weight: normal;
-    font-size: 1.2em;
-    text-align: center;
+  color: #999;
+  margin: 0 0 20px 0;
+  padding: 0 0 10px 0;
+  border-bottom: 1px solid #eee;
+  font-weight: normal;
+  font-size: 1.2em;
+  text-align: center;
 }
 
 .post-item {
-    width: 31%;
-    margin: 0 1% 2em 1%;
-    float: left;
-    height: 260px;
-    border: 1px solid #ddd;
-    border-radius: 2px;
-    color: #666;
+  width: 31%;
+  margin: 0 1% 2em 1%;
+  float: left;
+  height: 260px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  color: #666;
 }
 
 .post-feature {
-    display: block;
-    height: 100px;
-    background: #4ac396 no-repeat center center;
-    background-size: cover;
-    -moz-background-size: cover;
-    -webkit-background-size: cover;
+  display: block;
+  height: 100px;
+  background: #4ac396 no-repeat center center;
+  background-size: cover;
+  -moz-background-size: cover;
+  -webkit-background-size: cover;
 }
 
 .post-title {
-    font-weight: bold;
-    font-size: 1.1em;
-    padding: 15px 20px;
-    height: 3em;
-    overflow: hidden;
+  font-weight: bold;
+  font-size: 1.1em;
+  padding: 15px 20px;
+  height: 3em;
+  overflow: hidden;
 }
 
 .post-title a {
-    text-decoration: none;
-    color: inherit;
+  text-decoration: none;
+  color: inherit;
 }
 
 .post-meta {
-    margin-top: 4px;
-    padding: 10px 20px;
-    overflow: hidden;
+  margin-top: 4px;
+  padding: 10px 20px;
+  overflow: hidden;
 }
 
 .post-author-pic {
-    float: left;
-    margin-right: 10px;
-    padding: 2px;
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    color: #aaa;
+  float: left;
+  margin-right: 10px;
+  padding: 2px;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  color: #aaa;
 
-    background: #f5f5f5 no-repeat center center;
-    background-size: cover;
-    -moz-background-size: cover;
-    -webkit-background-size: cover;
+  background: #f5f5f5 no-repeat center center;
+  background-size: cover;
+  -moz-background-size: cover;
+  -webkit-background-size: cover;
 
-    font-size: 0.6em;
-    text-align: center;
-    border-radius: 32px;
-    overflow: hidden;
-    border: 1px solid #ddd;
+  font-size: 0.6em;
+  text-align: center;
+  border-radius: 32px;
+  overflow: hidden;
+  border: 1px solid #ddd;
 }
 
 .post-author-info {
-    font-size: 0.8em;
-    float: left;
-    line-height: 1.1em;
-    margin-top: 4px;
+  font-size: 0.8em;
+  float: left;
+  line-height: 1.1em;
+  margin-top: 4px;
 }
 
 .post-author-info b {
-    display: block;
-    font-weight: normal;
+  display: block;
+  font-weight: normal;
 }
 
 .post-author-info time {
-    font-size: 0.6em;
-    color: #aaa;
+  font-size: 0.6em;
+  color: #aaa;
 }
 
 .post-view {
-    width: 760px;
-    margin: 0 auto;
+  width: 760px;
+  margin: 0 auto;
 }
 
 .post-view-meta {
-    color: #999;
-    padding-bottom: 15px;
-    overflow: hidden;
+  color: #999;
+  padding-bottom: 15px;
+  overflow: hidden;
 }
 
 .post-view-meta div {
-    float: left;
-    margin-right: 40px;
-    overflow: hidden;
-    cursor: pointer;
+  float: left;
+  margin-right: 40px;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .post-view-meta div span {
-    display: block;
-    float: left;
+  display: block;
+  float: left;
 }
 
 .post-view-meta .fa {
-    font-size: 1.4em;
-    margin: 6px 8px 0 0;
+  font-size: 1.4em;
+  margin: 6px 8px 0 0;
 }
 
 .post-view-meta .fa-heart-o,
 .post-view-meta .fa-heart {
-    color: #2ECC71;
+  color: #2ECC71;
 }
 
 .author {
-    margin: 2em 0;
-    position: relative;
+  margin: 2em 0;
+  position: relative;
 }
 
 .author a {
-    color: inherit;
+  color: inherit;
 }
 
 .author-name a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .author-pic {
-    float: left;
-    width: 64px;
-    height: 64px;
-    line-height: 64px;
-    color: #aaa;
+  float: left;
+  width: 64px;
+  height: 64px;
+  line-height: 64px;
+  color: #aaa;
 
-    background: #f1f1f1 no-repeat center center;
-    background-size: cover;
-    -moz-background-size: cover;
-    -webkit-background-size: cover;
+  background: #f1f1f1 no-repeat center center;
+  background-size: cover;
+  -moz-background-size: cover;
+  -webkit-background-size: cover;
 
-    font-size: 0.6em;
-    text-align: center;
-    border-radius: 64px;
-    padding: 2px;
-    border: 1px solid #ddd;
-    text-align: center;
-    overflow: hidden;
+  font-size: 0.6em;
+  text-align: center;
+  border-radius: 64px;
+  padding: 2px;
+  border: 1px solid #ddd;
+  text-align: center;
+  overflow: hidden;
 }
 
 .author-info {
-    float: left;
-    font-size: 15px;
-    margin-left: 15px;
-    margin-top: 5px;
-    line-height: 1.2em;
+  float: left;
+  font-size: 15px;
+  margin-left: 15px;
+  margin-top: 5px;
+  line-height: 1.2em;
 }
 
 .pub-time, .author-pos {
-    display: block;
-    color: #999;
-    font-size: 12px;
-    margin: 2px 0;
+  display: block;
+  color: #999;
+  font-size: 12px;
+  margin: 2px 0;
 }
 
 .delete {
-    position: absolute;
-    display: block;
-    top: 122px;
-    left: -60px;
-    width: 36px;
-    height: 36px;
-    border: 1px solid #ddd;
-    border-radius: 36px;
-    line-height: 40px;
-    font-size: 1.2em;
-    color: #999;
-    background: #f1f1f1;
-    text-align: center;
-    cursor: pointer;
-    opacity: 0.4;
+  position: absolute;
+  display: block;
+  top: 122px;
+  left: -60px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ddd;
+  border-radius: 36px;
+  line-height: 40px;
+  font-size: 1.2em;
+  color: #999;
+  background: #f1f1f1;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0.4;
 }
 
 .delete:hover,
 .delete:active {
-    opacity: 1;
-    color: #E74C3C;
+  opacity: 1;
+  color: #E74C3C;
 }
 
 .editable-title {
-    font-family: inherit;
-    line-height: 2em;
-    font-size: 2em;
-    font-weight: bold;
-    outline: 0 none;
-    border: 0 none;
-    color: inherit;
-    min-height: 2em;
+  font-family: inherit;
+  line-height: 2em;
+  font-size: 2em;
+  font-weight: bold;
+  outline: 0 none;
+  border: 0 none;
+  color: inherit;
+  min-height: 2em;
 }
 
 /* === Comment === */
 .comment-view {
-    background: #fafafa;
-    padding: 50px 0;
-    border-top: 1px solid #eee;
-    display: none;
+  background: #fafafa;
+  padding: 50px 0;
+  border-top: 1px solid #eee;
+  display: none;
 }
 
 .comments {
-    width: 600px;
-    margin: 0 auto;
+  width: 600px;
+  margin: 0 auto;
 }
 
 .comment-title {
-    font-weight: bold;
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 15px;
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 15px;
 }
 
 .comment-form,
 .comment-item {
-   // border: 1px solid #ddd;
-    background: #fff;
+  // border: 1px solid #ddd;
+  background: #fff;
   //  box-shadow: 0 0 3px #eee;
-    border-radius: 16px;
-    margin-bottom: 20px;
-    font-size: 1rem;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  font-size: 1rem;
 
-    border: none;
-    box-shadow: 0px 3px 20px 5px rgba(113, 112, 112, 0.06) !important;
+  border: none;
+  box-shadow: 0px 3px 20px 5px rgba(113, 112, 112, 0.06) !important;
 }
 
 .comment-form .comment-placeholder {
-    color: #999;
-    cursor: pointer;
-    font-style: italic;
-    user-select: none;
+  color: #999;
+  cursor: pointer;
+  font-style: italic;
+  user-select: none;
 
-    &:hover{
-        font-weight: 700;
-        color: #0b6aaa;
-        .v-icon{
-            color: #0b6aaa !important;
-        }
+  &:hover {
+    font-weight: 700;
+    color: #0b6aaa;
+
+    .v-icon {
+      color: #0b6aaa !important;
     }
+  }
 }
-
-
 
 
 .comment-form .inline-error {
-    color: #E74C3C;
-    font-size: 0.8em;
-    margin-left: 15px;
-    display: none;
+  color: #E74C3C;
+  font-size: 0.8em;
+  margin-left: 15px;
+  display: none;
 }
-
 
 
 .comment-author-info {
-    font-size: 0.8em;
-    line-height: 1.5em;
+  font-size: 0.8em;
+  line-height: 1.5em;
 }
 
 .comment-author-info b {
-    color: #2ECC71;
-    font-weight: normal;
-    display: block;
+  color: #2ECC71;
+  font-weight: normal;
+  display: block;
 }
 
 .comment-author-info time {
-    color: #999;
-    font-size: 0.8em;
+  color: #999;
+  font-size: 0.8em;
 }
 
 .comment-body {
-    clear: both;
-    color: #555;
+  clear: both;
+  color: #555;
 }
-
-
-
 
 
 /* === Model Dialogs - Login, Register, Profile === */
 .overlay {
-    position: fixed;
-    z-index: 99992;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    opacity: 0.8;
-    display: none;
+  position: fixed;
+  z-index: 99992;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  opacity: 0.8;
+  display: none;
 }
 
 .model {
-    position: fixed;
-    z-index: 99993;
-    width: 30%;
-    top: 10%;
-    left: 33%;
-    padding: 50px 40px 40px 40px;
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    box-shadow: 0 0 20px #e5e5e5;
-    display: none;
+  position: fixed;
+  z-index: 99993;
+  width: 30%;
+  top: 10%;
+  left: 33%;
+  padding: 50px 40px 40px 40px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 0 20px #e5e5e5;
+  display: none;
 }
 
 .model .fa-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    color: #aaa;
-    padding: 5px 10px;
-    cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: #aaa;
+  padding: 5px 10px;
+  cursor: pointer;
 }
 
 .model-head {
-    text-align: center;
+  text-align: center;
 }
 
 .profile-pic {
-    width: 64px;
-    height: 64px;
-    line-height: 64px;
-    color: #aaa;
+  width: 64px;
+  height: 64px;
+  line-height: 64px;
+  color: #aaa;
 
-    background: #fff no-repeat center center;
-    background-size: cover;
-    -moz-background-size: cover;
-    -webkit-background-size: cover;
+  background: #fff no-repeat center center;
+  background-size: cover;
+  -moz-background-size: cover;
+  -webkit-background-size: cover;
 
-    text-align: center;
-    border-radius: 64px;
-    padding: 2px;
-    border: 1px solid #ddd;
-    overflow: hidden;
-    margin: 0 auto;
-    cursor: pointer;
+  text-align: center;
+  border-radius: 64px;
+  padding: 2px;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  margin: 0 auto;
+  cursor: pointer;
 }
 
 .profile-pic .fa-camera {
-    opacity: 0.6;
+  opacity: 0.6;
 }
 
 .profile-pic:hover .fa-camera {
-    opacity: 1;
+  opacity: 1;
 }
 
 .model-title {
-    font-size: 1.2em;
-    color: #666;
+  font-size: 1.2em;
+  color: #666;
 }
 
 .model-title.user-name {
-    margin: 10px 0 20px 0;
+  margin: 10px 0 20px 0;
 }
-
-
 
 
 .model .error-message {
-    font-size: 0.65em;
-    line-height: 2em;
-    color: #E74C3C;
-    display: none;
-    transition: color 5s ease;
+  font-size: 0.65em;
+  line-height: 2em;
+  color: #E74C3C;
+  display: none;
+  transition: color 5s ease;
 }
 
 .model .model-action {
-    text-align: center;
-    margin-top: 10px;
+  text-align: center;
+  margin-top: 10px;
 }
 
 .model .link {
-    color: #999;
-    font-size: 0.8em;
-    text-decoration: underline;
-    cursor: pointer;
+  color: #999;
+  font-size: 0.8em;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .model label {
-    font-size: 0.6em;
-    line-height: 1.5em;
-    color: #3498DB;
-    display: block;
-    margin: 0;
+  font-size: 0.6em;
+  line-height: 1.5em;
+  color: #3498DB;
+  display: block;
+  margin: 0;
 }
 
 .profile-model input[name=author] {
-    font-weight: bold;
-    font-size: 1.3em;
+  font-weight: bold;
+  font-size: 1.3em;
 }
 
 .model-message {
-    position: fixed;
-    z-index: 99998;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    display: none;
+  position: fixed;
+  z-index: 99998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  display: none;
 }
 
 .model-message .fa-close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    color: #ccc;
-    padding: 5px 10px;
-    font-size: 1.2em;
-    cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: #ccc;
+  padding: 5px 10px;
+  font-size: 1.2em;
+  cursor: pointer;
 }
 
 .model-message .fa-close:hover,
 .model-message .fa-close:active {
-    color: #aaa;
+  color: #aaa;
 }
 
 .model-message-body {
-    position: fixed;
-    top: 35%;
-    left: 34%;
-    width: 30%;
-    text-align: center;
+  position: fixed;
+  top: 35%;
+  left: 34%;
+  width: 30%;
+  text-align: center;
 }
 
 .model-message-buttons {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .model-message-buttons button {
-    background: #fff;
-    border-radius: 20px;
-    border: 1px solid #ddd;
-    padding: 6px 20px;
-    cursor: pointer;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  padding: 6px 20px;
+  cursor: pointer;
 }
 
 .model-message-buttons button:hover,
 .model-message-buttons button:active {
-    border-color: #aaa;
+  border-color: #aaa;
 }
 
 /* === Content (Editor & View) === */
 
 .editable-body {
-    outline: 0 none;
+  outline: 0 none;
 }
 
 .editable-body p,
@@ -536,57 +527,53 @@
 .editable-body ol,
 .editable-body pre,
 .medium-insert-images,
-.medium-insert-images-safe
-{
-    margin-top: 0;
-    margin-bottom: 2em;
+.medium-insert-images-safe {
+  margin-top: 0;
+  margin-bottom: 2em;
 }
 
 .editable-body ul,
-.editable-body ol
-{
-    line-height: 3em;
+.editable-body ol {
+  line-height: 3em;
 }
 
 .editable-body h2 {
-    font-size: 1.6em;
+  font-size: 1.6em;
 }
 
 .editable-body h3 {
-    font-size: 1.4em;
+  font-size: 1.4em;
 }
 
 .editable-body h2,
-.editable-body h3
-{
-    margin-top: 0;
-    margin-bottom: 0.25em;
+.editable-body h3 {
+  margin-top: 0;
+  margin-bottom: 0.25em;
 }
 
 .editable-body h2.sub-title,
-.editable-body h3.sub-title
-{
-    color: #999;
-    font-weight: normal;
-    margin-bottom: 2em;
-    font-size: 1.2em;
+.editable-body h3.sub-title {
+  color: #999;
+  font-weight: normal;
+  margin-bottom: 2em;
+  font-size: 1.2em;
 }
 
 .editable-body blockquote {
-    font-size: 0.9em;
-    border-left: 5px solid #666;
-    font-style: italic;
-    margin: 0 0 2em 2em;
-    padding-left: 2em;
-    color: #666;
+  font-size: 0.9em;
+  border-left: 5px solid #666;
+  font-style: italic;
+  margin: 0 0 2em 2em;
+  padding-left: 2em;
+  color: #666;
 }
 
 .editable-body pre {
-    line-height: 1.5em;
-    background: #555;
-    padding: 10px 20px;
-    font-size: 0.9em;
-    color: #fff;
+  line-height: 1.5em;
+  background: #555;
+  padding: 10px 20px;
+  font-size: 0.9em;
+  color: #fff;
 }
 
 /* === Medium Editor Fixes === */
@@ -594,35 +581,33 @@
 /* Placeholder position fix */
 .medium-editor-placeholder-relative::after,
 .medium-editor-placeholder::after,
-.medium-editor-insert-plugin.medium-editor-placeholder::after
-{
-    color: #999;
-    font-style: normal;
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 0;
+.medium-editor-insert-plugin.medium-editor-placeholder::after {
+  color: #999;
+  font-style: normal;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0;
 }
 
 /* Medium Editor Insert Addons - beagle themes - toolbar buttons fix */
 .medium-editor-toolbar li button:hover,
-.medium-editor-toolbar li .medium-editor-button-active
-{
-    background-color: transparent;
+.medium-editor-toolbar li .medium-editor-button-active {
+  background-color: transparent;
 }
 
 /* Medium Editor Insert Addons - Insert Button Style - enhancement */
 .editable-body .medium-insert-buttons .medium-insert-buttons-addons {
-    line-height: 1em;
+  line-height: 1em;
 }
 
 .editable-body .medium-insert-buttons .medium-insert-buttons-addons li {
-    margin: 0 2px;
+  margin: 0 2px;
 }
 
 .editable-body .medium-insert-buttons button {
-    color: #666;
-    border: 1px solid #666;
+  color: #666;
+  border: 1px solid #666;
 }
 
 .medium-insert-images figure figcaption,
@@ -632,63 +617,71 @@
 .medium-insert-images .figure .figcaption,
 .mediumInsert .figure .figcaption,
 .medium-insert-embeds .figure .figcaption,
-.mediumInsert-embeds .figure .figcaption
-{
-    color: #aaa;
-    font-size: .8em;
-    font-style: italic;
+.mediumInsert-embeds .figure .figcaption {
+  color: #aaa;
+  font-size: .8em;
+  font-style: italic;
 }
 
 /* === Progress Bar === */
 
 .progress {
-    position: fixed;
-    z-index: 99999;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: #28C76F;
-    height: 2px;
-    animation: progress 1s infinite;
-    display: none;
+  position: fixed;
+  z-index: 99999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #28C76F;
+  height: 2px;
+  animation: progress 1s infinite;
+  display: none;
 }
 
 @keyframes progress {
-  0% { width: 0; left: 0; }
-  50% { width: 100%; left: 0; }
-  100% { width: 0; left: 100%; }
+  0% {
+    width: 0;
+    left: 0;
+  }
+  50% {
+    width: 100%;
+    left: 0;
+  }
+  100% {
+    width: 0;
+    left: 100%;
+  }
 }
 
 /* === Helpers === */
 
 .screen, .state, .auth-show,
 .mobile-search, .mobile-search-trigger {
-    display: none ;
+  display: none;
 }
 
 header .menu li .link.mobile-menu-trigger,
 header .search-menu .link.mobile-menu-trigger {
-    display: none;
+  display: none;
 }
 
 .clear-fix {
-    clear: both;
+  clear: both;
 }
 
 *:focus {
-    outline: none;
+  outline: none;
 }
 
 small {
-    color: #aaa;
+  color: #aaa;
 }
 
 input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 30px white inset;
+  -webkit-box-shadow: 0 0 0 30px white inset;
 }
 
 a, span.link {
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 

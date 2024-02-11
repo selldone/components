@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div >
+  <div>
     <!-- General -->
     <div class="widget-box mb-5">
       <s-widget-header
@@ -21,21 +21,23 @@
         icon="tune"
       ></s-widget-header>
 
-      <v-list-subheader> Set a title and provide a concise description for the category.</v-list-subheader>
+      <v-list-subheader>
+        Set a title and provide a concise description for the category.
+      </v-list-subheader>
 
       <v-text-field
         v-model="title"
         :counter="128"
         :label="$t('community.category.title')"
-        :placeholder="$t('community.category.title_plc')"
         :messages="$t('community.category.title_msg')"
+        :placeholder="$t('community.category.title_plc')"
       ></v-text-field>
       <v-text-field
         v-model="desc"
         :counter="256"
         :label="$t('community.category.desc')"
-        :placeholder="$t('community.category.desc_plc')"
         :messages="$t('community.category.desc_msg')"
+        :placeholder="$t('community.category.desc_plc')"
       ></v-text-field>
     </div>
 
@@ -45,7 +47,9 @@
         :title="$t('global.commons.image')"
         icon="image"
       ></s-widget-header>
-      <v-list-subheader>You have the option to assign an image to the category.</v-list-subheader>
+      <v-list-subheader
+        >You have the option to assign an image to the category.
+      </v-list-subheader>
       <image-input
         v-model="image_file"
         :src="image && getShopImagePath(image)"
@@ -59,13 +63,16 @@
         icon="track_changes"
       ></s-widget-header>
 
-      <v-list-subheader>Here, you can adjust the SEO configurations specifically at the category level. </v-list-subheader>
+      <v-list-subheader
+        >Here, you can adjust the SEO configurations specifically at the
+        category level.
+      </v-list-subheader>
       <s-smart-toggle
         v-model="nofollow"
-        true-title="No follow links"
-        false-title="Follow links"
         :true-description="$t('community.commons.nofollow_msg')"
         false-gray
+        false-title="Follow links"
+        true-title="No follow links"
       ></s-smart-toggle>
     </div>
 
@@ -76,11 +83,13 @@
         icon="leak_add"
       ></s-widget-header>
 
-      <v-list-subheader>Categories can be cross-linked and integrated into other communities. </v-list-subheader>
+      <v-list-subheader
+        >Categories can be cross-linked and integrated into other communities.
+      </v-list-subheader>
       <s-smart-toggle
         v-model="cross"
-        :true-title="$t('community.commons.crossable')"
         :true-description="$t('community.commons.crossable_msg')"
+        :true-title="$t('community.commons.crossable')"
         false-gray
       ></s-smart-toggle>
     </div>
@@ -92,11 +101,14 @@
         icon="private_connectivity"
       ></s-widget-header>
 
-      <v-list-subheader>Determine whether customers are permitted to create new topics in this category. </v-list-subheader>
+      <v-list-subheader
+        >Determine whether customers are permitted to create new topics in this
+        category.
+      </v-list-subheader>
       <s-smart-toggle
         v-model="restrict"
-        :true-title="$t('community.category.restrict')"
         :true-description="$t('community.category.restrict_msg')"
+        :true-title="$t('community.category.restrict')"
         color="red"
         false-gray
       ></s-smart-toggle>
@@ -108,6 +120,7 @@
 import ImageInput from "../image/ImageInput.vue";
 import SSmartToggle from "@components/smart/SSmartToggle.vue";
 import ScrollHelper from "@core/utils/scroll/ScrollHelper";
+
 export default {
   name: "CommunityCategoryEdit",
   components: { SSmartToggle, ImageInput },
@@ -188,16 +201,16 @@ export default {
         promise = axios.post(
           window.CAPI.POST_COMMUNITY_EDIT_CATEGORY(
             this.community.id,
-            this.category.id
+            this.category.id,
           ),
           formData,
-          config
+          config,
         );
       } else {
         promise = axios.post(
           window.CAPI.POST_COMMUNITY_NEW_CATEGORY(this.community.id),
           formData,
-          config
+          config,
         );
       }
 
@@ -207,10 +220,10 @@ export default {
             if (this.category) {
               this.$emit("update:category", data.category);
 
-              ScrollHelper.scrollToTop(0,'smooth')
+              ScrollHelper.scrollToTop(0, "smooth");
             } else {
               this.$emit("add", data.category);
-                 this.resetToDefault();      // 🞇 Reset to default
+              this.resetToDefault(); // 🞇 Reset to default
             }
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -228,4 +241,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

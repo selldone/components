@@ -15,7 +15,6 @@
 <template>
   <span
     v-if="currency_obj"
-    class="imc"
     :caption="currency_obj.code"
     :class="{
       '-gradient': gradient,
@@ -24,7 +23,6 @@
       'sub-caption b-12px': caption,
       '--flag': flag || flagOnly,
     }"
-    :title="currency_obj.code"
     :style="
       gradient
         ? {
@@ -32,6 +30,8 @@
           }
         : undefined
     "
+    :title="currency_obj.code"
+    class="imc"
   >
     <flag
       v-if="(flag || flagOnly) && currency_obj.flag"
@@ -81,7 +81,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .imc {
   display: inline-flex;
   align-items: center;

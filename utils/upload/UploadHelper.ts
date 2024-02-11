@@ -43,7 +43,7 @@ export class UploadHelper {
     success:
       | ((data: { success: boolean; files: IFileUploadResponse }) => void)
       | null = null,
-    color: string | null = null
+    color: string | null = null,
   ) {
     const config: AxiosRequestConfig = {
       withCredentials: withCredentials,

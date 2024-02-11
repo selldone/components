@@ -17,6 +17,7 @@
 .dialog-top-transition-enter-active, .dialog-top-transition-leave-active {
   transition: transform 0.7s;
 }
+
 .dialog-top-transition-enter, .dialog-top-transition-leave-to {
   transform: translateY(-100%);
 }

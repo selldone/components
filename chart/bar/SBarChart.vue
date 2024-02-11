@@ -13,12 +13,18 @@
   -->
 
 <template>
-  <div :id="uid" class="x--chart-bar"
-       :style="{'--highlighted-group-color': highlightedGroup?highlightedGroupColor:undefined}"
+  <div
+    :id="uid"
+    :style="{
+      '--highlighted-group-color': highlightedGroup
+        ? highlightedGroupColor
+        : undefined,
+    }"
+    class="x--chart-bar"
   >
     <div
-      class="font-weight-bold mb-2 small text-start px-2 d-flex align-center"
       v-if="showTitle"
+      class="font-weight-bold mb-2 small text-start px-2 d-flex align-center"
     >
       <slot name="title"></slot>
       {{ title }}
@@ -26,60 +32,65 @@
       <span
         v-for="(max, i) in maxs"
         :key="i"
-        class="small mx-1"
         :title="
           $t('global.commons.max') +
           ' ' +
-          (labels && labels.length > i ? labels[i] : '') +` : ${max} ${title?title:''}`
+          (labels && labels.length > i ? labels[i] : '') +
+          ` : ${max} ${title ? title : ''}`
         "
+        class="small mx-1"
       >
         <v-icon
-          size="10"
           :color="colors[i] ? colors[i] : '#333'"
           class="hover-scale"
+          size="10"
           >circle</v-icon
         >
-        {{   numeralFormat(max,"0.[0]a") }}
+        {{ numeralFormat(max, "0.[0]a") }}
       </span>
     </div>
 
     <div
-      class="d-flex justify-space-between w-100"
       :class="{ 'px-4': !dense, '-grouped': grouped }"
-
+      class="d-flex justify-space-between w-100"
     >
       <div
         v-for="(it, i) in normalized"
         :key="i"
+        :class="{ '-narrow': narrow, 'flex-column': !grouped }"
+        :style="{
+          maxWidth: (narrow ? 4 : 8) * (grouped ? count : 1) + 'px',
+          height: height + 'px',
+        }"
+        class="d-flex justify-center flex-grow-1 --bars"
         @mouseenter.stop="mouseEnter(i)"
         @mouseleave.stop="index = null"
-        class="d-flex justify-center flex-grow-1 --bars"
-        :class="{ '-narrow': narrow, 'flex-column': !grouped }"
-        :style="{ maxWidth: (narrow ? 4 : 8)*(grouped?count:1)+'px', height: height + 'px' }"
       >
         <div
           v-for="(col, j) in it"
-          :key="'c-' + j"
           :id="'c_' + i"
-          class="--bar"
-          style="margin: 0 1px; padding: 1px"
+          :key="'c-' + j"
           :style="{
             height: Math.abs(col) + '%',
             backgroundColor:
               col < 0 ? '#F44336' : colors[j] ? colors[j] : '#333',
           }"
+          class="--bar"
+          style="margin: 0 1px; padding: 1px"
         ></div>
       </div>
     </div>
 
     <s-fade-scroll>
       <div
-        no-gutters
         v-if="legend && labels"
         class="d-flex text-start mx-2 small text-nowrap"
+        no-gutters
       >
         <div v-for="i in count" :key="'l-' + i" class="p-1">
-          <v-icon x-small :color="colors[i - 1]" class="me-1">lens</v-icon>
+          <v-icon :color="colors[i - 1]" class="me-1" size="x-small"
+            >lens
+          </v-icon>
           {{ labels[i - 1] }}
         </div>
       </div>
@@ -92,20 +103,23 @@
     </div>
 
     <v-tooltip
-      bottom
       :activator="`#${uid} #c_${index}`"
-      transition="scale-transition"
-      color="#222"
       :open-delay="350"
+      color="#222"
+      location="bottom"
+      transition="scale-transition"
     >
       <div class="text-start pa-1">
         <div v-if="startDate" class="py-2">
-          {{ getLocalDateString(startDate.addDays(index )) }}
+          {{ getLocalDateString(startDate.addDays(index)) }}
         </div>
         <div v-for="(col, j) in selected" :key="'c-' + j">
-          <v-icon :color="colors[j] ? colors[j] : '#333'" class="me-1" small
-            >circle</v-icon
-          >
+          <v-icon
+            :color="colors[j] ? colors[j] : '#333'"
+            class="me-1"
+            size="small"
+            >circle
+          </v-icon>
           <span v-if="labels && labels.length > j" class="small me-1"
             >{{ labels[j] }}:
           </span>
@@ -160,7 +174,7 @@ export default {
       default: false,
     },
     highlightedGroupColor: {
-      default: 'rgba(230, 230, 230, 0.1)',
+      default: "rgba(230, 230, 230, 0.1)",
     },
   },
 
@@ -185,7 +199,7 @@ export default {
       });
       // Normalize:
       return this.dataset.map((i) =>
-        i.map((x) => Math.round((100 * x) / max_sum))
+        i.map((x) => Math.round((100 * x) / max_sum)),
       );
     },
 
@@ -224,40 +238,46 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .x--chart-bar {
-
-
   .--bars {
     .--bar:first-child {
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
     }
+
     .--bar:last-child {
       border-bottom-left-radius: 4px;
       border-bottom-right-radius: 4px;
     }
+
     &.-narrow {
       .--bar:first-child {
         border-top-left-radius: 2px;
         border-top-right-radius: 2px;
       }
+
       .--bar:last-child {
         border-bottom-left-radius: 2px;
         border-bottom-right-radius: 2px;
       }
     }
+
     transition: all 0.6s ease-in-out;
     transition-delay: 0.3s;
+
     .--bar {
       transition: all 0.6s ease-in-out;
     }
+
     &:hover {
       transition-delay: 0s;
       transition: all 0.2s ease-out;
       transform: scale(1.3);
     }
-  } // --bars
+  }
+
+  // --bars
 
   .-grouped {
     align-items: end;
@@ -266,28 +286,33 @@ export default {
       align-items: end;
       margin: 0 3px;
       background: var(--highlighted-group-color);
-      padding:  1px;
+      padding: 1px;
+
       .--bar {
         border-radius: 4px 4px;
         flex-grow: 1;
+
         &:hover {
           transition-delay: 0s;
           transition: all 0.2s ease-out;
           transform: scale(1.3);
         }
       }
+
       &.-narrow {
         margin: 0 1px;
+
         .--bar {
           border-radius: 2px 2px;
         }
       }
+
       &:hover {
         transform: unset;
       }
+    }
 
-    } // --bars
-
+    // --bars
   }
 }
 </style>

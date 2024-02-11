@@ -15,10 +15,10 @@
 <template>
   <v-avatar :size="size">
     <v-avatar
-      :size="size - Math.min(8, size / 6)"
       :color="color"
-      class="text-white text-uppercase"
+      :size="size - Math.min(8, size / 6)"
       :style="{ 'font-size': size * 0.32 + 'px' }"
+      class="text-white text-uppercase"
     >
       {{ text }}
     </v-avatar>

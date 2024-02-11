@@ -26,7 +26,7 @@
             :key="cross_sell.id"
             class="-card"
           >
-            <v-avatar size="84" class="me-5" rounded
+            <v-avatar class="me-5" rounded size="84"
               ><img
                 v-if="cross_sell.target.icon"
                 :src="
@@ -34,7 +34,7 @@
                     cross_sell.selected_variant?.image
                       ? cross_sell.selected_variant.image
                       : cross_sell.target.icon,
-                    128
+                    128,
                   )
                 "
               />
@@ -45,8 +45,10 @@
                 class="-crossed-image"
                 dir="ltr"
               >
-                <v-icon class="-crossed-icon" color="#fff" small>add</v-icon>
-                <v-avatar size="36" class="avatar-gradient -thin -current">
+                <v-icon class="-crossed-icon" color="#fff" size="small"
+                  >add
+                </v-icon>
+                <v-avatar class="avatar-gradient -thin -current" size="36">
                   <img :src="getShopImagePath(product.icon, 128)" />
                 </v-avatar>
               </div>
@@ -59,13 +61,13 @@
 
               <b class="d-block">
                 <router-link
+                  :title="`${$t('global.actions.view_now')} ● ${
+                    cross_sell.target.title
+                  }`"
                   :to="{
                     name: window.$storefront.routes.PRODUCT_PAGE,
                     params: { product_id: cross_sell.target?.id },
                   }"
-                  :title="`${$t('global.actions.view_now')} ● ${
-                    cross_sell.target.title
-                  }`"
                 >
                   {{ cross_sell.target.title }}
                 </router-link>
@@ -80,23 +82,24 @@
                   ></price-view>
                   <v-chip
                     v-if="cross_sell.discount"
+                    class="pa-1"
                     color="#C2185B"
                     dark
                     label
-                    class="pa-1"
-                    small
+                    size="small"
                     ><b class="me-1">+ %{{ cross_sell.discount }}</b>
-                    {{ $t("global.commons.discount_off") }}</v-chip
-                  >
+                    {{ $t("global.commons.discount_off") }}
+                  </v-chip>
                 </div>
                 <v-spacer></v-spacer>
                 <product-variants-view
                   v-if="cross_sell.target.product_variants"
+                  :selected-variant="cross_sell.selected_variant"
                   :variants="cross_sell.target.product_variants"
                   class="mt-1 pa-0"
                   dense
+                  selectable
                   small
-                  :selected-variant="cross_sell.selected_variant"
                   @update:selected-variant="
                     (val) => {
                       cross_sell.selected_variant = val;
@@ -104,7 +107,6 @@
                       $forceUpdate();
                     }
                   "
-                  selectable
                 ></product-variants-view>
               </div>
 
@@ -118,27 +120,28 @@
                     cross_sell.target.type === ProductType.SUBSCRIPTION.code
                   "
                   :href="getProductLink(shop, cross_sell.target_id)"
-                  target="_blank"
-                  depressed
-                  rounded
                   class="tnt"
                   color="#eee"
+                  rounded
+                  target="_blank"
+                  variant="flat"
                   >{{ $t("global.actions.view_now") }}
-                  <v-icon right small>open_in_new</v-icon></v-btn
-                >
+                  <v-icon end size="small">open_in_new</v-icon>
+                </v-btn>
 
                 <v-btn
                   v-else
-                  @click="addToCardCrossSelling(cross_sell)"
-                  :loading="busy_add === cross_sell.target_id"
-                  depressed
-                  rounded
-                  class="tnt"
                   :color="cross_sell.in_basket ? '#4CAF50' : '#eee'"
                   :dark="cross_sell.in_basket"
-                  ><v-icon left small>{{
-                    cross_sell.in_basket ? "local_mall" : "add"
-                  }}</v-icon>
+                  :loading="busy_add === cross_sell.target_id"
+                  class="tnt"
+                  rounded
+                  variant="flat"
+                  @click="addToCardCrossSelling(cross_sell)"
+                >
+                  <v-icon size="small" start
+                    >{{ cross_sell.in_basket ? "local_mall" : "add" }}
+                  </v-icon>
                   {{
                     cross_sell.in_basket
                       ? $t("global.commons.in_cart")
@@ -224,7 +227,7 @@ export default {
       cross_sell.in_basket = !!BasketHelper.FindItem(
         this.getBasket(cross_sell.target.type),
         cross_sell.target,
-        cross_sell.selected_variant
+        cross_sell.selected_variant,
       );
     },
 
@@ -272,14 +275,14 @@ export default {
         },
         null,
         null, // 🟣 Marketplace 🟣
-        null // 🎗️ Subscription
+        null, // 🎗️ Subscription
       );
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -293,6 +296,7 @@ export default {
     display: flex;
     align-items: stretch;
   }
+
   .-card {
     border: solid thin #eee;
     display: flex;
@@ -313,13 +317,16 @@ export default {
       min-height: 100%;
       flex-direction: column;
       flex-grow: 1;
+
       a {
         color: currentColor;
+
         &:hover {
           color: var(--theme-info);
         }
       }
     }
+
     .-price {
       font-weight: 400;
       margin: 0;
@@ -334,6 +341,7 @@ export default {
       right: 4px;
       display: flex;
       align-items: center;
+
       .-crossed-icon {
         bottom: 8px;
         left: 8px;

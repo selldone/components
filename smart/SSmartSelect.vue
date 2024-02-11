@@ -18,9 +18,6 @@
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
-      tag="div"
-      group
-      class="border-between-vertical rounded-card"
       :class="{
         'disabled pen': disabled,
         border: border,
@@ -29,12 +26,14 @@
           decorative,
         pen: loading,
       }"
+      class="border-between-vertical rounded-card"
+      group
       hide-on-leave
+      tag="div"
     >
       <div
         v-for="(task, i) in items_show"
         :key="val(task) && isString(val(task)) ? val(task) : i"
-        class="p-2 pp row-hover usn"
         :class="{
           'bg-dark': dark && !backgroundColor,
           'bg-white': !dark && !backgroundColor,
@@ -42,50 +41,48 @@
           pen: !clearable && forceShowAll && localModelValue === val(task),
         }"
         :style="{ backgroundColor: backgroundColor }"
+        class="p-2 pp row-hover usn"
         @click="onClickItem(task)"
       >
         <div class="d-flex align-center mnh">
           <div
-            class="me-2 -thin -gray flex-grow-0"
             :class="{ 'avatar-gradient': val(task) === localModelValue }"
+            class="me-2 -thin -gray flex-grow-0"
           >
             <v-sheet
               v-if="val(task) === localModelValue"
-              class="circle-check zoomIn"
               :color="color"
+              class="circle-check zoomIn"
             >
               <!-- Loading -->
               <v-progress-circular
                 v-if="loading"
                 :color="'#fff'"
-                class="center-absolute"
-                indeterminate
                 :size="14"
                 :width="3"
+                class="center-absolute"
+                indeterminate
               ></v-progress-circular>
             </v-sheet>
             <v-icon
               v-else
               :color="dark ? '#fff' : grayUnselected ? '#333' : color"
-              >radio_button_unchecked</v-icon
-            >
+              >radio_button_unchecked
+            </v-icon>
           </div>
           <div class="flex-grow-1">
-            <slot name="prepend-title" :item="task"> </slot>
+            <slot :item="task" name="prepend-title"></slot>
             <b v-html="title(task)"> </b>
-            <slot name="append-title" :item="task"> </slot>
-            <div
-              v-if="itemDescription"
-              class="op-0-7 small"
-            >
+            <slot :item="task" name="append-title"></slot>
+            <div v-if="itemDescription" class="op-0-7 small">
               {{
                 isFunction(itemDescription)
                   ? itemDescription(task)
-                  : $t(task[itemDescription]??'')
+                  : $t(task[itemDescription] ?? "")
               }}
             </div>
 
-            <slot name="description" :item="task"> </slot>
+            <slot :item="task" name="description"></slot>
           </div>
 
           <v-icon
@@ -94,14 +91,12 @@
               (isFunction(itemIcon) ? itemIcon(task) : task[itemIcon])
             "
             :dark="dark"
-            >{{
-              isFunction(itemIcon) ? itemIcon(task) : task[itemIcon]
-            }}</v-icon
-          >
+            >{{ isFunction(itemIcon) ? itemIcon(task) : task[itemIcon] }}
+          </v-icon>
           <v-avatar
             v-if="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
-            size="24"
             :rounded="rounded"
+            size="24"
           >
             <img
               :src="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
@@ -175,7 +170,6 @@ export default {
     };
 
     const title = (task) => {
-
       return !props.itemText
         ? task
         : typeof props.itemText === "function"
@@ -211,10 +205,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .mnh {
   min-height: 40px;
 }
+
 .circle-check {
   animation-duration: 250ms;
   width: 20px;

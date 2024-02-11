@@ -15,33 +15,33 @@
 <template>
   <draggable
     v-model="list"
-    class="list-group list-group-flush"
-    @start="drag = true"
-    @end="drag = false"
-    @update:modelValue="$emit('input', list)"
-    tag="transition-group"
     :component-data="{
       tag: 'ul',
       type: 'transition-group',
       name: !drag ? 'flip-list' : 'fade',
     }"
-    v-bind="dragOptions"
+    class="list-group list-group-flush"
     style="list-style-type: none"
+    tag="transition-group"
+    v-bind="dragOptions"
+    @end="drag = false"
+    @start="drag = true"
+    @update:modelValue="$emit('input', list)"
   >
     <template v-slot:item="{ element }">
       <li
         :key="item"
-        class="list-group-item"
         :style="{ 'background-image': `url('${element}')` }"
+        class="list-group-item"
       >
         <v-btn
           class="delete-button"
           icon
-          variant="text"
           size="small"
+          variant="text"
           @click.stop="deleteItem(index)"
         >
-          <v-icon color="red"> close </v-icon>
+          <v-icon color="red"> close</v-icon>
         </v-btn>
       </li>
     </template>
@@ -50,9 +50,9 @@
       <div class="py-2">
         <v-btn
           v-if="hasAdd"
-          @click.stop="$emit('add-click')"
-          variant="flat"
           rounded
+          variant="flat"
+          @click.stop="$emit('add-click')"
         >
           <v-icon>add</v-icon>
           Add
@@ -64,6 +64,7 @@
 
 <script>
 import draggable from "vuedraggable";
+
 export default {
   name: "draggableImagesList",
   components: { draggable },
@@ -110,17 +111,20 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .flip-list-move {
   transition: transform 0.5s;
 }
+
 .no-move {
   transition: transform 0s;
 }
+
 .ghost {
   opacity: 0.5;
   background: #c8ebfb;
 }
+
 .list-group {
   min-height: 32px;
   //background-color: #fafafa;
@@ -177,6 +181,7 @@ export default {
       background-color: #fff !important;
       z-index: 3;
     }
+
     .delete-button {
       position: absolute;
       right: 8px;

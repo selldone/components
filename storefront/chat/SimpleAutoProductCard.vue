@@ -14,12 +14,19 @@
 
 <template>
   <div>
-    <component :is="to?'router-link':'div'" :to="to" :target="target"  v-if="product" class="widget widget-hover" @click="$emit('click')">
+    <component
+      :is="to ? 'router-link' : 'div'"
+      v-if="product"
+      :target="target"
+      :to="to"
+      class="widget widget-hover"
+      @click="$emit('click')"
+    >
       <v-img
-        width="100%"
-        height="96"
-        :src="getShopImagePath(product.icon)"
         :contain="isImageContain"
+        :src="getShopImagePath(product.icon)"
+        height="96"
+        width="100%"
       >
       </v-img>
       <p class="font-weight-bold mt-1">{{ product.title }}</p>
@@ -31,8 +38,8 @@
           line-through
         ></price-view>
 
-        <v-chip small color="red" dark class="mx-1 float-end"
-          >{{ discount_percent  }} %
+        <v-chip class="mx-1 float-end" color="red" dark size="small"
+          >{{ discount_percent }} %
         </v-chip>
       </p>
       <p class="mt-2">
@@ -41,14 +48,14 @@
 
       <product-variants-view
         v-if="hasVariant"
-        class="p-0"
         :variants="product.variants"
-        small
+        class="p-0"
         dense
+        small
       />
 
       <div v-if="badge || loading" class="blue-badge absolute-top-end">
-        <v-progress-circular v-if="loading" indeterminate color="#fff">
+        <v-progress-circular v-if="loading" color="#fff" indeterminate>
         </v-progress-circular>
         <span v-else>{{ badge }}</span>
       </div>
@@ -61,8 +68,8 @@
       type="card"
     ></v-skeleton-loader>
 
-    <v-alert v-if="error_msg" type="error" color="red" dense>
-      {{error_msg}}
+    <v-alert v-if="error_msg" color="red" density="compact" type="error">
+      {{ error_msg }}
     </v-alert>
   </div>
 </template>
@@ -85,16 +92,14 @@ export default {
 
     badge: {},
     loading: {},
-    target:{},
-    to:{},
-
-
+    target: {},
+    to: {},
   },
   data() {
     return {
       busy: false,
       product: null,
-      error_msg:null
+      error_msg: null,
     };
   },
 
@@ -106,7 +111,11 @@ export default {
     price() {
       if (!this.product) return 0;
 
-      return this.CalcPriceProductCurrentCurrency(this.shop, this.product, null);
+      return this.CalcPriceProductCurrentCurrency(
+        this.shop,
+        this.product,
+        null,
+      );
     },
     discount_percent() {
       return this.discountProductPercent(this.shop, this.product, null);
@@ -121,38 +130,36 @@ export default {
   },
 
   created() {
-      this.busy = true;
-      this.error_msg=null;
+    this.busy = true;
+    this.error_msg = null;
 
-      axios
-        .get(window.XAPI.GET_PRODUCT_INFO_CARD(this.shop.name, this.productId))
-        .then(({ data }) => {
-          if (!data.error) {
-            this.product=data.product
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-            this.error_msg=data.error_msg;
-
-          }
-        })
-        .catch((e) => {
-          this.showLaravelError(e);
-          this.error_msg='Product not found!';
-
-        })
-        .finally(() => {
-          this.busy = false;
-        });
-
+    axios
+      .get(window.XAPI.GET_PRODUCT_INFO_CARD(this.shop.name, this.productId))
+      .then(({ data }) => {
+        if (!data.error) {
+          this.product = data.product;
+        } else {
+          this.showErrorAlert(null, data.error_msg);
+          this.error_msg = data.error_msg;
+        }
+      })
+      .catch((e) => {
+        this.showLaravelError(e);
+        this.error_msg = "Product not found!";
+      })
+      .finally(() => {
+        this.busy = false;
+      });
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .widget {
   text-align: start;
   min-height: 100%;
   cursor: pointer;
+
   p {
     margin: 0;
     min-height: 21px;

@@ -20,47 +20,49 @@
       class="max-widget-width mx-4"
     >
       <v-sheet
-        class="d-flex align-center position-relative border"
-        style="padding: 4px 8px; border-radius: 12px"
         :color="buy_color"
+        class="d-flex align-center position-relative border"
         dark
+        style="padding: 4px 8px; border-radius: 12px"
       >
         <s-country-select
           v-model="selected_country"
-          placeholder="Select a country..."
-          item-value="alpha2"
+          :dense="$vuetify.display.xsOnly"
           :filter="Object.keys(locations)"
-          solo
-          hide-details
           :no-country-name="$vuetify.display.xsOnly"
           :style="$vuetify.display.xsOnly ? 'max-width:80px' : ''"
           flat
+          hide-details
+          item-value="alpha2"
+          placeholder="Select a country..."
+          solo
           transparent
-          :dense="$vuetify.display.xsOnly"
         ></s-country-select>
         <v-autocomplete
           v-model="selected_postal"
-          :placeholder="$t('buy_button.zip_pin_placeholder')"
-          :items="locations[selected_country]"
-          :disabled="!locations[selected_country]"
-          solo
-          hide-details
-          flat
-          background-color="transparent"
           :dense="$vuetify.display.xsOnly"
+          :disabled="!locations[selected_country]"
+          :items="locations[selected_country]"
           :no-data-text="$t('buy_button.zip_pin_not_available_msg')"
-          @change="setMyLocation"
+          :placeholder="$t('buy_button.zip_pin_placeholder')"
+          bg-color="transparent"
+          flat
+          hide-details
+          variant="solo"
+          @update:model-value="setMyLocation"
         >
           <template v-slot:prepend-inner>
-            <span class="small me-2 single-line" style="line-height: normal;">{{$t('buy_button.zip_pin_input')}} </span>
+            <span class="small me-2 single-line" style="line-height: normal"
+              >{{ $t("buy_button.zip_pin_input") }}
+            </span>
           </template>
           <template v-slot:append-inner>
             <v-icon
               v-if="selected_country && !selected_postal"
-              color="primary"
               class="blink-me-linear"
-              >touch_app</v-icon
-            >
+              color="primary"
+              >touch_app
+            </v-icon>
           </template>
         </v-autocomplete>
 
@@ -72,59 +74,60 @@
 
     <s-shop-buy-button
       v-if="has_buy_button"
-      :class="{ disabled: hasVariants && !currentVariant }"
-      :product="product"
-      :current-variant="currentVariant"
-      :can-buy="canBuy"
-      :preferences="preferences"
-      class="mx-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
       ref="buy_button"
-      style="min-height: 72px"
-      :vendor-product="selectedVendorProduct"
-      :selected-subscription-price="selectedSubscriptionPrice"
-      :quick-buy-mode="quickBuyMode"
       v-intersect="onIntersect"
+      :can-buy="canBuy"
+      :class="{ disabled: hasVariants && !currentVariant }"
+      :current-variant="currentVariant"
+      :preferences="preferences"
+      :product="product"
+      :quick-buy-mode="quickBuyMode"
+      :selected-subscription-price="selectedSubscriptionPrice"
+      :vendor-product="selectedVendorProduct"
+      class="mx-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
+      style="min-height: 72px"
     />
 
     <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ FILE:  Download list files dialog ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
     <v-btn
       v-if="isFile && product.buy_file"
-      x-large
-      rounded
+      class="mx-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
       color="green"
       dark
-      class="mx-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
       min-width="200"
+      rounded
+      size="x-large"
       @click="
         () => {
           files_show = true;
         }
       "
-      ><v-icon class="me-2">cloud_download</v-icon>
-      {{ $t("global.actions.download") }}</v-btn
     >
+      <v-icon class="me-2">cloud_download</v-icon>
+      {{ $t("global.actions.download") }}
+    </v-btn>
 
     <!-- █████████████████ Dialog > Files List █████████████████ -->
     <v-dialog
       v-if="isFile"
-      scrollable
       v-model="files_show"
       fullscreen
+      scrollable
       transition="dialog-bottom-transition"
     >
       <v-card>
-        <v-card-title
-          ><v-icon class="me-1" color="black">folder</v-icon>
-          {{ $t("global.commons.files_list") }}</v-card-title
-        >
+        <v-card-title>
+          <v-icon class="me-1" color="black">folder</v-icon>
+          {{ $t("global.commons.files_list") }}
+        </v-card-title>
 
         <v-card-text>
           <div class="widget-box mb-5">
-            <v-list-subheader
-              ><v-icon class="me-1" small>warning_amber</v-icon> After
-              downloading files, check those with your antivirus.</v-list-subheader
-            >
+            <v-list-subheader>
+              <v-icon class="me-1" size="small">warning_amber</v-icon>
+              After downloading files, check those with your antivirus.
+            </v-list-subheader>
 
             <s-shop-product-files-list
               :files="product.files"
@@ -135,10 +138,10 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn x-large text @click="files_show = false">
+            <v-btn size="x-large" variant="text" @click="files_show = false">
               <v-icon class="me-1">close</v-icon>
-              {{ $t("global.actions.close") }}</v-btn
-            >
+              {{ $t("global.actions.close") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -157,14 +160,14 @@
           ) /*Don't show in small screen if exist in cart!*/
         )
       "
-      class="sticky-buy-widget"
       :class="{
         '-hide': isIntersecting || no_side_buy,
         '-in-cart': corresponding_basket_item,
       }"
+      class="sticky-buy-widget"
     >
       <div class="sticky-product">
-        <v-avatar v-if="sticky_image" rounded size="64" class="me-3">
+        <v-avatar v-if="sticky_image" class="me-3" rounded size="64">
           <img
             :src="sticky_image"
             :style="{
@@ -181,16 +184,16 @@
       </div>
       <div class="sticky-action">
         <s-shop-buy-button
-          :class="{ disabled: hasVariants && !currentVariant }"
-          :product="product"
-          :current-variant="currentVariant"
           :can-buy="canBuy"
+          :class="{ disabled: hasVariants && !currentVariant }"
+          :current-variant="currentVariant"
           :preferences="preferences"
+          :product="product"
+          :quick-buy-mode="quickBuyMode"
+          :selected-subscription-price="selectedSubscriptionPrice"
+          :vendor-product="selectedVendorProduct"
           class="mx-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
           style="min-height: 72px"
-          :vendor-product="selectedVendorProduct"
-          :selected-subscription-price="selectedSubscriptionPrice"
-          :quick-buy-mode="quickBuyMode"
         />
       </div>
     </div>
@@ -202,6 +205,7 @@ import SShopBuyButton from "../button/SShopBuyButton.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
+
 export default {
   name: "ProductSectionBoxBuyButton",
   components: { SCountrySelect, SShopProductFilesList, SShopBuyButton },
@@ -262,7 +266,7 @@ export default {
       return this.getShopImagePath(
         this.currentVariant?.image
           ? this.currentVariant.image
-          : this.product.icon
+          : this.product.icon,
       );
     },
 
@@ -298,7 +302,7 @@ export default {
         (item) =>
           item.product_id === this.product.id &&
           item.variant_id ===
-            (this.currentVariant ? this.currentVariant.id : null)
+            (this.currentVariant ? this.currentVariant.id : null),
       );
     },
 
@@ -385,7 +389,7 @@ export default {
           {
             country: this.selected_country,
             postal: this.selected_postal,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -416,7 +420,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .sticky-buy-widget {
   --max-width: 460px;
   --bottom: 8px;
@@ -447,12 +451,15 @@ export default {
     --bottom: 0;
     transform: translateY(calc(100% + 24px));
   }
+
   &.-in-cart {
     --bottom: 52px; // Green strip!
     transform: translateX(90%);
+
     &:hover {
       transform: translateX(0);
     }
+
     &.-hide {
       --bottom: 0;
       transform: translateX(90%) translateY(calc(100% + 24px));
@@ -462,12 +469,15 @@ export default {
   .sticky-product {
     display: flex;
     align-items: center;
+
     .sticky-content {
       flex-grow: 1;
+
       .sticky-title {
         font-weight: 600;
         margin: 6px 0;
       }
+
       .sticky-title-en {
         opacity: 0.7;
       }

@@ -1,10 +1,10 @@
-import { defineComponent, h } from 'vue';
-import { toCanvas, toDataURL, toString } from 'qrcode';
+import { defineComponent, h } from "vue";
+import { toCanvas, toDataURL, toString } from "qrcode";
 
-const EVENT_READY = 'ready';
+const EVENT_READY = "ready";
 
 export default defineComponent({
-  name: 'SQrcode',
+  name: "SQrcode",
 
   props: {
     /**
@@ -29,7 +29,7 @@ export default defineComponent({
      */
     tag: {
       type: String,
-      default: 'canvas',
+      default: "canvas",
     },
   },
 
@@ -67,7 +67,7 @@ export default defineComponent({
       };
 
       switch (this.tag) {
-        case 'canvas':
+        case "canvas":
           toCanvas(this.$el, value, options, (error) => {
             if (error) {
               throw error;
@@ -77,7 +77,7 @@ export default defineComponent({
           });
           break;
 
-        case 'img':
+        case "img":
           toDataURL(value, options, (error, url) => {
             if (error) {
               throw error;
@@ -88,17 +88,17 @@ export default defineComponent({
           });
           break;
 
-        case 'svg':
+        case "svg":
           toString(value, options, (error, string) => {
             if (error) {
               throw error;
             }
 
-            const div = document.createElement('div');
+            const div = document.createElement("div");
 
             div.innerHTML = string;
 
-            const svg = div.querySelector('svg');
+            const svg = div.querySelector("svg");
 
             if (svg) {
               const { attributes, childNodes } = svg;

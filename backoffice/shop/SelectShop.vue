@@ -14,23 +14,23 @@
 
 <template>
   <v-select
-    :value="value"
-    @input="(val) => $emit('input', val)"
+    :clearable="clearable"
+    :color="color"
+    :dense="dense"
+    :disabled="disabled"
+    :filled="filled"
     :items="shops"
-    :placeholder="placeholder"
     :label="label"
+    :loading="loading"
+    :messages="messages"
+    :model-value="value"
+    :outlined="outlined"
+    :placeholder="placeholder"
     :return-object="returnObject"
     :rounded="rounded"
-    :outlined="outlined"
-    :dense="dense"
-    :filled="filled"
-    :color="color"
-    item-text="title"
+    item-title="title"
     item-value="id"
-    :messages="messages"
-    :loading="loading"
-    :disabled="disabled"
-    :clearable="clearable"
+    @update:model-value="(val) => $emit('input', val)"
   >
     <template v-slot:item="{ item }">
       <v-avatar size="32">
@@ -39,15 +39,15 @@
       <span class="mx-2">{{ item.title }}</span>
       <v-icon
         v-if="!item.shop_permissions || !item.shop_permissions.length"
-        x-small
         color="amber"
+        size="x-small"
         title="Owner"
-        >fa:fas fa-crown</v-icon
-      >
+        >fa:fas fa-crown
+      </v-icon>
     </template>
 
     <template v-slot:selection="{ item }">
-      <v-avatar size="32" class="me-2">
+      <v-avatar class="me-2" size="32">
         <img :src="getShopIcon(item.id, 96)" />
       </v-avatar>
       <span class="mx-2 font-weight-bold">{{ item.title }}</span>
@@ -55,26 +55,26 @@
 
       <v-icon
         v-if="!item.shop_permissions || !item.shop_permissions.length"
-        x-small
         color="amber"
+        size="x-small"
         title="Owner"
-        >fa:fas fa-crown</v-icon
-      >
+        >fa:fas fa-crown
+      </v-icon>
     </template>
 
     <template v-slot:append="">
       <v-btn
         v-if="to"
+        :class="{ disabled: !value }"
         :to="to"
-        @click.stop
-        rounded
-        style="margin-top: -7px"
         class=""
         color="#fff"
         light
-        :class="{ disabled: !value }"
-        depressed
         ripple
+        rounded
+        style="margin-top: -7px"
+        variant="flat"
+        @click.stop
       >
         {{ actionText }}
         <v-icon class="ms-2">{{ $t("icons.long_end") }}</v-icon>

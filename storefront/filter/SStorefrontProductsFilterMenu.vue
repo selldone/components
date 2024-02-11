@@ -15,39 +15,39 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-navigation-drawer
     v-model="drawer"
-    :color="light ? '#fafafa' : SaminColorDarkDeep"
-    :expand-on-hover="expandOnHover"
-    :rail="miniVariant"
-    :width="300"
-    :right="right"
-    :dark="!light"
-    :scrim="false"
-    floating
+    :absolute="$vuetify.display.mdAndUp"
     :class="{
       'scrollable-element-dark': !light,
       'scrollable-element-light': light,
     }"
+    :color="light ? '#fafafa' : SaminColorDarkDeep"
+    :dark="!light"
+    :expand-on-hover="expandOnHover"
     :fixed="$vuetify.display.smAndDown"
-    :absolute="$vuetify.display.mdAndUp"
     :height="
       $vuetify.display.mdAndDown ? 'calc(100% - 48px)' : 'calc(100% - 16px)'
     "
+    :rail="miniVariant"
+    :right="right"
+    :scrim="false"
+    :width="300"
     class="s--storefront-products-filter-menu"
+    floating
   >
     <div ref="list_container">
-      <v-list density="compact" nav class="py-0">
+      <v-list class="py-0" density="compact" nav>
         <v-list-item lines="two">
           <template v-slot:prepend>
-          <v-avatar v-if="category_image">
-            <img :src="category_image" />
-          </v-avatar>
+            <v-avatar v-if="category_image">
+              <img :src="category_image" />
+            </v-avatar>
           </template>
 
           <v-list-item-content class="text-start">
             <v-list-item-title>{{ category_title }}</v-list-item-title>
-            <v-list-item-subtitle>{{
-              category_description
-            }}</v-list-item-subtitle>
+            <v-list-item-subtitle
+              >{{ category_description }}
+            </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
 
@@ -56,26 +56,26 @@
         <v-treeview
           ref="treeview"
           :items="categories_item"
+          class="text-start hover-smart-tree"
+          color="accent"
           dense
           hoverable
-          color="accent"
-          rounded
-          item-text="title"
-          class="text-start hover-smart-tree"
           item-key="id"
-          return-object
+          item-text="title"
           open-all
+          return-object
+          rounded
         >
           <template v-slot:label="{ item }">
             <p
-              class="m-0 text-ellipsis"
               :class="{
                 'pointer-pointer': !item.current,
                 'amber--text font-weight-bold': item.current,
               }"
+              class="m-0 text-ellipsis"
               @click="clickTreeView(item)"
             >
-              <v-avatar v-if="item.icon" class="me-1" size="28" color="primary">
+              <v-avatar v-if="item.icon" class="me-1" color="primary" size="28">
                 <img :src="getShopImagePath(item.icon)" />
               </v-avatar>
               {{ item.title }}
@@ -87,10 +87,10 @@
           <v-divider />
           <s-smart-toggle
             v-model="only_is_original"
+            :dark="!light"
             :true-title="$t('product_filter_menu.only_original')"
             false-gray
             true-icon="verified"
-            :dark="!light"
           />
         </template>
 
@@ -99,10 +99,10 @@
 
           <s-smart-toggle
             v-model="only_has_discount"
+            :dark="!light"
             :true-title="$t('product_filter_menu.only_has_discount')"
             false-gray
             true-icon="local_offer"
-            :dark="!light"
           />
         </template>
         <!-- =========================================== Price =========================================== -->
@@ -117,26 +117,26 @@
             v-model="price_range"
             :max="max_price"
             :min="min_price"
-            hide-details
             :step="1"
-            class="align-center text-dark mt-5 mx-2"
-            thumb-label="always"
             :tick-size="8"
+            class="align-center text-dark mt-5 mx-2"
+            hide-details
+            thumb-label="always"
             @end="onChangeFilter"
             @start="price_range_changed = true"
           >
             <template v-slot:thumb-label="">
-              <v-icon size="small" color="accent"> star </v-icon>
+              <v-icon color="accent" size="small"> star</v-icon>
             </template>
           </v-range-slider>
 
           <v-layout row wrap>
-            <v-flex xs6 class="p-2">
+            <v-flex class="p-2" xs6>
               {{ FormatNumberCurrency(price_range[0]) }}
               <br />
               <small>{{ GetUserSelectedCurrencyName() }}</small>
             </v-flex>
-            <v-flex xs6 class="p-2">
+            <v-flex class="p-2" xs6>
               {{ FormatNumberCurrency(price_range[1]) }}
               <br />
               <small>{{ GetUserSelectedCurrencyName() }}</small>
@@ -151,15 +151,15 @@
         <v-divider />
 
         <div class="s-filter-header">
-          <v-icon style="color: currentColor"> fa:fas fa-braille </v-icon>
+          <v-icon style="color: currentColor"> fa:fas fa-braille</v-icon>
           <span class="mx-2">{{ $t("product_filter_menu.brands") }} </span>
         </div>
         <selection-list
-          class="px-1"
           v-model="selected_brands"
-          :list="brands"
-          @change="onChangeFilter"
           :light="light"
+          :list="brands"
+          class="px-1"
+          @change="onChangeFilter"
         />
       </div>
 
@@ -180,19 +180,20 @@
           <v-spacer></v-spacer>
           <v-btn
             v-if="selected_variants[item.code + 's']"
-            @click="selected_variants[item.code + 's'] = []"
             :title="`Reset filter: ${$t(item.name)}`"
             icon
-            ><v-icon>close</v-icon>
+            @click="selected_variants[item.code + 's'] = []"
+          >
+            <v-icon>close</v-icon>
           </v-btn>
         </div>
         <selection-list
-          class="px-1"
           v-model="selected_variants[item.code + 's']"
           :is-color="item.code === 'color'"
-          :list="getList(item.code + 's')"
-          @change="onChangeFilter"
           :light="light"
+          :list="getList(item.code + 's')"
+          class="px-1"
+          @change="onChangeFilter"
         />
       </div>
 
@@ -201,25 +202,26 @@
 
       <div v-for="item in other_filters" :key="item">
         <div class="s-filter-header">
-          <v-icon style="color: currentColor"> arrow_drop_down </v-icon>
+          <v-icon style="color: currentColor"> arrow_drop_down</v-icon>
 
           <span class="mx-2"> {{ item }}</span>
 
           <v-spacer></v-spacer>
           <v-btn
             v-if="selected_spec[item]"
-            @click="selected_spec[item] = []"
             :title="`Reset filter: ${$t(item)}`"
             icon
-            ><v-icon>close</v-icon>
+            @click="selected_spec[item] = []"
+          >
+            <v-icon>close</v-icon>
           </v-btn>
         </div>
         <selection-list
-          class="px-1"
           v-model="selected_spec[item]"
-          :list="getList(item)"
-          @change="onChangeFilter"
           :light="light"
+          :list="getList(item)"
+          class="px-1"
+          @change="onChangeFilter"
         />
       </div>
 

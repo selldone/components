@@ -13,8 +13,9 @@
  */
 
 @use 'sass:math';
+
 @function strip-unit($value) {
-  @return   math.div($value, ($value * 0 + 1));  // BUG in minify css step on build production! //$value / ($value * 0 + 1) //
+  @return math.div($value, ($value * 0 + 1)); // BUG in minify css step on build production! //$value / ($value * 0 + 1) //
 }
 
 @mixin fluid-type($min-vw, $max-vw, $min-font-size, $max-font-size) {
@@ -82,10 +83,7 @@ $mod_2: 1.5; // desktop
   }
 
 
-
-
-
-//-------------------------
+  //-------------------------
   .dark {
 
     h1 {
@@ -107,25 +105,30 @@ $mod_2: 1.5; // desktop
     h5 {
       color: #fff;
     }
+
     p {
       color: #fff;
     }
+
     .v-card {
       p {
         color: #fff;
       }
     }
-    .text-muted{
+
+    .text-muted {
       color: #ffffffab !important;
     }
-    small{
+
+    small {
       color: #ffffffab !important;
     }
 
   }
-//---------------------------
 
-  .h2-subtitle{
+  //---------------------------
+
+  .h2-subtitle {
     margin-bottom: 7rem;
     margin-top: 1.5rem;
     font-size: 1.4rem;
@@ -145,17 +148,16 @@ $mod_2: 1.5; // desktop
     }
 
 
-
   }
 
 
-
   .v-card {
-    &.dark,&.theme--dark{
+    &.dark, &.theme--dark {
       p {
         color: #fff;
       }
     }
+
     p {
       font-size: 1.1rem;
     }
@@ -169,12 +171,12 @@ $mod_2: 1.5; // desktop
     }
   }
 
-  .bg-image{
+  .bg-image {
     position: absolute;
     width: 100%;
     height: 100%;
     object-fit: contain;
-    top:0;
+    top: 0;
     left: 0;
   }
 
@@ -196,10 +198,12 @@ $mod_2: 1.5; // desktop
   @media screen and (max-width: 500px) {
     font-size: 1.2rem;
   }
-  b{
+
+  b {
     font-weight: 600;
   }
 }
+
 .sub-title-big-b {
   color: hsla(0, 0%, 0%, 0.8);
   line-height: 160%;
@@ -212,10 +216,12 @@ $mod_2: 1.5; // desktop
   @media screen and (max-width: 500px) {
     font-size: 1.2rem;
   }
-  b{
+
+  b {
     font-weight: 600;
   }
 }
+
 .sub-title-medium-b {
   color: hsla(0, 0%, 0%, 0.8);
   line-height: 160%;
@@ -237,22 +243,26 @@ $mod_2: 1.5; // desktop
 
   line-height: 140%;
 }
+
 .h1-medium {
   font-size: $mod_1*$mod_1*$mod_1 *1.2rem;
   @include fluid-type($min_width, $max_width, 24px, 48px);
 
   line-height: 140%;
 }
-.theme--dark{
+
+.theme--dark {
   .sub-title-medium-b {
     color: hsla(0, 0%, 100%, 0.8);
   }
-  .h1-big,.h1-medium {
+
+  .h1-big, .h1-medium {
     color: #fff;
   }
 }
+
 // ----------------------- Editor ----------------------
-.row-font{
+.row-font {
   padding: 8px 16px;
   display: flex;
   align-items: center;

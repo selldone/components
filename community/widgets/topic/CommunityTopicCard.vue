@@ -14,64 +14,68 @@
 
 <template>
   <v-col
-    cols="12"
-    class="c-container -force-rounded"
     :class="{ 'border-top-thick -red': topic.private }"
+    class="c-container -force-rounded"
+    cols="12"
   >
-    <v-icon v-if="topic.pin" class="absolute-top-end" small title="Pinned">push_pin</v-icon>
+    <v-icon
+      v-if="topic.pin"
+      class="absolute-top-end"
+      size="small"
+      title="Pinned"
+      >push_pin
+    </v-icon>
 
     <router-link
-      class="c-widget -hover d-flex black--text"
       :class="{ 'flex-column': $vuetify.display.xs }"
       :to="{
         name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
         params: { topic_id: topic.id, topic_slug: slugify(topic.title) },
       }"
+      class="c-widget -hover d-flex text-black"
     >
       <community-image
         v-if="topic.image"
-        :src="getShopImagePath(topic.image)"
         :height="$vuetify.display.xs ? '100px' : 'auto'"
-        :width="$vuetify.display.xs ? '100%' : 200"
         :min-height="$vuetify.display.xs ? 100 : 200"
+        :src="getShopImagePath(topic.image)"
+        :width="$vuetify.display.xs ? '100%' : 200"
       ></community-image>
 
       <div
         class="ms-2 px-2 flex-grow-1 py-2 overflow-hidden d-flex flex-column"
       >
-
         <b class="d-block text-capitalize t-title"
           >{{ topic.title }}
           <v-chip
-            class="ms-1"
-            x-small
-            pill
             v-if="topic.private"
+            class="ms-1"
             color="red"
             dark
-            >Private</v-chip
-          >
-          <v-chip
-            class="ms-1"
-            x-small
             pill
+            size="x-small"
+            >Private
+          </v-chip>
+          <v-chip
             v-if="topic.community_id !== community.id"
+            class="ms-1"
             color="green"
             dark
-            >Cross topic</v-chip
-          >
+            pill
+            size="x-small"
+            >Cross topic
+          </v-chip>
         </b>
-
 
         <p class="single-line d-block m-0 typo-body my-1">
           {{ topic.desc }}
         </p>
 
         <!-- Monetization -->
-        <p v-if="subscription" class="my-1 text-success subtitle-2">
-          <v-icon small class="me-1 mb-1" color="success"
-            >monetization_on</v-icon
-          >
+        <p v-if="subscription" class="my-1 text-success text-subtitle-2">
+          <v-icon class="me-1 mb-1" color="success" size="small"
+            >monetization_on
+          </v-icon>
           <price-view
             :amount="topic.price"
             :currency="topic.currency"
@@ -83,7 +87,7 @@
         <!-- Statistics -->
         <div v-if="timeSeries && show_reports" class="my-2 fadeIn delay_2s">
           <v-row dense>
-            <v-col cols="6" sm="3" v-for="item in keys" :key="item.key">
+            <v-col v-for="item in keys" :key="item.key" cols="6" sm="3">
               <div class="d-flex single-line">
                 <b class="x-small">{{ item.title }}</b>
                 <v-spacer></v-spacer>
@@ -92,10 +96,10 @@
               </div>
 
               <trend-sparkline
+                :auto-draw="false"
                 :value="timeSeries.arrayOfForceInterpolateZero(item.key)"
                 fill
                 height="32"
-                :auto-draw="false"
               ></trend-sparkline>
             </v-col>
           </v-row>
@@ -109,19 +113,18 @@
           :size="32"
         ></s-dense-images-circles-users>
 
-        <div class="subtitle-2 d-flex align-center op-0-7">
+        <div class="text-subtitle-2 d-flex align-center op-0-7">
           <v-spacer></v-spacer>
 
           <div v-if="topic.total_polls" class="me-2">
-            {{ topic.total_polls }} <v-icon small>poll</v-icon>
+            {{ topic.total_polls }}
+            <v-icon size="small">poll</v-icon>
           </div>
 
           <div class="me-2" title="Posts">
             {{ topic.total_posts }}
 
             <v-badge
-              :model-value="todayData && todayData.posts > 0"
-              color="#D32F2F"
               :content="
                 todayData && todayData.posts
                   ? todayData.posts > 9
@@ -129,8 +132,10 @@
                     : todayData.posts
                   : null
               "
+              :model-value="todayData && todayData.posts > 0"
+              color="#D32F2F"
             >
-              <v-icon small>person</v-icon>
+              <v-icon size="small">person</v-icon>
             </v-badge>
           </div>
 
@@ -140,8 +145,6 @@
             {{ topic.total_comments }}
 
             <v-badge
-              :model-value="todayData && todayData.comments > 0"
-              color="#D32F2F"
               :content="
                 todayData && todayData.comments
                   ? todayData.comments > 9
@@ -149,9 +152,11 @@
                     : todayData.comments
                   : null
               "
+              :model-value="todayData && todayData.comments > 0"
               bordered
+              color="#D32F2F"
             >
-              <v-icon small>comment</v-icon>
+              <v-icon size="small">comment</v-icon>
             </v-badge>
           </div>
         </div>
@@ -160,7 +165,7 @@
 
     <!-- Trend -->
     <s-ribbon v-if="topic.trend" red>
-      <v-icon small dark>local_fire_department</v-icon>
+      <v-icon dark size="small">local_fire_department</v-icon>
       {{ $t("community.commons.trend") }}
     </s-ribbon>
   </v-col>
@@ -174,6 +179,7 @@ import { TopicTrialType } from "@core/enums/community/TopicTrialType";
 import SRibbon from "@components/ui/ribbon/SRibbon.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
 import { TimeSeries } from "@core/timeserie/TimeSeries";
+
 export default {
   name: "CommunityTopicCard",
   components: {
@@ -241,7 +247,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .badge-circle {
   background-color: red;
   color: #fff;
@@ -255,7 +261,7 @@ export default {
   border-radius: 50%;
 }
 
-.t-title{
+.t-title {
   font-size: 140%;
 }
 </style>

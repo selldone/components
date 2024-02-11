@@ -39,7 +39,7 @@ $quoteAnimationNames: false;
   .#{$base}-enter-active, .#{$base}In,
   .#{$base}-leave-active, .#{$base}Out {
     animation-duration: $animationDuration;
-    animation-fill-mode: both;  //both
+    animation-fill-mode: both; //both
   }
 
   // Entrance/Exit for the base class
@@ -57,7 +57,7 @@ $quoteAnimationNames: false;
     .#{$base}#{$name}-enter-active, .#{$base}In#{$name},
     .#{$base}#{$name}-leave-active, .#{$base}Out#{$name} {
       animation-duration: $animationDuration;
-      animation-fill-mode: both;    //both
+      animation-fill-mode: both; //both
     }
 
     .#{$base}#{$name}-enter-active, .#{$base}In#{$name} {

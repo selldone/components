@@ -14,10 +14,9 @@
 
 <template>
   <tr
-    @click="edit_mode = true"
     :title="edit_mode ? undefined : 'Click to edit!'"
+    @click="edit_mode = true"
   >
-
     <td class="min-width-250">
       <div class="d-flex align-center">
         <s-state-flag
@@ -35,18 +34,18 @@
               <v-icon
                 v-if="defaultCountryRule"
                 class="mx-1"
-                title="Default country rule"
                 color="#111"
+                title="Default country rule"
                 >outlined_flag</v-icon
               >
             </span>
 
             <img
               v-if="vat.eu"
+              class="ms-2"
+              height="20"
               src="../../assets/icons/europe.svg"
               width="20"
-              height="20"
-              class="ms-2"
             />
           </div>
 
@@ -55,7 +54,15 @@
           </div>
         </div>
 
-        <v-chip v-if="override_rule" class="ms-1" size="small" color="cyan" pill> ● Override</v-chip>
+        <v-chip
+          v-if="override_rule"
+          class="ms-1"
+          color="cyan"
+          pill
+          size="small"
+        >
+          ● Override
+        </v-chip>
       </div>
     </td>
 
@@ -63,11 +70,11 @@
       <v-text-field
         v-if="edit_mode"
         v-model="label_value"
-        label="Label"
         density="compact"
-        variant="solo"
-        hide-details
         flat
+        hide-details
+        label="Label"
+        variant="solo"
       ></v-text-field>
       <span v-else class="typo-body">
         {{ label_value }}
@@ -78,16 +85,16 @@
       <s-number-input
         v-if="edit_mode"
         v-model="tax_value"
-        :step="0.1"
         :decimal="3"
-        class="strong-field"
         :max="100"
-        suffix="%"
+        :step="0.1"
+        class="strong-field"
         dense
-        solo
-        hide-details
-        flat
         filled
+        flat
+        hide-details
+        solo
+        suffix="%"
       ></s-number-input>
       <b v-else class="typo-body"> {{ tax_value }}% </b>
     </td>
@@ -96,16 +103,16 @@
       <s-number-input
         v-if="edit_mode"
         v-model="cvat_value"
-        :step="0.1"
         :decimal="3"
-        class="strong-field"
         :max="100"
-        suffix="%"
+        :step="0.1"
+        class="strong-field"
         dense
-        solo
-        hide-details
-        flat
         filled
+        flat
+        hide-details
+        solo
+        suffix="%"
       ></s-number-input>
       <b v-else class="typo-body"> {{ cvat_value }}% </b>
     </td>
@@ -113,16 +120,16 @@
       <s-number-input
         v-if="edit_mode"
         v-model="bvat_value"
-        :step="0.1"
         :decimal="3"
-        class="strong-field"
         :max="100"
-        suffix="%"
+        :step="0.1"
+        class="strong-field"
         dense
-        solo
-        hide-details
-        flat
         filled
+        flat
+        hide-details
+        solo
+        suffix="%"
       ></s-number-input>
       <b v-else class="typo-body"> {{ bvat_value }}% </b>
     </td>
@@ -131,16 +138,16 @@
       <s-number-input
         v-if="edit_mode"
         v-model="shipping_value"
-        :step="0.1"
         :decimal="3"
-        class="strong-field"
         :max="100"
-        suffix="%"
+        :step="0.1"
+        class="strong-field"
         dense
-        solo
-        hide-details
-        flat
         filled
+        flat
+        hide-details
+        solo
+        suffix="%"
       ></s-number-input>
       <b v-else class="typo-body"> {{ shipping_value }}% </b>
     </td>
@@ -148,27 +155,28 @@
     <td class="text-center min-width-100">
       <v-btn
         v-if="edited"
-        @click.stop="setOverrideTax()"
         :loading="busy_set"
-        color="primary"  variant="elevated"
         class="ma-1"
+        color="primary"
         title="Save my tax rule."
+        variant="elevated"
+        @click.stop="setOverrideTax()"
       >
-        <v-icon class="me-1" size="small">save</v-icon
-        >{{ $t("global.actions.save") }}</v-btn
-      >
+        <v-icon class="me-1" size="small">save </v-icon>
+        {{ $t("global.actions.save") }}
+      </v-btn>
       <v-btn
         v-else-if="override_rule"
-        variant="elevated"
-        @click.stop="deleteOverride()"
         :loading="busy_delete"
         class="ma-1"
         color="primary"
         title="Remove my custom rule (Override)."
+        variant="elevated"
+        @click.stop="deleteOverride()"
       >
         <v-icon class="me-1" size="small">refresh</v-icon>
-        {{ $t("global.actions.reset_default") }}</v-btn
-      >
+        {{ $t("global.actions.reset_default") }}
+      </v-btn>
     </td>
   </tr>
 </template>
@@ -176,7 +184,6 @@
 <script>
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import TaxRegionTypeView from "@components/backoffice/tax/TaxRegionTypeView.vue";
-
 
 export default {
   name: "TaxOverrideRow",

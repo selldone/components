@@ -15,8 +15,8 @@
 <template>
   <v-item-group
     :model-value="modelValue"
-    @update:model-value="(val) => $emit('update:modelValue', val)"
     :multiple="multiple"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <v-container>
       <v-row>
@@ -28,7 +28,7 @@
               dark
               @click="toggle"
             >
-              <img width="36" height="36" class="m-2" :src="level.icon" />
+              <img :src="level.icon" class="m-2" height="36" width="36" />
               {{ $t(level.name) }}
             </v-card>
           </v-item>
@@ -42,7 +42,7 @@
               dark
               @click="toggle"
             >
-              <v-icon size="36" height="36" class="m-2">face</v-icon>
+              <v-icon class="m-2" height="36" size="36">face</v-icon>
               {{ $t("global.commons.no_club") }}
             </v-card>
           </v-item>

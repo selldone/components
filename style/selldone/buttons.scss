@@ -29,64 +29,64 @@ a {
     font-family: inherit;
 
 
-      width: 13rem;
+    width: 13rem;
     min-width: 10rem;
     height: auto;
 
-      .circle {
-        transition: all  0.45s  cubic-bezier(0.65, 0, .076, 1);
-        position: relative;
-        margin: 0;
-        width: 3rem;
-        height: 3rem;
-        background: var(--theme-light);
-        border-radius: 1.625rem;
+    .circle {
+      transition: all 0.45s cubic-bezier(0.65, 0, .076, 1);
+      position: relative;
+      margin: 0;
+      width: 3rem;
+      height: 3rem;
+      background: var(--theme-light);
+      border-radius: 1.625rem;
 
-        .icon {
-          transition: all  0.45s  cubic-bezier(0.65, 0, .076, 1);
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          margin: auto;
-          background: #fff;
+      .icon {
+        transition: all 0.45s cubic-bezier(0.65, 0, .076, 1);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        background: #fff;
 
-          &.arrow {
-            transition: all  0.45s  cubic-bezier(0.65, 0, .076, 1);
-            left: 0.625rem;
-            width: 1.125rem;
-            height: 0.125rem;
-            background: none;
+        &.arrow {
+          transition: all 0.45s cubic-bezier(0.65, 0, .076, 1);
+          left: 0.625rem;
+          width: 1.125rem;
+          height: 0.125rem;
+          background: none;
 
-            &::before {
-              position: absolute;
-              content: '';
-              top: -0.25rem;
-              right: 0.0625rem;
-              width: 0.625rem;
-              height: 0.625rem;
-              border-top: 0.125rem solid #fff;
-              border-right: 0.125rem solid #fff;
-              transform: rotate(45deg);
-            }
+          &::before {
+            position: absolute;
+            content: '';
+            top: -0.25rem;
+            right: 0.0625rem;
+            width: 0.625rem;
+            height: 0.625rem;
+            border-top: 0.125rem solid #fff;
+            border-right: 0.125rem solid #fff;
+            transform: rotate(45deg);
           }
         }
       }
+    }
 
-      .button-text {
-        transition: all  0.45s  cubic-bezier(0.65, 0, .076, 1);
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding: 0.75rem 0;
-        margin: 0 0 0 1.85rem;
-        color: var(--theme-light);
-        font-weight: 500;
-        line-height: 1.6;
-        text-align: center;
-        text-transform: uppercase;
-      }
+    .button-text {
+      transition: all 0.45s cubic-bezier(0.65, 0, .076, 1);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0.75rem 0;
+      margin: 0 0 0 1.85rem;
+      color: var(--theme-light);
+      font-weight: 500;
+      line-height: 1.6;
+      text-align: center;
+      text-transform: uppercase;
+    }
 
 
     &:hover {

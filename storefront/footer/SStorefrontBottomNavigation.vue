@@ -15,78 +15,80 @@
 <template>
   <v-bottom-navigation
     v-if="shop"
-    app
-    grow
-    fixed
-    :color="SaminColorDark"
-    background-color="#fafafa"
-    class="s--storefront-bottom-navigation shadow-small"
     :class="{
       '-hide': (!showNavbar && !search_mode) || force_hide_navigation,
       '-top': search_mode,
     }"
-    style="z-index: 9999999; box-shadow: none"
-    :value="tab"
+    :color="SaminColorDark"
     :height="76"
+    :model-value="tab"
+    app
+    background-color="#fafafa"
+    class="s--storefront-bottom-navigation shadow-small"
+    fixed
+    grow
+    style="z-index: 9999999; box-shadow: none"
   >
     <template v-if="!search_mode">
       <!-- ------------------ Home ------------------ -->
 
       <v-btn
-        value="home"
         :to="
           last_home_route
             ? last_home_route
             : in_product || in_category
-            ? {
-                name: 'ShopPage',
-              }
-            : {
-                name: channel_entry
-                  ? in_channel_entry_page
-                    ? 'ShopPage'
-                    : channel_entry_page_name
-                  : getCustomHomePage()
-                  ? !in_custom_home_page
-                    ? getCustomHomePage()
-                    : 'ShopPage'
-                  : 'ShopPage',
-              }
+              ? {
+                  name: 'ShopPage',
+                }
+              : {
+                  name: channel_entry
+                    ? in_channel_entry_page
+                      ? 'ShopPage'
+                      : channel_entry_page_name
+                    : getCustomHomePage()
+                      ? !in_custom_home_page
+                        ? getCustomHomePage()
+                        : 'ShopPage'
+                      : 'ShopPage',
+                }
         "
+        class="zoomIn"
+        exact
+        min-width="60"
+        retain-focus-on-click
+        value="home"
         @click="
           last_home_route = null;
           last_product = null;
           last_cat = null;
         "
-        exact
-        min-width="60"
-        class="zoomIn"
-        retain-focus-on-click
       >
-        <v-avatar v-if="last_product" size="24" color="#eee">
+        <v-avatar v-if="last_product" color="#eee" size="24">
           <img :src="getProductImage(last_product, 64)" />
         </v-avatar>
-        <v-icon v-else-if="last_cat"> folder </v-icon>
+        <v-icon v-else-if="last_cat"> folder</v-icon>
         <v-icon v-else-if="last_home_route">store</v-icon>
 
-        <v-icon v-else-if="channel_entry">{{
-          in_channel_entry_page ? "apps" : channel_entry_page_icon
-        }}</v-icon>
+        <v-icon v-else-if="channel_entry"
+          >{{ in_channel_entry_page ? "apps" : channel_entry_page_icon }}
+        </v-icon>
 
-        <v-icon v-else>{{
-          in_custom_home_page || in_product || in_category ? "apps" : "home"
-        }}</v-icon>
+        <v-icon v-else
+          >{{
+            in_custom_home_page || in_product || in_category ? "apps" : "home"
+          }}
+        </v-icon>
       </v-btn>
 
       <!-- ------------------ Search ------------------ -->
 
       <v-btn
+        key="ser"
+        class="zoomIn delay_100"
+        min-width="60"
+        retain-focus-on-click
         value="search"
         @click="search_mode = true"
-        min-width="60"
-        class="zoomIn delay_100"
-        key="ser"
-        retain-focus-on-click
       >
         <v-icon>search</v-icon>
       </v-btn>
@@ -94,26 +96,26 @@
       <!-- ------------------ Basket ------------------ -->
 
       <v-btn
-        value="basket"
         :to="{
           name: window.$storefront.routes.BASKET_PAGE,
           params: { type: current_product_type_in_basket },
         }"
-        min-width="60"
         class="zoomIn delay_200"
+        min-width="60"
         retain-focus-on-click
+        value="basket"
       >
         <v-badge
+          :content="numeralFormat(total_items_in_carts, '0a')"
           :model-value="total_items_in_carts > 0"
           color="teal"
-          :content="  numeralFormat(total_items_in_carts,'0a')"
           offset-y="10"
         >
           <img
             v-if="total_items_in_carts > 0"
-            width="24"
             height="24"
             src="../../assets/icons/pos-basket.png"
+            width="24"
           />
           <v-icon v-else>local_mall</v-icon>
         </v-badge>
@@ -122,7 +124,6 @@
       <!-- ------------------ Notification ------------------ -->
 
       <v-btn
-        value="notification"
         :to="
           USER()
             ? {
@@ -130,16 +131,17 @@
               }
             : undefined
         "
-        @click="USER() ? null : NeedLogin()"
-        min-width="60"
         class="zoomIn delay_300"
+        min-width="60"
         retain-focus-on-click
+        value="notification"
+        @click="USER() ? null : NeedLogin()"
       >
         <v-badge
+          :content="numeralFormat(sum_orders_badges, '0a')"
+          :model-value="sum_orders_badges > 0"
           color="red"
           offset-y="10"
-          :model-value="sum_orders_badges > 0"
-          :content="  numeralFormat(sum_orders_badges,'0a')"
         >
           <v-icon>notifications</v-icon>
         </v-badge>
@@ -148,12 +150,16 @@
       <!-- ------------------ Profile ------------------ -->
 
       <v-btn
-        value="profile"
-        v-bind="USER() ? { to: { name: window.$storefront.routes.USER_PROFILE_PAGE } } : undefined"
-        @click="USER() ? null : NeedLogin()"
-        min-width="60"
         class="zoomIn delay_400"
+        min-width="60"
         retain-focus-on-click
+        v-bind="
+          USER()
+            ? { to: { name: window.$storefront.routes.USER_PROFILE_PAGE } }
+            : undefined
+        "
+        value="profile"
+        @click="USER() ? null : NeedLogin()"
       >
         <v-badge
           v-if="USER_ID()"
@@ -161,7 +167,7 @@
           color="transparent"
           offset-y="10"
         >
-          <v-avatar size="24" color="#eee">
+          <v-avatar color="#eee" size="24">
             <v-img :src="getUserAvatar(USER_ID())"></v-img>
           </v-avatar>
 
@@ -169,8 +175,8 @@
             <img
               v-if="getClub()"
               :src="getCustomerClubLevel(getClub().level).icon"
-              width="18"
               height="18"
+              width="18"
             />
           </template>
         </v-badge>
@@ -183,40 +189,40 @@
 
     <template v-if="search_mode">
       <v-btn
-        @click="$refs.search.showQRScanner()"
-        icon
         class="zoomIn delay_300"
-        width="70"
+        icon
         min-width="60"
+        width="70"
+        @click="$refs.search.showQRScanner()"
       >
         <v-icon>qr_code_scanner</v-icon>
       </v-btn>
 
       <s-storefront-search-box
         ref="search"
-        class="full-width align-center d-flex flex-grow-1 fadeIn"
         :class="{}"
-        :title="$t('layout_shop.search_title', { shop_name: shop.title })"
         :shop-name="shop.name"
-        @onSearch="onSearch"
-        @onClear="onClear"
+        :title="$t('layout_shop.search_title', { shop_name: shop.title })"
+        block
+        class="full-width align-center d-flex flex-grow-1 fadeIn"
         color="transparent"
-        solo
+        expand-input
         flat
         no-qr
-        block
         rounded
-        expand-input
         shadow
+        solo
+        @onClear="onClear"
+        @onSearch="onSearch"
       />
 
       <v-btn
-        @click="search_mode = false"
-        icon
-        class="zoomIn"
-        width="70"
-        min-width="60"
         key="ser"
+        class="zoomIn"
+        icon
+        min-width="60"
+        width="70"
+        @click="search_mode = false"
       >
         <v-icon>{{ $t("icons.navigate_next") }}</v-icon>
       </v-btn>
@@ -226,6 +232,7 @@
 
 <script>
 import SStorefrontSearchBox from "@components/storefront/search/SStorefrontSearchBox.vue";
+
 export default {
   name: "SStorefrontBottomNavigation",
   components: { SStorefrontSearchBox },
@@ -265,11 +272,19 @@ export default {
     },
 
     tab() {
-      if (this.$route.name === window.$storefront.routes.SHOP_PAGE) return "home";
-      else if (this.$route.name === window.$storefront.routes.USER_FAVORITES_PAGE) return "favorite";
-      else if (this.$route.name === window.$storefront.routes.BASKET_PAGE) return "basket";
-      else if (this.$route.name === window.$storefront.routes.USER_PROFILE_PAGE) return "profile";
-      else if (this.$route.name === window.$storefront.routes.HISTORY_ORDERS_PHYSICAL)
+      if (this.$route.name === window.$storefront.routes.SHOP_PAGE)
+        return "home";
+      else if (
+        this.$route.name === window.$storefront.routes.USER_FAVORITES_PAGE
+      )
+        return "favorite";
+      else if (this.$route.name === window.$storefront.routes.BASKET_PAGE)
+        return "basket";
+      else if (this.$route.name === window.$storefront.routes.USER_PROFILE_PAGE)
+        return "profile";
+      else if (
+        this.$route.name === window.$storefront.routes.HISTORY_ORDERS_PHYSICAL
+      )
         return "notification";
 
       return "home";
@@ -307,7 +322,7 @@ export default {
       return (
         this.channel_entry &&
         this.$route.matched.some(
-          (record) => record.meta.channel === this.channel_entry
+          (record) => record.meta.channel === this.channel_entry,
         )
       );
     },
@@ -378,7 +393,7 @@ export default {
 
     window.addEventListener("scroll", this.onScroll);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener("scroll", this.onScroll);
   },
   /**
@@ -432,7 +447,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -449,6 +464,7 @@ export default {
   border: 1px solid #dee2e6 !important;
   transition: all 0.35s linear;
   overflow: hidden;
+
   &.-hide {
     transform: translateY(100px) !important;
   }

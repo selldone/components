@@ -14,34 +14,34 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    class="flip-book"
-    :data="json_data"
-    spellcheck="false"
-    contenteditable="false"
     v-intersect:onec="onChange"
+    :data="json_data"
+    class="flip-book"
+    contenteditable="false"
+    spellcheck="false"
   >
     <s-article-editor-component-toolbar
       v-if="editable"
-      @click:edit="showEdit()"
       :element="element"
       :title="$t('global.commons.catalog')"
       edit-icon="add_photo_alternate"
+      @click:edit="showEdit()"
     >
       <v-btn
-        @click="showEdit('size')"
-        variant="text"
         class="text-body-2 border-end pe-2 text-capitalize"
+        variant="text"
+        @click="showEdit('size')"
         >{{ $t("global.commons.max_height") }}: <b>{{ max_height }}</b></v-btn
       >
     </s-article-editor-component-toolbar>
 
     <flipbook
       v-if="show"
-      class="flipbook"
-      :pages="muted_pack.pages"
       ref="flipbook"
+      :pages="muted_pack.pages"
       :style="{ maxHeight: max_height }"
       :zooms="null"
+      class="flipbook"
     />
   </div>
 </template>
@@ -50,7 +50,7 @@
 import Flipbook from "flipbook-vue";
 import SArticleEditorComponentToolbar from "../toolbar/SArticleEditorComponentToolbar.vue";
 import { defineComponent } from "vue";
-import {ArticleMixin} from "@components/mixin/ArticleMixin";
+import { ArticleMixin } from "@components/mixin/ArticleMixin";
 
 export default defineComponent({
   name: "SArticleFlipBook",
@@ -152,6 +152,7 @@ export default defineComponent({
   height: 90vh;
 
   margin-bottom: 36px;
+
   .container {
     max-width: unset !important;
   }

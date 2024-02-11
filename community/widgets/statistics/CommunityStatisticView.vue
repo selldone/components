@@ -17,72 +17,74 @@
     <h2 class="fadeIn">{{ title }}</h2>
 
     <s-time-span
-      :offset.sync="timeSeries.offset"
-      :days.sync="timeSeries.days"
-      @onChange="({ offset, days }) => timeSeries.fetch(offset, days)"
-      :max-days="90"
-      trigger-on-end
-      :loading="timeSeries.busy"
-      style="min-width: 300px; width: 50%"
-      dense
       ref="timespan"
+      v-model:days="timeSeries.days"
+      v-model:offset="timeSeries.offset"
+      :loading="timeSeries.busy"
+      :max-days="90"
       class="fadeIn delay_100"
+      dense
+      style="min-width: 300px; width: 50%"
+      trigger-on-end
+      @onChange="({ offset, days }) => timeSeries.fetch(offset, days)"
     ></s-time-span>
 
     <v-row>
-      <v-col v-if="isCommunity" cols="6" sm="4" md="3" class="fadeIn delay_200">
+      <v-col v-if="isCommunity" class="fadeIn delay_200" cols="6" md="3" sm="4">
         {{ $t("community.commons.categories") }}
 
         <small class="d-block">{{ $t("community.commons.total") }}</small>
-        <h3>{{   numeralFormat(target.total_categories,"0.[0]a") }}</h3>
+        <h3>{{ numeralFormat(target.total_categories, "0.[0]a") }}</h3>
       </v-col>
       <v-col
         v-if="isCommunity || isCategory"
-        cols="6"
-        sm="4"
-        md="3"
         class="fadeIn delay_300"
+        cols="6"
+        md="3"
+        sm="4"
       >
         {{ $t("community.commons.topics") }}
         <small class="d-block">{{ $t("community.commons.total") }}</small>
 
-        <h3>{{   numeralFormat(target.total_topics,"0.[0]a") }}</h3>
+        <h3>{{ numeralFormat(target.total_topics, "0.[0]a") }}</h3>
       </v-col>
-      <v-col cols="6" sm="4" md="3" class="fadeIn delay_400">
+      <v-col class="fadeIn delay_400" cols="6" md="3" sm="4">
         {{ $t("community.commons.posts") }}
         <small class="d-block">{{ $t("community.commons.total") }}</small>
 
-        <h3>{{  numeralFormat(target.total_posts ,"0.[0]a") }}</h3>
+        <h3>{{ numeralFormat(target.total_posts, "0.[0]a") }}</h3>
       </v-col>
-      <v-col cols="6" sm="4" md="3" class="fadeIn delay_500">
+      <v-col class="fadeIn delay_500" cols="6" md="3" sm="4">
         {{ $t("community.commons.comments") }}
         <small class="d-block">{{ $t("community.commons.total") }}</small>
 
-        <h3>{{   numeralFormat(target.total_comments,"0.[0]a") }}</h3>
+        <h3>{{ numeralFormat(target.total_comments, "0.[0]a") }}</h3>
       </v-col>
 
-      <v-col cols="12"><hr /></v-col>
+      <v-col cols="12">
+        <hr />
+      </v-col>
 
       <v-col
         v-for="(item, i) in keys"
         :key="item.key"
-        cols="12"
-        sm="6"
-        md="4"
-        lg="3"
-        class="fadeIn"
         :style="{ 'animation-delay': 500 + i * 50 + 'ms' }"
+        class="fadeIn"
+        cols="12"
+        lg="3"
+        md="4"
+        sm="6"
       >
         {{ item.title }}
         <small class="d-block">Total in {{ time_span_string }}</small>
         <h3>{{ timeSeries.totalOf(item.key) }}</h3>
         <trend-sparkline
-          :value="timeSeries.arrayOfForceInterpolateZero(item.key)"
-          height="32"
-          smooth="10"
-          fill
           :auto-draw="false"
           :reverse="item.reverse"
+          :value="timeSeries.arrayOfForceInterpolateZero(item.key)"
+          fill
+          height="32"
+          smooth="10"
         ></trend-sparkline>
       </v-col>
     </v-row>
@@ -90,13 +92,15 @@
     <v-row>
       <v-col cols="12" md="6">
         <div
-          v-intersect.once="(isIntersecting) => OnIntersectLoad(isIntersecting, 1)"
+          v-intersect.once="
+            (isIntersecting) => OnIntersectLoad(isIntersecting, 1)
+          "
           class="mh250 border rounded-18px p-2"
         >
           <s-line-chart
             v-if="IsLoaded(1)"
-            :time-series="timeSeries"
-            :y-label="$t('community.commons.user_reactions')"
+            :colors="['#C2185B', '#03A9F4', '#009688', '#FFC107', '#673AB7']"
+            :keys="['likes', 'smiles', 'claps', 'ideas', 'disagrees']"
             :labels-data="[
               '❤ ' + $t('community.post_reaction.LIKE'),
               '😊 ' + $t('community.post_reaction.SMILE'),
@@ -104,8 +108,8 @@
               '💡 ' + $t('community.post_reaction.IDEA'),
               '😡 ' + $t('community.post_reaction.DISAGREE'),
             ]"
-            :keys="['likes', 'smiles', 'claps', 'ideas', 'disagrees']"
-            :colors="['#C2185B', '#03A9F4', '#009688', '#FFC107', '#673AB7']"
+            :time-series="timeSeries"
+            :y-label="$t('community.commons.user_reactions')"
             height="240px"
           />
         </div>
@@ -113,13 +117,15 @@
 
       <v-col cols="12" md="6">
         <div
-          v-intersect.once="(isIntersecting) => OnIntersectLoad(isIntersecting, 2)"
+          v-intersect.once="
+            (isIntersecting) => OnIntersectLoad(isIntersecting, 2)
+          "
           class="mh250 border rounded-18px p-2"
         >
           <s-area-chart
             v-if="IsLoaded(2)"
-            class="fadeIn"
-            y-label="Media types"
+            :colors="['#C2185B', '#03A9F4', '#009688', '#FFC107', '#673AB7']"
+            :keys="['texts', 'videos', 'links', 'images', 'voices', 'products']"
             :labels-data="[
               $t('community.commons.text'),
               $t('community.commons.video'),
@@ -128,11 +134,11 @@
               $t('community.commons.voice'),
               $t('community.commons.product'),
             ]"
-            :keys="['texts', 'videos', 'links', 'images', 'voices', 'products']"
-            :time-series="timeSeries"
-            :colors="['#C2185B', '#03A9F4', '#009688', '#FFC107', '#673AB7']"
-            height="240px"
             :opacity="0.5"
+            :time-series="timeSeries"
+            class="fadeIn"
+            height="240px"
+            y-label="Media types"
           ></s-area-chart>
         </div>
       </v-col>
@@ -192,20 +198,20 @@ export default {
       return this.isCommunity
         ? this.community
         : this.isCategory
-        ? this.category
-        : this.isTopic
-        ? this.topic
-        : this.community;
+          ? this.category
+          : this.isTopic
+            ? this.topic
+            : this.community;
     },
 
     time_span_string() {
       return (
         this.getFromNowString(
-          DateConverter.GetStartOfDateBefore(this.timeSeries.offset)
+          DateConverter.GetStartOfDateBefore(this.timeSeries.offset),
         ) +
         " ~ " +
         this.getFromNowString(
-          DateConverter.GetStartOfDateBefore(this.timeSeries.days)
+          DateConverter.GetStartOfDateBefore(this.timeSeries.days),
         )
       );
     },

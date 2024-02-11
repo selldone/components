@@ -14,68 +14,65 @@
 
 <template>
   <div
-    class="radial-progress-container"
     :style="containerStyle"
+    class="radial-progress-container"
     @click="$emit('click')"
   >
-    <div class="radial-progress-inner" :style="innerCircleStyle">
+    <div :style="innerCircleStyle" class="radial-progress-inner">
       <slot />
     </div>
     <svg
-      class="radial-progress-bar"
-      :width="diameter"
       :height="diameter"
+      :width="diameter"
+      class="radial-progress-bar"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
         <radialGradient
           :id="'radial-gradient' + _uid"
-          :fx="gradient.fx"
-          :fy="gradient.fy"
           :cx="gradient.cx"
           :cy="gradient.cy"
+          :fx="gradient.fx"
+          :fy="gradient.fy"
           :r="gradient.r"
         >
-          <stop offset="30%" :stop-color="startColor" />
-          <stop offset="100%" :stop-color="stopColor" />
+          <stop :stop-color="startColor" offset="30%" />
+          <stop :stop-color="stopColor" offset="100%" />
         </radialGradient>
       </defs>
       <circle
-        :r="innerCircleRadius"
         :cx="radius"
         :cy="radius"
-        fill="transparent"
+        :r="innerCircleRadius"
         :stroke="innerStrokeColor"
         :stroke-dasharray="circumference"
+        :style="strokeStyle"
+        fill="transparent"
         stroke-dashoffset="0"
         stroke-linecap="round"
-        :style="strokeStyle"
       />
       <circle
-        :transform="'rotate(270, ' + radius + ',' + radius + ')'"
-        :r="innerCircleRadius"
         :cx="radius"
         :cy="radius"
-        fill="transparent"
+        :r="innerCircleRadius"
         :stroke="'url(#radial-gradient' + _uid + ')'"
         :stroke-dasharray="circumference"
         :stroke-dashoffset="circumference"
-        stroke-linecap="round"
         :style="progressStyleInner"
+        :transform="'rotate(270, ' + radius + ',' + radius + ')'"
+        fill="transparent"
+        stroke-linecap="round"
       />
     </svg>
 
-
     <v-progress-circular
-            v-if="loading"
-            :color="startColor"
-            class="center-absolute w-100 h-100"
-            indeterminate
-            :width="3"
+      v-if="loading"
+      :color="startColor"
+      :width="3"
+      class="center-absolute w-100 h-100"
+      indeterminate
     ></v-progress-circular>
-
-
   </div>
 </template>
 
@@ -86,58 +83,58 @@ export default {
     diameter: {
       type: Number,
       required: false,
-      default: 200
+      default: 200,
     },
     totalSteps: {
       type: Number,
       required: true,
-      default: 10
+      default: 10,
     },
     completedSteps: {
       type: Number,
       required: true,
-      default: 0
+      default: 0,
     },
     startColor: {
       type: String,
       required: false,
-      default: "#bbff42"
+      default: "#bbff42",
     },
     stopColor: {
       type: String,
       required: false,
-      default: "#429321"
+      default: "#429321",
     },
     strokeWidth: {
       type: Number,
       required: false,
-      default: 10
+      default: 10,
     },
     animateSpeed: {
       type: Number,
       required: false,
-      default: 1000
+      default: 1000,
     },
     innerStrokeColor: {
       type: String,
       required: false,
-      default: "#323232"
+      default: "#323232",
     },
     fps: {
       type: Number,
       required: false,
-      default: 60
+      default: 60,
     },
     timingFunc: {
       type: String,
       required: false,
-      default: "linear"
+      default: "linear",
     },
 
     loading: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
   },
 
@@ -148,11 +145,11 @@ export default {
         fy: 0.5,
         cx: 0.5,
         cy: 0.5,
-        r: 0.65
+        r: 0.65,
       },
       gradientAnimation: null,
       currentAngle: 0,
-      strokeDashoffset: 0
+      strokeDashoffset: 0,
     };
   },
 
@@ -208,7 +205,7 @@ export default {
     containerStyle() {
       return {
         height: `${this.diameter}px`,
-        width: `${this.diameter}px`
+        width: `${this.diameter}px`,
       };
     },
 
@@ -218,7 +215,7 @@ export default {
         width: `${this.diameter}px`,
         strokeWidth: `${this.strokeWidth}px`,
         strokeDashoffset: this.strokeDashoffset,
-        transition: `stroke-dashoffset ${this.animateSpeed}ms ${this.timingFunc}`
+        transition: `stroke-dashoffset ${this.animateSpeed}ms ${this.timingFunc}`,
       };
     },
     progressStyleInner() {
@@ -227,22 +224,22 @@ export default {
         width: `${this.diameter * 0.8}px`,
         strokeWidth: `${this.strokeWidth * 0.6}px`,
         strokeDashoffset: this.strokeDashoffset,
-        transition: `stroke-dashoffset ${this.animateSpeed}ms ${this.timingFunc}`
+        transition: `stroke-dashoffset ${this.animateSpeed}ms ${this.timingFunc}`,
       };
     },
     strokeStyle() {
       return {
         height: `${this.diameter}px`,
         width: `${this.diameter}px`,
-        strokeWidth: `${this.strokeWidth}px`
+        strokeWidth: `${this.strokeWidth}px`,
       };
     },
 
     innerCircleStyle() {
       return {
-        width: `${this.innerCircleDiameter}px`
+        width: `${this.innerCircleDiameter}px`,
       };
-    }
+    },
   },
 
   watch: {
@@ -260,7 +257,7 @@ export default {
 
     strokeWidth() {
       this.changeProgress({ isAnimate: true });
-    }
+    },
   },
 
   created() {
@@ -332,8 +329,8 @@ export default {
     gotoNextStep() {
       this.currentAngle = this.completedSteps * this.circleSlice;
       this.gotoPoint();
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -16,20 +16,20 @@
   <div class="uploader-container-file mx-auto p-2">
     <file-pond
       ref="pond"
+      :check-validity="true"
+      :data-max-file-size="maxFileSize"
+      :files="file"
+      :label-idle="`<p class='text-dark'>${label}</p>`"
+      :max-files="1"
+      :maxFileSize="maxFileSize"
+      :server="server_credential"
+      allow-multiple="false"
       class="mx-auto pointer-pointer"
+      credits="false"
       name="file"
       style="min-height: 84px"
-      :label-idle="`<p class='text-dark'>${label}</p>`"
-      allow-multiple="false"
-      :files="file"
-      :data-max-file-size="maxFileSize"
-      :maxFileSize="maxFileSize"
-      :max-files="1"
-      :check-validity="true"
-      @processfile="handleProcessFile"
       @error="handleFilePondError"
-      credits="false"
-      :server="server_credential"
+      @processfile="handleProcessFile"
     />
     <!-- NOT WORK! invalid mine type in usdz and glf files! :accepted-file-types="acceptedFileTypes" -->
     <!-- NOT WORK! accepted-file-types=".gltf, .glb" -->

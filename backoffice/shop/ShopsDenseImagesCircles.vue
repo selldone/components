@@ -13,19 +13,19 @@
   -->
 
 <template>
-  <div class="circles-container" :style="{ padding: `${size / 3}px` }">
+  <div :style="{ padding: `${size / 3}px` }" class="circles-container">
     <v-avatar
-      :size="size"
       v-for="(id, index) in ids"
       :key="id + '-' + index"
-      class="citm"
-      @click="$emit('click:item', id)"
       :class="{
         'pointer-pointer': link,
         'big-scale': bigScale,
         '-no-scale-on-hover': noScale,
       }"
       :color="color"
+      :size="size"
+      class="citm"
+      @click="$emit('click:item', id)"
     >
       <img :src="getShopIcon(id, IMAGE_SIZE_SMALL)" style="padding: 2px" />
     </v-avatar>
@@ -68,7 +68,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .circles-container {
   display: flex;
   overflow: auto;
@@ -78,6 +78,7 @@ export default {
     transition: all 0.5s;
 
     --scale: 1.5;
+
     &.big-scale {
       --scale: 2.2;
     }
@@ -90,6 +91,7 @@ export default {
       &:not(:first-child) {
         margin-left: 10px;
       }
+
       margin-right: 22px;
 
       transform: scale(var(--scale));
@@ -111,10 +113,12 @@ export default {
           margin-right: 10px;
           margin-left: unset;
         }
+
         margin-left: 22px;
         margin-right: unset;
       }
     }
+
     .more-items {
       margin-right: unset;
       margin-left: 24px;

@@ -12,8 +12,8 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import ParticleManager from './particle-manager';
-import Canvas from './canvas';
+import ParticleManager from "./particle-manager";
+import Canvas from "./canvas";
 
 /**
  * A class to drawing confetti onto a canvas.
@@ -82,11 +82,15 @@ export default class Confetti {
     let canvasEl = canvasElement;
 
     if (canvasElement && !(canvasElement instanceof HTMLCanvasElement)) {
-      throw new Error('Invalid options: canvasElement is not a valid HTMLCanvasElement');
+      throw new Error(
+        "Invalid options: canvasElement is not a valid HTMLCanvasElement",
+      );
     }
 
     if (canvasId && canvasElement) {
-      throw new Error('Invalid options: canvasId and canvasElement are mutually exclusive');
+      throw new Error(
+        "Invalid options: canvasId and canvasElement are mutually exclusive",
+      );
     }
 
     if (canvasId && !canvasEl) {
@@ -94,7 +98,9 @@ export default class Confetti {
     }
 
     if (canvasId && !(canvasEl instanceof HTMLCanvasElement)) {
-      throw new Error(`Invalid options: element with id "${canvasId}" is not a valid HTMLCanvasElement`);
+      throw new Error(
+        `Invalid options: element with id "${canvasId}" is not a valid HTMLCanvasElement`,
+      );
     }
 
     return canvasEl;

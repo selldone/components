@@ -20,36 +20,36 @@
   >
     <!-- ████████████████████ Group Title ████████████████████ -->
 
-    <div v-if="isGroup" class="section-group" :class="{ editable: editable }">
+    <div v-if="isGroup" :class="{ editable: editable }" class="section-group">
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Group > Label ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <v-text-field
         v-if="editing && !minimize"
         v-model="item.group"
-        type="text"
         flat
-        variant="solo"
         hide-details
         placeholder="Spec category title"
+        type="text"
+        variant="solo"
         @keypress.enter.stop="editing = false"
       />
       <p
         v-else
-        @click="editing = editable"
-        class="flex-grow-1 py-1"
         :class="{ 'editable-blue': editable }"
+        class="flex-grow-1 py-1"
+        @click="editing = editable"
       >
-        <v-icon color="#333" v-if="editable"> expand_more</v-icon>
+        <v-icon v-if="editable" color="#333"> expand_more</v-icon>
         <v-btn
           v-else
+          icon
+          variant="text"
           @click="
             local_collapse = !local_collapse;
             $emit('update:collapse', local_collapse);
           "
-          icon
-          variant="text"
         >
-          <v-icon color="#333" :class="{ 'rotate-180': local_collapse }">
+          <v-icon :class="{ 'rotate-180': local_collapse }" color="#333">
             expand_more
           </v-icon>
         </v-btn>
@@ -60,10 +60,10 @@
 
       <template v-if="editable && !minimize">
         <v-btn
-          class="section-action"
           :color="editing ? 'primary' : '#444'"
-          size="small"
+          class="section-action"
           icon
+          size="small"
           variant="text"
           @click="editing = !editing"
         >
@@ -71,10 +71,10 @@
         </v-btn>
         <v-btn
           class="section-action"
-          size="small"
-          icon
-          variant="text"
           color="#444"
+          icon
+          size="small"
+          variant="text"
           @click="$emit('delete')"
         >
           <v-icon> delete</v-icon>
@@ -84,22 +84,22 @@
 
     <!-- ████████████████████ Item ████████████████████ -->
 
-    <div v-if="isItem" class="list-item mt-1" :class="{ editable: editable }">
-      <div class="grid" :class="{ '-view-mode': !editable }">
+    <div v-if="isItem" :class="{ editable: editable }" class="list-item mt-1">
+      <div :class="{ '-view-mode': !editable }" class="grid">
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Item > Label ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div
+          :class="{ 'editable-blue': !editing && editable }"
           class="section-item sec2 strong"
           @click="editing = editable"
-          :class="{ 'editable-blue': !editing && editable }"
         >
           <v-text-field
             v-if="editing && !minimize"
             v-model="item[0]"
-            type="text"
-            variant="solo"
             flat
             hide-details
             placeholder="Name of spec.."
+            type="text"
+            variant="solo"
             @keypress.enter.stop="editing = false"
           />
           <div v-else>{{ item[0] }}</div>
@@ -113,21 +113,21 @@
               v-for="i in item.length - 1"
               :key="i"
               v-model="item[i]"
-              type="text"
               class="my-1"
-              variant="solo"
               flat
               hide-details
               placeholder="Value of spec.."
+              type="text"
+              variant="solo"
               @keypress.enter.stop="addInnerItem(item, i)"
             >
               <template v-slot:append-inner>
                 <v-btn
                   v-if="i !== 1"
-                  size="small"
-                  icon
-                  variant="text"
                   :title="`Remove item ${item}`"
+                  icon
+                  size="small"
+                  variant="text"
                   @click.stop="
                     () => {
                       if (item.length > 2) item.splice(i, 1);
@@ -142,12 +142,12 @@
           </div>
           <div
             v-else
-            class="section-item sec1"
             :class="{
               'editable-blue': editable,
               '-dense-value': denseValues,
               'section-item has-splitter': !denseValues,
             }"
+            class="section-item sec1"
             contenteditable="false"
             @click="editing = editable"
           >
@@ -161,10 +161,10 @@
           <template v-if="editable">
             <!-- Edit button -->
             <v-btn
-              class="section-action"
               :color="editing ? 'primary' : '#444'"
-              size="small"
+              class="section-action"
               icon
+              size="small"
               variant="text"
               @click="editing = !editing && editable"
             >
@@ -176,10 +176,10 @@
             <!-- Delete button -->
             <v-btn
               class="section-action"
-              size="small"
-              icon
-              variant="text"
               color="#444"
+              icon
+              size="small"
+              variant="text"
               @click="$emit('delete')"
             >
               <v-icon> delete</v-icon>
@@ -252,7 +252,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .rtl {
   direction: rtl !important;
 }

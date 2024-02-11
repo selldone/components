@@ -69,24 +69,24 @@ export default {
               : this.basket
                   .tax) /*Consider basket price if product be in basket.*/
         : this.vendorProduct
-        ? this.CalcPriceProductCurrentCurrency(
-            this.shop,
-            this.vendorProduct,
-            null,
-            this.preferences,
-            this.valuation,
-            null,
-            null
-          )
-        : this.CalcPriceProductCurrentCurrency(
-            this.shop,
-            this.product,
-            this.variant,
-            this.preferences,
-            this.valuation,
-            null,
-            null
-          );
+          ? this.CalcPriceProductCurrentCurrency(
+              this.shop,
+              this.vendorProduct,
+              null,
+              this.preferences,
+              this.valuation,
+              null,
+              null,
+            )
+          : this.CalcPriceProductCurrentCurrency(
+              this.shop,
+              this.product,
+              this.variant,
+              this.preferences,
+              this.valuation,
+              null,
+              null,
+            );
     },
   },
   watch: {
@@ -127,7 +127,7 @@ export default {
       const currency = this.GetUserSelectedCurrency().code;
 
       const stripe_gateway = this.shop.gateways?.find(
-        (g) => g.code === "stripe_" + currency.toLowerCase()
+        (g) => g.code === "stripe_" + currency.toLowerCase(),
       );
       if (!stripe_gateway?.public?.key) return;
 
@@ -160,7 +160,7 @@ export default {
         const elements = stripe.elements({ appearance });
         const options = {
           amount: Math.round(
-            this.price * (zeroDecimalCurrencies.includes(currency) ? 1 : 100)
+            this.price * (zeroDecimalCurrencies.includes(currency) ? 1 : 100),
           ),
           currency: currency,
           paymentMethodTypes: ["klarna", "afterpay_clearpay", "affirm"],
@@ -168,13 +168,13 @@ export default {
           countryCode: this.countryCode
             ? this.countryCode
             : this.basket?.receiver_info?.country
-            ? this.basket.receiver_info.country
-            : SetupService.DefaultCountry(),
+              ? this.basket.receiver_info.country
+              : SetupService.DefaultCountry(),
         };
 
         const PaymentMessageElement = elements.create(
           "paymentMethodMessaging",
-          options
+          options,
         );
         PaymentMessageElement.mount("#payment-method-messaging-element");
       });

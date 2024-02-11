@@ -16,39 +16,38 @@
   <div>
     <v-toolbar
       v-if="!$store.getters.getIsNative"
-      class="s--storefront-primary-header border-bottom"
-      :extended="!overlay"
-      :dark="overlay ? overlayDark : !transparent_header && !is_light_header"
-      flat
       :color="
         transparent_header || overlay
           ? 'transparent'
           : is_light_header
-          ? 'var(--background)'
-          : SaminColorDark
+            ? 'var(--background)'
+            : SaminColorDark
       "
-      extension-height="64px"
+      :dark="overlay ? overlayDark : !transparent_header && !is_light_header"
+      :extended="!overlay"
       :style="{
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
       }"
+      class="s--storefront-primary-header border-bottom"
+      extension-height="64px"
+      flat
     >
       <template v-slot:extension>
         <div style="height: 64px"></div>
       </template>
-
 
       <template v-if="!isMobile || !searchMode">
         <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
         <v-btn
           v-if="isMobile || is_standalone"
           :disabled="!shop"
+          class="m-1"
           icon
-          large
+          size="large"
           tile
           @click.stop="drawer = !drawer"
-          class="m-1"
         >
-          <v-icon> menu </v-icon>
+          <v-icon> menu</v-icon>
         </v-btn>
 
         <s-shop-main-header-logo
@@ -56,7 +55,7 @@
           :shop="shop"
         ></s-shop-main-header-logo>
 
-        <s-loading css-mode v-else-if="!shop"></s-loading>
+        <s-loading v-else-if="!shop" css-mode></s-loading>
 
         <v-spacer />
 
@@ -71,13 +70,13 @@
 
         <s-circle-button
           v-if="show_top_cart && !isMobile"
-          class="mx-3 fadeIn delay_300"
-          :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }"
-          icon="local_mall"
-          :tooltip="$t('global.commons.orders')"
-          exact
-          dense
           :color="is_light_header ? '#333' : '#fff'"
+          :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }"
+          :tooltip="$t('global.commons.orders')"
+          class="mx-3 fadeIn delay_300"
+          dense
+          exact
+          icon="local_mall"
         >
         </s-circle-button>
 
@@ -85,16 +84,16 @@
 
         <s-circle-button
           v-if="show_top_cart && !isMobile"
-          class="mx-3 fadeIn delay_300"
-          @click="show_basket = true"
-          icon="shopping_cart"
-          :tooltip="$t('basket_top_menu.basket')"
-          :has-badge="itemsCount > 0"
           :badge-number="itemsCount"
-          persist-badge
-          dense
-          badge-color="teal"
           :color="is_light_header ? '#333' : '#fff'"
+          :has-badge="itemsCount > 0"
+          :tooltip="$t('basket_top_menu.basket')"
+          badge-color="teal"
+          class="mx-3 fadeIn delay_300"
+          dense
+          icon="shopping_cart"
+          persist-badge
+          @click="show_basket = true"
         >
         </s-circle-button>
 
@@ -102,19 +101,19 @@
 
         <img
           v-if="getClub() && !isMobile"
-          class="absolute-top-end fadeIn"
           :src="getCustomerClubLevel(getClub().level).icon"
-          width="20px"
+          class="absolute-top-end fadeIn"
           height="20px"
+          width="20px"
         />
 
         <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
         <s-shop-language-selector
           v-if="shop"
-          :shop="shop"
-          icon-only
-          class="mx-3"
           :iconColor="is_light_header ? '#333' : '#fff'"
+          :shop="shop"
+          class="mx-3"
+          icon-only
         ></s-shop-language-selector>
 
         <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
@@ -124,22 +123,22 @@
             shop.currencies &&
             shop.currencies.length > 1
           "
-          class="rounded-18px"
-          outlined
-          hideDetails
+          :iconColor="is_light_header ? '#333' : '#fff'"
           :shop="shop"
+          class="rounded-18px"
           dense
+          hideDetails
           icon
-          singleLine
+          icon-only
           max-width="80px"
+          outlined
+          singleLine
           small
           @change="
             () => {
               onChangeUserSelectedCurrency();
             }
           "
-          icon-only
-          :iconColor="is_light_header ? '#333' : '#fff'"
         />
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -148,33 +147,33 @@
           <v-slide-y-reverse-transition group leave-absolute>
             <v-menu
               v-if="!busy_user && USER()"
+              key="kav1"
               v-model="menu"
               :close-on-content-click="true"
               :nudge-width="240"
-              rounded="xl"
               offset-y
               open-on-click
+              rounded="xl"
               z-index="99999999"
-              key="kav1"
             >
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-btn
-                  rounded
-                  outlined
-                  v-on="on"
-                  class="me-1 mt-1 hover-shadow"
-                  :loading="busy_logout"
-                  @click="menu = true"
                   :color="is_light_header ? '#ddd' : SaminColorDarkDeep"
+                  :loading="busy_logout"
+                  class="me-1 mt-1 hover-shadow"
                   height="42"
+                  rounded
+                  v-bind="props"
+                  variant="outlined"
+                  @click="menu = true"
                 >
-                  <v-icon left :color="is_light_header ? '#222' : '#fff'"
-                    >menu</v-icon
-                  >
+                  <v-icon :color="is_light_header ? '#222' : '#fff'" start
+                    >menu
+                  </v-icon>
                   <v-avatar
                     :color="is_light_header ? '#fff' : SaminColorDarkDeep"
-                    size="32"
                     class="me-n3"
+                    size="32"
                   >
                     <img :src="getUserAvatar(USER_ID())" />
                   </v-avatar>
@@ -186,31 +185,31 @@
                   <div class="d-flex text-start align-center">
                     <v-avatar
                       :size="64"
-                      color="#946f90"
                       class="avatar-gradient -thin me-2 flex-grow-0"
+                      color="#946f90"
                     >
                       <v-img :src="getUserAvatar(USER_ID())" />
                     </v-avatar>
 
                     <div class="flex-grow-1">
-                      <div class="my-1 subtitle-2 font-weight-black">
+                      <div class="my-1 text-subtitle-2 font-weight-black">
                         {{ USER().name }}
 
                         <v-icon
                           v-if="USER().personal_information_verified"
                           color="green"
-                          small
+                          size="small"
                         >
                           check_circle
                         </v-icon>
 
                         <v-icon
                           v-if="profile && profile.verified"
-                          small
-                          color="blue"
                           class="ms-1"
-                          >verified</v-icon
-                        >
+                          color="blue"
+                          size="small"
+                          >verified
+                        </v-icon>
                       </div>
 
                       <p class="text-muted m-0">
@@ -222,10 +221,10 @@
                         class="d-flex align-center pt-2"
                       >
                         <img
+                          class="m-1"
+                          height="24"
                           src="../../assets/icons/chips.svg"
                           width="24"
-                          height="24"
-                          class="m-1"
                         />
                         <b>
                           {{
@@ -255,52 +254,52 @@
                   <v-divider class="mt-0" />
                   <v-row
                     v-if="shop"
+                    class="m-0 pb-4"
                     dense
                     justify="space-around"
-                    class="m-0 pb-4"
                   >
-                    <v-col cols="4" v-if="has_avocado">
+                    <v-col v-if="has_avocado" cols="4">
                       <v-btn
-                        icon
-                        large
+                        :caption="$t('global.commons.avocado')"
                         :to="{ name: 'AvocadoPage' }"
                         class="sub-caption"
-                        :caption="$t('global.commons.avocado')"
+                        icon
+                        size="large"
                       >
                         <img
+                          height="24"
                           src="../../assets/icons/avocado.svg"
                           width="24"
-                          height="24"
                         />
                       </v-btn>
                     </v-col>
-                    <v-col cols="4" v-if="has_hyper">
+                    <v-col v-if="has_hyper" cols="4">
                       <v-btn
-                        icon
-                        large
+                        :caption="$t('global.commons.hyper')"
                         :to="{ name: window.$storefront.routes.HYPER_PAGE }"
                         class="sub-caption"
-                        :caption="$t('global.commons.hyper')"
+                        icon
+                        size="large"
                       >
                         <img
+                          height="24"
                           src="../../assets/icons/hyper.svg"
                           width="24"
-                          height="24"
                         />
                       </v-btn>
                     </v-col>
-                    <v-col cols="4" v-if="has_insta">
+                    <v-col v-if="has_insta" cols="4">
                       <v-btn
-                        icon
-                        large
+                        :caption="$t('global.commons.instashop')"
                         :to="{ name: 'InstagramPage' }"
                         class="sub-caption"
-                        :caption="$t('global.commons.instashop')"
+                        icon
+                        size="large"
                       >
                         <img
+                          height="24"
                           src="../../assets/trademark/instagram.svg"
                           width="24"
-                          height="24"
                         />
                       </v-btn>
                     </v-col>
@@ -313,13 +312,13 @@
                   class="d-flex align-center small text-center justify-content-around text-muted px-1 py-3"
                 >
                   <div class="p-1">
-                    <a href="/privacy" target="_blank" class="text-muted"
+                    <a class="text-muted" href="/privacy" target="_blank"
                       >Privacy Policy</a
                     >
                   </div>
                   •
                   <div class="p-1">
-                    <a href="/terms" target="_blank" class="text-muted"
+                    <a class="text-muted" href="/terms" target="_blank"
                       >Terms of Service</a
                     >
                   </div>
@@ -329,16 +328,16 @@
 
             <v-btn
               v-else-if="!busy_user"
-              :loading="!shop"
-              :icon="!shop"
-              roundedripple
-              :color="SaminInfoColor"
-              dark
-              @click.stop="NeedLogin()"
               key="kav2"
+              :color="SaminInfoColor"
+              :icon="!shop"
+              :loading="!shop"
               class="s--storefront-primary-header-login-button"
+              dark
+              roundedripple
+              @click.stop="NeedLogin()"
             >
-              <v-icon small class="me-2"> login </v-icon>
+              <v-icon class="me-2" size="small"> login</v-icon>
               <div v-if="!!shop">
                 <span class="hide-on-small-600"
                   >{{ $t("layout_shop.login_to_shop") }}
@@ -348,7 +347,7 @@
                 }}</span>
               </div>
             </v-btn>
-            <div style="min-width: 52px" key="pls">
+            <div key="pls" style="min-width: 52px">
               <!-- place holder -->
             </div>
           </v-slide-y-reverse-transition>
@@ -366,27 +365,27 @@
 
     <v-navigation-drawer
       v-model="show_basket"
-      fixed
-      :right="!$vuetify.rtl"
-      color="#fff"
-      class="s--storefront-primary-header-basket-navigation"
+      :location="!$vuetify.rtl && 'right'"
       :width="$vuetify.display.mdAndUp ? 640 : 360"
+      class="s--storefront-primary-header-basket-navigation"
+      color="#fff"
+      fixed
       temporary
     >
       <div class="d-flex flex-column" style="min-height: 100%">
         <v-btn
-          text
-          @click="show_basket = false"
           block
           class="tnt flex-grow-0 mb-2"
-          x-large
+          size="x-large"
+          variant="text"
+          @click="show_basket = false"
           >{{ $t("global.actions.close") }}
-          <v-icon class="ms-2">{{ $t("icons.long_end") }}</v-icon></v-btn
-        >
+          <v-icon class="ms-2">{{ $t("icons.long_end") }}</v-icon>
+        </v-btn>
 
         <basket-top-menu
-          class="flex-grow-1"
           ref="basket_menu"
+          class="flex-grow-1"
           @close="show_basket = false"
         />
       </div>
@@ -456,7 +455,7 @@ export default {
 
     transparent_header() {
       return this.$route.matched.some(
-        (record) => record.meta.transparent_header
+        (record) => record.meta.transparent_header,
       );
     },
     card() {
@@ -646,7 +645,7 @@ export default {
         this.$refs.basket_menu.setType(type);
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("side-cart-menu-open");
   },
 

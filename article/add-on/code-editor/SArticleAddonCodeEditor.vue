@@ -14,27 +14,27 @@
 
 <template>
   <div
-    class="code-editor editor-window"
-    :data="json_data"
-    spellcheck="false"
     :class="{ '-dark': dark }"
+    :data="json_data"
+    class="code-editor editor-window"
+    spellcheck="false"
   >
     <s-article-editor-component-toolbar
       v-if="editable"
-      @click:edit="showEdit()"
       :element="element"
       :title="$t('global.commons.code')"
+      @click:edit="showEdit()"
     ></s-article-editor-component-toolbar>
 
     <div class="text-left py-1 d-flex align-center" dir="ltr">
       <v-btn-toggle
         v-if="tabs_active?.length || editable"
         v-model="selected_lang"
-        rounded
-        selected-class="blue-flat"
+        class="widget-toggle flex-grow-0"
         density="compact"
         mandatory
-        class="widget-toggle flex-grow-0"
+        rounded
+        selected-class="blue-flat"
       >
         <v-btn
           v-for="lang in tabs_active"
@@ -47,10 +47,10 @@
         </v-btn>
       </v-btn-toggle>
       <v-spacer></v-spacer>
-      <v-btn @click="dark = !dark" icon class="mx-1" variant="text">
+      <v-btn class="mx-1" icon variant="text" @click="dark = !dark">
         <v-slide-y-reverse-transition leave-absolute>
-          <v-icon v-if="dark" color="blue" key="1">dark_mode</v-icon>
-          <v-icon v-else color="amber" key="2">light_mode</v-icon>
+          <v-icon v-if="dark" key="1" color="blue">dark_mode</v-icon>
+          <v-icon v-else key="2" color="amber">light_mode</v-icon>
         </v-slide-y-reverse-transition>
       </v-btn>
     </div>
@@ -58,13 +58,13 @@
     <div class="hover-open-edit-dialog" @click="showEdit()">
       <prism-editor
         v-model="codes[selected_lang]"
-        contenteditable="false"
-        class="scrollable-element-light"
         :class="{ 'light-code': !dark, 'prism-dark dark-code-theme': dark }"
+        :highlight="highlighter"
         :language="selected_lang"
+        class="scrollable-element-light"
+        contenteditable="false"
         line-numbers
         readonly
-        :highlight="highlighter"
       />
     </div>
   </div>

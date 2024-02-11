@@ -14,7 +14,7 @@
 
 <template>
   <span v-if="statusObject">
-    <v-icon class="me-1" :color="status === 'Succeeded' ? 'green' : ''">{{
+    <v-icon :color="status === 'Succeeded' ? 'green' : ''" class="me-1">{{
       statusObject.icon
     }}</v-icon>
 
@@ -40,7 +40,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

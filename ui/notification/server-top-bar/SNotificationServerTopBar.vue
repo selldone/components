@@ -16,20 +16,20 @@
   <v-sheet
     v-if="message && show"
     :color="color"
+    class="z1 pa-2 d-flex align-center justify-center"
     dark
     min-height="48"
-    class="z1 pa-2 d-flex align-center justify-center"
   >
     <v-spacer></v-spacer>
     <div class="flex-grow-1 py-2 py-sm-0">
-      <div v-html="message" class="typo-body mb-5 mb-sm-0"></div>
+      <div class="typo-body mb-5 mb-sm-0" v-html="message"></div>
 
       <div
         class="small d-flex align-center justify-center mt-1 flex-column flex-sm-row"
       >
         <template v-if="end_date">
           <span
-            >{{$t('global.commons.ends_in')}}
+            >{{ $t("global.commons.ends_in") }}
             <v-icon>{{
               $vuetify.display.smAndUp ? "arrow_right" : "arrow_drop_down"
             }}</v-icon></span
@@ -41,8 +41,8 @@
           v-if="action_text"
           :href="action_url"
           class="ms-0 ms-sm-5 my-3 my-sm-0"
-          variant="outlined"
           target="_blank"
+          variant="outlined"
         >
           <span v-html="action_text"></span>
           <v-icon class="ms-1">navigate_next</v-icon>
@@ -54,14 +54,14 @@
     <div>
       <time-lapse
         v-if="autoClose"
-        @end="show = false"
         :duration-ms="120 * 1000"
-        color="amber"
-        width="3"
-        size="20"
         class="mx-5"
+        color="amber"
+        size="20"
+        width="3"
+        @end="show = false"
       >
-        <v-icon small @click="show = false">close</v-icon>
+        <v-icon size="small" @click="show = false">close</v-icon>
       </time-lapse>
     </div>
   </v-sheet>
@@ -70,6 +70,7 @@
 <script>
 import TimeLapse from "@components/ui/time-lapse/timeLapse.vue";
 import SCountDown from "@components/ui/count-down/SCountDown.vue";
+
 export default {
   name: "SNotificationServerTopBar",
   components: { SCountDown, TimeLapse },
@@ -115,4 +116,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

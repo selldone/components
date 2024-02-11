@@ -20,7 +20,7 @@ export class ChartAnnotations {
     timeSeries: TimeSeries,
     keys: string[],
     labelsData: string[],
-    colors: string[]
+    colors: string[],
   ) {
     const maxPoints = [];
 
@@ -31,7 +31,7 @@ export class ChartAnnotations {
       if (maxItem && maxItem[key]) {
         const _date = DateConverter.convertToLocalTime(
           maxItem.created_at,
-          true
+          true,
         );
 
         // Prevent show zero!

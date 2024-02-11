@@ -24,16 +24,17 @@
       >
     </span>
     <span v-else class="ms-2">
-      | <v-icon small>share_location</v-icon> <small>Dynamic</small></span
+      | <v-icon size="small">share_location</v-icon>
+      <small>Dynamic</small></span
     >
 
     <v-chip
       :color="profile.included ? '#FFC107' : '#8BC34A'"
-      x-small
-      label
       class="mx-2"
-      >{{ profile.included ? "Included" : "Excluded" }}</v-chip
-    >
+      label
+      size="x-small"
+      >{{ profile.included ? "Included" : "Excluded" }}
+    </v-chip>
   </div>
 </template>
 

@@ -13,8 +13,7 @@
  */
 
 
-
-.hover-img-grayscale,.hover-grayscale-80 {
+.hover-img-grayscale, .hover-grayscale-80 {
   -webkit-filter: grayscale(80%); /* Safari 6.0 - 9.0 */
   filter: grayscale(80%);
   transition: all 0.5s;
@@ -27,9 +26,7 @@
 }
 
 
-
-
-.hover-img-grayscale-100,.hover-grayscale-100 {
+.hover-img-grayscale-100, .hover-grayscale-100 {
   -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
   filter: grayscale(100%);
   transition: all 0.5s;
@@ -42,7 +39,7 @@
 }
 
 
-.hover-img-opacity,.hover-opacity {
+.hover-img-opacity, .hover-opacity {
 
   transition: all 0.5s;
 
@@ -68,9 +65,6 @@
 }
 
 
-
-
-
 .hover-parallax {
   transition: all 0.9s;
 
@@ -92,38 +86,39 @@
 }
 
 
-
-.card-3d-up{
+.card-3d-up {
   box-shadow: 0px 20px 100px #555;
   transform: rotateX(60deg) scale(0.7);
   transition: .5s all ease;
-  &:hover{
+
+  &:hover {
     transform: rotate(0deg) scale(1) translateY(10px);
   }
 
 }
 
 
-.hover-round-2rem{
-  transition: all 0.5s ;
+.hover-round-2rem {
+  transition: all 0.5s;
   overflow: hidden;
 
-  &:hover{
+  &:hover {
     border-radius: 2rem !important;
   }
 
 }
 
 .hover-shadow {
-  transition: all 0.5s ;
+  transition: all 0.5s;
 
   &:hover {
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3) !important;
     z-index: 3;
   }
 }
+
 .hover-shadow-large {
-  transition: all 0.5s ;
+  transition: all 0.5s;
 
   &:hover {
     box-shadow: 10px 20px 25px 5px rgba(0, 0, 0, 0.25) !important;
@@ -133,29 +128,32 @@
 
 
 .hover-sepia {
-  transition: all 0.5s ;
+  transition: all 0.5s;
 
   &:hover {
     filter: sepia(80%);
   }
 }
+
 .hover-sepia-inv {
-  transition: all 0.5s ;
+  transition: all 0.5s;
   filter: sepia(80%);
 
   &:hover {
     filter: sepia(0);
   }
 }
+
 .hover-invert {
-  transition: all 0.5s ;
+  transition: all 0.5s;
 
   &:hover {
     filter: invert(100%);
   }
 }
+
 .hover-invert-inv {
-  transition: all 0.5s ;
+  transition: all 0.5s;
   filter: invert(100%);
 
   &:hover {
@@ -163,12 +161,13 @@
   }
 }
 
-.hover-b{
+.hover-b {
   &:hover {
     font-weight: bolder;
   }
 }
-.hover-blue{
+
+.hover-blue {
   &:hover {
     font-weight: bolder;
     color: #0b77bf !important;

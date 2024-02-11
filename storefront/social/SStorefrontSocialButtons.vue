@@ -15,47 +15,47 @@
 <template>
   <v-row
     v-if="socials && socials.length"
-    dense
-    align="center"
-    class="s--storefront-social-buttons"
-    :class="{
-      'flex-column': vertical,
-      'border-start': productOnly && socials.length,
-    }"
     v-intersect="
       (isIntersecting) => {
         visible = isIntersecting;
       }
     "
+    :class="{
+      'flex-column': vertical,
+      'border-start': productOnly && socials.length,
+    }"
+    align="center"
+    class="s--storefront-social-buttons"
+    dense
   >
     <v-btn
       v-for="(item, i) in socials"
       :key="item.network"
-      icon
-      target="_blank"
-      :href="getUrl(item)"
-      :title="$t(SocialNetwork[item.network].title)"
-      class="toc"
       :class="{
         'hover-parallax': parallax,
         'm-2': !productOnly,
         tada: productOnly && visible,
       }"
-      :tile="tile"
-      :large="large"
       :color="SocialNetwork[item.network].color"
+      :href="getUrl(item)"
+      :large="large"
       :min-width="minWidth"
       :style="{ animationDelay: 500 + i * 500 + 'ms' }"
+      :tile="tile"
+      :title="$t(SocialNetwork[item.network].title)"
+      class="toc"
+      icon
+      target="_blank"
     >
       <img
-        width="20"
-        height="20"
-        :src="SocialNetwork[item.network].image"
-        class="trn toc"
         :class="{
           '-scale': hasScale(item) && !finish,
           swing: hasScale(item) && finish,
         }"
+        :src="SocialNetwork[item.network].image"
+        class="trn toc"
+        height="20"
+        width="20"
       />
     </v-btn>
   </v-row>
@@ -112,12 +112,12 @@ export default {
     socials() {
       if (this.productOnly)
         return this.shop.socials?.filter(
-          (i) => SocialNetwork[i.network] && SocialNetwork[i.network].product
+          (i) => SocialNetwork[i.network] && SocialNetwork[i.network].product,
         );
 
       if (this.activeOnly)
         return this.shop.socials.filter(
-          (i) => i.active && SocialNetwork[i.network]
+          (i) => i.active && SocialNetwork[i.network],
         );
 
       return this.shop.socials.filter((i) => SocialNetwork[i.network]); // Check exist in web app (supported)
@@ -164,10 +164,12 @@ export default {
   .toc {
     transform-origin: center;
   }
+
   .-scale {
     transform: scale(1.5);
     transition: all 0.3s !important;
   }
+
   .trn {
     transition: all 0.5s;
   }

@@ -22,10 +22,11 @@
     >
       <template v-slot:activator="{ props }">
         <v-btn
-
-          v-bind="props"
-          icon variant="text" size="36"
           :color="activeColor"
+          icon
+          size="36"
+          v-bind="props"
+          variant="text"
           @click.stop="$emit('click')"
           ><v-icon size="24">sticky_note_2</v-icon></v-btn
         >
@@ -52,9 +53,11 @@
 
     <v-btn
       v-else
-      icon variant="text" size="small"
-      @click.stop="$emit('click')"
       :title="$t('notes.add_action')"
+      icon
+      size="small"
+      variant="text"
+      @click.stop="$emit('click')"
       ><v-icon size="24">edit_note</v-icon></v-btn
     >
   </span>
@@ -65,7 +68,7 @@ export default {
   name: "TeamNoteButton",
   props: {
     note: {},
-    activeColor: {default:'orange'},
+    activeColor: { default: "orange" },
   },
 };
 </script>

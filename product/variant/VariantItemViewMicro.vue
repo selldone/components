@@ -14,18 +14,18 @@
 
 <template>
   <div
-    class="product-variant-card-micro"
     :class="{ '-center': center }"
+    class="product-variant-card-micro"
     style="position: relative"
   >
-    <s-color-circle v-if="color" :color="color" class="me-1" :size="20">
+    <s-color-circle v-if="color" :color="color" :size="20" class="me-1">
     </s-color-circle>
 
     <span v-if="volume" class="card-badge-info">
       <variant-asset-view
         :shop-id="shop_id"
-        :value="volume"
         :size="24"
+        :value="volume"
       ></variant-asset-view>
       {{ volume?.removeVariantAsset() }}
     </span>
@@ -33,8 +33,8 @@
     <span v-if="pack" class="card-badge-info">
       <variant-asset-view
         :shop-id="shop_id"
-        :value="pack"
         :size="24"
+        :value="pack"
       ></variant-asset-view>
       {{ pack?.removeVariantAsset() }}<span class="text-muted">x</span>
     </span>
@@ -42,8 +42,8 @@
     <span v-if="weight" class="card-badge-info">
       <variant-asset-view
         :shop-id="shop_id"
-        :value="weight"
         :size="24"
+        :value="weight"
       ></variant-asset-view
       >{{ weight?.removeVariantAsset() }}
     </span>
@@ -51,8 +51,8 @@
     <span v-if="style" class="card-badge-info">
       <variant-asset-view
         :shop-id="shop_id"
-        :value="style"
         :size="24"
+        :value="style"
       ></variant-asset-view>
       {{ style?.removeVariantAsset() }}
     </span>
@@ -60,8 +60,8 @@
     <span v-if="type" class="card-badge-info">
       <variant-asset-view
         :shop-id="shop_id"
-        :value="type"
         :size="24"
+        :value="type"
       ></variant-asset-view>
       {{ type?.removeVariantAsset() }}
     </span>
@@ -121,7 +121,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .product-variant-card-micro {
   display: flex;
   align-items: center;

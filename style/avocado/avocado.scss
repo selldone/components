@@ -28,11 +28,14 @@
     font-weight: 500;
     text-align: right;
     direction: ltr;
+
     a {
       color: #738611;
+
       &:hover {
         color: #b7d22b;
       }
+
       img {
         margin-bottom: 2px;
       }
@@ -41,10 +44,11 @@
 
 }
 
-.-add-btn,.-pay-btn {
+.-add-btn, .-pay-btn {
   background-image: linear-gradient(120deg, #738611 0%, #9eb644 100%);
   box-shadow: 0 3px 20px 8px rgba(175, 190, 85, 0.66) !important;
 }
+
 .-delivery-btn {
   background-image: linear-gradient(120deg, #03a9f4 0%, #0288d1 100%);
   box-shadow: 0 3px 20px 8px rgba(3, 157, 232, 0.42) !important;

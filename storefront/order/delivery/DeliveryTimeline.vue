@@ -13,14 +13,14 @@
   -->
 
 <template>
-  <v-timeline density="compact" class="text-start">
+  <v-timeline class="text-start" density="compact">
     <!-- ------------- Send ------------- -->
 
     <v-timeline-item
       v-if="sendAt"
-      size="small"
       dot-color="#1976D2"
       icon="play_arrow"
+      size="small"
     >
       <small>{{ $t("global.commons.send_date") }}:</small>
       {{ getFromNowString(sendAt) }}
@@ -33,18 +33,18 @@
 
     <v-timeline-item
       v-if="sendAt && status === 'PENDING'"
-      size="small"
+      :fill-dot="!person && !service"
       dot-color="#1976D2"
       icon="move_down"
-      :fill-dot="!person && !service"
+      size="small"
     >
-      <v-row no-gutters align="center">
+      <v-row align="center" no-gutters>
         <img
           v-if="transportationObj"
           :src="transportationObj.icon"
-          width="24"
-          height="24"
           class="me-1"
+          height="24"
+          width="24"
         />
         {{ $t("global.commons.deliver_in_process") }}
         <v-icon class="mx-1 blink-me" color="#1976D2" size="14">lens</v-icon>
@@ -56,16 +56,16 @@
             class="blink-me ms-1"
             color="red"
             title="Delivery service not enable"
-            >error_outline</v-icon
-          >
+            >error_outline
+          </v-icon>
           <v-chip
             v-if="!service.livemode"
-            color="amber"
             class="ms-1"
-            variant="outlined"
+            color="amber"
             size="x-small"
-            >{{ $t("global.commons.debug") }}</v-chip
-          >
+            variant="outlined"
+            >{{ $t("global.commons.debug") }}
+          </v-chip>
         </div>
 
         <v-icon
@@ -73,8 +73,8 @@
           class="mx-1 blink-me"
           color="red"
           title="Courier not enable"
-          >error_outline</v-icon
-        >
+          >error_outline
+        </v-icon>
       </v-row>
     </v-timeline-item>
 
@@ -82,7 +82,7 @@
 
     <v-timeline-item v-if="person" size="small">
       <template v-slot:icon>
-        <v-avatar size="36" class="avatar-gradient -thin -role hover-scale">
+        <v-avatar class="avatar-gradient -thin -role hover-scale" size="36">
           <img :src="getUserAvatar(person.user_id)" />
         </v-avatar>
       </template>
@@ -90,13 +90,12 @@
       <div v-if="person.user" class="flex-grow-1">
         {{ person.user.name }}
         <br />
-        <a :href="`tel:${person.user.phone}`" class="link-dash"
-          ><v-icon class="me-1" size="small">phone</v-icon>
+        <a :href="`tel:${person.user.phone}`" class="link-dash">
+          <v-icon class="me-1" size="small">phone</v-icon>
           {{ person.user.phone }}
 
           <v-tooltip activator="parent">Courier phone</v-tooltip>
-        </a
-        >
+        </a>
       </div>
     </v-timeline-item>
 
@@ -104,7 +103,7 @@
 
     <v-timeline-item v-if="deliveryService" size="small">
       <template v-slot:icon>
-        <v-avatar size="36" class="avatar-gradient -thin -delivery-service">
+        <v-avatar class="avatar-gradient -thin -delivery-service" size="36">
           <v-img :src="getShopImagePath(deliveryService.icon)" />
         </v-avatar>
       </template>
@@ -116,19 +115,20 @@
         <span class="dashed-flex-space"></span>
 
         <v-btn
-          variant="text"
-          size="small"
-          color="primary"
           :loading="busy"
+          color="primary"
+          size="small"
+          variant="text"
           @click="
             busy = true;
             $emit('refresh-service', () => {
               busy = false;
             });
           "
-          ><v-icon class="me-1" size="small">refresh</v-icon>
-          {{ $t("global.actions.check") }}</v-btn
         >
+          <v-icon class="me-1" size="small">refresh</v-icon>
+          {{ $t("global.actions.check") }}
+        </v-btn>
       </div>
       <div
         v-if="transportationOrder && transportationOrder.track"
@@ -138,11 +138,12 @@
         <span class="dashed-flex-space"></span>
 
         <v-btn
-          icon
-          color="primary"
-          target="_blank"
           :href="transportationOrder.track"
-          ><v-icon size="small">gps_fixed</v-icon>
+          color="primary"
+          icon
+          target="_blank"
+        >
+          <v-icon size="small">gps_fixed</v-icon>
         </v-btn>
       </div>
       <div
@@ -153,11 +154,12 @@
         <span class="dashed-flex-space"></span>
 
         <v-btn
-          icon
-          color="primary"
-          target="_blank"
           :href="transportationOrder.label"
-          ><v-icon size="small">download</v-icon>
+          color="primary"
+          icon
+          target="_blank"
+        >
+          <v-icon size="small">download</v-icon>
         </v-btn>
       </div>
     </v-timeline-item>
@@ -166,7 +168,15 @@
     <v-timeline-item
       v-for="(record, i) in history"
       :key="i"
-      size="small"
+      :dot-color="
+        record.status === 'RETURNED'
+          ? 'amber'
+          : record.status === 'CANCELED'
+            ? 'red'
+            : record.status === 'DELIVERED'
+              ? 'success'
+              : 'black'
+      "
       :icon="
         record.status === 'RETURNED'
           ? 'rotate_right'
@@ -177,15 +187,7 @@
               : 'arrow_drop_down'
       "
       class="fadeInUp"
-      :dot-color="
-        record.status === 'RETURNED'
-          ? 'amber'
-          : record.status === 'CANCELED'
-            ? 'red'
-            : record.status === 'DELIVERED'
-              ? 'success'
-              : 'black'
-      "
+      size="small"
     >
       <b class="me-2">{{ getFromNowString(record.date) }}</b>
       <small>{{ getLocalTimeString(record.date) }}</small>
@@ -207,23 +209,23 @@
 
     <v-timeline-item
       v-if="paymentAt"
-      size="small"
       dot-color="green"
       icon="check"
+      size="small"
     >
       <img
+        class="me-1"
+        height="24"
         src="../../../assets/icons/cod-payment.svg"
         width="24"
-        height="24"
-        class="me-1"
       />
 
       <img
         v-if="person || service"
+        class="ms-1 me-2"
+        height="12"
         src="../../../assets/icons/wire.svg"
         width="12"
-        height="12"
-        class="ms-1 me-2"
       />
 
       <small>{{ $t("global.commons.payment_date") }}:</small>
@@ -237,23 +239,23 @@
 
     <v-timeline-item
       v-if="deliverAt"
-      size="small"
       dot-color="green"
       icon="check"
+      size="small"
     >
       <img
+        class="me-1"
+        height="24"
         src="../../../assets/icons/delivered.svg"
         width="24"
-        height="24"
-        class="me-1"
       />
 
       <img
         v-if="person || service"
+        class="me-1"
+        height="12"
         src="../../../assets/icons/wire.svg"
         width="12"
-        height="12"
-        class="me-1"
       />
 
       <small>{{ $t("global.commons.deliver_date") }}:</small>
@@ -274,9 +276,9 @@
 
     <v-timeline-item
       v-if="returnAt"
-      size="small"
       dot-color="amber"
       icon="keyboard_return"
+      size="small"
     >
       <small>{{ $t("global.commons.return_date") }}:</small>
       {{ getFromNowString(returnAt) }}
@@ -288,9 +290,9 @@
     <!-- ------------- Canceled ------------- -->
     <v-timeline-item
       v-if="status === 'CANCELED'"
-      size="small"
       dot-color="red"
       icon="close"
+      size="small"
     >
       <small>{{ $t("global.commons.cancel_date") }}:</small>
       {{ getFromNowString(updatedAt) }}<br />

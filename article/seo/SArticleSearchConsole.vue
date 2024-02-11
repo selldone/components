@@ -15,7 +15,7 @@
 <template>
   <div class="text-start position-relative pa-3">
     <b class="small pen"
-      ><img src="../../assets/trademark/google.svg" width="16" height="16" />
+      ><img height="16" src="../../assets/trademark/google.svg" width="16" />
       Google Search</b
     >
 
@@ -23,15 +23,15 @@
 
     <div v-if="busy">
       <v-skeleton-loader
-        type="card-heading, table, card"
         class="mt-2"
+        type="card-heading, table, card"
       ></v-skeleton-loader>
     </div>
     <div
       v-else-if="error"
       class="d-flex flex-column align-center justify-center py-16 text-center"
     >
-      <v-icon x-large>warning_amber</v-icon>
+      <v-icon size="x-large">warning_amber</v-icon>
       <div class="my-3" v-html="error_msg"></div>
       <v-btn
         v-if="
@@ -40,23 +40,25 @@
           !shop.search_console
         "
         :to="{ name: 'ShopEdit_SEO' }"
-        color="primary"
         class="tnt"
-        ><v-icon class="me-1" small>cable</v-icon> Connect to Search
-        Console</v-btn
+        color="primary"
       >
+        <v-icon class="me-1" size="small">cable</v-icon>
+        Connect to Search Console
+      </v-btn>
     </div>
     <div v-else class="mt-2">
       <div class="small mb-2">
-        <v-icon small class="me-1">link</v-icon> Page: <b>{{ page }}</b>
+        <v-icon class="me-1" size="small">link</v-icon>
+        Page: <b>{{ page }}</b>
 
         <flag
           v-for="(c, index) in countries?.limit(5)"
           :key="'c' + c.keys"
           :iso="c.keys.toUpperCase()"
           :squared="false"
-          class="mx-1 hover-scale"
           :title="`#${index + 1} Country: ${getCountryName(c.keys)}`"
+          class="mx-1 hover-scale"
         />
       </div>
 
@@ -64,38 +66,57 @@
 
       <div style="min-height: 220px">
         <apexchart
-          type="area"
-          height="220"
           :options="chartOptionsHistory"
           :series="seriesHistory"
+          height="220"
+          type="area"
         ></apexchart>
       </div>
 
       <v-tabs
         v-model="tab"
-        class="my-2"
+        align-tabs="center"
         center-active
-        centered
+        class="my-2"
         grow
         hide-slider
       >
-        <v-tab><v-icon small class="me-1">search</v-icon> Keywords</v-tab>
-        <v-tab><v-icon small class="me-1">public</v-icon> Countries</v-tab>
-        <v-tab><v-icon small class="me-1">grade</v-icon> Appearance</v-tab>
+        <v-tab>
+          <v-icon class="me-1" size="small">search</v-icon>
+          Keywords
+        </v-tab>
+        <v-tab>
+          <v-icon class="me-1" size="small">public</v-icon>
+          Countries
+        </v-tab>
+        <v-tab>
+          <v-icon class="me-1" size="small">grade</v-icon>
+          Appearance
+        </v-tab>
       </v-tabs>
 
-      <v-simple-table dense class="thin-scroll" height="350" fixed-header>
+      <v-table class="thin-scroll" dense fixed-header height="350">
         <template v-slot:default>
           <thead>
             <tr>
               <th class="text-center">#</th>
               <th>{{ key_title }}</th>
               <th>
-                <v-icon small class="me-1">visibility</v-icon> Impressions
+                <v-icon class="me-1" size="small">visibility</v-icon>
+                Impressions
               </th>
-              <th><v-icon small class="me-1">ads_click</v-icon> Clicks</th>
-              <th><v-icon small class="me-1">bolt</v-icon> CTR</th>
-              <th><v-icon small class="me-1">radar</v-icon> Position</th>
+              <th>
+                <v-icon class="me-1" size="small">ads_click</v-icon>
+                Clicks
+              </th>
+              <th>
+                <v-icon class="me-1" size="small">bolt</v-icon>
+                CTR
+              </th>
+              <th>
+                <v-icon class="me-1" size="small">radar</v-icon>
+                Position
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -126,25 +147,25 @@
                   </div>
                 </template>
               </td>
-              <td>{{   numeralFormat(item.impressions,"0.[0]a") }}</td>
-              <td>{{numeralFormat( item.clicks ,"0.[0]a") }}</td>
+              <td>{{ numeralFormat(item.impressions, "0.[0]a") }}</td>
+              <td>{{ numeralFormat(item.clicks, "0.[0]a") }}</td>
               <td>
                 <div>
-                  {{   numeralFormat(item.ctr,"%0.[00]") }}
+                  {{ numeralFormat(item.ctr, "%0.[00]") }}
                   <span class="mx-1">
                     <score-indicator
-                      :value="$SEO.CTRScore(item.ctr)"
                       :size="16"
+                      :value="$SEO.CTRScore(item.ctr)"
                       :width="2"
                     ></score-indicator
                   ></span>
                 </div>
               </td>
-              <td>{{  numeralFormat(item.position ,"0.[0]") }}</td>
+              <td>{{ numeralFormat(item.position, "0.[0]") }}</td>
             </tr>
           </tbody>
         </template>
-      </v-simple-table>
+      </v-table>
     </div>
   </div>
 </template>
@@ -233,9 +254,9 @@ export default {
           this.shop
             ? window.ARTICLE_API.GET_ARTICLE_SEO_AUDIT(
                 this.shop.id,
-                this.article.id
+                this.article.id,
               )
-            : window.ADMIN_API.GET_ARTICLE_SEO_AUDIT(this.article.id)
+            : window.ADMIN_API.GET_ARTICLE_SEO_AUDIT(this.article.id),
         )
         .then(({ data }) => {
           if (data.error) {

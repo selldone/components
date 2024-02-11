@@ -1,38 +1,44 @@
-import Vue from 'vue';
-import { shallowMount } from '@vue/test-utils';
-import STelInput from './s-tel-input.vue';
-import * as utils from '../utils';
+import Vue from "vue";
+import { shallowMount } from "@vue/test-utils";
+import STelInput from "./s-tel-input.vue";
+import * as utils from "../utils";
 
-describe('s-tel-input', () => {
+describe("s-tel-input", () => {
   beforeEach(() => {
-    jest.spyOn(utils, 'getCountry').mockImplementation(() => Promise.resolve('au'));
+    jest
+      .spyOn(utils, "getCountry")
+      .mockImplementation(() => Promise.resolve("au"));
   });
 
-  it('renders without crash', () => {
+  it("renders without crash", () => {
     const wrapper = shallowMount(STelInput);
 
-    expect(wrapper.find('.s-tel-input').exists()).toBeTruthy();
+    expect(wrapper.find(".s-tel-input").exists()).toBeTruthy();
   });
   // TODO: Test validation of some specific phone numbers
 });
 
-describe('Props', () => {
+describe("Props", () => {
   beforeEach(() => {
-    jest.spyOn(utils, 'getCountry').mockImplementation(() => Promise.resolve('au'));
+    jest
+      .spyOn(utils, "getCountry")
+      .mockImplementation(() => Promise.resolve("au"));
   });
 
-  describe(':allCountries', () => {
-    it('overrides all pre-defined countries', async () => {
+  describe(":allCountries", () => {
+    it("overrides all pre-defined countries", async () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
-          allCountries: [{ iso2: 'AU' }],
+          allCountries: [{ iso2: "AU" }],
           autoDefaultCountry: false,
         },
       });
       await Vue.nextTick();
       expect(wrapper.vm.sortedCountries).toHaveLength(1);
-      expect(wrapper.findAll('.vti__dropdown-list li')).toHaveLength(1);
-      expect(wrapper.find('.vti__selection > .vti__flag').classes()).toContain('au');
+      expect(wrapper.findAll(".vti__dropdown-list li")).toHaveLength(1);
+      expect(wrapper.find(".vti__selection > .vti__flag").classes()).toContain(
+        "au",
+      );
     });
   });
   // describe(':customValidate', () => {
@@ -47,66 +53,74 @@ describe('Props', () => {
   //     expect(wrapper.vm.testCustomValidate).toHaveBeenCalledTimes(1);
   //   });
   // });
-  describe(':defaultCountry', () => {
-    it('shows correct default country', async () => {
+  describe(":defaultCountry", () => {
+    it("shows correct default country", async () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
-          defaultCountry: 'AU',
+          defaultCountry: "AU",
         },
       });
       await Vue.nextTick();
-      expect(wrapper.find('.vti__selection > .vti__flag').classes()).toContain('au');
+      expect(wrapper.find(".vti__selection > .vti__flag").classes()).toContain(
+        "au",
+      );
     });
   });
-  describe(':defaultCountryByDialCode', () => {
-    it('shows correct default country by dial code', async () => {
+  describe(":defaultCountryByDialCode", () => {
+    it("shows correct default country by dial code", async () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
           defaultCountry: 48,
         },
       });
       await Vue.nextTick();
-      expect(wrapper.find('.vti__selection > .vti__flag').classes()).toContain('pl');
+      expect(wrapper.find(".vti__selection > .vti__flag").classes()).toContain(
+        "pl",
+      );
     });
   });
-  describe(':disabled', () => {
-    it('adds disabled class to component', () => {
+  describe(":disabled", () => {
+    it("adds disabled class to component", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
           disabled: true,
         },
       });
 
-      expect(wrapper.find('.s-tel-input').classes()).toContain('disabled');
-      expect(wrapper.find('.vti__input').attributes('disabled')).toBe('disabled');
+      expect(wrapper.find(".s-tel-input").classes()).toContain("disabled");
+      expect(wrapper.find(".vti__input").attributes("disabled")).toBe(
+        "disabled",
+      );
     });
-    it('stops showing dropdown list when true', () => {
+    it("stops showing dropdown list when true", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
           disabled: true,
         },
       });
 
-      wrapper.find('.vti__dropdown').trigger('click');
+      wrapper.find(".vti__dropdown").trigger("click");
       expect(wrapper.vm.open).toBe(false);
     });
   });
-  describe(':autoDefaultCountry', () => {
-    it('doesn\'t fetch the country by IP when set FALSE', async () => {
+  describe(":autoDefaultCountry", () => {
+    it("doesn't fetch the country by IP when set FALSE", async () => {
       utils.getCountry.mockReset();
       const wrapper = shallowMount(STelInput, {
         propsData: {
           autoDefaultCountry: false,
-          preferredCountries: ['AU'],
+          preferredCountries: ["AU"],
         },
       });
       await Vue.nextTick();
       expect(utils.getCountry).not.toHaveBeenCalled();
-      expect(wrapper.find('.vti__selection > .vti__flag').classes()).toContain('au');
+      expect(wrapper.find(".vti__selection > .vti__flag").classes()).toContain(
+        "au",
+      );
     });
   });
-  describe(':dropdownOptions', () => {
-    it('.tabindex sets tabindex for dropdown', () => {
+  describe(":dropdownOptions", () => {
+    it(".tabindex sets tabindex for dropdown", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
           dropdownOptions: {
@@ -115,9 +129,9 @@ describe('Props', () => {
         },
       });
 
-      expect(wrapper.find('.vti__dropdown').attributes('tabindex')).toBe('1');
+      expect(wrapper.find(".vti__dropdown").attributes("tabindex")).toBe("1");
     });
-    it('.showDialCodeInList hides dial code in the dropdown', () => {
+    it(".showDialCodeInList hides dial code in the dropdown", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
           dropdownOptions: {
@@ -126,21 +140,23 @@ describe('Props', () => {
         },
       });
 
-      expect(wrapper.find('.vti__dropdown-item span').exists()).toBeFalsy();
+      expect(wrapper.find(".vti__dropdown-item span").exists()).toBeFalsy();
     });
-    it('.showDialCodeInSelection shows country code in the selection if TRUE', async () => {
+    it(".showDialCodeInSelection shows country code in the selection if TRUE", async () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
           dropdownOptions: {
             showDialCodeInSelection: true,
           },
-          defaultCountry: 'au',
+          defaultCountry: "au",
         },
       });
       await Vue.nextTick();
-      expect(wrapper.find('.vti__selection > .vti__country-code').text()).toBe('+61');
+      expect(wrapper.find(".vti__selection > .vti__country-code").text()).toBe(
+        "+61",
+      );
     });
-    it('.showFlags hides flags in the dropdown list if FALSE', () => {
+    it(".showFlags hides flags in the dropdown list if FALSE", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
           dropdownOptions: {
@@ -149,57 +165,63 @@ describe('Props', () => {
         },
       });
 
-      expect(wrapper.find('.vti__dropdown-item .vti__flag').exists()).toBeFalsy();
+      expect(
+        wrapper.find(".vti__dropdown-item .vti__flag").exists(),
+      ).toBeFalsy();
     });
   });
-  describe(':ignoredCountries', () => {
-    it('hides countries from the list', () => {
+  describe(":ignoredCountries", () => {
+    it("hides countries from the list", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
-          ignoredCountries: ['AU'],
+          ignoredCountries: ["AU"],
         },
       });
 
-      expect(wrapper.vm.filteredCountries.find(({ iso2 }) => iso2 === 'AU')).toBeUndefined();
-      expect(wrapper.find('.vti__dropdown-item > .vti__flag.au').exists()).toBeFalsy();
+      expect(
+        wrapper.vm.filteredCountries.find(({ iso2 }) => iso2 === "AU"),
+      ).toBeUndefined();
+      expect(
+        wrapper.find(".vti__dropdown-item > .vti__flag.au").exists(),
+      ).toBeFalsy();
     });
   });
-  describe(':inputOptions', () => {
-    it('.id sets `id` native attribute of input', () => {
+  describe(":inputOptions", () => {
+    it(".id sets `id` native attribute of input", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
-          inputOptions: { id: 'test' },
+          inputOptions: { id: "test" },
         },
       });
 
-      expect(wrapper.find('.vti__input').attributes('id')).toBe('test');
+      expect(wrapper.find(".vti__input").attributes("id")).toBe("test");
     });
-    it('.maxlength sets `maxlength` native attribute of input', () => {
+    it(".maxlength sets `maxlength` native attribute of input", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
           inputOptions: { maxlength: 20 },
         },
       });
 
-      expect(wrapper.find('.vti__input').attributes('maxlength')).toBe('20');
+      expect(wrapper.find(".vti__input").attributes("maxlength")).toBe("20");
     });
-    it('.name sets `name` native attribute of input', () => {
+    it(".name sets `name` native attribute of input", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
-          inputOptions: { name: 'test' },
+          inputOptions: { name: "test" },
         },
       });
 
-      expect(wrapper.find('.vti__input').attributes('name')).toBe('test');
+      expect(wrapper.find(".vti__input").attributes("name")).toBe("test");
     });
-    it('.styleClasses sets classes along side with .vti__input', () => {
+    it(".styleClasses sets classes along side with .vti__input", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
-          inputOptions: { styleClasses: ['test'] },
+          inputOptions: { styleClasses: ["test"] },
         },
       });
 
-      expect(wrapper.find('.vti__input').classes()).toContain('test');
+      expect(wrapper.find(".vti__input").classes()).toContain("test");
     });
     // it('.dynamicPlaceholder generates a random number as placeholder', async () => {
     //   const wrapper = shallowMount(STelInput, {
@@ -214,48 +236,52 @@ describe('Props', () => {
     //   }, 2000));
     // });
   });
-  describe(':invalid-msg', () => {
+  describe(":invalid-msg", () => {
     // TODO
   });
-  describe(':mode', () => {
+  describe(":mode", () => {
     // TODO
   });
-  describe(':onlyCountries', () => {
-    it('limits the countries to be used', () => {
+  describe(":onlyCountries", () => {
+    it("limits the countries to be used", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
-          onlyCountries: ['AU'],
+          onlyCountries: ["AU"],
         },
       });
 
-      expect(wrapper.findAll('.vti__dropdown-item')).toHaveLength(1);
+      expect(wrapper.findAll(".vti__dropdown-item")).toHaveLength(1);
       expect(wrapper.vm.filteredCountries).toHaveLength(1);
     });
   });
-  describe(':preferredCountries', () => {
-    it('are highlighted and be on top of the dropdown', () => {
+  describe(":preferredCountries", () => {
+    it("are highlighted and be on top of the dropdown", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
-          preferredCountries: ['AU'],
+          preferredCountries: ["AU"],
         },
       });
 
-      expect(wrapper.vm.sortedCountries[0].iso2).toBe('AU');
-      expect(wrapper.find('.vti__dropdown-item > .vti__flag.au').element.parentElement.getAttribute('class')).toContain('preferred');
+      expect(wrapper.vm.sortedCountries[0].iso2).toBe("AU");
+      expect(
+        wrapper
+          .find(".vti__dropdown-item > .vti__flag.au")
+          .element.parentElement.getAttribute("class"),
+      ).toContain("preferred");
     });
   });
-  describe(':validCharactersOnly', () => {
+  describe(":validCharactersOnly", () => {
     // TODO
   });
-  describe(':styleClasses', () => {
-    it('sets classes along side with .s-tel-input', () => {
+  describe(":styleClasses", () => {
+    it("sets classes along side with .s-tel-input", () => {
       const wrapper = shallowMount(STelInput, {
         propsData: {
-          styleClasses: ['test'],
+          styleClasses: ["test"],
         },
       });
 
-      expect(wrapper.find('.s-tel-input').classes()).toContain('test');
+      expect(wrapper.find(".s-tel-input").classes()).toContain("test");
     });
   });
 });

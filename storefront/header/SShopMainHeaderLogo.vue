@@ -16,8 +16,6 @@
   <div class="d-inline-flex align-center">
     <component
       :is="logo_custom_size ? 'router-link' : 'v-btn'"
-      icon
-      class="mx-1 zoomIn"
       :to="
         viewOnly
           ? {}
@@ -28,20 +26,22 @@
                   : 'ShopPage',
             }
       "
+      class="mx-1 zoomIn"
+      icon
     >
       <img
         v-if="logo_custom_size"
-        :src="logo"
         :height="theme.logo_h"
+        :src="logo"
         :width="theme.logo_w"
         style="object-fit: contain"
       />
       <v-avatar
         v-else
-        class="pointer-pointer hover-scale-small force-top"
         :size="in_custom_home_page ? 26 : 36"
-        color="transparent"
         :tile="in_custom_home_page"
+        class="pointer-pointer hover-scale-small force-top"
+        color="transparent"
       >
         <v-img
           :src="
@@ -68,8 +68,6 @@
       </span>
       <router-link
         v-else
-        class="z2 ms-2 font-weight-bold zoomIn"
-        style="font-size: 22px; color: currentColor"
         :to="
           viewOnly
             ? {}
@@ -80,6 +78,8 @@
                     : 'ShopPage',
               }
         "
+        class="z2 ms-2 font-weight-bold zoomIn"
+        style="font-size: 22px; color: currentColor"
       >
         {{ title }}
       </router-link>
@@ -88,7 +88,6 @@
 </template>
 
 <script>
-
 export default {
   name: "SShopMainHeaderLogo",
   components: {},
@@ -154,7 +153,10 @@ export default {
     goToShopInfoPage() {
       if (this.$route.name === window.$storefront.routes.SHOP_INFO_PAGE_MOBILE)
         this.$router.push({ name: window.$storefront.routes.SHOP_PAGE });
-      else this.$router.push({ name: window.$storefront.routes.SHOP_INFO_PAGE_MOBILE });
+      else
+        this.$router.push({
+          name: window.$storefront.routes.SHOP_INFO_PAGE_MOBILE,
+        });
     },
   },
 };
@@ -165,7 +167,6 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-main-header-logo {
-
 }
 
 /*
@@ -173,6 +174,5 @@ export default {
  */
 
 .s--shop-main-header-logo {
-
 }
 </style>

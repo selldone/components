@@ -14,17 +14,17 @@
 
 <template>
   <v-list
-    :lines="!dense ? 'three':undefined"
+    :lines="!dense ? 'three' : undefined"
     class="bg-transparent border-between-vertical rounded-18px overflow-hidden"
   >
     <!-- --------------------------------------- PDF --------------------------------------- -->
     <v-list-item
       v-if="pdf"
       :href="pdf"
-      target="_blank"
-      :title="`${type} PDF`"
       :subtitle="pdfMessage"
+      :title="`${type} PDF`"
       append-icon="download"
+      target="_blank"
     >
       <template v-slot:prepend>
         <v-avatar rounded="0">
@@ -37,10 +37,10 @@
     <v-list-item
       v-if="excel"
       :href="excel"
-      target="_blank"
-      :title="`${type} Excel`"
       :subtitle="excelMessage"
+      :title="`${type} Excel`"
       append-icon="download"
+      target="_blank"
     >
       <template v-slot:prepend>
         <v-avatar rounded="0">
@@ -54,10 +54,10 @@
     <v-list-item
       v-if="csv"
       :href="csv"
-      target="_blank"
-      :title="`${type} CSV`"
       :subtitle="csvMessage"
+      :title="`${type} CSV`"
       append-icon="download"
+      target="_blank"
     >
       <template v-slot:prepend>
         <v-avatar rounded="0">

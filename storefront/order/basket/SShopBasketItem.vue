@@ -16,19 +16,19 @@
   <div>
     <v-row
       align="center"
-      justify="start"
       class="s--shop-basket-item"
-      no-gutters
       dense
+      justify="start"
+      no-gutters
     >
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <v-col
-        cols="12"
-        sm="12"
-        md="12"
-        lg="6"
-        xl="6"
         class="text-start px-2 flex-grow-1"
+        cols="12"
+        lg="6"
+        md="12"
+        sm="12"
+        xl="6"
       >
         <router-link
           :to="{
@@ -37,12 +37,6 @@
           }"
         >
           <v-img
-            class="item-image rounded float-start me-2"
-            height="84px"
-            width="84px"
-            min-height="42px"
-            min-width="42px"
-            aspect-ratio="1"
             :src="
               product?.icon
                 ? getShopImagePath(
@@ -51,25 +45,31 @@
                   )
                 : getProductImage(basketItem.product_id)
             "
+            aspect-ratio="1"
+            class="item-image rounded float-start me-2"
+            height="84px"
+            min-height="42px"
+            min-width="42px"
+            width="84px"
           />
         </router-link>
 
         <router-link
-          class="shop-item-title"
           :to="{
             name: window.$storefront.routes.PRODUCT_PAGE,
             params: { product_id: basketItem.product_id },
           }"
+          class="shop-item-title"
         >
           {{ product.title }}
 
           <v-icon
             v-if="!product.original"
+            :title="$t('global.commons.fake')"
             class="ms-1"
             color="red"
-            :title="$t('global.commons.fake')"
-            >new_releases</v-icon
-          >
+            >new_releases
+          </v-icon>
         </router-link>
         <small> {{ product.title_en }}</small>
         <p class="mini-info">
@@ -104,8 +104,10 @@
 
         <variant-item-view-micro v-if="variant" :product-variant="variant" />
 
-        <p class="offer" v-if="offer">
-          <v-icon small color="#00a89a" class="me-1">fa:fas fa-gift</v-icon>
+        <p v-if="offer" class="offer">
+          <v-icon class="me-1" color="#00a89a" size="small"
+            >fa:fas fa-gift
+          </v-icon>
           <span v-if="offer.percent !== 100">{{
             $t("basket_items.offer", {
               count: basketItem.offer_count,
@@ -119,7 +121,7 @@
       </v-col>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <v-col xl="3" lg="3" md="6" sm="5" cols="6">
+      <v-col cols="6" lg="3" md="6" sm="5" xl="3">
         <p v-if="basketItem.dis" class="discount-value">
           <price-view
             :amount="
@@ -139,13 +141,13 @@
         </p>
         <div v-if="basketItem.cross_dis">
           <v-chip
-            label
+            :title="$t('basket_page.cross_selling_discount')"
             color="green"
             dark
-            small
-            :title="$t('basket_page.cross_selling_discount')"
+            label
+            size="small"
           >
-            <v-icon small left>whatshot</v-icon>
+            <v-icon size="small" start>whatshot</v-icon>
             <price-view :amount="-basketItem.cross_dis"></price-view>
           </v-chip>
         </div>
@@ -155,43 +157,45 @@
             {{ $t("basket_items.price_changed") }}<br />
 
             <price-view
-              class="font-weight-medium"
               :amount="current_item_price"
+              class="font-weight-medium"
             ></price-view>
             <!-- Change percent labels -->
             <v-chip
               v-if="price_error_percent > 1"
-              x-small
+              class="mx-2 p-1"
               color="red"
               dark
               label
-              class="mx-2 p-1"
-              ><v-icon small>arrow_drop_up</v-icon>
-              {{  numeralFormat(price_error_percent,"0,0") }}%</v-chip
+              size="x-small"
             >
+              <v-icon size="small">arrow_drop_up</v-icon>
+              {{ numeralFormat(price_error_percent, "0,0") }}%
+            </v-chip>
             <v-chip
               v-if="price_error_percent < -1"
-              x-small
+              class="mx-2 p-1"
               color="green"
               dark
               label
-              class="mx-2 p-1"
-              ><v-icon small>arrow_drop_down</v-icon>
-              {{   numeralFormat(price_error_percent,"0,0") }}%</v-chip
+              size="x-small"
             >
+              <v-icon size="small">arrow_drop_down</v-icon>
+              {{ numeralFormat(price_error_percent, "0,0") }}%
+            </v-chip>
           </p>
           <v-btn
             class="mx-1"
-            icon
             color="#8BC34A"
+            icon
             @click="spinnerSelectAction(basketItem.count)"
           >
             <v-icon>check</v-icon>
           </v-btn>
           <v-btn
             class="mx-1"
-            icon
             color="#C2185B"
+            icon
             @click="spinnerSelectAction(0)"
           >
             <v-icon>close</v-icon>
@@ -200,25 +204,25 @@
       </v-col>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <v-col cols="6" sm="7" md="6" lg="3" xl="3">
+      <v-col cols="6" lg="3" md="6" sm="7" xl="3">
         <s-shop-basket-item-count-select
-          :disabled="['area', 'volume'].includes(product.price_input)"
           v-model="basketItem.count"
-          :max="available_quantity"
-          @change="(count) => spinnerSelectAction(count)"
-          :min="product?.limit_min ? product?.limit_min : 0"
+          :dense="$vuetify.display.smAndDown"
+          :disabled="['area', 'volume'].includes(product.price_input)"
+          :has-delete="$vuetify.display.smAndUp"
           :loading="busy"
-          class="my-1"
+          :loading-delete="busy_delete"
+          :max="available_quantity"
+          :min="product?.limit_min ? product?.limit_min : 0"
+          :solo="$vuetify.display.xsOnly"
           :unit="product.unit"
+          background-color="#111"
+          class="my-1"
+          dark
           filled
           flat
-          dark
-          background-color="#111"
-          :dense="$vuetify.display.smAndDown"
-          :solo="$vuetify.display.xsOnly"
-          :has-delete="$vuetify.display.smAndUp"
+          @change="(count) => spinnerSelectAction(count)"
           @click:delete="buyRemoveAction()"
-          :loading-delete="busy_delete"
         ></s-shop-basket-item-count-select>
 
         <p
@@ -420,7 +424,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -482,10 +486,12 @@ export default {
   .discount-value {
     color: #666;
   }
+
   .offer {
     color: #00a89a;
     font-size: 0.9rem;
     font-weight: 500;
+
     i {
       vertical-align: baseline;
     }

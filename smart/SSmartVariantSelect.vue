@@ -18,22 +18,22 @@
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
-      tag="div"
-      group
-      class="border-between-vertical rounded-card"
       :class="{ pen: disabled, border: border, 'white--text': dark }"
+      class="border-between-vertical rounded-card"
+      group
       hide-on-leave
+      tag="div"
     >
       <div
         v-for="(task, i) in items_show"
         :key="val(task) ? val(task) : i"
-        class="p-2 pp row-hover usn"
         :class="{
           'bg-dark': dark,
           'bg-white': !dark,
           'disabled pen': task.disabled,
           pen: !clearable && forceShowAll && value === val(task),
         }"
+        class="p-2 pp row-hover usn"
         @click="
           $emit(
             'input',
@@ -60,33 +60,33 @@
       >
         <div class="d-flex align-center mnh">
           <div
-            class="me-2 -thin -gray flex-grow-0"
             :class="{ 'avatar-gradient': val(task) === value }"
+            class="me-2 -thin -gray flex-grow-0"
           >
             <v-sheet
               v-if="val(task) === value"
-              class="circle-check zoomIn"
               :color="color"
+              class="circle-check zoomIn"
             ></v-sheet>
             <v-icon v-else :color="dark ? '#fff' : color"
-              >radio_button_unchecked</v-icon
-            >
+              >radio_button_unchecked
+            </v-icon>
           </div>
           <div class="flex-grow-1">
             <span v-if="task.color" class="me-1">
-              <v-icon small>{{ ProductVariants.color.icon }}</v-icon>
+              <v-icon size="small">{{ ProductVariants.color.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.color.name) }}</small>
               <b>{{ GetNameOfColor(task.color) }}</b>
             </span>
 
             <span v-if="task.style" class="me-1">
-              <v-icon small>{{ ProductVariants.style.icon }}</v-icon>
+              <v-icon size="small">{{ ProductVariants.style.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.style.name) }}</small>
 
               <variant-asset-view
                 :shop-id="shop.id"
-                :value="task.style"
                 :size="24"
+                :value="task.style"
               ></variant-asset-view>
 
               <b>
@@ -95,13 +95,13 @@
             </span>
 
             <span v-if="task.volume" class="me-1">
-              <v-icon small>{{ ProductVariants.volume.icon }}</v-icon>
+              <v-icon size="small">{{ ProductVariants.volume.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.volume.name) }}</small>
 
               <variant-asset-view
                 :shop-id="shop.id"
-                :value="task.volume"
                 :size="24"
+                :value="task.volume"
               ></variant-asset-view>
 
               <b>
@@ -110,13 +110,13 @@
             </span>
 
             <span v-if="task.weight" class="me-1">
-              <v-icon small>{{ ProductVariants.weight.icon }}</v-icon>
+              <v-icon size="small">{{ ProductVariants.weight.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.weight.name) }}</small>
 
               <variant-asset-view
                 :shop-id="shop.id"
-                :value="task.weight"
                 :size="24"
+                :value="task.weight"
               ></variant-asset-view>
 
               <b>
@@ -125,13 +125,13 @@
             </span>
 
             <span v-if="task.pack" class="me-1">
-              <v-icon small>{{ ProductVariants.pack.icon }}</v-icon>
+              <v-icon size="small">{{ ProductVariants.pack.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.pack.name) }}</small>
 
               <variant-asset-view
                 :shop-id="shop.id"
-                :value="task.pack"
                 :size="24"
+                :value="task.pack"
               ></variant-asset-view>
 
               <b>
@@ -140,13 +140,13 @@
             </span>
 
             <span v-if="task.type" class="me-1">
-              <v-icon small>{{ ProductVariants.type.icon }}</v-icon>
+              <v-icon size="small">{{ ProductVariants.type.icon }}</v-icon>
               <small class="mx-1">{{ $t(ProductVariants.type.name) }}</small>
 
               <variant-asset-view
                 :shop-id="shop.id"
-                :value="task.type"
                 :size="24"
+                :value="task.type"
               ></variant-asset-view>
 
               <b>
@@ -168,13 +168,13 @@
               color.
             </small>
           </div>
-          <v-icon x-small v-if="disabled" class="ma-1">lock</v-icon>
+          <v-icon v-if="disabled" class="ma-1" size="x-small">lock</v-icon>
 
           <s-color-circle
             v-if="task.color"
             :color="task.color"
-            class="circle-border m-1"
             :size="24"
+            class="circle-border m-1"
           >
           </s-color-circle>
         </div>
@@ -273,10 +273,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .mnh {
   min-height: 40px;
 }
+
 .circle-check {
   animation-duration: 250ms;
   width: 20px;

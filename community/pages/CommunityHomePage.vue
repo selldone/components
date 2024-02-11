@@ -16,15 +16,15 @@
   <v-container class="--add-extra-top-header">
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <community-breadcrumb
+      v-model:show-bot="show_bot"
+      v-model:show-edit="show_edit"
+      v-model:show-report="show_report"
+      :community="community"
       :shop="shop"
       class="mb-6 breadcrumb-max-w"
-      :community="community"
-      :show-report.sync="show_report"
-      :show-edit.sync="show_edit"
-      has-report
-      has-edit
       has-bot
-      :show-bot.sync="show_bot"
+      has-edit
+      has-report
     ></community-breadcrumb>
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Bot ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
@@ -36,9 +36,9 @@
     <v-expand-transition>
       <community-header
         v-if="!show_edit && !show_report"
-        :title="community.title"
-        :subtitle="'@' + community.name"
         :desc="community.desc"
+        :subtitle="'@' + community.name"
+        :title="community.title"
       >
       </community-header>
     </v-expand-transition>
@@ -72,16 +72,16 @@
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Categories ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-    <v-row justify="start" align="stretch">
+    <v-row align="stretch" justify="start">
       <v-col
-        cols="12"
-        sm="6"
-        md="4"
-        lg="3"
         v-for="(category, i) in categories"
         :key="category.id"
-        class="fadeInUp"
         :style="{ 'animation-delay': 50 * (i % 12) + 'ms' }"
+        class="fadeInUp"
+        cols="12"
+        lg="3"
+        md="4"
+        sm="6"
       >
         <community-category-card
           :category="category"
@@ -93,19 +93,19 @@
 
       <v-col
         v-if="access.admin"
-        cols="12"
-        sm="6"
-        md="4"
-        lg="3"
         key="add"
-        class="fadeInUp"
         :style="{ 'animation-delay': 50 * (6 % 12) + 'ms' }"
+        class="fadeInUp"
+        cols="12"
+        lg="3"
+        md="4"
+        sm="6"
       >
         <div class="c-container -force-rounded pa-2 pa-sm-3">
           <v-card class="c-widget -hover" @click="showAddCategory()">
-            <v-icon color="success" size="48" class="d-block text-center m-3"
-              >add</v-icon
-            >
+            <v-icon class="d-block text-center m-3" color="success" size="48"
+              >add
+            </v-icon>
             <v-card-title>{{ $t("community.category.add_new") }}</v-card-title>
             <v-card-subtitle style="min-height: 60px">
               {{ $t("community.category.add_new_msg") }}
@@ -119,19 +119,22 @@
     <v-dialog
       v-model="dialog_add"
       fullscreen
-      transition="dialog-bottom-transition"
       scrollable
+      transition="dialog-bottom-transition"
     >
       <v-card class="text-start">
-        <v-card-title><v-icon class="me-1">folder_open</v-icon> {{ $t("community.category.add_new") }}</v-card-title>
-        <v-card-subtitle>{{
-          $t("community.category.add_new_msg")
-        }}</v-card-subtitle>
+        <v-card-title>
+          <v-icon class="me-1">folder_open</v-icon>
+          {{ $t("community.category.add_new") }}
+        </v-card-title>
+        <v-card-subtitle
+          >{{ $t("community.category.add_new_msg") }}
+        </v-card-subtitle>
         <v-card-text>
           <community-category-edit
             v-if="dialog_add"
-            :community="community"
             ref="editor"
+            :community="community"
             @add="
               (cat) => {
                 AddOrUpdateItemByID(categories, cat);
@@ -142,24 +145,24 @@
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn text @click="dialog_add=false" x-large>
+            <v-btn size="x-large" variant="text" @click="dialog_add = false">
               <v-icon class="me-1">close</v-icon>
-              {{ $t("global.actions.close") }}</v-btn
-            >
+              {{ $t("global.actions.close") }}
+            </v-btn>
             <v-btn
-              depressed
+              :loading="busy_add"
               color="primary"
-              x-large
+              size="x-large"
+              variant="flat"
               @click="
                 $refs.editor.save((val) => {
                   busy_add = val;
                 })
               "
-              :loading="busy_add"
             >
-              <v-icon class="me-1">add</v-icon
-              >{{ $t("global.actions.add") }}</v-btn
-            >
+              <v-icon class="me-1">add </v-icon>
+              {{ $t("global.actions.add") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -232,4 +235,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

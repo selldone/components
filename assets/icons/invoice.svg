@@ -1,3 +1,24 @@
-
-
-<svg id="flat" height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m160 488-72-.00067a48 48 0 0 1 -47.99995-48v-55.99933h119.99995z" fill="#4976f2"/><path d="m88 488 336-.00067a48 48 0 0 0 48-48v-399.99933a16 16 0 0 0 -16-16h-304a16 16 0 0 0 -16 16v400.00005a48 48 0 0 1 -47.99995 48z" fill="#548aff"/><path d="m328 64h40l-16 24 8 16-40 32 8-32-16-16z" fill="#ffc431"/><path d="m296 112c0-13.25483-24-48-24-48s-24 34.74517-24 48a24 24 0 0 0 48 0z" fill="#8be0e8"/><g fill="#7dafff"><path d="m176 184h40v16h-40z"/><path d="m232 184h56v16h-56z"/><path d="m176 216h80v16h-80z"/><path d="m392 184h40v16h-40z"/><path d="m176 256h88v16h-88z"/><path d="m280 256h48v16h-48z"/><path d="m176 288h48v16h-48z"/><path d="m392 408h40v16h-40z"/><path d="m312 408h64v16h-64z"/><path d="m352 440h80v16h-80z"/><path d="m392 256h40v16h-40z"/><path d="m176 328h40v16h-40z"/><path d="m232 328h96v16h-96z"/><path d="m176 360h104v16h-104z"/><path d="m392 328h40v16h-40z"/></g></svg>
+<svg id="flat" height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg">
+    <path d="m160 488-72-.00067a48 48 0 0 1 -47.99995-48v-55.99933h119.99995z" fill="#4976f2"/>
+    <path d="m88 488 336-.00067a48 48 0 0 0 48-48v-399.99933a16 16 0 0 0 -16-16h-304a16 16 0 0 0 -16 16v400.00005a48 48 0 0 1 -47.99995 48z"
+          fill="#548aff"/>
+    <path d="m328 64h40l-16 24 8 16-40 32 8-32-16-16z" fill="#ffc431"/>
+    <path d="m296 112c0-13.25483-24-48-24-48s-24 34.74517-24 48a24 24 0 0 0 48 0z" fill="#8be0e8"/>
+    <g fill="#7dafff">
+        <path d="m176 184h40v16h-40z"/>
+        <path d="m232 184h56v16h-56z"/>
+        <path d="m176 216h80v16h-80z"/>
+        <path d="m392 184h40v16h-40z"/>
+        <path d="m176 256h88v16h-88z"/>
+        <path d="m280 256h48v16h-48z"/>
+        <path d="m176 288h48v16h-48z"/>
+        <path d="m392 408h40v16h-40z"/>
+        <path d="m312 408h64v16h-64z"/>
+        <path d="m352 440h80v16h-80z"/>
+        <path d="m392 256h40v16h-40z"/>
+        <path d="m176 328h40v16h-40z"/>
+        <path d="m232 328h96v16h-96z"/>
+        <path d="m176 360h104v16h-104z"/>
+        <path d="m392 328h40v16h-40z"/>
+    </g>
+</svg>

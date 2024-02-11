@@ -30,120 +30,126 @@
     <v-fade-transition>
       <v-row
         v-show="show_filter"
-        justify="center"
         class="product-variant-filters"
+        justify="center"
         no-gutters
       >
         <!-- ============== colors ============== -->
         <color-select-slider
           v-if="colors.length"
+          :close="mode !== 'color'"
           :list="colors"
           :value="null"
-          :close="mode !== 'color'"
+          @open="mode = 'color'"
           @select="
-            item => {
+            (item) => {
               color = item;
               onChange();
             }
           "
-          @open="mode = 'color'"
         />
 
         <!-- ============== volume ============== -->
         <text-select-slider
           v-if="volumes.length"
-          icon="equalizer"
-          :list="volumes"
-          :value="null"
           :close="mode !== 'volume'"
+          :list="volumes"
           :title="$t('global.variants.volume')"
+          :value="null"
+          icon="equalizer"
+          @open="mode = 'volume'"
           @select="
-            item => {
+            (item) => {
               volume = item;
               onChange();
             }
           "
-          @open="mode = 'volume'"
         />
 
         <!-- ============== packs ============== -->
 
         <text-select-slider
           v-if="packs.length"
-          icon="all_inbox"
-          :list="packs"
-          :value="null"
           :close="mode !== 'packs'"
+          :list="packs"
           :title="$t('global.variants.count_in_pack')"
+          :value="null"
+          icon="all_inbox"
+          @open="mode = 'packs'"
           @select="
-            item => {
+            (item) => {
               pack = item;
               onChange();
             }
           "
-          @open="mode = 'packs'"
         />
 
         <!-- ============== weights ============== -->
 
         <text-select-slider
           v-if="weights.length"
-          icon="fa:fas fa-weight-hanging"
-          :list="weights"
-          :value="null"
           :close="mode !== 'weights'"
+          :list="weights"
           :title="$t('global.variants.weight')"
+          :value="null"
+          icon="fa:fas fa-weight-hanging"
+          @open="mode = 'weights'"
           @select="
-            item => {
+            (item) => {
               weight = item;
               onChange();
             }
           "
-          @open="mode = 'weights'"
         />
 
         <!-- ============== types ============== -->
 
         <text-select-slider
           v-if="types.length"
-          icon="fa:fas fa-toolbox"
-          :list="types"
-          :value="null"
           :close="mode !== 'types'"
+          :list="types"
           :title="$t('global.variants.type')"
+          :value="null"
+          icon="fa:fas fa-toolbox"
+          @open="mode = 'types'"
           @select="
-            item => {
+            (item) => {
               type = item;
               onChange();
             }
           "
-          @open="mode = 'types'"
         />
 
         <!-- ============== styles ============== -->
         <text-select-slider
           v-if="styles.length"
-          icon="style"
-          :list="styles"
-          :value="null"
           :close="mode !== 'styles'"
+          :list="styles"
           :title="$t('global.variants.style')"
+          :value="null"
+          icon="style"
+          @open="mode = 'styles'"
           @select="
-            item => {
+            (item) => {
               style = item;
               onChange();
             }
           "
-          @open="mode = 'styles'"
         />
 
         <!-- ============== quantities ============== -->
 
-        <div  class="p-1 m-0 d-flex align-center">
-
-
-          <v-switch v-model="only_available" inset    class="inline-block ms-2 my-0 py-0 small-label" @change="onChange" color="success" dense  hide-details :label="$t('global.variant_filter.only_available')"></v-switch>
-
+        <div class="p-1 m-0 d-flex align-center">
+          <v-switch
+            v-model="only_available"
+            :label="$t('global.variant_filter.only_available')"
+            class="inline-block ms-2 my-0 py-0 small-label"
+            color="success"
+            density="compact"
+            hide-details
+            inset
+            @update:model-value="onChange"
+          ></v-switch>
         </div>
       </v-row>
     </v-fade-transition>
@@ -153,14 +159,15 @@
 <script>
 import TextSelectSlider from "./TextSelectSlider.vue";
 import ColorSelectSlider from "./ColorSelectSlider.vue";
+
 export default {
   name: "VariantFilter",
   components: { ColorSelectSlider, TextSelectSlider },
   props: {
     variants: {
       required: true,
-      type: Array
-    }
+      type: Array,
+    },
   },
   data() {
     return {
@@ -209,7 +216,7 @@ export default {
     },
     types() {
       return this.getItemsInArray(this.variants, "type");
-    }
+    },
   },
   methods: {
     onChange() {
@@ -223,14 +230,14 @@ export default {
         price: this.price,
         type: this.type,
         code: this.code,
-        available: this.only_available
+        available: this.only_available,
       };
       this.$emit("change", out);
     },
 
     getItemsInArray(array, item_name) {
       let out = [];
-      array.forEach(item => {
+      array.forEach((item) => {
         if (item[item_name] && !out.includes(item[item_name]))
           out.push(item[item_name]);
       });
@@ -262,12 +269,12 @@ export default {
     setType(type) {
       this.type = type;
       this.mode = null;
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .product-variant-filters {
   font-size: 0.8rem;
   margin-right: 5px;

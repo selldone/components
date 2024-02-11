@@ -15,15 +15,15 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="text-start">
     <s-widget-header
-      title="Augmentation"
-      add-text
       add-caption="Add New Item"
       add-sub-caption="Add custom key-value pair."
-      @click:add="show_add = true"
+      add-text
       icon="extension"
+      title="Augmentation"
+      @click:add="show_add = true"
     >
       <template v-slot:append-title>
-        <v-btn icon variant="text" class="mx-1" @click="help_dialog = true">
+        <v-btn class="mx-1" icon variant="text" @click="help_dialog = true">
           <v-icon>help</v-icon>
         </v-btn>
       </template>
@@ -48,54 +48,59 @@
             <td>
               <v-text-field
                 v-model="item.key"
+                :counter="32"
+                :rules="[GlobalRules.counter(32)]"
+                bg-color="transparent"
+                density="compact"
+                flat
+                hide-details
+                placeholder="Enter a key..."
                 title="Key"
                 variant="solo"
-                flat
-                :counter="32"
-                density="compact"
-                hide-details
-                :rules="[GlobalRules.counter(32)]"
-                placeholder="Enter a key..."
-                bg-color="transparent"
                 @change="$emit('change')"
               ></v-text-field>
             </td>
             <td>
               <s-image-uploader
                 v-if="item.type === 'image'"
-                dense
+                :image="item.value ? getShopImagePath(item.value) : undefined"
+                :server="upload_server"
                 auto-compact
                 clearable
-                param-name="photo"
+                dense
                 disable-past
-                :server="upload_server"
+                max-file-size="2MB"
+                min-height="110px"
+                param-name="photo"
                 @new-path="
                   (path) => {
                     item.value = path;
                     $emit('change');
                   }
                 "
-                :image="item.value ? getShopImagePath(item.value) : undefined"
-                max-file-size="2MB"
-                min-height="110px"
               ></s-image-uploader>
               <v-text-field
                 v-else
                 v-model="item.value"
+                :counter="64"
+                bg-color="transparent"
+                density="compact"
+                flat
+                hide-details
+                placeholder="Enter a value..."
                 title="Value"
                 variant="solo"
-                flat
-                density="compact"
-                hide-details
-                :counter="64"
-                placeholder="Enter a value..."
-                bg-color="transparent"
                 @change="$emit('change')"
               ></v-text-field>
             </td>
 
             <td>
-              <v-btn icon variant="text" color="red" @click="remove(modelValue, item)">
+              <v-btn
+                color="red"
+                icon
+                variant="text"
+                @click="remove(modelValue, item)"
+              >
                 <v-icon>close</v-icon>
               </v-btn>
             </td>
@@ -110,22 +115,22 @@
 
     <v-bottom-sheet
       v-model="show_add"
-      scrollable
-      max-width="680"
-      width="96%"
       content-class="no-shadow-dialog"
+      max-width="680"
+      scrollable
+      width="96%"
     >
       <v-card class="rounded-t-xl text-start">
         <v-card-title> Select input type</v-card-title>
         <v-card-text>
           <v-list>
-            <v-list-item @click="addTextItem" prepend-icon="title">
+            <v-list-item prepend-icon="title" @click="addTextItem">
               <v-list-item-title>Text & Html</v-list-item-title>
               <v-list-item-subtitle
                 >The item's value can be designated as either text or HTML.
               </v-list-item-subtitle>
             </v-list-item>
-            <v-list-item @click="addImageItem" prepend-icon="image">
+            <v-list-item prepend-icon="image" @click="addImageItem">
               <v-list-item-title>Image</v-list-item-title>
               <v-list-item-subtitle
                 >You can upload an image.
@@ -140,8 +145,8 @@
     <v-dialog
       v-model="help_dialog"
       fullscreen
-      transition="dialog-bottom-transition"
       scrollable
+      transition="dialog-bottom-transition"
     >
       <v-card class="text-start">
         <v-card-title>
@@ -171,8 +176,8 @@
               experience on your landing pages.
             </p>
             <v-img
-              :src="require('../../../augment/assets/agument-1.png')"
               :aspect-ratio="2000 / 1290"
+              :src="require('../../../augment/assets/agument-1.png')"
               class="my-10 mx-auto"
               max-width="640"
             ></v-img>
@@ -181,8 +186,8 @@
               located on the left side of the section.
             </p>
             <v-img
-              :src="require('../../../augment/assets/agument-2.png')"
               :aspect-ratio="2000 / 1290"
+              :src="require('../../../augment/assets/agument-2.png')"
               class="my-10 mx-auto"
               max-width="640"
             ></v-img>
@@ -191,8 +196,8 @@
               dynamic value.
             </p>
             <v-img
-              :src="require('../../../augment/assets/agument-3.png')"
               :aspect-ratio="2000 / 1290"
+              :src="require('../../../augment/assets/agument-3.png')"
               class="my-10 mx-auto"
               max-width="640"
             ></v-img>
@@ -201,8 +206,8 @@
               key-value pairs.
             </p>
             <v-img
-              :src="require('../../../augment/assets/agument-4.png')"
               :aspect-ratio="2000 / 1290"
+              :src="require('../../../augment/assets/agument-4.png')"
               class="my-10 mx-auto"
               max-width="640"
             ></v-img>
@@ -211,8 +216,8 @@
               been substituted with augmented values.
             </p>
             <v-img
-              :src="require('../../../augment/assets/agument-5.png')"
               :aspect-ratio="2000 / 1290"
+              :src="require('../../../augment/assets/agument-5.png')"
               class="my-10 mx-auto"
               max-width="640"
             ></v-img>
@@ -221,7 +226,7 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn size="x-large" @click="help_dialog = false" variant="text">
+            <v-btn size="x-large" variant="text" @click="help_dialog = false">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -285,4 +290,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

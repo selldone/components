@@ -14,26 +14,27 @@
 
 <template>
   <v-select
-    :value="value"
-    @input="(val) => $emit('input', val)"
+    :filled="filled"
     :items="giftCards"
     :label="$t('global.payment_form.gift_cards_input')"
-    :no-data-text="$t('global.payment_form.gift_cards_input_empty')"
+    :model-value="value"
     :multiple="multiple"
-    item-text="number"
+    :no-data-text="$t('global.payment_form.gift_cards_input_empty')"
     :return-object="returnObject"
-    prepend-inner-icon="card_giftcard"
     :rounded="rounded"
-    :filled="filled"
+    item-title="number"
+    prepend-inner-icon="card_giftcard"
+    @update:model-value="(val) => $emit('input', val)"
   >
     <template v-slot:append-outer="">
       <v-btn
-        @click.stop="dialog = true"
-        icon
         :caption="$t('global.actions.add_giftcard')"
         class="sub-caption b-16px -hover margin-n7px"
-        ><v-icon>add_box</v-icon></v-btn
+        icon
+        @click.stop="dialog = true"
       >
+        <v-icon>add_box</v-icon>
+      </v-btn>
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Add card  ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -50,12 +51,12 @@
     <template v-slot:selection="{ item, index }">
       <v-chip
         v-if="index === 0"
-        color="#ffffff33"
         class="mt-2"
-        close
+        closable
+        color="#ffffff33"
         @click:close="DeleteItemByID(value, item.id)"
       >
-        <v-avatar v-if="item.gift_type.bg" left>
+        <v-avatar v-if="item.gift_type.bg" start>
           <img
             :src="getShopImagePath(item.gift_type.bg, IMAGE_SIZE_SMALL)"
             alt="trevor"
@@ -65,7 +66,7 @@
         <span>{{ formatCard(item.number) }}</span>
         <span class="ms-2 small">{{ item.gift_type.title }}</span>
       </v-chip>
-      <span v-if="index === 1" class="caption ms-2 mt-1"
+      <span v-if="index === 1" class="text-caption ms-2 mt-1"
         >(+{{ value.length - 1 }} {{ $t("global.payment_form.more") }} )</span
       >
     </template>
@@ -73,9 +74,9 @@
       <img
         v-if="item.gift_type.bg"
         :src="getShopImagePath(item.gift_type.bg, IMAGE_SIZE_SMALL)"
+        class="rounded me-2"
         height="24"
         width="36"
-        class="rounded me-2"
       />
 
       <b>{{ formatCard(item.number) }}</b>
@@ -91,8 +92,8 @@
     <template v-slot:append-inner>
       <v-progress-circular
         v-if="loading"
-        indeterminate
         class="mt-n1"
+        indeterminate
       ></v-progress-circular>
     </template>
   </v-select>
@@ -100,6 +101,7 @@
 
 <script>
 import SStorefrontGiftcardAddDialog from "@components/storefront/giftcard/add-dialog/SStorefrontGiftcardAddDialog.vue";
+
 export default {
   name: "SStorefrontGiftcardSelector",
   components: { SStorefrontGiftcardAddDialog },

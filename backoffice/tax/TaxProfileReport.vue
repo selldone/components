@@ -13,28 +13,28 @@
   -->
 
 <template>
-  <div class="blur-animate" :class="{ blurred: busy }">
+  <div :class="{ blurred: busy }" class="blur-animate">
     <v-btn
       v-if="statistic?.products > 0"
-      color="primary"
-      class="mx-2 tnt"
-      variant="text"
       :to="{
         name: 'BPageShopProductsList',
         query: { search: 'tax:' + profile.name },
       }"
+      class="mx-2 tnt"
+      color="primary"
       target="_blank"
       title="Show products with this tax profile."
+      variant="text"
     >
       <v-icon start>inventory</v-icon>
 
       <b class="me-2">{{ numeralFormat(statistic?.products, "0,0") }}🞬 </b>
       {{ $t("global.commons.products") }}
 
-      <v-icon size="small" end>open_in_new</v-icon>
+      <v-icon end size="small">open_in_new</v-icon>
     </v-btn>
     <small v-else class="mx-2">
-      <v-icon size="small" class="me-1">inventory</v-icon>
+      <v-icon class="me-1" size="small">inventory</v-icon>
       {{ $t("global.commons.products") }}:
       {{ $t("global.commons.empty") }}!</small
     >

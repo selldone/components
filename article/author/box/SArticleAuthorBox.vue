@@ -15,7 +15,7 @@
 <template>
   <v-container v-bind="$attrs">
     <v-row v-if="article.user_id > 0" align="center" no-gutters>
-      <v-avatar size="160px" class="m-2 hide-on-small-900 avatar-gradient">
+      <v-avatar class="m-2 hide-on-small-900 avatar-gradient" size="160px">
         <v-img :src="author_avatar" />
       </v-avatar>
 
@@ -35,13 +35,13 @@
 
           <v-btn
             v-if="canFollow"
-            variant="flat"
-            rounded
             :color="isFollow ? 'success' : 'default'"
-            class="ms-2"
-            size="small"
-            @click="followUser"
             :loading="busy_follow"
+            class="ms-2"
+            rounded
+            size="small"
+            variant="flat"
+            @click="followUser"
           >
             <span v-if="isFollow" class="fas fa-check-circle me-2" />
             {{
@@ -70,7 +70,7 @@
             {{ $t("global.article.now") }}
           </span>
 
-          <v-tooltip location="bottom" activator="parent">
+          <v-tooltip activator="parent" location="bottom">
             {{
               $t("global.article.wrote_at") +
               " " +
@@ -80,15 +80,15 @@
         </span>
       </v-col>
 
-      <v-col cols="12" class="text-end">
+      <v-col class="text-end" cols="12">
         <!-- Report & Delete Article -->
         <v-btn
           v-if="(canDelete || canReport) && !reported"
-          variant="text"
+          :color="canDelete ? '#D32F2F' : '#444'"
+          class="m-1"
           rounded
           size="small"
-          class="m-1"
-          :color="canDelete ? '#D32F2F' : '#444'"
+          variant="text"
           @click.stop="dialog_report = true"
         >
           <v-icon class="mx-1">
@@ -104,11 +104,11 @@
         <v-alert
           v-if="reported"
           :model-value="reported"
-          color="error"
-          icon="new_releases"
           border="start"
-          density="compact"
           class="mt-5 text-start pp"
+          color="error"
+          density="compact"
+          icon="new_releases"
           @click="dialog_report = true"
         >
           {{ $t("global.article.you_reported_this_article") }}
@@ -127,57 +127,57 @@
       >
         <v-btn
           v-if="socials.linkedin"
-          variant="text"
-          color="#000"
-          class="m-2"
-          dir="ltr"
-          size="small"
-          icon
           :href="`https://www.linkedin.com/in/${socials.linkedin}`"
+          class="m-2"
+          color="#000"
+          dir="ltr"
+          icon
+          size="small"
           target="_blank"
+          variant="text"
         >
           <v-icon size="20"> fa:fab fa-linkedin</v-icon>
         </v-btn>
 
         <v-btn
           v-if="socials.twitter"
-          variant="text"
-          color="#000"
-          class="m-2"
-          dir="ltr"
-          size="small"
-          icon
           :href="`https://twitter.com/${socials.twitter}`"
+          class="m-2"
+          color="#000"
+          dir="ltr"
+          icon
+          size="small"
           target="_blank"
+          variant="text"
         >
           <v-icon size="20"> fa:fab fa-twitter</v-icon>
         </v-btn>
 
         <v-btn
           v-if="socials.medium"
-          variant="text"
-          color="#000"
-          class="m-2"
-          dir="ltr"
-          size="small"
-          icon
           :href="`https://medium.com/@${socials.medium}`"
+          class="m-2"
+          color="#000"
+          dir="ltr"
+          icon
+          size="small"
           target="_blank"
+          variant="text"
         >
           <v-icon size="20"> fa:fab fa-medium</v-icon>
         </v-btn>
 
         <v-btn
           v-if="socials.selldone"
-          variant="text"
-          color="#000"
-          class="m-2"
-          dir="ltr"
-          size="small"
-          icon
           :href="`${SetupService.MainServiceUrl()}/@${socials.selldone}`"
-          target="_blank"
           :title="`@${socials.selldone}`"
+          class="m-2"
+          color="#000"
+          dir="ltr"
+          icon
+          size="small"
+          target="_blank"
+          variant="text"
         >
           <v-icon size="20"> fa:fas fa-store</v-icon>
         </v-btn>
@@ -189,10 +189,10 @@
 
   <s-content-violation-report-dialog
     v-model="dialog_report"
-    @report="reportArticle"
-    @delete="reportDeleteArticle"
     :can-delete="canDelete"
     :loading="busy_report"
+    @delete="reportDeleteArticle"
+    @report="reportArticle"
   ></s-content-violation-report-dialog>
 </template>
 
@@ -374,7 +374,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .author-box {
   .author-title {
     font-size: 0.9rem;

@@ -14,11 +14,11 @@
 
 <template>
   <s-translations-button
+    v-model:translations="offer.translations"
     :default-value="offer[translationKey]"
     :label="label"
     :shop="shop"
     :translation-key="translationKey"
-    v-model:translations="offer.translations"
     :url="
       window.API.PUT_OFFER_SET_TRANSLATIONS(shop.id, offer.id, translationKey)
     "

@@ -14,15 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-select
-    :model-value="modelValue"
-    @update:model-value="
-      (val) => {
-        $emit('update:modelValue', val);
-         $nextTick(() => {
-        $emit('change',val);
-      })
-      }
-    "
+    :density="dense ? 'compact' : undefined"
     :items="[
       ...Object.values(ProductType).map((t) => {
         return { value: t.code, obj: t };
@@ -31,58 +23,69 @@
         return { value: t.code, obj: t };
       }),
     ]"
+    :model-value="modelValue"
+    bg-color="transparent"
+    chips
+    clearable
+    flat
+    hide-details
     item-value="value"
     multiple
-    chips
     placeholder="Select Filter *.*"
     prepend-inner-icon="filter_alt"
-    bg-color="transparent"
-    hide-details
-    clearable
-    :density="dense?'compact':undefined"
     variant="solo"
-    flat
-
+    @update:model-value="
+      (val) => {
+        $emit('update:modelValue', val);
+        $nextTick(() => {
+          $emit('change', val);
+        });
+      }
+    "
   >
-    <template v-slot:item="{ item,props }">
-      <v-list-item v-bind="props" class="d-flex align-center text-start"  >
+    <template v-slot:item="{ item, props }">
+      <v-list-item class="d-flex align-center text-start" v-bind="props">
         <template v-slot:title>
-          <span style="display: inline-block;min-width: 58px"><v-img
+          <span style="display: inline-block; min-width: 58px"
+            ><v-img
               v-if="item.raw.obj.image"
               :src="item.raw.obj.image"
-              width="16"
-              height="16"
               class="me-2"
-          ></v-img>
-          <v-icon v-else class="me-2" size="small">{{ item.raw.obj.icon }}</v-icon></span>
+              height="16"
+              width="16"
+            ></v-img>
+            <v-icon v-else class="me-2" size="small">{{
+              item.raw.obj.icon
+            }}</v-icon></span
+          >
 
-          {{$t(item.raw.obj.name)}}
+          {{ $t(item.raw.obj.name) }}
         </template>
-
       </v-list-item>
     </template>
 
     <template v-slot:chip="{ attrs, item, parent, selected }">
       <v-chip
+        :model-value="selected"
+        :size="dense ? 'x-small' : undefined"
         class="ma-1 font-weight-bold"
         closable
-        :model-value="selected"
-        v-bind="attrs"
-        @click:close="parent.selectItem(item)"
         color="#fafafa"
-        theme="light" variant="flat"
-        :size="dense ? 'x-small' : undefined"
+        theme="light"
+        v-bind="attrs"
+        variant="flat"
+        @click:close="parent.selectItem(item)"
       >
         <v-img
           v-if="item.raw.obj.image"
           :src="item.raw.obj.image"
-          width="16"
-          height="16"
           class="me-1"
+          height="16"
+          width="16"
         ></v-img>
-        <v-icon v-else start size="small" class="me-1">{{
-          item.raw.obj.icon
-        }}</v-icon>
+        <v-icon v-else class="me-1" size="small" start
+          >{{ item.raw.obj.icon }}
+        </v-icon>
         {{ $t(item.raw.obj.name) }}
       </v-chip>
     </template>
@@ -116,4 +119,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

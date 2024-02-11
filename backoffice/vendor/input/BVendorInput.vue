@@ -14,7 +14,29 @@
 
 <template>
   <v-autocomplete
+    v-model:menu="menu"
+    v-model:search="search"
+    :bg-color="backgroundColor"
+    :customFilter="() => true"
+    :density="dense ? 'compact' : undefined"
+    :disabled="disabled || IS_VENDOR_PANEL"
+    :flat="flat"
+    :hide-details="hideDetails"
+    :items="vendors"
+    :label="label"
+    :loading="busy"
     :model-value="modelValue"
+    :placeholder="placeholder"
+    :prepend-inner-icon="prependInnerIcon"
+    :return-object="false"
+    :rounded="rounded"
+    :single-line="singleLine"
+    :variant="variant ? variant : solo ? 'solo' : 'underlined'"
+    clearable
+    item-title="name"
+    item-value="id"
+    messages=" "
+    @focus="onFocus"
     @update:model-value="
       (val) => {
         $emit('update:modelValue', val);
@@ -23,40 +45,18 @@
         });
       }
     "
-    :items="vendors"
-    :loading="busy"
-    :label="label"
-    item-value="id"
-    item-title="name"
-    :return-object="false"
-    clearable
     @click:clear="
       $emit('click:clear');
       getVendors();
     "
-    v-model:search="search"
-    v-model:menu="menu"
-    :customFilter="() => true"
-    messages=" "
-    :disabled="disabled || IS_VENDOR_PANEL"
-    :placeholder="placeholder"
-    :flat="flat"
-    :density="dense ? 'compact' : undefined"
-    :bg-color="backgroundColor"
-    :hide-details="hideDetails"
-    :prepend-inner-icon="prependInnerIcon"
-    :rounded="rounded"
-    @focus="onFocus"
-    :variant="variant ? variant : solo ? 'solo' : 'underlined'"
-    :single-line="singleLine"
   >
     <template v-slot:selection="{}">
       <template v-if="selected_vendor">
         <v-avatar
           v-if="selected_vendor.icon"
           :size="dense ? 20 : 24"
-          rounded
           class="ma-1 me-2"
+          rounded
         >
           <img :src="getShopImagePath(selected_vendor.icon, 64)" />
         </v-avatar>
@@ -67,7 +67,7 @@
 
     <template v-slot:message>
       <div v-if="selected_vendor && selected_vendor.user" class="pen">
-        <v-avatar size="24" start class="avatar-gradient -thin -user me-1">
+        <v-avatar class="avatar-gradient -thin -user me-1" size="24" start>
           <img :src="getUserAvatar(selected_vendor.user_id)" />
         </v-avatar>
         {{ selected_vendor.user.name }}
@@ -77,7 +77,7 @@
     <template v-slot:item="{ item, props }">
       <v-list-item v-bind="props">
         <template v-slot:prepend>
-          <v-avatar size="32" rounded>
+          <v-avatar rounded size="32">
             <img
               v-if="item.raw.icon"
               :src="getShopImagePath(item.raw.icon, 64)"
@@ -87,11 +87,11 @@
         </template>
 
         <template v-slot:title>
-          <v-row no-gutters align="center">
+          <v-row align="center" no-gutters>
             <b>{{ item.raw.name }}</b>
             <v-spacer></v-spacer>
             <v-chip v-if="item.raw.user" class="mx-1 pen" size="small">
-              <v-avatar start class="avatar-gradient -thin -user">
+              <v-avatar class="avatar-gradient -thin -user" start>
                 <img :src="getUserAvatar(item.raw.user_id)" />
               </v-avatar>
               <span class="small">{{ item.raw.user.name }}</span>
@@ -239,4 +239,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

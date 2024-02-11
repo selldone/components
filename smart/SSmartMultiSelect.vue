@@ -18,26 +18,26 @@
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
-      tag="div"
-      group
-      class="border-between-vertical rounded-card"
       :class="{ disabled: disabled }"
+      class="border-between-vertical rounded-card"
+      group
       hide-on-leave
+      tag="div"
     >
       <div
         v-for="task in items_show"
         :key="task[itemValue]"
-        class="p-2 pp row-hover usn"
         :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: task.disabled }"
+        class="p-2 pp row-hover usn"
         @click="toggle(task[itemValue])"
       >
         <div class="d-flex align-center mnh">
-          <div style="min-width: 32px" class="position-relative me-2">
+          <div class="position-relative me-2" style="min-width: 32px">
             <v-icon
-              color="primary"
-              class="-thin -gray flex-grow-0 h-auto center-absolute"
-              size="24"
               :class="{ 'avatar-gradient': value.includes(task[itemValue]) }"
+              class="-thin -gray flex-grow-0 h-auto center-absolute"
+              color="primary"
+              size="24"
               >{{
                 value.includes(task[itemValue])
                   ? "lens"
@@ -50,15 +50,15 @@
             <b v-html="$t(task[itemText])"> </b>
             <v-list-subheader
               v-if="itemDescription"
-              style="height: auto"
               class="p-0"
+              style="height: auto"
             >
               {{ $t(task[itemDescription]) }}
             </v-list-subheader>
           </div>
 
           <v-icon v-if="itemIcon">{{ task[itemIcon] }}</v-icon>
-          <img v-if="itemImage" width="24" height="24" :src="task[itemImage]" />
+          <img v-if="itemImage" :src="task[itemImage]" height="24" width="24" />
         </div>
       </div>
     </v-slide-y-transition>
@@ -123,7 +123,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .mnh {
   min-height: 40px;
 }

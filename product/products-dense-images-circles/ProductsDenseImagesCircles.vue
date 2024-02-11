@@ -13,23 +13,29 @@
   -->
 
 <template>
-  <div class="circles-container" :class="{'-inline':inline}" :style="{ padding: `${size / 3}px` }">
+  <div
+    :class="{ '-inline': inline }"
+    :style="{ padding: `${size / 3}px` }"
+    class="circles-container"
+  >
     <v-avatar
-      :size="size"
       v-for="(id, index) in ids.limit(maxCount)"
       :key="id + '-' + index"
+      :class="{ 'pointer-pointer': link, 'big-scale': bigScale }"
+      :color="id.toString().startsWith('c-') ? 'amber' : '#ffffffbb'"
+      :size="size"
       class="citm"
       @click.stop="
         !rawImagesPath && id.toString().startsWith('c-')
           ? $emit('click:category', id.toString().replace('c-', ''))
           : $emit('click:item', id)
       "
-      :class="{ 'pointer-pointer': link, 'big-scale': bigScale }"
-      :color="id.toString().startsWith('c-') ? 'amber' : '#ffffffbb'"
     >
       <img
         v-if="!rawImagesPath && id.toString().startsWith('c-')"
-        :src="getCategoryIcon(id.toString().replace('c-', ''), IMAGE_SIZE_SMALL)"
+        :src="
+          getCategoryIcon(id.toString().replace('c-', ''), IMAGE_SIZE_SMALL)
+        "
         style="padding: 2px"
       />
       <img
@@ -44,18 +50,17 @@
     <v-icon v-if="ids.length > maxCount">more_horiz</v-icon>
 
     <v-btn
-      fab
-      :style="{ width: size + 'px', height: size + 'px' }"
-      depressed
       v-if="hasAdd"
       key="add"
-      class="citm"
-      @click="$emit('click:add')"
       :class="{ 'pointer-pointer': link, 'big-scale': bigScale }"
+      class="citm"
       color="primary"
-      dark
+      variant="flat"
+      icon
+      :size="size"
+      @click="$emit('click:add')"
     >
-      <v-icon small>add</v-icon>
+      <v-icon>add</v-icon>
     </v-btn>
   </div>
 </template>
@@ -100,14 +105,13 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .circles-container {
   display: flex;
   overflow: visible;
 
-  &.-inline{
+  &.-inline {
     display: inline-flex;
-
   }
 
   //  padding: 10px;
@@ -122,6 +126,7 @@ export default {
       &:not(:first-child) {
         margin-left: 10px;
       }
+
       margin-right: 22px;
 
       transform: scale(1.5);
@@ -151,10 +156,12 @@ export default {
           margin-right: 10px;
           margin-left: unset;
         }
+
         margin-left: 22px;
         margin-right: unset;
       }
     }
+
     .more-items {
       margin-right: unset;
       margin-left: 24px;

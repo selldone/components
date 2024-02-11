@@ -14,37 +14,37 @@
 
 <template>
   <div class="s--mentionable-input">
-    <v-avatar size="2.4em" color="#fafafa" class="me-2 mt-2">
+    <v-avatar class="me-2 mt-2" color="#fafafa" size="2.4em">
       <v-img :src="getUserAvatar(USER_ID())"></v-img>
     </v-avatar>
 
     <s-html-input
       ref="area"
-      class="flex-grow-1"
+      :auto-grow="autoGrow"
       :label="label"
-      :placeholder="placeholder"
+      :mentions="mentions"
+      :messages="messages"
       :modelValue="modelValue"
+      :placeholder="placeholder"
+      class="flex-grow-1"
+      @blur="$emit('blur')"
+      @focus="$emit('focus')"
       @update:text="(val) => $emit('update:text', val)"
       @update:modelValue="(val) => $emit('update:modelValue', val)"
-      :auto-grow="autoGrow"
-      :messages="messages"
-      :mentions="mentions"
       @update:mentions="(val) => $emit('update:mentions', val)"
-      @focus="$emit('focus')"
-      @blur="$emit('blur')"
     ></s-html-input>
 
-    <v-menu location="top" :close-on-content-click="false" max-width="420">
+    <v-menu :close-on-content-click="false" location="top" max-width="420">
       <template v-slot:activator="{ props }">
         <v-btn icon v-bind="props" variant="text">
           <v-icon>sentiment_satisfied_alt</v-icon>
         </v-btn>
       </template>
       <EmojiPicker
-        @select="selectEmoji"
         :native="true"
-        hide-group-names
         disable-skin-tones
+        hide-group-names
+        @select="selectEmoji"
       />
     </v-menu>
   </div>

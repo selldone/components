@@ -18,7 +18,7 @@ import _ from "lodash-es";
  * IntersectMixin provides inline editing capabilities.
  * @mixin IntersectMixin
  */
-export const IntersectMixin = ({
+export const IntersectMixin = {
   data() {
     return {
       intersects: [] as string[],
@@ -34,9 +34,9 @@ export const IntersectMixin = ({
      * @returns {void}
      */
     OnIntersectLoad(
-        isIntersecting: boolean,
+      isIntersecting: boolean,
       key: string,
-      delay: number = 0
+      delay: number = 0,
     ): void {
       if (!this.intersects)
         return console.error("ERROR! Register var: _intersects!");
@@ -64,4 +64,4 @@ export const IntersectMixin = ({
       return this.intersects.includes(key);
     },
   },
-});
+};

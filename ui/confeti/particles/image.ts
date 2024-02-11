@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import BaseParticle from './base';
+import BaseParticle from "./base";
 
 /**
  * Class representing an image particle.
@@ -34,6 +34,12 @@ export default class ImageParticle extends BaseParticle {
    */
   draw() {
     super.draw();
-    this.canvas.ctx.drawImage(this.imgEl, 0, 0, this.particleSize, this.particleSize);
+    this.canvas.ctx.drawImage(
+      this.imgEl,
+      0,
+      0,
+      this.particleSize,
+      this.particleSize,
+    );
   }
 }

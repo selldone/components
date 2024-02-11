@@ -15,10 +15,10 @@
 <template>
   <img
     v-if="region_object"
+    :height="height"
     :src="region_object.src"
     :title="region_object.name"
     :width="height * 1.5"
-    :height="height"
     class="no-inv"
   />
 </template>

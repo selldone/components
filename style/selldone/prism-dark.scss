@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-.prism-dark{
+.prism-dark {
   /*
    * Z-Toch
    * by Zeel Codder
@@ -131,7 +131,7 @@
   .token.function,
   .token.builtin,
   .token.char {
-    color: rgb(34 ,183, 199);
+    color: rgb(34, 183, 199);
   }
 
   .token.selector,
@@ -177,8 +177,8 @@
 }
 
 
-.prism-editor-wrapper.readonly{
-  textarea{
+.prism-editor-wrapper.readonly {
+  textarea {
     display: none !important;
   }
 }

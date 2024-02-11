@@ -21,15 +21,15 @@
         <span v-if="condition_object" class="flex-grow-1 me-1">
           <img
             :src="condition_object.icon"
-            width="24"
-            height="24"
             class="me-2 hover-scale z1 vertical-align-middle"
+            height="24"
+            width="24"
           />
           <span>{{ $t(condition_object.title) }}</span>
         </span>
 
         <span class="flex-grow-1">
-          <v-icon v-if="product.warranty" color="#444" class="mx-2">
+          <v-icon v-if="product.warranty" class="mx-2" color="#444">
             verified_user
           </v-icon>
           <span v-if="product.warranty">{{ product.warranty }}</span>
@@ -67,7 +67,7 @@ export default {
 
     condition_object() {
       return Object.values(ProductCondition).find(
-        (item) => item.code === this.product.condition
+        (item) => item.code === this.product.condition,
       );
     },
   },
@@ -75,4 +75,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

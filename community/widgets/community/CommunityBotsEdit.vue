@@ -14,30 +14,30 @@
 
 <template>
   <v-container
-    class="text-start"
     :class="{ 'pointer-event-none': community && !access.admin }"
+    class="text-start"
   >
     <div class="widget-box">
-      <s-widget-header title="Telegram channel" icon="fa:fab fa-telegram">
+      <s-widget-header icon="fa:fab fa-telegram" title="Telegram channel">
       </s-widget-header>
 
-      <p dir="ltr" class="mt-3">
+      <p class="mt-3" dir="ltr">
         Auto publish post on your Telegram channel. <br />
 
         1. add <b>@{{ official_telegram_bot }}</b> bot to
         <b>your channel</b> and set send post permission. <br />
         2. Past your <b>channel name</b> here and click <b>save</b>.
       </p>
-      <p dir="ltr" v-if="telegram && telegram.errors">
+      <p v-if="telegram && telegram.errors" dir="ltr">
         Send errors: <b class="text-danger">{{ telegram.errors }}</b> / limit is
         30! System auto disable the publishing if your bot reach this limit. If
         this happen you should re-enable it manually.
       </p>
       <v-alert
         v-if="telegram && !telegram.enable"
+        border="start"
         color="red"
         type="error"
-        border="left"
       >
         Telegram bot disabled to publish on this channel! Check your channel
         name and set the channel again.
@@ -46,30 +46,30 @@
       <v-switch
         v-model="telegram_enable"
         :label="telegram_enable ? 'Enable' : 'Disable'"
-        messages="Publish on the telegram channel"
-        color="success"
         class="mb-3"
+        color="success"
+        messages="Publish on the telegram channel"
       ></v-switch>
 
       <v-text-field
         v-model="telegram_channel"
-        label="Telegram channel"
-        placeholder="Your channel name without @..."
-        messages="Past your channel name here"
         :prepend-inner-icon="telegram_lock ? 'lock' : 'lock_open'"
-        @click:prepend-inner="telegram_lock = !telegram_lock"
         :readonly="telegram_lock"
+        label="Telegram channel"
+        messages="Past your channel name here"
+        placeholder="Your channel name without @..."
         prefix="@"
+        @click:prepend-inner="telegram_lock = !telegram_lock"
       >
       </v-text-field>
 
       <div class="widget-buttons">
         <v-btn
-          x-large
-          color="primary"
-          @click="saveBot('Telegram', telegram_channel, telegram_enable)"
-          :loading="busy"
           :disabled="!telegram_channel"
+          :loading="busy"
+          color="primary"
+          size="x-large"
+          @click="saveBot('Telegram', telegram_channel, telegram_enable)"
         >
           <v-icon class="me-1">save</v-icon>
           {{ $t("global.actions.save") }}
@@ -84,7 +84,7 @@ import { SetupService } from "@core/server/SetupService";
 
 export default {
   name: "CommunityBotsEdit",
-  components: {  },
+  components: {},
 
   props: {
     community: {}, // In the add if be null.
@@ -161,4 +161,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

@@ -15,37 +15,37 @@
 <template>
   <v-sheet
     v-if="show_inputs"
-    style="border-radius: 12px"
-    class="py-3 px-2 position-relative text-start"
     :class="{
       'pointer-pointer': !show,
       'hover-bg': !readonly && !forceShow,
       'is-show': show,
     }"
     :color="color"
+    class="py-3 px-2 position-relative text-start"
+    style="border-radius: 12px"
   >
     <template v-if="!forceShow">
-      <div @click.stop="show = !show" class="pointer-pointer">
+      <div class="pointer-pointer" @click.stop="show = !show">
         <p class="small m-0 not-selectable">
           {{ $t("global.basket_item_message.title") }}
           <v-progress-linear
             v-if="has_fields"
             :model-value="fill_percent"
+            color="#000"
             rounded
             striped
-            color="#000"
             style="max-width: 166px"
           ></v-progress-linear>
         </p>
 
         <div
           v-if="show"
-          v-html="convertToHtml(product.message)"
           class="mb-3 me-5 mt-3 fadeIn typo-body"
+          v-html="convertToHtml(product.message)"
         ></div>
       </div>
 
-      <v-icon class="absolute-top-end" :class="{ 'fa-rotate-180': show }"
+      <v-icon :class="{ 'fa-rotate-180': show }" class="absolute-top-end"
         >keyboard_arrow_down
       </v-icon>
     </template>
@@ -53,15 +53,15 @@
     <v-expand-transition>
       <div v-if="show">
         <s-basket-product-inputs
-          :readonly="readonly"
           ref="form"
           v-model="message"
-          :product="product"
           v-model:files="files"
-          :uploadedFiles="uploaded_files"
-          @onDeleteFile="onDeleteFile"
           :is-admin="isAdmin"
+          :product="product"
+          :readonly="readonly"
+          :uploadedFiles="uploaded_files"
           class="max-w-640 mx-auto py-5"
+          @onDeleteFile="onDeleteFile"
         ></s-basket-product-inputs>
       </div>
     </v-expand-transition>
@@ -69,10 +69,10 @@
     <div class="widget-buttons">
       <v-btn
         v-if="show && !readonly && has_fields"
-        @click="saveBasketItemMessage(product.id, variantId)"
-        size="x-large"
-        color="#000"
         :loading="busy"
+        color="#000"
+        size="x-large"
+        @click="saveBasketItemMessage(product.id, variantId)"
       >
         <v-icon start>save</v-icon>
 
@@ -251,10 +251,10 @@ export default {
             },
           },
           /* {
-                    basket_id: this.basket.id,
-                    variant_id: variant_id,
-                    message: this.message,
-                  }*/
+                        basket_id: this.basket.id,
+                        variant_id: variant_id,
+                        message: this.message,
+                      }*/
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -319,7 +319,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .hover-bg {
   border: #000 solid 2px !important;
   transition: box-shadow 0.5s;

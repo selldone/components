@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-menu :close-on-content-click="false" open-on-hover  z-index="100">
+  <v-menu :close-on-content-click="false" open-on-hover z-index="100">
     <template v-slot:activator="{ props }">
       <div v-bind="props">
         <h6 class="single-line">
@@ -34,15 +34,15 @@
           <small>{{ $t("user_dashboard.shops.shop_card.page_views") }}</small>
 
           <s-donut-chart
+            :background="dark ? SaminColorDark : '#fff'"
+            :has-legend="false"
             :sections="pie_values"
             :size="24"
-            unit="px"
             :thickness="40"
+            :total="total_visitors ? total_visitors : 1"
             class="d-inline-block ms-2"
             style="vertical-align: middle"
-            :has-legend="false"
-            :total="total_visitors ? total_visitors : 1"
-            :background="dark ? SaminColorDark : '#fff'"
+            unit="px"
           >
           </s-donut-chart>
         </p>
@@ -52,11 +52,11 @@
     <v-card class="p-2" max-width="320" rounded="xl">
       <apexchart
         v-if="has_visitors"
-        :width="300"
         :height="200"
-        type="donut"
         :options="options_visitors"
         :series="series_visitors"
+        :width="300"
+        type="donut"
       />
       <p v-else class="m-2 text-muted">No data</p>
     </v-card>

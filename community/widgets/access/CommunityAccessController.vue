@@ -15,10 +15,10 @@
 <template>
   <div class="pt-5 pb-3 text-start">
     <s-widget-header
-      :title="$t('community.access.admins')"
-      icon="fa:fas fa-crown"
       :add-caption="shop ? $t('community.access.manage_admins') : undefined"
       :href="admins_url"
+      :title="$t('community.access.admins')"
+      icon="fa:fas fa-crown"
       target="_blank"
     ></s-widget-header>
     <v-list-subheader>
@@ -26,17 +26,17 @@
       community. They are essentially part of your business staff.
     </v-list-subheader>
     <s-dense-images-circles-users
-      class="fadeIn delay_100"
       v-if="community.admins_list"
       :ids="community.admins_list"
+      class="fadeIn delay_100"
     ></s-dense-images-circles-users>
 
     <s-widget-header
-      :title="$t('community.access.moderators')"
-      icon="admin_panel_settings"
       :add-caption="$t('community.access.manage_moderators')"
-      @click:add="showModerators"
+      :title="$t('community.access.moderators')"
       class="mt-4"
+      icon="admin_panel_settings"
+      @click:add="showModerators"
     ></s-widget-header>
     <v-list-subheader
       >Moderators are granted limited access to oversee the community. They are
@@ -45,16 +45,16 @@
     </v-list-subheader>
 
     <s-dense-images-circles-users
-      class="fadeIn delay_400"
       v-if="community.moderators_list"
       :ids="community.moderators_list"
+      class="fadeIn delay_400"
     ></s-dense-images-circles-users>
 
     <!-- -------------------- Dialog ----------------------- -->
     <v-dialog
       v-model="dialog"
-      scrollable
       fullscreen
+      scrollable
       transition="dialog-bottom-transition"
     >
       <v-card class="position-relative text-start">
@@ -64,8 +64,8 @@
         <v-card-text>
           <div class="widget-box mb-5">
             <s-widget-header
-              title="Add new moderator"
               icon="person_add_alt"
+              title="Add new moderator"
             ></s-widget-header>
             <v-list-subheader
               >1. Make sure the user previously registered on Selldone.
@@ -75,17 +75,17 @@
             </v-list-subheader>
 
             <user-email-input
-              with-profile
               v-model="user_email"
               class="mt-5"
+              with-profile
             ></user-email-input>
 
             <div class="widget-buttons">
               <v-btn
+                :disabled="!user_email"
+                :loading="busy_add"
                 color="primary"
                 size="x-large"
-                :loading="busy_add"
-                :disabled="!user_email"
                 @click="addModerator"
               >
                 <v-icon class="me-1">add</v-icon>
@@ -97,8 +97,8 @@
           <div class="widget-box mb-5 min-height-20vh">
             <s-progress-loading v-if="busy_fetch"></s-progress-loading>
             <s-widget-header
-              title="Moderators list"
               icon="supervisor_account"
+              title="Moderators list"
             ></s-widget-header>
 
             <v-list
@@ -107,7 +107,7 @@
             >
               <v-list-item v-for="item in moderators" :key="item.user_id">
                 <template v-slot:prepend>
-                  <v-avatar size="48" class="my-0 avatar-gradient -thin">
+                  <v-avatar class="my-0 avatar-gradient -thin" size="48">
                     <v-img :src="getUserAvatar(item.user_id)"></v-img>
                   </v-avatar>
                 </template>
@@ -116,9 +116,9 @@
                   >{{ item.name }}
                   <v-icon
                     v-if="item.verified"
-                    size="small"
-                    color="blue"
                     class="ms-1"
+                    color="blue"
+                    size="small"
                     >verified
                   </v-icon>
                 </v-list-item-title>
@@ -131,10 +131,10 @@
 
                 <v-list-item-action>
                   <v-btn
-                    icon
-                    @click="removeModerator(item)"
                     :loading="busy_remove === item.user_id"
+                    icon
                     title="Remove moderator"
+                    @click="removeModerator(item)"
                   >
                     <v-icon>close</v-icon>
                   </v-btn>
@@ -151,18 +151,18 @@
 
             <div
               v-if="has_more"
-              style="height: 120px"
               v-intersect.quiet="
                 (isIntersecting) => {
                   if (isIntersecting) getMore();
                 }
               "
+              style="height: 120px"
             ></div>
           </div>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn variant="text" @click="dialog = false" size="x-large">
+            <v-btn size="x-large" variant="text" @click="dialog = false">
               <v-icon class="me-1">close</v-icon>
 
               {{ $t("global.actions.close") }}

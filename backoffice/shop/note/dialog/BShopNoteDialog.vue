@@ -15,38 +15,39 @@
 <template>
   <v-navigation-drawer
     v-model="dialog"
+    :scrim="false"
     :width="
       $vuetify.display.xl ? 560 : $vuetify.display.lgAndUp ? 420 : undefined
     "
-    :scrim="false"
-    color="#1e1e1e"
     class="x-page-builder-options-slider"
+    color="#1e1e1e"
   >
     <v-card
       class="text-start d-flex flex-column"
-      flat rounded="0"
+      flat
+      rounded="0"
       style="min-height: 100%; height: 100%"
     >
       <!-- ████████████████████ Actions ████████████████████ -->
 
       <v-card-actions class="flex-grow-0">
         <div class="widget-buttons">
-          <v-btn variant="text" @click="dialog = false" size="x-large">
-            <v-icon class="me-1">close</v-icon
-            >{{ $t("global.actions.close") }}</v-btn
-          >
+          <v-btn size="x-large" variant="text" @click="dialog = false">
+            <v-icon start>close </v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
         </div>
       </v-card-actions>
 
       <!-- ████████████████████ Chats ████████████████████ -->
 
-      <v-list class="flex-grow-0 overflow-auto pb-16" lines="two" ref="list">
+      <v-list ref="list" class="flex-grow-0 overflow-auto pb-16" lines="two">
         <b-shop-note-view
           v-for="note in filtered_notes"
           :key="note.id"
-          :shop="shop"
           :in-shop-admin="inShopAdmin"
           :note="note"
+          :shop="shop"
           @delete="DeleteItemByID(notes, note.id)"
         >
         </b-shop-note-view>
@@ -55,12 +56,12 @@
       <v-spacer></v-spacer>
       <div class="pa-2 flex-grow-0">
         <s-mentionable-input
-          :shop-id="shop.id"
-          :label="$t('order_timeline.message_input')"
           v-model="message"
+          v-model:mentions="mentions"
+          :label="$t('order_timeline.message_input')"
+          :shop-id="shop.id"
           auto-grow
           class="mb-2"
-          v-model:mentions="mentions"
         ></s-mentionable-input>
 
         <s-dense-images-circles-users
@@ -71,13 +72,14 @@
 
         <div class="widget-buttons">
           <v-btn
+            :loading="saving"
+            color="primary"
             size="x-large"
             variant="flat"
-            color="primary"
             @click="addNewNote()"
-            :loading="saving"
           >
-            {{ $t("global.actions.send") }} <v-icon class="ms-1">send</v-icon>
+            {{ $t("global.actions.send") }}
+            <v-icon class="ms-1">send</v-icon>
           </v-btn>
         </div>
       </div>
@@ -218,4 +220,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

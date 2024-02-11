@@ -1,3 +1,13 @@
-
-
-<svg height="512" viewBox="0 0 96 96" width="512" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><linearGradient id="linear-gradient" gradientUnits="userSpaceOnUse" x1="32.67" x2="77.87" y1="48.14" y2="48.14"><stop offset="0" stop-color="#ffb300"/><stop offset=".27" stop-color="#ffba11"/><stop offset=".8" stop-color="#ffcd3c"/><stop offset="1" stop-color="#ffd54f"/></linearGradient><g id="lightning"><path d="m70.22 48.19a2 2 0 0 0 .31-1.76l-11.4-38a2 2 0 0 0 -1.92-1.43h-28a2 2 0 0 0 -1.8 2.87l11.24 23.13h-11.23a2 2 0 0 0 -1.58 3.23l40.78 52.27a2 2 0 0 0 1.58.77 1.9 1.9 0 0 0 .92-.23 2 2 0 0 0 1-2.35l-11.45-37.69h10a2 2 0 0 0 1.55-.81z" fill="url(#linear-gradient)"/></g></svg>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="512" viewBox="0 0 96 96" width="512"
+     xmlns="http://www.w3.org/2000/svg">
+    <linearGradient id="linear-gradient" gradientUnits="userSpaceOnUse" x1="32.67" x2="77.87" y1="48.14" y2="48.14">
+        <stop offset="0" stop-color="#ffb300"/>
+        <stop offset=".27" stop-color="#ffba11"/>
+        <stop offset=".8" stop-color="#ffcd3c"/>
+        <stop offset="1" stop-color="#ffd54f"/>
+    </linearGradient>
+    <g id="lightning">
+        <path d="m70.22 48.19a2 2 0 0 0 .31-1.76l-11.4-38a2 2 0 0 0 -1.92-1.43h-28a2 2 0 0 0 -1.8 2.87l11.24 23.13h-11.23a2 2 0 0 0 -1.58 3.23l40.78 52.27a2 2 0 0 0 1.58.77 1.9 1.9 0 0 0 .92-.23 2 2 0 0 0 1-2.35l-11.45-37.69h10a2 2 0 0 0 1.55-.81z"
+              fill="url(#linear-gradient)"/>
+    </g>
+</svg>

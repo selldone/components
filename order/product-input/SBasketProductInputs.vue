@@ -23,15 +23,15 @@
       <v-text-field
         v-else-if="!item.type || item.type === 'text'"
         v-model="message[item.name]"
-        :label="item.title"
-        @update:model-value="$emit('update:modelValue', message)"
-        :style="{ 'animation-delay': `${index * 150}ms` }"
         :disabled="readonly"
-        append-inner-icon="fa:fas fa-copy"
-        @click:append-inner="copyToClipboard(message[item.name])"
-        variant="outlined"
-        :placeholder="item.hint"
+        :label="item.title"
         :persistent-placeholder="!!item.hint"
+        :placeholder="item.hint"
+        :style="{ 'animation-delay': `${index * 150}ms` }"
+        append-inner-icon="fa:fas fa-copy"
+        variant="outlined"
+        @update:model-value="$emit('update:modelValue', message)"
+        @click:append-inner="copyToClipboard(message[item.name])"
       />
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -39,17 +39,17 @@
       <v-select
         v-else-if="item.type === 'select'"
         v-model="message[item.name]"
-        :items="item.selects"
-        menu-props="auto"
-        :label="item.title"
-        @update:model-value="$emit('update:modelValue', message)"
-        :style="{ 'animation-delay': `${index * 150}ms` }"
-        :disabled="readonly"
-        :multiple="item.multiple"
         :chips="item.multiple"
-        variant="outlined"
-        :placeholder="item.hint"
+        :disabled="readonly"
+        :items="item.selects"
+        :label="item.title"
+        :multiple="item.multiple"
         :persistent-placeholder="!!item.hint"
+        :placeholder="item.hint"
+        :style="{ 'animation-delay': `${index * 150}ms` }"
+        menu-props="auto"
+        variant="outlined"
+        @update:model-value="$emit('update:modelValue', message)"
       />
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ switch ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -57,15 +57,15 @@
       <s-smart-switch
         v-else-if="item.type === 'switch'"
         v-model="message[item.name]"
-        :label="item.title"
-        class="mx-3 mt-3 mb-5"
-        :true-title="$t('global.actions.yes')"
-        :false-title="$t('global.actions.no')"
-        :true-description="item.hint_true"
-        :false-description="item.hint_false"
-        true-icon="check"
-        false-icon="close"
         :disabled="readonly"
+        :false-description="item.hint_false"
+        :false-title="$t('global.actions.no')"
+        :label="item.title"
+        :true-description="item.hint_true"
+        :true-title="$t('global.actions.yes')"
+        class="mx-3 mt-3 mb-5"
+        false-icon="close"
+        true-icon="check"
         @change="$forceUpdate()"
       >
       </s-smart-switch>
@@ -78,39 +78,39 @@
           (item.multiple || !getFiles(item.name).length)
         "
         v-model="files[item.name]"
-        :rules="[]"
-        menu-props="auto"
-        :label="item.title"
-        @update:model-value="$emit('update:modelValue', message)"
-        single-line
-        :style="{ 'animation-delay': `${index * 150}ms` }"
-        :multiple="item.multiple"
         :chips="item.multiple"
-        messages="Max file size: 20MB"
-        show-size
-        prepend-icon=""
-        append-inner-icon="attach_file"
-        variant="outlined"
-        :placeholder="item.hint"
+        :label="item.title"
+        :multiple="item.multiple"
         :persistent-placeholder="!!item.hint"
+        :placeholder="item.hint"
+        :rules="[]"
+        :style="{ 'animation-delay': `${index * 150}ms` }"
+        append-inner-icon="attach_file"
+        menu-props="auto"
+        messages="Max file size: 20MB"
+        prepend-icon=""
+        show-size
+        single-line
+        variant="outlined"
+        @update:model-value="$emit('update:modelValue', message)"
       />
 
       <v-fade-transition
+        class="border-between-vertical"
         group
         hide-on-leave
         tag="div"
-        class="border-between-vertical"
       >
         <div v-for="f in getFiles(item.name)" :key="f.id" class="p-2">
           <div class="d-flex align-center mnh">
             <img
               v-if="FileHelper.GetFileIcon(f.filename)"
               :src="FileHelper.GetFileIcon(f.filename)"
+              class="me-2 -thin -gray flex-grow-0"
               height="24"
               width="24"
-              class="me-2 -thin -gray flex-grow-0"
             />
-            <v-icon v-else color="primary" class="me-2 -thin -gray flex-grow-0"
+            <v-icon v-else class="me-2 -thin -gray flex-grow-0" color="primary"
               >attach_file
             </v-icon>
 
@@ -118,7 +118,7 @@
               <b>
                 {{ f.filename }}
               </b>
-              <v-list-subheader style="height: auto" class="p-0">
+              <v-list-subheader class="p-0" style="height: auto">
                 {{ numeralFormat(f.size, "0.[0] b") }}
                 <span class="mx-1">/</span>
                 <span :title="getLocalTimeString(f.created_at)">{{
@@ -130,11 +130,11 @@
             <!-- Delete -->
             <v-btn
               v-if="!readonly"
+              :loading="busy_delete === f.id"
+              color="red"
               icon
               variant="text"
-              color="red"
               @click="deleteFile(f)"
-              :loading="busy_delete === f.id"
             >
               <v-icon>close</v-icon>
             </v-btn>
@@ -142,11 +142,11 @@
             <!-- Download -->
             <v-btn
               v-if="isAdmin"
+              :loading="busy_download === f.id"
+              color="primary"
               icon
               variant="text"
-              color="primary"
               @click="downloadFile(f)"
-              :loading="busy_download === f.id"
             >
               <v-icon>download</v-icon>
             </v-btn>

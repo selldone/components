@@ -17,12 +17,12 @@
     <v-menu content-class="rounded-lg" min-width="240">
       <template v-slot:activator="{ props }">
         <v-btn
-          icon
-          variant="text"
-          v-bind="props"
           :loading="loading"
-          class="z1"
           :title="title"
+          class="z1"
+          icon
+          v-bind="props"
+          variant="text"
         >
           <v-icon>{{ icon }}</v-icon>
         </v-btn>
@@ -31,22 +31,22 @@
         <v-list-item
           v-for="item in items"
           :key="item.title"
+          :disabled="!!item.disabled"
+          :href="item.href"
+          :prepend-icon="item.icon"
+          :target="item.target"
+          :to="item.to"
           @click="
             item.click
               ? item.click(returnClickValue ? returnClickValue : item)
               : undefined
           "
-          :to="item.to"
-          :href="item.href"
-          :target="item.target"
-          :disabled="!!item.disabled"
-          :prepend-icon="item.icon"
         >
           <v-list-item-title class="d-flex align-center"
             ><span>{{ item.title }}</span>
 
             <v-spacer></v-spacer>
-            <img v-if="item.image" :src="item.image" width="24" height="24" />
+            <img v-if="item.image" :src="item.image" height="24" width="24" />
           </v-list-item-title>
           <div v-if="item.subtitle" class="op-0-7 small mt-1">
             {{ item.subtitle }}
@@ -56,8 +56,8 @@
         <v-divider v-if="hasWithTrashed && items?.length"></v-divider>
         <v-list-item
           v-if="hasWithTrashed"
-          @click="$emit('update:withTrashed', !withTrashed)"
           :prepend-icon="withTrashed ? 'circle' : 'radio_button_unchecked'"
+          @click="$emit('update:withTrashed', !withTrashed)"
         >
           <v-list-item-title class="d-flex align-center"
             >Show deleted items
@@ -98,7 +98,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .mnh {
   min-height: 40px;
 }

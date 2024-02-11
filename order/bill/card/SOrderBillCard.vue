@@ -101,16 +101,16 @@
     <!-- ------------------------ Billing Info ------------------------ -->
 
     <template v-if="billing">
-      <hr>
+      <hr />
 
       <s-value-dashed>
         <template v-slot:label>
           <small>{{ $t("global.commons.kind") }}</small>
         </template>
 
-        <v-icon class="me-1">{{
-          billing.business ? "business" : "person"
-        }}</v-icon>
+        <v-icon class="me-1"
+          >{{ billing.business ? "business" : "person" }}
+        </v-icon>
         {{
           billing.business
             ? $t("global.commons.business")
@@ -165,6 +165,7 @@
 
 <script>
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
+
 export default {
   name: "SOrderBillCard",
   components: { SValueDashed },

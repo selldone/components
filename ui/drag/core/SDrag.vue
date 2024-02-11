@@ -3,10 +3,10 @@
     :is="tag"
     :draggable="draggable"
     @drag="emitEvent(events.drag, $event)"
-    @dragstart="emitEvent(events.dragstart, $event)"
+    @dragend="emitEvent(events.dragend, $event)"
     @dragenter="emitEvent(events.dragenter, $event)"
     @dragleave="emitEvent(events.dragleave, $event)"
-    @dragend="emitEvent(events.dragend, $event)"
+    @dragstart="emitEvent(events.dragstart, $event)"
   >
     <slot :transfer-data="scopedData"></slot>
   </component>

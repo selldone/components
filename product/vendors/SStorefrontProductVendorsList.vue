@@ -19,23 +19,23 @@
         v-for="vendor in vendors"
         :key="vendor.id"
         cols="12"
-        sm="12"
-        md="6"
         lg="4"
+        md="6"
+        sm="12"
         xl="3"
       >
         <v-card
-          class="vnd-card"
-          rounded="lg"
-          outlined
           :to="{
             name: window.$storefront.routes.SHOP_VENDOR_PAGE,
             params: { slug: slugify(vendor.name), vendor_id: vendor.id },
           }"
+          class="vnd-card"
+          rounded="lg"
+          variant="outlined"
           @mouseenter.native="$emit('vendor-hover:enter', vendor)"
           @mouseleave.native="$emit('vendor-hover:leave', vendor)"
         >
-          <v-img :src="getShopImagePath(vendor.icon)" :aspect-ratio="2"></v-img>
+          <v-img :aspect-ratio="2" :src="getShopImagePath(vendor.icon)"></v-img>
 
           <v-card-title style="min-height: 64px">
             {{ vendor.name }}
@@ -141,7 +141,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

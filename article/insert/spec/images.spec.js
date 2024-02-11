@@ -41,7 +41,7 @@ describe("Images addon", function () {
       autoUpload: true,
       files: [
         dataURItoBlob(
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII=",
         ),
       ],
       submit: function () {
@@ -49,13 +49,13 @@ describe("Images addon", function () {
         expect(this.$el.find(".medium-insert-images img").length).toEqual(1);
         expect(
           this.$el.find(".medium-insert-images .medium-insert-images-progress")
-            .length
+            .length,
         ).toEqual(1);
         expect(
           this.$el
             .find(".medium-insert-images img")
             .attr("src")
-            .match(/^(data|blob):/)
+            .match(/^(data|blob):/),
         ).toBeTruthy();
         done();
       }.bind(this),
@@ -72,7 +72,7 @@ describe("Images addon", function () {
     const stubbedImage = jasmine.createSpy("image");
     spyOn(this.addon, "getDOMImage").and.returnValue(stubbedImage);
     this.$el.prepend(
-      '<div class="medium-insert-images medium-insert-active"><figure><img src="data:" alt=""></figure></div>'
+      '<div class="medium-insert-images medium-insert-active"><figure><img src="data:" alt=""></figure></div>',
     );
 
     this.addon.uploadDone(null, {
@@ -83,7 +83,7 @@ describe("Images addon", function () {
     });
     stubbedImage.onload();
     expect(this.$el.find(".medium-insert-images img").attr("src")).toEqual(
-      "test.jpg"
+      "test.jpg",
     );
   });
 
@@ -101,7 +101,7 @@ describe("Images addon", function () {
       submit: function () {
         expect(this.$el.find(".medium-insert-images").length).toEqual(1);
         expect(this.$el.find(".medium-insert-images progress").length).toEqual(
-          1
+          1,
         );
         expect(this.$el.find(".medium-insert-images img").length).toEqual(0);
 
@@ -112,7 +112,7 @@ describe("Images addon", function () {
         });
 
         expect(this.$el.find(".medium-insert-images img").attr("src")).toEqual(
-          "test.jpg"
+          "test.jpg",
         );
         done();
       }.bind(this),
@@ -131,7 +131,7 @@ describe("Images addon", function () {
       '<div class="medium-insert-images medium-insert-active">' +
         "<figure></figure>" +
         "<figure></figure>" +
-        "</div>"
+        "</div>",
     );
 
     this.addon.uploadAdd(null, {
@@ -147,7 +147,7 @@ describe("Images addon", function () {
         expect(
           this.$el
             .find(".medium-insert-images")
-            .hasClass("medium-insert-images-grid")
+            .hasClass("medium-insert-images-grid"),
         ).toBe(true);
         done();
       }.bind(this),
@@ -165,7 +165,7 @@ describe("Images addon", function () {
     this.$el.prepend(
       '<div class="medium-insert-images medium-insert-active">' +
         "<figure></figure>" +
-        "</div>"
+        "</div>",
     );
 
     this.addon.uploadAdd(null, {
@@ -181,7 +181,7 @@ describe("Images addon", function () {
         expect(
           this.$el
             .find(".medium-insert-images")
-            .hasClass("medium-insert-images-grid")
+            .hasClass("medium-insert-images-grid"),
         ).toBe(false);
         done();
       }.bind(this),
@@ -211,7 +211,7 @@ describe("Images addon", function () {
       context = this.$el.prepend(
         '<div class="medium-insert-images medium-insert-active">' +
           '<figure><img src="data:" alt=""></figure>' +
-          "</div>"
+          "</div>",
       );
 
     spyOn(this.addon, "getDOMImage").and.returnValue(stubbedImage);
@@ -236,7 +236,7 @@ describe("Images addon", function () {
       context = this.$el.prepend(
         '<div class="medium-insert-images medium-insert-active">' +
           '<figure><img src="data:" alt=""></figure>' +
-          "</div>"
+          "</div>",
       );
 
     spyOn(this.addon, "getDOMImage").and.returnValue(stubbedImage);
@@ -275,7 +275,7 @@ describe("Images addon", function () {
     jasmine.clock().tick(50);
 
     expect(this.$el.find("img").hasClass("medium-insert-image-active")).toBe(
-      true
+      true,
     );
     expect($(".medium-insert-images-toolbar").length).toEqual(1);
     expect($(".medium-insert-images-toolbar2").length).toEqual(1);
@@ -284,7 +284,7 @@ describe("Images addon", function () {
 
   it("supports disabling captions", function () {
     $("#fixture").html(
-      '<div class="editable"><div class="medium-insert-images"><figure><img src="image1.jpg" alt=""></figure></div></div>'
+      '<div class="editable"><div class="medium-insert-images"><figure><img src="image1.jpg" alt=""></figure></div></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -306,14 +306,14 @@ describe("Images addon", function () {
       .find("p")
       .addClass("medium-insert-images")
       .append(
-        '<figure><img src="image1.jpg" alt="" class="medium-insert-image-active"><figcaption class="medium-insert-caption-placeholder"></figcaption></figure>'
+        '<figure><img src="image1.jpg" alt="" class="medium-insert-image-active"><figcaption class="medium-insert-caption-placeholder"></figcaption></figure>',
       );
 
     this.$el.find(".medium-insert-caption-placeholder").click();
     jasmine.clock().tick(50);
 
     expect(
-      this.$el.find("figcaption").hasClass("medium-insert-caption-placeholder")
+      this.$el.find("figcaption").hasClass("medium-insert-caption-placeholder"),
     ).toEqual(false);
   });
 
@@ -322,13 +322,13 @@ describe("Images addon", function () {
       .find("p")
       .addClass("medium-insert-images")
       .append(
-        '<figure><img src="image1.jpg" alt="" class="medium-insert-image-active"><figcaption></figcaption></figure>'
+        '<figure><img src="image1.jpg" alt="" class="medium-insert-image-active"><figcaption></figcaption></figure>',
       );
 
     this.$el.click();
 
     expect(this.$el.find("img").hasClass("medium-insert-image-active")).toBe(
-      false
+      false,
     );
     expect($(".medium-insert-images-toolbar").length).toEqual(0);
     expect($(".medium-insert-images-toolbar2").length).toEqual(0);
@@ -347,7 +347,7 @@ describe("Images addon", function () {
         '<figure><img src="image1.jpg" alt=""></figure>' +
           '<figure><img src="image2.jpg" alt=""></figure>' +
           '<figure><img src="image3.jpg" alt=""></figure>' +
-          '<figure><img src="image4.jpg" alt="" class="medium-insert-image-active"></figure>'
+          '<figure><img src="image4.jpg" alt="" class="medium-insert-image-active"></figure>',
       );
 
     this.$el.trigger($event);
@@ -356,7 +356,7 @@ describe("Images addon", function () {
     expect(
       this.$el
         .find(".medium-insert-images")
-        .hasClass("medium-insert-images-grid")
+        .hasClass("medium-insert-images-grid"),
     ).toBe(true);
 
     this.$el.find("img").last().addClass("medium-insert-image-active");
@@ -380,7 +380,7 @@ describe("Images addon", function () {
     spyOn(jQuery, "ajax");
 
     $p.before(
-      '<div class="medium-insert-images"><figure><img src="delete-image1.jpg" alt=""></figure></div>'
+      '<div class="medium-insert-images"><figure><img src="delete-image1.jpg" alt=""></figure></div>',
     );
     $p.html("test");
 
@@ -399,7 +399,7 @@ describe("Images addon", function () {
     spyOn(jQuery, "ajax");
 
     $p.after(
-      '<div class="medium-insert-images"><figure><img src="delete-image1.jpg" alt=""></figure></div>'
+      '<div class="medium-insert-images"><figure><img src="delete-image1.jpg" alt=""></figure></div>',
     );
     $p.html("test");
 
@@ -424,7 +424,7 @@ describe("Images addon", function () {
       .addClass("medium-insert-images")
       .append(
         '<figure><img src="image1.jpg" alt=""></figure>' +
-          '<figure><img src="image2.jpg" alt="" class="medium-insert-image-active"></figure>'
+          '<figure><img src="image2.jpg" alt="" class="medium-insert-image-active"></figure>',
       );
 
     this.$el.trigger($event);
@@ -440,7 +440,7 @@ describe("Images addon", function () {
       .addClass("medium-insert-images")
       .append(
         '<figure><img src="image1.jpg" alt=""></figure>' +
-          '<figure><img src="image2.jpg" alt="" class="medium-insert-image-active"></figure>'
+          '<figure><img src="image2.jpg" alt="" class="medium-insert-image-active"></figure>',
       );
 
     spyOn(jQuery, "ajax");
@@ -454,7 +454,7 @@ describe("Images addon", function () {
       .find("p")
       .attr(
         "class",
-        "medium-insert-images medium-insert-active medium-insert-images-left"
+        "medium-insert-images medium-insert-active medium-insert-images-left",
       )
       .append('<figure><img src="image1.jpg" alt=""></figure>');
 
@@ -472,7 +472,7 @@ describe("Images addon", function () {
       .find("p")
       .attr(
         "class",
-        "medium-insert-images medium-insert-active medium-insert-images-left"
+        "medium-insert-images medium-insert-active medium-insert-images-left",
       )
       .append('<figure><img src="image1.jpg" alt=""></figure>');
 

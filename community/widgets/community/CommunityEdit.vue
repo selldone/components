@@ -16,9 +16,9 @@
   <v-container :class="{ 'pointer-event-none': community && !access.admin }">
     <v-alert
       v-if="community && community.penalty"
+      border="start"
       color="red"
       type="error"
-      border="left"
     >
       {{ $t("community.commons.rules_violation") }}
     </v-alert>
@@ -30,39 +30,42 @@
         icon="tune"
       ></s-widget-header>
 
-      <v-list-subheader>Assign a name to your community and provide a brief description outlining its purpose and value. </v-list-subheader>
+      <v-list-subheader
+        >Assign a name to your community and provide a brief description
+        outlining its purpose and value.
+      </v-list-subheader>
       <v-text-field
         v-model="name"
-        :label="$t('community.community.name')"
-        :placeholder="$t('community.community.name_plc')"
-        :messages="$t('community.community.name_msg')"
-        :counter="64"
         :append-inner-icon="lock ? 'lock' : 'lock_open'"
-        @click:append-inner="lock = !lock"
-        :readonly="lock"
-        :loading="busy_name"
-        @input="checkName"
+        :counter="64"
         :error-messages="name_error"
+        :label="$t('community.community.name')"
+        :loading="busy_name"
+        :messages="$t('community.community.name_msg')"
+        :placeholder="$t('community.community.name_plc')"
+        :readonly="lock"
+        @click:append-inner="lock = !lock"
+        @update:model-value="checkName"
       >
         <template v-slot:append-inner>
-          <v-icon color="success" v-if="valid_name === name">check</v-icon>
+          <v-icon v-if="valid_name === name" color="success">check</v-icon>
         </template>
       </v-text-field>
 
       <v-text-field
         v-model="title"
-        :label="$t('community.community.title')"
-        :placeholder="$t('community.community.title_plc')"
-        :messages="$t('community.community.title_msg')"
         :counter="128"
+        :label="$t('community.community.title')"
+        :messages="$t('community.community.title_msg')"
+        :placeholder="$t('community.community.title_plc')"
       ></v-text-field>
 
       <v-text-field
         v-model="desc"
-        :label="$t('community.community.desc')"
-        :placeholder="$t('community.community.desc_plc')"
-        :messages="$t('community.community.desc_msg')"
         :counter="256"
+        :label="$t('community.community.desc')"
+        :messages="$t('community.community.desc_msg')"
+        :placeholder="$t('community.community.desc_plc')"
       ></v-text-field>
     </div>
 
@@ -73,16 +76,18 @@
         icon="image"
       ></s-widget-header>
 
-      <v-list-subheader> You can upload and modify the logo of your community here.</v-list-subheader>
+      <v-list-subheader>
+        You can upload and modify the logo of your community here.
+      </v-list-subheader>
       <div class="text-center">
         <image-input
-          class="d-inline-block"
           v-model="image_file"
           :src="
             community && community.image
               ? getShopImagePath(community.image)
               : undefined
           "
+          class="d-inline-block"
         ></image-input>
       </div>
     </div>
@@ -94,14 +99,17 @@
         icon="track_changes"
       ></s-widget-header>
 
-      <v-list-subheader> This is the default SEO configuration for your community. Please note that SEO settings can also be adjusted at the topic and category level.</v-list-subheader>
+      <v-list-subheader>
+        This is the default SEO configuration for your community. Please note
+        that SEO settings can also be adjusted at the topic and category level.
+      </v-list-subheader>
 
       <s-smart-toggle
         v-model="nofollow"
-        true-title="No follow links"
-        false-title="Follow links"
         :true-description="$t('community.commons.nofollow_msg')"
         false-gray
+        false-title="Follow links"
+        true-title="No follow links"
       ></s-smart-toggle>
     </div>
 
@@ -112,12 +120,14 @@
         icon="leak_add"
       ></s-widget-header>
 
-      <v-list-subheader>Can other communities embed your topics? </v-list-subheader>
+      <v-list-subheader
+        >Can other communities embed your topics?
+      </v-list-subheader>
 
       <s-smart-toggle
         v-model="cross"
-        :true-title="$t('community.commons.crossable')"
         :true-description="$t('community.commons.crossable_msg')"
+        :true-title="$t('community.commons.crossable')"
         false-gray
       ></s-smart-toggle>
     </div>
@@ -129,74 +139,81 @@
         icon="private_connectivity"
       ></s-widget-header>
 
-      <v-list-subheader>Define the access level and status of your community here. The structure of the community follows this hierarchy: Your Community > Categories > Topics > Posts. </v-list-subheader>
+      <v-list-subheader
+        >Define the access level and status of your community here. The
+        structure of the community follows this hierarchy: Your Community >
+        Categories > Topics > Posts.
+      </v-list-subheader>
 
       <s-smart-select
         v-model="stage"
         :items="Object.values(CommunityStageLevel)"
+        class="mb-5"
+        item-description="description"
+        item-icon="icon"
         item-text="name"
         item-value="code"
-        item-icon="icon"
-        item-description="description"
-        class="mb-5"
         label="Who can create topics by default?"
       ></s-smart-select>
 
       <s-smart-toggle
         v-model="enable"
-        :true-title="$t('global.commons.enable')"
         :false-title="$t('global.commons.disable')"
         :true-description="$t('community.community.enable_msg')"
+        :true-title="$t('global.commons.enable')"
         false-gray
+        false-icon="public_off"
         label="Is your community available?"
         true-icon="public"
-        false-icon="public_off"
       ></s-smart-toggle>
     </div>
 
     <!-- Access -->
     <div class="widget-box mb-5">
-      <s-widget-header title="File Attachment" icon="attach_file"
-        ></s-widget-header
-      >
+      <s-widget-header
+        icon="attach_file"
+        title="File Attachment"
+      ></s-widget-header>
 
-      <v-list-subheader> You can add the attachment option in your community. Your customers can
-        attach up to 3 files, each 8MB, in their posts.</v-list-subheader>
+      <v-list-subheader>
+        You can add the attachment option in your community. Your customers can
+        attach up to 3 files, each 8MB, in their posts.
+      </v-list-subheader>
 
       <s-smart-select
         v-model="attachment"
         :items="Object.values(CommunityAttachmentAccess)"
+        class="my-5"
+        item-description="description"
+        item-icon="icon"
         item-text="name"
         item-value="code"
-        item-icon="icon"
-        item-description="description"
-        class="my-5"
         label="Who can attach files?"
       ></s-smart-select>
 
       <v-combobox
-        multiple
         v-model="mims"
         chips
-        deletable-chips
+        closable-chips
         label="Allowed file types"
         messages="Leave it empty means all file types are accepted."
+        multiple
         placeholder="Enter value and press enter. ex: zip"
       >
-        <template v-slot:selection="data">
+        <template v-slot:chip="data">
           <v-chip
             :key="JSON.stringify(data.item)"
-            v-bind="data.attrs"
-            :input-value="data.selected"
             :disabled="data.disabled"
+            :model-value="data.selected"
+            closable
+            v-bind="data.attrs"
             @click:close="data.parent.selectItem(data.item)"
-            close
           >
             <img
               :src="getFileExtensionImage(data.item)"
-              width="16"
-              height="16"
               class="me-1"
+              height="16"
+              width="16"
             />
             {{ data.item }}
           </v-chip>
@@ -206,37 +223,43 @@
 
     <!-- Rule -->
     <div class="widget-box mb-5">
+      <s-widget-header
+        :title="$t('global.commons.rules')"
+        icon="settings_accessibility"
+      ></s-widget-header>
 
-
-      <s-widget-header :title="$t('global.commons.rules')" icon="settings_accessibility"
-      ></s-widget-header
-      >
-
-      <v-list-subheader>Draft a concise set of guidelines for your community. </v-list-subheader>
+      <v-list-subheader
+        >Draft a concise set of guidelines for your community.
+      </v-list-subheader>
 
       <v-textarea
         v-model="rule"
+        :placeholder="$t('community.community.rule_plc')"
         :rows="4"
         class="m-0"
-        :placeholder="$t('community.community.rule_plc')"
       >
       </v-textarea>
     </div>
 
     <div class="widget-buttons">
-      <v-btn v-if="hasClose" x-large text @click="$emit('close')">
+      <v-btn
+        v-if="hasClose"
+        size="x-large"
+        variant="text"
+        @click="$emit('close')"
+      >
         <v-icon class="me-1">close</v-icon>
         {{ $t("global.actions.close") }}
       </v-btn>
 
       <v-btn
         v-if="!community || access.admin"
-        depressed
-        x-large
-        color="primary"
-        @click="saveCommunity"
-        :loading="busy"
         :disabled="!name || !title || !desc"
+        :loading="busy"
+        color="primary"
+        size="x-large"
+        variant="flat"
+        @click="saveCommunity"
       >
         <v-icon class="me-1">save</v-icon>
         {{ $t("global.actions.save_changes") }}
@@ -253,9 +276,10 @@ import SSmartSelect from "@components/smart/SSmartSelect.vue";
 import { CommunityAttachmentAccess } from "@core/enums/community/CommunityAttachmentAccess";
 import _ from "lodash-es";
 import ScrollHelper from "@core/utils/scroll/ScrollHelper";
+
 export default {
   name: "CommunityEdit",
-  components: {  SSmartSelect, SSmartToggle, ImageInput },
+  components: { SSmartSelect, SSmartToggle, ImageInput },
 
   props: {
     shop: {}, // optional for shops.
@@ -389,7 +413,7 @@ export default {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -398,7 +422,7 @@ export default {
               Object.assign(this.community, data.community);
               this.$emit("update:community", this.community);
 
-              ScrollHelper.scrollToTop(0,'smooth')
+              ScrollHelper.scrollToTop(0, "smooth");
             } else {
               // Add mode
               this.$emit("add:community", data.community);
@@ -420,4 +444,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

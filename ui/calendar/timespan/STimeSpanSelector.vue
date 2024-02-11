@@ -15,9 +15,15 @@
 <template>
   <v-menu>
     <template v-slot:activator="{ props }">
-      <v-btn class="tnt"  v-bind="props" :size="size" :class="buttonClass" :variant="variant">
+      <v-btn
+        :class="buttonClass"
+        :size="size"
+        :variant="variant"
+        class="tnt"
+        v-bind="props"
+      >
         {{ $t(selected_timespan) }}
-        <v-icon end >arrow_drop_down</v-icon>
+        <v-icon end>arrow_drop_down</v-icon>
       </v-btn>
     </template>
     <v-list density="compact">
@@ -46,11 +52,13 @@ export default {
     },
 
     variant: {
-      type: String as () => NonNullable<"flat" | "text" | "elevated" | "tonal" | "outlined" | "plain">,
+      type: String as () => NonNullable<
+        "flat" | "text" | "elevated" | "tonal" | "outlined" | "plain"
+      >,
       default: null,
     },
     size: [Number, String],
-    buttonClass:{},
+    buttonClass: {},
   },
   data: () => ({}),
   computed: {
@@ -81,7 +89,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

@@ -79,7 +79,9 @@ export default {
           contact: this.billingPhone,
         },
         notes: {
-          user: this.USER() ? this.USER().name /*🥵 User*/ : "Guest" /*🥶 Guest*/,
+          user: this.USER()
+            ? this.USER().name /*🥵 User*/
+            : "Guest" /*🥶 Guest*/,
           address: this.billingAddress,
         },
         theme: {

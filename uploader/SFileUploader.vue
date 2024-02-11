@@ -16,7 +16,6 @@
   <div>
     <div class="label-top" v-html="label"></div>
     <div
-      class="uploader-container mx-auto rounded-18px overflow-hidden"
       :class="{
         dense: dense,
         dark: dark,
@@ -24,25 +23,26 @@
         'has-value': true,
         ctrl: ctrl,
       }"
+      class="uploader-container mx-auto rounded-18px overflow-hidden"
     >
       <slot></slot>
 
       <file-pond
         ref="pond"
-        class="pointer-pointer fadeIn filepond-style"
-        :name="paramName"
-        style="min-height: 84px"
-        label-idle="Upload file"
-        :allow-multiple="false"
         :accepted-file-types="acceptedFileTypes"
-        :server="server_credential"
+        :allow-multiple="false"
         :files="logo"
-        :maxFileSize="maxFileSize"
         :max-files="maxFiles"
+        :maxFileSize="maxFileSize"
+        :name="paramName"
+        :server="server_credential"
         check-validity="true"
-        @processfile="handleProcessFile"
-        @error="handleFilePondError"
+        class="pointer-pointer fadeIn filepond-style"
         credits="false"
+        label-idle="Upload file"
+        style="min-height: 84px"
+        @error="handleFilePondError"
+        @processfile="handleProcessFile"
       />
 
       <p class="small file-size-limit">
@@ -50,18 +50,19 @@
       </p>
 
       <v-btn
-        fab
-        depressed
-        small
         v-if="clearable"
+        class="absolute-top-end m-2 z2"
+        fab
+        size="small"
+        variant="flat"
         @click.stop="
           () => {
             $emit('onClear');
           }
         "
-        class="absolute-top-end m-2 z2"
-        ><v-icon>close</v-icon></v-btn
       >
+        <v-icon>close</v-icon>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -158,7 +159,7 @@ export default {
 
   mounted() {},
 
-  beforeDestroy() {},
+  beforeUnmount() {},
 
   methods: {
     handleFilePondError(error) {

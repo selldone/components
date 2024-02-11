@@ -16,7 +16,6 @@
   <div class="d-flex flex-column align-center">
     <component
       :is="to ? 'router-link' : href ? 'a' : 'div'"
-      class="c-it text-black"
       :class="{
         '-large': large,
         placeholder: placeholder,
@@ -25,22 +24,23 @@
         disabled: disabled,
       }"
       :href="href"
-      :to="to"
       :target="href ? '_blank' : null"
+      :to="to"
+      class="c-it text-black"
       @click="$emit('click')"
     >
-      <img v-if="src" :src="src" width="36" height="36" />
-      <v-icon v-if="icon" size="36" :color="iconColor">{{ icon }}</v-icon>
+      <img v-if="src" :src="src" height="36" width="36" />
+      <v-icon v-if="icon" :color="iconColor" size="36">{{ icon }}</v-icon>
       <span class="mt-1">{{ name }}</span>
     </component>
     <v-btn
       v-if="toSetting"
-      size="small"
-      variant="plain"
-      @click.stop
       :to="toSetting"
       class="tnt"
       exact
+      size="small"
+      variant="plain"
+      @click.stop
     >
       <v-icon start>settings</v-icon>
       {{ $t("global.commons.setting") }}
@@ -84,7 +84,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .c-it {
   background: #fff;
   border-radius: 16px;

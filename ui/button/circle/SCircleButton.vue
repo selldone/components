@@ -14,65 +14,67 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    class="circle-button-selldone"
+    :key="key"
     :class="{ '-small': dense, '--wrap': wrap }"
+    class="circle-button-selldone"
     @mouseenter="(val) => $emit('mouseenter', val)"
     @mouseleave="(val) => $emit('mouseleave', val)"
-    :key="key"
   >
-
-      <v-btn
-        :to="to"
-        :href="href"
-        :variant="isFilled ? 'flat' : 'text'"
-        :color="
-          isCurrent
+    <v-btn
+      :class="{ disabled: disabled }"
+      :color="
+        isCurrent
+          ? activeColor
             ? activeColor
-              ? activeColor
-              : color
-            : fill
-              ? color
-              : 'default'
-        "
-        :target="target"
-        class="mx-1 mx-sm-2"
-        :width="large ? 72 : 38"
-        :height="large ? 72 : 38"
-        :icon="true"
-        @click="
-          () => {
-            onClick();
-            in_loading = !!to && !target;
-          }
-        "
-        @click.stop
-        :exact="true"
-        :class="{ disabled: disabled }"
-        :loading="(loading || in_loading) && !beInCurrentRoute"
+            : color
+          : fill
+            ? color
+            : 'default'
+      "
+      :exact="true"
+      :height="large ? 72 : 38"
+      :href="href"
+      :icon="true"
+      :loading="(loading || in_loading) && !beInCurrentRoute"
+      :target="target"
+      :to="to"
+      :variant="isFilled ? 'flat' : 'text'"
+      :width="large ? 72 : 38"
+      class="mx-1 mx-sm-2"
+      @click="
+        () => {
+          onClick();
+          in_loading = !!to && !target;
+        }
+      "
+      @click.stop
+    >
+      <v-badge
+        :color="badgeColor"
+        :content="formatedNumberValue"
+        :dot="dot"
+        :icon="badgeIcon"
+        :model-value="badge_value"
+        floating
       >
-        <v-badge
-            :model-value="badge_value"
-            :color="badgeColor"
-            :icon="badgeIcon"
-            :content="formatedNumberValue"
-            :dot="dot"
-            floating
-        >
         <!-- ------------------------ HAS BADGE   :disabled="disabled || beInCurrentRoute" ------------------------ -->
 
         <v-icon
           v-if="icon"
-          :small="small"
-          :size="adjustForFontAwesome ? 20 : undefined"
           :color="
             !fill && !isCurrent ? (iconColor ? iconColor : color) : '#fff'
           "
           :icon="icon"
+          :size="adjustForFontAwesome ? 20 : undefined"
+          :small="small"
         >
         </v-icon>
 
         <v-avatar
+          v-else-if="src"
+          :class="isCurrent ? '' : '-scale'"
           :color="isCurrent ? this.imageBgSelected : imageBgColor"
+          :rounded="tile && !isCurrent ? 'lg' : 'circle'"
           :size="
             (imageSize
               ? imageSize
@@ -82,9 +84,6 @@
                   ? 32
                   : 26) * (small ? 0.7 : 1)
           "
-          v-else-if="src"
-          :rounded="tile && !isCurrent?'lg':'circle'"
-          :class="isCurrent ? '' : '-scale'"
         >
           <img
             :src="src"
@@ -92,17 +91,14 @@
           />
         </v-avatar>
         <slot v-else></slot>
-
-
-    </v-badge>
-
+      </v-badge>
     </v-btn>
 
     <span
-      class="mini-name"
       :class="{ 'dense-text': dense }"
       :style="{ color: color }"
       :title="tooltip"
+      class="mini-name"
       >{{ tooltip }}
       <slot name="tooltip"></slot>
     </span>
@@ -330,7 +326,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .circle-button-selldone {
   user-select: none;
   position: relative;
@@ -340,6 +336,7 @@ export default {
 
   &.-small {
     padding: 0 4px;
+
     .mini-name {
       font-size: 0.68rem;
     }
@@ -353,10 +350,12 @@ export default {
     .mini-name {
       //  font-weight: 800;
     }
+
     .-scale {
       transform: scale(1.55, 1.55);
     }
   }
+
   .mini-name {
     transition: all 0.3s ease-in-out;
 
@@ -405,8 +404,6 @@ export default {
   border-radius: 50%;
   margin: 7%;
 }
-
-
 </style>
 
 <style lang="scss"></style>

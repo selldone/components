@@ -14,25 +14,25 @@
 
 <template>
   <div
+    :class="{ 'op-0-5 ': product.deleted_at }"
     :product-id="product.id"
+    class="position-relative d-flex flex-column align-center justify-center hover-up tooltip-con"
     @click="
       $emit('select');
       clicked = true;
     "
-    class="position-relative d-flex flex-column align-center justify-center hover-up tooltip-con"
-    :class="{ 'op-0-5 ': product.deleted_at }"
   >
     <!-- Icons -->
 
     <div class="position-relative">
       <!-- Main icon -->
 
-      <v-icon size="100" :color="selected ? 'primary' : '#eee'">note</v-icon>
+      <v-icon :color="selected ? 'primary' : '#eee'" size="100">note</v-icon>
 
       <!-- Connect service icon (top - Right) -->
 
       <div v-if="product.connect_id" class="top-r">
-        <v-avatar size="24" rounded
+        <v-avatar rounded size="24"
           ><img :src="getConnectIcon(product.connect_id)"
         /></v-avatar>
       </div>
@@ -44,17 +44,17 @@
 
         <v-icon
           v-if="!product.original"
-          size="x-small"
           :title="$t('global.commons.fake')"
+          size="x-small"
         >
           report
         </v-icon>
 
         <v-icon
           v-if="quantity < 5"
-          size="x-small"
-          :title="'Quantity: ' + quantity"
           :color="quantity === 0 ? 'red' : 'amber'"
+          :title="'Quantity: ' + quantity"
+          size="x-small"
         >
           notification_important
         </v-icon>
@@ -89,14 +89,14 @@
 
       <v-chip
         v-if="status_obj && status_obj.code !== ProductStatus.Open.code"
-        size="x-small"
-        class="product-status px-1"
-        label
         :color="status_obj.color"
         :theme="
           status_obj.code !== ProductStatus.Pending.code ? 'dark' : 'light'
         "
         :title="$t(status_obj.description)"
+        class="product-status px-1"
+        label
+        size="x-small"
         >{{ $t(status_obj.name) }}
       </v-chip>
 
@@ -104,9 +104,6 @@
 
       <div class="center-absolute">
         <circle-image
-          :size="36"
-          :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
-          class="pos-img hover-scale force-top"
           :class="{
             '-deleted': product.deleted_at,
             '-close': product.status === ProductStatus.Close.code,
@@ -116,16 +113,18 @@
             '-available': product.status === 'Open' && quantity > 0,
             '-dropshipping': add_by_dropShipping,
           }"
+          :size="36"
+          :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+          class="pos-img hover-scale force-top"
           drop-image="true"
         ></circle-image>
         <v-avatar
-          :size="24"
           v-if="shortcut"
-          label
+          :size="24"
+          class="hover-scale"
           color="#FFA000"
           dark
-          x-small
-          class="hover-scale"
+          label
           style="
             border: solid 2px #ffa000;
             position: absolute;
@@ -133,12 +132,13 @@
             bottom: -5px;
           "
           title="Shortcut | Originally, this product belongs to a different category."
+          x-small
         >
           <img
             v-if="product.category_id"
             :src="getCategoryIcon(product.category_id)"
           />
-          <v-icon v-else size="12" color="#000">home</v-icon>
+          <v-icon v-else color="#000" size="12">home</v-icon>
         </v-avatar>
       </div>
 
@@ -161,15 +161,15 @@
     <small class="d-block single-line">
       <v-avatar
         v-if="vendor"
-        size="20"
-        class="avatar-gradient -thin me-1"
         :class="vendor.enable ? '-blue' : '-red'"
         :title="vendor.name"
+        class="avatar-gradient -thin me-1"
+        size="20"
         ><img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 64)" />
         <v-icon
           v-else
-          size="x-small"
           color="#fff"
+          size="x-small"
           style="height: 16px !important"
           >storefront
         </v-icon>
@@ -181,15 +181,15 @@
       <v-avatar
         v-for="v in vendors"
         :key="v.id"
-        size="20"
-        class="avatar-gradient -thin me-1 hover-scale"
         :class="v.enable ? '-blue' : '-red'"
         :title="v.name"
+        class="avatar-gradient -thin me-1 hover-scale"
+        size="20"
         ><img v-if="v.icon" :src="getShopImagePath(v.icon, 64)" />
         <v-icon
           v-else
-          size="x-small"
           color="#fff"
+          size="x-small"
           style="height: 16px !important"
           >storefront
         </v-icon>
@@ -203,21 +203,25 @@
 
       <v-chip
         v-if="discount_percent"
-        size="x-small"
-        color="#C2185B"
         class="px-1 ms-1"
-        label variant="flat"
-        ><div style="line-height: normal;">
-        {{ discount_percent }}%
-        <span class="d-block" style="font-size: 5.5px;">{{$t('global.commons.discount')}}</span>
-      </div>
+        color="#C2185B"
+        label
+        size="x-small"
+        variant="flat"
+      >
+        <div style="line-height: normal">
+          {{ discount_percent }}%
+          <span class="d-block" style="font-size: 5.5px">{{
+            $t("global.commons.discount")
+          }}</span>
+        </div>
       </v-chip>
     </div>
 
     <div
       v-if="(product.variants && product.variants.length) || vendor"
-      class="tooltip"
       :class="{ '-offset-v': vendors && vendors.length }"
+      class="tooltip"
     >
       <div
         v-if="vendor"
@@ -229,9 +233,9 @@
         </div>
         <v-avatar
           v-if="vendor"
-          size="32"
-          class="avatar-gradient -thin ms-1"
           :class="vendor.enable ? '-blue' : '-red'"
+          class="avatar-gradient -thin ms-1"
+          size="32"
           ><img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 64)" />
           <v-icon v-else color="#fff">storefront</v-icon>
         </v-avatar>
@@ -239,34 +243,35 @@
 
       <product-variants-view
         v-if="product.variants && product.variants.length"
-        small
-        dense
         :variants="product.variants"
-        dark
         class="tsec"
+        dark
+        dense
+        small
       ></product-variants-view>
     </div>
 
     <!-- Add Note Button -->
     <team-note-button
       v-if="showNotes || (product.note && product.note.length)"
-      class="absolute-top-start z2"
-      :note="product.note"
-      @click="$emit('onShowNote', product)"
-      style="top: -6px; left: -6px"
       :activeColor="showNotes ? undefined : '#333'"
+      :note="product.note"
+      class="absolute-top-start z2"
+      style="top: -6px; left: -6px"
+      @click="$emit('onShowNote', product)"
     ></team-note-button>
 
     <!-- Selectable -->
     <template v-if="showSelect">
       <v-icon
+        :color="iSelected ? 'primary' : '#333'"
         class="absolute-top-end pp"
         style="z-index: 10"
-        :color="iSelected ? 'primary' : '#333'"
         @click.stop="$emit('onSelect', product)"
         >{{ iSelected ? "circle" : "radio_button_unchecked" }}
       </v-icon>
       <div
+        class="pp usall"
         style="
           position: absolute;
           left: 0;
@@ -275,7 +280,6 @@
           height: 100%;
           z-index: 10;
         "
-        class="pp usall"
         @click.stop="$emit('onSelect', product)"
       ></div>
     </template>
@@ -293,7 +297,12 @@ import TeamNoteButton from "@components/backoffice/note/TeamNoteButton.vue";
 
 export default {
   name: "ProductCardMini",
-  components: {TeamNoteButton, SColorCircle, ProductVariantsView, CircleImage },
+  components: {
+    TeamNoteButton,
+    SColorCircle,
+    ProductVariantsView,
+    CircleImage,
+  },
   emits: ["select", "onShowNote", "onSelect"],
   props: {
     shop: {
@@ -388,7 +397,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .pos-img {
   border: solid 2px #fff;
 

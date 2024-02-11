@@ -16,18 +16,22 @@
   <div class="text-start widget shadow m-3">
     <div class="d-flex align-center">
       <h2>
-        <v-avatar size="24" class="hover-scale me-1">
+        <v-avatar class="hover-scale me-1" size="24">
           <img :src="getProductImage(item.product_id)" />
         </v-avatar>
 
         {{ item.product.title }}
       </h2>
-      <variant-item-view-micro v-if="item.variant" :product-variant="item.variant" class="mx-2"></variant-item-view-micro>
+      <variant-item-view-micro
+        v-if="item.variant"
+        :product-variant="item.variant"
+        class="mx-2"
+      ></variant-item-view-micro>
 
-      <v-spacer> </v-spacer>
-      <small
-        ><v-icon color="green" class="me-1">check</v-icon> Receive
-        approved</small
+      <v-spacer></v-spacer>
+      <small>
+        <v-icon class="me-1" color="green">check</v-icon>
+        Receive approved</small
       >
     </div>
     <v-list-subheader class="px-0">
@@ -58,9 +62,10 @@
 <script>
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
 import VariantItemViewMicro from "../variant/VariantItemViewMicro.vue";
+
 export default {
   name: "VirtualItemInfo",
-  components: {VariantItemViewMicro, SValueDashed },
+  components: { VariantItemViewMicro, SValueDashed },
   props: {
     virtualItem: {
       required: true,
@@ -106,4 +111,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

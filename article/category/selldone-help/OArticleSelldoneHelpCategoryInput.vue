@@ -14,17 +14,17 @@
 
 <template>
   <v-select
-      :model-value="modelValue"
-      @update:modelValue="(v) => $emit('update:modelValue', v)"
-      :items="categories"
-      :label="$t('global.article.category_input')"
-      :messages="$t('global.article.category_input_message')"
-      :variant="variant"
-      :flat="flat"
-      :clearable="clearable"
-      :disabled="disabled"
-      class="text-start"
-      :rounded="rounded"
+    :clearable="clearable"
+    :disabled="disabled"
+    :flat="flat"
+    :items="categories"
+    :label="$t('global.article.category_input')"
+    :messages="$t('global.article.category_input_message')"
+    :model-value="modelValue"
+    :rounded="rounded"
+    :variant="variant"
+    class="text-start"
+    @update:modelValue="(v) => $emit('update:modelValue', v)"
   >
   </v-select>
 </template>
@@ -44,16 +44,14 @@ export default defineComponent({
     variant: {
       default: "underlined",
     },
-    flat:Boolean,
-    clearable:Boolean,
+    flat: Boolean,
+    clearable: Boolean,
     rounded: Boolean,
-
   },
 
   data() {
     return {
-      categories:[],
-
+      categories: [],
     };
   },
 
@@ -68,4 +66,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

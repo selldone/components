@@ -19,31 +19,35 @@
   >
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <community-breadcrumb
-      class="breadcrumb-max-w mb-12"
-      :shop="shop"
       :community="community"
+      :shop="shop"
+      class="breadcrumb-max-w mb-12"
     ></community-breadcrumb>
 
     <v-container class="c-max-w">
-      <v-row justify="center" align="start">
-
-        <community-comment-widget :shop="shop" :community="community" :comment="comment"  v-for="comment in comments" :key="comment.id">
-
+      <v-row align="start" justify="center">
+        <community-comment-widget
+          v-for="comment in comments"
+          :key="comment.id"
+          :comment="comment"
+          :community="community"
+          :shop="shop"
+        >
         </community-comment-widget>
 
         <!-- Auto load more -->
 
         <v-col
-          cols="12"
           v-if="has_more"
-          style="height: 50vh"
           v-intersect.quiet="
             (isIntersecting) => {
               if (isIntersecting) fetchComments(page + 1);
             }
           "
+          cols="12"
+          style="height: 50vh"
         >
-          <s-loading light css-mode v-if="busy"></s-loading>
+          <s-loading v-if="busy" css-mode light></s-loading>
         </v-col>
       </v-row>
     </v-container>
@@ -154,4 +158,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

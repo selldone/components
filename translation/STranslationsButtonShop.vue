@@ -14,11 +14,11 @@
 
 <template>
   <s-translations-button
+    v-model:translations="shop.translations"
     :default-value="shop[translationKey]"
     :label="label"
     :shop="shop"
     :translation-key="translationKey"
-    v-model:translations="shop.translations"
     :url="window.API.PUT_SHOP_SET_TRANSLATIONS(shop.id, translationKey)"
     is-string-mode
     @update:translations="

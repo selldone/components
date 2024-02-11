@@ -14,12 +14,12 @@
 
 <template>
   <span
-    class="s--color-circle no-inv"
+    :class="{ '-border': !borderLess }"
     :style="{ '--size': size + 'px' }"
     :title="GetNameOfColor(color)"
-    :class="{ '-border': !borderLess }"
+    class="s--color-circle no-inv"
   >
-    <span class="-color" :style="{ backgroundImage: gradient }"></span>
+    <span :style="{ backgroundImage: gradient }" class="-color"></span>
   </span>
 </template>
 
@@ -83,6 +83,7 @@ export default {
 
     border: 1px solid #dee2e6;
   }
+
   .-color {
     display: inline-block;
     border-radius: 50%;

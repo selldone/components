@@ -16,15 +16,16 @@
   <div v-if="product.ratings?.length" class="s--shop-product-rating-view">
     <v-btn
       v-if="show_edit_btn"
-      size="small"
-      icon
-      @click="edit_mode = !edit_mode"
-      title="Rate this product"
       class="absolute-top-end"
-      ><v-icon size="small">{{
-        edit_mode ? "close" : "fa:fas fa-poll-h"
-      }}</v-icon></v-btn
+      icon
+      size="small"
+      title="Rate this product"
+      @click="edit_mode = !edit_mode"
     >
+      <v-icon size="small"
+        >{{ edit_mode ? "close" : "fa:fas fa-poll-h" }}
+      </v-icon>
+    </v-btn>
 
     <v-expand-transition>
       <div v-if="input_rating_mode" key="edit">
@@ -39,12 +40,12 @@
         />
 
         <v-btn
-          rounded
-          color="blue"
-          variant="flat"
-          dark
-          @click="setMyRating"
           :loading="busy"
+          color="blue"
+          dark
+          rounded
+          variant="flat"
+          @click="setMyRating"
         >
           {{ $t("global.actions.submit") }}
         </v-btn>
@@ -53,16 +54,16 @@
         <div class="d-flex align-center justify-center">
           <v-rating
             v-model="product.rate"
-            class="my-2 text-center"
+            :density="small || dense ? 'compact' : undefined"
+            :small="small"
             active-color="yellow-darken-3"
+            class="my-2 text-center"
             color="grey-darken-1"
             half-increments
             hover
             readonly
-            :small="small"
-            :density="(small || dense) ? 'compact':undefined"
           />
-          <small class="mx-2" v-if="product.rate_count"
+          <small v-if="product.rate_count" class="mx-2"
             >({{ numeralFormat(product.rate_count, "0,0") }})</small
           >
         </div>
@@ -70,10 +71,10 @@
         <rating-bar
           v-for="rating in product.ratings"
           :key="rating.id"
-          :value="rating.value"
           :max="rating.count * 5"
           :title="rating.name"
           :user-rate="user_rating[rating.id]"
+          :value="rating.value"
         />
       </div>
     </v-expand-transition>
@@ -83,6 +84,7 @@
 <script>
 import RatingBar from "@components/ui/rating/RatingBar.vue";
 import RatingInput from "@components/ui/rating/RatingInput.vue";
+
 export default {
   name: "SShopProductRatingView",
   components: { RatingInput, RatingBar },
@@ -187,6 +189,7 @@ export default {
  */
 .s--shop-product-rating-view {
 }
+
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */

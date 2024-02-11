@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import BaseParticle from './base';
+import BaseParticle from "./base";
 
 /**
  * Class representing a rectangular particle.

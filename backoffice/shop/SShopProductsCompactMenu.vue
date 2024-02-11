@@ -13,13 +13,9 @@
   -->
 
 <template>
-  <v-menu
-    :close-on-content-click="false"
-    :open-on-hover="true"
-    z-index="100"
-  >
+  <v-menu :close-on-content-click="false" :open-on-hover="true" z-index="100">
     <template v-slot:activator="{ props }">
-      <div  v-bind="props">
+      <div v-bind="props">
         <h6>
           <i class="fas fa-boxes" />
           {{ numeralFormat(total_products, "0.[0]a") }}
@@ -34,9 +30,9 @@
       <apexchart
         v-if="has_products"
         :height="250"
-        type="donut"
         :options="options"
         :series="series"
+        type="donut"
       />
       <p v-else class="m-2 text-muted">
         {{ $t("global.commons.no_data") }}
@@ -53,7 +49,7 @@ export default {
   props: {
     lastData: {
       required: true,
-      type:Object
+      type: Object,
     },
   },
   data() {

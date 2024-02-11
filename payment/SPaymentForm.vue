@@ -16,34 +16,35 @@
   <!-- ========================== Payment Methods ========================== -->
 
   <v-card
-    tile
+    class="overflow-hidden"
+    rounded="0"
     style="
       position: relative;
       border-radius: 18px 18px 0 0 !important;
       min-height: 180px !important;
     "
-    class="overflow-hidden"
   >
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Top Bar ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
-    <v-toolbar v-if="!busy && !qrCode" flat color="transparent">
+    <v-toolbar v-if="!busy && !qrCode" color="transparent" flat>
       <s-currency-icon :currency="currency" gradient></s-currency-icon>
 
       <v-toolbar-title class="body-title px-3">
         {{ $t("global.payment_form.title") }}
         <b v-if="currency"
-          >| {{ currency.code }} <flag :iso="currency.flag" :squared="false"
-        /></b>
+          >| {{ currency.code }}
+          <flag :iso="currency.flag" :squared="false" />
+        </b>
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Success timeout ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
         <time-lapse
           v-if="success_end_countdown"
           :duration-ms="8000"
-          color="green"
           class="ms-2"
-          width="3"
+          color="green"
           size="20"
+          width="3"
           @end="$emit('close')"
         >
         </time-lapse>
@@ -54,14 +55,14 @@
       <img
         v-if="hasClub && getClub()"
         :src="getCustomerClubLevel(getClub().level).icon"
-        width="32px"
         height="32px"
+        width="32px"
       />
 
       <s-circle-button
+        :tooltip="$t('global.actions.close')"
         class="z2"
         icon="close"
-        :tooltip="$t('global.actions.close')"
         @click="$emit('close')"
       />
     </v-toolbar>
@@ -69,7 +70,7 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Loading View ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <div v-if="busy" class="py-8 text-muted">
-      <s-progress-loading> </s-progress-loading>
+      <s-progress-loading></s-progress-loading>
 
       <b class="d-block text-success mb-1">
         <v-icon class="me-1" color="success">shield</v-icon>
@@ -81,7 +82,7 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Paypal ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="in_paypal_message">
-      <v-alert v-if="paypal_success_message" type="success" class="mt-3">
+      <v-alert v-if="paypal_success_message" class="mt-3" type="success">
         <h3 class="mb-2">Payment completed</h3>
         <p class="small">Thanks for your order!</p>
         {{ paypal_success_message }}
@@ -116,21 +117,22 @@
       <div>
         <!-- Gift Cards -->
         <s-storefront-giftcard-selector
-          class="mt-3"
-          v-model="selected_gift_cards"
           v-if="hasGiftCardField && !isFree"
+          v-model="selected_gift_cards"
           :gift-cards="giftcards"
+          :loading="busy_gift_cards"
+          class="mt-3"
+          filled
           multiple
           return-object
           rounded
-          filled
-          :loading="busy_gift_cards"
         >
         </s-storefront-giftcard-selector>
 
         <div class="text-start">
           <small>{{ $t("global.commons.total_payment") }} </small>
-          <v-icon x-small>arrow_drop_down</v-icon><br />
+          <v-icon size="x-small">arrow_drop_down</v-icon>
+          <br />
 
           <div class="d-flex align-center">
             <price-view
@@ -141,27 +143,29 @@
 
             <v-chip
               v-if="isSelldoneSubscription"
-              label
+              class="ma-2"
               color="#111"
               dark
-              small
-              class="ma-2"
-              ><v-icon small left>add_card</v-icon> Add card to the
-              wallet.</v-chip
+              label
+              size="small"
             >
-            <v-tooltip v-else-if="bill" top color="transparent">
-              <template v-slot:activator="{ on }">
+              <v-icon size="small" start>add_card</v-icon>
+              Add card to the wallet.
+            </v-chip>
+            <v-tooltip v-else-if="bill" color="transparent" location="top">
+              <template v-slot:activator="{ props }">
                 <v-btn
-                  icon
-                  v-on="on"
-                  small
                   class="ms-2"
+                  icon
+                  size="small"
                   style="vertical-align: top"
-                  ><v-icon small>info</v-icon></v-btn
+                  v-bind="props"
                 >
+                  <v-icon size="small">info</v-icon>
+                </v-btn>
               </template>
 
-              <v-simple-table dense class="border rounded-18px">
+              <v-table class="border rounded-18px" dense>
                 <template v-slot:default>
                   <tbody class="text-start">
                     <tr>
@@ -177,7 +181,7 @@
 
                     <tr v-if="bill.items_discount">
                       <td>
-                        <v-icon small>fa:fas fa-gift</v-icon>
+                        <v-icon size="small">fa:fas fa-gift</v-icon>
                         {{ $t("global.commons.discount") }}
                       </td>
 
@@ -191,7 +195,7 @@
 
                     <tr v-if="bill.offer">
                       <td>
-                        <v-icon small>fa:fas fa-gift</v-icon>
+                        <v-icon size="small">fa:fas fa-gift</v-icon>
                         {{ $t("global.commons.offer") }}
                       </td>
 
@@ -205,7 +209,7 @@
 
                     <tr v-if="bill.delivery_price !== null">
                       <td>
-                        <v-icon small>fa:fas fa-shipping-fast</v-icon>
+                        <v-icon size="small">fa:fas fa-shipping-fast</v-icon>
                         {{ $t("global.commons.shipping") }}
                       </td>
 
@@ -221,7 +225,7 @@
 
                     <tr v-if="bill.discount_code">
                       <td>
-                        <v-icon small>fa:fas fa-percentage</v-icon>
+                        <v-icon size="small">fa:fas fa-percentage</v-icon>
                         {{ $t("global.commons.discount_code") }}
                       </td>
                       <td>
@@ -233,7 +237,7 @@
                     </tr>
                     <tr v-if="bill.club">
                       <td>
-                        <v-icon small>fa:fas fa-gem</v-icon>
+                        <v-icon size="small">fa:fas fa-gem</v-icon>
                         {{ $t("global.commons.customer_club") }}
                       </td>
                       <td>
@@ -245,7 +249,7 @@
                     </tr>
                     <tr v-if="bill.coupon">
                       <td>
-                        <v-icon small>fa:fas fa-ticket-alt</v-icon>
+                        <v-icon size="small">fa:fas fa-ticket-alt</v-icon>
                         {{ $t("global.commons.coupon") }}
                       </td>
                       <td>
@@ -258,7 +262,7 @@
 
                     <tr v-if="bill.lottery">
                       <td>
-                        <v-icon small>fa:fas fa-dice</v-icon>
+                        <v-icon size="small">fa:fas fa-dice</v-icon>
                         {{ $t("global.commons.prize") }}
                       </td>
                       <td>
@@ -271,7 +275,7 @@
 
                     <tr v-if="bill.tax">
                       <td>
-                        <v-icon small>fa:fas fa-coins</v-icon>
+                        <v-icon size="small">fa:fas fa-coins</v-icon>
                         {{ $t("global.commons.tax") }}
                       </td>
                       <td>
@@ -288,7 +292,7 @@
 
                     <tr v-if="total_amount_by_gift_cards">
                       <td>
-                        <v-icon small>card_giftcard</v-icon>
+                        <v-icon size="small">card_giftcard</v-icon>
                         {{ $t("global.commons.gift_card") }}
                       </td>
                       <td>
@@ -309,7 +313,7 @@
                     </tr>
                   </tbody>
                 </template>
-              </v-simple-table>
+              </v-table>
             </v-tooltip>
           </div>
         </div>
@@ -318,11 +322,11 @@
 
         <p v-if="total_amount_by_gift_cards > 0" class="mb-1 mt-2">
           <i
-            class="text-success mx-1"
             :class="{
               'fa:fas fa-circle-notch': total_amount_remain_for_pay > 0,
               'fa:fas fa-circle': total_amount_remain_for_pay === 0,
             }"
+            class="text-success mx-1"
           />
           {{ $t("global.payment_form.pay_amount_by_gift_cards") }}
           :
@@ -348,8 +352,8 @@
           <payment-button
             class="ma-auto pointer-pointer"
             pos=""
-            small
             purple
+            small
             @click="
               () => {
                 $emit('select-gateway', {
@@ -366,9 +370,9 @@
               {{ $t("global.payment_form.order_free_payment_action") }}
             </p>
             <img
+              :width="24"
               class="mx-2"
               src="@components/assets/icons/free-badge.svg"
-              :width="24"
             />
             {{ $t("global.commons.free") }}
           </payment-button>
@@ -385,42 +389,42 @@
               total_amount_remain_for_pay > 0
             "
           >
-            <v-expansion-panels light :value="0" flat>
+            <v-expansion-panels :model-value="0" flat light>
               <v-expansion-panel class="border rounded-18px">
-                <v-expansion-panel-header>
+                <v-expansion-panel-title>
                   <span>Secure Payment Form</span>
                   <s-loading
-                    light
-                    css-mode
                     v-if="!paypal_js_loaded || busy_get_paypal_client_token"
+                    css-mode
+                    light
                   >
                   </s-loading>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content style="border-radius: 12px">
+                </v-expansion-panel-title>
+                <v-expansion-panel-text style="border-radius: 12px">
                   <div>
-                    <div dir="ltr" id="braintree-dropin-container"></div>
+                    <div id="braintree-dropin-container" dir="ltr"></div>
 
                     <v-btn
                       v-if="paypal_instance"
-                      class="mt-3"
+                      id="braintree-submit-button"
                       :loading="busy_paypal_submit"
+                      block
+                      class="mt-3"
                       color="#0061e0"
                       dark
-                      block
-                      x-large
-                      depressed
+                      size="x-large"
+                      variant="flat"
                       @click="PayPalSubmit"
-                      id="braintree-submit-button"
                     >
                       {{ $t("global.actions.pay") }}
                       <price-view
-                        class="mx-2"
                         :amount="total_amount_remain_for_pay"
                         :currency="currency.code"
+                        class="mx-2"
                       ></price-view>
                     </v-btn>
                   </div>
-                </v-expansion-panel-content>
+                </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
           </v-card-text>
@@ -446,10 +450,10 @@
                 sm="6"
               >
                 <payment-button
-                  class="ma-auto pointer-pointer"
-                  :pos="GetUserSelectedCurrencyName(gateway.currency, true)"
-                  small
                   :blue="gateway.cod"
+                  :pos="GetUserSelectedCurrencyName(gateway.currency, true)"
+                  class="ma-auto pointer-pointer"
+                  small
                   @click="
                     () => {
                       $emit('select-gateway', {
@@ -468,14 +472,14 @@
                       gateway.dir
                         ? $t("global.actions.dir_payment")
                         : gateway.cod
-                        ? $t("global.actions.cod_payment")
-                        : $t("global.actions.online_payment")
+                          ? $t("global.actions.cod_payment")
+                          : $t("global.actions.online_payment")
                     }}
                   </p>
                   <img
-                    class="mx-2"
                     :src="getShopImagePath(gateway.icon)"
                     :width="24"
+                    class="mx-2"
                   />
                   {{ gateway.name }}
                 </payment-button>
@@ -484,9 +488,9 @@
 
             <div v-if="!gateways || !gateways.length">
               <img
-                src="@components/assets/emotions/013-disappointed.svg"
-                class="m-2"
                 :width="48"
+                class="m-2"
+                src="@components/assets/emotions/013-disappointed.svg"
               /><br />
 
               Sorry, payment with <b>{{ currency.code }}</b> not supported. We
@@ -511,8 +515,8 @@
             <payment-button
               class="ma-auto pointer-pointer"
               pos=""
-              small
               purple
+              small
               @click="
                 () => {
                   $emit('select-gateway', {
@@ -529,9 +533,9 @@
                 {{ $t("global.payment_form.pay_by_gift_cards_action") }}
               </p>
               <img
+                :width="24"
                 class="mx-2"
                 src="@components/assets/icons/gift.svg"
-                :width="24"
               />
               {{ $t("global.commons.free") }}
             </payment-button>
@@ -548,46 +552,47 @@
       <time-lapse
         v-if="timeout && !success_end_countdown"
         :duration-ms="timeout"
-        color="red"
         class="absolute-top-start"
-        width="3"
+        color="red"
         size="20"
+        width="3"
       >
       </time-lapse>
 
       <v-btn
-        @click="$emit('close')"
-        icon
         class="absolute-top-end zoomIn delay_100 z2"
-        ><v-icon>close</v-icon></v-btn
+        icon
+        @click="$emit('close')"
       >
+        <v-icon>close</v-icon>
+      </v-btn>
 
       <div class="position-relative">
         <s-qrcode
-          class="my-6 mx-auto zoomIn delay_300 blur-animate"
           :class="{ blurred: success_end_countdown }"
-          :value="qrCode"
           :options="{
             width: 300,
             color: { light: '#fff', dark: '#000' },
           }"
+          :value="qrCode"
+          class="my-6 mx-auto zoomIn delay_300 blur-animate"
         >
         </s-qrcode>
 
         <v-icon
           v-if="success_end_countdown"
           class="zoomIn center-absolute delay_600"
-          size="120"
           color="#4CAF50"
-          >check_circle</v-icon
-        >
+          size="120"
+          >check_circle
+        </v-icon>
       </div>
 
       <s-value-copy-box
-        :value="address"
-        :message="$t('global.payment_form.qr.address')"
         :color="currency.gradient[0]"
         :image="currency.icon"
+        :message="$t('global.payment_form.qr.address')"
+        :value="address"
         class="fadeInDown delay_100"
       >
       </s-value-copy-box>
@@ -596,9 +601,9 @@
         :
       </p>
       <price-view
-        class="fadeIn delay_600"
         :amount="amount"
         :currency="currency.code"
+        class="fadeIn delay_600"
         large
       ></price-view>
     </v-card-text>
@@ -609,23 +614,26 @@
       <s-payment-stripe
         v-if="pack && stripe_js_loaded"
         :amount="amount"
-        :currency="currency.code.toLowerCase()"
+        :billingAddress="billingAddress"
+        :billingEmail="billingEmail"
+        :billingName="billingName"
+        :billingPhone="billingPhone"
         :client-secret="pack.client_secret"
+        :currency="currency.code.toLowerCase()"
+        :order-url="orderUrl"
         :payment-id="pack.id"
         :public-key="pack.public_key"
+        :theme="
+          availableGateways.find(
+            (g) => g.code === `stripe_${currency.code.toLowerCase()}`,
+          )?.theme
+        "
         @onEndPayment="
           (data) => {
             $emit('onEndPayment', data);
             success_end_countdown = true;
           }
         "
-        :order-url="orderUrl"
-        :billingName="billingName"
-        :billingEmail="billingEmail"
-        :billingPhone="billingPhone"
-        :billingAddress="billingAddress"
-
-        :theme="availableGateways.find(g=>g.code===`stripe_${currency.code.toLowerCase()}`)?.theme"
       ></s-payment-stripe>
     </v-card-text>
 
@@ -633,14 +641,14 @@
 
     <v-card-text v-if="isRazorpay">
       <s-payment-razorpay
-        :pack="pack"
         :amount="amount"
+        :billingAddress="billingAddress"
+        :billingEmail="billingEmail"
+        :billingName="billingName"
+        :billingPhone="billingPhone"
         :currency="currency.code"
         :order-url="orderUrl"
-        :billingName="billingName"
-        :billingEmail="billingEmail"
-        :billingPhone="billingPhone"
-        :billingAddress="billingAddress"
+        :pack="pack"
       ></s-payment-razorpay>
     </v-card-text>
 
@@ -648,15 +656,15 @@
 
     <v-card-text v-if="isPayPalStandard">
       <s-payment-paypal-standard
-        :shop-name="customShopName ? customShopName : shop_name"
-        :pack="pack"
         :amount="amount"
+        :billingAddress="billingAddress"
+        :billingEmail="billingEmail"
+        :billingName="billingName"
+        :billingPhone="billingPhone"
         :currency="currency.code"
         :order-url="orderUrl"
-        :billingName="billingName"
-        :billingEmail="billingEmail"
-        :billingPhone="billingPhone"
-        :billingAddress="billingAddress"
+        :pack="pack"
+        :shop-name="customShopName ? customShopName : shop_name"
       ></s-payment-paypal-standard>
     </v-card-text>
 
@@ -664,9 +672,9 @@
 
     <v-card-text v-if="isMercadopago">
       <s-payment-mercadopago
-        :public-key="pack.public_key"
-        :preference-id="pack.unique_id"
         :currency="currency.code"
+        :preference-id="pack.unique_id"
+        :public-key="pack.public_key"
       ></s-payment-mercadopago>
     </v-card-text>
 
@@ -674,11 +682,11 @@
 
     <v-card-text v-if="isPaymob">
       <s-payment-paymob
-        :payment-token="pack.token"
         :iframe-card-id="pack.card_id"
+        :iframe-forsa-id="pack.forsa_id"
         :iframe-installment-id="pack.installment_id"
         :iframe-valu-id="pack.valu_id"
-        :iframe-forsa-id="pack.forsa_id"
+        :payment-token="pack.token"
       ></s-payment-paymob>
     </v-card-text>
 
@@ -686,15 +694,15 @@
 
     <v-card-text v-if="isSquareup">
       <s-payment-squareup
-        :script="pack.script"
         :amount="pack.amount"
+        :app-id="pack.app_id"
+        :billing-address="billingAddress"
         :currency="pack.currency"
         :location-id="pack.location_id"
-        :app-id="pack.app_id"
-        :submit-url="pack.submit_url"
         :order-url="orderUrl"
+        :script="pack.script"
+        :submit-url="pack.submit_url"
         :transaction-id="pack.transaction_id"
-        :billing-address="billingAddress"
       ></s-payment-squareup>
     </v-card-text>
   </v-card>
@@ -811,8 +819,6 @@ export default {
     billingEmail: {},
     billingPhone: {},
     billingAddress: {},
-
-
   },
 
   data: () => ({
@@ -959,7 +965,7 @@ export default {
     if (this.isBraintree) this.loadPaypalJs();
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopIntervalPaymentStatus();
     this.EventBus.$off("PaymentMethodsForm:reset");
   },
@@ -981,7 +987,7 @@ export default {
         $.cachedScript("https://js.stripe.com/v3/")
           .done(function (script, textStatus) {
             console.style(
-              `🔔 ❰ Stripe ❱  Load script file start... ▶ status: ${textStatus}`
+              `🔔 ❰ Stripe ❱  Load script file start... ▶ status: ${textStatus}`,
             );
             t.stripe_js_loaded = true;
             t.busy = false;
@@ -990,7 +996,7 @@ export default {
           .fail(function (jqxhr, settings, exception) {
             console.errorStyle(
               `⚠ ❰ Stripe ❱  Failed to load script file: `,
-              exception
+              exception,
             );
             this.showErrorAlert(null, "Can not load script!");
           });
@@ -1014,11 +1020,11 @@ export default {
       } catch (e) {
         // Load dynamically:
         $.cachedScript(
-          "https://js.braintreegateway.com/web/dropin/1.29.0/js/dropin.min.js"
+          "https://js.braintreegateway.com/web/dropin/1.29.0/js/dropin.min.js",
         )
           .done(function (script, textStatus) {
             console.style(
-              `🔔 ❰ Paypal ❱  Load script file start... ▶ status: ${textStatus}`
+              `🔔 ❰ Paypal ❱  Load script file start... ▶ status: ${textStatus}`,
             );
             t.paypal_js_loaded = true;
             t.busy = false;
@@ -1029,7 +1035,7 @@ export default {
           .fail(function (jqxhr, settings, exception) {
             console.errorStyle(
               `⚠ ❰ Paypal ❱  Failed to load script file: `,
-              exception
+              exception,
             );
             t.showErrorAlert(null, "Can not load script!");
           });
@@ -1048,8 +1054,8 @@ export default {
             ? window.API.GET_SELLDONE_PAYPAL_CLIENT_TOKEN(this.currency.code)
             : window.XAPI.GET_PAYPAL_CLIENT_TOKEN(
                 this.customShopName ? this.customShopName : this.shop_name,
-                this.currency.code
-              )
+                this.currency.code,
+              ),
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -1117,7 +1123,7 @@ export default {
             },
           },
         },
-        callback
+        callback,
       );
     },
 
@@ -1189,7 +1195,8 @@ export default {
     getGatewayPaypal() {
       return this.availableGateways.find(
         (item) =>
-          item.code.startsWith("paypal") && item.currency === this.currency.code
+          item.code.startsWith("paypal") &&
+          item.currency === this.currency.code,
       );
     },
 
@@ -1278,7 +1285,7 @@ export default {
       unique_id,
       timeout = this.timeout,
       interval = 10000,
-      start = null
+      start = null,
     ) {
       console.log("pollPaymentStatus...", gateway, transaction_id, unique_id);
 
@@ -1294,13 +1301,13 @@ export default {
                 this.customShopName ? this.customShopName : this.shop_name,
                 gateway,
                 transaction_id,
-                unique_id
+                unique_id,
               )
             : window.API.GET_PAYMENT_STATUS_INTERVAL(
                 gateway,
                 transaction_id,
-                unique_id
-              )
+                unique_id,
+              ),
         )
         .then(({ data }) => {
           if (data.success && data.payment_at) {
@@ -1309,7 +1316,7 @@ export default {
             this.success_end_countdown = true;
             this.showSuccessAlert(
               "Payment received",
-              "Your payment accepted successfully."
+              "Your payment accepted successfully.",
             );
 
             return;
@@ -1326,11 +1333,11 @@ export default {
               unique_id,
               timeout,
               interval,
-              start
+              start,
             );
           } else {
             this.showWarningAlert(
-              "Please refresh page after payment completed."
+              "Please refresh page after payment completed.",
             );
 
             // Finish payment:
@@ -1347,7 +1354,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .text-value {
   font-size: 2rem;
 }

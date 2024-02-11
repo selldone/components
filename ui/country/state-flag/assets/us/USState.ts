@@ -272,6 +272,4 @@ export default [
     name: "Rhode Island",
     src: require("./rhode-island-small.png"),
   },
-
-
 ];

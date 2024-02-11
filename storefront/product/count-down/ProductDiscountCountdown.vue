@@ -16,9 +16,9 @@
   <!--  ▃▃▃▃▃▃▃▃▃▃ Discount countdown ▃▃▃▃▃▃▃▃▃▃ -->
   <div v-if="hasDiscountCountDown">
     <img
-      src="@components/assets/icons/countdown-badge.svg"
       class="count-down-bg fadeIn delay_400"
       fetchpriority="high"
+      src="@components/assets/icons/countdown-badge.svg"
     />
 
     <div class="count-down-container fadeIn delay_400">
@@ -55,7 +55,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .count-down-bg {
   position: absolute;
   top: -9px;
@@ -66,17 +66,14 @@ export default {
 
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
-
-
 }
+
 .v-application--is-rtl {
   .count-down-bg {
     right: -10px;
     left: unset;
     -webkit-transform: unset;
     transform: unset;
-
-
   }
 
   .count-down-container {
@@ -85,7 +82,6 @@ export default {
     transform: rotate(42deg) translate(24%, -30%); /* Standard syntax */
   }
 }
-
 
 .count-down-container {
   pointer-events: none;
@@ -117,5 +113,4 @@ export default {
     font-size: 1.2rem;
   }
 }
-
 </style>

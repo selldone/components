@@ -18,11 +18,11 @@
       <b-shop-note-view
         v-for="note in notes.sortByKey('id', false).limit(limit)"
         :key="note.id"
-        :shop="shop"
-        in-shop-admin
-        :note="note"
-        class="fadeIn pp"
         :class="{ 'hover-scale-small force-top bg-white border-0': hoverAble }"
+        :note="note"
+        :shop="shop"
+        class="fadeIn pp"
+        in-shop-admin
         @click="show(note)"
         @delete="DeleteItemByID(notes, note.id)"
       >
@@ -87,7 +87,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .d--notes-digest-view {
   text-align: start;
   font-family: var(--font);

@@ -41,8 +41,8 @@
 
     <v-btn
       v-if="can_edit && can_create_new"
-      rounded
       color="primary"
+      rounded
       @click="
         () => {
           can_create_new = false;
@@ -60,11 +60,11 @@
 
       <v-toolbar
         v-if="USER() && can_edit && canEdit"
-        flat
-        color="transparent"
-        class="overflow-x-auto"
-        :height="62"
         :extended="12"
+        :height="62"
+        class="overflow-x-auto"
+        color="transparent"
+        flat
       >
         <template v-slot:extension>
           <div style="height: 12px"></div>
@@ -75,17 +75,18 @@
 
           <v-btn
             v-if="in_view_mode"
-            @click="render_state = 'editing'"
+            class="ma-1"
             color="primary"
-            variant="elevated"
             min-width="64"
             rounded="lg"
-            class="ma-1" stacked
+            stacked
+            variant="elevated"
+            @click="render_state = 'editing'"
           >
             <v-icon size="24">edit</v-icon>
-            <div class="x-small mt-1 tnt">{{$t('global.actions.edit')}}</div>
+            <div class="x-small mt-1 tnt">{{ $t("global.actions.edit") }}</div>
 
-            <v-tooltip activator="parent" max-width="360" location="top">
+            <v-tooltip activator="parent" location="top" max-width="360">
               <b>{{ $t("global.article.menu.edit") }}</b>
               <div>Click to edit article.</div>
             </v-tooltip>
@@ -93,24 +94,23 @@
 
           <v-btn
             v-if="in_edit_mode"
-            @click="render_state = 'review'"
-
-            variant="flat"
+            class="ma-1"
             min-width="64"
             rounded="lg"
-            class="ma-1" stacked
+            stacked
+            variant="flat"
+            @click="render_state = 'review'"
           >
             <v-icon size="24">visibility</v-icon>
-            <div class="x-small mt-1 tnt">{{$t('global.actions.view')}}</div>
+            <div class="x-small mt-1 tnt">{{ $t("global.actions.view") }}</div>
 
-
-            <v-tooltip activator="parent" max-width="360" location="top">
+            <v-tooltip activator="parent" location="top" max-width="360">
               <b>{{ $t("global.article.menu.view_mode") }}</b>
               <div>Click to see article in the view mode.</div>
             </v-tooltip>
           </v-btn>
 
-          <v-divider vertical class="my-0 mx-3"></v-divider>
+          <v-divider class="my-0 mx-3" vertical></v-divider>
         </v-toolbar-items>
 
         <v-toolbar-items>
@@ -118,24 +118,27 @@
 
           <v-btn
             v-if="article.schedule_at"
-            icon
-            variant="text"
-            @click="showTimeline()"
             :title="
               $t('global.article.publish_at') +
               ' : ' +
               getLocalTimeString(article.schedule_at)
             "
+            icon
             stacked
+            variant="text"
+            @click="showTimeline()"
           >
-            <v-icon size="24" > timeline</v-icon>
-            <div class="x-small pt-1 tnt"><v-icon size="6" color="pink">circle</v-icon> {{ $t("global.commons.timeline") }}</div>
+            <v-icon size="24"> timeline</v-icon>
+            <div class="x-small pt-1 tnt">
+              <v-icon color="pink" size="6">circle</v-icon>
+              {{ $t("global.commons.timeline") }}
+            </div>
 
             <v-tooltip
               activator="parent"
-              max-width="360"
-              location="top"
               content-class="text-start"
+              location="top"
+              max-width="360"
             >
               {{ $t("global.article.schedule_input") }}
               <div v-if="article.schedule_at">
@@ -149,34 +152,42 @@
 
           <v-btn
             v-else-if="published_state"
-            icon
-            variant="text"
             key="pls"
-            @click="published_state = !published_state"
             :class="{ pen: !in_edit_mode, disabled: !!schedule_at }"
+            icon
             stacked
+            variant="text"
+            @click="published_state = !published_state"
           >
-            <v-icon  size="20" class="ma-1"> fa:fas fa-rss</v-icon>
-            <div class="x-small pt-1 tnt"><v-icon size="6" color="green">circle</v-icon> {{ $t("global.article.published") }}</div>
+            <v-icon class="ma-1" size="20"> fa:fas fa-rss</v-icon>
+            <div class="x-small pt-1 tnt">
+              <v-icon color="green" size="6">circle</v-icon>
+              {{ $t("global.article.published") }}
+            </div>
 
-            <v-tooltip activator="parent" max-width="360" location="top">
-              {{ $t("global.article.published") }} /     {{ $t("global.article.draft") }}
+            <v-tooltip activator="parent" location="top" max-width="360">
+              {{ $t("global.article.published") }} /
+              {{ $t("global.article.draft") }}
             </v-tooltip>
           </v-btn>
           <v-btn
             v-else
-            icon
-            variant="text"
             key="dra"
-            @click="published_state = !published_state"
             :class="{ pen: !in_edit_mode, disabled: !!schedule_at }"
+            icon
             stacked
+            variant="text"
+            @click="published_state = !published_state"
           >
-            <v-icon  size="20" class="ma-1"> fa:fas fa-pencil-ruler</v-icon>
-            <div class="x-small pt-1 tnt"><v-icon size="6" color="#FFA000">circle</v-icon> {{ $t("global.article.draft") }}</div>
+            <v-icon class="ma-1" size="20"> fa:fas fa-pencil-ruler</v-icon>
+            <div class="x-small pt-1 tnt">
+              <v-icon color="#FFA000" size="6">circle</v-icon>
+              {{ $t("global.article.draft") }}
+            </div>
 
-            <v-tooltip activator="parent" max-width="360" location="top">
-              {{ $t("global.article.published") }} /     {{ $t("global.article.draft") }}
+            <v-tooltip activator="parent" location="top" max-width="360">
+              {{ $t("global.article.published") }} /
+              {{ $t("global.article.draft") }}
             </v-tooltip>
           </v-btn>
 
@@ -184,33 +195,39 @@
 
           <v-btn
             v-if="isPrivate"
-            icon
-            variant="text"
-            @click="isPrivate = !isPrivate"
             key="pri"
             :class="{ pen: !in_edit_mode }"
+            icon
             stacked
+            variant="text"
+            @click="isPrivate = !isPrivate"
           >
-            <v-icon size="20" class="ma-1" > fa:fas fa-user-lock</v-icon>
-            <div class="x-small pt-1 tnt"><v-icon size="6" color="red">circle</v-icon> {{ $t("global.article.private") }}</div>
+            <v-icon class="ma-1" size="20"> fa:fas fa-user-lock</v-icon>
+            <div class="x-small pt-1 tnt">
+              <v-icon color="red" size="6">circle</v-icon>
+              {{ $t("global.article.private") }}
+            </div>
 
-            <v-tooltip activator="parent" max-width="360" location="top">
+            <v-tooltip activator="parent" location="top" max-width="360">
               {{ $t("global.article.private") }}
             </v-tooltip>
           </v-btn>
           <v-btn
             v-else
-            icon
-            variant="text"
-            @click="isPrivate = !isPrivate"
             key="pub"
             :class="{ pen: !in_edit_mode }"
+            icon
             stacked
+            variant="text"
+            @click="isPrivate = !isPrivate"
           >
-            <v-icon size="20" class="ma-1" > fa:fas fa-globe</v-icon>
-            <div class="x-small pt-1 tnt"><v-icon size="6" color="green">circle</v-icon> {{ $t("global.article.public") }}</div>
+            <v-icon class="ma-1" size="20"> fa:fas fa-globe</v-icon>
+            <div class="x-small pt-1 tnt">
+              <v-icon color="green" size="6">circle</v-icon>
+              {{ $t("global.article.public") }}
+            </div>
 
-            <v-tooltip activator="parent" max-width="360" location="top">
+            <v-tooltip activator="parent" location="top" max-width="360">
               {{ $t("global.article.public") }}
             </v-tooltip>
           </v-btn>
@@ -219,40 +236,40 @@
 
           <s-language-input
             v-model="article.lang"
-            dense
-            :title="$t('global.commons.language')"
-            @change="onChangeNote()"
-            class="mx-2 mt-4 overflow-hidden min-width-150"
-            max-width="150px"
-            variant="solo-filled"
-            flat
-            single-line
-            :disabled="!in_edit_mode || !!forceLanguage"
-            prepend-inner-icon="translate"
             :class="{ pen: !in_edit_mode }"
+            :disabled="!in_edit_mode || !!forceLanguage"
+            :title="$t('global.commons.language')"
+            class="mx-2 mt-4 overflow-hidden min-width-150"
+            dense
+            flat
+            max-width="150px"
+            prepend-inner-icon="translate"
+            single-line
+            variant="solo-filled"
+            @change="onChangeNote()"
           >
-            <v-tooltip activator="parent" max-width="360" location="top">
+            <v-tooltip activator="parent" location="top" max-width="360">
               Change the language of this article.
             </v-tooltip>
           </s-language-input>
 
-          <v-divider vertical class="my-0 mx-2"></v-divider>
+          <v-divider class="my-0 mx-2" vertical></v-divider>
 
           <!-- ━━━━━━━━━━━━━━━━━━━━━━ Import Word ━━━━━━━━━━━━━━━━━━━━━━ -->
 
           <v-btn
+            :class="{ pen: !in_edit_mode }"
             icon
             variant="text"
             @click="$refs.editorContainer.showSelectWord()"
-            :class="{ pen: !in_edit_mode }"
           >
             <img
+              height="24"
               src="@core/enums/file/assets/extensions/docx.svg"
               width="24"
-              height="24"
             />
 
-            <v-tooltip activator="parent" max-width="360" location="top">
+            <v-tooltip activator="parent" location="top" max-width="360">
               Import word (.docx)
             </v-tooltip>
           </v-btn>
@@ -264,9 +281,9 @@
             variant="text"
             @click="showGoogleSearch()"
           >
-            <img src="../assets/trademark/google.svg" width="24" height="24" />
+            <img height="24" src="../assets/trademark/google.svg" width="24" />
 
-            <v-tooltip activator="parent" max-width="360" location="top">
+            <v-tooltip activator="parent" location="top" max-width="360">
               Show Google Search Rank.
             </v-tooltip>
           </v-btn>
@@ -279,9 +296,9 @@
                 in_edit_mode &&
                 !IS_VENDOR_PANEL
               "
+              :loading="auto_generate_busy"
               title="Write article - 😈 Beta version | ⚡ Due to high demand and limited resources, there may be errors. Please try again later after 60sec."
               @click="autoGenerate(true)"
-              :loading="auto_generate_busy"
             >
             </ai-button>
           </v-slide-y-transition>
@@ -296,22 +313,22 @@
             v-if="canEdit && !in_edit_mode && languages && multiLanguage"
           >
             <s-language-input
+              :available-languages="languages"
+              :checked-languages="multiLanguageAvailable"
+              :suffix="` (${multiLanguageAvailable.length})`"
               :value="article.lang"
-              @input="(lang) => loadArticleLanguage(lang)"
+              class="min-width-150"
+              hide-details
+              prepend-inner-icon="post_add"
               single-line
               variant="plain"
-              prepend-inner-icon="post_add"
-              :available-languages="languages"
-              hide-details
-              class="min-width-150"
-              :suffix="` (${multiLanguageAvailable.length})`"
-              :checked-languages="multiLanguageAvailable"
+              @input="(lang) => loadArticleLanguage(lang)"
             >
               <v-tooltip
                 activator="parent"
-                max-width="360"
-                location="top"
                 content-class="text-start"
+                location="top"
+                max-width="360"
               >
                 <b>Multi Languages</b>
                 <div>
@@ -328,13 +345,6 @@
 
         <template v-if="in_edit_mode">
           <v-btn
-            rounded
-            class="mx-2 tnt"
-            :color="
-              published_state ? 'success' : schedule_at ? 'primary' : 'amber'
-            "
-            :loading="state === 'saving'"
-            :variant="state === 'no-change' ? 'text' : 'elevated'"
             :class="{
               disabled:
                 state === 'saving' ||
@@ -342,8 +352,15 @@
                   published_state === article.published &&
                   isPrivate === article.private),
             }"
-            @click="saveChange(null)"
+            :color="
+              published_state ? 'success' : schedule_at ? 'primary' : 'amber'
+            "
+            :loading="state === 'saving'"
+            :variant="state === 'no-change' ? 'text' : 'elevated'"
+            class="mx-2 tnt"
+            rounded
             size="x-large"
+            @click="saveChange(null)"
           >
             <v-icon class="me-2" start>
               {{
@@ -405,10 +422,10 @@
 
             <s-article-seo-editor
               v-if="article && canEdit"
-              class="my-2"
               :article="article"
-              @change="state = 'changed'"
               :images="images_in_article"
+              class="my-2"
+              @change="state = 'changed'"
               @open-menu="$refs.editorContainer.findAllImages()"
             />
 
@@ -419,29 +436,29 @@
             >
               <v-expansion-panel elevation="0">
                 <v-expansion-panel-title
-                  :color="schedule_at ? '#0288D1' : undefined"
                   :class="{ 'white--text': !!schedule_at }"
+                  :color="schedule_at ? '#0288D1' : undefined"
+                  :title="$t('global.article.schedule_title')"
                   class="py-3 d-flex align-start align-sm-center flex-column flex-sm-row"
                   style="min-height: 60px"
-                  :title="$t('global.article.schedule_title')"
                 >
                   <div>
                     <div>
                       <v-icon
-                        class="me-1"
                         :color="schedule_at ? '#fff' : undefined"
+                        class="me-1"
                         >{{ schedule_at ? "watch_later" : "schedule" }}
                       </v-icon>
                       {{ $t("global.article.schedule_action") }}
                     </div>
                     <s-time-progress-bar
                       v-if="article && schedule_at"
-                      :start-time="article.created_at"
                       :end-time="schedule_at"
-                      small
+                      :start-time="article.created_at"
                       active-color="#FFA000"
                       bg-color="#fff"
                       class="max-w-250 mt-2"
+                      small
                     ></s-time-progress-bar>
                   </div>
 
@@ -456,23 +473,23 @@
                 <v-expansion-panel-text>
                   <s-date-input
                     v-model="schedule_at"
-                    return-utc
-                    class="max-widget-width mx-auto mt-5"
                     :label="$t('global.article.schedule_input')"
-                    clearable
+                    :min="new Date().toISOString()"
                     :placeholder="
                       $t('global.article.schedule_input_placeholder')
                     "
-                    :min="new Date().toISOString()"
+                    class="max-widget-width mx-auto mt-5"
+                    clearable
+                    return-utc
                   />
 
                   <div class="widget-buttons">
                     <v-btn
-                      @click.stop="showTimeline()"
-                      variant="text"
-                      color="primary"
                       class="tnt"
+                      color="primary"
                       size="x-large"
+                      variant="text"
+                      @click.stop="showTimeline()"
                     >
                       <v-icon class="me-2">timeline</v-icon>
                       {{ $t("global.article.schedule_view_action") }}
@@ -503,14 +520,14 @@
                       <v-list-item
                         v-for="lang in languages"
                         :key="lang"
-                        class="row-hover"
-                        @click="loadArticleLanguage(lang)"
                         :class="{
                           pen:
                             article &&
                             article.lang &&
                             article.lang.toLowerCase() === lang.toLowerCase(),
                         }"
+                        class="row-hover"
+                        @click="loadArticleLanguage(lang)"
                       >
                         <template v-slot:prepend>
                           <flag
@@ -534,11 +551,11 @@
                               shop &&
                               lang.toLowerCase() === shop.language.toLowerCase()
                             "
+                            class="px-1 mx-1"
                             label
                             size="small"
-                            class="px-1 mx-1"
-                            variant="outlined"
                             title="Default article (Shop main language)"
+                            variant="outlined"
                             >{{ $t("global.commons.default") }}
                           </v-chip>
                           <v-spacer></v-spacer>
@@ -552,22 +569,22 @@
                                 lang.toLowerCase(),
                               )
                             "
-                            @click.stop="$emit('request-auto-translate', lang)"
-                            variant="elevated"
+                            :title="$t('global.commons.translate')"
+                            class="rounded-14-12"
                             color="primary"
                             icon
                             size="small"
-                            class="rounded-14-12"
-                            :title="$t('global.commons.translate')"
+                            variant="elevated"
+                            @click.stop="$emit('request-auto-translate', lang)"
                           >
                             <v-icon>g_translate</v-icon>
                           </v-btn>
 
                           <v-icon
                             v-else-if="multiLanguageAvailable"
-                            size="small"
-                            color="success"
                             class="mx-1"
+                            color="success"
+                            size="small"
                             title="Article exist"
                             >check_circle
                           </v-icon>
@@ -612,34 +629,34 @@
                   </span>
                   <div class="flex-grow-1">
                     <v-chip
-                      size="x-small"
-                      label
                       v-for="tag in article.tags"
                       :key="tag"
                       class="ma-1"
+                      label
+                      size="x-small"
                       >{{ tag }}
                     </v-chip>
                   </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
-                  <s-article-tags-editor :shop="shop" :article="article" />
+                  <s-article-tags-editor :article="article" :shop="shop" />
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
 
-            <v-row dense class="mb-2 z1">
+            <v-row class="mb-2 z1" dense>
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
               <o-article-selldone-help-category-input
                 v-if="
                   articleType === ArticleTypes.SelldoneHelp.code && categories
                 "
                 v-model="category"
-                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px bg-white"
-                variant="solo"
-                flat
-                clearable
-                rounded
                 :disabled="!!menu && !!menu.parent_id"
+                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px bg-white"
+                clearable
+                flat
+                rounded
+                variant="solo"
                 @update:model-value="state = 'changed'"
               >
               </o-article-selldone-help-category-input>
@@ -649,13 +666,13 @@
                   articleType === ArticleTypes.SelldoneBlog.code && categories
                 "
                 v-model="category"
-                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
-                flat
-                :items="categories"
-                variant="solo"
-                clearable
-                rounded
                 :disabled="(!!menu && !!menu.parent_id) || busy_categories"
+                :items="categories"
+                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
+                clearable
+                flat
+                rounded
+                variant="solo"
                 @update:model-value="state = 'changed'"
               >
               </o-article-selldone-blog-category-input>
@@ -663,15 +680,15 @@
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Shop Blog Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
               <s-article-category-shop-blog-input
                 v-else-if="articleType === ArticleTypes.Blog.code && categories"
-                :shop="shop"
                 v-model="category"
-                :loading="busy_categories"
                 :disabled="busy_categories"
-                variant="solo"
-                flat
-                clearable
-                rounded
+                :loading="busy_categories"
+                :shop="shop"
                 class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
+                clearable
+                flat
+                rounded
+                variant="solo"
                 @update:model-value="state = 'changed'"
               >
               </s-article-category-shop-blog-input>
@@ -680,16 +697,16 @@
                 v-if="ArticleTypes.Blog.code && $route.params.shop_id"
                 v-model="cluster_id"
                 :return-object="false"
-                @change="state = 'changed'"
-                flat
-                rounded
-                solo
+                class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
                 clearable
+                flat
+                icon="workspaces_outline"
+                label="Resource Cluster"
                 no-home
                 placeholder="Select a cluster... (optional)"
-                label="Resource Cluster"
-                icon="workspaces_outline"
-                class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
+                rounded
+                solo
+                @change="state = 'changed'"
               ></b-cluster-input>
 
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help parent ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -701,30 +718,30 @@
                   parent_helps_canidates
                 "
                 v-model="menu.parent_id"
-                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
                 :items="parent_helps_canidates"
                 :label="$t('global.article.parent_input')"
                 :messages="$t('global.article.parent_input_message')"
-                variant="solo"
+                :return-object="false"
+                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
+                clearable
                 flat
-                rounded
                 item-title="title"
                 item-value="blog_id"
-                :return-object="false"
-                clearable
+                rounded
+                variant="solo"
                 @update:model-value="state = 'changed'"
               />
 
               <s-number-input
                 v-if="articleType === ArticleTypes.SelldoneHelp.code && menu"
-                messages="Order"
                 v-model="menu.order"
-                solo
-                flat
-                rounded
-                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white z1"
-                @change="state = 'changed'"
                 :hide-details="false"
+                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white z1"
+                flat
+                messages="Order"
+                rounded
+                solo
+                @change="state = 'changed'"
               ></s-number-input>
 
               <div
@@ -736,15 +753,15 @@
                 class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px bg-white z1 py-1 px-4"
               >
                 <v-btn
-                  icon
                   color="amber"
+                  icon
+                  size="large"
                   @click="
                     () => {
                       menu.star = !menu.star;
                       state = 'changed';
                     }
                   "
-                  size="large"
                 >
                   <v-icon>{{ menu.star ? "star" : "star_border" }}</v-icon>
                 </v-btn>
@@ -764,15 +781,15 @@
                 "
               >
                 <v-btn
-                  @click="change_author_dialog = true"
-                  color="primary"
-                  variant="flat"
-                  style="align-self: baseline"
                   class="m-2 tnt"
+                  color="primary"
                   rounded
                   size="large"
+                  style="align-self: baseline"
+                  variant="flat"
+                  @click="change_author_dialog = true"
                 >
-                  <v-avatar v-if="article" size="28" class="ms-n2"
+                  <v-avatar v-if="article" class="ms-n2" size="28"
                     ><img :src="getUserAvatar(article.user_id)"
                   /></v-avatar>
                   <span class="text-subtitle-2 mx-1">Change author</span>
@@ -785,9 +802,9 @@
                       <user-email-input
                         v-model="user_email"
                         :messages="user_email"
-                        placeholder="content@selldone.com"
                         label="Select author"
                         no-icon
+                        placeholder="content@selldone.com"
                       >
                       </user-email-input>
                     </v-card-text>
@@ -799,10 +816,10 @@
                       </v-btn>
                       <v-spacer></v-spacer>
                       <v-btn
-                        variant="flat"
-                        color="primary"
-                        @click="changeAuthor()"
                         :loading="busy_change_author"
+                        color="primary"
+                        variant="flat"
+                        @click="changeAuthor()"
                         >{{ $t("global.actions.change") }}
                       </v-btn>
                     </v-card-actions>
@@ -825,8 +842,8 @@
           <s-article-search-console
             v-if="article?.id && first_load_seo_audit"
             :key="'seo' + article?.id"
-            :shop="shop"
             :article="article"
+            :shop="shop"
           >
           </s-article-search-console>
         </div>
@@ -841,26 +858,26 @@
         <s-article-editor
           v-if="article"
           ref="editorContainer"
-          class="p-lg-5 p-md-4 p-3 samin-article-content"
-          :only-view="!canEdit"
-          :edit="in_edit_mode"
-          v-model:title="article.title"
           v-model:body="article.body"
+          v-model:title="article.title"
+          :edit="in_edit_mode"
+          :enable-title="showTitle"
+          :has-table-of-content="hasTableOfContent"
+          :hide-title="hideTitle"
+          :only-view="!canEdit"
           :upload-url="upload_url"
           :word-converter-url="word_converter_url"
+          class="p-lg-5 p-md-4 p-3 samin-article-content"
           @change="onChangeNote"
           @update:images="onChangeImages"
-          :has-table-of-content="hasTableOfContent"
-          :enable-title="showTitle"
-          :hide-title="hideTitle"
         >
           <template v-slot:after-title>
             <!-- ――――――――――――――――――――― Author Info Small Top ――――――――――――――――――――― -->
 
             <p v-if="showAuthorInfo" class="text-start small m-0">
               <v-avatar
-                size="32"
                 class="avatar-gradient -thin hover-scale force-top"
+                size="32"
               >
                 <img :src="author_avatar" />
               </v-avatar>
@@ -894,8 +911,8 @@
                   <v-avatar
                     v-if="category_obj.icon"
                     class="me-1"
-                    size="28"
                     rounded
+                    size="28"
                     ><img :src="getShopImagePath(category_obj.icon)"
                   /></v-avatar>
                   {{ category_obj.category }}
@@ -907,7 +924,7 @@
               v-if="showAuthorInfo && reading_time"
               class="text-start ms-10 mt-1 reading-time"
             >
-              <v-icon size="small" class="me-1">timelapse</v-icon>
+              <v-icon class="me-1" size="small">timelapse</v-icon>
               {{ $t("global.article.read_time") }}
               :
               <span> {{ reading_time }}</span>
@@ -919,16 +936,16 @@
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article FAQ ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
             <s-article-faqs
-              :editMode="edit"
               v-model:faqs="article.faqs"
+              :editMode="edit"
               @change="onChangeNote"
             ></s-article-faqs>
 
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Structured Data ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
             <s-article-structured-data
               v-if="in_edit_mode"
-              :editMode="edit"
               v-model="article.structures"
+              :editMode="edit"
             ></s-article-structured-data>
           </template>
         </s-article-editor>
@@ -940,14 +957,14 @@
 
         <div v-if="showUserFeedbackButtons && !isNew" style="min-height: 64px">
           <v-badge
-            class="m-2 float-right"
-            offset-x="16"
             :color="catch_power ? '#025185' : '#0288D1'"
             :title="
               catch_power
                 ? $t('global.article.claps')
                 : $t('global.article.claps_action')
             "
+            class="m-2 float-right"
+            offset-x="16"
           >
             <template v-slot:badge>
               {{ numeralFormat(article.power, "0.[0] a") }}
@@ -959,12 +976,12 @@
                 'disabled-no-filter': catch_power || power_busy || !USER(),
               }"
               :color="catch_power ? '#025185' : '#0288D1'"
-              @click="getPower"
-              :variant="!catch_power ? 'outlined' : 'flat'"
               :loading="power_busy"
+              :variant="!catch_power ? 'outlined' : 'flat'"
               icon
+              @click="getPower"
             >
-              <v-icon class="mx-2" :class="{ bounceIn: catch_power }">
+              <v-icon :class="{ bounceIn: catch_power }" class="mx-2">
                 fa:fas fa-sign-language
               </v-icon>
             </v-btn>
@@ -976,9 +993,9 @@
             @click="likeArticle"
           >
             <v-icon
-              :size="!!USER() ? 'large':undefined"
-              :color="!USER() ? '#c2185b' : isLiked ? '#c2185b' : 'gray'"
               :class="{ bounceIn: isLiked }"
+              :color="!USER() ? '#c2185b' : isLiked ? '#c2185b' : 'gray'"
+              :size="!!USER() ? 'large' : undefined"
             >
               {{
                 !USER() ? "favorite" : isLiked ? "favorite" : "favorite_border"
@@ -992,11 +1009,11 @@
 
           <div
             v-if="hasFavorite && USER()"
+            :class="{ bounceIn: isStared }"
             class="ms-4 float-left pointer-pointer"
             @click="starArticle"
-            :class="{ bounceIn: isStared }"
           >
-            <v-icon size="large" :color="isStared ? '#fbc02d' : 'gray'">
+            <v-icon :color="isStared ? '#fbc02d' : 'gray'" size="large">
               {{ isStared ? "star" : "star_border" }}
             </v-icon>
           </div>
@@ -1007,9 +1024,9 @@
 
       <s-article-author-box
         v-if="showAuthorInfo && article?.user_id > 0"
-        :article="article"
         v-model:is-follow="isFollow"
         v-model:reported="reported"
+        :article="article"
         class="widget my-5"
       >
       </s-article-author-box>
@@ -1018,15 +1035,15 @@
 
       <v-row
         v-if="hasRelatedArticles"
+        align="stretch"
         class="mx-0 my-12"
         justify="space-between"
-        align="stretch"
       >
-        <v-col v-for="it in relatives" :key="it.id" cols="12" sm="6" md="5">
+        <v-col v-for="it in relatives" :key="it.id" cols="12" md="5" sm="6">
           <v-card
             :to="getArticlePageTo(it)"
-            max-width="400"
             class="s--shadow-no-padding hover-able text-start rounded-18px article-card"
+            max-width="400"
           >
             <v-img
               v-if="it.article.image"
@@ -1053,25 +1070,23 @@
 
       <v-container v-if="!isNew && showComments && article">
         <s-article-comments
-          :is-shop="!!shopId"
-          :is-selldone="['blog', 'help'].includes(articleType)"
           v-if="!isNew"
-          class="pt-3"
-          :article-user-id="article.user_id"
           :article-id="article.id"
+          :article-user-id="article.user_id"
           :for-product="!!productId"
+          :is-selldone="['blog', 'help'].includes(articleType)"
+          :is-shop="!!shopId"
+          class="pt-3"
         />
       </v-container>
     </div>
-
-
 
     <!-- ██████████████████████ Dialog > Publish time line ██████████████████████ -->
 
     <v-dialog
       v-model="dialog_timeline"
-      scrollable
       fullscreen
+      scrollable
       transition="dialog-bottom-transition"
     >
       <v-card>
@@ -1080,20 +1095,20 @@
           {{ $t("global.article.schedule_dialog.title") }}
         </v-card-title>
         <v-card-text>
-           <v-container>
-             <s-articles-timeline
-                 :shop-id="shopId"
-                 :article-type="articleType"
-                 :current-article-id="article.id"
-             ></s-articles-timeline>
-           </v-container>
+          <v-container>
+            <s-articles-timeline
+              :article-type="articleType"
+              :current-article-id="article.id"
+              :shop-id="shopId"
+            ></s-articles-timeline>
+          </v-container>
         </v-card-text>
 
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
-              variant="text"
               size="x-large"
+              variant="text"
               @click="dialog_timeline = false"
             >
               <v-icon class="me-1">close</v-icon>
@@ -1331,7 +1346,6 @@ export default {
       selected_publication_id: null, // Selected publication to add!
       available_publications: [], // Available publication (active + has access)
 
-
       // ------ Errors -------
       NOT_FOUND_ARTICLE: false,
 
@@ -1441,13 +1455,11 @@ export default {
       return this.article.user.profile.name;
     },
 
-
     author_avatar() {
       if (!this.article) return null;
 
       return this.getUserAvatar(this.article.user_id, "big");
     },
-
 
     upload_url() {
       // Shop Products:
@@ -1987,7 +1999,6 @@ export default {
         });
     },
 
-
     //――――――――――――――――――――――― getPower ―――――――――――――――――――――――
     getPower() {
       this.power_busy = true;
@@ -2100,8 +2111,6 @@ export default {
           this.busy_fix = false;
         });
     },
-
-
 
     getArticlePageTo(target) {
       const target_id = target.id;
@@ -2275,7 +2284,6 @@ export default {
     padding: 5px 5px;
   }
 }
-
 
 .reading-time {
   color: #aaa;

@@ -14,28 +14,30 @@
 
 <template>
   <v-select
-    :value="value"
-    @input="(val) => $emit('input', val)"
+    :bg-color="backgroundColor"
+    :clearable="clearable"
+    :color="color"
+    :theme="dark ? 'dark' : 'light'"
+    :density="dense ? 'compact' : undefined"
+    :disabled="disabled"
+    :filled="filled"
+    :flat="flat"
+    :hide-details="hideDetails"
     :items="items"
     :label="label"
     :messages="messages"
-    :color="color"
-    :rounded="rounded"
+    :model-value="modelValue"
     :outlined="outlined"
-    :dark="dark"
-    :disabled="disabled"
-    :hide-details="hideDetails"
-    :solo="solo"
-    :dense="dense"
-    :filled="filled"
-    :flat="flat"
-    @change="(val) => $emit('change', val)"
     :prepend-icon="prependIcon"
     :prepend-inner-icon="prependInnerIcon"
-    :clearable="clearable"
-    :shaped="shaped"
-    :height="height"
-    :background-color="backgroundColor"
+    :rounded="rounded"
+    :solo="solo"
+    @update:model-value="
+      (val) => {
+        $emit('update:modelValue', val);
+        $emit('change', val);
+      }
+    "
   >
     <template v-slot:append-inner>
       <slot name="append-inner"></slot>
@@ -46,9 +48,9 @@
 <script>
 export default {
   name: "SDimensionSelector",
-
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
 
     label: {},
     messages: {},

@@ -15,18 +15,18 @@
 <template>
   <s-funnel-graph
     v-if="show_funnel"
-    class="funnel-chart-single-data mx-auto text-start pl-5"
+    :animated="true"
     :class="{ 'dense p-0': dense, dark: isDark, 'no-legend': noLegend }"
-    :width="width"
+    :colors="colors"
+    :direction="direction"
+    :display-percentage="displayPercentage"
+    :gradient-direction="gradientDirection"
     :height="height"
     :labels="labels"
-    :values="values"
-    :colors="colors"
     :sub-labels="subLabels"
-    :direction="direction"
-    :gradient-direction="gradientDirection"
-    :animated="true"
-    :display-percentage="displayPercentage"
+    :values="values"
+    :width="width"
+    class="funnel-chart-single-data mx-auto text-start pl-5"
   ></s-funnel-graph>
 </template>
 
@@ -132,7 +132,7 @@ export default {
       });
     },
   },
-  beforeDestroy() {},
+  beforeUnmount() {},
   mounted() {
     this.onResize();
   },
@@ -150,6 +150,7 @@ export default {
       border-top: 1px dashed rgba(119, 119, 119, 0.48) !important;
     }
   }
+
   // Dashed horizontal on horizontal chart only:
   &:not(.svg-funnel-js--vertical) {
     .svg-funnel-js__label:not(:first-child) {
@@ -174,10 +175,12 @@ export default {
       color: #2a333c !important;
     }
   }
+
   .svg-funnel-js__subLabels {
     .svg-funnel-js__subLabel--title {
       font-size: 8px !important;
     }
+
     .svg-funnel-js__subLabel--color {
       margin: 2px 4px 2px 4px !important;
     }

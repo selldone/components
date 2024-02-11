@@ -25,17 +25,17 @@
           <variant-item-mini
             v-for="(product_variant, index) in product_variants"
             :key="index"
-            class="m-2"
             :product-variant="product_variant"
             :selected="product_variant === currentVariant"
-            @select="$emit('update:currentVariant', product_variant)"
+            class="m-2"
             force-enable
+            @select="$emit('update:currentVariant', product_variant)"
           />
         </v-slide-y-reverse-transition>
         <v-btn
           v-if="product.product_variants.length > 3"
-          icon
           class="crossRotate m-1"
+          icon
           @click="show_all = !show_all"
         >
           <v-icon>
@@ -48,27 +48,33 @@
           <!-- Variant title -->
 
           <div class="my-2">
-            <v-icon color="#111" small class="me-1">{{ it.icon }}</v-icon>
+            <v-icon class="me-1" color="#111" size="small"
+              >{{ it.icon }}
+            </v-icon>
             <b class="me-2">{{ $t(it.name) }}</b>
-              <span v-if="currentVariant">{{ it.code === 'color' ? GetNameOfColor(currentVariant.color) : currentVariant[it.code]?.removeVariantAsset() }}</span>
+            <span v-if="currentVariant">{{
+              it.code === "color"
+                ? GetNameOfColor(currentVariant.color)
+                : currentVariant[it.code]?.removeVariantAsset()
+            }}</span>
           </div>
 
           <v-row no-gutters>
             <div
               v-for="selection in getVariantsValuesOf(it.code)"
               :key="selection"
-              class="var-sel"
               :class="{
                 '-color': it.code === 'color',
                 selected: selectionValues.some(
-                  (s) => s.code === it.code && s.value === selection
+                  (s) => s.code === it.code && s.value === selection,
                 ),
                 not:
                   !eligible_variants.some((x) => x[it.code] === selection) &&
                   !selectionValues.some(
-                    (y) => y.code === it.code
+                    (y) => y.code === it.code,
                   ) /*Do not disable item on when an item selected on the row!*/,
               }"
+              class="var-sel"
               @click="selectVarF(it.code, selection)"
             >
               <!-- Is Color ? -->
@@ -79,16 +85,20 @@
                       getShopImagePath(
                         product_variants.find((v) => v.color === selection)
                           ?.image,
-                        IMAGE_SIZE_SMALL
+                        IMAGE_SIZE_SMALL,
                       )
                     "
-                    width="100%"
-                    height="100%"
+                    class="-var-image"
                     eager
                     fetchpriority="high"
-                    class="-var-image"
+                    height="100%"
+                    width="100%"
                   >
-                      <s-color-circle :color="selection" :size="12" class="-var-image-color"></s-color-circle>
+                    <s-color-circle
+                      :color="selection"
+                      :size="12"
+                      class="-var-image-color"
+                    ></s-color-circle>
                   </v-img>
                 </template>
                 <template v-else>
@@ -104,14 +114,14 @@
                     '-hover-hide':
                       selection?.removeVariantAsset() /*Has pure text value?*/,
                   }"
+                  :selected="
+                    selectionValues.some(
+                      (s) => s.code === it.code && s.value === selection,
+                    )
+                  "
                   :shop-id="product.shop_id"
                   :value="selection"
                   background
-                  :selected="
-                    selectionValues.some(
-                      (s) => s.code === it.code && s.value === selection
-                    )
-                  "
                 ></variant-asset-view>
                 <span>{{ selection?.removeVariantAsset() }}</span>
               </span>
@@ -129,6 +139,7 @@ import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
 import { ProductVariants } from "@core/enums/product/ProductVariants";
 import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
 import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
+
 export default {
   name: "ProductSectionBoxVariants",
   components: {
@@ -193,10 +204,10 @@ export default {
       const sort_key = instance.volume
         ? "volume"
         : instance.weight
-        ? "weight"
-        : instance.pack
-        ? "pack"
-        : "quantity";
+          ? "weight"
+          : instance.pack
+            ? "pack"
+            : "quantity";
 
       out = out.sort((a, b) => {
         /*DESC*/
@@ -275,7 +286,7 @@ export default {
 
       if (
         this.selectionValues.some(
-          (it) => it.code === code && it.value === value
+          (it) => it.code === code && it.value === value,
         )
       ) {
         this.clearVarF(code);
@@ -285,7 +296,7 @@ export default {
       this.AddOrUpdateItemByID(
         this.selectionValues,
         { code: code, value: value },
-        "code"
+        "code",
       );
 
       // Check : If eligible variants iz zero remove all other selectionValues:
@@ -340,15 +351,18 @@ export default {
       font-size: 10px;
       margin-top: 3px;
     }
+
     &.-color {
       justify-content: space-around;
       min-width: 64px;
       max-width: 64px;
     }
+
     &.selected {
       background: #111;
       color: #fff;
       transform: scale(1.1);
+
       small {
         color: #fff !important;
       }
@@ -369,15 +383,18 @@ export default {
         transform: rotate(-5deg);
       }
     }
+
     .-hover-hide {
       &:hover {
         opacity: 0;
       }
     }
+
     .-var-image {
       border-radius: var(--radius);
       position: relative;
-      .-var-image-color{
+
+      .-var-image-color {
         position: absolute;
         right: 3px;
         bottom: 3px;

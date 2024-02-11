@@ -14,33 +14,35 @@
 
 <template>
   <div
-    class="chat-box"
-    :style="{ bottom: bottom + 'px', right: right + 'px' }"
     :class="{ expand: show }"
+    :style="{ bottom: bottom + 'px', right: right + 'px' }"
+    class="chat-box"
   >
     <v-slide-y-reverse-transition>
       <div v-show="show" class="view-box">
         <v-btn
           v-if="!selected_contact"
-          icon
-          @click="show = false"
           class="absolute-top-end"
           dark
-          ><v-icon>highlight_off</v-icon></v-btn
+          icon
+          @click="show = false"
         >
+          <v-icon>highlight_off</v-icon>
+        </v-btn>
 
         <v-btn
           v-else
-          @click="selected_contact = null"
-          class="m-1 sub-caption -hover absolute-top-end"
           :caption="$t('global.actions.back')"
-          icon
+          class="m-1 sub-caption -hover absolute-top-end"
           dark
-          ><v-icon>arrow_back</v-icon></v-btn
+          icon
+          @click="selected_contact = null"
         >
+          <v-icon>arrow_back</v-icon>
+        </v-btn>
 
         <!-- Header -->
-        <div class="box-header" :class="{ 'h-84': selected_contact }">
+        <div :class="{ 'h-84': selected_contact }" class="box-header">
           <p class="font-weight-bold">
             <v-avatar class="me-1" size="16">
               <v-img :src="getShopImagePath(shop.icon)" />
@@ -50,35 +52,36 @@
 
             <v-btn
               v-if="isAdmin && $route.name !== 'ShopUsers_ContactForm'"
-              class="ms-2 zoomIn"
-              icon
               :to="{ name: 'ShopUsers_ContactForm' }"
+              class="ms-2 zoomIn"
+              dark
+              icon
+              size="small"
               tile
               title="Open contacts page"
-              dark
-              small
-              ><v-icon small>launch</v-icon></v-btn
             >
+              <v-icon size="small">launch</v-icon>
+            </v-btn>
           </p>
 
           <emoji-rating
             v-if="selected_contact && selected_contact.closed"
             v-model="selected_contact.rate"
-            x-small
-            dense
             class="mt-1"
-            read-only
+            dense
             horizontal
+            read-only
+            x-small
           ></emoji-rating>
         </div>
 
         <shop-chats-list
           v-if="USER()"
-          is-small
-          class="chats thin-scroll"
-          :shop="shop"
-          :selected-contact.sync="selected_contact"
+          v-model:selected-contact="selected_contact"
           :is-admin="isAdmin"
+          :shop="shop"
+          class="chats thin-scroll"
+          is-small
         ></shop-chats-list>
         <s-shop-login v-else class="chat-login"></s-shop-login>
       </div>
@@ -86,18 +89,15 @@
 
     <v-scale-transition origin="center center">
       <v-btn
-        class="chat-btn"
         v-if="!show"
-        @click="show = true"
+        :color="SaminColorDark"
+        class="chat-btn"
         fab
         height="60"
+        variant="flat"
         width="60"
-        depressed
-        :color="SaminColorDark"
-        ><img
-          width="24"
-          height="24"
-          src="../../assets/icons/headphones.svg"
+        @click="show = true"
+        ><img height="24" src="../../assets/icons/headphones.svg" width="24"
       /></v-btn>
     </v-scale-transition>
   </div>
@@ -135,7 +135,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .chat-box {
   position: fixed;
   bottom: 8px;
@@ -204,6 +204,7 @@ export default {
       &.h-84 {
         height: 84px;
       }
+
       p {
         margin: 0;
       }
@@ -215,6 +216,7 @@ export default {
       flex-grow: 1;
       min-height: 50vh;
     }
+
     .chat-login {
       height: 550px;
       max-height: calc(100vh - 130px);
@@ -224,6 +226,7 @@ export default {
       background-color: #fafafa;
     }
   }
+
   .chat-btn {
     position: absolute;
     bottom: 8px;

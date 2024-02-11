@@ -22,24 +22,24 @@
     <v-btn
       v-if="deletable"
       class="float-end"
-      small
       color="red"
       dark
+      size="small"
+      variant="flat"
       @click="$emit('delete', value)"
-      depressed
-      >{{ $t("global.actions.clear") }}</v-btn
-    >
+      >{{ $t("global.actions.clear") }}
+    </v-btn>
 
     <v-select
       v-if="isEnum"
-      class="max-width-field"
-      :label="name"
-      filled
-      dense
-      :value="value"
-      @input="(val) => $emit('input', val)"
       :items="type"
+      :label="name"
+      :model-value="value"
+      class="max-width-field"
+      dense
       rounded
+      variant="filled"
+      @update:model-value="(val) => $emit('input', val)"
     >
       <template v-slot:item="{ item }">
         {{ fineName(item) }}
@@ -51,21 +51,21 @@
 
     <v-select
       v-else-if="isEnumsArray"
-      class=""
-      :label="name"
-      filled
-      dense
-      :value="value"
-      @input="(val) => $emit('input', val)"
       :items="type[0]"
-      multiple
+      :label="name"
+      :model-value="value"
       chips
+      class=""
+      dense
+      multiple
       rounded
+      variant="filled"
+      @update:model-value="(val) => $emit('input', val)"
     >
       <template v-slot:item="{ item }">
         {{ fineName(item) }}
       </template>
-      <template v-slot:selection="{ item }">
+      <template v-slot:chip="{ item }">
         <v-chip>
           {{ fineName(item) }}
         </v-chip>
@@ -74,90 +74,90 @@
 
     <v-text-field
       v-else-if="type === 'text'"
-      class="max-width-field"
       :label="name"
-      filled
-      dense
-      :value="value"
-      @input="(val) => $emit('input', val)"
+      :model-value="value"
+      class="max-width-field"
+      density="compact"
       rounded
+      variant="filled"
+      @update:model-value="(val) => $emit('input', val)"
     ></v-text-field>
     <v-text-field
       v-else-if="type === 'url'"
+      :label="name"
+      :model-value="value"
       :rules="[GlobalRules.url()]"
       class="max-width-field"
-      :label="name"
-      filled
-      dense
-      :value="value"
-      @input="(val) => $emit('input', val)"
+      density="compact"
       prepend-icon="link"
       rounded
+      variant="filled"
+      @update:model-value="(val) => $emit('input', val)"
     ></v-text-field>
     <s-number-input
       v-else-if="type === 'number'"
-      class="max-width-field"
       :label="name"
-      filled
-      dense
       :value="value"
-      @input="(val) => $emit('input', val)"
+      class="max-width-field"
+      dense
+      filled
       rounded
+      @input="(val) => $emit('input', val)"
     ></s-number-input>
     <s-price-input
       v-else-if="type === 'price'"
-      class="max-width-field"
-      :label="name"
-      filled
-      dense
-      :model-value="value"
-      @update:model-value="(val) => $emit('input', val)"
       :decimal="2"
+      :label="name"
+      :model-value="value"
+      class="max-width-field"
+      dense
+      filled
       prepend-icon="attach_money"
       rounded
+      @update:model-value="(val) => $emit('input', val)"
     ></s-price-input>
     <s-currency-input
       v-else-if="type === 'currency'"
-      class="max-width-field"
       :label="name"
-      filled
-      dense
-      :value="value"
-      @input="(val) => $emit('input', val)"
       :returnObject="false"
+      :value="value"
+      class="max-width-field"
+      dense
+      filled
       prepend-icon="account_balance_wallet"
       rounded
+      @input="(val) => $emit('input', val)"
     ></s-currency-input>
     <s-date-input
       v-else-if="type === 'date'"
-      class="max-width-field mb-3"
       :label="name"
-      filled
       :value="value"
-      @input="(val) => $emit('input', val)"
+      class="max-width-field mb-3"
+      filled
       format="YYYY-MM-DDTHH:mm:ssZ"
       rounded
+      @input="(val) => $emit('input', val)"
     ></s-date-input>
 
     <div v-else-if="type === 'duration'" class="mb-3">
       <v-text-field
-        class="max-width-field"
-        hide-details
         :label="name"
-        filled
-        dense
-        :value="value"
-        @input="(val) => $emit('input', val)"
+        :model-value="value"
+        class="max-width-field"
+        density="compact"
+        hide-details
         rounded
+        variant="filled"
+        @update:model-value="(val) => $emit('input', val)"
       ></v-text-field>
       <v-chip
         v-for="it in Duration"
         :key="it"
-        @click="$emit('input', it)"
         class="m-1"
-        small
-        >{{ it }}</v-chip
-      >
+        size="small"
+        @click="$emit('input', it)"
+        >{{ it }}
+      </v-chip>
     </div>
 
     <div v-else-if="Array.isArray(type)" class="border rounded mb-4">
@@ -168,21 +168,23 @@
       <s-structure-data-input
         v-for="(it_val, index) in value"
         :key="index"
+        :name="/*name +' '+*/ 'Item ' + index"
         :type="type[0]"
         :value="value[index]"
-        :name="/*name +' '+*/ 'Item ' + index"
-        @input="(val) => (value[index] = val)"
         deletable
         @delete="(val) => remove(value, val)"
+        @input="(val) => (value[index] = val)"
       ></s-structure-data-input>
 
       <v-btn
-        @click="value.push(type[0].startsWith('@') ? {} : '')"
-        depressed
-        color="success"
         class="m-2"
-        ><v-icon>add</v-icon> Add</v-btn
+        color="success"
+        variant="flat"
+        @click="value.push(type[0].startsWith('@') ? {} : '')"
       >
+        <v-icon>add</v-icon>
+        Add
+      </v-btn>
     </div>
 
     <div v-else-if="type.startsWith('@') && value">
@@ -192,9 +194,9 @@
       <s-structure-data-input
         v-for="(_type, key) in blueprint"
         :key="key"
-        :type="_type"
         v-model="value[key]"
         :name="/*name +' > '+*/ key"
+        :type="_type"
       ></s-structure-data-input>
     </div>
   </div>
@@ -205,6 +207,7 @@ import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
 import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
 import SDateInput from "../ui/calendar/date-input/SDateInput.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+
 const ActionPlatform = [
   "http://schema.org/DesktopWebPlatform",
   "http://schema.org/IOSPlatform",
@@ -235,6 +238,7 @@ const Duration = ["P1D", "P1H", "P1M", "P7D", "P1Y"];
 function CheckEnum(type) {
   return [Availability, ActionPlatform, BookFormat, Duration].includes(type);
 }
+
 export default {
   name: "SStructureDataInput",
   components: {
@@ -391,8 +395,8 @@ export default {
           this.isEnum
             ? this.type[0]
             : this.isObject
-            ? { "@type": this.blueprint["@type"] }
-            : ""
+              ? { "@type": this.blueprint["@type"] }
+              : "",
         );
     }
 

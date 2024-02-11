@@ -16,16 +16,18 @@
   <v-dialog
     v-if="post"
     v-model="dialog"
+    :fullscreen="$vuetify.display.mdAndDown"
     max-width="560"
     scrollable
-    :fullscreen="$vuetify.display.mdAndDown"
   >
     <v-card>
       <v-card-title>
         Insights
 
         <v-spacer></v-spacer>
-        <v-btn icon large @click="dialog = false"><v-icon>close</v-icon></v-btn>
+        <v-btn icon size="large" @click="dialog = false">
+          <v-icon>close</v-icon>
+        </v-btn>
       </v-card-title>
 
       <v-card-text class="text-center insi">
@@ -34,15 +36,15 @@
             v-for="item in PostAction"
             :key="item.code"
             cols="6"
-            sm="4"
             md="3"
+            sm="4"
           >
-            <small class="d-block"
-              ><v-icon>{{ item.icon }}</v-icon
-              ><br />
+            <small class="d-block">
+              <v-icon>{{ item.icon }} </v-icon>
+              <br />
               {{ $t(item.name) }}</small
             >
-            <b>{{   numeralFormat(post[item.code],"0.[00]a") }}</b>
+            <b>{{ numeralFormat(post[item.code], "0.[00]a") }}</b>
           </v-col>
         </v-row>
         <hr />
@@ -51,14 +53,14 @@
             v-for="item in PostReaction"
             :key="item.code"
             col="6"
-            sm="3"
             md="2"
+            sm="3"
           >
             <small class="d-block"
-              ><img width="24" height="24" :src="item.image" /><br />
+              ><img :src="item.image" height="24" width="24" /><br />
               {{ $t(item.name) }}</small
             >
-            <b>{{   numeralFormat(post[item.column],"0.[00]a") }}</b>
+            <b>{{ numeralFormat(post[item.column], "0.[00]a") }}</b>
           </v-col>
         </v-row>
       </v-card-text>
@@ -105,7 +107,7 @@ export default {
       this.dialog = true;
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("community:show-post-insights");
   },
 };

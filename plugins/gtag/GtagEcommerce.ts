@@ -45,7 +45,7 @@ export class GtagEcommerce {
     products: (Product & { category: Category })[],
     currency: keyof typeof Currency,
     _list: string | null,
-    category: Category | null
+    category: Category | null,
   ) {
     window.dataLayer = window.dataLayer || [];
 
@@ -58,8 +58,8 @@ export class GtagEcommerce {
         const category_name = product.category
           ? product.category.title
           : category
-          ? category.title
-          : "Home";
+            ? category.title
+            : "Home";
         const list = _list ? _list : `${category_name} Gallery`;
 
         try {
@@ -67,7 +67,7 @@ export class GtagEcommerce {
             shop,
             product,
             null,
-            currency
+            currency,
           );
           products_list.push({
             name: product.title, // Name or ID is required.
@@ -107,22 +107,22 @@ export class GtagEcommerce {
     product: Product & { category: Category },
     currency: keyof typeof Currency,
     position: number,
-    category: Category | null
+    category: Category | null,
   ) {
     window.dataLayer = window.dataLayer || [];
 
     const category_name = product.category
       ? product.category.title
       : category
-      ? category.title
-      : "Home";
+        ? category.title
+        : "Home";
 
     try {
       const price = PriceHelper.priceProductByCurrency(
         shop,
         product,
         null,
-        currency
+        currency,
       );
 
       window.dataLayer.push({
@@ -163,7 +163,7 @@ export class GtagEcommerce {
     shop: Shop,
     product: Product & { category: Category },
     currency: keyof typeof Currency,
-    _list?: "product-page" | "quick-view" | null
+    _list?: "product-page" | "quick-view" | null,
   ) {
     window.dataLayer = window.dataLayer || [];
     const category_name = product.category ? product.category.title : "Home";
@@ -176,7 +176,7 @@ export class GtagEcommerce {
         shop,
         product,
         null,
-        currency
+        currency,
       );
 
       products_list.push({
@@ -217,7 +217,7 @@ export class GtagEcommerce {
     product: Product & { category: Category },
     variant: ProductVariant | null,
     quantity: number,
-    currency: keyof typeof Currency
+    currency: keyof typeof Currency,
   ) {
     window.dataLayer = window.dataLayer || [];
     const category_name = product.category ? product.category.title : "Home";
@@ -227,7 +227,7 @@ export class GtagEcommerce {
         shop,
         product,
         variant,
-        currency
+        currency,
       );
 
       const products_list = [];
@@ -271,7 +271,7 @@ export class GtagEcommerce {
     product: Product & { category: Category },
     variant: ProductVariant | null,
     quantity: number,
-    currency: keyof typeof Currency
+    currency: keyof typeof Currency,
   ) {
     window.dataLayer = window.dataLayer || [];
     const category_name = product.category ? product.category.title : "Home";
@@ -281,7 +281,7 @@ export class GtagEcommerce {
         shop,
         product,
         variant,
-        currency
+        currency,
       );
 
       const products_list = [];
@@ -328,7 +328,7 @@ export class GtagEcommerce {
   static MeasuringCheckoutSteps(
     basket: Basket,
     step: number,
-    option: string | null
+    option: string | null,
   ) {
     if (!basket) return;
     window.dataLayer = window.dataLayer || [];

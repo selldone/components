@@ -17,9 +17,9 @@
     <!-- ████████████████ List ████████████████ -->
 
     <v-slide-y-transition
+      class="bg-transparent border-between-vertical"
       group
       tag="v-list"
-      class="bg-transparent border-between-vertical"
     >
       <v-list-item v-for="file in files" :key="file.key">
         <template v-slot:prepend>
@@ -48,13 +48,13 @@
       <div v-if="files?.length < 3">
         <v-file-input
           v-model="selected_file"
-          @update:model-value="selectFile"
-          multiple
-          clearable
-          variant="solo"
-          placeholder="Select files... max 3 files limited to 8MB each file."
           append-inner-icon="add_box"
           class="mt-3 mx-3"
+          clearable
+          multiple
+          placeholder="Select files... max 3 files limited to 8MB each file."
+          variant="solo"
+          @update:model-value="selectFile"
         ></v-file-input>
 
         <v-list-subheader>
@@ -64,9 +64,9 @@
               <span v-for="m in mims" :key="m" class="mx-1"
                 ><img
                   :src="getFileExtensionImage(m)"
-                  width="16"
-                  height="16"
                   class="hover-scale"
+                  height="16"
+                  width="16"
                 />
                 {{ m }}</span
               >

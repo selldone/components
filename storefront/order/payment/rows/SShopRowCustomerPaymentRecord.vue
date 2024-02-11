@@ -16,19 +16,20 @@
   <tr class="s--shop-row-customer-payment-record">
     <td>
       <v-icon v-if="sub" class="ms-5 flip-ltr" color="black"
-        >keyboard_return</v-icon
-      >
+        >keyboard_return
+      </v-icon>
 
-      <img height="24" class="mx-2" :src="getShopImagePath(gateway.icon)" />
+      <img :src="getShopImagePath(gateway.icon)" class="mx-2" height="24" />
       {{ gateway.name }}
 
-      <v-chip v-if="isSubscribed" color="#4CAF50" dark size="small" class="m-1">
-        <v-icon size="small" start>credit_score</v-icon> Subscribed</v-chip
-      >
-      <v-chip v-if="isUnsubscribed" color="#ddd" dark size="small" class="m-1">
+      <v-chip v-if="isSubscribed" class="m-1" color="#4CAF50" dark size="small">
+        <v-icon size="small" start>credit_score</v-icon>
+        Subscribed
+      </v-chip>
+      <v-chip v-if="isUnsubscribed" class="m-1" color="#ddd" dark size="small">
         <v-icon size="small" start>credit_card_off</v-icon>
-        Unsubscribed</v-chip
-      >
+        Unsubscribed
+      </v-chip>
     </td>
     <td class="text-left">
       <price-view
@@ -41,9 +42,9 @@
         <div>
           <s-payment-card
             v-if="payment.card"
-            :method="payment.method"
             :card="payment.card"
             :currency="payment.currency"
+            :method="payment.method"
             horizontal
           ></s-payment-card>
           <span v-else-if="payment.cod">{{
@@ -53,15 +54,15 @@
           {{ getLocalTimeString(payment.payment_at) }}
           <s-payment-billing-details
             v-if="payment.billing_details"
-            class="min-width-200 mb-2"
             :billing-detail="payment.billing_details"
+            class="min-width-200 mb-2"
           ></s-payment-billing-details>
         </div>
 
         <s-country-world-map
-          class="min-width-200 flex-grow-1 m-1"
           v-if="payment.card && payment.card.country"
           :country="payment.card.country"
+          class="min-width-200 flex-grow-1 m-1"
         ></s-country-world-map>
       </div>
     </td>
@@ -72,6 +73,7 @@
 import SPaymentCard from "@components/payment/card/SPaymentCard.vue";
 import SPaymentBillingDetails from "@components/payment/widgets/SPaymentBillingDetails.vue";
 import SCountryWorldMap from "@components/map/countries-svg/SCountryWorldMap.vue";
+
 export default {
   name: "SShopRowCustomerPaymentRecord",
   components: { SCountryWorldMap, SPaymentBillingDetails, SPaymentCard },
@@ -104,7 +106,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

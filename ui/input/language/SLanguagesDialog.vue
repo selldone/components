@@ -14,27 +14,27 @@
 
 <template>
   <v-dialog
-    fullscreen
     :model-value="modelValue"
-    @update:model-value="(val) => $emit('update:modelValue', val)"
-    transition="dialog-bottom-transition"
+    fullscreen
     scrollable
+    transition="dialog-bottom-transition"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <v-card>
-      <v-card-title class="d-flex"
-        ><v-icon class="me-1">translate</v-icon>
+      <v-card-title class="d-flex">
+        <v-icon class="me-1">translate</v-icon>
         {{ $t("global.commons.language") }}
 
         <v-spacer></v-spacer>
         <v-text-field
-          flat
-          variant="solo"
-          hide-details
           v-model="search"
           :placeholder="$t('global.commons.search')"
           append-inner-icon="search"
           class="max-width-field-mini"
           clearable
+          flat
+          hide-details
+          variant="solo"
         ></v-text-field>
       </v-card-title>
       <v-card-text>
@@ -44,10 +44,14 @@
               v-for="lan in languages"
               :key="lan.code"
               cols="6"
-              sm="4"
               md="3"
+              sm="4"
             >
-              <v-btn @click="select(lan)" variant="text" class="font-weight-bold">
+              <v-btn
+                class="font-weight-bold"
+                variant="text"
+                @click="select(lan)"
+              >
                 <v-icon
                   v-if="
                     selectedLanguage === lan.code ||
@@ -55,23 +59,24 @@
                   "
                   class="me-1"
                   color="success"
-                  >check</v-icon
-                >
+                  >check
+                </v-icon>
                 {{ lan.title }}
                 <v-icon
                   v-if="checkedLanguages && checkedLanguages.includes(lan.code)"
+                  class="ms-1"
                   color="primary"
                   size="small"
-                  class="ms-1"
-                  >check_circle</v-icon
-                >
+                  >check_circle
+                </v-icon>
               </v-btn>
               <v-row
                 v-if="show_flags"
                 class="max-w-200 mt-1 mx-auto"
-                no-gutters
                 justify="center"
-                ><flag
+                no-gutters
+              >
+                <flag
                   v-for="f in lan.countries"
                   :key="f"
                   :iso="f"
@@ -83,23 +88,29 @@
           </v-row>
 
           <div class="text-start mt-5">
-            <v-chip @click="show_flags = !show_flags" color="#fafafa">
-              <v-icon start :color="show_flags ? 'primary' : undefined">{{
-                show_flags ? "radio_button_checked" : "radio_button_unchecked"
-              }}</v-icon>
+            <v-chip color="#fafafa" @click="show_flags = !show_flags">
+              <v-icon :color="show_flags ? 'primary' : undefined" start
+                >{{
+                  show_flags ? "radio_button_checked" : "radio_button_unchecked"
+                }}
+              </v-icon>
               Show flags
             </v-chip>
           </div>
           <v-list-subheader class="my-5"
             >*Countries are random! Do you have an opinion on languages and
-            countries? Please email us.</v-list-subheader
-          >
+            countries? Please email us.
+          </v-list-subheader>
         </v-container>
       </v-card-text>
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="$emit('update:modelValue', false)">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="$emit('update:modelValue', false)"
+          >
             <v-icon class="me-1">close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -115,7 +126,7 @@ import { SetupService } from "@core/server/SetupService";
 
 export default {
   name: "SLanguagesDialog",
-emits: ["update:modelValue", "change"],
+  emits: ["update:modelValue", "change"],
   props: {
     modelValue: {},
     selectedLanguage: {},
@@ -135,7 +146,7 @@ emits: ["update:modelValue", "change"],
     languages() {
       if (this.availableLanguages) {
         return Object.values(Language).filter((i) =>
-          this.availableLanguages.includes(i.code)
+          this.availableLanguages.includes(i.code),
         );
       }
 

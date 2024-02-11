@@ -15,29 +15,38 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-text-field
     v-model="newValue"
-    :rounded="rounded"
-    :density="dense? 'compact':undefined"
+    :append-inner-icon="icon"
+    :bg-color="backgroundColor"
     :class="{
       'center-input': textCenter,
       'no-padding-nf': noPadding,
     }"
-    :label="label /*+ focus + '  ' + newValue*/"
-    :placeholder="placeholder"
-    persistent-placeholder
-    :append-inner-icon="icon"
-    :single-line="singleLine"
+    :density="dense ? 'compact' : undefined"
+    :disabled="disabled"
+    :flat="flat"
     :hide-details="hideDetails && !messages"
-    @keypress="isNumber($event)"
-    @wheel="handleMouseWheel"
-    :suffix="suffix"
-    :prepend-icon="prependIcon"
+    :label="label /*+ focus + '  ' + newValue*/"
+    :loading="loading"
     :messages="messages"
-    @change="
-      focus
-        ? undefined /*Prevent update when box focused*/
-        : $emit('change') /*Make sure update by mouse wheel*/
+    :placeholder="placeholder"
+    :prefix="prefix"
+    :prepend-icon="prependIcon"
+    :readonly="readonly || is_locked"
+    :rounded="rounded"
+    :single-line="singleLine"
+    :suffix="suffix"
+    :variant="
+      variant
+        ? variant
+        : solo
+          ? 'solo'
+          : filled
+            ? 'filled'
+            : outlined
+              ? 'outlined'
+              : 'underlined'
     "
-    @focus="focus = true"
+    persistent-placeholder
     @blur="
       () => {
         focus = false;
@@ -51,11 +60,14 @@
         });
       }
     "
-    :loading="loading"
-    :variant="variant ? variant : solo ? 'solo':filled?'filled':outlined?'outlined' : 'underlined'"
-    :flat="flat"
-    :readonly="readonly || is_locked"
-    :bg-color="backgroundColor"
+    @change="
+      focus
+        ? undefined /*Prevent update when box focused*/
+        : $emit('change') /*Make sure update by mouse wheel*/
+    "
+    @focus="focus = true"
+    @keypress="isNumber($event)"
+    @wheel="handleMouseWheel"
     @keyup.enter="
       (e) => {
         if (!newValue) {
@@ -64,40 +76,38 @@
         e.target.blur();
       }
     "
-    :disabled="disabled"
-    :prefix="prefix"
   >
     <template v-slot:append-inner>
       <v-btn
         v-if="lock"
+        :title="lock ? 'Click to edit value.' : 'Click to lock input'"
         class="me-2"
         icon
         variant="text"
         @click="is_locked = !is_locked"
-        :title="lock ? 'Click to edit value.' : 'Click to lock input'"
       >
         <v-icon>{{ is_locked ? "lock" : "lock_open" }}</v-icon>
       </v-btn>
 
       <v-btn
-        class="me-2"
         v-if="hasAlternativeButton && !readonly"
-        :disabled="is_locked"
-        @click.stop="newValue = alternativeButtonValue"
-        variant="flat"
-        :color="newValue === alternativeButtonValue ? 'success' : 'default'"
         :class="dense ? '' : 'margin-n7px'"
+        :color="newValue === alternativeButtonValue ? 'success' : 'default'"
+        :disabled="is_locked"
         :rounded="rounded"
         :size="dense ? 'small' : undefined"
+        class="me-2"
+        variant="flat"
+        @click.stop="newValue = alternativeButtonValue"
       >
         {{ alternativeButtonText }}
       </v-btn>
       <v-btn
         v-if="showButtons"
+        :disabled="is_locked"
         icon
         variant="text"
         @click.stop="mpminus()"
-        :disabled="is_locked"
       >
         <v-icon size="small"> fa:fas fa-minus</v-icon>
       </v-btn>
@@ -107,14 +117,14 @@
 
       <v-btn
         v-if="clearable"
+        :title="$t('buy_button.remove')"
+        class="mt-n1"
         icon
         variant="text"
         @click="
           newValue = 0;
           $emit('clear');
         "
-        class="mt-n1"
-        :title="$t('buy_button.remove')"
       >
         <v-icon>close</v-icon>
       </v-btn>

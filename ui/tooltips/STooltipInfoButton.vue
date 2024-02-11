@@ -13,9 +13,9 @@
   -->
 
 <template>
-  <v-tooltip bottom max-width="420" color="#000">
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn color="#666" dark v-bind="attrs" v-on="on" icon tile small>
+  <v-tooltip color="#000" location="bottom" max-width="420">
+    <template v-slot:activator="{ props }">
+      <v-btn color="#666" dark icon size="small" tile v-bind="props">
         <v-icon>help_center</v-icon>
       </v-btn>
     </template>

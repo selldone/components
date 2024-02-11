@@ -148,14 +148,14 @@ export default {
         if (this.debugMode) {
           if (options.minuteInterval > 60) {
             this.debugLog(
-              `"minute-interval" should be less than 60. Current value is ${this.minuteInterval}`
+              `"minute-interval" should be less than 60. Current value is ${this.minuteInterval}`,
             );
           } else if (
             options.minuteInterval === 0 ||
             options.minuteInterval < 1
           ) {
             this.debugLog(
-              `"minute-interval" should be NO less than 1. Current value is ${this.minuteInterval}`
+              `"minute-interval" should be NO less than 1. Current value is ${this.minuteInterval}`,
             );
           }
         }
@@ -178,14 +178,14 @@ export default {
         if (this.debugMode) {
           if (options.secondInterval > 60) {
             this.debugLog(
-              `"second-interval" should be less than 60. Current value is ${this.secondInterval}`
+              `"second-interval" should be less than 60. Current value is ${this.secondInterval}`,
             );
           } else if (
             options.secondInterval === 0 ||
             options.secondInterval < 1
           ) {
             this.debugLog(
-              `"second-interval" should be NO less than 1. Current value is ${this.secondInterval}`
+              `"second-interval" should be NO less than 1. Current value is ${this.secondInterval}`,
             );
           }
         }
@@ -264,7 +264,7 @@ export default {
 
     inUse() {
       const typesInUse = CONFIG.BASIC_TYPES.filter((type) =>
-        this.getTokenByType(type)
+        this.getTokenByType(type),
       );
       // Sort types and tokens by their sequence in the "format" string
       typesInUse.sort((l, r) => {
@@ -289,25 +289,25 @@ export default {
       if (this.hour) {
         formatString = formatString.replace(
           new RegExp(this.hourType, "g"),
-          this.hour
+          this.hour,
         );
       }
       if (this.minute) {
         formatString = formatString.replace(
           new RegExp(this.minuteType, "g"),
-          this.minute
+          this.minute,
         );
       }
       if (this.second && this.secondType) {
         formatString = formatString.replace(
           new RegExp(this.secondType, "g"),
-          this.second
+          this.second,
         );
       }
       if (this.apm && this.apmType) {
         formatString = formatString.replace(
           new RegExp(this.apmType, "g"),
-          this.apm
+          this.apm,
         );
       }
       return formatString;
@@ -319,7 +319,7 @@ export default {
       }
       return this.displayTime.replace(
         new RegExp(this.apm, "g"),
-        this.apmDisplayText(this.apm)
+        this.apmDisplayText(this.apm),
       );
     },
 
@@ -378,8 +378,8 @@ export default {
           if (value.length > 2 && this.debugMode) {
             this.debugLog(
               `Nested array within "hour-range" must contain no more than two items. Only the first two items of ${JSON.stringify(
-                value
-              )} will be taken into account.`
+                value,
+              )} will be taken into account.`,
             );
           }
 
@@ -474,7 +474,7 @@ export default {
         return [].concat(
           [],
           this.hours.map((hr) => `${hr}a`),
-          this.hours.map((hr) => `${hr}p`)
+          this.hours.map((hr) => `${hr}p`),
         );
       }
       return this.hours;
@@ -562,7 +562,7 @@ export default {
       const tokensRegxStr = `(${this.tokenRegexBase})+?`;
       const tokensMatchAll = this.getMatchAllByRegex(
         formatString,
-        tokensRegxStr
+        tokensRegxStr,
       );
 
       const tokenChunks = [];
@@ -796,7 +796,7 @@ export default {
       let minuteType = this.checkAcceptingType(CONFIG.MINUTE_TOKENS, newFormat);
       this.secondType = this.checkAcceptingType(
         CONFIG.SECOND_TOKENS,
-        newFormat
+        newFormat,
       );
       this.apmType = this.checkAcceptingType(CONFIG.APM_TOKENS, newFormat);
 
@@ -804,7 +804,7 @@ export default {
       if (!hourType && !minuteType && !this.secondType && !this.apmType) {
         if (this.debugMode && this.format) {
           this.debugLog(
-            `No valid tokens found in your defined "format" string "${this.format}". Fallback to the default "HH:mm" format.`
+            `No valid tokens found in your defined "format" string "${this.format}". Fallback to the default "HH:mm" format.`,
           );
         }
         hourType = "HH";
@@ -851,7 +851,7 @@ export default {
       const result = [];
       for (let i = 0; i < 60; i += interval) {
         result.push(
-          this.formatValue(isMinute ? this.minuteType : this.secondType, i)
+          this.formatValue(isMinute ? this.minuteType : this.secondType, i),
         );
       }
       isMinute ? (this.minutes = result) : (this.seconds = result);
@@ -870,7 +870,7 @@ export default {
       } else {
         if (this.debugMode) {
           this.debugLog(
-            `Received an object value: "${JSON.stringify(this.value || {})}"`
+            `Received an object value: "${JSON.stringify(this.value || {})}"`,
           );
         }
         this.readObjectValues(this.value);
@@ -903,7 +903,7 @@ export default {
     getMatchAllByRegex(testString, regexString) {
       const str = "polyfillTest";
       const needsPolyfill = Boolean(
-        !str.matchAll || typeof str.matchAll !== "function"
+        !str.matchAll || typeof str.matchAll !== "function",
       );
       return needsPolyfill
         ? this.polyfillMatchAll(testString, regexString)
@@ -923,11 +923,11 @@ export default {
 
       const tokensMatchAll = this.getMatchAllByRegex(
         formatString,
-        tokensRegxStr
+        tokensRegxStr,
       );
       const othersMatchAll = this.getMatchAllByRegex(
         formatString,
-        othersRegxStr
+        othersRegxStr,
       );
 
       const chunks = [];
@@ -975,7 +975,7 @@ export default {
             const targetToken = tokenChunks[vrIndex].token;
             timeValue[targetToken] = this.setValueFromString(
               value,
-              targetToken
+              targetToken,
             );
           }
         });
@@ -983,20 +983,20 @@ export default {
 
         if (this.debugMode) {
           const tokenChunksForLog = tokenChunks.map(
-            (tChunk) => tChunk && tChunk.token
+            (tChunk) => tChunk && tChunk.token,
           );
           this.debugLog(
             `Successfully parsed values ${JSON.stringify(
-              valueResults
+              valueResults,
             )}\nfor ${JSON.stringify(tokenChunksForLog)}\nin format pattern '${
               this.formatString
-            }'`
+            }'`,
           );
         }
       } else {
         if (this.debugMode) {
           this.debugLog(
-            `The input string in "v-model" does NOT match the "format" pattern\nformat: ${this.formatString}\nv-model: ${stringValue}`
+            `The input string in "v-model" does NOT match the "format" pattern\nformat: ${this.formatString}\nv-model: ${stringValue}`,
           );
         }
       }
@@ -1009,7 +1009,7 @@ export default {
       if (matchesList && matchesList.length) {
         matchesList.forEach((matchedItem) => {
           const existIndex = indicesReg.findIndex(
-            (idxItem) => idxItem.str === matchedItem
+            (idxItem) => idxItem.str === matchedItem,
           );
           let index;
           if (existIndex >= 0) {
@@ -1163,7 +1163,7 @@ export default {
       if (this.lazy && this.bakDisplayTime === this.displayTime) {
         if (this.debugMode) {
           this.debugLog(
-            "The value does not change on `lazy` mode. Skip the emitting `input` and `change` event."
+            "The value does not change on `lazy` mode. Skip the emitting `input` and `change` event.",
           );
         }
         return;
@@ -1261,8 +1261,8 @@ export default {
           if (value.length > 2 && this.debugMode) {
             this.debugLog(
               `Nested array within "${section}-range" must contain no more than two items. Only the first two items of ${JSON.stringify(
-                value
-              )} will be taken into account.`
+                value,
+              )} will be taken into account.`,
             );
           }
           const start = value[0];
@@ -1298,14 +1298,14 @@ export default {
           if (section === "minute") {
             this.debugLog(
               `The minute list is empty due to the "minute-range" config\nminute-range: ${JSON.stringify(
-                this.minuteRange
-              )}\nminute-interval: ${this.opts.minuteInterval}`
+                this.minuteRange,
+              )}\nminute-interval: ${this.opts.minuteInterval}`,
             );
           } else {
             this.debugLog(
               `The second list is empty due to the "second-range" config\nsecond-range: ${JSON.stringify(
-                this.secondRange
-              )}\nsecond-interval: ${this.opts.secondInterval}`
+                this.secondRange,
+              )}\nsecond-interval: ${this.opts.secondInterval}`,
             );
           }
         }
@@ -1646,11 +1646,11 @@ export default {
       const columnClass = `${column}s`;
       if (this.appendToBody && this.$refs && this.$refs.dropdown) {
         return this.$refs.dropdown.querySelectorAll(
-          `ul.${columnClass} > li:not(.hint):not([disabled])`
+          `ul.${columnClass} > li:not(.hint):not([disabled])`,
         );
       }
       return this.$el.querySelectorAll(
-        `ul.${columnClass} > li:not(.hint):not([disabled])`
+        `ul.${columnClass} > li:not(.hint):not([disabled])`,
       );
     },
 
@@ -1658,11 +1658,11 @@ export default {
       const columnClass = `${column}s`;
       if (this.appendToBody && this.$refs && this.$refs.dropdown) {
         return this.$refs.dropdown.querySelectorAll(
-          `ul.${columnClass} > li.active:not(.hint)`
+          `ul.${columnClass} > li.active:not(.hint)`,
         );
       }
       return this.$el.querySelectorAll(
-        `ul.${columnClass} > li.active:not(.hint)`
+        `ul.${columnClass} > li.active:not(.hint)`,
       );
     },
 
@@ -1779,7 +1779,7 @@ export default {
         window.clearTimeout(this.selectionTimer);
         if (this.$refs && this.$refs.input) {
           const nearestSlot = this.getNearestChunkByPos(
-            this.$refs.input.selectionStart || 0
+            this.$refs.input.selectionStart || 0,
           );
           this.debounceSetInputSelection(nearestSlot);
         }
@@ -1869,7 +1869,7 @@ export default {
     pasteHandler(evt) {
       evt.preventDefault();
       let pastingText = (evt.clipboardData || window.clipboardData).getData(
-        "text"
+        "text",
       );
       if (this.debugMode) {
         this.debugLog(`Pasting value "${pastingText}" from clipboard`);
@@ -2001,7 +2001,7 @@ export default {
         } else {
           const lastInputValue = this.formatValue(
             chunkToken,
-            value.substring(-1)
+            value.substring(-1),
           ); // Todo: replace with slice! Check it!  substr -> substring
           if (this.isValidValue(chunkToken, lastInputValue)) {
             validValue = lastInputValue;
@@ -2017,11 +2017,11 @@ export default {
       if (this.debugMode) {
         if (validValue) {
           this.debugLog(
-            `Successfully set value "${validValue}" from latest input "${value}" for the "${chunkType}" slot`
+            `Successfully set value "${validValue}" from latest input "${value}" for the "${chunkType}" slot`,
           );
         } else {
           this.debugLog(
-            `Value "${value}" is invalid in the "${chunkType}" slot`
+            `Value "${value}" is invalid in the "${chunkType}" slot`,
           );
         }
       }
@@ -2082,8 +2082,8 @@ export default {
         if (this.debugMode) {
           this.debugLog(
             `No valid hour values found, please check your "hour-range" config\nhour-range: ${JSON.stringify(
-              this.hourRange
-            )}`
+              this.hourRange,
+            )}`,
           );
         }
         return;
@@ -2138,7 +2138,7 @@ export default {
       // NOTE: Disabled values are allowed here, followed by an 'error' event, though
       const sanitizedValue = this.sanitizedValue(
         this.getTokenByType(section),
-        inputValue
+        inputValue,
       );
       this[section] = sanitizedValue;
     },
@@ -2149,7 +2149,7 @@ export default {
         const apmValue = hourT[2] === "a" ? "AM" : "PM";
         this.setSanitizedValueToSection(
           "apm",
-          this.apmType === "a" ? apmValue.toLowerCase() : apmValue
+          this.apmType === "a" ? apmValue.toLowerCase() : apmValue,
         );
         this.setSanitizedValueToSection("hour", hourT[1]);
       } else {
@@ -2183,7 +2183,7 @@ export default {
 
     getCurrentTokenChunk() {
       return this.getNearestChunkByPos(
-        (this.$refs.input && this.$refs.input.selectionStart) || 0
+        (this.$refs.input && this.$refs.input.selectionStart) || 0,
       );
     },
 
@@ -2216,7 +2216,7 @@ export default {
         return;
       }
       const currentChunkIndex = this.tokenChunksPos.findIndex(
-        (chk) => chk.token === currentChunk.token
+        (chk) => chk.token === currentChunk.token,
       );
       if (
         (!toLeft && currentChunkIndex >= this.tokenChunksPos.length - 1) ||
@@ -2258,7 +2258,7 @@ export default {
       ) {
         return inputString.replace(
           new RegExp(this.amText, "g"),
-          this.apmType === "A" ? "AM" : "am"
+          this.apmType === "A" ? "AM" : "am",
         );
       } else if (
         this.pmText &&
@@ -2267,7 +2267,7 @@ export default {
       ) {
         return inputString.replace(
           new RegExp(this.pmText, "g"),
-          this.apmType === "A" ? "PM" : "pm"
+          this.apmType === "A" ? "PM" : "pm",
         );
       }
       return inputString;
@@ -2282,7 +2282,7 @@ export default {
         container = document.getElementById(this.containerId);
         if (!container && this.debugMode) {
           this.debugLog(
-            `Container with id "${this.containerId}" not found. Fallback to document body.`
+            `Container with id "${this.containerId}" not found. Fallback to document body.`,
           );
         }
       }
@@ -2302,7 +2302,7 @@ export default {
           document.body.offsetHeight,
           document.documentElement.offsetHeight,
           document.body.clientHeight,
-          document.documentElement.clientHeight
+          document.documentElement.clientHeight,
         );
         spaceDown = docHeight - (el.offsetTop + el.offsetHeight);
       }
@@ -2450,7 +2450,7 @@ export default {
     this.renderFormat();
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     window.clearTimeout(this.debounceTimer);
     window.clearTimeout(this.selectionTimer);
     window.clearTimeout(this.kbInputTimer);
@@ -2459,11 +2459,11 @@ export default {
 </script>
 
 <template>
-  <span class="vue__time-picker time-picker" :style="inputWidthStyle">
+  <span :style="inputWidthStyle" class="vue__time-picker time-picker">
     <input
-      type="text"
-      class="display-time"
+      :id="id"
       ref="input"
+      :autocomplete="autocomplete"
       :class="[
         inputClass,
         {
@@ -2474,43 +2474,43 @@ export default {
           'has-custom-icon': $slots && $slots.icon,
         },
       ]"
-      :style="[inputWidthStyle,{minHeight:minHeight}]"
-      :id="id"
-      :name="name"
-      :value="inputIsEmpty ? null : customDisplayTime"
-      :placeholder="placeholder ? placeholder : formatString"
-      :tabindex="disabled ? -1 : tabindex"
       :disabled="disabled"
+      :name="name"
+      :placeholder="placeholder ? placeholder : formatString"
       :readonly="!manualInput"
-      :autocomplete="autocomplete"
-      @focus="onFocus"
-      @change="onChange"
+      :style="[inputWidthStyle, { minHeight: minHeight }]"
+      :tabindex="disabled ? -1 : tabindex"
+      :value="inputIsEmpty ? null : customDisplayTime"
+      class="display-time"
+      type="text"
       @blur="
         debounceBlur();
         blurEvent();
       "
-      @mousedown="onMouseDown"
-      @keydown="keyDownHandler"
-      @compositionstart="onCompostionStart"
+      @change="onChange"
       @compositionend="onCompostionEnd"
+      @compositionstart="onCompostionStart"
+      @focus="onFocus"
+      @keydown="keyDownHandler"
+      @mousedown="onMouseDown"
       @paste="pasteHandler"
       @keydown.esc.exact="escBlur"
     />
-    <div class="controls" v-if="showClearBtn || showDropdownBtn" tabindex="-1">
+    <div v-if="showClearBtn || showDropdownBtn" class="controls" tabindex="-1">
       <span
         v-if="!isActive && showClearBtn"
+        :class="{ 'has-custom-btn': $slots && $slots.clearButton }"
         class="clear-btn"
         tabindex="-1"
-        :class="{ 'has-custom-btn': $slots && $slots.clearButton }"
         @click="clearTime"
       >
         <slot name="clearButton"><span class="char">&times;</span></slot>
       </span>
       <span
         v-if="showDropdownBtn"
+        :class="{ 'has-custom-btn': $slots && $slots.dropdownButton }"
         class="dropdown-btn"
         tabindex="-1"
-        :class="{ 'has-custom-btn': $slots && $slots.dropdownButton }"
         @click="
           setDropdownState(fixedDropdownButton ? !showDropdown : true, true)
         "
@@ -2519,26 +2519,26 @@ export default {
         <slot name="dropdownButton"><span class="char">&dtrif;</span></slot>
       </span>
     </div>
-    <div class="custom-icon" v-if="$slots && $slots.icon">
+    <div v-if="$slots && $slots.icon" class="custom-icon">
       <slot name="icon"></slot>
     </div>
     <div
-      class="time-picker-overlay"
       v-if="showDropdown"
-      @click="toggleActive"
+      class="time-picker-overlay"
       tabindex="-1"
+      @click="toggleActive"
     ></div>
     <div
-      class="dropdown"
-      ref="dropdown"
       v-show="showDropdown"
-      tabindex="-1"
+      ref="dropdown"
       :class="[dropdownDirClass]"
       :style="inputWidthStyle"
+      class="dropdown"
+      tabindex="-1"
       @mouseup="keepFocusing"
       @click.stop=""
     >
-      <div class="select-list" :style="inputWidthStyle" tabindex="-1">
+      <div :style="inputWidthStyle" class="select-list" tabindex="-1">
         <!-- Common Keyboard Support: less event listeners -->
         <template v-if="!advancedKeyboard">
           <template v-for="column in columnsSequence">
@@ -2557,10 +2557,10 @@ export default {
                   "
                   :key="hIndex"
                   :class="{ active: hour === hr }"
-                  :disabled="isDisabled('hour', hr)"
                   :data-key="hr"
-                  v-text="hr"
+                  :disabled="isDisabled('hour', hr)"
                   @click="select('hour', hr)"
+                  v-text="hr"
                 ></li>
               </template>
             </ul>
@@ -2579,10 +2579,10 @@ export default {
                   "
                   :key="mIndex"
                   :class="{ active: minute === m }"
-                  :disabled="isDisabled('minute', m)"
                   :data-key="m"
-                  v-text="m"
+                  :disabled="isDisabled('minute', m)"
                   @click="select('minute', m)"
+                  v-text="m"
                 ></li>
               </template>
             </ul>
@@ -2601,10 +2601,10 @@ export default {
                   "
                   :key="sIndex"
                   :class="{ active: second === s }"
-                  :disabled="isDisabled('second', s)"
                   :data-key="s"
-                  v-text="s"
+                  :disabled="isDisabled('second', s)"
                   @click="select('second', s)"
+                  v-text="s"
                 ></li>
               </template>
             </ul>
@@ -2623,10 +2623,10 @@ export default {
                   "
                   :key="aIndex"
                   :class="{ active: apm === a }"
-                  :disabled="isDisabled('apm', a)"
                   :data-key="a"
-                  v-text="apmDisplayText(a)"
+                  :disabled="isDisabled('apm', a)"
                   @click="select('apm', a)"
+                  v-text="apmDisplayText(a)"
                 ></li>
               </template>
             </ul>
@@ -2646,7 +2646,7 @@ export default {
               tabindex="-1"
               @scroll="keepFocusing"
             >
-              <li class="hint" v-text="hourLabelText" tabindex="-1"></li>
+              <li class="hint" tabindex="-1" v-text="hourLabelText"></li>
               <template v-for="(hr, hIndex) in hours">
                 <li
                   v-if="
@@ -2655,11 +2655,13 @@ export default {
                   "
                   :key="hIndex"
                   :class="{ active: hour === hr }"
-                  :tabindex="isDisabled('hour', hr) ? -1 : tabindex"
                   :data-key="hr"
                   :disabled="isDisabled('hour', hr)"
-                  v-text="hr"
+                  :tabindex="isDisabled('hour', hr) ? -1 : tabindex"
+                  @blur="debounceBlur"
                   @click="select('hour', hr)"
+                  @focus="keepFocusing"
+                  v-text="hr"
                   @keydown.tab="onTab('hour', hr, $event)"
                   @keydown.space.prevent="select('hour', hr)"
                   @keydown.enter.prevent="select('hour', hr)"
@@ -2668,8 +2670,6 @@ export default {
                   @keydown.left.prevent="toLeftColumn('hour')"
                   @keydown.right.prevent="toRightColumn('hour')"
                   @keydown.esc.exact="debounceBlur"
-                  @blur="debounceBlur"
-                  @focus="keepFocusing"
                 ></li>
               </template>
             </ul>
@@ -2680,7 +2680,7 @@ export default {
               tabindex="-1"
               @scroll="keepFocusing"
             >
-              <li class="hint" v-text="minuteLabelText" tabindex="-1"></li>
+              <li class="hint" tabindex="-1" v-text="minuteLabelText"></li>
               <template v-for="(m, mIndex) in minutes">
                 <li
                   v-if="
@@ -2689,11 +2689,13 @@ export default {
                   "
                   :key="mIndex"
                   :class="{ active: minute === m }"
-                  :tabindex="isDisabled('minute', m) ? -1 : tabindex"
                   :data-key="m"
                   :disabled="isDisabled('minute', m)"
-                  v-text="m"
+                  :tabindex="isDisabled('minute', m) ? -1 : tabindex"
+                  @blur="debounceBlur"
                   @click="select('minute', m)"
+                  @focus="keepFocusing"
+                  v-text="m"
                   @keydown.tab="onTab('minute', m, $event)"
                   @keydown.space.prevent="select('minute', m)"
                   @keydown.enter.prevent="select('minute', m)"
@@ -2702,8 +2704,6 @@ export default {
                   @keydown.left.prevent="toLeftColumn('minute')"
                   @keydown.right.prevent="toRightColumn('minute')"
                   @keydown.esc.exact="debounceBlur"
-                  @blur="debounceBlur"
-                  @focus="keepFocusing"
                 ></li>
               </template>
             </ul>
@@ -2714,7 +2714,7 @@ export default {
               tabindex="-1"
               @scroll="keepFocusing"
             >
-              <li class="hint" v-text="secondLabelText" tabindex="-1"></li>
+              <li class="hint" tabindex="-1" v-text="secondLabelText"></li>
               <template v-for="(s, sIndex) in seconds">
                 <li
                   v-if="
@@ -2723,11 +2723,13 @@ export default {
                   "
                   :key="sIndex"
                   :class="{ active: second === s }"
-                  :tabindex="isDisabled('second', s) ? -1 : tabindex"
                   :data-key="s"
                   :disabled="isDisabled('second', s)"
-                  v-text="s"
+                  :tabindex="isDisabled('second', s) ? -1 : tabindex"
+                  @blur="debounceBlur"
                   @click="select('second', s)"
+                  @focus="keepFocusing"
+                  v-text="s"
                   @keydown.tab="onTab('second', s, $event)"
                   @keydown.space.prevent="select('second', s)"
                   @keydown.enter.prevent="select('second', s)"
@@ -2736,8 +2738,6 @@ export default {
                   @keydown.left.prevent="toLeftColumn('second')"
                   @keydown.right.prevent="toRightColumn('second')"
                   @keydown.esc.exact="debounceBlur"
-                  @blur="debounceBlur"
-                  @focus="keepFocusing"
                 ></li>
               </template>
             </ul>
@@ -2748,7 +2748,7 @@ export default {
               tabindex="-1"
               @scroll="keepFocusing"
             >
-              <li class="hint" v-text="apmLabelText" tabindex="-1"></li>
+              <li class="hint" tabindex="-1" v-text="apmLabelText"></li>
               <template v-for="(a, aIndex) in apms">
                 <li
                   v-if="
@@ -2757,11 +2757,13 @@ export default {
                   "
                   :key="aIndex"
                   :class="{ active: apm === a }"
-                  :tabindex="isDisabled('apm', a) ? -1 : tabindex"
                   :data-key="a"
                   :disabled="isDisabled('apm', a)"
-                  v-text="apmDisplayText(a)"
+                  :tabindex="isDisabled('apm', a) ? -1 : tabindex"
+                  @blur="debounceBlur"
                   @click="select('apm', a)"
+                  @focus="keepFocusing"
+                  v-text="apmDisplayText(a)"
                   @keydown.tab="onTab('apm', a, $event)"
                   @keydown.space.prevent="select('apm', a)"
                   @keydown.enter.prevent="select('apm', a)"
@@ -2770,8 +2772,6 @@ export default {
                   @keydown.left.prevent="toLeftColumn('apm')"
                   @keydown.right.prevent="toRightColumn('apm')"
                   @keydown.esc.exact="debounceBlur"
-                  @blur="debounceBlur"
-                  @focus="keepFocusing"
                 ></li>
               </template>
             </ul>
@@ -2857,7 +2857,9 @@ export default {
   /* Resume pointer-events on children components */
   pointer-events: initial;
 
-  transition: color 0.2s, opacity 0.2s;
+  transition:
+    color 0.2s,
+    opacity 0.2s;
 }
 
 .vue__time-picker .controls > *:hover {
@@ -2978,7 +2980,6 @@ export default {
 .vue__time-picker-dropdown ul.seconds,
 .vue__time-picker-dropdown ul.apms {
   border-left: 1px solid #fff;
-
 }
 
 .vue__time-picker .dropdown ul li,

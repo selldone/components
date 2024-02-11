@@ -20,8 +20,8 @@
 
     <div class="text-center">
       <v-avatar
-        size="56"
         class="m-1 hover-scale force-top avatar-gradient -thin"
+        size="56"
       >
         <img
           :src="
@@ -33,29 +33,29 @@
       </v-avatar>
     </div>
 
-    <p class="mb-1" v-if="receiverInfo.name">
+    <p v-if="receiverInfo.name" class="mb-1">
       <small>{{ $t("global.address_info.name") }}: </small>
       {{ receiverInfo.name }}
     </p>
 
-    <p class="mb-1" v-if="receiverInfo.phone">
+    <p v-if="receiverInfo.phone" class="mb-1">
       <small>{{ $t("global.address_info.tel") }}: </small
-      ><a class="link-dash p-0" :href="`tel:${receiverInfo.phone}`">{{
+      ><a :href="`tel:${receiverInfo.phone}`" class="link-dash p-0">{{
         receiverInfo.phone
       }}</a>
     </p>
-    <p class="mb-1" v-if="receiverInfo.email">
+    <p v-if="receiverInfo.email" class="mb-1">
       <small>{{ $t("global.address_info.email") }}: </small
-      ><a class="link-dash p-0" :href="`mailto:${receiverInfo.email}`">{{
+      ><a :href="`mailto:${receiverInfo.email}`" class="link-dash p-0">{{
         receiverInfo.email
       }}</a>
     </p>
-    <p class="mb-1" v-if="receiverInfo.country">
+    <p v-if="receiverInfo.country" class="mb-1">
       <small>{{ $t("global.address_info.country") }}: </small>
       <flag :iso="receiverInfo.country" :squared="false" />
       {{ getCountryName(receiverInfo.country) }}
     </p>
-    <p class="mb-1" v-if="receiverInfo.state">
+    <p v-if="receiverInfo.state" class="mb-1">
       <small>{{ $t("global.address_info.state") }}: </small
       >{{ receiverInfo.state }}
       <span class="mx-2"
@@ -63,11 +63,11 @@
         >{{ receiverInfo.city }}</span
       >
     </p>
-    <p class="mb-1" v-if="receiverInfo.address">
+    <p v-if="receiverInfo.address" class="mb-1">
       <small>{{ $t("global.address_info.address") }}: </small
       >{{ receiverInfo.address }}
     </p>
-    <p class="mb-1" v-if="receiverInfo.no">
+    <p v-if="receiverInfo.no" class="mb-1">
       <small>{{ $t("global.address_info.building_number") }}: </small
       >{{ receiverInfo.no }}
       <span class="mx-2"
@@ -76,21 +76,21 @@
       >
     </p>
 
-    <p class="mb-1" v-if="receiverInfo.postal">
+    <p v-if="receiverInfo.postal" class="mb-1">
       <small>{{ $t("global.address_info.postcode") }}: </small
       >{{ receiverInfo.postal }}
     </p>
 
-    <p class="mb-1" v-if="receiverInfo.message">
+    <p v-if="receiverInfo.message" class="mb-1">
       <small>{{ $t("global.address_info.note") }}: </small
       >{{ receiverInfo.message }}
     </p>
 
     <s-geo-navigation-button
       v-if="receiverInfo.location"
+      :large="large"
       :location="receiverInfo.location"
       :transportation-type="receiverInfo.type"
-      :large="large"
     ></s-geo-navigation-button>
 
     <slot name="append-buttons"></slot>
@@ -99,6 +99,7 @@
 
 <script>
 import SGeoNavigationButton from "@components/map/geo-button/SGeoNavigationButton.vue";
+
 export default {
   name: "SOrderReceiverInfoCard",
   components: { SGeoNavigationButton },
@@ -118,9 +119,10 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .-large {
   font-size: 16px;
+
   .mb-1 {
     margin-bottom: 12px !important;
   }

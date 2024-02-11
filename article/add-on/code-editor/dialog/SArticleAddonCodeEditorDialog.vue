@@ -23,17 +23,17 @@
       <v-card-title class="d-flex align-center">
         <v-spacer></v-spacer>
         <v-btn
-          variant="text"
           color="red"
+          size="x-large"
+          variant="text"
           @click="
             deleteCallback();
             show_dialog = false;
           "
-          size="x-large"
         >
-          <v-icon class="me-1">delete</v-icon
-          >{{ $t("global.actions.delete") }}</v-btn
-        >
+          <v-icon class="me-1">delete </v-icon>
+          {{ $t("global.actions.delete") }}
+        </v-btn>
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
@@ -51,30 +51,30 @@
           </v-list-subheader>
           <prism-editor
             v-model="code"
-            contenteditable="false"
-            class="light-code scrollable-element-light"
-            style="min-height: 50vh"
-            :language="language"
-            line-numbers
             :highlight="highlighter"
+            :language="language"
+            class="light-code scrollable-element-light"
+            contenteditable="false"
+            line-numbers
+            style="min-height: 50vh"
           />
         </div>
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn variant="text" @click="show_dialog = false" size="x-large">
-            <v-icon class="me-1">close</v-icon
-            >{{ $t("global.actions.close") }}</v-btn
-          >
+          <v-btn size="x-large" variant="text" @click="show_dialog = false">
+            <v-icon start>close </v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
           <v-btn
-            variant="flat"
             color="primary"
-            @click="setValue"
             size="x-large"
+            variant="flat"
+            @click="setValue"
           >
-            <v-icon class="me-1">check</v-icon
-            >{{ $t("global.actions.set") }}</v-btn
-          >
+            <v-icon class="me-1">check </v-icon>
+            {{ $t("global.actions.set") }}
+          </v-btn>
         </div>
       </v-card-actions>
     </v-card>

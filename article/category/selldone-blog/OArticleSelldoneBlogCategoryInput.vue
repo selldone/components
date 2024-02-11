@@ -14,31 +14,31 @@
 
 <template>
   <v-select
-    :model-value="modelValue"
-    @update:modelValue="(v) => $emit('update:modelValue', v)"
-    :flat="flat"
     :clearable="clearable"
+    :flat="flat"
     :items="categories"
-    item-value="category"
-    item-title="category"
     :label="$t('global.article.category_input')"
-    :messages="$t('global.article.category_input_message')"
-    :variant="variant"
     :loading="busy"
-    class="text-start"
+    :messages="$t('global.article.category_input_message')"
+    :model-value="modelValue"
     :rounded="rounded"
+    :variant="variant"
+    class="text-start"
+    item-title="category"
+    item-value="category"
+    @update:modelValue="(v) => $emit('update:modelValue', v)"
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" :title="item.raw.category">
+      <v-list-item :title="item.raw.category" v-bind="props">
         <template v-slot:prepend>
-          <v-avatar rounded class="me-2" v-if="item.raw.icon" size="28"
+          <v-avatar v-if="item.raw.icon" class="me-2" rounded size="28"
             ><img :src="getShopImagePath(item.raw.icon)"
           /></v-avatar>
         </template>
       </v-list-item>
     </template>
     <template v-slot:selection="{ item }">
-      <v-avatar rounded class="me-2" v-if="item.raw.icon" size="28"
+      <v-avatar v-if="item.raw.icon" class="me-2" rounded size="28"
         ><img :src="getShopImagePath(item.raw.icon)"
       /></v-avatar>
       <span class="text-subtitle-2">{{ item.raw.category }}</span>
@@ -95,4 +95,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

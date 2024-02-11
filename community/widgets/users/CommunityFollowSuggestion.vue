@@ -15,24 +15,24 @@
 <template>
   <v-col
     v-if="has_suggestion"
-    cols="12"
     class="c-container -force-rounded position-relative border-top-thick -blue"
+    cols="12"
   >
     <div class="bg-white z2 c-widget py-3">
       <h4 class="mx-3">{{ $t("community.commons.suggestion_list") }}</h4>
 
-      <v-slide-group show-arrows class="center-items">
+      <v-slide-group class="center-items" show-arrows>
         <v-slide-group-item
           v-for="profile in profiles"
           :key="profile.user_id"
           v-slot="{}"
         >
           <v-card
-            class="ma-2 ma-sm-3 ma-md-4 user-select-none"
             :height="$vuetify.display.xsOnly ? 160 : 200"
             :width="$vuetify.display.xsOnly ? 100 : 150"
-            outlined
+            class="ma-2 ma-sm-3 ma-md-4 user-select-none"
             rounded
+            variant="outlined"
           >
             <v-card-text
               class="d-flex align-center justify-center flex-column h-100"
@@ -41,29 +41,29 @@
                 <img :src="getUserAvatar(profile.user_id)" />
               </v-avatar>
 
-              <div class="subtitle-2 mt-2 mt-sm-4 single-line black--text">
+              <div class="text-subtitle-2 mt-2 mt-sm-4 single-line text-black">
                 <b>{{ profile.name }}</b>
                 <small v-if="profile.mutual" class="ms-1">2th</small>
               </div>
               <v-spacer></v-spacer>
-             <div class="widget-buttons w-100">
-               <v-btn
-                   color="#1976D2"
-                   dark
-                   width="100%"
-                   :small="$vuetify.display.xsOnly"
-                   @click="follow(profile, !profile.follow)"
-                   :loading="busy_follow === profile.user_id"
-                   :outlined="!profile.follow"
-               >
-                 <v-icon v-if="profile.follow" class="me-1">check</v-icon>
-                 {{
-                   profile.follow
-                       ? $t("community.commons.following_action")
-                       : $t("community.commons.follow_action")
-                 }}</v-btn
-               >
-             </div>
+              <div class="widget-buttons w-100">
+                <v-btn
+                  :loading="busy_follow === profile.user_id"
+                  :size="$vuetify.display.xsOnly && 'small'"
+                  :variant="!profile.follow && 'outlined'"
+                  color="#1976D2"
+                  dark
+                  width="100%"
+                  @click="follow(profile, !profile.follow)"
+                >
+                  <v-icon v-if="profile.follow" class="me-1">check</v-icon>
+                  {{
+                    profile.follow
+                      ? $t("community.commons.following_action")
+                      : $t("community.commons.follow_action")
+                  }}
+                </v-btn>
+              </div>
             </v-card-text>
           </v-card>
         </v-slide-group-item>
@@ -152,4 +152,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

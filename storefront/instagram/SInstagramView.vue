@@ -13,11 +13,11 @@
   -->
 
 <template>
-  <div class="instagram" v-resize="onResize">
+  <div v-resize="onResize" class="instagram">
     <v-container v-if="editable">
       <header class="header">
         <v-row>
-          <v-col cols="2" md="4" class="text-center avatar-con">
+          <v-col class="text-center avatar-con" cols="2" md="4">
             <v-avatar
               :size="$vuetify.display.smAndDown ? 77 : 168"
               class="story-border"
@@ -35,23 +35,29 @@
                   class="ms-2"
                   color="blue"
                   size="18"
-                  >verified</v-icon
-                >
+                  >verified
+                </v-icon>
               </h2>
               <div v-if="false" class="-buttons">
                 <v-btn
-                  small
+                  :to="
+                    editable
+                      ? undefined
+                      : { name: window.$storefront.routes.BASKET_PAGE }
+                  "
                   color="primary"
-                  dark
-                  :to="editable ? undefined : { name: window.$storefront.routes.BASKET_PAGE }"
+                  size="small"
                   ><b>Checkout</b></v-btn
                 >
                 <v-btn
-                  small
-                  color="primary"
-                  dark
+                  :to="
+                    editable
+                      ? undefined
+                      : { name: window.$storefront.routes.BASKET_PAGE }
+                  "
                   class="ms-2"
-                  :to="editable ? undefined : { name: window.$storefront.routes.BASKET_PAGE }"
+                  color="primary"
+                  size="small"
                 >
                   <v-icon>shopping_cart</v-icon>
                 </v-btn>
@@ -61,20 +67,16 @@
               <ul class="list">
                 <li class="list_item">
                   <span>{{
-                    numeralFormat(instagram.mediaCount ,"0.[0]a")
+                    numeralFormat(instagram.mediaCount, "0.[0]a")
                   }}</span
                   >posts
                 </li>
                 <li class="list_item">
-                  <span>{{
-                     numeralFormat( instagram.followers,"0.[0]a")
-                  }}</span
+                  <span>{{ numeralFormat(instagram.followers, "0.[0]a") }}</span
                   >followers
                 </li>
                 <li class="list_item">
-                  <span>{{
-                    numeralFormat(instagram.following ,"0.[0]a")
-                  }}</span
+                  <span>{{ numeralFormat(instagram.following, "0.[0]a") }}</span
                   >following
                 </li>
               </ul>
@@ -92,9 +94,9 @@
     <!-- Place holder -->
     <v-container v-if="busy_fetch && !medias.length">
       <v-row :dense="$vuetify.display.smAndDown">
-        <v-col cols="12" key="h" class="d-flex py-12 px-10 border-bottom">
+        <v-col key="h" class="d-flex py-12 px-10 border-bottom" cols="12">
           <div v-for="i in 4" :key="i" class="m-3">
-            <v-avatar color="#eee" class="mb-2" size="72"></v-avatar>
+            <v-avatar class="mb-2" color="#eee" size="72"></v-avatar>
             <div style="width: 90%; height: 20px; background-color: #eee"></div>
           </div>
         </v-col>
@@ -106,12 +108,12 @@
     </v-container>
 
     <instagram-view-highlights
-      class="container"
       v-if="highlights.length"
-      :shop="shop"
-      :instagram="instagram"
-      :highlights="highlights"
       :editable="editable"
+      :highlights="highlights"
+      :instagram="instagram"
+      :shop="shop"
+      class="container"
     ></instagram-view-highlights>
 
     <div class="container">
@@ -119,57 +121,52 @@
         <v-btn
           :color="show_heat ? 'blue' : undefined"
           icon
-          @click="toggleHeat"
+          variant="text"
           title="Show heatmap"
-          ><v-icon>bar_chart</v-icon></v-btn
+          @click="toggleHeat"
         >
+          <v-icon>bar_chart</v-icon>
+        </v-btn>
 
         <v-expand-transition>
           <div v-if="show_heat">
             <v-btn-toggle
               v-model="heatmap_filter"
-              @change="initHeatmap"
-              multiple
-              mandatory
-              class="fadeIn widget-toggle"
-              rounded
-              active-class="black-flat"
               :style="{ direction: $vuetify.rtl ? 'rtl' : 'ltr' }"
+              class="fadeIn widget-toggle"
+              mandatory
+              multiple
+              rounded
+              selected-class="black-flat"
+              @update:model-value="initHeatmap"
+              style="min-height: 64px"
             >
-              <v-btn value="likes" title="Likes">
-                <div>
-                  <v-icon
-                    small
-                    :color="
-                      heatmap_filter.includes('likes') ? 'red' : undefined
-                    "
-                    >favorite</v-icon
-                  ><br /><span class="small text-capitalize">likes</span>
-                </div>
+              <v-btn title="Likes" value="likes" stacked>
+                <v-icon
+                  :color="heatmap_filter.includes('likes') ? 'red' : undefined"
+                  >favorite
+                </v-icon>
+                likes
               </v-btn>
-              <v-btn value="comments" title="Comments">
-                <div>
-                  <v-icon
-                    small
-                    :color="
-                      heatmap_filter.includes('comments') ? 'blue' : undefined
-                    "
-                    >chat_bubble</v-icon
-                  ><br /><span class="small text-capitalize">comments</span>
-                </div>
+              <v-btn title="Comments" value="comments" stacked>
+                <v-icon
+                  :color="
+                    heatmap_filter.includes('comments') ? 'blue' : undefined
+                  "
+                  >chat_bubble
+                </v-icon>
+                comments
               </v-btn>
-              <v-btn value="videoViewCount" title="Video views">
-                <div>
-                  <v-icon
-                    small
-                    :color="
-                      heatmap_filter.includes('videoViewCount')
-                        ? 'green'
-                        : undefined
-                    "
-                    >play_arrow</v-icon
-                  ><br /><span class="small text-capitalize">plays</span>
-                </div>
+              <v-btn title="Video views" value="videoViewCount" stacked>
+                <v-icon
+                  :color="
+                    heatmap_filter.includes('videoViewCount')
+                      ? 'green'
+                      : undefined
+                  "
+                  >play_arrow
+                </v-icon>
+                plays
               </v-btn>
             </v-btn-toggle>
           </div>
@@ -178,10 +175,10 @@
 
       <instagram-view-medias
         ref="medias_container"
-        :shop="shop"
+        :editable="editable"
         :instagram="instagram"
         :medias="medias"
-        :editable="editable"
+        :shop="shop"
       >
       </instagram-view-medias>
     </div>
@@ -189,15 +186,15 @@
     <v-btn
       v-if="has_more"
       :loading="busy_fetch"
+      class="my-5 mx-2"
+      color="blue"
+      variant="text"
       @click="
         page++;
         fetchInsta();
       "
-      class="my-5 mx-2"
-      color="blue"
-      text
-      >Load more if exist...</v-btn
-    >
+      >Load more if exist...
+    </v-btn>
   </div>
 </template>
 
@@ -383,7 +380,7 @@ export default {
               offset: (this.page - 1) * this.itemsPerPage,
               limit: this.itemsPerPage,
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -412,16 +409,23 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .instagram {
   direction: ltr;
   color: #262626;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
   line-height: 18px;
   font-size: 14px;
   text-align: left;
 }
+
 .account-info {
   display: flex;
   padding-left: 28px;
@@ -434,6 +438,7 @@ export default {
   .user-id {
     margin-bottom: 20px;
   }
+
   .-buttons {
     display: flex;
     align-items: center;
@@ -451,6 +456,7 @@ export default {
     }
   }
 }
+
 .user-id {
   font-size: 28px;
   color: #262626;
@@ -463,6 +469,7 @@ export default {
   white-space: nowrap;
   line-height: normal;
 }
+
 .account-counts {
   padding: 15px 0 0 20px;
   display: none;
@@ -472,11 +479,13 @@ export default {
   .list {
     margin-bottom: 20px;
   }
+
   .list_item {
     font-size: 16px;
     margin-right: 40px;
     color: #262626;
     display: inline-block;
+
     span {
       color: #262626;
       font-weight: 600;
@@ -484,6 +493,7 @@ export default {
     }
   }
 }
+
 .list {
   list-style: none;
   padding: 0;
@@ -498,11 +508,13 @@ export default {
   color: #262626;
   margin-left: auto;
   padding-left: 20px;
+
   .user-name {
     font: inherit;
     display: inline;
     font-weight: 600;
   }
+
   width: 100vw;
   left: -20vw;
   position: relative;
@@ -527,16 +539,19 @@ h1 {
 .header .list {
   margin-bottom: 20px;
 }
+
 .header .list_item {
   font-size: 16px;
   margin-right: 40px;
   color: #262626;
 }
+
 .header .list_item span {
   color: #262626;
   font-weight: 600;
   margin-right: 4px;
 }
+
 .avatar-con {
 }
 

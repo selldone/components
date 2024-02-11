@@ -12,7 +12,6 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-
 @import 'variables';
 @import 'mixins';
 
@@ -25,8 +24,7 @@ $material-design-icons-class-icons-prefix: '' !default;
   font-weight: 400;
   font-display: block;
   src: url("~@/Components/style/material-design-fonts/fonts/MaterialIcons-Regular.eot"); /* For IE6-8 */
-  src:
-  url("~@/Components/style/material-design-fonts/fonts/MaterialIcons-Regular.woff2") format('woff2'),
+  src: url("~@/Components/style/material-design-fonts/fonts/MaterialIcons-Regular.woff2") format('woff2'),
   url("~@/Components/style/material-design-fonts/fonts/MaterialIcons-Regular.woff") format('woff'),
   url("~@/Components/style/material-design-fonts/fonts/MaterialIcons-Regular.ttf") format('truetype');
 }
@@ -70,27 +68,28 @@ $material-design-icons-class-icons-prefix: '' !default;
 
 
 }
+
 // Fix icon size:
 
-  .v-icon--size-x-small {
-    font-size: calc(var(--v-icon-size-multiplier) * 1em) !important;
-  }
+.v-icon--size-x-small {
+  font-size: calc(var(--v-icon-size-multiplier) * 1em) !important;
+}
 
-  .v-icon--size-small {
-    font-size: calc(var(--v-icon-size-multiplier) * 1.25em) !important;
-  }
+.v-icon--size-small {
+  font-size: calc(var(--v-icon-size-multiplier) * 1.25em) !important;
+}
 
-  .v-icon--size-default {
-    font-size: calc(var(--v-icon-size-multiplier) * 1.5em) !important;
-  }
+.v-icon--size-default {
+  font-size: calc(var(--v-icon-size-multiplier) * 1.5em) !important;
+}
 
-  .v-icon--size-large {
-    font-size: calc(var(--v-icon-size-multiplier) * 1.75em) !important;
-  }
+.v-icon--size-large {
+  font-size: calc(var(--v-icon-size-multiplier) * 1.75em) !important;
+}
 
-  .v-icon--size-large {
-    font-size: calc(var(--v-icon-size-multiplier) * 2em) !important;
-  }
+.v-icon--size-large {
+  font-size: calc(var(--v-icon-size-multiplier) * 2em) !important;
+}
 
 
 

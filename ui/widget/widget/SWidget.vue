@@ -16,11 +16,11 @@
   <v-sheet
     ref="widget"
     :class="{ className, h100: h100 }"
+    :style="{ '--background': 'var(--widget-background-color)' }"
+    :theme="dark ? 'dark' : 'light'"
+    class="widget"
     v-bind="dataWidgster"
     @click="$emit('click')"
-    class="widget"
-    :style="{'--background':'var(--widget-background-color)'}"
-    :theme="dark?'dark':'light'"
   >
     <div class="top-left-container">
       <slot name="top-left" />
@@ -28,17 +28,17 @@
 
     <h5
       v-if="title && typeof title === 'string' && !customHeader"
-      class="title-widget text-start-dir"
       :style="$vuetify.rtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
+      class="title-widget text-start-dir"
     >
       {{ title }}
     </h5>
 
     <header
       v-if="title && customHeader"
+      :style="$vuetify.rtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
       class="title-widget"
       v-html="title"
-      :style="$vuetify.rtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
     />
 
     <v-list-subheader v-if="subTitle" :dark="dark">
@@ -50,14 +50,14 @@
       class="widgetControls widget-controls"
     >
       <a v-if="settings" href="#"><i class="fas fa-cogs" /></a>
-      <a v-if="settingsInverse" href="#" class="bg-gray-transparent inverse">
+      <a v-if="settingsInverse" class="bg-gray-transparent inverse" href="#">
         <i class="fas fa-cogs text-white" />
       </a>
       <a
         v-if="refresh"
         :id="`reloadId-${randomId}`"
-        href="#"
         data-widgster="load"
+        href="#"
       >
         <strong v-if="typeof refresh === 'string'" class="text-gray-light">{{
           refresh
@@ -73,8 +73,8 @@
       <a
         v-if="fullscreen"
         :id="`fullscreenId-${randomId}`"
-        href="#"
         data-widgster="fullscreen"
+        href="#"
       >
         <i class="glyphicon glyphicon-resize-full" />
         <v-tooltip
@@ -87,8 +87,8 @@
       <a
         v-if="fullscreen"
         :id="`restoreId-${randomId}`"
-        href="#"
         data-widgster="restore"
+        href="#"
       >
         <i class="glyphicon glyphicon-resize-small" />
         <v-tooltip
@@ -99,7 +99,7 @@
         </v-tooltip>
       </a>
       <span v-if="collapse">
-        <a :id="`collapseId-${randomId}`" href="#" data-widgster="collapse">
+        <a :id="`collapseId-${randomId}`" data-widgster="collapse" href="#">
           <i class="fas fa-angle-down" />
           <v-tooltip
             v-if="showTooltip"
@@ -110,7 +110,7 @@
         </a>
       </span>
       <span v-if="collapse">
-        <a :id="`expandId-${randomId}`" href="#" data-widgster="expand">
+        <a :id="`expandId-${randomId}`" data-widgster="expand" href="#">
           <i class="fas fa-angle-up" />
           <v-tooltip
             v-if="showTooltip"
@@ -123,8 +123,8 @@
       <a
         v-if="close"
         :id="`closeId-${randomId}`"
-        href="#"
         data-widgster="close"
+        href="#"
       >
         <strong v-if="typeof refresh === 'string'" class="text-gray-light">{{
           close
@@ -194,7 +194,7 @@ export default {
 };
 </script>
 
-<style src="./s-widget.scss" lang="scss" />
+<style lang="scss" src="./s-widget.scss" />
 
 <style lang="scss" scoped>
 .top-left-container {
@@ -202,11 +202,11 @@ export default {
   top: 8px;
   right: 8px;
 }
+
 .v-application--is-rtl {
   .top-left-container {
     right: unset;
     left: 8px;
   }
 }
-
 </style>

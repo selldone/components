@@ -19,38 +19,37 @@
 
     <draggable
       v-model="list"
-      @start="drag = true"
+      :class="{
+        'rounded-list-xl': rounded,
+        'border-between-vertical': borderBetween,
+      }"
+      :component-data="{
+        tag: 'ul',
+        type: 'transition-group',
+        name: !drag ? 'flip-list' : 'fade',
+      }"
+      filter=".ignore"
+      style="list-style-type: none"
+      tag="transition-group"
+      v-bind="dragOptions"
       @end="drag = false"
+      @start="drag = true"
       @update:modelValue="
         $emit('update:modelValue', list);
         $nextTick(() => {
           $emit('change', list);
         });
       "
-      filter=".ignore"
-      tag="transition-group"
-      :component-data="{
-        tag: 'ul',
-        type: 'transition-group',
-        name: !drag ? 'flip-list' : 'fade',
-      }"
-      v-bind="dragOptions"
-      style="list-style-type: none"
-      :class="{
-        'rounded-list-xl': rounded,
-        'border-between-vertical': borderBetween,
-      }"
     >
       <template v-slot:item="{ element }">
         <li
           :key="isString(element) ? element : JSON.stringify(element)"
-          class="p-2 row-hover usn cursor-move"
           :class="{
             'bg-dark': dark,
             'bg-white': !dark,
             disabled: disabled,
-
           }"
+          class="p-2 row-hover usn cursor-move"
         >
           <div class="d-flex align-center mnh">
             <v-icon v-if="itemIcon" class="me-1">
@@ -58,10 +57,10 @@
             </v-icon>
             <v-img
               v-if="itemImage && itemImage(element)"
-              width="24"
-              height="24"
-              class="me-1 flex-grow-0"
               :src="itemImage(element)"
+              class="me-1 flex-grow-0"
+              height="24"
+              width="24"
             >
             </v-img>
 
@@ -87,9 +86,15 @@
     <div
       v-if="hasAdd"
       key="_add"
-      class="p-2 pp row-hover usn ignore d-flex align-center  justify-center"
-      :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: disabled , 'rounded-xl my-2': rounded,}"
-      @click="$emit('click:add')" style="min-height: 70px"
+      :class="{
+        'bg-dark': dark,
+        'bg-white': !dark,
+        disabled: disabled,
+        'rounded-xl my-2': rounded,
+      }"
+      class="p-2 pp row-hover usn ignore d-flex align-center justify-center"
+      style="min-height: 70px"
+      @click="$emit('click:add')"
     >
       <div>
         <v-icon class="me-1"> add_box</v-icon>
@@ -174,7 +179,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .mnh {
   min-height: 40px;
 }

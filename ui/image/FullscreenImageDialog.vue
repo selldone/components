@@ -16,17 +16,17 @@
   <v-dialog
     v-model="dialog"
     :fullscreen="$vuetify.display.mdAndDown"
-    max-width="1200"
     content-class="thin-scroll"
+    max-width="1200"
   >
     <v-card
       class="pointer-zoom-out position-relative d-flex align-items-center"
-      @click="dialog = false"
-      style="z-index: 999999"
       color="#000000e3"
-      tile
+      rounded="0"
+      style="z-index: 999999"
+      @click="dialog = false"
     >
-      <v-img :src="image" width="100%" height="100%"> </v-img>
+      <v-img :src="image" height="100%" width="100%"></v-img>
     </v-card>
   </v-dialog>
 </template>
@@ -50,10 +50,10 @@ export default {
       this.dialog = true;
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.EventBus.$off("fullscreen-image");
   },
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

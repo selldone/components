@@ -13,37 +13,41 @@
   -->
 
 <template>
-  <v-dialog :value="value" @input="(val) => $emit('input', val)" width="500">
+  <v-dialog
+    :model-value="value"
+    width="500"
+    @update:model-value="(val) => $emit('input', val)"
+  >
     <v-card>
       <v-card-title>
         {{ $t("user_gift_cards.add_card_dialog.title") }}
       </v-card-title>
 
       <v-card-text class="text-start">
-        <p >
+        <p>
           {{ $t("user_gift_cards.add_card_dialog.message") }}
         </p>
 
         <v-text-field
           v-model="card_number"
-          class="mt-3"
-          :label="$t('user_gift_cards.add_card_dialog.card_number_input')"
-          outline
-          messages="XXXX-XXXX-XXXX-XXXX"
           v-mask="`####-####-####-####`"
           :color="SaminColorLight"
+          :label="$t('user_gift_cards.add_card_dialog.card_number_input')"
+          class="mt-3"
+          messages="XXXX-XXXX-XXXX-XXXX"
+          variant="outlined"
         />
         <v-text-field
           v-model="card_cvv"
+          v-mask="`XXXX`"
+          :color="SaminColorLight"
           class="mt-3"
           label="CVV"
-          outline
-          :color="SaminColorLight"
           messages="XXXX"
-          v-mask="`XXXX`"
+          variant="outlined"
         />
 
-        <p >
+        <p>
           <i class="fas fa-info-circle text-primary" />
           {{ $t("user_gift_cards.add_card_dialog.info") }}
         </p>
@@ -54,13 +58,13 @@
       <v-card-actions>
         <div class="widget-buttons">
           <v-btn
-            depressed
+            :class="{ disabled: !canAddCard }"
+            :loading="busy_add"
             color="success"
             dark
-            x-large
+            size="x-large"
+            variant="flat"
             @click="addCard"
-            :loading="busy_add"
-            :class="{ disabled: !canAddCard }"
           >
             <v-icon class="me-1">add</v-icon>
             {{ $t("user_gift_cards.add_card_dialog.add_action") }}

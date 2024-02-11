@@ -14,25 +14,25 @@
 
 <template>
   <s-smart-select
-    :model-value="localModelValue"
-    @update:model-value="updateModelValue"
+    :border="border"
+    :class="{ 'theme--dark': dark }"
+    :clearable="clearable"
+    :color="falseGray && !localModelValue ? '#666' : color"
+    :dark="dark"
+    :disabled="disabled"
+    :force-show-all="forceShowAll"
+    :hint="hint"
     :items="items"
-    item-value="id"
-    item-text="title"
+    :label="label"
+    :loading="loading"
+    :model-value="localModelValue"
+    :readonly="readonly"
     item-description="description"
     item-icon="icon"
-    :label="label"
-    :hint="hint"
-    :force-show-all="forceShowAll"
+    item-text="title"
+    item-value="id"
     @change="handleChange"
-    :disabled="disabled"
-    :color="falseGray && !localModelValue ? '#666' : color"
-    :readonly="readonly"
-    :dark="dark"
-    :border="border"
-    :clearable="clearable"
-    :class="{ 'theme--dark': dark }"
-    :loading="loading"
+    @update:model-value="updateModelValue"
   >
   </s-smart-select>
 </template>
@@ -115,4 +115,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

@@ -14,44 +14,46 @@
 
 <template>
   <div
-    class="pod"
-    style="aspect-ratio: 1"
+    :class="{
+      'rounded-circle': circlePod,
+      '-dashed': dashed,
+      'hover-scale-small force-top': hover,
+      '-large': large,
+    }"
     :style="{
       '--pod-color': color,
       '--pod-dot-color': dotColor,
       '--pod-badge-text-color': badgeTextColor,
     }"
-    :class="{
-      'rounded-circle': circlePod,
-      '-dashed': dashed,
-      'hover-scale-small force-top': hover,
-      '-large':large
-    }"
+    class="pod"
+    style="aspect-ratio: 1"
   >
     <img
       v-if="isSelldoneIcon || image"
-      class="mb-1 pod-img"
-      width="var(--pod-icon-size)"
-      height="var(--pod-icon-size)"
       :class="{ 'rounded-xl': rounded, rounded: !rounded }"
       :src="
-        isSelldoneIcon ? require('@components/assets/selldone-logo/selldone.svg') : image
+        isSelldoneIcon
+          ? require('@components/assets/selldone-logo/selldone.svg')
+          : image
       "
+      class="mb-1 pod-img"
+      height="var(--pod-icon-size)"
+      width="var(--pod-icon-size)"
     />
 
     <v-icon
       v-else-if="icon"
-      size="var(--pod-icon-size)"
       :color="iconColor"
       class="mb-1 pod-icon"
-      >{{ icon }}</v-icon
-    >
+      size="var(--pod-icon-size)"
+      >{{ icon }}
+    </v-icon>
     <slot></slot>
 
-    <small class="d-block" :title="title">
-      <v-icon v-if="titleIcon" size="x-small" :color="titleIconColor">{{
-        titleIcon
-      }}</v-icon>
+    <small :title="title" class="d-block">
+      <v-icon v-if="titleIcon" :color="titleIconColor" size="x-small"
+        >{{ titleIcon }}
+      </v-icon>
       {{ title }}</small
     >
     <slot></slot>

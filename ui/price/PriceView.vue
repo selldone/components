@@ -15,7 +15,6 @@
 <template>
   <span
     v-if="!notShowZero || amount"
-    class="price-view"
     :class="{
       medium: medium,
       large: large,
@@ -29,6 +28,7 @@
         ? `Invalid amount! ⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.`
         : undefined
     "
+    class="price-view"
   >
     <span v-if="isUnicode && !at_end">{{
       GetUserSelectedCurrencyName(currency_code, true)
@@ -116,10 +116,7 @@ export default {
     isUnicode() {
       return (
         this.currency_name ===
-        CurrencyHelper.GetUserSelectedCurrencyUnicode(
-          this,
-          this.currency_code
-        )
+        CurrencyHelper.GetUserSelectedCurrencyUnicode(this, this.currency_code)
       );
     },
 
@@ -134,14 +131,14 @@ export default {
 
       return CurrencyHelper.GetUserSelectedCurrencySignAtEnd(
         this,
-        this.currency_code
+        this.currency_code,
       );
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -154,6 +151,7 @@ export default {
   unicode-bidi: plaintext;
   unicode-bidi: -webkit-isolate; // Solve invalid sign position in safari
   transition: all 0.5s;
+
   span {
     unicode-bidi: initial;
   }
@@ -164,24 +162,30 @@ export default {
 
   &.dark {
     color: #fff;
+
     .line-through {
       text-decoration-color: rgba(255, 255, 255, 0.8);
     }
   }
+
   .small {
     font-size: 0.7em !important;
     font-weight: 500;
   }
+
   .line-through {
     text-decoration-line: line-through;
     text-decoration-color: #666;
   }
+
   &.medium {
     font-size: 1.3rem;
   }
+
   &.large {
     font-size: 1.6rem;
   }
+
   &.x-large {
     font-size: 2.4rem;
   }

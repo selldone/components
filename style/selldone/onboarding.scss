@@ -12,26 +12,27 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-.onboarding{
+.onboarding {
   color: rgb(34, 34, 34) !important;
-//  background-color: rgba(255, 255, 255, 1);
+  //  background-color: rgba(255, 255, 255, 1);
   position: relative;
   z-index: 9999;
 
-  &.dark{
+  &.dark {
     color: #fff !important;
-  //  background-color: #141414;
+    //  background-color: #141414;
   }
 
-  &:not(.flat){
+  &:not(.flat) {
     box-shadow: rgba(0, 0, 0, 0.15) 0px 16px 32px, rgba(0, 0, 0, 0.1) 0px 3px 8px !important;
     border: 1px solid rgb(221, 221, 221);
     border-radius: 48px;
   }
+
   // style text fields:
-  .o-input{
-    .v-text-field__slot{
-      label{
+  .o-input {
+    .v-text-field__slot {
+      label {
         font-weight: 800;
         color: #000;
         letter-spacing: 0.04em !important;

@@ -14,29 +14,29 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--form-builder-container">
-    <v-row no-gutters align="center">
+    <v-row align="center" no-gutters>
       <v-icon class="me-3 cursor-move drag--handle" title="Drag and move"
-        >menu</v-icon
-      >
+        >menu
+      </v-icon>
 
       <v-icon>{{ type?.icon }}</v-icon>
       <b class="mx-2 small flex-grow-1">{{ getName(type?.title) }}</b>
 
       <s-circle-button
-        icon="close"
         :title="$t('global.actions.delete')"
         color="#fff"
+        icon="close"
         @click="removeField()"
       />
     </v-row>
 
     <div
       v-show="!collapse"
-      class="s--form-builder-item"
       :class="{
         '-locked':
           item.locked /*Locked item - ex. variants field for virtual products*/,
       }"
+      class="s--form-builder-item"
     >
       <!-- General Attributes -->
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Note ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -45,9 +45,9 @@
         <v-textarea
           v-model="item.title"
           :label="$t('global.commons.note')"
-          placeholder="Writer your message here..."
-          messages="Allowed tags: <h1>...<h5>, <br>, <b>, <i>, <a>,<ol>,<ul>, <li>, <hr>, <img>"
           color="primary"
+          messages="Allowed tags: <h1>...<h5>, <br>, <b>, <i>, <a>,<ol>,<ul>, <li>, <hr>, <img>"
+          placeholder="Writer your message here..."
           variant="underlined"
         />
       </template>
@@ -56,13 +56,13 @@
         <v-text-field
           v-model="item.title"
           :label="$t('global.form_builder.title_input')"
-          hint="Public label. Ex: Name, Prefer state, Description, ..."
           color="primary"
+          hint="Public label. Ex: Name, Prefer state, Description, ..."
+          variant="underlined"
           @blur="
             item.name = item.name ? item.name : slugify(item.title);
             $forceUpdate();
           "
-          variant="underlined"
         />
 
         <div v-if="!edit_name">
@@ -73,7 +73,7 @@
               <b>{{ item.name ? item.name : "Auto generate.." }}</b>
             </div>
 
-            <v-btn @click="edit_name = true" icon variant="text" size="small">
+            <v-btn icon size="small" variant="text" @click="edit_name = true">
               <v-icon>{{ edit_name ? "lock_open" : "lock" }}</v-icon>
             </v-btn>
           </div>
@@ -81,11 +81,11 @@
         <div v-else>
           <v-text-field
             v-model="item.name"
-            :label="$t('global.form_builder.name_input')"
-            hint="Ex: name, state, desc, ... Only lowercase Latin characters and numbers are permitted, and no whitespace is allowed."
-            color="primary"
-            :disabled="item.locked"
             :append-inner-icon="item.locked ? 'lock' : undefined"
+            :disabled="item.locked"
+            :label="$t('global.form_builder.name_input')"
+            color="primary"
+            hint="Ex: name, state, desc, ... Only lowercase Latin characters and numbers are permitted, and no whitespace is allowed."
             variant="underlined"
           />
         </div>
@@ -99,9 +99,9 @@
             :messages="$t('global.form_builder.value_input_message')"
             chips
             clearable
+            closable-chips
             multiple
             variant="underlined"
-            closable-chips
           >
             <template v-slot:chip="{ props, item }">
               <v-chip v-bind="props">
@@ -112,12 +112,12 @@
 
           <s-smart-switch
             v-model="item.multiple"
-            true-title="Multiple items"
+            class="mt-3"
+            false-description="User can select just one item."
             false-title="Single item"
             true-description="User can select more than one item."
-            false-description="User can select just one item."
+            true-title="Multiple items"
             @change="$forceUpdate()"
-            class="mt-3"
           >
           </s-smart-switch>
         </template>
@@ -127,14 +127,14 @@
         <s-smart-switch
           v-if="item.type === 'switch'"
           v-model="item.default"
-          :true-title="$t('global.form_builder.default') + ': True'"
+          :false-description="item.hint_false"
           :false-title="$t('global.form_builder.default') + ': False'"
           :true-description="item.hint_true"
-          :false-description="item.hint_false"
-          true-icon="check"
-          false-icon="close"
-          @change="$forceUpdate()"
+          :true-title="$t('global.form_builder.default') + ': True'"
           class="mt-3"
+          false-icon="close"
+          true-icon="check"
+          @change="$forceUpdate()"
         >
         </s-smart-switch>
 
@@ -145,13 +145,13 @@
             :items="['jpeg', 'png', 'zip', 'pdf']"
             :label="$t('global.form_builder.file_type_input')"
             :messages="$t('global.form_builder.file_type_message')"
-            placeholder="*.*"
             chips
             clearable
+            closable-chips
             multiple
             persistent-placeholder
+            placeholder="*.*"
             variant="underlined"
-            closable-chips
           >
             <template v-slot:chip="{ props, item }">
               <v-chip v-bind="props">
@@ -162,10 +162,10 @@
 
           <s-smart-switch
             v-model="item.multiple"
-            true-title="Multiple files"
+            false-description="User can upload just one file."
             false-title="Single file"
             true-description="User can upload more than one file."
-            false-description="User can upload just one file."
+            true-title="Multiple files"
             @change="$forceUpdate()"
           >
           </s-smart-switch>
@@ -173,11 +173,11 @@
 
         <!-- -------------- Hints -------------- -->
         <v-btn
-          variant="text"
-          color="primary"
           class="tnt mt-2"
-          @click="show_hints = !show_hints"
+          color="primary"
           size="small"
+          variant="text"
+          @click="show_hints = !show_hints"
         >
           <v-icon start>arrow_drop_down</v-icon>
           Edit hints
@@ -187,22 +187,22 @@
           <div v-if="show_hints && item.type === 'switch'">
             <v-text-field
               v-model="item.hint_true"
-              title="Hint True"
               placeholder="Some instruction to guide customer..."
+              title="Hint True"
               variant="underlined"
             ></v-text-field>
             <v-text-field
               v-model="item.hint_false"
-              title="Hint False"
               placeholder="Some instruction to guide customer..."
+              title="Hint False"
               variant="underlined"
             ></v-text-field>
           </div>
           <div v-else-if="show_hints">
             <v-text-field
               v-model="item.hint"
-              title="Hint"
               placeholder="Some instruction to guide customer..."
+              title="Hint"
               variant="underlined"
             ></v-text-field>
           </div>
@@ -254,7 +254,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

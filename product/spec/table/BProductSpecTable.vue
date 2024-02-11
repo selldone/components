@@ -20,40 +20,35 @@
       <s-smart-toggle
         v-model="auto_save"
         :true-title="$t('spec_view.auto_save_input')"
-        true-description="Changes will be saved automatically."
         color="green"
+        true-description="Changes will be saved automatically."
       ></s-smart-toggle>
 
       <draggable
+        :class="{ 'border-between-vertical': editable }"
+        :component-data="{
+          tag: 'ul',
+          type: 'transition-group',
+          name: !drag ? 'flip-list' : 'fade',
+        }"
         :model-value="spec"
         :press-delay="150"
+        style="list-style-type: none"
+        tag="transition-group"
+        v-bind="dragOptions"
+        @end="drag = false"
+        @start="drag = true"
         @update:modelValue="
           (list) => {
             if (auto_save) $emit('save', list);
             else $emit('update', list);
           }
         "
-        @start="drag = true"
-        @end="drag = false"
-        :class="{ 'border-between-vertical': editable }"
-        tag="transition-group"
-        :component-data="{
-          tag: 'ul',
-          type: 'transition-group',
-          name: !drag ? 'flip-list' : 'fade',
-        }"
-        v-bind="dragOptions"
-        style="list-style-type: none"
       >
-        <template v-slot:item="{ element ,index}">
-
+        <template v-slot:item="{ element, index }">
           <b-product-spec-row
             v-if="element"
             :key="index"
-            :item="element"
-            :editable="editable"
-            @delete="$emit('click-delete', element)"
-            :minimize="drag"
             :class="{
               '-border': !(
                 index >= spec.length - 1 ||
@@ -61,6 +56,10 @@
                 spec[index + 1].group
               ) /*Next is group so it's last item!*/,
             }"
+            :editable="editable"
+            :item="element"
+            :minimize="drag"
+            @delete="$emit('click-delete', element)"
           />
         </template>
       </draggable>
@@ -71,19 +70,19 @@
     <v-container v-else fluid>
       <v-row>
         <v-col
-          cols="12"
-          md="6"
           v-for="(item, index) in spec_grouped"
           :key="'g' + index"
+          cols="12"
+          md="6"
         >
           <b-product-spec-row
             v-if="item.group"
+            :collapse="collapses.includes(index)"
             :item="item.group"
             @update:collapse="collapses.toggle(index)"
-            :collapse="collapses.includes(index)"
           />
           <v-expand-transition>
-            <div class="-list-items" v-if="!collapses.includes(index)">
+            <div v-if="!collapses.includes(index)" class="-list-items">
               <b-product-spec-row
                 v-for="(item, j) in item.items"
                 :key="j"
@@ -95,7 +94,6 @@
         </v-col>
       </v-row>
     </v-container>
-
   </div>
 </template>
 

@@ -15,40 +15,40 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-sheet
     v-if="!disabled"
-    class="s--storefront-primary-footer"
     :class="{ '-dark': dark, '-rtl': $vuetify.rtl }"
     :color="dark ? SaminColorDarkDeep : '#fff'"
     :dark="dark"
+    class="s--storefront-primary-footer"
   >
     <v-card
       v-if="location && show_map"
-      class="map-view fadeIn delay_500"
       :class="{ 'for-native': isNative }"
+      class="map-view fadeIn delay_500"
     >
       <!-- MAP -->
       <s-map-view
-        class="map-view-panel"
-        :radius="18"
-        :zoom="16"
         :center="location"
+        :delay-load="1000"
         :marker-position="location"
         :pin-image="require('@components/assets/icons/bags.svg')"
-        :delay-load="1000"
+        :radius="18"
+        :zoom="16"
+        class="map-view-panel"
       >
       </s-map-view>
     </v-card>
 
     <v-container
-      style="max-width: 1520px"
       :class="{ 'img-grayscale': show_map }"
+      style="max-width: 1520px"
     >
       <!--- ================= Info ================= --->
       <v-row v-if="!isNative" class="mt-0">
         <v-col
-          cols="12"
-          sm="12"
           :md="sections_count > 1 ? 8 : sections_count ? 10 : 12"
           class="text-start pl-3 pr-3"
+          cols="12"
+          sm="12"
         >
           <h3 style="font-size: 32px; letter-spacing: -0.4px; font-weight: 900">
             {{ shop.title }}
@@ -67,24 +67,24 @@
 
         <v-col
           v-if="sections_count"
-          cols="12"
-          sm="12"
           :md="sections_count > 1 ? 4 : 2"
           class="mb-4 d-flex"
+          cols="12"
+          sm="12"
         >
           <div
             v-if="footer && footer.sec1 && footer.sec1.html"
-            v-html="footer.sec1.html"
-            class="pointer-pointer namad"
             :style="`width: ${90 / sections_count}%;`"
+            class="pointer-pointer namad"
+            v-html="footer.sec1.html"
           ></div>
           <div
             v-else-if="footer && footer.sec1"
+            :class="{ 'pointer-pointer': footer.sec1.url }"
             :style="`width: ${90 / sections_count}%;`"
             class="namad"
-            target="_blank"
-            :class="{ 'pointer-pointer': footer.sec1.url }"
             rel="nofollow"
+            target="_blank"
             @click="footer.sec1.url ? window.open(footer.sec1.url) : ''"
           >
             <v-img
@@ -98,17 +98,17 @@
 
           <div
             v-if="footer && footer.sec2 && footer.sec2.html"
-            v-html="footer.sec2.html"
-            class="pointer-pointer namad"
             :style="`width: ${90 / sections_count}%;`"
+            class="pointer-pointer namad"
+            v-html="footer.sec2.html"
           ></div>
           <div
             v-else-if="footer && footer.sec2"
-            class="namad"
-            :style="`width: ${90 / sections_count}%;`"
-            target="_blank"
             :class="{ 'pointer-pointer': footer.sec2.url }"
+            :style="`width: ${90 / sections_count}%;`"
+            class="namad"
             rel="nofollow"
+            target="_blank"
             @click="footer.sec2.url ? window.open(footer.sec2.url) : ''"
           >
             <v-img
@@ -122,17 +122,17 @@
 
           <div
             v-if="footer && footer.sec3 && footer.sec3.html"
-            v-html="footer.sec3.html"
-            class="pointer-pointer namad"
             :style="`width: ${90 / sections_count}%;`"
+            class="pointer-pointer namad"
+            v-html="footer.sec3.html"
           ></div>
           <div
             v-else-if="footer && footer.sec3"
-            class="namad"
-            :style="`width: ${90 / sections_count}%;`"
-            target="_blank"
             :class="{ 'pointer-pointer': footer.sec3.url }"
+            :style="`width: ${90 / sections_count}%;`"
+            class="namad"
             rel="nofollow"
+            target="_blank"
             @click="footer.sec3.url ? window.open(footer.sec3.url) : ''"
           >
             <v-img
@@ -148,15 +148,15 @@
 
       <!--- ================= Menu ================= --->
 
-      <v-row class="mb-4" v-if="!isNative">
+      <v-row v-if="!isNative" class="mb-4">
         <v-col
           v-for="index in 4"
           :key="index"
-          cols="6"
-          sm="3"
-          md="3"
-          lg="3"
           class="menu-footer"
+          cols="6"
+          lg="3"
+          md="3"
+          sm="3"
         >
           <router-link
             v-for="(item, i) in menu[index - 1]"
@@ -174,9 +174,9 @@
       <v-row v-if="!isNative" class="my-0">
         <v-col
           v-if="address"
-          md="6"
-          cols="12"
           class="border-end-grater-md"
+          cols="12"
+          md="6"
           style="border-color: #564160 !important"
         >
           <p class="info-title">
@@ -188,16 +188,16 @@
 
             <v-btn
               v-if="location"
-              fab
-              :depressed="show_map"
-              :icon="!show_map"
-              small
-              :title="$t('footer.map')"
-              class="ms-2 map-button hover-scale-small"
               :class="{ expanded: show_map, 'for-native': isNative }"
+              :icon="!show_map"
+              :title="$t('footer.map')"
+              :variant="show_map && 'flat'"
+              class="ms-2 map-button hover-scale-small"
+              fab
+              size="small"
               @click="show_map = !show_map"
             >
-              <v-icon :small="!show_map">
+              <v-icon :size="!show_map && 'small'">
                 {{ show_map ? "arrow_drop_down" : "near_me" }}
               </v-icon>
             </v-btn>
@@ -206,9 +206,9 @@
 
         <v-col
           v-if="phone"
-          md="3"
-          cols="12"
           class="border-end-grater-md px-2"
+          cols="12"
+          md="3"
           style="border-color: #564160 !important"
         >
           <p class="info-title">
@@ -221,7 +221,7 @@
           </p>
         </v-col>
 
-        <v-col v-if="email" md="3" cols="12">
+        <v-col v-if="email" cols="12" md="3">
           <p class="info-title">
             <i class="fas fa-envelope mx-2" />
 
@@ -252,15 +252,15 @@
       <!--- ================= Currency / Language ================= --->
       <div class="mt-6">
         <hr />
-        <v-row no-gutters class="text-start my-2" justify="end">
+        <v-row class="text-start my-2" justify="end" no-gutters>
           <div v-if="shop.currencies && shop.currencies.length > 1" class="p-2">
             <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
             <s-currency-selector
               :shop="shop"
               filled
-              rounded
               flag-mode
               hideDetails
+              rounded
               @change="
                 () => {
                   onChangeUserSelectedCurrency();
@@ -273,10 +273,10 @@
 
           <s-shop-language-selector
             :shop="shop"
-            filled
             class="m-2"
-            rounded
+            filled
             hide-details
+            rounded
           ></s-shop-language-selector>
         </v-row>
       </div>
@@ -284,7 +284,7 @@
       <!--- ================= Bottom ================= --->
 
       <v-row>
-        <v-col cols="12" class="mt-2 px-2">
+        <v-col class="mt-2 px-2" cols="12">
           <p class="pt-3">
             <i class="fas fa-copyright me-1" />
             {{ new Date().getFullYear() }},
@@ -293,21 +293,34 @@
           </p>
 
           <p class="m-0">
-            <router-link class="mx-2" :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_PRIVACY }">
+            <router-link
+              :to="{
+                name: window.$storefront.routes.SHOP_PROFILE_PAGE_PRIVACY,
+              }"
+              class="mx-2"
+            >
               {{ $t("footer.privacy") }}
             </router-link>
 
             |
-            <router-link class="mx-2" :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_TERMS }">
+            <router-link
+              :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_TERMS }"
+              class="mx-2"
+            >
               {{ $t("footer.term_of_use") }}
             </router-link>
 
-            <v-btn class="m-2" outlined small @click.stop="apps_dialog = true">
+            <v-btn
+              class="m-2"
+              size="small"
+              variant="outlined"
+              @click.stop="apps_dialog = true"
+            >
               <v-img
                 :src="require('@components/assets/icons/gdpr-user.svg')"
-                width="20"
-                height="20"
                 contain
+                height="20"
+                width="20"
               ></v-img>
 
               <span class="mx-2">{{ $t("footer.shop_app_setting") }} </span>
@@ -316,19 +329,19 @@
 
           <v-btn
             v-if="show_selldone"
-            text
             :href="SetupService.MainServiceUrl()"
             class="m-2 text-no-transform"
             target="_blank"
+            variant="text"
           >
             <small>{{ $t("footer.powered_by") }}</small>
 
             <svg
-              width="auto"
-              height="23px"
               :class="{ dark: dark }"
               class="ms-1 s--footer-svg"
+              height="23px"
               viewBox="0 0 33.37 13.62"
+              width="auto"
             >
               <g>
                 <path
@@ -531,6 +544,7 @@ export default {
     font-size: 1.3rem;
     font-weight: 400;
   }
+
   p {
     font-size: 0.9rem;
     font-weight: 300;
@@ -557,6 +571,7 @@ export default {
     padding: 0 10px;
     opacity: 0.8;
   }
+
   .info-value {
     text-align: start;
     padding: 0 10px;
@@ -564,6 +579,7 @@ export default {
     font-weight: 500;
     unicode-bidi: plaintext;
   }
+
   .namad {
     margin: 0 auto;
     display: inline-flex;
@@ -613,6 +629,7 @@ export default {
       }
     }
   }
+
   .map-view {
     background-color: #eee;
     border: #ddd solid 8px;
@@ -670,9 +687,11 @@ export default {
       background-color: #1d1621;
       border: #251b2a solid 8px;
     }
+
     .menu-footer {
       .menu-item {
         color: #fff;
+
         &:hover {
           background-color: var(--theme-dark);
         }
@@ -685,6 +704,7 @@ export default {
       fill: #373435;
       fill-rule: nonzero;
     }
+
     .fil0 {
       fill: #70557e;
       fill-rule: nonzero;
@@ -695,6 +715,7 @@ export default {
         fill: #fff;
         fill-rule: nonzero;
       }
+
       .fil0 {
         fill: #fff;
         fill-rule: nonzero;

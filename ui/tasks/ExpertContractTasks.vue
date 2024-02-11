@@ -15,18 +15,18 @@
 <template>
   <draggable
     v-model="list"
-    @start="drag = true"
-    @end="drag = false"
-    @update:modelValue="$emit('update:modelValue', list)"
-    handle=".handle"
-    tag="transition-group"
     :component-data="{
       tag: 'ul',
       type: 'transition-group',
       name: !drag ? 'flip-list' : 'fade',
     }"
-    v-bind="dragOptions"
+    handle=".handle"
     style="list-style-type: none"
+    tag="transition-group"
+    v-bind="dragOptions"
+    @end="drag = false"
+    @start="drag = true"
+    @update:modelValue="$emit('update:modelValue', list)"
   >
     <template v-slot:item="{ element }">
       <li class="list-group-item bg-transparent">
@@ -34,16 +34,16 @@
           v-if="editable"
           v-model="element.title"
           class="task-title"
+          flat
+          hide-details
           placeholder="Task title..."
           single-line
-          flat
           variant="solo"
-          hide-details
         >
           <template v-slot:prepend>
             <v-icon
-              class="handle"
               :style="{ cursor: editable ? 'move' : undefined }"
+              class="handle"
             >
               unfold_more
             </v-icon>
@@ -52,31 +52,31 @@
           <template v-slot:append>
             <v-btn
               icon
+              title="Delete item"
               @click="deleteItem(index)"
               @click.stop
-              title="Delete item"
             >
-              <v-icon color="red"> close </v-icon>
+              <v-icon color="red"> close</v-icon>
             </v-btn>
           </template>
         </v-text-field>
 
-        <p v-else v-text="element.title" class="task-title"></p>
+        <p v-else class="task-title" v-text="element.title"></p>
 
         <v-progress-linear
           v-model="element.progress"
+          :class="{ 'pointer-event-none': viewOnlyProgress }"
+          :reverse="$vuetify.rtl"
+          bg-color="#eee"
+          class="pointer-pointer my-2"
+          color="blue"
+          height="18"
+          rounded
+          striped
           @update:model-value="
             element.progress = Math.round(element.progress);
             $emit('change');
           "
-          height="18"
-          color="blue"
-          rounded
-          striped
-          bg-color="#eee"
-          class="pointer-pointer my-2"
-          :reverse="$vuetify.rtl"
-          :class="{ 'pointer-event-none': viewOnlyProgress }"
         >
         </v-progress-linear>
       </li>
@@ -84,7 +84,7 @@
 
     <template v-slot:footer>
       <div v-if="editable" class="widget-buttons">
-        <v-btn @click="addItem" size="x-large" variant="outlined">
+        <v-btn size="x-large" variant="outlined" @click="addItem">
           <v-icon class="me-1">add</v-icon>
           {{ $t("global.actions.add") }}
         </v-btn>
@@ -135,7 +135,8 @@ export default {
   },
 
   created() {
-    this.list = this.modelValue && Array.isArray(this.modelValue) ? this.modelValue : [];
+    this.list =
+      this.modelValue && Array.isArray(this.modelValue) ? this.modelValue : [];
   },
   methods: {
     deleteItem(index) {
@@ -152,13 +153,15 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .flip-list-move {
   transition: transform 0.5s;
 }
+
 .no-move {
   transition: transform 0s;
 }
+
 .ghost {
   opacity: 0.5;
   background: #c8ebfb;

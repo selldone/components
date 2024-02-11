@@ -19,29 +19,38 @@
       <span class="dashed-flex-space"></span>
     </template>
 
-    <v-btn icon variant="flat" color="#9d9d9d33" :size="30" @click.stop="show_picker = true"  class="mx-auto">
+    <v-btn
+      :size="30"
+      class="mx-auto"
+      color="#9d9d9d33"
+      icon
+      variant="flat"
+      @click.stop="show_picker = true"
+    >
       <v-icon
-        :size="icon === 'lens'? 'large':undefined"
-        :color="(nullable && !modelValue )?'transparent':modelValue"
         :class="{ 'bg-tiny-checkers rounded-circle': !noBg }"
-        >{{ (!modelValue )?'cancel':icon }}</v-icon
-      >
+        :color="nullable && !modelValue ? 'transparent' : modelValue"
+        :size="icon === 'lens' ? 'large' : undefined"
+        >{{ !modelValue ? "cancel" : icon }}
+      </v-icon>
     </v-btn>
 
     <v-btn
       v-if="nullable"
-      icon variant="text" :size="30"
+      :size="30"
+      class="ms-2"
+      icon
+      variant="text"
       @click.stop="
         $emit('update:modelValue', null);
         $emit('change', null);
         $emit('clear');
       "
-      class="ms-2"
     >
       <v-icon>close</v-icon>
     </v-btn>
 
-    <v-dialog v-model="show_picker" max-width="360" :dark="dark" scrollable>
+    <v-dialog v-model="show_picker" :dark="dark" max-width="360" scrollable>
       <v-card v-if="show_picker" :color="color">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1">palette</v-icon>
@@ -50,18 +59,17 @@
 
         <v-card-text>
           <v-color-picker
-            @click.stop
-            :model-value="modelValue ? modelValue : '#FFFFFFFF'"
-            @update:model-value="updateValue"
-            class="mx-auto bg-transparent"
-            show-swatches
             :mode="mode"
+            :model-value="modelValue ? modelValue : '#FFFFFFFF'"
+            class="mx-auto bg-transparent"
             elevation="0"
-
+            show-swatches
+            @click.stop
+            @update:model-value="updateValue"
           />
         </v-card-text>
 
-        <v-card-actions> </v-card-actions>
+        <v-card-actions></v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -95,15 +103,15 @@ export default {
     };
   },
 
-  watch: {
-
-
-  },
+  watch: {},
   created() {
     this.old_val = this.modelValue;
 
     if (!this.modelValue && !this.nullable) {
-      this.$emit("update:modelValue", this.default ? this.default : "#333333FF");
+      this.$emit(
+        "update:modelValue",
+        this.default ? this.default : "#333333FF",
+      );
     }
 
     // Correction of rgb value bug: (Specially in get style color in page builder)
@@ -121,7 +129,7 @@ export default {
       if (this.modelValue.length === 4) {
         val = this.modelValue.replaceAll(
           "#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])",
-          "#$1$1$2$2$3$3"
+          "#$1$1$2$2$3$3",
         );
       } else if (this.modelValue.length === 7) {
         if (this.noAlpha) {
@@ -148,7 +156,7 @@ export default {
 
 function rgb2hex(rgb) {
   rgb = rgb.match(
-    /^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i
+    /^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i,
   );
   return rgb && rgb.length === 4
     ? "#" +
@@ -184,4 +192,4 @@ function rgba2hexa(orig) {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

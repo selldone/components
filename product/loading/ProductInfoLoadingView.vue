@@ -13,43 +13,43 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-container fluid class="vue-content-placeholders">
-    <v-layout row wrap fill-height>
+  <v-container class="vue-content-placeholders" fluid>
+    <v-layout fill-height row wrap>
       <!--  ---------------------------- Images ---------------------------- -->
 
       <v-flex
-        xs12
-        lg5
+        class="image-gallery-root border-end-grater-xl"
         justify-center
-        class="image-gallery-root border-end-grater-xl "
+        lg5
         style="min-height: 580px"
+        xs12
       >
         <!-- swiper1 -->
         <div class="image-sprite" style="height: 80%" />
 
         <!-- swiper2 Thumbs -->
-        <v-container fluid style="height: 20%" p-2>
-          <v-layout row wrap align-center justify-center fill-height>
-            <v-flex xs3 class="image-sprite" />
-            <v-flex xs3 class="image-sprite" />
-            <v-flex xs3 class="image-sprite" />
+        <v-container fluid p-2 style="height: 20%">
+          <v-layout align-center fill-height justify-center row wrap>
+            <v-flex class="image-sprite" xs3 />
+            <v-flex class="image-sprite" xs3 />
+            <v-flex class="image-sprite" xs3 />
           </v-layout>
         </v-container>
       </v-flex>
 
       <!--  ---------------------------- Info ---------------------------- -->
 
-      <v-flex xs12 lg7 class="text-right pr-md-4 pl-md-4 pr-sm-2 pl-sm-2">
+      <v-flex class="text-right pr-md-4 pl-md-4 pr-sm-2 pl-sm-2" lg7 xs12>
         <h1 class="text-right mt-2 pr-2 pl-2 text-sprite big" />
         <p class="text-muted pr-2 pl-2 text-sprite small" />
 
-        <v-btn depressed />
+        <v-btn variant="flat" />
 
         <hr />
-        <v-container fluid class="pt-0 pb-0">
+        <v-container class="pt-0 pb-0" fluid>
           <v-layout row wrap>
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Section 1 ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <v-flex xs12 sm6 md7 lg8>
+            <v-flex lg8 md7 sm6 xs12>
               <p class="pr-2 text-sprite small" />
 
               <p class="pr-2 text-sprite" style="min-height: 1rem" />
@@ -80,7 +80,7 @@
             </v-flex>
 
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Section 2 ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <v-flex xs12 sm6 md5 lg4 class="pr-3 pl-2">
+            <v-flex class="pr-3 pl-2" lg4 md5 sm6 xs12>
               <p class="text-sprite small" />
               <p class="text-sprite small" />
               <p class="text-sprite small" />
@@ -111,13 +111,11 @@ export default {
 
   mounted() {},
 
-
-
-  methods: {}
+  methods: {},
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .image-sprite {
   background-color: #eee;
   border-radius: 8px;
@@ -126,18 +124,23 @@ export default {
   width: calc(100% - 8px);
 
   animation: lds-ripple 3s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+
   &:nth-child(2n) {
     animation-delay: -0.2s;
   }
+
   &:nth-child(2n + 1) {
     animation-delay: -0.5s;
   }
+
   &:nth-child(3n) {
     animation-delay: -0.8s;
   }
+
   &:nth-child(5n) {
     animation-delay: -1s;
   }
+
   &:nth-child(7n) {
     animation-delay: -1.3s;
   }
@@ -153,18 +156,23 @@ export default {
   height: 32px;
 
   animation: lds-ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+
   &:nth-child(2n) {
     animation-delay: -0.2s;
   }
+
   &:nth-child(2n + 1) {
     animation-delay: -0.5s;
   }
+
   &:nth-child(3n) {
     animation-delay: -0.8s;
   }
+
   &:nth-child(5n) {
     animation-delay: -1s;
   }
+
   &:nth-child(7n) {
     animation-delay: -1.3s;
   }

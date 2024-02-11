@@ -16,12 +16,12 @@
   <div class="text-center">
     <s-lottie
       v-if="!cssMode"
-      :options="{ animationData: animation, loop: true }"
       :height="height"
-      width="200px"
+      :options="{ animationData: animation, loop: true }"
       :speed="1"
+      width="200px"
     />
-    <div v-else class="lds-ellipsis" :class="{ light: light }">
+    <div v-else :class="{ light: light }" class="lds-ellipsis">
       <div />
       <div />
       <div />

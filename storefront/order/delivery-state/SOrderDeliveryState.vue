@@ -14,16 +14,16 @@
 
 <template>
   <div class="s--shop-delivery-state container px-1 px-sm-3">
-    <div class="arrows mx-0 mx-sm-2" :class="{ rtl: $vuetify.rtl }">
+    <div :class="{ rtl: $vuetify.rtl }" class="arrows mx-0 mx-sm-2">
       <ul>
         <!-- CheckQueue -->
         <li
           v-if="CheckQueue"
-          :style="item_style"
           :class="{
             gray: delivery_step < getStepIndex('CheckQueue'),
             active: delivery_step === getStepIndex('CheckQueue'),
           }"
+          :style="item_style"
           :title="
             basket.reserved_at
               ? 'Checkout: ' + getFromNowString(basket.reserved_at)
@@ -33,18 +33,18 @@
           <div>
             <v-icon
               v-if="delivery_step > getStepIndex('CheckQueue')"
-              color="#016358"
-              class="mb-1"
               :size="icon_size"
-              >check_circle</v-icon
-            >
+              class="mb-1"
+              color="#016358"
+              >check_circle
+            </v-icon>
             <v-icon
               v-else-if="delivery_step === getStepIndex('CheckQueue')"
-              color="#fff"
-              class="mb-1"
               :size="icon_size"
-              >panorama_fish_eye</v-icon
-            >
+              class="mb-1"
+              color="#fff"
+              >panorama_fish_eye
+            </v-icon>
             <span>
               {{ $t("global.basket_delivery_state.step_1") }}
             </span>
@@ -66,27 +66,27 @@
         <!-- OrderConfirm -->
         <li
           v-if="OrderConfirm"
-          :style="item_style"
           :class="{
             gray: delivery_step < getStepIndex('OrderConfirm'),
             active: delivery_step === getStepIndex('OrderConfirm'),
           }"
+          :style="item_style"
         >
           <div>
             <v-icon
               v-if="delivery_step > getStepIndex('OrderConfirm')"
-              color="#016358"
-              class="mb-1"
               :size="icon_size"
-              >check_circle</v-icon
-            >
+              class="mb-1"
+              color="#016358"
+              >check_circle
+            </v-icon>
             <v-icon
               v-else-if="delivery_step === getStepIndex('OrderConfirm')"
-              color="#fff"
-              class="mb-1"
               :size="icon_size"
-              >panorama_fish_eye</v-icon
-            >
+              class="mb-1"
+              color="#fff"
+              >panorama_fish_eye
+            </v-icon>
 
             <span>
               {{ $t("global.basket_delivery_state.step_2") }}
@@ -97,27 +97,27 @@
         <!-- PreparingOrder -->
         <li
           v-if="PreparingOrder"
-          :style="item_style"
           :class="{
             gray: delivery_step < getStepIndex('PreparingOrder'),
             active: delivery_step === getStepIndex('PreparingOrder'),
           }"
+          :style="item_style"
         >
           <div>
             <v-icon
               v-if="delivery_step > getStepIndex('PreparingOrder')"
-              color="#016358"
-              class="mb-1"
               :size="icon_size"
-              >check_circle</v-icon
-            >
+              class="mb-1"
+              color="#016358"
+              >check_circle
+            </v-icon>
             <v-icon
               v-else-if="delivery_step === getStepIndex('PreparingOrder')"
-              color="#fff"
-              class="mb-1"
               :size="icon_size"
-              >panorama_fish_eye</v-icon
-            >
+              class="mb-1"
+              color="#fff"
+              >panorama_fish_eye
+            </v-icon>
             <span>
               {{ $t("global.basket_delivery_state.step_3") }}
             </span>
@@ -127,28 +127,28 @@
         <!-- SentOrder -->
         <li
           v-if="SentOrder"
-          class="item"
-          :style="item_style"
           :class="{
             gray: delivery_step < getStepIndex('SentOrder'),
             active: delivery_step === getStepIndex('SentOrder'),
           }"
+          :style="item_style"
+          class="item"
         >
           <div>
             <v-icon
               v-if="delivery_step > getStepIndex('SentOrder')"
-              color="#016358"
-              class="mb-1"
               :size="icon_size"
-              >check_circle</v-icon
-            >
+              class="mb-1"
+              color="#016358"
+              >check_circle
+            </v-icon>
             <v-icon
               v-else-if="delivery_step === getStepIndex('SentOrder')"
-              color="#fff"
-              class="mb-1"
               :size="icon_size"
-              >panorama_fish_eye</v-icon
-            >
+              class="mb-1"
+              color="#fff"
+              >panorama_fish_eye
+            </v-icon>
             <span>
               {{ $t("global.basket_delivery_state.step_4") }}
             </span>
@@ -158,35 +158,35 @@
         <!-- ToCustomer -->
         <li
           v-if="ToCustomer"
-          class="item"
-          :style="item_style"
           :class="{
             gray: delivery_step < getStepIndex('ToCustomer'),
             active: delivery_step === getStepIndex('ToCustomer'),
           }"
+          :style="item_style"
           :title="
             basket.delivery_at
               ? 'Delivery: ' + getFromNowString(basket.delivery_at)
               : undefined
           "
+          class="item"
         >
           <div>
             <v-icon
               v-if="delivery_step === getStepIndex('ToCustomer')"
-              color="#fff"
-              class="mb-1"
               :size="icon_size"
-              >done_all</v-icon
-            >
+              class="mb-1"
+              color="#fff"
+              >done_all
+            </v-icon>
             <span>
               {{ $t("global.basket_delivery_state.step_5") }}
             </span>
 
             <!-- end -->
             <small v-if="basket.delivery_at" class="d-block">
-              <v-icon size="x-small" class="mb-1" color="#fff"
-                >where_to_vote</v-icon
-              >
+              <v-icon class="mb-1" color="#fff" size="x-small"
+                >where_to_vote
+              </v-icon>
               {{
                 getLocalTimeString(
                   basket.delivery_at,
@@ -371,7 +371,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -398,6 +398,7 @@ export default {
 
     div {
       position: relative;
+
       small {
         position: absolute;
         bottom: 6px;
@@ -405,6 +406,7 @@ export default {
         right: 4px;
       }
     }
+
     ul {
       display: flex;
       padding: 0;
@@ -418,14 +420,17 @@ export default {
         font-weight: 500;
       }
     }
+
     ul:before,
     ul:after {
       content: "";
       display: table;
     }
+
     ul:after {
       clear: both;
     }
+
     ul li {
       width: 25%;
       float: left;
@@ -435,18 +440,22 @@ export default {
 
       &.gray {
         color: #aaa;
+
         span {
           font-weight: 400;
         }
       }
     }
+
     ul li.active {
       background-image: linear-gradient(90deg, #222, #0c1818);
       color: #fff;
+
       small {
         color: #fff;
       }
     }
+
     ul li div {
       padding: 8px;
       height: 80px;
@@ -457,6 +466,7 @@ export default {
       justify-content: center;
       align-items: center;
     }
+
     ul li.active div:before,
     ul li.active div:after {
       content: "";
@@ -466,12 +476,14 @@ export default {
       border-width: 40px;
       left: 0px;
     }
+
     ul li.active div:after {
       content: "";
       right: -80px;
       left: auto;
       border-color: transparent transparent transparent #0c1818;
     }
+
     ul li.active a {
       padding-left: 30px;
     }
@@ -480,12 +492,14 @@ export default {
       ul li.active {
         background-image: linear-gradient(-90deg, #222, #0c1818);
       }
+
       ul li.active div:before,
       ul li.active div:after {
         border-color: transparent white transparent transparent;
         left: unset;
         right: 0;
       }
+
       ul li.active div:after {
         right: unset;
         left: -80px;

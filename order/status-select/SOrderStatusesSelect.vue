@@ -16,11 +16,11 @@
   <div class="c-container -force-rounded p-2 m-0 d-inline-block w-auto">
     <v-btn-toggle
       v-model="toggle_multiple"
+      class="rounded-group c-widget"
       density="compact"
       mandatory
       multiple
       rounded
-      class="rounded-group c-widget"
       selected-class="blue-flat"
       @update:model-value="
         () => {
@@ -29,7 +29,7 @@
         }
       "
     >
-      <v-btn :value="item.code" v-for="item in list" :key="item.code">
+      <v-btn v-for="item in list" :key="item.code" :value="item.code">
         <v-icon>{{ item.icon }}</v-icon>
         <span class="hide-on-small-600 mx-1">{{ $t(item.title) }}</span>
       </v-btn>

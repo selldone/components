@@ -16,29 +16,25 @@
   <div>
     <s-progress-loading v-if="busy_fetch"></s-progress-loading>
     <v-data-table-server
-      :headers="headers"
-      :items="return_requests"
-      item-key="id"
-      hide-default-footer
-      :items-length="totalItems"
       v-model:options="options"
       v-model:page="page"
-      :sort-by="[{ key: null, order: 'desc' }]"
+      :header-props="{ sortByText: $t('global.commons.sort_by') }"
+      :headers="headers"
+      :items="return_requests"
+      :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('global.commons.waiting_load_data')"
-      :header-props="{ sortByText: $t('global.commons.sort_by') }"
-      class="bg-transparent  min-height-60vh"
-      @click:row="(_, r) => $emit('select', r.item)"
-
-
-      density="compact"
       :row-props="
-      (_data) => {
-        return { class: 'row-hover' };
-      }
-    "
-
-
+        (_data) => {
+          return { class: 'row-hover' };
+        }
+      "
+      :sort-by="[{ key: null, order: 'desc' }]"
+      class="bg-transparent min-height-60vh"
+      density="compact"
+      hide-default-footer
+      item-key="id"
+      @click:row="(_, r) => $emit('select', r.item)"
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
@@ -47,9 +43,9 @@
             :src="
               require('@components/assets/guides/returned-orders-empty.png')
             "
-            width="85%"
             class="m-3 op-0-3"
             style="max-height: 400px; object-fit: contain"
+            width="85%"
           />
           <h2 class="text-h4 font-weight-thin">List of returned orders...</h2>
         </div>
@@ -62,9 +58,9 @@
 
       <template v-slot:item.product_id="{ item }">
         <v-img
-          :src="getProductImage(item.basket_item.product_id)"
           :aspect-ratio="1"
           :height="48"
+          :src="getProductImage(item.basket_item.product_id)"
           :width="48"
           class="rounded ma-2"
         />
@@ -107,8 +103,8 @@
       <template v-slot:item.state="{ item }">
         <p class="m-1">
           <v-icon
-            size="small"
             :color="getReturnRequestStateObject(item.state).color"
+            size="small"
           >
             {{ getReturnRequestStateObject(item.state).icon }}
           </v-icon>
@@ -144,7 +140,7 @@
       </template>
 
       <template v-slot:bottom>
-        <v-pagination v-model="page" rounded :length="pageCount" />
+        <v-pagination v-model="page" :length="pageCount" rounded />
       </template>
     </v-data-table-server>
   </div>
@@ -232,7 +228,7 @@ export default {
     options: {
       handler() {
         const { sortBy, page, itemsPerPage } = this.options;
-        this.fetchData(page, sortBy[0]?.key, sortBy[0]?.order==='desc');
+        this.fetchData(page, sortBy[0]?.key, sortBy[0]?.order === "desc");
       },
       deep: true,
     },
@@ -282,4 +278,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

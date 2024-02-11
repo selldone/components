@@ -15,63 +15,64 @@
 <template>
   <div class="poll">
     <div
-      class="p-item fadeIn"
-      :style="{ 'animation-delay': 100 + i * 75 + 'ms' }"
       v-for="(item, i) in value"
       :key="i"
+      :style="{ 'animation-delay': 100 + i * 75 + 'ms' }"
+      class="p-item fadeIn"
     >
       <v-btn
-        class="bounceIn"
-        :style="{ 'animation-delay': 250 + i * 75 + 'ms' }"
-        :disabled="editable"
         :color="isCheck(item) ? 'blue' : undefined"
+        :disabled="editable"
+        :loading="busy === item"
+        :style="{ 'animation-delay': 250 + i * 75 + 'ms' }"
+        class="bounceIn"
         icon
         @click="isCheck(item) ? undefined : $emit('click:item', item)"
-        :loading="busy === item"
       >
-        <v-icon>{{
-          isCheck(item) ? "circle" : "radio_button_unchecked"
-        }}</v-icon>
+        <v-icon
+          >{{ isCheck(item) ? "circle" : "radio_button_unchecked" }}
+        </v-icon>
       </v-btn>
 
       <div class="p-con px-2">
         <v-text-field
           v-if="editable"
           v-model="item.title"
-          solo
           flat
-          placeholder="Answer here..."
           hide-details
+          placeholder="Answer here..."
+          variant="solo"
         ></v-text-field>
         <div v-else>
           {{ item.title }}
         </div>
 
         <v-progress-linear
-          rounded
-          height="6"
+          :model-value="total ? (100 * item.value) / total : 0"
           color="blue"
-          :value="total ? (100 * item.value) / total : 0"
+          height="6"
+          rounded
         ></v-progress-linear>
       </div>
       <div class="p-val">
-        <v-btn v-if="editable" icon color="red" @click="remove(value, item)"
-          ><v-icon>close</v-icon></v-btn
-        >
-        <span v-else>{{  numeralFormat(item.value ,"0.[0]a") }}</span>
+        <v-btn v-if="editable" color="red" icon @click="remove(value, item)">
+          <v-icon>close</v-icon>
+        </v-btn>
+        <span v-else>{{ numeralFormat(item.value, "0.[0]a") }}</span>
       </div>
     </div>
 
     <div>
       <v-btn
-              v-if="editable"
-              color="success"
-              depressed
-              class="m-2"
-              text
-              @click="addItem"
-      ><v-icon class="me-1">add</v-icon> Add new poll item</v-btn
+        v-if="editable"
+        class="m-2"
+        color="success"
+        variant="text"
+        @click="addItem"
       >
+        <v-icon class="me-1">add</v-icon>
+        Add new poll item
+      </v-btn>
     </div>
   </div>
 </template>
@@ -118,11 +119,12 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .poll {
   display: flex;
   flex-direction: column;
   text-align: start;
+
   .p-item {
     padding: 12px 8px;
     display: flex;
@@ -133,6 +135,7 @@ export default {
       flex-direction: column;
       flex-grow: 1;
       font-size: 1.4rem;
+
       .v-input {
         font-size: 1.4rem;
       }

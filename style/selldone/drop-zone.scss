@@ -52,9 +52,9 @@
   border-radius: 24px;
   text-align: center;
 
-  &.-invalid-file{
+  &.-invalid-file {
     background-color: rgb(194, 14, 14);
-    background: radial-gradient(circle at bottom left,transparent 25%,#e34646 25.5%, #e34646 36%, transparent 37%, transparent 100%),radial-gradient(circle at top right,transparent 34%,#e34646 34.5%, #e34646 45.5%, transparent 46%, transparent 100%);
+    background: radial-gradient(circle at bottom left, transparent 25%, #e34646 25.5%, #e34646 36%, transparent 37%, transparent 100%), radial-gradient(circle at top right, transparent 34%, #e34646 34.5%, #e34646 45.5%, transparent 46%, transparent 100%);
     background-size: 1em 1em;
     background-color: #b03232;
     opacity: 0.9
@@ -92,7 +92,8 @@
   &::before {
     @include rings(3s, 0.5s, 80px, 5px);
   }
-  &.--blue{
+
+  &.--blue {
     --ripple-color: rgba(48, 105, 183, 0.8);
   }
 }
@@ -109,8 +110,6 @@
     transform: scale(1);
   }
 }
-
-
 
 
 /**********************************************

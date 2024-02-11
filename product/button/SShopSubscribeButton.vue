@@ -13,23 +13,23 @@
   -->
 
 <template>
-  <div style="min-height: 56px" class="position-relative">
+  <div class="position-relative" style="min-height: 56px">
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄  🦄 Membership  > Subscribed ▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
     <v-btn
       v-if="membership_subscribed_plan"
-      class="s--shop-subscription-button"
-      min-width="220"
-      color="#000"
-      dark
+      :loading="load_basket"
       :to="{
         name: 'MySubscriptionOrderInfoPage',
         params: { basket_id: membership_subscribed_plan.basket_id },
       }"
+      class="s--shop-subscription-button"
+      color="#000"
+      dark
+      min-width="220"
       @click="load_basket = !load_basket"
-      :loading="load_basket"
     >
-      <v-icon class="me-2"> shopping_bag </v-icon>
+      <v-icon class="me-2"> shopping_bag</v-icon>
       {{ $t("buy_button.manage_subscriptions") }}
       <small class="ms-2">SN-{{ membership_subscribed_plan.basket_id }}</small>
     </v-btn>
@@ -37,19 +37,19 @@
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Subscribe button ▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
     <v-btn
       v-else
+      :class="{ disabled: !selectedSubscriptionPrice }"
+      :loading="busy"
       class="s--shop-subscription-button"
-      rounded
       color="#D32F2F"
-      min-width="220"
       dark
-      @click.stop="showSubscribe"
+      min-width="220"
+      rounded
       v-bind="
         window.ExternalWidget
           ? { href: getProductLink(shop, product.id), target: '' }
           : {}
       "
-      :loading="busy"
-      :class="{ disabled: !selectedSubscriptionPrice }"
+      @click.stop="showSubscribe"
     >
       <v-icon class="me-2">
         {{ !selectedSubscriptionPrice ? "help_outline" : "shopping_cart" }}
@@ -79,23 +79,23 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Shipping ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
           <div v-if="has_shipping" class="widget-box mb-5 mt-5">
             <s-widget-header
-              title="Delivery Address"
               icon="place"
+              title="Delivery Address"
             ></s-widget-header>
-            <v-list-subheader> </v-list-subheader>
+            <v-list-subheader></v-list-subheader>
 
             <div class="mb-4">
               <div v-if="!receiver_info">
                 <div class="widget-buttons">
                   <v-btn
-                    color="#03A9F4"
                     class="-delivery-btn"
+                    color="#03A9F4"
                     dark
                     rounded
-                    x-large
+                    size="x-large"
                     @click="showMapSelect"
                   >
-                    <v-icon small class="me-1 blink-me">lens</v-icon>
+                    <v-icon class="me-1 blink-me" size="small">lens</v-icon>
                     {{ $t("global.commons.select_address") }}
                   </v-btn>
                 </div>
@@ -127,22 +127,22 @@
 
           <div v-if="has_billing" class="widget-box mb-5 mt-5">
             <s-widget-header
-              title="Billing Address"
               icon="receipt"
+              title="Billing Address"
             ></s-widget-header>
-            <v-list-subheader> </v-list-subheader>
+            <v-list-subheader></v-list-subheader>
             <s-shop-billing-address-form
               v-model="billing"
-              :receiver-info="receiver_info"
               :force-show-form="!has_shipping"
+              :receiver-info="receiver_info"
             ></s-shop-billing-address-form>
           </div>
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Plans / Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div class="widget-box mb-5">
-            <s-widget-header title="Payment" icon="payment"></s-widget-header>
-            <v-list-subheader> </v-list-subheader>
+            <s-widget-header icon="payment" title="Payment"></s-widget-header>
+            <v-list-subheader></v-list-subheader>
 
             <s-subscription-price-select
               v-model="selected_price_id"
@@ -153,27 +153,27 @@
             <s-number-input
               v-if="has_count"
               v-model="count"
-              class="extendable strong-field"
-              :placeholder="$t('buy_button.quantity')"
               :label="$t('buy_button.quantity_in_basket')"
-              filled
-              hide-details
-              background-color="#fff"
-              flat
-              clearable
               :min="1"
+              :placeholder="$t('buy_button.quantity')"
+              background-color="#fff"
+              class="extendable strong-field"
+              clearable
+              filled
+              flat
+              hide-details
             >
             </s-number-input>
 
             <div class="widget-buttons">
               <v-btn
-                :color="default_color"
-                dark
-                x-large
-                @click="subscribeNow"
-                :loading="busy_subscribe"
                 :class="{ disabled: !can_subscribe }"
+                :color="default_color"
+                :loading="busy_subscribe"
+                dark
                 height="82"
+                size="x-large"
+                @click="subscribeNow"
               >
                 <div class="flex-grow-1">
                   <div v-if="selected_price">
@@ -194,7 +194,7 @@
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn x-large text @click="dialog = false">
+            <v-btn size="x-large" variant="text" @click="dialog = false">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -212,6 +212,7 @@ import BillingPeriod from "@core/enums/subscription/BillingPeriod";
 import SShopBillingAddressForm from "@components/storefront/order/billing/SShopBillingAddressForm.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
+
 export default {
   name: "SShopSubscribeButton",
   components: {
@@ -350,7 +351,7 @@ export default {
         this.startup_mode_map_dialog,
         this.map_location,
         this.onClickSetLocation,
-        false
+        false,
       );
     },
     onClickSetLocation(info) {
@@ -382,7 +383,7 @@ export default {
               /*Used for in site payment flow & free orders!*/
               (data) => {
                 console.log("🎗️ Subscription > On callback payment!", data);
-              }
+              },
             );
 
             //  this.dialog=false;
@@ -401,7 +402,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

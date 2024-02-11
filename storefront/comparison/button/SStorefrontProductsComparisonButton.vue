@@ -18,18 +18,18 @@
     class="s--storefront-products-comparison-button"
   >
     <radial-progress-bar
-      class="widget-hover s--storefront-products-comparison-circle-progress"
-      :diameter="84"
+      :class="{ 'force-on-top': show, 'is-mobile': isMobile }"
       :completed-steps="products.length"
-      :total-steps="10"
-      start-color="#C2185B"
-      stop-color="#9C27B0"
+      :diameter="84"
       :inner-stroke-color="SaminColorDarkDeep"
       :stroke-width="10"
+      :total-steps="10"
+      class="widget-hover s--storefront-products-comparison-circle-progress"
+      start-color="#C2185B"
+      stop-color="#9C27B0"
       @click="!show ? showDialog() : (show = false)"
-      :class="{ 'force-on-top': show, 'is-mobile': isMobile }"
     >
-      <v-icon dark :size="24">
+      <v-icon :size="24" dark>
         {{ show ? "close" : "search" }}
       </v-icon>
       <p class="m-0 x-small">
@@ -37,7 +37,7 @@
       </p>
     </radial-progress-bar>
 
-    <v-dialog v-model="show" transition="dialog-bottom-transition" fullscreen>
+    <v-dialog v-model="show" fullscreen transition="dialog-bottom-transition">
       <v-card>
         <v-card-title>
           <v-icon class="me-2" color="#111">compare</v-icon>
@@ -139,7 +139,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -148,9 +148,9 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 .s--storefront-products-comparison-button {
-
 }
-.s--storefront-products-comparison-circle-progress{
+
+.s--storefront-products-comparison-circle-progress {
   user-select: none;
   position: fixed;
   bottom: 12px;
@@ -176,6 +176,7 @@ export default {
 
   &.force-on-top {
     z-index: 1000;
+
     &:hover {
       z-index: 1001;
     }

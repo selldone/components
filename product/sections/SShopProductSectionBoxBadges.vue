@@ -13,22 +13,25 @@
   -->
 
 <template>
-  <v-container class="s--shop-product-section-box-badges" :class="{ '-large': large , '-small': vertical}">
+  <v-container
+    :class="{ '-large': large, '-small': vertical }"
+    class="s--shop-product-section-box-badges"
+  >
     <!-- █████████████████████ Badges and Options █████████████████████ -->
 
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Seller Options ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
     <v-row
-        v-if="!custom_badges"
-        align="center"
-        justify="center"
-        class="-badge"
-        :dense="vertical"
+      v-if="!custom_badges"
+      :dense="vertical"
+      align="center"
+      class="-badge"
+      justify="center"
     >
       <div v-if="lead_time_object">
         <img
-            :src="lead_time_object.icon"
-            :title="lead_time_object.title(this, product.lead)"
+          :src="lead_time_object.icon"
+          :title="lead_time_object.title(this, product.lead)"
         />
         <p>
           {{ lead_time_object.title(this, product.lead) }}
@@ -37,12 +40,12 @@
 
       <div v-if="has_return_order">
         <img
-            :title="
+          :title="
             $t('product_info.return_in_days', {
               days: product.return_warranty,
             })
           "
-            src="../../assets/product-badges/return_order.svg"
+          src="../../assets/product-badges/return_order.svg"
         />
         <p>
           {{
@@ -55,8 +58,8 @@
 
       <div v-if="has_support_24h">
         <img
-            :title="$t('product_info.support24h7')"
-            src="../../assets/product-badges/support_24h.svg"
+          :title="$t('product_info.support24h7')"
+          src="../../assets/product-badges/support_24h.svg"
         />
         <p>
           {{ $t("product_info.support24h7") }}
@@ -64,8 +67,8 @@
       </div>
       <div v-if="has_support_normal">
         <img
-            :title="$t('product_info.support_normal')"
-            src="../../assets/product-badges/support_normal.svg"
+          :title="$t('product_info.support_normal')"
+          src="../../assets/product-badges/support_normal.svg"
         />
 
         <p>
@@ -75,8 +78,8 @@
 
       <div v-if="has_original_warranty">
         <img
-            :title="$t('product_info.original_guarantee')"
-            src="../../assets/product-badges/orginal_warranty.svg"
+          :title="$t('product_info.original_guarantee')"
+          src="../../assets/product-badges/orginal_warranty.svg"
         />
 
         <p>
@@ -85,8 +88,8 @@
       </div>
       <div v-if="has_cash_on_delivery">
         <img
-            :title="$t('product_info.cod_payment')"
-            src="../../assets/product-badges/cash_on_delivery.svg"
+          :title="$t('product_info.cod_payment')"
+          src="../../assets/product-badges/cash_on_delivery.svg"
         />
 
         <p>
@@ -96,24 +99,24 @@
     </v-row>
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Custom Badges ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
     <v-row
-        v-else-if="custom_badges.length"
-        align="start"
-        justify="center"
-        class="-badge -custom"
-        :class="{ '-small': vertical }"
-        :dense="vertical"
+      v-else-if="custom_badges.length"
+      :class="{ '-small': vertical }"
+      :dense="vertical"
+      align="start"
+      class="-badge -custom"
+      justify="center"
     >
       <div v-for="badge in custom_badges" :key="badge.id">
         <component
-            :is="badge.link ? 'a' : 'span'"
-            :href="badge.link"
-            target="_blank"
+          :is="badge.link ? 'a' : 'span'"
+          :href="badge.link"
+          target="_blank"
         >
           <img
-              v-if="badge.image"
-              :src="getShopImagePath(badge.image)"
-              :title="badge.title"
-              class="rounded hover-scale"
+            v-if="badge.image"
+            :src="getShopImagePath(badge.image)"
+            :title="badge.title"
+            class="rounded hover-scale"
           />
           <p v-if="badge.title">
             {{ badge.title }}
@@ -126,6 +129,7 @@
 
 <script>
 import { LeadStatus } from "@core/enums/logistic/LeadStatus";
+
 export default {
   name: "SShopProductSectionBoxBadges",
   components: {},
@@ -156,25 +160,25 @@ export default {
   computed: {
     custom_badges: function () {
       if (
-          !this.product.badges ||
-          !Array.isArray(this.product.badges) ||
-          !this.shop.product_badges
+        !this.product.badges ||
+        !Array.isArray(this.product.badges) ||
+        !this.shop.product_badges
       )
         return null;
 
       const out = this.product.badges.map((id) =>
-          this.shop.product_badges.find((b) => b.id === id)
+        this.shop.product_badges.find((b) => b.id === id),
       );
 
       const auto = this.shop.product_badges.filter((badge) => {
         const reg =
-            badge.pattern && badge.pattern !== "*.*" && this.product.spec
-                ? new RegExp(badge.pattern)
-                : null;
+          badge.pattern && badge.pattern !== "*.*" && this.product.spec
+            ? new RegExp(badge.pattern)
+            : null;
         return (
-            !this.product.badges.includes(badge.id) &&
-            (badge.pattern === "*.*" ||
-                (reg && reg.test(JSON.stringify(this.product.spec))))
+          !this.product.badges.includes(badge.id) &&
+          (badge.pattern === "*.*" ||
+            (reg && reg.test(JSON.stringify(this.product.spec))))
         );
       });
       out.push(...auto);
@@ -198,9 +202,9 @@ export default {
     has_cash_on_delivery() {
       if (!this.getShop().gateways) return false;
       return (
-          this.isPhysical &&
-          this.getShop() &&
-          this.getShop().gateways.some((item) => item.cod)
+        this.isPhysical &&
+        this.getShop() &&
+        this.getShop().gateways.some((item) => item.cod)
       );
     },
 
@@ -224,8 +228,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -235,18 +238,18 @@ export default {
  */
 
 .s--shop-product-section-box-badges {
-
   .-badge {
     text-align: center;
+
     div {
       user-select: none;
       flex-grow: 1;
     }
+
     img {
       width: 24px;
       height: 24px;
     }
-
 
     &.-custom {
       img {
@@ -254,6 +257,7 @@ export default {
         width: 42px;
         height: 42px;
       }
+
       p {
         min-height: unset;
       }
@@ -276,11 +280,11 @@ export default {
     }
   }
 
-
   &.-large {
     p {
       font-size: 1rem;
     }
+
     .-badge {
       img {
         width: 48px;
@@ -289,9 +293,5 @@ export default {
       }
     }
   }
-
-
-
-
 }
 </style>

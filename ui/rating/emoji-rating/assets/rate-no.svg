@@ -1,3 +1,54 @@
-
-
-<svg id="svg4593" height="512" viewBox="0 0 16.933333 16.933334" width="512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><clipPath id="clipPath5337"><path id="rect5339" d="m34.774 274.321h35.435v25.702h-35.435z"/></clipPath><clipPath id="clipPath4542"><path id="rect4544" d="m-535.214-48.848h501.574v185.586h-501.574z"/></clipPath><clipPath id="clipPath11017"><path id="rect11019" d="m36.669 153.503h29.654v28.999h-29.654z" transform="rotate(-90)" vector-effect="none"/></clipPath><clipPath id="clipPath11444"><path id="rect11446" d="m-143.933 265.779h28.84v29.104h-28.84z" transform="rotate(-90)" vector-effect="none"/></clipPath><clipPath id="clipPath11781"><rect id="rect11783" height="32.411" rx=".634" transform="rotate(-90)" width="32.941" x="-145.124" y="181.377"/></clipPath><clipPath id="clipPath11499"><path id="rect11501" d="m-551.399-9.261h16.064v16.347h-16.064z" vector-effect="none"/></clipPath><g id="layer1" transform="translate(0 -280.067)"><circle id="path34863" cx="8.467" cy="288.533" fill="#ffc861" r="7.938"/><path id="path35244" d="m58.464844 28.898438c3.097691 21.408908-22.437212 39.125499-41.324219 25.128906-1.459263-.857541-3.263206.405112-2.993805 2.076114 5.159874 3.838446 11.422176 5.884046 17.85318 5.896542 16.568539-.000009 29.999991-13.431461 30-30-.000114-1.702595-.145169-3.402091-.433594-5.080078-1.546492-.90687-3.325528.303669-3.101562 1.978516z" fill="#ffab61" transform="matrix(.265 0 0 .265 0 280.067)" font-variant-ligatures="normal" font-variant-position="normal" font-variant-caps="normal" font-variant-numeric="normal" font-variant-alternates="normal" font-feature-settings="normal" text-indent="0" text-align="start" text-decoration-line="none" text-decoration-style="solid" text-decoration-color="#000000" text-transform="none" text-orientation="mixed" white-space="normal" shape-padding="0" isolation="auto" mix-blend-mode="normal" solid-color="#000000" solid-opacity="1" vector-effect="none"/><path id="path3638" d="m7.7018199 284.71341a1.7197917 1.7197917 0 0 1 -1.7197917 1.71979 1.7197917 1.7197917 0 0 1 -1.7197916-1.71979 1.7197917 1.7197917 0 0 1 1.7197916-1.71979 1.7197917 1.7197917 0 0 1 1.7197917 1.71979z" fill="#d1dcff" vector-effect="none"/><path id="circle3796" d="m6.5277314 283.53932a.54570314.54570314 0 0 1 -.5457031.5457.54570314.54570314 0 0 1 -.5457032-.5457.54570314.54570314 0 0 1 .5457032-.5457.54570314.54570314 0 0 1 .5457031.5457z" fill="#4d4d4d" vector-effect="none"/><path id="path10842" d="m12.671363 284.71341a1.7197917 1.7197917 0 0 1 -1.719792 1.71979 1.7197917 1.7197917 0 0 1 -1.7197916-1.71979 1.7197917 1.7197917 0 0 1 1.7197916-1.71979 1.7197917 1.7197917 0 0 1 1.719792 1.71979z" fill="#d1dcff" vector-effect="none"/><g fill="#4d4d4d"><path id="path10844" d="m11.497274 283.53932a.54570314.54570314 0 0 1 -.545703.5457.54570314.54570314 0 0 1 -.545703-.5457.54570314.54570314 0 0 1 .545703-.5457.54570314.54570314 0 0 1 .545703.5457z" vector-effect="none"/><path id="path10860" d="m8.4656896 287.52344c-.6680653 0-1.3357272.1081-1.9414066.32422a.26460978.26460978 0 1 0 .1777344.49804c1.0817872-.386 2.4475092-.386 3.5292976 0a.26460978.26460978 0 1 0 .177734-.49804c-.6056794-.21612-1.2752944-.32422-1.9433594-.32422z" font-variant-ligatures="normal" font-variant-position="normal" font-variant-caps="normal" font-variant-numeric="normal" font-variant-alternates="normal" font-feature-settings="normal" text-indent="0" text-align="start" text-decoration-line="none" text-decoration-style="solid" text-decoration-color="#000000" text-transform="none" text-orientation="mixed" white-space="normal" shape-padding="0" isolation="auto" mix-blend-mode="normal" solid-color="#000000" solid-opacity="1" vector-effect="none"/></g></g></svg>
+<svg id="svg4593" height="512" viewBox="0 0 16.933333 16.933334" width="512" xmlns="http://www.w3.org/2000/svg"
+>
+    <clipPath id="clipPath5337">
+        <path id="rect5339" d="m34.774 274.321h35.435v25.702h-35.435z"/>
+    </clipPath>
+    <clipPath id="clipPath4542">
+        <path id="rect4544" d="m-535.214-48.848h501.574v185.586h-501.574z"/>
+    </clipPath>
+    <clipPath id="clipPath11017">
+        <path id="rect11019" d="m36.669 153.503h29.654v28.999h-29.654z" transform="rotate(-90)" vector-effect="none"/>
+    </clipPath>
+    <clipPath id="clipPath11444">
+        <path id="rect11446" d="m-143.933 265.779h28.84v29.104h-28.84z" transform="rotate(-90)" vector-effect="none"/>
+    </clipPath>
+    <clipPath id="clipPath11781">
+        <rect id="rect11783" height="32.411" rx=".634" transform="rotate(-90)" width="32.941" x="-145.124" y="181.377"/>
+    </clipPath>
+    <clipPath id="clipPath11499">
+        <path id="rect11501" d="m-551.399-9.261h16.064v16.347h-16.064z" vector-effect="none"/>
+    </clipPath>
+    <g id="layer1" transform="translate(0 -280.067)">
+        <circle id="path34863" cx="8.467" cy="288.533" fill="#ffc861" r="7.938"/>
+        <path id="path35244"
+              d="m58.464844 28.898438c3.097691 21.408908-22.437212 39.125499-41.324219 25.128906-1.459263-.857541-3.263206.405112-2.993805 2.076114 5.159874 3.838446 11.422176 5.884046 17.85318 5.896542 16.568539-.000009 29.999991-13.431461 30-30-.000114-1.702595-.145169-3.402091-.433594-5.080078-1.546492-.90687-3.325528.303669-3.101562 1.978516z"
+              fill="#ffab61" transform="matrix(.265 0 0 .265 0 280.067)" font-variant-ligatures="normal"
+              font-variant-position="normal" font-variant-caps="normal" font-variant-numeric="normal"
+              font-variant-alternates="normal" font-feature-settings="normal" text-indent="0" text-align="start"
+              text-decoration-line="none" text-decoration-style="solid" text-decoration-color="#000000"
+              text-transform="none" text-orientation="mixed" white-space="normal" shape-padding="0" isolation="auto"
+              mix-blend-mode="normal" solid-color="#000000" solid-opacity="1" vector-effect="none"/>
+        <path id="path3638"
+              d="m7.7018199 284.71341a1.7197917 1.7197917 0 0 1 -1.7197917 1.71979 1.7197917 1.7197917 0 0 1 -1.7197916-1.71979 1.7197917 1.7197917 0 0 1 1.7197916-1.71979 1.7197917 1.7197917 0 0 1 1.7197917 1.71979z"
+              fill="#d1dcff" vector-effect="none"/>
+        <path id="circle3796"
+              d="m6.5277314 283.53932a.54570314.54570314 0 0 1 -.5457031.5457.54570314.54570314 0 0 1 -.5457032-.5457.54570314.54570314 0 0 1 .5457032-.5457.54570314.54570314 0 0 1 .5457031.5457z"
+              fill="#4d4d4d" vector-effect="none"/>
+        <path id="path10842"
+              d="m12.671363 284.71341a1.7197917 1.7197917 0 0 1 -1.719792 1.71979 1.7197917 1.7197917 0 0 1 -1.7197916-1.71979 1.7197917 1.7197917 0 0 1 1.7197916-1.71979 1.7197917 1.7197917 0 0 1 1.719792 1.71979z"
+              fill="#d1dcff" vector-effect="none"/>
+        <g fill="#4d4d4d">
+            <path id="path10844"
+                  d="m11.497274 283.53932a.54570314.54570314 0 0 1 -.545703.5457.54570314.54570314 0 0 1 -.545703-.5457.54570314.54570314 0 0 1 .545703-.5457.54570314.54570314 0 0 1 .545703.5457z"
+                  vector-effect="none"/>
+            <path id="path10860"
+                  d="m8.4656896 287.52344c-.6680653 0-1.3357272.1081-1.9414066.32422a.26460978.26460978 0 1 0 .1777344.49804c1.0817872-.386 2.4475092-.386 3.5292976 0a.26460978.26460978 0 1 0 .177734-.49804c-.6056794-.21612-1.2752944-.32422-1.9433594-.32422z"
+                  font-variant-ligatures="normal" font-variant-position="normal" font-variant-caps="normal"
+                  font-variant-numeric="normal" font-variant-alternates="normal" font-feature-settings="normal"
+                  text-indent="0" text-align="start" text-decoration-line="none" text-decoration-style="solid"
+                  text-decoration-color="#000000" text-transform="none" text-orientation="mixed" white-space="normal"
+                  shape-padding="0" isolation="auto" mix-blend-mode="normal" solid-color="#000000" solid-opacity="1"
+                  vector-effect="none"/>
+        </g>
+    </g>
+</svg>

@@ -19,18 +19,18 @@
     <v-fade-transition hide-on-leave>
       <div
         v-if="!local_src"
-        style="width: 240px; height: 240px"
         class="my-2 dashed d-flex align-center justify-center mx-auto"
+        style="width: 240px; height: 240px"
       >
         <v-btn
-          icon
-          tile
           class="m-2"
-          @click="showSelectImage()"
-          x-large
-          depressed
-          width="90%"
           height="90%"
+          icon
+          size="x-large"
+          tile
+          variant="flat"
+          width="90%"
+          @click="showSelectImage()"
         >
           <v-icon>add_a_photo</v-icon>
         </v-btn>
@@ -38,29 +38,30 @@
 
       <div v-else class="my-2">
         <v-img
-          width="240"
-          height="240"
           :src="local_src"
           class="position-relative rounded-18px zoomIn anim-fast mx-auto"
+          height="240"
+          width="240"
         >
           <v-btn
             class="absolute-top-end fadeIn delay_200"
-            depressed
-            @click="clear()"
             fab
-            small
-            ><v-icon>close</v-icon></v-btn
+            size="small"
+            variant="flat"
+            @click="clear()"
           >
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-img>
       </div>
     </v-fade-transition>
 
     <input
-      type="file"
       ref="image_input"
-      hidden="hidden"
-      @change="onSelectImage"
       accept="image/*"
+      hidden="hidden"
+      type="file"
+      @change="onSelectImage"
     />
   </div>
 </template>
@@ -77,27 +78,25 @@ export default {
 
   data() {
     return {
-      local_src:null,
+      local_src: null,
     };
   },
 
-  computed: {
-
-  },
-  watch:{
-    src(src){
-      this.local_src=src
-    }
+  computed: {},
+  watch: {
+    src(src) {
+      this.local_src = src;
+    },
   },
 
   created() {
-    this.local_src=this.src
+    this.local_src = this.src;
   },
   mounted() {},
 
   methods: {
     clear() {
-      this.local_src=null;
+      this.local_src = null;
       this.$emit("input", null);
     },
 
@@ -128,7 +127,7 @@ export default {
         fileReader.addEventListener("load", function () {
           // convert image to base64 encoded string
           // load on success:
-          t.local_src= this.result
+          t.local_src = this.result;
           t.$emit("input", file);
         });
         fileReader.readAsDataURL(file);
@@ -138,4 +137,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

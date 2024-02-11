@@ -16,11 +16,11 @@
   <div class="s--line-chart">
     <apexchart
       v-if="chart_option"
-      dir="ltr"
-      :type="type"
       :height="height"
       :options="chart_option"
       :series="series"
+      :type="type"
+      dir="ltr"
     />
   </div>
 </template>
@@ -141,7 +141,7 @@ export default {
           data: this.timeSeries.arrayOfForceInterpolateZero(
             item,
             true,
-            "created_at"
+            "created_at",
           ),
         });
         i++;
@@ -156,7 +156,7 @@ export default {
           this.timeSeries,
           this.keys,
           this.labelsData,
-          this.colors
+          this.colors,
         );
       }
 

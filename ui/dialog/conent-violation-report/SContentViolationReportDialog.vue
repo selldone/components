@@ -14,17 +14,17 @@
 
 <template>
   <v-bottom-sheet
+    :max-width="840"
     :model-value="value"
+    content-class="rounded-t-xl"
+    scrollable
+    width="98vw"
     @update:model-value="
       (val) => {
         $emit('input', val);
         if (!val) report = null;
       }
     "
-    width="98vw"
-    :max-width="840"
-    scrollable
-    content-class="rounded-t-xl"
   >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>
@@ -35,7 +35,7 @@
             : $t("global.article.report_dialog.report_title")
         }}
         <v-spacer></v-spacer>
-        <v-btn large icon @click="$emit('input', false)">
+        <v-btn icon size="large" @click="$emit('input', false)">
           <v-icon>close</v-icon>
         </v-btn>
       </v-card-title>
@@ -43,48 +43,52 @@
         {{ $t("global.article.report_dialog.message") }}
       </v-card-subtitle>
       <v-card-text class="thin-scroll">
-        <v-radio-group v-model="report" active-class="shadow-paper-small" class="max-widget-width">
+        <v-radio-group
+          v-model="report"
+          active-class="shadow-paper-small"
+          class="max-widget-width"
+        >
           <v-radio
             v-for="(item, key, i) in ArticleReport"
             :key="item.value"
             :label="$t(item.title)"
-            :value="item.value"
-            color="red"
-            class="my-1 border p-3 rounded-18px flipInX"
             :style="{ 'animation-delay': i * 50 + 'ms' }"
+            :value="item.value"
+            class="my-1 border p-3 rounded-18px flipInX"
+            color="red"
           />
         </v-radio-group>
       </v-card-text>
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn text @click="s$emit('value', false)" x-large>
+          <v-btn size="x-large" variant="text" @click="s$emit('value', false)">
             <v-icon class="me-1">close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
 
           <v-btn
             v-if="canDelete"
-            depressed
-            x-large
-            dark
-            color="red"
             :disabled="!report"
-            @click="$emit('delete', report)"
             :loading="loading"
+            color="red"
+            dark
+            size="x-large"
+            variant="flat"
+            @click="$emit('delete', report)"
           >
             <v-icon class="me-1">delete</v-icon>
             {{ $t("global.article.report_dialog.accept_and_delete_action") }}
           </v-btn>
           <v-btn
             v-else
-            depressed
-            dark
-            x-large
-            color="red"
             :disabled="!report"
-            @click="sendReport"
             :loading="loading"
+            color="red"
+            dark
+            size="x-large"
+            variant="flat"
+            @click="sendReport"
           >
             <v-icon class="me-1">check</v-icon>
             {{ $t("global.actions.accept") }}

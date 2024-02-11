@@ -14,50 +14,40 @@
 
 <template>
   <div
-    class="position-relative canvas-container"
     :style="image ? `background-image:url('${image}')` : undefined"
+    class="position-relative canvas-container"
   >
     <v-fade-transition>
       <div v-if="editable && show_menu" class="toolbar-op">
-        <v-btn
-          @click="clearAll"
-
-          variant="outlined"
-          size="small"
-          class="m-1"
-
-          >Clear all</v-btn
-        >
+        <v-btn class="m-1" size="small" variant="outlined" @click="clearAll"
+          >Clear all
+        </v-btn>
         <v-btn
           v-if="selected_rect"
-
-          @click="RemoveSelected"
-          variant="outlined"
-
-          size="small"
           class="m-1"
-          >Remove selected</v-btn
-        >
+          size="small"
+          variant="outlined"
+          @click="RemoveSelected"
+          >Remove selected
+        </v-btn>
 
         <v-btn
-          @click="show_upload = !show_upload"
-
-
-          variant="outlined"
-          size="small"
           class="m-1"
-          >{{ show_upload ? "Back" : "Upload Image" }}</v-btn
-        >
+          size="small"
+          variant="outlined"
+          @click="show_upload = !show_upload"
+          >{{ show_upload ? "Back" : "Upload Image" }}
+        </v-btn>
         <v-slider
-          :model-value="ratio"
-          @update:model-value="(val) => $emit('update:ratio', val)"
-          :step="0.01"
-          :min="0.5"
           :max="2"
+          :min="0.5"
+          :model-value="ratio"
+          :step="0.01"
           class="mt-1"
+          color="#fff"
           density="compact"
           hide-details
-          color="#fff"
+          @update:model-value="(val) => $emit('update:ratio', val)"
         >
           <template v-slot:prepend>
             <span class="small text-nowrap text-white">Aspect ratio: </span>
@@ -66,9 +56,9 @@
           <template v-slot:append>
             <input
               :value="ratio"
-              @input="(val) => $emit('update:ratio', val)"
-              style="width: 48px"
               class="small font-weight-bold text-white"
+              style="width: 48px"
+              @input="(val) => $emit('update:ratio', val)"
             />
           </template>
         </v-slider>
@@ -98,28 +88,31 @@
 
     <v-btn
       v-if="editable"
-      icon variant="text" title="Show/hide setting bar."
-      @click="show_menu = !show_menu"
       class="absolute-top-end z2"
-      ><v-icon>{{ show_menu ? "close" : "settings" }}</v-icon>
+      icon
+      title="Show/hide setting bar."
+      variant="text"
+      @click="show_menu = !show_menu"
+    >
+      <v-icon>{{ show_menu ? "close" : "settings" }}</v-icon>
     </v-btn>
 
     <canvas
       ref="canvas"
-      :width="width"
-      :height="height"
-      class="canvas-style"
       :class="{ dragged: move }"
+      :height="height"
+      :width="width"
+      class="canvas-style"
     ></canvas>
 
     <div v-if="show_upload && editable" class="setting-overlay">
       <s-image-uploader
+        :image="bg_image"
+        :server="uploadUrl"
         class="center-absolute m-3 w-100"
         contenteditable="false"
-        :server="uploadUrl"
-        :image="bg_image"
-        @new-url="(url) => setBg(url)"
         max-file-size="2MB"
+        @new-url="(url) => setBg(url)"
       />
     </div>
 
@@ -130,6 +123,7 @@
 <script>
 import SImageUploader from "@components/uploader/SImageUploader.vue";
 import { ArticleMixin } from "@components/mixin/ArticleMixin";
+
 export default {
   name: "SImageCanvas",
   emits: ["update:image", "update:rects", "update:ratio"],
@@ -223,6 +217,7 @@ export default {
       rect.startY = e.offsetY;
       that.drag = true;
     }
+
     function findRect(x, y) {
       x = x / that.scale;
       y = y / that.scale;
@@ -260,6 +255,7 @@ export default {
 
       drawAll();
     }
+
     function mouseMove(e) {
       if (that.drag) {
         rect.w = e.offsetX - rect.startX;
@@ -403,7 +399,7 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .canvas-style {
   position: relative;
   left: 0;
@@ -429,7 +425,7 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
   //  border: rgb(204, 214, 221) solid 1px;
   overflow: hidden;
   position: relative;
- // box-shadow: 0 0 50px 3px rgba(68, 68, 68, 0.22) !important;
+  // box-shadow: 0 0 50px 3px rgba(68, 68, 68, 0.22) !important;
   transition: all 0.4s;
   margin: auto auto 16px;
 
@@ -473,6 +469,7 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
     left: 0;
     top: 0;
   }
+
   .setting-overlay {
     position: absolute;
     left: 0;

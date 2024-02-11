@@ -13,20 +13,20 @@
   -->
 
 <template>
-  <div class="subtitle-2" :class="{ 'black--text': !dark }">
-    <v-avatar size="20" class="me-1 me-sm-2">
-      <img :src="getUserAvatar(user.id)" :alt="user.name" />
+  <div :class="{ 'black--text': !dark }" class="text-subtitle-2">
+    <v-avatar class="me-1 me-sm-2" size="20">
+      <img :alt="user.name" :src="getUserAvatar(user.id)" />
     </v-avatar>
     <span> {{ user.profile?.name ? user.profile.name : user.name }}</span>
-    <v-icon v-if="user.verified" color="blue" class="mx-1" small
-      >verified</v-icon
-    >
+    <v-icon v-if="user.verified" class="mx-1" color="blue" size="small"
+      >verified
+    </v-icon>
 
     <template v-if="category">
       <v-icon class="mx-0 mx-sm-1">{{ $t("icons.navigate_next") }}</v-icon>
 
-      <v-avatar v-if="category.icon" size="20" class="me-1 me-sm-2" rounded>
-        <img :src="getShopImagePath(category.icon)" :alt="category.category" />
+      <v-avatar v-if="category.icon" class="me-1 me-sm-2" rounded size="20">
+        <img :alt="category.category" :src="getShopImagePath(category.icon)" />
       </v-avatar>
       {{ category.category }}
     </template>
@@ -60,7 +60,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .subtitle-2 {
   @media only screen and (max-width: 500px) {
     font-size: 80% !important;

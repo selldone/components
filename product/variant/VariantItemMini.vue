@@ -14,20 +14,25 @@
 
 <template>
   <v-row
-      no-gutters
-    class="product-variant-card-mini"
     :class="[
       quantity || forceEnable ? '' : 'disabled',
       selected ? 'selected' : '',
       bordered ? '-bordered' : '',
     ]"
-    @click="$emit('select')"
     :style="{ '--theme-dark': activeColor ? activeColor : SaminColorDark }"
+    class="product-variant-card-mini"
+    no-gutters
+    @click="$emit('select')"
   >
-    <div v-if="color" align-center justify-center class="--item pa-1 text-nowrap ">
+    <div
+      v-if="color"
+      align-center
+      class="--item pa-1 text-nowrap"
+      justify-center
+    >
       <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
 
-      <s-color-circle :color="color" class="me-1" :size="16"></s-color-circle>
+      <s-color-circle :color="color" :size="16" class="me-1"></s-color-circle>
 
       <span class="small mx-1">{{ coloName }}</span>
     </div>
@@ -40,8 +45,8 @@
 
         <variant-asset-view
           :shop-id="productVariant.shop_id"
-          :value="volume"
           :size="24"
+          :value="volume"
         ></variant-asset-view>
       </span>
     </div>
@@ -53,8 +58,8 @@
         {{ pack.removeVariantAsset() }}
         <variant-asset-view
           :shop-id="productVariant.shop_id"
-          :value="pack"
           :size="24"
+          :value="pack"
         ></variant-asset-view>
         <span class="text-muted">x</span>
       </span>
@@ -69,8 +74,8 @@
         {{ weight.removeVariantAsset() }}
         <variant-asset-view
           :shop-id="productVariant.shop_id"
-          :value="weight"
           :size="24"
+          :value="weight"
         ></variant-asset-view>
       </span>
     </div>
@@ -82,8 +87,8 @@
         {{ style.removeVariantAsset() }}
         <variant-asset-view
           :shop-id="productVariant.shop_id"
-          :value="style"
           :size="24"
+          :value="style"
         ></variant-asset-view>
       </span>
     </div>
@@ -96,17 +101,17 @@
         {{ type.removeVariantAsset() }}
         <variant-asset-view
           :shop-id="productVariant.shop_id"
-          :value="type"
           :size="24"
+          :value="type"
         ></variant-asset-view>
       </span>
     </div>
 
     <div v-if="has_ar" class="--item text-nowrap me-5 ms-2">
       <v-img
+        :src="require('@components/assets/icons/3d.svg')"
         height="20"
         width="20"
-        :src="require('@components/assets/icons/3d.svg')"
       ></v-img>
     </div>
   </v-row>
@@ -182,7 +187,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .product-variant-card-mini {
   //background: #fafafa;
   padding: 3px;

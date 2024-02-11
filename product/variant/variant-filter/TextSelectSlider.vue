@@ -14,14 +14,14 @@
 
 <template>
   <v-flex
-    d-flex
-    align-center
-    justify-center
-    class="slider-container pointer-pointer"
     :class="selected ? 'active' : ''"
+    align-center
+    class="slider-container pointer-pointer"
+    d-flex
+    justify-center
     @click="toggle()"
   >
-    <v-icon color="#fff" class="ms-1" small>
+    <v-icon class="ms-1" color="#fff" size="small">
       {{ icon }}
     </v-icon>
 
@@ -42,7 +42,7 @@
         @click="select(null)"
         @click.stop
       >
-         {{$t('global.commons.all')}}
+        {{ $t("global.commons.all") }}
       </span>
     </span>
     <span v-else class="card-badge-info" dir="auto">
@@ -57,34 +57,34 @@ export default {
   props: {
     icon: {
       required: false,
-      type: String
+      type: String,
     },
     list: {
       required: true,
-      type: Array
+      type: Array,
     },
     value: {
       required: false,
-      default: null
+      default: null,
     },
 
     close: {
       required: false,
-      default: true
+      default: true,
     },
 
     title: {
       required: false,
       type: String,
-      default: "همه"
-    }
+      default: "همه",
+    },
   },
 
   data() {
     return {
       show: false,
 
-      selected: null
+      selected: null,
     };
   },
   watch: {
@@ -93,7 +93,7 @@ export default {
     },
     close() {
       this.show = !this.close;
-    }
+    },
   },
   created() {
     this.selected = this.value;
@@ -110,12 +110,12 @@ export default {
       this.selected = item;
       this.$emit("select", item);
       this.show = null;
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .slider-container {
   user-select: none;
 

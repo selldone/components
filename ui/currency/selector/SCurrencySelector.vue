@@ -16,9 +16,9 @@
   <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Icon Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
   <div v-if="iconOnly" class="inline-block">
     <s-circle-button
-      dense
       :color="iconColor"
       :tooltip="selectedCurrency"
+      dense
       @click="dialog = true"
     >
       <template v-slot:default>
@@ -43,10 +43,10 @@
         <v-card-text class="text-start">
           <v-row class="border-between-vertical my-8 max-widget-width mx-auto">
             <v-col
-              cols="12"
               v-for="currency in currencies"
               :key="currency.code"
               class="pp row-hover"
+              cols="12"
               @click="
                 (selectedCurrency = currency.code),
                   selectCurrency(currency.code);
@@ -57,8 +57,8 @@
 
               <span style="min-width: 64px"
                 ><s-currency-icon
-                  :currency="currency"
                   :caption="false"
+                  :currency="currency"
                   class="me-2"
                 ></s-currency-icon
               ></span>
@@ -76,15 +76,21 @@
   <v-autocomplete
     v-else
     v-model="selectedCurrency"
+    :bg-color="backgroundColor"
+    :class="{ '-small': small }"
+    :color="color"
+    :density="dense ? 'compact' : 'default'"
+    :flat="flat"
+    :hide-details="hideDetails"
     :items="currencies"
     :label="$t('global.currency_selector.label')"
-    :hide-details="hideDetails"
-    :rounded="rounded"
-    :style="{ 'max-width': maxWidth, 'min-width': minWidth }"
-    @update:model-value="selectCurrency"
-    item-value="code"
-    item-title="code"
+    :loading="loading"
+    :menu-props="{ minWidth: '200px' }"
+    :multiple="false"
     :return-object="false"
+    :rounded="rounded"
+    :single-line="singleLine"
+    :style="{ 'max-width': maxWidth, 'min-width': minWidth }"
     :theme="dark ? 'dark' : 'light'"
     :variant="
       variant
@@ -97,19 +103,13 @@
               ? 'outlined'
               : undefined
     "
-    :density="dense ? 'compact' : 'default'"
-    :bg-color="backgroundColor"
-    :single-line="singleLine"
-    :loading="loading"
-    :multiple="false"
-    :flat="flat"
-    :color="color"
-    :class="{ '-small': small }"
-    :menu-props="{ minWidth: '200px' }"
     class="s--currency-selector"
+    item-title="code"
+    item-value="code"
+    @update:model-value="selectCurrency"
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" :title="$t(item.raw.name)">
+      <v-list-item :title="$t(item.raw.name)" v-bind="props">
         <template v-slot:prepend>
           <s-currency-icon
             :currency="item.raw"
@@ -121,16 +121,16 @@
         <template v-slot:append>
           <flag
             v-if="item.raw.flag"
-            class="ms-2"
             :iso="item.raw.flag"
             :squared="false"
+            class="ms-2"
           />
           <img
             v-else-if="item.raw.icon"
-            class="ms-2"
             :src="item.raw.icon"
-            width="20"
+            class="ms-2"
             height="20"
+            width="20"
           />
         </template>
       </v-list-item>
@@ -138,10 +138,10 @@
 
     <template v-slot:selection="{ item }">
       <s-currency-icon
-        small
         :currency="item.raw"
         :flag="flag || flagMode"
         :flag-only="flagMode"
+        small
       />
 
       <span v-if="!icon" class="ms-3">{{ $t(item.raw.name) }}</span>

@@ -15,14 +15,14 @@
 <template>
   <v-snackbar
     v-model="new_version"
-    multi-line
-    :vertical="$vuetify.display.smAndDown"
     :timeout="60000"
+    :vertical="$vuetify.display.smAndDown"
+    multi-line
     @click="new_version = false"
   >
     {{ $t("global.notification.new_pwa_version") }}
 
-    <v-btn color="green" text @click.stop="refreshMe" :loading="busy">
+    <v-btn :loading="busy" color="green" variant="text" @click.stop="refreshMe">
       <v-icon class="me-1">get_app</v-icon>
       {{ $t("global.actions.update") }}
     </v-btn>
@@ -71,7 +71,7 @@ export default {
                 console.style(
                   '<b="font-size:14px;">--- New Version ---</b> <b="color:blue;"> ☄ ' +
                     data.version +
-                    "</i>"
+                    "</i>",
                 );
                 if (callback_update) callback_update(true);
               } else {

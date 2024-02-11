@@ -16,17 +16,17 @@
   <div>
     <!-- ――――――――――――――――――――――― Article ――――――――――――――――――――――― -->
     <div
-      class="s--article-editor-container"
-      :class="{ 'for-rtl': isRTL }"
       :id="MASTER_ID"
+      :class="{ 'for-rtl': isRTL }"
+      class="s--article-editor-container"
     >
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ ✎ Edit mode ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
       <div
         v-if="!onlyView"
         v-show="edit"
-        class="px-2"
         :class="{ 'position-relative': show_drop }"
+        class="px-2"
         @dragover="dragover"
       >
         <div>
@@ -34,11 +34,11 @@
             v-if="enableTitle"
             :id="EDITABLE_TITLE_ID"
             ref="editable_title"
-            style="user-select: text; min-height: 84px"
-            class="h1 fw-semi-bold"
             :data-placeholder="$t('global.article.editor.title_placeholder')"
-            v-text="title"
+            class="h1 fw-semi-bold"
+            style="user-select: text; min-height: 84px"
             @edit="processEditOperationTitle"
+            v-text="title"
           />
         </div>
 
@@ -47,11 +47,11 @@
             v-if="enableBody"
             :id="EDITABLE_BODY_ID"
             ref="editable_body"
-            style="user-select: text; min-height: 284px"
-            class="can-edit-medium-insert"
             :data-placeholder="$t('global.article.editor.body_placeholder')"
-            v-html="rendered_body"
+            class="can-edit-medium-insert"
+            style="user-select: text; min-height: 284px"
             @edit="processEditOperationBody"
+            v-html="rendered_body"
           />
         </div>
 
@@ -65,16 +65,16 @@
         >
           <div class="center-absolute p-3">
             <div>
-              <v-icon size="64" color="#fff" class="m-2"
+              <v-icon class="m-2" color="#fff" size="64"
                 >fa:fas fa-file-word
               </v-icon>
             </div>
             <b>Drop Word file here!</b>
             <div>
               Supported formats:
-              <v-chip size="small" color="amber" class="m-1">.docx</v-chip>
+              <v-chip class="m-1" color="amber" size="small">.docx</v-chip>
               ,
-              <v-chip size="small" color="amber" class="m-1">.odt</v-chip>
+              <v-chip class="m-1" color="amber" size="small">.odt</v-chip>
             </div>
           </div>
         </div>
@@ -85,9 +85,9 @@
       <div v-show="!edit" class="review-style px-2">
         <div
           v-if="enableTitle"
-          :class="{ 'd-none': hideTitle }"
           :id="REVIEW_TITLE_ID"
           ref="review_title"
+          :class="{ 'd-none': hideTitle }"
           class="h1 fw-semi-bold"
           style="user-select: text"
           v-html="title"
@@ -98,8 +98,8 @@
         <!----------------------- Help Headlines ------------------------>
         <s-article-table-of-contents
           v-if="hasTableOfContent && show_table_of_content && $refs.review_body"
-          :target="$refs.review_body"
           :html="rendered_body_view"
+          :target="$refs.review_body"
         ></s-article-table-of-contents>
 
         <div
@@ -131,11 +131,11 @@
 
     <!-- ――――――――――――――――――――――― 💡 Select word file (docx) ――――――――――――――――――――――― -->
     <input
-      type="file"
       ref="file_input"
-      hidden="hidden"
-      @change="onSelectWordFile"
       accept=".docx"
+      hidden="hidden"
+      type="file"
+      @change="onSelectWordFile"
     />
   </div>
 </template>
@@ -602,8 +602,8 @@ export default defineComponent({
           this.showFullscreen,
           // Deprecated:
           /* function () {
-                        $(this).toggleClass("fullscreen");
-                      }*/
+                          $(this).toggleClass("fullscreen");
+                        }*/
         );
       }, 1000);
     },

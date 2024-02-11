@@ -13,21 +13,21 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-tooltip location="bottom" :max-width="480" color="#000">
+  <v-tooltip :max-width="480" color="#000" location="bottom">
     <template v-slot:activator="{ props }">
       <v-btn
-        color="primary"
         class="margin-n7px hover-alpha"
-        v-bind="props"
+        color="primary"
         icon
-        @click="$emit('click')"
+        size="36"
+        v-bind="props"
         variant="plain"
-size="36"
+        @click="$emit('click')"
       >
-        <v-icon color="#000"> {{icon}} </v-icon>
+        <v-icon color="#000"> {{ icon }}</v-icon>
       </v-btn>
     </template>
-    <div v-html="message" class="text-start"></div>
+    <div class="text-start" v-html="message"></div>
   </v-tooltip>
 </template>
 
@@ -40,12 +40,12 @@ export default {
   emits: ["click"],
   props: {
     message: {},
-    icon:{default:'help'}
+    icon: { default: "help" },
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -54,12 +54,12 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-
 .hover-alpha {
   opacity: 0.4;
   transition: all 0.3s;
   -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
   filter: grayscale(100%);
+
   &:hover {
     opacity: 1;
     -webkit-filter: grayscale(0%); /* Safari 6.0 - 9.0 */

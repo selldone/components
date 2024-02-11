@@ -25,12 +25,10 @@ import "@core/utils/console/ConsoleStyle";
 
 import "@components/style/components.scss";
 
-
-
 //――― SVG Filters (Css filters add elements) ―――
 import { SvgFilters } from "@core/helper/style/SvgFilters";
-SvgFilters.Install();
 
+SvgFilters.Install();
 
 //█████████████████████████████████████████████████████████████
 //――――――――――― Selldone ® Business OS™ ―――――――――――
@@ -38,6 +36,7 @@ SvgFilters.Install();
 
 // ━━━ Selldone Core (gapi,...) ━━━
 import { SelldoneCore } from "@core/SelldoneCore";
+
 SelldoneCore.Setup();
 
 console.log(
@@ -78,14 +77,13 @@ window.SERACH_THROTTLE = 1500; //ms; //TODO: Should remove!
 
 // Initial global language object:
 import { Language } from "@core/enums/language/Language";
+
 window.$language = Language.en;
 
 //█████████████████████████████████████████████████████████████
 //――――――――――――――――― Mixin ―――――――――――――――――
 //█████████████████████████████████████████████████████████████
 import CoreMixin from "./mixin/CoreMixin";
-
-
 
 //█████████████████████████████████████████████████████████████
 //――――――――――――――――― JQuery ――――――――――――――――
@@ -112,8 +110,8 @@ import { SEO } from "@core/helper/seo/SEO";
 //█████████████████████████████████████████████████████████████
 import type { ILanguage } from "@core/enums/language/Language";
 import { App } from "vue";
-import {installGlobalComponents} from "@components/components-mandetory";
-import {installGlobalDirectives} from "@components/directives-mandetory";
+import { installGlobalComponents } from "@components/components-mandetory";
+import { installGlobalDirectives } from "@components/directives-mandetory";
 
 declare global {
   interface Window {
@@ -161,15 +159,12 @@ export function createComponents(options: {
   const { components = {}, directives = {} } = options;
 
   const install = (app: App) => {
-
     app.mixin(CoreMixin);
-
 
     app.config.globalProperties.$SEO = SEO; // 🌴 Global object in vue components
 
-    installGlobalComponents(app)
-    installGlobalDirectives(app)
-
+    installGlobalComponents(app);
+    installGlobalDirectives(app);
 
     for (const key in directives) {
       app.directive(key, directives[key]);

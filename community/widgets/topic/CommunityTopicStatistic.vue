@@ -15,16 +15,18 @@
 <template>
   <div>
     <community-statistic-view
-      :title="$t('community.topic.statistics')"
       v-if="timeSeries && topic"
       :community="community"
       :timeSeries="timeSeries"
-      is-topic
+      :title="$t('community.topic.statistics')"
       :topic="topic"
       class="fadeIn"
+      is-topic
     ></community-statistic-view>
 
-    <community-statistic-view-skeleton v-else></community-statistic-view-skeleton>
+    <community-statistic-view-skeleton
+      v-else
+    ></community-statistic-view-skeleton>
 
     <div style="height: 5vh"></div>
   </div>
@@ -34,9 +36,10 @@
 import CommunityStatisticView from "../statistics/CommunityStatisticView.vue";
 import { TimeSeries } from "@core/timeserie/TimeSeries";
 import CommunityStatisticViewSkeleton from "../statistics/CommunityStatisticViewSkeleton.vue";
+
 export default {
   name: "CommunityTopicStatistic",
-  components: {CommunityStatisticViewSkeleton, CommunityStatisticView },
+  components: { CommunityStatisticViewSkeleton, CommunityStatisticView },
   props: {
     community: {
       required: true,
@@ -79,16 +82,13 @@ export default {
 
       axios
         .get(
-          window.CAPI.GET_COMMUNITY_TOPIC_DATA(
-            this.community.id,
-            this.topicId
-          ),{
-            params:{
-              offset:this.offset,
-              days:this.days,
-
-            }
-                }
+          window.CAPI.GET_COMMUNITY_TOPIC_DATA(this.community.id, this.topicId),
+          {
+            params: {
+              offset: this.offset,
+              days: this.days,
+            },
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -104,7 +104,7 @@ export default {
               data.data,
               "Topic Data",
               this.offset,
-              this.days
+              this.days,
             );
 
           // Register fetch callback (Use to refresh by change time span)

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-row no-gutters align="center" justify="space-around" class="flex-grow-0">
+  <v-row align="center" class="flex-grow-0" justify="space-around" no-gutters>
     <div
       v-if="!window.ExternalWidget"
       class="btn-fav border d-flex align-center"
@@ -21,18 +21,18 @@
       <v-btn
         v-if="!existInComparisonList"
         :disabled="productsCountInComparisonList >= 10"
-        @click="addToProductComparison(product, currentVariant)"
-        tile
-        text
-        large
         class="pe-2"
+        size="large"
+        tile
+        variant="text"
+        @click="addToProductComparison(product, currentVariant)"
       >
         <v-icon class="me-1">add</v-icon>
 
         <div
-          style="max-width: 20vw"
-          class="single-line overflow-hidden d-block"
           :class="{ small: $vuetify.display.xsOnly }"
+          class="single-line overflow-hidden d-block"
+          style="max-width: 20vw"
         >
           {{
             productsCountInComparisonList >= 10
@@ -43,27 +43,27 @@
       </v-btn>
       <v-btn
         v-else
-        text
-        tile
-        large
-        color="success"
         class="pe-2"
+        color="success"
+        size="large"
+        tile
+        variant="text"
         @click="removeFromProductComparison(product, currentVariant)"
       >
-        <v-icon size="10" class="blink-me me-1">lens</v-icon>
+        <v-icon class="blink-me me-1" size="10">lens</v-icon>
         {{ $t("product_info.compare_be_in_list") }}
       </v-btn>
 
-      <v-divider vertical class="m-0"></v-divider>
+      <v-divider class="m-0" vertical></v-divider>
       <v-btn
-        icon
-        tile
         :color="inWishlist ? 'red' : '#444'"
-        large
-        min-width="54px"
-        @click.stop="toggleWishlist"
         :loading="wishlist_busy"
         :title="inWishlist ? 'In my list' : 'Add to favorites'"
+        icon
+        min-width="54px"
+        size="large"
+        tile
+        @click.stop="toggleWishlist"
       >
         <v-icon>{{ inWishlist ? "favorite" : "favorite_border" }}</v-icon>
       </v-btn>
@@ -71,10 +71,10 @@
       <!-- 🞇 Direct Ask (WhatsApp,...) -->
       <s-storefront-social-buttons
         :shop="shop"
-        product-only
-        tile
         large
         min-width="54px"
+        product-only
+        tile
       >
       </s-storefront-social-buttons>
     </div>
@@ -85,11 +85,11 @@
 
     <a
       v-if="product.blog"
-      class="elastic-button m-2"
       :href="product.blog"
-      target="_blank"
-      rel="nofollow"
+      class="elastic-button m-2"
       dir="ltr"
+      rel="nofollow"
+      target="_blank"
     >
       <div class="circle">
         <span class="icon arrow"></span>
@@ -103,6 +103,7 @@
 
 <script>
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
+
 export default {
   name: "ProductSectionBoxExtraButtons",
   components: { SStorefrontSocialButtons },
@@ -163,7 +164,7 @@ export default {
       if (!this.inWishlist) {
         axios
           .put(
-            window.XAPI.PUT_WISHLIST_PRODUCT(this.shop_name, this.product.id)
+            window.XAPI.PUT_WISHLIST_PRODUCT(this.shop_name, this.product.id),
           )
           .then(({ data }) => {
             if (!data.error) {
@@ -181,7 +182,10 @@ export default {
       } else {
         axios
           .delete(
-            window.XAPI.DELETE_WISHLIST_PRODUCT(this.shop_name, this.product.id)
+            window.XAPI.DELETE_WISHLIST_PRODUCT(
+              this.shop_name,
+              this.product.id,
+            ),
           )
           .then(({ data }) => {
             if (!data.error) {
@@ -202,7 +206,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .btn-fav {
   display: flex;
   // box-shadow: 0px 8px 20px 10px rgba(0, 0, 0, 0.2);

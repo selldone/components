@@ -14,7 +14,6 @@
 
 <template>
   <div
-    class="widget shadow my-3 mx-0 mx-md-3 border-top overflow-hidden pb-0"
     :class="{
       'border-warning': isRequireAction,
       'border-danger': isCanceled,
@@ -23,6 +22,7 @@
       'border-lime': isCOD,
       'border-purple': isSucceeded && isTestPayment,
     }"
+    class="widget shadow my-3 mx-0 mx-md-3 border-top overflow-hidden pb-0"
   >
     <h2 class="d-flex align-center">
       <v-icon class="me-1" color="#111">payment</v-icon>
@@ -33,9 +33,12 @@
     </h2>
 
     <v-list-subheader v-if="payment" class="px-0">
-      <v-icon x-small :color="payment.livemode ? 'green' : 'amber'" class="me-1"
-        >fa:fas fa-circle</v-icon
-      >
+      <v-icon
+        :color="payment.livemode ? 'green' : 'amber'"
+        class="me-1"
+        size="x-small"
+        >fa:fas fa-circle
+      </v-icon>
       {{
         payment.livemode ? $t("global.status.live") : $t("global.status.test")
       }}
@@ -44,36 +47,41 @@
     <!-- Step 1 : بررسی پرداخت -->
     <div class="text-start">
       <p>
-        <span class="h3" :class="{ 'text-muted': !isPayed }">
+        <span :class="{ 'text-muted': !isPayed }" class="h3">
           {{ FormatNumberCurrency(order.price, order.currency) }}
           <span class="small">
             {{ GetUserSelectedCurrencyName(order.currency) }}</span
           >
         </span>
 
-        <v-chip v-if="isRequireAction" color="warning" small class="mx-2">
-          <v-icon small left> warning </v-icon>
+        <v-chip
+          v-if="isRequireAction"
+          class="mx-2"
+          color="warning"
+          size="small"
+        >
+          <v-icon size="small" start> warning</v-icon>
           {{ $t("global.transaction_status.RequireAction") }}
         </v-chip>
 
-        <v-chip v-if="isProcessing" color="blue" dark small class="mx-2">
-          <v-icon small left> loop </v-icon>
+        <v-chip v-if="isProcessing" class="mx-2" color="blue" dark size="small">
+          <v-icon size="small" start> loop</v-icon>
           {{ $t("global.transaction_status.Processing") }}
         </v-chip>
 
-        <v-chip v-if="isCanceled" color="red" dark small class="mx-2">
-          <v-icon small left> close </v-icon>
+        <v-chip v-if="isCanceled" class="mx-2" color="red" dark size="small">
+          <v-icon size="small" start> close</v-icon>
           {{ $t("global.transaction_status.Canceled") }}
         </v-chip>
 
         <v-chip
           v-if="isSucceeded"
           :color="isTestPayment ? '#9C27B0' : 'success'"
-          dark
-          small
           class="mx-2"
+          dark
+          size="small"
         >
-          <v-icon small left> check </v-icon>
+          <v-icon size="small" start> check</v-icon>
           {{ $t("global.transaction_status.Succeeded") }}
 
           <span v-if="isTestPayment" class="ms-2"
@@ -83,12 +91,12 @@
 
         <v-chip
           v-if="order.subscription_id"
+          class="mx-2"
           color="#C2185B"
           dark
-          small
-          class="mx-2"
+          size="small"
         >
-          <v-icon small left> shopping_bag </v-icon>
+          <v-icon size="small" start> shopping_bag</v-icon>
 
           By Subscription
         </v-chip>
@@ -96,13 +104,13 @@
     </div>
 
     <div
-      class="mt-5 overflow-hidden"
       :class="{
         'mx-n5': $vuetify.display.smAndDown,
         'rounded-xl mb-4 border': !$vuetify.display.smAndDown,
       }"
+      class="mt-5 overflow-hidden"
     >
-      <v-simple-table>
+      <v-table>
         <template v-slot:default>
           <thead>
             <tr>
@@ -123,10 +131,10 @@
             <tr class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/baskets.svg"
+                  width="24"
                 />
                 {{ $t("order_page.payment.total_price") }}
               </td>
@@ -148,10 +156,10 @@
             <tr v-if="items_discount" class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/product-discount-outline.svg"
+                  width="24"
                 />
                 {{ $t("order_page.payment.total_items_discount") }}
               </td>
@@ -169,10 +177,10 @@
             <tr v-if="total_offers" class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/offer-outline.svg"
+                  width="24"
                 />
                 {{ $t("global.commons.offer") }}
               </td>
@@ -191,7 +199,7 @@
                   color="blue"
                   dark
                 >
-                  <v-avatar left>
+                  <v-avatar start>
                     <img
                       :src="getProductImage(item.product_id, IMAGE_SIZE_SMALL)"
                     />
@@ -206,13 +214,13 @@
             </tr>
             <!------------ Discount Code ------------>
 
-            <tr class="text-start" v-if="order.discount_order">
+            <tr v-if="order.discount_order" class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/discount-code-outline.svg"
+                  width="24"
                 />
                 {{ $t("order_page.payment.discount_code") }}
               </td>
@@ -234,13 +242,13 @@
             </tr>
 
             <!------------ Coupon ------------>
-            <tr class="text-start" v-if="order.coupon_order">
+            <tr v-if="order.coupon_order" class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/coupon-outline.svg"
+                  width="24"
                 />
                 {{ $t("global.commons.coupon") }}
               </td>
@@ -261,13 +269,13 @@
             </tr>
 
             <!------------ Customer Club ------------>
-            <tr class="text-start" v-if="order.club_order && club">
+            <tr v-if="order.club_order && club" class="text-start">
               <td>
                 <img
                   :src="club.icon_outline"
+                  class="mx-2"
                   height="24"
                   width="24"
-                  class="mx-2"
                 />
 
                 {{ $t("global.commons.customer_club") }}
@@ -290,13 +298,13 @@
             </tr>
 
             <!------------ Lottery ------------>
-            <tr class="text-start" v-if="order.lottery_order">
+            <tr v-if="order.lottery_order" class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/lottery-outline.svg"
+                  width="24"
                 />
                 {{ $t("global.commons.prize") }}
               </td>
@@ -308,8 +316,8 @@
               </td>
               <td
                 v-else-if="order.lottery_order.product"
-                class="text-center"
                 :title="order.lottery_order.product.title"
+                class="text-center"
               >
                 <div class="d-flex align-center">
                   <router-link
@@ -343,13 +351,13 @@
             </tr>
 
             <!------------ Cross Selling ------------>
-            <tr class="text-start" v-if="total_cross_sells_discount">
+            <tr v-if="total_cross_sells_discount" class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/cross-sell-outline.svg"
+                  width="24"
                 />
                 {{ $t("global.commons.extra_discount") }}
               </td>
@@ -368,10 +376,10 @@
             <tr v-if="isPhysical && delivery_info" class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/shipping-outline.svg"
+                  width="24"
                 />
                 {{ $t("order_page.payment.delivery_fee") }}
               </td>
@@ -394,10 +402,10 @@
             <tr v-if="order.tax" class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/tax-outline.svg"
+                  width="24"
                 />
                 {{ $t("global.commons.tax") }}
               </td>
@@ -419,10 +427,10 @@
             <tr v-if="order.tax_shipping" class="text-start">
               <td>
                 <img
-                  height="24"
-                  width="24"
                   class="mx-2"
+                  height="24"
                   src="../../../assets/icons/shipping-tax-outline.svg"
+                  width="24"
                 />
                 {{ $t("global.commons.tax_shipping") }}
               </td>
@@ -447,17 +455,16 @@
 
             <template v-for="(bill, index) in bills" :key="'bl-' + index">
               <tr
-
                 :class="{
                   'border-start-blue': bill.status === BillStatus.PENDING.code,
                   'border-start-green no-border-bottom-tr':
                     bill.status === BillStatus.PAYED.code,
                   'border-start-red': bill.status === BillStatus.CANCELED.code,
                 }"
+                class="row-hover"
                 @click="
                   expanded_bill = expanded_bill === bill.id ? null : bill.id
                 "
-                class="row-hover"
               >
                 <td>
                   <div class="text-start py-1 d-flex align-center">
@@ -467,8 +474,8 @@
                       <b>{{ $t("global.commons.bill") }} {{ bill.id }}</b>
                       <small
                         v-if="bill.payment?.payment_at"
-                        class="d-block"
                         :title="$t('global.commons.payment_date')"
+                        class="d-block"
                       >
                         {{ getFromNowString(bill.payment.payment_at) }} ●
                         {{ getLocalTimeStringSmall(bill.payment.payment_at) }}
@@ -478,7 +485,7 @@
 
                     <i
                       v-if="bill.status === BillStatus.PENDING.code"
-                      class="fas fa-spinner fa-spin m-1 blue--text"
+                      class="fas fa-spinner fa-spin m-1 text-blue"
                     ></i>
                     <img
                       v-else-if="bill.payment?.gateway?.logo"
@@ -502,10 +509,10 @@
                     "
                     class="small"
                   >
-                    <v-icon small class="me-1">check</v-icon>
+                    <v-icon class="me-1" size="small">check</v-icon>
                     {{
                       $t(
-                        "order_page.payment.payment_is_in_require_capture_message"
+                        "order_page.payment.payment_is_in_require_capture_message",
                       )
                     }}
                   </div>
@@ -518,18 +525,18 @@
                   >
                     <v-btn
                       v-if="current_bill_waiting === bill"
-                      color="success"
-                      :x-large="current_bill_waiting === bill"
-                      :depressed="current_bill_waiting !== bill"
                       :disabled="current_bill_waiting !== bill"
+                      :size="current_bill_waiting === bill && 'x-large'"
+                      :variant="current_bill_waiting !== bill && 'flat'"
+                      color="success"
                       @click.stop="goToPaymentBill(bill)"
                     >
                       <v-icon
                         v-if="current_bill_waiting === bill"
-                        small
                         class="me-1 blink-me"
-                        >lens</v-icon
-                      >
+                        size="small"
+                        >lens
+                      </v-icon>
 
                       {{ $t("global.actions.pay_now") }}
                     </v-btn>
@@ -542,19 +549,19 @@
 
                   <div v-if="bill.payment?.card" class="d-inline-block">
                     <s-payment-card
-                      :method="bill.payment.method"
                       :card="bill.payment.card"
                       :currency="bill.payment.currency"
+                      :method="bill.payment.method"
                       horizontal
                     ></s-payment-card>
                   </div>
 
                   <v-icon
                     v-if="bill.gift_cards?.length || bill.payment"
-                    class="float-end"
                     :class="{ 'rotate-180': expanded_bill !== bill.id }"
-                    >expand_more</v-icon
-                  >
+                    class="float-end"
+                    >expand_more
+                  </v-icon>
                 </td>
               </tr>
 
@@ -563,10 +570,10 @@
                 <s-shop-row-customer-payment-gift-card
                   v-for="giftcard in bill.gift_cards"
                   :key="'bl-' + index + 'gif' + giftcard.number"
-                  :giftcard="giftcard"
                   :class="{ 'no-border-bottom-tr': bill.payment }"
-                  sub
+                  :giftcard="giftcard"
                   class="fadeIn"
+                  sub
                 >
                 </s-shop-row-customer-payment-gift-card>
 
@@ -574,8 +581,8 @@
 
                 <s-shop-row-customer-payment-record
                   v-if="bill.payment"
-                  :payment="bill.payment"
                   :key="'bl-pay' + index"
+                  :payment="bill.payment"
                   class="fadeIn"
                   sub
                 >
@@ -595,15 +602,15 @@
 
             <s-shop-row-customer-payment-record
               v-if="payment"
-              :payment="payment"
-              class="border-top-medium"
               :is-subscribed="isSubscription && order.status === 'Payed'"
               :is-unsubscribed="isSubscription && order.status === 'Canceled'"
+              :payment="payment"
+              class="border-top-medium"
             >
             </s-shop-row-customer-payment-record>
           </tbody>
         </template>
-      </v-simple-table>
+      </v-table>
 
       <v-row
         v-if="has_subscription_portal"
@@ -611,19 +618,19 @@
         no-gutters
       >
         <v-col
-          cols="12"
-          class="p-2 row-hover pp"
-          @click="createMyPortalUrl()"
           :class="{ disabled: busy_portal }"
+          class="p-2 row-hover pp"
+          cols="12"
+          @click="createMyPortalUrl()"
         >
-          <v-btn class="float-end" icon :loading="busy_portal"
-            ><v-icon color="#1976D2">open_in_new</v-icon>
+          <v-btn :loading="busy_portal" class="float-end" icon>
+            <v-icon color="#1976D2">open_in_new</v-icon>
           </v-btn>
 
           <b class="d-block">
             <v-icon v-if="cache_portal" class="me-1 zoomIn" color="green"
-              >check_circle</v-icon
-            >
+              >check_circle
+            </v-icon>
             <v-icon v-else class="me-1" color="#333">credit_card</v-icon>
             Subscription Portal</b
           >
@@ -633,7 +640,7 @@
         </v-col>
       </v-row>
       <v-row class="border-top bg-light" no-gutters>
-        <v-col cols="12" sm="6" class="p-2">
+        <v-col class="p-2" cols="12" sm="6">
           <p class="font-weight-bold text-muted small my-1">
             {{ $t("order_page.payment.total_order_price_before_tax") }}
           </p>
@@ -644,7 +651,7 @@
           ></price-view>
         </v-col>
 
-        <v-col v-if="isPayed" cols="12" sm="6" class="p-2">
+        <v-col v-if="isPayed" class="p-2" cols="12" sm="6">
           <p class="font-weight-bold text-muted small my-1">
             {{ $t("order_page.payment.buyer_payment") }}
             <span v-if="order.tax">+ {{ $t("global.commons.tax") }}</span>
@@ -667,7 +674,7 @@ import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 
 import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
 import { BillStatus } from "@core/enums/basket/BillStatus";
-import {GtagEcommerce} from "@components/plugins/gtag/GtagEcommerce";
+import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import SShopRowCustomerPaymentGiftCard from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentGiftCard.vue";
 import SShopRowCustomerPaymentRecord from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
 import SShopRowCustomerPendingPayment from "@components/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
@@ -746,7 +753,7 @@ export default {
       return (
         !this.isPayed &&
         this.transactions_pending.some(
-          (item) => item.status === "RequireAction"
+          (item) => item.status === "RequireAction",
         )
       );
     },
@@ -899,8 +906,8 @@ export default {
         .post(
           window.XAPI.POST_BASKET_CREATE_SUBSCRIPTION_PORTAL_URL(
             this.getShop().name,
-            this.order.id
-          )
+            this.order.id,
+          ),
         )
         .then(({ data }) => {
           if (!data.error) {

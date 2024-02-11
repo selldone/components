@@ -15,33 +15,33 @@
 <template>
   <v-autocomplete
     v-model="cluster"
-    :items="clusters"
-    item-title="name"
-    item-value="id"
-    :label="label"
-    :rounded="rounded"
-    :outlined="outlined"
-    :messages="hideDetails ? undefined : ' '"
-    :return-object="returnObject"
-    :clearable="clearable"
-    :placeholder="placeholder"
-    :no-data-text="placeholder"
-    :persistent-placeholder="persistentPlaceholder"
     v-model:search="search"
-    :customFilter="() => true"
-    :class="{ disabled: modelValue && busy && !cluster_obj }"
-    @update:model-value="$emit('change')"
-    :multiple="multiple"
+    :append-icon="appendIcon"
+    :bg-color="backgroundColor"
     :chips="chips"
+    :class="{ disabled: modelValue && busy && !cluster_obj }"
+    :clearable="clearable"
+    :customFilter="() => true"
     :disabled="disabled"
+    :flat="flat"
+    :hide-details="hideDetails"
+    :items="clusters"
+    :label="label"
+    :messages="hideDetails ? undefined : ' '"
+    :multiple="multiple"
+    :no-data-text="placeholder"
+    :outlined="outlined"
+    :persistent-placeholder="persistentPlaceholder"
+    :placeholder="placeholder"
+    :return-object="returnObject"
+    :rounded="rounded"
     :variant="
       variant ? variant : solo ? 'solo' : filled ? 'filled' : 'underlined'
     "
-    :flat="flat"
-    :append-icon="appendIcon"
-    :bg-color="backgroundColor"
-    :hide-details="hideDetails"
     class="text-start"
+    item-title="name"
+    item-value="id"
+    @update:model-value="$emit('change')"
   >
     <!-- ―――――――――――――――――― message ―――――――――――――――――― -->
 
@@ -51,8 +51,8 @@
           !multiple /*Show the cluster detail on the single mode!*/ &&
           cluster_obj
         "
-        class="fadeIn single-line"
         :cluster="cluster_obj"
+        class="fadeIn single-line"
       >
       </s-cluster-parents-view>
       <div v-if="messages">{{ messages }}</div>
@@ -60,7 +60,7 @@
 
     <!-- ―――――――――――――――――― items ―――――――――――――――――― -->
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" class="text-start" :title="item.raw.name">
+      <v-list-item :title="item.raw.name" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar :size="32">
             <img
@@ -75,8 +75,8 @@
           <s-cluster-parents-view
             v-if="multiple /*Show the cluster detail on the multiple mode!*/"
             :cluster="item.raw"
-            small
             class="d-block"
+            small
           >
           </s-cluster-parents-view>
           <small v-else class="d-block single-line">{{
@@ -113,8 +113,8 @@
     <template v-if="!multiple /*Only in the single mode*/" v-slot:prepend-inner>
       <circle-image
         v-if="cluster_obj?.icon"
-        :src="getShopImagePath(cluster_obj.icon, 64)"
         :size="32"
+        :src="getShopImagePath(cluster_obj.icon, 64)"
         class="mb-1 me-1 hover-scale force-top"
       />
       <v-icon v-else-if="cluster_obj">folder</v-icon>
@@ -131,8 +131,8 @@
     <template v-slot:append-item>
       <v-list-item
         v-if="showSettingsButton"
-        class="text-start"
         :to="{ name: 'ClustersManagement_List' }"
+        class="text-start"
         prepend-icon="settings"
       >
         <v-list-item-title>Clusters Management</v-list-item-title>

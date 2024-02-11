@@ -19,9 +19,9 @@
         {{ $t("global.commons.sub_total") }}
       </template>
       <price-view
-        class="font-weight-bold ms-1"
         :amount="bill.items_price"
         :currency="bill.currency"
+        class="font-weight-bold ms-1"
       ></price-view>
     </s-value-dashed>
 
@@ -30,76 +30,80 @@
         {{ $t("global.commons.discount") }}
       </template>
       <price-view
-        class="font-weight-bold"
         :amount="-bill.items_discount"
         :currency="bill.currency"
+        class="font-weight-bold"
       ></price-view>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.club" class="my-1">
       <template v-slot:label>
         <img
+          class="me-1"
+          height="20"
           src="../../assets/icons/customer-club.svg"
           width="20"
-          height="20"
-          class="me-1"
         />
         {{ $t("global.commons.customer_club") }}
       </template>
       <price-view
-        class="font-weight-bold"
         :amount="-bill.club"
         :currency="bill.currency"
+        class="font-weight-bold"
       ></price-view>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.discount_code" class="my-1">
       <template v-slot:label>
         <img
+          class="me-1"
+          height="20"
           src="../../assets/icons/discount-code.svg"
           width="20"
-          height="20"
-          class="me-1"
         />
         {{ $t("global.commons.discount_code") }}
       </template>
       <price-view
-        class="font-weight-bold"
         :amount="-bill.discount_code"
         :currency="bill.currency"
+        class="font-weight-bold"
       ></price-view>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.coupon" class="my-1">
       <template v-slot:label>
         <img
+          class="me-1"
+          height="20"
           src="../../assets/icons/coupon.svg"
           width="20"
-          height="20"
-          class="me-1"
         />
 
         {{ $t("global.commons.coupon") }}
       </template>
       <price-view
-        class="font-weight-bold"
         :amount="-bill.coupon"
         :currency="bill.currency"
+        class="font-weight-bold"
       ></price-view>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.tax" class="my-1">
       <template v-slot:label>
         {{ $t("global.commons.tax") }}
-        <v-chip v-if="bill.tax_included" color="success" x-small class="mx-1">{{
-          $t("global.commons.tax_included")
-        }}</v-chip>
+        <v-chip
+          v-if="bill.tax_included"
+          class="mx-1"
+          color="success"
+          size="x-small"
+          >{{ $t("global.commons.tax_included") }}
+        </v-chip>
       </template>
 
       <price-view
-        class="font-weight-bold"
         :amount="bill.tax"
         :currency="bill.currency"
+        class="font-weight-bold"
       ></price-view>
     </s-value-dashed>
 
@@ -107,31 +111,33 @@
       <template v-slot:label>
         {{ $t("global.commons.delivery") }}
       </template>
-      <span v-if="bill.delivery_price===-1" class="font-weight-bold">{{$t("process_center.payment_widget.delivery.not_paid")}}</span>
+      <span v-if="bill.delivery_price === -1" class="font-weight-bold">{{
+        $t("process_center.payment_widget.delivery.not_paid")
+      }}</span>
       <price-view
-          v-else
-        class="font-weight-bold"
+        v-else
         :amount="bill.delivery_price"
         :currency="bill.currency"
+        class="font-weight-bold"
       ></price-view>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.pay_by_giftcards" class="my-1">
       <template v-slot:label>
         <img
+          class="me-1"
+          height="20"
           src="../../assets/icons/gift-card.svg"
           width="20"
-          height="20"
-          class="me-1"
         />
 
         {{ $t("global.commons.gift_card") }}
       </template>
 
       <price-view
-        class="font-weight-bold"
         :amount="-bill.pay_by_giftcards"
         :currency="bill.currency"
+        class="font-weight-bold"
       ></price-view>
     </s-value-dashed>
   </div>
@@ -139,6 +145,7 @@
 
 <script>
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
+
 export default {
   name: "SPosBillView",
   components: { SValueDashed },

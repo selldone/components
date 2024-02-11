@@ -20,27 +20,27 @@
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Header ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
     <div
-      class="d-flex p-2"
       :class="{ 'justify-center': in_search, 'justify-end': !in_search }"
+      class="d-flex p-2"
     >
       <v-text-field
         v-model="search"
-        append-inner-icon="search"
-        @keydown.enter="searchPosts(1)"
-        :loading="busy_search"
-        single-line
-        solo
-        flat
-        hide-details
-        clearable
-        rounded
         :class="{
           'search-e c-widget -no-radius': in_search,
           'search-n': !in_search,
         }"
+        :loading="busy_search"
         :placeholder="$t('global.commons.search')"
-        @focus="focus = true"
+        append-inner-icon="search"
+        clearable
+        flat
+        hide-details
+        rounded
+        single-line
+        variant="solo"
         @blur="focus = false"
+        @focus="focus = true"
+        @keydown.enter="searchPosts(1)"
       >
       </v-text-field>
     </div>
@@ -51,12 +51,12 @@
       <router-view
         v-if="community"
         v-show="!in_search"
-        @busy="(val) => (busy = val)"
-        :shop="shop"
-        :community.sync="community"
+        v-model:categories="categories"
+        v-model:community="community"
         :communityTimeSeries="community_timeseries"
-        :categories.sync="categories"
         :data="data"
+        :shop="shop"
+        @busy="(val) => (busy = val)"
       ></router-view>
     </v-fade-transition>
 
@@ -64,7 +64,6 @@
       <router-link
         v-for="(post, i) in posts"
         :key="post.id"
-        style="color: #111"
         :to="{
           name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
           params: {
@@ -74,15 +73,16 @@
             topic_slug: slugify(post.topic.title),
           },
         }"
-        @click.native="search = null"
+        style="color: #111"
+        @click="search = null"
       >
         <community-widget
           :community="community"
-          :topic="post.topic"
           :post="post"
           :shop="shop"
-          class="fadeInUp"
           :style="{ 'animation-delay': 50 * (i % itemsPerPage) + 'ms' }"
+          :topic="post.topic"
+          class="fadeInUp"
           simple-mode
         ></community-widget>
       </router-link>
@@ -111,8 +111,8 @@
 
       <!-- Post Actions Menu view -->
       <community-post-actions-menu
-        :shop="shop"
         :community="community"
+        :shop="shop"
       ></community-post-actions-menu>
 
       <!-- Comment Actions Menu view -->
@@ -149,6 +149,7 @@ import CommunityCommentReportsDialog from "../widgets/global/CommunityCommentRep
 import { TimeSeries } from "@core/timeserie/TimeSeries";
 import CommunityWidget from "../widgets/CommunityWidget.vue";
 import _ from "lodash-es";
+
 export default {
   name: "CommunityLayout",
   components: {
@@ -200,7 +201,7 @@ export default {
   },
   watch: {
     search: _.debounce(function (newVal, oldVal) {
-      if(!newVal && !oldVal) return;
+      if (!newVal && !oldVal) return;
       this.searchPosts(1);
     }, 1500),
   },
@@ -235,7 +236,7 @@ export default {
             data,
             "Community Data",
             this.offset,
-            this.days
+            this.days,
           );
 
           // Register fetch callback (Use to refresh by change time span)
@@ -247,7 +248,7 @@ export default {
         .getInfo(
           window.$community.getCommunityID(this.shop),
           this.offset,
-          this.days
+          this.days,
         )
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
@@ -303,14 +304,16 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .search-n,
 .search-e {
   transition: all 0.8s ease;
 }
+
 .search-n {
   max-width: 250px;
 }
+
 .search-e {
   max-width: 480px;
   margin: 4vh auto;

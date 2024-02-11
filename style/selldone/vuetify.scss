@@ -13,7 +13,7 @@
  */
 
 
-.v-application{
+.v-application {
 
   .text-h4, .text-h3, .text-h2, .text-h1 {
     letter-spacing: -.018em !important;
@@ -25,7 +25,7 @@
   // Solve bottom navigation overlap bug:
   .v-bottom-sheet--inset {
     &:last-child {
-      &>:last-child {
+      & > :last-child {
         padding-bottom: 70px;
       }
     }
@@ -52,7 +52,7 @@
     line-height: normal; // Input field message (Solve line space in persian)
   }
 
-  .flex-rtl-row-revert{
+  .flex-rtl-row-revert {
     flex-direction: row-reverse;
   }
 }
@@ -71,7 +71,7 @@
 }
 
 // BUG: v-slide-group vertically scroll by touch not work!
-.v-slide-group__wrapper{
+.v-slide-group__wrapper {
   touch-action: auto !important;
 }
 
@@ -131,20 +131,18 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   }
 
   // Fix BUG in RTL for list in the navigation drawer:
- /* .v-navigation-drawer__content {
-    .v-list {
-      .v-list-item {
-        flex-direction: row-reverse;
-        text-align: right;
-      }
-    }
-  }*/
-
-
-
+  /* .v-navigation-drawer__content {
+     .v-list {
+       .v-list-item {
+         flex-direction: row-reverse;
+         text-align: right;
+       }
+     }
+   }*/
 
 
 }
+
 //-------------------------------------------------------------------------------------------------------
 .v-application--is-rtl {
   // Calendar: (Week & Day bug in RTL)
@@ -159,6 +157,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     flex-direction: row-reverse;
   }
 }
+
 // Calendar thine scroll:
 .v-calendar-daily__scroll-area {
   scrollbar-width: none; /* Firefox */
@@ -169,28 +168,34 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     -ms-overflow-style: unset;
   }
 }
+
 .v-calendar-daily__head {
   margin-right: 0px !important; // To adjust no scroll!
 }
-.v-calendar-daily__intervals-head,.v-calendar-daily__intervals-body{  // Remove border of hours & days in week & day views
+
+.v-calendar-daily__intervals-head, .v-calendar-daily__intervals-body { // Remove border of hours & days in week & day views
   border: none !important;
-  .v-calendar-daily__interval{
+
+  .v-calendar-daily__interval {
     text-align: center;
   }
 }
+
 // Set current day bold:
-.v-calendar-weekly__day.v-present{
-  .v-btn.v-btn--has-bg{
+.v-calendar-weekly__day.v-present {
+  .v-btn.v-btn--has-bg {
     background-color: #8BC34A;
     color: #fff;
   }
 
 }
-.v-calendar{
-  .v-event{
+
+.v-calendar {
+  .v-event {
     padding: 0 4px; //Fix event label padding in RTL
   }
 }
+
 //-------------------------------------------------------------------------------------------------------
 
 
@@ -248,11 +253,14 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   background-color: #fff !important;
 
 }
-@media only screen and (min-width: 600px) {
-  .dense-padding.v-data-table/*Deprecated*/ ,.v-data-table.v-table--density-compact/*Fix compact tables*/{
 
-    thead > tr > th{
-            padding: 0 8px !important;
+@media only screen and (min-width: 600px) {
+  .dense-padding.v-data-table /*Deprecated*/
+  , .v-data-table.v-table--density-compact /*Fix compact tables*/
+  {
+
+    thead > tr > th {
+      padding: 0 8px !important;
     }
 
     table > tbody > tr > td {
@@ -264,7 +272,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 // Fix header background color:
-.theme--light.v-data-table.v-data-table--fixed-header thead th{
+.theme--light.v-data-table.v-data-table--fixed-header thead th {
   background: var(--background) !important;
 }
 
@@ -294,21 +302,16 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   }
 }
 
-.justify-space-around{    // Apply space around for radio groups
-  .v-input--radio-group__input{
+.justify-space-around { // Apply space around for radio groups
+  .v-input--radio-group__input {
     justify-content: space-around;
   }
 }
 
 
-
-
-
-
-
 // Small suffix input
-.sm-suffix{
-  .v-text-field__suffix{
+.sm-suffix {
+  .v-text-field__suffix {
     font-size: 10px !important;
     font-weight: 500;
     margin-top: 0 !important;
@@ -316,8 +319,6 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     margin-right: 4px;
   }
 }
-
-
 
 
 // Button font auto small
@@ -328,7 +329,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     }
 
     @media only screen and (max-width: 460px) {
-      .-ah{ // Auto hide
+      .-ah { // Auto hide
         display: none;
       }
     }
@@ -337,19 +338,20 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 // ----------------------- Center items in slide group ----------------------
-.v-slide-group.center-items{
-  .v-slide-group__content{
+.v-slide-group.center-items {
+  .v-slide-group__content {
     justify-content: center;
   }
 }
+
 // ----------------------- Remove background of switch (in @ SortView) ----------------------
-.switch-no-bg{
-  &.v-input--switch .v-input--switch__track{
+.switch-no-bg {
+  &.v-input--switch .v-input--switch__track {
     color: transparent !important;
   }
 }
 
-.icon-side{
+.icon-side {
   height: 100% !important;
   min-width: 30px !important;
   color: #fff !important;
@@ -360,32 +362,38 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   display: flex;
   align-items: center;
   justify-content: center;
-  &.-purple{
+
+  &.-purple {
     background: #847;
   }
-  &.-blue{
+
+  &.-blue {
     background: #1976D2;
   }
-  &.-green{
+
+  &.-green {
     background: #4CAF50;
   }
-  &.-amber{
+
+  &.-amber {
     background: #FFA000;
   }
-  &.-red{
+
+  &.-red {
     background: #D32F2F;
   }
 }
+
 .v-application--is-rtl {
-  .icon-side{
+  .icon-side {
     left: unset;
     right: 0;
   }
 }
 
 
-.toolbar-no-transform{
-  button{
+.toolbar-no-transform {
+  button {
     text-transform: initial !important;
   }
 }
@@ -396,6 +404,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   margin: 3px 0;
   border-radius: 14px;
 }
+
 /*
 .black--text{
   i.v-icon:not(.theme--dark){
@@ -404,7 +413,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }*/
 // ----------------------- Unified UI Kit Dashboard ----------------------
 // Normal button
-.nbt{
+.nbt {
   background: #fff !important;
   border: 1px solid #dee2e6 !important;
   text-transform: initial !important;
@@ -413,12 +422,13 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   color: rgb(60, 66, 87);
   border-radius: 5px;
 
-  &.theme--dark{
+  &.theme--dark {
     background: #333 !important;
     border: 1px solid #111 !important;
   }
 }
-.nbt-colored{
+
+.nbt-colored {
   text-transform: initial !important;
   font-weight: 500;
   font-size: 12px;
@@ -426,23 +436,26 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   border-radius: 5px;
 }
 
-.dashboard{
+.dashboard {
 
 
   // Tables:
-  .v-data-table{
-    table{
-      thead{
+  .v-data-table {
+    table {
+      thead {
         font-size: 12px;
       }
-      tbody{
-        td.v-data-table__mobile-row{
+
+      tbody {
+        td.v-data-table__mobile-row {
           font-size: 12px !important;
           min-height: 28px !important;
-          .v-data-table__mobile-row__header{
+
+          .v-data-table__mobile-row__header {
 
           }
-          .v-data-table__mobile-row__cell{
+
+          .v-data-table__mobile-row__cell {
 
           }
         }
@@ -451,27 +464,26 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   }
 
   //Toolbars:
-  header.v-toolbar{
+  header.v-toolbar {
     // Header title:
-    .v-toolbar__title{
+    .v-toolbar__title {
       font-size: 13px;
       font-weight: 900;
     }
 
-}
-
+  }
 
 
   // Expansion panel:
-  .v-expansion-panels.auto-small-expansion{
+  .v-expansion-panels.auto-small-expansion {
 
     @media only screen and (max-width: 600px) {
 
-      .v-expansion-panel-header{
+      .v-expansion-panel-header {
         padding: 6px 0;
       }
-      .v-expansion-panel-content{
-        .v-expansion-panel-content__wrap{
+      .v-expansion-panel-content {
+        .v-expansion-panel-content__wrap {
           padding: 6px 0;
         }
       }
@@ -484,17 +496,16 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 
-
-
-
 // ----------------------- Fonts ----------------------
 
-.font--14{
+.font--14 {
   font-size: 14px;
 }
-.font--20{
+
+.font--20 {
   font-size: 20px;
 }
+
 /*
 .v-input{
   &.small-field{
@@ -511,41 +522,43 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   }
 }*/
 
-.v-bottom-sheet{
-  .v-overlay__content{
+.v-bottom-sheet {
+  .v-overlay__content {
     margin-left: auto !important;
     margin-right: auto !important;
   }
 }
-.v-input{
-  .v-field__append-inner{
-    pointer-events: all ;
+
+.v-input {
+  .v-field__append-inner {
+    pointer-events: all;
   }
 }
+
 // ----------------------- Draw an outline around the badge ----------------------
 
-.badge-border{
-  .v-badge__wrapper{
-    .v-badge__badge{
-     // outline: solid #141414 3px; // safari bug! not round!
-      &:before{
+.badge-border {
+  .v-badge__wrapper {
+    .v-badge__badge {
+      // outline: solid #141414 3px; // safari bug! not round!
+      &:before {
         content: '';
         position: absolute;
         left: -3px;
         top: -3px;
         width: calc(100% + 6px);
         height: calc(100% + 6px);
-        border:  solid #141414 3.5px;
+        border: solid #141414 3.5px;
         border-radius: 50%;
       }
     }
   }
 
-  &.-light{
+  &.-light {
     .v-badge__wrapper {
       .v-badge__badge {
         &:before {
-          border:  solid #fafafa 3.5px;
+          border: solid #fafafa 3.5px;
         }
       }
     }
@@ -554,39 +567,43 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
 // ----------------------- Negative orders ----------------------
 
-.order--1{
+.order--1 {
   order: -1 !important;
 }
-.order--2{
+
+.order--2 {
   order: -2 !important;
 }
-.order--3{
+
+.order--3 {
   order: -3 !important;
 }
-.order--4{
+
+.order--4 {
   order: -4 !important;
 }
-.order--5{
+
+.order--5 {
   order: -5 !important;
 }
 
 
 // Tabs prev box bug (Add empty space on mobile:
-.v-slide-group__prev.v-slide-group__prev--disabled{
+.v-slide-group__prev.v-slide-group__prev--disabled {
   display: none !important;
 }
 
 
-
 // ----------------------- Price fields ----------------------
 
-.strong-field{
-   input {
+.strong-field {
+  input {
     font-size: 22px;
     font-weight: 900;
-   // min-height: 64px;
+    // min-height: 64px;
     // padding-top: 16px;
   }
+
   .v-select__selections {
     font-size: 22px;
     font-weight: 900;
@@ -598,7 +615,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
 // ----------------------- 5 columns in row ----------------------
 
-.flex.xl20p{
+.flex.xl20p {
   @media only screen and (min-width: 1500px) {
     flex-basis: 20% !important;
     flex-grow: 0;
@@ -607,18 +624,18 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 
-.v-list-item .v-list-item__content{
+.v-list-item .v-list-item__content {
   padding: 0; // Solve issue when setting custom content in v-list-item the default padding (12px) prevent having compact mode!
 }
 
-.v-icon{
+.v-icon {
   min-width: max-content; // Fixe issue in show more than one icons in v-icon
 }
 
 
 // Fix img border radius in v-avatar:
-.v-avatar{
-  img{
+.v-avatar {
+  img {
     border-radius: inherit;
   }
 }
@@ -636,7 +653,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }*/
 
 // Fix v-container:
-.v-application,.v-overlay-container{
+.v-application, .v-overlay-container {
 
   @media (min-width: 2560px) {
     .v-container:not(.v-container--fluid) {
@@ -652,38 +669,39 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
 
 // Fix button with append image and full width (like login buttons)
-.s--login-btn{
+.s--login-btn {
   display: flex;
   align-items: center;
-  .v-btn__content{
+
+  .v-btn__content {
     flex-grow: 1;
   }
 }
 
 
 // Fix .v-pagination issue show invalid shadow:
-.v-pagination{
-  .v-pagination__item{
+.v-pagination {
+  .v-pagination__item {
     background: unset;
-    box-shadow:unset;
-    width:unset;
-    padding:unset;
-    min-width:unset;
-    height:unset;
+    box-shadow: unset;
+    width: unset;
+    padding: unset;
+    min-width: unset;
+    height: unset;
   }
 }
 
 // Fix v-dialog v-bottom-sheet bottom padding!
-.v-overlay.v-dialog.v-bottom-sheet{
+.v-overlay.v-dialog.v-bottom-sheet {
   max-height: 100%;
 }
 
 
 // Fix chips avatar overflow issue:
-.v-input{
-  .v-combobox__selection{
-    .v-chip{
-      .v-chip__content{
+.v-input {
+  .v-combobox__selection {
+    .v-chip {
+      .v-chip__content {
         overflow: visible;
       }
     }
@@ -697,23 +715,25 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   padding-bottom: var(--v-field-input-padding-bottom);
   padding-inline: var(--v-field-padding-start) var(--v-field-padding-end);
 }
+
 // TODO: Fix v-timeline size issue!
 .v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item--after .v-timeline-item__body,
 .v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item:nth-child(odd):not(.v-timeline-item--before) .v-timeline-item__body {
-   max-width:unset ;
-}
-.v-timeline-item__opposite {
-  max-width:unset ;
-}
-.v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item--before .v-timeline-item__body,
-.v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item:nth-child(2n):not(.v-timeline-item--after) .v-timeline-item__body {
-  max-width:unset ;
+  max-width: unset;
 }
 
+.v-timeline-item__opposite {
+  max-width: unset;
+}
+
+.v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item--before .v-timeline-item__body,
+.v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item:nth-child(2n):not(.v-timeline-item--after) .v-timeline-item__body {
+  max-width: unset;
+}
 
 
 :root {
-  .v-theme--light{
+  .v-theme--light {
     --v-medium-emphasis-opacity: 0.9;
   }
 

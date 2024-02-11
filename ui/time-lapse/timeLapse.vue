@@ -15,11 +15,11 @@
 <template>
   <v-progress-circular
     v-if="value > 0"
+    :color="color"
+    :model-value="value"
     :rotate="-90"
     :size="size"
     :width="width"
-    :value="value"
-    :color="color"
   >
     <slot></slot>
   </v-progress-circular>
@@ -48,7 +48,7 @@ export default {
       value: 100,
     };
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.interval) clearInterval(this.interval);
   },
   mounted() {
@@ -57,13 +57,13 @@ export default {
         this.end();
       }
       this.value -= 2;
-    }, this.durationMs/50);
+    }, this.durationMs / 50);
   },
   methods: {
     end() {
       clearInterval(this.interval);
       this.interval = null;
-      this.$emit('end')
+      this.$emit("end");
     },
   },
 };

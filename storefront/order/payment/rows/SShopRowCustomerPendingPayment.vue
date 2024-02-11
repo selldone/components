@@ -14,15 +14,15 @@
 
 <template>
   <tr
-    class="text-start"
     :class="{
       'bg-warning': transaction.status === 'RequireAction',
       'bg-info text-white': transaction.status === 'Processing',
       'bg-danger text-white': transaction.status === 'Canceled',
     }"
+    class="text-start"
   >
-    <td class="py-2" :colspan="transaction.dir ? 3 : 1">
-      <img height="24" class="mx-2" :src="getShopImagePath(transaction.logo)" />
+    <td :colspan="transaction.dir ? 3 : 1" class="py-2">
+      <img :src="getShopImagePath(transaction.logo)" class="mx-2" height="24" />
       {{ transaction.name }}
       <b class="ms-2 small">({{ $t("global.commons.payment_not_settled") }})</b>
 
@@ -30,11 +30,14 @@
         v-if="!transaction.livemode"
         class="mx-2 pointer-event-none my-1"
         color="#fff"
-        small
+        size="small"
       >
-        <v-icon small left :color="transaction.livemode ? 'green' : 'amber'">{{
-          transaction.livemode ? "check" : "science"
-        }}</v-icon>
+        <v-icon
+          :color="transaction.livemode ? 'green' : 'amber'"
+          size="small"
+          start
+          >{{ transaction.livemode ? "check" : "science" }}
+        </v-icon>
         {{
           transaction.livemode
             ? $t("global.commons.livemode")
@@ -57,36 +60,36 @@
         "
       >
         <v-btn
+          class="mx-2 my-1"
           color="primary"
-          small
+          size="small"
           @click="
             TryToPayOrder(
               transaction.gateway_code,
               transaction.id,
-              $route.params.basket_id
+              $route.params.basket_id,
             )
           "
-          class="mx-2 my-1"
         >
-          <v-icon small class="me-1">fa:fas fa-shopping-bag</v-icon>
+          <v-icon class="me-1" size="small">fa:fas fa-shopping-bag</v-icon>
           {{ $t("global.actions.pay_now") }}
           <img
             v-if="transaction.icon"
             :src="getShopImagePath(transaction.icon)"
+            class="ms-2 me-n1"
             height="18"
             width="18"
-            class="ms-2 me-n1"
           />
         </v-btn>
 
         <v-btn
+          class="mx-2 my-1"
           color="#fff"
           light
-          small
+          size="small"
           @click="changePaymentMethod(transaction)"
-          class="mx-2 my-1"
         >
-          <v-icon small class="me-1">fa:fas fa-credit-card</v-icon>
+          <v-icon class="me-1" size="small">fa:fas fa-credit-card</v-icon>
           {{ $t("global.actions.change_payment_method") }}
         </v-btn>
       </div>
@@ -94,12 +97,12 @@
       <!-- ------------------------ Payment receipt in direct payment ----------------------------- -->
       <s-image-uploader
         v-if="transaction.dir && transaction.status !== 'Succeeded'"
+        :image="payment_receipt ? getShopImagePath(payment_receipt) : undefined"
         :label="
           payment_receipt
             ? $t('pending_payment.upload_payment_receipt_done')
             : $t('pending_payment.upload_payment_receipt')
         "
-        :image="payment_receipt ? getShopImagePath(payment_receipt) : undefined"
         :placeholder-image="
           require('@components/assets/placeholders/image/payment-check.png')
         "
@@ -107,9 +110,10 @@
           window.XAPI.POST_UPLOAD_DIRECT_PAYMENT_RECEIPT(
             shop_name,
             transaction.id,
-            transaction.currency
+            transaction.currency,
           )
         "
+        auto-compact
         class="mt-2"
         max-file-size="2MB"
         @new-path="
@@ -119,14 +123,13 @@
             fetchBasketAndShop();
           }
         "
-        auto-compact
       ></s-image-uploader>
       <v-img
         v-else-if="transaction.dir && payment_receipt"
         :src="getShopImagePath(payment_receipt)"
         class="pointer-zoom-in rounded-2rem"
-        @click="showFullscreen"
         width="240"
+        @click="showFullscreen"
       ></v-img>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Public Form Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -135,13 +138,13 @@
       <v-card
         v-if="public_form"
         class="p-4 rounded-18px mx-auto"
-        max-width="420"
-        light
         flat
+        light
+        max-width="420"
       >
-        <small class="black--text op-0-6">
+        <small class="text-black op-0-6">
           {{ $t("pending_payment.public_form_title") }}
-          <v-icon small>arrow_drop_down</v-icon>
+          <v-icon size="small">arrow_drop_down</v-icon>
         </small>
         <div v-for="(val, key) in public_form" :key="key" class="py-1">
           <div v-if="key.toLowerCase() === 'qr'" class="text-center">
@@ -150,16 +153,16 @@
             </div>
 
             <s-qrcode
-              :value="extractValue(val)"
               :options="{
                 width: 280,
                 color: { dark: '#333', light: '#FFFFFF00' },
               }"
+              :value="extractValue(val)"
             />
           </div>
 
           <div v-else>
-            <p class="mt-2 mb-1 small black--text">
+            <p class="mt-2 mb-1 small text-black">
               {{ extractLabel(val, key) }}:
             </p>
             <h3 style="unicode-bidi: plaintext">{{ extractValue(val) }}</h3>
@@ -180,8 +183,8 @@
         <s-value-dashed>
           <template v-slot:label>
             <v-icon class="me-1" style="color: currentColor"
-              >flip_camera_android</v-icon
-            >
+              >flip_camera_android
+            </v-icon>
             {{ $t("global.commons.last_status") }}
           </template>
           {{ getTransactionStatusName(transaction.status) }}
@@ -199,13 +202,15 @@
     </td>
     <td v-if="!transaction.dir">
       <span class="me-1 small">
-        <v-icon class="me-1" style="color: currentColor" small>loupe</v-icon>
+        <v-icon class="me-1" size="small" style="color: currentColor"
+          >loupe</v-icon
+        >
         {{ $t("global.commons.issued_at") }}:</span
       >
       {{ getLocalTimeString(transaction.issued_at) }}
       <br />
       <span class="me-1 small">
-        <v-icon class="me-1" style="color: currentColor" small
+        <v-icon class="me-1" size="small" style="color: currentColor"
           >flip_camera_android</v-icon
         >
         {{ $t("global.commons.last_status") }}:</span
@@ -222,7 +227,7 @@ import SValueDashed from "@components/ui/text/SValueDashed.vue";
 
 export default {
   name: "SShopRowCustomerPendingPayment",
-  components: { SValueDashed,SImageUploader },
+  components: { SValueDashed, SImageUploader },
   props: {
     transaction: {
       require: true,
@@ -259,15 +264,19 @@ export default {
     },
 
     changePaymentMethod(transaction) {
-        this.openConfirmationAlert('Change the payment method','Are you sure about switching payment methods?','Yes, Show payment options',()=>{
-            this.TryToPayOrder(
-                transaction.gateway_code,
-                transaction.id,
-                this.$route.params.basket_id,
-                true
-            );
-        })
-
+      this.openConfirmationAlert(
+        "Change the payment method",
+        "Are you sure about switching payment methods?",
+        "Yes, Show payment options",
+        () => {
+          this.TryToPayOrder(
+            transaction.gateway_code,
+            transaction.id,
+            this.$route.params.basket_id,
+            true,
+          );
+        },
+      );
     },
   },
 };

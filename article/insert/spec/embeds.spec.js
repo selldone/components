@@ -62,7 +62,7 @@ describe("Embeds addon", function () {
 
     $event.which = 8;
     this.$el.prepend(
-      '<p class="medium-insert-embeds-input medium-insert-embeds-active"></p>'
+      '<p class="medium-insert-embeds-input medium-insert-embeds-active"></p>',
     );
 
     this.$el.trigger($event);
@@ -72,7 +72,7 @@ describe("Embeds addon", function () {
 
   it("supports selecting embed", function () {
     this.$el.prepend(
-      '<div class="medium-insert-embeds"><figure></figure><div class="medium-insert-embeds-overlay"></div></div>'
+      '<div class="medium-insert-embeds"><figure></figure><div class="medium-insert-embeds-overlay"></div></div>',
     );
 
     this.$el.find(".medium-insert-embeds-overlay").click();
@@ -81,7 +81,7 @@ describe("Embeds addon", function () {
     expect(
       this.$el
         .find(".medium-insert-embeds")
-        .hasClass("medium-insert-embeds-selected")
+        .hasClass("medium-insert-embeds-selected"),
     ).toBe(true);
     expect($(".medium-insert-embeds-toolbar").length).toEqual(1);
     expect($(".medium-insert-embeds-toolbar2").length).toEqual(1);
@@ -90,7 +90,7 @@ describe("Embeds addon", function () {
 
   it("supports disabling captions", function () {
     $("#fixtures").html(
-      '<div class="editable"><div class="medium-insert-embeds"><figure></figure><div class="medium-insert-embeds-overlay"></div></div></div>'
+      '<div class="editable"><div class="medium-insert-embeds"><figure></figure><div class="medium-insert-embeds-overlay"></div></div></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -112,27 +112,27 @@ describe("Embeds addon", function () {
       '<div class="medium-insert-embeds">' +
         '<figure><figcaption class="medium-insert-caption-placeholder"></figcaption></figure>' +
         '<div class="medium-insert-embeds-overlay"></div>' +
-        "</div>"
+        "</div>",
     );
 
     this.$el.find(".medium-insert-caption-placeholder").click();
     jasmine.clock().tick(50);
 
     expect(
-      this.$el.find("figcaption").hasClass("medium-insert-caption-placeholder")
+      this.$el.find("figcaption").hasClass("medium-insert-caption-placeholder"),
     ).toBe(false);
   });
 
   it("supports unselecting embed", function () {
     this.$el.prepend(
-      '<div class="medium-insert-embeds medium-insert-embeds-selected"><figure><figcaption></figcaption></figure></div><div class="medium-insert-embeds-toolbar"></div>'
+      '<div class="medium-insert-embeds medium-insert-embeds-selected"><figure><figcaption></figcaption></figure></div><div class="medium-insert-embeds-toolbar"></div>',
     );
     this.$el.click();
 
     expect(
       this.$el
         .find(".medium-insert-embeds")
-        .hasClass("medium-insert-embeds-selected")
+        .hasClass("medium-insert-embeds-selected"),
     ).toBe(false);
     expect($(".medium-insert-embeds-toolbar").length).toEqual(0);
     expect($(".medium-insert-embeds-toolbar2").length).toEqual(0);
@@ -145,7 +145,7 @@ describe("Embeds addon", function () {
     $event.which = 8;
 
     this.$el.prepend(
-      '<div class="medium-insert-embeds medium-insert-embeds-selected"></div><div class="medium-insert-embeds-toolbar"></div>'
+      '<div class="medium-insert-embeds medium-insert-embeds-selected"></div><div class="medium-insert-embeds-toolbar"></div>',
     );
     this.$el.trigger($event);
 
@@ -164,7 +164,7 @@ describe("Embeds addon", function () {
     $event.which = 8;
 
     this.$el.prepend(
-      '<div class="medium-insert-embeds medium-insert-embeds-selected"></div><div class="medium-insert-embeds-toolbar"></div>'
+      '<div class="medium-insert-embeds medium-insert-embeds-selected"></div><div class="medium-insert-embeds-toolbar"></div>',
     );
 
     this.$el.trigger($event);
@@ -174,7 +174,7 @@ describe("Embeds addon", function () {
     let $embed;
 
     this.$el.prepend(
-      '<div class="medium-insert-embeds medium-insert-embeds-left"><div class="medium-insert-embeds-overlay"></div></div>'
+      '<div class="medium-insert-embeds medium-insert-embeds-left"><div class="medium-insert-embeds-overlay"></div></div>',
     );
     $embed = this.$el.find(".medium-insert-embeds");
 
@@ -189,7 +189,7 @@ describe("Embeds addon", function () {
 
   it("triggers input event after changing embed style ", function (done) {
     this.$el.prepend(
-      '<div class="medium-insert-embeds medium-insert-embeds-left"><div class="medium-insert-embeds-overlay"></div></div>'
+      '<div class="medium-insert-embeds medium-insert-embeds-left"><div class="medium-insert-embeds-overlay"></div></div>',
     );
 
     this.editor.subscribe("editableInput", function () {
@@ -210,7 +210,7 @@ describe("Embeds addon", function () {
     };
 
     this.$el.prepend(
-      '<div class="medium-insert-embeds medium-insert-embeds-left"><div class="medium-insert-embeds-overlay"></div></div>'
+      '<div class="medium-insert-embeds medium-insert-embeds-left"><div class="medium-insert-embeds-overlay"></div></div>',
     );
 
     // Place caret into first paragraph
@@ -229,7 +229,7 @@ describe("Embeds addon", function () {
     };
 
     this.$el.prepend(
-      '<div class="medium-insert-embeds medium-insert-embeds-left"><div class="medium-insert-embeds-overlay"></div></div>'
+      '<div class="medium-insert-embeds medium-insert-embeds-left"><div class="medium-insert-embeds-overlay"></div></div>',
     );
 
     // Place caret into first paragraph
@@ -243,14 +243,14 @@ describe("Embeds addon", function () {
 
   it("maintains backwards compatibility", function () {
     $("#fixtures").html(
-      '<div class="editable"><div class="medium-insert-embeds"><iframe></iframe></div></div>'
+      '<div class="editable"><div class="medium-insert-embeds"><iframe></iframe></div></div>',
     );
     this.$el = $(".editable");
 
     this.$el.mediumInsert();
 
     expect(
-      this.$el.find(".medium-insert-embeds .medium-insert-embed iframe").length
+      this.$el.find(".medium-insert-embeds .medium-insert-embed iframe").length,
     ).toEqual(1);
   });
 
@@ -259,7 +259,7 @@ describe("Embeds addon", function () {
 
     $event.which = 13;
     $("#fixtures").html(
-      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://www.youtube.com/watch?v=BROWqjuTM0g</p></div>'
+      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://www.youtube.com/watch?v=BROWqjuTM0g</p></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -299,7 +299,7 @@ describe("Embeds addon", function () {
 
     $event.which = 13;
     $("#fixtures").html(
-      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">http://vimeo.com/2619976</p></div>'
+      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">http://vimeo.com/2619976</p></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -339,7 +339,7 @@ describe("Embeds addon", function () {
 
     $event.which = 13;
     $("#fixtures").html(
-      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">http://instagram.com/p/u7PiWCsGxj</p></div>'
+      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">http://instagram.com/p/u7PiWCsGxj</p></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -361,7 +361,7 @@ describe("Embeds addon", function () {
 
     $event.which = 13;
     $("#fixtures").html(
-      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://twitter.com/medium_editor/status/694987296379125760</p></div>'
+      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://twitter.com/medium_editor/status/694987296379125760</p></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -375,7 +375,7 @@ describe("Embeds addon", function () {
 
     expect(this.$el.find(".medium-insert-embeds").length).toEqual(1);
     expect(
-      this.$el.find(".medium-insert-embeds .twitter-tweet").length
+      this.$el.find(".medium-insert-embeds .twitter-tweet").length,
     ).toEqual(1);
     expect(this.$el.find(".medium-insert-embeds-input").length).toEqual(0);
   });
@@ -385,7 +385,7 @@ describe("Embeds addon", function () {
 
     $event.which = 13;
     $("#fixtures").html(
-      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://www.facebook.com/cneistat/videos/vb.210351389002863/922328184471843/?type=2&theater</p></div>'
+      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://www.facebook.com/cneistat/videos/vb.210351389002863/922328184471843/?type=2&theater</p></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -407,7 +407,7 @@ describe("Embeds addon", function () {
 
     $event.which = 13;
     $("#fixtures").html(
-      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">test</p></div>'
+      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">test</p></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -427,7 +427,7 @@ describe("Embeds addon", function () {
     this.addon.options.styles = false;
 
     this.$el.prepend(
-      '<div class="medium-insert-embeds"><figure></figure><div class="medium-insert-embeds-overlay"></div></div>'
+      '<div class="medium-insert-embeds"><figure></figure><div class="medium-insert-embeds-overlay"></div></div>',
     );
 
     this.$el.find(".medium-insert-embeds-overlay").click();
@@ -441,7 +441,7 @@ describe("Embeds addon", function () {
     this.addon.options.actions = false;
 
     this.$el.prepend(
-      '<div class="medium-insert-embeds"><figure></figure><div class="medium-insert-embeds-overlay"></div></div>'
+      '<div class="medium-insert-embeds"><figure></figure><div class="medium-insert-embeds-overlay"></div></div>',
     );
 
     this.$el.find(".medium-insert-embeds-overlay").click();
@@ -453,7 +453,7 @@ describe("Embeds addon", function () {
 
   it("adds contentediable attr and overlay on initialization", function () {
     $("#fixtures").html(
-      '<div class="editable"><div class="medium-insert-embeds"><figure class="medium-insert-embed"></figure></div></div>'
+      '<div class="editable"><div class="medium-insert-embeds"><figure class="medium-insert-embed"></figure></div></div>',
     );
     this.$el = $(".editable");
 
@@ -464,11 +464,11 @@ describe("Embeds addon", function () {
     });
 
     expect(this.$el.find(".medium-insert-embeds").attr("contenteditable")).toBe(
-      "false"
+      "false",
     );
     expect(
       this.$el.find(".medium-insert-embeds .medium-insert-embeds-overlay")
-        .length
+        .length,
     ).toEqual(1);
   });
 
@@ -492,7 +492,7 @@ describe("Embeds addon", function () {
 
     $serialized = $(editor.serialize()["element-0"].value);
     expect(
-      $serialized.find(".medium-insert-embeds").attr("contenteditable")
+      $serialized.find(".medium-insert-embeds").attr("contenteditable"),
     ).toBeUndefined();
     expect($serialized.find(".medium-insert-embeds-overlay").length).toEqual(0);
   });
@@ -517,7 +517,7 @@ describe("Embeds addon", function () {
 
     $serialized = $(editor.serialize()["element-0"].value);
     expect($serialized.find("[data-embed-code]").html()).toEqual(
-      "<blockquote>good-value</blockquote>"
+      "<blockquote>good-value</blockquote>",
     );
   });
 
@@ -526,7 +526,7 @@ describe("Embeds addon", function () {
 
     $event.which = 13;
     $("#fixtures").html(
-      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://www.facebook.com/cneistat/videos/vb.210351389002863/922328184471843/?type=2&theater</p></div>'
+      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://www.facebook.com/cneistat/videos/vb.210351389002863/922328184471843/?type=2&theater</p></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -550,7 +550,7 @@ describe("Embeds addon", function () {
 
     $event.which = 13;
     $("#fixtures").html(
-      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://www.facebook.com/cneistat/videos/vb.210351389002863/922328184471843/?type=2&theater</p></div>'
+      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">https://www.facebook.com/cneistat/videos/vb.210351389002863/922328184471843/?type=2&theater</p></div>',
     );
     this.$el = $(".editable");
     this.$el.mediumInsert({
@@ -574,7 +574,7 @@ describe("Embeds addon", function () {
 
     $event.which = 13;
     $("#fixtures").html(
-      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">test</p></div>'
+      '<div class="editable"><p class="medium-insert-embeds-input medium-insert-embeds-active">test</p></div>',
     );
     this.$el = $(".editable");
 

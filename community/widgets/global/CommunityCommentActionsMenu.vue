@@ -15,15 +15,14 @@
 <template>
   <div>
     <v-menu
-      :activator="activator"
       v-if="comment"
-      location="left bottom"
       v-model="value"
+      :activator="activator"
+      location="left bottom"
       max-width="320"
-
     >
       <div>
-        <v-list class="text-start"   rounded="xl">
+        <v-list class="text-start" rounded="xl">
           <v-list-item
             v-for="(item, index) in items"
             :key="index"
@@ -45,9 +44,9 @@
     <!-- ------------------ Edit post dialog ------------------------ -->
     <v-dialog
       v-if="edit_dialog"
-      max-width="680"
       v-model="edit_dialog"
       content-class="no-shadow-dialog"
+      max-width="680"
       scrollable
     >
       <v-card>
@@ -55,9 +54,9 @@
           {{ $t("community.comment_actions.edit") }}
 
           <v-spacer></v-spacer>
-          <v-btn size="large" icon @click="edit_dialog = false"
-            ><v-icon>close</v-icon></v-btn
-          >
+          <v-btn icon size="large" @click="edit_dialog = false">
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-card-title>
         <v-card-text>
           <v-textarea v-model="comment_body" auto-grow></v-textarea>
@@ -65,14 +64,14 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
+              :loading="busy_edit"
               color="primary"
               size="x-large"
               @click="editComment"
-              :loading="busy_edit"
             >
               <v-icon class="me-1">save</v-icon>
-              {{ $t("global.actions.save") }}</v-btn
-            >
+              {{ $t("global.actions.save") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-card>
@@ -82,8 +81,8 @@
 
     <s-content-violation-report-dialog
       v-model="report_dialog"
-      @report="reportComment"
       :loading="busy_report"
+      @report="reportComment"
     ></s-content-violation-report-dialog>
   </div>
 </template>

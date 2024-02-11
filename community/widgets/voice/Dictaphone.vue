@@ -14,17 +14,19 @@
 
 <template>
   <div v-if="mediaRecorder">
-    <slot :isRecording="isRecording"
-          :startRecording="startRecording"
-          :stopRecording="stopRecording"
-          :deleteRecording="deleteRecording">
+    <slot
+      :deleteRecording="deleteRecording"
+      :isRecording="isRecording"
+      :startRecording="startRecording"
+      :stopRecording="stopRecording"
+    >
     </slot>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'dictaphone',
+  name: "dictaphone",
   data() {
     return {
       audioBlob: null,
@@ -35,7 +37,7 @@ export default {
   props: {
     mimeType: {
       type: String,
-      default: 'audio/webm',
+      default: "audio/webm",
     },
   },
   methods: {
@@ -53,7 +55,7 @@ export default {
   },
   watch: {
     audioBlob() {
-      this.$emit('stop', {
+      this.$emit("stop", {
         blob: this.audioBlob,
         src: URL.createObjectURL(this.audioBlob),
       });
@@ -66,19 +68,19 @@ export default {
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (error) {
-      this.$emit('error', '`navigator.mediaDevices.getUserMedia()` failed.');
+      this.$emit("error", "`navigator.mediaDevices.getUserMedia()` failed.");
       return Promise.resolve();
     }
 
     const recorder = new MediaRecorder(stream);
     let chunks = [];
 
-    recorder.addEventListener('stop', () => {
+    recorder.addEventListener("stop", () => {
       this.audioBlob = new Blob(chunks, { type: this.mimeType });
       chunks = [];
     });
 
-    recorder.addEventListener('dataavailable', (e) => {
+    recorder.addEventListener("dataavailable", (e) => {
       chunks.push(e.data);
     });
 

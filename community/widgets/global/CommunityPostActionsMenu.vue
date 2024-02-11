@@ -15,14 +15,12 @@
 <template>
   <div>
     <v-menu
+      v-model="value"
       :activator="activator"
       location="left bottom"
-
-      v-model="value"
       max-width="360"
-
     >
-      <v-sheet class="p-3" color="#fff"  rounded="xl">
+      <v-sheet class="p-3" color="#fff" rounded="xl">
         <v-list class="text-start">
           <v-list-item
             v-for="(item, index) in items"
@@ -45,35 +43,37 @@
     <!-- ------------------ Embed post dialog ------------------------ -->
     <v-dialog
       v-if="embed_dialog"
-      max-width="560"
       v-model="embed_dialog"
+      max-width="560"
       scrollable
     >
       <v-card class="d-flex flex-column text-start">
         <v-card-title
-          >{{ $t("community.post_actions.embed") }} <v-spacer></v-spacer
-          ><v-btn size="large" icon @click="embed_dialog = false"
-            ><v-icon>close</v-icon></v-btn
-          ></v-card-title
-        >
+          >{{ $t("community.post_actions.embed") }}
+          <v-spacer></v-spacer>
+          <v-btn icon size="large" @click="embed_dialog = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-card-title>
 
         <v-card-text>
           <small>{{ $t("community.embed.copy_code_msg") }} </small>
           <div
-            v-text="embed_code"
             class="border my-3 hover-editable px-2 py-4 rounded"
+            v-text="embed_code"
           ></div>
 
           <v-btn
+            color="blue"
             variant="text"
             @click="copyToClipboard(embed_code)"
-            color="blue"
-            ><v-icon size="small" class="me-1">content_copy</v-icon>
-            {{ $t("community.embed.copy_code") }}</v-btn
           >
+            <v-icon class="me-1" size="small">content_copy</v-icon>
+            {{ $t("community.embed.copy_code") }}
+          </v-btn>
           <hr class="mb-4" />
           <small>{{ $t("global.commons.preview") }}</small>
-          <div v-html="embed_code" class="my-3"></div>
+          <div class="my-3" v-html="embed_code"></div>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -81,23 +81,24 @@
     <!-- ------------------ Edit post dialog ------------------------ -->
     <v-dialog
       v-if="edit_dialog"
-      max-width="680"
       v-model="edit_dialog"
       content-class="no-shadow-dialog"
+      max-width="680"
       scrollable
     >
       <v-btn
-        size="large"
-        icon
-        @click="edit_dialog = false"
         class="absolute-top-end"
-        ><v-icon>close</v-icon></v-btn
+        icon
+        size="large"
+        @click="edit_dialog = false"
       >
+        <v-icon>close</v-icon>
+      </v-btn>
 
       <community-post-editor
+        :community="community"
         :post="post"
         :shop="shop"
-        :community="community"
         class="my-0"
         scrollable
         @update:post="
@@ -114,8 +115,8 @@
 
     <s-content-violation-report-dialog
       v-model="report_dialog"
-      @report="reportPost"
       :loading="busy_report"
+      @report="reportPost"
     ></s-content-violation-report-dialog>
   </div>
 </template>

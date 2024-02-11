@@ -14,12 +14,14 @@
 
 <template>
   <div
-    class="flex-grow-1 min-width-50"
     :class="{ 'stop-animations': stop }"
     :style="{ '--pod-color': color }"
+    class="flex-grow-1 min-width-50"
   >
     <div v-if="forward" class="sph my-2">
-      <span v-if="!stop" class="dot -reverse"><slot name="forward"></slot></span>
+      <span v-if="!stop" class="dot -reverse"
+        ><slot name="forward"></slot
+      ></span>
     </div>
     <div v-if="backward" class="sph my-2">
       <span v-if="!stop" class="dot"><slot name="backward"></slot></span>

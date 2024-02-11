@@ -18,7 +18,7 @@
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Shop Info ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
       <div>
-        <v-avatar size="64" class="avatar-gradient -thin -shop mb-2">
+        <v-avatar class="avatar-gradient -thin -shop mb-2" size="64">
           <img :src="getShopImagePath(shop.icon, 128)" />
         </v-avatar>
       </div>
@@ -29,7 +29,7 @@
       <v-expand-transition>
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Busy User ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div v-if="busy_user" class="text-h4" key="1">
+        <div v-if="busy_user" key="1" class="text-h4">
           {{ $t("check_access.waiting_message") }}
         </div>
 
@@ -44,17 +44,27 @@
           <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Contact ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
           <div v-if="info && info.email" class="widget-buttons">
-            <v-btn :href="`mailto:${info.email}`" text color="primary" x-large>
-              <v-icon class="me-1">email</v-icon>
-              {{ info.email }}</v-btn
+            <v-btn
+              :href="`mailto:${info.email}`"
+              color="primary"
+              size="x-large"
+              variant="text"
             >
+              <v-icon class="me-1">email</v-icon>
+              {{ info.email }}
+            </v-btn>
           </div>
           <div v-if="info && info.phone" class="widget-buttons">
-            <v-btn :href="`tel:${info.phone}`" text color="primary" x-large>
+            <v-btn
+              :href="`tel:${info.phone}`"
+              color="primary"
+              size="x-large"
+              variant="text"
+            >
               <v-icon class="me-1">phone</v-icon>
 
-              {{ info.phone }}</v-btn
-            >
+              {{ info.phone }}
+            </v-btn>
           </div>
 
           <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ User ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
@@ -76,15 +86,15 @@
 
             <div class="widget-buttons">
               <v-btn
+                :loading="busy_logout"
+                color="primary"
+                size="x-large"
                 @click="
                   busy_logout = true;
                   Logout(() => {
                     busy_logout = false;
                   });
                 "
-                :loading="busy_logout"
-                color="primary"
-                x-large
               >
                 <v-icon class="me-1">logout</v-icon>
                 {{ $t("global.actions.logout") }}
@@ -97,10 +107,10 @@
           <div v-else class="widget-buttons">
             <v-btn
               :href="`${window.$storefront.prefix_url}/login`"
-              @click="busy_login = true"
               :loading="busy_login"
               color="primary"
-              x-large
+              size="x-large"
+              @click="busy_login = true"
             >
               <v-icon class="me-1">login</v-icon>
               {{ $t("global.actions.login_now") }}

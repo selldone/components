@@ -13,15 +13,15 @@
   -->
 
 <template>
-  <ul v-if="show" class="chart-skills" :caption="caption">
+  <ul v-if="show" :caption="caption" class="chart-skills">
     <li
       v-for="(item, i) in value"
       :key="i"
       :style="{
         zIndex: value.length - i,
-        '--start': ((sumb(i) * 180) / 100) + 'deg',
-        '--end': ((sumb(i+1) * 180) / 100) + 'deg',
-        '--color':item.color
+        '--start': (sumb(i) * 180) / 100 + 'deg',
+        '--end': (sumb(i + 1) * 180) / 100 + 'deg',
+        '--color': item.color,
       }"
     >
       <span>{{ item.title }}</span>
@@ -37,36 +37,34 @@ export default {
       required: true,
       type: Array,
     },
-    caption:{},
-
+    caption: {},
   },
   data: () => ({
-    show:true,
-
+    show: true,
   }),
   computed: {},
-  watch:{
-    value(){
-      this.show=false
+  watch: {
+    value() {
+      this.show = false;
       this.$nextTick(() => {
-        this.show=true
+        this.show = true;
       });
-    }
+    },
   },
   methods: {
     sumb(i) {
-      if(!i)return 0;
+      if (!i) return 0;
       let out = 0;
-      this.value.slice(0, i ).forEach((v) => (out += v.val));
+      this.value.slice(0, i).forEach((v) => (out += v.val));
 
       //console.log('sumb',i,out)
-      return out
+      return out;
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /* RESET STYLES
     –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
@@ -170,45 +168,47 @@ export default {
   backface-visibility: hidden;
   animation: fade-in 0.4s linear forwards;
 }
-.chart-skills{
-  li{
-    span{
+
+.chart-skills {
+  li {
+    span {
       font-size: 8px;
       font-weight: 500;
     }
   }
 }
+
 .chart-skills li:nth-child(1) span {
   top: 5px;
   left: 10px;
-  transform: calc(rotate( var(--start)) * -1);
+  transform: calc(rotate(var(--start)) * -1);
 }
 
 .chart-skills li:nth-child(2) span {
   top: 20px;
   left: 10px;
-  transform: calc(rotate( var(--start)) * -1);
+  transform: calc(rotate(var(--start)) * -1);
   animation-delay: 0.4s;
 }
 
 .chart-skills li:nth-child(3) span {
   top: 18px;
   left: 10px;
-  transform: calc(rotate( var(--start)) * -1);
+  transform: calc(rotate(var(--start)) * -1);
   animation-delay: 0.8s;
 }
 
 .chart-skills li:nth-child(4) span {
   top: 20px;
   left: 10px;
-  transform: calc(rotate( var(--start)) * -1);
+  transform: calc(rotate(var(--start)) * -1);
   animation-delay: 1.2s;
 }
 
 .chart-skills li:nth-child(5) span {
   top: 10px;
   left: 10px;
-  transform: calc(rotate( var(--start)) * -1);
+  transform: calc(rotate(var(--start)) * -1);
   animation-delay: 1.6s;
 }
 

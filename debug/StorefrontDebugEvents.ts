@@ -23,7 +23,7 @@ export class StorefrontDebugEvents {
           key: key,
           message: message,
         },
-      })
+      }),
     );
   }
 
@@ -34,7 +34,7 @@ export class StorefrontDebugEvents {
           key: key,
           message: message,
         },
-      })
+      }),
     );
   }
 }

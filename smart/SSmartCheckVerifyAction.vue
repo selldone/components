@@ -17,22 +17,22 @@
     <h3 v-if="label" class="my-2">{{ label }}</h3>
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
-    <div class="p-2 pp usn" :class="{ disabled: disabled }" @click="toggle">
+    <div :class="{ disabled: disabled }" class="p-2 pp usn" @click="toggle">
       <div class="d-flex align-center mnh">
         <div
-          style="min-width: 32px"
-          class="position-relative me-2"
           :class="{
             'interactive-zoom-in': modelValue,
           }"
+          class="position-relative me-2"
+          style="min-width: 32px"
         >
           <v-icon
-            :color="falseGray && !modelValue ? '#33' : color"
-            size="24"
-            class="-thin -gray flex-grow-0 h-auto center-absolute"
             :class="{
               'avatar-gradient': modelValue,
             }"
+            :color="falseGray && !modelValue ? '#33' : color"
+            class="-thin -gray flex-grow-0 h-auto center-absolute"
+            size="24"
             >{{ modelValue ? "lens" : "radio_button_unchecked" }}
           </v-icon>
         </div>
@@ -42,7 +42,7 @@
             {{ description }}
           </div>
         </div>
-        <v-avatar size="32" class="me-1 avatar-gradient -thin -user">
+        <v-avatar class="me-1 avatar-gradient -thin -user" size="32">
           <img :src="getUserAvatar(USER_ID())" />
         </v-avatar>
 
@@ -114,7 +114,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @keyframes interactiveZoomAnimation {
   from {
     transform: scale(0.5);
@@ -127,6 +127,4 @@ export default {
 .interactive-zoom-in {
   animation: interactiveZoomAnimation 0.25s;
 }
-
-
 </style>

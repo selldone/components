@@ -17,51 +17,51 @@
     <v-card-title class="mx-2">
       <v-btn
         v-if="method !== 'fast'"
+        class="zoomIn"
+        color="blue"
+        variant="text"
         @click="
           method = 'fast';
           code = null;
           phone = null;
         "
-        variant="text"
-        color="blue"
-        class="zoomIn"
       >
         {{ $t("global.need_login.title") }}
       </v-btn>
 
-      <v-icon v-if="current_step" class="zoomIn mx-2 delay_200">{{
-        $t("icons.chevron_next")
-      }}</v-icon>
+      <v-icon v-if="current_step" class="zoomIn mx-2 delay_200"
+        >{{ $t("icons.chevron_next") }}
+      </v-icon>
 
       <v-btn
         v-if="current_step"
-        variant="text"
         class="pointer-event-none zoomIn delay_400"
+        variant="text"
       >
         {{ current_step }}
       </v-btn>
     </v-card-title>
 
     <v-card-text
-      class="log-form"
       :class="{ 'overflow-visible': method === 'request' }"
+      class="log-form"
     >
       <!-- ====================================== Request ====================================== -->
-      <div v-if="method === 'request'" class="fst" :class="{ '-focus': tel_f }">
+      <div v-if="method === 'request'" :class="{ '-focus': tel_f }" class="fst">
         <div class="max-width-field mx-auto">
           <s-tel-input
             v-model="phone"
-            @country-changed="(val) => (country = val)"
-            enabledCountryCode
+            :defaultCountry="defaultCountry"
             :inputOptions="{
               placeholder: $t('global.need_login.mobile_input'),
             }"
+            class="stylish-phone-input my-3 fadeIn"
+            enabledCountryCode
             required
             validCharactersOnly
-            class="stylish-phone-input my-3 fadeIn"
-            @open="tel_f = true"
             @close="tel_f = false"
-            :defaultCountry="defaultCountry"
+            @open="tel_f = true"
+            @country-changed="(val) => (country = val)"
             @keypress.native.enter="
               country && phone && phone.length >= 7
                 ? requestSendCode()
@@ -71,16 +71,16 @@
 
           <div class="widget-buttons">
             <v-btn
-              class="my-3 -btn tnt fadeIn delay_100"
               :class="{ disabled: !country || !phone || phone.length < 7 }"
-              :variant="!country || !phone || (phone.length < 7 && 'flat')"
-              @click.stop="requestSendCode()"
               :loading="busy_login"
+              :variant="!country || !phone || (phone.length < 7 && 'flat')"
+              class="my-3 -btn tnt fadeIn delay_100"
               color="#0061e0"
-              size="x-large"
               dark
-              >{{ $t("global.actions.get_sms_code") }}</v-btn
-            >
+              size="x-large"
+              @click.stop="requestSendCode()"
+              >{{ $t("global.actions.get_sms_code") }}
+            </v-btn>
           </div>
         </div>
 
@@ -89,13 +89,13 @@
           <hr />
 
           <v-checkbox
-            color="#0061e0"
+            :label="$t('global.commons.accept_agreement')"
             :model-value="true"
+            class="small-label"
+            color="#0061e0"
+            hide-details
             readonly
             @click="show_sms_agreement = !show_sms_agreement"
-            :label="$t('global.commons.accept_agreement')"
-            class="small-label"
-            hide-details
           ></v-checkbox>
 
           <v-expand-transition>
@@ -117,9 +117,9 @@
             path: '/animation/938-iphone-x-loading.json',
             loop: true,
           }"
+          :speed="0.4"
           height="128px"
           width="128px"
-          :speed="0.4"
         />
         <div class="text-body-2">{{ phone_number }}</div>
 
@@ -132,16 +132,16 @@
             ></s-count-down>
             <v-btn
               v-else-if="show_resend"
+              class="tnt"
               color="#0061e0"
               variant="plain"
-              class="tnt"
               @click.stop="requestSendCode()"
-              >{{ $t("global.actions.resend_code") }}</v-btn
-            >
+              >{{ $t("global.actions.resend_code") }}
+            </v-btn>
           </v-expand-transition>
         </div>
 
-        <p style="max-width: 360px" class="mx-auto text-start">
+        <p class="mx-auto text-start" style="max-width: 360px">
           {{ $t("global.need_login.verification_code") }}:
         </p>
 
@@ -149,26 +149,26 @@
           v-model="verification_code"
           :length="6"
           autofocus
-          @finish="(val) => (verification_code = val)"
           class="max-width-field mx-auto text-center mb-12"
+          @finish="(val) => (verification_code = val)"
         />
 
         <div class="widget-buttons">
           <v-btn
-            class="fadeIn"
-            size="x-large"
-            block
             :class="{
               disabled: !verification_code || verification_code.length !== 6,
               'pointer-event-none': after_login,
             }"
-            @click.stop="loginVerify()"
-            :loading="busy_login"
             :color="after_login ? 'success' : '#0061e0'"
+            :loading="busy_login"
+            block
+            class="fadeIn"
             dark
             min-width="200"
-            >{{ $t("global.actions.verify") }}</v-btn
-          >
+            size="x-large"
+            @click.stop="loginVerify()"
+            >{{ $t("global.actions.verify") }}
+          </v-btn>
         </div>
       </div>
 
@@ -176,16 +176,16 @@
       <div v-if="method === 'select'">
         <v-list
           v-if="method === 'select' && users"
-          lines="two"
           :class="{ disabled: busy_login, 'pointer-event-none': after_login }"
           class="max-width-field mx-auto border-between-vertical text-start"
           color="transparent"
+          lines="two"
         >
           <template v-for="(user, index) in users" :key="user.id">
             <v-list-item
-              @click.stop="loginSelectUser(user)"
-              class="zoomIn"
               :style="`animation-delay: ${index * 100}ms`"
+              class="zoomIn"
+              @click.stop="loginSelectUser(user)"
             >
               <template v-slot:prepend>
                 <v-avatar>
@@ -193,9 +193,9 @@
                 </v-avatar>
               </template>
 
-              <v-list-item-title class="font-weight-bold">{{
-                user.name
-              }}</v-list-item-title>
+              <v-list-item-title class="font-weight-bold"
+                >{{ user.name }}
+              </v-list-item-title>
               <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
             </v-list-item>
           </template>
@@ -205,42 +205,41 @@
       <!-- ====================================== Register ====================================== -->
       <div v-if="method === 'register'">
         <v-text-field
-          class="zoomIn max-width-field mx-auto"
+          id="in_name"
+          v-model="name"
           :label="$t('global.commons.name')"
           :placeholder="$t('global.placeholders.name')"
-          v-model="name"
-          id="in_name"
           :rules="[GlobalRules.required()]"
+          class="zoomIn max-width-field mx-auto"
         >
         </v-text-field>
         <v-text-field
           v-if="!no_email_mode"
-          autocomplete="username"
-          type="email"
-          class="zoomIn delay_100 max-width-field mx-auto english-field"
+          id="in_email"
+          v-model="email"
           :label="$t('global.commons.email')"
           :placeholder="$t('global.placeholders.email')"
-          v-model="email"
-          id="in_email"
           :rules="[GlobalRules.required(), GlobalRules.email()]"
+          autocomplete="username"
+          class="zoomIn delay_100 max-width-field mx-auto english-field"
+          type="email"
         >
         </v-text-field>
         <v-text-field
           v-if="!no_email_mode"
+          id="in_password"
+          v-model="password"
+          :append-inner-icon="password_show ? 'visibility' : 'visibility_off'"
+          :label="$t('global.commons.password')"
+          :rules="[GlobalRules.required(), GlobalRules.minLength(8)]"
+          :type="password_show ? 'text' : 'password'"
           autocomplete="new-password"
           class="zoomIn delay_200 max-width-field mx-auto english-field"
-          :label="$t('global.commons.password')"
-          v-model="password"
-          id="in_password"
-          :rules="[GlobalRules.required(), GlobalRules.minLength(8)]"
-          :append-inner-icon="password_show ? 'visibility' : 'visibility_off'"
           @click:append-inner="password_show = !password_show"
-          :type="password_show ? 'text' : 'password'"
         >
         </v-text-field>
         <div class="widget-buttons">
           <v-btn
-            class="fadeIn"
             :class="{
               disabled:
                 !name ||
@@ -249,13 +248,14 @@
 
               'pointer-event-none': after_login,
             }"
-            @click.stop="loginNewUser()"
-            :loading="busy_login"
             :color="after_login ? 'success' : '#0061e0'"
-            size="x-large"
+            :loading="busy_login"
+            class="fadeIn"
             dark
-            >{{ $t("global.actions.verify") }}</v-btn
-          >
+            size="x-large"
+            @click.stop="loginNewUser()"
+            >{{ $t("global.actions.verify") }}
+          </v-btn>
         </div>
 
         <p class="mt-4 mb-1">
@@ -264,16 +264,16 @@
         <div class="widget-buttons">
           <v-btn
             class="fadeIn delay_300"
-            @click.stop="no_email_mode = !no_email_mode"
             color="#0061e0"
             dark
-            variant="text"
             min-width="200"
             size="x-large"
+            variant="text"
+            @click.stop="no_email_mode = !no_email_mode"
           >
             <v-icon v-if="no_email_mode" class="zoomIn me-1">check</v-icon>
-            {{ $t("global.actions.register_no_mail") }}</v-btn
-          >
+            {{ $t("global.actions.register_no_mail") }}
+          </v-btn>
         </div>
       </div>
 
@@ -288,26 +288,26 @@
           <p>{{ $t("global.need_login.msg_body") }}</p>
         </div>
         <div
-          class="max-width-field mx-auto"
           :class="{ disabled: disabled_fast_buttons }"
+          class="max-width-field mx-auto"
         >
           <!-- 1. Google login -->
           <v-btn
             v-if="login_modes && login_modes.includes('google')"
-            variant="flat"
+            :loading="busy_redirect === 'google'"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
-            @mouseenter="tick()"
+            color="#4285f4"
+            dark
+            size="large"
+            variant="flat"
             @click="
               busy_redirect = 'google';
               LoginShop(null, 'google', false);
             "
-            :loading="busy_redirect === 'google'"
-            color="#4285f4"
-            dark
-            size="large"
+            @mouseenter="tick()"
           >
-            <v-avatar size="32" class="float-start ms-n2" color="#fff"
+            <v-avatar class="float-start ms-n2" color="#fff" size="32"
               ><img class="p-2" src="../assets/trademark/google.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{
@@ -318,20 +318,20 @@
           <!-- 2. Apple login -->
           <v-btn
             v-if="login_modes && login_modes.includes('apple')"
-            variant="flat"
+            :loading="busy_redirect === 'apple'"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
-            @mouseenter="tick()"
+            color="#111"
+            dark
+            size="large"
+            variant="flat"
             @click="
               busy_redirect = 'apple';
               LoginShop(null, 'apple', false);
             "
-            :loading="busy_redirect === 'apple'"
-            size="large"
-            color="#111"
-            dark
+            @mouseenter="tick()"
           >
-            <v-avatar size="32" class="float-start ms-n2" color="#fff"
+            <v-avatar class="float-start ms-n2" color="#fff" size="32"
               ><img class="p-2" src="../assets/trademark/apple-b.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{
@@ -352,18 +352,18 @@
           <!-- 2. Facebook login -->
           <v-btn
             v-if="login_modes && login_modes.includes('facebook')"
-            variant="flat"
+            :loading="busy_redirect === 'facebook'"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
-            @mouseenter="tick()"
+            size="large"
+            variant="flat"
             @click="
               busy_redirect = 'facebook';
               LoginShop(null, 'facebook', false);
             "
-            :loading="busy_redirect === 'facebook'"
-            size="large"
+            @mouseenter="tick()"
           >
-            <v-avatar size="32" class="float-start ms-n2" color="#fff"
+            <v-avatar class="float-start ms-n2" color="#fff" size="32"
               ><img class="p-2" src="../assets/trademark/meta.png"
             /></v-avatar>
             <span class="flex-grow-1">{{
@@ -375,18 +375,18 @@
 
           <v-btn
             v-if="login_modes && login_modes.includes('selldone')"
-            variant="flat"
-            size="large"
+            :loading="busy_redirect === 'selldone'"
             block
             class="my-2 untransform fadeIn delay_300 d-flex align-items-center tnt"
+            size="large"
+            variant="flat"
             @click="
               busy_redirect = 'selldone';
               LoginShop(null, null, false);
             "
-            :loading="busy_redirect === 'selldone'"
             @mouseenter="tick()"
           >
-            <v-avatar size="32" class="float-start ms-n2" color="#fff">
+            <v-avatar class="float-start ms-n2" color="#fff" size="32">
               <img class="p-2" src="../assets/trademark/selldone.svg" />
             </v-avatar>
             <span class="flex-grow-1">{{
@@ -397,14 +397,14 @@
           <!-- 4. Phone login -->
           <v-btn
             v-if="login_modes && login_modes.includes('sms')"
-            variant="flat"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
+            size="large"
+            variant="flat"
             @mouseenter="tick()"
             @click.stop="method = 'request'"
-            size="large"
           >
-            <v-avatar size="32" class="float-start ms-n2" color="#fff">
+            <v-avatar class="float-start ms-n2" color="#fff" size="32">
               <v-icon size="20">phone_iphone</v-icon>
             </v-avatar>
             <span class="flex-grow-1">{{
@@ -414,7 +414,7 @@
         </div>
       </div>
 
-      <s-loading css-mode light v-if="method === 'login'" class="m-4">
+      <s-loading v-if="method === 'login'" class="m-4" css-mode light>
       </s-loading>
     </v-card-text>
   </v-card>
@@ -427,6 +427,7 @@ import { SetupService } from "@core/server/SetupService";
 import { SuccessVerifyMethod } from "@sdk-storefront/auth/XapiAuthSMS";
 import { XapiAuth } from "@sdk-storefront/auth/XapiAuth";
 import ShopEmailLogin from "@components/storefront/login/widgets/ShopEmailLogin.vue";
+
 export default {
   name: "SShopLogin",
   components: {
@@ -657,20 +658,25 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+
   > div {
     width: 100%;
   }
 
   .-fab {
     background-color: #fff !important;
+
     &.-blue {
       border: solid thick #03a9f4;
+
       &:hover {
         background-color: #03a9f4 !important;
       }
     }
+
     &.-green {
       border: solid thick #3cba92;
+
       &:hover {
         background-color: #3cba92 !important;
       }
@@ -684,6 +690,7 @@ export default {
       }
     }
   }
+
   .-msg {
     text-align: start;
     font-size: 1.5em;
@@ -694,13 +701,16 @@ export default {
 
 .fst {
   transition: all 0.4s ease-in-out;
+
   &.-focus {
     margin-top: -20% !important;
+
     .-btn {
       opacity: 0;
       transition: unset !important;
     }
   }
+
   .-btn {
     opacity: 1;
     transition: all 0.3s;

@@ -12,13 +12,13 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import getRandomNumber from '../utils/get-random-number';
+import getRandomNumber from "../utils/get-random-number";
 import {
   CircleParticle,
   RectParticle,
   HeartParticle,
   ImageParticle,
-} from '../particles';
+} from "../particles";
 
 /**
  * Create a particle based on the given options.
@@ -38,8 +38,8 @@ export default class ParticleFactory {
    *   The path to the image.
    */
   createImageElement(imgSource) {
-    const imgEl = document.createElement('img');
-    imgEl.setAttribute('src', imgSource);
+    const imgEl = document.createElement("img");
+    imgEl.setAttribute("src", imgSource);
     return imgEl;
   }
 
@@ -77,22 +77,22 @@ export default class ParticleFactory {
    */
   getDefaults(options = {}) {
     return {
-      type: options.defaultType || 'circle',
+      type: options.defaultType || "circle",
       size: options.defaultSize || 10,
       dropRate: options.defaultDropRate || 10,
       colors: options.defaultColors || [
-        'DodgerBlue',
-        'OliveDrab',
-        'Gold',
-        'pink',
-        'SlateBlue',
-        'lightblue',
-        'Violet',
-        'PaleGreen',
-        'SteelBlue',
-        'SandyBrown',
-        'Chocolate',
-        'Crimson',
+        "DodgerBlue",
+        "OliveDrab",
+        "Gold",
+        "pink",
+        "SlateBlue",
+        "lightblue",
+        "Violet",
+        "PaleGreen",
+        "SteelBlue",
+        "SandyBrown",
+        "Chocolate",
+        "Crimson",
       ],
       url: null,
     };
@@ -113,19 +113,19 @@ export default class ParticleFactory {
     const colorIndex = getRandomNumber(0, opts.colors.length - 1, true);
     opts.color = opts.colors[colorIndex];
 
-    if (opts.type === 'circle') {
+    if (opts.type === "circle") {
       return new CircleParticle(opts);
     }
 
-    if (opts.type === 'rect') {
+    if (opts.type === "rect") {
       return new RectParticle(opts);
     }
 
-    if (opts.type === 'heart') {
+    if (opts.type === "heart") {
       return new HeartParticle(opts);
     }
 
-    if (opts.type === 'image') {
+    if (opts.type === "image") {
       return new ImageParticle(opts, this.getImageElement(opts.url));
     }
 

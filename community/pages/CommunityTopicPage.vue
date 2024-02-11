@@ -15,32 +15,32 @@
 <template>
   <v-container
     :class="{ 'opx-active': opx_active }"
-    style="margin-bottom: 20vh"
     class="--add-extra-top-header"
+    style="margin-bottom: 20vh"
   >
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <community-breadcrumb
-      class="breadcrumb-max-w"
-      :class="{ 'mb-12': !has_cross }"
-      :shop="shop"
-      :community="community"
+      v-model:show-edit="show_edit"
+      v-model:show-report="show_report"
       :category="category"
-      :topic="topic"
+      :class="{ 'mb-12': !has_cross }"
+      :community="community"
       :post="target_post"
-      :show-edit.sync="show_edit"
-      :show-report.sync="show_report"
-      has-report
+      :shop="shop"
+      :topic="topic"
+      class="breadcrumb-max-w"
       has-edit
+      has-report
     ></community-breadcrumb>
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Edit ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
       <div v-if="show_edit" class="c-max-w">
         <community-post-editor
-          class="border-top-thick -blue"
-          :community="community"
           :category="category"
-          :topic="topic"
+          :community="community"
           :post="topic.question"
+          :topic="topic"
+          class="border-top-thick -blue"
           topic-mode
           @update:topic="
             (val) => {
@@ -51,19 +51,20 @@
         ></community-post-editor>
         <div class="text-end py-5">
           <v-btn
-            @click="show_critic = !show_critic"
-            color="red"
-            text
             class="m-2"
-            ><v-icon class="me-1" small>warning</v-icon>
-            {{ $t("global.commons.critical_zone") }}</v-btn
+            color="red"
+            variant="text"
+            @click="show_critic = !show_critic"
           >
+            <v-icon class="me-1" size="small">warning</v-icon>
+            {{ $t("global.commons.critical_zone") }}
+          </v-btn>
         </div>
         <v-expand-transition>
           <div v-if="show_critic">
             <div class="widget-box mb-5">
               <h2>
-                <v-icon class="me-1" small>warning</v-icon>
+                <v-icon class="me-1" size="small">warning</v-icon>
                 {{ $t("global.commons.critical_zone") }}
               </h2>
               <v-list-subheader>
@@ -71,16 +72,16 @@
               </v-list-subheader>
               <div class="widget-buttons">
                 <v-btn
+                  :loading="busy_delete"
                   color="red"
                   dark
-                  x-large
+                  size="x-large"
+                  variant="flat"
                   @click="removeTopic()"
-                  :loading="busy_delete"
-                  depressed
                 >
                   <v-icon class="me-1">delete</v-icon>
-                  {{ $t("community.topic.remove") }}</v-btn
-                >
+                  {{ $t("community.topic.remove") }}
+                </v-btn>
               </div>
             </div>
           </div>
@@ -110,27 +111,29 @@
     ></community-cross-topics>
 
     <v-container class="c-max-w">
-      <v-row justify="center" align="start">
+      <v-row align="start" justify="center">
         <template v-if="topic">
           <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Main post ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
           <community-widget
             v-if="topic.question"
-            class="fadeIn"
             :community="community"
-            :topic="topic"
             :post="topic.question"
             :shop="shop"
+            :topic="topic"
+            class="fadeIn"
+            question
             @delete="
               ({ post, topic_removed }) => {
                 topic.question = null;
                 if (topic_removed)
-                  $router.push({ name: window.$community.routes.COMMUNITY_CATEGORY_PAGE });
+                  $router.push({
+                    name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
+                  });
               }
             "
-            question
           ></community-widget>
-          <v-col v-else cols="12" class="c-container">
+          <v-col v-else class="c-container" cols="12">
             <div class="c-widget bg-white px-4 py-3">
               <small>{{ $t("community.commons.topic") }}</small>
               <h1>
@@ -138,13 +141,13 @@
               </h1>
 
               <v-alert
-                type="error"
-                color="red"
-                border="left"
-                dense
+                border="start"
                 class="mt-4"
-                >{{ $t("community.topic.main_post_removed_msg") }}</v-alert
-              >
+                color="red"
+                density="compact"
+                type="error"
+                >{{ $t("community.topic.main_post_removed_msg") }}
+              </v-alert>
             </div>
           </v-col>
 
@@ -159,21 +162,21 @@
           <!-- New post -->
 
           <community-post-editor
-            :community="community"
             :category="category"
+            :community="community"
             :topic="topic"
-            can-voice
             can-product
+            can-voice
             @add:post="(post) => AddOrUpdateItemByID(posts, post, 'id', false)"
           ></community-post-editor>
 
           <!-- filter -->
           <community-filter
-            :search.sync="search"
-            :filter.sync="filter"
-            :opx-active.sync="opx_active"
-            @update:sort="setSort"
+            v-model:filter="filter"
+            v-model:opx-active="opx_active"
+            v-model:search="search"
             :loadingSort="busy_posts && page === 1"
+            @update:sort="setSort"
           ></community-filter>
 
           <!-- posts > part 1 -->
@@ -183,18 +186,20 @@
               v-for="(post, i) in posts.slice(0, follow_index)"
               :key="post.id"
               :community="community"
-              :topic="topic"
               :post="post"
               :shop="shop"
+              :style="{ 'animation-delay': 50 * (i % itemsPerPage) + 'ms' }"
+              :topic="topic"
+              class="fadeInUp"
               @delete="
                 ({ post, topic_removed }) => {
                   DeleteItemByID(posts, post.id);
                   if (topic_removed)
-                    $router.push({ name: window.$community.routes.COMMUNITY_CATEGORY_PAGE });
+                    $router.push({
+                      name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
+                    });
                 }
               "
-              class="fadeInUp"
-              :style="{ 'animation-delay': 50 * (i % itemsPerPage) + 'ms' }"
             ></community-widget>
 
             <!-- following suggestion -->
@@ -202,8 +207,8 @@
             <community-follow-suggestion
               v-if="has_suggestion"
               :community="community"
-              class="fadeInUp"
               :style="{ 'animation-delay': 50 * follow_index + 'ms' }"
+              class="fadeInUp"
             ></community-follow-suggestion>
 
             <!-- posts > part 2 -->
@@ -212,41 +217,43 @@
               v-for="(post, i) in posts.slice(follow_index, posts.length)"
               :key="post.id"
               :community="community"
-              :topic="topic"
               :post="post"
               :shop="shop"
-              @delete="
-                ({ post, topic_removed }) => {
-                  DeleteItemByID(posts, post.id);
-                  if (topic_removed)
-                    $router.push({ name: window.$community.routes.COMMUNITY_CATEGORY_PAGE });
-                }
-              "
-              class="fadeInUp"
               :style="{
                 'animation-delay':
                   50 * ((i + follow_index) % itemsPerPage) + 'ms',
               }"
+              :topic="topic"
+              class="fadeInUp"
+              @delete="
+                ({ post, topic_removed }) => {
+                  DeleteItemByID(posts, post.id);
+                  if (topic_removed)
+                    $router.push({
+                      name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
+                    });
+                }
+              "
             ></community-widget>
 
             <!-- Auto load more -->
 
             <v-col
-              cols="12"
               v-if="has_more"
-              style="height: 50vh"
               v-intersect.quiet="
                 (isIntersecting) => {
                   if (isIntersecting) fetchPosts(page + 1);
                 }
               "
+              cols="12"
+              style="height: 50vh"
             >
-              <s-loading light css-mode v-if="busy_posts"></s-loading>
+              <s-loading v-if="busy_posts" css-mode light></s-loading>
             </v-col>
           </template>
 
           <!-- Keep space bottom -->
-          <v-col v-else-if="busy_posts" cols="12" style="height: 80vh"> </v-col>
+          <v-col v-else-if="busy_posts" cols="12" style="height: 80vh"></v-col>
         </template>
       </v-row>
     </v-container>
@@ -344,16 +351,21 @@ export default {
     },
 
     has_suggestion() {
-      return true
+      return true;
     },
-    target_post(){
+    target_post() {
       const query_post_id = parseInt(this.$route.query.post);
-      if(!query_post_id)return null;
+      if (!query_post_id) return null;
       // 1. try to find it in main topic:
-      if(this.topic && this.topic.question &&  this.topic.question.id===query_post_id)return this.topic.question
+      if (
+        this.topic &&
+        this.topic.question &&
+        this.topic.question.id === query_post_id
+      )
+        return this.topic.question;
       // 2. Try to find it in posts:
-      return  this.posts &&  this.posts.find(p=>p.id===query_post_id);
-    }
+      return this.posts && this.posts.find((p) => p.id === query_post_id);
+    },
   },
   watch: {
     "$route.query"(query) {
@@ -373,7 +385,7 @@ export default {
     },
 
     search: _.debounce(function (newVal, oldVal) {
-      if(!newVal && !oldVal) return;
+      if (!newVal && !oldVal) return;
       this.fetchPosts(1);
     }, 1500),
   },
@@ -385,7 +397,7 @@ export default {
 
     // Try to pre load category data:
     this.category = this.categories.find(
-      (c) => c.id === parseInt(this.$route.params.category_id)
+      (c) => c.id === parseInt(this.$route.params.category_id),
     );
 
     this.search = this.$route.query.search ? this.$route.query.search : "";
@@ -420,7 +432,7 @@ export default {
         .get(
           window.CAPI.GET_COMMUNITY_TOPIC_INFO(
             this.community.id,
-            this.$route.params.topic_id
+            this.$route.params.topic_id,
           ),
           {
             params: {
@@ -429,7 +441,7 @@ export default {
               comment_id: query_comment_id,
               //-----------------------
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -479,7 +491,7 @@ export default {
         .get(
           window.CAPI.GET_COMMUNITY_TOPIC_POSTS(
             this.community.id,
-            this.$route.params.topic_id
+            this.$route.params.topic_id,
           ),
           {
             params: {
@@ -499,7 +511,7 @@ export default {
 
               deletes: this.show_deletes, // Show deletes posts
             },
-          }
+          },
         )
         .then(({ data }) => {
           if (data.error) {
@@ -528,15 +540,10 @@ export default {
     },
     //――――――――――――――――――――――― Scroll ―――――――――――――――――――――――
     ScrollToPost(post_id) {
-      ScrollHelper.scrollToElement("#post-" + post_id,250,'smooth')
-
-
+      ScrollHelper.scrollToElement("#post-" + post_id, 250, "smooth");
     },
     ScrollToComment(comment_id) {
-      ScrollHelper.scrollToElement("#comment-" + comment_id,250,'smooth')
-
-
-
+      ScrollHelper.scrollToElement("#comment-" + comment_id, 250, "smooth");
     },
     //――――――――――――――――――――――― Remove topic ―――――――――――――――――――――――
     removeTopic() {
@@ -550,12 +557,14 @@ export default {
             .delete(
               window.CAPI.DELETE_COMMUNITY_TOPIC(
                 this.community.id,
-                this.topic.id
-              )
+                this.topic.id,
+              ),
             )
             .then(({ data }) => {
               if (!data.error) {
-                this.$router.push({ name: window.$community.routes.COMMUNITY_CATEGORY_PAGE });
+                this.$router.push({
+                  name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
+                });
               } else {
                 this.showErrorAlert(null, data.error_msg);
               }
@@ -566,11 +575,11 @@ export default {
             .finally(() => {
               this.busy_delete = false;
             });
-        }
+        },
       );
     },
   },
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

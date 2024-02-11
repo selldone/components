@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 
-
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 496.008 496.008" style="enable-background:new 0 0 496.008 496.008;" xml:space="preserve">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px"
+     y="0px"
+     viewBox="0 0 496.008 496.008" style="enable-background:new 0 0 496.008 496.008;" xml:space="preserve">
 <g>
 	<g>
 		<g>
@@ -62,57 +62,57 @@
 				c-1.472,0.528-2.864,1.176-4.184,1.96L404.94,197.688z M472.004,272c-4.408,0-8-3.584-8-8c0-4.416,3.592-8,8-8
 				c4.408,0,8,3.584,8,8C480.004,268.416,476.412,272,472.004,272z M472.004,160c-4.408,0-8-3.584-8-8s3.592-8,8-8
 				c4.408,0,8,3.584,8,8S476.412,160,472.004,160z"/>
-			<rect x="16.004" width="16" height="16"/>
-			<rect x="16.004" y="32" width="16" height="16"/>
-			<rect x="32.004" y="16" width="16" height="16"/>
-			<rect x="0.004" y="16" width="16" height="16"/>
-			<rect x="416.004" y="368" width="16" height="16"/>
-			<rect x="416.004" y="400" width="16" height="16"/>
-			<rect x="432.004" y="384" width="16" height="16"/>
-			<rect x="400.004" y="384" width="16" height="16"/>
-			<rect x="464.004" y="32" width="16" height="16"/>
-			<rect x="464.004" y="64" width="16" height="16"/>
-			<rect x="480.004" y="48" width="16" height="16"/>
-			<rect x="448.004" y="48" width="16" height="16"/>
-			<rect x="96.004" y="384" width="16" height="16"/>
-			<rect x="96.004" y="416" width="16" height="16"/>
-			<rect x="112.004" y="400" width="16" height="16"/>
-			<rect x="80.004" y="400" width="16" height="16"/>
-			<rect x="48.004" y="296" width="16" height="16"/>
-			<rect x="48.004" y="328" width="16" height="16"/>
-			<rect x="64.004" y="312" width="16" height="16"/>
-			<rect x="32.004" y="312" width="16" height="16"/>
+            <rect x="16.004" width="16" height="16"/>
+            <rect x="16.004" y="32" width="16" height="16"/>
+            <rect x="32.004" y="16" width="16" height="16"/>
+            <rect x="0.004" y="16" width="16" height="16"/>
+            <rect x="416.004" y="368" width="16" height="16"/>
+            <rect x="416.004" y="400" width="16" height="16"/>
+            <rect x="432.004" y="384" width="16" height="16"/>
+            <rect x="400.004" y="384" width="16" height="16"/>
+            <rect x="464.004" y="32" width="16" height="16"/>
+            <rect x="464.004" y="64" width="16" height="16"/>
+            <rect x="480.004" y="48" width="16" height="16"/>
+            <rect x="448.004" y="48" width="16" height="16"/>
+            <rect x="96.004" y="384" width="16" height="16"/>
+            <rect x="96.004" y="416" width="16" height="16"/>
+            <rect x="112.004" y="400" width="16" height="16"/>
+            <rect x="80.004" y="400" width="16" height="16"/>
+            <rect x="48.004" y="296" width="16" height="16"/>
+            <rect x="48.004" y="328" width="16" height="16"/>
+            <rect x="64.004" y="312" width="16" height="16"/>
+            <rect x="32.004" y="312" width="16" height="16"/>
 		</g>
 	</g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
 </svg>

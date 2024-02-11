@@ -13,18 +13,23 @@
   -->
 
 <template>
-  <div class="root" :class="{'is-rtl':$vuetify.rtl}">
+  <div :class="{ 'is-rtl': $vuetify.rtl }" class="root">
     <h3 class="progress-xyz-title">
       {{ title }}
     </h3>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <v-btn variant="text" rounded :disabled="!previous" @click="$emit('previous')">
+      <v-btn
+        :disabled="!previous"
+        rounded
+        variant="text"
+        @click="$emit('previous')"
+      >
         <v-icon> {{ $t("icons.chevron_back") }}</v-icon>
         {{ $t("global.actions.previous") }}
       </v-btn>
 
-      <v-btn variant="text" rounded :disabled="!next" @click="$emit('next')">
+      <v-btn :disabled="!next" rounded variant="text" @click="$emit('next')">
         {{ $t("global.actions.next") }}
 
         <v-icon>{{ $t("icons.chevron_next") }}</v-icon>
@@ -33,27 +38,27 @@
 
     <div class="progress-xyz">
       <div
-        class="progress-xyz-bar"
         :style="{
           width: `${tweeningValue}%`,
           background: gradient ? gradient : color,
         }"
+        class="progress-xyz-bar"
       >
         <span
-          class="progress-xyz-icon"
           :style="{
             color: '#fff',
             'border-color': colorValue ? colorValue : color,
             background: colorValue ? colorValue : color,
           }"
-          ><span>{{ Math.round(tweeningValue)  }}</span
+          class="progress-xyz-icon"
+          ><span>{{ Math.round(tweeningValue) }}</span
           >%</span
         >
       </div>
 
       <div
-        class="progress-xyz-value"
         :style="{ color: color, 'border-color': color }"
+        class="progress-xyz-value"
       >
         <v-icon :color="color" size="small" style="margin-bottom: 6px">
           {{ icon }}
@@ -70,7 +75,7 @@ export default {
   name: "ProgressXyzStepper",
   components: {},
   props: {
-    modelValue:{},
+    modelValue: {},
     title: {
       required: false,
       type: String,
@@ -119,7 +124,6 @@ export default {
   },
 
   watch: {
-
     modelValue(newVal, oldVal) {
       this.tween(oldVal, newVal);
     },
@@ -158,16 +162,18 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .root {
   padding: 0 32px 30px 32px;
 }
+
 .progress-xyz-title {
   font-size: 18px;
   font-weight: 700;
   color: #000;
   margin: 0 0 30px;
 }
+
 .progress-xyz {
   height: 17px;
   background: rgba(0, 0, 0, 0.1);
@@ -177,7 +183,8 @@ export default {
   overflow: visible;
   position: relative;
 
-  .progress-xyz-icon, .progress-xyz-value {
+  .progress-xyz-icon,
+  .progress-xyz-value {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -192,47 +199,33 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-
-
-
-
   }
 
   .progress-xyz-value {
     left: -25px;
-
-
-
   }
 
-  .progress-xyz-icon{
+  .progress-xyz-icon {
     right: -50px;
     transform: translate(-25px, 0);
-
   }
-
-
-
 }
 
 .is-rtl {
-  .progress-xyz{
+  .progress-xyz {
     .progress-xyz-value {
       right: -25px;
       left: auto;
     }
+
     .progress-xyz-icon {
       left: -50px;
       right: auto;
 
       transform: translate(25px, 0);
     }
-
   }
 }
-
-
-
 
 .progress-xyz .progress-xyz-bar {
   border-radius: 15px;
@@ -245,8 +238,6 @@ export default {
 
 .progress-xyz .progress-xyz-icon {
   left: auto;
-
-
 }
 
 .progress-xyz.orange-bar .progress-xyz-icon,
@@ -254,26 +245,28 @@ export default {
   border: 7px solid #f7810e;
   color: #f7810e;
 }
+
 .progress-xyz.pink-bar .progress-xyz-icon,
 .progress-xyz.pink-bar .progress-xyz-value {
   border: 7px solid #f2438f;
   color: #f2438f;
 }
+
 .progress-xyz.green-bar-bar .progress-xyz-icon,
 .progress-xyz.green-bar-bar .progress-xyz-value {
   border: 7px solid #08a061;
   color: #08a061;
 }
+
 @-webkit-keyframes animate-positive {
   0% {
     width: 0;
   }
 }
+
 @keyframes animate-positive {
   0% {
     width: 0;
   }
 }
-
-
 </style>

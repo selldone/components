@@ -14,57 +14,57 @@
 
 <template>
   <v-autocomplete
-    :model-value="modelValue"
-    @update:model-value="(val) => $emit('update:modelValue', val)"
+    v-model:menu="menu"
+    v-model:search="search"
+    :customFilter="() => true"
     :items="profiles"
-    :loading="busy || loading"
     :label="type.title"
+    :loading="busy || loading"
+    :model-value="modelValue"
+    :return-object="false"
+    :variant="variant"
+    clearable
     item-title="name"
     item-value="id"
-    :return-object="false"
-    clearable
+    messages=" "
+    @update:model-value="(val) => $emit('update:modelValue', val)"
     @click:clear="
       $nextTick(() => {
         $emit('click:clear');
       })
     "
-    v-model:search="search"
-    v-model:menu="menu"
-    :customFilter="() => true"
-    :variant="variant"
-    messages=" "
   >
     <template v-slot:selection>
       {{ live_value?.name }}
     </template>
     <template v-slot:message>
       <div
-        class="small"
         v-if="live_value?.info && Array.isArray(live_value.info.languages)"
+        class="small"
       >
         <v-chip
           v-for="lng in live_value.info.languages"
           :key="lng"
           class="ma-1"
-          size="x-small"
           label
+          size="x-small"
           >{{ getLanguageName(lng) }}
         </v-chip>
       </div>
     </template>
 
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" class="text-start" :title="item.raw.name">
+      <v-list-item :title="item.raw.name" class="text-start" v-bind="props">
         <div
-          class="my-1"
           v-if="item.raw.info && Array.isArray(item.raw.info.languages)"
+          class="my-1"
         >
           <v-chip
             v-for="lng in item.raw.info.languages"
             :key="lng"
             class="ma-1"
-            size="x-small"
             label
+            size="x-small"
             >{{ getLanguageName(lng) }}
           </v-chip>
         </div>
@@ -195,4 +195,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

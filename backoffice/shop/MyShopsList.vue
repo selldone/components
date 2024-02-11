@@ -15,35 +15,36 @@
 <template>
   <v-container class="text-center">
     <v-row
-      justify="center"
       align="center"
-      style="min-height: 240px"
       class="thin-scroll"
+      justify="center"
+      style="min-height: 240px"
     >
       <component
         :is="link ? 'router-link' : 'div'"
         v-for="(shop, index) in shops"
         :key="shop.id"
-        class="m-2 zoomIn position-relative pointer-pointer"
-        style="max-width: 96px"
-        :style="`animation-delay: ${30 * index}ms`"
-        @click="$emit('select:shop', returnObject ? shop : shop.id)"
         :class="{
           disabled:
-            $route.name === 'AdminShopDashboardPage' &&
+            $route.name === 'BPageShopDashboard' &&
             getId($route.params.shop_id) === shop.id,
         }"
+        :style="`animation-delay: ${30 * index}ms`"
         :to="
           link
             ? { name: linkPageName, params: { shop_id: shop.id } }
             : undefined
         "
+        class="m-2 zoomIn position-relative pointer-pointer"
+        style="max-width: 96px"
+        @click="$emit('select:shop', returnObject ? shop : shop.id)"
       >
         <v-card
-          width="96"
-          height="96"
           class="d-flex align-center justify-center rounded-2rem widget-hover position-relative"
-          variant="outlined" color="#999"
+          color="#999"
+          height="96"
+          variant="outlined"
+          width="96"
         >
           <img
             :src="
@@ -51,13 +52,17 @@
                 ? getShopImagePath(shop.icon, 96)
                 : require('@components/assets/placeholders/shop/store.svg')
             "
+            class="rounded-18px"
             height="80"
             width="80"
-            class="rounded-18px"
             @click="selected_shop = shop.id"
           />
-          <v-avatar class="absolute-bottom-end" size="30" :color="dark?'#000':'#fff'">
-            <v-avatar  size="24">
+          <v-avatar
+            :color="dark ? '#000' : '#fff'"
+            class="absolute-bottom-end"
+            size="30"
+          >
+            <v-avatar size="24">
               <v-img :src="getShopLicenseIcon(shop.license)"></v-img>
             </v-avatar>
           </v-avatar>
@@ -65,28 +70,28 @@
 
         <v-progress-circular
           v-if="selected_shop === shop.id && hasLoading"
+          class="position-absolute"
           color="blue"
           indeterminate
           size="48"
-          class="position-absolute"
           style="top: 24px; left: 24px"
         ></v-progress-circular>
 
         <div class="text-ellipsis">
           <v-icon
             v-if="!shop.shop_permissions || !shop.shop_permissions.length"
-            size="x-small"
-            color="amber"
-            class="me-1"
             :title="$t('shop_permissions.ADMIN.text')"
-            >fa:fas fa-crown</v-icon
-          >
+            class="me-1"
+            color="amber"
+            size="x-small"
+            >fa:fas fa-crown
+          </v-icon>
 
-          <v-tooltip v-else location="bottom" :max-width="480" color="#111">
+          <v-tooltip v-else :max-width="480" color="#111" location="bottom">
             <template v-slot:activator="{ props }">
-              <v-icon v-bind="props" size="x-small" color="#03A9F4" class="me-1"
-                >fa:fas fa-user</v-icon
-              >
+              <v-icon class="me-1" color="#03A9F4" size="x-small" v-bind="props"
+                >fa:fas fa-user
+              </v-icon>
             </template>
             <div class="text-start">
               <p
@@ -96,9 +101,9 @@
               >
                 <img
                   :src="getShopPermissionObject(item.level).src"
-                  width="16"
-                  height="16"
                   class="me-2"
+                  height="16"
+                  width="16"
                 />
                 {{ $t(getShopPermissionObject(item.level).text) }}
                 <br />
@@ -122,8 +127,8 @@
     >
       <s-add-button-green
         :caption="$t('home.s1.domain_input.action')"
-        icon="add_business"
         class="max-width-field mx-auto"
+        icon="add_business"
       >
       </s-add-button-green>
     </router-link>
@@ -152,7 +157,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    dark:Boolean
+    dark: Boolean,
   },
 
   data() {

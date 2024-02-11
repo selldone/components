@@ -17,12 +17,10 @@
 </template>
 
 <script>
-
-
-  function safeIncrementProperty(obj,key,count){
-    if(!key)return;
-    obj[key] = obj[key] ? (obj[key] + count) : count
-  }
+function safeIncrementProperty(obj, key, count) {
+  if (!key) return;
+  obj[key] = obj[key] ? obj[key] + count : count;
+}
 
 export default {
   name: "CommunityAnalytics",
@@ -70,26 +68,30 @@ export default {
 
     //――――――――――――――――――――――――― Actions ―――――――――――――――――――――――――
 
-    onPostImpression({topic, post }) {
-      this.pack.posts.impressions[post.id]=1;
-      safeIncrementProperty(this.pack.topics.impressions,topic.id,1)
-      safeIncrementProperty(this.pack.categories.impressions,topic.category_id,1)
+    onPostImpression({ topic, post }) {
+      this.pack.posts.impressions[post.id] = 1;
+      safeIncrementProperty(this.pack.topics.impressions, topic.id, 1);
+      safeIncrementProperty(
+        this.pack.categories.impressions,
+        topic.category_id,
+        1,
+      );
       //console.log('onPostImpression',this.pack)
     },
-    onPostShare({ topic,post }) {
-      this.pack.posts.shares[post.id]=1;
-      safeIncrementProperty(this.pack.topics.shares,topic.id,1)
-      safeIncrementProperty(this.pack.categories.shares,topic.category_id,1)
+    onPostShare({ topic, post }) {
+      this.pack.posts.shares[post.id] = 1;
+      safeIncrementProperty(this.pack.topics.shares, topic.id, 1);
+      safeIncrementProperty(this.pack.categories.shares, topic.category_id, 1);
     },
-    onPostEmbed({topic, post }) {
-      this.pack.posts.embeds[post.id]=1;
-      safeIncrementProperty(this.pack.topics.embeds,topic.id,1)
-      safeIncrementProperty(this.pack.categories.embeds,topic.category_id,1)
+    onPostEmbed({ topic, post }) {
+      this.pack.posts.embeds[post.id] = 1;
+      safeIncrementProperty(this.pack.topics.embeds, topic.id, 1);
+      safeIncrementProperty(this.pack.categories.embeds, topic.category_id, 1);
     },
-    onPostView({ topic,post }) {
-      this.pack.posts.views[post.id]=1;
-      safeIncrementProperty(this.pack.topics.views,topic.id,1)
-      safeIncrementProperty(this.pack.categories.views,topic.category_id,1)
+    onPostView({ topic, post }) {
+      this.pack.posts.views[post.id] = 1;
+      safeIncrementProperty(this.pack.topics.views, topic.id, 1);
+      safeIncrementProperty(this.pack.categories.views, topic.category_id, 1);
       //console.log('onPostImpression',this.pack.posts_view)
     },
 
@@ -98,8 +100,8 @@ export default {
     sendData() {
       if (this.busy) return;
 
-      let change = Object.values(this.pack).some(
-        (val) => Object.values(val).some(v=>Object.values(v).length>0)
+      let change = Object.values(this.pack).some((val) =>
+        Object.values(val).some((v) => Object.values(v).length > 0),
       );
 
       if (!change) return; // No change!
@@ -131,7 +133,7 @@ export default {
       this.sendData();
     }, 60 * 1000);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }

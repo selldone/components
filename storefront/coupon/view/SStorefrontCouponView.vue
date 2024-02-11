@@ -15,35 +15,37 @@
 <template>
   <v-hover
     v-slot:default="{ hover }"
-    class="coupon"
     :class="{ 'pointer-pointer': selectable && !disabled, selected: selected }"
     :style="{ borderColor: disabled ? '#000' : coupon.color, width: width }"
+    class="coupon"
   >
     <div
-      @click="disabled ? undefined : $emit('click')"
       :class="{ 'img-grayscale op-0-7': disabled }"
       class="d-flex flex-column"
+      @click="disabled ? undefined : $emit('click')"
     >
       <p class="coupon-title">
         {{ coupon.title }}
-        <small class="mx-2" v-if="coupon.code">({{ coupon.code }})</small>
+        <small v-if="coupon.code" class="mx-2">({{ coupon.code }})</small>
         <img
-          src="../../../assets/icons/coupon.svg"
-          height="20"
           class="float-end"
+          height="20"
+          src="../../../assets/icons/coupon.svg"
         />
       </p>
       <p class="coupon-description">{{ coupon.description }}</p>
 
       <v-spacer></v-spacer>
       <s-time-progress-bar
-        :start-time="coupon.start"
         :end-time="coupon.end"
+        :start-time="coupon.start"
         small
       ></s-time-progress-bar>
 
-      <p class="m-0 mt-1" v-if="coupon.charge">
-        <v-icon small class="me-1" color="#333">card_giftcard add</v-icon>
+      <p v-if="coupon.charge" class="m-0 mt-1">
+        <v-icon class="me-1" color="#333" size="small"
+          >card_giftcard add
+        </v-icon>
         <b>
           <price-view
             :amount="coupon.charge"
@@ -52,7 +54,7 @@
         </b>
       </p>
 
-      <div class="d-flex text-center mt-1" v-if="coupon.percent">
+      <div v-if="coupon.percent" class="d-flex text-center mt-1">
         <p class="w-50 my-0">
           <small>{{ $t("global.commons.discount") }} </small><br />
           <b>{{ coupon.percent }} %</b>
@@ -60,20 +62,20 @@
 
         <p class="w-50 my-0">
           <small>{{ $t("global.commons.limit") }} </small><br />
-          <b
-            ><price-view
+          <b>
+            <price-view
               :amount="coupon.limit"
               :currency="coupon.currency"
-            ></price-view
-          ></b>
+            ></price-view>
+          </b>
         </p>
       </div>
 
       <v-fade-transition>
         <div
           v-if="hover"
-          class="hover-detail op-0-9"
           :style="{ background: coupon.color }"
+          class="hover-detail op-0-9"
         >
           <p class="my-1">
             <small>{{ $t("global.commons.min_purchase") }}: </small>
@@ -81,26 +83,26 @@
               <price-view
                 :amount="coupon.min_purchase"
                 :currency="coupon.currency"
-              ></price-view
-            ></b>
+              ></price-view>
+            </b>
           </p>
 
           <p class="my-1">
             <small>{{ $t("global.commons.eligible_for") }}: </small>
             <b>{{ eligible_description }}</b>
           </p>
-          <div class="d-flex text-center" v-if="coupon.qualify">
-            <p class="my-1 w-50" v-if="coupon.qualify_daily">
+          <div v-if="coupon.qualify" class="d-flex text-center">
+            <p v-if="coupon.qualify_daily" class="my-1 w-50">
               <small>{{ $t("global.commons.daily") }}</small
               ><br />
               <b>{{ coupon.qualify_daily }}x</b>
             </p>
-            <p class="my-1 w-50" v-if="coupon.qualify_monthly">
+            <p v-if="coupon.qualify_monthly" class="my-1 w-50">
               <small>{{ $t("global.commons.monthly") }}</small
               ><br />
               <b>{{ coupon.qualify_monthly }}x</b>
             </p>
-            <p class="my-1 w-50" v-if="coupon.qualify_yearly">
+            <p v-if="coupon.qualify_yearly" class="my-1 w-50">
               <small>{{ $t("global.commons.yearly") }}</small
               ><br />
               <b>{{ coupon.qualify_yearly }}x</b>
@@ -109,13 +111,14 @@
 
           <v-btn
             v-if="coupon.code"
+            class="absolute-top-end"
             dark
             icon
             title="Delete coupon"
             @click="$emit('delete', coupon.code)"
-            class="absolute-top-end"
-            ><v-icon>close</v-icon></v-btn
           >
+            <v-icon>close</v-icon>
+          </v-btn>
         </div>
       </v-fade-transition>
     </div>
@@ -124,6 +127,7 @@
 
 <script>
 import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
+
 export default {
   name: "SStorefrontCouponView",
   components: { STimeProgressBar },
@@ -156,10 +160,10 @@ export default {
       return this.coupon.only_first_buy
         ? this.$t("global.commons.only_for_first_buy")
         : this.coupon.qualify_single
-        ? this.$t("global.commons.one_time_use")
-        : this.coupon.qualify
-        ? this.$t("global.commons.period_of_qualify")
-        : this.$t("global.commons.no_constraint");
+          ? this.$t("global.commons.one_time_use")
+          : this.coupon.qualify
+            ? this.$t("global.commons.period_of_qualify")
+            : this.$t("global.commons.no_constraint");
     },
   },
 
@@ -168,7 +172,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .coupon {
   user-select: none;
   position: relative;
@@ -181,9 +185,11 @@ export default {
     background-color: var(--theme-light) !important;
     color: #fff;
     border: unset;
+
     small {
       color: #fff !important;
     }
+
     .theme--light.v-icon {
       color: #fff !important;
     }
@@ -195,10 +201,12 @@ export default {
     margin: 0;
     min-height: 20px;
   }
+
   .coupon-description {
     font-size: 0.8rem;
     margin: 0;
   }
+
   .hover-detail {
     position: absolute;
     width: calc(100% - 12px);
@@ -210,6 +218,7 @@ export default {
     color: #fff;
     border-radius: 8px;
     padding: 8px;
+
     small {
       color: #fff !important;
       font-size: 11px;

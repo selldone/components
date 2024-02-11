@@ -17,27 +17,27 @@
     <div
       class="pa-6 dashed border-gray-300 rounded-18px d-flex flex-column"
       style="min-height: inherit"
-      @dragover="dragover"
-      @dragleave="dragleave"
       @dragend="dragleave"
+      @dragleave="dragleave"
+      @dragover="dragover"
       @drop="drop"
     >
       <v-file-input
-        :chips="!!multiple"
-        :multiple="multiple"
-        class="w-px h-px opacity-0 overflow-hidden absolute flex-grow-0"
-        @update:model-value="(files) => processFile(files, '')"
+        v-model="filelist"
         :accept="extension"
+        :chips="!!multiple"
+        :label="label"
+        :multiple="multiple"
+        bg-color="transparent"
+        class="w-px h-px opacity-0 overflow-hidden absolute flex-grow-0"
         flat
         variant="solo"
-        :label="label"
-        v-model="filelist"
-        bg-color="transparent"
+        @update:model-value="(files) => processFile(files, '')"
       />
 
       <v-spacer></v-spacer>
       <div>
-        <v-icon size="64" color="#fff" class="m-2">{{ icon }}</v-icon>
+        <v-icon class="m-2" color="#fff" size="64">{{ icon }}</v-icon>
       </div>
       <div>Drop landing page file here or click top input.</div>
       <v-spacer></v-spacer>
@@ -48,27 +48,34 @@
           {{ accepted_count }}
         </h3>
         <v-progress-linear
-          color="light-green"
-          class="my-3"
-          height="10"
           :model-value="(100 * uploaded_count) / accepted_count"
-          striped
+          class="my-3"
+          color="light-green"
+          height="10"
           rounded
+          striped
         ></v-progress-linear>
 
         <v-btn
           v-if="failed_count"
+          color="red"
+          dark
           size="x-large"
           variant="flat"
-          dark
-          color="red"
           @click="resendFailed"
-          >Resend {{ failed_count }} failed files</v-btn
-        >
+          >Resend {{ failed_count }} failed files
+        </v-btn>
 
-        <v-btn variant="flat" size="small" color="blue" dark @click="resetCount"
-          ><v-icon>clear</v-icon> Reset</v-btn
+        <v-btn
+          color="blue"
+          dark
+          size="small"
+          variant="flat"
+          @click="resetCount"
         >
+          <v-icon>clear</v-icon>
+          Reset
+        </v-btn>
       </template>
     </div>
   </div>

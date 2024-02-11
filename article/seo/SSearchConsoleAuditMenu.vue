@@ -13,76 +13,99 @@
   -->
 
 <template>
-  <v-menu offset-y min-width="400" max-width="640" rounded="lg">
-    <template v-slot:activator="{ on, attrs }">
+  <v-menu max-width="640" min-width="400" offset-y rounded="lg">
+    <template v-slot:activator="{ props }">
       <v-btn
-        icon
-        v-bind="attrs"
-        @click.stop
-        v-on="on"
         :title="`${keywords}\n\nClick to view details...`"
+        icon
+        v-bind="props"
+        @click.stop
       >
-        <img src="../../assets/trademark/google.svg" width="16" height="16" />
+        <img height="16" src="../../assets/trademark/google.svg" width="16" />
       </v-btn>
     </template>
     <v-sheet class="pa-2 small text-start" color="#fafafa">
-
-      <img src="../../assets/trademark/google.svg" width="16" height="16" class="me-1" />
+      <img
+        class="me-1"
+        height="16"
+        src="../../assets/trademark/google.svg"
+        width="16"
+      />
       <b>Google Search Console</b>
 
       <div v-if="queries" class="my-2">
-        <v-simple-table dense class="rounded-lg">
+        <v-table class="rounded-lg" dense>
           <template v-slot:default>
             <thead>
               <tr>
                 <th class="text-center">#</th>
                 <th>Keyword</th>
                 <th>
-                  <v-icon small class="me-1">visibility</v-icon> Impressions
+                  <v-icon class="me-1" size="small">visibility</v-icon>
+                  Impressions
                 </th>
-                <th><v-icon small class="me-1">ads_click</v-icon> Clicks</th>
-                <th><v-icon small class="me-1">bolt</v-icon> CTR</th>
-                <th><v-icon small class="me-1">radar</v-icon> Position</th>
+                <th>
+                  <v-icon class="me-1" size="small">ads_click</v-icon>
+                  Clicks
+                </th>
+                <th>
+                  <v-icon class="me-1" size="small">bolt</v-icon>
+                  CTR
+                </th>
+                <th>
+                  <v-icon class="me-1" size="small">radar</v-icon>
+                  Position
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(item, index) in queries" :key="index">
                 <td class="text-muted text-center">{{ index + 1 }}</td>
                 <td>{{ decodeURIComponent(item.keys) }}</td>
-                <td>{{  numeralFormat(item.impressions ,"0.[0]a") }}</td>
-                <td>{{   numeralFormat(item.clicks,"0.[0]a") }}</td>
+                <td>{{ numeralFormat(item.impressions, "0.[0]a") }}</td>
+                <td>{{ numeralFormat(item.clicks, "0.[0]a") }}</td>
                 <td>
                   <div>
-                    {{  numeralFormat(item.ctr ,"%0.[00]") }}
+                    {{ numeralFormat(item.ctr, "%0.[00]") }}
                     <span class="mx-1">
                       <score-indicator
-                        :value="$SEO.CTRScore(item.ctr)"
                         :size="16"
+                        :value="$SEO.CTRScore(item.ctr)"
                         :width="2"
                       ></score-indicator
                     ></span>
                   </div>
                 </td>
-                <td>{{   numeralFormat(item.position,"0.[0]") }}</td>
+                <td>{{ numeralFormat(item.position, "0.[0]") }}</td>
               </tr>
             </tbody>
           </template>
-        </v-simple-table>
+        </v-table>
       </div>
 
       <div v-if="countries" class="my-2">
-        <v-simple-table dense class="rounded-lg">
+        <v-table class="rounded-lg" dense>
           <template v-slot:default>
             <thead>
               <tr>
                 <th class="text-center">#</th>
                 <th>Country</th>
                 <th>
-                  <v-icon small class="me-1">visibility</v-icon> Impressions
+                  <v-icon class="me-1" size="small">visibility</v-icon>
+                  Impressions
                 </th>
-                <th><v-icon small class="me-1">ads_click</v-icon> Clicks</th>
-                <th><v-icon small class="me-1">bolt</v-icon> CTR</th>
-                <th><v-icon small class="me-1">radar</v-icon> Position</th>
+                <th>
+                  <v-icon class="me-1" size="small">ads_click</v-icon>
+                  Clicks
+                </th>
+                <th>
+                  <v-icon class="me-1" size="small">bolt</v-icon>
+                  CTR
+                </th>
+                <th>
+                  <v-icon class="me-1" size="small">radar</v-icon>
+                  Position
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -96,25 +119,25 @@
                   />
                   <small>{{ getCountryName(item.keys) }}</small>
                 </td>
-                <td>{{  numeralFormat(item.impressions ,"0.[0]a") }}</td>
-                <td>{{   numeralFormat(item.clicks,"0.[0]a") }}</td>
+                <td>{{ numeralFormat(item.impressions, "0.[0]a") }}</td>
+                <td>{{ numeralFormat(item.clicks, "0.[0]a") }}</td>
                 <td>
                   <div>
-                    {{  numeralFormat(item.ctr ,"%0.[00]") }}
+                    {{ numeralFormat(item.ctr, "%0.[00]") }}
                     <span class="mx-1">
                       <score-indicator
-                        :value="$SEO.CTRScore(item.ctr)"
                         :size="16"
+                        :value="$SEO.CTRScore(item.ctr)"
                         :width="2"
                       ></score-indicator
                     ></span>
                   </div>
                 </td>
-                <td>{{   numeralFormat(item.position,"0.[0]") }}</td>
+                <td>{{ numeralFormat(item.position, "0.[0]") }}</td>
               </tr>
             </tbody>
           </template>
-        </v-simple-table>
+        </v-table>
       </div>
     </v-sheet>
   </v-menu>
@@ -123,6 +146,7 @@
 <script>
 import ScoreIndicator from "@components/ui/progress/score-indicator/ScoreIndicator.vue";
 import numeral from "numeral";
+
 export default {
   name: "SSearchConsoleAuditMenu",
   components: { ScoreIndicator },
@@ -145,8 +169,8 @@ export default {
       this.queries?.forEach((it) => {
         out.push(
           `${decodeURIComponent(it.keys)} 🠞 ${numeral(it.position).format(
-            "0.[0]"
-          )}`
+            "0.[0]",
+          )}`,
         );
       });
       return out.join("\n");

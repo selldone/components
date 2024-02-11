@@ -16,8 +16,8 @@
 hr {
   margin-top: 1rem;
   margin-bottom: 1rem;
- // border: 0;
-//  border-top: 1px solid rgba(0, 0, 0, 0.5);
+   border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 //------------------ Font size ------------------
@@ -31,28 +31,31 @@ small,
     line-height: 0;
   }*/
 }
-big{
+
+big {
   font-size: 120%;
   line-height: normal;
 
-  big{
-   // line-height: 0;
+  big {
+    // line-height: 0;
   }
 
-  @media  (max-width: 900px) {
+  @media (max-width: 900px) {
     font-size: 110%;
   }
-  @media  (max-width: 600px) {
+  @media (max-width: 600px) {
     font-size: 105%;
   }
 }
+
 .small-xs-only {
-  @media  (max-width: 600px) {
+  @media (max-width: 600px) {
     font-size: 80%;
   }
 }
+
 //-------------------------------------------------------
-.tnt,.text-no-transform {
+.tnt, .text-no-transform {
   text-transform: initial !important;
 }
 
@@ -67,9 +70,11 @@ big{
 .text-capitalize {
   text-transform: capitalize !important;
 }
+
 .font-weight-200 {
   font-weight: 200 !important;
 }
+
 .font-weight-light {
   font-weight: 300 !important;
 }
@@ -81,9 +86,11 @@ big{
 .font-weight-normal {
   font-weight: 400 !important;
 }
+
 .font-weight-600 {
   font-weight: 600 !important;
 }
+
 .font-weight-bold {
   font-weight: 700 !important;
 }
@@ -98,7 +105,8 @@ big{
 
 .text-white {
   color: #fff !important;
-  .small,small{
+
+  .small, small {
     color: #fff !important;
   }
 }
@@ -176,7 +184,6 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 
-
 .m-0 {
   margin: 0 !important;
 }
@@ -228,12 +235,6 @@ a.text-dark:hover, a.text-dark:focus {
 .p-5 {
   padding: 3rem !important;
 }
-
-
-
-
-
-
 
 
 .justify-center {
@@ -513,7 +514,8 @@ button.bg-dark:focus {
 .rounded-2rem {
   border-radius: 2rem !important;
 }
-rounded-0{
+
+rounded-0 {
   border-radius: 0 !important;
 }
 
@@ -686,8 +688,6 @@ td {
 }
 
 
-
-
 /*[ Opacity ]
 -----------------------------------------------------------
 */
@@ -736,7 +736,6 @@ td {
 }
 
 
-
 .text-monospace {
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
 }
@@ -760,18 +759,19 @@ td {
 }
 
 
-.usn,.user-select-none {
+.usn, .user-select-none {
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
   -ms-user-select: none !important;
   user-select: none !important;
 }
-.usall{
-  user-select:all !important;
+
+.usall {
+  user-select: all !important;
 }
 
 
-.dashed-flex-space{
+.dashed-flex-space {
   flex-grow: 1;
   height: 2px;
   border-bottom: dashed thin #aaa;
@@ -780,8 +780,9 @@ td {
   opacity: 0.5;
 
 }
-.text-white,.theme--dark{
-  .dashed-flex-space{
+
+.text-white, .theme--dark {
+  .dashed-flex-space {
     border-bottom: dashed thin currentColor;
   }
 

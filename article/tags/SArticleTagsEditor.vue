@@ -19,29 +19,35 @@
       in various areas, such as the page builder, to showcase specific articles.
     </v-list-subheader>
     <v-combobox
+      :counter="5"
+      :disabled="busy_fetch"
+      :items="shop_tags"
+      :loading="busy_fetch"
+      :messages="$t('global.article_tags.tags_input_message')"
       :model-value="tags"
+      :placeholder="$t('global.article_tags.tags_input')"
+      :rules="[GlobalRules.counter(5)]"
+      chips
+      clearable
+      closable-chips
+      multiple
+      variant="underlined"
       @update:model-value="
         (val) => {
           tags = val.length > 5 ? val.slice(0, 5) : val;
           setTags();
         }
       "
-      :items="shop_tags"
-      :placeholder="$t('global.article_tags.tags_input')"
-      :messages="$t('global.article_tags.tags_input_message')"
-      chips
-      clearable
-      multiple
-      :loading="busy_fetch"
-      :disabled="busy_fetch"
-      :counter="5"
-      :rules="[GlobalRules.counter(5)]"
-      variant="underlined"
-      closable-chips
     >
       <template v-slot:chip="{ item, props }">
         <v-chip v-bind="props">
-          <v-icon start @click.prevent="showEditTag(item.raw)" title="Edit tag" class="hover-scale-small">edit</v-icon>
+          <v-icon
+            class="hover-scale-small"
+            start
+            title="Edit tag"
+            @click.prevent="showEditTag(item.raw)"
+            >edit
+          </v-icon>
           {{ item.raw }}
         </v-chip>
       </template>
@@ -49,10 +55,10 @@
 
     <v-bottom-sheet
       v-model="show_edit_tag"
-      width="840"
-      max-width="98vw"
       :open-delay="250"
       content-class="rounded-t-xl"
+      max-width="98vw"
+      width="840"
     >
       <v-card rounded="t-xl">
         <v-card-title>
@@ -79,7 +85,7 @@
 
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn variant="text" @click="show_edit_tag = false" size="x-large">
+            <v-btn size="x-large" variant="text" @click="show_edit_tag = false">
               <v-icon class="me-1">close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>

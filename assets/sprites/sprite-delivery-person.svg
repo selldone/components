@@ -3,10 +3,11 @@
 
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="799px" height="725px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 134.02 121.56"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xodm="http://www.corel.com/coreldraw/odm/2003" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="799px"
+     height="725px"
+     version="1.1"
+     style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+     viewBox="0 0 134.02 121.56">
  <defs>
   <style type="text/css">
    <![CDATA[
@@ -17,31 +18,32 @@ viewBox="0 0 134.02 121.56"
    ]]>
   </style>
  </defs>
- <g id="Layer_x0020_1">
+    <g id="Layer_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <rect class="fil0" width="134.02" height="121.56"/>
-  <rect class="fil1" x="44.43" y="27.55" width="43.55" height="6.73" rx="1.31" ry="0.82"/>
-  <rect class="fil1" x="46.58" y="35.26" width="38.7" height="3.9" rx="1.16" ry="0.47"/>
-  <rect class="fil1" x="18.64" y="44.77" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
-  <rect class="fil1" x="61.4" y="44.77" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
-  <rect class="fil1" x="104.16" y="44.77" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
-  <rect class="fil1" x="104.16" y="72.73" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
-  <rect class="fil1" x="61.4" y="72.73" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
-  <rect class="fil1" x="18.64" y="72.73" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
-  <rect class="fil1" x="14.1" y="50.89" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
-  <rect class="fil1" x="56.86" y="50.89" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
-  <rect class="fil1" x="99.61" y="50.89" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
-  <rect class="fil1" x="99.61" y="80.28" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
-  <rect class="fil1" x="56.86" y="80.28" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
-  <rect class="fil1" x="14.1" y="80.28" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
-  <g id="_2698254403776">
+        <rect class="fil0" width="134.02" height="121.56"/>
+        <rect class="fil1" x="44.43" y="27.55" width="43.55" height="6.73" rx="1.31" ry="0.82"/>
+        <rect class="fil1" x="46.58" y="35.26" width="38.7" height="3.9" rx="1.16" ry="0.47"/>
+        <rect class="fil1" x="18.64" y="44.77" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
+        <rect class="fil1" x="61.4" y="44.77" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
+        <rect class="fil1" x="104.16" y="44.77" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
+        <rect class="fil1" x="104.16" y="72.73" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
+        <rect class="fil1" x="61.4" y="72.73" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
+        <rect class="fil1" x="18.64" y="72.73" width="11.12" height="4.29" rx="0.82" ry="0.82"/>
+        <rect class="fil1" x="14.1" y="50.89" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
+        <rect class="fil1" x="56.86" y="50.89" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
+        <rect class="fil1" x="99.61" y="50.89" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
+        <rect class="fil1" x="99.61" y="80.28" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
+        <rect class="fil1" x="56.86" y="80.28" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
+        <rect class="fil1" x="14.1" y="80.28" width="20.2" height="4.29" rx="1.11" ry="0.82"/>
+        <g id="_2698254403776">
    <circle class="fil1" cx="24.2" cy="94.87" r="5.31"/>
-   <circle class="fil2" cx="24.2" cy="94.87" r="3.43"/>
+            <circle class="fil2" cx="24.2" cy="94.87" r="3.43"/>
   </g>
-  <g id="_2698254405088">
+        <g id="_2698254405088">
    <circle class="fil1" cx="66.65" cy="94.87" r="5.31"/>
-   <circle class="fil2" cx="66.65" cy="94.87" r="3.43"/>
+            <circle class="fil2" cx="66.65" cy="94.87" r="3.43"/>
   </g>
-  <path class="fil3" d="M66.6 4.32c5.64,0 10.21,4.57 10.21,10.2 0,5.64 -4.57,10.21 -10.21,10.21 -5.63,0 -10.2,-4.57 -10.2,-10.21 0,-5.63 4.57,-10.2 10.2,-10.2zm4.66 11.01c-0.72,-0.71 -1.57,-1.24 -2.5,-1.56 0.99,-0.69 1.65,-1.84 1.65,-3.14 0,-2.1 -1.71,-3.8 -3.81,-3.8 -2.09,0 -3.8,1.7 -3.8,3.8 0,1.3 0.65,2.45 1.65,3.14 -0.93,0.32 -1.78,0.85 -2.5,1.56 -1.24,1.25 -1.93,2.9 -1.93,4.66l1.03 0c0,-3.06 2.49,-5.56 5.55,-5.56 3.06,0 5.55,2.5 5.55,5.56l1.03 0c0,-1.76 -0.68,-3.41 -1.92,-4.66zm-4.66 -1.92c-1.53,0 -2.77,-1.25 -2.77,-2.78 0,-1.53 1.24,-2.77 2.77,-2.77 1.53,0 2.78,1.24 2.78,2.77 0,1.53 -1.25,2.78 -2.78,2.78z"/>
+        <path class="fil3"
+              d="M66.6 4.32c5.64,0 10.21,4.57 10.21,10.2 0,5.64 -4.57,10.21 -10.21,10.21 -5.63,0 -10.2,-4.57 -10.2,-10.21 0,-5.63 4.57,-10.2 10.2,-10.2zm4.66 11.01c-0.72,-0.71 -1.57,-1.24 -2.5,-1.56 0.99,-0.69 1.65,-1.84 1.65,-3.14 0,-2.1 -1.71,-3.8 -3.81,-3.8 -2.09,0 -3.8,1.7 -3.8,3.8 0,1.3 0.65,2.45 1.65,3.14 -0.93,0.32 -1.78,0.85 -2.5,1.56 -1.24,1.25 -1.93,2.9 -1.93,4.66l1.03 0c0,-3.06 2.49,-5.56 5.55,-5.56 3.06,0 5.55,2.5 5.55,5.56l1.03 0c0,-1.76 -0.68,-3.41 -1.92,-4.66zm-4.66 -1.92c-1.53,0 -2.77,-1.25 -2.77,-2.78 0,-1.53 1.24,-2.77 2.77,-2.77 1.53,0 2.78,1.24 2.78,2.77 0,1.53 -1.25,2.78 -2.78,2.78z"/>
  </g>
 </svg>

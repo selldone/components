@@ -15,22 +15,22 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <component
     :is="to ? 'router-link' : href ? 'a' : 'div'"
-    v-bind="to ? { to: to } : { href: href }"
-    class="card-item-new card-link pointer-pointer s--product-card"
     :class="{
       '-small-mode': smallMode,
       'no-hover': isInsta,
       '-insta-mode': isInsta,
       '-static': static,
     }"
+    class="card-item-new card-link pointer-pointer s--product-card"
+    v-bind="to ? { to: to } : { href: href }"
   >
     <div
       v-if="!isRow"
-      class="card card--1 m-0 text-center"
       :class="{
         'overflow-visible': hasDiscountCountDown,
         'rounded-18px': rounded,
       }"
+      class="card card--1 m-0 text-center"
       @click="$emit('click')"
     >
       <div class="overflow-hidden position-relative card-wrap">
@@ -42,8 +42,8 @@
 
         <div
           v-if="!product.original"
-          class="card__copy-product-badge"
           :class="{ 'is-small': isSmall }"
+          class="card__copy-product-badge"
         >
           <p>
             <i class="fas fa-exclamation pe-2 float-start" />
@@ -54,32 +54,30 @@
         <div class="card__img"></div>
 
         <v-img
-          class="card__img--hover"
-          :contain="is_image_contain"
-          :class="{ contain: is_image_contain }"
-          :src="product_image"
           :alt="
             product.title + (product.title_en ? ` | ${product.title_en}` : '')
           "
+          :class="{ contain: is_image_contain }"
+          :cover="!is_image_contain"
+          :src="product_image"
+          class="card__img--hover"
         >
-          <slot name="dynamic-background-layout" >
-
-          </slot>
+          <slot name="dynamic-background-layout"></slot>
           <template v-slot:placeholder>
-            <v-row class="fill-height ma-0" align="center" justify="center">
+            <v-row align="center" class="fill-height ma-0" justify="center">
               <v-progress-circular
+                color="grey-lighten-1"
                 indeterminate
-                color="grey lighten-1"
               ></v-progress-circular>
             </v-row>
           </template>
         </v-img>
 
         <div
-          class="top-title flex-column"
           :class="{ 'has-discount-banner': hasDiscountCountDown }"
+          class="top-title flex-column"
         >
-          <h3 class="card-new-title" :class="{ 'is-small': isSmall }">
+          <h3 :class="{ 'is-small': isSmall }" class="card-new-title">
             {{ product.title?.limitWords(7) }}
           </h3>
 
@@ -88,17 +86,16 @@
 
         <!-- ============== Color Rating in Small mode ================ -->
         <div v-if="isSmall" class="colors-rating-small-mode">
-          <v-chip v-if="product.rate_count" color="#fafafa" class="mx-2">
+          <v-chip v-if="product.rate_count" class="mx-2" color="#fafafa">
             <v-rating
-              :value="product.rate"
+              :model-value="product.rate"
+              :size="isSmall ? 'x-small':'small'"
               active-color="yellow-darken-3"
-              color="grey-darken-1"
-              half-increments
-              small
-              readonly
-              dense
-              :x-small="isSmall"
               class="me-1"
+              color="grey-darken-1"
+              density="compact"
+              half-increments
+              readonly
             />
             <b>{{ Number(product.rate).toFixed(1) }}</b>
           </v-chip>
@@ -107,8 +104,8 @@
               v-for="color in colors.slice(0, 5)"
               :key="color"
               :color="color"
-              class="me-1"
               :size="14"
+              class="me-1"
             >
             </s-color-circle>
             <v-icon v-if="colors.length > 5" class="me-1">more_horiz</v-icon>
@@ -126,90 +123,83 @@
           class="quick-buy"
         >
           <v-btn
-            @click.prevent="$emit('quick-buy')"
-            depressed
+            :size="($vuetify.display.mdAndUp && !isInsta)?'large':isInsta?'small':undefined"
             color="primary"
-            dark
-            tile
-            :large="$vuetify.display.mdAndUp && !isInsta"
-            :fab="isInsta"
-            :small="isInsta"
+            variant="flat"
             width="100%"
+            @click.prevent="$emit('quick-buy')"
           >
-            <v-icon small>shopping_basket</v-icon>
-            <span class="ms-1" v-if="!isInsta">
+            <v-icon size="small">shopping_basket</v-icon>
+            <span v-if="!isInsta" class="ms-1">
               {{ $t("global.actions.quick_buy") }}</span
             >
           </v-btn>
           <v-btn
+            :size="($vuetify.display.mdAndUp && !isInsta)? 'large':isInsta?'small':undefined"
+            :title="$t('global.commons.compare')"
+            block
+            color="primary"
+            icon
+            variant="flat"
             @click.prevent="
               existInComparisonList
                 ? removeFromProductComparison(product, null)
                 : addToProductComparison(product, null, true)
             "
-            depressed
-            color="primary"
-            icon
-            tile
-            block
-            :large="$vuetify.display.mdAndUp && !isInsta"
-            :fab="isInsta"
-            :small="isInsta"
-            :title="$t('global.commons.compare')"
           >
             <v-icon
               v-if="existInComparisonList"
-              small
-              color="success"
               class="blink-me"
+              color="success"
+              size="small"
               >lens
             </v-icon>
-            <v-icon v-else small>data_saver_on</v-icon>
+            <v-icon v-else size="small">data_saver_on</v-icon>
           </v-btn>
         </div>
 
         <div
+          :class="{ no_variants: !hasVariant }"
           class="card__info pt-2"
           style="z-index: 2"
-          :class="{ no_variants: !hasVariant }"
         >
           <product-variants-view
             v-if="hasVariant"
-            class="toggle-visible-on-hover"
-            :variants="product.variants"
-            small
-            center
-            :selected-variant.sync="current_variant"
-            hoverable
+            v-model:selected-variant="current_variant"
             :limit="5"
+            :variants="product.variants"
+            center
+            class="toggle-visible-on-hover"
+            hoverable
+            small
           />
 
-          <v-row no-gutters class="toggle-hidden-on-hover">
+          <v-row class="toggle-hidden-on-hover" no-gutters>
             <v-col
-              cols="5"
-              align-center
-              justify-center
-              class="small p-0 sec--rate-variants"
               v-if="!isSmall"
+              align-center
+              class="small p-0 sec--rate-variants"
+              cols="5"
+              justify-center
             >
               <div v-if="product.rate_count">
                 <v-rating
-                  :value="product.rate"
+                  :model-value="product.rate"
                   active-color="yellow-darken-3"
                   color="grey-darken-1"
+                  density="compact"
                   half-increments
-                  small
                   readonly
-                  dense
+                  size="small"
                 />
               </div>
 
               <div v-if="product.rate_count" class="single-line">
-                <b class="me-1" :class="{ '-zero-font': dense }">{{
+                <b :class="{ '-zero-font': dense }" class="me-1">{{
                   Number(product.rate).toFixed(1)
                 }}</b>
                 <small>
-                  ● {{   numeralFormat(product.rate_count,"0,0") }}
+                  ● {{ numeralFormat(product.rate_count, "0,0") }}
                   {{ $t("product_card.review_unit") }}
                 </small>
               </div>
@@ -222,8 +212,8 @@
                   v-for="color in colors.slice(0, 5)"
                   :key="color"
                   :color="color"
-                  class="me-1"
                   :size="14"
+                  class="me-1"
                 >
                 </s-color-circle>
                 <v-icon v-if="colors.length > 5" class="me-1"
@@ -236,23 +226,23 @@
               v-if="product.quantity || isFile"
               :cols="isSmall ? 12 : 7"
               align-center
-              justify-center
               class="small p-0 sec--price"
+              justify-center
             >
-              <div class="main-price-label" :class="{ 'text-center': isSmall }">
+              <div :class="{ 'text-center': isSmall }" class="main-price-label">
                 <p class="dis-val">
                   <price-view
                     v-if="discount > 0"
                     :amount="price_in_selected_currency + discount"
+                    :class="{ small: dense }"
                     class="discount-price text-muted"
                     line-through
-                    :class="{ small: dense }"
                   ></price-view>
 
                   <span
                     v-if="discount > 0"
-                    class="discount-percent mx-1 float-right"
                     :class="{ small: dense }"
+                    class="discount-percent mx-1 float-right"
                     >{{ discount_percent }} %
                   </span>
                 </p>
@@ -271,24 +261,24 @@
 
                   <!-- Coupon -->
                   <span v-if="hasCoupon">
-                    <v-icon x-small color="#D32F2F" class="mx-1"
+                    <v-icon class="mx-1" color="#D32F2F" size="x-small"
                       >fa:fas fa-plus</v-icon
                     >
                     <img
-                      src="@components/assets/icons/coupon.svg"
                       height="24"
+                      src="@components/assets/icons/coupon.svg"
                     />
                   </span>
                 </p>
               </div>
             </v-col>
-            <v-col v-else cols="7" class="sec--price">
+            <v-col v-else class="sec--price" cols="7">
               <h5 class="mt-1 mb-0">
                 {{ $t("product_card.sold_out") }}
               </h5>
               <img
-                width="36px"
                 :src="require('@components/assets/icons/sold.svg')"
+                width="36px"
               />
             </v-col>
           </v-row>
@@ -308,8 +298,8 @@
       <!--  -------- Discount countdown ---------- -->
       <img
         v-if="hasDiscountCountDown"
-        src="@components/assets/icons/countdown-badge.svg"
         class="count-down-bg fadeIn delay_400"
+        src="@components/assets/icons/countdown-badge.svg"
       />
 
       <div
@@ -330,69 +320,69 @@
       class="row-box position-relative overflow-visible row-hover"
       @click="$emit('click')"
     >
-      <v-container fluid class="overflow-hidden position-relative">
-        <v-row dense style="flex-wrap: nowrap;">
+      <v-container class="overflow-hidden position-relative" fluid>
+        <v-row dense style="flex-wrap: nowrap">
           <v-img
-            :src="product_image"
-            :height="$vuetify.display.smAndDown ? 64 : 84"
-            :width="$vuetify.display.smAndDown ? 64 : 84"
-            class="flex-grow-0 rounded me-0 me-sm-2"
             :alt="
               product.title + (product.title_en ? ` | ${product.title_en}` : '')
             "
+            :height="$vuetify.display.smAndDown ? 64 : 84"
+            :src="product_image"
+            :width="$vuetify.display.smAndDown ? 64 : 84"
+            class="flex-grow-0 rounded me-0 me-sm-2"
           >
           </v-img>
 
           <div
-            class="text-start px-2 flex-grow-1"
             :style="{
               'max-width': $vuetify.display.smAndDown
                 ? 'calc(100% - 195px)'
                 : 'calc(100% - 210px)',
             }"
+            class="text-start px-2 flex-grow-1"
           >
             <p class="mb-1 flex-grow-1 row-pro-title">{{ product.title }}</p>
 
             <v-chip
               v-if="product.rate_count"
-              x-small
-              color="#fafafa"
               class="my-1"
+              color="#fafafa"
+              size="x-small"
             >
               <v-rating
-                :value="product.rate"
+                :model-value="product.rate"
                 active-color="yellow-darken-3"
                 color="grey-darken-1"
+                density="compact"
                 half-increments
-                x-small
                 readonly
-                dense
+                size="x-small"
               />
               {{ Number(product.rate).toFixed(1) }}
             </v-chip>
 
-            <span class="mx-2" v-if="product.rate_count"
-              >{{  numeralFormat(product.rate_count ,"0,0") }}
+            <span v-if="product.rate_count" class="mx-2"
+              >{{ numeralFormat(product.rate_count, "0,0") }}
 
               <small>{{ $t("product_card.review_unit") }}</small>
             </span>
 
             <product-variants-view
               v-if="hasVariant"
-              class="p-0"
-              :variants="product.variants"
-              small
-              dense
-              :selected-variant.sync="current_variant"
-              hoverable
+              v-model:selected-variant="current_variant"
               :limit="5"
+              :variants="product.variants"
+              class="p-0"
+              dense
+              hoverable
+              small
             />
           </div>
 
           <div
+            :class="{ small: $vuetify.display.smAndDown }"
             class="text-end align-self-center flex-grow-1"
             style="flex-basis: 110px"
-            :class="{ small: $vuetify.display.smAndDown }"
           >
             <div v-if="product.quantity || isFile" class="main-price-label p-0">
               <p v-if="discount > 0">
@@ -408,11 +398,15 @@
 
                 <img
                   v-if="hasCoupon"
-                  src="@components/assets/icons/coupon.svg"
                   height="24"
+                  src="@components/assets/icons/coupon.svg"
                   title="Has extra coupon!"
                 />
-                <v-icon v-if="hasCoupon" x-small color="#D32F2F" class="mx-1"
+                <v-icon
+                  v-if="hasCoupon"
+                  class="mx-1"
+                  color="#D32F2F"
+                  size="x-small"
                   >fa:fas fa-plus
                 </v-icon>
                 <!-- Price label -->
@@ -425,27 +419,25 @@
               </p>
             </div>
 
-            <div v-else style="min-width: 80px" class="text-center">
+            <div v-else class="text-center" style="min-width: 80px">
               <h5 class="mt-2 mb-0">
                 {{ $t("product_card.sold_out") }}
               </h5>
               <img
-                width="36px"
                 :src="require('@components/assets/icons/sold.svg')"
+                width="36px"
               />
             </div>
 
             <v-btn
               v-if="product.quantity || isFile"
-              @click.prevent="$emit('quick-buy')"
-              depressed
-              color="#000"
-              dark
-              :large="$vuetify.display.mdAndUp"
-              small
+              :size="$vuetify.display.mdAndUp ? 'large':'small'"
               class="align-self-center flex-grow-0 ms-2 tnt"
+              color="#000"
+              variant="flat"
+              @click.prevent="$emit('quick-buy')"
             >
-              <v-icon class="me-1" small>shopping_basket</v-icon>
+              <v-icon class="me-1" size="small">shopping_basket</v-icon>
 
               {{ $t("global.actions.quick_buy") }}
             </v-btn>
@@ -461,8 +453,8 @@
       <!--  -------- Discount countdown ---------- -->
       <img
         v-if="hasDiscountCountDown"
-        src="@components/assets/icons/countdown-badge.svg"
         class="count-down-bg fadeIn delay_400"
+        src="@components/assets/icons/countdown-badge.svg"
       />
 
       <div
@@ -668,11 +660,9 @@ export default {
 };
 </script>
 
-<style src="./ProductCard.scss" lang="scss" scoped />
+<style lang="scss" scoped src="./ProductCard.scss" />
 
 <style lang="scss" scoped>
-
-
 @media only screen and (max-width: 600px) {
   .card-item-new {
     padding: 4px; //!important;
@@ -903,7 +893,7 @@ export default {
     //  border-top-right-radius: 12px;
     top: 0;
     height: calc(
-        var(--image-center-height-contain) + var(--header-size) +
+      var(--image-center-height-contain) + var(--header-size) +
         var(--footer-height)
     );
 
@@ -912,11 +902,11 @@ export default {
       height: var(--image-center-height-contain);
       top: var(--header-size);
     }
-    ::v-deep(.v-img__image){ // Force to show image on top of the dynamic background layout
+
+    ::v-deep(.v-img__image) {
+      // Force to show image on top of the dynamic background layout
       z-index: 1;
     }
-
-
   }
 
   .card {
@@ -967,8 +957,10 @@ export default {
     color: #333333;
 
     // TODO: moshkel flash zadan moghe animate border-radius!!! => so small duration set!!!
-    transition: transform 0.4s ease-in-out, background-color 0.45s ease-in-out,
-    border-radius 0.1s linear; // Flicker animation border-radius problem!!!
+    transition:
+      transform 0.4s ease-in-out,
+      background-color 0.45s ease-in-out,
+      border-radius 0.1s linear; // Flicker animation border-radius problem!!!
 
     transition-delay: 0.25s;
     @media (max-width: $max_width_to_delay_reverse) {

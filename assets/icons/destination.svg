@@ -1,3 +1,12 @@
-
-
-<svg id="Flat" height="512" viewBox="0 0 64 64" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m14.3247 9.3244a25.0023 25.0023 0 0 1 35.3506 35.3665l-17.6753 17.3091-17.6753-17.3091a25.0077 25.0077 0 0 1 0-35.3665z" fill="#f04e3c"/><circle cx="32" cy="27" fill="#fff" r="18.5"/><path d="m22 25h20v12h-20z" fill="#eab978"/><path d="m22 17h20v8h-20z" fill="#f1d4ab"/><g fill="#a07d3c"><path d="m30 17h4v10h-4z"/><path d="m33 32h2v2h-2z"/><path d="m29 32h2v2h-2z"/></g></svg>
+<svg id="Flat" height="512" viewBox="0 0 64 64" width="512" xmlns="http://www.w3.org/2000/svg">
+    <path d="m14.3247 9.3244a25.0023 25.0023 0 0 1 35.3506 35.3665l-17.6753 17.3091-17.6753-17.3091a25.0077 25.0077 0 0 1 0-35.3665z"
+          fill="#f04e3c"/>
+    <circle cx="32" cy="27" fill="#fff" r="18.5"/>
+    <path d="m22 25h20v12h-20z" fill="#eab978"/>
+    <path d="m22 17h20v8h-20z" fill="#f1d4ab"/>
+    <g fill="#a07d3c">
+        <path d="m30 17h4v10h-4z"/>
+        <path d="m33 32h2v2h-2z"/>
+        <path d="m29 32h2v2h-2z"/>
+    </g>
+</svg>

@@ -79,6 +79,3 @@ export default [
     src: require("./yukon.png"),
   },
 ];
-
-
-

@@ -36,11 +36,11 @@
       <template v-slot:append>
         <v-list-item-action>
           <v-btn
+            :loading="busy_ids.includes(file.id)"
+            class="tnt"
             color="#1976D2"
             variant="text"
-            class="tnt"
             @click="downloadAttachment(file)"
-            :loading="busy_ids.includes(file.id)"
           >
             <v-icon class="me-1">download</v-icon>
             {{ $t("global.actions.download") }}

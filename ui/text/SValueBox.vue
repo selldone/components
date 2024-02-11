@@ -13,11 +13,12 @@
   -->
 
 <template>
-  <div class="s--value-box" :style="{ height: height }">
+  <div :style="{ height: height }" class="s--value-box">
     <div class="flex-grow-1 border-end text-start pe-1 me-1">
-      <v-icon v-if="icon" class="me-1">{{ icon }}</v-icon> {{ label }}
+      <v-icon v-if="icon" class="me-1">{{ icon }}</v-icon>
+      {{ label }}
     </div>
-    <div class="-val text-subtitle-2" :class="{ vb50: vb50 }">
+    <div :class="{ vb50: vb50 }" class="-val text-subtitle-2">
       <s-check v-if="isBoolean(value)" :value="value" read-only></s-check>
       <span v-else>{{ value }}</span>
       <slot name="value"></slot>
@@ -42,7 +43,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -57,10 +58,12 @@ export default {
   border-radius: 12px;
   padding: 3px 8px;
   margin: 4px auto;
+
   .-val {
     flex-basis: 30%;
     padding: 2px 4px;
     text-align: center;
+
     &.vb50 {
       flex-basis: 50%;
     }

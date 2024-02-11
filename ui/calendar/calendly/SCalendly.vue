@@ -50,7 +50,7 @@ export default {
   mounted() {
     this.loadPaypalJs();
   },
-  beforeDestroy() {
+  beforeUnmount() {
     $("html")
       .find("script")
       .filter(function () {
@@ -76,7 +76,7 @@ export default {
         $.cachedScript("https://assets.calendly.com/assets/external/widget.js")
           .done(function (script, textStatus) {
             console.style(
-              `🔔 ❰ Calendly ❱  Load script file start... ▶ status: ${textStatus}`
+              `🔔 ❰ Calendly ❱  Load script file start... ▶ status: ${textStatus}`,
             );
             t.busy = false;
 
@@ -86,7 +86,7 @@ export default {
           .fail(function (jqxhr, settings, exception) {
             console.errorStyle(
               `⚠ ❰ Calendly ❱  Failed to load script file: `,
-              exception
+              exception,
             );
             t.showErrorAlert(null, "Can not load script!");
           });

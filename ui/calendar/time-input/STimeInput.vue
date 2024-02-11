@@ -16,42 +16,42 @@
   <div class="d-flex align-center">
     <s-number-input
       v-model="h"
-      solo
-      hide-details
-      flat
-      placeholder="00"
-      :min="0"
       :max="23"
-      dense
+      :min="0"
+      :title="$t('global.commons.hour')"
       background-color="transparent"
       class="intim"
-      :title="$t('global.commons.hour')"
+      dense
+      flat
+      hide-details
+      placeholder="00"
+      solo
     >
     </s-number-input>
     :
     <s-number-input
       v-model="m"
-      solo
-      hide-details
-      flat
-      placeholder="00"
-      :min="0"
       :max="59"
-      dense
+      :min="0"
+      :title="$t('global.commons.minute')"
       background-color="transparent"
       class="intim"
-      :title="$t('global.commons.minute')"
+      dense
+      flat
+      hide-details
+      placeholder="00"
+      solo
     >
     </s-number-input>
 
     <v-slide-y-transition hide-on-leave>
       <img
         v-if="obj"
-        :src="obj.icon"
         :key="obj.value"
-        width="20"
-        height="20"
+        :src="obj.icon"
         class="mx-1"
+        height="20"
+        width="20"
       />
     </v-slide-y-transition>
   </div>
@@ -60,6 +60,7 @@
 <script>
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import { TimeSpans } from "@core/enums/logistic/TimeSpans";
+
 export default {
   name: "STimeInput",
   components: { SNumberInput },

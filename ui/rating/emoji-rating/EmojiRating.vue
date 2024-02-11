@@ -16,31 +16,31 @@
   <div class="d-flex flex-column align-center justify-center">
     <v-rating
       v-if="!noStars"
+      :calss="{ disabled: loading }"
+      :class="{ 'inline-block': horizontal }"
+      :density="dense ? 'compact' : undefined"
       :model-value="modelValue"
-      @update:model-value="(val) => $emit('update:modelValue', val)"
+      :readonly="readOnly"
+      :size="xSmall ? 'x-small' : small ? 'small' : 'x-large'"
       active-color="amber-darken-3"
       color="grey-darken-1"
       hover
-      :size="xSmall ? 'x-small' : small ? 'small' : 'x-large'"
-      :density="dense ? 'compact' : undefined"
-      :calss="{ disabled: loading }"
       @change="(val) => $emit('change', val)"
-      :readonly="readOnly"
-      :class="{ 'inline-block': horizontal }"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     ></v-rating>
 
     <img
       v-if="!noImage"
-      :src="emoji"
-      :width="xSmall ? 24 : small ? 42 : 68"
-      :height="xSmall ? 24 : small ? 42 : 68"
-      class="face"
       :class="{
         '-vertical': modelValue === 5,
         'my-2': !dense,
         'mx-2': horizontal,
         'mx-auto': !horizontal,
       }"
+      :height="xSmall ? 24 : small ? 42 : 68"
+      :src="emoji"
+      :width="xSmall ? 24 : small ? 42 : 68"
+      class="face"
     />
   </div>
 </template>
@@ -75,7 +75,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .face {
   &:hover {
     animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
@@ -111,6 +111,7 @@ export default {
     transform: translate3d(4px, 0, 0);
   }
 }
+
 @keyframes shake-vertical {
   10%,
   90% {

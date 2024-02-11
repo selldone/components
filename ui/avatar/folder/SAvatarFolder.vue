@@ -14,22 +14,22 @@
 
 <template>
   <v-avatar
-    class="s---category"
     :class="{ 'bg-amber-soft': isAmber }"
-    :style="{ backgroundImage: bg }"
     :size="size"
+    :style="{ backgroundImage: bg }"
+    class="s---category"
     rounded="xl"
   >
     <v-avatar
       :size="size - borderSize"
-      style="border-radius: 22px"
       color="#fff"
+      style="border-radius: 22px"
     >
       <v-img v-if="src" :src="getShopImagePath(src)">
         <template v-slot:placeholder>
           <s-image-placeholder
-            :color="color2"
             :bg-color="color1"
+            :color="color2"
           ></s-image-placeholder>
         </template>
       </v-img>
@@ -37,11 +37,11 @@
     </v-avatar>
 
     <div
+      :style="{ backgroundImage: bg }"
       class="absolute-bottom-end rounded-ts-circle h-auto w-auto pa-1 ma-n1"
       style="background-size: 300% 300%"
-      :style="{ backgroundImage: bg }"
     >
-      <v-img v-if="sideImage" :src="sideImage" width="24" height="24"> </v-img>
+      <v-img v-if="sideImage" :src="sideImage" height="24" width="24"></v-img>
       <v-icon v-else color="#fff">
         {{ sideIcon }}
       </v-icon>
@@ -131,7 +131,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s---category {
   position: relative;
 

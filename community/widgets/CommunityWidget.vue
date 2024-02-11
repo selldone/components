@@ -14,13 +14,13 @@
 
 <template>
   <div
-    class="c-container pa-3 -force-rounded"
+    :id="'post-' + post.id"
     v-intersect.quiet.once="
       (isIntersecting) => {
         if (isIntersecting) onCommunityPostImpression(topic, post);
       }
     "
-    :id="'post-' + post.id"
+    class="c-container pa-3 -force-rounded"
   >
     <!-- tips: overflow-visible: show discount ribbon of product -->
 
@@ -28,10 +28,10 @@
       <!-- Header -->
       <div class="d-flex mx-4 mt-2 align-center">
         <v-avatar
-          size="3.2em"
-          color="#fafafa"
-          class="c-avatar pp"
           :class="avatar_class"
+          class="c-avatar pp"
+          color="#fafafa"
+          size="3.2em"
           @click="showCommunityUserProfile(post.profile)"
         >
           <img :src="getUserAvatar(post.user_id)" />
@@ -39,10 +39,14 @@
         <div class="flex-grow-1 ps-3 pe-2 overflow-hidden">
           <b class="d-block single-line text-capitalize"
             >{{ post.profile.name }}
-            <v-icon v-if="post.profile.verified" small color="blue" class="ms-1"
-              >verified</v-icon
-            ></b
-          >
+            <v-icon
+              v-if="post.profile.verified"
+              class="ms-1"
+              color="blue"
+              size="small"
+              >verified
+            </v-icon>
+          </b>
           <small class="d-block single-line">{{
             post.profile.description
           }}</small>
@@ -60,7 +64,7 @@
                   topic,
                   post,
                   (post, topic_removed) =>
-                    $emit('delete', { post, topic_removed })
+                    $emit('delete', { post, topic_removed }),
                 )
             "
           >
@@ -85,16 +89,16 @@
       </div>
 
       <!-- Cross community -->
-      <div v-if="post.cross" class="mt-1 mx-4 subtitle-2 text-end">
+      <div v-if="post.cross" class="mt-1 mx-4 text-subtitle-2 text-end">
         {{ post.cross.title }}
-        <v-avatar size="24" class="ms-1 hover-scale force-top"
+        <v-avatar class="ms-1 hover-scale force-top" size="24"
           ><img :src="getShopImagePath(post.cross.image)"
         /></v-avatar>
         <v-icon class="ms-2 rotate-90-s">alt_route</v-icon>
       </div>
 
       <!-- Deleted -->
-      <p v-if="post.deleted_at" class="mx-4 mt-1 subtitle-2 red--text">
+      <p v-if="post.deleted_at" class="mx-4 mt-1 text-subtitle-2 text-red">
         {{ $t("global.commons.deleted_at") }}
         {{ getLocalTimeString(post.deleted_at) }}
       </p>
@@ -102,14 +106,15 @@
       <!-- Message -->
       <v-btn
         v-if="post.offensive"
-        small
-        text
-        color="red"
-        @click="force_show = !force_show"
         class="m-4"
-        ><v-icon class="me-1" small>warning</v-icon>
-        {{ $t("community.widget.offensive_message") }}</v-btn
+        color="red"
+        size="small"
+        variant="text"
+        @click="force_show = !force_show"
       >
+        <v-icon class="me-1" size="small">warning</v-icon>
+        {{ $t("community.widget.offensive_message") }}
+      </v-btn>
 
       <div
         v-if="!post.offensive || force_show"
@@ -120,40 +125,40 @@
       <!-- Attachment files -->
       <community-attach-view
         v-if="post?.attachments?.length"
-        :post="post"
         :files="post?.attachments"
+        :post="post"
       >
       </community-attach-view>
 
       <!-- Poll -->
       <community-poll
         v-if="question && topic.poll"
-        class="mb-2"
-        :value="topic.poll"
-        :user-selected-id="topic.action && topic.action.poll"
-        @click:item="setPollAnswer"
         :busy="busy_poll"
+        :user-selected-id="topic.action && topic.action.poll"
+        :value="topic.poll"
+        class="mb-2"
+        @click:item="setPollAnswer"
       ></community-poll>
 
       <!-- Image -->
       <community-image
         v-if="post.image"
-        :src="getShopImagePath(post.image)"
         :aspect-ratio="post.aspect"
+        :src="getShopImagePath(post.image)"
         fullscreen
-        width="100%"
         height="auto"
+        width="100%"
       ></community-image>
 
       <!-- Video -->
       <video
         v-if="post.video"
-        width="100%"
         controls
-        style="max-height: 400px; background-color: #000"
-        @play="onPlayMedia"
-        preload="metadata"
         muted="muted"
+        preload="metadata"
+        style="max-height: 400px; background-color: #000"
+        width="100%"
+        @play="onPlayMedia"
       >
         <source
           :src="getVideoUrl(post.video)"
@@ -165,8 +170,8 @@
       <div v-if="post.voice" class="p-2">
         <audio
           :src="getVoiceUrl(post.voice)"
-          controls
           class="w-100 rounded"
+          controls
           style="background-color: #000"
           @play="onPlayMedia"
         ></audio>
@@ -187,21 +192,21 @@
       <community-product-view
         v-if="post.product_id"
         :community="community"
-        :shop="shop"
         :product-id="post.product_id"
+        :shop="shop"
       ></community-product-view>
 
       <!-- Reactions & Insights -->
 
       <div v-if="!simpleMode" class="mx-4 py-2 d-flex">
-        <div class="single-line subtitle-2">
+        <div class="single-line text-subtitle-2">
           <!-- Show reports to admin -->
           <span
             v-if="post.reports"
-            class="red--text pp"
+            class="text-red pp"
             @click="showCommunityPostReportsMenu(post)"
           >
-            <v-icon size="20" color="red">report</v-icon>
+            <v-icon color="red" size="20">report</v-icon>
             {{ post.reports }} report(s)
           </span>
 
@@ -225,11 +230,10 @@
 
           <template v-for="(item, i) in reactions" :key="'i-' + i">
             <span
-
               class="pp hover-blue"
               @click="showCommunityPostReactions(post, item.act.code)"
-              ><img :src="item.act.image" width="16" height="16" />
-              {{   numeralFormat(item.value,"0.[0]a") }}
+              ><img :src="item.act.image" height="16" width="16" />
+              {{ numeralFormat(item.value, "0.[0]a") }}
               <span v-if="i < 3" class="text-lowercase">{{
                 $t(item.act.name)
               }}</span></span
@@ -246,12 +250,12 @@
         <v-spacer></v-spacer>
         <v-btn
           v-if="access.admin"
-          text
           color="blue"
+          variant="text"
           @click="showCommunityPostInsights(post)"
         >
-          {{ $t("community.commons.view_insight") }}</v-btn
-        >
+          {{ $t("community.commons.view_insight") }}
+        </v-btn>
       </div>
 
       <hr v-if="!simpleMode" class="opx" />
@@ -260,23 +264,23 @@
 
       <div v-if="!simpleMode">
         <v-menu
-          offset-y
-          top
-          open-on-hover
-          open-on-click
-          content-class="rounded-28px bg-white overflow-hidden px-3"
-          close-on-content-click
-          open-delay="100ms"
           close-delay="300ms"
+          close-on-content-click
+          content-class="rounded-28px bg-white overflow-hidden px-3"
+          location="top"
+          offset-y
+          open-delay="100ms"
+          open-on-click
+          open-on-hover
         >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn v-bind="attrs" v-on="on" text :loading="busy_reaction" tile>
+          <template v-slot:activator="{ props }">
+            <v-btn :loading="busy_reaction" tile v-bind="props" variant="text">
               <template v-if="reaction">
                 <img
                   :src="reaction.image"
                   class="me-1 bounceIn"
-                  width="24"
                   height="24"
+                  width="24"
                 />
                 {{ $t(reaction.name) }}
               </template>
@@ -290,47 +294,47 @@
           <v-btn
             v-for="(rec, key, i) in PostReaction"
             :key="key"
-            icon
-            class="m-2 zoomIn anim-fast sub-caption -hover"
             :caption="$t(rec.name)"
-            @click="setReaction(rec.code)"
             :style="{ 'animation-delay': 50 * i + 'ms' }"
-            ><img :src="rec.image" width="24" height="24"
+            class="m-2 zoomIn anim-fast sub-caption -hover"
+            icon
+            @click="setReaction(rec.code)"
+            ><img :src="rec.image" height="24" width="24"
           /></v-btn>
         </v-menu>
 
-        <v-btn text @click="show_comments = !show_comments" tile>
-          <v-icon class="me-1">{{
-            show_comments ? "chat_bubble" : "chat_bubble_outline"
-          }}</v-icon>
+        <v-btn tile variant="text" @click="show_comments = !show_comments">
+          <v-icon class="me-1"
+            >{{ show_comments ? "chat_bubble" : "chat_bubble_outline" }}
+          </v-icon>
           {{ $t("community.commons.comment") }}
 
           <span v-if="post.total_comments" class="ms-1"
-            >({{   numeralFormat(post.total_comments,"0.[0]a") }})</span
+            >({{ numeralFormat(post.total_comments, "0.[0]a") }})</span
           >
         </v-btn>
 
-        <v-btn text @click="share" tile>
+        <v-btn tile variant="text" @click="share">
           <v-icon class="me-1">share</v-icon>
           {{ $t("community.commons.share") }}
         </v-btn>
       </div>
       <community-comments
         v-if="!simpleMode"
-        :shop="shop"
+        v-model:show="show_comments"
         :post="post"
-        :show.sync="show_comments"
+        :shop="shop"
       >
       </community-comments>
     </div>
 
     <!-- Trend -->
-    <s-ribbon v-if="!simpleMode && is_trend" red top680="13px" left680="3px">
-      <v-icon small dark>local_fire_department</v-icon>
+    <s-ribbon v-if="!simpleMode && is_trend" left680="3px" red top680="13px">
+      <v-icon dark size="small">local_fire_department</v-icon>
       {{ $t("community.commons.trend") }}
     </s-ribbon>
     <!-- Approved -->
-    <s-ribbon v-else-if="post.approved" green top680="13px" left680="3px">
+    <s-ribbon v-else-if="post.approved" green left680="3px" top680="13px">
       {{ $t("community.commons.approved") }}
     </s-ribbon>
   </div>
@@ -486,11 +490,11 @@ export default {
           window.CAPI.POST_COMMUNITY_TOPIC_POST_REACTION(
             this.post.community_id,
             this.topic.id,
-            this.post.id
+            this.post.id,
           ),
           {
             reaction: reaction,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -526,11 +530,11 @@ export default {
         .post(
           window.CAPI.POST_COMMUNITY_TOPIC_POLL(
             this.community.id,
-            this.topic.id
+            this.topic.id,
           ),
           {
             poll: item.id,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {

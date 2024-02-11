@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import ParticleFactory from './factories/particle';
+import ParticleFactory from "./factories/particle";
 
 /**
  * A particle generation and management service.
@@ -61,7 +61,7 @@ export default class ParticleManger {
    * Draw the particles currently in view.
    */
   draw() {
-    this.items.forEach(item => item.draw());
+    this.items.forEach((item) => item.draw());
   }
 
   /**
@@ -72,7 +72,9 @@ export default class ParticleManger {
       this.items.push(this.pool.pop().setup(this.particleOptions));
     } else {
       this.items.push(
-        this.particleFactory.create(this.particleOptions).setup(this.particleOptions),
+        this.particleFactory
+          .create(this.particleOptions)
+          .setup(this.particleOptions),
       );
     }
   }

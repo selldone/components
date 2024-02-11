@@ -20,7 +20,7 @@
     </v-list-subheader>
     <v-row v-if="$vuetify.display.mdAndUp" align="start" justify="center">
       <v-col v-for="it in includes" :key="it.id" cols="3">
-        <a v-if="it.url && !it.path" :target="'_blank'" :href="it.url">
+        <a v-if="it.url && !it.path" :href="it.url" :target="'_blank'">
           <img
             v-if="it.image"
             :src="getShopImagePath(it.image)"
@@ -73,16 +73,16 @@
       :continuous="true"
       :cycle="true"
       :show-arrows="false"
-      hide-delimiter-background
       delimiter-icon="circle"
       height="300"
-      show-arrows-on-hover
+      hide-delimiter-background
+      show-arrows="hover"
     >
       <v-carousel-item
         v-for="it in includes"
         :key="it.id"
-        :target="it.url ? '_blank' : undefined"
         :href="it.path ? undefined : it.url"
+        :target="it.url ? '_blank' : undefined"
         :to="
           it.path
             ? {
@@ -151,6 +151,7 @@ export default {
     font-size: 1.1rem;
     font-weight: 800;
   }
+
   .v-carousel__controls {
     .v-btn {
       &.v-item--active {
@@ -159,6 +160,7 @@ export default {
           opacity: 1;
         }
       }
+
       .v-icon {
         color: #111 !important;
         opacity: 0.4;

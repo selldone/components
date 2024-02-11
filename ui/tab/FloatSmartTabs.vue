@@ -17,18 +17,18 @@
     <v-tabs
       :direction="$vuetify.display.mdAndUp ? 'vertical' : 'horizontal'"
       :model-value="modelValue"
-      @update:model-value="(val) => $emit('update:modelValue', val)"
-      slider-size="7"
       :style="{
         'min-width': $vuetify.display.mdAndUp ? undefined : 'max-content',
       }"
+      slider-size="7"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     >
-      <v-tab v-for="(item, i) in items" :key="i" class="sx-item" :value="i">
+      <v-tab v-for="(item, i) in items" :key="i" :value="i" class="sx-item">
         <v-icon start>
           {{ item.icon }}
         </v-icon>
         {{ item.title }}
-        <v-icon v-if="item.warning" color="orange" size="small" class="mx-1"
+        <v-icon v-if="item.warning" class="mx-1" color="orange" size="small"
           >warning
         </v-icon>
       </v-tab>
@@ -50,7 +50,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .sx-menu {
   position: relative;
   text-align: start;

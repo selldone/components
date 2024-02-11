@@ -15,28 +15,28 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <s-grid-draggable-view
     v-if="show_images"
-    :style="{ 'background-color': bgColor }"
-    @layoutEnd="updateOrder"
-    @dragEnd="dragEnd"
     ref="grid_container"
+    :style="{ 'background-color': bgColor }"
     class="b--gallery-grid rounded-18px"
+    @dragEnd="dragEnd"
+    @layoutEnd="updateOrder"
   >
     <div
       v-for="(image, index) in images"
       :key="image.id"
-      class="item-grid"
-      :style="style_value"
       ref="items"
       :image_id="image.id"
+      :style="style_value"
+      class="item-grid"
     >
       <v-img
-        :src="getShopImagePath(image.path)"
         :aspect-ratio="$vuetify.display.smAndUp ? 1 : 2"
+        :src="getShopImagePath(image.path)"
         class="m-2"
       >
         <template v-slot:placeholder>
-          <v-layout fill-height align-center justify-center ma-0>
-            <v-progress-circular indeterminate color="primary" />
+          <v-layout align-center fill-height justify-center ma-0>
+            <v-progress-circular color="primary" indeterminate />
           </v-layout>
         </template>
 
@@ -60,11 +60,11 @@
               "
               :model-value="(100 * image.size) / (1024 * 1024)"
               bg-color="#000"
+              class="mx-1"
               height="2"
+              location="start"
               rounded
               style="max-width: 64px"
-              location="start"
-              class="mx-1"
             ></v-progress-linear>
           </div>
         </div>
@@ -72,12 +72,12 @@
         <div class="absolute-bottom-end d-flex flex-column no-drag">
           <v-btn
             v-if="hasAiBackgroundRemove"
-            title="AI Remove Background"
-            color="rgba(10,20,60)"
-            variant="flat"
-            size="small"
-            @click.stop="$emit('click:bg-remove', image)"
             class="mb-1"
+            color="rgba(10,20,60)"
+            size="small"
+            title="AI Remove Background"
+            variant="flat"
+            @click.stop="$emit('click:bg-remove', image)"
           >
             <v-icon class="me-1" size="x-small"
               >{{
@@ -92,10 +92,10 @@
 
           <v-btn
             v-if="hasAlt"
-            title="Set Alt Text"
             color="rgba(10,20,60)"
-            variant="flat"
             size="small"
+            title="Set Alt Text"
+            variant="flat"
             @click.stop="$emit('click:alt', image)"
           >
             <v-icon v-if="image.alt" class="me-1" size="x-small"
@@ -107,30 +107,30 @@
       </v-img>
 
       <v-btn
+        :loading="busy_delete === index"
         :title="$t('global.actions.delete')"
+        class="m-2 absolute-top-end no-drag"
         color="#D32F2F"
-        variant="flat"
         icon=""
         size="small"
-        class="m-2 absolute-top-end no-drag"
+        variant="flat"
         @click="deleteAppImage(image, index)"
-        :loading="busy_delete === index"
       >
         <v-icon>delete_outline</v-icon>
       </v-btn>
     </div>
 
-    <div class="p-2 item-grid" :style="style_value">
+    <div :style="style_value" class="p-2 item-grid">
       <s-image-uploader
-        class="marginal-center"
-        label="Upload images"
-        :server="uploadPath"
         :max-file-size="maxFileSize"
-        @response="handleUploadAppImages"
-        allow-multiple
         :max-files="20"
+        :server="uploadPath"
+        allow-multiple
+        class="marginal-center"
         dense
         disable-past
+        label="Upload images"
+        @response="handleUploadAppImages"
       >
       </s-image-uploader>
     </div>
@@ -294,8 +294,8 @@ export default {
             );
 
             /* this.$nextTick( () =>{
-                this.$refs.grid_container.layout();
-              });*/
+                  this.$refs.grid_container.layout();
+                });*/
 
             this.showSuccessAlert(
               "Delete image",
@@ -315,7 +315,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .b--gallery-grid {
   .item-grid {
     cursor: move;

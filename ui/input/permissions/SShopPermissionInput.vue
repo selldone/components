@@ -14,31 +14,31 @@
 
 <template>
   <v-select
-    :value="value"
-    @input="(val) => $emit('input', val)"
-    :label="label"
-    :items="permissions_list"
-    :rounded="rounded"
-    :filled="filled"
-    :return-object="returnObject"
-    item-value="code"
-    :item-text="(item) => $t(item.text)"
-    :success-messages="successMessages"
-    :messages="messages"
-    :outlined="outlined"
-    :solo="solo"
-    :flat="flat"
-    :multiple="multiple"
     :chips="chips"
+    :filled="filled"
+    :flat="flat"
+    :item-title="(item) => $t(item.text)"
+    :items="permissions_list"
+    :label="label"
+    :messages="messages"
+    :model-value="value"
+    :multiple="multiple"
+    :outlined="outlined"
+    :return-object="returnObject"
+    :rounded="rounded"
+    :solo="solo"
+    :success-messages="successMessages"
+    item-value="code"
+    @update:model-value="(val) => $emit('input', val)"
   >
-    <template v-slot:item="{item}" >
+    <template v-slot:item="{ item }">
       <span v-if="item" class="options text-start">
         <img :src="item.src" class="me-1" height="32" />
         {{ $t(item.text) }}
       </span>
     </template>
 
-    <template  v-slot:selection="{item}" >
+    <template v-slot:chip="{ item }">
       <span v-if="item" class="text-start me-2">
         <img :src="item.src" class="me-1" height="26" />
         {{ $t(item.text) }}

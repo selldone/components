@@ -3,10 +3,11 @@
 
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="1625px" height="2242px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 731.51 1009.1"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xodm="http://www.corel.com/coreldraw/odm/2003" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="1625px"
+     height="2242px"
+     version="1.1"
+     style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+     viewBox="0 0 731.51 1009.1">
  <defs>
   <style type="text/css">
    <![CDATA[
@@ -17,126 +18,127 @@ viewBox="0 0 731.51 1009.1"
    ]]>
   </style>
  </defs>
- <g id="Layer_x0020_1">
+    <g id="Layer_x0020_1">
   <metadata id="CorelCorpID_0Corel-Layer"/>
-  <rect class="fil0" width="731.51" height="1009.1"/>
-  <rect class="fil1" x="280.79" y="43.73" width="169.94" height="40.67" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="36.15" y="144.95" width="161.21" height="30.95" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="36.15" y="187.44" width="300.48" height="32.64" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="36.15" y="288.72" width="565.79" height="33.48" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="36.15" y="345.55" width="565.79" height="33.48" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="36.15" y="402.39" width="565.79" height="33.48" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="266.3" y="463.72" width="198.63" height="25.88" rx="5.32" ry="5.32"/>
-  <rect class="fil1" x="35.03" y="502.55" width="657.23" height="20.26" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="219.03" y="540.81" width="127.17" height="20.26" rx="7.09" ry="5.32"/>
-  <rect class="fil1" x="426.95" y="539.4" width="127.17" height="20.26" rx="7.09" ry="5.32"/>
-  <path class="fil2" d="M368.71 557.9l16.46 0 0 6.82 16.46 -13.64 -16.46 -13.65 0 6.83 -16.46 0 0 13.64zm8.23 0m8.23 3.41m8.23 -3.41m0 -13.64m-8.23 -3.42m-8.23 3.42m-8.23 6.82"/>
-  <rect class="fil1" x="42.34" y="605.24" width="89.75" height="21.1" rx="5.32" ry="5.32"/>
-  <rect class="fil1" x="140.82" y="595.39" width="120.98" height="40.8" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="42.34" y="662.63" width="198.07" height="21.1" rx="11.73" ry="5.32"/>
-  <rect class="fil1" x="42.34" y="720.03" width="128.86" height="21.1" rx="7.63" ry="5.32"/>
-  <rect class="fil1" x="42.34" y="777.42" width="135.05" height="21.1" rx="8" ry="5.32"/>
-  <rect class="fil1" x="249.13" y="652.79" width="49.8" height="40.8" rx="4.38" ry="10.63"/>
-  <rect class="fil1" x="184.71" y="710.18" width="120.98" height="40.8" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="184.14" y="767.58" width="161.78" height="40.8" rx="14.22" ry="10.63"/>
-  <rect class="fil1" x="42.34" y="868.58" width="55.43" height="21.1" rx="3.28" ry="5.32"/>
-  <rect class="fil1" x="42.34" y="930.2" width="101.57" height="21.1" rx="6.02" ry="5.32"/>
-  <rect class="fil1" x="370.11" y="930.2" width="48.39" height="21.1" rx="2.87" ry="5.32"/>
-  <rect class="fil1" x="104.24" y="864.22" width="146.86" height="29.82" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="156.85" y="925.84" width="146.86" height="29.82" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="428.92" y="925.84" width="146.86" height="29.82" rx="10.63" ry="10.63"/>
-  <rect class="fil1" x="35.03" y="963.96" width="657.51" height="6.47"/>
-  <line class="fil0 str0" x1="700.16" y1="258.05" x2="31.34" y2= "258.05" />
-  <line class="fil0 str0" x1="700.16" y1="842.13" x2="31.34" y2= "842.13" />
-  <g id="_1542079546336">
+        <rect class="fil0" width="731.51" height="1009.1"/>
+        <rect class="fil1" x="280.79" y="43.73" width="169.94" height="40.67" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="36.15" y="144.95" width="161.21" height="30.95" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="36.15" y="187.44" width="300.48" height="32.64" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="36.15" y="288.72" width="565.79" height="33.48" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="36.15" y="345.55" width="565.79" height="33.48" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="36.15" y="402.39" width="565.79" height="33.48" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="266.3" y="463.72" width="198.63" height="25.88" rx="5.32" ry="5.32"/>
+        <rect class="fil1" x="35.03" y="502.55" width="657.23" height="20.26" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="219.03" y="540.81" width="127.17" height="20.26" rx="7.09" ry="5.32"/>
+        <rect class="fil1" x="426.95" y="539.4" width="127.17" height="20.26" rx="7.09" ry="5.32"/>
+        <path class="fil2"
+              d="M368.71 557.9l16.46 0 0 6.82 16.46 -13.64 -16.46 -13.65 0 6.83 -16.46 0 0 13.64zm8.23 0m8.23 3.41m8.23 -3.41m0 -13.64m-8.23 -3.42m-8.23 3.42m-8.23 6.82"/>
+        <rect class="fil1" x="42.34" y="605.24" width="89.75" height="21.1" rx="5.32" ry="5.32"/>
+        <rect class="fil1" x="140.82" y="595.39" width="120.98" height="40.8" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="42.34" y="662.63" width="198.07" height="21.1" rx="11.73" ry="5.32"/>
+        <rect class="fil1" x="42.34" y="720.03" width="128.86" height="21.1" rx="7.63" ry="5.32"/>
+        <rect class="fil1" x="42.34" y="777.42" width="135.05" height="21.1" rx="8" ry="5.32"/>
+        <rect class="fil1" x="249.13" y="652.79" width="49.8" height="40.8" rx="4.38" ry="10.63"/>
+        <rect class="fil1" x="184.71" y="710.18" width="120.98" height="40.8" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="184.14" y="767.58" width="161.78" height="40.8" rx="14.22" ry="10.63"/>
+        <rect class="fil1" x="42.34" y="868.58" width="55.43" height="21.1" rx="3.28" ry="5.32"/>
+        <rect class="fil1" x="42.34" y="930.2" width="101.57" height="21.1" rx="6.02" ry="5.32"/>
+        <rect class="fil1" x="370.11" y="930.2" width="48.39" height="21.1" rx="2.87" ry="5.32"/>
+        <rect class="fil1" x="104.24" y="864.22" width="146.86" height="29.82" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="156.85" y="925.84" width="146.86" height="29.82" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="428.92" y="925.84" width="146.86" height="29.82" rx="10.63" ry="10.63"/>
+        <rect class="fil1" x="35.03" y="963.96" width="657.51" height="6.47"/>
+        <line class="fil0 str0" x1="700.16" y1="258.05" x2="31.34" y2="258.05"/>
+        <line class="fil0 str0" x1="700.16" y1="842.13" x2="31.34" y2="842.13"/>
+        <g id="_1542079546336">
   </g>
-  <g id="_1542079516320">
+        <g id="_1542079516320">
   </g>
-  <g id="_1542079515616">
+        <g id="_1542079515616">
   </g>
-  <g id="_1542079514848">
+        <g id="_1542079514848">
   </g>
-  <g id="_1542079515648">
+        <g id="_1542079515648">
   </g>
-  <g id="_1542079517024">
+        <g id="_1542079517024">
   </g>
-  <g id="_1542079518336">
+        <g id="_1542079518336">
   </g>
-  <g id="_1542079516608">
+        <g id="_1542079516608">
   </g>
-  <g id="_1542079517216">
+        <g id="_1542079517216">
   </g>
-  <g id="_1542079520256">
+        <g id="_1542079520256">
   </g>
-  <g id="_1542079520320">
+        <g id="_1542079520320">
   </g>
-  <g id="_1542079519648">
+        <g id="_1542079519648">
   </g>
-  <g id="_1542079519680">
+        <g id="_1542079519680">
   </g>
-  <g id="_1578003810544">
+        <g id="_1578003810544">
   </g>
-  <g id="_1578003812496">
+        <g id="_1578003812496">
   </g>
-  <g id="_1578021000192">
+        <g id="_1578021000192">
   </g>
-  <g id="_1578020999872">
+        <g id="_1578020999872">
   </g>
-  <g id="_1578270537056">
+        <g id="_1578270537056">
   </g>
-  <g id="_1578270564128">
+        <g id="_1578270564128">
   </g>
-  <g id="_1578004307136">
+        <g id="_1578004307136">
   </g>
-  <g id="_1578004299328">
+        <g id="_1578004299328">
   </g>
-  <g id="_1578002622272">
+        <g id="_1578002622272">
   </g>
-  <g id="_1578002614560">
+        <g id="_1578002614560">
   </g>
-  <g id="_1543008734240">
+        <g id="_1543008734240">
   </g>
-  <g id="_1543007591648">
+        <g id="_1543007591648">
   </g>
-  <g id="_1543007590432">
+        <g id="_1543007590432">
   </g>
-  <g id="_1543007350368">
+        <g id="_1543007350368">
   </g>
-  <g id="_1578011238176">
+        <g id="_1578011238176">
   </g>
-  <g id="_1543007494672">
+        <g id="_1543007494672">
   </g>
-  <g id="_1577996322016">
+        <g id="_1577996322016">
   </g>
-  <g id="_1543007260464">
+        <g id="_1543007260464">
   </g>
-  <g id="_1578021016720">
+        <g id="_1578021016720">
   </g>
-  <g id="_1542099698528">
+        <g id="_1542099698528">
   </g>
-  <g id="_1542099698752">
+        <g id="_1542099698752">
   </g>
-  <g id="_1542099698112">
+        <g id="_1542099698112">
   </g>
-  <g id="_1542099699136">
+        <g id="_1542099699136">
   </g>
-  <g id="_1542099697888">
+        <g id="_1542099697888">
   </g>
-  <g id="_1542099701216">
+        <g id="_1542099701216">
   </g>
-  <g id="_1542099700352">
+        <g id="_1542099700352">
   </g>
-  <g id="_1542099700480">
+        <g id="_1542099700480">
   </g>
-  <g id="_1542099700032">
+        <g id="_1542099700032">
   </g>
-  <g id="_1542099701696">
+        <g id="_1542099701696">
   </g>
-  <g id="_1542099703072">
+        <g id="_1542099703072">
   </g>
-  <g id="_1542099701984">
+        <g id="_1542099701984">
   </g>
-  <g id="_1542099703488">
+        <g id="_1542099703488">
   </g>
  </g>
 </svg>

@@ -40,14 +40,14 @@ const getMaxAndMinCountryDataValues = (countryData: {
 
 export const getBaseCss = (
   map_id: string,
-  { defaultCountryFillColor, countryStrokeColor }: { [key: string]: string }
+  { defaultCountryFillColor, countryStrokeColor }: { [key: string]: string },
 ) =>
   `.map_svg_${map_id} .land{fill:${defaultCountryFillColor};stroke:${countryStrokeColor};}`;
 
 export const getDynamicMapCss = (
   map_id: string,
   countryData: { [key: string]: number },
-  chromaScale: Scale
+  chromaScale: Scale,
 ) => {
   const { min, max } = getMaxAndMinCountryDataValues(countryData);
   const colorScaleUnit = getColorScaleUnit(min, max);

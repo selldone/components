@@ -14,25 +14,25 @@
 
 <template>
   <v-autocomplete
-    :model-value="modelValue"
-    @update:model-value="(val) => $emit('update:modelValue', val)"
+    v-model:menu="menu"
+    v-model:search="search"
+    :customFilter="() => true"
     :items="map_tags"
     :loading="busy || loading"
-    label="Location"
+    :model-value="modelValue"
+    :return-object="returnObject"
+    :variant="variant"
+    clearable
     item-title="title"
     item-value="id"
-    :return-object="returnObject"
-    clearable
+    label="Location"
+    messages=" "
+    @update:model-value="(val) => $emit('update:modelValue', val)"
     @click:clear="
       $nextTick(() => {
         $emit('click:clear');
       })
     "
-    v-model:search="search"
-    v-model:menu="menu"
-    :customFilter="() => true"
-    :variant="variant"
-    messages=" "
   >
     <template v-slot:selection>
       <template v-if="live_value">
@@ -59,9 +59,9 @@
 
     <template v-slot:item="{ item, props }">
       <v-list-item
+        :subtitle="item.raw.address"
         class="text-start"
         v-bind="props"
-        :subtitle="item.raw.address"
       >
         <template v-slot:title>
           <v-list-item-title>
@@ -187,4 +187,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

@@ -16,11 +16,11 @@
   <div :class="{ disabled: busy_delete_message }" class="text-start">
     <div class="d-flex align-center">
       <v-avatar
-        :size="32"
-        class="avatar-gradient -thin me-2"
         :class="{
           '-staff': message.officer,
         }"
+        :size="32"
+        class="avatar-gradient -thin me-2"
       >
         <v-img v-if="message.user_id" :src="getUserAvatar(message.user_id)" />
         <v-icon v-else>account_circle</v-icon>
@@ -30,20 +30,20 @@
         <!-- Show it from admin to customer -->
         <v-chip
           v-if="!isAdmin && message.officer"
+          class="mx-2"
           color="#F44336"
           label
           size="x-small"
-          class="mx-2"
         >
           {{ $t("global.commons.admin") }}
         </v-chip>
         <!-- Show it from customer to admin -->
         <v-chip
           v-else-if="isAdmin && !message.officer"
+          class="mx-2"
           color="#1976D2"
           label
           size="x-small"
-          class="mx-2"
         >
           {{ $t("global.commons.customer") }}
         </v-chip>
@@ -59,12 +59,13 @@
           hasDelete &&
           ((isAdmin && message.officer) || (!isAdmin && !message.officer))
         "
-        color="red"
-        :title="$t('global.actions.delete')"
-        @click="deleteMessage()"
-        icon variant="text"
-        :loading="busy_delete_message"
         :class="{ disabled: busy_delete_message }"
+        :loading="busy_delete_message"
+        :title="$t('global.actions.delete')"
+        color="red"
+        icon
+        variant="text"
+        @click="deleteMessage()"
       >
         <v-icon>close</v-icon>
       </v-btn>

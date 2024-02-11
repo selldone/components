@@ -13,75 +13,73 @@
   -->
 
 <template>
-  <v-col cols="12" class="c-max-w">
+  <v-col class="c-max-w" cols="12">
     <div class="bg-white c-widget nopx">
       <div class="d-flex border-between fnt-as">
         <v-btn
-          depressed
-          text
-          tile
-          large
-          min-height="48"
-          class="border-end"
-          @click="$emit('update:opxActive', !opxActive)"
           :color="opxActive ? 'success' : undefined"
+          class="border-end"
+          min-height="48"
+          size="large"
+          variant="text"
+          @click="$emit('update:opxActive', !opxActive)"
         >
-          <v-icon class="me-1">{{
-            !opxActive ? "wysiwyg" : "view_headline"
-          }}</v-icon>
+          <v-icon class="me-1"
+            >{{ !opxActive ? "wysiwyg" : "view_headline" }}
+          </v-icon>
         </v-btn>
 
         <v-btn
-          depressed
-          text
-          tile
-          large
+          :color="filter === 'posts' ? 'success' : undefined"
           class="w-25"
           min-height="48"
+          size="large"
+          variant="text"
           @click="$emit('update:filter', 'posts')"
-          :color="filter === 'posts' ? 'success' : undefined"
         >
           <v-icon class="me-1">batch_prediction</v-icon>
-          {{$t('community.filter.all_posts')}}
-
+          {{ $t("community.filter.all_posts") }}
         </v-btn>
 
         <v-btn
-          depressed
-          text
-          tile
-          large
+          :color="filter === 'media' ? 'success' : undefined"
           class="w-25"
           min-height="48"
+          size="large"
+          variant="text"
           @click="$emit('update:filter', 'media')"
-          :color="filter === 'media' ? 'success' : undefined"
         >
           <v-icon class="me-1">photo_camera</v-icon>
-          {{$t('community.filter.media_only')}}
-
+          {{ $t("community.filter.media_only") }}
         </v-btn>
 
         <v-text-field
-          :value="search"
-          @input="(val) => $emit('update:search', val)"
+          :model-value="search"
+          :placeholder="$t('global.commons.search')"
           append-inner-icon="search"
-          single-line
-          solo
+          class="w-50"
+          clearable
           flat
           hide-details
-          clearable
-          class="w-50"
-          :placeholder="$t('global.commons.search')"
+          single-line
+          variant="solo"
+          @update:model-value="(val) => $emit('update:search', val)"
         >
         </v-text-field>
       </div>
     </div>
 
-    <v-menu offset-y>
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn color="blue" text class="mt-2" v-bind="attrs" v-on="on" :loading="loadingSort">
+    <v-menu>
+      <template v-slot:activator="{ props }">
+        <v-btn
+          :loading="loadingSort"
+          class="mt-2"
+          color="blue"
+          v-bind="props"
+          variant="text"
+        >
           {{ sort.text }}
-          <v-icon class="ms-1" small
+          <v-icon class="ms-1" size="small"
             >{{ sort.sortDesc ? "south" : "north" }}
           </v-icon>
         </v-btn>
@@ -90,11 +88,11 @@
         <v-list-item
           v-for="(item, index) in sorts"
           :key="index"
+          :disabled="sort === item"
           @click="
             sort = item;
             $emit('update:sort', item);
           "
-          :disabled="sort === item"
         >
           <v-list-item-title>{{ item.text }}</v-list-item-title>
         </v-list-item>
@@ -122,10 +120,26 @@ export default {
   data() {
     return {
       sorts: [
-        { sortBy: "created_at", sortDesc: true, text: this.$t('community.filter.created_at') },
-        { sortBy: "created_at", sortDesc: false, text:this.$t('community.filter.created_at_asc') },
-        { sortBy: "positive-reactions", sortDesc: true, text: this.$t('community.filter.positive_reactions') },
-        { sortBy: "engagement", sortDesc: true, text: this.$t('community.filter.engaged')},
+        {
+          sortBy: "created_at",
+          sortDesc: true,
+          text: this.$t("community.filter.created_at"),
+        },
+        {
+          sortBy: "created_at",
+          sortDesc: false,
+          text: this.$t("community.filter.created_at_asc"),
+        },
+        {
+          sortBy: "positive-reactions",
+          sortDesc: true,
+          text: this.$t("community.filter.positive_reactions"),
+        },
+        {
+          sortBy: "engagement",
+          sortDesc: true,
+          text: this.$t("community.filter.engaged"),
+        },
       ],
 
       sort: null,
@@ -138,4 +152,4 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

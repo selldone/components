@@ -14,32 +14,31 @@
 
 <template>
   <span>
-    <v-menu open-on-hover max-width="240" >
+    <v-menu max-width="240" open-on-hover>
       <template v-slot:activator="{ props }">
         <v-btn
           v-if="user.phone"
-          icon variant="text"
           :href="link"
+          :size="xSmall ? '24' : small ? '28' : null"
+          icon
           target="_blank"
-          @click.stop
-
           v-bind="props"
-          :size="xSmall?'24':small?'28':null"
-
+          variant="text"
+          @click.stop
           ><img
-            src="../../../assets/trademark/whatsapp.svg"
             :height="xSmall ? 12 : small ? 18 : 20"
             :width="xSmall ? 12 : small ? 18 : 20"
+            src="../../../assets/trademark/whatsapp.svg"
         /></v-btn>
       </template>
-      <v-sheet dark class="text-start p-4" rounded="xl">
+      <v-sheet class="text-start p-4" dark rounded="xl">
         <div class="mb-3 small">{{ $t("global.instance_message_title") }}:</div>
         <div class="mb-2">
-          <v-icon size="small" class="me-1">phone</v-icon>
+          <v-icon class="me-1" size="small">phone</v-icon>
 
           {{ user.phone }}
         </div>
-        <v-icon size="small" class="me-1">message</v-icon>
+        <v-icon class="me-1" size="small">message</v-icon>
         {{ message }}
       </v-sheet>
     </v-menu>
@@ -84,7 +83,7 @@ export default {
         this.user.phone,
         {
           text: this.message,
-        }
+        },
       );
     },
   },

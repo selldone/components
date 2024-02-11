@@ -16,9 +16,15 @@
   <div class="t-w">
     <div class="t-d">
       <div class="th-h -name">
-        <v-btn v-if="editable" icon @click="resetAll" title="Clear all" small
-          ><v-icon small>restart_alt</v-icon></v-btn
+        <v-btn
+          v-if="editable"
+          icon
+          size="small"
+          title="Clear all"
+          @click="resetAll"
         >
+          <v-icon size="small">restart_alt</v-icon>
+        </v-btn>
       </div>
       <div v-for="h in 24" :key="h" class="th-h" v-text="h"></div>
     </div>
@@ -26,25 +32,22 @@
     <div
       v-for="day in WeekDays"
       :key="day.value"
+      :class="{ 'pointer-event-none': !editable }"
+      :style="{ '--dis-color': disColor, '--active-color': activeColor }"
       class="t-d"
       @click="onClick"
       @mousedown="onDragstart"
-      @mouseup="onDragend"
       @mousemove="onDragover"
-      :class="{ 'pointer-event-none': !editable }"
-      :style="{ '--dis-color': disColor, '--active-color': activeColor }"
+      @mouseup="onDragend"
     >
       <div
         class="th-h -name"
-        v-text="$t(day.name)"
         @click="toggleDay(day.value)"
+        v-text="$t(day.name)"
       ></div>
       <div
         v-for="h in 24"
         :key="h"
-        class="t-h"
-        :day="day.value"
-        :hour="h"
         :class="{
           '-active':
             (value && value[day.value] && value[day.value].includes(h)) ||
@@ -53,6 +56,9 @@
           '-green': isPointed(day.value, h),
           '-dis': !isAllowed(day.value, h),
         }"
+        :day="day.value"
+        :hour="h"
+        class="t-h"
       ></div>
     </div>
   </div>
@@ -281,7 +287,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .t-w {
   display: flex;
   flex-direction: column;
@@ -314,19 +320,24 @@ export default {
       user-select: none;
       flex: 1 1 0px; // Make all same size!
     }
+
     .t-h {
       cursor: pointer;
       transition: all 0.4s ease-in-out;
+
       &:hover {
         background-color: #eee;
       }
+
       &.-active {
         background-color: var(--active-color);
         color: #fff;
       }
+
       &.-now,
       &.-green {
         position: relative;
+
         &:after {
           content: "●";
           position: absolute;
@@ -335,8 +346,10 @@ export default {
           transform: translate(-50%, -50%);
         }
       }
+
       &.-green {
         background-color: #4caf50;
+
         &:after {
           content: "✓";
         }
@@ -347,11 +360,13 @@ export default {
         pointer-events: none;
       }
     }
+
     .th-h {
       background-color: #fff;
       font-weight: bold;
     }
   }
+
   .-name {
     cursor: pointer;
     padding: 0 2px;

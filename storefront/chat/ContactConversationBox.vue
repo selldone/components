@@ -16,24 +16,25 @@
   <v-fade-transition group hide-on-leave tag="div">
     <v-card
       v-if="show_user_detail"
-      class="text-start shadow-paper"
       key="detail"
+      class="text-start shadow-paper"
     >
       <v-card-title class="text-uppercase">
         <v-spacer></v-spacer>
 
         <v-btn
-          @click="show_user_detail = false"
-          class="sub-caption -hover"
           :caption="$t('global.actions.close')"
+          class="sub-caption -hover"
           icon
-          ><v-icon> close </v-icon></v-btn
+          @click="show_user_detail = false"
         >
+          <v-icon> close</v-icon>
+        </v-btn>
       </v-card-title>
       <v-card-text>
         <v-avatar
-          size="32"
           class="hover-scale-small pointer-pointer me-2"
+          size="32"
           target="_blank"
         >
           <img :src="getUserAvatar(selectedContact.user_id)" />
@@ -56,8 +57,8 @@
 
         <emoji-rating
           v-model="selectedContact.rate"
-          x-small
           read-only
+          x-small
         ></emoji-rating>
 
         <p>
@@ -67,8 +68,8 @@
 
         <div class="d-flex text-center">
           <div class="w-50 mb-1 p-1">
-            <v-icon class="me-2">mail</v-icon
-            ><span v-copy
+            <v-icon class="me-2">mail </v-icon>
+            <span v-copy
               >{{
                 selectedContact.user
                   ? selectedContact.user.email
@@ -77,8 +78,8 @@
             </span>
           </div>
           <div class="w-50 mb-1 p-1">
-            <v-icon class="me-2">phone</v-icon
-            ><span v-copy
+            <v-icon class="me-2">phone </v-icon>
+            <span v-copy
               >{{
                 selectedContact.user
                   ? selectedContact.user.phone
@@ -97,38 +98,38 @@
 
       <v-card-text>
         <product-select-box
-          single-product-select
-          :shop="shop"
           v-model="selected_product_id"
-          simple-mode
+          :shop="shop"
           auto-open-dialog
+          simple-mode
+          single-product-select
         >
         </product-select-box>
 
-        <v-btn @click="show_products = false" text class="m-2">
+        <v-btn class="m-2" variant="text" @click="show_products = false">
           {{ $t("global.actions.back") }}
         </v-btn>
 
         <v-btn
-          color="success"
-          class="m-2"
-          :loading="busy_contact"
-          @click="sendResponse"
           :disabled="!selected_product_id"
+          :loading="busy_contact"
+          class="m-2"
+          color="success"
+          @click="sendResponse"
         >
-          <v-icon class="me-1" small>send</v-icon>
-          {{ $t("global.actions.send") }}</v-btn
-        >
+          <v-icon class="me-1" size="small">send</v-icon>
+          {{ $t("global.actions.send") }}
+        </v-btn>
       </v-card-text>
     </v-card>
 
-    <v-card v-else flat key="chat" :rounded="false" class="chat-container">
+    <v-card v-else key="chat" :rounded="false" class="chat-container" flat>
       <!--- --------------- Chat mode --------------- --->
 
       <v-card-text
-        class="text-start conversation-box"
         ref="conversation_box"
         :class="{ popup: popup }"
+        class="text-start conversation-box"
       >
         <v-fade-transition group leave-absolute>
           <div
@@ -137,7 +138,6 @@
             class="my-2"
           >
             <div
-              class="d-flex"
               :class="{
                 'same-user':
                   index > 0 &&
@@ -145,19 +145,20 @@
                     selectedContact.messages[index - 1].user_id &&
                   item.officer === selectedContact.messages[index - 1].officer,
               }"
+              class="d-flex"
             >
               <v-avatar
+                :class="{
+                  'avatar-officer': item.officer,
+                  'pointer-pointer': !item.officer,
+                }"
+                class="me-2 flex-grow-0 -hide-on-same"
                 size="2rem"
                 @click="
                   isAdmin && !item.officer
                     ? (show_user_detail = true)
                     : undefined
                 "
-                class="me-2 flex-grow-0 -hide-on-same"
-                :class="{
-                  'avatar-officer': item.officer,
-                  'pointer-pointer': !item.officer,
-                }"
               >
                 <img :src="getUserAvatar(item.user_id)" />
               </v-avatar>
@@ -165,23 +166,24 @@
                 <p class="user-name -remove-on-same">{{ item.user }}</p>
 
                 <div
-                  class="message-box"
                   :class="{
                     '-its-me': isAdmin ? item.officer : !item.officer,
                     'empty-msg': !item.message,
                   }"
+                  class="message-box"
                 >
                   <v-btn
                     v-if="item.officer && isAdmin"
-                    @click="deleteResponse(index)"
-                    :loading="busy_delete === index"
                     :disabled="busy_delete !== null"
-                    color="red"
-                    class="absolute-top-end -zero"
-                    icon
+                    :loading="busy_delete === index"
                     :title="$t('global.actions.delete')"
-                    ><v-icon>close</v-icon></v-btn
+                    class="absolute-top-end -zero"
+                    color="red"
+                    icon
+                    @click="deleteResponse(index)"
                   >
+                    <v-icon>close</v-icon>
+                  </v-btn>
 
                   <p
                     v-if="item.message"
@@ -190,20 +192,22 @@
                   <v-btn
                     v-if="item.link"
                     :href="item.link"
-                    target="_blank"
-                    color="success"
-                    small
-                    depressed
                     class="my-2"
+                    color="success"
                     rounded
-                    ><v-icon small class="me-1">link</v-icon
-                    >{{ $t("global.actions.click_here") }}</v-btn
+                    size="small"
+                    target="_blank"
+                    variant="flat"
                   >
+                    <v-icon class="me-1" size="small">link </v-icon>
+                    {{ $t("global.actions.click_here") }}
+                  </v-btn>
 
                   <small
                     v-if="item.date && item.message"
                     class="text-end d-block"
-                    ><v-icon small>done</v-icon>
+                  >
+                    <v-icon size="small">done</v-icon>
                     {{ getLocalTimeStringSmall(item.date) }}</small
                   >
                 </div>
@@ -212,8 +216,8 @@
             <!--- --------------- Product --------------- --->
             <simple-auto-product-card
               v-if="item.product"
-              :shop="shop"
               :product-id="item.product"
+              :shop="shop"
               :to="
                 !isAdmin
                   ? {
@@ -236,30 +240,33 @@
           {{ $t("global.commons.closed_at") }}
           {{ getLocalTimeStringSmall(selectedContact.closed_at) }}
         </p>
-        <div v-if="isAdmin || !selectedContact.closed" class="p-2 widget-buttons">
+        <div
+          v-if="isAdmin || !selectedContact.closed"
+          class="p-2 widget-buttons"
+        >
           <v-btn
             :color="selectedContact.closed ? '#00796B' : '#7B1FA2'"
-            dark
-            @click="closeTicket()"
             :loading="busy_close"
             class="tnt"
+            dark
+            @click="closeTicket()"
           >
             <v-icon v-if="selectedContact.closed" class="me-1">done</v-icon>
             {{
               selectedContact.closed
                 ? $t("global.commons.reopen_ticket")
                 : $t("global.commons.close_ticket")
-            }}</v-btn
-          >
+            }}
+          </v-btn>
         </div>
 
         <emoji-rating
           v-if="selectedContact.closed && !isAdmin"
           v-model="selectedContact.rate"
-          small
-          class="box-raiting"
-          @input="(val) => sendRate(val)"
           :loading="busy_rate"
+          class="box-raiting"
+          small
+          @input="(val) => sendRate(val)"
         ></emoji-rating>
       </v-card-text>
 
@@ -267,33 +274,33 @@
 
       <v-card-actions class="border-top d-block pt-3 text-start z1 bg-white">
         <v-textarea
-          :disabled="selectedContact.closed"
           v-model="contact_message"
-          :rows="1"
-          auto-grow
-          :rules="[GlobalRules.counter(1024)]"
-          dense
-          :prepend-icon="isAdmin ? 'local_mall' : undefined"
-          @click:prepend="isAdmin ? showSelectProduct() : undefined"
-          hide-details
+          :disabled="selectedContact.closed"
           :placeholder="$t('global.commons.message')"
+          :prepend-icon="isAdmin ? 'local_mall' : undefined"
+          :rows="1"
+          :rules="[GlobalRules.counter(1024)]"
+          auto-grow
           class="small-textarea"
+          density="compact"
           flat
-          solo
+          hide-details
           row-height="10px"
+          variant="solo"
+          @click:prepend="isAdmin ? showSelectProduct() : undefined"
         >
           <template v-slot:append>
             <v-btn
-              @click="sendResponse()"
-              :loading="busy_contact"
-              rounded
               :class="{ disabled: !contact_message }"
-              depressed
+              :loading="busy_contact"
+              :title="$t('global.actions.send')"
+              class="mt-n1"
               color="blue"
               dark
-              :title="$t('global.actions.send')"
               icon
-              class="mt-n1"
+              rounded
+              variant="flat"
+              @click="sendResponse()"
             >
               <v-icon class="flip-image-rtl">send</v-icon>
             </v-btn>
@@ -369,18 +376,18 @@ export default {
           this.isAdmin
             ? window.API.PUT_SHOP_CONTACT_US_UPDATE_MESSAGE(
                 this.shop.id,
-                this.selectedContact.id
+                this.selectedContact.id,
               )
             : window.XAPI.PUT_SHOP_TICKET_UPDATE_MESSAGE(
                 this.shop.name,
-                this.selectedContact.id
+                this.selectedContact.id,
               ),
           {
             message: this.contact_message,
             link: this.contact_link,
             mail: this.send_mail,
             product: this.selected_product_id,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -388,7 +395,7 @@ export default {
               // Not show success message in popup mode!
               this.showSuccessAlert(
                 "Send message",
-                "Your response sent successfully."
+                "Your response sent successfully.",
               );
 
             this.$emit("update:selectedContact", data.contact);
@@ -428,13 +435,13 @@ export default {
                 ? window.API.DELETE_SHOP_CONTACT_US_MESSAGE_RESPONSE(
                     this.shop.id,
                     this.selectedContact.id,
-                    index
+                    index,
                   )
                 : window.XAPI.DELETE_SHOP_TICKET_MESSAGE_RESPONSE(
                     this.shop.name,
                     this.selectedContact.id,
-                    index
-                  )
+                    index,
+                  ),
             )
             .then(({ data }) => {
               if (!data.error) {
@@ -442,7 +449,7 @@ export default {
                   // Not show success message in popup mode!
                   this.showSuccessAlert(
                     "Remove message",
-                    "Message response removed successfully."
+                    "Message response removed successfully.",
                   );
                 this.$emit("update:selectedContact", data.contact);
                 this.$emit("update", data.contact);
@@ -454,7 +461,7 @@ export default {
             .finally(() => {
               this.busy_delete = null;
             });
-        }
+        },
       );
     },
 
@@ -465,15 +472,15 @@ export default {
           this.isAdmin
             ? window.API.POST_SHOP_CONTACT_US_CLOSE_TICKET(
                 this.shop.id,
-                this.selectedContact.id
+                this.selectedContact.id,
               )
             : window.XAPI.POST_SHOP_TICKET_CLOSE(
                 this.shop.name,
-                this.selectedContact.id
+                this.selectedContact.id,
               ),
           {
             close: !this.selectedContact.closed,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -481,7 +488,7 @@ export default {
               // Not show success message in popup mode!
               this.showSuccessAlert(
                 "Ticket closed",
-                "This ticket closed successfully."
+                "This ticket closed successfully.",
               );
             this.$emit("update:selectedContact", data.contact);
             this.$emit("update", data.contact);
@@ -500,11 +507,11 @@ export default {
         .put(
           window.XAPI.PUT_SHOP_TICKET_RATE(
             this.shop.name,
-            this.selectedContact.id
+            this.selectedContact.id,
           ),
           {
             rate: rate,
-          }
+          },
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -580,6 +587,7 @@ export default {
     background-repeat: repeat, no-repeat !important;
   }
 }
+
 .conversation-box {
   user-select: none;
   scroll-behavior: smooth;
@@ -593,6 +601,7 @@ export default {
   &.popup {
     height: 565px;
   }
+
   &:not(.popup) {
     min-height: 70vh;
   }
@@ -608,6 +617,7 @@ export default {
   .avatar-officer {
     border: solid #1976d2 3px;
   }
+
   .avatar-ai {
     border: solid #cf92ff 3px;
   }
@@ -651,9 +661,11 @@ export default {
       small {
         color: #fff !important;
       }
+
       .v-icon {
         color: #fff !important;
       }
+
       a {
         color: #fff !important;
         font-weight: 500;
@@ -665,6 +677,7 @@ export default {
         }
       }
     }
+
     &.empty-msg {
       background-color: transparent !important;
     }
@@ -674,6 +687,7 @@ export default {
     .-hide-on-same {
       opacity: 0;
     }
+
     .-remove-on-same {
       display: none;
     }
@@ -688,6 +702,7 @@ export default {
     max-width: max-content;
   }
 }
+
 .small-textarea {
   //  font-size: 0.9em;
 }

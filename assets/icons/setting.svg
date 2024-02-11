@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 
-
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
-<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="-34.1074" y1="646.2129" x2="-34.1074" y2="621.2129" gradientTransform="matrix(20.48 0 0 -20.48 954.52 13234.4395)">
-	<stop  offset="0" style="stop-color:#1AD6FD"/>
-	<stop  offset="1" style="stop-color:#1D67F0"/>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px"
+     y="0px"
+     viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="-34.1074" y1="646.2129" x2="-34.1074" y2="621.2129"
+                gradientTransform="matrix(20.48 0 0 -20.48 954.52 13234.4395)">
+	<stop offset="0" style="stop-color:#1AD6FD"/>
+    <stop offset="1" style="stop-color:#1D67F0"/>
 </linearGradient>
-<path style="fill:url(#SVGID_1_);" d="M327.68,256c0,39.526-32.154,71.68-71.68,71.68s-71.68-32.154-71.68-71.68
+    <path style="fill:url(#SVGID_1_);" d="M327.68,256c0,39.526-32.154,71.68-71.68,71.68s-71.68-32.154-71.68-71.68
 	s32.154-71.68,71.68-71.68S327.68,216.474,327.68,256 M487.322,211.948L487.322,211.948l-38.769-7.741
 	c-10.015-2.007-18.35-8.929-22.467-18.944c-3.973-9.564-2.949-20.316,2.703-28.795l21.914-32.87
 	c8.11-12.165,6.492-28.447-3.85-38.748l-19.702-19.722c-10.301-10.322-26.604-11.94-38.748-3.83l-32.87,21.893
@@ -25,34 +26,34 @@
 	l19.702-19.681c10.342-10.322,11.96-26.604,3.85-38.769l-21.914-32.87c-5.652-8.479-6.676-19.231-2.56-29.204
 	c3.973-9.605,12.309-16.527,22.323-18.534l38.769-7.741C501.617,297.185,512,284.529,512,269.926v-27.873
 	C512,227.471,501.617,214.815,487.322,211.948"/>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
-<g>
+    <g>
 </g>
 </svg>

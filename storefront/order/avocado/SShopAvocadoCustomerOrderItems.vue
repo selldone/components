@@ -15,32 +15,32 @@
 <template>
   <div>
     <v-fade-transition
+      class="border-between-vertical"
       group
       hide-on-leave
-      class="border-between-vertical"
       tag="div"
     >
       <div
         v-for="item in filtered_items"
         :key="item.id"
-        class="d-flex text-subtitle-2 py-1 align-items-center s--shop-avocado-customer-order-items px-1"
         :class="{
           'img-grayscale op-0-5':
             !isReserved &&
             !isOpen &&
             item.status !== AvocadoItemStatus.ACCEPTED.code,
         }"
+        class="d-flex text-subtitle-2 py-1 align-items-center s--shop-avocado-customer-order-items px-1"
       >
         <v-img
+          :class="{ 'pointer-event-none': !item.image }"
           :src="
             item.image
               ? getShopImagePath(item.image)
               : require('@components/assets/icons/product-outline.svg')
           "
-          width="56"
-          height="56"
           class="rounded-18px me-2 ms-1 flex-grow-0 pointer-zoom-in border"
-          :class="{ 'pointer-event-none': !item.image }"
+          height="56"
+          width="56"
           @click="showFullscreen"
         >
         </v-img>
@@ -50,12 +50,12 @@
             {{ item.message }}
             <v-btn
               v-if="item.link"
-              size="small"
-              color="blue"
               :href="item.link"
+              class="float-end"
+              color="blue"
+              size="small"
               target="_blank"
               variant="text"
-              class="float-end"
             >
               <v-icon start>link</v-icon>
               {{ $t("global.commons.link") }}
@@ -76,12 +76,12 @@
         </div>
         <v-btn
           v-if="!viewOnly && (isOpen || isReserved)"
-          @click="deleteItem(item)"
           :loading="busy_delete === item.id"
-          icon
-          variant="text"
           color="red"
+          icon
           title="Delete"
+          variant="text"
+          @click="deleteItem(item)"
         >
           <v-icon>close</v-icon>
         </v-btn>
@@ -106,19 +106,19 @@
       </div>
     </v-fade-transition>
 
-  <div class="text-end">
-    <v-btn
+    <div class="text-end">
+      <v-btn
         v-if="viewOnly"
-        @click="show_all = !show_all"
+        class="my-2 tnt"
+        color="#000"
         size="small"
         variant="text"
-        color="#000"
-        class="my-2 tnt"
-    >
-      <v-icon start>visibility</v-icon>
-      {{ show_all ? $t("avocado.show_accepted") : $t("avocado.show_all") }}
-    </v-btn>
-  </div>
+        @click="show_all = !show_all"
+      >
+        <v-icon start>visibility</v-icon>
+        {{ show_all ? $t("avocado.show_accepted") : $t("avocado.show_all") }}
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -205,7 +205,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

@@ -16,7 +16,7 @@
   <div>
     <!-- --------- Compact mode --------- -->
     <div v-if="on_compact" class="d-flex align-center py-5">
-      <v-avatar size="64" rounded="lg" class="me-2 border">
+      <v-avatar class="me-2 border" rounded="lg" size="64">
         <img
           :src="image_url"
           class="pa-1 rounded-lg"
@@ -28,29 +28,31 @@
       </div>
 
       <v-btn
-        icon variant="text"
-        color="red"
         v-if="clearable && last_image"
+        class="ms-1"
+        color="red"
+        icon
+        title="Clear image"
+        variant="text"
         @click.stop="
           () => {
             last_image = null;
             $emit('onClear');
           }
         "
-        title="Clear image"
-        class="ms-1"
       >
         <v-icon>close</v-icon>
       </v-btn>
 
       <v-btn
-        icon variant="text"
+        :title="$t('global.actions.edit')"
         class="ms-1"
+        icon
+        variant="text"
         @click="
           force_edit = !force_edit;
           last_image = null;
         "
-        :title="$t('global.actions.edit')"
       >
         <v-icon>edit</v-icon>
       </v-btn>
@@ -61,8 +63,6 @@
       <div v-if="!on_compact">
         <div v-if="!on_compact" class="label-top" v-html="label"></div>
         <div
-          class="uploader-container mx-auto rounded-18px overflow-hidden"
-          :style="{ minHeight: minHeight }"
           :class="{
             dense: dense,
             dark: dark,
@@ -70,13 +70,15 @@
             'has-value': true,
             ctrl: ctrl,
           }"
+          :style="{ minHeight: minHeight }"
+          class="uploader-container mx-auto rounded-18px overflow-hidden"
         >
           <v-slide-y-transition>
             <v-avatar
               v-if="showPreImage && last_image && !autoCompact"
+              :style="clearable ? 'top: 50%;' : ''"
               class="prev-img"
               size="76"
-              :style="clearable ? 'top: 50%;' : ''"
             >
               <img :src="image_url" />
             </v-avatar>
@@ -84,19 +86,30 @@
 
           <v-icon
             v-if="focused && !disablePast"
-            class="fadeIn absolute-top-start"
-            style="z-index: 1"
-            size="small"
             :dark="dark"
+            class="fadeIn absolute-top-start"
+            size="small"
+            style="z-index: 1"
             >fa:fas fa-paste
           </v-icon>
           <file-pond
             v-if="!clearable || !last_image"
-            v-intersect="onIntersect"
             ref="pond"
-            class="pointer-pointer fadeIn filepond-style"
-            :name="paramName"
-            style="min-height: 84px"
+            v-intersect="onIntersect"
+            :accepted-file-types="acceptedFileTypes"
+            :allow-multiple="allowMultiple"
+            :allowImageResize="allowImageResize"
+            :allowImageTransform="allowImageTransform"
+            :allowPaste="focused && !disablePast"
+            :files="logo"
+            :imageResizeMode="imageResizeMode"
+            :imageResizeTargetHeight="
+              imageResizeTargetHeight
+                ? imageResizeTargetHeight
+                : imageResizeTargetWidth
+            "
+            :imageResizeTargetWidth="imageResizeTargetWidth"
+            :imageResizeUpscale="imageResizeUpscale"
             :label-idle="
               (placeholderImage && !last_image
                 ? `<img src='${placeholderImage}' class='placeholder'>`
@@ -105,30 +118,19 @@
                 'global.image_uploader.label',
               )}  </p>`
             "
-            :allow-multiple="allowMultiple"
-            :accepted-file-types="acceptedFileTypes"
-            :server="server_credential"
-            :files="logo"
-            :maxFileSize="maxFileSize"
             :max-files="maxFiles"
+            :maxFileSize="maxFileSize"
+            :name="paramName"
+            :server="server_credential"
             check-validity="true"
-            @processfile="handleProcessFile"
-            @error="handleFilePondError"
-            :allowPaste="focused && !disablePast"
-            :allowImageResize="allowImageResize"
-            :imageResizeUpscale="imageResizeUpscale"
-            :imageResizeMode="imageResizeMode"
-            :imageResizeTargetWidth="imageResizeTargetWidth"
-            :imageResizeTargetHeight="
-              imageResizeTargetHeight
-                ? imageResizeTargetHeight
-                : imageResizeTargetWidth
-            "
+            class="pointer-pointer fadeIn filepond-style"
             credits="false"
-            :allowImageTransform="allowImageTransform"
+            style="min-height: 84px"
             @addfile="(error, file) => $emit('onAddFile', { error, file })"
-            @processfilestart="(e) => $emit('onProcessFileStart', e)"
+            @error="handleFilePondError"
+            @processfile="handleProcessFile"
             @processfileabort="(e) => $emit('onProcessFileAbort', e)"
+            @processfilestart="(e) => $emit('onProcessFileStart', e)"
           />
 
           <p class="small file-size-limit">
@@ -136,10 +138,12 @@
           </p>
 
           <v-btn
-            variant="flat"
+            v-if="clearable && last_image"
+            class="absolute-top-end m-2 z2"
             icon
             size="small"
-            v-if="clearable && last_image"
+            title="Clear image"
+            variant="flat"
             @click.stop="
               () => {
                 last_image = null;
@@ -147,8 +151,6 @@
                 force_edit = false;
               }
             "
-            title="Clear image"
-            class="absolute-top-end m-2 z2"
           >
             <v-icon>close</v-icon>
           </v-btn>
@@ -412,7 +414,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-
-</style>
+<style lang="scss"></style>

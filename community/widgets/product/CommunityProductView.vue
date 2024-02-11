@@ -17,11 +17,11 @@
   <div class="position-relative mh200 hide-scroll">
     <div v-if="product && !busy">
       <s-shop-product-main-card
-        :product="product"
         :can-buy="product.shop_id === community.shop_id"
+        :product="product"
+        class="blur-animate"
         show-cover
         vertical
-        class="blur-animate"
       >
       </s-shop-product-main-card>
 

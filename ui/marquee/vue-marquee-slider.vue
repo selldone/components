@@ -61,7 +61,7 @@ export default {
       },
     },
     duration: {
-default:'10s'
+      default: "10s",
     },
     width: {
       type: Number,
@@ -139,7 +139,7 @@ default:'10s'
     },
     setContainer() {
       this.container = document.querySelector(
-        `#${this.id} .${this.$style.marqueeSliderContainer}`
+        `#${this.id} .${this.$style.marqueeSliderContainer}`,
       );
     },
     setContainerWidth() {

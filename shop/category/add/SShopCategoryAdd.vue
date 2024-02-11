@@ -17,10 +17,10 @@
     <v-card-title v-if="!hideTopBar">
       <s-shop-category-add-header
         key="header"
+        v-model:tab="tab"
+        :category="category"
         :shop="shop"
         :vendor="vendor"
-        :category="category"
-        v-model:tab="tab"
         @back="back"
       >
       </s-shop-category-add-header>
@@ -47,32 +47,32 @@
           <v-text-field
             v-model="title"
             :counter="24"
-            :label="$t('add_category.title_input')"
-            placeholder="Enter category title, e.g. 'Shoes', 'Clothing', etc."
             :error-messages="
               !title ? $t('add_category.title_input_error') : null
             "
+            :label="$t('add_category.title_input')"
+            placeholder="Enter category title, e.g. 'Shoes', 'Clothing', etc."
+            variant="underlined"
             @blur="
               () => {
                 if (!edit_name || !name) name = slugify(title);
               }
             "
-            variant="underlined"
           >
             <template v-slot:append-inner>
               <s-translations-button-category
                 v-if="category?.id"
-                :shop="shop"
                 :category="category"
-                translation-key="title"
                 :label="$t('add_category.title_input')"
+                :shop="shop"
+                translation-key="title"
               ></s-translations-button-category>
 
               <v-btn
                 class="margin-n7px"
+                color="#fafafa"
                 rounded
                 variant="flat"
-                color="#fafafa"
                 @click="star = !star"
               >
                 <v-icon :color="star ? '#FFA000' : 'gray'">
@@ -84,10 +84,10 @@
           </v-text-field>
 
           <v-btn
-            @click="edit_name = !edit_name"
             class="tnt my-2"
             color="primary"
             variant="text"
+            @click="edit_name = !edit_name"
           >
             <v-icon class="me-1">link</v-icon>
             {{ $t("global.actions.edit") }} : {{ getShopMainUrl(shop) }}/{{
@@ -99,11 +99,11 @@
               <v-text-field
                 v-model="name"
                 :counter="24"
-                class="ma-2"
-                :label="$t('add_category.name_input')"
                 :error-messages="
                   !valid_name ? $t('add_category.name_input_error') : null
                 "
+                :label="$t('add_category.name_input')"
+                class="ma-2"
                 suffix="-category"
                 variant="underlined"
               />
@@ -114,17 +114,17 @@
             v-model="description"
             :label="$t('add_category.description_input')"
             :messages="$t('add_category.description_input_message')"
-            rows="2"
             auto-grow
+            rows="2"
             variant="underlined"
           >
             <template v-slot:append-inner>
               <s-translations-button-category
                 v-if="category?.id"
-                :shop="shop"
                 :category="category"
-                translation-key="description"
                 :label="$t('add_category.description_input')"
+                :shop="shop"
+                translation-key="description"
               ></s-translations-button-category>
             </template>
           </v-textarea>
@@ -133,6 +133,7 @@
 
           <s-image-uploader
             v-if="category && category.id"
+            :image="getShopImagePath(icon)"
             :label="$t('add_category.image_input')"
             :server="
               IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -142,25 +143,24 @@
                   )
                 : window.API.POST_UPLOAD_CATEGORY_IMAGE(shop.id, category.id)
             "
-            max-file-size="2MB"
-            :image="getShopImagePath(icon)"
-            @new-path="handleProcessFile"
             auto-compact
+            max-file-size="2MB"
+            @new-path="handleProcessFile"
           >
           </s-image-uploader>
 
           <v-file-input
             v-else
             v-model="selected_file"
-            color="primary"
-            class="mt-5"
             :label="$t('add_category.image_input')"
             :placeholder="$t('add_category.image_input_placeholder')"
-            append-inner-icon="attach_file"
-            prepend-icon=""
             accept="image/*"
-            variant="underlined"
+            append-inner-icon="attach_file"
+            class="mt-5"
             clearable
+            color="primary"
+            prepend-icon=""
+            variant="underlined"
           />
 
           <!-- Parent folder -->
@@ -176,8 +176,8 @@
             </v-list-subheader>
             <div class="m-2">
               <circle-image
-                :src="getCategoryIcon(parentFolder.id)"
                 :size="32"
+                :src="getCategoryIcon(parentFolder.id)"
                 class="m-2 avatar-gradient -thin -category"
                 scale-on-hover
               />
@@ -187,10 +187,10 @@
           </div>
           <b-shop-category-input
             v-model="parent_id"
-            class="mb-5"
             :label="$t('add_category.parent_input')"
-            clearable
             :messages="parent_id ? '' : $t('add_category.parent_input_message')"
+            class="mb-5"
+            clearable
           >
           </b-shop-category-input>
         </div>
@@ -198,19 +198,19 @@
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" color="default" variant="flat" @click="back()">
+          <v-btn color="default" size="x-large" variant="flat" @click="back()">
             <v-icon class="me-1">{{ $t("icons.chevron_back") }}</v-icon>
             {{ $t("add_category.back_action") }}
           </v-btn>
 
           <v-btn
             v-if="category"
-            size="x-large"
-            color="primary"
             :disabled="!canConfirm"
-            @click="editCategory()"
             :loading="busy"
+            color="primary"
+            size="x-large"
             variant="elevated"
+            @click="editCategory()"
           >
             <v-icon class="me-1">save</v-icon>
             {{ $t("global.actions.save_changes") }}
@@ -218,12 +218,12 @@
 
           <v-btn
             v-else
-            size="x-large"
-            color="primary"
             :disabled="!canConfirm"
-            @click="addCategory()"
             :loading="busy"
+            color="primary"
+            size="x-large"
             variant="elevated"
+            @click="addCategory()"
           >
             <v-icon class="me-1">add</v-icon>
 
@@ -237,8 +237,8 @@
 
     <s-shop-category-filter
       v-if="tab === 'filter' && category"
-      :shop="shop"
       :category="category"
+      :shop="shop"
     >
     </s-shop-category-filter>
 
@@ -248,16 +248,16 @@
       <v-card-text>
         <div class="widget-box mb-5">
           <s-widget-header
-            title="Template"
-            icon="layers"
             :add-caption="page ? 'Edit Page' : 'List of Pages'"
-            add-text
             :add-icon="page ? 'edit' : 'add_box'"
             :to="
               page
                 ? { name: 'ShopPageBuilderPage', params: { page_id: page.id } }
                 : { name: 'PagesManagement_CustomPages' }
             "
+            add-text
+            icon="layers"
+            title="Template"
           ></s-widget-header>
 
           <v-list-subheader>
@@ -270,20 +270,20 @@
           </v-list-subheader>
 
           <s-shop-page-input
-            label="Page"
             v-model="page"
             :shop="shop"
-            clearable
             background-color="transparent"
+            clearable
+            label="Page"
           ></s-shop-page-input>
 
           <v-expand-transition>
             <div v-if="page">
               <b-page-augment-form
                 v-model="augment"
+                :loading="busy_load"
                 class="my-10"
                 @change="changed = true"
-                :loading="busy_load"
               ></b-page-augment-form>
             </div>
           </v-expand-transition>
@@ -297,10 +297,10 @@
             class="widget-buttons"
           >
             <v-btn
-              size="x-large"
-              color="primary"
-              variant="elevated"
               :loading="busy"
+              color="primary"
+              size="x-large"
+              variant="elevated"
               @click="editCategory"
             >
               <v-icon class="me-1">save</v-icon>
@@ -317,8 +317,8 @@
       <v-card-text>
         <div class="widget-box mb-5">
           <s-widget-header
-            icon="warning_amber"
             :title="$t('global.commons.critical_zone')"
+            icon="warning_amber"
           >
           </s-widget-header>
           <v-list-subheader>
@@ -334,9 +334,9 @@
           <s-smart-check-verify-action
             v-model="accept_delete"
             color="red"
-            true-title="Confirm Remove Category"
-            true-description="I want to remove this category."
             false-gray
+            true-description="I want to remove this category."
+            true-title="Confirm Remove Category"
           ></s-smart-check-verify-action>
         </div>
       </v-card-text>
@@ -344,12 +344,12 @@
       <v-card-actions>
         <div class="widget-buttons">
           <v-btn
-            @click="deleteCategoryDialog()"
+            :disabled="!accept_delete"
+            :loading="busy_delete"
+            color="red"
             size="x-large"
             variant="elevated"
-            color="red"
-            :loading="busy_delete"
-            :disabled="!accept_delete"
+            @click="deleteCategoryDialog()"
           >
             <v-icon class="me-1">delete</v-icon>
             {{ $t("add_category.menu.delete") }}

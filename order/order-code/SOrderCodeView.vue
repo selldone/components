@@ -15,7 +15,7 @@
 <template>
   <span v-if="basket" class="d-block mt-2 font-weight-black" dir="ltr"
     >{{ code }}-{{ basket.id }}
-    <v-icon class="mt-n2" size="10" :color="status ? status.color : null"
+    <v-icon :color="status ? status.color : null" class="mt-n2" size="10"
       >lens</v-icon
     >
   </span>
