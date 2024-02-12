@@ -14,24 +14,21 @@
 
 <template>
   <span>
-    <v-tooltip
+    <v-btn
       v-if="note && note.length"
-      color="#111"
-      max-width="460"
-      min-width="240"
-    >
-      <template v-slot:activator="{ props }">
-        <v-btn
-          :color="activeColor"
-          icon
-          size="36"
-          v-bind="props"
-          variant="text"
-          @click.stop="$emit('click')"
-          ><v-icon size="24">sticky_note_2</v-icon></v-btn
-        >
-      </template>
-      <div class="pa-2 text-start rounded-lg">
+      :color="activeColor"
+      icon
+      size="36"
+      variant="text"
+      @click.stop="$emit('click')"
+      ><v-icon size="24">sticky_note_2</v-icon>
+
+      <v-tooltip
+        max-width="460"
+        min-width="240"
+        content-class="bg-black text-start"
+        activator="parent"
+      >
         <div class="d-flex align-center">
           <v-avatar :size="32" class="avatar-gradient -thin -staff me-2">
             <v-img :src="getUserAvatar(note[note.length - 1].user_id)" />
@@ -48,8 +45,8 @@
         <div class="typo-body my-2">
           {{ note[note.length - 1].body.limitWords(20) }}
         </div>
-      </div>
-    </v-tooltip>
+      </v-tooltip>
+    </v-btn>
 
     <v-btn
       v-else

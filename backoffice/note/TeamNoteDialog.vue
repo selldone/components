@@ -16,11 +16,11 @@
   <!-- █████████████████████ Dialog > Note Messages █████████████████████ -->
 
   <v-bottom-sheet
-    :model-value="value"
+    :model-value="modelValue"
     content-class="rounded-t-xl overflow-hidden"
     max-width="820"
     scrollable
-    @update:model-value="(v) => $emit('input', v)"
+    @update:model-value="(v) => $emit('update:modelValue', v)"
   >
     <v-card color="#f9f9f9" flat rounded="0">
       <v-card-title class="d-flex align-center">
@@ -95,14 +95,14 @@
 
           <div class="widget-buttons">
             <v-btn
-              :class="{ disabled: !body_input }"
+              :disabled="!body_input"
               :loading="busy_add"
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="addNote"
             >
-              <v-icon class="me-1">add</v-icon>
+              <v-icon start>add</v-icon>
               {{ $t("global.actions.add") }}
             </v-btn>
           </div>
@@ -110,8 +110,12 @@
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="$emit('input', false)">
-            <v-icon class="me-1">close</v-icon>
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="$emit('update:modelValue', false)"
+          >
+            <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
         </div>
@@ -125,9 +129,9 @@ export default {
   name: "TeamNoteDialog",
 
   components: {},
-
+  emits: ["update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
 
     addUrl: { type: Function },
     deleteUrl: { type: Function },
