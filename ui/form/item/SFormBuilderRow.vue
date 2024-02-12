@@ -14,13 +14,17 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--form-builder-container">
-    <v-row align="center" no-gutters>
+    <v-row align="center" no-gutters class="py-1">
       <v-icon class="me-3 cursor-move drag--handle" title="Drag and move"
-        >menu
+        >unfold_more
       </v-icon>
 
       <v-icon>{{ type?.icon }}</v-icon>
-      <b class="mx-2 small flex-grow-1">{{ getName(type?.title) }}</b>
+
+      <b class="mx-1 small">{{ item.title }}</b>
+      <span class="mx-1 small">/ {{ getName(type?.title) }}</span>
+
+      <v-spacer></v-spacer>
 
       <s-circle-button
         :title="$t('global.actions.delete')"
@@ -28,187 +32,204 @@
         icon="close"
         @click="removeField()"
       />
+
     </v-row>
 
-    <div
-      v-show="!collapse"
-      :class="{
-        '-locked':
-          item.locked /*Locked item - ex. variants field for virtual products*/,
-      }"
-      class="s--form-builder-item"
-    >
-      <!-- General Attributes -->
-      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Note ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+    <v-expand-transition>
+      <div v-if="!collapse">
+        <div
+          :class="{
+            '-locked':
+              item.locked /*Locked item - ex. variants field for virtual products*/,
+          }"
+          class="s--form-builder-item"
+        >
+          <!-- General Attributes -->
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Note ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-      <template v-if="item.type === 'note'">
-        <v-textarea
-          v-model="item.title"
-          :label="$t('global.commons.note')"
-          color="primary"
-          messages="Allowed tags: <h1>...<h5>, <br>, <b>, <i>, <a>,<ol>,<ul>, <li>, <hr>, <img>"
-          placeholder="Writer your message here..."
-          variant="underlined"
-        />
-      </template>
-      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Inputs ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <template v-else>
-        <v-text-field
-          v-model="item.title"
-          :label="$t('global.form_builder.title_input')"
-          color="primary"
-          hint="Public label. Ex: Name, Prefer state, Description, ..."
-          variant="underlined"
-          @blur="
-            item.name = item.name ? item.name : slugify(item.title);
-            $forceUpdate();
-          "
-        />
+          <template v-if="item.type === 'note'">
+            <v-textarea
+              v-model="item.title"
+              :label="$t('global.commons.note')"
+              color="primary"
+              messages="Allowed tags: <h1>...<h5>, <br>, <b>, <i>, <a>,<ol>,<ul>, <li>, <hr>, <img>"
+              placeholder="Writer your message here..."
+              variant="underlined"
+            />
+          </template>
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Inputs ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <template v-else>
+            <v-text-field
+              v-model="item.title"
+              persistent-placeholder
+              placeholder="Enter a title for input..."
+              :label="$t('global.form_builder.title_input')"
+              color="primary"
+              hint="Public label. Ex: Name, Prefer state, Description, ..."
+              variant="underlined"
+              @blur="
+                item.name = item.name ? item.name : slugify(item.title);
+                $forceUpdate();
+              "
+            />
 
-        <div v-if="!edit_name">
-          <div class="d-flex justify-space-between pb-6 px-2">
-            <div>
-              <small>{{ $t("global.form_builder.name_input") }}</small
-              ><br />
-              <b>{{ item.name ? item.name : "Auto generate.." }}</b>
+            <div v-if="!edit_name">
+              <div class="d-flex justify-space-between pb-6 px-2">
+                <div>
+                  <small>{{ $t("global.form_builder.name_input") }}</small
+                  ><br />
+                  <b>{{ item.name ? item.name : "Auto generate.." }}</b>
+                </div>
+
+                <v-btn
+                  icon
+                  size="small"
+                  variant="text"
+                  @click="edit_name = true"
+                >
+                  <v-icon>{{ edit_name ? "lock_open" : "lock" }}</v-icon>
+                </v-btn>
+              </div>
+            </div>
+            <div v-else>
+              <v-text-field
+                v-model="item.name"
+                :append-inner-icon="item.locked ? 'lock' : undefined"
+                :disabled="item.locked"
+                :label="$t('global.form_builder.name_input')"
+                color="primary"
+                hint="Ex: name, state, desc, ... Only lowercase Latin characters and numbers are permitted, and no whitespace is allowed."
+                variant="underlined"
+              />
             </div>
 
-            <v-btn icon size="small" variant="text" @click="edit_name = true">
-              <v-icon>{{ edit_name ? "lock_open" : "lock" }}</v-icon>
+            <!-- select -->
+            <template v-if="item.type === 'select'">
+              <v-combobox
+                v-model="item.selects"
+                :items="[]"
+                :label="$t('global.form_builder.value_input')"
+                :messages="$t('global.form_builder.value_input_message')"
+                chips
+                clearable
+                closable-chips
+                multiple
+                variant="underlined"
+              >
+                <template v-slot:chip="{ props, item }">
+                  <v-chip v-bind="props">
+                    {{ item.raw }}
+                  </v-chip>
+                </template>
+              </v-combobox>
+
+              <s-smart-switch
+                v-model="item.multiple"
+                class="mt-3"
+                false-description="User can select just one item."
+                false-title="Single item"
+                true-description="User can select more than one item."
+                true-title="Multiple items"
+                @change="$forceUpdate()"
+                border
+              >
+              </s-smart-switch>
+            </template>
+
+            <!-- switch -->
+
+            <s-smart-switch
+              v-if="item.type === 'switch'"
+              v-model="item.default"
+              :false-description="item.hint_false"
+              :false-title="$t('global.form_builder.default') + ': False'"
+              :true-description="item.hint_true"
+              :true-title="$t('global.form_builder.default') + ': True'"
+              class="mt-3"
+              false-icon="close"
+              true-icon="check"
+              @change="$forceUpdate()"
+              border
+            >
+            </s-smart-switch>
+
+            <!-- Upload file -->
+            <template v-if="item.type === 'file'">
+              <v-combobox
+                v-model="item.types"
+                :items="['jpeg', 'png', 'zip', 'pdf']"
+                :label="$t('global.form_builder.file_type_input')"
+                :messages="$t('global.form_builder.file_type_message')"
+                chips
+                clearable
+                closable-chips
+                multiple
+                persistent-placeholder
+                placeholder="*.*"
+                variant="underlined"
+              >
+                <template v-slot:chip="{ props, item }">
+                  <v-chip v-bind="props">
+                    {{ item.raw }}
+                  </v-chip>
+                </template>
+              </v-combobox>
+
+              <s-smart-switch
+                v-model="item.multiple"
+                false-description="User can upload just one file."
+                false-title="Single file"
+                true-description="User can upload more than one file."
+                true-title="Multiple files"
+                @change="$forceUpdate()"
+                border
+              >
+              </s-smart-switch>
+            </template>
+
+            <!-- -------------- Hints -------------- -->
+            <v-btn
+              class="tnt mt-2"
+              color="primary"
+              size="small"
+              variant="text"
+              @click="show_hints = !show_hints"
+            >
+              <v-icon start>arrow_drop_down</v-icon>
+              Edit hints
             </v-btn>
-          </div>
+
+            <v-expand-transition>
+              <div v-if="show_hints && item.type === 'switch'">
+                <v-text-field
+                  v-model="item.hint_true"
+                  placeholder="Some instruction to guide customer..."
+                  label="Hint True"
+                  variant="underlined"
+                  persistent-placeholder
+                ></v-text-field>
+                <v-text-field
+                  v-model="item.hint_false"
+                  placeholder="Some instruction to guide customer..."
+                  label="Hint False"
+                  variant="underlined"
+                  persistent-placeholder
+                ></v-text-field>
+              </div>
+              <div v-else-if="show_hints">
+                <v-text-field
+                  v-model="item.hint"
+                  placeholder="Some instruction to guide customer..."
+                  label="Hint"
+                  variant="underlined"
+                  persistent-placeholder
+                ></v-text-field>
+              </div>
+            </v-expand-transition>
+          </template>
         </div>
-        <div v-else>
-          <v-text-field
-            v-model="item.name"
-            :append-inner-icon="item.locked ? 'lock' : undefined"
-            :disabled="item.locked"
-            :label="$t('global.form_builder.name_input')"
-            color="primary"
-            hint="Ex: name, state, desc, ... Only lowercase Latin characters and numbers are permitted, and no whitespace is allowed."
-            variant="underlined"
-          />
-        </div>
-
-        <!-- select -->
-        <template v-if="item.type === 'select'">
-          <v-combobox
-            v-model="item.selects"
-            :items="[]"
-            :label="$t('global.form_builder.value_input')"
-            :messages="$t('global.form_builder.value_input_message')"
-            chips
-            clearable
-            closable-chips
-            multiple
-            variant="underlined"
-          >
-            <template v-slot:chip="{ props, item }">
-              <v-chip v-bind="props">
-                {{ item.raw }}
-              </v-chip>
-            </template>
-          </v-combobox>
-
-          <s-smart-switch
-            v-model="item.multiple"
-            class="mt-3"
-            false-description="User can select just one item."
-            false-title="Single item"
-            true-description="User can select more than one item."
-            true-title="Multiple items"
-            @change="$forceUpdate()"
-          >
-          </s-smart-switch>
-        </template>
-
-        <!-- switch -->
-
-        <s-smart-switch
-          v-if="item.type === 'switch'"
-          v-model="item.default"
-          :false-description="item.hint_false"
-          :false-title="$t('global.form_builder.default') + ': False'"
-          :true-description="item.hint_true"
-          :true-title="$t('global.form_builder.default') + ': True'"
-          class="mt-3"
-          false-icon="close"
-          true-icon="check"
-          @change="$forceUpdate()"
-        >
-        </s-smart-switch>
-
-        <!-- Upload file -->
-        <template v-if="item.type === 'file'">
-          <v-combobox
-            v-model="item.types"
-            :items="['jpeg', 'png', 'zip', 'pdf']"
-            :label="$t('global.form_builder.file_type_input')"
-            :messages="$t('global.form_builder.file_type_message')"
-            chips
-            clearable
-            closable-chips
-            multiple
-            persistent-placeholder
-            placeholder="*.*"
-            variant="underlined"
-          >
-            <template v-slot:chip="{ props, item }">
-              <v-chip v-bind="props">
-                {{ item.raw }}
-              </v-chip>
-            </template>
-          </v-combobox>
-
-          <s-smart-switch
-            v-model="item.multiple"
-            false-description="User can upload just one file."
-            false-title="Single file"
-            true-description="User can upload more than one file."
-            true-title="Multiple files"
-            @change="$forceUpdate()"
-          >
-          </s-smart-switch>
-        </template>
-
-        <!-- -------------- Hints -------------- -->
-        <v-btn
-          class="tnt mt-2"
-          color="primary"
-          size="small"
-          variant="text"
-          @click="show_hints = !show_hints"
-        >
-          <v-icon start>arrow_drop_down</v-icon>
-          Edit hints
-        </v-btn>
-
-        <v-expand-transition>
-          <div v-if="show_hints && item.type === 'switch'">
-            <v-text-field
-              v-model="item.hint_true"
-              placeholder="Some instruction to guide customer..."
-              title="Hint True"
-              variant="underlined"
-            ></v-text-field>
-            <v-text-field
-              v-model="item.hint_false"
-              placeholder="Some instruction to guide customer..."
-              title="Hint False"
-              variant="underlined"
-            ></v-text-field>
-          </div>
-          <div v-else-if="show_hints">
-            <v-text-field
-              v-model="item.hint"
-              placeholder="Some instruction to guide customer..."
-              title="Hint"
-              variant="underlined"
-            ></v-text-field>
-          </div>
-        </v-expand-transition>
-      </template>
-    </div>
+      </div>
+    </v-expand-transition>
   </div>
 </template>
 
@@ -277,14 +298,6 @@ export default {
     padding: 12px;
     position: relative;
     transition: all 0.4s ease-in-out;
-
-    .v-input {
-      margin: 0.5em;
-    }
-
-    &:hover {
-      box-shadow: 0 2px 43px -4px rgba(0, 0, 0, 0.19);
-    }
 
     &.-locked {
       border: solid #0061e0 3px;

@@ -16,14 +16,16 @@
   <v-avatar
     :class="{ 'bg-amber-soft': isAmber }"
     :size="size"
-    :style="{ backgroundImage: bg }"
+    :style="{
+      backgroundImage: bg,
+      'border-radius': size < 60 ? '18px' : '24px',
+    }"
     class="s---category"
-    rounded="xl"
   >
     <v-avatar
       :size="size - borderSize"
       color="#fff"
-      style="border-radius: 22px"
+      :style="{ 'border-radius': size < 60 ? '16px' : '22px' }"
     >
       <v-img v-if="src" :src="getShopImagePath(src)">
         <template v-slot:placeholder>
@@ -41,8 +43,16 @@
       class="absolute-bottom-end rounded-ts-circle h-auto w-auto pa-1 ma-n1"
       style="background-size: 300% 300%"
     >
-      <v-img v-if="sideImage" :src="sideImage" height="24" width="24"></v-img>
-      <v-icon v-else color="#fff">
+      <v-img
+        v-if="sideImage"
+        :src="sideImage"
+        :height="side_size"
+        :width="side_size"
+        :class="{
+          'rounded rounded-ts-circle rounded-be-circle': side_image_rounded,
+        }"
+      ></v-img>
+      <v-icon v-else color="#fff" :size="side_size">
         {{ sideIcon }}
       </v-icon>
     </div>
@@ -81,11 +91,14 @@ export default defineComponent({
     isBlue: Boolean,
     isRed: Boolean,
     isPink: Boolean,
+    isGray: Boolean,
     size: {
       default: 62,
+      type: Number,
     },
     borderSize: {
       default: 10,
+      type: Number,
     },
     sideIcon: {
       default: "devices_fold",
@@ -101,6 +114,15 @@ export default defineComponent({
   },
 
   computed: {
+    side_image_rounded() {
+      return (
+        !this.sideImage?.endsWith(".svg")
+      );
+    },
+
+    side_size() {
+      return Math.min(this.size / 3.3, 24);
+    },
     bg() {
       return `linear-gradient(45deg, ${this.color1}, ${this.color2})`;
     },
@@ -114,7 +136,9 @@ export default defineComponent({
             ? "#F44336"
             : this.isPink
               ? "#E91E63"
-              : "#000";
+              : this.isGray
+                ? "#ddd"
+                : "#000";
     },
     color2() {
       return this.isAmber
@@ -125,7 +149,9 @@ export default defineComponent({
             ? "#D32F2F"
             : this.isPink
               ? "#C2185B"
-              : "#000";
+              : this.isGray
+                ? "#eee"
+                : "#000";
     },
   },
 });

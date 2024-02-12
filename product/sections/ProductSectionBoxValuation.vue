@@ -18,23 +18,8 @@
       structure && preferences_valuation && product.price_input === 'custom'
     "
     class="widget-box w-100 py-3 mt-5 pricing-form strong-field"
+    :class="{'-preview':previewMode}"
   >
-    <!--
-    <b>valuation:</b>
-    <div>
-      {{ product.valuation }}
-    </div>
-
-    <b> preferences:</b>
-    <div>
-      {{ preferences }}
-    </div>
-
-    <b> selected_values:</b>
-    <div>
-      {{ selected_values }}
-    </div>
--->
     <s-progress-loading v-if="busy_save"></s-progress-loading>
     <div
       v-for="(item, index) in structure"
@@ -56,6 +41,7 @@
           $emit('update:preferences', preferences);
           $forceUpdate();
         "
+        variant="underlined"
       >
       </v-text-field>
 
@@ -69,7 +55,8 @@
         background-color="transparent"
         class="mx-4"
         @blur="debounceSavePreferences()"
-        @input="$emit('update:preferences', preferences)"
+        @update:model-value="$emit('update:preferences', preferences)"
+        variant="underlined"
       >
       </s-number-input>
 
@@ -80,6 +67,7 @@
         :chips="item.multiple"
         :disabled="readonly"
         :items="filterSelects(item.selects, preferences_valuation[item.name])"
+        :return-object="false"
         :label="item.title"
         :multiple="item.multiple"
         :persistent-placeholder="!!item.placeholder"
@@ -88,13 +76,13 @@
         bg-color="transparent"
         class="mx-4"
         clearable
-        menu-props="auto"
         @click:clear="preferences_valuation[item.name] = null"
         @update:model-value="
           $emit('update:preferences', preferences);
           $forceUpdate();
           debounceSavePreferences();
         "
+        variant="underlined"
       >
       </v-select>
       <!-- switch -->
@@ -115,98 +103,15 @@
         "
         class="mx-4 mb-5"
         false-icon="close"
-        solo
         true-icon="check"
         @change="debounceSavePreferences"
-        @input="
+        @update:model-value="
           $emit('update:preferences', preferences);
           $forceUpdate();
         "
       >
       </s-smart-switch>
 
-      <!-- File not implemented yet!-->
-      <!--
-      <template v-if="item.type === 'file'">
-        <v-file-input
-          v-if="!readonly && (item.multiple || !getFiles(item.name).length)"
-          v-model="files[item.name]"
-          :rules="[]"
-          menu-props="auto"
-          :label="item.title"
-          @input="$emit('update:preferences', preferences)"
-          :multiple="item.multiple"
-          :chips="item.multiple"
-          messages="Max file size: 20MB"
-          show-size
-          prepend-icon=""
-          append-icon="attach_file"
-          @blur="debounceSavePreferences"
-          background-color="transparent"
-          class="mx-4"
-        />
-
-        <v-fade-transition
-          group
-          hide-on-leave
-          tag="div"
-          class="border-between-vertical mx-4"
-        >
-          <div v-for="f in getFiles(item.name)" :key="f.id" class="p-2">
-            <div class="d-flex align-center mnh">
-              <img
-                v-if="FileHelper.GetFileIcon(f.filename)"
-                :src="FileHelper.GetFileIcon(f.filename)"
-                height="24"
-                width="24"
-                class="me-2 -thin -gray flex-grow-0"
-              />
-              <v-icon
-                v-else
-                color="primary"
-                class="me-2 -thin -gray flex-grow-0"
-                >attach_file</v-icon
-              >
-
-              <div class="flex-grow-1">
-                <b>
-                  {{ f.filename }}
-                </b>
-                <v-list-subheader style="height: auto" class="p-0">
-                  {{ f.size | numeralFormat("0.[0] b") }}
-                  <span class="mx-1">/</span>
-                  <span :title="getLocalTimeString(f.created_at)">{{
-                    getFromNowString(f.created_at)
-                  }}</span>
-                </v-list-subheader>
-              </div>
-
-
-              <v-btn
-                v-if="!readonly"
-                icon
-                color="red"
-                @click="deleteFile(f)"
-                :loading="busy_delete === f.id"
-              >
-                <v-icon>close</v-icon>
-              </v-btn>
-
-
-              <v-btn
-                v-if="isAdmin"
-                icon
-                color="primary"
-                @click="downloadFile(f)"
-                :loading="busy_download === f.id"
-              >
-                <v-icon>download</v-icon>
-              </v-btn>
-            </div>
-          </div>
-        </v-fade-transition>
-      </template>
-      -->
       <v-icon
         v-if="index_blink === index"
         class="blink-me-linear indic"
@@ -239,7 +144,10 @@ export default {
     },
 
     currentVariant: {},
-    preferences: {},
+    preferences: {
+      required: true,
+      type: Object,
+    },
 
     readonly: {
       type: Boolean,
@@ -248,8 +156,7 @@ export default {
 
     correspondingBasketItem: {},
 
-    files: {},
-    uploadedFiles: {},
+    previewMode: Boolean,
   },
 
   data: () => ({
@@ -315,6 +222,7 @@ export default {
     },
 
     filterSelects(items, ignore_current_val) {
+      if (!items) return [];
       if (!this.unavailable || !this.unavailable.length) return items;
       return items.filter(
         (item) => item === ignore_current_val || this.checkAvailable(item),
@@ -337,72 +245,6 @@ export default {
       });
     },
 
-    getFiles(key) {
-      if (!this.uploadedFiles) return [];
-      return (
-        this.uploadedFiles && this.uploadedFiles.filter((f) => f.key === key)
-      );
-    },
-
-    deleteFile(file_item) {
-      this.busy_delete = file_item.id;
-      axios
-        .delete(
-          window.XAPI.DELETE_BASKET_ITEM_FILE(
-            this.shop.name,
-            file_item.basket_id,
-            file_item.id,
-          ),
-        )
-        .then(({ data }) => {
-          if (!data.error) {
-            this.$emit("onDeleteFile", {
-              item_id: file_item.item_id,
-              file_id: file_item.id,
-            });
-            this.showSuccessAlert(null, "File removed successfully!");
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => {
-          this.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_delete = null;
-        });
-    },
-
-    downloadFile(file_item) {
-      this.busy_download = file_item.id;
-      axios
-        .get(
-          window.API.GET_BASKET_ITEM_FILE_DOWNLOAD_LINK(
-            this.shop.id,
-            file_item.basket_id,
-            file_item.id,
-          ),
-        )
-        .then(({ data }) => {
-          if (!data.error) {
-            window.open(data.url, "_blank").focus();
-
-            this.showSuccessAlert(
-              null,
-              "The secure download link has been generated successfully!",
-            );
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => {
-          this.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_download = null;
-        });
-    },
-
     debounceSavePreferences: _.debounce(
       function () {
         // console.log("Auto get rates...");
@@ -413,6 +255,7 @@ export default {
     ),
 
     saveBasketItemPreferences() {
+      if (this.previewMode) return;
       // Check item exist in the basket:
       if (!this.correspondingBasketItem || this.readonly) return;
 
@@ -467,6 +310,11 @@ export default {
     right: unset;
     left: -4px;
     transform: translate(0, -50%);
+  }
+
+  &.-preview{
+    border: dashed 2px #333;
+    background: #fefefe !important;
   }
 }
 </style>

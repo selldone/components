@@ -34,6 +34,7 @@
     :prepend-icon="prependIcon"
     :prepend-inner-icon="prependInnerIcon"
     :return-object="returnObject"
+    :single-line="singleLine"
     :rounded="rounded"
     :theme="dark ? 'dark' : 'light'"
     :variant="
@@ -189,7 +190,7 @@ export default {
       default: true,
       type: Boolean,
     },
-
+    singleLine:Boolean,
     hideDetails: {
       default: false,
       type: Boolean,

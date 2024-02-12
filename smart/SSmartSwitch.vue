@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { ref, watch, nextTick } from "vue";
+import { ref, watch, nextTick,computed } from "vue";
 import SSmartSelect from "./SSmartSelect.vue";
 
 export default {
@@ -88,7 +88,7 @@ export default {
       });
     };
 
-    const items = ref([
+    const items = computed(() => [
       {
         id: true,
         title: props.trueTitle,

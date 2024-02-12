@@ -126,7 +126,17 @@ export default defineComponent({
         },
         xaxis: {
           type: "numeric",
+          labels: {
+            show: false // Hides the x-axis labels
+          }
         },
+        yaxis: {
+          reversed: this.reversed,
+          labels: {
+            show: false // Hides the y-axis labels
+          }
+        },
+
         tooltip: {
           fixed: {
             enabled: false,
@@ -150,9 +160,7 @@ export default defineComponent({
           },
         },
 
-        yaxis: {
-          reversed: this.reversed,
-        },
+
       };
     },
   },

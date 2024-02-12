@@ -107,7 +107,7 @@
           src="../../../assets/icons/pos.svg"
           width="24"
         />
-        <s-check v-else :value="transportation.cod" read-only></s-check>
+        <s-check v-else :model-value="transportation.cod" read-only></s-check>
       </p>
       <p class="mb-1 w-50">
         <small class="me-1">{{ $t("global.commons.sod") }}:</small>

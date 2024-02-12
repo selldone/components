@@ -18,30 +18,24 @@
     <v-list-subheader>{{ hint }}</v-list-subheader>
     <draggable
       :animation="200"
-      :component-data="{
-        tag: 'ul',
-        type: 'transition-group',
-        name: !drag ? 'scale' : 'fade',
-      }"
       :disabled="false"
-      :list="structure"
       :model-value="structure"
       ghostClass="ghost"
-      group="description"
       handle=".drag--handle"
       style="list-style-type: none"
-      tag="transition-group"
+      tag="div"
       @end="drag = false"
       @start="drag = true"
       @update:model-value="(val) => $emit('update:structure', val)"
     >
+
       <template v-slot:item="{ element, index }">
         <s-form-builder-row
           :key="index"
           :collapse="drag"
           :item="element"
           :item-types="item_types"
-          class="mt-6"
+          class="mt-5"
           @remove="removeField(index)"
         >
         </s-form-builder-row>
@@ -51,7 +45,7 @@
     <div class="text-end m-3">
       <v-menu :min-width="120">
         <template v-slot:activator="{ props }">
-          <v-btn color="primary" v-bind="props" variant="flat">
+          <v-btn  v-bind="props" variant="elevated">
             <v-icon start>add</v-icon>
             {{ $t("global.form_builder.add_item_action") }}
           </v-btn>

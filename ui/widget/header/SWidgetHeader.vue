@@ -119,7 +119,7 @@ export default {
 
   computed: {
     font_size() {
-      return this.icon?.startsWith("fas ") || this.icon?.startsWith("fa: ")
+      return (this.icon?.startsWith("fas ") || this.icon?.startsWith("fa:"))
         ? 22
         : 26;
     },
