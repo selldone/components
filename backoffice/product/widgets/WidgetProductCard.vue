@@ -56,13 +56,13 @@
       </v-btn>
 
       <!-- Add Note Button -->
-      <team-note-button
+      <b-note-button
         v-if="showNotes || (product.note && product.note.length)"
         :activeColor="showNotes ? undefined : '#333'"
         :note="product.note"
         class="z2 mx-1"
         @click="$emit('onShowNote', product)"
-      ></team-note-button>
+      ></b-note-button>
 
       <!-- Selectable -->
       <template v-if="showSelect">
@@ -500,12 +500,12 @@ import ProductVariantsView from "@components/product/variant/ProductVariantsView
 import { ProductType } from "@core/enums/product/ProductType";
 import { ProductCondition } from "@core/enums/product/ProductCondition";
 import { PricingTypes } from "@core/enums/product/PricingTypes";
-import TeamNoteButton from "@components/backoffice/note/TeamNoteButton.vue";
+import BNoteButton from "@components/backoffice/note/button/BNoteButton.vue";
 
 export default {
   name: "WidgetProductCard",
   components: {
-    TeamNoteButton,
+    BNoteButton,
     ProductVariantsView,
     STimeProgressBar,
     CircleImage,

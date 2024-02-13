@@ -15,7 +15,7 @@
 <template>
   <v-combobox
     v-model="select"
-    v-model:search-input="search"
+    v-model:search="search"
     :customFilter="() => true"
     :density="dense ? 'compact' : undefined"
     :filled="filled"

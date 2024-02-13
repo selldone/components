@@ -27,13 +27,13 @@
     bg-color="transparent"
     chips
     clearable
-    flat
+    :flat="flat"
     hide-details
     item-value="value"
     multiple
     placeholder="Select Filter *.*"
     prepend-inner-icon="filter_alt"
-    variant="solo"
+    :variant="variant"
     @update:model-value="
       (val) => {
         $emit('update:modelValue', val);
@@ -106,6 +106,10 @@ export default {
     },
     modelValue: {},
     dense: { type: Boolean },
+    variant: {
+      default: "underlined",
+    },
+    flat: Boolean,
   },
   data: function () {
     return {

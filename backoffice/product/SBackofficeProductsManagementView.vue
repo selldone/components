@@ -175,6 +175,7 @@
           class="min-width-200 pa-0"
           dense
           @change="onFilterChange"
+          variant="plain"
         >
         </admin-products-filter-input>
 
@@ -467,14 +468,14 @@
         </s-drag>
 
         <!-- Add Note Button -->
-        <team-note-button
+        <b-note-button
           v-if="showNotes || (category.note && category.note.length)"
           :activeColor="showNotes ? undefined : '#333'"
           :note="category.note"
           class="absolute-top-start z2"
           style="top: 0; left: 0"
           @click="showNoteCategory(category)"
-        ></team-note-button>
+        ></b-note-button>
       </v-col>
 
       <v-col
@@ -1432,7 +1433,7 @@
               variant="text"
               @click="dialog_vendors = false"
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
 
@@ -1447,7 +1448,7 @@
               variant="flat"
               @click="assignVendor()"
             >
-              <v-icon class="me-1">save</v-icon>
+              <v-icon start>save</v-icon>
 
               {{
                 clear_other && vendor_id_input
@@ -1464,7 +1465,7 @@
 
     <!-- █████████████████████ Dialog > Product Note Messages █████████████████████ -->
 
-    <team-note-dialog
+    <b-note-dialog
       v-model="note_product_dialog"
       :add-url="
         () =>
@@ -1494,11 +1495,11 @@
       "
       :target="note_product_item"
       :title="note_product_item && note_product_item.title"
-    ></team-note-dialog>
+    ></b-note-dialog>
 
     <!-- █████████████████████ Dialog > Category Note Messages █████████████████████ -->
 
-    <team-note-dialog
+    <b-note-dialog
       v-model="note_category_dialog"
       :add-url="
         () =>
@@ -1530,7 +1531,7 @@
       "
       :target="note_category_item"
       :title="note_category_item && note_category_item.title"
-    ></team-note-dialog>
+    ></b-note-dialog>
 
     <!-- █████████████████████ Dialog > Category > Bulk set profile █████████████████████ -->
 
@@ -1594,7 +1595,7 @@
               variant="text"
               @click="status_product_dialog = false"
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
           </div>
@@ -1640,7 +1641,7 @@
               variant="text"
               @click="dialog_root_filter = false"
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
           </div>
@@ -1671,8 +1672,8 @@ import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
 import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import SSmartCheckVerifyAction from "@components/smart/SSmartCheckVerifyAction.vue";
-import TeamNoteDialog from "@components/backoffice/note/TeamNoteDialog.vue";
-import TeamNoteButton from "@components/backoffice/note/TeamNoteButton.vue";
+import BNoteDialog from "@components/backoffice/note/dialog/BNoteDialog.vue";
+import BNoteButton from "@components/backoffice/note/button/BNoteButton.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import TaxProfileView from "@components/backoffice/tax/TaxProfileView.vue";
 import CategoryBulkProductsSetProfile from "@components/backoffice/category/category-bulk-action/CategoryBulkProductsSetProfile.vue";
@@ -1705,8 +1706,8 @@ export default {
     BulkDiscountDialog,
     CategoryBulkProductsSetProfile,
     TaxProfileView,
-    TeamNoteButton,
-    TeamNoteDialog,
+    BNoteButton,
+    BNoteDialog,
     SSmartCheckVerifyAction,
     ProductsDenseImagesCircles,
     SSmartSwitch,

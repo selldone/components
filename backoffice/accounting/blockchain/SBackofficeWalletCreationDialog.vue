@@ -20,7 +20,7 @@
       variant="flat"
       @click="showAddWallet()"
     >
-      <v-icon class="me-1">add</v-icon>
+      <v-icon start>add</v-icon>
       Set new wallet
     </v-btn>
 

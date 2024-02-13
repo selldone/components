@@ -20,44 +20,44 @@
   >
     <v-container>
       <v-row>
-        <v-col v-for="level in CustomerClubLevels" :key="level.code">
-          <v-item v-slot="{ isSelected, toggle }" :value="level.code">
-            <v-card
-              :color="isSelected ? 'primary' : ''"
-              class="d-flex align-center justify-center flex-column p-2 min-h-100"
-              dark
-              @click="toggle"
-            >
-              <img :src="level.icon" class="m-2" height="36" width="36" />
-              {{ $t(level.name) }}
-            </v-card>
-          </v-item>
-        </v-col>
-
-        <v-col v-if="noClub" key="no">
-          <v-item v-slot="{ isSelected, toggle }" value="no-club">
-            <v-card
-              :color="isSelected ? 'primary' : ''"
-              class="d-flex align-center justify-center flex-column p-2 min-h-100"
-              dark
-              @click="toggle"
-            >
-              <v-icon class="m-2" height="36" size="36">face</v-icon>
-              {{ $t("global.commons.no_club") }}
-            </v-card>
-          </v-item>
-        </v-col>
-
-        <v-col v-if="clearable" key="all">
-          <v-card
-            :color="!modelValue ? 'primary' : ''"
-            class="d-flex align-center justify-center flex-column p-2 min-h-100"
-            dark
-            @click="$emit('update:modelValue', null)"
+        <v-item v-if="noClub" v-slot="{ isSelected, toggle }" value="no-club">
+          <v-btn
+            key="no"
+            class="m-1 shadow-box"
+            rounded
+            :color="isSelected ? '#222' : '#aaa'"
+            :variant="!isSelected ? 'outlined' : 'flat'"
+            @click="toggle()"
           >
-            {{ clearText ? clearText : "-" }}
-          </v-card>
-        </v-col>
+            <v-icon class="me-2" size="24">face</v-icon>
+            {{ $t("global.commons.no_club") }}
+          </v-btn>
+        </v-item>
+
+        <div v-for="level in CustomerClubLevels" :key="level.code">
+          <v-item v-slot="{ isSelected, toggle }" :value="level.code">
+            <v-btn
+              :color="isSelected ? '#222' : '#aaa'"
+              :variant="!isSelected ? 'outlined' : 'flat'"
+              @click="toggle()"
+              class="m-1 shadow-box"
+              rounded
+            >
+              <img :src="level.icon" class="me-2" width="24" />
+              {{ $t(level.name) }}
+            </v-btn>
+          </v-item>
+        </div>
+
+        <v-btn
+          v-if="clearable"
+          key="all"
+          :color="!modelValue ? 'primary' : ''"
+          @click="$emit('update:modelValue', null)"
+          rounded
+        >
+          {{ clearText ? clearText : "-" }}
+        </v-btn>
       </v-row>
     </v-container>
   </v-item-group>
@@ -67,7 +67,7 @@
 import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
 
 export default {
-  name: "SelectCustomerClub",
+  name: "BClubSelect",
   emits: ["update:modelValue"],
   props: {
     modelValue: {},

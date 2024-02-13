@@ -89,7 +89,7 @@
                 Auto refresh after 5 seconds...
               </template>
               <template v-else>
-                <v-icon class="me-1">save</v-icon>
+                <v-icon start>save</v-icon>
                 {{ $t("global.actions.save") }}
               </template>
             </v-btn>

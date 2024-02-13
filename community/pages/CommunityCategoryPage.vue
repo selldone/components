@@ -85,7 +85,7 @@
               })
             "
           >
-            <v-icon class="me-1">save</v-icon>
+            <v-icon start>save</v-icon>
             {{ $t("global.actions.save") }}
           </v-btn>
         </div>

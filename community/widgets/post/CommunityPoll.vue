@@ -70,7 +70,7 @@
         variant="text"
         @click="addItem"
       >
-        <v-icon class="me-1">add</v-icon>
+        <v-icon start>add</v-icon>
         Add new poll item
       </v-btn>
     </div>

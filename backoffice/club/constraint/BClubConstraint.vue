@@ -17,22 +17,18 @@
     <v-btn
       :class="{ 'img-grayscale': !noClub }"
       :color="noClub ? '#222' : '#aaa'"
-      :dark="noClub"
-      :variant="!noClub && 'outlined'"
+      :variant="!noClub ? 'outlined' : 'flat'"
       class="m-1 shadow-box"
       rounded
-      variant="flat"
       @click="$emit('update:noClub', !noClub)"
       >{{ $t("global.commons.no_club") }}
     </v-btn>
     <v-btn
       :class="{ 'img-grayscale': !bronzeClub }"
       :color="bronzeClub ? '#222' : '#aaa'"
-      :dark="bronzeClub"
-      :variant="!bronzeClub && 'outlined'"
+      :variant="!bronzeClub ? 'outlined' : 'flat'"
       class="m-1 shadow-box"
       rounded
-      variant="flat"
       @click="$emit('update:bronzeClub', !bronzeClub)"
       ><img :src="CustomerClubLevels.BRONZE.icon" class="me-2" width="24" />
       {{ $t(CustomerClubLevels.BRONZE.name) }}
@@ -40,11 +36,9 @@
     <v-btn
       :class="{ 'img-grayscale': !silverClub }"
       :color="silverClub ? '#222' : '#aaa'"
-      :dark="silverClub"
-      :variant="!silverClub && 'outlined'"
+      :variant="!silverClub ? 'outlined' : 'flat'"
       class="m-1 shadow-box"
       rounded
-      variant="flat"
       @click="$emit('update:silverClub', !silverClub)"
       ><img :src="CustomerClubLevels.SILVER.icon" class="me-2" width="24" />
       {{ $t(CustomerClubLevels.SILVER.name) }}
@@ -52,11 +46,9 @@
     <v-btn
       :class="{ 'img-grayscale': !goldClub }"
       :color="goldClub ? '#222' : '#aaa'"
-      :dark="goldClub"
-      :variant="!goldClub && 'outlined'"
+      :variant="!goldClub ? 'outlined' : 'flat'"
       class="m-1 shadow-box"
       rounded
-      variant="flat"
       @click="$emit('update:goldClub', !goldClub)"
       ><img :src="CustomerClubLevels.GOLD.icon" class="me-2" width="24" />
       {{ $t(CustomerClubLevels.GOLD.name) }}
@@ -64,11 +56,9 @@
     <v-btn
       :class="{ 'img-grayscale': !platinumClub }"
       :color="platinumClub ? '#222' : '#aaa'"
-      :dark="platinumClub"
-      :variant="!platinumClub && 'outlined'"
+      :variant="!platinumClub ? 'outlined' : 'flat'"
       class="m-1 shadow-box"
       rounded
-      variant="flat"
       @click="$emit('update:platinumClub', !platinumClub)"
       ><img :src="CustomerClubLevels.PLATINUM.icon" class="me-2" width="24" />
       {{ $t(CustomerClubLevels.PLATINUM.name) }}
@@ -76,11 +66,9 @@
     <v-btn
       :class="{ 'img-grayscale': !diamondClub }"
       :color="diamondClub ? '#222' : '#aaa'"
-      :dark="diamondClub"
-      :variant="!diamondClub && 'outlined'"
+      :variant="!diamondClub ? 'outlined' : 'flat'"
       class="m-1 shadow-box"
       rounded
-      variant="flat"
       @click="$emit('update:diamondClub', !diamondClub)"
       ><img :src="CustomerClubLevels.DIAMOND.icon" class="me-2" width="24" />
       {{ $t(CustomerClubLevels.DIAMOND.name) }}
@@ -92,7 +80,7 @@
 import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
 
 export default {
-  name: "CustomerClubConstraintSelection",
+  name: "BClubConstraint",
   props: {
     noClub: {},
     bronzeClub: {},

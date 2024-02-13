@@ -342,7 +342,7 @@
                       variant="text"
                       @click="show_cal = false"
                     >
-                      <v-icon class="me-1">close</v-icon>
+                      <v-icon start>close</v-icon>
                       Close
                     </v-btn>
                   </div>

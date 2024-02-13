@@ -97,7 +97,7 @@
     <v-card-actions>
       <div class="widget-buttons">
         <v-btn size="x-large" variant="text" @click="$emit('close')">
-          <v-icon class="me-1">close</v-icon>
+          <v-icon start>close</v-icon>
           {{ $t("global.actions.close") }}
         </v-btn>
 
@@ -111,7 +111,7 @@
           variant="flat"
           @click="assignProfile()"
         >
-          <v-icon class="me-1">save</v-icon>
+          <v-icon start>save</v-icon>
           {{
             value ? "Assign profile to products" : "Clear profile from products"
           }}

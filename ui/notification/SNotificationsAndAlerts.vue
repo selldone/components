@@ -95,7 +95,7 @@
               variant="text"
               @click="alert_dialog = false"
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ alert_dialog_reject_button }}
             </v-btn>
 

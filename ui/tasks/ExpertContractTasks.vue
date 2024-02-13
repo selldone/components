@@ -85,7 +85,7 @@
     <template v-slot:footer>
       <div v-if="editable" class="widget-buttons">
         <v-btn size="x-large" variant="outlined" @click="addItem">
-          <v-icon class="me-1">add</v-icon>
+          <v-icon start>add</v-icon>
           {{ $t("global.actions.add") }}
         </v-btn>
       </div>

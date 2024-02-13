@@ -109,9 +109,7 @@
       </template>
     </v-table>
 
-    <v-expand-transition>
-      <s-progress-loading v-if="loading" relative></s-progress-loading>
-    </v-expand-transition>
+    <s-progress-loading v-if="loading" relative></s-progress-loading>
 
     <v-bottom-sheet
       v-model="show_add"
@@ -227,7 +225,7 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn size="x-large" variant="text" @click="help_dialog = false">
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
           </div>

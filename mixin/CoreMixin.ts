@@ -12,59 +12,58 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import { SetupService } from "@core/server/SetupService";
-import { ProductType } from "@core/enums/product/ProductType";
-import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
-import { DateConverter } from "@core/helper/date/DateConverter";
-import type { ICurrency } from "@core/enums/payment/Currency";
-import { Currency } from "@core/enums/payment/Currency";
-import { type ILanguage, Language } from "@core/enums/language/Language";
-import { ShopLicense } from "@core/enums/shop/ShopLicense";
-import { Scopes } from "@core/enums/permission/Scopes";
+import {SetupService} from "@core/server/SetupService";
+import {ProductType} from "@core/enums/product/ProductType";
+import {PhysicalOrderStates} from "@core/enums/basket/PhysicalOrderStates";
+import {DateConverter} from "@core/helper/date/DateConverter";
+import type {ICurrency} from "@core/enums/payment/Currency";
+import {Currency} from "@core/enums/payment/Currency";
+import {type ILanguage, Language} from "@core/enums/language/Language";
+import {ShopLicense} from "@core/enums/shop/ShopLicense";
+import {Scopes} from "@core/enums/permission/Scopes";
 
-import { ReturnItemStates } from "@core/enums/basket/ReturnItemStates";
-import { FileExtensions } from "@core/enums/file/FileExtensions";
+import {ReturnItemStates} from "@core/enums/basket/ReturnItemStates";
+import {FileExtensions} from "@core/enums/file/FileExtensions";
 import GlobalRules from "@core/helper/rules/GlobalRules";
-import { SocialNetwork } from "@core/enums/social/SocialNetwork";
-import { ShopURLs } from "@core/helper/url/ShopURLs";
-import { ColorHelper } from "@core/helper/color/ColorHelper";
+import {SocialNetwork} from "@core/enums/social/SocialNetwork";
+import {ShopURLs} from "@core/helper/url/ShopURLs";
+import {ColorHelper} from "@core/helper/color/ColorHelper";
 import EventBusTriggers from "@core/enums/event-bus/EventBusTriggers";
 
-import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
-import { CurrencyHelper } from "@core/helper/currency/CurrencyHelper";
-import { PriceHelper } from "@core/helper/price/PriceHelper";
-import { LogesticHelper } from "@core/helper/logistic/LogesticHelper";
-import { GiftStatus } from "@core/enums/wallet/gift/GiftStatus";
-import { GiftStProgramTypes } from "@core/enums/wallet/gift/GiftStProgramTypes";
-import { MapHelper } from "@core/helper/map/MapHelper";
+import {CustomerClubLevels} from "@core/enums/customer/CustomerClubLevels";
+import {CurrencyHelper} from "@core/helper/currency/CurrencyHelper";
+import {PriceHelper} from "@core/helper/price/PriceHelper";
+import {LogesticHelper} from "@core/helper/logistic/LogesticHelper";
+import {GiftStatus} from "@core/enums/wallet/gift/GiftStatus";
+import {GiftStProgramTypes} from "@core/enums/wallet/gift/GiftStProgramTypes";
+import {MapHelper} from "@core/helper/map/MapHelper";
 import numeral from "numeral";
 import _ from "lodash-es";
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-import { EventBus, EventName } from "@core/events/EventBus";
+import {EventBus, EventName} from "@core/events/EventBus";
 
 //―――――――――――――――――――――― Country ――――――――――――――――――――
-import { getCountryName } from "@core/enums/country/country-list";
-import type { Note } from "@core/models/shop/note/note.model";
-import { Shop } from "@core/models/shop/shop.model";
-import type { ProductVariant } from "@core/models/shop/product/product_variant.model";
-import { Product } from "@core/models/shop/product/product.model";
-import { XapiShop } from "@sdk-storefront/shop/XapiShop";
-import type { Basket } from "@core/models/shop/order/basket/basket.model";
-import type { IAddress } from "@core/models/traits/address.model";
-import type { CommunityTopic } from "@core/models/community/community.topic.model";
-import type { CommunityPost } from "@core/models/community/community.post.model";
-import type { CommunityComment } from "@core/models/community/community.comment.model";
-import type { Guild } from "@core/models/guild/guild.model";
-import type { IOrder } from "@core/models/traits/order.model";
-import type { Avocado } from "@core/models/shop/order/avocado/avocado.order";
-import type { IReturn } from "@core/types/route/return.type";
-import type { ICountryCode } from "@core/enums/country/CountriesListEnum";
-import type { BasketItem } from "@core/models/shop/order/basket/basket_item.model";
-import type { gapi } from "@core/gapi/requests/gapi.countries.get";
-import type { User } from "@core/models/user/user.model";
-import { XapiUser } from "@sdk-storefront/user/XapiUser";
+import {getCountryName} from "@core/enums/country/country-list";
+import type {Note} from "@core/models/shop/note/note.model";
+import {Shop} from "@core/models/shop/shop.model";
+import type {ProductVariant} from "@core/models/shop/product/product_variant.model";
+import {Product} from "@core/models/shop/product/product.model";
+import {XapiShop} from "@sdk-storefront/shop/XapiShop";
+import type {Basket} from "@core/models/shop/order/basket/basket.model";
+import type {IAddress} from "@core/models/traits/address.model";
+import type {CommunityTopic} from "@core/models/community/community.topic.model";
+import type {CommunityPost} from "@core/models/community/community.post.model";
+import type {CommunityComment} from "@core/models/community/community.comment.model";
+import type {Guild} from "@core/models/guild/guild.model";
+import type {IOrder} from "@core/models/traits/order.model";
+import type {Avocado} from "@core/models/shop/order/avocado/avocado.order";
+import type {ICountryCode} from "@core/enums/country/CountriesListEnum";
+import type {BasketItem} from "@core/models/shop/order/basket/basket_item.model";
+import type {gapi} from "@core/gapi/requests/gapi.countries.get";
+import type {User} from "@core/models/user/user.model";
+import {XapiUser} from "@sdk-storefront/user/XapiUser";
 import ScrollHelper from "@core/utils/scroll/ScrollHelper";
-import { BackofficeLocalStorages } from "@core/helper/local-storage/BackofficeLocalStorages";
+import {BackofficeLocalStorages} from "@core/helper/local-storage/BackofficeLocalStorages";
 
 //――― User Device Preferences ―――
 
@@ -197,8 +196,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                  return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                },*/
+                      return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                    },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -364,8 +363,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                  return Num2persian(number);
-                },*/
+                      return Num2persian(number);
+                    },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -383,11 +382,16 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Time ▶ Get Currency ――――――――――――――――――――
 
     getCurrencyName: function getCurrencyName(
-      currency_code: keyof typeof Currency,
+      currency_code: keyof typeof Currency | typeof Currency,
     ) {
       if (!currency_code) return "";
 
-      return this.$t(Currency[currency_code].name);
+      let currency ;
+      if (this.isObject(currency_code)) currency = currency_code;
+      else if (this.isString(currency_code)) currency = Currency[currency_code];
+      if (!currency) return "";
+
+      return this.$t(currency.name);
     },
 
     //―――――――――――――――――――――― 🌍 Status ――――――――――――――――――――
@@ -596,21 +600,6 @@ const CoreMixin = {
       });
     },
 
-    //―――――――――――――――――――――― Global Shop Note Dialog ――――――――――――――――――――
-
-    showGlobalShopNoteDialog(
-      notes: Note.INote[],
-      element_id: string,
-      page_id: string | number,
-      popup_id: string | number,
-    ) {
-      this.EventBus.$emit("show:ShopNoteDialog", {
-        notes,
-        element_id,
-        page_id,
-        popup_id,
-      });
-    },
 
     //―――――――――――――――――――――― Format account number ――――――――――――――――――――
     // XXXX-XXXX-XXXX-XXXX
@@ -1334,8 +1323,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                  PushNotification.AskForPermission();
-                },*/
+                      PushNotification.AskForPermission();
+                    },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 

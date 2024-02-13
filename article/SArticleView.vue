@@ -1111,7 +1111,7 @@
               variant="text"
               @click="dialog_timeline = false"
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
           </div>

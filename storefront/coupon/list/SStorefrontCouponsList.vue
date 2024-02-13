@@ -103,7 +103,7 @@
               variant="text"
               @click="dialog = false"
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
 
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -115,7 +115,7 @@
               variant="outlined"
               @click="addCoupon(code_input)"
             >
-              <v-icon class="me-1">add</v-icon>
+              <v-icon start>add</v-icon>
               {{ $t("global.actions.add") }}
             </v-btn>
           </div>

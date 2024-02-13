@@ -42,8 +42,7 @@
           name: 'ShopPageBuilderPage',
           params: { page_id: modelValue.id },
         }"
-        icon
-        size="var(--append-inner-button-size)"
+        icon size="small"
         target="_blank"
         title="Edit page"
         variant="text"

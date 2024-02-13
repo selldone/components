@@ -126,7 +126,7 @@
 
 <script>
 export default {
-  name: "TeamNoteDialog",
+  name: "BNoteDialog",
 
   components: {},
   emits: ["update:modelValue"],

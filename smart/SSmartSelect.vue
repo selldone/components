@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, nextTick } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 
 export default {
   name: "SSmartSelect",
@@ -177,17 +177,21 @@ export default {
           : $t(task[props.itemText]);
     };
 
+    const nullable = computed(() => {
+      return props.items.some((item) => val(item) === null);
+    });
+
     const isUnset = (value) => {
-      return value === null || value === undefined;
+      return (!nullable.value && value === null) || value === undefined;
     };
 
     const onClickItem = (task) => {
       const _new_value = props.forceShowAll
         ? props.clearable && localModelValue.value === val(task)
-          ? null
+          ? undefined
           : val(task)
         : !isUnset(localModelValue.value)
-          ? null
+          ? undefined
           : val(task);
 
       updateModelValue(_new_value);

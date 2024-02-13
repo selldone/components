@@ -56,10 +56,10 @@
       rounded="xl"
     >
       <v-sheet class="pa-3" color="#111" dark>
-        <delivery-card-content
+        <b-transportation-overview
           :show-buttons="false"
           :transportation="activator_item"
-        ></delivery-card-content>
+        ></b-transportation-overview>
       </v-sheet>
     </v-menu>
   </div>
@@ -67,12 +67,12 @@
 
 <script>
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
-import DeliveryCardContent from "@components/backoffice/logistic/transportation/DeliveryCardContent.vue";
+import BTransportationOverview from "@app-backoffice/components/transportation/overview/BTransportationOverview.vue";
 import _ from "lodash-es";
 
 export default {
   name: "TransportationsEligibleView",
-  components: { DeliveryCardContent },
+  components: { BTransportationOverview },
   props: {
     shop: {
       type: Object,

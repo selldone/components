@@ -86,7 +86,7 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn size="x-large" variant="text" @click="show_edit_tag = false">
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
 
@@ -96,7 +96,7 @@
               size="x-large"
               @click="editTag(editing_tag, editing_tag_new)"
             >
-              <v-icon class="me-1">save</v-icon>
+              <v-icon start>save</v-icon>
               {{ $t("global.actions.save") }}
             </v-btn>
           </div>

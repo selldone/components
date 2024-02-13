@@ -15,7 +15,7 @@
 <template>
   <v-combobox
     ref="self"
-    v-model:search-input="search"
+    v-model:search="search"
     :bg-color="backgroundColor"
     :color="color"
     :customFilter="() => true"

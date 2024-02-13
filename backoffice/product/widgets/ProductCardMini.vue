@@ -252,14 +252,14 @@
     </div>
 
     <!-- Add Note Button -->
-    <team-note-button
+    <b-note-button
       v-if="showNotes || (product.note && product.note.length)"
       :activeColor="showNotes ? undefined : '#333'"
       :note="product.note"
       class="absolute-top-start z2"
       style="top: -6px; left: -6px"
       @click="$emit('onShowNote', product)"
-    ></team-note-button>
+    ></b-note-button>
 
     <!-- Selectable -->
     <template v-if="showSelect">
@@ -293,12 +293,12 @@ import ProductVariantsView from "@components/product/variant/ProductVariantsView
 import { GetArrayOfValuesInVariants } from "@core/enums/product/ProductVariants";
 import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 import { ProductStatus } from "@core/enums/product/ProductStatus";
-import TeamNoteButton from "@components/backoffice/note/TeamNoteButton.vue";
+import BNoteButton from "@components/backoffice/note/button/BNoteButton.vue";
 
 export default {
   name: "ProductCardMini",
   components: {
-    TeamNoteButton,
+    BNoteButton,
     SColorCircle,
     ProductVariantsView,
     CircleImage,

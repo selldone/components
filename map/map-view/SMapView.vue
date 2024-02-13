@@ -528,7 +528,7 @@
                     size="x-large"
                     @click="showDefault()"
                   >
-                    <v-icon class="me-1">save</v-icon>
+                    <v-icon start>save</v-icon>
                     {{ $t("global.map_view.save_detail_action") }}
                   </v-btn>
                 </div>
@@ -574,7 +574,7 @@
               size="x-large"
               @click="saveCurrentPosition"
             >
-              <v-icon class="me-1">save</v-icon>
+              <v-icon start>save</v-icon>
               {{ $t("global.actions.save") }}
             </v-btn>
             <v-btn
@@ -582,7 +582,7 @@
               variant="text"
               @click="dialog_add_to_address_book = false"
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.cancel") }}
             </v-btn>
           </div>

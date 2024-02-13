@@ -130,7 +130,7 @@
           variant="elevated"
           @click="add"
         >
-          <v-icon class="me-1">add</v-icon>
+          <v-icon start>add</v-icon>
           {{ $t("global.actions.add") }}
         </v-btn>
       </div>

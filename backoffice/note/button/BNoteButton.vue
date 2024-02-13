@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -29,7 +29,7 @@
         content-class="bg-black text-start"
         activator="parent"
       >
-        <div class="d-flex align-center">
+        <div class="d-flex align-center pt-2">
           <v-avatar :size="32" class="avatar-gradient -thin -staff me-2">
             <v-img :src="getUserAvatar(note[note.length - 1].user_id)" />
           </v-avatar>
@@ -62,7 +62,7 @@
 
 <script>
 export default {
-  name: "TeamNoteButton",
+  name: "BNoteButton",
   props: {
     note: {},
     activeColor: { default: "orange" },

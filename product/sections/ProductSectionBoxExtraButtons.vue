@@ -27,7 +27,7 @@
         variant="text"
         @click="addToProductComparison(product, currentVariant)"
       >
-        <v-icon class="me-1">add</v-icon>
+        <v-icon start>add</v-icon>
 
         <div
           :class="{ small: $vuetify.display.xsOnly }"

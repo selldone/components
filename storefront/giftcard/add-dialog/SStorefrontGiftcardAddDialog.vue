@@ -66,7 +66,7 @@
             variant="flat"
             @click="addCard"
           >
-            <v-icon class="me-1">add</v-icon>
+            <v-icon start>add</v-icon>
             {{ $t("user_gift_cards.add_card_dialog.add_action") }}
           </v-btn>
         </div>

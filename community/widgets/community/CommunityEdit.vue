@@ -248,7 +248,7 @@
         variant="text"
         @click="$emit('close')"
       >
-        <v-icon class="me-1">close</v-icon>
+        <v-icon start>close</v-icon>
         {{ $t("global.actions.close") }}
       </v-btn>
 
@@ -261,7 +261,7 @@
         variant="flat"
         @click="saveCommunity"
       >
-        <v-icon class="me-1">save</v-icon>
+        <v-icon start>save</v-icon>
         {{ $t("global.actions.save_changes") }}
       </v-btn>
     </div>

@@ -310,7 +310,7 @@
               variant="text"
               @click="bottom_sheet_user_message = false"
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
           </div>
@@ -344,7 +344,7 @@
               variant="text"
               @click="customize_detail_dialog = false"
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
           </div>

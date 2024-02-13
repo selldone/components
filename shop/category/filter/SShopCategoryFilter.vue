@@ -190,7 +190,7 @@
         variant="elevated"
         @click="editCategoryFilter"
       >
-        <v-icon class="me-1">save</v-icon>
+        <v-icon start>save</v-icon>
         {{ $t("global.actions.save") }} /
         {{ $t("global.actions.regenerate") }}
       </v-btn>

@@ -187,10 +187,10 @@ export default {
     },
 
     returnObject: {
-      default: true,
+      default: false,
       type: Boolean,
     },
-    singleLine:Boolean,
+    singleLine: Boolean,
     hideDetails: {
       default: false,
       type: Boolean,

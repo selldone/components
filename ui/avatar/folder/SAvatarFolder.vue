@@ -18,20 +18,22 @@
     :size="size"
     :style="{
       backgroundImage: bg,
-      'border-radius': size < 60 ? '18px' : '24px',
+      'border-radius': `${border_radius}px`,
     }"
     class="s---category"
   >
     <v-avatar
       :size="size - borderSize"
       color="#fff"
-      :style="{ 'border-radius': size < 60 ? '16px' : '22px' }"
+      :style="{ 'border-radius': `${border_radius - 2}px` }"
+      cover
     >
       <v-img v-if="src" :src="getShopImagePath(src)">
         <template v-slot:placeholder>
           <s-image-placeholder
             :bg-color="color1"
             :color="color2"
+            :size="border_radius * 1.7"
           ></s-image-placeholder>
         </template>
       </v-img>
@@ -41,18 +43,18 @@
     <div
       :style="{ backgroundImage: bg }"
       class="absolute-bottom-end rounded-ts-circle h-auto w-auto pa-1 ma-n1"
-      style="background-size: 300% 300%"
+      style="background-size: 300% 300%;line-height: 0"
     >
       <v-img
         v-if="sideImage"
         :src="sideImage"
-        :height="side_size"
-        :width="side_size"
+        :height="side_size/(smallSideIcon?2:1)"
+        :width="side_size/(smallSideIcon?2:1)"
         :class="{
           'rounded rounded-ts-circle rounded-be-circle': side_image_rounded,
         }"
       ></v-img>
-      <v-icon v-else color="#fff" :size="side_size">
+      <v-icon v-else color="#fff" :size="side_size/(smallSideIcon?2:1)">
         {{ sideIcon }}
       </v-icon>
     </div>
@@ -104,6 +106,7 @@ export default defineComponent({
       default: "devices_fold",
     },
     sideImage: {},
+    smallSideIcon:Boolean,
 
     caption: {},
     loading: Boolean,
@@ -114,14 +117,16 @@ export default defineComponent({
   },
 
   computed: {
+    border_radius() {
+      return Math.round(Math.min(this.size / 3.3, 24));
+    },
+
     side_image_rounded() {
-      return (
-        !this.sideImage?.endsWith(".svg")
-      );
+      return !this.sideImage?.endsWith(".svg");
     },
 
     side_size() {
-      return Math.min(this.size / 3.3, 24);
+      return Math.round(Math.min(this.size / 3.3, 24));
     },
     bg() {
       return `linear-gradient(45deg, ${this.color1}, ${this.color2})`;

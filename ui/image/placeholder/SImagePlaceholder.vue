@@ -29,6 +29,7 @@ Use case:
     :color="color"
     class="center-absolute"
     indeterminate
+    :size="size"
   />
 </template>
 
@@ -45,6 +46,9 @@ export default defineComponent({
     bgColor: {
       type: String,
     },
+    size:{
+      type: String,
+    }
   },
   computed: {},
 });

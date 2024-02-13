@@ -212,7 +212,7 @@
             variant="elevated"
             @click="editCategory()"
           >
-            <v-icon class="me-1">save</v-icon>
+            <v-icon start>save</v-icon>
             {{ $t("global.actions.save_changes") }}
           </v-btn>
 
@@ -225,7 +225,7 @@
             variant="elevated"
             @click="addCategory()"
           >
-            <v-icon class="me-1">add</v-icon>
+            <v-icon start>add</v-icon>
 
             {{ $t("add_category.add_action") }}
           </v-btn>
@@ -303,7 +303,7 @@
               variant="elevated"
               @click="editCategory"
             >
-              <v-icon class="me-1">save</v-icon>
+              <v-icon start>save</v-icon>
               {{ $t("global.actions.save") }}
             </v-btn>
           </div>

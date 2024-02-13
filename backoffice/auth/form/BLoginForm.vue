@@ -879,7 +879,7 @@
                 }
               "
             >
-              <v-icon class="me-1">close</v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.reject") }}
             </v-btn>
 

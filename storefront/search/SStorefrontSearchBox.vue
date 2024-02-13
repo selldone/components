@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div :class="{ block: block }" class="s--storefront-search-box">
     <v-btn
-      v-if="isMobile && !force_show"
+      v-if="isMobile && !force_show "
       :color="color ? color : SaminColorLight"
       class="collapse-button"
       size="small"
@@ -27,29 +27,26 @@
     </v-btn>
 
     <v-autocomplete
-      v-if="!block || !isMobile || force_show"
+      v-if="!block || !isMobile || force_show "
       v-model="model"
-      v-model:search-input="search"
+      v-model:search="search"
       :append-icon="isMobile && noClose ? $t('icons.navigate_next') : undefined"
       :bg-color="backgroundColor"
       :class="{ 'is-mobile': isMobile, force_show: force_show, shadow: shadow }"
       :color="color"
       :customFilter="() => true"
       :density="dense ? 'compact' : 'default'"
-      :filled="filled"
       :flat="flat"
       :hint="hint"
       :items="items"
       :label="current_label"
       :loading="isLoading"
       :messages="messages"
-      :outlined="outlined"
       :persistentPlaceholder="persistentPlaceholder"
       :placeholder="placeholder ? placeholder : $t('global.commons.search')"
       :readonly="readonly"
       :rounded="rounded"
       :single-line="singleLine"
-      :solo="solo"
       :theme="dark ? 'dark' : 'light'"
       autocomplete
       class="search-box"
@@ -66,16 +63,29 @@
         }
       "
       @click:append="force_show = false"
+      :variant="
+        variant
+          ? variant
+          : solo
+            ? 'solo'
+            : filled
+              ? 'filled'
+              : outlined
+                ? 'outlined'
+                : 'underlined'
+      "
     >
-      <template v-slot:prepend>
+      <template v-slot:prepend-inner>
         <v-btn
           v-if="!noQr"
           :class="negativeQrMargin ? 'mt-n3' : ''"
           class="hoverable-icon zoomIn delay_500"
           icon
+          variant="text"
+          size="small"
           @click="showQRScanner"
         >
-          <v-icon>qr_code_scanner</v-icon>
+          <v-icon size="20">qr_code_scanner</v-icon>
         </v-btn>
       </template>
       <template v-slot:prepend-item>
@@ -128,22 +138,22 @@
           class="text-subtitle-2"
           variant="outlined"
         >
-          <v-avatar v-if="item.icon" start>
-            <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)" />
+          <v-avatar v-if="item.raw.icon" start>
+            <v-img :src="getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)" />
           </v-avatar>
 
           <span
             class="limited-text-150px"
-            v-text="item.title.substring(0, max_title)"
+            v-text="item.raw.title.substring(0, max_title)"
           />
         </v-chip>
       </template>
 
       <template v-slot:item="{ item, props }">
-        <v-list-item :title="item.title" class="text-start" v-bind="props">
+        <v-list-item :title="item.raw.title" class="text-start" v-bind="props">
           <template v-slot:prepend>
-            <v-avatar v-if="item.icon">
-              <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)">
+            <v-avatar v-if="item.raw.icon">
+              <v-img :src="getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)">
                 <template v-slot:placeholder>
                   <v-layout align-center fill-height justify-center ma-0>
                     <v-progress-circular color="grey-lighten-5" indeterminate />
@@ -151,15 +161,15 @@
                 </template>
               </v-img>
             </v-avatar>
-            <v-icon v-if="item.query">search</v-icon>
+            <v-icon v-if="item.raw.query">search</v-icon>
           </template>
 
           <template v-slot:append>
             <v-list-item-action>
-              <div v-if="item.cat" class="small">
+              <div v-if="item.raw.cat" class="small">
                 {{ $t("global.search_box.category") }}
               </div>
-              <v-icon v-if="item.cat" class="mx-auto" color="amber"
+              <v-icon v-if="item.raw.cat" class="mx-auto" color="amber"
                 >folder
               </v-icon>
             </v-list-item-action>
@@ -286,6 +296,8 @@ export default {
       type: Boolean,
       default: false,
     },
+    variant: {},
+
   },
   data: () => ({
     isLoading: false,

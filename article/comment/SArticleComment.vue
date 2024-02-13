@@ -171,7 +171,7 @@
                           variant="text"
                           @click="show_reply = false"
                         >
-                          <v-icon class="me-1">close</v-icon>
+                          <v-icon start>close</v-icon>
                           {{ $t("global.actions.close") }}
                         </v-btn>
                         <v-btn
@@ -179,7 +179,7 @@
                           size="x-large"
                           @click="sendReply()"
                         >
-                          <v-icon class="me-1">save</v-icon>
+                          <v-icon start>save</v-icon>
                           {{ $t("global.actions.save") }}
                         </v-btn>
                       </div>
@@ -205,7 +205,7 @@
 
               <div class="widget-buttons">
                 <v-btn size="x-large" variant="text" @click="resetEdit">
-                  <v-icon class="me-1">close</v-icon>
+                  <v-icon start>close</v-icon>
                   {{ $t("global.actions.cancel") }}
                 </v-btn>
                 <v-btn
@@ -224,7 +224,7 @@
                   variant="flat"
                   @click="saveEdit"
                 >
-                  <v-icon class="me-1">save</v-icon>
+                  <v-icon start>save</v-icon>
                   {{ $t("global.actions.save") }}
                 </v-btn>
               </div>
