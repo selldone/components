@@ -296,7 +296,7 @@ import { ProductStatus } from "@core/enums/product/ProductStatus";
 import BNoteButton from "@components/backoffice/note/button/BNoteButton.vue";
 
 export default {
-  name: "ProductCardMini",
+  name: "BProductWindowProductMini",
   components: {
     BNoteButton,
     SColorCircle,

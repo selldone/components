@@ -27,6 +27,7 @@
         class="text-start card"
         custom-header
         style="border-radius: 8px"
+        dark
       >
         <template v-slot:top-left>
           <v-btn
@@ -162,7 +163,7 @@
 import CircleImage from "@components/ui/image/CircleImage.vue";
 
 export default {
-  name: "WidgetFolderCard",
+  name: "BProductWindowCategoryLarge",
   components: { CircleImage },
   props: {
     category: {

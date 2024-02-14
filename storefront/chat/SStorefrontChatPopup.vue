@@ -51,13 +51,11 @@
             {{ shop.title }}
 
             <v-btn
-              v-if="isAdmin && $route.name !== 'ShopUsers_ContactForm'"
-              :to="{ name: 'ShopUsers_ContactForm' }"
+              v-if="isAdmin && $route.name !== 'BPageShopCrmChat'"
+              :to="{ name: 'BPageShopCrmChat' }"
               class="ms-2 zoomIn"
-              dark
               icon
-              size="small"
-              tile
+              size="small" variant="text"
               title="Open contacts page"
             >
               <v-icon size="small">launch</v-icon>

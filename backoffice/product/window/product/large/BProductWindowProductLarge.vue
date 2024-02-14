@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -97,7 +97,7 @@
     <div v-if="add_by_dropShipping" class="drop-shipping-mode">
       <img
         height="24"
-        src="../../../assets/icons/dropshipping-w.svg"
+        src="../../../../../assets/icons/dropshipping-w.svg"
         width="24"
       />
       <span>{{ $t("global.commons.drop_shipping") }}</span>
@@ -503,7 +503,7 @@ import { PricingTypes } from "@core/enums/product/PricingTypes";
 import BNoteButton from "@components/backoffice/note/button/BNoteButton.vue";
 
 export default {
-  name: "WidgetProductCard",
+  name: "BProductWindowProductLarge",
   components: {
     BNoteButton,
     ProductVariantsView,

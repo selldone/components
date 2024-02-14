@@ -23,11 +23,6 @@
       '-invalid': !is_valid_amount,
     }"
     :style="{ 'min-height': minHeight }"
-    :title="
-      !is_valid_amount
-        ? `Invalid amount! ⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.`
-        : undefined
-    "
     class="price-view"
   >
     <span v-if="isUnicode && !at_end">{{
@@ -47,6 +42,21 @@
     <span v-if="isUnicode && at_end" class="mx-1">{{
       GetUserSelectedCurrencyName(currency_code, true)
     }}</span>
+
+    <v-tooltip
+      v-if="!is_valid_amount"
+      activator="parent"
+      location="bottom"
+      max-width="320"
+      content-class="text-start"
+    >
+      <b>Invalid amount!</b> <br />
+      {{
+        `⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.`
+      }}
+      <hr />
+      <div>Amount: {{ ((amount === null || amount === undefined) ? 'Null' : amount) }}, Currency: {{ currency_code }}</div>
+    </v-tooltip>
   </span>
 </template>
 

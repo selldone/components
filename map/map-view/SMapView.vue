@@ -593,7 +593,7 @@
 </template>
 
 <script>
-import { h, render } from "vue";
+import {createApp, h, render} from "vue";
 import SMapLocationMarker from "../market/SMapLocationMarker.vue";
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 
@@ -604,6 +604,8 @@ import SAddressInput from "@components/ui/input/address/SAddressInput.vue";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import SArticleAddonCodeEditor from "@components/article/add-on/code-editor/SArticleAddonCodeEditor.vue";
+import {installGlobalComponents} from "@components/components-mandetory";
 
 export default {
   name: "SMapView",
@@ -1111,11 +1113,25 @@ export default {
         if (this.map_box) {
           const el = document.createElement("div");
           //Only if loaded map!
-          const vnode = h(SMapLocationMarker, {
+         /* const vnode = h(SMapLocationMarker, {
             pinImage: this.pinImage,
             pinIcon: this.pinIcon,
           });
-          render(vnode, el);
+           render(vnode, el);
+*/
+          const app = createApp({
+            render: () =>
+                h(SMapLocationMarker, {
+                  pinImage: this.pinImage,
+                  pinIcon: this.pinIcon,
+                }),
+          });
+          // Use Vuetify and i18n instances
+          app.use(window.$global_vuetify);
+          app.use(this.geti18n());
+          installGlobalComponents(app);
+          app.mount(el);
+
 
           const marker = new Mapbox.Marker(el)
             .setOffset([0, -32])

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -156,7 +156,6 @@
         "
       >
         <v-btn
-          :class="{ 'ripple-focus': !local_view_mode }"
           icon
           title="Change view mode"
           variant="text"
@@ -217,7 +216,7 @@
           <img
             class="me-1"
             height="16"
-            src="../../assets/icons/tax-3d.svg"
+            src="../../../assets/icons/tax-3d.svg"
             width="16"
           />
           <small>{{ $t("global.commons.tax") }} </small>
@@ -235,7 +234,7 @@
           <img
             class="me-1"
             height="16"
-            src="../../assets/icons/valuation.svg"
+            src="../../../assets/icons/valuation.svg"
             width="16"
           />
           <small>{{ $t("global.commons.valuation") }} </small>
@@ -423,7 +422,7 @@
             @drop="(data) => handleDropInFolder(data, category)"
           >
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category > Mini ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-            <folder-card-mini
+            <b-product-window-category-mini
               v-if="mini"
               :category="category"
               :class="{
@@ -432,11 +431,11 @@
               }"
               @select="selectFolder(category)"
             >
-            </folder-card-mini>
+            </b-product-window-category-mini>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category > Normal ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-            <widget-folder-card
+            <b-product-window-category-large
               v-else
               :category="category"
               :class="{
@@ -472,8 +471,8 @@
           v-if="showNotes || (category.note && category.note.length)"
           :activeColor="showNotes ? undefined : '#333'"
           :note="category.note"
-          class="absolute-top-start z2"
-          style="top: 0; left: 0"
+          class="absolute-top-start"
+          style="top: 0; left: 0;z-index: 50;"
           @click="showNoteCategory(category)"
         ></b-note-button>
       </v-col>
@@ -535,7 +534,7 @@
           @dragend="onDragEnd"
         >
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product > Mini ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-          <product-card-mini
+          <b-product-window-product-mini
             v-if="mini"
             :class="{
               'not-drop-able':
@@ -564,11 +563,11 @@
             @onShowNote="showNoteProduct(product)"
             @select="$emit('select', product)"
           >
-          </product-card-mini>
+          </b-product-window-product-mini>
 
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product > Normal ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-          <widget-product-card
+          <b-product-window-product-large
             v-else
             :class="{
               'not-drop-able':
@@ -1250,7 +1249,7 @@
                 <v-icon v-if="!cut_product || !cut_product.icon" size="small"
                   >fa:fas fa-paste
                 </v-icon>
-                <v-avatar v-else size="24"
+                <v-avatar v-else size="24" class="me-3"
                   ><img
                     :src="getShopImagePath(cut_product.icon, IMAGE_SIZE_SMALL)"
                 /></v-avatar>
@@ -1652,9 +1651,9 @@
 </template>
 
 <script>
-import WidgetProductCard from "@components/backoffice/product/widgets/WidgetProductCard.vue";
+import BProductWindowProductLarge from "@components/backoffice/product/window/product/large/BProductWindowProductLarge.vue";
 import SProductsSortView from "@components/product/sort/SProductsSortView.vue";
-import WidgetFolderCard from "@components/backoffice/product/widgets/WidgetFolderCard.vue";
+import BProductWindowCategoryLarge from "@components/backoffice/product/window/category/large/BProductWindowCategoryLarge.vue";
 
 import CircleImage from "@components/ui/image/CircleImage.vue";
 import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
@@ -1662,8 +1661,8 @@ import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
 import SLoading from "@components/ui/loading/SLoading.vue";
 import SAddButtonGreen from "@components/ui/button/add/SAddButtonGreen.vue";
 import SShopCategoryAdd from "@components/shop/category/add/SShopCategoryAdd.vue";
-import FolderCardMini from "@components/backoffice/product/widgets/FolderCardMini.vue";
-import ProductCardMini from "@components/backoffice/product/widgets/ProductCardMini.vue";
+import BProductWindowCategoryMini from "@components/backoffice/product/window/category/mini/BProductWindowCategoryMini.vue";
+import BProductWindowProductMini from "@components/backoffice/product/window/product/mini/BProductWindowProductMini.vue";
 import { BusinessModel } from "@core/enums/shop/BusinessModel";
 import BVendorInput from "@components/backoffice/vendor/input/BVendorInput.vue";
 
@@ -1687,7 +1686,7 @@ import SShopCategoryFilter from "@components/shop/category/filter/SShopCategoryF
 import SDenseImagesCircles from "@components/ui/image/SDenseImagesCircles.vue";
 
 export default {
-  name: "SBackofficeProductsManagementView",
+  name: "BProductsWindow",
   emits: [
     "click:ai-add",
     "change:folders",
@@ -1715,17 +1714,17 @@ export default {
     VendorPricingInputField,
 
     BVendorInput,
-    ProductCardMini,
-    FolderCardMini,
+    BProductWindowProductMini,
+    BProductWindowCategoryMini,
     SShopCategoryAdd,
     SAddButtonGreen,
     SLoading,
     SBreadcrumbImage,
     CircleImage,
 
-    WidgetFolderCard,
+    BProductWindowCategoryLarge,
     SProductsSortView,
-    WidgetProductCard,
+    BProductWindowProductLarge,
   },
   props: {
     shop: {

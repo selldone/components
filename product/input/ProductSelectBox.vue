@@ -214,7 +214,7 @@
           </v-card-title>
 
           <v-card-text>
-            <s-backoffice-products-management-view
+            <b-products-window
               v-if="dialog"
               :can-select-category="!singleProductSelect && !productsOnly"
               :selected-list="modelValue ? modelValue : []"
@@ -250,7 +250,7 @@
 </template>
 
 <script>
-import SBackofficeProductsManagementView from "@components/backoffice/product/SBackofficeProductsManagementView.vue";
+import BProductsWindow from "@components/backoffice/product/window/BProductsWindow.vue";
 import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
 import SLoading from "@components/ui/loading/SLoading.vue";
@@ -261,7 +261,7 @@ export default {
     SLoading,
     ProductVariantsView,
     VariantItemMini,
-    SBackofficeProductsManagementView,
+    BProductsWindow,
   },
   emits: ["update:modelValue", "change", "update:variantId"],
   props: {

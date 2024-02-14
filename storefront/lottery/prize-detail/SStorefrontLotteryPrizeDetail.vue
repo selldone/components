@@ -39,7 +39,7 @@
 
     <!-- ===================== Product ==================== -->
 
-    <widget-product-card
+    <b-product-window-product-large
       v-else-if="lottery.product_id"
       :compact-mode="true"
       :filter-variant="lottery.variant"
@@ -94,11 +94,11 @@
 </template>
 
 <script>
-import WidgetProductCard from "@components/backoffice/product/widgets/WidgetProductCard.vue";
+import BProductWindowProductLarge from "@components/backoffice/product/window/product/large/BProductWindowProductLarge.vue";
 
 export default {
   name: "SStorefrontLotteryPrizeDetail",
-  components: { WidgetProductCard },
+  components: { BProductWindowProductLarge },
   props: {
     lottery: {
       require: true,

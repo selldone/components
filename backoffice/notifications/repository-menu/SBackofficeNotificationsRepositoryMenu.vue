@@ -65,7 +65,7 @@
           <v-spacer></v-spacer>
           <v-btn
             v-if="shop_id"
-            :to="{ name: 'ShopNotificationsRepositoryList' }"
+            :to="{ name: 'BShopAutomationNotifications' }"
             class="tnt"
             exact
             rounded

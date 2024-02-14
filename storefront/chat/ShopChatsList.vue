@@ -37,7 +37,6 @@
           <v-menu
             v-if="isAdmin"
             :close-on-content-click="false"
-            offset-y
             z-index="99999999"
           >
             <template v-slot:activator="{ props }">
@@ -70,7 +69,6 @@
                 v-model="categories"
                 :label="$t(category.name)"
                 :value="category.code"
-                dense
                 hide-details
               >
               </v-checkbox>
@@ -108,19 +106,19 @@
             <v-fade-transition group hide-on-leave>
               <v-card
                 v-for="item in items"
-                :key="item.id"
+                :key="item.raw.id"
                 :class="{ '-active': item === selectedContact }"
                 :color="item === selectedContact ? SaminColorDark : ''"
                 :dark="item === selectedContact"
                 class="support-item text-nowrap"
-                @click="showContact(item)"
+                @click="showContact(item.raw)"
               >
                 <v-card-title>
                   <v-avatar class="me-2 hover-scale-small" size="36">
                     <img
                       :src="
-                        item.user_id
-                          ? getUserAvatar(item.user_id)
+                        item.raw.user_id
+                          ? getUserAvatar(item.raw.user_id)
                           : require('@components/assets/icons/user.svg')
                       "
                     />
@@ -128,11 +126,11 @@
 
                   <div class="text-start small">
                     <b>
-                      {{ item.user ? item.user.name : item.name }}
+                      {{ item.raw.user ? item.raw.user.name : item.raw.name }}
                     </b>
                     <emoji-rating
-                      v-if="item.closed"
-                      v-model="item.rate"
+                      v-if="item.raw.closed"
+                      v-model="item.raw.rate"
                       class="ms-1 inline-block"
                       dense
                       no-stars
@@ -140,10 +138,10 @@
                       x-small
                     ></emoji-rating>
 
-                    <p v-if="getLastMessage(item)" class="m-0">
+                    <p v-if="getLastMessage(item.raw)" class="m-0">
                       <small class="me-1 cap">
                         {{
-                          getLastMessage(item).officer
+                          getLastMessage(item.raw).officer
                             ? $t("global.commons.officer")
                             : $t("global.commons.user")
                         }}:
@@ -151,10 +149,10 @@
                       <small
                         class="limited-text-100px d-inline-block vertical-align-middle"
                       >
-                        <span v-if="getLastMessage(item).message">
-                          {{ getLastMessage(item).message }}
+                        <span v-if="getLastMessage(item.raw).message">
+                          {{ getLastMessage(item.raw).message }}
                         </span>
-                        <span v-else-if="getLastMessage(item).product">
+                        <span v-else-if="getLastMessage(item.raw).product">
                           <v-icon size="small">local_mall</v-icon>
                           {{ $t("global.commons.product") }}
                         </span>
@@ -164,28 +162,28 @@
 
                   <v-spacer></v-spacer>
 
-                  <v-badge v-if="item.mention_id" color="#C2185B" dot overlap>
+                  <v-badge v-if="item.raw.mention_id" color="#C2185B" dot >
                     <v-avatar
                       class="hover-scale-small me-1"
                       size="24"
                       title="Mention"
                     >
-                      <img :src="getUserAvatar(item.mention_id)" />
+                      <img :src="getUserAvatar(item.raw.mention_id)" />
                     </v-avatar>
                   </v-badge>
 
-                  <v-badge v-if="item.officer_id" color="blue" dot overlap>
+                  <v-badge v-if="item.raw.officer_id" color="blue" dot >
                     <v-avatar
                       class="hover-scale-small"
                       size="24"
                       title="Officer"
                     >
-                      <img :src="getUserAvatar(item.officer_id)" />
+                      <img :src="getUserAvatar(item.raw.officer_id)" />
                     </v-avatar>
                   </v-badge>
 
                   <v-chip
-                    v-if="item.waiting"
+                    v-if="item.raw.waiting"
                     class="absolute-top-start"
                     color="transparent"
                     size="x-small"
@@ -200,14 +198,14 @@
                     {{ $t("global.commons.waiting") }}
                   </v-chip>
 
-                  <small v-if="!item.closed" class="absolute-top-end ch-time">{{
-                    getFromNowString(item.updated_at)
+                  <small v-if="!item.raw.closed" class="absolute-top-end ch-time">{{
+                    getFromNowString(item.raw.updated_at)
                   }}</small>
                   <small v-else class="absolute-top-end ch-time text-success">
                     <v-icon class="me-1" color="success" size="small"
                       >done_all
                     </v-icon>
-                    {{ getFromNowString(item.closed_at) }}</small
+                    {{ getFromNowString(item.raw.closed_at) }}</small
                   >
                 </v-card-title>
 
@@ -216,13 +214,13 @@
                     <div class="w-50 mb-1 p-1">
                       <v-icon class="me-2" size="small">mail </v-icon>
                       <span v-copy
-                        >{{ item.user ? item.user.email : item.email }}
+                        >{{ item.raw.user ? item.raw.user.email : item.raw.email }}
                       </span>
                     </div>
                     <div class="w-50 mb-1 p-1">
                       <v-icon class="me-2" size="small">phone </v-icon>
                       <span v-copy
-                        >{{ item.user ? item.user.phone : item.phone }}
+                        >{{ item.raw.user ? item.raw.user.phone : item.raw.phone }}
                       </span>
                     </div>
                   </div>
@@ -232,7 +230,7 @@
                   >
                     <div class="w-50 p-1">
                       <emoji-rating
-                        v-model="item.rate"
+                        v-model="item.raw.rate"
                         dense
                         read-only
                         x-small
@@ -242,13 +240,13 @@
                     <div class="w-50 p-1">
                       <div>
                         <small>{{ $t("global.commons.created_at") }}: </small
-                        >{{ getLocalTimeStringSmall(item.created_at) }}
+                        >{{ getLocalTimeStringSmall(item.raw.created_at) }}
                       </div>
                       <div>
                         <small>{{ $t("global.commons.updated_at") }}: </small
-                        >{{ getLocalTimeStringSmall(item.updated_at) }}
+                        >{{ getLocalTimeStringSmall(item.raw.updated_at) }}
                         <br /><span class="small"
-                          >({{ getFromNowString(item.created_at) }})</span
+                          >({{ getFromNowString(item.raw.created_at) }})</span
                         >
                       </div>
                     </div>

@@ -131,7 +131,7 @@
     <template v-slot:append-item>
       <v-list-item
         v-if="showSettingsButton"
-        :to="{ name: 'ClustersManagement_List' }"
+        :to="{ name: 'BPageShopClassificationClusters' }"
         class="text-start"
         prepend-icon="settings"
       >

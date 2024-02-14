@@ -22,7 +22,7 @@
       variant="text"
       @click="$emit('update:only-available', !onlyAvailable)"
     >
-      <div class="d-flex flex-column small">
+      <div class="d-flex flex-column small align-center">
         <v-icon class="mb-1" size="24"
           >{{ onlyAvailable ? "check_box" : "all_inclusive" }}
         </v-icon>
@@ -66,7 +66,7 @@
         :value="item.val"
         border="0"
         height="46"
-        variant="text"
+        variant="text" :size="$vuetify.display.mdAndDown?'small':undefined"
       >
         {{ item.name }}
       </v-btn>

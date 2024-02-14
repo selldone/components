@@ -102,7 +102,7 @@
 import CircleImage from "@components/ui/image/CircleImage.vue";
 
 export default {
-  name: "FolderCardMini",
+  name: "BProductWindowCategoryMini",
   components: { CircleImage },
   props: {
     category: {

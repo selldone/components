@@ -253,7 +253,7 @@
             :to="
               page
                 ? { name: 'ShopPageBuilderPage', params: { page_id: page.id } }
-                : { name: 'PagesManagement_CustomPages' }
+                : { name: 'BPageShopPagesLandings' }
             "
             add-text
             icon="layers"
