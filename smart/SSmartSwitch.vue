@@ -15,7 +15,7 @@
 <template>
   <s-smart-select
     :border="border"
-    :class="{ 'theme--dark': dark }"
+    :class="{ 'v-theme--light': dark }"
     :clearable="clearable"
     :color="falseGray && !localModelValue ? '#666' : color"
     :dark="dark"

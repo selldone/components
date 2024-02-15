@@ -39,7 +39,7 @@
     >
       <v-btn
         :to="{
-          name: 'ShopPageBuilderPage',
+          name: 'BPageLandingEditor',
           params: { page_id: modelValue.id },
         }"
         icon size="small"

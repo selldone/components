@@ -1234,20 +1234,6 @@ const CoreMixin = {
       this.EventBus.$emit("guild:share", { activator, guild });
     },
 
-    //―――――――――――――――――――――― Page builder global ――――――――――――――――――――
-    /**
-     * Close all except indicated code! (Almost we call it when a new tool open, and we want to close all other menus)
-     * @constructor
-     */
-    CloseAllPageBuilderNavigationDrawerTools() {
-      this.EventBus.$emit(EventBusTriggers.PAGE_BUILDER_CLOSE_TOOLS);
-    },
-    onPageBuilderStyleOpen(type: StylerType, show: boolean) {
-      this.EventBus.$emit(EventBusTriggers.PAGE_BUILDER_STYLER_OPEN, {
-        type,
-        show,
-      });
-    },
 
     //―――――――――――――――――――――― Logistic > Basket Helpers ――――――――――――――――――――
     getBasketOrderCode(order: IOrder) {

@@ -14,7 +14,7 @@
 
 <template>
   <v-toolbar
-    :color="transparent ? 'transparent' : dark ? 'var(--theme-dark)' : null"
+    :color="color?color:transparent ? 'transparent' : dark ? 'var(--theme-dark)' : null"
     :flat="flat"
     :theme="dark ? 'dark' : 'light'"
     :border="outlined"
@@ -186,6 +186,7 @@ export default {
     forceDark: {
       default: null,
     },
+    color:{},
     center: {
       type: Boolean,
     },

@@ -1022,7 +1022,7 @@ $size: 2.8rem;
   }
 }
 
-.theme--dark {
+.v-theme--light {
   .row-hover {
     &:hover:not(.excluded) {
       box-shadow: 0px 10px 50px 0px rgba(220, 220, 220, 0.2);
@@ -2356,7 +2356,7 @@ Smart invert
       }
     }
 
-    button.theme--dark {
+    button.v-theme--light {
       filter: invert(1);
     }
 
@@ -2516,7 +2516,7 @@ Overlays
   }
 }
 
-.theme--dark {
+.v-theme--light {
   .stylish-phone-input {
     &.-line {
       border-bottom: solid thin #999 !important;
@@ -2571,7 +2571,7 @@ Overlays
   }
 }
 
-.theme--dark {
+.v-theme--light {
 
   .stylish-phone-input {
     background: hsla(0, 0%, 100%, .08);
@@ -3934,7 +3934,7 @@ Fix snaky chart overflow problem!
   background-repeat: repeat;
 }
 
-.theme--dark { // Solve bg for color picker button bg
+.v-theme--light { // Solve bg for color picker button bg
   &.v-btn {
     .bg-tiny-checkers {
       background-color: #2f3133;
@@ -5036,7 +5036,7 @@ canvas.heatmap-canvas {
   text-decoration-thickness: 3px;
 }
 
-.theme--dark {
+.v-theme--light {
   .pacman-dots {
     &:after {
       border-top: dotted 2.5px #fff;

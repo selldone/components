@@ -27,9 +27,10 @@
       :width="xLarge ? 36 : 24"
       src="@components/assets/icons/ci-logo.png"
     />
-    <v-tooltip activator="parent" location="top" max-width="360">
-      <b>AI</b> | Automatically generate contents or do process.
+    <v-tooltip v-if="tooltip" activator="parent" :location="tooltipLocation" max-width="360">
+      <div v-html="tooltip"></div>
     </v-tooltip>
+    <slot></slot>
   </v-btn>
 </template>
 
@@ -40,6 +41,12 @@ export default {
   props: {
     loading: {},
     xLarge: { type: Boolean, default: false },
+    tooltip: {
+      default: "<b>AI</b> | Automatically generate contents or do process.",
+    },
+    tooltipLocation: {
+      default: "top",
+    },
   },
 };
 </script>

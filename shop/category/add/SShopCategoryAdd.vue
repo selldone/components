@@ -252,7 +252,7 @@
             :add-icon="page ? 'edit' : 'add_box'"
             :to="
               page
-                ? { name: 'ShopPageBuilderPage', params: { page_id: page.id } }
+                ? { name: 'BPageLandingEditor', params: { page_id: page.id } }
                 : { name: 'BPageShopPagesLandings' }
             "
             add-text

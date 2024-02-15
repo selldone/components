@@ -405,12 +405,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   border-radius: 14px;
 }
 
-/*
-.black--text{
-  i.v-icon:not(.theme--dark){
-    color: #000 !important;
-  }
-}*/
+
 // ----------------------- Unified UI Kit Dashboard ----------------------
 // Normal button
 .nbt {
@@ -422,7 +417,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   color: rgb(60, 66, 87);
   border-radius: 5px;
 
-  &.theme--dark {
+  &.v-theme--light {
     background: #333 !important;
     border: 1px solid #111 !important;
   }

@@ -14,7 +14,11 @@
 
 <template>
   <span>
-    <v-menu max-width="240" open-on-hover>
+    <v-menu
+      max-width="240"
+      open-on-hover
+      content-class="bg-black pa-4 rounded-xl text-start"
+    >
       <template v-slot:activator="{ props }">
         <v-btn
           v-if="user.phone"
@@ -31,16 +35,16 @@
             src="../../../assets/trademark/whatsapp.svg"
         /></v-btn>
       </template>
-      <v-sheet class="text-start p-4" dark rounded="xl">
-        <div class="mb-3 small">{{ $t("global.instance_message_title") }}:</div>
-        <div class="mb-2">
-          <v-icon class="me-1" size="small">phone</v-icon>
+      <div class="mb-3 small">{{ $t("global.instance_message_title") }}:</div>
+      <div class="mb-2">
+        <v-icon class="me-1" size="small">phone</v-icon>
 
-          {{ user.phone }}
-        </div>
+        {{ user.phone }}
+      </div>
+      <div class="small">
         <v-icon class="me-1" size="small">message</v-icon>
-        {{ message }}
-      </v-sheet>
+      {{ message }}
+      </div>
     </v-menu>
   </span>
 </template>
