@@ -20,18 +20,28 @@
     :theme="dark ? 'dark' : 'light'"
     :density="dense ? 'compact' : undefined"
     :disabled="disabled"
-    :filled="filled"
     :flat="flat"
     :hide-details="hideDetails"
     :items="items"
     :label="label"
     :messages="messages"
     :model-value="modelValue"
-    :outlined="outlined"
     :prepend-icon="prependIcon"
     :prepend-inner-icon="prependInnerIcon"
     :rounded="rounded"
-    :solo="solo"
+    :single-line="singleLine"
+
+    :variant="
+      variant
+        ? variant
+        : solo
+          ? 'solo'
+          : filled
+            ? 'filled'
+            : outlined
+              ? 'outlined'
+              : 'underlined'
+    "
     @update:model-value="
       (val) => {
         $emit('update:modelValue', val);
@@ -55,7 +65,6 @@ export default {
     label: {},
     messages: {},
     color: {},
-    height: {},
     dark: {
       default: false,
       type: Boolean,
@@ -64,6 +73,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    singleLine:Boolean,
     outlined: {
       default: false,
       type: Boolean,
@@ -87,6 +97,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    variant: {},
 
     activeCurrencies: {
       require: false,
@@ -100,10 +111,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    shaped: {
-      default: false,
-      type: Boolean,
-    },
+
 
     flat: {
       default: false,

@@ -18,10 +18,8 @@
     v-model="dim_val"
     :background-color="backgroundColor"
     :disabled="disabled || lock"
-    :filled="filled"
     :flat="flat"
     :hide-details="hideDetails && !messages"
-    :hideDetails="hideDetails"
     :label="label"
     :loading="loading"
     :messages="messages"
@@ -31,63 +29,68 @@
     :rounded="rounded"
     :single-line="singleLine"
     :solo="solo"
+    :filled="filled"
+:variant="variant"
     :suffix="suffix"
   >
+    <!--
     <template v-slot:append-inner>
       <div style="min-height: 38px"></div>
-    </template>
+    </template>-->
   </s-dimension-selector>
-  <s-number-input
-    v-else
-    v-model="number_val"
-    :background-color="backgroundColor"
-    :clearable="clearable"
-    :decimal="3"
-    :disabled="disabled"
-    :filled="filled"
-    :flat="flat"
-    :hide-details="hideDetails && !messages"
-    :hideDetails="hideDetails"
-    :icon="icon"
-    :label="label"
-    :loading="loading"
-    :lock="lock"
-    :max="99999"
-    :messages="messages"
-    :min="-99999"
-    :prepend-icon="prependIcon"
-    :prependIcon="prependIcon"
-    :readonly="readonly"
-    :rounded="rounded"
-    :single-line="singleLine"
-    :solo="solo"
-    :step="1"
-    :suffix="suffix"
-    :textCenter="true"
-    @blur="$emit('blur')"
-    @clear="dim_val = 'unset'"
-  >
-    <template v-slot:append-inner>
-      <s-dimension-selector
-        v-model="dim_val"
-        :disabled="disabled || lock"
-        :height="40"
-        :readonly="readonly"
-        :rounded="rounded && solo"
-        :shaped="!rounded"
-        :style="{
-          width: rounded && solo ? '110px' : '84px',
+  <div v-else class="d-flex align-center">
+    <s-number-input
+      v-model="number_val"
+      :background-color="backgroundColor"
+      :clearable="clearable"
+      :decimal="3"
+      :disabled="disabled"
+      :filled="filled"
+      :flat="flat"
+      :hide-details="hideDetails && !messages"
+      :icon="icon"
+      :label="label"
+      :loading="loading"
+      :lock="lock"
+      :max="99999"
+      :messages="messages"
+      :min="-99999"
+      :prepend-icon="prependIcon"
+      :prependIcon="prependIcon"
+      :readonly="readonly"
+      :rounded="rounded"
+      :single-line="singleLine"
+      :solo="solo"
+      :step="1"
+      :suffix="suffix"
+      :textCenter="true"
+      @blur="$emit('blur')"
+      @clear="dim_val = 'unset'"
+      class="flex-grow-1"
+      :variant="variant"
+    >
+    </s-number-input>
+    <s-dimension-selector
+      v-model="dim_val"
+      :disabled="disabled || lock"
+      :readonly="readonly"
+      :rounded="rounded"
+      style="width: 40px"
+      :style="{
+        /* width: rounded && solo ? '110px' : '84px',
           marginTop:
-            rounded && solo ? '-7px' : rounded && !solo ? '-14px' : undefined,
-        }"
-        dense
-        flat
-        hide-details
-        solo
-      >
-      </s-dimension-selector>
-    </template>
-  </s-number-input>
+            rounded && solo ? '-7px' : rounded && !solo ? '-14px' : undefined,*/
+      }"
+
+      :single-line="singleLine"
+      :solo="solo"
+      :filled="filled"
+      :flat="flat"
+      :hide-details="hideDetails && !messages"
+      :variant="variant"
+    >
+    </s-dimension-selector>
+  </div>
 </template>
 
 <script>
@@ -97,8 +100,9 @@ import SDimensionSelector from "./SDimensionSelector.vue";
 export default {
   name: "SNumberDimensionInput",
   components: { SDimensionSelector, SNumberInput },
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
 
     disabled: {
       default: false,
@@ -188,6 +192,8 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    variant:{},
   },
 
   data() {
@@ -208,18 +214,18 @@ export default {
       return `${this.number_val}${this.dim_val}`;
     },
     no_number_cal() {
-      return this.noNumberVal(this.value);
+      return this.noNumberVal(this.modelValue);
     },
   },
   watch: {
-    value: {
+    modelValue: {
       handler: function (newVal, oldVal) {
         this.extractValue(newVal);
       },
     },
 
     gen_value(val) {
-      this.$emit("input", val);
+      this.$emit("update:modelValue", val);
 
       this.$nextTick(() => {
         this.$emit("change", val);
@@ -227,8 +233,8 @@ export default {
     },
   },
   created() {
-    if (this.value) {
-      this.extractValue(this.value);
+    if (this.modelValue) {
+      this.extractValue(this.modelValue);
     } else {
       this.dim_val = "unset";
     }

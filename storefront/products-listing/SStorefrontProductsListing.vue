@@ -684,7 +684,7 @@ export default {
       else if (this.$vuetify.display.sm) limit = 10;
       else if (this.$vuetify.display.md) limit = 16;
       else if (this.$vuetify.display.lg) limit = 20;
-      else if (this.$vuetify.display.xl) limit = 25;
+      else if (this.$vuetify.display.xlAndUp) limit = 25;
 
       if (this.freeMode) return limit;
 
@@ -701,7 +701,7 @@ export default {
         return "mobile";
       } else if (this.$vuetify.display.smOnly || this.$vuetify.display.mdOnly) {
         return "tablet";
-      } else if (this.$vuetify.display.lgOnly || this.$vuetify.display.xlOnly) {
+      } else if (this.$vuetify.display.lgOnly || this.$vuetify.display.xlAndUp) {
         return "pc";
       }
       return "pc";

@@ -27,7 +27,7 @@
       :width="xLarge ? 36 : 24"
       src="@components/assets/icons/ci-logo.png"
     />
-    <v-tooltip v-if="tooltip" activator="parent" :location="tooltipLocation" max-width="360">
+    <v-tooltip v-if="tooltip" activator="parent" :location="tooltipLocation" max-width="360" content-class="bg-black">
       <div v-html="tooltip"></div>
     </v-tooltip>
     <slot></slot>

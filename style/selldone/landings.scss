@@ -152,7 +152,7 @@ $mod_2: 1.5; // desktop
 
 
   .v-card {
-    &.dark, &.v-theme--light {
+    &.dark, &.v-theme--dark {
       p {
         color: #fff;
       }
@@ -251,7 +251,7 @@ $mod_2: 1.5; // desktop
   line-height: 140%;
 }
 
-.v-theme--light {
+.v-theme--dark {
   .sub-title-medium-b {
     color: hsla(0, 0%, 100%, 0.8);
   }

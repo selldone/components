@@ -83,10 +83,11 @@
         :title="lock ? 'Click to edit value.' : 'Click to lock input'"
         class="me-2"
         icon
+        size="28"
         variant="text"
         @click="is_locked = !is_locked"
       >
-        <v-icon>{{ is_locked ? "lock" : "lock_open" }}</v-icon>
+        <v-icon size="24">{{ is_locked ? "lock" : "lock_open" }}</v-icon>
       </v-btn>
 
       <v-btn
@@ -106,10 +107,11 @@
         v-if="showButtons"
         :disabled="is_locked"
         icon
+        size="28"
         variant="text"
         @click.stop="mpminus()"
       >
-        <v-icon size="small"> fa:fas fa-minus</v-icon>
+        <v-icon size="24"> fa:fas fa-minus</v-icon>
       </v-btn>
       <v-icon v-if="appendIcon">{{ appendIcon }}</v-icon>
 
@@ -120,14 +122,18 @@
         :title="$t('buy_button.remove')"
         class="mt-n1"
         icon
+        size="28"
         variant="text"
         @click="
           newValue = 0;
           $emit('clear');
         "
       >
-        <v-icon>close</v-icon>
+        <v-icon size="24">close</v-icon>
       </v-btn>
+    </template>
+    <template v-slot:append>
+      <slot name="append"></slot>
     </template>
 
     <template v-slot:prepend-inner>
@@ -135,10 +141,11 @@
         v-if="showButtons && !readonly"
         :disabled="is_locked"
         icon
+        size="28"
         variant="text"
         @click.stop="mpplus()"
       >
-        <v-icon size="small"> fa:fas fa-plus</v-icon>
+        <v-icon size="24"> fa:fas fa-plus</v-icon>
       </v-btn>
       <v-icon v-if="prependInnerIcon">{{ prependInnerIcon }}</v-icon>
 

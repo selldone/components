@@ -861,12 +861,12 @@ export default {
           const _image = it.image || it.src || it.icon;
           if (!_image) return;
 
-          if (it.code)
+          if (it.code) {
             out = out.replace(
               " " + it.code + " ",
               `<img width="16" height="16" src="${_image}" title="${this.$t(it.name || it.code)}">`,
             );
-          else if (it.name)
+          } else if (it.name)
             out = out.replace(
               " " + it.name + " ",
               `<img width="16" height="16" src="${_image}" title="${this.$t(it.name)}">`,
