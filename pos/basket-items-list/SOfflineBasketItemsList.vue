@@ -41,7 +41,7 @@
 
       <v-row no-gutters>
         <div
-          :class="{ 'col-9 col-sm-4 col-md-3 col-lg-4 constrained': !viewOnly }"
+          :class="{ 'v-col-9 v-col-sm-4 v-col-md-3 v-col-lg-4 constrained': !viewOnly }"
           class=""
         >
           <v-list-item-title class="ptitle">
@@ -91,13 +91,13 @@
 
         <div
           v-if="viewOnly"
-          class="text-center px-2 col-2 col-sm-4"
+          class="text-center px-2 v-col-2 v-col-sm-4"
           style="max-width: max-content"
         >
           <b>{{ item.count }}</b>
         </div>
 
-        <div v-if="!viewOnly" class="col-5 col-sm-3 col-md-3 col-lg-3">
+        <div v-if="!viewOnly" class="v-col-5 v-col-sm-3 v-col-md-3 v-col-lg-3">
           <s-shop-basket-item-count-select
             v-model="item.count"
             :loading="busyAdd === item.product_id + '-' + item.variant_id"
@@ -111,7 +111,7 @@
           ></s-shop-basket-item-count-select>
         </div>
 
-        <div class="text-left px-3 col-5 col-sm-2 col-md-3 col-lg-3">
+        <div class="text-left px-3 v-col-5 v-col-sm-2 v-col-md-3 v-col-lg-3">
           <div v-if="item.dis" class="text-muted">
             <price-view
               :amount="item.dis * item.count"
