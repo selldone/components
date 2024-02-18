@@ -153,7 +153,7 @@ export default defineComponent({
 
   margin-bottom: 36px;
 
-  .container {
+  .v-container {
     max-width: unset !important;
   }
 }

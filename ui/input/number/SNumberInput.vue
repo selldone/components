@@ -47,6 +47,7 @@
               : 'underlined'
     "
     persistent-placeholder
+    @click:clear="$emit('clear')"
     @blur="
       () => {
         focus = false;
@@ -119,7 +120,6 @@
 
       <v-btn
         v-if="clearable"
-        :title="$t('buy_button.remove')"
         class="mt-n1"
         icon
         size="28"
