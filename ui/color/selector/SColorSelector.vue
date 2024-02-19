@@ -16,6 +16,7 @@
   <div class="justify-content-between d-flex align-center py-1">
     <template v-if="title">
       <span class="me-2">{{ title }}</span>
+      <slot name="append-title"></slot>
       <span class="dashed-flex-space"></span>
     </template>
 
