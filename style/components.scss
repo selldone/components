@@ -1624,6 +1624,7 @@ Page builder Styler global css
   text-align: left !important;
 }
 
+
 .text-align-center {
   text-align: center !important;
 }
@@ -1636,6 +1637,12 @@ Page builder Styler global css
   text-align: justify !important;
 }
 
+.text-align-start {
+  text-align: start !important;
+}
+.text-align-end {
+  text-align: end !important;
+}
 /*******************************************************************************************
 Global
  */

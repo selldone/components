@@ -19,7 +19,7 @@
     :dark="dark"
     :rounded="rect && '0'"
     :to="
-      !window.ExternalWidget
+      !window.ExternalWidget && !viewOnly
         ? is_product
           ? {
               name: window.$storefront.routes.PRODUCT_PAGE,
@@ -33,7 +33,7 @@
     "
     class="s--shop-blog-card d-flex flex-column"
     v-bind="
-      window.ExternalWidget
+      window.ExternalWidget && !viewOnly
         ? {
             href: is_product
               ? getProductLink(shop, article.parent_id)
@@ -116,6 +116,8 @@ export default {
     rect: {},
     dark: {},
     color: {},
+
+    viewOnly: Boolean,
   },
   computed: {
     shop() {
