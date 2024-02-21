@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div :class="{ block: block }" class="s--storefront-search-box">
     <v-btn
-      v-if="isMobile && !force_show "
+      v-if="isMobile && !force_show"
       :color="color ? color : SaminColorLight"
       class="collapse-button"
       size="small"
@@ -27,7 +27,7 @@
     </v-btn>
 
     <v-autocomplete
-      v-if="!block || !isMobile || force_show "
+      v-if="!block || !isMobile || force_show"
       v-model="model"
       v-model:search="search"
       :append-icon="isMobile && noClose ? $t('icons.navigate_next') : undefined"
@@ -41,7 +41,7 @@
       :items="items"
       :label="current_label"
       :loading="isLoading"
-      :messages="messages"
+      :messages="messages ? messages : undefined"
       :persistentPlaceholder="persistentPlaceholder"
       :placeholder="placeholder ? placeholder : $t('global.commons.search')"
       :readonly="readonly"
@@ -66,13 +66,15 @@
       :variant="
         variant
           ? variant
-          : solo
-            ? 'solo'
-            : filled
-              ? 'filled'
-              : outlined
-                ? 'outlined'
-                : 'underlined'
+          : solo && filled
+            ? 'solo-filled'
+            : solo
+              ? 'solo'
+              : filled
+                ? 'filled'
+                : outlined
+                  ? 'outlined'
+                  : 'underlined'
       "
     >
       <template v-slot:prepend-inner>
@@ -297,7 +299,6 @@ export default {
       default: false,
     },
     variant: {},
-
   },
   data: () => ({
     isLoading: false,

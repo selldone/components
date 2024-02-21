@@ -16,12 +16,13 @@
   <div
     :category-id="category.id"
     :class="{ disabled: loading }"
-    class="widget-folder-root pointer-pointer"
+    class="widget-folder-root"
     @click="$emit('select')"
+    :style="{'--card-color':SaminColorDarkDeep }"
   >
     <div class="box">
       <s-widget
-        :class="{ 'm-1': small, compact: compactMode }"
+        :class="{ 'm-1': small, compact: compactMode  }"
         :title="`<h5 class='align-items-center pb-1 text-white '  style='font-size: 1.16rem;font-weight: 500'>    <span class=' ${star_class} mr-sm text-warning' style='font-size: 12px;'></span>  ${category.title}  </h5>`"
         body-class="p-0 mt"
         class="text-start card"
@@ -225,27 +226,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-a {
-  color: #444;
 
-  &:hover {
-    color: #444;
-  }
-}
-
-.folder-icon {
-  margin: 8px;
-}
-
-.folder-description {
-  height: 5.6em;
-  overflow: hidden;
-  font-size: 0.85em;
-  line-height: 1.4em;
-  font-weight: 400;
-}
 
 .widget-folder-root {
+  cursor: pointer;
   margin: 0;
   padding: 0;
   display: flex;
@@ -256,60 +240,82 @@ a {
   //font-family: sans-serif;
   color: white;
   position: relative;
-}
 
-.box {
-  z-index: 50;
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-gap: 15px;
-  margin: 0 auto;
-  padding: 16px;
-}
+  a {
+    color: #444;
 
-.card {
-  position: relative;
-  width: 100%;
-  height: auto;
-
-  background: var(--theme-dark);
-  margin: 0 auto;
-  border-radius: 14px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-
-  &.compact {
-    height: auto;
+    &:hover {
+      color: #444;
+    }
   }
+
+  .folder-icon {
+    margin: 8px;
+  }
+
+  .folder-description {
+    height: 5.6em;
+    overflow: hidden;
+    font-size: 0.85em;
+    line-height: 1.4em;
+    font-weight: 400;
+  }
+
+  .box {
+    z-index: 50;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 15px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    height: auto;
+
+    background: var(--card-color);
+    margin: 0 auto;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+
+    &.compact {
+      height: auto;
+    }
+  }
+
+  .card:before,
+  .card:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--card-color);
+    opacity: 0.96;
+
+    transition: 0.5s;
+    z-index: -1;
+  }
+
+  .card:hover:before {
+    transform: rotate(20deg);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .card:hover:after {
+    transform: rotate(10deg);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .text-muted {
+    color: #eee !important;
+  }
+
 }
 
-.card:before,
-.card:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  background: var(--theme-dark);
-  opacity: 0.96;
-
-  transition: 0.5s;
-  z-index: -1;
-}
-
-.card:hover:before {
-  transform: rotate(20deg);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-}
-
-.card:hover:after {
-  transform: rotate(10deg);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-}
-
-.text-muted {
-  color: #eee !important;
-}
 </style>

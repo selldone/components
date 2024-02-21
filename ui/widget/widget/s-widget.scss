@@ -48,7 +48,7 @@ $enable-prefers-reduced-motion-media-query: true !default;
 .title-widget {
   margin-top: 0;
 
-  color: $widget-title-color;
+ // color: $widget-title-color;
   // font-family: var(--font) !important;
   font-weight: 500;
   @include clearfix();
@@ -57,7 +57,7 @@ $enable-prefers-reduced-motion-media-query: true !default;
     font-weight: 400;
     font-size: 12px;
     display: block;
-    color: #aaa;
+    //color: #aaa;
   }
 }
 

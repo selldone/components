@@ -216,6 +216,7 @@
           <v-card-text>
             <b-products-window
               v-if="dialog"
+              class="mx-auto" style="max-width: 1720px"
               :can-select-category="!singleProductSelect && !productsOnly"
               :selected-list="modelValue ? modelValue : []"
               :shop="shop"
@@ -224,6 +225,7 @@
               withFullVariant
               @select="selectProduct"
               @select-category="selectCategory"
+              dark
             />
           </v-card-text>
 
@@ -232,7 +234,6 @@
           <v-card-actions>
             <div class="widget-buttons">
               <v-btn
-                color="primary"
                 size="x-large"
                 variant="text"
                 @click="dialog = false"

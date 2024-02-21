@@ -27,7 +27,7 @@
     <div class="position-relative">
       <!-- Main icon -->
 
-      <v-icon :color="selected ? 'primary' : '#eee'" size="100">note</v-icon>
+      <v-icon :color="selected ? 'primary' : dark?'#000':'#eee'" size="100">note</v-icon>
 
       <!-- Connect service icon (top - Right) -->
 
@@ -332,6 +332,9 @@ export default {
     showNotes: Boolean,
     showSelect: Boolean,
     iSelected: Boolean,
+
+    dark: Boolean,
+
   },
   data() {
     return {

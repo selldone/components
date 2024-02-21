@@ -32,8 +32,8 @@
           class="vnd-card"
           rounded="lg"
           variant="outlined"
-          @mouseenter.native="$emit('vendor-hover:enter', vendor)"
-          @mouseleave.native="$emit('vendor-hover:leave', vendor)"
+          @mouseenter="$emit('vendor-hover:enter', vendor)"
+          @mouseleave="$emit('vendor-hover:leave', vendor)"
         >
           <v-img :aspect-ratio="2" :src="getShopImagePath(vendor.icon)"></v-img>
 

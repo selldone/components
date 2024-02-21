@@ -562,6 +562,7 @@
             @onSelect="toggleProductsSelect(product)"
             @onShowNote="showNoteProduct(product)"
             @select="$emit('select', product)"
+            :dark="dark"
           >
           </b-product-window-product-mini>
 
@@ -605,6 +606,8 @@
                 e.preventDefault();
               }
             "
+            :dark="dark"
+            :color="dark?'#000':'#fff'"
           />
 
           <v-scale-transition leave-absolute origin="center center">
@@ -1807,6 +1810,8 @@ export default {
 
     withProductTranslations: { type: Boolean, default: false },
     withCategoryTranslations: { type: Boolean, default: false },
+
+    dark:Boolean,
   },
 
   data: () => ({
