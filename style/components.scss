@@ -1149,6 +1149,14 @@ table.v-table {
 
 
 }
+.disabled-scale-down{
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.7;
+  filter: grayscale(100%);
+  transition: all 0.4s;
+  transform: scale(0.9);
+}
 
 .disabled-no-filter {
   user-select: none;

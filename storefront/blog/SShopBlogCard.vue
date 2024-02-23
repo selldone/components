@@ -14,10 +14,10 @@
 
 <template>
   <v-card
-    :class="{ '-flat': flat, '-rect': rect }"
+    :class="{ '-flat': flat }"
     :color="color"
-    :dark="dark"
-    :rounded="rect && '0'"
+    :theme="dark ? 'dark' : 'light'"
+    :rounded="rounded"
     :to="
       !window.ExternalWidget && !viewOnly
         ? is_product
@@ -48,7 +48,7 @@
         v-if="article.image"
         :src="getShopImagePath(article.image)"
         class="blog-card-header"
-        height="180"
+        height="180" cover
       >
         <template v-slot:placeholder>
           <v-progress-circular
@@ -113,7 +113,7 @@ export default {
     categories: {},
 
     flat: {},
-    rect: {},
+    rounded: {},
     dark: {},
     color: {},
 
@@ -136,11 +136,9 @@ export default {
 <style lang="scss" scoped>
 .s--shop-blog-card {
   --shadow: 0px 2px 40px 0px rgba(0, 0, 0, 0.1);
-  --radius: 14px;
 
   position: relative;
   min-height: 100%;
-  border-radius: var(--radius) !important;
   box-shadow: var(--shadow) !important;
 
   transition: all 0.45s !important;
@@ -162,9 +160,9 @@ export default {
     --shadow: none;
   }
 
-  &.-rect {
-    --radius: 0;
-  }
+  /*  &.-rect {
+      --radius: 0;
+    }*/
 }
 
 .blog-category-title {

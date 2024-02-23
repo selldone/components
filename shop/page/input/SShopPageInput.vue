@@ -144,7 +144,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    clearable: Boolean,
+    disabled: Boolean,
   },
 
   data() {

@@ -56,8 +56,8 @@
         }
         newValue = validateNumber(newValue);
         $nextTick(() => {
-          $emit('blur');
-          $emit('change'); // Make sure update value!
+          $emit('blur',newValue);
+          $emit('change',newValue); // Make sure update value!
         });
       }
     "
