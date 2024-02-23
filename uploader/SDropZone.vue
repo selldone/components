@@ -13,9 +13,9 @@
   -->
 
 <template>
-  <div class="flex items-center justify-center w-full h-screen text-center">
+  <div class="d-flex items-center justify-center w-full  text-center">
     <div
-      class="pa-6 dashed border-gray-300 rounded-18px d-flex flex-column"
+      class="pa-6 dashed border-gray-300 rounded-18px d-flex flex-column flex-grow-1"
       style="min-height: inherit"
       @dragend="dragleave"
       @dragleave="dragleave"
@@ -59,7 +59,6 @@
         <v-btn
           v-if="failed_count"
           color="red"
-          dark
           size="x-large"
           variant="flat"
           @click="resendFailed"
@@ -68,7 +67,6 @@
 
         <v-btn
           color="blue"
-          dark
           size="small"
           variant="flat"
           @click="resetCount"

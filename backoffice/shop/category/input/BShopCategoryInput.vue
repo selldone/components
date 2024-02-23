@@ -18,6 +18,7 @@
     v-model:menu="menu"
     v-model:search="search"
     :chips="chips"
+    :closable-chips="chips"
     :class="{ disabled: modelValue && busy && !category_obj }"
     :clearable="clearable"
     :customFilter="() => true"
@@ -269,12 +270,22 @@ export default {
   created() {
     // Fix some possible issues in setting v-model initial value:
     if (this.modelValue) {
-      if (this.returnObject) {
-        this.category = this.isObject(this.modelValue) ? this.modelValue : null;
+      if (this.multiple) {
+        if (Array.isArray(this.modelValue)) {
+          this.category = this.modelValue;
+        } else {
+          this.category = [];
+        }
       } else {
-        this.category = this.isObject(this.modelValue)
-          ? null
-          : parseInt(this.modelValue);
+        if (this.returnObject) {
+          this.category = this.isObject(this.modelValue)
+            ? this.modelValue
+            : null;
+        } else {
+          this.category = this.isObject(this.modelValue)
+            ? null
+            : parseInt(this.modelValue);
+        }
       }
     } else {
       this.category = null;

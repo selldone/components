@@ -169,7 +169,7 @@
           class="products-container"
           fluid
         >
-          <v-fade-transition
+          <v-row
             v-resize="onResize"
             :align="align"
             :class="[
@@ -180,97 +180,96 @@
             :justify="justify"
             :style="{ '--insta-size': insta_size }"
             class="products-layout"
-            group
-            hide-on-leave
-            tag="v-row"
           >
-            <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
+            <v-fade-transition group hide-on-leave>
+              <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
 
-            <category-card
-              v-for="category in folders.slice(
-                (folder_page - 1) * max_folders_per_page,
-                folder_page * max_folders_per_page,
-              )"
-              :key="'f' + category.id"
-              :category="category"
-              :class="[class_items_categories]"
-              :static="no_animation"
-              :to="
-                viewOnly || window.ExternalWidget
-                  ? undefined
-                  : {
-                      name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
-                      params: { category_name: category.name },
-                    }
-              "
-              class="flex m-0"
-              v-bind="
-                !viewOnly && window.ExternalWidget
-                  ? { href: getCategoryLink(shop, category.name), target: '' }
-                  : {}
-              "
-            />
+              <category-card
+                v-for="category in folders.slice(
+                  (folder_page - 1) * max_folders_per_page,
+                  folder_page * max_folders_per_page,
+                )"
+                :key="'f' + category.id"
+                :category="category"
+                :class="[class_items_categories]"
+                :static="no_animation"
+                :to="
+                  viewOnly || window.ExternalWidget
+                    ? undefined
+                    : {
+                        name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+                        params: { category_name: category.name },
+                      }
+                "
+                class="flex m-0"
+                v-bind="
+                  !viewOnly && window.ExternalWidget
+                    ? { href: getCategoryLink(shop, category.name), target: '' }
+                    : {}
+                "
+              />
 
-            <v-spacer
-              v-if="has_breaker"
-              key="breaker"
-              class="w-100 mt-16"
-            ></v-spacer>
+              <v-spacer
+                v-if="has_breaker"
+                key="breaker"
+                class="w-100 mt-16"
+              ></v-spacer>
 
-            <v-col
-              v-if="folder_pages_count > 1"
-              key="pagination-categoreis"
-              cols="12"
-            >
-              <v-pagination
-                v-model="folder_page"
-                :length="folder_pages_count"
-                rounded
-              ></v-pagination>
-            </v-col>
+              <v-col
+                v-if="folder_pages_count > 1"
+                key="pagination-categoreis"
+                cols="12"
+              >
+                <v-pagination
+                  v-model="folder_page"
+                  :length="folder_pages_count"
+                  rounded
+                ></v-pagination>
+              </v-col>
 
-            <!-- ⬬⬬⬬⬬ Products ⬬⬬⬬⬬ -->
+              <!-- ⬬⬬⬬⬬ Products ⬬⬬⬬⬬ -->
 
-            <s-shop-product-card
-              v-for="(product, index) in products"
-              :key="product.id"
-              :class="[class_items_products]"
-              :dense="show_filter_menu"
-              :is-row="isRow"
-              :is-small="isSmallItem"
-              :isInsta="isInsta"
-              :product="product"
-              :quick-buy="hover_actions"
-              :rounded="freeMode"
-              :static="no_animation"
-              :to="
-                viewOnly || window.ExternalWidget
-                  ? undefined
-                  : {
-                      name: window.$storefront.routes.PRODUCT_PAGE,
-                      params: {
-                        product_id: product.id,
-                      },
-                    }
-              "
-              class="flex"
-              v-bind="
-                !viewOnly && window.ExternalWidget
-                  ? { href: getProductLink(shop, product.id), target: '' }
-                  : {}
-              "
-              @click.native="onClickProduct(product, index)"
-              @quick-buy="quickBuy(product)"
-              @mouseenter.native="$emit('product-hover:enter', product)"
-              @mouseleave.native="$emit('product-hover:leave', product)"
-            />
+              <s-shop-product-card
+                v-for="(product, index) in products"
+                :key="product.id"
+                :class="[class_items_products]"
+                :dense="show_filter_menu"
+                :is-row="isRow"
+                :is-small="isSmallItem"
+                :isInsta="isInsta"
+                :product="product"
+                :quick-buy="hover_actions"
+                :rounded="freeMode"
+                :static="no_animation"
+                :to="
+                  viewOnly || window.ExternalWidget
+                    ? undefined
+                    : {
+                        name: window.$storefront.routes.PRODUCT_PAGE,
+                        params: {
+                          product_id: product.id,
+                        },
+                      }
+                "
+                class="flex"
+                v-bind="
+                  !viewOnly && window.ExternalWidget
+                    ? { href: getProductLink(shop, product.id), target: '' }
+                    : {}
+                "
+                @click.native="onClickProduct(product, index)"
+                @quick-buy="quickBuy(product)"
+                @mouseenter.native="$emit('product-hover:enter', product)"
+                @mouseleave.native="$emit('product-hover:leave', product)"
+              />
 
-            <v-spacer
-              v-if="!landingPageMode && !freeMode"
-              key="space"
-              :style="{ 'max-width': spacer_w }"
-            ></v-spacer>
-          </v-fade-transition>
+              <v-spacer
+                v-if="!landingPageMode && !freeMode"
+                key="space"
+                :style="{ 'max-width': spacer_w }"
+              ></v-spacer>
+            </v-fade-transition>
+          </v-row>
         </v-container>
 
         <v-btn
@@ -346,7 +345,7 @@
           >
             <div class="widget-buttons mb-4">
               <v-btn size="x-large" variant="text" @click="quick_buy = false">
-                <v-icon start>close </v-icon>
+                <v-icon start>close</v-icon>
                 {{ $t("global.actions.close") }}
               </v-btn>
             </div>
@@ -701,7 +700,10 @@ export default {
         return "mobile";
       } else if (this.$vuetify.display.smOnly || this.$vuetify.display.mdOnly) {
         return "tablet";
-      } else if (this.$vuetify.display.lgOnly || this.$vuetify.display.xlAndUp) {
+      } else if (
+        this.$vuetify.display.lgOnly ||
+        this.$vuetify.display.xlAndUp
+      ) {
         return "pc";
       }
       return "pc";
