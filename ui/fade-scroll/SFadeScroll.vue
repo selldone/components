@@ -20,6 +20,7 @@
       '--bottom': fadeBottom,
       '--left': $vuetify.rtl ? fadeRight : fadeLeft,
       '--right': $vuetify.rtl ? fadeLeft : fadeRight,
+      '--background':bgColor
     }"
     class="s-fade-scroll"
   >
@@ -86,6 +87,7 @@ export default {
     },
 
     dragScroll: Boolean,
+    bgColor:{}
   },
   data: () => ({
     fadeTop: "0",

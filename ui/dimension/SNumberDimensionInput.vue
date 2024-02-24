@@ -257,8 +257,11 @@ export default {
       }
       let num = 0;
       let dim = "px";
+
+
       try {
-        const split_string = value.match(/(-?\d+(\.\d+)?)([a-z]+)/i);
+        const split_string = value.match(/(-?\d+(\.\d+)?)([a-z%]+)/i);
+
 
         // console.log("extractValue:", split_string);
 

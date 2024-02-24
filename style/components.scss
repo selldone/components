@@ -3885,61 +3885,7 @@ Fix snaky chart overflow problem!
   min-height: 56px;
 }
 
-//---------------------------------------------------------------------
-// List vertical line between (v-list + icon)
 
-.v-line-list {
-  > * :not(:last-child) { //TODO: Add without check!!!!
-    &:after {
-      content: ' ';
-      background: gray;
-      position: absolute;
-      left: 27px;
-      top: 34px;
-      bottom: -6px;
-      width: 2px;
-      min-height: 0;
-    }
-
-    /*
-        &-rounded {
-          border-radius: 4px;
-        }
-
-        &-green {
-          background: #4CAF50;
-        }
-
-        &-red {
-          background: #D32F2F;
-        }
-
-        &-pink {
-          background: #C2185B;
-        }
-
-        &-amber {
-          background: #FFA000;
-        }
-
-        &-blue {
-          background: #0061e0;
-        }*/
-
-  }
-}
-
-.v-application--is-rtl {
-  .v-line-list {
-    > :not(:last-child) {
-      &:after {
-        left: unset;
-        right: 27px;
-      }
-    }
-  }
-
-}
 
 
 //---------------------------------------------------------------------
