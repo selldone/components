@@ -17,13 +17,16 @@
     <v-toolbar
       v-if="!$store.getters.getIsNative"
       :color="
+      color
+        ? color:
+
         transparent_header || overlay
           ? 'transparent'
           : is_light_header
             ? 'var(--background)'
             : SaminColorDark
       "
-      :dark="overlay ? overlayDark : !transparent_header && !is_light_header"
+      :theme="(overlay ? overlayDark : !transparent_header && !is_light_header)?'dark':'light'"
       :extended="!overlay"
       :style="{
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
@@ -429,6 +432,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    color:{},
   },
   data: () => ({
     menu: false,
