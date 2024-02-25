@@ -25,10 +25,7 @@ import "@core/utils/console/ConsoleStyle";
 
 import "@components/style/components.scss";
 
-//――― SVG Filters (Css filters add elements) ―――
-import { SvgFilters } from "@core/helper/style/SvgFilters";
 
-SvgFilters.Install();
 
 //█████████████████████████████████████████████████████████████
 //――――――――――― Selldone ® Business OS™ ―――――――――――

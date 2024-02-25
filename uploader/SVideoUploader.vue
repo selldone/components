@@ -28,7 +28,7 @@
         v-if="clearable && last_video"
         class="ms-1"
         color="red"
-        icon
+        icon variant="text"
         title="Clear image"
         @click.stop="
           () => {
@@ -43,7 +43,7 @@
       <v-btn
         :title="$t('global.actions.edit')"
         class="ms-1"
-        icon
+        icon variant="text"
         @click="
           force_edit = !force_edit;
           last_video = null;
@@ -99,9 +99,9 @@
           <v-btn
             v-if="clearable && last_video"
             class="absolute-top-end m-2 z2"
-            fab
             size="small"
-            variant="flat"
+            variant="text"
+            icon
             @click.stop="
               () => {
                 last_video = null;

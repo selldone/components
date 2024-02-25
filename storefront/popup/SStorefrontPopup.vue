@@ -44,9 +44,9 @@
         style="cursor: initial"
         @click.stop
       >
-        <s-page-render-popup
+        <LPageViewer
           v-if="popup.content"
-          :data="popup.content"
+          :initialPageData="popup.content"
           class="thin-scroll overflow-y-auto"
           style="max-height: 100%; width: 100%"
         />
@@ -100,9 +100,11 @@
 </template>
 
 <script>
+import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
+
 export default {
   name: "SStorefrontPopup",
-  components: {},
+  components: { LPageViewer },
   props: {
     popup: {
       require: true,

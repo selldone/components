@@ -14,7 +14,15 @@
 
 <template>
   <v-toolbar
-    :color="color?color:transparent ? 'transparent' : dark ? 'var(--theme-dark)' : null"
+    :color="
+      color
+        ? color
+        : transparent
+          ? 'transparent'
+          : dark
+            ? 'var(--theme-dark)'
+            : null
+    "
     :flat="flat"
     :theme="dark ? 'dark' : 'light'"
     :border="outlined"
@@ -131,14 +139,14 @@
 
               <!-- Menu > Custom -->
 
-              <SPageRenderMenu
+              <LPageViewer
                 v-if="
                   tab.type === 'custom' &&
                   tab.page &&
                   tab.page.content &&
                   visibles[index]
                 "
-                :data="tab.page.content"
+                :initialPageData="tab.page.content"
               />
             </v-sheet>
           </v-menu>
@@ -151,10 +159,11 @@
 <script>
 import MenuCategories from "./MenuCategories.vue";
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
 
 export default {
   name: "SStorefrontTopMenu",
-  components: { SFadeScroll, MenuCategories },
+  components: { LPageViewer, SFadeScroll, MenuCategories },
   props: {
     shop: {
       required: true,
@@ -186,7 +195,7 @@ export default {
     forceDark: {
       default: null,
     },
-    color:{},
+    color: {},
     center: {
       type: Boolean,
     },

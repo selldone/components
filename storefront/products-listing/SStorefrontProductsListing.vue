@@ -25,10 +25,10 @@
     }"
   >
     <!-- ████████████████████ Custom Page ███████████████████ -->
-    <SPageRender
+    <LPageViewer
       v-if="parent_folders?.page"
       :augment="parent_folders.augment"
-      :data="parent_folders.page.content"
+      :initialPageData="parent_folders.page.content"
       :style="parent_folders.page.background"
     />
 
@@ -373,10 +373,12 @@ import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
 import ProductInfoLoadingView from "@components/product/loading/ProductInfoLoadingView.vue";
 import { ModeView } from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
+import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
 
 export default {
   name: "SStorefrontProductsListing",
   components: {
+    LPageViewer,
     ProductInfoLoadingView,
     SBreadcrumbImage,
     BProductSpecTable,

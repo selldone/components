@@ -28,7 +28,7 @@ import GlobalRules from "@core/helper/rules/GlobalRules";
 import {SocialNetwork} from "@core/enums/social/SocialNetwork";
 import {ShopURLs} from "@core/helper/url/ShopURLs";
 import {ColorHelper} from "@core/helper/color/ColorHelper";
-import EventBusTriggers from "@core/enums/event-bus/EventBusTriggers";
+import LEventsName from "@app-page-builder/mixins/events/name/LEventsName";
 
 import {CustomerClubLevels} from "@core/enums/customer/CustomerClubLevels";
 import {CurrencyHelper} from "@core/helper/currency/CurrencyHelper";
