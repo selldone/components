@@ -31,6 +31,7 @@
         :label="$t('community.category.title')"
         :messages="$t('community.category.title_msg')"
         :placeholder="$t('community.category.title_plc')"
+        variant="underlined"
       ></v-text-field>
       <v-text-field
         v-model="desc"
@@ -38,6 +39,7 @@
         :label="$t('community.category.desc')"
         :messages="$t('community.category.desc_msg')"
         :placeholder="$t('community.category.desc_plc')"
+        variant="underlined"
       ></v-text-field>
     </div>
 
