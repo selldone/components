@@ -1149,7 +1149,8 @@ table.v-table {
 
 
 }
-.disabled-scale-down{
+
+.disabled-scale-down {
   user-select: none;
   pointer-events: none;
   opacity: 0.7;
@@ -1648,9 +1649,11 @@ Page builder Styler global css
 .text-align-start {
   text-align: start !important;
 }
+
 .text-align-end {
   text-align: end !important;
 }
+
 /*******************************************************************************************
 Global
  */
@@ -3886,8 +3889,6 @@ Fix snaky chart overflow problem!
 }
 
 
-
-
 //---------------------------------------------------------------------
 .bg-tiny-checkers {
   background-color: #ddd;
@@ -3987,7 +3988,8 @@ Fix snaky chart overflow problem!
   background-image: url("../assets/patterns/bg-dot.svg");
   background-repeat: repeat;
   background-size: 10px;
-  border-radius: 12px;
+  border-radius: 0px 0px 26px 26px;
+  overflow: hidden;
 }
 
 
@@ -5070,6 +5072,6 @@ canvas.heatmap-canvas {
 }
 
 
-ol,ul{
+ol, ul {
   list-style-position: inside;
 }

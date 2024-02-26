@@ -21,7 +21,7 @@
     </template>
 
     <v-btn
-      :size="30"
+      :size="size"
       class="mx-auto"
       color="#9d9d9d33"
       icon
@@ -31,14 +31,14 @@
       <v-icon
         :class="{ 'bg-tiny-checkers rounded-circle': !noBg }"
         :color="nullable && !modelValue ? 'transparent' : modelValue"
-        :size="icon === 'lens' ? 'large' : undefined"
+        :size="size ? size * 0.8 : icon === 'lens' ? 'large' : undefined"
         >{{ !modelValue ? "cancel" : icon }}
       </v-icon>
     </v-btn>
 
     <v-btn
       v-if="nullable"
-      :size="30"
+      :size="size"
       class="ms-2"
       icon
       variant="text"
@@ -97,6 +97,9 @@ export default {
     },
 
     noAlpha: { type: Boolean, default: false },
+    size: {
+      default: 30,
+    },
   },
   data() {
     return {
