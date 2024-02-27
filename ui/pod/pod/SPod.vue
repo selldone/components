@@ -48,6 +48,7 @@
       size="var(--pod-icon-size)"
       >{{ icon }}
     </v-icon>
+
     <slot></slot>
 
     <small :title="title" class="d-block">
@@ -56,7 +57,6 @@
       </v-icon>
       {{ title }}</small
     >
-    <slot></slot>
   </div>
 </template>
 

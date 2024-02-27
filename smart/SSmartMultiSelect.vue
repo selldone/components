@@ -34,12 +34,12 @@
         <div class="d-flex align-center mnh">
           <div class="position-relative me-2" style="min-width: 32px">
             <v-icon
-              :class="{ 'avatar-gradient': value.includes(task[itemValue]) }"
+              :class="{ 'avatar-gradient': modelValue.includes(task[itemValue]) }"
               class="-thin -gray flex-grow-0 h-auto center-absolute"
               color="primary"
               size="24"
               >{{
-                value.includes(task[itemValue])
+                modelValue.includes(task[itemValue])
                   ? "lens"
                   : "radio_button_unchecked"
               }}
@@ -68,8 +68,9 @@
 <script>
 export default {
   name: "SSmartMultiSelect",
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
     items: { type: Array },
     itemValue: {
       required: true,
@@ -107,10 +108,10 @@ export default {
 
   methods: {
     toggle(val) {
-      this.value.toggle(val);
+      this.modelValue.toggle(val);
 
-      this.$emit("input", this.value);
-      this.$emit("change", this.value);
+      this.$emit("update:modelValue", this.modelValue);
+      this.$emit("change", this.modelValue);
       this.signalUpdate();
     },
 
