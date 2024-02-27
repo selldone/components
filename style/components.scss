@@ -4750,6 +4750,7 @@ canvas.heatmap-canvas {
   max-width: 580px;
   padding: 4px;
   flex-grow: 1;
+  transition: all 0.3s ease-in-out;
 
   button, .button, .v-btn, .extendable {
     margin: 4px;
@@ -4762,6 +4763,13 @@ canvas.heatmap-canvas {
     flex-direction: column-reverse;
   }
 
+
+  &.-fixed-bottom{
+    position: fixed;bottom: 0;left: 0;right: 0;z-index: 20;
+    background: #fff;
+    border-radius: 10px 10px 0 0;
+    box-shadow: inset 0 -2em 2em rgba(0, 0, 0, 0.02), 0 3px 10px 2px rgba(166, 166, 166, 0.57);
+  }
 }
 
 // Dashboard views
