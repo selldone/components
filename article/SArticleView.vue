@@ -436,7 +436,7 @@
             >
               <v-expansion-panel elevation="0">
                 <v-expansion-panel-title
-                  :class="{ 'white--text': !!schedule_at }"
+                  :class="{ 'text-white': !!schedule_at }"
                   :color="schedule_at ? '#0288D1' : undefined"
                   :title="$t('global.article.schedule_title')"
                   class="py-3 d-flex align-start align-sm-center flex-column flex-sm-row"

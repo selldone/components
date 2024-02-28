@@ -45,8 +45,8 @@
         <li
           :key="isString(element) ? element : JSON.stringify(element)"
           :class="{
-            'bg-dark': dark,
-            'bg-white': !dark,
+            'bg-dark': dark && !transparent,
+            'bg-white': !dark && !transparent,
             disabled: disabled,
           }"
           class="p-2 row-hover usn cursor-move"
@@ -132,7 +132,7 @@ export default {
       default: false,
       type: Boolean,
     },
-
+    transparent:Boolean,
     label: {},
     hint: {},
 

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ 'black--text': !dark }" class="text-subtitle-2">
+  <div :class="{ 'text-black': !dark }" class="text-subtitle-2">
     <v-avatar class="me-1 me-sm-2" size="20">
       <img :alt="user.name" :src="getUserAvatar(user.id)" />
     </v-avatar>

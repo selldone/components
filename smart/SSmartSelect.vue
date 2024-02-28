@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ dark: dark, pen: readonly }" class="text-start">
+  <div :class="{ dark: dark, pen: readonly }" class="s--smart-select">
     <h3 v-if="label" class="my-2">{{ label }}</h3>
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
@@ -21,7 +21,7 @@
       :class="{
         'disabled pen': disabled,
         border: border,
-        'white--text': dark,
+        'text-white': dark,
         'shadow-colored -no-after position-relative s--shadow-no-padding':
           decorative,
         pen: loading,
@@ -210,15 +210,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.mnh {
-  min-height: 40px;
+.s--smart-select{
+  text-align: start;
+
+  .mnh {
+    min-height: 40px;
+  }
+
+  .circle-check {
+    animation-duration: 250ms;
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    border-radius: 50%;
+  }
+
+  .bg-dark{
+    background: #000;
+  }
+  .bg-white{
+    background: #fff;
+  }
+
 }
 
-.circle-check {
-  animation-duration: 250ms;
-  width: 20px;
-  height: 20px;
-  margin: 2px;
-  border-radius: 50%;
-}
 </style>

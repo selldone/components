@@ -18,7 +18,7 @@
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
-      :class="{ pen: disabled, border: border, 'white--text': dark }"
+      :class="{ pen: disabled, border: border, 'text-white': dark }"
       class="border-between-vertical rounded-card"
       group
       hide-on-leave

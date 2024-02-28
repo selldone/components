@@ -21,7 +21,7 @@
       :class="{
         'disabled pen': disabled,
         border: border,
-        'white--text': dark,
+        'text-white': dark,
         'shadow-colored -no-after position-relative s--shadow-no-padding':
           decorative,
         pen: loading,

@@ -135,7 +135,7 @@
                 v-for="(item, i) in hierarchy_items"
                 :key="i"
                 :to="item.disabled ? undefined : item.to"
-                active-class="bg-primary white--text"
+                active-class="bg-primary text-white"
                 exact
                 selectable
               >
