@@ -48,8 +48,8 @@
             <div
               :class="{
                 selected: returnObject
-                  ? value?.id === prize.id
-                  : value === prize.id,
+                  ? modelValue?.id === prize.id
+                  : modelValue === prize.id,
               }"
               :prize="prize"
               class="-prize"
@@ -57,7 +57,7 @@
               @click="
                 selectable
                   ? selectLottery(
-                      value?.id === prize.id || value === prize.id
+                      modelValue?.id === prize.id || modelValue === prize.id
                         ? null
                         : prize,
                     )
@@ -147,6 +147,7 @@ import _ from "lodash-es";
 export default {
   name: "SStorefrontLotteryPrizesList",
   components: { SFadeScroll },
+  emits: ["update:modelValue", "loading"],
   props: {
     productId: {},
     VariantId: {},
@@ -158,7 +159,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    value: {},
+    modelValue: {},
 
     // -------- BASKET --------
     basket: {
@@ -201,9 +202,9 @@ export default {
   methods: {
     selectLottery(prize) {
       if (prize) {
-        this.$emit("input", this.returnObject ? prize : prize.id);
+        this.$emit("update:modelValue", this.returnObject ? prize : prize.id);
       } else {
-        this.$emit("input", null);
+        this.$emit("update:modelValue", null);
       }
 
       this.setLotteryForBasket(prize);

@@ -523,7 +523,7 @@
             {{ $t("community.nominate.no_credit_message") }}
           </v-alert>
 
-          <user-email-input
+          <s-user-input
             v-model:user="user_nominate"
             :class="{ disabled: profile_credit <= 0 }"
             :label="$t('community.nominate.user_nominate')"
@@ -531,7 +531,7 @@
             exclude-me
             no-icon
             with-profile
-          ></user-email-input>
+          ></s-user-input>
 
           <v-alert v-if="user_nominate && !user_nominate.profile" type="error"
             >{{ $t("community.invite.not_have_profile_error") }}
@@ -572,7 +572,7 @@
 <script>
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 import SSocialShareButtons from "../../../ui/button/share/SSocialShareButtons.vue";
-import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
+import SUserInput from "@components/user/input/SUserInput.vue";
 import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
 import CommunityAccessController from "../access/CommunityAccessController.vue";
 import SCountDown from "@components/ui/count-down/SCountDown.vue";
@@ -585,7 +585,7 @@ export default {
     SCountDown,
     CommunityAccessController,
     SDenseImagesCirclesUsers,
-    UserEmailInput,
+    SUserInput,
     SSocialShareButtons,
   },
   props: {

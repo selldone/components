@@ -23,10 +23,9 @@
       v-if="deletable"
       class="float-end"
       color="red"
-      dark
       size="small"
       variant="flat"
-      @click="$emit('delete', value)"
+      @click="$emit('delete', modelValue)"
       >{{ $t("global.actions.clear") }}
     </v-btn>
 
@@ -34,12 +33,12 @@
       v-if="isEnum"
       :items="type"
       :label="name"
-      :model-value="value"
+      :model-value="modelValue"
       class="max-width-field"
-      dense
+      density="compact"
       rounded
       variant="filled"
-      @update:model-value="(val) => $emit('input', val)"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     >
       <template v-slot:item="{ item }">
         {{ fineName(item) }}
@@ -53,14 +52,14 @@
       v-else-if="isEnumsArray"
       :items="type[0]"
       :label="name"
-      :model-value="value"
+      :model-value="modelValue"
       chips
       class=""
-      dense
+      density="compact"
       multiple
       rounded
       variant="filled"
-      @update:model-value="(val) => $emit('input', val)"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     >
       <template v-slot:item="{ item }">
         {{ fineName(item) }}
@@ -75,87 +74,87 @@
     <v-text-field
       v-else-if="type === 'text'"
       :label="name"
-      :model-value="value"
+      :model-value="modelValue"
       class="max-width-field"
       density="compact"
       rounded
       variant="filled"
-      @update:model-value="(val) => $emit('input', val)"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     ></v-text-field>
     <v-text-field
       v-else-if="type === 'url'"
       :label="name"
-      :model-value="value"
+      :model-value="modelValue"
       :rules="[GlobalRules.url()]"
       class="max-width-field"
       density="compact"
       prepend-icon="link"
       rounded
       variant="filled"
-      @update:model-value="(val) => $emit('input', val)"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     ></v-text-field>
     <s-number-input
       v-else-if="type === 'number'"
       :label="name"
-      :value="value"
+      :model-value="modelValue"
       class="max-width-field"
       dense
       filled
       rounded
-      @input="(val) => $emit('input', val)"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     ></s-number-input>
     <s-price-input
       v-else-if="type === 'price'"
       :decimal="2"
       :label="name"
-      :model-value="value"
+      :model-value="modelValue"
       class="max-width-field"
       dense
       filled
       prepend-icon="attach_money"
       rounded
-      @update:model-value="(val) => $emit('input', val)"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     ></s-price-input>
     <s-currency-input
       v-else-if="type === 'currency'"
       :label="name"
       :returnObject="false"
-      :value="value"
+      :model-value="modelValue"
       class="max-width-field"
       dense
       filled
       prepend-icon="account_balance_wallet"
       rounded
-      @input="(val) => $emit('input', val)"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     ></s-currency-input>
     <s-date-input
       v-else-if="type === 'date'"
       :label="name"
-      :value="value"
+      :model-value="modelValue"
       class="max-width-field mb-3"
       filled
       format="YYYY-MM-DDTHH:mm:ssZ"
       rounded
-      @input="(val) => $emit('input', val)"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     ></s-date-input>
 
     <div v-else-if="type === 'duration'" class="mb-3">
       <v-text-field
         :label="name"
-        :model-value="value"
+        :model-value="modelValue"
         class="max-width-field"
         density="compact"
         hide-details
         rounded
         variant="filled"
-        @update:model-value="(val) => $emit('input', val)"
+        @update:model-value="(val) => $emit('update:modelValue', val)"
       ></v-text-field>
       <v-chip
         v-for="it in Duration"
         :key="it"
         class="m-1"
         size="small"
-        @click="$emit('input', it)"
+        @click="$emit('update:modelValue', it)"
         >{{ it }}
       </v-chip>
     </div>
@@ -166,35 +165,35 @@
       </p>
 
       <s-structure-data-input
-        v-for="(it_val, index) in value"
+        v-for="(it_val, index) in modelValue"
         :key="index"
         :name="/*name +' '+*/ 'Item ' + index"
         :type="type[0]"
-        :value="value[index]"
+        :model-value="modelValue[index]"
         deletable
-        @delete="(val) => remove(value, val)"
-        @input="(val) => (value[index] = val)"
+        @delete="(val) => remove(modelValue, val)"
+        @update:model-value="(val) => (modelValue[index] = val)"
       ></s-structure-data-input>
 
       <v-btn
         class="m-2"
         color="success"
         variant="flat"
-        @click="value.push(type[0].startsWith('@') ? {} : '')"
+        @click="modelValue.push(type[0].startsWith('@') ? {} : '')"
       >
         <v-icon>add</v-icon>
         Add
       </v-btn>
     </div>
 
-    <div v-else-if="type.startsWith('@') && value">
+    <div v-else-if="type.startsWith('@') && modelValue">
       <p class="bg-primary text-white px-2 rounded mb-4">
         <b>{{ name }}</b>
       </p>
       <s-structure-data-input
         v-for="(_type, key) in blueprint"
         :key="key"
-        v-model="value[key]"
+        v-model="modelValue[key]"
         :name="/*name +' > '+*/ key"
         :type="_type"
       ></s-structure-data-input>
@@ -247,8 +246,9 @@ export default {
     SCurrencyInput,
     SPriceInput,
   },
+  emits : ['update:modelValue', 'delete'],
   props: {
-    value: {},
+    modelValue: {},
     type: {
       require: true,
     },
@@ -386,12 +386,15 @@ export default {
 
   created() {
     if (this.isArray) {
-      if (!this.value || !Array.isArray(this.value))
-        this.$emit("input", this.isEnumsArray ? [this.type[0][0]] : []);
-    } else {
-      if (!this.value || Array.isArray(this.value))
+      if (!this.modelValue || !Array.isArray(this.modelValue))
         this.$emit(
-          "input",
+          "update:modelValue",
+          this.isEnumsArray ? [this.type[0][0]] : [],
+        );
+    } else {
+      if (!this.modelValue || Array.isArray(this.modelValue))
+        this.$emit(
+          "update:modelValue",
           this.isEnum
             ? this.type[0]
             : this.isObject
@@ -400,8 +403,8 @@ export default {
         );
     }
 
-    if (this.isObject && this.value) {
-      this.value["@type"] = this.blueprint["@type"];
+    if (this.isObject && this.modelValue) {
+      this.modelValue["@type"] = this.blueprint["@type"];
     }
   },
 

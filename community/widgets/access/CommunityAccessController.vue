@@ -74,11 +74,11 @@
               >2. Enter the correct email address.
             </v-list-subheader>
 
-            <user-email-input
+            <s-user-input
               v-model="user_email"
               class="mt-5"
               with-profile
-            ></user-email-input>
+            ></s-user-input>
 
             <div class="widget-buttons">
               <v-btn
@@ -176,11 +176,11 @@
 
 <script>
 import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
-import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
+import SUserInput from "@components/user/input/SUserInput.vue";
 
 export default {
   name: "CommunityAccessController",
-  components: { UserEmailInput, SDenseImagesCirclesUsers },
+  components: { SUserInput, SDenseImagesCirclesUsers },
   props: {
     shop: {},
 

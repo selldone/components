@@ -120,7 +120,7 @@
               clearable
               no-home
               persistent-placeholder
-              @input="fetchReport"
+              @update:model-value="fetchReport"
             >
             </b-shop-category-input>
 

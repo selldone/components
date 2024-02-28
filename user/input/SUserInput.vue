@@ -106,7 +106,7 @@
 
 <script>
 export default {
-  name: "UserEmailInput",
+  name: "SUserInput",
   emits: ["update:modelValue", "update:user-id", "update:user"],
   props: {
     modelValue: {},

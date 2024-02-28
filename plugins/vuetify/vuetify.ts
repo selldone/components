@@ -14,15 +14,17 @@
 //import "vuetify/styles"; // Import Vuetify styles
 import "./vuetify-override.scss";
 
-import { createVuetify, VuetifyOptions } from "vuetify";
+import {createVuetify, VuetifyOptions} from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 
-import { SetupService } from "@core/server/SetupService";
-import { aliases, md } from "vuetify/iconsets/md";
+import {SetupService} from "@core/server/SetupService";
+import {aliases, md} from "vuetify/iconsets/md";
 
 import "@fortawesome/fontawesome-free/css/all.css"; // Ensure your project is capable of handling css files
-import { fa } from "vuetify/iconsets/fa";
+import {fa} from "vuetify/iconsets/fa";
+import {createVueI18nAdapter} from "vuetify/locale/adapters/vue-i18n";
+import {I18n, useI18n} from "vue-i18n";
 
 // Define the Vuetify options.
 const vuetifyOptions: VuetifyOptions = {
@@ -74,4 +76,10 @@ const vuetifyOptions: VuetifyOptions = {
 };
 
 // Create and export a Vuetify instance with the defined options.
-export default createVuetify(vuetifyOptions);
+
+export function VuetifyInstance(i18n: I18n<any>) {
+  vuetifyOptions.locale = {
+    adapter: createVueI18nAdapter({ i18n, useI18n }),
+  };
+  return createVuetify(vuetifyOptions);
+}

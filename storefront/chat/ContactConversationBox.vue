@@ -266,7 +266,7 @@
           :loading="busy_rate"
           class="box-raiting"
           small
-          @input="(val) => sendRate(val)"
+          @update:model-value="(val) => sendRate(val)"
         ></emoji-rating>
       </v-card-text>
 

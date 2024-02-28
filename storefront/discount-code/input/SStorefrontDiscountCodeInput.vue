@@ -29,15 +29,15 @@
           : (show_discount_code_input = true)
       "
     >
-      <v-icon v-if="!value || show_discount_code_input" class="mx-2">
+      <v-icon v-if="!modelValue || show_discount_code_input" class="mx-2">
         {{ show_discount_code_input ? "done" : "fa:fas fa-percentage" }}
       </v-icon>
       <span v-if="!show_discount_code_input">
-        <span v-if="value">
+        <span v-if="modelValue">
           {{
             $t("global.discount_input.limit", {
-              percent: value.percent,
-              limit: FormatNumberCurrency(value.limit),
+              percent: modelValue.percent,
+              limit: FormatNumberCurrency(modelValue.limit),
               currency: GetUserSelectedCurrencyName(),
             })
           }}
@@ -83,7 +83,13 @@ import _ from "lodash-es";
 export default {
   name: "SStorefrontDiscountCodeInput",
 
-  props: ["value", "basket", "loadId", "currency"],
+  emits: ["update:modelValue", "loading"],
+  props: {
+    modelValue: {},
+    basket: {},
+    loadId: {},
+    currency: {},
+  },
 
   data: () => ({
     //-------------- Discount Code ---------------
@@ -97,21 +103,21 @@ export default {
 
   watch: {
     currency() {
-      this.$emit("input", null);
+      this.$emit("update:modelValue", null);
       this.tryAssignByCampaign();
     },
     loadId() {
-      this.value = this.loadId;
+      this.modelValue = this.loadId;
       this.setDiscountCode();
     },
   },
   mounted() {
     if (this.loadId) {
-      this.value = this.loadId;
+      this.modelValue = this.loadId;
       this.setDiscountCode();
     }
 
-    if (!this.value) {
+    if (!this.modelValue) {
       this.tryAssignByCampaign();
     }
   },
@@ -135,7 +141,7 @@ export default {
       }
 
       this.busy = true;
-      this.$emit("input", null);
+      this.$emit("update:modelValue", null);
       this.$emit("loading", true);
 
       axios
@@ -160,7 +166,7 @@ export default {
 
             this.show_discount_code_input = false;
 
-            this.$emit("input", data.discount_code);
+            this.$emit("update:modelValue", data.discount_code);
           } else {
             if (with_error_notification)
               this.showErrorAlert(null, data.error_msg);

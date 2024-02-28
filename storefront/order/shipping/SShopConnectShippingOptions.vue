@@ -62,7 +62,7 @@
           :background-color="dark ? SaminColorDark : '#fafafa'"
           :dark="dark"
           :items="connect_shipping_option.options"
-          :value="
+          :model-value="
             findSelectedConnectShipping(connect_shipping_option)?.shipping_id
           "
           class="my-3"
@@ -70,7 +70,7 @@
           item-description="message"
           item-text="name"
           item-value="id"
-          @input="(val) => selectOption(connect_shipping_option, val)"
+          @update:model-value="(val) => selectOption(connect_shipping_option, val)"
         >
           <template v-slot:prepend-title="{ item }">
             <price-view

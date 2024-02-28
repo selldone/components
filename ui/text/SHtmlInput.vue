@@ -30,7 +30,7 @@ import { StripTags } from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "SHtmlInput",
-
+  emits: ["update:modelValue", "update:text", "update:mentions"],
   props: {
     modelValue: {},
     label: {},

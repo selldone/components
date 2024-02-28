@@ -18,7 +18,7 @@
       v-if="checked"
       :color="trueColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click.stop="readOnly ? undefined : set(false)"
+      @click="readOnly ? undefined : set(false)"
     >
       {{ trueIcon }}
     </v-icon>
@@ -26,7 +26,7 @@
       v-else
       :color="falseColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click.stop="readOnly ? undefined : set(true)"
+      @click="readOnly ? undefined : set(true)"
     >
       {{ falseIcon }}
     </v-icon>

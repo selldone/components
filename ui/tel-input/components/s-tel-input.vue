@@ -133,6 +133,7 @@ export default {
   directives: {
     clickOutside,
   },
+  emits: ["update:modelValue", "on-input", "validate", "country-changed", "open", "close", "blur", "focus", "enter", "space"],
   props: {
     modelValue: {
       type: String,

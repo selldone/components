@@ -54,11 +54,14 @@
           </template>
 
           <template v-slot:append>
-            <input
-              :value="ratio"
+            <v-text-field
+              :model-value="ratio"
               class="small font-weight-bold text-white"
               style="width: 48px"
-              @input="(val) => $emit('update:ratio', val)"
+              variant="plain"
+              hide-details
+              single-line
+              @update:model-value="(val) => $emit('update:ratio', val)"
             />
           </template>
         </v-slider>

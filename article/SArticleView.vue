@@ -316,13 +316,13 @@
               :available-languages="languages"
               :checked-languages="multiLanguageAvailable"
               :suffix="` (${multiLanguageAvailable.length})`"
-              :value="article.lang"
+              :model-value="article.lang"
               class="min-width-150"
               hide-details
               prepend-inner-icon="post_add"
               single-line
               variant="plain"
-              @input="(lang) => loadArticleLanguage(lang)"
+              @update:model-value="(lang) => loadArticleLanguage(lang)"
             >
               <v-tooltip
                 activator="parent"
@@ -799,14 +799,14 @@
                   <v-card>
                     <v-card-title>Change author</v-card-title>
                     <v-card-text>
-                      <user-email-input
+                      <s-user-input
                         v-model="user_email"
                         :messages="user_email"
                         label="Select author"
                         no-icon
                         placeholder="content@selldone.com"
                       >
-                      </user-email-input>
+                      </s-user-input>
                     </v-card-text>
                     <v-card-actions>
                       <v-btn
@@ -1141,7 +1141,7 @@ import SArticleFaqs from "./faq/SArticleFaqs.vue";
 import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./tags/SArticleTagsEditor.vue";
 import SContentViolationReportDialog from "../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
-import UserEmailInput from "@components/ui/input/email/UserEmailInput.vue";
+import SUserInput from "@components/user/input/SUserInput.vue";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
 import STimeProgressBar from "../ui/calendar/time-progress/STimeProgressBar.vue";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
@@ -1166,7 +1166,7 @@ export default {
     SArticleSearchConsole,
     STimeProgressBar,
     SSmartMenu,
-    UserEmailInput,
+    SUserInput,
     SContentViolationReportDialog,
     SArticleTagsEditor,
     SArticleStructuredData,

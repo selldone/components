@@ -44,14 +44,14 @@
               :disabled="!canUse(coupon)"
               :selectable="selectable"
               :selected="
-                returnObject ? value?.id === coupon.id : value === coupon.id
+                returnObject ? modelValue?.id === coupon.id : modelValue === coupon.id
               "
               class="-coupon"
               width="220px"
               @click="
                 selectable
                   ? selectCoupon(
-                      value?.id === coupon.id || value === coupon.id
+                      modelValue?.id === coupon.id || modelValue === coupon.id
                         ? null
                         : coupon,
                     )
@@ -134,6 +134,7 @@ import _ from "lodash-es";
 export default {
   name: "SStorefrontCouponsList",
   components: { SFadeScroll, SStorefrontCouponView },
+  emits: ["update:modelValue", "loading"],
   props: {
     productId: {},
     VariantId: {},
@@ -145,7 +146,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    value: {},
+    modelValue: {},
 
     // set coupons list! (not auto mode!)
     customCoupons: {},
@@ -283,7 +284,7 @@ export default {
             // Auto select new added coupon:
             const current_coupon = coupons.find((i) => i.code === code);
             if (current_coupon) {
-              this.$emit("input", current_coupon);
+              this.$emit("update:modelValue", current_coupon);
               this.setCouponForBasket(current_coupon);
             }
 
@@ -311,9 +312,9 @@ export default {
 
     selectCoupon(coupon) {
       if (coupon) {
-        this.$emit("input", this.returnObject ? coupon : coupon.id);
+        this.$emit("update:modelValue", this.returnObject ? coupon : coupon.id);
       } else {
-        this.$emit("input", null);
+        this.$emit("update:modelValue", null);
       }
 
       this.setCouponForBasket(coupon);
