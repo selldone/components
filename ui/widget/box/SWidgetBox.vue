@@ -22,6 +22,7 @@
     body-class="p-0 mt"
     class="text-start font-weight-normal"
     custom-header
+    h100
   >
     <template v-slot:top-left>
       <component v-bind:is="iconTo ? 'router-link' : 'span'" :to="iconTo">

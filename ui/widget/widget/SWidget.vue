@@ -17,10 +17,12 @@
     ref="widget"
     :class="{ className, h100: h100 }"
     :style="{ '--background': 'var(--widget-background-color)' }"
+    color="var(--widget-background-color)"
     :theme="dark ? 'dark' : 'light'"
-    class="widget"
+    class="widget s--widget"
     v-bind="dataWidgster"
     @click="$emit('click')"
+    :rounded="rounded"
   >
     <div class="top-left-container">
       <slot name="top-left" />
@@ -169,8 +171,9 @@ export default {
     bodyClass: { default: "" },
     options: { default: () => ({}) },
     dataWidgster: { type: Object, default: () => ({}) },
-    h100: { default: true, type: Boolean },
+    h100: { default: false, type: Boolean },
     dark: { type: Boolean, default: false },
+    rounded:{default:'xl'}
   },
   computed: {
     randomId() {
