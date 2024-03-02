@@ -17,7 +17,6 @@
     v-model:search="search"
     :customFilter="() => true"
     :density="dense ? 'compact' : undefined"
-    :filled="filled"
     :item-title="itemText"
     :itemValue="itemValue"
     :items="items_fixed"
@@ -26,7 +25,7 @@
     :model-value="value"
     :returnObject="returnObject"
     :rounded="rounded"
-    :solo="solo"
+    :variant="solo?'solo':filled?'filled':'underlined'"
     @update:model-value="(val) => $emit('input', val)"
   >
     <template v-slot:prepend-inner>
