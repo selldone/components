@@ -39,7 +39,7 @@
           $route.params.shop_id /*Must be in the panel!*/ &&
           !shop.search_console
         "
-        :to="{ name: 'ShopEdit_SEO' }"
+        :to="{ name: 'BPageShopSettingSeo' }"
         class="tnt"
         color="primary"
       >

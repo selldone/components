@@ -14,7 +14,7 @@
 
 <template>
   <v-chip
-    v-if="percent"
+    v-if="percent || showZero"
     :color="color"
     :size="size"
     label
@@ -41,6 +41,7 @@ export default defineComponent({
   name: "SChipDiscount",
   props: {
     percent: {},
+    showZero: Boolean,
     size: {},
     color: {
       default: "#C2185B",

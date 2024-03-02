@@ -34,7 +34,7 @@
       </v-tab>
     </v-tabs>
 
-    <v-tabs-items v-model="tab">
+    <v-window v-model="tab">
       <v-window-item v-for="item in tabs" :key="item.title" :value="item.title">
         <v-card flat>
           <v-card-text>
@@ -47,7 +47,7 @@
           </v-card-text>
         </v-card>
       </v-window-item>
-    </v-tabs-items>
+    </v-window>
   </div>
 </template>
 

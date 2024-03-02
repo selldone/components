@@ -13,14 +13,13 @@
   -->
 
 <template>
-  <div v-if="languages?.length" class="d-flex align-center">
-    <s-fade-scroll class="flex-grow-1">
+  <s-fade-scroll v-if="languages?.length">
+    <div class="d-flex align-center py-5">
       <div class="d-flex">
         <v-btn
           key="default"
-          :color="!value ? 'primary' : undefined"
-          :dark="!value"
-          :variant="!!value && 'flat'"
+          :color="!modelValue ? 'primary' : undefined"
+          :variant="!!modelValue ? 'flat' : 'elevated'"
           class="ma-1"
           @click="select(null)"
         >
@@ -33,9 +32,8 @@
         <v-btn
           v-for="language in languages"
           :key="language"
-          :color="language === value ? 'primary' : undefined"
-          :dark="language === value"
-          :variant="language !== value && 'flat'"
+          :color="language === modelValue ? 'primary' : undefined"
+          :variant="language !== modelValue ? 'flat' : 'elevated'"
           class="ma-1"
           @click="select(language)"
         >
@@ -45,7 +43,7 @@
               <v-scale-transition>
                 <v-icon
                   v-if="availableTranslations?.includes(language)"
-                  :color="language !== value ? 'green' : '#ff'"
+                  :color="language !== modelValue ? 'green' : '#ff'"
                   class="ms-1"
                   size="x-small"
                   >check_circle</v-icon
@@ -56,23 +54,24 @@
           </div>
         </v-btn>
       </div>
-    </s-fade-scroll>
 
-    <s-smart-menu
-      v-if="!!value"
-      :items="[
-        {
-          title: `Remove ${getLanguageName(value)} translation`,
-          icon: 'delete',
-          click: () =>
-            openDeleteAlert(() => {
-              $emit('delete', value);
-            }),
-        },
-      ]"
-    >
-    </s-smart-menu>
-  </div>
+      <s-smart-menu
+        v-if="!!modelValue"
+        :items="[
+          {
+            title: `Remove ${getLanguageName(modelValue)} translation`,
+            icon: 'delete',
+            click: () =>
+              openDeleteAlert(() => {
+                $emit('delete', modelValue);
+              }),
+          },
+        ]"
+        style="flex-basis: 64px"
+      >
+      </s-smart-menu>
+    </div>
+  </s-fade-scroll>
 </template>
 
 <script>
@@ -83,9 +82,10 @@ import SSmartMenu from "@components/smart/SSmartMenu.vue";
 export default {
   name: "STranslationsLanguagesOptions",
   components: { SSmartMenu, SFadeScroll },
+  emits: ["update:modelValue", "change", "delete"],
   props: {
     shop: { required: true, type: Object },
-    value: {},
+    modelValue: {},
     availableTranslations: { type: Array },
   },
   data: () => ({
@@ -105,7 +105,7 @@ export default {
 
   methods: {
     select(language) {
-      this.$emit("input", language);
+      this.$emit("update:modelValue", language);
       this.$nextTick(() => {
         this.$emit("change", language);
       });

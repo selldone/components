@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: "PodWire",
+  name: "SPodWire",
   props: {
     color: {},
     forward: { type: Boolean, default: false },

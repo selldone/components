@@ -273,18 +273,18 @@ export default {
       return this.GetCurrency(this.currency);
     },
 
-    currencyIcon() {
-      return this.currencyObject ? this.currencyObject.icon : null;
-    },
-
-    currencyName() {
-      return this.currencyObject ? this.currencyObject.name : "";
-    },
   },
 
   watch: {
     currency(currency) {
-      this.$emit("update:modelValue", currency);
+      this.$emit(
+        "update:modelValue",
+        currency
+          ? this.returnObject
+            ? this.currencyObject
+            : this.currencyObject.code
+          : null,
+      );
     },
     modelValue(currency) {
       this.currency = currency;

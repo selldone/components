@@ -23,7 +23,7 @@
       }"
       active-class="bg-primary text-white"
     >
-      <v-list-item-icon>
+      <template v-slot:prepend>
         <v-badge
           :content="numeralFormat(sum_orders_badges, '0a')"
           :model-value="sum_orders_badges > 0"
@@ -32,7 +32,7 @@
         >
           <v-icon>history</v-icon>
         </v-badge>
-      </v-list-item-icon>
+      </template>
 
       <v-list-item-title>
         {{ $t("layout_shop.shop_menu.orders_history") }}
@@ -42,11 +42,8 @@
     <v-list-item
       :to="{ name: window.$storefront.routes.USER_PROFILE_PAGE }"
       active-class="bg-primary text-white"
+      prepend-icon="person"
     >
-      <v-list-item-icon>
-        <v-icon>person</v-icon>
-      </v-list-item-icon>
-
       <v-list-item-title>
         {{ $t("layout_shop.shop_menu.profile") }}
       </v-list-item-title>
@@ -56,11 +53,8 @@
       v-if="shop.community"
       :to="{ name: 'CommunityHomePage' }"
       active-class="bg-primary text-white"
+      prepend-icon="forum"
     >
-      <v-list-item-icon>
-        <v-icon>forum</v-icon>
-      </v-list-item-icon>
-
       <v-list-item-title>
         {{ $t("global.commons.community") }}
       </v-list-item-title>
@@ -69,11 +63,8 @@
     <v-list-item
       :to="{ name: window.$storefront.routes.USER_FAVORITES_PAGE }"
       active-class="bg-primary text-white"
+      prepend-icon="favorite"
     >
-      <v-list-item-icon>
-        <v-icon>favorite</v-icon>
-      </v-list-item-icon>
-
       <v-list-item-title>
         {{ $t("layout_shop.shop_menu.favorites") }}
       </v-list-item-title>
@@ -82,11 +73,8 @@
     <v-list-item
       :to="{ name: window.$storefront.routes.USER_GIFTCARDS_PAGE }"
       active-class="bg-primary text-white"
+      prepend-icon="card_giftcard"
     >
-      <v-list-item-icon>
-        <v-icon>card_giftcard</v-icon>
-      </v-list-item-icon>
-
       <v-list-item-title>
         {{ $t("layout_shop.shop_menu.gift_cards") }}
       </v-list-item-title>
@@ -97,11 +85,8 @@
         name: window.$storefront.routes.USER_RETURN_REQUESTS,
       }"
       active-class="bg-primary text-white"
+      prepend-icon="wifi_protected_setup"
     >
-      <v-list-item-icon>
-        <v-icon>wifi_protected_setup</v-icon>
-      </v-list-item-icon>
-
       <v-list-item-title>
         {{ $t("layout_shop.shop_menu.return_requests") }}
       </v-list-item-title>
@@ -115,7 +100,7 @@
       }"
       active-class="bg-primary text-white"
     >
-      <v-list-item-icon>
+      <template v-slot:prepend>
         <v-badge
           :content="numeralFormat(total_items_in_carts, '0a')"
           color="teal"
@@ -123,7 +108,7 @@
         >
           <v-icon>shopping_cart</v-icon>
         </v-badge>
-      </v-list-item-icon>
+      </template>
 
       <v-list-item-title>
         {{ $t("layout_shop.shop_menu.basket") }}
@@ -137,15 +122,11 @@
         :href="window.URLS.AdminShopsURL()"
         active-class="bg-primary text-white"
         target="_blank"
+        prepend-icon="shop"
       >
-        <v-list-item-icon>
-          <v-icon>shop</v-icon>
-        </v-list-item-icon>
-        <v-list-item-content class="text-start">
-          <v-list-item-title>
-            {{ $t("layout_shop.user_menu.my_shops") }}
-          </v-list-item-title>
-        </v-list-item-content>
+        <v-list-item-title>
+          {{ $t("layout_shop.user_menu.my_shops") }}
+        </v-list-item-title>
         <v-list-item-action>
           <v-icon color="green" size="x-small">shield</v-icon>
         </v-list-item-action>
@@ -156,19 +137,15 @@
         :href="window.URLS.AdminShopURL(shop.id)"
         active-class="bg-primary text-white"
         target="_blank"
+        prepend-icon="settings"
       >
-        <v-list-item-icon>
-          <v-icon> settings</v-icon>
-        </v-list-item-icon>
-        <v-list-item-content class="text-start">
-          <v-list-item-title>
-            {{
-              $t("layout_shop.user_menu.go_to_admin", {
-                shop_name: shop.title,
-              })
-            }}
-          </v-list-item-title>
-        </v-list-item-content>
+        <v-list-item-title>
+          {{
+            $t("layout_shop.user_menu.go_to_admin", {
+              shop_name: shop.title,
+            })
+          }}
+        </v-list-item-title>
         <v-list-item-action>
           <v-icon color="green" size="x-small">shield</v-icon>
         </v-list-item-action>

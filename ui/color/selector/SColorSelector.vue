@@ -15,7 +15,7 @@
 <template>
   <div class="justify-content-between d-flex align-center py-1">
     <template v-if="title">
-      <span class="me-2">{{ title }}</span>
+      <span class="me-2"><v-icon v-if="prependIcon" class="me-1">{{ prependIcon }}</v-icon> {{ title }}</span>
       <slot name="append-title"></slot>
       <span class="dashed-flex-space"></span>
     </template>
@@ -84,6 +84,7 @@ export default {
     modelValue: {},
 
     icon: { default: "lens" },
+    prependIcon: {},
     noBg: { type: Boolean, default: false },
 
     color: { default: "#fff" },

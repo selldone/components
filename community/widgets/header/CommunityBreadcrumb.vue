@@ -66,9 +66,9 @@
                   <v-list-item-title class="text-uppercase"
                     >{{ $t("community.commons.you_are_admin") }}
                   </v-list-item-title>
-                  <v-list-item-icon>
+                  <template v-slot:append>
                     <v-icon color="amber" size="small">fa:fas fa-crown </v-icon>
-                  </v-list-item-icon>
+                  </template>
                 </v-list-item>
 
                 <v-divider></v-divider>
@@ -78,11 +78,11 @@
                 <v-list-item-title class="text-uppercase"
                   >{{ $t("community.commons.you_are_moderator") }}
                 </v-list-item-title>
-                <v-list-item-icon>
+                <template v-slot:append>
                   <v-icon color="success" size="small"
                     >admin_panel_settings
                   </v-icon>
-                </v-list-item-icon>
+                </template>
               </v-list-item>
 
               <!-- profile -->
@@ -123,11 +123,11 @@
                   >{{ $t("community.commons.request_nominate") }}
                 </v-list-item-subtitle>
 
-                <v-list-item-icon
+                <template v-slot:append
                   v-if="is_verified_user"
                   class="text-success font-weight-bold"
                   >{{ profile_credit }}x
-                </v-list-item-icon>
+                </template>
               </v-list-item>
 
               <template v-if="access.admin || access.moderator">
@@ -141,7 +141,7 @@
                   <v-list-item-title
                     >{{ $t("community.commons.show_deleted_posts") }}
                   </v-list-item-title>
-                  <v-list-item-icon>
+                  <template v-slot:append>
                     <v-icon
                       :color="
                         community_config.show_deletes ? 'success' : undefined
@@ -152,7 +152,7 @@
                           : "radio_button_unchecked"
                       }}
                     </v-icon>
-                  </v-list-item-icon>
+                  </template>
                 </v-list-item>
               </template>
             </v-list>

@@ -90,13 +90,13 @@
               itemIcon &&
               (isFunction(itemIcon) ? itemIcon(task) : task[itemIcon])
             "
-            :dark="dark"
+            :dark="dark"  class="ms-2"
             >{{ isFunction(itemIcon) ? itemIcon(task) : task[itemIcon] }}
           </v-icon>
           <v-avatar
             v-if="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
             :rounded="rounded"
-            size="24"
+            size="24" class="ms-2"
           >
             <img
               :src="isFunction(itemImage) ? itemImage(task) : task[itemImage]"

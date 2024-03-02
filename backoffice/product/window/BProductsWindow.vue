@@ -1554,12 +1554,12 @@
 
     <!-- █████████████████████ Dialog > Category > Bulk discount █████████████████████ -->
 
-    <bulk-discount-dialog
+    <b-inventory-bulk-discount
       v-if="selected_category_bulk_discount"
       v-model="bulk_discount_dialog"
       :category="selected_category_bulk_discount"
       :shop="shop"
-    ></bulk-discount-dialog>
+    ></b-inventory-bulk-discount>
 
     <!-- █████████████████████ Dialog > Product > Change Status █████████████████████ -->
 
@@ -1679,7 +1679,7 @@ import BNoteButton from "@components/backoffice/note/button/BNoteButton.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import TaxProfileView from "@components/backoffice/tax/TaxProfileView.vue";
 import CategoryBulkProductsSetProfile from "@components/backoffice/category/category-bulk-action/CategoryBulkProductsSetProfile.vue";
-import BulkDiscountDialog from "@components/backoffice/incentives/discount-code/inventory-bulk-action/BulkDiscountDialog.vue";
+import BInventoryBulkDiscount from "@app-backoffice/components/inventory/bulk/discount/BInventoryBulkDiscount.vue";
 import { ProductStatus } from "@core/enums/product/ProductStatus";
 import SSmartSelect from "@components/smart/SSmartSelect.vue";
 import AdminProductsFilterInput from "@components/backoffice/product/products-filter/AdminProductsFilterInput.vue";
@@ -1705,7 +1705,7 @@ export default {
     SFadeScroll,
     AdminProductsFilterInput,
     SSmartSelect,
-    BulkDiscountDialog,
+    BInventoryBulkDiscount,
     CategoryBulkProductsSetProfile,
     TaxProfileView,
     BNoteButton,

@@ -13,60 +13,71 @@
   -->
 
 <template>
-  <div
-    :class="{ 'is-table': scrollable, disabled: disabled }"
-    :style="{ '--radius': radius }"
-    class="nav"
-  >
-    <div v-if="src" class="nav-icon">
-      <img :src="src" class="rounded" height="24" />
-    </div>
-    <div v-else-if="icon" class="nav-icon">
-      <v-icon>{{ icon }}</v-icon>
-    </div>
-
+  <s-fade-scroll center>
     <div
-      v-for="item in tabsNotNull"
-      :key="'tab-' + item.title"
-      :active-color="item.color"
-      :class="{ 'is-active': modelValue === item.value, small: small }"
-      :color="item.color"
-      :style="``"
-      class="nav-item"
-      @click="$emit('update:modelValue', item.value)"
+      :class="{ 'is-table': scrollable, disabled: disabled }"
+      :style="{ '--radius': radius }"
+      class="nav"
     >
-      <v-icon
-        v-if="item.icon"
-        :color="modelValue === item.value ? item.color : ''"
-        :size="window.innerWidth < 900 || small ? 'small' : undefined"
-        class="me-1"
-        style="pointer-events: none"
-        >{{ item.icon }}
-      </v-icon>
-      <v-img
-        v-if="item.src"
-        :src="item.src"
-        :width="window.innerWidth < 900 || small ? 20 : 28"
-        aspect-ratio="1"
-        class="me-1"
-        style="pointer-events: none"
-        >{{ item.icon }}
-      </v-img>
+      <div v-if="src" class="nav-icon">
+        <img :src="src" class="rounded" height="24" />
+      </div>
+      <div v-else-if="icon" class="nav-icon">
+        <v-icon>{{ icon }}</v-icon>
+      </div>
 
-      {{ item.title }}
+      <div
+        v-for="item in tabsNotNull"
+        :key="'tab-' + item.title"
+        :active-color="item.color"
+        :class="{ 'is-active': modelValue === item.value, small: small }"
+        :color="item.color"
+        :style="``"
+        class="nav-item"
+        @click="$emit('update:modelValue', item.value)"
+      >
+        <v-icon
+          v-if="item.icon"
+          :color="modelValue === item.value ? item.color : ''"
+          :size="window.innerWidth < 900 || small ? 'small' : undefined"
+          class="me-1"
+          style="pointer-events: none"
+          >{{ item.icon }}
+        </v-icon>
+        <v-img
+          v-if="item.src"
+          :src="item.src"
+          :width="window.innerWidth < 900 || small ? 20 : 28"
+          aspect-ratio="1"
+          class="me-1"
+          style="pointer-events: none"
+        >
+        </v-img>
 
-      <v-icon v-if="item.check" class="ms-1 zoomIn" color="success" size="small"
-        >check_circle
-      </v-icon>
+        {{ item.title }}
+
+        <slot :name="`item.${item.value}`"></slot>
+
+        <v-icon
+          v-if="item.check"
+          class="ms-1 zoomIn"
+          color="success"
+          size="small"
+          >check_circle
+        </v-icon>
+      </div>
+
+      <slot></slot>
     </div>
-
-    <slot></slot>
-  </div>
+  </s-fade-scroll>
 </template>
 
 <script>
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+
 export default {
   name: "RoundedTabs",
+  components: { SFadeScroll },
   emits: ["update:modelValue"],
   props: {
     modelValue: {},

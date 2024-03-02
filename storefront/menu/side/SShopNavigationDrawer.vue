@@ -217,9 +217,9 @@
           link
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
-          <v-list-item-icon v-if="item.src"
+          <template v-slot:append v-if="item.src"
             ><img :src="item.src" height="24" width="24"
-          /></v-list-item-icon>
+          /></template>
         </v-list-item>
       </v-expansion-panels>
 

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="text-center py-5">
+  <div class="text-center py-5" :class="{ disabled: disabled }">
     <div class="pod mx-auto">
       <v-icon color="#111">local_pizza</v-icon>
       <div>Net price</div>
@@ -43,6 +43,7 @@ export default {
   name: "BTaxProfileIncludePod",
   props: {
     included: {},
+    disabled: Boolean,
   },
 };
 </script>

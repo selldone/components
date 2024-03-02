@@ -48,6 +48,7 @@
     @keyup="onKeyUp"
     @keydown.enter="$emit('enter')"
     @click:clear="$emit('click:clear')"
+    :theme="dark ? 'dark' : 'light'"
   >
     <template v-slot:append-inner>
       <slot name="append-inner"></slot>
@@ -151,6 +152,7 @@ export default {
       default: false,
     },
     currency: {},
+    dark: Boolean,
   },
   data() {
     return {

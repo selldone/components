@@ -49,6 +49,7 @@
         prepend-inner-icon="image"
         show-size
         @update:model-value="(val) => $emit('update:file', val)"
+        :variant="variant"
       />
     </v-expand-transition>
   </div>
@@ -75,6 +76,9 @@ export default {
       type: Boolean,
     },
     message: { default: "Max image size: 2MB" },
+    variant: {
+      default: "underlined",
+    },
   },
   computed: {},
 

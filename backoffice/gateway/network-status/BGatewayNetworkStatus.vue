@@ -82,7 +82,7 @@
 import SSparkline from "@components/chart/sparkline/SSparkline.vue";
 
 export default {
-  name: "SBackofficeGatewayNetworkStatus",
+  name: "BGatewayNetworkStatus",
   components: { SSparkline },
   props: {
     network: {},

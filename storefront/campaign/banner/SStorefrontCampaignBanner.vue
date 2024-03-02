@@ -25,15 +25,16 @@
         )
       "
       :class="{ '-bg-repeat': banner.repeat }"
-      :dark="banner.dark"
+      :theme="banner.dark ? 'dark' : 'light'"
       :style="{
         'background-color': banner.bg,
-        'background-image': `url(${banner.bg_image})`,
+        'background-image': banner.bg_image
+          ? `url(${banner.bg_image})`
+          : undefined,
       }"
       class="s--storefront-top-banner"
-      single-line
     >
-      <template v-slot:icon>
+      <template v-slot:prepend>
         <v-avatar v-if="banner.icon" :color="banner.icon_bg" size="40">
           <v-icon>
             {{ banner.icon }}
@@ -64,7 +65,12 @@
           :width="banner.anim_width"
           class="mx-1 flex-grow-0"
         />
-        <v-btn class="mx-1 flex-grow-0" icon @click.stop="dismiss">
+        <v-btn
+          class="mx-1 flex-grow-0"
+          icon
+          @click.stop="dismiss"
+          variant="text"
+        >
           <v-icon>close</v-icon>
         </v-btn>
       </template>
@@ -140,7 +146,7 @@ html {
 
 .s--storefront-top-banner {
   z-index: 100;
-  height: var(--s--top-banner-heigh);
+  min-height: var(--s--top-banner-heigh);
   text-align: start;
 
   a {

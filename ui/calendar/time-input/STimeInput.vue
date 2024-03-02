@@ -22,10 +22,11 @@
       background-color="transparent"
       class="intim"
       dense
-      flat
+
       hide-details
       placeholder="00"
-      solo
+      variant="plain"
+
     >
     </s-number-input>
     :
@@ -37,10 +38,10 @@
       background-color="transparent"
       class="intim"
       dense
-      flat
+
       hide-details
       placeholder="00"
-      solo
+      variant="plain"
     >
     </s-number-input>
 
@@ -65,7 +66,7 @@ export default {
   name: "STimeInput",
   components: { SNumberInput },
   props: {
-    value: {},
+    modelValue: {},
   },
 
   data: () => ({
@@ -86,7 +87,7 @@ export default {
     },
   },
   watch: {
-    value() {
+    modelValue() {
       this.assignValue();
     },
     out() {
@@ -99,13 +100,13 @@ export default {
   },
   methods: {
     assignValue() {
-      if (this.value === this.out) return;
-      if (!this.value || !this.isString(this.value)) {
+      if (this.modelValue === this.out) return;
+      if (!this.modelValue || !this.isString(this.modelValue)) {
         this.h = 0;
         this.m = 0;
         return;
       }
-      const arr = this.value.split(":");
+      const arr = this.modelValue.split(":");
       if (arr.length !== 2) {
         this.h = 0;
         this.m = 0;
@@ -115,7 +116,7 @@ export default {
       this.m = parseInt(arr[1]);
     },
     updateValue() {
-      this.$emit("input", this.out);
+      this.$emit("update:modelValue", this.out);
       this.$emit("change", this.out);
     },
   },
@@ -124,7 +125,7 @@ export default {
 
 <style lang="scss" scoped>
 .intim {
-  width: 52px !important;
-  max-width: 52px !important;
+  width: 80px !important;
+  max-width: 80px !important;
 }
 </style>

@@ -99,14 +99,13 @@
                               }
                         "
                         @mouseenter="selected_category = cat"
+                        append-icon="more_horiz"
                       >
                         <v-list-item-title>
                           {{ $t("global.actions.view_all") }}
                         </v-list-item-title>
 
-                        <v-list-item-icon class="my-auto">
-                          <v-icon color="#333" size="small">more_horiz</v-icon>
-                        </v-list-item-icon>
+
                       </v-list-item>
                     </v-expansion-panel-text>
                   </v-expansion-panel>
@@ -154,14 +153,13 @@
                         }
                   "
                   @mouseenter="selected_category = cat"
+                  append-icon="more_horiz"
                 >
                   <v-list-item-title class="parent-cat text-capitalize">
                     {{ $t("global.actions.view_all") }}
                   </v-list-item-title>
 
-                  <v-list-item-icon class="my-auto">
-                    <v-icon color="#333" size="small">more_horiz</v-icon>
-                  </v-list-item-icon>
+
                 </v-list-item>
               </div>
             </v-col>

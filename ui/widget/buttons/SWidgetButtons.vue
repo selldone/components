@@ -16,6 +16,7 @@
   <div
     v-if="autoFixedPosition"
     v-intersect="(isIntersecting) => (intersected = isIntersecting)"
+    class="flex-grow-1"
   >
     <div class="widget-buttons" :class="{ '-fixed-bottom': !intersected }">
       <slot></slot>

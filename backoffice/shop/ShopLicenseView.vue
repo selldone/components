@@ -41,7 +41,7 @@
       pen: viewOnly,
     }"
     :title="$t('admin_shop.dashboard.info.license')"
-    :to="{ name: 'ShopEdit_License' }"
+    :to="{ name: 'BPageShopSettingLicense' }"
     class="font-weight-bold inline-block"
   >
     <img

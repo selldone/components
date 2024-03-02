@@ -14,7 +14,7 @@
 
 <template>
   <div class="s--time-span">
-    <div class="d-flex align-center mt-2 text-start">
+    <div class="d-flex align-center text-start">
       <small class="not-selectable">{{ $t("time_spans.days_range") }}</small>
       <v-spacer></v-spacer>
 

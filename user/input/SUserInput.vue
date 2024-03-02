@@ -18,20 +18,28 @@
     v-model:search="search"
     :customFilter="() => true"
     :density="dense ? 'compact' : undefined"
-    :filled="filled"
     :flat="flat"
     :hide-details="hideDetails"
     :items="items"
     :label="label"
     :loading="loading"
     :messages="messages"
-    :outlined="outlined"
     :placeholder="placeholder"
     :prepend-inner-icon="!noIcon && !select ? 'account_circle' : undefined"
     :readonly="readonly"
     :rounded="rounded"
     :rules="rules"
-    :variant="soloInverted && 'solo-inverted'"
+    :variant="
+      variant
+        ? variant
+        : soloInverted
+          ? 'solo-inverted'
+          : outlined
+            ? 'outlined'
+            : filled
+              ? 'filled'
+              : 'underlined'
+    "
     clearable
     hide-no-data
     item-title="name"
@@ -181,6 +189,7 @@ export default {
     messages: {},
 
     staffOfShopId: {},
+    variant: {},
   },
 
   data() {

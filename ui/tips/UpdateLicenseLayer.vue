@@ -17,7 +17,7 @@
     :class="{ 'fill-h': fillH }"
     :title="$t('global.notification.update_license')"
     class="overlay-block clickable --red text-uppercase"
-    @click.stop="$router.push({ name: 'ShopEdit_License' })"
+    @click.stop="$router.push({ name: 'BPageShopSettingLicense' })"
   ></div>
 </template>
 

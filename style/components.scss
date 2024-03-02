@@ -1670,9 +1670,7 @@ Global
     overflow: visible;
   }
 
-  .v-tabs-items {
-    overflow: hidden;
-  }
+
 
   .tab-image {
     transition: all 0.4s;
@@ -1704,13 +1702,7 @@ Global
 }
 
 
-.v-tabs-transparent-bg {
-  .v-tabs-items, .v-item-group {
-    background-color: transparent !important;
-    background: transparent !important;
-  }
 
-}
 
 // Center button in append input field of vuetify:
 .margin-n7px {
@@ -4696,8 +4688,6 @@ canvas.heatmap-canvas {
 
 .dashed-hr {
   border-top: dashed 1.6px #fff;
-  margin-left: -20px;
-  margin-right: -20px;
 }
 
 

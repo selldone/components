@@ -21,6 +21,20 @@
     :width="height * 1.5"
     class="no-inv"
   />
+  <b
+    v-else-if="region"
+    style="
+      background-color: #000;
+      color: #fff;
+      padding: 4px;
+      border-radius: 4px;
+      font-size: 12px;
+      min-width: 26px;
+      text-align: center;
+      text-transform: uppercase;
+    "
+    >{{ region.substring(0, 2) }}</b
+  >
 </template>
 
 <script>
