@@ -12,33 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-.border-w-medium {
-  border: solid #fff 4px !important;
-}
-
-.h--top-dash-group {
-  position: relative;
-  --color: rgba(255, 255, 255, 0.6);
-  --bg-color: transparent;
-
-  border-top: dotted thin var(--color);
-  white-space: nowrap; // Very important! To prevent inline blocks become more than one line!
-  &:before {
-    content: attr(caption);
-    position: absolute;
-    text-align: center;
-    padding: 0 4px;
-
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--bg-color);
-
-    height: 8px;
-    line-height: 5px;
-
-    color: var(--color);
-    font-size: 9px;
-    font-weight: 500;
-    border-radius: 2px;
-  }
-}
+@import "between";
+@import "rounded";
+@import "dash";
+@import "solid";

@@ -54,8 +54,8 @@
       </div>
 
       <v-container fluid>
-        <v-layout align-center justify-center row wrap>
-          <v-flex v-if="step === 1" md6 xs12>
+        <v-row align="center" justify="center"  >
+          <v-col v-if="step === 1" md6 xs12>
             <p class="action-title text-start m-2">
               <s-number-input
                 v-model="count"
@@ -95,15 +95,15 @@
               rounded
               variant="filled"
             />
-          </v-flex>
+          </v-col>
 
-          <v-flex v-if="step === 2" class="p-2" xs12>
+          <v-col v-if="step === 2" class="p-2" cols="12">
             <p class="text-start">
               {{ $t("return_request.media_message") }}
             </p>
-          </v-flex>
+          </v-col>
 
-          <v-flex v-if="step === 2" class="p-2 text-center" md3 xs12>
+          <v-col v-if="step === 2" class="p-2 text-center" md="3" cols="12">
             <div style="min-height: 48px">
               <v-img
                 v-if="imagePath"
@@ -129,9 +129,9 @@
               name="photo"
               @processfile="handleProcessFileImage"
             />
-          </v-flex>
+          </v-col>
 
-          <v-flex v-if="step === 2" class="p-2 text-center" md3 xs12>
+          <v-col v-if="step === 2" class="p-2 text-center" md="3" cols="12">
             <div style="min-height: 48px">
               <v-img
                 v-if="videoPath"
@@ -156,9 +156,9 @@
               name="photo"
               @processfile="handleProcessFileVideo"
             />
-          </v-flex>
+          </v-col>
 
-          <v-flex v-if="step === 2" class="p-2 text-center" md3 xs12>
+          <v-col v-if="step === 2" class="p-2 text-center" md="3" cols="12">
             <div style="min-height: 48px">
               <v-img
                 v-if="voicePath"
@@ -184,8 +184,8 @@
               name="photo"
               @processfile="handleProcessFileVoice"
             />
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-card-text>
     <v-card-actions class="pb-2">

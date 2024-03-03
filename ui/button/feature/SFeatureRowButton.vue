@@ -19,7 +19,7 @@
     :style="color ? `border-color: ${color} !important; color: ${color}` : null"
     :to="to"
     class="row-hover rounded-xl border px-5 py-7 d-flex m-2 bg-gray"
-    @click="$emit('click')"
+
   >
     <s-progress-loading v-if="loading"></s-progress-loading>
     <v-icon v-if="icon" :color="color" class="me-1">{{ icon }}</v-icon>

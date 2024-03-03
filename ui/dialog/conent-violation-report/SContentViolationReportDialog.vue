@@ -15,13 +15,13 @@
 <template>
   <v-bottom-sheet
     :max-width="840"
-    :model-value="value"
+    :model-value="modelValue"
     content-class="rounded-t-xl"
     scrollable
     width="98vw"
     @update:model-value="
       (val) => {
-        $emit('input', val);
+        $emit('update:modelValue', val);
         if (!val) report = null;
       }
     "
@@ -35,7 +35,7 @@
             : $t("global.article.report_dialog.report_title")
         }}
         <v-spacer></v-spacer>
-        <v-btn icon size="large" @click="$emit('input', false)">
+        <v-btn icon size="large" @click="$emit('update:modelValue', false)">
           <v-icon>close</v-icon>
         </v-btn>
       </v-card-title>
@@ -62,7 +62,7 @@
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="s$emit('value', false)">
+          <v-btn size="x-large" variant="text" @click="$emit('update:modelValue', false)">
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -104,8 +104,9 @@ import { ArticleReport } from "@core/enums/article/ArticleReport";
 
 export default {
   name: "SContentViolationReportDialog",
+  emits: ["update:modelValue", "report", "delete"],
   props: {
-    value: {},
+    modelValue: {},
     canDelete: {
       type: Boolean,
       default: false,

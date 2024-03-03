@@ -86,12 +86,12 @@
                 width="100%"
               >
                 <template v-slot:placeholder>
-                  <v-layout align-center fill-height justify-center ma-0>
+                  <v-row align="center"  justify="center" no-gutters>
                     <v-progress-circular
                       :color="SaminColorLight"
                       indeterminate
                     />
-                  </v-layout>
+                  </v-row>
                 </template>
               </v-img>
 

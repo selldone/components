@@ -15,13 +15,13 @@
 <template>
   <v-navigation-drawer
     :location="$vuetify.rtl && 'right'"
-    :model-value="value"
+    :model-value="modelValue"
     app
     class="text-start pt-5"
     style="border-radius: 24px; margin: 8px; height: calc(100vh - 100px)"
     temporary
     width="90vw"
-    @update:model-value="(val) => $emit('input', val)"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <div class="s--shop-navigation-drawer">
       <div class="d-flex align-center pa-2">
@@ -71,7 +71,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn color="#000" icon @click="$emit('input', false)">
+        <v-btn color="#000" icon @click="$emit('update:modelValue', false)">
           <v-icon>close</v-icon>
         </v-btn>
       </div>
@@ -266,6 +266,7 @@ import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontS
 
 export default {
   name: "SShopNavigationDrawer",
+  emits: ["update:modelValue"],
   components: {
     SShopLanguageSelector,
     SCurrencySelector,
@@ -274,7 +275,7 @@ export default {
     SStorefrontSocialButtons,
   },
   props: {
-    value: {},
+    modelValue: {},
     shop: {
       require: true,
       type: Object,

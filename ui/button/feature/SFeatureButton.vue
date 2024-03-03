@@ -27,7 +27,7 @@
       :target="href ? '_blank' : null"
       :to="to"
       class="c-it text-black"
-      @click="$emit('click')"
+      @click="$emit('select')"
     >
       <img v-if="src" :src="src" height="36" width="36" />
       <v-icon v-if="icon" :color="iconColor" size="36">{{ icon }}</v-icon>
@@ -45,12 +45,15 @@
       <v-icon start>settings</v-icon>
       {{ $t("global.commons.setting") }}
     </v-btn>
+
+    <slot></slot>
   </div>
 </template>
 
 <script>
 export default {
   name: "SFeatureButton",
+  emits: ["select"],
   props: {
     href: {},
     to: {},

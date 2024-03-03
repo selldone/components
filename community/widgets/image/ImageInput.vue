@@ -73,7 +73,6 @@ export default {
 
   props: {
     src: {},
-    value: {},
   },
 
   data() {

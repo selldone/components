@@ -20,28 +20,30 @@
     :item-title="(item) => $t(item.text)"
     :items="permissions_list"
     :label="label"
-    :messages="messages"
-    :model-value="value"
+    :messages="successMessages ? successMessages : messages"
+    :model-value="modelValue"
     :multiple="multiple"
     :outlined="outlined"
     :return-object="returnObject"
     :rounded="rounded"
     :solo="solo"
-    :success-messages="successMessages"
     item-value="code"
-    @update:model-value="(val) => $emit('input', val)"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <template v-slot:item="{ item }">
-      <span v-if="item" class="options text-start">
-        <img :src="item.src" class="me-1" height="32" />
-        {{ $t(item.text) }}
-      </span>
+    <template v-slot:item="{ item, props }">
+      <v-list-item
+        v-bind="props"
+        class="text-start"
+        :prepend-avatar="item.raw.src"
+        :title="$t(item.raw.text)"
+      >
+      </v-list-item>
     </template>
 
     <template v-slot:chip="{ item }">
-      <span v-if="item" class="text-start me-2">
-        <img :src="item.src" class="me-1" height="26" />
-        {{ $t(item.text) }}
+      <span class="text-start">
+        <img :src="item.raw.src" class="me-1" height="26" />
+        {{ $t(item.raw.text) }}
       </span>
     </template>
   </v-select>
@@ -53,7 +55,7 @@ import { ShopPermissions } from "@core/enums/permission/ShopPermissions";
 export default {
   name: "SShopPermissionInput",
   props: {
-    value: {},
+    modelValue: {},
     label: {},
     rounded: { type: Boolean, default: false },
     filled: { type: Boolean, default: false },

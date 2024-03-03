@@ -1778,6 +1778,10 @@ export default {
 
     //――――――――――――――――――――――― Update page ―――――――――――――――――――――――
 
+    /**
+     * Called externally
+     * @param force
+     */
     updateArticlePage(force = false) {
       // 🞇 Reset to default
       this.resetToDefault();

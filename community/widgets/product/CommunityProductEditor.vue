@@ -85,6 +85,7 @@ import CommunityProductView from "./CommunityProductView.vue";
 export default {
   name: "CommunityProductEditor",
   components: { CommunityProductView },
+  emits: ["update:modelValue"],
   props: {
     shop: {
       require: true,
@@ -96,7 +97,7 @@ export default {
       type: Object,
     },
 
-    value: {},
+    modelValue: {},
   },
 
   data: () => ({
@@ -117,15 +118,15 @@ export default {
 
   watch: {
     product_id(val) {
-      this.$emit("input", val);
+      this.$emit("update:modelValue", val);
     },
   },
 
   computed: {},
 
   created() {
-    this.product_id = this.value;
-    this.product_url = this.value;
+    this.product_id = this.modelValue;
+    this.product_url = this.modelValue;
   },
 
   methods: {

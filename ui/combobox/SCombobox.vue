@@ -22,14 +22,14 @@
     :items="items_fixed"
     :label="label"
     :messages="messages"
-    :model-value="value"
+    :model-value="modelValue"
     :returnObject="returnObject"
     :rounded="rounded"
     :variant="solo?'solo':filled?'filled':'underlined'"
-    @update:model-value="(val) => $emit('input', val)"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template v-slot:prepend-inner>
-      <img :src="findIcon(value)" class="me-1" height="16" width="16" />
+      <img :src="findIcon(modelValue)" class="me-1" height="16" width="16" />
     </template>
   </v-combobox>
 </template>
@@ -37,8 +37,9 @@
 <script>
 export default {
   name: "SCombobox",
+  emits: ["update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
     items: {},
     itemText: {},
     itemValue: {},

@@ -472,7 +472,7 @@
           :activeColor="showNotes ? undefined : '#333'"
           :note="category.note"
           class="absolute-top-start"
-          style="top: 0; left: 0;z-index: 50;"
+          style="top: 0; left: 0; z-index: 50"
           @click="showNoteCategory(category)"
         ></b-note-button>
       </v-col>
@@ -563,6 +563,7 @@
             @onShowNote="showNoteProduct(product)"
             @select="$emit('select', product)"
             :dark="dark"
+            @click.middle.stop="$emit('select:middle', product)"
           >
           </b-product-window-product-mini>
 
@@ -607,7 +608,7 @@
               }
             "
             :dark="dark"
-            :color="dark?'#000':'#fff'"
+            :color="dark ? '#000' : '#fff'"
           />
 
           <v-scale-transition leave-absolute origin="center center">
@@ -1696,6 +1697,7 @@ export default {
     "change:parent-folder",
     "select-category",
     "select",
+    "select:middle",
     "click:add",
     "click:fast-add",
   ],
@@ -1811,7 +1813,7 @@ export default {
     withProductTranslations: { type: Boolean, default: false },
     withCategoryTranslations: { type: Boolean, default: false },
 
-    dark:Boolean,
+    dark: Boolean,
   },
 
   data: () => ({

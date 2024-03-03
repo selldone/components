@@ -31,27 +31,27 @@
           'bg-dark': dark,
           'bg-white': !dark,
           'disabled pen': task.disabled,
-          pen: !clearable && forceShowAll && value === val(task),
+          pen: !clearable && forceShowAll && modelValue === val(task),
         }"
         class="p-2 pp row-hover usn"
         @click="
           $emit(
-            'input',
+            'update:modelValue',
             forceShowAll
-              ? clearable && value === val(task)
+              ? clearable && modelValue === val(task)
                 ? null
                 : val(task)
-              : !isUnset(value)
+              : !isUnset(modelValue)
                 ? null
                 : val(task),
           );
           $emit(
             'change',
             forceShowAll
-              ? clearable && value === val(task)
+              ? clearable && modelValue === val(task)
                 ? null
                 : val(task)
-              : !isUnset(value)
+              : !isUnset(modelValue)
                 ? null
                 : val(task),
           );
@@ -60,11 +60,11 @@
       >
         <div class="d-flex align-center mnh">
           <div
-            :class="{ 'avatar-gradient': val(task) === value }"
+            :class="{ 'avatar-gradient': val(task) === modelValue }"
             class="me-2 -thin -gray flex-grow-0"
           >
             <v-sheet
-              v-if="val(task) === value"
+              v-if="val(task) === modelValue"
               :color="color"
               class="circle-check zoomIn"
             ></v-sheet>
@@ -191,12 +191,13 @@ import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 export default {
   name: "SSmartVariantSelect",
   components: { SColorCircle, VariantAssetView },
+  emits: ["update:modelValue", "change"],
   props: {
     shop: {
       require: true,
       type: Object,
     },
-    value: {},
+    modelValue: {},
 
     variants: {
       require: true,
@@ -248,8 +249,10 @@ export default {
   computed: {
     items_show() {
       if (this.forceShowAll) return this.variants;
-      if (this.isUnset(this.value)) return this.variants;
-      const out = this.variants.filter((item) => this.val(item) === this.value);
+      if (this.isUnset(this.modelValue)) return this.variants;
+      const out = this.variants.filter(
+        (item) => this.val(item) === this.modelValue,
+      );
       return out.length ? out : this.variants;
     },
   },

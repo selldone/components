@@ -28,7 +28,6 @@ import GlobalRules from "@core/helper/rules/GlobalRules";
 import {SocialNetwork} from "@core/enums/social/SocialNetwork";
 import {ShopURLs} from "@core/helper/url/ShopURLs";
 import {ColorHelper} from "@core/helper/color/ColorHelper";
-import LEventsName from "@app-page-builder/mixins/events/name/LEventsName";
 
 import {CustomerClubLevels} from "@core/enums/customer/CustomerClubLevels";
 import {CurrencyHelper} from "@core/helper/currency/CurrencyHelper";
@@ -44,7 +43,6 @@ import {EventBus, EventName} from "@core/events/EventBus";
 
 //―――――――――――――――――――――― Country ――――――――――――――――――――
 import {getCountryName} from "@core/enums/country/country-list";
-import type {Note} from "@core/models/shop/note/note.model";
 import {Shop} from "@core/models/shop/shop.model";
 import type {ProductVariant} from "@core/models/shop/product/product_variant.model";
 import {Product} from "@core/models/shop/product/product.model";
@@ -196,8 +194,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                      return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                    },*/
+                          return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                        },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -214,7 +212,7 @@ const CoreMixin = {
           hour12: true,
         } as Intl.DateTimeFormatOptions;
         return Intl.DateTimeFormat(
-          window.$language?.full_local,
+          window.$language?.full_locale,
           options,
         ).format(new Date(datetimeStr));
       } catch (e) {
@@ -233,7 +231,7 @@ const CoreMixin = {
           year: "numeric",
         } as Intl.DateTimeFormatOptions;
         return Intl.DateTimeFormat(
-          window.$language?.full_local,
+          window.$language?.full_locale,
           options,
         ).format(new Date(datetimeStr));
       } catch (e) {
@@ -252,7 +250,7 @@ const CoreMixin = {
           hour12: true,
         } as Intl.DateTimeFormatOptions;
         return Intl.DateTimeFormat(
-          window.$language?.full_local,
+          window.$language?.full_locale,
           options,
         ).format(new Date(datetimeStr));
       } catch (e) {
@@ -363,8 +361,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                      return Num2persian(number);
-                    },*/
+                          return Num2persian(number);
+                        },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -386,7 +384,7 @@ const CoreMixin = {
     ) {
       if (!currency_code) return "";
 
-      let currency ;
+      let currency;
       if (this.isObject(currency_code)) currency = currency_code;
       else if (this.isString(currency_code)) currency = Currency[currency_code];
       if (!currency) return "";
@@ -599,7 +597,6 @@ const CoreMixin = {
         color: "red",
       });
     },
-
 
     //―――――――――――――――――――――― Format account number ――――――――――――――――――――
     // XXXX-XXXX-XXXX-XXXX
@@ -929,7 +926,7 @@ const CoreMixin = {
     },
 
     getFormatPriceCurrency(price: number, currency: keyof typeof Currency) {
-      return new Intl.NumberFormat(window.$language?.full_local, {
+      return new Intl.NumberFormat(window.$language?.full_locale, {
         style: "currency",
         currency: currency,
       }).format(price);
@@ -1141,6 +1138,10 @@ const CoreMixin = {
       this.EventBus.$emit("need-login", true);
     },
 
+    BlurApp(blur: boolean) {
+      EventBus.$emit(EventName.BLUR_APP, blur);
+    },
+
     //―――――――――――――――――――――― Fullscreen ――――――――――――――――――――
 
     // Fullscreen by animation
@@ -1234,7 +1235,6 @@ const CoreMixin = {
       this.EventBus.$emit("guild:share", { activator, guild });
     },
 
-
     //―――――――――――――――――――――― Logistic > Basket Helpers ――――――――――――――――――――
     getBasketOrderCode(order: IOrder) {
       if (order.label) {
@@ -1309,8 +1309,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                      PushNotification.AskForPermission();
-                    },*/
+                          PushNotification.AskForPermission();
+                        },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 

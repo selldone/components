@@ -121,8 +121,9 @@ import { MapHelper } from "@core/helper/map/MapHelper";
 export default {
   name: "SShopBillingAddressForm",
   components: { SSmartSwitch, SSmartToggle, SCountrySelect },
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
     receiverInfo: {},
     dark: {
       default: false,
@@ -199,16 +200,16 @@ export default {
 
   methods: {
     loadValue() {
-      if (this.value) {
-        this.same_billing = !this.value.custom;
+      if (this.modelValue) {
+        this.same_billing = !this.modelValue.custom;
 
-        this.billing_name = this.value.name;
-        this.billing_country = this.value.country;
-        this.billing_state = this.value.state;
-        this.billing_state_code = this.value.state_code;
-        this.billing_address = this.value.address;
-        this.billing_business = this.value.business;
-        this.billing_tax_id = this.value.tax_id;
+        this.billing_name = this.modelValue.name;
+        this.billing_country = this.modelValue.country;
+        this.billing_state = this.modelValue.state;
+        this.billing_state_code = this.modelValue.state_code;
+        this.billing_address = this.modelValue.address;
+        this.billing_business = this.modelValue.business;
+        this.billing_tax_id = this.modelValue.tax_id;
       } else {
         Object.assign(this.$data, this.$options.data()); // Reset values.
       }
@@ -216,7 +217,7 @@ export default {
 
     updateValue() {
       //console.log('-->',this.value,this.billing,this.receiverInfo)
-      this.$emit("input", this.billing);
+      this.$emit("update:modelValue", this.billing);
       this.$nextTick(() => {
         this.$emit("change", this.billing);
       });

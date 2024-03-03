@@ -137,7 +137,7 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 html {
-  --s--top-banner-heigh: 64px;
+
 }
 
 /*
@@ -146,7 +146,7 @@ html {
 
 .s--storefront-top-banner {
   z-index: 100;
-  min-height: var(--s--top-banner-heigh);
+  min-height: 64px;
   text-align: start;
 
   a {

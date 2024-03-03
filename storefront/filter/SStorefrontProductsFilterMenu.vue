@@ -130,18 +130,18 @@
             </template>
           </v-range-slider>
 
-          <v-layout row wrap>
-            <v-flex class="p-2" xs6>
+          <v-row  >
+            <v-col class="p-2" cols="6">
               {{ FormatNumberCurrency(price_range[0]) }}
               <br />
               <small>{{ GetUserSelectedCurrencyName() }}</small>
-            </v-flex>
-            <v-flex class="p-2" xs6>
+            </v-col>
+            <v-col class="p-2" cols="6">
               {{ FormatNumberCurrency(price_range[1]) }}
               <br />
               <small>{{ GetUserSelectedCurrencyName() }}</small>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </div>
       </v-list>
 
@@ -238,13 +238,13 @@ import SSmartToggle from "@components/smart/SSmartToggle.vue";
 export default {
   name: "SStorefrontProductsFilterMenu",
   components: { SSmartToggle, SelectionList },
-  emits: ["change-filter", "change-height"],
+  emits: ["change-filter", "change-height", "update:modelValue"],
   props: {
     shop: {
       required: true,
       type: Object,
     },
-    value: {},
+    modelValue: {},
     folders: {},
     parentFolders: {},
   },
@@ -531,10 +531,10 @@ export default {
   },
   watch: {
     drawer(val) {
-      this.$emit("input", val);
+      this.$emit("update:modelValue", val);
     },
 
-    value(val) {
+    modelValue(val) {
       this.drawer = val;
     },
 
@@ -570,7 +570,7 @@ export default {
 
   created() {
     this.change_not_user = new Date().getTime();
-    this.drawer = this.value;
+    this.drawer = this.modelValue;
     this.price_range = [this.min_price, this.max_price];
 
     // Load from route query:

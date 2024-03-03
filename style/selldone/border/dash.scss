@@ -1,0 +1,40 @@
+/*!
+ * Copyright (c) 2024. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+.h--top-dash-group {
+  position: relative;
+  --color: rgba(255, 255, 255, 0.6);
+  --bg-color: transparent;
+
+  border-top: dotted thin var(--color);
+  white-space: nowrap; // Very important! To prevent inline blocks become more than one line!
+  &:before {
+    content: attr(caption);
+    position: absolute;
+    text-align: center;
+    padding: 0 4px;
+
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-color);
+
+    height: 8px;
+    line-height: 5px;
+
+    color: var(--color);
+    font-size: 9px;
+    font-weight: 500;
+    border-radius: 2px;
+  }
+}

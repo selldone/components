@@ -21,7 +21,6 @@
     :theme="dark ? 'dark' : 'light'"
     class="widget s--widget"
     v-bind="dataWidgster"
-    @click="$emit('click')"
     :rounded="rounded"
   >
     <div class="top-left-container">

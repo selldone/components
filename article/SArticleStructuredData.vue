@@ -22,7 +22,7 @@
 
       <v-scroll-y-transition group tag="v-row">
         <v-col
-          v-for="(structure, index) in value"
+          v-for="(structure, index) in modelValue"
           :key="index"
           cols="12"
           md="4"
@@ -55,7 +55,7 @@
               class="absolute-top-end sub-caption -hover"
               color="red"
               icon
-              @click.stop="remove(value, structure)"
+              @click.stop="remove(modelValue, structure)"
             >
               <v-icon>close</v-icon>
             </v-btn>
@@ -188,9 +188,9 @@ import SStructureDataInput from "./SStructureDataInput.vue";
 export default {
   name: "SArticleStructuredData",
   components: { SStructureDataInput, SAddButtonGreen },
-
+  emits: ["update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
 
     editMode: {
       type: Boolean,
@@ -292,7 +292,8 @@ export default {
   },
 
   created() {
-    if (!this.value || !Array.isArray(this.value)) this.$emit("input", []);
+    if (!this.modelValue || !Array.isArray(this.modelValue))
+      this.$emit("update:modelValue", []);
   },
 
   methods: {
@@ -319,12 +320,12 @@ export default {
     },
 
     saveChange() {
-      if (!this.value || !Array.isArray(this.value)) {
+      if (!this.modelValue || !Array.isArray(this.modelValue)) {
         // Not set yet!
-        this.$emit("input", [this.structure_data]);
+        this.$emit("update:modelValue", [this.structure_data]);
       } else {
         if (!this.selected) {
-          this.value.push(this.structure_data);
+          this.modelValue.push(this.structure_data);
         }
       }
 

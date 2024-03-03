@@ -27,7 +27,7 @@
       ref="items"
       :image_id="image.id"
       :style="style_value"
-      class="item-grid"
+      class="item-grid position-relative"
     >
       <v-img
         :aspect-ratio="$vuetify.display.smAndUp ? 1 : 2"
@@ -35,9 +35,7 @@
         class="m-2"
       >
         <template v-slot:placeholder>
-          <v-layout align-center fill-height justify-center ma-0>
-            <v-progress-circular color="primary" indeterminate />
-          </v-layout>
+            <v-progress-circular color="primary" indeterminate class="center-absolute" />
         </template>
 
         <div

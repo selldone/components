@@ -97,14 +97,14 @@
       </v-card-title>
 
       <v-card-text>
-        <product-select-box
+        <b-products-select-box
           v-model="selected_product_id"
           :shop="shop"
           auto-open-dialog
           simple-mode
           single-product-select
         >
-        </product-select-box>
+        </b-products-select-box>
 
         <v-btn class="m-2" variant="text" @click="show_products = false">
           {{ $t("global.actions.back") }}
@@ -314,13 +314,13 @@
 <script>
 import { SupportCategory } from "@core/enums/support/SupportCategory";
 import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
-import ProductSelectBox from "@components/product/input/ProductSelectBox.vue";
+import BProductsSelectBox from "@components/backoffice/product/select-box/BProductsSelectBox.vue";
 import SimpleAutoProductCard from "@components/storefront/chat/SimpleAutoProductCard.vue";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "ContactConversationBox",
-  components: { SimpleAutoProductCard, ProductSelectBox, EmojiRating },
+  components: { SimpleAutoProductCard, BProductsSelectBox, EmojiRating },
   props: {
     shop: {
       required: true,

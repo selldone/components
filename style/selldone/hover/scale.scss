@@ -1,0 +1,132 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+
+.hover-scale {
+  --scale: 3;
+  --duration: 0.3s;
+
+  transition: all var(--duration) ease-in-out;
+
+  &:hover {
+    position: relative;
+    transform: scale(var(--scale), var(--scale));
+    z-index: 1;
+
+    &.force-top {
+      z-index: 20;
+    }
+
+  }
+
+  &.-fast {
+    --duration: 0.2s;
+    transition-duration: 0.2s !important;
+  }
+
+  // Create double animation effect on avatar
+  &.v-avatar {
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); // Customize this for your bounce effect
+    &:hover {
+      > img, > .v-avatar {
+        animation: hover-bounce calc(var(--duration) * 0.6) ease-in-out;
+      }
+    }
+  }
+}
+
+@keyframes hover-bounce {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(0.7); // Scale up more than the original for the bounce effect
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+.hover-scale-small {
+  --scale: 1.4;
+  --duration: 0.3s;
+
+  transition: all var(--duration) ease-in-out;
+
+  &:hover {
+    transform: scale(var(--scale), var(--scale));
+    z-index: 1;
+
+    &.force-top {
+      z-index: 20;
+    }
+  }
+}
+
+.hover-scale-tiny {
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.2, 1.2);
+    z-index: 1;
+
+    &.force-top {
+      z-index: 20;
+    }
+  }
+}
+
+
+.hover-scale-y-2x {
+  transition: all 0.3s linear;
+  --scale: 2;
+
+  &:hover {
+    transform: scale(1, var(--scale));
+  }
+}
+
+.hover-scale-y-3x {
+  transition: all 0.3s linear;
+  --scale: 3;
+
+  &:hover {
+    transform: scale(1, var(--scale));
+  }
+}
+
+
+/*
+Avatar scale
+<v-chip class="chip-avatar-scale">
+ */
+
+.chip-avatar-scale {
+
+  --duration: 0.2s;
+  --scale: 3;
+
+  overflow: visible;
+
+  .v-avatar {
+    transition: all var(--duration) ease-in-out;
+
+
+    &:hover {
+      transform: scale(var(--scale), var(--scale));
+      z-index: 1;
+    }
+  }
+}

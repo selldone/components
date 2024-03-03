@@ -85,13 +85,14 @@ import numeral from "numeral";
 export default {
   name: "CommunityAttachEditor",
   components: {},
+  emits: ["update:modelValue"],
   props: {
     community: {
       require: true,
       type: Object,
     },
 
-    value: {},
+    modelValue: {},
   },
 
   data: () => ({
@@ -101,7 +102,7 @@ export default {
 
   watch: {
     files(val) {
-      this.$emit("input", val);
+      this.$emit("update:modelValue", val);
     },
   },
 
@@ -112,8 +113,8 @@ export default {
   },
 
   created() {
-    if (this.value) {
-      this.files = this.value;
+    if (this.modelValue) {
+      this.files = this.modelValue;
     } else {
       this.files = [];
     }

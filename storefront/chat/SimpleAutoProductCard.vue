@@ -23,7 +23,7 @@
       @click="$emit('click')"
     >
       <v-img
-        :contain="isImageContain"
+        :cover="!isImageContain"
         :src="getShopImagePath(product.icon)"
         height="96"
         width="100%"

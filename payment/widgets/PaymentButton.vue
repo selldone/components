@@ -16,7 +16,6 @@
   <div
     :class="{ '-small': small, '-blue': blue, '-purple': purple }"
     class="container-btn border"
-    @click="$emit('click')"
   >
     <div class="left-side">
       <div class="card-pay">

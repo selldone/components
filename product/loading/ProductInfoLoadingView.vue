@@ -14,32 +14,31 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-container class="vue-content-placeholders" fluid>
-    <v-layout fill-height row wrap>
+    <v-row >
       <!--  ---------------------------- Images ---------------------------- -->
 
-      <v-flex
-        class="image-gallery-root border-end-grater-xl"
-        justify-center
-        lg5
+      <v-col
+        class="image-gallery-root border-end-grater-xl d-flex justify-center"
+        lg="5"
         style="min-height: 580px"
-        xs12
+        cols="12"
       >
         <!-- swiper1 -->
         <div class="image-sprite" style="height: 80%" />
 
         <!-- swiper2 Thumbs -->
         <v-container fluid p-2 style="height: 20%">
-          <v-layout align-center fill-height justify-center row wrap>
-            <v-flex class="image-sprite" xs3 />
-            <v-flex class="image-sprite" xs3 />
-            <v-flex class="image-sprite" xs3 />
-          </v-layout>
+          <v-row align="center"  justify="center"  >
+            <v-col  class="image-sprite" cols="3" />
+            <v-col class="image-sprite" cols="3"  />
+            <v-col class="image-sprite" cols="3"  />
+          </v-row>
         </v-container>
-      </v-flex>
+      </v-col>
 
       <!--  ---------------------------- Info ---------------------------- -->
 
-      <v-flex class="text-right pr-md-4 pl-md-4 pr-sm-2 pl-sm-2" lg7 xs12>
+      <v-col class="text-right pr-md-4 pl-md-4 pr-sm-2 pl-sm-2" lg="7" cols="12">
         <h1 class="text-right mt-2 pr-2 pl-2 text-sprite big" />
         <p class="text-muted pr-2 pl-2 text-sprite small" />
 
@@ -47,9 +46,9 @@
 
         <hr />
         <v-container class="pt-0 pb-0" fluid>
-          <v-layout row wrap>
+          <v-row  >
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Section 1 ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <v-flex lg8 md7 sm6 xs12>
+            <v-col lg="8" md="7" sm="6" cols="12" >
               <p class="pr-2 text-sprite small" />
 
               <p class="pr-2 text-sprite" style="min-height: 1rem" />
@@ -77,23 +76,21 @@
                   ―――――――――――――――――――――――― Buy Button ―――――――――――――――――――――――
                   █████████████████████████████████████████████████████████████
                   -->
-            </v-flex>
+            </v-col>
 
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Section 2 ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <v-flex class="pr-3 pl-2" lg4 md5 sm6 xs12>
+            <v-col class="pr-3 pl-2" lg="4" md="5" sm="6" cols="12">
               <p class="text-sprite small" />
               <p class="text-sprite small" />
               <p class="text-sprite small" />
               <p class="text-sprite small" />
               <p class="text-sprite small" />
-            </v-flex>
+            </v-col>
 
-            <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Seller Options ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <v-flex xs12 />
-          </v-layout>
+          </v-row>
         </v-container>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
     <slot></slot>
   </v-container>
 </template>

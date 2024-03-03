@@ -58,13 +58,14 @@ import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
 export default {
   name: "SelectionList",
   components: { VariantAssetView, SColorCircle },
+  emits: ["update:modelValue", "change"],
   props: {
     isColor: {
       type: Boolean,
       default: false,
     },
 
-    value: {},
+    modelValue: {},
     list: {
       require: true,
       type: Array,
@@ -91,7 +92,7 @@ export default {
     selected_list: {
       handler: function (val) {
         //console.log("watch > selected_list", this.internal_change_value);
-        this.$emit("input", val);
+        this.$emit("update:modelValue", val);
 
         if (!this.internal_change_value)
           this.$emit("change", this.selected_list);
@@ -101,7 +102,7 @@ export default {
       deep: true,
     },
 
-    value(value) {
+    modelValue(value) {
       this.selected_list = value;
     },
   },
@@ -115,7 +116,7 @@ export default {
   created() {
     this.internal_change_value = true;
 
-    this.selected_list = this.value;
+    this.selected_list = this.modelValue;
   },
 };
 </script>

@@ -116,7 +116,6 @@
 export default {
   name: "SBackofficeWalletCreationDialog",
   props: {
-    value: {},
     gateway: {
       require: true,
     },

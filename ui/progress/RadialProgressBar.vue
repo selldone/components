@@ -16,7 +16,6 @@
   <div
     :style="containerStyle"
     class="radial-progress-container"
-    @click="$emit('click')"
   >
     <div :style="innerCircleStyle" class="radial-progress-inner">
       <slot />

@@ -50,7 +50,9 @@
         :key="h"
         :class="{
           '-active':
-            (value && value[day.value] && value[day.value].includes(h)) ||
+            (modelValue &&
+              modelValue[day.value] &&
+              modelValue[day.value].includes(h)) ||
             inDragMode(day.value, h),
           '-now': isNow(day.value, h),
           '-green': isPointed(day.value, h),
@@ -70,8 +72,9 @@ import { DateConverter } from "@core/helper/date/DateConverter";
 
 export default {
   name: "SWeekDayTimePicker",
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
     pointedTimeUtc: {},
     editable: {
       type: Boolean,
@@ -103,8 +106,8 @@ export default {
   },
   watch: {},
   created() {
-    if (!this.value || !this.isObject(this.value)) {
-      this.$emit("input", {});
+    if (!this.modelValue || !this.isObject(this.modelValue)) {
+      this.$emit("update:modelValue", {});
       // Not emit change! only change by user interaction emit change!
     }
   },
@@ -115,17 +118,18 @@ export default {
       const hour = parseInt(e.target.getAttribute("hour"));
       if (!day || !hour) return;
 
-      if (!this.value[day] || !Array.isArray(this.value[day]))
-        this.value[day] = [hour];
-      else if (!this.value[day].includes(hour)) this.value[day].push(hour);
-      else this.remove(this.value[day], hour);
+      if (!this.modelValue[day] || !Array.isArray(this.modelValue[day]))
+        this.modelValue[day] = [hour];
+      else if (!this.modelValue[day].includes(hour))
+        this.modelValue[day].push(hour);
+      else this.remove(this.modelValue[day], hour);
 
-      const new_val = Object.assign(this.value);
-      this.$emit("input", new_val);
+      const new_val = Object.assign(this.modelValue);
+      this.$emit("update:modelValue", new_val);
 
       this.$forceUpdate();
       this.$emit("change", new_val);
-      //console.log("onClick", day, hour, this.value);
+      //console.log("onClick", day, hour, this.modelValue);
     },
 
     resetDrag() {
@@ -192,15 +196,16 @@ export default {
             continue;
           }
 
-          if (!this.value[day] || !Array.isArray(this.value[day]))
-            this.value[day] = [hour];
-          else if (!this.value[day].includes(hour)) this.value[day].push(hour);
+          if (!this.modelValue[day] || !Array.isArray(this.modelValue[day]))
+            this.modelValue[day] = [hour];
+          else if (!this.modelValue[day].includes(hour))
+            this.modelValue[day].push(hour);
         }
       }
 
-      const new_val = Object.assign(this.value);
+      const new_val = Object.assign(this.modelValue);
 
-      this.$emit("input", new_val);
+      this.$emit("update:modelValue", new_val);
       this.$forceUpdate();
       this.resetDrag();
 
@@ -254,18 +259,18 @@ export default {
     toggleDay(day) {
       if (!this.editable) return;
       if (
-        !this.value[day] ||
-        !Array.isArray(this.value[day]) ||
-        !this.value[day].includes(1)
+        !this.modelValue[day] ||
+        !Array.isArray(this.modelValue[day]) ||
+        !this.modelValue[day].includes(1)
       ) {
         // toggle base on hour 1
-        this.value[day] = Array.from({ length: 24 }, (_, i) => i + 1);
+        this.modelValue[day] = Array.from({ length: 24 }, (_, i) => i + 1);
       } else {
-        this.value[day] = null;
+        this.modelValue[day] = null;
       }
-      const new_val = Object.assign(this.value);
+      const new_val = Object.assign(this.modelValue);
 
-      this.$emit("input", new_val);
+      this.$emit("update:modelValue", new_val);
       this.$forceUpdate();
       this.$emit("change", new_val);
     },
@@ -273,7 +278,7 @@ export default {
     resetAll() {
       const new_val = {};
 
-      this.$emit("input", new_val);
+      this.$emit("update:modelValue", new_val);
       this.$forceUpdate();
       this.$emit("change", new_val);
     },

@@ -44,11 +44,11 @@
       v-if="add"
       class="more-items"
       color="success"
-      icon
+      icon  :size="size"
       variant="flat"
       @click.stop="$emit('click:add')"
     >
-      <v-icon>add</v-icon>
+      <v-icon size="20" >add</v-icon>
     </v-btn>
   </div>
 </template>

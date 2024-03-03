@@ -180,8 +180,8 @@
 export default {
   name: "SShopUserMenuList",
   components: {},
+  emits: ["click:logout"],
   props: {
-    value: {},
     shop: {
       require: true,
       type: Object,

@@ -14,9 +14,9 @@
 
 <template>
   <v-dialog
-    :model-value="value"
+    :model-value="modelValue"
     width="500"
-    @update:model-value="(val) => $emit('input', val)"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <v-card>
       <v-card-title>
@@ -78,8 +78,9 @@
 <script>
 export default {
   name: "SStorefrontGiftcardAddDialog",
+  emits: ["update:modelValue", "add"],
   props: {
-    value: {},
+    modelValue: {},
   },
   data: () => ({
     card_number: null,

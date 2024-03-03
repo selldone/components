@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -33,34 +33,41 @@
       <b v-if="!simpleMode" class="mx-2"
         >{{ $t("global.commons.categories") }}:</b
       >
-      <v-list class="border-between-vertical" color="transparent">
-        <v-list-item
-          v-for="category in categories_detail"
-          :key="category.id"
-          density="compact"
-          lines="three"
-        >
+      <v-list
+        class="border-between-vertical"
+        color="transparent"
+        lines="two"
+        bg-color="transparent"
+      >
+        <v-list-item v-for="category in categories_detail" :key="category.id">
           <template v-slot:prepend>
             <v-avatar rounded="lg">
               <v-img
                 :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
-                class="rounded -cat"
+                class="-cat"
               ></v-img>
             </v-avatar>
           </template>
 
           <v-list-item-title
-            >{{ category.title?.limitWords(7) }}
+            ><b>{{ category.title?.limitWords(7) }}</b>
           </v-list-item-title>
-          <v-list-item-subtitle
+          <v-list-item-subtitle v-if="category.description"
             >{{ category.description?.limitWords(20) }}
           </v-list-item-subtitle>
 
-          <v-list-item-action>
-            <v-btn icon @click.stop="deleteCategory(category.id)">
-              <v-icon>close</v-icon>
-            </v-btn>
-          </v-list-item-action>
+          <template v-slot:append>
+            <v-list-item-action>
+              <v-btn
+                icon
+                size="40"
+                @click.stop="deleteCategory(category.id)"
+                variant="text"
+              >
+                <v-icon size="22">close</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </template>
         </v-list-item>
       </v-list>
     </div>
@@ -81,6 +88,7 @@
         :class="{ 'no-action': singleProductSelect }"
         bg-color="transparent"
         class="border-between-vertical text-start"
+        lines="two"
       >
         <v-list-group
           v-for="product in products_detail"
@@ -89,14 +97,10 @@
             product.product_variants.length ? 'keyboard_arrow_down' : ' '
           "
           :value="product.id"
+
         >
           <template v-slot:activator="{ props, isOpen }">
-            <v-list-item
-              class="ps-0"
-              density="compact"
-              lines="three"
-              v-bind="props"
-            >
+            <v-list-item  v-bind="props">
               <template v-slot:prepend>
                 <v-avatar rounded="lg">
                   <v-img
@@ -106,7 +110,7 @@
               </template>
 
               <v-list-item-title
-                >{{ product.title?.limitWords(7) }}
+                ><b>{{ product.title?.limitWords(7) }}</b>
               </v-list-item-title>
 
               <v-list-item-subtitle class="d-flex"
@@ -147,9 +151,9 @@
           </template>
 
           <template v-if="!singleProductSelect">
-            <v-list-item
+            <div
               v-for="variant in product.product_variants"
-              :key="'var_' + variant.id"
+              :key="'var_' + variant.id" class="pa-1"
             >
               <variant-item-mini
                 :class="{ pen: forceNoVariants }"
@@ -160,7 +164,7 @@
                 "
                 @select="toggleVariant(product.id, variant.id)"
               ></variant-item-mini>
-            </v-list-item>
+            </div>
           </template>
 
           <template v-if="singleProductVariantSelect">
@@ -216,7 +220,8 @@
           <v-card-text>
             <b-products-window
               v-if="dialog"
-              class="mx-auto" style="max-width: 1720px"
+              class="mx-auto"
+              style="max-width: 1720px"
               :can-select-category="!singleProductSelect && !productsOnly"
               :selected-list="modelValue ? modelValue : []"
               :shop="shop"
@@ -233,11 +238,7 @@
 
           <v-card-actions>
             <div class="widget-buttons">
-              <v-btn
-                size="x-large"
-                variant="text"
-                @click="dialog = false"
-              >
+              <v-btn size="x-large" variant="text" @click="dialog = false">
                 <v-icon start>close</v-icon>
 
                 {{ $t("global.actions.close") }}
@@ -253,11 +254,11 @@
 <script>
 import BProductsWindow from "@components/backoffice/product/window/BProductsWindow.vue";
 import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
-import ProductVariantsView from "../variant/ProductVariantsView.vue";
+import ProductVariantsView from "../../../product/variant/ProductVariantsView.vue";
 import SLoading from "@components/ui/loading/SLoading.vue";
 
 export default {
-  name: "ProductSelectBox",
+  name: "BProductsSelectBox",
   components: {
     SLoading,
     ProductVariantsView,
@@ -569,6 +570,8 @@ export default {
 
 .-cat {
   border: #ffa000 solid 2px;
+  background: #ffa000;
+  border-radius: inherit;
 }
 
 .-cat-box {

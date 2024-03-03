@@ -17,14 +17,14 @@
     :filled="filled"
     :items="giftCards"
     :label="$t('global.payment_form.gift_cards_input')"
-    :model-value="value"
+    :model-value="modelValue"
     :multiple="multiple"
     :no-data-text="$t('global.payment_form.gift_cards_input_empty')"
     :return-object="returnObject"
     :rounded="rounded"
     item-title="number"
     prepend-inner-icon="card_giftcard"
-    @update:model-value="(val) => $emit('input', val)"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template v-slot:append-outer="">
       <v-btn
@@ -54,7 +54,7 @@
         class="mt-2"
         closable
         color="#ffffff33"
-        @click:close="DeleteItemByID(value, item.id)"
+        @click:close="DeleteItemByID(modelValue, item.id)"
       >
         <v-avatar v-if="item.gift_type.bg" start>
           <img
@@ -67,7 +67,7 @@
         <span class="ms-2 small">{{ item.gift_type.title }}</span>
       </v-chip>
       <span v-if="index === 1" class="text-caption ms-2 mt-1"
-        >(+{{ value.length - 1 }} {{ $t("global.payment_form.more") }} )</span
+        >(+{{ modelValue.length - 1 }} {{ $t("global.payment_form.more") }} )</span
       >
     </template>
     <template v-slot:item="{ item }">
@@ -105,8 +105,9 @@ import SStorefrontGiftcardAddDialog from "@components/storefront/giftcard/add-di
 export default {
   name: "SStorefrontGiftcardSelector",
   components: { SStorefrontGiftcardAddDialog },
+  emits: ["update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
     giftCards: {},
     multiple: {
       default: false,

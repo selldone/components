@@ -21,7 +21,7 @@
       class="s--ai-button-large"
       size="x-large"
       variant="flat"
-      @click="$emit('click')"
+      @click="$emit('select')"
     >
       <div class="flex-grow-0 d-flex align-center">
         <v-avatar
@@ -63,7 +63,7 @@
 <script>
 export default {
   name: "AiButtonLarge",
-  emits: ["click"],
+  emits: ["select"],
   props: {
     loading: Boolean,
     title: {},

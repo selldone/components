@@ -29,7 +29,7 @@ export default {
   name: "SBackofficeAugmentKeysFinder",
   components: { SFadeScroll },
   props: {
-    value: {},
+    modelValue: {},
   },
 
   data: function () {
@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     array() {
-      return this.value?.findAllDynamicAugmentKeys().unique(); // Find all {{key}}
+      return this.modelValue?.findAllDynamicAugmentKeys().unique(); // Find all {{key}}
     },
   },
 

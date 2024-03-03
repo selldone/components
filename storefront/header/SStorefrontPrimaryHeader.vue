@@ -17,16 +17,19 @@
     <v-toolbar
       v-if="!$store.getters.getIsNative"
       :color="
-      color
-        ? color:
-
-        transparent_header || overlay
-          ? 'transparent'
-          : is_light_header
-            ? 'var(--background)'
-            : SaminColorDark
+        color
+          ? color
+          : transparent_header || overlay
+            ? 'transparent'
+            : is_light_header
+              ? 'var(--background)'
+              : SaminColorDark
       "
-      :theme="(overlay ? overlayDark : !transparent_header && !is_light_header)?'dark':'light'"
+      :theme="
+        (overlay ? overlayDark : !transparent_header && !is_light_header)
+          ? 'dark'
+          : 'light'
+      "
       :extended="!overlay"
       :style="{
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
@@ -47,7 +50,6 @@
           class="m-1"
           icon
           size="large"
-          tile
           @click.stop="drawer = !drawer"
         >
           <v-icon> menu</v-icon>
@@ -148,25 +150,14 @@
 
         <template v-if="!isMobile">
           <v-slide-y-reverse-transition group leave-absolute>
-            <v-menu
-              v-if="!busy_user && USER()"
-              key="kav1"
-              v-model="menu"
-              :close-on-content-click="true"
-              :nudge-width="240"
-              offset-y
-              open-on-click
-              rounded="xl"
-              z-index="99999999"
-            >
-              <template v-slot:activator="{ props }">
+
                 <v-btn
+                    v-if="!busy_user && USER()"
                   :color="is_light_header ? '#ddd' : SaminColorDarkDeep"
                   :loading="busy_logout"
                   class="me-1 mt-1 hover-shadow"
                   height="42"
                   rounded
-                  v-bind="props"
                   variant="outlined"
                   @click="menu = true"
                 >
@@ -180,154 +171,164 @@
                   >
                     <img :src="getUserAvatar(USER_ID())" />
                   </v-avatar>
-                </v-btn>
-              </template>
+                  <v-menu
+                      key="kav1"
+                      v-model="menu"
+                      :close-on-content-click="true"
+                      :min-width="240"
+                      open-on-click
+                      z-index="99999999"
+                      activator="parent"
+                  >
+                    <v-card flat rounded="xl">
+                      <v-card-text>
+                        <div class="d-flex text-start align-center">
+                          <v-avatar
+                              :size="64"
+                              class="avatar-gradient -thin me-2 flex-grow-0"
+                              color="#946f90"
+                          >
+                            <v-img :src="getUserAvatar(USER_ID())" />
+                          </v-avatar>
 
-              <v-card flat>
-                <v-card-text>
-                  <div class="d-flex text-start align-center">
-                    <v-avatar
-                      :size="64"
-                      class="avatar-gradient -thin me-2 flex-grow-0"
-                      color="#946f90"
-                    >
-                      <v-img :src="getUserAvatar(USER_ID())" />
-                    </v-avatar>
+                          <div class="flex-grow-1">
+                            <div class="my-1 text-subtitle-2 font-weight-black">
+                              {{ USER().name }}
 
-                    <div class="flex-grow-1">
-                      <div class="my-1 text-subtitle-2 font-weight-black">
-                        {{ USER().name }}
+                              <v-icon
+                                  v-if="USER().personal_information_verified"
+                                  color="green"
+                                  size="small"
+                              >
+                                check_circle
+                              </v-icon>
 
-                        <v-icon
-                          v-if="USER().personal_information_verified"
-                          color="green"
-                          size="small"
+                              <v-icon
+                                  v-if="profile && profile.verified"
+                                  class="ms-1"
+                                  color="blue"
+                                  size="small"
+                              >verified
+                              </v-icon>
+                            </div>
+
+                            <p class="text-muted m-0">
+                              {{ USER().email }}
+                            </p>
+
+                            <div
+                                v-if="shop && shop.lottery && shop.lottery.enable"
+                                class="d-flex align-center pt-2"
+                            >
+                              <img
+                                  class="m-1"
+                                  height="24"
+                                  src="../../assets/icons/chips.svg"
+                                  width="24"
+                              />
+                              <b>
+                                {{
+                                  $t("layout_shop.user_menu.chips", {
+                                    chips: USER().chips,
+                                  })
+                                }}
+                              </b>
+                            </div>
+                          </div>
+                        </div>
+                      </v-card-text>
+
+                      <v-divider />
+
+                      <!-- ―――――――――― Shop User Menu List ―――――――――― -->
+
+                      <s-shop-user-menu-list
+                          v-if="shop"
+                          :shop="shop"
+                          @click:logout="logout()"
+                      ></s-shop-user-menu-list>
+
+                      <!-- ―――――――――― Extra links ―――――――――― -->
+
+                      <template v-if="has_avocado || has_hyper || has_insta">
+                        <v-divider class="mt-0" />
+                        <v-row
+                            v-if="shop"
+                            class="m-0 pb-4"
+                            dense
+                            justify="space-around"
                         >
-                          check_circle
-                        </v-icon>
+                          <v-col v-if="has_avocado" cols="4">
+                            <v-btn
+                                :caption="$t('global.commons.avocado')"
+                                :to="{ name: 'AvocadoPage' }"
+                                class="sub-caption"
+                                icon
+                                size="large"
+                            >
+                              <img
+                                  height="24"
+                                  src="../../assets/icons/avocado.svg"
+                                  width="24"
+                              />
+                            </v-btn>
+                          </v-col>
+                          <v-col v-if="has_hyper" cols="4">
+                            <v-btn
+                                :caption="$t('global.commons.hyper')"
+                                :to="{ name: window.$storefront.routes.HYPER_PAGE }"
+                                class="sub-caption"
+                                icon
+                                size="large"
+                            >
+                              <img
+                                  height="24"
+                                  src="../../assets/icons/hyper.svg"
+                                  width="24"
+                              />
+                            </v-btn>
+                          </v-col>
+                          <v-col v-if="has_insta" cols="4">
+                            <v-btn
+                                :caption="$t('global.commons.instashop')"
+                                :to="{ name: 'InstagramPage' }"
+                                class="sub-caption"
+                                icon
+                                size="large"
+                            >
+                              <img
+                                  height="24"
+                                  src="../../assets/trademark/instagram.svg"
+                                  width="24"
+                              />
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+                      </template>
 
-                        <v-icon
-                          v-if="profile && profile.verified"
-                          class="ms-1"
-                          color="blue"
-                          size="small"
-                          >verified
-                        </v-icon>
-                      </div>
-
-                      <p class="text-muted m-0">
-                        {{ USER().email }}
-                      </p>
+                      <!-- ―――――――――― Terms / Privacy ―――――――――― -->
 
                       <div
-                        v-if="shop && shop.lottery && shop.lottery.enable"
-                        class="d-flex align-center pt-2"
+                          class="d-flex align-center small text-center justify-content-around text-muted px-1 py-3"
                       >
-                        <img
-                          class="m-1"
-                          height="24"
-                          src="../../assets/icons/chips.svg"
-                          width="24"
-                        />
-                        <b>
-                          {{
-                            $t("layout_shop.user_menu.chips", {
-                              chips: USER().chips,
-                            })
-                          }}
-                        </b>
+                        <div class="p-1">
+                          <a class="text-muted" href="/privacy" target="_blank"
+                          >Privacy Policy</a
+                          >
+                        </div>
+                        •
+                        <div class="p-1">
+                          <a class="text-muted" href="/terms" target="_blank"
+                          >Terms of Service</a
+                          >
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </v-card-text>
+                    </v-card>
+                  </v-menu>
+                </v-btn>
 
-                <v-divider />
 
-                <!-- ―――――――――― Shop User Menu List ―――――――――― -->
 
-                <s-shop-user-menu-list
-                  v-if="shop"
-                  :shop="shop"
-                  @click:logout="logout()"
-                ></s-shop-user-menu-list>
-
-                <!-- ―――――――――― Extra links ―――――――――― -->
-
-                <template v-if="has_avocado || has_hyper || has_insta">
-                  <v-divider class="mt-0" />
-                  <v-row
-                    v-if="shop"
-                    class="m-0 pb-4"
-                    dense
-                    justify="space-around"
-                  >
-                    <v-col v-if="has_avocado" cols="4">
-                      <v-btn
-                        :caption="$t('global.commons.avocado')"
-                        :to="{ name: 'AvocadoPage' }"
-                        class="sub-caption"
-                        icon
-                        size="large"
-                      >
-                        <img
-                          height="24"
-                          src="../../assets/icons/avocado.svg"
-                          width="24"
-                        />
-                      </v-btn>
-                    </v-col>
-                    <v-col v-if="has_hyper" cols="4">
-                      <v-btn
-                        :caption="$t('global.commons.hyper')"
-                        :to="{ name: window.$storefront.routes.HYPER_PAGE }"
-                        class="sub-caption"
-                        icon
-                        size="large"
-                      >
-                        <img
-                          height="24"
-                          src="../../assets/icons/hyper.svg"
-                          width="24"
-                        />
-                      </v-btn>
-                    </v-col>
-                    <v-col v-if="has_insta" cols="4">
-                      <v-btn
-                        :caption="$t('global.commons.instashop')"
-                        :to="{ name: 'InstagramPage' }"
-                        class="sub-caption"
-                        icon
-                        size="large"
-                      >
-                        <img
-                          height="24"
-                          src="../../assets/trademark/instagram.svg"
-                          width="24"
-                        />
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </template>
-
-                <!-- ―――――――――― Terms / Privacy ―――――――――― -->
-
-                <div
-                  class="d-flex align-center small text-center justify-content-around text-muted px-1 py-3"
-                >
-                  <div class="p-1">
-                    <a class="text-muted" href="/privacy" target="_blank"
-                      >Privacy Policy</a
-                    >
-                  </div>
-                  •
-                  <div class="p-1">
-                    <a class="text-muted" href="/terms" target="_blank"
-                      >Terms of Service</a
-                    >
-                  </div>
-                </div>
-              </v-card>
-            </v-menu>
 
             <v-btn
               v-else-if="!busy_user"
@@ -336,7 +337,6 @@
               :icon="!shop"
               :loading="!shop"
               class="s--storefront-primary-header-login-button"
-              dark
               roundedripple
               @click.stop="NeedLogin()"
             >
@@ -368,11 +368,10 @@
 
     <v-navigation-drawer
       v-model="show_basket"
-      :location="!$vuetify.rtl && 'right'"
+      :location="!$vuetify.rtl ? 'right' : undefined"
       :width="$vuetify.display.mdAndUp ? 640 : 360"
       class="s--storefront-primary-header-basket-navigation"
       color="#fff"
-      fixed
       temporary
     >
       <div class="d-flex flex-column" style="min-height: 100%">
@@ -432,7 +431,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    color:{},
+    color: {},
   },
   data: () => ({
     menu: false,

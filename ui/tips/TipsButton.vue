@@ -13,22 +13,24 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-tooltip :max-width="480" color="#000" location="bottom">
-    <template v-slot:activator="{ props }">
-      <v-btn
-        class="margin-n7px hover-alpha"
-        color="primary"
-        icon
-        size="36"
-        v-bind="props"
-        variant="plain"
-        @click="$emit('click')"
-      >
-        <v-icon color="#000"> {{ icon }}</v-icon>
-      </v-btn>
-    </template>
-    <div class="text-start" v-html="message"></div>
-  </v-tooltip>
+  <v-btn
+    class="margin-n7px hover-alpha"
+    color="primary"
+    icon
+    size="36"
+    variant="plain"
+  >
+    <v-icon color="#000"> {{ icon }}</v-icon>
+
+    <v-tooltip
+      activator="parent"
+      :max-width="480"
+      content-class="bg-black text-start"
+      location="bottom"
+    >
+      <div class="text-start" v-html="message"></div>
+    </v-tooltip>
+  </v-btn>
 </template>
 
 <script>

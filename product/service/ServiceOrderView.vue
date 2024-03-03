@@ -93,7 +93,7 @@
         :first-day-of-week="
           !en_cal ? getCurrentLanguage().calendar.first_day_of_week : undefined
         "
-        :locale="!en_cal ? getCurrentLanguage().full_local : undefined"
+        :locale="!en_cal ? getCurrentLanguage().full_locale : undefined"
         :min="new Date().toISOString()"
         color="blue"
         event-color="red"

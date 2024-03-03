@@ -13,12 +13,9 @@
   -->
 
 <template>
-  <v-flex
+  <div
     :class="selected ? 'active' : ''"
-    align-center
-    class="slider-container pointer-pointer"
-    d-flex
-    justify-center
+    class="d-flex align-center justify-center slider-container pointer-pointer"
     @click="toggle()"
   >
     <v-icon class="ms-1" color="#fff" size="small">
@@ -48,12 +45,13 @@
     <span v-else class="card-badge-info" dir="auto">
       {{ selected ? selected : title }}
     </span>
-  </v-flex>
+  </div>
 </template>
 
 <script>
 export default {
   name: "TextSelectSlider",
+  emits: ["select", "open", "close"],
   props: {
     icon: {
       required: false,
@@ -63,7 +61,7 @@ export default {
       required: true,
       type: Array,
     },
-    value: {
+    modelValue: {
       required: false,
       default: null,
     },
@@ -76,7 +74,7 @@ export default {
     title: {
       required: false,
       type: String,
-      default: "همه",
+      default: "All",
     },
   },
 
@@ -88,15 +86,15 @@ export default {
     };
   },
   watch: {
-    value() {
-      this.selected = this.value;
+    modelValue() {
+      this.selected = this.modelValue;
     },
     close() {
       this.show = !this.close;
     },
   },
   created() {
-    this.selected = this.value;
+    this.selected = this.modelValue;
     this.show = !this.close;
   },
 

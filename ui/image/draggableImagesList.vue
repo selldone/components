@@ -26,7 +26,7 @@
     v-bind="dragOptions"
     @end="drag = false"
     @start="drag = true"
-    @update:modelValue="$emit('input', list)"
+    @update:modelValue="$emit('update:modelValue', list)"
   >
     <template v-slot:item="{ element }">
       <li
@@ -68,8 +68,9 @@ import draggable from "vuedraggable";
 export default {
   name: "draggableImagesList",
   components: { draggable },
+  emits: ["update:modelValue", "add-click"],
   props: {
-    value: {},
+    modelValue: {},
     hasAdd: {
       default: true,
       type: Boolean,
@@ -94,18 +95,18 @@ export default {
   },
 
   watch: {
-    value() {
-      this.list = this.value;
+    modelValue() {
+      this.list = this.modelValue;
     },
   },
 
   created() {
-    this.list = this.value;
+    this.list = this.modelValue;
   },
   methods: {
     deleteItem(index) {
       this.list.splice(index, 1);
-      this.$emit("input", this.list);
+      this.$emit("update:modelValue", this.list);
     },
   },
 };

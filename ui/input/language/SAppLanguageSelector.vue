@@ -169,7 +169,7 @@ export default {
   },
 
   data: () => ({
-    select_language: window.$language.local,
+    select_language: window.$language.locale,
 
     prevent_update: false,
 
@@ -219,7 +219,7 @@ export default {
   },
 
   created() {
-    this.select_language = window.$language.local;
+    this.select_language = window.$language.locale;
   },
 
   methods: {

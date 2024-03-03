@@ -15,7 +15,7 @@
 <template>
   <div class="poll">
     <div
-      v-for="(item, i) in value"
+      v-for="(item, i) in modelValue"
       :key="i"
       :style="{ 'animation-delay': 100 + i * 75 + 'ms' }"
       class="p-item fadeIn"
@@ -55,7 +55,12 @@
         ></v-progress-linear>
       </div>
       <div class="p-val">
-        <v-btn v-if="editable" color="red" icon @click="remove(value, item)">
+        <v-btn
+          v-if="editable"
+          color="red"
+          icon
+          @click="remove(modelValue, item)"
+        >
           <v-icon>close</v-icon>
         </v-btn>
         <span v-else>{{ numeralFormat(item.value, "0.[0]a") }}</span>
@@ -80,8 +85,9 @@
 <script>
 export default {
   name: "CommunityPoll",
+  emits: ["click:item", "update:modelValue"],
   props: {
-    value: {},
+    modelValue: {},
 
     editable: {
       type: Boolean,
@@ -97,14 +103,14 @@ export default {
   computed: {
     total() {
       let sum = 0;
-      this.value.forEach((i) => (sum += i.value));
+      this.modelValue.forEach((i) => (sum += i.modelValue));
       return sum;
     },
   },
 
   created() {
-    if (!this.value || !Array.isArray(this.value)) {
-      this.$emit("input", []);
+    if (!this.modelValue || !Array.isArray(this.modelValue)) {
+      this.$emit("update:modelValue", []);
     }
   },
 
@@ -113,7 +119,7 @@ export default {
       return this.userSelectedId === item.id;
     },
     addItem() {
-      this.value.push({ title: "", value: 0 });
+      this.modelValue.push({ title: "", value: 0 });
     },
   },
 };

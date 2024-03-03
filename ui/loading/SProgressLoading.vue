@@ -13,16 +13,16 @@
   -->
 
 <template>
-  <v-progress-linear
-    :class="{ '-relative': relative }"
-    :color="color"
-    :height="height"
-    :stream="stream"
-    class="loader-to-bar"
-    indeterminate
-    rounded
-    rounded-bar
-  ></v-progress-linear>
+  <div class="loader-to-bar" :class="{ '-relative': relative }">
+    <v-progress-linear
+      :color="color"
+      :height="height"
+      :stream="stream"
+      indeterminate
+      rounded
+      rounded-bar
+    ></v-progress-linear>
+  </div>
 </template>
 
 <script>

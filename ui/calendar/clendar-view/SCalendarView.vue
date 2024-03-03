@@ -84,7 +84,7 @@
       <v-calendar
         ref="calendar"
         v-model="calendar_value"
-        :locale="getCurrentLanguage().full_local"
+        :locale="getCurrentLanguage().full_locale"
         :type="type"
         :weekdays="weekday"
         class="s--calendar-table my-3"

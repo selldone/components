@@ -20,7 +20,7 @@
 import { CampaignMedium } from "@core/enums/campaign/CampaignMedium";
 
 export default {
-  name: "MediumIcon",
+  name: "SCampaignMediumIcon",
 
   props: {
     value: {},

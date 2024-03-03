@@ -14,7 +14,7 @@
 
 <template>
   <div
-    v-if="value && can_show"
+    v-if="modelValue && can_show"
     :class="{ preview: preview }"
     :style="{
       'background-image': notification.bg
@@ -100,6 +100,7 @@ import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLo
 export default {
   name: "SStorefrontCampaignNotification",
   computed: {},
+  emits: ["update:modelValue"],
   props: {
     notification: {
       require: true,
@@ -109,7 +110,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    value: {
+    modelValue: {
       type: Boolean,
       default: false,
     },
@@ -147,7 +148,7 @@ export default {
 
   methods: {
     close() {
-      this.$emit("input", false);
+      this.$emit("update:modelValue", false);
 
       if (!this.preview && !this.notification.persist) {
         localStorage.setItem(

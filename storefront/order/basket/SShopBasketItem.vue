@@ -152,7 +152,7 @@
           </v-chip>
         </div>
 
-        <v-flex v-if="Math.abs(price_error_percent) > 0.01">
+        <v-col v-if="Math.abs(price_error_percent) > 0.01">
           <p class="m-1 text-muted small">
             {{ $t("basket_items.price_changed") }}<br />
 
@@ -200,7 +200,7 @@
           >
             <v-icon>close</v-icon>
           </v-btn>
-        </v-flex>
+        </v-col>
       </v-col>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->

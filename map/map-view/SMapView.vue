@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="map" @click="$emit('click')">
+  <div class="map" >
     <v-slide-group
       v-if="hasAddressBook"
       :model-value="selected_address_from_list"
@@ -1061,7 +1061,7 @@ export default {
           params: {
             lat: this.last_selected_position.lat,
             lon: this.last_selected_position.lng,
-            local: this.getCurrentLanguage().local, // For Auto select service!
+            local: this.getCurrentLanguage().locale, // For Auto select service!
           },
         })
         .then(({ data }) => {

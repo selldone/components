@@ -31,7 +31,6 @@
         'rounded-18px': rounded,
       }"
       class="card card--1 m-0 text-center"
-      @click="$emit('click')"
     >
       <div class="overflow-hidden position-relative card-wrap">
         <div class="card__info-hover">
@@ -318,7 +317,6 @@
     <div
       v-else
       class="row-box position-relative overflow-visible row-hover"
-      @click="$emit('click')"
     >
       <v-container class="overflow-hidden position-relative" fluid>
         <v-row dense style="flex-wrap: nowrap">

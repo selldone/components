@@ -17,7 +17,7 @@
     :is="to ? 'router-link' : href ? 'a' : 'div'"
     class="s--category-card"
     v-bind="to ? { to: to } : { href: href }"
-    @click="$emit('click')"
+
   >
     <div class="category-card-root">
       <div class="box">

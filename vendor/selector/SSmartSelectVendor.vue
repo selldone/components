@@ -33,18 +33,28 @@
         :class="{
           'bg-dark': dark,
           'bg-white': !dark,
-          's--shadow-no-padding z1 my-2': vendor.id === value,
+          's--shadow-no-padding z1 my-2': vendor.id === modelValue,
         }"
         class="s--smart-select-vendor-item row-hover usn border"
         @click="
-          $emit('input', forceShowAll ? vendor.id : value ? null : vendor.id);
-          $emit('change', forceShowAll ? vendor.id : value ? null : vendor.id);
+          $emit(
+            'update:modelValue',
+            forceShowAll ? vendor.id : modelValue ? null : vendor.id,
+          );
+          $emit(
+            'change',
+            forceShowAll ? vendor.id : modelValue ? null : vendor.id,
+          );
         "
       >
         <div class="s--smart-select-vendor-content">
           <div class="flex-grow-0 me-2">
-            <v-icon :size="vendor.id === value && 'large'" color="primary"
-              >{{ vendor.id === value ? "lens" : "radio_button_unchecked" }}
+            <v-icon
+              :size="vendor.id === modelValue ? 'large' : undefined"
+              color="primary"
+              >{{
+                vendor.id === modelValue ? "lens" : "radio_button_unchecked"
+              }}
             </v-icon>
           </div>
           <div class="flex-grow-1">
@@ -60,7 +70,7 @@
               title="Go to the store page."
             >
               {{ $t("select_vendor.item_title", { vendor: vendor.name }) }}
-              <v-icon class="ms-1" color="primary" size="small">launch </v-icon>
+              <v-icon class="ms-1" color="primary" size="small">launch</v-icon>
             </router-link>
             <b v-else>
               {{ vendor.name }}
@@ -90,8 +100,9 @@
 <script>
 export default {
   name: "SSmartSelectVendor",
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
     vendors: { type: Array },
 
     itemIcon: {},
@@ -118,8 +129,8 @@ export default {
   computed: {
     items_show() {
       if (this.forceShowAll) return this.vendors;
-      if (!this.value) return this.vendors;
-      const out = this.vendors.filter((i) => i.id === this.value);
+      if (!this.modelValue) return this.vendors;
+      const out = this.vendors.filter((i) => i.id === this.modelValue);
       return out.length ? out : this.vendors;
     },
   },

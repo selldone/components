@@ -34,17 +34,17 @@
           'bg-dark': dark,
           'bg-white': !dark,
           's--shadow-no-padding z1 my-2':
-            plan.id === (returnObject ? value?.id : value),
+            plan.id === (returnObject ? modelValue?.id : modelValue),
         }"
         class="p-2 pp row-hover usn border mb-1"
         @click="
           $emit(
-            'input',
+            'update:modelValue',
             forceShowAll
               ? returnObject
                 ? plan
                 : plan.id
-              : value
+              : modelValue
                 ? null
                 : returnObject
                   ? plan
@@ -56,7 +56,7 @@
               ? returnObject
                 ? plan
                 : plan.id
-              : value
+              : modelValue
                 ? null
                 : returnObject
                   ? plan
@@ -67,10 +67,10 @@
         <div class="d-flex align-center mnh">
           <div class="flex-grow-0 me-2">
             <v-icon
-              :size="plan.id === (returnObject ? value?.id : value) && 'large'"
+              :size="plan.id === (returnObject ? modelValue?.id : modelValue) && 'large'"
               color="primary"
               >{{
-                plan.id === (returnObject ? value?.id : value)
+                plan.id === (returnObject ? modelValue?.id : modelValue)
                   ? "lens"
                   : "radio_button_unchecked"
               }}
@@ -118,8 +118,9 @@ import BillingPeriod from "@core/enums/subscription/BillingPeriod";
 
 export default {
   name: "SSubscriptionPriceSelect",
+  emits: ["update:modelValue", "change"],
   props: {
-    value: {},
+    modelValue: {},
     subscriptionPrices: { type: Array },
 
     itemIcon: {},
@@ -157,9 +158,9 @@ export default {
 
     items_show() {
       if (this.forceShowAll) return this.subscriptionPricesForSelectedCurrency;
-      if (!this.value) return this.subscriptionPricesForSelectedCurrency;
+      if (!this.modelValue) return this.subscriptionPricesForSelectedCurrency;
       const out = this.subscriptionPricesForSelectedCurrency.filter(
-        (i) => i.id === (this.returnObject ? this.value.id : this.value),
+        (i) => i.id === (this.returnObject ? this.modelValue.id : this.modelValue),
       );
       return out.length ? out : this.subscriptionPricesForSelectedCurrency;
     },

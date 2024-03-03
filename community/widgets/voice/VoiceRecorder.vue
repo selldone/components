@@ -80,13 +80,13 @@
         </template>
       </dictaphone>
 
-      <div v-if="value" class="d-flex align-center">
+      <div v-if="modelValue" class="d-flex align-center">
         <audio
-          :src="value"
+          :src="modelValue"
           class="my-1 flex-grow-1 rounded me-1"
           controls
         ></audio>
-        <v-btn icon size="large" tile @click="clear()">
+        <v-btn icon size="large" @click="clear()">
           <v-icon>close</v-icon>
         </v-btn>
       </div>
@@ -100,8 +100,9 @@ import SpectrumAnalyser from "./SpectrumAnalyser.vue";
 
 export default {
   name: "VoiceRecorder",
+  emits: ["update:modelValue", "update:voiceFile"],
   props: {
-    value: {},
+    modelValue: {},
     voiceFile: {},
   },
   data() {
@@ -115,12 +116,12 @@ export default {
     },
     // eslint-disable-next-line no-unused-vars
     handleRecording({ blob, src }) {
-      this.$emit("input", src);
+      this.$emit("update:modelValue", src);
       this.$emit("update:voiceFile", blob);
       // console.log("handleRecording", src);
     },
     clear() {
-      this.$emit("input", null);
+      this.$emit("update:modelValue", null);
       this.$emit("update:voiceFile", null);
     },
   },

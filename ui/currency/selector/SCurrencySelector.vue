@@ -158,7 +158,7 @@ export default {
   components: { SCurrencyIcon },
   emits: ["change"],
   props: {
-    value: {},
+    modelValue: {},
     shop: {},
     dark: {
       type: Boolean,
@@ -280,8 +280,8 @@ export default {
     currencies() {
       this.validateCurrentCurrency();
     },
-    value() {
-      this.selectedCurrency = this.value;
+    modelValue() {
+      this.selectedCurrency = this.modelValue;
     },
 
     "$route.query.currency"(val) {
@@ -329,7 +329,7 @@ export default {
     if (this.saveLocalStorage) {
       this.selectedCurrency = this.GetUserSelectedCurrency().code;
     } else {
-      this.selectedCurrency = this.value;
+      this.selectedCurrency = this.modelValue;
     }
 
     if (this.shop) {

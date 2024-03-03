@@ -19,7 +19,6 @@
 @import "selldone/animations";
 @import "selldone/vuetify";
 @import "selldone/widgets";
-@import "selldone/hovers";
 @import "selldone/responsives";
 @import "selldone/landings";
 @import "avocado/avocado";
@@ -35,11 +34,11 @@
 @import "selldone/html-style";
 @import "selldone/scale";
 @import "selldone/cursor";
+@import "selldone/hover/all";
 
 @import "../article/Article";
 @import "selldone/pages/pages";
 @import "selldone/animations/transitions";
-@import "selldone/border/rounded";
 
 @import "../community/style/community";
 
@@ -1300,98 +1299,9 @@ table.v-table {
 }
 
 
-.hover-scale {
-  --scale: 3;
-  --duration: 0.3s;
-
-  transition: all var(--duration) ease-in-out;
-
-  &:hover {
-    position: relative;
-    transform: scale(var(--scale), var(--scale));
-    z-index: 1;
-
-    &.force-top {
-      z-index: 20;
-    }
-
-  }
-
-  &.-fast {
-    --duration: 0.2s;
-    transition-duration: 0.2s !important;
-  }
-
-  // Create double animation effect on avatar
-  &.v-avatar {
-    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); // Customize this for your bounce effect
-    &:hover {
-      > img, > .v-avatar {
-        animation: hover-bounce calc(var(--duration) * 0.6) ease-in-out;
-      }
-    }
-  }
-}
-
-@keyframes hover-bounce {
-  0% {
-    transform: scale(1);
-  }
-  20% {
-    transform: scale(0.7); // Scale up more than the original for the bounce effect
-  }
-  100% {
-    transform: scale(1);
-  }
-}
 
 
-.hover-scale-small {
-  --scale: 1.4;
-  --duration: 0.3s;
 
-  transition: all var(--duration) ease-in-out;
-
-  &:hover {
-    transform: scale(var(--scale), var(--scale));
-    z-index: 1;
-
-    &.force-top {
-      z-index: 20;
-    }
-  }
-}
-
-.hover-scale-tiny {
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    transform: scale(1.2, 1.2);
-    z-index: 1;
-
-    &.force-top {
-      z-index: 20;
-    }
-  }
-}
-
-.hover-scale-y-2x {
-  transition: all 0.3s linear;
-  --scale: 2;
-
-  &:hover {
-    transform: scale(1, var(--scale));
-  }
-}
-
-.hover-scale-y-3x {
-  transition: all 0.3s linear;
-  --scale: 2;
-
-  &:hover {
-    transform: scale(1, var(--scale));
-  }
-}
 
 /******************
 Animation
@@ -3605,19 +3515,7 @@ Fix snaky chart overflow problem!
 }
 
 
-.border-between {
-  > :not(:last-child) {
-    border-right: solid 1px #e8e8e8;
-  }
 
-  @media screen and (max-width: 600px) {
-    &.-hide-sm {
-      > :not(:last-child) {
-        border: none !important;
-      }
-    }
-  }
-}
 
 .border-end-dashed {
   border-right: dashed thin #ccc;
@@ -3647,44 +3545,16 @@ Fix snaky chart overflow problem!
 }
 
 
-.border-between-vertical {
-  > :not(:last-child) {
-    border-bottom: solid 1px #e8e8e8;
-  }
 
-  &.-dashed {
-    > :not(:last-child) {
-      border-bottom: dashed 1px #e8e8e8;
-    }
-  }
 
-  &.-medium {
-    > :not(:last-child) {
-      border-width: medium;
-    }
-  }
 
-  &.-light {
-    border-color: #fafafa;
-  }
-
-  &.-animated {
-
-  }
-}
-
-.border-between-vertical-white-space {
-  > :not(:last-child) {
-    border-bottom: solid 6px #fff;
-  }
-}
 
 
 //------------------------- Blur animate -------------------------
 
 .blur-animate {
   //animation: blur 1s ease;
-  transition: all 1s;
+  transition: filter 1s;
 
   &.blurred {
     filter: blur(6px);

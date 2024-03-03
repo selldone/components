@@ -40,8 +40,9 @@ const DEFAULT_OPTIONS = {
 
 export default {
   name: "STimepicker",
+  emits: ["update:modelValue", "error", "blur", "focus", "change", "complete"],
   props: {
-    value: { type: [Object, String] },
+    modelValue: { type: [Object, String] },
     format: { type: String },
     minuteInterval: { type: [Number, String] },
     secondInterval: { type: [Number, String] },
@@ -255,7 +256,7 @@ export default {
     },
 
     useStringValue() {
-      return typeof this.value === "string";
+      return typeof this.modelValue === "string";
     },
 
     formatString() {
@@ -718,7 +719,7 @@ export default {
     "opts.secondInterval"(newInteval) {
       this.renderList("second", newInteval);
     },
-    value: {
+    modelValue: {
       deep: true,
       handler() {
         this.readValues();
@@ -864,16 +865,16 @@ export default {
     readValues() {
       if (this.useStringValue) {
         if (this.debugMode) {
-          this.debugLog(`Received a string value: "${this.value}"`);
+          this.debugLog(`Received a string value: "${this.modelValue}"`);
         }
-        this.readStringValues(this.value);
+        this.readStringValues(this.modelValue);
       } else {
         if (this.debugMode) {
           this.debugLog(
-            `Received an object value: "${JSON.stringify(this.value || {})}"`,
+            `Received an object value: "${JSON.stringify(this.modelValue || {})}"`,
           );
         }
-        this.readObjectValues(this.value);
+        this.readObjectValues(this.modelValue);
       }
     },
 
@@ -1172,7 +1173,7 @@ export default {
       const fullData = this.getFullData();
 
       if (this.useStringValue) {
-        this.$emit("input", fullData.displayTime);
+        this.$emit("update:modelValue", fullData.displayTime);
       } else {
         const fullValues = fullData.data;
         const tokensInUse = this.inUse.tokens || [];
@@ -1180,7 +1181,7 @@ export default {
         tokensInUse.forEach((token) => {
           timeValue[token] = fullValues[token] || "";
         });
-        this.$emit("input", JSON.parse(JSON.stringify(timeValue)));
+        this.$emit("update:modelValue", JSON.parse(JSON.stringify(timeValue)));
       }
 
       this.$emit("change", fullData);

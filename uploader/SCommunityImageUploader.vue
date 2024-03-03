@@ -50,7 +50,6 @@ export default {
   name: "SCommunityImageUploader",
   components: { CommunityImage },
   props: {
-    value: {},
     src: {},
     edit: {
       type: Boolean,

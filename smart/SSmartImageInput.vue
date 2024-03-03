@@ -15,10 +15,10 @@
 <template>
   <div :class="{ disabled: disabled }" class="text-start">
     <v-expand-transition>
-      <v-list-item v-if="value" key="1" :dark="dark">
+      <v-list-item v-if="modelValue" key="1" :dark="dark">
         <template v-slot:prepend>
           <v-avatar rounded="lg">
-            <v-img :src="getShopImagePath(value)"></v-img>
+            <v-img :src="getShopImagePath(modelValue)"></v-img>
           </v-avatar>
         </template>
         <v-list-item-title>{{ label }}</v-list-item-title>
@@ -28,8 +28,8 @@
           <v-list-item-action end>
             <v-btn
               color="red"
-              icon
-              @click="$emit('input', null) /*Clear image*/"
+              icon variant="text"
+              @click="$emit('update:modelValue', null) /*Clear image*/"
             >
               <v-icon>close</v-icon>
             </v-btn>
@@ -59,9 +59,10 @@
 export default {
   name: "SSmartImageInput",
   components: {},
+  emits: ["update:file", "update:modelValue"],
   props: {
     file: {},
-    value: {}, // Save value on database (path of image)
+    modelValue: {}, // Save value on database (path of image)
 
     label: {},
     hint: {},

@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-flex align-center justify-start>
+  <div class="d-flex align-center justify-center">
     <small class="m-0 float-end text-center" style="min-width: 74px">
       <v-icon :color="ticksColor[value_clone - 1]"
         >{{ tickIcons[value_clone - 1] }}
@@ -40,7 +40,7 @@
       track-fill-color="blue darken-3"
       @change="$emit('input', value_clone)"
     />
-  </v-flex>
+  </div>
 </template>
 
 <script>

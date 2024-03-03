@@ -189,7 +189,7 @@ export default {
             text: newVal,
             lat: this.center ? this.center.lat : null,
             lon: this.center ? this.center.lng : null,
-            local: this.getCurrentLanguage().local, // For Auto select service!
+            local: this.getCurrentLanguage().locale, // For Auto select service!
           },
         })
         .then(({ data }) => {

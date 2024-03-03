@@ -13,12 +13,9 @@
   -->
 
 <template>
-  <v-flex
+  <v-col
     :class="selected ? 'active' : ''"
-    align-center
-    class="slider-container pointer-pointer"
-    d-flex
-    justify-center
+    class="slider-container pointer-pointer d-flex align-center justify-center"
     @click="toggle()"
   >
     <v-icon
@@ -58,12 +55,13 @@
         $t("global.variants.color")
       }}</span>
     </span>
-  </v-flex>
+  </v-col>
 </template>
 
 <script>
 export default {
   name: "ColorSelectSlider",
+  emits: ["open", "close", "select"],
   props: {
     icon: {
       required: false,
@@ -74,7 +72,7 @@ export default {
       required: true,
       type: Array,
     },
-    value: {
+    modelValue: {
       required: false,
       default: null,
     },
@@ -93,15 +91,15 @@ export default {
     };
   },
   watch: {
-    value() {
-      this.selected = this.value;
+    modelValue() {
+      this.selected = this.modelValue;
     },
     close() {
       this.show = !this.close;
     },
   },
   created() {
-    this.selected = this.value;
+    this.selected = this.modelValue;
     this.show = !this.close;
   },
 

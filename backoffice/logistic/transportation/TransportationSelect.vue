@@ -29,7 +29,6 @@
         :mandatory="mandatory"
         :multiple="multiple"
         :rounded="!vertical"
-        borderless
         class="widget-toggle overflow-auto align-items-stretch"
         selected-class="black-flat"
         @blur="(val) => $emit('blur', val)"
@@ -51,11 +50,12 @@ import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 
 export default {
   name: "TransportationSelect",
+  emits: ["change", "blur", "update:modelValue"],
   props: {
     transportTypes: {
       type: Array,
     },
-    value: {},
+    modelValue: {},
     title: {},
     readonly: {
       type: Boolean,
@@ -79,32 +79,19 @@ export default {
     transportation: null,
   }),
   created() {
-    this.transportation = this.value;
+    this.transportation = this.modelValue;
   },
   watch: {
     transportation(value) {
-      this.$emit("input", value);
+      this.$emit("update:modelValue", value);
     },
-    value() {
-      this.transportation = this.value;
+    modelValue() {
+      this.transportation = this.modelValue;
     },
   },
 
   computed: {
-    /*   calculated_distance() {
-      if (
-        !this.getShop() ||
-        !this.getShop().warehouse ||
-        !this.getShop().warehouse.location ||
-        !this.receiver_info ||
-        !this.receiver_info.location
-      )
-        return -1;
-      return this.calculateDistanceBasket(
-        this.getShop().warehouse.location,
-        this.receiver_info.location
-      );
-    }*/
+
   },
 
   methods: {

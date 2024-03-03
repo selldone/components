@@ -144,28 +144,27 @@
             <v-chip
               v-if="isSelldoneSubscription"
               class="ma-2"
-              color="#111"
-              dark
+              color="#111" variant="flat"
               label
               size="small"
             >
-              <v-icon size="small" start>add_card</v-icon>
+              <v-icon  start>add_card</v-icon>
               Add card to the wallet.
             </v-chip>
-            <v-tooltip v-else-if="bill" color="transparent" location="top">
+            <v-tooltip v-else-if="bill" content-class="bg-black text-start rounded-xl"  location="top">
               <template v-slot:activator="{ props }">
                 <v-btn
                   class="ms-2"
-                  icon
+                  icon variant="text"
                   size="small"
                   style="vertical-align: top"
                   v-bind="props"
                 >
-                  <v-icon size="small">info</v-icon>
+                  <v-icon>info</v-icon>
                 </v-btn>
               </template>
 
-              <v-table class="border rounded-18px" dense>
+              <v-table class="bg-transparent" density="compact" theme="dark" >
                 <template v-slot:default>
                   <tbody class="text-start">
                     <tr>
@@ -303,7 +302,7 @@
                       </td>
                     </tr>
                     <tr style="border-top: #fff solid 2px">
-                      <td>{{ $t("global.commons.sum") }}</td>
+                      <td><b>{{ $t("global.commons.sum") }}</b></td>
                       <td class="font-weight-bold">
                         <price-view
                           :amount="total_amount_remain_for_pay"
@@ -411,7 +410,6 @@
                       block
                       class="mt-3"
                       color="#0061e0"
-                      dark
                       size="x-large"
                       variant="flat"
                       @click="PayPalSubmit"

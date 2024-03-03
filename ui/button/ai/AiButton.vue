@@ -20,7 +20,6 @@
     class="ai-btn"
     icon
     variant="text"
-    @click="$emit('click')"
   >
     <img
       :height="xLarge ? 36 : 24"

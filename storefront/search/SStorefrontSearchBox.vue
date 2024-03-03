@@ -154,12 +154,10 @@
       <template v-slot:item="{ item, props }">
         <v-list-item :title="item.raw.title" class="text-start" v-bind="props">
           <template v-slot:prepend>
-            <v-avatar v-if="item.raw.icon">
+            <v-avatar v-if="item.raw.icon" class="position-relative">
               <v-img :src="getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)">
                 <template v-slot:placeholder>
-                  <v-layout align-center fill-height justify-center ma-0>
-                    <v-progress-circular color="grey-lighten-5" indeterminate />
-                  </v-layout>
+                    <v-progress-circular color="grey-lighten-5" class="center-absolute" indeterminate />
                 </template>
               </v-img>
             </v-avatar>

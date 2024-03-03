@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-flex d-inline-flex style="">
+  <v-col class="d-inline-flex" >
     <v-btn class="ms-2" icon @click="show_filter = !show_filter">
       <v-icon class="crossRotate">
         {{ show_filter ? "close" : "more_vert" }}
@@ -39,7 +39,7 @@
           v-if="colors.length"
           :close="mode !== 'color'"
           :list="colors"
-          :value="null"
+          :model-value="null"
           @open="mode = 'color'"
           @select="
             (item) => {
@@ -55,7 +55,7 @@
           :close="mode !== 'volume'"
           :list="volumes"
           :title="$t('global.variants.volume')"
-          :value="null"
+          :model-value="null"
           icon="equalizer"
           @open="mode = 'volume'"
           @select="
@@ -73,7 +73,7 @@
           :close="mode !== 'packs'"
           :list="packs"
           :title="$t('global.variants.count_in_pack')"
-          :value="null"
+          :model-value="null"
           icon="all_inbox"
           @open="mode = 'packs'"
           @select="
@@ -91,7 +91,7 @@
           :close="mode !== 'weights'"
           :list="weights"
           :title="$t('global.variants.weight')"
-          :value="null"
+          :model-value="null"
           icon="fa:fas fa-weight-hanging"
           @open="mode = 'weights'"
           @select="
@@ -109,7 +109,7 @@
           :close="mode !== 'types'"
           :list="types"
           :title="$t('global.variants.type')"
-          :value="null"
+          :model-value="null"
           icon="fa:fas fa-toolbox"
           @open="mode = 'types'"
           @select="
@@ -126,7 +126,7 @@
           :close="mode !== 'styles'"
           :list="styles"
           :title="$t('global.variants.style')"
-          :value="null"
+          :model-value="null"
           icon="style"
           @open="mode = 'styles'"
           @select="
@@ -153,7 +153,7 @@
         </div>
       </v-row>
     </v-fade-transition>
-  </v-flex>
+  </v-col>
 </template>
 
 <script>
