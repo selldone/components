@@ -68,7 +68,6 @@
         </div>
       </v-tooltip>
       <!-- ............................................................... -->
-
       <price-view
         :amount="calculated_price * price_multi"
         class="price-value font-weight-black single-line"

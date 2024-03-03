@@ -19,22 +19,25 @@
     :bg-color="backgroundColor"
     :color="color"
     :customFilter="() => true"
-    :dark="dark"
-    :dense="dense"
+    :theme="dark ? 'dark' : 'light'"
+    :density="dense ? 'compact' : undefined"
     :disabled="disabled || loadingDelete"
-    :error-messages="value > max ? $t('global.commons.not_in_stock') : null"
-    :filled="filled"
+    :error-messages="
+      modelValue > max ? $t('global.commons.not_in_stock') : undefined
+    "
+    :variant="
+      variant ? variant : filled ? 'filled' : solo ? 'solo' : 'underlined'
+    "
     :flat="flat"
-    :hide-details="value <= max"
+    :hide-details="modelValue <= max"
     :items="items"
     :label="$t('global.commons.count')"
     :loading="loading"
-    :model-value="value"
+    :model-value="modelValue"
     :placeholder="$t('global.commons.count')"
-    :solo="solo"
     class="s--shop-basket-item-count-select"
     @blur="focus = false"
-    @change="
+    @update:modelValue="
       (val) => {
         $emit('change', correctValue(val));
         $refs.self.blur();
@@ -42,28 +45,31 @@
     "
     @click="focus = true"
     @focus="focus = true"
-    @update:model-value="(val) => $emit('input', correctValue(val))"
+    @update:model-value="(val) => $emit('update:modelValue', correctValue(val))"
     @keydown.enter="
       () => {
         $refs.self.blur();
       }
     "
+    :rounded="rounded"
   >
-    <template v-slot:item="{ item }">
-      <span v-if="item">
-        <span class="float-left mx-1">{{
-          unit ? unit : $t("global.commons.count_unit")
-        }}</span>
-        {{ item }}
-      </span>
-      <span v-else>
-        {{ $t("global.actions.delete") }}
-      </span>
+    <template v-slot:item="{ item, props }">
+      <v-list-item v-if="item.raw" v-bind="props">
+        <template v-slot:title>
+          {{ item.raw }}
+
+          <small class="ms-1">{{
+            unit ? unit : $t("global.commons.count_unit")
+          }}</small>
+        </template>
+      </v-list-item>
+      <v-list-item v-else v-bind="props" :title="$t('global.actions.delete')">
+      </v-list-item>
     </template>
 
     <template v-slot:selection="{ item }">
-      <span v-if="item && !focus" :class="{ 'center-view': noUnit }">
-        {{ item }}
+      <span v-if="item.raw && !focus" :class="{ 'center-view': noUnit }">
+        {{ item.raw }}
         <small v-if="!noUnit" class="mx-1">{{
           unit ? unit : $t("global.commons.count_unit")
         }}</small>
@@ -82,7 +88,6 @@
           :color="backgroundColor"
           :loading="loadingDelete"
           class="delete-button border-end"
-          tile
           title="Remove item from the cart."
           variant="flat"
           @click.stop="$emit('click:delete')"
@@ -99,8 +104,9 @@ import { NumberHelper } from "@core/helper/number/NumberHelper";
 
 export default {
   name: "SShopBasketItemCountSelect",
+  emits: ["change", "update:modelValue", "click:delete"],
   props: {
-    value: {},
+    modelValue: {},
 
     min: {
       default: 0,
@@ -136,6 +142,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    variant: {},
     flat: {
       type: Boolean,
       default: false,
@@ -144,6 +151,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    rounded: {},
   },
   data: () => {
     return {
@@ -186,7 +194,7 @@ export default {
  */
 .s--shop-basket-item-count-select {
   --delete-width: 48px;
-  --border-radius: 12px;
+  //  --border-radius: 12px;
 }
 
 /*
@@ -194,7 +202,7 @@ export default {
  */
 .s--shop-basket-item-count-select {
   overflow: hidden;
-  border-radius: var(--border-radius) !important;
+  // border-radius: var(--border-radius) !important;
   font-weight: 700 !important;
 
   .center-view {

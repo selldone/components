@@ -50,27 +50,30 @@
 
     <!-- ███████████████████ Sort ███████████████████ -->
 
-    <v-btn-toggle
-      v-if="!forceCollapse"
-      :mandatory="mandatory"
-      :model-value="modelValue"
-      :selected-class="activeClass"
-      border="0"
-      class="hide-on-small-900 mx-2"
-      @update:model-value="(val) => $emit('update:modelValue', val)"
-    >
-      <v-btn
-        v-for="item in items"
-        :key="item.val"
-        :loading="loading && modelValue === item.val && !search"
-        :value="item.val"
-        border="0"
-        height="46"
-        variant="text" :size="$vuetify.display.mdAndDown?'small':undefined"
+    <s-fade-scroll   v-if="!forceCollapse" style="max-width: calc(100% - 350px);" drag-scroll>
+      <v-btn-toggle
+
+          :mandatory="mandatory"
+          :model-value="modelValue"
+          :selected-class="activeClass"
+          border="0"
+          class="hide-on-small-900 mx-2"
+          @update:model-value="(val) => $emit('update:modelValue', val)"
+          style="min-width: max-content"
       >
-        {{ item.name }}
-      </v-btn>
-    </v-btn-toggle>
+        <v-btn
+            v-for="item in items"
+            :key="item.val"
+            :loading="loading && modelValue === item.val && !search"
+            :value="item.val"
+            border="0"
+            height="46"
+            variant="text" :size="$vuetify.display.mdAndDown?'small':undefined"
+        >
+          {{ item.name }}
+        </v-btn>
+      </v-btn-toggle>
+    </s-fade-scroll>
 
     <!-- Small screen -->
     <v-menu location="bottom" transition="slide-y-transition">
@@ -176,10 +179,11 @@
 <script>
 import { ModeView } from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
+import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 
 export default {
   name: "SProductsSortView",
-  components: {},
+  components: {SFadeScroll},
   emits: ["update:modelValue", "update:search", "update:view-mode"],
 
   props: {
@@ -300,6 +304,7 @@ export default {
   align-items: center;
   min-height: 54px;
   overflow: auto;
+  --background:#fff;
 
   .search-box {
     max-width: 360px;

@@ -22,7 +22,7 @@
       style="cursor: default"
     >
       <template v-slot:prepend>
-        <v-avatar class="rounded-lg">
+        <v-avatar rounded="lg" variant="outlined" color="#eee">
           <v-img
             :src="
               item.product.icon
@@ -39,10 +39,13 @@
         </v-avatar>
       </template>
 
-      <v-row no-gutters>
-        <div
-          :class="{ 'v-col-9 v-col-sm-4 v-col-md-3 v-col-lg-4 constrained': !viewOnly }"
-          class=""
+      <v-row no-gutters align="center">
+        <v-col
+            cols="12"
+            sm="6"
+            md="6"
+
+          :class="{ 'constrained': !viewOnly }"
         >
           <v-list-item-title class="ptitle">
             <component
@@ -53,7 +56,7 @@
               }"
               class="text-dark"
             >
-              {{ item.product.title?.limitWords(7) }}
+              <b>{{ item.product.title?.limitWords(7) }}</b>
 
               <v-chip
                 v-if="!item.product.original"
@@ -87,31 +90,43 @@
               :product-variant="item.variant"
             />
           </v-list-item-subtitle>
-        </div>
+        </v-col>
 
-        <div
-          v-if="viewOnly"
+        <v-col
           class="text-center px-2 v-col-2 v-col-sm-4"
-          style="max-width: max-content"
+          cols="6"
+          sm="4"
+          md="3"
         >
-          <b>{{ item.count }}</b>
-        </div>
+          <b  v-if="viewOnly">{{ item.count }}</b>
 
-        <div v-if="!viewOnly" class="v-col-5 v-col-sm-3 v-col-md-3 v-col-lg-3">
-          <s-shop-basket-item-count-select
-            v-model="item.count"
-            :loading="busyAdd === item.product_id + '-' + item.variant_id"
-            :max="availableQuantity(item)"
-            :min="0"
-            background-color="#111"
-            dark
-            filled
-            no-unit
-            @change="(count) => spinnerSelectAction(item, count)"
-          ></s-shop-basket-item-count-select>
-        </div>
 
-        <div class="text-left px-3 v-col-5 v-col-sm-2 v-col-md-3 v-col-lg-3">
+            <s-shop-basket-item-count-select
+                v-else
+                v-model="item.count"
+                :loading="busyAdd === item.product_id + '-' + item.variant_id"
+                :max="availableQuantity(item)"
+                :min="0"
+                background-color="#111"
+                dark
+                filled
+                no-unit
+                @change="(count) => spinnerSelectAction(item, count)"
+                rounded="lg"
+
+            ></s-shop-basket-item-count-select>
+
+        </v-col>
+
+
+
+        <v-col
+            cols="6"
+            sm="2"
+            md="3"
+
+
+            class="text-left px-3">
           <div v-if="item.dis" class="text-muted">
             <price-view
               :amount="item.dis * item.count"
@@ -121,16 +136,15 @@
           <div class="price">
             <price-view :amount="item.price * item.count"></price-view>
           </div>
-        </div>
+        </v-col>
       </v-row>
 
       <template v-slot:append>
         <v-list-item-action v-if="!viewOnly" class="text-center m-0">
           <v-btn
-            :caption="$t('global.actions.delete')"
+            :title="$t('global.actions.delete')"
             :loading="busyDelete === item.id"
-            class="sub-caption -hover b-12px"
-            icon
+            icon variant="text"
             @click.stop="$emit('delete', item.id)"
           >
             <v-icon> close</v-icon>
@@ -148,7 +162,7 @@ import { ProductCondition } from "@core/enums/product/ProductCondition";
 import SShopBasketItemCountSelect from "../../storefront/order/basket/SShopBasketItemCountSelect.vue";
 
 export default {
-  name: "SOfflineBasketItemsList",
+  name: "BPosCartItems",
   components: { SShopBasketItemCountSelect, VariantItemViewMicro },
   props: {
     basket: {
