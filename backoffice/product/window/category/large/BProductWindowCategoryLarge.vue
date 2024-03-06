@@ -29,6 +29,7 @@
         custom-header
         style="border-radius: 8px"
         dark
+        :color="SaminColorDarkDeep"
       >
         <template v-slot:top-left>
           <v-btn

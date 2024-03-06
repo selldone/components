@@ -564,7 +564,7 @@
             @onShowNote="showNoteProduct(product)"
             @select="$emit('select', product)"
             :dark="dark"
-            @click.middle.stop="$emit('select:middle', product)"
+            @mousedown.middle.stop="$emit('select:middle', product)"
           >
           </b-product-window-product-mini>
 

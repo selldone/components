@@ -16,7 +16,7 @@
   <v-sheet
     ref="widget"
     :class="{ className, h100: h100 }"
-    :style="{ '--background': 'var(--widget-background-color)' }"
+    :style="{ '--background': 'var(--widget-background-color)' ,'--widget-background-color':color?color:undefined}"
     color="var(--widget-background-color)"
     :theme="dark ? 'dark' : 'light'"
     class="widget s--widget"
@@ -172,7 +172,8 @@ export default {
     dataWidgster: { type: Object, default: () => ({}) },
     h100: { default: false, type: Boolean },
     dark: { type: Boolean, default: false },
-    rounded:{default:'xl'}
+    rounded:{default:'xl'},
+    color:{},
   },
   computed: {
     randomId() {
