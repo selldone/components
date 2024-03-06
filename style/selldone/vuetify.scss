@@ -786,3 +786,14 @@ FIX! prevent show extra scroll bar
     overflow: visible;
   }
 }
+
+/**
+Make v-btn flex to put prepend and append in start and end of button
+ */
+
+.s--button-flex{
+  display: flex;
+  .v-btn__content{
+    flex-grow: 1;
+  }
+}

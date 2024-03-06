@@ -123,7 +123,7 @@
 
     <router-link
       v-if="USER() && !shops.length && home"
-      :to="{ name: 'ShopsListPage' }"
+      :to="{ name: 'BPageShuttleShops' }"
     >
       <s-add-button-green
         :caption="$t('home.s1.domain_input.action')"

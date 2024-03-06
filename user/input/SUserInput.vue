@@ -50,12 +50,16 @@
       $emit('update:user-id', null);
       $emit('update:user', null);
     "
+    :multiple="multiple"
+    class="v-input-auto-height"
   >
     <template v-slot:chip="{ item, props }">
       <v-chip
+        v-if="multiple"
+        v-bind="props"
         :color="item.raw.add ? 'primary' : 'transparent'"
         :title="item.raw.email"
-        v-bind="props"
+        variant="flat"
       >
         <v-avatar start>
           <v-img
@@ -71,6 +75,35 @@
           {{ item.raw.email }}</span
         >
       </v-chip>
+      <div v-else class="d-flex align-center">
+        <v-avatar class="me-2 avatar-gradient -thin -user" size="32">
+          <v-img
+            v-if="!item.raw.add && item.raw.id"
+            :src="getUserAvatar(item.raw.id)"
+          ></v-img>
+          <v-icon v-else>person_add</v-icon>
+        </v-avatar>
+
+        <div class="flex-grow-1">
+          <div>
+            {{ item.raw.name }}
+
+            <v-chip
+              v-if="item.raw.add"
+              color="green"
+              size="small"
+              variant="tonal"
+              class="ms-1"
+              >invite
+            </v-chip>
+          </div>
+
+          <small v-if="item.raw.email && !item.raw.add" class="d-block">
+            <v-icon class="me-1" size="small">email</v-icon>
+            {{ item.raw.email }}</small
+          >
+        </div>
+      </div>
     </template>
 
     <template v-slot:item="{ item, props }">
@@ -118,6 +151,8 @@ export default {
   emits: ["update:modelValue", "update:user-id", "update:user"],
   props: {
     modelValue: {},
+
+    multiple: Boolean,
 
     withProfile: {
       type: Boolean,

@@ -32,9 +32,9 @@
       :title="title"
       :to="to"
     ></s-widget-header>
-    <v-list-subheader class="expandable px-0">
+    <p class="px-0 op-0-7" style="font-size: 0.85rem">
       {{ subtitle }}
-    </v-list-subheader>
+    </p>
   </div>
 </template>
 

@@ -1320,7 +1320,7 @@ export default {
         location.href = this.window.back_url;
       } else {
         if (!this.noRedirect) {
-          this.$router.push({ name: "ShopsListPage" });
+          this.$router.push({ name: "BPageShuttleShops" });
         }
 
         // Fetch home data: (user shops...) Load by delay! (Must not cached!)
