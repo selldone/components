@@ -18,6 +18,7 @@
     :style="{ 'overflow-hidden': inDragState }"
     class="s--backoffice-products-management-view"
     @contextmenu="showMenu($event, null, null)"
+    v-bind="$attrs"
   >
     <!-- ⬬⬬⬬⬬ Breadcrumbs ⬬⬬⬬⬬ -->
 
@@ -453,13 +454,13 @@
               v-if="selectMode && canSelectCategory"
               class="absolute-top-end selected-icon m-2"
               icon
-              size="large"
+              :size="38"
               style="z-index: 50"
               @click.stop="$emit('select-category', category)"
             >
               <v-icon
                 :color="isSelected('c-' + category.id) ? '#689F38' : '#ccc'"
-                size="large"
+                :size="30"
                 >check_circle
               </v-icon>
             </v-btn>
@@ -1205,10 +1206,19 @@
 
             <v-list-item @click="dialog_root_filter = true">
               <template v-slot:prepend>
-                <v-icon size="small">filter_alt</v-icon>
+                <v-avatar
+                  v-if="parent_folders"
+                  :image="getShopImagePath(parent_folders.icon, 64)"
+                  :size="24"
+                  class="avatar-gradient -thin -category"
+                ></v-avatar>
+                <v-icon v-else size="small">filter_alt</v-icon>
               </template>
 
-              <v-list-item-title> Set Root Filter</v-list-item-title>
+              <v-list-item-title v-if="parent_folders">
+                Set Filter: {{ parent_folders.title?.limitWords(3) }}
+              </v-list-item-title>
+              <v-list-item-title v-else> Set Root Filter</v-list-item-title>
             </v-list-item>
           </v-list>
 
@@ -1265,6 +1275,18 @@
               </v-list-item-subtitle>
             </v-list-item>
 
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Select All Products ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+            <v-list-item @click="selectAllProducts(!all_products_selected)">
+              <template v-slot:prepend>
+                <v-icon >highlight_alt</v-icon>
+              </template>
+
+              <v-list-item-title>
+                {{ all_products_selected ? "Unselect" : "Select all products" }}
+              </v-list-item-title>
+            </v-list-item>
+
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ New Category ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <template v-if="CAN_ADD_CATEGORY">
@@ -1272,7 +1294,7 @@
 
               <v-list-item @click="showEditCategory(null)">
                 <template v-slot:prepend>
-                  <v-icon color="amber" size="small">create_new_folder</v-icon>
+                  <v-icon color="amber" >create_new_folder</v-icon>
                 </template>
 
                 <v-list-item-title>
@@ -1302,356 +1324,364 @@
         </template>
       </v-sheet>
     </v-menu>
+  </div>
 
-    <!-- ████████████████████ Dialog > Edit category ████████████████████ -->
-    <v-dialog
-      v-model="dialog_cat"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
-    >
-      <s-shop-category-add
-        v-if="dialog_pre"
-        :categories="null"
-        :category="selected_cat"
-        :parent-folder="parent_folders"
-        :shop="shop"
-        :vendor="vendor"
-        @add="
-          (item) =>
-            item.parent_id === current_dir_id ? folders.push(item) : undefined
-        "
-        @back="dialog_cat = false"
-        @delete="
-          (id) => {
-            DeleteItemByID(folders, id);
-            fetchData(
-              false,
-              true /*Force fetch items -> because inside folders and products return to current location*/,
-            );
-          }
-        "
-        @edit="
-          (item) =>
-            item.parent_id !== current_dir_id
-              ? DeleteItemByID(folders, item.id)
-              : UpdateItemByID(folders, item)
-        "
-      />
-    </v-dialog>
-
-    <!-- ████████████████████ Dialog > Assign Vendor to Product ████████████████████ -->
-    <v-dialog
-      v-model="dialog_vendors"
-      :content-class="!$vuetify.display.mdAndDown ? 'rounded-28px' : undefined"
-      :fullscreen="$vuetify.display.mdAndDown"
-      max-width="1080"
-      scrollable
-      transition="dialog-bottom-transition"
-    >
-      <v-card>
-        <v-card-title>Bulk actions > Assign vendor</v-card-title>
-        <v-card-text>
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Vendor ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-          <div class="widget-box mb-5">
-            <s-widget-header icon="admin_panel_settings" title="Vendor">
-            </s-widget-header>
-            <v-list-subheader
-              >This vendor will be added to selected products for all their
-              variants.
-            </v-list-subheader>
-
-            <products-dense-images-circles
-              :ids="assign_vendor_product_ids"
-            ></products-dense-images-circles>
-
-            <b-vendor-input
-              v-model="vendor_id_input"
-              :shop="shop"
-              active-only
-              label="Vendor"
-              placeholder="Filter by vendor..."
-            ></b-vendor-input>
-
-            <s-smart-switch
-              v-model="clear_other"
-              class="mt-5"
-              false-description="Add selected vendor."
-              false-title="Add / Update"
-              true-description="Other assigned vendors will be removed from selected products."
-              true-icon="cleaning_services"
-              true-title="Add / Update + Clear other vendors"
-            >
-            </s-smart-switch>
-          </div>
-
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ price (Calculated / Manual price) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-          <div class="widget-box mb-5">
-            <s-widget-header icon="price_change" title="Marketplace pricing">
-            </s-widget-header>
-            <v-list-subheader
-              >Select a marketplace pricing model to assign to the selected
-              product. If you leave it empty, the product pricing will be set as
-              vendor price, and the marketplace commission will assume as zero.
-            </v-list-subheader>
-
-            <vendor-pricing-input-field
-              v-model="pricing_id"
-              :shop="shop"
-            ></vendor-pricing-input-field>
-          </div>
-
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Quantity  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-          <div class="widget-box mb-5">
-            <s-widget-header
-              icon="inventory"
-              title="Vendor Inventory"
-            ></s-widget-header>
-            <v-list-subheader
-              >Set as the inventory for each item. No effect on the File-type
-              products.
-            </v-list-subheader>
-
-            <s-number-input
-              v-model="quantity"
-              :label="$t('global.commons.quantity')"
-              :min="0"
-              :step="1"
-              class="my-3 strong-field"
-            />
-          </div>
-
-          <div class="widget-box mb-5 py-3">
-            <s-smart-check-verify-action
-              v-model="check_bulk_vendor"
-            ></s-smart-check-verify-action>
-          </div>
-        </v-card-text>
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn
-              size="x-large"
-              variant="text"
-              @click="dialog_vendors = false"
-            >
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
-
-            <v-btn
-              :class="{
-                disabled:
-                  !check_bulk_vendor || (!vendor_id_input && !clear_other),
-              }"
-              :loading="busy_assign_vendor"
-              color="primary"
-              size="x-large"
-              variant="flat"
-              @click="assignVendor()"
-            >
-              <v-icon start>save</v-icon>
-
-              {{
-                clear_other && vendor_id_input
-                  ? "Set selected and remove other vendors"
-                  : clear_other
-                    ? "Clear all vendors"
-                    : $t("global.actions.set")
-              }}
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- █████████████████████ Dialog > Product Note Messages █████████████████████ -->
-
-    <b-note-dialog
-      v-model="note_product_dialog"
-      :add-url="
-        () =>
-          IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-            ? window.VAPI.POST_MY_VENDOR_PRODUCT_ADD_NOTE(
-                vendor.id,
-                note_product_item.id,
-              )
-            : window.API.POST_PRODUCT_ADD_NOTE(shop.id, note_product_item.id)
-      "
-      :delete-url="
-        (index) =>
-          IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-            ? window.VAPI.DELETE_MY_VENDOR_PRODUCT_NOTE(
-                vendor.id,
-                note_product_item.id,
-                index,
-              )
-            : window.API.DELETE_PRODUCT_NOTE(
-                shop.id,
-                note_product_item.id,
-                index,
-              )
-      "
-      :icon="
-        note_product_item ? getShopImagePath(note_product_item.icon, 128) : null
-      "
-      :target="note_product_item"
-      :title="note_product_item && note_product_item.title"
-    ></b-note-dialog>
-
-    <!-- █████████████████████ Dialog > Category Note Messages █████████████████████ -->
-
-    <b-note-dialog
-      v-model="note_category_dialog"
-      :add-url="
-        () =>
-          IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-            ? window.VAPI.POST_MY_VENDOR_CATEGORY_ADD_NOTE(
-                vendor.id,
-                note_category_item.id,
-              )
-            : window.API.POST_CATEGORY_ADD_NOTE(shop.id, note_category_item.id)
-      "
-      :delete-url="
-        (index) =>
-          IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-            ? window.VAPI.DELETE_MY_VENDOR_CATEGORY_NOTE(
-                vendor.id,
-                note_category_item.id,
-                index,
-              )
-            : window.API.DELETE_CATEGORY_NOTE(
-                shop.id,
-                note_category_item.id,
-                index,
-              )
-      "
-      :icon="
-        note_category_item
-          ? getShopImagePath(note_category_item.icon, 128)
-          : null
-      "
-      :target="note_category_item"
-      :title="note_category_item && note_category_item.title"
-    ></b-note-dialog>
-
-    <!-- █████████████████████ Dialog > Category > Bulk set profile █████████████████████ -->
-
-    <v-dialog
-      v-model="bulk_profile_dialog"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
-    >
-      <category-bulk-products-set-profile
-        v-if="selected_category_bulk_profile"
-        :category="selected_category_bulk_profile"
-        :shop="shop"
-        :vendor="vendor"
-        @close="bulk_profile_dialog = false"
-      ></category-bulk-products-set-profile>
-    </v-dialog>
-
-    <!-- █████████████████████ Dialog > Category > Bulk discount █████████████████████ -->
-
-    <b-inventory-bulk-discount
-      v-if="selected_category_bulk_discount"
-      v-model="bulk_discount_dialog"
-      :category="selected_category_bulk_discount"
+  <!-- ████████████████████ Dialog > Edit category ████████████████████ -->
+  <v-dialog
+    v-model="dialog_cat"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <s-shop-category-add
+      v-if="dialog_pre"
+      :categories="null"
+      :category="selected_cat"
+      :parent-folder="parent_folders"
       :shop="shop"
-    ></b-inventory-bulk-discount>
+      :vendor="vendor"
+      @add="
+        (item) =>
+          item.parent_id === current_dir_id ? folders.push(item) : undefined
+      "
+      @back="dialog_cat = false"
+      @delete="
+        (id) => {
+          DeleteItemByID(folders, id);
+          fetchData(
+            false,
+            true /*Force fetch items -> because inside folders and products return to current location*/,
+          );
+        }
+      "
+      @edit="
+        (item) =>
+          item.parent_id !== current_dir_id
+            ? DeleteItemByID(folders, item.id)
+            : UpdateItemByID(folders, item)
+      "
+    />
+  </v-dialog>
 
-    <!-- █████████████████████ Dialog > Product > Change Status █████████████████████ -->
+  <!-- ████████████████████ Dialog > Assign Vendor to Product ████████████████████ -->
+  <v-dialog
+    v-model="dialog_vendors"
+    :content-class="!$vuetify.display.mdAndDown ? 'rounded-28px' : undefined"
+    :fullscreen="$vuetify.display.mdAndDown"
+    max-width="1080"
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <v-card class="text-start">
+      <v-card-title>Bulk actions > Assign vendor</v-card-title>
+      <v-card-text>
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Vendor ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <v-dialog v-model="status_product_dialog" max-width="640" scrollable>
-      <v-card v-if="status_product_items?.length">
-        <v-card-title>
-          <v-icon class="me-1" color="#111">nat</v-icon>
-          Change Product Status
-        </v-card-title>
-        <v-card-text>
+        <div class="widget-box mb-5">
+          <s-widget-header icon="admin_panel_settings" title="Vendor">
+          </s-widget-header>
+          <v-list-subheader
+            >This vendor will be added to selected products for all their
+            variants.
+          </v-list-subheader>
+
           <products-dense-images-circles
-            :ids="status_product_items.map((p) => p.id)"
+            :ids="assign_vendor_product_ids"
           ></products-dense-images-circles>
 
-          <s-smart-select
-            v-model="product_status_input"
-            :color="ProductStatus[status_product_items[0].status]?.color"
-            :items="status_list"
-            :loading="status_busy"
-            class="my-8"
-            force-show-all
-            gray-unselected
-            item-description="description"
-            item-icon="icon"
-            item-text="title"
-            item-value="code"
-            @change="(val) => setBulkProductStatus(val, status_product_items)"
-          >
-          </s-smart-select>
-        </v-card-text>
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn
-              size="x-large"
-              variant="text"
-              @click="status_product_dialog = false"
-            >
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- ████████████████████ Dialog > Edit shop root filters ████████████████████ -->
-    <v-dialog
-      v-if="!IS_VENDOR_PANEL"
-      v-model="dialog_root_filter"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
-    >
-      <v-card>
-        <v-card-title>
-          <v-avatar class="avatar-gradient -thin -shop me-2" size="38">
-            <img :src="getShopImagePath(shop.icon)" />
-          </v-avatar>
-
-          {{ shop.title }}
-        </v-card-title>
-        <v-card-text>
-          <s-shop-category-filter
-            :category="{
-              id: 'root',
-              shop_id: shop.id,
-              filters: shop.filters,
-            }"
+          <b-vendor-input
+            v-model="vendor_id_input"
             :shop="shop"
-            @edit-filters="
-              (_filters) => {
-                shop.filters = _filters;
-              }
-            "
+            active-only
+            label="Vendor"
+            placeholder="Filter by vendor..."
+          ></b-vendor-input>
+
+          <s-smart-switch
+            v-model="clear_other"
+            class="mt-5"
+            false-description="Add selected vendor."
+            false-title="Add / Update"
+            true-description="Other assigned vendors will be removed from selected products."
+            true-icon="cleaning_services"
+            true-title="Add / Update + Clear other vendors"
+          >
+          </s-smart-switch>
+        </div>
+
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ price (Calculated / Manual price) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+        <div class="widget-box mb-5">
+          <s-widget-header icon="price_change" title="Marketplace pricing">
+          </s-widget-header>
+          <v-list-subheader
+            >Select a marketplace pricing model to assign to the selected
+            product. If you leave it empty, the product pricing will be set as
+            vendor price, and the marketplace commission will assume as zero.
+          </v-list-subheader>
+
+          <vendor-pricing-input-field
+            v-model="pricing_id"
+            :shop="shop"
+          ></vendor-pricing-input-field>
+        </div>
+
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Quantity  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+        <div class="widget-box mb-5">
+          <s-widget-header
+            icon="inventory"
+            title="Vendor Inventory"
+          ></s-widget-header>
+          <v-list-subheader
+            >Set as the inventory for each item. No effect on the File-type
+            products.
+          </v-list-subheader>
+
+          <s-number-input
+            v-model="quantity"
+            :label="$t('global.commons.quantity')"
+            :min="0"
+            :step="1"
+            class="my-3 strong-field"
           />
-        </v-card-text>
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn
-              size="x-large"
-              variant="text"
-              @click="dialog_root_filter = false"
-            >
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+        </div>
+
+        <div class="widget-box mb-5 py-3">
+          <s-smart-check-verify-action
+            v-model="check_bulk_vendor"
+          ></s-smart-check-verify-action>
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn size="x-large" variant="text" @click="dialog_vendors = false">
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+
+          <v-btn
+            :class="{
+              disabled:
+                !check_bulk_vendor || (!vendor_id_input && !clear_other),
+            }"
+            :loading="busy_assign_vendor"
+            color="primary"
+            size="x-large"
+            variant="flat"
+            @click="assignVendor()"
+          >
+            <v-icon start>save</v-icon>
+
+            {{
+              clear_other && vendor_id_input
+                ? "Set selected and remove other vendors"
+                : clear_other
+                  ? "Clear all vendors"
+                  : $t("global.actions.set")
+            }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- █████████████████████ Dialog > Product Note Messages █████████████████████ -->
+
+  <b-note-dialog
+    v-model="note_product_dialog"
+    :add-url="
+      () =>
+        IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+          ? window.VAPI.POST_MY_VENDOR_PRODUCT_ADD_NOTE(
+              vendor.id,
+              note_product_item.id,
+            )
+          : window.API.POST_PRODUCT_ADD_NOTE(shop.id, note_product_item.id)
+    "
+    :delete-url="
+      (index) =>
+        IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+          ? window.VAPI.DELETE_MY_VENDOR_PRODUCT_NOTE(
+              vendor.id,
+              note_product_item.id,
+              index,
+            )
+          : window.API.DELETE_PRODUCT_NOTE(shop.id, note_product_item.id, index)
+    "
+    :icon="
+      note_product_item ? getShopImagePath(note_product_item.icon, 128) : null
+    "
+    :target="note_product_item"
+    :title="note_product_item && note_product_item.title"
+  ></b-note-dialog>
+
+  <!-- █████████████████████ Dialog > Category Note Messages █████████████████████ -->
+
+  <b-note-dialog
+    v-model="note_category_dialog"
+    :add-url="
+      () =>
+        IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+          ? window.VAPI.POST_MY_VENDOR_CATEGORY_ADD_NOTE(
+              vendor.id,
+              note_category_item.id,
+            )
+          : window.API.POST_CATEGORY_ADD_NOTE(shop.id, note_category_item.id)
+    "
+    :delete-url="
+      (index) =>
+        IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+          ? window.VAPI.DELETE_MY_VENDOR_CATEGORY_NOTE(
+              vendor.id,
+              note_category_item.id,
+              index,
+            )
+          : window.API.DELETE_CATEGORY_NOTE(
+              shop.id,
+              note_category_item.id,
+              index,
+            )
+    "
+    :icon="
+      note_category_item ? getShopImagePath(note_category_item.icon, 128) : null
+    "
+    :target="note_category_item"
+    :title="note_category_item && note_category_item.title"
+  ></b-note-dialog>
+
+  <!-- █████████████████████ Dialog > Category > Bulk set profile █████████████████████ -->
+
+  <v-dialog
+    v-model="bulk_profile_dialog"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <category-bulk-products-set-profile
+      v-if="selected_category_bulk_profile"
+      :category="selected_category_bulk_profile"
+      :shop="shop"
+      :vendor="vendor"
+      @close="bulk_profile_dialog = false"
+    ></category-bulk-products-set-profile>
+  </v-dialog>
+
+  <!-- █████████████████████ Dialog > Category > Bulk discount █████████████████████ -->
+
+  <b-inventory-bulk-discount
+    v-if="selected_category_bulk_discount"
+    v-model="bulk_discount_dialog"
+    :category="selected_category_bulk_discount"
+    :shop="shop"
+  ></b-inventory-bulk-discount>
+
+  <!-- █████████████████████ Dialog > Product > Change Status █████████████████████ -->
+
+  <v-dialog v-model="status_product_dialog" max-width="640" scrollable>
+    <v-card v-if="status_product_items?.length" class="text-start" rounded="xl">
+      <v-card-title>
+        <v-icon class="me-2">nat</v-icon>
+        Change Product Status
+      </v-card-title>
+      <v-card-text>
+        <products-dense-images-circles
+          :ids="status_product_items.map((p) => p.id)"
+        ></products-dense-images-circles>
+
+        <s-smart-select
+          v-model="product_status_input"
+          :color="ProductStatus[status_product_items[0].status]?.color"
+          :items="status_list"
+          :loading="status_busy"
+          class="my-8"
+          force-show-all
+          gray-unselected
+          item-description="description"
+          item-icon="icon"
+          item-text="title"
+          item-value="code"
+          @change="(val) => setBulkProductStatus(val, status_product_items)"
+        >
+        </s-smart-select>
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="status_product_dialog = false"
+          >
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- ████████████████████ Dialog > Edit shop root filters ████████████████████ -->
+  <v-dialog
+    v-if="!IS_VENDOR_PANEL"
+    v-model="dialog_root_filter"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <v-card class="text-start">
+      <v-card-title>
+        <v-avatar class="avatar-gradient -thin -shop me-2" size="38">
+          <img :src="getShopImagePath(shop.icon)" />
+        </v-avatar>
+
+        {{ shop.title }}
+        <b v-if="parent_folders" class="ms-1">
+          |
+
+          <s-avatar-folder
+            :src="getShopImagePath(parent_folders.icon, 64)"
+            is-amber
+            :size="36"
+            class="mx-1"
+            side-icon="folder"
+            :border-size="5"
+          ></s-avatar-folder>
+
+          {{ parent_folders.title }}
+        </b>
+      </v-card-title>
+      <v-card-text>
+        <s-shop-category-filter
+          :category="
+            parent_folders
+              ? parent_folders
+              : {
+                  id: 'root',
+                  shop_id: shop.id,
+                  filters: shop.filters,
+                }
+          "
+          :shop="shop"
+          @edit-filters="
+            (_filters) => {
+              shop.filters = _filters;
+            }
+          "
+        />
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="dialog_root_filter = false"
+          >
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -1688,6 +1718,7 @@ import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import _ from "lodash-es";
 import SShopCategoryFilter from "@components/shop/category/filter/SShopCategoryFilter.vue";
 import SDenseImagesCircles from "@components/ui/image/SDenseImagesCircles.vue";
+import SAvatarFolder from "@components/ui/avatar/folder/SAvatarFolder.vue";
 
 export default {
   name: "BProductsWindow",
@@ -1702,6 +1733,7 @@ export default {
     "click:fast-add",
   ],
   components: {
+    SAvatarFolder,
     SDenseImagesCircles,
     SShopCategoryFilter,
     SFadeScroll,
@@ -2065,6 +2097,10 @@ export default {
         this.products &&
         Math.ceil(this.products.length / this.max_products_per_page)
       );
+    },
+
+    all_products_selected() {
+      return this.selected_products.length === this.products.length;
     },
   },
   watch: {
@@ -3005,6 +3041,10 @@ export default {
         .finally(() => {
           this.busy_clear_root_filter = false;
         });
+    },
+
+    selectAllProducts(select) {
+      this.selected_products = select ? this.products.map((p) => p.id) : [];
     },
   },
 };

@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-expand-transition>
+  <v-slide-y-transition>
     <v-banner
       v-if="
         !close &&
@@ -58,24 +58,26 @@
       </router-link>
 
       <template v-slot:actions>
+      <v-list-item-action end>
         <s-lottie
-          :height="banner.anim_height"
-          :options="{ path: banner.anim, loop: true }"
-          :speed="1"
-          :width="banner.anim_width"
-          class="mx-1 flex-grow-0"
+            :height="banner.anim_height"
+            :options="{ path: banner.anim, loop: true }"
+            :speed="1"
+            :width="banner.anim_width"
+            class="mx-1 flex-grow-0"
         />
         <v-btn
-          class="mx-1 flex-grow-0"
-          icon
-          @click.stop="dismiss"
-          variant="text"
+            class="mx-2 flex-grow-0"
+            icon size="42"
+            @click.stop="dismiss"
+            variant="text"
         >
           <v-icon>close</v-icon>
         </v-btn>
+      </v-list-item-action>
       </template>
     </v-banner>
-  </v-expand-transition>
+  </v-slide-y-transition>
 </template>
 
 <script>
@@ -136,9 +138,6 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
-html {
-
-}
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
@@ -156,5 +155,13 @@ html {
   &.-bg-repeat {
     background-repeat: repeat;
   }
+
+  .v-banner-actions{
+    margin-top: 0 !important;
+  }
+
+
 }
+
+
 </style>

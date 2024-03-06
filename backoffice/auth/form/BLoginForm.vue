@@ -717,11 +717,12 @@
               :inputOptions="{
                 placeholder: $t('global.need_login.mobile_input'),
               }"
-              class="stylish-phone-input my-3 max-width-field mx-auto zoomIn"
+              class=" my-3 max-width-field mx-auto zoomIn"
               enabledCountryCode
               required
               validCharactersOnly
               @country-changed="(val) => (country = val)"
+              variant="underlined"
             ></s-tel-input>
           </template>
 

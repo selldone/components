@@ -732,6 +732,15 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     --v-medium-emphasis-opacity: 0.9;
   }
 
+  .v-list{
+    .v-list-subheader{
+      --v-medium-emphasis-opacity: 0.5;
+    }
+    .v-list-item-subtitle{
+      --v-medium-emphasis-opacity: 0.6;
+      font-size: 0.85rem;
+    }
+  }
 }
 
 
@@ -751,6 +760,29 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
  */
 .v-toolbar{
   .v-toolbar__content{
+    overflow: visible;
+  }
+}
+
+/**
+Fix! Make prepend and append center of list item
+ */
+.v-list{
+  .v-list-item{
+    .v-list-item__prepend,.v-list-item__append{
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+  }
+}
+
+/**
+Expandable table on hover rows
+FIX! prevent show extra scroll bar
+ */
+
+.s--table-expandable-hover{
+  .v-table__wrapper{
     overflow: visible;
   }
 }

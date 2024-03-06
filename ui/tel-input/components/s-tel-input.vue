@@ -1,105 +1,88 @@
 <template>
-  <div :class="['s-tel-input', styleClasses, { disabled: disabled }]">
-    <div
-      v-click-outside="clickedOutside"
-      :aria-expanded="open"
-      :class="[
-        'vti__dropdown',
-        { open: open, disabled: dropdownOptions.disabled },
-      ]"
-      :tabindex="dropdownOptions.tabindex"
-      aria-haspopup="listbox"
-      aria-label="Country Code Selector"
-      role="button"
-      @click="toggleDropdown"
-      @keydown="keyboardNav"
-      @keydown.space="toggleDropdown"
-      @keydown.esc="reset"
-      @keydown.tab="reset"
-    >
-      <span class="vti__selection">
-        <span
-          v-if="dropdownOptions.showFlags"
-          :class="['vti__flag', activeCountryCode.toLowerCase()]"
-        ></span>
-        <span
-          v-if="dropdownOptions.showDialCodeInSelection"
-          class="vti__country-code"
-        >
-          +{{ activeCountry && activeCountry.dialCode }}
-        </span>
-        <slot :open="open" name="arrow-icon">
-          <span class="vti__dropdown-arrow">{{ open ? "▲" : "▼" }}</span>
-        </slot>
-      </span>
-      <ul
-        v-if="open"
-        ref="list"
-        :class="dropdownOpenDirection"
-        class="vti__dropdown-list"
-        role="listbox"
+  <v-text-field
+    :id="inputOptions.id"
+    ref="input"
+    class="s--tel-input"
+    v-model="phone"
+    :aria-describedby="inputOptions['aria-describedby']"
+    :autocomplete="inputOptions.autocomplete"
+    :autofocus="inputOptions.autofocus"
+    :class="['vti__input', inputOptions.styleClasses, { disabled: disabled }]"
+    :disabled="disabled"
+    :maxlength="inputOptions.maxlength"
+    :name="inputOptions.name"
+    :placeholder="parsedPlaceholder"
+    :readonly="inputOptions.readonly"
+    :required="inputOptions.required"
+    :tabindex="inputOptions.tabindex"
+    :type="inputOptions.type"
+    :model-value="modelValue"
+    @blur="onBlur"
+    @focus="onFocus"
+    @update:model-value="onInput"
+    @keyup.enter="onEnter"
+    @keyup.space="onSpace"
+    :variant="variant"
+    :rounded="rounded"
+  >
+    <template v-slot:prepend>
+      <v-select
+        v-model="activeCountryCode"
+        @update:model-value="choose"
+        :return-object="false"
+        item-value="iso2"
+        item-title="name"
+        :items="filtered_countries"
+        variant="plain"
+        hide-details
+        style="width: 64px"
+        density="compact"
+        :menu-props="{
+          width: '80vw',
+          maxWidth: '380px',
+        }"
+        @update:menu="search = ''"
       >
-        <input
-          v-if="dropdownOptions.showSearchBox"
-          v-model="searchQuery"
-          :placeholder="sortedCountries.length ? sortedCountries[0].name : ''"
-          aria-label="Search by country name or country code"
-          class="vti__input vti__search_box"
-          type="text"
-          @click.stop
-        />
-        <li
-          v-for="(pb, index) in sortedCountries"
-          :key="pb.iso2 + (pb.preferred ? '-preferred' : '')"
-          :aria-selected="activeCountryCode === pb.iso2 && !pb.preferred"
-          :class="['vti__dropdown-item', getItemClass(index, pb.iso2)]"
-          role="option"
-          tabindex="-1"
-          @click="choose(pb)"
-          @mousemove="selectedIndex = index"
-        >
-          <span
-            v-if="dropdownOptions.showFlags"
-            :class="['vti__flag', pb.iso2.toLowerCase()]"
-          ></span>
-          <strong>{{ pb.name }}</strong>
-          <span v-if="dropdownOptions.showDialCodeInList">
-            +{{ pb.dialCode }}
-          </span>
-        </li>
-      </ul>
-    </div>
-    <input
-      :id="inputOptions.id"
-      ref="input"
-      v-model="phone"
-      :aria-describedby="inputOptions['aria-describedby']"
-      :autocomplete="inputOptions.autocomplete"
-      :autofocus="inputOptions.autofocus"
-      :class="['vti__input', inputOptions.styleClasses]"
-      :disabled="disabled"
-      :maxlength="inputOptions.maxlength"
-      :name="inputOptions.name"
-      :placeholder="parsedPlaceholder"
-      :readonly="inputOptions.readonly"
-      :required="inputOptions.required"
-      :tabindex="inputOptions.tabindex"
-      :type="inputOptions.type"
-      :value="modelValue"
-      @blur="onBlur"
-      @focus="onFocus"
-      @input="onInput"
-      @keyup.enter="onEnter"
-      @keyup.space="onSpace"
-    />
-    <slot name="icon-right"></slot>
-    <v-icon
-      v-if="appendInnerIcon"
-      class="align-self-center"
-      style="opacity: var(--v-medium-emphasis-opacity)"
-      >{{ appendInnerIcon }}
-    </v-icon>
-  </div>
+        <template v-slot:item="{ item, props }">
+          <v-list-item v-bind="props" :title="item.raw.name" class="text-start">
+            <template v-slot:prepend>
+              <flag :iso="item.raw?.iso2" :squared="false" class="me-3" />
+            </template>
+            <template v-slot:append> +{{ item.raw.dialCode }}</template>
+          </v-list-item>
+        </template>
+
+        <template v-slot:prepend-item>
+          <v-text-field
+            v-model="search"
+            autofocus
+            variant="plain"
+            hide-details
+            placeholder="Search..."
+            class="mx-3"
+            single-line
+          ></v-text-field>
+        </template>
+
+        <template v-slot:selection="{ item }">
+          <flag :iso="item.raw.iso2" :squared="false" />
+        </template>
+      </v-select>
+    </template>
+
+    <template v-slot:append-inner>
+      <v-icon
+        v-if="appendInnerIcon"
+        class="align-self-center"
+        style="opacity: var(--v-medium-emphasis-opacity)"
+        >{{ appendInnerIcon }}
+      </v-icon>
+    </template>
+
+    <template v-slot:append>
+      <slot name="icon-right"></slot>
+    </template>
+  </v-text-field>
 </template>
 
 <script>
@@ -115,30 +98,34 @@ function getDefault(key) {
   return value;
 }
 
-// let examples = null;
-// const getExamples = () => new Promise(
-//   (resolve) => (
-//     examples
-//       ? resolve(examples)
-//       : import('libphonenumber-js/examples.mobile.json')
-//         .then((results) => {
-//           examples = results;
-//           resolve(results);
-//         })
-//   ),
-// );
-
 export default {
   name: "STelInput",
   directives: {
     clickOutside,
   },
-  emits: ["update:modelValue", "on-input", "validate", "country-changed", "open", "close", "blur", "focus", "enter", "space"],
+  emits: [
+    "update:modelValue",
+    "on-input",
+    "validate",
+    "country-changed",
+    "open",
+    "close",
+    "blur",
+    "focus",
+    "enter",
+    "space",
+  ],
   props: {
     modelValue: {
       type: String,
       default: "",
     },
+
+    variant: {
+      default: "underlined",
+    },
+    rounded: Boolean,
+
     allCountries: {
       type: Array,
       default: () => getDefault("allCountries"),
@@ -205,6 +192,8 @@ export default {
   },
   data() {
     return {
+      search: "",
+
       phone: "",
       activeCountryCode: "",
       open: false,
@@ -218,6 +207,17 @@ export default {
     };
   },
   computed: {
+    filtered_countries() {
+      return this.sortedCountries?.filter((x) => {
+        const searchTrimmed = this.search.trim().toLowerCase();
+        return (
+          !searchTrimmed ||
+          x.iso2?.toLowerCase().includes(searchTrimmed) ||
+          x.name?.toLowerCase().includes(searchTrimmed) ||
+          x.dialCode?.toLowerCase().includes(searchTrimmed)
+        );
+      });
+    },
     activeCountry() {
       return this.findCountry(this.activeCountryCode);
     },

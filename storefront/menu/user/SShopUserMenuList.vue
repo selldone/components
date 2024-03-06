@@ -16,6 +16,8 @@
   <v-list
     :density="$vuetify.display.smAndUp && 'compact'"
     class="s--shop-user-menu-list"
+    bg-color="#fff"
+    rounded="xl"
   >
     <v-list-item
       :to="{
@@ -28,7 +30,6 @@
           :content="numeralFormat(sum_orders_badges, '0a')"
           :model-value="sum_orders_badges > 0"
           color="red"
-          overlap
         >
           <v-icon>history</v-icon>
         </v-badge>
@@ -104,7 +105,6 @@
         <v-badge
           :content="numeralFormat(total_items_in_carts, '0a')"
           color="teal"
-          overlap
         >
           <v-icon>shopping_cart</v-icon>
         </v-badge>
@@ -117,7 +117,7 @@
 
     <template v-if="!navigation && shop.user_id === USER_ID()">
       <v-divider />
-
+      <v-list-subheader>Only visible to admins</v-list-subheader>
       <v-list-item
         :href="window.URLS.AdminShopsURL()"
         active-class="bg-primary text-white"
@@ -127,9 +127,11 @@
         <v-list-item-title>
           {{ $t("layout_shop.user_menu.my_shops") }}
         </v-list-item-title>
-        <v-list-item-action>
-          <v-icon color="green" size="x-small">shield</v-icon>
-        </v-list-item-action>
+        <template v-slot:append>
+          <v-list-item-action end>
+            <v-icon color="green" size="x-small">shield</v-icon>
+          </v-list-item-action>
+        </template>
       </v-list-item>
 
       <v-list-item
@@ -146,37 +148,40 @@
             })
           }}
         </v-list-item-title>
-        <v-list-item-action>
-          <v-icon color="green" size="x-small">shield</v-icon>
-        </v-list-item-action>
+        <template v-slot:append>
+          <v-list-item-action end>
+            <v-icon color="green" size="x-small">shield</v-icon>
+          </v-list-item-action>
+        </template>
       </v-list-item>
     </template>
 
     <template v-if="!navigation">
       <v-divider class="mb-0" />
 
-      <div class="text-center">
-        <v-btn
-          block
-          class="tnt"
-          color="#444"
-          min-height="48"
-          variant="text"
-          @click="$emit('click:logout')"
-        >
+      <v-list-item
+        @click="$emit('click:logout')"
+        prepend-icon="logout"
+        lines="two"
+      >
+        <v-list-item-title>
           {{
             $t("layout_shop.user_menu.exit_from", {
               shop_name: shop.title,
             })
           }}
-          <v-icon class="ms-1" size="small"> logout</v-icon>
-        </v-btn>
-      </div>
+        </v-list-item-title>
+        <v-list-item-subtitle>
+          {{ USER()?.email }}
+        </v-list-item-subtitle>
+      </v-list-item>
     </template>
   </v-list>
 </template>
 
 <script>
+import {EventBus} from "@core/events/EventBus";
+
 export default {
   name: "SShopUserMenuList",
   components: {},
@@ -209,6 +214,10 @@ export default {
       return this.getTotalItemInBaskets();
     },
   },
+
+  methods:{
+
+  }
 };
 </script>
 
@@ -221,9 +230,7 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-user-menu-list {
-  padding-top: 0;
-  padding-bottom: 0;
-  background-color: transparent !important;
   text-align: start;
+  margin: 8px 16px;
 }
 </style>

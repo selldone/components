@@ -127,6 +127,7 @@
                 center
                 dense
                 small
+                :limit="6"
               />
 
               <template v-slot:append>
@@ -230,7 +231,6 @@
               withFullVariant
               @select="selectProduct"
               @select-category="selectCategory"
-              dark
             />
           </v-card-text>
 

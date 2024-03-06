@@ -1299,10 +1299,6 @@ table.v-table {
 }
 
 
-
-
-
-
 /******************
 Animation
  */
@@ -1581,7 +1577,6 @@ Global
   }
 
 
-
   .tab-image {
     transition: all 0.4s;
     -webkit-filter: grayscale(80%);
@@ -1610,8 +1605,6 @@ Global
     }
   }
 }
-
-
 
 
 // Center button in append input field of vuetify:
@@ -2434,97 +2427,6 @@ Overlays
     line-height: normal;
     padding: 1px;
   }
-}
-
-.v-theme--dark {
-  .stylish-phone-input {
-    &.-line {
-      border-bottom: solid thin #999 !important;
-    }
-  }
-}
-
-
-.stylish-phone-input {
-  z-index: 1;
-  position: relative;
-  direction: ltr;
-  padding: 8px;
-  border-radius: 26px !important;
-  font-size: 1.3rem;
-  font-weight: 500;
-  //  background: #fff;
-  color: #333;
-
-  &.-outline {
-    border: 1px solid #777 !important;
-    border-radius: 4px !important;
-  }
-
-  &.-line {
-    border-radius: 0 !important;
-    border: none;
-    border-bottom: solid thin #bbb !important;
-    box-shadow: none !important;
-    background: transparent !important;
-  }
-
-  ul {
-    direction: ltr;
-    padding: 0 !important;
-    font-size: 12px;
-    color: #333;
-  }
-
-  .vti__input {
-    border-radius: 18px;
-    font-size: 16px;
-    font-weight: 400;
-  }
-
-  .vti__dropdown {
-    border-radius: 18px;
-  }
-
-  .vti__dropdown-list {
-    border-radius: 12px;
-  }
-}
-
-.v-theme--dark {
-
-  .stylish-phone-input {
-    background: hsla(0, 0%, 100%, .08);
-    border: none;
-    color: #fff;
-
-    .vti__input {
-      color: #fff;
-    }
-
-    .vti__dropdown {
-      .vti__country-code {
-        color: #fff;
-      }
-
-      .vti__dropdown-arrow {
-        color: #fff;
-        margin-left: 4px;
-        margin-right: 4px;
-      }
-
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.11);
-      }
-
-      &.open {
-        background: rgba(255, 255, 255, 0.11);
-      }
-
-    }
-  }
-
 }
 
 
@@ -3515,8 +3417,6 @@ Fix snaky chart overflow problem!
 }
 
 
-
-
 .border-end-dashed {
   border-right: dashed thin #ccc;
 }
@@ -3543,11 +3443,6 @@ Fix snaky chart overflow problem!
     border-left: dashed thin #e8e8e8;
   }
 }
-
-
-
-
-
 
 
 //------------------------- Blur animate -------------------------
@@ -4589,9 +4484,12 @@ canvas.heatmap-canvas {
   }
 
 
-  hr {
-    border-top: 1.4px dashed rgba(0, 0, 0, 0.25);
-  }
+    hr {
+      border-top: 1.4px dashed rgba(0, 0, 0, 0.25);
+      opacity: 1;
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+    }
 
 
 }
@@ -4624,8 +4522,12 @@ canvas.heatmap-canvas {
   }
 
 
-  &.-fixed-bottom{
-    position: fixed;bottom: 0;left: 0;right: 0;z-index: 20;
+  &.-fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
     background: #fff;
     border-radius: 10px 10px 0 0;
     box-shadow: inset 0 -2em 2em rgba(0, 0, 0, 0.02), 0 3px 10px 2px rgba(166, 166, 166, 0.57);

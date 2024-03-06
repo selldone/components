@@ -55,18 +55,19 @@
             :inputOptions="{
               placeholder: $t('global.need_login.mobile_input'),
             }"
-            class="stylish-phone-input my-3 fadeIn"
+            class="my-3 fadeIn"
             enabledCountryCode
             required
             validCharactersOnly
             @close="tel_f = false"
             @open="tel_f = true"
             @country-changed="(val) => (country = val)"
-            @keypress.native.enter="
+            @keypress.enter="
               country && phone && phone.length >= 7
                 ? requestSendCode()
                 : undefined
             "
+            variant="underlined"
           ></s-tel-input>
 
           <div class="widget-buttons">
@@ -76,7 +77,6 @@
               :variant="!country || !phone || (phone.length < 7 && 'flat')"
               class="my-3 -btn tnt fadeIn delay_100"
               color="#0061e0"
-              dark
               size="x-large"
               @click.stop="requestSendCode()"
               >{{ $t("global.actions.get_sms_code") }}
