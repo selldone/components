@@ -3453,10 +3453,16 @@ Fix snaky chart overflow problem!
 
   &.blurred {
     filter: blur(6px);
+    &.disabled{
+      filter: blur(6px) grayscale(100%);
+    }
   }
 
   &.blurred-lg {
     filter: blur(16px);
+    &.disabled{
+      filter: blur(16px) grayscale(100%);
+    }
   }
 }
 
