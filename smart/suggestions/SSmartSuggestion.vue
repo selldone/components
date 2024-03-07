@@ -22,7 +22,7 @@
           variant="text"
           @click="showDialog"
         >
-          <v-icon>pin_invoke</v-icon>
+          <v-icon :size="18">pin_invoke</v-icon>
         </v-btn>
       </v-slide-group-item>
       <v-slide-group-item v-for="n in samples_processed" :key="n" :title="n">

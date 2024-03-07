@@ -1025,7 +1025,6 @@
 
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Add Note ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-              <template>
                 <v-list-item @click="showNoteProduct(currentProductForMenu)">
                   <template v-slot:prepend>
                     <v-icon size="small">edit_note</v-icon>
@@ -1034,7 +1033,6 @@
                     {{ $t("notes.add_action") }}
                   </v-list-item-title>
                 </v-list-item>
-              </template>
 
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Delete Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 

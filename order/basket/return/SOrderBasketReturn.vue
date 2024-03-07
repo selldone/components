@@ -208,7 +208,7 @@
         </div>
       </div>
 
-      <div v-if="isAdmin || isRole" class="admin">
+      <div v-if="isAdmin || isRolePanel" class="admin">
         <div class="widget-buttons">
           <v-btn
               :class="{ disabled: item.return_request.state === 'Accepted' }"
@@ -272,7 +272,7 @@ export default {
     },
 
     // ----- Role -----
-    isRole: {
+    isRolePanel: {
       required: false,
       type: Boolean,
       default: false,
@@ -340,7 +340,7 @@ export default {
             this.$route.params.basket_id,
             item.id,
         );
-      } else if (this.isRole) {
+      } else if (this.isRolePanel) {
         url = window.API.POST_MY_ROLE_TASK_ACTION(
             this.role.id,
             this.basket.id,

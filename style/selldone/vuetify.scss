@@ -525,8 +525,10 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 .v-input {
-  .v-field__append-inner {
-    pointer-events: all;
+  &:not(.v-input--disabled){
+    .v-field__append-inner {
+      pointer-events: all;
+    }
   }
 }
 

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <s-funnel-graph
+  <s-funnel
     v-if="show_funnel"
     :animated="true"
     :class="{ 'dense p-0': dense, dark: isDark, 'no-legend': noLegend }"
@@ -27,13 +27,15 @@
     :values="values"
     :width="width"
     class="funnel-chart-single-data mx-auto text-start pl-5"
-  ></s-funnel-graph>
+  ></s-funnel>
 </template>
 
 <script>
+import SFunnel from "@components/chart/funnel/SFunnel.vue";
+
 export default {
-  name: "SSimpleFunnelGraph",
-  components: {},
+  name: "SChartFunnelSimple",
+  components: { SFunnel },
 
   props: {
     value: {

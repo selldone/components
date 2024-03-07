@@ -71,7 +71,7 @@
         :label="$t('global.commons.message')"
         auto-grow
         bg-color="#fafafa"
-        flat
+        flat rounded="xl"
         variant="solo-filled"
       ></v-textarea>
 

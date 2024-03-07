@@ -170,7 +170,7 @@ import "@components/chart/funnel/core/scss/main.scss";
 import "@components/chart/funnel/core/scss/theme.scss";
 
 export default {
-  name: "SFunnelGraph",
+  name: "SFunnel",
   components: { SCurrencyIcon },
   props: {
     animated: {
