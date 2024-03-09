@@ -47,6 +47,7 @@ $mod_2: 1.5; // desktop
 
 .default-template {
   padding-bottom: 0;
+  border-radius: inherit; // Same as parent!
 
 
   h1 {

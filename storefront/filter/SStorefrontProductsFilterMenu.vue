@@ -23,19 +23,19 @@
     :color="light ? '#fafafa' : SaminColorDarkDeep"
     :theme="light ? 'light' : 'dark'"
     :expand-on-hover="expandOnHover"
-    :floating="!$vuetify.display.smAndDown "
+    :floating="!$vuetify.display.smAndDown"
     temporary
-    :height="
-      $vuetify.display.mdAndDown ? 'calc(100% - 48px)' : 'calc(100% - 16px)'
-    "
+    :style="{
+      height: $vuetify.display.mdAndDown
+        ? 'calc(100% - 48px)'
+        : 'calc(100% - 16px)',
+    }"
     :rail="miniVariant"
     :right="right"
     :scrim="false"
     :width="300"
     class="s--storefront-products-filter-menu"
     elevation="0"
-
-
   >
     <div ref="list_container">
       <v-list class="py-0 text-start" density="compact" nav>
@@ -46,13 +46,13 @@
             </v-avatar>
           </template>
 
-            <v-list-item-title>{{ category_title }}</v-list-item-title>
-            <v-list-item-subtitle
-              >{{ category_description }}
-            </v-list-item-subtitle>
+          <v-list-item-title>{{ category_title }}</v-list-item-title>
+          <v-list-item-subtitle
+            >{{ category_description }}
+          </v-list-item-subtitle>
           <template v-slot:append>
             <v-list-item-action end>
-              <v-btn @click="drawer=false" variant="plain" :size="48" icon>
+              <v-btn @click="drawer = false" variant="plain" :size="48" icon>
                 <v-icon>close</v-icon>
               </v-btn>
             </v-list-item-action>

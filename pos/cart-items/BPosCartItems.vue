@@ -51,7 +51,7 @@
           <v-list-item-title class="ptitle">
             <component
               :is="!viewOnly ? 'router-link' : 'div'"
-              :to="{
+              :to="isAffiliatePos?{}:{
                 name: 'BPageProductDashboard',
                 params: { product_id: item.product.id },
               }"
@@ -176,6 +176,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    isAffiliatePos:Boolean
   },
 
   data: function () {
