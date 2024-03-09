@@ -92,7 +92,7 @@
     <template v-slot:append-inner>
       <v-progress-circular
         v-if="loading"
-        class="mt-n1"
+
         indeterminate
       ></v-progress-circular>
     </template>

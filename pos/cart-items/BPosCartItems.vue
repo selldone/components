@@ -20,6 +20,7 @@
       class="text-start row-hover border-bottom flex-wrap"
       density="compact"
       style="cursor: default"
+      lines="two"
     >
       <template v-slot:prepend>
         <v-avatar rounded="lg" variant="outlined" color="#eee">
@@ -81,8 +82,8 @@
             </component>
           </v-list-item-title>
 
-          <v-list-item-subtitle>
-            {{ item.product.title_en?.limitWords(14) }}
+          <v-list-item-subtitle class="small">
+            {{ item.product.title_en }}
           </v-list-item-subtitle>
           <v-list-item-subtitle>
             <variant-item-view-micro

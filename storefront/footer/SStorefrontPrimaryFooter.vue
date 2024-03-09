@@ -253,30 +253,28 @@
       <div class="mt-6">
         <hr />
         <v-row class="text-start my-2" justify="end" no-gutters>
-          <div v-if="shop.currencies && shop.currencies.length > 1" class="p-2">
-            <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-            <s-currency-selector
-              :shop="shop"
-              filled
-              flag-mode
-              hideDetails
-              rounded
-              @change="
-                () => {
-                  onChangeUserSelectedCurrency();
-                }
-              "
-            />
-          </div>
+          <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
+          <s-currency-selector
+            v-if="shop.currencies && shop.currencies.length > 1"
+            :shop="shop"
+            flag-mode
+            hide-details
+            @change="
+              () => {
+                onChangeUserSelectedCurrency();
+              }
+            "
+            variant="outlined"
+            class="ma-2"
+          />
 
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
 
           <s-shop-language-selector
             :shop="shop"
-            class="m-2"
-            filled
+            class="ma-2"
             hide-details
-            rounded
+            variant="outlined"
           ></s-shop-language-selector>
         </v-row>
       </div>

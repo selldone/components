@@ -21,15 +21,16 @@
       height="46"
       variant="text"
       @click="$emit('update:only-available', !onlyAvailable)"
+      stacked
     >
-      <div class="d-flex flex-column small align-center">
-        <v-icon class="mb-1" size="24"
-          >{{ onlyAvailable ? "check_box" : "all_inclusive" }}
-        </v-icon>
+      <v-icon class="mb-1" size="24"
+        >{{ onlyAvailable ? "check_box" : "all_inclusive" }}
+      </v-icon>
+      <span class="small">
         {{
           onlyAvailable ? $t("sort.only_available") : $t("global.commons.all")
         }}
-      </div>
+      </span>
     </v-btn>
 
     <!-- ███████████████████ View mode ███████████████████ -->
@@ -41,34 +42,39 @@
       height="46"
       variant="text"
       @click="toggleModeView"
+      stacked
     >
-      <div class="d-flex flex-column small">
-        <v-icon class="mb-1" size="24">{{ viewMode.icon }}</v-icon>
+      <v-icon class="mb-1" size="24">{{ viewMode.icon }}</v-icon>
+      <span class="small">
         {{ $t(viewMode.title) }}
-      </div>
+      </span>
     </v-btn>
 
     <!-- ███████████████████ Sort ███████████████████ -->
 
-    <s-fade-scroll   v-if="!forceCollapse" style="max-width: calc(100% - 350px);" drag-scroll>
+    <s-fade-scroll
+      v-if="!forceCollapse"
+      style="max-width: calc(100% - 350px)"
+      drag-scroll
+    >
       <v-btn-toggle
-
-          :mandatory="mandatory"
-          :model-value="modelValue"
-          :selected-class="activeClass"
-          border="0"
-          class="hide-on-small-900 mx-2"
-          @update:model-value="(val) => $emit('update:modelValue', val)"
-          style="min-width: max-content"
+        :mandatory="mandatory"
+        :model-value="modelValue"
+        :selected-class="activeClass"
+        border="0"
+        class="hide-on-small-900 mx-2"
+        @update:model-value="(val) => $emit('update:modelValue', val)"
+        style="min-width: max-content"
       >
         <v-btn
-            v-for="item in items"
-            :key="item.val"
-            :loading="loading && modelValue === item.val && !search"
-            :value="item.val"
-            border="0"
-            height="46"
-            variant="text" :size="$vuetify.display.mdAndDown?'small':undefined"
+          v-for="item in items"
+          :key="item.val"
+          :loading="loading && modelValue === item.val && !search"
+          :value="item.val"
+          border="0"
+          height="46"
+          variant="text"
+          :size="$vuetify.display.mdAndDown ? 'small' : undefined"
         >
           {{ item.name }}
         </v-btn>
@@ -183,7 +189,7 @@ import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 
 export default {
   name: "SProductsSortView",
-  components: {SFadeScroll},
+  components: { SFadeScroll },
   emits: ["update:modelValue", "update:search", "update:view-mode"],
 
   props: {
@@ -304,7 +310,7 @@ export default {
   align-items: center;
   min-height: 54px;
   overflow: auto;
-  --background:#fff;
+  --background: #fff;
 
   .search-box {
     max-width: 360px;

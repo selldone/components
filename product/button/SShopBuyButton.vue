@@ -49,7 +49,6 @@
       v-if="!quantity && !busy"
       :class="{ 'waiting-mode': forAvailable }"
       :color="forAvailable ? default_color : '#eee'"
-      :dark="forAvailable"
       class="s--shop-buy-button px-2"
       min-width="220"
       rounded
@@ -117,7 +116,6 @@
         v-if="default_mode || custom_mode"
         v-model="selected_order_count"
         :background-color="default_color"
-        :color="default_color"
         :items="order_counts"
         :label="$t('buy_button.quantity_in_basket')"
         :max="quantity"
@@ -125,7 +123,8 @@
         class="extendable select-order-count"
         clearable
         dark
-        filled
+        variant="solo"
+        rounded="lg"
         flat
         hide-details
         hot-update-mode
@@ -162,7 +161,8 @@
           class="extendable select-order-count"
           clearable
           dark
-          filled
+          variant="solo"
+          rounded="lg" flat
           hide-details
           hot-update-mode
           @blur="calculatorCall"
@@ -178,7 +178,8 @@
           class="extendable select-order-count"
           clearable
           dark
-          filled
+          variant="solo"
+          rounded="lg" flat
           hide-details
           hot-update-mode
           @blur="calculatorCall"
@@ -196,7 +197,8 @@
           class="extendable select-order-count"
           clearable
           dark
-          filled
+          variant="solo"
+          rounded="lg" flat
           hide-details
           hot-update-mode
           @blur="calculatorCall"
@@ -217,7 +219,6 @@
       v-if="canBuy && quantity && !busy && !find_existed_in_basket"
       :color="default_color"
       class="s--shop-buy-button"
-      dark
       min-width="220"
       rounded
       v-bind="

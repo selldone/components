@@ -290,7 +290,7 @@
                 :class="{ disabled: !message }"
                 :loading="busy_send"
                 :title="$t('global.actions.send')"
-                class="mt-n1"
+
                 color="blue"
                 dark
                 icon

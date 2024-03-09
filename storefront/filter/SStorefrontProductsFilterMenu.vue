@@ -15,15 +15,16 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-navigation-drawer
     v-model="drawer"
-    :absolute="$vuetify.display.mdAndUp"
+    :absolute="$vuetify.display.mdAndUp || true"
     :class="{
       'scrollable-element-dark': !light,
       'scrollable-element-light': light,
     }"
     :color="light ? '#fafafa' : SaminColorDarkDeep"
-    :dark="!light"
+    :theme="light ? 'light' : 'dark'"
     :expand-on-hover="expandOnHover"
-    :fixed="$vuetify.display.smAndDown"
+    :floating="!$vuetify.display.smAndDown "
+    temporary
     :height="
       $vuetify.display.mdAndDown ? 'calc(100% - 48px)' : 'calc(100% - 16px)'
     "
@@ -32,10 +33,12 @@
     :scrim="false"
     :width="300"
     class="s--storefront-products-filter-menu"
-    floating
+    elevation="0"
+
+
   >
     <div ref="list_container">
-      <v-list class="py-0" density="compact" nav>
+      <v-list class="py-0 text-start" density="compact" nav>
         <v-list-item lines="two">
           <template v-slot:prepend>
             <v-avatar v-if="category_image">
@@ -43,12 +46,17 @@
             </v-avatar>
           </template>
 
-          <v-list-item-content class="text-start">
             <v-list-item-title>{{ category_title }}</v-list-item-title>
             <v-list-item-subtitle
               >{{ category_description }}
             </v-list-item-subtitle>
-          </v-list-item-content>
+          <template v-slot:append>
+            <v-list-item-action end>
+              <v-btn @click="drawer=false" variant="plain" :size="48" icon>
+                <v-icon>close</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </template>
         </v-list-item>
 
         <v-divider />
@@ -130,7 +138,7 @@
             </template>
           </v-range-slider>
 
-          <v-row  >
+          <v-row>
             <v-col class="p-2" cols="6">
               {{ FormatNumberCurrency(price_range[0]) }}
               <br />

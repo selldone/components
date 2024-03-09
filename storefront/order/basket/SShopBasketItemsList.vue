@@ -329,13 +329,13 @@
       <v-card>
         <v-card-title></v-card-title>
         <v-card-text v-if="selected_item">
-          <product-section-box-valuation
+          <s-product-section-valuation
             :current-variant="selected_item.variant"
             :preferences="selected_item.preferences"
             :product="selected_item.product"
             :shop="getShop()"
             readonly
-          ></product-section-box-valuation>
+          ></s-product-section-valuation>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -360,12 +360,12 @@ import { ReturnItemStates } from "@core/enums/basket/ReturnItemStates";
 import SShopBasketItemReturnForm from "@components/storefront/order/return/SShopBasketItemReturnForm.vue";
 import BasketItemUserMessageForm from "@components/order/product-input/BasketItemUserMessageForm.vue";
 import { ProductType } from "@core/enums/product/ProductType";
-import ProductSectionBoxValuation from "@components/product/sections/ProductSectionBoxValuation.vue";
+import SProductSectionValuation from "@components/product/section/valuation/SProductSectionValuation.vue";
 
 export default {
   name: "SShopBasketItemsList",
   components: {
-    ProductSectionBoxValuation,
+    SProductSectionValuation,
     BasketItemUserMessageForm,
     SShopBasketItemReturnForm,
     VariantItemViewMicro,

@@ -3771,8 +3771,16 @@ Fix snaky chart overflow problem!
 
 
 // ---------------------------------------- Main Headers Background ----------------------------------------
+@mixin toolbar-padding($padding: 16px) {
+  .v-toolbar__content {
+    padding-left: $padding;
+    padding-right: $padding;
+  }
+}
 
 .bg-header-selldone {
+  @include toolbar-padding;
+
   background-image: linear-gradient(180deg, var(--theme-dark) 0%, var(--theme-deep-dark) 100%);
 
   &::-webkit-scrollbar {
@@ -3782,39 +3790,47 @@ Fix snaky chart overflow problem!
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 
-  &.v-toolbar {
-    .v-toolbar__content {
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-  }
 }
 
 .bg-header-dropshipping {
+  @include toolbar-padding;
+
   background-image: linear-gradient(to bottom, #0f756c 0%, #06554C 100%);
 }
 
 .bg-header-marketplace {
+  @include toolbar-padding;
+
   background-image: linear-gradient(to bottom, #673AB7 0%, #512DA8 100%);
 }
 
 .bg-header-selldone-pos {
+  @include toolbar-padding;
+
   background-image: linear-gradient(to bottom, #137781 0%, #006974 100%);
 }
 
 .bg-header-affiliate-pos {
+  @include toolbar-padding;
+
   background-image: linear-gradient(to bottom, #3F51B5 0%, #303F9F 100%);
 }
 
 .bg-header-affiliate-developer {
+  @include toolbar-padding;
+
   background-image: linear-gradient(to bottom, #57717e 0%, #455A64 100%);
 }
 
 .bg-header-monetize {
+  @include toolbar-padding;
+
   background-image: linear-gradient(to bottom, #222 0%, #111 100%);
 }
 
 .bg-header-partner {
+  @include toolbar-padding;
+
   background-image: linear-gradient(to bottom, #222 0%, #111 100%);
 }
 

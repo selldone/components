@@ -16,14 +16,14 @@
   <!-- ---------------- Product Info ---------------- -->
   <div class="position-relative mh200 hide-scroll">
     <div v-if="product && !busy">
-      <s-shop-product-main-card
+      <s-product-overview
         :can-buy="product.shop_id === community.shop_id"
         :product="product"
         class="blur-animate"
         show-cover
         vertical
       >
-      </s-shop-product-main-card>
+      </s-product-overview>
 
       <v-expansion-panels
         v-if="spec_array && Object.keys(spec_array).length > 0"
@@ -52,14 +52,14 @@
 </template>
 
 <script>
-import SShopProductMainCard from "@components/product/info/SShopProductMainCard.vue";
+import SProductOverview from "@components/product/overview/SProductOverview.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import BProductSpecTable from "@components/product/spec/table/BProductSpecTable.vue";
 
 export default {
   name: "CommunityProductView",
-  components: { BProductSpecTable, SShopProductMainCard },
+  components: { BProductSpecTable, SProductOverview },
   props: {
     shop: {
       require: true,

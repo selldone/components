@@ -33,19 +33,21 @@
     :title="currency_obj.code"
     class="imc"
   >
-    <flag
-      v-if="(flag || flagOnly) && currency_obj.flag"
-      :iso="currency_obj.flag"
-      :squared="true"
-      class="me-1 -flag"
-    />
-    <img
-      v-else-if="currency_obj.icon"
-      :src="currency_obj.icon"
-      width="20"
-      height="20"
-      class="me-1"
-    />
+    <template v-if="flag || flagOnly">
+      <flag
+        v-if="currency_obj.flag"
+        :iso="currency_obj.flag"
+        :squared="true"
+        class="me-1 -flag"
+      />
+      <img
+        v-else-if="currency_obj.icon"
+        :src="currency_obj.icon"
+        width="20"
+        height="20"
+        class="me-1"
+      />
+    </template>
 
     {{ flagOnly ? "" : currency_obj.unicode }}
   </span>

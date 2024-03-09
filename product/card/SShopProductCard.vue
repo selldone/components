@@ -124,7 +124,7 @@
           <v-btn
             :size="($vuetify.display.mdAndUp && !isInsta)?'large':isInsta?'small':undefined"
             color="primary"
-            variant="flat"
+            variant="flat" tile
             width="100%"
             @click.prevent="$emit('quick-buy')"
           >
@@ -136,10 +136,9 @@
           <v-btn
             :size="($vuetify.display.mdAndUp && !isInsta)? 'large':isInsta?'small':undefined"
             :title="$t('global.commons.compare')"
-            block
+            block tile
             color="primary"
-            icon
-            variant="flat"
+            variant="text"
             @click.prevent="
               existInComparisonList
                 ? removeFromProductComparison(product, null)

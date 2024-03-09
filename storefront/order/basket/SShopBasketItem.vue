@@ -233,10 +233,10 @@
     </v-row>
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Service Form ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <service-order-view
+    <s-product-service-form
       :basket="getBasket(product.type)"
       :product="product"
-    ></service-order-view>
+    ></s-product-service-form>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product Input Form ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
@@ -253,14 +253,14 @@ import VariantItemViewMicro from "@components/product/variant/VariantItemViewMic
 import BasketItemUserMessageForm from "@components/order/product-input/BasketItemUserMessageForm.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import SShopBasketItemCountSelect from "./SShopBasketItemCountSelect.vue";
-import ServiceOrderView from "@components/product/service/ServiceOrderView.vue";
+import SProductServiceForm from "@components/product/service/form/SProductServiceForm.vue";
 import { ServiceTypes } from "@core/enums/product/ServiceTypes";
 import BillingPeriod from "@core/enums/subscription/BillingPeriod";
 
 export default {
   name: "SShopBasketItem",
   components: {
-    ServiceOrderView,
+    SProductServiceForm,
     SShopBasketItemCountSelect,
     BasketItemUserMessageForm,
     VariantItemViewMicro,

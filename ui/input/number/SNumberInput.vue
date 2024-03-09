@@ -35,6 +35,7 @@
     :rounded="rounded"
     :single-line="singleLine"
     :suffix="suffix"
+    :theme="dark?'dark':'light'"
     :variant="
       variant
         ? variant
@@ -120,7 +121,7 @@
 
       <v-btn
         v-if="clearable"
-        class="mt-n1"
+
         icon
         size="28"
         variant="text"

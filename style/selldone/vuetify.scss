@@ -612,7 +612,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
 // ----------------------- 5 columns in row ----------------------
 
-.flex.xl20p {
+.v-col-20p {
   @media only screen and (min-width: 1500px) {
     flex-basis: 20% !important;
     flex-grow: 0;
@@ -799,3 +799,4 @@ Make v-btn flex to put prepend and append in start and end of button
     flex-grow: 1;
   }
 }
+

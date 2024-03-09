@@ -74,7 +74,6 @@
         '-bg-white': isStyleContain,
         '-vertical': vertical,
       }"
-      :show-arrows="true"
       :style="{
         '--circle-left': `${circleX}px`,
         '--circle-top': `${circleY}px`,
@@ -86,7 +85,7 @@
       show-arrows="hover"
     >
       <v-carousel-item
-        v-for="item in images_list_embedded"
+        v-for="(item,i) in images_list_embedded"
         :key="item.key"
         :eager="
           !!item.image /*Only for images! Prevent load YouTube and ar by default!*/
@@ -108,21 +107,24 @@
             "
           />
 
-          <v-img
+          <s-image
             :alt="item.image.alt"
-            :contain="!!isStyleContain"
+            :cover="!isStyleContain"
             :src="getShopImagePath(item.image.path)"
+            :lazy-src="getShopImagePath(item.image.path,IMAGE_SIZE_SMALL)"
             aspect-ratio="1"
             class="swiper-slide-image pointer-zoom-in ma-auto pointer-zoom-in"
             eager
             height="auto"
             width="calc(100% - 8px)"
             @click="showFullscreen"
-            @mousemove.native="updateCirclePosition"
-            @mouseleave.native="show_circle = false"
+            @mousemove="updateCirclePosition"
+            @mouseleave="show_circle = false"
+            detect-white-background
+            auto-cover
           >
             <div v-if="show_circle" class="circle-zoom ripple-focus"></div>
-          </v-img>
+          </s-image>
         </template>
 
         <!--  ━━━━━━━━━━━━ Main > Video ━━━━━━━━━━━━ -->
@@ -166,36 +168,44 @@
         </template>
       </v-carousel-item>
 
-      <template v-slot:prev="{ on }">
+      <template v-slot:prev="{ props }">
         <v-avatar
           v-if="prev_item"
-          class="pp hover-scale-small"
           size="84"
-          v-on="on"
+          color="#33333333"
+          v-bind="props"
+          class="pp overflow-visible t-all-400"
         >
-          <img
-            v-if="prev_item.image"
-            :src="getShopImagePath(prev_item.image.path, IMAGE_SIZE_SMALL)"
-            class="pa-2"
-          />
-          <v-icon v-else-if="prev_item.video">smart_display</v-icon>
-          <v-icon v-else-if="prev_item.ar">view_in_ar</v-icon>
+          <v-scale-transition leave-absolute group>
+            <img
+              v-if="prev_item.image"
+              :key="prev_item.image"
+              :src="getShopImagePath(prev_item.image.path, IMAGE_SIZE_SMALL)"
+              class="pa-2 hover-scale-small"
+            />
+            <v-icon v-else-if="prev_item.video">smart_display</v-icon>
+            <v-icon v-else-if="prev_item.ar">view_in_ar</v-icon>
+          </v-scale-transition>
         </v-avatar>
       </template>
-      <template v-slot:next="{ on }">
+      <template v-slot:next="{ props }">
         <v-avatar
           v-if="next_item"
-          class="pp hover-scale-small"
           size="84"
-          v-on="on"
+          v-bind="props"
+          color="#33333333"
+          class="pp overflow-visible t-all-400"
         >
-          <img
-            v-if="next_item.image"
-            :src="getShopImagePath(next_item.image.path, IMAGE_SIZE_SMALL)"
-            class="pa-2"
-          />
-          <v-icon v-else-if="next_item.video">smart_display</v-icon>
-          <v-icon v-else-if="next_item.ar">view_in_ar</v-icon>
+          <v-scale-transition leave-absolute group>
+            <img
+              v-if="next_item.image"
+              :key="next_item.image"
+              :src="getShopImagePath(next_item.image.path, IMAGE_SIZE_SMALL)"
+              class="pa-2 hover-scale-small"
+            />
+            <v-icon v-else-if="next_item.video">smart_display</v-icon>
+            <v-icon v-else-if="next_item.ar">view_in_ar</v-icon>
+          </v-scale-transition>
         </v-avatar>
       </template>
     </v-carousel>
@@ -205,11 +215,12 @@
 <script>
 import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
-import SYoutube from "@components/ui/youtube/SYoutube";
+import SYoutube from "@components/ui/youtube/SYoutube.vue";
+import SImage from "@components/product/images/SImage.vue";
 
 export default {
   name: "SShopProductSlideShow",
-  components: { SYoutube, SFadeScroll, VariantItemViewMicro },
+  components: {SImage, SYoutube, SFadeScroll, VariantItemViewMicro },
   props: {
     shop: {
       required: true,
@@ -379,6 +390,8 @@ export default {
         this.goToSlide(this.index + 1);
       }
     },
+
+
   },
 
   mounted() {

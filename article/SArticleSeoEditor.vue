@@ -71,7 +71,7 @@
               <template v-slot:append-inner>
                 <score-indicator
                   :value="$SEO.GetPageURLScore(slug)"
-                  class="mt-n1"
+
                 ></score-indicator>
               </template>
             </v-text-field>
@@ -89,7 +89,7 @@
               <template v-slot:append-inner>
                 <score-indicator
                   :value="$SEO.GetPageTitleScore(page_title)"
-                  class="mt-n1"
+
                 ></score-indicator>
               </template>
             </v-text-field>
@@ -107,7 +107,7 @@
               <template v-slot:append-inner>
                 <score-indicator
                   :value="$SEO.GetPageDescription(description)"
-                  class="mt-n1"
+
                 ></score-indicator>
               </template>
             </v-textarea>

@@ -294,7 +294,7 @@
               :class="{ disabled: !contact_message }"
               :loading="busy_contact"
               :title="$t('global.actions.send')"
-              class="mt-n1"
+
               color="blue"
               dark
               icon

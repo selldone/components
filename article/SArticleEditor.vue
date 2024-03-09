@@ -2197,7 +2197,7 @@ p iframe {
     .link-preview {
       border-radius: 16px !important;
 
-      .v-row {
+      .v-row,.row {
         .section-image {
           flex: unset !important;
           //  max-width: 220px !important;
@@ -2213,7 +2213,7 @@ p iframe {
 
   &.medium-insert-embeds-left {
     .link-preview {
-      .v-row {
+      .v-row,.row {
         display: block !important;
 
         /* .section-image {
@@ -2233,7 +2233,7 @@ p iframe {
 
   &.medium-insert-embeds-right {
     .link-preview {
-      .v-row {
+      .v-row,.row {
         display: block !important;
 
         /*  .section-image {
@@ -2255,7 +2255,7 @@ p iframe {
     margin: 12px 0 24px 0 !important;
     position: relative;
 
-    .v-row {
+    .v-row,.row {
       margin: 0 !important;
     }
 

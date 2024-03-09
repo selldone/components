@@ -38,13 +38,13 @@
       }"
       :color="SocialNetwork[item.network].color"
       :href="getUrl(item)"
-      :large="large"
+      :size="size"
       :min-width="minWidth"
       :style="{ animationDelay: 500 + i * 500 + 'ms' }"
       :tile="tile"
       :title="$t(SocialNetwork[item.network].title)"
       class="toc"
-      icon
+      icon variant="text"
       target="_blank"
     >
       <img
@@ -95,9 +95,8 @@ export default {
       default: false,
       type: Boolean,
     },
-    large: {
-      default: false,
-      type: Boolean,
+    size: {
+      default: 44,
     },
     minWidth: {},
   },
