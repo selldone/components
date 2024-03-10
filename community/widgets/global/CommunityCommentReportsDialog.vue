@@ -39,7 +39,7 @@
               </h3>
               <s-dense-images-circles-users
                 :ids="item.users"
-                :size="$vuetify.display.xsOnly ? 32 : 42"
+                :size="$vuetify.display.xs ? 32 : 42"
               ></s-dense-images-circles-users>
             </div>
             <p class="d-block m-0">

@@ -54,7 +54,7 @@
         }}
       </v-list-subheader>
 
-      <div class="d-flex align-center mt-3">
+      <div class="d-flex align-center my-3">
         <v-avatar :size="32" class="avatar-gradient -thin -user me-2">
           <v-img v-if="USER_ID()" :src="getUserAvatar(USER_ID())" />
           <v-icon v-else>account_circle</v-icon>
@@ -78,14 +78,15 @@
       <div class="widget-buttons">
         <v-btn
           :class="{ disabled: !body_input }"
+          :disabled="!body_input"
           :loading="busy_add"
           color="primary"
           size="x-large"
-          variant="flat"
+          variant="elevated"
           @click="addChat"
+          append-icon="send"
         >
-          <v-icon start>add</v-icon>
-          {{ $t("global.actions.add") }}
+          {{ $t("global.actions.send") }}
         </v-btn>
       </div>
     </div>

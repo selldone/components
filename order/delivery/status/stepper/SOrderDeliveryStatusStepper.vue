@@ -122,7 +122,7 @@
 <script>
 export default {
   name: "SOrderDeliveryStatusStepper",
-
+  emits: ["mouseEnterToCustomer"],
   props: {
     dark: {
       type: Boolean,

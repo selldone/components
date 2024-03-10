@@ -133,8 +133,8 @@
         <v-icon size="24">close</v-icon>
       </v-btn>
     </template>
-    <template v-slot:append>
-      <slot name="append"></slot>
+    <template v-if="$slots.append" v-slot:append>
+        <slot name="append"></slot>
     </template>
 
     <template v-slot:prepend-inner>

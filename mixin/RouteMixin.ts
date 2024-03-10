@@ -12,7 +12,9 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import type { IReturn } from "@core/types/route/return.type";
+import type {IReturn} from "@core/types/route/return.type";
+import {defineComponent} from "vue";
+import _ from "lodash-es";
 
 declare global {
   interface Window {
@@ -21,7 +23,7 @@ declare global {
   }
 }
 
-export const RouteMixin = {
+export const RouteMixin = defineComponent({
   props: {},
   data() {
     return {
@@ -51,6 +53,14 @@ export const RouteMixin = {
     window.__RETURN = null;
 
     //..............................................
+  },
+
+  mounted() {
+    // Clear highlight ID:
+    if (this.HIGHLIGHT_ID)
+      _.delay(() => {
+        this.HIGHLIGHT_ID = null;
+      }, 3000);
   },
   methods: {
     //―――――――――――――――――――――― Route ――――――――――――――――――――
@@ -94,4 +104,4 @@ export const RouteMixin = {
       window.__RETURN!.ROUTE_PARAMS = this.$route.params;
     },
   },
-};
+});

@@ -13,24 +13,23 @@
   -->
 
 <template>
-  <div v-scroll="onScroll">
+  <div v-scroll="onScroll" class="mt-2">
     <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Product Locations ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
     <div
       v-if="canBuy && has_product_locations_restriction"
-      class="max-widget-width mx-4"
+      class="widget-buttons mx-n2 mx-sm-2 pa-1"
     >
       <v-sheet
         :color="buy_color"
-        class="d-flex align-center position-relative border"
+        class="d-flex align-center position-relative border flex-grow-1 ma-1"
         dark
-        style="padding: 4px 8px; border-radius: 12px"
+        style="padding: 0px 4px; border-radius: 12px"
       >
         <s-country-select
           v-model="selected_country"
-          :dense="$vuetify.display.xsOnly"
           :filter="Object.keys(locations)"
-          :no-country-name="$vuetify.display.xsOnly"
-          :style="$vuetify.display.xsOnly ? 'max-width:80px' : ''"
+          :no-country-name="$vuetify.display.xs"
+          :style="$vuetify.display.xs ? 'max-width:80px' : ''"
           flat
           hide-details
           item-value="alpha2"
@@ -41,7 +40,6 @@
         ></s-country-select>
         <v-autocomplete
           v-model="selected_postal"
-          :density="$vuetify.display.xsOnly?'compact':undefined"
           :disabled="!locations[selected_country]"
           :items="locations[selected_country]"
           :no-data-text="$t('buy_button.zip_pin_not_available_msg')"
@@ -86,7 +84,7 @@
       :quick-buy-mode="quickBuyMode"
       :selected-subscription-price="selectedSubscriptionPrice"
       :vendor-product="selectedVendorProduct"
-      class="mx-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
+      class="mx-n2 mx-sm-2 widget-buttons mb-3 d-flex flex-column flex-grow-0"
       style="min-height: 72px"
     />
 
@@ -94,7 +92,7 @@
 
     <v-btn
       v-if="isFile && product.buy_file"
-      class="mx-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
+      class="mx-n2 mx-sm-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
       color="green"
       min-width="200"
       rounded

@@ -28,8 +28,8 @@
           v-slot="{}"
         >
           <v-card
-            :height="$vuetify.display.xsOnly ? 160 : 200"
-            :width="$vuetify.display.xsOnly ? 100 : 150"
+            :height="$vuetify.display.xs ? 160 : 200"
+            :width="$vuetify.display.xs ? 100 : 150"
             class="ma-2 ma-sm-3 ma-md-4 user-select-none"
             rounded
             variant="outlined"
@@ -37,7 +37,7 @@
             <v-card-text
               class="d-flex align-center justify-center flex-column h-100"
             >
-              <v-avatar :size="$vuetify.display.xsOnly ? 64 : 86">
+              <v-avatar :size="$vuetify.display.xs ? 64 : 86">
                 <img :src="getUserAvatar(profile.user_id)" />
               </v-avatar>
 
@@ -49,7 +49,7 @@
               <div class="widget-buttons w-100">
                 <v-btn
                   :loading="busy_follow === profile.user_id"
-                  :size="$vuetify.display.xsOnly && 'small'"
+                  :size="$vuetify.display.xs && 'small'"
                   :variant="!profile.follow && 'outlined'"
                   color="#1976D2"
                   dark

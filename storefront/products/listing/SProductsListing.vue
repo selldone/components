@@ -698,7 +698,7 @@ export default {
 
     // Device by screen size:
     template_device() {
-      if (this.$vuetify.display.xsOnly) {
+      if (this.$vuetify.display.xs) {
         return "mobile";
       } else if (this.$vuetify.display.smOnly || this.$vuetify.display.mdOnly) {
         return "tablet";

@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="map" >
+  <div class="map">
     <v-slide-group
       v-if="hasAddressBook"
       :model-value="selected_address_from_list"
@@ -46,7 +46,8 @@
             <v-btn
               :title="$t('global.actions.delete')"
               class="float-end"
-              icon variant="text"
+              icon
+              variant="text"
               @click.stop="deleteAddressBook(item)"
             >
               <v-icon>close</v-icon>
@@ -80,8 +81,7 @@
       <div class="mb-5">
         <v-btn
           v-if="mode_bottom_card !== 'detail'"
-          :caption="$t('global.actions.close')"
-          class="sub-caption -hover b-16px -black"
+          class="-black"
           icon
           size="small"
           variant="elevated"
@@ -92,14 +92,17 @@
           "
         >
           <v-icon>arrow_downward</v-icon>
+
+          <v-tooltip activator="parent">
+            {{ $t("global.actions.close") }}
+          </v-tooltip>
         </v-btn>
       </div>
 
       <div v-if="$vuetify.display.mdAndUp" class="mb-5">
         <v-btn
           v-if="canSaveAddress"
-          :caption="$t('global.actions.add')"
-          class="sub-caption b-16px -black zoomIn"
+          class="zoomIn"
           color="#1976D2"
           icon
           size="small"
@@ -107,20 +110,25 @@
           @click="dialog_add_to_address_book = true"
         >
           <v-icon>add</v-icon>
+          <v-tooltip activator="parent">
+            {{ $t("global.actions.add") }}
+          </v-tooltip>
         </v-btn>
       </div>
       <div v-if="$vuetify.display.mdAndUp" class="mb-5">
         <v-btn
           v-if="canSaveUpdate"
-          :caption="$t('global.actions.update')"
           :loading="busy_update_book"
-          class="sub-caption b-16px -black zoomIn"
+          class="zoomIn"
           icon
           size="small"
           variant="elevated"
           @click="updateAddressBook"
         >
           <v-icon color="#1976D2"> save</v-icon>
+          <v-tooltip activator="parent">
+            {{ $t("global.actions.update") }}
+          </v-tooltip>
         </v-btn>
       </div>
     </div>
@@ -593,7 +601,7 @@
 </template>
 
 <script>
-import {createApp, h, render} from "vue";
+import { createApp, h } from "vue";
 import SMapLocationMarker from "../market/SMapLocationMarker.vue";
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 
@@ -604,8 +612,7 @@ import SAddressInput from "@components/ui/input/address/SAddressInput.vue";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import SArticleAddonCodeEditor from "@components/article/add-on/code-editor/SArticleAddonCodeEditor.vue";
-import {installGlobalComponents} from "@components/components-mandetory";
+import { installGlobalComponents } from "@components/components-mandetory";
 
 export default {
   name: "SMapView",
@@ -1113,25 +1120,24 @@ export default {
         if (this.map_box) {
           const el = document.createElement("div");
           //Only if loaded map!
-         /* const vnode = h(SMapLocationMarker, {
-            pinImage: this.pinImage,
-            pinIcon: this.pinIcon,
-          });
-           render(vnode, el);
-*/
+          /* const vnode = h(SMapLocationMarker, {
+             pinImage: this.pinImage,
+             pinIcon: this.pinIcon,
+           });
+            render(vnode, el);
+ */
           const app = createApp({
             render: () =>
-                h(SMapLocationMarker, {
-                  pinImage: this.pinImage,
-                  pinIcon: this.pinIcon,
-                }),
+              h(SMapLocationMarker, {
+                pinImage: this.pinImage,
+                pinIcon: this.pinIcon,
+              }),
           });
           // Use Vuetify and i18n instances
           app.use(window.$global_vuetify);
           app.use(this.geti18n());
           installGlobalComponents(app);
           app.mount(el);
-
 
           const marker = new Mapbox.Marker(el)
             .setOffset([0, -32])

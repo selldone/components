@@ -4482,7 +4482,7 @@ canvas.heatmap-canvas {
 .widget, .widget-box {
 
 
-  background: var(--background);
+  background: var(--widget-background-color);
 
   .v-data-table, .v-data-iterator {
     .v-pagination {
@@ -4502,7 +4502,7 @@ canvas.heatmap-canvas {
 
   // Fix inside table headers:
   .v-table.v-table--fixed-header.bg-transparent > .v-table__wrapper > table > thead > tr > th {
-    background: var(--background);
+    background: var(--widget-background-color);
   }
 
 

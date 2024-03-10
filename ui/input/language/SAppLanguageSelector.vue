@@ -37,7 +37,7 @@
     ></s-languages-dialog>
 
     <component
-      :is="$vuetify.display.xsOnly ? 'v-bottom-sheet' : 'v-dialog'"
+      :is="$vuetify.display.xs ? 'v-bottom-sheet' : 'v-dialog'"
       v-model="show_warning"
       :overlay-opacity="0.8"
       max-width="1080"
@@ -45,7 +45,7 @@
       width="90vw"
     >
       <v-card
-        :rounded="$vuetify.display.xsOnly ? 't-xl b-0' : 'lg'"
+        :rounded="$vuetify.display.xs ? 't-xl b-0' : 'lg'"
         color="#f9f9f9"
         flat
       >
@@ -56,7 +56,7 @@
         </v-card-title>
         <v-card-text
           :style="
-            $vuetify.display.xsOnly ? '' : 'height: 60vh;max-height: 460px'
+            $vuetify.display.xs ? '' : 'height: 60vh;max-height: 460px'
           "
           class="d-flex flex-column"
           style="color: #222222"
@@ -83,7 +83,7 @@
 
           <div class="mx-auto mt-12 mt-sm-5" style="max-width: 640px">
             <h2
-              :class="$vuetify.display.xsOnly ? 'text-h4' : 'text-h2'"
+              :class="$vuetify.display.xs ? 'text-h4' : 'text-h2'"
               class="text-center font-weight-bold lhn text-capitalize"
             >
               {{ $t("home.select_language_dialog_title") }}

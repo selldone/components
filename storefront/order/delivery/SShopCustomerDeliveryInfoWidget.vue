@@ -24,7 +24,12 @@
       </v-icon>
       {{ $t("order_page.delivery.title") }}
 
-      <v-chip v-if="is_pickup" class="skew-n20 ms-2" color="success" dark label
+      <v-chip
+        v-if="is_pickup"
+        class="skew-n20 ms-2"
+        color="success"
+        label
+        variant="flat"
         >{{ $t("global.commons.pickup") }}
       </v-chip>
 
@@ -40,7 +45,6 @@
         <v-btn
           :loading="busy_receive"
           color="primary"
-          dark
           size="x-large"
           @click="confirmReceivedOrder"
         >
@@ -63,69 +67,76 @@
       <!-- ========================================= BILLING ========================================= -->
 
       <v-col class="border-end-grater-md" cols="12" md="4" sm="6">
-        <div v-if="!edit_billing">
-          <s-order-bill-card
-            :basket="basket"
-            :billing="billing"
-          ></s-order-bill-card>
-          <div class="d-flex justify-end">
-            <v-btn
-              v-if="can_edit_address"
-              :loading="busy_edit_receiver"
-              class="nbt"
-              variant="flat"
-              @click="showEditBilling()"
-            >
-              <v-icon class="me-1" size="small">edit</v-icon>
-              {{ $t("global.actions.edit") }}
-            </v-btn>
-          </div>
-        </div>
-        <div v-else>
-          <div class="spacer-line-dotted mt-5 mb-2"></div>
-
-          <v-checkbox
-            v-model="same_billing"
-            :label="
-              same_billing
-                ? $t('basket_page.same_billing_address')
-                : $t('basket_page.custom_billing_info')
-            "
-            class="text-start-dir"
-            color="success"
-            dense
-          ></v-checkbox>
-
-          <v-expand-transition>
-            <div v-if="!same_billing">
-              <v-text-field
-                v-model="billing_name"
-                :label="$t('global.address_info.name')"
-                density="compact"
-                flat
-              ></v-text-field>
-
-              <v-text-field
-                v-model="billing_address"
-                :label="$t('global.address_info.address')"
-                density="compact"
-                flat
-              ></v-text-field>
+        <v-slide-y-transition hide-on-leave>
+          <div v-if="!edit_billing">
+            <s-order-bill-card
+              :basket="basket"
+              :billing="billing"
+            ></s-order-bill-card>
+            <div class="d-flex justify-end my-2">
+              <v-btn
+                v-if="can_edit_address"
+                :loading="busy_edit_receiver"
+                class="nbt"
+                variant="flat"
+                @click="showEditBilling()"
+              >
+                <v-icon start>edit</v-icon>
+                {{ $t("global.actions.edit") }}
+              </v-btn>
             </div>
-          </v-expand-transition>
+          </div>
+          <div v-else>
+            <div class="spacer-line-dotted mt-5 mb-2"></div>
 
-          <v-btn class="m-1" variant="text" @click="edit_billing = false"
-            >{{ $t("global.actions.close") }}
-          </v-btn>
-          <v-btn
-            :loading="busy_edit_billing"
-            class="m-1"
-            color="success"
-            variant="flat"
-            @click="onClickSetBilling"
-            >{{ $t("global.actions.save") }}
-          </v-btn>
-        </div>
+            <s-smart-toggle
+              v-model="same_billing"
+              :true-title="$t('basket_page.same_billing_address')"
+              :false-title="$t('basket_page.custom_billing_info')"
+              class="my-3"
+              color="success"
+            ></s-smart-toggle>
+
+            <v-expand-transition>
+              <div v-if="!same_billing">
+                <v-text-field
+                  v-model="billing_name"
+                  :label="$t('global.address_info.name')"
+                  :placeholder="$t('global.placeholders.name')"
+                  flat
+                  variant="outlined"
+                ></v-text-field>
+
+                <v-text-field
+                  v-model="billing_address"
+                  :label="$t('global.address_info.address')"
+                  :placeholder="$t('global.placeholders.address')"
+                  variant="outlined"
+                  flat
+                ></v-text-field>
+              </div>
+            </v-expand-transition>
+
+            <div class="widget-buttons">
+              <v-btn
+                variant="text"
+                @click="edit_billing = false"
+                size="x-large"
+                prepend-icon="close"
+                >{{ $t("global.actions.close") }}
+              </v-btn>
+              <v-btn
+                :loading="busy_edit_billing"
+                color="success"
+                variant="elevated"
+                size="x-large"
+                @click="onClickSetBilling"
+                prepend-icon="save"
+                >{{ $t("global.actions.save") }}
+              </v-btn>
+            </div>
+          </div>
+        </v-slide-y-transition>
       </v-col>
 
       <!-- ========================================= ADDRESS ========================================= -->
@@ -186,14 +197,17 @@
           >{{ receiver_info.message }}
         </p>
 
-        <div v-if="can_edit_address && !is_pickup" class="d-flex justify-end">
+        <div
+          v-if="can_edit_address && !is_pickup"
+          class="d-flex justify-end my-2"
+        >
           <v-btn
             :loading="busy_edit_receiver"
             class="nbt"
             variant="flat"
             @click="showEditAddress"
           >
-            <v-icon class="me-1" size="small">edit</v-icon>
+            <v-icon start>edit</v-icon>
             {{ $t("global.actions.edit") }}
           </v-btn>
         </div>
@@ -350,10 +364,12 @@ import SOrderDeliveryAutoComplete from "@components/order/delivery/auto-complete
 import DeliveryTimelineTransportationOrder from "@components/storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import SGeoNavigationButton from "@components/map/geo-button/SGeoNavigationButton.vue";
+import SSmartToggle from "@components/smart/SSmartToggle.vue";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
   components: {
+    SSmartToggle,
     SGeoNavigationButton,
     DeliveryTimelineTransportationOrder,
     SOrderDeliveryAutoComplete,

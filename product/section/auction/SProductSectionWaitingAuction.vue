@@ -19,7 +19,7 @@
       v-if="!discount_percent && !window.ExternalWidget"
       :class="{
         'small-label': vertical,
-        'align-self-end': $vuetify.display.xsOnly,
+        'align-self-end': $vuetify.display.xs,
       }"
       :color="forAuction ? '#333' : 'fff'"
       :dark="forAuction"

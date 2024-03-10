@@ -31,7 +31,7 @@
         <v-icon start>add</v-icon>
 
         <div
-          :class="{ small: $vuetify.display.xsOnly }"
+          :class="{ small: $vuetify.display.xs }"
           class="single-line overflow-hidden d-block"
           style="max-width: 20vw"
         >

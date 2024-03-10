@@ -16,8 +16,8 @@
   <v-col cols="12">
     <div
       :class="{
-        'text-center': $vuetify.display.xsOnly,
-        'rounded-28px': !$vuetify.display.xsOnly,
+        'text-center': $vuetify.display.xs,
+        'rounded-28px': !$vuetify.display.xs,
       }"
       class="c-widget d-sm-flex align-center nopx overflow-x-auto -header py-2 thin-scroll position-relative"
     >
@@ -28,8 +28,8 @@
 
         <v-btn
           v-if="!USER()"
-          :class="{ 'absolute-top-end': $vuetify.display.xsOnly }"
-          :size="!$vuetify.display.xsOnly && 'small'"
+          :class="{ 'absolute-top-end': $vuetify.display.xs }"
+          :size="!$vuetify.display.xs && 'small'"
           class="me-2 ms-sm-n2"
           icon
           @click="NeedLogin()"
@@ -50,8 +50,8 @@
         >
           <template v-slot:activator="{ props }">
             <v-avatar
-              :class="{ 'float-start': $vuetify.display.xsOnly }"
-              :size="$vuetify.display.xsOnly ? 48 : 36"
+              :class="{ 'float-start': $vuetify.display.xs }"
+              :size="$vuetify.display.xs ? 48 : 36"
               class="me-2 ms-sm-n2 avatar-gradient -thin -user"
               v-bind="props"
             >
@@ -162,8 +162,8 @@
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Home ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
         <router-link
           :class="{
-            'limited-text-300px': $vuetify.display.xsOnly,
-            'limited-text-150px': !$vuetify.display.xsOnly,
+            'limited-text-300px': $vuetify.display.xs,
+            'limited-text-150px': !$vuetify.display.xs,
           }"
           :to="{ name: 'CommunityHomePage' }"
           class="d-block text-start"
@@ -181,8 +181,8 @@
           <component
             :is="topic ? 'router-link' : 'span'"
             :class="{
-              'limited-text-300px': $vuetify.display.xsOnly,
-              'limited-text-150px': !$vuetify.display.xsOnly,
+              'limited-text-300px': $vuetify.display.xs,
+              'limited-text-150px': !$vuetify.display.xs,
             }"
             :to="{
               name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
@@ -206,8 +206,8 @@
           <component
             :is="post ? 'router-link' : 'span'"
             :class="{
-              'limited-text-300px': $vuetify.display.xsOnly,
-              'limited-text-150px': !$vuetify.display.xsOnly,
+              'limited-text-300px': $vuetify.display.xs,
+              'limited-text-150px': !$vuetify.display.xs,
             }"
             :to="{
               name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
@@ -237,8 +237,8 @@
 
           <span
             :class="{
-              'limited-text-300px': $vuetify.display.xsOnly,
-              'limited-text-150px': !$vuetify.display.xsOnly,
+              'limited-text-300px': $vuetify.display.xs,
+              'limited-text-150px': !$vuetify.display.xs,
             }"
             class="d-block text-start"
           >

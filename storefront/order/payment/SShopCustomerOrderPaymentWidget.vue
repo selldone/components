@@ -44,7 +44,7 @@
       }}
     </v-list-subheader>
 
-    <!-- Step 1 : بررسی پرداخت -->
+    <!-- Step 1 : Check Payment -->
     <div class="text-start">
       <p>
         <span :class="{ 'text-muted': !isPayed }" class="h3">
@@ -58,19 +58,19 @@
           v-if="isRequireAction"
           class="mx-2"
           color="warning"
-          size="small"
+          size="small" variant="flat"
         >
-          <v-icon size="small" start> warning</v-icon>
+          <v-icon  start> warning</v-icon>
           {{ $t("global.transaction_status.RequireAction") }}
         </v-chip>
 
-        <v-chip v-if="isProcessing" class="mx-2" color="blue" dark size="small">
-          <v-icon size="small" start> loop</v-icon>
+        <v-chip v-if="isProcessing" class="mx-2" color="blue" dark size="small" variant="flat">
+          <v-icon start> loop</v-icon>
           {{ $t("global.transaction_status.Processing") }}
         </v-chip>
 
-        <v-chip v-if="isCanceled" class="mx-2" color="red" dark size="small">
-          <v-icon size="small" start> close</v-icon>
+        <v-chip v-if="isCanceled" class="mx-2" color="red" dark size="small" variant="flat">
+          <v-icon  start> close</v-icon>
           {{ $t("global.transaction_status.Canceled") }}
         </v-chip>
 
@@ -78,14 +78,14 @@
           v-if="isSucceeded"
           :color="isTestPayment ? '#9C27B0' : 'success'"
           class="mx-2"
-          dark
+          dark variant="flat"
           size="small"
         >
-          <v-icon size="small" start> check</v-icon>
+          <v-icon start> check</v-icon>
           {{ $t("global.transaction_status.Succeeded") }}
 
-          <span v-if="isTestPayment" class="ms-2"
-            >({{ $t("global.status.test") }})</span
+          <b v-if="isTestPayment" class="ms-1"
+            >● {{ $t("global.status.test") }}</b
           >
         </v-chip>
 
@@ -94,9 +94,9 @@
           class="mx-2"
           color="#C2185B"
           dark
-          size="small"
+          size="small" variant="flat"
         >
-          <v-icon size="small" start> shopping_bag</v-icon>
+          <v-icon start> shopping_bag</v-icon>
 
           By Subscription
         </v-chip>

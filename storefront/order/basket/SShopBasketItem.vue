@@ -214,7 +214,7 @@
           :loading-delete="busy_delete"
           :max="available_quantity"
           :min="product?.limit_min ? product?.limit_min : 0"
-          :solo="$vuetify.display.xsOnly"
+          :solo="$vuetify.display.xs"
           :unit="product.unit"
           background-color="#111"
           class="my-1"

@@ -360,7 +360,7 @@ export default {
 
   computed: {
     aspect() {
-      return this.$vuetify.display.xsOnly
+      return this.$vuetify.display.xs
         ? 0.8
         : this.$vuetify.display.smOnly
           ? 1.4

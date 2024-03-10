@@ -13,8 +13,8 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-slide-y-transition>
-    <v-banner
+  <v-expand-transition>
+    <div
       v-if="
         !close &&
         banner &&
@@ -24,60 +24,64 @@
           $route.params.page_name === banner.page_name
         )
       "
-      :class="{ '-bg-repeat': banner.repeat }"
-      :theme="banner.dark ? 'dark' : 'light'"
-      :style="{
-        'background-color': banner.bg,
-        'background-image': banner.bg_image
-          ? `url(${banner.bg_image})`
-          : undefined,
-      }"
-      class="s--storefront-top-banner"
     >
-      <template v-slot:prepend>
-        <v-avatar v-if="banner.icon" :color="banner.icon_bg" size="40">
-          <v-icon>
-            {{ banner.icon }}
-          </v-icon>
-        </v-avatar>
-      </template>
-
-      <router-link
-        :class="{ pen: developerMode }"
-        :to="
-          banner.page_name
-            ? {
-                name: window.$storefront.routes.PAGE_RENDER,
-                params: { page_name: banner.page_name },
-              }
-            : {}
-        "
-        class="flex-grow-1"
+      <v-banner
+        :class="{ '-bg-repeat': banner.repeat }"
+        :theme="banner.dark ? 'dark' : 'light'"
+        :style="{
+          'background-color': banner.bg,
+          'background-image': banner.bg_image
+            ? `url(${banner.bg_image})`
+            : undefined,
+        }"
+        class="s--storefront-top-banner"
       >
-        <div v-html="banner.message"></div>
-      </router-link>
+        <template v-slot:prepend>
+          <v-avatar v-if="banner.icon" :color="banner.icon_bg" size="40">
+            <v-icon>
+              {{ banner.icon }}
+            </v-icon>
+          </v-avatar>
+        </template>
 
-      <template v-slot:actions>
-      <v-list-item-action end>
-        <s-lottie
-            :height="banner.anim_height"
-            :options="{ path: banner.anim, loop: true }"
-            :speed="1"
-            :width="banner.anim_width"
-            class="mx-1 flex-grow-0"
-        />
-        <v-btn
-            class="mx-2 flex-grow-0"
-            icon size="42"
-            @click.stop="dismiss"
-            variant="text"
+        <router-link
+          :class="{ pen: developerMode }"
+          :to="
+            banner.page_name
+              ? {
+                  name: window.$storefront.routes.PAGE_RENDER,
+                  params: { page_name: banner.page_name },
+                }
+              : {}
+          "
+          class="flex-grow-1"
         >
-          <v-icon>close</v-icon>
-        </v-btn>
-      </v-list-item-action>
-      </template>
-    </v-banner>
-  </v-slide-y-transition>
+          <div v-html="banner.message"></div>
+        </router-link>
+
+        <template v-slot:actions>
+          <v-list-item-action end>
+            <s-lottie
+              :height="banner.anim_height"
+              :options="{ path: banner.anim, loop: true }"
+              :speed="1"
+              :width="banner.anim_width"
+              class="mx-1 flex-grow-0"
+            />
+            <v-btn
+              class="mx-2 flex-grow-0"
+              icon
+              size="42"
+              @click.stop="dismiss"
+              variant="text"
+            >
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-list-item-action>
+        </template>
+      </v-banner>
+    </div>
+  </v-expand-transition>
 </template>
 
 <script>
@@ -156,12 +160,8 @@ export default {
     background-repeat: repeat;
   }
 
-  .v-banner-actions{
+  .v-banner-actions {
     margin-top: 0 !important;
   }
-
-
 }
-
-
 </style>

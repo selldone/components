@@ -31,7 +31,7 @@
   ―――――――――――――――― Buy ▶ Normal ―――――――――――――
   █████████████████████████████████████████████████████████████
   -->
-  <div v-else class="position-relative" style="min-height: 56px">
+  <div v-else class="position-relative px-1" style="min-height: 65px">
     <!-- 🞇 Loading -->
 
     <s-loading
@@ -131,22 +131,7 @@
         @change="lock ? undefined : debounceSpinnerSelectAction()"
         @clear="buyRemoveAction"
       >
-        <template v-slot:item="{ item }">
-          <p v-if="item" class="options">
-            <span class="float-left me-1">{{ unit }}</span>
-            {{ item }}
-          </p>
-          <p v-else class="options">
-            {{ $t("buy_button.remove") }}
-          </p>
-        </template>
 
-        <template v-slot:selection="{ item }">
-          <span v-if="item">
-            {{ item }}
-            <span class="ms-1 small">{{ unit }}</span>
-          </span>
-        </template>
       </s-number-input>
 
       <!-- ―――――――――――――― 🞇 Price input: Area / Volume ―――――――――――――― -->
