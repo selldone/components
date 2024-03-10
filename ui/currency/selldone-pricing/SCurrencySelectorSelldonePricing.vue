@@ -24,7 +24,6 @@
     :hideDetails="hideDetails"
     :icon="icon"
     :light="light"
-    :loading="busy_currency"
     :max-width="maxWidth"
     :noRouteQuery="noRouteQuery"
     :outlined="outlined"
@@ -35,7 +34,11 @@
     :variant="variant"
     flag
     @change="setUserCurrency"
-  ></s-currency-selector>
+  >
+    <template v-slot:append-inner>
+      <v-progress-circular v-if="busy_currency" size="24" indeterminate></v-progress-circular>
+    </template>
+  </s-currency-selector>
 </template>
 
 <script>
@@ -132,25 +135,19 @@ export default {
       this.$store.commit("setUserCurrency", this.user_currency);
     },
     setUserCurrency(currency) {
-      //console.log('setUserCurrency',currency)
       this.user_currency = currency;
       this.$store.commit("setUserCurrency", currency);
 
       if (this.USER()) {
-        let preferences = Object.assign({}, this.USER().preferences); // User data embed in html on load!
-        if (!preferences) preferences = {};
-
-        preferences.currency = currency;
-
         this.busy_currency = true;
 
-        this.savePreferences(
-          preferences,
-          (preferences) => {},
-          () => {
+        this.savePreferencesKey("currency", currency)
+          .catch((error) => {
+            this.showLaravelError(error);
+          })
+          .finally(() => {
             this.busy_currency = false;
-          },
-        );
+          });
       }
     },
   },

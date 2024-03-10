@@ -925,7 +925,7 @@
 
         <v-row class="d-flex align-center my-5">
           <v-col cols="12" sm="4">
-            <s-app-language-selector rounded></s-app-language-selector>
+            <s-app-language-selector rounded flat></s-app-language-selector>
           </v-col>
           <v-col class="text-end" cols="12" sm="8">
             <v-btn

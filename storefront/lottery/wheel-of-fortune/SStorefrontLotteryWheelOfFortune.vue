@@ -16,10 +16,8 @@
   <div>
     <v-btn
       v-if="available_lotories"
-      :caption="$t('global.commons.lottery')"
       :loading="busy_fetch"
-      class="sub-caption -hover -white"
-      icon
+      icon variant="text"
       @click="dialog = true"
     >
       <s-lottie
@@ -28,6 +26,9 @@
         height="44px"
         width="44px"
       />
+      <v-tooltip activator="parent" location="bottom">
+        {{$t('global.commons.lottery')}}
+      </v-tooltip>
     </v-btn>
 
     <v-dialog
@@ -36,15 +37,15 @@
       max-width="860"
       scrollable
     >
-      <v-card>
-        <v-card-title>
+      <v-card class="text-start">
+        <v-card-title class="d-flex align-center">
           {{ $t("global.wheel_fortune.title") }}
 
           <v-spacer></v-spacer>
           <v-btn
-            :caption="$t('global.actions.close')"
+            :title="$t('global.actions.close')"
             class="sub-caption -hover"
-            icon
+            icon variant="text"
             @click="dialog = false"
           >
             <v-icon>close</v-icon>
@@ -205,7 +206,7 @@
                 :class="{
                   'pointer-event-none': busy_play || busy_fetch || play,
                 }"
-                class="center"
+                class="btn-center"
                 @click="playNow()"
               >
                 <v-icon class="spin">refresh </v-icon>
@@ -619,7 +620,7 @@ export default {
   }
 }
 
-.center {
+.btn-center {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -631,6 +632,7 @@ export default {
   box-shadow: 0 5px 50px 4px rgb(221, 221, 221) !important;
   display: flex;
   justify-content: center;
+  align-items: center;
 
   cursor: pointer;
   transition: all 0.4s ease-in-out;
@@ -675,6 +677,7 @@ export default {
 
 .slice-label {
   pointer-events: none;
+  text-align: center;
   transform: rotate(var(--deg));
   position: absolute;
   top: 50%;

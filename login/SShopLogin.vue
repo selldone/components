@@ -14,11 +14,12 @@
 
 <template>
   <v-card flat>
-    <v-card-title class="mx-2">
+    <v-card-title class="mx-2 text-start">
       <v-btn
         v-if="method !== 'fast'"
-        class="zoomIn"
+        class="zoomIn tnt"
         color="blue"
+        rounded
         variant="text"
         @click="
           method = 'fast';
@@ -35,8 +36,9 @@
 
       <v-btn
         v-if="current_step"
-        class="pointer-event-none zoomIn delay_400"
+        class="pointer-event-none zoomIn delay_400 tnt"
         variant="text"
+        rounded
       >
         {{ current_step }}
       </v-btn>
@@ -48,40 +50,40 @@
     >
       <!-- ====================================== Request ====================================== -->
       <div v-if="method === 'request'" :class="{ '-focus': tel_f }" class="fst">
-        <div class="max-width-field mx-auto">
-          <s-tel-input
-            v-model="phone"
-            :defaultCountry="defaultCountry"
-            :inputOptions="{
-              placeholder: $t('global.need_login.mobile_input'),
-            }"
-            class="my-3 fadeIn"
-            enabledCountryCode
-            required
-            validCharactersOnly
-            @close="tel_f = false"
-            @open="tel_f = true"
-            @country-changed="(val) => (country = val)"
-            @keypress.enter="
-              country && phone && phone.length >= 7
-                ? requestSendCode()
-                : undefined
-            "
-            variant="underlined"
-          ></s-tel-input>
+        <s-tel-input
+          v-model="phone"
+          :defaultCountry="defaultCountry"
+          :inputOptions="{
+            placeholder: $t('global.need_login.mobile_input'),
+          }"
+          class="max-width-field mx-auto my-3 fadeIn"
+          enabledCountryCode
+          required
+          validCharactersOnly
+          @close="tel_f = false"
+          @open="tel_f = true"
+          @country-changed="(val) => (country = val)"
+          @keypress.enter="
+            country && phone && phone.length >= 7
+              ? requestSendCode()
+              : undefined
+          "
+          variant="outlined"
+        ></s-tel-input>
 
-          <div class="widget-buttons">
-            <v-btn
-              :class="{ disabled: !country || !phone || phone.length < 7 }"
-              :loading="busy_login"
-              :variant="!country || !phone || (phone.length < 7 && 'flat')"
-              class="my-3 -btn tnt fadeIn delay_100"
-              color="#0061e0"
-              size="x-large"
-              @click.stop="requestSendCode()"
-              >{{ $t("global.actions.get_sms_code") }}
-            </v-btn>
-          </div>
+        <div class="widget-buttons">
+          <v-btn
+            :class="{ disabled: !country || !phone || phone.length < 7 }"
+            :loading="busy_login"
+            :disabled="!country || !phone || phone.length < 7"
+            class="my-3 -btn tnt fadeIn delay_100"
+            color="#0061e0"
+            variant="elevated"
+            size="x-large"
+            @click.stop="requestSendCode()"
+            >{{ $t("global.actions.get_sms_code") }}
+            <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
+          </v-btn>
         </div>
 
         <!----- SMS Agreement ------>
@@ -101,7 +103,7 @@
           <v-expand-transition>
             <div v-if="show_sms_agreement">
               <div
-                class="text-justify mt-4 blue-links"
+                class="text-justify my-4 blue-links"
                 style="font-size: 12px; line-height: 1.5rem"
                 v-html="window.sms_agreement"
               ></div>
@@ -151,6 +153,7 @@
           autofocus
           class="max-width-field mx-auto text-center mb-12"
           @finish="(val) => (verification_code = val)"
+          @click="verification_code=''"
         />
 
         <div class="widget-buttons">
@@ -163,7 +166,6 @@
             :loading="busy_login"
             block
             class="fadeIn"
-            dark
             min-width="200"
             size="x-large"
             @click.stop="loginVerify()"
@@ -251,7 +253,6 @@
             :color="after_login ? 'success' : '#0061e0'"
             :loading="busy_login"
             class="fadeIn"
-            dark
             size="x-large"
             @click.stop="loginNewUser()"
             >{{ $t("global.actions.verify") }}
@@ -265,7 +266,6 @@
           <v-btn
             class="fadeIn delay_300"
             color="#0061e0"
-            dark
             min-width="200"
             size="x-large"
             variant="text"
@@ -281,11 +281,13 @@
       <div v-if="method === 'fast'">
         <div class="-msg">
           <div class="d-flex align-items-center justify-center">
-            <v-avatar><img :src="getShopIcon(shop.id)" /></v-avatar>
+            <v-avatar class="avatar-gradient -thin -shop"
+              ><img :src="getShopIcon(shop.id)"
+            /></v-avatar>
             <p class="text-subtitle-2 mx-2 my-2">{{ shop.title }}</p>
           </div>
           <h2>{{ $t("global.need_login.msg_title") }}</h2>
-          <p>{{ $t("global.need_login.msg_body") }}</p>
+          <p class="mb-5">{{ $t("global.need_login.msg_body") }}</p>
         </div>
         <div
           :class="{ disabled: disabled_fast_buttons }"
@@ -296,9 +298,9 @@
             v-if="login_modes && login_modes.includes('google')"
             :loading="busy_redirect === 'google'"
             block
-            class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
+            class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt s--button-flex"
+            rounded
             color="#4285f4"
-            dark
             size="large"
             variant="flat"
             @click="
@@ -307,12 +309,13 @@
             "
             @mouseenter="tick()"
           >
-            <v-avatar class="float-start ms-n2" color="#fff" size="32"
-              ><img class="p-2" src="../assets/trademark/google.svg"
-            /></v-avatar>
-            <span class="flex-grow-1">{{
-              $t("global.need_login.login_google")
-            }}</span>
+            <template v-slot:prepend>
+              <v-avatar class="float-start ms-n2" color="#fff" size="32"
+                ><img class="p-2" src="../assets/trademark/google.svg"
+              /></v-avatar>
+            </template>
+
+            <span>{{ $t("global.need_login.login_google") }}</span>
           </v-btn>
 
           <!-- 2. Apple login -->
@@ -320,9 +323,9 @@
             v-if="login_modes && login_modes.includes('apple')"
             :loading="busy_redirect === 'apple'"
             block
-            class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
+            class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt s--button-flex"
+            rounded
             color="#111"
-            dark
             size="large"
             variant="flat"
             @click="
@@ -331,12 +334,12 @@
             "
             @mouseenter="tick()"
           >
-            <v-avatar class="float-start ms-n2" color="#fff" size="32"
-              ><img class="p-2" src="../assets/trademark/apple-b.svg"
-            /></v-avatar>
-            <span class="flex-grow-1">{{
-              $t("global.need_login.login_apple")
-            }}</span>
+            <template v-slot:prepend>
+              <v-avatar class="float-start ms-n2" color="#fff" size="32"
+                ><img class="p-2" src="../assets/trademark/apple-b.svg"
+              /></v-avatar>
+            </template>
+            <span>{{ $t("global.need_login.login_apple") }}</span>
           </v-btn>
 
           <!-- 0. Email login -->
@@ -354,7 +357,8 @@
             v-if="login_modes && login_modes.includes('facebook')"
             :loading="busy_redirect === 'facebook'"
             block
-            class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
+            class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt s--button-flex border"
+            rounded
             size="large"
             variant="flat"
             @click="
@@ -363,12 +367,12 @@
             "
             @mouseenter="tick()"
           >
-            <v-avatar class="float-start ms-n2" color="#fff" size="32"
-              ><img class="p-2" src="../assets/trademark/meta.png"
-            /></v-avatar>
-            <span class="flex-grow-1">{{
-              $t("global.need_login.login_facebook")
-            }}</span>
+            <template v-slot:prepend>
+              <v-avatar class="float-start ms-n2" color="#fff" size="32"
+                ><img class="p-2" src="../assets/trademark/meta.png"
+              /></v-avatar>
+            </template>
+            <span>{{ $t("global.need_login.login_facebook") }}</span>
           </v-btn>
 
           <!-- 3. Selldone login -->
@@ -377,7 +381,8 @@
             v-if="login_modes && login_modes.includes('selldone')"
             :loading="busy_redirect === 'selldone'"
             block
-            class="my-2 untransform fadeIn delay_300 d-flex align-items-center tnt"
+            class="my-2 untransform fadeIn delay_300 d-flex align-items-center tnt s--button-flex border"
+            rounded
             size="large"
             variant="flat"
             @click="
@@ -386,30 +391,32 @@
             "
             @mouseenter="tick()"
           >
-            <v-avatar class="float-start ms-n2" color="#fff" size="32">
-              <img class="p-2" src="../assets/trademark/selldone.svg" />
-            </v-avatar>
-            <span class="flex-grow-1">{{
-              $t("global.need_login.login_account")
-            }}</span>
+            <template v-slot:prepend>
+              <v-avatar class="float-start ms-n2" color="#fff" size="32">
+                <img class="p-2" src="../assets/trademark/selldone.svg" />
+              </v-avatar>
+            </template>
+            <span>{{ $t("global.need_login.login_account") }}</span>
           </v-btn>
 
           <!-- 4. Phone login -->
           <v-btn
             v-if="login_modes && login_modes.includes('sms')"
             block
-            class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt"
+            class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt s--button-flex border"
+            rounded
             size="large"
             variant="flat"
             @mouseenter="tick()"
             @click.stop="method = 'request'"
           >
-            <v-avatar class="float-start ms-n2" color="#fff" size="32">
-              <v-icon size="20">phone_iphone</v-icon>
-            </v-avatar>
-            <span class="flex-grow-1">{{
-              $t("global.need_login.login_sms")
-            }}</span>
+            <template v-slot:prepend>
+              <v-avatar class="float-start ms-n2" color="#fff" size="32">
+                <v-icon size="20">phone_iphone</v-icon>
+              </v-avatar>
+            </template>
+
+            <span>{{ $t("global.need_login.login_sms") }}</span>
           </v-btn>
         </div>
       </div>
@@ -453,7 +460,7 @@ export default {
       country: null,
       phone: null,
       phone_number: "",
-      verification_code: null,
+      verification_code: '',
       busy_login: false,
       method: "fast",
       countdown_end: null,
@@ -640,7 +647,7 @@ export default {
       this.method = "fast";
       this.country = null;
       this.phone = null;
-      this.verification_code = null;
+      this.verification_code = '';
       this.code = null;
       this.name = null;
       this.email = null;

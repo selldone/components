@@ -333,7 +333,7 @@
               :loading="!shop"
               class="s--storefront-primary-header-login-button"
               roundedripple
-              @click.stop="NeedLogin()"
+              @click.stop="NeedLogin()" variant="elevated"
             >
               <v-icon class="me-2" size="small"> login</v-icon>
               <div v-if="!!shop">

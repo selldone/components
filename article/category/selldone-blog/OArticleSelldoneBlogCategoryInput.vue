@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-select
+  <v-autocomplete
     :clearable="clearable"
     :flat="flat"
     :items="categories"
@@ -29,7 +29,7 @@
     @update:modelValue="(v) => $emit('update:modelValue', v)"
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item :title="item.raw.category" v-bind="props">
+      <v-list-item :title="item.raw.category" v-bind="props" class="text-start">
         <template v-slot:prepend>
           <v-avatar v-if="item.raw.icon" class="me-2" rounded size="28"
             ><img :src="getShopImagePath(item.raw.icon)"
@@ -43,7 +43,7 @@
       /></v-avatar>
       <span class="text-subtitle-2">{{ item.raw.category }}</span>
     </template>
-  </v-select>
+  </v-autocomplete>
 </template>
 
 <script>
@@ -51,7 +51,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "OArticleSelldoneBlogCategoryInput",
-
+  emits: ["update:modelValue", "update:categoryObject"],
   props: {
     modelValue: {},
     disabled: {},
@@ -68,6 +68,22 @@ export default defineComponent({
       categories: [],
       busy: false,
     };
+  },
+  computed: {
+    category_obj() {
+      return (
+        this.categories &&
+        this.modelValue &&
+        this.categories.find(
+          (it) => it.category === this.modelValue || it.id === this.modelValue,
+        )
+      );
+    },
+  },
+  watch: {
+    category_obj(val) {
+      this.$emit("update:categoryObject", val);
+    },
   },
 
   created() {

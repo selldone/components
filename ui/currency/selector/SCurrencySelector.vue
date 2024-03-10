@@ -104,9 +104,10 @@
               : undefined
     "
     class="s--currency-selector"
-    item-title="code"
     item-value="code"
+    :item-title="(i) => $t(i.name)"
     @update:model-value="selectCurrency"
+
   >
     <template v-slot:item="{ item, props }">
       <v-list-item :title="$t(item.raw.name)" v-bind="props">
@@ -145,6 +146,9 @@
       />
 
       <span v-if="!icon" class="ms-3">{{ $t(item.raw.name) }}</span>
+    </template>
+    <template v-if="$slots['append-inner']"  v-slot:append-inner>
+      <slot name="append-inner"></slot>
     </template>
   </v-autocomplete>
 </template>

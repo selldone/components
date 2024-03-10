@@ -24,7 +24,7 @@
       :rounded="rounded"
       :style="{ 'max-width': maxWidth }"
       :variant="variant ? variant : outlined ? 'outlined' : 'underlined'"
-      flat
+      :flat="flat"
       prepend-inner-icon="translate"
       readonly
       @click.stop="show_dialog = true"
@@ -166,6 +166,7 @@ export default {
       default: false,
     },
     backgroundColor: {},
+    flat:Boolean,
   },
 
   data: () => ({

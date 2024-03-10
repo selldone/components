@@ -24,7 +24,7 @@
     <div v-if="busy">
       <v-skeleton-loader
         class="mt-2"
-        type="card-heading, table, card"
+        :type="['table-thead', 'table', 'card']"
       ></v-skeleton-loader>
     </div>
     <div

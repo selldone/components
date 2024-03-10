@@ -290,7 +290,7 @@
             {{ $t("footer.copyright", { shop_title: shop.title }) }}
           </p>
 
-          <p class="m-0">
+          <p class="mt-3">
             <router-link
               :to="{
                 name: window.$storefront.routes.SHOP_PROFILE_PAGE_PRIVACY,
@@ -307,30 +307,29 @@
             >
               {{ $t("footer.term_of_use") }}
             </router-link>
+          </p>
 
-            <v-btn
-              class="m-2"
+          <v-btn
+              class="ma-2 tnt"
               size="small"
-              variant="outlined"
+              variant="plain"
               @click.stop="apps_dialog = true"
-            >
-              <v-img
+          >
+            <v-img
                 :src="require('@components/assets/icons/gdpr-user.svg')"
-                contain
                 height="20"
                 width="20"
-              ></v-img>
+            ></v-img>
 
-              <span class="mx-2">{{ $t("footer.shop_app_setting") }} </span>
-            </v-btn>
-          </p>
+            <span class="mx-2">{{ $t("footer.shop_app_setting") }} </span>
+          </v-btn>
 
           <v-btn
             v-if="show_selldone"
             :href="SetupService.MainServiceUrl()"
-            class="m-2 text-no-transform"
+            class="ma-2 tnt"
             target="_blank"
-            variant="text"
+            variant="plain"
           >
             <small>{{ $t("footer.powered_by") }}</small>
 
@@ -390,11 +389,12 @@
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Shop Settings Dialog For Customer ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-    <v-dialog v-model="apps_dialog" max-width="720px">
+    <v-dialog v-model="apps_dialog" max-width="720px" content-class="rounded-xl">
       <s-storefront-cookie-preferences
         :shop="shop"
         has-close
         @close="apps_dialog = false"
+        class="rounded-xl"
       ></s-storefront-cookie-preferences>
     </v-dialog>
   </v-sheet>

@@ -20,7 +20,7 @@
       <v-col v-for="i in 4" :key="i" cols="6" md="3" sm="4">
         <v-skeleton-loader
           class="mx-auto"
-          type="article, text@2"
+          :type="['article', 'text@2']"
         ></v-skeleton-loader>
       </v-col>
 

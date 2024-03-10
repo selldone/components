@@ -14,8 +14,8 @@
 
 <template>
   <v-card class="text-start">
-    <v-card-title>
-      <v-avatar class="me-2">
+    <v-card-title class="d-flex align-center">
+      <v-avatar class="me-2 avatar-gradient -thin -shop" :size="48">
         <v-img :src="getShopImagePath(shop?.icon, 128)"></v-img>
       </v-avatar>
 
@@ -37,7 +37,6 @@
           <v-avatar tile>
             <v-img
               :src="require('@components/assets/icons/europe.svg')"
-              contain
               height="48"
               width="48"
             ></v-img>
@@ -54,7 +53,7 @@
         </v-list-item-subtitle>
       </v-list-item>
 
-      <v-list v-if="apps?.length" flat lines="three" subheader>
+      <v-list v-if="apps?.length" lines="three">
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Application ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
         <v-list-subheader>
@@ -64,7 +63,7 @@
         <v-list-item v-for="app in apps" :key="app.code">
           <template v-slot:prepend>
             <v-avatar tile>
-              <v-img :src="getShopImagePath(app.icon)" contain />
+              <v-img :src="getShopImagePath(app.icon)" />
             </v-avatar>
           </template>
 

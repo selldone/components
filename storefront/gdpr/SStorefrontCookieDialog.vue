@@ -34,7 +34,6 @@
         block
         class="my-3 tnt"
         color="black"
-        dark
         variant="flat"
         @click="
           () => {

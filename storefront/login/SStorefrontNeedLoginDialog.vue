@@ -22,7 +22,12 @@
     scrollable
     width="90%"
   >
-    <v-btn class="absolute-top-end m-3 z2" icon @click="show_dialog = false">
+    <v-btn
+      class="absolute-top-end m-3 z2"
+      icon
+      @click="show_dialog = false"
+      variant="text"
+    >
       <v-icon>close</v-icon>
     </v-btn>
 
@@ -45,7 +50,11 @@ export default {
     show_dialog: false,
   }),
   computed: {},
-  watch: {},
+  watch: {
+    show_dialog(val) {
+      this.BlurApp(!!val);
+    },
+  },
   created() {
     //█████████████████████████████████████████████████████████████
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――

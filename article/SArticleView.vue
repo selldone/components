@@ -647,12 +647,10 @@
             <v-row class="mb-2 z1" dense>
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
               <o-article-selldone-help-category-input
-                v-if="
-                  articleType === ArticleTypes.SelldoneHelp.code && categories
-                "
+                v-if="articleType === ArticleTypes.SelldoneHelp.code"
                 v-model="category"
                 :disabled="!!menu && !!menu.parent_id"
-                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px bg-white"
+                class="m-2 max-width-field s--shadow-no-padding rounded-28px bg-white"
                 clearable
                 flat
                 rounded
@@ -662,13 +660,11 @@
               </o-article-selldone-help-category-input>
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
               <o-article-selldone-blog-category-input
-                v-else-if="
-                  articleType === ArticleTypes.SelldoneBlog.code && categories
-                "
+                v-else-if="articleType === ArticleTypes.SelldoneBlog.code"
                 v-model="category"
+                @update:category-object="(c) => (category_obj = c)"
                 :disabled="(!!menu && !!menu.parent_id) || busy_categories"
-                :items="categories"
-                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
+                class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
                 clearable
                 flat
                 rounded
@@ -679,7 +675,7 @@
 
               <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Shop Blog Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
               <s-article-category-shop-blog-input
-                v-else-if="articleType === ArticleTypes.Blog.code && categories"
+                v-else-if="articleType === ArticleTypes.Blog.code"
                 v-model="category"
                 :disabled="busy_categories"
                 :loading="busy_categories"
@@ -1140,7 +1136,6 @@ import SLanguageInput from "@components/ui/input/language/SLanguageInput.vue";
 import SArticleFaqs from "./faq/SArticleFaqs.vue";
 import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./tags/SArticleTagsEditor.vue";
-import SContentViolationReportDialog from "../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
 import SUserInput from "@components/user/input/SUserInput.vue";
 import SSmartMenu from "@components/smart/SSmartMenu.vue";
 import STimeProgressBar from "../ui/calendar/time-progress/STimeProgressBar.vue";
@@ -1167,7 +1162,6 @@ export default {
     STimeProgressBar,
     SSmartMenu,
     SUserInput,
-    SContentViolationReportDialog,
     SArticleTagsEditor,
     SArticleStructuredData,
     SArticleFaqs,
@@ -1369,6 +1363,7 @@ export default {
       busy_categories: false,
       categories: [],
       category: "",
+      category_obj: null,
       busy_change_author: false,
 
       //---------- Samin Help ------------
@@ -1539,16 +1534,6 @@ export default {
     },
     in_view_mode() {
       return this.render_state === "review";
-    },
-
-    category_obj() {
-      return (
-        this.categories &&
-        this.category &&
-        this.categories.find(
-          (it) => it.category === this.category || it.id === this.category,
-        )
-      );
     },
   },
 
