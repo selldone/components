@@ -21,8 +21,8 @@
       v-for="connect_shipping_option in connect_shipping_options"
       :key="connect_shipping_option.connect_id"
     >
-      <v-list-subheader class="my-2">
-        {{ $t("global.commons.shipping") }}
+      <div  class="d-flex align-center my-2">
+        <small>{{ $t("global.commons.shipping") }}</small>
         <products-dense-images-circles
           :ids="
             basket.items
@@ -39,7 +39,7 @@
           inline
           raw-images-path
         ></products-dense-images-circles>
-      </v-list-subheader>
+      </div>
 
       <template v-if="connect_shipping_option.error">
         <div class="font-weight-bold d-flex align-center my-3">

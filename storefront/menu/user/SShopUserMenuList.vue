@@ -15,7 +15,7 @@
 <template>
   <v-list
     :density="$vuetify.display.smAndUp && 'compact'"
-    class="s--shop-user-menu-list"
+    class="s--shop-user-menu-list py-0"
     bg-color="#fff"
     rounded="xl"
   >
@@ -180,7 +180,6 @@
 </template>
 
 <script>
-import {EventBus} from "@core/events/EventBus";
 
 export default {
   name: "SShopUserMenuList",
@@ -215,9 +214,7 @@ export default {
     },
   },
 
-  methods:{
-
-  }
+  methods: {},
 };
 </script>
 

@@ -29,7 +29,7 @@
         <v-btn
           v-if="!USER()"
           :class="{ 'absolute-top-end': $vuetify.display.xs }"
-          :size="!$vuetify.display.xs && 'small'"
+          :size="!$vuetify.display.xs ? 'small':undefined"
           class="me-2 ms-sm-n2"
           icon
           @click="NeedLogin()"

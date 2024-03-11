@@ -30,7 +30,7 @@
 
     <p v-if="!forceShow" class="small font-weight-bold">
       <v-btn
-        :variant="show_prizes && 'outlined'"
+        :variant="show_prizes  ? 'outlined':'elevated'"
         color="green"
         dark
         size="small"

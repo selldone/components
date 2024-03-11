@@ -336,7 +336,7 @@
           :color="body ? 'blue' : '#666'"
           :icon="!body"
           :loading="busy"
-          :size="!!body && 'small'"
+          :size="!!body ? 'small':undefined"
           :variant="!!body ? 'flat':undefined"
           class="margin-n7px me-n3"
           @click="sendComment"

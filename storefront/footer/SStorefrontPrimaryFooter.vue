@@ -191,13 +191,12 @@
               :class="{ expanded: show_map, 'for-native': isNative }"
               :icon="!show_map"
               :title="$t('footer.map')"
-              :variant="show_map && 'flat'"
+              :variant="show_map ? 'flat':'elevated'"
               class="ms-2 map-button hover-scale-small"
-              fab
               size="small"
               @click="show_map = !show_map"
             >
-              <v-icon :size="!show_map && 'small'">
+              <v-icon :size="!show_map ? 'small':undefined">
                 {{ show_map ? "arrow_drop_down" : "near_me" }}
               </v-icon>
             </v-btn>

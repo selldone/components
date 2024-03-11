@@ -49,10 +49,9 @@
               <div class="widget-buttons w-100">
                 <v-btn
                   :loading="busy_follow === profile.user_id"
-                  :size="$vuetify.display.xs && 'small'"
-                  :variant="!profile.follow && 'outlined'"
+                  :size="$vuetify.display.xs ? 'small':undefined"
+                  :variant="!profile.follow ? 'outlined':'elevated'"
                   color="#1976D2"
-                  dark
                   width="100%"
                   @click="follow(profile, !profile.follow)"
                 >

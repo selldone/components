@@ -14,7 +14,7 @@
 
 <template>
   <div :class="{ dark: dark }" class="s--shop-buyer-receiver-info-widget">
-    <p class="text-start-dir">
+    <p class="text-start-dir my-1">
       <i class="fas fa-truck me-1" />
       {{ $t("global.receiver_info.address") }}
       :
@@ -46,7 +46,7 @@
       </span>
     </p>
 
-    <p v-if="has_postcode">
+    <p v-if="has_postcode" class="my-1">
       {{ $t("global.receiver_info.postcode") }}
       :
       <span class="field-value" @click.stop="$emit('show:detail')">
@@ -62,7 +62,7 @@
       </span>
     </p>
 
-    <p>
+    <p class="my-1">
       {{ $t("global.receiver_info.tel") }}
       :
       <span class="field-value" @click.stop="$emit('show:detail')">
@@ -82,7 +82,7 @@
       </span>
     </p>
 
-    <p>
+    <p class="my-1">
       {{ $t("global.receiver_info.address_note") }}
       :
       <span class="field-value" @click.stop="$emit('show:detail')">
@@ -103,7 +103,7 @@
           ? `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${receiverInfo.location.lng},${receiverInfo.location.lat},17,0,0/800x400?access_token=pk.eyJ1IjoicGFqdWhhYW4iLCJhIjoiY2sxaHNtbnU3MDFjcjNta2V0OTZ0d2ExYiJ9.YKRh0EP7NnhbmuSil7AvSw`
           : require('@components/assets/icons/map-shop.svg')
       "
-      class="map-view-box -jumping pointer-pointer fadeIn delay_300 rounded-18px mx-auto"
+      class="map-view-box -jumping pointer-pointer fadeIn delay_300 rounded-18px mx-auto my-3"
       height="auto"
       width="100%"
       @click="$emit('show:map')"

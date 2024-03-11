@@ -21,10 +21,9 @@
     <p v-if="!forceShow" class="small font-weight-bold">
       <v-btn
         :color="show_coupons ? '#666' : 'green'"
-        :variant="show_coupons && 'outlined'"
-        dark
+        :variant="show_coupons ?'outlined':'flat'"
         size="small"
-        variant="flat"
+
         @click="show_coupons = !show_coupons"
         ><i class="fas fa-ticket-alt me-2"></i>
         {{

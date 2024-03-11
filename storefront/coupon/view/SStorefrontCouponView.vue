@@ -13,11 +13,10 @@
   -->
 
 <template>
-  <v-hover
-    v-slot:default="{ hover }"
+  <div
     :class="{ 'pointer-pointer': selectable && !disabled, selected: selected }"
     :style="{ borderColor: disabled ? '#000' : coupon.color, width: width }"
-    class="coupon"
+    class="s--coupon-card"
   >
     <div
       :class="{ 'img-grayscale op-0-7': disabled }"
@@ -71,11 +70,9 @@
         </p>
       </div>
 
-      <v-fade-transition>
         <div
-          v-if="hover"
           :style="{ background: coupon.color }"
-          class="hover-detail op-0-9"
+          class="hover-detail"
         >
           <p class="my-1">
             <small>{{ $t("global.commons.min_purchase") }}: </small>
@@ -112,17 +109,15 @@
           <v-btn
             v-if="coupon.code"
             class="absolute-top-end"
-            dark
-            icon
+            icon variant="text"
             title="Delete coupon"
             @click="$emit('delete', coupon.code)"
           >
             <v-icon>close</v-icon>
           </v-btn>
         </div>
-      </v-fade-transition>
     </div>
-  </v-hover>
+  </div>
 </template>
 
 <script>
@@ -153,7 +148,9 @@ export default {
       default: false,
     },
   },
-  data: () => ({}),
+  data: () => ({
+
+  }),
 
   computed: {
     eligible_description() {
@@ -173,13 +170,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.coupon {
+.s--coupon-card {
   user-select: none;
   position: relative;
   border: white dashed 1.5px;
   border-radius: 8px;
   width: 200px;
   padding: 8px;
+  white-space: normal;
 
   &.selected {
     background-color: var(--theme-light) !important;
@@ -207,7 +205,17 @@ export default {
     margin: 0;
   }
 
+  &:hover{
+    .hover-detail{
+      display: block;
+      opacity: 0.9;
+    }
+  }
+
   .hover-detail {
+    transition: all 0.3s ease-in-out;
+    display: none;
+    opacity: 0;
     position: absolute;
     width: calc(100% - 12px);
     height: calc(100% - 12px);

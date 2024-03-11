@@ -61,12 +61,12 @@
       variant="filled"
       @update:model-value="(val) => $emit('update:modelValue', val)"
     >
-      <template v-slot:item="{ item }">
-        {{ fineName(item) }}
+      <template v-slot:item="{ item, props }">
+        <v-list-item v-bind="props" :title="fineName(item.raw)"> </v-list-item>
       </template>
-      <template v-slot:chip="{ item }">
-        <v-chip>
-          {{ fineName(item) }}
+      <template v-slot:chip="{ item, props }">
+        <v-chip v-bind="props">
+          {{ fineName(item.raw) }}
         </v-chip>
       </template>
     </v-select>
@@ -246,7 +246,7 @@ export default {
     SCurrencyInput,
     SPriceInput,
   },
-  emits : ['update:modelValue', 'delete'],
+  emits: ["update:modelValue", "delete"],
   props: {
     modelValue: {},
     type: {

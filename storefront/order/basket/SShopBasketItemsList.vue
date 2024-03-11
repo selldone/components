@@ -56,16 +56,15 @@
                   : getProductImage(item.product_id)
               "
               aspect-ratio="1"
-              class="mx-auto my-2 rounded pointer-pointer"
-              min-height="42px"
-              min-width="42px"
+              class="mx-auto my-2 rounded pointer-pointer border"
+              min-height="62"
+              min-width="62"
             />
           </router-link>
           <v-btn
             v-if="isFile && isPayed"
             class="mx-2"
             color="green"
-            dark
             size="large"
             variant="flat"
             @click="$emit('show-download-list', item)"
@@ -77,7 +76,7 @@
       </template>
 
       <template v-slot:item.product.title="{ item }">
-        <div class="min-width-200">
+        <div class="min-width-200 text-start">
           <p class="m-0">
             <b>{{ item.product.title }}</b>
 
@@ -415,6 +414,13 @@ export default {
 
     headers() {
       return [
+
+
+        {
+          title: '',
+          align: "start",
+          value: "product_id",
+        },
         {
           title: this.$t("order_page.basket_items.table.product"),
           align: "start",

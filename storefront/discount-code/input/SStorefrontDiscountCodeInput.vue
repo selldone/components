@@ -16,12 +16,11 @@
   <div class="discount-code-row">
     <v-btn
       :color="show_discount_code_input ? SaminColorLight : SaminColorDark"
-      :fab="show_discount_code_input"
+      :icon="show_discount_code_input"
       :loading="busy"
-      :size="show_discount_code_input && 'small'"
+      :size="show_discount_code_input ? 'small':'large'"
       class="mx-1 animated-all-normal"
-      dark
-      rounded
+      :rounded="!show_discount_code_input"
       variant="flat"
       @click="
         show_discount_code_input
@@ -42,7 +41,7 @@
             })
           }}
 
-          <v-btn icon @click.stop="clearDiscountCodeFromBasket"
+          <v-btn icon variant="text" @click.stop="clearDiscountCodeFromBasket"
             ><v-icon>close</v-icon></v-btn
           >
         </span>
@@ -53,7 +52,7 @@
     <v-btn
       v-if="show_discount_code_input"
       class="mx-1 animated-all-normal"
-      icon
+      icon variant="text"
       size="small"
       @click="show_discount_code_input = false"
     >
@@ -65,12 +64,11 @@
         v-if="show_discount_code_input"
         v-model="discount_code_code"
         :label="$t('global.discount_input.code_input')"
-        class="font-weight-bold mx-1 animated-all-normal"
+        class="mx-1 animated-all-normal"
         flat
         hide-details
         rounded
-        style="max-width: 180px"
-        variant="filled"
+        variant="solo"
         @keydown.enter="setDiscountCode"
       />
     </v-slide-x-reverse-transition>
