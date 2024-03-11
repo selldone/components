@@ -553,7 +553,7 @@ export default {
 .products-box {
   position: relative;
   border: #aaa solid 1px;
-  border-radius: 4px;
+  border-radius: 8px;
 
   &.simple-mode {
     border: none !important;

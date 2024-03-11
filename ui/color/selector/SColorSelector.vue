@@ -15,7 +15,10 @@
 <template>
   <div class="justify-content-between d-flex align-center py-1">
     <template v-if="title">
-      <span class="me-2"><v-icon v-if="prependIcon" class="me-1">{{ prependIcon }}</v-icon> {{ title }}</span>
+      <span class="me-2"
+        ><v-icon v-if="prependIcon" class="me-1">{{ prependIcon }}</v-icon>
+        {{ title }}</span
+      >
       <slot name="append-title"></slot>
       <span class="dashed-flex-space"></span>
     </template>
@@ -51,11 +54,16 @@
       <v-icon>close</v-icon>
     </v-btn>
 
-    <v-dialog v-model="show_picker" :dark="dark" max-width="360" scrollable>
-      <v-card v-if="show_picker" :color="color">
+    <v-dialog
+      v-model="show_picker"
+      :theme="dark ? 'dark' : 'light'"
+      max-width="360"
+      scrollable
+    >
+      <v-card v-if="show_picker" :color="color" rounded="xl">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1">palette</v-icon>
-          <span class="small" v-html="title"></span>
+          <span class="small" v-html="dialogTitle ? dialogTitle : title"></span>
         </v-card-title>
 
         <v-card-text>
@@ -91,6 +99,7 @@ export default {
     dark: { type: Boolean, default: false },
 
     title: {},
+    dialogTitle: {},
     default: {},
     nullable: { type: Boolean, default: false },
     mode: {
