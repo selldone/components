@@ -14,7 +14,7 @@
 
 <template>
   <v-list
-    :density="$vuetify.display.smAndUp && 'compact'"
+    :density="$vuetify.display.smAndUp ? 'compact' : undefined"
     class="s--shop-user-menu-list py-0"
     bg-color="#fff"
     rounded="xl"
@@ -24,6 +24,7 @@
         name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL,
       }"
       active-class="bg-primary text-white"
+      class="pt-4 pb-2"
     >
       <template v-slot:prepend>
         <v-badge
@@ -163,6 +164,7 @@
         @click="$emit('click:logout')"
         prepend-icon="logout"
         lines="two"
+        class="pb-4 pt-2"
       >
         <v-list-item-title>
           {{
@@ -180,7 +182,6 @@
 </template>
 
 <script>
-
 export default {
   name: "SShopUserMenuList",
   components: {},
@@ -218,16 +219,23 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss">
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
+.s--shop-user-menu-list {
 
+}
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-user-menu-list {
   text-align: start;
   margin: 8px 16px;
+  .v-divider{
+    opacity: 1;
+    border-color: #f8f8f8;
+    border-width: 1px;
+  }
 }
 </style>

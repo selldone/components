@@ -108,15 +108,21 @@
       content-class="no-shadow-dialog"
       max-width="680"
     >
-      <v-card class="rounded-28px">
-        <v-card-title>{{ $t("global.commons.barcode_scanner") }}</v-card-title>
+      <v-card class="rounded-28px text-start">
+        <v-card-title>    <v-icon class="me-1">qr_code_scanner</v-icon>{{ $t("global.commons.barcode_scanner") }}</v-card-title>
         <v-card-text v-if="show_scanner">
           <barcode-scanner qr-code @on-scan="onScan"></barcode-scanner>
         </v-card-text>
         <v-card-actions>
-          <v-btn variant="text" @click="show_scanner = false"
-            >{{ $t("global.actions.close") }}
-          </v-btn>
+          <div class="widget-buttons">
+            <v-btn
+              variant="text"
+              @click="show_scanner = false"
+              size="x-large"
+              prepend-icon="close"
+              >{{ $t("global.actions.close") }}
+            </v-btn>
+          </div>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -126,10 +132,11 @@
 <script>
 import VariantSelectorMenu from "../../ui/variant/VariantSelectorMenu.vue";
 import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+import BarcodeScanner from "@components/ui/scanner/BarcodeScanner.vue";
 
 export default {
   name: "SShopHyperProductView",
-  components: { SNumberInput, VariantSelectorMenu },
+  components: { BarcodeScanner, SNumberInput, VariantSelectorMenu },
   props: {
     shop: {
       require: true,

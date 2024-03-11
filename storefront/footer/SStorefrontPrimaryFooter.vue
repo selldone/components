@@ -20,28 +20,7 @@
     :dark="dark"
     class="s--storefront-primary-footer"
   >
-    <v-card
-      v-if="location && show_map"
-      :class="{ 'for-native': isNative }"
-      class="map-view fadeIn delay_500"
-    >
-      <!-- MAP -->
-      <s-map-view
-        :center="location"
-        :delay-load="1000"
-        :marker-position="location"
-        :pin-image="require('@components/assets/icons/bags.svg')"
-        :radius="18"
-        :zoom="16"
-        class="map-view-panel"
-      >
-      </s-map-view>
-    </v-card>
-
-    <v-container
-      :class="{ 'img-grayscale': show_map }"
-      style="max-width: 1520px"
-    >
+    <v-container style="max-width: 1520px">
       <!--- ================= Info ================= --->
       <v-row v-if="!isNative" class="mt-0">
         <v-col
@@ -188,17 +167,14 @@
 
             <v-btn
               v-if="location"
-              :class="{ expanded: show_map, 'for-native': isNative }"
-              :icon="!show_map"
+              icon
               :title="$t('footer.map')"
-              :variant="show_map ? 'flat':'elevated'"
-              class="ms-2 map-button hover-scale-small"
+              class="ms-2 hover-scale-small"
               size="small"
+              variant="text"
               @click="show_map = !show_map"
             >
-              <v-icon :size="!show_map ? 'small':undefined">
-                {{ show_map ? "arrow_drop_down" : "near_me" }}
-              </v-icon>
+              <v-icon> near_me </v-icon>
             </v-btn>
           </p>
         </v-col>
@@ -309,15 +285,15 @@
           </p>
 
           <v-btn
-              class="ma-2 tnt"
-              size="small"
-              variant="plain"
-              @click.stop="apps_dialog = true"
+            class="ma-2 tnt"
+            size="small"
+            variant="plain"
+            @click.stop="apps_dialog = true"
           >
             <v-img
-                :src="require('@components/assets/icons/gdpr-user.svg')"
-                height="20"
-                width="20"
+              :src="require('@components/assets/icons/gdpr-user.svg')"
+              height="20"
+              width="20"
             ></v-img>
 
             <span class="mx-2">{{ $t("footer.shop_app_setting") }} </span>
@@ -388,7 +364,11 @@
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Shop Settings Dialog For Customer ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-    <v-dialog v-model="apps_dialog" max-width="720px" content-class="rounded-xl">
+    <v-dialog
+      v-model="apps_dialog"
+      max-width="720px"
+      content-class="rounded-xl"
+    >
       <s-storefront-cookie-preferences
         :shop="shop"
         has-close
@@ -397,6 +377,32 @@
       ></s-storefront-cookie-preferences>
     </v-dialog>
   </v-sheet>
+
+  <v-dialog
+    v-if="location"
+    v-model="show_map"
+    fullscreen
+    transition="dialog-bottom-transition"
+  >
+    <v-card>
+      <!-- MAP -->
+      <s-map-view
+        :center="location"
+        :delay-load="1000"
+        :marker-position="location"
+        :pin-image="require('@components/assets/icons/bags.svg')"
+        :radius="18"
+        :zoom="16"
+        style="position: absolute; left: 0; top: 0; right: 0; bottom: 0"
+      >
+      </s-map-view>
+      <div class="widget-buttons absolute-bottom-center w-100">
+        <v-btn size="x-large" prepend-icon="close" @click="show_map=false" variant="flat">
+          {{$t('global.actions.close')}}
+        </v-btn>
+      </div>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -599,65 +605,6 @@ export default {
     }
   }
 
-  .map-button {
-    position: relative;
-    vertical-align: super;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    z-index: 10000;
-    max-width: 200px;
-
-    top: 8px;
-    transition: all 0.5s;
-    // transition-delay: 550ms;
-
-    @media only screen and (max-width: 600px) {
-      margin-right: 8px;
-    }
-
-    &.expanded {
-      position: absolute;
-      top: -140px;
-
-      &.for-native {
-        top: -245px;
-      }
-    }
-  }
-
-  .map-view {
-    background-color: #eee;
-    border: #ddd solid 8px;
-
-    border-radius: 28px !important;
-    max-width: 1520px;
-    width: 100%;
-    height: 460px;
-    top: -80px;
-
-    position: absolute;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-
-    &.for-native {
-      top: -230px;
-    }
-
-    .map-view-panel {
-      width: 100%;
-      height: 100%;
-      min-width: 100%;
-      min-height: 100%;
-      position: relative;
-      z-index: 100;
-    }
-  }
-
   .menu-footer {
     line-height: 1.9rem;
     padding-bottom: 8px;
@@ -675,23 +622,6 @@ export default {
         background-color: #fafafa;
         border-radius: 8px;
         font-size: 1.25rem;
-      }
-    }
-  }
-
-  &.-dark {
-    .map-view {
-      background-color: #1d1621;
-      border: #251b2a solid 8px;
-    }
-
-    .menu-footer {
-      .menu-item {
-        color: #fff;
-
-        &:hover {
-          background-color: var(--theme-dark);
-        }
       }
     }
   }
@@ -716,17 +646,6 @@ export default {
       .fil0 {
         fill: #fff;
         fill-rule: nonzero;
-      }
-    }
-  }
-
-  &.-rtl {
-    .footer {
-      .map-button {
-        @media only screen and (max-width: 600px) {
-          margin-right: auto !important;
-          margin-left: 8px !important;
-        }
       }
     }
   }

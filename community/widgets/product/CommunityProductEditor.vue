@@ -58,7 +58,7 @@
       content-class="no-shadow-dialog"
       max-width="680"
     >
-      <v-card class="rounded-28px">
+      <v-card class="rounded-28px text-start">
         <v-card-title>
           <v-icon class="me-1">qr_code_scanner</v-icon>
           {{ $t("global.commons.barcode_scanner") }}
@@ -68,8 +68,12 @@
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn size="x-large" variant="text" @click="show_scanner = false">
-              <v-icon start>close</v-icon>
+            <v-btn
+              size="x-large"
+              variant="text"
+              @click="show_scanner = false"
+              prepend-icon="close"
+            >
               {{ $t("global.actions.close") }}
             </v-btn>
           </div>
@@ -81,10 +85,11 @@
 
 <script>
 import CommunityProductView from "./CommunityProductView.vue";
+import BarcodeScanner from "@components/ui/scanner/BarcodeScanner.vue";
 
 export default {
   name: "CommunityProductEditor",
-  components: { CommunityProductView },
+  components: { BarcodeScanner, CommunityProductView },
   emits: ["update:modelValue"],
   props: {
     shop: {

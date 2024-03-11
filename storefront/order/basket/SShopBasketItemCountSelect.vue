@@ -43,7 +43,6 @@
         $refs.self.blur();
       }
     "
-    @click="focus = true"
     @focus="focus = true"
     @update:model-value="(val) => $emit('update:modelValue', correctValue(val))"
     @keydown.enter="
@@ -52,6 +51,7 @@
       }
     "
     :rounded="rounded"
+    :readonly="loadingDelete"
   >
     <template v-slot:item="{ item, props }">
       <v-list-item v-if="item.raw" v-bind="props">
@@ -78,7 +78,7 @@
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Remove Button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <template v-if="hasDelete" v-slot:prepend-inner>
+    <template v-if="hasDelete" v-slot:prepend>
       <div
         :class="{ 'me-2': solo, '-rtl': $vuetify.rtl }"
         :style="{ '--delete-width': dense ? '32px' : '48px' }"
@@ -202,7 +202,7 @@ export default {
  */
 .s--shop-basket-item-count-select {
   overflow: hidden;
-  // border-radius: var(--border-radius) !important;
+  position: relative;
   font-weight: 700 !important;
 
   .center-view {
@@ -230,6 +230,11 @@ export default {
         right: 0;
       }
     }
+  }
+
+  &.v-input.v-input--horizontal .v-input__prepend {
+    margin: 0;
+    margin-inline-end: 0;
   }
 }
 </style>

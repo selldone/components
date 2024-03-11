@@ -157,7 +157,11 @@
             <v-avatar v-if="item.raw.icon" class="position-relative">
               <v-img :src="getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)">
                 <template v-slot:placeholder>
-                    <v-progress-circular color="grey-lighten-5" class="center-absolute" indeterminate />
+                  <v-progress-circular
+                    color="grey-lighten-5"
+                    class="center-absolute"
+                    indeterminate
+                  />
                 </template>
               </v-img>
             </v-avatar>
@@ -184,8 +188,8 @@
       content-class="no-shadow-dialog"
       max-width="680"
     >
-      <v-card class="rounded-28px">
-        <v-card-title>{{ $t("global.commons.barcode_scanner") }}</v-card-title>
+      <v-card class="rounded-28px text-start">
+        <v-card-title>    <v-icon class="me-1">qr_code_scanner</v-icon>{{ $t("global.commons.barcode_scanner") }}</v-card-title>
         <v-card-text v-if="show_scanner">
           <barcode-scanner
             other-codes
@@ -194,9 +198,15 @@
           ></barcode-scanner>
         </v-card-text>
         <v-card-actions>
-          <v-btn variant="text" @click="show_scanner = false"
-            >{{ $t("global.actions.close") }}
-          </v-btn>
+          <div class="widget-buttons">
+            <v-btn
+              variant="text"
+              @click="show_scanner = false"
+              size="x-large"
+              prepend-icon="close"
+              >{{ $t("global.actions.close") }}
+            </v-btn>
+          </div>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -205,10 +215,11 @@
 
 <script>
 import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
+import BarcodeScanner from "@components/ui/scanner/BarcodeScanner.vue";
 
 export default {
   name: "SStorefrontSearchBox",
-  components: {},
+  components: { BarcodeScanner },
   emits: ["onSearch", "onClear", "update:expandInput"],
   props: {
     title: {
