@@ -45,7 +45,7 @@
         >
           <v-btn
             class="absolute-top-end fadeIn delay_200"
-            fab
+            icon
             size="small"
             variant="flat"
             @click="clear()"

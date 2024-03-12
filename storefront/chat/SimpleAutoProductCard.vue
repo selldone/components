@@ -20,7 +20,6 @@
       :target="target"
       :to="to"
       class="widget widget-hover"
-      @click="$emit('click')"
     >
       <v-img
         :cover="!isImageContain"

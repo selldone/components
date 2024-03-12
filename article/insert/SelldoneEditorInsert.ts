@@ -32,7 +32,7 @@
   // Check if we're in a CommonJS environment (like Node.js)
   else if (typeof module === "object" && module.exports) {
     // Export a function for initializing the module
-    module.exports = function (providedJQuery) {
+    module.exports = function (providedJQuery: any) {
       // If we're not in a browser environment, throw an error
       if (typeof window === "undefined") {
         throw new Error("medium-editor-insert-plugin runs only in a browser.");
@@ -59,7 +59,7 @@
     // Simply call the factory function directly
     factory(jQuery, Handlebars, MediumEditor);
   }
-})(function ($, Handlebars, MediumEditor) {
+})(function ($: any, Handlebars: any, MediumEditor: MediumEditor.MediumEditor) {
   this.MediumInsert = this.MediumInsert || {};
   this.MediumInsert.Templates = this.MediumInsert.Templates || {};
 

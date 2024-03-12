@@ -33,6 +33,8 @@
 </template>
 
 <script>
+
+
 export default {
   name: "ShopsDenseImagesCircles",
   props: {

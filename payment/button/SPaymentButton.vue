@@ -32,7 +32,7 @@
       </div>
     </div>
     <div class="right-side">
-      <div class="new ms-4">
+      <div class="-right-side-container ms-4">
         <slot></slot>
       </div>
 
@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  name: "PaymentButton",
+  name: "SPaymentButton",
   props: {
     small: {
       type: Boolean,
@@ -203,9 +203,10 @@ export default {
   // margin-right: 20px;
 }
 
-.new {
+.-right-side-container {
   font-size: var(--font-size);
   color: #333;
+  overflow: hidden;
 }
 
 .card-pay {
@@ -243,7 +244,7 @@ export default {
       transform: scale(0.74);
     }
   }
-  .new {
+  .-right-side-container {
     font-size: 18px;
   }
 }

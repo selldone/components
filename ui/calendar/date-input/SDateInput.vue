@@ -13,139 +13,138 @@
   -->
 
 <template>
-  <div>
-    <v-text-field
-      :bg-color="backgroundColor"
-      :class="{ pp: !disable }"
-      :clearable="clearable"
-      :color="color"
-      :density="dense ? 'compact' : undefined"
-      :disable="disable"
-      :filled="filled"
-      :flat="flat"
-      :hide-details="hideDetails"
-      :label="label"
-      :messages="getFromNowString(modelValue)"
-      :model-value="getLocalTimeString(modelValue, false, false, this.dateOnly)"
-      :placeholder="placeholder"
-      :prepend-inner-icon="prependInnerIcon"
-      :rounded="rounded"
-      :variant="
-        variant ? variant : solo ? 'solo' : outlined ? 'outlined' : 'underlined'
-      "
-      append-inner-icon="today"
-      class="pp"
-      persistent-placeholder
-      readonly
-      @click="showDialog()"
-      @click:clear="clear()"
-      @click:append-inner.stop="showDialog()"
+  <v-text-field
+    v-bind="$attrs"
+    :bg-color="backgroundColor"
+    :class="{ pp: !disable }"
+    :clearable="clearable"
+    :color="color"
+    :density="dense ? 'compact' : undefined"
+    :disable="disable"
+    :filled="filled"
+    :flat="flat"
+    :hide-details="hideDetails"
+    :label="label"
+    :messages="getFromNowString(modelValue)"
+    :model-value="getLocalTimeString(modelValue, false, false, this.dateOnly)"
+    :placeholder="placeholder"
+    :prepend-inner-icon="prependInnerIcon"
+    :rounded="rounded"
+    :variant="
+      variant ? variant : solo ? 'solo' : outlined ? 'outlined' : 'underlined'
+    "
+    append-inner-icon="today"
+    class="pp"
+    persistent-placeholder
+    readonly
+    @click="showDialog()"
+    @click:clear="clear()"
+    @click:append-inner.stop="showDialog()"
+  >
+    <template v-slot:prepend-inner>
+      <slot name="prepend-inner"></slot>
+    </template>
+  </v-text-field>
+
+  <v-dialog
+    v-if="dialog"
+    v-model="dialog"
+    :fullscreen="$vuetify.display.smAndDown"
+    max-width="700"
+    scrollable
+    theme="light"
+  >
+    <v-card
+      :title="getLocalTimeString(date_time)"
+      class="text-start"
+      prepend-icon="calendar_today"
+      rounded="xl"
     >
-      <template v-slot:prepend-inner>
-        <slot name="prepend-inner"></slot>
-      </template>
-    </v-text-field>
+      <v-card-text>
+        <v-row justify="space-around" no-gutters>
+          <v-date-picker
+            v-model="date"
+            :max="max instanceof Date ? max.toISOString() : max"
+            :min="min instanceof Date ? min.toISOString() : min"
+            show-adjacent-months
+          ></v-date-picker>
 
-    <v-dialog
-      v-if="dialog"
-      v-model="dialog"
-      :fullscreen="$vuetify.display.smAndDown"
-      max-width="700"
-      scrollable
-      theme="light"
-    >
-      <v-card
-        :title="getLocalTimeString(date_time)"
-        class="text-start"
-        prepend-icon="calendar_today"
-        rounded="xl"
-      >
-        <v-card-text>
-          <v-row justify="space-around" no-gutters>
-            <v-date-picker
-              v-model="date"
-              :max="max instanceof Date ? max.toISOString() : max"
-              :min="min instanceof Date ? min.toISOString() : min"
-              show-adjacent-months
-            ></v-date-picker>
+          <v-time-picker
+            v-if="!dateOnly /** TODO: NOt added yet! I should add this!*/"
+            v-model="time"
+            :max="max_time"
+            :min="min_time"
+            ampm-in-title
+          ></v-time-picker>
+        </v-row>
 
-            <v-time-picker
-              v-if="!dateOnly /** TODO: NOt added yet! I should add this!*/"
-              v-model="time"
-              :max="max_time"
-              :min="min_time"
-              ampm-in-title
-            ></v-time-picker>
-          </v-row>
+        <div v-if="clearable" class="text-end">
+          <v-btn
+            class="ma-1 tnt"
+            color="red"
+            rounded="xl"
+            size="x-large"
+            variant="text"
+            @click="
+              clear();
+              dialog = false;
+            "
+          >
+            <v-icon start>delete</v-icon>
 
-          <div v-if="clearable" class="text-end">
-            <v-btn
-              class="ma-1 tnt"
-              color="red"
-              rounded="xl"
-              size="x-large"
-              variant="text"
-              @click="
-                clear();
-                dialog = false;
-              "
-            >
-              <v-icon start>delete</v-icon>
+            {{ $t("global.actions.clear") }}
+          </v-btn>
+        </div>
+      </v-card-text>
+      <v-card-actions class="border-top">
+        <div class="widget-buttons">
+          <v-btn size="x-large" variant="text" @click="dialog = false">
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
 
-              {{ $t("global.actions.clear") }}
-            </v-btn>
-          </div>
-        </v-card-text>
-        <v-card-actions class="border-top">
-          <div class="widget-buttons">
-            <v-btn size="x-large" variant="text" @click="dialog = false">
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="
+              date = new Date();
+              time = new Date().toLocaleString('default', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: false,
+              });
+            "
+          >
+            <v-icon start>today</v-icon>
+            {{ $t("global.commons.now") }}
+          </v-btn>
+          <v-btn
+            :class="{ disabled: !date_time }"
+            color="primary"
+            size="x-large"
+            variant="elevated"
+            @click="
+              $emit('update:modelValue', date_time);
 
-            <v-btn
-              size="x-large"
-              variant="text"
-              @click="
-                date = new Date();
-                time = new Date().toLocaleString('default', {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  hour12: false,
-                });
-              "
-            >
-              <v-icon start>today</v-icon>
-              {{ $t("global.commons.now") }}
-            </v-btn>
-            <v-btn
-              :class="{ disabled: !date_time }"
-              color="primary"
-              size="x-large"
-              variant="elevated"
-              @click="
-                $emit('update:modelValue', date_time);
+              dialog = false;
+              $nextTick(() => {
+                $emit('change', date_time);
+              });
+            "
+          >
+            <v-icon start>done</v-icon>
 
-                dialog = false;
-                $nextTick(() => {
-                  $emit('change', date_time);
-                });
-              "
-            >
-              <v-icon start>done</v-icon>
-
-              <div>
-                {{ $t("global.actions.set") }}
-                <div class="small mt-1">
-                  {{ getFromNowString(date_time) }}
-                </div>
+            <div>
+              {{ $t("global.actions.set") }}
+              <div class="small mt-1">
+                {{ getFromNowString(date_time) }}
               </div>
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+            </div>
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>

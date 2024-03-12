@@ -33,7 +33,6 @@
     <div class="widget-buttons mb-3">
       <v-btn
         color="primary"
-        dark
         size="x-large"
         variant="flat"
         @click="showQRScanner"

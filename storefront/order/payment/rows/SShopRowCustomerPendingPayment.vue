@@ -29,7 +29,7 @@
       <v-chip
         v-if="!transaction.livemode"
         class="mx-2 pointer-event-none my-1"
-        color="#fff"
+        color="#fff" variant="flat"
         size="small"
       >
         <v-icon

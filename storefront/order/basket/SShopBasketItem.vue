@@ -61,7 +61,7 @@
           }"
           class="shop-item-title"
         >
-          {{ product.title }}
+          {{ product.title?.limitWords(12) }}
 
           <v-icon
             v-if="!product.original"
@@ -71,7 +71,7 @@
             >new_releases
           </v-icon>
         </router-link>
-        <small> {{ product.title_en }}</small>
+        <small> {{ product.title_en?.limitWords(18) }}</small>
         <p class="mini-info">
           <!-- ▂▂▂▂▂▂▂▂▂▂▂ volume ▂▂▂▂▂▂▂▂▂▂▂ -->
           <span v-if="product.price_input === 'volume'"

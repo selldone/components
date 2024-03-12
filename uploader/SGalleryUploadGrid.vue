@@ -27,12 +27,12 @@
       ref="items"
       :image_id="image.id"
       :style="style_value"
-      class="item-grid position-relative"
+      class="item-grid pa-2"
     >
       <v-img
         :aspect-ratio="$vuetify.display.smAndUp ? 1 : 2"
         :src="getShopImagePath(image.path)"
-        class="m-2"
+        cover
       >
         <template v-slot:placeholder>
             <v-progress-circular color="primary" indeterminate class="center-absolute" />

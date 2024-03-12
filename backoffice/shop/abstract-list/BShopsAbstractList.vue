@@ -35,13 +35,13 @@
             ? { name: linkPageName, params: { shop_id: shop.id } }
             : undefined
         "
-        class="m-2 zoomIn position-relative pointer-pointer"
+        class="ma-3 zoomIn position-relative pointer-pointer"
         style="max-width: 96px"
         @click="$emit('select:shop', returnObject ? shop : shop.id)"
       >
         <v-card
           class="d-flex align-center justify-center rounded-2rem widget-hover position-relative"
-          color="#999"
+          color="#eee"
           height="96"
           variant="outlined"
           width="96"
@@ -52,7 +52,7 @@
                 ? getShopImagePath(shop.icon, 96)
                 : require('@components/assets/placeholders/shop/store.svg')
             "
-            class="rounded-18px"
+            class="rounded-1-8rem"
             height="80"
             width="80"
             @click="selected_shop = shop.id"
@@ -139,8 +139,11 @@
 import { ShopPermissions } from "@core/enums/permission/ShopPermissions";
 import SAddButtonGreen from "@components/ui/button/add/SAddButtonGreen.vue";
 
+/**
+ * <b-shops-abstract-list>
+ */
 export default {
-  name: "MyShopsList",
+  name: "BShopsAbstractList",
   components: { SAddButtonGreen },
   props: {
     link: {

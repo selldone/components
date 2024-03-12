@@ -180,7 +180,7 @@
           v-if="method === 'select' && users"
           :class="{ disabled: busy_login, 'pointer-event-none': after_login }"
           class="max-width-field mx-auto border-between-vertical text-start"
-          color="transparent"
+          bg-color="transparent"
           lines="two"
         >
           <template v-for="(user, index) in users" :key="user.id">

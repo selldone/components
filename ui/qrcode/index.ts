@@ -68,7 +68,7 @@ export default defineComponent({
 
       switch (this.tag) {
         case "canvas":
-          toCanvas(this.$el, value, options, (error) => {
+          toCanvas(this.$el, value, options, (error:any) => {
             if (error) {
               throw error;
             }
@@ -78,7 +78,7 @@ export default defineComponent({
           break;
 
         case "img":
-          toDataURL(value, options, (error, url) => {
+          toDataURL(value, options, (error:any, url:string) => {
             if (error) {
               throw error;
             }
@@ -89,7 +89,7 @@ export default defineComponent({
           break;
 
         case "svg":
-          toString(value, options, (error, string) => {
+          toString(value, options, (error:any, string:string) => {
             if (error) {
               throw error;
             }

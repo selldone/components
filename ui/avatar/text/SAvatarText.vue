@@ -14,14 +14,14 @@
 
 <template>
   <v-avatar :size="size">
-    <v-avatar
+    <v-sheet
       :color="color"
-      :size="size - Math.min(8, size / 6)"
       :style="{ 'font-size': size * 0.32 + 'px' }"
-      class="text-white text-uppercase"
+      class="text-uppercase d-flex align-center justify-center av-image"
+      rounded="circle"
     >
-      {{ text }}
-    </v-avatar>
+      <span>{{ text }}</span>
+    </v-sheet>
   </v-avatar>
 </template>
 

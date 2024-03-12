@@ -14,7 +14,7 @@
 
 <template>
   <v-select
-    :filled="filled"
+    :variant="variant"
     :items="giftCards"
     :label="$t('global.payment_form.gift_cards_input')"
     :model-value="modelValue"
@@ -26,14 +26,16 @@
     prepend-inner-icon="card_giftcard"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <template v-slot:append-outer="">
-      <v-btn
-        :caption="$t('global.actions.add_giftcard')"
-        class="sub-caption b-16px -hover margin-n7px"
-        icon
-        @click.stop="dialog = true"
-      >
+    <template v-slot:append>
+      <v-btn icon variant="text" @click.stop="dialog = true">
         <v-icon>add_box</v-icon>
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+          content-class="bg-black"
+        >
+          {{ $t("global.actions.add_giftcard") }}
+        </v-tooltip>
       </v-btn>
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Add card  ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -51,50 +53,55 @@
     <template v-slot:selection="{ item, index }">
       <v-chip
         v-if="index === 0"
-        class="mt-2"
+        class="overflow-visible"
         closable
-        color="#ffffff33"
-        @click:close="DeleteItemByID(modelValue, item.id)"
+        color="#ffffff"
+        theme="light"
+        variant="flat"
+        @click:close.stop="DeleteItemByID(modelValue, item.raw.id)"
       >
-        <v-avatar v-if="item.gift_type.bg" start>
-          <img
-            :src="getShopImagePath(item.gift_type.bg, IMAGE_SIZE_SMALL)"
-            alt="trevor"
-          />
-        </v-avatar>
-
-        <span>{{ formatCard(item.number) }}</span>
-        <span class="ms-2 small">{{ item.gift_type.title }}</span>
+        <template v-slot:prepend>
+          <v-avatar v-if="item.raw.gift_type.bg" class="me-2">
+            <img
+              :src="getShopImagePath(item.raw.gift_type.bg, IMAGE_SIZE_SMALL)"
+              alt="trevor"
+            />
+          </v-avatar>
+        </template>
+        <span>{{ formatCard(item.raw.number) }}</span>
+        <span class="ms-2 small">{{ item.raw.gift_type.title }}</span>
       </v-chip>
       <span v-if="index === 1" class="text-caption ms-2 mt-1"
-        >(+{{ modelValue.length - 1 }} {{ $t("global.payment_form.more") }} )</span
+        >(+{{ modelValue.length - 1 }}
+        {{ $t("global.payment_form.more") }} )</span
       >
     </template>
-    <template v-slot:item="{ item }">
-      <img
-        v-if="item.gift_type.bg"
-        :src="getShopImagePath(item.gift_type.bg, IMAGE_SIZE_SMALL)"
-        class="rounded me-2"
-        height="24"
-        width="36"
-      />
+    <template v-slot:item="{ item, props }">
+      <v-list-item v-bind="props" class="text-start">
+        <template v-slot:prepend>
+          <img
+            v-if="item.raw.gift_type.bg"
+            :src="getShopImagePath(item.raw.gift_type.bg, IMAGE_SIZE_SMALL)"
+            class="rounded me-2"
+            height="24"
+            width="36"
+          />
+        </template>
 
-      <b>{{ formatCard(item.number) }}</b>
-
-      <v-spacer></v-spacer>
-
-      <price-view
-        :amount="item.balance"
-        :currency="item.gift_type.currency"
-      ></price-view>
+        <template v-slot:title>
+          <b>{{ formatCard(item.raw.number) }}</b>
+        </template>
+        <template v-slot:append>
+          <price-view
+            :amount="item.raw.balance"
+            :currency="item.raw.gift_type.currency"
+          ></price-view>
+        </template>
+      </v-list-item>
     </template>
 
     <template v-slot:append-inner>
-      <v-progress-circular
-        v-if="loading"
-
-        indeterminate
-      ></v-progress-circular>
+      <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
     </template>
   </v-select>
 </template>
@@ -122,13 +129,13 @@ export default {
       default: false,
       type: Boolean,
     },
-    filled: {
-      default: false,
-      type: Boolean,
-    },
+
     loading: {
       default: false,
       type: Boolean,
+    },
+    variant: {
+      default: "underlined",
     },
   },
   data: () => ({

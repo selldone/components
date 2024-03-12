@@ -28,7 +28,6 @@
       '--btn-hover-bg-color': hoverColor,
     }"
     class="s--add-button-green"
-    @click.stop="$emit('click')"
   >
     <v-img :src="src" class="sprite flip-image-rtl"></v-img>
     <div class="center-content px-2">

@@ -3453,14 +3453,16 @@ Fix snaky chart overflow problem!
 
   &.blurred {
     filter: blur(6px);
-    &.disabled{
+
+    &.disabled {
       filter: blur(6px) grayscale(100%);
     }
   }
 
   &.blurred-lg {
     filter: blur(16px);
-    &.disabled{
+
+    &.disabled {
       filter: blur(16px) grayscale(100%);
     }
   }
@@ -4219,18 +4221,20 @@ canvas.heatmap-canvas {
 //----------------------------------------------------------------------------------------------
 
 .avatar-gradient {
+  --padding: 4px;
   --border-radious: 50%;
   background: radial-gradient(circle at 33% 100%, #009688 4%, #00796B 30%, #0288D1 62%, #3F51B5 85%, #303F9F);
   border-radius: var(--border-radious);
-  padding: 4px;
+  padding: var(--padding);
   display: inline-flex;
+  position: relative;
 
   &.-shape-bin-l {
-    --border-radious: 40px 48px 63px 6px;
+    --border-radious: 40px 48px 63px 6px !important;
   }
 
   &.-shape-bin-r {
-    --border-radious: 63px 40px 6px 48px;
+    --border-radious: 63px 40px 6px 48px !important;
   }
 
   &.-shop {
@@ -4301,12 +4305,18 @@ canvas.heatmap-canvas {
   &.v-avatar {
     align-items: stretch !important;
 
-    img, .v-img { // Force fill on render!
-      height: inherit;
-      width: auto;
+    & > img, & > .v-img, & > .av-image { // Force fill on render!
+      position: absolute;
+      left: var(--padding);
+      top: var(--padding);
+      bottom: var(--padding);
+      right: var(--padding);
       flex-grow: 1;
-      max-width: 100%;
-      max-height: 100%;
+      max-width: calc(100% - 2 * var(--padding));
+      max-height: calc(100% - 2 * var(--padding));
+      width: calc(100% - 2 * var(--padding));
+      height: calc(100% - 2 * var(--padding));
+      padding: 0;
     }
 
     .v-img {
@@ -4318,32 +4328,32 @@ canvas.heatmap-canvas {
     }
 
 
-    :not(img, .v-img) { // Force be on center! (text, icon, ...)
+    & > :not(img, .v-img) { // Force be on center! (text, icon, ...)
       // margin: auto;
       align-self: center;
     }
   }
 
   &.-thin {
-    padding: 2px;
+    --padding: 2px;
 
-    img, .v-img {
-      padding: 2px;
+    & > img, & > .v-img {
+      //  padding: 2px;
 
     }
   }
 
   &.-no-gap {
-    img, .v-img {
-      padding: 0 !important;
+    & > img, & > .v-img {
+      border: none !important;
     }
   }
 
-  img, .v-img {
+  & > img, & > .v-img, & > .av-image {
     border-radius: var(--border-radious);
     margin: 0;
-    // border: solid 3px #fff;
-    padding: 3px;
+    border: solid var(--padding) var(--background, #fff);
+    box-sizing: border-box;
 
     background-color: var(--background, #fff);
     aspect-ratio: 1;
@@ -4352,7 +4362,7 @@ canvas.heatmap-canvas {
 }
 
 // Fix issue in using <img> in v-avatar:
-.v-avatar {
+.v-avatar:not(.avatar-gradient) {
   img {
     max-width: 100%;
     max-height: 100%;
@@ -4506,16 +4516,15 @@ canvas.heatmap-canvas {
   }
 
 
-    hr {
-      border-top: 1.4px dashed rgba(0, 0, 0, 0.25);
-      opacity: 1;
-      margin-top: 0.2rem;
-      margin-bottom: 0.2rem;
-    }
+  hr {
+    border-top: 1.4px dashed rgba(0, 0, 0, 0.25);
+    opacity: 1;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+  }
 
 
 }
-
 
 
 .widget-buttons {

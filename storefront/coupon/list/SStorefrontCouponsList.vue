@@ -47,7 +47,7 @@
               "
               class="-coupon"
               width="220px"
-              @click="
+              @select="
                 selectable
                   ? selectCoupon(
                       modelValue?.id === coupon.id || modelValue === coupon.id

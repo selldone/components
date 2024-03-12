@@ -600,6 +600,11 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     // min-height: 64px;
     // padding-top: 16px;
   }
+  // FIx vuetify 3 issue in showing numbers in input!
+ /* .v-field__input{
+    padding-bottom: 0px;
+    padding-top: 16px;
+  }*/
 
   .v-select__selections {
     font-size: 22px;
@@ -706,12 +711,6 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 
-// TODO: Fix v-textarea padding issue:
-.v-textarea textarea {
-  padding-top: var(--v-field-input-padding-top);
-  padding-bottom: var(--v-field-input-padding-bottom);
-  padding-inline: var(--v-field-padding-start) var(--v-field-padding-end);
-}
 
 // TODO: Fix v-timeline size issue!
 .v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item--after .v-timeline-item__body,

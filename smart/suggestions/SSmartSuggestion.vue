@@ -25,12 +25,13 @@
           <v-icon :size="18">pin_invoke</v-icon>
         </v-btn>
       </v-slide-group-item>
-      <v-slide-group-item v-for="n in samples_processed" :key="n" :title="n">
+      <v-slide-group-item v-for="n in samples_processed" :key="n">
         <v-btn
           class="tnt"
           size="small"
           variant="plain"
           @click="$emit('select', n)"
+          :title="n"
         >
           {{ n.limitWords(4) }}
         </v-btn>

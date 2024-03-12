@@ -122,10 +122,9 @@
           :gift-cards="giftcards"
           :loading="busy_gift_cards"
           class="mt-3"
-          filled
           multiple
           return-object
-          rounded
+          variant="outlined"
         >
         </s-storefront-giftcard-selector>
 
@@ -144,18 +143,24 @@
             <v-chip
               v-if="isSelldoneSubscription"
               class="ma-2"
-              color="#111" variant="flat"
+              color="#111"
+              variant="flat"
               label
               size="small"
             >
-              <v-icon  start>add_card</v-icon>
+              <v-icon start>add_card</v-icon>
               Add card to the wallet.
             </v-chip>
-            <v-tooltip v-else-if="bill" content-class="bg-black text-start rounded-xl"  location="top">
+            <v-tooltip
+              v-else-if="bill"
+              content-class="bg-black text-start rounded-xl"
+              location="top"
+            >
               <template v-slot:activator="{ props }">
                 <v-btn
                   class="ms-2"
-                  icon variant="text"
+                  icon
+                  variant="text"
                   size="small"
                   style="vertical-align: top"
                   v-bind="props"
@@ -164,7 +169,7 @@
                 </v-btn>
               </template>
 
-              <v-table class="bg-transparent" density="compact" theme="dark" >
+              <v-table class="bg-transparent" density="compact" theme="dark">
                 <template v-slot:default>
                   <tbody class="text-start">
                     <tr>
@@ -302,7 +307,9 @@
                       </td>
                     </tr>
                     <tr style="border-top: #fff solid 2px">
-                      <td><b>{{ $t("global.commons.sum") }}</b></td>
+                      <td>
+                        <b>{{ $t("global.commons.sum") }}</b>
+                      </td>
                       <td class="font-weight-bold">
                         <price-view
                           :amount="total_amount_remain_for_pay"
@@ -319,36 +326,28 @@
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Charge Gift Cards ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
-        <p v-if="total_amount_by_gift_cards > 0" class="mb-1 mt-2">
-          <i
-            :class="{
-              'fa:fas fa-circle-notch': total_amount_remain_for_pay > 0,
-              'fa:fas fa-circle': total_amount_remain_for_pay === 0,
-            }"
-            class="text-success mx-1"
-          />
-          {{ $t("global.payment_form.pay_amount_by_gift_cards") }}
-          :
+        <p v-if="total_amount_by_gift_cards > 0" class="my-2">
+          <v-icon class="me-1" size="small">{{
+            total_amount_remain_for_pay > 0 ? "redeem" : "check_circle"
+          }}</v-icon>
+          {{ $t("global.payment_form.pay_amount_by_gift_cards") }}:
 
-          <span class="text-success">
-            {{
-              FormatNumberCurrency(total_amount_by_gift_cards, currency.code)
-            }}
-          </span>
-
-          <span class="small">
-            {{ GetUserSelectedCurrencyName(currency.code) }}</span
+          <price-view
+            class="text-success"
+            :amount="total_amount_by_gift_cards"
+            :currency="currency.code"
           >
+          </price-view>
         </p>
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Free payment ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
         <div v-if="isFree">
-          <p class="m-2 small">
+          <p class="my-2 small">
             {{ $t("global.payment_form.order_free_payment") }}
           </p>
 
-          <payment-button
+          <s-payment-button
             class="ma-auto pointer-pointer"
             pos=""
             purple
@@ -365,7 +364,7 @@
               }
             "
           >
-            <p class="font-weight-black m-0">
+            <p class="font-weight-black m-0 pb-1 single-line">
               {{ $t("global.payment_form.order_free_payment_action") }}
             </p>
             <img
@@ -374,7 +373,7 @@
               src="@components/assets/icons/free-badge.svg"
             />
             {{ $t("global.commons.free") }}
-          </payment-button>
+          </s-payment-button>
         </div>
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Paypal (Instance payment form) ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
@@ -447,7 +446,7 @@
                 cols="12"
                 sm="6"
               >
-                <payment-button
+                <s-payment-button
                   :blue="gateway.cod"
                   :pos="GetUserSelectedCurrencyName(gateway.currency, true)"
                   class="ma-auto pointer-pointer"
@@ -465,7 +464,7 @@
                     }
                   "
                 >
-                  <p class="font-weight-black m-0">
+                  <p class="font-weight-black m-0 pb-1 single-line">
                     {{
                       gateway.dir
                         ? $t("global.actions.dir_payment")
@@ -480,7 +479,7 @@
                     class="mx-2"
                   />
                   {{ gateway.name }}
-                </payment-button>
+                </s-payment-button>
               </v-col>
             </v-row>
 
@@ -506,11 +505,11 @@
               !isSelldoneSubscription
             "
           >
-            <p class="mx-2 small">
+            <p class="mt-2 mb-5 small">
               {{ $t("global.payment_form.all_paid_by_gift_cards") }}
             </p>
 
-            <payment-button
+            <s-payment-button
               class="ma-auto pointer-pointer"
               pos=""
               purple
@@ -527,7 +526,7 @@
                 }
               "
             >
-              <p class="font-weight-black m-0">
+              <p class="font-weight-black m-0 pb-1 single-line">
                 {{ $t("global.payment_form.pay_by_gift_cards_action") }}
               </p>
               <img
@@ -536,7 +535,7 @@
                 src="@components/assets/icons/gift.svg"
               />
               {{ $t("global.commons.free") }}
-            </payment-button>
+            </s-payment-button>
           </div>
         </v-slide-y-transition>
       </div>
@@ -708,7 +707,7 @@
 
 <script>
 import SPaymentStripe from "./stripe/SPaymentStripe.vue";
-import PaymentButton from "./widgets/PaymentButton.vue";
+import SPaymentButton from "./button/SPaymentButton.vue";
 import SStorefrontGiftcardSelector from "@components/storefront/giftcard/selector/SStorefrontGiftcardSelector.vue";
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 import TimeLapse from "@components/ui/time-lapse/timeLapse.vue";
@@ -731,7 +730,7 @@ export default {
     TimeLapse,
     SValueCopyBox,
     SStorefrontGiftcardSelector,
-    PaymentButton,
+    SPaymentButton,
     SPaymentStripe,
   },
   props: {

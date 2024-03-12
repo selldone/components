@@ -45,7 +45,7 @@
         :placeholder="$t('community.community.name_plc')"
         :readonly="lock"
         @click:append-inner="lock = !lock"
-        @update:model-value="checkName"
+        @update:model-value="checkName" variant="underlined"
       >
         <template v-slot:append-inner>
           <v-icon v-if="valid_name === name" color="success">check</v-icon>
@@ -57,7 +57,7 @@
         :counter="128"
         :label="$t('community.community.title')"
         :messages="$t('community.community.title_msg')"
-        :placeholder="$t('community.community.title_plc')"
+        :placeholder="$t('community.community.title_plc')" variant="underlined"
       ></v-text-field>
 
       <v-text-field
@@ -65,7 +65,7 @@
         :counter="256"
         :label="$t('community.community.desc')"
         :messages="$t('community.community.desc_msg')"
-        :placeholder="$t('community.community.desc_plc')"
+        :placeholder="$t('community.community.desc_plc')" variant="underlined"
       ></v-text-field>
     </div>
 
@@ -198,24 +198,17 @@
         label="Allowed file types"
         messages="Leave it empty means all file types are accepted."
         multiple
-        placeholder="Enter value and press enter. ex: zip"
+        placeholder="Enter value and press enter. ex: zip" variant="underlined"
       >
-        <template v-slot:chip="data">
-          <v-chip
-            :key="JSON.stringify(data.item)"
-            :disabled="data.disabled"
-            :model-value="data.selected"
-            closable
-            v-bind="data.attrs"
-            @click:close="data.parent.selectItem(data.item)"
-          >
+        <template v-slot:chip="{item,props}">
+          <v-chip v-bind="props">
             <img
-              :src="getFileExtensionImage(data.item)"
+              :src="getFileExtensionImage(item.raw)"
               class="me-1"
               height="16"
               width="16"
             />
-            {{ data.item }}
+            {{ item.raw }}
           </v-chip>
         </template>
       </v-combobox>
@@ -236,12 +229,12 @@
         v-model="rule"
         :placeholder="$t('community.community.rule_plc')"
         :rows="4"
-        class="m-0"
+        class="m-0" variant="underlined"
       >
       </v-textarea>
     </div>
 
-    <div class="widget-buttons">
+    <s-widget-buttons :auto-fixed-position="!hasClose" >
       <v-btn
         v-if="hasClose"
         size="x-large"
@@ -258,13 +251,13 @@
         :loading="busy"
         color="primary"
         size="x-large"
-        variant="flat"
+        variant="elevated"
         @click="saveCommunity"
+        prepend-icon="save"
       >
-        <v-icon start>save</v-icon>
         {{ $t("global.actions.save_changes") }}
       </v-btn>
-    </div>
+    </s-widget-buttons>
   </v-container>
 </template>
 
@@ -276,10 +269,11 @@ import SSmartSelect from "@components/smart/SSmartSelect.vue";
 import { CommunityAttachmentAccess } from "@core/enums/community/CommunityAttachmentAccess";
 import _ from "lodash-es";
 import ScrollHelper from "@core/utils/scroll/ScrollHelper";
+import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "CommunityEdit",
-  components: { SSmartSelect, SSmartToggle, ImageInput },
+  components: {SWidgetButtons, SSmartSelect, SSmartToggle, ImageInput },
 
   props: {
     shop: {}, // optional for shops.

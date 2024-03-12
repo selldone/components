@@ -204,27 +204,26 @@
               />
 
               <div class="widget-buttons">
-                <v-btn size="x-large" variant="text" @click="resetEdit">
-                  <v-icon start>close</v-icon>
+                <v-btn size="x-large" variant="text" @click="resetEdit" prepend-icon="close">
                   {{ $t("global.actions.cancel") }}
                 </v-btn>
                 <v-btn
                   color="#333"
                   size="x-large"
-                  variant="flat"
+                  variant="text"
                   @click="deleteComment"
+                  prepend-icon="delete"
                 >
-                  <v-icon class="me-1">delete</v-icon>
                   {{ $t("global.actions.delete") }}
                 </v-btn>
                 <v-btn
                   :loading="loading"
                   color="#333"
                   size="x-large"
-                  variant="flat"
+                  variant="elevated"
                   @click="saveEdit"
+                  prepend-icon="save"
                 >
-                  <v-icon start>save</v-icon>
                   {{ $t("global.actions.save") }}
                 </v-btn>
               </div>

@@ -21,7 +21,7 @@
     <div
       :class="{ 'img-grayscale op-0-7': disabled }"
       class="d-flex flex-column"
-      @click="disabled ? undefined : $emit('click')"
+      @click="disabled ? undefined : $emit('select')"
     >
       <p class="coupon-title">
         {{ coupon.title }}
@@ -42,7 +42,7 @@
       ></s-time-progress-bar>
 
       <p v-if="coupon.charge" class="m-0 mt-1">
-        <v-icon class="me-1" color="#333" size="small"
+        <v-icon class="me-1"  size="small"
           >card_giftcard add
         </v-icon>
         <b>
@@ -70,52 +70,50 @@
         </p>
       </div>
 
-        <div
-          :style="{ background: coupon.color }"
-          class="hover-detail"
-        >
-          <p class="my-1">
-            <small>{{ $t("global.commons.min_purchase") }}: </small>
-            <b>
-              <price-view
-                :amount="coupon.min_purchase"
-                :currency="coupon.currency"
-              ></price-view>
-            </b>
-          </p>
+      <div :style="{ background: coupon.color }" class="hover-detail">
+        <p class="my-1">
+          <small>{{ $t("global.commons.min_purchase") }}: </small>
+          <b>
+            <price-view
+              :amount="coupon.min_purchase"
+              :currency="coupon.currency"
+            ></price-view>
+          </b>
+        </p>
 
-          <p class="my-1">
-            <small>{{ $t("global.commons.eligible_for") }}: </small>
-            <b>{{ eligible_description }}</b>
+        <p class="my-1">
+          <small>{{ $t("global.commons.eligible_for") }}: </small>
+          <b>{{ eligible_description }}</b>
+        </p>
+        <div v-if="coupon.qualify" class="d-flex text-center">
+          <p v-if="coupon.qualify_daily" class="my-1 w-50">
+            <small>{{ $t("global.commons.daily") }}</small
+            ><br />
+            <b>{{ coupon.qualify_daily }}x</b>
           </p>
-          <div v-if="coupon.qualify" class="d-flex text-center">
-            <p v-if="coupon.qualify_daily" class="my-1 w-50">
-              <small>{{ $t("global.commons.daily") }}</small
-              ><br />
-              <b>{{ coupon.qualify_daily }}x</b>
-            </p>
-            <p v-if="coupon.qualify_monthly" class="my-1 w-50">
-              <small>{{ $t("global.commons.monthly") }}</small
-              ><br />
-              <b>{{ coupon.qualify_monthly }}x</b>
-            </p>
-            <p v-if="coupon.qualify_yearly" class="my-1 w-50">
-              <small>{{ $t("global.commons.yearly") }}</small
-              ><br />
-              <b>{{ coupon.qualify_yearly }}x</b>
-            </p>
-          </div>
-
-          <v-btn
-            v-if="coupon.code"
-            class="absolute-top-end"
-            icon variant="text"
-            title="Delete coupon"
-            @click="$emit('delete', coupon.code)"
-          >
-            <v-icon>close</v-icon>
-          </v-btn>
+          <p v-if="coupon.qualify_monthly" class="my-1 w-50">
+            <small>{{ $t("global.commons.monthly") }}</small
+            ><br />
+            <b>{{ coupon.qualify_monthly }}x</b>
+          </p>
+          <p v-if="coupon.qualify_yearly" class="my-1 w-50">
+            <small>{{ $t("global.commons.yearly") }}</small
+            ><br />
+            <b>{{ coupon.qualify_yearly }}x</b>
+          </p>
         </div>
+
+        <v-btn
+          v-if="coupon.code"
+          class="absolute-top-end"
+          icon
+          variant="text"
+          title="Delete coupon"
+          @click="$emit('delete', coupon.code)"
+        >
+          <v-icon>close</v-icon>
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -126,6 +124,7 @@ import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgres
 export default {
   name: "SStorefrontCouponView",
   components: { STimeProgressBar },
+  emits: ["select", "delete"],
   props: {
     coupon: {
       require: true,
@@ -148,9 +147,7 @@ export default {
       default: false,
     },
   },
-  data: () => ({
-
-  }),
+  data: () => ({}),
 
   computed: {
     eligible_description() {
@@ -205,8 +202,8 @@ export default {
     margin: 0;
   }
 
-  &:hover{
-    .hover-detail{
+  &:hover {
+    .hover-detail {
       display: block;
       opacity: 0.9;
     }

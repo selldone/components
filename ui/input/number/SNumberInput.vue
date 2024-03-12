@@ -21,6 +21,7 @@
       'center-input': textCenter,
       'no-padding-nf': noPadding,
     }"
+    class=""
     :density="dense ? 'compact' : undefined"
     :disabled="disabled"
     :flat="flat"

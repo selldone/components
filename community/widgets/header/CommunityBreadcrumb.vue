@@ -29,7 +29,7 @@
         <v-btn
           v-if="!USER()"
           :class="{ 'absolute-top-end': $vuetify.display.xs }"
-          :size="!$vuetify.display.xs ? 'small':undefined"
+          :size="!$vuetify.display.xs ? 'small' : undefined"
           class="me-2 ms-sm-n2"
           icon
           @click="NeedLogin()"
@@ -43,23 +43,21 @@
           v-if="USER()"
           close-delay="300ms"
           min-width="220"
-          offset-y
           open-on-click
           open-on-hover
-          rounded="lg"
         >
           <template v-slot:activator="{ props }">
             <v-avatar
               :class="{ 'float-start': $vuetify.display.xs }"
               :size="$vuetify.display.xs ? 48 : 36"
-              class="me-2 ms-sm-n2 avatar-gradient -thin -user"
+              class="me-2 ms-sm-n2 avatar-gradient -thin -user pp"
               v-bind="props"
             >
               <v-img :src="getUserAvatar(USER_ID())" />
             </v-avatar>
           </template>
 
-          <v-sheet class="text-start">
+          <v-sheet class="text-start" rounded="lg">
             <v-list density="compact">
               <template v-if="access.admin">
                 <v-list-item>
@@ -67,7 +65,7 @@
                     >{{ $t("community.commons.you_are_admin") }}
                   </v-list-item-title>
                   <template v-slot:append>
-                    <v-icon color="amber" size="small">fa:fas fa-crown </v-icon>
+                    <v-icon color="amber" size="small">fa:fas fa-crown</v-icon>
                   </template>
                 </v-list-item>
 
@@ -123,10 +121,8 @@
                   >{{ $t("community.commons.request_nominate") }}
                 </v-list-item-subtitle>
 
-                <template v-slot:append
-                  v-if="is_verified_user"
-                  class="text-success font-weight-bold"
-                  >{{ profile_credit }}x
+                <template v-slot:append v-if="is_verified_user">
+                  <b class="text-success">{{ profile_credit }}x</b>
                 </template>
               </v-list-item>
 
@@ -260,25 +256,30 @@
       <v-btn
         v-if="bot_telegram && bot_telegram.enable"
         :href="`https://t.me/${bot_telegram.channel}`"
-        :title="$t('global.social_network.telegram')"
-        class="me-1 sub-caption -hover"
+        class="me-1"
         icon
+        variant="text"
         target="_blank"
         ><img
           height="16"
           src="../../../assets/trademark/telegram.svg"
           width="16"
-      /></v-btn>
+        />
+
+        <v-tooltip activator="parent" location="bottom">
+          {{ $t("global.social_network.telegram") }}
+        </v-tooltip>
+      </v-btn>
 
       <template v-if="access.admin">
         <!-- Bot -->
 
         <v-btn
           v-if="hasBot"
-          :caption="$t('global.commons.bot')"
           :color="showBot ? 'blue' : undefined"
-          class="me-1 sub-caption -hover"
+          class="me-1"
           icon
+          variant="text"
           @click="
             $emit('update:showBot', !showBot);
             $emit('update:showReport', false);
@@ -286,27 +287,35 @@
           "
         >
           <v-icon size="small">fa:fas fa-robot</v-icon>
+
+          <v-tooltip activator="parent" location="bottom">
+            {{ $t("community.commons.bot") }}
+          </v-tooltip>
         </v-btn>
 
         <!-- Moderators -->
         <v-btn
-          :caption="$t('community.commons.moderators')"
           :color="show_access ? 'blue' : undefined"
-          class="me-1 sub-caption -hover"
+          class="me-1"
           icon
+          variant="text"
           @click="show_access = !show_access"
         >
           <v-icon size="small">add_moderator</v-icon>
+
+          <v-tooltip activator="parent" location="bottom">
+            {{ $t("community.commons.moderators") }}
+          </v-tooltip>
         </v-btn>
 
         <!-- Report / Statistics -->
 
         <v-btn
           v-if="hasReport"
-          :caption="$t('community.commons.analytics')"
           :color="showReport ? 'blue' : undefined"
-          class="me-1 sub-caption -hover"
+          class="me-1"
           icon
+          variant="text"
           @click="
             $emit('update:showReport', !showReport);
             $emit('update:showEdit', false);
@@ -314,15 +323,19 @@
           "
         >
           <v-icon size="small">donut_small</v-icon>
+
+          <v-tooltip activator="parent" location="bottom">
+            {{ $t("community.commons.analytics") }}
+          </v-tooltip>
         </v-btn>
         <!-- Edit -->
 
         <v-btn
           v-if="hasEdit"
-          :caption="$t('community.commons.edit')"
           :color="showEdit ? 'blue' : undefined"
-          class="me-1 sub-caption -hover"
+          class="me-1"
           icon
+          variant="text"
           @click="
             $emit('update:showEdit', !showEdit);
             $emit('update:showReport', false);
@@ -330,6 +343,10 @@
           "
         >
           <v-icon size="small">edit</v-icon>
+
+          <v-tooltip activator="parent" location="bottom">
+            {{ $t("community.commons.edit") }}
+          </v-tooltip>
         </v-btn>
 
         <v-divider class="my-0 mx-1" vertical></v-divider>
@@ -339,52 +356,67 @@
 
       <v-btn
         v-if="is_topic && USER()"
-        :caption="$t('community.commons.notify')"
         :color="notify ? 'amber' : undefined"
         :loading="busy_notify"
-        class="me-1 sub-caption -hover"
+        class="me-1"
         icon
+        variant="text"
         @click="toggleNotify()"
       >
         <v-icon size="small"
           >{{ notify ? "notifications_active" : "notifications_none" }}
         </v-icon>
+
+        <v-tooltip activator="parent" location="bottom">
+          {{ $t("community.commons.notify") }}
+        </v-tooltip>
       </v-btn>
       <!-- Rule -->
 
       <v-btn
         v-if="is_topic && USER()"
-        :caption="$t('community.commons.rules')"
         :color="showRule ? 'blue' : undefined"
-        class="me-1 sub-caption -hover"
+        class="me-1"
         icon
+        variant="text"
         @click="dialog_rule = true"
       >
         <v-icon size="small">gavel</v-icon>
+
+        <v-tooltip activator="parent" location="bottom">
+          {{ $t("community.commons.rules") }}
+        </v-tooltip>
       </v-btn>
 
       <!-- Feeds -->
       <v-btn
         v-if="USER()"
-        :caption="$t('community.commons.explore')"
         :to="{ name: 'CommunityFeedPage' }"
-        class="me-1 sub-caption -hover"
+        class="me-1"
         exact
         icon
+        variant="text"
       >
         <v-icon size="small">explore</v-icon>
+
+        <v-tooltip activator="parent" location="bottom">
+          {{ $t("community.commons.explore") }}
+        </v-tooltip>
       </v-btn>
 
       <!-- Comments (Replies) -->
       <v-btn
         v-if="USER()"
-        :caption="$t('community.commons.my_feed')"
         :to="{ name: 'CommunityMyCommentsPage' }"
-        class="me-1 sub-caption -hover"
+        class="me-1"
         exact
         icon
+        variant="text"
       >
         <v-icon size="small">question_answer</v-icon>
+        <v-tooltip activator="parent" location="bottom">
+          {{ $t("community.commons.my_feed") }}
+        </v-tooltip>
       </v-btn>
     </div>
 
@@ -405,7 +437,7 @@
       border="start"
       class="mt-8 text-subtitle-2"
       color="red"
-      colored-border
+      variant="flat"
       density="compact"
       >{{ $t("community.commons.blocked_message") }}:
       {{ getLocalTimeString(block_at) }}

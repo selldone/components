@@ -35,7 +35,6 @@
       >
       <v-list
         class="border-between-vertical"
-        color="transparent"
         lines="two"
         bg-color="transparent"
       >

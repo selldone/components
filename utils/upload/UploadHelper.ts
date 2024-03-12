@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import axios, { AxiosRequestConfig } from "axios";
+import axios, {AxiosProgressEvent, AxiosRequestConfig} from "axios";
 import type { IFileUploadResponse } from "@core/types/upload/file-upload-response-type.type";
 
 export class UploadHelper {
@@ -47,8 +47,8 @@ export class UploadHelper {
   ) {
     const config: AxiosRequestConfig = {
       withCredentials: withCredentials,
-      onUploadProgress: (e) => {
-        const pval = Math.floor((e.loaded / (e.total + 0.001)) * 100);
+      onUploadProgress: (e:AxiosProgressEvent) => {
+        const pval =e.total? Math.floor((e.loaded / (e.total + 0.001)) * 100):e.progress;
         //console.log("progress", e.loaded, e.total, pval + "%");
 
         // + Add to global upload keeper:
