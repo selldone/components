@@ -86,7 +86,7 @@
 
           <v-icon
             v-if="focused && !disablePast"
-            :dark="dark"
+            :color="dark?'#fff':'#000'"
             class="fadeIn absolute-top-start"
             size="small"
             style="z-index: 1"

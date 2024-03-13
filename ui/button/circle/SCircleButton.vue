@@ -111,6 +111,7 @@ import { SetupService } from "@core/server/SetupService";
 
 export default {
   name: "SCircleButton",
+  emits: ["click", "mouseenter", "mouseleave"],
   props: {
     icon: {
       required: false,

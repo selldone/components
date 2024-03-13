@@ -31,7 +31,7 @@
   >
     <v-img :src="src" class="sprite flip-image-rtl"></v-img>
     <div class="center-content px-2">
-      <v-icon :class="{ 'mb-3': !small }" :size="small ? 24 : 36" dark
+      <v-icon :class="{ 'mb-3': !small }" :size="small ? 24 : 36"
         >{{ icon }}
       </v-icon>
       <div :class="{ small: small, 'inline-block': horizontal }" class="-title">
@@ -54,9 +54,11 @@
 </template>
 
 <script>
+/**
+ * <s-add-button-green>
+ */
 export default {
   name: "SAddButtonGreen",
-  emits: ["click"],
 
   props: {
     icon: {},

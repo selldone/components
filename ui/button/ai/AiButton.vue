@@ -36,7 +36,6 @@
 <script>
 export default {
   name: "AiButton",
-  emits: ["click"],
   props: {
     loading: {},
     xLarge: { type: Boolean, default: false },

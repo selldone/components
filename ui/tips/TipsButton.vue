@@ -39,7 +39,6 @@
  */
 export default {
   name: "TipsButton",
-  emits: ["click"],
   props: {
     message: {},
     icon: { default: "help" },
