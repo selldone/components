@@ -107,7 +107,7 @@
         >
           <template v-slot:login>
             <!-- Shop Login -->
-            <s-shop-login class="mt-16"></s-shop-login>
+            <s-shop-login class="mt-16 rounded-16px"></s-shop-login>
           </template>
         </s-article-comments>
       </s-expand-view>

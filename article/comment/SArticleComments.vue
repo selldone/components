@@ -90,10 +90,8 @@
       </div>
 
       <div v-else class="mb-16">
-        <div class="ps-5">
           <!-- Login Form -->
           <slot name="login"></slot>
-        </div>
       </div>
 
       <div
