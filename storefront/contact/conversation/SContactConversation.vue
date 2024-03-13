@@ -91,37 +91,6 @@
       </v-card-text>
     </v-card>
 
-    <v-card v-else-if="show_products" key="products">
-      <v-card-title>
-        <v-spacer></v-spacer>
-      </v-card-title>
-
-      <v-card-text>
-        <b-products-select-box
-          v-model="selected_product_id"
-          :shop="shop"
-          auto-open-dialog
-          simple-mode
-          single-product-select
-        >
-        </b-products-select-box>
-
-        <v-btn class="m-2" variant="text" @click="show_products = false">
-          {{ $t("global.actions.back") }}
-        </v-btn>
-
-        <v-btn
-          :disabled="!selected_product_id"
-          :loading="busy_contact"
-          class="m-2"
-          color="success"
-          @click="sendResponse"
-        >
-          <v-icon class="me-1" size="small">send</v-icon>
-          {{ $t("global.actions.send") }}
-        </v-btn>
-      </v-card-text>
-    </v-card>
 
     <v-card v-else key="chat" :rounded="false" class="chat-container" flat>
       <!--- --------------- Chat mode --------------- --->
@@ -321,9 +290,6 @@ export default {
 
     show_user_detail: false,
 
-    //----------------------------
-    show_products: false,
-    selected_product_id: null,
 
     //----------------------------
     busy_close: false,
@@ -333,7 +299,7 @@ export default {
   methods: {
     sendResponse() {
       // Can send message product without body:
-      if (!this.contact_message && !this.selected_product_id) return;
+      if (!this.contact_message ) return;
 
       if (this.contact_message)
         this.contact_message = this.contact_message.replace(/<[^>]*>?/gm, "");
@@ -350,7 +316,7 @@ export default {
             message: this.contact_message,
             link: this.contact_link,
             mail: this.send_mail,
-            product: this.selected_product_id,
+            product: null,
           },
         )
         .then(({ data }) => {
@@ -369,8 +335,6 @@ export default {
             this.contact_link = null;
             this.has_link = false;
 
-            this.selected_product_id = null;
-            this.show_products = false;
 
             this.$nextTick(() => {
               const objDiv = this.$refs.conversation_box;
@@ -482,42 +446,10 @@ export default {
         });
     },
 
-    showSelectProduct() {
-      this.show_products = true;
-    },
+
     smartConvert(message) {
       return SmartConvertTextToHtml(message);
 
-      /*   if (!message) return "";
-         function linkify(inputText) {
-           var replacedText, replacePattern1, replacePattern2, replacePattern3;
-
-           //URLs starting with http://, https://, or ftp://
-           replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-           replacedText = inputText.replace(
-             replacePattern1,
-             '<a href="$1" target="_blank">$1</a>'
-           );
-
-           //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-           replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-           replacedText = replacedText.replace(
-             replacePattern2,
-             '$1<a href="http://$2" target="_blank">$2</a>'
-           );
-
-           //Change email addresses to mailto:: links.
-           replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
-           replacedText = replacedText.replace(
-             replacePattern3,
-             '<a href="mailto:$1">$1</a>'
-           );
-
-           return replacedText;
-         }
-         message = message.replace(/<[^>]*>?/gm, "");
-
-         return linkify(message);*/
     },
   },
 };
