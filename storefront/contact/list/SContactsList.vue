@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -34,46 +34,6 @@
           class="flex-grow-0"
           style="margin: 0 !important"
         >
-          <v-menu
-            v-if="isAdmin"
-            :close-on-content-click="false"
-            z-index="99999999"
-          >
-            <template v-slot:activator="{ props }">
-              <v-btn icon size="small" v-bind="props">
-                <v-icon>more_vert</v-icon>
-              </v-btn>
-            </template>
-
-            <v-sheet
-              class="p-2 text-start small-label"
-              color="#fff"
-              min-width="220"
-              rounded
-            >
-              <small class="font-weight-bold">
-                {{ $t("global.commons.options") }}
-              </small>
-              <v-switch
-                v-model="details"
-                :label="$t('global.commons.show_details')"
-                color="blue"
-                density="compact"
-                hide-details
-                inset
-              ></v-switch>
-
-              <v-checkbox
-                v-for="(category, key) in SupportCategory"
-                :key="key"
-                v-model="categories"
-                :label="$t(category.name)"
-                :value="category.code"
-                hide-details
-              >
-              </v-checkbox>
-            </v-sheet>
-          </v-menu>
         </s-data-iterator-toolbar-small>
 
         <!------------------------------- List ----------------------------------->
@@ -162,7 +122,7 @@
 
                   <v-spacer></v-spacer>
 
-                  <v-badge v-if="item.raw.mention_id" color="#C2185B" dot >
+                  <v-badge v-if="item.raw.mention_id" color="#C2185B" dot>
                     <v-avatar
                       class="hover-scale-small me-1"
                       size="24"
@@ -172,7 +132,7 @@
                     </v-avatar>
                   </v-badge>
 
-                  <v-badge v-if="item.raw.officer_id" color="blue" dot >
+                  <v-badge v-if="item.raw.officer_id" color="blue" dot>
                     <v-avatar
                       class="hover-scale-small"
                       size="24"
@@ -198,9 +158,11 @@
                     {{ $t("global.commons.waiting") }}
                   </v-chip>
 
-                  <small v-if="!item.raw.closed" class="absolute-top-end ch-time">{{
-                    getFromNowString(item.raw.updated_at)
-                  }}</small>
+                  <small
+                    v-if="!item.raw.closed"
+                    class="absolute-top-end ch-time"
+                    >{{ getFromNowString(item.raw.updated_at) }}</small
+                  >
                   <small v-else class="absolute-top-end ch-time text-success">
                     <v-icon class="me-1" color="success" size="small"
                       >done_all
@@ -212,15 +174,19 @@
                 <v-card-text v-if="details">
                   <div class="d-flex text-center mb-1">
                     <div class="w-50 mb-1 p-1">
-                      <v-icon class="me-2" size="small">mail </v-icon>
+                      <v-icon class="me-2" size="small">mail</v-icon>
                       <span v-copy
-                        >{{ item.raw.user ? item.raw.user.email : item.raw.email }}
+                        >{{
+                          item.raw.user ? item.raw.user.email : item.raw.email
+                        }}
                       </span>
                     </div>
                     <div class="w-50 mb-1 p-1">
-                      <v-icon class="me-2" size="small">phone </v-icon>
+                      <v-icon class="me-2" size="small">phone</v-icon>
                       <span v-copy
-                        >{{ item.raw.user ? item.raw.user.phone : item.raw.phone }}
+                        >{{
+                          item.raw.user ? item.raw.user.phone : item.raw.phone
+                        }}
                       </span>
                     </div>
                   </div>
@@ -269,7 +235,6 @@
         <!--- --------------- Actions --------------- --->
 
         <v-card-actions
-          v-if="!isAdmin"
           class="border-top d-block pt-3 text-start bottom-action"
         >
           <v-textarea
@@ -290,7 +255,6 @@
                 :class="{ disabled: !message }"
                 :loading="busy_send"
                 :title="$t('global.actions.send')"
-
                 color="blue"
                 dark
                 icon
@@ -307,8 +271,7 @@
 
       <v-col v-if="selectedContact" :md="small_mode ? 12 : 9" cols="12">
         <!------------------------------- Chat ----------------------------------->
-        <contact-conversation-box
-          :is-admin="isAdmin"
+        <s-contact-conversation
           :popup="isSmall"
           :selected-contact="selectedContact"
           :shop="shop"
@@ -317,7 +280,7 @@
             (val) => $emit('update:selectedContact', val)
           "
           @click:close="$emit('update:selectedContact', null)"
-        ></contact-conversation-box>
+        ></s-contact-conversation>
         <div class="widget-buttons">
           <v-btn size="x-large" variant="text" @click="showContact(null)">
             <v-icon class="me-1">{{ $t("icons.chevron_back") }}</v-icon>
@@ -332,15 +295,18 @@
 <script>
 import { SupportCategory } from "@core/enums/support/SupportCategory";
 import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
-import ContactConversationBox from "./ContactConversationBox.vue";
+import SContactConversation from "../conversation/SContactConversation.vue";
 import SDataIteratorToolbarSmall from "@components/ui/toolbar/SDataIteratorToolbarSmall.vue";
 import _ from "lodash-es";
 
+/**
+ * <s-contacts-list>
+ */
 export default {
-  name: "ShopChatsList",
+  name: "SContactsList",
   components: {
     SDataIteratorToolbarSmall,
-    ContactConversationBox,
+    SContactConversation,
     EmojiRating,
   },
 
@@ -359,10 +325,7 @@ export default {
       type: Object,
     },
 
-    isAdmin: {
-      default: false,
-      type: Boolean,
-    },
+
   },
 
   data: () => ({
@@ -407,20 +370,12 @@ export default {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
     keys() {
-      if (this.isAdmin) {
-        return [
-          { label: "global.sort.user", value: "user_id" },
-          { label: "global.sort.officer", value: "officer_id" },
-          { label: "global.sort.mention", value: "mention_id" },
-          { label: "global.sort.created_at", value: "created_at" },
-          { label: "global.sort.updated_at", value: "updated_at" },
-        ];
-      } else {
+
         return [
           { label: "global.sort.created_at", value: "created_at" },
           { label: "global.sort.updated_at", value: "updated_at" },
         ];
-      }
+
     },
     small_mode() {
       return this.isSmall || this.windowSize.x < 960;
@@ -521,9 +476,8 @@ export default {
 
       axios
         .get(
-          this.isAdmin
-            ? window.API.GET_SHOP_CONTACT_US_LIST(this.shop.id)
-            : window.XAPI.GET_SHOP_TICKETS_LIST(this.shop.name),
+
+            window.XAPI.GET_SHOP_TICKETS_LIST(this.shop.name),
           {
             params: {
               offset: (page - 1) * this.itemsPerPage,

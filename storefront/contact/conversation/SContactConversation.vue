@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -68,7 +68,7 @@
 
         <div class="d-flex text-center">
           <div class="w-50 mb-1 p-1">
-            <v-icon class="me-2">mail </v-icon>
+            <v-icon class="me-2">mail</v-icon>
             <span v-copy
               >{{
                 selectedContact.user
@@ -78,7 +78,7 @@
             </span>
           </div>
           <div class="w-50 mb-1 p-1">
-            <v-icon class="me-2">phone </v-icon>
+            <v-icon class="me-2">phone</v-icon>
             <span v-copy
               >{{
                 selectedContact.user
@@ -154,11 +154,6 @@
                 }"
                 class="me-2 flex-grow-0 -hide-on-same"
                 size="2rem"
-                @click="
-                  isAdmin && !item.officer
-                    ? (show_user_detail = true)
-                    : undefined
-                "
               >
                 <img :src="getUserAvatar(item.user_id)" />
               </v-avatar>
@@ -167,24 +162,11 @@
 
                 <div
                   :class="{
-                    '-its-me': isAdmin ? item.officer : !item.officer,
+                    '-its-me': !item.officer,
                     'empty-msg': !item.message,
                   }"
                   class="message-box"
                 >
-                  <v-btn
-                    v-if="item.officer && isAdmin"
-                    :disabled="busy_delete !== null"
-                    :loading="busy_delete === index"
-                    :title="$t('global.actions.delete')"
-                    class="absolute-top-end -zero"
-                    color="red"
-                    icon
-                    @click="deleteResponse(index)"
-                  >
-                    <v-icon>close</v-icon>
-                  </v-btn>
-
                   <p
                     v-if="item.message"
                     v-html="smartConvert(item.message)"
@@ -199,7 +181,7 @@
                     target="_blank"
                     variant="flat"
                   >
-                    <v-icon class="me-1" size="small">link </v-icon>
+                    <v-icon class="me-1" size="small">link</v-icon>
                     {{ $t("global.actions.click_here") }}
                   </v-btn>
 
@@ -214,21 +196,17 @@
               </div>
             </div>
             <!--- --------------- Product --------------- --->
-            <simple-auto-product-card
+            <s-product-preview-by-id
               v-if="item.product"
               :product-id="item.product"
               :shop="shop"
-              :to="
-                !isAdmin
-                  ? {
-                      name: window.$storefront.routes.PRODUCT_PAGE,
-                      params: { product_id: item.product },
-                    }
-                  : undefined
-              "
+              :to="{
+                name: window.$storefront.routes.PRODUCT_PAGE,
+                params: { product_id: item.product },
+              }"
               class="mt-2 max-w-300 mx-auto shadow-paper"
             >
-            </simple-auto-product-card>
+            </s-product-preview-by-id>
 
             <!--- --------------- AI Response --------------- --->
           </div>
@@ -240,15 +218,11 @@
           {{ $t("global.commons.closed_at") }}
           {{ getLocalTimeStringSmall(selectedContact.closed_at) }}
         </p>
-        <div
-          v-if="isAdmin || !selectedContact.closed"
-          class="p-2 widget-buttons"
-        >
+        <div v-if="!selectedContact.closed" class="p-2 widget-buttons">
           <v-btn
             :color="selectedContact.closed ? '#00796B' : '#7B1FA2'"
             :loading="busy_close"
             class="tnt"
-            dark
             @click="closeTicket()"
           >
             <v-icon v-if="selectedContact.closed" class="me-1">done</v-icon>
@@ -261,7 +235,7 @@
         </div>
 
         <emoji-rating
-          v-if="selectedContact.closed && !isAdmin"
+          v-if="selectedContact.closed"
           v-model="selectedContact.rate"
           :loading="busy_rate"
           class="box-raiting"
@@ -277,7 +251,6 @@
           v-model="contact_message"
           :disabled="selectedContact.closed"
           :placeholder="$t('global.commons.message')"
-          :prepend-icon="isAdmin ? 'local_mall' : undefined"
           :rows="1"
           :rules="[GlobalRules.counter(1024)]"
           auto-grow
@@ -287,16 +260,13 @@
           hide-details
           row-height="10px"
           variant="solo"
-          @click:prepend="isAdmin ? showSelectProduct() : undefined"
         >
           <template v-slot:append>
             <v-btn
               :class="{ disabled: !contact_message }"
               :loading="busy_contact"
               :title="$t('global.actions.send')"
-
               color="blue"
-              dark
               icon
               rounded
               variant="flat"
@@ -315,12 +285,15 @@
 import { SupportCategory } from "@core/enums/support/SupportCategory";
 import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
 import BProductsSelectBox from "@app-backoffice/components/product/select-box/BProductsSelectBox.vue";
-import SimpleAutoProductCard from "@components/storefront/chat/SimpleAutoProductCard.vue";
+import SProductPreviewById from "@components/product/preview-by-id/SProductPreviewById.vue";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 
+/**
+ * <s-contact-conversation>
+ */
 export default {
-  name: "ContactConversationBox",
-  components: { SimpleAutoProductCard, BProductsSelectBox, EmojiRating },
+  name: "SContactConversation",
+  components: { SProductPreviewById, BProductsSelectBox, EmojiRating },
   props: {
     shop: {
       required: true,
@@ -330,10 +303,6 @@ export default {
     selectedContact: {},
 
     popup: {
-      default: false,
-      type: Boolean,
-    },
-    isAdmin: {
       default: false,
       type: Boolean,
     },
@@ -373,15 +342,10 @@ export default {
 
       axios
         .put(
-          this.isAdmin
-            ? window.API.PUT_SHOP_CONTACT_US_UPDATE_MESSAGE(
-                this.shop.id,
-                this.selectedContact.id,
-              )
-            : window.XAPI.PUT_SHOP_TICKET_UPDATE_MESSAGE(
-                this.shop.name,
-                this.selectedContact.id,
-              ),
+          window.XAPI.PUT_SHOP_TICKET_UPDATE_MESSAGE(
+            this.shop.name,
+            this.selectedContact.id,
+          ),
           {
             message: this.contact_message,
             link: this.contact_link,
@@ -431,17 +395,11 @@ export default {
           this.busy_delete = index;
           axios
             .delete(
-              this.isAdmin
-                ? window.API.DELETE_SHOP_CONTACT_US_MESSAGE_RESPONSE(
-                    this.shop.id,
-                    this.selectedContact.id,
-                    index,
-                  )
-                : window.XAPI.DELETE_SHOP_TICKET_MESSAGE_RESPONSE(
-                    this.shop.name,
-                    this.selectedContact.id,
-                    index,
-                  ),
+              window.XAPI.DELETE_SHOP_TICKET_MESSAGE_RESPONSE(
+                this.shop.name,
+                this.selectedContact.id,
+                index,
+              ),
             )
             .then(({ data }) => {
               if (!data.error) {
@@ -469,15 +427,10 @@ export default {
       this.busy_close = true;
       axios
         .post(
-          this.isAdmin
-            ? window.API.POST_SHOP_CONTACT_US_CLOSE_TICKET(
-                this.shop.id,
-                this.selectedContact.id,
-              )
-            : window.XAPI.POST_SHOP_TICKET_CLOSE(
-                this.shop.name,
-                this.selectedContact.id,
-              ),
+          window.XAPI.POST_SHOP_TICKET_CLOSE(
+            this.shop.name,
+            this.selectedContact.id,
+          ),
           {
             close: !this.selectedContact.closed,
           },

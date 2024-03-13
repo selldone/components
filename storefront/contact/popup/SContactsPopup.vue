@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -50,16 +50,7 @@
 
             {{ shop.title }}
 
-            <v-btn
-              v-if="isAdmin && $route.name !== 'BPageShopCrmChat'"
-              :to="{ name: 'BPageShopCrmChat' }"
-              class="ms-2 zoomIn"
-              icon
-              size="small" variant="text"
-              title="Open contacts page"
-            >
-              <v-icon size="small">launch</v-icon>
-            </v-btn>
+
           </p>
 
           <emoji-rating
@@ -73,14 +64,13 @@
           ></emoji-rating>
         </div>
 
-        <shop-chats-list
+        <s-contacts-list
           v-if="USER()"
           v-model:selected-contact="selected_contact"
-          :is-admin="isAdmin"
           :shop="shop"
           class="chats thin-scroll"
           is-small
-        ></shop-chats-list>
+        ></s-contacts-list>
         <s-shop-login v-else class="chat-login"></s-shop-login>
       </div>
     </v-slide-y-reverse-transition>
@@ -90,34 +80,34 @@
         v-if="!show"
         :color="SaminColorDark"
         class="chat-btn"
-        fab
+        icon
         height="60"
         variant="flat"
         width="60"
         @click="show = true"
-        ><img height="24" src="../../assets/icons/headphones.svg" width="24"
+        ><img height="24" src="../../../assets/icons/headphones.svg" width="24"
       /></v-btn>
     </v-scale-transition>
   </div>
 </template>
 
 <script>
-import ShopChatsList from "./ShopChatsList.vue";
+import SContactsList from "../list/SContactsList.vue";
 import SShopLogin from "@components/login/SShopLogin.vue";
 import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
 
+/**
+ * <s-contacts-popup>
+ */
 export default {
-  name: "SStorefrontChatPopup",
-  components: { EmojiRating, SShopLogin, ShopChatsList },
+  name: "SContactsPopup",
+  components: { EmojiRating, SShopLogin, SContactsList },
   props: {
     shop: {
       required: true,
       type: Object,
     },
-    isAdmin: {
-      default: false,
-      type: Boolean,
-    },
+
     bottom: {
       default: 8,
     },

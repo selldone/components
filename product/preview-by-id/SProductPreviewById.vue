@@ -37,9 +37,12 @@
           line-through
         ></price-view>
 
-        <v-chip class="mx-1 float-end" color="red" dark size="small"
-          >{{ discount_percent }} %
-        </v-chip>
+        <s-chip-discount
+          :percent="discount_percent"
+          class="mx-1 float-end"
+          size="small"
+        >
+        </s-chip-discount>
       </p>
       <p class="mt-2">
         <price-view :amount="price"></price-view>
@@ -75,10 +78,11 @@
 
 <script>
 import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
+import SChipDiscount from "@components/ui/chip/discount/SChipDiscount.vue";
 
 export default {
-  name: "SimpleAutoProductCard",
-  components: { ProductVariantsView },
+  name: "SProductPreviewById",
+  components: { SChipDiscount, ProductVariantsView },
   props: {
     // ------------ MOde Auto Fetch --------------
 
