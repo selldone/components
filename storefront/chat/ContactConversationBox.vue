@@ -314,7 +314,7 @@
 <script>
 import { SupportCategory } from "@core/enums/support/SupportCategory";
 import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
-import BProductsSelectBox from "@components/backoffice/product/select-box/BProductsSelectBox.vue";
+import BProductsSelectBox from "@app-backoffice/components/product/select-box/BProductsSelectBox.vue";
 import SimpleAutoProductCard from "@components/storefront/chat/SimpleAutoProductCard.vue";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 

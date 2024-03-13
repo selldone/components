@@ -33,13 +33,14 @@
 
     <v-dialog
       v-model="dialog"
-      content-class="dialog-rounded-card"
+
       max-width="860"
       scrollable
+      :fullscreen="$vuetify.display.xs"
     >
-      <v-card class="text-start">
+      <v-card class="text-start" :rounded="$vuetify.display.xs?0:'xl'">
         <v-card-title class="d-flex align-center">
-          {{ $t("global.wheel_fortune.title") }}
+          <v-icon class="me-1">casino</v-icon>    {{ $t("global.wheel_fortune.title") }}
 
           <v-spacer></v-spacer>
           <v-btn
@@ -54,7 +55,7 @@
 
         <v-card-text>
           <p class="text-start">
-            <v-icon class="me-1">casino</v-icon>
+
             {{ $t("global.wheel_fortune.message", { chips: chips }) }}
           </p>
 
@@ -95,7 +96,7 @@
                   width="120px"
                 />
 
-                <h3 class="text-white zoomIn">
+                <h3 class="text-white zoomIn text-center">
                   {{ $t("global.wheel_fortune.win_message") }}
                 </h3>
 
@@ -104,7 +105,7 @@
                 ></s-storefront-lottery-prize-detail>
               </div>
               <div v-else class="center-absolute" style="width: 70%">
-                <h3 class="text-white zoomIn user-select-none">
+                <h3 class="text-white zoomIn user-select-none text-center">
                   {{ $t("global.wheel_fortune.lost_message") }}
                 </h3>
                 <v-btn

@@ -39,18 +39,14 @@
 
     <!-- ===================== Product ==================== -->
 
-    <b-product-window-product-large
+    <s-shop-product-card
       v-else-if="lottery.product_id"
-      :compact-mode="true"
       :filter-variant="lottery.variant"
-      :hover="false"
       :product="lottery.product"
-      :shop="getShop()"
-      :show-edit-button="false"
-      :show-price="true"
-      :show-ratting="false"
-      :show-statistics="false"
-      class="my-3"
+      rounded
+      class="my-3 mx-auto"
+      is-insta
+      style="max-width: 80%;max-height: 80%"
     />
 
     <!-- ===================== Discount ==================== -->
@@ -94,11 +90,11 @@
 </template>
 
 <script>
-import BProductWindowProductLarge from "@app-backoffice/components/product/window/product/large/BProductWindowProductLarge.vue";
+import SShopProductCard from "@components/product/card/SShopProductCard.vue";
 
 export default {
   name: "SStorefrontLotteryPrizeDetail",
-  components: { BProductWindowProductLarge },
+  components: { SShopProductCard },
   props: {
     lottery: {
       require: true,

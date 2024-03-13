@@ -26,9 +26,7 @@
   >
     <div
       v-if="color"
-      align-center
       class="--item pa-1 text-nowrap"
-      justify-center
     >
       <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
 
@@ -124,6 +122,7 @@ import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
 export default {
   name: "VariantItemMini",
   components: { VariantAssetView, SColorCircle },
+  emits: ["select"],
   props: {
     productVariant: {
       required: true,
