@@ -18,6 +18,7 @@
   --duration: 0.3s;
 
   transition: all var(--duration) ease-in-out;
+  transition-property: all !important;
 
   &:hover {
     position: relative;
@@ -64,6 +65,7 @@
   --duration: 0.3s;
 
   transition: all var(--duration) ease-in-out;
+  transition-property: all !important;
 
   &:hover {
     transform: scale(var(--scale), var(--scale));
@@ -77,6 +79,7 @@
 
 .hover-scale-tiny {
   transition: all 0.3s ease-in-out;
+  transition-property: all !important;
 
   &:hover {
     transform: scale(1.2, 1.2);
@@ -91,6 +94,7 @@
 
 .hover-scale-y-2x {
   transition: all 0.3s linear;
+  transition-property: all !important;
   --scale: 2;
 
   &:hover {
@@ -100,6 +104,7 @@
 
 .hover-scale-y-3x {
   transition: all 0.3s linear;
+  transition-property: all !important;
   --scale: 3;
 
   &:hover {

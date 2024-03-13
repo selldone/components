@@ -41,7 +41,7 @@
       <v-btn
         v-if="showEditButton"
         :to="{
-          name: 'BProductAddFull',
+          name: 'BPageProductEdit',
           params: { product_id: product.id },
           hash: '#general',
         }"
@@ -189,7 +189,7 @@
       @click.stop="
         showEditButton
           ? $router.push({
-              name: 'BProductAddFull',
+              name: 'BPageProductEdit',
               params: { product_id: product.id },
               hash: '#price',
             })
@@ -442,7 +442,7 @@
               <router-link
                 v-if="product.video"
                 :to="{
-                  name: 'BProductAddFull',
+                  name: 'BPageProductEdit',
                   params: { product_id: product.id },
                   hash: '#images',
                 }"

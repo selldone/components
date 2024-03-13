@@ -67,11 +67,7 @@
       </template>
 
       <template v-slot:item.basket_id="{ item }">
-        <p class="m-0 font-weight-bold">
-          {{ getType(item.basket_item).basket_code }}-{{
-            item.basket_item.basket_id
-          }}
-        </p>
+        <b-order-button :order="item.basket_item?.basket"></b-order-button>
       </template>
 
       <template v-slot:item.product_name="{ item }">
@@ -151,10 +147,11 @@ import VariantItemViewMicro from "@components/product/variant/VariantItemViewMic
 import { ReturnItemStates } from "@core/enums/basket/ReturnItemStates";
 import { ReturnOrderReason } from "@core/enums/basket/ReturnOrderReason";
 import { ProductType } from "@core/enums/product/ProductType";
+import BOrderButton from "@app-backoffice/components/order/button/BOrderButton.vue";
 
 export default {
   name: "SBackofficeReturnRequestsList",
-  components: { VariantItemViewMicro },
+  components: {BOrderButton, VariantItemViewMicro },
   props: {
     url: {
       require: true,
@@ -181,6 +178,15 @@ export default {
     },
     headers() {
       return [
+
+
+
+        {
+          title: '',
+          align: "center",
+          sortable: false,
+          value: "product_id",
+        },
         {
           title: this.$t("global.return_request_list.table.code"),
           align: "center",
@@ -207,7 +213,7 @@ export default {
         },
         {
           title: this.$t("global.return_request_list.table.reason"),
-          align: "center",
+          align: "start",
           value: "reason",
           sortable: false,
         },

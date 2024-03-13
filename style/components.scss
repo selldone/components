@@ -4223,7 +4223,7 @@ canvas.heatmap-canvas {
 .avatar-gradient {
   --padding: 4px;
   --border-radious: 50%;
-  background: radial-gradient(circle at 33% 100%, #009688 4%, #00796B 30%, #0288D1 62%, #3F51B5 85%, #303F9F);
+  background: radial-gradient(circle at 33% 100%, #009688 4%, #00796B 30%, #0288D1 62%, #3F51B5 85%, #303F9F) !important;
   border-radius: var(--border-radious);
   padding: var(--padding);
   display: inline-flex;
@@ -4238,68 +4238,70 @@ canvas.heatmap-canvas {
   }
 
   &.-shop {
-    background: radial-gradient(circle at 33% 100%, #F44336 4%, #E91E63 30%, #C2185B 62%, #FF9800 85%, #FFA000);
+    background: radial-gradient(circle at 33% 100%, #F44336 4%, #E91E63 30%, #C2185B 62%, #FF9800 85%, #FFA000) !important;
   }
 
   &.-staff {
-    background: linear-gradient(45deg, #ffc22e 4%, #41d506 30%, #18c2ae 62%, #1e9ebb 85%, #FFA000);
+    background: linear-gradient(45deg, #ffc22e 4%, #41d506 30%, #18c2ae 62%, #1e9ebb 85%, #FFA000) !important;
   }
 
   &.-officer {
-    background-image: linear-gradient(45deg, #cc208e 0%, #6713d2 100%);
+    background-image: linear-gradient(45deg, #cc208e 0%, #6713d2 100%) !important;
   }
 
   &.-joint-shop, &.-delivery-service {
-    background: radial-gradient(circle at 33% 100%, #673AB7 4%, #512DA8 30%, #6743a7 62%, #9C27B0 85%, #7B1FA2);
+    background: radial-gradient(circle at 33% 100%, #673AB7 4%, #512DA8 30%, #6743a7 62%, #9C27B0 85%, #7B1FA2) !important;
   }
 
   &.-affiliate, &.-online, &.-mention {
-    background: radial-gradient(circle at 33% 100%, #8BC34A 4%, #689F38 30%, #388E3C 62%, #4CAF50 85%, #4CAF50);
+    background: radial-gradient(circle at 33% 100%, #8BC34A 4%, #689F38 30%, #388E3C 62%, #4CAF50 85%, #4CAF50) !important;
   }
 
   &.-role, &.-waiting, &.-connect, &.-category {
-    background: radial-gradient(circle at 33% 100%, #FFEB3B 4%, #FBC02D 30%, #FF9800 62%, #FF9800 85%, #F57C00);
+    background: radial-gradient(circle at 33% 100%, #FFEB3B 4%, #FBC02D 30%, #FF9800 62%, #FF9800 85%, #F57C00) !important;
   }
 
   &.-customer {
-    background-image: linear-gradient(120deg, #e3dfdf 0%, #bdc1c2 100%);
+    background-image: linear-gradient(120deg, #e3dfdf 0%, #bdc1c2 100%) !important;
   }
 
   &.-current {
-    background: radial-gradient(circle at 33% 100%, #4b76c2 4%, #2f9bd4 30%, #1e83ba 62%, #3F51B5 85%, #303F9F);
+    background: radial-gradient(circle at 33% 100%, #4b76c2 4%, #2f9bd4 30%, #1e83ba 62%, #3F51B5 85%, #303F9F) !important;
   }
 
   &.-gray {
-    background-image: linear-gradient(120deg, #eee 0%, #ccc 100%);
+    background-image: linear-gradient(120deg, #eee 0%, #ccc 100%) !important;
   }
 
   &.-red {
-    background-image: linear-gradient(120deg, #F44336 0%, #FF9800 100%);
+    background-image: linear-gradient(120deg, #F44336 0%, #FF9800 100%) !important;
   }
 
   &.-green {
-    background-image: linear-gradient(120deg, #8BC34A 0%, #4CAF50 100%);
+    background-image: linear-gradient(120deg, #8BC34A 0%, #4CAF50 100%) !important;
   }
 
   &.-blue {
-    background-image: linear-gradient(120deg, #4b76c2 0%, #3F51B5 100%);
+    background-image: linear-gradient(120deg, #4b76c2 0%, #3F51B5 100%) !important;
   }
 
   &.-company {
-    background-image: linear-gradient(120deg, #1976D2 0%, #673AB7 100%);
+    background-image: linear-gradient(120deg, #1976D2 0%, #673AB7 100%) !important;
+  }
+
+
+
+  &.-black, &.-agency {
+    background-image: linear-gradient(120deg, #000 0%, #222 100%) !important;
+  }
+
+  &.-vendor {
+    background-image: linear-gradient(120deg, #5f36f4 0%, #673AB7 100%) !important;
+
   }
 
   &.-banned {
     background-image: linear-gradient(120deg, #F44336 0%, #a31b1b 100%) !important;
-  }
-
-  &.-black, &.-agency {
-    background-image: linear-gradient(120deg, #000 0%, #222 100%);
-  }
-
-  &.-vendor {
-    background-image: linear-gradient(120deg, #F44336 0%, #673AB7 100%);
-
   }
 
   &.v-avatar {
