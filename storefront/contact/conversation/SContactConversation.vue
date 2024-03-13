@@ -91,7 +91,6 @@
       </v-card-text>
     </v-card>
 
-
     <v-card v-else key="chat" :rounded="false" class="chat-container" flat>
       <!--- --------------- Chat mode --------------- --->
 
@@ -253,7 +252,6 @@
 <script>
 import { SupportCategory } from "@core/enums/support/SupportCategory";
 import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
-import BProductsSelectBox from "@app-backoffice/components/product/select-box/BProductsSelectBox.vue";
 import SProductPreviewById from "@components/product/preview-by-id/SProductPreviewById.vue";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 
@@ -262,7 +260,7 @@ import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
  */
 export default {
   name: "SContactConversation",
-  components: { SProductPreviewById, BProductsSelectBox, EmojiRating },
+  components: { SProductPreviewById, EmojiRating },
   props: {
     shop: {
       required: true,
@@ -290,7 +288,6 @@ export default {
 
     show_user_detail: false,
 
-
     //----------------------------
     busy_close: false,
     busy_rate: false,
@@ -299,7 +296,7 @@ export default {
   methods: {
     sendResponse() {
       // Can send message product without body:
-      if (!this.contact_message ) return;
+      if (!this.contact_message) return;
 
       if (this.contact_message)
         this.contact_message = this.contact_message.replace(/<[^>]*>?/gm, "");
@@ -334,7 +331,6 @@ export default {
             this.contact_message = null;
             this.contact_link = null;
             this.has_link = false;
-
 
             this.$nextTick(() => {
               const objDiv = this.$refs.conversation_box;
@@ -446,10 +442,8 @@ export default {
         });
     },
 
-
     smartConvert(message) {
       return SmartConvertTextToHtml(message);
-
     },
   },
 };
