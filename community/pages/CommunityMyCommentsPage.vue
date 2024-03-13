@@ -18,11 +18,11 @@
     style="margin-bottom: 20vh"
   >
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-    <community-breadcrumb
+    <c-breadcrumb
       :community="community"
       :shop="shop"
       class="breadcrumb-max-w mb-12"
-    ></community-breadcrumb>
+    ></c-breadcrumb>
 
     <v-container class="c-max-w">
       <v-row align="start" justify="center">
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import CommunityBreadcrumb from "../widgets/header/CommunityBreadcrumb.vue";
+import CBreadcrumb from "@components/community/Breadcrumb/CBreadcrumb.vue";
 import CommunityComments from "../widgets/comment/CommunityComments.vue";
 import CommunityCommentWidget from "../widgets/comment/CommunityCommentWidget.vue";
 
@@ -64,7 +64,7 @@ export default {
   components: {
     CommunityCommentWidget,
 
-    CommunityBreadcrumb,
+    CBreadcrumb,
   },
 
   props: {

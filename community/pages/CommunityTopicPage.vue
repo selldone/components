@@ -19,7 +19,7 @@
     style="margin-bottom: 20vh"
   >
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-    <community-breadcrumb
+    <c-breadcrumb
       v-model:show-edit="show_edit"
       v-model:show-report="show_report"
       :category="category"
@@ -31,7 +31,7 @@
       class="breadcrumb-max-w"
       has-edit
       has-report
-    ></community-breadcrumb>
+    ></c-breadcrumb>
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Edit ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
       <div v-if="show_edit" class="c-max-w">
@@ -264,7 +264,7 @@
 import CommunityWidget from "../widgets/CommunityWidget.vue";
 import CommunityPostEditor from "../widgets/post/CommunityPostEditor.vue";
 import CommunityFilter from "../widgets/filter/CommunityFilter.vue";
-import CommunityBreadcrumb from "../widgets/header/CommunityBreadcrumb.vue";
+import CBreadcrumb from "@components/community/Breadcrumb/CBreadcrumb.vue";
 import CommunityCrossTopics from "../widgets/topic/CommunityCrossTopics.vue";
 import CommunityTopicSubscribe from "../widgets/topic/CommunityTopicSubscribe.vue";
 import CommunityFollowSuggestion from "../widgets/users/CommunityFollowSuggestion.vue";
@@ -280,7 +280,7 @@ export default {
     CommunityTopicSubscribe,
 
     CommunityCrossTopics,
-    CommunityBreadcrumb,
+    CBreadcrumb,
     CommunityFilter,
     CommunityPostEditor,
     CommunityWidget,

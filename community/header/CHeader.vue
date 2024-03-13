@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -20,7 +20,7 @@
       class="text-capitalize mx-2 d-block fadeIn delay_100"
       >{{ subtitle }}</small
     >
-    <p class="mx-2 fadeIn delay_200">
+    <p class="mx-2 fadeIn delay_200 mb-3">
       {{ desc.substring(0, more ? 256 : 80) }}
       <v-btn
         v-if="!more && desc.length > 80"
@@ -36,8 +36,11 @@
 </template>
 
 <script>
+/**
+ * <c-header>
+ */
 export default {
-  name: "CommunityHeader",
+  name: "CHeader",
   props: {
     title: {},
     subtitle: {},

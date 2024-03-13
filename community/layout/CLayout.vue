@@ -151,7 +151,7 @@ import CommunityWidget from "../widgets/CommunityWidget.vue";
 import _ from "lodash-es";
 
 export default {
-  name: "CommunityLayout",
+  name: "CLayout",
   components: {
     CommunityWidget,
     CommunityCommentReportsDialog,

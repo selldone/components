@@ -15,7 +15,7 @@
 <template>
   <v-container class="--add-extra-top-header">
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-    <community-breadcrumb
+    <c-breadcrumb
       v-model:show-bot="show_bot"
       v-model:show-edit="show_edit"
       v-model:show-report="show_report"
@@ -25,7 +25,7 @@
       has-bot
       has-edit
       has-report
-    ></community-breadcrumb>
+    ></c-breadcrumb>
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Bot ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
       <community-bots-edit v-if="show_bot" :community="community">
@@ -34,13 +34,13 @@
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Title ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
-      <community-header
+      <c-header
         v-if="!show_edit && !show_report"
         :desc="community.desc"
         :subtitle="'@' + community.name"
         :title="community.title"
       >
-      </community-header>
+      </c-header>
     </v-expand-transition>
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Report ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -171,24 +171,24 @@
 </template>
 
 <script>
-import CommunityBreadcrumb from "../widgets/header/CommunityBreadcrumb.vue";
+import CBreadcrumb from "@components/community/Breadcrumb/CBreadcrumb.vue";
 import CommunityCategoryCard from "../widgets/category/CommunityCategoryCard.vue";
 import CommunityStatistic from "../widgets/community/CommunityStatistic.vue";
 import CommunityEdit from "../widgets/community/CommunityEdit.vue";
 import CommunityCategoryEdit from "../widgets/category/CommunityCategoryEdit.vue";
-import CommunityHeader from "../widgets/header/CommunityHeader.vue";
+import CHeader from "../header/CHeader.vue";
 import CommunityBotsEdit from "../widgets/community/CommunityBotsEdit.vue";
 
 export default {
   name: "CommunityHomePage",
   components: {
     CommunityBotsEdit,
-    CommunityHeader,
+    CHeader,
     CommunityCategoryEdit,
     CommunityEdit,
     CommunityStatistic,
     CommunityCategoryCard,
-    CommunityBreadcrumb,
+    CBreadcrumb,
   },
   props: {
     shop: {},

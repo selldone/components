@@ -31,7 +31,7 @@
           :class="{ 'absolute-top-end': $vuetify.display.xs }"
           :size="!$vuetify.display.xs ? 'small' : undefined"
           class="me-2 ms-sm-n2"
-          icon
+          icon variant="text"
           @click="NeedLogin()"
         >
           <v-icon>person</v-icon>
@@ -262,7 +262,7 @@
         target="_blank"
         ><img
           height="16"
-          src="../../../assets/trademark/telegram.svg"
+          src="../../assets/trademark/telegram.svg"
           width="16"
         />
 
@@ -457,7 +457,7 @@
         <v-card-title>
           {{ $t("community.commons.rules") }}
           <v-spacer></v-spacer>
-          <v-btn icon size="large" @click="dialog_rule = false">
+          <v-btn icon size="large" @click="dialog_rule = false" variant="text">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
@@ -482,7 +482,7 @@
         <v-card-title
           >{{ $t("community.commons.invite_friend") }}
           <v-spacer></v-spacer>
-          <v-btn icon size="large" @click="show_invite = false">
+          <v-btn icon size="large" @click="show_invite = false" variant="text">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
@@ -533,7 +533,7 @@
           {{ $t("community.nominate.title") }}
 
           <v-spacer></v-spacer>
-          <v-btn icon size="large" @click="show_nominate = false">
+          <v-btn icon size="large" @click="show_nominate = false" variant="text">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
@@ -603,16 +603,19 @@
 
 <script>
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
-import SSocialShareButtons from "../../../ui/button/share/SSocialShareButtons.vue";
+import SSocialShareButtons from "../../ui/button/share/SSocialShareButtons.vue";
 import SUserInput from "@components/user/input/SUserInput.vue";
 import SDenseImagesCirclesUsers from "@components/user/dense-circles/SDenseImagesCirclesUsers.vue";
-import CommunityAccessController from "../access/CommunityAccessController.vue";
+import CommunityAccessController from "../widgets/access/CommunityAccessController.vue";
 import SCountDown from "@components/ui/count-down/SCountDown.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 
+/**
+ * <c-breadcrumb>
+ */
 export default {
-  name: "CommunityBreadcrumb",
+  name: "CBreadcrumb",
   components: {
     SCountDown,
     CommunityAccessController,

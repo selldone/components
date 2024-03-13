@@ -15,7 +15,7 @@
 <template>
   <v-container class="--add-extra-top-header">
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Breadcrumb ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-    <community-breadcrumb
+    <c-breadcrumb
       v-model:show-edit="show_edit"
       v-model:show-report="show_report"
       :category="category"
@@ -24,7 +24,7 @@
       class="mb-6 breadcrumb-max-w"
       has-edit
       has-report
-    ></community-breadcrumb>
+    ></c-breadcrumb>
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Title ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
@@ -357,7 +357,7 @@
 </template>
 
 <script>
-import CommunityBreadcrumb from "../widgets/header/CommunityBreadcrumb.vue";
+import CBreadcrumb from "@components/community/Breadcrumb/CBreadcrumb.vue";
 import CommunityTopicCard from "../widgets/topic/CommunityTopicCard.vue";
 import CommunityPostEditor from "../widgets/post/CommunityPostEditor.vue";
 import CommunityCategoryEdit from "../widgets/category/CommunityCategoryEdit.vue";
@@ -375,7 +375,7 @@ export default {
     CommunityCategoryEdit,
     CommunityPostEditor,
     CommunityTopicCard,
-    CommunityBreadcrumb,
+    CBreadcrumb,
   },
   props: {
     shop: {},
