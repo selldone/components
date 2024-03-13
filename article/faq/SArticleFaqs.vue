@@ -36,8 +36,9 @@
         <v-expansion-panel
           v-for="(faq, i) in faqs"
           :key="i"
-          class="faq-item"
+          class="faq-item bg-transparent"
           elevation="0"
+          bg-color="transparent"
         >
           <v-expansion-panel-title class="question" hide-actions>
             <v-text-field
@@ -141,6 +142,9 @@
 <script>
 import { InlineEditorMixin } from "@components/mixin/InlineEditorMixin";
 
+/**
+ * <s-article-faqs>
+ */
 export default {
   name: "SArticleFaqs",
   mixins: [InlineEditorMixin],

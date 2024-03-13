@@ -251,10 +251,10 @@
 </template>
 
 <script>
-import BProductsWindow from "@components/backoffice/product/window/BProductsWindow.vue";
 import VariantItemMini from "@components/product/variant/VariantItemMini.vue";
 import ProductVariantsView from "../../../product/variant/ProductVariantsView.vue";
 import SLoading from "@components/ui/loading/SLoading.vue";
+import BProductsWindow from "@app-backoffice/components/product/window/BProductsWindow.vue";
 
 export default {
   name: "BProductsSelectBox",

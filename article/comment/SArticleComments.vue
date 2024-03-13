@@ -91,16 +91,8 @@
 
       <div v-else class="mb-16">
         <div class="ps-5">
-          <!-- Shop Login -->
-          <s-shop-login v-if="isShop" class="mt-16"></s-shop-login>
-          <!-- Selldone Login -->
-          <b-login-form
-            v-if="isSelldone"
-            flat
-            inlineMode
-            no-header
-            no-redirect
-          ></b-login-form>
+          <!-- Login Form -->
+          <slot name="login"></slot>
         </div>
       </div>
 
@@ -174,15 +166,11 @@
 
 <script>
 import SArticleComment from "./SArticleComment.vue";
-import SShopLogin from "@components/login/SShopLogin.vue";
-import BLoginForm from "@components/backoffice/auth/form/BLoginForm.vue";
 
 export default {
   name: "SArticleComments",
 
   components: {
-    BLoginForm,
-    SShopLogin,
     SArticleComment,
   },
   props: {

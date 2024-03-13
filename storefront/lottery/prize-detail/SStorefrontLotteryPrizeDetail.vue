@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import BProductWindowProductLarge from "@components/backoffice/product/window/product/large/BProductWindowProductLarge.vue";
+import BProductWindowProductLarge from "@app-backoffice/components/product/window/product/large/BProductWindowProductLarge.vue";
 
 export default {
   name: "SStorefrontLotteryPrizeDetail",

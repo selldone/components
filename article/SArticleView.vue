@@ -935,6 +935,7 @@
               v-model:faqs="article.faqs"
               :editMode="edit"
               @change="onChangeNote"
+              color="var(--background)"
             ></s-article-faqs>
 
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Structured Data ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -1073,7 +1074,11 @@
           :is-selldone="['blog', 'help'].includes(articleType)"
           :is-shop="!!shopId"
           class="pt-3"
-        />
+        >
+          <template v-slot:login>
+            <slot name="login"></slot>
+          </template>
+        </s-article-comments>
       </v-container>
     </div>
 

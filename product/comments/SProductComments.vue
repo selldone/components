@@ -104,7 +104,12 @@
           class="min-height-20vh"
           for-product
           is-shop
-        />
+        >
+          <template v-slot:login>
+            <!-- Shop Login -->
+            <s-shop-login class="mt-16"></s-shop-login>
+          </template>
+        </s-article-comments>
       </s-expand-view>
     </div>
   </div>
@@ -115,6 +120,7 @@ import SExpandView from "@components/ui/expand-view/SExpandView.vue";
 import SArticleComments from "@components/article/comment/SArticleComments.vue";
 import SShopProductRatingView from "@components/product/rating/SShopProductRatingView.vue";
 import { FontSizeHelper } from "@core/helper/style/FontSizeHelper";
+import SShopLogin from "@components/login/SShopLogin.vue";
 
 export default {
   name: "SProductComments",
@@ -127,6 +133,7 @@ export default {
     },
   },
   components: {
+    SShopLogin,
     SShopProductRatingView,
     SArticleComments,
     SExpandView,
