@@ -258,6 +258,8 @@ import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 /**
  * <s-contact-conversation>
  */
+
+
 export default {
   name: "SContactConversation",
   components: { SProductPreviewById, EmojiRating },
