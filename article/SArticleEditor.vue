@@ -116,17 +116,17 @@
     <slot name="end" v-bind:edit="edit"></slot>
 
     <!-- ――――――――――――――――――――――― 💡 Mega Replacer ――――――――――――――――――――――― -->
-    <s-article-code-editor-global-dialog
+    <s-article-addon-code-editor-dialog
       :master-id="MASTER_ID"
-    ></s-article-code-editor-global-dialog>
+    ></s-article-addon-code-editor-dialog>
     <s-article-flip-book-global-dialog
       :master-id="MASTER_ID"
       :upload-url="uploadUrl"
     ></s-article-flip-book-global-dialog>
-    <s-article-images-compare-global-dialog
+    <s-article-addon-comparison-dialog
       :master-id="MASTER_ID"
       :upload-url="uploadUrl"
-    ></s-article-images-compare-global-dialog>
+    ></s-article-addon-comparison-dialog>
     <!-- <calculator-global-dialog></calculator-global-dialog>-->
 
     <!-- ――――――――――――――――――――――― 💡 Select word file (docx) ――――――――――――――――――――――― -->
@@ -150,7 +150,7 @@ import SArticleAddonComparison from "./add-on/comparison/SArticleAddonComparison
 import SArticleFlipBook from "@components/article/add-on/catalog/SArticleFlipBook.vue";
 import SArticleAddonCanvas from "./add-on/canvas/SArticleAddonCanvas.vue";
 import SArticleAddonCodeEditorDialog from "./add-on/code-editor/dialog/SArticleAddonCodeEditorDialog.vue";
-import SArticleFlipBookGlobalDialog from "@components/article/add-on/catalog/SArticleFlipBookGlobalDialog.vue";
+import SArticleFlipBookGlobalDialog from "@components/article/add-on/catalog/dialog/SArticleFlipBookGlobalDialog.vue";
 import SArticleAddonComparisonDialog from "./add-on/comparison/dialog/SArticleAddonComparisonDialog.vue";
 import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
 import { FileFormatConverterOnline } from "@core/helper/converters/FileFormatConverterOnline";

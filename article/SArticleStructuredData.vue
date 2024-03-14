@@ -13,86 +13,102 @@
   -->
 
 <template>
-  <div>
+  <div v-bind="$attrs">
     <div class="widget-box -large">
       <h3 class="my-2 widget-title">
         <v-icon class="me-1">post_add</v-icon>
         Structured data
       </h3>
 
-      <v-scroll-y-transition group tag="v-row">
-        <v-col
-          v-for="(structure, index) in modelValue"
-          :key="index"
-          cols="12"
-          md="4"
-        >
-          <v-card
-            class="text-start shadow-box -hover min-h-100 rounded-18px"
-            @click="showDialog(structure)"
+      <v-row>
+        <v-fade-transition group leave-absolute>
+          <v-col
+            v-for="(structure, index) in modelValue"
+            :key="index"
+            cols="12"
+            md="4"
           >
-            <v-card-text v-if="findType(structure)">
-              <div class="text-center mb-2">
-                <img
-                  :src="findType(structure).image"
-                  height="auto"
-                  width="60%"
-                />
-              </div>
-              <b class="text-uppercase">{{ $t(findType(structure).title) }}</b>
-              <p v-if="structure.name" class="font-weight-bold mb-1">
-                {{ structure.name }}
-              </p>
-              <p v-if="structure.description" class="mb-1">
-                {{ structure.description }}
-              </p>
-            </v-card-text>
-
-            <span v-else class="p-3">Invalid data!</span>
-
-            <v-btn
-              :caption="$t('global.actions.delete')"
-              class="absolute-top-end sub-caption -hover"
-              color="red"
-              icon
-              @click.stop="remove(modelValue, structure)"
+            <v-card
+              class="text-start shadow-box -hover min-h-100 rounded-18px"
+              @click="showDialog(structure)"
             >
-              <v-icon>close</v-icon>
-            </v-btn>
-          </v-card>
-        </v-col>
-        <v-col key="new" cols="12" md="4" style="font-size: 12px">
-          <s-add-button-green
-            :caption="$t('global.json.add')"
-            :message="$t('global.json.add_message')"
-            class="rounded-18px"
-            icon="add"
-            min-height="160px"
-            @click="showDialog()"
-          >
-          </s-add-button-green>
-        </v-col>
-      </v-scroll-y-transition>
+              <v-card-text v-if="findType(structure)">
+                <div class="text-center mb-2">
+                  <img
+                    :src="findType(structure).image"
+                    height="auto"
+                    width="60%"
+                  />
+                </div>
+                <b class="text-uppercase">{{
+                  $t(findType(structure).title)
+                }}</b>
+                <p v-if="structure.name" class="font-weight-bold mb-1">
+                  {{ structure.name }}
+                </p>
+                <p v-if="structure.description" class="mb-1">
+                  {{ structure.description }}
+                </p>
+              </v-card-text>
+
+              <span v-else class="p-3">Invalid data!</span>
+
+              <v-btn
+                class="absolute-top-end"
+                color="red"
+                icon
+                variant="text"
+                @click.stop="remove(modelValue, structure)"
+              >
+                <v-icon>close</v-icon>
+                <v-tooltip content-class="bg-red text-white" activator="parent">
+                  {{ $t("global.actions.delete") }}
+                </v-tooltip>
+              </v-btn>
+            </v-card>
+          </v-col>
+          <v-col key="new" cols="12" md="4" style="font-size: 12px">
+            <s-add-button-green
+              :caption="$t('global.json.add')"
+              :message="$t('global.json.add_message')"
+              class="rounded-18px"
+              icon="add"
+              min-height="160px"
+              @click="showDialog()"
+            >
+            </s-add-button-green>
+          </v-col>
+        </v-fade-transition>
+      </v-row>
     </div>
+  </div>
 
-    <v-dialog v-model="dialog" max-width="1200px" scrollable>
-      <v-card>
-        <v-card-title>
-          <span
-            :class="{ 'pointer-pointer': selected_type }"
-            @click="selected_type = null"
-            >{{ $t("global.json.structures") }}</span
-          >
-          <span v-if="selected_type"
-            ><v-icon class="mx-2">{{ $t("icons.angle_next") }}</v-icon>
-            {{ $t(selected_type.title) }}</span
-          ></v-card-title
+  <!-- ██████████████████████ Dialog ██████████████████████ -->
+
+  <v-dialog
+    v-model="dialog"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <v-card class="text-start">
+      <v-card-title>
+        <span
+          :class="{ 'pointer-pointer': selected_type }"
+          @click="selected_type = null"
+          >{{ $t("global.json.structures") }}</span
         >
+        <span v-if="selected_type"
+          ><v-icon class="mx-2">{{ $t("icons.angle_next") }}</v-icon>
+          {{ $t(selected_type.title) }}</span
+        ></v-card-title
+      >
 
-        <v-fade-transition leave-absolute>
-          <!-- ================= STEP 2 =================== -->
-          <v-card-text v-if="selected_type" class="text-start">
-            <v-row>
+      <v-fade-transition leave-absolute>
+        <!-- ================= STEP 2 =================== -->
+        <v-card-text v-if="selected_type" class="text-start">
+          <v-container>
+            <v-row align="stretch">
               <v-col cols="12" md="6" order="2">
                 <div class="text-center">
                   <img :src="selected_type.image" height="auto" width="240px" />
@@ -123,42 +139,43 @@
                 </div>
               </v-col>
             </v-row>
-          </v-card-text>
+          </v-container>
+        </v-card-text>
 
-          <!-- ================= STEP 1 =================== -->
+        <!-- ================= STEP 1 =================== -->
 
-          <v-card-text v-else>
-            <v-container>
-              <v-row>
-                <v-col
-                  v-for="(type, index) in types"
-                  :key="index"
-                  cols="12"
-                  md="4"
+        <v-card-text v-else>
+          <v-container>
+            <v-row align="stretch">
+              <v-col
+                v-for="(type, index) in types"
+                :key="index"
+                cols="12"
+                md="4"
+              >
+                <v-card
+                  class="shadow-paper -hover pp min-h-100"
+                  @click="selectType(type)"
                 >
-                  <v-card
-                    class="shadow-paper text-start -hover pointer-pointer"
-                    @click="selectType(type)"
-                  >
-                    <v-card-text>
-                      <div class="text-center mb-2">
-                        <img :src="type.image" height="auto" width="80%" />
-                      </div>
+                  <v-card-text>
+                    <div class="mb-2">
+                      <img :src="type.image" height="auto" width="80%" />
+                    </div>
 
-                      <b>{{ $t(type.title) }}</b>
-                      <p>{{ $t(type.desc) }}</p>
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-        </v-fade-transition>
+                    <b>{{ $t(type.title) }}</b>
+                    <p>{{ $t(type.desc) }}</p>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </v-fade-transition>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
+      <v-card-actions>
+        <s-widget-buttons>
           <v-btn
-            class="m-1"
+            size="x-large"
             variant="text"
             @click="
               () => {
@@ -166,28 +183,31 @@
                 selected_type = null;
               }
             "
+            prepend-icon="close"
             >{{ $t("global.actions.close") }}
           </v-btn>
           <v-btn
-            class="m-1"
-            color="success"
-            variant="flat"
+            size="x-large"
+            color="primary"
+            variant="elevated"
             @click="saveChange()"
-            >{{ $t("global.actions.save") }}
+            prepend-icon="check"
+            >{{ $t("global.actions.confirm") }}
           </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+        </s-widget-buttons>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 import SAddButtonGreen from "../ui/button/add/SAddButtonGreen.vue";
 import SStructureDataInput from "./SStructureDataInput.vue";
+import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "SArticleStructuredData",
-  components: { SStructureDataInput, SAddButtonGreen },
+  components: { SWidgetButtons, SStructureDataInput, SAddButtonGreen },
   emits: ["update:modelValue"],
   props: {
     modelValue: {},

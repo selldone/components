@@ -513,10 +513,22 @@
                   </span>
 
                   <v-spacer></v-spacer>
+
+                  <v-row no-gutters class="flex-grow-0">
+                    <v-chip
+                      size="small"
+                      class="ma-1"
+                      v-for="lang in multiLanguageAvailable"
+                      :key="lang"
+                      :variant="lang===article?.lang?.toLowerCase()?'flat':'plain'"
+                    >
+                      {{ getLanguageObject(lang)?.title }}
+                    </v-chip>
+                  </v-row>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                   <div class="max-widget-width">
-                    <v-list class="border-between-vertical">
+                    <v-list class="border-between-vertical overflow-visible">
                       <v-list-item
                         v-for="lang in languages"
                         :key="lang"
@@ -530,6 +542,24 @@
                         @click="loadArticleLanguage(lang)"
                       >
                         <template v-slot:prepend>
+                          <v-icon
+                            :color="
+                              article &&
+                              article.lang &&
+                              article.lang.toLowerCase() === lang.toLowerCase()
+                                ? 'primary'
+                                : '#333'
+                            "
+                            class="me-2"
+                            >{{
+                              article &&
+                              article.lang &&
+                              article.lang.toLowerCase() === lang.toLowerCase()
+                                ? "circle"
+                                : "radio_button_unchecked"
+                            }}
+                          </v-icon>
+
                           <flag
                             v-if="getLanguageObject(lang)"
                             :iso="getLanguageObject(lang).flag"
@@ -551,64 +581,47 @@
                               shop &&
                               lang.toLowerCase() === shop.language.toLowerCase()
                             "
-                            class="px-1 mx-1"
+                            class="px-1 mx-2"
                             label
                             size="small"
                             title="Default article (Shop main language)"
-                            variant="outlined"
+                            variant="flat"
                             >{{ $t("global.commons.default") }}
                           </v-chip>
                           <v-spacer></v-spacer>
                         </v-list-item-title>
 
-                     <template v-slot:append>
-                       <v-list-item-action class="my-2">
-                         <v-btn
-                             v-if="
-                              multiLanguageAvailable &&
-                              !multiLanguageAvailable.includes(
-                                lang.toLowerCase(),
-                              )
-                            "
-                             :title="$t('global.commons.translate')"
-                             class="rounded-14-12"
-                             color="primary"
-                             icon
-                             size="small"
-                             variant="elevated"
-                             @click.stop="$emit('request-auto-translate', lang)"
-                         >
-                           <v-icon>g_translate</v-icon>
-                         </v-btn>
-
-                         <v-icon
-                             v-else-if="multiLanguageAvailable"
-                             class="mx-1"
-                             color="success"
-                             size="small"
-                             title="Article exist"
-                         >check_circle
-                         </v-icon>
-                       </v-list-item-action>
-                     </template>
-
                         <template v-slot:append>
-                          <v-icon
-                            :color="
-                              article &&
-                              article.lang &&
-                              article.lang.toLowerCase() === lang.toLowerCase()
-                                ? 'primary'
-                                : '#333'
-                            "
-                            >{{
-                              article &&
-                              article.lang &&
-                              article.lang.toLowerCase() === lang.toLowerCase()
-                                ? "circle"
-                                : "radio_button_unchecked"
-                            }}
-                          </v-icon>
+                          <v-list-item-action end>
+                            <v-btn
+                              v-if="
+                                multiLanguageAvailable &&
+                                !multiLanguageAvailable.includes(
+                                  lang.toLowerCase(),
+                                )
+                              "
+                              :title="$t('global.commons.translate')"
+                              class="rounded-14-12 my-1"
+                              color="primary"
+                              icon
+                              size="small"
+                              variant="elevated"
+                              @click.stop="
+                                $emit('request-auto-translate', lang)
+                              "
+                            >
+                              <v-icon>g_translate</v-icon>
+                            </v-btn>
+
+                            <v-icon
+                              v-else-if="multiLanguageAvailable"
+                              class="mx-1"
+                              color="success"
+                              size="small"
+                              title="Article exist"
+                              >check_circle
+                            </v-icon>
+                          </v-list-item-action>
                         </template>
                       </v-list-item>
                     </v-list>

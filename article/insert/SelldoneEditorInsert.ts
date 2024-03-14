@@ -203,9 +203,12 @@
       3: function (container, depth0, helpers, partials, data) {
         let stack1,
           helper,
-          alias1 = depth0 != null ? depth0 : container.nullContext || {},
-          alias2 = helpers.helperMissing,
-          alias3 = "function";
+          // eslint-disable-next-line prefer-const
+          alias1: any = depth0 != null ? depth0 : container.nullContext || {},
+          // eslint-disable-next-line prefer-const
+          alias2: any = helpers.helperMissing,
+          // eslint-disable-next-line prefer-const
+          alias3: any = "function";
 
         return (
           '                    <li>\n                        <button class="medium-editor-action" data-action="' +
@@ -258,6 +261,7 @@
       compiler: [7, ">= 4.0.0"],
       main: function (container, depth0, helpers, partials, data) {
         let stack1,
+          // eslint-disable-next-line prefer-const
           alias1 = depth0 != null ? depth0 : container.nullContext || {};
 
         return (
@@ -339,6 +343,7 @@
       main: function (container, depth0, helpers, partials, data) {
         let stack1,
           helper,
+          // eslint-disable-next-line prefer-const
           alias1 = depth0 != null ? depth0 : container.nullContext || {};
 
         return (
@@ -404,8 +409,11 @@
       2: function (container, depth0, helpers, partials, data) {
         let stack1,
           helper,
+          // eslint-disable-next-line prefer-const
           alias1 = depth0 != null ? depth0 : container.nullContext || {},
+          // eslint-disable-next-line prefer-const
           alias2 = helpers.helperMissing,
+          // eslint-disable-next-line prefer-const
           alias3 = "function";
 
         return (
@@ -476,8 +484,11 @@
       6: function (container, depth0, helpers, partials, data) {
         let stack1,
           helper,
+          // eslint-disable-next-line prefer-const
           alias1 = depth0 != null ? depth0 : container.nullContext || {},
+          // eslint-disable-next-line prefer-const
           alias2 = helpers.helperMissing,
+          // eslint-disable-next-line prefer-const
           alias3 = "function";
 
         return (
@@ -509,8 +520,8 @@
       },
       compiler: [7, ">= 4.0.0"],
       main: function (container, depth0, helpers, partials, data) {
-        let stack1,
-          alias1 = depth0 != null ? depth0 : container.nullContext || {};
+        let stack1;
+        const alias1 = depth0 != null ? depth0 : container.nullContext || {};
 
         return (
           '<div class="medium-insert-images-toolbar medium-editor-toolbar medium-toolbar-arrow-under medium-editor-toolbar-active">\n    <ul class="medium-editor-toolbar-actions clearfix">\n' +
@@ -879,10 +890,7 @@
      */
 
     Core.prototype.clean = function () {
-      let that = this,
-        $buttons,
-        $lastEl,
-        $text;
+      const that = this;
 
       if (this.options.enabled === false) {
         return;
@@ -896,7 +904,7 @@
 
       // Fix #29
       // Wrap content text in <p></p> to avoid Firefox problems
-      $text = this.$el.contents().filter(function () {
+      const $text = this.$el.contents().filter(function () {
         return (
           (this.nodeName === "#text" && $.trim($(this).text()) !== "") ||
           this.nodeName.toLowerCase() === "br"
@@ -913,8 +921,8 @@
 
       this.addButtons();
 
-      $buttons = this.$el.find(".medium-insert-buttons");
-      $lastEl = $buttons.prev();
+      const $buttons = this.$el.find(".medium-insert-buttons");
+      const $lastEl = $buttons.prev();
       if (
         $lastEl.attr("class") &&
         $lastEl.attr("class").match(/medium\-insert(?!\-active)/)
@@ -960,13 +968,10 @@
      */
 
     Core.prototype.toggleButtons = function (e) {
-      let $el = $(e.target),
-        selection = window.getSelection(),
-        that = this,
-        range,
-        $current,
-        $p,
-        activeAddon;
+      const $el = $(e.target);
+      const selection = window.getSelection();
+      const that = this;
+      let range, $current, $p, activeAddon;
 
       if (this.options.enabled === false) {
         return;
@@ -1211,15 +1216,13 @@
      */
 
     Core.prototype.moveCaret = function ($el, position) {
-      let range, sel, el, textEl;
-
       position = position || 0;
-      range = document.createRange();
-      sel = window.getSelection();
-      el = $el.get(0);
+      const range = document.createRange();
+      const sel = window.getSelection();
+      const el = $el.get(0);
 
       if (!el.childNodes.length) {
-        textEl = document.createTextNode(" ");
+        const textEl = document.createTextNode(" ");
         el.appendChild(textEl);
       }
 
@@ -1548,18 +1551,16 @@
      */
 
     Embeds.prototype.togglePlaceholder = function (e) {
-      let $place = $(e.target),
-        selection = window.getSelection(),
-        range,
-        $current,
-        text;
+      let $place = $(e.target);
+      const selection = window.getSelection();
+      let text;
 
       if (!selection || selection.rangeCount === 0) {
         return;
       }
 
-      range = selection.getRangeAt(0);
-      $current = $(range.commonAncestorContainer);
+      const range = selection.getRangeAt(0);
+      const $current = $(range.commonAncestorContainer);
 
       if ($current.hasClass("medium-insert-embeds-active")) {
         $place = $current;
@@ -1609,14 +1610,13 @@
      */
 
     Embeds.prototype.processLink = function (e) {
-      let $place = this.$el.find(".medium-insert-embeds-active"),
-        url;
+      const $place = this.$el.find(".medium-insert-embeds-active");
 
       if (!$place.length) {
         return;
       }
 
-      url = $place.text().trim();
+      const url = $place.text().trim();
 
       // Return empty placeholder on backspace, delete or enter
       if (url === "" && [8, 46, 13].indexOf(e.which) !== -1) {
@@ -1644,13 +1644,12 @@
      */
 
     Embeds.prototype.processPasted = function (e) {
-      let pastedUrl, linkRegEx;
       if ($(".medium-insert-embeds-active").length) {
         return;
       }
 
-      pastedUrl = e.originalEvent.clipboardData.getData("text");
-      linkRegEx = new RegExp("^(http(s?):)?//", "i");
+      const pastedUrl = e.originalEvent.clipboardData.getData("text");
+      const linkRegEx = new RegExp("^(http(s?):)?//", "i");
       if (linkRegEx.test(pastedUrl)) {
         if (this.options.oembedProxy) {
           this.oembed(pastedUrl, true);
@@ -1905,23 +1904,20 @@
     Embeds.prototype.convertBadEmbed = function (content) {
       console.log("🟤 Insert > convertBadEmbed | ", "content:", content);
 
-      let $place,
-        $empty,
-        $content,
-        emptyTemplate =
-          this.templates["src/js/templates/core-empty-line.hbs"]().trim();
+      const emptyTemplate =
+        this.templates["src/js/templates/core-empty-line.hbs"]().trim();
 
-      $place = this.$el.find(".medium-insert-embeds-active");
+      const $place = this.$el.find(".medium-insert-embeds-active");
 
       // convert embed node to an empty node and insert the bad embed inside
-      $content = $(emptyTemplate);
+      const $content = $(emptyTemplate);
       $place.before($content);
       $place.remove();
       $content.html(content);
       //   $content.attr('data', JSON.stringify({html:content})); // Keep raw html in data attribute! We load the raw html from it!
 
       // add an new empty node right after to simulate Enter press
-      $empty = $(emptyTemplate);
+      const $empty = $(emptyTemplate);
       $content.after($empty);
 
       this.core.triggerInput();
@@ -1937,10 +1933,9 @@
      */
 
     Embeds.prototype.selectEmbed = function (e) {
-      let that = this,
-        $embed;
+      const that = this;
       if (this.core.options.enabled) {
-        $embed = $(e.target).hasClass("medium-insert-embeds")
+        const $embed = $(e.target).hasClass("medium-insert-embeds")
           ? $(e.target)
           : $(e.target).closest(".medium-insert-embeds");
 
@@ -2043,19 +2038,15 @@
      */
 
     Embeds.prototype.addToolbar = function () {
-      let $embed = this.$el.find(".medium-insert-embeds-selected"),
-        active = false,
-        $toolbar,
-        $toolbar2,
-        mediumEditor,
-        toolbarContainer;
+      const $embed = this.$el.find(".medium-insert-embeds-selected");
+      let active = false;
 
       if ($embed.length === 0) {
         return;
       }
 
-      mediumEditor = this.core.getEditor();
-      toolbarContainer = mediumEditor.options.elementsContainer || "body";
+      const mediumEditor = this.core.getEditor();
+      const toolbarContainer = mediumEditor.options.elementsContainer || "body";
 
       $(toolbarContainer).append(
         this.templates["src/js/templates/embeds-toolbar.hbs"]({
@@ -2064,8 +2055,8 @@
         }).trim(),
       );
 
-      $toolbar = $(".medium-insert-embeds-toolbar");
-      $toolbar2 = $(".medium-insert-embeds-toolbar2");
+      const $toolbar = $(".medium-insert-embeds-toolbar");
+      const $toolbar2 = $(".medium-insert-embeds-toolbar2");
 
       $toolbar.find("button").each(function () {
         if ($embed.hasClass("medium-insert-embeds-" + $(this).data("action"))) {
@@ -2074,7 +2065,7 @@
         }
       });
 
-      if (active === false) {
+      if (!active) {
         $toolbar.find("button").first().addClass("medium-editor-button-active");
       }
 
@@ -2094,7 +2085,7 @@
     };
 
     Embeds.prototype.repositionToolbars = function () {
-      let $toolbar = $(".medium-insert-embeds-toolbar"),
+      const $toolbar = $(".medium-insert-embeds-toolbar"),
         $toolbar2 = $(".medium-insert-embeds-toolbar2"),
         $embed = this.$el.find(".medium-insert-embeds-selected"),
         elementsContainer = this.core.getEditor().options.elementsContainer,
@@ -2106,9 +2097,9 @@
           ) > -1,
         elementsContainerBoundary = elementsContainerAbsolute
           ? elementsContainer.getBoundingClientRect()
-          : null,
-        containerWidth = $(window).width(),
-        position = {};
+          : null;
+      let containerWidth = $(window).width();
+      const position = {};
 
       if ($toolbar2.length) {
         position.top = $embed.offset().top + 2; // 2px - distance from a border
@@ -2482,13 +2473,13 @@
      */
 
     Images.prototype.uploadAdd = function (e, data) {
-      let $place = this.$el.find(".medium-insert-active"),
-        that = this,
+      let $place = this.$el.find(".medium-insert-active");
+      const that = this,
         uploadErrors = [],
         file = data.files[0],
         acceptFileTypes = this.options.fileUploadOptions.acceptFileTypes,
-        maxFileSize = this.options.fileUploadOptions.maxFileSize,
-        previewImg;
+        maxFileSize = this.options.fileUploadOptions.maxFileSize;
+      let previewImg;
 
       if (acceptFileTypes && !acceptFileTypes.test(file.type)) {
         uploadErrors.push(
@@ -2639,16 +2630,15 @@
      */
 
     Images.prototype.showImage = function (img, data) {
-      let $place = this.$el.find(".medium-insert-active"),
-        domImage,
-        that;
+      const $place = this.$el.find(".medium-insert-active");
+      let domImage;
 
       // Hide editor's placeholder
       $place.click();
 
       // If preview is allowed and preview image already exists,
       // replace it with uploaded image
-      that = this;
+      const that = this;
       if (this.options.preview && data.context) {
         domImage = this.getDOMImage();
         domImage.onload = function () {
@@ -2716,8 +2706,8 @@
      */
 
     Images.prototype.selectImage = function (e) {
-      let that = this,
-        $image;
+      const that = this;
+      let $image;
 
       if (this.core.options.enabled) {
         $image = $(e.target);
@@ -2789,11 +2779,10 @@
       if (e.which === 8 || e.which === 46) {
         //   console.log('---removeImage---',this.$el.find('.medium-insert-image-active'))
 
-        let images = [],
-          $selectedImage = this.$el.find(".medium-insert-image-active"),
-          $parent,
+        const images = [],
+          $selectedImage = this.$el.find(".medium-insert-image-active");
+        let $parent,
           $empty,
-          selection,
           range,
           current,
           caretPosition,
@@ -2815,7 +2804,7 @@
         }
 
         // Remove image even if it's not selected, but backspace/del is pressed in text
-        selection = window.getSelection(); // Sometimes select previous node!!!
+        const selection = window.getSelection(); // Sometimes select previous node!!!
         //console.log('---removeImage--- selection',selection)
 
         if (selection && selection.rangeCount && !images.length) {
@@ -2978,13 +2967,11 @@
      */
 
     Images.prototype.addToolbar = function () {
-      let $image = this.$el.find(".medium-insert-image-active"),
-        $p = $image.closest(".medium-insert-images"),
-        active = false,
-        mediumEditor = this.core.getEditor(),
-        toolbarContainer = mediumEditor.options.elementsContainer || "body",
-        $toolbar,
-        $toolbar2;
+      const $image = this.$el.find(".medium-insert-image-active"),
+        $p = $image.closest(".medium-insert-images");
+      let active = false;
+      const mediumEditor = this.core.getEditor();
+      const toolbarContainer = mediumEditor.options.elementsContainer || "body";
 
       $(toolbarContainer).append(
         this.templates["src/js/templates/images-toolbar.hbs"]({
@@ -2993,8 +2980,8 @@
         }).trim(),
       );
 
-      $toolbar = $(".medium-insert-images-toolbar");
-      $toolbar2 = $(".medium-insert-images-toolbar2");
+      const $toolbar = $(".medium-insert-images-toolbar");
+      const $toolbar2 = $(".medium-insert-images-toolbar2");
 
       $toolbar.find("button").each(function () {
         if ($p.hasClass("medium-insert-images-" + $(this).data("action"))) {
@@ -3024,10 +3011,10 @@
     };
 
     Images.prototype.repositionToolbars = function () {
-      let $toolbar = $(".medium-insert-images-toolbar"),
-        $toolbar2 = $(".medium-insert-images-toolbar2"),
-        $image = this.$el.find(".medium-insert-image-active"),
-        elementsContainer = this.core.getEditor().options.elementsContainer,
+      const $toolbar = $(".medium-insert-images-toolbar"),
+        $toolbar2 = $(".medium-insert-images-toolbar2");
+      let $image = this.$el.find(".medium-insert-image-active");
+      const elementsContainer = this.core.getEditor().options.elementsContainer,
         elementsContainerAbsolute =
           ["absolute", "fixed"].indexOf(
             window
@@ -3036,9 +3023,9 @@
           ) > -1,
         elementsContainerBoundary = elementsContainerAbsolute
           ? elementsContainer.getBoundingClientRect()
-          : null,
-        containerWidth = $(window).width(),
-        position = {};
+          : null;
+      let containerWidth = $(window).width();
+      const position = {};
 
       if ($toolbar2.length && $image.offset()) {
         // TODO: add new bug fix
@@ -3092,24 +3079,19 @@
      */
 
     Images.prototype.toolbarAction = function (e) {
-      let that = this,
-        $button,
-        $li,
-        $ul,
-        $lis,
-        $p;
+      const that = this;
 
       if (this.$currentImage === null) {
         return;
       }
 
-      $button = $(e.target).is("button")
+      const $button = $(e.target).is("button")
         ? $(e.target)
         : $(e.target).closest("button");
-      $li = $button.closest("li");
-      $ul = $li.closest("ul");
-      $lis = $ul.find("li");
-      $p = this.$el.find(".medium-insert-active");
+      const $li = $button.closest("li");
+      const $ul = $li.closest("ul");
+      const $lis = $ul.find("li");
+      const $p = this.$el.find(".medium-insert-active");
 
       $button.addClass("medium-editor-button-active");
       $li
@@ -3148,16 +3130,14 @@
      */
 
     Images.prototype.toolbar2Action = function (e) {
-      let $button, callback;
-
       if (this.$currentImage === null) {
         return;
       }
 
-      $button = $(e.target).is("button")
+      const $button = $(e.target).is("button")
         ? $(e.target)
         : $(e.target).closest("button");
-      callback = this.options.actions[$button.data("action")].clicked;
+      const callback = this.options.actions[$button.data("action")].clicked;
 
       if (callback) {
         callback(this.$el.find(".medium-insert-image-active"));

@@ -14,11 +14,6 @@
 
 <template>
   <div class="px-4">
-    <div v-if="debug" class="bg-success text-white">
-      {{ name }}:{{ type }} | isEnum:{{ isEnum }} | isEnumsArray:{{
-        isEnumsArray
-      }}
-    </div>
     <v-btn
       v-if="deletable"
       class="float-end"
@@ -35,17 +30,10 @@
       :label="name"
       :model-value="modelValue"
       class="max-width-field"
-      density="compact"
-      rounded
-      variant="filled"
+      variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
+      :item-title="(item) => fineName(item)"
     >
-      <template v-slot:item="{ item }">
-        {{ fineName(item) }}
-      </template>
-      <template v-slot:selection="{ item }">
-        {{ fineName(item) }}
-      </template>
     </v-select>
 
     <v-select
@@ -54,16 +42,11 @@
       :label="name"
       :model-value="modelValue"
       chips
-      class=""
-      density="compact"
       multiple
-      rounded
-      variant="filled"
+      variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
+      :item-title="(item) => fineName(item)"
     >
-      <template v-slot:item="{ item, props }">
-        <v-list-item v-bind="props" :title="fineName(item.raw)"> </v-list-item>
-      </template>
       <template v-slot:chip="{ item, props }">
         <v-chip v-bind="props">
           {{ fineName(item.raw) }}
@@ -76,9 +59,7 @@
       :label="name"
       :model-value="modelValue"
       class="max-width-field"
-      density="compact"
-      rounded
-      variant="filled"
+      variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
     ></v-text-field>
     <v-text-field
@@ -87,10 +68,8 @@
       :model-value="modelValue"
       :rules="[GlobalRules.url()]"
       class="max-width-field"
-      density="compact"
       prepend-icon="link"
-      rounded
-      variant="filled"
+      variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
     ></v-text-field>
     <s-number-input
@@ -98,9 +77,8 @@
       :label="name"
       :model-value="modelValue"
       class="max-width-field"
-      dense
       filled
-      rounded
+      variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
     ></s-number-input>
     <s-price-input
@@ -109,10 +87,8 @@
       :label="name"
       :model-value="modelValue"
       class="max-width-field"
-      dense
-      filled
+      variant="underlined"
       prepend-icon="attach_money"
-      rounded
       @update:model-value="(val) => $emit('update:modelValue', val)"
     ></s-price-input>
     <s-currency-input
@@ -121,10 +97,8 @@
       :returnObject="false"
       :model-value="modelValue"
       class="max-width-field"
-      dense
-      filled
       prepend-icon="account_balance_wallet"
-      rounded
+      variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
     ></s-currency-input>
     <s-date-input
@@ -132,9 +106,8 @@
       :label="name"
       :model-value="modelValue"
       class="max-width-field mb-3"
-      filled
       format="YYYY-MM-DDTHH:mm:ssZ"
-      rounded
+      variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
     ></s-date-input>
 
@@ -145,8 +118,7 @@
         class="max-width-field"
         density="compact"
         hide-details
-        rounded
-        variant="filled"
+        variant="underlined"
         @update:model-value="(val) => $emit('update:modelValue', val)"
       ></v-text-field>
       <v-chip
@@ -160,9 +132,10 @@
     </div>
 
     <div v-else-if="Array.isArray(type)" class="border rounded mb-4">
-      <p class="bg-success text-white px-2 rounded">
-        <b>{{ name }} (Array)</b>
-      </p>
+      <div class="pa-1 mb-3">
+        <b>{{ name }}</b>
+        <v-chip color="green" size="small" label class="ma-1">Array</v-chip>
+      </div>
 
       <s-structure-data-input
         v-for="(it_val, index) in modelValue"
@@ -175,21 +148,25 @@
         @update:model-value="(val) => (modelValue[index] = val)"
       ></s-structure-data-input>
 
-      <v-btn
-        class="m-2"
-        color="success"
-        variant="flat"
-        @click="modelValue.push(type[0].startsWith('@') ? {} : '')"
-      >
-        <v-icon>add</v-icon>
-        Add
-      </v-btn>
+      <div class="text-end">
+        <v-btn
+          class="ma-2"
+          color="#000"
+          size="small"
+          variant="elevated"
+          @click="modelValue.push(type[0]?.startsWith('@') ? {} : '')"
+          prepend-icon="add"
+        >
+          Add Item
+        </v-btn>
+      </div>
     </div>
 
-    <div v-else-if="type.startsWith('@') && modelValue">
-      <p class="bg-primary text-white px-2 rounded mb-4">
+    <div v-else-if="type?.startsWith('@') && modelValue">
+      <div class="pa-1 mb-3">
         <b>{{ name }}</b>
-      </p>
+        <v-chip color="blue" size="small" label class="ma-1">Object</v-chip>
+      </div>
       <s-structure-data-input
         v-for="(_type, key) in blueprint"
         :key="key"
@@ -264,8 +241,6 @@ export default {
   data() {
     return {
       Duration: Duration,
-
-      debug: false,
 
       blueprints: {
         "@Person": { "@type": "Person", name: "text" },
@@ -370,7 +345,7 @@ export default {
       return Array.isArray(this.type) && !this.isEnum; // Enums are array by default!
     },
     isObject() {
-      return !Array.isArray(this.type) && this.type.startsWith("@");
+      return !Array.isArray(this.type) && this.type?.startsWith("@");
     },
     isEnum() {
       return CheckEnum(this.type);

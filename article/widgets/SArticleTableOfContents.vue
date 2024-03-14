@@ -96,6 +96,7 @@ export default {
       // If the target element is intersecting the viewport, set isElementInView to true
       if (entries[0].isIntersecting) {
         this.isElementInView = true;
+        this.gen();
       } else {
         this.isElementInView = false;
       }
@@ -146,6 +147,7 @@ export default {
         // Create an id
         const name = "h_" + tag + i;
         headers[i].id = name;
+       // console.log("headers[i]", headers[i]);
 
         this.items.push({
           id: name,

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -104,6 +104,7 @@
                 :max="100"
                 :min="10"
                 :tick-size="12"
+                :step="0.1"
                 class="mt-12"
                 density="compact"
                 thumb-color="primary"
@@ -213,7 +214,6 @@ export default {
 
   methods: {
     addNewPage(path) {
-      console.log("addNewPage", path);
 
       this.pack.pages.push(path);
       this.onChange();
