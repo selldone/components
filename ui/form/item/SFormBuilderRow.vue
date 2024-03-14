@@ -234,7 +234,7 @@
 </template>
 
 <script>
-import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
+import SSmartSwitch from "@components/ui/smart/SSmartSwitch.vue";
 
 export default {
   name: "SFormBuilderRow",

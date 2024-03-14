@@ -118,7 +118,7 @@
 
 <script>
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
-import SMapLocationMarker from "@components/map/market/SMapLocationMarker.vue";
+import SMapLocationMarker from "@components/ui/map/market/SMapLocationMarker.vue";
 
 export default {
   name: "SShopCustomerReceiverInfoWidget",

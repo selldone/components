@@ -93,7 +93,7 @@
 
 <script>
 import SContactsList from "../list/SContactsList.vue";
-import SShopLogin from "@components/login/SShopLogin.vue";
+import SShopLogin from "@components/storefront/login/SShopLogin.vue";
 import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
 
 /**

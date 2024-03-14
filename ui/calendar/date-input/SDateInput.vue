@@ -50,50 +50,54 @@
     v-if="dialog"
     v-model="dialog"
     :fullscreen="$vuetify.display.smAndDown"
-    max-width="700"
+    max-width="860"
     scrollable
     theme="light"
   >
-    <v-card
-      :title="getLocalTimeString(date_time)"
-      class="text-start"
-      prepend-icon="calendar_today"
-      rounded="xl"
-    >
-      <v-card-text>
-        <v-row justify="space-around" no-gutters>
-          <v-date-picker
-            v-model="date"
-            :max="max instanceof Date ? max.toISOString() : max"
-            :min="min instanceof Date ? min.toISOString() : min"
-            show-adjacent-months
-          ></v-date-picker>
+    <v-card class="text-start" rounded="xl">
+      <v-card-title class="d-flex align-center">
+        <v-icon class="me-2"> calendar_today </v-icon>
+        {{ getLocalTimeString(date_time) }}
+        <v-spacer></v-spacer>
+        <v-btn
+          v-if="clearable"
+          class="ma-1 tnt"
+          color="red"
+          rounded="xl"
+          size="x-large"
+          variant="outlined"
+          @click="
+            clear();
+            dialog = false;
+          "
+        >
+          <v-icon start>delete</v-icon>
 
-          <v-time-picker
+          {{ $t("global.actions.clear") }}
+        </v-btn>
+      </v-card-title>
+
+      <v-card-text class="pt-0">
+        <v-date-picker
+          v-model="date"
+          :max="max instanceof Date ? max.toISOString() : max"
+          :min="min instanceof Date ? min.toISOString() : min"
+          show-adjacent-months
+          :key="`d-${date_key}`"
+          max-width="100%"
+          width="400"
+          class="mx-auto"
+        ></v-date-picker>
+
+        <div class="my-3 max-w-400 mx-auto">
+          <s-time-input
             v-if="!dateOnly /** TODO: NOt added yet! I should add this!*/"
             v-model="time"
             :max="max_time"
             :min="min_time"
-            ampm-in-title
-          ></v-time-picker>
-        </v-row>
-
-        <div v-if="clearable" class="text-end">
-          <v-btn
-            class="ma-1 tnt"
-            color="red"
-            rounded="xl"
-            size="x-large"
-            variant="text"
-            @click="
-              clear();
-              dialog = false;
-            "
-          >
-            <v-icon start>delete</v-icon>
-
-            {{ $t("global.actions.clear") }}
-          </v-btn>
+            variant="flat"
+            class="border rounded-xl"
+          ></s-time-input>
         </div>
       </v-card-text>
       <v-card-actions class="border-top">
@@ -113,6 +117,7 @@
                 minute: 'numeric',
                 hour12: false,
               });
+              date_key = Math.random();
             "
           >
             <v-icon start>today</v-icon>
@@ -148,8 +153,13 @@
 </template>
 
 <script>
+import STimeInput from "@components/ui/calendar/time-input/STimeInput.vue";
+import STimepicker from "@components/ui/calendar/time-picker/STimepicker.vue";
+import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+
 export default {
   name: "SDateInput",
+  components: { SNumberInput, STimepicker, STimeInput },
   emits: ["update:modelValue", "change", "enter", "click:clear"],
   props: {
     modelValue: {},
@@ -229,6 +239,8 @@ export default {
     date: null,
     time: null,
     dialog: false,
+
+    date_key: 0, // To force update date picker when set now is clicked
   }),
 
   computed: {

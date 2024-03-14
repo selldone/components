@@ -561,34 +561,36 @@
                           <v-spacer></v-spacer>
                         </v-list-item-title>
 
-                        <v-list-item-action class="my-2">
-                          <v-btn
-                            v-if="
+                     <template v-slot:append>
+                       <v-list-item-action class="my-2">
+                         <v-btn
+                             v-if="
                               multiLanguageAvailable &&
                               !multiLanguageAvailable.includes(
                                 lang.toLowerCase(),
                               )
                             "
-                            :title="$t('global.commons.translate')"
-                            class="rounded-14-12"
-                            color="primary"
-                            icon
-                            size="small"
-                            variant="elevated"
-                            @click.stop="$emit('request-auto-translate', lang)"
-                          >
-                            <v-icon>g_translate</v-icon>
-                          </v-btn>
+                             :title="$t('global.commons.translate')"
+                             class="rounded-14-12"
+                             color="primary"
+                             icon
+                             size="small"
+                             variant="elevated"
+                             @click.stop="$emit('request-auto-translate', lang)"
+                         >
+                           <v-icon>g_translate</v-icon>
+                         </v-btn>
 
-                          <v-icon
-                            v-else-if="multiLanguageAvailable"
-                            class="mx-1"
-                            color="success"
-                            size="small"
-                            title="Article exist"
-                            >check_circle
-                          </v-icon>
-                        </v-list-item-action>
+                         <v-icon
+                             v-else-if="multiLanguageAvailable"
+                             class="mx-1"
+                             color="success"
+                             size="small"
+                             title="Article exist"
+                         >check_circle
+                         </v-icon>
+                       </v-list-item-action>
+                     </template>
 
                         <template v-slot:append>
                           <v-icon
@@ -644,184 +646,39 @@
               </v-expansion-panel>
             </v-expansion-panels>
 
+            <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Extra Edit Options ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
             <v-row class="mb-2 z1" dense>
-              <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-              <o-article-selldone-help-category-input
-                v-if="articleType === ArticleTypes.SelldoneHelp.code"
-                v-model="category"
-                :disabled="!!menu && !!menu.parent_id"
-                class="m-2 max-width-field s--shadow-no-padding rounded-28px bg-white"
-                clearable
-                flat
-                rounded
-                variant="solo"
-                @update:model-value="state = 'changed'"
-              >
-              </o-article-selldone-help-category-input>
-              <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-              <o-article-selldone-blog-category-input
-                v-else-if="articleType === ArticleTypes.SelldoneBlog.code"
-                v-model="category"
-                @update:category-object="(c) => (category_obj = c)"
-                :disabled="(!!menu && !!menu.parent_id) || busy_categories"
-                class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
-                clearable
-                flat
-                rounded
-                variant="solo"
-                @update:model-value="state = 'changed'"
-              >
-              </o-article-selldone-blog-category-input>
-
-              <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Shop Blog Category ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-              <s-article-category-shop-blog-input
-                v-else-if="articleType === ArticleTypes.Blog.code"
-                v-model="category"
-                :disabled="busy_categories"
-                :loading="busy_categories"
-                :shop="shop"
-                class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
-                clearable
-                flat
-                rounded
-                variant="solo"
-                @update:model-value="state = 'changed'"
-              >
-              </s-article-category-shop-blog-input>
-
-              <b-cluster-input
-                v-if="ArticleTypes.Blog.code && $route.params.shop_id"
-                v-model="cluster_id"
-                :return-object="false"
-                class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
-                clearable
-                flat
-                icon="workspaces_outline"
-                label="Resource Cluster"
-                no-home
-                placeholder="Select a cluster... (optional)"
-                rounded
-                solo
-                @change="state = 'changed'"
-              ></b-cluster-input>
-
-              <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Selldone Help parent ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-              <v-autocomplete
-                v-if="
-                  articleType === ArticleTypes.SelldoneHelp.code &&
-                  menu &&
-                  parent_helps_canidates
+              <slot
+                name="extra-header-options"
+                :categoryId="category"
+                :setCategoryId="
+                  (_category) => {
+                    category = _category;
+                    state = 'changed';
+                  }
                 "
-                v-model="menu.parent_id"
-                :items="parent_helps_canidates"
-                :label="$t('global.article.parent_input')"
-                :messages="$t('global.article.parent_input_message')"
-                :return-object="false"
-                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
-                clearable
-                flat
-                item-title="title"
-                item-value="blog_id"
-                rounded
-                variant="solo"
-                @update:model-value="state = 'changed'"
-              />
-
-              <s-number-input
-                v-if="articleType === ArticleTypes.SelldoneHelp.code && menu"
-                v-model="menu.order"
-                :hide-details="false"
-                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white z1"
-                flat
-                messages="Order"
-                rounded
-                solo
-                @change="state = 'changed'"
-              ></s-number-input>
-
-              <div
-                v-if="
-                  articleType === ArticleTypes.SelldoneHelp.code &&
-                  menu &&
-                  in_edit_mode
+                :setCategoryObject="
+                  (_category) => {
+                    category_obj = _category;
+                    state = 'changed';
+                  }
                 "
-                class="m-2 max-width-field-mini s--shadow-no-padding rounded-28px bg-white z1 py-1 px-4"
-              >
-                <v-btn
-                  color="amber"
-                  icon
-                  size="large"
-                  @click="
-                    () => {
-                      menu.star = !menu.star;
-                      state = 'changed';
-                    }
-                  "
-                >
-                  <v-icon>{{ menu.star ? "star" : "star_border" }}</v-icon>
-                </v-btn>
-                <div class="mt-1" style="font-size: 12px; color: #8a8a8a">
-                  Pin on parent
-                </div>
-              </div>
-
-              <v-spacer></v-spacer>
-              <template
-                v-if="
-                  articleType === ArticleTypes.SelldoneBlog.code &&
-                  HasPermission(
-                    permissions.Content,
-                    permissionLevels.FULL_ACCESS,
-                  )
+                :clusterId="cluster_id"
+                :setClusterId="
+                  (_cluster_id) => {
+                    cluster_id = _cluster_id;
+                    state = 'changed';
+                  }
                 "
-              >
-                <v-btn
-                  class="m-2 tnt"
-                  color="primary"
-                  rounded
-                  size="large"
-                  style="align-self: baseline"
-                  variant="flat"
-                  @click="change_author_dialog = true"
-                >
-                  <v-avatar v-if="article" class="ms-n2" size="28"
-                    ><img :src="getUserAvatar(article.user_id)"
-                  /></v-avatar>
-                  <span class="text-subtitle-2 mx-1">Change author</span>
-                </v-btn>
-
-                <v-dialog v-model="change_author_dialog" max-width="480">
-                  <v-card>
-                    <v-card-title>Change author</v-card-title>
-                    <v-card-text>
-                      <s-user-input
-                        v-model="user_email"
-                        :messages="user_email"
-                        label="Select author"
-                        no-icon
-                        placeholder="content@selldone.com"
-                      >
-                      </s-user-input>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-btn
-                        variant="text"
-                        @click="change_author_dialog = false"
-                        >{{ $t("global.actions.cancel") }}
-                      </v-btn>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        :loading="busy_change_author"
-                        color="primary"
-                        variant="flat"
-                        @click="changeAuthor()"
-                        >{{ $t("global.actions.change") }}
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-              </template>
+                :menu="menu"
+                :inEditMode="in_edit_mode"
+                :state="state"
+                :onChange="
+                  () => {
+                    state = 'changed';
+                  }
+                "
+              ></slot>
             </v-row>
           </v-container>
         </div>
@@ -1046,6 +903,7 @@
               v-if="it.article.image"
               :src="it.article.image"
               height="200px"
+              cover
             ></v-img>
 
             <v-card-title class="tit">
@@ -1136,42 +994,31 @@ import { PermissionNames } from "@core/enums/admin/permission/PermissionNames";
 import { PermissionLevels } from "@core/enums/admin/permission/PermissionLevels";
 import SDateInput from "../ui/calendar/date-input/SDateInput.vue";
 import SArticlesTimeline from "@components/article/timeline/SArticlesTimeline.vue";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
 import SLanguageInput from "@components/ui/input/language/SLanguageInput.vue";
 import SArticleFaqs from "./faq/SArticleFaqs.vue";
 import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./tags/SArticleTagsEditor.vue";
-import SUserInput from "@components/user/input/SUserInput.vue";
-import SSmartMenu from "@components/smart/SSmartMenu.vue";
+import SSmartMenu from "@components/ui/smart/SSmartMenu.vue";
 import STimeProgressBar from "../ui/calendar/time-progress/STimeProgressBar.vue";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import AiButton from "@components/ui/button/ai/AiButton.vue";
-import BClusterInput from "@components/backoffice/cluster/BClusterInput.vue";
 import _ from "lodash-es";
-import SArticleCategoryShopBlogInput from "@components/article/category/shop-blog/SArticleCategoryShopBlogInput.vue";
-import OArticleSelldoneHelpCategoryInput from "@components/article/category/selldone-help/OArticleSelldoneHelpCategoryInput.vue";
-import OArticleSelldoneBlogCategoryInput from "@components/article/category/selldone-blog/OArticleSelldoneBlogCategoryInput.vue";
 import SArticleAuthorBox from "@components/article/author/box/SArticleAuthorBox.vue";
 
 export default {
   name: "SArticleView",
   components: {
     SArticleAuthorBox,
-    OArticleSelldoneBlogCategoryInput,
-    OArticleSelldoneHelpCategoryInput,
-    SArticleCategoryShopBlogInput,
-    BClusterInput,
+
     AiButton,
     SArticleSearchConsole,
     STimeProgressBar,
     SSmartMenu,
-    SUserInput,
     SArticleTagsEditor,
     SArticleStructuredData,
     SArticleFaqs,
     SLanguageInput,
-    SNumberInput,
     SArticlesTimeline,
     SDateInput,
     SArticleSeoEditor,
@@ -1365,15 +1212,9 @@ export default {
       cluster_id: null,
 
       //---------- Samin Blog ------------
-      busy_categories: false,
       categories: [],
       category: "",
       category_obj: null,
-      busy_change_author: false,
-
-      //---------- Samin Help ------------
-
-      parent_helps_canidates: [],
 
       // ----------------------------
       schedule_at: null,
@@ -1385,10 +1226,6 @@ export default {
 
       // ----------- Report ------------
       busy_report: false,
-
-      // ----------- Change author dialog ------------
-      change_author_dialog: false,
-      user_email: null,
 
       // ----------- Google Rank ------------
       show_google_tank: false,
@@ -1602,24 +1439,6 @@ export default {
       this.dialog_timeline = true;
     },
 
-    getHelpParentCandidatesList() {
-      if (!this.can_edit || this.targetId === "new") return;
-
-      axios
-        .get(window.ADMIN_API.GET_SAMIN_HELP_PARENT_CANDIDATES(this.targetId))
-        .then(({ data }) => {
-          if (!data.error) {
-            let out = [];
-            data.helps.forEach((item) => {
-              out.push({ title: item.title, blog_id: item.id });
-            });
-            this.parent_helps_canidates = out;
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-          }
-        });
-    },
-
     //――――――――――――――――――――――― Change listeners ―――――――――――――――――――――――
 
     onChangeNote($event = null) {
@@ -1742,8 +1561,6 @@ export default {
             } else {
               if (this.articleType === ArticleTypes.SelldoneHelp.code) {
                 this.menu = data.menu;
-
-                this.getHelpParentCandidatesList();
               }
             }
             // ---------------------------------------------------------------------------------
@@ -1873,10 +1690,6 @@ export default {
       this.cluster_id = data.article?.parent?.cluster_id; // 🆑 Cluster
 
       if (this.$refs.editorContainer) this.$refs.editorContainer.setDirection();
-
-      if (this.articleType === ArticleTypes.SelldoneHelp.code) {
-        this.getHelpParentCandidatesList();
-      }
 
       this.$emit("update-article", this.article);
 
@@ -2114,7 +1927,7 @@ export default {
           params: { blog_id: target_id, slug: target.article.slug },
         };
       } else if (this.articleType === ArticleTypes.SelldoneHelp.code) {
-        return { name: "Help", params: { help_id: target_id } };
+        return { name: "OPageHelp", params: { help_id: target_id } };
       } else if (this.articleType === ArticleTypes.Product.code) {
       } else if (this.is_shop_blog) {
         return {
@@ -2123,42 +1936,6 @@ export default {
         };
       } else if (this.articleType === ArticleTypes.Company.code) {
       }
-    },
-
-    //――――――――――――――――― Admin > Make blog wrote by Selldone team ―――――――――――――――――
-    changeAuthor() {
-      this.busy_change_author = true;
-      axios
-        .put(
-          window.ADMIN_API.PUT_SET_ARTICLE_AUTHOR(
-            "blogs",
-            this.article.parent_id,
-          ),
-          {
-            email: this.user_email,
-          },
-        )
-        .then(({ data }) => {
-          if (data.error) {
-            // Error!
-            this.showErrorAlert(null, data.error_msg);
-          } else {
-            this.change_author_dialog = false;
-            this.article.user = data.author;
-            this.article.user_id = data.author.id;
-
-            this.showSuccessAlert(
-              null,
-              `Change author to ${data.author.name}.`,
-            );
-          }
-        })
-        .catch((e) => {
-          this.showLaravelError(e);
-        })
-        .finally(() => {
-          this.busy_change_author = false;
-        });
     },
 
     //――――――――――――――――― Load Other Language ―――――――――――――――――

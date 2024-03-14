@@ -131,11 +131,11 @@
 </template>
 
 <script>
-import SOrderStatusView from "@components/order/order-status/SOrderStatusView.vue";
+import SOrderStatusView from "@components/storefront/order/order-status/SOrderStatusView.vue";
 import { AvocadoOrderStates } from "@core/enums/avocado/AvocadoOrderStates";
-import SOrderDeliveryStatusStepper from "@components/order/delivery/status/stepper/SOrderDeliveryStatusStepper.vue";
+import SOrderDeliveryStatusStepper from "@components/storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
-import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SStorefrontAvocadoCustomerOrderList",

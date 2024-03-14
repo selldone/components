@@ -222,7 +222,7 @@
 
 <script>
 import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
-import SImageUploader from "../../../../uploader/SImageUploader.vue";
+import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
 import SValueDashed from "@components/ui/text/SValueDashed.vue";
 
 export default {

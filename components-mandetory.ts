@@ -124,7 +124,7 @@ export function installGlobalComponents(app: App) {
 
   const SMapView = defineAsyncComponent(
     () =>
-      import(/* webpackChunkName: "plug-map" */ "./map/map-view/SMapView.vue"),
+      import(/* webpackChunkName: "plug-map" */ "@components/ui/map/map-view/SMapView.vue"),
   );
   app.component("s-map-view", SMapView);
 

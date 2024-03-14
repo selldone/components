@@ -302,12 +302,12 @@
 </template>
 
 <script>
-import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
 import SDragPins from "@components/ui/drag/pins/SDragPins.vue";
-import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
+import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
 import VariantSelectorMenu from "@components/ui/variant/VariantSelectorMenu.vue";
-import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
+import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
 import _ from "lodash-es";
 
 export default {

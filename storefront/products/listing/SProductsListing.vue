@@ -283,7 +283,7 @@
           >{{ remains_count }} {{ $t("global.actions.more") }}
         </v-btn>
 
-        <s-storefront-products-filter-menu
+        <s-category-filter
           v-if="has_filter"
           v-model="show_filter_menu"
           :class="{
@@ -359,18 +359,18 @@
 </template>
 
 <script>
-import SShopProductCard from "@components/product/card/SShopProductCard.vue";
-import SProductsSortView from "@components/product/sort/SProductsSortView.vue";
-import SCategoryCard from "@components/category/card/SCategoryCard.vue";
+import SShopProductCard from "@components/storefront/product/card/SShopProductCard.vue";
+import SProductsSortView from "@components/storefront/product/sort/SProductsSortView.vue";
+import SCategoryCard from "@components/storefront/category/card/SCategoryCard.vue";
 import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
-import SStorefrontProductsFilterMenu from "@components/storefront/filter/SStorefrontProductsFilterMenu.vue";
+import SCategoryFilter from "@components/storefront/category/filter/SCategoryFilter.vue";
 import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
-import SProductOverview from "@components/product/overview/SProductOverview.vue";
+import SProductOverview from "@components/storefront/overview/SProductOverview.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
-import BProductSpecTable from "../../../product/spec/table/BProductSpecTable.vue";
+import BProductSpecTable from "@components/storefront/product/spec/table/BProductSpecTable.vue";
 import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
-import SProductOverviewLoading from "@components/product/overview/loading/SProductOverviewLoading.vue";
+import SProductOverviewLoading from "@components/storefront/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
 import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
@@ -383,7 +383,7 @@ export default {
     SBreadcrumbImage,
     BProductSpecTable,
     SProductOverview,
-    SStorefrontProductsFilterMenu,
+    SCategoryFilter,
     SCategoryCard,
     SProductsSortView,
     SShopProductCard,
@@ -1013,7 +1013,7 @@ export default {
           ? 256
           : 0);
 
-      let width = Math.min(real_w / 3, 200);
+      let width = Math.floor(Math.min(real_w / 3, 200))-1;
 
       //   console.log('onResize',width)
       this.insta_size = `${width}px`;

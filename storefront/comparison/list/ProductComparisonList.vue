@@ -418,8 +418,8 @@
 </template>
 
 <script>
-import SShopProductRatingView from "@components/product/rating/SShopProductRatingView.vue";
-import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
+import SShopProductRatingView from "@components/storefront/product/rating/SShopProductRatingView.vue";
+import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
 import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 

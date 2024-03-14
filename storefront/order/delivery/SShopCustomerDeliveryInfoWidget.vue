@@ -358,13 +358,13 @@
 
 <script>
 import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
-import SOrderBillCard from "@components/order/bill/card/SOrderBillCard.vue";
+import SOrderBillCard from "@components/storefront/order/billing/card/SOrderBillCard.vue";
 import { ProductType } from "@core/enums/product/ProductType";
-import SOrderDeliveryAutoComplete from "@components/order/delivery/auto-complete/SOrderDeliveryAutoComplete.vue";
+import SOrderDeliveryAutoComplete from "@components/storefront/order/auto-complete/SOrderDeliveryAutoComplete.vue";
 import DeliveryTimelineTransportationOrder from "@components/storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
-import SGeoNavigationButton from "@components/map/geo-button/SGeoNavigationButton.vue";
-import SSmartToggle from "@components/smart/SSmartToggle.vue";
+import SGeoNavigationButton from "@components/ui/map/geo-button/SGeoNavigationButton.vue";
+import SSmartToggle from "@components/ui/smart/SSmartToggle.vue";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",

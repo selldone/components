@@ -503,9 +503,9 @@ import {
   SmartConvertTextToHtml,
   SmartConvertTextToHtmlHashtags,
 } from "@core/helper/html/HtmlHelper";
-import ProductsDenseImagesCircles from "@components/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
-import ProductVariantsView from "@components/product/variant/ProductVariantsView.vue";
-import SShopBuyButton from "@components/product/button/SShopBuyButton.vue";
+import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
+import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
 import VariantSelectorMenu from "@components/ui/variant/VariantSelectorMenu.vue";
 import SDragPins from "@components/ui/drag/pins/SDragPins.vue";
 import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";

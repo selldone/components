@@ -200,17 +200,18 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
 
 .hover-smart-tree {
-  .v-treeview-node {
-    .v-treeview-node__level {
-      transition: all 0.3s;
-    }
+  &:hover {
+    --indent-padding: 0;
 
-    &:hover {
-      .v-treeview-node__level {
-        width: 0;
-      }
+    .v-list-item {
+      padding-inline: 0;
     }
   }
+
+  .v-treeview-item {
+    transition: all 0.3s;
+  }
+
 }
 
 
@@ -525,7 +526,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 .v-input {
-  &:not(.v-input--disabled){
+  &:not(.v-input--disabled) {
     .v-field__append-inner {
       pointer-events: all;
     }
@@ -600,11 +601,12 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     // min-height: 64px;
     // padding-top: 16px;
   }
+
   // FIx vuetify 3 issue in showing numbers in input!
- /* .v-field__input{
-    padding-bottom: 0px;
-    padding-top: 16px;
-  }*/
+  /* .v-field__input{
+     padding-bottom: 0px;
+     padding-top: 16px;
+   }*/
 
   .v-select__selections {
     font-size: 22px;
@@ -711,7 +713,6 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 
-
 // TODO: Fix v-timeline size issue!
 .v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item--after .v-timeline-item__body,
 .v-timeline:not(.v-timeline--dense):not(.v-timeline--reverse) .v-timeline-item:nth-child(odd):not(.v-timeline-item--before) .v-timeline-item__body {
@@ -733,11 +734,12 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     --v-medium-emphasis-opacity: 0.9;
   }
 
-  .v-list{
-    .v-list-subheader{
+  .v-list {
+    .v-list-subheader {
       --v-medium-emphasis-opacity: 0.5;
     }
-    .v-list-item-subtitle{
+
+    .v-list-item-subtitle {
       --v-medium-emphasis-opacity: 0.6;
       font-size: 0.85rem;
     }
@@ -748,19 +750,20 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 /**
     * Fix v-combobox auto height issue!
  */
-.v-input-auto-height{
-  .v-field__input{
-    .v-combobox__selection,.v-autocomplete__selection{
+.v-input-auto-height {
+  .v-field__input {
+    .v-combobox__selection, .v-autocomplete__selection {
       height: auto;
     }
   }
 
 }
+
 /**
   Fix toolbar scroll and overflow issue! (after update to 3.5.7)
  */
-.v-toolbar{
-  .v-toolbar__content{
+.v-toolbar {
+  .v-toolbar__content {
     overflow: visible;
   }
 }
@@ -768,9 +771,9 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 /**
 Fix! Make prepend and append center of list item
  */
-.v-list{
-  .v-list-item{
-    .v-list-item__prepend,.v-list-item__append{
+.v-list {
+  .v-list-item {
+    .v-list-item__prepend, .v-list-item__append {
       margin-top: auto;
       margin-bottom: auto;
     }
@@ -782,8 +785,8 @@ Expandable table on hover rows
 FIX! prevent show extra scroll bar
  */
 
-.s--table-expandable-hover{
-  .v-table__wrapper{
+.s--table-expandable-hover {
+  .v-table__wrapper {
     overflow: visible;
   }
 }
@@ -792,9 +795,10 @@ FIX! prevent show extra scroll bar
 Make v-btn flex to put prepend and append in start and end of button
  */
 
-.s--button-flex{
+.s--button-flex {
   display: flex;
-  .v-btn__content{
+
+  .v-btn__content {
     flex-grow: 1;
   }
 }

@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import SImageUploader from "@components/uploader/SImageUploader.vue";
+import SImageUploader from "@components/ui/uploader/SImageUploader.vue";
 import DraggableImagesList from "@components/ui/image/draggableImagesList.vue";
 import { EventName } from "@core/events/EventBus";
 

@@ -94,7 +94,7 @@
 
 <script>
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
-import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
+import SSmartSwitch from "@components/ui/smart/SSmartSwitch.vue";
 
 export default {
   name: "SShopShareOrderButton",

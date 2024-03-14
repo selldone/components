@@ -81,7 +81,7 @@
         <v-btn
           v-if="!noQr"
           :class="negativeQrMargin ? 'mt-n3' : ''"
-          class="hoverable-icon zoomIn delay_500"
+          class="hoverable-icon zoomIn delay_500 flex-grow-0"
           icon
           variant="text"
           size="small"

@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import { MapHelper } from "@core/helper/map/MapHelper";
 

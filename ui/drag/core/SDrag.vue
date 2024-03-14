@@ -14,8 +14,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import transferDataStore from "./transferDataStore.js";
-import { dropEffects, effectsAllowed, events } from "./constants.js";
+import transferDataStore from "./transferDataStore";
+import { dropEffects, effectsAllowed, events } from "./constants";
 
 export default defineComponent({
   name: "SDrag",

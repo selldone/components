@@ -672,7 +672,7 @@ import { BasketStatus } from "@core/enums/basket/BasketStatus";
 import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 
-import VariantItemViewMicro from "@components/product/variant/VariantItemViewMicro.vue";
+import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
 import { BillStatus } from "@core/enums/basket/BillStatus";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import SShopRowCustomerPaymentGiftCard from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentGiftCard.vue";

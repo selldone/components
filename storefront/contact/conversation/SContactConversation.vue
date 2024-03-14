@@ -252,7 +252,7 @@
 <script>
 import { SupportCategory } from "@core/enums/support/SupportCategory";
 import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
-import SProductPreviewById from "@components/product/preview-by-id/SProductPreviewById.vue";
+import SProductPreviewById from "@components/storefront/product/preview-by-id/SProductPreviewById.vue";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 
 /**

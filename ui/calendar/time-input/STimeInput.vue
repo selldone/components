@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="d-flex align-center">
+  <div class="d-flex align-center justify-center">
     <s-number-input
       v-model="h"
       :max="23"
@@ -21,12 +21,11 @@
       :title="$t('global.commons.hour')"
       background-color="transparent"
       class="intim"
-      dense
-
+      :dense="dense"
       hide-details
+      single-line
       placeholder="00"
-      variant="plain"
-
+      :variant="variant"
     >
     </s-number-input>
     :
@@ -37,11 +36,11 @@
       :title="$t('global.commons.minute')"
       background-color="transparent"
       class="intim"
-      dense
-
+      :dense="dense"
       hide-details
+      single-line
       placeholder="00"
-      variant="plain"
+      :variant="variant"
     >
     </s-number-input>
 
@@ -67,6 +66,12 @@ export default {
   components: { SNumberInput },
   props: {
     modelValue: {},
+    min: { type: String },
+    max: { type: String },
+    variant: {
+      default: "underlined",
+    },
+    dense: Boolean,
   },
 
   data: () => ({
@@ -85,11 +90,41 @@ export default {
       else if (this.h < 20) return TimeSpans.Evening;
       return TimeSpans.Night;
     },
+    max_array() {
+      const arr = this.max?.split(":");
+      return arr?.length === 2 ? arr : null;
+    },
+
+    min_array() {
+      const arr = this.min?.split(":");
+      return arr?.length === 2 ? arr : null;
+    },
+
+    max_h() {
+      if (!this.max_array) return 23;
+      return Math.min(23, this.max_array[0]);
+    },
+
+    max_m() {
+      if (!this.max_array) return null;
+      return Math.min(59, this.max_array[1]);
+    },
+
+    min_h() {
+      if (!this.min_array) return 0;
+      return Math.max(0, this.min_array[0]);
+    },
+
+    min_m() {
+      if (!this.min_array) return 0;
+      return Math.max(0, this.min_array[1]);
+    },
   },
   watch: {
     modelValue() {
       this.assignValue();
     },
+
     out() {
       this.updateValue();
     },
@@ -114,6 +149,12 @@ export default {
       }
       this.h = parseInt(arr[0]);
       this.m = parseInt(arr[1]);
+
+      if (this.max_h != null && this.h > this.max_h) this.h = this.max_h;
+      if (this.max_m != null && this.m > this.max_m) this.m = this.max_m;
+
+      if (this.min_h != null && this.h < this.min_h) this.h = this.min_h;
+      if (this.min_m != null && this.m < this.min_m) this.h = this.min_m;
     },
     updateValue() {
       this.$emit("update:modelValue", this.out);

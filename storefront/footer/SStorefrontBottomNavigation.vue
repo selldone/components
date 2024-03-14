@@ -102,14 +102,13 @@
         }"
         class="zoomIn delay_200"
         min-width="60"
-        retain-focus-on-click
         value="basket"
       >
         <v-badge
           :content="numeralFormat(total_items_in_carts, '0a')"
           :model-value="total_items_in_carts > 0"
           color="teal"
-          offset-y="10"
+         floating
         >
           <img
             v-if="total_items_in_carts > 0"
@@ -133,15 +132,16 @@
         "
         class="zoomIn delay_300"
         min-width="60"
-        retain-focus-on-click
         value="notification"
         @click="USER() ? null : NeedLogin()"
+        floating
       >
         <v-badge
           :content="numeralFormat(sum_orders_badges, '0a')"
           :model-value="sum_orders_badges > 0"
           color="red"
-          offset-y="10"
+
+
         >
           <v-icon>notifications</v-icon>
         </v-badge>
@@ -152,7 +152,6 @@
       <v-btn
         class="zoomIn delay_400"
         min-width="60"
-        retain-focus-on-click
         v-bind="
           USER()
             ? { to: { name: window.$storefront.routes.USER_PROFILE_PAGE } }
@@ -165,7 +164,7 @@
           v-if="USER_ID()"
           :model-value="!!getClub()"
           color="transparent"
-          offset-y="10"
+          floating
         >
           <v-avatar color="#eee" size="24">
             <v-img :src="getUserAvatar(USER_ID())"></v-img>
@@ -189,8 +188,8 @@
 
     <template v-if="search_mode">
       <v-btn
-        class="zoomIn delay_300"
-        icon
+        class="zoomIn delay_300 flex-grow-0"
+        icon variant="text"
         min-width="60"
         width="70"
         @click="$refs.search.showQRScanner()"
@@ -209,22 +208,21 @@
         expand-input
         flat
         no-qr
-        rounded
-        shadow
-        solo
+        variant="solo"
+        background-color="transparent"
         @onClear="onClear"
         @onSearch="onSearch"
       />
 
       <v-btn
         key="ser"
-        class="zoomIn"
-        icon
+        class="zoomIn flex-grow-0"
+        icon variant="text"
         min-width="60"
         width="70"
         @click="search_mode = false"
       >
-        <v-icon>{{ $t("icons.navigate_next") }}</v-icon>
+        <v-icon>close</v-icon>
       </v-btn>
     </template>
   </v-bottom-navigation>

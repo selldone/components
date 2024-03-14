@@ -64,7 +64,7 @@
               v-if="!(game_has_result && !play)"
               class="arrow"
               height="64"
-              src="../../../login/assets/arrow.svg"
+              src="../../login/assets/arrow.svg"
               width="64"
             />
             <ul
@@ -149,7 +149,7 @@
               >
                 <v-img
                   :src="
-                    require('../../../login/assets/pattern-empty-fortune.jpg')
+                    require('@components/storefront/login/assets/pattern-empty-fortune.jpg')
                   "
                   class="image"
                 ></v-img>

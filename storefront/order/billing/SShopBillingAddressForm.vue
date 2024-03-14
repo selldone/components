@@ -114,8 +114,8 @@
 
 <script>
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
-import SSmartToggle from "@components/smart/SSmartToggle.vue";
-import SSmartSwitch from "@components/smart/SSmartSwitch.vue";
+import SSmartToggle from "@components/ui/smart/SSmartToggle.vue";
+import SSmartSwitch from "@components/ui/smart/SSmartSwitch.vue";
 import { MapHelper } from "@core/helper/map/MapHelper";
 
 export default {

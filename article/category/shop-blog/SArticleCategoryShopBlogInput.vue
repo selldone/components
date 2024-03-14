@@ -36,6 +36,7 @@
         :title="item.raw.category"
         class="text-start"
         v-bind="props"
+        lines="two"
       >
         <template v-slot:prepend>
           <v-avatar rounded size="28"
@@ -49,9 +50,11 @@
       <v-avatar v-if="item.raw.icon" class="me-2" rounded size="28"
         ><img :src="getShopImagePath(item.raw.icon)"
       /></v-avatar>
-      <div class="flex-grow-1 text-start">
+      <div class="flex-grow-1 text-start overflow-hidden">
         <div class="text-subtitle-2">{{ item.raw.category }}</div>
-        <small>{{ item.raw.description }}</small>
+        <div class="single-line small text-muted">
+          {{ item.raw.description }}
+        </div>
       </div>
     </template>
   </v-select>

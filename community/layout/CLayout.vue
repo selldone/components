@@ -137,17 +137,17 @@
 </template>
 
 <script>
-import CommunityUserProfileDialog from "../widgets/global/CommunityUserProfileDialog.vue";
-import CommunityShareDialog from "../widgets/global/CommunityShareDialog.vue";
-import CommunityPostReactionsDialog from "../widgets/global/CommunityPostReactionsDialog.vue";
-import CommunityPostInsightsDialog from "../widgets/global/CommunityPostInsightsDialog.vue";
-import CommunityPostActionsMenu from "../widgets/global/CommunityPostActionsMenu.vue";
-import CommunityCommentActionsMenu from "../widgets/global/CommunityCommentActionsMenu.vue";
-import CommunityPostReportsDialog from "../widgets/global/CommunityPostReportsDialog.vue";
-import CommunityAnalytics from "../widgets/global/CommunityAnalytics.vue";
-import CommunityCommentReportsDialog from "../widgets/global/CommunityCommentReportsDialog.vue";
+import CommunityUserProfileDialog from "@components/community/global/CommunityUserProfileDialog.vue";
+import CommunityShareDialog from "@components/community/global/CommunityShareDialog.vue";
+import CommunityPostReactionsDialog from "@components/community/global/CommunityPostReactionsDialog.vue";
+import CommunityPostInsightsDialog from "@components/community/global/CommunityPostInsightsDialog.vue";
+import CommunityPostActionsMenu from "@components/community/global/CommunityPostActionsMenu.vue";
+import CommunityCommentActionsMenu from "@components/community/global/CommunityCommentActionsMenu.vue";
+import CommunityPostReportsDialog from "@components/community/global/CommunityPostReportsDialog.vue";
+import CommunityAnalytics from "@components/community/global/CommunityAnalytics.vue";
+import CommunityCommentReportsDialog from "@components/community/global/CommunityCommentReportsDialog.vue";
 import { TimeSeries } from "@core/timeserie/TimeSeries";
-import CommunityWidget from "../widgets/CommunityWidget.vue";
+import CommunityWidget from "../post/widget/CommunityWidget.vue";
 import _ from "lodash-es";
 
 export default {

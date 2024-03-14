@@ -259,7 +259,7 @@ export default {
         };
       else if (article.parent_type === ArticleTypes.SelldoneHelp.code)
         return {
-          name: "Help",
+          name: "OPageHelp",
           params: { help_id: article.parent_id },
         };
 
