@@ -48,8 +48,8 @@ export class UploadHelper {
     const config: AxiosRequestConfig = {
       withCredentials: withCredentials,
       onUploadProgress: (e:AxiosProgressEvent) => {
-        const pval =e.total? Math.floor((e.loaded / (e.total + 0.001)) * 100):e.progress;
-        //console.log("progress", e.loaded, e.total, pval + "%");
+        const pval =e.total? Math.floor((e.loaded / (e.total + 0.001)) * 100):((e.progress?e.progress:1)*100);
+        // console.log("progress", e.loaded, e.total, pval + "%",e);
 
         // + Add to global upload keeper:
         vue.$store.dispatch({

@@ -74,7 +74,7 @@
           v-else-if="src"
           :class="isCurrent ? '' : '-scale'"
           :color="isCurrent ? this.imageBgSelected : imageBgColor"
-          :rounded="tile && !isCurrent ? 'lg' : 'circle'"
+          :rounded="tile && !isCurrent ? 'sm' : 'circle'"
           :size="
             (imageSize
               ? imageSize

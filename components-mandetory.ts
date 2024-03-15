@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import { App, defineAsyncComponent } from "vue";
+import {App, defineAsyncComponent} from "vue";
 
 //---------------- Vue FilePond --------------
 // Import Vue FilePond
@@ -74,12 +74,12 @@ import "@components/article/add-on/catalog/plugin/ArticleAddonCatalogPlugin";
 import "@components/article/add-on/canvas/plugin/ArticleAddonCanvasPlugin";
 
 // @ts-ignore
-import { MediumInsert } from "@components/article/insert/SelldoneEditorInsert";
+import {MediumInsert} from "@components/article/insert/SelldoneEditorInsert";
 //―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
 import "prismjs";
 import "prismjs/themes/prism.css";
 
-import { PrismEditor } from "vue-prism-editor";
+import {PrismEditor} from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css";
 
 //---------------- Widget --------------
@@ -124,7 +124,9 @@ export function installGlobalComponents(app: App) {
 
   const SMapView = defineAsyncComponent(
     () =>
-      import(/* webpackChunkName: "plug-map" */ "@components/ui/map/map-view/SMapView.vue"),
+      import(
+        /* webpackChunkName: "plug-map" */ "@components/ui/map/map-view/SMapView.vue"
+      ),
   );
   app.component("s-map-view", SMapView);
 

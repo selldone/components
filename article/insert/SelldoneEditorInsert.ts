@@ -12,60 +12,43 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-//█████████████████████████████████████████████████████████████
-//―――――――――――――――――― Code ―――――――――――――――――
-//█████████████████████████████████████████████████████████████
+// ES6 TypeScript module
+import * as $ from "jquery";
+import Handlebars from "handlebars/runtime";
+import MediumEditor from "medium-editor";
+import "blueimp-file-upload";
 
-(function (factory) {
-  // Check if we're using the AMD module system (like RequireJS)
-  // @ts-ignore
-  if (typeof define === "function" && define.amd) {
-    // Define the module and its dependencies
-    // @ts-ignore
-    define([
-      "jquery",
-      "handlebars/runtime",
-      "medium-editor",
-      "blueimp-file-upload",
-    ], factory);
-  }
-  // Check if we're in a CommonJS environment (like Node.js)
-  else if (typeof module === "object" && module.exports) {
-    // Export a function for initializing the module
-    module.exports = function (providedJQuery: any) {
-      // If we're not in a browser environment, throw an error
-      if (typeof window === "undefined") {
-        throw new Error("medium-editor-insert-plugin runs only in a browser.");
-      }
+declare let FB: any;
 
-      // Use provided jQuery or require it if it's not provided
-      const jQuery = providedJQuery || require("jquery");
-      window.jQuery = jQuery;
+let MediumInsert: Record<string, any> = {
+  Templates: {},
+  // Other properties and methods...
+};
 
-      // Require other necessary dependencies
-      const Handlebars = require("handlebars/runtime");
-      const MediumEditor = require("medium-editor");
-      require("blueimp-file-upload");
+// Export MediumInsert
+export { MediumInsert };
 
-      // Call the factory function to initialize our module
-      factory(jQuery, Handlebars, MediumEditor);
+interface IMediumEditor {
+  selection: {
+    getCaretOffsets: (
+      element: HTMLElement,
+      range?: Range,
+    ) => { left: number; right: number };
+    getSelectionHtml: (element: HTMLElement) => string;
+  };
+  util: any;
+}
 
-      // Return jQuery as the exported value
-      return jQuery;
-    };
-  }
-  // If we're not using any module system
-  else {
-    // Simply call the factory function directly
-    factory(jQuery, Handlebars, MediumEditor);
-  }
-})(function ($: any, Handlebars: any, MediumEditor: MediumEditor.MediumEditor) {
-  this.MediumInsert = this.MediumInsert || {};
-  this.MediumInsert.Templates = this.MediumInsert.Templates || {};
-
-  this.MediumInsert.Templates["src/js/templates/core-buttons.hbs"] =
+function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
+  MediumInsert.Templates["src/js/templates/core-buttons.hbs"] =
     Handlebars.template({
-      1: function (container, depth0, helpers, partials, data) {
+      1: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1, helper;
         const alias1 = depth0 != null ? depth0 : container.nullContext || {},
           alias2 = helpers.helperMissing,
@@ -99,7 +82,13 @@
         );
       },
       compiler: [7, ">= 4.0.0"],
-      main: function (container, depth0, helpers, partials, data) {
+      main: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1;
 
         return (
@@ -123,10 +112,16 @@
       useData: true,
     });
 
-  this.MediumInsert.Templates["src/js/templates/core-caption.hbs"] =
+  MediumInsert.Templates["src/js/templates/core-caption.hbs"] =
     Handlebars.template({
       compiler: [7, ">= 4.0.0"],
-      main: function (container, depth0, helpers, partials, data) {
+      main: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let helper;
 
         return (
@@ -151,18 +146,30 @@
       useData: true,
     });
 
-  this.MediumInsert.Templates["src/js/templates/core-empty-line.hbs"] =
+  MediumInsert.Templates["src/js/templates/core-empty-line.hbs"] =
     Handlebars.template({
       compiler: [7, ">= 4.0.0"],
-      main: function (container, depth0, helpers, partials, data) {
+      main: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         return "<p><br></p>\n";
       },
       useData: true,
     });
 
-  this.MediumInsert.Templates["src/js/templates/embeds-toolbar.hbs"] =
+  MediumInsert.Templates["src/js/templates/embeds-toolbar.hbs"] =
     Handlebars.template({
-      1: function (container, depth0, helpers, partials, data) {
+      1: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1;
 
         return (
@@ -183,7 +190,13 @@
           "        </ul>\n    </div>\n"
         );
       },
-      2: function (container, depth0, helpers, partials, data) {
+      2: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1;
 
         return (stack1 = helpers["if"].call(
@@ -200,7 +213,13 @@
           ? stack1
           : "";
       },
-      3: function (container, depth0, helpers, partials, data) {
+      3: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1,
           helper,
           // eslint-disable-next-line prefer-const
@@ -237,7 +256,13 @@
           "</button>\n                    </li>\n"
         );
       },
-      5: function (container, depth0, helpers, partials, data) {
+      5: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1;
 
         return (
@@ -259,7 +284,13 @@
         );
       },
       compiler: [7, ">= 4.0.0"],
-      main: function (container, depth0, helpers, partials, data) {
+      main: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1,
           // eslint-disable-next-line prefer-const
           alias1 = depth0 != null ? depth0 : container.nullContext || {};
@@ -297,10 +328,16 @@
       useData: true,
     });
 
-  this.MediumInsert.Templates["src/js/templates/embeds-wrapper.hbs"] =
+  MediumInsert.Templates["src/js/templates/embeds-wrapper.hbs"] =
     Handlebars.template({
       compiler: [7, ">= 4.0.0"],
-      main: function (container, depth0, helpers, partials, data) {
+      main: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1, helper;
 
         return (
@@ -325,22 +362,40 @@
       useData: true,
     });
 
-  this.MediumInsert.Templates["src/js/templates/images-fileupload.hbs"] =
+  MediumInsert.Templates["src/js/templates/images-fileupload.hbs"] =
     Handlebars.template({
       compiler: [7, ">= 4.0.0"],
-      main: function (container, depth0, helpers, partials, data) {
+      main: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         return '<input type="file" multiple>';
       },
       useData: true,
     });
 
-  this.MediumInsert.Templates["src/js/templates/images-image.hbs"] =
+  MediumInsert.Templates["src/js/templates/images-image.hbs"] =
     Handlebars.template({
-      1: function (container, depth0, helpers, partials, data) {
+      1: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         return `        <div class="medium-insert-images-progress"><img src="${depth0.img}" alt="" /><div class="loader"></div><div class="progress-bar"  ></div></div>\n`;
       },
       compiler: [7, ">= 4.0.0"],
-      main: function (container, depth0, helpers, partials, data) {
+      main: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1,
           helper,
           // eslint-disable-next-line prefer-const
@@ -378,18 +433,30 @@
       useData: true,
     });
 
-  this.MediumInsert.Templates["src/js/templates/images-progressbar.hbs"] =
+  MediumInsert.Templates["src/js/templates/images-progressbar.hbs"] =
     Handlebars.template({
       compiler: [7, ">= 4.0.0"],
-      main: function (container, depth0, helpers, partials, data) {
+      main: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         return '<progress min="0" max="100" value="0">0</progress>';
       },
       useData: true,
     });
 
-  this.MediumInsert.Templates["src/js/templates/images-toolbar.hbs"] =
+  MediumInsert.Templates["src/js/templates/images-toolbar.hbs"] =
     Handlebars.template({
-      1: function (container, depth0, helpers, partials, data) {
+      1: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1;
 
         return (stack1 = helpers["if"].call(
@@ -406,7 +473,13 @@
           ? stack1
           : "";
       },
-      2: function (container, depth0, helpers, partials, data) {
+      2: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1,
           helper,
           // eslint-disable-next-line prefer-const
@@ -443,7 +516,13 @@
           "</button>\n                </li>\n"
         );
       },
-      4: function (container, depth0, helpers, partials, data) {
+      4: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1;
 
         return (
@@ -464,7 +543,13 @@
           "    	</ul>\n    </div>\n"
         );
       },
-      5: function (container, depth0, helpers, partials, data) {
+      5: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1;
 
         return (stack1 = helpers["if"].call(
@@ -481,7 +566,13 @@
           ? stack1
           : "";
       },
-      6: function (container, depth0, helpers, partials, data) {
+      6: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1,
           helper,
           // eslint-disable-next-line prefer-const
@@ -519,7 +610,13 @@
         );
       },
       compiler: [7, ">= 4.0.0"],
-      main: function (container, depth0, helpers, partials, data) {
+      main: function (
+        container: any,
+        depth0: any,
+        helpers: any,
+        partials: any,
+        data: any,
+      ) {
         let stack1;
         const alias1 = depth0 != null ? depth0 : container.nullContext || {};
 
@@ -559,15 +656,15 @@
 
   (function ($, window, document, undefined) {
     /** Default values */
-    const pluginName = "mediumInsert",
-      defaults = {
-        editor: null,
-        enabled: true,
-        addons: {
-          images: true, // boolean or object containing configuration
-          embeds: true,
-        },
-      };
+    const pluginName = "mediumInsert";
+    const defaults = {
+      editor: null,
+      enabled: true,
+      addons: {
+        images: true, // boolean or object containing configuration
+        embeds: true,
+      },
+    };
 
     /**
      * Capitalize first character
@@ -576,7 +673,7 @@
      * @return {string}
      */
 
-    function ucfirst(str) {
+    function ucfirst(str: string) {
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
@@ -591,7 +688,7 @@
      * @return {void}
      */
 
-    function Core(el, options) {
+    function Core(el: any, options: any) {
       let editor;
 
       this.el = el;
@@ -672,7 +769,7 @@
       const that = this;
 
       this.$el
-        .on("dragover drop", function (e) {
+        .on("dragover drop", function (e: Event) {
           e.preventDefault();
         })
         .on("keyup click", $.proxy(this, "toggleButtons"))
@@ -687,9 +784,16 @@
           $.proxy(this, "toggleAddons"),
         )
         .on("click", ".medium-insert-action", $.proxy(this, "addonAction"))
-        .on("paste", ".medium-insert-caption-placeholder", function (e) {
-          $.proxy(that, "removeCaptionPlaceholder")($(e.target));
-        });
+        .on(
+          "paste",
+          ".medium-insert-caption-placeholder",
+          function (e: ClipboardEvent) {
+            $.proxy(
+              that,
+              "removeCaptionPlaceholder",
+            )($(e.target as HTMLElement));
+          },
+        );
 
       $(window).on("resize", $.proxy(this, "positionButtons", null));
     };
@@ -721,8 +825,13 @@
 
         // Restore original embed code from embed wrapper attribute value.
         $data.find("[data-embed-code]").each(function () {
-          const $this = $(this),
-            html = $("<div />").html($this.attr("data-embed-code")).text();
+          const $this = $(this);
+          let _original_embed_code: string | undefined =
+            $this.attr("data-embed-code");
+          if (!_original_embed_code)
+            _original_embed_code =
+              "<small>Original embed code missed in attr [data-embed-code]!</small>";
+          const html = $("<div />").html(_original_embed_code).text();
           $this.html(html);
         });
 
@@ -774,7 +883,10 @@
      * @return {void}
      */
 
-    Core.prototype.editorUpdatePlaceholder = function (el, dontShow) {
+    Core.prototype.editorUpdatePlaceholder = function (
+      el: HTMLElement,
+      dontShow: boolean,
+    ) {
       const contents = $(el)
         .children()
         .not(".medium-insert-buttons")
@@ -811,7 +923,7 @@
      */
 
     Core.prototype.deselect = function () {
-      document.getSelection().removeAllRanges();
+      document.getSelection()?.removeAllRanges();
     };
 
     /**
@@ -844,7 +956,7 @@
      * @return {void}
      */
 
-    Core.prototype.disableSelection = function (e) {
+    Core.prototype.disableSelection = function (e: any) {
       const $el = $(e.target);
 
       if (
@@ -868,7 +980,7 @@
         return;
       }
 
-      $.each(this.options.addons, function (addon, options) {
+      $.each(this.options.addons, function (addon: string, options: any) {
         const addonName = pluginName + ucfirst(addon);
 
         if (options === false) {
@@ -967,11 +1079,14 @@
      * @return {void}
      */
 
-    Core.prototype.toggleButtons = function (e) {
+    Core.prototype.toggleButtons = function (e: any) {
       const $el = $(e.target);
       const selection = window.getSelection();
       const that = this;
-      let range, $current, $p, activeAddon;
+      let range;
+      let $current: any;
+      let $p;
+      let activeAddon: any;
 
       if (this.options.enabled === false) {
         return;
@@ -1002,7 +1117,7 @@
           .find(".medium-insert-active")
           .removeClass("medium-insert-active");
 
-        $.each(this.options.addons, function (addon) {
+        $.each(this.options.addons, function (addon: string) {
           if ($el.closest(".medium-insert-" + addon).length) {
             $current = $el;
           }
@@ -1052,7 +1167,7 @@
      * @returns {void}
      */
 
-    Core.prototype.showButtons = function (activeAddon) {
+    Core.prototype.showButtons = function (activeAddon: string) {
       const $buttons = this.$el.find(".medium-insert-buttons");
 
       $buttons.show();
@@ -1074,7 +1189,7 @@
      * @returns {void}
      */
 
-    Core.prototype.hideButtons = function ($el) {
+    Core.prototype.hideButtons = function ($el: any) {
       $el = $el || this.$el;
 
       $el.find(".medium-insert-buttons").hide();
@@ -1091,7 +1206,7 @@
      * @return {void}
      */
 
-    Core.prototype.positionButtons = function (activeAddon) {
+    Core.prototype.positionButtons = function (activeAddon: string) {
       const $buttons = this.$el.find(".medium-insert-buttons"),
         $p = this.$el.find(".medium-insert-active"),
         $lastCaption = $p.hasClass("medium-insert-images-grid")
@@ -1106,7 +1221,7 @@
               .getComputedStyle(elementsContainer)
               .getPropertyValue("position"),
           ) > -1,
-        position = {};
+        position: { left: number; top: number } = { left: 0, top: 0 };
 
       if ($p.length) {
         position.left = $p.position().left;
@@ -1198,7 +1313,7 @@
      * @return {void}
      */
 
-    Core.prototype.addonAction = function (e) {
+    Core.prototype.addonAction = function (e: any) {
       const $a = $(e.currentTarget),
         addon = $a.data("addon"),
         action = $a.data("action");
@@ -1215,7 +1330,7 @@
      * @return {void}
      */
 
-    Core.prototype.moveCaret = function ($el, position) {
+    Core.prototype.moveCaret = function ($el: any, position: number | null) {
       position = position || 0;
       const range = document.createRange();
       const sel = window.getSelection();
@@ -1228,8 +1343,8 @@
 
       range.setStart(el.childNodes[0], position);
       range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
+      sel?.removeAllRanges();
+      sel?.addRange(range);
     };
 
     /**
@@ -1240,7 +1355,7 @@
      * @return {void}
      */
 
-    Core.prototype.addCaption = function ($el, placeholder) {
+    Core.prototype.addCaption = function ($el: any, placeholder: any) {
       const $caption = $el.find("figcaption");
 
       if ($caption.length === 0) {
@@ -1259,7 +1374,7 @@
      * @return {void}
      */
 
-    Core.prototype.removeCaptions = function ($ignore) {
+    Core.prototype.removeCaptions = function ($ignore: any) {
       let $captions = this.$el.find("figcaption");
 
       if ($ignore) {
@@ -1283,7 +1398,7 @@
      * @return {void}
      */
 
-    Core.prototype.removeCaptionPlaceholder = function ($el) {
+    Core.prototype.removeCaptionPlaceholder = function ($el: any) {
       const $caption = $el.is("figcaption") ? $el : $el.find("figcaption");
 
       if ($caption.length) {
@@ -1294,11 +1409,11 @@
     };
 
     /** Plugin initialization */
-
-    $.fn[pluginName] = function (options) {
+    // @ts-ignore
+    $.fn[pluginName] = function (options: any) {
       return this.each(function () {
-        let that = this,
-          textareaId;
+        let that = this;
+        let textareaId;
 
         if ($(that).is("textarea")) {
           textareaId = $(that).attr("medium-editor-textarea-id");
@@ -1309,6 +1424,7 @@
 
         if (!$.data(that, "plugin_" + pluginName)) {
           // Plugin initialization
+          // @ts-ignore
           $.data(that, "plugin_" + pluginName, new Core(that, options));
           $.data(that, "plugin_" + pluginName).init();
         } else if (
@@ -1376,7 +1492,7 @@
      * @return {void}
      */
 
-    function Embeds(el, options) {
+    function Embeds(el: any, options: any) {
       this.el = el;
       this.$el = $(el);
       this.templates = window.MediumInsert.Templates;
@@ -1550,8 +1666,8 @@
      * @return {void}
      */
 
-    Embeds.prototype.togglePlaceholder = function (e) {
-      let $place = $(e.target);
+    Embeds.prototype.togglePlaceholder = function (e: Event) {
+      let $place = $(e.target as any);
       const selection = window.getSelection();
       let text;
 
@@ -1598,8 +1714,8 @@
      * @return {void}
      */
 
-    Embeds.prototype.fixRightClickOnPlaceholder = function (e) {
-      this.core.moveCaret($(e.target));
+    Embeds.prototype.fixRightClickOnPlaceholder = function (e: Event) {
+      this.core.moveCaret($(e.target as any));
     };
 
     /**
@@ -1609,7 +1725,7 @@
      * @return {void}
      */
 
-    Embeds.prototype.processLink = function (e) {
+    Embeds.prototype.processLink = function (e: any) {
       const $place = this.$el.find(".medium-insert-embeds-active");
 
       if (!$place.length) {
@@ -1643,7 +1759,7 @@
      * @return {void}
      */
 
-    Embeds.prototype.processPasted = function (e) {
+    Embeds.prototype.processPasted = function (e: any) {
       if ($(".medium-insert-embeds-active").length) {
         return;
       }
@@ -1659,7 +1775,7 @@
       }
     };
 
-    function isValidUrl(string) {
+    function isValidUrl(string: string) {
       try {
         new URL(string);
         return true;
@@ -1675,7 +1791,7 @@
      * @return {void}
      */
 
-    Embeds.prototype.oembed = function (url, pasted) {
+    Embeds.prototype.oembed = function (url: string, pasted: boolean) {
       const that = this;
 
       console.log("🟤 Insert > oembed  | ", "url:", url, "pasted:", pasted);
@@ -1724,7 +1840,7 @@
             $.proxy(that, "embed", html)();
           }
         },
-        error: function (jqXHR, textStatus, errorThrown) {
+        error: function (jqXHR, textStatus, errorThrown: any) {
           const responseJSON = (function () {
             try {
               return JSON.parse(jqXHR.responseText);
@@ -1762,7 +1878,7 @@
      * @return {void}
      */
 
-    Embeds.prototype.parseUrl = function (url, pasted) {
+    Embeds.prototype.parseUrl = function (url: string, pasted: boolean) {
       let html;
 
       console.log("🟤 Insert > parseUrl | ", "url:", url, "pasted:", pasted);
@@ -1836,7 +1952,7 @@
      * @return {void}
      */
 
-    Embeds.prototype.embed = function (html, pastedUrl) {
+    Embeds.prototype.embed = function (html: string, pastedUrl: string) {
       let $place = this.$el.find(".medium-insert-embeds-active"),
         $div;
 
@@ -1901,7 +2017,7 @@
      *
      * @return {void}
      */
-    Embeds.prototype.convertBadEmbed = function (content) {
+    Embeds.prototype.convertBadEmbed = function (content: string) {
       console.log("🟤 Insert > convertBadEmbed | ", "content:", content);
 
       const emptyTemplate =
@@ -1932,7 +2048,7 @@
      * @returns {void}
      */
 
-    Embeds.prototype.selectEmbed = function (e) {
+    Embeds.prototype.selectEmbed = function (e: any) {
       const that = this;
       if (this.core.options.enabled) {
         const $embed = $(e.target).hasClass("medium-insert-embeds")
@@ -1961,7 +2077,7 @@
      * @returns {void}
      */
 
-    Embeds.prototype.unselectEmbed = function (e) {
+    Embeds.prototype.unselectEmbed = function (e: any) {
       const $el = $(e.target).hasClass("medium-insert-embeds")
           ? $(e.target)
           : $(e.target).closest(".medium-insert-embeds"),
@@ -2003,7 +2119,7 @@
      * @returns {void}
      */
 
-    Embeds.prototype.removeEmbed = function (e) {
+    Embeds.prototype.removeEmbed = function (e: any) {
       let $embed, $empty;
 
       if (e.which === 8 || e.which === 46) {
@@ -2085,9 +2201,9 @@
     };
 
     Embeds.prototype.repositionToolbars = function () {
-      const $toolbar = $(".medium-insert-embeds-toolbar"),
-        $toolbar2 = $(".medium-insert-embeds-toolbar2"),
-        $embed = this.$el.find(".medium-insert-embeds-selected"),
+      const $toolbar = $(".medium-insert-embeds-toolbar");
+      const $toolbar2 = $(".medium-insert-embeds-toolbar2");
+      const $embed = this.$el.find(".medium-insert-embeds-selected"),
         elementsContainer = this.core.getEditor().options.elementsContainer,
         elementsContainerAbsolute =
           ["absolute", "fixed"].indexOf(
@@ -2099,12 +2215,12 @@
           ? elementsContainer.getBoundingClientRect()
           : null;
       let containerWidth = $(window).width();
-      const position = {};
+      const position = { top: 0, left: 0 };
 
       if ($toolbar2.length) {
         position.top = $embed.offset().top + 2; // 2px - distance from a border
         position.left =
-          $embed.offset().left + $embed.width() - $toolbar2.width() - 4; // 4px - distance from a border
+          $embed.offset().left + $embed.width() - $toolbar2.width()! - 4; // 4px - distance from a border
 
         if (elementsContainerAbsolute) {
           position.top +=
@@ -2113,8 +2229,8 @@
           containerWidth = $(elementsContainer).width();
         }
 
-        if (position.left + $toolbar2.width() > containerWidth) {
-          position.left = containerWidth - $toolbar2.width();
+        if (position.left + $toolbar2.width()! > containerWidth!) {
+          position.left = containerWidth! - $toolbar2.width()!;
         }
 
         $toolbar2.css(position);
@@ -2122,8 +2238,8 @@
 
       if ($toolbar.length) {
         position.left =
-          $embed.offset().left + $embed.width() / 2 - $toolbar.width() / 2;
-        position.top = $embed.offset().top - $toolbar.height() - 8 - 2 - 5; // 8px - hight of an arrow under toolbar, 2px - height of an embed outset, 5px - distance from an embed
+          $embed.offset().left + $embed.width() / 2 - $toolbar.width()! / 2;
+        position.top = $embed.offset().top - $toolbar.height()! - 8 - 2 - 5; // 8px - hight of an arrow under toolbar, 2px - height of an embed outset, 5px - distance from an embed
 
         if (elementsContainerAbsolute) {
           position.top +=
@@ -2146,7 +2262,7 @@
      * @returns {void}
      */
 
-    Embeds.prototype.toolbarAction = function (e) {
+    Embeds.prototype.toolbarAction = function (e: any) {
       const $button = $(e.target).is("button")
           ? $(e.target)
           : $(e.target).closest("button"),
@@ -2190,7 +2306,7 @@
      * @returns {void}
      */
 
-    Embeds.prototype.toolbar2Action = function (e) {
+    Embeds.prototype.toolbar2Action = function (e: any) {
       const $button = $(e.target).is("button")
           ? $(e.target)
           : $(e.target).closest("button"),
@@ -2204,13 +2320,14 @@
     };
 
     /** Plugin initialization */
-
-    $.fn[pluginName + addonName] = function (options) {
+    // @ts-ignore
+    $.fn[pluginName + addonName] = function (options: any) {
       return this.each(function () {
         if (!$.data(this, "plugin_" + pluginName + addonName)) {
           $.data(
             this,
             "plugin_" + pluginName + addonName,
+            // @ts-ignore
             new Embeds(this, options),
           );
         }
@@ -2220,81 +2337,81 @@
 
   /*global MediumEditor*/
 
-  (function ($, window, document, Util, undefined) {
+  (function ($: any, window: any, document: any, Util, undefined) {
     /** Default values */
-    const pluginName = "mediumInsert",
-      addonName = "Images", // first char is uppercase
-      defaults = {
-        label: '<span class="fa fa-camera"></span>',
-        deleteMethod: "POST",
-        deleteScript: "delete.php",
-        preview: true,
-        captions: true,
-        captionPlaceholder: "Type caption for image (optional)",
-        autoGrid: 3,
-        fileUploadOptions: {
-          // See https://github.com/blueimp/jQuery-File-Upload/wiki/Options
-          url: null,
-          acceptFileTypes: /(\.|\/)(gif|jpe?g|png|apng|avif|svg|webp)$/i,
+    const pluginName: string = "mediumInsert";
+    const addonName: string = "Images"; // first char is uppercase
+    const defaults = {
+      label: '<span class="fa fa-camera"></span>',
+      deleteMethod: "POST",
+      deleteScript: "delete.php",
+      preview: true,
+      captions: true,
+      captionPlaceholder: "Type caption for image (optional)",
+      autoGrid: 3,
+      fileUploadOptions: {
+        // See https://github.com/blueimp/jQuery-File-Upload/wiki/Options
+        url: null,
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png|apng|avif|svg|webp)$/i,
+      },
+      fileDeleteOptions: {},
+      styles: {
+        wide: {
+          label: '<span class="fa fa-align-justify"></span>',
+          // added: function ($el) {},
+          // removed: function ($el) {}
         },
-        fileDeleteOptions: {},
-        styles: {
-          wide: {
-            label: '<span class="fa fa-align-justify"></span>',
-            // added: function ($el) {},
-            // removed: function ($el) {}
-          },
-          left: {
-            label: '<span class="fa fa-align-left"></span>',
-            // added: function ($el) {},
-            // removed: function ($el) {}
-          },
-          right: {
-            label: '<span class="fa fa-align-right"></span>',
-            // added: function ($el) {},
-            // removed: function ($el) {}
-          },
-          grid: {
-            label: '<span class="fa fa-th"></span>',
-            // added: function ($el) {},
-            // removed: function ($el) {}
-          },
+        left: {
+          label: '<span class="fa fa-align-left"></span>',
+          // added: function ($el) {},
+          // removed: function ($el) {}
         },
-        actions: {
-          remove: {
-            label: '<span class="fa fa-times"></span>',
-            clicked: function () {
-              const $event = $.Event("keydown");
+        right: {
+          label: '<span class="fa fa-align-right"></span>',
+          // added: function ($el) {},
+          // removed: function ($el) {}
+        },
+        grid: {
+          label: '<span class="fa fa-th"></span>',
+          // added: function ($el) {},
+          // removed: function ($el) {}
+        },
+      },
+      actions: {
+        remove: {
+          label: '<span class="fa fa-times"></span>',
+          clicked: function () {
+            const $event = $.Event("keydown");
 
-              $event.which = 8;
-              $(document).trigger($event);
-            },
+            $event.which = 8;
+            $(document).trigger($event);
           },
         },
-        sorting: function () {
-          if (true) return; // TODO: Disabled beacuse of this bug: "TypeError: $(...).sortable is not a function"
-          const that = this;
+      },
+      sorting: function () {
+        if (true) return; // TODO: Disabled beacuse of this bug: "TypeError: $(...).sortable is not a function"
+        const that = this;
 
-          $(".medium-insert-images").sortable({
-            group: "medium-insert-images",
-            containerSelector: ".medium-insert-images",
-            itemSelector: "figure",
-            placeholder: '<figure class="placeholder">',
-            handle: "img",
-            nested: false,
-            vertical: false,
-            afterMove: function () {
-              that.core.triggerInput();
-            },
-          });
-        },
-        messages: {
-          acceptFileTypesError: "This file is not in a supported format: ",
-          maxFileSizeError: "This file is too big: ",
-        },
-        // uploadError: function($el, data) {}
-        // uploadCompleted: function ($el, data) {}
-      };
+        $(".medium-insert-images").sortable({
+          group: "medium-insert-images",
+          containerSelector: ".medium-insert-images",
+          itemSelector: "figure",
+          placeholder: '<figure class="placeholder">',
+          handle: "img",
+          nested: false,
+          vertical: false,
+          afterMove: function () {
+            that.core.triggerInput();
+          },
+        });
+      },
+      messages: {
+        acceptFileTypesError: "This file is not in a supported format: ",
+        maxFileSizeError: "This file is too big: ",
+      },
+      // uploadError: function($el, data) {}
+      // uploadCompleted: function ($el, data) {}
+    };
 
     /**
      * Images object
@@ -2307,7 +2424,7 @@
      * @return {void}
      */
 
-    function Images(el, options) {
+    function Images(el: JQuery, options: any) {
       this.el = el;
       this.$el = $(el);
       this.$currentImage = null;
@@ -2408,7 +2525,7 @@
     Images.prototype.editorSerialize = function () {
       const data = this._serializePreImages();
 
-      $.each(data, function (key) {
+      $.each(data, function (key: string) {
         const $data = $("<div />").html(data[key].value);
 
         $data
@@ -2432,12 +2549,21 @@
     Images.prototype.add = function () {
       const that = this,
         $file = $(this.templates["src/js/templates/images-fileupload.hbs"]()),
-        fileUploadOptions = {
+        fileUploadOptions: {
+          dataType: string;
+          add: (e: any, data: any) => void;
+          done: (e: any, data: any) => void;
+          progress?: (e: any, data: any) => void;
+          progressall?: (
+            e: any,
+            data: { loaded: number; total: number; bitrate: number },
+          ) => void;
+        } = {
           dataType: "json",
-          add: function (e, data) {
+          add: function (e: any, data: any) {
             $.proxy(that, "uploadAdd", e, data)();
           },
-          done: function (e, data) {
+          done: function (e: any, data: any) {
             $.proxy(that, "uploadDone", e, data)();
           },
         };
@@ -2447,11 +2573,18 @@
       // http://stackoverflow.com/questions/6767887/
       // what-is-the-best-way-to-check-for-xhr2-file-upload-support
       if (new XMLHttpRequest().upload) {
-        fileUploadOptions.progress = function (e, data) {
+        fileUploadOptions.progress = function (e: any, data: any) {
           $.proxy(that, "uploadProgress", e, data)();
         };
 
-        fileUploadOptions.progressall = function (e, data) {
+        fileUploadOptions.progressall = function (
+          e: any,
+          data: {
+            loaded: number;
+            total: number;
+            bitrate: number;
+          },
+        ) {
           $.proxy(that, "uploadProgressall", e, data)();
         };
       }
@@ -2472,7 +2605,7 @@
      * @return {void}
      */
 
-    Images.prototype.uploadAdd = function (e, data) {
+    Images.prototype.uploadAdd = function (e: any, data: any) {
       let $place = this.$el.find(".medium-insert-active");
       const that = this,
         uploadErrors = [],
@@ -2564,11 +2697,19 @@
      * @return {void}
      */
 
-    Images.prototype.uploadProgressall = function (e, data) {
+    Images.prototype.uploadProgressall = function (
+      e: any,
+      data: {
+        loaded: number;
+        total: number;
+        bitrate: number;
+      },
+    ) {
       let progress, $progressbar;
 
-      if (this.options.preview === false) {
-        progress = parseInt((data.loaded / data.total) * 100, 10);
+      if (this.options.preview) {
+        progress = Math.round((data.loaded / data.total) * 100); // Use Math.round for number values
+        // console.log("🟤 Insert > uploadProgressall | ", "data:", data,'progress',progress);
         $progressbar = this.$el.find(".medium-insert-active").find("progress");
 
         $progressbar.attr("value", progress).text(progress);
@@ -2588,19 +2729,24 @@
      * @return {void}
      */
 
-    Images.prototype.uploadProgress = function (e, data) {
-      let progress, $view, $progressbar;
-
+    Images.prototype.uploadProgress = function (
+      e: any,
+      data: {
+        loaded: number;
+        total: number;
+        bitrate: number;
+      },
+    ) {
       if (this.options.preview) {
-        progress = 100 - parseInt((data.loaded / data.total) * 100, 10);
+        const progress = Math.round((data.loaded / data.total) * 100); // Use Math.round for number values
 
-        $view = data.context.find(".medium-insert-images-progress");
+        const $view = this.$el.find(".medium-insert-images-progress");
 
-        $progressbar = $view.find(".progress-bar");
+        const $progressbar = $view?.find(".progress-bar");
 
-        $progressbar.css("width", progress + "%");
+        $progressbar?.css("width", progress + "%");
 
-        if (progress === 0) {
+        if (progress >= 100) {
           $view.remove();
         }
       }
@@ -2615,7 +2761,7 @@
      * @return {void}
      */
 
-    Images.prototype.uploadDone = function (e, data) {
+    Images.prototype.uploadDone = function (e: any, data: any) {
       $.proxy(this, "showImage", data.result.files[0].url, data)();
 
       this.core.clean();
@@ -2629,7 +2775,7 @@
      * @returns {void}
      */
 
-    Images.prototype.showImage = function (img, data) {
+    Images.prototype.showImage = function (img: any, data: any) {
       const $place = this.$el.find(".medium-insert-active");
       let domImage;
 
@@ -2665,7 +2811,7 @@
           this.options.autoGrid &&
           $place.find("figure").length >= this.options.autoGrid
         ) {
-          $.each(this.options.styles, function (style, options) {
+          $.each(this.options.styles, function (style: string, options: any) {
             const className = "medium-insert-images-" + style;
 
             $place.removeClass(className);
@@ -2705,9 +2851,9 @@
      * @returns {void}
      */
 
-    Images.prototype.selectImage = function (e) {
+    Images.prototype.selectImage = function (e: any) {
       const that = this;
-      let $image;
+      let $image: any;
 
       if (this.core.options.enabled) {
         $image = $(e.target);
@@ -2742,7 +2888,7 @@
      * @returns {void}
      */
 
-    Images.prototype.unselectImage = function (e) {
+    Images.prototype.unselectImage = function (e: any) {
       const $el = $(e.target),
         $image = this.$el.find(".medium-insert-image-active");
 
@@ -2775,7 +2921,7 @@
      * @returns {void}
      */
 
-    Images.prototype.removeImage = function (e) {
+    Images.prototype.removeImage = function (e: any) {
       if (e.which === 8 || e.which === 46) {
         //   console.log('---removeImage---',this.$el.find('.medium-insert-image-active'))
 
@@ -2813,23 +2959,13 @@
           range = selection.getRangeAt(0);
           current = range.commonAncestorContainer;
 
-          /**  if($selectedImage[0].nodeName==='IMG'){ // ADDED BY PAJUHAAN Correction of some time not remove image!
-                     $current=$(current); irad dare!  ::: selection = window.getSelection();
-                     console.log('---removeImage--- Extra correction!',$current)
-                     }*/
-
-          //   const   $original_current=$(current);    // ADDED BY PAJUHAAN
-
-          //  console.log('---removeImage--- nodeName',current.nodeName,current)
-
           $current =
             current.nodeName === "#text" || current.nodeName === "BR"
               ? $(current).parent()
               : $(current);
 
-          //    console.log('---removeImage--- current.nodeName After',$current)
-
-          caretPosition = MediumEditor.selection.getCaretOffsets(current).left;
+          caretPosition = MediumEditor.selection?.getCaretOffsets(current).left;
+          // console.log('---removeImage--- current.nodeName After',MediumEditor.selection,MediumEditor)
 
           // Is backspace pressed and caret is at the beginning of a paragraph, get previous element
           if (e.which === 8 && caretPosition === 0) {
@@ -2936,7 +3072,7 @@
      * @returns {void}
      */
 
-    Images.prototype.deleteFile = function (file, $el) {
+    Images.prototype.deleteFile = function (file: string, $el: JQuery) {
       // only take action if there is a truthy value
       if (this.options.deleteScript) {
         // try to run it as a callback
@@ -3025,7 +3161,7 @@
           ? elementsContainer.getBoundingClientRect()
           : null;
       let containerWidth = $(window).width();
-      const position = {};
+      const position = { top: 0, left: 0 };
 
       if ($toolbar2.length && $image.offset()) {
         // TODO: add new bug fix
@@ -3078,7 +3214,7 @@
      * @returns {void}
      */
 
-    Images.prototype.toolbarAction = function (e) {
+    Images.prototype.toolbarAction = function (e: any) {
       const that = this;
 
       if (this.$currentImage === null) {
@@ -3129,7 +3265,7 @@
      * @returns {void}
      */
 
-    Images.prototype.toolbar2Action = function (e) {
+    Images.prototype.toolbar2Action = function (e: any) {
       if (this.$currentImage === null) {
         return;
       }
@@ -3160,16 +3296,26 @@
 
     /** Plugin initialization */
 
-    $.fn[pluginName + addonName] = function (options) {
+    $.fn[pluginName + addonName] = function (options: any) {
       return this.each(function () {
         if (!$.data(this, "plugin_" + pluginName + addonName)) {
           $.data(
             this,
             "plugin_" + pluginName + addonName,
+            // @ts-ignore
             new Images(this, options),
           );
         }
       });
     };
   })(jQuery, window, document, MediumEditor.util);
-});
+}
+
+//█████████████████████████████████████████████████████████████
+//―――――――――――――― Auto Initialize ―――――――――――――
+//█████████████████████████████████████████████████████████████
+
+// Here we're directly calling factory for the sake of example,
+// In a real scenario, you might pass actual instances or make this call elsewhere
+// @ts-ignore
+factory($, Handlebars, MediumEditor);

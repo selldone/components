@@ -34,7 +34,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "SCheck",
   emits: ["update:modelValue"],
   props: {
@@ -70,7 +72,7 @@ export default {
       this.$emit("update:modelValue", checked);
     },
   },
-};
+});
 </script>
 
 <style scoped></style>
