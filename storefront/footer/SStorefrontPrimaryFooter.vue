@@ -70,7 +70,6 @@
               v-if="footer.sec1.image"
               :src="footer.sec1.image"
               aspect-ratio="1"
-              contain
               width="100%"
             />
           </div>
@@ -94,7 +93,6 @@
               v-if="footer.sec2.image"
               :src="footer.sec2.image"
               aspect-ratio="1"
-              contain
               width="100%"
             />
           </div>
@@ -118,7 +116,6 @@
               v-if="footer.sec3.image"
               :src="footer.sec3.image"
               aspect-ratio="1"
-              contain
               width="100%"
             />
           </div>
@@ -412,6 +409,7 @@ import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontS
 
 import { SetupService } from "@core/server/SetupService";
 import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
+import {ShopFooterHelper} from "@components/storefront/footer/ShopFooterHelper";
 
 export default {
   name: "SStorefrontPrimaryFooter",
@@ -482,14 +480,8 @@ export default {
     },
 
     menu() {
-      let out =
-        this.menu_footer && this.menu_footer.menu
-          ? this.menu_footer.menu
-          : [[], [], [], []];
-      while (out.length < 4) {
-        out.push([]);
-      }
-      return out;
+     return ShopFooterHelper.GetMenuItems(this.menu_footer,this.$router)
+
     },
 
     location() {
