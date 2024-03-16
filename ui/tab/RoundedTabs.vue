@@ -29,9 +29,7 @@
       <div
         v-for="item in tabsNotNull"
         :key="'tab-' + item.title"
-        :active-color="item.color"
         :class="{ 'is-active': modelValue === item.value, small: small }"
-        :color="item.color"
         :style="``"
         class="nav-item"
         @click="$emit('update:modelValue', item.value)"
@@ -39,7 +37,7 @@
         <v-icon
           v-if="item.icon"
           :color="modelValue === item.value ? item.color : ''"
-          :size="window.innerWidth < 900 || small ? 'small' : undefined"
+          :size="window.innerWidth < 900 || small ? '20px' : '28px'"
           class="me-1"
           style="pointer-events: none"
           >{{ item.icon }}
