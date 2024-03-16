@@ -142,8 +142,7 @@
         <div v-if="basketItem.cross_dis">
           <v-chip
             :title="$t('basket_page.cross_selling_discount')"
-            color="green"
-            dark
+            color="green" variant="flat"
             label
             size="small"
           >
@@ -164,8 +163,7 @@
             <v-chip
               v-if="price_error_percent > 1"
               class="mx-2 p-1"
-              color="red"
-              dark
+              color="red" variant="flat"
               label
               size="x-small"
             >
@@ -175,8 +173,8 @@
             <v-chip
               v-if="price_error_percent < -1"
               class="mx-2 p-1"
-              color="green"
-              dark
+              color="green" variant="flat"
+
               label
               size="x-small"
             >
@@ -187,7 +185,7 @@
           <v-btn
             class="mx-1"
             color="#8BC34A"
-            icon
+            icon variant="text"
             @click="spinnerSelectAction(basketItem.count)"
           >
             <v-icon>check</v-icon>
@@ -195,7 +193,7 @@
           <v-btn
             class="mx-1"
             color="#C2185B"
-            icon
+            icon  variant="text"
             @click="spinnerSelectAction(0)"
           >
             <v-icon>close</v-icon>
@@ -207,19 +205,17 @@
       <v-col cols="6" lg="3" md="6" sm="7" xl="3">
         <s-shop-basket-item-count-select
           v-model="basketItem.count"
-          :dense="$vuetify.display.smAndDown"
           :disabled="['area', 'volume'].includes(product.price_input)"
-          :has-delete="$vuetify.display.smAndUp"
+          has-delete
           :loading="busy"
           :loading-delete="busy_delete"
           :max="available_quantity"
           :min="product?.limit_min ? product?.limit_min : 0"
-          :solo="$vuetify.display.xs"
           :unit="product.unit"
           background-color="#111"
           class="my-1"
           dark
-          filled
+          variant="solo"
           flat
           @change="(count) => spinnerSelectAction(count)"
           @click:delete="buyRemoveAction()"
@@ -274,6 +270,7 @@ export default {
       required: true,
       type: Object,
     },
+
   },
 
   data: function () {

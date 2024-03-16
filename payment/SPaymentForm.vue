@@ -116,7 +116,7 @@
     >
       <div>
         <!-- Gift Cards -->
-        <s-storefront-giftcard-selector
+        <s-giftcard-input
           v-if="hasGiftCardField && !isFree"
           v-model="selected_gift_cards"
           :gift-cards="giftcards"
@@ -126,7 +126,7 @@
           return-object
           variant="outlined"
         >
-        </s-storefront-giftcard-selector>
+        </s-giftcard-input>
 
         <div class="text-start">
           <small>{{ $t("global.commons.total_payment") }} </small>
@@ -708,7 +708,7 @@
 <script>
 import SPaymentStripe from "./stripe/SPaymentStripe.vue";
 import SPaymentButton from "./button/SPaymentButton.vue";
-import SStorefrontGiftcardSelector from "@components/storefront/giftcard/selector/SStorefrontGiftcardSelector.vue";
+import SGiftcardInput from "@components/storefront/giftcard/selector/SGiftcardInput.vue";
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 import TimeLapse from "@components/ui/time-lapse/timeLapse.vue";
 import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
@@ -729,7 +729,7 @@ export default {
     SCurrencyIcon,
     TimeLapse,
     SValueCopyBox,
-    SStorefrontGiftcardSelector,
+    SGiftcardInput,
     SPaymentButton,
     SPaymentStripe,
   },

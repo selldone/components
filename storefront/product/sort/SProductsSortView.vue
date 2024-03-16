@@ -52,11 +52,7 @@
 
     <!-- ███████████████████ Sort ███████████████████ -->
 
-    <s-fade-scroll
-      v-if="!forceCollapse"
-      style="max-width: calc(100% - 350px)"
-      drag-scroll
-    >
+    <div v-if="!forceCollapse">
       <v-btn-toggle
         :mandatory="mandatory"
         :model-value="modelValue"
@@ -79,7 +75,7 @@
           {{ item.name }}
         </v-btn>
       </v-btn-toggle>
-    </s-fade-scroll>
+    </div>
 
     <!-- Small screen -->
     <v-menu location="bottom" transition="slide-y-transition">
@@ -126,7 +122,7 @@
         :class="{ 'my-2 my-md-0': !twoLine, 'my-2': twoLine }"
         :loading="loading && !!search"
         :placeholder="$t('global.commons.search')"
-        class="search-box me-1 min-width-200 pa-0"
+        class="search-box me-1 min-width-200"
         clearable
         density="compact"
         flat
@@ -136,16 +132,15 @@
         variant="solo"
       >
         <template v-slot:append-inner>
-          <v-tooltip color="#000" location="bottom">
+          <v-tooltip color="#000" location="bottom" content-class="bg-black rounded-xl">
             <template v-slot:activator="{ props }">
               <v-btn
-                color="#aaa"
                 icon
-                size="small"
+                size="24"
                 v-bind="props"
-                variant="text"
+                variant="plain"
               >
-                <v-icon size="small">info</v-icon>
+                <v-icon size="20">info</v-icon>
               </v-btn>
             </template>
             <div class="text-start pa-3">
@@ -185,11 +180,10 @@
 <script>
 import { ModeView } from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 
 export default {
   name: "SProductsSortView",
-  components: { SFadeScroll },
+  components: {},
   emits: ["update:modelValue", "update:search", "update:view-mode"],
 
   props: {
@@ -310,7 +304,6 @@ export default {
   align-items: center;
   min-height: 54px;
   overflow: auto;
-  --background: #fff;
 
   .search-box {
     max-width: 360px;

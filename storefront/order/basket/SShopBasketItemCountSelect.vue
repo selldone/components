@@ -68,7 +68,7 @@
     </template>
 
     <template v-slot:selection="{ item }">
-      <span v-if="item.raw && !focus" :class="{ 'center-view': noUnit }">
+      <span v-if="item.raw && !focus" :class="{ 'center-view': noUnit }" class="single-line d-block">
         {{ item.raw }}
         <small v-if="!noUnit" class="mx-1">{{
           unit ? unit : $t("global.commons.count_unit")

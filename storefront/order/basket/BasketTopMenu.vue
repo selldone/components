@@ -13,6 +13,8 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+  <!-- ―――――――――― Basket Top Menu ―――――――――― -->
+
   <div class="shopping-basket d-flex flex-column">
     <div v-if="filtered_types.length > 1" class="text-center pt-2">
       <s-circle-button
@@ -37,9 +39,9 @@
       <div class="position-relative">
         <v-scale-transition group hide-on-leave origin="center">
           <div
-            v-if="!in_current_basket_page"
             key="a"
             class="view-basket-btn"
+            :class="{pen:in_current_basket_page}"
             @click="
               $router.push({
                 name: window.$storefront.routes.BASKET_PAGE,
@@ -58,15 +60,6 @@
               large
             ></price-view>
           </div>
-          <v-avatar
-            v-else
-            key="b"
-            :size="64"
-            class="pointer-pointer row-hover mx-auto d-block"
-            @click="$router.push({ name: 'ShopPage' })"
-          >
-            <img :src="getShopImagePath(shop.icon)" />
-          </v-avatar>
         </v-scale-transition>
 
         <div
@@ -88,59 +81,14 @@
             )
           }}
         </div>
-        <div style="background: #333; height: 3px"></div>
+        <div style="background: #333; height: 3px" class="my-3"></div>
 
-        <v-list class="text-start">
-          <v-list-item
-            v-for="(item, index) in show_items"
-            :key="index"
-            @click="goToProduct(item.product.id)"
-          >
-            <template v-slot:prepend>
-              <v-avatar :size="$vuetify.display.mdAndUp ? 64 : 48" rounded>
-                <v-img
-                  :src="
-                    getShopImagePath(
-                      item.variant?.image
-                        ? item.variant.image
-                        : item.product.icon,
-                      128,
-                    )
-                  "
-                  aspect-ratio="1"
-                  class="rounded-14-12"
-                />
-              </v-avatar>
-            </template>
-
-            <p class="shop-item-title font-weight-bold">
-              {{ item.product.title }}
-            </p>
-            <v-spacer></v-spacer>
-            <p class="mini-info">
-              <span>{{ item.count }} {{ $t("basket_top_menu.items") }}</span>
-            </p>
-
-            <variant-item-view-micro
-              v-if="item.variant"
-              :product-variant="item.variant"
-            />
-
-            <v-list-item-action>
-              <v-btn
-                :loading="busy_remove === item.id"
-                class="nbt"
-                icon
-                title="Remove from cart."
-                variant="outlined"
-                @click="deleteItemFromBasket(item)"
-                @click.stop
-              >
-                <v-icon> close</v-icon>
-              </v-btn>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list>
+        <s-shop-basket-item
+          v-for="(item, index) in show_items"
+          :key="index"
+          :basket-item="item"
+          :shop="shop"
+        ></s-shop-basket-item>
       </div>
       <v-spacer></v-spacer>
       <div
@@ -173,7 +121,7 @@
           }
         "
       >
-        <v-icon class="me-2" dark>shopping_cart</v-icon>
+        <v-icon class="me-2">shopping_cart</v-icon>
         {{ $t("basket_top_menu.accept_and_pay") }}
       </div>
     </template>
@@ -181,13 +129,13 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import { MapHelper } from "@core/helper/map/MapHelper";
+import SShopBasketItem from "@components/storefront/order/basket/SShopBasketItem.vue";
 
 export default {
   name: "BasketTopMenu",
-  components: { VariantItemViewMicro },
+  components: { SShopBasketItem },
   props: {},
   data: () => ({
     menu: false,

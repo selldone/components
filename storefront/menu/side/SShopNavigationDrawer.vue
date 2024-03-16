@@ -41,14 +41,14 @@
         </div>
         <template v-else>
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-          <s-shop-language-selector
+          <s-language-selector
             v-if="shop"
             :shop="shop"
             class="mx-3"
             hide-details
             icon-color="#111"
             icon-only
-          ></s-shop-language-selector>
+          ></s-language-selector>
 
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
           <s-currency-selector
@@ -261,14 +261,14 @@
 import SShopUserMenuList from "../user/SShopUserMenuList.vue";
 import MenuCategories from "@components/storefront/menu/header/MenuCategories.vue";
 import SCurrencySelector from "@components/ui/currency/selector/SCurrencySelector.vue";
-import SShopLanguageSelector from "@components/storefront/language/SShopLanguageSelector.vue";
+import SLanguageSelector from "@components/storefront/language/selector/SLanguageSelector.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 
 export default {
   name: "SShopNavigationDrawer",
   emits: ["update:modelValue"],
   components: {
-    SShopLanguageSelector,
+    SLanguageSelector,
     SCurrencySelector,
     MenuCategories,
     SShopUserMenuList,

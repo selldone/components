@@ -12,6 +12,8 @@
  * Tread carefully, for you're treading on dreams.
  */
 
+import {Router} from "vue-router";
+
 export class ShopFooterHelper {
   /**
    * Fix the footer menu items.
@@ -20,8 +22,8 @@ export class ShopFooterHelper {
    * @param router
    * @constructor
    */
-  static GetMenuItems(footer: { items: any[] }, router) {
-    const out = footer?.menu ? footer.menu : [[], [], [], []];
+  static GetMenuItems(footer: { menu: { items: any[] } }, router: Router) {
+    const out: any = footer?.menu ? footer.menu : [[], [], [], []];
     while (out.length < 4) {
       out.push([]);
     }

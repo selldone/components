@@ -1623,16 +1623,7 @@ const CoreMixin = {
       return window.CDN.GET_USER_AVATAR(user_id, size);
     },
 
-    //―――――――――――――――――――――― Cookie ――――――――――――――――――――
 
-    setCookieAccept(active: boolean) {
-      // @ts-ignore
-      if (this.preview) return; // Maybe exists in the component (preview in seller dashboard)
-
-      // GDPR: Save in local storage if user not login!
-      if (!active) localStorage.setItem(`GDPR-Cookie`, "false");
-      else localStorage.setItem(`GDPR-Cookie`, "true");
-    },
 
     //―――――――――――――――――――――― Cookie ――――――――――――――――――――
     getId(id_with_slug: string | number): number | null {

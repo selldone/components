@@ -132,13 +132,13 @@ export function installGlobalComponents(app: App) {
 
   //---------------- Lottie Animation View for Vue --------------
 
-  const SLottie = defineAsyncComponent(
+  const ULottie = defineAsyncComponent(
     () =>
       import(
-        /* webpackChunkName: "plug-lottie" */ "./ui/animation/SLottie.vue"
+        /* webpackChunkName: "plug-lottie" */ "./ui/animation/ULottie.vue"
       ),
   );
-  app.component("s-lottie", SLottie);
+  app.component("u-lottie", ULottie);
 
   //---------------- State Flags --------------
 

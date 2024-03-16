@@ -114,7 +114,7 @@
 
       <!-- ====================================== Verify ====================================== -->
       <div v-if="method === 'verify'">
-        <s-lottie
+        <u-lottie
           :options="{
             path: '/animation/938-iphone-x-loading.json',
             loop: true,

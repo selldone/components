@@ -139,7 +139,7 @@ export default {
       return list.some((item) => {
         return (
           item.id === this.product.id &&
-          (!item.variant || item.variant.id === this.currentVariant.id)
+          (!item.variant || item.variant.id === this.currentVariant?.id)
         );
       });
     },

@@ -88,7 +88,7 @@
           <v-chip v-if="product.rate_count" class="mx-2" color="#fafafa">
             <v-rating
               :model-value="product.rate"
-              :size="isSmall ? 'x-small':'small'"
+              :size="isSmall ? 'x-small' : 'small'"
               active-color="yellow-darken-3"
               class="me-1"
               color="grey-darken-1"
@@ -122,9 +122,16 @@
           class="quick-buy"
         >
           <v-btn
-            :size="($vuetify.display.mdAndUp && !isInsta)?'large':isInsta?'small':undefined"
+            :size="
+              $vuetify.display.mdAndUp && !isInsta
+                ? 'large'
+                : isInsta
+                  ? 'small'
+                  : undefined
+            "
             color="primary"
-            variant="flat" tile
+            variant="flat"
+            tile
             width="100%"
             @click.prevent="$emit('quick-buy')"
           >
@@ -134,9 +141,16 @@
             >
           </v-btn>
           <v-btn
-            :size="($vuetify.display.mdAndUp && !isInsta)? 'large':isInsta?'small':undefined"
+            :size="
+              $vuetify.display.mdAndUp && !isInsta
+                ? 'large'
+                : isInsta
+                  ? 'small'
+                  : undefined
+            "
             :title="$t('global.commons.compare')"
-            block tile
+            block
+            tile
             color="primary"
             variant="text"
             @click.prevent="
@@ -262,10 +276,7 @@
                     <v-icon class="mx-1" color="#D32F2F" size="x-small"
                       >fa:fas fa-plus</v-icon
                     >
-                    <img
-                      height="24"
-                      src="../../../assets/icons/coupon.svg"
-                    />
+                    <img height="24" src="../../../assets/icons/coupon.svg" />
                   </span>
                 </p>
               </div>
@@ -313,10 +324,7 @@
 
     <!-- ========================== Row ======================== -->
 
-    <div
-      v-else
-      class="row-box position-relative overflow-visible row-hover"
-    >
+    <div v-else class="row-box position-relative overflow-visible row-hover">
       <v-container class="overflow-hidden position-relative" fluid>
         <v-row dense style="flex-wrap: nowrap">
           <v-img
@@ -327,6 +335,7 @@
             :src="product_image"
             :width="$vuetify.display.smAndDown ? 64 : 84"
             class="flex-grow-0 rounded me-0 me-sm-2"
+            cover
           >
           </v-img>
 
@@ -428,7 +437,7 @@
 
             <v-btn
               v-if="product.quantity || isFile"
-              :size="$vuetify.display.mdAndUp ? 'large':'small'"
+              :size="$vuetify.display.mdAndUp ? 'large' : 'small'"
               class="align-self-center flex-grow-0 ms-2 tnt"
               color="#000"
               variant="flat"
@@ -473,10 +482,17 @@ import PriceView from "@components/ui/price/PriceView.vue";
 import CountDown from "@components/ui/count-down/SCountDown.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
+import SCountDown from "@components/ui/count-down/SCountDown.vue";
 
 export default {
   name: "SShopProductCard",
-  components: { SColorCircle, CountDown, PriceView, ProductVariantsView },
+  components: {
+    SCountDown,
+    SColorCircle,
+    CountDown,
+    PriceView,
+    ProductVariantsView,
+  },
   props: {
     product: {
       required: true,

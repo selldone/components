@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <ul class="vuejs-countdown" dir="ltr">
+  <ul v-if="end" class="vuejs-countdown" dir="ltr">
     <li v-if="days > 0">
       <p class="digit">
         {{ twoDigits(days) }}
@@ -50,13 +50,11 @@
 </template>
 
 <script>
-let interval = null;
 export default {
   name: "SCountDown",
 
   props: {
     end: {
-      type: Date,
     },
     stop: {
       type: Boolean,
@@ -67,6 +65,8 @@ export default {
       now: Math.trunc(new Date().getTime() / 1000),
       date: null,
       diff: 0,
+
+      interval: null,
     };
   },
   computed: {
@@ -82,6 +82,10 @@ export default {
     days() {
       return Math.trunc(this.diff / 60 / 60 / 24);
     },
+
+    end_date(){
+      return this.end && new Date(this.end);
+    }
   },
   watch: {
     now(value) {
@@ -89,29 +93,37 @@ export default {
     },
 
     end() {
-      this.date = Math.trunc(this.end / 1000);
+      this.date = Math.trunc(this.end_date / 1000);
+      this.init();
     },
   },
   created() {
-    if (!this.end) {
-      throw new Error("Missing props 'deadline' or 'end'");
-    }
-    //   let endTime = this.deadline ? this.deadline : this.end;
-    this.date = Math.trunc(this.end / 1000); // Math.trunc(Date.parse(endTime.replace(/-/g, "/")) / 1000);
-    if (!this.date) {
-      throw new Error("Invalid props value, correct the 'deadline' or 'end'");
-    }
+    if (!this.end_date) return;
 
-    this.now = Math.trunc(new Date().getTime() / 1000);
-    this.updateView();
-    interval = setInterval(() => {
-      this.now = Math.trunc(new Date().getTime() / 1000);
-    }, 1000);
+    this.init();
   },
   beforeUnmount() {
-    clearInterval(interval);
+    clearInterval(this.interval);
   },
   methods: {
+    init() {
+      if (this.interval) clearInterval(this.interval);
+      this.interval = null;
+
+      //   let endTime = this.deadline ? this.deadline : this.end;
+      this.date = Math.trunc(this.end_date / 1000); // Math.trunc(Date.parse(endTime.replace(/-/g, "/")) / 1000);
+      if (!this.date) {
+        console.error("Invalid props value, correct the 'deadline' or 'end'")
+        return;
+      }
+
+      this.now = Math.trunc(new Date().getTime() / 1000);
+      this.updateView();
+
+      this.interval = setInterval(() => {
+        this.now = Math.trunc(new Date().getTime() / 1000);
+      }, 1000);
+    },
     twoDigits(value) {
       if (value.toString().length <= 1) {
         return "0" + value.toString();
@@ -124,7 +136,7 @@ export default {
       if (this.diff <= 0 || this.stop) {
         this.diff = 0;
         // Remove interval
-        clearInterval(interval);
+        clearInterval(this.interval);
         this.$emit("end");
       }
     },

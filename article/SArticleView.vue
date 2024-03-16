@@ -234,7 +234,7 @@
 
           <!-- ━━━━━━━━━━━━━━━━━━━━━━ Language ━━━━━━━━━━━━━━━━━━━━━━ -->
 
-          <s-language-input
+          <u-language-input
             v-model="article.lang"
             :class="{ pen: !in_edit_mode }"
             :disabled="!in_edit_mode || !!forceLanguage"
@@ -251,7 +251,7 @@
             <v-tooltip activator="parent" location="top" max-width="360">
               Change the language of this article.
             </v-tooltip>
-          </s-language-input>
+          </u-language-input>
 
           <v-divider class="my-0 mx-2" vertical></v-divider>
 
@@ -312,7 +312,7 @@
           <template
             v-if="canEdit && !in_edit_mode && languages && multiLanguage"
           >
-            <s-language-input
+            <u-language-input
               :available-languages="languages"
               :checked-languages="multiLanguageAvailable"
               :suffix="` (${multiLanguageAvailable.length})`"
@@ -337,7 +337,7 @@
                   + Add more languages...
                 </div>
               </v-tooltip>
-            </s-language-input>
+            </u-language-input>
           </template>
         </v-toolbar-items>
 
@@ -1007,7 +1007,7 @@ import { PermissionNames } from "@core/enums/admin/permission/PermissionNames";
 import { PermissionLevels } from "@core/enums/admin/permission/PermissionLevels";
 import SDateInput from "../ui/calendar/date-input/SDateInput.vue";
 import SArticlesTimeline from "@components/article/timeline/SArticlesTimeline.vue";
-import SLanguageInput from "@components/ui/input/language/SLanguageInput.vue";
+import ULanguageInput from "@components/ui/language/input/ULanguageInput.vue";
 import SArticleFaqs from "./faq/SArticleFaqs.vue";
 import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./tags/SArticleTagsEditor.vue";
@@ -1031,7 +1031,7 @@ export default {
     SArticleTagsEditor,
     SArticleStructuredData,
     SArticleFaqs,
-    SLanguageInput,
+    ULanguageInput,
     SArticlesTimeline,
     SDateInput,
     SArticleSeoEditor,

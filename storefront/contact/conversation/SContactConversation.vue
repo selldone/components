@@ -25,7 +25,7 @@
         <v-btn
           :caption="$t('global.actions.close')"
           class="sub-caption -hover"
-          icon
+          icon variant="text"
           @click="show_user_detail = false"
         >
           <v-icon> close</v-icon>

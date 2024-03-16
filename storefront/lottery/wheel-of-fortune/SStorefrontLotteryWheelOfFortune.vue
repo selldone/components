@@ -20,7 +20,7 @@
       icon variant="text"
       @click="dialog = true"
     >
-      <s-lottie
+      <u-lottie
         :options="{ path: '/animation/happy_birthday.json', loop: true }"
         :speed="1"
         height="44px"
@@ -84,7 +84,7 @@
             >
               <!-------------------- Play game result ------------------------->
               <div v-if="win" class="center-absolute" style="width: 70%">
-                <s-lottie
+                <u-lottie
                   :options="{
                     path: '/animation/gift-box-white.json',
                     loop: true,
