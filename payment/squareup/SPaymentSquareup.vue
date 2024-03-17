@@ -18,12 +18,12 @@
       <small>{{ $t("global.commons.total_payment") }} </small>
       <v-icon size="x-small">arrow_drop_down</v-icon>
       <br />
-      <price-view
+      <u-price
         :amount="amount"
         :currency="currency.toUpperCase()"
         class="text-h3"
         x-large
-      ></price-view>
+      ></u-price>
     </div>
 
     <!-- ***************** Checkout ************************ -->
@@ -80,11 +80,11 @@
           size="x-large"
           @click="handlePaymentSubmit(card)"
           >{{ $t("global.actions.pay") }}
-          <price-view
+          <u-price
             :amount="amount"
             :currency="currency.toUpperCase()"
             class="mx-2"
-          ></price-view>
+          ></u-price>
         </v-btn>
       </div>
 
@@ -101,11 +101,11 @@
           size="x-large"
           @click="handlePaymentSubmit(giftCard)"
           >Pay with Gift Card
-          <price-view
+          <u-price
             :amount="amount"
             :currency="currency.toUpperCase()"
             class="mx-2"
-          ></price-view>
+          ></u-price>
         </v-btn>
       </div>
 
@@ -144,11 +144,11 @@
           size="x-large"
           @click="achClick()"
           >Pay with Bank Account
-          <price-view
+          <u-price
             :amount="amount"
             :currency="currency.toUpperCase()"
             class="mx-2"
-          ></price-view>
+          ></u-price>
         </v-btn>
       </div>
 
@@ -171,10 +171,10 @@
       size="48"
     ></v-progress-circular>
 
-    <s-progress-loading
+    <u-loading-progress
       v-if="!square_js_loaded || busy_submit"
       color="#000"
-    ></s-progress-loading>
+    ></u-loading-progress>
   </div>
 </template>
 

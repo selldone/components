@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <s-sparkline
+  <u-sparkline
     v-if="value && value.length"
     :auto-draw="autoDraw"
     :fill="fill"
@@ -29,15 +29,15 @@
     padding="3"
     stroke-linecap="round"
   >
-  </s-sparkline>
+  </u-sparkline>
 </template>
 
 <script>
-import SSparkline from "@components/ui/chart/sparkline/SSparkline.vue";
+import USparkline from "@components/ui/chart/sparkline/USparkline.vue";
 
 export default {
   name: "TrendSparkline",
-  components: { SSparkline },
+  components: { USparkline },
   props: {
     value: {
       type: Array,

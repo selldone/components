@@ -24,12 +24,12 @@
         class="mx-1"
         >(<v-icon color="success" size="small">shopping_bag</v-icon>
         {{ $t("global.commons.over") }}
-        <price-view
+        <u-price
           :amount="
             transportation_with_min_free_shipping_limit?.free_shipping_limit
           "
           :currency="transportation_with_min_free_shipping_limit?.currency"
-        ></price-view
+        ></u-price
         >)</span
       >
 

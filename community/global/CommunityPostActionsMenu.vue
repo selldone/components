@@ -113,23 +113,23 @@
 
     <!-- ------------------ Report post dialog ------------------------ -->
 
-    <s-content-violation-report-dialog
+    <a-feedback-content-violation-report
       v-model="report_dialog"
       :loading="busy_report"
       @report="reportPost"
-    ></s-content-violation-report-dialog>
+    ></a-feedback-content-violation-report>
   </div>
 </template>
 <script>
 import CommunityPostEditor from "@components/community/post/CommunityPostEditor.vue";
-import SContentViolationReportDialog from "../../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
+import AFeedbackContentViolationReport from "@components/article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { ArticleReport } from "@core/enums/article/ArticleReport";
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 import _ from "lodash-es";
 
 export default {
   name: "CommunityPostActionsMenu",
-  components: { SContentViolationReportDialog, CommunityPostEditor },
+  components: { AFeedbackContentViolationReport, CommunityPostEditor },
   props: {
     shop: {},
 

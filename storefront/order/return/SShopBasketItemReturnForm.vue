@@ -57,7 +57,7 @@
         <v-row align="center" justify="center"  >
           <v-col v-if="step === 1" md6 xs12>
             <p class="action-title text-start m-2">
-              <s-number-input
+              <u-number-input
                 v-model="count"
                 :label="$t('return_request.count_input')"
                 :max="basketItem.count"
@@ -215,13 +215,13 @@
 
 <script>
 import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 import { ReturnOrderReason } from "@core/enums/basket/ReturnOrderReason";
 
 export default {
   name: "SShopBasketItemReturnForm",
   components: {
-    SNumberInput,
+    UNumberInput,
     VariantItemViewMicro,
   },
 

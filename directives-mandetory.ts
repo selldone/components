@@ -15,11 +15,11 @@
 //█████████████████████████████████████████████████████████████
 //―――――――――――――――― Directives ―――――――――――――――
 //█████████████████████████████████████████████████████████████
-import CopyDirective from "./directives/CopyDirective";
+import CopyDirective from "./directives/copy/CopyDirective";
 
-import TrackDirective from "@components/directives/TrackDirective";
+import TrackDirective from "@components/directives/track/TrackDirective";
 
-import DynamicScriptDirective from "./directives/DynamicScriptDirective";
+import DynamicScriptDirective from "./directives/script/DynamicScriptDirective";
 import DragScrollDirective from "./directives/dragscroll/DragScrollDirective";
 import { App } from "vue";
 

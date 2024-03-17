@@ -53,7 +53,7 @@
 
           </p>
 
-          <emoji-rating
+          <u-rating-emoji
             v-if="selected_contact && selected_contact.closed"
             v-model="selected_contact.rate"
             class="mt-1"
@@ -61,7 +61,7 @@
             horizontal
             read-only
             x-small
-          ></emoji-rating>
+          ></u-rating-emoji>
         </div>
 
         <s-contacts-list
@@ -94,14 +94,14 @@
 <script>
 import SContactsList from "../list/SContactsList.vue";
 import SShopLogin from "@components/storefront/login/SShopLogin.vue";
-import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
+import URatingEmoji from "@components/ui/rating/emoji/URatingEmoji.vue";
 
 /**
  * <s-contacts-popup>
  */
 export default {
   name: "SContactsPopup",
-  components: { EmojiRating, SShopLogin, SContactsList },
+  components: { URatingEmoji, SShopLogin, SContactsList },
   props: {
     shop: {
       required: true,

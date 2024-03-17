@@ -27,10 +27,10 @@
       {{ $t("global.commons.gift_card") }}
     </td>
     <td class="text-left">
-      <price-view
+      <u-price
         :amount="-giftcard.amount"
         :currency="giftcard.currency"
-      ></price-view>
+      ></u-price>
     </td>
     <td class="text-subtitle-2">
       {{ formatCard(giftcard.number) }}

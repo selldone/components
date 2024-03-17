@@ -55,11 +55,11 @@
           {{ $t(SupportCategory[selectedContact.category].name) }}
         </p>
 
-        <emoji-rating
+        <u-rating-emoji
           v-model="selectedContact.rate"
           read-only
           x-small
-        ></emoji-rating>
+        ></u-rating-emoji>
 
         <p>
           <b class="me-2">{{ $t("global.commons.ticket_url") }}:</b
@@ -202,14 +202,14 @@
           </v-btn>
         </div>
 
-        <emoji-rating
+        <u-rating-emoji
           v-if="selectedContact.closed"
           v-model="selectedContact.rate"
           :loading="busy_rate"
           class="box-raiting"
           small
           @update:model-value="(val) => sendRate(val)"
-        ></emoji-rating>
+        ></u-rating-emoji>
       </v-card-text>
 
       <!--- --------------- Actions --------------- --->
@@ -251,7 +251,7 @@
 
 <script>
 import { SupportCategory } from "@core/enums/support/SupportCategory";
-import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
+import URatingEmoji from "@components/ui/rating/emoji/URatingEmoji.vue";
 import SProductPreviewById from "@components/storefront/product/preview-by-id/SProductPreviewById.vue";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 
@@ -262,7 +262,7 @@ import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "SContactConversation",
-  components: { SProductPreviewById, EmojiRating },
+  components: { SProductPreviewById, URatingEmoji },
   props: {
     shop: {
       required: true,

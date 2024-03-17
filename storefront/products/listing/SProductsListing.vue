@@ -51,7 +51,7 @@
               $vuetify.display.smAndUp
             "
           >
-            <s-breadcrumb-image
+            <u-breadcrumb
               :class="
                 $vuetify.display.mdAndUp
                   ? {
@@ -353,7 +353,7 @@
         </v-card>
       </v-bottom-sheet>
 
-      <s-progress-loading v-if="busy_fetch"></s-progress-loading>
+      <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     </div>
   </div>
 </template>
@@ -369,7 +369,7 @@ import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import SProductOverview from "@components/storefront/overview/SProductOverview.vue";
 import { SpecHelper } from "@core/helper/product/SpecHelper";
 import BProductSpecTable from "@components/storefront/product/spec/table/BProductSpecTable.vue";
-import SBreadcrumbImage from "@components/ui/breadcrumb/SBreadcrumbImage.vue";
+import UBreadcrumb from "@components/ui/breadcrumb/UBreadcrumb.vue";
 import SProductOverviewLoading from "@components/storefront/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
@@ -380,7 +380,7 @@ export default {
   components: {
     LPageViewer,
     SProductOverviewLoading,
-    SBreadcrumbImage,
+    UBreadcrumb,
     BProductSpecTable,
     SProductOverview,
     SCategoryFilter,
@@ -1557,7 +1557,7 @@ export default {
               margin: 0 !important;
             }
 
-            .price-view.large {
+            .u--price.large {
               font-size: 1rem !important;
             }
           }
@@ -1581,7 +1581,7 @@ export default {
                 display: none;
               }
 
-              .price-view.large {
+              .u--price.large {
                 font-size: 0.9rem !important;
               }
             }

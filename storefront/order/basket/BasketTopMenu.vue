@@ -17,7 +17,7 @@
 
   <div class="shopping-basket d-flex flex-column">
     <div v-if="filtered_types.length > 1" class="text-center pt-2">
-      <s-circle-button
+      <u-button-circle
         v-for="item in filtered_types"
         :key="item.code"
         :badge-number="getCount(item.code)"
@@ -53,12 +53,12 @@
               {{ $t("basket_top_menu.view_basket") }}
             </h2>
 
-            <price-view
+            <u-price
               :amount="total_price"
               :title="$t('basket_top_menu.total_price')"
               class="my-2"
               large
-            ></price-view>
+            ></u-price>
           </div>
         </v-scale-transition>
 

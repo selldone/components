@@ -25,11 +25,11 @@ function placeCaret(el: Element, position: number) {
   const sel = window.getSelection();
   range.setStart(el.childNodes[0], position);
   range.collapse(true);
-  sel.removeAllRanges();
-  sel.addRange(range);
+  sel?.removeAllRanges();
+  sel?.addRange(range);
 }
 
-function dataURItoBlob(dataURI) {
+function dataURItoBlob(dataURI:string) {
   // convert base64 to raw binary data held in a string
   const byteString = atob(dataURI.split(",")[1]),
     // separate out the mime component

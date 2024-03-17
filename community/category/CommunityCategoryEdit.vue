@@ -69,13 +69,13 @@
         >Here, you can adjust the SEO configurations specifically at the
         category level.
       </v-list-subheader>
-      <s-smart-toggle
+      <u-smart-toggle
         v-model="nofollow"
         :true-description="$t('community.commons.nofollow_msg')"
         false-gray
         false-title="Follow links"
         true-title="No follow links"
-      ></s-smart-toggle>
+      ></u-smart-toggle>
     </div>
 
     <!-- Cross Community -->
@@ -88,12 +88,12 @@
       <v-list-subheader
         >Categories can be cross-linked and integrated into other communities.
       </v-list-subheader>
-      <s-smart-toggle
+      <u-smart-toggle
         v-model="cross"
         :true-description="$t('community.commons.crossable_msg')"
         :true-title="$t('community.commons.crossable')"
         false-gray
-      ></s-smart-toggle>
+      ></u-smart-toggle>
     </div>
 
     <!-- Access -->
@@ -107,25 +107,25 @@
         >Determine whether customers are permitted to create new topics in this
         category.
       </v-list-subheader>
-      <s-smart-toggle
+      <u-smart-toggle
         v-model="restrict"
         :true-description="$t('community.category.restrict_msg')"
         :true-title="$t('community.category.restrict')"
         color="red"
         false-gray
-      ></s-smart-toggle>
+      ></u-smart-toggle>
     </div>
   </div>
 </template>
 
 <script>
 import ImageInput from "@components/community/image/ImageInput.vue";
-import SSmartToggle from "@components/ui/smart/SSmartToggle.vue";
+import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
 import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 
 export default {
   name: "CommunityCategoryEdit",
-  components: { SSmartToggle, ImageInput },
+  components: { USmartToggle, ImageInput },
 
   props: {
     community: {

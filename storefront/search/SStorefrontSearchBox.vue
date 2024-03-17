@@ -191,11 +191,11 @@
       <v-card class="rounded-28px text-start">
         <v-card-title>    <v-icon class="me-1">qr_code_scanner</v-icon>{{ $t("global.commons.barcode_scanner") }}</v-card-title>
         <v-card-text v-if="show_scanner">
-          <barcode-scanner
+          <u-scanner
             other-codes
             qr-code
             @on-scan="onScan"
-          ></barcode-scanner>
+          ></u-scanner>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -215,11 +215,11 @@
 
 <script>
 import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
-import BarcodeScanner from "@components/ui/scanner/BarcodeScanner.vue";
+import UScanner from "@components/ui/scanner/UScanner.vue";
 
 export default {
   name: "SStorefrontSearchBox",
-  components: { BarcodeScanner },
+  components: { UScanner },
   emits: ["onSearch", "onClear", "update:expandInput"],
   props: {
     title: {

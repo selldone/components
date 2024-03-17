@@ -129,13 +129,13 @@
 
             class="text-left px-3">
           <div v-if="item.dis" class="text-muted">
-            <price-view
+            <u-price
               :amount="item.dis * item.count"
               line-through
-            ></price-view>
+            ></u-price>
           </div>
           <div class="price">
-            <price-view :amount="item.price * item.count"></price-view>
+            <u-price :amount="item.price * item.count"></u-price>
           </div>
         </v-col>
       </v-row>

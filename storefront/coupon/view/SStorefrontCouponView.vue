@@ -35,21 +35,21 @@
       <p class="coupon-description">{{ coupon.description }}</p>
 
       <v-spacer></v-spacer>
-      <s-time-progress-bar
+      <u-time-progress-bar
         :end-time="coupon.end"
         :start-time="coupon.start"
         small
-      ></s-time-progress-bar>
+      ></u-time-progress-bar>
 
       <p v-if="coupon.charge" class="m-0 mt-1">
         <v-icon class="me-1"  size="small"
           >card_giftcard add
         </v-icon>
         <b>
-          <price-view
+          <u-price
             :amount="coupon.charge"
             :currency="coupon.currency"
-          ></price-view>
+          ></u-price>
         </b>
       </p>
 
@@ -62,10 +62,10 @@
         <p class="w-50 my-0">
           <small>{{ $t("global.commons.limit") }} </small><br />
           <b>
-            <price-view
+            <u-price
               :amount="coupon.limit"
               :currency="coupon.currency"
-            ></price-view>
+            ></u-price>
           </b>
         </p>
       </div>
@@ -74,10 +74,10 @@
         <p class="my-1">
           <small>{{ $t("global.commons.min_purchase") }}: </small>
           <b>
-            <price-view
+            <u-price
               :amount="coupon.min_purchase"
               :currency="coupon.currency"
-            ></price-view>
+            ></u-price>
           </b>
         </p>
 
@@ -119,11 +119,11 @@
 </template>
 
 <script>
-import STimeProgressBar from "@components/ui/calendar/time-progress/STimeProgressBar.vue";
+import UTimeProgressBar from "@components/ui/time/progress-bar/UTimeProgressBar.vue";
 
 export default {
   name: "SStorefrontCouponView",
-  components: { STimeProgressBar },
+  components: { UTimeProgressBar },
   emits: ["select", "delete"],
   props: {
     coupon: {

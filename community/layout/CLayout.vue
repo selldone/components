@@ -15,7 +15,7 @@
 <template>
   <div class="text-start overflow-hidden min-height-100vh">
     <!-- Loading -->
-    <s-progress-loading v-if="busy"></s-progress-loading>
+    <u-loading-progress v-if="busy"></u-loading-progress>
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Header ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 

@@ -55,7 +55,7 @@
           cols="12"
           style="height: 50vh"
         >
-          <s-loading v-if="busy" css-mode light></s-loading>
+          <u-loading-ellipsis v-if="busy" css-mode light></u-loading-ellipsis>
         </v-col>
       </v-row>
     </v-container>

@@ -16,7 +16,7 @@
   <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ Container ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
   <div>
-    <s-progress-loading v-if="busy"></s-progress-loading>
+    <u-loading-progress v-if="busy"></u-loading-progress>
     <v-timeline
       v-else
       :density="$vuetify.display.mdAndDown ? 'compact' : undefined"

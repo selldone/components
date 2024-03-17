@@ -86,23 +86,23 @@
       >{{ receiverInfo.message }}
     </p>
 
-    <s-geo-navigation-button
+    <u-map-geo-button
       v-if="receiverInfo.location"
       :large="large"
       :location="receiverInfo.location"
       :transportation-type="receiverInfo.type"
-    ></s-geo-navigation-button>
+    ></u-map-geo-button>
 
     <slot name="append-buttons"></slot>
   </div>
 </template>
 
 <script>
-import SGeoNavigationButton from "@components/ui/map/geo-button/SGeoNavigationButton.vue";
+import UMapGeoButton from "@components/ui/map/geo-button/UMapGeoButton.vue";
 
 export default {
   name: "SOrderReceiverInfoCard",
-  components: { SGeoNavigationButton },
+  components: { UMapGeoButton },
   props: {
     userId: {
       require: true,

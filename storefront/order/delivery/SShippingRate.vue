@@ -40,11 +40,11 @@
         </v-chip>
       </div>
       <div class="small d-flex align-center mt-1">
-        <price-view
+        <u-price
           :amount="rate.amount_local"
           :currency="rate.currency_local"
           class="text-nowrap"
-        ></price-view>
+        ></u-price>
         <v-spacer></v-spacer>
         <span class="ms-2 small">
           {{

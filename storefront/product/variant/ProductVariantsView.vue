@@ -32,7 +32,7 @@
     >
       <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
 
-      <s-color-circle
+      <u-color-circle
         v-for="color in colors"
         :key="color"
         :border-less="small"
@@ -46,7 +46,7 @@
           hoverable ? $emit('update:selected-variant', null) : undefined
         "
       >
-      </s-color-circle>
+      </u-color-circle>
     </div>
 
     <div
@@ -64,11 +64,11 @@
         dir="auto"
         @click="onSelect('volume', volume)"
       >
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="shop_id"
           :size="16"
           :value="volume"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
         {{ volume?.removeVariantAsset() }}
       </span>
     </div>
@@ -88,11 +88,11 @@
         dir="auto"
         @click="onSelect('pack', pack)"
       >
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="shop_id"
           :size="16"
           :value="pack"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
         {{ pack?.removeVariantAsset() }}<span class="text-muted">x</span>
       </span>
     </div>
@@ -114,11 +114,11 @@
         dir="auto"
         @click="onSelect('weight', weight)"
       >
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="shop_id"
           :size="16"
           :value="weight"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
         {{ weight?.removeVariantAsset() }}
       </span>
     </div>
@@ -139,11 +139,11 @@
         dir="auto"
         @click="onSelect('type', type)"
       >
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="shop_id"
           :size="16"
           :value="type"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
         {{ type?.removeVariantAsset() }}
       </span>
     </div>
@@ -163,11 +163,11 @@
         dir="auto"
         @click="onSelect('style', style)"
       >
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="shop_id"
           :size="16"
           :value="style"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
         {{ style?.removeVariantAsset() }}
       </span>
     </div>
@@ -217,12 +217,12 @@
 
 <script>
 import { GetArrayOfValuesInVariants } from "@core/enums/product/ProductVariants";
-import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
-import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
+import UVariantAssetImage from "@components/ui/variant/asset/image/UVariantAssetImage.vue";
+import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
 
 export default {
   name: "ProductVariantsView",
-  components: { SColorCircle, VariantAssetView },
+  components: { UColorCircle, UVariantAssetImage },
   props: {
     variants: {
       required: true,

@@ -50,7 +50,7 @@
     >
       <!-- ====================================== Request ====================================== -->
       <div v-if="method === 'request'" :class="{ '-focus': tel_f }" class="fst">
-        <s-tel-input
+        <u-tel-input
           v-model="phone"
           :defaultCountry="defaultCountry"
           :inputOptions="{
@@ -69,7 +69,7 @@
               : undefined
           "
           variant="outlined"
-        ></s-tel-input>
+        ></u-tel-input>
 
         <div class="widget-buttons">
           <v-btn
@@ -127,11 +127,11 @@
 
         <div class="py-3">
           <v-expand-transition>
-            <s-count-down
+            <u-count-down
               v-if="countdown_end && !show_resend"
               :end="countdown_end"
               @end="show_resend = true"
-            ></s-count-down>
+            ></u-count-down>
             <v-btn
               v-else-if="show_resend"
               class="tnt"
@@ -421,25 +421,27 @@
         </div>
       </div>
 
-      <s-loading v-if="method === 'login'" class="m-4" css-mode light>
-      </s-loading>
+      <u-loading-ellipsis v-if="method === 'login'" class="m-4" css-mode light>
+      </u-loading-ellipsis>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
 import { SoundHelper } from "@core/helper/sound/SoundHelper";
-import SCountDown from "@components/ui/count-down/SCountDown.vue";
+import UCountDown from "@components/ui/count-down/UCountDown.vue";
 import { SetupService } from "@core/server/SetupService";
 import { SuccessVerifyMethod } from "@sdk-storefront/auth/XapiAuthSMS";
 import { XapiAuth } from "@sdk-storefront/auth/XapiAuth";
 import ShopEmailLogin from "@components/storefront/login/widgets/ShopEmailLogin.vue";
+import UTelInput from "@components/ui/tel-input/UTelInput.vue";
 
 export default {
   name: "SShopLogin",
   components: {
+    UTelInput,
     ShopEmailLogin,
-    SCountDown,
+    UCountDown,
   },
   props: {
     show: {

@@ -33,7 +33,7 @@
         forAuction ? delete_from_auction() : put_to_waiting_for_auction()
       "
     >
-      <s-progress-loading v-if="busy_track_price"></s-progress-loading>
+      <u-loading-progress v-if="busy_track_price"></u-loading-progress>
       <img
         :class="{ 'img-grayscale': !forAuction }"
         class="fadeIn float-start me-1"

@@ -14,7 +14,7 @@
 
 <template>
   <div class="s--shop-billing-address-form">
-    <s-smart-toggle
+    <u-smart-toggle
       v-if="!forceShowForm"
       v-model="same_billing"
       :dark="dark"
@@ -35,11 +35,11 @@
       class="text-start-dir"
       color="success"
       @change="updateValue"
-    ></s-smart-toggle>
+    ></u-smart-toggle>
 
     <v-expand-transition>
       <v-container v-if="!same_billing" fluid>
-        <s-smart-switch
+        <u-smart-switch
           v-model="billing_business"
           :dark="dark"
           :false-description="$t('basket_page.billing_personal_desc')"
@@ -52,7 +52,7 @@
           true-icon="business"
           @change="updateValue"
         >
-        </s-smart-switch>
+        </u-smart-switch>
 
         <v-expand-transition>
           <div v-if="billing_business">
@@ -114,13 +114,13 @@
 
 <script>
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
-import SSmartToggle from "@components/ui/smart/SSmartToggle.vue";
-import SSmartSwitch from "@components/ui/smart/SSmartSwitch.vue";
+import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
+import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
 import { MapHelper } from "@core/helper/map/MapHelper";
 
 export default {
   name: "SShopBillingAddressForm",
-  components: { SSmartSwitch, SSmartToggle, SCountrySelect },
+  components: { USmartSwitch, USmartToggle, SCountrySelect },
   emits: ["update:modelValue", "change"],
   props: {
     modelValue: {},

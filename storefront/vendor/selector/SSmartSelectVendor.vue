@@ -81,10 +81,10 @@
           </div>
 
           <div class="min-width-100">
-            <price-view
+            <u-price
               :amount="calcVendorPrice(vendor)"
               :currency="GetUserSelectedCurrency()"
-            ></price-view>
+            ></u-price>
           </div>
 
           <v-avatar color="#fafafa" rounded>

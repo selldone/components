@@ -31,21 +31,21 @@
       <p class="font-weight-bold mt-1">{{ product.title }}</p>
 
       <p v-if="discount > 0">
-        <price-view
+        <u-price
           :amount="price + discount"
           class="discount-price text-muted"
           line-through
-        ></price-view>
+        ></u-price>
 
-        <s-chip-discount
+        <u-chip-discount
           :percent="discount_percent"
           class="mx-1 float-end"
           size="small"
         >
-        </s-chip-discount>
+        </u-chip-discount>
       </p>
       <p class="mt-2">
-        <price-view :amount="price"></price-view>
+        <u-price :amount="price"></u-price>
       </p>
 
       <product-variants-view
@@ -78,11 +78,11 @@
 
 <script>
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
-import SChipDiscount from "@components/ui/chip/discount/SChipDiscount.vue";
+import UChipDiscount from "@components/ui/chip/discount/UChipDiscount.vue";
 
 export default {
   name: "SProductPreviewById",
-  components: { SChipDiscount, ProductVariantsView },
+  components: { UChipDiscount, ProductVariantsView },
   props: {
     // ------------ MOde Auto Fetch --------------
 

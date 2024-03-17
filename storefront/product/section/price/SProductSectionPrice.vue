@@ -20,11 +20,11 @@
   >
     <div class="price">
       <p v-if="discount_value" class="m-0">
-        <price-view
+        <u-price
           :amount="discount_value + calculated_price"
           class="discount-value"
           line-through
-        ></price-view>
+        ></u-price>
       </p>
 
       <!-- ..................... Tips of pricing ..................... -->
@@ -68,10 +68,10 @@
         </div>
       </v-tooltip>
       <!-- ............................................................... -->
-      <price-view
+      <u-price
         :amount="calculated_price * price_multi"
         class="price-value font-weight-black single-line"
-      ></price-view>
+      ></u-price>
 
       <small v-if="product.unit" class="ms-2">/ {{ product.unit }}</small>
 

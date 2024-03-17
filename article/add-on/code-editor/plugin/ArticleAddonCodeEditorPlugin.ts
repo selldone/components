@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright (c) 2023. Selldone® Business OS™
  *

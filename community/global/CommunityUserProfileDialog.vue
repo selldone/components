@@ -51,7 +51,7 @@
 
       <v-card-text class="text-center">
         <div class="max-widget-width mx-auto">
-          <s-progress-loading v-if="busy"></s-progress-loading>
+          <u-loading-progress v-if="busy"></u-loading-progress>
 
           <v-avatar class="hover-scale force-top" color="#fafafa" size="64">
             <img :src="getUserAvatar(profile.user_id)" />
@@ -123,11 +123,11 @@
             v-if="mutual_ids?.length"
             class="d-flex align-center text-start mt-5"
           >
-            <s-dense-images-circles-users
+            <u-dense-circles-users
               :ids="mutual_ids"
               :size="32"
               class="overflow-visible"
-            ></s-dense-images-circles-users>
+            ></u-dense-circles-users>
 
             <p class="m-0 flex-grow-1">
               Mutual followers
@@ -160,12 +160,12 @@
 
 <script>
 import { SetupService } from "@core/server/SetupService";
-import SDenseImagesCirclesUsers from "@components/ui/dense-circles/SDenseImagesCirclesUsers.vue";
+import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 import SValueBox from "@components/ui/text/SValueBox.vue";
 
 export default {
   name: "CommunityUserProfileDialog",
-  components: { SValueBox, SDenseImagesCirclesUsers },
+  components: { SValueBox, UDenseCirclesUsers },
   props: {
     community: {
       type: Object,

@@ -140,7 +140,7 @@
           />
         </transition-group>
 
-        <s-loading v-if="busy" css-mode light></s-loading>
+        <u-loading-ellipsis v-if="busy" css-mode light></u-loading-ellipsis>
         <v-btn
           v-if="more && !busy"
           v-intersect.quiet="

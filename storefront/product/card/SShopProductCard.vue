@@ -99,14 +99,14 @@
             <b>{{ Number(product.rate).toFixed(1) }}</b>
           </v-chip>
           <div v-if="colors && colors.length" class="p-1">
-            <s-color-circle
+            <u-color-circle
               v-for="color in colors.slice(0, 5)"
               :key="color"
               :color="color"
               :size="14"
               class="me-1"
             >
-            </s-color-circle>
+            </u-color-circle>
             <v-icon v-if="colors.length > 5" class="me-1">more_horiz</v-icon>
           </div>
         </div>
@@ -220,14 +220,14 @@
                 v-if="colors && colors.length"
                 class="p-1 overflow-hidden single-line"
               >
-                <s-color-circle
+                <u-color-circle
                   v-for="color in colors.slice(0, 5)"
                   :key="color"
                   :color="color"
                   :size="14"
                   class="me-1"
                 >
-                </s-color-circle>
+                </u-color-circle>
                 <v-icon v-if="colors.length > 5" class="me-1"
                   >more_horiz
                 </v-icon>
@@ -243,13 +243,13 @@
             >
               <div :class="{ 'text-center': isSmall }" class="main-price-label">
                 <p class="dis-val">
-                  <price-view
+                  <u-price
                     v-if="discount > 0"
                     :amount="price_in_selected_currency + discount"
                     :class="{ small: dense }"
                     class="discount-price text-muted"
                     line-through
-                  ></price-view>
+                  ></u-price>
 
                   <span
                     v-if="discount > 0"
@@ -261,10 +261,10 @@
                 <p class="mt-2">
                   <!-- Main price -->
 
-                  <price-view
+                  <u-price
                     :amount="price_in_selected_currency"
                     :large="!dense"
-                  ></price-view>
+                  ></u-price>
 
                   <!-- Price label -->
                   <span v-if="product.price_label" class="mx-1 price-label">{{
@@ -315,7 +315,7 @@
         v-if="hasDiscountCountDown"
         class="count-down-container fadeIn delay_400"
       >
-        <s-count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
+        <u-count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
         <p v-else class="discount-not-end">
           {{ $t("product_info.action") }}
         </p>
@@ -392,11 +392,11 @@
           >
             <div v-if="product.quantity || isFile" class="main-price-label p-0">
               <p v-if="discount > 0">
-                <price-view
+                <u-price
                   :amount="price_in_selected_currency + discount"
                   class="discount-price text-muted"
                   line-through
-                ></price-view>
+                ></u-price>
               </p>
 
               <p class="my-1">
@@ -421,7 +421,7 @@
                 }}</span>
 
                 <!-- Main price  -->
-                <price-view :amount="price_in_selected_currency"></price-view>
+                <u-price :amount="price_in_selected_currency"></u-price>
               </p>
             </div>
 
@@ -467,7 +467,7 @@
         v-if="hasDiscountCountDown"
         class="count-down-container fadeIn delay_400"
       >
-        <s-count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
+        <u-count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
         <p v-else class="discount-not-end">
           {{ $t("product_info.action") }}
         </p>
@@ -478,19 +478,17 @@
 
 <script>
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
-import PriceView from "@components/ui/price/PriceView.vue";
-import CountDown from "@components/ui/count-down/SCountDown.vue";
+import UPrice from "@components/ui/price/UPrice.vue";
 import { ProductType } from "@core/enums/product/ProductType";
-import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
-import SCountDown from "@components/ui/count-down/SCountDown.vue";
+import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
+import UCountDown from "@components/ui/count-down/UCountDown.vue";
 
 export default {
   name: "SShopProductCard",
   components: {
-    SCountDown,
-    SColorCircle,
-    CountDown,
-    PriceView,
+    UCountDown,
+    UColorCircle,
+    UPrice,
     ProductVariantsView,
   },
   props: {

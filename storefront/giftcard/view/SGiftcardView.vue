@@ -69,13 +69,13 @@
           }}</span>
         </div>
 
-        <s-currency-icon
+        <u-currency-icon
           :currency="giftCard.currency"
           class="card__logo"
           flag
-        ></s-currency-icon>
+        ></u-currency-icon>
 
-        <s-circle-button
+        <u-button-circle
           :tooltip="$t('global.gift_card.transfer')"
           class="card__flip"
           color="#fff"
@@ -96,7 +96,7 @@
           </div>
         </div>
 
-        <s-circle-button
+        <u-button-circle
           v-if="false"
           :tooltip="$t('global.gift_card.send_to_friend')"
           color="#fff"
@@ -104,7 +104,7 @@
           icon="send"
         />
 
-        <s-circle-button
+        <u-button-circle
           :tooltip="$t('global.actions.close')"
           adjust-for-font-awesome
           class="card__flip"
@@ -118,11 +118,11 @@
 </template>
 
 <script>
-import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
+import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
 
 export default {
   name: "SGiftcardView",
-  components: { SCurrencyIcon },
+  components: { UCurrencyIcon },
   props: {
     giftCard: {
       require: true,

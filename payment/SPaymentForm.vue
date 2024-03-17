@@ -27,7 +27,7 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Top Bar ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-toolbar v-if="!busy && !qrCode" color="transparent" flat>
-      <s-currency-icon :currency="currency" gradient></s-currency-icon>
+      <u-currency-icon :currency="currency" gradient></u-currency-icon>
 
       <v-toolbar-title class="body-title px-3">
         {{ $t("global.payment_form.title") }}
@@ -38,7 +38,7 @@
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Success timeout ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
-        <time-lapse
+        <u-time-laps
           v-if="success_end_countdown"
           :duration-ms="8000"
           class="ms-2"
@@ -47,7 +47,7 @@
           width="3"
           @end="$emit('close')"
         >
-        </time-lapse>
+        </u-time-laps>
       </v-toolbar-title>
 
       <v-spacer />
@@ -59,7 +59,7 @@
         width="32px"
       />
 
-      <s-circle-button
+      <u-button-circle
         :tooltip="$t('global.actions.close')"
         class="z2"
         icon="close"
@@ -70,7 +70,7 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Loading View ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <div v-if="busy" class="py-8 text-muted">
-      <s-progress-loading></s-progress-loading>
+      <u-loading-progress></u-loading-progress>
 
       <b class="d-block text-success mb-1">
         <v-icon class="me-1" color="success">shield</v-icon>
@@ -134,11 +134,11 @@
           <br />
 
           <div class="d-flex align-center">
-            <price-view
+            <u-price
               :amount="total_amount_remain_for_pay"
               :currency="currency.code"
               class="text-h3"
-            ></price-view>
+            ></u-price>
 
             <v-chip
               v-if="isSelldoneSubscription"
@@ -176,10 +176,10 @@
                       <td>{{ $t("global.commons.amount") }}</td>
 
                       <td>
-                        <price-view
+                        <u-price
                           :amount="bill.items_price"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                       </td>
                     </tr>
 
@@ -190,10 +190,10 @@
                       </td>
 
                       <td>
-                        <price-view
+                        <u-price
                           :amount="-bill.items_discount"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                       </td>
                     </tr>
 
@@ -204,10 +204,10 @@
                       </td>
 
                       <td>
-                        <price-view
+                        <u-price
                           :amount="-bill.offer"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                       </td>
                     </tr>
 
@@ -218,11 +218,11 @@
                       </td>
 
                       <td>
-                        <price-view
+                        <u-price
                           v-if="bill.delivery_price >= 0"
                           :amount="bill.delivery_price"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                         <span v-else>{{ $t("global.commons.not_paid") }}</span>
                       </td>
                     </tr>
@@ -233,10 +233,10 @@
                         {{ $t("global.commons.discount_code") }}
                       </td>
                       <td>
-                        <price-view
+                        <u-price
                           :amount="-bill.discount_code"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                       </td>
                     </tr>
                     <tr v-if="bill.club">
@@ -245,10 +245,10 @@
                         {{ $t("global.commons.customer_club") }}
                       </td>
                       <td>
-                        <price-view
+                        <u-price
                           :amount="-bill.club"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                       </td>
                     </tr>
                     <tr v-if="bill.coupon">
@@ -257,10 +257,10 @@
                         {{ $t("global.commons.coupon") }}
                       </td>
                       <td>
-                        <price-view
+                        <u-price
                           :amount="-bill.coupon"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                       </td>
                     </tr>
 
@@ -270,10 +270,10 @@
                         {{ $t("global.commons.prize") }}
                       </td>
                       <td>
-                        <price-view
+                        <u-price
                           :amount="-bill.lottery"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                       </td>
                     </tr>
 
@@ -283,11 +283,11 @@
                         {{ $t("global.commons.tax") }}
                       </td>
                       <td>
-                        <price-view
+                        <u-price
                           v-if="!bill.tax_included"
                           :amount="bill.tax"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                         <span v-else>{{
                           $t("global.commons.tax_included")
                         }}</span>
@@ -300,10 +300,10 @@
                         {{ $t("global.commons.gift_card") }}
                       </td>
                       <td>
-                        <price-view
+                        <u-price
                           :amount="-total_amount_by_gift_cards"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                       </td>
                     </tr>
                     <tr style="border-top: #fff solid 2px">
@@ -311,10 +311,10 @@
                         <b>{{ $t("global.commons.sum") }}</b>
                       </td>
                       <td class="font-weight-bold">
-                        <price-view
+                        <u-price
                           :amount="total_amount_remain_for_pay"
                           :currency="currency.code"
-                        ></price-view>
+                        ></u-price>
                       </td>
                     </tr>
                   </tbody>
@@ -332,12 +332,12 @@
           }}</v-icon>
           {{ $t("global.payment_form.pay_amount_by_gift_cards") }}:
 
-          <price-view
+          <u-price
             class="text-success"
             :amount="total_amount_by_gift_cards"
             :currency="currency.code"
           >
-          </price-view>
+          </u-price>
         </p>
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Free payment ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
@@ -391,12 +391,12 @@
               <v-expansion-panel class="border rounded-18px">
                 <v-expansion-panel-title>
                   <span>Secure Payment Form</span>
-                  <s-loading
+                  <u-loading-ellipsis
                     v-if="!paypal_js_loaded || busy_get_paypal_client_token"
                     css-mode
                     light
                   >
-                  </s-loading>
+                  </u-loading-ellipsis>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text style="border-radius: 12px">
                   <div>
@@ -414,11 +414,11 @@
                       @click="PayPalSubmit"
                     >
                       {{ $t("global.actions.pay") }}
-                      <price-view
+                      <u-price
                         :amount="total_amount_remain_for_pay"
                         :currency="currency.code"
                         class="mx-2"
-                      ></price-view>
+                      ></u-price>
                     </v-btn>
                   </div>
                 </v-expansion-panel-text>
@@ -546,7 +546,7 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ QR Code ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="qrCode" class="p-3">
-      <time-lapse
+      <u-time-laps
         v-if="timeout && !success_end_countdown"
         :duration-ms="timeout"
         class="absolute-top-start"
@@ -554,18 +554,18 @@
         size="20"
         width="3"
       >
-      </time-lapse>
+      </u-time-laps>
 
       <v-btn
         class="absolute-top-end zoomIn delay_100 z2"
-        icon
+        icon variant="text"
         @click="$emit('close')"
       >
         <v-icon>close</v-icon>
       </v-btn>
 
       <div class="position-relative">
-        <s-qrcode
+        <u-qrcode
           :class="{ blurred: success_end_countdown }"
           :options="{
             width: 300,
@@ -574,7 +574,7 @@
           :value="qrCode"
           class="my-6 mx-auto zoomIn delay_300 blur-animate"
         >
-        </s-qrcode>
+        </u-qrcode>
 
         <v-icon
           v-if="success_end_countdown"
@@ -597,12 +597,12 @@
         {{ $t("global.payment_form.qr.amount") }}
         :
       </p>
-      <price-view
+      <u-price
         :amount="amount"
         :currency="currency.code"
         class="fadeIn delay_600"
         large
-      ></price-view>
+      ></u-price>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Stripe ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
@@ -710,8 +710,8 @@ import SPaymentStripe from "./stripe/SPaymentStripe.vue";
 import SPaymentButton from "./button/SPaymentButton.vue";
 import SGiftcardInput from "@components/storefront/giftcard/selector/SGiftcardInput.vue";
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
-import TimeLapse from "@components/ui/time-lapse/timeLapse.vue";
-import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
+import UTimeLaps from "@components/ui/time/lapse/UTimeLaps.vue";
+import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
 import SPaymentRazorpay from "./razorpay/SPaymentRazorpay.vue";
 import SPaymentPaypalStandard from "./paypal-standard/SPaymentPaypalStandard.vue";
 import SPaymentMercadopago from "./mercadopago/SPaymentMercadopago.vue";
@@ -726,8 +726,8 @@ export default {
     SPaymentMercadopago,
     SPaymentPaypalStandard,
     SPaymentRazorpay,
-    SCurrencyIcon,
-    TimeLapse,
+    UCurrencyIcon,
+    UTimeLaps,
     SValueCopyBox,
     SGiftcardInput,
     SPaymentButton,

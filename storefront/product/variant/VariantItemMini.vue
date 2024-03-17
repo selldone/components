@@ -30,7 +30,7 @@
     >
       <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
 
-      <s-color-circle :color="color" :size="16" class="me-1"></s-color-circle>
+      <u-color-circle :color="color" :size="16" class="me-1"></u-color-circle>
 
       <span class="small mx-1">{{ coloName }}</span>
     </div>
@@ -41,11 +41,11 @@
       <span class="card-badge-info">
         {{ volume.removeVariantAsset() }}
 
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="productVariant.shop_id"
           :size="24"
           :value="volume"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
       </span>
     </div>
 
@@ -54,11 +54,11 @@
 
       <span class="card-badge-info">
         {{ pack.removeVariantAsset() }}
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="productVariant.shop_id"
           :size="24"
           :value="pack"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
         <span class="text-muted">x</span>
       </span>
     </div>
@@ -70,11 +70,11 @@
 
       <span class="card-badge-info">
         {{ weight.removeVariantAsset() }}
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="productVariant.shop_id"
           :size="24"
           :value="weight"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
       </span>
     </div>
 
@@ -83,11 +83,11 @@
 
       <span class="card-badge-info">
         {{ style.removeVariantAsset() }}
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="productVariant.shop_id"
           :size="24"
           :value="style"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
       </span>
     </div>
 
@@ -97,11 +97,11 @@
       </v-icon>
       <span class="card-badge-info">
         {{ type.removeVariantAsset() }}
-        <variant-asset-view
+        <u-variant-asset-image
           :shop-id="productVariant.shop_id"
           :size="24"
           :value="type"
-        ></variant-asset-view>
+        ></u-variant-asset-image>
       </span>
     </div>
 
@@ -116,12 +116,12 @@
 </template>
 
 <script>
-import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
-import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
+import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
+import UVariantAssetImage from "@components/ui/variant/asset/image/UVariantAssetImage.vue";
 
 export default {
   name: "VariantItemMini",
-  components: { VariantAssetView, SColorCircle },
+  components: { UVariantAssetImage, UColorCircle },
   emits: ["select"],
   props: {
     productVariant: {

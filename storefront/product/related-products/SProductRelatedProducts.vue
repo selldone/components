@@ -33,10 +33,10 @@
 
               <template v-if="product.tags?.length">
                 <p>{{ $t("related_products.card.same_tags_subtitle") }}</p>
-                <s-cloud-tags-view
+                <u-tags-cloud
                   :tags="product.tags"
                   class="my-3"
-                ></s-cloud-tags-view>
+                ></u-tags-cloud>
               </template>
 
               <!-- load products in same category -->
@@ -123,10 +123,10 @@
             ></product-variants-view>
 
             <div class="-card-content">
-              <price-view
+              <u-price
                 :amount="CalcPriceProductCurrentCurrency(getShop(), item)"
                 large
-              ></price-view>
+              ></u-price>
             </div>
           </div>
 
@@ -151,7 +151,7 @@
 <script>
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
-import SCloudTagsView from "@components/ui/tag/SCloudTagsView.vue";
+import UTagsCloud from "@components/ui/tag/cloud/UTagsCloud.vue";
 import _ from "lodash-es";
 
 export default {
@@ -165,7 +165,7 @@ export default {
     },
   },
   components: {
-    SCloudTagsView,
+    UTagsCloud,
     ProductVariantsView,
     SFadeScroll,
   },

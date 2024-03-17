@@ -34,7 +34,7 @@
   <div v-else class="position-relative px-1" style="min-height: 65px">
     <!-- 🞇 Loading -->
 
-    <s-loading
+    <u-loading-ellipsis
       v-show="
         busy /*default_mode || changed to number input!*/ &&
         selected_order_count <= 1 /*Show loading for first action!*/
@@ -112,7 +112,7 @@
       "
     >
       <!-- ―――――――――――――― 🞇 Price input: Default / Custom ―――――――――――――― -->
-      <s-number-input
+      <u-number-input
         v-if="default_mode || custom_mode"
         v-model="selected_order_count"
         :background-color="default_color"
@@ -132,12 +132,12 @@
         @clear="buyRemoveAction"
       >
 
-      </s-number-input>
+      </u-number-input>
 
       <!-- ―――――――――――――― 🞇 Price input: Area / Volume ―――――――――――――― -->
 
       <div v-else-if="area_mode || volume_mode" class="d-flex align-center">
-        <s-number-input
+        <u-number-input
           v-model="dim_1"
           :background-color="default_color"
           :color="default_color"
@@ -153,8 +153,8 @@
           @blur="calculatorCall"
           @change="lock ? undefined : calculatorCall()"
         >
-        </s-number-input>
-        <s-number-input
+        </u-number-input>
+        <u-number-input
           v-model="dim_2"
           :background-color="default_color"
           :color="default_color"
@@ -170,9 +170,9 @@
           @blur="calculatorCall"
           @change="lock ? undefined : calculatorCall()"
         >
-        </s-number-input>
+        </u-number-input>
 
-        <s-number-input
+        <u-number-input
           v-if="volume_mode"
           v-model="dim_3"
           :background-color="default_color"
@@ -189,7 +189,7 @@
           @blur="calculatorCall"
           @change="lock ? undefined : calculatorCall()"
         >
-        </s-number-input>
+        </u-number-input>
       </div>
     </template>
 
@@ -221,11 +221,11 @@
 
 <script>
 import { ProductType } from "@core/enums/product/ProductType";
-import SLoading from "@components/ui/loading/SLoading.vue";
+import ULoadingEllipsis from "@components/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 import { BusinessModel } from "@core/enums/shop/BusinessModel";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 import SShopSubscribeButton from "./SShopSubscribeButton.vue";
 import { SubscriptionMode } from "@core/enums/subscription/SubscriptionMode";
 import { BasketHelper } from "@core/helper/shop/BasketHelper";
@@ -234,7 +234,7 @@ import _ from "lodash-es";
 
 export default {
   name: "SShopBuyButton",
-  components: { SShopSubscribeButton, SNumberInput, SLoading },
+  components: { SShopSubscribeButton, UNumberInput, ULoadingEllipsis },
   props: {
     product: {
       required: true,

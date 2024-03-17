@@ -80,10 +80,10 @@
                 </v-list-item-action>
 
                 <v-list-item-action>
-                  <price-view
+                  <u-price
                     :amount="item.price"
                     :currency="item.currency"
-                  ></price-view>
+                  ></u-price>
                 </v-list-item-action>
               </v-list-item>
             </v-list>

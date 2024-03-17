@@ -62,6 +62,7 @@ import type {User} from "@core/models/user/user.model";
 import {XapiUser} from "@sdk-storefront/user/XapiUser";
 import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 import {BackofficeLocalStorages} from "@core/helper/local-storage/BackofficeLocalStorages";
+import {ExecuteCopyToClipboard} from "@components/directives/copy/CopyDirective";
 
 //――― User Device Preferences ―――
 
@@ -194,8 +195,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                          return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                        },*/
+                                      return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                                    },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -361,8 +362,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                          return Num2persian(number);
-                        },*/
+                                      return Num2persian(number);
+                                    },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -380,16 +381,17 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Time ▶ Get Currency ――――――――――――――――――――
 
     getCurrencyName: function getCurrencyName(
-      currency_code: keyof typeof Currency | typeof Currency,
+      currency_code: keyof typeof Currency | ICurrency,
     ) {
       if (!currency_code) return "";
 
-      let currency;
-      if (this.isObject(currency_code)) currency = currency_code;
-      else if (this.isString(currency_code)) currency = Currency[currency_code];
+      let currency: ICurrency | null = null;
+      if (this.isObject(currency_code)) currency = currency_code as ICurrency;
+      else if (this.isString(currency_code))
+        currency = Currency[currency_code as string];
       if (!currency) return "";
 
-      return this.$t(currency.name);
+      return this.$t(currency!.name);
     },
 
     //―――――――――――――――――――――― 🌍 Status ――――――――――――――――――――
@@ -662,7 +664,9 @@ const CoreMixin = {
       return ProductType[type] ? this.$t(ProductType[type].name) : "";
     },
 
-    getProductTypeImage(type: string) {
+    getProductTypeImage(
+      type: keyof typeof ProductType | "POS" | "FUL" | "AVO" | "HYP",
+    ) {
       if (type === "POS")
         return require("@components/assets/icons/pos-order-type.svg");
       else if (type === "FUL")
@@ -674,7 +678,9 @@ const CoreMixin = {
 
       return ProductType[type] ? ProductType[type].image : "";
     },
-    getBasketTypeImage(type: string) {
+    getBasketTypeImage(
+      type: keyof typeof ProductType | "POS" | "FUL" | "AVO" | "HYP",
+    ) {
       if (type === "POS")
         return require("@core/assets/order-types/basket-pos.svg");
       else if (type === "FUL")
@@ -821,12 +827,14 @@ const CoreMixin = {
     },
 
     //―――――――――――――――――――――― Currency ――――――――――――――――――――
-
     GetCurrency(currency: keyof typeof Currency | ICurrency) {
       if (!currency) return null;
-      return Currency[
-        this.isObject(currency) ? (currency as ICurrency).code : currency
-      ];
+      if (typeof currency === "string") {
+        return Currency[currency];
+      } else if ("code" in currency) {
+        return Currency[currency.code];
+      }
+      return null;
     },
 
     /**
@@ -1309,25 +1317,17 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                          PushNotification.AskForPermission();
-                        },*/
+                                      PushNotification.AskForPermission();
+                                    },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 
     copyToClipboard(
       str: string,
       title: string | null = null,
-      message: string = "Copied successfully.",
+      message: string | null = null,
     ) {
-      //console.log('copyToClipboard',str)
-      const el = document.createElement("textarea");
-      el.addEventListener("focusin", (e) => e.stopPropagation());
-      el.value = str;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand("copy");
-      document.body.removeChild(el);
-      this.showSuccessAlert(title, message);
+      ExecuteCopyToClipboard(this, str, title, message);
     },
 
     //―――――――――――――――――――――― Laravel validation error handler ――――――――――――――――――――
@@ -1622,8 +1622,6 @@ const CoreMixin = {
     getUserAvatar(user_id: number, size: "small" | "big" | null = "small") {
       return window.CDN.GET_USER_AVATAR(user_id, size);
     },
-
-
 
     //―――――――――――――――――――――― Cookie ――――――――――――――――――――
     getId(id_with_slug: string | number): number | null {

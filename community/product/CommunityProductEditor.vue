@@ -63,7 +63,7 @@
           {{ $t("global.commons.barcode_scanner") }}
         </v-card-title>
         <v-card-text v-if="show_scanner">
-          <barcode-scanner qr-code @on-scan="onScan"></barcode-scanner>
+          <u-scanner qr-code @on-scan="onScan"></u-scanner>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -84,11 +84,11 @@
 
 <script>
 import CommunityProductView from "./CommunityProductView.vue";
-import BarcodeScanner from "@components/ui/scanner/BarcodeScanner.vue";
+import UScanner from "@components/ui/scanner/UScanner.vue";
 
 export default {
   name: "CommunityProductEditor",
-  components: { BarcodeScanner, CommunityProductView },
+  components: { UScanner, CommunityProductView },
   emits: ["update:modelValue"],
   props: {
     shop: {

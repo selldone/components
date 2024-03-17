@@ -29,11 +29,11 @@
 
       <div>
         <small>{{ $t("global.commons.amount") }}:</small><br />
-        <price-view
+        <u-price
           :amount="lottery.card_type.amount"
           :currency="lottery.card_type.currency"
           large
-        ></price-view>
+        ></u-price>
       </div>
     </v-row>
 
@@ -64,11 +64,11 @@
 
       <div class="w-50">
         <small>{{ $t("global.commons.discount_limit") }}:</small><br />
-        <price-view
+        <u-price
           :amount="lottery.discount_limit"
           :currency="lottery.currency"
           large
-        ></price-view>
+        ></u-price>
       </div>
     </v-row>
 
@@ -80,11 +80,11 @@
       style="border-color: #689f38"
     >
       <small>{{ $t("global.commons.prize_amount") }}: </small><br />
-      <price-view
+      <u-price
         :amount="lottery.amount"
         :currency="lottery.currency"
         large
-      ></price-view>
+      ></u-price>
     </div>
   </div>
 </template>

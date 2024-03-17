@@ -41,18 +41,18 @@
 
       <div class="d-flex text-subtitle-2">
         <div class="w-50" title="Address balance">
-          <price-view
+          <u-price
             :amount="card.balance"
             :currency="currency"
             not-show-zero
-          ></price-view>
+          ></u-price>
         </div>
         <div class="w-50" title="Network fee">
-          <price-view
+          <u-price
             :amount="card.fee"
             :currency="currency"
             not-show-zero
-          ></price-view>
+          ></u-price>
         </div>
       </div>
 

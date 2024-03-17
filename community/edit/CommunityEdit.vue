@@ -104,13 +104,13 @@
         that SEO settings can also be adjusted at the topic and category level.
       </v-list-subheader>
 
-      <s-smart-toggle
+      <u-smart-toggle
         v-model="nofollow"
         :true-description="$t('community.commons.nofollow_msg')"
         false-gray
         false-title="Follow links"
         true-title="No follow links"
-      ></s-smart-toggle>
+      ></u-smart-toggle>
     </div>
 
     <!-- Cross Community -->
@@ -124,12 +124,12 @@
         >Can other communities embed your topics?
       </v-list-subheader>
 
-      <s-smart-toggle
+      <u-smart-toggle
         v-model="cross"
         :true-description="$t('community.commons.crossable_msg')"
         :true-title="$t('community.commons.crossable')"
         false-gray
-      ></s-smart-toggle>
+      ></u-smart-toggle>
     </div>
 
     <!-- Access -->
@@ -145,7 +145,7 @@
         Categories > Topics > Posts.
       </v-list-subheader>
 
-      <s-smart-select
+      <u-smart-select
         v-model="stage"
         :items="Object.values(CommunityStageLevel)"
         class="mb-5"
@@ -154,9 +154,9 @@
         item-text="name"
         item-value="code"
         label="Who can create topics by default?"
-      ></s-smart-select>
+      ></u-smart-select>
 
-      <s-smart-toggle
+      <u-smart-toggle
         v-model="enable"
         :false-title="$t('global.commons.disable')"
         :true-description="$t('community.community.enable_msg')"
@@ -165,7 +165,7 @@
         false-icon="public_off"
         label="Is your community available?"
         true-icon="public"
-      ></s-smart-toggle>
+      ></u-smart-toggle>
     </div>
 
     <!-- Access -->
@@ -180,7 +180,7 @@
         attach up to 3 files, each 8MB, in their posts.
       </v-list-subheader>
 
-      <s-smart-select
+      <u-smart-select
         v-model="attachment"
         :items="Object.values(CommunityAttachmentAccess)"
         class="my-5"
@@ -189,7 +189,7 @@
         item-text="name"
         item-value="code"
         label="Who can attach files?"
-      ></s-smart-select>
+      ></u-smart-select>
 
       <v-combobox
         v-model="mims"
@@ -264,8 +264,8 @@
 <script>
 import ImageInput from "@components/community/image/ImageInput.vue";
 import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
-import SSmartToggle from "@components/ui/smart/SSmartToggle.vue";
-import SSmartSelect from "@components/ui/smart/SSmartSelect.vue";
+import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
+import USmartSelect from "@components/ui/smart/select/USmartSelect.vue";
 import { CommunityAttachmentAccess } from "@core/enums/community/CommunityAttachmentAccess";
 import _ from "lodash-es";
 import ScrollHelper from "@core/utils/scroll/ScrollHelper";
@@ -273,7 +273,7 @@ import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "CommunityEdit",
-  components: {SWidgetButtons, SSmartSelect, SSmartToggle, ImageInput },
+  components: {SWidgetButtons, USmartSelect, USmartToggle, ImageInput },
 
   props: {
     shop: {}, // optional for shops.

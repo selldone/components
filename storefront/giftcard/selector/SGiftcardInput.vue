@@ -92,10 +92,10 @@
           <b>{{ formatCard(item.raw.number) }}</b>
         </template>
         <template v-slot:append>
-          <price-view
+          <u-price
             :amount="item.raw.balance"
             :currency="item.raw.gift_type.currency"
-          ></price-view>
+          ></u-price>
         </template>
       </v-list-item>
     </template>

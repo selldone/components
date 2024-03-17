@@ -20,7 +20,7 @@
     class="widget-box w-100 py-3 mt-5 pricing-form strong-field"
     :class="{'-preview':previewMode}"
   >
-    <s-progress-loading v-if="busy_save"></s-progress-loading>
+    <u-loading-progress v-if="busy_save"></u-loading-progress>
     <div
       v-for="(item, index) in structure"
       :key="index"
@@ -46,7 +46,7 @@
       </v-text-field>
 
       <!-- Number -->
-      <s-number-input
+      <u-number-input
         v-else-if="item.type === 'number'"
         v-model="preferences_valuation[item.name]"
         :label="item.title"
@@ -58,7 +58,7 @@
         @update:model-value="$emit('update:preferences', preferences)"
         variant="underlined"
       >
-      </s-number-input>
+      </u-number-input>
 
       <!-- Select -->
       <v-select
@@ -86,7 +86,7 @@
       >
       </v-select>
       <!-- switch -->
-      <s-smart-switch
+      <u-smart-switch
         v-else-if="item.type === 'switch'"
         v-model="preferences_valuation[item.name]"
         :false-description="item.false_desc"
@@ -110,7 +110,7 @@
           $forceUpdate();
         "
       >
-      </s-smart-switch>
+      </u-smart-switch>
 
       <v-icon
         v-if="index_blink === index"
@@ -125,13 +125,13 @@
 
 <script>
 import { FileHelper } from "@core/helper/converters/FileHelper";
-import SSmartSwitch from "@components/ui/smart/SSmartSwitch.vue";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
+import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 import _ from "lodash-es";
 
 export default {
   name: "SProductSectionValuation",
-  components: { SNumberInput, SSmartSwitch },
+  components: { UNumberInput, USmartSwitch },
   props: {
     shop: {
       required: true,

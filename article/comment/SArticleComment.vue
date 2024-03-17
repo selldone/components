@@ -87,7 +87,7 @@
             <div class="comment-body">
               <v-row v-if="buy_product" align="center">
                 <v-col class="text-start" cols="12" sm="6">
-                  <rating-bar
+                  <u-rating-bar
                     v-for="(item, index) in rates"
                     :key="index"
                     :max="5"
@@ -236,12 +236,12 @@
 </template>
 
 <script>
-import RatingBar from "@components/ui/rating/RatingBar.vue";
+import URatingBar from "@components/ui/rating/bar/URatingBar.vue";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 
 export default {
   name: "SArticleComment",
-  components: { RatingBar },
+  components: { URatingBar },
   props: {
     comment: {
       required: true,

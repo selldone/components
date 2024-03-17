@@ -72,7 +72,7 @@
       variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
     ></v-text-field>
-    <s-number-input
+    <u-number-input
       v-else-if="type === 'number'"
       :label="name"
       :model-value="modelValue"
@@ -80,8 +80,8 @@
       filled
       variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
-    ></s-number-input>
-    <s-price-input
+    ></u-number-input>
+    <u-price-input
       v-else-if="type === 'price'"
       :decimal="2"
       :label="name"
@@ -90,8 +90,8 @@
       variant="underlined"
       prepend-icon="attach_money"
       @update:model-value="(val) => $emit('update:modelValue', val)"
-    ></s-price-input>
-    <s-currency-input
+    ></u-price-input>
+    <u-currency-input
       v-else-if="type === 'currency'"
       :label="name"
       :returnObject="false"
@@ -100,8 +100,8 @@
       prepend-icon="account_balance_wallet"
       variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
-    ></s-currency-input>
-    <s-date-input
+    ></u-currency-input>
+    <u-date-input
       v-else-if="type === 'date'"
       :label="name"
       :model-value="modelValue"
@@ -109,7 +109,7 @@
       format="YYYY-MM-DDTHH:mm:ssZ"
       variant="underlined"
       @update:model-value="(val) => $emit('update:modelValue', val)"
-    ></s-date-input>
+    ></u-date-input>
 
     <div v-else-if="type === 'duration'" class="mb-3">
       <v-text-field
@@ -179,10 +179,10 @@
 </template>
 
 <script>
-import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
-import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
-import SDateInput from "../ui/calendar/date-input/SDateInput.vue";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
+import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
+import UDateInput from "../ui/date/input/UDateInput.vue";
+import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 
 const ActionPlatform = [
   "http://schema.org/DesktopWebPlatform",
@@ -218,10 +218,10 @@ function CheckEnum(type) {
 export default {
   name: "SStructureDataInput",
   components: {
-    SNumberInput,
-    SDateInput,
-    SCurrencyInput,
-    SPriceInput,
+    UNumberInput,
+    UDateInput,
+    UCurrencyInput,
+    UPriceInput,
   },
   emits: ["update:modelValue", "delete"],
   props: {

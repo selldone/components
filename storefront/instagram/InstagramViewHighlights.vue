@@ -167,13 +167,13 @@
                 <!-- Select variant -->
 
                 <div class="my-3">
-                  <variant-selector-menu
+                  <u-variant-selector
                     v-if="has_available_variants"
                     v-model="selected_variant"
                     :variants="product_variants"
                     active-color="#000"
                     bordered
-                  ></variant-selector-menu>
+                  ></u-variant-selector>
                 </div>
 
                 <v-row align="center" class="mx-0" dense>
@@ -181,11 +181,11 @@
 
                   <v-col cols="12" md="6">
                     <p v-if="discount > 0">
-                      <price-view
+                      <u-price
                         :amount="price + discount"
                         class="op-0-8"
                         line-through
-                      ></price-view>
+                      ></u-price>
 
                       <v-chip
                         class="mx-1 float-end"
@@ -196,7 +196,7 @@
                       </v-chip>
                     </p>
                     <p class="-price">
-                      <price-view :amount="price"></price-view>
+                      <u-price :amount="price"></u-price>
                     </p>
                   </v-col>
 
@@ -306,7 +306,7 @@ import ProductsDenseImagesCircles from "@components/storefront/product/products-
 import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
 import SDragPins from "@components/ui/drag/pins/SDragPins.vue";
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
-import VariantSelectorMenu from "@components/ui/variant/VariantSelectorMenu.vue";
+import UVariantSelector from "@components/ui/variant/selector/UVariantSelector.vue";
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
 import _ from "lodash-es";
 
@@ -314,7 +314,7 @@ export default {
   name: "InstagramViewHighlights",
   components: {
     SShopBuyButton,
-    VariantSelectorMenu,
+    UVariantSelector,
     ProductVariantsView,
     SDragPins,
     ProductsDenseImagesCircles,

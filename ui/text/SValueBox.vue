@@ -19,7 +19,7 @@
       {{ label }}
     </div>
     <div :class="{ vb50: vb50 }" class="-val text-subtitle-2">
-      <s-check v-if="isBoolean(value)" :model-value="value" read-only></s-check>
+      <u-check v-if="isBoolean(value)" :model-value="value" read-only></u-check>
       <span v-else>{{ value }}</span>
       <slot name="value"></slot>
       <slot></slot>

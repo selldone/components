@@ -12,9 +12,17 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import { ObjectDirective } from "vue";
-import { AppLevel } from "@core/enums/application/AppLevel";
-import { Store } from "vuex"; // Import Vuex Store type
+import {ComponentPublicInstance, ObjectDirective} from "vue";
+import {AppLevel, IAppLevel} from "@core/enums/application/AppLevel";
+import {Store} from "vuex"; // Import Vuex Store type
+
+interface HTMLElementWithCleanup extends HTMLElement {
+  _cleanup?: () => void;
+}
+
+interface VueInstance extends ComponentPublicInstance {
+  $store: Store<any>;
+}
 
 /**
  * Directive to conditionally hide elements based on user's app level.
@@ -23,9 +31,12 @@ import { Store } from "vuex"; // Import Vuex Store type
  * v-level.min="BEGINNER" - Hides the element for levels below BEGINNER.
  * v-level.max="BEGINNER" - Hides the element for levels above BEGINNER.
  */
-const levelDirective: ObjectDirective<HTMLElement, keyof typeof AppLevel> = {
-  beforeMount(el, binding, vnode) {
-    const store = binding.instance?.$store as Store<any>;
+const levelDirective: ObjectDirective<
+  HTMLElementWithCleanup,
+  keyof typeof AppLevel | IAppLevel
+> = {
+  beforeMount(el: HTMLElementWithCleanup, binding, vnode) {
+    const store = (binding.instance as VueInstance).$store as Store<any>;
     if (!store) {
       console.error("Store is not available in directive context.");
       return;
@@ -66,7 +77,7 @@ const levelDirective: ObjectDirective<HTMLElement, keyof typeof AppLevel> = {
     el._cleanup = unwatch;
   },
 
-  unmounted(el) {
+  unmounted(el: HTMLElementWithCleanup) {
     // Run the cleanup function to stop watching when the element is removed
     if (el._cleanup) {
       el._cleanup();

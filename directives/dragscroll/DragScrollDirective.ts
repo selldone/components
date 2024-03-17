@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import type { DirectiveBinding, VNode } from "vue";
+import type {DirectiveBinding, VNode} from "vue";
 
 const POINTER_START_EVENTS = ["mousedown", "touchstart"];
 const POINTER_MOVE_EVENTS = ["mousemove", "touchmove"];
@@ -119,15 +119,19 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
     // Add 'cursor-pan-all' class on init
     target.classList.add("cursor-grab");
 
-    target.md = function (e: {
-      pageX: any;
-      touches: { clientX: any; clientY: any; pageX: any; pageY: any }[];
-      pageY: any;
-      button: number;
-      clientX: any;
-      clientY: any;
-    }) {
-      e.preventDefault();
+    target.md = function (
+      e:
+        | DragEvent
+        | {
+            pageX: any;
+            touches: { clientX: any; clientY: any; pageX: any; pageY: any }[];
+            pageY: any;
+            button: number;
+            clientX: any;
+            clientY: any;
+          },
+    ) {
+      (e as DragEvent).preventDefault();
       const isMouseEvent = e instanceof window.MouseEvent;
       // The coordinates of the mouse pointer compared to the page when the mouse button is clicked on an element
       const pageX = isMouseEvent ? e.pageX : e.touches[0].pageX;

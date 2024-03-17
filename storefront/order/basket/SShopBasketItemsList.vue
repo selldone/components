@@ -162,45 +162,45 @@
       </template>
 
       <template v-slot:item.price="{ item }">
-        <price-view
+        <u-price
           :amount="item.price + item.dis"
           :currency="item.currency"
-        ></price-view>
+        ></u-price>
       </template>
 
       <template v-slot:item.total_price="{ item }">
-        <price-view
+        <u-price
           :amount="item.count * (item.price + item.dis)"
           :currency="item.currency"
-        ></price-view>
+        ></u-price>
       </template>
 
       <template v-slot:item.dis="{ item }">
-        <price-view
+        <u-price
           v-if="item.dis"
           :amount="-item.count * item.dis"
           :currency="item.currency"
-        ></price-view>
+        ></u-price>
 
         <div v-if="item.offer_amount">
           <v-chip color="blue" dark size="small" title="Offer">
             <v-icon size="small" start>add</v-icon>
-            <price-view
+            <u-price
               :amount="-item.offer_amount"
               :currency="item.currency"
-            ></price-view>
+            ></u-price>
           </v-chip>
         </div>
       </template>
 
       <template v-slot:item.final_price="{ item }">
-        <price-view
+        <u-price
           :amount="
             item.count * item.price -
             (item.offer_amount ? item.offer_amount : 0)
           "
           :currency="item.currency"
-        ></price-view>
+        ></u-price>
       </template>
 
       <template v-if="isPhysical" v-slot:item.return_request="{ item }">

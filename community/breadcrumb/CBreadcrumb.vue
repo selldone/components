@@ -31,7 +31,8 @@
           :class="{ 'absolute-top-end': $vuetify.display.xs }"
           :size="!$vuetify.display.xs ? 'small' : undefined"
           class="me-2 ms-sm-n2"
-          icon variant="text"
+          icon
+          variant="text"
           @click="NeedLogin()"
         >
           <v-icon>person</v-icon>
@@ -442,7 +443,7 @@
       >{{ $t("community.commons.blocked_message") }}:
       {{ getLocalTimeString(block_at) }}
       <br />
-      <s-count-down :end="block_at_date"></s-count-down>
+      <u-count-down :end="block_at_date"></u-count-down>
     </v-alert>
 
     <!-- ████████████████████ Rule Dialog ████████████████████ -->
@@ -504,7 +505,7 @@
           </div>
 
           <div class="text-center">
-            <s-social-share-buttons
+            <u-button-share-group
               :description="invite_message + '\n\n' + invite_link"
               :hashtags="`${community.name}`"
               :quote="invite_message"
@@ -514,7 +515,7 @@
               :url="invite_link"
               class="mt-3"
               small
-            ></s-social-share-buttons>
+            ></u-button-share-group>
           </div>
         </v-card-text>
       </v-card>
@@ -533,7 +534,12 @@
           {{ $t("community.nominate.title") }}
 
           <v-spacer></v-spacer>
-          <v-btn icon size="large" @click="show_nominate = false" variant="text">
+          <v-btn
+            icon
+            size="large"
+            @click="show_nominate = false"
+            variant="text"
+          >
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
@@ -555,7 +561,7 @@
             {{ $t("community.nominate.no_credit_message") }}
           </v-alert>
 
-          <s-user-input
+          <c-user-input
             v-model:user="user_nominate"
             :class="{ disabled: profile_credit <= 0 }"
             :label="$t('community.nominate.user_nominate')"
@@ -563,7 +569,7 @@
             exclude-me
             no-icon
             with-profile
-          ></s-user-input>
+          ></c-user-input>
 
           <v-alert v-if="user_nominate && !user_nominate.profile" type="error"
             >{{ $t("community.invite.not_have_profile_error") }}
@@ -603,13 +609,13 @@
 
 <script>
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
-import SSocialShareButtons from "../../ui/button/share/SSocialShareButtons.vue";
-import SUserInput from "@components/ui/user/input/SUserInput.vue";
-import SDenseImagesCirclesUsers from "@components/ui/dense-circles/SDenseImagesCirclesUsers.vue";
+import UButtonShareGroup from "../../ui/button/share/group/UButtonShareGroup.vue";
+import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 import CommunityAccessController from "@components/community/access/CommunityAccessController.vue";
-import SCountDown from "@components/ui/count-down/SCountDown.vue";
+import UCountDown from "@components/ui/count-down/UCountDown.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
+import CUserInput from "@components/community/user/input/CUserInput.vue";
 
 /**
  * <c-breadcrumb>
@@ -617,11 +623,11 @@ import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
 export default {
   name: "CBreadcrumb",
   components: {
-    SCountDown,
+    CUserInput,
+    UCountDown,
     CommunityAccessController,
-    SDenseImagesCirclesUsers,
-    SUserInput,
-    SSocialShareButtons,
+    UDenseCirclesUsers,
+    UButtonShareGroup,
   },
   props: {
     shop: {},

@@ -83,11 +83,11 @@
           </div>
 
           <div class="min-width-150 px-1">
-            <price-view
+            <u-price
               :amount="plan.price"
               :currency="plan.currency"
               medium
-            ></price-view>
+            ></u-price>
 
             <div>
               /

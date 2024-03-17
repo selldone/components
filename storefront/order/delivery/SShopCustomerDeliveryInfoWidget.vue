@@ -89,13 +89,13 @@
           <div v-else>
             <div class="spacer-line-dotted mt-5 mb-2"></div>
 
-            <s-smart-toggle
+            <u-smart-toggle
               v-model="same_billing"
               :true-title="$t('basket_page.same_billing_address')"
               :false-title="$t('basket_page.custom_billing_info')"
               class="my-3"
               color="success"
-            ></s-smart-toggle>
+            ></u-smart-toggle>
 
             <v-expand-transition>
               <div v-if="!same_billing">
@@ -217,11 +217,11 @@
             <v-icon class="me-1" size="small">pin_drop</v-icon>
             {{ $t("global.commons.pickup") }}:
           </small>
-          <s-geo-navigation-button
+          <u-map-geo-button
             :location="receiver_info.location"
             class="my-1"
           >
-          </s-geo-navigation-button>
+          </u-map-geo-button>
         </p>
 
         <!-- ========================================= RECEIVER ========================================= -->
@@ -251,7 +251,7 @@
       <!-- ========================================= MAP ========================================= -->
 
       <v-col class="" cols="12" md="4" sm="12">
-        <s-map-view
+        <u-map-view
           v-if="receiver_info.location"
           v-model="receiver_info"
           :center="center"
@@ -330,7 +330,7 @@
       transition="dialog-bottom-transition"
     >
       <v-sheet color="#fff" height="100%" width="100%">
-        <s-map-view
+        <u-map-view
           v-if="map_dialog"
           v-model="receiver_info_edit"
           v-model:center="center_edit"
@@ -363,14 +363,14 @@ import { ProductType } from "@core/enums/product/ProductType";
 import SOrderDeliveryAutoComplete from "@components/storefront/order/auto-complete/SOrderDeliveryAutoComplete.vue";
 import DeliveryTimelineTransportationOrder from "@components/storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
-import SGeoNavigationButton from "@components/ui/map/geo-button/SGeoNavigationButton.vue";
-import SSmartToggle from "@components/ui/smart/SSmartToggle.vue";
+import UMapGeoButton from "@components/ui/map/geo-button/UMapGeoButton.vue";
+import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
   components: {
-    SSmartToggle,
-    SGeoNavigationButton,
+    USmartToggle,
+    UMapGeoButton,
     DeliveryTimelineTransportationOrder,
     SOrderDeliveryAutoComplete,
     SOrderBillCard,

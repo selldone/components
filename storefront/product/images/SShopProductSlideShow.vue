@@ -130,7 +130,7 @@
         <!--  ━━━━━━━━━━━━ Main > Video ━━━━━━━━━━━━ -->
         <template v-else-if="item.video">
           <v-responsive aspect-ratio="1" class="position-relative">
-            <s-youtube
+            <u-youtube-player
               :player-vars="{
                 color: 'white',
                 controls: 1,
@@ -141,7 +141,7 @@
               height="100%"
               style="border-radius: 8px"
               width="100%"
-            ></s-youtube>
+            ></u-youtube-player>
           </v-responsive>
         </template>
 
@@ -215,12 +215,12 @@
 <script>
 import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
 import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
-import SYoutube from "@components/ui/youtube/SYoutube.vue";
+import UYoutubePlayer from "@components/ui/youtube/player/UYoutubePlayer.vue";
 import SImage from "@components/storefront/product/images/SImage.vue";
 
 export default {
   name: "SShopProductSlideShow",
-  components: {SImage, SYoutube, SFadeScroll, VariantItemViewMicro },
+  components: {SImage, UYoutubePlayer, SFadeScroll, VariantItemViewMicro },
   props: {
     shop: {
       required: true,

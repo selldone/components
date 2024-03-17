@@ -60,7 +60,7 @@
           :shop="shop"
         ></s-header-section-logo>
 
-        <s-loading v-else-if="!shop" css-mode></s-loading>
+        <u-loading-ellipsis v-else-if="!shop" css-mode></u-loading-ellipsis>
 
         <v-spacer />
 
@@ -73,7 +73,7 @@
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Orders history ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <s-circle-button
+        <u-button-circle
           v-if="show_top_cart && !isMobile"
           :color="is_light_header ? '#333' : '#fff'"
           :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }"
@@ -83,11 +83,11 @@
           exact
           icon="local_mall"
         >
-        </s-circle-button>
+        </u-button-circle>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Basket Top Menu ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <s-circle-button
+        <u-button-circle
           v-if="show_top_cart && !isMobile"
           :badge-number="itemsCount"
           :color="is_light_header ? '#333' : '#fff'"
@@ -100,7 +100,7 @@
           persist-badge
           @click="show_basket = true"
         >
-        </s-circle-button>
+        </u-button-circle>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User Badges ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
@@ -122,7 +122,7 @@
         ></s-language-selector>
 
         <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-        <s-currency-selector
+        <u-currency-selector
           v-if="
             /* isMobile &&*/ shop &&
             shop.currencies &&
@@ -392,10 +392,10 @@
 
 <script>
 import BasketTopMenu from "../../order/basket/BasketTopMenu.vue";
-import SLoading from "@components/ui/loading/SLoading.vue";
+import ULoadingEllipsis from "@components/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 import SStorefrontLotteryWheelOfFortune from "@components/storefront/lottery/wheel-of-fortune/SStorefrontLotteryWheelOfFortune.vue";
-import SCurrencySelector from "@components/ui/currency/selector/SCurrencySelector.vue";
+import UCurrencySelector from "@components/ui/currency/selector/UCurrencySelector.vue";
 import SShopNavigationDrawer from "@components/storefront/menu/side/SShopNavigationDrawer.vue";
 import SShopUserMenuList from "@components/storefront/menu/user/SShopUserMenuList.vue";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
@@ -411,10 +411,10 @@ export default {
     SLanguageSelector,
     SShopUserMenuList,
     SShopNavigationDrawer,
-    SCurrencySelector,
+    UCurrencySelector,
 
     SStorefrontLotteryWheelOfFortune,
-    SLoading,
+    ULoadingEllipsis,
 
     BasketTopMenu,
   },

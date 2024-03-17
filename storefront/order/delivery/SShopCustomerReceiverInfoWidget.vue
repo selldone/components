@@ -108,21 +108,21 @@
       width="100%"
       @click="$emit('show:map')"
     >
-      <s-map-location-marker
+      <u-map-view-pin
         v-if="receiverInfo.location"
         class="map-pointer"
-      ></s-map-location-marker>
+      ></u-map-view-pin>
     </v-img>
   </div>
 </template>
 
 <script>
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
-import SMapLocationMarker from "@components/ui/map/market/SMapLocationMarker.vue";
+import UMapViewPin from "@components/ui/map/view/market/UMapViewPin.vue";
 
 export default {
   name: "SShopCustomerReceiverInfoWidget",
-  components: { SMapLocationMarker, SCountrySelect },
+  components: { UMapViewPin, SCountrySelect },
   props: {
     receiverInfo: {
       require: true,

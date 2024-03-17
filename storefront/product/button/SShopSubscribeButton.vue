@@ -150,7 +150,7 @@
               class="mb-5"
             ></s-subscription-price-select>
 
-            <s-number-input
+            <u-number-input
               v-if="has_count"
               v-model="count"
               :label="$t('buy_button.quantity_in_basket')"
@@ -163,7 +163,7 @@
               flat
               hide-details
             >
-            </s-number-input>
+            </u-number-input>
 
             <div class="widget-buttons">
               <v-btn
@@ -177,11 +177,11 @@
               >
                 <div class="flex-grow-1">
                   <div v-if="selected_price">
-                    <price-view
+                    <u-price
                       :amount="selected_price.price * count"
                       :currency="selected_price.currency"
                       large
-                    ></price-view>
+                    ></u-price>
                     / {{ $t(selected_period.title) }}
                   </div>
                   <div v-else class="font-weight-light">Select a plan!</div>
@@ -210,13 +210,13 @@ import SShopCustomerReceiverInfoWidget from "@components/storefront/order/delive
 import SSubscriptionPriceSelect from "@components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
 import BillingPeriod from "@core/enums/subscription/BillingPeriod";
 import SShopBillingAddressForm from "@components/storefront/order/billing/SShopBillingAddressForm.vue";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
 
 export default {
   name: "SShopSubscribeButton",
   components: {
-    SNumberInput,
+    UNumberInput,
     SShopBillingAddressForm,
     SSubscriptionPriceSelect,
     SShopCustomerReceiverInfoWidget,

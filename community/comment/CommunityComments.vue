@@ -22,7 +22,7 @@
         :class="{ 'mx-4': !parent, 'ms-4': parent }"
         class="my-2"
       >
-        <s-loading v-if="busy_fetch && page === 1" css-mode light></s-loading>
+        <u-loading-ellipsis v-if="busy_fetch && page === 1" css-mode light></u-loading-ellipsis>
 
         <!-- No comment message -->
         <div v-if="!busy_fetch && !comments.length" class="text-muted p-2">

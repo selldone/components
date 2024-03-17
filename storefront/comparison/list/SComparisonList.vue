@@ -161,7 +161,7 @@
             <td>{{ $t("product_comparison.list.price") }}</td>
             <td v-for="product in shown_products" :key="product.key">
               <span class="txt-l">
-                <price-view
+                <u-price
                   :amount="
                     CalcPriceProductCurrentCurrency(
                       getShop(),
@@ -169,7 +169,7 @@
                       product.variant,
                     )
                   "
-                ></price-view>
+                ></u-price>
               </span>
             </td>
           </tr>
@@ -223,13 +223,13 @@
               {{ $t("global.variants.color") }}
             </td>
             <td v-for="product in shown_products" :key="product.key">
-              <s-color-circle
+              <u-color-circle
                 v-if="product.variant && product.variant.color"
                 :color="product.variant.color"
                 :size="14"
                 class="me-1 hover-scale"
               >
-              </s-color-circle>
+              </u-color-circle>
             </td>
           </tr>
 
@@ -435,7 +435,7 @@
 <script>
 import SShopProductRatingView from "@components/storefront/product/rating/SShopProductRatingView.vue";
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
-import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
+import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 
 /**
@@ -445,7 +445,7 @@ export default {
   name: "SComparisonList",
   components: {
     SValueCopyBox,
-    SColorCircle,
+    UColorCircle,
     SShopBuyButton,
     SShopProductRatingView,
   },

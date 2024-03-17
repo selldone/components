@@ -16,7 +16,7 @@
   <v-container
     class="s--shop-product-membership-content-viewer p-lg-5 p-md-4 p-3 master-article-container"
   >
-    <s-progress-loading v-if="busy_fetch"></s-progress-loading>
+    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <!-- ███████████████████████ Folders ███████████████████████ -->
 

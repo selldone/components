@@ -33,11 +33,11 @@
         </div>
         <div class="w-50 p-1">
           <span class="d-block">Price</span>
-          <price-view
+          <u-price
             :amount="topic.price"
             :currency="topic.currency"
             x-large
-          ></price-view>
+          ></u-price>
         </div>
         <div v-if="trial" class="w-50 p-1">
           <span class="d-block">Trial</span>
@@ -67,11 +67,11 @@
           variant="flat"
           @click="subscribe()"
           >Subscribe now just for
-          <price-view
+          <u-price
             :amount="topic.price"
             :currency="topic.currency"
             class="ms-2"
-          ></price-view>
+          ></u-price>
         </v-btn>
       </div>
     </div>

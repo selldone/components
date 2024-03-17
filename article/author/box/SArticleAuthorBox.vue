@@ -187,22 +187,22 @@
 
   <!-- ██████████████████████ Dialog > Report Article ██████████████████████ -->
 
-  <s-content-violation-report-dialog
+  <a-feedback-content-violation-report
     v-model="dialog_report"
     :can-delete="canDelete"
     :loading="busy_report"
     @delete="reportDeleteArticle"
     @report="reportArticle"
-  ></s-content-violation-report-dialog>
+  ></a-feedback-content-violation-report>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import SContentViolationReportDialog from "@components/ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
+import AFeedbackContentViolationReport from "@components/article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 
 export default defineComponent({
   name: "SArticleAuthorBox",
-  components: { SContentViolationReportDialog },
+  components: { AFeedbackContentViolationReport },
   props: {
     article: {
       required: true,

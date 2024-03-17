@@ -64,14 +64,14 @@
           prepend-icon=""
         />
 
-        <s-number-input
+        <u-number-input
           v-model="count"
           :label="$t('global.commons.count')"
           :min="1"
           class="mt-5"
           show-buttons
         >
-        </s-number-input>
+        </u-number-input>
 
         <div class="widget-buttons">
           <v-btn
@@ -131,7 +131,7 @@
       </div>
 
       <div v-if="!need_address || address_entered">
-        <s-currency-input
+        <u-currency-input
           v-if="shop.currencies.length > 1"
           v-model="avocado.currency"
           :label="$t('global.commons.currency')"
@@ -141,7 +141,7 @@
           class="my-5"
           dense
         >
-        </s-currency-input>
+        </u-currency-input>
 
         <p class="text-subtitle-2 mb-3">
           {{ $t("avocado.step2") }}
@@ -181,16 +181,16 @@
 
 <script>
 import SShopAvocadoCustomerOrderItems from "./SShopAvocadoCustomerOrderItems.vue";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
+import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 import SShopCustomerReceiverInfoWidget from "../delivery/SShopCustomerReceiverInfoWidget.vue";
-import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
+import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
 
 export default {
   name: "SStorefrontAvocadoCustomerOrderForm",
   components: {
-    SCurrencyInput,
+    UCurrencyInput,
     SShopCustomerReceiverInfoWidget,
-    SNumberInput,
+    UNumberInput,
     SShopAvocadoCustomerOrderItems,
   },
   props: {

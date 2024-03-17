@@ -248,7 +248,7 @@
               cols="12"
               style="height: 50vh"
             >
-              <s-loading v-if="busy_posts" css-mode light></s-loading>
+              <u-loading-ellipsis v-if="busy_posts" css-mode light></u-loading-ellipsis>
             </v-col>
           </template>
 

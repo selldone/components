@@ -112,7 +112,7 @@
                 {{ $t("community.category.remove_msg") }}
               </v-list-subheader>
 
-              <s-smart-check-verify-action
+              <u-smart-verify
                 v-model="check_delete"
                 :true-description="
                   $t('community.category.delete_dialog.message')
@@ -122,7 +122,7 @@
                 false-gray
                 true-title="Verify delete category"
               >
-              </s-smart-check-verify-action>
+              </u-smart-verify>
 
               <div class="widget-buttons">
                 <v-btn
@@ -365,7 +365,7 @@
           cols="12"
           style="height: 50vh"
         >
-          <s-loading v-if="busy" css-mode light></s-loading>
+          <u-loading-ellipsis v-if="busy" css-mode light></u-loading-ellipsis>
         </v-col>
       </v-row>
     </v-container>
@@ -380,14 +380,14 @@ import CommunityCategoryEdit from "@components/community/category/CommunityCateg
 import CommunityCategoryStatistic from "@components/community/category/CommunityCategoryStatistic.vue";
 import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
 import CommunityImage from "@components/community/image/CommunityImage.vue";
-import SSmartCheckVerifyAction from "@components/ui/smart/SSmartCheckVerifyAction.vue";
+import USmartVerify from "@components/ui/smart/verify/USmartVerify.vue";
 import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "CommunityCategoryPage",
   components: {
     SWidgetButtons,
-    SSmartCheckVerifyAction,
+    USmartVerify,
     CommunityImage,
     CommunityCategoryStatistic,
     CommunityCategoryEdit,

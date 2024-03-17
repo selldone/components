@@ -17,7 +17,8 @@
     <v-btn
       v-if="show_edit_btn"
       class="absolute-top-end"
-      icon variant="text"
+      icon
+      variant="text"
       size="small"
       title="Rate this product"
       @click="edit_mode = !edit_mode"
@@ -32,23 +33,25 @@
         <p class="small text-muted me-10">
           {{ $t("product_rating_view.message", { user: USER()?.name }) }}
         </p>
-        <rating-input
+        <u-rating-input
           v-for="rating in product.ratings"
           :key="rating.id"
           v-model="user_rating[rating.id]"
           :title="rating.name"
+          class="my-1"
         />
 
-        <v-btn
-          :loading="busy"
-          color="blue"
-          dark
-          rounded
-          variant="flat"
-          @click="setMyRating"
-        >
-          {{ $t("global.actions.submit") }}
-        </v-btn>
+        <div class="text-end">
+          <v-btn
+            :loading="busy"
+            color="primary"
+            rounded
+            variant="elevated"
+            @click="setMyRating"
+          >
+            {{ $t("global.actions.submit") }}
+          </v-btn>
+        </div>
       </div>
       <div v-else-if="product.rate_count" key="view">
         <div class="d-flex align-center justify-center">
@@ -68,7 +71,7 @@
           >
         </div>
 
-        <rating-bar
+        <u-rating-bar
           v-for="rating in product.ratings"
           :key="rating.id"
           :max="rating.count * 5"
@@ -82,12 +85,12 @@
 </template>
 
 <script>
-import RatingBar from "@components/ui/rating/RatingBar.vue";
-import RatingInput from "@components/ui/rating/RatingInput.vue";
+import URatingBar from "@components/ui/rating/bar/URatingBar.vue";
+import URatingInput from "@components/ui/rating/input/URatingInput.vue";
 
 export default {
   name: "SShopProductRatingView",
-  components: { RatingInput, RatingBar },
+  components: { URatingInput, URatingBar },
   props: {
     product: {
       required: true,

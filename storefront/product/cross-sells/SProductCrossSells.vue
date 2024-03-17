@@ -75,11 +75,11 @@
 
               <div class="d-flex align-center mt-2">
                 <div class="d-flex flex-column me-3">
-                  <price-view
+                  <u-price
                     :amount="cross_sell.target.price"
                     :currency="cross_sell.target.currency"
                     class="-price"
-                  ></price-view>
+                  ></u-price>
                   <v-chip
                     v-if="cross_sell.discount"
                     class="pa-1"

@@ -56,7 +56,7 @@
       />
     </v-bottom-sheet>
 
-    <radial-progress-bar
+    <u-progress-radial
       v-for="(item, index) in paymentQue"
       :key="index"
       :class="{
@@ -79,7 +79,7 @@
         :width="size * 0.38"
         alt="Gateway"
       />
-    </radial-progress-bar>
+    </u-progress-radial>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Redirect loading dialog ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
     <div v-if="redirect_loading" class="blocking-dialog">
@@ -92,7 +92,7 @@
         <v-icon>close</v-icon>
       </v-btn>
       <div class="widget rounded-18px p-5 min-width-200">
-        <s-loading css-mode light></s-loading>
+        <u-loading-ellipsis css-mode light></u-loading-ellipsis>
         {{ $t("global.commons.waiting_connecting_payment") }}
       </div>
     </div>
@@ -119,7 +119,7 @@
 <script>
 import { Currency } from "@core/enums/payment/Currency";
 import SPaymentForm from "@components/payment/SPaymentForm.vue";
-import RadialProgressBar from "@components/ui/progress/RadialProgressBar.vue";
+import UProgressRadial from "@components/ui/progress/radial/UProgressRadial.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
 import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
 import { SetupService } from "@core/server/SetupService";
@@ -130,7 +130,7 @@ import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 
 export default {
   name: "SStorefrontMasterPaymentDialog",
-  components: { RadialProgressBar, SPaymentForm },
+  components: { UProgressRadial, SPaymentForm },
 
   props: {
     shop: {

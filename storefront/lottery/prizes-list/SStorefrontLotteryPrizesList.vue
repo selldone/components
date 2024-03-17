@@ -81,7 +81,7 @@
 
              <div class="w-50">
                <small>{{ $t("global.commons.charge") }}:</small><br>
-               <price-view v-if="prize" :amount="prize.card_type.amount" :currency="prize.card_type.currency" ></price-view>
+               <u-price v-if="prize" :amount="prize.card_type.amount" :currency="prize.card_type.currency" ></u-price>
                <p v-else>Problem in issuing gift card!</p>
              </div>
            </v-row>-->
@@ -114,10 +114,10 @@
                 <div class="w-50">
                   <small>{{ $t("global.commons.discount_limit") }}</small
                   ><br />
-                  <price-view
+                  <u-price
                     :amount="prize.discount_limit"
                     :currency="prize.currency"
-                  ></price-view>
+                  ></u-price>
                 </div>
               </v-row>
               <!-- ===================== Amount ==================== -->
@@ -127,10 +127,10 @@
                 class="text-center py-3 flex-grow-0"
               >
                 <small>{{ $t("global.commons.prize_amount") }} </small><br />
-                <price-view
+                <u-price
                   :amount="prize.amount"
                   :currency="prize.currency"
-                ></price-view>
+                ></u-price>
               </div>
             </div>
           </div>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright (c) 2023. Selldone® Business OS™
  *
@@ -38,19 +39,16 @@ import VueNotifications from "@kyvg/vue3-notification";
 import VueNumerals from "vue-numerals";
 
 //---------------- Check --------------
-import SCheck from "@components/ui/check/SCheck.vue";
+import UCheck from "@components/ui/check/UCheck.vue";
 
 //---------------- Price view --------------
-import PriceView from "@components/ui/price/PriceView.vue";
+import UPrice from "@components/ui/price/UPrice.vue";
 
 //---------------- Loading --------------
-import SLoading from "@components/ui/loading/SLoading.vue";
+import ULoadingEllipsis from "@components/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
-import SProgressLoading from "@components/ui/loading/SProgressLoading.vue";
+import ULoadingProgress from "@components/ui/loading/progress/ULoadingProgress.vue";
 
-// + Tel input:
-// @ts-ignore
-import STelInput from "@components/ui/tel-input";
 
 // @ts-ignore
 import VueTheMask from "vue-the-mask";
@@ -61,9 +59,9 @@ import FlagIcon from "vue-flag-icon";
 
 //---------------- Social Share --------------
 import VueSocialSharing from "vue-social-sharing";
-import SCircleButton from "@components/ui/button/circle/SCircleButton.vue";
+import UButtonCircle from "@components/ui/button/circle/UButtonCircle.vue";
 
-import TipsButton from "./ui/tips/TipsButton.vue";
+import UTooltipTips from "@components/ui/tooltip/tips/UTooltipTips.vue";
 
 //---------------- Medium Editor --------------
 import "medium-editor";
@@ -87,7 +85,7 @@ import SWidget from "@components/ui/widget/widget/SWidget.vue";
 
 import SWidgetHeader from "@components/ui/widget/header/SWidgetHeader.vue";
 
-import VueConfetti from "@components/ui/confeti";
+import VueConfetti from "@components/ui/confetti";
 import SDrag from "@components/ui/drag/core/SDrag.vue";
 import SDrop from "@components/ui/drag/core/SDrop.vue";
 
@@ -115,20 +113,20 @@ export function installGlobalComponents(app: App) {
   app.use(VueNotifications);
 
   app.use(VueNumerals);
-  app.component("SCheck", SCheck);
-  app.component("price-view", PriceView);
-  app.component(SLoading.name, SLoading);
-  app.component(SProgressLoading.name, SProgressLoading);
+  app.component("UCheck", UCheck);
+  app.component("u-price", UPrice);
+  app.component(ULoadingEllipsis.name, ULoadingEllipsis);
+  app.component(ULoadingProgress.name, ULoadingProgress);
 
   //---------------- Map --------------
 
-  const SMapView = defineAsyncComponent(
+  const UMapView = defineAsyncComponent(
     () =>
       import(
-        /* webpackChunkName: "plug-map" */ "@components/ui/map/map-view/SMapView.vue"
+        /* webpackChunkName: "plug-map" */ "@components/ui/map/view/UMapView.vue"
       ),
   );
-  app.component("s-map-view", SMapView);
+  app.component("u-map-view", UMapView);
 
   //---------------- Lottie Animation View for Vue --------------
 
@@ -168,21 +166,21 @@ export function installGlobalComponents(app: App) {
     () =>
       import(
         // @ts-ignore
-        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/qrcode"
+        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/qrcode/UQrcode"
       ),
   );
-  app.component("s-qrcode", SQrcode);
+  app.component("u-qrcode", SQrcode);
 
   // + Bar Code:
 
-  const SBarcode = defineAsyncComponent(
+  const UBarcode = defineAsyncComponent(
     () =>
       import(
         // @ts-ignore
-        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/barcode/SBarcode.vue"
+        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/barcode/UBarcode"
       ),
   );
-  app.component("s-barcode", SBarcode);
+  app.component("u-barcode", UBarcode);
 
   //---------------- Barcode Scanner --------------
   app.component(
@@ -190,18 +188,17 @@ export function installGlobalComponents(app: App) {
     // A dynamic import returns a Promise.
     () =>
       import(
-        /* webpackChunkName: "plug-scanner" */ "./ui/scanner/BarcodeScanner.vue"
+        /* webpackChunkName: "plug-scanner" */ "./ui/scanner/./UScanner"
       ),
   );
 
   app.use(VueConfetti);
 
-  app.use(STelInput);
   app.use(VueTheMask);
   app.use(FlagIcon);
   app.use(VueSocialSharing);
-  app.component(SCircleButton.name, SCircleButton);
-  app.component(TipsButton.name, TipsButton);
+  app.component(UButtonCircle.name, UButtonCircle);
+  app.component(UTooltipTips.name, UTooltipTips);
   app.component("prism-editor", PrismEditor);
   app.component(SWidget.name, SWidget);
   app.component(SWidgetHeader.name, SWidgetHeader);

@@ -50,9 +50,9 @@
             {{ $t("share_order.message") }}
           </p>
 
-          <s-progress-loading v-if="busy_share"></s-progress-loading>
+          <u-loading-progress v-if="busy_share"></u-loading-progress>
 
-          <s-smart-switch
+          <u-smart-switch
             v-model="share_address"
             :false-title="$t('share_order.address_excluded')"
             :true-title="$t('share_order.address_included')"
@@ -61,7 +61,7 @@
             true-icon="local_mall place"
             @change="showShareDialog"
           >
-          </s-smart-switch>
+          </u-smart-switch>
 
           <s-value-copy-box
             :border="false"
@@ -94,11 +94,11 @@
 
 <script>
 import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
-import SSmartSwitch from "@components/ui/smart/SSmartSwitch.vue";
+import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
 
 export default {
   name: "SShopShareOrderButton",
-  components: { SSmartSwitch, SValueCopyBox },
+  components: { USmartSwitch, SValueCopyBox },
   props: {
     shop: {
       require: true,

@@ -64,12 +64,12 @@
           class="font-weight-black flex-grow-1 text-center"
           style="min-width: 30%"
         >
-          <price-view
+          <u-price
             :amount="item.price"
             :currency="item.currency"
             class="d-block"
             not-show-zero
-          ></price-view>
+          ></u-price>
 
           <span
             v-if="item.status === BasketStatus.Reserved.code && !item.price"

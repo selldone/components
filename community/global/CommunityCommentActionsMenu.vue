@@ -79,23 +79,23 @@
 
     <!-- ------------------ Report post dialog ------------------------ -->
 
-    <s-content-violation-report-dialog
+    <a-feedback-content-violation-report
       v-model="report_dialog"
       :loading="busy_report"
       @report="reportComment"
-    ></s-content-violation-report-dialog>
+    ></a-feedback-content-violation-report>
   </div>
 </template>
 
 <script>
 import { ArticleReport } from "@core/enums/article/ArticleReport";
-import SContentViolationReportDialog from "../../ui/dialog/conent-violation-report/SContentViolationReportDialog.vue";
+import AFeedbackContentViolationReport from "@components/article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 import _ from "lodash-es";
 
 export default {
   name: "CommunityCommentActionsMenu",
-  components: { SContentViolationReportDialog },
+  components: { AFeedbackContentViolationReport },
   props: {
     community: {
       type: Object,

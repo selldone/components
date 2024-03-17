@@ -17,7 +17,7 @@
     v-if="products && products.length"
     class="s--storefront-products-comparison-button"
   >
-    <radial-progress-bar
+    <u-progress-radial
       :class="{ 'force-on-top': show, 'is-mobile': isMobile }"
       :completed-steps="products.length"
       :diameter="84"
@@ -35,7 +35,7 @@
       <p class="m-0 x-small">
         {{ $t("product_comparison.action_button") }}
       </p>
-    </radial-progress-bar>
+    </u-progress-radial>
 
     <v-dialog v-model="show" fullscreen transition="dialog-bottom-transition">
       <v-card class="text-start">
@@ -50,7 +50,7 @@
           </v-btn>
         </v-card-title>
 
-        <s-progress-loading v-if="busy"></s-progress-loading>
+        <u-loading-progress v-if="busy"></u-loading-progress>
 
         <s-comparison-list
           v-if="!need_updates.length"
@@ -64,12 +64,12 @@
 </template>
 
 <script>
-import RadialProgressBar from "@components/ui/progress/RadialProgressBar.vue";
+import UProgressRadial from "@components/ui/progress/radial/UProgressRadial.vue";
 import SComparisonList from "../list/SComparisonList.vue";
 
 export default {
   name: "SComparisonButton",
-  components: { SComparisonList, RadialProgressBar },
+  components: { SComparisonList, UProgressRadial },
 
   data: () => ({
     show: false,

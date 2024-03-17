@@ -45,11 +45,11 @@
           <small>{{ $t("global.commons.count_unit") }}</small>
         </div>
         <div class="font-weight-black flex-grow-1 text-center">
-          <price-view
+          <u-price
             :amount="item.price"
             :currency="item.currency"
             not-show-zero
-          ></price-view>
+          ></u-price>
         </div>
         <v-btn
           v-if="!viewOnly && (isOpen || isReserved)"

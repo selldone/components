@@ -93,7 +93,7 @@
 
         <template v-if="!ignore?.includes('original')">
           <v-divider />
-          <s-smart-toggle
+          <u-smart-toggle
             v-model="only_is_original"
             :dark="!light"
             :true-title="$t('product_filter_menu.only_original')"
@@ -105,7 +105,7 @@
         <template v-if="!ignore?.includes('discount')">
           <v-divider />
 
-          <s-smart-toggle
+          <u-smart-toggle
             v-model="only_has_discount"
             :dark="!light"
             :true-title="$t('product_filter_menu.only_has_discount')"
@@ -162,7 +162,7 @@
           <v-icon style="color: currentColor"> fa:fas fa-braille</v-icon>
           <span class="mx-2">{{ $t("product_filter_menu.brands") }} </span>
         </div>
-        <selection-list
+        <s-category-filter-selector
           v-model="selected_brands"
           :light="light"
           :list="brands"
@@ -189,13 +189,13 @@
           <v-btn
             v-if="selected_variants[item.code + 's']"
             :title="`Reset filter: ${$t(item.name)}`"
-            icon
+            icon variant="text" size="small"
             @click="selected_variants[item.code + 's'] = []"
           >
             <v-icon>close</v-icon>
           </v-btn>
         </div>
-        <selection-list
+        <s-category-filter-selector
           v-model="selected_variants[item.code + 's']"
           :is-color="item.code === 'color'"
           :light="light"
@@ -218,13 +218,13 @@
           <v-btn
             v-if="selected_spec[item]"
             :title="`Reset filter: ${$t(item)}`"
-            icon
+            icon variant="text" size="small"
             @click="selected_spec[item] = []"
           >
             <v-icon>close</v-icon>
           </v-btn>
         </div>
-        <selection-list
+        <s-category-filter-selector
           v-model="selected_spec[item]"
           :light="light"
           :list="getList(item)"
@@ -239,16 +239,16 @@
 </template>
 
 <script>
-import SelectionList from "@components/ui/select/SelectionList.vue";
+import SCategoryFilterSelector from "@components/storefront/category/filter/selector/SCategoryFilterSelector.vue";
 import { ProductVariants } from "@core/enums/product/ProductVariants";
-import SSmartToggle from "@components/ui/smart/SSmartToggle.vue";
+import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
 
 /**
  * >
  */
 export default {
   name: "SCategoryFilter",
-  components: { SSmartToggle, SelectionList },
+  components: { USmartToggle, SCategoryFilterSelector },
   emits: ["change-filter", "change-height", "update:modelValue"],
   props: {
     shop: {

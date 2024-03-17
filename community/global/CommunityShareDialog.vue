@@ -24,7 +24,7 @@
     top
   >
     <div class="p-3 bg-white">
-      <s-social-share-buttons
+      <u-button-share-group
         :description="post.body"
         :force-large="$vuetify.display.xs"
         :hashtags="hashtags"
@@ -37,18 +37,18 @@
         @embed="onCommunityPostEmbed(topic, post)"
         @share="onCommunityPostShare(topic, post)"
       >
-      </s-social-share-buttons>
+      </u-button-share-group>
     </div>
   </component>
 </template>
 
 <script>
-import SSocialShareButtons from "../../ui/button/share/SSocialShareButtons.vue";
+import UButtonShareGroup from "../../ui/button/share/group/UButtonShareGroup.vue";
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 
 export default {
   name: "CommunityShareDialog",
-  components: { SSocialShareButtons },
+  components: { UButtonShareGroup },
   props: {
     community: {
       type: Object,

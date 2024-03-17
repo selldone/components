@@ -51,7 +51,7 @@
           ></s-language-selector>
 
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-          <s-currency-selector
+          <u-currency-selector
             v-if="
               /* isMobile &&*/ shop &&
               shop.currencies &&
@@ -260,7 +260,7 @@
 <script>
 import SShopUserMenuList from "../user/SShopUserMenuList.vue";
 import MenuCategories from "@components/storefront/menu/header/MenuCategories.vue";
-import SCurrencySelector from "@components/ui/currency/selector/SCurrencySelector.vue";
+import UCurrencySelector from "@components/ui/currency/selector/UCurrencySelector.vue";
 import SLanguageSelector from "@components/storefront/language/selector/SLanguageSelector.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 
@@ -269,7 +269,7 @@ export default {
   emits: ["update:modelValue"],
   components: {
     SLanguageSelector,
-    SCurrencySelector,
+    UCurrencySelector,
     MenuCategories,
     SShopUserMenuList,
     SStorefrontSocialButtons,

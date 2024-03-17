@@ -32,10 +32,10 @@
       </v-chip>
     </td>
     <td class="text-left">
-      <price-view
+      <u-price
         :amount="payment.amount"
         :currency="payment.currency"
-      ></price-view>
+      ></u-price>
     </td>
     <td class="text-subtitle-2">
       <div class="d-flex pt-2 align-items-center">
@@ -59,11 +59,11 @@
           ></s-payment-billing-details>
         </div>
 
-        <s-country-world-map
+        <u-map-countries-single
           v-if="payment.card && payment.card.country"
           :country="payment.card.country"
           class="min-width-200 flex-grow-1 m-1"
-        ></s-country-world-map>
+        ></u-map-countries-single>
       </div>
     </td>
   </tr>
@@ -72,11 +72,11 @@
 <script>
 import SPaymentCard from "@components/payment/card/SPaymentCard.vue";
 import SPaymentBillingDetails from "@components/payment/widgets/SPaymentBillingDetails.vue";
-import SCountryWorldMap from "@components/ui/map/countries-svg/SCountryWorldMap.vue";
+import UMapCountriesSingle from "@components/ui/map/countries/single/UMapCountriesSingle.vue";
 
 export default {
   name: "SShopRowCustomerPaymentRecord",
-  components: { SCountryWorldMap, SPaymentBillingDetails, SPaymentCard },
+  components: { UMapCountriesSingle, SPaymentBillingDetails, SPaymentCard },
   props: {
     payment: {
       require: true,

@@ -33,7 +33,7 @@
       class="bg-white z2 blur-animate nopx overflow-visible"
     >
       <div class="pb-2" style="overflow-x: auto; overflow-y: visible">
-        <rounded-tabs
+        <u-tabs-rounded
           v-model="tab"
           :radius="'50px'"
           :tabs="tabs"
@@ -41,7 +41,7 @@
           scrollable
           small
         >
-        </rounded-tabs>
+        </u-tabs-rounded>
       </div>
 
       <v-slide-y-transition leave-absolute>
@@ -68,7 +68,7 @@
           ></v-select>
 
           <template v-if="subscription">
-            <s-currency-input
+            <u-currency-input
               v-model="currency"
               :activeCurrencies="currencies"
               :title="$t('global.commons.price')"
@@ -77,7 +77,7 @@
               placeholder="Select a currency..."
             />
 
-            <s-price-input
+            <u-price-input
               v-model="price"
               :decimal="currency ? currency.floats : 0"
               :label="$t('community.commons.subscription_fee')"
@@ -87,7 +87,7 @@
               class="delay_200 strong-field"
               placeholder="0.00"
             >
-            </s-price-input>
+            </u-price-input>
 
             <v-select
               v-model="trial"
@@ -104,7 +104,7 @@
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Configuration ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div v-if="tab === 'config'" class="px-4 py-2">
-          <s-smart-switch
+          <u-smart-switch
             v-model="nofollow"
             :true-description="$t('community.editor.nofollow_msg')"
             :true-title="$t('community.commons.nofollow')"
@@ -112,8 +112,8 @@
             class="my-3"
             false-title="Follow links"
             label="Follow / Nofollow links"
-          ></s-smart-switch>
-          <s-smart-switch
+          ></u-smart-switch>
+          <u-smart-switch
             v-model="cross"
             :false-title="$t('global.commons.disable')"
             :true-description="$t('community.editor.cross_msg')"
@@ -123,8 +123,8 @@
             false-gray
             label="Crossable topic by other communities"
             true-icon="shuffle"
-          ></s-smart-switch>
-          <s-smart-switch
+          ></u-smart-switch>
+          <u-smart-switch
             v-model="pin"
             :true-description="$t('community.editor.pin_msg')"
             :true-title="$t('community.commons.pin')"
@@ -134,8 +134,8 @@
             false-title="Normal topic"
             label="Pin topic"
             true-icon="push_pin"
-          ></s-smart-switch>
-          <s-smart-switch
+          ></u-smart-switch>
+          <u-smart-switch
             v-model="private"
             :false-description="$t('community.editor.private_off_msg')"
             :false-title="$t('community.commons.public')"
@@ -147,9 +147,9 @@
             false-icon="public"
             label="Who can see this topic?"
             true-icon="admin_panel_settings"
-          ></s-smart-switch>
+          ></u-smart-switch>
 
-          <s-smart-switch
+          <u-smart-switch
             v-model="lock_post"
             border
             class="my-3"
@@ -159,9 +159,9 @@
             true-description="Only moderators can post."
             true-icon="lock"
             true-title="Lock posts"
-          ></s-smart-switch>
+          ></u-smart-switch>
 
-          <s-smart-switch
+          <u-smart-switch
             v-model="lock_comment"
             border
             class="my-3"
@@ -171,7 +171,7 @@
             true-description="No one can comment."
             true-icon="lock"
             true-title="Lock comments"
-          ></s-smart-switch>
+          ></u-smart-switch>
         </div>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ SEO ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -307,11 +307,11 @@
           >
           </s-mentionable-input>
 
-          <s-dense-images-circles-users
+          <u-dense-circles-users
             v-if="mentions && mentions.users"
             :ids="mentions.users"
             :size="32"
-          ></s-dense-images-circles-users>
+          ></u-dense-circles-users>
 
           <!-- Poll , tips: can not edit poll after create! -->
 
@@ -594,7 +594,7 @@
       </div>
     </div>
 
-    <s-progress-loading v-if="busy_link" style="top: -8px"></s-progress-loading>
+    <u-loading-progress v-if="busy_link" style="top: -8px"></u-loading-progress>
 
     <!-- ----------------------- Preview dialog ----------------------- -->
     <v-dialog v-if="false" v-model="preview" max-width="620" scrollable>
@@ -658,15 +658,15 @@
 
 <script>
 import VoiceRecorder from "@components/community/voice/VoiceRecorder.vue";
-import RoundedTabs from "@components/ui/tab/RoundedTabs.vue";
+import UTabsRounded from "@components/ui/tab/rounded/UTabsRounded.vue";
 import GlobalRules from "@core/helper/rules/GlobalRules";
 import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
 import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
-import SDenseImagesCirclesUsers from "@components/ui/dense-circles/SDenseImagesCirclesUsers.vue";
+import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { Screenshot } from "@core/helper/canvas/Screenshot";
 import { FileHelper } from "@core/helper/converters/FileHelper";
-import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
-import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
+import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
+import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
 import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
 import { TopicTrialType } from "@core/enums/community/TopicTrialType";
 import { Currency } from "@core/enums/payment/Currency";
@@ -675,7 +675,7 @@ import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
 import CommunityProductEditor from "@components/community/product/CommunityProductEditor.vue";
 import CommunityProductView from "@components/community/product/CommunityProductView.vue";
 import { ImageDimension } from "@core/helper/image/ImageDimension";
-import SSmartSwitch from "@components/ui/smart/SSmartSwitch.vue";
+import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
 import CommunityAttachEditor from "@components/community/attach/CommunityAttachEditor.vue";
 import CommunityAttachView from "@components/community/attach/CommunityAttachView.vue";
 import { VideoHelper } from "@core/helper/video/VideoHelper";
@@ -694,15 +694,15 @@ export default {
   components: {
     CommunityAttachView,
     CommunityAttachEditor,
-    SSmartSwitch,
+    USmartSwitch,
     CommunityProductView,
     CommunityProductEditor,
     CommunityPoll,
-    SCurrencyInput,
-    SPriceInput,
-    SDenseImagesCirclesUsers,
+    UCurrencyInput,
+    UPriceInput,
+    UDenseCirclesUsers,
     SMentionableInput,
-    RoundedTabs,
+    UTabsRounded,
     VoiceRecorder,
   },
 

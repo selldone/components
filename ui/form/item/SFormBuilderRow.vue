@@ -26,7 +26,7 @@
 
       <v-spacer></v-spacer>
 
-      <s-circle-button
+      <u-button-circle
         :title="$t('global.actions.delete')"
         color="#fff"
         icon="close"
@@ -123,7 +123,7 @@
                 </template>
               </v-combobox>
 
-              <s-smart-switch
+              <u-smart-switch
                 v-model="item.multiple"
                 class="mt-3"
                 false-description="User can select just one item."
@@ -133,12 +133,12 @@
                 @change="$forceUpdate()"
                 border
               >
-              </s-smart-switch>
+              </u-smart-switch>
             </template>
 
             <!-- switch -->
 
-            <s-smart-switch
+            <u-smart-switch
               v-if="item.type === 'switch'"
               v-model="item.default"
               :false-description="item.hint_false"
@@ -151,7 +151,7 @@
               @change="$forceUpdate()"
               border
             >
-            </s-smart-switch>
+            </u-smart-switch>
 
             <!-- Upload file -->
             <template v-if="item.type === 'file'">
@@ -175,7 +175,7 @@
                 </template>
               </v-combobox>
 
-              <s-smart-switch
+              <u-smart-switch
                 v-model="item.multiple"
                 false-description="User can upload just one file."
                 false-title="Single file"
@@ -184,7 +184,7 @@
                 @change="$forceUpdate()"
                 border
               >
-              </s-smart-switch>
+              </u-smart-switch>
             </template>
 
             <!-- -------------- Hints -------------- -->
@@ -234,11 +234,11 @@
 </template>
 
 <script>
-import SSmartSwitch from "@components/ui/smart/SSmartSwitch.vue";
+import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
 
 export default {
   name: "SFormBuilderRow",
-  components: { SSmartSwitch },
+  components: { USmartSwitch },
   emits: ["remove"],
   props: {
     item: {

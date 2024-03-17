@@ -68,7 +68,7 @@
             </v-card>
           </v-col>
           <v-col key="new" cols="12" md="4" style="font-size: 12px">
-            <s-add-button-green
+            <u-button-add
               :caption="$t('global.json.add')"
               :message="$t('global.json.add_message')"
               class="rounded-18px"
@@ -76,7 +76,7 @@
               min-height="160px"
               @click="showDialog()"
             >
-            </s-add-button-green>
+            </u-button-add>
           </v-col>
         </v-fade-transition>
       </v-row>
@@ -201,13 +201,13 @@
 </template>
 
 <script>
-import SAddButtonGreen from "../ui/button/add/SAddButtonGreen.vue";
+import UButtonAdd from "../ui/button/add/UButtonAdd.vue";
 import SStructureDataInput from "./SStructureDataInput.vue";
 import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "SArticleStructuredData",
-  components: { SWidgetButtons, SStructureDataInput, SAddButtonGreen },
+  components: { SWidgetButtons, SStructureDataInput, UButtonAdd },
   emits: ["update:modelValue"],
   props: {
     modelValue: {},

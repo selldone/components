@@ -7,8 +7,8 @@
 ```html
 
 <template>
-    <s-qrcode value="Hello, World!"></s-qrcode>
-    <s-qrcode value="xyz"></s-qrcode>
+    <u-qrcode value="Hello, World!"></u-qrcode>
+    <u-qrcode value="xyz"></u-qrcode>
 </template>
 ```
 
@@ -17,8 +17,8 @@
 ```html
 
 <template>
-    <s-qrcode value="xyz" tag="img"></s-qrcode>
-    <s-qrcode value="xyz" tag="svg" :options="{ width: 148 }"></s-qrcode>
+    <u-qrcode value="xyz" tag="img"></u-qrcode>
+    <u-qrcode value="xyz" tag="svg" :options="{ width: 148 }"></u-qrcode>
 </template>
 ```
 
@@ -30,14 +30,14 @@
 
 <template>
     <figure class="qrcode">
-        <s-qrcode
+        <u-qrcode
                 value="xyz"
                 tag="svg"
                 :options="{
         errorCorrectionLevel: 'Q',
         width: 200,
       }"
-        ></s-qrcode>
+        ></u-qrcode>
         <img
                 class="qrcode__image"
                 src="https://avatars.githubusercontent.com/u/3456749"
@@ -77,14 +77,14 @@
 ```html
 
 <template>
-    <s-qrcode
+    <u-qrcode
             value="xyz"
             :options="{
       errorCorrectionLevel: 'Q',
       width: 200,
     }"
             @ready="onReady"
-    ></s-qrcode>
+    ></u-qrcode>
 </template>
 
 <script>

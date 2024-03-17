@@ -68,11 +68,11 @@
                   <div>
                     {{ numeralFormat(item.ctr, "%0.[00]") }}
                     <span class="mx-1">
-                      <score-indicator
+                      <u-progress-score
                         :size="16"
                         :value="$SEO.CTRScore(item.ctr)"
                         :width="2"
-                      ></score-indicator
+                      ></u-progress-score
                     ></span>
                   </div>
                 </td>
@@ -125,11 +125,11 @@
                   <div>
                     {{ numeralFormat(item.ctr, "%0.[00]") }}
                     <span class="mx-1">
-                      <score-indicator
+                      <u-progress-score
                         :size="16"
                         :value="$SEO.CTRScore(item.ctr)"
                         :width="2"
-                      ></score-indicator
+                      ></u-progress-score
                     ></span>
                   </div>
                 </td>
@@ -144,12 +144,12 @@
 </template>
 
 <script>
-import ScoreIndicator from "@components/ui/progress/score-indicator/ScoreIndicator.vue";
+import UProgressScore from "@components/ui/progress/score/UProgressScore.vue";
 import numeral from "numeral";
 
 export default {
   name: "SSearchConsoleAuditMenu",
-  components: { ScoreIndicator },
+  components: { UProgressScore },
   props: {
     audit: { required: true, type: Object },
   },

@@ -14,7 +14,7 @@
 
 <template>
   <div v-if="show" class="text-start position-relative pt-2">
-    <s-progress-loading v-if="busy"></s-progress-loading>
+    <u-loading-progress v-if="busy"></u-loading-progress>
     <!-- ----------------------- Tasks ----------------------- -->
 
     <div v-if="has_tasks" class="tasks mb-2">
@@ -40,13 +40,13 @@
         {{ $t("global.service.appointment.message") }}
       </p>
 
-      <s-week-day-time-picker
+      <u-time-week-picker
         v-model="preferences.days"
         :restrictions="outputs.days"
         class="my-2 max-width-field-large mx-auto"
         editable
         @change="onChange"
-      ></s-week-day-time-picker>
+      ></u-time-week-picker>
     </div>
 
     <!-- ----------------------- Booking ----------------------- -->
@@ -112,12 +112,12 @@
 
 <script>
 import { ServiceTypes } from "@core/enums/product/ServiceTypes";
-import SWeekDayTimePicker from "@components/ui/calendar/week-time-picker/SWeekDayTimePicker.vue";
+import UTimeWeekPicker from "@components/ui/time/week-picker/UTimeWeekPicker.vue";
 import _ from "lodash-es";
 
 export default {
   name: "SProductServiceForm",
-  components: { SWeekDayTimePicker },
+  components: { UTimeWeekPicker },
   props: {
     product: {
       require: true,

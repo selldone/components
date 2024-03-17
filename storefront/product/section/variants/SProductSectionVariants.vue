@@ -94,22 +94,22 @@
                     height="100%"
                     width="100%"
                   >
-                    <s-color-circle
+                    <u-color-circle
                       :color="selection"
                       :size="12"
                       class="-var-image-color"
-                    ></s-color-circle>
+                    ></u-color-circle>
                   </v-img>
                 </template>
                 <template v-else>
-                  <s-color-circle :color="selection"></s-color-circle>
+                  <u-color-circle :color="selection"></u-color-circle>
 
                   <small>{{ GetNameOfColor(selection) }}</small>
                 </template>
               </template>
               <!-- Normal -->
               <span v-else>
-                <variant-asset-view
+                <u-variant-asset-image
                   :class="{
                     '-hover-hide':
                       selection?.removeVariantAsset() /*Has pure text value?*/,
@@ -122,7 +122,7 @@
                   :shop-id="product.shop_id"
                   :value="selection"
                   background
-                ></variant-asset-view>
+                ></u-variant-asset-image>
                 <span>{{ selection?.removeVariantAsset() }}</span>
               </span>
             </div>
@@ -137,14 +137,14 @@
 import VariantFilter from "../../variant/variant-filter/VariantFilter.vue";
 import VariantItemMini from "@components/storefront/product/variant/VariantItemMini.vue";
 import { ProductVariants } from "@core/enums/product/ProductVariants";
-import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
-import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
+import UVariantAssetImage from "@components/ui/variant/asset/image/UVariantAssetImage.vue";
+import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
 
 export default {
   name: "SProductSectionVariants",
   components: {
-    SColorCircle,
-    VariantAssetView,
+    UColorCircle,
+    UVariantAssetImage,
     VariantItemMini,
     VariantFilter,
   },

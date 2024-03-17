@@ -29,7 +29,7 @@
       {{ $t("order_page.payment.title") }}
 
       <v-spacer></v-spacer>
-      <s-currency-icon :currency="order.currency" gradient></s-currency-icon>
+      <u-currency-icon :currency="order.currency" gradient></u-currency-icon>
     </h2>
 
     <v-list-subheader v-if="payment" class="px-0">
@@ -139,14 +139,14 @@
                 {{ $t("order_page.payment.total_price") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   :amount="
                     order.price +
                     order.discount -
                     (order.delivery_price > 0 ? order.delivery_price : 0)
                   "
                   :currency="order.currency"
-                ></price-view>
+                ></u-price>
               </td>
               <td></td>
             </tr>
@@ -164,10 +164,10 @@
                 {{ $t("order_page.payment.total_items_discount") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   :amount="-items_discount"
                   :currency="order.currency"
-                ></price-view>
+                ></u-price>
               </td>
               <td></td>
             </tr>
@@ -185,11 +185,11 @@
                 {{ $t("global.commons.offer") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   :amount="-total_offers"
                   :currency="order.currency"
                   not-show-zero
-                ></price-view>
+                ></u-price>
               </td>
               <td>
                 <v-chip
@@ -205,10 +205,10 @@
                     />
                   </v-avatar>
 
-                  <price-view
+                  <u-price
                     :amount="item.amount_discount"
                     :currency="order.currency"
-                  ></price-view>
+                  ></u-price>
                 </v-chip>
               </td>
             </tr>
@@ -225,11 +225,11 @@
                 {{ $t("order_page.payment.discount_code") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   :amount="-discount_code_amount"
                   :currency="order.discount_order.currency"
                   not-show-zero
-                ></price-view>
+                ></u-price>
               </td>
               <td v-if="order.discount_order.discount_code">
                 <p class="my-1">
@@ -253,11 +253,11 @@
                 {{ $t("global.commons.coupon") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   :amount="-coupon_amount"
                   :currency="order.coupon_order.currency"
                   not-show-zero
-                ></price-view>
+                ></u-price>
               </td>
               <td v-if="order.coupon_order.coupon">
                 <p class="my-1">{{ order.coupon_order.coupon.title }}</p>
@@ -281,11 +281,11 @@
                 {{ $t("global.commons.customer_club") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   :amount="-club_amount"
                   :currency="order.club_order.currency"
                   not-show-zero
-                ></price-view>
+                ></u-price>
               </td>
               <td>
                 <p class="my-1">
@@ -309,10 +309,10 @@
                 {{ $t("global.commons.prize") }}
               </td>
               <td v-if="order.lottery_order.amount_discount" class="text-left">
-                <price-view
+                <u-price
                   :amount="-lottery_amount"
                   :currency="order.lottery_order.currency"
-                ></price-view>
+                ></u-price>
               </td>
               <td
                 v-else-if="order.lottery_order.product"
@@ -362,10 +362,10 @@
                 {{ $t("global.commons.extra_discount") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   :amount="-total_cross_sells_discount"
                   :currency="order.currency"
-                ></price-view>
+                ></u-price>
               </td>
 
               <td></td>
@@ -384,11 +384,11 @@
                 {{ $t("order_page.payment.delivery_fee") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   v-if="order.delivery_price >= 0"
                   :amount="order.delivery_price"
                   :currency="order.currency"
-                ></price-view>
+                ></u-price>
 
                 <span v-else>{{
                   $t("order_page.payment.delivery_fee_after")
@@ -410,10 +410,10 @@
                 {{ $t("global.commons.tax") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   :amount="order.tax"
                   :currency="order.currency"
-                ></price-view>
+                ></u-price>
               </td>
               <td>
                 <span v-if="order.tax_included">{{
@@ -435,10 +435,10 @@
                 {{ $t("global.commons.tax_shipping") }}
               </td>
               <td class="text-left">
-                <price-view
+                <u-price
                   :amount="order.tax_shipping"
                   :currency="order.currency"
-                ></price-view>
+                ></u-price>
               </td>
               <td></td>
             </tr>
@@ -495,10 +495,10 @@
                   </div>
                 </td>
                 <td class="text-left">
-                  <price-view
+                  <u-price
                     :amount="bill.price"
                     :currency="bill.currency"
-                  ></price-view>
+                  ></u-price>
                 </td>
 
                 <td class="text-start">
@@ -645,10 +645,10 @@
             {{ $t("order_page.payment.total_order_price_before_tax") }}
           </p>
 
-          <price-view
+          <u-price
             :amount="order.price"
             :currency="order.currency"
-          ></price-view>
+          ></u-price>
         </v-col>
 
         <v-col v-if="isPayed" class="p-2" cols="12" sm="6">
@@ -657,10 +657,10 @@
             <span v-if="order.tax">+ {{ $t("global.commons.tax") }}</span>
           </p>
 
-          <price-view
+          <u-price
             :amount="total_payed"
             :currency="order.currency"
-          ></price-view>
+          ></u-price>
         </v-col>
       </v-row>
     </div>
@@ -679,7 +679,7 @@ import SShopRowCustomerPaymentGiftCard from "@components/storefront/order/paymen
 import SShopRowCustomerPaymentRecord from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
 import SShopRowCustomerPendingPayment from "@components/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
 import { ProductType } from "@core/enums/product/ProductType";
-import SCurrencyIcon from "@components/ui/currency/icon/SCurrencyIcon.vue";
+import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
 import SPaymentCard from "@components/payment/card/SPaymentCard.vue";
 import { URLHelper } from "@core/helper/url/URLHelper";
 import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
@@ -688,7 +688,7 @@ export default {
   name: "SShopCustomerOrderPaymentWidget",
   components: {
     SPaymentCard,
-    SCurrencyIcon,
+    UCurrencyIcon,
     SShopRowCustomerPendingPayment,
     SShopRowCustomerPaymentRecord,
     SShopRowCustomerPaymentGiftCard,

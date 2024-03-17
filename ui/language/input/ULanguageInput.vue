@@ -17,7 +17,7 @@
     <!-- v-input : css of widget-box same effect like normal inputs -->
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Icon Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-    <s-circle-button
+    <u-button-circle
       v-if="iconOnly"
       :color="iconColor"
       :icon="prependInnerIcon"
@@ -25,7 +25,7 @@
       :tooltip="selected_language_object?.title"
       dense
       @click="readonly ? undefined : showDialog()"
-    ></s-circle-button>
+    ></u-button-circle>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Normal Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 

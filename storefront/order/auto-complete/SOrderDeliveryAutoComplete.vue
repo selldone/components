@@ -16,20 +16,20 @@
   <div v-if="auto_complete_at" class="py-3 text-start small">
     <v-icon class="me-1" size="small">hourglass_top</v-icon>
     {{ $t("global.commons.auto_complete") }}:<br />
-    <s-count-down
+    <u-count-down
       :end="auto_complete_at"
       class="ms-2 inline-block vertical-align-middle"
-    ></s-count-down>
+    ></u-count-down>
   </div>
 </template>
 
 <script>
 import { DateConverter } from "@core/helper/date/DateConverter";
-import SCountDown from "@components/ui/count-down/SCountDown.vue";
+import UCountDown from "@components/ui/count-down/UCountDown.vue";
 
 export default {
   name: "SOrderDeliveryAutoComplete",
-  components: { SCountDown },
+  components: { UCountDown },
   props: {
     basket: {
       required: true,

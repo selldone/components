@@ -82,11 +82,11 @@
           <v-icon class="me-1 mb-1" color="success" size="small"
             >monetization_on
           </v-icon>
-          <price-view
+          <u-price
             :amount="topic.price"
             :currency="topic.currency"
             class="mx-1"
-          ></price-view>
+          ></u-price>
           / {{ subscription_title }} + {{ trial_title }}
         </p>
 
@@ -113,11 +113,11 @@
 
         <v-spacer></v-spacer>
 
-        <s-dense-images-circles-users
+        <u-dense-circles-users
           v-if="topic.contributors"
           :ids="topic.contributors"
           :size="32"
-        ></s-dense-images-circles-users>
+        ></u-dense-circles-users>
 
         <div class="text-subtitle-2 d-flex align-center op-0-7">
           <v-spacer></v-spacer>
@@ -170,19 +170,19 @@
     </router-link>
 
     <!-- Trend -->
-    <s-ribbon v-if="topic.trend" red>
+    <u-ribbon v-if="topic.trend" red>
       <v-icon dark size="small">local_fire_department</v-icon>
       {{ $t("community.commons.trend") }}
-    </s-ribbon>
+    </u-ribbon>
   </v-col>
 </template>
 
 <script>
-import SDenseImagesCirclesUsers from "@components/ui/dense-circles/SDenseImagesCirclesUsers.vue";
+import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 import CommunityImage from "@components/community/image/CommunityImage.vue";
 import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
 import { TopicTrialType } from "@core/enums/community/TopicTrialType";
-import SRibbon from "@components/ui/ribbon/SRibbon.vue";
+import URibbon from "@components/ui/ribbon/URibbon.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
 import { TimeSeries } from "@core/timeserie/TimeSeries";
 
@@ -190,9 +190,9 @@ export default {
   name: "CommunityTopicCard",
   components: {
     TrendSparkline,
-    SRibbon,
+    URibbon,
     CommunityImage,
-    SDenseImagesCirclesUsers,
+    UDenseCirclesUsers,
   },
   props: {
     community: {

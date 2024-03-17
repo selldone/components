@@ -208,11 +208,11 @@
       <small class="text-white"
         ><i class="fas fa-stopwatch"></i> Time to cancel:
       </small>
-      <s-count-down
+      <u-count-down
         v-if="basket.reject_at"
         :end="endOfRejectPeriod"
         class="me-2 p-0"
-      ></s-count-down>
+      ></u-count-down>
       <p>{{ reject_reason }}</p>
     </div>
   </div>
@@ -221,12 +221,12 @@
 <script>
 import { BasketRejectReasons } from "@core/enums/basket/BasketRejectReasons";
 import { DateConverter } from "@core/helper/date/DateConverter";
-import SCountDown from "@components/ui/count-down/SCountDown.vue";
+import UCountDown from "@components/ui/count-down/UCountDown.vue";
 import { ProductType } from "@core/enums/product/ProductType";
 
 export default {
   name: "SOrderDeliveryState",
-  components: { SCountDown },
+  components: { UCountDown },
   props: {
     basket: {
       required: true,

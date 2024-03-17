@@ -54,7 +54,7 @@
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ switch ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-      <s-smart-switch
+      <u-smart-switch
         v-else-if="item.type === 'switch'"
         v-model="message[item.name]"
         :disabled="readonly"
@@ -68,7 +68,7 @@
         true-icon="check"
         @change="$forceUpdate()"
       >
-      </s-smart-switch>
+      </u-smart-switch>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ File ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <v-file-input
@@ -159,7 +159,7 @@
 
 <script>
 import { FileHelper } from "@core/helper/converters/FileHelper";
-import SSmartSwitch from "@components/ui/smart/SSmartSwitch.vue";
+import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
 import {
   FORM_BUILDER_TAGS,
   SmartConvertTextToHtml,
@@ -167,7 +167,7 @@ import {
 
 export default {
   name: "SBasketProductInputs",
-  components: { SSmartSwitch },
+  components: { USmartSwitch },
 
   emits: ["update:modelValue", "update:files", "onDeleteFile"],
   props: {

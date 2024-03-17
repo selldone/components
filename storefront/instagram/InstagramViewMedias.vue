@@ -63,7 +63,7 @@
       </v-col>
     </v-row>
 
-    <s-loading v-if="busy_fetch" css-mode light></s-loading>
+    <u-loading-ellipsis v-if="busy_fetch" css-mode light></u-loading-ellipsis>
   </v-container>
 
   <!-- Dialog : Post -->
@@ -215,27 +215,27 @@
             class="post-footer default-font"
             @click.stop
           >
-            <variant-selector-menu
+            <u-variant-selector
               v-if="has_available_variants"
               v-model="selected_variant"
               :variants="product_variants"
-            ></variant-selector-menu>
+            ></u-variant-selector>
 
             <div>
               <div>
                 <p v-if="discount > 0">
-                  <price-view
+                  <u-price
                     :amount="price + discount"
                     class="text-muted"
                     line-through
-                  ></price-view>
+                  ></u-price>
 
                   <v-chip class="mx-1 float-end" color="red"  size="small"
                     >{{ discount_percent }} %
                   </v-chip>
                 </p>
                 <p class="-price">
-                  <price-view :amount="price"></price-view>
+                  <u-price :amount="price"></u-price>
                 </p>
               </div>
 
@@ -422,7 +422,7 @@ cover
             variant="underlined"
           ></v-text-field>
 
-          <s-price-input
+          <u-price-input
             v-model="in_price"
             :decimal="in_currency ? in_currency.floats : 0"
             :disabled="!in_currency"
@@ -434,7 +434,7 @@ cover
             variant="underlined"
           >
             <template v-slot:append-inner>
-              <s-currency-input
+              <u-currency-input
                 v-model="in_currency"
                 :activeCurrencies="shop.currencies"
                 class="margin-n7px"
@@ -445,7 +445,7 @@ cover
                 variant="underlined"
               />
             </template>
-          </s-price-input>
+          </u-price-input>
 
           <v-combobox
             v-model="in_unit"
@@ -462,13 +462,13 @@ cover
             variant="underlined"
           />
 
-          <s-number-input
+          <u-number-input
             v-model="in_quantity"
             :label="$t('product_admin.inventory.variants.count_input')"
             :min="0"
             class="max-width-field mx-auto my-2"
           >
-          </s-number-input>
+          </u-number-input>
         </div>
       </v-card-text>
 
@@ -506,12 +506,12 @@ import {
 import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
-import VariantSelectorMenu from "@components/ui/variant/VariantSelectorMenu.vue";
+import UVariantSelector from "@components/ui/variant/selector/UVariantSelector.vue";
 import SDragPins from "@components/ui/drag/pins/SDragPins.vue";
 import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
-import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
-import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
+import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
+import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
+import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
 import { Currency } from "@core/enums/payment/Currency";
 import { ProductCondition } from "@core/enums/product/ProductCondition";
 import { ProductType } from "@core/enums/product/ProductType";
@@ -520,11 +520,11 @@ import _ from "lodash-es";
 export default {
   name: "InstagramViewMedias",
   components: {
-    SCurrencyInput,
-    SPriceInput,
-    SNumberInput,
+    UCurrencyInput,
+    UPriceInput,
+    UNumberInput,
     SDragPins,
-    VariantSelectorMenu,
+    UVariantSelector,
     SShopBuyButton,
     ProductVariantsView,
     ProductsDenseImagesCircles,

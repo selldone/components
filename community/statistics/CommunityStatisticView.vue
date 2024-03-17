@@ -16,7 +16,7 @@
   <v-container class="text-start">
     <h2 class="fadeIn">{{ title }}</h2>
 
-    <s-time-span
+    <u-time-span
       ref="timespan"
       v-model:days="timeSeries.days"
       v-model:offset="timeSeries.offset"
@@ -27,7 +27,7 @@
       style="min-width: 300px; width: 50%"
       trigger-on-end
       @onChange="({ offset, days }) => timeSeries.fetch(offset, days)"
-    ></s-time-span>
+    ></u-time-span>
 
     <v-row>
       <v-col v-if="isCommunity" class="fadeIn delay_200" cols="6" md="3" sm="4">
@@ -97,7 +97,7 @@
           "
           class="mh250 border rounded-18px p-2"
         >
-          <s-line-chart
+          <u-chart-line
             v-if="IsLoaded(1)"
             :colors="['#C2185B', '#03A9F4', '#009688', '#FFC107', '#673AB7']"
             :keys="['likes', 'smiles', 'claps', 'ideas', 'disagrees']"
@@ -122,7 +122,7 @@
           "
           class="mh250 border rounded-18px p-2"
         >
-          <s-area-chart
+          <u-chart-area
             v-if="IsLoaded(2)"
             :colors="['#C2185B', '#03A9F4', '#009688', '#FFC107', '#673AB7']"
             :keys="['texts', 'videos', 'links', 'images', 'voices', 'products']"
@@ -139,7 +139,7 @@
             class="fadeIn"
             height="240px"
             y-label="Media types"
-          ></s-area-chart>
+          ></u-chart-area>
         </div>
       </v-col>
     </v-row>
@@ -148,9 +148,9 @@
 </template>
 
 <script>
-import STimeSpan from "../../ui/calendar/timespan/STimeSpan.vue";
-import SAreaChart from "@components/ui/chart/area/SAreaChart.vue";
-import SLineChart from "@components/ui/chart/line/SLineChart.vue";
+import UTimeSpan from "../../ui/time/span/UTimeSpan.vue";
+import UChartArea from "@components/ui/chart/area/UChartArea.vue";
+import UChartLine from "@components/ui/chart/line/UChartLine.vue";
 import TrendSparkline from "./TrendSparkline.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
 import { IntersectMixin } from "@components/mixin/IntersectMixin";
@@ -159,7 +159,7 @@ export default {
   name: "CommunityStatisticView",
   mixins: [IntersectMixin],
 
-  components: { STimeSpan, SAreaChart, SLineChart, TrendSparkline },
+  components: { UTimeSpan, UChartArea, UChartLine, TrendSparkline },
   props: {
     title: {},
 

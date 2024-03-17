@@ -152,7 +152,7 @@
               {{ extractLabel(val, key) }}:
             </div>
 
-            <s-qrcode
+            <u-qrcode
               :options="{
                 width: 280,
                 color: { dark: '#333', light: '#FFFFFF00' },
@@ -195,10 +195,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Normal Payment > Issue Information ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <td v-if="!transaction.dir" class="text-left">
-      <price-view
+      <u-price
         :amount="transaction.amount"
         :currency="transaction.currency"
-      ></price-view>
+      ></u-price>
     </td>
     <td v-if="!transaction.dir">
       <span class="me-1 small">

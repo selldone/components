@@ -32,7 +32,7 @@
         :class="{ '-selected': current_extra_pricing?.id === extra_pricing.id }"
         class="ex-price"
       >
-        <price-view :amount="calculatedPrice(extra_pricing)"></price-view>
+        <u-price :amount="calculatedPrice(extra_pricing)"></u-price>
         <small> {{ intervals_string[i] }}</small>
         <v-progress-linear
           v-if="

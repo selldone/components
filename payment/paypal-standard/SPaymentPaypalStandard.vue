@@ -17,13 +17,13 @@
     :class="{ disabled: busy }"
     class="position-relative min-height-10vh my-5"
   >
-    <s-progress-loading v-if="busy" color="blue"></s-progress-loading>
+    <u-loading-progress v-if="busy" color="blue"></u-loading-progress>
 
     <!-- Set up a container element for the button -->
     <div id="paypal-button-container"></div>
 
     <div v-if="busy_verify" class="v-msg text-h4">
-      <s-progress-loading></s-progress-loading>
+      <u-loading-progress></u-loading-progress>
       Verifying Payment...
     </div>
   </div>

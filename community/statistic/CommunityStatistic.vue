@@ -21,7 +21,7 @@
       :title="$t('community.community.statistics')"
       is-community
     ></community-statistic-view>
-    <s-progress-loading v-if="busy"></s-progress-loading>
+    <u-loading-progress v-if="busy"></u-loading-progress>
   </div>
 </template>
 

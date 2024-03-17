@@ -69,10 +69,10 @@
               @change="onChange()"
             >
               <template v-slot:append-inner>
-                <score-indicator
+                <u-progress-score
                   :value="$SEO.GetPageURLScore(slug)"
 
-                ></score-indicator>
+                ></u-progress-score>
               </template>
             </v-text-field>
 
@@ -87,10 +87,10 @@
               @change="onChange"
             >
               <template v-slot:append-inner>
-                <score-indicator
+                <u-progress-score
                   :value="$SEO.GetPageTitleScore(page_title)"
 
-                ></score-indicator>
+                ></u-progress-score>
               </template>
             </v-text-field>
 
@@ -105,10 +105,10 @@
               @change="onChange"
             >
               <template v-slot:append-inner>
-                <score-indicator
+                <u-progress-score
                   :value="$SEO.GetPageDescription(description)"
 
-                ></score-indicator>
+                ></u-progress-score>
               </template>
             </v-textarea>
 
@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import ScoreIndicator from "@components/ui/progress/score-indicator/ScoreIndicator.vue";
+import UProgressScore from "@components/ui/progress/score/UProgressScore.vue";
 
 require("vue-select-image/dist/vue-select-image.css");
 
@@ -165,7 +165,7 @@ export default {
   name: "ArticleEdit",
 
   components: {
-    ScoreIndicator,
+    UProgressScore,
   },
   emits: ["open-menu", "change"],
   props: {

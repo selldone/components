@@ -22,10 +22,10 @@
         <small>{{ $t("global.basket_order_info_summery.total_price") }}</small>
       </template>
 
-      <price-view
+      <u-price
         :amount="total_price + total_discount"
         :currency="basket.currency"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <!-- ------------------------ Discount ------------------------ -->
@@ -34,10 +34,10 @@
         <small>{{ $t("global.commons.discount") }}</small>
       </template>
 
-      <price-view
+      <u-price
         :amount="-total_discount"
         :currency="basket.currency"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <!-- ------------------------ Delivery price ------------------------ -->
@@ -46,11 +46,11 @@
         <small>{{ $t("global.commons.shipping") }}</small>
       </template>
 
-      <price-view
+      <u-price
         v-if="delivery_price > 0"
         :amount="delivery_price"
         :currency="basket.currency"
-      ></price-view>
+      ></u-price>
       <span v-else-if="delivery_price === 0">{{
         $t("global.commons.free")
       }}</span>
@@ -65,7 +65,7 @@
         <small>{{ $t("global.commons.tax") }}</small>
       </template>
 
-      <price-view :amount="tax" :currency="basket.currency"></price-view>
+      <u-price :amount="tax" :currency="basket.currency"></u-price>
 
       <span v-if="basket.tax_included">{{
         $t("global.commons.tax_included")
@@ -78,10 +78,10 @@
         <small>{{ $t("global.commons.tax_shipping") }}</small>
       </template>
 
-      <price-view
+      <u-price
         :amount="tax_shipping"
         :currency="basket.currency"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <!-- ------------------------ Final Price ------------------------ -->
@@ -90,12 +90,12 @@
         <small>{{ $t("global.basket_order_info_summery.final_price") }}</small>
       </template>
 
-      <price-view
+      <u-price
         :amount="final_price"
         :currency="basket.currency"
         class="text-success"
         large
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <!-- ------------------------ Billing Info ------------------------ -->

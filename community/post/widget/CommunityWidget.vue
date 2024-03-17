@@ -328,14 +328,14 @@
     </div>
 
     <!-- Trend -->
-    <s-ribbon v-if="!simpleMode && is_trend" left680="3px" red top680="13px">
+    <u-ribbon v-if="!simpleMode && is_trend" left680="3px" red top680="13px">
       <v-icon size="small">local_fire_department</v-icon>
       {{ $t("community.commons.trend") }}
-    </s-ribbon>
+    </u-ribbon>
     <!-- Approved -->
-    <s-ribbon v-else-if="post.approved" green left680="3px" top680="13px">
+    <u-ribbon v-else-if="post.approved" green left680="3px" top680="13px">
       {{ $t("community.commons.approved") }}
-    </s-ribbon>
+    </u-ribbon>
   </div>
 </template>
 
@@ -344,7 +344,7 @@ import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
 import CommunityComments from "@components/community/comment/CommunityComments.vue";
 import CommunityImage from "@components/community/image/CommunityImage.vue";
 import { PostReaction } from "@core/enums/community/PostReaction";
-import SRibbon from "@components/ui/ribbon/SRibbon.vue";
+import URibbon from "@components/ui/ribbon/URibbon.vue";
 import CommunityPoll from "@components/community/post/CommunityPoll.vue";
 import CommunityProductView from "@components/community/product/CommunityProductView.vue";
 import CommunityAttachView from "@components/community/attach/CommunityAttachView.vue";
@@ -356,7 +356,7 @@ export default {
     CommunityAttachView,
     CommunityProductView,
     CommunityPoll,
-    SRibbon,
+    URibbon,
     CommunityImage,
     CommunityComments,
   },

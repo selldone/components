@@ -54,7 +54,7 @@
           no-data-text=""
         >
           <template v-slot:loading>
-            <s-loading css-mode light></s-loading>
+            <u-loading-ellipsis css-mode light></u-loading-ellipsis>
           </template>
           <template v-slot:no-data>
             <v-icon class="center-absolute" color="#ddd" size="80"
@@ -88,7 +88,7 @@
                     <b>
                       {{ item.raw.user ? item.raw.user.name : item.raw.name }}
                     </b>
-                    <emoji-rating
+                    <u-rating-emoji
                       v-if="item.raw.closed"
                       v-model="item.raw.rate"
                       class="ms-1 inline-block"
@@ -96,7 +96,7 @@
                       no-stars
                       read-only
                       x-small
-                    ></emoji-rating>
+                    ></u-rating-emoji>
 
                     <p v-if="getLastMessage(item.raw)" class="m-0">
                       <small class="me-1 cap">
@@ -195,12 +195,12 @@
                     class="d-flex text-center align-items-center border-between"
                   >
                     <div class="w-50 p-1">
-                      <emoji-rating
+                      <u-rating-emoji
                         v-model="item.raw.rate"
                         dense
                         read-only
                         x-small
-                      ></emoji-rating>
+                      ></u-rating-emoji>
                     </div>
 
                     <div class="w-50 p-1">
@@ -294,7 +294,7 @@
 
 <script>
 import { SupportCategory } from "@core/enums/support/SupportCategory";
-import EmojiRating from "@components/ui/rating/emoji-rating/EmojiRating.vue";
+import URatingEmoji from "@components/ui/rating/emoji/URatingEmoji.vue";
 import SContactConversation from "../conversation/SContactConversation.vue";
 import SDataIteratorToolbarSmall from "@components/ui/toolbar/SDataIteratorToolbarSmall.vue";
 import _ from "lodash-es";
@@ -307,7 +307,7 @@ export default {
   components: {
     SDataIteratorToolbarSmall,
     SContactConversation,
-    EmojiRating,
+    URatingEmoji,
   },
 
   props: {

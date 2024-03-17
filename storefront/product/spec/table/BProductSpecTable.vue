@@ -17,12 +17,12 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Edit Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <template v-if="editable">
-      <s-smart-toggle
+      <u-smart-toggle
         v-model="auto_save"
         :true-title="$t('spec_view.auto_save_input')"
         color="green"
         true-description="Changes will be saved automatically."
-      ></s-smart-toggle>
+      ></u-smart-toggle>
 
       <draggable
         :class="{ 'border-between-vertical': editable }"
@@ -100,13 +100,13 @@
 <script>
 import BProductSpecRow from "../BProductSpecRow.vue";
 
-import SSmartToggle from "@components/ui/smart/SSmartToggle.vue";
+import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
 import draggable from "vuedraggable";
 
 export default {
   name: "BProductSpecTable",
   components: {
-    SSmartToggle,
+    USmartToggle,
     BProductSpecRow,
     draggable,
   },

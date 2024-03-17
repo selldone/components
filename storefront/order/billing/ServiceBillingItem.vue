@@ -39,13 +39,13 @@
         </div>
 
         <v-row align="center" no-gutters>
-          <price-view
+          <u-price
             v-if="service_item?.price"
             :amount="service_item.price"
             :currency="service_item.currency"
             class="me-2"
             title="Pricing of this item by seller."
-          ></price-view>
+          ></u-price>
           <small v-else class="me-2">Not pricing yet!</small>
 
           <div v-if="start_at" class="ma-1" title="Checkin date.">
@@ -78,7 +78,7 @@
             {{ $t("service_bill.task.message") }}
           </v-list-subheader>
 
-          <expert-contract-tasks
+          <u-tasks-editor
             v-model="tasks"
             :editable="editing"
             :view-only-progress="viewOnlyProgress"
@@ -97,7 +97,7 @@
           >
           </s-widget-header>
 
-          <s-date-input
+          <u-date-input
             v-model="reserved_at"
             :jump-minute="15"
             :min="new Date().toISOString()"
@@ -107,15 +107,15 @@
             return-utc
             rounded
           >
-          </s-date-input>
+          </u-date-input>
 
-          <s-week-day-time-picker
+          <u-time-week-picker
             v-model="preferences.days"
             :pointed-time-utc="reserved_at"
             :restrictions="outputs.days"
             class="my-2 max-width-field-large mx-auto"
             dis-color="#ddd"
-          ></s-week-day-time-picker>
+          ></u-time-week-picker>
         </div>
 
         <!-- ----------------------- Booking ----------------------- -->
@@ -289,7 +289,7 @@
               <v-container v-if="change_dates">
                 <v-row class="m-0">
                   <v-col cols="12" sm="6">
-                    <s-date-input
+                    <u-date-input
                       v-model="start_at"
                       :min="new Date().toISOString()"
                       class="max-width-field mx-auto border rounded-lg pt-5 bg-white widget-hover"
@@ -300,10 +300,10 @@
                       rounded
                       type="date"
                     >
-                    </s-date-input>
+                    </u-date-input>
                   </v-col>
                   <v-col cols="12" sm="6">
-                    <s-date-input
+                    <u-date-input
                       v-model="end_at"
                       :min="start_at"
                       class="max-width-field mx-auto border rounded-lg pt-5 bg-white widget-hover"
@@ -314,7 +314,7 @@
                       rounded
                       type="date"
                     >
-                    </s-date-input>
+                    </u-date-input>
                   </v-col>
                 </v-row>
               </v-container>
@@ -328,12 +328,12 @@
               <v-card class="rounded-t-xl" rounded="0">
                 <v-card-title></v-card-title>
                 <v-card-text>
-                  <s-calendar-view
+                  <u-calendar-view
                     :disabled="outputs.disabled"
                     :new-event="new_event"
                     class="my-3"
                     day-level
-                  ></s-calendar-view>
+                  ></u-calendar-view>
                 </v-card-text>
                 <v-card-actions>
                   <div class="widget-buttons">
@@ -366,7 +366,7 @@
             {{ $t("service_bill.subscription.message") }}
           </v-list-subheader>
 
-          <s-number-input
+          <u-number-input
             v-model="subscription"
             :decimal="0"
             :label="$t('service_bill.subscription.duration')"
@@ -377,7 +377,7 @@
             placeholder="Ex. 90 days"
             rounded
           >
-          </s-number-input>
+          </u-number-input>
         </div>
 
         <!-- ----------------------- Charge ----------------------- -->
@@ -395,7 +395,7 @@
             {{ $t("service_bill.charge.message") }}
           </v-list-subheader>
 
-          <s-number-input
+          <u-number-input
             v-model="charge"
             :decimal="0"
             :label="$t('service_bill.subscription.charge')"
@@ -406,7 +406,7 @@
             placeholder="Ex. 2000 units"
             rounded
           >
-          </s-number-input>
+          </u-number-input>
         </div>
 
         <!-- ----------------------- Set Price ----------------------- -->
@@ -421,7 +421,7 @@
             {{ $t("service_bill.pricing.message") }}
           </v-list-subheader>
 
-          <s-price-input
+          <u-price-input
             v-model="price"
             :decimal="currency.floats"
             :disabled="!currency"
@@ -432,7 +432,7 @@
             placeholder="0.00"
             required
           >
-          </s-price-input>
+          </u-price-input>
 
           <div class="widget-buttons">
             <v-btn
@@ -457,13 +457,13 @@
 </template>
 
 <script>
-import SDateInput from "@components/ui/calendar/date-input/SDateInput.vue";
-import ExpertContractTasks from "@components/ui/tasks/ExpertContractTasks.vue";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
-import SCalendarView from "@components/ui/calendar/clendar-view/SCalendarView.vue";
-import SWeekDayTimePicker from "@components/ui/calendar/week-time-picker/SWeekDayTimePicker.vue";
+import UDateInput from "@components/ui/date/input/UDateInput.vue";
+import UTasksEditor from "@components/ui/task/editor/UTasksEditor.vue";
+import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
+import UCalendarView from "@components/ui/calendar/clendar-view/UCalendarView.vue";
+import UTimeWeekPicker from "@components/ui/time/week-picker/UTimeWeekPicker.vue";
 import { ServiceTypes } from "@core/enums/product/ServiceTypes";
-import SPriceInput from "@components/ui/input/price/SPriceInput.vue";
+import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
 import { Currency } from "@core/enums/payment/Currency";
 
 import _ from "lodash-es";
@@ -471,12 +471,12 @@ import _ from "lodash-es";
 export default {
   name: "ServiceBillingItem",
   components: {
-    SPriceInput,
-    SWeekDayTimePicker,
-    SCalendarView,
-    SNumberInput,
-    ExpertContractTasks,
-    SDateInput,
+    UPriceInput,
+    UTimeWeekPicker,
+    UCalendarView,
+    UNumberInput,
+    UTasksEditor,
+    UDateInput,
   },
   props: {
     shop: {

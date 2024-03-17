@@ -14,10 +14,10 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div v-bind="$attrs">
-    <s-progress-loading
+    <u-loading-progress
       v-if="busy || busy_delete"
       :color="busy_delete ? 'red' : undefined"
-    ></s-progress-loading>
+    ></u-loading-progress>
     <div class="widget-buttons">
       <v-btn
         :disabled="show_add"
@@ -48,11 +48,11 @@
         ></s-mentionable-input>
 
         <v-expand-transition>
-          <s-dense-images-circles-users
+          <u-dense-circles-users
             v-if="mentions && mentions.users"
             :ids="mentions.users"
             :size="32"
-          ></s-dense-images-circles-users>
+          ></u-dense-circles-users>
         </v-expand-transition>
 
         <div class="widget-buttons">
@@ -185,10 +185,10 @@
               <v-list-item-subtitle
                 v-if="item.data.payment && isObject(item.data.payment)"
               >
-                <price-view
+                <u-price
                   :amount="item.data.payment.amount"
                   :currency="item.data.payment.currency"
-                ></price-view>
+                ></u-price>
 
                 <v-icon class="mx-2">trending_flat</v-icon>
                 <span class="text-subtitle-2">{{
@@ -265,25 +265,25 @@
                       <v-icon color="red" size="small">close</v-icon>
                       <small>{{ $t("global.commons.old") }}:</small>
                       <b>{{ generateFullAddress(item.data.old) }}</b>
-                      <s-geo-navigation-button
+                      <u-map-geo-button
                         v-if="item.data.old && item.data.old.location"
                         :icon="true"
                         :location="item.data.old.location"
                         class="ms-1"
                         small
-                      ></s-geo-navigation-button>
+                      ></u-map-geo-button>
                     </div>
                     <div class="mt-2">
                       <v-icon color="green" size="small">check</v-icon>
                       <small>{{ $t("global.commons.new") }}:</small>
                       <b>{{ generateFullAddress(item.data.new) }}</b>
-                      <s-geo-navigation-button
+                      <u-map-geo-button
                         v-if="item.data.new && item.data.new.location"
                         :icon="true"
                         :location="item.data.new.location"
                         class="ms-1"
                         small
-                      ></s-geo-navigation-button>
+                      ></u-map-geo-button>
                     </div>
                   </div>
                 </span>
@@ -291,7 +291,7 @@
 
               <template v-slot:append>
                 <v-list-item-action style="min-width: 36px">
-                  <s-smart-menu
+                  <u-smart-menu
                     v-if="getTimelineStatus(item.type).editable"
                     :items="[
                       {
@@ -315,7 +315,7 @@
                     ]"
                     icon="more_horiz"
                   >
-                  </s-smart-menu>
+                  </u-smart-menu>
 
                   <v-btn
                     v-if="
@@ -377,7 +377,7 @@
         <span v-html="email_title"></span>
       </v-card-title>
 
-      <s-loading v-if="busy_email" css-mode light></s-loading>
+      <u-loading-ellipsis v-if="busy_email" css-mode light></u-loading-ellipsis>
       <v-card-text>
         <div
           class="widget-box -large mb-5 min-height-60vh"
@@ -408,23 +408,23 @@
 
 <script>
 import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
-import SDenseImagesCirclesUsers from "@components/ui/dense-circles/SDenseImagesCirclesUsers.vue";
+import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import { Reactions } from "@core/enums/support/Reactions";
 import { Brands } from "@core/enums/social/Brands";
 import { CampaignMedium } from "@core/enums/campaign/CampaignMedium";
 import { CustomerClubLevels } from "@core/enums/customer/CustomerClubLevels";
-import SGeoNavigationButton from "@components/ui/map/geo-button/SGeoNavigationButton.vue";
+import UMapGeoButton from "@components/ui/map/geo-button/UMapGeoButton.vue";
 import TimelineStatus from "@core/enums/timeline/TimelineStatus";
-import SSmartMenu from "@components/ui/smart/SSmartMenu.vue";
+import USmartMenu from "@components/ui/smart/menu/USmartMenu.vue";
 import { TimelineEmailType } from "@core/enums/timeline/TimelineEmailType";
 
 export default {
   name: "SBackofficeOrderTimeline",
   components: {
-    SSmartMenu,
-    SGeoNavigationButton,
-    SDenseImagesCirclesUsers,
+    USmartMenu,
+    UMapGeoButton,
+    UDenseCirclesUsers,
     SMentionableInput,
   },
   props: {

@@ -37,10 +37,10 @@
               <h3 class="text-h4">
                 {{ numeralFormat(item.count, "0.[00]a") }}
               </h3>
-              <s-dense-images-circles-users
+              <u-dense-circles-users
                 :ids="item.users"
                 :size="$vuetify.display.xs ? 32 : 42"
-              ></s-dense-images-circles-users>
+              ></u-dense-circles-users>
             </div>
             <p class="d-block m-0">
               {{ $t(ArticleReport[item.report].title) }}
@@ -56,18 +56,18 @@
         </v-row>
       </v-card-text>
 
-      <s-progress-loading v-if="busy"></s-progress-loading>
+      <u-loading-progress v-if="busy"></u-loading-progress>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
 import { ArticleReport } from "@core/enums/article/ArticleReport";
-import SDenseImagesCirclesUsers from "@components/ui/dense-circles/SDenseImagesCirclesUsers.vue";
+import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 
 export default {
   name: "CommunityPostReportsDialog",
-  components: { SDenseImagesCirclesUsers },
+  components: { UDenseCirclesUsers },
   props: {
     community: {
       type: Object,

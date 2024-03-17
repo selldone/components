@@ -14,7 +14,7 @@
 
 <template>
   <span :title="`Price per parcel : ${calculatePrice} ${currency}`">
-    <price-view :amount="smart_per_unit" :currency="currency"></price-view>
+    <u-price :amount="smart_per_unit" :currency="currency"></u-price>
     <span v-if="final_factor !== 1">/</span>
     {{ final_label }}
   </span>

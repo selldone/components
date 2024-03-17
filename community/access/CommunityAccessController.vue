@@ -25,11 +25,11 @@
       Administrators have unrestricted access to every component of the
       community. They are essentially part of your business staff.
     </v-list-subheader>
-    <s-dense-images-circles-users
+    <u-dense-circles-users
       v-if="community.admins_list"
       :ids="community.admins_list"
       class="fadeIn delay_100"
-    ></s-dense-images-circles-users>
+    ></u-dense-circles-users>
 
     <s-widget-header
       :add-caption="$t('community.access.manage_moderators')"
@@ -44,11 +44,11 @@
       information.
     </v-list-subheader>
 
-    <s-dense-images-circles-users
+    <u-dense-circles-users
       v-if="community.moderators_list"
       :ids="community.moderators_list"
       class="fadeIn delay_400"
-    ></s-dense-images-circles-users>
+    ></u-dense-circles-users>
 
     <!-- -------------------- Dialog ----------------------- -->
     <v-dialog
@@ -74,11 +74,11 @@
               >2. Enter the correct email address.
             </v-list-subheader>
 
-            <s-user-input
+            <c-user-input
               v-model="user_email"
               class="mt-5"
               with-profile
-            ></s-user-input>
+            ></c-user-input>
 
             <div class="widget-buttons">
               <v-btn
@@ -95,7 +95,7 @@
           </div>
 
           <div class="widget-box mb-5 min-height-20vh">
-            <s-progress-loading v-if="busy_fetch"></s-progress-loading>
+            <u-loading-progress v-if="busy_fetch"></u-loading-progress>
             <s-widget-header
               icon="supervisor_account"
               title="Moderators list"
@@ -175,12 +175,12 @@
 </template>
 
 <script>
-import SDenseImagesCirclesUsers from "@components/ui/dense-circles/SDenseImagesCirclesUsers.vue";
-import SUserInput from "@components/ui/user/input/SUserInput.vue";
+import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
+import CUserInput from "@components/community/user/input/CUserInput.vue";
 
 export default {
   name: "CommunityAccessController",
-  components: { SUserInput, SDenseImagesCirclesUsers },
+  components: {CUserInput,  UDenseCirclesUsers },
   props: {
     shop: {},
 

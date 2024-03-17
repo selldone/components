@@ -19,7 +19,7 @@
       Google Search</b
     >
 
-    <s-progress-loading v-if="busy"></s-progress-loading>
+    <u-loading-progress v-if="busy"></u-loading-progress>
 
     <div v-if="busy">
       <v-skeleton-loader
@@ -153,11 +153,11 @@
                 <div>
                   {{ numeralFormat(item.ctr, "%0.[00]") }}
                   <span class="mx-1">
-                    <score-indicator
+                    <u-progress-score
                       :size="16"
                       :value="$SEO.CTRScore(item.ctr)"
                       :width="2"
-                    ></score-indicator
+                    ></u-progress-score
                   ></span>
                 </div>
               </td>
@@ -173,11 +173,11 @@
 <script>
 import { DateConverter } from "@core/helper/date/DateConverter";
 import numeral from "numeral";
-import ScoreIndicator from "@components/ui/progress/score-indicator/ScoreIndicator.vue";
+import UProgressScore from "@components/ui/progress/score/UProgressScore.vue";
 
 export default {
   name: "SArticleSearchConsole",
-  components: { ScoreIndicator },
+  components: { UProgressScore },
   props: {
     shop: { required: false, type: Object },
     article: { required: true, type: Object },

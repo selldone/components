@@ -18,63 +18,63 @@
     class="product-variant-card-micro"
     style="position: relative"
   >
-    <s-color-circle v-if="color" :color="color" :size="20" class="me-1">
-    </s-color-circle>
+    <u-color-circle v-if="color" :color="color" :size="20" class="me-1">
+    </u-color-circle>
 
     <span v-if="volume" class="card-badge-info">
-      <variant-asset-view
+      <u-variant-asset-image
         :shop-id="shop_id"
         :size="24"
         :value="volume"
-      ></variant-asset-view>
+      ></u-variant-asset-image>
       {{ volume?.removeVariantAsset() }}
     </span>
 
     <span v-if="pack" class="card-badge-info">
-      <variant-asset-view
+      <u-variant-asset-image
         :shop-id="shop_id"
         :size="24"
         :value="pack"
-      ></variant-asset-view>
+      ></u-variant-asset-image>
       {{ pack?.removeVariantAsset() }}<span class="text-muted">x</span>
     </span>
 
     <span v-if="weight" class="card-badge-info">
-      <variant-asset-view
+      <u-variant-asset-image
         :shop-id="shop_id"
         :size="24"
         :value="weight"
-      ></variant-asset-view
+      ></u-variant-asset-image
       >{{ weight?.removeVariantAsset() }}
     </span>
 
     <span v-if="style" class="card-badge-info">
-      <variant-asset-view
+      <u-variant-asset-image
         :shop-id="shop_id"
         :size="24"
         :value="style"
-      ></variant-asset-view>
+      ></u-variant-asset-image>
       {{ style?.removeVariantAsset() }}
     </span>
 
     <span v-if="type" class="card-badge-info">
-      <variant-asset-view
+      <u-variant-asset-image
         :shop-id="shop_id"
         :size="24"
         :value="type"
-      ></variant-asset-view>
+      ></u-variant-asset-image>
       {{ type?.removeVariantAsset() }}
     </span>
   </div>
 </template>
 
 <script>
-import VariantAssetView from "@components/ui/variant/VariantAssetView.vue";
-import SColorCircle from "@components/ui/color/view/SColorCircle.vue";
+import UVariantAssetImage from "@components/ui/variant/asset/image/UVariantAssetImage.vue";
+import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
 
 export default {
   name: "VariantItemViewMicro",
-  components: { SColorCircle, VariantAssetView },
+  components: { UColorCircle, UVariantAssetImage },
   props: {
     productVariant: {
       required: true,

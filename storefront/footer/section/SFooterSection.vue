@@ -226,7 +226,7 @@
         <hr />
         <v-row class="text-start my-2" justify="end" no-gutters>
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-          <s-currency-selector
+          <u-currency-selector
             v-if="shop.currencies && shop.currencies.length > 1"
             :shop="shop"
             flag-mode
@@ -383,7 +383,7 @@
   >
     <v-card>
       <!-- MAP -->
-      <s-map-view
+      <u-map-view
         :center="location"
         :delay-load="1000"
         :marker-position="location"
@@ -392,7 +392,7 @@
         :zoom="16"
         style="position: absolute; left: 0; top: 0; right: 0; bottom: 0"
       >
-      </s-map-view>
+      </u-map-view>
       <div class="widget-buttons absolute-bottom-center w-100">
         <v-btn size="x-large" prepend-icon="close" @click="show_map=false" variant="flat">
           {{$t('global.actions.close')}}
@@ -403,7 +403,7 @@
 </template>
 
 <script>
-import SCurrencySelector from "@components/ui/currency/selector/SCurrencySelector.vue";
+import UCurrencySelector from "@components/ui/currency/selector/UCurrencySelector.vue";
 import SCookiePreferences from "../../cookie/preferences/SCookiePreferences.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 
@@ -418,7 +418,7 @@ export default {
 
     SStorefrontSocialButtons,
     SCookiePreferences,
-    SCurrencySelector,
+    UCurrencySelector,
   },
   props: {
     shop: {

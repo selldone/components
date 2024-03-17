@@ -87,7 +87,7 @@
         ></div>
       </v-card-text>
 
-      <s-progress-loading v-if="busy"></s-progress-loading>
+      <u-loading-progress v-if="busy"></u-loading-progress>
     </v-card>
   </v-dialog>
 </template>

@@ -22,7 +22,7 @@
     />
 
     <div class="count-down-container fadeIn delay_400">
-      <s-count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
+      <u-count-down v-if="endOfDiscountDate" :end="endOfDiscountDate" />
       <p v-else class="discount-not-end">
         {{ $t("product_info.action") }}
       </p>
@@ -31,11 +31,11 @@
 </template>
 
 <script>
-import SCountDown from "@components/ui/count-down/SCountDown.vue";
+import UCountDown from "@components/ui/count-down/UCountDown.vue";
 
 export default {
   name: "ProductDiscountCountdown",
-  components: { SCountDown },
+  components: { UCountDown },
 
   props: {
     product: {

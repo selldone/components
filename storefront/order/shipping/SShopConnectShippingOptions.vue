@@ -58,7 +58,7 @@
       </template>
 
       <template v-else-if="connect_shipping_option.options?.length">
-        <s-smart-select
+        <u-smart-select
           :background-color="dark ? SaminColorDark : '#fafafa'"
           :dark="dark"
           :items="connect_shipping_option.options"
@@ -73,25 +73,25 @@
           @update:model-value="(val) => selectOption(connect_shipping_option, val)"
         >
           <template v-slot:prepend-title="{ item }">
-            <price-view
+            <u-price
               :amount="item.rate"
               :currency="item.currency"
-            ></price-view>
+            ></u-price>
             <span class="mx-2">|</span>
           </template>
-        </s-smart-select>
+        </u-smart-select>
       </template>
     </div>
   </div>
 </template>
 
 <script>
-import SSmartSelect from "@components/ui/smart/SSmartSelect.vue";
+import USmartSelect from "@components/ui/smart/select/USmartSelect.vue";
 import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopConnectShippingOptions",
-  components: { ProductsDenseImagesCircles, SSmartSelect },
+  components: { ProductsDenseImagesCircles, USmartSelect },
   props: {
     shop: {
       required: true,

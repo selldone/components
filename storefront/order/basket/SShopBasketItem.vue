@@ -123,20 +123,20 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <v-col cols="6" lg="3" md="6" sm="5" xl="3">
         <p v-if="basketItem.dis" class="discount-value">
-          <price-view
+          <u-price
             :amount="
               getBasketItemSumPriceDiscount(shop, basketItem) * basketItem.count
             "
             line-through
-          ></price-view>
+          ></u-price>
         </p>
         <p class="shop-item-price m-0">
-          <price-view
+          <u-price
             :amount="
               getBasketItemPrice(shop, basketItem) * basketItem.count -
               basketItem.offer_amount
             "
-          ></price-view>
+          ></u-price>
           <small v-if="subscription_price">/{{ subscription_period }}</small>
         </p>
         <div v-if="basketItem.cross_dis">
@@ -147,7 +147,7 @@
             size="small"
           >
             <v-icon size="small" start>whatshot</v-icon>
-            <price-view :amount="-basketItem.cross_dis"></price-view>
+            <u-price :amount="-basketItem.cross_dis"></u-price>
           </v-chip>
         </div>
 
@@ -155,10 +155,10 @@
           <p class="m-1 text-muted small">
             {{ $t("basket_items.price_changed") }}<br />
 
-            <price-view
+            <u-price
               :amount="current_item_price"
               class="font-weight-medium"
-            ></price-view>
+            ></u-price>
             <!-- Change percent labels -->
             <v-chip
               v-if="price_error_percent > 1"

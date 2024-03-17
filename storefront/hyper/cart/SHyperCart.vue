@@ -29,7 +29,7 @@
         @click:add="addHyperItem"
       ></s-hyper-product>
 
-      <s-currency-input
+      <u-currency-input
         v-if="shop.currencies.length > 1"
         v-model="currency"
         :label="$t('global.commons.currency')"
@@ -41,7 +41,7 @@
         solo
         @change="setCurrencyHyper"
       >
-      </s-currency-input>
+      </u-currency-input>
 
       <hr />
 
@@ -63,41 +63,41 @@
       <div class="d-flex">
         <p class="flex-grow-1">{{ $t("global.commons.net_price") }}</p>
 
-        <price-view
+        <u-price
           :amount="hyper.price"
           :currency="hyper.currency"
           not-show-zero
         >
-        </price-view>
+        </u-price>
       </div>
 
       <div class="d-flex">
         <p class="flex-grow-1">{{ $t("global.commons.tax") }}</p>
 
-        <price-view
+        <u-price
           :amount="hyper.tax"
           :currency="hyper.currency"
           :line-through="hyper.tax_included"
           not-show-zero
         >
-        </price-view>
+        </u-price>
       </div>
 
       <hr />
       <div class="py-3">
-        <price-view
+        <u-price
           :amount="sum"
           :currency="hyper.currency"
           large
           not-show-zero
         >
-        </price-view>
-        <stamp v-if="isPayed" class="float-end" is-approved>
+        </u-price>
+        <u-stamp v-if="isPayed" class="float-end" is-approved>
           {{ $t("global.status.paid") }}
-        </stamp>
-        <stamp v-if="isCanceled" class="float-end" is-declined>
+        </u-stamp>
+        <u-stamp v-if="isCanceled" class="float-end" is-declined>
           {{ $t("global.status.canceled") }}
-        </stamp>
+        </u-stamp>
       </div>
 
       <h2 class="mb-6 text-muted font-weight-light">
@@ -128,21 +128,21 @@
 </template>
 
 <script>
-import SCurrencyInput from "@components/ui/currency/input/SCurrencyInput.vue";
+import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
 import SHyperCartItems from "@components/storefront/hyper/cart/items/SHyperCartItems.vue";
 import SHyperProduct from "../product/SHyperProduct.vue";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import { BasketStatus } from "@core/enums/basket/BasketStatus";
-import Stamp from "@components/ui/stamp/Stamp.vue";
+import UStamp from "@components/ui/stamp/UStamp.vue";
 import _ from "lodash-es";
 
 export default {
   name: "SHyperCart",
   components: {
-    Stamp,
+    UStamp,
     SHyperProduct,
     SHyperCartItems,
-    SCurrencyInput,
+    UCurrencyInput,
   },
   props: {
     shop: { required: true },

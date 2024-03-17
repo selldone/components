@@ -39,11 +39,11 @@
       <!-- Select variant -->
 
       <div class="my-3 slideInDown delay_200">
-        <variant-selector-menu
+        <u-variant-selector
           v-if="has_available_variants"
           v-model="selected_variant"
           :variants="product_variants"
-        ></variant-selector-menu>
+        ></u-variant-selector>
       </div>
 
       <v-row align="center" class="mx-0 fadeIn" dense>
@@ -51,18 +51,18 @@
 
         <v-col cols="12" md="6">
           <p v-if="discount > 0">
-            <price-view
+            <u-price
               :amount="price + discount"
               class="op-0-8"
               line-through
-            ></price-view>
+            ></u-price>
 
             <v-chip class="mx-1 float-end" color="red" variant="flat" size="small"
               >{{ discount_percent }} %
             </v-chip>
           </p>
           <p class="-price">
-            <price-view :amount="price"></price-view>
+            <u-price :amount="price"></u-price>
           </p>
         </v-col>
 
@@ -70,7 +70,7 @@
 
         <v-col class="text-center" cols="12" md="6">
           <v-slide-y-reverse-transition hide-on-leave>
-            <s-number-input
+            <u-number-input
               v-if="exist_in_basket"
               v-model="count"
               :max="quantity"
@@ -78,7 +78,7 @@
               filled
               rounded
               show-buttons
-            ></s-number-input>
+            ></u-number-input>
 
             <v-btn
               v-else
@@ -110,7 +110,7 @@
       <v-card class="rounded-28px text-start">
         <v-card-title>    <v-icon class="me-1">qr_code_scanner</v-icon>{{ $t("global.commons.barcode_scanner") }}</v-card-title>
         <v-card-text v-if="show_scanner">
-          <barcode-scanner qr-code @on-scan="onScan"></barcode-scanner>
+          <u-scanner qr-code @on-scan="onScan"></u-scanner>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -129,13 +129,13 @@
 </template>
 
 <script>
-import VariantSelectorMenu from "../../../ui/variant/VariantSelectorMenu.vue";
-import SNumberInput from "@components/ui/input/number/SNumberInput.vue";
-import BarcodeScanner from "@components/ui/scanner/BarcodeScanner.vue";
+import UVariantSelector from "../../../ui/variant/selector/UVariantSelector.vue";
+import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
+import UScanner from "@components/ui/scanner/UScanner.vue";
 
 export default {
   name: "SHyperProduct",
-  components: { BarcodeScanner, SNumberInput, VariantSelectorMenu },
+  components: { UScanner, UNumberInput, UVariantSelector },
   props: {
     shop: {
       require: true,

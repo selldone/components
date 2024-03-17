@@ -18,22 +18,22 @@
       <template v-slot:label>
         {{ $t("global.commons.sub_total") }}
       </template>
-      <price-view
+      <u-price
         :amount="bill.items_price"
         :currency="bill.currency"
         class="font-weight-bold ms-1"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.items_discount" class="my-1">
       <template v-slot:label>
         {{ $t("global.commons.discount") }}
       </template>
-      <price-view
+      <u-price
         :amount="-bill.items_discount"
         :currency="bill.currency"
         class="font-weight-bold"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.club" class="my-1">
@@ -46,11 +46,11 @@
         />
         {{ $t("global.commons.customer_club") }}
       </template>
-      <price-view
+      <u-price
         :amount="-bill.club"
         :currency="bill.currency"
         class="font-weight-bold"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.discount_code" class="my-1">
@@ -63,11 +63,11 @@
         />
         {{ $t("global.commons.discount_code") }}
       </template>
-      <price-view
+      <u-price
         :amount="-bill.discount_code"
         :currency="bill.currency"
         class="font-weight-bold"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.coupon" class="my-1">
@@ -81,11 +81,11 @@
 
         {{ $t("global.commons.coupon") }}
       </template>
-      <price-view
+      <u-price
         :amount="-bill.coupon"
         :currency="bill.currency"
         class="font-weight-bold"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.tax" class="my-1">
@@ -100,11 +100,11 @@
         </v-chip>
       </template>
 
-      <price-view
+      <u-price
         :amount="bill.tax"
         :currency="bill.currency"
         class="font-weight-bold"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.delivery_price" class="my-1">
@@ -114,12 +114,12 @@
       <span v-if="bill.delivery_price === -1" class="font-weight-bold">{{
         $t("process_center.payment_widget.delivery.not_paid")
       }}</span>
-      <price-view
+      <u-price
         v-else
         :amount="bill.delivery_price"
         :currency="bill.currency"
         class="font-weight-bold"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
 
     <s-value-dashed v-if="bill.pay_by_giftcards" class="my-1">
@@ -134,11 +134,11 @@
         {{ $t("global.commons.gift_card") }}
       </template>
 
-      <price-view
+      <u-price
         :amount="-bill.pay_by_giftcards"
         :currency="bill.currency"
         class="font-weight-bold"
-      ></price-view>
+      ></u-price>
     </s-value-dashed>
   </div>
 </template>

@@ -108,11 +108,11 @@
                     <b>{{ d_K }}: </b>{{ d_v }}
                   </p>
                 </div>
-                <s-check
+                <u-check
                   v-else-if="typeof val === 'boolean'"
                   :model-value="val"
                   read-only
-                ></s-check>
+                ></u-check>
                 <span
                   v-else-if="val && (typeof val == 'number' || val.isNumber())"
                   >{{ numeralFormat(val, "0,0.[000]") }}</span
