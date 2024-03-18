@@ -17,13 +17,13 @@
     <h2>🎙️ Record voice</h2>
 
     <template v-if="showError">
-      Your browser doesn’t support audio recording or you’ve blocked microphone
+      Your browser does’t support audio recording or you’ve blocked microphone
       access.
     </template>
 
     <template v-else>
       <u-voice-recorder
-        mime-type="audio/mp3"
+        :mime-type="mimeType"
         :max-duration="maxDuration"
         @error="handleError"
         @stop="handleRecording"
@@ -53,7 +53,8 @@
                 <v-btn
                   class="border-w-medium"
                   color="#FFCDD2"
-                  icon variant="flat"
+                  icon
+                  variant="flat"
                   @click="stopRecording"
                 >
                   <v-icon>stop</v-icon>
@@ -80,7 +81,7 @@
         </template>
       </u-voice-recorder>
 
-      <div v-if="modelValue" class="d-flex align-center">
+      <div v-if="modelValue && !noPlayback" class="d-flex align-center">
         <audio
           :src="modelValue"
           class="my-1 flex-grow-1 rounded me-1"
@@ -102,12 +103,17 @@ export default {
   name: "UVoiceBox",
   emits: ["update:modelValue", "update:voiceFile"],
   props: {
+    mimeType: {
+      type: String,
+      default: "audio/webm",
+    },
     modelValue: {},
     voiceFile: {},
     maxDuration: {
       type: Number,
       default: 10 * 60, // Default max recording time in seconds (e.g., 10s)
     },
+    noPlayback: Boolean, // Do not show playback controls
   },
   data() {
     return {

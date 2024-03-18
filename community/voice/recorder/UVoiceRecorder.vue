@@ -27,6 +27,7 @@
 <script>
 export default {
   name: "UVoiceRecorder",
+  emits: ["error", "stop"],
   data() {
     return {
       audioBlob: null,
@@ -39,6 +40,9 @@ export default {
     mimeType: {
       type: String,
       default: "audio/webm",
+      // Prefer MP3 if supported: audio/mpeg
+      // Fallback to WAV if supported: audio/wav
+      // Fallback to WebM if supported: audio/webm
     },
     maxDuration: {
       type: Number,
@@ -90,11 +94,13 @@ export default {
       return Promise.resolve();
     }
 
-    const recorder = new MediaRecorder(stream);
+    const recorder = new MediaRecorder(stream,{
+      mimeType: this.mimeType,
+    });
     let chunks = [];
 
     recorder.addEventListener("stop", () => {
-      this.audioBlob = new Blob(chunks, { type: this.mimeType });
+      this.audioBlob = new Blob(chunks, { type: this.mediaRecorder.mimeType });
       chunks = [];
     });
 

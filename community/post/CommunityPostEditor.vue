@@ -1302,7 +1302,8 @@ export default {
 
       // VOICE POST
       if (this.voice_file) {
-        formData.append("voice", this.voice_file, "voice.mp3");
+        let blob = new Blob([this.voice_file], { type: "audio/mpeg" });
+        formData.append("voice", blob, "voice.mp3");
       }
 
       // PRODUCT POST
