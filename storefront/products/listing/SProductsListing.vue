@@ -180,7 +180,7 @@
             ]"
             :justify="justify"
             :style="{ '--insta-size': insta_size }"
-            class="products-layout"
+            class="s--products-listing-row"
           >
             <v-fade-transition group hide-on-leave>
               <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
@@ -1260,7 +1260,7 @@ export default {
       }
     }
 
-    .products-layout {
+    .s--products-listing-row {
       margin-left: 1.2%;
       margin-right: 1.2%;
       @media (max-width: 800px) {
