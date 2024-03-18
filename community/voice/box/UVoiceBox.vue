@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -22,8 +22,9 @@
     </template>
 
     <template v-else>
-      <dictaphone
+      <u-voice-recorder
         mime-type="audio/mp3"
+        :max-duration="maxDuration"
         @error="handleError"
         @stop="handleRecording"
       >
@@ -38,7 +39,7 @@
             >
               <v-btn
                 class="border-w-medium"
-                fab
+                icon
                 variant="flat"
                 @click="startRecording"
               >
@@ -52,7 +53,7 @@
                 <v-btn
                   class="border-w-medium"
                   color="#FFCDD2"
-                  fab
+                  icon variant="flat"
                   @click="stopRecording"
                 >
                   <v-icon>stop</v-icon>
@@ -69,16 +70,15 @@
           </v-slide-x-reverse-transition>
 
           <!--  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Spectrum ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
           <div style="min-height: 128px">
-            <spectrum-analyser
+            <u-voice-spectrum
               :play="isRecording"
               :style="{ opacity: isRecording ? 1 : 0.5, display: 'block' }"
               class="mx-auto"
             />
           </div>
         </template>
-      </dictaphone>
+      </u-voice-recorder>
 
       <div v-if="modelValue" class="d-flex align-center">
         <audio
@@ -86,7 +86,7 @@
           class="my-1 flex-grow-1 rounded me-1"
           controls
         ></audio>
-        <v-btn icon size="large" @click="clear()">
+        <v-btn icon variant="text" size="large" @click="clear()">
           <v-icon>close</v-icon>
         </v-btn>
       </div>
@@ -95,15 +95,19 @@
 </template>
 
 <script>
-import Dictaphone from "./Dictaphone.vue";
-import SpectrumAnalyser from "./SpectrumAnalyser.vue";
+import UVoiceRecorder from "../recorder/UVoiceRecorder.vue";
+import UVoiceSpectrum from "../spectrum/UVoiceSpectrum.vue";
 
 export default {
-  name: "VoiceRecorder",
+  name: "UVoiceBox",
   emits: ["update:modelValue", "update:voiceFile"],
   props: {
     modelValue: {},
     voiceFile: {},
+    maxDuration: {
+      type: Number,
+      default: 10 * 60, // Default max recording time in seconds (e.g., 10s)
+    },
   },
   data() {
     return {
@@ -126,8 +130,8 @@ export default {
     },
   },
   components: {
-    Dictaphone,
-    SpectrumAnalyser,
+    UVoiceRecorder,
+    UVoiceSpectrum,
   },
 };
 </script>

@@ -16,17 +16,26 @@
   <v-btn
     :class="{ '-loading': loading }"
     :loading="loading"
-    :size="xLarge ? 'x-large' : undefined"
+    :size="size ? size : xLarge ? 'x-large' : undefined"
     class="ai-btn"
-    icon
-    variant="text"
+    :icon="icon"
+    :variant="variant"
+    :color="color"
   >
     <img
-      :height="xLarge ? 36 : 24"
-      :width="xLarge ? 36 : 24"
-      src="../../../../assets/icons/ci-logo.png"
+      :height="imageSize ? imageSize : xLarge ? 36 : 24"
+      :width="imageSize ? imageSize : xLarge ? 36 : 24"
+      :src="require('@components/assets/icons/ci-logo.png')"
+      :class="{ '-circle-white': darkMode }"
     />
-    <v-tooltip v-if="tooltip" activator="parent" :location="tooltipLocation" max-width="360" content-class="bg-black">
+    <v-icon v-if="placeholderIcon" class="center-absolute" :color="placeholderColor" style="text-shadow: rgba(0,0,0,0.8) 1px 2px 3px">{{placeholderIcon}}</v-icon>
+    <v-tooltip
+      v-if="tooltip"
+      activator="parent"
+      :location="tooltipLocation"
+      max-width="360"
+      content-class="bg-black text-start"
+    >
       <div v-html="tooltip"></div>
     </v-tooltip>
     <slot></slot>
@@ -45,6 +54,21 @@ export default {
     tooltipLocation: {
       default: "top",
     },
+    variant: {
+      default: "text",
+    },
+    icon: {
+      type: Boolean,
+      default: true,
+    },
+    color: {},
+    size: {},
+
+    imageSize: {},
+    darkMode: Boolean,
+    placeholderIcon:{},
+    placeholderColor:{},
+
   },
 };
 </script>
@@ -81,6 +105,11 @@ export default {
 
       opacity: 1;
     }
+  }
+
+  .-circle-white {
+    background: #fff;
+    border-radius: 50%;
   }
 }
 

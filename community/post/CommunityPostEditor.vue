@@ -265,12 +265,12 @@
         </div>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Voice post ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-        <voice-recorder
+        <u-voice-box
           v-else-if="tab === 'voice'"
           v-model="voice"
           v-model:voice-file="voice_file"
           class="m-4"
-        ></voice-recorder>
+        ></u-voice-box>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Text post ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅-->
         <div v-else-if="tab === 'text'">
@@ -657,7 +657,7 @@
 </template>
 
 <script>
-import VoiceRecorder from "@components/community/voice/VoiceRecorder.vue";
+import UVoiceBox from "@components/community/voice/box/UVoiceBox.vue";
 import UTabsRounded from "@components/ui/tab/rounded/UTabsRounded.vue";
 import GlobalRules from "@core/helper/rules/GlobalRules";
 import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
@@ -703,7 +703,7 @@ export default {
     UDenseCirclesUsers,
     SMentionableInput,
     UTabsRounded,
-    VoiceRecorder,
+    UVoiceBox,
   },
 
   name: "CommunityPostEditor",

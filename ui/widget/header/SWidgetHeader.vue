@@ -49,6 +49,27 @@
       <slot name="icon-actions"></slot>
       <slot v-if="$vuetify.display.xs" name="actions"></slot>
     </div>
+    <template v-if="hasAiAction">
+      <!-- Ai Action -->
+      <u-button-ai-small
+        @click="$emit('click:ai')"
+        :loading="loadingAi"
+        :tooltip="tooltipAi"
+        variant="elevated"
+        :color="buttonColor"
+        :size="44"
+        :image-size="36"
+        dark-mode
+        placeholder-icon="mic"
+        placeholder-color="#fff"
+      ></u-button-ai-small>
+      <v-sheet
+        class="align-self-center"
+        :color="buttonColor"
+        width="16"
+        height="4"
+      ></v-sheet>
+    </template>
     <v-btn
       v-if="addCaption"
       :block="$vuetify.display.xs"
@@ -89,9 +110,12 @@
 </template>
 
 <script>
+import UButtonAiSmall from "@components/ui/button/ai/small/UButtonAiSmall.vue";
+
 export default {
   name: "SWidgetHeader",
-  emits: ["click:add"],
+  components: { UButtonAiSmall },
+  emits: ["click:add", "click:ai"],
   props: {
     icon: {},
     iconColor: {},
@@ -115,11 +139,15 @@ export default {
     //------------------------------
     dot: { default: false },
     dotColor: { default: "red" },
+
+    hasAiAction: Boolean,
+    loadingAi: Boolean,
+    tooltipAi: String,
   },
 
   computed: {
     font_size() {
-      return (this.icon?.startsWith("fas ") || this.icon?.startsWith("fa:"))
+      return this.icon?.startsWith("fas ") || this.icon?.startsWith("fa:")
         ? 22
         : 26;
     },

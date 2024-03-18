@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  name: "spectrum-analyser",
+  name: "UVoiceSpectrum",
   props: {
     width: {
       type: Number,
@@ -82,15 +82,18 @@ export default {
   },
   directives: {
     render: {
-      update(canvasElement, binding, vnode) {
-        const context = canvasElement.getContext("2d");
+      beforeMount(el, binding, vnode, prevVnode) {
+        el.context = el.getContext("2d");
+      },
+      updated(el, binding, vnode, prevVnode) {
+        const context = el.context;
 
-        const width = canvasElement.width;
-        const height = canvasElement.height;
+        const width = el.width;
+        const height = el.height;
 
         const points = binding.value;
 
-        context.fillStyle = vnode.context.fillStyle;
+        context.fillStyle = vnode.props.fillStyle;
 
         context.clearRect(0, 0, width, height);
         context.beginPath();
@@ -109,29 +112,31 @@ export default {
       },
     },
   },
-  // eslint-disable-next-line consistent-return
-  async mounted() {
-    let stream;
-
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch (error) {
-      this.$emit("error", "`navigator.mediaDevices.getUserMedia()` failed.");
-      return Promise.resolve();
-    }
-
-    this.context = new AudioContext();
-
-    this.analyser = this.context.createAnalyser();
-    this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
-
-    const source = this.context.createMediaStreamSource(stream);
-    source.connect(this.analyser);
-
-    this.updateData();
+  mounted() {
+    this.generate();
   },
 
   methods: {
+    async generate() {
+      let stream;
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (error) {
+        this.$emit("error", "`navigator.mediaDevices.getUserMedia()` failed.");
+        return Promise.resolve();
+      }
+
+      this.context = new AudioContext();
+
+      this.analyser = this.context.createAnalyser();
+      this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+
+      const source = this.context.createMediaStreamSource(stream);
+      source.connect(this.analyser);
+
+      this.updateData();
+    },
     updateData() {
       this.analyser.getByteFrequencyData(this.dataArray);
       this.spectrum = this.dataArray.slice();

@@ -22,7 +22,11 @@
         :class="{ 'mx-4': !parent, 'ms-4': parent }"
         class="my-2"
       >
-        <u-loading-ellipsis v-if="busy_fetch && page === 1" css-mode light></u-loading-ellipsis>
+        <u-loading-ellipsis
+          v-if="busy_fetch && page === 1"
+          css-mode
+          light
+        ></u-loading-ellipsis>
 
         <!-- No comment message -->
         <div v-if="!busy_fetch && !comments.length" class="text-muted p-2">
@@ -62,7 +66,6 @@
                       v-if="com.user_id === post.user_id"
                       class="mx-1"
                       color="#333"
-
                       pill
                       size="x-small"
                       >{{ $t("community.commons.author") }}
@@ -276,7 +279,6 @@
         >
           <v-btn
             class="absolute-top-end"
-
             size="small"
             variant="flat"
             @click="clearImage"
@@ -305,10 +307,11 @@
           : $t('community.comment.comment_plc')
       "
       auto-grow
-      class="my-2"
+      class="my-2 rounded-28px"
       color="#ddd"
       flat
       hide-details
+      bg-color="transparent"
       rounded
       rows="1"
       variant="solo"
@@ -322,23 +325,23 @@
       "
     >
       <template v-slot:prepend-inner>
-        <v-avatar class="margin-n7px ms-n4 me-2" color="#fafafa" size="2.4em">
+        <v-avatar class="me-2" color="#fafafa" size="2.4em">
           <v-img :src="getUserAvatar(USER_ID())"></v-img>
         </v-avatar>
       </template>
       <template v-slot:append-inner>
-        <v-btn class="margin-n7px me-2" icon @click="showSelectImage()">
+        <v-btn class="me-2" icon @click="showSelectImage()" variant="text">
           <v-icon>add_a_photo</v-icon>
         </v-btn>
 
         <v-btn
           :class="{ disabled: !body }"
-          :color="body ? 'blue' : '#666'"
-          :icon="!body"
+          :disabled="!body"
+          :color="body ? 'primary' : '#666'"
+          icon
           :loading="busy"
-          :size="!!body ? 'small':undefined"
-          :variant="!!body ? 'flat':undefined"
-          class="margin-n7px me-n3"
+          :variant="body ? 'elevated' : 'text'"
+          class=""
           @click="sendComment"
         >
           <v-icon class="flip-rtl">send</v-icon>

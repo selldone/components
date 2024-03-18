@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -26,12 +26,13 @@
 
 <script>
 export default {
-  name: "dictaphone",
+  name: "UVoiceRecorder",
   data() {
     return {
       audioBlob: null,
       mediaRecorder: null,
       isRecording: false,
+      recordTimeout: null, // Timeout reference
     };
   },
   props: {
@@ -39,15 +40,32 @@ export default {
       type: String,
       default: "audio/webm",
     },
+    maxDuration: {
+      type: Number,
+      default: 10 * 60, // Default max recording time in seconds (e.g., 10s)
+    },
   },
   methods: {
     startRecording() {
+      if (this.isRecording) return; // Prevent starting a new recording if already recording
+
       this.isRecording = true;
       this.mediaRecorder.start();
+
+      // Automatically stop recording after maxDuration milliseconds
+      this.recordTimeout = setTimeout(() => {
+        this.stopRecording();
+      }, this.maxDuration * 1000);
     },
     stopRecording() {
+      if (!this.isRecording) return; // Prevent stopping if not currently recording
+
       this.isRecording = false;
       this.mediaRecorder.stop();
+
+      if (this.recordTimeout) clearTimeout(this.recordTimeout); // Clear the timeout when recording is manually stopped
+
+      this.recordTimeout = null;
     },
     deleteRecording() {
       this.audioBlob = null;
@@ -85,6 +103,10 @@ export default {
     });
 
     this.mediaRecorder = recorder;
+  },
+
+  beforeUnmount() {
+    if (this.recordTimeout) clearTimeout(this.recordTimeout); // Clear the timeout when recording is manually stopped
   },
 };
 </script>
