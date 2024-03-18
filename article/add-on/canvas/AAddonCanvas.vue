@@ -19,32 +19,33 @@
     contenteditable="false"
     spellcheck="false"
   >
-    <s-article-editor-component-toolbar
+    <a-addon-toolbar
       v-if="editable"
       :edit-button="false"
       :element="element"
       :title="$t('global.commons.canvas')"
     >
-    </s-article-editor-component-toolbar>
 
-    <s-image-canvas
+    </a-addon-toolbar>
+
+    <a-addon-canvas-editor
       v-model:image="bg"
       v-model:ratio="ratio"
       v-model:rects="rects"
       :editable="edit_mode"
       :upload-url="uploadUrl"
     >
-    </s-image-canvas>
+    </a-addon-canvas-editor>
   </div>
 </template>
 
 <script>
-import SImageCanvas from "./SImageCanvas.vue";
-import SArticleEditorComponentToolbar from "../toolbar/SArticleEditorComponentToolbar.vue";
+import AAddonCanvasEditor from "@components/article/add-on/canvas/editor/AAddonCanvasEditor.vue";
+import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 
 export default {
-  name: "SArticleAddonCanvas",
-  components: { SArticleEditorComponentToolbar, SImageCanvas },
+  name: "AAddonCanvas",
+  components: { AAddonToolbar, AAddonCanvasEditor },
   props: {
     pack: {},
     editable: {

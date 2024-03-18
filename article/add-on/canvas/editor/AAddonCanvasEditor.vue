@@ -18,24 +18,34 @@
     class="position-relative canvas-container"
   >
     <v-fade-transition>
-      <div v-if="editable && show_menu" class="toolbar-op">
-        <v-btn class="m-1" size="small" variant="outlined" @click="clearAll"
+      <v-sheet v-if="editable && show_menu" class="toolbar-op" color="primary">
+        <v-btn
+          class="m-1"
+          size="small"
+          @click="clearAll"
+          variant="elevated"
+          color="#fff"
+          prepend-icon="layers_clear"
           >Clear all
         </v-btn>
         <v-btn
           v-if="selected_rect"
           class="m-1"
           size="small"
-          variant="outlined"
+          variant="elevated"
+          color="#fff"
           @click="RemoveSelected"
+          prepend-icon="close"
           >Remove selected
         </v-btn>
 
         <v-btn
           class="m-1"
           size="small"
-          variant="outlined"
+          variant="elevated"
+          color="#fff"
           @click="show_upload = !show_upload"
+          prepend-icon="image"
           >{{ show_upload ? "Back" : "Upload Image" }}
         </v-btn>
         <v-slider
@@ -66,33 +76,38 @@
           </template>
         </v-slider>
 
-        <div v-if="selected_rect" class="d-flex">
-          <div class="w-50">
-            <span class="small text-nowrap text-white">Caption: </span>
-            <input
-              v-model="selected_rect.caption"
-              class="small font-weight-bold text-white"
-              placeholder="Type caption..."
-              @blur="drawAll()"
-            />
+        <v-expand-transition>
+          <div v-if="selected_rect" class="d-flex">
+            <div class="w-50 pa-1">
+              <v-text-field
+                  v-model="selected_rect.caption"
+                  placeholder="Type caption..."
+                  label="Caption"
+                  @blur="drawAll()"
+                  variant="solo"
+                  hide-details
+              />
+            </div>
+            <div class="w-50 pa-1">
+              <v-text-field
+                  v-model="selected_rect.header"
+                  placeholder="Type header..."
+                  label="Header"
+                  @blur="drawAll()"
+                  variant="solo"
+                  hide-details
+              />
+            </div>
           </div>
-          <div class="w-50">
-            <span class="small text-nowrap text-white">Header: </span>
-            <input
-              v-model="selected_rect.header"
-              class="small font-weight-bold text-white"
-              placeholder="Type header..."
-              @blur="drawAll()"
-            />
-          </div>
-        </div>
-      </div>
+        </v-expand-transition>
+      </v-sheet>
     </v-fade-transition>
 
     <v-btn
       v-if="editable"
       class="absolute-top-end z2"
       icon
+      color="#fff"
       title="Show/hide setting bar."
       variant="text"
       @click="show_menu = !show_menu"
@@ -128,7 +143,7 @@ import SImageUploader from "@components/ui/uploader/SImageUploader.vue";
 import { ArticleMixin } from "@components/mixin/ArticleMixin";
 
 export default {
-  name: "SImageCanvas",
+  name: "AAddonCanvasEditor",
   emits: ["update:image", "update:rects", "update:ratio"],
   mixins: [ArticleMixin],
   components: { SImageUploader },
@@ -350,7 +365,7 @@ export default {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
     RemoveSelected() {
-      this.remove(this.rects, this.selected_rect);
+      this.rects.remove(this.selected_rect);
       this.drawAll();
     },
 
@@ -459,18 +474,10 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
     box-shadow: 0px 10px 50px 5px rgba(113, 112, 112, 0.5) !important;
 
     padding: 4px 8px;
-    background-color: #0c91d3;
-    color: #fff;
 
     &:hover {
       opacity: 1;
     }
-  }
-
-  .image-b {
-    position: absolute;
-    left: 0;
-    top: 0;
   }
 
   .setting-overlay {

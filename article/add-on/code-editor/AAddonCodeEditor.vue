@@ -19,12 +19,12 @@
     class="code-editor editor-window"
     spellcheck="false"
   >
-    <s-article-editor-component-toolbar
+    <a-addon-toolbar
       v-if="editable"
       :element="element"
       :title="$t('global.commons.code')"
       @click:edit="showEdit()"
-    ></s-article-editor-component-toolbar>
+    ></a-addon-toolbar>
 
     <div class="text-left py-1 d-flex align-center" dir="ltr">
       <v-btn-toggle
@@ -71,14 +71,14 @@
 </template>
 
 <script>
-import SArticleEditorComponentToolbar from "../toolbar/SArticleEditorComponentToolbar.vue";
+import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { ArticleMixin } from "@components/mixin/ArticleMixin";
 import { PrismEditor } from "vue-prism-editor";
 
 export default {
-  name: "SArticleAddonCodeEditor",
+  name: "AAddonCodeEditor",
   mixins: [ArticleMixin],
-  components: { PrismEditor, SArticleEditorComponentToolbar },
+  components: { PrismEditor, AAddonToolbar },
   props: {
     codes: {},
     editable: {

@@ -14,16 +14,15 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    v-intersect:onec="onChange"
     :data="json_data"
-    class="flip-book"
+    class="images-compare"
     contenteditable="false"
     spellcheck="false"
   >
-    <s-article-editor-component-toolbar
+    <a-addon-toolbar
       v-if="editable"
       :element="element"
-      :title="$t('global.commons.catalog')"
+      :title="$t('global.commons.images_compare')"
       edit-icon="add_photo_alternate"
       @click:edit="showEdit()"
     >
@@ -31,33 +30,44 @@
         class="text-body-2 border-end pe-2 text-capitalize"
         variant="text"
         @click="showEdit('size')"
-        >{{ $t("global.commons.max_height") }}: <b>{{ max_height }}</b></v-btn
+        >{{ $t("global.commons.max_height") }}: <b>{{ max_width }}</b></v-btn
       >
-    </s-article-editor-component-toolbar>
+    </a-addon-toolbar>
 
-    <flipbook
-      v-if="show"
-      ref="flipbook"
-      :pages="muted_pack.pages"
-      :style="{ maxHeight: max_height }"
-      :zooms="null"
-      class="flipbook"
+    <vue-compare-image
+      v-if="muted_images && show"
+      :handle-size="40"
+      :left-image="
+        muted_images.original
+          ? muted_images.original
+          : require('@components/article/add-on/comparison/asset/image-placeholder.svg')
+      "
+      :right-image="
+        muted_images.compare
+          ? muted_images.compare
+          : require('@components/article/add-on/comparison/asset/image-placeholder.svg')
+      "
+      :slider-line-width="2"
+      :slider-position-percentage="0.5"
+      :style="{ 'max-width': `${max_width}` }"
+      class="mx-auto"
+      hover
+      style="direction: ltr; min-height: 64px"
     />
   </div>
 </template>
 
 <script>
-import Flipbook from "flipbook-vue";
-import SArticleEditorComponentToolbar from "../toolbar/SArticleEditorComponentToolbar.vue";
-import { defineComponent } from "vue";
+import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
+import VueCompareImage from "@components/ui/image-compare/VueCompareImage.vue";
 import { ArticleMixin } from "@components/mixin/ArticleMixin";
 
-export default defineComponent({
-  name: "SArticleFlipBook",
+export default {
+  name: "AAddonComparison",
   mixins: [ArticleMixin],
-  components: { SArticleEditorComponentToolbar, Flipbook },
+  components: { AAddonToolbar, VueCompareImage },
   props: {
-    pack: {},
+    images: {},
     editable: {
       type: Boolean,
       default: false,
@@ -76,64 +86,53 @@ export default defineComponent({
     return {
       edit_mode: this.editable,
 
-      muted_pack: {
-        max_height: 40,
-        pages: [],
+      muted_images: {
+        max_width: 20,
+        dim: "em",
       },
 
       show: true,
-
-      time: null,
 
       element: null,
     };
   },
   computed: {
     json_data() {
-      let time = this.time;
-      return JSON.stringify(this.muted_pack);
+      return JSON.stringify(this.muted_images);
     },
-
-    max_height() {
-      if (!this.muted_pack.max_height) return "100em";
-      return `${this.muted_pack.max_height}em`;
+    max_width() {
+      if (!this.muted_images.max_width || !this.muted_images.dim) return "20em";
+      return `${this.muted_images.max_width}${this.muted_images.dim}`;
     },
   },
 
   created() {
     // Fix bug: (important)
-    /* if (!this.$vuetify.theme) this.$vuetify.theme = {};
+    /*   if (!this.$vuetify.theme) this.$vuetify.theme = {};
     if (!this.$vuetify.icons) this.$vuetify.icons = {};
     if (!this.$vuetify.display) this.$vuetify.display = {};*/
 
-    if (this.pack) this.muted_pack = this.pack;
+    if (this.images) this.muted_images = this.images;
 
-    if (!this.muted_pack.pages || !Array.isArray(this.muted_pack.pages))
-      this.muted_pack.pages = [];
+    if (!this.muted_images.dim) this.muted_images.dim = "em";
+    if (!this.muted_images.max_width) this.muted_images.max_width = 20;
 
-    if (!this.muted_pack.max_height) this.muted_pack.max_height = 40;
+    this.dim = this.muted_images.dim;
   },
   mounted() {
     this.element = this.$el;
   },
   methods: {
-    onChange() {
-      this.show = false;
-      this.time = new Date();
-
-      this.$nextTick(function () {
-        this.show = true;
-        this.$forceUpdate();
-      });
-    },
-
     showEdit(tab = null) {
       if (!this.editable) return;
-      this.ShowFlipBookGlobalDialog(
-        this.muted_pack,
+      this.ShowImagesCompareGlobalDialog(
+        Object.assign({}, this.muted_images),
         (val) => {
-          this.muted_pack = val;
-          this.onChange();
+          this.muted_images = val;
+          this.show = false;
+          this.$nextTick(() => {
+            this.show = true;
+          });
         },
         () => {
           this.$el.remove();
@@ -143,18 +142,7 @@ export default defineComponent({
       );
     },
   },
-});
+};
 </script>
 
-<style lang="scss">
-.flipbook {
-  width: 100%;
-  height: 90vh;
-
-  margin-bottom: 36px;
-
-  .v-container {
-    max-width: unset !important;
-  }
-}
-</style>
+<style lang="scss"></style>

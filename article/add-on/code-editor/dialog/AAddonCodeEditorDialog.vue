@@ -13,14 +13,13 @@
   -->
 
 <template>
-  <v-dialog
-    v-model="show_dialog"
-    fullscreen
-    scrollable
-    transition="dialog-bottom-transition"
-  >
-    <v-card>
+  <v-bottom-sheet v-model="show_dialog" width="98vw" max-width="860" scrollable content-class="rounded-t-xl">
+    <v-card rounded="t-xl">
       <v-card-title class="d-flex align-center">
+        <v-icon class="me-1">code</v-icon>
+        Code
+
+
         <v-spacer></v-spacer>
         <v-btn
           color="red"
@@ -31,11 +30,13 @@
             show_dialog = false;
           "
         >
-          <v-icon class="me-1">delete </v-icon>
+          <v-icon start>delete </v-icon>
           {{ $t("global.actions.delete") }}
         </v-btn>
       </v-card-title>
       <v-card-text>
+
+
         <div class="widget-box -large mb-5">
           <s-widget-header
             :title="$t('global.commons.code')"
@@ -69,23 +70,23 @@
           <v-btn
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="setValue"
           >
-            <v-icon class="me-1">check </v-icon>
+            <v-icon start>check </v-icon>
             {{ $t("global.actions.set") }}
           </v-btn>
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 </template>
 
 <script>
 import { EventName } from "@core/events/EventBus";
 
 export default {
-  name: "SArticleAddonCodeEditorDialog",
+  name: "AAddonCodeEditorDialog",
   components: {},
   props: {
     masterId: {

@@ -116,17 +116,17 @@
     <slot name="end" v-bind:edit="edit"></slot>
 
     <!-- ――――――――――――――――――――――― 💡 Mega Replacer ――――――――――――――――――――――― -->
-    <s-article-addon-code-editor-dialog
+    <a-addon-code-editor-dialog
       :master-id="MASTER_ID"
-    ></s-article-addon-code-editor-dialog>
-    <s-article-flip-book-global-dialog
-      :master-id="MASTER_ID"
-      :upload-url="uploadUrl"
-    ></s-article-flip-book-global-dialog>
-    <s-article-addon-comparison-dialog
+    ></a-addon-code-editor-dialog>
+    <a-addon-catalog-dialog
       :master-id="MASTER_ID"
       :upload-url="uploadUrl"
-    ></s-article-addon-comparison-dialog>
+    ></a-addon-catalog-dialog>
+    <a-addon-comparison-dialog
+      :master-id="MASTER_ID"
+      :upload-url="uploadUrl"
+    ></a-addon-comparison-dialog>
     <!-- <calculator-global-dialog></calculator-global-dialog>-->
 
     <!-- ――――――――――――――――――――――― 💡 Select word file (docx) ――――――――――――――――――――――― -->
@@ -141,17 +141,17 @@
 </template>
 
 <script>
-import SArticleAddonCodeEditor from "./add-on/code-editor/SArticleAddonCodeEditor.vue";
+import AAddonCodeEditor from "./add-on/code-editor/AAddonCodeEditor.vue";
 
 import MediumEditor from "medium-editor";
 
 import { createApp, defineComponent, h } from "vue";
-import SArticleAddonComparison from "./add-on/comparison/SArticleAddonComparison.vue";
-import SArticleFlipBook from "@components/article/add-on/catalog/SArticleFlipBook.vue";
-import SArticleAddonCanvas from "./add-on/canvas/SArticleAddonCanvas.vue";
-import SArticleAddonCodeEditorDialog from "./add-on/code-editor/dialog/SArticleAddonCodeEditorDialog.vue";
-import SArticleFlipBookGlobalDialog from "@components/article/add-on/catalog/dialog/SArticleFlipBookGlobalDialog.vue";
-import SArticleAddonComparisonDialog from "./add-on/comparison/dialog/SArticleAddonComparisonDialog.vue";
+import AAddonComparison from "./add-on/comparison/AAddonComparison.vue";
+import AAddonCatalog from "@components/article/add-on/catalog/AAddonCatalog.vue";
+import AAddonCanvas from "./add-on/canvas/AAddonCanvas.vue";
+import AAddonCodeEditorDialog from "./add-on/code-editor/dialog/AAddonCodeEditorDialog.vue";
+import AAddonCatalogDialog from "@components/article/add-on/catalog/dialog/AAddonCatalogDialog.vue";
+import AAddonComparisonDialog from "./add-on/comparison/dialog/AAddonComparisonDialog.vue";
 import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
 import { FileFormatConverterOnline } from "@core/helper/converters/FileFormatConverterOnline";
 import { installGlobalComponents } from "@components/components-mandetory";
@@ -304,9 +304,9 @@ export default defineComponent({
 
   components: {
     SArticleTableOfContents,
-    SArticleAddonComparisonDialog,
-    SArticleFlipBookGlobalDialog,
-    SArticleAddonCodeEditorDialog,
+    AAddonComparisonDialog,
+    AAddonCatalogDialog,
+    AAddonCodeEditorDialog,
   },
 
   props: {
@@ -645,10 +645,10 @@ export default defineComponent({
             const editable =
               element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
 
-            // Create a new Vue app with the SArticleAddonCodeEditor component
+            // Create a new Vue app with the AAddonCodeEditor component
             const app = createApp({
               render: () =>
-                h(SArticleAddonCodeEditor, {
+                h(AAddonCodeEditor, {
                   codes: data_json,
                   editable: editable,
                   masterId: t.MASTER_ID /*Point which dialog open!*/,
@@ -692,10 +692,10 @@ export default defineComponent({
             const editable =
               element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
 
-            // Create a new Vue app with the SArticleAddonComparison component
+            // Create a new Vue app with the AAddonComparison component
             const app = createApp({
               render: () =>
-                h(SArticleAddonComparison, {
+                h(AAddonComparison, {
                   images: data_json,
                   editable: editable,
                   uploadUrl: this.uploadUrl,
@@ -740,10 +740,10 @@ export default defineComponent({
             const editable =
               element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
 
-            // Create a new Vue app with the SArticleFlipBook component
+            // Create a new Vue app with the AAddonCatalog component
             const app = createApp({
               render: () =>
-                h(SArticleFlipBook, {
+                h(AAddonCatalog, {
                   pack: data_json,
                   editable: editable,
                   uploadUrl: t.uploadUrl,
@@ -788,10 +788,10 @@ export default defineComponent({
             const editable =
               element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
 
-            // Create a new Vue app with the SArticleAddonCanvas component
+            // Create a new Vue app with the AAddonCanvas component
             const app = createApp({
               render: () =>
-                h(SArticleAddonCanvas, {
+                h(AAddonCanvas, {
                   pack: data_json,
                   editable: editable,
                   uploadUrl: t.uploadUrl,
