@@ -71,13 +71,17 @@
           </v-slide-x-reverse-transition>
 
           <!--  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Spectrum ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-          <div style="min-height: 128px">
-            <u-voice-spectrum
-              :play="isRecording"
-              :style="{ opacity: isRecording ? 1 : 0.5, display: 'block' }"
-              class="mx-auto"
-            />
-          </div>
+          <v-expand-transition>
+            <div v-if="isRecording || voiceFile">
+              <div style="min-height: 128px">
+                <u-voice-spectrum
+                  :play="isRecording"
+                  :style="{ opacity: isRecording ? 1 : 0.5, display: 'block' }"
+                  class="mx-auto"
+                />
+              </div>
+            </div>
+          </v-expand-transition>
         </template>
       </u-voice-recorder>
 
@@ -87,7 +91,7 @@
           class="my-1 flex-grow-1 rounded me-1"
           controls
         ></audio>
-        <v-btn icon variant="text" size="large" @click="clear()">
+        <v-btn variant="flat" size="40" @click="clear()" title="Clear voice">
           <v-icon>close</v-icon>
         </v-btn>
       </div>

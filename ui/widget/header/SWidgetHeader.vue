@@ -49,62 +49,63 @@
       <slot name="icon-actions"></slot>
       <slot v-if="$vuetify.display.xs" name="actions"></slot>
     </div>
-    <template v-if="hasAiAction">
-      <!-- Ai Action -->
-      <u-button-ai-small
-        @click="$emit('click:ai')"
-        :loading="loadingAi"
-        :tooltip="tooltipAi"
-        variant="elevated"
+    <div class="d-flex align-center">
+      <template v-if="hasAiAction">
+        <!-- Ai Action -->
+        <u-button-ai-small
+          @click="$emit('click:ai')"
+          :loading="loadingAi"
+          :tooltip="tooltipAi"
+          variant="elevated"
+          :color="buttonColor"
+          :size="44"
+          :image-size="36"
+          dark-mode
+          placeholder-icon="mic"
+          placeholder-color="#fff"
+        ></u-button-ai-small>
+        <v-sheet
+          class="align-self-center"
+          :color="buttonColor"
+          width="16"
+          height="4"
+        ></v-sheet>
+      </template>
+      <v-btn
+        v-if="addCaption"
+        :block="$vuetify.display.xs"
+        :class="{ disabled: disabled }"
         :color="buttonColor"
-        :size="44"
-        :image-size="36"
-        dark-mode
-        placeholder-icon="mic"
-        placeholder-color="#fff"
-      ></u-button-ai-small>
-      <v-sheet
-        class="align-self-center"
-        :color="buttonColor"
-        width="16"
-        height="4"
-      ></v-sheet>
-    </template>
-    <v-btn
-      v-if="addCaption"
-      :block="$vuetify.display.xs"
-      :class="{ disabled: disabled }"
-      :color="buttonColor"
-      :href="href"
-      :loading="addLoading"
-      :target="target"
-      :to="to"
-      :variant="addText ? 'text' : 'elevated'"
-      class="mt-2 mt-sm-0 rounded-18px"
-      min-width="200"
-      size="large"
-      style="font-size: 0.875rem"
-      @click="$emit('click:add')"
-    >
-      <v-icon :size="20" class="me-1">{{ addIcon }}</v-icon>
+        :href="href"
+        :loading="addLoading"
+        :target="target"
+        :to="to"
+        :variant="addText ? 'text' : 'elevated'"
+        class="mt-2 mt-sm-0 rounded-18px"
+        min-width="200"
+        size="large"
+        style="font-size: 0.875rem"
+        @click="$emit('click:add')"
+      >
+        <v-icon :size="20" class="me-1">{{ addIcon }}</v-icon>
 
-      <div v-if="disabled">
-        {{ addCaption }}
-        <small class="d-block tnt">
-          <v-icon size="x-small">error_outline</v-icon>
-          {{
-            disabledReason ? disabledReason : $t("error.license_max_limit")
-          }}</small
-        >
-      </div>
-      <span v-else>
-        {{ addCaption }}
-        <span v-if="addSubCaption" class="d-block tnt small op-0-8">{{
-          addSubCaption
-        }}</span>
-      </span>
-    </v-btn>
-
+        <div v-if="disabled">
+          {{ addCaption }}
+          <small class="d-block tnt">
+            <v-icon size="x-small">error_outline</v-icon>
+            {{
+              disabledReason ? disabledReason : $t("error.license_max_limit")
+            }}</small
+          >
+        </div>
+        <span v-else>
+          {{ addCaption }}
+          <span v-if="addSubCaption" class="d-block tnt small op-0-8">{{
+            addSubCaption
+          }}</span>
+        </span>
+      </v-btn>
+    </div>
     <slot v-if="!$vuetify.display.xs" name="actions"></slot>
   </div>
 </template>
