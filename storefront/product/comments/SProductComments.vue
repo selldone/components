@@ -97,7 +97,7 @@
     </v-container>
 
     <div v-if="product?.article_pack" class="s--product-section-comments">
-      <s-expand-view max-height="80vh" min-height="30vh">
+      <u-expand-view max-height="80vh" min-height="30vh">
         <s-article-comments
           :article-id="product.article_pack.article.id"
           :article-user-id="product.user_id"
@@ -110,13 +110,13 @@
             <s-shop-login class="mt-16 rounded-16px"></s-shop-login>
           </template>
         </s-article-comments>
-      </s-expand-view>
+      </u-expand-view>
     </div>
   </div>
 </template>
 
 <script>
-import SExpandView from "@components/ui/expand-view/SExpandView.vue";
+import UExpandView from "@components/ui/expand-view/UExpandView.vue";
 import SArticleComments from "@components/article/comment/SArticleComments.vue";
 import SShopProductRatingView from "@components/storefront/product/rating/SShopProductRatingView.vue";
 import { FontSizeHelper } from "@core/helper/style/FontSizeHelper";
@@ -136,7 +136,7 @@ export default {
     SShopLogin,
     SShopProductRatingView,
     SArticleComments,
-    SExpandView,
+    UExpandView,
   },
 
   data: function () {

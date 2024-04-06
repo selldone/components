@@ -21,7 +21,7 @@
     </v-container>
 
     <div class="my-5 py-5">
-      <s-fade-scroll center show-arrow stick-class="-product-card">
+      <u-fade-scroll center show-arrow stick-class="-product-card">
         <div class="-product-container">
           <div class="-product-card d-flex align-center flex-column pa-5">
             <div class="ma-auto">
@@ -143,13 +143,13 @@
             </div>
           </template>
         </div>
-      </s-fade-scroll>
+      </u-fade-scroll>
     </div>
   </div>
 </template>
 
 <script>
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
 import UTagsCloud from "@components/ui/tag/cloud/UTagsCloud.vue";
 import _ from "lodash-es";
@@ -167,7 +167,7 @@ export default {
   components: {
     UTagsCloud,
     ProductVariantsView,
-    SFadeScroll,
+    UFadeScroll,
   },
 
   data: function () {

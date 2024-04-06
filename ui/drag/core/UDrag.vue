@@ -18,7 +18,7 @@ import transferDataStore from "./transferDataStore";
 import { dropEffects, effectsAllowed, events } from "./constants";
 
 export default defineComponent({
-  name: "SDrag",
+  name: "UDrag",
   props: {
     draggable: { type: Boolean, default: true },
     transferData: {}, // Specify the type if possible

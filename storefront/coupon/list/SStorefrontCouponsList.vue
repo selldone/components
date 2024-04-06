@@ -35,7 +35,7 @@
     </p>
 
     <v-expand-transition hide-on-leave leave-absolute>
-      <s-fade-scroll v-if="show_coupons" show-arrow small-arrow>
+      <u-fade-scroll v-if="show_coupons" show-arrow small-arrow>
         <div class="d-flex align-stretch">
           <div v-for="coupon in coupons" :key="coupon.id" class="coupon-slide">
             <s-storefront-coupon-view
@@ -76,7 +76,7 @@
             </v-btn>
           </div>
         </div>
-      </s-fade-scroll>
+      </u-fade-scroll>
     </v-expand-transition>
 
     <v-dialog v-model="dialog" content-class="no-shadow-dialog" max-width="480">
@@ -127,12 +127,12 @@
 <script>
 import SStorefrontCouponView from "../view/SStorefrontCouponView.vue";
 import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 import _ from "lodash-es";
 
 export default {
   name: "SStorefrontCouponsList",
-  components: { SFadeScroll, SStorefrontCouponView },
+  components: { UFadeScroll, SStorefrontCouponView },
   emits: ["update:modelValue", "loading"],
   props: {
     productId: {},

@@ -17,7 +17,7 @@ import { events } from "./constants";
 const insideElements = new Set();
 
 export default {
-  name: "SDrop",
+  name: "UDrop",
   data() {
     return { transferData: undefined, isDraggingOver: false };
   },

@@ -19,7 +19,7 @@
         ● {{ $t("cross_selling.title", { product: product.title }) }}
       </v-list-subheader>
 
-      <s-fade-scroll v-model="index">
+      <u-fade-scroll v-model="index">
         <div class="-cards-wrap">
           <div
             v-for="cross_sell in cross_sells"
@@ -152,21 +152,21 @@
             </div>
           </div>
         </div>
-      </s-fade-scroll>
+      </u-fade-scroll>
     </v-container>
   </div>
 </template>
 
 <script>
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 import { BasketHelper } from "@core/helper/shop/BasketHelper";
 import CrossSellActionType from "@core/enums/product/CrossSellActionType";
 import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "SProductCrossSells",
-  components: { SFadeScroll, ProductVariantsView },
+  components: { UFadeScroll, ProductVariantsView },
   props: {
     shop: {
       required: true,

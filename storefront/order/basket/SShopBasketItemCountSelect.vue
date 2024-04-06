@@ -13,90 +13,100 @@
   -->
 
 <template>
-  <v-combobox
-    ref="self"
-    v-model:search="search"
-    :bg-color="backgroundColor"
-    :color="color"
-    :customFilter="() => true"
-    :theme="dark ? 'dark' : 'light'"
-    :density="dense ? 'compact' : undefined"
-    :disabled="disabled || loadingDelete"
-    :error-messages="
-      modelValue > max ? $t('global.commons.not_in_stock') : undefined
-    "
-    :variant="
-      variant ? variant : filled ? 'filled' : solo ? 'solo' : 'underlined'
-    "
-    :flat="flat"
-    :hide-details="modelValue <= max"
-    :items="items"
-    :label="$t('global.commons.count')"
-    :loading="loading"
-    :model-value="modelValue"
-    :placeholder="$t('global.commons.count')"
-    class="s--shop-basket-item-count-select"
-    @blur="focus = false"
-    @update:modelValue="
-      (val) => {
-        $emit('change', correctValue(val));
-        $refs.self.blur();
-      }
-    "
-    @focus="focus = true"
-    @update:model-value="(val) => $emit('update:modelValue', correctValue(val))"
-    @keydown.enter="
-      () => {
-        $refs.self.blur();
-      }
-    "
-    :rounded="rounded"
-    :readonly="loadingDelete"
-  >
-    <template v-slot:item="{ item, props }">
-      <v-list-item v-if="item.raw" v-bind="props">
-        <template v-slot:title>
-          {{ item.raw }}
+  <div>
+    <v-combobox
+      ref="self"
+      v-model:search="search"
+      :bg-color="backgroundColor"
+      :color="color"
+      :customFilter="() => true"
+      :theme="dark ? 'dark' : 'light'"
+      :density="dense ? 'compact' : undefined"
+      :disabled="disabled || loadingDelete"
+      :variant="
+        variant ? variant : filled ? 'filled' : solo ? 'solo' : 'underlined'
+      "
+      :flat="flat"
+      hide-details
+      :items="items"
+      :label="$t('global.commons.count')"
+      :loading="loading"
+      :model-value="modelValue"
+      :placeholder="$t('global.commons.count')"
+      class="s--shop-basket-item-count-select"
+      @blur="focus = false"
+      @update:modelValue="
+        (val) => {
+          $emit('change', correctValue(val));
+          $refs.self.blur();
+        }
+      "
+      @focus="focus = true"
+      @update:model-value="
+        (val) => $emit('update:modelValue', correctValue(val))
+      "
+      @keydown.enter="
+        () => {
+          $refs.self.blur();
+        }
+      "
+      :rounded="rounded"
+      :readonly="loadingDelete"
+    >
+      <template v-slot:item="{ item, props }">
+        <v-list-item v-if="item.raw" v-bind="props">
+          <template v-slot:title>
+            {{ item.raw }}
 
-          <small class="ms-1">{{
+            <small class="ms-1">{{
+              unit ? unit : $t("global.commons.count_unit")
+            }}</small>
+          </template>
+        </v-list-item>
+        <v-list-item v-else v-bind="props" :title="$t('global.actions.delete')">
+        </v-list-item>
+      </template>
+
+      <template v-slot:selection="{ item }">
+        <span
+          v-if="item.raw && !focus"
+          :class="{ 'center-view': noUnit }"
+          class="single-line d-block"
+        >
+          {{ item.raw }}
+          <small v-if="!noUnit" class="mx-1">{{
             unit ? unit : $t("global.commons.count_unit")
           }}</small>
-        </template>
-      </v-list-item>
-      <v-list-item v-else v-bind="props" :title="$t('global.actions.delete')">
-      </v-list-item>
-    </template>
+        </span>
+      </template>
 
-    <template v-slot:selection="{ item }">
-      <span v-if="item.raw && !focus" :class="{ 'center-view': noUnit }" class="single-line d-block">
-        {{ item.raw }}
-        <small v-if="!noUnit" class="mx-1">{{
-          unit ? unit : $t("global.commons.count_unit")
-        }}</small>
-      </span>
-    </template>
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Remove Button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Remove Button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-    <template v-if="hasDelete" v-slot:prepend>
-      <div
-        :class="{ 'me-2': solo, '-rtl': $vuetify.rtl }"
-        :style="{ '--delete-width': dense ? '32px' : '48px' }"
-        class="delete-button-con"
-      >
-        <v-btn
-          :color="backgroundColor"
-          :loading="loadingDelete"
-          class="delete-button border-end"
-          title="Remove item from the cart."
-          variant="flat"
-          @click.stop="$emit('click:delete')"
+      <template v-if="hasDelete" v-slot:prepend>
+        <div
+          :class="{ 'me-2': solo, '-rtl': $vuetify.rtl }"
+          :style="{ '--delete-width': dense ? '32px' : '48px' }"
+          class="delete-button-con"
         >
-          <v-icon>close</v-icon>
-        </v-btn>
-      </div>
-    </template>
-  </v-combobox>
+          <v-btn
+            :color="backgroundColor"
+            :loading="loadingDelete"
+            class="delete-button border-end"
+            title="Remove item from the cart."
+            variant="flat"
+            @click.stop="$emit('click:delete')"
+          >
+            <v-icon>close</v-icon>
+          </v-btn>
+        </div>
+      </template>
+    </v-combobox>
+
+    <b v-if="modelValue > max" class="small text-red text-start d-block py-1">
+      <v-icon size="14" class="me-1">warning</v-icon>
+      {{ $t("global.commons.not_in_stock") }}
+    </b>
+  </div>
 </template>
 
 <script>

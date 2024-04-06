@@ -183,7 +183,7 @@
         </v-col>
       </v-row>
       <v-spacer></v-spacer>
-      <s-fade-scroll>
+      <u-fade-scroll>
         <div class="d-flex flex-grow-0 mt-12 text-center">
           <v-col
             v-for="cat in selected_categories"
@@ -226,17 +226,17 @@
             </div>
           </v-col>
         </div>
-      </s-fade-scroll>
+      </u-fade-scroll>
     </v-container>
   </div>
 </template>
 
 <script>
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "MenuCategories",
-  components: { SFadeScroll },
+  components: { UFadeScroll },
   props: {
     categories: {
       require: true,

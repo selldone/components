@@ -42,7 +42,7 @@
     </p>
 
     <v-expand-transition hide-on-leave leave-absolute>
-      <s-fade-scroll v-if="show_prizes" show-arrow small-arrow>
+      <u-fade-scroll v-if="show_prizes" show-arrow small-arrow>
         <div class="d-flex align-stretch">
           <div v-for="prize in lotteries" :key="prize.id" class="prize-slide">
             <div
@@ -135,18 +135,18 @@
             </div>
           </div>
         </div>
-      </s-fade-scroll>
+      </u-fade-scroll>
     </v-expand-transition>
   </v-container>
 </template>
 
 <script>
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 import _ from "lodash-es";
 
 export default {
   name: "SStorefrontLotteryPrizesList",
-  components: { SFadeScroll },
+  components: { UFadeScroll },
   emits: ["update:modelValue", "loading"],
   props: {
     productId: {},

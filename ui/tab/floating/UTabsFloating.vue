@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <s-fade-scroll class="sx-menu">
+  <u-fade-scroll class="sx-menu">
     <v-tabs
       :direction="$vuetify.display.mdAndUp ? 'vertical' : 'horizontal'"
       :model-value="modelValue"
@@ -33,15 +33,15 @@
         </v-icon>
       </v-tab>
     </v-tabs>
-  </s-fade-scroll>
+  </u-fade-scroll>
 </template>
 
 <script>
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "UTabsFloating",
-  components: { SFadeScroll },
+  components: { UFadeScroll },
   emits: ["update:modelValue"],
   props: {
     modelValue: {},

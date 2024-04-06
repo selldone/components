@@ -66,7 +66,7 @@
 
 <script>
 export default {
-  name: "SFadeScroll",
+  name: "UFadeScroll",
   props: {
     showArrow: {
       type: Boolean,

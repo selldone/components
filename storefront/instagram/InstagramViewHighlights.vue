@@ -95,7 +95,7 @@
                 </v-col>
 
                 <!-- ---------------- Pin products ---------------- -->
-                <s-drag-pins
+                <u-drag-pin
                   v-if="index === i && in_main_post && selected_story"
                   v-model="selected_story.products"
                   :editable="editable"
@@ -106,7 +106,7 @@
                   @click:category="showCategory"
                   @update:tags="(tags) => (selected_story.products.tags = tags)"
                 >
-                </s-drag-pins>
+                </u-drag-pin>
               </v-img>
 
               <!-- ---------------- Header ---------------- -->
@@ -304,7 +304,7 @@
 <script>
 import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
-import SDragPins from "@components/ui/drag/pins/SDragPins.vue";
+import UDragPin from "@components/ui/drag/pin/UDragPin.vue";
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
 import UVariantSelector from "@components/ui/variant/selector/UVariantSelector.vue";
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
@@ -316,7 +316,7 @@ export default {
     SShopBuyButton,
     UVariantSelector,
     ProductVariantsView,
-    SDragPins,
+    UDragPin,
     ProductsDenseImagesCircles,
   },
   props: {

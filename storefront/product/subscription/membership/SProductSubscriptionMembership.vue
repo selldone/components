@@ -18,7 +18,7 @@
     class="s-shop-product-subscription-membership"
   >
     <v-container class="my-16 position-relative">
-      <s-expand-view
+      <u-expand-view
         class="master-article-container"
         max-height="60vh"
         min-height="40vh"
@@ -38,13 +38,13 @@
             After subscribing, you will have access to the contents here.
           </div>
         </div>
-      </s-expand-view>
+      </u-expand-view>
     </v-container>
   </div>
 </template>
 
 <script>
-import SExpandView from "@components/ui/expand-view/SExpandView.vue";
+import UExpandView from "@components/ui/expand-view/UExpandView.vue";
 import SProductSubscriptionContentViewer from "@components/storefront/product/service/content/viewer/SProductSubscriptionContentViewer.vue";
 import { SubscriptionMode } from "@core/enums/subscription/SubscriptionMode";
 import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
@@ -61,7 +61,7 @@ export default {
   },
   components: {
     SProductSubscriptionContentViewer,
-    SExpandView,
+    UExpandView,
   },
 
   data: function () {

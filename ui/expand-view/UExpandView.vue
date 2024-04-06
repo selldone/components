@@ -54,7 +54,7 @@
 import _ from "lodash-es";
 
 export default {
-  name: "SExpandView",
+  name: "UExpandView",
   props: {
     minHeight: {
       default: "40vh",

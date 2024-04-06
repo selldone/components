@@ -58,19 +58,32 @@
           v-if="isRequireAction"
           class="mx-2"
           color="warning"
-          size="small" variant="flat"
+          size="small"
+          variant="flat"
         >
-          <v-icon  start> warning</v-icon>
+          <v-icon start> warning</v-icon>
           {{ $t("global.transaction_status.RequireAction") }}
         </v-chip>
 
-        <v-chip v-if="isProcessing" class="mx-2" color="blue" dark size="small" variant="flat">
+        <v-chip
+          v-if="isProcessing"
+          class="mx-2"
+          color="blue"
+          size="small"
+          variant="flat"
+        >
           <v-icon start> loop</v-icon>
           {{ $t("global.transaction_status.Processing") }}
         </v-chip>
 
-        <v-chip v-if="isCanceled" class="mx-2" color="red" dark size="small" variant="flat">
-          <v-icon  start> close</v-icon>
+        <v-chip
+          v-if="isCanceled"
+          class="mx-2"
+          color="red"
+          size="small"
+          variant="flat"
+        >
+          <v-icon start> close</v-icon>
           {{ $t("global.transaction_status.Canceled") }}
         </v-chip>
 
@@ -78,7 +91,7 @@
           v-if="isSucceeded"
           :color="isTestPayment ? '#9C27B0' : 'success'"
           class="mx-2"
-          dark variant="flat"
+          variant="flat"
           size="small"
         >
           <v-icon start> check</v-icon>
@@ -93,8 +106,8 @@
           v-if="order.subscription_id"
           class="mx-2"
           color="#C2185B"
-          dark
-          size="small" variant="flat"
+          size="small"
+          variant="flat"
         >
           <v-icon start> shopping_bag</v-icon>
 
@@ -110,7 +123,7 @@
       }"
       class="mt-5 overflow-hidden"
     >
-      <v-table>
+      <v-table style="border-radius: unset">
         <template v-slot:default>
           <thead>
             <tr>
@@ -197,7 +210,7 @@
                   :key="index"
                   class="m-1"
                   color="blue"
-                  dark
+                  variant="flat"
                 >
                   <v-avatar start>
                     <img
@@ -645,10 +658,7 @@
             {{ $t("order_page.payment.total_order_price_before_tax") }}
           </p>
 
-          <u-price
-            :amount="order.price"
-            :currency="order.currency"
-          ></u-price>
+          <u-price :amount="order.price" :currency="order.currency"></u-price>
         </v-col>
 
         <v-col v-if="isPayed" class="p-2" cols="12" sm="6">
@@ -657,10 +667,7 @@
             <span v-if="order.tax">+ {{ $t("global.commons.tax") }}</span>
           </p>
 
-          <u-price
-            :amount="total_payed"
-            :currency="order.currency"
-          ></u-price>
+          <u-price :amount="total_payed" :currency="order.currency"></u-price>
         </v-col>
       </v-row>
     </div>

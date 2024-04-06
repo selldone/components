@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div v-if="guide_article" class="s--shop-product-guide">
     <v-container class="my-16 position-relative">
-      <s-expand-view
+      <u-expand-view
         class="master-article-container"
         max-height="60vh"
         min-height="100px"
@@ -29,7 +29,7 @@
           suffix-id="guide"
         >
         </s-article-editor>
-      </s-expand-view>
+      </u-expand-view>
 
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
       <div v-if="$vuetify.display.mdAndUp && admin_url_guide" class="text-end">
@@ -60,7 +60,7 @@ import SArticleEditor from "@components/article/SArticleEditor.vue";
 import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
 import { SetupService } from "@core/server/SetupService";
 
-import SExpandView from "@components/ui/expand-view/SExpandView.vue";
+import UExpandView from "@components/ui/expand-view/UExpandView.vue";
 
 export default {
   name: "SProductGuide",
@@ -73,7 +73,7 @@ export default {
     },
   },
   components: {
-    SExpandView,
+    UExpandView,
     SArticleEditor,
   },
 

@@ -13,13 +13,13 @@
   -->
 
 <template>
-  <s-drop
+  <u-drop
     id="drop_area"
     class="pins-list"
     @drop="onDrop"
 
   >
-    <s-drag
+    <u-drag
       v-for="(item, key) in items"
       :key="key + '-' + item.id"
       :class="{ '-drag': editable }"
@@ -53,13 +53,17 @@
         />
         <img v-else :src="getProductImage(item.id, IMAGE_SIZE_SMALL)" />
       </v-avatar>
-    </s-drag>
-  </s-drop>
+    </u-drag>
+  </u-drop>
 </template>
 
 <script>
+import UDrop from "@components/ui/drag/core/UDrop.vue";
+import UDrag from "@components/ui/drag/core/UDrag.vue";
+
 export default {
-  name: "SDragPins",
+  name: "UDragPin",
+  components: {UDrag, UDrop},
   emits: ["click:product", "click:category", "click:add", "change", "update:tags"],
   props: {
     modelValue: {},

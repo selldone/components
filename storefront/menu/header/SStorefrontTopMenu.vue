@@ -30,7 +30,7 @@
     :style="{ '--justify': center ? 'center' : 'start' }"
     class="s--storefront-top-menu"
   >
-    <s-fade-scroll class="overflow-auto">
+    <u-fade-scroll class="overflow-auto">
       <div class="text-no-wrap">
         <template v-for="(tab, index) in tabs">
           <span v-if="tab.type === 'link'" :key="'l' + index">
@@ -152,18 +152,18 @@
           </v-menu>
         </template>
       </div>
-    </s-fade-scroll>
+    </u-fade-scroll>
   </v-toolbar>
 </template>
 
 <script>
 import MenuCategories from "./MenuCategories.vue";
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
 
 export default {
   name: "SStorefrontTopMenu",
-  components: { LPageViewer, SFadeScroll, MenuCategories },
+  components: { LPageViewer, UFadeScroll, MenuCategories },
   props: {
     shop: {
       required: true,

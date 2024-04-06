@@ -336,7 +336,7 @@
             {{ error_msg }}
           </v-alert>
 
-          <s-drag-pins
+          <u-drag-pin
             v-if="in_main_post"
             v-model="selected_media.products"
             :editable="editable"
@@ -347,7 +347,7 @@
             @click:category="showCategory"
             @update:tags="(tags) => (selected_media.products.tags = tags)"
           >
-          </s-drag-pins>
+          </u-drag-pin>
         </v-img>
 
 
@@ -507,7 +507,7 @@ import ProductsDenseImagesCircles from "@components/storefront/product/products-
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
 import UVariantSelector from "@components/ui/variant/selector/UVariantSelector.vue";
-import SDragPins from "@components/ui/drag/pins/SDragPins.vue";
+import UDragPin from "@components/ui/drag/pin/UDragPin.vue";
 import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
 import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
@@ -523,7 +523,7 @@ export default {
     UCurrencyInput,
     UPriceInput,
     UNumberInput,
-    SDragPins,
+    UDragPin,
     UVariantSelector,
     SShopBuyButton,
     ProductVariantsView,

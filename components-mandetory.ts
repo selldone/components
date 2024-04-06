@@ -86,8 +86,6 @@ import SWidget from "@components/ui/widget/widget/SWidget.vue";
 import SWidgetHeader from "@components/ui/widget/header/SWidgetHeader.vue";
 
 import VueConfetti from "@components/ui/confetti";
-import SDrag from "@components/ui/drag/core/SDrag.vue";
-import SDrop from "@components/ui/drag/core/SDrop.vue";
 
 require("@components/style/animation/vue2-animate.scss");
 require("@components/style/selldone/general_animates.scss");
@@ -206,6 +204,4 @@ export function installGlobalComponents(app: App) {
   //Vue.prototype.window = window;
   app.config.globalProperties.window = window; // 🌴 Global object in vue components
 
-  app.component(SDrag.name, SDrag);
-  app.component(SDrop.name, SDrop);
 }

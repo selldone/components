@@ -24,7 +24,7 @@
         </v-col>
 
         <v-col cols="12" md="6">
-          <s-fade-scroll>
+          <u-fade-scroll>
             <div class="d-flex">
               <div
                 v-for="pickup in pickup_transportation.pickups"
@@ -64,13 +64,13 @@
                 </div>
               </div>
             </div>
-          </s-fade-scroll>
+          </u-fade-scroll>
         </v-col>
       </v-row>
     </v-container>
 
     <v-container v-if="shipping_article" class="my-16 position-relative">
-      <s-expand-view
+      <u-expand-view
         class="master-article-container"
         max-height="60vh"
         min-height="100px"
@@ -96,7 +96,7 @@
             </div>
           </template>
         </s-article-editor>
-      </s-expand-view>
+      </u-expand-view>
 
       <!-- ▁▁▁▁▁▁▁ Go to admin panel button ▁▁▁▁▁▁▁ -->
       <div
@@ -126,13 +126,13 @@
 
 <script>
 import SArticleEditor from "@components/article/SArticleEditor.vue";
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
 import { SetupService } from "@core/server/SetupService";
 import { ProductType } from "@core/enums/product/ProductType";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import { MapHelper } from "@core/helper/map/MapHelper";
-import SExpandView from "@components/ui/expand-view/SExpandView.vue";
+import UExpandView from "@components/ui/expand-view/UExpandView.vue";
 
 export default {
   name: "SProductShipping",
@@ -145,8 +145,8 @@ export default {
     },
   },
   components: {
-    SExpandView,
-    SFadeScroll,
+    UExpandView,
+    UFadeScroll,
     SArticleEditor,
   },
 

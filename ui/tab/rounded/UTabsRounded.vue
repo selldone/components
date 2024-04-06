@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <s-fade-scroll center>
+  <u-fade-scroll center>
     <div
       :class="{ 'is-table': scrollable, disabled: disabled }"
       :style="{ '--radius': radius }"
@@ -67,15 +67,15 @@
 
       <slot></slot>
     </div>
-  </s-fade-scroll>
+  </u-fade-scroll>
 </template>
 
 <script>
-import SFadeScroll from "@components/ui/fade-scroll/SFadeScroll.vue";
+import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "UTabsRounded",
-  components: { SFadeScroll },
+  components: { UFadeScroll },
   emits: ["update:modelValue"],
   props: {
     modelValue: {},
