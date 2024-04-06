@@ -70,7 +70,7 @@
 
 <script>
 export default {
-  name: "SValueCopyBox",
+  name: "UTextCopyBox",
   props: {
     value: {},
     message: {},

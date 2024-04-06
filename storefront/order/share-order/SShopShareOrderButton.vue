@@ -63,13 +63,13 @@
           >
           </u-smart-switch>
 
-          <s-value-copy-box
+          <u-text-copy-box
             :border="false"
             :value="wishlist_url"
             background-color="#343a40"
             class="my-3"
             small-width-mode
-          ></s-value-copy-box>
+          ></u-text-copy-box>
 
           <v-list-subheader>
             <v-icon class="me-1" color="green" size="small"
@@ -93,12 +93,12 @@
 </template>
 
 <script>
-import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
+import UTextCopyBox from "@components/ui/text/copy-box/UTextCopyBox.vue";
 import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
 
 export default {
   name: "SShopShareOrderButton",
-  components: { USmartSwitch, SValueCopyBox },
+  components: { USmartSwitch, UTextCopyBox },
   props: {
     shop: {
       require: true,

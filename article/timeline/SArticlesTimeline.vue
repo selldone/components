@@ -43,21 +43,21 @@
         </template>
 
         <template v-slot:opposite>
-          <s-value-dashed>
+          <u-text-value-dashed>
             <template v-slot:label>
               <v-icon class="me-1" size="small">schedule</v-icon>
               {{ $t("global.article.schedule_dialog.publish_at") }}
             </template>
             <b v-text="getLocalTimeString(_article.schedule_at)" />
-          </s-value-dashed>
+          </u-text-value-dashed>
 
-          <s-value-dashed>
+          <u-text-value-dashed>
             <template v-slot:label>
               <v-icon class="me-1" size="small">edit_note</v-icon>
               {{ $t("global.article.schedule_dialog.last_edit") }}
             </template>
             <b>{{ getLocalTimeString(_article.updated_at, true) }}</b>
-          </s-value-dashed>
+          </u-text-value-dashed>
         </template>
         <div class="widget-box">
           <h2 class="mb-2">
@@ -86,21 +86,21 @@
           </div>
 
           <div v-if="$vuetify.display.mdAndDown" class="mt-2">
-            <s-value-dashed>
+            <u-text-value-dashed>
               <template v-slot:label>
                 <v-icon class="me-1" size="small">schedule</v-icon>
                 {{ $t("global.article.schedule_dialog.publish_at") }}
               </template>
               <b v-text="getLocalTimeString(_article.schedule_at)" />
-            </s-value-dashed>
+            </u-text-value-dashed>
 
-            <s-value-dashed>
+            <u-text-value-dashed>
               <template v-slot:label>
                 <v-icon class="me-1" size="small">edit_note</v-icon>
                 {{ $t("global.article.schedule_dialog.last_edit") }}
               </template>
               <b>{{ getLocalTimeString(_article.updated_at, true) }}</b>
-            </s-value-dashed>
+            </u-text-value-dashed>
           </div>
 
           <p v-if="_article.parent_type === 'product'" class="m-2">
@@ -159,11 +159,11 @@
 
 <script>
 import { ArticleTypes } from "@core/enums/article/ArticleTypes";
-import SValueDashed from "@components/ui/text/SValueDashed.vue";
+import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
 
 export default {
   name: "SArticlesTimeline",
-  components: { SValueDashed },
+  components: { UTextValueDashed },
   props: {
     shopId: {
       required: false,

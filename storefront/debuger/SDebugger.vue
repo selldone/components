@@ -104,21 +104,21 @@
       </v-expand-transition>
 
       <div v-if="layout_package" class="px-3">
-        <s-value-box
+        <u-text-value-box
           :value="layout_package"
           icon="widgets"
           label="Package"
-        ></s-value-box>
-        <s-value-box
+        ></u-text-value-box>
+        <u-text-value-box
           :value="layout_version"
           icon="manage_history"
           label="Version"
-        ></s-value-box>
-        <s-value-box
+        ></u-text-value-box>
+        <u-text-value-box
           :value="layout_operator"
           icon="earbuds"
           label="Operator"
-        ></s-value-box>
+        ></u-text-value-box>
       </div>
 
       <v-list class="" lines="three">
@@ -188,11 +188,11 @@ import { StorefrontDebugLogType } from "@components/storefront/debuger/Storefron
 import { StorefrontDebugEvents } from "@components/storefront/debuger/StorefrontDebugEvents";
 import { SetupService } from "@core/server/SetupService";
 import _ from "lodash-es";
-import SValueBox from "@components/ui/text/SValueBox.vue";
+import UTextValueBox from "@components/ui/text/value-box/UTextValueBox.vue";
 
 export default {
   name: "SDebugger",
-  components: { SValueBox },
+  components: { UTextValueBox },
   props: {},
   data() {
     return {

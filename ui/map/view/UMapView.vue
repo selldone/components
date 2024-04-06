@@ -524,16 +524,16 @@
                   <v-btn
                     v-if="noMap"
                     color="primary"
-                    size="x-large"
+                    size="x-large" variant="elevated"
                     @click="clickSetLocation"
                   >
-                    <v-icon class="me-1"> done</v-icon>
+                    <v-icon start> done</v-icon>
                     {{ confirmText }}
                   </v-btn>
                   <v-btn
                     v-else
                     color="primary"
-                    size="x-large"
+                    size="x-large" variant="elevated"
                     @click="showDefault()"
                   >
                     <v-icon start>save</v-icon>
@@ -558,7 +558,7 @@
         <v-card-text>
           <v-text-field
             v-model="new_address_title"
-            :color="SaminColorLight"
+            color="primary"
             :label="$t('global.map_view.address_title_input')"
             class="text-start mx-2"
             prepend-inner-icon="fa:fas fa-tag"

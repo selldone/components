@@ -38,14 +38,14 @@
 
     <v-expand-transition>
       <div v-if="show_add" class="px-3 py-2">
-        <s-mentionable-input
+        <u-text-mention-input
           v-model="message"
           v-model:mentions="mentions"
           :label="$t('order_timeline.message_input')"
           :shop-id="shop.id"
           auto-grow
           class="mb-2"
-        ></s-mentionable-input>
+        ></u-text-mention-input>
 
         <v-expand-transition>
           <u-dense-circles-users
@@ -64,7 +64,7 @@
             :loading="saving"
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="addNewNote()"
           >
             <v-icon class="me-1">add_box</v-icon>
@@ -94,13 +94,13 @@
               key="x1"
               class="px-3 py-2"
             >
-              <s-mentionable-input
+              <u-text-mention-input
                 v-model="item.data.message"
                 :label="$t('order_timeline.message_input')"
                 auto-grow
                 class="mb-2"
                 outlined
-              ></s-mentionable-input>
+              ></u-text-mention-input>
 
               <v-row justify="end" no-gutters>
                 <v-btn
@@ -407,7 +407,7 @@
 </template>
 
 <script>
-import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
+import UTextMentionInput from "@components/ui/text/mention-input/UTextMentionInput.vue";
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
 import { Reactions } from "@core/enums/support/Reactions";
@@ -425,7 +425,7 @@ export default {
     USmartMenu,
     UMapGeoButton,
     UDenseCirclesUsers,
-    SMentionableInput,
+    UTextMentionInput,
   },
   props: {
     shop: {

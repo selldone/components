@@ -15,9 +15,9 @@
 <template>
   <tr
     :class="{
-      'bg-warning': transaction.status === 'RequireAction',
-      'bg-info text-white': transaction.status === 'Processing',
-      'bg-danger text-white': transaction.status === 'Canceled',
+      'bg-amber': transaction.status === 'RequireAction',
+      'bg-cyan text-white': transaction.status === 'Processing',
+      'bg-red text-white': transaction.status === 'Canceled',
     }"
     class="text-start"
   >
@@ -62,7 +62,7 @@
         <v-btn
           class="mx-2 my-1"
           color="primary"
-          size="small"
+          size="small"  variant="elevated"
           @click="
             TryToPayOrder(
               transaction.gateway_code,
@@ -85,8 +85,7 @@
         <v-btn
           class="mx-2 my-1"
           color="#fff"
-          light
-          size="small"
+          size="small" variant="elevated"
           @click="changePaymentMethod(transaction)"
         >
           <v-icon class="me-1" size="small">fa:fas fa-credit-card</v-icon>
@@ -172,15 +171,15 @@
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Direct Payment > Issue Information ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div v-if="transaction.dir" class="max-widget-width my-3">
-        <s-value-dashed>
+        <u-text-value-dashed>
           <template v-slot:label>
             <v-icon class="me-1" style="color: currentColor">loupe</v-icon>
             {{ $t("global.commons.issued_at") }}
           </template>
           {{ getLocalTimeString(transaction.issued_at) }}
-        </s-value-dashed>
+        </u-text-value-dashed>
 
-        <s-value-dashed>
+        <u-text-value-dashed>
           <template v-slot:label>
             <v-icon class="me-1" style="color: currentColor"
               >flip_camera_android
@@ -188,7 +187,7 @@
             {{ $t("global.commons.last_status") }}
           </template>
           {{ getTransactionStatusName(transaction.status) }}
-        </s-value-dashed>
+        </u-text-value-dashed>
       </div>
     </td>
 
@@ -223,11 +222,11 @@
 <script>
 import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
-import SValueDashed from "@components/ui/text/SValueDashed.vue";
+import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
 
 export default {
   name: "SShopRowCustomerPendingPayment",
-  components: { SValueDashed, SImageUploader },
+  components: { UTextValueDashed, SImageUploader },
   props: {
     transaction: {
       require: true,

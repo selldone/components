@@ -73,19 +73,19 @@
             class="justify-center"
             no-gutters
           >
-            <s-value-box
+            <u-text-value-box
               :value="full_profile.followers_count"
               class="flex-grow-1 ma-1"
               height="44px"
               label="Followers"
-            ></s-value-box>
+            ></u-text-value-box>
 
-            <s-value-box
+            <u-text-value-box
               :value="full_profile.following_count"
               class="flex-grow-1 ma-1"
               height="44px"
               label="Following"
-            ></s-value-box>
+            ></u-text-value-box>
 
             <div
               v-if="USER_ID() && USER_ID() !== profile.user_id"
@@ -161,11 +161,11 @@
 <script>
 import { SetupService } from "@core/server/SetupService";
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
-import SValueBox from "@components/ui/text/SValueBox.vue";
+import UTextValueBox from "@components/ui/text/value-box/UTextValueBox.vue";
 
 export default {
   name: "CommunityUserProfileDialog",
-  components: { SValueBox, UDenseCirclesUsers },
+  components: { UTextValueBox, UDenseCirclesUsers },
   props: {
     community: {
       type: Object,

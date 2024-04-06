@@ -13,12 +13,17 @@
   -->
 
 <template>
-  <v-bottom-sheet v-model="show_dialog" width="98vw" max-width="860" scrollable content-class="rounded-t-xl">
+  <v-bottom-sheet
+    v-model="show_dialog"
+    width="98vw"
+    max-width="860"
+    scrollable
+    content-class="rounded-t-xl"
+  >
     <v-card rounded="t-xl">
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1">code</v-icon>
         Code
-
 
         <v-spacer></v-spacer>
         <v-btn
@@ -35,8 +40,6 @@
         </v-btn>
       </v-card-title>
       <v-card-text>
-
-
         <div class="widget-box -large mb-5">
           <s-widget-header
             :title="$t('global.commons.code')"
@@ -84,10 +87,11 @@
 
 <script>
 import { EventName } from "@core/events/EventBus";
+import { PrismEditor } from "vue-prism-editor";
 
 export default {
   name: "AAddonCodeEditorDialog",
-  components: {},
+  components: { PrismEditor },
   props: {
     masterId: {
       /*Point which dialog open!*/

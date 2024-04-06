@@ -56,14 +56,14 @@
             class="variant"
         />
 
-        <s-value-dashed>
+        <u-text-value-dashed>
           <template v-slot:label>
             {{ $t("global.basket_return_request_view.delivery_date") }}
           </template>
           {{ getLocalTimeString(basket.delivery_at) }}
-        </s-value-dashed>
+        </u-text-value-dashed>
 
-        <s-value-dashed>
+        <u-text-value-dashed>
           <template v-slot:label>
             {{ $t("global.basket_return_request_view.return_date") }}
           </template>
@@ -80,17 +80,17 @@
               )
             }}</span
           >
-        </s-value-dashed>
+        </u-text-value-dashed>
 
-        <s-value-dashed>
+        <u-text-value-dashed>
           <template v-slot:label>
             {{ $t("global.basket_return_request_view.items_count") }}
           </template>
           <b> {{ item.return_request.count }}</b>
           {{ $t("global.basket_return_request_view.items_count_unit") }}
-        </s-value-dashed>
+        </u-text-value-dashed>
 
-        <s-value-dashed>
+        <u-text-value-dashed>
           <template v-slot:label>
             {{ $t("global.basket_return_request_view.reason") }}
           </template>
@@ -102,16 +102,16 @@
             )
             }}
           </b>
-        </s-value-dashed>
+        </u-text-value-dashed>
 
-        <s-value-dashed>
+        <u-text-value-dashed>
           <template v-slot:label>
             {{ $t("global.basket_return_request_view.description") }}
           </template>
           <b> {{ item.return_request.note }}</b>
-        </s-value-dashed>
+        </u-text-value-dashed>
 
-        <s-value-dashed>
+        <u-text-value-dashed>
           <template v-slot:label>
             {{ $t("global.basket_return_request_view.status") }}
           </template>
@@ -128,7 +128,7 @@
             >{{ getReturnRequestStateObject(item.return_request.state).icon }}
             </v-icon>
           </b>
-        </s-value-dashed>
+        </u-text-value-dashed>
       </div>
 
       <div
@@ -249,12 +249,12 @@ import {ReturnItemStates} from "@core/enums/basket/ReturnItemStates";
 import {ReturnOrderReason} from "@core/enums/basket/ReturnOrderReason";
 import CircleImage from "@components/ui/image/CircleImage.vue";
 import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import SValueDashed from "@components/ui/text/SValueDashed.vue";
+import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
 
 export default {
   name: "SOrderBasketReturn",
   components: {
-    SValueDashed,
+    UTextValueDashed,
     VariantItemViewMicro,
     CircleImage,
   },

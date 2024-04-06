@@ -585,14 +585,14 @@
         </v-icon>
       </div>
 
-      <s-value-copy-box
+      <u-text-copy-box
         :color="currency.gradient[0]"
         :image="currency.icon"
         :message="$t('global.payment_form.qr.address')"
         :value="address"
         class="fadeInDown delay_100"
       >
-      </s-value-copy-box>
+      </u-text-copy-box>
       <p class="mt-3 zoomIn delay_500">
         {{ $t("global.payment_form.qr.amount") }}
         :
@@ -709,7 +709,7 @@
 import SPaymentStripe from "./stripe/SPaymentStripe.vue";
 import SPaymentButton from "./button/SPaymentButton.vue";
 import SGiftcardInput from "@components/storefront/giftcard/selector/SGiftcardInput.vue";
-import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
+import UTextCopyBox from "@components/ui/text/copy-box/UTextCopyBox.vue";
 import UTimeLaps from "@components/ui/time/lapse/UTimeLaps.vue";
 import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
 import SPaymentRazorpay from "./razorpay/SPaymentRazorpay.vue";
@@ -728,7 +728,7 @@ export default {
     SPaymentRazorpay,
     UCurrencyIcon,
     UTimeLaps,
-    SValueCopyBox,
+    UTextCopyBox,
     SGiftcardInput,
     SPaymentButton,
     SPaymentStripe,

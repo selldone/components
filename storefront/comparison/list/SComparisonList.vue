@@ -419,14 +419,14 @@
           {{ $t("product_comparison.list.info") }}
         </p>
 
-        <s-value-copy-box
+        <u-text-copy-box
           :image="getShopImagePath(getShop()?.icon, 128)"
           :message="$t('product_comparison.list.copy_action')"
           :value="comparison_link"
           class="my-5"
           small-width-mode
         >
-        </s-value-copy-box>
+        </u-text-copy-box>
       </div>
     </div>
   </div>
@@ -436,7 +436,7 @@
 import SShopProductRatingView from "@components/storefront/product/rating/SShopProductRatingView.vue";
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
 import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
-import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
+import UTextCopyBox from "@components/ui/text/copy-box/UTextCopyBox.vue";
 
 /**
  * <s-comparison-list>
@@ -444,7 +444,7 @@ import SValueCopyBox from "@components/ui/text/SValueCopyBox.vue";
 export default {
   name: "SComparisonList",
   components: {
-    SValueCopyBox,
+    UTextCopyBox,
     UColorCircle,
     SShopBuyButton,
     SShopProductRatingView,

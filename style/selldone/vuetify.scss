@@ -322,21 +322,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 
-// Button font auto small
-.fnt-as {
-  .v-btn {
-    @media only screen and (max-width: 680px) {
-      font-size: 8px !important;
-    }
 
-    @media only screen and (max-width: 460px) {
-      .-ah { // Auto hide
-        display: none;
-      }
-    }
-
-  }
-}
 
 // ----------------------- Center items in slide group ----------------------
 .v-slide-group.center-items {

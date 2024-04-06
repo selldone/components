@@ -14,7 +14,7 @@
 
 <template>
   <div>
-    <s-value-dashed class="my-1">
+    <u-text-value-dashed class="my-1">
       <template v-slot:label>
         {{ $t("global.commons.sub_total") }}
       </template>
@@ -23,9 +23,9 @@
         :currency="bill.currency"
         class="font-weight-bold ms-1"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
-    <s-value-dashed v-if="bill.items_discount" class="my-1">
+    <u-text-value-dashed v-if="bill.items_discount" class="my-1">
       <template v-slot:label>
         {{ $t("global.commons.discount") }}
       </template>
@@ -34,9 +34,9 @@
         :currency="bill.currency"
         class="font-weight-bold"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
-    <s-value-dashed v-if="bill.club" class="my-1">
+    <u-text-value-dashed v-if="bill.club" class="my-1">
       <template v-slot:label>
         <img
           class="me-1"
@@ -51,9 +51,9 @@
         :currency="bill.currency"
         class="font-weight-bold"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
-    <s-value-dashed v-if="bill.discount_code" class="my-1">
+    <u-text-value-dashed v-if="bill.discount_code" class="my-1">
       <template v-slot:label>
         <img
           class="me-1"
@@ -68,9 +68,9 @@
         :currency="bill.currency"
         class="font-weight-bold"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
-    <s-value-dashed v-if="bill.coupon" class="my-1">
+    <u-text-value-dashed v-if="bill.coupon" class="my-1">
       <template v-slot:label>
         <img
           class="me-1"
@@ -86,9 +86,9 @@
         :currency="bill.currency"
         class="font-weight-bold"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
-    <s-value-dashed v-if="bill.tax" class="my-1">
+    <u-text-value-dashed v-if="bill.tax" class="my-1">
       <template v-slot:label>
         {{ $t("global.commons.tax") }}
         <v-chip
@@ -105,9 +105,9 @@
         :currency="bill.currency"
         class="font-weight-bold"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
-    <s-value-dashed v-if="bill.delivery_price" class="my-1">
+    <u-text-value-dashed v-if="bill.delivery_price" class="my-1">
       <template v-slot:label>
         {{ $t("global.commons.delivery") }}
       </template>
@@ -120,9 +120,9 @@
         :currency="bill.currency"
         class="font-weight-bold"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
-    <s-value-dashed v-if="bill.pay_by_giftcards" class="my-1">
+    <u-text-value-dashed v-if="bill.pay_by_giftcards" class="my-1">
       <template v-slot:label>
         <img
           class="me-1"
@@ -139,16 +139,16 @@
         :currency="bill.currency"
         class="font-weight-bold"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
   </div>
 </template>
 
 <script>
-import SValueDashed from "@components/ui/text/SValueDashed.vue";
+import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
 
 export default {
   name: "SPosBillView",
-  components: { SValueDashed },
+  components: { UTextValueDashed },
   props: {
     bill: {
       type: Object,

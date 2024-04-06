@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -18,7 +18,7 @@
       <v-img :src="getUserAvatar(USER_ID())"></v-img>
     </v-avatar>
 
-    <s-html-input
+    <u-text-html-input
       ref="area"
       :auto-grow="autoGrow"
       :label="label"
@@ -32,7 +32,7 @@
       @update:text="(val) => $emit('update:text', val)"
       @update:modelValue="(val) => $emit('update:modelValue', val)"
       @update:mentions="(val) => $emit('update:mentions', val)"
-    ></s-html-input>
+    ></u-text-html-input>
 
     <v-menu :close-on-content-click="false" location="top" max-width="420">
       <template v-slot:activator="{ props }">
@@ -52,13 +52,13 @@
 
 <script>
 import Tribute from "tributejs";
-import SHtmlInput from "./SHtmlInput.vue";
+import UTextHtmlInput from "../html-input/UTextHtmlInput.vue";
 import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
 
 export default {
-  name: "SMentionableInput",
-  components: { SHtmlInput, EmojiPicker },
+  name: "UTextMentionInput",
+  components: { UTextHtmlInput, EmojiPicker },
   emits: [
     "update:modelValue",
     "update:text",

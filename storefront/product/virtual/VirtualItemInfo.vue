@@ -42,7 +42,7 @@
     <!-- ================== OUTPUT VALUES (SECRETS) =========================-->
 
     <div v-if="hasOutputForm" class="max-width-field-large mx-auto pa-3 w-100">
-      <s-value-dashed
+      <u-text-value-dashed
         v-for="item_key in Object.keys(virtualItem.data)"
         :key="item_key"
         class="m-1"
@@ -52,7 +52,7 @@
           {{ findElementNameOutput(item_key) }}
         </template>
         <b>{{ virtualItem.data[item_key] }}</b>
-      </s-value-dashed>
+      </u-text-value-dashed>
     </div>
 
     <!-- ================== USER ACCEPT =========================-->
@@ -60,12 +60,12 @@
 </template>
 
 <script>
-import SValueDashed from "@components/ui/text/SValueDashed.vue";
+import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
 import VariantItemViewMicro from "../variant/VariantItemViewMicro.vue";
 
 export default {
   name: "VirtualItemInfo",
-  components: { VariantItemViewMicro, SValueDashed },
+  components: { VariantItemViewMicro, UTextValueDashed },
   props: {
     virtualItem: {
       required: true,

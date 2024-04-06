@@ -17,7 +17,7 @@
     <b class="mb-2 d-block">{{ $t("global.commons.bill") }}</b>
 
     <!-- ------------------------ Raw Price ------------------------ -->
-    <s-value-dashed>
+    <u-text-value-dashed>
       <template v-slot:label>
         <small>{{ $t("global.basket_order_info_summery.total_price") }}</small>
       </template>
@@ -26,10 +26,10 @@
         :amount="total_price + total_discount"
         :currency="basket.currency"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
     <!-- ------------------------ Discount ------------------------ -->
-    <s-value-dashed>
+    <u-text-value-dashed>
       <template v-slot:label>
         <small>{{ $t("global.commons.discount") }}</small>
       </template>
@@ -38,10 +38,10 @@
         :amount="-total_discount"
         :currency="basket.currency"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
     <!-- ------------------------ Delivery price ------------------------ -->
-    <s-value-dashed>
+    <u-text-value-dashed>
       <template v-slot:label>
         <small>{{ $t("global.commons.shipping") }}</small>
       </template>
@@ -57,10 +57,10 @@
       <span v-else-if="delivery_price === -1">{{
         $t("global.commons.sod")
       }}</span>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
     <!-- ------------------------ Tax ------------------------ -->
-    <s-value-dashed v-if="tax">
+    <u-text-value-dashed v-if="tax">
       <template v-slot:label>
         <small>{{ $t("global.commons.tax") }}</small>
       </template>
@@ -70,10 +70,10 @@
       <span v-if="basket.tax_included">{{
         $t("global.commons.tax_included")
       }}</span>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
     <!-- ------------------------ Tax Shipping  ------------------------ -->
-    <s-value-dashed v-if="tax_shipping">
+    <u-text-value-dashed v-if="tax_shipping">
       <template v-slot:label>
         <small>{{ $t("global.commons.tax_shipping") }}</small>
       </template>
@@ -82,10 +82,10 @@
         :amount="tax_shipping"
         :currency="basket.currency"
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
     <!-- ------------------------ Final Price ------------------------ -->
-    <s-value-dashed>
+    <u-text-value-dashed>
       <template v-slot:label>
         <small>{{ $t("global.basket_order_info_summery.final_price") }}</small>
       </template>
@@ -96,14 +96,14 @@
         class="text-success"
         large
       ></u-price>
-    </s-value-dashed>
+    </u-text-value-dashed>
 
     <!-- ------------------------ Billing Info ------------------------ -->
 
     <template v-if="billing">
       <hr />
 
-      <s-value-dashed>
+      <u-text-value-dashed>
         <template v-slot:label>
           <small>{{ $t("global.commons.kind") }}</small>
         </template>
@@ -116,59 +116,59 @@
             ? $t("global.commons.business")
             : $t("global.commons.personal")
         }}
-      </s-value-dashed>
+      </u-text-value-dashed>
 
       <!-- ------------------------ Tax ID ------------------------ -->
-      <s-value-dashed v-if="billing.tax_id">
+      <u-text-value-dashed v-if="billing.tax_id">
         <template v-slot:label>
           <small> Tax ID</small>
         </template>
 
         {{ billing.tax_id }}
-      </s-value-dashed>
+      </u-text-value-dashed>
 
-      <s-value-dashed v-if="billing.name">
+      <u-text-value-dashed v-if="billing.name">
         <template v-slot:label>
           <small> {{ $t("global.commons.name") }}</small>
         </template>
 
         {{ billing.name }}
-      </s-value-dashed>
+      </u-text-value-dashed>
 
-      <s-value-dashed v-if="billing.country">
+      <u-text-value-dashed v-if="billing.country">
         <template v-slot:label>
           <small>{{ $t("global.commons.country") }}</small>
         </template>
 
         <flag :iso="billing.country" :squared="false" class="me-1" />
         {{ getCountryName(billing.country) }}
-      </s-value-dashed>
+      </u-text-value-dashed>
 
-      <s-value-dashed v-if="billing.state">
+      <u-text-value-dashed v-if="billing.state">
         <template v-slot:label>
           <small>{{ $t("global.commons.state") }}</small>
         </template>
 
         {{ billing.state }}
-      </s-value-dashed>
+      </u-text-value-dashed>
 
-      <s-value-dashed v-if="billing.address">
+      <u-text-value-dashed v-if="billing.address">
         <template v-slot:label>
           <small>{{ $t("global.commons.address") }}</small>
         </template>
 
         {{ billing.address }}
-      </s-value-dashed>
+      </u-text-value-dashed>
     </template>
   </div>
 </template>
 
 <script>
-import SValueDashed from "@components/ui/text/SValueDashed.vue";
+import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
 
 export default {
   name: "SOrderBillCard",
-  components: { SValueDashed },
+  components: { UTextValueDashed },
   props: {
     basket: {
       require: true,

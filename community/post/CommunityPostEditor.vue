@@ -290,7 +290,7 @@
             @focus="focus = true"
           ></v-textarea>
 
-          <s-mentionable-input
+          <u-text-mention-input
             ref="textarea"
             v-model="body"
             v-model:mentions="mentions"
@@ -305,7 +305,7 @@
             @blur="focus = false"
             @focus="focus = true"
           >
-          </s-mentionable-input>
+          </u-text-mention-input>
 
           <u-dense-circles-users
             v-if="mentions && mentions.users"
@@ -501,39 +501,39 @@
       </v-slide-y-transition>
 
       <!-- Buttons to select image / video / link -->
-      <div class="d-flex border-between fnt-as widget-bottom">
+      <div class="d-flex border-between widget-bottom">
         <template v-if="tab === 'text'">
           <v-btn
             :disabled="!can_add_media"
-            :size="$vuetify.display.smAndUp ? 'large' : undefined"
+            size="large"
             class="w-25"
             variant="text"
             @click="showSelectImage()"
           >
             <v-icon class="me-1">add_a_photo</v-icon>
-            <span class="-ah">{{ $t("community.editor.add_image") }}</span>
+            <span class="d-none d-sm-inline-block">{{ $t("community.editor.add_image") }}</span>
           </v-btn>
 
           <v-btn
             :disabled="!can_add_media"
-            :size="$vuetify.display.smAndUp ? 'large' : undefined"
+            size="large"
             class="w-25"
             variant="text"
             @click="showSelectVideo()"
           >
             <v-icon class="me-1">video_call</v-icon>
-            <span class="-ah">{{ $t("community.editor.add_video") }}</span>
+            <span class="d-none d-sm-inline-block">{{ $t("community.editor.add_video") }}</span>
           </v-btn>
 
           <v-btn
             :disabled="!can_add_media"
-            :size="$vuetify.display.smAndUp ? 'large':undefined"
+            size="large"
             class="w-25"
             variant="text"
             @click="link_mode = !link_mode"
           >
             <v-icon class="me-1">add_link</v-icon>
-            <span class="-ah">{{
+            <span class="d-none d-sm-inline-block">{{
               link_mode
                 ? $t("community.editor.no_link")
                 : $t("community.editor.add_link")
@@ -545,13 +545,13 @@
         <v-btn
           :class="{ disabled: !can_send }"
           :loading="busy"
-          :size="$vuetify.display.smAndUp && 'large'"
+          size="large"
           :variant="!body ? 'text' : 'flat'"
           class="w-25"
           color="blue"
           @click="sendPost()"
         >
-          <span class="-ah">{{ $t("community.editor.send_post") }}</span>
+          <span class="d-none d-sm-inline-block">{{ $t("community.editor.send_post") }}</span>
           <v-icon class="ms-1 flip-rtl">send</v-icon>
         </v-btn>
       </div>
@@ -660,7 +660,7 @@
 import UVoiceBox from "@components/community/voice/box/UVoiceBox.vue";
 import UTabsRounded from "@components/ui/tab/rounded/UTabsRounded.vue";
 import GlobalRules from "@core/helper/rules/GlobalRules";
-import SMentionableInput from "@components/ui/text/SMentionableInput.vue";
+import UTextMentionInput from "@components/ui/text/mention-input/UTextMentionInput.vue";
 import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { Screenshot } from "@core/helper/canvas/Screenshot";
@@ -701,7 +701,7 @@ export default {
     UCurrencyInput,
     UPriceInput,
     UDenseCirclesUsers,
-    SMentionableInput,
+    UTextMentionInput,
     UTabsRounded,
     UVoiceBox,
   },

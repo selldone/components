@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: "SValueDashed",
+  name: "UTextValueDashed",
   props: {},
 };
 </script>

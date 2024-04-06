@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: "SValueBox",
+  name: "UTextValueBox",
   props: {
     label: {},
     value: {},

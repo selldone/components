@@ -15,13 +15,15 @@
 <template>
   <v-col class="c-max-w" cols="12">
     <div class="bg-white c-widget nopx">
-      <div class="d-flex border-between fnt-as">
+      <div class="d-flex border-between">
         <v-btn
           :color="opxActive ? 'success' : undefined"
           class="border-end"
-          min-height="48"
+          min-height="56"
           size="large"
           variant="text"
+          tile
+          min-width="56"
           @click="$emit('update:opxActive', !opxActive)"
         >
           <v-icon class="me-1"
@@ -31,26 +33,32 @@
 
         <v-btn
           :color="filter === 'posts' ? 'success' : undefined"
-          class="w-25"
-          min-height="48"
           size="large"
+          min-height="56"
+          min-width="56"
+          tile
           variant="text"
           @click="$emit('update:filter', 'posts')"
         >
           <v-icon class="me-1">batch_prediction</v-icon>
-          {{ $t("community.filter.all_posts") }}
+          <span class="d-none d-sm-inline-block tnt">
+            {{ $t("community.filter.all_posts") }}</span
+          >
         </v-btn>
 
         <v-btn
           :color="filter === 'media' ? 'success' : undefined"
-          class="w-25"
-          min-height="48"
+          min-height="56"
+          min-width="56"
+          tile
           size="large"
           variant="text"
           @click="$emit('update:filter', 'media')"
         >
           <v-icon class="me-1">photo_camera</v-icon>
-          {{ $t("community.filter.media_only") }}
+          <span class="d-none d-sm-inline-block tnt">
+            {{ $t("community.filter.media_only") }}
+          </span>
         </v-btn>
 
         <v-text-field
