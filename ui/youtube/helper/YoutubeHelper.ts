@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright (c) 2024. Selldone® Business OS™
  *
@@ -11,7 +12,7 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-export const getYoutubeId = (url, opts = { fuzzy: true }) => {
+export const getYoutubeId = (url:string, opts = { fuzzy: true }) => {
   if (/youtu\.?be/.test(url)) {
     const patterns = [
       /youtu\.be\/([^#\&\?]{11})/, // youtu.be/<id>

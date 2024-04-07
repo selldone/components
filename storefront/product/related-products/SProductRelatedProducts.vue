@@ -33,10 +33,7 @@
 
               <template v-if="product.tags?.length">
                 <p>{{ $t("related_products.card.same_tags_subtitle") }}</p>
-                <u-tags-cloud
-                  :tags="product.tags"
-                  class="my-3"
-                ></u-tags-cloud>
+                <u-tags-cloud :tags="product.tags" class="my-3"></u-tags-cloud>
               </template>
 
               <!-- load products in same category -->
@@ -86,12 +83,11 @@
                 width="100%"
               >
                 <template v-slot:placeholder>
-                  <v-row align="center" justify="center" no-gutters>
-                    <v-progress-circular
-                      :color="SaminColorLight"
-                      indeterminate
-                    />
-                  </v-row>
+                  <v-progress-circular
+                    color="#333"
+                    indeterminate
+                    class="center-absolute"
+                  />
                 </template>
               </v-img>
 
