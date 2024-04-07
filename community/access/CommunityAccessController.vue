@@ -129,16 +129,19 @@
                   >{{ item.description }}
                 </v-list-item-subtitle>
 
-                <v-list-item-action>
-                  <v-btn
-                    :loading="busy_remove === item.user_id"
-                    icon
-                    title="Remove moderator"
-                    @click="removeModerator(item)"
-                  >
-                    <v-icon>close</v-icon>
-                  </v-btn>
-                </v-list-item-action>
+                <template v-slot:append>
+                  <v-list-item-action end>
+                    <v-btn
+                      :loading="busy_remove === item.user_id"
+                      icon
+                      variant="text"
+                      title="Remove moderator"
+                      @click="removeModerator(item)"
+                    >
+                      <v-icon>close</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </template>
               </v-list-item>
             </v-list>
 
@@ -180,7 +183,7 @@ import CUserInput from "@components/community/user/input/CUserInput.vue";
 
 export default {
   name: "CommunityAccessController",
-  components: {CUserInput,  UDenseCirclesUsers },
+  components: { CUserInput, UDenseCirclesUsers },
   props: {
     shop: {},
 

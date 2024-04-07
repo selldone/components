@@ -234,7 +234,7 @@
       </v-textarea>
     </div>
 
-    <s-widget-buttons :auto-fixed-position="!hasClose" >
+    <s-widget-buttons auto-fixed-position >
       <v-btn
         v-if="hasClose"
         size="x-large"
