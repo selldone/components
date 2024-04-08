@@ -138,7 +138,6 @@
                 :to="item.disabled ? undefined : item.to"
                 active-class="bg-primary text-white"
                 exact
-                selectable
               >
                 <template v-slot:prepend>
                   <v-avatar :tile="!!item.icon">
@@ -373,12 +372,12 @@ import UBreadcrumb from "@components/ui/breadcrumb/UBreadcrumb.vue";
 import SProductOverviewLoading from "@components/storefront/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
-import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
+//import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
 
 export default {
   name: "SProductsListing",
   components: {
-    LPageViewer,
+    LPageViewer: () => import("@app-page-builder/page/viewer/LPageViewer.vue"),
     SProductOverviewLoading,
     UBreadcrumb,
     BProductSpecTable,
@@ -1277,7 +1276,7 @@ export default {
         padding-right: var(--products-filter-width) !important;
         @media (max-width: 800px) {
           padding-right: 0 !important;
-          transform: translateX(-var(--products-filter-width));
+          transform: translateX(- var(--products-filter-width));
         }
       }
     }

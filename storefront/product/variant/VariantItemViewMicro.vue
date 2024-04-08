@@ -125,7 +125,7 @@ export default {
 .product-variant-card-micro {
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
   padding: 3px;
   border-radius: 4px;
   font-weight: 500;

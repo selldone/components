@@ -87,12 +87,12 @@ import SWidgetHeader from "@components/ui/widget/header/SWidgetHeader.vue";
 
 import VueConfetti from "@components/ui/confetti";
 
-require("@components/style/animation/vue2-animate.scss");
-require("@components/style/selldone/general_animates.scss");
+import "@components/style/animation/vue2-animate.scss";
+import "@components/style/selldone/general_animates.scss";
 
 //---------------- prototypes --------------
 
-require("@core/prototypes/Prototypes");
+import "@core/prototypes/Prototypes";
 
 window.MediumInsert = MediumInsert;
 
@@ -164,7 +164,7 @@ export function installGlobalComponents(app: App) {
     () =>
       import(
         // @ts-ignore
-        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/qrcode/UQrcode"
+        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/qrcode/UQrcode.vue"
       ),
   );
   app.component("u-qrcode", SQrcode);
@@ -175,20 +175,12 @@ export function installGlobalComponents(app: App) {
     () =>
       import(
         // @ts-ignore
-        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/barcode/UBarcode"
+        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/barcode/UBarcode.vue"
       ),
   );
   app.component("u-barcode", UBarcode);
 
-  //---------------- Barcode Scanner --------------
-  app.component(
-    "barcode-scanner",
-    // A dynamic import returns a Promise.
-    () =>
-      import(
-        /* webpackChunkName: "plug-scanner" */ "./ui/scanner/./UScanner"
-      ),
-  );
+
 
   app.use(VueConfetti);
 

@@ -15,7 +15,9 @@
 //―――――――――――――― Js & Components――――――――――――――
 //█████████████████████████████████████████████████████████████
 
-import $ from "jquery";
+import $ from 'jquery';
+window.$ = $;
+window.jQuery = $;
 
 import "@core/utils/console/ConsoleStyle";
 

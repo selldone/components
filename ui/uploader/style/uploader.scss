@@ -52,7 +52,7 @@
 
       .filepond--panel-root {
         background-color: #868f96;
-        background-image: url("~@/Components/ui/uploader/assets/drop-image.svg"),
+        background-image: url("@components/ui/uploader/assets/drop-image.svg"),
         linear-gradient(to right, #868f96 0%, #596164 100%);
         background-size: 48px, cover;
         background-position: center;
@@ -192,7 +192,7 @@
 
     .filepond--panel-root {
       background-color: #d5d4d0;
-      background-image: url("~@/Components/ui/uploader/assets/drop-image.svg"),
+      background-image: url("@components/ui/uploader/assets/drop-image.svg"),
       linear-gradient(
                       to top,
                       #d5d4d0 0%,

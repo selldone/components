@@ -397,3 +397,4 @@
 
   return ResizeSensor;
 });
+export default ResizeSensor;

@@ -20,7 +20,7 @@ import "blueimp-file-upload";
 
 declare let FB: any;
 
-let MediumInsert: Record<string, any> = {
+const MediumInsert: Record<string, any> = {
   Templates: {},
   // Other properties and methods...
 };

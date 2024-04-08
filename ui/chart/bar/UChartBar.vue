@@ -280,10 +280,10 @@ export default {
   // --bars
 
   .-grouped {
-    align-items: end;
+    align-items: flex-end;
 
     .--bars {
-      align-items: end;
+      align-items: flex-end;
       margin: 0 3px;
       background: var(--highlighted-group-color);
       padding: 1px;
