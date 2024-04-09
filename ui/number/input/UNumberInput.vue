@@ -86,7 +86,7 @@
         :title="lock ? 'Click to edit value.' : 'Click to lock input'"
         class="me-2"
         icon
-        size="28"
+        size="24"
         variant="text"
         @click="is_locked = !is_locked"
       >
@@ -124,7 +124,7 @@
         v-if="clearable"
 
         icon
-        size="28"
+        size="24"
         variant="text"
         @click="
           newValue = 0;
@@ -143,7 +143,7 @@
         v-if="showButtons && !readonly"
         :disabled="is_locked"
         icon
-        size="28"
+        size="24"
         variant="text"
         @click.stop="mpplus()"
       >

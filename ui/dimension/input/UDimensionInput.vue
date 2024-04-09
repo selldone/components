@@ -75,7 +75,7 @@
       :disabled="disabled || lock"
       :readonly="readonly"
       :rounded="rounded"
-      style="width: 40px"
+      style="width: 40px;max-width: 90px"
       :style="{
         /* width: rounded && solo ? '110px' : '84px',
           marginTop:

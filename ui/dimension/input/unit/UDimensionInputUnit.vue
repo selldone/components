@@ -30,7 +30,6 @@
     :prepend-inner-icon="prependInnerIcon"
     :rounded="rounded"
     :single-line="singleLine"
-
     :variant="
       variant
         ? variant
@@ -73,7 +72,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    singleLine:Boolean,
+    singleLine: Boolean,
     outlined: {
       default: false,
       type: Boolean,
@@ -112,7 +111,6 @@ export default {
       type: Boolean,
     },
 
-
     flat: {
       default: false,
       type: Boolean,
@@ -143,6 +141,9 @@ export default {
       "pc",
       "ex",
       "ch",
+      "fit-content",
+      "max-content",
+      "min-content",
     ],
   }),
 

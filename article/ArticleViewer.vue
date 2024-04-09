@@ -237,18 +237,18 @@
           <u-language-input
             v-model="article.lang"
             :class="{ pen: !in_edit_mode }"
-            :disabled="!in_edit_mode || !!forceLanguage"
-            :title="$t('global.commons.language')"
-            class="mx-2 mt-4 overflow-hidden min-width-150"
+            :disabled="!can_change_article_language"
+            class="mx-2 mt-2 overflow-hidden min-width-150"
             dense
             flat
             max-width="150px"
             prepend-inner-icon="translate"
             single-line
-            variant="solo-filled"
+            :variant="can_change_article_language?'solo':'plain'"
             @change="onChangeNote()"
+            hide-details
           >
-            <v-tooltip activator="parent" location="top" max-width="360">
+            <v-tooltip v-if="can_change_article_language" activator="parent" location="top" max-width="360">
               Change the language of this article.
             </v-tooltip>
           </u-language-input>
@@ -1270,6 +1270,9 @@ export default {
     languages() {
       // Available languages of shop!
       return this.shop && ShopOptionsHelper.GetLanguages(this.shop);
+    },
+    can_change_article_language(){
+      return this.in_edit_mode && !this.forceLanguage
     },
 
     can_auto_translate() {

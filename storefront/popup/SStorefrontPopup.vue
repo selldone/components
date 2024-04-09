@@ -28,34 +28,25 @@
       class="position-relative"
       style="max-height: 100%; max-width: 100%"
     >
-      <v-card
+      <LPageViewer
+        v-if="popup.content"
         :class="[{ 's--shadow-no-padding': style && style.s }]"
-        :flat="!style || !style.s"
-        :height="style && style.h ? style.h : Math.min(window.innerHeight, 800)"
-        :ripple="false"
         :style="{
           borderRadius: style && style.r ? style.r : undefined,
+          width: style && style.w ? style.w : Math.min(window.innerWidth, 800),
+          height:
+            style && style.h ? style.h : Math.min(window.innerHeight, 800),
         }"
-        :width="style && style.w ? style.w : Math.min(window.innerWidth, 800)"
-        class="pop-card overflow-hidden d-flex pa-1 pa-sm-2 pa-md-3"
-        color="#fff"
-        max-height="100%"
-        max-width="100%"
-        style="cursor: initial"
         @click.stop
-      >
-        <LPageViewer
-          v-if="popup.content"
-          :initialPageData="popup.content"
-          class="thin-scroll overflow-y-auto"
-          style="max-height: 100%; width: 100%"
-        />
-      </v-card>
+        :initialPageData="popup.content"
+        class="pop-card overflow-auto d-flex thin-scroll"
+        style="max-height: 100%; width: 100%; cursor: initial"
+      />
 
       <v-btn
         class="absolute-top-end zoomIn delay_500"
         color="#fff"
-        fab
+        icon
         variant="flat"
         @click="$emit('close')"
       >
@@ -73,14 +64,21 @@
         v-if="popup.delay"
         class="m-1"
         color="green"
-        dark
+        variant="flat"
         label
         size="small"
       >
         <v-icon class="me-1" size="small">motion_photos_on</v-icon>
         {{ popup.delay }} s
       </v-chip>
-      <v-chip v-if="popup.hide" class="m-1" color="red" dark label size="small">
+      <v-chip
+        v-if="popup.hide"
+        class="m-1"
+        color="red"
+        variant="flat"
+        label
+        size="small"
+      >
         <v-icon class="me-1" size="small">hourglass_bottom</v-icon>
         {{ popup.hide }} s
       </v-chip>
@@ -88,7 +86,7 @@
         v-if="popup.transition"
         class="m-1"
         color="blue"
-        dark
+        variant="flat"
         label
         size="small"
       >
