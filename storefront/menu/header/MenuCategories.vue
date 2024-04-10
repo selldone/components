@@ -37,17 +37,18 @@
                     params: { category_name: cat.name },
                   }"
                   class="-category-header -route"
-                  @mouseenter.native="selected_category = cat"
+                  @mouseenter="selected_category = cat"
                 >
-                  <span>{{ cat.title }}</span>
-
                   <v-avatar
-                    v-if="cat.icon"
-                    class="hover-scale force-top me-2"
-                    size="24"
+                      v-if="cat.icon"
+                      class="hover-scale force-top me-2"
+                      size="24"
                   >
                     <img :src="getShopImagePath(cat.icon, 64)" />
                   </v-avatar>
+                  <span>{{ cat.title }}</span>
+
+
                 </router-link>
                 <v-expansion-panels flat>
                   <v-expansion-panel
@@ -173,7 +174,8 @@
               :lazy-src="getShopImagePath(selected_category.icon, 64)"
               :src="getShopImagePath(selected_category.icon)"
               aspect-ratio="1"
-              class="rounded"
+              rounded="xl"
+              cover
             ></v-img>
             <h3 class="mt-2 mb-1">{{ selected_category.title }}</h3>
             <p class="typo-body">
@@ -392,6 +394,7 @@ export default {
   .-categories-wrap {
     .-category-header {
       font-size: var(--font-size);
+      text-align: start;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -404,6 +407,7 @@ export default {
       overflow: visible;
 
       span {
+        flex-grow: 1;
         max-width: calc(100% - 42px);
         white-space: nowrap;
         text-overflow: ellipsis;

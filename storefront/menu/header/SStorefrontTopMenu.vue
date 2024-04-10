@@ -38,6 +38,7 @@
           class="me-2"
           variant="text"
           rounded
+          :color="dark?'#fff':'#000'"
         >
           <v-icon
             v-if="tab.icon"
@@ -64,6 +65,7 @@
         v-bind="props"
         variant="text"
         rounded
+        :color="dark?'#fff':'#000'"
       >
         <v-icon
           v-if="tab.icon"
@@ -89,11 +91,11 @@
           :transition="tab.transition"
           :z-index="100"
           close-delay="0"
-          content-class="bg-white shadow-box"
           open-delay="0"
+          theme="light"
         >
           <!-- Menu > default -->
-          <v-sheet :rounded="tab.rounded">
+          <v-sheet :rounded="tab.rounded" class="shadow-box">
             <v-container
               v-if="tab.type === 'default'"
               class="py-12 text-start"
@@ -128,6 +130,7 @@
               :categories="tab.categories"
               :preview="preview"
               class="my-2 ms-2"
+              style="width: 98vw ;max-height: 90vh"
             ></menu-categories>
 
             <!-- Menu > Custom -->
@@ -156,12 +159,11 @@
 
 <script>
 import MenuCategories from "./MenuCategories.vue";
-import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
 
 export default {
   name: "SStorefrontTopMenu",
-  components: { LPageViewer, UFadeScroll, MenuCategories },
+  components: { LPageViewer, MenuCategories },
   props: {
     shop: {
       required: true,

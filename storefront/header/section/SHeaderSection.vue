@@ -25,22 +25,18 @@
               ? 'var(--background)'
               : SaminColorDark
       "
-      :theme="
-        (overlay ? overlayDark : !transparent_header && !is_light_header)
-          ? 'dark'
-          : 'light'
-      "
+      :theme="is_dark ? 'dark' : 'light'"
+      :class="{ 'text-white': is_dark,'-dark':is_dark }"
       :extended="!overlay"
       :style="{
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
       }"
-      class="s--storefront-primary-header border-bottom"
+      class="s--storefront-primary-header "
       extension-height="64px"
       flat
     >
       <template v-slot:extension>
-        <div v-if="!overlay" style="min-height: 64px">
-        </div>
+        <div v-if="!overlay" style="min-height: 64px"></div>
       </template>
 
       <template v-if="!isMobile || !searchMode">
@@ -56,10 +52,7 @@
           <v-icon> menu</v-icon>
         </v-btn>
 
-        <s-header-section-logo
-          v-if="shop"
-          :shop="shop"
-        ></s-header-section-logo>
+        <s-header-section-logo v-if="shop" :shop="shop"></s-header-section-logo>
 
         <u-loading-ellipsis v-else-if="!shop" css-mode></u-loading-ellipsis>
 
@@ -172,7 +165,6 @@
                 <img :src="getUserAvatar(USER_ID())" />
               </v-avatar>
               <v-menu
-
                 v-model="menu"
                 :close-on-content-click="true"
                 :min-width="280"
@@ -240,7 +232,6 @@
                     </div>
                   </v-card-text>
 
-
                   <!-- ―――――――――― Shop User Menu List ―――――――――― -->
 
                   <s-shop-user-menu-list
@@ -258,10 +249,15 @@
                       dense
                       justify="space-around"
                     >
-                      <v-col v-if="has_avocado" cols="4" class="d-flex flex-column align-center">
+                      <v-col
+                        v-if="has_avocado"
+                        cols="4"
+                        class="d-flex flex-column align-center"
+                      >
                         <v-btn
                           :to="{ name: 'AvocadoPage' }"
-                          icon variant="text"
+                          icon
+                          variant="text"
                           size="large"
                         >
                           <img
@@ -270,12 +266,17 @@
                             width="24"
                           />
                         </v-btn>
-                        <small>{{$t('global.commons.avocado')}}</small>
+                        <small>{{ $t("global.commons.avocado") }}</small>
                       </v-col>
-                      <v-col v-if="has_hyper" cols="4" class="d-flex flex-column align-center">
+                      <v-col
+                        v-if="has_hyper"
+                        cols="4"
+                        class="d-flex flex-column align-center"
+                      >
                         <v-btn
                           :to="{ name: window.$storefront.routes.HYPER_PAGE }"
-                          icon variant="text"
+                          icon
+                          variant="text"
                           size="large"
                         >
                           <img
@@ -285,13 +286,18 @@
                           />
                         </v-btn>
                         <small>
-                          {{$t('global.commons.hyper')}}
+                          {{ $t("global.commons.hyper") }}
                         </small>
                       </v-col>
-                      <v-col v-if="has_insta" cols="4" class="d-flex flex-column align-center">
+                      <v-col
+                        v-if="has_insta"
+                        cols="4"
+                        class="d-flex flex-column align-center"
+                      >
                         <v-btn
                           :to="{ name: 'InstagramPage' }"
-                          icon variant="text"
+                          icon
+                          variant="text"
                           size="large"
                         >
                           <img
@@ -300,7 +306,7 @@
                             width="24"
                           />
                         </v-btn>
-                        <small >{{$t('global.commons.instashop')}}</small>
+                        <small>{{ $t("global.commons.instashop") }}</small>
                       </v-col>
                     </v-row>
                   </template>
@@ -334,7 +340,8 @@
               :loading="!shop"
               class="s--storefront-primary-header-login-button"
               roundedripple
-              @click.stop="NeedLogin()" variant="elevated"
+              @click.stop="NeedLogin()"
+              variant="elevated"
             >
               <v-icon class="me-2" size="small"> login</v-icon>
               <div v-if="!!shop">
@@ -558,6 +565,11 @@ export default {
       return this.shop.theme;
     },
 
+    is_dark() {
+      return this.overlay
+        ? this.overlayDark
+        : !this.transparent_header && !this.is_light_header;
+    },
     // --------------------------------------------------------------------------------
 
     is_light_header() {
@@ -671,6 +683,11 @@ export default {
 .s--storefront-primary-header {
   overflow-x: auto;
   overflow-y: hidden;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.3) !important;
+  &.-dark{
+
+    border-bottom: 1px solid rgba(222, 226, 230, 0.3) !important;
+  }
 }
 
 .s--storefront-primary-header-basket-navigation {
