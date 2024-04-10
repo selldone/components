@@ -87,7 +87,7 @@ import SWidgetHeader from "@components/ui/widget/header/SWidgetHeader.vue";
 
 import VueConfetti from "@components/ui/confetti";
 
-import "@components/style/animation/vue2-animate.scss";
+import '@asika32764/vue-animate/dist/vue-animate.css';
 import "@components/style/selldone/general_animates.scss";
 
 //---------------- prototypes --------------
