@@ -39,7 +39,8 @@
       flat
     >
       <template v-slot:extension>
-        <div style="height: 64px"></div>
+        <div v-if="!overlay" style="min-height: 64px">
+        </div>
       </template>
 
       <template v-if="!isMobile || !searchMode">

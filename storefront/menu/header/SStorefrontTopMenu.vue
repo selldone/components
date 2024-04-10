@@ -21,7 +21,7 @@
           ? 'transparent'
           : dark
             ? 'var(--theme-dark)'
-            : null
+            : '#fff'
     "
     :flat="flat"
     :theme="dark ? 'dark' : 'light'"
@@ -30,129 +30,127 @@
     :style="{ '--justify': center ? 'center' : 'start' }"
     class="s--storefront-top-menu"
   >
+    <template v-for="(tab, index) in tabs">
+      <span v-if="tab.type === 'link'" :key="'l' + index">
+        <v-btn
+          :href="preview ? undefined : tab.link"
+          :target="tab.link?.startsWith('http') ? '_blank' : undefined"
+          class="me-2"
+          variant="text"
+          rounded
+        >
+          <v-icon
+            v-if="tab.icon"
+            :size="
+              tab.icon_size === 'large'
+                ? 'large'
+                : tab.icon_size === 'small'
+                  ? 'small'
+                  : undefined
+            "
+            start
+            >{{ tab.icon }}</v-icon
+          >
+
+          {{ tab.title }}
+        </v-btn>
+      </span>
+
+      <v-btn
+        v-else
+        :ref="`tab_${index}`"
+        :key="'m' + index"
+        class="me-2"
+        v-bind="props"
+        variant="text"
+        rounded
+      >
+        <v-icon
+          v-if="tab.icon"
+          :size="
+            tab.icon_size === 'large'
+              ? 'large'
+              : tab.icon_size === 'small'
+                ? 'small'
+                : undefined
+          "
+          start
+          >{{ tab.icon }}
+        </v-icon>
+
+        {{ tab.title }}
+
+        <v-menu
+          activator="parent"
+          v-model="visibles[index]"
+          :location="$vuetify.rtl && 'left'"
+
+          :open-on-hover="tab.hover"
+          :transition="tab.transition"
+          :z-index="100"
+          close-delay="0"
+          content-class="bg-white shadow-box"
+          open-delay="0"
+        >
+          <!-- Menu > default -->
+          <v-sheet :rounded="tab.rounded">
+            <v-container
+              v-if="tab.type === 'default'"
+              class="py-12 text-start"
+              fluid
+            >
+              <v-row>
+                <v-col
+                  v-for="(col, i) in tab.cols"
+                  :key="i"
+
+
+                >
+                  <v-list-item
+                    v-for="(item, index) in col"
+                    :key="index"
+                    :href="preview ? undefined : item.href"
+                    :target="item.target"
+                    :to="preview ? undefined : item.to"
+                    exact
+                  >
+                    <v-list-item-title class="list-menu-item"
+                      >{{ item.name }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-col>
+              </v-row>
+            </v-container>
+
+            <!-- Menu > category -->
+            <menu-categories
+              v-if="tab.type === 'category' && tab.categories"
+              :categories="tab.categories"
+              :preview="preview"
+              class="my-2 ms-2"
+            ></menu-categories>
+
+            <!-- Menu > Custom -->
+
+            <LPageViewer
+              v-if="
+                tab.type === 'custom' &&
+                tab.page &&
+                tab.page.content &&
+                visibles[index]
+              "
+              :initialPageData="tab.page.content"
+            />
+          </v-sheet>
+        </v-menu>
+      </v-btn>
+    </template>
+    <!--
     <u-fade-scroll class="overflow-auto">
       <div class="text-no-wrap">
-        <template v-for="(tab, index) in tabs">
-          <span v-if="tab.type === 'link'" :key="'l' + index">
-            <v-btn
-              :href="preview ? undefined : tab.link"
-              :target="tab.link?.startsWith('http') ? '_blank' : undefined"
-              class="me-2"
-              variant="text"
-            >
-              <v-icon
-                v-if="tab.icon"
-                :size="
-                  tab.icon_size === 'large'
-                    ? 'large'
-                    : tab.icon_size === 'small'
-                      ? 'small'
-                      : undefined
-                "
-                start
-                >{{ tab.icon }}</v-icon
-              >
 
-              {{ tab.title }}
-            </v-btn>
-          </span>
-
-          <v-menu
-            v-else
-            :key="'m' + index"
-            v-model="visibles[index]"
-            :location="$vuetify.rtl && 'left'"
-            :max-width="window.innerWidth - 24"
-            :min-width="window.innerWidth - 24"
-            :open-on-hover="tab.hover"
-            :transition="tab.transition"
-            :z-index="100"
-            close-delay="0"
-            content-class="bg-white shadow-box"
-            max-height="90vh"
-            open-delay="0"
-          >
-            <template v-slot:activator="{ props }">
-              <v-btn
-                :ref="`tab_${index}`"
-                class="me-2"
-                v-bind="props"
-                variant="text"
-              >
-                <v-icon
-                  v-if="tab.icon"
-                  :size="
-                    tab.icon_size === 'large'
-                      ? 'large'
-                      : tab.icon_size === 'small'
-                        ? 'small'
-                        : undefined
-                  "
-                  start
-                  >{{ tab.icon }}
-                </v-icon>
-
-                {{ tab.title }}
-              </v-btn>
-            </template>
-
-            <!-- Menu > default -->
-            <v-sheet :rounded="tab.rounded">
-              <v-container
-                v-if="tab.type === 'default'"
-                class="py-12 text-start"
-                fluid
-              >
-                <v-row>
-                  <v-col
-                    v-for="(col, i) in tab.cols"
-                    :key="i"
-                    :style="{
-                      width: 100 / columns_count + '%',
-                      flex: 100 / columns_count + '%',
-                      'max-width': 100 / columns_count + '%',
-                    }"
-                  >
-                    <v-list-item
-                      v-for="(item, index) in col"
-                      :key="index"
-                      :href="preview ? undefined : item.href"
-                      :target="item.target"
-                      :to="preview ? undefined : item.to"
-                      exact
-                    >
-                      <v-list-item-title class="list-menu-item"
-                        >{{ item.name }}
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-col>
-                </v-row>
-              </v-container>
-
-              <!-- Menu > category -->
-              <menu-categories
-                v-if="tab.type === 'category' && tab.categories"
-                :categories="tab.categories"
-                :preview="preview"
-                class="my-2 ms-2"
-              ></menu-categories>
-
-              <!-- Menu > Custom -->
-
-              <LPageViewer
-                v-if="
-                  tab.type === 'custom' &&
-                  tab.page &&
-                  tab.page.content &&
-                  visibles[index]
-                "
-                :initialPageData="tab.page.content"
-              />
-            </v-sheet>
-          </v-menu>
-        </template>
       </div>
-    </u-fade-scroll>
+    </u-fade-scroll>-->
   </v-toolbar>
 </template>
 

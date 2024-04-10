@@ -16,7 +16,6 @@
   <v-navigation-drawer
     :location="$vuetify.rtl && 'right'"
     :model-value="modelValue"
-    app
     class="text-start pt-5"
     style="border-radius: 24px; margin: 8px; height: calc(100vh - 100px)"
     temporary
@@ -29,7 +28,6 @@
           <v-btn
             class="tnt"
             color="#111"
-            dark
             max-width="80vw"
             min-width="200"
             size="large"
@@ -78,8 +76,8 @@
       <v-expansion-panels class="border-between-vertical" flat>
         <!-- ――――――――――――――――――――― Shop User Menu List ――――――――――――――――――――― -->
 
-        <v-expansion-panel v-if="USER()">
-          <v-expansion-panel-title class="p-0 pe-3">
+        <v-expansion-panel v-if="USER()" class="py-4">
+          <v-expansion-panel-title class="px-0 pe-3 py-2">
             <v-list-item>
               <template v-slot:prepend>
                 <v-avatar class="avatar-gradient -thin -user">
@@ -114,6 +112,7 @@
                   busy_logout = true;
                   Logout(() => (busy_logout = false));
                 "
+                block
               >
                 <v-icon class="me-1" size="small">logout</v-icon>
                 {{ $t("global.actions.logout") }}
@@ -134,11 +133,12 @@
             :key="'l-' + index"
             :href="tab.link"
             :target="tab.link?.startsWith('http') ? '_blank' : undefined"
+            class="flex-grow-1 w-100"
           >
             <v-list-item-title>
               {{ tab.title }}
             </v-list-item-title>
-            <template v-slot:append>
+            <template v-slot:prepend>
               <v-icon
                 v-if="tab.icon"
                 :size="
@@ -162,7 +162,7 @@
                 <v-list-item-title>
                   {{ tab.title }}
                 </v-list-item-title>
-                <template v-if="tab.icon" v-slot:append>
+                <template v-if="tab.icon" v-slot:prepend>
                   <v-icon
                     :size="
                       tab.icon_size === 'small'
@@ -206,22 +206,27 @@
           </v-expansion-panel>
         </template>
 
+
+      </v-expansion-panels>
+
+
+      <div class="pt-16 border-between-vertical">
         <!-- ――――――――――――――――――――― Footer Menu ――――――――――――――――――――― -->
 
         <v-list-item
-          v-for="(item, i) in menu"
-          :key="'f-' + i"
-          :to="item.to"
-          active-class="bg-primary text-white"
-          exact
-          link
+            v-for="(item, i) in menu"
+            :key="'f-' + i"
+            :to="item.to"
+            active-class="bg-primary text-white"
+            exact
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
           <template v-slot:append v-if="item.src"
-            ><img :src="item.src" height="24" width="24"
+          ><img :src="item.src" height="24" width="24"
           /></template>
         </v-list-item>
-      </v-expansion-panels>
+      </div>
+
 
       <!-- ――――――――――――――――――――― Social links ――――――――――――――――――――― -->
       <v-spacer></v-spacer>
