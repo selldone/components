@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -20,11 +20,11 @@
 </template>
 
 <script>
-import { SetupService } from "@core/server/SetupService";
-import { ProductType } from "@core/enums/product/ProductType";
+import { SetupService } from "@core/server/SetupService.ts";
+import { ProductType } from "@core/enums/product/ProductType.ts";
 
 export default {
-  name: "SStripeSplitPaymentInfo",
+  name: "UPaymentStripeSplit",
   components: {},
   props: {
     countryCode: {},

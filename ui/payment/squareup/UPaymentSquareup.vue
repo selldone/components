@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -43,8 +43,7 @@
       }"
       class="blur-animate"
     >
-      <v-tabs v-model="tab" class="mx-n5 mb-6" height="84" light stacked>
-        <v-tabs-slider></v-tabs-slider>
+      <v-tabs v-model="tab" class="mx-n5 mb-6" height="84" stacked>
 
         <v-tab
           v-for="item in tabs"
@@ -76,7 +75,6 @@
           block
           class="mb-3 mt-8"
           color="#0061e0"
-          dark
           size="x-large"
           @click="handlePaymentSubmit(card)"
           >{{ $t("global.actions.pay") }}
@@ -97,7 +95,6 @@
           block
           class="mb-3 mt-8"
           color="#0061e0"
-          dark
           size="x-large"
           @click="handlePaymentSubmit(giftCard)"
           >Pay with Gift Card
@@ -140,7 +137,6 @@
           block
           class="mb-3 mt-8"
           color="#0061e0"
-          dark
           size="x-large"
           @click="achClick()"
           >Pay with Bank Account
@@ -182,7 +178,7 @@
 import { SetupService } from "@core/server/SetupService";
 
 export default {
-  name: "SPaymentSquareup",
+  name: "UPaymentSquareup",
   components: {},
 
   props: {

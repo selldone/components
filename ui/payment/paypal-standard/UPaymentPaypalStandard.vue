@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: "SPaymentPaypalStandard",
+  name: "UPaymentPaypalStandard",
 
   props: {
     shopName: {},

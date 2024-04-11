@@ -131,7 +131,7 @@ export function installGlobalComponents(app: App) {
   const ULottie = defineAsyncComponent(
     () =>
       import(
-        /* webpackChunkName: "plug-lottie" */ "./ui/animation/ULottie.vue"
+        /* webpackChunkName: "plug-lottie" */ "@components/ui/lottie/ULottie.vue"
       ),
   );
   app.component("u-lottie", ULottie);

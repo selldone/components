@@ -50,7 +50,6 @@
         block
         class="mb-3 mt-8 zoomIn"
         color="#0061e0"
-        dark
         size="x-large"
         @click="confirmPayment"
         >{{ $t("global.actions.pay") }}
@@ -79,7 +78,7 @@
 
 <script>
 export default {
-  name: "SPaymentStripe",
+  name: "UPaymentStripe",
   components: {},
 
   props: {

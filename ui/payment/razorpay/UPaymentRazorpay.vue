@@ -22,7 +22,7 @@
 import { SetupService } from "@core/server/SetupService";
 
 export default {
-  name: "SPaymentRazorpay",
+  name: "UPaymentRazorpay",
 
   props: {
     pack: {

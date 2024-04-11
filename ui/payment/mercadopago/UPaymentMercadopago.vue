@@ -24,7 +24,7 @@
 import { Language } from "@core/enums/language/Language";
 
 export default {
-  name: "SPaymentMercadopago",
+  name: "UPaymentMercadopago",
 
   props: {
     publicKey: {

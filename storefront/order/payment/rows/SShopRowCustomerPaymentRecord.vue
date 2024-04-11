@@ -40,23 +40,23 @@
     <td class="text-subtitle-2">
       <div class="d-flex pt-2 align-items-center">
         <div>
-          <s-payment-card
+          <u-payment-card
             v-if="payment.card"
             :card="payment.card"
             :currency="payment.currency"
             :method="payment.method"
             horizontal
-          ></s-payment-card>
+          ></u-payment-card>
           <span v-else-if="payment.cod">{{
             $t("process_center.payment_widget.cod")
           }}</span>
 
           {{ getLocalTimeString(payment.payment_at) }}
-          <s-payment-billing-details
+          <u-payment-billing-details
             v-if="payment.billing_details"
             :billing-detail="payment.billing_details"
             class="min-width-200 mb-2"
-          ></s-payment-billing-details>
+          ></u-payment-billing-details>
         </div>
 
         <u-map-countries-single
@@ -70,13 +70,13 @@
 </template>
 
 <script>
-import SPaymentCard from "@components/payment/card/SPaymentCard.vue";
-import SPaymentBillingDetails from "@components/payment/widgets/SPaymentBillingDetails.vue";
+import UPaymentCard from "@components/ui/payment/card/UPaymentCard.vue";
+import UPaymentBillingDetails from "@components/ui/payment/billing-details/UPaymentBillingDetails.vue";
 import UMapCountriesSingle from "@components/ui/map/countries/single/UMapCountriesSingle.vue";
 
 export default {
   name: "SShopRowCustomerPaymentRecord",
-  components: { UMapCountriesSingle, SPaymentBillingDetails, SPaymentCard },
+  components: { UMapCountriesSingle, UPaymentBillingDetails, UPaymentCard },
   props: {
     payment: {
       require: true,

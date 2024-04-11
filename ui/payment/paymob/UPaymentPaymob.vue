@@ -14,8 +14,7 @@
 
 <template>
   <div class="position-relative min-height-60vh my-5">
-    <v-tabs v-model="tab" class="mx-n5" height="84" light stacked>
-      <v-tabs-slider></v-tabs-slider>
+    <v-tabs v-model="tab" class="mx-n5" height="84" stacked>
 
       <v-tab
         v-for="item in tabs"
@@ -53,7 +52,7 @@
 
 <script>
 export default {
-  name: "SPaymentPaymob",
+  name: "UPaymentPaymob",
 
   props: {
     shopName: {},

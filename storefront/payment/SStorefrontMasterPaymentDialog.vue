@@ -24,7 +24,7 @@
       persistent
       scrollable
     >
-      <s-payment-form
+      <u-payment-form
         v-if="exist_payment_form"
         ref="payment_form"
         :accept-c-o-d="acceptCOD"
@@ -118,7 +118,7 @@
 
 <script>
 import { Currency } from "@core/enums/payment/Currency";
-import SPaymentForm from "@components/payment/SPaymentForm.vue";
+import UPaymentForm from "@components/ui/payment/form/UPaymentForm.vue";
 import UProgressRadial from "@components/ui/progress/radial/UProgressRadial.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
 import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
@@ -130,7 +130,7 @@ import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 
 export default {
   name: "SStorefrontMasterPaymentDialog",
-  components: { UProgressRadial, SPaymentForm },
+  components: { UProgressRadial, UPaymentForm },
 
   props: {
     shop: {

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -347,7 +347,7 @@
             {{ $t("global.payment_form.order_free_payment") }}
           </p>
 
-          <s-payment-button
+          <u-payment-button
             class="ma-auto pointer-pointer"
             pos=""
             purple
@@ -370,10 +370,10 @@
             <img
               :width="24"
               class="mx-2"
-              src="@components/assets/icons/free-badge.svg"
+              src="../../../assets/icons/free-badge.svg"
             />
             {{ $t("global.commons.free") }}
-          </s-payment-button>
+          </u-payment-button>
         </div>
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Paypal (Instance payment form) ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
@@ -446,7 +446,7 @@
                 cols="12"
                 sm="6"
               >
-                <s-payment-button
+                <u-payment-button
                   :blue="gateway.cod"
                   :pos="GetUserSelectedCurrencyName(gateway.currency, true)"
                   class="ma-auto pointer-pointer"
@@ -479,7 +479,7 @@
                     class="mx-2"
                   />
                   {{ gateway.name }}
-                </s-payment-button>
+                </u-payment-button>
               </v-col>
             </v-row>
 
@@ -487,7 +487,7 @@
               <img
                 :width="48"
                 class="m-2"
-                src="@components/assets/emotions/013-disappointed.svg"
+                src="../../../assets/emotions/013-disappointed.svg"
               /><br />
 
               Sorry, payment with <b>{{ currency.code }}</b> not supported. We
@@ -509,7 +509,7 @@
               {{ $t("global.payment_form.all_paid_by_gift_cards") }}
             </p>
 
-            <s-payment-button
+            <u-payment-button
               class="ma-auto pointer-pointer"
               pos=""
               purple
@@ -532,10 +532,10 @@
               <img
                 :width="24"
                 class="mx-2"
-                src="@components/assets/icons/gift.svg"
+                src="../../../assets/icons/gift.svg"
               />
               {{ $t("global.commons.free") }}
-            </s-payment-button>
+            </u-payment-button>
           </div>
         </v-slide-y-transition>
       </div>
@@ -608,7 +608,7 @@
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Stripe ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isStripe">
-      <s-payment-stripe
+      <u-payment-stripe
         v-if="pack && stripe_js_loaded"
         :amount="amount"
         :billingAddress="billingAddress"
@@ -631,13 +631,13 @@
             success_end_countdown = true;
           }
         "
-      ></s-payment-stripe>
+      ></u-payment-stripe>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Razorpay ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isRazorpay">
-      <s-payment-razorpay
+      <u-payment-razorpay
         :amount="amount"
         :billingAddress="billingAddress"
         :billingEmail="billingEmail"
@@ -646,13 +646,13 @@
         :currency="currency.code"
         :order-url="orderUrl"
         :pack="pack"
-      ></s-payment-razorpay>
+      ></u-payment-razorpay>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ PayPal Standard ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isPayPalStandard">
-      <s-payment-paypal-standard
+      <u-payment-paypal-standard
         :amount="amount"
         :billingAddress="billingAddress"
         :billingEmail="billingEmail"
@@ -662,35 +662,35 @@
         :order-url="orderUrl"
         :pack="pack"
         :shop-name="customShopName ? customShopName : shop_name"
-      ></s-payment-paypal-standard>
+      ></u-payment-paypal-standard>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Mercadopago ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isMercadopago">
-      <s-payment-mercadopago
+      <u-payment-mercadopago
         :currency="currency.code"
         :preference-id="pack.unique_id"
         :public-key="pack.public_key"
-      ></s-payment-mercadopago>
+      ></u-payment-mercadopago>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Paymob ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isPaymob">
-      <s-payment-paymob
+      <u-payment-paymob
         :iframe-card-id="pack.card_id"
         :iframe-forsa-id="pack.forsa_id"
         :iframe-installment-id="pack.installment_id"
         :iframe-valu-id="pack.valu_id"
         :payment-token="pack.token"
-      ></s-payment-paymob>
+      ></u-payment-paymob>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Squareup ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
     <v-card-text v-if="isSquareup">
-      <s-payment-squareup
+      <u-payment-squareup
         :amount="pack.amount"
         :app-id="pack.app_id"
         :billing-address="billingAddress"
@@ -700,38 +700,38 @@
         :script="pack.script"
         :submit-url="pack.submit_url"
         :transaction-id="pack.transaction_id"
-      ></s-payment-squareup>
+      ></u-payment-squareup>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import SPaymentStripe from "./stripe/SPaymentStripe.vue";
-import SPaymentButton from "./button/SPaymentButton.vue";
+import UPaymentStripe from "@components/ui/payment/stripe/UPaymentStripe.vue";
+import UPaymentButton from "@components/ui/payment/button/UPaymentButton.vue";
 import SGiftcardInput from "@components/storefront/giftcard/selector/SGiftcardInput.vue";
 import UTextCopyBox from "@components/ui/text/copy-box/UTextCopyBox.vue";
 import UTimeLaps from "@components/ui/time/lapse/UTimeLaps.vue";
 import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
-import SPaymentRazorpay from "./razorpay/SPaymentRazorpay.vue";
-import SPaymentPaypalStandard from "./paypal-standard/SPaymentPaypalStandard.vue";
-import SPaymentMercadopago from "./mercadopago/SPaymentMercadopago.vue";
-import SPaymentPaymob from "@components/payment/paymob/SPaymentPaymob.vue";
-import SPaymentSquareup from "@components/payment/squareup/SPaymentSquareup.vue";
+import UPaymentRazorpay from "@components/ui/payment/razorpay/UPaymentRazorpay.vue";
+import UPaymentPaypalStandard from "@components/ui/payment/paypal-standard/UPaymentPaypalStandard.vue";
+import UPaymentMercadopago from "@components/ui/payment/mercadopago/UPaymentMercadopago.vue";
+import UPaymentPaymob from "@components/ui/payment/paymob/UPaymentPaymob.vue";
+import UPaymentSquareup from "@components/ui/payment/squareup/UPaymentSquareup.vue";
 
 export default {
-  name: "SPaymentForm",
+  name: "UPaymentForm",
   components: {
-    SPaymentSquareup,
-    SPaymentPaymob,
-    SPaymentMercadopago,
-    SPaymentPaypalStandard,
-    SPaymentRazorpay,
+    UPaymentSquareup,
+    UPaymentPaymob,
+    UPaymentMercadopago,
+    UPaymentPaypalStandard,
+    UPaymentRazorpay,
     UCurrencyIcon,
     UTimeLaps,
     UTextCopyBox,
     SGiftcardInput,
-    SPaymentButton,
-    SPaymentStripe,
+    UPaymentButton,
+    UPaymentStripe,
   },
   props: {
     isOfficialSamin: {

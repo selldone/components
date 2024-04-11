@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  name: "SPaymentButton",
+  name: "UPaymentButton",
   props: {
     small: {
       type: Boolean,

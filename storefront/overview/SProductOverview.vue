@@ -293,7 +293,7 @@
               </v-btn>
             </div>
 
-            <s-stripe-split-payment-info
+            <u-payment-stripe-split
               :basket="corresponding_basket_item ? basket : null"
               :country-code="basket?.receiver_info?.country"
               :preferences="preferences"
@@ -302,7 +302,7 @@
               :selected-vendor-product="selected_vendor_product"
               :variant="current_variant"
               :vendor-product="selected_vendor_product"
-            ></s-stripe-split-payment-info>
+            ></u-payment-stripe-split>
           </v-container>
         </v-col>
       </v-row>
@@ -353,7 +353,7 @@ import SSubscriptionPriceSelect from "@components/storefront/order/subscription/
 import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
 import ProductDiscountCountdown from "@components/storefront/product/count-down/ProductDiscountCountdown.vue";
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
-import SStripeSplitPaymentInfo from "@components/payment/stripe/SStripeSplitPaymentInfo.vue";
+import UPaymentStripeSplit from "@components/ui/payment/stripe/split/UPaymentStripeSplit.vue";
 import SProductSectionService from "@components/storefront/product/section/service/SProductSectionService.vue";
 import SProductSectionValuation from "@components/storefront/product/section/valuation/SProductSectionValuation.vue";
 import SProductSectionExtraPricings
@@ -371,7 +371,7 @@ import SProductSectionVariants from "@components/storefront/product/section/vari
 export default {
   name: "SProductOverview",
   components: {
-    SStripeSplitPaymentInfo,
+    UPaymentStripeSplit,
     SShopBuyButton,
     ProductDiscountCountdown,
     SProductSectionTax,
