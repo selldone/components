@@ -62,7 +62,7 @@
 
       <div class="d-flex border-between text-center align-items-center my-2">
         <div class="p-2">
-          <v-btn icon @click="en_cal = !en_cal">
+          <v-btn icon variant="text" @click="en_cal = !en_cal">
             <flag
               :iso="en_cal ? 'gb' : getCurrentLanguage().flag"
               :squared="false"
@@ -86,8 +86,14 @@
         </div>
       </div>
 
-      <v-date-picker
-        v-model="preferences.dates"
+      <u-date-range-picker
+        v-model:start="preferences.dates[0]"
+        v-model:end="preferences.dates[1]"
+        start-label="Check-in"
+        end-label="Check-out"
+        start-icon="login"
+        end-icon="logout"
+
         :allowed-dates="isAllowed"
         :events="isDisabled"
         :first-day-of-week="
@@ -95,17 +101,8 @@
         "
         :locale="!en_cal ? getCurrentLanguage().full_locale : undefined"
         :min="new Date().toISOString()"
-        color="blue"
-        event-color="red"
-        full-width
-        header-color="primary"
-        multiple="range"
-        no-title
-        show-adjacent-months
-        show-current
         @change="onChange"
-      >
-      </v-date-picker>
+      ></u-date-range-picker>
     </div>
   </div>
 </template>
@@ -114,10 +111,11 @@
 import { ServiceTypes } from "@core/enums/product/ServiceTypes";
 import UTimeWeekPicker from "@components/ui/time/week-picker/UTimeWeekPicker.vue";
 import _ from "lodash-es";
+import UDateRangePicker from "@components/ui/date/range-picker/UDateRangePicker.vue";
 
 export default {
   name: "SProductServiceForm",
-  components: { UTimeWeekPicker },
+  components: { UDateRangePicker, UTimeWeekPicker },
   props: {
     product: {
       require: true,
@@ -215,6 +213,12 @@ export default {
         this.preferences = this.basket_item.preferences;
       } else {
         // B. Not in basket!
+      }
+
+      if (this.has_booking) {
+        if (!this.preferences) this.preferences = {};
+        if (!this.preferences.dates || !Array.isArray(this.preferences.dates))
+          this.preferences.dates = [];
       }
       this.$emit("update:preferences", this.preferences);
     },

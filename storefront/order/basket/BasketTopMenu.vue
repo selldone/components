@@ -41,7 +41,7 @@
           <div
             key="a"
             class="view-basket-btn"
-            :class="{pen:in_current_basket_page}"
+            :class="{ pen: in_current_basket_page }"
             @click="
               $router.push({
                 name: window.$storefront.routes.BASKET_PAGE,
@@ -90,39 +90,29 @@
           :shop="shop"
         ></s-shop-basket-item>
       </div>
-      <v-spacer></v-spacer>
-      <div
-        v-if="more_items_count > 0"
-        class="more-items-btn"
-        @click="
-          in_current_basket_page
-            ? undefined
-            : $router.push({
-                name: window.$storefront.routes.BASKET_PAGE,
-                params: { type: type },
-              })
-        "
-      >
-        {{ more_items_count }}
+      <v-spacer style="min-height: 164px"></v-spacer>
 
-        {{ $t("basket_top_menu.more") }}
-      </div>
-
-      <div
-        v-if="!in_current_basket_page"
-        class="shop-basket-button fadeIn"
-        @click="
-          () => {
-            $router.push({
-              name: window.$storefront.routes.BASKET_PAGE,
-              params: { type: type },
-            });
-            $emit('close');
-          }
-        "
-      >
-        <v-icon class="me-2">shopping_cart</v-icon>
-        {{ $t("basket_top_menu.accept_and_pay") }}
+      <div>
+        <s-widget-buttons auto-fixed-position>
+          <v-btn
+            v-if="!in_current_basket_page"
+            @click="
+              () => {
+                $router.push({
+                  name: window.$storefront.routes.BASKET_PAGE,
+                  params: { type: type },
+                });
+                $emit('close');
+              }
+            "
+            color="#000"
+            variant="elevated"
+            size="x-large"
+          >
+            <v-icon start>shopping_cart</v-icon>
+            {{ $t("basket_top_menu.accept_and_pay") }}
+          </v-btn>
+        </s-widget-buttons>
       </div>
     </template>
   </div>
@@ -132,10 +122,11 @@
 import { ProductType } from "@core/enums/product/ProductType";
 import { MapHelper } from "@core/helper/map/MapHelper";
 import SShopBasketItem from "@components/storefront/order/basket/SShopBasketItem.vue";
+import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "BasketTopMenu",
-  components: { SShopBasketItem },
+  components: { SWidgetButtons, SShopBasketItem },
   props: {},
   data: () => ({
     menu: false,
@@ -146,8 +137,6 @@ export default {
 
     types: ProductType,
     type: ProductType.PHYSICAL.code,
-
-    max_items: 8,
   }),
   computed: {
     MapHelper() {
@@ -176,11 +165,7 @@ export default {
 
     show_items() {
       if (!this.current_basket || !this.current_basket.items) return [];
-      return this.current_basket.items.slice(0, this.max_items);
-    },
-    more_items_count() {
-      if (!this.current_basket || !this.current_basket.items) return 0;
-      return this.current_basket.items.length - this.max_items;
+      return this.current_basket.items;
     },
 
     hasItemsInBasket() {
@@ -268,23 +253,6 @@ export default {
   .no-data {
     color: #6c757d;
     padding: 16px 4px;
-  }
-
-  .shop-basket-button {
-    color: white;
-    font-size: 1.1rem;
-    background: #111;
-    padding: 16px 8px;
-    text-align: center;
-    cursor: pointer;
-    font-weight: 400;
-    transition: background-color 0.3s ease-in-out;
-    border-radius: 5px 5px 12px 12px;
-
-    &:hover {
-      background: #223; //#9a71a9;
-      transition: background-color 0.1s ease-in-out;
-    }
   }
 
   .view-basket-btn {

@@ -33,7 +33,7 @@
     :variant="
       variant ? variant : solo ? 'solo' : outlined ? 'outlined' : 'underlined'
     "
-    append-inner-icon="today"
+    :append-inner-icon="appendInnerIcon"
     class="pp"
     persistent-placeholder
     readonly
@@ -87,6 +87,9 @@
           max-width="100%"
           width="400"
           class="mx-auto"
+          :allowed-dates="allowedDates"
+          :events="events"
+
         ></v-date-picker>
 
         <div class="my-3 max-w-400 mx-auto">
@@ -230,7 +233,12 @@ export default {
       default: false,
     },
     prependInnerIcon: {},
+    appendInnerIcon:{default:'today'},
     variant: {},
+
+
+    allowedDates:{},
+    events:{},
   },
 
   data: () => ({

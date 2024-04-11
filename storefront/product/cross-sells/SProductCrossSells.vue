@@ -83,8 +83,7 @@
                   <v-chip
                     v-if="cross_sell.discount"
                     class="pa-1"
-                    color="#C2185B"
-                    dark
+                    color="#C2185B" variant="flat"
                     label
                     size="small"
                     ><b class="me-1">+ %{{ cross_sell.discount }}</b>
@@ -132,7 +131,6 @@
                 <v-btn
                   v-else
                   :color="cross_sell.in_basket ? '#4CAF50' : '#eee'"
-                  :dark="cross_sell.in_basket"
                   :loading="busy_add === cross_sell.target_id"
                   class="tnt"
                   rounded
@@ -311,6 +309,7 @@ export default {
     text-align: start;
     background: #fff;
     align-items: center;
+    white-space: normal;
 
     .-content {
       display: flex;
