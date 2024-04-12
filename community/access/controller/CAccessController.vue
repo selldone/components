@@ -182,7 +182,7 @@ import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCircles
 import CUserInput from "@components/community/user/input/CUserInput.vue";
 
 export default {
-  name: "CommunityAccessController",
+  name: "CAccessController",
   components: { CUserInput, UDenseCirclesUsers },
   props: {
     shop: {},

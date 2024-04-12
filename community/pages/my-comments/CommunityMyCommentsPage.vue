@@ -26,14 +26,14 @@
 
     <v-container class="c-max-w">
       <v-row align="start" justify="center">
-        <community-comment-widget
+        <c-comment-widget
           v-for="comment in comments"
           :key="comment.id"
           :comment="comment"
           :community="community"
           :shop="shop"
         >
-        </community-comment-widget>
+        </c-comment-widget>
 
         <!-- Auto load more -->
 
@@ -56,13 +56,12 @@
 
 <script>
 import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
-import CommunityComments from "@components/community/comment/CommunityComments.vue";
-import CommunityCommentWidget from "@components/community/comment/CommunityCommentWidget.vue";
+import CCommentWidget from "@components/community/comment/widget/CCommentWidget.vue";
 
 export default {
   name: "CommunityMyCommentsPage",
   components: {
-    CommunityCommentWidget,
+    CCommentWidget,
 
     CBreadcrumb,
   },

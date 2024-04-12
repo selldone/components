@@ -111,7 +111,7 @@
 
 <script>
 export default {
-  name: "CommunityFilter",
+  name: "CPostsFilter",
 
   props: {
     filter: {

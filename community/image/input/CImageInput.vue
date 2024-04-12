@@ -68,7 +68,7 @@
 
 <script>
 export default {
-  name: "ImageInput",
+  name: "CImageInput",
   components: {},
 
   props: {

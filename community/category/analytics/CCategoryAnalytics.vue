@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -34,11 +34,11 @@
 
 <script>
 import CommunityStatisticView from "@components/community/statistics/CommunityStatisticView.vue";
-import { TimeSeries } from "@core/timeserie/TimeSeries";
+import { TimeSeries } from "@core/timeserie/TimeSeries.ts";
 import CommunityStatisticViewSkeleton from "@components/community/statistics/CommunityStatisticViewSkeleton.vue";
 
 export default {
-  name: "CommunityCategoryStatistic",
+  name: "CCategoryAnalytics",
   components: { CommunityStatisticViewSkeleton, CommunityStatisticView },
   props: {
     community: {

@@ -28,8 +28,8 @@
     ></c-breadcrumb>
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Bot ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
-      <community-bots-edit v-if="show_bot" :community="community">
-      </community-bots-edit>
+      <c-bot-management v-if="show_bot" :community="community">
+      </c-bot-management>
     </v-expand-transition>
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Title ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -58,7 +58,7 @@
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Edit ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
       <div v-if="access.admin && show_edit" class="c-max-w">
-        <community-edit
+        <c-community-edit
           :community="community"
           @update:community="
             (val) => {
@@ -66,7 +66,7 @@
               show_edit = false;
             }
           "
-        ></community-edit>
+        ></c-community-edit>
       </div>
     </v-expand-transition>
 
@@ -83,11 +83,11 @@
         md="4"
         sm="6"
       >
-        <community-category-card
+        <c-category-card
           :category="category"
           :showReport="show_report"
           class="min-h-100"
-        ></community-category-card>
+        ></c-category-card>
       </v-col>
       <!-- -------------------- Add Card ------------------------ -->
 
@@ -131,7 +131,7 @@
           >{{ $t("community.category.add_new_msg") }}
         </v-card-subtitle>
         <v-card-text>
-          <community-category-edit
+          <c-category-edit
             v-if="dialog_add"
             ref="editor"
             :community="community"
@@ -141,7 +141,7 @@
                 dialog_add = false;
               }
             "
-          ></community-category-edit>
+          ></c-category-edit>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -172,22 +172,22 @@
 
 <script>
 import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
-import CommunityCategoryCard from "@components/community/category/CommunityCategoryCard.vue";
+import CCategoryCard from "@components/community/category/card/CCategoryCard.vue";
 import CommunityStatistic from "../../statistic/CommunityStatistic.vue";
-import CommunityEdit from "../../edit/CommunityEdit.vue";
-import CommunityCategoryEdit from "@components/community/category/CommunityCategoryEdit.vue";
+import CCommunityEdit from "../../edit/CCommunityEdit.vue";
+import CCategoryEdit from "@components/community/category/edit/CCategoryEdit.vue";
 import CHeader from "../../header/CHeader.vue";
-import CommunityBotsEdit from "../../bot/CommunityBotsEdit.vue";
+import CBotManagement from "../../bot/management/CBotManagement.vue";
 
 export default {
   name: "CommunityHomePage",
   components: {
-    CommunityBotsEdit,
+    CBotManagement,
     CHeader,
-    CommunityCategoryEdit,
-    CommunityEdit,
+    CCategoryEdit,
+    CCommunityEdit,
     CommunityStatistic,
-    CommunityCategoryCard,
+    CCategoryCard,
     CBreadcrumb,
   },
   props: {

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -52,11 +52,11 @@
       <v-list-subheader
         >You have the option to assign an image to the category.
       </v-list-subheader>
-      <image-input
+      <c-image-input
         v-model="image_file"
         :src="image && getShopImagePath(image)"
         class="mb-4"
-      ></image-input>
+      ></c-image-input>
     </div>
 
     <div class="widget-box mb-5">
@@ -119,13 +119,13 @@
 </template>
 
 <script>
-import ImageInput from "@components/community/image/ImageInput.vue";
+import CImageInput from "@components/community/image/input/CImageInput.vue";
 import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
-import ScrollHelper from "@core/utils/scroll/ScrollHelper";
+import ScrollHelper from "@core/utils/scroll/ScrollHelper.ts";
 
 export default {
-  name: "CommunityCategoryEdit",
-  components: { USmartToggle, ImageInput },
+  name: "CCategoryEdit",
+  components: { USmartToggle, CImageInput },
 
   props: {
     community: {

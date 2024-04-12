@@ -53,7 +53,7 @@
 
 <script>
 export default {
-  name: "CommunityAttachView",
+  name: "CAttachViewer",
   components: {},
   props: {
     post: {

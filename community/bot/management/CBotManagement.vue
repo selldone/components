@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -59,7 +59,7 @@
         messages="Past your channel name here"
         placeholder="Your channel name without @..."
         prefix="@"
-        @click:prepend-inner="telegram_lock = !telegram_lock"
+        @click:prepend-inner="telegram_lock = !telegram_lock" variant="underlined"
       >
       </v-text-field>
 
@@ -80,10 +80,10 @@
 </template>
 
 <script>
-import { SetupService } from "@core/server/SetupService";
+import { SetupService } from "@core/server/SetupService.ts";
 
 export default {
-  name: "CommunityBotsEdit",
+  name: "CBotManagement",
   components: {},
 
   props: {

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <community-image
+  <c-image-view
     :aspect-ratio="aspectRatio"
     :height="height"
     :src="cover ? cover : src"
@@ -40,15 +40,15 @@
       @change="onSelectCover"
     />
     <slot></slot>
-  </community-image>
+  </c-image-view>
 </template>
 
 <script>
-import CommunityImage from "@components/community/image/CommunityImage.vue";
+import CImageView from "@components/community/image/view/CImageView.vue";
 
 export default {
   name: "SCommunityImageUploader",
-  components: { CommunityImage },
+  components: { CImageView },
   props: {
     src: {},
     edit: {

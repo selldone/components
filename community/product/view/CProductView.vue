@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -53,12 +53,12 @@
 
 <script>
 import SProductOverview from "@components/storefront/overview/SProductOverview.vue";
-import { SpecHelper } from "@core/helper/product/SpecHelper";
-import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
+import { SpecHelper } from "@core/helper/product/SpecHelper.ts";
+import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce.ts";
 import BProductSpecTable from "@components/storefront/product/spec/table/BProductSpecTable.vue";
 
 export default {
-  name: "CommunityProductView",
+  name: "CProductView",
   components: { BProductSpecTable, SProductOverview },
   props: {
     shop: {

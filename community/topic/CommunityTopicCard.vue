@@ -40,13 +40,13 @@
       }"
       class="c-widget -hover d-flex text-black"
     >
-      <community-image
+      <c-image-view
         v-if="topic.image"
         :height="$vuetify.display.xs ? '100px' : 'auto'"
         :min-height="$vuetify.display.xs ? 100 : 200"
         :src="getShopImagePath(topic.image)"
         :width="$vuetify.display.xs ? '100%' : 200"
-      ></community-image>
+      ></c-image-view>
 
       <div
         class="ms-2 px-2 flex-grow-1 py-2 overflow-hidden d-flex flex-column"
@@ -179,7 +179,7 @@
 
 <script>
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
-import CommunityImage from "@components/community/image/CommunityImage.vue";
+import CImageView from "@components/community/image/view/CImageView.vue";
 import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
 import { TopicTrialType } from "@core/enums/community/TopicTrialType";
 import URibbon from "@components/ui/ribbon/URibbon.vue";
@@ -191,7 +191,7 @@ export default {
   components: {
     TrendSparkline,
     URibbon,
-    CommunityImage,
+    CImageView,
     UDenseCirclesUsers,
   },
   props: {

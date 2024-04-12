@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -247,21 +247,21 @@
         </div>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product post ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div v-else-if="tab === 'product'">
-          <community-product-editor
+          <c-product-editor
             v-if="shop && !post"
             v-model="product_id"
             :community="community"
             :shop="shop"
             class="my-4"
           >
-          </community-product-editor>
-          <community-product-view
+          </c-product-editor>
+          <c-product-view
             v-else-if="shop"
             :community="community"
             :shop="shop"
             class="my-4"
           >
-          </community-product-view>
+          </c-product-view>
         </div>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Voice post ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -316,11 +316,11 @@
           <!-- Poll , tips: can not edit poll after create! -->
 
           <template v-if="topicMode">
-            <community-poll
+            <c-post-poll
               v-model="poll"
               :editable="!topic || !topic.poll"
               :user-selected-id="topic && topic.action && topic.action.poll"
-            ></community-poll>
+            ></c-post-poll>
             <v-btn
               v-if="topic && topic.poll"
               class="m-2 zoomIn"
@@ -473,22 +473,22 @@
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Attach Files ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div v-else-if="tab === 'attach'">
-          <community-attach-editor
+          <c-attach-editor
             v-if="!post"
             v-model="attach_files"
             :community="community"
             class="my-4"
           >
-          </community-attach-editor>
+          </c-attach-editor>
 
           <template v-else>
-            <community-attach-view
+            <c-attach-viewer
               v-if="post?.attachments?.length"
               :files="post?.attachments"
               :post="post"
               view-only
             >
-            </community-attach-view>
+            </c-attach-viewer>
             <v-list-subheader>
               <div>
                 <v-icon class="me-1">warning_amber</v-icon>
@@ -659,26 +659,26 @@
 <script>
 import UVoiceBox from "@components/community/voice/box/UVoiceBox.vue";
 import UTabsRounded from "@components/ui/tab/rounded/UTabsRounded.vue";
-import GlobalRules from "@core/helper/rules/GlobalRules";
+import GlobalRules from "@core/helper/rules/GlobalRules.ts";
 import UTextMentionInput from "@components/ui/text/mention-input/UTextMentionInput.vue";
-import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
+import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper.ts";
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
-import { Screenshot } from "@core/helper/canvas/Screenshot";
-import { FileHelper } from "@core/helper/converters/FileHelper";
+import { Screenshot } from "@core/helper/canvas/Screenshot.ts";
+import { FileHelper } from "@core/helper/converters/FileHelper.ts";
 import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
-import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType";
-import { TopicTrialType } from "@core/enums/community/TopicTrialType";
-import { Currency } from "@core/enums/payment/Currency";
-import CommunityPoll from "./CommunityPoll.vue";
-import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
-import CommunityProductEditor from "@components/community/product/CommunityProductEditor.vue";
-import CommunityProductView from "@components/community/product/CommunityProductView.vue";
-import { ImageDimension } from "@core/helper/image/ImageDimension";
+import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType.ts";
+import { TopicTrialType } from "@core/enums/community/TopicTrialType.ts";
+import { Currency } from "@core/enums/payment/Currency.ts";
+import CPostPoll from "../poll/CPostPoll.vue";
+import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel.ts";
+import CProductEditor from "@components/community/product/editor/CProductEditor.vue";
+import CProductView from "@components/community/product/view/CProductView.vue";
+import { ImageDimension } from "@core/helper/image/ImageDimension.ts";
 import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
-import CommunityAttachEditor from "@components/community/attach/CommunityAttachEditor.vue";
-import CommunityAttachView from "@components/community/attach/CommunityAttachView.vue";
-import { VideoHelper } from "@core/helper/video/VideoHelper";
+import CAttachEditor from "@components/community/attach/editor/CAttachEditor.vue";
+import CAttachViewer from "@components/community/attach/viewer/CAttachViewer.vue";
+import { VideoHelper } from "@core/helper/video/VideoHelper.ts";
 import _ from "lodash-es";
 
 /**
@@ -692,12 +692,12 @@ function getAspect(el) {
 
 export default {
   components: {
-    CommunityAttachView,
-    CommunityAttachEditor,
+    CAttachViewer,
+    CAttachEditor,
     USmartSwitch,
-    CommunityProductView,
-    CommunityProductEditor,
-    CommunityPoll,
+    CProductView,
+    CProductEditor,
+    CPostPoll,
     UCurrencyInput,
     UPriceInput,
     UDenseCirclesUsers,
@@ -706,7 +706,7 @@ export default {
     UVoiceBox,
   },
 
-  name: "CommunityPostEditor",
+  name: "CPostEditor",
 
   props: {
     community: {

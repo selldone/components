@@ -76,7 +76,7 @@
         style="color: #111"
         @click="search = null"
       >
-        <community-widget
+        <c-post-widget
           :community="community"
           :post="post"
           :shop="shop"
@@ -84,7 +84,7 @@
           :topic="post.topic"
           class="fadeInUp"
           simple-mode
-        ></community-widget>
+        ></c-post-widget>
       </router-link>
     </v-container>
 
@@ -147,13 +147,13 @@ import CommunityPostReportsDialog from "@components/community/global/CommunityPo
 import CommunityAnalytics from "@components/community/global/CommunityAnalytics.vue";
 import CommunityCommentReportsDialog from "@components/community/global/CommunityCommentReportsDialog.vue";
 import { TimeSeries } from "@core/timeserie/TimeSeries";
-import CommunityWidget from "../post/widget/CommunityWidget.vue";
+import CPostWidget from "../post/widget/CPostWidget.vue";
 import _ from "lodash-es";
 
 export default {
   name: "CLayout",
   components: {
-    CommunityWidget,
+    CPostWidget,
     CommunityCommentReportsDialog,
     CommunityAnalytics,
     CommunityPostReportsDialog,

@@ -95,7 +95,7 @@
         <v-icon>close</v-icon>
       </v-btn>
 
-      <community-post-editor
+      <c-post-editor
         :community="community"
         :post="post"
         :shop="shop"
@@ -108,7 +108,7 @@
           }
         "
       >
-      </community-post-editor>
+      </c-post-editor>
     </v-dialog>
 
     <!-- ------------------ Report post dialog ------------------------ -->
@@ -121,7 +121,7 @@
   </div>
 </template>
 <script>
-import CommunityPostEditor from "@components/community/post/CommunityPostEditor.vue";
+import CPostEditor from "@components/community/post/editor/CPostEditor.vue";
 import AFeedbackContentViolationReport from "@components/article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { ArticleReport } from "@core/enums/article/ArticleReport";
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
@@ -129,7 +129,7 @@ import _ from "lodash-es";
 
 export default {
   name: "CommunityPostActionsMenu",
-  components: { AFeedbackContentViolationReport, CommunityPostEditor },
+  components: { AFeedbackContentViolationReport, CPostEditor },
   props: {
     shop: {},
 

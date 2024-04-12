@@ -26,7 +26,7 @@
 
     <v-container class="c-max-w">
       <v-row align="start" justify="center">
-        <community-widget
+        <c-post-widget
           v-for="(post, i) in posts"
           :key="post.id"
           :community="community"
@@ -41,7 +41,7 @@
               DeleteItemByID(posts, post.id);
             }
           "
-        ></community-widget>
+        ></c-post-widget>
 
         <!-- Auto load more -->
 
@@ -64,12 +64,12 @@
 
 <script>
 import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
-import CommunityWidget from "../../post/widget/CommunityWidget.vue";
+import CPostWidget from "../../post/widget/CPostWidget.vue";
 
 export default {
   name: "CommunityFeedPage",
   components: {
-    CommunityWidget,
+    CPostWidget,
 
     CBreadcrumb,
   },

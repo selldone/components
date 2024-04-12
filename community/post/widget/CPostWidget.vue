@@ -123,32 +123,32 @@
       ></div>
 
       <!-- Attachment files -->
-      <community-attach-view
+      <c-attach-viewer
         v-if="post?.attachments?.length"
         :files="post?.attachments"
         :post="post"
       >
-      </community-attach-view>
+      </c-attach-viewer>
 
       <!-- Poll -->
-      <community-poll
+      <c-post-poll
         v-if="question && topic.poll"
         :busy="busy_poll"
         :user-selected-id="topic.action && topic.action.poll"
         :value="topic.poll"
         class="mb-2"
         @click:item="setPollAnswer"
-      ></community-poll>
+      ></c-post-poll>
 
       <!-- Image -->
-      <community-image
+      <c-image-view
         v-if="post.image"
         :aspect-ratio="post.aspect"
         :src="getShopImagePath(post.image)"
         fullscreen
         height="auto"
         width="100%"
-      ></community-image>
+      ></c-image-view>
 
       <!-- Video -->
       <video
@@ -189,12 +189,12 @@
       </div>
 
       <!-- Product -->
-      <community-product-view
+      <c-product-view
         v-if="post.product_id"
         :community="community"
         :product-id="post.product_id"
         :shop="shop"
-      ></community-product-view>
+      ></c-product-view>
 
       <!-- Reactions & Insights -->
 
@@ -318,13 +318,13 @@
           {{ $t("community.commons.share") }}
         </v-btn>
       </div>
-      <community-comments
+      <c-comments-list
         v-if="!simpleMode"
         v-model:show="show_comments"
         :post="post"
         :shop="shop"
       >
-      </community-comments>
+      </c-comments-list>
     </div>
 
     <!-- Trend -->
@@ -340,25 +340,25 @@
 </template>
 
 <script>
-import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
-import CommunityComments from "@components/community/comment/CommunityComments.vue";
-import CommunityImage from "@components/community/image/CommunityImage.vue";
-import { PostReaction } from "@core/enums/community/PostReaction";
+import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper.ts";
+import CCommentsList from "@components/community/comment/list/CCommentsList.vue";
+import CImageView from "@components/community/image/view/CImageView.vue";
+import { PostReaction } from "@core/enums/community/PostReaction.ts";
 import URibbon from "@components/ui/ribbon/URibbon.vue";
-import CommunityPoll from "@components/community/post/CommunityPoll.vue";
-import CommunityProductView from "@components/community/product/CommunityProductView.vue";
-import CommunityAttachView from "@components/community/attach/CommunityAttachView.vue";
-import { VideoHelper } from "@core/helper/video/VideoHelper";
+import CPostPoll from "@components/community/post/poll/CPostPoll.vue";
+import CProductView from "@components/community/product/view/CProductView.vue";
+import CAttachViewer from "@components/community/attach/viewer/CAttachViewer.vue";
+import { VideoHelper } from "@core/helper/video/VideoHelper.ts";
 
 export default {
-  name: "CommunityWidget",
+  name: "CPostWidget",
   components: {
-    CommunityAttachView,
-    CommunityProductView,
-    CommunityPoll,
+    CAttachViewer,
+    CProductView,
+    CPostPoll,
     URibbon,
-    CommunityImage,
-    CommunityComments,
+    CImageView,
+    CCommentsList,
   },
   props: {
     community: {

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -79,7 +79,7 @@
                   >
                   <v-btn
                     class="ms-2"
-                    icon
+                    icon variant="text"
                     size="small"
                     @click="
                       (e) =>
@@ -103,7 +103,7 @@
 
                 <!-- Comment image -->
 
-                <community-image
+                <c-image-view
                   v-if="com.image"
                   :src="getShopImagePath(com.image)"
                   class="rounded-18px"
@@ -112,7 +112,7 @@
                   max-height="480"
                   width="240"
                 >
-                </community-image>
+                </c-image-view>
 
                 <!-- Comment body -->
                 <v-btn
@@ -360,12 +360,12 @@
 </template>
 
 <script>
-import CommunityImage from "@components/community/image/CommunityImage.vue";
-import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
+import CImageView from "@components/community/image/view/CImageView.vue";
+import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper.ts";
 
 export default {
-  name: "CommunityComments",
-  components: { CommunityImage },
+  name: "CCommentsList",
+  components: { CImageView },
   props: {
     shop: {},
 

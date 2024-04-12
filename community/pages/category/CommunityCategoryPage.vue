@@ -49,18 +49,18 @@
 
     <v-expand-transition>
       <div v-if="show_report">
-        <community-category-statistic
+        <c-category-analytics
           :category-id="category.id"
           :community="community"
           @busy="(v) => $emit('busy', v)"
-        ></community-category-statistic>
+        ></c-category-analytics>
       </div>
     </v-expand-transition>
 
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Edit ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
       <div v-if="show_edit" class="c-max-w">
-        <community-category-edit
+        <c-category-edit
           ref="editor"
           v-model:category="category"
           :class="{ 'pointer-event-none': !access.admin }"
@@ -71,7 +71,7 @@
               AddOrUpdateItemByID(categories, cat);
             }
           "
-        ></community-category-edit>
+        ></c-category-edit>
 
         <div v-if="access.admin" class="my-3 widget-buttons">
           <v-btn
@@ -189,7 +189,7 @@
 
       <v-expand-transition>
         <div v-show="show_new_post && !show_report" class="c-max-w">
-          <community-post-editor
+          <c-post-editor
             :category="category"
             :community="community"
             topic-mode
@@ -206,7 +206,7 @@
                   },
                 })
             "
-          ></community-post-editor>
+          ></c-post-editor>
         </div>
       </v-expand-transition>
     </template>
@@ -280,13 +280,13 @@
                 :class="{ 'flex-column': $vuetify.display.xs }"
                 class="d-flex"
               >
-                <community-image
+                <c-image-view
                   :height="$vuetify.display.xs ? '140px' : 'auto'"
                   :min-height="$vuetify.display.xs ? undefined : 200"
                   :src="getShopImagePath(cross_preview.image)"
                   :width="$vuetify.display.xs ? '100%' : 200"
                   class="rounded-18px"
-                ></community-image>
+                ></c-image-view>
                 <div class="ps-3 pe-2 mt-4 text-justify overflow-hidden">
                   <h2>{{ cross_preview.title }}</h2>
                   <p class="single-line">{{ cross_preview.desc }}</p>
@@ -375,11 +375,11 @@
 <script>
 import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
 import CommunityTopicCard from "@components/community/topic/CommunityTopicCard.vue";
-import CommunityPostEditor from "@components/community/post/CommunityPostEditor.vue";
-import CommunityCategoryEdit from "@components/community/category/CommunityCategoryEdit.vue";
-import CommunityCategoryStatistic from "@components/community/category/CommunityCategoryStatistic.vue";
+import CPostEditor from "@components/community/post/editor/CPostEditor.vue";
+import CCategoryEdit from "@components/community/category/edit/CCategoryEdit.vue";
+import CCategoryAnalytics from "@components/community/category/analytics/CCategoryAnalytics.vue";
 import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
-import CommunityImage from "@components/community/image/CommunityImage.vue";
+import CImageView from "@components/community/image/view/CImageView.vue";
 import USmartVerify from "@components/ui/smart/verify/USmartVerify.vue";
 import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 
@@ -388,10 +388,10 @@ export default {
   components: {
     SWidgetButtons,
     USmartVerify,
-    CommunityImage,
-    CommunityCategoryStatistic,
-    CommunityCategoryEdit,
-    CommunityPostEditor,
+    CImageView,
+    CCategoryAnalytics,
+    CCategoryEdit,
+    CPostEditor,
     CommunityTopicCard,
     CBreadcrumb,
   },

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -42,25 +42,25 @@
         </div>
       </div>
 
-      <community-comments
+      <c-comments-list
         :parent="comment"
         :post="comment.post"
         :shop="shop"
         class="mx-4"
         show
       >
-      </community-comments>
+      </c-comments-list>
     </div>
   </v-col>
 </template>
 
 <script>
-import CommunityComments from "./CommunityComments.vue";
-import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper";
+import CCommentsList from "../list/CCommentsList.vue";
+import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper.ts";
 
 export default {
-  name: "CommunityCommentWidget",
-  components: { CommunityComments },
+  name: "CCommentWidget",
+  components: { CCommentsList },
   props: {
     community: {
       required: true,

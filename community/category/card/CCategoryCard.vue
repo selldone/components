@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -25,7 +25,7 @@
       class="c-widget -hover flex-grow-1"
     >
       <!-- Image -->
-      <community-image
+      <c-image-view
         :aspect-ratio="1"
         :src="getShopImagePath(category.image)"
         width="100%"
@@ -69,7 +69,7 @@
             </u-sparkline>
           </v-row>
         </v-fade-transition>
-      </community-image>
+      </c-image-view>
 
       <div
         v-if="todayData && todayData.topics"
@@ -107,14 +107,14 @@
 </template>
 
 <script>
-import CommunityImage from "@components/community/image/CommunityImage.vue";
+import CImageView from "@components/community/image/view/CImageView.vue";
 import TrendSparkline from "@components/community/statistics/TrendSparkline.vue";
-import { TimeSeries } from "@core/timeserie/TimeSeries";
+import { TimeSeries } from "@core/timeserie/TimeSeries.ts";
 import USparkline from "@components/ui/chart/sparkline/USparkline.vue";
 
 export default {
-  name: "CommunityCategoryCard",
-  components: { USparkline, TrendSparkline, CommunityImage },
+  name: "CCategoryCard",
+  components: { USparkline, TrendSparkline, CImageView },
   props: {
     category: {
       required: true,

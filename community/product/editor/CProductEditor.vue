@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -43,13 +43,13 @@
     </div>
 
     <!-- ---------------- Product Info ---------------- -->
-    <community-product-view
+    <c-product-view
       :community="community"
       :product-id="product_id"
       :shop="shop"
       class="fadeIn"
     >
-    </community-product-view>
+    </c-product-view>
 
     <!-- ████████████████ Dialog > Scan ████████████████ -->
     <v-dialog
@@ -83,12 +83,12 @@
 </template>
 
 <script>
-import CommunityProductView from "./CommunityProductView.vue";
+import CProductView from "../view/CProductView.vue";
 import UScanner from "@components/ui/scanner/UScanner.vue";
 
 export default {
-  name: "CommunityProductEditor",
-  components: { UScanner, CommunityProductView },
+  name: "CProductEditor",
+  components: { UScanner, CProductView },
   emits: ["update:modelValue"],
   props: {
     shop: {

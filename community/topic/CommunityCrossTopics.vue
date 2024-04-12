@@ -16,8 +16,7 @@
   <v-col class="c-max-w d-flex align-center" cols="12">
     <v-btn
       color="success"
-      dark
-      fab
+       icon
       size="small"
       variant="flat"
       @click="show_cross = true"
@@ -32,7 +31,7 @@
         :href="getUrl(main_community)"
         :title="main_community.title"
         class="m-2"
-        icon
+        icon variant="text"
         size="large"
         target="_blank"
       >
@@ -47,7 +46,7 @@
         :href="getUrl(item)"
         :title="item.title"
         class="m-2"
-        icon
+        icon variant="text"
         size="large"
         target="_blank"
       >
@@ -57,7 +56,7 @@
       </v-btn>
     </v-row>
 
-    <v-btn v-if="false" icon>
+    <v-btn v-if="false" icon variant="text">
       <v-icon>more_horiz</v-icon>
     </v-btn>
 

@@ -35,7 +35,7 @@
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Edit ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <v-expand-transition>
       <div v-if="show_edit" class="c-max-w">
-        <community-post-editor
+        <c-post-editor
           :category="category"
           :community="community"
           :post="topic.question"
@@ -48,7 +48,7 @@
               show_edit = false;
             }
           "
-        ></community-post-editor>
+        ></c-post-editor>
         <div class="text-end py-5">
           <v-btn
             class="m-2"
@@ -115,7 +115,7 @@
         <template v-if="topic">
           <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Main post ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-          <community-widget
+          <c-post-widget
             v-if="topic.question"
             :community="community"
             :post="topic.question"
@@ -132,7 +132,7 @@
                   });
               }
             "
-          ></community-widget>
+          ></c-post-widget>
           <v-col v-else class="c-container" cols="12">
             <div class="c-widget bg-white px-4 py-3">
               <small>{{ $t("community.commons.topic") }}</small>
@@ -161,28 +161,28 @@
 
           <!-- New post -->
 
-          <community-post-editor
+          <c-post-editor
             :category="category"
             :community="community"
             :topic="topic"
             can-product
             can-voice
             @add:post="(post) => AddOrUpdateItemByID(posts, post, 'id', false)"
-          ></community-post-editor>
+          ></c-post-editor>
 
           <!-- filter -->
-          <community-filter
+          <c-posts-filter
             v-model:filter="filter"
             v-model:opx-active="opx_active"
             v-model:search="search"
             :loadingSort="busy_posts && page === 1"
             @update:sort="setSort"
-          ></community-filter>
+          ></c-posts-filter>
 
           <!-- posts > part 1 -->
 
           <template v-if="posts.length">
-            <community-widget
+            <c-post-widget
               v-for="(post, i) in posts.slice(0, follow_index)"
               :key="post.id"
               :community="community"
@@ -200,7 +200,7 @@
                     });
                 }
               "
-            ></community-widget>
+            ></c-post-widget>
 
             <!-- following suggestion -->
 
@@ -213,7 +213,7 @@
 
             <!-- posts > part 2 -->
 
-            <community-widget
+            <c-post-widget
               v-for="(post, i) in posts.slice(follow_index, posts.length)"
               :key="post.id"
               :community="community"
@@ -234,7 +234,7 @@
                     });
                 }
               "
-            ></community-widget>
+            ></c-post-widget>
 
             <!-- Auto load more -->
 
@@ -261,9 +261,9 @@
 </template>
 
 <script>
-import CommunityWidget from "../../post/widget/CommunityWidget.vue";
-import CommunityPostEditor from "@components/community/post/CommunityPostEditor.vue";
-import CommunityFilter from "@components/community/filter/CommunityFilter.vue";
+import CPostWidget from "../../post/widget/CPostWidget.vue";
+import CPostEditor from "@components/community/post/editor/CPostEditor.vue";
+import CPostsFilter from "@components/community/post/filter/CPostsFilter.vue";
 import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
 import CommunityCrossTopics from "@components/community/topic/CommunityCrossTopics.vue";
 import CommunityTopicSubscribe from "@components/community/topic/CommunityTopicSubscribe.vue";
@@ -281,9 +281,9 @@ export default {
 
     CommunityCrossTopics,
     CBreadcrumb,
-    CommunityFilter,
-    CommunityPostEditor,
-    CommunityWidget,
+    CPostsFilter,
+    CPostEditor,
+    CPostWidget,
   },
 
   props: {

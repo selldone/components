@@ -425,10 +425,10 @@
 
     <v-expand-transition>
       <div v-if="show_access">
-        <community-access-controller
+        <c-access-controller
           :community="community"
           :shop="shop"
-        ></community-access-controller>
+        ></c-access-controller>
       </div>
     </v-expand-transition>
 
@@ -611,7 +611,7 @@
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 import UButtonShareGroup from "../../ui/button/share/group/UButtonShareGroup.vue";
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
-import CommunityAccessController from "@components/community/access/CommunityAccessController.vue";
+import CAccessController from "@components/community/access/controller/CAccessController.vue";
 import UCountDown from "@components/ui/count-down/UCountDown.vue";
 import { DateConverter } from "@core/helper/date/DateConverter";
 import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
@@ -625,7 +625,7 @@ export default {
   components: {
     CUserInput,
     UCountDown,
-    CommunityAccessController,
+    CAccessController,
     UDenseCirclesUsers,
     UButtonShareGroup,
   },

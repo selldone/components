@@ -42,7 +42,7 @@
 
 <script>
 export default {
-  name: "CommunityImage",
+  name: "CImageView",
   components: {},
   props: {
     fullscreen: {

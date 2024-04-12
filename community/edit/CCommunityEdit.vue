@@ -80,7 +80,7 @@
         You can upload and modify the logo of your community here.
       </v-list-subheader>
       <div class="text-center">
-        <image-input
+        <c-image-input
           v-model="image_file"
           :src="
             community && community.image
@@ -88,7 +88,7 @@
               : undefined
           "
           class="d-inline-block"
-        ></image-input>
+        ></c-image-input>
       </div>
     </div>
 
@@ -262,7 +262,7 @@
 </template>
 
 <script>
-import ImageInput from "@components/community/image/ImageInput.vue";
+import CImageInput from "@components/community/image/input/CImageInput.vue";
 import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
 import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
 import USmartSelect from "@components/ui/smart/select/USmartSelect.vue";
@@ -272,8 +272,8 @@ import ScrollHelper from "@core/utils/scroll/ScrollHelper";
 import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
-  name: "CommunityEdit",
-  components: {SWidgetButtons, USmartSelect, USmartToggle, ImageInput },
+  name: "CCommunityEdit",
+  components: {SWidgetButtons, USmartSelect, USmartToggle, CImageInput },
 
   props: {
     shop: {}, // optional for shops.

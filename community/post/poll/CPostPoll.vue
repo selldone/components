@@ -26,7 +26,7 @@
         :loading="busy === item"
         :style="{ 'animation-delay': 250 + i * 75 + 'ms' }"
         class="bounceIn"
-        icon
+        icon variant="text"
         @click="isCheck(item) ? undefined : $emit('click:item', item)"
       >
         <v-icon
@@ -58,7 +58,7 @@
         <v-btn
           v-if="editable"
           color="red"
-          icon
+          icon variant="text"
           @click="remove(modelValue, item)"
         >
           <v-icon>close</v-icon>
@@ -84,7 +84,7 @@
 
 <script>
 export default {
-  name: "CommunityPoll",
+  name: "CPostPoll",
   emits: ["click:item", "update:modelValue"],
   props: {
     modelValue: {},

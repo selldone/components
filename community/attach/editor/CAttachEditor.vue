@@ -35,11 +35,13 @@
           {{ numeralFormat(file.size, "0.[0] b") }}
         </v-list-item-subtitle>
 
-        <v-list-item-action>
-          <v-btn color="red" icon @click="remove(files, file)">
-            <v-icon>close</v-icon>
-          </v-btn>
-        </v-list-item-action>
+        <template v-slot:append>
+          <v-list-item-action>
+            <v-btn color="red" icon @click="remove(files, file)" variant="text">
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-list-item-action>
+        </template>
       </v-list-item>
     </v-slide-y-transition>
     <!-- ████████████████ Add ████████████████ -->
@@ -52,28 +54,29 @@
           class="mt-3 mx-3"
           clearable
           multiple
-          placeholder="Select files... max 3 files limited to 8MB each file."
+          label="Select files... max 3 files limited to 8MB each file."
           variant="solo"
           @update:model-value="selectFile"
-        ></v-file-input>
-
-        <v-list-subheader>
-          <div>
-            Acceptable files:
-            <span v-if="mims">
-              <span v-for="m in mims" :key="m" class="mx-1"
-                ><img
-                  :src="getFileExtensionImage(m)"
-                  class="hover-scale"
-                  height="16"
-                  width="16"
-                />
-                {{ m }}</span
-              >
-            </span>
-            <span v-else>*.*</span>
-          </div>
-        </v-list-subheader>
+          messages=" "
+        >
+          <template v-slot:message>
+            <div>
+              Acceptable files:
+              <span v-if="mims">
+                <span v-for="m in mims" :key="m" class="mx-1"
+                  ><img
+                    :src="getFileExtensionImage(m)"
+                    class="hover-scale"
+                    height="16"
+                    width="16"
+                  />
+                  {{ m }}</span
+                >
+              </span>
+              <span v-else>*.*</span>
+            </div>
+          </template>
+        </v-file-input>
       </div>
     </v-expand-transition>
   </div>
@@ -83,7 +86,7 @@
 import numeral from "numeral";
 
 export default {
-  name: "CommunityAttachEditor",
+  name: "CAttachEditor",
   components: {},
   emits: ["update:modelValue"],
   props: {
