@@ -18,7 +18,7 @@
       v-model="dialog"
       class="s--webapp-debug-view"
       color="#fafaf6"
-      fixed
+      temporary
       touchless
       width="640"
     >
@@ -56,17 +56,16 @@
       </v-expand-transition>
       <v-expand-transition>
         <div v-if="show_settings">
-          <v-list-subheader class="my-3" style="height: unset">
+          <div class="mt-3 mb-5" style="height: unset">
             To execute your development storefront web application in a live
             storefront environment in real-time, initiate the process by running
             yarn serv. Afterward, enter the development URL in the provided
             field and click 'Save' to proceed.
-          </v-list-subheader>
+          </div>
 
           <v-text-field
             v-model="dev_url"
             append-inner-icon="cloud_sync"
-            class="mx-5"
             clearable
             label="Local dev server"
             persistent-placeholder
@@ -75,6 +74,7 @@
               fixDevUrl();
               getValidateDevPack(dev_url);
             "
+            variant="outlined"
           ></v-text-field>
 
           <div class="widget-buttons">
@@ -100,6 +100,8 @@
               {{ error_dev_serve }}
             </div>
           </v-expand-transition>
+
+          <div class="my-5" style="border-top: 1px dashed #999"></div>
         </div>
       </v-expand-transition>
 
@@ -122,11 +124,11 @@
       </div>
 
       <v-list class="" lines="three">
-        <v-list-subheader>
+        <div>
           This is a debug window designed to log errors and key messages. It's
           intended solely for debugging purposes and is primarily useful for
           shop owners, developers, and technically savvy users.
-        </v-list-subheader>
+        </div>
         <v-list-item
           v-for="(item, key) in errors.entries()"
           :key="key"
@@ -424,13 +426,17 @@ export default {
         const scripts = Array.from(doc.querySelectorAll("script"));
 
         // Filter the script with the specific src attribute
-        const targetScript = scripts.find((script) =>
+        const target_script_shop_js = scripts.find((script) =>
           script.src.includes("shop.js"),
         );
+        // Find script when it's Vite dev mode
+        const target_script_vite_js = scripts.find((script) =>
+            script.src.includes("@vite/client"),
+        );
 
-        if (targetScript) {
+        if (target_script_shop_js) {
           // Extract the 'XXX' part from the src attribute
-          const src = targetScript.src;
+          const src = target_script_shop_js.src;
           const regex = /https?:\/\/[^\/]+\/(layouts)\/(v\d+\/app)\/shop\.js/;
           const matches = src.match(regex);
 
@@ -446,10 +452,34 @@ export default {
             console.log("No matches found");
             return null;
           }
+        }else if(target_script_vite_js){
+          console.log("We detect Vite dev mode!");
+
+
+          // Find all script tags of type module within the body
+          const scripts = Array.from(doc.body.querySelectorAll('script[type="module"]'));
+
+
+          // We want the src attribute of the first script tag of type module
+          const src_module = scripts.length > 0 ? scripts[0].getAttribute('src') : null;
+
+          if(!src_module){
+            const err="Module not found in the url! It should be like <script type=\"module\" src=\"storefront.ts\"..."
+            console.log(err);
+            this.error_dev_serve = err;
+            return null;
+          }
+
+          console.log("We find module:",src_module);
+
+          return (this.pack_dev_server = { path:src_module, version:"vite" });
+
+        }else{
+          console.log("Script shop.js or Vite client not found!");
+          this.error_dev_serve = "Script shop.js or Vite client not found!";
         }
 
-        console.log("Script shop.js not found!");
-        this.error_dev_serve = "Script shop.js not found!";
+
 
         return null;
       } catch (error) {
@@ -523,6 +553,8 @@ export default {
 .s--webapp-debug-view {
   text-align: start;
   z-index: 100;
+
+  padding: 8px 12px;
 
   .--item {
     background: #fff;
