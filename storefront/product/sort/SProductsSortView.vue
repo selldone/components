@@ -22,6 +22,7 @@
       variant="text"
       @click="$emit('update:only-available', !onlyAvailable)"
       stacked
+      :size="smallSortButtons ? 'small' : undefined"
     >
       <v-icon class="mb-1" size="24"
         >{{ onlyAvailable ? "check_box" : "all_inclusive" }}
@@ -43,6 +44,7 @@
       variant="text"
       @click="toggleModeView"
       stacked
+      :size="smallSortButtons ? 'small' : undefined"
     >
       <v-icon class="mb-1" size="24">{{ viewMode.icon }}</v-icon>
       <span class="small">
@@ -70,7 +72,7 @@
           border="0"
           height="46"
           variant="text"
-          :size="$vuetify.display.mdAndDown ? 'small' : undefined"
+          :size="$vuetify.display.mdAndDown || smallSortButtons ? 'small' : undefined"
         >
           {{ item.name }}
         </v-btn>
@@ -229,6 +231,7 @@ export default {
       type: Boolean,
     },
     activeClass: { default: "dark-flat" },
+    smallSortButtons:Boolean,
   },
 
   data() {

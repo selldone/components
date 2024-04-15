@@ -48,9 +48,9 @@
         @click="show_pass = true"
         >CLICK TO SHOW</span
       >
-      <div v-else :class="contentClass" class="-link">
+      <div v-else :class="contentClass" class="-link" >
         <slot name="prepend-value"></slot>
-        <span> {{ value }}</span>
+        <span :style="{'letter-spacing':letterSpacing}"> {{ value }}</span>
       </div>
       <slot name="append-value"></slot>
       <img
@@ -88,6 +88,7 @@ export default {
     contentClass: {},
     small: Boolean,
     textStart: Boolean,
+    letterSpacing:{}
   },
   data: () => ({
     show_pass: false,
