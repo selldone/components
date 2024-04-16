@@ -26,13 +26,12 @@
     <v-spacer v-if="center && $vuetify.display.mdAndUp"></v-spacer>
 
     <template v-if="has_sort && $vuetify.display.mdAndUp">
+
       <v-btn-toggle
-        :model-value="sortBy"
-        borderless
+        :model-value="sortKey"
         class="rounded-group ms-2"
-        light
         selected-class="dark-flat"
-        @update:model-value="(val) => $emit('update:sort-by', val)"
+        @update:model-value="(val) => $emit('update:sortKey', val)"
       >
         <v-btn
           v-for="(item, index) in sortKeys"
@@ -47,18 +46,16 @@
       </v-btn-toggle>
 
       <v-btn-toggle
-        :dark="dark"
-        :model-value="sortDesc"
-        borderless
+        :model-value="sortOrder"
         class="mx-2"
         mandatory
         selected-class="dark-flat"
-        @update:model-value="(value) => $emit('update:sortDesc', value)"
+        @update:model-value="(value) => $emit('update:sortOrder', value)"
       >
-        <v-btn :small="small" :value="false" variant="flat">
+        <v-btn :small="small" value="asc" variant="flat">
           <v-icon>keyboard_arrow_up</v-icon>
         </v-btn>
-        <v-btn :small="small" :value="true" variant="flat">
+        <v-btn :small="small" value="desc" variant="flat">
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
       </v-btn-toggle>
@@ -68,10 +65,9 @@
 
     <v-spacer v-if="$vuetify.display.mdAndUp"></v-spacer>
 
-    <v-menu v-if="$vuetify.display.smAndUp" offset-y open-on-hover>
+    <v-menu v-if="$vuetify.display.smAndUp"  open-on-hover>
       <template v-slot:activator="{ props }">
         <v-btn
-          :dark="dark"
           :title="itemsPerPage"
           class="mx-2"
           icon
@@ -98,7 +94,7 @@
       :placeholder="$t('global.commons.search')"
       :single-line="true"
       bg-color="transparent"
-      class="max-width-field"
+      class="max-width-field min-width-200"
       clearable
       flat
       hide-details
@@ -112,17 +108,17 @@
       <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn
-            :close="!!sortBy"
+            :close="!!sortKey"
             class="mx-2 tnt"
             height="48"
             v-bind="props"
             variant="flat"
-            @click:close="$emit('update:sort-by', null)"
+            @click:close="$emit('update:sortKey', null)"
           >
             <v-icon size="small" start>sort</v-icon>
             {{
-              sortBy_object
-                ? $t(sortBy_object.label)
+              sortKey_object
+                ? $t(sortKey_object.label)
                 : $t("global.data_toolbar.sort_by")
             }}
           </v-btn>
@@ -132,7 +128,7 @@
             v-for="(item, index) in sortKeys"
             :key="index.value"
             density="compact"
-            @click="$emit('update:sort-by', item.value)"
+            @click="$emit('update:sortKey', item.value)"
           >
             <v-list-item-title>{{ $t(item.label) }}</v-list-item-title>
           </v-list-item>
@@ -140,18 +136,17 @@
       </v-menu>
 
       <v-btn-toggle
-        :dark="dark"
-        :model-value="sortDesc"
-        borderless
+        :model-value="sortOrder"
+
         class="rounded-group mx-2"
         mandatory
         selected-class="dark-flat"
-        @update:model-value="(value) => $emit('update:sortDesc', value)"
+        @update:model-value="(value) => $emit('update:sortOrder', value)"
       >
-        <v-btn :value="false">
+        <v-btn value="asc">
           <v-icon>keyboard_arrow_up</v-icon>
         </v-btn>
-        <v-btn :value="true">
+        <v-btn value="desc">
           <v-icon>keyboard_arrow_down</v-icon>
         </v-btn>
       </v-btn-toggle>
@@ -174,14 +169,14 @@ export default {
       type: String,
     },
 
-    sortBy: {
+    sortKey: {
       required: false,
       type: String,
     },
 
-    sortDesc: {
+    sortOrder: {
       required: false,
-      type: Boolean,
+      type: String,
     },
     itemsPerPage: {
       required: false,
@@ -247,8 +242,8 @@ export default {
         this.baseItemsCount * 8,
       ];
     },
-    sortBy_object() {
-      return this.sortKeys.find((item) => item.value === this.sortBy);
+    sortKey_object() {
+      return this.sortKeys.find((item) => item.value === this.sortKey);
     },
   },
 };

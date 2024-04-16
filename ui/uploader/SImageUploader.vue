@@ -19,8 +19,8 @@
       <v-avatar class="me-2 border" rounded="lg" size="64">
         <img
           :src="image_url"
-          class="pa-1 rounded-lg"
-          style="object-fit: cover"
+          class="pa-1"
+          style="object-fit: cover;height: inherit;width: inherit;border-radius: 0.7em"
         />
       </v-avatar>
       <div class="flex-grow-1">

@@ -1508,6 +1508,24 @@ const CoreMixin = {
         window.$language,
       );
     },
+    /**
+     * Updates the class attribute of the <body> element to reflect the current locale.
+     * It adds a class based on the current locale and removes any previous locale-specific classes.
+     * This helps in applying locale-specific CSS styles across the application.
+     *
+     * The method constructs a class name prefixed with `lang-` and the current locale (e.g., `lang-en`).
+     * It then filters out any existing classes that start with `lang-` from the <body> element to avoid duplicate or conflicting locale classes.
+     * After filtering, it adds the new locale class to the <body> element.
+     *
+     * Usage:
+     * - This method should be called on component mount and whenever the locale changes.
+     */
+    setBodyLanguageClass() {
+      const currentLocale = `lang-${this.$i18n.locale}`;
+      const bodyClasses = document.body.className.split(' ').filter(c => !c.startsWith('lang-'));
+      bodyClasses.push(currentLocale);
+      document.body.className = bodyClasses.join(' ');
+    },
 
     //―――――――――――――――――――――― Global Dimensions ――――――――――――――――――――
     getBoxSizeDimension() {

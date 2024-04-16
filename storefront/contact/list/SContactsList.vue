@@ -22,19 +22,21 @@
         class="d-flex flex-column min-height-60vh"
         cols="12"
       >
-        <s-data-iterator-toolbar-small
+        <s-data-iterator-toolbar
           v-model:items-per-page="itemsPerPage"
           v-model:search="search"
-          v-model:sort-by="sortBy.key"
-          v-model:sort-desc="sortBy.order"
+          v-model:sort-key="sortBy[0].key"
+          v-model:sort-order="sortBy[0].order"
           :base-items-count="6"
           :color="isSmall ? SaminColorDark : undefined"
           :dark="isSmall"
           :sort-keys="keys"
           class="flex-grow-0"
           style="margin: 0 !important"
+          small
+          dense
         >
-        </s-data-iterator-toolbar-small>
+        </s-data-iterator-toolbar>
 
         <!------------------------------- List ----------------------------------->
 
@@ -48,7 +50,6 @@
           :items-per-page="itemsPerPage"
           :loading="busy_fetch"
           :search="search"
-          :sort-desc="sortDesc"
           class="flex-grow-1"
           hide-default-footer
           no-data-text=""
@@ -296,8 +297,8 @@
 import { SupportCategory } from "@core/enums/support/SupportCategory";
 import URatingEmoji from "@components/ui/rating/emoji/URatingEmoji.vue";
 import SContactConversation from "../conversation/SContactConversation.vue";
-import SDataIteratorToolbarSmall from "@components/ui/toolbar/SDataIteratorToolbarSmall.vue";
 import _ from "lodash-es";
+import SDataIteratorToolbar from "@components/ui/toolbar/SDataIteratorToolbar.vue";
 
 /**
  * <s-contacts-list>
@@ -305,7 +306,7 @@ import _ from "lodash-es";
 export default {
   name: "SContactsList",
   components: {
-    SDataIteratorToolbarSmall,
+    SDataIteratorToolbar,
     SContactConversation,
     URatingEmoji,
   },
@@ -338,7 +339,6 @@ export default {
 
     search: "",
     filter: {},
-    sortDesc: true,
     sortBy: [{ key: null, order: "desc" }],
 
     // Pagination:
