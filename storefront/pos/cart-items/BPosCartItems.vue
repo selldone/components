@@ -63,9 +63,9 @@
                 v-if="!item.product.original"
                 class="m-1 text-uppercase px-2"
                 color="red"
-                pill
+                label density="comfortable"
                 size="x-small"
-                variant="outlined"
+                variant="tonal"
                 >{{ $t("global.commons.fake") }}
               </v-chip>
               <v-chip
