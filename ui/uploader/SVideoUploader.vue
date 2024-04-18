@@ -15,43 +15,51 @@
 <template>
   <div>
     <!-- --------- Compact mode --------- -->
-    <div v-if="on_compact" class="d-flex align-center py-5">
-      <v-avatar class="me-2 border" rounded="lg" size="64">
-        <v-icon size="x-large">smart_display</v-icon>
-      </v-avatar>
-      <div class="flex-grow-1">
+    <v-list-item v-if="on_compact" class="text-start py-5" lines="two">
+      <template v-slot:prepend>
+        <v-avatar class="border" rounded="lg" size="64">
+          <v-icon size="x-large">smart_display</v-icon>
+        </v-avatar>
+      </template>
+      <v-list-item-title>
         <b>{{ label }}</b>
-        <div v-if="video" class="small">{{ video }}</div>
-      </div>
+      </v-list-item-title>
+      <v-list-item-subtitle v-if="video" class="small">{{
+        video
+      }}</v-list-item-subtitle>
 
-      <v-btn
-        v-if="clearable && last_video"
-        class="ms-1"
-        color="red"
-        icon variant="text"
-        title="Clear image"
-        @click.stop="
-          () => {
+      <template v-slot:append>
+        <v-btn
+          v-if="clearable && last_video"
+          class="ms-1"
+          color="red"
+          icon
+          variant="text"
+          title="Clear Video"
+          @click.stop="
+            () => {
+              last_video = null;
+              $emit('onClear');
+            }
+          "
+        >
+          <v-icon>close</v-icon>
+        </v-btn>
+
+        <v-btn
+          title="Edit Video"
+          class="ms-1"
+          icon
+          variant="text"
+          @click="
+            force_edit = !force_edit;
             last_video = null;
-            $emit('onClear');
-          }
-        "
-      >
-        <v-icon>close</v-icon>
-      </v-btn>
-
-      <v-btn
-        :title="$t('global.actions.edit')"
-        class="ms-1"
-        icon variant="text"
-        @click="
-          force_edit = !force_edit;
-          last_video = null;
-        "
-      >
-        <v-icon>edit</v-icon>
-      </v-btn>
-    </div>
+          "
+        >
+          <v-icon>edit</v-icon>
+        </v-btn>
+      </template>
+    </v-list-item>
     <v-expand-transition>
       <div v-if="!on_compact">
         <div class="label-top" v-html="label"></div>

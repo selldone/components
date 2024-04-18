@@ -15,48 +15,62 @@
 <template>
   <div>
     <!-- --------- Compact mode --------- -->
-    <div v-if="on_compact" class="d-flex align-center py-5">
-      <v-avatar class="me-2 border" rounded="lg" size="64">
-        <img
-          :src="image_url"
-          class="pa-1"
-          style="object-fit: cover;height: inherit;width: inherit;border-radius: 0.7em"
-        />
-      </v-avatar>
-      <div class="flex-grow-1">
+    <v-list-item v-if="on_compact" class="text-start py-5" lines="two">
+      <template v-slot:prepend>
+        <v-avatar class="border" rounded="lg" size="64">
+          <img
+            :src="image_url"
+            class="pa-1"
+            style="
+              object-fit: cover;
+              height: inherit;
+              width: inherit;
+              border-radius: 0.7em;
+            "
+          />
+        </v-avatar>
+      </template>
+
+      <v-list-item-title>
         <b>{{ label }}</b>
-      </div>
+      </v-list-item-title>
 
-      <v-btn
-        v-if="clearable && last_image"
-        class="ms-1"
-        color="red"
-        icon
-        title="Clear image"
-        variant="text"
-        @click.stop="
-          () => {
+      <v-list-item-subtitle v-if="image" class="small"
+        >{{ image }}
+      </v-list-item-subtitle>
+
+      <template v-slot:append>
+        <v-btn
+          v-if="clearable && last_image"
+          class="ms-1"
+          color="red"
+          icon
+          title="Clear image"
+          variant="text"
+          @click.stop="
+            () => {
+              last_image = null;
+              $emit('onClear');
+            }
+          "
+        >
+          <v-icon>close</v-icon>
+        </v-btn>
+
+        <v-btn
+          title="Edit image"
+          class="ms-1"
+          icon
+          variant="text"
+          @click="
+            force_edit = !force_edit;
             last_image = null;
-            $emit('onClear');
-          }
-        "
-      >
-        <v-icon>close</v-icon>
-      </v-btn>
-
-      <v-btn
-        :title="$t('global.actions.edit')"
-        class="ms-1"
-        icon
-        variant="text"
-        @click="
-          force_edit = !force_edit;
-          last_image = null;
-        "
-      >
-        <v-icon>edit</v-icon>
-      </v-btn>
-    </div>
+          "
+        >
+          <v-icon>edit</v-icon>
+        </v-btn>
+      </template>
+    </v-list-item>
     <!-- --------- Normal mode --------- -->
 
     <v-expand-transition>
@@ -86,7 +100,7 @@
 
           <v-icon
             v-if="focused && !disablePast"
-            :color="dark?'#fff':'#000'"
+            :color="dark ? '#fff' : '#000'"
             class="fadeIn absolute-top-start"
             size="small"
             style="z-index: 1"
