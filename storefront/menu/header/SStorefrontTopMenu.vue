@@ -97,7 +97,7 @@
           <v-sheet :rounded="tab.rounded" class="shadow-box">
             <v-container
               v-if="tab.type === 'default'"
-              class="py-12 text-start"
+              class="py-4 text-start"
               fluid
             >
               <v-row>
