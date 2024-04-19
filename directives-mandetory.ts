@@ -22,10 +22,12 @@ import TrackDirective from "@components/directives/track/TrackDirective";
 import DynamicScriptDirective from "./directives/script/DynamicScriptDirective";
 import DragScrollDirective from "./directives/dragscroll/DragScrollDirective";
 import { App } from "vue";
+import SizeDirective from "@components/directives/size/SizeDirective";
 
 export function installGlobalDirectives(app: App) {
   app.directive("copy", CopyDirective);
   app.directive("track", TrackDirective);
   app.directive("dynamic-scripts", DynamicScriptDirective);
   app.directive("dragscroll", DragScrollDirective);
+  app.directive("size", SizeDirective);
 }

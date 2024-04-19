@@ -90,7 +90,6 @@
           :open-on-hover="tab.hover"
           :transition="tab.transition"
           :z-index="100"
-          close-delay="0"
           open-delay="0"
           theme="light"
         >

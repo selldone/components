@@ -35,6 +35,8 @@
 @import "selldone/scale";
 @import "selldone/cursor";
 @import "selldone/hover/all";
+@import "selldone/general_animates";
+
 
 @import "../article/Article";
 @import "selldone/pages/pages";
@@ -52,6 +54,8 @@
 @import "selldone/pointer";
 @import "selldone/background";
 @import "dynamic-backgrounds/dynamic-background-layouts";
+
+@import "animation/master-animations";
 
 
 html {
