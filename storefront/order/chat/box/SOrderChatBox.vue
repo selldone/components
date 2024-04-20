@@ -24,8 +24,8 @@
       <v-list-subheader>
         {{
           isAdmin
-            ? "Messages history between you and the customer."
-            : "Messages history between you and the seller."
+            ? $t("global.order_chat.seller.history_title")
+            : $t("global.order_chat.customer.history_title")
         }}
       </v-list-subheader>
       <s-order-chat-message
@@ -49,8 +49,8 @@
       <v-list-subheader>
         {{
           isAdmin
-            ? "Here, you have the ability to directly exchange messages with customers."
-            : "Here, you have the ability to directly communicate with the seller by sending messages."
+            ? $t("global.order_chat.seller.input_message")
+            : $t("global.order_chat.customer.input_message")
         }}
       </v-list-subheader>
 
@@ -71,7 +71,8 @@
         :label="$t('global.commons.message')"
         auto-grow
         bg-color="#fafafa"
-        flat rounded="xl"
+        flat
+        rounded="xl"
         variant="solo-filled"
       ></v-textarea>
 

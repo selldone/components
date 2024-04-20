@@ -14,10 +14,18 @@
 
 <template>
   <span>
-    <v-icon v-if="value > 0" :color="green" :small="small">
+    <v-icon
+      v-if="value > 0"
+      :color="green"
+      :size="size ? size : small ? 'small' : undefined"
+    >
       fa:fas fa-caret-up
     </v-icon>
-    <v-icon v-else-if="value < 0" :color="red" :small="small">
+    <v-icon
+      v-else-if="value < 0"
+      :color="red"
+      :size="size ? size : small ? 'small' : undefined"
+    >
       fa:fas fa-caret-down
     </v-icon>
   </span>
@@ -38,6 +46,7 @@ export default {
     },
     red: { default: "red" },
     green: { default: "green" },
+    size: {},
   },
 };
 </script>
