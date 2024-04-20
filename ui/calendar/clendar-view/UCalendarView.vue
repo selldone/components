@@ -412,7 +412,7 @@ export default {
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .s--calendar-table {
     .-bg {
       right: unset;

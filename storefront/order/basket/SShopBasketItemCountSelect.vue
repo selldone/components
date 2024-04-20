@@ -84,7 +84,7 @@
 
       <template v-if="hasDelete" v-slot:prepend>
         <div
-          :class="{ 'me-2': solo, '-rtl': $vuetify.rtl }"
+          :class="{ 'me-2': solo, '-rtl': $vuetify.locale.isRtl }"
           :style="{ '--delete-width': dense ? '32px' : '48px' }"
           class="delete-button-con"
         >

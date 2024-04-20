@@ -204,7 +204,7 @@
 
       <v-slide-y-reverse-transition
         v-if="$vuetify.display.smAndDown"
-        :style="$vuetify.rtl ? 'flex-direction: row-reverse;' : ''"
+        :style="$vuetify.locale.isRtl ? 'flex-direction: row-reverse;' : ''"
         class="mobile-toolbar"
         group
         tag="v-row"

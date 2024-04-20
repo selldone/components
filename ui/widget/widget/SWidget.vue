@@ -29,7 +29,7 @@
 
     <h5
       v-if="title && typeof title === 'string' && !customHeader"
-      :style="$vuetify.rtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
+      :style="$vuetify.locale.isRtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
       class="title-widget text-start-dir"
     >
       {{ title }}
@@ -37,7 +37,7 @@
 
     <header
       v-if="title && customHeader"
-      :style="$vuetify.rtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
+      :style="$vuetify.locale.isRtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
       class="title-widget"
       v-html="title"
     />
@@ -206,7 +206,7 @@ export default {
   right: 8px;
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .top-left-container {
     right: unset;
     left: 8px;

@@ -14,7 +14,7 @@
 
 <template>
   <div class="s--shop-delivery-state container px-1 px-sm-3">
-    <div :class="{ rtl: $vuetify.rtl }" class="arrows mx-0 mx-sm-2">
+    <div :class="{ rtl: $vuetify.locale.isRtl }" class="arrows mx-0 mx-sm-2">
       <ul>
         <!-- CheckQueue -->
         <li

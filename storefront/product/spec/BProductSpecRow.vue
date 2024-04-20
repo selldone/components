@@ -14,8 +14,8 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <li
-    :class="$vuetify.rtl ? 'text-right' : 'text-left'"
-    :dir="$vuetify.rtl ? 'rtl' : 'ltr'"
+    :class="$vuetify.locale.isRtl ? 'text-right' : 'text-left'"
+    :dir="$vuetify.locale.isRtl ? 'rtl' : 'ltr'"
     style="list-style-type: none"
   >
     <!-- ████████████████████ Group Title ████████████████████ -->

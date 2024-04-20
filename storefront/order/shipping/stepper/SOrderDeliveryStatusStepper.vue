@@ -97,7 +97,7 @@
 
       <div
         v-if="hasSubscription"
-        :class="{ '-rtl': $vuetify.rtl }"
+        :class="{ '-rtl': $vuetify.locale.isRtl }"
         class="top-chain"
       >
         <v-icon class="-ic-1" size="16">shortcut</v-icon>

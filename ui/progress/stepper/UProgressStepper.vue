@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ 'is-rtl': $vuetify.rtl }" class="root">
+  <div :class="{ 'is-rtl': $vuetify.locale.isRtl }" class="root">
     <h3 class="progress-xyz-title">
       {{ title }}
     </h3>

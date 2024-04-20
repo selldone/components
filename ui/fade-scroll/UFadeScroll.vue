@@ -18,8 +18,8 @@
     :style="{
       '--top': fadeTop,
       '--bottom': fadeBottom,
-      '--left': $vuetify.rtl ? fadeRight : fadeLeft,
-      '--right': $vuetify.rtl ? fadeLeft : fadeRight,
+      '--left': $vuetify.locale.isRtl ? fadeRight : fadeLeft,
+      '--right': $vuetify.locale.isRtl ? fadeLeft : fadeRight,
       '--background':bgColor
     }"
     class="s-fade-scroll"
@@ -133,7 +133,7 @@ export default {
         if (this.scrollToTheNextChild()) return;
       }
       this.$refs.scroll.scrollBy({
-        left: (this.$vuetify.rtl ? -1 : 1) * Math.min(window.innerWidth, 1600),
+        left: (this.$vuetify.locale.isRtl ? -1 : 1) * Math.min(window.innerWidth, 1600),
         behavior: "smooth",
       });
     },
@@ -143,7 +143,7 @@ export default {
       }
 
       this.$refs.scroll.scrollBy({
-        left: (this.$vuetify.rtl ? 1 : -1) * Math.min(window.innerWidth, 1600),
+        left: (this.$vuetify.locale.isRtl ? 1 : -1) * Math.min(window.innerWidth, 1600),
         behavior: "smooth",
       });
     },
@@ -158,7 +158,7 @@ export default {
       items.some((item, index) => {
         const itemRect = item.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        if (this.$vuetify.rtl) {
+        if (this.$vuetify.locale.isRtl) {
           if (itemRect.left < containerRect.left) {
             nextItem = item;
             return true;
@@ -194,7 +194,7 @@ export default {
       items.some((item, index) => {
         const itemRect = item.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        if (this.$vuetify.rtl) {
+        if (this.$vuetify.locale.isRtl) {
           if (itemRect.right > containerRect.right + containerRect.width) {
             previousItem = items[index - 1];
             return true;

@@ -35,7 +35,7 @@
     <!-- ███████████████████ Products & Categories List ███████████████████ -->
     <div
       :class="{
-        rtl: $vuetify.rtl,
+        rtl: $vuetify.locale.isRtl,
         'position-relative':
           parent_folders?.page /*Only in custom page mode! otherwise menu should fill top to bottom of window.*/,
       }"
@@ -106,7 +106,7 @@
             <div style="min-width: 100px; height: 1px"></div>
             <v-btn
               v-if="has_filter"
-              :style="$vuetify.rtl ? 'left: 0' : 'right: 0'"
+              :style="$vuetify.locale.isRtl ? 'left: 0' : 'right: 0'"
               absolute
               class="border-start position-absolute bg-white"
               height="46px"

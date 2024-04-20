@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ rtl: $vuetify.rtl }">
+  <div :class="{ rtl: $vuetify.locale.isRtl }">
     <p
       v-if="editMode || (faqs && faqs.length)"
       :data-content="$t('global.commons.faq')"

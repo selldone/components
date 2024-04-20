@@ -333,7 +333,7 @@ export default {
         },
         legend: {
           position: "bottom",
-          horizontalAlign: this.$vuetify.rtl ? "right" : "left",
+          horizontalAlign: this.$vuetify.locale.isRtl ? "right" : "left",
         },
         xaxis: {
           type: "datetime",

@@ -1284,7 +1284,7 @@ export default {
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .offer-top-end {
     right: unset;
     left: 0;
@@ -1332,7 +1332,7 @@ export default {
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .top-title {
     &.has-discount-banner {
       padding-left: unset;
@@ -1356,7 +1356,7 @@ export default {
   }*/
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .count-down-bg {
     right: -4px;
     left: unset;

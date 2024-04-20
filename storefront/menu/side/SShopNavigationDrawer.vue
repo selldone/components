@@ -14,7 +14,7 @@
 
 <template>
   <v-navigation-drawer
-    :location="$vuetify.rtl && 'right'"
+    :location="$vuetify.locale.isRtl && 'right'"
     :model-value="modelValue"
     class="text-start pt-5"
     style="border-radius: 24px; margin: 8px; height: calc(100vh - 100px)"

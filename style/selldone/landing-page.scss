@@ -362,7 +362,7 @@
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .quote-block {
     &:before {
       content: "❞";
@@ -407,7 +407,7 @@
 //----------------------------------- RTL MODE ----------------------------------
 
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .landing-page {
     .info-box-top-end {
       margin-left: unset;

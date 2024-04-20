@@ -61,7 +61,7 @@
   float: left !important
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .float-start {
     float: right !important
   }
@@ -71,7 +71,7 @@
   float: right !important
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .float-end {
     float: left !important
   }
@@ -169,7 +169,7 @@
 }
 
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
 
   .border-end {
     border-right: unset !important;

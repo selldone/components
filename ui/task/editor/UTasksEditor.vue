@@ -66,7 +66,7 @@
         <v-progress-linear
           v-model="element.progress"
           :class="{ 'pointer-event-none': viewOnlyProgress }"
-          :reverse="$vuetify.rtl"
+          :reverse="$vuetify.locale.isRtl"
           bg-color="#eee"
           class="pointer-pointer my-2"
           color="blue"

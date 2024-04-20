@@ -132,7 +132,7 @@
           <div v-if="show_heat">
             <v-btn-toggle
               v-model="heatmap_filter"
-              :style="{ direction: $vuetify.rtl ? 'rtl' : 'ltr' }"
+              :style="{ direction: $vuetify.locale.isRtl ? 'rtl' : 'ltr' }"
               class="fadeIn widget-toggle"
               mandatory
               multiple

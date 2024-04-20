@@ -371,7 +371,7 @@
 
     <v-navigation-drawer
       v-model="show_basket"
-      :location="!$vuetify.rtl ? 'right' : undefined"
+      :location="!$vuetify.locale.isRtl ? 'right' : undefined"
       :width="$vuetify.display.mdAndUp ? 640 : 360"
       class="s--storefront-primary-header-basket-navigation"
       color="#fff"

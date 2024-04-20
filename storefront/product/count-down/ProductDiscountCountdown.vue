@@ -68,7 +68,7 @@ export default {
   transform: scaleX(-1);
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .count-down-bg {
     right: -10px;
     left: unset;

@@ -308,7 +308,7 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-:not(.v-application--is-rtl) {
+:not(.v-locale--is-rtl) {
   .icon-only-cur {
     .v-input__control {
       .v-select__slot {
@@ -324,7 +324,7 @@ export default {
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .icon-only-cur {
     .v-input__control {
       .v-select__slot {

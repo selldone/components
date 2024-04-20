@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-sheet
     v-if="!disabled"
-    :class="{ '-dark': dark, '-rtl': $vuetify.rtl }"
+    :class="{ '-dark': dark, '-rtl': $vuetify.locale.isRtl }"
     :color="dark ? SaminColorDarkDeep : '#fff'"
     :dark="dark"
     class="s--storefront-primary-footer"

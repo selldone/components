@@ -323,7 +323,7 @@ export default {
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .tasks {
     .-item {
       &:before {

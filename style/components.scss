@@ -129,7 +129,7 @@ body{
   }
 
 
-    .text-h4, .text-h3, .text-h2, .text-h1 {
+    .text-h4, .text-h3, .text-h2, .text-h1,.text-subtitle-1,.text-subtitle-2 {
       font-family: var(--font) !important;
     }
 
@@ -165,11 +165,11 @@ body{
     direction: ltr;
   }
 
-  &:not(.v-application--is-rtl) {
+  &:not(.v-locale--is-rtl) {
     font-family: var(--font);
   }
 
-  &.v-application--is-rtl {
+  &.v-locale--is-rtl {
 
     font-family: var(--font) !important;
 
@@ -3126,7 +3126,7 @@ Fix snaky chart overflow problem!
 }
 
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .editable-click {
     &:hover {
       &:after {
@@ -3216,7 +3216,7 @@ Fix snaky chart overflow problem!
   text-align: left;
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .text-start-dir {
     text-align: right;
   }
@@ -3417,7 +3417,7 @@ Fix snaky chart overflow problem!
   margin-left: 5vw;
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .margin-start-5vw {
     margin-right: 5vw;
     margin-left: unset;
@@ -3429,7 +3429,7 @@ Fix snaky chart overflow problem!
   border-right: dashed thin #ccc;
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .border-between {
     > :not(:last-child) {
       border-right: none;
@@ -3489,7 +3489,7 @@ Fix snaky chart overflow problem!
   transform: rotate(90deg);
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .rotate-90-s {
     transform: rotate(90deg);
   }
@@ -3935,7 +3935,7 @@ Fix snaky chart overflow problem!
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .border-start {
     &-red {
       box-shadow: inset -8px 0 0 0 #D32F2F;
@@ -3984,7 +3984,7 @@ Fix snaky chart overflow problem!
   padding: 1px;
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .sup-icon {
     right: -10px;
     left: unset;

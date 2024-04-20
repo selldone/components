@@ -43,7 +43,7 @@
   }
 }*/
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .v-card__title, .v-tab {
     letter-spacing: normal !important;
   }
@@ -121,7 +121,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   min-width: max-content;
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .rounded-group {
     /*  flex-direction: row-reverse !important; FIXED!
       -webkit-flex-direction: row-reverse;
@@ -144,7 +144,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 }
 
 //-------------------------------------------------------------------------------------------------------
-.v-application--is-rtl {
+.v-locale--is-rtl {
   // Calendar: (Week & Day bug in RTL)
 
   .v-calendar-daily__head {
@@ -371,7 +371,7 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .icon-side {
     left: unset;
     right: 0;

@@ -100,7 +100,7 @@ export default {
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .circles-container {
     .citm {
       &:not(:first-child) {

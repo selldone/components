@@ -305,7 +305,7 @@ export default {
       return this.theme?.light_filter;
     },
     right() {
-      return this.$vuetify.rtl;
+      return this.$vuetify.locale.isRtl;
     },
 
     max_price() {

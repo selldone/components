@@ -85,7 +85,7 @@
         <v-menu
           activator="parent"
           v-model="visibles[index]"
-          :location="$vuetify.rtl && 'left'"
+          :location="$vuetify.locale.isRtl && 'left'"
 
           :open-on-hover="tab.hover"
           :transition="tab.transition"

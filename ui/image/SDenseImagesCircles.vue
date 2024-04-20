@@ -35,14 +35,14 @@
       />
     </v-avatar>
 
-    <span v-if="more_items > 0" class="more-items">
+    <span v-if="more_items > 0" class="more-items ms-2">
       <v-icon size="small">more_horiz</v-icon>
       (+{{ more_items }})
     </span>
 
     <v-btn
       v-if="add"
-      class="more-items"
+      class="more-items ms-2"
       color="success"
       icon
       variant="flat"
@@ -117,7 +117,6 @@ export default {
   }
 
   .more-items {
-    margin-left: 8px;
     font-size: 10px;
     font-weight: 600;
     color: #999;
@@ -126,7 +125,7 @@ export default {
   }
 }
 
-.v-application--is-rtl {
+.v-locale--is-rtl {
   .circles-container {
     .citm {
       &:not(:first-child) {
@@ -146,8 +145,6 @@ export default {
     }
 
     .more-items {
-      margin-left: unset;
-      margin-right: 8px;
     }
   }
 }
