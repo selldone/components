@@ -41,7 +41,6 @@
       :loading="busy"
       class="s--shop-subscription-button"
       color="#D32F2F"
-      dark
       min-width="220"
       rounded
       v-bind="

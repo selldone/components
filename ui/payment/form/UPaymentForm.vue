@@ -408,9 +408,9 @@
                       :loading="busy_paypal_submit"
                       block
                       class="mt-3"
-                      color="#0061e0"
+                      color="#000"
                       size="x-large"
-                      variant="flat"
+                      variant="elevated"
                       @click="PayPalSubmit"
                     >
                       {{ $t("global.actions.pay") }}
@@ -429,7 +429,7 @@
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Select Gateway ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
         <v-slide-y-reverse-transition hide-on-leave>
-          <div v-if="total_amount_remain_for_pay > 0 || isSelldoneSubscription">
+          <div v-if="total_amount_remain_for_pay > 0 || isSelldoneSubscription" class="pb-8">
             <p class="small text-start border-top-dashed pt-2 mb-2 mt-2">
               {{
                 isBraintree
@@ -504,6 +504,7 @@
               !isFree &&
               !isSelldoneSubscription
             "
+            class="pb-8"
           >
             <p class="mt-2 mb-5 small">
               {{ $t("global.payment_form.all_paid_by_gift_cards") }}
