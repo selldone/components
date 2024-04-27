@@ -34,14 +34,14 @@
         :color="id.toString().startsWith('c-') ? 'amber' : '#ffffffbb'"
         :size="size"
       >
-        <img
+        <v-img
           v-if="!rawImagesPath && id.toString().startsWith('c-')"
           :src="
             getCategoryIcon(id.toString().replace('c-', ''), IMAGE_SIZE_SMALL)
           "
           style="padding: 2px"
         />
-        <img
+        <v-img
           v-else
           :src="
             rawImagesPath
@@ -60,8 +60,6 @@
       :style="{ width: size + 'px', height: size + 'px' }"
       class="citm"
       color="primary"
-      dark
-      fab
       variant="flat"
       @click="$emit('click:add')"
     >

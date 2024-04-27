@@ -27,6 +27,13 @@
     --margin-h3: 0;
   }
 
+  &.-single-line, &.-single-line p, &.-single-line h1, &.-single-line h2, &.-single-line h3{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+  }
+
   .chip-user {
     direction: ltr;
     user-select: text;
