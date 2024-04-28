@@ -17,8 +17,9 @@
     v-if="!disabled"
     :class="{ '-dark': dark, '-rtl': $vuetify.locale.isRtl }"
     :color="dark ? SaminColorDarkDeep : '#fff'"
-    :dark="dark"
+    :theme="dark?'dark':'light'"
     class="s--storefront-primary-footer"
+    :style="{'--color-link': dark ? '#fff' : '#000','--color-hover-bg': dark ? '#00000033' : '#fafafa'}"
   >
     <v-container style="max-width: 1520px">
       <!--- ================= Info ================= --->
@@ -606,11 +607,11 @@ export default {
       transition: all 0.45s;
       padding: 3px 8px;
 
-      color: #333;
+      color: var(--color-link);
       //  font-size: 0.8rem;
 
       &:hover {
-        background-color: #fafafa;
+        background-color: var(--color-hover-bg);
         border-radius: 8px;
         font-size: 1.25rem;
       }
