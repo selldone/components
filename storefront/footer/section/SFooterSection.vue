@@ -531,7 +531,6 @@ export default {
   color: #fff;
   min-height: 240px;
   //padding-top: 0px;
-  margin-top: 24px;
   padding-bottom: 38px;
   padding-top: 12px;
 
