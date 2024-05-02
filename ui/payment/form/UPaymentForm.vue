@@ -69,7 +69,7 @@
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Loading View ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
-    <div v-if="busy" class="py-8 text-muted">
+    <div v-if="busy" class="py-8 text-muted text-center">
       <u-loading-progress></u-loading-progress>
 
       <b class="d-block text-success mb-1">

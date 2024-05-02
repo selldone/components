@@ -65,7 +65,7 @@
 
     <v-progress-circular
       v-if="loading_form"
-      class="m-3"
+      class="my-5 mx-auto d-block"
       indeterminate
       size="48"
     ></v-progress-circular>

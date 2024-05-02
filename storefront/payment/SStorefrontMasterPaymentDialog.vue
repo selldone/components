@@ -91,7 +91,7 @@
       >
         <v-icon>close</v-icon>
       </v-btn>
-      <div class="widget rounded-18px p-5 min-width-200">
+      <div class="widget rounded-18px p-5 min-width-200 text-center">
         <u-loading-ellipsis css-mode light></u-loading-ellipsis>
         {{ $t("global.commons.waiting_connecting_payment") }}
       </div>
