@@ -18,8 +18,13 @@
   .text-h4, .text-h3, .text-h2, .text-h1 {
     letter-spacing: -.018em !important;
   }
+
+
 }
 
+.v-table{
+  --v-table-row-height: auto; // Auto set height for table rows
+}
 
 .is-mobile {
   // Solve bottom navigation overlap bug:

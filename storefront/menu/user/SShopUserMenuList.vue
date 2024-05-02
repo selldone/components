@@ -17,7 +17,7 @@
     :density="$vuetify.display.smAndUp ? 'compact' : undefined"
     class="s--shop-user-menu-list py-0"
     bg-color="#fff"
-    rounded="xl"
+    :rounded="navigation?undefined:'xl'"
   >
     <v-list-item
       :to="{
@@ -231,7 +231,6 @@ export default {
  */
 .s--shop-user-menu-list {
   text-align: start;
-  margin: 8px 16px;
   .v-divider{
     opacity: 1;
     border-color: #f8f8f8;

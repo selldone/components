@@ -16,7 +16,7 @@
   <!-- ========================== Payment Methods ========================== -->
 
   <v-card
-    class="overflow-hidden"
+    class="overflow-hidden text-start"
     rounded="0"
     style="
       position: relative;
@@ -29,7 +29,7 @@
     <v-toolbar v-if="!busy && !qrCode" color="transparent" flat>
       <u-currency-icon :currency="currency" gradient></u-currency-icon>
 
-      <v-toolbar-title class="body-title px-3">
+      <div class="body-title px-3">
         {{ $t("global.payment_form.title") }}
         <b v-if="currency"
           >| {{ currency.code }}
@@ -48,7 +48,7 @@
           @end="$emit('close')"
         >
         </u-time-laps>
-      </v-toolbar-title>
+      </div>
 
       <v-spacer />
 

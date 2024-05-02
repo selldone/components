@@ -49,7 +49,7 @@
           variant="outlined"
         />
 
-        <p>
+        <p class="my-3">
           <i class="fas fa-info-circle text-primary" />
           {{ $t("user_gift_cards.add_card_dialog.info") }}
         </p>

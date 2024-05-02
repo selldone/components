@@ -159,8 +159,6 @@
 <script>
 import UProgressScore from "@components/ui/progress/score/UProgressScore.vue";
 
-import "vue-select-image/dist/vue-select-image.css";
-
 export default {
   name: "ArticleEdit",
 

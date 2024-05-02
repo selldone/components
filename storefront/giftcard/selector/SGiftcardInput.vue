@@ -26,8 +26,10 @@
     prepend-inner-icon="card_giftcard"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <template v-slot:append>
-      <v-btn icon variant="text" @click.stop="dialog = true">
+    <template v-slot:append-inner>
+      <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
+
+      <v-btn icon variant="text" @click.prevent="dialog = true">
         <v-icon>add_box</v-icon>
         <v-tooltip
           activator="parent"
@@ -98,10 +100,6 @@
           ></u-price>
         </template>
       </v-list-item>
-    </template>
-
-    <template v-slot:append-inner>
-      <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
     </template>
   </v-select>
 </template>

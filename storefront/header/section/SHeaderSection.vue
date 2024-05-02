@@ -238,6 +238,7 @@
                     v-if="shop"
                     :shop="shop"
                     @click:logout="logout()"
+                    class="mx-4 my-2"
                   ></s-shop-user-menu-list>
 
                   <!-- ―――――――――― Extra links ―――――――――― -->

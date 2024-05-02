@@ -14,12 +14,17 @@
 
 <template>
   <v-navigation-drawer
-    :location="$vuetify.locale.isRtl && 'right'"
+    location="start"
     :model-value="modelValue"
-    class="text-start pt-5"
-    style="border-radius: 24px; margin: 8px; height: calc(100vh - 100px)"
+    class="text-start pt-5 overflow-hidden t-all-400"
+    style="
+      border-radius: 24px;
+      height: calc(100vh - 100px);
+      max-width: 90vw;
+    "
     temporary
-    width="90vw"
+    :width="420"
+    :class="{'ma-2':modelValue}"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <div class="s--shop-navigation-drawer">
@@ -69,11 +74,20 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn color="#000" icon @click="$emit('update:modelValue', false)">
+        <v-btn
+          color="#000"
+          icon
+          variant="text"
+          @click="$emit('update:modelValue', false)"
+        >
           <v-icon>close</v-icon>
         </v-btn>
       </div>
-      <v-expansion-panels class="border-between-vertical" flat>
+      <v-expansion-panels
+        class="border-between-vertical"
+        variant="accordion"
+        flat
+      >
         <!-- ――――――――――――――――――――― Shop User Menu List ――――――――――――――――――――― -->
 
         <v-expansion-panel v-if="USER()" class="py-4">
@@ -104,10 +118,10 @@
             <v-list-item>
               <v-btn
                 :loading="busy_logout"
-                class="tnt"
-                color="#333"
+                class="tnt mt-3"
+                color="#000"
                 size="large"
-                variant="outlined"
+                variant="flat"
                 @click="
                   busy_logout = true;
                   Logout(() => (busy_logout = false));
@@ -157,7 +171,7 @@
           </v-list-item>
 
           <v-expansion-panel v-else :key="'m-' + index">
-            <v-expansion-panel-title class="p-0 pe-3">
+            <v-expansion-panel-title class="pa-0 pe-3">
               <v-list-item :href="tab.link" text>
                 <v-list-item-title>
                   {{ tab.title }}
@@ -205,28 +219,24 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
         </template>
-
-
       </v-expansion-panels>
-
 
       <div class="pt-16 border-between-vertical">
         <!-- ――――――――――――――――――――― Footer Menu ――――――――――――――――――――― -->
 
         <v-list-item
-            v-for="(item, i) in menu"
-            :key="'f-' + i"
-            :to="item.to"
-            active-class="bg-primary text-white"
-            exact
+          v-for="(item, i) in menu"
+          :key="'f-' + i"
+          :to="item.to"
+          active-class="bg-primary text-white"
+          exact
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
           <template v-slot:append v-if="item.src"
-          ><img :src="item.src" height="24" width="24"
+            ><img :src="item.src" height="24" width="24"
           /></template>
         </v-list-item>
       </div>
-
 
       <!-- ――――――――――――――――――――― Social links ――――――――――――――――――――― -->
       <v-spacer></v-spacer>
