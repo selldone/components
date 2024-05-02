@@ -429,7 +429,7 @@
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Select Gateway ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
         <v-slide-y-reverse-transition hide-on-leave>
-          <div v-if="total_amount_remain_for_pay > 0 || isSelldoneSubscription" class="pb-8">
+          <div v-if="total_amount_remain_for_pay > 0 || isSelldoneSubscription" class="pb-12">
             <p class="small text-start border-top-dashed pt-2 mb-2 mt-2">
               {{
                 isBraintree
@@ -504,7 +504,7 @@
               !isFree &&
               !isSelldoneSubscription
             "
-            class="pb-8"
+            class="pb-12"
           >
             <p class="mt-2 mb-5 small">
               {{ $t("global.payment_form.all_paid_by_gift_cards") }}

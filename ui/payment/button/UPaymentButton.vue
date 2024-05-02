@@ -124,11 +124,11 @@ export default {
   --scale-factor: 1;
 
   &.-small {
-    --width: 280px;
+    --width: 320px;
     --height: 70px;
     --width-hover: 80px;
     --left-side-w: 65px;
-    --font-size: 100%;
+    --font-size: 14px;
     --post-top: 90px;
     --scale-factor: 2;
   }
@@ -141,6 +141,9 @@ export default {
   border-radius: 18px;
   transition: 0.3s ease-in-out;
   line-height: normal;
+  max-width: 100%;
+  text-align: start;
+
 
   &:before {
     width: var(--width);
@@ -238,14 +241,14 @@ export default {
 
 @media only screen and (max-width: 480px) {
   .container-btn {
-    transform: scale(0.7);
+    transform: scale(0.9);
 
     &:hover {
-      transform: scale(0.74);
+      transform: scale(0.94);
     }
   }
   .-right-side-container {
-    font-size: 18px;
+    font-size: 14px;
   }
 }
 

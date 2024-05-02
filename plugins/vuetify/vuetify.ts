@@ -25,13 +25,11 @@ import "@fortawesome/fontawesome-free/css/all.css"; // Ensure your project is ca
 import {fa} from "vuetify/iconsets/fa";
 import {createVueI18nAdapter} from "vuetify/locale/adapters/vue-i18n";
 import {I18n, useI18n} from "vue-i18n";
-import {VEmptyState} from "vuetify/labs/VEmptyState";
-import { VTreeview } from 'vuetify/labs/VTreeview'
+import {VTreeview} from "vuetify/labs/VTreeview";
 // Define the Vuetify options.
 const vuetifyOptions: VuetifyOptions = {
-  components:{
+  components: {
     ...components,
-    VEmptyState,
     VTreeview,
   },
   directives,

@@ -85,8 +85,8 @@
     <div v-if="redirect_loading" class="blocking-dialog">
       <v-btn
         class="absolute-top-end"
-        dark
         icon
+        variant="text"
         @click="redirect_loading = false"
       >
         <v-icon>close</v-icon>
@@ -230,6 +230,9 @@ export default {
   watch: {
     "$store.getters.getPendingTransactions"() {
       this.getPaymentQue();
+    },
+    showSelectGateway(show) {
+      this.$store.commit("setForceHideNavigation", show);
     },
   },
 
