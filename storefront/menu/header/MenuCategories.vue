@@ -40,15 +40,13 @@
                   @mouseenter="selected_category = cat"
                 >
                   <v-avatar
-                      v-if="cat.icon"
-                      class="hover-scale force-top me-2"
-                      size="24"
+                    v-if="cat.icon"
+                    class="hover-scale force-top me-2"
+                    size="24"
                   >
                     <img :src="getShopImagePath(cat.icon, 64)" />
                   </v-avatar>
                   <span>{{ cat.title }}</span>
-
-
                 </router-link>
                 <v-expansion-panels flat>
                   <v-expansion-panel
@@ -105,8 +103,6 @@
                         <v-list-item-title>
                           {{ $t("global.actions.view_all") }}
                         </v-list-item-title>
-
-
                       </v-list-item>
                     </v-expansion-panel-text>
                   </v-expansion-panel>
@@ -159,8 +155,6 @@
                   <v-list-item-title class="parent-cat text-capitalize">
                     {{ $t("global.actions.view_all") }}
                   </v-list-item-title>
-
-
                 </v-list-item>
               </div>
             </v-col>
@@ -212,6 +206,7 @@
                 :src="getShopImagePath(cat.icon)"
                 class="cat-hover"
                 content-class="d-flex flex-column"
+                cover
               >
                 <v-spacer></v-spacer>
                 <div
