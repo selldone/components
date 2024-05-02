@@ -22,8 +22,11 @@
 
 }
 
-.v-table{
-  --v-table-row-height: auto; // Auto set height for table rows
+.v-data-table{
+
+  @media (max-width: 1280px) {
+    --v-table-row-height: auto; // Auto set height for table rows
+  }
 }
 
 .is-mobile {
