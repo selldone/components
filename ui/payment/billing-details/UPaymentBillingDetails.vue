@@ -61,13 +61,17 @@
     </p>
 
     <!-- Payment receipt in direct payment mode -->
-    <v-img
-      v-if="payment_receipt"
-      :src="getShopImagePath(payment_receipt)"
-      class="pointer-zoom-in rounded-2rem my-1 mx-auto"
-      width="120"
-      @click="showFullscreen"
-    ></v-img>
+    <div v-if="payment_receipt" class="text-center">
+      <div class="d-inline-block my-2 pa-1 border rounded-lg hover-scale-small">
+        <v-img
+          :src="getShopImagePath(payment_receipt)"
+          class="pointer-zoom-in mx-auto border"
+          width="120"
+          @click="showFullscreen"
+          rounded="lg"
+        ></v-img>
+      </div>
+    </div>
   </div>
 </template>
 
