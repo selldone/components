@@ -14,7 +14,6 @@
 
 <template>
   <v-menu
-    :bottom="bottom"
     :disabled="!auto_complete_address"
     :model-value="
       auto_complete_address /*Disable after user click on an item*/ &&
@@ -23,8 +22,7 @@
       search_results.length
     "
     :top="top"
-    max-height="40vh"
-    variant="underlined"
+    :location="top?'top':bottom?'bottom':undefined"
     @update:model-value="(val) => (suggestion_menu = val)"
   >
     <template v-slot:activator="{ props }">
@@ -64,6 +62,7 @@
       lines="two"
       rounded="xl"
       style="line-height: 1.5em"
+      class="border-between-vertical -dashed"
     >
       <v-list-item
         v-for="(item, index) in search_results"
@@ -75,7 +74,7 @@
           $emit('select:address', item);
         "
       >
-        <b class="me-2 small font-weight-bold text-muted">
+        <b class="me-2 small">
           <flag
             v-if="item.country"
             :iso="item.country"
@@ -195,7 +194,7 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.search_results = data.list;
-            this.suggestion_menu = this.hide ? false : true;
+            this.suggestion_menu = !this.hide;
           } else {
             this.showErrorAlert(null, data.error_msg);
           }
