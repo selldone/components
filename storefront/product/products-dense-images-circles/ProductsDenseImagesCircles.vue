@@ -21,7 +21,7 @@
     <v-avatar
       v-for="(id, index) in ids.limit(maxCount)"
       :key="id + '-' + index"
-      :class="{ 'pointer-pointer': link, 'big-scale': bigScale }"
+      :class="{ 'pointer-pointer': link, 'big-scale': bigScale,border:border }"
       :color="id.toString().startsWith('c-') ? 'amber' : '#ffffffbb'"
       :size="size"
       class="citm"
@@ -101,6 +101,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    border:Boolean
   },
 };
 </script>
