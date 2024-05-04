@@ -223,7 +223,7 @@
         v-if="person || service"
         class="ms-1 me-2"
         height="12"
-        src="../../../assets/icons/wire.svg"
+        src="@components/assets/icons/wire.svg"
         width="12"
       />
 
@@ -253,7 +253,7 @@
         v-if="person || service"
         class="me-1"
         height="12"
-        src="../../../assets/icons/wire.svg"
+        src="@components/assets/icons/wire.svg"
         width="12"
       />
 
