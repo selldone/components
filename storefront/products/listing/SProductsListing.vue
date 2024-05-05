@@ -26,7 +26,7 @@
   >
     <!-- ████████████████████ Custom Page ███████████████████ -->
     <LPageViewer
-      v-if="parent_folders?.page"
+      v-if="parent_folders?.page?.content "
       :augment="parent_folders.augment"
       :initialPageData="parent_folders.page.content"
       :style="parent_folders.page.background"
@@ -63,7 +63,7 @@
               "
               :hierarchy-items="hierarchy_items"
               class="flex-grow-1"
-              style="max-width: inherit;transition: all 0.5s ease;"
+              style="max-width: inherit; transition: all 0.5s ease"
             />
           </div>
         </v-expand-transition>
@@ -86,7 +86,7 @@
             :has-view-mode="!freeMode /*Don't show view modes in map view!*/"
             :mandatory="false"
             class="w-100 overflow-x-auto"
-            style="transition: all 0.5s ease;"
+            style="transition: all 0.5s ease"
           >
             <!-- ............................ Categories > Small screen ............................ -->
             <v-btn
@@ -309,10 +309,7 @@
         max-height="90vh"
         width="98vw"
       >
-        <v-card
-          class="position-relative"
-          rounded="t-xl"
-        >
+        <v-card class="position-relative" rounded="t-xl">
           <v-card-text class="pt-5 thin-scroll">
             <s-product-overview-loading
               v-if="busy_fetch_product && !selected_product"
@@ -331,7 +328,8 @@
             </template>
             <v-btn
               class="absolute-top-end z1"
-              icon variant="text"
+              icon
+              variant="text"
               size="large"
               @click="quick_buy = false"
             >
@@ -372,12 +370,14 @@ import UBreadcrumb from "@components/ui/breadcrumb/UBreadcrumb.vue";
 import SProductOverviewLoading from "@components/storefront/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@core/enums/shop/ModeView";
 import _ from "lodash-es";
-//import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
+import {defineAsyncComponent} from "vue";
 
 export default {
   name: "SProductsListing",
   components: {
-    LPageViewer: () => import("@app-page-builder/page/viewer/LPageViewer.vue"),
+    LPageViewer: defineAsyncComponent(() =>
+        import('@app-page-builder/page/viewer/LPageViewer.vue')
+    ),
     SProductOverviewLoading,
     UBreadcrumb,
     BProductSpecTable,
@@ -616,8 +616,7 @@ export default {
         return "v-col-6 v-col-sm-4 v-col-md-3 v-col-lg-2 pa-2";
       else if (this.mode_view.code === ModeView.LIST.code)
         return "v-col-12 v-col-lg-6 pa-0";
-      else if (this.mode_view.code === ModeView.INSTA.code)
-        return "insta-prod";
+      else if (this.mode_view.code === ModeView.INSTA.code) return "insta-prod";
 
       return "";
     },
@@ -1012,7 +1011,7 @@ export default {
           ? 256
           : 0);
 
-      let width = Math.floor(Math.min(real_w / 3, 200))-1;
+      let width = Math.floor(Math.min(real_w / 3, 200)) - 1;
 
       //   console.log('onResize',width)
       this.insta_size = `${width}px`;

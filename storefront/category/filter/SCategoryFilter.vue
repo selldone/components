@@ -189,7 +189,9 @@
           <v-btn
             v-if="selected_variants[item.code + 's']"
             :title="`Reset filter: ${$t(item.name)}`"
-            icon variant="text" size="small"
+            icon
+            variant="text"
+            size="small"
             @click="selected_variants[item.code + 's'] = []"
           >
             <v-icon>close</v-icon>
@@ -218,7 +220,9 @@
           <v-btn
             v-if="selected_spec[item]"
             :title="`Reset filter: ${$t(item)}`"
-            icon variant="text" size="small"
+            icon
+            variant="text"
+            size="small"
             @click="selected_spec[item] = []"
           >
             <v-icon>close</v-icon>
@@ -676,7 +680,8 @@ export default {
     },
 
     updateHeight() {
-      this.cal_height = this.$refs.list_container.clientHeight;
+      this.cal_height = this.$refs.list_container?.clientHeight;
+      if (!this.cal_height) return;
       this.$emit("change-height", this.cal_height);
       console.debug("Filter menu height", this.cal_height);
     },
