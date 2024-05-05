@@ -43,18 +43,18 @@
     <div
       :style="{ backgroundImage: bg }"
       class="absolute-bottom-end rounded-ts-circle h-auto w-auto pa-1 ma-n1"
-      style="background-size: 300% 300%;line-height: 0"
+      style="background-size: 300% 300%; line-height: 0"
     >
       <v-img
         v-if="sideImage"
         :src="sideImage"
-        :height="side_size/(smallSideIcon?2:1)"
-        :width="side_size/(smallSideIcon?2:1)"
+        :height="side_size / (smallSideIcon ? 2 : 1)"
+        :width="side_size / (smallSideIcon ? 2 : 1)"
         :class="{
           'rounded rounded-ts-circle rounded-be-circle': side_image_rounded,
         }"
       ></v-img>
-      <v-icon v-else color="#fff" :size="side_size/(smallSideIcon?2:1)">
+      <v-icon v-else color="#fff" :size="side_size / (smallSideIcon ? 2 : 1)">
         {{ sideIcon }}
       </v-icon>
     </div>
@@ -94,6 +94,8 @@ export default defineComponent({
     isRed: Boolean,
     isPink: Boolean,
     isGray: Boolean,
+    isGreen: Boolean,
+
     size: {
       default: 62,
       type: Number,
@@ -106,7 +108,7 @@ export default defineComponent({
       default: "devices_fold",
     },
     sideImage: {},
-    smallSideIcon:Boolean,
+    smallSideIcon: Boolean,
 
     caption: {},
     loading: Boolean,
@@ -143,7 +145,9 @@ export default defineComponent({
               ? "#E91E63"
               : this.isGray
                 ? "#ddd"
-                : "#000";
+                : this.isGreen
+                  ? "#4CAF50"
+                  : "#000";
     },
     color2() {
       return this.isAmber
@@ -156,7 +160,9 @@ export default defineComponent({
               ? "#C2185B"
               : this.isGray
                 ? "#eee"
-                : "#000";
+                : this.isGreen
+                  ? "#388E3C"
+                  : "#000";
     },
   },
 });

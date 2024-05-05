@@ -114,7 +114,8 @@
         "
         auto-compact
         class="mt-2"
-        max-file-size="2MB"
+        max-file-size="16MB"
+        allow-image-transform
         @new-path="
           (path) => {
             transaction.billing_details = { receipt: path };
