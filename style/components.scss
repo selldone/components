@@ -4835,6 +4835,8 @@ canvas.heatmap-canvas {
   --bapp-size: 90px;
   font-family: sans-serif;
   font-weight: 900;
+
+
   @media only screen and (max-width: 992px) {
     --bapp-size: 64px;
   }
@@ -4851,7 +4853,11 @@ canvas.heatmap-canvas {
   align-items: center;
   justify-content: center;
   border-radius: 20%;
-  background: #fafafa;
+  background: rgba(250, 250, 250, 0.78);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2),   /* Drop shadow */
+  inset 0 0 15px rgba(255, 255, 255, 0.5);  /* Inner white glow */
+  // border:  solid medium rgba(255, 255, 255, 0.8);
+  backdrop-filter: saturate(180%) blur(10px);
 }
 
 
