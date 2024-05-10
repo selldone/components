@@ -174,14 +174,15 @@ export default defineComponent({
 
   .s---title {
     position: absolute;
-    left: 12px;
-    right: 12px;
+    left: 9px;
+    right: 9px;
     top: 7px;
-    padding: 3px 3px;
-    border-radius: 8px;
+    padding: 4px 3px 3px 3px;
+    line-height: normal;
+    border-radius: 18px 18px 4px 4px;
     font-size: 7px;
-    max-width: calc(100% - 24px);
-    width: calc(100% - 24px);
+    max-width: calc(100% - 18px);
+    width: calc(100% - 18px);
     overflow: hidden;
     display: block;
     color: #000;
