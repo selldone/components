@@ -47,10 +47,10 @@
         item-value="iso2"
         item-title="name"
         :items="filtered_countries"
-        variant="plain"
+        :variant="variant"
+        :rounded="rounded"
         hide-details
-        style="width: 64px"
-        density="compact"
+        style="width: 84px"
         :menu-props="{
           width: '80vw',
           maxWidth: '380px',
@@ -93,7 +93,7 @@
       </v-icon>
     </template>
 
-    <template v-slot:append>
+    <template v-slot:append v-if="$slots['icon-right']">
       <slot name="icon-right"></slot>
     </template>
   </v-text-field>
