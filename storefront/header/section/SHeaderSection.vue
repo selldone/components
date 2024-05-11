@@ -407,9 +407,9 @@ import SStorefrontLotteryWheelOfFortune from "@components/storefront/lottery/whe
 import UCurrencySelector from "@components/ui/currency/selector/UCurrencySelector.vue";
 import SShopNavigationDrawer from "@components/storefront/menu/side/SShopNavigationDrawer.vue";
 import SShopUserMenuList from "@components/storefront/menu/user/SShopUserMenuList.vue";
-import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import SLanguageSelector from "@components/storefront/language/selector/SLanguageSelector.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SHeaderSectionLogo from "@components/storefront/header/section/logo/SHeaderSectionLogo.vue";
 
 const BOTTOM_PADDING_CONTAINER = "82px";

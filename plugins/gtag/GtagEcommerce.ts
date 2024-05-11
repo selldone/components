@@ -16,14 +16,14 @@
  * @link https://developers.google.com/tag-manager/enhanced-ecommerce
  */
 
-import type { ProductVariant } from "@core/models/shop/product/product_variant.model";
-import { ProductType } from "@core/enums/product/ProductType";
-import { Product } from "@core/models/shop/product/product.model";
-import { Currency } from "@core/enums/payment/Currency";
-import { Category } from "@core/models/shop/category/category.model";
-import type { Basket } from "@core/models/shop/order/basket/basket.model";
-import type { Shop } from "@core/models/shop/shop.model";
-import { PriceHelper } from "@core/helper/price/PriceHelper";
+import type { ProductVariant } from "@selldone/core-js/models/shop/product/product_variant.model";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { Product } from "@selldone/core-js/models/shop/product/product.model";
+import { Currency } from "@selldone/core-js/enums/payment/Currency";
+import { Category } from "@selldone/core-js/models/shop/category/category.model";
+import type { Basket } from "@selldone/core-js/models/shop/order/basket/basket.model";
+import type { Shop } from "@selldone/core-js/models/shop/shop.model";
+import { PriceHelper } from "@selldone/core-js/helper/price/PriceHelper";
 
 declare global {
   interface Window {

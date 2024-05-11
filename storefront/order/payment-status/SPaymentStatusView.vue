@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
+import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 
 export default {
   name: "SPaymentStatusView",

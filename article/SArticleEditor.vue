@@ -153,7 +153,7 @@ import AAddonCodeEditorDialog from "./add-on/code-editor/dialog/AAddonCodeEditor
 import AAddonCatalogDialog from "@components/article/add-on/catalog/dialog/AAddonCatalogDialog.vue";
 import AAddonComparisonDialog from "./add-on/comparison/dialog/AAddonComparisonDialog.vue";
 import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
-import { FileFormatConverterOnline } from "@core/helper/converters/FileFormatConverterOnline";
+import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
 import { installGlobalComponents } from "@components/components-mandetory";
 
 const OPTIONS_TITLE = {

@@ -124,7 +124,7 @@
 <script>
 import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
 import SShopCustomerReceiverInfoWidget from "@components/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
-import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "SStorefrontRetrieveShareOrder",

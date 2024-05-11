@@ -21,7 +21,7 @@ import {
   isSupported,
 } from "firebase/messaging";
 import { getAnalytics } from "firebase/analytics";
-import {EventBus, EventName} from "@core/events/EventBus";
+import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
 
 const firebaseConfig = {
   apiKey: "{!! enter here e.g. AIzaSyBlMGghN...!!}",

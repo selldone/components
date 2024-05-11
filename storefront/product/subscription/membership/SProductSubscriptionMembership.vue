@@ -46,8 +46,8 @@
 <script>
 import UExpandView from "@components/ui/expand-view/UExpandView.vue";
 import SProductSubscriptionContentViewer from "@components/storefront/product/service/content/viewer/SProductSubscriptionContentViewer.vue";
-import { SubscriptionMode } from "@core/enums/subscription/SubscriptionMode";
-import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
+import { SubscriptionMode } from "@selldone/core-js/enums/subscription/SubscriptionMode";
+import { RibbonHelper } from "@selldone/core-js/helper/ribbon/RibbonHelper";
 
 export default {
   name: "SProductSubscriptionMembership",

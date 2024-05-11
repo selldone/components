@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "SShopProductFilesList",

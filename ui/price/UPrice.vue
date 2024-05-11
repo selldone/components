@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { CurrencyHelper } from "@core/helper/currency/CurrencyHelper";
+import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper";
 
 export default {
   name: "UPrice",
@@ -126,7 +126,7 @@ export default {
     isUnicode() {
       return (
         this.currency_name ===
-        CurrencyHelper.GetUserSelectedCurrencyUnicode(this, this.currency_code)
+        CurrencyHelper.GetUserSelectedCurrencyUnicode(this.GetUserSelectedCurrency(this), this.currency_code)
       );
     },
 
@@ -140,7 +140,7 @@ export default {
         return true;
 
       return CurrencyHelper.GetUserSelectedCurrencySignAtEnd(
-        this,
+          this.GetUserSelectedCurrency(this),
         this.currency_code,
       );
     },

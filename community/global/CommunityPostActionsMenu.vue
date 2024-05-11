@@ -123,7 +123,7 @@
 <script>
 import CPostEditor from "@components/community/post/editor/CPostEditor.vue";
 import AFeedbackContentViolationReport from "@components/article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
-import { ArticleReport } from "@core/enums/article/ArticleReport";
+import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 import _ from "lodash-es";
 

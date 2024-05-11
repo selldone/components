@@ -479,7 +479,7 @@
 <script>
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
 import UPrice from "@components/ui/price/UPrice.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
 import UCountDown from "@components/ui/count-down/UCountDown.vue";
 

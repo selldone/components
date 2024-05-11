@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { DateConverter } from "@core/helper/date/DateConverter";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UTimeSpanSelector from "./selector/UTimeSpanSelector.vue";
 import _ from "lodash-es";
 

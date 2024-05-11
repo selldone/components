@@ -158,7 +158,7 @@
 </template>
 
 <script>
-import { ArticleTypes } from "@core/enums/article/ArticleTypes";
+import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
 import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
 
 export default {

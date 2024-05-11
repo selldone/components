@@ -154,7 +154,7 @@
 </template>
 
 <script>
-import { Currency } from "@core/enums/payment/Currency";
+import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
 
 /**
@@ -306,6 +306,8 @@ export default {
       if (this.saveLocalStorage) {
         if (this.SetUserSelectedCurrency)
           this.SetUserSelectedCurrency(currency); // Backoffice (Deprecated we should change it!)
+
+
         if (window.$storefront)
           window.$storefront.currency = this.isObject(currency)
             ? currency

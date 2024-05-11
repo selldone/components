@@ -355,10 +355,10 @@
 
 <script>
 import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import { ReturnItemStates } from "@core/enums/basket/ReturnItemStates";
+import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
 import SShopBasketItemReturnForm from "@components/storefront/order/return/SShopBasketItemReturnForm.vue";
 import BasketItemUserMessageForm from "@components/storefront/order/product-input/BasketItemUserMessageForm.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SProductSectionValuation from "@components/storefront/product/section/valuation/SProductSectionValuation.vue";
 
 export default {

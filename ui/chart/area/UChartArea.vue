@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import { DateConverter } from "@core/helper/date/DateConverter";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
 import numeral from "numeral";
-import { colorSet1 } from "@core/helper/color/ColorGenerator";
+import { colorSet1 } from "@selldone/core-js/helper/color/ColorGenerator";
 import { ChartAnnotations } from "@components/ui/chart/helper/ChartAnnotations";
 
 export default {

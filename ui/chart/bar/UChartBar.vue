@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import { DateConverter } from "@core/helper/date/DateConverter";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
 
 export default {

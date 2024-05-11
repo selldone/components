@@ -220,16 +220,16 @@
 </template>
 
 <script>
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import ULoadingEllipsis from "@components/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
-import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
-import { BusinessModel } from "@core/enums/shop/BusinessModel";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
+import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 import SShopSubscribeButton from "./SShopSubscribeButton.vue";
-import { SubscriptionMode } from "@core/enums/subscription/SubscriptionMode";
-import { BasketHelper } from "@core/helper/shop/BasketHelper";
-import { BuyButtonHelper } from "@core/helper/shop/BuyButtonHelper";
+import { SubscriptionMode } from "@selldone/core-js/enums/subscription/SubscriptionMode";
+import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
+import { BuyButtonHelper } from "@selldone/core-js/helper/shop/BuyButtonHelper";
 import _ from "lodash-es";
 
 export default {

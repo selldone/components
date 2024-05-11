@@ -29,7 +29,7 @@
         <img
           class="ms-1 me-2 flex-grow-0 my-3"
           height="48"
-          src="../../../../../core/assets/order-types/basket-hyper.svg"
+          src="@selldone/core-js/assets/order-types/basket-hyper.svg"
           width="48"
         />
 
@@ -121,9 +121,9 @@
 
 <script>
 import SOrderStatusView from "@components/storefront/order/order-status/SOrderStatusView.vue";
-import { AvocadoOrderStates } from "@core/enums/avocado/AvocadoOrderStates";
+import { AvocadoOrderStates } from "@selldone/core-js/enums/avocado/AvocadoOrderStates";
 import SOrderDeliveryStatusStepper from "@components/storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
-import { BasketStatus } from "@core/enums/basket/BasketStatus";
+import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {

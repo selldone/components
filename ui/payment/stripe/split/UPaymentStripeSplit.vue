@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import { SetupService } from "@core/server/SetupService.ts";
-import { ProductType } from "@core/enums/product/ProductType.ts";
+import { SetupService } from "@selldone/core-js/server/SetupService.ts";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "UPaymentStripeSplit",

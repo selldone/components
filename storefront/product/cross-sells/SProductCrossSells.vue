@@ -158,9 +158,9 @@
 <script>
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
 import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
-import { BasketHelper } from "@core/helper/shop/BasketHelper";
-import CrossSellActionType from "@core/enums/product/CrossSellActionType";
-import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
+import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
+import CrossSellActionType from "@selldone/core-js/enums/product/CrossSellActionType";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "SProductCrossSells",

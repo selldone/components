@@ -119,7 +119,7 @@
 import UExpandView from "@components/ui/expand-view/UExpandView.vue";
 import SArticleComments from "@components/article/comment/SArticleComments.vue";
 import SShopProductRatingView from "@components/storefront/product/rating/SShopProductRatingView.vue";
-import { FontSizeHelper } from "@core/helper/style/FontSizeHelper";
+import { FontSizeHelper } from "@selldone/core-js/helper/style/FontSizeHelper";
 import SShopLogin from "@components/storefront/login/SShopLogin.vue";
 
 export default {

@@ -675,21 +675,21 @@
 </template>
 
 <script>
-import { BasketStatus } from "@core/enums/basket/BasketStatus";
-import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
-import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
+import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
+import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
+import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 
 import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import { BillStatus } from "@core/enums/basket/BillStatus";
+import { BillStatus } from "@selldone/core-js/enums/basket/BillStatus";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import SShopRowCustomerPaymentGiftCard from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentGiftCard.vue";
 import SShopRowCustomerPaymentRecord from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
 import SShopRowCustomerPendingPayment from "@components/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
 import UPaymentCard from "@components/ui/payment/card/UPaymentCard.vue";
-import { URLHelper } from "@core/helper/url/URLHelper";
-import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
+import { URLHelper } from "@selldone/core-js/helper/url/URLHelper";
+import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",

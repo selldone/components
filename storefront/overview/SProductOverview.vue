@@ -344,13 +344,13 @@
 import SShopProductRatingView from "@components/storefront/product/rating/SShopProductRatingView.vue";
 import BasketItemUserMessageForm from "@components/storefront/order/product-input/BasketItemUserMessageForm.vue";
 import SStorefrontCouponsList from "@components/storefront/coupon/list/SStorefrontCouponsList.vue";
-import { ProductVariants } from "@core/enums/product/ProductVariants";
+import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import SSmartSelectVendor from "@components/storefront/vendor/selector/SSmartSelectVendor.vue";
 
 import SShopProductSlideShow from "@components/storefront/product/images/SShopProductSlideShow.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SSubscriptionPriceSelect from "@components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
-import { RibbonHelper } from "@core/helper/ribbon/RibbonHelper";
+import { RibbonHelper } from "@selldone/core-js/helper/ribbon/RibbonHelper";
 import ProductDiscountCountdown from "@components/storefront/product/count-down/ProductDiscountCountdown.vue";
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
 import UPaymentStripeSplit from "@components/ui/payment/stripe/split/UPaymentStripeSplit.vue";

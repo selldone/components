@@ -19,7 +19,7 @@ import $ from 'jquery';
 window.$ = $;
 window.jQuery = $;
 
-import "@core/utils/console/ConsoleStyle";
+import "@selldone/core-js/utils/console/ConsoleStyle";
 
 //█████████████████████████████████████████████████████████████
 //――――――――――――――――― Style ―――――――――――――――――
@@ -34,7 +34,7 @@ import "@components/style/components.scss";
 //█████████████████████████████████████████████████████████████
 
 // ━━━ Selldone Core (gapi,...) ━━━
-import { SelldoneCore } from "@core/SelldoneCore";
+import { SelldoneCore } from "@selldone/core-js";
 
 SelldoneCore.Setup();
 
@@ -75,7 +75,7 @@ console.log(
 window.SERACH_THROTTLE = 1500; //ms; //TODO: Should remove!
 
 // Initial global language object:
-import { Language } from "@core/enums/language/Language";
+import { Language } from "@selldone/core-js/enums/language/Language";
 
 window.$language = Language.en;
 
@@ -102,12 +102,12 @@ $.cachedScript = function (url: string, options?: any) {
 };
 
 //―――――――――――――――――――――― SEO ――――――――――――――――――――
-import { SEO } from "@core/helper/seo/SEO";
+import { SEO } from "@selldone/core-js/helper/seo/SEO";
 
 //█████████████████████████████████████████████████████████████
 //―――――――――――――――― Interfaces ―――――――――――――――
 //█████████████████████████████████████████████████████████████
-import type { ILanguage } from "@core/enums/language/Language";
+import type { ILanguage } from "@selldone/core-js/enums/language/Language";
 import { App } from "vue";
 import { installGlobalComponents } from "@components/components-mandetory";
 import { installGlobalDirectives } from "@components/directives-mandetory";

@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import { SetupService } from "@core/server/SetupService.ts";
+import { SetupService } from "@selldone/core-js/server/SetupService.ts";
 
 export default {
   name: "CBotManagement",

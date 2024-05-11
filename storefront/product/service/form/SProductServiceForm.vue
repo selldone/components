@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { ServiceTypes } from "@core/enums/product/ServiceTypes";
+import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UTimeWeekPicker from "@components/ui/time/week-picker/UTimeWeekPicker.vue";
 import _ from "lodash-es";
 import UDateRangePicker from "@components/ui/date/range-picker/UDateRangePicker.vue";

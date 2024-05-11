@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { ReturnItemStates } from "@core/enums/basket/ReturnItemStates";
+import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
 
 export default {
   name: "ReturnRequestButtonBadge",

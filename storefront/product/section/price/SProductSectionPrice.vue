@@ -125,12 +125,12 @@
 </template>
 
 <script>
-import { ProductType } from "@core/enums/product/ProductType";
-import { PricingTypes } from "@core/enums/product/PricingTypes";
-import { ServiceTypes } from "@core/enums/product/ServiceTypes";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
+import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import SProductPrice from "@components/storefront/product/price/SProductPrice.vue";
-import { ExtraPricingHelper } from "@core/helper/shop/ExtraPricingHelper";
-import { BasketHelper } from "@core/helper/shop/BasketHelper";
+import { ExtraPricingHelper } from "@selldone/core-js/helper/shop/ExtraPricingHelper";
+import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import SProductSectionWaitingAuction from "../auction/SProductSectionWaitingAuction.vue";
 
 export default {

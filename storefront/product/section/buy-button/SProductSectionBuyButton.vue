@@ -201,7 +201,7 @@
 
 <script>
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 

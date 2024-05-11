@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { BasketStatus } from "@core/enums/basket/BasketStatus";
+import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import UTimeProgressBar from "../../../ui/time/progress-bar/UTimeProgressBar.vue";
 
 export default {

@@ -408,7 +408,7 @@ import UCurrencySelector from "@components/ui/currency/selector/UCurrencySelecto
 import SCookiePreferences from "../../cookie/preferences/SCookiePreferences.vue";
 import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
 
-import { SetupService } from "@core/server/SetupService";
+import { SetupService } from "@selldone/core-js/server/SetupService";
 import SLanguageSelector from "@components/storefront/language/selector/SLanguageSelector.vue";
 import {ShopFooterHelper} from "@components/storefront/footer/ShopFooterHelper";
 

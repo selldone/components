@@ -105,8 +105,8 @@
 </template>
 
 <script>
-import { Cards } from "@core/enums/payment/Cards.ts";
-import SVGs from "@core/enums/payment/stripe/SVGs.js";
+import { Cards } from "@selldone/core-js/enums/payment/Cards.ts";
+import SVGs from "@selldone/core-js/enums/payment/stripe/SVGs.js";
 
 export default {
   name: "UPaymentCard",

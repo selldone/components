@@ -250,10 +250,10 @@
 </template>
 
 <script>
-import { SupportCategory } from "@core/enums/support/SupportCategory";
+import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
 import URatingEmoji from "@components/ui/rating/emoji/URatingEmoji.vue";
 import SProductPreviewById from "@components/storefront/product/preview-by-id/SProductPreviewById.vue";
-import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
+import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
 /**
  * <s-contact-conversation>

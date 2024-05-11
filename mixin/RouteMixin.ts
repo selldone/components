@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import type {IReturn} from "@core/types/route/return.type";
+import type {IReturn} from "@selldone/core-js/types/route/return.type";
 import {defineComponent} from "vue";
 import _ from "lodash-es";
 

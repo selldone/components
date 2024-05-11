@@ -56,7 +56,7 @@
 
 <script>
 import CCommentsList from "../list/CCommentsList.vue";
-import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper.ts";
+import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
 
 export default {
   name: "CCommentWidget",

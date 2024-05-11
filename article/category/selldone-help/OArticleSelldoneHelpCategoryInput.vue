@@ -31,8 +31,8 @@
 
 <script>
 import { defineComponent } from "vue";
-import { ArticleTypes } from "@core/enums/article/ArticleTypes";
-import { HelpCategories } from "@core/enums/admin/help/HelpCategories";
+import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
+import { HelpCategories } from "@selldone/core-js/enums/admin/help/HelpCategories";
 
 export default defineComponent({
   name: "OArticleSelldoneHelpCategoryInput",

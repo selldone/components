@@ -119,8 +119,8 @@
 </template>
 
 <script>
-import { ProductType } from "@core/enums/product/ProductType";
-import { MapHelper } from "@core/helper/map/MapHelper";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import SShopBasketItem from "@components/storefront/order/basket/SShopBasketItem.vue";
 import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 

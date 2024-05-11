@@ -613,8 +613,8 @@ import UButtonShareGroup from "../../ui/button/share/group/UButtonShareGroup.vue
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 import CAccessController from "@components/community/access/controller/CAccessController.vue";
 import UCountDown from "@components/ui/count-down/UCountDown.vue";
-import { DateConverter } from "@core/helper/date/DateConverter";
-import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
+import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import CUserInput from "@components/community/user/input/CUserInput.vue";
 
 /**

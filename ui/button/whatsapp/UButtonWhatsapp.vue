@@ -53,7 +53,7 @@
 import {
   CreateSocialConnectLink,
   SocialNetwork,
-} from "@core/enums/social/SocialNetwork";
+} from "@selldone/core-js/enums/social/SocialNetwork";
 
 export default {
   name: "UButtonWhatsapp",

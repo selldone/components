@@ -158,8 +158,8 @@
 
 <script>
 import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import { ProductType } from "@core/enums/product/ProductType";
-import { ProductCondition } from "@core/enums/product/ProductCondition";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
 import SShopBasketItemCountSelect from "../../order/basket/SShopBasketItemCountSelect.vue";
 
 export default {

@@ -502,7 +502,7 @@ cover
 import {
   SmartConvertTextToHtml,
   SmartConvertTextToHtmlHashtags,
-} from "@core/helper/html/HtmlHelper";
+} from "@selldone/core-js/helper/html/HtmlHelper";
 import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
 import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
@@ -512,9 +512,9 @@ import { InstagramHelper } from "@components/storefront/instagram/helpers/Instag
 import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
-import { Currency } from "@core/enums/payment/Currency";
-import { ProductCondition } from "@core/enums/product/ProductCondition";
-import { ProductType } from "@core/enums/product/ProductType";
+import { Currency } from "@selldone/core-js/enums/payment/Currency";
+import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import _ from "lodash-es";
 
 export default {

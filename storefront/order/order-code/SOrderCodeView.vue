@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import { BasketStatus } from "@core/enums/basket/BasketStatus";
-import { ProductType } from "@core/enums/product/ProductType";
+import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "SOrderCodeView",

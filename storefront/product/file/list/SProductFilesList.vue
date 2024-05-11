@@ -68,7 +68,7 @@
 <script>
 import UExpandView from "@components/ui/expand-view/UExpandView.vue";
 import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "SProductFilesList",

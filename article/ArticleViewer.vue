@@ -265,7 +265,7 @@
           >
             <img
               height="24"
-              src="@core/enums/file/assets/extensions/docx.svg"
+              src="@selldone/core-js/enums/file/assets/extensions/docx.svg"
               width="24"
             />
 
@@ -1002,9 +1002,9 @@ import SArticleSeoEditor from "./SArticleSeoEditor.vue";
 
 import SArticleEditor from "./SArticleEditor.vue";
 
-import { ArticleTypes } from "@core/enums/article/ArticleTypes";
-import { PermissionNames } from "@core/enums/admin/permission/PermissionNames";
-import { PermissionLevels } from "@core/enums/admin/permission/PermissionLevels";
+import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
+import { PermissionNames } from "@selldone/core-js/enums/admin/permission/PermissionNames";
+import { PermissionLevels } from "@selldone/core-js/enums/admin/permission/PermissionLevels";
 import UDateInput from "../ui/date/input/UDateInput.vue";
 import SArticlesTimeline from "@components/article/timeline/SArticlesTimeline.vue";
 import ULanguageInput from "@components/ui/language/input/ULanguageInput.vue";
@@ -1013,7 +1013,7 @@ import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./tags/SArticleTagsEditor.vue";
 import USmartMenu from "@components/ui/smart/menu/USmartMenu.vue";
 import UTimeProgressBar from "../ui/time/progress-bar/UTimeProgressBar.vue";
-import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import UButtonAiSmall from "@components/ui/button/ai/small/UButtonAiSmall.vue";
 import _ from "lodash-es";

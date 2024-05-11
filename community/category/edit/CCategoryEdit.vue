@@ -121,7 +121,7 @@
 <script>
 import CImageInput from "@components/community/image/input/CImageInput.vue";
 import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
-import ScrollHelper from "@core/utils/scroll/ScrollHelper.ts";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 
 export default {
   name: "CCategoryEdit",

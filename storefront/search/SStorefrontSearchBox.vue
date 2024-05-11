@@ -214,7 +214,7 @@
 </template>
 
 <script>
-import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
+import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import UScanner from "@components/ui/scanner/UScanner.vue";
 
 export default {

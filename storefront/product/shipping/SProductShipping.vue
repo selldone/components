@@ -127,11 +127,11 @@
 <script>
 import SArticleEditor from "@components/article/SArticleEditor.vue";
 import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
-import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
-import { SetupService } from "@core/server/SetupService";
-import { ProductType } from "@core/enums/product/ProductType";
-import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
-import { MapHelper } from "@core/helper/map/MapHelper";
+import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
+import { SetupService } from "@selldone/core-js/server/SetupService";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
+import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import UExpandView from "@components/ui/expand-view/UExpandView.vue";
 
 export default {

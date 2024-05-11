@@ -221,7 +221,7 @@
 </template>
 
 <script>
-import { TransactionStatus } from "@core/enums/payment/TransactionStatus";
+import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
 import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
 

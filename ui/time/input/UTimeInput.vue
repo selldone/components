@@ -59,7 +59,7 @@
 
 <script>
 import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
-import { TimeSpans } from "@core/enums/logistic/TimeSpans";
+import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
 
 export default {
   name: "UTimeInput",

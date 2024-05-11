@@ -245,8 +245,8 @@
 </template>
 
 <script>
-import {ReturnItemStates} from "@core/enums/basket/ReturnItemStates";
-import {ReturnOrderReason} from "@core/enums/basket/ReturnOrderReason";
+import {ReturnItemStates} from "@selldone/core-js/enums/basket/ReturnItemStates";
+import {ReturnOrderReason} from "@selldone/core-js/enums/basket/ReturnOrderReason";
 import CircleImage from "@components/ui/image/CircleImage.vue";
 import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
 import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";

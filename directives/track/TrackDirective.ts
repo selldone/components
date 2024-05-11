@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import { TrackUser } from "@core/enums/gtag/TrackUser";
+import { TrackUser } from "@selldone/core-js/enums/gtag/TrackUser";
 import type { ObjectDirective, DirectiveBinding } from "vue";
 
 /**

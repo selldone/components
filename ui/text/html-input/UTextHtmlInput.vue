@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { StripTags } from "@core/helper/html/HtmlHelper";
+import { StripTags } from "@selldone/core-js/helper/html/HtmlHelper";
 
 export default {
   name: "UTextHtmlInput",

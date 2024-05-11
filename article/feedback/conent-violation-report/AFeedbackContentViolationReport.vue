@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { ArticleReport } from "@core/enums/article/ArticleReport";
+import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
 
 export default {
   name: "AFeedbackContentViolationReport",

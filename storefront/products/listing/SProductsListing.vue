@@ -359,16 +359,16 @@
 import SShopProductCard from "@components/storefront/product/card/SShopProductCard.vue";
 import SProductsSortView from "@components/storefront/product/sort/SProductsSortView.vue";
 import SCategoryCard from "@components/storefront/category/card/SCategoryCard.vue";
-import { HierarchyHelper } from "@core/helper/breadcrumb/HierarchyHelper";
+import { HierarchyHelper } from "@selldone/core-js/helper/breadcrumb/HierarchyHelper";
 import SCategoryFilter from "@components/storefront/category/filter/SCategoryFilter.vue";
-import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
+import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
 import SProductOverview from "@components/storefront/overview/SProductOverview.vue";
-import { SpecHelper } from "@core/helper/product/SpecHelper";
+import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper";
 import BProductSpecTable from "@components/storefront/product/spec/table/BProductSpecTable.vue";
 import UBreadcrumb from "@components/ui/breadcrumb/UBreadcrumb.vue";
 import SProductOverviewLoading from "@components/storefront/overview/loading/SProductOverviewLoading.vue";
-import { ModeView } from "@core/enums/shop/ModeView";
+import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 import _ from "lodash-es";
 import {defineAsyncComponent} from "vue";
 

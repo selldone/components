@@ -18,7 +18,7 @@ import {createVuetify, VuetifyOptions} from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 
-import {SetupService} from "@core/server/SetupService";
+import {SetupService} from "@selldone/core-js/server/SetupService";
 import {aliases, md} from "vuetify/iconsets/md";
 
 import "@fortawesome/fontawesome-free/css/all.css"; // Ensure your project is capable of handling css files

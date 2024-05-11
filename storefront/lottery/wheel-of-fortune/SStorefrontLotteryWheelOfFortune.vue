@@ -249,7 +249,7 @@
 
 <script>
 import SStorefrontLotteryPrizeDetail from "@components/storefront/lottery/prize-detail/SStorefrontLotteryPrizeDetail.vue";
-import { SoundHelper } from "@core/helper/sound/SoundHelper";
+import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 
 export default {
   name: "SStorefrontLotteryWheelOfFortune",

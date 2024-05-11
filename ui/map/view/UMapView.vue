@@ -607,7 +607,7 @@ import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 
 //―――――――――――――――――――――― Mapbox ――――――――――――――――――――
 import Mapbox from "@components/ui/map/providers/mapbox/MapBox";
-import { SetupService } from "@core/server/SetupService";
+import { SetupService } from "@selldone/core-js/server/SetupService";
 import UMapAddressInput from "@components/ui/map/address/input/UMapAddressInput.vue";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";

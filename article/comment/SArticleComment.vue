@@ -237,7 +237,7 @@
 
 <script>
 import URatingBar from "@components/ui/rating/bar/URatingBar.vue";
-import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
+import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
 export default {
   name: "SArticleComment",

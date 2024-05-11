@@ -53,7 +53,7 @@
 
 <script>
 import SProductOverview from "@components/storefront/overview/SProductOverview.vue";
-import { SpecHelper } from "@core/helper/product/SpecHelper.ts";
+import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper.ts";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce.ts";
 import BProductSpecTable from "@components/storefront/product/spec/table/BProductSpecTable.vue";
 

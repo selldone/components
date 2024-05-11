@@ -378,7 +378,7 @@ import CommunityTopicCard from "@components/community/topic/CommunityTopicCard.v
 import CPostEditor from "@components/community/post/editor/CPostEditor.vue";
 import CCategoryEdit from "@components/community/category/edit/CCategoryEdit.vue";
 import CCategoryAnalytics from "@components/community/category/analytics/CCategoryAnalytics.vue";
-import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
+import { CommunityStageLevel } from "@selldone/core-js/enums/community/CommunityStageLevel";
 import CImageView from "@components/community/image/view/CImageView.vue";
 import USmartVerify from "@components/ui/smart/verify/USmartVerify.vue";
 import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";

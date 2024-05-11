@@ -107,7 +107,7 @@
 
 <script>
 import numeral from "numeral";
-import { SetupService } from "@core/server/SetupService";
+import { SetupService } from "@selldone/core-js/server/SetupService";
 
 export default {
   name: "UButtonCircle",

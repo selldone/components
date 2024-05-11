@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { ProductStatus } from "@core/enums/product/ProductStatus";
+import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 
 export default {
   name: "ProductStatusView",

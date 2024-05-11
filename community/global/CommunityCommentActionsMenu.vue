@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { ArticleReport } from "@core/enums/article/ArticleReport";
+import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
 import AFeedbackContentViolationReport from "@components/article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
 import _ from "lodash-es";

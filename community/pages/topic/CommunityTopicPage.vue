@@ -270,7 +270,7 @@ import CommunityTopicSubscribe from "@components/community/topic/CommunityTopicS
 import CommunityFollowSuggestion from "@components/community/users/CommunityFollowSuggestion.vue";
 import CommunityTopicStatistic from "@components/community/topic/CommunityTopicStatistic.vue";
 import _ from "lodash-es";
-import ScrollHelper from "@core/utils/scroll/ScrollHelper";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 
 export default {
   name: "CommunityTopicPage",

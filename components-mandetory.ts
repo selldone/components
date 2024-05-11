@@ -90,7 +90,7 @@ import VueConfetti from "@components/ui/confetti";
 
 //---------------- prototypes --------------
 
-import "@core/prototypes/Prototypes";
+import "@selldone/core-js/prototypes/Prototypes";
 
 window.MediumInsert = MediumInsert;
 

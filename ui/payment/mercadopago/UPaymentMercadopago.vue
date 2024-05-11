@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { Language } from "@core/enums/language/Language";
+import { Language } from "@selldone/core-js/enums/language/Language";
 
 export default {
   name: "UPaymentMercadopago",

@@ -116,7 +116,7 @@
 import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
 import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
 import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
-import { MapHelper } from "@core/helper/map/MapHelper";
+import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 
 export default {
   name: "SShopBillingAddressForm",

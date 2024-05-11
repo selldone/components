@@ -31,7 +31,7 @@
 
 <script>
 import _ from "lodash-es";
-import { SetupService } from "@core/server/SetupService";
+import { SetupService } from "@selldone/core-js/server/SetupService";
 
 export default {
   name: "SPwaVersionCheck",

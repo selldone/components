@@ -117,16 +117,16 @@
 </template>
 
 <script>
-import { Currency } from "@core/enums/payment/Currency";
+import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UPaymentForm from "@components/ui/payment/form/UPaymentForm.vue";
 import UProgressRadial from "@components/ui/progress/radial/UProgressRadial.vue";
-import { DateConverter } from "@core/helper/date/DateConverter";
-import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
-import { SetupService } from "@core/server/SetupService";
-import { ProductType } from "@core/enums/product/ProductType";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
+import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
+import { SetupService } from "@selldone/core-js/server/SetupService";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import _ from "lodash-es";
-import { BasketHelper } from "@core/helper/shop/BasketHelper";
-import ScrollHelper from "@core/utils/scroll/ScrollHelper";
+import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 
 export default {
   name: "SStorefrontMasterPaymentDialog",

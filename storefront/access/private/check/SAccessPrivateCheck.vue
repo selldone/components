@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import { ShopRestriction } from "@core/enums/shop/options/ShopRestriction";
+import { ShopRestriction } from "@selldone/core-js/enums/shop/options/ShopRestriction";
 
 export default {
   name: "SAccessPrivateCheck",

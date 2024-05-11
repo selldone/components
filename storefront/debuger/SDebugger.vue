@@ -185,10 +185,10 @@
 </template>
 
 <script>
-import { LRUCache } from "@core/helper/cache/LRUCache";
-import { StorefrontDebugLogType } from "@components/storefront/debuger/StorefrontDebugLogType";
-import { StorefrontDebugEvents } from "@components/storefront/debuger/StorefrontDebugEvents";
-import { SetupService } from "@core/server/SetupService";
+import { LRUCache } from "@selldone/core-js/helper/cache/LRUCache";
+import { StorefrontDebugLogType } from "@selldone/core-js/enums/debug/StorefrontDebugLogType.ts";
+import { StorefrontDebugEvents } from "@selldone/core-js/enums/debug/StorefrontDebugEvents.ts";
+import { SetupService } from "@selldone/core-js/server/SetupService";
 import _ from "lodash-es";
 import UTextValueBox from "@components/ui/text/value-box/UTextValueBox.vue";
 

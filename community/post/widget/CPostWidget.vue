@@ -340,15 +340,15 @@
 </template>
 
 <script>
-import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper.ts";
+import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
 import CCommentsList from "@components/community/comment/list/CCommentsList.vue";
 import CImageView from "@components/community/image/view/CImageView.vue";
-import { PostReaction } from "@core/enums/community/PostReaction.ts";
+import { PostReaction } from "@selldone/core-js/enums/community/PostReaction.ts";
 import URibbon from "@components/ui/ribbon/URibbon.vue";
 import CPostPoll from "@components/community/post/poll/CPostPoll.vue";
 import CProductView from "@components/community/product/view/CProductView.vue";
 import CAttachViewer from "@components/community/attach/viewer/CAttachViewer.vue";
-import { VideoHelper } from "@core/helper/video/VideoHelper.ts";
+import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
 
 export default {
   name: "CPostWidget",

@@ -294,7 +294,7 @@
 </template>
 
 <script>
-import { SupportCategory } from "@core/enums/support/SupportCategory";
+import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
 import URatingEmoji from "@components/ui/rating/emoji/URatingEmoji.vue";
 import SContactConversation from "../conversation/SContactConversation.vue";
 import _ from "lodash-es";

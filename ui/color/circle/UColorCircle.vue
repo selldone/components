@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { ColorHelper } from "@core/helper/color/ColorHelper";
+import { ColorHelper } from "@selldone/core-js/helper/color/ColorHelper";
 
 export default {
   name: "UColorCircle",

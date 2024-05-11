@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { EventName } from "@core/events/EventBus";
+import { EventName } from "@selldone/core-js/events/EventBus";
 import { PrismEditor } from "vue-prism-editor";
 
 export default {

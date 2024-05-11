@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { PostReaction } from "@core/enums/community/PostReaction";
+import { PostReaction } from "@selldone/core-js/enums/community/PostReaction";
 
 export default {
   name: "CommunityPostReactionsDialog",

@@ -152,7 +152,7 @@ import UTimeSpan from "../../ui/time/span/UTimeSpan.vue";
 import UChartArea from "@components/ui/chart/area/UChartArea.vue";
 import UChartLine from "@components/ui/chart/line/UChartLine.vue";
 import TrendSparkline from "./TrendSparkline.vue";
-import { DateConverter } from "@core/helper/date/DateConverter";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import { IntersectMixin } from "@components/mixin/IntersectMixin";
 
 export default {

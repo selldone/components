@@ -109,7 +109,7 @@
 <script>
 import CImageView from "@components/community/image/view/CImageView.vue";
 import TrendSparkline from "@components/community/statistics/TrendSparkline.vue";
-import { TimeSeries } from "@core/timeserie/TimeSeries.ts";
+import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries.ts";
 import USparkline from "@components/ui/chart/sparkline/USparkline.vue";
 
 export default {

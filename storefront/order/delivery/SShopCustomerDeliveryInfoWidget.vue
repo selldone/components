@@ -357,12 +357,12 @@
 </template>
 
 <script>
-import { PhysicalOrderStates } from "@core/enums/basket/PhysicalOrderStates";
+import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import SOrderBillCard from "@components/storefront/order/billing/card/SOrderBillCard.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SOrderDeliveryAutoComplete from "@components/storefront/order/auto-complete/SOrderDeliveryAutoComplete.vue";
 import DeliveryTimelineTransportationOrder from "@components/storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
-import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
+import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import UMapGeoButton from "@components/ui/map/geo-button/UMapGeoButton.vue";
 import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
 

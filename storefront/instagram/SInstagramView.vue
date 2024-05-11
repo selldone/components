@@ -199,7 +199,7 @@
 </template>
 
 <script>
-import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper";
+import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
 import InstagramViewMedias from "@components/storefront/instagram/InstagramViewMedias.vue";
 import InstagramViewHighlights from "@components/storefront/instagram/InstagramViewHighlights.vue";

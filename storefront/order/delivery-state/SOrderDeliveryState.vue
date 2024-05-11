@@ -219,10 +219,10 @@
 </template>
 
 <script>
-import { BasketRejectReasons } from "@core/enums/basket/BasketRejectReasons";
-import { DateConverter } from "@core/helper/date/DateConverter";
+import { BasketRejectReasons } from "@selldone/core-js/enums/basket/BasketRejectReasons";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UCountDown from "@components/ui/count-down/UCountDown.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "SOrderDeliveryState",

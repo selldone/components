@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import { NumberHelper } from "@core/helper/number/NumberHelper";
+import { NumberHelper } from "@selldone/core-js/helper/number/NumberHelper";
 
 export default {
   name: "UNumberInput",

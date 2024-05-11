@@ -301,7 +301,7 @@
 </template>
 
 <script>
-import { ShopTransportations } from "@core/enums/logistic/ShopTransportations";
+import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import SShippingRate from "@components/storefront/order/delivery/SShippingRate.vue";
 
 export default {

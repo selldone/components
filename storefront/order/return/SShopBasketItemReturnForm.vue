@@ -216,7 +216,7 @@
 <script>
 import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
 import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
-import { ReturnOrderReason } from "@core/enums/basket/ReturnOrderReason";
+import { ReturnOrderReason } from "@selldone/core-js/enums/basket/ReturnOrderReason";
 
 export default {
   name: "SShopBasketItemReturnForm",

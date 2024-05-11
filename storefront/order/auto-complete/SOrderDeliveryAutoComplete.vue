@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { DateConverter } from "@core/helper/date/DateConverter";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UCountDown from "@components/ui/count-down/UCountDown.vue";
 
 export default {

@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { ArticleReport } from "@core/enums/article/ArticleReport";
+import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 
 export default {

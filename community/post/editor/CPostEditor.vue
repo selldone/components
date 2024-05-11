@@ -659,26 +659,26 @@
 <script>
 import UVoiceBox from "@components/community/voice/box/UVoiceBox.vue";
 import UTabsRounded from "@components/ui/tab/rounded/UTabsRounded.vue";
-import GlobalRules from "@core/helper/rules/GlobalRules.ts";
+import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules.ts";
 import UTextMentionInput from "@components/ui/text/mention-input/UTextMentionInput.vue";
-import { SmartConvertTextToHtmlHashtags } from "@core/helper/html/HtmlHelper.ts";
+import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
-import { Screenshot } from "@core/helper/canvas/Screenshot.ts";
-import { FileHelper } from "@core/helper/converters/FileHelper.ts";
+import { Screenshot } from "@selldone/core-js/helper/canvas/Screenshot.ts";
+import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper.ts";
 import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
-import { TopicSubscriptionType } from "@core/enums/community/TopicSubscriptionType.ts";
-import { TopicTrialType } from "@core/enums/community/TopicTrialType.ts";
-import { Currency } from "@core/enums/payment/Currency.ts";
+import { TopicSubscriptionType } from "@selldone/core-js/enums/community/TopicSubscriptionType.ts";
+import { TopicTrialType } from "@selldone/core-js/enums/community/TopicTrialType.ts";
+import { Currency } from "@selldone/core-js/enums/payment/Currency.ts";
 import CPostPoll from "../poll/CPostPoll.vue";
-import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel.ts";
+import { CommunityStageLevel } from "@selldone/core-js/enums/community/CommunityStageLevel.ts";
 import CProductEditor from "@components/community/product/editor/CProductEditor.vue";
 import CProductView from "@components/community/product/view/CProductView.vue";
-import { ImageDimension } from "@core/helper/image/ImageDimension.ts";
+import { ImageDimension } from "@selldone/core-js/helper/image/ImageDimension.ts";
 import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
 import CAttachEditor from "@components/community/attach/editor/CAttachEditor.vue";
 import CAttachViewer from "@components/community/attach/viewer/CAttachViewer.vue";
-import { VideoHelper } from "@core/helper/video/VideoHelper.ts";
+import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
 import _ from "lodash-es";
 
 /**

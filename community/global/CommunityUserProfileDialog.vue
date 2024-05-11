@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import { SetupService } from "@core/server/SetupService";
+import { SetupService } from "@selldone/core-js/server/SetupService";
 import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
 import UTextValueBox from "@components/ui/text/value-box/UTextValueBox.vue";
 

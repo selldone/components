@@ -60,7 +60,7 @@
 
 <script>
 import _ from "lodash-es";
-import ScrollHelper from "@core/utils/scroll/ScrollHelper";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 
 export default {
   name: "SArticleTableOfContents",

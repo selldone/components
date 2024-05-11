@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { BasketStatus } from "@core/enums/basket/BasketStatus";
+import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 
 export default {
   name: "SOrderStatusesSelect",

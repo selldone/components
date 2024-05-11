@@ -216,7 +216,7 @@
 </template>
 
 <script>
-import { GetArrayOfValuesInVariants } from "@core/enums/product/ProductVariants";
+import { GetArrayOfValuesInVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import UVariantAssetImage from "@components/ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
 

@@ -13,7 +13,7 @@
  */
 
 import {ComponentPublicInstance, ObjectDirective} from "vue";
-import {AppLevel, IAppLevel} from "@core/enums/application/AppLevel";
+import {AppLevel, IAppLevel} from "@selldone/core-js/enums/application/AppLevel";
 import {Store} from "vuex"; // Import Vuex Store type
 
 interface HTMLElementWithCleanup extends HTMLElement {

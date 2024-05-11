@@ -31,7 +31,7 @@
 
 <script>
 import ULanguageInput from "@components/ui/language/input/ULanguageInput.vue";
-import { ShopOptionsHelper } from "@core/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "SLanguageSelector",

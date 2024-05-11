@@ -462,9 +462,9 @@ import UTasksEditor from "@components/ui/task/editor/UTasksEditor.vue";
 import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
 import UCalendarView from "@components/ui/calendar/clendar-view/UCalendarView.vue";
 import UTimeWeekPicker from "@components/ui/time/week-picker/UTimeWeekPicker.vue";
-import { ServiceTypes } from "@core/enums/product/ServiceTypes";
+import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
-import { Currency } from "@core/enums/payment/Currency";
+import { Currency } from "@selldone/core-js/enums/payment/Currency";
 
 import _ from "lodash-es";
 

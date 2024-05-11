@@ -146,7 +146,7 @@ import CommunityCommentActionsMenu from "@components/community/global/CommunityC
 import CommunityPostReportsDialog from "@components/community/global/CommunityPostReportsDialog.vue";
 import CommunityAnalytics from "@components/community/global/CommunityAnalytics.vue";
 import CommunityCommentReportsDialog from "@components/community/global/CommunityCommentReportsDialog.vue";
-import { TimeSeries } from "@core/timeserie/TimeSeries";
+import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 import CPostWidget from "../post/widget/CPostWidget.vue";
 import _ from "lodash-es";
 

@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { StorefrontLocalStorages } from "@core/helper/local-storage/StorefrontLocalStorages";
+import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 
 export default {
   name: "SStorefrontCampaignNotification",

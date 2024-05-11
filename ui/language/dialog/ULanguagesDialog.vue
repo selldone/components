@@ -121,8 +121,8 @@
 </template>
 
 <script>
-import { Language } from "@core/enums/language/Language";
-import { SetupService } from "@core/server/SetupService";
+import { Language } from "@selldone/core-js/enums/language/Language";
+import { SetupService } from "@selldone/core-js/server/SetupService";
 
 export default {
   name: "ULanguagesDialog",

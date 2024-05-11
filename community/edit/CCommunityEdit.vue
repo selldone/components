@@ -263,12 +263,12 @@
 
 <script>
 import CImageInput from "@components/community/image/input/CImageInput.vue";
-import { CommunityStageLevel } from "@core/enums/community/CommunityStageLevel";
+import { CommunityStageLevel } from "@selldone/core-js/enums/community/CommunityStageLevel";
 import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
 import USmartSelect from "@components/ui/smart/select/USmartSelect.vue";
-import { CommunityAttachmentAccess } from "@core/enums/community/CommunityAttachmentAccess";
+import { CommunityAttachmentAccess } from "@selldone/core-js/enums/community/CommunityAttachmentAccess";
 import _ from "lodash-es";
-import ScrollHelper from "@core/utils/scroll/ScrollHelper";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {

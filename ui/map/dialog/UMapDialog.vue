@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { EventName } from "@core/events/EventBus";
+import { EventName } from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "UMapDialog",

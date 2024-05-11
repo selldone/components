@@ -184,7 +184,7 @@
 </template>
 
 <script>
-import { ProductVariants } from "@core/enums/product/ProductVariants";
+import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import UVariantAssetImage from "@components/ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
 

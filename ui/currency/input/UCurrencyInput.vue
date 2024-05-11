@@ -146,7 +146,7 @@
 </template>
 
 <script>
-import { Currency } from "@core/enums/payment/Currency";
+import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UCurrencyIcon from "../icon/UCurrencyIcon.vue";
 
 export default {

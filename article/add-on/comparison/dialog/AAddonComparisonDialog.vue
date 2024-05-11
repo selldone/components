@@ -150,7 +150,7 @@
 
 <script>
 import SImageUploader from "@components/ui/uploader/SImageUploader.vue";
-import { EventName } from "@core/events/EventBus";
+import { EventName } from "@selldone/core-js/events/EventBus";
 import UTabsRounded from "@components/ui/tab/rounded/UTabsRounded.vue";
 
 export default {

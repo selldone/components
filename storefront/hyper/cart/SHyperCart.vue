@@ -132,7 +132,7 @@ import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
 import SHyperCartItems from "@components/storefront/hyper/cart/items/SHyperCartItems.vue";
 import SHyperProduct from "../product/SHyperProduct.vue";
 import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
-import { BasketStatus } from "@core/enums/basket/BasketStatus";
+import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import UStamp from "@components/ui/stamp/UStamp.vue";
 import _ from "lodash-es";
 

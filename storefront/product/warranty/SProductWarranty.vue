@@ -156,8 +156,8 @@
 
 <script>
 import SArticleEditor from "@components/article/SArticleEditor.vue";
-import { LogisticProfileType } from "@core/enums/logistic/LogisticProfileType";
-import { SetupService } from "@core/server/SetupService";
+import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
+import { SetupService } from "@selldone/core-js/server/SetupService";
 import UExpandView from "@components/ui/expand-view/UExpandView.vue";
 
 export default {

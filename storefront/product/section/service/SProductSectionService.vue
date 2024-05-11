@@ -26,7 +26,7 @@
 
 <script>
 import SProductServiceForm from "@components/storefront/product/service/form/SProductServiceForm.vue";
-import { ProductType } from "@core/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "SProductSectionService",

@@ -361,7 +361,7 @@
 
 <script>
 import CImageView from "@components/community/image/view/CImageView.vue";
-import { SmartConvertTextToHtml } from "@core/helper/html/HtmlHelper.ts";
+import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper.ts";
 
 export default {
   name: "CCommentsList",

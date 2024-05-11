@@ -171,7 +171,7 @@
 </template>
 
 <script>
-import { DateConverter } from "@core/helper/date/DateConverter";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import numeral from "numeral";
 import UProgressScore from "@components/ui/progress/score/UProgressScore.vue";
 
