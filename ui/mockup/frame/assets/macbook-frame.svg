@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xodm="http://www.corel.com/coreldraw/odm/2003" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="3384px"
+     height="2035px"
+     version="1.1"
+     style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+     viewBox="0 0 7720.39 4644">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil8 {fill:#848688}
+    .fil0 {fill:black;fill-rule:nonzero}
+    .fil6 {fill:url(#id10)}
+    .fil1 {fill:url(#id11)}
+    .fil4 {fill:url(#id12)}
+    .fil5 {fill:url(#id13)}
+    .fil3 {fill:url(#id14)}
+    .fil7 {fill:url(#id15)}
+    .fil2 {fill:url(#id16)}
+   ]]>
+  </style>
+     <clipPath id="id0">
+    <path d="M7124.77 4378.59l0 -0.33c-1.48,-42.28 -450.72,-78.52 -1298.51,-99.97l0 0c848.9,21.48 1298.51,57.78 1298.51,100.15 0,0.06 0,0.09 0,0.15l0 0z"/>
+   </clipPath>
+     <clipPath id="id1">
+    <path d="M3856.28 4644c-2128.48,0 -3232.55,-55.39 -3232.55,-123.69 0,-42.95 437.18,-80.81 1289.31,-102.96l1976.58 0 0 -6.94 0 6.94 1965.47 0c848.42,21.4 1296.72,57.69 1298.57,99.97l0 0.34c-1.85,68.23 -1170.75,126.34 -3297.38,126.34l0 0z"/>
+   </clipPath>
+     <clipPath id="id2">
+    <path d="M4413.97 4161.46l-0.01 0 0 -5.8 0.01 0 0 5.8 0 0z"/>
+   </clipPath>
+     <clipPath id="id3">
+    <path d="M3860.16 4251.72l-464.21 0c-23.78,0 -45.29,-9.24 -61.35,-24.32 16.06,15.08 37.57,24.32 61.35,24.32l464.21 0 0 0 0 0z"/>
+   </clipPath>
+     <clipPath id="id4">
+    <path d="M4324.52 4251.72l-464.39 0 0 0 464.39 0c49.48,0 89.37,-40.02 89.37,-89.4l0 -0.85 0 0 0 0.85c0,49.38 -39.89,89.4 -89.37,89.4l0 0z"/>
+   </clipPath>
+     <clipPath id="id5">
+    <path d="M3331.67 4213.12c-13.03,-15.56 -20.88,-35.59 -20.88,-57.46l0.01 0c0,21.87 7.84,41.9 20.87,57.46l0 0z"/>
+   </clipPath>
+     <clipPath id="id6">
+    <path d="M4413.94 4161.46l-4.44 0c0,-1.92 0.32,-3.85 0.32,-5.8l4.12 0 0 5.8zm-1103.05 0l-4.43 0 0 -5.8 4.43 0c0,1.95 0,3.88 0,5.8l0 0z"/>
+   </clipPath>
+     <clipPath id="id7">
+    <path d="M3860.27 4251.72l-464.41 0c-23.74,0 -45.24,-9.23 -61.33,-24.32 -17.21,-16.31 -28.05,-39.44 -28.05,-65.08l0 -0.85 4.47 0c3.02,46.65 41.74,83.66 89.21,83.66l0 0 0 0 460.11 0 0 6.59 0 0z"/>
+   </clipPath>
+     <clipPath id="id8">
+    <path d="M4324.52 4251.72l-464.39 0 0 -6.59 460.09 0c24.73,0 47.07,-10.05 63.19,-26.22 15,-14.92 24.58,-35.08 26.01,-57.44l4.47 0 0 0.85c0,49.38 -39.89,89.4 -89.37,89.4l0 0z"/>
+   </clipPath>
+     <clipPath id="id9">
+    <path d="M3400.2 4245.14l-0.06 0c-47.42,0 -86.2,-37.01 -89.2,-83.68l0 0c-0.11,-1.91 -0.17,-3.85 -0.17,-5.81l0.03 0c0,21.87 7.85,41.92 20.87,57.45 16.42,19.57 41.01,32.04 68.53,32.04l0 0z"/>
+   </clipPath>
+     <linearGradient id="id10" gradientUnits="userSpaceOnUse" x1="3310.76" y1="4200.39" x2="4409.63" y2="4200.39">
+   <stop offset="0" style="stop-opacity:1; stop-color:#9F9F9F"/>
+         <stop offset="0.0392157" style="stop-opacity:1; stop-color:#ACACAC"/>
+         <stop offset="0.509804" style="stop-opacity:1; stop-color:#E5E5E5"/>
+         <stop offset="0.960784" style="stop-opacity:1; stop-color:#ACACAC"/>
+         <stop offset="1" style="stop-opacity:1; stop-color:#9F9F9F"/>
+  </linearGradient>
+     <linearGradient id="id11" gradientUnits="userSpaceOnUse" x1="0" y1="4219.88" x2="3860.2" y2="4219.88">
+   <stop offset="0" style="stop-opacity:1; stop-color:#929292"/>
+         <stop offset="0.00392157" style="stop-opacity:1; stop-color:#B0B0B0"/>
+         <stop offset="0.0117647" style="stop-opacity:1; stop-color:#C1C1C1"/>
+         <stop offset="0.0509804" style="stop-opacity:1; stop-color:#9C9C9C"/>
+         <stop offset="0.0901961" style="stop-opacity:1; stop-color:#AFAFAF"/>
+         <stop offset="1" style="stop-opacity:1; stop-color:#CFCFCF"/>
+  </linearGradient>
+     <linearGradient id="id12" gradientUnits="userSpaceOnUse" x1="0" y1="4216.43" x2="3860.2" y2="4216.43">
+   <stop offset="0" style="stop-opacity:1; stop-color:#666666"/>
+         <stop offset="0.00392157" style="stop-opacity:1; stop-color:#ABABAB"/>
+         <stop offset="0.0117647" style="stop-opacity:1; stop-color:#D5D5D5"/>
+         <stop offset="0.0509804" style="stop-opacity:1; stop-color:#707070"/>
+         <stop offset="0.0901961" style="stop-opacity:1; stop-color:#BCBCBC"/>
+         <stop offset="1" style="stop-opacity:1; stop-color:#F1F1F1"/>
+  </linearGradient>
+     <linearGradient id="id13" gradientUnits="userSpaceOnUse" x1="3860.2" y1="4216.43" x2="7720.39" y2="4216.43">
+   <stop offset="0" style="stop-opacity:1; stop-color:#F1F1F1"/>
+         <stop offset="0.454902" style="stop-opacity:1; stop-color:#ACACAC"/>
+         <stop offset="0.909804" style="stop-opacity:1; stop-color:#BCBCBC"/>
+         <stop offset="0.94902" style="stop-opacity:1; stop-color:#707070"/>
+         <stop offset="0.988235" style="stop-opacity:1; stop-color:#D5D5D5"/>
+         <stop offset="1" style="stop-opacity:1; stop-color:#666666"/>
+  </linearGradient>
+     <linearGradient id="id14" gradientUnits="userSpaceOnUse" x1="3860.2" y1="4219.88" x2="7720.39" y2="4219.88">
+   <stop offset="0" style="stop-opacity:1; stop-color:#CFCFCF"/>
+         <stop offset="0.454902" style="stop-opacity:1; stop-color:#B1B1B1"/>
+         <stop offset="0.909804" style="stop-opacity:1; stop-color:#AFAFAF"/>
+         <stop offset="0.94902" style="stop-opacity:1; stop-color:#9C9C9C"/>
+         <stop offset="0.988235" style="stop-opacity:1; stop-color:#C1C1C1"/>
+         <stop offset="1" style="stop-opacity:1; stop-color:#929292"/>
+  </linearGradient>
+     <linearGradient id="id15" gradientUnits="userSpaceOnUse" x1="3860.2" y1="4381.26" x2="3860.2" y2="4278.3">
+   <stop offset="0" style="stop-opacity:1; stop-color:#575757"/>
+         <stop offset="0.368627" style="stop-opacity:1; stop-color:#7B7B7B"/>
+         <stop offset="0.741176" style="stop-opacity:1; stop-color:#B9B9B9"/>
+         <stop offset="1" style="stop-opacity:1; stop-color:#9F9F9F"/>
+  </linearGradient>
+     <linearGradient id="id16" gradientUnits="userSpaceOnUse" x1="0" y1="4158.55" x2="7720.39" y2="4158.55">
+   <stop offset="0" style="stop-opacity:1; stop-color:#F8F8F8"/>
+         <stop offset="0.00392157" style="stop-opacity:1; stop-color:whitesmoke"/>
+         <stop offset="0.0117647" style="stop-opacity:1; stop-color:#F8F8F8"/>
+         <stop offset="0.0588235" style="stop-opacity:1; stop-color:#D0D0D0"/>
+         <stop offset="0.501961" style="stop-opacity:1; stop-color:#F8F8F8"/>
+         <stop offset="0.870588" style="stop-opacity:1; stop-color:#D0D0D0"/>
+         <stop offset="1" style="stop-opacity:1; stop-color:#F1F1F1"/>
+  </linearGradient>
+ </defs>
+    <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+        <g style="clip-path:url(#id0)">
+   <image x="5821.45" y="4274.35" width="1305.54" height="107.62"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID1.png"/>
+  </g>
+        <g style="clip-path:url(#id1)">
+   <image x="620.02" y="4406.68" width="6537.34" height="239.84"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID2.png"/>
+  </g>
+        <polygon class="fil0" points="790.35,4145.57 6992.66,4145.57 6992.66,4035.51 790.35,4035.51 "/>
+        <path class="fil0"
+              d="M6992.66 188.95l0 3846.57 -6202.31 0 0 -3846.57c0,-89.16 73.13,-161.69 163.03,-161.69l5876.25 0c89.89,0 163.03,72.53 163.03,161.69zm-6074.01 3751.44l5945.67 0 0 -3678.82 -5945.67 0 0 3678.82z"/>
+        <polygon class="fil0"
+                 points="7020.28,4145.57 7020.28,4155.63 6992.66,4155.63 6992.66,4155.6 790.35,4155.6 790.35,4155.63 763.09,4155.63 763.09,4145.57 "/>
+        <path class="fil1"
+              d="M3860.2 4278.29l-3860.2 0 0 -6.9 3860.2 0 0 6.9zm-3860.2 -6.9l0 -109.93 0 109.93zm0 -109.93l3306.43 0 -3306.43 0z"/>
+        <path class="fil2"
+              d="M7720.39 4161.46l-3306.42 0 0 -5.8 -4.3 0c0,1.95 -0.07,3.88 -0.19,5.8l-0.03 0c0.11,-1.92 0.18,-3.85 0.18,-5.8l-1098.87 0 -4.33 0 0 5.8 -3306.43 0 0 -5.83 7720.39 0 0 5.83z"/>
+        <path class="fil3" d="M7720.39 4278.29l-3860.19 0 0 -6.9 3860.19 0 0 6.9zm-3860.19 -6.9l0 -19.67 0 19.67z"/>
+        <path class="fil4"
+              d="M3860.2 4271.39l-3860.2 0 0 -109.93 3306.43 0 0 0.87c0,25.64 10.83,48.77 28.14,65.07 16.02,15.08 37.61,24.32 61.33,24.32l464.3 0 0 19.67z"/>
+        <path class="fil5"
+              d="M7720.39 4271.39l-3860.19 0 0 -19.67 464.29 0c49.45,0 89.48,-40.01 89.48,-89.39l0 -0.87 3306.42 0 0 109.93zm-3400.19 -26.26l-0.04 0 0.04 0 1.12 -0.01 0.04 0 1.11 -0.02 0.04 0 1.11 -0.03 0.04 0 1.11 -0.05 0.04 0 1.11 -0.07 0.04 0c22.44,-1.44 42.54,-11.14 57.45,-26.04 14.97,-14.91 24.61,-35.07 26.04,-57.45l0.03 0c-1.43,22.38 -11.06,42.54 -26.03,57.45 -14.91,14.9 -35.04,24.61 -57.49,26.04l-0.04 0 -1.11 0.07 -0.04 0 -1.11 0.05 -0.04 0 -1.11 0.03 -0.04 0 -1.11 0.02 -0.04 0 -1.12 0.01zm-0.04 0l-459.96 0 459.96 0z"/>
+        <path class="fil6"
+              d="M4320.16 4245.13l-919.96 0c-27.52,0 -52.12,-12.45 -68.52,-32.02 -13.04,-15.54 -20.88,-35.59 -20.88,-57.45l1098.83 0c0,1.95 -0.07,3.88 -0.18,5.8 -1.43,22.38 -11.07,42.54 -26.04,57.45 -16.18,16.17 -38.48,26.22 -63.25,26.22zm-1009.36 -89.47l-0.04 0 0.04 0zm1098.65 5.8l0 0z"/>
+        <g style="clip-path:url(#id2)">
+   <image x="4411.52" y="4150.76" width="7.8" height="14.45"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID3.png"/>
+  </g>
+        <g style="clip-path:url(#id3)">
+   <image x="3329.6" y="4223.97" width="534.5" height="30.61"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID4.png"/>
+  </g>
+        <g style="clip-path:url(#id4)">
+   <image x="3856.3" y="4157.42" width="563.02" height="97.16"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID5.png"/>
+  </g>
+        <g style="clip-path:url(#id5)">
+   <image x="3306.78" y="4150.76" width="28.71" height="67.69"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID6.png"/>
+  </g>
+        <g style="clip-path:url(#id6)">
+   <image x="3302.02" y="4150.76" width="1117.29" height="14.45"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID7.png"/>
+  </g>
+        <g style="clip-path:url(#id7)">
+   <image x="3302.02" y="4157.42" width="562.07" height="97.16"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID8.png"/>
+  </g>
+        <g style="clip-path:url(#id8)">
+   <image x="3856.3" y="4157.42" width="563.02" height="97.16"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID9.png"/>
+  </g>
+        <g style="clip-path:url(#id9)">
+   <image x="3306.78" y="4150.76" width="97.16" height="99.07"
+          xlink:href="macbook-frame_Images\macbook-frame_ImgID10.png"/>
+  </g>
+        <path class="fil7"
+              d="M0 4278.29c271.44,68.25 554.15,102.97 838.49,102.97l6043.41 0c284.34,0 567.05,-34.72 838.49,-102.97l-7720.39 0z"/>
+        <path class="fil8"
+              d="M953.39 0l5876.24 0c105.3,0 190.65,84.41 190.65,188.53l0 15.1 0 3951.97 -27.62 0 0 -3967.1c0,-40.28 -15,-77.16 -39.8,-105.42 -1.69,-1.97 -3.44,-3.86 -5.25,-5.72 -0.89,-0.94 -1.79,-1.84 -2.73,-2.77 -2.77,-2.73 -5.63,-5.36 -8.59,-7.89l-0.03 -0.05c-1.94,-1.66 -3.96,-3.3 -6.01,-4.9l-0.03 -0.04c-4.13,-3.15 -8.38,-6.17 -12.77,-8.96 -3.31,-2.09 -6.72,-4.09 -10.17,-5.95 -23.1,-12.4 -49.58,-19.46 -77.65,-19.46l-5876.24 0c-21.05,0 -41.24,3.99 -59.72,11.18l-0.03 0.03c-2.44,0.96 -4.87,1.96 -7.28,3.02l-0.04 0.03c-3.6,1.61 -7.14,3.34 -10.59,5.2 -3.47,1.86 -6.85,3.86 -10.16,5.95 -9.92,6.29 -19.11,13.65 -27.43,21.84 -0.94,0.93 -1.84,1.83 -2.73,2.77 -1.81,1.86 -3.57,3.75 -5.26,5.72 -14.52,16.57 -25.7,36.1 -32.45,57.56 -0.82,2.5 -1.53,5.08 -2.21,7.64 -0.68,2.57 -1.27,5.17 -1.83,7.78 -0.54,2.63 -1.03,5.26 -1.42,7.93 -1.24,7.99 -1.89,16.19 -1.89,24.51l0 3967.1 -27.26 0 0 -3940.12 -0.39 -26.95c0,-104.12 85.38,-188.53 190.69,-188.53z"/>
+ </g>
+</svg>

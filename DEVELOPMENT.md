@@ -21,4 +21,6 @@ yarn link "@selldone/sdk-community"
 
 yarn link "@selldone/sdk-vendor"
 
+yarn link "@selldone/page-builder"
+
 ```

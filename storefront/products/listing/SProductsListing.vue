@@ -376,7 +376,7 @@ export default {
   name: "SProductsListing",
   components: {
     LPageViewer: defineAsyncComponent(() =>
-        import('@app-page-builder/page/viewer/LPageViewer.vue')
+        import('@selldone/page-builder/page/viewer/LPageViewer.vue')
     ),
     SProductOverviewLoading,
     UBreadcrumb,

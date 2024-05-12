@@ -158,7 +158,7 @@
 
 <script>
 import MenuCategories from "./MenuCategories.vue";
-import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
+import LPageViewer from "@selldone/page-builder/page/viewer/LPageViewer.vue";
 
 export default {
   name: "SStorefrontTopMenu",

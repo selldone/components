@@ -1,0 +1,231 @@
+<!--
+  ~ Copyright (c) 2023. Selldone® Business OS™
+  ~
+  ~ Author: M.Pajuhaan
+  ~ Web: https://selldone.com
+  ~ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ~
+  ~ All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+  ~ From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+  ~ Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+  ~ Our journey is not just about reaching a destination, but about creating a masterpiece.
+  ~ Tread carefully, for you're treading on dreams.
+  -->
+
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <meta content="" name="description">
+    <meta content="" name="author">
+    <link href="https://selldone.com/favicon.ico" rel="icon">
+
+    <title>{{product.title}}</title>
+
+    <!-- 🌌 Business OS -->
+    <meta content="Selldone" name="copyright">
+
+    <!-- CSS only -->
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" rel="stylesheet">
+    <style>
+        .header {
+            margin-top: 84px;
+        }
+
+        .article-bar {
+            opacity: 0.5;
+            font-size: 13px;
+        }
+
+        .avatar {
+            vertical-align: middle;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+        }
+
+        .avatar.small {
+            width: 24px;
+            height: 24px;
+        }
+
+        .article {
+            margin: 16px 0;
+            border-radius: 18px;
+            padding: 12px;
+            background-color: #fafafa;
+        }
+
+        a {
+            text-decoration: none;
+            color: #3798d5;
+            font-weight: 600;
+        }
+
+        /*Decoration image*/
+        .dec-img {
+            position: absolute;
+            z-index: -1;
+            width: 240px;
+            height: 240px;
+            border-radius: 12px;
+            transform: rotate(-30deg);
+            pointer-events: none;
+            background: #333;
+        }
+
+        .im1 {
+            left: -20px;
+            top: 10px;
+        }
+
+        .im2 {
+            right: -20px;
+            top: 10px;
+        }
+
+        .im3 {
+            left: 250px;
+            top: 150px;
+        }
+
+        .im4 {
+            left: 25px;
+            top: 290px;
+        }
+
+        .im5 {
+            right: 20px;
+            top: 330px;
+        }
+
+        .img-contain {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            top: 0;
+            overflow: hidden;
+            height: 100%;
+            z-index: -1;
+        }
+
+        @media only screen and (max-width: 860px) {
+            .im2, .im5 {
+                display: none
+            }
+        }
+
+        main {
+            margin-bottom: 128px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 12px;
+        }
+
+        .gallery-img {
+            box-shadow: 0 0 2px 0 rgba(0, 0, 0, .16), 0 1px 1px 0 rgba(0, 0, 0, .1) !important;
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top px-3">
+    <a class="navbar-brand" href="https://selldone.com"><b>SD</b></a> <small class="text-white">● Product one page
+    report <b class="mx-1">🌶 BETA</b></small>
+
+</nav>
+
+<div class="img-contain">
+    <img class="dec-img im1" src="{{img1}}">
+    <img class="dec-img im2" src="{{img2}}">
+    <img class="dec-img im3" src="{{img3}}">
+    <img class="dec-img im4" src="{{img4}}">
+    <img class="dec-img im5" src="{{img5}}">
+</div>
+
+<main class="container" role="main" style="margin-bottom: 128px">
+
+    <div class="header p-5">
+        <h1 class="text-h2">{{product.title}}</h1>
+        <p class="lead">{{product.title_en}}</p>
+    </div>
+    <!-- Shop -->
+    <div class="mb-5 d-flex align-center px-3">
+        <img alt="Logo" class="avatar me-2" src="{{shop_logo}}">
+        <div class="flex-grow-1">
+            <b>{{shop.name}}</b>
+            <div class="small">
+                <a class="" href="{{shop.domain}}" target="_blank">{{shop.domain}}</a> ━
+                <a class="" href="{{product_link}}" target="_blank">{{product_link}}</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Gallery -->
+    <div class="row">
+        <div class="v-col-lg-4 v-col-md-12 mb-4 mb-lg-0">
+            <img
+                    alt=""
+                    class="w-100 gallery-img rounded mb-4"
+                    src="{{img1}}"
+            />
+
+            <img
+                    alt=""
+                    class="w-100 gallery-img rounded mb-4"
+                    src="{{img2}}"
+            />
+        </div>
+
+        <div class="v-col-lg-4 mb-4 mb-lg-0">
+            <img
+                    alt=""
+                    class="w-100 gallery-img rounded mb-4"
+                    src="{{img6}}"
+            />
+
+            <img
+                    alt=""
+                    class="w-100 gallery-img rounded mb-4"
+                    src="{{img4}}"
+            />
+        </div>
+
+        <div class="v-col-lg-4 mb-4 mb-lg-0">
+            <img
+                    alt=""
+                    class="w-100 gallery-img rounded mb-4"
+                    src="{{img5}}"
+            />
+
+            <img
+                    alt=""
+                    class="w-100 gallery-img rounded mb-4"
+                    src="{{img3}}"
+            />
+        </div>
+    </div>
+    <!-- Gallery -->
+
+
+    <!-- Articles -->
+    <h2>Articles</h2>
+    {{articles}}
+
+
+</main><!-- /.container -->
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- JavaScript Bundle with Popper -->
+<script crossorigin="anonymous"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+// iPhone X
+$device-silver: #e2e3e4;
+$device-silver-dark: darken($device-silver, 10%);
+$device-silver-panel: #f7f7f7; // #222;
+
+.device-iphone-x {
+  height: 868px;
+  width: 428px;
+
+  .device-frame {
+    background: $device-silver-panel;
+    border-radius: 68px;
+    box-shadow: inset 0 0 2px 2px $device-silver-dark, inset 0 0 0 7px $device-silver;
+    height: 868px;
+    padding: 28px;
+    width: 428px;
+  }
+
+  // 2436-by-1125-pixel resolution
+  .device-content {
+    border-radius: 40px;
+    height: 812px;
+    width: 375px;
+  }
+
+  .device-stripe {
+    &::after,
+    &::before {
+      border: solid rgba(#333, .25);
+      border-width: 0 7px;
+      content: "";
+      height: 7px;
+      left: 0;
+      position: absolute;
+      width: 100%;
+      z-index: 9;
+    }
+
+    &::after {
+      top: 85px;
+    }
+
+    &::before {
+      bottom: 85px;
+    }
+  }
+
+  .device-header {
+    background: $device-silver-panel;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    height: 30px;
+    left: 50%;
+    margin-left: -102px;
+    position: absolute;
+    top: 28px;
+    width: 204px;
+
+    &::after,
+    &::before {
+      content: "";
+      height: 10px;
+      position: absolute;
+      top: 0;
+      width: 10px;
+    }
+
+    &::after {
+      background: radial-gradient(circle at bottom left, transparent 0, transparent 75%, $device-silver-panel 75%, $device-silver-panel 100%);
+      left: -10px;
+    }
+
+    &::before {
+      background: radial-gradient(circle at bottom right, transparent 0, transparent 75%, $device-silver-panel 75%, $device-silver-panel 100%);
+      right: -10px;
+    }
+  }
+
+  .device-sensors {
+    &::after,
+    &::before {
+      content: "";
+      position: absolute;
+    }
+
+    &::after {
+      background: #444;
+      border-radius: 3px;
+      height: 6px;
+      left: 50%;
+      margin-left: -25px;
+      top: 32px;
+      width: 50px;
+    }
+
+    &::before {
+      background: #444;
+      border-radius: 50%;
+      height: 14px;
+      left: 50%;
+      margin-left: 40px;
+      top: 28px;
+      width: 14px;
+    }
+  }
+
+  .device-btns {
+    background: $device-silver-dark;
+    height: 32px;
+    left: -3px;
+    position: absolute;
+    top: 115px;
+    width: 3px;
+
+    &::after,
+    &::before {
+      background: $device-silver-dark;
+      content: "";
+      height: 62px;
+      left: 0;
+      position: absolute;
+      width: 3px;
+    }
+
+    &::after {
+      top: 60px;
+    }
+
+    &::before {
+      top: 140px;
+    }
+  }
+
+  .device-power {
+    background: $device-silver-dark;
+    height: 100px;
+    right: -3px;
+    position: absolute;
+    top: 200px;
+    width: 3px;
+  }
+}

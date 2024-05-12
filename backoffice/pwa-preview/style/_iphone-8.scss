@@ -1,0 +1,197 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+// iPhone 8
+$device-silver: #e2e3e4;
+$device-silver-dark: darken($device-silver, 10%);
+$device-silver-panel: #fff;
+$device-gold: #f7e8dd;
+$device-gold-dark: darken($device-gold, 20%);
+$device-gold-panel: #fff;
+$device-spacegray: #9b9ba0;
+$device-spacegray-dark: darken($device-spacegray, 15%);
+$device-spacegray-panel: #222;
+
+.device-iphone-8 {
+  height: 871px;
+  width: 419px;
+
+  .device-frame {
+    background: $device-silver-panel;
+    border-radius: 68px;
+    box-shadow: inset 0 0 0 2px $device-silver-dark, inset 0 0 0 7px $device-silver;
+    height: 871px;
+    padding: 102px 22px;
+    width: 419px;
+  }
+
+  // 1334-by-750-pixel resolution
+  .device-content {
+    border: 2px solid #222;
+    border-radius: 4px;
+    height: 667px;
+    width: 375px;
+  }
+
+  .device-stripe {
+    &::after,
+    &::before {
+      border: solid rgba(#333, .15);
+      border-width: 0 7px;
+      content: "";
+      height: 6px;
+      left: 0;
+      position: absolute;
+      width: 100%;
+      z-index: 9;
+    }
+
+    &::after {
+      top: 68px;
+    }
+
+    &::before {
+      bottom: 68px;
+    }
+  }
+
+  // Home button
+  .device-header {
+    border: 2px solid $device-silver-dark;
+    border-radius: 50%;
+    bottom: 25px;
+    height: 58px;
+    left: 50%;
+    margin-left: -29px;
+    position: absolute;
+    width: 58px;
+  }
+
+  .device-sensors {
+    background: #666;
+    border-radius: 3px;
+    height: 6px;
+    left: 50%;
+    margin-left: -38px;
+    position: absolute;
+    top: 52px;
+    width: 76px;
+
+    &::after,
+    &::before {
+      background: #666;
+      border-radius: 50%;
+      content: "";
+      position: absolute;
+    }
+
+    &::after {
+      height: 10px;
+      left: 50%;
+      margin-left: -5px;
+      top: -25px;
+      width: 10px;
+    }
+
+    &::before {
+      height: 12px;
+      left: -42px;
+      margin-top: -6px;
+      top: 50%;
+      width: 12px;
+    }
+  }
+
+  .device-btns {
+    background: $device-silver-dark;
+    height: 30px;
+    left: -3px;
+    position: absolute;
+    top: 102px;
+    width: 3px;
+
+    &::after,
+    &::before {
+      background: $device-silver-dark;
+      content: "";
+      height: 56px;
+      left: 0;
+      position: absolute;
+      width: 3px;
+    }
+
+    &::after {
+      top: 62px;
+    }
+
+    &::before {
+      top: 132px;
+    }
+  }
+
+  .device-power {
+    background: $device-silver-dark;
+    height: 80px;
+    right: -2px;
+    position: absolute;
+    top: 160px;
+    width: 3px;
+  }
+
+  // Gold edition 
+  &.device-gold {
+    .device-frame {
+      box-shadow: inset 0 0 0 2px $device-gold-dark, inset 0 0 0 7px $device-gold;
+    }
+
+    .device-header {
+      border-color: $device-gold-dark;
+    }
+
+    .device-btns {
+      &,
+      &::after,
+      &::before {
+        background: $device-gold-dark;
+      }
+    }
+
+    .device-power {
+      background: $device-gold-dark;
+    }
+  }
+
+  // Space Gray edition
+  &.device-spacegray {
+    .device-frame {
+      background: $device-spacegray-panel;
+      box-shadow: inset 0 0 0 2px $device-spacegray-dark, inset 0 0 0 7px $device-spacegray;
+    }
+
+    .device-stripe {
+      &::after,
+      &::before {
+        border-color: rgba(#ccc, .35);
+      }
+    }
+
+    .device-btns {
+      &,
+      &::after,
+      &::before {
+        background: $device-spacegray-dark;
+      }
+    }
+  }
+}

@@ -1,0 +1,93 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+// iMac Pro
+$device-spacegray: #fefefe;
+$device-spacegray-dark: darken($device-spacegray, 8%);
+$device-spacegray-panel: #fefefe;
+
+.device-imac-pro {
+  height: 484px;
+  width: 624px;
+
+  .device-frame {
+    background: $device-spacegray-panel;
+    border-radius: 18px;
+    box-shadow: inset 0 0 0 2px darken($device-spacegray-panel, 2%);
+    height: 428px;
+    padding: 24px 24px 80px 24px;
+    position: relative;
+    width: 624px;
+
+    &::after {
+      background: $device-spacegray-dark;
+      border-radius: 0 0 18px 18px;
+      bottom: 2px;
+      content: "";
+      height: 54px;
+      left: 2px;
+      position: absolute;
+      width: 620px;
+    }
+
+    &::before {
+      bottom: 15px;
+      color: $device-spacegray-panel;
+      content: "";
+      font-size: 24px;
+      height: 24px;
+      left: 50%;
+      line-height: 24px;
+      margin-left: -100px;
+      position: absolute;
+      text-align: center;
+      width: 200px;
+      z-index: 9;
+    }
+  }
+
+  // 5120‑by‑2880-pixel resolution
+  .device-content {
+    border: 2px solid lighten($device-spacegray-panel, 2%);
+    border-radius: 2px;
+    height: 324px;
+    width: 576px;
+  }
+
+  .device-power {
+    &::after,
+    &::before {
+      content: "";
+    }
+
+    &::after {
+      background: darken($device-spacegray-dark, 5%);
+      border-radius: 2px;
+      height: 6px;
+      margin: 0 auto;
+      position: relative;
+      width: 180px;
+    }
+
+    &::before {
+      border: solid transparent;
+      border-bottom-color: lighten($device-spacegray-panel, 15%);
+      border-width: 0 8px 50px 8px;
+      height: 50px;
+      margin: 0 auto;
+      position: relative;
+      width: 130px;
+    }
+  }
+}

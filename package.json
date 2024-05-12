@@ -27,6 +27,7 @@
     "@selldone/sdk-backoffice": "^1.0.0",
     "@selldone/sdk-community": "^1.0.0",
     "@selldone/sdk-vendor": "^1.0.0",
+    "@selldone/page-builder": "^1.0.0",
 
 
 
@@ -80,7 +81,9 @@
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.6.4",
     "vuex": "^4.1.0",
-    "youtube-player": "^5.6.0"
+    "youtube-player": "^5.6.0",
+    "webfontloader": "^1.6.28",
+    "file-saver": "^2.0.5"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.5.2",

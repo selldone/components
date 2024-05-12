@@ -1,0 +1,98 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+// Google Pixel 2 XL
+$device-black: #cfcfcf;
+$device-black-dark: darken($device-black, 20%);
+$device-black-panel: #121212;
+
+.device-google-pixel-2-xl {
+  height: 832px;
+  width: 404px;
+
+  .device-frame {
+    background: $device-black-panel;
+    border-radius: 36px;
+    box-shadow: inset 0 0 0 2px $device-black, inset 0 0 0 7px $device-black-dark;
+    height: 832px;
+    padding: 56px 22px;
+    width: 404px;
+  }
+
+  // 2880-by-1440-pixel resolution
+  .device-content {
+    border-radius: 27px;
+    height: 720px;
+    width: 360px;
+  }
+
+  .device-header {
+    height: 832px;
+    left: 50%;
+    margin-left: -150px;
+    position: absolute;
+    top: 0;
+    width: 300px;
+
+    &::after,
+    &::before {
+      background: #333;
+      border-radius: 3px;
+      content: "";
+      height: 6px;
+      left: 50%;
+      margin-left: -73px;
+      margin-top: -3px;
+      position: absolute;
+      width: 146px;
+    }
+
+    &::after {
+      top: 24px;
+    }
+
+    &::before {
+      bottom: 28px;
+    }
+  }
+
+  .device-sensors {
+    background: #333;
+    border-radius: 7px;
+    height: 14px;
+    left: 54px;
+    margin-top: -7px;
+    position: absolute;
+    top: 36px;
+    width: 14px;
+  }
+
+  .device-btns {
+    background: $device-black;
+    height: 102px;
+    position: absolute;
+    right: -3px;
+    top: 306px;
+    width: 3px;
+  }
+
+  .device-power {
+    background: $device-black;
+    height: 58px;
+    position: absolute;
+    right: -3px;
+    top: 194px;
+    width: 3px;
+  }
+}

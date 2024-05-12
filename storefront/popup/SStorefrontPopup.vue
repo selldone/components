@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import LPageViewer from "@app-page-builder/page/viewer/LPageViewer.vue";
+import LPageViewer from "@selldone/page-builder/page/viewer/LPageViewer.vue";
 
 export default {
   name: "SStorefrontPopup",

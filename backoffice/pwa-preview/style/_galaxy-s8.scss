@@ -1,0 +1,161 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+// Galaxy S8
+$device-black: #cfcfcf;
+$device-black-dark: darken($device-black, 20%);
+$device-black-panel: #fefefe;
+$device-blue: #a3c5e8;
+$device-blue-dark: darken($device-blue, 20%);
+$device-blue-panel: #222;
+
+.device-galaxy-s8 {
+  height: 828px;
+  width: 380px;
+
+  .device-frame {
+    background: $device-black-panel;
+    border: solid $device-black;
+    border-radius: 55px;
+    border-width: 5px 0;
+    box-shadow: inset 0 0 0 2px $device-black-dark;
+    height: 828px;
+    padding: 48px 10px 40px 10px;
+    width: 380px;
+  }
+
+  // 2960-by-1440-pixel resolution
+  .device-content {
+    border: 2px solid #222;
+    border-radius: 34px;
+    height: 740px;
+    width: 360px;
+  }
+
+  .device-stripe {
+    &::after,
+    &::before {
+      border: solid rgba(#333, .15);
+      border-width: 5px 0;
+      content: "";
+      height: 828px;
+      position: absolute;
+      top: 0;
+      width: 6px;
+      z-index: 9;
+    }
+
+    &::after {
+      left: 48px;
+    }
+
+    &::before {
+      right: 48px;
+    }
+  }
+
+  .device-sensors {
+    background: #666;
+    border-radius: 3px;
+    height: 6px;
+    left: 50%;
+    margin-left: -24px;
+    margin-top: -3px;
+    position: absolute;
+    top: 32px;
+    width: 48px;
+
+    &::after,
+    &::before {
+      background: #666;
+      border-radius: 50%;
+      content: "";
+      position: absolute;
+      top: 50%;
+    }
+
+    &::after {
+      box-shadow: -192px 0 #333, -174px 0 #333, -240px 0 #333;
+      height: 8px;
+      right: -90px;
+      margin-top: -4px;
+      width: 8px;
+    }
+
+    &::before {
+      box-shadow: 186px 0 #666;
+      height: 12px;
+      left: -90px;
+      margin-top: -6px;
+      width: 12px;
+    }
+  }
+
+  .device-btns {
+    background: $device-black-dark;
+    border-radius: 3px 0 0 3px;
+    height: 116px;
+    left: -3px;
+    position: absolute;
+    top: 144px;
+    width: 3px;
+
+    &::after {
+      background: $device-black-dark;
+      border-radius: 3px 0 0 3px;
+      content: "";
+      height: 54px;
+      left: 0;
+      position: absolute;
+      top: 164px;
+      width: 3px;
+    }
+  }
+
+  .device-power {
+    background: $device-black-dark;
+    border-radius: 0 3px 3px 0;
+    height: 54px;
+    right: -3px;
+    position: absolute;
+    top: 260px;
+    width: 3px;
+  }
+
+  // Coral Blue edition
+  &.device-blue {
+    .device-frame {
+      border-color: $device-blue;
+      box-shadow: inset 0 0 0 2px $device-blue-dark;
+    }
+
+    .device-stripe {
+      &::after,
+      &::before {
+        border-color: rgba(#fff, .35);
+      }
+    }
+
+    .device-btns {
+      &,
+      &::after {
+        background: $device-blue-dark;
+      }
+    }
+
+    .device-power {
+      background: $device-blue-dark;
+    }
+  }
+}

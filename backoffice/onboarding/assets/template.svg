@@ -1,0 +1,26 @@
+<svg id="Flat" height="512" viewBox="0 0 512 512" width="512" xmlns="http://www.w3.org/2000/svg">
+    <rect fill="#e9eef2" height="448" rx="16" transform="matrix(-1 0 0 -1 512 513.036)" width="464" x="24" y="32.518"/>
+    <path d="m488 48.518v48h-464v-48a16 16 0 0 1 16-16h432a16 16 0 0 1 16 16z" fill="#c3c6c7"/>
+    <g fill="#e9eef2">
+        <circle cx="120" cy="64.518" r="8"/>
+        <circle cx="88" cy="64.518" r="8"/>
+        <circle cx="56" cy="64.518" r="8"/>
+    </g>
+    <path d="m72 144h368v128h-368z" fill="#2d85cc"/>
+    <circle cx="304" cy="192" fill="#f7cc38" r="8"/>
+    <path d="m248 272h-112l56-80z" fill="#75ab7d"/>
+    <path d="m376 272h-96l48-48z" fill="#75ab7d"/>
+    <path d="m312 272h-96l48-64z" fill="#88c791"/>
+    <circle cx="288" cy="304" fill="#9aa3a8" r="8"/>
+    <circle cx="256" cy="304" fill="#9aa3a8" r="8"/>
+    <circle cx="224" cy="304" fill="#9aa3a8" r="8"/>
+    <path d="m72 336h96v64h-96z" fill="#2d85cc"/>
+    <path d="m160 400h-80l40-32z" fill="#88c791"/>
+    <path d="m208 336h96v64h-96z" fill="#2d85cc"/>
+    <path d="m296 400h-80l40-32z" fill="#88c791"/>
+    <path d="m344 336h96v64h-96z" fill="#2d85cc"/>
+    <path d="m432 400h-80l40-32z" fill="#88c791"/>
+    <path d="m152 440h-64a8 8 0 0 1 0-16h64a8 8 0 0 1 0 16z" fill="#c3c6c7"/>
+    <path d="m288 440h-64a8 8 0 0 1 0-16h64a8 8 0 0 1 0 16z" fill="#c3c6c7"/>
+    <path d="m424 440h-64a8 8 0 0 1 0-16h64a8 8 0 0 1 0 16z" fill="#c3c6c7"/>
+</svg>

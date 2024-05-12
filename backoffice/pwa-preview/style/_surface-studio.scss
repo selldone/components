@@ -1,0 +1,101 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+// Surface Studio
+$device-silver: #e2e3e4;
+$device-silver-dark: darken($device-silver, 10%);
+$device-silver-panel: #0d0d0d;
+
+.device-surface-studio {
+  height: 506px;
+  width: 640px;
+
+  .device-frame {
+    background: $device-silver-panel;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 2px darken($device-silver-panel, 5%);
+    height: 440px;
+    padding: 20px;
+    width: 640px;
+  }
+
+  // 4500-by-3000-pixel resolution
+  .device-content {
+    border: 2px solid lighten($device-silver-panel, 2%);
+    border-radius: 2px;
+    height: 400px;
+    width: 600px;
+  }
+
+  .device-stripe {
+    background: #444;
+    border-radius: 0 0 2px 2px;
+    bottom: 0;
+    height: 4px;
+    left: 50%;
+    margin-left: -117px;
+    position: absolute;
+    width: 234px;
+
+    &::after,
+    &::before {
+      content: "";
+      left: 50%;
+      position: absolute;
+      top: -75px;
+    }
+
+    &::after {
+      border: 6px solid darken($device-silver, 5%);
+      border-top: 0;
+      border-radius: 0 0 18px 18px;
+      box-shadow: inset 0 0 0 4px $device-silver-dark;
+      height: 60px;
+      margin-left: -140px;
+      width: 280px;
+      z-index: -1;
+    }
+
+    &::before {
+      border: 15px solid $device-silver;
+      border-top: 0;
+      border-radius: 0 0 4px 4px;
+      height: 70px;
+      margin-left: -150px;
+      width: 300px;
+      z-index: -2;
+    }
+  }
+
+  .device-power {
+    background: lighten($device-silver, 5%);
+    border: solid $device-silver;
+    border-radius: 0 0 2px 2px;
+    border-width: 0 4px 2px 4px;
+    height: 32px;
+    margin: 30px auto 0 auto;
+    position: relative;
+    width: 250px;
+
+    &::after {
+      background: darken($device-silver-dark, 10%);
+      content: "";
+      height: 2px;
+      left: -4px;
+      position: absolute;
+      top: 4px;
+      width: 250px;
+    }
+  }
+}

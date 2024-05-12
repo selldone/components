@@ -1,0 +1,183 @@
+/*!
+ * Copyright (c) 2023. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+// MacBook
+$device-silver: #e2e3e4;
+$device-silver-dark: darken($device-silver, 10%);
+$device-silver-panel: #fefefe;
+$device-spacegray: #83878a;
+$device-spacegray-dark: darken($device-spacegray, 5%);
+$device-spacegray-panel: #0d0d0d;
+$device-gold: #f7e8dd;
+$device-gold-dark: darken($device-gold, 10%);
+$device-gold-panel: #0d0d0d;
+$device-rosegold: #fefefe;
+$device-rosegold-dark: darken($device-rosegold, 10%);
+$device-rosegold-panel: #0d0d0d;
+
+
+.device-macbook {
+  height: 432px;
+  width: 740px;
+
+  .device-frame {
+    background: $device-silver-panel;
+    border-radius: 20px;
+    box-shadow: inset 0 0 0 2px $device-silver-dark;
+    height: 428px;
+    margin: 0 auto;
+    padding: 29px 19px 39px 19px;
+    position: relative;
+    width: 614px;
+
+    &::after {
+      background: lighten($device-silver-panel, 10%);
+      border-radius: 0 0 20px 20px;
+      bottom: 2px;
+      content: "";
+      height: 26px;
+      left: 2px;
+      position: absolute;
+      width: 610px;
+    }
+
+    &::before {
+      bottom: 10px;
+      color: $device-silver-dark;
+      content: "MacBook";
+      font-size: 12px;
+      height: 16px;
+      left: 50%;
+      line-height: 16px;
+      margin-left: -100px;
+      position: absolute;
+      text-align: center;
+      width: 200px;
+      z-index: 1;
+    }
+  }
+
+  // 1440-by-900-pixel resolution
+  .device-content {
+    border: 2px solid lighten($device-silver-panel, 2%);
+    border-radius: 2px;
+    height: 360px;
+    width: 576px;
+  }
+
+  .device-power {
+    background: $device-silver;
+    border: solid darken($device-silver, 5%);
+    border-radius: 2px 2px 0 0;
+    border-width: 0 4px;
+    height: 4px;
+    margin-top: -10px;
+    position: relative;
+    width: 740px;
+    z-index: 9;
+
+    &::after,
+    &::before {
+      content: "";
+      position: absolute;
+    }
+
+    &::after {
+      background: radial-gradient(circle at center, $device-silver 0, $device-silver 85%, darken($device-silver-dark, 15%) 100%);
+      border: solid darken($device-silver-dark, 10%);
+      border-width: 0 2px;
+      height: 4px;
+      left: 50%;
+      margin-left: -60px;
+      width: 120px;
+    }
+
+    &::before {
+      background: darken($device-silver-dark, 15%);
+      border-radius: 0 0 180px 180px/ 0 0 10px 10px;
+      box-shadow: inset 0 -2px 6px 0 darken($device-silver-dark, 50%);
+      height: 10px;
+      left: -4px;
+      margin: 0 auto;
+      top: 4px;
+      width: 740px;
+    }
+  }
+
+  // Gold edition
+  &.device-gold {
+    .device-frame {
+      box-shadow: inset 0 0 0 2px $device-gold-dark;
+    }
+
+    .device-power {
+      background: $device-gold;
+      border-color: $device-gold-dark;
+
+      &::after {
+        background: radial-gradient(circle at center, $device-gold 0, $device-gold 85%, darken($device-gold-dark, 15%) 100%);
+        border-color: darken($device-gold-dark, 10%);
+      }
+
+      &::before {
+        background: $device-gold-dark;
+        box-shadow: inset 0 -2px 6px 0 darken($device-gold-dark, 50%);
+      }
+    }
+  }
+
+  // Rose Gold edition 
+  &.device-rosegold {
+    .device-frame {
+      box-shadow: inset 0 0 0 2px $device-rosegold-dark;
+    }
+
+    .device-power {
+      background: $device-rosegold;
+      border-color: $device-rosegold-dark;
+
+      &::after {
+        background: radial-gradient(circle at center, $device-rosegold 0, $device-rosegold 85%, darken($device-rosegold-dark, 15%) 100%);
+        border-color: $device-rosegold-dark;
+      }
+
+      &::before {
+        background: $device-rosegold-dark;
+        box-shadow: inset 0 -2px 6px 0 darken($device-rosegold-dark, 50%);
+      }
+    }
+  }
+
+  // Space Gray edition
+  &.device-spacegray {
+    .device-frame {
+      box-shadow: inset 0 0 0 2px $device-spacegray-dark;
+    }
+
+    .device-power {
+      background: lighten($device-spacegray, 5%);
+      border-color: $device-spacegray-dark;
+
+      &::after {
+        background: radial-gradient(circle at center, lighten($device-spacegray, 5%) 0, lighten($device-spacegray, 5%) 85%, darken($device-spacegray-dark, 15%) 100%);
+        border-color: darken($device-spacegray-dark, 10%);
+      }
+
+      &::before {
+        background: darken($device-spacegray-dark, 15%);
+        box-shadow: inset 0 -2px 6px 0 darken($device-spacegray-dark, 50%);
+      }
+    }
+  }
+}
