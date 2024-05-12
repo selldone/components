@@ -22,7 +22,7 @@
 @import "selldone/responsives";
 @import "selldone/landings";
 @import "avocado/avocado";
-@import "selldone/brush";
+@import "selldone/brush.css";
 @import "selldone/dragable";
 @import "selldone/markdown";
 @import "selldone/onboarding";
@@ -44,9 +44,6 @@
 
 @import "../community/style/community";
 
-@import "material-design-fonts/material-design-icons";
-
-@import "lang-fa-iransans/lang-fa-iransans.css";
 @import "../ui/uploader/style/uploader";
 @import "selldone/border/borders";
 @import "selldone/overlays";

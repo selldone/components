@@ -410,7 +410,7 @@ import SStorefrontSocialButtons from "../../../storefront/social/SStorefrontSoci
 
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import SLanguageSelector from "../../../storefront/language/selector/SLanguageSelector.vue";
-import {ShopFooterHelper} from "../ShopFooterHelper.js";
+import {ShopFooterHelper} from "../ShopFooterHelper.ts";
 
 export default {
   name: "SFooterSection",

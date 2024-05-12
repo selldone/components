@@ -21,7 +21,7 @@ import * as directives from "vuetify/directives";
 import {SetupService} from "@selldone/core-js/server/SetupService";
 import {aliases, md} from "vuetify/iconsets/md";
 
-import "@fortawesome/fontawesome-free/css/all.css"; // Ensure your project is capable of handling css files
+//import "@fortawesome/fontawesome-free/css/all.css"; // Ensure your project is capable of handling css files
 import {fa} from "vuetify/iconsets/fa";
 import {createVueI18nAdapter} from "vuetify/locale/adapters/vue-i18n";
 import {I18n, useI18n} from "vue-i18n";

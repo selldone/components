@@ -34,7 +34,7 @@ import {
   getDynamicMapCss,
   getBaseCss,
   getCombinedCssString,
-} from "./dynamic-map-css.js";
+} from "./dynamic-map-css.ts";
 
 export default {
   name: "UMapCountriesHeatmap",

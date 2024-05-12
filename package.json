@@ -1,6 +1,6 @@
 {
   "name": "@selldone/components-vue",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": false,
   "type": "module",
   "author": "Mehrdad Pajuhaan <mehrdad@selldone.com> (https://selldone.com)",
@@ -81,10 +81,10 @@
     "vuetify": "^3.6.4",
     "vuex": "^4.1.0",
     "youtube-player": "^5.6.0"
-
-
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.2",
+
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",
     "eslint": "^8.56.0",
@@ -106,7 +106,9 @@
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
     "eslint-plugin-vue": "^9.26.0",
-    "eslint-plugin-vuetify": "^2.4.0"
+    "eslint-plugin-vuetify": "^2.4.0",
+    "sass": "^1.77.0",
+    "autoprefixer": "^10.4.19"
   },
   "env": {
     "jquery": true
