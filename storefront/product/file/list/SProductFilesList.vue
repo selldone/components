@@ -66,8 +66,8 @@
 </template>
 
 <script>
-import UExpandView from "@components/ui/expand-view/UExpandView.vue";
-import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
+import UExpandView from "../../../../ui/expand-view/UExpandView.vue";
+import SShopProductFilesList from "../../../../storefront/product/file/SShopProductFilesList.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {

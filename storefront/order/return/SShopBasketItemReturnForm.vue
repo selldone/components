@@ -136,7 +136,7 @@
               <v-img
                 v-if="videoPath"
                 :height="48"
-                :src="require('@components/assets/icons/film.svg')"
+                :src="require('../../../assets/icons/film.svg')"
                 :width="48"
                 class="ma-auto"
               />
@@ -163,7 +163,7 @@
               <v-img
                 v-if="voicePath"
                 :height="48"
-                :src="require('@components/assets/icons/voice.svg')"
+                :src="require('../../../assets/icons/voice.svg')"
                 :width="48"
                 class="ma-auto"
               />
@@ -214,8 +214,8 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
+import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
+import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { ReturnOrderReason } from "@selldone/core-js/enums/basket/ReturnOrderReason";
 
 export default {

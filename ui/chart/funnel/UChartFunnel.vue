@@ -159,15 +159,15 @@
 import { interpolate } from "polymorph-js";
 import TWEEN from "@tweenjs/tween.js";
 
-import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
+import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import numeral from "numeral";
-import FunnelGraph from "@components/ui/chart/funnel/core/js/main";
+import FunnelGraph from "../../../ui/chart/funnel/core/js/main";
 import {
   generateLegendBackground,
   getDefaultColors,
-} from "@components/ui/chart/funnel/core/js/graph";
-import "@components/ui/chart/funnel/core/scss/main.scss";
-import "@components/ui/chart/funnel/core/scss/theme.scss";
+} from "./core/js/graph.js";
+import "../../../ui/chart/funnel/core/scss/main.scss";
+import "../../../ui/chart/funnel/core/scss/theme.scss";
 
 export default {
   name: "UChartFunnel",

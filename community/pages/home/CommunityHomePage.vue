@@ -171,11 +171,11 @@
 </template>
 
 <script>
-import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
-import CCategoryCard from "@components/community/category/card/CCategoryCard.vue";
+import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
+import CCategoryCard from "../../../community/category/card/CCategoryCard.vue";
 import CommunityStatistic from "../../statistic/CommunityStatistic.vue";
 import CCommunityEdit from "../../edit/CCommunityEdit.vue";
-import CCategoryEdit from "@components/community/category/edit/CCategoryEdit.vue";
+import CCategoryEdit from "../../../community/category/edit/CCategoryEdit.vue";
 import CHeader from "../../header/CHeader.vue";
 import CBotManagement from "../../bot/management/CBotManagement.vue";
 

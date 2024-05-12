@@ -221,11 +221,11 @@
 
 <script>
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import ULoadingEllipsis from "@components/ui/loading/ellipsis/ULoadingEllipsis.vue";
-import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
+import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
+import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
-import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
+import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import SShopSubscribeButton from "./SShopSubscribeButton.vue";
 import { SubscriptionMode } from "@selldone/core-js/enums/subscription/SubscriptionMode";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";

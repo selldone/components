@@ -201,8 +201,8 @@
 <script>
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
-import InstagramViewMedias from "@components/storefront/instagram/InstagramViewMedias.vue";
-import InstagramViewHighlights from "@components/storefront/instagram/InstagramViewHighlights.vue";
+import InstagramViewMedias from "../../storefront/instagram/InstagramViewMedias.vue";
+import InstagramViewHighlights from "../../storefront/instagram/InstagramViewHighlights.vue";
 import * as h337 from "heatmap.js";
 import _ from "lodash-es";
 

@@ -251,8 +251,8 @@
 
 <script>
 import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
-import URatingEmoji from "@components/ui/rating/emoji/URatingEmoji.vue";
-import SProductPreviewById from "@components/storefront/product/preview-by-id/SProductPreviewById.vue";
+import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
+import SProductPreviewById from "../../../storefront/product/preview-by-id/SProductPreviewById.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
 /**

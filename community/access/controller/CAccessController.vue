@@ -178,8 +178,8 @@
 </template>
 
 <script>
-import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
-import CUserInput from "@components/community/user/input/CUserInput.vue";
+import UDenseCirclesUsers from "../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
+import CUserInput from "../../../community/user/input/CUserInput.vue";
 
 export default {
   name: "CAccessController",

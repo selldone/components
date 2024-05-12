@@ -135,10 +135,10 @@
 
 <script>
 import VariantFilter from "../../variant/variant-filter/VariantFilter.vue";
-import VariantItemMini from "@components/storefront/product/variant/VariantItemMini.vue";
+import VariantItemMini from "../../../../storefront/product/variant/VariantItemMini.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
-import UVariantAssetImage from "@components/ui/variant/asset/image/UVariantAssetImage.vue";
-import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
+import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
+import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 
 export default {
   name: "SProductSectionVariants",

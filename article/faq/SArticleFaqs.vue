@@ -140,7 +140,7 @@
 </template>
 
 <script>
-import { InlineEditorMixin } from "@components/mixin/InlineEditorMixin";
+import { InlineEditorMixin } from "../../mixin/InlineEditorMixin";
 
 /**
  * <s-article-faqs>

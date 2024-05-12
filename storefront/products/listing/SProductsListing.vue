@@ -356,18 +356,18 @@
 </template>
 
 <script>
-import SShopProductCard from "@components/storefront/product/card/SShopProductCard.vue";
-import SProductsSortView from "@components/storefront/product/sort/SProductsSortView.vue";
-import SCategoryCard from "@components/storefront/category/card/SCategoryCard.vue";
+import SShopProductCard from "../../../storefront/product/card/SShopProductCard.vue";
+import SProductsSortView from "../../../storefront/product/sort/SProductsSortView.vue";
+import SCategoryCard from "../../../storefront/category/card/SCategoryCard.vue";
 import { HierarchyHelper } from "@selldone/core-js/helper/breadcrumb/HierarchyHelper";
-import SCategoryFilter from "@components/storefront/category/filter/SCategoryFilter.vue";
+import SCategoryFilter from "../../../storefront/category/filter/SCategoryFilter.vue";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
-import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
-import SProductOverview from "@components/storefront/overview/SProductOverview.vue";
+import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";
+import SProductOverview from "../../../storefront/overview/SProductOverview.vue";
 import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper";
-import BProductSpecTable from "@components/storefront/product/spec/table/BProductSpecTable.vue";
-import UBreadcrumb from "@components/ui/breadcrumb/UBreadcrumb.vue";
-import SProductOverviewLoading from "@components/storefront/overview/loading/SProductOverviewLoading.vue";
+import BProductSpecTable from "../../../storefront/product/spec/table/BProductSpecTable.vue";
+import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
+import SProductOverviewLoading from "../../../storefront/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 import _ from "lodash-es";
 import {defineAsyncComponent} from "vue";

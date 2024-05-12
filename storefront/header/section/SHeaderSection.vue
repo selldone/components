@@ -401,16 +401,16 @@
 
 <script>
 import BasketTopMenu from "../../order/basket/BasketTopMenu.vue";
-import ULoadingEllipsis from "@components/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
 
-import SStorefrontLotteryWheelOfFortune from "@components/storefront/lottery/wheel-of-fortune/SStorefrontLotteryWheelOfFortune.vue";
-import UCurrencySelector from "@components/ui/currency/selector/UCurrencySelector.vue";
-import SShopNavigationDrawer from "@components/storefront/menu/side/SShopNavigationDrawer.vue";
-import SShopUserMenuList from "@components/storefront/menu/user/SShopUserMenuList.vue";
+import SStorefrontLotteryWheelOfFortune from "../../../storefront/lottery/wheel-of-fortune/SStorefrontLotteryWheelOfFortune.vue";
+import UCurrencySelector from "../../../ui/currency/selector/UCurrencySelector.vue";
+import SShopNavigationDrawer from "../../../storefront/menu/side/SShopNavigationDrawer.vue";
+import SShopUserMenuList from "../../../storefront/menu/user/SShopUserMenuList.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
-import SLanguageSelector from "@components/storefront/language/selector/SLanguageSelector.vue";
+import SLanguageSelector from "../../../storefront/language/selector/SLanguageSelector.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import SHeaderSectionLogo from "@components/storefront/header/section/logo/SHeaderSectionLogo.vue";
+import SHeaderSectionLogo from "../../../storefront/header/section/logo/SHeaderSectionLogo.vue";
 
 const BOTTOM_PADDING_CONTAINER = "82px";
 export default {

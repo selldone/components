@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import SFormBuilderRow from "@components/ui/form/item/SFormBuilderRow.vue";
+import SFormBuilderRow from "../../ui/form/item/SFormBuilderRow.vue";
 import draggable from "vuedraggable";
 
 export default {

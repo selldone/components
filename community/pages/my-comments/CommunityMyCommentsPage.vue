@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
-import CCommentWidget from "@components/community/comment/widget/CCommentWidget.vue";
+import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
+import CCommentWidget from "../../../community/comment/widget/CCommentWidget.vue";
 
 export default {
   name: "CommunityMyCommentsPage",

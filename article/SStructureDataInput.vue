@@ -179,10 +179,10 @@
 </template>
 
 <script>
-import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
-import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
+import UPriceInput from "../ui/price/input/UPriceInput.vue";
+import UCurrencyInput from "../ui/currency/input/UCurrencyInput.vue";
 import UDateInput from "../ui/date/input/UDateInput.vue";
-import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
+import UNumberInput from "../ui/number/input/UNumberInput.vue";
 
 const ActionPlatform = [
   "http://schema.org/DesktopWebPlatform",

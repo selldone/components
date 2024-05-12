@@ -341,32 +341,32 @@
 </template>
 
 <script>
-import SShopProductRatingView from "@components/storefront/product/rating/SShopProductRatingView.vue";
-import BasketItemUserMessageForm from "@components/storefront/order/product-input/BasketItemUserMessageForm.vue";
-import SStorefrontCouponsList from "@components/storefront/coupon/list/SStorefrontCouponsList.vue";
+import SShopProductRatingView from "../../storefront/product/rating/SShopProductRatingView.vue";
+import BasketItemUserMessageForm from "../../storefront/order/product-input/BasketItemUserMessageForm.vue";
+import SStorefrontCouponsList from "../../storefront/coupon/list/SStorefrontCouponsList.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
-import SSmartSelectVendor from "@components/storefront/vendor/selector/SSmartSelectVendor.vue";
+import SSmartSelectVendor from "../../storefront/vendor/selector/SSmartSelectVendor.vue";
 
-import SShopProductSlideShow from "@components/storefront/product/images/SShopProductSlideShow.vue";
+import SShopProductSlideShow from "../../storefront/product/images/SShopProductSlideShow.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import SSubscriptionPriceSelect from "@components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
+import SSubscriptionPriceSelect from "../../storefront/order/subscription/SSubscriptionPriceSelect.vue";
 import { RibbonHelper } from "@selldone/core-js/helper/ribbon/RibbonHelper";
-import ProductDiscountCountdown from "@components/storefront/product/count-down/ProductDiscountCountdown.vue";
-import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
-import UPaymentStripeSplit from "@components/ui/payment/stripe/split/UPaymentStripeSplit.vue";
-import SProductSectionService from "@components/storefront/product/section/service/SProductSectionService.vue";
-import SProductSectionValuation from "@components/storefront/product/section/valuation/SProductSectionValuation.vue";
+import ProductDiscountCountdown from "../../storefront/product/count-down/ProductDiscountCountdown.vue";
+import SShopBuyButton from "../../storefront/product/button/SShopBuyButton.vue";
+import UPaymentStripeSplit from "../../ui/payment/stripe/split/UPaymentStripeSplit.vue";
+import SProductSectionService from "../../storefront/product/section/service/SProductSectionService.vue";
+import SProductSectionValuation from "../../storefront/product/section/valuation/SProductSectionValuation.vue";
 import SProductSectionExtraPricings
-  from "@components/storefront/product/section/extra-pricing/SProductSectionExtraPricings.vue";
-import SProductSectionTax from "@components/storefront/product/section/tax/SProductSectionTax.vue";
-import SProductSectionBuyButton from "@components/storefront/product/section/buy-button/SProductSectionBuyButton.vue";
+  from "../../storefront/product/section/extra-pricing/SProductSectionExtraPricings.vue";
+import SProductSectionTax from "../../storefront/product/section/tax/SProductSectionTax.vue";
+import SProductSectionBuyButton from "../../storefront/product/section/buy-button/SProductSectionBuyButton.vue";
 import SProductSectionExtraButtons
-  from "@components/storefront/product/section/extra-buttons/SProductSectionExtraButtons.vue";
-import SProductSectionPrice from "@components/storefront/product/section/price/SProductSectionPrice.vue";
+  from "../../storefront/product/section/extra-buttons/SProductSectionExtraButtons.vue";
+import SProductSectionPrice from "../../storefront/product/section/price/SProductSectionPrice.vue";
 import SProductSectionWaitingAuction
-  from "@components/storefront/product/section/auction/SProductSectionWaitingAuction.vue";
-import SProductSectionBadges from "@components/storefront/product/section/badges/SProductSectionBadges.vue";
-import SProductSectionVariants from "@components/storefront/product/section/variants/SProductSectionVariants.vue";
+  from "../../storefront/product/section/auction/SProductSectionWaitingAuction.vue";
+import SProductSectionBadges from "../../storefront/product/section/badges/SProductSectionBadges.vue";
+import SProductSectionVariants from "../../storefront/product/section/variants/SProductSectionVariants.vue";
 
 export default {
   name: "SProductOverview",

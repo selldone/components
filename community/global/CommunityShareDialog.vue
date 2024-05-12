@@ -44,7 +44,7 @@
 
 <script>
 import UButtonShareGroup from "../../ui/button/share/group/UButtonShareGroup.vue";
-import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
+import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 
 export default {
   name: "CommunityShareDialog",

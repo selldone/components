@@ -457,13 +457,13 @@
 </template>
 
 <script>
-import UDateInput from "@components/ui/date/input/UDateInput.vue";
-import UTasksEditor from "@components/ui/task/editor/UTasksEditor.vue";
-import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
-import UCalendarView from "@components/ui/calendar/clendar-view/UCalendarView.vue";
-import UTimeWeekPicker from "@components/ui/time/week-picker/UTimeWeekPicker.vue";
+import UDateInput from "../../../ui/date/input/UDateInput.vue";
+import UTasksEditor from "../../../ui/task/editor/UTasksEditor.vue";
+import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
+import UCalendarView from "../../../ui/calendar/clendar-view/UCalendarView.vue";
+import UTimeWeekPicker from "../../../ui/time/week-picker/UTimeWeekPicker.vue";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
-import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
+import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 
 import _ from "lodash-es";

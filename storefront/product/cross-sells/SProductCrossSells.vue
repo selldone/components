@@ -156,8 +156,8 @@
 </template>
 
 <script>
-import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
-import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
+import ProductVariantsView from "../../../storefront/product/variant/ProductVariantsView.vue";
+import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import CrossSellActionType from "@selldone/core-js/enums/product/CrossSellActionType";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";

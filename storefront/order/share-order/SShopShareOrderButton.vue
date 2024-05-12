@@ -93,8 +93,8 @@
 </template>
 
 <script>
-import UTextCopyBox from "@components/ui/text/copy-box/UTextCopyBox.vue";
-import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
+import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
+import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 
 export default {
   name: "SShopShareOrderButton",

@@ -139,8 +139,8 @@
 </template>
 
 <script>
-import SImageUploader from "@components/ui/uploader/SImageUploader.vue";
-import { ArticleMixin } from "@components/mixin/ArticleMixin";
+import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
+import { ArticleMixin } from "../../../../mixin/ArticleMixin";
 
 export default {
   name: "AAddonCanvasEditor",

@@ -147,14 +147,14 @@ import MediumEditor from "medium-editor";
 
 import { createApp, defineComponent, h } from "vue";
 import AAddonComparison from "./add-on/comparison/AAddonComparison.vue";
-import AAddonCatalog from "@components/article/add-on/catalog/AAddonCatalog.vue";
+import AAddonCatalog from "../article/add-on/catalog/AAddonCatalog.vue";
 import AAddonCanvas from "./add-on/canvas/AAddonCanvas.vue";
 import AAddonCodeEditorDialog from "./add-on/code-editor/dialog/AAddonCodeEditorDialog.vue";
-import AAddonCatalogDialog from "@components/article/add-on/catalog/dialog/AAddonCatalogDialog.vue";
+import AAddonCatalogDialog from "../article/add-on/catalog/dialog/AAddonCatalogDialog.vue";
 import AAddonComparisonDialog from "./add-on/comparison/dialog/AAddonComparisonDialog.vue";
 import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
 import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
-import { installGlobalComponents } from "@components/components-mandetory";
+import { installGlobalComponents } from "../components-mandetory";
 
 const OPTIONS_TITLE = {
   buttonLabels: "fontawesome",

@@ -109,9 +109,9 @@
 
 <script>
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
-import UTimeWeekPicker from "@components/ui/time/week-picker/UTimeWeekPicker.vue";
+import UTimeWeekPicker from "../../../../ui/time/week-picker/UTimeWeekPicker.vue";
 import _ from "lodash-es";
-import UDateRangePicker from "@components/ui/date/range-picker/UDateRangePicker.vue";
+import UDateRangePicker from "../../../../ui/date/range-picker/UDateRangePicker.vue";
 
 export default {
   name: "SProductServiceForm",

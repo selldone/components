@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import UProgressScore from "@components/ui/progress/score/UProgressScore.vue";
+import UProgressScore from "../../ui/progress/score/UProgressScore.vue";
 import numeral from "numeral";
 
 export default {

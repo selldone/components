@@ -149,7 +149,7 @@
             <v-img
                 v-else
                 :height="48"
-                :src="require('@components/assets/icons/camera.svg')"
+                :src="require('../../../../assets/icons/camera.svg')"
                 :width="48"
                 class="ma-auto"
             />
@@ -172,7 +172,7 @@
           >
             <v-img
                 :height="48"
-                :src="require('@components/assets/icons/film.svg')"
+                :src="require('../../../../assets/icons/film.svg')"
                 :width="48"
                 class="ma-auto"
             />
@@ -193,7 +193,7 @@
           >
             <v-img
                 :height="48"
-                :src="require('@components/assets/icons/voice.svg')"
+                :src="require('../../../../assets/icons/voice.svg')"
                 :width="48"
                 class="ma-auto"
             />
@@ -247,9 +247,9 @@
 <script>
 import {ReturnItemStates} from "@selldone/core-js/enums/basket/ReturnItemStates";
 import {ReturnOrderReason} from "@selldone/core-js/enums/basket/ReturnOrderReason";
-import CircleImage from "@components/ui/image/CircleImage.vue";
-import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
+import CircleImage from "../../../../ui/image/CircleImage.vue";
+import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
+import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 
 export default {
   name: "SOrderBasketReturn",

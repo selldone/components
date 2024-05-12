@@ -23,10 +23,10 @@ $material-design-icons-class-icons-prefix: '' !default;
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url("@components/style/material-design-fonts/fonts/MaterialIcons-Regular.eot"); /* For IE6-8 */
-  src: url("@components/style/material-design-fonts/fonts/MaterialIcons-Regular.woff2") format('woff2'),
-  url("@components/style/material-design-fonts/fonts/MaterialIcons-Regular.woff") format('woff'),
-  url("@components/style/material-design-fonts/fonts/MaterialIcons-Regular.ttf") format('truetype');
+  src: url("../../style/material-design-fonts/fonts/MaterialIcons-Regular.eot"); /* For IE6-8 */
+  src: url("../../style/material-design-fonts/fonts/MaterialIcons-Regular.woff2") format('woff2'),
+  url("../../style/material-design-fonts/fonts/MaterialIcons-Regular.woff") format('woff'),
+  url("../../style/material-design-fonts/fonts/MaterialIcons-Regular.ttf") format('truetype');
 }
 
 .material-icons {

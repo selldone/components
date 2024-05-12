@@ -132,12 +132,12 @@ export default {
     image() {
       // In-app purchase:
       if (this.store?.toLowerCase() === "appstore")
-        return require("@components/assets/trademark/apple-b.svg");
+        return require("../../../assets/trademark/apple-b.svg");
       else if (this.store?.toLowerCase() === "googleplay")
-        return require("@components/assets/trademark/googleplay.svg");
+        return require("../../../assets/trademark/googleplay.svg");
 
       if (this.card && this.card.blockchain)
-        return require("@components/assets/icons/blockchain.svg");
+        return require("../../../assets/icons/blockchain.svg");
 
       if (!this.card.brand) return Cards.card;
 

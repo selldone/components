@@ -245,11 +245,11 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import BasketItemUserMessageForm from "@components/storefront/order/product-input/BasketItemUserMessageForm.vue";
+import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
+import BasketItemUserMessageForm from "../../../storefront/order/product-input/BasketItemUserMessageForm.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SShopBasketItemCountSelect from "./SShopBasketItemCountSelect.vue";
-import SProductServiceForm from "@components/storefront/product/service/form/SProductServiceForm.vue";
+import SProductServiceForm from "../../../storefront/product/service/form/SProductServiceForm.vue";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 

@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import USparkline from "@components/ui/chart/sparkline/USparkline.vue";
+import USparkline from "../../ui/chart/sparkline/USparkline.vue";
 
 export default {
   name: "TrendSparkline",

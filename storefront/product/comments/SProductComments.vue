@@ -116,11 +116,11 @@
 </template>
 
 <script>
-import UExpandView from "@components/ui/expand-view/UExpandView.vue";
-import SArticleComments from "@components/article/comment/SArticleComments.vue";
-import SShopProductRatingView from "@components/storefront/product/rating/SShopProductRatingView.vue";
+import UExpandView from "../../../ui/expand-view/UExpandView.vue";
+import SArticleComments from "../../../article/comment/SArticleComments.vue";
+import SShopProductRatingView from "../../../storefront/product/rating/SShopProductRatingView.vue";
 import { FontSizeHelper } from "@selldone/core-js/helper/style/FontSizeHelper";
-import SShopLogin from "@components/storefront/login/SShopLogin.vue";
+import SShopLogin from "../../../storefront/login/SShopLogin.vue";
 
 export default {
   name: "SProductComments",

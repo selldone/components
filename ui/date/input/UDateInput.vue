@@ -156,7 +156,7 @@
 </template>
 
 <script>
-import UTimeInput from "@components/ui/time/input/UTimeInput.vue";
+import UTimeInput from "../../../ui/time/input/UTimeInput.vue";
 
 export default {
   name: "UDateInput",

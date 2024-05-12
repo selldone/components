@@ -11,11 +11,11 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-import getRandomNumber from "@components/ui/confetti/utils/get-random-number";
-import CircleParticle from "@components/ui/confetti/particles/circle";
-import RectParticle from "@components/ui/confetti/particles/rect";
-import HeartParticle from "@components/ui/confetti/particles/heart";
-import ImageParticle from "@components/ui/confetti/particles/image";
+import getRandomNumber from "../../../ui/confetti/utils/get-random-number";
+import CircleParticle from "../../../ui/confetti/particles/circle";
+import RectParticle from "../../../ui/confetti/particles/rect";
+import HeartParticle from "../../../ui/confetti/particles/heart";
+import ImageParticle from "../../../ui/confetti/particles/image";
 
 /**
  * A factory for creating particles with various shapes and properties.

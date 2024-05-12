@@ -205,11 +205,11 @@
 </template>
 
 <script>
-import SShopCustomerReceiverInfoWidget from "@components/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
-import SSubscriptionPriceSelect from "@components/storefront/order/subscription/SSubscriptionPriceSelect.vue";
+import SShopCustomerReceiverInfoWidget from "../../../storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
+import SSubscriptionPriceSelect from "../../../storefront/order/subscription/SSubscriptionPriceSelect.vue";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
-import SShopBillingAddressForm from "@components/storefront/order/billing/SShopBillingAddressForm.vue";
-import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
+import SShopBillingAddressForm from "../../../storefront/order/billing/SShopBillingAddressForm.vue";
+import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { RibbonHelper } from "@selldone/core-js/helper/ribbon/RibbonHelper";
 
 export default {

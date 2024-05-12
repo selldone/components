@@ -200,10 +200,10 @@
 </template>
 
 <script>
-import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
+import SShopBuyButton from "../../../../storefront/product/button/SShopBuyButton.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
-import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
+import SShopProductFilesList from "../../../../storefront/product/file/SShopProductFilesList.vue";
+import SCountrySelect from "../../../../ui/country/select/SCountrySelect.vue";
 
 export default {
   name: "SProductSectionBuyButton",

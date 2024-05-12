@@ -68,8 +68,8 @@
 </template>
 
 <script>
-import UTimeLaps from "@components/ui/time/lapse/UTimeLaps.vue";
-import UCountDown from "@components/ui/count-down/UCountDown.vue";
+import UTimeLaps from "../../../ui/time/lapse/UTimeLaps.vue";
+import UCountDown from "../../../ui/count-down/UCountDown.vue";
 
 export default {
   name: "UNotificationServer",

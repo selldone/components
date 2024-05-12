@@ -52,10 +52,10 @@
 </template>
 
 <script>
-import SProductOverview from "@components/storefront/overview/SProductOverview.vue";
+import SProductOverview from "../../../storefront/overview/SProductOverview.vue";
 import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper.ts";
-import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce.ts";
-import BProductSpecTable from "@components/storefront/product/spec/table/BProductSpecTable.vue";
+import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce.ts";
+import BProductSpecTable from "../../../storefront/product/spec/table/BProductSpecTable.vue";
 
 export default {
   name: "CProductView",

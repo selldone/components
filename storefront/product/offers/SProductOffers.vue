@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import ProductsDenseImagesCirclesLinks from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCirclesLinks.vue";
+import ProductsDenseImagesCirclesLinks from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCirclesLinks.vue";
 
 export default {
   name: "SProductOffers",

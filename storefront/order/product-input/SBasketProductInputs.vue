@@ -159,7 +159,7 @@
 
 <script>
 import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
-import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
+import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import {
   FORM_BUILDER_TAGS,
   SmartConvertTextToHtml,

@@ -132,7 +132,7 @@
 
 <script>
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
-import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
+import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "UChartBar",

@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import CImageView from "@components/community/image/view/CImageView.vue";
+import CImageView from "../../community/image/view/CImageView.vue";
 
 export default {
   name: "SCommunityImageUploader",

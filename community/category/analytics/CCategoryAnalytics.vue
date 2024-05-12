@@ -33,9 +33,9 @@
 </template>
 
 <script>
-import CommunityStatisticView from "@components/community/statistics/CommunityStatisticView.vue";
+import CommunityStatisticView from "../../../community/statistics/CommunityStatisticView.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries.ts";
-import CommunityStatisticViewSkeleton from "@components/community/statistics/CommunityStatisticViewSkeleton.vue";
+import CommunityStatisticViewSkeleton from "../../../community/statistics/CommunityStatisticViewSkeleton.vue";
 
 export default {
   name: "CCategoryAnalytics",

@@ -160,8 +160,8 @@
 
 <script>
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
-import UTextValueBox from "@components/ui/text/value-box/UTextValueBox.vue";
+import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
+import UTextValueBox from "../../ui/text/value-box/UTextValueBox.vue";
 
 export default {
   name: "CommunityUserProfileDialog",

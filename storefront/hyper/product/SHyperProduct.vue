@@ -130,8 +130,8 @@
 
 <script>
 import UVariantSelector from "../../../ui/variant/selector/UVariantSelector.vue";
-import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
-import UScanner from "@components/ui/scanner/UScanner.vue";
+import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
+import UScanner from "../../../ui/scanner/UScanner.vue";
 
 export default {
   name: "SHyperProduct",

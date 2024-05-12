@@ -215,7 +215,7 @@
 
 <script>
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
-import UScanner from "@components/ui/scanner/UScanner.vue";
+import UScanner from "../../ui/scanner/UScanner.vue";
 
 export default {
   name: "SStorefrontSearchBox",

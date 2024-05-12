@@ -70,9 +70,9 @@
 </template>
 
 <script>
-import UPaymentCard from "@components/ui/payment/card/UPaymentCard.vue";
-import UPaymentBillingDetails from "@components/ui/payment/billing-details/UPaymentBillingDetails.vue";
-import UMapCountriesSingle from "@components/ui/map/countries/single/UMapCountriesSingle.vue";
+import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
+import UPaymentBillingDetails from "../../../../ui/payment/billing-details/UPaymentBillingDetails.vue";
+import UMapCountriesSingle from "../../../../ui/map/countries/single/UMapCountriesSingle.vue";
 
 export default {
   name: "SShopRowCustomerPaymentRecord",

@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import UMapCountriesHeatmap from "@components/ui/map/countries/heatmap/UMapCountriesHeatmap.vue";
+import UMapCountriesHeatmap from "../../../../ui/map/countries/heatmap/UMapCountriesHeatmap.vue";
 
 export default {
   name: "UMapCountriesSingle",

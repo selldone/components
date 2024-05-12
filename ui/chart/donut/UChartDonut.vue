@@ -50,7 +50,7 @@ import defaultColors from "./utils/colors";
 import { placement, placementStyles, sectionValidator } from "./utils/misc";
 import UChartDonutPiece from "./piece/UChartDonutPiece.vue";
 
-import "@components/ui/chart/donut/styles/main.scss";
+import "../../../ui/chart/donut/styles/main.scss";
 
 export default {
   name: "UChartDonut",

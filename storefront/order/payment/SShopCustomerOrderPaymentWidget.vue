@@ -679,15 +679,15 @@ import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus
 import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 
-import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
+import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import { BillStatus } from "@selldone/core-js/enums/basket/BillStatus";
-import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
-import SShopRowCustomerPaymentGiftCard from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentGiftCard.vue";
-import SShopRowCustomerPaymentRecord from "@components/storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
-import SShopRowCustomerPendingPayment from "@components/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
+import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";
+import SShopRowCustomerPaymentGiftCard from "../../../storefront/order/payment/rows/SShopRowCustomerPaymentGiftCard.vue";
+import SShopRowCustomerPaymentRecord from "../../../storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
+import SShopRowCustomerPendingPayment from "../../../storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
-import UPaymentCard from "@components/ui/payment/card/UPaymentCard.vue";
+import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import UPaymentCard from "../../../ui/payment/card/UPaymentCard.vue";
 import { URLHelper } from "@selldone/core-js/helper/url/URLHelper";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 

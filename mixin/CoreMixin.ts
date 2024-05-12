@@ -46,7 +46,7 @@ import {getCountryName} from "@selldone/core-js/enums/country/country-list";
 import {Shop} from "@selldone/core-js/models/shop/shop.model";
 import type {ProductVariant} from "@selldone/core-js/models/shop/product/product_variant.model";
 import {Product} from "@selldone/core-js/models/shop/product/product.model";
-import {XapiShop} from "@sdk-storefront/shop/XapiShop";
+import {XapiShop} from "@selldone/sdk-storefront/shop/XapiShop";
 import type {Basket} from "@selldone/core-js/models/shop/order/basket/basket.model";
 import type {IAddress} from "@selldone/core-js/models/traits/address.model";
 import type {CommunityTopic} from "@selldone/core-js/models/community/community.topic.model";
@@ -59,10 +59,10 @@ import type {ICountryCode} from "@selldone/core-js/enums/country/CountriesListEn
 import type {BasketItem} from "@selldone/core-js/models/shop/order/basket/basket_item.model";
 import type {gapi} from "@selldone/core-js/gapi/requests/gapi.countries.get";
 import type {User} from "@selldone/core-js/models/user/user.model";
-import {XapiUser} from "@sdk-storefront/user/XapiUser";
+import {XapiUser} from "@selldone/sdk-storefront/user/XapiUser";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
-import {ExecuteCopyToClipboard} from "@components/directives/copy/CopyDirective";
+import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
 
 //――― User Device Preferences ―――
 
@@ -668,13 +668,13 @@ const CoreMixin = {
       type: keyof typeof ProductType | "POS" | "FUL" | "AVO" | "HYP",
     ) {
       if (type === "POS")
-        return require("@components/assets/icons/pos-order-type.svg");
+        return require("../assets/icons/pos-order-type.svg");
       else if (type === "FUL")
-        return require("@components/assets/icons/dropshipping.svg");
+        return require("../assets/icons/dropshipping.svg");
       else if (type === "AVO")
-        return require("@components/assets/icons/avocado.svg");
+        return require("../assets/icons/avocado.svg");
       else if (type === "HYP")
-        return require("@components/assets/icons/hyper.svg");
+        return require("../assets/icons/hyper.svg");
 
       return ProductType[type] ? ProductType[type].image : "";
     },
@@ -807,16 +807,16 @@ const CoreMixin = {
       if (!code) return null;
       code = code.toLowerCase();
       if (code === "firefox")
-        return require("@components/assets/trademark/firefox.svg");
+        return require("../assets/trademark/firefox.svg");
       if (code === "chrome")
-        return require("@components/assets/trademark/chrome.svg");
+        return require("../assets/trademark/chrome.svg");
       if (code === "opera")
-        return require("@components/assets/trademark/opera.svg");
+        return require("../assets/trademark/opera.svg");
       if (code === "internet-explorer")
-        return require("@components/assets/trademark/internet-explorer.svg");
+        return require("../assets/trademark/internet-explorer.svg");
       if (code === "safari")
-        return require("@components/assets/trademark/safari.svg");
-      else return require("@components/assets/trademark/information.svg");
+        return require("../assets/trademark/safari.svg");
+      else return require("../assets/trademark/information.svg");
     },
 
     //―――――――――――――――――――――― Basket > Reject ――――――――――――――――――――
@@ -1843,22 +1843,22 @@ const CoreMixin = {
     //――――――――――――――――――――――――― Home Image Helper ―――――――――――――――――――――――――
     GetDomainHomeIcon: function (home: string) {
       return home === "shop"
-        ? require("@components/assets/icons/store.svg")
+        ? require("../assets/icons/store.svg")
         : home === "avocado"
-          ? require("@components/assets/icons/avocado.svg")
+          ? require("../assets/icons/avocado.svg")
           : home === "blog"
-            ? require("@components/assets/icons/blog.svg")
+            ? require("../assets/icons/blog.svg")
             : home === "hyper"
-              ? require("@components/assets/icons/hyper.svg")
+              ? require("../assets/icons/hyper.svg")
               : home === "community"
-                ? require("@components/assets/icons/community.png")
+                ? require("../assets/icons/community.png")
                 : home === "map"
-                  ? require("@components/assets/icons/map-tag.svg")
+                  ? require("../assets/icons/map-tag.svg")
                   : ("" + home).startsWith("/")
-                    ? require("@components/assets/icons/static-pages.svg")
+                    ? require("../assets/icons/static-pages.svg")
                     : home
-                      ? require("@components/assets/icons/landing-page.svg")
-                      : require("@components/assets/icons/store.svg");
+                      ? require("../assets/icons/landing-page.svg")
+                      : require("../assets/icons/store.svg");
     },
     GetDomainHomeName(home: string) {
       return home === "shop"

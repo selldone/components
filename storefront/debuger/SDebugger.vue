@@ -190,7 +190,7 @@ import { StorefrontDebugLogType } from "@selldone/core-js/enums/debug/Storefront
 import { StorefrontDebugEvents } from "@selldone/core-js/enums/debug/StorefrontDebugEvents.ts";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import _ from "lodash-es";
-import UTextValueBox from "@components/ui/text/value-box/UTextValueBox.vue";
+import UTextValueBox from "../../ui/text/value-box/UTextValueBox.vue";
 
 export default {
   name: "SDebugger",

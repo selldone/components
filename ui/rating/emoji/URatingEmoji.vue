@@ -63,13 +63,13 @@ export default {
 
   computed: {
     emoji() {
-      if (this.modelValue === 1) return require("@components/ui/rating/emoji/assets/rate-1.svg");
-      if (this.modelValue === 2) return require("@components/ui/rating/emoji/assets/rate-2.svg");
-      if (this.modelValue === 3) return require("@components/ui/rating/emoji/assets/rate-3.svg");
-      if (this.modelValue === 4) return require("@components/ui/rating/emoji/assets/rate-4.svg");
-      if (this.modelValue === 5) return require("@components/ui/rating/emoji/assets/rate-5.svg");
+      if (this.modelValue === 1) return require("../../../ui/rating/emoji/assets/rate-1.svg");
+      if (this.modelValue === 2) return require("../../../ui/rating/emoji/assets/rate-2.svg");
+      if (this.modelValue === 3) return require("../../../ui/rating/emoji/assets/rate-3.svg");
+      if (this.modelValue === 4) return require("../../../ui/rating/emoji/assets/rate-4.svg");
+      if (this.modelValue === 5) return require("../../../ui/rating/emoji/assets/rate-5.svg");
 
-      return require("@components/ui/rating/emoji/assets/rate-no.svg");
+      return require("../../../ui/rating/emoji/assets/rate-no.svg");
     },
   },
 };

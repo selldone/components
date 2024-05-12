@@ -286,7 +286,7 @@
                 {{ $t("product_card.sold_out") }}
               </h5>
               <img
-                :src="require('@components/assets/icons/sold.svg')"
+                :src="require('../../../assets/icons/sold.svg')"
                 width="36px"
               />
             </v-col>
@@ -430,7 +430,7 @@
                 {{ $t("product_card.sold_out") }}
               </h5>
               <img
-                :src="require('@components/assets/icons/sold.svg')"
+                :src="require('../../../assets/icons/sold.svg')"
                 width="36px"
               />
             </div>
@@ -478,10 +478,10 @@
 
 <script>
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
-import UPrice from "@components/ui/price/UPrice.vue";
+import UPrice from "../../../ui/price/UPrice.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
-import UCountDown from "@components/ui/count-down/UCountDown.vue";
+import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
+import UCountDown from "../../../ui/count-down/UCountDown.vue";
 
 export default {
   name: "SShopProductCard",

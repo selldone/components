@@ -707,17 +707,17 @@
 </template>
 
 <script>
-import UPaymentStripe from "@components/ui/payment/stripe/UPaymentStripe.vue";
-import UPaymentButton from "@components/ui/payment/button/UPaymentButton.vue";
-import SGiftcardInput from "@components/storefront/giftcard/selector/SGiftcardInput.vue";
-import UTextCopyBox from "@components/ui/text/copy-box/UTextCopyBox.vue";
-import UTimeLaps from "@components/ui/time/lapse/UTimeLaps.vue";
-import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
-import UPaymentRazorpay from "@components/ui/payment/razorpay/UPaymentRazorpay.vue";
-import UPaymentPaypalStandard from "@components/ui/payment/paypal-standard/UPaymentPaypalStandard.vue";
-import UPaymentMercadopago from "@components/ui/payment/mercadopago/UPaymentMercadopago.vue";
-import UPaymentPaymob from "@components/ui/payment/paymob/UPaymentPaymob.vue";
-import UPaymentSquareup from "@components/ui/payment/squareup/UPaymentSquareup.vue";
+import UPaymentStripe from "../../../ui/payment/stripe/UPaymentStripe.vue";
+import UPaymentButton from "../../../ui/payment/button/UPaymentButton.vue";
+import SGiftcardInput from "../../../storefront/giftcard/selector/SGiftcardInput.vue";
+import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
+import UTimeLaps from "../../../ui/time/lapse/UTimeLaps.vue";
+import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import UPaymentRazorpay from "../../../ui/payment/razorpay/UPaymentRazorpay.vue";
+import UPaymentPaypalStandard from "../../../ui/payment/paypal-standard/UPaymentPaypalStandard.vue";
+import UPaymentMercadopago from "../../../ui/payment/mercadopago/UPaymentMercadopago.vue";
+import UPaymentPaymob from "../../../ui/payment/paymob/UPaymentPaymob.vue";
+import UPaymentSquareup from "../../../ui/payment/squareup/UPaymentSquareup.vue";
 
 export default {
   name: "UPaymentForm",

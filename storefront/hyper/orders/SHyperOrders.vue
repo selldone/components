@@ -120,11 +120,11 @@
 </template>
 
 <script>
-import SOrderStatusView from "@components/storefront/order/order-status/SOrderStatusView.vue";
+import SOrderStatusView from "../../../storefront/order/order-status/SOrderStatusView.vue";
 import { AvocadoOrderStates } from "@selldone/core-js/enums/avocado/AvocadoOrderStates";
-import SOrderDeliveryStatusStepper from "@components/storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
+import SOrderDeliveryStatusStepper from "../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
-import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SHyperOrders",

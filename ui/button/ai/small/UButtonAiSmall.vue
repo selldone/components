@@ -25,7 +25,7 @@
     <img
       :height="imageSize ? imageSize : xLarge ? 36 : 24"
       :width="imageSize ? imageSize : xLarge ? 36 : 24"
-      :src="require('@components/assets/icons/ci-logo.png')"
+      :src="require('../../../../assets/icons/ci-logo.png')"
       :class="{ '-circle-white': darkMode }"
     />
     <v-icon v-if="placeholderIcon" class="center-absolute" :color="placeholderColor" style="text-shadow: rgba(0,0,0,0.8) 1px 2px 3px">{{placeholderIcon}}</v-icon>

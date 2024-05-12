@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
+import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 
 export default {
   name: "SGiftcardView",

@@ -181,9 +181,9 @@
 
 <script>
 import SShopAvocadoCustomerOrderItems from "./SShopAvocadoCustomerOrderItems.vue";
-import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
+import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import SShopCustomerReceiverInfoWidget from "../delivery/SShopCustomerReceiverInfoWidget.vue";
-import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
+import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 
 export default {
   name: "SStorefrontAvocadoCustomerOrderForm",

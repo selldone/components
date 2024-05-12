@@ -429,12 +429,12 @@
 
 <script>
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
-import UCountDown from "@components/ui/count-down/UCountDown.vue";
+import UCountDown from "../../ui/count-down/UCountDown.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import { SuccessVerifyMethod } from "@sdk-storefront/auth/XapiAuthSMS";
-import { XapiAuth } from "@sdk-storefront/auth/XapiAuth";
-import ShopEmailLogin from "@components/storefront/login/widgets/ShopEmailLogin.vue";
-import UTelInput from "@components/ui/tel-input/UTelInput.vue";
+import { SuccessVerifyMethod } from "@selldone/sdk-storefront/auth/XapiAuthSMS";
+import { XapiAuth } from "@selldone/sdk-storefront/auth/XapiAuth";
+import ShopEmailLogin from "../../storefront/login/widgets/ShopEmailLogin.vue";
+import UTelInput from "../../ui/tel-input/UTelInput.vue";
 
 export default {
   name: "SShopLogin",

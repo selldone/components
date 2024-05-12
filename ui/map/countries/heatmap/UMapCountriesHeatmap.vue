@@ -29,12 +29,12 @@
 
 <script>
 import chroma from "chroma-js";
-import UMapCountriesSvg from "@components/ui/map/countries/svg/UMapCountriesSvg.vue";
+import UMapCountriesSvg from "../../../../ui/map/countries/svg/UMapCountriesSvg.vue";
 import {
   getDynamicMapCss,
   getBaseCss,
   getCombinedCssString,
-} from "@components/ui/map/countries/heatmap/dynamic-map-css";
+} from "./dynamic-map-css.js";
 
 export default {
   name: "UMapCountriesHeatmap",

@@ -12,8 +12,8 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import ParticleFactory from "@components/ui/confetti/factories/particle";
-import {confetti} from "@components/ui/confetti/particles/base";
+import ParticleFactory from "../../ui/confetti/factories/particle";
+import {confetti} from "./particles/base.ts";
 
 /**
  * A particle generation and management service.

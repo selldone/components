@@ -80,7 +80,7 @@
                       :src="
                         item.raw.user_id
                           ? getUserAvatar(item.raw.user_id)
-                          : require('@components/assets/icons/user.svg')
+                          : require('../../../assets/icons/user.svg')
                       "
                     />
                   </v-avatar>
@@ -295,10 +295,10 @@
 
 <script>
 import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
-import URatingEmoji from "@components/ui/rating/emoji/URatingEmoji.vue";
+import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 import SContactConversation from "../conversation/SContactConversation.vue";
 import _ from "lodash-es";
-import SDataIteratorToolbar from "@components/ui/toolbar/SDataIteratorToolbar.vue";
+import SDataIteratorToolbar from "../../../ui/toolbar/SDataIteratorToolbar.vue";
 
 /**
  * <s-contacts-list>

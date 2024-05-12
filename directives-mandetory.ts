@@ -17,12 +17,12 @@
 //█████████████████████████████████████████████████████████████
 import CopyDirective from "./directives/copy/CopyDirective";
 
-import TrackDirective from "@components/directives/track/TrackDirective";
+import TrackDirective from "./directives/track/TrackDirective";
 
 import DynamicScriptDirective from "./directives/script/DynamicScriptDirective";
 import DragScrollDirective from "./directives/dragscroll/DragScrollDirective";
 import { App } from "vue";
-import SizeDirective from "@components/directives/size/SizeDirective";
+import SizeDirective from "./directives/size/SizeDirective";
 
 export function installGlobalDirectives(app: App) {
   app.directive("copy", CopyDirective);

@@ -107,7 +107,7 @@
 
     <div v-if="has_ar" class="--item text-nowrap me-5 ms-2">
       <v-img
-        :src="require('@components/assets/icons/3d.svg')"
+        :src="require('../../../assets/icons/3d.svg')"
         height="20"
         width="20"
       ></v-img>
@@ -116,8 +116,8 @@
 </template>
 
 <script>
-import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
-import UVariantAssetImage from "@components/ui/variant/asset/image/UVariantAssetImage.vue";
+import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
+import UVariantAssetImage from "../../../ui/variant/asset/image/UVariantAssetImage.vue";
 
 export default {
   name: "VariantItemMini",

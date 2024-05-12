@@ -63,7 +63,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import UDateInput from "@components/ui/date/input/UDateInput.vue";
+import UDateInput from "../../../ui/date/input/UDateInput.vue";
 
 export default defineComponent({
   name: "UDateRangePicker",

@@ -223,7 +223,7 @@
         v-if="person || service"
         class="ms-1 me-2"
         height="12"
-        src="@components/assets/icons/wire.svg"
+        src="../../../assets/icons/wire.svg"
         width="12"
       />
 
@@ -253,7 +253,7 @@
         v-if="person || service"
         class="me-1"
         height="12"
-        src="@components/assets/icons/wire.svg"
+        src="../../../assets/icons/wire.svg"
         width="12"
       />
 
@@ -302,7 +302,7 @@
 
 <script>
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
-import SShippingRate from "@components/storefront/order/delivery/SShippingRate.vue";
+import SShippingRate from "../../../storefront/order/delivery/SShippingRate.vue";
 
 export default {
   name: "DeliveryTimeline",

@@ -289,7 +289,7 @@
             @click.stop="apps_dialog = true"
           >
             <v-img
-              :src="require('@components/assets/icons/gdpr-user.svg')"
+              :src="require('../../../assets/icons/gdpr-user.svg')"
               height="20"
               width="20"
             ></v-img>
@@ -388,7 +388,7 @@
         :center="location"
         :delay-load="1000"
         :marker-position="location"
-        :pin-image="require('@components/assets/icons/bags.svg')"
+        :pin-image="require('../../../assets/icons/bags.svg')"
         :radius="18"
         :zoom="16"
         style="position: absolute; left: 0; top: 0; right: 0; bottom: 0"
@@ -404,13 +404,13 @@
 </template>
 
 <script>
-import UCurrencySelector from "@components/ui/currency/selector/UCurrencySelector.vue";
+import UCurrencySelector from "../../../ui/currency/selector/UCurrencySelector.vue";
 import SCookiePreferences from "../../cookie/preferences/SCookiePreferences.vue";
-import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
+import SStorefrontSocialButtons from "../../../storefront/social/SStorefrontSocialButtons.vue";
 
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import SLanguageSelector from "@components/storefront/language/selector/SLanguageSelector.vue";
-import {ShopFooterHelper} from "@components/storefront/footer/ShopFooterHelper";
+import SLanguageSelector from "../../../storefront/language/selector/SLanguageSelector.vue";
+import {ShopFooterHelper} from "../ShopFooterHelper.js";
 
 export default {
   name: "SFooterSection",

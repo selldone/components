@@ -1,0 +1,54 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "ESNext",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+
+    "noEmitOnError": false,
+
+
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+
+    "noImplicitThis": false,
+    "strict": true,
+
+
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "allowImportingTsExtensions": true,
+    "downlevelIteration": true,
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost",
+    ],
+    "rootDir": ".",
+    "paths": {
+      //"@selldone/components-vue/*": ["*"]
+
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "*.ts",
+    "*.tsx",
+    "*"
+  ],
+  "exclude": [
+    "node_modules",
+    "_docs",
+    "public"
+  ]
+}

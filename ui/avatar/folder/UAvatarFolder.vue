@@ -82,7 +82,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import SImagePlaceholder from "@components/ui/image/placeholder/SImagePlaceholder.vue";
+import SImagePlaceholder from "../../../ui/image/placeholder/SImagePlaceholder.vue";
 
 export default defineComponent({
   name: "UAvatarFolder",

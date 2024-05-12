@@ -18,9 +18,9 @@
       <img
         :src="
           gatewayProcessing
-            ? require('@components/assets/icons/gateway-processing.svg')
+            ? require('../../../assets/icons/gateway-processing.svg')
             : paymentRequireCapture
-              ? require('@components/assets/icons/require_capture.svg')
+              ? require('../../../assets/icons/require_capture.svg')
               : statusObject.src
         "
         class="me-1"

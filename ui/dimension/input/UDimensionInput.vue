@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
+import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import UDimensionInputUnit from "./unit/UDimensionInputUnit.vue";
 
 export default {

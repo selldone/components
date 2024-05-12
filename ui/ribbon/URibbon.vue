@@ -58,8 +58,8 @@ export default {
   computed: {
     src() {
       return this.green
-        ? require("@components/assets/icons/approve-badge.svg")
-        : require("@components/assets/icons/countdown-badge.svg");
+        ? require("../../assets/icons/approve-badge.svg")
+        : require("../../assets/icons/countdown-badge.svg");
     },
   },
 };

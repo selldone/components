@@ -373,15 +373,15 @@
 </template>
 
 <script>
-import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
-import CommunityTopicCard from "@components/community/topic/CommunityTopicCard.vue";
-import CPostEditor from "@components/community/post/editor/CPostEditor.vue";
-import CCategoryEdit from "@components/community/category/edit/CCategoryEdit.vue";
-import CCategoryAnalytics from "@components/community/category/analytics/CCategoryAnalytics.vue";
+import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
+import CommunityTopicCard from "../../../community/topic/CommunityTopicCard.vue";
+import CPostEditor from "../../../community/post/editor/CPostEditor.vue";
+import CCategoryEdit from "../../../community/category/edit/CCategoryEdit.vue";
+import CCategoryAnalytics from "../../../community/category/analytics/CCategoryAnalytics.vue";
 import { CommunityStageLevel } from "@selldone/core-js/enums/community/CommunityStageLevel";
-import CImageView from "@components/community/image/view/CImageView.vue";
-import USmartVerify from "@components/ui/smart/verify/USmartVerify.vue";
-import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
+import CImageView from "../../../community/image/view/CImageView.vue";
+import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
+import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "CommunityCategoryPage",

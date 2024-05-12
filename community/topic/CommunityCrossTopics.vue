@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
+import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 
 export default {
   name: "CommunityCrossTopics",

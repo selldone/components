@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import UAvatarFolder from "@components/ui/avatar/folder/UAvatarFolder.vue";
+import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "UYoutubePreview",

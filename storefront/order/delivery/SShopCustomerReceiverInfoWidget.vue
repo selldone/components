@@ -101,7 +101,7 @@
       :src="
         receiverInfo.location
           ? `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${receiverInfo.location.lng},${receiverInfo.location.lat},17,0,0/800x400?access_token=pk.eyJ1IjoicGFqdWhhYW4iLCJhIjoiY2sxaHNtbnU3MDFjcjNta2V0OTZ0d2ExYiJ9.YKRh0EP7NnhbmuSil7AvSw`
-          : require('@components/assets/icons/map-shop.svg')
+          : require('../../../assets/icons/map-shop.svg')
       "
       class="map-view-box -jumping pointer-pointer fadeIn delay_300 rounded-18px mx-auto my-3"
       height="auto"
@@ -117,8 +117,8 @@
 </template>
 
 <script>
-import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
-import UMapViewPin from "@components/ui/map/view/market/UMapViewPin.vue";
+import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
+import UMapViewPin from "../../../ui/map/view/market/UMapViewPin.vue";
 
 export default {
   name: "SShopCustomerReceiverInfoWidget",

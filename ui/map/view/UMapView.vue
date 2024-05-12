@@ -174,7 +174,7 @@
         <img
           :class="{ jump: !last_selected_position }"
           :src="
-            require('@components/assets/icons/location-center-icon-blue.svg')
+            require('../../../assets/icons/location-center-icon-blue.svg')
           "
           width="64px"
         />
@@ -602,17 +602,17 @@
 
 <script>
 import { createApp, h } from "vue";
-import UMapViewPin from "@components/ui/map/view/market/UMapViewPin.vue";
-import SCountrySelect from "@components/ui/country/select/SCountrySelect.vue";
+import UMapViewPin from "../../../ui/map/view/market/UMapViewPin.vue";
+import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 
 //―――――――――――――――――――――― Mapbox ――――――――――――――――――――
-import Mapbox from "@components/ui/map/providers/mapbox/MapBox";
+import Mapbox from "../../../ui/map/providers/mapbox/MapBox";
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import UMapAddressInput from "@components/ui/map/address/input/UMapAddressInput.vue";
+import UMapAddressInput from "../../../ui/map/address/input/UMapAddressInput.vue";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { installGlobalComponents } from "@components/components-mandetory";
+import { installGlobalComponents } from "../../../components-mandetory";
 
 export default {
   name: "UMapView",
@@ -719,7 +719,7 @@ export default {
     pinImage: {
       require: false,
       type: String,
-      default: require("@components/assets/icons/Truck-fill.svg"),
+      default: require("../../../assets/icons/Truck-fill.svg"),
     },
 
     pinIcon: {

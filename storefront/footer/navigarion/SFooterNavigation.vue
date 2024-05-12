@@ -227,7 +227,7 @@
 </template>
 
 <script>
-import SStorefrontSearchBox from "@components/storefront/search/SStorefrontSearchBox.vue";
+import SStorefrontSearchBox from "../../../storefront/search/SStorefrontSearchBox.vue";
 
 export default {
   name: "SFooterNavigation",

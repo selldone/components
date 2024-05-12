@@ -29,7 +29,7 @@
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
 import numeral from "numeral";
-import { ChartAnnotations } from "@components/ui/chart/helper/ChartAnnotations";
+import { ChartAnnotations } from "../helper/ChartAnnotations.js";
 
 export default {
   name: "UChartLine",

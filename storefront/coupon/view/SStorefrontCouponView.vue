@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import UTimeProgressBar from "@components/ui/time/progress-bar/UTimeProgressBar.vue";
+import UTimeProgressBar from "../../../ui/time/progress-bar/UTimeProgressBar.vue";
 
 export default {
   name: "SStorefrontCouponView",

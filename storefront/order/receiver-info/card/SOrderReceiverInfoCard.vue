@@ -27,7 +27,7 @@
           :src="
             userId
               ? getUserAvatar(userId)
-              : require('@components/assets/icons/user.svg')
+              : require('../../../../assets/icons/user.svg')
           "
         />
       </v-avatar>
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import UMapGeoButton from "@components/ui/map/geo-button/UMapGeoButton.vue";
+import UMapGeoButton from "../../../../ui/map/geo-button/UMapGeoButton.vue";
 
 export default {
   name: "SOrderReceiverInfoCard",

@@ -503,15 +503,15 @@ import {
   SmartConvertTextToHtml,
   SmartConvertTextToHtmlHashtags,
 } from "@selldone/core-js/helper/html/HtmlHelper";
-import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
-import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
-import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
-import UVariantSelector from "@components/ui/variant/selector/UVariantSelector.vue";
-import UDragPin from "@components/ui/drag/pin/UDragPin.vue";
-import { InstagramHelper } from "@components/storefront/instagram/helpers/InstagramHelper";
-import UNumberInput from "@components/ui/number/input/UNumberInput.vue";
-import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
-import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
+import ProductsDenseImagesCircles from "../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import ProductVariantsView from "../../storefront/product/variant/ProductVariantsView.vue";
+import SShopBuyButton from "../../storefront/product/button/SShopBuyButton.vue";
+import UVariantSelector from "../../ui/variant/selector/UVariantSelector.vue";
+import UDragPin from "../../ui/drag/pin/UDragPin.vue";
+import { InstagramHelper } from "./helpers/InstagramHelper.js";
+import UNumberInput from "../../ui/number/input/UNumberInput.vue";
+import UPriceInput from "../../ui/price/input/UPriceInput.vue";
+import UCurrencyInput from "../../ui/currency/input/UCurrencyInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";

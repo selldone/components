@@ -29,7 +29,7 @@ import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
 import numeral from "numeral";
 import { colorSet1 } from "@selldone/core-js/helper/color/ColorGenerator";
-import { ChartAnnotations } from "@components/ui/chart/helper/ChartAnnotations";
+import { ChartAnnotations } from "../helper/ChartAnnotations.js";
 
 export default {
   name: "UChartArea",

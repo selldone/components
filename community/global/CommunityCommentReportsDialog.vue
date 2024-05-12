@@ -63,7 +63,7 @@
 
 <script>
 import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
-import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
+import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 
 export default {
   name: "CommunityCommentReportsDialog",

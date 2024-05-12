@@ -155,10 +155,10 @@
 </template>
 
 <script>
-import SArticleEditor from "@components/article/SArticleEditor.vue";
+import SArticleEditor from "../../../article/SArticleEditor.vue";
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import UExpandView from "@components/ui/expand-view/UExpandView.vue";
+import UExpandView from "../../../ui/expand-view/UExpandView.vue";
 
 export default {
   name: "SProductWarranty",

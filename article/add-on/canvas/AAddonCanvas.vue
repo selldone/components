@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import AAddonCanvasEditor from "@components/article/add-on/canvas/editor/AAddonCanvasEditor.vue";
+import AAddonCanvasEditor from "../../../article/add-on/canvas/editor/AAddonCanvasEditor.vue";
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 
 export default {

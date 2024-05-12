@@ -128,7 +128,7 @@
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
-import SProductPrice from "@components/storefront/product/price/SProductPrice.vue";
+import SProductPrice from "../../../../storefront/product/price/SProductPrice.vue";
 import { ExtraPricingHelper } from "@selldone/core-js/helper/shop/ExtraPricingHelper";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import SProductSectionWaitingAuction from "../auction/SProductSectionWaitingAuction.vue";

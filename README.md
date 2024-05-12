@@ -1,5 +1,6 @@
 ![Selldone Official Storefront App](_docs/images/banner-components.jpg)
 
+<a href="https://www.npmjs.com/package/@selldone/components-vue"><img src="https://img.shields.io/npm/v/@selldone/components-vue.svg?sanitize=true" alt="Version"></a>
 ![Selldone](https://img.shields.io/badge/type-Selldone-f39f37?style=flat&label=components&labelColor=%23567&color=%23000)
 ![Vue3](https://img.shields.io/badge/version-Vue-8BC34A?style=flat&label=3&labelColor=%238BC34A&color=%2300796B)
 ![License](https://img.shields.io/github/license/selldone/components.svg)
@@ -13,12 +14,30 @@
 
 🛍️ Go to the [**Full Storefront Project ▶**](https://github.com/selldone/storefront)
 
-# Use
+## Installation
 
+To install Selldone Core in your project, use the following command:
+
+
+```bash
+npm install @selldone/components-vue
 ```
-// ━━━ Components ━━━
-require("@components/components.ts");
+```bash
+yarn add @selldone/components-vue
 ```
+
+## Usage
+
+Here's a basic example to get you started:
+
+```javascript
+import { createComponents } from "@selldone/components-vue/components";
+
+const components = createComponents({});
+app.use(components);
+```
+
+
 
 # Copyright and License
 

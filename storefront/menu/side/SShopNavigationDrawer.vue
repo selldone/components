@@ -274,10 +274,10 @@
 
 <script>
 import SShopUserMenuList from "../user/SShopUserMenuList.vue";
-import MenuCategories from "@components/storefront/menu/header/MenuCategories.vue";
-import UCurrencySelector from "@components/ui/currency/selector/UCurrencySelector.vue";
-import SLanguageSelector from "@components/storefront/language/selector/SLanguageSelector.vue";
-import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
+import MenuCategories from "../../../storefront/menu/header/MenuCategories.vue";
+import UCurrencySelector from "../../../ui/currency/selector/UCurrencySelector.vue";
+import SLanguageSelector from "../../../storefront/language/selector/SLanguageSelector.vue";
+import SStorefrontSocialButtons from "../../../storefront/social/SStorefrontSocialButtons.vue";
 
 export default {
   name: "SShopNavigationDrawer",
@@ -324,7 +324,7 @@ export default {
         out.push({
           to: { name: window.$storefront.routes.AVOCADO_PAGE },
           name: this.$t("global.commons.avocado"),
-          src: require("@components/assets/icons/avocado.svg"),
+          src: require("../../../assets/icons/avocado.svg"),
         });
       }
       // Hyper:
@@ -332,7 +332,7 @@ export default {
         out.push({
           to: { name: window.$storefront.routes.HYPER_PAGE },
           name: this.$t("global.commons.hyper"),
-          src: require("@components/assets/icons/hyper.svg"),
+          src: require("../../../assets/icons/hyper.svg"),
         });
       }
 
@@ -341,7 +341,7 @@ export default {
         out.push({
           to: { name: window.$storefront.routes.INSTAGRAM_PAGE },
           name: this.$t("global.commons.instagram"),
-          src: require("@components/assets/trademark/instagram.svg"),
+          src: require("../../../assets/trademark/instagram.svg"),
         });
       }
 

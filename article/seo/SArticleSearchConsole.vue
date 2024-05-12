@@ -173,7 +173,7 @@
 <script>
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import numeral from "numeral";
-import UProgressScore from "@components/ui/progress/score/UProgressScore.vue";
+import UProgressScore from "../../ui/progress/score/UProgressScore.vue";
 
 export default {
   name: "SArticleSearchConsole",

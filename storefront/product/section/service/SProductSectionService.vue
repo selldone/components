@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import SProductServiceForm from "@components/storefront/product/service/form/SProductServiceForm.vue";
+import SProductServiceForm from "../../../../storefront/product/service/form/SProductServiceForm.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {

@@ -121,10 +121,10 @@
   </div>
 </template>
 <script>
-import CPostEditor from "@components/community/post/editor/CPostEditor.vue";
-import AFeedbackContentViolationReport from "@components/article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
+import CPostEditor from "../../community/post/editor/CPostEditor.vue";
+import AFeedbackContentViolationReport from "../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
-import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
+import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import _ from "lodash-es";
 
 export default {

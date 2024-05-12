@@ -18,7 +18,7 @@
     <img
       class="count-down-bg fadeIn delay_400"
       fetchpriority="high"
-      src="@components/assets/icons/countdown-badge.svg"
+      src="../../../assets/icons/countdown-badge.svg"
     />
 
     <div class="count-down-container fadeIn delay_400">
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import UCountDown from "@components/ui/count-down/UCountDown.vue";
+import UCountDown from "../../../ui/count-down/UCountDown.vue";
 
 export default {
   name: "ProductDiscountCountdown",

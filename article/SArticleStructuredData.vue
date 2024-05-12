@@ -203,7 +203,7 @@
 <script>
 import UButtonAdd from "../ui/button/add/UButtonAdd.vue";
 import SStructureDataInput from "./SStructureDataInput.vue";
-import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
+import SWidgetButtons from "../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "SArticleStructuredData",
@@ -227,14 +227,14 @@ export default {
           "@type": "Book",
           title: "global.json.book.title",
           desc: "global.json.book.desc",
-          image: require("@components/assets/jsonld/jsonld-book.svg"),
+          image: require("../assets/jsonld/jsonld-book.svg"),
           inputs: { name: "text", author: "@Person", workExample: ["@Book"] },
         },
         {
           "@type": "Occupation",
           title: "global.json.occupation.title",
           desc: "global.json.occupation.desc",
-          image: require("@components/assets/jsonld/jsonld-ocupation.svg"),
+          image: require("../assets/jsonld/jsonld-ocupation.svg"),
           inputs: {
             name: "text",
             mainEntityOfPage: "@WebPage",
@@ -247,7 +247,7 @@ export default {
           "@type": "Course",
           title: "global.json.course.title",
           desc: "global.json.course.desc",
-          image: require("@components/assets/jsonld/jsonld-course.svg"),
+          image: require("../assets/jsonld/jsonld-course.svg"),
           inputs: {
             name: "text",
             description: "text",
@@ -258,7 +258,7 @@ export default {
           "@type": "HowTo",
           title: "global.json.howto.title",
           desc: "global.json.howto.desc",
-          image: require("@components/assets/jsonld/jsonled-howto.svg"),
+          image: require("../assets/jsonld/jsonled-howto.svg"),
           inputs: {
             name: "text",
             description: "text",
@@ -275,7 +275,7 @@ export default {
           "@type": "Recipe",
           title: "global.json.recipe.title",
           desc: "global.json.recipe.desc",
-          image: require("@components/assets/jsonld/jsonld-recipe.svg"),
+          image: require("../assets/jsonld/jsonld-recipe.svg"),
           inputs: {
             name: "text",
             description: "text",

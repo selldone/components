@@ -149,7 +149,7 @@
               >
                 <v-img
                   :src="
-                    require('@components/storefront/login/assets/pattern-empty-fortune.jpg')
+                    require('../../../storefront/login/assets/pattern-empty-fortune.jpg')
                   "
                   class="image"
                 ></v-img>
@@ -248,7 +248,7 @@
 </template>
 
 <script>
-import SStorefrontLotteryPrizeDetail from "@components/storefront/lottery/prize-detail/SStorefrontLotteryPrizeDetail.vue";
+import SStorefrontLotteryPrizeDetail from "../../../storefront/lottery/prize-detail/SStorefrontLotteryPrizeDetail.vue";
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 
 export default {

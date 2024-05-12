@@ -262,13 +262,13 @@
 
 <script>
 import CPostWidget from "../../post/widget/CPostWidget.vue";
-import CPostEditor from "@components/community/post/editor/CPostEditor.vue";
-import CPostsFilter from "@components/community/post/filter/CPostsFilter.vue";
-import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
-import CommunityCrossTopics from "@components/community/topic/CommunityCrossTopics.vue";
-import CommunityTopicSubscribe from "@components/community/topic/CommunityTopicSubscribe.vue";
-import CommunityFollowSuggestion from "@components/community/users/CommunityFollowSuggestion.vue";
-import CommunityTopicStatistic from "@components/community/topic/CommunityTopicStatistic.vue";
+import CPostEditor from "../../../community/post/editor/CPostEditor.vue";
+import CPostsFilter from "../../../community/post/filter/CPostsFilter.vue";
+import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
+import CommunityCrossTopics from "../../../community/topic/CommunityCrossTopics.vue";
+import CommunityTopicSubscribe from "../../../community/topic/CommunityTopicSubscribe.vue";
+import CommunityFollowSuggestion from "../../../community/users/CommunityFollowSuggestion.vue";
+import CommunityTopicStatistic from "../../../community/topic/CommunityTopicStatistic.vue";
 import _ from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 

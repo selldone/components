@@ -159,7 +159,7 @@
 
 <script>
 import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
-import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
+import UTextValueDashed from "../../ui/text/value-dashed/UTextValueDashed.vue";
 
 export default {
   name: "SArticlesTimeline",

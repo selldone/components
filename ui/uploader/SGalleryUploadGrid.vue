@@ -137,7 +137,7 @@
 
 <script>
 import SImageUploader from "./SImageUploader.vue";
-import SGridDraggableView from "@components/ui/grid/draggable-view/SGridDraggableView.vue";
+import SGridDraggableView from "../../ui/grid/draggable-view/SGridDraggableView.vue";
 
 export default {
   name: "SGalleryUploadGrid",

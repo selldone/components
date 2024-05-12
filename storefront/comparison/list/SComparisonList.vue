@@ -433,10 +433,10 @@
 </template>
 
 <script>
-import SShopProductRatingView from "@components/storefront/product/rating/SShopProductRatingView.vue";
-import SShopBuyButton from "@components/storefront/product/button/SShopBuyButton.vue";
-import UColorCircle from "@components/ui/color/circle/UColorCircle.vue";
-import UTextCopyBox from "@components/ui/text/copy-box/UTextCopyBox.vue";
+import SShopProductRatingView from "../../../storefront/product/rating/SShopProductRatingView.vue";
+import SShopBuyButton from "../../../storefront/product/button/SShopBuyButton.vue";
+import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
+import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 
 /**
  * <s-comparison-list>

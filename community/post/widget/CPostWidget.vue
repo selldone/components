@@ -341,13 +341,13 @@
 
 <script>
 import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
-import CCommentsList from "@components/community/comment/list/CCommentsList.vue";
-import CImageView from "@components/community/image/view/CImageView.vue";
+import CCommentsList from "../../../community/comment/list/CCommentsList.vue";
+import CImageView from "../../../community/image/view/CImageView.vue";
 import { PostReaction } from "@selldone/core-js/enums/community/PostReaction.ts";
-import URibbon from "@components/ui/ribbon/URibbon.vue";
-import CPostPoll from "@components/community/post/poll/CPostPoll.vue";
-import CProductView from "@components/community/product/view/CProductView.vue";
-import CAttachViewer from "@components/community/attach/viewer/CAttachViewer.vue";
+import URibbon from "../../../ui/ribbon/URibbon.vue";
+import CPostPoll from "../../../community/post/poll/CPostPoll.vue";
+import CProductView from "../../../community/product/view/CProductView.vue";
+import CAttachViewer from "../../../community/attach/viewer/CAttachViewer.vue";
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
 
 export default {

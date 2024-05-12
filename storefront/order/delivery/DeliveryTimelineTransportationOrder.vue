@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import DeliveryTimeline from "@components/storefront/order/delivery/DeliveryTimeline.vue";
+import DeliveryTimeline from "../../../storefront/order/delivery/DeliveryTimeline.vue";
 
 export default {
   name: "DeliveryTimelineTransportationOrder",

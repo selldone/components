@@ -125,14 +125,14 @@
 </template>
 
 <script>
-import SArticleEditor from "@components/article/SArticleEditor.vue";
-import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
+import SArticleEditor from "../../../article/SArticleEditor.vue";
+import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
-import UExpandView from "@components/ui/expand-view/UExpandView.vue";
+import UExpandView from "../../../ui/expand-view/UExpandView.vue";
 
 export default {
   name: "SProductShipping",

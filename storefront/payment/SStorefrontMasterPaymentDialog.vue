@@ -118,8 +118,8 @@
 
 <script>
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
-import UPaymentForm from "@components/ui/payment/form/UPaymentForm.vue";
-import UProgressRadial from "@components/ui/progress/radial/UProgressRadial.vue";
+import UPaymentForm from "../../ui/payment/form/UPaymentForm.vue";
+import UProgressRadial from "../../ui/progress/radial/UProgressRadial.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import { SetupService } from "@selldone/core-js/server/SetupService";

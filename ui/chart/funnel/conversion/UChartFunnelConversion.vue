@@ -30,7 +30,7 @@
   ></u-chart-funnel>
 </template>
 <script>
-import UChartFunnel from "@components/ui/chart/funnel/UChartFunnel.vue";
+import UChartFunnel from "../../../../ui/chart/funnel/UChartFunnel.vue";
 
 export default {
   name: "UChartFunnelConversion",

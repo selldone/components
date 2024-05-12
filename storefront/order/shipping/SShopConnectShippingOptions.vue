@@ -86,8 +86,8 @@
 </template>
 
 <script>
-import USmartSelect from "@components/ui/smart/select/USmartSelect.vue";
-import ProductsDenseImagesCircles from "@components/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
+import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopConnectShippingOptions",

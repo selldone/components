@@ -213,10 +213,10 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
-import UYoutubePlayer from "@components/ui/youtube/player/UYoutubePlayer.vue";
-import SImage from "@components/storefront/product/images/SImage.vue";
+import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
+import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
+import UYoutubePlayer from "../../../ui/youtube/player/UYoutubePlayer.vue";
+import SImage from "../../../storefront/product/images/SImage.vue";
 
 export default {
   name: "SShopProductSlideShow",

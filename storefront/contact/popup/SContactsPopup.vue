@@ -93,8 +93,8 @@
 
 <script>
 import SContactsList from "../list/SContactsList.vue";
-import SShopLogin from "@components/storefront/login/SShopLogin.vue";
-import URatingEmoji from "@components/ui/rating/emoji/URatingEmoji.vue";
+import SShopLogin from "../../../storefront/login/SShopLogin.vue";
+import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 
 /**
  * <s-contacts-popup>

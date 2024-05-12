@@ -89,8 +89,8 @@
 
 <script>
 import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
-import AFeedbackContentViolationReport from "@components/article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
-import { CommunityURLs } from "@sdk-community/url/CommunityURLs";
+import AFeedbackContentViolationReport from "../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
+import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import _ from "lodash-es";
 
 export default {

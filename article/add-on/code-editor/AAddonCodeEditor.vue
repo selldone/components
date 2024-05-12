@@ -72,7 +72,7 @@
 
 <script>
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
-import { ArticleMixin } from "@components/mixin/ArticleMixin";
+import { ArticleMixin } from "../../../mixin/ArticleMixin";
 import { PrismEditor } from "vue-prism-editor";
 
 export default {

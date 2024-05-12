@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import SStorefrontSocialButtons from "@components/storefront/social/SStorefrontSocialButtons.vue";
+import SStorefrontSocialButtons from "../../../../storefront/social/SStorefrontSocialButtons.vue";
 
 export default {
   name: "SProductSectionExtraButtons",

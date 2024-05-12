@@ -100,7 +100,7 @@
 <script>
 import BProductSpecRow from "../BProductSpecRow.vue";
 
-import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
+import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import draggable from "vuedraggable";
 
 export default {

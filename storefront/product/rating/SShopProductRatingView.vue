@@ -85,8 +85,8 @@
 </template>
 
 <script>
-import URatingBar from "@components/ui/rating/bar/URatingBar.vue";
-import URatingInput from "@components/ui/rating/input/URatingInput.vue";
+import URatingBar from "../../../ui/rating/bar/URatingBar.vue";
+import URatingInput from "../../../ui/rating/input/URatingInput.vue";
 
 export default {
   name: "SShopProductRatingView",

@@ -25,7 +25,7 @@
 
 <script>
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
-import UCountDown from "@components/ui/count-down/UCountDown.vue";
+import UCountDown from "../../../ui/count-down/UCountDown.vue";
 
 export default {
   name: "SOrderDeliveryAutoComplete",

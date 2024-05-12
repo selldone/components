@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import getRandomNumber from "@components/ui/confetti/utils/get-random-number";
+import getRandomNumber from "../../../ui/confetti/utils/get-random-number";
 
 export namespace confetti{
   export interface ParticleOptions {

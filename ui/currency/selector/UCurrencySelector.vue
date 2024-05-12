@@ -155,7 +155,7 @@
 
 <script>
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
-import UCurrencyIcon from "@components/ui/currency/icon/UCurrencyIcon.vue";
+import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 
 /**
  * Change currency

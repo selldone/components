@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import UProgressScore from "@components/ui/progress/score/UProgressScore.vue";
+import UProgressScore from "../ui/progress/score/UProgressScore.vue";
 
 export default {
   name: "ArticleEdit",

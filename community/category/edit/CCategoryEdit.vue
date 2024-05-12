@@ -119,8 +119,8 @@
 </template>
 
 <script>
-import CImageInput from "@components/community/image/input/CImageInput.vue";
-import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
+import CImageInput from "../../../community/image/input/CImageInput.vue";
+import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 
 export default {

@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import SGiftcardAdd from "@components/storefront/giftcard/add/SGiftcardAdd.vue";
+import SGiftcardAdd from "../../../storefront/giftcard/add/SGiftcardAdd.vue";
 
 export default {
   name: "SGiftcardInput",

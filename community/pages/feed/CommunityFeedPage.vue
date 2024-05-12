@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import CBreadcrumb from "@components/community/breadcrumb/CBreadcrumb.vue";
+import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CPostWidget from "../../post/widget/CPostWidget.vue";
 
 export default {

@@ -178,11 +178,11 @@
 </template>
 
 <script>
-import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
-import CImageView from "@components/community/image/view/CImageView.vue";
+import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
+import CImageView from "../../community/image/view/CImageView.vue";
 import { TopicSubscriptionType } from "@selldone/core-js/enums/community/TopicSubscriptionType";
 import { TopicTrialType } from "@selldone/core-js/enums/community/TopicTrialType";
-import URibbon from "@components/ui/ribbon/URibbon.vue";
+import URibbon from "../../ui/ribbon/URibbon.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 

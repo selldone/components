@@ -25,7 +25,7 @@ import "@selldone/core-js/utils/console/ConsoleStyle";
 //――――――――――――――――― Style ―――――――――――――――――
 //█████████████████████████████████████████████████████████████
 
-import "@components/style/components.scss";
+import "./style/components.scss";
 
 
 
@@ -109,8 +109,8 @@ import { SEO } from "@selldone/core-js/helper/seo/SEO";
 //█████████████████████████████████████████████████████████████
 import type { ILanguage } from "@selldone/core-js/enums/language/Language";
 import { App } from "vue";
-import { installGlobalComponents } from "@components/components-mandetory";
-import { installGlobalDirectives } from "@components/directives-mandetory";
+import { installGlobalComponents } from "./components-mandetory";
+import { installGlobalDirectives } from "./directives-mandetory";
 
 declare global {
   interface Window {

@@ -236,7 +236,7 @@
 </template>
 
 <script>
-import URatingBar from "@components/ui/rating/bar/URatingBar.vue";
+import URatingBar from "../../ui/rating/bar/URatingBar.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
 export default {

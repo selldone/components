@@ -33,7 +33,7 @@
       :class="{ 'rounded-xl': rounded, rounded: !rounded }"
       :src="
         isSelldoneIcon
-          ? require('@components/assets/selldone-logo/selldone.svg')
+          ? require('../../../assets/selldone-logo/selldone.svg')
           : image
       "
       class="mb-1 pod-img"

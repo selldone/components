@@ -16,7 +16,7 @@
   <div class="marker-samin">
     <div class="market-pin">
       <img
-        :src="require('@components/assets/icons/location-center-icon.svg')"
+        :src="require('../../../../assets/icons/location-center-icon.svg')"
         width="64px"
       />
       <img
@@ -47,7 +47,7 @@ export default defineComponent({
     pinImage: {
       require: false,
       type: String,
-      default: require("@components/assets/icons/Truck-fill.svg"),
+      default: require("../../../../assets/icons/Truck-fill.svg"),
     },
 
     pinIcon: {

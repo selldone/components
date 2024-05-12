@@ -40,12 +40,12 @@
       :left-image="
         muted_images.original
           ? muted_images.original
-          : require('@components/article/add-on/comparison/asset/image-placeholder.svg')
+          : require('../../../article/add-on/comparison/asset/image-placeholder.svg')
       "
       :right-image="
         muted_images.compare
           ? muted_images.compare
-          : require('@components/article/add-on/comparison/asset/image-placeholder.svg')
+          : require('../../../article/add-on/comparison/asset/image-placeholder.svg')
       "
       :slider-line-width="2"
       :slider-position-percentage="0.5"
@@ -59,8 +59,8 @@
 
 <script>
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
-import VueCompareImage from "@components/ui/image-compare/VueCompareImage.vue";
-import { ArticleMixin } from "@components/mixin/ArticleMixin";
+import VueCompareImage from "../../../ui/image-compare/VueCompareImage.vue";
+import { ArticleMixin } from "../../../mixin/ArticleMixin";
 
 export default {
   name: "AAddonComparison",

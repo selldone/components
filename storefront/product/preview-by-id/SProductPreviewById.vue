@@ -77,8 +77,8 @@
 </template>
 
 <script>
-import ProductVariantsView from "@components/storefront/product/variant/ProductVariantsView.vue";
-import UChipDiscount from "@components/ui/chip/discount/UChipDiscount.vue";
+import ProductVariantsView from "../../../storefront/product/variant/ProductVariantsView.vue";
+import UChipDiscount from "../../../ui/chip/discount/UChipDiscount.vue";
 
 export default {
   name: "SProductPreviewById",

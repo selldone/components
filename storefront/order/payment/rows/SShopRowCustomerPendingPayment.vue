@@ -103,7 +103,7 @@
             : $t('pending_payment.upload_payment_receipt')
         "
         :placeholder-image="
-          require('@components/assets/placeholders/image/payment-check.png')
+          require('../../../../assets/placeholders/image/payment-check.png')
         "
         :server="
           window.XAPI.POST_UPLOAD_DIRECT_PAYMENT_RECEIPT(
@@ -223,7 +223,7 @@
 <script>
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
-import UTextValueDashed from "@components/ui/text/value-dashed/UTextValueDashed.vue";
+import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 
 export default {
   name: "SShopRowCustomerPendingPayment",

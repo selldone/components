@@ -1006,18 +1006,18 @@ import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
 import { PermissionNames } from "@selldone/core-js/enums/admin/permission/PermissionNames";
 import { PermissionLevels } from "@selldone/core-js/enums/admin/permission/PermissionLevels";
 import UDateInput from "../ui/date/input/UDateInput.vue";
-import SArticlesTimeline from "@components/article/timeline/SArticlesTimeline.vue";
-import ULanguageInput from "@components/ui/language/input/ULanguageInput.vue";
+import SArticlesTimeline from "../article/timeline/SArticlesTimeline.vue";
+import ULanguageInput from "../ui/language/input/ULanguageInput.vue";
 import SArticleFaqs from "./faq/SArticleFaqs.vue";
 import SArticleStructuredData from "./SArticleStructuredData.vue";
 import SArticleTagsEditor from "./tags/SArticleTagsEditor.vue";
-import USmartMenu from "@components/ui/smart/menu/USmartMenu.vue";
+import USmartMenu from "../ui/smart/menu/USmartMenu.vue";
 import UTimeProgressBar from "../ui/time/progress-bar/UTimeProgressBar.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
-import UButtonAiSmall from "@components/ui/button/ai/small/UButtonAiSmall.vue";
+import UButtonAiSmall from "../ui/button/ai/small/UButtonAiSmall.vue";
 import _ from "lodash-es";
-import SArticleAuthorBox from "@components/article/author/box/SArticleAuthorBox.vue";
+import SArticleAuthorBox from "../article/author/box/SArticleAuthorBox.vue";
 
 export default {
   name: "ArticleViewer",

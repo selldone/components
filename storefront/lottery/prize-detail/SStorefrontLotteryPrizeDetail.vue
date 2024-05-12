@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import SShopProductCard from "@components/storefront/product/card/SShopProductCard.vue";
+import SShopProductCard from "../../../storefront/product/card/SShopProductCard.vue";
 
 export default {
   name: "SStorefrontLotteryPrizeDetail",

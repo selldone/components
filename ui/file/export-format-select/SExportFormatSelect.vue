@@ -28,7 +28,7 @@
     >
       <template v-slot:prepend>
         <v-avatar rounded="0">
-          <v-img :src="require('@components/assets/icons/pdf.svg')"></v-img>
+          <v-img :src="require('../../../assets/icons/pdf.svg')"></v-img>
         </v-avatar>
       </template>
     </v-list-item>
@@ -44,7 +44,7 @@
     >
       <template v-slot:prepend>
         <v-avatar rounded="0">
-          <v-img :src="require('@components/assets/file/excel.svg')"></v-img>
+          <v-img :src="require('../../../assets/file/excel.svg')"></v-img>
         </v-avatar>
       </template>
     </v-list-item>
@@ -61,7 +61,7 @@
     >
       <template v-slot:prepend>
         <v-avatar rounded="0">
-          <v-img :src="require('@components/assets/file/csv.svg')"></v-img>
+          <v-img :src="require('../../../assets/file/csv.svg')"></v-img>
         </v-avatar>
       </template>
     </v-list-item>

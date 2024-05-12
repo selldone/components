@@ -354,12 +354,12 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
+import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
-import SShopBasketItemReturnForm from "@components/storefront/order/return/SShopBasketItemReturnForm.vue";
-import BasketItemUserMessageForm from "@components/storefront/order/product-input/BasketItemUserMessageForm.vue";
+import SShopBasketItemReturnForm from "../../../storefront/order/return/SShopBasketItemReturnForm.vue";
+import BasketItemUserMessageForm from "../../../storefront/order/product-input/BasketItemUserMessageForm.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import SProductSectionValuation from "@components/storefront/product/section/valuation/SProductSectionValuation.vue";
+import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
 
 export default {
   name: "SShopBasketItemsList",

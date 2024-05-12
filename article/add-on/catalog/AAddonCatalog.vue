@@ -50,7 +50,7 @@
 import Flipbook from "flipbook-vue";
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { defineComponent } from "vue";
-import { ArticleMixin } from "@components/mixin/ArticleMixin";
+import { ArticleMixin } from "../../../mixin/ArticleMixin";
 
 export default defineComponent({
   name: "AAddonCatalog",
@@ -92,7 +92,7 @@ export default defineComponent({
     pages(){
       if(this.edit_mode && !this.muted_pack?.pages?.length){
         return [
-          require('@components/article/add-on/comparison/asset/image-placeholder.svg'),
+          require('../../../article/add-on/comparison/asset/image-placeholder.svg'),
         ];
       }
       return this.muted_pack?.pages

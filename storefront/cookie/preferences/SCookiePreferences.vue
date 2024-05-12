@@ -36,7 +36,7 @@
         <template v-slot:prepend>
           <v-avatar tile>
             <v-img
-              :src="require('@components/assets/icons/europe.svg')"
+              :src="require('../../../assets/icons/europe.svg')"
               height="48"
               width="48"
             ></v-img>

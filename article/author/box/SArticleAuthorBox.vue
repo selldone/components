@@ -198,7 +198,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import AFeedbackContentViolationReport from "@components/article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
+import AFeedbackContentViolationReport from "../../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 
 export default defineComponent({
   name: "SArticleAuthorBox",

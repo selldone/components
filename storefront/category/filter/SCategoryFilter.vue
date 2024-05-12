@@ -243,9 +243,9 @@
 </template>
 
 <script>
-import SCategoryFilterSelector from "@components/storefront/category/filter/selector/SCategoryFilterSelector.vue";
+import SCategoryFilterSelector from "../../../storefront/category/filter/selector/SCategoryFilterSelector.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
-import USmartToggle from "@components/ui/smart/toggle/USmartToggle.vue";
+import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 
 /**
  * >

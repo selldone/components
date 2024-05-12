@@ -122,8 +122,8 @@
 </template>
 
 <script>
-import VariantItemViewMicro from "@components/storefront/product/variant/VariantItemViewMicro.vue";
-import SShopCustomerReceiverInfoWidget from "@components/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
+import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
+import SShopCustomerReceiverInfoWidget from "../../../storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 export default {

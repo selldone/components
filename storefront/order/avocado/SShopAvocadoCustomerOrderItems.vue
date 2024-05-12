@@ -36,7 +36,7 @@
           :src="
             item.image
               ? getShopImagePath(item.image)
-              : require('@components/assets/icons/product-outline.svg')
+              : require('../../../assets/icons/product-outline.svg')
           "
           class="rounded-18px me-2 ms-1 flex-grow-0 pointer-zoom-in border"
           height="56"

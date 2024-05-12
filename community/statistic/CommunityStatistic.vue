@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import CommunityStatisticView from "@components/community/statistics/CommunityStatisticView.vue";
+import CommunityStatisticView from "../../community/statistics/CommunityStatisticView.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 
 export default {

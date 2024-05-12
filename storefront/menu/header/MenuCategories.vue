@@ -229,7 +229,7 @@
 </template>
 
 <script>
-import UFadeScroll from "@components/ui/fade-scroll/UFadeScroll.vue";
+import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "MenuCategories",

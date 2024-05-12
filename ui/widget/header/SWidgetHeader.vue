@@ -111,7 +111,8 @@
 </template>
 
 <script>
-import UButtonAiSmall from "@components/ui/button/ai/small/UButtonAiSmall.vue";
+
+import UButtonAiSmall from "../../button/ai/small/UButtonAiSmall.vue";
 
 export default {
   name: "SWidgetHeader",

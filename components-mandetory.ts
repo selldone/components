@@ -39,15 +39,15 @@ import VueNotifications from "@kyvg/vue3-notification";
 import VueNumerals from "vue-numerals";
 
 //---------------- Check --------------
-import UCheck from "@components/ui/check/UCheck.vue";
+import UCheck from "./ui/check/UCheck.vue";
 
 //---------------- Price view --------------
-import UPrice from "@components/ui/price/UPrice.vue";
+import UPrice from "./ui/price/UPrice.vue";
 
 //---------------- Loading --------------
-import ULoadingEllipsis from "@components/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import ULoadingEllipsis from "./ui/loading/ellipsis/ULoadingEllipsis.vue";
 
-import ULoadingProgress from "@components/ui/loading/progress/ULoadingProgress.vue";
+import ULoadingProgress from "./ui/loading/progress/ULoadingProgress.vue";
 
 
 // @ts-ignore
@@ -59,20 +59,20 @@ import FlagIcon from "vue-flag-icon";
 
 //---------------- Social Share --------------
 import VueSocialSharing from "vue-social-sharing";
-import UButtonCircle from "@components/ui/button/circle/UButtonCircle.vue";
+import UButtonCircle from "./ui/button/circle/UButtonCircle.vue";
 
-import UTooltipTips from "@components/ui/tooltip/tips/UTooltipTips.vue";
+import UTooltipTips from "./ui/tooltip/tips/UTooltipTips.vue";
 
 //---------------- Medium Editor --------------
 import "medium-editor";
 
-import "@components/article/add-on/code-editor/plugin/ArticleAddonCodeEditorPlugin";
-import "@components/article/add-on/comparison/plugin/ArticleAddonComparisonPlugin";
-import "@components/article/add-on/catalog/plugin/ArticleAddonCatalogPlugin";
-import "@components/article/add-on/canvas/plugin/ArticleAddonCanvasPlugin";
+import "./article/add-on/code-editor/plugin/ArticleAddonCodeEditorPlugin";
+import "./article/add-on/comparison/plugin/ArticleAddonComparisonPlugin";
+import "./article/add-on/catalog/plugin/ArticleAddonCatalogPlugin";
+import "./article/add-on/canvas/plugin/ArticleAddonCanvasPlugin";
 
 // @ts-ignore
-import {MediumInsert} from "@components/article/insert/SelldoneEditorInsert";
+import {MediumInsert} from "./article/insert/SelldoneEditorInsert";
 //―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
 import "prismjs";
 import "prismjs/themes/prism.css";
@@ -81,11 +81,11 @@ import {PrismEditor} from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css";
 
 //---------------- Widget --------------
-import SWidget from "@components/ui/widget/widget/SWidget.vue";
+import SWidget from "./ui/widget/widget/SWidget.vue";
 
-import SWidgetHeader from "@components/ui/widget/header/SWidgetHeader.vue";
+import SWidgetHeader from "./ui/widget/header/SWidgetHeader.vue";
 
-import VueConfetti from "@components/ui/confetti";
+import VueConfetti from "./ui/confetti";
 
 
 //---------------- prototypes --------------
@@ -119,7 +119,7 @@ export function installGlobalComponents(app: App) {
   const UMapView = defineAsyncComponent(
     () =>
       import(
-        /* webpackChunkName: "plug-map" */ "@components/ui/map/view/UMapView.vue"
+        /* webpackChunkName: "plug-map" */ "./ui/map/view/UMapView.vue"
       ),
   );
   app.component("u-map-view", UMapView);
@@ -129,7 +129,7 @@ export function installGlobalComponents(app: App) {
   const ULottie = defineAsyncComponent(
     () =>
       import(
-        /* webpackChunkName: "plug-lottie" */ "@components/ui/lottie/ULottie.vue"
+        /* webpackChunkName: "plug-lottie" */ "./ui/lottie/ULottie.vue"
       ),
   );
   app.component("u-lottie", ULottie);
@@ -139,7 +139,7 @@ export function installGlobalComponents(app: App) {
   const SStateFlag = defineAsyncComponent(
     () =>
       import(
-        /* webpackChunkName: "plug-flag" */ "@components/ui/country/state-flag/SStateFlag.vue"
+        /* webpackChunkName: "plug-flag" */ "./ui/country/state-flag/SStateFlag.vue"
       ),
   );
   app.component("s-state-flag", SStateFlag);
@@ -162,7 +162,7 @@ export function installGlobalComponents(app: App) {
     () =>
       import(
         // @ts-ignore
-        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/qrcode/UQrcode.vue"
+        /* webpackChunkName: "plug-miscellaneous" */ "./ui/qrcode/UQrcode.vue"
       ),
   );
   app.component("u-qrcode", SQrcode);
@@ -173,7 +173,7 @@ export function installGlobalComponents(app: App) {
     () =>
       import(
         // @ts-ignore
-        /* webpackChunkName: "plug-miscellaneous" */ "@components/ui/barcode/UBarcode.vue"
+        /* webpackChunkName: "plug-miscellaneous" */ "./ui/barcode/UBarcode.vue"
       ),
   );
   app.component("u-barcode", UBarcode);

@@ -136,8 +136,8 @@
 </template>
 
 <script>
-import SShopProductFilesList from "@components/storefront/product/file/SShopProductFilesList.vue";
-import SFilesGroup from "@components/ui/file/group/SFilesGroup.vue";
+import SShopProductFilesList from "../../../../../storefront/product/file/SShopProductFilesList.vue";
+import SFilesGroup from "../../../../../ui/file/group/SFilesGroup.vue";
 import _ from "lodash-es";
 
 export default {

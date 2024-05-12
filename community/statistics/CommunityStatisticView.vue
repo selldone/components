@@ -149,11 +149,11 @@
 
 <script>
 import UTimeSpan from "../../ui/time/span/UTimeSpan.vue";
-import UChartArea from "@components/ui/chart/area/UChartArea.vue";
-import UChartLine from "@components/ui/chart/line/UChartLine.vue";
+import UChartArea from "../../ui/chart/area/UChartArea.vue";
+import UChartLine from "../../ui/chart/line/UChartLine.vue";
 import TrendSparkline from "./TrendSparkline.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
-import { IntersectMixin } from "@components/mixin/IntersectMixin";
+import { IntersectMixin } from "../../mixin/IntersectMixin";
 
 export default {
   name: "CommunityStatisticView",

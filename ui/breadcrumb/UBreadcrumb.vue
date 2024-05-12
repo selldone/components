@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import CircleImage from "@components/ui/image/CircleImage.vue";
+import CircleImage from "../../ui/image/CircleImage.vue";
 
 export default {
   name: "UBreadcrumb",

@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import SBlogCardAuthorCategory from "@components/storefront/blog/card/author-category/SBlogCardAuthorCategory.vue";
+import SBlogCardAuthorCategory from "../../../storefront/blog/card/author-category/SBlogCardAuthorCategory.vue";
 
 export default {
   name: "SBlogCard",

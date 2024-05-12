@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import UProgressRadial from "@components/ui/progress/radial/UProgressRadial.vue";
+import UProgressRadial from "../../../ui/progress/radial/UProgressRadial.vue";
 import SComparisonList from "../list/SComparisonList.vue";
 
 export default {

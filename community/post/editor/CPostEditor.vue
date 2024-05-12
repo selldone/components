@@ -657,27 +657,27 @@
 </template>
 
 <script>
-import UVoiceBox from "@components/community/voice/box/UVoiceBox.vue";
-import UTabsRounded from "@components/ui/tab/rounded/UTabsRounded.vue";
+import UVoiceBox from "../../../community/voice/box/UVoiceBox.vue";
+import UTabsRounded from "../../../ui/tab/rounded/UTabsRounded.vue";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules.ts";
-import UTextMentionInput from "@components/ui/text/mention-input/UTextMentionInput.vue";
+import UTextMentionInput from "../../../ui/text/mention-input/UTextMentionInput.vue";
 import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
-import UDenseCirclesUsers from "@components/ui/dense-circles/users/UDenseCirclesUsers.vue";
+import UDenseCirclesUsers from "../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { Screenshot } from "@selldone/core-js/helper/canvas/Screenshot.ts";
 import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper.ts";
-import UPriceInput from "@components/ui/price/input/UPriceInput.vue";
-import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
+import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
+import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import { TopicSubscriptionType } from "@selldone/core-js/enums/community/TopicSubscriptionType.ts";
 import { TopicTrialType } from "@selldone/core-js/enums/community/TopicTrialType.ts";
 import { Currency } from "@selldone/core-js/enums/payment/Currency.ts";
 import CPostPoll from "../poll/CPostPoll.vue";
 import { CommunityStageLevel } from "@selldone/core-js/enums/community/CommunityStageLevel.ts";
-import CProductEditor from "@components/community/product/editor/CProductEditor.vue";
-import CProductView from "@components/community/product/view/CProductView.vue";
+import CProductEditor from "../../../community/product/editor/CProductEditor.vue";
+import CProductView from "../../../community/product/view/CProductView.vue";
 import { ImageDimension } from "@selldone/core-js/helper/image/ImageDimension.ts";
-import USmartSwitch from "@components/ui/smart/switch/USmartSwitch.vue";
-import CAttachEditor from "@components/community/attach/editor/CAttachEditor.vue";
-import CAttachViewer from "@components/community/attach/viewer/CAttachViewer.vue";
+import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
+import CAttachEditor from "../../../community/attach/editor/CAttachEditor.vue";
+import CAttachViewer from "../../../community/attach/viewer/CAttachViewer.vue";
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
 import _ from "lodash-es";
 

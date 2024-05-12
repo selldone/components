@@ -128,12 +128,12 @@
 </template>
 
 <script>
-import UCurrencyInput from "@components/ui/currency/input/UCurrencyInput.vue";
-import SHyperCartItems from "@components/storefront/hyper/cart/items/SHyperCartItems.vue";
+import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
+import SHyperCartItems from "../../../storefront/hyper/cart/items/SHyperCartItems.vue";
 import SHyperProduct from "../product/SHyperProduct.vue";
-import { GtagEcommerce } from "@components/plugins/gtag/GtagEcommerce";
+import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";
 import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
-import UStamp from "@components/ui/stamp/UStamp.vue";
+import UStamp from "../../../ui/stamp/UStamp.vue";
 import _ from "lodash-es";
 
 export default {

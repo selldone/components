@@ -121,8 +121,8 @@
 <script>
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
-import SShopBasketItem from "@components/storefront/order/basket/SShopBasketItem.vue";
-import SWidgetButtons from "@components/ui/widget/buttons/SWidgetButtons.vue";
+import SShopBasketItem from "../../../storefront/order/basket/SShopBasketItem.vue";
+import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "BasketTopMenu",

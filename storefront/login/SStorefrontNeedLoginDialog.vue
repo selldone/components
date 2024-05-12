@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import SShopLogin from "@components/storefront/login/SShopLogin.vue";
+import SShopLogin from "../../storefront/login/SShopLogin.vue";
 import _ from "lodash-es";
 
 export default {
