@@ -71,7 +71,7 @@
       </v-btn>
     </div>
 
-    <v-data-table-server
+    <v-data-table-server  :mobile="$vuetify.display.xs"
       v-if="$vuetify.display.smAndUp || show_domains || showHeader || search"
       v-model:expanded="expanded"
       v-model:options="options"

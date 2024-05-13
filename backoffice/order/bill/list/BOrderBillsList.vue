@@ -61,7 +61,7 @@
 
     <!-- -------------- List -------------- -->
 
-    <v-data-table-server
+    <v-data-table-server  :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"

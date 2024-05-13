@@ -90,7 +90,7 @@
     </v-row>
 
     <!---------------------------- List ----------------------->
-    <v-data-table-server
+    <v-data-table-server  :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       :group-by="is_grouped ? [{ key: 'group' }] : undefined"

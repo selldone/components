@@ -42,7 +42,7 @@
       ></v-text-field>
     </v-row>
 
-    <v-data-table-server
+    <v-data-table-server  :mobile="$vuetify.display.xs"
       v-model:expanded="expanded"
       v-model:options="options"
       v-model:page="page"

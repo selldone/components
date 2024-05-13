@@ -60,7 +60,7 @@
       </v-row>
 
       <u-loading-progress v-if="busy_fetch"></u-loading-progress>
-      <v-data-table-server
+      <v-data-table-server  :mobile="$vuetify.display.xs"
         v-model:options="options"
         v-model:page="page"
         :class="{ disabled: busy_fetch }"

@@ -51,7 +51,7 @@
 
   <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ List ━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
-  <v-data-table-server
+  <v-data-table-server  :mobile="$vuetify.display.xs"
     v-model:items-per-page="itemsPerPage"
     v-model:options="options"
     v-model:page="page"

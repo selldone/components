@@ -73,6 +73,7 @@
 
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
+        :mobile="$vuetify.display.xs"
       v-model:page="page"
       v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
@@ -95,6 +96,7 @@
       item-key="id"
       @click:row="(_, r) => handleSelected(r.item)"
       :class="{ 'blurred disabled': busy_fetch && !HIGHLIGHT_ID }"
+
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>

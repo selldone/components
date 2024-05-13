@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
-    <v-data-table-server
+    <v-data-table-server  :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
