@@ -83,7 +83,8 @@
     "vuex": "^4.1.0",
     "youtube-player": "^5.6.0",
     "webfontloader": "^1.6.28",
-    "file-saver": "^2.0.5"
+    "file-saver": "^2.0.5",
+    "papaparse": "^5.4.1"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.5.2",
