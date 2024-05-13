@@ -80,7 +80,7 @@
     </v-expand-transition>
 
     <v-dialog v-model="dialog" content-class="no-shadow-dialog" max-width="480">
-      <v-card class="rounded-28px">
+      <v-card class="rounded-28px text-start">
         <v-card-title>
           <v-icon class="me-1">confirmation_number</v-icon>
           {{ $t("coupons.add_coupon") }}
@@ -91,6 +91,7 @@
             :label="$t('coupons.coupon_code')"
             class="strong-field"
             @keydown.enter="addCoupon(code_input)"
+            variant="underlined"
           >
           </v-text-field>
         </v-card-text>
@@ -111,7 +112,8 @@
               :class="{ disabled: !code_input }"
               :loading="busy_add"
               size="x-large"
-              variant="outlined"
+              variant="elevated"
+              color="primary"
               @click="addCoupon(code_input)"
             >
               <v-icon start>add</v-icon>

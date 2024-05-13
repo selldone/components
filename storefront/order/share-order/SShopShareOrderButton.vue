@@ -25,22 +25,21 @@
       <v-icon size="small">share</v-icon>
       {{ $t("share_order.action") }}
     </v-btn>
-
     <!-- █████████████████████ Dialog > Share █████████████████████ -->
 
     <v-bottom-sheet
       v-model="show_share"
-      class="position-relative"
-      dark
       inset
-      max-width="640"
+      max-width="820"
+      content-class="rounded-t-xl"
     >
-      <v-card class="text-start">
-        <v-card-title>
+      <v-card class="text-start" rounded="t-xl" color="#fafafa">
+        <v-card-title class="d-flex align-center">
           <v-icon class="me-2">share</v-icon>
           {{ $t("share_order.title") }}
-          <v-chip class="mx-2" color="green" dark label size="small">
-            <v-icon size="small" start>lock_clock</v-icon>
+          <v-spacer></v-spacer>
+          <v-chip class="mx-2" color="green" dark  size="small" variant="flat">
+            <v-icon  start>lock_clock</v-icon>
             {{ $t("global.commons.secure") }}
           </v-chip>
         </v-card-title>
@@ -56,9 +55,9 @@
             v-model="share_address"
             :false-title="$t('share_order.address_excluded')"
             :true-title="$t('share_order.address_included')"
-            dark
             false-icon="local_mall"
             true-icon="local_mall place"
+            class="my-5"
             @change="showShareDialog"
           >
           </u-smart-switch>
@@ -66,8 +65,7 @@
           <u-text-copy-box
             :border="false"
             :value="wishlist_url"
-            background-color="#343a40"
-            class="my-3"
+            class="my-5" border
             small-width-mode
           ></u-text-copy-box>
 
