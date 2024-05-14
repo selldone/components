@@ -14,7 +14,7 @@
 
 <template>
   <v-card flat>
-    <v-card-title class="mx-2 text-start">
+    <v-card-title class="mx-2 text-start d-flex align-center">
       <v-btn
         v-if="method !== 'fast'"
         class="zoomIn tnt"
@@ -36,7 +36,7 @@
 
       <v-btn
         v-if="current_step"
-        class="pointer-event-none zoomIn delay_400 tnt"
+        class="zoomIn delay_400 tnt pen"
         variant="text"
         rounded
       >
@@ -56,7 +56,7 @@
           :inputOptions="{
             placeholder: $t('global.need_login.mobile_input'),
           }"
-          class="max-width-field mx-auto my-3 fadeIn"
+          class="max-width-field mx-auto my-3 fadeIn "
           enabledCountryCode
           required
           validCharactersOnly

@@ -15,10 +15,10 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="widget-box -x-large">
     <s-widget-header
-      :add-caption="$t('shop_license.add')"
-      :title="$t('shop_license.licenses_table.title')"
-      icon="payments"
-      @click:add="
+        :add-caption="$t('shop_license.add')"
+        :title="$t('shop_license.licenses_table.title')"
+        icon="payments"
+        @click:add="
         () => {
           voucher_selected = null;
           sheet = true;
@@ -28,33 +28,33 @@
     </s-widget-header>
 
     <v-list-subheader
-      >{{ $t("shop_license.licenses_table.subtitle") }}
+    >{{ $t("shop_license.licenses_table.subtitle") }}
     </v-list-subheader>
 
     <!-- ████████████████████ Shop Subscriptions ████████████████████ -->
 
     <v-data-table
-      :header-props="{ sortByText: $t('global.commons.sort_by') }"
-      :headers="headers"
-      :items="subscriptions"
-      :loading="busy_fetch"
-      class="bg-transparent mb-6"
-      item-key="id"
+        :header-props="{ sortByText: $t('global.commons.sort_by') }"
+        :headers="headers"
+        :items="subscriptions"
+        :loading="busy_fetch"
+        class="bg-transparent mb-6"
+        item-key="id"
     >
       <template v-slot:item.code="{ item }">
         <div class="min-width-150 p-2">
           <img
-            :src="getShopLicenseIcon(item.code)"
-            class="me-1"
-            height="24"
-            width="24"
+              :src="getShopLicenseIcon(item.code)"
+              class="me-1"
+              height="24"
+              width="24"
           />
           {{ item.code }}
 
           <u-time-progress-bar
-            :created-time="item.created_at"
-            :end-time="item.end_at"
-            :start-time="item.start_at"
+              :created-time="item.created_at"
+              :end-time="item.end_at"
+              :start-time="item.start_at"
           ></u-time-progress-bar>
         </div>
       </template>
@@ -62,14 +62,14 @@
       <template v-slot:item.start_at="{ item }">
         <div class="min-width-200">
           <v-icon class="me-1" size="small">play_arrow</v-icon>
-          {{ getFromNowString(item.start_at) }}<br />
+          {{ getFromNowString(item.start_at) }}<br/>
           <small>{{ getLocalTimeString(item.start_at) }}</small>
         </div>
 
         <div class="min-width-200">
           <v-icon class="me-1" size="small">stop</v-icon>
 
-          {{ getFromNowString(item.end_at) }}<br />
+          {{ getFromNowString(item.end_at) }}<br/>
           <small>{{ getLocalTimeString(item.end_at) }}</small>
         </div>
       </template>
@@ -77,17 +77,17 @@
       <template v-slot:item.renewal="{ item }">
         <div v-if="last_subscription === item">
           <v-btn
-            :color="item.renewal ? 'green' : undefined"
-            :dark="item.renewal"
-            :loading="busy_renewal === item"
-            :variant="item.renewal ? 'flat' : 'outlined'"
-            fab
-            size="small"
-            @click="toggleRenewal(item)"
+              :color="item.renewal ? 'green' : undefined"
+              :dark="item.renewal"
+              :loading="busy_renewal === item"
+              :variant="item.renewal ? 'flat' : 'outlined'"
+              fab
+              size="small"
+              @click="toggleRenewal(item)"
           >
             <v-icon>refresh</v-icon>
           </v-btn>
-          <br />
+          <br/>
           {{ item.renewal ? $t("global.active") : $t("global.inactive") }}
         </div>
         <div v-else>
@@ -99,25 +99,25 @@
         <div v-if="item.account" class="min-width-150 p-2">
           {{ formatCard(item.account.account_number) }}
           <v-btn
-            :to="{
+              :to="{
               name: 'BPageAccountTransactions',
               params: { account_number: item.account.account_number },
             }"
-            class="m-2"
-            icon
-            target="_blank"
-            tile
+              class="m-2"
+              icon variant="text"
+              target="_blank"
+              tile
           >
             <v-icon>open_in_new</v-icon>
           </v-btn>
-          <br />
+          <br/>
           <small>{{ item.account.account_name }}</small>
         </div>
         <div v-else class="min-width-150">
           <img
-            :src="getVoucherImage(item.voucher.code)"
-            :title="getVoucherTitle(item.voucher.code)"
-            height="64"
+              :src="getVoucherImage(item.voucher.code)"
+              :title="getVoucherTitle(item.voucher.code)"
+              height="64"
           />
           <small class="d-block">{{ item.voucher.comment }}</small>
 
@@ -126,24 +126,24 @@
             {{ $t("shop_license.use_date") }}:
           </small>
           <b class="small mb-1">{{
-            getLocalTimeStringSmall(item.voucher.used_at)
-          }}</b>
+              getLocalTimeStringSmall(item.voucher.used_at)
+            }}</b>
         </div>
       </template>
 
       <template v-slot:item.payment="{ item }">
         <u-price
-          :amount="item.payment"
-          :currency="item.currency"
+            :amount="item.payment"
+            :currency="item.currency"
         ></u-price>
       </template>
 
       <template v-slot:item.cancel="{ item }">
         <v-btn
-          color="red"
-          icon variant="text"
-          title="Cancel subscription"
-          @click="cancelSubscription(item.id)"
+            color="red"
+            icon variant="text"
+            title="Cancel subscription"
+            @click="cancelSubscription(item.id)"
         >
           <v-icon>close</v-icon>
         </v-btn>
@@ -158,55 +158,57 @@
     </h3>
     <v-slide-group v-if="vouchers.length">
       <v-slide-group-item
-        v-for="voucher in vouchers"
-        :key="voucher.id"
-        v-slot:default=""
-        :value="voucher"
+          v-for="voucher in vouchers"
+          :key="voucher.id"
+          v-slot:default=""
+          :value="voucher"
       >
         <div
-          class="p-3 row-hover rounded my-10 mx-3"
-          @click="selectVoucher(voucher)"
+            class="p-3 row-hover rounded-lg my-10 mx-3 text-start"
+            @click="selectVoucher(voucher)"
         >
-          <v-badge
-            :content="voucher.total"
-            :model-value="voucher.total > 1"
-            class="text-center"
-            color="deep-purple-accent-4"
-            transition="slide-x-transition"
-          >
-            <v-img
+
+
+          <v-img
               :src="getVoucherImage(voucher.code)"
               height="96"
               width="200"
-            ></v-img>
+          ></v-img>
 
-            <div class="text-center">
-              <img
+          <div class="text-center">
+            <img
                 :src="getVoucherObject(voucher.code).license.icon"
                 class="me-2"
                 height="24"
                 width="24"
-              />
-              <v-icon
+            />
+            <v-icon
                 v-for="i in getVoucherObject(voucher.code).months"
                 :key="i"
                 color="primary"
                 size="x-small"
-                >circle
-              </v-icon>
-            </div>
+            >circle
+            </v-icon>
+          </div>
 
-            <p class="m-1 text-uppercase text-muted small">
-              {{ getVoucherTitle(voucher.code) }}
-            </p>
-          </v-badge>
+          <p class="m-1 text-uppercase text-muted small">
+            {{ getVoucherTitle(voucher.code) }}
+            <v-badge
+                :content="voucher.total+1"
+                :model-value="voucher.total+1 > 1"
+                color="deep-purple-accent-4"
+                inline
+            >
+            </v-badge>
+          </p>
+
         </div>
       </v-slide-group-item>
     </v-slide-group>
 
     <div
-      v-if="!vouchers.length"
-      class="text-center text-muted text-h3 font-weight-thin py-5 px-2"
+        v-if="!vouchers.length"
+        class="text-center text-muted text-h3 font-weight-thin py-5 px-2"
     >
       {{ $t("global.commons.empty") }}
     </div>
@@ -214,19 +216,19 @@
     <!-- ████████████████████ Bottom Sheet > Add account to shop ████████████████████ -->
 
     <v-bottom-sheet
-      v-model="sheet"
-      :max-width="1200"
-      :overlay-opacity="0.9"
-      content-class="rounded-t-xl"
-      inset
-      scrollable
+        v-model="sheet"
+        :max-width="1200"
+        :overlay-opacity="0.9"
+        content-class="rounded-t-xl"
+        inset
+        scrollable
     >
       <v-card class="text-start rounded-t-xl">
         <v-card-title class="text-capitalize">
           <v-icon class="me-1" color="#111">workspace_premium</v-icon>
           {{ $t("shop_license.buy") }}
 
-          <v-btn class="absolute-top-end" icon @click="sheet = false">
+          <v-btn class="absolute-top-end" icon @click="sheet = false" variant="text">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
@@ -239,11 +241,11 @@
                 <s-widget-header icon="looks_one" title="Select a wallet">
                   <template v-slot:append-title>
                     <v-icon
-                      v-if="!account_selected"
-                      class="mx-1 blink-me"
-                      color="success"
-                      size="small"
-                      >circle
+                        v-if="!account_selected"
+                        class="mx-1 blink-me"
+                        color="success"
+                        size="small"
+                    >circle
                     </v-icon>
                   </template>
                 </s-widget-header>
@@ -258,57 +260,57 @@
 
               <div class="widget-box mb-5">
                 <s-widget-header
-                  :title="$t('shop_license.plan')"
-                  class=""
-                  icon="looks_two"
+                    :title="$t('shop_license.plan')"
+                    class=""
+                    icon="looks_two"
                 >
                   <template v-slot:append-title>
                     <v-icon
-                      v-if="account_selected && !subscription_code"
-                      class="mx-1 blink-me"
-                      color="success"
-                      >circle
+                        v-if="account_selected && !subscription_code"
+                        class="mx-1 blink-me"
+                        color="success"
+                    >circle
                     </v-icon>
                   </template>
                 </s-widget-header>
 
                 <v-list-subheader
-                  >{{ $t("shop_license.plan_placeholder") }}
+                >{{ $t("shop_license.plan_placeholder") }}
                 </v-list-subheader>
                 <u-smart-select
-                  v-model="subscription_code"
-                  :disabled="!account_selected"
-                  :items="plans"
-                  class="my-3"
-                  item-image="icon"
-                  item-text="name"
-                  item-value="code"
+                    v-model="subscription_code"
+                    :disabled="!account_selected"
+                    :items="plans"
+                    class="my-3"
+                    item-image="icon"
+                    item-text="name"
+                    item-value="code"
                 >
                 </u-smart-select>
               </div>
               <div class="widget-box mb-5">
                 <s-widget-header
-                  :title="$t('shop_license.validity_duration')"
-                  class=""
-                  icon="looks_3"
+                    :title="$t('shop_license.validity_duration')"
+                    class=""
+                    icon="looks_3"
                 >
                   <template v-slot:append-title>
                     <v-icon
-                      v-if="subscription_code && !type"
-                      class="mx-1 blink-me"
-                      color="success"
-                      >circle
+                        v-if="subscription_code && !type"
+                        class="mx-1 blink-me"
+                        color="success"
+                    >circle
                     </v-icon>
                   </template>
                 </s-widget-header>
 
                 <v-list-subheader
-                  >{{ $t("shop_license.validity_duration_hint") }}
+                >{{ $t("shop_license.validity_duration_hint") }}
                 </v-list-subheader>
                 <u-smart-select
-                  v-model="type"
-                  :disabled="!subscription_code"
-                  :items="[
+                    v-model="type"
+                    :disabled="!subscription_code"
+                    :items="[
                     { value: 'monthly', title: $t('shop_license.monthly') },
                     {
                       value: 'yearly',
@@ -316,52 +318,52 @@
                       icon: 'star_purple500',
                     },
                   ]"
-                  class="my-3"
-                  item-icon="icon"
-                  item-text="title"
-                  item-value="value"
+                    class="my-3"
+                    item-icon="icon"
+                    item-text="title"
+                    item-value="value"
                 >
                 </u-smart-select>
               </div>
               <div class="widget-box mb-5">
                 <s-widget-header
-                  class=""
-                  icon="settings_applications"
-                  title="More options"
+                    class=""
+                    icon="settings_applications"
+                    title="More options"
                 ></s-widget-header>
 
                 <u-smart-toggle
-                  v-model="renewal"
-                  :true-title="$t('shop_license.auto_renewal')"
-                  class="my-3"
-                  false-gray
-                  true-description="The system will extend if your wallet has sufficient balance or if you have available the same voucher."
-                  true-icon="autorenew"
+                    v-model="renewal"
+                    :true-title="$t('shop_license.auto_renewal')"
+                    class="my-3"
+                    false-gray
+                    true-description="The system will extend if your wallet has sufficient balance or if you have available the same voucher."
+                    true-icon="autorenew"
                 ></u-smart-toggle>
               </div>
             </div>
 
             <!-- Voucher mode -->
-            <div v-else class="py-5 text-center">
+            <div v-else class="py-5 text-center widget-box mb-5">
               <v-img
-                :src="getVoucherImage(voucher_selected.code)"
-                height="168"
+                  :src="getVoucherImage(voucher_selected.code)"
+                  height="168"
               ></v-img>
               <v-row align="center" class="my-2" justify="center" no-gutters>
                 <v-icon
-                  v-for="i in selected_voucher_obj.months"
-                  :key="i"
-                  color="primary"
-                  size="small"
-                  >circle
+                    v-for="i in selected_voucher_obj.months"
+                    :key="i"
+                    color="primary"
+                    size="small"
+                >circle
                 </v-icon>
               </v-row>
               <p class="m-1 text-uppercase">
                 <img
-                  :src="selected_voucher_obj.license.icon"
-                  class="me-1"
-                  height="24"
-                  width="24"
+                    :src="selected_voucher_obj.license.icon"
+                    class="me-1"
+                    height="24"
+                    width="24"
                 />
                 {{ getVoucherTitle(voucher_selected.code) }}
               </p>
@@ -369,8 +371,8 @@
 
             <div class="widget-box mb-5">
               <s-widget-header
-                icon="check_box"
-                title="Verify"
+                  icon="check_box"
+                  title="Verify"
               ></s-widget-header>
 
               <v-expand-transition>
@@ -395,8 +397,8 @@
                         {{ $t("shop_license.price") }}
                       </template>
                       <u-price
-                        :amount="price"
-                        :currency="currency"
+                          :amount="price"
+                          :currency="currency"
                       ></u-price>
                     </u-text-value-dashed>
                   </div>
@@ -404,9 +406,9 @@
               </v-expand-transition>
 
               <u-smart-verify
-                v-model="agreement"
-                :true-title="$t('shop_license.terms')"
-                class="my-3"
+                  v-model="agreement"
+                  :true-title="$t('shop_license.terms')"
+                  class="my-3"
               ></u-smart-verify>
             </div>
           </div>
@@ -417,50 +419,52 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
-              v-if="needCharge"
-              :to="{
+                v-if="needCharge"
+                :to="{
                 name: 'BPageAccountDeposit',
                 params: { account_number: account_selected.account_number },
                 query: { charge: calculated_need_charge },
               }"
-              color="primary"
-              size="x-large"
+                color="primary"
+                size="x-large"
+                variant="elevated"
             >
               <v-icon class="me-1">info</v-icon>
               {{ $t("shop_license.need_charge") }}
 
               <u-price
-                v-if="currency && price"
-                :amount="calculated_need_charge"
-                :currency="account_selected.currency"
-                class="mx-2"
+                  v-if="currency && price"
+                  :amount="calculated_need_charge"
+                  :currency="account_selected.currency"
+                  class="mx-2"
               ></u-price>
             </v-btn>
 
             <v-btn
-              v-else
-              :class="{
+                v-else
+                :class="{
                 disabled: (!canPay && !voucher_selected) || !agreement,
               }"
-              :loading="busy_buy"
-              color="success"
-              dark
-              size="x-large"
-              @click="buySubscription()"
+                :loading="busy_buy"
+                color="primary"
+                dark
+                size="x-large"
+                @click="buySubscription()"
+                variant="elevated"
             >
               <v-icon v-if="voucher_selected" class="me-1">check</v-icon>
               <img
-                v-else-if="subscription_code"
-                :src="getShopLicenseIcon(subscription_code)"
-                class="me-1"
-                height="24"
-                width="24"
+                  v-else-if="subscription_code"
+                  :src="getShopLicenseIcon(subscription_code)"
+                  class="me-1"
+                  height="24"
+                  width="24"
               />
 
               {{
                 voucher_selected
-                  ? $t("shop_license.use_voucher_now")
-                  : $t("shop_license.buy_now")
+                    ? $t("shop_license.use_voucher_now")
+                    : $t("shop_license.buy_now")
               }}
 
               <b v-if="currency && price" class="mx-2">
@@ -477,9 +481,9 @@
 
 <script>
 import BAccountInput from "../account/input/BAccountInput.vue";
-import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense";
+import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense";
 import UTimeProgressBar from "../../ui/time/progress-bar/UTimeProgressBar.vue";
-import { Vouchers } from "@selldone/core-js/enums/shop/Vouchers";
+import {Vouchers} from "@selldone/core-js/enums/shop/Vouchers";
 import UTextValueDashed from "../../ui/text/value-dashed/UTextValueDashed.vue";
 import USmartSelect from "../../ui/smart/select/USmartSelect.vue";
 import USmartToggle from "../../ui/smart/toggle/USmartToggle.vue";
@@ -551,25 +555,25 @@ export default {
 
     needCharge() {
       return (
-        this.canPay &&
-        this.account_selected.balance - this.account_selected.locked <
+          this.canPay &&
+          this.account_selected.balance - this.account_selected.locked <
           this.price
       );
     },
 
     calculated_need_charge() {
       return (
-        this.price -
-        (this.account_selected.balance - this.account_selected.locked)
+          this.price -
+          (this.account_selected.balance - this.account_selected.locked)
       );
     },
 
     canPay() {
       return (
-        this.account_selected &&
-        this.subscription_code &&
-        this.price &&
-        this.currency
+          this.account_selected &&
+          this.subscription_code &&
+          this.price &&
+          this.currency
       );
     },
     plans() {
@@ -647,22 +651,22 @@ export default {
     toggleRenewal(subscription) {
       this.busy_renewal = subscription;
       axios
-        .put(window.API.PUT_SHOP_SUBSCRIPTION(this.shop.id, subscription.id), {
-          renewal: !subscription.renewal,
-        })
-        .then(({ data }) => {
-          if (!data.error) {
-            subscription.renewal = data.renewal;
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => {
-          this.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_renewal = null;
-        });
+          .put(window.API.PUT_SHOP_SUBSCRIPTION(this.shop.id, subscription.id), {
+            renewal: !subscription.renewal,
+          })
+          .then(({data}) => {
+            if (!data.error) {
+              subscription.renewal = data.renewal;
+            } else {
+              this.showErrorAlert(null, data.error_msg);
+            }
+          })
+          .catch((error) => {
+            this.showLaravelError(error);
+          })
+          .finally(() => {
+            this.busy_renewal = null;
+          });
     },
 
     refreshPrice() {
@@ -676,128 +680,129 @@ export default {
       this.end_at = null;
 
       axios
-        .get(window.API.GET_SHOP_SUBSCRIPTION_PRICE(this.shop.id), {
-          params: {
-            currency: this.account_selected.currency,
-            type: this.type,
-            code: this.subscription_code,
-          },
-        })
-        .then(({ data }) => {
-          if (!data.error) {
-            this.price = data.price;
-            this.currency = data.currency;
-            this.start_at = data.start_at;
-            this.end_at = data.end_at;
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => {
-          this.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_price = false;
-        });
+          .get(window.API.GET_SHOP_SUBSCRIPTION_PRICE(this.shop.id), {
+            params: {
+              currency: this.account_selected.currency,
+              type: this.type,
+              code: this.subscription_code,
+            },
+          })
+          .then(({data}) => {
+            if (!data.error) {
+              this.price = data.price;
+              this.currency = data.currency;
+              this.start_at = data.start_at;
+              this.end_at = data.end_at;
+            } else {
+              this.showErrorAlert(null, data.error_msg);
+            }
+          })
+          .catch((error) => {
+            this.showLaravelError(error);
+          })
+          .finally(() => {
+            this.busy_price = false;
+          });
     },
 
     fetchSubscriptions() {
       this.busy_fetch = true;
       axios
-        .get(window.API.GET_SHOP_SUBSCRIPTIONS(this.shop.id))
-        .then(({ data }) => {
-          if (!data.error) {
-            this.subscriptions = data.subscriptions;
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => {
-          this.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_fetch = false;
-        });
+          .get(window.API.GET_SHOP_SUBSCRIPTIONS(this.shop.id))
+          .then(({data}) => {
+            if (!data.error) {
+              this.subscriptions = data.subscriptions;
+            } else {
+              this.showErrorAlert(null, data.error_msg);
+            }
+          })
+          .catch((error) => {
+            this.showLaravelError(error);
+          })
+          .finally(() => {
+            this.busy_fetch = false;
+          });
     },
 
     buySubscription() {
       this.busy_buy = true;
       axios
-        .post(window.API.POST_ADD_SHOP_SUBSCRIPTION(this.shop.id), {
-          type: this.type,
-          renewal: this.renewal,
-          code: this.subscription_code,
-          account_number: this.account_selected
-            ? this.account_selected.account_number
-            : null,
-          voucher_code: this.voucher_selected
-            ? this.voucher_selected.code
-            : null, //Only send voucher type! not id!
-        })
-        .then(({ data }) => {
-          if (!data.error) {
-            this.showSuccessAlert(
-              null,
-              this.$t("shop_license.notifications.subscribe_success"),
-            );
-            this.AddOrUpdateItemByID(this.subscriptions, data.subscription);
-            this.account_selected = null;
-            (this.voucher_selected = null), (this.sheet = false);
+          .post(window.API.POST_ADD_SHOP_SUBSCRIPTION(this.shop.id), {
+            type: this.type,
+            renewal: this.renewal,
+            code: this.subscription_code,
+            account_number: this.account_selected
+                ? this.account_selected.account_number
+                : null,
+            voucher_code: this.voucher_selected
+                ? this.voucher_selected.code
+                : null, //Only send voucher type! not id!
+          })
+          .then(({data}) => {
+            if (!data.error) {
+              this.showSuccessAlert(
+                  null,
+                  this.$t("shop_license.notifications.subscribe_success"),
+              );
+              this.AddOrUpdateItemByID(this.subscriptions, data.subscription);
+              this.account_selected = null;
+              (this.voucher_selected = null), (this.sheet = false);
 
-            if (data.vouchers) {
-              this.USER().vouchers = data.vouchers;
+              if (data.vouchers) {
+                this.USER().vouchers = data.vouchers;
+              }
+
+              // Update shop license:
+              this.shop.license = data.shop_license;
+            } else {
+              this.showErrorAlert(null, data.error_msg);
             }
-
-            // Update shop license:
-            this.shop.license = data.shop_license;
-          } else {
-            this.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => {
-          this.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_buy = false;
-        });
+          })
+          .catch((error) => {
+            this.showLaravelError(error);
+          })
+          .finally(() => {
+            this.busy_buy = false;
+          });
     },
 
     cancelSubscription(subscription_id) {
       this.openDangerAlert(
-        this.$t("shop_license.cancel_dialog.title"),
-        this.$t("shop_license.cancel_dialog.message"),
-        this.$t("shop_license.cancel_dialog.action"),
-        () => {
-          axios
-            .delete(
-              window.API.DELETE_SHOP_SUBSCRIPTION(
-                this.shop.id,
-                subscription_id,
-              ),
-            )
-            .then(({ data }) => {
-              if (!data.error) {
-                this.showSuccessAlert(
-                  null,
-                  this.$t("shop_license.notifications.cancel_success"),
-                );
-                this.DeleteItemByID(this.subscriptions, data.id);
+          this.$t("shop_license.cancel_dialog.title"),
+          this.$t("shop_license.cancel_dialog.message"),
+          this.$t("shop_license.cancel_dialog.action"),
+          () => {
+            axios
+                .delete(
+                    window.API.DELETE_SHOP_SUBSCRIPTION(
+                        this.shop.id,
+                        subscription_id,
+                    ),
+                )
+                .then(({data}) => {
+                  if (!data.error) {
+                    this.showSuccessAlert(
+                        null,
+                        this.$t("shop_license.notifications.cancel_success"),
+                    );
+                    this.DeleteItemByID(this.subscriptions, data.id);
 
-                if (data.vouchers) {
-                  this.USER().vouchers = data.vouchers;
-                }
+                    if (data.vouchers) {
+                      this.USER().vouchers = data.vouchers;
+                    }
 
-                // Update shop license:
-                this.shop.license = data.shop_license;
-              } else {
-                this.showErrorAlert(null, data.error_msg);
-              }
-            })
-            .catch((error) => {
-              this.showLaravelError(error);
-            })
-            .finally(() => {});
-        },
+                    // Update shop license:
+                    this.shop.license = data.shop_license;
+                  } else {
+                    this.showErrorAlert(null, data.error_msg);
+                  }
+                })
+                .catch((error) => {
+                  this.showLaravelError(error);
+                })
+                .finally(() => {
+                });
+          },
       );
     },
   },

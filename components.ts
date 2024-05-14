@@ -157,7 +157,7 @@ export function createComponents(options: {
 }) {
   const { components = {}, directives = {} } = options;
 
-  const install = (app: App) => {
+  const install = (app: App, options?: any) => {
     app.mixin(CoreMixin);
 
     app.config.globalProperties.$SEO = SEO; // 🌴 Global object in vue components

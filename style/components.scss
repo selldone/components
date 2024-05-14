@@ -126,7 +126,7 @@ body{
   }
 
 
-    .text-h4, .text-h3, .text-h2, .text-h1,.text-subtitle-1,.text-subtitle-2 {
+    .text-h4, .text-h3, .text-h2, .text-h1,.text-subtitle-1,.text-subtitle-2,.v-list-item-title {
       font-family: var(--font) !important;
     }
 
@@ -166,7 +166,7 @@ body{
     font-family: var(--font);
   }
 
-  &.v-locale--is-rtl {
+  .v-locale--is-rtl {
 
     font-family: var(--font) !important;
 

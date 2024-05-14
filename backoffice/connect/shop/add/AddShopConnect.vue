@@ -19,11 +19,11 @@
     <div class="widget-box mb-5">
       <s-widget-header
         icon="settings_ethernet"
-        title="Service"
+        :title="$t('shop_connect.edit.service.title')"
       ></s-widget-header>
       <v-list-subheader
-        >Select target platform, dropshipping supplier, or marketplace to
-        connect.
+        >
+        {{$t('shop_connect.edit.service.subtitle')}}
       </v-list-subheader>
 
       <connect-input-field
@@ -54,13 +54,13 @@
             v-model="params.test"
             :disabled="!connect.enable"
             class="my-3"
-            false-description="Get all available products, categories, customers."
+            :false-description="$t('shop_connect.edit.test.false_desc') "
             false-icon="all_inclusive"
-            false-title="Sync all"
+            :false-title="$t('shop_connect.edit.test.false_title')"
             label="Sync mode"
-            true-description="Get max 5 products, categories, and customers. You can turn it to full mode in the Connect > Setting at any time."
+            :true-description="$t('shop_connect.edit.test.true_desc') "
             true-icon="science"
-            true-title="Limited (Recommended for beginners)"
+            :true-title="$t('shop_connect.edit.test.true_title')"
             @change="$forceUpdate()"
           ></u-smart-switch>
 
@@ -68,22 +68,18 @@
             v-if="shopConnect"
             v-model="overwrite"
             class="my-3"
-            false-description="Retain existing product and category details as they are."
+            :false-description="$t('shop_connect.edit.overwrite.false_desc')"
             false-gray
             false-icon="edit_off"
-            false-title="Do not change if exist"
-            true-description="Update existing product, variant, and category information."
+            :false-title="$t('shop_connect.edit.overwrite.false_title')"
+            :true-description="$t('shop_connect.edit.overwrite.true_desc') "
             true-icon="mode_edit"
-            true-title="Overwrite"
+            :true-title="$t('shop_connect.edit.overwrite.true_title') "
           ></u-smart-switch>
 
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Cation : Migration ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-          <div v-if="mode === 'Migration'" class="py-2">
-            <b>Tips: </b>If you want to test the functionality please select
-            <b>Limited</b> option. By selecting 'Sync all', we get all data from
-            your connected services and download related images, so it will
-            reduce your free storage. Also, removing many products, categories,
-            and customers would be hard!
+          <div v-if="mode === 'Migration'" class="py-2" v-html="$t('shop_connect.edit.migration_tips')">
+
           </div>
 
           <div class="widget-buttons">
@@ -103,7 +99,8 @@
               @click="loading = true"
             >
               <v-icon start>add</v-icon>
-              Auto connect to
+              {{$t('shop_connect.edit.add_action')}}
+
               <v-avatar
                 :image="getShopImagePath(connect.icon)"
                 size="22"
@@ -121,13 +118,11 @@
       <div class="widget-box mb-5">
         <s-widget-header
           icon="shopping_bag"
-          title="Ordering Status"
+          :title="$t('shop_connect.edit.order.title')"
         ></s-widget-header>
         <v-list-subheader>
-          Configure the connected service's order management settings for your
-          store. This includes setting up order acceptance, enabling automatic
-          order confirmation (if supported), and configuring shipping cost
-          calculations.
+
+          {{$t('shop_connect.edit.order.subtitle')}}
         </v-list-subheader>
         <u-smart-switch
           v-model="enable"
@@ -136,8 +131,8 @@
           class="my-3"
           false-gray
           false-icon="stop"
-          label="Connect status"
-          true-description="Inventory and orders will be synced."
+          :label="$t('shop_connect.edit.enable.label') "
+          :true-description="$t('shop_connect.edit.enable.true_desc') "
           true-icon="cloud_sync"
         ></u-smart-switch>
 
@@ -147,11 +142,11 @@
           :false-title="$t('global.commons.disable')"
           :true-title="$t('global.commons.enable')"
           class="my-3"
-          false-description="You should confirm order manually."
+          :false-description="$t('shop_connect.edit.confirm.false_desc') "
           false-gray
           false-icon="close"
-          label="Auto confirm orders"
-          true-description="Orders with live payment will be automatically approved. Orders with debug payment will not approve automatically. "
+          :label="$t('shop_connect.edit.confirm.label') "
+          :true-description="$t('shop_connect.edit.confirm.true_desc')"
           true-icon="flash_auto"
         ></u-smart-switch>
 
@@ -160,8 +155,8 @@
             <v-list-subheader>
               <div>
                 <v-icon class="me-1" size="small">tips_and_updates</v-icon>
-                Orders paid by gift card or COD or payment gateways in the debug
-                mode are exceptions and will not be confirmed automatically.
+                {{$t('shop_connect.edit.confirm.tips') }}
+
               </div>
             </v-list-subheader>
           </div>
@@ -171,22 +166,22 @@
 
         <template v-if="connect.shipping">
           <v-list-subheader
-            >This service offers shipping calculation, which can be enabled or
-            disabled as per your preference. If enabled, cost calculation APIs
-            with 3rd party services will be required, which may cause a delay of
-            over 300ms for updating the price on the checkout page.
+            >
+            {{$t('shop_connect.edit.shipping.tips')}}
+
+
           </v-list-subheader>
 
           <u-smart-switch
             v-model="shipping"
             class="my-3"
-            false-description="Use my shipping cost calculation, in Shop > Logistic > Transportation for all products, including imported ones."
+            :false-description="$t('shop_connect.edit.shipping.false_desc')"
             false-gray
-            false-title="Disable"
-            label="Shipping"
-            true-description="Employ the shipping rate calculation API offered by this service."
+            :false-title="$t('shop_connect.edit.shipping.false_title')"
+            :label="$t('shop_connect.edit.shipping.label')"
+            :true-description="$t('shop_connect.edit.shipping.true_desc')"
             true-icon="local_shipping"
-            true-title="Calculate shipping"
+            :true-title="$t('shop_connect.edit.shipping.true_title')"
           ></u-smart-switch>
         </template>
 
@@ -199,7 +194,7 @@
             @click="updateConnect"
           >
             <v-icon start>save</v-icon>
-            Save changes
+            {{$t('global.actions.save_changes')}}
           </v-btn>
         </div>
       </div>
@@ -216,7 +211,7 @@
           :true-description="delete_label"
           class="my-3"
           color="red"
-          true-title="I verify to remove this connection."
+          :true-title="$t('shop_connect.edit.remove.verify') "
         ></u-smart-verify>
 
         <div class="widget-buttons">
@@ -228,7 +223,8 @@
             @click="remove"
           >
             <v-icon class="me-1">remove</v-icon>
-            Remove connect
+
+            {{$t('shop_connect.edit.remove.action')}}
           </v-btn>
         </div>
       </div>
@@ -243,7 +239,7 @@
       ></s-widget-header>
 
       <v-list-subheader>
-        {{ mode_desc }}
+        {{ mode_desc}}
       </v-list-subheader>
 
       <template v-if="connect.read_categories || connect.write_categories">

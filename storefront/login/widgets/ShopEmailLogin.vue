@@ -44,12 +44,14 @@
           <p class="typo-body">
             {{ $t("global.need_login.email_login_step_1") }}
           </p>
+
           <v-text-field
             v-model="email"
             :placeholder="$t('global.placeholders.email')"
             :rules="[GlobalRules.required(), GlobalRules.email()]"
-            class="strong-field my-5"
+            class="strong-field my-5 english-field"
             variant="outlined"
+            dir="ltr"
           ></v-text-field>
         </template>
 

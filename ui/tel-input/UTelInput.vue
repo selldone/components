@@ -13,95 +13,100 @@
   -->
 
 <template>
-  <v-text-field
-    :id="inputOptions.id"
-    ref="input"
-    class="s--tel-input"
-    v-model="phone"
-    :aria-describedby="inputOptions['aria-describedby']"
-    :autocomplete="inputOptions.autocomplete"
-    :autofocus="inputOptions.autofocus"
-    :class="['vti__input', inputOptions.styleClasses, { disabled: disabled }]"
-    :disabled="disabled"
-    :maxlength="inputOptions.maxlength"
-    :name="inputOptions.name"
-    :placeholder="parsedPlaceholder"
-    :readonly="inputOptions.readonly"
-    :required="inputOptions.required"
-    :tabindex="inputOptions.tabindex"
-    :type="inputOptions.type"
-    :model-value="modelValue"
-    @blur="onBlur"
-    @focus="onFocus"
-    @update:model-value="onInput"
-    @keyup.enter="onEnter"
-    @keyup.space="onSpace"
-    :variant="variant"
-    :rounded="rounded"
-  >
-    <template v-slot:prepend>
-      <v-select
-        v-model="activeCountryCode"
-        @update:model-value="choose"
-        :return-object="false"
-        item-value="iso2"
-        item-title="name"
-        :items="filtered_countries"
-        :variant="variant"
-        :rounded="rounded"
-        hide-details
-        style="width: 84px"
-        :menu-props="{
+
+  <div>
+    <v-locale-provider :rtl="false">
+      <v-text-field
+          :id="inputOptions.id"
+          ref="input"
+          class="s--tel-input"
+          v-model="phone"
+          :aria-describedby="inputOptions['aria-describedby']"
+          :autocomplete="inputOptions.autocomplete"
+          :autofocus="inputOptions.autofocus"
+          :class="['vti__input', inputOptions.styleClasses, { disabled: disabled }]"
+          :disabled="disabled"
+          :maxlength="inputOptions.maxlength"
+          :name="inputOptions.name"
+          :placeholder="parsedPlaceholder"
+          :readonly="inputOptions.readonly"
+          :required="inputOptions.required"
+          :tabindex="inputOptions.tabindex"
+          :type="inputOptions.type"
+          :model-value="modelValue"
+          @blur="onBlur"
+          @focus="onFocus"
+          @update:model-value="onInput"
+          @keyup.enter="onEnter"
+          @keyup.space="onSpace"
+          :variant="variant"
+          :rounded="rounded"
+      >
+        <template v-slot:prepend>
+          <v-select
+              v-model="activeCountryCode"
+              @update:model-value="choose"
+              :return-object="false"
+              item-value="iso2"
+              item-title="name"
+              :items="filtered_countries"
+              :variant="variant"
+              :rounded="rounded"
+              hide-details
+              style="width: 84px;min-height: 100%"
+              :menu-props="{
           width: '80vw',
           maxWidth: '380px',
         }"
-        @update:menu="search = ''"
-      >
-        <template v-slot:item="{ item, props }">
-          <v-list-item v-bind="props" :title="item.raw.name" class="text-start">
-            <template v-slot:prepend>
-              <flag :iso="item.raw?.iso2" :squared="false" class="me-3" />
+              @update:menu="search = ''"
+          >
+            <template v-slot:item="{ item, props }">
+              <v-list-item v-bind="props" :title="item.raw.name" class="text-start">
+                <template v-slot:prepend>
+                  <flag :iso="item.raw?.iso2" :squared="false" class="me-3"/>
+                </template>
+                <template v-slot:append> +{{ item.raw.dialCode }}</template>
+              </v-list-item>
             </template>
-            <template v-slot:append> +{{ item.raw.dialCode }}</template>
-          </v-list-item>
+
+            <template v-slot:prepend-item>
+              <v-text-field
+                  v-model="search"
+                  autofocus
+                  variant="plain"
+                  hide-details
+                  placeholder="Search..."
+                  class="mx-3"
+                  single-line
+              ></v-text-field>
+            </template>
+
+            <template v-slot:selection="{ item }">
+              <flag :iso="item.raw.iso2" :squared="false"/>
+            </template>
+          </v-select>
         </template>
 
-        <template v-slot:prepend-item>
-          <v-text-field
-            v-model="search"
-            autofocus
-            variant="plain"
-            hide-details
-            placeholder="Search..."
-            class="mx-3"
-            single-line
-          ></v-text-field>
+        <template v-slot:append-inner>
+          <v-icon
+              v-if="appendInnerIcon"
+              class="align-self-center"
+              style="opacity: var(--v-medium-emphasis-opacity)"
+          >{{ appendInnerIcon }}
+          </v-icon>
         </template>
 
-        <template v-slot:selection="{ item }">
-          <flag :iso="item.raw.iso2" :squared="false" />
+        <template v-slot:append v-if="$slots['icon-right']">
+          <slot name="icon-right"></slot>
         </template>
-      </v-select>
-    </template>
-
-    <template v-slot:append-inner>
-      <v-icon
-        v-if="appendInnerIcon"
-        class="align-self-center"
-        style="opacity: var(--v-medium-emphasis-opacity)"
-        >{{ appendInnerIcon }}
-      </v-icon>
-    </template>
-
-    <template v-slot:append v-if="$slots['icon-right']">
-      <slot name="icon-right"></slot>
-    </template>
-  </v-text-field>
+      </v-text-field>
+    </v-locale-provider>
+  </div>
 </template>
 
 <script>
-import { parsePhoneNumberFromString } from "libphonenumber-js";
-import utils, { getCountry, setCaretPosition } from "./utils/utils";
+import {parsePhoneNumberFromString} from "libphonenumber-js";
+import utils, {getCountry, setCaretPosition} from "./utils/utils";
 
 function getDefault(key) {
   const value = utils.options[key];
@@ -113,9 +118,7 @@ function getDefault(key) {
 
 export default {
   name: "UTelInput",
-  directives: {
-
-  },
+  directives: {},
   emits: [
     "update:modelValue",
     "on-input",
@@ -224,10 +227,10 @@ export default {
       return this.sortedCountries?.filter((x) => {
         const searchTrimmed = this.search.trim().toLowerCase();
         return (
-          !searchTrimmed ||
-          x.iso2?.toLowerCase().includes(searchTrimmed) ||
-          x.name?.toLowerCase().includes(searchTrimmed) ||
-          x.dialCode?.toLowerCase().includes(searchTrimmed)
+            !searchTrimmed ||
+            x.iso2?.toLowerCase().includes(searchTrimmed) ||
+            x.name?.toLowerCase().includes(searchTrimmed) ||
+            x.dialCode?.toLowerCase().includes(searchTrimmed)
         );
       });
     },
@@ -250,16 +253,16 @@ export default {
     filteredCountries() {
       // List countries after filtered
       if (this.onlyCountries.length) {
-        return this.allCountries.filter(({ iso2 }) =>
-          this.onlyCountries.some((c) => c.toUpperCase() === iso2),
+        return this.allCountries.filter(({iso2}) =>
+            this.onlyCountries.some((c) => c.toUpperCase() === iso2),
         );
       }
 
       if (this.ignoredCountries.length) {
         return this.allCountries.filter(
-          ({ iso2 }) =>
-            !this.ignoredCountries.includes(iso2.toUpperCase()) &&
-            !this.ignoredCountries.includes(iso2.toLowerCase()),
+            ({iso2}) =>
+                !this.ignoredCountries.includes(iso2.toUpperCase()) &&
+                !this.ignoredCountries.includes(iso2.toLowerCase()),
         );
       }
 
@@ -268,7 +271,7 @@ export default {
     sortedCountries() {
       // Sort the list countries: from preferred countries to all countries
       const preferredCountries = this.getCountries(this.preferredCountries).map(
-        (country) => ({ ...country, preferred: true }),
+          (country) => ({...country, preferred: true}),
       );
 
       const countriesList = [...preferredCountries, ...this.filteredCountries];
@@ -277,15 +280,15 @@ export default {
       }
       const userInput = this.searchQuery;
       const cleanInput = userInput.replace(
-        /[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g,
-        "",
+          /[~`!@#$%^&*()+={}\[\];:\'\"<>.,\/\\\?-_]/g,
+          "",
       );
 
       return countriesList.filter(
-        (c) =>
-          new RegExp(cleanInput, "i").test(c.name) ||
-          new RegExp(cleanInput, "i").test(c.iso2) ||
-          new RegExp(cleanInput, "i").test(c.dialCode),
+          (c) =>
+              new RegExp(cleanInput, "i").test(c.name) ||
+              new RegExp(cleanInput, "i").test(c.iso2) ||
+              new RegExp(cleanInput, "i").test(c.dialCode),
       );
     },
     phoneObject() {
@@ -294,10 +297,10 @@ export default {
         result = parsePhoneNumberFromString(this.phone) || {};
       } else {
         result =
-          parsePhoneNumberFromString(this.phone, this.activeCountryCode) || {};
+            parsePhoneNumberFromString(this.phone, this.activeCountryCode) || {};
       }
 
-      const { metadata, ...phoneObject } = result;
+      const {metadata, ...phoneObject} = result;
 
       let valid = result.isValid?.();
       let formatted = this.phone;
@@ -307,12 +310,12 @@ export default {
       }
 
       if (
-        result.country &&
-        (this.ignoredCountries.length || this.onlyCountries.length)
+          result.country &&
+          (this.ignoredCountries.length || this.onlyCountries.length)
       ) {
         if (!this.findCountry(result.country)) {
           valid = false;
-          Object.assign(result, { country: null });
+          Object.assign(result, {country: null});
         }
       }
 
@@ -390,20 +393,20 @@ export default {
     this.cleanInvalidCharacters();
 
     this.initializeCountry()
-      .then(() => {
-        if (
-          !this.phone &&
-          this.inputOptions?.showDialCode &&
-          this.activeCountryCode
-        ) {
-          this.phone = `+${this.activeCountryCode}`;
-        }
-        this.$emit("validate", this.phoneObject);
-      })
-      .catch(console.error)
-      .then(() => {
-        this.finishMounted = true;
-      });
+        .then(() => {
+          if (
+              !this.phone &&
+              this.inputOptions?.showDialCode &&
+              this.activeCountryCode
+          ) {
+            this.phone = `+${this.activeCountryCode}`;
+          }
+          this.$emit("validate", this.phoneObject);
+        })
+        .catch(console.error)
+        .then(() => {
+          this.finishMounted = true;
+        });
   },
   methods: {
     resetPlaceholder() {
@@ -450,25 +453,25 @@ export default {
         }
 
         const fallbackCountry =
-          this.preferredCountries[0] || this.filteredCountries[0];
+            this.preferredCountries[0] || this.filteredCountries[0];
         /**
          * 3. Check if fetching country based on user's IP is allowed, set it as the default country
          */
         if (this.autoDefaultCountry) {
           getCountry()
-            .then((res) => {
-              this.choose(res || this.activeCountryCode);
-            })
-            .catch((error) => {
-              console.warn(error);
-              /**
-               * 4. Use the first country from preferred list (if available) or all countries list
-               */
-              this.choose(fallbackCountry);
-            })
-            .then(() => {
-              resolve();
-            });
+              .then((res) => {
+                this.choose(res || this.activeCountryCode);
+              })
+              .catch((error) => {
+                console.warn(error);
+                /**
+                 * 4. Use the first country from preferred list (if available) or all countries list
+                 */
+                this.choose(fallbackCountry);
+              })
+              .then(() => {
+                resolve();
+              });
         } else {
           /**
            * 4. Use the first country from preferred list (if available) or all countries list
@@ -483,24 +486,24 @@ export default {
      */
     getCountries(list = []) {
       return list
-        .map((countryCode) => this.findCountry(countryCode))
-        .filter(Boolean);
+          .map((countryCode) => this.findCountry(countryCode))
+          .filter(Boolean);
     },
     findCountry(iso = "") {
       return this.filteredCountries.find(
-        (country) => country.iso2 === iso.toUpperCase(),
+          (country) => country.iso2 === iso.toUpperCase(),
       );
     },
     findCountryByDialCode(dialCode) {
       return this.filteredCountries.find(
-        (country) => Number(country.dialCode) === dialCode,
+          (country) => Number(country.dialCode) === dialCode,
       );
     },
     getItemClass(index, iso2) {
       const highlighted = this.selectedIndex === index;
       const lastPreferred = index === this.preferredCountries.length - 1;
       const preferred = this.preferredCountries.some(
-        (c) => c.toUpperCase() === iso2,
+          (c) => c.toUpperCase() === iso2,
       );
       return {
         highlighted,
@@ -518,15 +521,15 @@ export default {
         return;
       }
       if (
-        this.phone?.[0] === "+" &&
-        parsedCountry.iso2 &&
-        this.phoneObject.nationalNumber
+          this.phone?.[0] === "+" &&
+          parsedCountry.iso2 &&
+          this.phoneObject.nationalNumber
       ) {
         this.activeCountryCode = parsedCountry.iso2;
         // Attach the current phone number with the newly selected country
         this.phone = parsePhoneNumberFromString(
-          this.phoneObject.nationalNumber,
-          parsedCountry.iso2,
+            this.phoneObject.nationalNumber,
+            parsedCountry.iso2,
         ).formatInternational();
         return;
       }
@@ -572,12 +575,12 @@ export default {
     },
     testCustomValidate() {
       return this.customValidate instanceof RegExp
-        ? this.customValidate.test(this.phone)
-        : false;
+          ? this.customValidate.test(this.phone)
+          : false;
     },
     onInput() {
       this.$refs.input.setCustomValidity(
-        this.phoneObject.valid ? "" : this.invalidMsg,
+          this.phoneObject.valid ? "" : this.invalidMsg,
       );
       // Returns response.number to assign it to v-model (if being used)
       // Returns full response for cases @input is used
@@ -623,20 +626,20 @@ export default {
           this.selectedIndex = 0;
         } else {
           this.selectedIndex = Math.min(
-            this.sortedCountries.length - 1,
-            this.selectedIndex + 1,
+              this.sortedCountries.length - 1,
+              this.selectedIndex + 1,
           );
         }
         const selEle = this.$refs.list.children[this.selectedIndex];
         selEle.focus();
         if (
-          selEle.offsetTop + selEle.clientHeight >
-          this.$refs.list.scrollTop + this.$refs.list.clientHeight
+            selEle.offsetTop + selEle.clientHeight >
+            this.$refs.list.scrollTop + this.$refs.list.clientHeight
         ) {
           this.$refs.list.scrollTop =
-            selEle.offsetTop -
-            this.$refs.list.clientHeight +
-            selEle.clientHeight;
+              selEle.offsetTop -
+              this.$refs.list.clientHeight +
+              selEle.clientHeight;
         }
       } else if (e.keyCode === 38) {
         // up arrow
@@ -667,33 +670,33 @@ export default {
         }, 700);
         // don't include preferred countries so we jump to the right place in the alphabet
         const typedCountryI = this.sortedCountries
-          .slice(this.preferredCountries.length)
-          .findIndex((c) =>
-            c.name.toLowerCase().startsWith(this.typeToFindInput),
-          );
+            .slice(this.preferredCountries.length)
+            .findIndex((c) =>
+                c.name.toLowerCase().startsWith(this.typeToFindInput),
+            );
         if (typedCountryI >= 0) {
           this.selectedIndex = this.preferredCountries.length + typedCountryI;
           const selEle = this.$refs.list.children[this.selectedIndex];
           const needToScrollTop = selEle.offsetTop < this.$refs.list.scrollTop;
           const needToScrollBottom =
-            selEle.offsetTop + selEle.clientHeight >
-            this.$refs.list.scrollTop + this.$refs.list.clientHeight;
+              selEle.offsetTop + selEle.clientHeight >
+              this.$refs.list.scrollTop + this.$refs.list.clientHeight;
           if (needToScrollTop || needToScrollBottom) {
             this.$refs.list.scrollTop =
-              selEle.offsetTop - this.$refs.list.clientHeight / 2;
+                selEle.offsetTop - this.$refs.list.clientHeight / 2;
           }
         }
       }
     },
     reset() {
       this.selectedIndex = this.sortedCountries
-        .map((c) => c.iso2)
-        .indexOf(this.activeCountryCode);
+          .map((c) => c.iso2)
+          .indexOf(this.activeCountryCode);
       this.open = false;
     },
     setDropdownPosition() {
       const spaceBelow =
-        window.innerHeight - this.$el.getBoundingClientRect().bottom;
+          window.innerHeight - this.$el.getBoundingClientRect().bottom;
       const hasEnoughSpaceBelow = spaceBelow > 200;
       if (hasEnoughSpaceBelow) {
         this.dropdownOpenDirection = "below";
