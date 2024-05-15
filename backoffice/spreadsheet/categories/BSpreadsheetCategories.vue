@@ -53,7 +53,7 @@ import {
 } from "@selldone/core-js/helper/csv/CategoriesCsvFormat";
 import { ProductsCsvFormat } from "@selldone/core-js/helper/csv/product/ProductsCsvFormat";
 import BSpreadsheet from "../BSpreadsheet.vue";
-import SpreadsheetMixin from "../mixins/SpreadsheetMixin.js";
+import SpreadsheetMixin from "../mixins/SpreadsheetMixin";
 
 const Papa = require("papaparse");
 
