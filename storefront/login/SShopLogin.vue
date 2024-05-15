@@ -432,7 +432,8 @@ import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import UCountDown from "../../ui/count-down/UCountDown.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import { SuccessVerifyMethod } from "@selldone/sdk-storefront/auth/XapiAuthSMS";
-import { XapiAuth } from "@selldone/sdk-storefront/auth/XapiAuth";
+import {CustomerSource} from "@selldone/core-js/enums/customer/source/CustomerSource";
+
 import ShopEmailLogin from "../../storefront/login/widgets/ShopEmailLogin.vue";
 import UTelInput from "../../ui/tel-input/UTelInput.vue";
 
@@ -452,7 +453,7 @@ export default {
       default: "transparent",
     },
     source: {
-      default: XapiAuth.LoginSource.CUSTOMER,
+      default: CustomerSource.CUSTOMER,
     },
   },
   data() {
