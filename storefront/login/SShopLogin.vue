@@ -56,7 +56,7 @@
           :inputOptions="{
             placeholder: $t('global.need_login.mobile_input'),
           }"
-          class="max-width-field mx-auto my-3 fadeIn "
+          class="max-width-field mx-auto my-3 fadeIn"
           enabledCountryCode
           required
           validCharactersOnly
@@ -70,6 +70,14 @@
           "
           variant="outlined"
         ></u-tel-input>
+
+
+        <v-expand-transition>
+          <div v-if="error_message_send_code" class="text-red text-start">
+            <div v-html="error_message_send_code" class="py-3"></div>
+          </div>
+        </v-expand-transition>
+
 
         <div class="widget-buttons">
           <v-btn
@@ -153,8 +161,15 @@
           autofocus
           class="max-width-field mx-auto text-center mb-12"
           @finish="(val) => (verification_code = val)"
-          @click="verification_code=''"
+          @click="verification_code = ''"
+          dir="ltr"
         />
+
+        <v-expand-transition>
+          <div v-if="error_message_otp_check" class="text-red text-start">
+            <div v-html="error_message_otp_check" class="py-3"></div>
+          </div>
+        </v-expand-transition>
 
         <div class="widget-buttons">
           <v-btn
@@ -432,7 +447,7 @@ import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import UCountDown from "../../ui/count-down/UCountDown.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import { SuccessVerifyMethod } from "@selldone/sdk-storefront/auth/XapiAuthSMS";
-import {CustomerSource} from "@selldone/core-js/enums/customer/source/CustomerSource";
+import { CustomerSource } from "@selldone/core-js/enums/customer/source/CustomerSource";
 
 import ShopEmailLogin from "../../storefront/login/widgets/ShopEmailLogin.vue";
 import UTelInput from "../../ui/tel-input/UTelInput.vue";
@@ -463,11 +478,16 @@ export default {
       country: null,
       phone: null,
       phone_number: "",
-      verification_code: '',
+      verification_code: "",
+      error_message_otp_check: null,
+
       busy_login: false,
       method: "fast",
       countdown_end: null,
       show_resend: false,
+      error_message_send_code:null,
+
+
       users: null,
       code: null,
       name: null,
@@ -534,7 +554,7 @@ export default {
     requestSendCode() {
       this.show_resend = false;
       this.countdown_end = null;
-
+      this.error_message_send_code = null;
       this.busy_login = true;
 
       window.$storefront.auth.sms
@@ -547,6 +567,7 @@ export default {
           this.countdown_end = new Date().addSeconds(60);
         })
         .catch((error) => {
+          this.error_message_send_code = error.error_msg;
           this.showLaravelError(error);
         })
         .finally(() => {
@@ -557,7 +578,7 @@ export default {
     loginVerify() {
       if (this.verification_code?.length !== 6) return;
       this.busy_login = true;
-
+      this.error_message_otp_check = null;
       // Reset values:
       this.users = null;
       this.code = null;
@@ -585,6 +606,7 @@ export default {
           }
         })
         .catch((error) => {
+          this.error_message_otp_check = error.error_msg;
           this.showLaravelError(error);
         })
 
@@ -650,7 +672,7 @@ export default {
       this.method = "fast";
       this.country = null;
       this.phone = null;
-      this.verification_code = '';
+      this.verification_code = "";
       this.code = null;
       this.name = null;
       this.email = null;

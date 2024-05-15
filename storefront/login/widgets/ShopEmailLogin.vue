@@ -62,6 +62,13 @@
           <div class="text-h4 font-weight-thin text-center py-3">
             {{ email }}
           </div>
+
+          <v-expand-transition>
+            <div v-if="error_message_send_code" class="text-red text-start">
+              <div v-html="error_message_send_code" class="py-3"></div>
+            </div>
+          </v-expand-transition>
+
         </template>
 
         <template v-else-if="step === 3">
@@ -74,8 +81,21 @@
             length="8"
             type="number"
             @finish="confirmOtp()"
+            dir="ltr"
           ></v-otp-input>
+
+          <v-expand-transition>
+            <div v-if="error_message_otp_check" class="text-red text-start">
+              <div v-html="error_message_otp_check" class="py-3"></div>
+            </div>
+          </v-expand-transition>
+
+
         </template>
+
+
+
+
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
@@ -158,6 +178,10 @@ export default {
     email: null,
     otp: '',
 
+    error_message_send_code:null,
+    error_message_otp_check: null,
+
+
     step: 1,
 
     busy: false,
@@ -189,6 +213,7 @@ export default {
 
     sendEmail() {
       this.busy = true;
+      this.error_message_send_code = null;
 
       axios
         .post(window.XAPI.POST_SHOP_LOGIN_EMAIL_REQUEST(this.shop.name), {
@@ -198,6 +223,7 @@ export default {
           if (!data.error) {
             this.step = 3;
           } else {
+            this.error_message_send_code = data.error_msg;
             this.showErrorAlert(null, data.error_msg);
           }
         })
@@ -212,6 +238,7 @@ export default {
 
     confirmOtp() {
       this.busy = true;
+      this.error_message_otp_check = null;
 
       axios
         .post(window.XAPI.POST_SHOP_LOGIN_EMAIL_VERIFY(this.shop.name), {
@@ -230,6 +257,8 @@ export default {
               expires_in: data.expires_in,
             }); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
           } else {
+            this.error_message_otp_check = data.error_msg;
+
             this.showErrorAlert(null, data.error_msg);
           }
         })

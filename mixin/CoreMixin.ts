@@ -458,7 +458,10 @@ const CoreMixin = {
       detail: string | null = null,
       duration: number = 6000,
     ) {
-      if (!this.$t) return;
+      if (!this.$t) {
+        console.error("Error: Translation is not available!");
+        return;
+      }
       if (!title) title = this.$t("global.notification.error") as string;
 
       this.$notify({

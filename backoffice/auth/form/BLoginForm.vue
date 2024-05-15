@@ -708,7 +708,6 @@
         v-if="!recaptcha_response"
         class="m-2"
         color="#0097A7"
-        dark
         pill
         size="small"
         >{{ $t("login.checking_robot_message") }}
@@ -765,6 +764,7 @@
               autofocus
               class="zoomIn max-width-field mx-auto text-center mb-12"
               @finish="(val) => (in_code = val)"
+              dir="ltr"
             />
 
             <v-text-field
