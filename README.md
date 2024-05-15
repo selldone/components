@@ -16,7 +16,7 @@
 
 ## Installation
 
-To install Selldone Core in your project, use the following command:
+To install Selldone Core in your project, use the following command :
 
 
 ```bash
