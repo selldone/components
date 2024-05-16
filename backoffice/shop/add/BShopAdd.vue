@@ -22,7 +22,7 @@
     <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
 
     <u-progress-stepper
-        v-if="showStepper"
+      v-if="showStepper"
       :gradient="`linear-gradient(to ${
         $vuetify.locale.isRtl ? 'right' : 'left'
       }, #00796B 0%, #00796B 10%,  #009688 50%,#AFB42B 75%,#CDDC39 90%,#CDDC39 100%)`"
@@ -40,18 +40,17 @@
     <transition name="fadeUp">
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Tabs ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <u-tabs-rounded
-          v-model="step"
-          :disabled="!shop"
-          :src="icon_pic ? getShopImagePath(icon_pic) : null"
-          :tabs="tabs"
-          class="mt-4 mb-5 mx-auto"
-          icon="storefront"
-          scrollable
-          small
-        ></u-tabs-rounded>
+      <u-tabs-rounded
+        v-model="step"
+        :disabled="!shop"
+        :src="icon_pic ? getShopImagePath(icon_pic) : null"
+        :tabs="tabs"
+        class="mt-4 mb-5 mx-auto"
+        icon="storefront"
+        scrollable
+        small
+      ></u-tabs-rounded>
     </transition>
-
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Title & State ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
@@ -80,6 +79,7 @@
             :label="$t('add_shop.title_input')"
             :shop="shop"
             translation-key="title"
+            class="me-2"
           ></b-translation-button-shop>
 
           <u-tooltip-tips :message="$t('add_shop.title_input_tips')" />
@@ -163,9 +163,8 @@
 
       <v-text-field
         v-model="name"
-        :color="SaminColorLight"
         :counter="128"
-        :disabled="lock_name"
+        :readonly="lock_name"
         :error="!shop_name_available_success && name.length > 3"
         :error-messages="shop_name_available_error_msg"
         :label="`${$t('add_shop.name_input')}*`"
@@ -174,24 +173,26 @@
             ? shop_name_available_message
             : $t('add_shop.name_input_message')
         "
-        :reverse="$vuetify.locale.isRtl"
-        class="mt-2 max-width-field-large mx-auto fadeIn"
+        class="mt-2 max-width-field-large mx-auto fadeIn english-field"
         required
-        single-line
         variant="underlined"
+        placeholder="Write a name... e.g. my-shop"
+        persistent-placeholder
+        dir="ltr"
       >
         <template v-slot:append-inner>
           <v-progress-circular
             v-if="checking_shop_name"
-            class="me-2"
+            class="mx-1"
             color="green"
             indeterminate
             size="24"
           />
           <v-icon
             v-else-if="shop_name_available_success && name.length > 3"
-            class="me-2"
+            class="mx-1"
             color="green"
+            size="20"
           >
             check_circle
           </v-icon>
@@ -203,19 +204,19 @@
             @click="lock_name = !lock_name"
           />
 
-          <u-tooltip-tips :message="$t('add_shop.name_input_tips')" class="mx-1" />
+          <u-tooltip-tips
+            :message="$t('add_shop.name_input_tips')"
+            class="mx-1"
+          />
         </template>
-
         <template v-slot:prepend-inner>
           <v-chip
-            class="me-2 text-success font-weight-medium"
-            color="#fafafa"
-            rounded
-            style="direction: ltr"
-            variant="text"
+            color="#000"
+            variant="flat"
+            size="small"
+            prepend-icon="shield"
           >
-            <v-icon class="mx-2" color="success" size="small"> lock</v-icon>
-            <span class="hide-on-small-600">{{ main_service_url }}/@</span>
+            Shop UID
           </v-chip>
         </template>
       </v-text-field>
@@ -256,7 +257,8 @@
         :messages="$t('add_shop.description_input_message')"
         auto-grow
         rows="3"
-        style="max-width: 1250px" variant="underlined"
+        style="max-width: 1250px"
+        variant="underlined"
       >
         <template v-slot:append-inner>
           <b-translation-button-shop
@@ -334,7 +336,8 @@
         :color="SaminColorLight"
         :hint="$t('add_shop.region_input_message')"
         :label="$t('add_shop.region_input')"
-        append-inner-icon="place" variant="underlined"
+        append-inner-icon="place"
+        variant="underlined"
       />
 
       <v-text-field
@@ -342,7 +345,8 @@
         :color="SaminColorLight"
         :hint="$t('add_shop.locality_input_message')"
         :label="$t('add_shop.locality_input')"
-        append-icon="near_me" variant="underlined"
+        append-icon="near_me"
+        variant="underlined"
       />
 
       <v-textarea
@@ -353,7 +357,8 @@
         :label="$t('add_shop.address_input')"
         :rows="2"
         append-icon="fa:fas fa-map-marked-alt"
-        auto-grow variant="underlined"
+        auto-grow
+        variant="underlined"
       />
 
       <v-text-field
@@ -361,7 +366,8 @@
         :color="SaminColorLight"
         :hint="$t('add_shop.postal_code_input_message')"
         :label="$t('add_shop.postal_code_input')"
-        append-icon="local_convenience_store" variant="underlined"
+        append-icon="local_convenience_store"
+        variant="underlined"
       />
 
       <v-text-field
@@ -370,7 +376,8 @@
         :hint="$t('add_shop.phone_input_message')"
         :label="$t('add_shop.phone_input')"
         append-icon="fa:fas fa-phone"
-        placeholder="+###-###-######## or use any preferred format..." variant="underlined"
+        placeholder="+###-###-######## or use any preferred format..."
+        variant="underlined"
       >
         <template v-slot:append-inner>
           <u-tooltip-tips :message="$t('add_shop.phone_input_tips')" />
@@ -382,7 +389,8 @@
         :color="SaminColorLight"
         :hint="$t('add_shop.email_input_message')"
         :label="$t('add_shop.email_input')"
-        append-icon="fa:fas fa-envelope" variant="underlined"
+        append-icon="fa:fas fa-envelope"
+        variant="underlined"
       />
     </div>
 
@@ -606,7 +614,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    showStepper:Boolean,
+    showStepper: Boolean,
   },
 
   data: () => ({
@@ -756,6 +764,7 @@ export default {
       if (!this.name || this.name.length < 4) {
         this.shop_name_available_success = false;
         this.shop_name_available_message = "";
+        this.lock_name = false; // Force unlock name!
         return;
       }
       let t = this;
@@ -777,6 +786,8 @@ export default {
             this.shop_name_available_error_msg = null;
           } else {
             this.shop_name_available_success = false;
+            this.lock_name = false; // Force unlock name!
+
             this.shop_name_available_error_msg = data.error_msg;
             this.shop_name_available_message = null;
           }
@@ -811,15 +822,17 @@ export default {
       if (!this.shop && this.step >= 1) return;
 
       if (!this.shop && this.step === 0 && this.title && !this.name) {
-        function hasNonEnglishChars(str) {
-          const nonEnglishPattern = /[^a-zA-Z0-9\s.,-_!()&'"]/;
-          return nonEnglishPattern.test(str);
-        }
+        /* function hasNonEnglishChars(str) {
+           const nonEnglishPattern = /[^a-zA-Z0-9\s.,-_!()&'"]/;
+           return nonEnglishPattern.test(str);
+         }*/
 
         // Auto set shop name:
-        if (!hasNonEnglishChars(this.title)) {
-          this.name = this.slugify(this.title);
-        }
+        this.name = this.slugify(this.title);
+
+        /* if (!hasNonEnglishChars(this.title)) {
+           this.name = this.slugify(this.title);
+         }*/
       }
 
       if (this.step === 1 && !this.shop) {

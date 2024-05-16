@@ -68,8 +68,8 @@
             <b>{{ $t("global.commons.default") }} :</b>
             {{ defaultValue }}
           </p>
-          <v-list class="max-widget-width mx-auto">
-            <v-list-item v-for="language in languages" :key="language">
+          <div class="max-widget-width mx-auto">
+            <div v-for="language in languages" :key="language" class="py-2">
               <v-text-field
                 v-if="isStringMode"
                 v-model="pack[language]"
@@ -85,8 +85,8 @@
                   </v-scale-transition>
                 </template>
               </v-text-field>
-            </v-list-item>
-          </v-list>
+            </div>
+          </div>
         </v-card-text>
 
         <v-card-actions>
@@ -101,6 +101,7 @@
               color="primary"
               size="x-large"
               @click="save()"
+              variant="elevated"
             >
               <v-icon start>save</v-icon>
               Save
@@ -288,13 +289,13 @@ export default {
 <style lang="scss" scoped>
 .s-lang-completed {
   position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  right: -2px;
+  top: 2%;
+  bottom: 2%;
   background-color: #eee;
   border-radius: 2px;
   width: 3px;
-  height: 100%;
+  height: 96%;
   overflow: hidden;
 
   &:after {

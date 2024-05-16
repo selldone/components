@@ -433,8 +433,8 @@
                       </tr>
                       <tr v-if="!finances?.length">
                         <td colspan="2" class="text-center op-0-5 font-weight-light">
-                          <v-icon size="24">show_chart</v-icon>
-                          No purchase!
+                          <v-icon size="24" class="me-1">show_chart</v-icon>
+                          {{ $t("user_dashboard.shops.shop_card.no_purchase") }}
                         </td>
                       </tr>
                     </tbody>
@@ -483,8 +483,8 @@
                       </tr>
                       <tr v-if="!finances?.length">
                         <td colspan="2" class="text-center op-0-5 font-weight-light">
-                          <v-icon size="24">show_chart</v-icon>
-                          No payment!
+                          <v-icon size="24" class="me-1">show_chart</v-icon>
+                          {{ $t("user_dashboard.shops.shop_card.no_payment") }}
                         </td>
                       </tr>
                     </tbody>

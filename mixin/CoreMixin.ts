@@ -18,7 +18,7 @@ import {PhysicalOrderStates} from "@selldone/core-js/enums/basket/PhysicalOrderS
 import {DateConverter} from "@selldone/core-js/helper/date/DateConverter";
 import type {ICurrency} from "@selldone/core-js/enums/payment/Currency";
 import {Currency} from "@selldone/core-js/enums/payment/Currency";
-import {type ILanguage, Language} from "@selldone/core-js/enums/language/Language";
+import {type ILanguage, Language,} from "@selldone/core-js/enums/language/Language";
 import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense";
 import {Scopes} from "@selldone/core-js/enums/permission/Scopes";
 
@@ -63,6 +63,7 @@ import {XapiUser} from "@selldone/sdk-storefront/user/XapiUser";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
+import {Slugify} from "../utils/slugify/slugify.ts";
 
 //――― User Device Preferences ―――
 
@@ -195,8 +196,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                                      return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                                    },*/
+                                          return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                                        },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -362,8 +363,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                                      return Num2persian(number);
-                                    },*/
+                                          return Num2persian(number);
+                                        },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -670,14 +671,11 @@ const CoreMixin = {
     getProductTypeImage(
       type: keyof typeof ProductType | "POS" | "FUL" | "AVO" | "HYP",
     ) {
-      if (type === "POS")
-        return require("../assets/icons/pos-order-type.svg");
+      if (type === "POS") return require("../assets/icons/pos-order-type.svg");
       else if (type === "FUL")
         return require("../assets/icons/dropshipping.svg");
-      else if (type === "AVO")
-        return require("../assets/icons/avocado.svg");
-      else if (type === "HYP")
-        return require("../assets/icons/hyper.svg");
+      else if (type === "AVO") return require("../assets/icons/avocado.svg");
+      else if (type === "HYP") return require("../assets/icons/hyper.svg");
 
       return ProductType[type] ? ProductType[type].image : "";
     },
@@ -773,12 +771,11 @@ const CoreMixin = {
      * @param text
      * @returns {string}
      */
-    slugify: function slugify(text: string | null) {
+    slugify (text: string | null) {
       if (!text) return "";
 
       return (
-        text
-          .toString()
+          Slugify.apply(text.toString())
           .toLowerCase()
           .replace(/\s+/g, "-") // Replace spaces with -
           //   .replace(/[^\w\-]+/gu, "") // Remove all non-word chars
@@ -809,16 +806,12 @@ const CoreMixin = {
     getBrowserImage(code: string) {
       if (!code) return null;
       code = code.toLowerCase();
-      if (code === "firefox")
-        return require("../assets/trademark/firefox.svg");
-      if (code === "chrome")
-        return require("../assets/trademark/chrome.svg");
-      if (code === "opera")
-        return require("../assets/trademark/opera.svg");
+      if (code === "firefox") return require("../assets/trademark/firefox.svg");
+      if (code === "chrome") return require("../assets/trademark/chrome.svg");
+      if (code === "opera") return require("../assets/trademark/opera.svg");
       if (code === "internet-explorer")
         return require("../assets/trademark/internet-explorer.svg");
-      if (code === "safari")
-        return require("../assets/trademark/safari.svg");
+      if (code === "safari") return require("../assets/trademark/safari.svg");
       else return require("../assets/trademark/information.svg");
     },
 
@@ -848,7 +841,10 @@ const CoreMixin = {
     SetUserSelectedCurrency(currency: ICurrency | keyof typeof Currency) {
       if (!isString(currency)) currency = (currency as ICurrency).code;
 
-      return CurrencyHelper.SetUserSelectedCurrency(this.$localstorage_base_path(), currency);
+      return CurrencyHelper.SetUserSelectedCurrency(
+        this.$localstorage_base_path(),
+        currency,
+      );
     },
 
     /**
@@ -857,7 +853,9 @@ const CoreMixin = {
      * @constructor
      */
     GetUserSelectedCurrency(): ICurrency {
-      return CurrencyHelper.GetUserSelectedCurrency(this.$localstorage_base_path());
+      return CurrencyHelper.GetUserSelectedCurrency(
+        this.$localstorage_base_path(),
+      );
     },
 
     /**
@@ -871,7 +869,10 @@ const CoreMixin = {
       if (!isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
-      return CurrencyHelper.GetUserSelectedCurrencyFactor( this.GetUserSelectedCurrency(this), opt_currency);
+      return CurrencyHelper.GetUserSelectedCurrencyFactor(
+        this.GetUserSelectedCurrency(this),
+        opt_currency,
+      );
     },
     /**
      *
@@ -886,7 +887,11 @@ const CoreMixin = {
         opt_currency = (opt_currency as ICurrency).code;
 
       return this.$t(
-        CurrencyHelper.GetUserSelectedCurrencyName( this.GetUserSelectedCurrency(this), opt_currency, unicode),
+        CurrencyHelper.GetUserSelectedCurrencyName(
+          this.GetUserSelectedCurrency(this),
+          opt_currency,
+          unicode,
+        ),
       ) as string;
     },
     /**
@@ -898,7 +903,10 @@ const CoreMixin = {
       if (!isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
-      return CurrencyHelper.GetUserSelectedCurrencyFloats(   this.GetUserSelectedCurrency(this), opt_currency);
+      return CurrencyHelper.GetUserSelectedCurrencyFloats(
+        this.GetUserSelectedCurrency(this),
+        opt_currency,
+      );
     },
 
     /**
@@ -913,7 +921,7 @@ const CoreMixin = {
         opt_currency = (opt_currency as ICurrency).code;
 
       return CurrencyHelper.GetUserSelectedCurrencyRoundFactor(
-          this.GetUserSelectedCurrency(this),
+        this.GetUserSelectedCurrency(this),
         opt_currency,
       );
     },
@@ -929,7 +937,10 @@ const CoreMixin = {
       if (opt_currency && !isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
-      return CurrencyHelper.GetUserSelectedCurrencyFormat( this.GetUserSelectedCurrency(this), opt_currency);
+      return CurrencyHelper.GetUserSelectedCurrencyFormat(
+        this.GetUserSelectedCurrency(this),
+        opt_currency,
+      );
     },
 
     truncate(num: number, places: number) {
@@ -1320,8 +1331,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                      PushNotification.AskForPermission();
-                                    },*/
+                                          PushNotification.AskForPermission();
+                                        },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 
@@ -1525,9 +1536,11 @@ const CoreMixin = {
      */
     setBodyLanguageClass() {
       const currentLocale = `lang-${this.$i18n.locale}`;
-      const bodyClasses = document.body.className.split(' ').filter(c => !c.startsWith('lang-'));
+      const bodyClasses = document.body.className
+        .split(" ")
+        .filter((c) => !c.startsWith("lang-"));
       bodyClasses.push(currentLocale);
-      document.body.className = bodyClasses.join(' ');
+      document.body.className = bodyClasses.join(" ");
     },
 
     //―――――――――――――――――――――― Global Dimensions ――――――――――――――――――――

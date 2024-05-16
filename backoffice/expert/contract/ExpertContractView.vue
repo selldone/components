@@ -134,7 +134,6 @@
               'pointer-event-none': !can_set_progress,
             }"
             :color="task.progress > 99 ? 'green' : 'blue'"
-            :reverse="$vuetify.locale.isRtl"
             bg-color="#eee"
             class="my-2"
             height="18"

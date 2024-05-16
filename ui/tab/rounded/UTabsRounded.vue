@@ -38,7 +38,7 @@
           v-if="item.icon"
           :color="modelValue === item.value ? item.color : ''"
           :size="window.innerWidth < 900 || small ? '20px' : '28px'"
-          class="me-1"
+          class="me-2"
           style="pointer-events: none"
           >{{ item.icon }}
         </v-icon>
