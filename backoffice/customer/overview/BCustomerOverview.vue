@@ -115,7 +115,7 @@
                 {{ $t(getCustomerClubLevel(customer.level).name) }}
               </template>
 
-              <small v-else>No club</small>
+              <small v-else> {{ $t("global.commons.no_club") }}</small>
             </v-btn>
           </div>
         </div>

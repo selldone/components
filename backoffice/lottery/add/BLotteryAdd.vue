@@ -36,8 +36,7 @@
           ></s-widget-header>
 
           <v-list-subheader
-            >Here, you can create your shop's lottery prizes. Set the title,
-            description, color, and image for each prize.
+            >{{$t('lottery_edit.config.subtitle')}}
           </v-list-subheader>
 
           <v-text-field
@@ -124,8 +123,9 @@
           ></s-widget-header>
 
           <v-list-subheader>
-            Here, you have the option to choose an image and color for the
-            prize.
+
+
+            {{$t('lottery_edit.design.subtitle')}}
           </v-list-subheader>
 
           <v-file-input
@@ -161,7 +161,8 @@
           ></s-widget-header>
 
           <v-list-subheader>
-            Specify the criteria and limitations for winning this prize.
+
+            {{$t('lottery_edit.constraints.subtitle')}}
           </v-list-subheader>
 
           <u-number-input
@@ -182,7 +183,7 @@
             :true-description="$t('lottery_edit.free_for_first_message')"
             :true-title="$t('global.commons.enable')"
             class="my-7"
-            false-description="This prize not available for first free play."
+            :false-description="$t('lottery_edit.not_free_for_first_message')"
           ></u-smart-switch>
 
           <b-club-select v-model="clubs" multiple no-club>
@@ -193,13 +194,15 @@
 
         <div class="widget-box mb-5">
           <s-widget-header
-            :title="$t('lottery_edit.prize')"
+            :title="$t('lottery_edit.prize.title')"
             icon="emoji_events"
           ></s-widget-header>
 
           <v-list-subheader
-            >Set up the prize details here. Options include discount codes, gift
-            cards, credits, and other discounts as lottery rewards.
+            >
+
+            {{$t('lottery_edit.prize.subtitle')}}
+
           </v-list-subheader>
 
           <v-btn-toggle
@@ -208,23 +211,24 @@
             mandatory
             rounded
             selected-class="blue-flat"
+            style="min-height: 64px"
           >
             <v-btn value="amount">
-              <v-icon class="me-1" size="small">paid</v-icon>
+              <v-icon class="me-1">paid</v-icon>
               {{ $t("global.commons.amount") }}
             </v-btn>
             <v-btn value="discount">
-              <v-icon class="me-1" size="small">local_offer</v-icon>
+              <v-icon class="me-1" >local_offer</v-icon>
 
               {{ $t("global.commons.discount") }}
             </v-btn>
             <v-btn value="product">
-              <v-icon class="me-1" size="small">shopping_bag</v-icon>
+              <v-icon class="me-1" >shopping_bag</v-icon>
 
               {{ $t("global.commons.product") }}
             </v-btn>
             <v-btn value="gift_card">
-              <v-icon class="me-1" size="small">card_giftcard</v-icon>
+              <v-icon class="me-1">card_giftcard</v-icon>
 
               {{ $t("global.commons.gift_card") }}
             </v-btn>
@@ -244,10 +248,9 @@
 
                 <u-price-input
                   v-model="amount"
-                  :decimal="currencyObject.floats"
+                  :currency="currency"
                   :hint="$t('lottery_edit.amount_hint')"
                   :label="$t('lottery_edit.amount')"
-                  :suffix="getCurrencyName(currency)"
                   required
                   variant="underlined"
                 />
@@ -271,15 +274,15 @@
                   :min="1"
                   :rounded="false"
                   variant="underlined"
+                  suffix="%"
                 ></u-number-input>
 
                 <u-price-input
                   v-model="discount_limit"
-                  :decimal="currencyObject.floats"
+                  :currency="currency"
                   :hint="$t('lottery_edit.discount_limit_hint')"
                   :label="$t('lottery_edit.discount_limit')"
                   :rounded="false"
-                  :suffix="getCurrencyName(currency)"
                   required
                   variant="underlined"
                 />
@@ -291,18 +294,17 @@
                   v-model:variant-id="variant_id"
                   :shop="shop"
                   border-less
-                  label="Product prize"
-                  messages="Select a product for prize (is free)"
+                  :label="$t('lottery_edit.product_input.label')"
+                  :messages="$t('lottery_edit.product_input.message')"
                   single-product-select
                   single-product-variant-select
                 ></b-products-select-box>
               </div>
 
-              <div v-if="tab === 'gift_card'">
+              <div v-if="tab === 'gift_card'" class="py-5">
                 <b-giftcard-type-input
                   v-model="card_type_id"
                   :shop="shop"
-                  dense
                 ></b-giftcard-type-input>
               </div>
             </div>
@@ -435,9 +437,7 @@ export default {
   }),
 
   computed: {
-    currencyObject() {
-      return this.GetCurrency(this.currency);
-    },
+
   },
 
   methods: {

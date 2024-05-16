@@ -28,8 +28,9 @@
           >
           </s-widget-header>
           <v-list-subheader
-            >Begin crafting an intelligent deal by establishing its title,
-            description, and public availability status.
+            >
+
+            {{$t('offer_edit.config.subtitle')}}
           </v-list-subheader>
 
           <v-text-field
@@ -114,7 +115,8 @@
             {{ $t("global.commons.limits_config") }}
           </h2>
           <v-list-subheader
-            >Set the maximum usage limit for this offer in this section.
+            >
+            {{$t('offer_edit.limit.subtitle')}}
           </v-list-subheader>
 
           <u-number-input
@@ -134,8 +136,9 @@
             {{ $t("global.commons.duration_config") }}
           </h2>
           <v-list-subheader
-            >If you wish to set a specific timeframe for an offer, you can
-            configure the duration here.
+            >
+
+            {{$t('offer_edit.duration.subtitle')}}
           </v-list-subheader>
 
           <u-date-input
@@ -174,8 +177,9 @@
             {{ $t("global.commons.constraints_config") }}
           </h2>
           <v-list-subheader
-            >Set the eligibility criteria and conditions for the offer here. The
-            offer applies to cart items that meet these conditions.
+            >
+            {{$t('offer_edit.constraints.subtitle')}}
+
           </v-list-subheader>
 
           <u-price-input
@@ -214,7 +218,7 @@
             :shop="shop"
             border-less
             class="my-5"
-            >Select products
+            >{{$t('global.placeholders.select_products')}}
           </b-products-select-box>
         </div>
 
@@ -225,14 +229,12 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Discounted Products ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div class="widget-box mb-5">
-          <h2>
-            <v-icon class="me-1">border_outer</v-icon>
 
-            {{ $t("offer_edit.discounted_products") }}
-          </h2>
+          <s-widget-header :title="$t('offer_edit.discounted_products.title')" icon="border_outer"></s-widget-header>
           <v-list-subheader
-            >You can specify the products to which this offer will apply a
-            discount.
+            >
+
+            {{$t('offer_edit.discounted_products.subtitle')}}
           </v-list-subheader>
 
           <b-products-select-box
@@ -242,7 +244,7 @@
             :shop="shop"
             border-less
             class="my-5"
-            >Select products
+            >{{$t('global.placeholders.select_products')}}
           </b-products-select-box>
 
           <u-number-input
@@ -253,7 +255,7 @@
             :max="100"
             :messages="$t('offer_edit.discount_percent_message')"
             :min="1"
-            alternative-button-text="free"
+            :alternative-button-text="$t('global.commons.free')"
             append-icon="fa:fas fa-percentage"
             persistent-hint
             variant="underlined"
@@ -273,16 +275,17 @@
         <div class="widget-box mb-5">
           <s-widget-header
             :to="{ name: 'BPageShopClassificationClusters' }"
-            add-caption="Management"
+            :add-caption="$t('global.commons.management')"
             add-icon="settings"
             add-text
             icon="workspaces"
-            title="Cluster"
+            :title="$t('global.commons.cluster')"
           ></s-widget-header>
 
           <v-list-subheader>
-            By associating this offer with a cluster, you can easily manage it
-            alongside other resources in a single location.
+
+
+            {{$t('offer_edit.cluster.subtitle')}}
           </v-list-subheader>
           <b-cluster-input
             v-model="cluster_id"
@@ -365,10 +368,12 @@ import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue"
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import BTranslationButtonOffer from "../../translation/button/offer/BTranslationButtonOffer.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
+import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
 
 export default {
   name: "BOfferAdd",
   components: {
+    SWidgetHeader,
     SWidgetButtons,
     BTranslationButtonOffer,
     BClusterInput,

@@ -22,8 +22,7 @@
       </s-widget-header>
 
       <v-list-subheader
-        >Export and download labels for bulk order processing - ideal for
-        handling over 100 orders daily.
+        >{{$t('orders_bulk_export.subtitle')}}
       </v-list-subheader>
 
       <h3>

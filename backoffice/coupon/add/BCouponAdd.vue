@@ -29,8 +29,7 @@
           </s-widget-header>
 
           <v-list-subheader>
-            The formula of the coupon discount calculation is: CHARGE + max
-            (LIMIT, PERCENT * cart price).
+            {{ $t("coupon_edit.config.subtitle") }}
           </v-list-subheader>
 
           <u-price-input
@@ -84,9 +83,8 @@
           >
           </s-widget-header>
 
-          <v-list-subheader
-            >In this section, you're able to set both the maximum number of uses
-            per coupon and the highest discount amount each coupon can provide.
+          <v-list-subheader>
+            {{ $t("coupon_edit.limit.subtitle") }}
           </v-list-subheader>
 
           <u-price-input
@@ -96,7 +94,7 @@
             :label="`${$t('coupon_edit.limit_input')}  ${getCurrencyName(
               currency,
             )}`"
-            :messages="limit === 0 ? 'zero: there is no limit!' : ''"
+            :messages="limit === 0 ? $t('coupon_edit.limit.zero_message') : ''"
             :suffix="getCurrencyName(currency)"
             class="strong-field"
             required
@@ -123,9 +121,8 @@
           >
           </s-widget-header>
 
-          <v-list-subheader
-            >If you wish to set a specific timeframe for a coupon to be active,
-            you can configure the duration in this section.
+          <v-list-subheader>
+            {{ $t("coupon_edit.duration.subtitle") }}
           </v-list-subheader>
 
           <u-date-input
@@ -165,9 +162,8 @@
           >
           </s-widget-header>
 
-          <v-list-subheader
-            >Each coupon allows for the addition of a title and description.
-            These details will be visible to the customer.
+          <v-list-subheader>
+            {{ $t("coupon_edit.design.subtitle") }}
           </v-list-subheader>
 
           <v-text-field
@@ -241,9 +237,8 @@
           >
           </s-widget-header>
 
-          <v-list-subheader
-            >Here, you have the ability to establish additional personalized
-            parameters for the coupon.
+          <v-list-subheader>
+            {{ $t("coupon_edit.constraints.subtitle") }}
           </v-list-subheader>
 
           <v-switch
@@ -251,7 +246,7 @@
             color="success"
             density="compact"
             :label="$t('coupon_edit.need_code')"
-            messages="User should enter the code to add coupon."
+            :messages="$t('coupon_edit.constraints.has_code_message')"
             inset
           >
           </v-switch>
@@ -259,7 +254,7 @@
           <v-text-field
             v-model="code"
             :counter="64"
-            :label="$t('coupon_edit.coupon_code') + ' (optional)'"
+            :label="$t('coupon_edit.coupon_code') + ` (${$t('global.commons.optional')})`"
             :persistent-hint="has_code"
             :readonly="!has_code"
             :single-line="!has_code"
@@ -287,7 +282,7 @@
             :shop="shop"
             border-less
             class="my-6"
-            >Select products
+            >{{$t('global.placeholders.select_products')}}
           </b-products-select-box>
 
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Only first buy ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -314,8 +309,8 @@
                   $t('coupon_edit.has_qualify_constraints_message')
                 "
                 class="my-3"
-                false-title="No extra limitation"
-                true-title="Extra constraints"
+                :false-title="$t('coupon_edit.constraints.no_limit')"
+                :true-title="$t('coupon_edit.constraints.has_limit')"
               >
               </u-smart-switch>
 
@@ -384,9 +379,8 @@
           >
           </s-widget-header>
 
-          <v-list-subheader
-            >This coupon's use can be restricted exclusively to members of
-            chosen customer clubs.
+          <v-list-subheader>
+            {{ $t("coupon_edit.club.subtitle") }}
           </v-list-subheader>
           <b-club-constraint
             v-model:bronze-club="bronze_club"
@@ -403,16 +397,15 @@
         <div class="widget-box mb-5">
           <s-widget-header
             :to="{ name: 'BPageShopClassificationClusters' }"
-            add-caption="Management"
+            :add-caption="$t('global.commons.management')"
             add-icon="settings"
             add-text
             icon="workspaces"
-            title="Cluster"
+            :title="$t('global.commons.cluster')"
           ></s-widget-header>
 
           <v-list-subheader>
-            By associating this coupon with a cluster, you can easily manage it
-            alongside other resources in a single location.
+            {{ $t("coupon_edit.cluster.subtitle") }}
           </v-list-subheader>
           <b-cluster-input
             v-model="cluster_id"
@@ -430,18 +423,22 @@
         <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
           <s-widget-header :title="$t('global.commons.preview')" icon="preview">
           </s-widget-header>
-          <v-list-subheader
-            >Here's the public preview of the coupon.
+          <v-list-subheader>
+            {{ $t("coupon_edit.preview.subtitle") }}
           </v-list-subheader>
 
           <s-storefront-coupon-view
             :coupon="coupon_sample"
             :disabled="!enable"
             class="mx-auto mb-5"
+            style="min-width: 240px"
           ></s-storefront-coupon-view>
         </div>
       </v-form>
-      <BShopLicenseBlockOverlay v-if="licenseRestriction" fill-h></BShopLicenseBlockOverlay>
+      <BShopLicenseBlockOverlay
+        v-if="licenseRestriction"
+        fill-h
+      ></BShopLicenseBlockOverlay>
     </v-card-text>
     <v-card-actions>
       <s-widget-buttons :auto-fixed-position="!hasClose">

@@ -60,7 +60,7 @@
       outlined
       single-product-select
       @change="onUpdate()"
-      >Select products
+      >{{$t('global.placeholders.select_products')}}
     </b-products-select-box>
 
     <s-setting-text-input

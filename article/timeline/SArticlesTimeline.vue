@@ -111,7 +111,8 @@
                 cover
               />
             </v-avatar>
-            Article For Product : P-{{ _article.parent_id }}
+            {{$t("global.article.schedule_dialog.article_for_product") }}
+            : P-{{ _article.parent_id }}
           </p>
 
           <div class="text-end mt-4">
@@ -124,7 +125,7 @@
             >
               {{
                 _article.id === currentArticleId
-                  ? "Current Article"
+                  ? $t("global.article.schedule_dialog.current_article")
                   : $t("global.article.schedule_dialog.view_action")
               }}
               <v-icon class="ms-2" size="small"
@@ -152,7 +153,7 @@
           </div>
         </v-timeline-item>
       </v-timeline>
-      <h2 class="text-h3 font-weight-thin px-2 py-6">No scheduled article!</h2>
+      <h2 class="text-h3 font-weight-thin px-2 py-6">{{ $t("global.article.schedule_dialog.no_article")}}</h2>
     </div>
   </div>
 </template>

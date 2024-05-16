@@ -20,7 +20,8 @@
       @click="dialog = true"
     >
       <v-icon class="me-1" size="small">workspaces</v-icon>
-      Resources
+
+      {{ $t("global.commons.resources") }}
     </v-btn>
     <!-- ███████████████████████ Dialog ███████████████████████ -->
 

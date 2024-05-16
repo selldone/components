@@ -17,11 +17,14 @@
     <div class="widget-box mb-5">
       <s-widget-header
         :icon="customer ? 'person_outline' : 'person_add_alt'"
-        :title="customer ? 'Edit customer' : 'Add new customer'"
+        :title="
+          customer
+            ? $t('customer_add.edit_title')
+            : $t('customer_add.add_title')
+        "
       ></s-widget-header>
-      <v-list-subheader
-        >To add a customer to your store, please provide either an email address
-        or a phone number.
+      <v-list-subheader>
+        {{ $t("customer_add.subtitle") }}
       </v-list-subheader>
 
       <v-text-field
@@ -69,9 +72,9 @@
         @click="show_detail = !show_detail"
       >
         <div>
-          <div>Add more details</div>
+          <div>{{ $t("customer_add.more.title") }}</div>
           <div class="small">
-            Set currency, customer club, segments, address and more.
+            {{ $t("customer_add.more.subtitle") }}
           </div>
         </div>
         <v-icon
@@ -91,9 +94,8 @@
             :title="$t('global.commons.personal_info')"
             icon="badge"
           ></s-widget-header>
-          <v-list-subheader
-            >Keep a record of personal information about your customer. Please
-            respect your customer's privacy.
+          <v-list-subheader>
+            {{ $t("customer_add.detail.subtitle") }}
           </v-list-subheader>
 
           <u-date-input
@@ -102,7 +104,7 @@
             :max="new Date()"
             clearable
             date-only
-            placeholder="Select birthday"
+            :placeholder="$t('global.placeholders.birthday')"
             type="date"
           />
 
@@ -133,8 +135,8 @@
             :title="$t('global.commons.preferences')"
             icon="tune"
           ></s-widget-header>
-          <v-list-subheader
-            >Set default user currency, customer club, and segments here.
+          <v-list-subheader>
+            {{ $t("customer_add.preferences.subtitle") }}
           </v-list-subheader>
 
           <u-currency-input
@@ -143,7 +145,7 @@
             :label="$t('global.commons.currency')"
           ></u-currency-input>
 
-          <b-club-select v-model="level" class="my-3"> </b-club-select>
+          <b-club-select v-model="level" class="my-3"></b-club-select>
 
           <b-customer-segment-input
             v-model="segments"
@@ -158,9 +160,8 @@
             :title="$t('global.commons.address')"
             icon="map"
           ></s-widget-header>
-          <v-list-subheader
-            >This address can be used in the POS. The user can not see this
-            information.
+          <v-list-subheader>
+            {{ $t("customer_add.address.subtitle") }}
           </v-list-subheader>
 
           <div>

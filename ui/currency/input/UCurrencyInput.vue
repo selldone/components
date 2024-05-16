@@ -24,11 +24,11 @@
     :disabled="disabled"
     :flat="flat"
     :hide-details="hideDetails"
-    :item-title="(i) =>i.name? $t(i.name):i"
+    :item-title="(i) => (i.name ? $t(i.name) : i)"
     :items="currencies"
     :label="label"
     :loading="loading"
-    :messages="messages?messages:undefined"
+    :messages="messages ? messages : undefined"
     :multiple="multiple"
     :placeholder="placeholder"
     :prepend-icon="prependIcon"
@@ -55,8 +55,8 @@
   >
     <template v-slot:item="{ item, props }">
       <v-list-item
-        :subtitle="item.raw.country?$t(item.raw.country):undefined"
-        :title="item.raw.name?$t(item.raw.name):undefined"
+        :subtitle="item.raw.country ? $t(item.raw.country) : undefined"
+        :title="item.raw.name ? $t(item.raw.name) : undefined"
         class="text-start"
         v-bind="props"
       >
@@ -110,7 +110,7 @@
         />
 
         <span>
-          {{item.raw.name? $t(item.raw.name) :item.raw}}
+          {{ item.raw.name ? $t(item.raw.name) : item.raw }}
         </span>
       </v-chip>
       <template v-else>
@@ -130,7 +130,7 @@
         />
 
         <span>
-          {{ item.raw.name?$t(item.raw.name):item.raw }}
+          {{ item.raw.name ? $t(item.raw.name) : item.raw }}
         </span>
       </template>
     </template>

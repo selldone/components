@@ -16,24 +16,24 @@
   <v-select
     v-model="gift_type_selected"
     :density="dense ? 'compact' : undefined"
-    :filled="filled"
     :items="gift_card_types"
     :label="$t('gift_card_types_list.label')"
     :loading="busy"
     :messages="$t('gift_card_types_list.message')"
-    :outlined="outlined"
+    :variant="variant"
     :return-object="returnObject"
     :rounded="rounded"
-    class="m-2"
     item-title="title"
     item-value="id"
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" :title="item.raw.title">
+      <v-list-item v-bind="props" :title="item.raw.title" class="text-start">
         <template v-slot:prepend>
-          <v-avatar :color="item.raw.color" size="24">
-            <img :src="getShopImagePath(item.raw.bg)" />
-          </v-avatar>
+          <b-giftcard-type-icon
+            :image="getShopImagePath(item.raw.bg)"
+            :color="item.raw.color"
+            height="36"
+          ></b-giftcard-type-icon>
         </template>
 
         <template v-slot:append>
@@ -53,11 +53,11 @@
     </template>
 
     <template v-slot:selection="{ item }">
-      <v-chip v-if="chip" color="#fafafa" light>
+      <v-chip v-if="chip" color="#fafafa" variant="flat">
         <b>{{ item.raw.title }}</b>
 
         <v-avatar :color="item.raw.color" end size="20">
-          <img :src="getShopImagePath(item.raw.bg)" />
+          <v-img :src="getShopImagePath(item.raw.bg)" />
         </v-avatar>
       </v-chip>
       <span v-else class="small">
@@ -72,8 +72,12 @@
 </template>
 
 <script>
+import SGiftcardView from "../../../../storefront/giftcard/view/SGiftcardView.vue";
+import BGiftcardTypeIcon from "../icon/BGiftcardTypeIcon.vue";
+
 export default {
   name: "BGiftcardTypeInput",
+  components: { BGiftcardTypeIcon, SGiftcardView },
 
   props: {
     shop: {
@@ -85,19 +89,14 @@ export default {
       type: Boolean,
     },
 
-    outlined: {
-      type: Boolean,
-      default: false,
+    variant: {
+      default: "underlined",
     },
     dense: {
       type: Boolean,
       default: false,
     },
     rounded: {
-      type: Boolean,
-      default: false,
-    },
-    filled: {
       type: Boolean,
       default: false,
     },

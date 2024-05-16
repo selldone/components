@@ -76,7 +76,8 @@
           </u-qrcode>
           <div class="small">
             <v-icon>straight</v-icon>
-            Scan me with your phone!
+
+            {{$t('selldone_applications.scan_qr_code')}}
           </div>
           <div class="center-absolute circle-white p-1">
             <v-icon
@@ -102,8 +103,8 @@
             class="ma-2"
             prepend-icon="notifications_active"
             rounded="lg"
-            subtitle="Get new orders notification."
-            title="Notification"
+            :subtitle="$t('selldone_applications.notification.subtitle')"
+            :title="$t('selldone_applications.notification.title') "
             variant="plain"
           >
           </v-list-item>
@@ -111,8 +112,8 @@
             class="ma-2"
             prepend-icon="shopping_bag"
             rounded="lg"
-            subtitle="See your orders and manage them."
-            title="Orders"
+            :subtitle="$t('selldone_applications.order.subtitle')"
+            :title="$t('selldone_applications.order.title') "
             variant="plain"
           >
           </v-list-item>
@@ -120,8 +121,8 @@
             class="ma-2"
             prepend-icon="shelves"
             rounded="lg"
-            subtitle="Inventory management and product plain."
-            title="Products"
+            :subtitle="$t('selldone_applications.product.subtitle')"
+            :title="$t('selldone_applications.product.title') "
             variant="plain"
           >
           </v-list-item>

@@ -60,13 +60,13 @@
       <div class="widget-buttons">
         <v-btn
           :to="{ name: 'LandingTemplatesListPage' }"
-          color="primary"
+          color="#000"
           size="x-large"
           target="_blank"
-          variant="text"
-          >View all templates...
-
-          <v-icon end="">open_in_new</v-icon>
+          variant="elevated"
+          >
+          {{ $t("onboarding.customize.template.action") }}
+          <v-icon end>open_in_new</v-icon>
         </v-btn>
       </div>
 
@@ -93,7 +93,8 @@
             ></u-color-circle>
           </div>
 
-          Customize Colors & Theme
+
+          {{ $t("onboarding.customize.colors.action") }}
         </v-btn>
       </div>
     </v-card-text>

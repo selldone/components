@@ -340,6 +340,7 @@
             :min="item.add ? -1000 : 0"
             class="max-width-field inline-block vertical-align-middle center-input strong-field"
             variant="solo-filled"
+            background-color="#fafafa"
             flat
             hide-details
             no-padding
@@ -386,7 +387,7 @@
           </u-number-input>
         </div>
         <div v-else>
-          <small>Can't set here</small>
+          <small>{{$t("inventory_list.cant_set_here") }}</small>
         </div>
       </template>
 

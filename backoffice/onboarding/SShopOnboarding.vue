@@ -235,7 +235,7 @@
             </v-avatar>
 
             <v-card-text class="flex-grow-1">
-              <div class="typo-body mb-2">
+              <div class="typo-body mb-2 text-wrap">
                 {{ shop.title }}
               </div>
               <v-chip
@@ -293,7 +293,7 @@
             />
 
             <v-card-text class="flex-grow-1">
-              <div class="typo-body mb-2">
+              <div class="typo-body mb-2 text-wrap">
                 The ultimate guide to start and make your first sale on your
                 ecommerce.
               </div>
@@ -330,7 +330,7 @@
             />
 
             <v-card-text class="flex-grow-1">
-              <div class="typo-body mb-2">
+              <div class="typo-body mb-2 text-wrap">
                 {{ item.title }}
               </div>
             </v-card-text>

@@ -14,13 +14,13 @@
 
 <template>
   <div :title="$t(status_obj.description)" class="inline-block text-center">
-    <v-icon :color="status_obj.color" size="small">
+    <v-icon  size="small">
       {{ status_obj.icon }}
     </v-icon>
 
-    <span class="x-small d-block">
+    <b class="x-small d-block mt-1">
       {{ $t(status_obj.name) }}
-    </span>
+    </b>
   </div>
 </template>
 

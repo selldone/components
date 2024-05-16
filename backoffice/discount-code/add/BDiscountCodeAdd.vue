@@ -26,14 +26,12 @@
         <!-- ---------------------- General ---------------------- -->
         <div class="widget-box mb-5">
           <s-widget-header
-            :title="$t('global.commons.general_config')"
+            :title="$t('discount_codes.dialog.config.title')"
             icon="tune"
           ></s-widget-header>
 
           <v-list-subheader>
-            The formula of the discount code calculation is: max (LIMIT, PERCENT
-            * cart price). Remember to make the codes relevant and easy to
-            remember.
+            {{ $t("discount_codes.dialog.config.subtitle") }}
           </v-list-subheader>
           <v-text-field
             v-model="code"
@@ -49,10 +47,10 @@
           >
           </v-text-field>
           <u-smart-suggestion
-              v-if="!discountCode?.id"
-              :samples="$tm('suggestions.discount_code.code')"
-              class="mb-4"
-              @select="(v) => (code = v)"
+            v-if="!discountCode?.id"
+            :samples="$tm('suggestions.discount_code.code')"
+            class="mb-4"
+            @select="(v) => (code = v)"
           ></u-smart-suggestion>
 
           <u-number-input
@@ -84,14 +82,13 @@
 
         <div :class="{ disabled: !code }" class="widget-box mb-5">
           <s-widget-header
-            :title="$t('global.commons.limits_config')"
+            :title="$t('discount_codes.dialog.limit.title')"
             icon="call_missed_outgoing"
           >
           </s-widget-header>
 
           <v-list-subheader
-            >You can define the maximum usage limit for each discount code, as
-            well as the maximum discount amount, in this section.
+            >{{ $t("discount_codes.dialog.limit.subtitle") }}
           </v-list-subheader>
           <u-price-input
             v-model="limit"
@@ -122,14 +119,13 @@
 
         <div :class="{ disabled: !code }" class="widget-box mb-5">
           <s-widget-header
-            :title="$t('global.commons.duration_config')"
+            :title="$t('discount_codes.dialog.duration.title')"
             icon="schedule"
           >
           </s-widget-header>
 
           <v-list-subheader
-            >Should you want to activate a discount code for a specific
-            timeframe, you can establish that duration here.
+            >{{ $t("discount_codes.dialog.duration.subtitle") }}
           </v-list-subheader>
           <u-date-input
             v-model="dis_start"
@@ -169,9 +165,8 @@
           >
           </s-widget-header>
 
-          <v-list-subheader
-            >You can set a title and description for each discount code. These
-            details will be displayed to the user.
+          <v-list-subheader>
+            {{ $t("discount_codes.dialog.design.subtitle") }}
           </v-list-subheader>
           <v-text-field
             v-model="title"
@@ -193,10 +188,10 @@
             </template>
           </v-text-field>
           <u-smart-suggestion
-              v-if="!discountCode?.id || !title"
-              :samples="$tm('suggestions.discount_code.title')"
-              class="mb-4"
-              @select="(v) => (title = v)"
+            v-if="!discountCode?.id || !title"
+            :samples="$tm('suggestions.discount_code.title')"
+            class="mb-4"
+            @select="(v) => (title = v)"
           ></u-smart-suggestion>
 
           <v-text-field
@@ -217,14 +212,12 @@
                 translation-key="description"
               ></b-translation-button-discount-code>
             </template>
-
-
           </v-text-field>
           <u-smart-suggestion
-              v-if="!discountCode?.id || !description"
-              :samples="$tm('suggestions.discount_code.description')"
-              class="mb-4"
-              @select="(v) => (description = v)"
+            v-if="!discountCode?.id || !description"
+            :samples="$tm('suggestions.discount_code.description')"
+            class="mb-4"
+            @select="(v) => (description = v)"
           ></u-smart-suggestion>
         </div>
 
@@ -232,16 +225,15 @@
         <div class="widget-box mb-5">
           <s-widget-header
             :to="{ name: 'BPageShopClassificationClusters' }"
-            add-caption="Management"
+            :add-caption="$t('global.commons.management')"
             add-icon="settings"
             add-text
             icon="workspaces"
-            title="Cluster"
+            :title="$t('global.commons.cluster')"
           ></s-widget-header>
 
           <v-list-subheader>
-            By associating this discount code with a cluster, you can easily
-            manage it alongside other resources in a single location.
+            {{ $t("discount_codes.dialog.cluster.subtitle") }}
           </v-list-subheader>
           <b-cluster-input
             v-model="cluster_id"
@@ -254,7 +246,10 @@
         </div>
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
       </v-form>
-      <BShopLicenseBlockOverlay v-if="licenseRestriction" fill-h></BShopLicenseBlockOverlay>
+      <BShopLicenseBlockOverlay
+        v-if="licenseRestriction"
+        fill-h
+      ></BShopLicenseBlockOverlay>
     </v-card-text>
     <!-- ---------------------- Actions ---------------------- -->
 
@@ -276,7 +271,7 @@
           :loading="busy_set"
           color="primary"
           size="x-large"
-          variant="flat"
+          variant="elevated"
           @click="createDiscountCode()"
         >
           <v-icon start>add</v-icon>
