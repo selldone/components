@@ -64,8 +64,8 @@
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import EffectMaterial from "./effect-material.esm.js";
-import "./effect-material.scss";
+import EffectMaterial from "../../../../ui/swiper/effects/material/effect-material.esm.js";
+import "../../../../ui/swiper/effects/material/effect-material.scss";
 
 export default {
   name: "BAppDetailGallery",
