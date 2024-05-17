@@ -18,14 +18,15 @@
   <v-bottom-sheet
     :model-value="modelValue"
     content-class="rounded-t-xl overflow-hidden"
-    max-width="820"
+    max-width="840"
     scrollable
     @update:model-value="(v) => $emit('update:modelValue', v)"
   >
-    <v-card color="#f9f9f9" flat rounded="0">
-      <v-card-title class="d-flex align-center">
-        <v-avatar v-if="icon" class="me-2" rounded size="24">
-          <img :src="icon" />
+    <v-card color="#f9f9f9" >
+      <v-card-title>
+
+        <v-avatar v-if="icon" class="me-2" rounded size="36">
+          <v-img :src="icon" />
         </v-avatar>
 
         {{ title }}
