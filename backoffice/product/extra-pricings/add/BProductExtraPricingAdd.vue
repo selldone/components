@@ -24,15 +24,13 @@
   >
     <v-card
       :color="light ? '#fff' : '#111'"
-      :title="`Extra Pricing for over ${clone_extra_pricing.min}×`"
+      :title="$t('extra_pricing_add_dialog.title',{min:clone_extra_pricing.min})"
       class="rounded-t-xl text-start"
       prepend-icon="money"
     >
       <v-card-text>
         <div class="pb-5">
-          The system automatically determines the order and priority for price
-          calculation. Please input the minimum quantity required for this
-          pricing to take effect.
+          {{$t('extra_pricing_add_dialog.subtitle')}}
         </div>
 
         <u-number-input
@@ -41,7 +39,7 @@
           :min="2"
           :text-center="false"
           class="sm-suffix price-input strong-field"
-          label="Minimum quantity"
+          :label="$t('extra_pricing_add_dialog.min_quantity')"
           required
           variant="underlined"
         ></u-number-input>

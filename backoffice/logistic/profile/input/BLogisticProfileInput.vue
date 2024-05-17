@@ -18,7 +18,7 @@
     v-model:search="search"
     :customFilter="() => true"
     :items="profiles"
-    :label="type.title"
+    :label="$t(type.title)"
     :loading="busy || loading"
     :model-value="modelValue"
     :return-object="false"

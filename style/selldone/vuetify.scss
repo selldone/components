@@ -797,3 +797,6 @@ Make v-btn flex to put prepend and append in start and end of button
   }
 }
 
+.v-btn{
+  line-height: 1em; // Fix button line height issue in multi line buttons
+}

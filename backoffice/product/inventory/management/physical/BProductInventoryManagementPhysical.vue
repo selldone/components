@@ -212,10 +212,10 @@
       <v-list-subheader>
         {{
           add_by_dropShipping
-            ? "Inventory for dropshipping products is set by wholesalers, and cannot be modified here."
+            ? $t('product_inventory_management_physical.subtitle.dropshipping')
             : is_marketplace
-              ? "The overall product inventory in the marketplace is determined by adding up the inventories of all vendors. You cannot modify it here."
-              : "Specify the product's inventory count here."
+              ? $t('product_inventory_management_physical.subtitle.marketplace')
+              : $t('product_inventory_management_physical.subtitle.default')
         }}
       </v-list-subheader>
 

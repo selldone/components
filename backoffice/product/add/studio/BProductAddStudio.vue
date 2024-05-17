@@ -192,8 +192,8 @@
             ></v-text-field>
             <v-text-field
               v-model="brand"
-              :label="$t('add_product.edit_info.brand')"
-              :placeholder="$t('add_product.edit_info.brand_placeholder')"
+              :label="$t('add_product.edit_info.brand.label')"
+              :placeholder="$t('add_product.edit_info.brand.placeholder') "
               class="m-2"
               variant="underlined"
             ></v-text-field>

@@ -348,9 +348,7 @@
         ></div>
 
         <hr class="my-5" />
-        If you accidentally delete a product, you can recover it by navigating
-        to your Shop > Products, enabling Show Deleted Items, and then
-        right-clicking on the product, and selecting Restore.
+        {{ $t('add_product.delete_product.tips')}}
       </v-card-text>
 
       <v-card-actions>
@@ -360,6 +358,7 @@
             size="x-large"
             variant="text"
             @click="dialogDeleteProduct = false"
+            prepend-icon="close"
           >
             {{ $t("global.actions.cancel") }}
           </v-btn>

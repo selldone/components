@@ -69,7 +69,7 @@
 
       <template v-slot:item.type="{ item }">
         <v-icon class="me-1"> {{ LogisticProfileType[item.type].icon }}</v-icon>
-        <b>{{ LogisticProfileType[item.type].title }}</b>
+        <b>{{ $t(LogisticProfileType[item.type].title) }}</b>
       </template>
 
       <template v-slot:item.info.languages="{ item }">

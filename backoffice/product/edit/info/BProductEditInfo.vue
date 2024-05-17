@@ -152,7 +152,7 @@
         </template>
       </s-widget-header>
       <v-list-subheader
-        >Configure the category and title to be displayed in your listing.
+        >{{$t('add_product.edit_info.category.subtitle')}}
       </v-list-subheader>
 
       <b-category-input
@@ -161,9 +161,9 @@
         :label="$t('add_product.edit_info.category_input')"
         :return-object="false"
         clearable
-        messages="Empty: In the store's root"
+        :messages="$t('add_product.edit_info.category_input_msg')"
         no-selected-icon="home"
-        placeholder="Select a category..."
+        :placeholder="$t('global.placeholders.select_category')"
       >
         <template v-if="product?.id" v-slot:append-inner>
           <products-dense-images-circles
@@ -233,8 +233,8 @@
         icon="price_change"
       ></s-widget-header>
       <v-list-subheader
-        >You can personalize the display of pricing and call-to-action elements
-        on the product page.
+        >
+        {{ $t("add_product.edit_info.unit.subtitle") }}
       </v-list-subheader>
 
       <v-combobox
@@ -242,7 +242,7 @@
         :counter="16"
         :hint="$t('add_product.edit_info.unit_message')"
         :items="unit_items"
-        :label="$t('add_product.edit_info.unit')"
+        :label="$t('add_product.edit_info.unit_input')"
         :placeholder="
           $t('global.commons.default') +
           ' : ' +
@@ -283,12 +283,12 @@
         <div v-if="product.price_input === 'custom'" id="custom_valuation">
           <s-widget-header
             icon="calculate"
-            title="Custom pricing form"
+            :title="$t('add_product.edit_info.custom_pricing.title') "
           ></s-widget-header>
           <v-list-subheader
-            >You can create or assign a valuation (a pricing input form) to the
-            product, and your customers can select between variants or customize
-            your merchandise by an intuitive input form.
+            >
+
+            {{$t("add_product.edit_info.custom_pricing.subtitle") }}
           </v-list-subheader>
 
           <b-valuation-input
@@ -304,15 +304,16 @@
 
           <div v-if="!in_edit_mode" class="py-3 text-red font-weight-bold">
             <v-icon class="me-1" color="red">warning_amber</v-icon>
-            Please save the product first, and then you can assign a valuation
-            model.
+
+            {{$t("add_product.edit_info.custom_pricing.valuation_need_saved_product_message") }}
           </div>
           <div
             v-else-if="!product.valuation_id"
             class="py-3 text-red font-weight-bold"
           >
             <v-icon class="me-1" color="red">warning_amber</v-icon>
-            Please assign a valuation model to this product.
+
+            {{$t("add_product.edit_info.custom_pricing.assign_valuation_message") }}
           </div>
 
           <div class="widget-buttons">
@@ -324,7 +325,8 @@
               @click="showValuationForm"
             >
               <v-icon class="me-1">edit_note</v-icon>
-              Edit pricing form
+
+              {{$t("add_product.edit_info.custom_pricing.edit_pricing_action") }}
             </v-btn>
             <v-btn
               v-else
@@ -334,7 +336,9 @@
               @click="showValuationForm"
             >
               <v-icon class="me-1">playlist_add</v-icon>
-              Create new pricing form
+
+              {{$t("add_product.edit_info.custom_pricing.add_pricing_action") }}
+
             </v-btn>
           </div>
 
@@ -398,11 +402,11 @@
         :items="actions"
         :label="
           product.action
-            ? 'Custom buy button'
-            : `Default: ${default_buy_button}`
+            ? $t('add_product.edit_info.action.title')
+            : `${$t('global.commons.default')}: ${default_buy_button}`
         "
-        messages="You can change icon by following this pattern : {icon name} caption..."
-        placeholder="Enter call to action..."
+        :messages="$tm('add_product.edit_info.action.message') "
+        :placeholder="$t('add_product.edit_info.action.placeholder')"
         variant="underlined"
         @blur="live_action = product.action"
       >
@@ -425,7 +429,7 @@
             v-if="product?.id"
             :product="product"
             :shop="shop"
-            label="Custom buy button caption"
+            :label="$t('add_product.edit_info.action.multi_language_dialog_title') "
             translation-key="action"
           ></b-translation-button-product>
         </template>
@@ -439,16 +443,15 @@
         icon="warehouse"
       ></s-widget-header>
       <v-list-subheader
-        >This information is utilized by the warehouse management system and
-        serves to globally identify the product.
+        >{{$t('add_product.edit_info.warehouse.subtitle')}}
       </v-list-subheader>
 
       <v-text-field
         v-model="product.sku"
         v-level.min="AppLevel.NOVICE"
         :counter="48"
-        :hint="$t('add_product.edit_info.sku_message')"
-        :label="$t('add_product.edit_info.sku')"
+        :hint="$t('add_product.edit_info.sku.message')"
+        :label="$t('add_product.edit_info.sku.label')"
         :messages="product.connect ? ' ' : undefined"
         :rules="[GlobalRules.counter(48)]"
         placeholder="XYZ-ABC-001"
@@ -470,8 +473,8 @@
         :disabled="
           !!product.connect_id /*Keep important product ID in the payment services like Stripe!*/
         "
-        :hint="$t('add_product.edit_info.mpn_message')"
-        :label="$t('add_product.edit_info.mpn')"
+        :hint="$t('add_product.edit_info.mpn.message')"
+        :label="$t('add_product.edit_info.mpn.label')"
         :messages="product.connect ? ' ' : undefined"
         :rules="[GlobalRules.counter(48)]"
         placeholder="XYZ00001"
@@ -496,9 +499,9 @@
         v-level.min="AppLevel.NOVICE"
         :counter="48"
         :rules="[GlobalRules.counter(48)]"
-        hint="Supported values are UPC (North America, 12 digits), EAN (Europe, 13 digits), JAN (Japan, 8 or 13 digits), ISBN (books, 13 digits)."
-        label="Product's Global Trade Item Number"
-        placeholder="Global trade number here.. (Optional)"
+        :hint="$t('add_product.edit_info.gtin.hint')"
+        :label="$t('add_product.edit_info.gtin.label')"
+        :placeholder="$t('add_product.edit_info.gtin.placeholder')"
         required
         variant="underlined"
       />
@@ -508,9 +511,9 @@
         v-level.min="AppLevel.NOVICE"
         :counter="16"
         :rules="[GlobalRules.counter(16)]"
-        hint="HSN, or Harmonized System of Nomenclature, is an internationally standardized classification system for categorizing goods and products."
-        label="HSN"
-        placeholder="6~16 digits HSN code.. (Optional)"
+        :hint="$t('add_product.edit_info.hsn.hint')"
+        :label=" $t('add_product.edit_info.hsn.label')"
+        :placeholder="$t('add_product.edit_info.hsn.placeholder')"
         required
         type="number"
         variant="underlined"
@@ -560,8 +563,7 @@
         icon="bookmark"
       ></s-widget-header>
       <v-list-subheader
-        >Inform your customers about the condition and brand of the product
-        you're offering.
+        >{{$t('add_product.edit_info.condition.subtitle')}}
       </v-list-subheader>
 
       <v-text-field
@@ -577,9 +579,9 @@
       <v-text-field
         v-model="product.brand"
         :disabled="add_by_dropShipping"
-        :label="$t('add_product.edit_info.brand')"
+        :label="$t('add_product.edit_info.brand.label')"
         prepend-inner-icon="book"
-        placeholder="Brand Ex. Apple.. (Optional)"
+        :placeholder="$t('add_product.edit_info.brand.placeholder') "
         required
         variant="underlined"
       >
@@ -613,9 +615,9 @@
         v-if="isPhysical"
         v-model="product.condition"
         :disabled="add_by_dropShipping"
-        :hint="$t('add_product.edit_info.condition_message')"
+        :hint="$t('add_product.edit_info.condition.message')"
         :items="conditions"
-        :label="$t('add_product.edit_info.condition')"
+        :label="$t('add_product.edit_info.condition.label')"
         item-text="title"
         item-value="code"
       >
@@ -630,17 +632,15 @@
         icon="workspace_premium"
       ></s-widget-header>
       <v-list-subheader
-        >Set the warranty and product status, as this information regarding
-        warranty will be displayed to the customer and helps establish the time
-        frame within which products can be returned after purchase.
+        >{{$t('add_product.edit_info.warranty.subtitle')}}
       </v-list-subheader>
 
       <v-text-field
         v-model="product.warranty"
         :disabled="add_by_dropShipping"
-        :label="$t('add_product.edit_info.warranty')"
+        :label="$t('add_product.edit_info.warranty.label')"
         messages=" "
-        placeholder="Golden 24 months warranty.. (Optional)"
+        :placeholder="$t('add_product.edit_info.warranty.placeholder')"
         required
         variant="underlined"
         prepend-inner-icon="safety_check"
@@ -663,7 +663,7 @@
         <template v-slot:append-inner>
           <b-translation-button-product
             v-if="product?.id"
-            :label="$t('add_product.edit_info.warranty')"
+            :label="$t('add_product.edit_info.warranty.label')"
             :product="product"
             :shop="shop"
             translation-key="warranty"
@@ -709,12 +709,11 @@
 
     <div class="widget-box mb-5">
       <s-widget-header
-        :title="$t('add_product.edit_info.status')"
+        :title="$t('add_product.edit_info.status.title')"
         icon="nat"
       ></s-widget-header>
       <v-list-subheader
-        >The product's status determines its availability online and in-store.
-        To make a product draft, just switch its status to 'Inactive'..
+        >{{$t('add_product.edit_info.status.subtitle')}}
       </v-list-subheader>
 
       <u-smart-select
@@ -738,10 +737,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Logistic Profiles ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header icon="assignment" title="Profiles"></s-widget-header>
+      <s-widget-header icon="assignment" :title="$t('add_product.edit_info.profiles.title')"></s-widget-header>
       <v-list-subheader
-        >You can define warranty, return policy, shipping, and guide and assign
-        them to this product. It will be shown as new tabs on the product page.
+        >
+        {{$t('add_product.edit_info.profiles.subtitle')}}
       </v-list-subheader>
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Profiles ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
@@ -804,7 +803,8 @@
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon class="me-2">folder</v-icon>
-        Assign Product to Additional Categories
+        {{$t('add_product.edit_info.shortcuts.title')}}
+
       </v-card-title>
 
       <v-card-text v-if="shortcuts">
@@ -814,11 +814,8 @@
             title="Shortcuts"
           ></s-widget-header>
           <v-list-subheader>
-            This feature allows you to list the product in multiple categories
-            while retaining its placement in the primary category set under
-            Product > Edit > Category. Essentially, it functions similarly to
-            creating 'shortcuts' in operating systems, enabling the product to
-            appear in additional specified categories.
+
+            {{$t('add_product.edit_info.shortcuts.subtitle')}}
           </v-list-subheader>
 
           <div class="border-between-vertical">
@@ -833,9 +830,10 @@
               clearable
               default-icon="folder_open"
               no-home
-              placeholder="Select a category..."
+              :placeholder="$t('global.placeholders.select_category')"
               single-line
               variant="plain"
+              persistent-placeholder
             >
             </b-category-input>
           </div>
@@ -853,7 +851,7 @@
             :loading="busy_set_shortcuts"
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="setShortcuts()"
           >
             <v-icon start>save</v-icon>

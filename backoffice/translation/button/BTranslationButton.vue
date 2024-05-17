@@ -44,7 +44,7 @@
       <v-card class="rounded-t-xl rounded-b-0">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1" color="#333">translate</v-icon>
-          Multi Language | {{ label }}
+          {{$t('translation_button.header')}} | {{ label }}
           <v-spacer></v-spacer>
           <v-btn
             v-if="defaultValue && number_translated_in_pack < languages.length"
@@ -56,9 +56,10 @@
           >
             <v-icon class="me-1">g_translate</v-icon>
             <div class="d-block text-start">
-              Auto Translate
+              {{$t('translation_button.auto_action')}}
+
               <span class="d-block small tnt mt-1"
-                ><v-icon size="x-small">star</v-icon> Premium Users</span
+                ><v-icon size="x-small">star</v-icon>  {{$t('translation_button.premium_user_only')}} </span
               >
             </div>
           </v-btn>
@@ -104,7 +105,7 @@
               variant="elevated"
             >
               <v-icon start>save</v-icon>
-              Save
+              {{ $t("global.actions.save") }}
             </v-btn>
           </div>
         </v-card-actions>

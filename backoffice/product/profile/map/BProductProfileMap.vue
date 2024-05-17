@@ -20,7 +20,7 @@
     @click="showSetMapTag()"
   >
     <v-list-item-title class="d-flex align-center">
-      <b>Location</b>
+      <b>{{$t('product_location_profile.title')}}</b>
 
       <template v-if="product.map && product.map_id">
         <span>
@@ -59,7 +59,7 @@
       {{
         product.map
           ? product.map.address
-          : "Assign a location to the product if it's a location-based item."
+          :$t('product_location_profile.empty_subtitle')
       }}
     </v-list-item-subtitle>
 
@@ -87,29 +87,27 @@
     <v-card class="text-start">
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1">map</v-icon>
-        Select location profile
+
+        {{$t('product_location_profile.dialog.header')}}
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
           <s-widget-header
             :to="{ name: 'BPageShopChannelMap' }"
-            add-caption="Add new location"
+            :add-caption="$t('product_location_profile.dialog.action_new_location') "
             add-text
             icon="place"
-            title="Location profile"
+            :title="$t('product_location_profile.dialog.title')"
           >
           </s-widget-header>
           <v-list-subheader>
-            You can pin products on the map location by assigning location tags
-            to the products.
+            {{$t('product_location_profile.dialog.subtitle')}}
+
           </v-list-subheader>
-          <div class="typo-body mb-3">
+          <div class="typo-body mb-3" >
             <v-icon class="me-1">notification_important</v-icon>
-            <b>Important: </b> Assign a location to the product <b>only</b> if
-            you want to show the product on the specific location on the map.
-            The pined product must have the location as its main specification,
-            like <b>rental homes/places</b> or in-person services like
-            <b>Hairdressing and Spa</b>.
+            <span v-html="$t('product_location_profile.dialog.tips')"></span>
+
           </div>
           <b-map-tag-input
             v-model="map_input"
@@ -138,7 +136,8 @@
             <v-col v-if="map_input" cols="12" sm="6">
               <div v-if="full_address" class="mb-3 typo-body">
                 <v-icon class="me-1">assistant_direction</v-icon>
-                Address:
+                {{$t('global.commons.address')}}
+                :
                 <flag
                   v-if="map_input.country"
                   :iso="map_input.country"
@@ -150,13 +149,13 @@
 
               <div v-if="map_input.message" class="mb-3">
                 <v-icon class="me-1">chat_bubble</v-icon>
-                Message:
+                {{$t('global.commons.message')}}:
                 {{ map_input.message }}
               </div>
 
               <div :title="getFromNowString(map_input.created_at)" class="my-1">
                 <v-icon class="me-1">calendar_today</v-icon>
-                Create:
+                {{$t('global.commons.created_at')}}:
                 {{ getLocalTimeString(map_input.created_at) }}
               </div>
               <div :title="getFromNowString(map_input.updated_at)" class="my-1">
@@ -179,10 +178,10 @@
           <v-btn
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="selectMap(map_input)"
           >
-            <v-icon class="me-1">check</v-icon>
+            <v-icon start>check</v-icon>
             {{ $t("global.actions.confirm") }}
           </v-btn>
         </div>

@@ -23,11 +23,11 @@
 
     clearable
     hide-no-data
-    hint="Represents the category of your product according to the Google's product taxonomy."
+    :hint="$t('google_product_category_input.hint')"
     item-title="category"
     item-value="id"
-    label="Google product category code"
-    placeholder="Enter product or service category.. (Optional)"
+    :label="$t('google_product_category_input.label')"
+    :placeholder="$t('google_product_category_input.placeholder') "
     variant="underlined"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >

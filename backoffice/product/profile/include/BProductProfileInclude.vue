@@ -47,7 +47,7 @@
       </v-sheet>
     </v-menu>
     <v-list-item-subtitle v-if="!product.includes?.length">
-      Include a list of items that come with the product or service package.
+      {{$t('product_include_profile.subtitle')}}
     </v-list-item-subtitle>
 
     <template v-slot:append>
@@ -75,26 +75,28 @@
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1">bento</v-icon>
-          Product Package Items
+          {{$t('product_include_profile.dialog.header')}}
+
         </v-card-title>
         <v-card-text>
           <div class="widget-box -large mb-5">
             <s-widget-header
               :disabled="IS_VENDOR_PANEL"
               :to="{ name: 'BPageShopLogisticIncludes' }"
-              add-caption="Manage items"
+              :add-caption="$t('product_include_profile.dialog.action_manage')"
               add-icon="ballot"
               add-text
-              disabled-reason="Marketplace owner"
+              :disabled-reason="$t('product_include_profile.dialog.action_disable_msg')"
               icon="library_add_check"
-              title="Included items"
+              :title="$t('product_include_profile.dialog.title') "
             >
             </s-widget-header>
 
             <v-expand-transition>
               <div v-if="includes?.length">
                 <v-list-subheader>
-                  This is a compilation of items that come with the product.
+                  {{$t('product_include_profile.dialog.subtitle')}}
+
                 </v-list-subheader>
                 <v-container>
                   <v-row>
@@ -136,12 +138,8 @@
             </v-expand-transition>
 
             <v-list-subheader>
-              Create or choose package components that come with the product or
-              service. Utilize this feature to emphasize what customers can
-              anticipate receiving upon purchasing the item. We advise employing
-              this function only when it is crucial for the customer to
-              understand the contents included, such as when buying a
-              smartphone.
+              {{$t('product_include_profile.dialog.select_items_tips')}}
+
             </v-list-subheader>
 
             <div class="max-widget-width">
@@ -158,11 +156,8 @@
 
             <template v-if="!IS_VENDOR_PANEL">
               <v-list-subheader>
-                Alternatively, you can include a new item. Utilize square
-                images, as we will automatically resize uploaded pictures to a
-                256x256 square format. To ensure optimal appearance across all
-                templates, use minimalistic images with transparent backgrounds
-                and maintain a consistent pattern for all your products.
+                {{$t('product_include_profile.dialog.create_item_tips')}}
+
               </v-list-subheader>
 
               <div class="widget-buttons">
@@ -172,7 +167,7 @@
                   @click="dialog_add = true"
                 >
                   <v-icon class="me-1">add_box</v-icon>
-                  Create new included item
+                  {{$t('product_include_profile.dialog.create_new_item_action')}}
                 </v-btn>
               </div>
             </template>

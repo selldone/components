@@ -23,9 +23,9 @@
       >
       </s-widget-header>
       <v-list-subheader>
-        Insert product specifications here. This information will be displayed
-        to customers and can also be utilized in the category's intelligent
-        filtering system.
+        {{ $t("add_product.edit_spec.subtitle") }}
+
+
       </v-list-subheader>
       <b-product-spec-table
         :class="{ disabled: add_by_dropShipping }"
@@ -60,11 +60,11 @@
       <template v-if="!add_by_dropShipping">
         <s-widget-header
           icon="format_list_bulleted_add"
-          title="Manually"
+          :title="$t('add_product.edit_spec.manual.title')"
         ></s-widget-header>
         <v-list-subheader>
-          Add product specifications manually by defining groups and key-values
-          pair.
+
+          {{$t('add_product.edit_spec.manual.subtitle')}}
         </v-list-subheader>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Add Group ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -81,7 +81,7 @@
                 <v-icon start>create_new_folder</v-icon>
 
                 <div>
-                  <b>Add Group</b>
+                  <b>   {{$t('add_product.edit_spec.manual.add_group_action')}}</b>
                   <div
                     class="d-flex align-center justify-content-around mt-1 min-width-150"
                   >
@@ -152,7 +152,7 @@
               <v-btn color="#000" size="x-large" v-bind="props" variant="flat">
                 <v-icon start>post_add</v-icon>
                 <div>
-                  <b>Add Spec Value</b>
+                  <b>{{$t('add_product.edit_spec.manual.add_item_action')}}</b>
                   <div
                     class="d-flex align-center justify-content-around mt-1 min-width-150"
                   >
@@ -229,7 +229,7 @@
           icon="save_alt"
         ></s-widget-header>
         <v-list-subheader>
-          {{ $t("add_product.edit_spec.sub_title") }}
+          {{ $t("add_product.edit_spec.import.subtitle") }}
         </v-list-subheader>
 
         <div class="widget-buttons">
@@ -242,9 +242,9 @@
             <v-icon start> download</v-icon>
 
             <div>
-              {{ $t("add_product.edit_spec.import_action") }}
+              {{ $t("add_product.edit_spec.import.action_title") }}
 
-              <div class="small mt-1">Clone spec from another product.</div>
+              <div class="small mt-1">{{ $t("add_product.edit_spec.import.action_subtitle") }} </div>
             </div>
           </v-btn>
         </div>
@@ -253,16 +253,16 @@
 
         <div class="dashed-hr my-2 mx-n5"></div>
 
-        <s-widget-header icon="auto_fix_high" title="AI"></s-widget-header>
+        <s-widget-header icon="auto_fix_high" :title="$t('add_product.edit_spec.ai.title')"></s-widget-header>
 
         <v-list-subheader>
-          You can automatically create product specifications by submitting the
-          product's raw data in textual form.
+
+          {{$t('add_product.edit_spec.ai.subtitle')}}
         </v-list-subheader>
 
         <u-button-ai-large
-          sub-title="Create product specifications by abstract prompt."
-          title="Auto Generate by AI"
+          :sub-title="$t('add_product.edit_spec.ai.action_subtitle') "
+          :title="$t('add_product.edit_spec.ai.action_title') "
           @select="
             dialog_ai = true;
             prompt = null;

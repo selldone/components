@@ -22,10 +22,10 @@
     @click="showSetProfile(profile_type, product[profile_type.product_column])"
   >
     <v-list-item-title>
-      <b>{{ profile_type.title }}</b>
+      <b>{{ $t(profile_type.title) }}</b>
     </v-list-item-title>
     <v-list-item-subtitle class="single-line">
-      {{ profile_type.desc }}
+      {{ $t(profile_type.desc) }}
     </v-list-item-subtitle>
 
     <v-tooltip
@@ -34,7 +34,7 @@
       location="top"
       max-width="360"
     >
-      {{ profile_type.desc }}
+      {{ $t(profile_type.desc) }}
     </v-tooltip>
 
     <template v-slot:append>
@@ -65,21 +65,21 @@
     <v-card v-if="selected_profile_type">
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1" color="#111">sticky_note_2</v-icon>
-        Select logistic profile
+        {{$t('product_logistic_profile.dialog.title')}}
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
           <s-widget-header
             :disabled="IS_VENDOR_PANEL"
             :icon="selected_profile_type.icon"
-            :title="selected_profile_type.title"
+            :title="$t(selected_profile_type.title)"
             :to="{ name: 'BPageShopLogisticProfiles' }"
-            add-caption="Add new profile"
+            :add-caption="$t('product_logistic_profile.dialog.add_new_action') "
             add-text
-            disabled-reason="Marketplace owner"
+            :disabled-reason="$t('product_logistic_profile.dialog.add_new_disable_msg') "
           >
           </s-widget-header>
-          <v-list-subheader>{{ selected_profile_type.desc }}</v-list-subheader>
+          <v-list-subheader>{{ $t(selected_profile_type.desc) }}</v-list-subheader>
           <b-logistic-profile-input
             v-model="profile_input"
             :shop="shop"
@@ -106,7 +106,7 @@
           <v-btn
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="selectProfile(profile_input)"
           >
             <v-icon class="me-1">check</v-icon>

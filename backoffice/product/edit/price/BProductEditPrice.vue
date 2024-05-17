@@ -377,9 +377,9 @@
           <div>
             <b class="d-block">
               <v-icon start>add</v-icon>
-              Add extra pricing</b
+              {{$t('add_product.pricing.extra_pricings.title')}}</b
             >
-            <small>Apply varying prices based on the quantity purchased.</small>
+            <small>{{$t('add_product.pricing.extra_pricings.subtitle')}}</small>
           </div>
         </v-btn>
       </div>
@@ -464,7 +464,7 @@
       class="mb-5 mt-12"
     >
       <v-btn
-        :class="{ disabled: calculatePrice <= 0 }"
+        :class="{ disabled: calculatePrice < 0 }"
         :loading="busy"
         color="primary"
         size="x-large"
@@ -768,14 +768,14 @@ export default {
 
     subtitle() {
       return this.isMarketplace
-        ? "Within the marketplace, the primary product pricing displayed is the listing price, while the actual price is determined based on the vendor-product relationship records."
+        ? this.$t('add_product.pricing.subtitle.marketplace')
         : this.isSubscription
-          ? "For subscriptions, only the listing price is displayed, while the actual cost will be determined based on the selected subscription plan."
+          ? this.$t('add_product.pricing.subtitle.subscription')
           : this.isService
-            ? "For service-based products, the listed pricing is solely for display purposes, providing an estimated cost of the service. The actual service price will be determined by you once the customer has placed their order (upon checkout)."
+            ? this.$t('add_product.pricing.subtitle.service')
             : this.isFile
-              ? "This refers to the listed and actual price of the file, which customers must pay in order to gain access to the files."
-              : "This refers to the product's listed price and also takes into account the price of any variants that do not have separate pricing.";
+              ? this.$t('add_product.pricing.subtitle.file')
+              : this.$t('add_product.pricing.subtitle.default');
     },
   },
 

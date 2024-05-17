@@ -62,23 +62,22 @@
         <v-avatar class="me-2" size="36"
           ><img :src="getShopImagePath(product.icon, 64)"
         /></v-avatar>
-        Select tax profile
+       {{$t('product_tax_profile.dialog.header')}}
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
           <s-widget-header
             :to="{ name: 'BPageShopFinanceTax' }"
-            add-caption="Manage tax"
-            add-sub-caption="Shop > Finance > Tax"
+            :add-caption="$t('product_tax_profile.dialog.action_manage')"
+            :add-sub-caption="$t('product_tax_profile.dialog.action_manage_sub')"
             add-text
             icon="gavel"
-            title="Tax profile"
+            :title="$t('product_tax_profile.dialog.title')"
           >
           </s-widget-header>
           <v-list-subheader>
-            You can assign particular tax regulations to the product. Should a
-            tax profile not be chosen for the product, the default store tax
-            regulations will then be applied.
+
+            {{$t('product_tax_profile.dialog.subtitle')}}
           </v-list-subheader>
 
           <b-tax-profile-input
@@ -86,17 +85,8 @@
             :shop="shop"
           ></b-tax-profile-input>
 
-          <p v-if="isSubscription">
-            When you select a tax profile for subscription product, we update
-            <code>tax code</code> and set inclusive/exclusive mode on your
-            payment service provider. The selected tax profile specifies whether
-            the price is considered inclusive of taxes or exclusive of taxes.
-            One of <code>inclusive</code> or <code>exclusive</code>. Once
-            specified as either inclusive or exclusive, it cannot be changed.
-            <br /><br />
-            <b>Important!</b> After changing the tax profile, you should click
-            on pricing plans on the Product > Inventory tab and click the Save
-            button to apply changes.
+          <p v-if="isSubscription" v-html="$t('product_tax_profile.dialog.subscription_tips')">
+
           </p>
         </div>
       </v-card-text>
@@ -111,7 +101,7 @@
           <v-btn
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="selectTax(tax_input)"
           >
             <v-icon class="me-1">check</v-icon>
@@ -126,6 +116,7 @@
 <script>
 import { defineComponent } from "vue";
 import BTaxProfileInput from "../../../tax/profile/input/BTaxProfileInput.vue";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default defineComponent({
   name: "BProductProfileTax",
@@ -157,40 +148,43 @@ export default defineComponent({
     tax_profiles() {
       return this.shop.tax_profiles;
     },
+    isSubscription() {
+      return this.type?.code === ProductType.SUBSCRIPTION.code;
+    },
 
     tax_profile_desc() {
       if (this.isSubscription)
-        return "We can apply tax only on the payment creation step.";
+        return this.$t('product_tax_profile.description.subscription') ;
       let out = "";
       let tax = null;
       if (!this.current_tax_profile) {
-        out = `<b>Default</b> `;
+        out = `<b>${this.$t('product_tax_profile.description.default')}</b> `;
         tax = this.shop.tax;
       } else {
-        out = "<b>Dedicated</b> ";
+        out =  `<b>${this.$t('product_tax_profile.description.dedicated')}</b> `;
         tax = this.current_tax_profile;
       }
 
       if (tax) {
         if (!tax.enable) {
-          out += " | This tax profile is disabled! (⚠️Warning)";
+          out += ` | ${this.$t('product_tax_profile.description.is_disabled')}`;
         } else {
           if (tax.fix) {
-            out += ` | Tax: ${tax.fix_vat}%`;
+            out += ` | ${this.$t('product_tax_profile.description.fixed_rate')}: ${tax.fix_vat}%`;
 
             if (tax.shipping) {
-              out += ` | Shipping: ${tax.fix_shipping}%`;
+              out += ` | ${this.$t('product_tax_profile.description.shipping')}: ${tax.fix_shipping}%`;
             }
           } else {
-            out += ` | Tax: Location based`;
+            out += ` | ${this.$t('product_tax_profile.description.location_based_rate')}`;
 
             if (tax.shipping) {
-              out += ` | Shipping: Location based`;
+              out += ` | ${this.$t('product_tax_profile.description.shipping_location_based_rate')}`;
             }
           }
 
           if (tax.included) {
-            out += ` | Included in price.`;
+            out += ` | ${this.$t('product_tax_profile.description.include_in_price')}.`;
           } else {
             out += `.`;
           }
