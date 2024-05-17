@@ -18,7 +18,7 @@
     <v-list-item v-if="on_compact" class="text-start py-5" lines="two">
       <template v-slot:prepend>
         <v-avatar class="border" rounded="lg" size="64">
-          <img
+          <v-img
             :src="image_url"
             class="pa-1"
             style="
@@ -94,7 +94,7 @@
               class="prev-img"
               size="76"
             >
-              <img :src="image_url" />
+              <v-img :src="image_url" />
             </v-avatar>
           </v-slide-y-transition>
 

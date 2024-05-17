@@ -13,18 +13,18 @@
   -->
 
 <template>
-  <v-menu max-width="640" min-width="400" offset-y rounded="lg">
+  <v-menu max-width="720" min-width="400" offset-y content-class="rounded-lg">
     <template v-slot:activator="{ props }">
       <v-btn
         :title="`${keywords}\n\nClick to view details...`"
-        icon
+        icon variant="text"
         v-bind="props"
         @click.stop
       >
         <img height="16" src="../../assets/trademark/google.svg" width="16" />
       </v-btn>
     </template>
-    <v-sheet class="pa-2 small text-start" color="#fafafa">
+    <v-sheet class="pa-3 small text-start" color="#fafafa" rounded="xl">
       <img
         class="me-1"
         height="16"
@@ -34,7 +34,7 @@
       <b>Google Search Console</b>
 
       <div v-if="queries" class="my-2">
-        <v-table class="rounded-lg" dense>
+        <v-table class="rounded-lg" density="compact">
           <template v-slot:default>
             <thead>
               <tr>
