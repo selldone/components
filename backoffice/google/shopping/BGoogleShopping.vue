@@ -16,46 +16,37 @@
   <div class="widget-box ">
     <s-widget-header
       :src="require('../../../assets/trademark/google-shopping.png')"
-      title="Google Shopping"
+      :title="$t('channel_google.shopping.title') "
     >
     </s-widget-header>
 
     <v-list-subheader>
-      Data Sources indicate the origins of your catalog information on Google.
-      Follow this link to automatically add all products and categories to
-      Google merchandise.
+      {{$t('channel_google.shopping.subtitle')}}
+
     </v-list-subheader>
 
-    <v-row align="center" class="mb-2" justify="start" no-gutters>
-      <div class="pod">
-        <v-icon>storefront</v-icon>
-        <small class="d-block">{{ shop.title }}</small>
-      </div>
+    <u-pods-panel >
+      <u-pod-node  :title=" shop.title ">
+        <v-avatar class="avatar-gradient -thin -shop mb-1" size="24">
+          <v-img :src="getShopImagePath(shop.icon, 96)" />
+        </v-avatar>
+      </u-pod-node>
 
-      <div class="flex-grow-1 sph">
-        <span class="dot -reverse"></span>
-      </div>
-      <div class="pod">
-        <div>
-          <img
-            class="m-1"
-            height="20"
-            src="../../../assets/trademark/google.svg"
-            width="20"
-          />
-        </div>
-      </div>
-    </v-row>
+      <u-pod-wire forward>
+      </u-pod-wire>
+      <u-pod-node :image="require('../../../assets/trademark/google-shopping.png')" title="Google">
+      </u-pod-node>
+    </u-pods-panel>
 
     <v-list-subheader>
-      You can utilize this tool to effortlessly and automatically manage Google
-      ads.
+      {{$t('channel_google.shopping.tips')}}
+
     </v-list-subheader>
 
     <u-text-copy-box
       :image="require('../../../assets/icons/link.svg')"
       :value="google_products_feed"
-      message="Google Products Feed URL"
+      :message="$t('channel_google.shopping.link_message') "
       small-width-mode
     >
     </u-text-copy-box>
@@ -64,10 +55,16 @@
 
 <script>
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
+import UPodsPanel from "@selldone/components-vue/ui/pod/panel/UPodsPanel.vue";
+import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";
+import UPodWire from "@selldone/components-vue/ui/pod/wire/UPodWire.vue";
 
 export default {
   name: "BGoogleShopping",
   components: {
+    UPodWire,
+    UPodNode,
+    UPodsPanel,
     UTextCopyBox,
   },
   props: {

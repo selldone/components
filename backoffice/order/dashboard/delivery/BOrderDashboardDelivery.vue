@@ -111,7 +111,7 @@
           <div class="small mt-1">
             {{
               is_pickup
-                ?  $t("order_delivery.pickup_action_subtitle")
+                ? $t("order_delivery.pickup_action_subtitle")
                 : $t("order_delivery.courier_action_subtitle")
             }}
           </div>
@@ -309,7 +309,7 @@
                 "
               >
                 <v-icon class="me-1" size="small">edit</v-icon>
-                {{$t("global.actions.edit_address")}}
+                {{ $t("global.actions.edit_address") }}
               </v-btn>
             </template>
           </s-order-receiver-info-card>
@@ -364,16 +364,26 @@
           class="p-2"
           cols="12"
         >
-          <u-map-view
-            v-if="receiver_info.location"
-            v-model="receiver_info"
-            :center="center"
-            :marker-position="receiver_info.location"
-            :zoom="15"
-            class="overflow-hidden rounded-18px border"
-            show-user-location
-            style="width: 100%; height: 300px"
-          />
+          <template v-if="receiver_info.location">
+            <u-map-view
+              v-if="$vuetify.display.smAndUp"
+              v-model="receiver_info"
+              :center="center"
+              :marker-position="receiver_info.location"
+              :zoom="15"
+              class="overflow-hidden rounded-18px border"
+              show-user-location
+              style="width: 100%; aspect-ratio: 1;max-height: 420px"
+            />
+            <u-map-image
+              v-else
+              :location="receiver_info.location"
+              size="100%"
+              aspect-ratio="1"
+              class="overflow-hidden rounded-18px border"
+            >
+            </u-map-image>
+          </template>
 
           <!-- =================== Preferences >  Preferred Delivery Time =================== -->
           <div v-if="delivery_info && delivery_info.custom">
@@ -550,12 +560,17 @@
 
             <v-btn
               v-if="transportation_order.person"
-              :to="IS_VENDOR_PANEL?{}:{
-                name: 'BPageTransportationCouriers',
-                params: {
-                  transportation_id: transportation_order.transportation_id,
-                },
-              }"
+              :to="
+                IS_VENDOR_PANEL
+                  ? {}
+                  : {
+                      name: 'BPageTransportationCouriers',
+                      params: {
+                        transportation_id:
+                          transportation_order.transportation_id,
+                      },
+                    }
+              "
               block
               class="tnt"
               color="primary"
@@ -566,13 +581,19 @@
             </v-btn>
             <v-btn
               v-else-if="transportation_order.service"
-              :to="IS_VENDOR_PANEL?{}:{
-                name: 'BPageTransportationServiceOrders',
-                params: {
-                  transportation_id: transportation_order.transportation_id,
-                  delivery_service_id: transportation_order.service.service_id,
-                },
-              }"
+              :to="
+                IS_VENDOR_PANEL
+                  ? {}
+                  : {
+                      name: 'BPageTransportationServiceOrders',
+                      params: {
+                        transportation_id:
+                          transportation_order.transportation_id,
+                        delivery_service_id:
+                          transportation_order.service.service_id,
+                      },
+                    }
+              "
               block
               class="tnt"
               color="primary"
@@ -606,7 +627,7 @@
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ To Buyer ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
       <!-- Step 5 : Delivery to the customer > Confirmed by the customer or the transportation system -->
-      <div v-if="basket.delivery_state === PhysicalOrderStates.SentOrder.code">
+      <div v-if="basket.delivery_state === PhysicalOrderStates.SentOrder.code" class="pb-3">
         <p
           class="my-2 text-muted"
           v-html="$t('order_delivery.manual.message')"
@@ -623,12 +644,12 @@
               dialog_received_by_customer = true;
             "
           >
-            <v-icon class="me-1">check</v-icon>
+            <v-icon class="mae-1">check</v-icon>
             {{ $t("order_delivery.manual.action_received") }}
           </v-btn>
 
           <v-btn
-            class="m-1"
+            class="ma-1"
             color="#E64A19"
             rounded
             variant="flat"
@@ -682,19 +703,18 @@
 
   <!-- █████████████████████████ Dialog Delivery > Success █████████████████████████ -->
 
-  <v-dialog v-model="dialog_received_by_customer" max-width="640">
-    <v-card class="text-start">
-      <v-card-title>
+  <v-bottom-sheet v-model="dialog_received_by_customer" max-width="640" width="98vw" inset content-class="rounded-t-xl">
+    <v-card class="text-start" rounded="t-xl">
+      <v-card-title class="text-wrap">
+        <v-icon class="me-2">assignment_turned_in</v-icon>
+
         {{ $t("process_center.delivered_dialog.title") }}
       </v-card-title>
 
       <v-card-text>
         {{ $t("process_center.delivered_dialog.message") }}
 
-        <u-smart-verify
-          v-model="accept_action"
-          class="my-3"
-        ></u-smart-verify>
+        <u-smart-verify v-model="accept_action" class="my-3"></u-smart-verify>
       </v-card-text>
 
       <v-card-actions>
@@ -723,23 +743,21 @@
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 
   <!-- █████████████████████████ Dialog Delivery > Failed █████████████████████████ -->
 
-  <v-dialog v-model="dialog_returned_by_customer" max-width="640">
-    <v-card class="text-start">
-      <v-card-title>
+  <v-bottom-sheet v-model="dialog_returned_by_customer"  max-width="640" width="98vw" inset content-class="rounded-t-xl">
+    <v-card class="text-start" rounded="t-xl">
+      <v-card-title class="text-wrap">
+        <v-icon class="me-2">assignment_return</v-icon>
         {{ $t("process_center.return_delivery_dialog.title") }}
       </v-card-title>
 
       <v-card-text>
         {{ $t("process_center.return_delivery_dialog.message") }}
 
-        <u-smart-verify
-          v-model="accept_action"
-          class="my-3"
-        ></u-smart-verify>
+        <u-smart-verify v-model="accept_action" class="my-3"></u-smart-verify>
       </v-card-text>
 
       <v-card-actions>
@@ -768,7 +786,7 @@
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 </template>
 
 <script>
@@ -787,10 +805,14 @@ import { ETA } from "@selldone/core-js/enums/logistic/ETA";
 import _ from "lodash-es";
 import UDenseCirclesUsers from "../../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
+import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
+import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
 
 export default {
   name: "BOrderDashboardDelivery",
   components: {
+    UMapImage,
+    UMapView,
     SDenseImagesCircles,
     UDenseCirclesUsers,
     USmartVerify,
@@ -824,7 +846,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    isRolePanel:Boolean,
+    isRolePanel: Boolean,
   },
 
   data: function () {
@@ -861,8 +883,8 @@ export default {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
 

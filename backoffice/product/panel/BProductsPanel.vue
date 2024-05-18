@@ -396,7 +396,6 @@
     <v-dialog
       v-model="add_product_studio_dialog"
       fullscreen
-      scrollable
       transition="dialog-bottom-transition"
     >
       <v-card color="#FFF">

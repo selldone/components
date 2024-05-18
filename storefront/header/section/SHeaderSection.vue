@@ -26,12 +26,12 @@
               : SaminColorDark
       "
       :theme="is_dark ? 'dark' : 'light'"
-      :class="{ 'text-white': is_dark,'-dark':is_dark }"
+      :class="{ 'text-white': is_dark, '-dark': is_dark }"
       :extended="!overlay"
       :style="{
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
       }"
-      class="s--storefront-primary-header "
+      class="s--storefront-primary-header"
       extension-height="64px"
       flat
     >
@@ -685,8 +685,8 @@ export default {
   overflow-x: auto;
   overflow-y: hidden;
   border-bottom: 1px solid rgba(10, 10, 10, 0.3) !important;
-  &.-dark{
 
+  &.-dark {
     border-bottom: 1px solid rgba(222, 226, 230, 0.3) !important;
   }
 }

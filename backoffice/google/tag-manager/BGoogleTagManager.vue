@@ -16,21 +16,19 @@
   <div class="widget-box ">
     <s-widget-header
       :src="require('../../../assets/trademark/google-tag-manager.svg')"
-      title="Tag Manager"
+      :title="$t('channel_google.gtag.title')"
     >
     </s-widget-header>
 
     <v-list-subheader>
-      Google Analytics enables measurement of ad ROI while tracking Flash,
-      video, and social media sites and apps. Manage website tags effortlessly
-      with Google Tag Manager's free, simple, and reliable solutions—no code
-      editing required.
+
+      {{$t('channel_google.gtag.subtitle')}}
     </v-list-subheader>
 
     <v-text-field
       v-model="tag_id"
       class="max-width-field-large mx-auto"
-      label="Google Tag Manger ID"
+      :label="$t('channel_google.gtag.tag_id.label') "
       placeholder="GTM-######## or G-######## or AW-########"
       variant="underlined"
       @update:model-value="change = true"

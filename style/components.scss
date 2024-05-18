@@ -3261,9 +3261,15 @@ Fix snaky chart overflow problem!
 
 .rounded-btns {
   border-radius: 24px;
-  display: inline-block;
+  display: inline-flex;
   background-color: #fafafa;
   padding: 6px;
+  flex-wrap: wrap;
+  justify-content: stretch;
+  align-items: center;
+  & > * {
+    flex-grow: 1;
+  }
 }
 
 .hover-show {
@@ -4549,6 +4555,9 @@ canvas.heatmap-canvas {
     flex-grow: 1;
     text-transform: capitalize;
     border-radius: 12px;
+    .v-btn__content{
+      white-space: normal;
+    }
   }
 
   @media screen and (max-width: 600px) {

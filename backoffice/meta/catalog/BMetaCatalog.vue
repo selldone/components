@@ -25,16 +25,16 @@
       update your products and categories.
     </v-list-subheader>
 
-    <v-row align="center" class="mb-2" justify="start" no-gutters>
-      <div class="pod">
-        <v-icon>storefront</v-icon>
-        <small class="d-block">{{ shop.title }}</small>
-      </div>
+    <u-pods-panel >
+      <u-pod-node  :title="shop.title">
+        <v-avatar class="avatar-gradient -thin -shop mb-1" size="24">
+          <v-img :src="getShopImagePath(shop.icon, 96)" />
+        </v-avatar>
+      </u-pod-node>
 
-      <div class="flex-grow-1 sph">
-        <span class="dot -reverse"></span>
-      </div>
-      <div class="pod">
+      <u-pod-wire forward >
+      </u-pod-wire>
+      <u-pod-node >
         <div>
           <img
             class="m-1"
@@ -49,8 +49,8 @@
             width="20"
           />
         </div>
-      </div>
-    </v-row>
+      </u-pod-node>
+    </u-pods-panel>
 
     <v-list-subheader>
       Here's the link for your data feed. Simply copy it and integrate it with
@@ -83,10 +83,13 @@
 
 <script>
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
+import UPodsPanel from "@selldone/components-vue/ui/pod/panel/UPodsPanel.vue";
+import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";
+import UPodWire from "@selldone/components-vue/ui/pod/wire/UPodWire.vue";
 
 export default {
   name: "BMetaCatalog",
-  components: { UTextCopyBox },
+  components: {UPodWire, UPodNode, UPodsPanel, UTextCopyBox },
   props: {
     shop: {
       required: true,

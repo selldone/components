@@ -80,16 +80,26 @@
       <!-- ========================================= MAP ========================================= -->
 
       <v-col :md="billing ? 4 : 6" :sm="billing ? 12 : 6" class="p-2" cols="12">
-        <u-map-view
-          v-if="receiver_info.location"
-          v-model="receiver_info"
-          :center="center"
-          :marker-position="receiver_info.location"
-          :zoom="15"
-          class="overflow-hidden rounded-18px border"
-          show-user-location
-          style="width: 100%; height: 300px"
-        />
+        <template v-if="receiver_info.location">
+          <u-map-view
+            v-if="$vuetify.display.smAndUp"
+            v-model="receiver_info"
+            :center="center"
+            :marker-position="receiver_info.location"
+            :zoom="15"
+            class="overflow-hidden rounded-18px border"
+            show-user-location
+            style="width: 100%; aspect-ratio: 1;max-height: 420px"
+          />
+          <u-map-image
+            v-else
+            :location="receiver_info.location"
+            size="100%"
+            aspect-ratio="1"
+            class="overflow-hidden rounded-18px border"
+          >
+          </u-map-image>
+        </template>
 
         <!-- =================== Preferences >  Preferred Delivery Time =================== -->
         <div v-if="delivery_info && delivery_info.custom">
@@ -138,10 +148,14 @@ import SOrderBillCard from "../../../../../storefront/order/billing/card/SOrderB
 import UButtonWhatsapp from "../../../../../ui/button/whatsapp/UButtonWhatsapp.vue";
 import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
 import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
+import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
+import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 
 export default {
   name: "BOrderDashboardDropshippingDelivery",
   components: {
+    UMapView,
+    UMapImage,
     UButtonWhatsapp,
     SOrderBillCard,
     SOrderReceiverInfoCard,

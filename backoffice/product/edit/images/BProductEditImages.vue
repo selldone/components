@@ -191,9 +191,8 @@
       ></u-youtube-preview>
     </div>
 
-    <s-widget-buttons auto-fixed-position class="my-5">
+    <s-widget-buttons v-if="!forStudio" auto-fixed-position class="my-5">
       <v-btn
-        v-if="!forStudio"
         color="primary"
         size="x-large"
         variant="elevated"

@@ -18,14 +18,17 @@
   <div v-if="search_console_available" class="widget-box ">
     <s-widget-header
       :src="require('../../../assets/icons/seo.svg')"
-      title="Google SERP & Keywords"
+      :title="$t('channel_google.serp.title') "
     >
     </s-widget-header>
 
     <v-list-subheader
-      >We obtain the most precise SEO audit data from Google and present it to
-      you in a convenient manner. Simply follow the steps provided.
+      >
+      {{$t('channel_google.serp.subtitle')}}
+
+
     </v-list-subheader>
+
 
     <b-google-serp-connect
       :shop="shop"

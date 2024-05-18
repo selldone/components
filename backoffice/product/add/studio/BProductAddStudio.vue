@@ -175,8 +175,7 @@
               icon="info"
             ></s-widget-header>
             <v-list-subheader
-              >To generate the product, you can enter only the essential details
-              necessary for its creation.
+              >{{$t('product_studio.info.subtitle')}}
             </v-list-subheader>
 
             <v-text-field
@@ -193,7 +192,7 @@
             <v-text-field
               v-model="brand"
               :label="$t('add_product.edit_info.brand.label')"
-              :placeholder="$t('add_product.edit_info.brand.placeholder') "
+              :placeholder="$t('add_product.edit_info.brand.placeholder')"
               class="m-2"
               variant="underlined"
             ></v-text-field>
@@ -216,8 +215,8 @@
               icon="monetization_on"
             ></s-widget-header>
             <v-list-subheader
-              >Enter the price and discount for this product. Once the product
-              is added, you'll have access to more options.
+              >
+              {{$t('product_studio.price.subtitle')}}
             </v-list-subheader>
 
             <u-currency-input
@@ -230,29 +229,28 @@
 
             <u-price-input
               v-model="price"
-              :decimal="currency ? currency.floats : 0"
+              :currency="currency"
               :disabled="!currency"
               :label="$t('add_product.pricing.price_input')"
               :rules="[GlobalRules.required()]"
-              :suffix="currency ? currency.code : undefined"
               class="m-2 strong-field"
               placeholder="0.00"
             />
           </div>
 
-          <div class="widget-buttons">
+          <s-widget-buttons auto-fixed-position>
             <v-btn
               :disabled="!can_add"
               :loading="busy_add"
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="addProduct()"
             >
               <v-icon start>add</v-icon>
               {{ $t("global.actions.add") }}
             </v-btn>
-          </div>
+          </s-widget-buttons>
         </v-container>
 
         <div v-if="tab_product === 2">
@@ -261,7 +259,7 @@
           <b-product-edit-images v-if="product" :product="product" for-studio>
           </b-product-edit-images>
 
-          <div class="widget-buttons">
+          <s-widget-buttons auto-fixed-position>
             <v-btn
               size="x-large"
               variant="text"
@@ -278,13 +276,13 @@
             <v-btn
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="finish()"
             >
-              <v-icon class="me-1">done</v-icon>
+              <v-icon start>done</v-icon>
               {{ $t("global.actions.finish") }}
             </v-btn>
-          </div>
+          </s-widget-buttons>
         </div>
 
         <div v-if="tab_product === 3">
@@ -298,17 +296,17 @@
             for-studio
           />
 
-          <div class="widget-buttons">
+          <s-widget-buttons auto-fixed-position>
             <v-btn
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="finish()"
             >
-              <v-icon class="me-1">done</v-icon>
+              <v-icon start>done</v-icon>
               {{ $t("global.actions.finish") }}
             </v-btn>
-          </div>
+          </s-widget-buttons>
         </div>
       </div>
     </div>
@@ -327,14 +325,13 @@ import { ProductCondition } from "@selldone/core-js/enums/product/ProductConditi
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
-import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import BProductEditImages from "../../../product/edit/images/BProductEditImages.vue";
-import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import BVendorInput from "../../../vendor/input/BVendorInput.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import BProductEditType from "../../../product/edit/type/BProductEditType.vue";
+import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
 
 const TAB_PRODUCT = 1;
 const TAB_CATEGORY = 2;
@@ -342,6 +339,7 @@ const TAB_CATEGORY = 2;
 export default {
   name: "BProductAddStudio",
   components: {
+    SWidgetButtons,
     BProductEditType,
     USmartSwitch,
     BVendorInput,
@@ -418,16 +416,10 @@ export default {
       );
     },
 
-    currencyName() {
-      return this.currency ? this.$t(this.currency.name) : "";
+    can_add() {
+      return this.type && this.title && this.price>=0 && this.currency;
     },
 
-    can_add() {
-      return this.type && this.title && this.price && this.currency;
-    },
-    can_reselling() {
-      return Eligible.CanReselling(this.shop);
-    },
     isFile() {
       return this.type?.code === ProductType.FILE.code;
     },
@@ -449,10 +441,7 @@ export default {
       );
     },
     currency(currency) {
-      window.sessionStorage.setItem(
-        "temp-studio-currency",
-        currency ? currency.code : null,
-      );
+      window.sessionStorage.setItem("temp-studio-currency", currency);
     },
   },
   created() {
@@ -461,10 +450,9 @@ export default {
         ProductType[window.sessionStorage.getItem("temp-studio-type")];
 
     if (window.sessionStorage.getItem("temp-studio-currency"))
-      this.currency =
-        Currency[window.sessionStorage.getItem("temp-studio-currency")];
+      this.currency = window.sessionStorage.getItem("temp-studio-currency");
     else if (this.shop.currencies.length > 0)
-      this.currency = Currency[this.shop.currencies[0]];
+      this.currency = this.shop.currencies[0];
 
     // Assign vendor (used in subscription products)
     this.selected_vendor_id = this.vendor?.id;
@@ -493,7 +481,7 @@ export default {
             condition: ProductCondition.NEW.code,
 
             price: this.price,
-            currency: this.currency.code,
+            currency: this.currency,
 
             commission: 0,
             discount: 0,

@@ -173,9 +173,7 @@
       >
         <img
           :class="{ jump: !last_selected_position }"
-          :src="
-            require('../../../assets/icons/location-center-icon-blue.svg')
-          "
+          :src="require('../../../assets/icons/location-center-icon-blue.svg')"
           width="64px"
         />
         <span class="label-icon text-nowrap">
@@ -524,7 +522,8 @@
                   <v-btn
                     v-if="noMap"
                     color="primary"
-                    size="x-large" variant="elevated"
+                    size="x-large"
+                    variant="elevated"
                     @click="clickSetLocation"
                   >
                     <v-icon start> done</v-icon>
@@ -533,7 +532,8 @@
                   <v-btn
                     v-else
                     color="primary"
-                    size="x-large" variant="elevated"
+                    size="x-large"
+                    variant="elevated"
                     @click="showDefault()"
                   >
                     <v-icon start>save</v-icon>

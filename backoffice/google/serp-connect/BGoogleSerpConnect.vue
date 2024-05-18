@@ -24,34 +24,35 @@
       </template>
 
       <v-list-item-title>
-        <b>Connect to Google Search Console</b>
+        <b>{{$t('channel_google.serp_content.title')}}</b>
       </v-list-item-title>
       <v-list-item-subtitle>
-        Connect your shop to the search console and start exploring keywords,
-        ranks, and other free SEO tools on Selldone.
+        {{$t('channel_google.serp_content.subtitle')}}
+
       </v-list-item-subtitle>
     </v-list-item>
 
+
+    <hr class="my-5">
+
     <div v-if="!shop.search_console">
-      <b class="d-block mt-7 mb-2">
-        Prior to linking Selldone with Google Search Console, ensure the
-        following:
+      <b class="d-block mb-2">
+        {{$t('channel_google.serp_content.tips.title')}}
+
       </b>
       <ol class="my-3">
         <li>
-          Add, verify, and set as primary your
-          <router-link :to="{ name: 'BPageShopSettingDomain' }"
-            ><b>Custom Domain</b></router-link
-          >
-          .
+          {{$t('channel_google.serp_content.tips.add_in_selldone')}}
+
+
+
           <u-check :model-value="!!main_domain" class="mx-1"></u-check>
+<br>
+          <v-btn :to="{ name: 'BPageShopSettingDomain' }" prepend-icon="add_box" class="tnt" variant="text" color="primary"
+          ><b>{{$t('channel_google.serp_content.action_custom_domain')}}</b></v-btn
+          >
         </li>
-        <li>
-          Add and verify
-          <b>{{ main_domain ? main_domain.domain : "your domain" }}</b> in your
-          <a href="https://search.google.com/search-console" target="_blank"
-            ><b>Google Search Console</b></a
-          >.
+        <li v-html="$t('channel_google.serp_content.tips.add_in_google',{domain:main_domain ? main_domain.domain : 'your domain'})">
         </li>
       </ol>
     </div>
@@ -68,7 +69,8 @@
         @click="busy_search = true"
       >
         <v-icon start>cable</v-icon>
-        Connect Now
+
+        {{$t('channel_google.serp_content.action_connect_now')}}
       </v-btn>
       <v-btn
         v-else
@@ -79,7 +81,8 @@
         @click="askRemove()"
       >
         <v-icon start>mobiledata_off</v-icon>
-        Remove connection
+
+        {{$t('channel_google.serp_content.action_remove_connection')}}
       </v-btn>
     </div>
   </div>

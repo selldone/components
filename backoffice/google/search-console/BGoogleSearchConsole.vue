@@ -16,25 +16,21 @@
   <div class="widget-box ">
     <s-widget-header
       :src="require('../../../assets/trademark/search-console.svg')"
-      title="Search Console"
+      :title="$t('channel_google.console.title') "
     >
     </s-widget-header>
     <v-list-subheader>
       <div>
-        Add a meta tag to your homepage for Google Search Console verification.
-        ex.
-        <i>
-          name="google-site-verification"
-          content="<b>vi9MmjEeHnwy88zpRD13kAgnlydDb</b>"
-        </i>
+        {{$t('channel_google.console.subtitle')}}
+        <div dir="ltr" class="text-left"><i>name="google-site-verification" content="<b>vi9MmjEeHnwy88zpRD13kAgnlydDb</b>"</i></div>
       </div>
     </v-list-subheader>
 
     <v-text-field
       v-model="code"
       class="max-width-field-large mx-auto"
-      label="Verification meta tag"
-      placeholder="From google, e.g. viQg9mjdBj..."
+      :label="$t('channel_google.console.code.label') "
+      :placeholder="$t('channel_google.console.code.placeholder') "
       variant="underlined"
       @update:model-value="change = true"
       :append-inner-icon="lock ? 'lock' : 'lock_open'"
