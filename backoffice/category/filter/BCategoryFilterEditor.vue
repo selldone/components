@@ -17,7 +17,7 @@
     <div class="widget-box mb-5">
       <s-widget-header
         :title="$t('add_category.filter.title')"
-        icon="filter_alt"
+        icon="filter_list"
       ></s-widget-header>
       <v-list-subheader>
         {{ $t("add_category.filter.sub_title") }}

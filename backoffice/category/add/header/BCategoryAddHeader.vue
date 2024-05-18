@@ -24,11 +24,14 @@
       :href="`${getShopMainUrl(shop)}/${category.name}-category`"
       target="_blank"
       variant="text"
+      size="x-large" class="tnt"
+      rounded
     >
       <v-avatar
         v-if="category.icon"
-        class="me-2 avatar-gradient -thin -category"
-        size="24"
+        class="me-2 ms-n3 avatar-gradient -thin -category"
+        size="36"
+
       >
         <v-img :src="getShopImagePath(category.icon, 64)"></v-img>
       </v-avatar>
@@ -38,14 +41,13 @@
     </v-btn>
   </v-toolbar>
 
-  <div v-if="category" class="max-widget-width mt-5">
+  <div v-if="category" class="max-w-640 mx-auto mt-5">
     <v-btn-toggle
       :model-value="tab"
       class="widget-toggle mx-0"
       mandatory
       rounded
       selected-class="blue-flat"
-      style="height: 64px"
       @update:model-value="(v) => $emit('update:tab', v)"
     >
       <v-btn value="setting">
@@ -54,13 +56,18 @@
       </v-btn>
 
       <v-btn value="filter">
-        <v-icon class="me-1">filter_list</v-icon>
+        <v-icon class="me-1">filter_alt</v-icon>
         {{ $t("add_category.menu.filter") }}
       </v-btn>
 
       <v-btn value="template">
         <v-icon class="me-1">architecture</v-icon>
         {{ $t("global.commons.template") }}
+      </v-btn>
+
+      <v-btn value="engine">
+        <v-icon class="me-1">auto_mode</v-icon>
+        {{ $t("global.commons.engine") }}
       </v-btn>
 
       <v-btn value="critical">

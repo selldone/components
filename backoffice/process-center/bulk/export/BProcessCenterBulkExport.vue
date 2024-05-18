@@ -88,7 +88,6 @@
         multiple
         rounded
         selected-class="blue-flat"
-        style="height: 64px"
       >
         <v-btn
           v-for="state in all_delivery_states"
@@ -111,7 +110,6 @@
         mandatory
         rounded
         selected-class="blue-flat "
-        style="height: 64px"
         title="Page size"
       >
         <v-btn
@@ -135,7 +133,6 @@
         mandatory
         rounded
         selected-class="blue-flat "
-        style="height: 64px"
       >
         <v-btn :value="false" class="w-50" min-height="42">
           <v-icon class="me-1" size="small">fa:fas fa-pager</v-icon>

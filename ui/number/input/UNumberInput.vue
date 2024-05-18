@@ -36,7 +36,7 @@
     :rounded="rounded"
     :single-line="singleLine"
     :suffix="suffix"
-    :theme="dark?'dark':'light'"
+    :theme="dark ? 'dark' : 'light'"
     :variant="
       variant
         ? variant
@@ -58,8 +58,8 @@
         }
         newValue = validateNumber(newValue);
         $nextTick(() => {
-          $emit('blur',newValue);
-          $emit('change',newValue); // Make sure update value!
+          $emit('blur', newValue);
+          $emit('change', newValue); // Make sure update value!
         });
       }
     "
@@ -122,7 +122,6 @@
 
       <v-btn
         v-if="clearable"
-
         icon
         size="24"
         variant="text"
@@ -135,7 +134,7 @@
       </v-btn>
     </template>
     <template v-if="$slots.append" v-slot:append>
-        <slot name="append"></slot>
+      <slot name="append"></slot>
     </template>
 
     <template v-slot:prepend-inner>

@@ -39,6 +39,7 @@
     item-value="id"
     messages=" "
     @update:model-value="$emit('change')"
+    :counter="counter"
   >
     <!-- ―――――――――――――――――― message ―――――――――――――――――― -->
 
@@ -60,10 +61,10 @@
       <v-list-item
         :prepend-avatar="
           item.raw.icon
-            ? getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)
+            ? getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL,null)
             : null
         "
-        :prepend-icon="item.raw.icon ? null : 'folder'"
+        :prepend-icon="item.raw.icon ? null : 'home'"
         :subtitle="item.raw.description?.limitWords(8)"
         :title="item.raw.title"
         class="text-start"
@@ -83,7 +84,8 @@
     <template v-slot:chip="{ props, item }">
       <v-chip
         v-if="multiple"
-        :prepend-avatar="getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)"
+        :prepend-avatar="item.raw.icon?getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL):undefined"
+        :prepend-icon="item.raw.icon ? null : 'home'"
         :text="item.raw.title"
         v-bind="props"
       ></v-chip>
@@ -213,6 +215,7 @@ export default {
     },
     variant: {},
     singleLine: Boolean,
+    counter:{},
   },
   data: () => ({
     category: null,

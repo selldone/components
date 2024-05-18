@@ -79,7 +79,8 @@
                   >
                   <v-btn
                     class="ms-2"
-                    icon variant="text"
+                    icon
+                    variant="text"
                     size="small"
                     @click="
                       (e) =>
@@ -159,13 +160,8 @@
 
                   <!-- actions > Disagree -->
 
-                  <v-btn
-                    :color="
-                      com.action && com.action.reaction === 'DISAGREE'
-                        ? '#9C27B0'
-                        : undefined
-                    "
-                    :loading="busy_reaction === com.id + 'DISAGREE'"
+                  <span
+                    class="cc-d"
                     :style="{
                       '--size':
                         Math.round(
@@ -174,33 +170,37 @@
                               (com.agrees + com.disagrees + 10)) /*bias*/,
                         ) + 'px',
                     }"
-                    class="m-1 cc-d"
-                    size="small"
-                    variant="text"
-                    @click="sendCommentReaction(com, 'DISAGREE')"
                   >
-                    <v-icon class="me-1" size="small"
-                      >{{
-                        com.action && com.action.reaction === "DISAGREE"
-                          ? "thumb_down"
-                          : "thumb_down_off_alt"
-                      }}
-                    </v-icon>
-                    {{ $t("community.commons.disagree") }}
-                    <b v-if="com.disagrees" class="ms-1"
-                      >({{ numeralFormat(com.disagrees, "0.[0]a") }})</b
-                    ></v-btn
-                  >
+                    <v-btn
+                      :color="
+                        com.action && com.action.reaction === 'DISAGREE'
+                          ? '#9C27B0'
+                          : undefined
+                      "
+                      :loading="busy_reaction === com.id + 'DISAGREE'"
+                      class="ma-1"
+                      size="small"
+                      variant="text"
+                      @click="sendCommentReaction(com, 'DISAGREE')"
+                    >
+                      <v-icon class="me-1" size="small"
+                        >{{
+                          com.action && com.action.reaction === "DISAGREE"
+                            ? "thumb_down"
+                            : "thumb_down_off_alt"
+                        }}
+                      </v-icon>
+                      {{ $t("community.commons.disagree") }}
+                      <b v-if="com.disagrees" class="ms-1"
+                        >({{ numeralFormat(com.disagrees, "0.[0]a") }})</b
+                      ></v-btn
+                    >
+                  </span>
 
                   <!-- actions > Agree -->
 
-                  <v-btn
-                    :color="
-                      com.action && com.action.reaction === 'AGREE'
-                        ? 'success'
-                        : undefined
-                    "
-                    :loading="busy_reaction === com.id + 'AGREE'"
+                  <span
+                    class="cc-a"
                     :style="{
                       '--size':
                         Math.round(
@@ -209,23 +209,32 @@
                               (com.agrees + com.disagrees + 10)) /*bias*/,
                         ) + 'px',
                     }"
-                    class="m-1 cc-a"
-                    size="small"
-                    variant="text"
-                    @click="sendCommentReaction(com, 'AGREE')"
                   >
-                    <v-icon class="me-1" size="small"
-                      >{{
-                        com.action && com.action.reaction === "AGREE"
-                          ? "thumb_up"
-                          : "thumb_up_off_alt"
-                      }}
-                    </v-icon>
-                    {{ $t("community.commons.agree") }}
-                    <b v-if="com.agrees" class="ms-1"
-                      >({{ numeralFormat(com.agrees, "0.[0]a") }})</b
-                    ></v-btn
-                  >
+                    <v-btn
+                      :color="
+                        com.action && com.action.reaction === 'AGREE'
+                          ? 'success'
+                          : undefined
+                      "
+                      :loading="busy_reaction === com.id + 'AGREE'"
+                      class="ma-1"
+                      size="small"
+                      variant="text"
+                      @click="sendCommentReaction(com, 'AGREE')"
+                    >
+                      <v-icon class="me-1" size="small"
+                        >{{
+                          com.action && com.action.reaction === "AGREE"
+                            ? "thumb_up"
+                            : "thumb_up_off_alt"
+                        }}
+                      </v-icon>
+                      {{ $t("community.commons.agree") }}
+                      <b v-if="com.agrees" class="ms-1"
+                        >({{ numeralFormat(com.agrees, "0.[0]a") }})</b
+                      ></v-btn
+                    >
+                  </span>
                 </div>
               </div>
             </div>
@@ -244,14 +253,14 @@
                 }}
                 ({{ com.replies }})
               </v-btn>
-              <community-comments
+              <c-comments-list
                 :parent="com"
                 :post="post"
                 :show="show_replies_messages"
                 @blur="focus = null"
                 @focus="focus = com.id"
               >
-              </community-comments>
+              </c-comments-list>
             </div>
           </div>
         </v-scroll-y-reverse-transition>
@@ -291,71 +300,112 @@
 
     <!-- Comment send -->
 
-    <v-textarea
-      v-model="body"
+    <div
+      class="my-2"
       :class="{
-        border: !parent || focus_me,
-        'mx-4': !parent,
-        'ms-4': parent,
+        'mx-2 mx-sm-4': !parent,
+        'ms-2 ms-sm-4': parent,
         opx: !show,
       }"
-      :placeholder="
-        parent
-          ? $t('community.comment.comment_response_plc', {
-              name: parent.profile.name,
-            })
-          : $t('community.comment.comment_plc')
-      "
-      auto-grow
-      class="my-2 rounded-28px"
-      color="#ddd"
-      flat
-      hide-details
-      bg-color="transparent"
-      rounded
-      rows="1"
-      variant="solo"
-      @blur="
-        $emit('blur');
-        focus_me = false;
-      "
-      @focus="
-        $emit('focus');
-        focus_me = true;
-      "
     >
-      <template v-slot:prepend-inner>
-        <v-avatar class="me-2" color="#fafafa" size="2.4em">
-          <v-img :src="getUserAvatar(USER_ID())"></v-img>
-        </v-avatar>
-      </template>
-      <template v-slot:append-inner>
-        <v-btn class="me-2" icon @click="showSelectImage()" variant="text">
-          <v-icon>add_a_photo</v-icon>
-        </v-btn>
+      <v-textarea
+        v-model="body"
+        :class="{
+          border: !parent || focus_me,
 
-        <v-btn
-          :class="{ disabled: !body }"
-          :disabled="!body"
-          :color="body ? 'primary' : '#666'"
-          icon
-          :loading="busy"
-          :variant="body ? 'elevated' : 'text'"
-          class=""
-          @click="sendComment"
-        >
-          <v-icon class="flip-rtl">send</v-icon>
-        </v-btn>
-      </template>
-    </v-textarea>
+          ' rounded-t-xl': $vuetify.display.xs,
+          'border-b-0 ': $vuetify.display.xs && body,
+          'rounded-b-xl': $vuetify.display.xs && !body,
 
-    <input
-      ref="image_input"
-      accept="image/*"
-      hidden="hidden"
-      type="file"
-      @change="onSelectImage"
-    />
+          'rounded-28px': !$vuetify.display.xs,
+        }"
+        :placeholder="
+          parent
+            ? $t('community.comment.comment_response_plc', {
+                name: parent.profile.name,
+              })
+            : $t('community.comment.comment_plc')
+        "
+        auto-grow
+        color="#ddd"
+        flat
+        hide-details
+        bg-color="transparent"
+        rounded
+        rows="1"
+        variant="solo"
+        @blur="
+          $emit('blur');
+          focus_me = false;
+        "
+        @focus="
+          $emit('focus');
+          focus_me = true;
+        "
+      >
+        <template v-slot:prepend-inner>
+          <v-avatar class="me-2" color="#fafafa" size="2.4em">
+            <v-img :src="getUserAvatar(USER_ID())"></v-img>
+          </v-avatar>
+        </template>
+        <template v-if="!$vuetify.display.xs" v-slot:append-inner>
+          <v-btn class="me-2" icon @click="showSelectImage()" variant="text">
+            <v-icon>add_a_photo</v-icon>
+          </v-btn>
+
+          <v-btn
+            :class="{ disabled: !body }"
+            :disabled="!body"
+            :color="body ? 'primary' : '#666'"
+            icon
+            :loading="busy"
+            :variant="body ? 'elevated' : 'text'"
+            class=""
+            @click="sendComment"
+          >
+            <v-icon class="flip-rtl">send</v-icon>
+          </v-btn>
+        </template>
+      </v-textarea>
+
+      <v-expand-transition>
+        <div v-if="$vuetify.display.xs && body" class="text-center">
+          <div class="rounded-b-xl border border-t-0 mb-2">
+            <v-btn
+              class="my-1 mx-3"
+              icon
+              @click="showSelectImage()"
+              variant="text"
+            >
+              <v-icon>add_a_photo</v-icon>
+            </v-btn>
+
+            <v-btn
+              :class="{ disabled: !body }"
+              :disabled="!body"
+              :color="body ? 'primary' : '#666'"
+              :loading="busy"
+              :variant="body ? 'elevated' : 'text'"
+              class="my-1 mx-3"
+              @click="sendComment"
+              rounded
+              min-height="48px"
+            >
+              {{ $t("global.actions.send") }}
+              <v-icon class="flip-rtl" end>send</v-icon>
+            </v-btn>
+          </div>
+        </div>
+      </v-expand-transition>
+
+      <input
+        ref="image_input"
+        accept="image/*"
+        hidden="hidden"
+        type="file"
+        @change="onSelectImage"
+      />
+    </div>
   </div>
 </template>
 

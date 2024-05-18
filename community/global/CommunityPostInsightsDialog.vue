@@ -13,19 +13,22 @@
   -->
 
 <template>
-  <v-dialog
+  <v-bottom-sheet
     v-if="post"
     v-model="dialog"
-    :fullscreen="$vuetify.display.mdAndDown"
     max-width="560"
+    width="98vw"
+    inset
     scrollable
+    content-class="rounded-t-xl"
   >
-    <v-card>
-      <v-card-title>
+    <v-card rounded="t-xl">
+      <v-card-title class="d-flex align-center">
+        <v-icon class="me-2">ssid_chart</v-icon>
         Insights
 
         <v-spacer></v-spacer>
-        <v-btn icon size="large" @click="dialog = false">
+        <v-btn icon variant="text" size="large" @click="dialog = false">
           <v-icon>close</v-icon>
         </v-btn>
       </v-card-title>
@@ -40,7 +43,7 @@
             sm="4"
           >
             <small class="d-block">
-              <v-icon>{{ item.icon }} </v-icon>
+              <v-icon>{{ item.icon }}</v-icon>
               <br />
               {{ $t(item.name) }}</small
             >
@@ -65,7 +68,7 @@
         </v-row>
       </v-card-text>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 </template>
 
 <script>

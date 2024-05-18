@@ -139,7 +139,7 @@
               rounded
               selected-class="black-flat"
               @update:model-value="initHeatmap"
-              style="min-height: 64px"
+
             >
               <v-btn title="Likes" value="likes" stacked>
                 <v-icon

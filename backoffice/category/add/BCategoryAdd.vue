@@ -25,6 +25,14 @@
       >
       </b-category-add-header>
     </v-card-title>
+    <!-- ███████████████████████████ Engine ███████████████████████████ -->
+    <template v-if="tab === 'engine'">
+      <b-category-engine-editor
+        :category="category"
+        :shop="shop"
+        @edit-engine="(_engine) => (category.engine = _engine)"
+      ></b-category-engine-editor>
+    </template>
 
     <!-- ███████████████████████████ Setting ███████████████████████████ -->
     <template v-if="tab === 'setting'">
@@ -88,11 +96,14 @@
             color="primary"
             variant="text"
             @click="edit_name = !edit_name"
+            height="auto"
+            min-height="36"
           >
             <v-icon class="me-1">link</v-icon>
-            {{ $t("global.actions.edit") }} : {{ getShopMainUrl(shop) }}/{{
-              name
-            }}-category
+            <div class="text-wrap text-start py-1">
+              <b>{{ $t("global.actions.edit") }}</b> :
+              {{ getShopMainUrl(shop) }}/{{ name }}-category
+            </div>
           </v-btn>
           <v-expand-transition>
             <div v-if="edit_name">
@@ -371,10 +382,13 @@ import BPageInput from "../../page/input/BPageInput.vue";
 import BTranslationButtonCategory from "../../translation/button/category/BTranslationButtonCategory.vue";
 import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
 import BCategoryAddHeader from "../../category/add/header/BCategoryAddHeader.vue";
+import BCategoryEngineEditor from "@selldone/components-vue/backoffice/category/engine/BCategoryEngineEditor.vue";
 
 export default {
   name: "BCategoryAdd",
   components: {
+    BCategoryEngineEditor,
+
     BCategoryAddHeader,
     SWidgetHeader,
     BTranslationButtonCategory,

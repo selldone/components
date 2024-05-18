@@ -756,10 +756,63 @@
 
                 {{ $t("products_select.filter_box.clear_action") }}
               </v-btn>
+
+              <div class="mt-2">
+                <small class="d-block"
+                  >Load products from categories in the root.</small
+                >
+              </div>
+
+              <v-btn
+                class="tnt ma-1"
+                color="primary"
+                size="small"
+                @click="dialog_root_engine = true"
+              >
+                <v-icon class="me-1" size="small">auto_mode</v-icon>
+
+                Edit Root Engine
+              </v-btn>
             </div>
           </div>
         </v-col>
       </template>
+
+      <v-col
+        v-if="
+          current_engine?.categories?.length || current_engine?.tags?.length
+        "
+        key="engine"
+        class="p-2 d-flex flex-column"
+        cols="12"
+        lg="3"
+        md="4"
+        sm="6"
+        xl="3"
+      >
+        <div
+          class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+        >
+          <div>
+            <h3>Extra Products Engine</h3>
+            <small class="d-block">
+              More products will be loaded from selected categories and tags.
+            </small>
+
+            <b-category-engine-preview
+              class="my-2"
+              :category="
+                parent_folders
+                  ? parent_folders
+                  : { id: 'root', title: $t('global.commons.home') }
+              "
+              :engine-categories="current_engine.categories"
+              :engine-tags="current_engine.tags"
+            >
+            </b-category-engine-preview>
+          </div>
+        </div>
+      </v-col>
     </v-fade-transition>
 
     <u-loading-ellipsis
@@ -1177,12 +1230,12 @@
                 </template>
 
                 <v-list-item-title>
-
-                  {{$t('products_select.menu.category_assign_profile')}}
+                  {{ $t("products_select.menu.category_assign_profile") }}
                 </v-list-item-title>
-                <v-list-item-subtitle
-                  >
-                  {{$t('products_select.menu.category_assign_profile_subtitle')}}
+                <v-list-item-subtitle>
+                  {{
+                    $t("products_select.menu.category_assign_profile_subtitle")
+                  }}
                 </v-list-item-subtitle>
               </v-list-item>
 
@@ -1193,10 +1246,11 @@
                   <v-icon size="small">local_offer</v-icon>
                 </template>
 
-                <v-list-item-title>   {{$t('products_select.menu.bulk_discount')}} </v-list-item-title>
-                <v-list-item-subtitle
-                  >
-                  {{$t('products_select.menu.bulk_discount_subtitle')}}
+                <v-list-item-title>
+                  {{ $t("products_select.menu.bulk_discount") }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ $t("products_select.menu.bulk_discount_subtitle") }}
                 </v-list-item-subtitle>
               </v-list-item>
             </template>
@@ -1213,9 +1267,12 @@
             class="py-0"
             density="compact"
           >
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Past Product (copy) ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Set root filter ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-            <v-list-item @click="dialog_root_filter = true">
+            <v-list-item
+              @click="dialog_root_filter = true"
+              append-icon="filter_alt"
+            >
               <template v-slot:prepend>
                 <v-avatar
                   v-if="parent_folders"
@@ -1223,14 +1280,46 @@
                   :size="24"
                   class="avatar-gradient -thin -category"
                 ></v-avatar>
-                <v-icon v-else size="small">filter_alt</v-icon>
+                <v-icon v-else size="small">home</v-icon>
               </template>
 
               <v-list-item-title v-if="parent_folders">
                 Set Filter: {{ parent_folders.title?.limitWords(3) }}
               </v-list-item-title>
               <v-list-item-title v-else> Set Root Filter</v-list-item-title>
+
+              <v-list-item-subtitle>
+                Set filters of this category.
+              </v-list-item-subtitle>
             </v-list-item>
+
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Set root engine ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+            <v-list-item
+              @click="dialog_root_engine = true"
+              append-icon="auto_mode"
+            >
+              <template v-slot:prepend>
+                <v-avatar
+                  v-if="parent_folders"
+                  :image="getShopImagePath(parent_folders.icon, 64)"
+                  :size="24"
+                  class="avatar-gradient -thin -category"
+                ></v-avatar>
+                <v-icon v-else size="small">home</v-icon>
+              </template>
+
+              <v-list-item-title v-if="parent_folders">
+                Set Engine: {{ parent_folders.title?.limitWords(3) }}
+              </v-list-item-title>
+              <v-list-item-title v-else> Set Root Engine</v-list-item-title>
+
+              <v-list-item-subtitle>
+                Load extra products from other categories or by tags.
+              </v-list-item-subtitle>
+            </v-list-item>
+
+            <v-divider></v-divider>
           </v-list>
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For all ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -1294,7 +1383,11 @@
               </template>
 
               <v-list-item-title>
-                {{ all_products_selected ? $t('products_select.menu.unselect') : $t('products_select.menu.select_all_products') }}
+                {{
+                  all_products_selected
+                    ? $t("products_select.menu.unselect")
+                    : $t("products_select.menu.select_all_products")
+                }}
               </v-list-item-title>
             </v-list-item>
 
@@ -1327,8 +1420,7 @@
                 </template>
 
                 <v-list-item-title>
-
-                 {{ $t('products_select.menu.sort_categories')}}
+                  {{ $t("products_select.menu.sort_categories") }}
                 </v-list-item-title>
               </v-list-item>
             </template>
@@ -1689,6 +1781,70 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <!-- ████████████████████ Dialog > Edit shop root engine ████████████████████ -->
+  <v-dialog
+    v-if="!IS_VENDOR_PANEL"
+    v-model="dialog_root_engine"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <v-card class="text-start">
+      <v-card-title>
+        <v-avatar class="avatar-gradient -thin -shop me-2" size="38">
+          <img :src="getShopImagePath(shop.icon)" />
+        </v-avatar>
+
+        {{ shop.title }}
+        <b v-if="parent_folders" class="ms-1">
+          |
+
+          <u-avatar-folder
+            :src="getShopImagePath(parent_folders.icon, 64)"
+            is-amber
+            :size="36"
+            class="mx-1"
+            side-icon="folder"
+            :border-size="5"
+          ></u-avatar-folder>
+
+          {{ parent_folders.title }}
+        </b>
+      </v-card-title>
+      <v-card-text>
+        <b-category-engine-editor
+          :category="
+            parent_folders
+              ? parent_folders
+              : {
+                  id: 'root',
+                  shop_id: shop.id,
+                  engine: shop.engine,
+                }
+          "
+          :shop="shop"
+          @edit-engine="
+            (_engine) => {
+              shop.engine = _engine;
+            }
+          "
+        />
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="dialog_root_engine = false"
+          >
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -1728,6 +1884,8 @@ import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
 import UDrop from "../../../ui/drag/core/UDrop.vue";
 import UDrag from "../../../ui/drag/core/UDrag.vue";
 import VPricingInput from "../../../storefront/pricing/VPricingInput.vue";
+import BCategoryEngineEditor from "@selldone/components-vue/backoffice/category/engine/BCategoryEngineEditor.vue";
+import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
 
 export default {
   name: "BProductsWindow",
@@ -1742,6 +1900,8 @@ export default {
     "click:fast-add",
   ],
   components: {
+    BCategoryEnginePreview,
+    BCategoryEngineEditor,
     UDrag,
     UDrop,
     UAvatarFolder,
@@ -1978,6 +2138,9 @@ export default {
     //━━━━━━━━━━━━━━━━ Root shop filters ━━━━━━━━━━━━
     dialog_root_filter: false,
     busy_clear_root_filter: false,
+
+    //━━━━━━━━━━━━━━━━ Root shop engine ━━━━━━━━━━━━
+    dialog_root_engine: false,
   }),
 
   computed: {
@@ -2069,9 +2232,13 @@ export default {
       )
         return null;
       if (this.currentProductForMenu?.type === ProductType.SUBSCRIPTION.code)
-        return this.$t('products_select.menu.subscription_vendor_not_support_message');
+        return this.$t(
+          "products_select.menu.subscription_vendor_not_support_message",
+        );
       else if (this.currentProductForMenu?.vendor_id)
-        return  this.$t('products_select.menu.vendor_owner_not_assignable_message');
+        return this.$t(
+          "products_select.menu.vendor_owner_not_assignable_message",
+        );
       return null;
     },
 
@@ -2112,6 +2279,12 @@ export default {
 
     all_products_selected() {
       return this.selected_products.length === this.products.length;
+    },
+
+    current_engine() {
+      return this.parent_folders
+        ? this.parent_folders.engine
+        : this.shop.engine;
     },
   },
   watch: {

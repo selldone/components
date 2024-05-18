@@ -4604,11 +4604,15 @@ canvas.heatmap-canvas {
   font-weight: 500;
   font-size: 12px;
   position: relative;
-  min-height: 48px;
   flex-grow: 1;
+  min-height: 64px;
+  height: auto;
 
   box-shadow: inset 0 2px 8px rgba(15, 15, 15, 0.08);
-  height: auto;
+
+  & > .v-btn{
+    min-height: 42px !important;
+  }
 
   &.inline {
     display: inline-block !important;

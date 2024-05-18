@@ -44,15 +44,7 @@
         @update:model-value="change = true"
       >
         <template v-slot:chip="{ props, item }">
-          <v-chip v-bind="props">
-            <v-avatar
-              :color="item.raw ? item.raw.toColor(true) : '#333'"
-              class="text-white"
-              start
-              v-text="item.raw?.slice(0, 1).toUpperCase()"
-            ></v-avatar>
-            {{ item.raw }}
-          </v-chip>
+          <u-chip-tag v-bind="props" :tag="item.raw"> </u-chip-tag>
         </template>
       </v-combobox>
     </div>
@@ -62,10 +54,11 @@
 <script>
 import _ from "lodash-es";
 import { BackofficeLocalStorages } from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
+import UChipTag from "@selldone/components-vue/ui/chip/tag/UChipTag.vue";
 
 export default {
   name: "BProductTagsInput",
-  components: {},
+  components: { UChipTag },
   props: {
     product: {
       required: true,

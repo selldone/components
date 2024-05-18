@@ -46,12 +46,16 @@
 
     <!-- -------------------- Current -------------------- -->
 
-    <v-icon :small="small" class="mx-1">{{ $t("icons.chevron_next") }}</v-icon>
+    <template v-if="category.id /*Do not show duplicated home! */">
+      <v-icon :small="small" class="mx-1">{{
+        $t("icons.chevron_next")
+      }}</v-icon>
 
-    <v-avatar v-if="category.icon" :size="small ? 16 : 24"
-      ><img :src="getShopImagePath(category.icon, 64)" class="me-1"
-    /></v-avatar>
-    {{ category.title }}
+      <v-avatar v-if="category.icon" :size="small ? 16 : 24"
+        ><img :src="getShopImagePath(category.icon, 64)" class="me-1"
+      /></v-avatar>
+      {{ category.title }}
+    </template>
   </span>
 </template>
 
