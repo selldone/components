@@ -26,7 +26,7 @@
   >
     <!-- ████████████████████ Custom Page ███████████████████ -->
     <LPageViewer
-      v-if="parent_folders?.page?.content "
+      v-if="parent_folders?.page?.content"
       :augment="parent_folders.augment"
       :initialPageData="parent_folders.page.content"
       :style="parent_folders.page.background"
@@ -370,13 +370,13 @@ import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
 import SProductOverviewLoading from "../../../storefront/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 import _ from "lodash-es";
-import {defineAsyncComponent} from "vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "SProductsListing",
   components: {
-    LPageViewer: defineAsyncComponent(() =>
-        import('@selldone/page-builder/page/viewer/LPageViewer.vue')
+    LPageViewer: defineAsyncComponent(
+      () => import("@selldone/page-builder/page/viewer/LPageViewer.vue"),
     ),
     SProductOverviewLoading,
     UBreadcrumb,
