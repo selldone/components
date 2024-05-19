@@ -759,68 +759,71 @@
             </div>
           </div>
         </v-col>
-      </template>
 
-      <v-col
-        v-if="
+        <v-col
+            v-if="
 
           (current_engine?.categories?.length ||
             current_engine?.tags?.length ||
             true)
         "
-        key="engine"
-        class="p-2 d-flex flex-column"
-        cols="12"
-        lg="3"
-        md="4"
-        sm="6"
-        xl="3"
-      >
-        <div
-          class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+            key="engine"
+            class="p-2 d-flex flex-column"
+            cols="12"
+            lg="3"
+            md="4"
+            sm="6"
+            xl="3"
         >
-          <div>
-            <h3>Extra Products Engine</h3>
+          <div
+              class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+          >
+            <div>
+              <h3>Extra Products Engine</h3>
 
-            <template v-if="current_engine">
-              <small class="d-block">
-                More products will be loaded from selected categories and tags.
-              </small>
+              <template v-if="current_engine">
+                <small class="d-block">
+                  More products will be loaded from selected categories and tags.
+                </small>
 
-              <b-category-engine-preview
-                class="my-2"
-                :category="
+                <b-category-engine-preview
+                    class="my-2"
+                    :category="
                   parent_folders
                     ? parent_folders
                     : { id: 'root', title: $t('global.commons.home') }
                 "
-                :engine-categories="current_engine.categories"
-                :engine-tags="current_engine.tags"
-              >
-              </b-category-engine-preview>
-            </template>
+                    :engine-categories="current_engine.categories"
+                    :engine-tags="current_engine.tags"
+                >
+                </b-category-engine-preview>
+              </template>
 
-            <v-icon v-else class="my-2" size="48"> devices_fold</v-icon>
+              <v-icon v-else class="my-2" size="48"> devices_fold</v-icon>
 
-            <div class="mt-2">
-              <small class="d-block"
+              <div class="mt-2">
+                <small class="d-block"
                 >Load products from categories in the {{parent_folders?parent_folders.title:$t('global.commons.home')}}.</small
+                >
+              </div>
+
+              <v-btn
+                  class="tnt ma-1"
+                  color="primary"
+                  size="small"
+                  @click="dialog_root_engine = true"
               >
+                <v-icon class="me-1" size="small">auto_mode</v-icon>
+
+                Edit Root Engine
+              </v-btn>
             </div>
-
-            <v-btn
-              class="tnt ma-1"
-              color="primary"
-              size="small"
-              @click="dialog_root_engine = true"
-            >
-              <v-icon class="me-1" size="small">auto_mode</v-icon>
-
-              Edit Root Engine
-            </v-btn>
           </div>
-        </div>
-      </v-col>
+        </v-col>
+
+      </template>
+
+
     </v-fade-transition>
 
     <u-loading-ellipsis

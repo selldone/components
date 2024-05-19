@@ -63,7 +63,7 @@
             variant="underlined"
             @blur="
               () => {
-                if (!edit_name || !name) name = slugify(title);
+                if (!name) name = slugify(title);
               }
             "
           >
