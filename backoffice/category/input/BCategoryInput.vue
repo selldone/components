@@ -59,17 +59,29 @@
     <!-- ―――――――――――――――――― items ―――――――――――――――――― -->
     <template v-slot:item="{ props, item }">
       <v-list-item
-        :prepend-avatar="
-          item.raw.icon
-            ? getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL,null)
-            : null
-        "
-        :prepend-icon="item.raw.icon ? null : 'home'"
         :subtitle="item.raw.description?.limitWords(8)"
         :title="item.raw.title"
         class="text-start"
         v-bind="props"
       >
+        <template v-slot:prepend>
+          <u-avatar-folder
+            :size="42"
+            :borderSize="5"
+            is-amber
+            hide-side-icon
+
+            :placeholder-icon="item.raw.id ? 'folder' : 'home'"
+            :src="
+              item.raw.icon
+                ? getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL, null)
+                : null
+            "
+            :text-avatar="item.raw.title"
+
+          >
+          </u-avatar-folder>
+        </template>
         <template
           v-if="multiple /*Show the category detail on the multiple mode!*/"
           v-slot:subtitle
@@ -84,8 +96,12 @@
     <template v-slot:chip="{ props, item }">
       <v-chip
         v-if="multiple"
-        :prepend-avatar="item.raw.icon?getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL):undefined"
-        :prepend-icon="item.raw.icon ? null : 'home'"
+        :prepend-avatar="
+          item.raw.icon
+            ? getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)
+            : undefined
+        "
+        :prepend-icon="item.raw.icon ? null : !item.raw.id ? 'home' : 'folder'"
         :text="item.raw.title"
         v-bind="props"
       ></v-chip>
@@ -151,10 +167,11 @@
 import CircleImage from "../../../ui/image/CircleImage.vue";
 import BCategoryParent from "../../category/parent/BCategoryParent.vue";
 import threads from "@selldone/core-js/utils/thread/threads";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "BCategoryInput",
-  components: { BCategoryParent, CircleImage },
+  components: { UAvatarFolder, BCategoryParent, CircleImage },
   emits: ["change", "update:modelValue"],
   props: {
     modelValue: {},
@@ -215,7 +232,7 @@ export default {
     },
     variant: {},
     singleLine: Boolean,
-    counter:{},
+    counter: {},
   },
   data: () => ({
     category: null,
@@ -317,7 +334,7 @@ export default {
               parent: true,
 
               offset: 0,
-              limit: 10,
+              limit: this.search ? 20 : 100,
             },
           },
         )

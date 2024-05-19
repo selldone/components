@@ -24,7 +24,7 @@
   >
     <v-avatar
       :size="size - borderSize"
-      color="#fff"
+      :color="!src && text_avatar_color ? text_avatar_color : '#fff'"
       :style="{ 'border-radius': `${border_radius - 2}px` }"
       cover
     >
@@ -37,10 +37,18 @@
           ></s-image-placeholder>
         </template>
       </v-img>
+
+      <span
+        v-else-if="textAvatar"
+        :style="{ 'font-size': size * 0.32 + 'px' }"
+        class="text-uppercase pen usn"
+        >{{ text_avatar_value }}</span
+      >
       <v-icon v-else>{{ placeholderIcon }}</v-icon>
     </v-avatar>
 
     <div
+      v-if="!hideSideIcon"
       :style="{ backgroundImage: bg }"
       class="absolute-bottom-end rounded-ts-circle h-auto w-auto pa-1 ma-n1"
       style="background-size: 300% 300%; line-height: 0"
@@ -83,6 +91,7 @@
 <script>
 import { defineComponent } from "vue";
 import SImagePlaceholder from "../../../ui/image/placeholder/SImagePlaceholder.vue";
+import { StringToColour } from "@selldone/core-js/helper/color/ColorGenerator";
 
 export default defineComponent({
   name: "UAvatarFolder",
@@ -116,6 +125,11 @@ export default defineComponent({
     placeholderIcon: {
       default: "camera",
     },
+    hideSideIcon: {
+      default: false,
+      type: Boolean,
+    },
+    textAvatar: {},
   },
 
   computed: {
@@ -163,6 +177,26 @@ export default defineComponent({
                 : this.isGreen
                   ? "#388E3C"
                   : "#000";
+    },
+
+    text_avatar_value() {
+      if (!this.textAvatar) return "-";
+      let out = "";
+
+      out = this.textAvatar
+        .split(" ")
+        .map((word) => word[0])
+        .join("");
+
+      if (out.length < 2 && this.textAvatar.length >= 2)
+        out = out + this.textAvatar[1];
+
+      return out.substring(0, 2);
+    },
+
+    text_avatar_color() {
+      if (!this.textAvatar) return null;
+      return StringToColour(this.textAvatar ? this.textAvatar : "-", -15);
     },
   },
 });
