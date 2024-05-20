@@ -17,8 +17,8 @@
     v-model="category"
     v-model:menu="menu"
     v-model:search="search"
-    :chips="chips"
-    :closable-chips="chips"
+    :chips="multiple"
+    :closable-chips="multiple"
     :class="{ disabled: modelValue && busy && !category_obj }"
     :clearable="clearable"
     :customFilter="() => true"
@@ -223,10 +223,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    chips: {
-      default: false,
-      type: Boolean,
-    },
+
     defaultIcon: {
       default: "home",
     },
