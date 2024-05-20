@@ -110,10 +110,8 @@
         <v-container
           :class="{
             'container-expanded-side-menu': show_filter_menu && has_filter,
-            'p-3': !hasSelfeItemSpacing,
-            'p-1': hasSelfeItemSpacing,
           }"
-          class="products-container"
+          class="products-container pa-1"
           fluid
           v-resize="onResize"
         >
