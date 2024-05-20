@@ -67,59 +67,6 @@
             />
           </div>
         </v-expand-transition>
-        <v-toolbar
-          v-if="hasBreadcrumb || has_filter"
-          class="position-relative"
-          color="transparent"
-          flat
-        >
-          <!-- ━━━━━━━ Sort tools ━━━━━━━ -->
-          <s-products-sort-view
-            v-if="hasSort"
-            v-model="sort"
-            v-model:only-available="only_available"
-            v-model:viewMode="mode_view"
-            :class="{
-              'add-marginal-side-menu-open':
-                show_filter_menu && has_filter && $vuetify.display.smAndUp,
-            }"
-            :has-view-mode="!freeMode /*Don't show view modes in map view!*/"
-            :mandatory="false"
-            class="w-100 overflow-x-auto"
-            style="transition: all 0.5s ease"
-          >
-            <!-- ............................ Categories > Small screen ............................ -->
-            <v-btn
-              v-if="$vuetify.display.xs && hierarchy_items.length > 1"
-              height="46px"
-              tile
-              variant="text"
-              @click="show_categories = !show_categories"
-            >
-              {{ $t("global.commons.category") }}
-              <v-icon class="ms-1" size="x-small">expand_more</v-icon>
-            </v-btn>
-            <!-- .................................................................................... -->
-
-            <v-spacer></v-spacer>
-
-            <div style="min-width: 100px; height: 1px"></div>
-            <v-btn
-              v-if="has_filter"
-              :style="$vuetify.locale.isRtl ? 'left: 0' : 'right: 0'"
-              absolute
-              class="border-start position-absolute bg-white"
-              height="46px"
-              tile
-              variant="text"
-              @click.stop="show_filter_menu = !show_filter_menu"
-              >{{ $t("shop.products_filter") }}
-              <v-icon class="ms-1" size="small"
-                >{{ show_filter_menu ? "close" : "filter_alt" }}
-              </v-icon>
-            </v-btn>
-          </s-products-sort-view>
-        </v-toolbar>
 
         <!-- ............................ Categories > Small screen ............................ -->
         <v-expand-transition>
@@ -168,22 +115,23 @@
           }"
           class="products-container"
           fluid
+          v-resize="onResize"
         >
+          <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
+
           <v-row
-            v-resize="onResize"
+              v-if="folders.length"
             :align="align"
             :class="[
-              class_row_products,
+              class_row_categories,
               align ? 'align-' + align : undefined,
               justify ? 'justify-' + justify : undefined,
             ]"
             :justify="justify"
             :style="{ '--insta-size': insta_size }"
-            class="s--products-listing-row"
+            class="s--products-listing-row mb-6 mb-sm-12"
           >
             <v-fade-transition group hide-on-leave>
-              <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
-
               <s-category-card
                 v-for="category in folders.slice(
                   (folder_page - 1) * max_folders_per_page,
@@ -207,27 +155,95 @@
                     : {}
                 "
               />
+            </v-fade-transition>
 
-              <v-spacer
-                v-if="has_breaker"
-                key="breaker"
-                class="w-100 mt-16"
-              ></v-spacer>
+            <v-col
+              v-if="folder_pages_count > 1"
+              key="pagination-categories"
+              cols="12"
+            >
+              <v-pagination
+                v-model="folder_page"
+                :length="folder_pages_count"
+                rounded
+              ></v-pagination>
+            </v-col>
+          </v-row>
 
-              <v-col
-                v-if="folder_pages_count > 1"
-                key="pagination-categoreis"
-                cols="12"
+          <!-- ............................ Sort View of Products ............................ -->
+
+          <v-expand-transition>
+            <div v-if="(hasBreadcrumb || has_filter) && products?.length">
+              <v-toolbar
+                class="position-relative mb-5"
+                color="transparent"
+                flat
               >
-                <v-pagination
-                  v-model="folder_page"
-                  :length="folder_pages_count"
-                  rounded
-                ></v-pagination>
-              </v-col>
+                <!-- ━━━━━━━ Sort tools ━━━━━━━ -->
+                <s-products-sort-view
+                  v-if="hasSort"
+                  v-model="sort"
+                  v-model:only-available="only_available"
+                  v-model:viewMode="mode_view_products"
+                  :class="{
+                    /*  'add-marginal-side-menu-open':
+                show_filter_menu && has_filter && $vuetify.display.smAndUp,*/
+                  }"
+                  :has-view-mode="
+                    !freeMode /*Don't show view modes in map view!*/
+                  "
+                  :mandatory="false"
+                  class="w-100 overflow-x-auto"
+                  style="transition: all 0.5s ease"
+                >
+                  <!-- ............................ Categories > Small screen ............................ -->
+                  <v-btn
+                    v-if="$vuetify.display.xs && hierarchy_items.length > 1"
+                    height="46px"
+                    tile
+                    variant="text"
+                    @click="show_categories = !show_categories"
+                  >
+                    {{ $t("global.commons.category") }}
+                    <v-icon class="ms-1" size="x-small">expand_more</v-icon>
+                  </v-btn>
+                  <!-- .................................................................................... -->
 
-              <!-- ⬬⬬⬬⬬ Products ⬬⬬⬬⬬ -->
+                  <v-spacer></v-spacer>
 
+                  <div style="min-width: 100px; height: 1px"></div>
+                  <v-btn
+                    v-if="has_filter"
+                    :style="$vuetify.locale.isRtl ? 'left: 0' : 'right: 0'"
+                    absolute
+                    class="border-start position-absolute bg-white"
+                    height="46px"
+                    tile
+                    variant="text"
+                    @click.stop="show_filter_menu = !show_filter_menu"
+                    >{{ $t("shop.products_filter") }}
+                    <v-icon class="ms-1" size="small"
+                      >{{ show_filter_menu ? "close" : "filter_alt" }}
+                    </v-icon>
+                  </v-btn>
+                </s-products-sort-view>
+              </v-toolbar>
+            </div>
+          </v-expand-transition>
+          <!-- ⬬⬬⬬⬬ Products ⬬⬬⬬⬬ -->
+
+          <v-row
+            :align="align"
+            :class="[
+              class_row_products,
+              align ? 'align-' + align : undefined,
+              justify ? 'justify-' + justify : undefined,
+            ]"
+            :justify="justify"
+            :style="{ '--insta-size': insta_size }"
+            class="s--products-listing-row"
+          >
+            <v-fade-transition group hide-on-leave>
               <s-shop-product-card
                 v-for="(product, index) in products"
                 :key="product.id"
@@ -474,6 +490,7 @@ export default {
      * If set, the view mode will not be stored in local storage.
      */
     forceModeView: {},
+    forceModeViewFolders: {},
 
     /**
      * If set to true, listings will be in view-only mode. Clicking items will not navigate to product or category pages.
@@ -555,7 +572,8 @@ export default {
 
     filter: null,
 
-    mode_view: ModeView.NORMAL,
+    mode_view_products: ModeView.NORMAL,
+    mode_view_categories: null,
 
     quick_buy: false,
     selected_product: null,
@@ -594,13 +612,14 @@ export default {
         return "free-mode";
       }
 
-      if (this.mode_view.code === ModeView.NORMAL.code)
+      if (this.mode_view_categories.code === ModeView.NORMAL.code)
         return "v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-20p pa-0"; // v-col-20p: 5 columns in row
-      else if (this.mode_view.code === ModeView.GRID.code)
+      else if (this.mode_view_categories.code === ModeView.GRID.code)
         return "v-col-6 v-col-sm-4 v-col-md-3 v-col-lg-2 pa-0";
-      else if (this.mode_view.code === ModeView.LIST.code)
+      else if (this.mode_view_categories.code === ModeView.LIST.code)
         return "v-col-12 v-col-sm-6 v-col-sm-4 v-col-lg-3 pa-2";
-      else if (this.mode_view.code === ModeView.INSTA.code) return "insta-cat";
+      else if (this.mode_view_categories.code === ModeView.INSTA.code)
+        return "insta-cat";
 
       return "";
     },
@@ -610,43 +629,62 @@ export default {
         return "free-mode";
       }
 
-      if (this.mode_view.code === ModeView.NORMAL.code)
+      if (this.mode_view_products.code === ModeView.NORMAL.code)
         return "v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-20p pa-0"; // v-col-20p: 5 columns in row
-      else if (this.mode_view.code === ModeView.GRID.code)
+      else if (this.mode_view_products.code === ModeView.GRID.code)
         return "v-col-6 v-col-sm-4 v-col-md-3 v-col-lg-2 pa-2";
-      else if (this.mode_view.code === ModeView.LIST.code)
+      else if (this.mode_view_products.code === ModeView.LIST.code)
         return "v-col-12 v-col-lg-6 pa-0";
-      else if (this.mode_view.code === ModeView.INSTA.code) return "insta-prod";
+      else if (this.mode_view_products.code === ModeView.INSTA.code)
+        return "insta-prod";
 
       return "";
     },
 
     class_row_products() {
-      if (!this.freeMode && this.mode_view.code === ModeView.INSTA.code)
+      if (
+        !this.freeMode &&
+        this.mode_view_products.code === ModeView.INSTA.code
+      )
+        return "insta-row";
+
+      return "";
+    },
+    class_row_categories() {
+      if (
+        !this.freeMode &&
+        this.mode_view_categories.code === ModeView.INSTA.code
+      )
         return "insta-row";
 
       return "";
     },
 
     isSmallItem() {
-      return !this.freeMode && this.mode_view.code === ModeView.GRID.code;
+      return (
+        !this.freeMode && this.mode_view_products.code === ModeView.GRID.code
+      );
     },
 
     isRow() {
-      return !this.freeMode && this.mode_view.code === ModeView.LIST.code;
+      return (
+        !this.freeMode && this.mode_view_products.code === ModeView.LIST.code
+      );
     },
     isInsta() {
-      return !this.freeMode && this.mode_view.code === ModeView.INSTA.code;
+      return (
+        !this.freeMode && this.mode_view_products.code === ModeView.INSTA.code
+      );
     },
     has_breaker() {
-      return (this.isInsta || this.isRow) && this.folders.length > 0;
+      return true; // (this.isInsta || this.isRow) && this.folders.length > 0;
     },
 
     hasSelfeItemSpacing() {
       return (
         !this.freeMode &&
-        (this.mode_view.code === ModeView.GRID.code ||
-          this.mode_view.code === ModeView.LIST.code)
+        (this.mode_view_products.code === ModeView.GRID.code ||
+          this.mode_view_products.code === ModeView.LIST.code)
       );
     },
 
@@ -687,9 +725,12 @@ export default {
 
       if (this.freeMode) return limit;
 
-      if (this.mode_view.code === ModeView.GRID.code) limit = limit * 2;
-      else if (this.mode_view.code === ModeView.LIST.code) limit = limit * 2;
-      else if (this.mode_view.code === ModeView.INSTA.code) limit = limit * 4;
+      if (this.mode_view_products.code === ModeView.GRID.code)
+        limit = limit * 2;
+      else if (this.mode_view_products.code === ModeView.LIST.code)
+        limit = limit * 2;
+      else if (this.mode_view_products.code === ModeView.INSTA.code)
+        limit = limit * 4;
 
       return limit;
     },
@@ -716,10 +757,14 @@ export default {
     max_folders_per_page() {
       let limit = 20;
 
-      if (this.mode_view.code === ModeView.NORMAL.code) limit = 4 * 5;
-      else if (this.mode_view.code === ModeView.GRID.code) limit = 4 * 6;
-      else if (this.mode_view.code === ModeView.LIST.code) limit = 5 * 4;
-      else if (this.mode_view.code === ModeView.INSTA.code) limit = 4 * 6;
+      if (this.mode_view_categories.code === ModeView.NORMAL.code)
+        limit = 4 * 5;
+      else if (this.mode_view_categories.code === ModeView.GRID.code)
+        limit = 4 * 6;
+      else if (this.mode_view_categories.code === ModeView.LIST.code)
+        limit = 5 * 4;
+      else if (this.mode_view_categories.code === ModeView.INSTA.code)
+        limit = 4 * 6;
 
       const multiple = this.$vuetify.display.lgAndUp ? 2 : 1; // Show more on PC
 
@@ -820,14 +865,14 @@ export default {
       if (this.updateRoute) this.$router.replace({ query: _query });
     },
 
-    mode_view(mode_view) {
+    mode_view_products(mode_view_products) {
       if (this.forceModeView) return; // Do not save mode view in local storage! (Show in landing pages)
       localStorage.setItem(
         StorefrontLocalStorages.GetUserShopViewModePath(
           this.$localstorage_base_path(),
           this.template_device,
         ),
-        mode_view.code,
+        mode_view_products.code,
       );
     },
 
@@ -845,10 +890,16 @@ export default {
     },
 
     forceModeView() {
-      // console.log('===========forceModeView=============')
       if (this.forceModeView) {
-        this.mode_view = Object.values(ModeView).find(
+        this.mode_view_products = Object.values(ModeView).find(
           (i) => i.code === this.forceModeView,
+        );
+      }
+    },
+    forceModeViewFolders() {
+      if (this.forceModeViewFolders) {
+        this.mode_view_categories = Object.values(ModeView).find(
+            (i) => i.code === this.forceModeViewFolders,
         );
       }
     },
@@ -888,33 +939,59 @@ export default {
     // Show filters on large screens by default:
     this.show_filter_menu = this.$vuetify.display.lgAndUp;
 
-    // Read from local storage:
-    let code = null;
-    // ............... Apply customized template ...............
+    // ............... Apply customized view mode for products ...............
 
-    code = localStorage.getItem(
+    let _mode_view_products = null;
+
+    // Read from local storage:
+    _mode_view_products = localStorage.getItem(
       StorefrontLocalStorages.GetUserShopViewModePath(
         this.$localstorage_base_path(),
         this.template_device,
       ),
     );
-    if (!code && this.theme && this.theme[this.template_device]) {
-      code = this.theme[this.template_device];
+    if (
+      !_mode_view_products &&
+      this.theme &&
+      this.theme[this.template_device]
+    ) {
+      _mode_view_products = this.theme[this.template_device];
     }
+
+    // Read from force mode view:
+    if (this.forceModeView) _mode_view_products = this.forceModeView;
+
+    console.debug(
+      `${this.template_device} ➡ view mode : ${_mode_view_products}`,
+    );
+
+    if (_mode_view_products)
+      this.mode_view_products = Object.values(ModeView).find(
+        (i) => i.code === _mode_view_products,
+      );
+
+    // ............... Apply customized view mode for Categories ...............
+    let _mode_view_categories = null;
+
+    if (this.theme && this.theme[this.template_device + "_f"]) {
+      _mode_view_categories = this.theme[this.template_device + "_f"];
+    }
+    // Read from force mode view:
+    if (this.forceModeViewFolders) _mode_view_categories = this.forceModeViewFolders;
+
+
+    if (_mode_view_categories)
+      this.mode_view_categories = Object.values(ModeView).find(
+        (i) => i.code === _mode_view_categories,
+      );
+
+    if (!this.mode_view_categories)
+      this.mode_view_categories = this.mode_view_products; // Same as products! User can not change view mode of categories!
+    // .........................................................................
 
     this.only_available = !!this.theme?.only_available;
 
-    // ...........................................................
-
-    // Read from force mode view:
-    if (this.forceModeView) code = this.forceModeView;
-
-    console.debug(`${this.template_device} ➡ view mode : ${code}`);
-
-    if (code)
-      this.mode_view = Object.values(ModeView).find((i) => i.code === code);
-
-    if (!this.mode_view) this.mode_view = ModeView.NORMAL;
+    if (!this.mode_view_products) this.mode_view_products = ModeView.NORMAL;
 
     if (this.forcePackage) {
       // Important: this cause re-fetch ba watcher:
@@ -1503,8 +1580,6 @@ export default {
         transform: scale(1.2, 1.2) !important;
         z-index: 20;
 
-        .card__info {
-        }
 
         // Hide discount bar on hover:
         .count-down-bg {
@@ -1551,9 +1626,9 @@ export default {
               min-height: 0 !important;
             }
 
-            .mt-2 {
+           /* .mt-2 {
               margin: 0 !important;
-            }
+            }*/
 
             .u--price.large {
               font-size: 1rem !important;
@@ -1601,7 +1676,7 @@ export default {
 
     // Position quick by at center:
     .quick-buy {
-      top: 50% !important;
+      top: 30% !important;
       bottom: unset !important;
     }
   }

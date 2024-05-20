@@ -72,7 +72,9 @@
           border="0"
           height="46"
           variant="text"
-          :size="$vuetify.display.mdAndDown || smallSortButtons ? 'small' : undefined"
+          :size="
+            $vuetify.display.mdAndDown || smallSortButtons ? 'small' : undefined
+          "
         >
           {{ item.name }}
         </v-btn>
@@ -134,14 +136,13 @@
         variant="solo"
       >
         <template v-slot:append-inner>
-          <v-tooltip color="#000" location="bottom" content-class="bg-black rounded-xl">
+          <v-tooltip
+            color="#000"
+            location="bottom"
+            content-class="bg-black rounded-xl"
+          >
             <template v-slot:activator="{ props }">
-              <v-btn
-                icon
-                size="24"
-                v-bind="props"
-                variant="plain"
-              >
+              <v-btn icon size="24" v-bind="props" variant="plain">
                 <v-icon size="20">info</v-icon>
               </v-btn>
             </template>
@@ -231,7 +232,7 @@ export default {
       type: Boolean,
     },
     activeClass: { default: "dark-flat" },
-    smallSortButtons:Boolean,
+    smallSortButtons: Boolean,
   },
 
   data() {

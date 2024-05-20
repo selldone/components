@@ -127,7 +127,7 @@
             :min="min_price"
             :step="1"
             :tick-size="8"
-            class="align-center text-dark mt-5 mx-2"
+            class="align-center text-dark mt-5 mx-4"
             hide-details
             thumb-label="always"
             @end="onChangeFilter"

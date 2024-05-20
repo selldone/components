@@ -28,13 +28,20 @@
       :src="require('../../../../assets/icons/ci-logo.png')"
       :class="{ '-circle-white': darkMode }"
     />
-    <v-icon v-if="placeholderIcon" class="center-absolute" :color="placeholderColor" style="text-shadow: rgba(0,0,0,0.8) 1px 2px 3px">{{placeholderIcon}}</v-icon>
+    <v-icon
+      v-if="placeholderIcon"
+      class="center-absolute"
+      :color="placeholderColor"
+      style="text-shadow: rgba(0, 0, 0, 0.8) 1px 2px 3px"
+      >{{ placeholderIcon }}
+    </v-icon>
     <v-tooltip
       v-if="tooltip"
       activator="parent"
       :location="tooltipLocation"
       max-width="360"
       content-class="bg-black text-start"
+      :open-delay="openDelay"
     >
       <div v-html="tooltip"></div>
     </v-tooltip>
@@ -66,9 +73,9 @@ export default {
 
     imageSize: {},
     darkMode: Boolean,
-    placeholderIcon:{},
-    placeholderColor:{},
-
+    placeholderIcon: {},
+    placeholderColor: {},
+    openDelay: {},
   },
 };
 </script>

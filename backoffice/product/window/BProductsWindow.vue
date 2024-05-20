@@ -479,7 +479,7 @@
 
       <v-col
         v-if="folder_pages_count > 1"
-        key="pagination-categoreis"
+        key="pagination-categories"
         cols="12"
       >
         <v-pagination

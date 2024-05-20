@@ -71,21 +71,27 @@
             </v-row>
           </template>
         </v-img>
+        <!--
+            <div
+              :class="{ 'has-discount-banner': hasDiscountCountDown }"
+              class="top-title flex-column"
+            >
 
-        <div
-          :class="{ 'has-discount-banner': hasDiscountCountDown }"
-          class="top-title flex-column"
-        >
-          <h3 :class="{ 'is-small': isSmall }" class="card-new-title">
-            {{ product.title?.limitWords(7) }}
-          </h3>
+              <h3 v-if="!isInsta" :class="{ 'is-small': isSmall }" class="card-new-title">
+                {{ product.title?.limitWords(7) }}
+              </h3>
 
           <div v-if="false" class="bar-gradient" />
-        </div>
+        </div>-->
 
         <!-- ============== Color Rating in Small mode ================ -->
         <div v-if="isSmall" class="colors-rating-small-mode">
-          <v-chip v-if="product.rate_count" class="mx-2" color="#fafafa">
+          <v-chip
+            v-if="product.rate_count"
+            class="mx-2 mb-2"
+            color="#fafafa"
+            style="backdrop-filter: blur(4px)"
+          >
             <v-rating
               :model-value="product.rate"
               :size="isSmall ? 'x-small' : 'small'"
@@ -130,7 +136,7 @@
                   : undefined
             "
             color="primary"
-            variant="flat"
+            variant="elevated"
             tile
             width="100%"
             @click.prevent="$emit('quick-buy')"
@@ -172,9 +178,12 @@
 
         <div
           :class="{ no_variants: !hasVariant }"
-          class="card__info pt-2"
-          style="z-index: 2"
+          class="card__info "
+          style="z-index: 2; "
         >
+
+
+
           <product-variants-view
             v-if="hasVariant"
             v-model:selected-variant="current_variant"
@@ -187,6 +196,12 @@
           />
 
           <v-row class="toggle-hidden-on-hover" no-gutters>
+            <v-col class="text-start pt-1 lhn" :class="{'small':isInsta || isSmall,'my-1 ':!isInsta}" cols="12">
+              <div class="single-line">
+                {{product.title}}
+              </div>
+            </v-col>
+
             <v-col
               v-if="!isSmall"
               align-center
@@ -242,28 +257,31 @@
               justify-center
             >
               <div :class="{ 'text-center': isSmall }" class="main-price-label">
-                <p class="dis-val">
+                <p class="dis-val d-flex align-center single-line">
+                  <v-spacer></v-spacer>
+
                   <u-price
                     v-if="discount > 0"
                     :amount="price_in_selected_currency + discount"
                     :class="{ small: dense }"
-                    class="discount-price text-muted"
+                    class="discount-price text-muted me-2"
                     line-through
                   ></u-price>
 
                   <span
                     v-if="discount > 0"
                     :class="{ small: dense }"
-                    class="discount-percent mx-1 float-right"
+                    class="discount-percent"
                     >{{ discount_percent }} %
                   </span>
                 </p>
-                <p class="mt-2">
+                <p class="" :class="{ 'mt-2': !isInsta ,'mt-1':isInsta}">
                   <!-- Main price -->
 
                   <u-price
                     :amount="price_in_selected_currency"
-                    :large="!dense"
+                    :medium="!dense"
+                    class="-price-value"
                   ></u-price>
 
                   <!-- Price label -->
@@ -272,7 +290,7 @@
                   }}</span>
 
                   <!-- Coupon -->
-                  <span v-if="hasCoupon">
+                  <span v-if="hasCoupon && !isSmall">
                     <v-icon class="mx-1" color="#D32F2F" size="x-small"
                       >fa:fas fa-plus</v-icon
                     >
@@ -367,8 +385,8 @@
               {{ Number(product.rate).toFixed(1) }}
             </v-chip>
 
-            <span v-if="product.rate_count" class="mx-2"
-              >{{ numeralFormat(product.rate_count, "0,0") }}
+            <span v-if="product.rate_count" class="mx-2  text-black"
+              ><b class="me-2">{{ numeralFormat(product.rate_count, "0,0") }}</b>
 
               <small>{{ $t("product_card.review_unit") }}</small>
             </span>
@@ -686,7 +704,7 @@ export default {
 
   --header-size: 60px;
 
-  --image-height: 280px;
+  --image-height: 360px;
 
   --image-center-height-contain: 220px;
 
@@ -745,7 +763,7 @@ export default {
   }
 
   .main-price-label {
-    font-size: 1.7em;
+    font-size: 1.4em;
     color: #000;
     //   background: #fff;
     font-weight: 500;
@@ -765,7 +783,7 @@ export default {
 
     .discount-price {
       color: #444;
-      font-size: 0.8em;
+      font-size: 0.7em;
     }
   }
 
@@ -964,35 +982,48 @@ export default {
   }
 
   .card__info {
-    position: relative;
+    position: absolute;
     color: #333333;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: max-content;
+    min-height: var(--footer-height);
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.9);
 
-    // TODO: moshkel flash zadan moghe animate border-radius!!! => so small duration set!!!
+    border-radius: 0px;
+
     transition:
       transform 0.4s ease-in-out,
       background-color 0.45s ease-in-out,
+      backdrop-filter 0s step-start,
       border-radius 0.1s linear; // Flicker animation border-radius problem!!!
+
 
     transition-delay: 0.25s;
     @media (max-width: $max_width_to_delay_reverse) {
       transition-delay: 0.25s + $delay_reverse;
     }
     z-index: 0;
-    background-color: #fff;
+
     //  border-bottom-left-radius: 12px;
     //  border-bottom-right-radius: 12px;
     padding: 0px 8px 0px 8px;
 
-    height: var(--footer-height);
+
     //  margin-bottom: 6px;
     margin-bottom: 0px;
 
-    border-radius: 0px;
 
     overflow: hidden;
+    display: block;
     @media (max-width: 800px) {
       height: var(--footer-height);
     }
+
+
+
   }
 
   .card__category {
@@ -1029,16 +1060,18 @@ export default {
 
   .card:hover {
     .card__info {
+      backdrop-filter: none;
       border-radius: 16px;
-      transform: scale(0.75, 0.75);
+    //  transform: scale(0.75, 0.75);
       background-color: rgba(255, 255, 255, 0.94);
+      transform: scale(0.9, 0.9);
 
       &.no_variants {
         background: unset;
       }
 
       &:hover {
-        transform: scale(0.9, 0.9);
+        transform: scale(0.96, 0.96);
       }
     }
 
@@ -1191,7 +1224,7 @@ export default {
 }
 
 .discount-percent {
-  font-size: 0.7em;
+  font-size: 0.65em;
   font-weight: 500;
   background-color: #00796b;
   color: white;
@@ -1235,7 +1268,7 @@ export default {
   position: absolute;
   bottom: var(--footer-height);
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%,0);
   visibility: hidden;
   opacity: 0;
   z-index: 10;
@@ -1263,13 +1296,14 @@ export default {
   right: 0;
   width: 72px;
   height: 72px;
-  background-color: #6ac174;
+  background-color: rgba(17, 161, 33, 0.63);
+  box-shadow: 0px 5px 5px 0px #68c37299;
   color: #fff;
   z-index: 2;
   border-bottom-left-radius: 72px;
   text-align: center;
   padding-left: 12px;
-  opacity: 0.9;
+  backdrop-filter: blur(4px);
 
   img {
     display: block;
@@ -1374,9 +1408,7 @@ export default {
     right: -65px;
     left: unset;
 
-    -ms-transform: scale(0.5, 0.5) rotate(42deg) translate(24%, -30%); /* IE 9 */
-    -webkit-transform: scale(0.5, 0.5) rotate(42deg) translate(24%, -30%); /* Safari */
-    transform: scale(0.5, 0.5) rotate(42deg) translate(24%, -30%); /* Standard syntax */
+    transform: scale(0.5, 0.5) rotate(42deg) translate(24%, -30%);
   }
 }
 
@@ -1392,8 +1424,7 @@ export default {
   padding: 6px;
   color: #fff;
 
-  -ms-transform: scale(0.5, 0.5) rotate(-42deg) translate(-24%, -30%);
-  -webkit-transform: scale(0.5, 0.5) rotate(-42deg) translate(-24%, -30%);
+
   transform: scale(0.5, 0.5) rotate(-42deg) translate(-24%, -30%);
 
   //  background: rgba(194, 24, 91, 0.8);

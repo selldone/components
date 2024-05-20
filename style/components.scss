@@ -4610,6 +4610,10 @@ canvas.heatmap-canvas {
 
   box-shadow: inset 0 2px 8px rgba(15, 15, 15, 0.08);
 
+  &.-dark{
+    background-color: #000;
+  }
+
   & > .v-btn{
     min-height: 42px !important;
   }
@@ -4621,13 +4625,24 @@ canvas.heatmap-canvas {
     }
   }
 
+  &.force-horizontal{
+      overflow: auto;
+    justify-content: start;
+
+  }
+  @media only screen and (max-width: 680px) {
+    margin: 12px 0;
+  }
+
   &:not(.force-horizontal) {
+
     @media only screen and (max-width: 680px) {
       flex-direction: column;
       align-items: stretch;
 
       min-height: max-content;
       height: max-content;
+
 
       & > .v-btn {
         min-height: 32px;
@@ -4670,6 +4685,18 @@ canvas.heatmap-canvas {
   & > * {
     flex-grow: 1 !important;
     width: unset !important; // Override w-50 / w-100 / ...
+  }
+
+  // Icon + Label at the start of buttons
+  .widget-toggle-label{
+    max-width: 80px;
+    min-width: 80px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px;
+    border-right: 1px solid #dee2e6
   }
 
 }
