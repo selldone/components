@@ -696,7 +696,9 @@
         <v-col
           v-if="
             !IS_VENDOR_PANEL &&
-            (shop.filters || products?.length > 1) &&
+            (shop.filters || products?.length > 1 ||
+              current_engine?.categories?.length ||
+            current_engine?.tags?.length ) &&
             !parent_folders /*Show just in the root*/
           "
           key="root-filters"
