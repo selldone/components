@@ -42,20 +42,23 @@
           name: 'BPageLandingEditor',
           params: { page_id: modelValue.id },
         }"
-        icon
+
         size="small"
         target="_blank"
         title="Edit page"
-        variant="text"
+        variant="elevated"
+        class="tnt"
+        @click.stop
       >
-        <v-icon>edit</v-icon>
+        <v-icon start>edit</v-icon>
+        {{$t('global.actions.edit')}}
       </v-btn>
     </template>
 
     <template v-slot:chip="{ item }">
       <div class="mb-n3">
         <v-avatar :color="item.raw.color" class="me-2" size="32">
-          <img v-if="item.raw.image" :src="getShopImagePath(item.raw.image)" />
+          <v-img v-if="item.raw.image" :src="getShopImagePath(item.raw.image)" />
           <v-icon v-else size="small">architecture</v-icon>
         </v-avatar>
         {{ item.raw.title }}
