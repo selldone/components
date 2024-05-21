@@ -55,7 +55,10 @@
         `⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.`
       }}
       <hr />
-      <div>Amount: {{ ((amount === null || amount === undefined) ? 'Null' : amount) }}, Currency: {{ currency_code }}</div>
+      <div>
+        Amount: {{ amount === null || amount === undefined ? "Null" : amount }},
+        Currency: {{ currency_code }}
+      </div>
     </v-tooltip>
   </span>
 </template>
@@ -126,7 +129,10 @@ export default {
     isUnicode() {
       return (
         this.currency_name ===
-        CurrencyHelper.GetUserSelectedCurrencyUnicode(this.GetUserSelectedCurrency(this), this.currency_code)
+        CurrencyHelper.GetUserSelectedCurrencyUnicode(
+          this.GetUserSelectedCurrency(this),
+          this.currency_code,
+        )
       );
     },
 
@@ -140,7 +146,7 @@ export default {
         return true;
 
       return CurrencyHelper.GetUserSelectedCurrencySignAtEnd(
-          this.GetUserSelectedCurrency(this),
+        this.GetUserSelectedCurrency(this),
         this.currency_code,
       );
     },
