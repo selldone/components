@@ -27,44 +27,50 @@
       :style="{ backgroundColor: backgroundColor }"
       class="link-box"
     >
-      <v-btn
-        :class="{
-          'rounded-18px': smallWidthMode,
-          'ma-2': !small && smallWidthMode,
-          'ma-1': small && smallWidthMode,
-        }"
-        :color="color"
-        :min-height="small ? 24 : 64"
-        :size="small ? 'small' : undefined"
-        class="-btn"
-        @click.stop="copyToClipboard(value)"
-      >
-        <v-icon>{{ icon }}</v-icon>
-      </v-btn>
-
-      <span
-        v-if="password && !show_pass"
-        class="-link text-muted pp"
-        @click="show_pass = true"
-        >CLICK TO SHOW</span
-      >
-      <div v-else :class="contentClass" class="-link" >
-        <slot name="prepend-value"></slot>
-        <span :style="{'letter-spacing':letterSpacing}"> {{ value }}</span>
+      <div class="d-flex align-center justify-center">
+        <v-btn
+          :class="{
+            'rounded-18px': smallWidthMode,
+            'ma-2': !small && smallWidthMode,
+            'ma-1': small && smallWidthMode,
+          }"
+          :color="color"
+          :min-height="small ? 24 : 64"
+          :size="small ? 'small' : undefined"
+          class="-btn"
+          @click.stop="copyToClipboard(value)"
+        >
+          <v-icon>{{ icon }}</v-icon>
+        </v-btn>
       </div>
+
+      <div class="-link">
+        <div v-if="message" class="text-start small op-0-5">
+          {{ message }}
+        </div>
+        <v-spacer></v-spacer>
+
+        <span
+          v-if="password && !show_pass"
+          class="text-muted pp"
+          @click="show_pass = true"
+          >CLICK TO SHOW</span
+        >
+        <div v-else :class="contentClass" class="">
+          <slot name="prepend-value"></slot>
+          <span :style="{ 'letter-spacing': letterSpacing }"> {{ value }}</span>
+        </div>
+        <v-spacer :style="message ? 'flex-basis: 14px;' : ''"></v-spacer>
+      </div>
+
       <slot name="append-value"></slot>
-      <img
+      <div
         v-if="image"
-        :src="image"
-        :width="small ? 18 : 46"
-        class="ms-2 px-2 border-start"
-        height="auto"
-      />
+        class="ms-2 px-2 border-start flex-grow-0 d-flex align-center justify-center"
+      >
+        <v-img :src="image" :width="small ? 18 : 36" height="auto" />
+      </div>
     </div>
-    <p v-if="message" class="text-subtitle-2 text-start my-1">
-      <v-icon class="me-1" size="small">info</v-icon>
-      {{ message }}
-    </p>
   </div>
 </template>
 
@@ -88,7 +94,7 @@ export default {
     contentClass: {},
     small: Boolean,
     textStart: Boolean,
-    letterSpacing:{}
+    letterSpacing: {},
   },
   data: () => ({
     show_pass: false,
@@ -130,7 +136,7 @@ export default {
 
   .link-box {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-around;
     border-radius: 12px;
     overflow: hidden;
@@ -148,6 +154,9 @@ export default {
       text-align: center;
       font-size: 1rem;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
 
       @media only screen and (max-width: 850px) {
         font-size: 0.8rem;

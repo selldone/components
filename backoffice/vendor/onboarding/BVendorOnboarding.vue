@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ██████████████████████ Vendor request form ██████████████████████ -->
 
-  <v-card>
+  <v-card class="text-start">
     <v-card-title>
       <v-icon class="me-1">add_business</v-icon>
       Add new vendor
@@ -29,7 +29,9 @@
           icon="workspaces"
           title="Last status"
         ></s-widget-header>
-        <v-list-subheader></v-list-subheader>
+        <v-list-subheader>
+          Here, you can view the latest status of the vendor request.
+        </v-list-subheader>
         <div class="py-1">
           <div class="min-width-200 my-1">
             <small class="float-end">{{
@@ -78,29 +80,36 @@
             icon="business"
             title="Company information"
           ></s-widget-header>
-          <v-list-subheader></v-list-subheader>
+          <v-list-subheader>
+            This is the information regarding the vendor's
+            business.</v-list-subheader
+          >
           <v-text-field
             v-model="company.name"
             :readonly="adminMode"
             :rules="[GlobalRules.required()]"
             label="Company name"
+            variant="underlined"
           ></v-text-field>
           <v-text-field
             v-model="company.address"
             :label="$t('global.commons.address')"
             :readonly="adminMode"
+            variant="underlined"
             :rules="[GlobalRules.required()]"
           ></v-text-field>
           <v-text-field
             v-model="company.postal_code"
             :label="$t('global.map_view.postal_code')"
             :readonly="adminMode"
+            variant="underlined"
           ></v-text-field>
           <v-text-field
             v-model="company.phone"
             :label="$t('global.map_view.phone_input')"
             :readonly="adminMode"
             :rules="[GlobalRules.required()]"
+            variant="underlined"
             placeholder="(+45) 2225 6000"
           ></v-text-field>
           <v-text-field
@@ -108,6 +117,7 @@
             :label="$t('global.commons.email')"
             :readonly="adminMode"
             :rules="[GlobalRules.required(), GlobalRules.email()]"
+            variant="underlined"
             placeholder="john@sample.com"
           ></v-text-field>
           <v-text-field
@@ -116,6 +126,7 @@
             :readonly="adminMode"
             :rules="[GlobalRules.url()]"
             placeholder="https://..."
+            variant="underlined"
           ></v-text-field>
         </div>
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃ Personal information ▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -125,12 +136,15 @@
             icon="person"
             title="Personal information"
           ></s-widget-header>
-          <v-list-subheader></v-list-subheader>
+          <v-list-subheader>
+            Personal information of the vendor account owner.
+          </v-list-subheader>
           <v-text-field
             v-model="personal.name"
             :label="$t('global.commons.name')"
             :readonly="adminMode"
             :rules="[GlobalRules.required()]"
+            variant="underlined"
           ></v-text-field>
         </div>
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃ Products Category ▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -150,6 +164,7 @@
             auto-grow
             placeholder="About your products... Keep it short."
             rows="3"
+            variant="underlined"
           ></v-textarea>
         </div>
 
@@ -170,6 +185,7 @@
             hint="The name of the bank where the vendor has their account."
             persistent-placeholder
             placeholder="Your bank name.."
+            variant="underlined"
           ></v-text-field>
 
           <v-text-field
@@ -178,6 +194,7 @@
             hint="This should match the name associated with the bank account."
             persistent-placeholder
             placeholder="Your name.."
+            variant="underlined"
           ></v-text-field>
 
           <v-text-field
@@ -186,6 +203,7 @@
             hint="The vendor's unique account number."
             persistent-placeholder
             placeholder="Your bank account number.."
+            variant="underlined"
           ></v-text-field>
 
           <v-text-field
@@ -194,6 +212,7 @@
             hint="This number varies by country. It's used to identify the specific bank branch the vendor uses."
             persistent-placeholder
             placeholder="Your bank routing number, sort code, or BSB number.."
+            variant="underlined"
           ></v-text-field>
 
           <v-text-field
@@ -202,6 +221,7 @@
             label="IBAN"
             persistent-placeholder
             placeholder="Your IBAN number..  eg. DE89 3704 0044 0000 0000 00"
+            variant="underlined"
           ></v-text-field>
 
           <v-text-field
@@ -210,6 +230,7 @@
             label="Swift Code/BIC"
             persistent-placeholder
             placeholder="Your Swift code/BIC.."
+            variant="underlined"
           ></v-text-field>
 
           <v-text-field
@@ -218,6 +239,7 @@
             hint="The address of the bank branch where the vendor has their account."
             persistent-placeholder
             placeholder="Your bank address.."
+            variant="underlined"
           ></v-text-field>
         </div>
       </v-form>
@@ -226,18 +248,27 @@
 
       <div v-if="adminMode" class="widget-box mb-5">
         <s-widget-header icon="rate_review" title="Actions"></s-widget-header>
-        <v-list-subheader></v-list-subheader>
+        <v-list-subheader
+          >As the marketplace admin, please review the vendor's request. Here,
+          you can accept or reject the request. Accepting the request will
+          create the vendor account in your marketplace.
+        </v-list-subheader>
         <u-smart-verify
           v-model="accept"
           color="green"
           false-gray
-          label="Accept vendor request."
+          true-title="Accept Request"
+          true-description="Approve the vendor's request to create their account in the marketplace."
+          @update:model-value="reject = false"
         ></u-smart-verify>
+
         <u-smart-verify
           v-model="reject"
           color="red"
           false-gray
-          label="Reject vendor request."
+          true-title="Reject Request"
+          true-description="Deny the vendor's request to create their account in the marketplace."
+          @update:model-value="accept = false"
         ></u-smart-verify>
       </div>
     </v-card-text>
@@ -254,11 +285,11 @@
           v-if="reject"
           :loading="busy_accept === 'false'"
           color="red"
-          dark
           size="x-large"
+          variant="elevated"
           @click="acceptRequest(false)"
         >
-          <v-icon class="me-1">thumb_down_alt</v-icon>
+          <v-icon start>thumb_down_alt</v-icon>
           Reject vendor
         </v-btn>
 
@@ -266,11 +297,11 @@
           v-if="accept"
           :loading="busy_accept === 'true'"
           color="success"
-          dark
           size="x-large"
+          variant="elevated"
           @click="acceptRequest(true)"
         >
-          <v-icon class="me-1">thumb_up_alt</v-icon>
+          <v-icon start>thumb_up_alt</v-icon>
           Accept and create vendor
         </v-btn>
       </div>
@@ -289,7 +320,7 @@
           size="x-large"
           @click="saveChange"
         >
-          <v-icon class="me-1">{{ modelValue ? "save" : "add" }}</v-icon>
+          <v-icon start>{{ modelValue ? "save" : "add" }}</v-icon>
           {{
             modelValue ? $t("global.actions.save") : $t("global.actions.add")
           }}
