@@ -33,7 +33,7 @@
             v-if="category.icon"
             :src="getShopImagePath(category.icon, 64)"
           />
-          <v-icon v-else>folder</v-icon>
+          <v-icon v-else>{{ category.id!=='root'?'folder':'home' }}</v-icon>
         </v-avatar>
 
         <b>{{ category.title }}</b>
@@ -93,9 +93,9 @@ export default {
     },
     engineCategories: {},
     engineTags: {},
-    limit:{
-      default:5
-    }
+    limit: {
+      default: 5,
+    },
   },
 
   data: () => ({}),
