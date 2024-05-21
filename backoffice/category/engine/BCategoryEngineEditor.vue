@@ -127,7 +127,7 @@ export default {
     BCategoryInput,
     UChipTag,
   },
-  emits: ["edit-engine"],
+  emits: ["edit-engine", "edit-filters"],
   props: {
     shop: {
       required: true,
@@ -208,6 +208,7 @@ export default {
               "Category engine has been successfully updated.",
             );
             this.$emit("edit-engine", data.engine);
+            this.$emit("edit-filters", data.filters);
 
             this.engine_changed = false;
           }

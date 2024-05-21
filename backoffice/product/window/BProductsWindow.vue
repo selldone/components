@@ -1868,6 +1868,13 @@
                 : (shop.engine = _engine);
             }
           "
+          @edit-filters="
+            (_filters) => {
+              parent_folders
+                ? (parent_folders.filters = _filters)
+                : (shop.filters = _filters);
+            }
+          "
         />
       </v-card-text>
       <v-card-actions>
