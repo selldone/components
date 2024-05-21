@@ -45,6 +45,7 @@
         class="my-3"
         :counter="32"
         @change="engine_changed = true"
+        clearable
       >
       </b-category-input>
 
@@ -64,6 +65,7 @@
         class="my-3"
         :counter="32"
         @update:model-value="engine_changed = true"
+        clearable
       >
         <template v-slot:chip="{ props, item }">
           <u-chip-tag v-bind="props" :tag="item.raw"></u-chip-tag>
