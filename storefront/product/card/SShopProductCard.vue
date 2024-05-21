@@ -454,7 +454,7 @@
             </div>
 
             <v-btn
-              v-if="product.quantity || isFile"
+              v-if="quickBuy && (product.quantity || isFile)"
               :size="$vuetify.display.mdAndUp ? 'large' : 'small'"
               class="align-self-center flex-grow-0 ms-2 tnt"
               color="#000"

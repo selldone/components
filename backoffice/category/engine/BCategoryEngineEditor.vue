@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card-text>
-    <div class="widget-box mb-5">
+    <div class="widget-box mb-5 pb-5">
       <s-widget-header
         title="Extra Products Listing"
         icon="shelves"
@@ -26,8 +26,11 @@
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Preview ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
-      <b-category-engine-preview :category="category" :engine-categories="engine_categories" :engine-tags="engine_tags">
-
+      <b-category-engine-preview
+        :category="category"
+        :engine-categories="engine_categories"
+        :engine-tags="engine_tags"
+      >
       </b-category-engine-preview>
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Categories ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
@@ -39,9 +42,8 @@
         placeholder="Select categories..."
         persistent-placeholder
         messages="Products in these categories will be shown."
-        clearable
         class="my-3"
-        :counter="20"
+        :counter="32"
         @change="engine_changed = true"
       >
       </b-category-input>
@@ -52,7 +54,6 @@
         v-model="engine_tags"
         :items="cache_tags"
         chips
-        clearable
         closable-chips
         multiple
         placeholder="Wire tags here and press enter. ex. new collection"
@@ -61,7 +62,7 @@
         persistent-placeholder
         messages="Products with these tags will be show."
         class="my-3"
-        :counter="20"
+        :counter="32"
         @update:model-value="engine_changed = true"
       >
         <template v-slot:chip="{ props, item }">
@@ -69,7 +70,23 @@
         </template>
       </v-combobox>
 
+      <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Auto Add All Sub Categories ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
+      <v-list-subheader
+        >You can automatically add all subcategories to the current category by
+        clicking the button below.
+      </v-list-subheader>
+      <div>
+        <v-btn
+          class="tnt"
+          variant="elevated"
+          prepend-icon="flash_auto"
+          @click="autoAddSubCategories"
+          :loading="busy_auto"
+        >
+          Auto add sub-categories
+        </v-btn>
+      </div>
     </div>
 
     <v-fade-transition>
@@ -93,14 +110,11 @@
 
 <script>
 import UChipTag from "../../../ui/chip/tag/UChipTag.vue";
-import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import BCategoryInput from "../input/BCategoryInput.vue";
-import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
 import { BackofficeLocalStorages } from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
-import BCategoryEnginePreview
-  from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
+import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
 
 export default {
   name: "BCategoryEngineEditor",
@@ -108,9 +122,7 @@ export default {
     BCategoryEnginePreview,
     SWidgetHeader,
     SWidgetButtons,
-    UNumberInput,
     BCategoryInput,
-    ProductsDenseImagesCircles,
     UChipTag,
   },
   emits: ["edit-engine"],
@@ -131,6 +143,8 @@ export default {
     cache_tags: [],
     busy_engine: false,
     engine_changed: false,
+
+    busy_auto: false,
   }),
   computed: {
     IS_VENDOR_PANEL() {
@@ -201,6 +215,40 @@ export default {
         })
         .finally(() => {
           this.busy_engine = false;
+        });
+    },
+
+    autoAddSubCategories() {
+      this.busy_auto = true;
+
+      axios
+        .get(
+          this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+            ? null
+            : window.API.GET_CATEGORY_ALL_SUB_CATEGORIES(
+                this.shop.id,
+                this.category.id,
+              ),
+        )
+        .then(({ data }) => {
+          if (data.error) {
+            this.showErrorAlert(null, data.error_msg);
+          } else {
+            this.showSuccessAlert(
+              null,
+              "All sub-categories have been successfully added.",
+            );
+
+            this.engine_categories.push(...data.ids);
+            this.engine_categories = this.engine_categories.unique().limit(32);
+            this.engine_changed=true;
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_auto = false;
         });
     },
   },

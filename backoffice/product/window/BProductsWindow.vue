@@ -696,10 +696,11 @@
         <v-col
           v-if="
             !IS_VENDOR_PANEL &&
-            (shop.filters || products?.length > 1 ||
+            (current_filter ||
+              products?.length > 1 ||
               current_engine?.categories?.length ||
-            current_engine?.tags?.length ) &&
-            !parent_folders /*Show just in the root*/
+              current_engine?.tags?.length)
+            // && !parent_folders /*Show just in the root*/
           "
           key="root-filters"
           class="p-2 d-flex flex-column"
@@ -713,6 +714,25 @@
             class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
           >
             <div>
+
+              <h3 v-if="current_filter">
+                <v-icon class="me-1 zoomIn" color="green">check_circle</v-icon>
+
+                {{
+                  parent_folders
+                      ? "This category has a filter."
+                      : $t("products_select.filter_box.has_root_filter_message")
+                }}
+              </h3>
+              <h3 v-else>
+                {{
+                  parent_folders
+                      ? "No filters have been defined!"
+                      : $t("products_select.filter_box.no_root_filter_message")
+                }}
+              </h3>
+
+
               <s-dense-images-circles
                 :images="
                   products?.map((p) =>
@@ -723,14 +743,8 @@
                 class="justify-center"
               ></s-dense-images-circles>
 
-              <h3 v-if="shop.filters">
-                <v-icon class="me-1 zoomIn" color="green">check_circle</v-icon>
 
-                {{ $t("products_select.filter_box.has_root_filter_message") }}
-              </h3>
-              <h3 v-else>
-                {{ $t("products_select.filter_box.no_root_filter_message") }}
-              </h3>
+
 
               <small class="d-block">{{
                 $t("products_select.filter_box.set_filter_message")
@@ -744,19 +758,21 @@
               >
                 <v-icon class="me-1" size="small">filter_alt</v-icon>
 
-                {{ $t("products_select.filter_box.edit_action") }}
+                {{
+                  parent_folders ? `Edit ${parent_folders.title.limitWords(1)} Filter` : $t("products_select.filter_box.edit_action")
+                }}
               </v-btn>
               <v-btn
-                v-if="shop.filters"
+                v-if="current_filter"
                 :loading="busy_clear_root_filter"
                 class="tnt ma-1"
                 size="small"
                 variant="outlined"
-                @click="showClearRootFiltersDialog()"
+                @click="showClearRootFiltersDialog(parent_folders)"
               >
                 <v-icon class="me-1" size="small">filter_alt_off</v-icon>
 
-                {{ $t("products_select.filter_box.clear_action") }}
+                {{parent_folders?'Clear Category Filter': $t("products_select.filter_box.clear_action") }}
               </v-btn>
             </div>
           </div>
@@ -801,7 +817,7 @@
                 </b-category-engine-preview>
               </template>
 
-              <v-icon v-else class="my-2" size="48"> devices_fold</v-icon>
+              <v-icon v-else class="my-2" size="36"> devices_fold</v-icon>
 
               <div class="mt-2">
                 <small class="d-block"
@@ -822,7 +838,11 @@
               >
                 <v-icon class="me-1" size="small">auto_mode</v-icon>
 
-                Edit Root Engine
+                {{
+                  parent_folders
+                    ? `Edit ${parent_folders.title.limitWords(1)} Engine`
+                    : "Edit Root Engine"
+                }}
               </v-btn>
             </div>
           </div>
@@ -1777,7 +1797,9 @@
           :shop="shop"
           @edit-filters="
             (_filters) => {
-              shop.filters = _filters;
+              parent_folders
+                ? (parent_folders.filters = _filters)
+                : (shop.filters = _filters);
             }
           "
         />
@@ -2302,6 +2324,12 @@ export default {
       return this.parent_folders
         ? this.parent_folders.engine
         : this.shop.engine;
+    },
+
+    current_filter() {
+      return this.parent_folders
+        ? this.parent_folders.filters
+        : this.shop.filters;
     },
   },
   watch: {
@@ -3211,27 +3239,32 @@ export default {
       }
     },
 
-    showClearRootFiltersDialog() {
+    showClearRootFiltersDialog(category) {
       this.openConfirmationAlert(
-        "Remove Root Filter",
-        "Do you want to clear filter of root category?",
-        "Clear filters",
+        `Remove ${category?category.title:'Root'} Filter`,
+        "Do you want to clear filter of this category?",
+        "Yes, Clear filters",
         () => {
-          this.clearRootFilters();
+          this.clearRootFilters(category);
         },
       );
     },
-    clearRootFilters() {
+    clearRootFilters(category) {
       this.busy_clear_root_filter = true;
       axios
-        .delete(window.API.DELETE_CATEGORY_FILTER(this.shop.id, "root"))
+        .delete(window.API.DELETE_CATEGORY_FILTER(this.shop.id, category?category.id:"root"))
         .then(({ data }) => {
           if (!data.error) {
             this.showSuccessAlert(
               null,
               "Root filters has been removed successfully.",
             );
-            this.shop.filters = data.filters;
+            if(category){
+              category.filters = data.filters;
+            }else{
+              this.shop.filters = data.filters;
+            }
+
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

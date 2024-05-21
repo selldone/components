@@ -29,7 +29,7 @@
     >
       <div class="small single-line">
         <v-avatar class="me-2 avatar-gradient -thin -category" size="24">
-          <img
+          <v-img
             v-if="category.icon"
             :src="getShopImagePath(category.icon, 64)"
           />

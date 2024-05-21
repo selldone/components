@@ -40,7 +40,8 @@
         :src="
           getCategoryIcon(id.toString().replace('c-', ''), IMAGE_SIZE_SMALL)
         "
-        style="padding: 2px"
+        style="padding: 2px;"
+        height="100%"
       />
       <img
         v-else
@@ -49,6 +50,7 @@
             ? getShopImagePath(id)
             : getProductImage(id, IMAGE_SIZE_SMALL)
         "
+        height="100%"
       />
     </v-avatar>
     <v-icon v-if="ids.length > maxCount">more_horiz</v-icon>
