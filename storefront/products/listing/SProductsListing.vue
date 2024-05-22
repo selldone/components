@@ -118,17 +118,21 @@
           <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
 
           <v-row
-              v-if="folders.length"
-            :align="single_line_categories?'center':align"
+            v-if="folders.length"
+            :align="single_line_categories ? 'center' : align"
             :class="[
-             single_line_categories?undefined: class_row_categories,
+              single_line_categories ? undefined : class_row_categories,
               align ? 'align-' + align : undefined,
               justify ? 'justify-' + justify : undefined,
             ]"
             :justify="justify"
             class="s--products-listing-row pb-5 mb-2 pb-sm-12"
-              :style="[{ '--insta-size': insta_size },single_line_categories?'flex-wrap: nowrap;overflow: auto; flex-direction: initial':'']"
-
+            :style="[
+              { '--insta-size': insta_size },
+              single_line_categories
+                ? 'flex-wrap: nowrap;overflow: auto; flex-direction: initial'
+                : '',
+            ]"
           >
             <v-fade-transition group hide-on-leave>
               <s-category-card
@@ -156,18 +160,17 @@
                 style="min-width: max-content"
               />
             </v-fade-transition>
-
           </v-row>
 
           <v-col
-              v-if="folder_pages_count > 1"
-              key="pagination-categories"
-              cols="12"
+            v-if="folder_pages_count > 1"
+            key="pagination-categories"
+            cols="12"
           >
             <v-pagination
-                v-model="folder_page"
-                :length="folder_pages_count"
-                rounded
+              v-model="folder_page"
+              :length="folder_pages_count"
+              rounded
             ></v-pagination>
           </v-col>
 
@@ -303,9 +306,9 @@
           v-if="has_filter"
           v-model="show_filter_menu"
           :class="{
-            'ms-2 mt-2': $vuetify.display.mdAndDown,
-            'm-2': !$vuetify.display.mdAndDown,
+            'ma-2': show_filter_menu,
           }"
+          class="t-all-400"
           :folders="folders"
           :parent-folders="parent_folders"
           :shop="shop"
@@ -598,9 +601,8 @@ export default {
   }),
 
   computed: {
-
-    single_line_categories(){
-      return this.products.length>0;
+    single_line_categories() {
+      return this.products.length > 0;
     },
     theme() {
       return this.shop.theme;
@@ -904,7 +906,7 @@ export default {
     forceModeViewFolders() {
       if (this.forceModeViewFolders) {
         this.mode_view_categories = Object.values(ModeView).find(
-            (i) => i.code === this.forceModeViewFolders,
+          (i) => i.code === this.forceModeViewFolders,
         );
       }
     },
@@ -982,8 +984,8 @@ export default {
       _mode_view_categories = this.theme[this.template_device + "_f"];
     }
     // Read from force mode view:
-    if (this.forceModeViewFolders) _mode_view_categories = this.forceModeViewFolders;
-
+    if (this.forceModeViewFolders)
+      _mode_view_categories = this.forceModeViewFolders;
 
     if (_mode_view_categories)
       this.mode_view_categories = Object.values(ModeView).find(
@@ -1538,7 +1540,7 @@ export default {
   }
 
   .insta-prod {
-    --footer-height:50px;
+    --footer-height: 50px;
     // Fix Flickering in Safari in Safari: (Apple bug)
     -webkit-transform: translateZ(0);
     -webkit-backface-visibility: hidden;
@@ -1586,11 +1588,10 @@ export default {
         transform: scale(1.2, 1.2) !important;
         z-index: 20;
 
-
         // Hide discount bar on hover:
         .count-down-bg {
-        //  transform: scale(0);
-         // transform-origin: top right;
+          //  transform: scale(0);
+          // transform-origin: top right;
         }
 
         .count-down-container {
@@ -1610,7 +1611,6 @@ export default {
         display: flex !important;
         align-items: center;
         justify-content: center;
-
 
         .toggle-visible-on-hover {
           width: auto !important;
@@ -1636,9 +1636,9 @@ export default {
               min-height: 0 !important;
             }
 
-           /* .mt-2 {
-              margin: 0 !important;
-            }*/
+            /* .mt-2 {
+               margin: 0 !important;
+             }*/
 
             .u--price.large {
               font-size: 1rem !important;
