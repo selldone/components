@@ -71,18 +71,6 @@
             </v-row>
           </template>
         </v-img>
-        <!--
-            <div
-              :class="{ 'has-discount-banner': hasDiscountCountDown }"
-              class="top-title flex-column"
-            >
-
-              <h3 v-if="!isInsta" :class="{ 'is-small': isSmall }" class="card-new-title">
-                {{ product.title?.limitWords(7) }}
-              </h3>
-
-          <div v-if="false" class="bar-gradient" />
-        </div>-->
 
         <!-- ============== Color Rating in Small mode ================ -->
         <div v-if="isSmall" class="colors-rating-small-mode">
@@ -178,12 +166,9 @@
 
         <div
           :class="{ no_variants: !hasVariant }"
-          class="card__info "
-          style="z-index: 2; "
+          class="card__info"
+          style="z-index: 2"
         >
-
-
-
           <product-variants-view
             v-if="hasVariant"
             v-model:selected-variant="current_variant"
@@ -196,9 +181,13 @@
           />
 
           <v-row class="toggle-hidden-on-hover" no-gutters>
-            <v-col class="text-start pt-1 lhn" :class="{'small':isInsta || isSmall,'my-1 ':!isInsta}" cols="12">
+            <v-col
+              class="text-start pt-1 lhn"
+              :class="{ small: isInsta || isSmall, 'my-1 ': !isInsta }"
+              cols="12"
+            >
               <div class="single-line">
-                {{product.title}}
+                {{ product.title }}
               </div>
             </v-col>
 
@@ -261,7 +250,7 @@
                   <v-spacer></v-spacer>
 
                   <u-price
-                    v-if="discount > 0"
+                    v-if="discount > 0 && !isInsta"
                     :amount="price_in_selected_currency + discount"
                     :class="{ small: dense }"
                     class="discount-price text-muted me-2"
@@ -270,17 +259,17 @@
 
                   <span
                     v-if="discount > 0"
-                    :class="{ small: dense }"
+                    :class="{ small: dense || isInsta }"
                     class="discount-percent"
                     >{{ discount_percent }} %
                   </span>
                 </p>
-                <p class="" :class="{ 'mt-2': !isInsta ,'mt-1':isInsta}">
+                <p class="" :class="{ 'mt-2': !isInsta, 'mt-1': isInsta }">
                   <!-- Main price -->
 
                   <u-price
                     :amount="price_in_selected_currency"
-                    :medium="!dense"
+                    :medium="!dense && !isInsta && !isSmall"
                     class="-price-value"
                   ></u-price>
 
@@ -299,13 +288,22 @@
                 </p>
               </div>
             </v-col>
-            <v-col v-else class="sec--price" cols="7">
-              <h5 class="mt-1 mb-0">
-                {{ $t("product_card.sold_out") }}
-              </h5>
+            <v-col v-else class="sec--price" :cols="7">
+              <template v-if="!isInsta">
+                <h5 class="mt-1 mb-0">
+                  {{ $t("product_card.sold_out") }}
+                </h5>
+                <img
+                  :src="require('../../../assets/icons/sold.svg')"
+                  :width="'36px'"
+                />
+              </template>
+
               <img
+                v-else
                 :src="require('../../../assets/icons/sold.svg')"
-                width="36px"
+                width="20px"
+                class="float-end"
               />
             </v-col>
           </v-row>
@@ -385,8 +383,10 @@
               {{ Number(product.rate).toFixed(1) }}
             </v-chip>
 
-            <span v-if="product.rate_count" class="mx-2  text-black"
-              ><b class="me-2">{{ numeralFormat(product.rate_count, "0,0") }}</b>
+            <span v-if="product.rate_count" class="mx-2 text-black"
+              ><b class="me-2">{{
+                numeralFormat(product.rate_count, "0,0")
+              }}</b>
 
               <small>{{ $t("product_card.review_unit") }}</small>
             </span>
@@ -455,13 +455,14 @@
 
             <v-btn
               v-if="quickBuy && (product.quantity || isFile)"
-              :size="$vuetify.display.mdAndUp ? 'large' : 'small'"
+              :size="$vuetify.display.mdAndUp ? undefined : 'small'"
               class="align-self-center flex-grow-0 ms-2 tnt"
               color="#000"
-              variant="flat"
+              rounded
+              variant="elevated"
               @click.prevent="$emit('quick-buy')"
             >
-              <v-icon class="me-1" size="small">shopping_basket</v-icon>
+              <v-icon start>shopping_basket</v-icon>
 
               {{ $t("global.actions.quick_buy") }}
             </v-btn>
@@ -1000,7 +1001,6 @@ export default {
       backdrop-filter 0s step-start,
       border-radius 0.1s linear; // Flicker animation border-radius problem!!!
 
-
     transition-delay: 0.25s;
     @media (max-width: $max_width_to_delay_reverse) {
       transition-delay: 0.25s + $delay_reverse;
@@ -1011,19 +1011,14 @@ export default {
     //  border-bottom-right-radius: 12px;
     padding: 0px 8px 0px 8px;
 
-
     //  margin-bottom: 6px;
     margin-bottom: 0px;
-
 
     overflow: hidden;
     display: block;
     @media (max-width: 800px) {
-      height: var(--footer-height);
+      min-height: var(--footer-height);
     }
-
-
-
   }
 
   .card__category {
@@ -1062,7 +1057,7 @@ export default {
     .card__info {
       backdrop-filter: none;
       border-radius: 16px;
-    //  transform: scale(0.75, 0.75);
+      //  transform: scale(0.75, 0.75);
       background-color: rgba(255, 255, 255, 0.94);
       transform: scale(0.9, 0.9);
 
@@ -1253,6 +1248,27 @@ export default {
       transform: translate(90%, -90%);
     }
   }
+
+  .offer-top-end {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-left:7px;
+
+    img{
+      width: 13px;
+      height: 13px;
+      margin: 0 auto;
+    }
+    span{
+      font-size: 6px !important;
+      margin: 0;
+    }
+  }
+
 }
 
 .colors-rating-small-mode {
@@ -1268,7 +1284,7 @@ export default {
   position: absolute;
   bottom: var(--footer-height);
   left: 50%;
-  transform: translate3d(-50%, -50%,0);
+  transform: translate3d(-50%, -50%, 0);
   visibility: hidden;
   opacity: 0;
   z-index: 10;
@@ -1424,7 +1440,6 @@ export default {
   padding: 6px;
   color: #fff;
 
-
   transform: scale(0.5, 0.5) rotate(-42deg) translate(-24%, -30%);
 
   //  background: rgba(194, 24, 91, 0.8);
@@ -1450,6 +1465,28 @@ export default {
   .price-label {
     font-size: 10px;
     color: #000;
+    display: block;
+    text-align: end;
+    margin: 0!important;
+  }
+  .offer-top-end {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-left:7px;
+
+    img{
+      width: 13px;
+      height: 13px;
+      margin: 0 auto;
+    }
+    span{
+      font-size: 6px !important;
+      margin: 0;
+    }
   }
 }
 

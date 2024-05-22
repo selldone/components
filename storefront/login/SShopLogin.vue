@@ -460,6 +460,10 @@ export default {
     UCountDown,
   },
   props: {
+    shop:{
+      required: true,
+      type: Object,
+    },
     show: {
       type: Boolean,
       default: false,
@@ -500,9 +504,7 @@ export default {
     };
   },
   computed: {
-    shop() {
-      return this.getShop();
-    },
+
     user() {
       return this.$store.getters.getUser;
     },

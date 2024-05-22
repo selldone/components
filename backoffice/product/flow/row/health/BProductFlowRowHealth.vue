@@ -33,7 +33,7 @@
         <template v-if="files_count">
           <v-icon class="me-1" color="green">check_circle</v-icon>
           {{ files_count }} files with total
-          {{ numeralFormat(files_size * 1024, "0.[0]b") }} uploaded for this
+          {{ numeralFormat(files_size * 1024, "0.[0] ib") }} uploaded for this
           product.
         </template>
         <template v-else>

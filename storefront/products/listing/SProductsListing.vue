@@ -119,15 +119,16 @@
 
           <v-row
               v-if="folders.length"
-            :align="align"
+            :align="single_line_categories?'center':align"
             :class="[
-              class_row_categories,
+             single_line_categories?undefined: class_row_categories,
               align ? 'align-' + align : undefined,
               justify ? 'justify-' + justify : undefined,
             ]"
             :justify="justify"
-            :style="{ '--insta-size': insta_size }"
-            class="s--products-listing-row mb-6 mb-sm-12"
+            class="s--products-listing-row pb-5 mb-2 pb-sm-12"
+              :style="[{ '--insta-size': insta_size },single_line_categories?'flex-wrap: nowrap;overflow: auto; flex-direction: initial':'']"
+
           >
             <v-fade-transition group hide-on-leave>
               <s-category-card
@@ -152,21 +153,23 @@
                     ? { href: getCategoryLink(shop, category.name), target: '' }
                     : {}
                 "
+                style="min-width: max-content"
               />
             </v-fade-transition>
 
-            <v-col
+          </v-row>
+
+          <v-col
               v-if="folder_pages_count > 1"
               key="pagination-categories"
               cols="12"
-            >
-              <v-pagination
+          >
+            <v-pagination
                 v-model="folder_page"
                 :length="folder_pages_count"
                 rounded
-              ></v-pagination>
-            </v-col>
-          </v-row>
+            ></v-pagination>
+          </v-col>
 
           <!-- ............................ Sort View of Products ............................ -->
 
@@ -595,6 +598,10 @@ export default {
   }),
 
   computed: {
+
+    single_line_categories(){
+      return this.products.length>0;
+    },
     theme() {
       return this.shop.theme;
     },
@@ -1531,6 +1538,7 @@ export default {
   }
 
   .insta-prod {
+    --footer-height:50px;
     // Fix Flickering in Safari in Safari: (Apple bug)
     -webkit-transform: translateZ(0);
     -webkit-backface-visibility: hidden;
@@ -1581,27 +1589,28 @@ export default {
 
         // Hide discount bar on hover:
         .count-down-bg {
-          transform: scale(0);
-          transform-origin: top right;
+        //  transform: scale(0);
+         // transform-origin: top right;
         }
 
         .count-down-container {
-          opacity: 0 !important;
+          //opacity: 0 !important;
         }
       }
 
       .card__info {
         position: absolute;
         bottom: 0;
-        width: calc(100% - 16px);
+        width: calc(100% - 6px);
         height: max-content !important;
         padding: 2px 4px !important;
-        margin: 9px;
+        margin: 3px;
         border-radius: 8px;
         background-color: #ffffff8f;
         display: flex !important;
         align-items: center;
         justify-content: center;
+
 
         .toggle-visible-on-hover {
           width: auto !important;
@@ -1618,7 +1627,10 @@ export default {
 
           .main-price-label {
             font-size: 1rem;
-            margin: 3px !important;
+            margin: 1px !important;
+            padding: 2px;
+            display: flex !important;
+            justify-content: space-between;
 
             p {
               min-height: 0 !important;

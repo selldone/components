@@ -21,12 +21,12 @@
         title="Documents"
         @click:add="showUpload"
       ></s-widget-header>
-      <v-list-subheader
-        >
-        {{IS_VENDOR_PANEL?"Please upload the necessary business, IP, and address verification documents. We require this information to confirm your partnership and provide you with the necessary access.":
-          "Vendors can submit documents such as business, intellectual property, and address verification to facilitate their KYC process, allowing you to grant them the appropriate access."}}
-
-
+      <v-list-subheader>
+        {{
+          IS_VENDOR_PANEL
+            ? "Please upload the necessary business, IP, and address verification documents. We require this information to confirm your partnership and provide you with the necessary access."
+            : "Vendors can submit documents such as business, intellectual property, and address verification to facilitate their KYC process, allowing you to grant them the appropriate access."
+        }}
       </v-list-subheader>
       <u-loading-progress v-if="busy"></u-loading-progress>
 
@@ -42,7 +42,11 @@
           </template>
 
           <v-list-item-title class="d-flex align-center"
-            ><b class="single-line d-block flex-grow-1">{{
+            ><b class="single-line d-block flex-grow-1 mb-1">
+
+            <img :src="FileHelper.GetFileIcon(doc.name)" width="20" height="20" class="me-1">
+
+            {{
               $t(getType(doc)?.title) + (doc.name ? ` | ${doc.name}` : "")
             }}</b>
 
@@ -51,13 +55,15 @@
               class="ma-1 min-width-max-content"
               color="success"
               label
-              size="x-small" variant="tonal"
+              size="x-small"
+              variant="tonal"
               >Verified
             </v-chip>
             <v-chip
               v-if="doc.reject_at"
               class="ma-1 min-width-max-content"
-              color="red" variant="tonal"
+              color="red"
+              variant="tonal"
               label
               size="x-small"
               >Rejected
@@ -114,12 +120,11 @@
               icon="assignment"
               title="Document Type"
             ></s-widget-header>
-            <v-list-subheader
-              >Please upload only the necessary documents. Avoid sharing any
+            <v-list-subheader>
+              Please upload only the necessary documents. Avoid sharing any
               documents that contain sensitive information. We request documents
               that are publicly available.
             </v-list-subheader>
-
             <u-smart-select
               v-model="type"
               :items="available_types"
@@ -127,14 +132,14 @@
               item-description="description"
               item-icon="icon"
               item-text="title"
+              item-value="code"
             >
             </u-smart-select>
 
-            <div
-              v-if="type?.guide"
-              class="py-3 typo-body"
-              v-html="smartConvert(type.guide)"
-            ></div>
+            <div v-if="guide" class="py-3 typo-body">
+              <v-icon class="me-1">info_outline</v-icon>
+              <span v-html="smartConvert(guide)"></span>
+            </div>
 
             <v-file-input
               v-model="selected_file"
@@ -191,6 +196,7 @@ import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
 import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentType";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
+import {FileHelper} from "@selldone/core-js/helper/converters/FileHelper";
 
 export default {
   name: "BVendorDocumentsList",
@@ -211,6 +217,8 @@ export default {
 
   data: function () {
     return {
+      FileHelper:FileHelper,
+
       VendorDocumentType: VendorDocumentType,
 
       busy: false,
@@ -243,10 +251,16 @@ export default {
     },
     available_types() {
       if (!this.marketplace_documents) return [];
-      return this.marketplace_documents.map((x) => {
-        const obj = VendorDocumentType[x.type];
-        return Object.assign({ guide: x.guide }, obj);
-      });
+      return this.marketplace_documents
+        .map((x) => {
+          const obj = VendorDocumentType[x.type];
+          return Object.assign({ guide: x.guide }, obj);
+        })
+        .uniqueByKey("code");
+    },
+
+    guide() {
+      return this.available_types.find((i) => i.code === this.type)?.guide;
     },
   },
 
@@ -309,7 +323,7 @@ export default {
         this.selected_file?.length ? this.selected_file[0] : null,
       );
 
-      formData.append("type", this.type.code);
+      formData.append("type", this.type);
 
       if (this.note) formData.append("note", this.note);
 

@@ -49,8 +49,6 @@
             </v-avatar>
 
             {{ shop.title }}
-
-
           </p>
 
           <u-rating-emoji
@@ -71,7 +69,7 @@
           class="chats thin-scroll"
           is-small
         ></s-contacts-list>
-        <s-shop-login v-else class="chat-login"></s-shop-login>
+        <s-shop-login v-else :shop="shop" class="chat-login"></s-shop-login>
       </div>
     </v-slide-y-reverse-transition>
 

@@ -714,24 +714,22 @@
             class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
           >
             <div>
-
               <h3 v-if="current_filter">
                 <v-icon class="me-1 zoomIn" color="green">check_circle</v-icon>
 
                 {{
                   parent_folders
-                      ? "This category has a filter."
-                      : $t("products_select.filter_box.has_root_filter_message")
+                    ? "This category has a filter."
+                    : $t("products_select.filter_box.has_root_filter_message")
                 }}
               </h3>
               <h3 v-else>
                 {{
                   parent_folders
-                      ? "No filters have been defined!"
-                      : $t("products_select.filter_box.no_root_filter_message")
+                    ? "No filters have been defined!"
+                    : $t("products_select.filter_box.no_root_filter_message")
                 }}
               </h3>
-
 
               <s-dense-images-circles
                 :images="
@@ -742,9 +740,6 @@
                 :limit="5"
                 class="justify-center"
               ></s-dense-images-circles>
-
-
-
 
               <small class="d-block">{{
                 $t("products_select.filter_box.set_filter_message")
@@ -759,7 +754,9 @@
                 <v-icon class="me-1" size="small">filter_alt</v-icon>
 
                 {{
-                  parent_folders ? `Edit ${parent_folders.title.limitWords(1)} Filter` : $t("products_select.filter_box.edit_action")
+                  parent_folders
+                    ? `Edit ${parent_folders.title.limitWords(1)} Filter`
+                    : $t("products_select.filter_box.edit_action")
                 }}
               </v-btn>
               <v-btn
@@ -772,7 +769,11 @@
               >
                 <v-icon class="me-1" size="small">filter_alt_off</v-icon>
 
-                {{parent_folders?'Clear Category Filter': $t("products_select.filter_box.clear_action") }}
+                {{
+                  parent_folders
+                    ? "Clear Category Filter"
+                    : $t("products_select.filter_box.clear_action")
+                }}
               </v-btn>
             </div>
           </div>
@@ -1503,15 +1504,15 @@
   </v-dialog>
 
   <!-- ████████████████████ Dialog > Assign Vendor to Product ████████████████████ -->
-  <v-dialog
+  <v-bottom-sheet
     v-model="dialog_vendors"
-    :content-class="!$vuetify.display.mdAndDown ? 'rounded-28px' : undefined"
-    :fullscreen="$vuetify.display.mdAndDown"
+    content-class="rounded-t-xl"
     max-width="1080"
+    inset
+    width="98cw"
     scrollable
-    transition="dialog-bottom-transition"
   >
-    <v-card class="text-start">
+    <v-card class="text-start" rounded="t-xl">
       <v-card-title>Bulk actions > Assign vendor</v-card-title>
       <v-card-text>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Vendor ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -1526,6 +1527,7 @@
 
           <products-dense-images-circles
             :ids="assign_vendor_product_ids"
+            avatar-class="avatar-gradient -thin -vendor"
           ></products-dense-images-circles>
 
           <b-vendor-input
@@ -1583,7 +1585,13 @@
         </div>
 
         <div class="widget-box mb-5 py-3">
-          <u-smart-verify v-model="check_bulk_vendor"></u-smart-verify>
+          <u-smart-verify
+            v-model="check_bulk_vendor"
+            true-title="Verify Bulk Vendor Assignment"
+            true-description="Please confirm that you want to assign the vendor in bulk."
+          >
+            >
+          </u-smart-verify>
         </div>
       </v-card-text>
       <v-card-actions>
@@ -1601,7 +1609,7 @@
             :loading="busy_assign_vendor"
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="assignVendor()"
           >
             <v-icon start>save</v-icon>
@@ -1617,7 +1625,7 @@
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 
   <!-- █████████████████████ Dialog > Product Note Messages █████████████████████ -->
 
@@ -3248,7 +3256,7 @@ export default {
 
     showClearRootFiltersDialog(category) {
       this.openConfirmationAlert(
-        `Remove ${category?category.title:'Root'} Filter`,
+        `Remove ${category ? category.title : "Root"} Filter`,
         "Do you want to clear filter of this category?",
         "Yes, Clear filters",
         () => {
@@ -3259,19 +3267,23 @@ export default {
     clearRootFilters(category) {
       this.busy_clear_root_filter = true;
       axios
-        .delete(window.API.DELETE_CATEGORY_FILTER(this.shop.id, category?category.id:"root"))
+        .delete(
+          window.API.DELETE_CATEGORY_FILTER(
+            this.shop.id,
+            category ? category.id : "root",
+          ),
+        )
         .then(({ data }) => {
           if (!data.error) {
             this.showSuccessAlert(
               null,
               "Root filters has been removed successfully.",
             );
-            if(category){
+            if (category) {
               category.filters = data.filters;
-            }else{
+            } else {
               this.shop.filters = data.filters;
             }
-
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

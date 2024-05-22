@@ -21,11 +21,14 @@
     <v-avatar
       v-for="(id, index) in ids.limit(maxCount)"
       :key="id + '-' + index"
-      :class="{
-        'pointer-pointer': link,
-        'big-scale': bigScale,
-        border: border,
-      }"
+      :class="[
+        {
+          'pointer-pointer': link,
+          'big-scale': bigScale,
+          border: border,
+        },
+        avatarClass,
+      ]"
       :color="id.toString().startsWith('c-') ? 'amber' : '#ffffffbb'"
       :size="size"
       class="citm"
@@ -40,7 +43,7 @@
         :src="
           getCategoryIcon(id.toString().replace('c-', ''), IMAGE_SIZE_SMALL)
         "
-        style="padding: 2px;"
+        style="padding: 2px"
         height="100%"
       />
       <img
@@ -108,6 +111,7 @@ export default {
       default: false,
     },
     border: Boolean,
+    avatarClass: {},
   },
 };
 </script>
