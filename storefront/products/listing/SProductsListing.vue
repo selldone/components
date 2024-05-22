@@ -66,6 +66,7 @@
               style="max-width: inherit; transition: all 0.5s ease"
             />
           </div>
+
         </v-expand-transition>
 
         <!-- ............................ Categories > Small screen ............................ -->
@@ -110,6 +111,7 @@
         <v-container
           :class="{
             'container-expanded-side-menu': show_filter_menu && has_filter,
+
           }"
           class="products-container pa-1"
           fluid
@@ -124,6 +126,9 @@
               single_line_categories ? undefined : class_row_categories,
               align ? 'align-' + align : undefined,
               justify ? 'justify-' + justify : undefined,
+              {
+                   'pt-9':hasBreadcrumb && $vuetify.display.smAndUp && hierarchy_items.length <= 1
+              }
             ]"
             :justify="justify"
             class="s--products-listing-row pb-5 mb-2 pb-sm-12"
