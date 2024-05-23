@@ -446,7 +446,7 @@
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import UCountDown from "../../ui/count-down/UCountDown.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import { SuccessVerifyMethod } from "@selldone/sdk-storefront/auth/XapiAuthSMS";
+import { SuccessVerifyMethod } from "@selldone/sdk-storefront";
 import { CustomerSource } from "@selldone/core-js/enums/customer/source/CustomerSource";
 
 import ShopEmailLogin from "../../storefront/login/widgets/ShopEmailLogin.vue";

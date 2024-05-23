@@ -46,7 +46,7 @@ import {getCountryName} from "@selldone/core-js/enums/country/country-list";
 import {Shop} from "@selldone/core-js/models/shop/shop.model";
 import type {ProductVariant} from "@selldone/core-js/models/shop/product/product_variant.model";
 import {Product} from "@selldone/core-js/models/shop/product/product.model";
-import {XapiShop} from "@selldone/sdk-storefront/shop/XapiShop";
+import {XapiShop} from "@selldone/sdk-storefront";
 import type {Basket} from "@selldone/core-js/models/shop/order/basket/basket.model";
 import type {IAddress} from "@selldone/core-js/models/traits/address.model";
 import type {CommunityTopic} from "@selldone/core-js/models/community/community.topic.model";
@@ -59,12 +59,13 @@ import type {ICountryCode} from "@selldone/core-js/enums/country/CountriesListEn
 import type {BasketItem} from "@selldone/core-js/models/shop/order/basket/basket_item.model";
 import type {gapi} from "@selldone/core-js/gapi/requests/gapi.countries.get";
 import type {User} from "@selldone/core-js/models/user/user.model";
-import {XapiUser} from "@selldone/sdk-storefront/user/XapiUser";
+import {XapiUser} from "@selldone/sdk-storefront";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
 import {Slugify} from "../utils/slugify/slugify.ts";
 import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
+import {UserProfile} from "@selldone/core-js/models/user/user_profile.model";
 
 //――― User Device Preferences ―――
 
@@ -197,8 +198,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                                              return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                                            },*/
+                                                  return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                                                },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -364,8 +365,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                                              return Num2persian(number);
-                                            },*/
+                                                  return Num2persian(number);
+                                                },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -1332,8 +1333,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                              PushNotification.AskForPermission();
-                                            },*/
+                                                  PushNotification.AskForPermission();
+                                                },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 

@@ -12,10 +12,10 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import { XapiUser } from "@selldone/sdk-storefront/user/XapiUser.ts";
-import { ShopApplicationInterface } from "@selldone/core-js/enums/application/ShopApplicationInterface.ts";
-import { ShopEventsName } from "@selldone/core-js/enums/application/event/ShopEventsName.ts";
-import { Shop } from "@selldone/core-js/models/shop/shop.model.ts";
+import {XapiUser} from "@selldone/sdk-storefront";
+import {ShopApplicationInterface} from "@selldone/core-js/enums/application/ShopApplicationInterface.ts";
+import {ShopEventsName} from "@selldone/core-js/enums/application/event/ShopEventsName.ts";
+import {Shop} from "@selldone/core-js/models/shop/shop.model.ts";
 
 declare global {
   interface Window {}
