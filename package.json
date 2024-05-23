@@ -23,13 +23,13 @@
 
   "dependencies": {
 
-    "@selldone/core-js": "^1.5.15-7",
-    "@selldone/translate": "^1.5.14",
-    "@selldone/sdk-storefront": "^1.5.15-7",
-    "@selldone/sdk-backoffice": "^1.5.15-7",
-    "@selldone/sdk-community": "^1.5.15-7",
-    "@selldone/sdk-vendor": "^1.5.15-7",
-    "@selldone/page-builder": "^1.5.15-7",
+    "@selldone/core-js": "latest",
+    "@selldone/translate": "latest",
+    "@selldone/sdk-storefront": "latest",
+    "@selldone/sdk-backoffice": "latest",
+    "@selldone/sdk-community": "latest",
+    "@selldone/sdk-vendor": "latest",
+    "@selldone/page-builder": "latest",
 
 
 
