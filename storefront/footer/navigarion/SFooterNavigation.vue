@@ -63,14 +63,14 @@
         <v-avatar v-if="last_product" color="#eee" size="24">
           <img :src="getProductImage(last_product, 64)" />
         </v-avatar>
-        <v-icon v-else-if="last_cat"  size="24"> folder</v-icon>
-        <v-icon v-else-if="last_home_route"  size="24">store</v-icon>
+        <v-icon v-else-if="last_cat" size="24"> folder</v-icon>
+        <v-icon v-else-if="last_home_route" size="24">store</v-icon>
 
         <v-icon v-else-if="channel_entry" size="24"
           >{{ in_channel_entry_page ? "apps" : channel_entry_page_icon }}
         </v-icon>
 
-        <v-icon v-else  size="24"
+        <v-icon v-else size="24"
           >{{
             in_custom_home_page || in_product || in_category ? "apps" : "home"
           }}
@@ -86,7 +86,7 @@
         value="search"
         @click="search_mode = true"
       >
-        <v-icon  size="24">search</v-icon>
+        <v-icon size="24">search</v-icon>
       </v-btn>
 
       <!-- ------------------ Basket ------------------ -->
@@ -104,7 +104,7 @@
           :content="numeralFormat(total_items_in_carts, '0a')"
           :model-value="total_items_in_carts > 0"
           color="teal"
-         floating
+          floating
         >
           <img
             v-if="total_items_in_carts > 0"
@@ -137,9 +137,8 @@
           :model-value="sum_orders_badges > 0"
           color="red"
           floating
-
         >
-          <v-icon  size="24">notifications</v-icon>
+          <v-icon size="24">notifications</v-icon>
         </v-badge>
       </v-btn>
 
@@ -161,7 +160,6 @@
           :model-value="!!getClub()"
           color="transparent"
           floating
-
         >
           <v-avatar color="#eee" size="24">
             <v-img :src="getUserAvatar(USER_ID())"></v-img>
@@ -173,12 +171,12 @@
               :src="getCustomerClubLevel(getClub().level).icon"
               height="18"
               width="18"
-              style="min-width: 18px;min-height: 18px;"
+              style="min-width: 18px; min-height: 18px"
             />
           </template>
         </v-badge>
 
-        <v-icon v-else  size="24">account_circle</v-icon>
+        <v-icon v-else size="24">account_circle</v-icon>
       </v-btn>
     </template>
 
@@ -187,12 +185,13 @@
     <template v-if="search_mode">
       <v-btn
         class="zoomIn delay_300 flex-grow-0"
-        icon variant="text"
+        icon
+        variant="text"
         min-width="60"
         width="70"
         @click="$refs.search.showQRScanner()"
       >
-        <v-icon  size="24">qr_code_scanner</v-icon>
+        <v-icon size="24">qr_code_scanner</v-icon>
       </v-btn>
 
       <s-storefront-search-box
@@ -215,12 +214,13 @@
       <v-btn
         key="ser"
         class="zoomIn flex-grow-0"
-        icon variant="text"
+        icon
+        variant="text"
         min-width="60"
         width="70"
         @click="search_mode = false"
       >
-        <v-icon  size="24">close</v-icon>
+        <v-icon size="24">close</v-icon>
       </v-btn>
     </template>
   </v-bottom-navigation>

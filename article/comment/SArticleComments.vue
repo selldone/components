@@ -14,7 +14,7 @@
 
 <template>
   <div style="line-height: normal">
-    <div class="mx-auto">
+    <div class="mx-auto px-2">
       <div v-if="user" class="comment-form">
         <v-expand-transition>
           <div
@@ -90,8 +90,8 @@
       </div>
 
       <div v-else class="mb-16">
-          <!-- Login Form -->
-          <slot name="login"></slot>
+        <!-- Login Form -->
+        <slot name="login"></slot>
       </div>
 
       <div

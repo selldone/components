@@ -46,9 +46,8 @@
         <v-expand-transition>
           <div
             v-if="
-              hasBreadcrumb &&
-              hierarchy_items.length > 1 &&
-              $vuetify.display.smAndUp
+              hasBreadcrumb && hierarchy_items.length > 1
+              //  && $vuetify.display.smAndUp
             "
           >
             <u-breadcrumb
@@ -66,52 +65,13 @@
               style="max-width: inherit; transition: all 0.5s ease"
             />
           </div>
-
         </v-expand-transition>
-
-        <!-- ............................ Categories > Small screen ............................ -->
-        <v-expand-transition>
-          <div
-            v-if="
-              $vuetify.display.xs &&
-              hierarchy_items.length > 1 &&
-              show_categories
-            "
-            class="border-between-vertical"
-          >
-            <v-list class="text-start">
-              <v-list-item
-                v-for="(item, i) in hierarchy_items"
-                :key="i"
-                :to="item.disabled ? undefined : item.to"
-                active-class="bg-primary text-white"
-                exact
-              >
-                <template v-slot:prepend>
-                  <v-avatar :tile="!!item.icon">
-                    <img
-                      v-if="item.image"
-                      :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
-                    />
-                    <v-icon v-else-if="item.icon" class="me-1"
-                      >{{ item.icon }}
-                    </v-icon>
-                  </v-avatar>
-                </template>
-
-                <v-list-item-title>{{ item.text }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </div>
-        </v-expand-transition>
-        <!-- .................................................................................... -->
 
         <!-- -------------------------- Container -------------------------------- -->
 
         <v-container
           :class="{
             'container-expanded-side-menu': show_filter_menu && has_filter,
-
           }"
           class="products-container pa-1"
           fluid
@@ -119,53 +79,60 @@
         >
           <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
 
-          <v-row
+          <component
             v-if="folders.length"
-            :align="single_line_categories ? 'center' : align"
-            :class="[
-              single_line_categories ? undefined : class_row_categories,
-              align ? 'align-' + align : undefined,
-              justify ? 'justify-' + justify : undefined,
-              {
-                   'pt-9':hasBreadcrumb && $vuetify.display.smAndUp && hierarchy_items.length <= 1
-              }
-            ]"
-            :justify="justify"
-            class="s--products-listing-row pb-5 mb-2 pb-sm-12"
-            :style="[
-              { '--insta-size': insta_size },
-              single_line_categories
-                ? 'flex-wrap: nowrap;overflow: auto; flex-direction: initial'
-                : '',
-            ]"
+            :is="single_line_categories ? 'u-fade-scroll' : 'div'"
+            drag-scroll
+            small-arrow
+            show-arrow
           >
-            <v-fade-transition group hide-on-leave>
-              <s-category-card
-                v-for="category in folders.slice(
-                  (folder_page - 1) * max_folders_per_page,
-                  folder_page * max_folders_per_page,
-                )"
-                :key="'f' + category.id"
-                :category="category"
-                :class="[class_items_categories]"
-                :static="no_animation"
-                :to="
-                  viewOnly || window.ExternalWidget
-                    ? undefined
-                    : {
-                        name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
-                        params: { category_name: category.name },
-                      }
-                "
-                v-bind="
-                  !viewOnly && window.ExternalWidget
-                    ? { href: getCategoryLink(shop, category.name), target: '' }
-                    : {}
-                "
-                style="min-width: max-content"
-              />
-            </v-fade-transition>
-          </v-row>
+            <v-row
+              :align="single_line_categories ? 'center' : align"
+              :class="[
+                single_line_categories ? undefined : class_row_categories,
+                align ? 'align-' + align : undefined,
+                justify ? 'justify-' + justify : undefined,
+              ]"
+              :justify="justify"
+              class="s--products-listing-row pb-5 mb-2 pb-sm-12 pt-9"
+              :style="[
+                { '--insta-size': insta_size },
+                single_line_categories
+                  ? 'flex-wrap: nowrap;overflow: visible; flex-direction: initial'
+                  : '',
+              ]"
+            >
+              <v-fade-transition group hide-on-leave>
+                <s-category-card
+                  v-for="category in folders.slice(
+                    (folder_page - 1) * max_folders_per_page,
+                    folder_page * max_folders_per_page,
+                  )"
+                  :key="'f' + category.id"
+                  :category="category"
+                  :class="[class_items_categories]"
+                  :static="no_animation"
+                  :to="
+                    viewOnly || window.ExternalWidget
+                      ? undefined
+                      : {
+                          name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+                          params: { category_name: category.name },
+                        }
+                  "
+                  v-bind="
+                    !viewOnly && window.ExternalWidget
+                      ? {
+                          href: getCategoryLink(shop, category.name),
+                          target: '',
+                        }
+                      : {}
+                  "
+                  style="min-width: max-content"
+                />
+              </v-fade-transition>
+            </v-row>
+          </component>
 
           <v-col
             v-if="folder_pages_count > 1"
@@ -205,17 +172,6 @@
                   class="w-100 overflow-x-auto"
                   style="transition: all 0.5s ease"
                 >
-                  <!-- ............................ Categories > Small screen ............................ -->
-                  <v-btn
-                    v-if="$vuetify.display.xs && hierarchy_items.length > 1"
-                    height="46px"
-                    tile
-                    variant="text"
-                    @click="show_categories = !show_categories"
-                  >
-                    {{ $t("global.commons.category") }}
-                    <v-icon class="ms-1" size="x-small">expand_more</v-icon>
-                  </v-btn>
                   <!-- .................................................................................... -->
 
                   <v-spacer></v-spacer>
@@ -396,10 +352,12 @@ import SProductOverviewLoading from "../../../storefront/overview/loading/SProdu
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 import _ from "lodash-es";
 import { defineAsyncComponent } from "vue";
+import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "SProductsListing",
   components: {
+    UFadeScroll,
     LPageViewer: defineAsyncComponent(
       () => import("@selldone/page-builder/page/viewer/LPageViewer.vue"),
     ),
@@ -595,8 +553,6 @@ export default {
     min_height: null, // Set min heigh to prevent scrollable filters.
     //--------------------
     prevent_refetch: false,
-
-    show_categories: false,
 
     //---------------- Key board -------------
     key_listener_keydown: null,

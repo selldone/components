@@ -32,7 +32,7 @@
     }"
     :rail="miniVariant"
     :right="right"
-    :scrim="false"
+    :scrim="$vuetify.display.smAndDown"
     :width="300"
     class="s--storefront-products-filter-menu"
     elevation="0"
@@ -43,7 +43,7 @@
         <v-list-item lines="two">
           <template v-slot:prepend>
             <v-avatar v-if="category_image">
-              <img :src="category_image" />
+              <v-img :src="category_image" />
             </v-avatar>
           </template>
 
@@ -84,7 +84,7 @@
               @click.stop="clickTreeView(item)"
             >
               <v-avatar v-if="item.icon" class="me-1" color="primary" size="28">
-                <img :src="getShopImagePath(item.icon)" />
+                <v-img :src="getShopImagePath(item.icon)" />
               </v-avatar>
               {{ item.title }}
             </div>

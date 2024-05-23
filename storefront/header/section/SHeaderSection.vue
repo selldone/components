@@ -373,10 +373,12 @@
     <v-navigation-drawer
       v-model="show_basket"
       :location="!$vuetify.locale.isRtl ? 'right' : undefined"
-      :width="$vuetify.display.mdAndUp ? 640 : 360"
-      class="s--storefront-primary-header-basket-navigation"
+      :width="Math.min(640,window.innerWidth*0.86)"
+      class="s--storefront-primary-header-basket-navigation t-all-400"
+      :class="{'ma-2':show_basket}"
       color="#fff"
       temporary
+
     >
       <div class="d-flex flex-column" style="min-height: 100%">
         <v-btn
@@ -643,6 +645,10 @@ export default {
         this.darkHeader = null; // Default value is null!
       }
     },
+
+    show_basket(value){
+      this.$store.commit("setForceHideNavigation", value);
+    }
   },
 
   created() {},
@@ -693,7 +699,6 @@ export default {
 
 .s--storefront-primary-header-basket-navigation {
   padding: 8px;
-  margin: 8px;
   height: calc(100vh - 16px) !important;
   border-radius: 16px;
   border: solid thin #ddd !important;

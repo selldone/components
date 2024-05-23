@@ -63,7 +63,9 @@
     <div v-else-if="hierarchyItems.length > 0">
       <v-btn class="w-100" size="x-large" variant="text" @click="dialog = true">
         {{ $t("global.commons.category") }}
-        <v-icon class="ms-1" size="x-small">expand_more</v-icon>
+        <v-icon end class="t-all-400" :class="{ 'rotate-180': dialog }"
+          >expand_more</v-icon
+        >
       </v-btn>
     </div>
 
@@ -76,41 +78,43 @@
       scrollable
       width="480"
     >
-      <v-card min-height="40vh" rounded="t-xl">
-        <v-card-text class="pb-16">
-          <v-list class="text-start">
-            <v-list-item
-              v-for="(item, i) in hierarchyItems"
-              :key="i"
-              :to="item.disabled ? undefined : item.to"
-              exact
-              @click="dialog = false"
-            >
-              <template v-slot:prepend>
-                <v-avatar :tile="!!item.icon">
-                  <img
-                    v-if="item.image"
-                    :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
-                  />
-                  <v-icon v-else-if="item.icon" class="me-1"
-                    >{{ item.icon }}
-                  </v-icon>
-                </v-avatar>
-              </template>
+      <v-card min-height="40vh" rounded="t-xl" class="text-start">
+        <v-list class="text-start" style="margin-bottom: 100px">
+          <v-list-item
+            v-for="(item, i) in hierarchyItems"
+            :key="i"
+            :to="item.disabled ? undefined : item.to"
+            exact
+            @click="dialog = false"
+          >
+            <template v-slot:prepend>
+              <u-avatar-folder
+                :src="
+                  item.image
+                    ? getShopImagePath(item.image, IMAGE_SIZE_SMALL)
+                    : undefined
+                "
+                :placeholder-icon="item.icon"
+                is-amber
+                small-side-icon
+                :border-size="8"
+                :size="56"
+              >
+              </u-avatar-folder>
+            </template>
+            <v-list-item-title>{{ item.text }} </v-list-item-title>
 
-              <v-list-item-title>{{ item.text }}</v-list-item-title>
-              <v-list-item-subtitle>
-                <v-chip
-                  v-if="i === hierarchyItems.length - 1"
-                  color="#111"
-                  label
-                  size="x-small"
-                  >{{ $t("global.commons.current") }}
-                </v-chip>
-              </v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
+            <template v-slot:append>
+              <v-chip
+                v-if="i === hierarchyItems.length - 1"
+                color="#111"
+                variant="flat"
+                size="x-small"
+                >{{ $t("global.commons.current") }}
+              </v-chip>
+            </template>
+          </v-list-item>
+        </v-list>
       </v-card>
     </v-bottom-sheet>
   </div>
@@ -118,10 +122,11 @@
 
 <script>
 import CircleImage from "../../ui/image/CircleImage.vue";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "UBreadcrumb",
-  components: { CircleImage },
+  components: { UAvatarFolder, CircleImage },
   props: {
     hierarchyItems: {
       required: true,

@@ -105,7 +105,7 @@
       "
       class="map-view-box -jumping pointer-pointer fadeIn delay_300 rounded-18px mx-auto my-3"
       height="auto"
-      width="100%"
+      width="100%" cover
       @click="$emit('show:map')"
     >
       <u-map-view-pin
