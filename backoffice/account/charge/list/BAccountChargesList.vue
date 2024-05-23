@@ -16,9 +16,11 @@
   <div>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="transactions"
@@ -29,7 +31,6 @@
           return { class: 'row-hover -no-pointer' };
         }
       "
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent min-height-40vh"
       density="compact"
       hide-default-footer
@@ -39,7 +40,6 @@
         <v-img
           :src="getShopImagePath(gateway.icon)"
           class="my-1"
-          contain
           height="32"
           width="32"
         ></v-img>
@@ -47,10 +47,7 @@
 
       <template v-slot:item.amount="{ item }">
         <div class="min-width-100">
-          <u-price
-            :amount="item.amount"
-            :currency="item.currency"
-          ></u-price>
+          <u-price :amount="item.amount" :currency="item.currency"></u-price>
           <v-chip
             v-if="item.target?.auto_charge"
             class="ma-2"
@@ -148,8 +145,7 @@
         <v-btn
           v-if="item.target.completed"
           :loading="busy_download === item.target"
-          color="#111"
-          dark
+          color="#111" variant="elevated"
           size="small"
           @click="downloadSingleReceipt(item.target)"
         >
@@ -203,6 +199,7 @@ export default {
       itemsPerPage: 10,
       totalItems: 0,
       options: {},
+      sortBy: [{ key: null, order: "desc" }],
 
       headers: [
         {

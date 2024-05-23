@@ -60,9 +60,11 @@
       </v-row>
 
       <u-loading-progress v-if="busy_fetch"></u-loading-progress>
-      <v-data-table-server  :mobile="$vuetify.display.xs"
+      <v-data-table-server
+        :mobile="$vuetify.display.xs"
         v-model:options="options"
         v-model:page="page"
+        v-model:sort-by="sortBy"
         :class="{ disabled: busy_fetch }"
         :header-props="{ sortByText: $t('global.commons.sort_by') }"
         :headers="headers"
@@ -74,7 +76,6 @@
             return { class: 'row-hover' };
           }
         "
-        :sort-by="[{ key: null, order: 'desc' }]"
         class="bg-transparent"
         density="compact"
         hide-default-footer
@@ -172,16 +173,19 @@
 
             {{ getStatusString(item.status) }}
           </v-chip>
-          <v-chip v-else-if="item.status === 'Reserved'" size="small" label  color="amber">
+          <v-chip
+            v-else-if="item.status === 'Reserved'"
+            size="small"
+            label
+            color="amber"
+          >
             <v-icon start>hourglass_top</v-icon>
 
             {{ getStatusString(item.status) }}
           </v-chip>
           <v-chip v-else size="small" label>
-
             {{ getStatusString(item.status) }}
           </v-chip>
-
         </template>
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂ order ▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
@@ -463,6 +467,7 @@ export default {
     itemsPerPage: 10,
     totalItems: 0,
     options: {},
+    sortBy: [{ key: null, order: "desc" }],
 
     busy_delete: null,
     busy_restore: null,

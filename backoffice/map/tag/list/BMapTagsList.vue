@@ -43,9 +43,11 @@
         variant="plain"
       ></v-text-field>
     </v-row>
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="map_tags"
@@ -57,7 +59,6 @@
           return { class: 'row-hover' };
         }
       "
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent my-2 min-height-60vh"
       density="compact"
       hide-default-footer
@@ -181,7 +182,6 @@
 </template>
 
 <script>
-import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import _ from "lodash-es";
 import BMapTagAdd from "../../../map/tag/add/BMapTagAdd.vue";
@@ -210,6 +210,7 @@ export default {
     itemsPerPage: 10,
     totalItems: 0,
     options: {},
+    sortBy: [{ key: null, order: "desc" }],
 
     //---------------------------------------
     dialog: false,
@@ -296,9 +297,7 @@ export default {
     }, window.SERACH_THROTTLE),
   },
 
-  created() {
-
-  },
+  created() {},
 
   methods: {
     fetchLocations(page, sortBy, sortDesc = true) {

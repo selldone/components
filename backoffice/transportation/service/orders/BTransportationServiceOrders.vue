@@ -21,12 +21,12 @@
     <v-data-table
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="transportation_orders"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent"
       density="compact"
       hide-default-footer
@@ -68,7 +68,8 @@
               item.basket.receiver_info && item.basket.receiver_info.location
             "
             :href="`https://www.google.com/maps/dir/?api=1&destination=${item.basket.receiver_info.location.lat},${item.basket.receiver_info.location.lng}`"
-            icon variant="text"
+            icon
+            variant="text"
             target="_blank"
             title="Google map"
           >
@@ -79,7 +80,8 @@
             v-if="item.track"
             :href="item.track"
             color="primary"
-            icon variant="text"
+            icon
+            variant="text"
             target="_blank"
             title="Tracking page"
           >
@@ -187,7 +189,13 @@
       </template>
 
       <template v-slot:item.label="{ item }">
-        <v-btn v-if="item.label" :href="item.label" icon target="_blank" variant="text">
+        <v-btn
+          v-if="item.label"
+          :href="item.label"
+          icon
+          target="_blank"
+          variant="text"
+        >
           <v-icon>download</v-icon>
         </v-btn>
       </template>
@@ -198,7 +206,7 @@
             v-if="item.status === 'PENDING'"
             class="d-flex align-items-center"
           >
-            <v-menu >
+            <v-menu>
               <template v-slot:activator="{ props }">
                 <v-btn
                   :loading="busy_transportation === item"
@@ -360,6 +368,7 @@ export default {
       itemsPerPage: 10,
       totalItems: 0,
       options: {},
+      sortBy: [{ key: null, order: "desc" }],
 
       //------------
       busy_transportation: null,

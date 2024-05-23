@@ -61,9 +61,11 @@
 
     <!-- -------------- List -------------- -->
 
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="bills"
@@ -74,7 +76,6 @@
           return { class: 'row-hover' };
         }
       "
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent min-height-60vh"
       density="compact"
       hide-default-footer
@@ -321,6 +322,7 @@ export default {
       itemsPerPage: 10,
       totalItems: 0,
       options: {},
+      sortBy: [{ key: null, order: "desc" }],
 
       search: null,
       segments_filter: [],

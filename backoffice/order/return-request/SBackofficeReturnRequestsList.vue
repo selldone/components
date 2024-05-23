@@ -15,9 +15,11 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="return_requests"
@@ -29,7 +31,6 @@
           return { class: 'row-hover' };
         }
       "
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent min-height-60vh"
       density="compact"
       hide-default-footer
@@ -40,9 +41,7 @@
       <template v-slot:no-data>
         <div v-if="!busy_fetch" class="py-5 usn text-center fadeIn">
           <img
-            :src="
-              require('../../../assets/guides/returned-orders-empty.png')
-            "
+            :src="require('../../../assets/guides/returned-orders-empty.png')"
             class="m-3 op-0-3"
             style="max-height: 400px; object-fit: contain"
             width="85%"
@@ -151,7 +150,7 @@ import BOrderButton from "../../order/button/BOrderButton.vue";
 
 export default {
   name: "SBackofficeReturnRequestsList",
-  components: {BOrderButton, VariantItemViewMicro },
+  components: { BOrderButton, VariantItemViewMicro },
   props: {
     url: {
       require: true,
@@ -170,6 +169,7 @@ export default {
       itemsPerPage: 10,
       totalItems: 0,
       options: {},
+      sortBy: [{ key: null, order: "desc" }],
     };
   },
   computed: {
@@ -178,11 +178,8 @@ export default {
     },
     headers() {
       return [
-
-
-
         {
-          title: '',
+          title: "",
           align: "center",
           sortable: false,
           value: "product_id",

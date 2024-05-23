@@ -42,17 +42,18 @@
       ></v-text-field>
     </v-row>
 
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-model:expanded="expanded"
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="ribbons"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('admin_shop.blogs.list.waiting_message')"
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent min-height-60vh"
       hide-default-footer
       hover
@@ -135,7 +136,8 @@
                 name: 'BPageProductInventory',
                 params: { product_id: item.id },
               }"
-              target="_blank" class="font-weight-bold"
+              target="_blank"
+              class="font-weight-bold"
             >
               {{ item.title }}
             </router-link>
@@ -186,7 +188,7 @@
           class="h-auto py-1 min-width-75"
           density="comfortable"
           label
-          :color="item.subscription_prices.length?'#000':'#999'"
+          :color="item.subscription_prices.length ? '#000' : '#999'"
           variant="flat"
         >
           <div class="text-start">
@@ -300,6 +302,7 @@ export default {
     itemsPerPage: 10,
     totalItems: 0,
     options: {},
+    sortBy: [{ key: null, order: "desc" }],
 
     expanded: [],
     //----------------------

@@ -90,9 +90,11 @@
     </v-row>
 
     <!---------------------------- List ----------------------->
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :group-by="is_grouped ? [{ key: 'group' }] : undefined"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
@@ -113,7 +115,6 @@
           };
         }
       "
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent min-height-80vh"
       density="compact"
       hide-default-footer
@@ -183,8 +184,8 @@
             </v-img>
 
             <v-tooltip activator="parent" location="bottom"
-              >Open product admin page.</v-tooltip
-            >
+              >Open product admin page.
+            </v-tooltip>
           </router-link>
         </div>
       </template>
@@ -387,7 +388,7 @@
           </u-number-input>
         </div>
         <div v-else>
-          <small>{{$t("inventory_list.cant_set_here") }}</small>
+          <small>{{ $t("inventory_list.cant_set_here") }}</small>
         </div>
       </template>
 
@@ -496,7 +497,11 @@
   </v-dialog>
 
   <!-- ====================== Dialog > Bulk price action ====================== -->
-  <b-inventory-bulk-price v-model="show_bulk_price" :shop="shop" @update="onRefresh">
+  <b-inventory-bulk-price
+    v-model="show_bulk_price"
+    :shop="shop"
+    @update="onRefresh"
+  >
   </b-inventory-bulk-price>
   <!-- ====================== Dialog > Bulk discount action ====================== -->
   <b-inventory-bulk-discount
@@ -570,6 +575,7 @@ export default {
       itemsPerPage: 10,
       totalItems: 0,
       options: {},
+      sortBy: [{ key: null, order: "desc" }],
 
       open_group: [],
       //-----------------------------------------
@@ -947,11 +953,11 @@ export default {
             // available: this.filter_bundle.only_available,
             dir: "*",
             /* dir:
-                                                      !this.search &&
-                                                      this.filter_bundle.dir &&
-                                                      this.filter_bundle.dir.length
-                                                          ? this.filter_bundle.dir
-                                                          : "*",*/
+                                                        !this.search &&
+                                                        this.filter_bundle.dir &&
+                                                        this.filter_bundle.dir.length
+                                                            ? this.filter_bundle.dir
+                                                            : "*",*/
             products_only: true,
             need_full_variants: true, // Return full variants data
             optimized: true, // Dont send pricing & rating values!

@@ -17,12 +17,13 @@
     <s-widget-header icon="paid" title="Wallet top-ups"></s-widget-header>
     <v-list-subheader></v-list-subheader>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
-
       :row-props="
         (_data) => {
           return {
@@ -30,11 +31,9 @@
           };
         }
       "
-
       :items="charges"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent min-height-40vh"
       hide-default-footer
       item-key="id"
@@ -116,6 +115,7 @@ export default {
     itemsPerPage: 10,
     totalItems: 0,
     options: {},
+    sortBy: [{ key: null, order: "desc" }],
 
     //-------------------------------
     busy_refresh: null,

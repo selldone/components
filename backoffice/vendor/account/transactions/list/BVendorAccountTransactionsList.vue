@@ -45,26 +45,24 @@
         ></v-text-field>
       </v-row>
 
-      <v-data-table-server  :mobile="$vuetify.display.xs"
+      <v-data-table-server
+        :mobile="$vuetify.display.xs"
         v-model:options="options"
         v-model:page="page"
+        v-model:sort-by="sortBy"
         :header-props="{ sortByText: $t('global.commons.sort_by') }"
         :headers="headers"
         :items="transactions"
         :items-length="totalItems"
         :items-per-page="itemsPerPage"
         :loading-text="$t('global.commons.waiting_load_data')"
-        :sort-by="[{ key: null, order: 'desc' }]"
         class="bg-transparent min-height-60vh"
         density="compact"
         hide-default-footer
         item-key="id"
       >
         <template v-slot:item.amount="{ item }">
-          <u-price
-            :amount="item.amount"
-            :currency="item.currency"
-          ></u-price>
+          <u-price :amount="item.amount" :currency="item.currency"></u-price>
           <div v-if="item.source === 'ORDER'" class="small">
             {{
               item.amount > 0
@@ -163,6 +161,7 @@ export default {
     itemsPerPage: 10,
     totalItems: 0,
     options: {},
+    sortBy: [{ key: null, order: "desc" }],
 
     search: null,
 

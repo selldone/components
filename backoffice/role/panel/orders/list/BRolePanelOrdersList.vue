@@ -29,9 +29,11 @@
     ></s-order-statuses-select>
 
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="orders"
@@ -42,7 +44,6 @@
           return { class: 'row-hover' };
         }
       "
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent"
       density="compact"
       hide-default-footer
@@ -79,18 +80,13 @@
       </template>
 
       <template v-slot:item.price="{ item }">
-        <u-price
-          :amount="item.price"
-          :currency="item.currency"
-          title="Payment"
-        >
+        <u-price :amount="item.price" :currency="item.currency" title="Payment">
         </u-price>
 
         <small v-if="item.discount" class="d-block">
           {{ $t("admin_shop.orders.physical.discount") }}:
 
-          <u-price :amount="item.discount" :currency="item.currency">
-          </u-price>
+          <u-price :amount="item.discount" :currency="item.currency"> </u-price>
         </small>
 
         <small class="d-block">
@@ -200,6 +196,7 @@ export default {
       itemsPerPage: 10,
       totalItems: 0,
       options: {},
+      sortBy: [{ key: null, order: "desc" }],
 
       headers: [
         {

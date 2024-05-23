@@ -71,18 +71,19 @@
       </v-btn>
     </div>
 
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-if="$vuetify.display.smAndUp || show_domains || showHeader || search"
       v-model:expanded="expanded"
       v-model:options="options"
       v-model:page="page"
+      v-model:sort-by="sortBy"
       :class="{ 'min-height-40vh': showHeader }"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="shop_domains"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
-      :sort-by="[{ key: null, order: 'desc' }]"
       class="bg-transparent"
       density="compact"
       hide-default-footer
@@ -233,9 +234,9 @@
 
               <v-chip
                 v-if="
-                item.certificate['Expiry Date']?.convertToLocalDate(
-                    item.certificate['Expiry Date'],
-                  )?.isBeforeToday()
+                  item.certificate['Expiry Date']
+                    ?.convertToLocalDate(item.certificate['Expiry Date'])
+                    ?.isBeforeToday()
                 "
                 size="x-small"
                 color="red"
@@ -664,6 +665,7 @@ export default {
     totalItems: 0,
     options: {},
     search: null,
+    sortBy: [{ key: null, order: "desc" }],
 
     busy_fetch: false,
 
