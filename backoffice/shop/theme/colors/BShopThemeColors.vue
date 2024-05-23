@@ -320,10 +320,10 @@
 
 <script>
 import { defineComponent } from "vue";
-import { ShadeColor } from "core-js/helper/color/ColorGenerator";
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 import UTextValueDashed from "./../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import UColorSelector from "./../../../../ui/color/selector/UColorSelector.vue";
+import {ShadeColor} from "@selldone/core-js/helper/color/ColorGenerator";
 
 export default defineComponent({
   name: "BShopThemeColors",
