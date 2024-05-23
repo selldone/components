@@ -60,7 +60,7 @@
       <u-number-input
         v-model="cal_dis"
         :label="$t('global.commons.distance')"
-        :suffix="getDistanceDimension()"
+        :suffix="getDistanceDimension(shop)"
         class="inline-block cal-in"
         dense
         flat
@@ -99,7 +99,7 @@
       <u-number-input
         v-model="cal_w"
         :label="$t('global.commons.weight')"
-        :suffix="getWeightDimension()"
+        :suffix="getWeightDimension(shop)"
         class="inline-block cal-in"
         dense
         flat
@@ -133,9 +133,9 @@
       }"
       class="d-flex align-center"
     >
-      <span>{{ cal_dis }} {{ getDistanceDimension() }}</span>
+      <span>{{ cal_dis }} {{ getDistanceDimension(shop) }}</span>
       <v-icon color="primary">fa:fas fa-times</v-icon>
-      <span>{{ cal_w }} {{ getWeightDimension() }}</span>
+      <span>{{ cal_w }} {{ getWeightDimension(shop) }}</span>
       <v-icon color="primary">fa:fas fa-times</v-icon>
       <u-price
         :amount="

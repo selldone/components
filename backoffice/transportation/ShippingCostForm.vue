@@ -31,12 +31,9 @@
         variant="solo"
       >
         <template v-if="selected_state" v-slot:prepend-inner>
-          <s-state-flag
-            class="me-2"
-            :country="country"
-            :region="selected_state"
-            >{{ selected_state }}</s-state-flag
-          >
+          <s-state-flag class="me-2" :country="country" :region="selected_state"
+            >{{ selected_state }}
+          </s-state-flag>
         </template>
 
         <template v-slot:selection="{ item }">
@@ -44,7 +41,8 @@
           <v-chip
             v-if="modelValue.states && modelValue.states[item.raw.code]"
             class="mx-2"
-            color="blue" variant="flat"
+            color="blue"
+            variant="flat"
             label
             size="x-small"
             >override
@@ -64,7 +62,8 @@
               <v-chip
                 v-if="modelValue.states && modelValue.states[item.raw.code]"
                 class="mx-2"
-                color="blue"  variant="flat"
+                color="blue"
+                variant="flat"
                 label
                 size="x-small"
                 >override
@@ -112,7 +111,7 @@
           :messages="
             $t(
               'admin_shop.logistic.delivery.delivery_form.distance_cof_input_dim',
-              { dim: getDistanceDimension() },
+              { dim: getDistanceDimension(shop) },
             )
           "
           :text-center="false"
@@ -122,7 +121,7 @@
             <div class="d-flex flex-column text-center">
               <small>{{ currency }}</small>
               <hr class="my-1" />
-              <small>{{ getDistanceDimension() }}</small>
+              <small>{{ getDistanceDimension(shop) }}</small>
             </div>
           </template>
         </u-number-input>
@@ -146,7 +145,7 @@
             $t(
               'admin_shop.logistic.delivery.delivery_form.weight_cof_input_dim',
               {
-                dim: getWeightDimension(),
+                dim: getWeightDimension(shop),
               },
             )
           "
@@ -157,7 +156,7 @@
             <div class="d-flex flex-column text-center">
               <small>{{ currency }}</small>
               <hr class="my-1" />
-              <small>{{ getWeightDimension() }}</small>
+              <small>{{ getWeightDimension(shop) }}</small>
             </div>
           </template>
         </u-number-input>
@@ -179,8 +178,8 @@
             $t(
               'admin_shop.logistic.delivery.delivery_form.distance_weight_cof_input_dim',
               {
-                weight: getWeightDimension(),
-                distance: getDistanceDimension(),
+                weight: getWeightDimension(shop),
+                distance: getDistanceDimension(shop),
               },
             )
           "
@@ -192,7 +191,9 @@
               <small>{{ currency }}</small>
               <hr class="my-1" />
               <small
-                >{{ getDistanceDimension() }}🞬{{ getWeightDimension() }}</small
+                >{{ getDistanceDimension(shop) }}🞬{{
+                  getWeightDimension(shop)
+                }}</small
               >
             </div>
           </template>
@@ -237,7 +238,11 @@
       </div>
       <div v-else key="b" class="d-flex align-center justify-space-between">
         <div class="text-green">● Default country profile</div>
-        <v-btn class="nbt" @click="addOverrideState(selected_state)" variant="elevated">
+        <v-btn
+          class="nbt"
+          @click="addOverrideState(selected_state)"
+          variant="elevated"
+        >
           <v-icon start>edit_square</v-icon>
           Override shipping for
           <b>{{ selected_state }}</b></v-btn
@@ -266,6 +271,7 @@ export default {
   },
   emits: ["selectState"],
   props: {
+    shop: { type: Object, required: true },
     currency: {},
     modelValue: { type: Object },
     autoSelectMode: { type: Boolean, default: false },

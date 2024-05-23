@@ -35,13 +35,14 @@
     "
   >
     <u-ribbon v-if="transportationObj.pickup" green>
-      <v-icon dark size="small">add_location_alt</v-icon>
+      <v-icon size="small">add_location_alt</v-icon>
       {{ $t("global.commons.pickup") }}
     </u-ribbon>
 
     <p>{{ $t(transportationObj.description) }}</p>
 
     <b-transportation-overview
+      :shop="shop"
       :outlined="outlined"
       :transportation="transportation"
     >
@@ -62,6 +63,7 @@ export default {
     BTransportationOverview,
   },
   props: {
+    shop: { require: true },
     transportation: { require: true },
     outlined: { type: Boolean, default: false },
   },

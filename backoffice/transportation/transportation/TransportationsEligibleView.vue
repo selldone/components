@@ -52,11 +52,10 @@
       v-model="menu"
       :activator="activator"
       location="bottom"
-      offset-y
-      rounded="xl"
     >
       <v-sheet class="pa-3" color="#111" dark>
         <b-transportation-overview
+          :shop="shop"
           :show-buttons="false"
           :transportation="activator_item"
         ></b-transportation-overview>

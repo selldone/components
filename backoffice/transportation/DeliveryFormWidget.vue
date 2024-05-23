@@ -105,7 +105,7 @@
           'admin_shop.logistic.delivery.delivery_form.distance_input_message',
         )}`"
         :min="-1"
-        :suffix="getDistanceDimension()"
+        :suffix="getDistanceDimension(shop)"
         prepend-inner-icon="fa:fas fa-drafting-compass"
         variant="underlined"
       />
@@ -120,7 +120,7 @@
           'admin_shop.logistic.delivery.delivery_form.max_weight_input_message',
         )}`"
         :min="-1"
-        :suffix="getWeightDimension()"
+        :suffix="getWeightDimension(shop)"
         prepend-inner-icon="fa:fas fa-weight-hanging"
         variant="underlined"
       />
@@ -144,7 +144,7 @@
         :label="$t('admin_shop.logistic.delivery.delivery_form.width')"
         :max="100000"
         :min="-1"
-        :suffix="getBoxSizeDimension()"
+        :suffix="getBoxSizeDimension(shop)"
         variant="underlined"
       />
 
@@ -153,7 +153,7 @@
         :label="$t('admin_shop.logistic.delivery.delivery_form.length')"
         :max="100000"
         :min="-1"
-        :suffix="getBoxSizeDimension()"
+        :suffix="getBoxSizeDimension(shop)"
         variant="underlined"
       />
 
@@ -162,7 +162,7 @@
         :label="$t('admin_shop.logistic.delivery.delivery_form.height')"
         :max="100000"
         :min="-1"
-        :suffix="getBoxSizeDimension()"
+        :suffix="getBoxSizeDimension(shop)"
         variant="underlined"
       />
 
@@ -404,6 +404,7 @@
         <shipping-cost-form
           v-if="selected_profile"
           v-model="selected_profile"
+          :shop="shop"
           :country="selected_country"
           :currency="transportation.currency"
           auto-select-mode
@@ -412,6 +413,7 @@
         <shipping-cost-form
           v-else
           v-model="transportation"
+          :shop="shop"
           :currency="transportation.currency"
           auto-select-mode
         ></shipping-cost-form>
@@ -563,6 +565,7 @@
 
           <shipping-cost-form
             v-model="new_profile"
+            :shop="shop"
             :currency="transportation.currency"
           ></shipping-cost-form>
         </div>
@@ -607,6 +610,7 @@ import ShippingCostForm from "../transportation/ShippingCostForm.vue";
 import BTransportationCalculator from "../transportation/calculator/BTransportationCalculator.vue";
 import { LogesticHelper } from "@selldone/core-js/helper/logistic/LogesticHelper";
 import SWidgetButtons from "../../ui/widget/buttons/SWidgetButtons.vue";
+import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "DeliveryFormWidget",
@@ -683,6 +687,14 @@ export default {
     dialog_new_profile: false,
   }),
   computed: {
+    size_unit() {
+      return ShopOptionsHelper.GetSizeUnit(this.shop);
+    },
+
+    mass_unit() {
+      return ShopOptionsHelper.GetMassUnit(this.shop);
+    },
+
     price_min() {
       return LogesticHelper.calculateShipping(
         this.shop,

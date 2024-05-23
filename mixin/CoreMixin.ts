@@ -64,6 +64,7 @@ import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
 import {Slugify} from "../utils/slugify/slugify.ts";
+import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
 
 //――― User Device Preferences ―――
 
@@ -196,8 +197,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                                          return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                                        },*/
+                                              return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                                            },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -363,8 +364,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                                          return Num2persian(number);
-                                        },*/
+                                              return Num2persian(number);
+                                            },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -771,11 +772,11 @@ const CoreMixin = {
      * @param text
      * @returns {string}
      */
-    slugify (text: string | null) {
+    slugify(text: string | null) {
       if (!text) return "";
 
       return (
-          Slugify.apply(text.toString())
+        Slugify.apply(text.toString())
           .toLowerCase()
           .replace(/\s+/g, "-") // Replace spaces with -
           //   .replace(/[^\w\-]+/gu, "") // Remove all non-word chars
@@ -1331,8 +1332,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                          PushNotification.AskForPermission();
-                                        },*/
+                                              PushNotification.AskForPermission();
+                                            },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 
@@ -1544,14 +1545,14 @@ const CoreMixin = {
     },
 
     //―――――――――――――――――――――― Global Dimensions ――――――――――――――――――――
-    getBoxSizeDimension() {
-      return this.$t("global.dimensions.cm");
+    getBoxSizeDimension(shop: Shop) {
+      return ShopOptionsHelper.GetSizeUnit(shop);
     },
-    getDistanceDimension() {
+    getDistanceDimension(shop: Shop) {
       return this.$t("global.dimensions.km");
     },
-    getWeightDimension() {
-      return this.$t("global.dimensions.kg");
+    getWeightDimension(shop: Shop) {
+      return ShopOptionsHelper.GetMassUnit(shop);
     },
 
     //―――――――――――――――――――――― Color ――――――――――――――――――――
