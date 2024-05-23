@@ -34,8 +34,8 @@
         <v-list
           class="mx-auto text-start border border-between-vertical rounded-28px"
           density="compact"
-          max-width="680px"
           lines="two"
+          max-width="680px"
         >
           <v-list-item
             v-for="(login_device, index) in login_devices"
@@ -56,9 +56,7 @@
             </v-list-item-subtitle>
 
             <template v-slot:append>
-
-
-              <v-list-item-action end class="d-flex flex-column align-end">
+              <v-list-item-action class="d-flex flex-column align-end" end>
                 <small class="mb-1" title="Last activity">
                   {{ getLocalTimeStringSmall(login_device.last_activity) }}
                 </small>

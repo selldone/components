@@ -28,7 +28,6 @@
       @start="drag = true"
       @update:model-value="(val) => $emit('update:structure', val)"
     >
-
       <template v-slot:item="{ element, index }">
         <s-form-builder-row
           :key="index"
@@ -45,7 +44,7 @@
     <div class="text-end m-3">
       <v-menu :min-width="120">
         <template v-slot:activator="{ props }">
-          <v-btn  v-bind="props" variant="elevated">
+          <v-btn v-bind="props" variant="elevated">
             <v-icon start>add</v-icon>
             {{ $t("global.form_builder.add_item_action") }}
           </v-btn>

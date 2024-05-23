@@ -13,7 +13,13 @@
   -->
 
 <template>
-  <v-chip variant="text" label class="border" title="" :size="small?'small':undefined">
+  <v-chip
+    :size="small ? 'small' : undefined"
+    class="border"
+    label
+    title=""
+    variant="text"
+  >
     <v-avatar rounded start title="Connect OS | Bridge"
       ><img :src="getConnectIcon(connectOrders.connect_id)"
     /></v-avatar>
@@ -39,17 +45,17 @@
       <v-icon class="ms-2">published_with_changes </v-icon>
 
       <v-tooltip
+        activator="parent"
         content-class="text-start bg-black"
         location="bottom"
         max-width="320"
-        activator="parent"
       >
         <div class="mb-1 d-flex align-center">
           <img
             :src="getConnectIcon(connectOrders.connect_id)"
-            width="16"
-            height="16"
             class="me-2"
+            height="16"
+            width="16"
           />
           <b>Confirmed Date</b>
         </div>
@@ -66,18 +72,18 @@
       <v-icon class="ms-2" color="#111">cloud_sync </v-icon>
 
       <v-tooltip
-        content-class="text-start bg-black"
+        activator="parent"
         color="#000"
+        content-class="text-start bg-black"
         location="bottom"
         max-width="320"
-        activator="parent"
       >
         <div class="mb-1 d-flex align-center">
           <img
             :src="getConnectIcon(connectOrders.connect_id)"
-            width="16"
-            height="16"
             class="me-2"
+            height="16"
+            width="16"
           />
           <b>Last Sync Date</b>
         </div>
@@ -96,17 +102,17 @@
     <span v-if="connectOrders.error">
       <v-icon class="ms-2" color="red">report </v-icon>
       <v-tooltip
+        activator="parent"
         content-class="text-start bg-black"
         location="bottom"
         max-width="320"
-        activator="parent"
       >
         <div class="mb-1 d-flex align-center">
           <img
             :src="getConnectIcon(connectOrders.connect_id)"
-            width="16"
-            height="16"
             class="me-2"
+            height="16"
+            width="16"
           />
           <b>Error</b>
         </div>
@@ -125,7 +131,7 @@ export default {
       required: true,
       type: Object,
     },
-    small:Boolean
+    small: Boolean,
   },
 };
 </script>

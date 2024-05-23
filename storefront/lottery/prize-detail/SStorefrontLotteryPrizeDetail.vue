@@ -43,10 +43,10 @@
       v-else-if="lottery.product_id"
       :filter-variant="lottery.variant"
       :product="lottery.product"
-      rounded
       class="my-3 mx-auto"
       is-insta
-      style="max-width: 80%;max-height: 80%"
+      rounded
+      style="max-width: 80%; max-height: 80%"
     />
 
     <!-- ===================== Discount ==================== -->

@@ -15,9 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <!-- █████████████████████████ Domains █████████████████████████ -->
-    <s-widget-box
-      :title="$t('admin_shop.dashboard.info.shop_domains')"
-    >
+    <s-widget-box :title="$t('admin_shop.dashboard.info.shop_domains')">
       <template v-slot:top-left>
         <img
           :src="require('../../../../assets/icons/domains.svg')"

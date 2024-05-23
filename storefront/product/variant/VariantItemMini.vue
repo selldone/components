@@ -24,10 +24,7 @@
     no-gutters
     @click="$emit('select')"
   >
-    <div
-      v-if="color"
-      class="--item pa-1 text-nowrap"
-    >
+    <div v-if="color" class="--item pa-1 text-nowrap">
       <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
 
       <u-color-circle :color="color" :size="16" class="me-1"></u-color-circle>

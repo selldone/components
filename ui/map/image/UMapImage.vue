@@ -13,7 +13,10 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="u--map-image" :style="{'--size':size,'--aspect-ratio':aspectRatio}">
+  <div
+    :style="{ '--size': size, '--aspect-ratio': aspectRatio }"
+    class="u--map-image"
+  >
     <a
       :href="MapHelper.GetMapDirectionUrl(location, true)"
       class="-wrap"
@@ -37,12 +40,12 @@ export default {
     location: {
       require: true,
     },
-    size:{
-      default:'300px'
+    size: {
+      default: "300px",
     },
-    aspectRatio:{
-      default:1
-    }
+    aspectRatio: {
+      default: 1,
+    },
   },
   components: {},
 
@@ -74,7 +77,6 @@ export default {
 .u--map-image {
   width: var(--size);
   aspect-ratio: var(--aspect-ratio);
-
 
   .-wrap {
     border-radius: 4px;

@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--form-builder-container">
-    <v-row align="center" no-gutters class="py-1">
+    <v-row align="center" class="py-1" no-gutters>
       <v-icon class="me-3 cursor-move drag--handle" title="Drag and move"
         >unfold_more
       </v-icon>
@@ -32,7 +32,6 @@
         icon="close"
         @click="removeField()"
       />
-
     </v-row>
 
     <v-expand-transition>
@@ -61,11 +60,11 @@
           <template v-else>
             <v-text-field
               v-model="item.title"
-              persistent-placeholder
-              placeholder="Enter a title for input..."
               :label="$t('global.form_builder.title_input')"
               color="primary"
               hint="Public label. Ex: Name, Prefer state, Description, ..."
+              persistent-placeholder
+              placeholder="Enter a title for input..."
               variant="underlined"
               @blur="
                 item.name = item.name ? item.name : slugify(item.title);
@@ -125,13 +124,13 @@
 
               <u-smart-switch
                 v-model="item.multiple"
+                border
                 class="mt-3"
                 false-description="User can select just one item."
                 false-title="Single item"
                 true-description="User can select more than one item."
                 true-title="Multiple items"
                 @change="$forceUpdate()"
-                border
               >
               </u-smart-switch>
             </template>
@@ -145,11 +144,11 @@
               :false-title="$t('global.form_builder.default') + ': False'"
               :true-description="item.hint_true"
               :true-title="$t('global.form_builder.default') + ': True'"
+              border
               class="mt-3"
               false-icon="close"
               true-icon="check"
               @change="$forceUpdate()"
-              border
             >
             </u-smart-switch>
 
@@ -177,12 +176,12 @@
 
               <u-smart-switch
                 v-model="item.multiple"
+                border
                 false-description="User can upload just one file."
                 false-title="Single file"
                 true-description="User can upload more than one file."
                 true-title="Multiple files"
                 @change="$forceUpdate()"
-                border
               >
               </u-smart-switch>
             </template>
@@ -203,26 +202,26 @@
               <div v-if="show_hints && item.type === 'switch'">
                 <v-text-field
                   v-model="item.hint_true"
-                  placeholder="Some instruction to guide customer..."
                   label="Hint True"
-                  variant="underlined"
                   persistent-placeholder
+                  placeholder="Some instruction to guide customer..."
+                  variant="underlined"
                 ></v-text-field>
                 <v-text-field
                   v-model="item.hint_false"
-                  placeholder="Some instruction to guide customer..."
                   label="Hint False"
-                  variant="underlined"
                   persistent-placeholder
+                  placeholder="Some instruction to guide customer..."
+                  variant="underlined"
                 ></v-text-field>
               </div>
               <div v-else-if="show_hints">
                 <v-text-field
                   v-model="item.hint"
-                  placeholder="Some instruction to guide customer..."
                   label="Hint"
-                  variant="underlined"
                   persistent-placeholder
+                  placeholder="Some instruction to guide customer..."
+                  variant="underlined"
                 ></v-text-field>
               </div>
             </v-expand-transition>

@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs" class="widget-box -large">
+  <div class="widget-box -large" v-bind="$attrs">
     <s-widget-header
       :src="require('@selldone/core-js/assets/product-types/subscription.svg')"
       title="Ribbon Subscriptions"
@@ -43,7 +43,6 @@
     </v-row>
 
     <v-data-table-server
-      :mobile="$vuetify.display.xs"
       v-model:expanded="expanded"
       v-model:options="options"
       v-model:page="page"
@@ -54,12 +53,13 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('admin_shop.blogs.list.waiting_message')"
+      :mobile="$vuetify.display.xs"
       class="bg-transparent min-height-60vh"
+      expand-on-click
       hide-default-footer
       hover
       item-key="id"
       show-expand
-      expand-on-click
       @click:row="(_, r) => expanded.toggle(r.item)"
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
@@ -86,9 +86,9 @@
         <td :colspan="headers.length + 1 /*Expand column*/">
           <div v-if="item.subscription_prices?.length">
             <v-list
+              bg-color="#fff"
               class="border-between-vertical my-3"
               density="compact"
-              bg-color="#fff"
               rounded="xl"
             >
               <v-list-item v-for="sp in item.subscription_prices" :key="sp.id">
@@ -136,8 +136,8 @@
                 name: 'BPageProductInventory',
                 params: { product_id: item.id },
               }"
-              target="_blank"
               class="font-weight-bold"
+              target="_blank"
             >
               {{ item.title }}
             </router-link>
@@ -150,12 +150,12 @@
       <template v-slot:item.title="{ item }">
         <div class="py-1 d-flex align-center">
           <u-avatar-folder
-            class="me-2"
+            :side-image="ProductType.SUBSCRIPTION.image"
             :size="62"
             :src="getShopImagePath(item.icon, 128)"
-            placeholder-icon="fastfood"
+            class="me-2"
             is-gray
-            :side-image="ProductType.SUBSCRIPTION.image"
+            placeholder-icon="fastfood"
           >
           </u-avatar-folder>
           <div class="flex-grow-1">
@@ -185,10 +185,10 @@
 
       <template v-slot:item.plans="{ item }">
         <v-chip
+          :color="item.subscription_prices.length ? '#000' : '#999'"
           class="h-auto py-1 min-width-75"
           density="comfortable"
           label
-          :color="item.subscription_prices.length ? '#000' : '#999'"
           variant="flat"
         >
           <div class="text-start">

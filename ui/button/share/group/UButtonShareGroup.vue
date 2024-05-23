@@ -197,14 +197,14 @@ sites = {
 }
 
 $animate {
-    transition: all .35s
-    transition-timing-function: cubic-bezier(
-            0.310,
-            -0.105,
-            0.430,
-            1.590
-    )
-  }
+  transition: all .35s
+  transition-timing-function: cubic-bezier(
+      0.310,
+      -0.105,
+      0.430,
+      1.590
+  )
+}
 
 $btn__inactive
   &:before

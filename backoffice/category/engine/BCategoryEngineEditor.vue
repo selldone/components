@@ -16,8 +16,8 @@
   <v-card-text>
     <div class="widget-box mb-5 pb-5">
       <s-widget-header
-        title="Extra Products Listing"
         icon="shelves"
+        title="Extra Products Listing"
       ></s-widget-header>
       <v-list-subheader>
         Display products from various categories. You have the option to choose
@@ -37,15 +37,15 @@
 
       <b-category-input
         v-model="engine_categories"
-        multiple
-        label="Categories"
-        placeholder="Select categories..."
-        persistent-placeholder
-        messages="Products in these categories will be shown."
-        class="my-3"
         :counter="32"
-        @change="engine_changed = true"
+        class="my-3"
         clearable
+        label="Categories"
+        messages="Products in these categories will be shown."
+        multiple
+        persistent-placeholder
+        placeholder="Select categories..."
+        @change="engine_changed = true"
       >
       </b-category-input>
 
@@ -53,22 +53,22 @@
 
       <v-combobox
         v-model="engine_tags"
+        :counter="32"
         :items="cache_tags"
         chips
+        class="my-3"
+        clearable
         closable-chips
+        label="Product tags"
+        messages="Products with these tags will be show."
         multiple
+        persistent-placeholder
         placeholder="Wire tags here and press enter. ex. new collection"
         variant="underlined"
-        label="Product tags"
-        persistent-placeholder
-        messages="Products with these tags will be show."
-        class="my-3"
-        :counter="32"
         @update:model-value="engine_changed = true"
-        clearable
       >
         <template v-slot:chip="{ props, item }">
-          <u-chip-tag v-bind="props" :tag="item.raw"></u-chip-tag>
+          <u-chip-tag :tag="item.raw" v-bind="props"></u-chip-tag>
         </template>
       </v-combobox>
 
@@ -80,11 +80,11 @@
       </v-list-subheader>
       <div>
         <v-btn
-          class="tnt"
-          variant="elevated"
-          prepend-icon="flash_auto"
-          @click="autoAddSubCategories"
           :loading="busy_auto"
+          class="tnt"
+          prepend-icon="flash_auto"
+          variant="elevated"
+          @click="autoAddSubCategories"
         >
           Auto add sub-categories
         </v-btn>
@@ -95,12 +95,12 @@
       <s-widget-buttons v-if="engine_changed" auto-fixed-position>
         <v-btn
           :disabled="IS_VENDOR_PANEL"
-          size="x-large"
+          :loading="busy_engine"
           color="primary"
           prepend-icon="save"
+          size="x-large"
           variant="elevated"
           @click="saveEngine()"
-          :loading="busy_engine"
         >
           Save Engine
           {{ IS_VENDOR_PANEL ? " [Marketplace Owner]" : "" }}
@@ -244,7 +244,7 @@ export default {
 
             this.engine_categories.push(...data.ids);
             this.engine_categories = this.engine_categories.unique().limit(32);
-            this.engine_changed=true;
+            this.engine_changed = true;
           }
         })
         .catch((error) => {

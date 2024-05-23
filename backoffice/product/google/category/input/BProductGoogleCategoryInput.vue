@@ -17,32 +17,34 @@
     v-level.min="AppLevel.NOVICE"
     v-model:search="search"
     :customFilter="() => true"
+    :hint="$t('google_product_category_input.hint')"
     :items="items"
+    :label="$t('google_product_category_input.label')"
     :loading="busy_google_category"
     :model-value="modelValue"
-
+    :placeholder="$t('google_product_category_input.placeholder')"
     clearable
     hide-no-data
-    :hint="$t('google_product_category_input.hint')"
     item-title="category"
     item-value="id"
-    :label="$t('google_product_category_input.label')"
-    :placeholder="$t('google_product_category_input.placeholder') "
     variant="underlined"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template v-slot:prepend-inner>
-      <img :src="require('../../../../../assets/trademark/google.svg')" width="24" height="24">
+      <img
+        :src="require('../../../../../assets/trademark/google.svg')"
+        height="24"
+        width="24"
+      />
     </template>
 
-    <template v-slot:item="{ item,props }">
-      <v-list-item v-bind="props" :title="item.raw.category" class="text-start">
+    <template v-slot:item="{ item, props }">
+      <v-list-item :title="item.raw.category" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <b class="me-2 single-line" style="flex-basis: 48px"
-          >{{ item.raw.id }} ┇
+            >{{ item.raw.id }} ┇
           </b>
         </template>
-
       </v-list-item>
     </template>
   </v-autocomplete>

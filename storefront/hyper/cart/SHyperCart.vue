@@ -63,11 +63,7 @@
       <div class="d-flex">
         <p class="flex-grow-1">{{ $t("global.commons.net_price") }}</p>
 
-        <u-price
-          :amount="hyper.price"
-          :currency="hyper.currency"
-          not-show-zero
-        >
+        <u-price :amount="hyper.price" :currency="hyper.currency" not-show-zero>
         </u-price>
       </div>
 
@@ -85,12 +81,7 @@
 
       <hr />
       <div class="py-3">
-        <u-price
-          :amount="sum"
-          :currency="hyper.currency"
-          large
-          not-show-zero
-        >
+        <u-price :amount="sum" :currency="hyper.currency" large not-show-zero>
         </u-price>
         <u-stamp v-if="isPayed" class="float-end" is-approved>
           {{ $t("global.status.paid") }}

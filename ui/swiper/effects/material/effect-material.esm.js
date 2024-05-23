@@ -1,15 +1,16 @@
-if (typeof window !== 'undefined' && window.SwiperElementRegisterParams) {
-  window.SwiperElementRegisterParams(['materialEffect']);
+if (typeof window !== "undefined" && window.SwiperElementRegisterParams) {
+  window.SwiperElementRegisterParams(["materialEffect"]);
 }
 
 function elementTransitionEnd(el, callback) {
   function fireCallBack(e) {
     if (e.target !== el) return;
     callback.call(el, e);
-    el.removeEventListener('transitionend', fireCallBack);
+    el.removeEventListener("transitionend", fireCallBack);
   }
+
   if (callback) {
-    el.addEventListener('transitionend', fireCallBack);
+    el.addEventListener("transitionend", fireCallBack);
   }
 }
 
@@ -37,7 +38,7 @@ function effectVirtualTransitionEnd({
       transitionEndTarget = transformElements;
     } else {
       transitionEndTarget = transformElements.filter((transformEl) => {
-        const el = transformEl.classList.contains('swiper-slide-transform')
+        const el = transformEl.classList.contains("swiper-slide-transform")
           ? getSlide(transformEl)
           : transformEl;
         return swiper.getSlideIndex(el) === activeIndex;
@@ -49,7 +50,7 @@ function effectVirtualTransitionEnd({
         if (!swiper || swiper.destroyed) return;
         eventTriggered = true;
         swiper.animating = false;
-        const evt = new window.CustomEvent('transitionend', {
+        const evt = new window.CustomEvent("transitionend", {
           bubbles: true,
           cancelable: true,
         });
@@ -76,11 +77,11 @@ export default function EffectMaterial({ swiper, on, extendParams }) {
       : 1 - Math.min(Math.max(params.materialEffect.slideSplitRatio, 0), 1);
     for (let i = 0; i < slides.length; i += 1) {
       const slideEl = slides[i];
-      const materialEl = slideEl.querySelector('.swiper-material-wrapper');
+      const materialEl = slideEl.querySelector(".swiper-material-wrapper");
       const opacityEls = slideEl.querySelectorAll(
-        '.swiper-material-animate-opacity',
+        ".swiper-material-animate-opacity",
       );
-      const scaleEls = slideEl.querySelectorAll('[data-swiper-material-scale]');
+      const scaleEls = slideEl.querySelectorAll("[data-swiper-material-scale]");
       const progress = -slideEl.progress;
       const offset = slideEl.swiperSlideOffset;
       const swiperTranslate = swiper.translate;
@@ -269,13 +270,13 @@ export default function EffectMaterial({ swiper, on, extendParams }) {
       // if (scale === 0) {
       //   scale = 0.0001;
       // }
-      slideEl.style.setProperty('--swiper-material-scale', scale);
+      slideEl.style.setProperty("--swiper-material-scale", scale);
       opacityEls.forEach((opacityEl) => {
         opacityEl.style.opacity = opacity;
       });
       scaleEls.forEach((scaleEl) => {
         let elementScale = parseFloat(
-          scaleEl.getAttribute('data-swiper-material-scale'),
+          scaleEl.getAttribute("data-swiper-material-scale"),
         );
         if (Number.isNaN(elementScale) || (!elementScale && elementScale !== 0))
           elementScale = 1;
@@ -301,11 +302,11 @@ export default function EffectMaterial({ swiper, on, extendParams }) {
     const transformElements = [];
     for (let i = 0; i < slides.length; i += 1) {
       const slideEl = slides[i];
-      const materialEl = slideEl.querySelector('.swiper-material-wrapper');
+      const materialEl = slideEl.querySelector(".swiper-material-wrapper");
       const opacityEls = slideEl.querySelectorAll(
-        '.swiper-material-animate-opacity',
+        ".swiper-material-animate-opacity",
       );
-      const scaleEls = slideEl.querySelectorAll('[data-swiper-material-scale]');
+      const scaleEls = slideEl.querySelectorAll("[data-swiper-material-scale]");
 
       [materialEl, ...scaleEls, ...opacityEls].forEach((opacityEl) => {
         opacityEl.style.transitionDuration = `${duration}ms`;
@@ -322,8 +323,8 @@ export default function EffectMaterial({ swiper, on, extendParams }) {
     });
   };
 
-  on('beforeInit', () => {
-    if (swiper.params.effect !== 'material') return;
+  on("beforeInit", () => {
+    if (swiper.params.effect !== "material") return;
     swiper.classNames.push(`${swiper.params.containerModifierClass}material`);
     if (swiper.isElement && swiper.hostEl) {
       swiper.hostEl.classList.add(`swiper-${swiper.params.direction}`);
@@ -337,15 +338,15 @@ export default function EffectMaterial({ swiper, on, extendParams }) {
     Object.assign(swiper.params, overwriteParams);
     Object.assign(swiper.originalParams, overwriteParams);
   });
-  on('setTranslate', () => {
-    if (swiper.params.effect !== 'material') return;
+  on("setTranslate", () => {
+    if (swiper.params.effect !== "material") return;
     setTranslate();
   });
-  on('setTransition', (_s, duration) => {
-    if (swiper.params.effect !== 'material') return;
+  on("setTransition", (_s, duration) => {
+    if (swiper.params.effect !== "material") return;
     setTransition(duration);
   });
-  on('slidesUpdated', () => {
+  on("slidesUpdated", () => {
     if (
       !swiper.params.centeredSlides &&
       swiper.params.slidesPerView > 1 &&
@@ -358,7 +359,7 @@ export default function EffectMaterial({ swiper, on, extendParams }) {
       );
     }
     swiper.el.style.setProperty(
-      '--swiper-material-slide-size',
+      "--swiper-material-slide-size",
       `${swiper.slidesSizesGrid[0]}px`,
     );
   });

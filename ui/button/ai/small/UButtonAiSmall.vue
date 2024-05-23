@@ -15,33 +15,33 @@
 <template>
   <v-btn
     :class="{ '-loading': loading }"
+    :color="color"
+    :icon="icon"
     :loading="loading"
     :size="size ? size : xLarge ? 'x-large' : undefined"
-    class="ai-btn"
-    :icon="icon"
     :variant="variant"
-    :color="color"
+    class="ai-btn"
   >
     <img
-      :height="imageSize ? imageSize : xLarge ? 36 : 24"
-      :width="imageSize ? imageSize : xLarge ? 36 : 24"
-      :src="require('../../../../assets/icons/ci-logo.png')"
       :class="{ '-circle-white': darkMode }"
+      :height="imageSize ? imageSize : xLarge ? 36 : 24"
+      :src="require('../../../../assets/icons/ci-logo.png')"
+      :width="imageSize ? imageSize : xLarge ? 36 : 24"
     />
     <v-icon
       v-if="placeholderIcon"
-      class="center-absolute"
       :color="placeholderColor"
+      class="center-absolute"
       style="text-shadow: rgba(0, 0, 0, 0.8) 1px 2px 3px"
       >{{ placeholderIcon }}
     </v-icon>
     <v-tooltip
       v-if="tooltip"
-      activator="parent"
       :location="tooltipLocation"
-      max-width="360"
-      content-class="bg-black text-start"
       :open-delay="openDelay"
+      activator="parent"
+      content-class="bg-black text-start"
+      max-width="360"
     >
       <div v-html="tooltip"></div>
     </v-tooltip>

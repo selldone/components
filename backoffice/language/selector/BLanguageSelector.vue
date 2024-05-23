@@ -17,6 +17,7 @@
     <v-text-field
       :bg-color="backgroundColor"
       :density="dense ? 'compact' : undefined"
+      :flat="flat"
       :hide-details="!messages"
       :messages="messages"
       :model-value="selected_language_object.title"
@@ -24,7 +25,6 @@
       :rounded="rounded"
       :style="{ 'max-width': maxWidth }"
       :variant="variant ? variant : outlined ? 'outlined' : 'underlined'"
-      :flat="flat"
       prepend-inner-icon="translate"
       readonly
       @click.stop="show_dialog = true"
@@ -55,9 +55,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text
-          :style="
-            $vuetify.display.xs ? '' : 'height: 60vh;max-height: 460px'
-          "
+          :style="$vuetify.display.xs ? '' : 'height: 60vh;max-height: 460px'"
           class="d-flex flex-column"
           style="color: #222222"
         >
@@ -166,7 +164,7 @@ export default {
       default: false,
     },
     backgroundColor: {},
-    flat:Boolean,
+    flat: Boolean,
   },
 
   data: () => ({

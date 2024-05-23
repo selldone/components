@@ -36,13 +36,13 @@
         :name="$t('global.commons.avocado')"
         :selected="home_page === 'avocado'"
         :src="require('../../../../assets/icons/avocado.svg')"
+        :to-setting="{ name: 'BPageShopChannelAvocado' }"
         auto-scale-down
         class="zoomIn delay_400"
         @select="
           home_page = 'avocado';
           setHomePage();
         "
-        :to-setting="{ name: 'BPageShopChannelAvocado' }"
       >
         <v-tooltip
           v-if="!shop.avocado?.enable"
@@ -59,13 +59,13 @@
         :name="$t('global.commons.hyper')"
         :selected="home_page === 'hyper'"
         :src="require('../../../../assets/icons/hyper.svg')"
+        :to-setting="{ name: 'BPageShopChannelHyper' }"
         auto-scale-down
         class="zoomIn delay_500"
         @select="
           home_page = 'hyper';
           setHomePage();
         "
-        :to-setting="{ name: 'BPageShopChannelHyper' }"
       >
         <v-tooltip
           v-if="!shop.hyper?.enable"
@@ -82,13 +82,13 @@
         :name="$t('global.commons.community')"
         :selected="home_page === 'community'"
         :src="require('../../../../assets/icons/community.png')"
+        :to-setting="{ name: 'BPageShopCommunityTopics' }"
         auto-scale-down
         class="zoomIn delay_600"
         @select="
           home_page = 'community';
           setHomePage();
         "
-        :to-setting="{ name: 'BPageShopCommunityTopics' }"
       >
         <v-tooltip
           v-if="!shop.community?.enable"
@@ -104,13 +104,13 @@
         :name="$t('global.commons.blog')"
         :selected="home_page === 'blog'"
         :src="require('../../../../assets/icons/blog.svg')"
+        :to-setting="{ name: 'BPageShopBlogsList' }"
         auto-scale-down
         class="zoomIn delay_700"
         @select="
           home_page = 'blog';
           setHomePage();
         "
-        :to-setting="{ name: 'BPageShopBlogsList' }"
       >
       </u-button-feature>
 
@@ -118,13 +118,13 @@
         :name="$t('global.commons.map')"
         :selected="home_page === 'map'"
         :src="require('../../../../assets/icons/map-tag.svg')"
+        :to-setting="{ name: 'BPageShopChannelMap' }"
         auto-scale-down
         class="zoomIn delay_700"
         @select="
           home_page = 'map';
           setHomePage();
         "
-        :to-setting="{ name: 'BPageShopChannelMap' }"
       >
       </u-button-feature>
 
@@ -133,13 +133,13 @@
         :name="$t('global.commons.landing_page')"
         :selected="landing_page_mode"
         :src="require('../../../../assets/icons/landing-page.svg')"
+        :to-setting="{ name: 'BPageShopPagesLandings' }"
         auto-scale-down
         class="zoomIn delay_800"
         @select="
           home_page = pages[0].id;
           setHomePage();
         "
-        :to-setting="{ name: 'BPageShopPagesLandings' }"
       >
         <v-tooltip v-if="!pages.length" activator="parent" location="bottom">
           <v-icon class="me-1">warning</v-icon>
@@ -150,6 +150,7 @@
       <u-button-feature
         :selected="static_page_mode"
         :src="require('../../../../assets/icons/static-pages.svg')"
+        :to-setting="{ name: 'BPageShopPagesStatic' }"
         auto-scale-down
         class="zoomIn delay_900"
         name="Static page"
@@ -157,7 +158,6 @@
           home_page = '/';
           setHomePage();
         "
-        :to-setting="{ name: 'BPageShopPagesStatic' }"
       >
       </u-button-feature>
     </v-row>
@@ -167,19 +167,20 @@
         v-model="home_page"
         :disabled="busy_set"
         class="max-width-field-large mx-auto mt-8 mb-4 fadeIn"
+        flat
         label="Page path"
         messages="Paths should begin with a forward slash '/'. For example, to access a specific folder, you can use the path '/Folder1'."
         variant="solo"
-        flat
         @keydown.enter="setHomePage"
       >
         <template v-slot:append-inner>
           <v-btn
+            :disabled="old_page === home_page"
             :loading="busy_set"
             class="ma-1"
-            color="primary" size="small"
+            color="primary"
+            size="small"
             @click="setHomePage"
-            :disabled="old_page === home_page"
           >
             <v-icon start>save</v-icon>
             {{ $t("global.actions.save") }}
@@ -194,7 +195,7 @@
           color="primary"
           variant="text"
           >Manage static pages
-          <v-icon end>{{ $t("icons.chevron_next") }} </v-icon>
+          <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
         </v-btn>
       </div>
     </template>
@@ -212,8 +213,8 @@
       item-title="title"
       item-value="id"
       searchable
-      @update:model-value="setHomePage"
       variant="underlined"
+      @update:model-value="setHomePage"
     >
       <template v-slot:append-inner>
         <v-progress-circular
@@ -230,8 +231,8 @@
           <template v-slot:prepend>
             <v-avatar
               :image="getShopImagePath(item.raw.image, IMAGE_SIZE_SMALL)"
-              size="24"
               rounded="lg"
+              size="24"
             />
           </template>
 

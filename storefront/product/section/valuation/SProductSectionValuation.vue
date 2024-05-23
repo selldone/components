@@ -17,8 +17,8 @@
     v-if="
       structure && preferences_valuation && product.price_input === 'custom'
     "
+    :class="{ '-preview': previewMode }"
     class="widget-box w-100 py-3 mt-5 pricing-form strong-field"
-    :class="{'-preview':previewMode}"
   >
     <u-loading-progress v-if="busy_save"></u-loading-progress>
     <div
@@ -36,12 +36,12 @@
         :readonly="readonly"
         bg-color="transparent"
         class="mx-4"
+        variant="underlined"
         @blur="debounceSavePreferences()"
         @update:model-value="
           $emit('update:preferences', preferences);
           $forceUpdate();
         "
-        variant="underlined"
       >
       </v-text-field>
 
@@ -54,9 +54,9 @@
         :readonly="readonly"
         background-color="transparent"
         class="mx-4"
+        variant="underlined"
         @blur="debounceSavePreferences()"
         @update:model-value="$emit('update:preferences', preferences)"
-        variant="underlined"
       >
       </u-number-input>
 
@@ -67,22 +67,22 @@
         :chips="item.multiple"
         :disabled="readonly"
         :items="filterSelects(item.selects, preferences_valuation[item.name])"
-        :return-object="false"
         :label="item.title"
         :multiple="item.multiple"
         :persistent-placeholder="!!item.placeholder"
         :placeholder="item.placeholder"
         :readonly="readonly"
+        :return-object="false"
         bg-color="transparent"
         class="mx-4"
         clearable
+        variant="underlined"
         @click:clear="preferences_valuation[item.name] = null"
         @update:model-value="
           $emit('update:preferences', preferences);
           $forceUpdate();
           debounceSavePreferences();
         "
-        variant="underlined"
       >
       </v-select>
       <!-- switch -->
@@ -312,7 +312,7 @@ export default {
     transform: translate(0, -50%);
   }
 
-  &.-preview{
+  &.-preview {
     border: dashed 2px #333;
     background: #fefefe !important;
   }

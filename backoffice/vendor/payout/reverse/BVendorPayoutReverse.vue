@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-card flat class="text-start">
+  <v-card class="text-start" flat>
     <v-card-title></v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
@@ -48,9 +48,7 @@
           This is the detailed information about the payment and the history of
           any reversal transactions associated with it.
         </v-list-subheader>
-        <b-vendor-payout-history
-          :payment="payment"
-        ></b-vendor-payout-history>
+        <b-vendor-payout-history :payment="payment"></b-vendor-payout-history>
       </div>
 
       <div class="widget-box mb-5">
@@ -92,7 +90,8 @@
           :label="$t('global.commons.currency')"
           :return-object="false"
           :value="currency"
-          disabled variant="underlined"
+          disabled
+          variant="underlined"
         ></u-currency-input>
         <u-price-input
           v-model="amount"
@@ -104,7 +103,8 @@
           "
           :label="$t('global.commons.amount')"
           :messages="`Remains amount: ${remains_amount} ${currency}`"
-          class="strong-field" variant="underlined"
+          class="strong-field"
+          variant="underlined"
         ></u-price-input>
 
         <v-textarea
@@ -115,7 +115,8 @@
           hide-details
           persistent-placeholder
           placeholder="You can attach a note here... It's visible to the vendor."
-          rows="2" variant="underlined"
+          rows="2"
+          variant="underlined"
         >
         </v-textarea>
         <u-smart-suggestion

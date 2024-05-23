@@ -69,9 +69,9 @@
             "
             :href="`https://www.google.com/maps/dir/?api=1&destination=${item.basket.receiver_info.location.lat},${item.basket.receiver_info.location.lng}`"
             icon
-            variant="text"
             target="_blank"
             title="Google map"
+            variant="text"
           >
             <v-icon>map</v-icon>
           </v-btn>
@@ -81,9 +81,9 @@
             :href="item.track"
             color="primary"
             icon
-            variant="text"
             target="_blank"
             title="Tracking page"
+            variant="text"
           >
             <v-icon>gps_fixed</v-icon>
           </v-btn>

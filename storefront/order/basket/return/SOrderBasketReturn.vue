@@ -75,8 +75,8 @@
           ><i class="fas fa-history"/>
             {{
               getFromOtherTimeString(
-                item.return_request.created_at,
-                basket.delivery_at,
+                  item.return_request.created_at,
+                  basket.delivery_at,
               )
             }}</span
           >
@@ -96,10 +96,10 @@
           </template>
           <b>
             {{
-            $t(
-            getReturnBasketItemReasonObject(item.return_request.reason)
-            .title,
-            )
+              $t(
+                  getReturnBasketItemReasonObject(item.return_request.reason)
+                      .title,
+              )
             }}
           </b>
         </u-text-value-dashed>
@@ -117,7 +117,7 @@
           </template>
           <b class="state-badge ms-2">
             {{
-            $t(getReturnRequestStateObject(item.return_request.state).name)
+              $t(getReturnRequestStateObject(item.return_request.state).name)
             }}
             <v-icon
                 :color="
@@ -156,9 +156,9 @@
 
             <p class="m-2">
               {{
-              getImagePath(item.return_request)
-              ? $t("global.basket_return_request_view.download_image")
-              : $t("global.not_exist")
+                getImagePath(item.return_request)
+                    ? $t("global.basket_return_request_view.download_image")
+                    : $t("global.not_exist")
               }}
             </p>
           </a>
@@ -178,9 +178,9 @@
             />
             <p class="m-2">
               {{
-              getVideoPath(item.return_request)
-              ? $t("global.basket_return_request_view.download_film")
-              : $t("global.not_exist")
+                getVideoPath(item.return_request)
+                    ? $t("global.basket_return_request_view.download_film")
+                    : $t("global.not_exist")
               }}
             </p>
           </a>
@@ -199,9 +199,9 @@
             />
             <p class="m-2">
               {{
-              getVoicePath(item.return_request)
-              ? $t("global.basket_return_request_view.download_voice")
-              : $t("global.not_exist")
+                getVoicePath(item.return_request)
+                    ? $t("global.basket_return_request_view.download_voice")
+                    : $t("global.not_exist")
               }}
             </p>
           </a>

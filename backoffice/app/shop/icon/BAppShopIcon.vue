@@ -18,9 +18,9 @@
       v-if="!shopApp.app.enable"
       class="absolute-top-end z1 shake-target"
       color="red"
-      variant="flat"
       icon
       size="x-small"
+      variant="flat"
       @click="deleteApp(shopApp.app.code)"
     >
       <v-icon size="small">delete</v-icon>
@@ -110,4 +110,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

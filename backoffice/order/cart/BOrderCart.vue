@@ -14,7 +14,6 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-data-table
-    v-bind="$attrs"
     v-model="selected"
     v-model:page="page"
     :header-props="{ sortByText: $t('global.commons.sort_by') }"
@@ -33,6 +32,7 @@
     item-key="id"
     item-selectable
     return-object
+    v-bind="$attrs"
   >
     <template v-slot:item.data-table-select="{ item }">
       <v-btn
@@ -152,20 +152,20 @@
             max-width="360"
           >
             <v-avatar
+              :image="getShopIcon(item.product.shop_id)"
               class="me-2 avatar-gradient -thin -shop"
               size="24"
-              :image="getShopIcon(item.product.shop_id)"
             >
             </v-avatar>
 
             <b>Reseller Product</b>
 
-            <v-row no-gutters class="mt-2">
+            <v-row class="mt-2" no-gutters>
               <v-avatar
                 :image="getShopImagePath(item.product.icon, IMAGE_SIZE_SMALL)"
                 class="me-2"
-                size="64"
                 rounded="lg"
+                size="64"
               ></v-avatar>
               <div>
                 <div>

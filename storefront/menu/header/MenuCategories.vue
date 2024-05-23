@@ -85,6 +85,7 @@
 
                       <!-- View all categories in a this category -->
                       <v-list-item
+                        append-icon="more_horiz"
                         class="-route"
                         v-bind="
                           preview
@@ -98,7 +99,6 @@
                               }
                         "
                         @mouseenter="selected_category = cat"
-                        append-icon="more_horiz"
                       >
                         <v-list-item-title>
                           {{ $t("global.actions.view_all") }}
@@ -138,6 +138,7 @@
                 <!-- View all categories in a main category -->
                 <v-list-item
                   v-if="cat.children?.length > 6"
+                  append-icon="more_horiz"
                   class="-route"
                   v-bind="
                     preview
@@ -150,7 +151,6 @@
                         }
                   "
                   @mouseenter="selected_category = cat"
-                  append-icon="more_horiz"
                 >
                   <v-list-item-title class="parent-cat text-capitalize">
                     {{ $t("global.actions.view_all") }}
@@ -168,8 +168,8 @@
               :lazy-src="getShopImagePath(selected_category.icon, 64)"
               :src="getShopImagePath(selected_category.icon)"
               aspect-ratio="1"
-              rounded="xl"
               cover
+              rounded="xl"
             ></v-img>
             <h3 class="mt-2 mb-1">{{ selected_category.title }}</h3>
             <p class="typo-body">

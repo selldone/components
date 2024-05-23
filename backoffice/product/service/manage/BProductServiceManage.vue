@@ -156,11 +156,7 @@
       </u-number-input>
 
       <div class="text-center">
-        <v-btn-toggle
-          v-model="outputs.days"
-          rounded
-          selected-class="blue-flat"
-        >
+        <v-btn-toggle v-model="outputs.days" rounded selected-class="blue-flat">
           <v-btn
             v-for="(sub, key) in subscription_periods"
             :key="key"

@@ -147,7 +147,10 @@
             <div class="flex-grow-1">
               <v-icon class="me-1" color="#111" size="small">login</v-icon>
               {{ $t("service_bill.booking.selected_checkin") }}:
-              <div v-if="preferences.dates && preferences.dates[0]" class="mt-1">
+              <div
+                v-if="preferences.dates && preferences.dates[0]"
+                class="mt-1"
+              >
                 <div>
                   <div
                     v-if="

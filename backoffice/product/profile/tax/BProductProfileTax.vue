@@ -62,22 +62,23 @@
         <v-avatar class="me-2" size="36"
           ><img :src="getShopImagePath(product.icon, 64)"
         /></v-avatar>
-       {{$t('product_tax_profile.dialog.header')}}
+        {{ $t("product_tax_profile.dialog.header") }}
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
           <s-widget-header
-            :to="{ name: 'BPageShopFinanceTax' }"
             :add-caption="$t('product_tax_profile.dialog.action_manage')"
-            :add-sub-caption="$t('product_tax_profile.dialog.action_manage_sub')"
+            :add-sub-caption="
+              $t('product_tax_profile.dialog.action_manage_sub')
+            "
+            :title="$t('product_tax_profile.dialog.title')"
+            :to="{ name: 'BPageShopFinanceTax' }"
             add-text
             icon="gavel"
-            :title="$t('product_tax_profile.dialog.title')"
           >
           </s-widget-header>
           <v-list-subheader>
-
-            {{$t('product_tax_profile.dialog.subtitle')}}
+            {{ $t("product_tax_profile.dialog.subtitle") }}
           </v-list-subheader>
 
           <b-tax-profile-input
@@ -85,9 +86,10 @@
             :shop="shop"
           ></b-tax-profile-input>
 
-          <p v-if="isSubscription" v-html="$t('product_tax_profile.dialog.subscription_tips')">
-
-          </p>
+          <p
+            v-if="isSubscription"
+            v-html="$t('product_tax_profile.dialog.subscription_tips')"
+          ></p>
         </div>
       </v-card-text>
 
@@ -154,37 +156,37 @@ export default defineComponent({
 
     tax_profile_desc() {
       if (this.isSubscription)
-        return this.$t('product_tax_profile.description.subscription') ;
+        return this.$t("product_tax_profile.description.subscription");
       let out = "";
       let tax = null;
       if (!this.current_tax_profile) {
-        out = `<b>${this.$t('product_tax_profile.description.default')}</b> `;
+        out = `<b>${this.$t("product_tax_profile.description.default")}</b> `;
         tax = this.shop.tax;
       } else {
-        out =  `<b>${this.$t('product_tax_profile.description.dedicated')}</b> `;
+        out = `<b>${this.$t("product_tax_profile.description.dedicated")}</b> `;
         tax = this.current_tax_profile;
       }
 
       if (tax) {
         if (!tax.enable) {
-          out += ` | ${this.$t('product_tax_profile.description.is_disabled')}`;
+          out += ` | ${this.$t("product_tax_profile.description.is_disabled")}`;
         } else {
           if (tax.fix) {
-            out += ` | ${this.$t('product_tax_profile.description.fixed_rate')}: ${tax.fix_vat}%`;
+            out += ` | ${this.$t("product_tax_profile.description.fixed_rate")}: ${tax.fix_vat}%`;
 
             if (tax.shipping) {
-              out += ` | ${this.$t('product_tax_profile.description.shipping')}: ${tax.fix_shipping}%`;
+              out += ` | ${this.$t("product_tax_profile.description.shipping")}: ${tax.fix_shipping}%`;
             }
           } else {
-            out += ` | ${this.$t('product_tax_profile.description.location_based_rate')}`;
+            out += ` | ${this.$t("product_tax_profile.description.location_based_rate")}`;
 
             if (tax.shipping) {
-              out += ` | ${this.$t('product_tax_profile.description.shipping_location_based_rate')}`;
+              out += ` | ${this.$t("product_tax_profile.description.shipping_location_based_rate")}`;
             }
           }
 
           if (tax.included) {
-            out += ` | ${this.$t('product_tax_profile.description.include_in_price')}.`;
+            out += ` | ${this.$t("product_tax_profile.description.include_in_price")}.`;
           } else {
             out += `.`;
           }

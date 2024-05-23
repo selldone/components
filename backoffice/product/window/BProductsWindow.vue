@@ -17,8 +17,8 @@
   <div
     :style="{ 'overflow-hidden': inDragState }"
     class="s--backoffice-products-management-view"
-    @contextmenu="showMenu($event, null, null)"
     v-bind="$attrs"
+    @contextmenu="showMenu($event, null, null)"
   >
     <!-- ⬬⬬⬬⬬ Breadcrumbs ⬬⬬⬬⬬ -->
 
@@ -174,9 +174,9 @@
           :shop="shop"
           class="min-width-200"
           dense
-          @change="onFilterChange"
-          variant="solo"
           flat
+          variant="solo"
+          @change="onFilterChange"
         >
         </b-inventory-filter>
 
@@ -187,10 +187,10 @@
           :shop="shop"
           class="max-w-300 min-width-200"
           dense
-          variant="solo"
           flat
           hide-details
           prepend-inner-icon="storefront"
+          variant="solo"
           @change="fetchData()"
         ></b-vendor-input>
       </s-products-sort-view>
@@ -451,9 +451,9 @@
             />
             <v-btn
               v-if="selectMode && canSelectCategory"
+              :size="38"
               class="absolute-top-end selected-icon m-2"
               icon
-              :size="38"
               style="z-index: 50"
               @click.stop="$emit('select-category', category)"
             >
@@ -542,6 +542,7 @@
 
               disabled: disableTypes?.includes(product.type),
             }"
+            :dark="dark"
             :deleting="
               product.id === busy_delete ||
               (busy_delete === 'selected' &&
@@ -562,7 +563,6 @@
             @onSelect="toggleProductsSelect(product)"
             @onShowNote="showNoteProduct(product)"
             @select="$emit('select', product)"
-            :dark="dark"
             @mousedown.middle.stop="$emit('select:middle', product)"
           >
           </b-product-window-product-mini>
@@ -577,7 +577,9 @@
 
               disabled: disableTypes?.includes(product.type),
             }"
+            :color="dark ? '#000' : '#fff'"
             :compact-mode="compactMode"
+            :dark="dark"
             :deleting="product.id === busy_delete"
             :i-selected="selected_products.includes(product.id)"
             :product="product"
@@ -607,8 +609,6 @@
                 e.preventDefault();
               }
             "
-            :dark="dark"
-            :color="dark ? '#000' : '#fff'"
           />
 
           <v-scale-transition leave-absolute origin="center center">
@@ -678,8 +678,8 @@
             @click="$emit('click:fast-add')"
           ></u-button-add>
           <u-button-add
-            :fillHeight="false"
             :caption="$t('products_select.ai.title')"
+            :fillHeight="false"
             class="mt-1 flex-grow-1"
             color="#516ad6"
             hover-color="#667eea"
@@ -806,7 +806,6 @@
                 </small>
 
                 <b-category-engine-preview
-                  class="my-2"
                   :category="
                     parent_folders
                       ? parent_folders
@@ -814,6 +813,7 @@
                   "
                   :engine-categories="current_engine.categories"
                   :engine-tags="current_engine.tags"
+                  class="my-2"
                 >
                 </b-category-engine-preview>
               </template>
@@ -1306,8 +1306,8 @@
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Set root filter ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <v-list-item
-              @click="dialog_root_filter = true"
               append-icon="filter_alt"
+              @click="dialog_root_filter = true"
             >
               <template v-slot:prepend>
                 <v-avatar
@@ -1332,8 +1332,8 @@
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Set root engine ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <v-list-item
-              @click="dialog_root_engine = true"
               append-icon="auto_mode"
+              @click="dialog_root_engine = true"
             >
               <template v-slot:prepend>
                 <v-avatar
@@ -1399,7 +1399,7 @@
                 <v-icon v-if="!cut_product || !cut_product.icon" size="small"
                   >fa:fas fa-paste
                 </v-icon>
-                <v-avatar v-else size="24" class="me-3"
+                <v-avatar v-else class="me-3" size="24"
                   ><img
                     :src="getShopImagePath(cut_product.icon, IMAGE_SIZE_SMALL)"
                 /></v-avatar>
@@ -1507,10 +1507,10 @@
   <v-bottom-sheet
     v-model="dialog_vendors"
     content-class="rounded-t-xl"
-    max-width="1080"
     inset
-    width="98cw"
+    max-width="1080"
     scrollable
+    width="98cw"
   >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>Bulk actions > Assign vendor</v-card-title>
@@ -1587,8 +1587,8 @@
         <div class="widget-box mb-5 py-3">
           <u-smart-verify
             v-model="check_bulk_vendor"
-            true-title="Verify Bulk Vendor Assignment"
             true-description="Please confirm that you want to assign the vendor in bulk."
+            true-title="Verify Bulk Vendor Assignment"
           >
             >
           </u-smart-verify>
@@ -1780,12 +1780,12 @@
           |
 
           <u-avatar-folder
-            :src="getShopImagePath(parent_folders.icon, 64)"
-            is-amber
-            :size="36"
-            class="mx-1"
-            side-icon="folder"
             :border-size="5"
+            :size="36"
+            :src="getShopImagePath(parent_folders.icon, 64)"
+            class="mx-1"
+            is-amber
+            side-icon="folder"
           ></u-avatar-folder>
 
           {{ parent_folders.title }}
@@ -1846,12 +1846,12 @@
           |
 
           <u-avatar-folder
-            :src="getShopImagePath(parent_folders.icon, 64)"
-            is-amber
-            :size="36"
-            class="mx-1"
-            side-icon="folder"
             :border-size="5"
+            :size="36"
+            :src="getShopImagePath(parent_folders.icon, 64)"
+            class="mx-1"
+            is-amber
+            side-icon="folder"
           ></u-avatar-folder>
 
           {{ parent_folders.title }}

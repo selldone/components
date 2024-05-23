@@ -65,21 +65,25 @@
     <v-card v-if="selected_profile_type">
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1" color="#111">sticky_note_2</v-icon>
-        {{$t('product_logistic_profile.dialog.title')}}
+        {{ $t("product_logistic_profile.dialog.title") }}
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
           <s-widget-header
+            :add-caption="$t('product_logistic_profile.dialog.add_new_action')"
             :disabled="IS_VENDOR_PANEL"
+            :disabled-reason="
+              $t('product_logistic_profile.dialog.add_new_disable_msg')
+            "
             :icon="selected_profile_type.icon"
             :title="$t(selected_profile_type.title)"
             :to="{ name: 'BPageShopLogisticProfiles' }"
-            :add-caption="$t('product_logistic_profile.dialog.add_new_action') "
             add-text
-            :disabled-reason="$t('product_logistic_profile.dialog.add_new_disable_msg') "
           >
           </s-widget-header>
-          <v-list-subheader>{{ $t(selected_profile_type.desc) }}</v-list-subheader>
+          <v-list-subheader>{{
+            $t(selected_profile_type.desc)
+          }}</v-list-subheader>
           <b-logistic-profile-input
             v-model="profile_input"
             :shop="shop"

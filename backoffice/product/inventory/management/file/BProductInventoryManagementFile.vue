@@ -241,7 +241,7 @@
         </v-list-subheader>
       </template>
       <draggable
-          v-model="files"
+        v-model="files"
         :class="{ blurred: busy_fetch }"
         :component-data="{
           tag: 'ul',

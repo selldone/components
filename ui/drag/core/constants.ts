@@ -1,8 +1,11 @@
 const keyMirror = <T extends string>(keys: T[]): { [K in T]: K } =>
-    keys.reduce<{ [K in T]: K }>((acc, k) => {
+  keys.reduce<{ [K in T]: K }>(
+    (acc, k) => {
       acc[k] = k;
       return acc;
-    }, {} as { [K in T]: K });
+    },
+    {} as { [K in T]: K },
+  );
 
 export const events = keyMirror([
   "drag",

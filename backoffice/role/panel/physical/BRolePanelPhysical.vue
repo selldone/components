@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-container v-bind="$attrs" class="py-10" fluid>
+  <v-container class="py-10" fluid v-bind="$attrs">
     <b-role-panel-orders-list
       :dark="dark"
       :role="role"
@@ -35,7 +35,12 @@
   >
     <v-card class="text-start">
       <v-card-title>
-        <img :src="ProductType.PHYSICAL.image" class="me-2" width="24" height="24" />
+        <img
+          :src="ProductType.PHYSICAL.image"
+          class="me-2"
+          height="24"
+          width="24"
+        />
         Order SM-{{ selected.id }}
       </v-card-title>
 
@@ -51,8 +56,8 @@
             :order="basket"
             :shop="shop"
             cod-enable
-            @fetch-order="fetchBasket()"
             is-role-panel
+            @fetch-order="fetchBasket()"
           ></b-order-dashboard-payment>
 
           <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ List > Items ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -64,6 +69,7 @@
             :basket="basket"
             :class="{ disabled: !is_active_OrderBasketListWidget }"
             :shop="shop"
+            is-role-panel
             @confirm-order="
               ({ list, callback }) =>
                 updateState(
@@ -73,7 +79,6 @@
                   null,
                 )
             "
-            is-role-panel
           ></b-order-dashboard-cart>
 
           <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Package info ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -85,6 +90,7 @@
             :basket="basket"
             :class="{ disabled: !is_active_OrderPreparingWidget }"
             :shop="shop"
+            is-role-panel
             @confirm-preparing="
               ({ delivery_info, callback }) =>
                 updateState(
@@ -94,7 +100,6 @@
                   delivery_info,
                 )
             "
-            is-role-panel
           ></b-order-dashboard-preparing>
 
           <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Delivery Info ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -106,6 +111,7 @@
             :basket="basket"
             :class="{ disabled: !is_active_OrderDeliveryWidget }"
             :shop="shop"
+            is-role-panel
             @confirm-send="
               ({ callback }) =>
                 updateState(
@@ -125,7 +131,6 @@
                 )
             "
             @fetch-order="$emit('fetch-order')"
-            is-role-panel
           ></b-order-dashboard-delivery>
           <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ List > Return Requests ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -142,10 +147,10 @@
       <v-card-actions>
         <s-widget-buttons>
           <v-btn
-            @click="dialog = false"
-            variant="text"
             prepend-icon="close"
             size="x-large"
+            variant="text"
+            @click="dialog = false"
           >
             {{ $t("global.actions.close") }}
           </v-btn>

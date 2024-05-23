@@ -67,7 +67,7 @@ import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "BProductEditOutputs",
-  components: {SWidgetButtons, BProductServiceManage, SFormBuilder },
+  components: { SWidgetButtons, BProductServiceManage, SFormBuilder },
   props: {
     product: {
       required: true,

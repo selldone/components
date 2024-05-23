@@ -43,9 +43,9 @@
       <img
         v-else-if="currency_obj.icon"
         :src="currency_obj.icon"
-        width="20"
-        height="20"
         class="me-1"
+        height="20"
+        width="20"
       />
     </template>
 

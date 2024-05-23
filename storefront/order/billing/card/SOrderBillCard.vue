@@ -34,10 +34,7 @@
         <small>{{ $t("global.commons.discount") }}</small>
       </template>
 
-      <u-price
-        :amount="-total_discount"
-        :currency="basket.currency"
-      ></u-price>
+      <u-price :amount="-total_discount" :currency="basket.currency"></u-price>
     </u-text-value-dashed>
 
     <!-- ------------------------ Delivery price ------------------------ -->
@@ -78,10 +75,7 @@
         <small>{{ $t("global.commons.tax_shipping") }}</small>
       </template>
 
-      <u-price
-        :amount="tax_shipping"
-        :currency="basket.currency"
-      ></u-price>
+      <u-price :amount="tax_shipping" :currency="basket.currency"></u-price>
     </u-text-value-dashed>
 
     <!-- ------------------------ Final Price ------------------------ -->

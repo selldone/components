@@ -451,7 +451,12 @@ import SelldoneBlogCard from "../blog-card/SelldoneBlogCard.vue";
 
 export default {
   name: "BSupportMenu",
-  components: { USmartSelect, SelldoneHelpCard, SelldoneBlogCard, URatingEmoji },
+  components: {
+    USmartSelect,
+    SelldoneHelpCard,
+    SelldoneBlogCard,
+    URatingEmoji,
+  },
   data: () => ({
     show_support: false,
     selected_support: null,

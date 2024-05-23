@@ -89,14 +89,14 @@
             :zoom="15"
             class="overflow-hidden rounded-18px border"
             show-user-location
-            style="width: 100%; aspect-ratio: 1;max-height: 420px"
+            style="width: 100%; aspect-ratio: 1; max-height: 420px"
           />
           <u-map-image
             v-else
             :location="receiver_info.location"
-            size="100%"
             aspect-ratio="1"
             class="overflow-hidden rounded-18px border"
+            size="100%"
           >
           </u-map-image>
         </template>

@@ -45,7 +45,7 @@
           {{ $t("product_comparison.title") }}
           <v-spacer />
 
-          <v-btn icon @click="show = false" variant="text">
+          <v-btn icon variant="text" @click="show = false">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>

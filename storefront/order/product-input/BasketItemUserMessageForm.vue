@@ -251,10 +251,10 @@ export default {
             },
           },
           /* {
-                        basket_id: this.basket.id,
-                        variant_id: variant_id,
-                        message: this.message,
-                      }*/
+                            basket_id: this.basket.id,
+                            variant_id: variant_id,
+                            message: this.message,
+                          }*/
         )
         .then(({ data }) => {
           if (!data.error) {

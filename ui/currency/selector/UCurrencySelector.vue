@@ -82,6 +82,7 @@
     :density="dense ? 'compact' : 'default'"
     :flat="flat"
     :hide-details="hideDetails"
+    :item-title="(i) => $t(i.name)"
     :items="currencies"
     :label="$t('global.currency_selector.label')"
     :loading="loading"
@@ -105,9 +106,7 @@
     "
     class="s--currency-selector"
     item-value="code"
-    :item-title="(i) => $t(i.name)"
     @update:model-value="selectCurrency"
-
   >
     <template v-slot:item="{ item, props }">
       <v-list-item :title="$t(item.raw.name)" v-bind="props">
@@ -147,7 +146,7 @@
 
       <span v-if="!icon" class="ms-3">{{ $t(item.raw.name) }}</span>
     </template>
-    <template v-if="$slots['append-inner']"  v-slot:append-inner>
+    <template v-if="$slots['append-inner']" v-slot:append-inner>
       <slot name="append-inner"></slot>
     </template>
   </v-autocomplete>
@@ -306,7 +305,6 @@ export default {
       if (this.saveLocalStorage) {
         if (this.SetUserSelectedCurrency)
           this.SetUserSelectedCurrency(currency); // Backoffice (Deprecated we should change it!)
-
 
         if (window.$storefront)
           window.$storefront.currency = this.isObject(currency)

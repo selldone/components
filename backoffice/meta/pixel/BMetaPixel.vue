@@ -28,13 +28,13 @@
 
     <v-text-field
       v-model="tag_manager_id"
+      :append-inner-icon="lock ? 'lock' : 'lock_open'"
+      :readonly="lock"
       label="Facebook Pixel ID"
       placeholder="############"
-      @update:model-value="change = true"
       variant="underlined"
-      :append-inner-icon="lock ? 'lock' : 'lock_open'"
+      @update:model-value="change = true"
       @click:append-inner="lock = !lock"
-      :readonly="lock"
     >
     </v-text-field>
 

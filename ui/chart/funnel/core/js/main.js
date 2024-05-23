@@ -1,14 +1,8 @@
 /* eslint-disable no-trailing-spaces */
 /* global HTMLElement */
-import { formatNumber, roundPoint } from "./number";
-import { createPath, createVerticalPath } from "./path";
-import {
-  createSVGElement,
-  generateLegendBackground,
-  getDefaultColors,
-  removeAttrs,
-  setAttrs,
-} from "./graph";
+import {formatNumber, roundPoint} from "./number";
+import {createPath, createVerticalPath} from "./path";
+import {createSVGElement, generateLegendBackground, getDefaultColors, removeAttrs, setAttrs,} from "./graph";
 import generateRandomIdString from "./random";
 
 class FunnelGraph {
@@ -34,6 +28,44 @@ class FunnelGraph {
     this.height = options.height;
     this.width = options.width;
     this.subLabelValue = options.subLabelValue || "percent";
+  }
+
+  static getSubLabels(options) {
+    if (!options.data) {
+      throw new Error("Data is missing");
+    }
+
+    const { data } = options;
+
+    if (typeof data.subLabels === "undefined") return [];
+
+    return data.subLabels;
+  }
+
+  static getLabels(options) {
+    if (!options.data) {
+      throw new Error("Data is missing");
+    }
+
+    const { data } = options;
+
+    if (typeof data.labels === "undefined") return [];
+
+    return data.labels;
+  }
+
+  static getValues(options) {
+    if (!options.data) {
+      return [];
+    }
+
+    const { data } = options;
+
+    if (typeof data === "object") {
+      return data.values;
+    }
+
+    return [];
   }
 
   /**
@@ -157,30 +189,6 @@ class FunnelGraph {
 
   getFullDimension() {
     return this.isVertical() ? this.getWidth() : this.getHeight();
-  }
-
-  static getSubLabels(options) {
-    if (!options.data) {
-      throw new Error("Data is missing");
-    }
-
-    const { data } = options;
-
-    if (typeof data.subLabels === "undefined") return [];
-
-    return data.subLabels;
-  }
-
-  static getLabels(options) {
-    if (!options.data) {
-      throw new Error("Data is missing");
-    }
-
-    const { data } = options;
-
-    if (typeof data.labels === "undefined") return [];
-
-    return data.labels;
   }
 
   addLabels() {
@@ -312,20 +320,6 @@ class FunnelGraph {
   setWidth(w) {
     this.width = w;
     return this;
-  }
-
-  static getValues(options) {
-    if (!options.data) {
-      return [];
-    }
-
-    const { data } = options;
-
-    if (typeof data === "object") {
-      return data.values;
-    }
-
-    return [];
   }
 
   getValues2d() {
@@ -531,8 +525,8 @@ class FunnelGraph {
   }
 
   /*
-          Methods
-       */
+            Methods
+         */
 
   makeVertical() {
     if (this.direction === "vertical") return true;

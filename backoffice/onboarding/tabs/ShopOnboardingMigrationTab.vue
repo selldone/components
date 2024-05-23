@@ -22,9 +22,7 @@
         </p>
 
         <v-img
-          :src="
-            require('../../onboarding/assets/shopify.png')
-          "
+          :src="require('../../onboarding/assets/shopify.png')"
           class="m-2 imgi"
           contain
         ></v-img>
@@ -63,9 +61,7 @@
           {{ $t("onboarding.migration.woocommerce.msg") }}
         </p>
         <v-img
-          :src="
-            require('../../onboarding/assets/woocommerce.svg')
-          "
+          :src="require('../../onboarding/assets/woocommerce.svg')"
           class="m-2 imgi"
           contain
         ></v-img>

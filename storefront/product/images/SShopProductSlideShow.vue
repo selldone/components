@@ -85,7 +85,7 @@
       show-arrows="hover"
     >
       <v-carousel-item
-        v-for="(item,i) in images_list_embedded"
+        v-for="(item, i) in images_list_embedded"
         :key="item.key"
         :eager="
           !!item.image /*Only for images! Prevent load YouTube and ar by default!*/
@@ -110,18 +110,18 @@
           <s-image
             :alt="item.image.alt"
             :cover="!isStyleContain"
+            :lazy-src="getShopImagePath(item.image.path, IMAGE_SIZE_SMALL)"
             :src="getShopImagePath(item.image.path)"
-            :lazy-src="getShopImagePath(item.image.path,IMAGE_SIZE_SMALL)"
             aspect-ratio="1"
+            auto-cover
             class="swiper-slide-image pointer-zoom-in ma-auto pointer-zoom-in"
+            detect-white-background
             eager
             height="auto"
             width="calc(100% - 8px)"
             @click="showFullscreen"
-            @mousemove="updateCirclePosition"
             @mouseleave="show_circle = false"
-            detect-white-background
-            auto-cover
+            @mousemove="updateCirclePosition"
           >
             <div v-if="show_circle" class="circle-zoom ripple-focus"></div>
           </s-image>
@@ -171,12 +171,12 @@
       <template v-slot:prev="{ props }">
         <v-avatar
           v-if="prev_item"
-          size="84"
-          color="#33333333"
-          v-bind="props"
           class="pp overflow-visible t-all-400"
+          color="#33333333"
+          size="84"
+          v-bind="props"
         >
-          <v-scale-transition leave-absolute group>
+          <v-scale-transition group leave-absolute>
             <img
               v-if="prev_item.image"
               :key="prev_item.image"
@@ -191,12 +191,12 @@
       <template v-slot:next="{ props }">
         <v-avatar
           v-if="next_item"
+          class="pp overflow-visible t-all-400"
+          color="#33333333"
           size="84"
           v-bind="props"
-          color="#33333333"
-          class="pp overflow-visible t-all-400"
         >
-          <v-scale-transition leave-absolute group>
+          <v-scale-transition group leave-absolute>
             <img
               v-if="next_item.image"
               :key="next_item.image"
@@ -220,7 +220,7 @@ import SImage from "../../../storefront/product/images/SImage.vue";
 
 export default {
   name: "SShopProductSlideShow",
-  components: {SImage, UYoutubePlayer, UFadeScroll, VariantItemViewMicro },
+  components: { SImage, UYoutubePlayer, UFadeScroll, VariantItemViewMicro },
   props: {
     shop: {
       required: true,
@@ -390,8 +390,6 @@ export default {
         this.goToSlide(this.index + 1);
       }
     },
-
-
   },
 
   mounted() {

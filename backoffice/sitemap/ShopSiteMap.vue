@@ -44,10 +44,7 @@
                         target="_blank"
                         tooltip="/product/:product id"
                       >
-                        <img
-                          src="../../assets/icons/box-3d.svg"
-                          width="24"
-                        />
+                        <img src="../../assets/icons/box-3d.svg" width="24" />
                         {{ category.products }}</a
                       >
                     </li>
@@ -57,10 +54,7 @@
                         target="_blank"
                         tooltip="/?dir=:name or id"
                       >
-                        <img
-                          src="../../assets/icons/boxes.svg"
-                          width="24"
-                        />
+                        <img src="../../assets/icons/boxes.svg" width="24" />
 
                         {{ category.categories }}</a
                       >
@@ -82,10 +76,7 @@
               <ul>
                 <li>
                   <a class="multi" target="_blank" tooltip="/blog/:blog id">
-                    <img
-                      src="../../assets/icons/article.svg"
-                      width="24"
-                    />
+                    <img src="../../assets/icons/article.svg" width="24" />
                     Article</a
                   >
                 </li>
@@ -99,10 +90,7 @@
               <ul>
                 <li v-for="page in pages" :key="page.id">
                   <a :tooltip="`/pages/${page.name}`" target="_blank">
-                    <img
-                      src="../../assets/icons/compass.svg"
-                      width="24"
-                    />
+                    <img src="../../assets/icons/compass.svg" width="24" />
                     {{ page.title }} <small>{{ page.name }}</small></a
                   >
                 </li>
@@ -127,14 +115,12 @@
       <ul>
         <li>
           <a target="_blank" tooltip="/login"
-            ><img src="../../assets/icons/login.svg" width="24" /> Sign
-            In</a
+            ><img src="../../assets/icons/login.svg" width="24" /> Sign In</a
           >
         </li>
         <li>
           <a target="_blank" tooltip="/sitemap"
-            ><img src="../../assets/icons/sitemap.svg" width="24" /> Site
-            Map</a
+            ><img src="../../assets/icons/sitemap.svg" width="24" /> Site Map</a
           >
         </li>
         <li>
@@ -144,14 +130,14 @@
         </li>
         <li>
           <a target="_blank" tooltip="/terms"
-            ><img src="../../assets/icons/terms.svg" width="24" /> Terms
-            &amp; Conditions</a
+            ><img src="../../assets/icons/terms.svg" width="24" /> Terms &amp;
+            Conditions</a
           >
         </li>
         <li>
           <a target="_blank" tooltip="/privacy"
-            ><img src="../../assets/icons/shield.svg" width="24" />
-            Privacy Policy</a
+            ><img src="../../assets/icons/shield.svg" width="24" /> Privacy
+            Policy</a
           >
         </li>
 

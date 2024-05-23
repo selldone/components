@@ -121,8 +121,8 @@
         <v-btn
           :color="show_heat ? 'blue' : undefined"
           icon
-          variant="text"
           title="Show heatmap"
+          variant="text"
           @click="toggleHeat"
         >
           <v-icon>bar_chart</v-icon>
@@ -139,16 +139,15 @@
               rounded
               selected-class="black-flat"
               @update:model-value="initHeatmap"
-
             >
-              <v-btn title="Likes" value="likes" stacked>
+              <v-btn stacked title="Likes" value="likes">
                 <v-icon
                   :color="heatmap_filter.includes('likes') ? 'red' : undefined"
                   >favorite
                 </v-icon>
                 likes
               </v-btn>
-              <v-btn title="Comments" value="comments" stacked>
+              <v-btn stacked title="Comments" value="comments">
                 <v-icon
                   :color="
                     heatmap_filter.includes('comments') ? 'blue' : undefined
@@ -157,7 +156,7 @@
                 </v-icon>
                 comments
               </v-btn>
-              <v-btn title="Video views" value="videoViewCount" stacked>
+              <v-btn stacked title="Video views" value="videoViewCount">
                 <v-icon
                   :color="
                     heatmap_filter.includes('videoViewCount')

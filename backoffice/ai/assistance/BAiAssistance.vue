@@ -16,21 +16,25 @@
   <!-- ███████████████████████ Dialog > AI ███████████████████████ -->
   <v-dialog
     :model-value="modelValue"
-    @update:model-value="(value) => $emit('update:modelValue', value)"
+    max-width="860"
     scrollable
     transition="dialog-bottom-transition"
-    max-width="860"
+    @update:model-value="(value) => $emit('update:modelValue', value)"
   >
     <v-card
-      rounded="xl"
-      color="#673AB7"
-      class="text-start"
       :disabled="busy_ai"
       :loading="busy_ai"
+      class="text-start"
+      color="#673AB7"
+      rounded="xl"
     >
       <v-card-text>
         <div class="text-h4 text-lg-h3 font-weight-thin py-3">
-          <u-button-ai-small    class="ms-2 float-end pen" :loading="busy_ai" variant="text" ></u-button-ai-small>
+          <u-button-ai-small
+            :loading="busy_ai"
+            class="ms-2 float-end pen"
+            variant="text"
+          ></u-button-ai-small>
           <span v-html="title"></span>
         </div>
 
@@ -39,31 +43,31 @@
           <div v-if="!busy_ai">
             <u-currency-input
               v-if="hasCurrency && shop.currencies?.length > 1"
-              :active-currencies="shop.currencies"
               v-model="currency"
-              variant="plain"
-              class="max-w-400 mx-auto my-5"
+              :active-currencies="shop.currencies"
               :label="$t('global.commons.currency')"
+              class="max-w-400 mx-auto my-5"
               placeholder="Select the currency please."
+              variant="plain"
             ></u-currency-input>
 
             <u-voice-box
               v-model="voice"
               v-model:voice-file="voice_file"
-              class="ma-4"
               :max-duration="30"
-              @update:voice-file="sendVoiceToServer"
+              class="ma-4"
               no-playback
+              @update:voice-file="sendVoiceToServer"
             ></u-voice-box>
           </div>
           <div v-else class="text-center">
             <v-progress-circular
-              :size="64"
-              :width="4"
               :indeterminate="progress >= 99"
               :model-value="progress"
-              color="#D1C4E9"
+              :size="64"
+              :width="4"
               class="ma-5"
+              color="#D1C4E9"
             >
             </v-progress-circular>
           </div>
@@ -82,10 +86,10 @@
       <v-card-actions>
         <div class="widget-buttons">
           <v-btn
+            prepend-icon="close"
             size="x-large"
             variant="text"
             @click="$emit('update:modelValue', false)"
-            prepend-icon="close"
           >
             {{ $t("global.actions.close") }}
           </v-btn>

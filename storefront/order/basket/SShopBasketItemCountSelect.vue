@@ -20,28 +20,30 @@
       :bg-color="backgroundColor"
       :color="color"
       :customFilter="() => true"
-      :theme="dark ? 'dark' : 'light'"
       :density="dense ? 'compact' : undefined"
       :disabled="disabled || loadingDelete"
-      :variant="
-        variant ? variant : filled ? 'filled' : solo ? 'solo' : 'underlined'
-      "
       :flat="flat"
-      hide-details
       :items="items"
       :label="$t('global.commons.count')"
       :loading="loading"
       :model-value="modelValue"
       :placeholder="$t('global.commons.count')"
+      :readonly="loadingDelete"
+      :rounded="rounded"
+      :theme="dark ? 'dark' : 'light'"
+      :variant="
+        variant ? variant : filled ? 'filled' : solo ? 'solo' : 'underlined'
+      "
       class="s--shop-basket-item-count-select"
+      hide-details
       @blur="focus = false"
+      @focus="focus = true"
       @update:modelValue="
         (val) => {
           $emit('change', correctValue(val));
           $refs.self.blur();
         }
       "
-      @focus="focus = true"
       @update:model-value="
         (val) => $emit('update:modelValue', correctValue(val))
       "
@@ -50,8 +52,6 @@
           $refs.self.blur();
         }
       "
-      :rounded="rounded"
-      :readonly="loadingDelete"
     >
       <template v-slot:item="{ item, props }">
         <v-list-item v-if="item.raw" v-bind="props">
@@ -63,7 +63,7 @@
             }}</small>
           </template>
         </v-list-item>
-        <v-list-item v-else v-bind="props" :title="$t('global.actions.delete')">
+        <v-list-item v-else :title="$t('global.actions.delete')" v-bind="props">
         </v-list-item>
       </template>
 
@@ -103,7 +103,7 @@
     </v-combobox>
 
     <b v-if="modelValue > max" class="small text-red text-start d-block py-1">
-      <v-icon size="14" class="me-1">warning</v-icon>
+      <v-icon class="me-1" size="14">warning</v-icon>
       {{ $t("global.commons.not_in_stock") }}
     </b>
   </div>

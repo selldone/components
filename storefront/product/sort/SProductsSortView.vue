@@ -17,12 +17,12 @@
     <!-- ███████████████████ Only available ███████████████████ -->
 
     <v-btn
+      :size="smallSortButtons ? 'small' : undefined"
       class="tnt"
       height="46"
+      stacked
       variant="text"
       @click="$emit('update:only-available', !onlyAvailable)"
-      stacked
-      :size="smallSortButtons ? 'small' : undefined"
     >
       <v-icon class="mb-1" size="24"
         >{{ onlyAvailable ? "check_box" : "all_inclusive" }}
@@ -38,13 +38,13 @@
 
     <v-btn
       v-if="hasViewMode"
+      :size="smallSortButtons ? 'small' : undefined"
       :title="$t(viewMode.title)"
       class="tnt"
       height="46"
+      stacked
       variant="text"
       @click="toggleModeView"
-      stacked
-      :size="smallSortButtons ? 'small' : undefined"
     >
       <v-icon class="mb-1" size="24">{{ viewMode.icon }}</v-icon>
       <span class="small">
@@ -61,20 +61,20 @@
         :selected-class="activeClass"
         border="0"
         class="hide-on-small-900 mx-2"
-        @update:model-value="(val) => $emit('update:modelValue', val)"
         style="min-width: max-content"
+        @update:model-value="(val) => $emit('update:modelValue', val)"
       >
         <v-btn
           v-for="item in items"
           :key="item.val"
           :loading="loading && modelValue === item.val && !search"
+          :size="
+            $vuetify.display.mdAndDown || smallSortButtons ? 'small' : undefined
+          "
           :value="item.val"
           border="0"
           height="46"
           variant="text"
-          :size="
-            $vuetify.display.mdAndDown || smallSortButtons ? 'small' : undefined
-          "
         >
           {{ item.name }}
         </v-btn>
@@ -138,8 +138,8 @@
         <template v-slot:append-inner>
           <v-tooltip
             color="#000"
-            location="bottom"
             content-class="bg-black rounded-xl"
+            location="bottom"
           >
             <template v-slot:activator="{ props }">
               <v-btn icon size="24" v-bind="props" variant="plain">

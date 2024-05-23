@@ -84,9 +84,9 @@
               >
                 <template v-slot:placeholder>
                   <v-progress-circular
+                    class="center-absolute"
                     color="#333"
                     indeterminate
-                    class="center-absolute"
                   />
                 </template>
               </v-img>
@@ -131,9 +131,9 @@
             <div v-for="i in 6" :key="'_' + i" class="-product-card">
               <div class="pa-3">
                 <v-skeleton-loader
+                  :type="['image', 'card', 'paragraph']"
                   height="600"
                   max-width="100%"
-                  :type="['image', 'card', 'paragraph']"
                 ></v-skeleton-loader>
               </div>
             </div>

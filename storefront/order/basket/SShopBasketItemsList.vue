@@ -414,10 +414,8 @@ export default {
 
     headers() {
       return [
-
-
         {
-          title: '',
+          title: "",
           align: "start",
           value: "product_id",
         },

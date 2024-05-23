@@ -16,7 +16,7 @@
   <div :class="[type, { '-shadow': shadow }]" class="frame-view">
     <v-img v-if="src" :src="src" class="view" contain eager>
       <template v-slot:placeholder>
-        <v-row align="center"  justify="center" no-gutters>
+        <v-row align="center" justify="center" no-gutters>
           <v-progress-circular :color="SaminColorLight" indeterminate />
         </v-row>
       </template>

@@ -66,9 +66,9 @@
         <v-img
           :src="getShopImagePath(payment_receipt)"
           class="pointer-zoom-in mx-auto border"
+          rounded="lg"
           width="120"
           @click="showFullscreen"
-          rounded="lg"
         ></v-img>
       </div>
     </div>

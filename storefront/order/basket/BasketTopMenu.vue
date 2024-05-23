@@ -40,8 +40,8 @@
         <v-scale-transition group hide-on-leave origin="center">
           <div
             key="a"
-            class="view-basket-btn"
             :class="{ pen: in_current_basket_page }"
+            class="view-basket-btn"
             @click="
               $router.push({
                 name: window.$storefront.routes.BASKET_PAGE,
@@ -81,7 +81,7 @@
             )
           }}
         </div>
-        <div style="background: #333; height: 3px" class="my-3"></div>
+        <div class="my-3" style="background: #333; height: 3px"></div>
 
         <s-shop-basket-item
           v-for="(item, index) in show_items"
@@ -96,6 +96,9 @@
         <s-widget-buttons auto-fixed-position>
           <v-btn
             v-if="!in_current_basket_page"
+            color="#000"
+            size="x-large"
+            variant="elevated"
             @click="
               () => {
                 $router.push({
@@ -105,9 +108,6 @@
                 $emit('close');
               }
             "
-            color="#000"
-            variant="elevated"
-            size="x-large"
           >
             <v-icon start>shopping_cart</v-icon>
             {{ $t("basket_top_menu.accept_and_pay") }}

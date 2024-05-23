@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-card flat class="text-start">
+  <v-card class="text-start" flat>
     <v-card-title></v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
@@ -49,7 +49,8 @@
           :label="$t('global.commons.currency')"
           :return-object="false"
           :value="currency"
-          disabled variant="underlined"
+          disabled
+          variant="underlined"
         ></u-currency-input>
         <u-price-input
           v-model="amount"
@@ -61,7 +62,8 @@
           "
           :label="$t('global.commons.amount')"
           :messages="`Remains amount: ${sum_transactions} ${currency}`"
-          class="strong-field" variant="underlined"
+          class="strong-field"
+          variant="underlined"
         ></u-price-input>
 
         <v-textarea
@@ -72,7 +74,8 @@
           messages="It's visible to the vendor."
           persistent-placeholder
           placeholder="You can attach a note here..."
-          rows="2" variant="underlined"
+          rows="2"
+          variant="underlined"
         >
         </v-textarea>
         <u-smart-suggestion

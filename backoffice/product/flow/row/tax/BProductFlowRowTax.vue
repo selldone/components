@@ -13,9 +13,8 @@
   -->
 
 <template>
-  <v-row no-gutters align="center">
+  <v-row align="center" no-gutters>
     <v-list-item
-      class="flex-grow-1"
       :prepend-icon="
         current_tax_profile?.icon ? current_tax_profile.icon : 'balance'
       "
@@ -25,6 +24,7 @@
           ? ` ● ${current_tax_profile.name}`
           : ' ● Default Shop')
       "
+      class="flex-grow-1"
     >
       <template v-slot:subtitle>
         <v-icon class="me-1" color="green">check_circle</v-icon>

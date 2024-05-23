@@ -15,9 +15,9 @@
 <template>
   <v-list
     :density="$vuetify.display.smAndUp ? 'compact' : undefined"
-    class="s--shop-user-menu-list py-0"
+    :rounded="navigation ? undefined : 'xl'"
     bg-color="#fff"
-    :rounded="navigation?undefined:'xl'"
+    class="s--shop-user-menu-list py-0"
   >
     <v-list-item
       :to="{
@@ -122,8 +122,8 @@
       <v-list-item
         :href="window.URLS.AdminShopsURL()"
         active-class="bg-primary text-white"
-        target="_blank"
         prepend-icon="shop"
+        target="_blank"
       >
         <v-list-item-title>
           {{ $t("layout_shop.user_menu.my_shops") }}
@@ -139,8 +139,8 @@
         v-if="shop.user_id === USER_ID()"
         :href="window.URLS.AdminShopURL(shop.id)"
         active-class="bg-primary text-white"
-        target="_blank"
         prepend-icon="settings"
+        target="_blank"
       >
         <v-list-item-title>
           {{
@@ -161,10 +161,10 @@
       <v-divider class="mb-0" />
 
       <v-list-item
-        @click="$emit('click:logout')"
-        prepend-icon="logout"
-        lines="two"
         class="pb-4 pt-2"
+        lines="two"
+        prepend-icon="logout"
+        @click="$emit('click:logout')"
       >
         <v-list-item-title>
           {{
@@ -224,14 +224,15 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-user-menu-list {
-
 }
+
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-user-menu-list {
   text-align: start;
-  .v-divider{
+
+  .v-divider {
     opacity: 1;
     border-color: #f8f8f8;
     border-width: 1px;

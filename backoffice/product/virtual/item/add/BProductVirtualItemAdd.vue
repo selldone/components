@@ -33,7 +33,7 @@
         variant="text"
         @click="$emit('update:expand', !expand)"
       >
-        <v-icon>{{ expand ? "close_fullscreen" : "open_in_full" }} </v-icon>
+        <v-icon>{{ expand ? "close_fullscreen" : "open_in_full" }}</v-icon>
       </v-btn>
 
       <v-btn class="ms-1" icon variant="text" @click="$emit('close')">
@@ -204,7 +204,7 @@
 
                   <v-col cols="12" sm="4">
                     <p class="m-0 small">
-                      <v-icon class="me-1" size="small">error </v-icon>
+                      <v-icon class="me-1" size="small">error</v-icon>
                       {{ $t("global.commons.fail") }}
                     </p>
                     <h2 class="text-danger text-h3">{{ result_fails }}</h2>

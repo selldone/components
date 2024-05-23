@@ -83,7 +83,10 @@
 </template>
 
 <script>
-import { ShopLicense, ShopLicenseLimits } from "@selldone/core-js/enums/shop/ShopLicense";
+import {
+  ShopLicense,
+  ShopLicenseLimits,
+} from "@selldone/core-js/enums/shop/ShopLicense";
 
 export default {
   name: "BShopLicensePartnerOverrided",

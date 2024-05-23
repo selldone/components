@@ -35,194 +35,196 @@
       item-title="title"
     >
       <v-stepper-window :model-value="step">
-      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ STEP 1 : Review imported data ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+        <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ STEP 1 : Review imported data ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-      <v-stepper-window-item :value="1">
-        <s-widget-header
-          add-caption="Sample Excel"
-          add-icon="download"
-          add-sub-caption="Download template file"
-          href="/app/excel/customers-import.xlsx"
-          icon="checklist"
-          title="Important checklist"
-        ></s-widget-header>
-        <v-list-subheader>Make sure to follow the guideline.</v-list-subheader>
-        <v-list density="compact">
-          <v-list-item
-            :prepend-icon="
-              personal_information_verified
-                ? 'check_circle'
-                : 'radio_button_unchecked'
-            "
+        <v-stepper-window-item :value="1">
+          <s-widget-header
+            add-caption="Sample Excel"
+            add-icon="download"
+            add-sub-caption="Download template file"
+            href="/app/excel/customers-import.xlsx"
+            icon="checklist"
+            title="Important checklist"
+          ></s-widget-header>
+          <v-list-subheader
+            >Make sure to follow the guideline.</v-list-subheader
           >
-            <v-list-item-title>Complete your KYC.</v-list-item-title>
-          </v-list-item>
+          <v-list density="compact">
+            <v-list-item
+              :prepend-icon="
+                personal_information_verified
+                  ? 'check_circle'
+                  : 'radio_button_unchecked'
+              "
+            >
+              <v-list-item-title>Complete your KYC.</v-list-item-title>
+            </v-list-item>
 
-          <v-list-item prepend-icon="check_circle">
-            <v-list-item-title
-              >You should provide a valid user name and at least a valid email
-              or phone number.
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item prepend-icon="check_circle">
-            <v-list-item-title
-              >The phone number must be in the global standard format. country
-              code + phone number, ex:<b>45</b>71510000
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item prepend-icon="check_circle">
-            <v-list-item-title
-              >Your customers will have access to see purchase history and
-              obfuscate their information(Privacy is the top priority in
-              Selldone)
-            </v-list-item-title>
-          </v-list-item>
+            <v-list-item prepend-icon="check_circle">
+              <v-list-item-title
+                >You should provide a valid user name and at least a valid email
+                or phone number.
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item prepend-icon="check_circle">
+              <v-list-item-title
+                >The phone number must be in the global standard format. country
+                code + phone number, ex:<b>45</b>71510000
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item prepend-icon="check_circle">
+              <v-list-item-title
+                >Your customers will have access to see purchase history and
+                obfuscate their information(Privacy is the top priority in
+                Selldone)
+              </v-list-item-title>
+            </v-list-item>
 
-          <v-list-item prepend-icon="mail">
-            <v-list-item-title
-              >We will send an email to inform the user about adding them to
-              your store. They can reject it. The email contains your shop
-              information and your name.
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
+            <v-list-item prepend-icon="mail">
+              <v-list-item-title
+                >We will send an email to inform the user about adding them to
+                your store. They can reject it. The email contains your shop
+                information and your name.
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
 
-        <b-spreadsheet-customers
-          ref="spreadsheet"
-          v-model:totalItems="total_items"
-          class="mb-3"
-          @update:valid="(val) => (is_valid = val)"
-        ></b-spreadsheet-customers>
+          <b-spreadsheet-customers
+            ref="spreadsheet"
+            v-model:totalItems="total_items"
+            class="mb-3"
+            @update:valid="(val) => (is_valid = val)"
+          ></b-spreadsheet-customers>
 
-        <div class="widget-buttons mt-4">
-          <v-btn
-            :disabled="!is_valid || !personal_information_verified"
-            color="primary"
-            size="x-large"
-            variant="flat"
-            @click="step = 2"
-          >
-            {{ $t("global.actions.continue") }}
-            <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
-          </v-btn>
-        </div>
-      </v-stepper-window-item>
+          <div class="widget-buttons mt-4">
+            <v-btn
+              :disabled="!is_valid || !personal_information_verified"
+              color="primary"
+              size="x-large"
+              variant="flat"
+              @click="step = 2"
+            >
+              {{ $t("global.actions.continue") }}
+              <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
+            </v-btn>
+          </div>
+        </v-stepper-window-item>
 
-      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ STEP 2 : Send dataset to the server ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+        <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ STEP 2 : Send dataset to the server ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-      <v-stepper-window-item :value="2">
-        <div class="pt-6" style="min-height: 200px">
+        <v-stepper-window-item :value="2">
+          <div class="pt-6" style="min-height: 200px">
+            <v-container class="text-center">
+              <v-row>
+                <v-col cols="12" sm="4">
+                  <p>
+                    {{ $t("importer.shop_license") }}
+                  </p>
+                  <shop-license-view :shop="shop"></shop-license-view>
+                </v-col>
+
+                <v-col cols="12" sm="4">
+                  <p>
+                    {{ $t("importer.max_items_limit") }}
+                  </p>
+                  <b class="text-h4">{{ max_items_limit }}</b>
+                </v-col>
+
+                <v-col cols="12" sm="4">
+                  <p>
+                    {{ $t("importer.total_items") }}
+                  </p>
+                  <b
+                    :class="valid_count ? 'text-success' : 'text-danger'"
+                    class="text-h4"
+                    >{{ total_items }}</b
+                  >
+                </v-col>
+              </v-row>
+            </v-container>
+
+            <b-shop-quota-importer
+              :new-count="total_items"
+              :quota-key="shopQuota.Customer"
+              :shop="shop"
+            ></b-shop-quota-importer>
+
+            <div
+              :class="{ 'op-0-0': !progress }"
+              class="mb-6 mt-3 shadow-small rounded-xl pa-2 mx-5"
+            >
+              <v-progress-linear
+                :model-value="progress"
+                class="rounded-xl"
+                color="green"
+                height="14"
+                rounded
+                stream
+                striped
+              ></v-progress-linear>
+            </div>
+
+            <div class="widget-buttons mt-4">
+              <v-btn size="x-large" variant="flat" @click="step = 1">
+                <v-icon start>{{ $t("icons.chevron_back") }}</v-icon>
+                {{ $t("global.actions.back") }}
+              </v-btn>
+
+              <v-btn
+                :class="{ disabled: !valid_count }"
+                :loading="busy_send"
+                color="primary"
+                size="x-large"
+                @click="postToServer()"
+              >
+                <v-icon class="me-2 blink-me" size="small"
+                  >fiber_manual_record
+                </v-icon>
+                {{ $t("importer.send_to_server_action") }}
+
+                <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
+              </v-btn>
+            </div>
+          </div>
+        </v-stepper-window-item>
+
+        <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ STEP 3 : Send dataset to the server ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+
+        <v-stepper-window-item :value="3">
+          <!-- Results -->
           <v-container class="text-center">
             <v-row>
-              <v-col cols="12" sm="4">
-                <p>
-                  {{ $t("importer.shop_license") }}
-                </p>
-                <shop-license-view :shop="shop"></shop-license-view>
+              <v-col cols="12" sm="6">
+                <p class="m-0 small">{{ $t("global.commons.success") }}</p>
+                <h2 class="text-success" style="font-size: 34px !important">
+                  {{ result_success }}
+                </h2>
               </v-col>
 
-              <v-col cols="12" sm="4">
-                <p>
-                  {{ $t("importer.max_items_limit") }}
-                </p>
-                <b class="text-h4">{{ max_items_limit }}</b>
-              </v-col>
-
-              <v-col cols="12" sm="4">
-                <p>
-                  {{ $t("importer.total_items") }}
-                </p>
-                <b
-                  :class="valid_count ? 'text-success' : 'text-danger'"
-                  class="text-h4"
-                  >{{ total_items }}</b
-                >
+              <v-col cols="12" sm="6">
+                <p class="m-0 small">{{ $t("global.commons.fail") }}</p>
+                <h2 class="text-danger" style="font-size: 34px !important">
+                  {{ result_fails }}
+                </h2>
               </v-col>
             </v-row>
           </v-container>
 
-          <b-shop-quota-importer
-            :new-count="total_items"
-            :quota-key="shopQuota.Customer"
-            :shop="shop"
-          ></b-shop-quota-importer>
-
-          <div
-            :class="{ 'op-0-0': !progress }"
-            class="mb-6 mt-3 shadow-small rounded-xl pa-2 mx-5"
-          >
-            <v-progress-linear
-              :model-value="progress"
-              class="rounded-xl"
-              color="green"
-              height="14"
-              rounded
-              stream
-              striped
-            ></v-progress-linear>
+          <!-- Errors list -->
+          <div class="border-between-vertical my-3">
+            <div v-for="(error, i) in errors" :key="i" class="px-x py-1 small">
+              <v-icon class="me-1" color="red" size="small">error</v-icon>
+              {{ error }}
+            </div>
           </div>
 
           <div class="widget-buttons mt-4">
-            <v-btn size="x-large" variant="flat" @click="step = 1">
-              <v-icon start>{{ $t("icons.chevron_back") }}</v-icon>
-              {{ $t("global.actions.back") }}
-            </v-btn>
-
-            <v-btn
-              :class="{ disabled: !valid_count }"
-              :loading="busy_send"
-              color="primary"
-              size="x-large"
-              @click="postToServer()"
-            >
-              <v-icon class="me-2 blink-me" size="small"
-                >fiber_manual_record
-              </v-icon>
-              {{ $t("importer.send_to_server_action") }}
-
-              <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
+            <v-btn exact size="x-large" variant="flat" @click="$emit('close')"
+              >Back to the customers list
+              <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
             </v-btn>
           </div>
-        </div>
-      </v-stepper-window-item>
-
-      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ STEP 3 : Send dataset to the server ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-      <v-stepper-window-item :value="3">
-        <!-- Results -->
-        <v-container class="text-center">
-          <v-row>
-            <v-col cols="12" sm="6">
-              <p class="m-0 small">{{ $t("global.commons.success") }}</p>
-              <h2 class="text-success" style="font-size: 34px !important">
-                {{ result_success }}
-              </h2>
-            </v-col>
-
-            <v-col cols="12" sm="6">
-              <p class="m-0 small">{{ $t("global.commons.fail") }}</p>
-              <h2 class="text-danger" style="font-size: 34px !important">
-                {{ result_fails }}
-              </h2>
-            </v-col>
-          </v-row>
-        </v-container>
-
-        <!-- Errors list -->
-        <div class="border-between-vertical my-3">
-          <div v-for="(error, i) in errors" :key="i" class="px-x py-1 small">
-            <v-icon class="me-1" color="red" size="small">error</v-icon>
-            {{ error }}
-          </div>
-        </div>
-
-        <div class="widget-buttons mt-4">
-          <v-btn exact size="x-large" variant="flat" @click="$emit('close')"
-            >Back to the customers list
-            <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
-          </v-btn>
-        </div>
-      </v-stepper-window-item>
+        </v-stepper-window-item>
       </v-stepper-window>
     </v-stepper>
 

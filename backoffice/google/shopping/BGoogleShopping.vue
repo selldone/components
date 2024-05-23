@@ -13,40 +13,40 @@
   -->
 
 <template>
-  <div class="widget-box ">
+  <div class="widget-box">
     <s-widget-header
       :src="require('../../../assets/trademark/google-shopping.png')"
-      :title="$t('channel_google.shopping.title') "
+      :title="$t('channel_google.shopping.title')"
     >
     </s-widget-header>
 
     <v-list-subheader>
-      {{$t('channel_google.shopping.subtitle')}}
-
+      {{ $t("channel_google.shopping.subtitle") }}
     </v-list-subheader>
 
-    <u-pods-panel >
-      <u-pod-node  :title=" shop.title ">
+    <u-pods-panel>
+      <u-pod-node :title="shop.title">
         <v-avatar class="avatar-gradient -thin -shop mb-1" size="24">
           <v-img :src="getShopImagePath(shop.icon, 96)" />
         </v-avatar>
       </u-pod-node>
 
-      <u-pod-wire forward>
-      </u-pod-wire>
-      <u-pod-node :image="require('../../../assets/trademark/google-shopping.png')" title="Google">
+      <u-pod-wire forward> </u-pod-wire>
+      <u-pod-node
+        :image="require('../../../assets/trademark/google-shopping.png')"
+        title="Google"
+      >
       </u-pod-node>
     </u-pods-panel>
 
     <v-list-subheader>
-      {{$t('channel_google.shopping.tips')}}
-
+      {{ $t("channel_google.shopping.tips") }}
     </v-list-subheader>
 
     <u-text-copy-box
       :image="require('../../../assets/icons/link.svg')"
+      :message="$t('channel_google.shopping.link_message')"
       :value="google_products_feed"
-      :message="$t('channel_google.shopping.link_message') "
       small-width-mode
     >
     </u-text-copy-box>
@@ -78,14 +78,11 @@ export default {
     google_products_feed() {
       return `${this.getShopMainUrl(this.shop)}/rss/google`;
     },
-
   },
 
   watch: {},
 
-  created() {
-
-  },
+  created() {},
 
   methods: {},
 };

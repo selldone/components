@@ -310,10 +310,7 @@
               <span v-if="shop.expire_at">{{
                 getFromNowString(shop.expire_at)
               }}</span>
-              <v-icon
-                v-else
-                :title="$t('global.commons.infinite')"
-                size="20"
+              <v-icon v-else :title="$t('global.commons.infinite')" size="20"
                 >all_inclusive
               </v-icon>
             </small>
@@ -432,8 +429,11 @@
                         </td>
                       </tr>
                       <tr v-if="!finances?.length">
-                        <td colspan="2" class="text-center op-0-5 font-weight-light">
-                          <v-icon size="24" class="me-1">show_chart</v-icon>
+                        <td
+                          class="text-center op-0-5 font-weight-light"
+                          colspan="2"
+                        >
+                          <v-icon class="me-1" size="24">show_chart</v-icon>
                           {{ $t("user_dashboard.shops.shop_card.no_purchase") }}
                         </td>
                       </tr>
@@ -482,8 +482,11 @@
                         </td>
                       </tr>
                       <tr v-if="!finances?.length">
-                        <td colspan="2" class="text-center op-0-5 font-weight-light">
-                          <v-icon size="24" class="me-1">show_chart</v-icon>
+                        <td
+                          class="text-center op-0-5 font-weight-light"
+                          colspan="2"
+                        >
+                          <v-icon class="me-1" size="24">show_chart</v-icon>
                           {{ $t("user_dashboard.shops.shop_card.no_payment") }}
                         </td>
                       </tr>

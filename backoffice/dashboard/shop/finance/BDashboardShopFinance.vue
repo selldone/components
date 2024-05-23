@@ -420,9 +420,9 @@
             v-if="!item.gateway.enable"
             class="ma-1"
             color="red"
-            variant="flat"
             size="small"
             title="This payment globally disabled on Selldone."
+            variant="flat"
           >
             <v-icon start>warning</v-icon>
             Globally Disabled

@@ -19,10 +19,7 @@
       <u-price :amount="min_price" :currency="product.currency"></u-price>
       <template v-if="min_price !== max_price">
         ~
-        <u-price
-          :amount="max_price"
-          :currency="product.currency"
-        ></u-price>
+        <u-price :amount="max_price" :currency="product.currency"></u-price>
       </template>
     </template>
     <template v-slot:subtitle>
@@ -33,10 +30,7 @@
       <div v-else>
         <v-icon class="me-1" color="green">check_circle</v-icon>
         Listing pricing is set to
-        <u-price
-          :amount="product.price"
-          :currency="product.currency"
-        ></u-price>
+        <u-price :amount="product.price" :currency="product.currency"></u-price>
         .
       </div>
 
@@ -86,8 +80,8 @@ export default {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
 

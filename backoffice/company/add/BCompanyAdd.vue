@@ -50,13 +50,13 @@
 
         <v-text-field
           v-model="name"
-          :readonly="lock"
           :label="$t('add_company.name_input') + ' *'"
           :messages="
             company
               ? 'If you change it, your company needs to SD review and verify your business again.'
               : undefined
           "
+          :readonly="lock"
           :rules="[GlobalRules.required()]"
           append-inner-icon="fa:fas fa-briefcase"
           variant="underlined"
@@ -64,8 +64,8 @@
 
         <v-text-field
           v-model="website"
-          :readonly="lock"
           :label="$t('add_company.website_input')"
+          :readonly="lock"
           :rules="[GlobalRules.required()]"
           append-inner-icon="fa:fas fa-link"
           variant="underlined"
@@ -73,8 +73,8 @@
 
         <v-text-field
           v-model="email"
-          :readonly="lock"
           :label="$t('add_company.email_input') + ' *'"
+          :readonly="lock"
           :rules="[GlobalRules.required()]"
           append-inner-icon="fa:fas fa-envelope"
           variant="underlined"
@@ -82,13 +82,13 @@
 
         <v-text-field
           v-model="address"
-          :readonly="lock"
           :label="$t('add_company.address_input') + ' *'"
           :messages="
             company
               ? 'If you change it, your company needs to SD review and verify your business again.'
               : undefined
           "
+          :readonly="lock"
           :rules="[GlobalRules.required()]"
           append-inner-icon="fa:fas fa-map-marker-alt"
           variant="underlined"
@@ -96,8 +96,8 @@
 
         <v-text-field
           v-model="phone"
-          :readonly="lock"
           :label="$t('add_company.tel_input') + ' *'"
+          :readonly="lock"
           :rules="[GlobalRules.required()]"
           append-inner-icon="fa:fas fa-phone"
           variant="underlined"
@@ -105,8 +105,8 @@
 
         <v-text-field
           v-model="mobile"
-          :readonly="lock"
           :label="$t('add_company.mobile_input')"
+          :readonly="lock"
           :rules="[GlobalRules.required()]"
           append-inner-icon="fa:fas fa-mobile"
           variant="underlined"
@@ -137,8 +137,8 @@
 
         <s-country-select
           v-model="country"
-          :readonly="lock"
           :label="$t('global.commons.country')"
+          :readonly="lock"
           item-value="alpha2"
           variant="underlined"
         ></s-country-select>

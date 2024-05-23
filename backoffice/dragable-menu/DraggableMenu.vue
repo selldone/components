@@ -26,15 +26,15 @@
       {{ $t("global.actions.delete") }}
     </v-btn>
     <draggable
-      :model-value="list"
       :class="{ '-flat': flat }"
+      :model-value="list"
       class="list-group list-group-flush"
       style="list-style-type: none"
       tag="div"
       v-bind="dragOptions"
-      @update:model-value="(val) => $emit('update:modelValue', val)"
       @end="drag = false"
       @start="drag = true"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
     >
       <template v-slot:item="{ element, index }">
         <li :key="index" class="list-group-item d-flex align-center">

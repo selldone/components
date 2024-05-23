@@ -25,16 +25,16 @@
     <v-btn
       class="absolute-top-end m-3 z2"
       icon
-      @click="show_dialog = false"
       variant="text"
+      @click="show_dialog = false"
     >
       <v-icon>close</v-icon>
     </v-btn>
 
     <s-shop-login
       v-model:show="show_dialog"
-      :shop="shop"
       :color="SaminColorDarkDeep"
+      :shop="shop"
       class="rounded-0"
     ></s-shop-login>
   </v-bottom-sheet>
@@ -47,20 +47,17 @@ import _ from "lodash-es";
 export default {
   name: "SStorefrontNeedLoginDialog",
   components: { SShopLogin },
-  props:{
+  props: {
     shop: {
       required: true,
       type: Object,
     },
   },
 
-
   data: () => ({
     show_dialog: false,
   }),
-  computed: {
-
-  },
+  computed: {},
   watch: {
     show_dialog(val) {
       this.BlurApp(!!val);

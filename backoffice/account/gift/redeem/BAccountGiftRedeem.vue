@@ -15,9 +15,9 @@
 <template>
   <v-bottom-sheet
     v-model="apply_gift_dialog"
-    inset
     :max-width="720"
     content-class="rounded-t-xl"
+    inset
   >
     <v-card v-if="selectedGift" :color="SaminColorDarkDeep" rounded="t-xl">
       <v-card-title class="dialog-title">

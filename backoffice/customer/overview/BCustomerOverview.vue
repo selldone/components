@@ -33,11 +33,11 @@
         <div>
           <v-chip
             v-if="customer.access"
+            class="ma-1"
             color="#7C4DFF"
             label
             size="small"
             variant="flat"
-            class="ma-1"
           >
             <v-icon start>verified</v-icon>
             Exlusive Access
@@ -45,46 +45,45 @@
 
           <v-chip
             v-if="customer.subscribed"
+            class="ma-1"
             color="success"
             label
             size="small"
             variant="flat"
-            class="ma-1"
           >
             <v-icon start>mark_email_read</v-icon>
             {{ $t("global.commons.subscribed") }}
           </v-chip>
 
           <v-chip
-              v-if="customer.source==='vendor'"
-              color="#000"
-              label
-              size="small"
-              variant="flat"
-              class="ma-1"
+            v-if="customer.source === 'vendor'"
+            class="ma-1"
+            color="#000"
+            label
+            size="small"
+            variant="flat"
           >
             <v-icon start>storefront</v-icon>
             {{ $t("global.commons.vendor") }}
           </v-chip>
 
-
           <v-chip
             v-for="segment in customer.segments?.limit(3)"
             :key="segment"
-            class="ma-1"
-            size="small"
             :color="segment.toColor(true)"
+            class="ma-1"
             label
+            size="small"
             variant="tonal"
           >
             {{ segment }}
           </v-chip>
           <v-btn
-            icon
-            @click="showEditSegments()"
-            variant="text"
-            size="26"
             class="ma-1"
+            icon
+            size="26"
+            variant="text"
+            @click="showEditSegments()"
           >
             <v-icon> more_horiz</v-icon>
           </v-btn>
@@ -104,7 +103,7 @@
           </small>
 
           <div class="widget-buttons">
-            <v-btn variant="text" @click.stop="showSetClub()" size="x-large">
+            <v-btn size="x-large" variant="text" @click.stop="showSetClub()">
               <template v-if="customer.level">
                 <img
                   :src="getCustomerClubLevel(customer.level).icon"
@@ -126,7 +125,7 @@
             {{ $t("global.commons.chips") }}
           </small>
           <div class="widget-buttons">
-            <v-btn variant="text" @click.stop="showSetChips()" size="x-large">
+            <v-btn size="x-large" variant="text" @click.stop="showSetChips()">
               <v-icon start>casino</v-icon>
               {{ numeralFormat(customer.chips, "0,0") }}
             </v-btn>
@@ -166,7 +165,7 @@
 
           <template v-if="customer.address">
             <hr class="my-2" />
-            <v-icon color="#111" class="me-1">arrow_drop_down</v-icon>
+            <v-icon class="me-1" color="#111">arrow_drop_down</v-icon>
             <b>{{ $t("global.commons.address") }}</b>
 
             <p>
@@ -184,7 +183,7 @@
 
           <template v-if="customer.banned">
             <hr class="my-2" />
-            <v-icon color="red" class="me-1">front_hand</v-icon>
+            <v-icon class="me-1" color="red">front_hand</v-icon>
             <b class="text-red">{{ $t("global.commons.banned") }}</b>
             <p>
               This customer is banned and cannot place new orders or post to the
@@ -193,11 +192,11 @@
 
             <div class="text-end py-1">
               <v-btn
-                class="tnt"
-                variant="elevated"
                 :to="{ name: 'BPageCustomerEdit' }"
+                class="tnt"
                 prepend-icon="settings"
                 size="small"
+                variant="elevated"
                 >Change
               </v-btn>
             </div>
@@ -225,17 +224,14 @@
           <h3 v-for="it in clv" :key="it.currency" class="d-flex">
             <u-currency-icon
               :currency="it.currency"
-              flag-only
               class="me-1"
+              flag-only
             ></u-currency-icon>
             <span>{{ it.currency }}</span>
 
             <div class="dashed-flex-space"></div>
 
-            <u-price
-              :amount="it.amount"
-              :currency="it.currency"
-            ></u-price>
+            <u-price :amount="it.amount" :currency="it.currency"></u-price>
           </h3>
         </div>
       </v-col>
@@ -359,8 +355,8 @@
             <v-chip
               v-for="segment in customer.segments"
               :key="segment"
-              class="ma-1"
               :color="segment.toColor(true)"
+              class="ma-1"
               label
               variant="tonal"
             >
@@ -404,10 +400,7 @@
             </template>
 
             <template v-slot:item.price="{ item }">
-              <u-price
-                :amount="item.price"
-                :currency="item.currency"
-              ></u-price>
+              <u-price :amount="item.price" :currency="item.currency"></u-price>
             </template>
 
             <template v-slot:item.reserved_at="{ item }">
@@ -472,10 +465,7 @@
             </template>
 
             <template v-slot:item.price="{ item }">
-              <u-price
-                :amount="item.price"
-                :currency="item.currency"
-              ></u-price>
+              <u-price :amount="item.price" :currency="item.currency"></u-price>
             </template>
 
             <template v-slot:item.reserved_at="{ item }">

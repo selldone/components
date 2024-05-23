@@ -38,14 +38,15 @@
       }"
       :color="SocialNetwork[item.network].color"
       :href="getUrl(item)"
-      :size="size"
       :min-width="minWidth"
+      :size="size"
       :style="{ animationDelay: 500 + i * 500 + 'ms' }"
       :tile="tile"
       :title="$t(SocialNetwork[item.network].title)"
       class="toc"
-      icon variant="text"
+      icon
       target="_blank"
+      variant="text"
     >
       <img
         :class="{

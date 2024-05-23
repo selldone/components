@@ -23,9 +23,9 @@
       :color="isSmall ? SaminColorDark : undefined"
       :dark="isSmall"
       :sort-keys="keys"
-      style="margin: 0 !important"
-      small
       dense
+      small
+      style="margin: 0 !important"
     >
       <v-menu :close-on-content-click="false" z-index="99999999">
         <template v-slot:activator="{ props }">
@@ -65,7 +65,7 @@
       </v-menu>
     </s-data-iterator-toolbar>
 
-    <v-row :no-gutters="small_mode" style="min-height: 100%" class="mt-3">
+    <v-row :no-gutters="small_mode" class="mt-3" style="min-height: 100%">
       <v-col
         v-if="!selectedContact || !small_mode"
         :class="small_mode ? '' : 'border-end'"

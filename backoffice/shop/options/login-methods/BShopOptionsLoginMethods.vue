@@ -20,12 +20,12 @@
       {{ $t("shop_configuration.login.subtitle") }}
     </v-list-subheader>
 
-    <v-list class="bg-transparent border-between-vertical" :lines="2">
+    <v-list :lines="2" class="bg-transparent border-between-vertical">
       <b-options-login-method-row
         v-for="login in login_methods"
         :key="login.code"
-        :shop="shop"
         :login="login"
+        :shop="shop"
       >
       </b-options-login-method-row>
     </v-list>

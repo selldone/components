@@ -37,8 +37,8 @@
       <v-btn
         v-if="current_step"
         class="zoomIn delay_400 tnt pen"
-        variant="text"
         rounded
+        variant="text"
       >
         {{ current_step }}
       </v-btn>
@@ -60,6 +60,7 @@
           enabledCountryCode
           required
           validCharactersOnly
+          variant="outlined"
           @close="tel_f = false"
           @open="tel_f = true"
           @country-changed="(val) => (country = val)"
@@ -68,26 +69,23 @@
               ? requestSendCode()
               : undefined
           "
-          variant="outlined"
         ></u-tel-input>
-
 
         <v-expand-transition>
           <div v-if="error_message_send_code" class="text-red text-start">
-            <div v-html="error_message_send_code" class="py-3"></div>
+            <div class="py-3" v-html="error_message_send_code"></div>
           </div>
         </v-expand-transition>
-
 
         <div class="widget-buttons">
           <v-btn
             :class="{ disabled: !country || !phone || phone.length < 7 }"
-            :loading="busy_login"
             :disabled="!country || !phone || phone.length < 7"
+            :loading="busy_login"
             class="my-3 -btn tnt fadeIn delay_100"
             color="#0061e0"
-            variant="elevated"
             size="x-large"
+            variant="elevated"
             @click.stop="requestSendCode()"
             >{{ $t("global.actions.get_sms_code") }}
             <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
@@ -160,14 +158,14 @@
           :length="6"
           autofocus
           class="max-width-field mx-auto text-center mb-12"
-          @finish="(val) => (verification_code = val)"
-          @click="verification_code = ''"
           dir="ltr"
+          @click="verification_code = ''"
+          @finish="(val) => (verification_code = val)"
         />
 
         <v-expand-transition>
           <div v-if="error_message_otp_check" class="text-red text-start">
-            <div v-html="error_message_otp_check" class="py-3"></div>
+            <div class="py-3" v-html="error_message_otp_check"></div>
           </div>
         </v-expand-transition>
 
@@ -194,8 +192,8 @@
         <v-list
           v-if="method === 'select' && users"
           :class="{ disabled: busy_login, 'pointer-event-none': after_login }"
-          class="max-width-field mx-auto border-between-vertical text-start"
           bg-color="transparent"
+          class="max-width-field mx-auto border-between-vertical text-start"
           lines="two"
         >
           <template v-for="(user, index) in users" :key="user.id">
@@ -314,8 +312,8 @@
             :loading="busy_redirect === 'google'"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt s--button-flex"
-            rounded
             color="#4285f4"
+            rounded
             size="large"
             variant="flat"
             @click="
@@ -339,8 +337,8 @@
             :loading="busy_redirect === 'apple'"
             block
             class="my-2 untransform fadeIn delay_100 d-flex align-items-center tnt s--button-flex"
-            rounded
             color="#111"
+            rounded
             size="large"
             variant="flat"
             @click="
@@ -460,7 +458,7 @@ export default {
     UCountDown,
   },
   props: {
-    shop:{
+    shop: {
       required: true,
       type: Object,
     },
@@ -489,8 +487,7 @@ export default {
       method: "fast",
       countdown_end: null,
       show_resend: false,
-      error_message_send_code:null,
-
+      error_message_send_code: null,
 
       users: null,
       code: null,
@@ -504,7 +501,6 @@ export default {
     };
   },
   computed: {
-
     user() {
       return this.$store.getters.getUser;
     },

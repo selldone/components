@@ -18,7 +18,7 @@
     v-intersect="(isIntersecting) => (intersected = isIntersecting)"
     class="flex-grow-1"
   >
-    <div class="widget-buttons" :class="{ '-fixed-bottom': !intersected }">
+    <div :class="{ '-fixed-bottom': !intersected }" class="widget-buttons">
       <slot></slot>
     </div>
   </div>
@@ -44,4 +44,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

@@ -52,7 +52,8 @@
           <v-btn
             :loading="busy_set_segments"
             color="primary"
-            size="x-large" variant="elevated"
+            size="x-large"
+            variant="elevated"
             @click="saveSegments(customer, segments_input)"
           >
             <v-icon start>save</v-icon>

@@ -25,16 +25,15 @@
       update your products and categories.
     </v-list-subheader>
 
-    <u-pods-panel >
-      <u-pod-node  :title="shop.title">
+    <u-pods-panel>
+      <u-pod-node :title="shop.title">
         <v-avatar class="avatar-gradient -thin -shop mb-1" size="24">
           <v-img :src="getShopImagePath(shop.icon, 96)" />
         </v-avatar>
       </u-pod-node>
 
-      <u-pod-wire forward >
-      </u-pod-wire>
-      <u-pod-node >
+      <u-pod-wire forward> </u-pod-wire>
+      <u-pod-node>
         <div>
           <img
             class="m-1"
@@ -89,7 +88,7 @@ import UPodWire from "@selldone/components-vue/ui/pod/wire/UPodWire.vue";
 
 export default {
   name: "BMetaCatalog",
-  components: {UPodWire, UPodNode, UPodsPanel, UTextCopyBox },
+  components: { UPodWire, UPodNode, UPodsPanel, UTextCopyBox },
   props: {
     shop: {
       required: true,

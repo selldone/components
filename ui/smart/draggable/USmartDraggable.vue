@@ -132,7 +132,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    transparent:Boolean,
+    transparent: Boolean,
     label: {},
     hint: {},
 

@@ -26,13 +26,13 @@
     :flat="flat"
     :hide-details="hideDetails"
     :items="clusters"
-    :label="label?label:$t('global.commons.cluster')"
+    :label="label ? label : $t('global.commons.cluster')"
     :messages="hideDetails ? undefined : ' '"
     :multiple="multiple"
     :no-data-text="placeholder"
     :outlined="outlined"
     :persistent-placeholder="persistentPlaceholder"
-    :placeholder="placeholder?placeholder:$t('global.placeholders.cluster')"
+    :placeholder="placeholder ? placeholder : $t('global.placeholders.cluster')"
     :return-object="returnObject"
     :rounded="rounded"
     :variant="
@@ -60,7 +60,12 @@
 
     <!-- ―――――――――――――――――― items ―――――――――――――――――― -->
     <template v-slot:item="{ item, props }">
-      <v-list-item :title="item.raw.name" class="text-start" v-bind="props" lines="two">
+      <v-list-item
+        :title="item.raw.name"
+        class="text-start"
+        lines="two"
+        v-bind="props"
+      >
         <template v-slot:prepend>
           <v-avatar :size="32">
             <img
@@ -79,9 +84,7 @@
             small
           >
           </b-cluster-parent>
-          <div v-else
-            >{{ item.raw.description?.limitWords(8) }}
-          </div>
+          <div v-else>{{ item.raw.description?.limitWords(8) }}</div>
         </v-list-item-subtitle>
       </v-list-item>
     </template>

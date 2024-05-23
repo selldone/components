@@ -33,8 +33,8 @@
       <v-chip
         class="mx-2 my-1 pointer-event-none"
         color="#fff"
-        variant="flat"
         size="small"
+        variant="flat"
       >
         <v-icon
           :color="transaction.livemode ? 'green' : 'amber'"
@@ -60,9 +60,9 @@
           <v-img
             :src="getShopImagePath(payment_receipt)"
             class="pointer-zoom-in"
+            rounded="lg"
             width="160"
             @click="showFullscreen"
-            rounded="lg"
           ></v-img>
         </div>
         <v-alert v-else border="bottom" color="red"

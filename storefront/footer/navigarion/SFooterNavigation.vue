@@ -127,10 +127,10 @@
             : undefined
         "
         class="zoomIn delay_300"
+        floating
         min-width="60"
         value="notification"
         @click="USER() ? null : NeedLogin()"
-        floating
       >
         <v-badge
           :content="numeralFormat(sum_orders_badges, '0a')"
@@ -170,8 +170,8 @@
               v-if="getClub()"
               :src="getCustomerClubLevel(getClub().level).icon"
               height="18"
-              width="18"
               style="min-width: 18px; min-height: 18px"
+              width="18"
             />
           </template>
         </v-badge>
@@ -186,8 +186,8 @@
       <v-btn
         class="zoomIn delay_300 flex-grow-0"
         icon
-        variant="text"
         min-width="60"
+        variant="text"
         width="70"
         @click="$refs.search.showQRScanner()"
       >
@@ -199,6 +199,7 @@
         :class="{}"
         :shop-name="shop.name"
         :title="$t('layout_shop.search_title', { shop_name: shop.title })"
+        background-color="transparent"
         block
         class="full-width align-center d-flex flex-grow-1 fadeIn"
         color="transparent"
@@ -206,7 +207,6 @@
         flat
         no-qr
         variant="solo"
-        background-color="transparent"
         @onClear="onClear"
         @onSearch="onSearch"
       />
@@ -215,8 +215,8 @@
         key="ser"
         class="zoomIn flex-grow-0"
         icon
-        variant="text"
         min-width="60"
+        variant="text"
         width="70"
         @click="search_mode = false"
       >

@@ -22,8 +22,8 @@
         v-if="!existInComparisonList"
         :disabled="productsCountInComparisonList >= 10"
         class="pe-2"
-        size="large"
         height="44"
+        size="large"
         tile
         variant="text"
         @click="addToProductComparison(product, currentVariant)"
@@ -46,8 +46,8 @@
         v-else
         class="pe-2"
         color="success"
-        size="large"
         height="44"
+        size="large"
         tile
         variant="text"
         @click="removeFromProductComparison(product, currentVariant)"
@@ -62,10 +62,10 @@
         :loading="wishlist_busy"
         :title="inWishlist ? 'In my list' : 'Add to favorites'"
         icon
-        variant="text"
         min-width="54px"
         size="44"
         tile
+        variant="text"
         @click.stop="toggleWishlist"
       >
         <v-icon>{{ inWishlist ? "favorite" : "favorite_border" }}</v-icon>
@@ -76,8 +76,8 @@
         :shop="shop"
         min-width="54px"
         product-only
-        tile
         size="44"
+        tile
       >
       </s-storefront-social-buttons>
     </div>

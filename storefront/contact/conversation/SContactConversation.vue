@@ -25,7 +25,8 @@
         <v-btn
           :caption="$t('global.actions.close')"
           class="sub-caption -hover"
-          icon variant="text"
+          icon
+          variant="text"
           @click="show_user_detail = false"
         >
           <v-icon> close</v-icon>
@@ -258,7 +259,6 @@ import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper
 /**
  * <s-contact-conversation>
  */
-
 
 export default {
   name: "SContactConversation",

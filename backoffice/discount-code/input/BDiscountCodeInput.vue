@@ -23,6 +23,7 @@
       modelValue && modelValue.description ? modelValue.description : ''
     "
     :model-value="modelValue"
+    :variant="variant"
     clearable
     item-title="title"
     @update:model-value="(val) => $emit('update:modelValue', val)"
@@ -30,7 +31,6 @@
       $emit('click:clear');
       getDiscounts();
     "
-    :variant="variant"
   >
     <template v-slot:selection="{ item }">
       <v-avatar class="text-white bg-red m-2 small" size="32">
@@ -50,7 +50,7 @@
       </small>
     </template>
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" class="text-start" :title="item.raw.title">
+      <v-list-item :title="item.raw.title" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar class="text-white bg-red m-2 small" size="32">
             %{{ item.raw.percent }}
@@ -86,9 +86,9 @@ export default {
       type: Boolean,
     },
     currency: {},
-    variant:{
-      default: 'underlined',
-    }
+    variant: {
+      default: "underlined",
+    },
   },
 
   data() {

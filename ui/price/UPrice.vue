@@ -46,9 +46,9 @@
     <v-tooltip
       v-if="!is_valid_amount"
       activator="parent"
+      content-class="text-start"
       location="bottom"
       max-width="320"
-      content-class="text-start"
     >
       <b>Invalid amount!</b> <br />
       {{

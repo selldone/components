@@ -58,7 +58,9 @@
       item-icon="icon"
       item-text="title"
       item-value="value"
-      @update:model-value="(val) => (val ? setOptionCheckout('shipping', val) : undefined)"
+      @update:model-value="
+        (val) => (val ? setOptionCheckout('shipping', val) : undefined)
+      "
     >
     </u-smart-select>
 

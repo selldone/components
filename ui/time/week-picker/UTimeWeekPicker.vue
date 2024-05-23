@@ -18,9 +18,10 @@
       <div class="th-h -name">
         <v-btn
           v-if="editable"
-          icon variant="text"
+          icon
           size="small"
           title="Clear all"
+          variant="text"
           @click="resetAll"
         >
           <v-icon size="small">restart_alt</v-icon>

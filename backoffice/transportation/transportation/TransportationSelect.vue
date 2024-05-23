@@ -33,9 +33,13 @@
         selected-class="black-flat"
         @blur="(val) => $emit('blur', val)"
         @update:model-value="(val) => $emit('change', val)"
-
       >
-        <v-btn v-for="item in transportTypes" :key="item" :value="item" min-height="38">
+        <v-btn
+          v-for="item in transportTypes"
+          :key="item"
+          :value="item"
+          min-height="38"
+        >
           <img :src="getShopTransportationObject(item).icon" width="24px" />
           <span class="px-1">{{
             $t(getShopTransportationObject(item).name)
@@ -91,9 +95,7 @@ export default {
     },
   },
 
-  computed: {
-
-  },
+  computed: {},
 
   methods: {
     getShopTransportationObject(type) {

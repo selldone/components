@@ -14,13 +14,13 @@
 
 <template>
   <v-img
+    :aspect-ratio="1.7"
     :height="height"
     :max-width="height * 1.7"
     :min-width="height * 1.7"
     :src="image"
     :style="{ 'background-color': color }"
     :width="height * 1.7"
-    :aspect-ratio="1.7"
     class="card-con"
     cover
   >

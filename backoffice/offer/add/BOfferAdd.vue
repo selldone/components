@@ -27,10 +27,8 @@
             icon="tune"
           >
           </s-widget-header>
-          <v-list-subheader
-            >
-
-            {{$t('offer_edit.config.subtitle')}}
+          <v-list-subheader>
+            {{ $t("offer_edit.config.subtitle") }}
           </v-list-subheader>
 
           <v-text-field
@@ -114,9 +112,8 @@
 
             {{ $t("global.commons.limits_config") }}
           </h2>
-          <v-list-subheader
-            >
-            {{$t('offer_edit.limit.subtitle')}}
+          <v-list-subheader>
+            {{ $t("offer_edit.limit.subtitle") }}
           </v-list-subheader>
 
           <u-number-input
@@ -135,10 +132,8 @@
             <v-icon class="me-1">schedule</v-icon>
             {{ $t("global.commons.duration_config") }}
           </h2>
-          <v-list-subheader
-            >
-
-            {{$t('offer_edit.duration.subtitle')}}
+          <v-list-subheader>
+            {{ $t("offer_edit.duration.subtitle") }}
           </v-list-subheader>
 
           <u-date-input
@@ -176,10 +171,8 @@
 
             {{ $t("global.commons.constraints_config") }}
           </h2>
-          <v-list-subheader
-            >
-            {{$t('offer_edit.constraints.subtitle')}}
-
+          <v-list-subheader>
+            {{ $t("offer_edit.constraints.subtitle") }}
           </v-list-subheader>
 
           <u-price-input
@@ -218,7 +211,7 @@
             :shop="shop"
             border-less
             class="my-5"
-            >{{$t('global.placeholders.select_products')}}
+            >{{ $t("global.placeholders.select_products") }}
           </b-products-select-box>
         </div>
 
@@ -229,12 +222,12 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Discounted Products ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div class="widget-box mb-5">
-
-          <s-widget-header :title="$t('offer_edit.discounted_products.title')" icon="border_outer"></s-widget-header>
-          <v-list-subheader
-            >
-
-            {{$t('offer_edit.discounted_products.subtitle')}}
+          <s-widget-header
+            :title="$t('offer_edit.discounted_products.title')"
+            icon="border_outer"
+          ></s-widget-header>
+          <v-list-subheader>
+            {{ $t("offer_edit.discounted_products.subtitle") }}
           </v-list-subheader>
 
           <b-products-select-box
@@ -244,18 +237,18 @@
             :shop="shop"
             border-less
             class="my-5"
-            >{{$t('global.placeholders.select_products')}}
+            >{{ $t("global.placeholders.select_products") }}
           </b-products-select-box>
 
           <u-number-input
             v-model="percent"
+            :alternative-button-text="$t('global.commons.free')"
             :alternative-button-value="100"
             :hint="$t('offer_edit.discount_percent_hint')"
             :label="$t('offer_edit.discount_percent')"
             :max="100"
             :messages="$t('offer_edit.discount_percent_message')"
             :min="1"
-            :alternative-button-text="$t('global.commons.free')"
             append-icon="fa:fas fa-percentage"
             persistent-hint
             variant="underlined"
@@ -274,18 +267,16 @@
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
         <div class="widget-box mb-5">
           <s-widget-header
-            :to="{ name: 'BPageShopClassificationClusters' }"
             :add-caption="$t('global.commons.management')"
+            :title="$t('global.commons.cluster')"
+            :to="{ name: 'BPageShopClassificationClusters' }"
             add-icon="settings"
             add-text
             icon="workspaces"
-            :title="$t('global.commons.cluster')"
           ></s-widget-header>
 
           <v-list-subheader>
-
-
-            {{$t('offer_edit.cluster.subtitle')}}
+            {{ $t("offer_edit.cluster.subtitle") }}
           </v-list-subheader>
           <b-cluster-input
             v-model="cluster_id"
@@ -298,7 +289,10 @@
         </div>
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
       </v-form>
-      <BShopLicenseBlockOverlay v-if="licenseRestriction" fill-h></BShopLicenseBlockOverlay>
+      <BShopLicenseBlockOverlay
+        v-if="licenseRestriction"
+        fill-h
+      ></BShopLicenseBlockOverlay>
     </v-card-text>
     <v-card-actions>
       <s-widget-buttons :auto-fixed-position="!hasClose">

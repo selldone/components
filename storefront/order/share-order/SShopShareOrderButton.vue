@@ -29,17 +29,17 @@
 
     <v-bottom-sheet
       v-model="show_share"
+      content-class="rounded-t-xl"
       inset
       max-width="820"
-      content-class="rounded-t-xl"
     >
-      <v-card class="text-start" rounded="t-xl" color="#fafafa">
+      <v-card class="text-start" color="#fafafa" rounded="t-xl">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-2">share</v-icon>
           {{ $t("share_order.title") }}
           <v-spacer></v-spacer>
-          <v-chip class="mx-2" color="green" dark  size="small" variant="flat">
-            <v-icon  start>lock_clock</v-icon>
+          <v-chip class="mx-2" color="green" dark size="small" variant="flat">
+            <v-icon start>lock_clock</v-icon>
             {{ $t("global.commons.secure") }}
           </v-chip>
         </v-card-title>
@@ -55,9 +55,9 @@
             v-model="share_address"
             :false-title="$t('share_order.address_excluded')"
             :true-title="$t('share_order.address_included')"
+            class="my-5"
             false-icon="local_mall"
             true-icon="local_mall place"
-            class="my-5"
             @change="showShareDialog"
           >
           </u-smart-switch>
@@ -65,7 +65,8 @@
           <u-text-copy-box
             :border="false"
             :value="wishlist_url"
-            class="my-5" border
+            border
+            class="my-5"
             small-width-mode
           ></u-text-copy-box>
 
@@ -80,7 +81,7 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn size="x-large" variant="text" @click="show_share = false">
-              <v-icon start>close </v-icon>
+              <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
           </div>

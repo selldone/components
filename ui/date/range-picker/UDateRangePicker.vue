@@ -14,49 +14,49 @@
 <template>
   <v-sheet class="d-flex align-items-stretch overflow-hidden py-2" rounded="xl">
     <u-date-input
+      :allowedDates="allowedDates"
+      :appendInnerIcon="startIcon"
+      :events="events"
+      :label="startLabel"
+      :max="max"
+      :min="min"
       :model-value="start"
+      clearable
+      date-only
+      flat
+      hide-details
+      placeholder="Select date"
+      type="date"
+      variant="solo"
       @update:model-value="
         (v) => {
           $emit('update:start', v);
           $emit('change');
         }
       "
-      variant="solo"
-      :label="startLabel"
-      placeholder="Select date"
-      flat
-      hide-details
-      date-only
-      type="date"
-      :allowedDates="allowedDates"
-      :events="events"
-      :min="min"
-      :max="max"
-      clearable
-      :appendInnerIcon="startIcon"
     ></u-date-input>
     <div class="mx-3" style="border: solid thin #eee"></div>
     <u-date-input
+      :allowedDates="allowedDates"
+      :appendInnerIcon="endIcon"
+      :events="events"
+      :label="endLabel"
+      :max="max"
+      :min="start"
       :model-value="end"
+      clearable
+      date-only
+      flat
+      hide-details
+      placeholder="Select date"
+      type="date"
+      variant="solo"
       @update:model-value="
         (v) => {
           $emit('update:end', v);
           $emit('change');
         }
       "
-      variant="solo"
-      :label="endLabel"
-      placeholder="Select date"
-      flat
-      hide-details
-      date-only
-      type="date"
-      :allowedDates="allowedDates"
-      :events="events"
-      :min="start"
-      :max="max"
-      clearable
-      :appendInnerIcon="endIcon"
     ></u-date-input>
   </v-sheet>
 </template>
@@ -84,4 +84,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

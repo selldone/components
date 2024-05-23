@@ -22,7 +22,7 @@
       </s-widget-header>
 
       <v-list-subheader
-        >{{$t('orders_bulk_export.subtitle')}}
+        >{{ $t("orders_bulk_export.subtitle") }}
       </v-list-subheader>
 
       <h3>

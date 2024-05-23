@@ -23,7 +23,8 @@
     :items="items"
     :label="label"
     :loading="loading"
-    :messages="messages?messages:undefined"
+    :messages="messages ? messages : undefined"
+    :multiple="multiple"
     :placeholder="placeholder"
     :prepend-inner-icon="!noIcon && !select ? 'account_circle' : undefined"
     :readonly="readonly"
@@ -40,6 +41,7 @@
               ? 'filled'
               : 'underlined'
     "
+    class="v-input-auto-height"
     clearable
     hide-no-data
     item-title="name"
@@ -50,15 +52,13 @@
       $emit('update:user-id', null);
       $emit('update:user', null);
     "
-    :multiple="multiple"
-    class="v-input-auto-height"
   >
     <template v-slot:chip="{ item, props }">
       <v-chip
         v-if="multiple"
-        v-bind="props"
         :color="item.raw.add ? 'primary' : 'transparent'"
         :title="item.raw.email"
+        v-bind="props"
         variant="flat"
       >
         <v-avatar start>
@@ -90,10 +90,10 @@
 
             <v-chip
               v-if="item.raw.add"
+              class="ms-1"
               color="green"
               size="small"
               variant="tonal"
-              class="ms-1"
               >invite
             </v-chip>
           </div>

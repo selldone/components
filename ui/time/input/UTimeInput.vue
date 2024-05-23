@@ -16,31 +16,31 @@
   <div class="d-flex align-center justify-center">
     <u-number-input
       v-model="h"
+      :dense="dense"
       :max="23"
       :min="0"
       :title="$t('global.commons.hour')"
+      :variant="variant"
       background-color="transparent"
       class="intim"
-      :dense="dense"
       hide-details
-      single-line
       placeholder="00"
-      :variant="variant"
+      single-line
     >
     </u-number-input>
     :
     <u-number-input
       v-model="m"
+      :dense="dense"
       :max="59"
       :min="0"
       :title="$t('global.commons.minute')"
+      :variant="variant"
       background-color="transparent"
       class="intim"
-      :dense="dense"
       hide-details
-      single-line
       placeholder="00"
-      :variant="variant"
+      single-line
     >
     </u-number-input>
 

@@ -21,22 +21,22 @@
       'scrollable-element-light': light,
     }"
     :color="light ? '#fafafa' : SaminColorDarkDeep"
-    :theme="light ? 'light' : 'dark'"
     :expand-on-hover="expandOnHover"
     :floating="!$vuetify.display.smAndDown"
-    temporary
+    :rail="miniVariant"
+    :right="right"
+    :scrim="$vuetify.display.smAndDown"
     :style="{
       height: $vuetify.display.mdAndDown
         ? 'calc(100% - 48px)'
         : 'calc(100% - 16px)',
     }"
-    :rail="miniVariant"
-    :right="right"
-    :scrim="$vuetify.display.smAndDown"
+    :theme="light ? 'light' : 'dark'"
     :width="300"
     class="s--storefront-products-filter-menu"
-    elevation="0"
     disable-route-watcher
+    elevation="0"
+    temporary
   >
     <div ref="list_container">
       <v-list class="py-0 text-start" density="compact" nav>
@@ -53,7 +53,7 @@
           </v-list-item-subtitle>
           <template v-slot:append>
             <v-list-item-action end>
-              <v-btn @click="drawer = false" variant="plain" :size="48" icon>
+              <v-btn :size="48" icon variant="plain" @click="drawer = false">
                 <v-icon>close</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -68,19 +68,19 @@
           class="text-start hover-smart-tree"
           density="comfortable"
           hoverable
-          item-value="id"
           item-title="title"
+          item-value="id"
           open-all
           open-strategy="multiple"
         >
           <template v-slot:title="{ item, props }">
             <div
-              v-bind="props"
               :class="{
                 'pointer-pointer': !item.current,
                 'font-weight-bold': item.current,
               }"
               class="text-ellipsis"
+              v-bind="props"
               @click.stop="clickTreeView(item)"
             >
               <v-avatar v-if="item.icon" class="me-1" color="primary" size="28">
@@ -190,8 +190,8 @@
             v-if="selected_variants[item.code + 's']"
             :title="`Reset filter: ${$t(item.name)}`"
             icon
-            variant="text"
             size="small"
+            variant="text"
             @click="selected_variants[item.code + 's'] = []"
           >
             <v-icon>close</v-icon>
@@ -221,8 +221,8 @@
             v-if="selected_spec[item]"
             :title="`Reset filter: ${$t(item)}`"
             icon
-            variant="text"
             size="small"
+            variant="text"
             @click="selected_spec[item] = []"
           >
             <v-icon>close</v-icon>

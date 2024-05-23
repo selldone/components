@@ -46,7 +46,12 @@
         </v-icon>
       </b>
 
-      <v-row v-if="user.email || user.phone" class="small" :class="{ 'my-1': !small }" no-gutters>
+      <v-row
+        v-if="user.email || user.phone"
+        :class="{ 'my-1': !small }"
+        class="small"
+        no-gutters
+      >
         <div class="flex-grow-1">
           <span v-copy class="py-1" @click.stop>{{ user.email }}</span>
         </div>

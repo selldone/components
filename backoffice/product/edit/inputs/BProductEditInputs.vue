@@ -70,7 +70,7 @@ import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "ProductEditInputs",
-  components: {SWidgetButtons, SFormBuilder },
+  components: { SWidgetButtons, SFormBuilder },
   props: {
     product: {
       required: true,

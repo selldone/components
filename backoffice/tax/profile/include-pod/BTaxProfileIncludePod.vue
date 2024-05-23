@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="text-center py-5" :class="{ disabled: disabled }">
+  <div :class="{ disabled: disabled }" class="text-center py-5">
     <div class="pod mx-auto">
       <v-icon color="#111">local_pizza</v-icon>
       <div>Net price</div>

@@ -18,8 +18,9 @@
       <v-toolbar color="transparent" flat>
         <v-btn
           color="grey-darken-2"
-          icon variant="text"
+          icon
           title="Previous month"
+          variant="text"
           @click="$refs.calendar.prev()"
         >
           <v-icon>
@@ -39,8 +40,9 @@
 
         <v-btn
           color="grey-darken-2"
-          icon variant="text"
+          icon
           title="Next month"
+          variant="text"
           @click="$refs.calendar.next()"
         >
           <v-icon>

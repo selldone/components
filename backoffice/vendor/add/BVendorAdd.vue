@@ -51,12 +51,12 @@
         ]"
       ></u-tabs-floating>
 
-      <v-form  ref="form" lazy-validation>
+      <v-form ref="form" lazy-validation>
         <v-window v-model="tab" direction="vertical" mandatory>
-          <v-window-item >
+          <v-window-item>
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Profile  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-            <div  class="widget-box mb-5">
+            <div class="widget-box mb-5">
               <s-widget-header icon="admin_panel_settings" title="Vendor info">
               </s-widget-header>
 
@@ -108,7 +108,7 @@
               >
                 <template v-slot:append-inner>
                   <b-translation-button-vendor
-                    v-if="vendor?.id  && !IS_VENDOR_PANEL"
+                    v-if="vendor?.id && !IS_VENDOR_PANEL"
                     :label="$t('global.commons.description')"
                     :shop="shop"
                     :vendor="vendor"
@@ -123,12 +123,12 @@
                   v-model:user-id="user_id"
                   :label="$t('affiliates.dialog.user')"
                   messages="Optional, Ex: vendor name in the Selldone"
+                  variant="underlined"
                   @update:model-value="
                     (val) => {
                       if (!email) email = val;
                     }
                   "
-                  variant="underlined"
                 ></s-user-input>
                 <div v-else class="d-flex align-center">
                   <v-avatar
@@ -148,7 +148,8 @@
                       !IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢 Only marketplace owner can edit user*/
                     "
                     :title="$t('global.actions.edit')"
-                    icon variant="text"
+                    icon
+                    variant="text"
                     @click="user_edit = true"
                   >
                     <v-icon>edit</v-icon>
@@ -223,9 +224,9 @@
                     :href="`${getShopMainUrl(shop)}/pages/${page.name}`"
                     color="primary"
                     icon
-                    variant="text"
                     target="_blank"
                     title="Open landing page"
+                    variant="text"
                   >
                     <v-icon>open_in_new</v-icon>
                   </v-btn>
@@ -376,8 +377,8 @@
                     <v-btn
                       :color="vendor?.map_id || map_id ? 'success' : 'primary'"
                       icon
-                      variant="flat"
                       tile
+                      variant="flat"
                     >
                       <v-icon
                         >{{
@@ -410,7 +411,11 @@
                   :title="shop.title"
                 ></u-pod-node>
                 <u-pod-wire forward></u-pod-wire>
-                <u-pod-node v-if="email" :title="email" icon="email"></u-pod-node>
+                <u-pod-node
+                  v-if="email"
+                  :title="email"
+                  icon="email"
+                ></u-pod-node>
                 <u-pod-node
                   v-else-if="user_id"
                   :image="getUserAvatar(user_id)"
@@ -548,8 +553,8 @@
                     color="amber"
                     label
                     size="x-small"
-                    variant="flat"
                     title="Please set a default pricing model for vendor."
+                    variant="flat"
                   >
                     <v-icon size="x-small" start>sell</v-icon>
                     No pricing
@@ -703,9 +708,7 @@
                 min-height="250"
                 width="100%"
               >
-                <u-map-view-pin
-                  class="map-pointer"
-                ></u-map-view-pin>
+                <u-map-view-pin class="map-pointer"></u-map-view-pin>
               </v-img>
 
               <div v-if="full_address" class="mb-3 typo-body">

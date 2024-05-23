@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-card flat class="text-start">
+  <v-card class="text-start" flat>
     <v-card-title class="d-flex align-center">
       <v-avatar class="me-2" rounded>
         <v-img
@@ -138,9 +138,11 @@
             </s-widget-header>
             <v-list-subheader>
               {{
-                isSubscription
-                  ? "The subscription pricing is determined in the Product > Inventory > Subscription Price tab. You can set these pricing options here just to keep accounting, but the marketplace pricing does not affect the price of the listing and the final cost of the subscription."
-                  : "It's the price of the product sales in your marketplace."
+              isSubscription
+              ? "The subscription pricing is determined in the Product > Inventory > Subscription Price tab. You can set
+              these pricing options here just to keep accounting, but the marketplace pricing does not affect the price
+              of the listing and the final cost of the subscription."
+              : "It's the price of the product sales in your marketplace."
               }}
             </v-list-subheader>
 
@@ -191,17 +193,17 @@
               v-if="vendor_enter_final_price"
               v-model="raw_price_final_input"
               :currency="currency"
-              class="sm-suffix price-input strong-field"
               :label="'Vendor price [After Marketplace Commission]'"
+              class="sm-suffix price-input strong-field"
               required
             >
               <template v-slot:append-inner>
                 <v-btn
-                  variant="flat"
-                  size="small"
                   class="tnt"
-                  @click="vendor_enter_final_price = false"
                   prepend-icon="calculate"
+                  size="small"
+                  variant="flat"
+                  @click="vendor_enter_final_price = false"
                   >Final Price
                 </v-btn>
               </template>
@@ -211,17 +213,17 @@
               v-else
               v-model="raw_price"
               :currency="currency"
-              class="sm-suffix price-input strong-field"
               :label="'Vendor price [Before Marketplace Commission]'"
+              class="sm-suffix price-input strong-field"
               required
             >
               <template v-slot:append-inner>
                 <v-btn
-                  variant="flat"
-                  size="small"
                   class="tnt"
-                  @click="vendor_enter_final_price = true"
                   prepend-icon="calculate"
+                  size="small"
+                  variant="flat"
+                  @click="vendor_enter_final_price = true"
                   >Vendor Price
                 </v-btn>
               </template>
@@ -909,7 +911,6 @@ export default {
         } else {
           this.raw_price = val;
         }
-
       }
     },
   },

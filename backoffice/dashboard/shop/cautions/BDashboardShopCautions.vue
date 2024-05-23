@@ -23,7 +23,8 @@
       v-for="(cation, index) in cautions"
       :key="index"
       :cation="cation"
-      :shop="shop" class="mb-2"
+      :shop="shop"
+      class="mb-2"
     />
   </div>
 </template>

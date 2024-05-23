@@ -98,22 +98,22 @@
                 class="mx-1"
                 color="#D32F2F"
                 icon
-                variant="text"
                 size="small"
+                variant="text"
                 @click="removeFromProductComparison(product, product.variant)"
               >
                 <v-icon>close</v-icon>
                 <v-tooltip activator="parent" location="bottom"
-                  >Remove from list</v-tooltip
-                >
+                  >Remove from list
+                </v-tooltip>
               </v-btn>
 
               <v-btn
                 class="mx-1"
                 color="#444"
                 icon
-                variant="text"
                 size="small"
+                variant="text"
                 @click="
                   () => {
                     goToProduct(product.id);
@@ -139,10 +139,10 @@
             <td style="border: unset" />
             <td v-for="product in shown_products" :key="product.key">
               <!--
-        █████████████████████████████████████████████████████████████
-        ―――――――――――――――――――――――― Buy Button ―――――――――――――――――――――――
-        █████████████████████████████████████████████████████████████
-        -->
+      █████████████████████████████████████████████████████████████
+      ―――――――――――――――――――――――― Buy Button ―――――――――――――――――――――――
+      █████████████████████████████████████████████████████████████
+      -->
               <s-shop-buy-button
                 :can-buy="true"
                 :current-variant="product.variant"

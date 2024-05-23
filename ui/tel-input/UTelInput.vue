@@ -18,7 +18,6 @@
       <v-text-field
         :id="inputOptions.id"
         ref="input"
-        class="s--tel-input"
         v-model="phone"
         :aria-describedby="inputOptions['aria-describedby']"
         :autocomplete="inputOptions.autocomplete"
@@ -30,45 +29,46 @@
         ]"
         :disabled="disabled"
         :maxlength="inputOptions.maxlength"
+        :model-value="modelValue"
         :name="inputOptions.name"
         :placeholder="placeholder"
         :readonly="inputOptions.readonly"
         :required="inputOptions.required"
+        :rounded="rounded"
         :tabindex="inputOptions.tabindex"
         :type="inputOptions.type"
-        :model-value="modelValue"
+        :variant="variant"
+        class="s--tel-input"
         @blur="onBlur"
         @focus="onFocus"
         @update:model-value="onInput"
         @keyup.enter="onEnter"
         @keyup.space="onSpace"
-        :variant="variant"
-        :rounded="rounded"
       >
         <template v-slot:prepend>
           <v-select
             v-model="activeCountryCode"
-            @update:model-value="choose"
-            :return-object="false"
-            item-value="iso2"
-            item-title="name"
+            :density="variant !== 'outlined' ? 'compact' : undefined"
             :items="filtered_countries"
-            :variant="variant"
-            :rounded="rounded"
-            hide-details
-            style="width: 84px; min-height: 100%"
             :menu-props="{
               width: '80vw',
               maxWidth: '380px',
             }"
+            :return-object="false"
+            :rounded="rounded"
+            :variant="variant"
+            hide-details
+            item-title="name"
+            item-value="iso2"
+            style="width: 84px; min-height: 100%"
+            @update:model-value="choose"
             @update:menu="search = ''"
-            :density="variant!=='outlined'?'compact':undefined"
           >
             <template v-slot:item="{ item, props }">
               <v-list-item
-                v-bind="props"
                 :title="item.raw.name"
                 class="text-start"
+                v-bind="props"
               >
                 <template v-slot:prepend>
                   <flag :iso="item.raw?.iso2" :squared="false" class="me-3" />
@@ -81,11 +81,11 @@
               <v-text-field
                 v-model="search"
                 autofocus
-                variant="plain"
+                class="mx-3"
                 hide-details
                 placeholder="Search..."
-                class="mx-3"
                 single-line
+                variant="plain"
               ></v-text-field>
             </template>
 
@@ -104,7 +104,7 @@
           </v-icon>
         </template>
 
-        <template v-slot:append v-if="$slots['icon-right']">
+        <template v-if="$slots['icon-right']" v-slot:append>
           <slot name="icon-right"></slot>
         </template>
       </v-text-field>
@@ -144,7 +144,7 @@ export default {
       type: String,
       default: "",
     },
-    placeholder:{},
+    placeholder: {},
 
     variant: {
       default: "underlined",

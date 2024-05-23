@@ -42,10 +42,10 @@
 
     <v-btn
       v-if="add"
+      :size="size"
       class="more-items"
       color="success"
       icon
-      :size="size"
       variant="flat"
       @click.stop="$emit('click:add')"
     >

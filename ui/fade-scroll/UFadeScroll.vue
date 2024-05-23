@@ -20,7 +20,7 @@
       '--bottom': fadeBottom,
       '--left': $vuetify.locale.isRtl ? fadeRight : fadeLeft,
       '--right': $vuetify.locale.isRtl ? fadeLeft : fadeRight,
-      '--background':bgColor
+      '--background': bgColor,
     }"
     class="s-fade-scroll"
   >
@@ -87,7 +87,7 @@ export default {
     },
 
     dragScroll: Boolean,
-    bgColor:{}
+    bgColor: {},
   },
   data: () => ({
     fadeTop: "0",
@@ -133,7 +133,9 @@ export default {
         if (this.scrollToTheNextChild()) return;
       }
       this.$refs.scroll.scrollBy({
-        left: (this.$vuetify.locale.isRtl ? -1 : 1) * Math.min(window.innerWidth, 1600),
+        left:
+          (this.$vuetify.locale.isRtl ? -1 : 1) *
+          Math.min(window.innerWidth, 1600),
         behavior: "smooth",
       });
     },
@@ -143,7 +145,9 @@ export default {
       }
 
       this.$refs.scroll.scrollBy({
-        left: (this.$vuetify.locale.isRtl ? 1 : -1) * Math.min(window.innerWidth, 1600),
+        left:
+          (this.$vuetify.locale.isRtl ? 1 : -1) *
+          Math.min(window.innerWidth, 1600),
         behavior: "smooth",
       });
     },

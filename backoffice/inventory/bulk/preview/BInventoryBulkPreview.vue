@@ -28,18 +28,18 @@
     </div>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
-      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
+      :class="{ disabled: busy_fetch }"
       :headers="headers"
       :items="products"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
+      :mobile="$vuetify.display.xs"
       class="bg-transparent"
       density="compact"
       hide-default-footer
-      :class="{ disabled: busy_fetch }"
     >
       <template v-slot:item.icon="{ item }">
         <v-img

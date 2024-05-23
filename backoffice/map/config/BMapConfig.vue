@@ -14,7 +14,7 @@
 
 <template>
   <!-- ██████████████████ Config ██████████████████ -->
-  <div v-bind="$attrs" class="widget-box">
+  <div class="widget-box" v-bind="$attrs">
     <s-widget-header
       :disabled="!enable"
       add-caption="Open map"
@@ -45,7 +45,7 @@
       variant="solo"
     >
       <template v-slot:item="{ item, props }">
-        <v-list-item v-bind="props" class="text-start">
+        <v-list-item class="text-start" v-bind="props">
           <template v-slot:prepend>
             <img :src="item.raw.icon" class="me-2" height="24" width="24" />
           </template>
@@ -82,18 +82,22 @@
   <!-- ███████████████████████ Dialog > Show Links ███████████████████████ -->
 
   <v-bottom-sheet v-model="show_map_urls" inset max-width="520">
-    <v-card rounded="t-xl" class="text-start">
+    <v-card class="text-start" rounded="t-xl">
       <v-card-title>
-        <v-avatar class="me-1 avatar-gradient -shop -thin" size="36" :image="getShopImagePath(shop.icon, 128)">
+        <v-avatar
+          :image="getShopImagePath(shop.icon, 128)"
+          class="me-1 avatar-gradient -shop -thin"
+          size="36"
+        >
         </v-avatar>
-          {{ shop.title }}
+        {{ shop.title }}
       </v-card-title>
       <v-list class="border-between-vertical my-5" lines="three">
         <v-list-item
           :href="getShopMainUrl(shop) + '/map'"
-          target="_blank"
-          prepend-icon="shopping_bag"
           append-icon="open_in_new"
+          prepend-icon="shopping_bag"
+          target="_blank"
         >
           <v-list-item-title><b>Products Map Page</b></v-list-item-title>
           <v-list-item-subtitle
@@ -103,9 +107,9 @@
 
         <v-list-item
           :href="getShopMainUrl(shop) + '/map-vendors'"
-          target="_blank"
-          prepend-icon="store"
           append-icon="open_in_new"
+          prepend-icon="store"
+          target="_blank"
         >
           <v-list-item-title><b>Vendors Map Page</b></v-list-item-title>
           <v-list-item-subtitle

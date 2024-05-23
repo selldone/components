@@ -31,6 +31,7 @@
     :rounded="rounded"
     :rules="rules"
     :suffix="suffix ? suffix : currency_obj ? $t(currency_obj.name) : undefined"
+    :theme="dark ? 'dark' : 'light'"
     :variant="
       variant
         ? variant
@@ -48,7 +49,6 @@
     @keyup="onKeyUp"
     @keydown.enter="$emit('enter')"
     @click:clear="$emit('click:clear')"
-    :theme="dark ? 'dark' : 'light'"
   >
     <template v-slot:append-inner>
       <slot name="append-inner"></slot>

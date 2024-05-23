@@ -16,8 +16,8 @@
   <v-card
     :class="{ '-flat': flat }"
     :color="color"
-    :theme="dark ? 'dark' : 'light'"
     :rounded="rounded"
+    :theme="dark ? 'dark' : 'light'"
     :to="
       !window.ExternalWidget && !viewOnly
         ? is_product
@@ -48,7 +48,8 @@
         v-if="article.image"
         :src="getShopImagePath(article.image)"
         class="blog-card-header"
-        height="180" cover
+        cover
+        height="180"
       >
         <template v-slot:placeholder>
           <v-progress-circular

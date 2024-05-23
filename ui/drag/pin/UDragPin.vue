@@ -13,16 +13,12 @@
   -->
 
 <template>
-  <u-drop
-    id="drop_area"
-    class="pins-list"
-    @drop="onDrop"
-
-  >
+  <u-drop id="drop_area" class="pins-list" @drop="onDrop">
     <u-drag
       v-for="(item, key) in items"
       :key="key + '-' + item.id"
       :class="{ '-drag': editable }"
+      :draggable="editable"
       :style="{
         left: item.x + '%',
         top: item.y + '%',
@@ -30,7 +26,6 @@
       }"
       :transfer-data="item.id"
       class="-pin zoomIn"
-      :draggable="editable"
     >
       <v-avatar
         :class="{
@@ -63,8 +58,14 @@ import UDrag from "../../../ui/drag/core/UDrag.vue";
 
 export default {
   name: "UDragPin",
-  components: {UDrag, UDrop},
-  emits: ["click:product", "click:category", "click:add", "change", "update:tags"],
+  components: { UDrag, UDrop },
+  emits: [
+    "click:product",
+    "click:category",
+    "click:add",
+    "change",
+    "update:tags",
+  ],
   props: {
     modelValue: {},
     initialX: {
@@ -113,7 +114,8 @@ export default {
         let i = 0;
         Object.keys(this.modelValue.list).forEach((id) => {
           const pre_tag =
-            this.modelValue.tags && this.modelValue.tags.find((it) => it.id === id);
+            this.modelValue.tags &&
+            this.modelValue.tags.find((it) => it.id === id);
 
           this.items.push({
             id: id,
@@ -126,7 +128,6 @@ export default {
         this.$emit("update:modelValue", this.modelValue);
       }
     },
-
 
     onDrop(transferData, e) {
       // console.log("onDrop", transferData, e);

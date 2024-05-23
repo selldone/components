@@ -21,7 +21,6 @@
       'center-input': textCenter,
       'no-padding-nf': noPadding,
     }"
-    class=""
     :density="dense ? 'compact' : undefined"
     :disabled="disabled"
     :flat="flat"
@@ -48,8 +47,8 @@
               ? 'outlined'
               : 'underlined'
     "
+    class=""
     persistent-placeholder
-    @click:clear="$emit('clear')"
     @blur="
       () => {
         focus = false;
@@ -71,6 +70,7 @@
     @focus="focus = true"
     @keypress="isNumber($event)"
     @wheel="handleMouseWheel"
+    @click:clear="$emit('clear')"
     @keyup.enter="
       (e) => {
         if (!newValue) {

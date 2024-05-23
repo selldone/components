@@ -39,12 +39,12 @@
           counter="256"
           label="Title*"
           placeholder="Concise title displayed on product page..."
+          variant="underlined"
           @blur="
             include_code = include_code
               ? include_code
               : include_title?.toLowerCase()
           "
-          variant="underlined"
         >
           <template v-slot:append-inner>
             <b-translation-button-include
@@ -149,10 +149,10 @@
                 v-if="internal_page_link"
                 :href="internal_page_link"
                 icon
-                variant="text"
                 size="small"
                 target="_blank"
                 title="Open live page"
+                variant="text"
               >
                 <v-icon>open_in_new</v-icon>
               </v-btn>
@@ -181,9 +181,9 @@
           v-if="include?.id"
           :disabled="!include_title"
           :loading="busy_edit"
-          variant="elevated"
           color="primary"
           size="x-large"
+          variant="elevated"
           @click="editInclude"
         >
           <v-icon start>save</v-icon>
@@ -193,8 +193,8 @@
         <!-- Add mode -->
         <v-btn
           v-else
-          :loading="busy_add"
           :disabled="!include_title || !include_image?.length"
+          :loading="busy_add"
           color="primary"
           size="x-large"
           variant="elevated"
@@ -237,7 +237,7 @@ export default {
     include: {
       // Edit mode
     },
-    dialogMode:Boolean
+    dialogMode: Boolean,
   },
 
   data: function () {

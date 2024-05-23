@@ -53,22 +53,22 @@
       <template v-if="hasAiAction">
         <!-- Ai Action -->
         <u-button-ai-small
-          @click="$emit('click:ai')"
-          :loading="loadingAi"
-          :tooltip="tooltipAi"
-          variant="elevated"
           :color="buttonColor"
-          :size="44"
           :image-size="36"
+          :loading="loadingAi"
+          :size="44"
+          :tooltip="tooltipAi"
           dark-mode
-          placeholder-icon="mic"
           placeholder-color="#fff"
+          placeholder-icon="mic"
+          variant="elevated"
+          @click="$emit('click:ai')"
         ></u-button-ai-small>
         <v-sheet
-          class="align-self-center"
           :color="buttonColor"
-          width="16"
+          class="align-self-center"
           height="4"
+          width="16"
         ></v-sheet>
       </template>
       <v-btn
@@ -111,7 +111,6 @@
 </template>
 
 <script>
-
 import UButtonAiSmall from "../../button/ai/small/UButtonAiSmall.vue";
 
 export default {

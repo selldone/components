@@ -37,7 +37,7 @@
         <v-row align="start" class="text-center my-1">
           <v-col v-if="agency" class="text-start mb-2" cols="12" md="4" sm="6">
             <div class="d-flex align-start">
-              <v-avatar size="72" rounded class="me-3">
+              <v-avatar class="me-3" rounded size="72">
                 <img :src="getShopImagePath(agency.logo)" />
               </v-avatar>
 
@@ -77,9 +77,9 @@
                 <v-chip
                   v-if="agency.url"
                   :href="agency.url"
+                  size="small"
                   target="_blank"
                   variant="text"
-                  size="small"
                 >
                   <v-icon start>public</v-icon>
 
@@ -169,14 +169,14 @@
         </v-list-subheader>
         <v-list-subheader>
           <div>
-            <v-avatar class="me-1" size="20" rounded>
+            <v-avatar class="me-1" rounded size="20">
               <img :src="getShopImagePath(shop.icon, 128)" />
             </v-avatar>
             {{ shop.license }}
 
             <v-icon class="mx-2">{{ $t("icons.chevron_next") }}</v-icon>
 
-            <v-avatar class="mx-1" size="20" rounded>
+            <v-avatar class="mx-1" rounded size="20">
               <img :src="getShopImagePath(agency.logo)" />
             </v-avatar>
             {{ plan.license }}
@@ -184,7 +184,7 @@
         </v-list-subheader>
         <v-list-subheader>
           <div>
-            <v-avatar class="me-1" size="20" rounded>
+            <v-avatar class="me-1" rounded size="20">
               <img :src="getShopImagePath(shop.icon, 128)" />
             </v-avatar>
 
@@ -192,7 +192,7 @@
 
             <v-icon class="mx-2">{{ $t("icons.chevron_next") }}</v-icon>
 
-            <v-avatar class="mx-1" size="20" rounded>
+            <v-avatar class="mx-1" rounded size="20">
               <img :src="getShopImagePath(agency.logo)" />
             </v-avatar>
             {{ getLocalDateString(agency_client.expire_at) }}

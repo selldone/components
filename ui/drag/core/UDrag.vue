@@ -55,7 +55,9 @@ export default defineComponent({
 
       // Set drop effect on dragenter and dragover
       if (
-        [events.dragenter as string, events.dragover as string].includes(name) &&
+        [events.dragenter as string, events.dragover as string].includes(
+          name,
+        ) &&
         this.dropEffect
       ) {
         transfer.dropEffect = this.dropEffect;

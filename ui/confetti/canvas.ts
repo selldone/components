@@ -40,24 +40,6 @@ export default class Canvas {
   }
 
   /**
-   * Add a fixed, full-screen canvas to the page.
-   * @returns {HTMLCanvasElement}
-   *   A full-screen canvas.
-   */
-  static createDefaultCanvas(id: string): HTMLCanvasElement {
-    const canvas = document.createElement("canvas");
-    canvas.style.display = "block";
-    canvas.style.position = "fixed";
-    canvas.style.pointerEvents = "none";
-    canvas.style.top = "0";
-    canvas.style.width = "100vw";
-    canvas.style.height = "100vh";
-    canvas.id = id;
-    document.querySelector("body")?.appendChild(canvas);
-    return canvas;
-  }
-
-  /**
    * Get the canvas width.
    * @returns {Number}
    *   The canvas width.
@@ -73,6 +55,24 @@ export default class Canvas {
    */
   get height(): number {
     return this.canvas.height;
+  }
+
+  /**
+   * Add a fixed, full-screen canvas to the page.
+   * @returns {HTMLCanvasElement}
+   *   A full-screen canvas.
+   */
+  static createDefaultCanvas(id: string): HTMLCanvasElement {
+    const canvas = document.createElement("canvas");
+    canvas.style.display = "block";
+    canvas.style.position = "fixed";
+    canvas.style.pointerEvents = "none";
+    canvas.style.top = "0";
+    canvas.style.width = "100vw";
+    canvas.style.height = "100vh";
+    canvas.id = id;
+    document.querySelector("body")?.appendChild(canvas);
+    return canvas;
   }
 
   /**

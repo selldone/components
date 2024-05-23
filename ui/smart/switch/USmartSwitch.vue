@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { ref, watch, nextTick,computed } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import USmartSelect from "../select/USmartSelect.vue";
 
 export default {

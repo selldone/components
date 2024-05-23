@@ -15,26 +15,26 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ████████████████████████ Structure ████████████████████████ -->
   <draggable
+    :animation="200"
+    :disabled="false"
     :model-value="modelValue"
-    @update:model-value="(val) => $emit('update:modelValue', val)"
+    ghostClass="ghost"
     handle=".handle"
     style="list-style-type: none"
     tag="div"
     @end="drag = false"
     @start="drag = true"
-    :animation="200"
-    :disabled="false"
-    ghostClass="ghost"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <!-- It should be an html element not a component -->
     <template v-slot:item="{ element, index }">
       <b-valuation-form-structure-row
         :key="index"
-        @remove="removeField(index)"
-        :element="element"
         :collapse="drag || collapse"
+        :element="element"
         :sample-product="sampleProduct"
         class="mt-5"
+        @remove="removeField(index)"
       >
       </b-valuation-form-structure-row>
     </template>

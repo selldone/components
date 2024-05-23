@@ -20,7 +20,7 @@
     @click="showSetMapTag()"
   >
     <v-list-item-title class="d-flex align-center">
-      <b>{{$t('product_location_profile.title')}}</b>
+      <b>{{ $t("product_location_profile.title") }}</b>
 
       <template v-if="product.map && product.map_id">
         <span>
@@ -59,7 +59,7 @@
       {{
         product.map
           ? product.map.address
-          :$t('product_location_profile.empty_subtitle')
+          : $t("product_location_profile.empty_subtitle")
       }}
     </v-list-item-subtitle>
 
@@ -88,26 +88,26 @@
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1">map</v-icon>
 
-        {{$t('product_location_profile.dialog.header')}}
+        {{ $t("product_location_profile.dialog.header") }}
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
           <s-widget-header
+            :add-caption="
+              $t('product_location_profile.dialog.action_new_location')
+            "
+            :title="$t('product_location_profile.dialog.title')"
             :to="{ name: 'BPageShopChannelMap' }"
-            :add-caption="$t('product_location_profile.dialog.action_new_location') "
             add-text
             icon="place"
-            :title="$t('product_location_profile.dialog.title')"
           >
           </s-widget-header>
           <v-list-subheader>
-            {{$t('product_location_profile.dialog.subtitle')}}
-
+            {{ $t("product_location_profile.dialog.subtitle") }}
           </v-list-subheader>
-          <div class="typo-body mb-3" >
+          <div class="typo-body mb-3">
             <v-icon class="me-1">notification_important</v-icon>
             <span v-html="$t('product_location_profile.dialog.tips')"></span>
-
           </div>
           <b-map-tag-input
             v-model="map_input"
@@ -127,16 +127,14 @@
                 min-height="200"
                 width="100%"
               >
-                <u-map-view-pin
-                  class="map-pointer"
-                ></u-map-view-pin>
+                <u-map-view-pin class="map-pointer"></u-map-view-pin>
               </v-img>
             </v-col>
 
             <v-col v-if="map_input" cols="12" sm="6">
               <div v-if="full_address" class="mb-3 typo-body">
                 <v-icon class="me-1">assistant_direction</v-icon>
-                {{$t('global.commons.address')}}
+                {{ $t("global.commons.address") }}
                 :
                 <flag
                   v-if="map_input.country"
@@ -149,13 +147,13 @@
 
               <div v-if="map_input.message" class="mb-3">
                 <v-icon class="me-1">chat_bubble</v-icon>
-                {{$t('global.commons.message')}}:
+                {{ $t("global.commons.message") }}:
                 {{ map_input.message }}
               </div>
 
               <div :title="getFromNowString(map_input.created_at)" class="my-1">
                 <v-icon class="me-1">calendar_today</v-icon>
-                {{$t('global.commons.created_at')}}:
+                {{ $t("global.commons.created_at") }}:
                 {{ getLocalTimeString(map_input.created_at) }}
               </div>
               <div :title="getFromNowString(map_input.updated_at)" class="my-1">

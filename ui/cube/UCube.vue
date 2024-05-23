@@ -86,7 +86,7 @@ export default {
       // draw the cube
       drawCube(
         size / 2,
-        size / 2 + wobble + (t.z * t.scale) / 2 + (size>100?15:0),
+        size / 2 + wobble + (t.z * t.scale) / 2 + (size > 100 ? 15 : 0),
         Number(t.x * t.scale),
         Number(t.y * t.scale),
         Number(t.z * t.scale),

@@ -22,16 +22,16 @@
     <v-btn
       v-if="category"
       :href="`${getShopMainUrl(shop)}/${category.name}-category`"
+      class="tnt"
+      rounded
+      size="x-large"
       target="_blank"
       variant="text"
-      size="x-large" class="tnt"
-      rounded
     >
       <v-avatar
         v-if="category.icon"
         class="me-2 ms-n3 avatar-gradient -thin -category"
         size="36"
-
       >
         <v-img :src="getShopImagePath(category.icon, 64)"></v-img>
       </v-avatar>

@@ -43,11 +43,7 @@
       </div>
 
       <template v-if="APP_IMAGE">
-        <img
-          class="mx-3"
-          src="../../../assets/icons/wire.svg"
-          width="16"
-        />
+        <img class="mx-3" src="../../../assets/icons/wire.svg" width="16" />
 
         <div
           class="bg-white rounded-28px flex-grow-0 pa-2"
@@ -228,9 +224,7 @@
             @click="busy_redirect = 'google'"
           >
             <v-avatar class="ms-n2" color="#ffffff" size="28"
-              ><img
-                class="pa-1"
-                src="../../../assets/trademark/google.svg"
+              ><img class="pa-1" src="../../../assets/trademark/google.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_google") }}</span>
           </v-btn>
@@ -248,9 +242,7 @@
             @click="busy_redirect = 'apple'"
           >
             <v-avatar class="ms-n2" color="#111" size="28"
-              ><img
-                class="pa-1"
-                src="../../../assets/trademark/apple.svg"
+              ><img class="pa-1" src="../../../assets/trademark/apple.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_apple") }}</span>
           </v-btn>
@@ -288,9 +280,7 @@
             @click="busy_redirect = 'facebook'"
           >
             <v-avatar class="ms-n2" color="#fff" size="28"
-              ><img
-                class="pa-1"
-                src="../../../assets/trademark/meta.png"
+              ><img class="pa-1" src="../../../assets/trademark/meta.png"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_facebook") }}</span>
           </v-btn>
@@ -308,9 +298,7 @@
             @click="busy_redirect = 'github'"
           >
             <v-avatar class="ms-n2" color="#fff" size="28"
-              ><img
-                class="pa-1"
-                src="../../../assets/trademark/github.svg"
+              ><img class="pa-1" src="../../../assets/trademark/github.svg"
             /></v-avatar>
             <span class="flex-grow-1">{{ $t("login.register_github") }}</span>
           </v-btn>
@@ -508,9 +496,7 @@
               @click="busy_redirect = 'google'"
             >
               <v-avatar class="ms-n2" color="#ffffff" size="28"
-                ><img
-                  class="pa-1"
-                  src="../../../assets/trademark/google.svg"
+                ><img class="pa-1" src="../../../assets/trademark/google.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_google") }}</span>
             </v-btn>
@@ -528,9 +514,7 @@
               @click="busy_redirect = 'apple'"
             >
               <v-avatar class="ms-n2" color="#111" size="28"
-                ><img
-                  class="pa-1"
-                  src="../../../assets/trademark/apple.svg"
+                ><img class="pa-1" src="../../../assets/trademark/apple.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.register_apple") }}</span>
             </v-btn>
@@ -567,9 +551,7 @@
               @click="busy_redirect = 'facebook'"
             >
               <v-avatar class="ms-n2" color="#fff" size="28"
-                ><img
-                  class="pa-1"
-                  src="../../../assets/trademark/meta.png"
+                ><img class="pa-1" src="../../../assets/trademark/meta.png"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_facebook") }}</span>
             </v-btn>
@@ -587,9 +569,7 @@
               @click="busy_redirect = 'github'"
             >
               <v-avatar class="-start ms-n2" color="#fff" size="28"
-                ><img
-                  class="pa-1"
-                  src="../../../assets/trademark/github.svg"
+                ><img class="pa-1" src="../../../assets/trademark/github.svg"
               /></v-avatar>
               <span class="flex-grow-1">{{ $t("login.login_github") }}</span>
             </v-btn>
@@ -748,8 +728,8 @@
               enabledCountryCode
               required
               validCharactersOnly
-              @country-changed="(val) => (country = val)"
               variant="underlined"
+              @country-changed="(val) => (country = val)"
             ></u-tel-input>
           </template>
 
@@ -763,8 +743,8 @@
               :length="6"
               autofocus
               class="zoomIn max-width-field mx-auto text-center mb-12"
-              @finish="(val) => (in_code = val)"
               dir="ltr"
+              @finish="(val) => (in_code = val)"
             />
 
             <v-text-field
@@ -933,9 +913,9 @@
 
     <v-footer
       v-if="LOGIN_POPUP_LOGIN"
+      :style="{ minHeight: '25vh' }"
       class="border-top"
       light
-      :style="{ minHeight: '25vh' }"
     >
       <v-container class="text-start">
         <h3 class="text-h4 my-2">
@@ -953,7 +933,7 @@
 
         <v-row class="d-flex align-center my-5">
           <v-col cols="12" sm="4">
-            <b-language-selector rounded flat></b-language-selector>
+            <b-language-selector flat rounded></b-language-selector>
           </v-col>
           <v-col class="text-end" cols="12" sm="8">
             <v-btn
@@ -994,12 +974,12 @@ import { TrackEventOnboarding } from "@selldone/core-js/enums/gtag/TrackEvents";
 import _ from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import UTelInput from "../../../ui/tel-input/UTelInput.vue";
-import {BackofficeMixinAuth} from "../../../mixin/backoffice/auth/BackofficeMixinAuth.ts";
+import { BackofficeMixinAuth } from "../../../mixin/backoffice/auth/BackofficeMixinAuth.ts";
 
 export default {
   name: "BLoginForm",
   mixins: [BackofficeMixinAuth],
-  components: {UTelInput, USmartToggle, BLanguageSelector },
+  components: { UTelInput, USmartToggle, BLanguageSelector },
 
   props: {
     inlineMode: {

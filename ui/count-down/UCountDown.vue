@@ -54,8 +54,7 @@ export default {
   name: "UCountDown",
 
   props: {
-    end: {
-    },
+    end: {},
     stop: {
       type: Boolean,
     },
@@ -83,9 +82,9 @@ export default {
       return Math.trunc(this.diff / 60 / 60 / 24);
     },
 
-    end_date(){
+    end_date() {
       return this.end && new Date(this.end);
-    }
+    },
   },
   watch: {
     now(value) {
@@ -113,7 +112,7 @@ export default {
       //   let endTime = this.deadline ? this.deadline : this.end;
       this.date = Math.trunc(this.end_date / 1000); // Math.trunc(Date.parse(endTime.replace(/-/g, "/")) / 1000);
       if (!this.date) {
-        console.error("Invalid props value, correct the 'deadline' or 'end'")
+        console.error("Invalid props value, correct the 'deadline' or 'end'");
         return;
       }
 

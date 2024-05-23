@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-container v-bind="$attrs" class="text-start">
+  <v-container class="text-start" v-bind="$attrs">
     <u-pods-panel color="#fff">
       <u-pod-node is-selldone-icon title="This Wallet"></u-pod-node>
       <u-pod-wire forward></u-pod-wire>
@@ -85,7 +85,7 @@
     >
       <template v-slot:append-inner>
         <div class="d-flex align-center single-line">
-          <v-slide-y-transition leave-absolute group>
+          <v-slide-y-transition group leave-absolute>
             <div v-if="account_to_user_id" class="mx-1 small">
               <v-avatar
                 class="avatar-gradient -thin -user mx-1"
@@ -101,16 +101,16 @@
 
             <v-icon
               v-if="account_to_success"
+              class="ms-1"
               color="green"
               size="20"
-              class="ms-1"
               >check_circle
             </v-icon>
 
             <v-progress-circular
               v-if="account_to_loading"
-              color="info"
               class="ms-1"
+              color="info"
               indeterminate
               size="24"
             />
@@ -149,8 +149,8 @@
     >
       <template v-slot:prepend-inner>
         <div class="d-flex align-center single-line">
-          <v-fade-transition leave-absolute group>
-            <v-icon v-if="receipt_success" color="green" size="20" class="me-1"
+          <v-fade-transition group leave-absolute>
+            <v-icon v-if="receipt_success" class="me-1" color="green" size="20"
               >check_circle
             </v-icon>
             <v-progress-circular
@@ -229,8 +229,8 @@
             :label="$t('transaction_form.note')"
             :rows="3"
             auto-grow
-            @focusout="showDescriptionField = false"
             variant="underlined"
+            @focusout="showDescriptionField = false"
           />
         </div>
       </v-expand-transition>
@@ -240,13 +240,13 @@
 
     <s-widget-buttons auto-fixed-position>
       <v-btn
+        :class="{ disabled: !canConfirmTransaction }"
         :disabled="!canConfirmTransaction"
         :loading="busy_createTransaction"
         color="primary"
         size="x-large"
         variant="elevated"
         @click="createTransaction"
-        :class="{ disabled: !canConfirmTransaction }"
       >
         {{ $t("transaction_form.transfer_action") }}
 
@@ -261,8 +261,8 @@
     :max-width="640"
     content-class="rounded-t-xl overflow-hidden"
     inset
-    scrollable
     opacity="0.9"
+    scrollable
   >
     <v-card v-if="new_transaction_response" class="text-start" color="#fafafa">
       <v-card-title class="mb-2">

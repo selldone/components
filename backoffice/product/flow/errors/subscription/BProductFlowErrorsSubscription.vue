@@ -14,9 +14,13 @@
 
 <template>
   <!-- ⬬⬬⬬⬬ File Empty ⬬⬬⬬⬬ -->
-  <v-row      v-if="isSubscription && !subscription_prices?.length" no-gutters align="center" class="bg-red shadow-small">
+  <v-row
+    v-if="isSubscription && !subscription_prices?.length"
+    align="center"
+    class="bg-red shadow-small"
+    no-gutters
+  >
     <v-list-item
-
       base-color="#fff"
       class="flex-grow-1"
       subtitle="This product has no subscription pricing plans. You need to add at least one subscription pricing plan to make this product available for subscription purchase."

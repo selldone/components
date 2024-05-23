@@ -14,7 +14,7 @@
 
 <template>
   <div :title="$t(status_obj.description)" class="inline-block text-center">
-    <v-icon  size="small">
+    <v-icon size="small">
       {{ status_obj.icon }}
     </v-icon>
 

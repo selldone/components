@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div style="height: 100%" >
+  <div style="height: 100%">
     <s-widget
       :class="[small ? 'm-1' : '', dark ? 'widget-dark' : '']"
       :style="`background: ${color}`"

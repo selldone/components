@@ -26,7 +26,7 @@
     temporary
     theme="dark"
   >
-    <v-card v-if="dialog_options" class="text-start" flat color="#1e1e1e">
+    <v-card v-if="dialog_options" class="text-start" color="#1e1e1e" flat>
       <v-card-actions>
         <div class="widget-buttons">
           <v-btn size="x-large" variant="text" @click="dialog_show = false">
@@ -40,11 +40,11 @@
         <b-email-marketing-editor-section-row
           v-for="(option, index) in dialog_options"
           :key="index"
-          :shop="shop"
-          :option="option"
-          @blur="$emit('blur')"
           :loaded-fonts="loadedFonts"
+          :option="option"
+          :shop="shop"
           :upload-url="uploadUrl"
+          @blur="$emit('blur')"
         ></b-email-marketing-editor-section-row>
 
         <div class="min-height-20vh"></div>
@@ -88,9 +88,7 @@ export default defineComponent({
       return window.API.POST_UPLOAD_IMAGE_EMAIL(this.shop.id, this.email.id);
     },
   },
-  created() {
-
-  },
+  created() {},
 
   methods: {
     /**
@@ -116,4 +114,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

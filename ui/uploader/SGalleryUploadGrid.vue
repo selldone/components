@@ -35,7 +35,11 @@
         cover
       >
         <template v-slot:placeholder>
-            <v-progress-circular color="primary" indeterminate class="center-absolute" />
+          <v-progress-circular
+            class="center-absolute"
+            color="primary"
+            indeterminate
+          />
         </template>
 
         <div
@@ -292,8 +296,8 @@ export default {
             );
 
             /* this.$nextTick( () =>{
-                  this.$refs.grid_container.layout();
-                });*/
+                    this.$refs.grid_container.layout();
+                  });*/
 
             this.showSuccessAlert(
               "Delete image",

@@ -247,8 +247,8 @@
             :currency="currency"
             :label="$t('add_product.pricing.price_input')"
             class="strong-field"
-            required
             dark
+            required
           ></u-price-input>
 
           <u-price-input
@@ -258,8 +258,8 @@
             :messages="`${$t(
               'add_product.pricing.discount_input_message',
             )}: ${discount_percent}%`"
-            required
             dark
+            required
           ></u-price-input>
         </v-sheet>
 
@@ -367,10 +367,7 @@
             style="position: relative; background-color: #000"
             width="100%"
           >
-            <source
-              src="./assets/ai-add-product-small.mp4"
-              type="video/mp4"
-            />
+            <source src="./assets/ai-add-product-small.mp4" type="video/mp4" />
           </video>
         </v-container>
       </v-card>

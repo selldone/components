@@ -24,36 +24,43 @@
       </template>
 
       <v-list-item-title>
-        <b>{{$t('channel_google.serp_content.title')}}</b>
+        <b>{{ $t("channel_google.serp_content.title") }}</b>
       </v-list-item-title>
       <v-list-item-subtitle>
-        {{$t('channel_google.serp_content.subtitle')}}
-
+        {{ $t("channel_google.serp_content.subtitle") }}
       </v-list-item-subtitle>
     </v-list-item>
 
-
-    <hr class="my-5">
+    <hr class="my-5" />
 
     <div v-if="!shop.search_console">
       <b class="d-block mb-2">
-        {{$t('channel_google.serp_content.tips.title')}}
-
+        {{ $t("channel_google.serp_content.tips.title") }}
       </b>
       <ol class="my-3">
         <li>
-          {{$t('channel_google.serp_content.tips.add_in_selldone')}}
-
-
+          {{ $t("channel_google.serp_content.tips.add_in_selldone") }}
 
           <u-check :model-value="!!main_domain" class="mx-1"></u-check>
-<br>
-          <v-btn :to="{ name: 'BPageShopSettingDomain' }" prepend-icon="add_box" class="tnt" variant="text" color="primary"
-          ><b>{{$t('channel_google.serp_content.action_custom_domain')}}</b></v-btn
+          <br />
+          <v-btn
+            :to="{ name: 'BPageShopSettingDomain' }"
+            class="tnt"
+            color="primary"
+            prepend-icon="add_box"
+            variant="text"
+            ><b>{{
+              $t("channel_google.serp_content.action_custom_domain")
+            }}</b></v-btn
           >
         </li>
-        <li v-html="$t('channel_google.serp_content.tips.add_in_google',{domain:main_domain ? main_domain.domain : 'your domain'})">
-        </li>
+        <li
+          v-html="
+            $t('channel_google.serp_content.tips.add_in_google', {
+              domain: main_domain ? main_domain.domain : 'your domain',
+            })
+          "
+        ></li>
       </ol>
     </div>
 
@@ -70,7 +77,7 @@
       >
         <v-icon start>cable</v-icon>
 
-        {{$t('channel_google.serp_content.action_connect_now')}}
+        {{ $t("channel_google.serp_content.action_connect_now") }}
       </v-btn>
       <v-btn
         v-else
@@ -82,7 +89,7 @@
       >
         <v-icon start>mobiledata_off</v-icon>
 
-        {{$t('channel_google.serp_content.action_remove_connection')}}
+        {{ $t("channel_google.serp_content.action_remove_connection") }}
       </v-btn>
     </div>
   </div>

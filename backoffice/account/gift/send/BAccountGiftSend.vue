@@ -15,11 +15,11 @@
 <template>
   <v-bottom-sheet
     v-model="send_gift_dialog"
+    content-class="rounded-t-xl"
     dark
     inset
     max-width="720px"
     scrollable
-    content-class="rounded-t-xl"
   >
     <v-card :color="SaminColorDarkDeep" class="text-start" rounded="t-xl">
       <v-card-title>
@@ -39,8 +39,8 @@
         <s-user-input
           v-model="receiver"
           :label="$t('send_gift_dialog.receiver_input')"
-          :rules="[GlobalRules.required()]"
           :messages="$t('send_gift_dialog.receiver_input_message')"
+          :rules="[GlobalRules.required()]"
           class="max-width-field mx-auto my-4"
           placeholder="john@mail.com or 457151234..."
         ></s-user-input>
@@ -56,6 +56,8 @@
 
         <u-price-input
           v-model="amount"
+          :currency="currency"
+          :disabled="!currency"
           :label="$t('send_gift_dialog.amount_input')"
           :outlined="false"
           :rounded="false"
@@ -65,8 +67,6 @@
           placeholder="0.00"
           required
           variant="underlined"
-          :currency="currency"
-          :disabled="!currency"
         >
         </u-price-input>
       </v-card-text>
@@ -78,16 +78,16 @@
               disabled: !amount || !currency || !receiver || !account_from,
             }"
             :loading="busy"
+            append-icon="send"
             color="primary"
+            prepend-icon="redeem"
             size="x-large"
             variant="elevated"
             @click="sendGift()"
-            prepend-icon="redeem"
-            append-icon="send"
           >
             <u-price
-              :currency="currency"
               :amount="amount"
+              :currency="currency"
               class="me-2"
             ></u-price>
             {{ $t("send_gift_dialog.send_action") }}

@@ -91,8 +91,8 @@
 
             <u-smart-toggle
               v-model="same_billing"
-              :true-title="$t('basket_page.same_billing_address')"
               :false-title="$t('basket_page.custom_billing_info')"
+              :true-title="$t('basket_page.same_billing_address')"
               class="my-3"
               color="success"
             ></u-smart-toggle>
@@ -111,27 +111,27 @@
                   v-model="billing_address"
                   :label="$t('global.address_info.address')"
                   :placeholder="$t('global.placeholders.address')"
-                  variant="outlined"
                   flat
+                  variant="outlined"
                 ></v-text-field>
               </div>
             </v-expand-transition>
 
             <div class="widget-buttons">
               <v-btn
+                prepend-icon="close"
+                size="x-large"
                 variant="text"
                 @click="edit_billing = false"
-                size="x-large"
-                prepend-icon="close"
                 >{{ $t("global.actions.close") }}
               </v-btn>
               <v-btn
                 :loading="busy_edit_billing"
                 color="success"
-                variant="elevated"
-                size="x-large"
-                @click="onClickSetBilling"
                 prepend-icon="save"
+                size="x-large"
+                variant="elevated"
+                @click="onClickSetBilling"
                 >{{ $t("global.actions.save") }}
               </v-btn>
             </div>
@@ -217,10 +217,7 @@
             <v-icon class="me-1" size="small">pin_drop</v-icon>
             {{ $t("global.commons.pickup") }}:
           </small>
-          <u-map-geo-button
-            :location="receiver_info.location"
-            class="my-1"
-          >
+          <u-map-geo-button :location="receiver_info.location" class="my-1">
           </u-map-geo-button>
         </p>
 

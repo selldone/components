@@ -98,7 +98,12 @@
             <b> {{ $t("importer.total_items") }}</b>
           </v-card-title>
           <v-card-subtitle>
-            <img src="../../../../assets/file/excel.svg" width="16" height="16" class="me-1">
+            <img
+              class="me-1"
+              height="16"
+              src="../../../../assets/file/excel.svg"
+              width="16"
+            />
             Statistics about this file.
           </v-card-subtitle>
 

@@ -14,11 +14,15 @@
 
 <template>
   <!-- ⬬⬬⬬⬬ File Empty ⬬⬬⬬⬬ -->
-  <v-row   v-if="is_file && !product?.files?.length" align="center" no-gutters class="bg-red shadow-small">
+  <v-row
+    v-if="is_file && !product?.files?.length"
+    align="center"
+    class="bg-red shadow-small"
+    no-gutters
+  >
     <v-list-item
-
       base-color="#fff"
-      class=" flex-grow-1"
+      class="flex-grow-1"
       subtitle="Currently, no files have been uploaded for this product. Please upload files to proceed."
       title="Missing Files"
     >

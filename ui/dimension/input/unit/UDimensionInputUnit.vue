@@ -17,7 +17,6 @@
     :bg-color="backgroundColor"
     :clearable="clearable"
     :color="color"
-    :theme="dark ? 'dark' : 'light'"
     :density="dense ? 'compact' : undefined"
     :disabled="disabled"
     :flat="flat"
@@ -30,6 +29,7 @@
     :prepend-inner-icon="prependInnerIcon"
     :rounded="rounded"
     :single-line="singleLine"
+    :theme="dark ? 'dark' : 'light'"
     :variant="
       variant
         ? variant

@@ -144,9 +144,9 @@
               v-if="isSelldoneSubscription"
               class="ma-2"
               color="#111"
-              variant="flat"
               label
               size="small"
+              variant="flat"
             >
               <v-icon start>add_card</v-icon>
               Add card to the wallet.
@@ -160,10 +160,10 @@
                 <v-btn
                   class="ms-2"
                   icon
-                  variant="text"
                   size="small"
                   style="vertical-align: top"
                   v-bind="props"
+                  variant="text"
                 >
                   <v-icon>info</v-icon>
                 </v-btn>
@@ -327,15 +327,15 @@
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Charge Gift Cards ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
         <p v-if="total_amount_by_gift_cards > 0" class="my-2">
-          <v-icon class="me-1" size="small">{{
-            total_amount_remain_for_pay > 0 ? "redeem" : "check_circle"
-          }}</v-icon>
+          <v-icon class="me-1" size="small"
+            >{{ total_amount_remain_for_pay > 0 ? "redeem" : "check_circle" }}
+          </v-icon>
           {{ $t("global.payment_form.pay_amount_by_gift_cards") }}:
 
           <u-price
-            class="text-success"
             :amount="total_amount_by_gift_cards"
             :currency="currency.code"
+            class="text-success"
           >
           </u-price>
         </p>
@@ -429,7 +429,10 @@
 
         <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Select Gateway ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
         <v-slide-y-reverse-transition hide-on-leave>
-          <div v-if="total_amount_remain_for_pay > 0 || isSelldoneSubscription" class="pb-12">
+          <div
+            v-if="total_amount_remain_for_pay > 0 || isSelldoneSubscription"
+            class="pb-12"
+          >
             <p class="small text-start border-top-dashed pt-2 mb-2 mt-2">
               {{
                 isBraintree
@@ -559,7 +562,8 @@
 
       <v-btn
         class="absolute-top-end zoomIn delay_100 z2"
-        icon variant="text"
+        icon
+        variant="text"
         @click="$emit('close')"
       >
         <v-icon>close</v-icon>

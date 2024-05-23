@@ -14,17 +14,13 @@
 
 <template>
   <v-navigation-drawer
-    location="start"
+    :class="{ 'ma-2': modelValue }"
     :model-value="modelValue"
-    class="text-start pt-5 overflow-hidden t-all-400"
-    style="
-      border-radius: 24px;
-      height: calc(100vh - 100px);
-      max-width: 90vw;
-    "
-    temporary
     :width="420"
-    :class="{'ma-2':modelValue}"
+    class="text-start pt-5 overflow-hidden t-all-400"
+    location="start"
+    style="border-radius: 24px; height: calc(100vh - 100px); max-width: 90vw"
+    temporary
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <div class="s--shop-navigation-drawer">
@@ -85,8 +81,8 @@
       </div>
       <v-expansion-panels
         class="border-between-vertical"
-        variant="accordion"
         flat
+        variant="accordion"
       >
         <!-- ――――――――――――――――――――― Shop User Menu List ――――――――――――――――――――― -->
 
@@ -118,6 +114,7 @@
             <v-list-item>
               <v-btn
                 :loading="busy_logout"
+                block
                 class="tnt mt-3"
                 color="#000"
                 size="large"
@@ -126,7 +123,6 @@
                   busy_logout = true;
                   Logout(() => (busy_logout = false));
                 "
-                block
               >
                 <v-icon class="me-1" size="small">logout</v-icon>
                 {{ $t("global.actions.logout") }}
@@ -232,7 +228,7 @@
           exact
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
-          <template v-slot:append v-if="item.src"
+          <template v-if="item.src" v-slot:append
             ><img :src="item.src" height="24" width="24"
           /></template>
         </v-list-item>

@@ -87,13 +87,8 @@
       </div>
 
       <u-date-range-picker
-        v-model:start="preferences.dates[0]"
         v-model:end="preferences.dates[1]"
-        start-label="Check-in"
-        end-label="Check-out"
-        start-icon="login"
-        end-icon="logout"
-
+        v-model:start="preferences.dates[0]"
         :allowed-dates="isAllowed"
         :events="isDisabled"
         :first-day-of-week="
@@ -101,6 +96,10 @@
         "
         :locale="!en_cal ? getCurrentLanguage().full_locale : undefined"
         :min="new Date().toISOString()"
+        end-icon="logout"
+        end-label="Check-out"
+        start-icon="login"
+        start-label="Check-in"
         @change="onChange"
       ></u-date-range-picker>
     </div>

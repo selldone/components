@@ -18,7 +18,12 @@
       <template v-slot:badge
         ><span>{{ count }}</span></template
       >
-      <v-btn :loading="busy" icon variant="text" @click.stop="apply_gift_dialog = true">
+      <v-btn
+        :loading="busy"
+        icon
+        variant="text"
+        @click.stop="apply_gift_dialog = true"
+      >
         <u-lottie
           :options="{ path: '/animation/happy_birthday.json', loop: true }"
           :speed="1"

@@ -373,14 +373,14 @@
               :zoom="15"
               class="overflow-hidden rounded-18px border"
               show-user-location
-              style="width: 100%; aspect-ratio: 1;max-height: 420px"
+              style="width: 100%; aspect-ratio: 1; max-height: 420px"
             />
             <u-map-image
               v-else
               :location="receiver_info.location"
-              size="100%"
               aspect-ratio="1"
               class="overflow-hidden rounded-18px border"
+              size="100%"
             >
             </u-map-image>
           </template>
@@ -627,7 +627,10 @@
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ To Buyer ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
       <!-- Step 5 : Delivery to the customer > Confirmed by the customer or the transportation system -->
-      <div v-if="basket.delivery_state === PhysicalOrderStates.SentOrder.code" class="pb-3">
+      <div
+        v-if="basket.delivery_state === PhysicalOrderStates.SentOrder.code"
+        class="pb-3"
+      >
         <p
           class="my-2 text-muted"
           v-html="$t('order_delivery.manual.message')"
@@ -703,7 +706,13 @@
 
   <!-- █████████████████████████ Dialog Delivery > Success █████████████████████████ -->
 
-  <v-bottom-sheet v-model="dialog_received_by_customer" max-width="640" width="98vw" inset content-class="rounded-t-xl">
+  <v-bottom-sheet
+    v-model="dialog_received_by_customer"
+    content-class="rounded-t-xl"
+    inset
+    max-width="640"
+    width="98vw"
+  >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title class="text-wrap">
         <v-icon class="me-2">assignment_turned_in</v-icon>
@@ -747,7 +756,13 @@
 
   <!-- █████████████████████████ Dialog Delivery > Failed █████████████████████████ -->
 
-  <v-bottom-sheet v-model="dialog_returned_by_customer"  max-width="640" width="98vw" inset content-class="rounded-t-xl">
+  <v-bottom-sheet
+    v-model="dialog_returned_by_customer"
+    content-class="rounded-t-xl"
+    inset
+    max-width="640"
+    width="98vw"
+  >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title class="text-wrap">
         <v-icon class="me-2">assignment_return</v-icon>

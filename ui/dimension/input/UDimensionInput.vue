@@ -18,6 +18,7 @@
     v-model="dim_val"
     :background-color="backgroundColor"
     :disabled="disabled || lock"
+    :filled="filled"
     :flat="flat"
     :hide-details="hideDetails && !messages"
     :label="label"
@@ -29,9 +30,8 @@
     :rounded="rounded"
     :single-line="singleLine"
     :solo="solo"
-    :filled="filled"
-:variant="variant"
     :suffix="suffix"
+    :variant="variant"
   >
     <!--
     <template v-slot:append-inner>
@@ -64,30 +64,29 @@
       :step="1"
       :suffix="suffix"
       :textCenter="true"
+      :variant="variant"
+      class="flex-grow-1"
       @blur="$emit('blur')"
       @clear="dim_val = 'unset'"
-      class="flex-grow-1"
-      :variant="variant"
     >
     </u-number-input>
     <u-dimension-input-unit
       v-model="dim_val"
       :disabled="disabled || lock"
+      :filled="filled"
+      :flat="flat"
+      :hide-details="hideDetails && !messages"
       :readonly="readonly"
       :rounded="rounded"
-      style="width: 40px;max-width: 90px"
+      :single-line="singleLine"
+      :solo="solo"
       :style="{
         /* width: rounded && solo ? '110px' : '84px',
           marginTop:
             rounded && solo ? '-7px' : rounded && !solo ? '-14px' : undefined,*/
       }"
-
-      :single-line="singleLine"
-      :solo="solo"
-      :filled="filled"
-      :flat="flat"
-      :hide-details="hideDetails && !messages"
       :variant="variant"
+      style="width: 40px; max-width: 90px"
     >
     </u-dimension-input-unit>
   </div>
@@ -193,7 +192,7 @@ export default {
       default: false,
     },
 
-    variant:{},
+    variant: {},
   },
 
   data() {
@@ -258,10 +257,8 @@ export default {
       let num = 0;
       let dim = "px";
 
-
       try {
         const split_string = value.match(/(-?\d+(\.\d+)?)([a-z%]+)/i);
-
 
         // console.log("extractValue:", split_string);
 

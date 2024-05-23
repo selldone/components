@@ -14,8 +14,8 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    v-bind="$attrs"
     class="text-start p-2 font-weight-regular content-container"
+    v-bind="$attrs"
   >
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  General ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
@@ -194,8 +194,8 @@
         item-text="title"
         item-value="code"
         label="ETA Mode"
-        @change="transportation.eta = eta"
         variant="underlined"
+        @change="transportation.eta = eta"
       ></u-smart-select>
 
       <v-select
@@ -218,8 +218,8 @@
         prepend-inner-icon="fa:fas fa-calendar-week"
         variant="underlined"
       >
-        <template v-slot:chip="{ item,props }">
-          <v-chip v-bind="props" class="text-body-2 font-weight-bold">
+        <template v-slot:chip="{ item, props }">
+          <v-chip class="text-body-2 font-weight-bold" v-bind="props">
             {{ $t(item.raw.name) }}
           </v-chip>
         </template>
@@ -245,7 +245,7 @@
         prepend-inner-icon="fa:fas fa-clock"
         variant="underlined"
       >
-        <template v-slot:chip="{ item,props }">
+        <template v-slot:chip="{ item, props }">
           <v-chip v-bind="props">
             <v-avatar class="m-0">
               <v-img :src="item.raw.icon" />
@@ -404,17 +404,17 @@
         <shipping-cost-form
           v-if="selected_profile"
           v-model="selected_profile"
-          :shop="shop"
           :country="selected_country"
           :currency="transportation.currency"
+          :shop="shop"
           auto-select-mode
           @selectState="(val) => (selected_state = val)"
         ></shipping-cost-form>
         <shipping-cost-form
           v-else
           v-model="transportation"
-          :shop="shop"
           :currency="transportation.currency"
+          :shop="shop"
           auto-select-mode
         ></shipping-cost-form>
       </div>
@@ -486,7 +486,8 @@
       <v-btn
         :loading="busy"
         color="primary"
-        size="x-large" variant="elevated"
+        size="x-large"
+        variant="elevated"
         @click="updateDelivery"
       >
         <v-icon start>save</v-icon>
@@ -513,7 +514,7 @@
       >
       </u-smart-verify>
 
-      <s-widget-buttons >
+      <s-widget-buttons>
         <v-btn
           :class="{ disabled: !check_delete }"
           :loading="busy_delete"
@@ -565,8 +566,8 @@
 
           <shipping-cost-form
             v-model="new_profile"
-            :shop="shop"
             :currency="transportation.currency"
+            :shop="shop"
           ></shipping-cost-form>
         </div>
       </v-card-text>
@@ -582,7 +583,12 @@
             {{ $t("global.actions.close") }}
           </v-btn>
 
-          <v-btn color="primary" size="x-large" @click="addProfile()" variant="elevated">
+          <v-btn
+            color="primary"
+            size="x-large"
+            variant="elevated"
+            @click="addProfile()"
+          >
             <v-icon start>save</v-icon>
             {{ $t("global.actions.save") }}
           </v-btn>
@@ -610,7 +616,7 @@ import ShippingCostForm from "../transportation/ShippingCostForm.vue";
 import BTransportationCalculator from "../transportation/calculator/BTransportationCalculator.vue";
 import { LogesticHelper } from "@selldone/core-js/helper/logistic/LogesticHelper";
 import SWidgetButtons from "../../ui/widget/buttons/SWidgetButtons.vue";
-import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "DeliveryFormWidget",

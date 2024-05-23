@@ -58,21 +58,21 @@
     <v-autocomplete
       v-else
       v-model:search="search"
+      :clearable="clearable"
       :customFilter="() => true"
       :disabled="disabled"
       :items="companies"
       :loading="busy"
       :messages="selected ? selected.address : ''"
       :model-value="modelValue"
-      @update:model-value="(val) => $emit('update:modelValue', val)"
       :return-object="returnObject"
-      :clearable="clearable"
+      :variant="variant"
+      class="v-input-auto-height"
       item-title="name"
       item-value="id"
       label="Company / Business Profile"
+      @update:model-value="(val) => $emit('update:modelValue', val)"
       @click:clear="$emit('click:clear')"
-      :variant="variant"
-      class="v-input-auto-height"
     >
       <template v-slot:append-item>
         <v-list-item @click="dialog = true">
@@ -126,7 +126,7 @@
       </template>
 
       <template v-slot:item="{ item, props }">
-        <v-list-item v-bind="props" class="text-start">
+        <v-list-item class="text-start" v-bind="props">
           <template v-slot:prepend>
             <v-avatar rounded size="32">
               <img

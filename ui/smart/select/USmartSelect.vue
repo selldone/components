@@ -97,8 +97,8 @@
           <v-avatar
             v-if="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
             :rounded="rounded"
-            size="24"
             class="ms-2"
+            size="24"
           >
             <img
               :src="isFunction(itemImage) ? itemImage(task) : task[itemImage]"

@@ -48,6 +48,19 @@
       :rounded="rounded"
       :single-line="singleLine"
       :theme="dark ? 'dark' : 'light'"
+      :variant="
+        variant
+          ? variant
+          : solo && filled
+            ? 'solo-filled'
+            : solo
+              ? 'solo'
+              : filled
+                ? 'filled'
+                : outlined
+                  ? 'outlined'
+                  : 'underlined'
+      "
       autocomplete
       class="search-box"
       clearable
@@ -63,19 +76,6 @@
         }
       "
       @click:append="force_show = false"
-      :variant="
-        variant
-          ? variant
-          : solo && filled
-            ? 'solo-filled'
-            : solo
-              ? 'solo'
-              : filled
-                ? 'filled'
-                : outlined
-                  ? 'outlined'
-                  : 'underlined'
-      "
     >
       <template v-slot:prepend-inner>
         <v-btn
@@ -83,8 +83,8 @@
           :class="negativeQrMargin ? 'mt-n3' : ''"
           class="hoverable-icon zoomIn delay_500 flex-grow-0"
           icon
-          variant="text"
           size="small"
+          variant="text"
           @click="showQRScanner"
         >
           <v-icon size="20">qr_code_scanner</v-icon>
@@ -158,8 +158,8 @@
               <v-img :src="getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)">
                 <template v-slot:placeholder>
                   <v-progress-circular
-                    color="grey-lighten-5"
                     class="center-absolute"
+                    color="grey-lighten-5"
                     indeterminate
                   />
                 </template>
@@ -189,21 +189,20 @@
       max-width="680"
     >
       <v-card class="rounded-28px text-start">
-        <v-card-title>    <v-icon class="me-1">qr_code_scanner</v-icon>{{ $t("global.commons.barcode_scanner") }}</v-card-title>
+        <v-card-title>
+          <v-icon class="me-1">qr_code_scanner</v-icon>
+          {{ $t("global.commons.barcode_scanner") }}
+        </v-card-title>
         <v-card-text v-if="show_scanner">
-          <u-scanner
-            other-codes
-            qr-code
-            @on-scan="onScan"
-          ></u-scanner>
+          <u-scanner other-codes qr-code @on-scan="onScan"></u-scanner>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
+              prepend-icon="close"
+              size="x-large"
               variant="text"
               @click="show_scanner = false"
-              size="x-large"
-              prepend-icon="close"
               >{{ $t("global.actions.close") }}
             </v-btn>
           </div>

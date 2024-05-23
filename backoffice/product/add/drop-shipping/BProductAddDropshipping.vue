@@ -518,7 +518,7 @@
               size="x-large"
               @click="addProduct()"
             >
-              <v-icon class="me-1">add </v-icon>
+              <v-icon class="me-1">add</v-icon>
               {{ $t("global.actions.add") }}
             </v-btn>
           </div>

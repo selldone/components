@@ -13,11 +13,15 @@
   -->
 
 <template>
-  <div v-bind="$attrs" class="widget shadow my-3 mx-1 mx-md-3 text-start">
+  <div class="widget shadow my-3 mx-1 mx-md-3 text-start" v-bind="$attrs">
     <!-- █████████████████████ Header █████████████████████ -->
 
     <s-widget-header
-      :add-caption="IS_VENDOR_PANEL ?$t('order_vendor_payment.my_wallets'): $t('order_vendor_payment.vendor_wallets')"
+      :add-caption="
+        IS_VENDOR_PANEL
+          ? $t('order_vendor_payment.my_wallets')
+          : $t('order_vendor_payment.vendor_wallets')
+      "
       :title="$t('process_center.payment_widget.title')"
       :to="
         IS_VENDOR_PANEL
@@ -40,16 +44,23 @@
 
     <!-- █████████████████████ Transactions █████████████████████ -->
     <v-list-subheader
-      >{{$t('order_vendor_payment.message')}}
+      >{{ $t("order_vendor_payment.message") }}
     </v-list-subheader>
 
     <div class="max-widget-width mx-auto my-3">
-      <u-pods-panel small dense>
-        <u-pod-node :image="type.basket" :title="$t('global.commons.order')"> </u-pod-node>
-        <u-pod-wire forward> </u-pod-wire>
-        <u-pod-node icon="wallet" title="Vendor Wallet"> </u-pod-node>
-        <u-pod-wire color="#fff" forward> </u-pod-wire>
-        <u-pod-node icon="account_balance" title="Vendor Account" color="#fff"> </u-pod-node>
+      <u-pods-panel dense small>
+        <u-pod-node
+          :image="type.basket"
+          :title="$t('global.commons.order')"
+        ></u-pod-node>
+        <u-pod-wire forward></u-pod-wire>
+        <u-pod-node icon="wallet" title="Vendor Wallet"></u-pod-node>
+        <u-pod-wire color="#fff" forward></u-pod-wire>
+        <u-pod-node
+          color="#fff"
+          icon="account_balance"
+          title="Vendor Account"
+        ></u-pod-node>
       </u-pods-panel>
     </div>
 
@@ -110,15 +121,21 @@
       </v-list-subheader>
 
       <div class="max-widget-width mx-auto my-3">
-        <u-pods-panel small dense>
-          <u-pod-node :image="type.basket" :title="$t('global.commons.order')"  color="#fff"> </u-pod-node>
-          <u-pod-wire forward color="#fff"> </u-pod-wire>
-          <u-pod-node icon="wallet" title="Vendor Wallet"> </u-pod-node>
-          <u-pod-wire forward > </u-pod-wire>
-          <u-pod-node icon="account_balance" title="Vendor Account"> </u-pod-node>
+        <u-pods-panel dense small>
+          <u-pod-node
+            :image="type.basket"
+            :title="$t('global.commons.order')"
+            color="#fff"
+          ></u-pod-node>
+          <u-pod-wire color="#fff" forward></u-pod-wire>
+          <u-pod-node icon="wallet" title="Vendor Wallet"></u-pod-node>
+          <u-pod-wire forward></u-pod-wire>
+          <u-pod-node
+            icon="account_balance"
+            title="Vendor Account"
+          ></u-pod-node>
         </u-pods-panel>
       </div>
-
 
       <v-table class="rounded-lg bg-table-gray">
         <template v-slot:default>
@@ -154,9 +171,9 @@
                       :title="`Click to copy ${value}`"
                       class="ma-1 pa-1 ms-0"
                       color="#fafafa"
-                      variant="flat"
                       label
                       size="small"
+                      variant="flat"
                       @click="copyToClipboard(payment.meta)"
                       ><small class="mx-1">{{ getName(key) }}: </small>
                       {{ value }}
@@ -257,7 +274,7 @@ import BVendorOrderRefund from "../../../vendor/order/refund/BVendorOrderRefund.
 import UPodsPanel from "../../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../../ui/pod/wire/UPodWire.vue";
-import {ProductType} from "@selldone/core-js/enums/product/ProductType";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "BOrderVendorPaymentManagement",

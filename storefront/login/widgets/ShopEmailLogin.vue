@@ -14,14 +14,14 @@
 
 <template>
   <v-btn
-    v-bind="$attrs"
     block
     class="my-2 fadeIn delay_100 d-flex align-items-center tnt s--button-flex border"
     rounded
     size="large"
+    v-bind="$attrs"
     variant="flat"
-    @click.stop="show()"
     @mouseenter="tick()"
+    @click.stop="show()"
   >
     <template v-slot:prepend>
       <v-avatar class="float-start ms-n2" color="#fff" size="32">
@@ -33,7 +33,7 @@
 
   <!-- ██████████████████████ Dialog ██████████████████████ -->
 
-  <v-bottom-sheet v-model="dialog" max-width="680" content-class="rounded-t-xl">
+  <v-bottom-sheet v-model="dialog" content-class="rounded-t-xl" max-width="680">
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>
         <v-icon class="me-1">account_circle</v-icon>
@@ -50,8 +50,8 @@
             :placeholder="$t('global.placeholders.email')"
             :rules="[GlobalRules.required(), GlobalRules.email()]"
             class="strong-field my-5 english-field"
-            variant="outlined"
             dir="ltr"
+            variant="outlined"
           ></v-text-field>
         </template>
 
@@ -65,10 +65,9 @@
 
           <v-expand-transition>
             <div v-if="error_message_send_code" class="text-red text-start">
-              <div v-html="error_message_send_code" class="py-3"></div>
+              <div class="py-3" v-html="error_message_send_code"></div>
             </div>
           </v-expand-transition>
-
         </template>
 
         <template v-else-if="step === 3">
@@ -78,24 +77,18 @@
           <v-otp-input
             v-model="otp"
             class="strong-field"
+            dir="ltr"
             length="8"
             type="number"
             @finish="confirmOtp()"
-            dir="ltr"
           ></v-otp-input>
 
           <v-expand-transition>
             <div v-if="error_message_otp_check" class="text-red text-start">
-              <div v-html="error_message_otp_check" class="py-3"></div>
+              <div class="py-3" v-html="error_message_otp_check"></div>
             </div>
           </v-expand-transition>
-
-
         </template>
-
-
-
-
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
@@ -119,8 +112,8 @@
             :class="{ disabled: !is_valid_email }"
             :loading="busy"
             color="primary"
-            variant="elevated"
             size="x-large"
+            variant="elevated"
             @click="step = 2"
             >{{ $t("global.actions.next") }}
             <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
@@ -129,8 +122,8 @@
             v-else-if="step === 2"
             :loading="busy"
             color="primary"
-            variant="elevated"
             size="x-large"
+            variant="elevated"
             @click="sendEmail()"
           >
             <v-icon start>check</v-icon>
@@ -142,8 +135,8 @@
             :class="{ disabled: !is_valid_otp }"
             :loading="busy"
             color="primary"
-            variant="elevated"
             size="x-large"
+            variant="elevated"
             @click="confirmOtp()"
           >
             <v-icon start>check</v-icon>
@@ -176,11 +169,10 @@ export default {
     dialog: false,
 
     email: null,
-    otp: '',
+    otp: "",
 
-    error_message_send_code:null,
+    error_message_send_code: null,
     error_message_otp_check: null,
-
 
     step: 1,
 
@@ -195,9 +187,7 @@ export default {
       return this.otp?.length >= 8;
     },
   },
-  watch: {
-
-  },
+  watch: {},
 
   methods: {
     tick() {
@@ -206,7 +196,7 @@ export default {
     show() {
       this.step = 1;
       this.email = null;
-      this.otp = '';
+      this.otp = "";
 
       this.dialog = true;
     },

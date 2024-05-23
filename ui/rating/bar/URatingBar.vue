@@ -33,8 +33,12 @@
       <v-avatar
         v-if="userRate"
         :style="{
-          left: $vuetify.locale.isRtl ? undefined : `calc(${userRate * 20}% - 9px)`,
-          right: !$vuetify.locale.isRtl ? undefined : `calc(${userRate * 20}% - 9px)`,
+          left: $vuetify.locale.isRtl
+            ? undefined
+            : `calc(${userRate * 20}% - 9px)`,
+          right: !$vuetify.locale.isRtl
+            ? undefined
+            : `calc(${userRate * 20}% - 9px)`,
           top: '-4px',
         }"
         class="position-absolute"

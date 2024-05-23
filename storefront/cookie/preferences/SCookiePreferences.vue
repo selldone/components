@@ -15,7 +15,7 @@
 <template>
   <v-card class="text-start">
     <v-card-title class="d-flex align-center">
-      <v-avatar class="me-2 avatar-gradient -thin -shop" :size="48">
+      <v-avatar :size="48" class="me-2 avatar-gradient -thin -shop">
         <v-img :src="getShopImagePath(shop?.icon, 128)"></v-img>
       </v-avatar>
 

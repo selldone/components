@@ -75,12 +75,12 @@
         <b-order-cart
           ref="basket_items_list"
           :checkable="!isActionDisabled && !readonly"
+          :is-role-panel="isRolePanel"
           :items="items"
           :readonly="readonly"
           :select-all="initial_select_all"
           :shop="shop"
           :type="basket.type"
-          :is-role-panel="isRolePanel"
         />
       </div>
     </v-expand-transition>

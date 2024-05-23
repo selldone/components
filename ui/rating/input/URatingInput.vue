@@ -32,11 +32,11 @@
         :min="1"
         color="primary"
         hide-details
-        step="1"
         rounded
+        show-ticks="always"
+        step="1"
         thumb-color="primary"
         tick-size="4"
-        show-ticks="always"
         track-color="#ddd"
         track-fill-color="primary"
         @update:model-value="$emit('update:modelValue', value_clone)"

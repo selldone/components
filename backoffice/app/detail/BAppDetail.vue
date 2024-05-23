@@ -141,8 +141,8 @@
                 }"
                 class="me-3 zoomIn delay_500"
                 color="blue"
-                variant="flat"
                 prepend-icon="launch"
+                variant="flat"
               >
                 {{ $t("global.actions.open_app") }}
               </v-btn>
@@ -155,9 +155,9 @@
                 :loading="busy_delete"
                 class="zoomIn delay_600"
                 color="red"
+                prepend-icon="delete"
                 variant="outlined"
                 @click="deleteApp"
-                prepend-icon="delete"
               >
                 {{ $t("app_config.uninstall") }}
               </v-btn>
@@ -170,10 +170,10 @@
                 :loading="busy_save"
                 class="zoomIn delay_600"
                 color="green"
+                prepend-icon="get_app"
                 size="large"
                 variant="flat"
                 @click="setPlugin()"
-                prepend-icon="get_app"
               >
                 {{ $t("app_config.get_app") }}
               </v-btn>
@@ -185,8 +185,8 @@
                 :href="`https://github.com/${app.github}`"
                 class="ma-2"
                 icon
-                variant="text"
                 target="_blank"
+                variant="text"
               >
                 <v-icon>fa:fab fa-github</v-icon>
                 <v-tooltip activator="parent" location="bottom">
@@ -199,8 +199,8 @@
                 :href="app.web"
                 class="ma-2"
                 icon
-                variant="text"
                 target="_blank"
+                variant="text"
               >
                 <v-icon>link</v-icon>
 
@@ -214,8 +214,8 @@
                 :href="app.privacy"
                 class="ma-2"
                 icon
-                variant="text"
                 target="_blank"
+                variant="text"
               >
                 <v-icon>security</v-icon>
 
@@ -229,8 +229,8 @@
                 :href="app.video"
                 class="ma-2"
                 icon
-                variant="text"
                 target="_blank"
+                variant="text"
               >
                 <v-icon>theaters</v-icon>
 
@@ -429,10 +429,7 @@
     </v-card-text>
   </v-card>
 
-  <v-dialog
-    v-model="rate_mode"
-    max-width="640"
-  >
+  <v-dialog v-model="rate_mode" max-width="640">
     <div class="p-3">
       <v-avatar class="mb-n8 s--shadow-no-padding" color="#fff" size="84">
         <img :src="getShopImagePath(app.icon)" class="p-2" />
@@ -460,16 +457,13 @@
         </v-textarea>
 
         <div class="widget-buttons">
-          <v-btn
-            size="x-large"
-            variant="text"
-            @click="rate_mode = false"
+          <v-btn size="x-large" variant="text" @click="rate_mode = false"
             >{{ $t("global.actions.cancel") }}
           </v-btn>
           <v-btn
             :loading="busy_review"
-            size="x-large"
             color="success"
+            size="x-large"
             variant="flat"
             @click="saveAppRate()"
             >{{ $t("global.actions.accept") }}

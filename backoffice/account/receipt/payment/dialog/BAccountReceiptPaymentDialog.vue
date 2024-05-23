@@ -26,8 +26,8 @@
       v-if="receipt_number"
       :color="SaminColorDark"
       class="scrollable-element-dark text-start"
-      theme="dark"
       min-height="360px"
+      theme="dark"
     >
       <u-loading-ellipsis v-if="!receipt" />
 
@@ -36,7 +36,8 @@
         <v-spacer></v-spacer>
         <u-currency-icon
           :currency="receipt.currency"
-          gradient flag
+          flag
+          gradient
         ></u-currency-icon>
       </v-card-title>
 

@@ -152,18 +152,18 @@
         </template>
       </s-widget-header>
       <v-list-subheader
-        >{{$t('add_product.edit_info.category.subtitle')}}
+        >{{ $t("add_product.edit_info.category.subtitle") }}
       </v-list-subheader>
 
       <b-category-input
         v-model="category_id"
         :height="48"
         :label="$t('add_product.edit_info.category_input')"
+        :messages="$t('add_product.edit_info.category_input_msg')"
+        :placeholder="$t('global.placeholders.select_category')"
         :return-object="false"
         clearable
-        :messages="$t('add_product.edit_info.category_input_msg')"
         no-selected-icon="home"
-        :placeholder="$t('global.placeholders.select_category')"
       >
         <template v-if="product?.id" v-slot:append-inner>
           <products-dense-images-circles
@@ -232,8 +232,7 @@
         :title="$t('add_product.edit_info.unit_section')"
         icon="price_change"
       ></s-widget-header>
-      <v-list-subheader
-        >
+      <v-list-subheader>
         {{ $t("add_product.edit_info.unit.subtitle") }}
       </v-list-subheader>
 
@@ -282,13 +281,11 @@
       <v-expand-transition>
         <div v-if="product.price_input === 'custom'" id="custom_valuation">
           <s-widget-header
+            :title="$t('add_product.edit_info.custom_pricing.title')"
             icon="calculate"
-            :title="$t('add_product.edit_info.custom_pricing.title') "
           ></s-widget-header>
-          <v-list-subheader
-            >
-
-            {{$t("add_product.edit_info.custom_pricing.subtitle") }}
+          <v-list-subheader>
+            {{ $t("add_product.edit_info.custom_pricing.subtitle") }}
           </v-list-subheader>
 
           <b-valuation-input
@@ -305,7 +302,11 @@
           <div v-if="!in_edit_mode" class="py-3 text-red font-weight-bold">
             <v-icon class="me-1" color="red">warning_amber</v-icon>
 
-            {{$t("add_product.edit_info.custom_pricing.valuation_need_saved_product_message") }}
+            {{
+              $t(
+                "add_product.edit_info.custom_pricing.valuation_need_saved_product_message",
+              )
+            }}
           </div>
           <div
             v-else-if="!product.valuation_id"
@@ -313,7 +314,11 @@
           >
             <v-icon class="me-1" color="red">warning_amber</v-icon>
 
-            {{$t("add_product.edit_info.custom_pricing.assign_valuation_message") }}
+            {{
+              $t(
+                "add_product.edit_info.custom_pricing.assign_valuation_message",
+              )
+            }}
           </div>
 
           <div class="widget-buttons">
@@ -326,7 +331,9 @@
             >
               <v-icon class="me-1">edit_note</v-icon>
 
-              {{$t("add_product.edit_info.custom_pricing.edit_pricing_action") }}
+              {{
+                $t("add_product.edit_info.custom_pricing.edit_pricing_action")
+              }}
             </v-btn>
             <v-btn
               v-else
@@ -337,8 +344,9 @@
             >
               <v-icon class="me-1">playlist_add</v-icon>
 
-              {{$t("add_product.edit_info.custom_pricing.add_pricing_action") }}
-
+              {{
+                $t("add_product.edit_info.custom_pricing.add_pricing_action")
+              }}
             </v-btn>
           </div>
 
@@ -405,7 +413,7 @@
             ? $t('add_product.edit_info.action.title')
             : `${$t('global.commons.default')}: ${default_buy_button}`
         "
-        :messages="$tm('add_product.edit_info.action.message') "
+        :messages="$tm('add_product.edit_info.action.message')"
         :placeholder="$t('add_product.edit_info.action.placeholder')"
         variant="underlined"
         @blur="live_action = product.action"
@@ -427,9 +435,11 @@
 
           <b-translation-button-product
             v-if="product?.id"
+            :label="
+              $t('add_product.edit_info.action.multi_language_dialog_title')
+            "
             :product="product"
             :shop="shop"
-            :label="$t('add_product.edit_info.action.multi_language_dialog_title') "
             translation-key="action"
           ></b-translation-button-product>
         </template>
@@ -443,7 +453,7 @@
         icon="warehouse"
       ></s-widget-header>
       <v-list-subheader
-        >{{$t('add_product.edit_info.warehouse.subtitle')}}
+        >{{ $t("add_product.edit_info.warehouse.subtitle") }}
       </v-list-subheader>
 
       <v-text-field
@@ -498,10 +508,10 @@
         v-model="product.gtin"
         v-level.min="AppLevel.NOVICE"
         :counter="48"
-        :rules="[GlobalRules.counter(48)]"
         :hint="$t('add_product.edit_info.gtin.hint')"
         :label="$t('add_product.edit_info.gtin.label')"
         :placeholder="$t('add_product.edit_info.gtin.placeholder')"
+        :rules="[GlobalRules.counter(48)]"
         required
         variant="underlined"
       />
@@ -510,10 +520,10 @@
         v-model="product.hsn"
         v-level.min="AppLevel.NOVICE"
         :counter="16"
-        :rules="[GlobalRules.counter(16)]"
         :hint="$t('add_product.edit_info.hsn.hint')"
-        :label=" $t('add_product.edit_info.hsn.label')"
+        :label="$t('add_product.edit_info.hsn.label')"
         :placeholder="$t('add_product.edit_info.hsn.placeholder')"
+        :rules="[GlobalRules.counter(16)]"
         required
         type="number"
         variant="underlined"
@@ -563,7 +573,7 @@
         icon="bookmark"
       ></s-widget-header>
       <v-list-subheader
-        >{{$t('add_product.edit_info.condition.subtitle')}}
+        >{{ $t("add_product.edit_info.condition.subtitle") }}
       </v-list-subheader>
 
       <v-text-field
@@ -580,8 +590,8 @@
         v-model="product.brand"
         :disabled="add_by_dropShipping"
         :label="$t('add_product.edit_info.brand.label')"
+        :placeholder="$t('add_product.edit_info.brand.placeholder')"
         prepend-inner-icon="book"
-        :placeholder="$t('add_product.edit_info.brand.placeholder') "
         required
         variant="underlined"
       >
@@ -632,21 +642,19 @@
         icon="workspace_premium"
       ></s-widget-header>
       <v-list-subheader
-        >{{$t('add_product.edit_info.warranty.subtitle')}}
+        >{{ $t("add_product.edit_info.warranty.subtitle") }}
       </v-list-subheader>
 
       <v-text-field
         v-model="product.warranty"
         :disabled="add_by_dropShipping"
         :label="$t('add_product.edit_info.warranty.label')"
-        messages=" "
         :placeholder="$t('add_product.edit_info.warranty.placeholder')"
+        messages=" "
+        prepend-inner-icon="safety_check"
         required
         variant="underlined"
-        prepend-inner-icon="safety_check"
       >
-
-
         <template v-slot:message>
           <u-smart-suggestion
             :samples="$tm('suggestions.product.warranty')"
@@ -713,7 +721,7 @@
         icon="nat"
       ></s-widget-header>
       <v-list-subheader
-        >{{$t('add_product.edit_info.status.subtitle')}}
+        >{{ $t("add_product.edit_info.status.subtitle") }}
       </v-list-subheader>
 
       <u-smart-select
@@ -737,10 +745,12 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Logistic Profiles ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header icon="assignment" :title="$t('add_product.edit_info.profiles.title')"></s-widget-header>
-      <v-list-subheader
-        >
-        {{$t('add_product.edit_info.profiles.subtitle')}}
+      <s-widget-header
+        :title="$t('add_product.edit_info.profiles.title')"
+        icon="assignment"
+      ></s-widget-header>
+      <v-list-subheader>
+        {{ $t("add_product.edit_info.profiles.subtitle") }}
       </v-list-subheader>
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Profiles ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
@@ -803,8 +813,7 @@
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon class="me-2">folder</v-icon>
-        {{$t('add_product.edit_info.shortcuts.title')}}
-
+        {{ $t("add_product.edit_info.shortcuts.title") }}
       </v-card-title>
 
       <v-card-text v-if="shortcuts">
@@ -814,8 +823,7 @@
             title="Shortcuts"
           ></s-widget-header>
           <v-list-subheader>
-
-            {{$t('add_product.edit_info.shortcuts.subtitle')}}
+            {{ $t("add_product.edit_info.shortcuts.subtitle") }}
           </v-list-subheader>
 
           <div class="border-between-vertical">
@@ -825,15 +833,15 @@
               v-model="shortcuts[index - 1]"
               :height="48"
               :label="$t('add_product.edit_info.category_input')"
+              :placeholder="$t('global.placeholders.select_category')"
               :return-object="false"
               class="pb-3"
               clearable
               default-icon="folder_open"
               no-home
-              :placeholder="$t('global.placeholders.select_category')"
+              persistent-placeholder
               single-line
               variant="plain"
-              persistent-placeholder
             >
             </b-category-input>
           </div>

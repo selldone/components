@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="d-flex items-center justify-center w-full  text-center">
+  <div class="d-flex items-center justify-center w-full text-center">
     <div
       class="pa-6 dashed border-gray-300 rounded-18px d-flex flex-column flex-grow-1"
       style="min-height: inherit"
@@ -65,12 +65,7 @@
           >Resend {{ failed_count }} failed files
         </v-btn>
 
-        <v-btn
-          color="blue"
-          size="small"
-          variant="flat"
-          @click="resetCount"
-        >
+        <v-btn color="blue" size="small" variant="flat" @click="resetCount">
           <v-icon>clear</v-icon>
           Reset
         </v-btn>

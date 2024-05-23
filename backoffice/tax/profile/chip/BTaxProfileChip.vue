@@ -17,8 +17,8 @@
     v-if="profile"
     :color="dark ? '#111' : '#fafafa'"
     :small="small"
-    variant="flat"
     title="Tax profile"
+    variant="flat"
   >
     <v-icon :color="profile.icon" :small="small" start
       >{{ profile.icon }}

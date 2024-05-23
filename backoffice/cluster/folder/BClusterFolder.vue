@@ -15,7 +15,6 @@
 <template>
   <div
     class="position-relative d-flex flex-column align-center justify-center hover-up"
-
   >
     <div class="position-relative">
       <v-icon

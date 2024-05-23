@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs" class="pb-16">
+  <div class="pb-16" v-bind="$attrs">
     <v-toolbar color="transparent" flat></v-toolbar>
 
     <!-- ██████████████████████████ Config ██████████████████████████ -->
@@ -37,9 +37,9 @@
           id="mail_name"
           v-model="mail_name"
           :rules="[GlobalRules.required()]"
+          hide-details
           label="* Campaign name"
           variant="underlined"
-          hide-details
         >
         </v-text-field>
         <u-smart-suggestion
@@ -260,12 +260,12 @@
               style="background-size: cover; background-position: center"
             >
               <v-chip
-                size="x-small"
-                color="#000"
-                label
-                variant="flat"
                 v-if="editMode"
                 class="section-label justify-center"
+                color="#000"
+                label
+                size="x-small"
+                variant="flat"
                 >{{ section.type }}
               </v-chip>
               <span
@@ -324,8 +324,8 @@
                   v-if="editMode && section.type === 'product'"
                   class="option-btn"
                   icon
-                  variant="flat"
                   title="Edit product section."
+                  variant="flat"
                   @click="
                     showEdit(EmailOptionsHelper.GenerateProductOptions(section))
                   "
@@ -404,8 +404,8 @@
                   v-if="editMode && section.type === 'image'"
                   class="option-btn"
                   icon
-                  variant="flat"
                   title="Edit image section."
+                  variant="flat"
                   @click="
                     showEdit(EmailOptionsHelper.GenerateImageOptions(section))
                   "
@@ -491,8 +491,8 @@
                   v-if="editMode && section.type === 'two-columns'"
                   class="option-btn"
                   icon
-                  variant="flat"
                   title="Edit columns section."
+                  variant="flat"
                   @click="
                     showEdit(
                       EmailOptionsHelper.GenerateTwoColumnsOptions(section),
@@ -633,8 +633,8 @@
                   v-if="editMode && section.type === 'text'"
                   class="option-btn"
                   icon
-                  variant="flat"
                   title="Edit text section."
+                  variant="flat"
                   @click="
                     showEdit(EmailOptionsHelper.GenerateTextOptions(section))
                   "
@@ -705,9 +705,9 @@
                   v-if="editMode"
                   class="ma-2"
                   color="primary"
+                  prepend-icon="add"
                   variant="flat"
                   @click="addAction(section)"
-                  prepend-icon="add"
                 >
                   Actions
                 </v-btn>
@@ -728,9 +728,9 @@
                     :key="key"
                     class="m-2"
                     color="#fff"
+                    prepend-icon="add"
                     variant="outlined"
                     @click="addSection(key, index)"
-                    prepend-icon="add"
                   >
                     {{ key }}
                   </v-btn>
@@ -901,14 +901,14 @@
         >.
         <v-chip
           v-if="invalid_schedule"
+          class="ma-1"
+          closable
           color="red"
           variant="elevated"
-          class="ma-1"
           @click="
             mail_schedule = null;
             schedule_enable = false;
           "
-          closable
           >Invalid date! Click to remove.
         </v-chip>
       </v-list-subheader>
@@ -917,11 +917,11 @@
         <div :data-content="$t('global.commons.or')" class="hr-text my-4"></div>
         <div class="widget-buttons">
           <v-btn
+            append-icon="send"
+            class="s--button-flex"
             color="primary"
             size="x-large"
             @click="dialog_send = true"
-            class="s--button-flex"
-            append-icon="send"
           >
             <div>
               {{ $t("global.actions.send") }}
@@ -939,9 +939,9 @@
   <b-email-marketing-editor-section
     v-if="editMode"
     ref="section_editor"
-    :shop="shop"
     :email="email"
     :loaded-fonts="loaded_fonts"
+    :shop="shop"
   >
   </b-email-marketing-editor-section>
 
@@ -1091,9 +1091,9 @@
           v-if="email?.sent"
           class="ms-2"
           color="green"
-          variant="flat"
           label
           size="small"
+          variant="flat"
         >
           <v-icon size="small" start>check_circle</v-icon>
 
@@ -1128,9 +1128,9 @@
                   v-if="mailService.enable"
                   class="mx-1"
                   color="success"
-                  variant="flat"
                   label
                   size="small"
+                  variant="flat"
                   >{{ $t("global.commons.enable") }}
                 </v-chip>
                 <v-chip
@@ -1530,7 +1530,6 @@ export default {
       max_h: "unset",
 
       edit_description: false,
-
 
       loaded_fonts: [],
 

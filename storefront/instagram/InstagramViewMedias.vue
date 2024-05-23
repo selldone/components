@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-container v-bind="$attrs" class="instagram">
+  <v-container class="instagram" v-bind="$attrs">
     <v-row>
       <v-col
         v-for="media in medias"
@@ -26,8 +26,8 @@
           :src="getShopImagePath(media.thumbnail)"
           aspect-ratio="1"
           class="-img"
-          width="100%"
           cover
+          width="100%"
         >
           <v-icon class="absolute-top-right" dark
             >{{
@@ -84,7 +84,7 @@
   >
     <!-- Header > Master Top (Mobile only) -->
     <header v-if="$vuetify.display.mdAndDown" class="master-header">
-      <v-btn icon @click="dialog_media = false" variant="text">
+      <v-btn icon variant="text" @click="dialog_media = false">
         <v-icon>arrow_back_ios</v-icon>
       </v-btn>
       <div class="flex-grow-1">
@@ -230,7 +230,7 @@
                     line-through
                   ></u-price>
 
-                  <v-chip class="mx-1 float-end" color="red"  size="small"
+                  <v-chip class="mx-1 float-end" color="red" size="small"
                     >{{ discount_percent }} %
                   </v-chip>
                 </p>
@@ -325,7 +325,6 @@
           cover
           @click="showNormalPost()"
         >
-
           <v-alert
             v-if="error_msg"
             class="absolute-bottom-center"
@@ -349,7 +348,6 @@
           >
           </u-drag-pin>
         </v-img>
-
 
         <!-- Header > User (Mobile only) -->
 
@@ -394,24 +392,19 @@
     transition="dialog-bottom-transition"
   >
     <v-card>
-
       <v-card-text>
         <v-img
-            v-if="selected_media"
-            :src="getShopImagePath(selected_media.display)"
-            aspect-ratio="1"
-            class="mb-5 mx-auto"
-            width="100%"
-            max-width="240"
-            rounded="xl"
-cover
+          v-if="selected_media"
+          :src="getShopImagePath(selected_media.display)"
+          aspect-ratio="1"
+          class="mb-5 mx-auto"
+          cover
+          max-width="240"
+          rounded="xl"
+          width="100%"
         ></v-img>
 
-
         <div class="widget-box">
-
-
-
           <v-text-field
             v-model="in_title"
             :counter="120"

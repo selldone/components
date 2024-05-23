@@ -15,9 +15,9 @@
 <template>
   <span>
     <v-menu
+      content-class="bg-black pa-4 rounded-xl text-start"
       max-width="240"
       open-on-hover
-      content-class="bg-black pa-4 rounded-xl text-start"
     >
       <template v-slot:activator="{ props }">
         <v-btn
@@ -43,7 +43,7 @@
       </div>
       <div class="small">
         <v-icon class="me-1" size="small">message</v-icon>
-      {{ message }}
+        {{ message }}
       </div>
     </v-menu>
   </span>

@@ -13,9 +13,8 @@
   -->
 
 <template>
-  <v-row no-gutters align="center">
+  <v-row align="center" no-gutters>
     <v-list-item
-      class="flex-grow-1"
       v-if="isMarketplace"
       :title="
         'Marketplace' +
@@ -25,6 +24,7 @@
             ? ` ● ${vendors?.length} vendors`
             : ' ● No Vendor')
       "
+      class="flex-grow-1"
       prepend-icon="storefront"
     >
       <template v-slot:subtitle>

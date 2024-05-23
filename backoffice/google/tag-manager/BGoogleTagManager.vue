@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="widget-box ">
+  <div class="widget-box">
     <s-widget-header
       :src="require('../../../assets/trademark/google-tag-manager.svg')"
       :title="$t('channel_google.gtag.title')"
@@ -21,20 +21,19 @@
     </s-widget-header>
 
     <v-list-subheader>
-
-      {{$t('channel_google.gtag.subtitle')}}
+      {{ $t("channel_google.gtag.subtitle") }}
     </v-list-subheader>
 
     <v-text-field
       v-model="tag_id"
+      :append-inner-icon="lock ? 'lock' : 'lock_open'"
+      :label="$t('channel_google.gtag.tag_id.label')"
+      :readonly="lock"
       class="max-width-field-large mx-auto"
-      :label="$t('channel_google.gtag.tag_id.label') "
       placeholder="GTM-######## or G-######## or AW-########"
       variant="underlined"
       @update:model-value="change = true"
-      :append-inner-icon="lock ? 'lock' : 'lock_open'"
       @click:append-inner="lock = !lock"
-      :readonly="lock"
     >
     </v-text-field>
 
@@ -56,7 +55,6 @@
 </template>
 
 <script>
-
 export default {
   name: "BGoogleTagManager",
   components: {},
@@ -82,7 +80,6 @@ export default {
     let tagManagePlugin = this.shop.plugins.find(
       (item) => item.name === "TagManager",
     );
-
 
     this.tag_id =
       tagManagePlugin && tagManagePlugin.setting
@@ -110,7 +107,7 @@ export default {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.shop.plugins, data.plugin);
             this.showSuccessAlert(null, "Set tag manager ID.");
-            this.change=false;
+            this.change = false;
           }
         })
         .catch((error) => {

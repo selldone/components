@@ -148,7 +148,11 @@
           icon="account_balance_wallet"
         ></s-widget-header>
 
-        <u-text-value-box class="max-width-field my-4" icon="person" label="User ID">
+        <u-text-value-box
+          class="max-width-field my-4"
+          icon="person"
+          label="User ID"
+        >
           <template v-slot:value>
             <v-avatar :size="28" class="my-1">
               <v-img
@@ -288,12 +292,12 @@
               autocomplete="off"
               class="unicode-bidi-plaintext"
               color="green"
+              variant="underlined"
               @click:append-inner="
                 visibility.includes(item.name)
                   ? remove(visibility, item.name)
                   : visibility.push(item.name)
               "
-              variant="underlined"
             />
           </v-form>
         </div>

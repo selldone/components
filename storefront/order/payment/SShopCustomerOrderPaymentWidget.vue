@@ -91,8 +91,8 @@
           v-if="isSucceeded"
           :color="isTestPayment ? '#9C27B0' : 'success'"
           class="mx-2"
-          variant="flat"
           size="small"
+          variant="flat"
         >
           <v-icon start> check</v-icon>
           {{ $t("global.transaction_status.Succeeded") }}

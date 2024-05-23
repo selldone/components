@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="loader-to-bar" :class="{ '-relative': relative }">
+  <div :class="{ '-relative': relative }" class="loader-to-bar">
     <v-progress-linear
       :color="color"
       :height="height"
@@ -26,7 +26,6 @@
 </template>
 
 <script>
-
 export default {
   name: "ULoadingProgress",
   props: {

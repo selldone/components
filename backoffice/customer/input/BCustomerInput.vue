@@ -60,7 +60,7 @@
     "
   >
     <template v-slot:selection="{ item }">
-      <v-avatar class="me-2" :size="24">
+      <v-avatar :size="24" class="me-2">
         <v-img
           v-if="!item.raw.add && item.raw.user_id"
           :src="getUserAvatar(item.raw.user_id)"

@@ -69,9 +69,9 @@
       <b-inventory-filter
         v-model="filters"
         :shop="shop"
-        @change="onFilterChange"
         class="min-width-200"
         variant="plain"
+        @change="onFilterChange"
       >
       </b-inventory-filter>
       <s-storefront-search-box
@@ -82,16 +82,15 @@
         background-color="transparent"
         block
         class="search-inline mx-2 max-width-field min-width-250 flex-grow-1"
+        expand-input
+        variant="plain"
         @onClear="onClear()"
         @onSearch="(event) => onSearch(event)"
-        variant="plain"
-        expand-input
       />
     </v-row>
 
     <!---------------------------- List ----------------------->
     <v-data-table-server
-      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -102,6 +101,7 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('global.commons.waiting_load_data')"
+      :mobile="$vuetify.display.xs"
       :row-propsCC="
         (_data) => {
           return {
@@ -152,11 +152,11 @@
         }"
       >
         <b-inventory-list-group-header
-          :isMobile="isMobile"
           :columns="columns"
+          :isGroupOpen="isGroupOpen"
+          :isMobile="isMobile"
           :item="item"
           :toggleGroup="toggleGroup"
-          :isGroupOpen="isGroupOpen"
         ></b-inventory-list-group-header>
       </template>
 
@@ -339,21 +339,21 @@
           <u-number-input
             v-model="item.number"
             :min="item.add ? -1000 : 0"
-            class="max-width-field inline-block vertical-align-middle center-input strong-field"
-            variant="solo-filled"
             background-color="#fafafa"
+            class="max-width-field inline-block vertical-align-middle center-input strong-field"
             flat
             hide-details
             no-padding
             rounded
+            variant="solo-filled"
           >
             <template v-slot:prepend-inner>
               <v-btn-toggle
                 v-model="item.add"
                 class="mx-2 vertical-align-middle"
+                density="compact"
                 mandatory
                 rounded="xl"
-                density="compact"
               >
                 <v-btn :value="true" selected-class="green-flat" size="small">
                   {{ $t("global.actions.add") }}
@@ -953,11 +953,11 @@ export default {
             // available: this.filter_bundle.only_available,
             dir: "*",
             /* dir:
-                                                        !this.search &&
-                                                        this.filter_bundle.dir &&
-                                                        this.filter_bundle.dir.length
-                                                            ? this.filter_bundle.dir
-                                                            : "*",*/
+                                                          !this.search &&
+                                                          this.filter_bundle.dir &&
+                                                          this.filter_bundle.dir.length
+                                                              ? this.filter_bundle.dir
+                                                              : "*",*/
             products_only: true,
             need_full_variants: true, // Return full variants data
             optimized: true, // Dont send pricing & rating values!

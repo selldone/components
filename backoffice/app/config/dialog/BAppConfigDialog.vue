@@ -17,15 +17,15 @@
   <v-bottom-sheet
     v-model="value_local"
     :fullscreen="$vuetify.display.mdAndDown"
+    content-class="rounded-t-xl"
     max-width="1280"
     scrollable
-    content-class="rounded-t-xl"
   >
     <b-app-detail
-      class="rounded-t-xl"
       :app="app"
       :shop-app="shopApp"
       :shop-id="shop.id"
+      class="rounded-t-xl"
       dark
       @close="value_local = false"
       @update:shopApp="(val) => $emit('update:shopApp', val)"

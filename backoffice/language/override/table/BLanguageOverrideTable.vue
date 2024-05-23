@@ -57,11 +57,11 @@
 
               <!-- Table -->
               <b-language-override-table
+                v-model="modelValue[key]"
                 :dense="dense"
                 :nested="nested"
                 :structure="val"
                 :to="to"
-                v-model="modelValue[key]"
               ></b-language-override-table>
             </td>
 
@@ -147,7 +147,8 @@
           <v-text-field
             v-model="input"
             :dir="language_object.dir"
-            label="Translated" variant="outlined"
+            label="Translated"
+            variant="outlined"
           >
           </v-text-field>
 
@@ -173,7 +174,8 @@
               :loading="busy_save"
               color="primary"
               size="x-large"
-              @click="setValue()" variant="elevated"
+              variant="elevated"
+              @click="setValue()"
             >
               <v-icon start>save</v-icon>
               {{ $t("global.actions.set") }}
@@ -251,7 +253,8 @@ export default {
     },
 
     checkValidParams(key) {
-      if (!this.modelValue[key] || !this.isString(this.modelValue[key])) return true;
+      if (!this.modelValue[key] || !this.isString(this.modelValue[key]))
+        return true;
 
       const paramsPattern = /[^{\}]+(?=})/g;
 

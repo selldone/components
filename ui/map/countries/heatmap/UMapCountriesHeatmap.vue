@@ -31,9 +31,9 @@
 import chroma from "chroma-js";
 import UMapCountriesSvg from "../../../../ui/map/countries/svg/UMapCountriesSvg.vue";
 import {
-  getDynamicMapCss,
   getBaseCss,
   getCombinedCssString,
+  getDynamicMapCss,
 } from "./dynamic-map-css.ts";
 
 export default {

@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import { toCanvas, toDataURL, toString } from 'qrcode';
+import { toCanvas, toDataURL, toString } from "qrcode";
 
 export default {
-  name: 'UQrcode',
+  name: "UQrcode",
 
   props: {
     // The value of the QR code.
@@ -25,11 +25,11 @@ export default {
     // The tag name of the component's root element.
     tag: {
       type: String,
-      default: 'canvas',
+      default: "canvas",
     },
   },
 
-  emits: ['ready'],
+  emits: ["ready"],
 
   watch: {
     // Watching all props for changes to regenerate the QR code
@@ -53,13 +53,13 @@ export default {
       const value = String(this.value);
 
       const done = () => {
-        this.$emit('ready', this.$refs.qrcodeElement);
+        this.$emit("ready", this.$refs.qrcodeElement);
       };
 
       const el = this.$refs.qrcodeElement;
 
       switch (this.tag) {
-        case 'canvas':
+        case "canvas":
           toCanvas(el, value, options, (error) => {
             if (error) {
               throw error;
@@ -68,7 +68,7 @@ export default {
           });
           break;
 
-        case 'img':
+        case "img":
           toDataURL(value, options, (error, url) => {
             if (error) {
               throw error;
@@ -78,18 +78,18 @@ export default {
           });
           break;
 
-        case 'svg':
+        case "svg":
           toString(value, options, (error, string) => {
             if (error) {
               throw error;
             }
 
-            const div = document.createElement('div');
+            const div = document.createElement("div");
             div.innerHTML = string;
-            const svg = div.querySelector('svg');
+            const svg = div.querySelector("svg");
 
             if (svg) {
-              const {attributes, childNodes} = svg;
+              const { attributes, childNodes } = svg;
               Object.keys(attributes).forEach((key) => {
                 const attribute = attributes[key];
                 el.setAttribute(attribute.name, attribute.value);

@@ -25,11 +25,11 @@
             <v-chip
               v-if="!has_original_warranty"
               class="mx-2"
-              color="red" variant="tonal"
-
+              color="red"
               size="small"
+              variant="tonal"
             >
-              <v-icon  start>fa:fas fa-exclamation</v-icon>
+              <v-icon start>fa:fas fa-exclamation</v-icon>
               {{ $t("product_info.fake") }}
             </v-chip>
           </h1>
@@ -99,7 +99,11 @@
                 "
                 ><b>{{ product.brand }}</b>
               </component>
-              <span v-if="product.brand && product.title_en" class="mx-1 d-none d-sm-inline">/</span>
+              <span
+                v-if="product.brand && product.title_en"
+                class="mx-1 d-none d-sm-inline"
+                >/</span
+              >
             </div>
 
             <div class="flex-grow-1 ps-1">
@@ -144,7 +148,6 @@
               v-if="!has_original_warranty"
               class="mx-2"
               color="red"
-
               size="small"
             >
               <v-icon size="x-small" start>fa:fas fa-exclamation</v-icon>
@@ -171,8 +174,6 @@
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
           <v-container class="pt-0 pb-0 flex-grow-1 d-flex flex-column" fluid>
-
-
             <!-- ▁▁▁▁▁▁ 🞇 Variants 🞇 ▁▁▁▁▁▁ -->
             <s-product-section-variants
               v-model:current-variant="current_variant"
@@ -282,7 +283,6 @@
                   shop.theme?.color_buy ? shop.theme.color_buy : '#0061e0'
                 "
                 :href="getProductLink(shop, product.id, product.slug)"
-
                 min-height="72"
                 min-width="220"
                 style="font-size: 18px"
@@ -356,15 +356,12 @@ import SShopBuyButton from "../../storefront/product/button/SShopBuyButton.vue";
 import UPaymentStripeSplit from "../../ui/payment/stripe/split/UPaymentStripeSplit.vue";
 import SProductSectionService from "../../storefront/product/section/service/SProductSectionService.vue";
 import SProductSectionValuation from "../../storefront/product/section/valuation/SProductSectionValuation.vue";
-import SProductSectionExtraPricings
-  from "../../storefront/product/section/extra-pricing/SProductSectionExtraPricings.vue";
+import SProductSectionExtraPricings from "../../storefront/product/section/extra-pricing/SProductSectionExtraPricings.vue";
 import SProductSectionTax from "../../storefront/product/section/tax/SProductSectionTax.vue";
 import SProductSectionBuyButton from "../../storefront/product/section/buy-button/SProductSectionBuyButton.vue";
-import SProductSectionExtraButtons
-  from "../../storefront/product/section/extra-buttons/SProductSectionExtraButtons.vue";
+import SProductSectionExtraButtons from "../../storefront/product/section/extra-buttons/SProductSectionExtraButtons.vue";
 import SProductSectionPrice from "../../storefront/product/section/price/SProductSectionPrice.vue";
-import SProductSectionWaitingAuction
-  from "../../storefront/product/section/auction/SProductSectionWaitingAuction.vue";
+import SProductSectionWaitingAuction from "../../storefront/product/section/auction/SProductSectionWaitingAuction.vue";
 import SProductSectionBadges from "../../storefront/product/section/badges/SProductSectionBadges.vue";
 import SProductSectionVariants from "../../storefront/product/section/variants/SProductSectionVariants.vue";
 
@@ -761,7 +758,7 @@ export default {
   --h1-size: 3rem;
   --h1-margin: 8px 12px 32px 12px;
   --title-en-margin: 8px 12px 0 12px;
-  --hr-color:#efefef;
+  --hr-color: #efefef;
 }
 
 /*

@@ -229,10 +229,7 @@
                   </td>
 
                   <td class="text-start p-0">
-                    <u-price
-                      :amount="amount"
-                      :currency="currency"
-                    ></u-price>
+                    <u-price :amount="amount" :currency="currency"></u-price>
                   </td>
                 </tr>
               </tbody>

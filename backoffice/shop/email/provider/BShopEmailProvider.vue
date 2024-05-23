@@ -93,7 +93,8 @@
         :messages="selected_provider.options.host?.message"
         :placeholder="selected_provider.options?.host?.placeholder"
         class="my-3"
-        persistent-placeholder variant="underlined"
+        persistent-placeholder
+        variant="underlined"
       ></v-text-field>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Port ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -106,7 +107,8 @@
         :min="20"
         :placeholder="selected_provider.options?.port?.placeholder"
         class="my-3"
-        clearable variant="underlined"
+        clearable
+        variant="underlined"
       ></u-number-input>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ API Key ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -121,7 +123,8 @@
         :type="show_api ? 'test' : 'password'"
         class="my-3"
         persistent-placeholder
-        @click:append-inner="show_api = !show_api" variant="underlined"
+        variant="underlined"
+        @click:append-inner="show_api = !show_api"
       ></v-text-field>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Endpoint ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -133,7 +136,8 @@
         :messages="selected_provider.options.endpoint?.message"
         :placeholder="selected_provider.options?.endpoint?.placeholder"
         class="my-3"
-        persistent-placeholder variant="underlined"
+        persistent-placeholder
+        variant="underlined"
       ></v-select>
       <v-text-field
         v-else-if="selected_provider?.options?.endpoint"
@@ -142,7 +146,8 @@
         :messages="selected_provider.options?.endpoint?.message"
         :placeholder="selected_provider.options?.endpoint?.placeholder"
         class="my-3"
-        persistent-placeholder variant="underlined"
+        persistent-placeholder
+        variant="underlined"
       ></v-text-field>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ User name ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -154,7 +159,8 @@
         :messages="selected_provider.options?.username?.message"
         :placeholder="selected_provider.options?.username?.placeholder"
         class="my-3"
-        persistent-placeholder variant="underlined"
+        persistent-placeholder
+        variant="underlined"
       ></v-text-field>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Password ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -169,7 +175,8 @@
         :type="show_password ? 'test' : 'password'"
         class="my-3"
         persistent-placeholder
-        @click:append-inner="show_password = !show_password" variant="underlined"
+        variant="underlined"
+        @click:append-inner="show_password = !show_password"
       ></v-text-field>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Encryption ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -206,7 +213,8 @@
         append-icon="alternate_email"
         label="From Email"
         persistent-placeholder
-        placeholder="support@yourdomain.com" variant="underlined"
+        placeholder="support@yourdomain.com"
+        variant="underlined"
       ></v-text-field>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Default Sender Name ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -216,7 +224,8 @@
         :placeholder="shop.title + ' team'"
         append-icon="person"
         label="From Name"
-        persistent-placeholder variant="underlined"
+        persistent-placeholder
+        variant="underlined"
       ></v-text-field>
 
       <v-list-subheader v-if="enable">
@@ -253,7 +262,7 @@ import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "BShopEmailProvider",
-  components: {SWidgetButtons, USmartSelect, USmartSwitch, UNumberInput },
+  components: { SWidgetButtons, USmartSelect, USmartSwitch, UNumberInput },
   props: {
     shop: {
       required: true,

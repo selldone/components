@@ -17,7 +17,6 @@
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <v-data-table-server
-      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -26,6 +25,7 @@
       :items="transactions"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
+      :mobile="$vuetify.display.xs"
       :row-props="
         (_data) => {
           return { class: 'row-hover -no-pointer' };
@@ -93,8 +93,8 @@
             :loading="busy_check === item.unique_id"
             color="primary"
             icon
-            variant="elevated"
             size="32"
+            variant="elevated"
             @click="checkPaymentStatus(gateway.code, item, gateway.name)"
           >
             <v-icon size="20">refresh</v-icon>
@@ -145,8 +145,9 @@
         <v-btn
           v-if="item.target.completed"
           :loading="busy_download === item.target"
-          color="#111" variant="elevated"
+          color="#111"
           size="small"
+          variant="elevated"
           @click="downloadSingleReceipt(item.target)"
         >
           <v-icon class="me-1" size="small">download</v-icon>

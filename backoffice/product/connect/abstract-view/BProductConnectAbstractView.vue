@@ -19,7 +19,7 @@
   >
     <div class="d-flex align-center py-1">
       <router-link
-        :to="IS_VENDOR_PANEL?undefined:{ name: 'BPageShopChannelConnect' }"
+        :to="IS_VENDOR_PANEL ? undefined : { name: 'BPageShopChannelConnect' }"
         title="Go to the channels."
       >
         <v-avatar class="me-2" rounded size="64">
@@ -81,8 +81,8 @@ export default defineComponent({
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
 

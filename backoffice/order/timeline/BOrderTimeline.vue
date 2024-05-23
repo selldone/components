@@ -30,8 +30,7 @@
         <div>
           {{ $t("global.commons.add_note") }}
           <div class="small mt-1">
-
-            {{$t('order_timeline.add_note_subtitle')}}
+            {{ $t("order_timeline.add_note_subtitle") }}
           </div>
         </div>
       </v-btn>
@@ -335,7 +334,7 @@
                     {{
                       item.data.resend
                         ? getLocalTimeStringSmall(item.data.resend)
-                        : $t('global.actions.resend')
+                        : $t("global.actions.resend")
                     }}
                   </v-btn>
 

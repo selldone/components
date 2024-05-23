@@ -65,20 +65,28 @@
         <v-icon class="me-2">{{ is_open ? "remove" : "add" }}</v-icon>
 
         <u-avatar-folder
-          class="me-2 my-1"
           :size="42"
-          side-icon="folder" is-gray
           :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+          class="me-2 my-1"
+          is-gray
+          side-icon="folder"
           small-side-icon
         >
         </u-avatar-folder>
 
         <div class="text-start">
           <p class="m-0 text-subtitle-2 font-weight-bold single-line">
-            <img :src="product_type.image" width="16" height="16" class="me-1">
+            <img
+              :src="product_type.image"
+              class="me-1"
+              height="16"
+              width="16"
+            />
             {{ product.title?.limitWords(7) }}
           </p>
-          <small class="single-line d-block">{{ product.title_en?.limitWords(7) }}</small>
+          <small class="single-line d-block">{{
+            product.title_en?.limitWords(7)
+          }}</small>
         </div>
 
         <v-spacer></v-spacer>

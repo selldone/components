@@ -16,19 +16,19 @@
   <div class="py-10">
     <div v-for="item in items" :key="item.id" class="widget-box -large mb-5">
       <s-widget-header
+        :add-caption="$t('commons.product_admin')"
         :title="item.product.title"
         :to="{
           name: 'BPageProductDashboard',
           params: { product_id: item.product.id },
         }"
-        :add-caption="$t('commons.product_admin')"
         add-icon="open_in_new"
         add-text
         icon="folder_shared"
       ></s-widget-header>
 
       <v-list-subheader>
-        {{$t('order_input.message')}}
+        {{ $t("order_input.message") }}
       </v-list-subheader>
       <!-- Product Info -->
       <v-list-item>

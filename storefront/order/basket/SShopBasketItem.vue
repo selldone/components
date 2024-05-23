@@ -142,9 +142,10 @@
         <div v-if="basketItem.cross_dis">
           <v-chip
             :title="$t('basket_page.cross_selling_discount')"
-            color="green" variant="flat"
+            color="green"
             label
             size="small"
+            variant="flat"
           >
             <v-icon size="small" start>whatshot</v-icon>
             <u-price :amount="-basketItem.cross_dis"></u-price>
@@ -163,9 +164,10 @@
             <v-chip
               v-if="price_error_percent > 1"
               class="mx-2 p-1"
-              color="red" variant="flat"
+              color="red"
               label
               size="x-small"
+              variant="flat"
             >
               <v-icon size="small">arrow_drop_up</v-icon>
               {{ numeralFormat(price_error_percent, "0,0") }}%
@@ -173,10 +175,10 @@
             <v-chip
               v-if="price_error_percent < -1"
               class="mx-2 p-1"
-              color="green" variant="flat"
-
+              color="green"
               label
               size="x-small"
+              variant="flat"
             >
               <v-icon size="small">arrow_drop_down</v-icon>
               {{ numeralFormat(price_error_percent, "0,0") }}%
@@ -185,7 +187,8 @@
           <v-btn
             class="mx-1"
             color="#8BC34A"
-            icon variant="text"
+            icon
+            variant="text"
             @click="spinnerSelectAction(basketItem.count)"
           >
             <v-icon>check</v-icon>
@@ -193,7 +196,8 @@
           <v-btn
             class="mx-1"
             color="#C2185B"
-            icon  variant="text"
+            icon
+            variant="text"
             @click="spinnerSelectAction(0)"
           >
             <v-icon>close</v-icon>
@@ -206,7 +210,6 @@
         <s-shop-basket-item-count-select
           v-model="basketItem.count"
           :disabled="['area', 'volume'].includes(product.price_input)"
-          has-delete
           :loading="busy"
           :loading-delete="busy_delete"
           :max="available_quantity"
@@ -215,8 +218,9 @@
           background-color="#111"
           class="my-1"
           dark
-          variant="solo"
           flat
+          has-delete
+          variant="solo"
           @change="(count) => spinnerSelectAction(count)"
           @click:delete="buyRemoveAction()"
         ></s-shop-basket-item-count-select>
@@ -270,7 +274,6 @@ export default {
       required: true,
       type: Object,
     },
-
   },
 
   data: function () {

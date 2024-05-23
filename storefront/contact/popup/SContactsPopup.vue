@@ -78,8 +78,8 @@
         v-if="!show"
         :color="SaminColorDark"
         class="chat-btn"
-        icon
         height="60"
+        icon
         variant="flat"
         width="60"
         @click="show = true"

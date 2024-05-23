@@ -18,8 +18,8 @@
       <div
         v-for="(plate, i) in plates"
         :key="i"
-        class="plate"
         :class="{ '-borderless': !plate.border }"
+        class="plate"
       >
         <slot :name="`layer-${i + 1}`"></slot>
       </div>
@@ -43,7 +43,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .s--plates {
   display: inline-flex;
 
@@ -82,6 +82,7 @@ export default defineComponent({
     &:nth-child(2) {
       transform: rotateX(70deg) rotateY(0deg) rotateZ(35deg) translateZ(0);
       z-index: 2;
+
       &:hover {
         animation: rotate-second 10s infinite linear;
       }
@@ -90,6 +91,7 @@ export default defineComponent({
     &:nth-child(3) {
       transform: rotateX(70deg) rotateY(0deg) rotateZ(35deg) translateZ(-40px);
       z-index: 1;
+
       &:hover {
         animation: rotate-third 10s infinite linear;
       }

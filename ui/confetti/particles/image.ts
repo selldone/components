@@ -11,7 +11,7 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-import BaseParticle, {confetti} from "./base";
+import BaseParticle, { confetti } from "./base";
 
 /**
  * Class representing an image particle.

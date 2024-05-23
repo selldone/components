@@ -15,8 +15,8 @@
 <template>
   <v-bottom-sheet
     :model-value="modelValue"
-    width="98vw"
     max-width="540"
+    width="98vw"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <v-card class="text-start" rounded="t-xl">

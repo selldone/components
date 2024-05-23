@@ -18,8 +18,8 @@
       <u-loading-progress v-if="busy"></u-loading-progress>
       <div v-else class="widget-box mb-5">
         <s-widget-header
-          title="Barcode Scanner Config"
           icon="barcode_reader"
+          title="Barcode Scanner Config"
         ></s-widget-header>
         <v-list-subheader>
           You can connect compatible barcode scanners to your POS just by
@@ -31,8 +31,8 @@
           :label="$t('barcode_scanner.wifi_ssid')"
           :messages="$t('barcode_scanner.ssid_message')"
           class="my-5 english-field"
-          variant="solo-inverted"
           prepend-inner-icon="wifi"
+          variant="solo-inverted"
         ></v-text-field>
 
         <v-text-field
@@ -40,8 +40,8 @@
           :label="$t('barcode_scanner.wifi_pass')"
           :messages="$t('barcode_scanner.message')"
           class="my-5 english-field"
-          variant="solo-inverted"
           prepend-inner-icon="password"
+          variant="solo-inverted"
         ></v-text-field>
 
         <u-qrcode
@@ -51,14 +51,14 @@
             color: { dark: '#000', light: '#fff' },
           }"
           :value="qrcode_value"
-          style="max-width: 100%; border-radius: 12px"
           class="d-block mx-auto my-5"
+          style="max-width: 100%; border-radius: 12px"
         />
 
         <u-text-copy-box
           :value="secure_url"
-          small-width-mode
           message="Secure URL! Do not share it with others."
+          small-width-mode
         ></u-text-copy-box>
       </div>
     </v-expand-transition>
@@ -87,31 +87,28 @@
           </p>
 
           <p>
-            Search for <b>Selldone barcode scanner</b> in Googleplay or Appstore.
+            Search for <b>Selldone barcode scanner</b> in Googleplay or
+            Appstore.
           </p>
 
-
-
           <a
-              href="https://play.google.com/store/apps/details?id=com.selldone.pos"
-              class="ma-2 d-inline-block"
-              target="_blank"
-              title="Selldone POS Barcode Scanner"
-          ><img
+            class="ma-2 d-inline-block"
+            href="https://play.google.com/store/apps/details?id=com.selldone.pos"
+            target="_blank"
+            title="Selldone POS Barcode Scanner"
+            ><img
               :height="42"
               :src="require('../../../../assets/trademark/googleplay.png')"
           /></a>
-
-
 
           <h2 class="mt-5">Option 2. Integration Steps for Developers:</h2>
           <ol>
             <li class="my-2">
               <b>Secure URL Acquisition:</b> Initially, scan a QR code to obtain
-              a secure URL in JSON format containing <code>{url, ssid, pass}</code>. The ssid
-              and pass fields, which pertain to your WiFi network, are optional
-              but helpful for easily connecting intermediary hardware to your
-              local network.
+              a secure URL in JSON format containing
+              <code>{url, ssid, pass}</code>. The ssid and pass fields, which
+              pertain to your WiFi network, are optional but helpful for easily
+              connecting intermediary hardware to your local network.
             </li>
             <li class="my-2">
               <b>Send a GET Request:</b> Use the URL from Step 1 to send a GET
@@ -121,9 +118,11 @@
             <li class="my-2">
               <b>Post Request with Barcode Data:</b> With the URL and token
               obtained, your barcode scanner must then send a POST request to
-              the provided URL. This request should include the <code>token</code>, <code>sku</code>, and
-              <code>quantity</code> within its body, aiming to add a specific quantity of an
-              item to the cart. The response to this request will be detailed as
+              the provided URL. This request should include the
+              <code>token</code>, <code>sku</code>, and
+              <code>quantity</code> within its body, aiming to add a specific
+              quantity of an item to the cart. The response to this request will
+              be detailed as
               <code
                 >{success, product_id, variant_id, quantity, product,
                 variant}</code
@@ -137,9 +136,9 @@
 
     <v-btn
       class="absolute-top-end"
+      icon
       prepend-icon="close"
       variant="text"
-      icon
       @click="$emit('close')"
     >
       <v-icon>close</v-icon>
@@ -222,8 +221,8 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-code{
+<style lang="scss" scoped>
+code {
   font-weight: bold;
 }
 </style>

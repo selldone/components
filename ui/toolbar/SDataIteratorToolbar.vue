@@ -26,7 +26,6 @@
     <v-spacer v-if="center && $vuetify.display.mdAndUp"></v-spacer>
 
     <template v-if="has_sort && $vuetify.display.mdAndUp">
-
       <v-btn-toggle
         :model-value="sortKey"
         class="rounded-group ms-2"
@@ -65,14 +64,9 @@
 
     <v-spacer v-if="$vuetify.display.mdAndUp"></v-spacer>
 
-    <v-menu v-if="$vuetify.display.smAndUp"  open-on-hover>
+    <v-menu v-if="$vuetify.display.smAndUp" open-on-hover>
       <template v-slot:activator="{ props }">
-        <v-btn
-          :title="itemsPerPage"
-          class="mx-2"
-          icon
-          v-bind="props"
-        >
+        <v-btn :title="itemsPerPage" class="mx-2" icon v-bind="props">
           <v-icon>view_module</v-icon>
         </v-btn>
       </template>
@@ -137,7 +131,6 @@
 
       <v-btn-toggle
         :model-value="sortOrder"
-
         class="rounded-group mx-2"
         mandatory
         selected-class="dark-flat"

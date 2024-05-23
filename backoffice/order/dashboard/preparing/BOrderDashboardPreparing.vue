@@ -197,14 +197,19 @@
         <v-col class="border-end-grater-md p-2" cols="12" md="4">
           <p class="mt-2 small text-muted">
             <v-icon size="small"> fa:fas fa-weight-hanging</v-icon>
-            {{ $t('process_center.preparing.packing_weight') }}
+            {{ $t("process_center.preparing.packing_weight") }}
           </p>
 
           <u-number-input
             v-model="weight"
             :decimal="3"
             :label="$t('product_extra_physical.weight')"
-            :messages="$t('process_center.preparing.packing_weight',{weight:total_items_weight,unit:mass_unit})"
+            :messages="
+              $t('process_center.preparing.packing_weight', {
+                weight: total_items_weight,
+                unit: mass_unit,
+              })
+            "
             :min="total_items_weight"
             :readonly="!isActive"
             :suffix="mass_unit"
@@ -335,13 +340,12 @@
             v-else
             class="position-absolute center-absolute text-muted m-0 text-uppercase"
           >
-            {{$t('global.commons.no_data')}}!
+            {{ $t("global.commons.no_data") }}!
           </p>
         </v-col>
       </v-row>
       <div v-else class="pa-3 my-12 typo-body text-muted text-center">
-        {{ $t('process_center.preparing.not_available_message') }}
-
+        {{ $t("process_center.preparing.not_available_message") }}
       </div>
     </div>
   </div>
@@ -378,7 +382,7 @@ export default {
       require: true,
       type: Object,
     },
-    isRolePanel:Boolean,
+    isRolePanel: Boolean,
   },
 
   data: function () {

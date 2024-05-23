@@ -70,11 +70,11 @@
             label="Local dev server"
             persistent-placeholder
             placeholder="https://localhost:8080"
+            variant="outlined"
             @blur="
               fixDevUrl();
               getValidateDevPack(dev_url);
             "
-            variant="outlined"
           ></v-text-field>
 
           <div class="widget-buttons">
@@ -431,7 +431,7 @@ export default {
         );
         // Find script when it's Vite dev mode
         const target_script_vite_js = scripts.find((script) =>
-            script.src.includes("@vite/client"),
+          script.src.includes("@vite/client"),
         );
 
         if (target_script_shop_js) {
@@ -452,34 +452,33 @@ export default {
             console.log("No matches found");
             return null;
           }
-        }else if(target_script_vite_js){
+        } else if (target_script_vite_js) {
           console.log("We detect Vite dev mode!");
 
-
           // Find all script tags of type module within the body
-          const scripts = Array.from(doc.body.querySelectorAll('script[type="module"]'));
-
+          const scripts = Array.from(
+            doc.body.querySelectorAll('script[type="module"]'),
+          );
 
           // We want the src attribute of the first script tag of type module
-          const src_module = scripts.length > 0 ? scripts[0].getAttribute('src') : null;
+          const src_module =
+            scripts.length > 0 ? scripts[0].getAttribute("src") : null;
 
-          if(!src_module){
-            const err="Module not found in the url! It should be like <script type=\"module\" src=\"storefront.ts\"..."
+          if (!src_module) {
+            const err =
+              'Module not found in the url! It should be like <script type="module" src="storefront.ts"...';
             console.log(err);
             this.error_dev_serve = err;
             return null;
           }
 
-          console.log("We find module:",src_module);
+          console.log("We find module:", src_module);
 
-          return (this.pack_dev_server = { path:src_module, version:"vite" });
-
-        }else{
+          return (this.pack_dev_server = { path: src_module, version: "vite" });
+        } else {
           console.log("Script shop.js or Vite client not found!");
           this.error_dev_serve = "Script shop.js or Vite client not found!";
         }
-
-
 
         return null;
       } catch (error) {

@@ -24,13 +24,13 @@
         <v-row row wrap>
           <v-col cols="4">
             <u-sparkline
+              :height="120"
               :value="count_list"
               class="mx-auto chart-line"
               color="#333"
               line-width="2"
               smooth
               stroke-linecap="round"
-              :height="120"
             />
 
             <p class="small">
@@ -59,13 +59,13 @@
 
           <v-col cols="4">
             <u-sparkline
+              :height="120"
               :value="buys_list"
               class="mx-auto chart-line"
               color="#333"
               line-width="2"
               smooth
               stroke-linecap="round"
-              :height="120"
             />
 
             <p class="small">
@@ -80,13 +80,13 @@
 
           <v-col cols="4">
             <u-sparkline
+              :height="120"
               :value="add_baskets_list"
               class="mx-auto chart-line"
               color="#333"
               line-width="2"
               smooth
               stroke-linecap="round"
-              :height="120"
             />
 
             <p class="small">

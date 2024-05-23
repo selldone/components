@@ -62,15 +62,15 @@
           {{ $t("global.commons.size") }}:
           <span dir="ltr">
             <b :title="$t('global.commons.width')"
-              >{{ numeralFormat(transportation.max_w, "0,0") }} {{size_unit}}
+              >{{ numeralFormat(transportation.max_w, "0,0") }} {{ size_unit }}
             </b>
             <v-icon class="mx-1" size="small">fa:fas fa-times</v-icon>
             <b :title="$t('global.commons.length')"
-              >{{ numeralFormat(transportation.max_l, "0,0") }}  {{size_unit}}
+              >{{ numeralFormat(transportation.max_l, "0,0") }} {{ size_unit }}
             </b>
             <v-icon class="mx-1" size="small">fa:fas fa-times</v-icon>
             <b :title="$t('global.commons.height')"
-              >{{ numeralFormat(transportation.max_h, "0,0") }}  {{size_unit}}
+              >{{ numeralFormat(transportation.max_h, "0,0") }} {{ size_unit }}
             </b></span
           >
         </p>
@@ -192,6 +192,7 @@
         />
         <v-btn
           v-if="showButtons"
+          :size="32"
           :to="{
             name: 'BPageTransportationServices',
             params: { transportation_id: transportation.id },
@@ -199,7 +200,6 @@
           class="ms-2"
           color="success"
           icon
-          :size="32"
           variant="flat"
         >
           <v-icon size="20">add</v-icon>

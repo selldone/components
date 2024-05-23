@@ -21,7 +21,12 @@
     <v-icon v-if="icon" :dark="dark" class="me-2" size="x-small">{{
       icon
     }}</v-icon>
-    <span v-if="!noLabel" style="vertical-align: sub" v-text="name" class="me-1"></span>
+    <span
+      v-if="!noLabel"
+      class="me-1"
+      style="vertical-align: sub"
+      v-text="name"
+    ></span>
 
     <!-- Customer clubs -->
     <span v-if="filter.type === 'LEVEL' && filter.levels">
@@ -60,7 +65,7 @@
     </span>
 
     <!-- Limit -->
-    <b v-else-if="filter.type === 'LIMIT'" class=" small">
+    <b v-else-if="filter.type === 'LIMIT'" class="small">
       [{{ filter.limit }}]
     </b>
 
@@ -85,7 +90,7 @@
     </div>
 
     <!-- Others -->
-    <b v-else class=" small">
+    <b v-else class="small">
       {{ filter.type }}
     </b>
   </span>

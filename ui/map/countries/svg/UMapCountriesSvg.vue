@@ -25,7 +25,7 @@
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
       <svg:style type="text/css">
-        {{cssInline}}
+        {{ cssInline }}
       </svg:style>
 
       <g>

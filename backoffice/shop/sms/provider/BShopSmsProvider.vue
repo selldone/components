@@ -229,10 +229,7 @@
         use their features more quickly.
       </v-list-subheader>
 
-      <u-smart-verify
-        v-model="check"
-        class="mb-3"
-      ></u-smart-verify>
+      <u-smart-verify v-model="check" class="mb-3"></u-smart-verify>
 
       <div v-if="has_sync_action" class="widget-buttons">
         <v-btn

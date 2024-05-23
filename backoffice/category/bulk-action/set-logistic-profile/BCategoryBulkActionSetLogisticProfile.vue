@@ -88,10 +88,7 @@
           </div>
         </v-expand-transition>
 
-        <u-smart-verify
-          v-model="check"
-          class="my-3"
-        ></u-smart-verify>
+        <u-smart-verify v-model="check" class="my-3"></u-smart-verify>
       </div>
     </v-card-text>
     <v-card-actions>

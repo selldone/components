@@ -13,33 +13,56 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-container style="--hr-color:#efefef;" fluid>
-    <v-row >
+  <v-container fluid style="--hr-color: #efefef">
+    <v-row>
       <!--  ---------------------------- Images ---------------------------- -->
 
       <v-col
         class="image-gallery-root border-end-grater-xl d-flex justify-center"
+        cols="12"
         lg="5"
         style="min-height: 580px"
-        cols="12"
       >
         <!-- swiper2 Thumbs -->
-        <div style="width: 20%" class="d-flex flex-column mt-1 me-2 align-center">
-            <v-card flat color="#eee"  class=" ratio-1-1 mb-3" rounded="lg" width="64" />
-            <v-card flat color="#eee" class=" ratio-1-1 mb-3"  rounded="lg" width="64" />
-            <v-card flat color="#eee" class=" ratio-1-1 mb-3"  rounded="lg"  width="64" />
+        <div
+          class="d-flex flex-column mt-1 me-2 align-center"
+          style="width: 20%"
+        >
+          <v-card
+            class="ratio-1-1 mb-3"
+            color="#eee"
+            flat
+            rounded="lg"
+            width="64"
+          />
+          <v-card
+            class="ratio-1-1 mb-3"
+            color="#eee"
+            flat
+            rounded="lg"
+            width="64"
+          />
+          <v-card
+            class="ratio-1-1 mb-3"
+            color="#eee"
+            flat
+            rounded="lg"
+            width="64"
+          />
           <v-spacer></v-spacer>
         </div>
 
         <!-- swiper1 -->
         <div class="image-sprite" style="width: 80%" />
-
-
       </v-col>
 
       <!--  ---------------------------- Info ---------------------------- -->
 
-      <v-col class="text-right pr-md-4 pl-md-4 pr-sm-2 pl-sm-2" lg="7" cols="12">
+      <v-col
+        class="text-right pr-md-4 pl-md-4 pr-sm-2 pl-sm-2"
+        cols="12"
+        lg="7"
+      >
         <h1 class="text-right mt-2 pr-2 pl-2 text-sprite big" />
         <p class="text-muted pr-2 pl-2 text-sprite small" />
 
@@ -47,9 +70,9 @@
 
         <hr />
         <v-container class="pt-0 pb-0" fluid>
-          <v-row  >
+          <v-row>
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Section 1 ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <v-col lg="8" md="7" sm="6" cols="12" >
+            <v-col cols="12" lg="8" md="7" sm="6">
               <p class="pr-2 text-sprite small" />
 
               <p class="pr-2 text-sprite" style="min-height: 1rem" />
@@ -80,14 +103,13 @@
             </v-col>
 
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Section 2 ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <v-col class="pr-3 pl-2" lg="4" md="5" sm="6" cols="12">
+            <v-col class="pr-3 pl-2" cols="12" lg="4" md="5" sm="6">
               <p class="text-sprite small" />
               <p class="text-sprite small" />
               <p class="text-sprite small" />
               <p class="text-sprite small" />
               <p class="text-sprite small" />
             </v-col>
-
           </v-row>
         </v-container>
       </v-col>

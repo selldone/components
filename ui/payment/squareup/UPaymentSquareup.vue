@@ -44,7 +44,6 @@
       class="blur-animate"
     >
       <v-tabs v-model="tab" class="mx-n5 mb-6" height="84" stacked>
-
         <v-tab
           v-for="item in tabs"
           :key="item.title"

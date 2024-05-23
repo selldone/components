@@ -20,21 +20,26 @@
     :items="items_fixed"
     :label="$t('global.commons.medium')"
     :model-value="modelValue"
+    :return-object="false"
     :rounded="rounded"
     :variant="variant"
-    @update:model-value="(val) => $emit('update:modelValue', val)"
     item-title="name"
     item-value="name"
-    :return-object="false"
     messages="Use medium to identify a medium such as email or cost-per- click."
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template v-slot:prepend-inner>
       <img :src="findIcon(modelValue)" class="me-1" height="16" width="16" />
     </template>
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" :title="item.raw.name" class="text-start">
+      <v-list-item :title="item.raw.name" class="text-start" v-bind="props">
         <template v-slot:prepend>
-          <v-avatar v-if="item.raw.icon" :image="item.raw.icon" size="24" rounded="0" />
+          <v-avatar
+            v-if="item.raw.icon"
+            :image="item.raw.icon"
+            rounded="0"
+            size="24"
+          />
           <v-icon v-else>add_box</v-icon>
         </template>
       </v-list-item>

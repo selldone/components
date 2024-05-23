@@ -14,7 +14,7 @@
 
 <template>
   <v-text-field
-    v-bind="$attrs"
+    :append-inner-icon="appendInnerIcon"
     :bg-color="backgroundColor"
     :class="{ pp: !disable }"
     :clearable="clearable"
@@ -33,10 +33,10 @@
     :variant="
       variant ? variant : solo ? 'solo' : outlined ? 'outlined' : 'underlined'
     "
-    :append-inner-icon="appendInnerIcon"
     class="pp"
     persistent-placeholder
     readonly
+    v-bind="$attrs"
     @click="showDialog()"
     @click:clear="clear()"
     @click:append-inner.stop="showDialog()"
@@ -79,17 +79,16 @@
 
       <v-card-text class="pt-0">
         <v-date-picker
-          v-model="date"
-          :max="max instanceof Date ? max.toISOString() : max"
-          :min="min instanceof Date ? min.toISOString() : min"
-          show-adjacent-months
           :key="`d-${date_key}`"
-          max-width="100%"
-          width="400"
-          class="mx-auto"
+          v-model="date"
           :allowed-dates="allowedDates"
           :events="events"
-
+          :max="max instanceof Date ? max.toISOString() : max"
+          :min="min instanceof Date ? min.toISOString() : min"
+          class="mx-auto"
+          max-width="100%"
+          show-adjacent-months
+          width="400"
         ></v-date-picker>
 
         <div class="my-3 max-w-400 mx-auto">
@@ -98,8 +97,8 @@
             v-model="time"
             :max="max_time"
             :min="min_time"
-            variant="flat"
             class="border rounded-xl"
+            variant="flat"
           ></u-time-input>
         </div>
       </v-card-text>
@@ -233,12 +232,11 @@ export default {
       default: false,
     },
     prependInnerIcon: {},
-    appendInnerIcon:{default:'today'},
+    appendInnerIcon: { default: "today" },
     variant: {},
 
-
-    allowedDates:{},
-    events:{},
+    allowedDates: {},
+    events: {},
   },
 
   data: () => ({

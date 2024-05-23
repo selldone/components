@@ -52,7 +52,12 @@
             center
           ></variant-item-view-micro>
 
-          <u-text-copy-box :value="qrcode_value" small small-width-mode class="mt-3"></u-text-copy-box>
+          <u-text-copy-box
+            :value="qrcode_value"
+            class="mt-3"
+            small
+            small-width-mode
+          ></u-text-copy-box>
         </div>
       </div>
       <div v-else>
@@ -123,7 +128,7 @@ import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 export default {
   name: "BProductBarcode",
   emits: ["update:modelValue"],
-  components: {UTextCopyBox, VariantItemViewMicro, UTabsRounded },
+  components: { UTextCopyBox, VariantItemViewMicro, UTabsRounded },
   props: {
     modelValue: {},
     shop: {

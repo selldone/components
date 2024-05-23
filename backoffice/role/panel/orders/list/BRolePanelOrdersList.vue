@@ -30,7 +30,6 @@
 
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
-      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -39,6 +38,7 @@
       :items="orders"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
+      :mobile="$vuetify.display.xs"
       :row-props="
         (_data) => {
           return { class: 'row-hover' };
@@ -86,7 +86,7 @@
         <small v-if="item.discount" class="d-block">
           {{ $t("admin_shop.orders.physical.discount") }}:
 
-          <u-price :amount="item.discount" :currency="item.currency"> </u-price>
+          <u-price :amount="item.discount" :currency="item.currency"></u-price>
         </small>
 
         <small class="d-block">

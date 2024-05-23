@@ -15,12 +15,12 @@
 <template>
   <div class="mb-4">
     <v-expand-transition>
-      <u-loading-progress v-if="busy" ></u-loading-progress>
+      <u-loading-progress v-if="busy"></u-loading-progress>
       <div v-else class="widget-box">
-
-        <s-widget-header title="Customer Screen" icon="cast"></s-widget-header>
+        <s-widget-header icon="cast" title="Customer Screen"></s-widget-header>
         <v-list-subheader>
-          You can convert any devices to a customer screen for your POS just by pasting the following link in its browser.
+          You can convert any devices to a customer screen for your POS just by
+          pasting the following link in its browser.
         </v-list-subheader>
         <u-qrcode
           v-if="qrcode_value"
@@ -29,8 +29,8 @@
             color: { dark: '#000', light: '#fff' },
           }"
           :value="qrcode_value"
-          style="max-width: 100%; border-radius: 12px"
           class="d-block mx-auto my-5"
+          style="max-width: 100%; border-radius: 12px"
         />
 
         <div class="widget-buttons">
@@ -65,7 +65,7 @@
       </div>
     </v-expand-transition>
 
-    <v-btn class="absolute-top-end" variant="text" icon @click="$emit('close')">
+    <v-btn class="absolute-top-end" icon variant="text" @click="$emit('close')">
       <v-icon>close</v-icon>
     </v-btn>
   </div>
@@ -77,7 +77,7 @@ import SWidgetHeader from "../../../../ui/widget/header/SWidgetHeader.vue";
 
 export default {
   name: "BPosDeviceCustomerScreen",
-  components: {SWidgetHeader},
+  components: { SWidgetHeader },
   emits: ["close", "add"],
   props: {
     shop: {

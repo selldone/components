@@ -42,7 +42,6 @@
 
 <script>
 import {
-  MultiFormatReader,
   BarcodeFormat,
   BrowserMultiFormatReader,
   DecodeHintType,

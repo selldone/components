@@ -18,6 +18,7 @@
       <div v-if="!collapsed || !autoCollapse">
         <u-smart-switch
           v-model="business"
+          :force-show-all="!readOnly"
           :readonly="readOnly"
           class="mt-3 mb-8"
           false-description="This wallet is designated for personal use. Billing will be based on your individual information."
@@ -26,7 +27,6 @@
           true-description="This wallet is designated for business use. Billing will be set based on your company's details."
           true-icon="business"
           true-title="Business"
-          :force-show-all="!readOnly"
         >
         </u-smart-switch>
       </div>
@@ -38,8 +38,8 @@
           <b-company-input
             v-model="company_id"
             :readOnly="readOnly"
-            :variant="readOnly?'underlined':'plain'"
             :return-object="false"
+            :variant="readOnly ? 'underlined' : 'plain'"
             auto-select-first
             class="flex-grow-1"
             has-add
@@ -47,13 +47,14 @@
           <v-btn
             v-if="autoCollapse"
             class="border-start ms-2"
-            width="52"
             height="52"
             rounded="0"
             title="View more details..."
-            @click="collapsed = !collapsed" variant="text"
+            variant="text"
+            width="52"
+            @click="collapsed = !collapsed"
           >
-            <v-icon size="32" :class="{ 'rotate-180': !collapsed }"
+            <v-icon :class="{ 'rotate-180': !collapsed }" size="32"
               >expand_more
             </v-icon>
           </v-btn>
@@ -75,14 +76,14 @@
           <v-btn
             v-if="autoCollapse"
             class="ms-2 border-start"
-            width="52"
             height="52"
             rounded="0"
-            variant="text"
             title="View more details..."
+            variant="text"
+            width="52"
             @click="collapsed = !collapsed"
           >
-            <v-icon size="32" :class="{ 'rotate-180': !collapsed }"
+            <v-icon :class="{ 'rotate-180': !collapsed }" size="32"
               >expand_more
             </v-icon>
           </v-btn>

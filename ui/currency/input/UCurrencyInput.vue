@@ -34,8 +34,8 @@
     :prepend-icon="prependIcon"
     :prepend-inner-icon="prependInnerIcon"
     :return-object="returnObject"
-    :single-line="singleLine"
     :rounded="rounded"
+    :single-line="singleLine"
     :theme="dark ? 'dark' : 'light'"
     :variant="
       variant

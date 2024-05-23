@@ -18,9 +18,10 @@
     v-model:menu="menu"
     v-model:search="search"
     :chips="multiple"
-    :closable-chips="multiple"
     :class="{ disabled: modelValue && busy && !category_obj }"
     :clearable="clearable"
+    :closable-chips="multiple"
+    :counter="counter"
     :customFilter="() => true"
     :disabled="disabled"
     :items="categories"
@@ -39,7 +40,6 @@
     item-value="id"
     messages=" "
     @update:model-value="$emit('change')"
-    :counter="counter"
   >
     <!-- ―――――――――――――――――― message ―――――――――――――――――― -->
 
@@ -66,19 +66,17 @@
       >
         <template v-slot:prepend>
           <u-avatar-folder
-            :size="42"
             :borderSize="5"
-            is-amber
-            hide-side-icon
-
             :placeholder-icon="item.raw.id ? 'folder' : 'home'"
+            :size="42"
             :src="
               item.raw.icon
                 ? getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL, null)
                 : null
             "
             :text-avatar="item.raw.title"
-
+            hide-side-icon
+            is-amber
           >
           </u-avatar-folder>
         </template>

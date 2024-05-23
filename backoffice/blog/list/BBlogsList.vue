@@ -51,7 +51,7 @@
 
   <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ List ━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
-  <v-data-table-server  :mobile="$vuetify.display.xs"
+  <v-data-table-server
     v-model:items-per-page="itemsPerPage"
     v-model:options="options"
     v-model:page="page"
@@ -61,6 +61,7 @@
     :items="articles"
     :items-length="totalItems"
     :loading-text="$t('admin_shop.blogs.list.waiting_message')"
+    :mobile="$vuetify.display.xs"
     :row-props="
       (_data) => {
         return { class: 'row-hover' };
@@ -128,9 +129,9 @@
 
       <v-avatar
         class="rounded-18px my-1 hover-scale-small"
+        color="#ccc"
         size="62"
         variant="outlined"
-        color="#ccc"
       >
         <v-img v-if="item.image" :src="getShopImagePath(item.image, 128)" cover>
           <template v-slot:placeholder>
@@ -185,27 +186,32 @@
     </template>
     <template v-else v-slot:item.views="{ item }">
       <div class="min-width-250 text-center d-flex justify-end">
-        <v-chip variant="flat" color="#fff" class="ma-1" size="small">
+        <v-chip class="ma-1" color="#fff" size="small" variant="flat">
           <v-icon start>favorite</v-icon>
           {{ numeralFormat(item.like, "0.[0] a") }}
         </v-chip>
 
-        <v-chip variant="flat" color="#fff" class="ma-1 position-relative"  size="small">
+        <v-chip
+          class="ma-1 position-relative"
+          color="#fff"
+          size="small"
+          variant="flat"
+        >
           <v-icon start>chat_bubble</v-icon>
 
           {{ numeralFormat(item.comments_count, "0.[0] a") }}
 
           <v-sheet
             v-if="item.new_comments_count > 0"
-            rounded="circle"
+            class="me-n2 ms-2"
             color="red"
             min-width="20"
-            class="me-n2 ms-2"
+            rounded="circle"
           >
             {{ item.new_comments_count }}
           </v-sheet>
         </v-chip>
-        <v-chip variant="flat" color="#fff" class="ma-1"  size="small">
+        <v-chip class="ma-1" color="#fff" size="small" variant="flat">
           <v-icon start>visibility</v-icon>
           {{ numeralFormat(item.views, "0.[0] a") }}
         </v-chip>
@@ -216,6 +222,9 @@
       <div class="d-flex justify-space-around flex-md-column text-center">
         <v-chip
           :color="item.published ? 'green' : '#FFA000'"
+          :prepend-icon="
+            item.published ? 'fa:fas fa-rss' : 'fa:fas fa-pencil-ruler'
+          "
           :text="
             item.published
               ? $t('admin_shop.blogs.list.published')
@@ -223,14 +232,14 @@
           "
           class="ma-1"
           size="x-small"
-          :prepend-icon="
-            item.published ? 'fa:fas fa-rss' : 'fa:fas fa-pencil-ruler'
-          "
         >
         </v-chip>
 
         <v-chip
           :color="item.private ? 'red' : 'primary'"
+          :prepend-icon="
+            item.private ? 'fa:fas fa-user-lock' : 'fa:fas fa-globe'
+          "
           :text="
             item.private
               ? $t('admin_shop.blogs.list.private')
@@ -238,9 +247,6 @@
           "
           class="ma-1"
           size="x-small"
-          :prepend-icon="
-            item.private ? 'fa:fas fa-user-lock' : 'fa:fas fa-globe'
-          "
         >
         </v-chip>
 
@@ -249,8 +255,8 @@
           :text="getLocalTimeString(item.schedule_at)"
           class="ma-1"
           color="#673AB7"
-          size="x-small"
           prepend-icon="watch_later"
+          size="x-small"
         >
         </v-chip>
       </div>
@@ -279,16 +285,16 @@
 
     <template v-slot:item.action="{ item }">
       <v-btn
+        :icon="$vuetify.display.mdAndUp"
         :to="{
           name: window.$storefront.routes.SHOP_BLOG_PAGE,
           params: { shop_name: shop.name, blog_id: item.parent_id },
         }"
+        class="my-1"
         color="primary"
-        :icon="$vuetify.display.mdAndUp"
         target="_blank"
         variant="text"
         @click.stop
-        class="my-1"
       >
         <template v-if="$vuetify.display.mdAndUp">
           <v-icon size="small">open_in_new</v-icon>
@@ -318,7 +324,7 @@ import BUserBox from "../../user/box/BUserBox.vue";
 
 export default {
   name: "BBlogsList",
-  components: {BUserBox, UAvatarFolder, SImagePlaceholder, BClusterInput },
+  components: { BUserBox, UAvatarFolder, SImagePlaceholder, BClusterInput },
   props: {
     shop: {
       required: true,
@@ -362,7 +368,7 @@ export default {
           sortable: false,
           value: "image",
           width: 100,
-          nowrap:true
+          nowrap: true,
         },
         {
           title: this.$t("admin_shop.blogs.list.table.title"),

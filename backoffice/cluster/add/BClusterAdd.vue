@@ -31,7 +31,10 @@
 
       <div class="widget-box mb-5">
         <s-widget-header icon="tune" title="General Config"></s-widget-header>
-        <v-list-subheader>Configure the cluster's name, description, and image here.</v-list-subheader>
+        <v-list-subheader
+          >Configure the cluster's name, description, and image
+          here.</v-list-subheader
+        >
 
         <v-text-field
           v-model="name"
@@ -57,7 +60,8 @@
           class="m-2"
           label="Description"
           placeholder="Write a short description..."
-          rows="2"      variant="underlined"
+          rows="2"
+          variant="underlined"
         >
         </v-textarea>
 
@@ -79,7 +83,8 @@
           class="m-2 mb-5"
           clearable
           label="Parent Cluster"
-          placeholder="Select a parent... (optional)"      variant="underlined"
+          placeholder="Select a parent... (optional)"
+          variant="underlined"
         >
         </b-cluster-input>
 
@@ -110,7 +115,8 @@
           color="primary"
           label="Cluster Icon"
           placeholder="Select an image... (optional)"
-          prepend-icon="attach_file"      variant="underlined"
+          prepend-icon="attach_file"
+          variant="underlined"
         />
       </div>
 

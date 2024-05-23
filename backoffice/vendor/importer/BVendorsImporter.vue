@@ -52,11 +52,11 @@
             title="Important checklist"
           ></s-widget-header>
           <v-list-subheader
-            >Make sure to follow the guideline.</v-list-subheader
-          >
+            >Make sure to follow the guideline.
+          </v-list-subheader>
           <v-list density="compact">
             <v-list-item>
-              <template   v-slot:prepend >
+              <template v-slot:prepend>
                 <v-icon color="primary">check_circle</v-icon>
               </template>
 
@@ -67,7 +67,7 @@
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
-              <template   v-slot:prepend >
+              <template v-slot:prepend>
                 <v-icon color="primary">check_circle</v-icon>
               </template>
 

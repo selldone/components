@@ -252,11 +252,10 @@ export default {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
-
 
     available_types() {
       return this.types.filter(

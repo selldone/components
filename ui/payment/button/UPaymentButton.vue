@@ -144,7 +144,6 @@ export default {
   max-width: 100%;
   text-align: start;
 
-
   &:before {
     width: var(--width);
     position: absolute;

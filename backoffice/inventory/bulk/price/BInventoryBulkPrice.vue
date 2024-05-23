@@ -245,7 +245,7 @@
       scrollable
       transition="dialog-bottom-transition"
     >
-      <v-card min-height="60vh" class="text-start">
+      <v-card class="text-start" min-height="60vh">
         <v-card-title></v-card-title>
 
         <v-card-text>

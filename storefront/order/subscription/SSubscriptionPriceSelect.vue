@@ -67,7 +67,10 @@
         <div class="d-flex align-center mnh">
           <div class="flex-grow-0 me-2">
             <v-icon
-              :size="plan.id === (returnObject ? modelValue?.id : modelValue) && 'large'"
+              :size="
+                plan.id === (returnObject ? modelValue?.id : modelValue) &&
+                'large'
+              "
               color="primary"
               >{{
                 plan.id === (returnObject ? modelValue?.id : modelValue)
@@ -160,7 +163,8 @@ export default {
       if (this.forceShowAll) return this.subscriptionPricesForSelectedCurrency;
       if (!this.modelValue) return this.subscriptionPricesForSelectedCurrency;
       const out = this.subscriptionPricesForSelectedCurrency.filter(
-        (i) => i.id === (this.returnObject ? this.modelValue.id : this.modelValue),
+        (i) =>
+          i.id === (this.returnObject ? this.modelValue.id : this.modelValue),
       );
       return out.length ? out : this.subscriptionPricesForSelectedCurrency;
     },

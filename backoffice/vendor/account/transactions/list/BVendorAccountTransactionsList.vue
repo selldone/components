@@ -46,7 +46,6 @@
       </v-row>
 
       <v-data-table-server
-        :mobile="$vuetify.display.xs"
         v-model:options="options"
         v-model:page="page"
         v-model:sort-by="sortBy"
@@ -56,6 +55,7 @@
         :items-length="totalItems"
         :items-per-page="itemsPerPage"
         :loading-text="$t('global.commons.waiting_load_data')"
+        :mobile="$vuetify.display.xs"
         class="bg-transparent min-height-60vh"
         density="compact"
         hide-default-footer

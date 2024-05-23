@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="b--valuation-form-structure-row">
-    <v-row align="center" no-gutters class="py-1">
+    <v-row align="center" class="py-1" no-gutters>
       <v-icon class="handle cursor-move" title="Drag and move">
         unfold_more
       </v-icon>
@@ -27,14 +27,14 @@
       <v-spacer></v-spacer>
 
       <v-btn
-          :title="$t('global.actions.delete')"
+        :class="{ 'rotate-180': !local_collapse }"
+        :title="$t('global.actions.delete')"
+        class="mx-2"
+        color="#fff"
+        icon
         size="small"
         variant="text"
-        color="#fff"
         @click="local_collapse = !local_collapse"
-        class="mx-2"
-        icon
-        :class="{ 'rotate-180': !local_collapse }"
       >
         <v-icon size="20">arrow_drop_down</v-icon>
       </v-btn>
@@ -52,18 +52,18 @@
 
           <v-text-field
             v-model="element.title"
-            persistent-placeholder
             :label="$t('global.form_builder.title_input')"
             :rules="[GlobalRules.required()]"
             color="primary"
             messages=" "
+            persistent-placeholder
             placeholder="Public label. Ex: Name, Prefer state, Description, ..."
+            variant="underlined"
             @blur="
               element.name = element.name
                 ? element.name
                 : slugify(element.title.substring(0, 32))
             "
-            variant="underlined"
           >
             <template v-slot:message>
               <u-smart-suggestion
@@ -92,57 +92,57 @@
 
           <v-text-field
             v-model="element.name"
+            :append-inner-icon="lock_name ? 'lock_open' : 'lock'"
+            :disabled="lock_name"
             :label="$t('global.form_builder.name_input')"
             :rules="[GlobalRules.counter(32), GlobalRules.required()]"
             color="primary"
             counter="32"
-            placeholder="Ex: name, state, desc, ..."
             hint="Unique name for the system."
-            variant="underlined"
-            :append-inner-icon="lock_name ? 'lock_open' : 'lock'"
-            @click:append-inner="lock_name = !lock_name"
-            :disabled="lock_name"
             persistent-placeholder
+            placeholder="Ex: name, state, desc, ..."
+            variant="underlined"
+            @click:append-inner="lock_name = !lock_name"
           />
 
           <template v-if="element.type === 'switch'">
             <hr />
             <v-text-field
               v-model="element.true_title"
+              append-inner-icon="check_circle_outline"
               color="primary"
               label="True value title"
-              variant="underlined"
               persistent-placeholder
               placeholder="Ex: Active, On, Yes, ..."
-              append-inner-icon="check_circle_outline"
+              variant="underlined"
             />
             <v-text-field
               v-model="element.true_desc"
+              append-inner-icon="check_circle_outline"
               color="primary"
               label="True value description"
-              variant="underlined"
               persistent-placeholder
               placeholder="Ex: I want to..."
-              append-inner-icon="check_circle_outline"
+              variant="underlined"
             />
 
             <v-text-field
               v-model="element.false_title"
+              append-inner-icon="highlight_off"
               color="primary"
               label="False value title"
-              variant="underlined"
               persistent-placeholder
               placeholder="Ex: Inactive, Off, No, ..."
-              append-inner-icon="highlight_off"
+              variant="underlined"
             />
             <v-text-field
               v-model="element.false_desc"
+              append-inner-icon="highlight_off"
               color="primary"
               label="False value description"
-              variant="underlined"
               persistent-placeholder
               placeholder="Ex: I don't want to..."
-              append-inner-icon="highlight_off"
+              variant="underlined"
             />
             <hr />
           </template>
@@ -156,11 +156,11 @@
               :messages="$t('global.form_builder.value_input_message')"
               :rules="[GlobalRules.required()]"
               chips
-              closable-chips
               clearable
+              closable-chips
               multiple
-              @update:model-value="$forceUpdate()"
               variant="underlined"
+              @update:model-value="$forceUpdate()"
             >
               <template v-slot:chip="{ item, props }">
                 <v-chip v-bind="props">
@@ -176,11 +176,11 @@
             v-if="element.type === 'switch'"
             v-model="element.default"
             :label="$t('global.form_builder.default')"
+            border
             false-icon="close"
             false-title="False"
             true-icon="check"
             true-title="True"
-            border
           >
           </u-smart-switch>
 
@@ -189,11 +189,11 @@
           <u-smart-switch
             v-if="element.type === 'number'"
             v-model="element.decimal"
+            border
             false-description="Ex. 10, 15, 18, ..."
             false-title="Integer"
             true-description="Ex. 12.5, 18.30, ... (Two floating digits are permitted!)"
             true-title="Decimal"
-            border
           >
           </u-smart-switch>
 
@@ -204,13 +204,13 @@
             :false-title="$t('global.actions.no')"
             :force-show-all="false"
             :true-title="$t('global.actions.yes')"
+            border
             class="my-3"
             false-description="It has no effect on the price."
             false-gray
             label="Valuation"
             true-description="It affects the price calculation."
             true-icon="functions"
-            border
           ></u-smart-switch>
 
           <!-- ▅▅▅▅▅▅▅▅▅ Pricing > Enable ▅▅▅▅▅▅▅▅▅ -->
@@ -223,6 +223,7 @@
               >
                 <u-smart-switch
                   v-model="element.sum"
+                  border
                   class="my-3"
                   false-description="Primary product cost multiplied by a constant. For example, to increase the price by 15%, it should be 1.15"
                   false-icon="close"
@@ -232,7 +233,6 @@
                   true-icon="add"
                   true-title="Sum"
                   @change="(sum) => setAction(element, sum)"
-                  border
                 >
                 </u-smart-switch>
 
@@ -322,8 +322,8 @@
                   hide-details
                   label="Input factor"
                   messages="Add user input value * Input factor to the price."
-                  @update:model-value="$forceUpdate()"
                   variant="underlined"
+                  @update:model-value="$forceUpdate()"
                 ></u-number-input>
 
                 <div>

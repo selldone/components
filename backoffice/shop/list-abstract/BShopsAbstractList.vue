@@ -40,8 +40,8 @@
         @click="$emit('select:shop', returnObject ? shop : shop.id)"
       >
         <v-card
+          :color="dark ? '#222' : '#eee'"
           class="d-flex align-center justify-center rounded-2rem widget-hover position-relative"
-          :color="dark?'#222':'#eee'"
           height="96"
           variant="outlined"
           width="96"
@@ -74,7 +74,7 @@
           color="blue"
           indeterminate
           size="48"
-          style="top: 24px; left: 24px;z-index: 3"
+          style="top: 24px; left: 24px; z-index: 3"
         ></v-progress-circular>
 
         <div class="text-ellipsis">

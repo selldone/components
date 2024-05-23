@@ -152,7 +152,7 @@
           <h4 class="text-h4">
             {{ numeralFormat(change_today, "0,0a") }}
 
-            <up-down-icon :value="change_today" small size="24"></up-down-icon>
+            <up-down-icon :value="change_today" size="24" small></up-down-icon>
           </h4>
           <div class="d-flex align-center justify-center mt-2">
             <v-icon class="me-1" size="x-small">fa:fas fa-calendar-day</v-icon>

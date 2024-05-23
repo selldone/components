@@ -177,9 +177,7 @@
           <v-card-title></v-card-title>
 
           <v-img
-            :src="
-              require('../onboarding/assets/help-button.jpg')
-            "
+            :src="require('../onboarding/assets/help-button.jpg')"
             class="mb-3"
             eager
             height="300px"
@@ -326,7 +324,8 @@
             <v-img
               :src="item.image"
               aspect-ratio="2"
-              class="  flex-grow-1" cover
+              class="flex-grow-1"
+              cover
             />
 
             <v-card-text class="flex-grow-1">

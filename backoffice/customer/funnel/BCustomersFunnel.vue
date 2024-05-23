@@ -55,20 +55,16 @@
         class="m-1"
         variant="flat"
         @click="downloadExcel()"
-        ><img
-          class="me-2"
-          src="../../../assets/file/excel.svg"
-          width="20"
-        />
+        ><img class="me-2" src="../../../assets/file/excel.svg" width="20" />
         {{ $t("global.actions.download") }}
       </v-btn>
 
       <b-customers-filter-design
+        :model-value="modelValue"
         :permanentFilters="permanentFilters"
         :segments="shop_segments"
         :shop="shop"
         :types="filter_types"
-        :model-value="modelValue"
         @update:model-value="(val) => $emit('update:modelValue', val)"
       ></b-customers-filter-design>
     </div>
@@ -242,10 +238,10 @@ export default {
               );
 
             /*  if(download_data){
-                  const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
-                  excel.downLoad();
-    
-                }*/
+                    const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
+                    excel.downLoad();
+      
+                  }*/
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

@@ -29,8 +29,9 @@
       <v-chip
         v-if="!transaction.livemode"
         class="mx-2 pointer-event-none my-1"
-        color="#fff" variant="flat"
+        color="#fff"
         size="small"
+        variant="flat"
       >
         <v-icon
           :color="transaction.livemode ? 'green' : 'amber'"
@@ -62,7 +63,8 @@
         <v-btn
           class="mx-2 my-1"
           color="primary"
-          size="small"  variant="elevated"
+          size="small"
+          variant="elevated"
           @click="
             TryToPayOrder(
               transaction.gateway_code,
@@ -85,7 +87,8 @@
         <v-btn
           class="mx-2 my-1"
           color="#fff"
-          size="small" variant="elevated"
+          size="small"
+          variant="elevated"
           @click="changePaymentMethod(transaction)"
         >
           <v-icon class="me-1" size="small">fa:fas fa-credit-card</v-icon>
@@ -112,10 +115,10 @@
             transaction.currency,
           )
         "
+        allow-image-transform
         auto-compact
         class="mt-2"
         max-file-size="16MB"
-        allow-image-transform
         @new-path="
           (path) => {
             transaction.billing_details = { receipt: path };

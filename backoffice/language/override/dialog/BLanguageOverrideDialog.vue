@@ -43,8 +43,8 @@
               label="Package"
               prepend-inner-icon="inbox"
               return-object
-              variant="solo"
               rounded
+              variant="solo"
             >
             </v-select>
             <v-spacer></v-spacer>
@@ -101,9 +101,9 @@
 
           <b-language-override-table
             v-if="pack_override && pack_default"
+            v-model="pack_override"
             :structure="pack_default"
             :to="language"
-            v-model="pack_override"
             dense
             nested
           ></b-language-override-table>

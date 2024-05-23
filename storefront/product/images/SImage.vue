@@ -14,23 +14,29 @@
 
 <template>
   <v-img
-    v-bind="$attrs"
     :alt="alt"
-    :cover="autoCover && white_background != null ? !white_background : cover"
-    :src="src"
-    :lazy-src="lazySrc"
     :aspect-ratio="aspectRatio"
+    :class="{ blurred: loading }"
+    :cover="autoCover && white_background != null ? !white_background : cover"
     :eager="eager"
     :height="height"
+    :lazy-src="lazySrc"
+    :src="src"
     :width="width"
-    @load="onImageLoad()"
-    @loadstart="loading=true"
     class="position-relative blur-animate"
-    :class="{'blurred':loading}"
+    v-bind="$attrs"
+    @load="onImageLoad()"
+    @loadstart="loading = true"
   >
     <slot></slot>
     <template v-slot:placeholder>
-      <v-progress-circular :color="444" class="op-0-5 center-absolute" indeterminate :size="84" :width="4" ></v-progress-circular>
+      <v-progress-circular
+        :color="444"
+        :size="84"
+        :width="4"
+        class="op-0-5 center-absolute"
+        indeterminate
+      ></v-progress-circular>
     </template>
   </v-img>
 </template>
@@ -55,8 +61,7 @@ export default {
 
   data: () => ({
     white_background: null,
-    loading:false,
-
+    loading: false,
   }),
 
   computed: {},
@@ -69,11 +74,11 @@ export default {
      * Detect image background is white or not
      */
     onImageLoad() {
-      this.loading=false;
+      this.loading = false;
       if (!this.detectWhiteBackground) return;
 
       this.$nextTick(() => {
-        try{
+        try {
           const imgElement = this.$el.querySelector("img");
 
           // Create a canvas and get the context
@@ -112,8 +117,8 @@ export default {
           } else {
             //  console.log("The background is not white.");
           }
-        }catch (e) {
-         // console.error(e)
+        } catch (e) {
+          // console.error(e)
         }
       });
     },

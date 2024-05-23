@@ -26,9 +26,6 @@
     :placeholder="placeholder"
     :return-object="returnObject"
     :rounded="rounded"
-    item-title="title"
-    item-value="id"
-    @update:model-value="(val) => $emit('update:modelValue', val)"
     :variant="
       variant
         ? variant
@@ -38,13 +35,16 @@
             ? 'outlined'
             : 'underlined'
     "
+    item-title="title"
+    item-value="id"
+    @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template v-slot:item="{ item, props }">
       <v-list-item
-        v-bind="props"
-        :title="item.raw.title"
         :subtitle="`@${item.raw.name}`"
+        :title="item.raw.title"
         class="text-start"
+        v-bind="props"
       >
         <template v-slot:prepend>
           <v-avatar size="32">
@@ -55,9 +55,9 @@
           <shop-license-view
             v-if="item.raw.license"
             :shop="item.raw"
+            class="mx-1"
             small
             view-only
-            class="mx-1"
           />
 
           <v-icon

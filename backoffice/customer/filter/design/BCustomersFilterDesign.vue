@@ -56,9 +56,9 @@
             icon
             size="small"
             title="Delete item"
+            variant="text"
             @click="deleteItem(index)"
             @click.stop
-            variant="text"
           >
             <v-icon color="red"> close</v-icon>
           </v-btn>
@@ -70,12 +70,12 @@
       <v-list-item
         v-for="item in available_types"
         :key="item.type"
-        :title="$t(item.title)"
-        :subtitle="$t(item.description)"
         :prepend-icon="item.icon"
+        :subtitle="$t(item.description)"
+        :title="$t(item.title)"
+        append-icon="add"
         variant="text"
         @click="addDialog(item.type)"
-        append-icon="add"
       >
       </v-list-item>
     </v-list>
@@ -225,7 +225,13 @@
             {{ $t("global.actions.close") }}
           </v-btn>
 
-          <v-btn color="primary" size="x-large" variant="elevated" @click="add" class="min-width-200">
+          <v-btn
+            class="min-width-200"
+            color="primary"
+            size="x-large"
+            variant="elevated"
+            @click="add"
+          >
             <v-icon start>save</v-icon>
 
             {{ $t("global.actions.set") }}
@@ -303,9 +309,7 @@ export default {
     },
   },
 
-  watch: {
-
-  },
+  watch: {},
 
   created() {
     if (!this.modelValue) this.$emit("update:modelValue", []);
@@ -317,7 +321,6 @@ export default {
         this.permanentFilters.some((item) => item.type === filter.type)
       );
     },
-
 
     deleteItem(index) {
       this.modelValue.splice(index, 1);
@@ -338,7 +341,6 @@ export default {
       if (!this.types[item.type]) return null;
       return this.$t(this.types[item.type].title);
     },
-
 
     addDialog(type) {
       this.add_type = this.types[type];

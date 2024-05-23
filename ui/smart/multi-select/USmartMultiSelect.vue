@@ -34,7 +34,9 @@
         <div class="d-flex align-center mnh">
           <div class="position-relative me-2" style="min-width: 32px">
             <v-icon
-              :class="{ 'avatar-gradient': modelValue.includes(task[itemValue]) }"
+              :class="{
+                'avatar-gradient': modelValue.includes(task[itemValue]),
+              }"
               class="-thin -gray flex-grow-0 h-auto center-absolute"
               color="primary"
               size="24"

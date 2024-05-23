@@ -14,32 +14,34 @@
 
 <template>
   <v-bottom-sheet
+    :max-width="840"
     :model-value="modelValue"
     :theme="light ? 'light' : 'dark'"
     content-class="rounded-t-xl"
-    :max-width="840"
     scrollable
     width="96%"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <v-card
       :color="light ? '#fff' : '#111'"
-      :title="$t('extra_pricing_add_dialog.title',{min:clone_extra_pricing.min})"
+      :title="
+        $t('extra_pricing_add_dialog.title', { min: clone_extra_pricing.min })
+      "
       class="rounded-t-xl text-start"
       prepend-icon="money"
     >
       <v-card-text>
         <div class="pb-5">
-          {{$t('extra_pricing_add_dialog.subtitle')}}
+          {{ $t("extra_pricing_add_dialog.subtitle") }}
         </div>
 
         <u-number-input
           v-model="clone_extra_pricing.min"
           :dark="!light"
+          :label="$t('extra_pricing_add_dialog.min_quantity')"
           :min="2"
           :text-center="false"
           class="sm-suffix price-input strong-field"
-          :label="$t('extra_pricing_add_dialog.min_quantity')"
           required
           variant="underlined"
         ></u-number-input>
@@ -77,6 +79,7 @@
             class="sm-suffix price-input strong-field"
             label="Vendor price"
             required
+            variant="underlined"
             @blur="
               () => {
                 if (vendorProduct?.pricing) {
@@ -86,7 +89,6 @@
                 }
               }
             "
-            variant="underlined"
           >
             <template v-slot:append-inner>
               <v-icon class="mt-2">storefront</v-icon>

@@ -67,14 +67,14 @@
           </v-list-subheader>
 
           <v-list
+            bg-color="transparent"
             class="border-between-vertical"
             density="compact"
-            bg-color="transparent"
           >
             <v-list-item
+              prepend-icon="inventory"
               title="Show list of assigned products."
               @click="show_products = !show_products"
-              prepend-icon="inventory"
             >
               <v-list-item-title class="font-weight-bold">
                 Products
@@ -138,8 +138,8 @@
 
           <u-smart-suggestion
             :samples="$tm('suggestions.map_tag.title')"
-            @select="(v) => (currentItem.title = v)"
             class="mb-5"
+            @select="(v) => (currentItem.title = v)"
           >
           </u-smart-suggestion>
 

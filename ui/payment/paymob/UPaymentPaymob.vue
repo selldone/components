@@ -15,7 +15,6 @@
 <template>
   <div class="position-relative min-height-60vh my-5">
     <v-tabs v-model="tab" class="mx-n5" height="84" stacked>
-
       <v-tab
         v-for="item in tabs"
         :key="item.title"

@@ -50,22 +50,14 @@
               icon="discount"
             ></s-widget-header>
 
-
             <v-list-subheader>
               {{ $t("inventory_list.bulk_discount_dialog.message") }}
             </v-list-subheader>
 
-
-
-
             <b-inventory-price-preview multiple price-color="#C2185B">
               <u-chip-discount :percent="bulk_percent" show-zero size="x-large">
-
               </u-chip-discount>
             </b-inventory-price-preview>
-
-
-
 
             <u-number-input
               v-model="bulk_percent"
@@ -144,11 +136,7 @@
 
               <div class="flex-grow-1 overflow-hidden">
                 <b>{{ category.title }}</b>
-                <b-category-parent
-                  :category="category"
-                  class="d-block"
-                  small
-                >
+                <b-category-parent :category="category" class="d-block" small>
                 </b-category-parent>
               </div>
             </div>
@@ -173,7 +161,7 @@
 
             <!-- ━━━━━━━━━━━━━━━━━━ Confirmation ━━━━━━━━━━━━━━━━━━ -->
 
-            <hr class="hr-dashed">
+            <hr class="hr-dashed" />
 
             <u-smart-verify
               v-model="bulk_check"

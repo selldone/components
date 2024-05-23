@@ -16,6 +16,7 @@
   <div>
     <v-toolbar
       v-if="!$store.getters.getIsNative"
+      :class="{ 'text-white': is_dark, '-dark': is_dark }"
       :color="
         color
           ? color
@@ -25,12 +26,11 @@
               ? 'var(--background)'
               : SaminColorDark
       "
-      :theme="is_dark ? 'dark' : 'light'"
-      :class="{ 'text-white': is_dark, '-dark': is_dark }"
       :extended="!overlay"
       :style="{
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
       }"
+      :theme="is_dark ? 'dark' : 'light'"
       class="s--storefront-primary-header"
       extension-height="64px"
       flat
@@ -146,13 +146,13 @@
           <v-slide-y-reverse-transition group leave-absolute>
             <v-btn
               v-if="!busy_user && USER()"
+              key="kav1"
               :color="is_light_header ? '#ddd' : SaminColorDarkDeep"
               :loading="busy_logout"
               class="me-1 mt-1 hover-shadow"
               height="42"
               rounded
               variant="outlined"
-              key="kav1"
             >
               <v-icon :color="is_light_header ? '#222' : '#fff'" start
                 >menu
@@ -167,14 +167,14 @@
               <v-menu
                 v-model="menu"
                 :close-on-content-click="true"
-                :min-width="280"
-                width="80vw"
                 :max-width="460"
-                open-on-click
-                z-index="99999999"
+                :min-width="280"
                 activator="parent"
+                open-on-click
+                width="80vw"
+                z-index="99999999"
               >
-                <v-card flat rounded="xl" color="#f8f8f8">
+                <v-card color="#f8f8f8" flat rounded="xl">
                   <v-card-text>
                     <div class="d-flex text-start align-center">
                       <v-avatar
@@ -237,8 +237,8 @@
                   <s-shop-user-menu-list
                     v-if="shop"
                     :shop="shop"
-                    @click:logout="logout()"
                     class="mx-4 my-2"
+                    @click:logout="logout()"
                   ></s-shop-user-menu-list>
 
                   <!-- ―――――――――― Extra links ―――――――――― -->
@@ -252,14 +252,14 @@
                     >
                       <v-col
                         v-if="has_avocado"
-                        cols="4"
                         class="d-flex flex-column align-center"
+                        cols="4"
                       >
                         <v-btn
                           :to="{ name: 'AvocadoPage' }"
                           icon
-                          variant="text"
                           size="large"
+                          variant="text"
                         >
                           <img
                             height="24"
@@ -271,14 +271,14 @@
                       </v-col>
                       <v-col
                         v-if="has_hyper"
-                        cols="4"
                         class="d-flex flex-column align-center"
+                        cols="4"
                       >
                         <v-btn
                           :to="{ name: window.$storefront.routes.HYPER_PAGE }"
                           icon
-                          variant="text"
                           size="large"
+                          variant="text"
                         >
                           <img
                             height="24"
@@ -292,14 +292,14 @@
                       </v-col>
                       <v-col
                         v-if="has_insta"
-                        cols="4"
                         class="d-flex flex-column align-center"
+                        cols="4"
                       >
                         <v-btn
                           :to="{ name: 'InstagramPage' }"
                           icon
-                          variant="text"
                           size="large"
+                          variant="text"
                         >
                           <img
                             height="24"
@@ -341,8 +341,8 @@
               :loading="!shop"
               class="s--storefront-primary-header-login-button"
               roundedripple
-              @click.stop="NeedLogin()"
               variant="elevated"
+              @click.stop="NeedLogin()"
             >
               <v-icon class="me-2" size="small"> login</v-icon>
               <div v-if="!!shop">
@@ -372,13 +372,12 @@
 
     <v-navigation-drawer
       v-model="show_basket"
+      :class="{ 'ma-2': show_basket }"
       :location="!$vuetify.locale.isRtl ? 'right' : undefined"
-      :width="Math.min(640,window.innerWidth*0.86)"
+      :width="Math.min(640, window.innerWidth * 0.86)"
       class="s--storefront-primary-header-basket-navigation t-all-400"
-      :class="{'ma-2':show_basket}"
       color="#fff"
       temporary
-
     >
       <div class="d-flex flex-column" style="min-height: 100%">
         <v-btn
@@ -646,9 +645,9 @@ export default {
       }
     },
 
-    show_basket(value){
+    show_basket(value) {
       this.$store.commit("setForceHideNavigation", value);
-    }
+    },
   },
 
   created() {},

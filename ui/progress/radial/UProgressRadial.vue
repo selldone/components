@@ -13,10 +13,7 @@
   -->
 
 <template>
-  <div
-    :style="containerStyle"
-    class="radial-progress-container"
-  >
+  <div :style="containerStyle" class="radial-progress-container">
     <div :style="innerCircleStyle" class="radial-progress-inner">
       <slot />
     </div>

@@ -19,7 +19,8 @@
       :loading="busy_delete === courier.id"
       class="absolute-top-end sub-caption -hover"
       color="red"
-      icon variant="text"
+      icon
+      variant="text"
       @click="deletePerson(courier)"
     >
       <v-icon>close</v-icon>
@@ -87,8 +88,9 @@
             :caption="$t('global.actions.reset')"
             :loading="busy_reset === courier.id"
             class="m-1 sub-caption -hover"
-            icon variant="text"
+            icon
             size="small"
+            variant="text"
             @click="resetPerson(courier)"
           >
             <v-icon>refresh</v-icon>
@@ -274,4 +276,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

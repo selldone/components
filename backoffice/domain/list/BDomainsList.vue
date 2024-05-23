@@ -72,7 +72,6 @@
     </div>
 
     <v-data-table-server
-      :mobile="$vuetify.display.xs"
       v-if="$vuetify.display.smAndUp || show_domains || showHeader || search"
       v-model:expanded="expanded"
       v-model:options="options"
@@ -84,6 +83,7 @@
       :items="shop_domains"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
+      :mobile="$vuetify.display.xs"
       class="bg-transparent"
       density="compact"
       hide-default-footer
@@ -132,8 +132,8 @@
               </v-icon>
               <v-icon
                 v-else
-                size="small"
                 class="me-2"
+                size="small"
                 title="Not secure! Issue SSL for this domain."
               >
                 no_encryption_gmailerrorred
@@ -151,9 +151,9 @@
                   <v-tooltip
                     activator="parent"
                     color="#111"
+                    content-class="text-start"
                     location="bottom"
                     max-width="360"
-                    content-class="text-start"
                   >
                     <b class="d-block">Error</b>
                     <div v-html="item.error"></div>
@@ -177,8 +177,8 @@
                   <v-tooltip
                     activator="parent"
                     color="#111"
-                    location="bottom"
                     content-class="text-start"
+                    location="bottom"
                   >
                     <div>Waiting...</div>
                   </v-tooltip>
@@ -238,10 +238,10 @@
                     ?.convertToLocalDate(item.certificate['Expiry Date'])
                     ?.isBeforeToday()
                 "
-                size="x-small"
-                color="red"
                 class="ms-2 me-n2"
+                color="red"
                 prepend-icon="error"
+                size="x-small"
               >
                 Expire
               </v-chip>
@@ -350,10 +350,10 @@
               <v-chip
                 v-if="item.primary || !item.domain.home"
                 class="tnt"
-                size="x-small"
                 label
-                variant="tonal"
                 prepend-icon="home"
+                size="x-small"
+                variant="tonal"
                 >Default Home
               </v-chip>
             </div>

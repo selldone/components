@@ -28,9 +28,7 @@
       <v-card-text>
         <p>Save your file in the UTF8 format.</p>
         <img
-          :src="
-            require('../../spreadsheet/assets/excel-utf8-save.png')
-          "
+          :src="require('../../spreadsheet/assets/excel-utf8-save.png')"
           height="auto"
           style="aspect-ratio: 1.4; object-fit: contain"
           width="100%"

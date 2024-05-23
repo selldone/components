@@ -24,8 +24,6 @@
       </s-widget-header>
       <v-list-subheader>
         {{ $t("add_product.edit_spec.subtitle") }}
-
-
       </v-list-subheader>
       <b-product-spec-table
         :class="{ disabled: add_by_dropShipping }"
@@ -59,12 +57,11 @@
 
       <template v-if="!add_by_dropShipping">
         <s-widget-header
-          icon="format_list_bulleted_add"
           :title="$t('add_product.edit_spec.manual.title')"
+          icon="format_list_bulleted_add"
         ></s-widget-header>
         <v-list-subheader>
-
-          {{$t('add_product.edit_spec.manual.subtitle')}}
+          {{ $t("add_product.edit_spec.manual.subtitle") }}
         </v-list-subheader>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Add Group ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -81,7 +78,9 @@
                 <v-icon start>create_new_folder</v-icon>
 
                 <div>
-                  <b>   {{$t('add_product.edit_spec.manual.add_group_action')}}</b>
+                  <b>
+                    {{ $t("add_product.edit_spec.manual.add_group_action") }}</b
+                  >
                   <div
                     class="d-flex align-center justify-content-around mt-1 min-width-150"
                   >
@@ -152,7 +151,9 @@
               <v-btn color="#000" size="x-large" v-bind="props" variant="flat">
                 <v-icon start>post_add</v-icon>
                 <div>
-                  <b>{{$t('add_product.edit_spec.manual.add_item_action')}}</b>
+                  <b>{{
+                    $t("add_product.edit_spec.manual.add_item_action")
+                  }}</b>
                   <div
                     class="d-flex align-center justify-content-around mt-1 min-width-150"
                   >
@@ -244,7 +245,9 @@
             <div>
               {{ $t("add_product.edit_spec.import.action_title") }}
 
-              <div class="small mt-1">{{ $t("add_product.edit_spec.import.action_subtitle") }} </div>
+              <div class="small mt-1">
+                {{ $t("add_product.edit_spec.import.action_subtitle") }}
+              </div>
             </div>
           </v-btn>
         </div>
@@ -253,16 +256,18 @@
 
         <div class="dashed-hr my-2 mx-n5"></div>
 
-        <s-widget-header icon="auto_fix_high" :title="$t('add_product.edit_spec.ai.title')"></s-widget-header>
+        <s-widget-header
+          :title="$t('add_product.edit_spec.ai.title')"
+          icon="auto_fix_high"
+        ></s-widget-header>
 
         <v-list-subheader>
-
-          {{$t('add_product.edit_spec.ai.subtitle')}}
+          {{ $t("add_product.edit_spec.ai.subtitle") }}
         </v-list-subheader>
 
         <u-button-ai-large
-          :sub-title="$t('add_product.edit_spec.ai.action_subtitle') "
-          :title="$t('add_product.edit_spec.ai.action_title') "
+          :sub-title="$t('add_product.edit_spec.ai.action_subtitle')"
+          :title="$t('add_product.edit_spec.ai.action_title')"
           @select="
             dialog_ai = true;
             prompt = null;
@@ -293,17 +298,15 @@
         </v-icon>
       </v-btn>
     </s-widget-buttons>
-
   </div>
-
 
   <!-- ████████████████████ Dialog > Import Spec ████████████████████ -->
 
   <v-dialog
-      v-model="dialog_import"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
+    v-model="dialog_import"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
   >
     <v-card>
       <v-card-title class="d-flex align-center">
@@ -321,19 +324,16 @@
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Dialog Wizard > Select product ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <v-container
-            class="mx-auto min-height-50vh"
-            style="max-width: 1720px"
-        >
+        <v-container class="mx-auto min-height-50vh" style="max-width: 1720px">
           <b-products-window
-              v-if="dialog_import"
-              :hash="$route.hash"
-              :shop="shop"
-              :vendor="product.vendor"
-              compact-mode
-              dialog-mode
-              set="spec"
-              @select="selectProduct"
+            v-if="dialog_import"
+            :hash="$route.hash"
+            :shop="shop"
+            :vendor="product.vendor"
+            compact-mode
+            dialog-mode
+            set="spec"
+            @select="selectProduct"
           />
         </v-container>
 
@@ -343,18 +343,17 @@
           <div v-if="spec_selected">
             <div class="widget-box -large mb-5">
               <s-widget-header
-                  :title="$t('add_product.edit_spec.dialog.spec_view_title')"
-                  icon="info_outline"
+                :title="$t('add_product.edit_spec.dialog.spec_view_title')"
+                icon="info_outline"
               >
               </s-widget-header>
               <v-list-subheader
-              >The specifications have been imported from the chosen
-                product.
+                >The specifications have been imported from the chosen product.
               </v-list-subheader>
 
               <b-product-spec-table
-                  :spec="spec_selected"
-                  class="min-height-10vh"
+                :spec="spec_selected"
+                class="min-height-10vh"
               ></b-product-spec-table>
             </div>
           </div>
@@ -368,15 +367,15 @@
             {{ $t("global.actions.cancel") }}
           </v-btn>
           <v-btn
-              :class="{ disabled: !spec_selected }"
-              color="primary"
-              size="x-large"
-              @click="
-                () => {
-                  safeSetSpec(spec_selected);
-                  dialog_import = false;
-                }
-              "
+            :class="{ disabled: !spec_selected }"
+            color="primary"
+            size="x-large"
+            @click="
+              () => {
+                safeSetSpec(spec_selected);
+                dialog_import = false;
+              }
+            "
           >
             <v-icon class="me-1">copy_all</v-icon>
             {{ $t("add_product.edit_spec.dialog.set_spec_action") }}
@@ -389,10 +388,10 @@
   <!-- ████████████████████ Dialog > AI ████████████████████ -->
 
   <v-dialog
-      v-model="dialog_ai"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
+    v-model="dialog_ai"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
   >
     <v-card>
       <v-card-title class="d-flex align-center">
@@ -407,41 +406,41 @@
           <s-widget-header icon="mode_comment" title="Prompt">
             <template v-slot:actions>
               <b-ai-model-input
-                  v-model="ai_model"
-                  background-color="transparent"
-                  class="max-w-300"
-                  flat
-                  hide-details
-                  label="label"
-                  single-line
-                  variant="plain"
+                v-model="ai_model"
+                background-color="transparent"
+                class="max-w-300"
+                flat
+                hide-details
+                label="label"
+                single-line
+                variant="plain"
               >
               </b-ai-model-input>
             </template>
           </s-widget-header>
 
           <v-list-subheader>
-            Please input a concise overview of the product, including
-            essential and notable details. We will utilize this information to
+            Please input a concise overview of the product, including essential
+            and notable details. We will utilize this information to
             automatically generate the product's specifications.
           </v-list-subheader>
 
           <v-textarea
-              v-model="prompt"
-              :counter="1024"
-              class="my-5"
-              label="Product Raw Info"
-              persistent-placeholder
-              placeholder="Write about the product..."
-              variant="underlined"
+            v-model="prompt"
+            :counter="1024"
+            class="my-5"
+            label="Product Raw Info"
+            persistent-placeholder
+            placeholder="Write about the product..."
+            variant="underlined"
           ></v-textarea>
 
           <u-button-ai-large
-              :class="{ disabled: !prompt }"
-              :loading="busy_ai"
-              sub-title="Start create product specifications by abstract prompt."
-              title="Auto Generate Now"
-              @select="autoGenerateAI"
+            :class="{ disabled: !prompt }"
+            :loading="busy_ai"
+            sub-title="Start create product specifications by abstract prompt."
+            title="Auto Generate Now"
+            @select="autoGenerateAI"
           >
           </u-button-ai-large>
         </div>
@@ -451,18 +450,15 @@
         <v-expand-transition>
           <div v-if="spec_generated">
             <div class="widget-box -large mb-5">
-              <s-widget-header
-                  icon="info_outline"
-                  title="Auto generated spec"
-              >
+              <s-widget-header icon="info_outline" title="Auto generated spec">
               </s-widget-header>
               <v-list-subheader
-              >This content has been generated by artificial intelligence.
+                >This content has been generated by artificial intelligence.
               </v-list-subheader>
 
               <b-product-spec-table
-                  :spec="spec_generated"
-                  class="min-height-10vh"
+                :spec="spec_generated"
+                class="min-height-10vh"
               ></b-product-spec-table>
             </div>
           </div>
@@ -476,16 +472,16 @@
             {{ $t("global.actions.cancel") }}
           </v-btn>
           <v-btn
-              :class="{ disabled: !spec_generated }"
-              color="primary"
-              size="x-large"
-              variant="outlined"
-              @click="
-                () => {
-                  safeSetSpec(spec_generated);
-                  dialog_ai = false;
-                }
-              "
+            :class="{ disabled: !spec_generated }"
+            color="primary"
+            size="x-large"
+            variant="outlined"
+            @click="
+              () => {
+                safeSetSpec(spec_generated);
+                dialog_ai = false;
+              }
+            "
           >
             <v-icon class="me-1">copy_all</v-icon>
             Add generated spec

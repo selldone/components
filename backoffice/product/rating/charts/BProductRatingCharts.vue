@@ -15,7 +15,7 @@
 <template>
   <s-widget-box
     :icon-to="{
-      name:IS_VENDOR_PANEL?'Vendor_AddProduct': 'BPageProductEdit',
+      name: IS_VENDOR_PANEL ? 'Vendor_AddProduct' : 'BPageProductEdit',
       params: { product_id: product.id },
       hash: '#rating',
     }"
@@ -203,11 +203,10 @@ export default {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
-
 
     todayData() {
       return this.timeSeries.todayData();

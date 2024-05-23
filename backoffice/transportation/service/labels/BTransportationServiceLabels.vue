@@ -161,10 +161,7 @@
           <span class="dashed-flex-space"></span>
 
           <!-- Show normal pricing -->
-          <u-price
-            :amount="item.price"
-            :currency="item.currency"
-          ></u-price>
+          <u-price :amount="item.price" :currency="item.currency"></u-price>
         </div>
 
         <div class="d-flex align-center text-muted small py-1">

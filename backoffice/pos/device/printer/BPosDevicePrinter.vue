@@ -16,7 +16,7 @@
   <div class="mb-4">
     <u-loading-progress v-if="busy"></u-loading-progress>
     <div v-else class="widget-box">
-      <s-widget-header title="Receipt Printer" icon="print"></s-widget-header>
+      <s-widget-header icon="print" title="Receipt Printer"></s-widget-header>
       <v-list-subheader>
         You can add printer devices to your POS.
       </v-list-subheader>

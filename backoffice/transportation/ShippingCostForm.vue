@@ -31,7 +31,7 @@
         variant="solo"
       >
         <template v-if="selected_state" v-slot:prepend-inner>
-          <s-state-flag class="me-2" :country="country" :region="selected_state"
+          <s-state-flag :country="country" :region="selected_state" class="me-2"
             >{{ selected_state }}
           </s-state-flag>
         </template>
@@ -42,14 +42,14 @@
             v-if="modelValue.states && modelValue.states[item.raw.code]"
             class="mx-2"
             color="blue"
-            variant="flat"
             label
             size="x-small"
+            variant="flat"
             >override
           </v-chip>
         </template>
         <template v-slot:item="{ item, props }">
-          <v-list-item v-bind="props" class="text-start">
+          <v-list-item class="text-start" v-bind="props">
             <template v-slot:title>
               <s-state-flag
                 :country="country"
@@ -63,9 +63,9 @@
                 v-if="modelValue.states && modelValue.states[item.raw.code]"
                 class="mx-2"
                 color="blue"
-                variant="flat"
                 label
                 size="x-small"
+                variant="flat"
                 >override
               </v-chip>
             </template>
@@ -230,7 +230,7 @@
             variant="text"
             @click="removeOverrideState(selected_state)"
           >
-            <v-icon start color="red">close</v-icon>
+            <v-icon color="red" start>close</v-icon>
             Set default shipping for
             <b>{{ selected_state }}</b></v-btn
           >
@@ -240,8 +240,8 @@
         <div class="text-green">● Default country profile</div>
         <v-btn
           class="nbt"
-          @click="addOverrideState(selected_state)"
           variant="elevated"
+          @click="addOverrideState(selected_state)"
         >
           <v-icon start>edit_square</v-icon>
           Override shipping for

@@ -16,15 +16,15 @@
   <div>
     <!-- ███████████████████████ Dialog ███████████████████████ -->
     <v-dialog
-        v-model="show"
-        fullscreen
-        scrollable
-        transition="dialog-bottom-transition"
+      v-model="show"
+      fullscreen
+      scrollable
+      transition="dialog-bottom-transition"
     >
       <v-card class="text-start">
         <v-card-title>
           <v-avatar class="me-2" size="36">
-            <img :src="getShopImagePath(shop.icon, 64)"/>
+            <img :src="getShopImagePath(shop.icon, 64)" />
           </v-avatar>
 
           {{ $t("share_order.retrieve_dialog_title") }}
@@ -33,7 +33,7 @@
           <v-container>
             <div v-if="user" class="d-flex align-center mb-2">
               <v-avatar class="me-2 avatar-gradient -thin -user">
-                <img :src="getUserAvatar(user.id, 64)"/>
+                <img :src="getUserAvatar(user.id, 64)" />
               </v-avatar>
               <div class="flex-grow-1">
                 <b class="d-block">{{ user.name }}</b>
@@ -46,8 +46,8 @@
                 <template v-slot:prepend>
                   <v-avatar tile>
                     <v-img
-                        v-if="item.product.icon"
-                        :src="getShopImagePath(item.product.icon, 64)"
+                      v-if="item.product.icon"
+                      :src="getShopImagePath(item.product.icon, 64)"
                     ></v-img>
                     <v-icon v-else color="#ddd">inventory</v-icon>
                   </v-avatar>
@@ -55,12 +55,12 @@
 
                 <v-list-item-title>
                   <router-link
-                      :to="{
+                    :to="{
                       name: window.$storefront.routes.PRODUCT_PAGE,
                       params: { product_id: item.product_id },
                       query: { variant_id: item.variant_id },
                     }"
-                      target="_blank"
+                    target="_blank"
                   >
                     <b>{{ item.product.title }}</b>
                   </router-link>
@@ -70,8 +70,8 @@
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
                   <variant-item-view-micro
-                      v-if="item.variant"
-                      :product-variant="item.variant"
+                    v-if="item.variant"
+                    :product-variant="item.variant"
                   ></variant-item-view-micro>
                 </v-list-item-subtitle>
 
@@ -81,25 +81,25 @@
 
                 <v-list-item-action>
                   <u-price
-                      :amount="item.price"
-                      :currency="item.currency"
+                    :amount="item.price"
+                    :currency="item.currency"
                   ></u-price>
                 </v-list-item-action>
               </v-list-item>
             </v-list>
 
             <s-shop-customer-receiver-info-widget
-                v-if="receiver_info"
-                :receiver-info="receiver_info"
-                class="mt-5"
+              v-if="receiver_info"
+              :receiver-info="receiver_info"
+              class="mt-5"
             ></s-shop-customer-receiver-info-widget>
 
             <div class="widget-buttons my-5">
               <v-btn
-                  :loading="busy_import"
-                  color="primary"
-                  size="x-large"
-                  @click="importOrder"
+                :loading="busy_import"
+                color="primary"
+                size="x-large"
+                @click="importOrder"
               >
                 <v-icon class="me-1">shopping_cart_checkout</v-icon>
                 {{ $t("share_order.import_order_action") }}
@@ -124,11 +124,11 @@
 <script>
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import SShopCustomerReceiverInfoWidget from "../../../storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
-import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "SStorefrontRetrieveShareOrder",
-  components: {SShopCustomerReceiverInfoWidget, VariantItemViewMicro},
+  components: { SShopCustomerReceiverInfoWidget, VariantItemViewMicro },
   props: {
     shop: {
       require: true,
@@ -150,11 +150,10 @@ export default {
   computed: {
     retrieve_link() {
       return this.$route.query.retrieve
-          ?.replace(/[_]/g, "/")
-          .replace(/[~]/g, "?")
-          .replace(/[|]/g, "&");
+        ?.replace(/[_]/g, "/")
+        .replace(/[~]/g, "?")
+        .replace(/[|]/g, "&");
     },
-
   },
   watch: {
     retrieve_link() {
@@ -166,35 +165,34 @@ export default {
     if (this.retrieve_link) this.fetch();
   },
 
-
   methods: {
     fetch() {
       this.busy = true;
 
       axios
-          .get(this.retrieve_link)
-          .then(({data}) => {
-            if (!data.error) {
-              this.type = data.type;
-              this.items = data.items;
-              this.receiver_info = data.receiver_info;
-              this.user = data.user;
-              this.show = true;
-            } else {
-              this.showErrorAlert(null, data.error_msg);
-            }
-          })
-          .catch((error) => {
-            this.showLaravelError(error);
-          })
-          .finally(() => {
-            this.busy = false;
-          });
+        .get(this.retrieve_link)
+        .then(({ data }) => {
+          if (!data.error) {
+            this.type = data.type;
+            this.items = data.items;
+            this.receiver_info = data.receiver_info;
+            this.user = data.user;
+            this.show = true;
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy = false;
+        });
     },
     importOrder() {
       if (
-          !this.USER() &&
-          !ShopOptionsHelper.HasGuestCheckout(this.shop) /*🥶 Guest*/
+        !this.USER() &&
+        !ShopOptionsHelper.HasGuestCheckout(this.shop) /*🥶 Guest*/
       ) {
         this.NeedLogin();
         return;
@@ -203,34 +201,34 @@ export default {
       this.busy_import = true;
 
       axios
-          .post(window.XAPI.POST_BASKET_IMPORT(this.shop_name, this.type), {
-            currency: this.GetUserSelectedCurrency().code,
-            items: this.items,
-            receiver_info: this.receiver_info,
-          })
-          .then(({data}) => {
-            if (!data.error) {
-              this.showSuccessAlert(
-                  "Import completed",
-                  "Items in your cart has been replaced by new items.",
-              );
-              this.show = false;
-              this.$router.push({
-                name: window.$storefront.routes.BASKET_PAGE,
-                params: {type: data.basket.type},
-              });
+        .post(window.XAPI.POST_BASKET_IMPORT(this.shop_name, this.type), {
+          currency: this.GetUserSelectedCurrency().code,
+          items: this.items,
+          receiver_info: this.receiver_info,
+        })
+        .then(({ data }) => {
+          if (!data.error) {
+            this.showSuccessAlert(
+              "Import completed",
+              "Items in your cart has been replaced by new items.",
+            );
+            this.show = false;
+            this.$router.push({
+              name: window.$storefront.routes.BASKET_PAGE,
+              params: { type: data.basket.type },
+            });
 
-              this.fetchBasketAndShop();
-            } else {
-              this.showErrorAlert(null, data.error_msg);
-            }
-          })
-          .catch((error) => {
-            this.showLaravelError(error);
-          })
-          .finally(() => {
-            this.busy_import = false;
-          });
+            this.fetchBasketAndShop();
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_import = false;
+        });
     },
   },
 };

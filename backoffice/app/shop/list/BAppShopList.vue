@@ -16,7 +16,11 @@
   <div>
     <v-container fluid grid-list-md>
       <v-row align="center" justify="center">
-        <u-loading-ellipsis v-if="busy_fetch" css-mode light></u-loading-ellipsis>
+        <u-loading-ellipsis
+          v-if="busy_fetch"
+          css-mode
+          light
+        ></u-loading-ellipsis>
 
         <div v-else-if="!filtered_shop_apps || !filtered_shop_apps.length">
           <v-alert
@@ -36,9 +40,9 @@
           :key="shop_app.id"
           :shop="shop"
           :shop-app="shop_app"
+          :small="small"
           class="ma-2"
           @delete="DeleteItemByID(shop_apps, shop_app.id)"
-          :small="small"
         >
         </b-app-shop-icon>
       </v-row>

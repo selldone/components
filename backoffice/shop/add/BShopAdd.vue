@@ -78,8 +78,8 @@
             v-if="shop?.id"
             :label="$t('add_shop.title_input')"
             :shop="shop"
-            translation-key="title"
             class="me-2"
+            translation-key="title"
           ></b-translation-button-shop>
 
           <u-tooltip-tips :message="$t('add_shop.title_input_tips')" />
@@ -164,7 +164,6 @@
       <v-text-field
         v-model="name"
         :counter="128"
-        :readonly="lock_name"
         :error="!shop_name_available_success && name.length > 3"
         :error-messages="shop_name_available_error_msg"
         :label="`${$t('add_shop.name_input')}*`"
@@ -173,12 +172,13 @@
             ? shop_name_available_message
             : $t('add_shop.name_input_message')
         "
+        :readonly="lock_name"
         class="mt-2 max-width-field-large mx-auto fadeIn english-field"
+        dir="ltr"
+        persistent-placeholder
+        placeholder="Write a name... e.g. my-shop"
         required
         variant="underlined"
-        placeholder="Write a name... e.g. my-shop"
-        persistent-placeholder
-        dir="ltr"
       >
         <template v-slot:append-inner>
           <v-progress-circular
@@ -212,9 +212,9 @@
         <template v-slot:prepend-inner>
           <v-chip
             color="#000"
-            variant="flat"
-            size="small"
             prepend-icon="shield"
+            size="small"
+            variant="flat"
           >
             Shop UID
           </v-chip>

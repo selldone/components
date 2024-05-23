@@ -15,6 +15,7 @@
 <template>
   <v-menu
     :disabled="!auto_complete_address"
+    :location="top ? 'top' : bottom ? 'bottom' : undefined"
     :model-value="
       auto_complete_address /*Disable after user click on an item*/ &&
       suggestion_menu &&
@@ -22,7 +23,6 @@
       search_results.length
     "
     :top="top"
-    :location="top?'top':bottom?'bottom':undefined"
     @update:model-value="(val) => (suggestion_menu = val)"
   >
     <template v-slot:activator="{ props }">
@@ -58,11 +58,11 @@
     </template>
 
     <v-list
+      class="border-between-vertical -dashed"
       density="compact"
       lines="two"
       rounded="xl"
       style="line-height: 1.5em"
-      class="border-between-vertical -dashed"
     >
       <v-list-item
         v-for="(item, index) in search_results"

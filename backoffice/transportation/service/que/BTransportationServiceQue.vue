@@ -17,11 +17,11 @@
     v-if="has_orders_in_que"
     :class="{ hiding: hiding && !mouse_over }"
     class="send-orders-list"
+    v-bind="$attrs"
     @mouseenter="mouse_over = true"
     @mouseleave="mouse_over = false"
-    v-bind="$attrs"
   >
-    <v-row align="center" no-gutters class="px-2 bg-gray">
+    <v-row align="center" class="px-2 bg-gray" no-gutters>
       <v-btn class="ma-1" icon variant="text" @click="loadFromLocalStorage">
         <v-icon> refresh</v-icon>
       </v-btn>
@@ -33,20 +33,20 @@
         :variant="!show_all ? 'tonal' : 'elevated'"
         class="ma-1"
         color="primary"
-        size="small"
         label
+        size="small"
         @click="show_all = !show_all"
         >{{ $t("global.commons.all") }}
       </v-chip>
 
       <v-chip
-        @click="toggleShow"
+        :prepend-icon="hiding ? 'arrow_back' : 'fa:fas fa-map-pin'"
         :variant="hiding ? 'tonal' : 'elevated'"
         class="ma-1"
         color="primary"
-        size="small"
         label
-        :prepend-icon="hiding ? 'arrow_back' : 'fa:fas fa-map-pin'"
+        size="small"
+        @click="toggleShow"
         >Pin
       </v-chip>
     </v-row>
@@ -57,8 +57,8 @@
       density="compact"
       elevation="0"
       lines="three"
-      variant="text"
       style="flex-grow: 1; overflow: auto; height: 100%"
+      variant="text"
     >
       <u-drag
         v-for="basket in send_orders_list_filtered"
@@ -124,12 +124,12 @@
               v-if="basket.status === 'COD'"
               class="ma-1"
               color="#000"
-              variant="flat"
               size="x-small"
+              variant="flat"
             >
               <v-avatar
-                start
                 :image="require('../../../../assets/icons/pos.svg')"
+                start
               >
               </v-avatar>
               {{ $t("global.commons.cod") }}
@@ -139,10 +139,10 @@
               v-if="basket.delivery_info.weight"
               :title="$t('global.commons.weight')"
               class="ma-1"
-              prepend-icon="scale"
               color="#000"
-              variant="flat"
+              prepend-icon="scale"
               size="x-small"
+              variant="flat"
             >
               {{ basket.delivery_info.weight }} {{ mass_unit }}
             </v-chip>
@@ -151,10 +151,10 @@
               v-if="basket.delivery_info.volume"
               :title="$t('global.commons.size')"
               class="ma-1"
-              prepend-icon="straighten"
               color="#000"
-              variant="flat"
+              prepend-icon="straighten"
               size="x-small"
+              variant="flat"
             >
               {{ basket.delivery_info.volume.width }}
               <i class="fas fa-times mx-2" />{{
@@ -170,10 +170,10 @@
               v-if="basket.delivery_info.distance"
               :title="$t('global.commons.distance')"
               class="ma-1"
-              prepend-icon="near_me"
               color="#000"
-              variant="flat"
+              prepend-icon="near_me"
               size="x-small"
+              variant="flat"
             >
               {{ numeralFormat(basket.delivery_info.distance, "0,0.[0]") }}
 
@@ -181,7 +181,7 @@
             </v-chip>
           </div>
 
-          <v-row no-gutters align="center">
+          <v-row align="center" no-gutters>
             <s-dense-images-circles
               :images="basket.items?.map((i) => getProductImage(i.product_id))"
               :limit="5"
@@ -235,9 +235,9 @@
     <!-- ======================= Footer ======================= -->
 
     <v-row
-      style="position: absolute; bottom: 0; left: 0; width: 100%"
       class="border-top bg-white"
       no-gutters
+      style="position: absolute; bottom: 0; left: 0; width: 100%"
     >
       <v-btn
         v-for="transportation in transportations"
@@ -246,9 +246,9 @@
           name: 'BPageTransportationServices',
           params: { transportation_id: transportation.id },
         }"
-        variant="flat"
         class="ma-1"
         size="small"
+        variant="flat"
       >
         <img
           :src="getTransportationImage(transportation.type)"
@@ -272,15 +272,18 @@
           labels, manage parcels, and, if supported by delivery services,
           process batch orders for sending.
         </p>
-        <v-list class="border-between-vertical overflow-visible pb-12" lines="two">
+        <v-list
+          class="border-between-vertical overflow-visible pb-12"
+          lines="two"
+        >
           <v-list-item
             v-for="service in getDeliveryServices(selected_basket_service)"
             :key="service.id"
-            @click="setDeliveryServiceID(selected_basket_service, service.id)"
             :prepend-avatar="getShopImagePath(service.icon)"
-            :title="service.name"
             :subtitle="service.description"
+            :title="service.name"
             class="row-hover"
+            @click="setDeliveryServiceID(selected_basket_service, service.id)"
           >
           </v-list-item>
         </v-list>

@@ -23,8 +23,8 @@
     class="s---category"
   >
     <v-avatar
-      :size="size - borderSize"
       :color="!src && text_avatar_color ? text_avatar_color : '#fff'"
+      :size="size - borderSize"
       :style="{ 'border-radius': `${border_radius - 2}px` }"
       cover
     >
@@ -55,14 +55,14 @@
     >
       <v-img
         v-if="sideImage"
-        :src="sideImage"
-        :height="side_size / (smallSideIcon ? 2 : 1)"
-        :width="side_size / (smallSideIcon ? 2 : 1)"
         :class="{
           'rounded rounded-ts-circle rounded-be-circle': side_image_rounded,
         }"
+        :height="side_size / (smallSideIcon ? 2 : 1)"
+        :src="sideImage"
+        :width="side_size / (smallSideIcon ? 2 : 1)"
       ></v-img>
-      <v-icon v-else color="#fff" :size="side_size / (smallSideIcon ? 2 : 1)">
+      <v-icon v-else :size="side_size / (smallSideIcon ? 2 : 1)" color="#fff">
         {{ sideIcon }}
       </v-icon>
     </div>

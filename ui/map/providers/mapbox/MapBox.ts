@@ -14,7 +14,7 @@
 
 import Mapbox from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { SetupService } from "@selldone/core-js/server/SetupService";
+import {SetupService} from "@selldone/core-js/server/SetupService";
 
 Mapbox.accessToken = SetupService.MapToken()!;
 Mapbox.setRTLTextPlugin(

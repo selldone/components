@@ -108,7 +108,7 @@
         </v-avatar>
       </template>
 
-      <s-shipping-rate v-if="rate" :rate="rate"> </s-shipping-rate>
+      <s-shipping-rate v-if="rate" :rate="rate"></s-shipping-rate>
       <div class="flex-grow-1 d-flex align-center py-1">
         {{ deliveryService.name }}
         <span class="dashed-flex-space"></span>

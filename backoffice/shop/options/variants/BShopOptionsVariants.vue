@@ -100,7 +100,7 @@
     </v-list>
 
     <v-expand-transition>
-      <s-widget-buttons v-if="variants_change" >
+      <s-widget-buttons v-if="variants_change">
         <v-btn
           :loading="busy_variants"
           color="primary"
@@ -125,7 +125,7 @@ import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "BShopOptionsVariants",
-  components: {SWidgetButtons},
+  components: { SWidgetButtons },
   props: {
     shop: {
       required: true,

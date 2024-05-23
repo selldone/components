@@ -48,7 +48,7 @@
     </v-list-subheader>
 
     <div class="small mt-3 mb-1">
-      <v-avatar class="me-1" size="24" rounded>
+      <v-avatar class="me-1" rounded size="24">
         <img
           :src="
             agency && agency.logo
@@ -66,10 +66,9 @@
 
       <u-text-value-box
         v-if="agency_client"
+        :value="agency_client.uuid"
         class="mt-3 max-widget-width mx-auto"
         label="Your Deal UUID."
-        :value="agency_client.uuid"
-
       >
       </u-text-value-box>
     </div>
@@ -323,7 +322,10 @@
 </template>
 
 <script>
-import { ShopLicense, ShopLicenseLimits } from "@selldone/core-js/enums/shop/ShopLicense";
+import {
+  ShopLicense,
+  ShopLicenseLimits,
+} from "@selldone/core-js/enums/shop/ShopLicense";
 import BShopLicensePartnerOverrided from "../../../../shop/license/partner/overrided/BShopLicensePartnerOverrided.vue";
 
 import USmartMenu from "../../../../../ui/smart/menu/USmartMenu.vue";

@@ -27,11 +27,11 @@
       </v-slide-group-item>
       <v-slide-group-item v-for="n in samples_processed" :key="n">
         <v-btn
+          :title="n"
           class="tnt"
           size="small"
           variant="plain"
           @click="$emit('select', n)"
-          :title="n"
         >
           {{ n.limitWords(4) }}
         </v-btn>

@@ -65,7 +65,9 @@
     <!-- ▀▀▀▀▀▀▀▀▀ 🎗️ Subscription ▀▀▀▀▀▀▀▀▀ -->
     <div v-if="isSubscription" class="widget-box my-5">
       <s-widget-header
-        :src="require('@selldone/core-js/assets/product-types/subscription.svg')"
+        :src="
+          require('@selldone/core-js/assets/product-types/subscription.svg')
+        "
         :to="{
           name: 'BPageProductInventory',
           params: product ? { product_id: product.id } : undefined,
@@ -146,8 +148,8 @@
         :label="$t('add_product.pricing.currency_input')"
         :messages="$t('add_product.pricing.currency_input_messages')"
         class="sm-suffix price-input"
-        @update:model-value="setValue('currency', currency.code)"
         return-object
+        @update:model-value="setValue('currency', currency.code)"
       />
 
       <u-price-input
@@ -377,9 +379,11 @@
           <div>
             <b class="d-block">
               <v-icon start>add</v-icon>
-              {{$t('add_product.pricing.extra_pricings.title')}}</b
+              {{ $t("add_product.pricing.extra_pricings.title") }}</b
             >
-            <small>{{$t('add_product.pricing.extra_pricings.subtitle')}}</small>
+            <small>{{
+              $t("add_product.pricing.extra_pricings.subtitle")
+            }}</small>
           </div>
         </v-btn>
       </div>
@@ -768,14 +772,14 @@ export default {
 
     subtitle() {
       return this.isMarketplace
-        ? this.$t('add_product.pricing.subtitle.marketplace')
+        ? this.$t("add_product.pricing.subtitle.marketplace")
         : this.isSubscription
-          ? this.$t('add_product.pricing.subtitle.subscription')
+          ? this.$t("add_product.pricing.subtitle.subscription")
           : this.isService
-            ? this.$t('add_product.pricing.subtitle.service')
+            ? this.$t("add_product.pricing.subtitle.service")
             : this.isFile
-              ? this.$t('add_product.pricing.subtitle.file')
-              : this.$t('add_product.pricing.subtitle.default');
+              ? this.$t("add_product.pricing.subtitle.file")
+              : this.$t("add_product.pricing.subtitle.default");
     },
   },
 

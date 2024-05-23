@@ -46,7 +46,10 @@
       <flag :iso="vendor.country" :squared="false" class="me-1" />
       {{ getCountryName(vendor.country) }}
     </u-text-value-box>
-    <u-text-value-box v-if="vendor.state" :label="$t('global.commons.state')" vb50
+    <u-text-value-box
+      v-if="vendor.state"
+      :label="$t('global.commons.state')"
+      vb50
       >{{ vendor.state }}
     </u-text-value-box>
     <u-text-value-box v-if="vendor.note" :label="$t('global.commons.note')" vb50
@@ -56,7 +59,10 @@
       <u-check :model-value="vendor.business" class="me-1"></u-check>
       {{ vendor.business_name }}
     </u-text-value-box>
-    <u-text-value-box v-if="vendor.tax_id" :label="$t('global.commons.tax_id')" vb50
+    <u-text-value-box
+      v-if="vendor.tax_id"
+      :label="$t('global.commons.tax_id')"
+      vb50
       >{{ vendor.tax_id }}
     </u-text-value-box>
   </div>

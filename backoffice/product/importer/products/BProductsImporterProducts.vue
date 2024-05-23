@@ -29,7 +29,7 @@
     </v-row>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
-    <v-data-table-server  :mobile="$vuetify.display.xs"
+    <v-data-table-server
       v-model:items-per-page="itemsPerPage"
       v-model:options="options"
       v-model:page="page"
@@ -38,6 +38,7 @@
       :items="products"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
+      :mobile="$vuetify.display.xs"
       class="bg-transparent min-height-60vh"
       density="compact"
       hide-default-footer

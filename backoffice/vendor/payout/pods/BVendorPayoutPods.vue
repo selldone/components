@@ -14,7 +14,10 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <u-pods-panel color="#fff">
-    <u-pod-node :image="getShopImagePath(shop.icon)" :title="shop.title"></u-pod-node>
+    <u-pod-node
+      :image="getShopImagePath(shop.icon)"
+      :title="shop.title"
+    ></u-pod-node>
     <u-pod-wire forward></u-pod-wire>
 
     <u-pod-node icon="shopping_bag" title="Order"></u-pod-node>

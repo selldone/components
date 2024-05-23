@@ -58,10 +58,7 @@
         class="svg-funnel-js__label"
       >
         <div v-if="labelValueCurrency" class="label__value">
-          <u-price
-            :amount="value"
-            :currency="labelValueCurrency"
-          ></u-price>
+          <u-price :amount="value" :currency="labelValueCurrency"></u-price>
         </div>
         <div v-else class="label__value">{{ value }}</div>
 
@@ -162,10 +159,7 @@ import TWEEN from "@tweenjs/tween.js";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import numeral from "numeral";
 import FunnelGraph from "../../../ui/chart/funnel/core/js/main";
-import {
-  generateLegendBackground,
-  getDefaultColors,
-} from "./core/js/graph.js";
+import { generateLegendBackground, getDefaultColors } from "./core/js/graph.js";
 import "../../../ui/chart/funnel/core/scss/main.scss";
 import "../../../ui/chart/funnel/core/scss/theme.scss";
 

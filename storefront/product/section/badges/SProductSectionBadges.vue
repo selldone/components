@@ -128,8 +128,7 @@
 </template>
 
 <script>
-
-import {LeadStatus} from "@selldone/core-js/enums/logistic/LeadStatus";
+import { LeadStatus } from "@selldone/core-js/enums/logistic/LeadStatus";
 
 export default {
   name: "SProductSectionBadges",

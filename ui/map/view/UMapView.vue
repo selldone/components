@@ -558,9 +558,9 @@
         <v-card-text>
           <v-text-field
             v-model="new_address_title"
-            color="primary"
             :label="$t('global.map_view.address_title_input')"
             class="text-start mx-2"
+            color="primary"
             prepend-inner-icon="fa:fas fa-tag"
             variant="underlined"
           >

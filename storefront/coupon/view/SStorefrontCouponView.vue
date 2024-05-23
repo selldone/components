@@ -42,7 +42,7 @@
       ></u-time-progress-bar>
 
       <p v-if="coupon.charge" class="m-0 mt-1">
-        <v-icon class="me-1" size="small">card_giftcard add </v-icon>
+        <v-icon class="me-1" size="small">card_giftcard add</v-icon>
         <b>
           <u-price
             :amount="coupon.charge"
@@ -105,8 +105,8 @@
           v-if="coupon.code"
           class="absolute-top-end"
           icon
-          variant="text"
           title="Delete coupon"
+          variant="text"
           @click="$emit('delete', coupon.code)"
         >
           <v-icon>close</v-icon>

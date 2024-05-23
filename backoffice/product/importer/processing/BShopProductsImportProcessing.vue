@@ -21,7 +21,7 @@
     <u-loading-progress color="blue" stream></u-loading-progress>
 
     <v-list-subheader>
-      {{$t('product_import_processing.message')}}
+      {{ $t("product_import_processing.message") }}
     </v-list-subheader>
 
     <div class="widget-buttons">

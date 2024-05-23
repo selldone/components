@@ -23,10 +23,10 @@
         <v-item v-if="noClub" v-slot="{ isSelected, toggle }" value="no-club">
           <v-btn
             key="no"
-            class="m-1 shadow-box"
-            rounded
             :color="isSelected ? '#222' : '#444'"
             :variant="!isSelected ? 'outlined' : 'flat'"
+            class="m-1 shadow-box"
+            rounded
             @click="toggle()"
           >
             <v-icon class="me-2" size="24">face</v-icon>
@@ -39,9 +39,9 @@
             <v-btn
               :color="isSelected ? '#222' : '#444'"
               :variant="!isSelected ? 'outlined' : 'flat'"
-              @click="toggle()"
               class="ma-1 shadow-box"
               rounded
+              @click="toggle()"
             >
               <img :src="level.icon" class="me-2" width="24" />
               {{ $t(level.name) }}
@@ -53,10 +53,10 @@
           v-if="clearable"
           key="all"
           :color="!modelValue ? 'primary' : ''"
-          @click="$emit('update:modelValue', null)"
-          rounded
           class="ma-1"
+          rounded
           variant="flat"
+          @click="$emit('update:modelValue', null)"
         >
           {{ clearText ? clearText : "-" }}
         </v-btn>

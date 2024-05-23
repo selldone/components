@@ -42,8 +42,8 @@
     <p>{{ $t(transportationObj.description) }}</p>
 
     <b-transportation-overview
-      :shop="shop"
       :outlined="outlined"
+      :shop="shop"
       :transportation="transportation"
     >
     </b-transportation-overview>

@@ -15,8 +15,8 @@
 <template>
   <v-card
     :color="!hasClose ? 'transparent' : undefined"
-    flat
     class="text-start"
+    flat
   >
     <v-card-title>
       <v-icon class="me-1">emoji_events</v-icon>
@@ -36,7 +36,7 @@
           ></s-widget-header>
 
           <v-list-subheader
-            >{{$t('lottery_edit.config.subtitle')}}
+            >{{ $t("lottery_edit.config.subtitle") }}
           </v-list-subheader>
 
           <v-text-field
@@ -123,9 +123,7 @@
           ></s-widget-header>
 
           <v-list-subheader>
-
-
-            {{$t('lottery_edit.design.subtitle')}}
+            {{ $t("lottery_edit.design.subtitle") }}
           </v-list-subheader>
 
           <v-file-input
@@ -161,8 +159,7 @@
           ></s-widget-header>
 
           <v-list-subheader>
-
-            {{$t('lottery_edit.constraints.subtitle')}}
+            {{ $t("lottery_edit.constraints.subtitle") }}
           </v-list-subheader>
 
           <u-number-input
@@ -178,16 +175,15 @@
 
           <u-smart-switch
             v-model="free_for_first"
+            :false-description="$t('lottery_edit.not_free_for_first_message')"
             :false-title="$t('global.commons.disable')"
             :label="$t('lottery_edit.free_for_first')"
             :true-description="$t('lottery_edit.free_for_first_message')"
             :true-title="$t('global.commons.enable')"
             class="my-7"
-            :false-description="$t('lottery_edit.not_free_for_first_message')"
           ></u-smart-switch>
 
-          <b-club-select v-model="clubs" multiple no-club>
-          </b-club-select>
+          <b-club-select v-model="clubs" multiple no-club> </b-club-select>
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Prize ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
@@ -198,11 +194,8 @@
             icon="emoji_events"
           ></s-widget-header>
 
-          <v-list-subheader
-            >
-
-            {{$t('lottery_edit.prize.subtitle')}}
-
+          <v-list-subheader>
+            {{ $t("lottery_edit.prize.subtitle") }}
           </v-list-subheader>
 
           <v-btn-toggle
@@ -218,12 +211,12 @@
               {{ $t("global.commons.amount") }}
             </v-btn>
             <v-btn value="discount">
-              <v-icon class="me-1" >local_offer</v-icon>
+              <v-icon class="me-1">local_offer</v-icon>
 
               {{ $t("global.commons.discount") }}
             </v-btn>
             <v-btn value="product">
-              <v-icon class="me-1" >shopping_bag</v-icon>
+              <v-icon class="me-1">shopping_bag</v-icon>
 
               {{ $t("global.commons.product") }}
             </v-btn>
@@ -273,8 +266,8 @@
                   :messages="$t('lottery_edit.discount_message')"
                   :min="1"
                   :rounded="false"
-                  variant="underlined"
                   suffix="%"
+                  variant="underlined"
                 ></u-number-input>
 
                 <u-price-input
@@ -292,10 +285,10 @@
                 <b-products-select-box
                   v-model="product_id"
                   v-model:variant-id="variant_id"
-                  :shop="shop"
-                  border-less
                   :label="$t('lottery_edit.product_input.label')"
                   :messages="$t('lottery_edit.product_input.message')"
+                  :shop="shop"
+                  border-less
                   single-product-select
                   single-product-variant-select
                 ></b-products-select-box>
@@ -312,7 +305,10 @@
         </div>
       </v-form>
 
-      <BShopLicenseBlockOverlay v-if="licenseRestriction" fill-h></BShopLicenseBlockOverlay>
+      <BShopLicenseBlockOverlay
+        v-if="licenseRestriction"
+        fill-h
+      ></BShopLicenseBlockOverlay>
     </v-card-text>
     <v-card-actions>
       <div class="widget-buttons">
@@ -436,9 +432,7 @@ export default {
     busy_upload: false,
   }),
 
-  computed: {
-
-  },
+  computed: {},
 
   methods: {
     getFormData() {

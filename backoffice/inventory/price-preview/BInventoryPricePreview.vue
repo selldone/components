@@ -13,14 +13,15 @@
   -->
 <template>
   <div class="position-relative">
-    <u-cube size="168" no-animation></u-cube>
+    <u-cube no-animation size="168"></u-cube>
     <u-cube
       v-if="multiple"
-      size="72"
       no-animation
+      size="72"
       style="position: absolute; left: 30%; bottom: 10%"
     ></u-cube>
     <v-sheet
+      :color="priceColor"
       style="
         position: absolute;
         top: 20px;
@@ -30,7 +31,6 @@
         padding: 12px;
         z-index: 1;
       "
-      :color="priceColor"
     >
       <slot></slot>
     </v-sheet>
@@ -52,4 +52,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

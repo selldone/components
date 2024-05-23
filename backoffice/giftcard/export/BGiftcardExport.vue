@@ -41,9 +41,9 @@
         )
       "
       :type="$t('global.commons.giftcard')"
+      csv-message="Download list of gift cards in CSV format. It contains all the details of the gift cards."
       dense
       excel-message="Download list of gift cards in Excel format. It contains all the details of the gift cards."
-      csv-message="Download list of gift cards in CSV format. It contains all the details of the gift cards."
     >
     </s-export-format-select>
 
@@ -67,9 +67,9 @@
         )
       "
       :type="$t('global.commons.report')"
+      csv-message="Download report of gift cards in CSV format."
       dense
       excel-message="Download report of gift cards in Excel format."
-      csv-message="Download report of gift cards in CSV format."
     >
     </s-export-format-select>
   </s-widget-box>

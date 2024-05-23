@@ -15,15 +15,15 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ███████████████████████ Discount Code > AI ███████████████████████ -->
   <b-ai-assistance
-    :shop="shop"
+    :endpoint="window.API.POST_CREATE_DISCOUNT_CODE_AI(shop.id)"
     :model-value="modelValue"
-    @update:model-value="(value) => $emit('update:modelValue', value)"
+    :shop="shop"
+    error-message="I can not create discount code now."
+    has-currency
+    success-message="The discount code was created successfully."
     title="Talk to me, I am here to help you with creating discount codes."
     @response="({ discount_code }) => $emit('discount-code', discount_code)"
-    success-message="The discount code was created successfully."
-    error-message="I can not create discount code now."
-    :endpoint="window.API.POST_CREATE_DISCOUNT_CODE_AI(shop.id)"
-    has-currency
+    @update:model-value="(value) => $emit('update:modelValue', value)"
   >
     <template v-slot:tips>
       <p class="op-0-5">
@@ -57,9 +57,7 @@ export default {
     },
   },
 
-  data: () => ({
-
-  }),
+  data: () => ({}),
 
   computed: {},
 

@@ -49,7 +49,11 @@
       height="350"
       type="bubble"
     />
-    <u-loading-ellipsis v-else class="ma-auto" height="350px"></u-loading-ellipsis>
+    <u-loading-ellipsis
+      v-else
+      class="ma-auto"
+      height="350px"
+    ></u-loading-ellipsis>
   </div>
 </template>
 

@@ -16,12 +16,15 @@
   <v-sheet
     ref="widget"
     :class="{ className, h100: h100 }"
-    :style="{ '--background': 'var(--widget-background-color)' ,'--widget-background-color':color?color:undefined}"
-    color="var(--widget-background-color)"
+    :rounded="rounded"
+    :style="{
+      '--background': 'var(--widget-background-color)',
+      '--widget-background-color': color ? color : undefined,
+    }"
     :theme="dark ? 'dark' : 'light'"
     class="widget s--widget"
+    color="var(--widget-background-color)"
     v-bind="dataWidgster"
-    :rounded="rounded"
   >
     <div class="top-left-container">
       <slot name="top-left" />
@@ -29,7 +32,9 @@
 
     <h5
       v-if="title && typeof title === 'string' && !customHeader"
-      :style="$vuetify.locale.isRtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
+      :style="
+        $vuetify.locale.isRtl ? 'padding-left: 48px ' : 'padding-right: 48px '
+      "
       class="title-widget text-start-dir"
     >
       {{ title }}
@@ -37,7 +42,9 @@
 
     <header
       v-if="title && customHeader"
-      :style="$vuetify.locale.isRtl ? 'padding-left: 48px ' : 'padding-right: 48px '"
+      :style="
+        $vuetify.locale.isRtl ? 'padding-left: 48px ' : 'padding-right: 48px '
+      "
       class="title-widget"
       v-html="title"
     />
@@ -172,8 +179,8 @@ export default {
     dataWidgster: { type: Object, default: () => ({}) },
     h100: { default: false, type: Boolean },
     dark: { type: Boolean, default: false },
-    rounded:{default:'xl'},
-    color:{},
+    rounded: { default: "xl" },
+    color: {},
   },
   computed: {
     randomId() {

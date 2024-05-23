@@ -44,7 +44,7 @@
         @update:model-value="change = true"
       >
         <template v-slot:chip="{ props, item }">
-          <u-chip-tag v-bind="props" :tag="item.raw"> </u-chip-tag>
+          <u-chip-tag :tag="item.raw" v-bind="props"></u-chip-tag>
         </template>
       </v-combobox>
     </div>

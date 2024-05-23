@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-col class="d-inline-flex" >
+  <v-col class="d-inline-flex">
     <v-btn class="ms-2" icon @click="show_filter = !show_filter">
       <v-icon class="crossRotate">
         {{ show_filter ? "close" : "more_vert" }}
@@ -54,8 +54,8 @@
           v-if="volumes.length"
           :close="mode !== 'volume'"
           :list="volumes"
-          :title="$t('global.variants.volume')"
           :model-value="null"
+          :title="$t('global.variants.volume')"
           icon="equalizer"
           @open="mode = 'volume'"
           @select="
@@ -72,8 +72,8 @@
           v-if="packs.length"
           :close="mode !== 'packs'"
           :list="packs"
-          :title="$t('global.variants.count_in_pack')"
           :model-value="null"
+          :title="$t('global.variants.count_in_pack')"
           icon="all_inbox"
           @open="mode = 'packs'"
           @select="
@@ -90,8 +90,8 @@
           v-if="weights.length"
           :close="mode !== 'weights'"
           :list="weights"
-          :title="$t('global.variants.weight')"
           :model-value="null"
+          :title="$t('global.variants.weight')"
           icon="fa:fas fa-weight-hanging"
           @open="mode = 'weights'"
           @select="
@@ -108,8 +108,8 @@
           v-if="types.length"
           :close="mode !== 'types'"
           :list="types"
-          :title="$t('global.variants.type')"
           :model-value="null"
+          :title="$t('global.variants.type')"
           icon="fa:fas fa-toolbox"
           @open="mode = 'types'"
           @select="
@@ -125,8 +125,8 @@
           v-if="styles.length"
           :close="mode !== 'styles'"
           :list="styles"
-          :title="$t('global.variants.style')"
           :model-value="null"
+          :title="$t('global.variants.style')"
           icon="style"
           @open="mode = 'styles'"
           @select="

@@ -23,9 +23,11 @@
       ></s-widget-header>
       <v-list-subheader>
         {{
-          IS_VENDOR_PANEL
-            ? "Please upload the necessary business, IP, and address verification documents. We require this information to confirm your partnership and provide you with the necessary access."
-            : "Vendors can submit documents such as business, intellectual property, and address verification to facilitate their KYC process, allowing you to grant them the appropriate access."
+        IS_VENDOR_PANEL
+        ? "Please upload the necessary business, IP, and address verification documents. We require this information to
+        confirm your partnership and provide you with the necessary access."
+        : "Vendors can submit documents such as business, intellectual property, and address verification to facilitate
+        their KYC process, allowing you to grant them the appropriate access."
         }}
       </v-list-subheader>
       <u-loading-progress v-if="busy"></u-loading-progress>
@@ -43,12 +45,17 @@
 
           <v-list-item-title class="d-flex align-center"
             ><b class="single-line d-block flex-grow-1 mb-1">
+              <img
+                :src="FileHelper.GetFileIcon(doc.name)"
+                class="me-1"
+                height="20"
+                width="20"
+              />
 
-            <img :src="FileHelper.GetFileIcon(doc.name)" width="20" height="20" class="me-1">
-
-            {{
-              $t(getType(doc)?.title) + (doc.name ? ` | ${doc.name}` : "")
-            }}</b>
+              {{
+                $t(getType(doc)?.title) + (doc.name ? ` | ${doc.name}` : "")
+              }}</b
+            >
 
             <v-chip
               v-if="doc.verify_at"
@@ -63,9 +70,9 @@
               v-if="doc.reject_at"
               class="ma-1 min-width-max-content"
               color="red"
-              variant="tonal"
               label
               size="x-small"
+              variant="tonal"
               >Rejected
             </v-chip>
           </v-list-item-title>
@@ -196,7 +203,7 @@ import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
 import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentType";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
-import {FileHelper} from "@selldone/core-js/helper/converters/FileHelper";
+import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
 
 export default {
   name: "BVendorDocumentsList",
@@ -217,7 +224,7 @@ export default {
 
   data: function () {
     return {
-      FileHelper:FileHelper,
+      FileHelper: FileHelper,
 
       VendorDocumentType: VendorDocumentType,
 

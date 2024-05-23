@@ -14,16 +14,16 @@
 
 <template>
   <swiper
-    :modules="modules"
-    effect="material"
+    :grabCursor="true"
+    :loop="false"
     :materialEffect="{
       slideSplitRatio: 0.65,
     }"
-    :loop="false"
-    :grabCursor="true"
+    :modules="modules"
     :slidesPerView="slidesPerView"
     :spaceBetween="16"
     :speed="600"
+    effect="material"
     style="height: 600px"
   >
     <swiper-slide v-for="image in images" :key="image.path">
@@ -37,10 +37,10 @@
             :src="getShopImagePath(image.path)"
             aspect-ratio="1"
             class="swiper-slide pointer-zoom-in mx-2"
+            cover
+            data-swiper-material-scale="1.25"
             height="100%"
             @click="showFullscreen"
-            data-swiper-material-scale="1.25"
-            cover
           >
             <template v-slot:placeholder>
               <v-progress-circular

@@ -79,9 +79,13 @@ export default {
     },
 
     selected_timespan() {
-      const found = this.items.find((item:{title:string,from:number,to:number}) => {
-        return item.from === this.dateRange[1] && item.to === this.dateRange[0];
-      });
+      const found = this.items.find(
+        (item: { title: string; from: number; to: number }) => {
+          return (
+            item.from === this.dateRange[1] && item.to === this.dateRange[0]
+          );
+        },
+      );
 
       return found ? found.title : "time_spans.custom";
     },

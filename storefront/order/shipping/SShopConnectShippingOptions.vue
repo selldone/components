@@ -21,7 +21,7 @@
       v-for="connect_shipping_option in connect_shipping_options"
       :key="connect_shipping_option.connect_id"
     >
-      <div  class="d-flex align-center my-2">
+      <div class="d-flex align-center my-2">
         <small>{{ $t("global.commons.shipping") }}</small>
         <products-dense-images-circles
           :ids="
@@ -70,13 +70,12 @@
           item-description="message"
           item-text="name"
           item-value="id"
-          @update:model-value="(val) => selectOption(connect_shipping_option, val)"
+          @update:model-value="
+            (val) => selectOption(connect_shipping_option, val)
+          "
         >
           <template v-slot:prepend-title="{ item }">
-            <u-price
-              :amount="item.rate"
-              :currency="item.currency"
-            ></u-price>
+            <u-price :amount="item.rate" :currency="item.currency"></u-price>
             <span class="mx-2">|</span>
           </template>
         </u-smart-select>

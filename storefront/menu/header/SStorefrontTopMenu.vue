@@ -14,6 +14,7 @@
 
 <template>
   <v-toolbar
+    :border="outlined"
     :color="
       color
         ? color
@@ -24,21 +25,20 @@
             : '#fff'
     "
     :flat="flat"
-    :theme="dark ? 'dark' : 'light'"
-    :border="outlined"
     :rounded="rounded"
     :style="{ '--justify': center ? 'center' : 'start' }"
+    :theme="dark ? 'dark' : 'light'"
     class="s--storefront-top-menu"
   >
     <template v-for="(tab, index) in tabs">
       <span v-if="tab.type === 'link'" :key="'l' + index">
         <v-btn
+          :color="dark ? '#fff' : '#000'"
           :href="preview ? undefined : tab.link"
           :target="tab.link?.startsWith('http') ? '_blank' : undefined"
           class="me-2"
-          variant="text"
           rounded
-          :color="dark?'#fff':'#000'"
+          variant="text"
         >
           <v-icon
             v-if="tab.icon"
@@ -59,13 +59,13 @@
 
       <v-btn
         v-else
-        :ref="`tab_${index}`"
         :key="'m' + index"
+        :ref="`tab_${index}`"
+        :color="dark ? '#fff' : '#000'"
         class="me-2"
+        rounded
         v-bind="props"
         variant="text"
-        rounded
-        :color="dark?'#fff':'#000'"
       >
         <v-icon
           v-if="tab.icon"
@@ -83,13 +83,12 @@
         {{ tab.title }}
 
         <v-menu
-          activator="parent"
           v-model="visibles[index]"
-          location="bottom"
-
           :open-on-hover="tab.hover"
           :transition="tab.transition"
           :z-index="100"
+          activator="parent"
+          location="bottom"
           open-delay="0"
           theme="light"
         >
@@ -101,12 +100,7 @@
               fluid
             >
               <v-row>
-                <v-col
-                  v-for="(col, i) in tab.cols"
-                  :key="i"
-
-
-                >
+                <v-col v-for="(col, i) in tab.cols" :key="i">
                   <v-list-item
                     v-for="(item, index) in col"
                     :key="index"
@@ -129,7 +123,7 @@
               :categories="tab.categories"
               :preview="preview"
               class="my-2 ms-2"
-              style="width: 98vw ;max-height: 90vh"
+              style="width: 98vw; max-height: 90vh"
             ></menu-categories>
 
             <!-- Menu > Custom -->

@@ -14,7 +14,6 @@
 
 <template>
   <div
-    v-bind="$attrs"
     :class="{
       'border-warning': isRequireAction,
       'border-danger': isCanceled,
@@ -26,6 +25,7 @@
     }"
     class="widget shadow my-3 mx-1 mx-md-3 overflow-hidden pb-0"
     style="border-top: 2px solid #dee2e6"
+    v-bind="$attrs"
   >
     <!-- █████████████████████ Header █████████████████████ -->
 
@@ -103,10 +103,7 @@
     <div class="text-start mt-2">
       <p>
         <span :class="{ 'text-muted': !isPayed }" class="h3">
-          <u-price
-            :amount="order.price"
-            :currency="order.currency"
-          ></u-price>
+          <u-price :amount="order.price" :currency="order.currency"></u-price>
         </span>
         <v-chip
           v-if="isRequireAction"
@@ -193,10 +190,14 @@
             >
             <component
               :is="order.customer_id ? 'router-link' : 'span'"
-              :to="isRolePanel || IS_VENDOR_PANEL?{}:{
-                name: 'BPageCustomerDashboard',
-                params: { customer_id: order.customer_id },
-              }"
+              :to="
+                isRolePanel || IS_VENDOR_PANEL
+                  ? {}
+                  : {
+                      name: 'BPageCustomerDashboard',
+                      params: { customer_id: order.customer_id },
+                    }
+              "
               class="flex-grow-0"
               @click.stop
             >
@@ -248,10 +249,14 @@
               >{{ $t("global.commons.customer") }} :</small
             >
             <v-btn
-              :to="isRolePanel || IS_VENDOR_PANEL?{}:{
-                name: 'BPageCustomerDashboard',
-                params: { customer_id: order.customer_id },
-              }"
+              :to="
+                isRolePanel || IS_VENDOR_PANEL
+                  ? {}
+                  : {
+                      name: 'BPageCustomerDashboard',
+                      params: { customer_id: order.customer_id },
+                    }
+              "
               icon
               size="large"
               title="Go to customer page"
@@ -310,10 +315,14 @@
 
         <router-link
           v-if="campaign_link.campaign"
-          :to="isRolePanel || IS_VENDOR_PANEL?{}:{
-            name: 'BPageCampaignDashboard',
-            params: { campaign_id: campaign_link.campaign_id },
-          }"
+          :to="
+            isRolePanel || IS_VENDOR_PANEL
+              ? {}
+              : {
+                  name: 'BPageCampaignDashboard',
+                  params: { campaign_id: campaign_link.campaign_id },
+                }
+          "
           class="me-3 text-uppercase link-dash"
           >{{ campaign_link.campaign.name }}
         </router-link>
@@ -345,10 +354,14 @@
         >
 
         <router-link
-          :to="isRolePanel || IS_VENDOR_PANEL?{}:{
-            name: 'BPageCampaignDashboard',
-            params: { campaign_id: campaign.id },
-          }"
+          :to="
+            isRolePanel || IS_VENDOR_PANEL
+              ? {}
+              : {
+                  name: 'BPageCampaignDashboard',
+                  params: { campaign_id: campaign.id },
+                }
+          "
           class="me-3 text-uppercase link-dash"
           >{{ campaign.name }}
         </router-link>
@@ -386,10 +399,14 @@
           <v-img :src="getUserAvatar(affiliate.user_id)"></v-img>
         </v-avatar>
         <router-link
-          :to="isRolePanel || IS_VENDOR_PANEL?{}:{
-            name: 'BPageAffiliateDashboard',
-            params: { affiliate_id: affiliate.id },
-          }"
+          :to="
+            isRolePanel || IS_VENDOR_PANEL
+              ? {}
+              : {
+                  name: 'BPageAffiliateDashboard',
+                  params: { affiliate_id: affiliate.id },
+                }
+          "
           class="me-3 text-uppercase link-dash"
           >{{ affiliate.name }}
         </router-link>
@@ -599,7 +616,9 @@
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Summery > Country + Map ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <v-col v-if="card" class="p-2 text-center" cols="6" md="2">
-          <u-map-countries-single :country="card.country"></u-map-countries-single>
+          <u-map-countries-single
+            :country="card.country"
+          ></u-map-countries-single>
         </v-col>
       </v-row>
     </div>
@@ -616,11 +635,11 @@
     >
       <b-order-payment-table
         :cod-enable="codEnable"
+        :is-role-panel="isRolePanel"
         :order="order"
         :shop="shop"
         style="border-radius: unset"
         @fetch-order="$emit('fetch-order')"
-        :is-role-panel="isRolePanel"
       >
       </b-order-payment-table>
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Footer ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -632,10 +651,7 @@
               $t("process_center.payment_widget.total_order_price_before_tax")
             }}
           </p>
-          <u-price
-            :amount="order.price"
-            :currency="order.currency"
-          ></u-price>
+          <u-price :amount="order.price" :currency="order.currency"></u-price>
         </v-col>
 
         <v-col v-if="tax" class="p-2" cols="12" sm="3">
@@ -675,9 +691,7 @@
         <div class="mb-5">
           {{ $t("process_center.payment_widget.pay_cod_dialog.message") }}
         </div>
-        <u-smart-verify
-          v-model="accept_action"
-        ></u-smart-verify>
+        <u-smart-verify v-model="accept_action"></u-smart-verify>
       </v-card-text>
 
       <v-card-actions>
@@ -799,7 +813,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    isRolePanel:Boolean,
+    isRolePanel: Boolean,
   },
 
   data: function () {
@@ -835,8 +849,8 @@ export default {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
 

@@ -18,9 +18,9 @@
     :color="color"
     :size="size"
     label
+    style="line-height: normal"
     title="Discount percent"
     variant="flat"
-    style="line-height: normal;"
   >
     <v-icon start>fa:fas fa-percentage</v-icon>
 

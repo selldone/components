@@ -16,20 +16,20 @@
   <div
     :category-id="category.id"
     :class="{ disabled: loading }"
+    :style="{ '--card-color': SaminColorDarkDeep }"
     class="widget-folder-root"
     @click="$emit('select')"
-    :style="{'--card-color':SaminColorDarkDeep }"
   >
     <div class="box">
       <s-widget
-        :class="{ 'm-1': small, compact: compactMode  }"
+        :class="{ 'm-1': small, compact: compactMode }"
+        :color="SaminColorDarkDeep"
         :title="`<h5 class='align-items-center pb-1 text-white '  style='font-size: 1.16rem;font-weight: 500'>    <span class=' ${star_class} mr-sm text-warning' style='font-size: 12px;'></span>  ${category.title}  </h5>`"
         body-class="p-0 mt"
         class="text-start card"
         custom-header
-        style="border-radius: 8px"
         dark
-        :color="SaminColorDarkDeep"
+        style="border-radius: 8px"
       >
         <template v-slot:top-left>
           <v-btn
@@ -227,8 +227,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-
 .widget-folder-root {
   cursor: pointer;
   margin: 0;
@@ -316,7 +314,5 @@ export default {
   .text-muted {
     color: #eee !important;
   }
-
 }
-
 </style>

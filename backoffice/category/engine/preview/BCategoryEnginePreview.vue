@@ -17,6 +17,7 @@
 
   <div class="pa-2 text-center d-flex">
     <div
+      class="pa-3 d-block mx-auto"
       style="
         max-width: 260px;
         width: 96%;
@@ -25,7 +26,6 @@
         min-height: 120px;
         overflow: hidden;
       "
-      class="pa-3 d-block mx-auto"
     >
       <div class="small single-line">
         <v-avatar class="me-2 avatar-gradient -thin -category" size="24">
@@ -33,7 +33,9 @@
             v-if="category.icon"
             :src="getShopImagePath(category.icon, 64)"
           />
-          <v-icon v-else>{{ category.id!=='root'?'folder':'home' }}</v-icon>
+          <v-icon v-else>{{
+            category.id !== "root" ? "folder" : "home"
+          }}</v-icon>
         </v-avatar>
 
         <b>{{ category.title }}</b>

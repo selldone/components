@@ -34,11 +34,7 @@
       {{ value > 0 ? "fa:fas fa-caret-up" : "fa:fas fa-caret-down" }}
     </v-icon>
 
-    <u-price
-      v-if="currency"
-      :amount="value"
-      :currency="currency"
-    ></u-price>
+    <u-price v-if="currency" :amount="value" :currency="currency"></u-price>
     <span v-else>{{ numeralFormat(value, "0.[00]a") }}</span>
 
     <slot></slot>

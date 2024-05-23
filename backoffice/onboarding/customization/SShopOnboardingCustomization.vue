@@ -64,7 +64,7 @@
           size="x-large"
           target="_blank"
           variant="elevated"
-          >
+        >
           {{ $t("onboarding.customize.template.action") }}
           <v-icon end>open_in_new</v-icon>
         </v-btn>
@@ -83,7 +83,11 @@
       </div>
 
       <div class="widget-buttons">
-        <v-btn :to="{ name: 'BPageShopSettingTheme' }" color="#000" size="x-large">
+        <v-btn
+          :to="{ name: 'BPageShopSettingTheme' }"
+          color="#000"
+          size="x-large"
+        >
           <div class="me-2">
             <u-color-circle :color="color_light" class="mx-1"></u-color-circle>
             <u-color-circle :color="color_dark" class="mx-1"></u-color-circle>
@@ -92,7 +96,6 @@
               class="mx-1"
             ></u-color-circle>
           </div>
-
 
           {{ $t("onboarding.customize.colors.action") }}
         </v-btn>

@@ -84,7 +84,7 @@
 
           <v-scroll-y-reverse-transition hide-on-leave>
             <div v-if="commission" key="1">
-              <v-sheet theme="dark" class="widget-box mx-auto usn price-prev">
+              <v-sheet class="widget-box mx-auto usn price-prev" theme="dark">
                 <u-currency-input
                   v-model="currency"
                   :activeCurrencies="shop.currencies"
@@ -105,8 +105,8 @@
                 />
 
                 <div
-                  style="border: solid #f3c50e medium; border-radius: 10px"
                   class="ma-n1 pa-1 position-relative"
+                  style="border: solid #f3c50e medium; border-radius: 10px"
                 >
                   <u-price-input
                     :currency="currency"
@@ -163,12 +163,12 @@
               v-model:user-id="user_id"
               :label="$t('affiliates.dialog.user')"
               messages="Optional, Ex: affiliate name in the Selldone"
+              variant="underlined"
               @update:model-value="
                 (val) => {
                   if (!email) email = val;
                 }
               "
-              variant="underlined"
             ></s-user-input>
 
             <div v-else class="d-flex align-center">

@@ -12,8 +12,8 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
-import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
+import {DateConverter} from "@selldone/core-js/helper/date/DateConverter";
+import {TimeSeries} from "@selldone/core-js/timeserie/TimeSeries";
 
 export class ChartAnnotations {
   static CreateMaxPoints(

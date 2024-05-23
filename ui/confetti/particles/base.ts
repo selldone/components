@@ -14,7 +14,7 @@
 
 import getRandomNumber from "../../../ui/confetti/utils/get-random-number";
 
-export namespace confetti{
+export namespace confetti {
   export interface ParticleOptions {
     color?: string;
     size?: number;
@@ -28,8 +28,6 @@ export namespace confetti{
     windSpeedMax: number;
     count: number;
   }
-
-
 
   /**
    * Extends HTMLCanvasElement to include 'ctx' as CanvasRenderingContext2D.

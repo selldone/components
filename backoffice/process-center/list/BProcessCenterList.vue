@@ -43,13 +43,13 @@
           v-model="selected_subscription_price"
           :product="filterProductId ? { id: filterProductId } : null"
           :shop="shop"
+          bg-color="transparent"
           class="min-width-200 max-width-field"
           clearable
+          flat
           hide-details
           single-line
           variant="solo"
-          bg-color="transparent"
-          flat
           @change="refreshOrders"
         >
         </b-product-subscription-pricing-input>
@@ -58,14 +58,14 @@
       <v-text-field
         v-model="search"
         :label="$t('global.commons.search')"
+        bg-color="transparent"
         class="min-width-200 max-width-field"
         clearable
+        flat
         hide-details
         prepend-inner-icon="search"
         single-line
         variant="solo"
-        flat
-        bg-color="transparent"
       ></v-text-field>
 
       <slot name="top-menu"></slot>
@@ -73,14 +73,15 @@
 
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
-        :mobile="$vuetify.display.xs"
       v-model:page="page"
       v-model:sort-by="sortBy"
+      :class="{ 'blurred disabled': busy_fetch && !HIGHLIGHT_ID }"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="orders"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
+      :mobile="$vuetify.display.xs"
       :row-props="
         (_data) => {
           return {
@@ -95,8 +96,6 @@
       hide-default-footer
       item-key="id"
       @click:row="(_, r) => handleSelected(r.item)"
-      :class="{ 'blurred disabled': busy_fetch && !HIGHLIGHT_ID }"
-
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
@@ -165,8 +164,8 @@
                 <products-dense-images-circles
                   :ids="getItemsImages(item)"
                   big-scale
-                  class="py-1"
                   border
+                  class="py-1"
                   raw-images-path
                   style="vertical-align: super; display: inline"
                 ></products-dense-images-circles>
@@ -211,8 +210,8 @@
               <products-dense-images-circles
                 :ids="getProductsIDs(item)"
                 big-scale
-                class="py-1"
                 border
+                class="py-1"
                 style="vertical-align: super; display: inline"
               ></products-dense-images-circles>
 
@@ -393,8 +392,8 @@
               v-for="connect_order in item.connect_orders"
               :key="connect_order.id"
               :connect-orders="connect_order"
-              class="ma-1"
               :small="$vuetify.display.xs"
+              class="ma-1"
             ></connect-order-chip>
 
             <!-- 🎗️ Subscription payment active -->
@@ -424,8 +423,8 @@
             <v-chip
               v-if="item.subscription_id"
               class="m-1"
-              title=""
               label
+              title=""
               variant="text"
             >
               <v-avatar rounded start>
@@ -1226,7 +1225,8 @@ export default {
     },
 
     basket_image() {
-      if (this.isPos) return require("@selldone/core-js/assets/order-types/basket-pos.svg");
+      if (this.isPos)
+        return require("@selldone/core-js/assets/order-types/basket-pos.svg");
       else if (this.isDropShipping)
         return require("@selldone/core-js/assets/order-types/basket-drop-shipping.svg");
       else if (this.isAvocado)
@@ -1469,8 +1469,7 @@ export default {
     },
 
     getDiffLastUpdateEmoji(item) {
-      if (item.reject)
-        return require("../../../assets/emotions/010-dead.svg");
+      if (item.reject) return require("../../../assets/emotions/010-dead.svg");
 
       if (
         item.status === BasketStatus.Open ||
@@ -1486,12 +1485,10 @@ export default {
       if (diff > 10) return require("../../../assets/emotions/Angry.svg");
       else if (diff > 7)
         return require("../../../assets/emotions/002-angry face.svg");
-      else if (diff > 5)
-        return require("../../../assets/emotions/030-mad.svg");
+      else if (diff > 5) return require("../../../assets/emotions/030-mad.svg");
       else if (diff > 3)
         return require("../../../assets/emotions/003-annoyed.svg");
-      else if (diff > 2)
-        return require("../../../assets/emotions/035-sad.svg");
+      else if (diff > 2) return require("../../../assets/emotions/035-sad.svg");
       else if (diff > 1)
         return require("../../../assets/emotions/011-detective.svg");
       else return require("../../../assets/emotions/019-happy.svg");

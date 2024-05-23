@@ -74,29 +74,45 @@
             exact
             prepend-icon="rss_feed"
             subtitle="Importing products into Google, Meta, ..."
-
             @click="rss_dialog = true"
           >
             <template v-slot:title>
               Products RSS
 
-              <img src="./../../../../assets/trademark/google.svg" width="22" height="22" class="mx-1">
-              <img src="./../../../../assets/trademark/meta.png" width="22" height="22" class="mx-1">
+              <img
+                class="mx-1"
+                height="22"
+                src="./../../../../assets/trademark/google.svg"
+                width="22"
+              />
+              <img
+                class="mx-1"
+                height="22"
+                src="./../../../../assets/trademark/meta.png"
+                width="22"
+              />
             </template>
           </v-list-item>
 
           <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ API ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
           <v-list-item
-              v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
-              exact
-              prepend-icon="api"
-              subtitle="Importing products via a publicly accessible API call."
-              @click="api_dialog = true"
+            v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
+            exact
+            prepend-icon="api"
+            subtitle="Importing products via a publicly accessible API call."
+            @click="api_dialog = true"
           >
             <template v-slot:title>
               Products API
 
-              <img v-for="i in available_api_feeds.limit(3)" :key="i.driver" :src="i.logo" width="22" height="22" class="mx-1">
+              <img
+                v-for="i in available_api_feeds.limit(3)"
+                :key="i.driver"
+                :src="i.logo"
+                class="mx-1"
+                height="22"
+                width="22"
+              />
             </template>
           </v-list-item>
 
@@ -233,22 +249,22 @@
         <u-text-copy-box
           :image="getShopImagePath(shop.icon, 128)"
           :value="products_feed"
-          small-width-mode
           message="Products RSS"
+          small-width-mode
         ></u-text-copy-box>
 
         <u-text-copy-box
           :image="require('../../../../assets/trademark/google.svg')"
           :value="products_feed_google"
-          small-width-mode
           message="Google Merchants Feed"
+          small-width-mode
         ></u-text-copy-box>
 
         <u-text-copy-box
           :image="require('../../../../assets/trademark/meta.png')"
           :value="products_feed_facebook"
-          small-width-mode
           message="Facebook Business Feed"
+          small-width-mode
         ></u-text-copy-box>
       </v-card-text>
     </v-card>
@@ -257,9 +273,9 @@
   <!-- █████████████████████ API Dialog █████████████████████ -->
 
   <v-bottom-sheet
-      v-model="api_dialog"
-      content-class="rounded-t-xl"
-      max-width="840"
+    v-model="api_dialog"
+    content-class="rounded-t-xl"
+    max-width="840"
   >
     <v-card class="rounded-t-xl text-start" rounded="0">
       <v-card-title>
@@ -268,30 +284,28 @@
       </v-card-title>
       <v-card-text class="py-5">
         <v-list-subheader>
-          Use this API feed to keep your product list up-to-date. It provides a publicly accessible API to fetch products from your store, making it ideal for product listing and comparison websites.
+          Use this API feed to keep your product list up-to-date. It provides a
+          publicly accessible API to fetch products from your store, making it
+          ideal for product listing and comparison websites.
         </v-list-subheader>
         <u-text-copy-box
-            :image="getShopImagePath(shop.icon, 128)"
-            :value="products_api_feed"
-            small-width-mode
-            message="Products API"
+          :image="getShopImagePath(shop.icon, 128)"
+          :value="products_api_feed"
+          message="Products API"
+          small-width-mode
         ></u-text-copy-box>
 
         <u-text-copy-box
-            v-for="item in available_api_feeds"
-            :key="item.driver"
-            :image="item.logo"
-            :value="generateApiFeedUrl(item)"
-            small-width-mode
-            :message="item.title"
+          v-for="item in available_api_feeds"
+          :key="item.driver"
+          :image="item.logo"
+          :message="item.title"
+          :value="generateApiFeedUrl(item)"
+          small-width-mode
         ></u-text-copy-box>
-
-
-
       </v-card-text>
     </v-card>
   </v-bottom-sheet>
-
 
   <!-- █████████████████████ Advanced Options Dialog █████████████████████ -->
   <b-products-advanced-options
@@ -310,8 +324,8 @@ import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import BProductsAdvancedOptions from "../../../product/advanced-options/BProductsAdvancedOptions.vue";
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
 import { HelpCenterCode } from "../../../help/HelpCenterCode";
-import {ShopPublicFeedApi} from "@selldone/core-js/enums/shop/feeds/api/ShopPublicFeedApi";
-import {SetupService} from "@selldone/core-js/server/SetupService";
+import { ShopPublicFeedApi } from "@selldone/core-js/enums/shop/feeds/api/ShopPublicFeedApi";
+import { SetupService } from "@selldone/core-js/server/SetupService";
 
 export default {
   name: "BProductsPanelHeader",
@@ -340,7 +354,7 @@ export default {
     dialog_advanced: false,
 
     rss_dialog: false,
-    api_dialog:false,
+    api_dialog: false,
 
     ShopPublicFeedApi: ShopPublicFeedApi,
   }),
@@ -388,11 +402,11 @@ export default {
     products_api_feed() {
       return `${this.getShopMainUrl(this.shop)}/api/products`;
     },
-    available_api_feeds(){
-      return ShopPublicFeedApi.filter(i=>!i.local || i.local===SetupService.LocalServiceCountry())
+    available_api_feeds() {
+      return ShopPublicFeedApi.filter(
+        (i) => !i.local || i.local === SetupService.LocalServiceCountry(),
+      );
     },
-
-
 
     service_google_sheet() {
       return this.shop.service_google_sheet;

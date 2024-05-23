@@ -21,7 +21,7 @@
     width="90%"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <v-card v-if="toLanguage" rounded="t-xl" class="text-start">
+    <v-card v-if="toLanguage" class="text-start" rounded="t-xl">
       <v-card-title>
         <v-icon class="me-1" color="#333">translate</v-icon>
         Auto Translate
@@ -72,10 +72,7 @@
             >* Enterprise-grade translation machine.
           </v-list-subheader>
 
-          <u-smart-verify
-            v-model="check"
-            class="my-3"
-          ></u-smart-verify>
+          <u-smart-verify v-model="check" class="my-3"></u-smart-verify>
         </div>
       </v-card-text>
 

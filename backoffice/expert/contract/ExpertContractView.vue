@@ -145,8 +145,7 @@
         </div>
       </template>
 
-      <u-tasks-editor v-else v-model="new_tasks" editable>
-      </u-tasks-editor>
+      <u-tasks-editor v-else v-model="new_tasks" editable> </u-tasks-editor>
 
       <!-- ......................... Permissions ......................... -->
 
@@ -355,9 +354,9 @@
           <p>{{ $t("contract_view.comment_desc") }}</p>
           <v-rating
             v-model="rate"
-            color="grey-darken-1"
-            class="inline-block mb-2"
             active-color="yellow-darken-3"
+            class="inline-block mb-2"
+            color="grey-darken-1"
           ></v-rating>
           <v-textarea
             v-model="comment"
@@ -400,9 +399,9 @@
           <!-- Show rating only for started contract -->
           <v-rating
             :model-value="contract.rate"
-            color="grey-darken-1"
-            class="inline-block"
             active-color="yellow-darken-3"
+            class="inline-block"
+            color="grey-darken-1"
             readonly
           ></v-rating>
 
@@ -563,7 +562,7 @@
 
     <v-skeleton-loader
       v-else
-      :type="['list-item-two-line','article', 'image']"
+      :type="['list-item-two-line', 'article', 'image']"
     ></v-skeleton-loader>
 
     <!-- ......................... Dialog > Payment ......................... -->
@@ -625,10 +624,7 @@
               @click="payNow"
             >
               {{ $t("global.actions.pay_now") }}
-              <u-price
-                :amount="contract.cost"
-                :currency="currency"
-              ></u-price>
+              <u-price :amount="contract.cost" :currency="currency"></u-price>
             </v-btn>
           </div>
         </v-card-actions>

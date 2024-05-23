@@ -32,9 +32,9 @@
           v-if="!rate.live"
           class="float-end"
           color="amber"
+          prepend-icon="science"
           size="x-small"
           variant="flat"
-          prepend-icon="science"
         >
           {{ $t("global.commons.debug") }}
         </v-chip>

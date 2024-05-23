@@ -216,7 +216,7 @@
       <v-card v-if="ai_dialog_pre" color="#516ad6" dark rounded="0">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-2">auto_fix_high</v-icon>
-          {{$t('product_panel.ai.title')}}
+          {{ $t("product_panel.ai.title") }}
 
           <span v-if="parent_folders">
             <span class="mx-2">|</span>

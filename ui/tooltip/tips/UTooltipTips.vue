@@ -17,15 +17,15 @@
     class="margin-n7px hover-alpha"
     color="primary"
     icon
+    max-width="420"
     size="32"
     variant="plain"
-    max-width="420"
   >
     <v-icon color="#000" size="20"> {{ icon }}</v-icon>
 
     <v-tooltip
-      activator="parent"
       :max-width="480"
+      activator="parent"
       content-class="bg-black text-start"
       location="bottom"
     >

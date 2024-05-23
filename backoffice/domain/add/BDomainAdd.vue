@@ -55,8 +55,8 @@
               color="green"
               placeholder="your-shop-domain.com"
               single-line
-              @keydown.enter="setShopDomain()"
               variant="underlined"
+              @keydown.enter="setShopDomain()"
             >
               <template v-slot:prepend-inner>
                 <b
@@ -225,7 +225,7 @@
                   :image="getShopImagePath(shop.icon, 64)"
                   title="Your Domain"
                 ></u-pod-node>
-                <u-pod-wire forward backward></u-pod-wire>
+                <u-pod-wire backward forward></u-pod-wire>
 
                 <template v-if="show_ssl_ips">
                   <u-pod-node
@@ -235,13 +235,13 @@
                     icon-color="#eee"
                     title="Optional CDN"
                   ></u-pod-node>
-                  <u-pod-wire forward backward></u-pod-wire>
+                  <u-pod-wire backward forward></u-pod-wire>
                   <u-pod-node
                     icon="cloud"
                     icon-color="primary"
                     title="SSL + CDN"
                   ></u-pod-node>
-                  <u-pod-wire forward backward></u-pod-wire>
+                  <u-pod-wire backward forward></u-pod-wire>
                 </template>
 
                 <template v-else>
@@ -251,7 +251,7 @@
                     icon-color="#009688"
                     title="CDN (Required)"
                   ></u-pod-node>
-                  <u-pod-wire forward backward></u-pod-wire>
+                  <u-pod-wire backward forward></u-pod-wire>
                 </template>
 
                 <u-pod-node is-selldone-icon title="Selldone"></u-pod-node>
@@ -368,9 +368,9 @@
                   >
                     <template v-slot:item="{ item, props }">
                       <v-list-item
-                        v-bind="props"
                         :title="item.title"
                         class="text-start"
+                        v-bind="props"
                       >
                         <template v-slot:prepend>
                           <img
@@ -504,9 +504,11 @@
             <s-widget-header icon="dns" title="DNS records"></s-widget-header>
             <v-list-subheader v-if="domain"
               >{{
-                domain.ssl_proxy
-                  ? "If you added this domain via Selldone SSL service, Selldone will issue an SSL certificate if your DNS configuration is correct."
-                  : "When you add a domain in direct mode, it implies that you are responsible for adding SSL to your domain via CDNs like Cloudflare. Please note that Selldone will not issue SSL for your domain in this case."
+              domain.ssl_proxy
+              ? "If you added this domain via Selldone SSL service, Selldone will issue an SSL certificate if your DNS
+              configuration is correct."
+              : "When you add a domain in direct mode, it implies that you are responsible for adding SSL to your domain
+              via CDNs like Cloudflare. Please note that Selldone will not issue SSL for your domain in this case."
               }}
             </v-list-subheader>
 

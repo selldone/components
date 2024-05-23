@@ -32,9 +32,9 @@
           :dark="isSmall"
           :sort-keys="keys"
           class="flex-grow-0"
-          style="margin: 0 !important"
-          small
           dense
+          small
+          style="margin: 0 !important"
         >
         </s-data-iterator-toolbar>
 
@@ -325,8 +325,6 @@ export default {
       default: null,
       type: Object,
     },
-
-
   },
 
   data: () => ({
@@ -370,12 +368,10 @@ export default {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
     keys() {
-
-        return [
-          { label: "global.sort.created_at", value: "created_at" },
-          { label: "global.sort.updated_at", value: "updated_at" },
-        ];
-
+      return [
+        { label: "global.sort.created_at", value: "created_at" },
+        { label: "global.sort.updated_at", value: "updated_at" },
+      ];
     },
     small_mode() {
       return this.isSmall || this.windowSize.x < 960;
@@ -475,22 +471,18 @@ export default {
       this.busy_fetch = true;
 
       axios
-        .get(
+        .get(window.XAPI.GET_SHOP_TICKETS_LIST(this.shop.name), {
+          params: {
+            offset: (page - 1) * this.itemsPerPage,
+            limit: this.itemsPerPage,
+            sortBy: sortBy,
+            sortDesc: sortDesc,
 
-            window.XAPI.GET_SHOP_TICKETS_LIST(this.shop.name),
-          {
-            params: {
-              offset: (page - 1) * this.itemsPerPage,
-              limit: this.itemsPerPage,
-              sortBy: sortBy,
-              sortDesc: sortDesc,
+            search: this.search,
 
-              search: this.search,
-
-              categories: this.categories,
-            },
+            categories: this.categories,
           },
-        )
+        })
         .then(({ data }) => {
           this.contacts = data.contacts;
           this.totalItems = data.total;

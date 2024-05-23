@@ -43,8 +43,8 @@
         :src="
           getCategoryIcon(id.toString().replace('c-', ''), IMAGE_SIZE_SMALL)
         "
-        style="padding: 2px"
         height="100%"
+        style="padding: 2px"
       />
       <img
         v-else
@@ -62,11 +62,11 @@
       v-if="hasAdd"
       key="add"
       :class="{ 'pointer-pointer': link, 'big-scale': bigScale }"
+      :size="size"
       class="citm"
       color="primary"
-      variant="flat"
       icon
-      :size="size"
+      variant="flat"
       @click="$emit('click:add')"
     >
       <v-icon>add</v-icon>

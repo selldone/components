@@ -42,11 +42,7 @@
       <h4>{{ title }}</h4>
 
       <div class="text-center py-3">
-        <img
-          height="48"
-          src="../../assets/icons/warehouse.svg"
-          width="48"
-        />
+        <img height="48" src="../../assets/icons/warehouse.svg" width="48" />
       </div>
 
       <p>
@@ -182,10 +178,7 @@
       </v-row>
     </div>
 
-    <u-map-geo-button
-      v-if="location"
-      :location="location"
-    ></u-map-geo-button>
+    <u-map-geo-button v-if="location" :location="location"></u-map-geo-button>
 
     <v-img
       :src="require('../../assets/icons/location-placeholder.svg')"

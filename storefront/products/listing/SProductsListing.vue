@@ -70,21 +70,21 @@
         <!-- -------------------------- Container -------------------------------- -->
 
         <v-container
+          v-resize="onResize"
           :class="{
             'container-expanded-side-menu': show_filter_menu && has_filter,
           }"
           class="products-container pa-1"
           fluid
-          v-resize="onResize"
         >
           <!-- ⬬⬬⬬⬬ Folders ⬬⬬⬬⬬ -->
 
           <component
-            v-if="folders.length"
             :is="single_line_categories ? 'u-fade-scroll' : 'div'"
+            v-if="folders.length"
             drag-scroll
-            small-arrow
             show-arrow
+            small-arrow
           >
             <v-row
               :align="single_line_categories ? 'center' : align"
@@ -94,13 +94,13 @@
                 justify ? 'justify-' + justify : undefined,
               ]"
               :justify="justify"
-              class="s--products-listing-row pb-5 mb-2 pb-sm-12 pt-9"
               :style="[
                 { '--insta-size': insta_size },
                 single_line_categories
                   ? 'flex-wrap: nowrap;overflow: visible; flex-direction: initial'
                   : '',
               ]"
+              class="s--products-listing-row pb-5 mb-2 pb-sm-12 pt-9"
             >
               <v-fade-transition group hide-on-leave>
                 <s-category-card
@@ -120,6 +120,7 @@
                           params: { category_name: category.name },
                         }
                   "
+                  style="min-width: max-content"
                   v-bind="
                     !viewOnly && window.ExternalWidget
                       ? {
@@ -128,7 +129,6 @@
                         }
                       : {}
                   "
-                  style="min-width: max-content"
                 />
               </v-fade-transition>
             </v-row>
@@ -237,9 +237,9 @@
                     : {}
                 "
                 @click="onClickProduct(product, index)"
-                @quick-buy="quickBuy(product)"
                 @mouseenter="$emit('product-hover:enter', product)"
                 @mouseleave="$emit('product-hover:leave', product)"
+                @quick-buy="quickBuy(product)"
               />
 
               <v-spacer
@@ -269,13 +269,13 @@
           :class="{
             'ma-2': show_filter_menu,
           }"
-          class="t-all-400"
           :folders="folders"
           :parent-folders="parent_folders"
           :shop="shop"
           :style="{
             borderRadius: $vuetify.display.mdAndDown ? '32px' : '32px',
           }"
+          class="t-all-400"
           @change-filter="setFilter"
           @change-height="(h) => (min_height = h)"
         />
@@ -285,8 +285,8 @@
       <v-bottom-sheet
         v-if="hover_actions"
         v-model="quick_buy"
-        content-class="rounded-t-xl"
         :max-width="1480"
+        content-class="rounded-t-xl"
         max-height="90vh"
         width="98vw"
       >
@@ -310,8 +310,8 @@
             <v-btn
               class="absolute-top-end z1"
               icon
-              variant="text"
               size="large"
+              variant="text"
               @click="quick_buy = false"
             >
               <v-icon>close</v-icon>

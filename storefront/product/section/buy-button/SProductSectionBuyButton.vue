@@ -34,9 +34,9 @@
           hide-details
           item-value="alpha2"
           placeholder="Select a country..."
-          variant="solo"
           rounded="lg"
           transparent
+          variant="solo"
         ></s-country-select>
         <v-autocomplete
           v-model="selected_postal"
@@ -47,8 +47,8 @@
           bg-color="transparent"
           flat
           hide-details
-          variant="solo"
           rounded="lg"
+          variant="solo"
           @update:model-value="setMyLocation"
         >
           <template v-slot:prepend-inner>

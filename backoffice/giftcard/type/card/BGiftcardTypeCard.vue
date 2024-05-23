@@ -13,10 +13,7 @@
   -->
 
 <template>
-  <div
-    :class="[hover ? 'widget-card' : 'widget', dashed ? 'dashed' : '']"
-
-  >
+  <div :class="[hover ? 'widget-card' : 'widget', dashed ? 'dashed' : '']">
     <v-btn
       v-if="editable"
       class="float-right"

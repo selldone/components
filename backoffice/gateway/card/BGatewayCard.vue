@@ -42,15 +42,20 @@
         }}</span>
         <u-currency-icon :currency="currency" gradient></u-currency-icon>
 
-        <v-chip v-if="!gateway?.enable" color="red" size="small"  prepend-icon="gpp_bad">
+        <v-chip
+          v-if="!gateway?.enable"
+          color="red"
+          prepend-icon="gpp_bad"
+          size="small"
+        >
           Gateway disabled
         </v-chip>
 
         <v-chip
           v-else-if="shopGateway.enable && shopGateway.livemode"
           color="green"
-          size="small"
           prepend-icon="verified_user"
+          size="small"
         >
           {{ $t("global.status.active") }}
         </v-chip>
@@ -58,17 +63,27 @@
         <v-chip
           v-else-if="shopGateway.enable && !shopGateway.livemode"
           color="orange"
-          size="small"
           prepend-icon="science"
+          size="small"
         >
           {{ $t("global.status.debug") }}
         </v-chip>
 
-        <v-chip v-else color="red" size="small" prepend-icon="report_gmailerrorred" variant="flat">
+        <v-chip
+          v-else
+          color="red"
+          prepend-icon="report_gmailerrorred"
+          size="small"
+          variant="flat"
+        >
           {{ $t("global.status.inactive") }}
-          <v-icon size="12" class="blink-me" end>circle</v-icon>
+          <v-icon class="blink-me" end size="12">circle</v-icon>
 
-          <v-tooltip activator="parent" content-class="bg-red" location="bottom">
+          <v-tooltip
+            activator="parent"
+            content-class="bg-red"
+            location="bottom"
+          >
             The gateway is inactivated by selldone.
           </v-tooltip>
         </v-chip>
@@ -76,8 +91,8 @@
         <v-spacer></v-spacer>
         <v-btn
           icon
-          variant="text"
           title="Edit"
+          variant="text"
           @click="goToEditGateway()"
           @click.stop
         >
@@ -136,16 +151,16 @@
                 }"
                 class="me-1"
                 icon
-                variant="text"
                 size="small"
+                variant="text"
                 @click.stop
               >
                 <v-icon>wallet</v-icon>
 
                 <v-tooltip
                   activator="parent"
-                  location="bottom"
                   content-class="bg-black"
+                  location="bottom"
                 >
                   Linked selldone wallet
                   <br />
@@ -167,12 +182,12 @@
                 </v-icon>
                 <v-tooltip
                   activator="parent"
-                  location="bottom"
                   content-class="bg-black text-start"
+                  location="bottom"
                 >
                   Available balance of the connected wallet.
 
-                  <v-table density="compact" class="bg-transparent">
+                  <v-table class="bg-transparent" density="compact">
                     <template v-slot:default>
                       <tbody>
                         <tr>

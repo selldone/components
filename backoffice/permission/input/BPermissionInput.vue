@@ -32,10 +32,10 @@
   >
     <template v-slot:item="{ item, props }">
       <v-list-item
-        v-bind="props"
-        class="text-start"
         :prepend-avatar="item.raw.src"
         :title="$t(item.raw.text)"
+        class="text-start"
+        v-bind="props"
       >
       </v-list-item>
     </template>

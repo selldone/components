@@ -18,8 +18,6 @@ Supported barcode formats:
 
 It is a light wrapper for the [JsBarcode](https://github.com/lindell/JsBarcode) barcode library.
 
-
-
 ## Use
 
 #### 1. Add VueBarcode as a component

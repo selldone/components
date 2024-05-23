@@ -17,7 +17,8 @@
     <v-btn
       v-if="available_lotories"
       :loading="busy_fetch"
-      icon variant="text"
+      icon
+      variant="text"
       @click="dialog = true"
     >
       <u-lottie
@@ -27,26 +28,27 @@
         width="44px"
       />
       <v-tooltip activator="parent" location="bottom">
-        {{$t('global.commons.lottery')}}
+        {{ $t("global.commons.lottery") }}
       </v-tooltip>
     </v-btn>
 
     <v-dialog
       v-model="dialog"
-
+      :fullscreen="$vuetify.display.xs"
       max-width="860"
       scrollable
-      :fullscreen="$vuetify.display.xs"
     >
-      <v-card class="text-start" :rounded="$vuetify.display.xs?0:'xl'">
+      <v-card :rounded="$vuetify.display.xs ? 0 : 'xl'" class="text-start">
         <v-card-title class="d-flex align-center">
-          <v-icon class="me-1">casino</v-icon>    {{ $t("global.wheel_fortune.title") }}
+          <v-icon class="me-1">casino</v-icon>
+          {{ $t("global.wheel_fortune.title") }}
 
           <v-spacer></v-spacer>
           <v-btn
             :title="$t('global.actions.close')"
             class="sub-caption -hover"
-            icon variant="text"
+            icon
+            variant="text"
             @click="dialog = false"
           >
             <v-icon>close</v-icon>
@@ -55,7 +57,6 @@
 
         <v-card-text>
           <p class="text-start">
-
             {{ $t("global.wheel_fortune.message", { chips: chips }) }}
           </p>
 
@@ -210,7 +211,7 @@
                 class="btn-center"
                 @click="playNow()"
               >
-                <v-icon class="spin">refresh </v-icon>
+                <v-icon class="spin">refresh</v-icon>
                 <span class="-on-hover">{{ $t("global.actions.play") }}</span>
               </div>
             </ul>

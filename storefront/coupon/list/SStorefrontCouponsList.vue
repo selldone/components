@@ -21,9 +21,8 @@
     <p v-if="!forceShow" class="small font-weight-bold">
       <v-btn
         :color="show_coupons ? '#666' : 'green'"
-        :variant="show_coupons ?'outlined':'flat'"
+        :variant="show_coupons ? 'outlined' : 'flat'"
         size="small"
-
         @click="show_coupons = !show_coupons"
         ><i class="fas fa-ticket-alt me-2"></i>
         {{
@@ -43,10 +42,13 @@
               :disabled="!canUse(coupon)"
               :selectable="selectable"
               :selected="
-                returnObject ? modelValue?.id === coupon.id : modelValue === coupon.id
+                returnObject
+                  ? modelValue?.id === coupon.id
+                  : modelValue === coupon.id
               "
               class="-coupon"
               width="220px"
+              @delete="deleteCoupon"
               @select="
                 selectable
                   ? selectCoupon(
@@ -56,7 +58,6 @@
                     )
                   : undefined
               "
-              @delete="deleteCoupon"
             >
             </s-storefront-coupon-view>
           </div>
@@ -90,8 +91,8 @@
             v-model="code_input"
             :label="$t('coupons.coupon_code')"
             class="strong-field"
-            @keydown.enter="addCoupon(code_input)"
             variant="underlined"
+            @keydown.enter="addCoupon(code_input)"
           >
           </v-text-field>
         </v-card-text>
@@ -111,9 +112,9 @@
             <v-btn
               :class="{ disabled: !code_input }"
               :loading="busy_add"
+              color="primary"
               size="x-large"
               variant="elevated"
-              color="primary"
               @click="addCoupon(code_input)"
             >
               <v-icon start>add</v-icon>

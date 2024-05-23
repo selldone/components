@@ -61,7 +61,6 @@
 
       <u-loading-progress v-if="busy_fetch"></u-loading-progress>
       <v-data-table-server
-        :mobile="$vuetify.display.xs"
         v-model:options="options"
         v-model:page="page"
         v-model:sort-by="sortBy"
@@ -71,6 +70,7 @@
         :items="virtual_items"
         :items-length="totalItems"
         :items-per-page="itemsPerPage"
+        :mobile="$vuetify.display.xs"
         :row-props="
           (_data) => {
             return { class: 'row-hover' };
@@ -126,8 +126,8 @@
 
             <v-tooltip
               activator="parent"
-              max-width="320"
               content-class="text-start"
+              max-width="320"
             >
               Select a variant! Customers can't purchase this item.
             </v-tooltip>
@@ -155,8 +155,8 @@
           <v-chip
             v-if="item.status === 'Canceled'"
             color="red"
-            size="small"
             label
+            size="small"
           >
             <v-icon start>cancel</v-icon>
 
@@ -166,8 +166,8 @@
           <v-chip
             v-else-if="item.status === 'Payed'"
             color="green"
-            size="small"
             label
+            size="small"
           >
             <v-icon start>check_circle</v-icon>
 
@@ -175,15 +175,15 @@
           </v-chip>
           <v-chip
             v-else-if="item.status === 'Reserved'"
-            size="small"
-            label
             color="amber"
+            label
+            size="small"
           >
             <v-icon start>hourglass_top</v-icon>
 
             {{ getStatusString(item.status) }}
           </v-chip>
-          <v-chip v-else size="small" label>
+          <v-chip v-else label size="small">
             {{ getStatusString(item.status) }}
           </v-chip>
         </template>

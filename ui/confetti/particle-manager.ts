@@ -13,7 +13,7 @@
  */
 
 import ParticleFactory from "../../ui/confetti/factories/particle";
-import {confetti} from "./particles/base.ts";
+import { confetti } from "./particles/base.ts";
 
 /**
  * A particle generation and management service.

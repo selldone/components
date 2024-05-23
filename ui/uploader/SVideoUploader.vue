@@ -24,9 +24,9 @@
       <v-list-item-title>
         <b>{{ label }}</b>
       </v-list-item-title>
-      <v-list-item-subtitle v-if="video" class="small">{{
-        video
-      }}</v-list-item-subtitle>
+      <v-list-item-subtitle v-if="video" class="small"
+        >{{ video }}
+      </v-list-item-subtitle>
 
       <template v-slot:append>
         <v-btn
@@ -34,8 +34,8 @@
           class="ms-1"
           color="red"
           icon
-          variant="text"
           title="Clear Video"
+          variant="text"
           @click.stop="
             () => {
               last_video = null;
@@ -47,9 +47,9 @@
         </v-btn>
 
         <v-btn
-          title="Edit Video"
           class="ms-1"
           icon
+          title="Edit Video"
           variant="text"
           @click="
             force_edit = !force_edit;
@@ -107,9 +107,9 @@
           <v-btn
             v-if="clearable && last_video"
             class="absolute-top-end m-2 z2"
+            icon
             size="small"
             variant="text"
-            icon
             @click.stop="
               () => {
                 last_video = null;

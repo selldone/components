@@ -55,12 +55,12 @@
         enabledCountryCode
         required
         validCharactersOnly
+        variant="underlined"
         @country-changed="
           (val) => {
             country = val;
           }
         "
-        variant="underlined"
       ></u-tel-input>
     </div>
 
@@ -102,9 +102,9 @@
             v-model="birthday"
             :label="$t('basic_information.personal_info_dialog.birthday_input')"
             :max="new Date()"
+            :placeholder="$t('global.placeholders.birthday')"
             clearable
             date-only
-            :placeholder="$t('global.placeholders.birthday')"
             type="date"
           />
 

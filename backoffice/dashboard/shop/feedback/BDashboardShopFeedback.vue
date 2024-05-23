@@ -14,8 +14,8 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <s-widget-box
-    :title="$t('direct_feedback.title')"
     :sub-title="$t('direct_feedback.message')"
+    :title="$t('direct_feedback.title')"
   >
     <template v-slot:top-left>
       <img :src="require('./assets/feedback.svg')" height="24" width="24" />
@@ -25,22 +25,22 @@
         <div v-if="hide">
           <v-btn
             append-icon="expand_more"
-            variant="text"
             class="tnt ma-1"
+            variant="text"
             @click="hide = false"
           >
             <v-avatar :size="24" class="avatar-gradient -thin -user me-1">
               <v-img :src="getUserAvatar(USER_ID())" />
             </v-avatar>
-            {{$t('direct_feedback.expand_action')}}
+            {{ $t("direct_feedback.expand_action") }}
 
             <v-icon
-              :size="16"
               v-if="feedback?.message"
-              color="green"
+              :size="16"
               class="mx-1"
-              >check_circle</v-icon
-            >
+              color="green"
+              >check_circle
+            </v-icon>
           </v-btn>
         </div>
         <div v-else>
@@ -52,62 +52,65 @@
             rounded="lg"
             selected-class="blue-flat elevation-10"
           >
-            <v-btn variant="outlined" value="CEO" class="tnt">
+            <v-btn class="tnt" value="CEO" variant="outlined">
               <v-avatar :size="24" class="me-1" variant="outlined">
                 <v-img :src="require('./assets/mehrdad.jpg')" />
               </v-avatar>
 
-              {{$t('direct_feedback.to.ceo')}}
+              {{ $t("direct_feedback.to.ceo") }}
             </v-btn>
-            <v-btn variant="outlined" value="TEAM" class="tnt">
+            <v-btn class="tnt" value="TEAM" variant="outlined">
               <v-avatar :size="24" class="me-1" variant="outlined">
                 <v-img :src="require('./assets/team.jpg')" />
               </v-avatar>
 
-
-              {{$t('direct_feedback.to.team')}}
+              {{ $t("direct_feedback.to.team") }}
             </v-btn>
           </v-btn-toggle>
 
           <v-textarea
             v-model="message"
             :label="$t('direct_feedback.input_label')"
-            variant="solo"
-            flat
-            persistent-placeholder
+            :placeholder="
+              to === 'CEO'
+                ? $t('direct_feedback.placeholder.ceo')
+                : $t('direct_feedback.placeholder.team')
+            "
             :rows="3"
             auto-grow
-            :placeholder="to==='CEO'?$t('direct_feedback.placeholder.ceo'):$t('direct_feedback.placeholder.team')"
+            flat
             hide-details
+            persistent-placeholder
+            variant="solo"
           >
             <template v-slot:append-inner>
               <div class="d-flex flex-column">
                 <v-btn
                   append-icon="expand_less"
-                  variant="text"
                   class="tnt ma-1"
+                  variant="text"
                   @click="hide = true"
                 >
                   {{ $t("global.commons.hide") }}
                 </v-btn>
                 <v-btn
                   v-if="feedback"
-                  color="primary"
-                  append-icon="save"
-                  variant="elevated"
-                  class="tnt ma-1"
                   :loading="busy"
+                  append-icon="save"
+                  class="tnt ma-1"
+                  color="primary"
+                  variant="elevated"
                   @click="send"
                 >
                   {{ $t("global.actions.save") }}
                 </v-btn>
                 <v-btn
                   v-else
-                  color="primary"
-                  append-icon="send"
-                  variant="elevated"
-                  class="tnt ma-1"
                   :loading="busy"
+                  append-icon="send"
+                  class="tnt ma-1"
+                  color="primary"
+                  variant="elevated"
                   @click="send"
                 >
                   {{ $t("global.actions.send") }}

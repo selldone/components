@@ -348,17 +348,17 @@
         ></div>
 
         <hr class="my-5" />
-        {{ $t('add_product.delete_product.tips')}}
+        {{ $t("add_product.delete_product.tips") }}
       </v-card-text>
 
       <v-card-actions>
         <s-widget-buttons>
           <v-btn
             color="default"
+            prepend-icon="close"
             size="x-large"
             variant="text"
             @click="dialogDeleteProduct = false"
-            prepend-icon="close"
           >
             {{ $t("global.actions.cancel") }}
           </v-btn>
@@ -1221,8 +1221,8 @@ not need!
 
         this.step =
           /* this.hasStep__Inputs
-                              ? TAB_INPUTS
-                              :*/
+                                ? TAB_INPUTS
+                                :*/
           this.hasStep__Outputs
             ? TAB_OUTPUTS
             : this.hasStep__physicalExtra

@@ -15,12 +15,20 @@
 <template>
   <!-- ━━━━━━━━━━━━━ Pods ━━━━━━━━━━━━━ -->
   <u-pods-panel color="#fff" dense small>
-    <u-pod-node :title="$t('global.commons.customer')" hover icon="person_outline">
+    <u-pod-node
+      :title="$t('global.commons.customer')"
+      hover
+      icon="person_outline"
+    >
     </u-pod-node>
 
     <u-pod-wire forward></u-pod-wire>
 
-    <u-pod-node hover icon="shopping_cart_checkout" title="Checkout"></u-pod-node>
+    <u-pod-node
+      hover
+      icon="shopping_cart_checkout"
+      title="Checkout"
+    ></u-pod-node>
 
     <template v-if="type.code === ProductType.SERVICE.code">
       <u-pod-wire forward></u-pod-wire>

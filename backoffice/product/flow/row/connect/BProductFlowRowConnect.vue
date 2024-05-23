@@ -13,9 +13,8 @@
   -->
 
 <template>
-  <v-row   v-if="connect" no-gutters align="center">
+  <v-row v-if="connect" align="center" no-gutters>
     <v-list-item
-
       :prepend-avatar="getShopImagePath(connect.icon)"
       :title="`${$t(connect_mode.title)} Connect ● ${connect.name}`"
     >

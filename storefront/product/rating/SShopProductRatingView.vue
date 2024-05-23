@@ -18,9 +18,9 @@
       v-if="show_edit_btn"
       class="absolute-top-end"
       icon
-      variant="text"
       size="small"
       title="Rate this product"
+      variant="text"
       @click="edit_mode = !edit_mode"
     >
       <v-icon size="small"

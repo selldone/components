@@ -20,18 +20,18 @@
     :label="$t('gift_card_types_list.label')"
     :loading="busy"
     :messages="$t('gift_card_types_list.message')"
-    :variant="variant"
     :return-object="returnObject"
     :rounded="rounded"
+    :variant="variant"
     item-title="title"
     item-value="id"
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" :title="item.raw.title" class="text-start">
+      <v-list-item :title="item.raw.title" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <b-giftcard-type-icon
-            :image="getShopImagePath(item.raw.bg)"
             :color="item.raw.color"
+            :image="getShopImagePath(item.raw.bg)"
             height="36"
           ></b-giftcard-type-icon>
         </template>

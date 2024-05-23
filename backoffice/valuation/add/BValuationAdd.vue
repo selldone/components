@@ -15,8 +15,8 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card
     :color="transparent ? 'transparent' : undefined"
-    flat
     class="text-start"
+    flat
   >
     <v-card-title>
       <v-icon class="me-2">calculate</v-icon>
@@ -71,8 +71,8 @@
 
           <b-valuation-form-structure
             v-model="structure"
-            :sample-product="product"
             :collapse="collapse"
+            :sample-product="product"
           >
           </b-valuation-form-structure>
 
@@ -95,11 +95,11 @@
             </div>
 
             <s-product-section-valuation
+              v-model:preferences="preview_valuation"
               :product="preview_product"
               :shop="shop"
-              v-model:preferences="preview_valuation"
-              preview-mode
               class="my-5"
+              preview-mode
             ></s-product-section-valuation>
           </div>
 
@@ -120,8 +120,8 @@
                 <v-list-item
                   v-for="(item_type, index) in types"
                   :key="index"
-                  @click="addField(item_type.value)"
                   :prepend-icon="item_type.icon"
+                  @click="addField(item_type.value)"
                 >
                   <v-list-item-title
                     ><b>{{ item_type.title }}</b>
@@ -153,9 +153,9 @@
           </v-list-subheader>
 
           <b-valuation-form-condition
+            v-model="conditions"
             :shop="shop"
             :structure="structure"
-            v-model="conditions"
           ></b-valuation-form-condition>
         </div>
       </v-form>
@@ -224,6 +224,7 @@
             <v-list-item
               v-for="(item, i) in samples"
               :key="i"
+              :prepend-icon="item.icon"
               @click="
                 title = title ? title : item.title;
                 structure = item.structure;
@@ -231,7 +232,6 @@
                 collapse = true;
                 samples_dialog = false;
               "
-              :prepend-icon="item.icon"
             >
               <v-list-item-title>
                 {{ item.title }}

@@ -23,10 +23,11 @@
       selected || iSelected ? 'border-selected ' : '',
       shortcut ? '-shortcut' : '',
     ]"
+    :dark="dark"
     :deleted_at="getFromNowString(product.deleted_at)"
     :h100="false"
     :product-id="product.id"
-    :style="{'--card-color':color}"
+    :style="{ '--card-color': color }"
     :title="`<h5 class='align-items-center pb-1'  style='font-size: 1.16rem;min-height: 42px'>    <span class='circle ${state_class}' style='font-size: 6px;'></span>  ${product.title?.limitWords(
       12,
     )}  </h5>`"
@@ -35,7 +36,6 @@
     custom-header
     style="border-radius: 8px"
     @click="$emit('select')"
-    :dark="dark"
   >
     <template v-slot:top-left>
       <v-btn
@@ -682,8 +682,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.b--product-window-product-large{
+.b--product-window-product-large {
   background: var(--card-color);
 }
 

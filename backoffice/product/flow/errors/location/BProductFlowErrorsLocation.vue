@@ -14,9 +14,13 @@
 
 <template>
   <!-- ⬬⬬⬬⬬ Locations Error ⬬⬬⬬⬬ -->
-  <v-row   v-if="no_location_error || invalid_location_error" no-gutters align="center" class="bg-red shadow-small">
+  <v-row
+    v-if="no_location_error || invalid_location_error"
+    align="center"
+    class="bg-red shadow-small"
+    no-gutters
+  >
     <v-list-item
-
       :subtitle="subtitle"
       :title="`Available locations error`"
       base-color="#fff"
@@ -25,7 +29,7 @@
       <template v-slot:prepend>
         <v-icon class="blink-me-linear">report</v-icon>
       </template>
-      <template v-slot:append> </template>
+      <template v-slot:append></template>
     </v-list-item>
 
     <div class="text-end flex-grow-1">

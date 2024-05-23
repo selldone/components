@@ -15,7 +15,7 @@
 <template>
   <!-- ██████████████████ Locations List ██████████████████ -->
 
-  <div v-bind="$attrs" class="widget-box">
+  <div class="widget-box" v-bind="$attrs">
     <s-widget-header
       add-caption="Add location"
       icon="edit_location"
@@ -44,7 +44,6 @@
       ></v-text-field>
     </v-row>
     <v-data-table-server
-      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -54,6 +53,7 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('admin_shop.blogs.list.waiting_message')"
+      :mobile="$vuetify.display.xs"
       :row-props="
         (_data) => {
           return { class: 'row-hover' };
@@ -167,16 +167,16 @@
 
   <b-map-tag-add
     v-model="dialog"
-    :shop="shop"
     :current-item="current_item"
+    :shop="shop"
     @add="
       (map_tag) => {
         AddOrUpdateItemByID(map_tags, map_tag, 'id', false);
         ++this.totalItems;
       }
     "
-    @edit="(map_tag) => AddOrUpdateItemByID(map_tags, map_tag)"
     @delete="(id) => DeleteItemByID(map_tags, id)"
+    @edit="(map_tag) => AddOrUpdateItemByID(map_tags, map_tag)"
   >
   </b-map-tag-add>
 </template>

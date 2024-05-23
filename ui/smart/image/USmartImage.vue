@@ -28,7 +28,8 @@
           <v-list-item-action end>
             <v-btn
               color="red"
-              icon variant="text"
+              icon
+              variant="text"
               @click="$emit('update:modelValue', null) /*Clear image*/"
             >
               <v-icon>close</v-icon>
@@ -43,13 +44,13 @@
         :messages="message"
         :model-value="file"
         :placeholder="hint"
+        :variant="variant"
         accept="image/*"
         color="primary"
         prepend-icon=""
         prepend-inner-icon="image"
         show-size
         @update:model-value="(val) => $emit('update:file', val)"
-        :variant="variant"
       />
     </v-expand-transition>
   </div>

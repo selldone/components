@@ -69,8 +69,8 @@
               v-if="vendor.enable"
               class="m-1"
               color="#fafafa"
-              variant="flat"
               size="small"
+              variant="flat"
             >
               <v-icon color="green" start>check</v-icon>
               {{ $t("global.commons.enable") }}
@@ -84,8 +84,8 @@
               v-if="vendor.access"
               class="m-1"
               color="#fafafa"
-              variant="flat"
               size="small"
+              variant="flat"
             >
               <v-icon start>admin_panel_settings</v-icon>
               {{ $t("order_vendor.has_panel") }}
@@ -94,8 +94,8 @@
               v-else
               class="m-1"
               color="#fafafa"
-              variant="flat"
               size="small"
+              variant="flat"
             >
               <v-icon start>person_outline</v-icon>
               {{ $t("order_vendor.has_panel") }}
@@ -125,9 +125,9 @@
     >
       <span class="absolute-top-end text-muted px-2 small"
         ><v-icon
+          :class="{ 'rotate-180': force_show_items }"
           class="mx-1 t-all-400"
           size="12"
-          :class="{ 'rotate-180': force_show_items }"
           >fa:fas fa-angle-up</v-icon
         >{{ $t("fulfilment_order_widget.list_of_items") }}
       </span>
@@ -159,7 +159,7 @@
       </div>
     </v-expand-transition>
 
-    <v-expansion-panels flat class="mt-5">
+    <v-expansion-panels class="mt-5" flat>
       <v-expansion-panel class="bg-transparent">
         <v-expansion-panel-title>
           <v-icon class="me-1">arrow_drop_down</v-icon>
@@ -167,13 +167,13 @@
             <div>
               <b> {{ $t("order_vendor.manual_action.title") }}</b>
               <v-chip
+                :prepend-icon="getDeliveryStateIcon(vendorOrder.delivery_state)"
                 class="ma-1"
                 color="#111"
-                variant="flat"
                 label
                 size="x-small"
-                :prepend-icon="getDeliveryStateIcon(vendorOrder.delivery_state)"
-                >{{ getDeliveryStateString(vendorOrder.delivery_state )}}
+                variant="flat"
+                >{{ getDeliveryStateString(vendorOrder.delivery_state) }}
               </v-chip>
             </div>
             <small class="mt-1">
@@ -191,9 +191,9 @@
               "
               :loading="busy === item.code"
               :value="item.code"
+              class="ma-1"
               rounded
               variant="flat"
-              class="ma-1"
               @click="setDeliveryStatus(item.code)"
             >
               <v-icon start>{{ item.icon }}</v-icon>
@@ -230,10 +230,10 @@
                 :key="transaction.id"
                 class="ma-1"
                 color="#111"
-                variant="flat"
                 label
-                size="x-small"
                 prepend-icon="wallet"
+                size="x-small"
+                variant="flat"
               >
                 <u-price
                   :amount="transaction.amount"
@@ -256,10 +256,10 @@
                 :key="payment.id"
                 class="ma-1"
                 color="#111"
-                variant="flat"
                 label
-                size="x-small"
                 prepend-icon="account_balance"
+                size="x-small"
+                variant="flat"
               >
                 <u-price
                   :amount="payment.amount"

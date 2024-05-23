@@ -175,14 +175,18 @@
         multiple
         placeholder="Basic user profile"
       >
-        <template v-slot:item="{ item ,props}">
-          <v-list-item v-bind="props" :prepend-icon="item.raw.icon" :title="$t(item.raw.name)" :subtitle="$t(item.raw.description)">
-
+        <template v-slot:item="{ item, props }">
+          <v-list-item
+            :prepend-icon="item.raw.icon"
+            :subtitle="$t(item.raw.description)"
+            :title="$t(item.raw.name)"
+            v-bind="props"
+          >
           </v-list-item>
         </template>
 
-        <template v-slot:chip="{ item,props }">
-          <v-chip v-bind="props" :title="$t(item.raw.description)" color="#fff">
+        <template v-slot:chip="{ item, props }">
+          <v-chip :title="$t(item.raw.description)" color="#fff" v-bind="props">
             <v-icon class="mx-1" size="small" v-text="item.raw.icon"></v-icon>
             <span class="px-3"> {{ $t(item.raw.name) }}</span></v-chip
           >

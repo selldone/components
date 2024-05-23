@@ -27,8 +27,8 @@
         <u-currency-icon
           :currency="currency"
           :small="small"
-          gradient
           flag
+          gradient
         ></u-currency-icon>
       </template>
 

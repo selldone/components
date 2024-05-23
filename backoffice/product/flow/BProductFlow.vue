@@ -121,7 +121,10 @@
 
       <template v-if="product.type === ProductType.SERVICE.code">
         <u-pod-wire forward></u-pod-wire>
-        <u-pod-node icon="assignment_turned_in" title="Confirmation"></u-pod-node>
+        <u-pod-node
+          icon="assignment_turned_in"
+          title="Confirmation"
+        ></u-pod-node>
       </template>
 
       <u-pod-wire forward></u-pod-wire>
@@ -140,7 +143,10 @@
 
       <template v-if="isSubscription && ribbon_link_type">
         <u-pod-wire forward></u-pod-wire>
-        <u-pod-node :image="ribbon_link_type.image" title="+ Order"></u-pod-node>
+        <u-pod-node
+          :image="ribbon_link_type.image"
+          title="+ Order"
+        ></u-pod-node>
       </template>
 
       <template v-if="connect">
@@ -253,10 +259,10 @@ export default {
   ::v-deep(.v-list) {
     .v-list-item .v-list-item__prepend .v-icon {
       opacity: 1 !important;
-
     }
-    .v-list-item-subtitle{
-      --v-medium-emphasis-opacity:1;
+
+    .v-list-item-subtitle {
+      --v-medium-emphasis-opacity: 1;
     }
   }
 }

@@ -94,10 +94,10 @@
           <v-btn
             class="tnt my-2"
             color="primary"
-            variant="text"
-            @click="edit_name = !edit_name"
             height="auto"
             min-height="36"
+            variant="text"
+            @click="edit_name = !edit_name"
           >
             <v-icon class="me-1">link</v-icon>
             <div class="text-wrap text-start py-1">

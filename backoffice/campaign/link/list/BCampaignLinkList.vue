@@ -64,6 +64,7 @@
       <div class="min-width-200 max-w-400">
         <u-sparkline
           :height="24"
+          :padding="0"
           :value="[
             item.sessions,
             item.products,
@@ -73,7 +74,6 @@
           ]"
           class="mx-auto my-1"
           color="#0288D1"
-          :padding="0"
           smooth
           style="width: 100%"
           type="area"
@@ -125,7 +125,7 @@
     </template>
 
     <template v-if="hasButtons" v-slot:item.copy="{ item }">
-      <v-btn icon variant="text" title="Copy generated URL">
+      <v-btn icon title="Copy generated URL" variant="text">
         <v-icon size="small" @click.stop="copy(item)">fa:fas fa-copy</v-icon>
       </v-btn>
     </template>
@@ -134,8 +134,8 @@
       <v-btn
         :loading="item.busy"
         icon
-        variant="text"
         title="Remove campaign's link"
+        variant="text"
         @click.stop="$emit('click:delete', item)"
       >
         <v-icon size="small">fa:fas fa-eraser</v-icon>

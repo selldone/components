@@ -18,10 +18,16 @@
   <v-card class="text-start">
     <v-card-title class="d-flex align-center">
       <v-icon class="me-1">add_business</v-icon>
-      {{ adminMode ? "Review vendor's request" : modelValue?.id ? 'Edit vendor request' : 'Add new vendor'}}
+      {{
+        adminMode
+          ? "Review vendor's request"
+          : modelValue?.id
+            ? "Edit vendor request"
+            : "Add new vendor"
+      }}
       <v-spacer></v-spacer>
-      <v-btn @click="close()" variant="text" icon>
-        <v-icon> close </v-icon>
+      <v-btn icon variant="text" @click="close()">
+        <v-icon> close</v-icon>
       </v-btn>
     </v-card-title>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
@@ -29,19 +35,19 @@
     <v-card-text :class="{ disabled: busy_fetch }">
       <v-stepper
         v-model="step"
-        flat
-        editable
-        class="max-width-container-1280px mx-auto mb-5"
         border
+        class="max-width-container-1280px mx-auto mb-5"
+        editable
+        flat
         mandatory
         rounded="xl"
       >
         <v-stepper-header>
           <v-stepper-item
+            :color="valid_company ? 'green' : '#000'"
             :complete="valid_company && step !== 1"
             :value="1"
             class="text-start"
-            :color="valid_company ? 'green' : '#000'"
           >
             Company
             <v-expand-transition>
@@ -55,10 +61,10 @@
           <div class="flex-grow-1 hr-dashed"></div>
 
           <v-stepper-item
+            :color="valid_personal ? 'green' : '#000'"
             :complete="valid_personal && step !== 2"
             :value="2"
             class="text-start"
-            :color="valid_personal ? 'green' : '#000'"
           >
             Person
             <v-expand-transition>
@@ -74,9 +80,9 @@
           <div class="flex-grow-1 hr-dashed"></div>
 
           <v-stepper-item
-            :value="3"
-            :complete="valid_products && step !== 3"
             :color="valid_products ? 'green' : '#000'"
+            :complete="valid_products && step !== 3"
+            :value="3"
             class="text-start"
           >
             Merchandise
@@ -88,9 +94,9 @@
           <div class="flex-grow-1 hr-dashed"></div>
 
           <v-stepper-item
-            :value="4"
-            :complete="valid_bank && step !== 4"
             :color="valid_bank ? 'green' : '#000'"
+            :complete="valid_bank && step !== 4"
+            :value="4"
             class="text-start"
           >
             Payout
@@ -101,9 +107,9 @@
           <div class="flex-grow-1 hr-dashed"></div>
 
           <v-stepper-item
-            :value="5"
-            :complete="valid_document && step !== 5"
             :color="valid_document ? 'green' : '#000'"
+            :complete="valid_document && step !== 5"
+            :value="5"
             class="text-start"
           >
             Documents
@@ -116,10 +122,10 @@
             <div class="flex-grow-1 hr-dashed"></div>
 
             <v-stepper-item
-              :value="100"
+              :color="modelValue?.accepted_at ? 'green' : '#000'"
               :complete="!!modelValue?.accepted_at"
               :error="!!modelValue?.rejected_at"
-              :color="modelValue?.accepted_at ? 'green' : '#000'"
+              :value="100"
               class="text-start"
             >
               Marketplace
@@ -164,7 +170,7 @@
                 </div>
 
                 <div v-if="modelValue.accepted_at" class="min-width-200 my-1">
-                  <v-chip color="green" class="float-end"
+                  <v-chip class="float-end" color="green"
                     >{{ $t("global.status.accepted") }}
                   </v-chip>
                   <v-icon class="me-1" size="small"
@@ -220,8 +226,8 @@
                 v-model="company.address"
                 :label="$t('global.commons.address') + '*'"
                 :readonly="adminMode"
-                variant="underlined"
                 :rules="[GlobalRules.required()]"
+                variant="underlined"
               ></v-text-field>
               <v-text-field
                 v-model="company.postal_code"
@@ -234,16 +240,16 @@
                 :label="$t('global.map_view.phone_input') + '*'"
                 :readonly="adminMode"
                 :rules="[GlobalRules.required()]"
-                variant="underlined"
                 placeholder="(+45) 2225 6000"
+                variant="underlined"
               ></v-text-field>
               <v-text-field
                 v-model="company.email"
                 :label="$t('global.commons.email') + '*'"
                 :readonly="adminMode"
                 :rules="[GlobalRules.required(), GlobalRules.email()]"
-                variant="underlined"
                 placeholder="john@sample.com"
+                variant="underlined"
               ></v-text-field>
               <v-text-field
                 v-model="company.web"
@@ -426,24 +432,24 @@
                   <template v-slot:append>
                     <v-btn
                       v-if="adminMode && modelValue.id"
-                      icon
-                      variant="text"
-                      @click.stop
                       :href="getDownloadLink(attachment)"
                       class="me-2"
+                      icon
                       target="_blank"
                       title="Download File"
+                      variant="text"
+                      @click.stop
                     >
                       <v-icon>download</v-icon>
                     </v-btn>
 
                     <v-btn
                       v-if="!adminMode"
+                      :loading="busy_delete === attachment"
                       color="red"
                       icon
                       variant="text"
                       @click.stop="removeAttachment(attachment)"
-                      :loading="busy_delete === attachment"
                     >
                       <v-icon>close</v-icon>
                     </v-btn>
@@ -453,15 +459,15 @@
                   v-if="!attachments?.some((a) => a.type === item.type)"
                   v-model="files[item.type]"
                   accept=".png,.jpg,.jpeg,.pdf"
+                  chips
                   class="mb-5"
-                  messages="Max image size: 8MB"
-                  label="Select image or pdf..."
                   clearable
+                  label="Select image or pdf..."
+                  messages="Max image size: 8MB"
                   prepend-icon=""
                   prepend-inner-icon="attach_file"
                   show-size
                   variant="outlined"
-                  chips
                 >
                 </v-file-input>
               </template>
@@ -483,8 +489,8 @@
             v-model="accept"
             color="green"
             false-gray
-            true-title="Accept Request"
             true-description="Approve the vendor's request to create their account in the marketplace."
+            true-title="Accept Request"
             @update:model-value="reject = false"
           ></u-smart-verify>
 
@@ -492,8 +498,8 @@
             v-model="reject"
             color="red"
             false-gray
-            true-title="Reject Request"
             true-description="Deny the vendor's request to create their account in the marketplace."
+            true-title="Reject Request"
             @update:model-value="accept = false"
           ></u-smart-verify>
         </div>

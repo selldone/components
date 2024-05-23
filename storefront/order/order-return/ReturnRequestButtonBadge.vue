@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-tooltip location="bottom" content-class="bg-black text-start">
+  <v-tooltip content-class="bg-black text-start" location="bottom">
     <template v-slot:activator="{ props }">
       <v-badge
         v-if="basketItemReturns.length"
@@ -21,7 +21,7 @@
         bordered
         dot
       >
-        <v-btn icon variant="text" tile v-bind="props"
+        <v-btn icon tile v-bind="props" variant="text"
           ><img
             src="../../../assets/icons/return-box.svg"
             width="24"
@@ -32,7 +32,7 @@
     </template>
     <p class="font-weight-bold mb-2">Return items</p>
 
-    <v-table theme="dark" density="compact" class="bg-transparent">
+    <v-table class="bg-transparent" density="compact" theme="dark">
       <template v-slot:default>
         <thead>
           <tr>

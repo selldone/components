@@ -72,7 +72,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .u--button-decorative {
   .elevation-3 {
     transition: all 0.35s;

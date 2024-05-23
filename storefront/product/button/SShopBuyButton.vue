@@ -123,15 +123,14 @@
         class="extendable select-order-count"
         clearable
         dark
-        variant="solo"
-        rounded="lg"
         flat
         hide-details
         hot-update-mode
+        rounded="lg"
+        variant="solo"
         @change="lock ? undefined : debounceSpinnerSelectAction()"
         @clear="buyRemoveAction"
       >
-
       </u-number-input>
 
       <!-- ―――――――――――――― 🞇 Price input: Area / Volume ―――――――――――――― -->
@@ -146,10 +145,11 @@
           class="extendable select-order-count"
           clearable
           dark
-          variant="solo"
-          rounded="lg" flat
+          flat
           hide-details
           hot-update-mode
+          rounded="lg"
+          variant="solo"
           @blur="calculatorCall"
           @change="lock ? undefined : calculatorCall()"
         >
@@ -163,10 +163,11 @@
           class="extendable select-order-count"
           clearable
           dark
-          variant="solo"
-          rounded="lg" flat
+          flat
           hide-details
           hot-update-mode
+          rounded="lg"
+          variant="solo"
           @blur="calculatorCall"
           @change="lock ? undefined : calculatorCall()"
         >
@@ -182,10 +183,11 @@
           class="extendable select-order-count"
           clearable
           dark
-          variant="solo"
-          rounded="lg" flat
+          flat
           hide-details
           hot-update-mode
+          rounded="lg"
+          variant="solo"
           @blur="calculatorCall"
           @change="lock ? undefined : calculatorCall()"
         >

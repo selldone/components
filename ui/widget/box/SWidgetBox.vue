@@ -16,13 +16,13 @@
   <s-widget
     :class="[small ? 'm-1' : '', dark ? 'widget-dark' : '']"
     :dark="dark"
+    :h100="h100"
     :style="`background: ${color}`"
     :subTitle="subTitle"
     :title="title"
     body-class="p-0 mt"
     class="text-start font-weight-normal"
     custom-header
-    :h100="h100"
   >
     <template v-slot:top-left>
       <component v-bind:is="iconTo ? 'router-link' : 'span'" :to="iconTo">
@@ -161,11 +161,10 @@ export default {
       default: false,
       type: Boolean,
     },
-    h100:{
+    h100: {
       default: true,
       type: Boolean,
     },
-
 
     src: {},
   },

@@ -83,9 +83,10 @@
                   <v-chip
                     v-if="cross_sell.discount"
                     class="pa-1"
-                    color="#C2185B" variant="flat"
+                    color="#C2185B"
                     label
                     size="small"
+                    variant="flat"
                     ><b class="me-1">+ %{{ cross_sell.discount }}</b>
                     {{ $t("global.commons.discount_off") }}
                   </v-chip>

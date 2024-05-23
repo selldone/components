@@ -212,10 +212,10 @@
       <v-list-subheader>
         {{
           add_by_dropShipping
-            ? $t('product_inventory_management_physical.subtitle.dropshipping')
+            ? $t("product_inventory_management_physical.subtitle.dropshipping")
             : is_marketplace
-              ? $t('product_inventory_management_physical.subtitle.marketplace')
-              : $t('product_inventory_management_physical.subtitle.default')
+              ? $t("product_inventory_management_physical.subtitle.marketplace")
+              : $t("product_inventory_management_physical.subtitle.default")
         }}
       </v-list-subheader>
 
@@ -264,55 +264,52 @@
         </v-btn>
       </div>
     </div>
-
   </div>
-
-
 
   <!-- ███████████████████████ Dialog > Add/Edit ███████████████████████ -->
 
   <v-dialog
-      v-model="dialog"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
+    v-model="dialog"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
   >
     <b-product-variant-add
-        v-if="dialog_pre"
-        :for-studio="forStudio"
-        :has-color="has_color"
-        :has-pack="has_pack"
-        :has-style="has_style"
-        :has-type="has_type"
-        :has-volume="has_volume"
-        :has-weight="has_weight"
-        :loading="busy_save"
-        :product="product"
-        :product-variant="current_item"
-        :shop="shop"
-        :vendor="vendor"
-        @add="addOrUpdateProductVariant"
-        @close="
-          dialog = false;
-          $route.query.variant_id
-            ? $router.replace({
-                query: null,
-              })
-            : undefined;
-        "
-        @update="addOrUpdateProductVariant"
+      v-if="dialog_pre"
+      :for-studio="forStudio"
+      :has-color="has_color"
+      :has-pack="has_pack"
+      :has-style="has_style"
+      :has-type="has_type"
+      :has-volume="has_volume"
+      :has-weight="has_weight"
+      :loading="busy_save"
+      :product="product"
+      :product-variant="current_item"
+      :shop="shop"
+      :vendor="vendor"
+      @add="addOrUpdateProductVariant"
+      @close="
+        dialog = false;
+        $route.query.variant_id
+          ? $router.replace({
+              query: null,
+            })
+          : undefined;
+      "
+      @update="addOrUpdateProductVariant"
     />
   </v-dialog>
 
   <!-- ███████████████████████ Dialog > Add Bulk ███████████████████████ -->
 
   <b-product-variants-bulk-add
-      v-model="dialog_bulk"
-      :initial-variant-types="validate_variants"
-      :product="product"
-      :shop="shop"
-      :vendor="vendor"
-      @add="(items) => onUpdateVariants(...items)"
+    v-model="dialog_bulk"
+    :initial-variant-types="validate_variants"
+    :product="product"
+    :shop="shop"
+    :vendor="vendor"
+    @add="(items) => onUpdateVariants(...items)"
   ></b-product-variants-bulk-add>
 </template>
 

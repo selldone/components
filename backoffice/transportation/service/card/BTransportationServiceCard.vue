@@ -107,8 +107,8 @@
             :loading="busy_reset === service.id"
             class="m-1 sub-caption -hover"
             icon
-            variant="text"
             size="small"
+            variant="text"
             @click.stop="resetService(service)"
           >
             <v-icon>refresh</v-icon>
@@ -267,12 +267,8 @@ export default defineComponent({
           this.busy_enable = null;
         });
     },*/
-
-
-
-
   },
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

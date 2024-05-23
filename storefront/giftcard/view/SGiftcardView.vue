@@ -14,8 +14,8 @@
 
 <template>
   <div
-    class="s--giftcard-view"
     :style="{ '--background': giftCard.gift_type.color }"
+    class="s--giftcard-view"
   >
     <v-scale-transition hide-on-leave>
       <div
@@ -28,11 +28,11 @@
         <h2 class="card-title">
           {{ giftCard.gift_type.title }}
 
-          <v-btn color="#fff" icon v-bind="props" variant="text" size="small">
+          <v-btn color="#fff" icon size="small" v-bind="props" variant="text">
             <v-icon>info</v-icon>
             <v-tooltip
-              activator="parent"
               v-if="giftCard.title || giftCard.note"
+              activator="parent"
               location="bottom"
             >
               <div class="text-start">
@@ -139,6 +139,7 @@ export default {
 <style lang="scss" scoped>
 .s--giftcard-view {
   transition: all 0.4s ease-in-out;
+
   &:hover {
     box-shadow: 0px 6px 30px 0px rgba(0, 0, 0, 0.4);
     transition: all 0.5s;

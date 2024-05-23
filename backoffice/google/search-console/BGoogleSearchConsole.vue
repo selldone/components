@@ -13,29 +13,34 @@
   -->
 
 <template>
-  <div class="widget-box ">
+  <div class="widget-box">
     <s-widget-header
       :src="require('../../../assets/trademark/search-console.svg')"
-      :title="$t('channel_google.console.title') "
+      :title="$t('channel_google.console.title')"
     >
     </s-widget-header>
     <v-list-subheader>
       <div>
-        {{$t('channel_google.console.subtitle')}}
-        <div dir="ltr" class="text-left"><i>name="google-site-verification" content="<b>vi9MmjEeHnwy88zpRD13kAgnlydDb</b>"</i></div>
+        {{ $t("channel_google.console.subtitle") }}
+        <div class="text-left" dir="ltr">
+          <i
+            >name="google-site-verification"
+            content="<b>vi9MmjEeHnwy88zpRD13kAgnlydDb</b>"</i
+          >
+        </div>
       </div>
     </v-list-subheader>
 
     <v-text-field
       v-model="code"
+      :append-inner-icon="lock ? 'lock' : 'lock_open'"
+      :label="$t('channel_google.console.code.label')"
+      :placeholder="$t('channel_google.console.code.placeholder')"
+      :readonly="lock"
       class="max-width-field-large mx-auto"
-      :label="$t('channel_google.console.code.label') "
-      :placeholder="$t('channel_google.console.code.placeholder') "
       variant="underlined"
       @update:model-value="change = true"
-      :append-inner-icon="lock ? 'lock' : 'lock_open'"
       @click:append-inner="lock = !lock"
-      :readonly="lock"
     >
     </v-text-field>
 
@@ -113,8 +118,7 @@ export default {
               null,
               "Set meta tag to your site's home page.",
             );
-            this.change=false;
-
+            this.change = false;
           }
         })
         .catch((error) => {

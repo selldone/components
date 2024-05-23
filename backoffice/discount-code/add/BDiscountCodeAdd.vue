@@ -39,11 +39,11 @@
             :rules="[GlobalRules.required()]"
             append-inner-icon="shuffle"
             class="strong-field"
+            hide-details
             messages=" "
             required
-            @click:append-inner="createRandomCode"
             variant="underlined"
-            hide-details
+            @click:append-inner="createRandomCode"
           >
           </v-text-field>
           <u-smart-suggestion
@@ -71,8 +71,8 @@
             v-model="currency"
             :color="SaminColorLight"
             :disabled="discountCode !== null && !cloneMode"
-            :messages="$t('discount_codes.dialog.currency_input_message')"
             :label="$t('global.commons.currency')"
+            :messages="$t('discount_codes.dialog.currency_input_message')"
             :return-object="false"
             variant="underlined"
           >
@@ -171,11 +171,11 @@
           <v-text-field
             v-model="title"
             :counter="48"
-            :placeholder="$t('discount_codes.dialog.title_input_hint')"
             :label="$t('discount_codes.dialog.title_input')"
+            :placeholder="$t('discount_codes.dialog.title_input_hint')"
+            hide-details
             messages=" "
             variant="underlined"
-            hide-details
           >
             <template v-slot:append-inner>
               <b-translation-button-discount-code
@@ -197,11 +197,11 @@
           <v-text-field
             v-model="description"
             :counter="128"
-            :placeholder="$t('discount_codes.dialog.description_input_hint')"
             :label="$t('discount_codes.dialog.description_input')"
+            :placeholder="$t('discount_codes.dialog.description_input_hint')"
+            hide-details
             messages=" "
             variant="underlined"
-            hide-details
           >
             <template v-slot:append-inner>
               <b-translation-button-discount-code
@@ -224,12 +224,12 @@
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
         <div class="widget-box mb-5">
           <s-widget-header
-            :to="{ name: 'BPageShopClassificationClusters' }"
             :add-caption="$t('global.commons.management')"
+            :title="$t('global.commons.cluster')"
+            :to="{ name: 'BPageShopClassificationClusters' }"
             add-icon="settings"
             add-text
             icon="workspaces"
-            :title="$t('global.commons.cluster')"
           ></s-widget-header>
 
           <v-list-subheader>

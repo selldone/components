@@ -24,10 +24,10 @@
       ><v-icon size="24">sticky_note_2</v-icon>
 
       <v-tooltip
+        activator="parent"
+        content-class="bg-black text-start"
         max-width="460"
         min-width="240"
-        content-class="bg-black text-start"
-        activator="parent"
       >
         <div class="d-flex align-center pt-2">
           <v-avatar :size="32" class="avatar-gradient -thin -staff me-2">

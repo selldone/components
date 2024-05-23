@@ -14,9 +14,13 @@
 
 <template>
   <!-- ⬬⬬⬬⬬ Location restriction error ⬬⬬⬬⬬ -->
-  <v-row   v-if="has_no_vendor" no-gutters align="center" class="bg-red shadow-small">
+  <v-row
+    v-if="has_no_vendor"
+    align="center"
+    class="bg-red shadow-small"
+    no-gutters
+  >
     <v-list-item
-
       :title="`Missing Vendors`"
       base-color="#fff"
       class="flex-grow-1"

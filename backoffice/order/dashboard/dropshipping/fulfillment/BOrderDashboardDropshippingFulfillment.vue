@@ -145,7 +145,9 @@
         :disabled="isPayed"
         :rounded="!isPayed"
         :size="!isPayed ? 'x-large' : undefined"
-        :to="IS_VENDOR_PANEL?{}:{ name: 'BPageShopFinanceResellerFulfillment' }"
+        :to="
+          IS_VENDOR_PANEL ? {} : { name: 'BPageShopFinanceResellerFulfillment' }
+        "
         :variant="isPayed ? 'text' : 'flat'"
         class="mt-2"
         color="blue"
@@ -233,8 +235,8 @@ export default {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
 

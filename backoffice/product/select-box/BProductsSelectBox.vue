@@ -34,9 +34,9 @@
         >{{ $t("global.commons.categories") }}:</b
       >
       <v-list
+        bg-color="transparent"
         class="border-between-vertical"
         lines="two"
-        bg-color="transparent"
       >
         <v-list-item v-for="category in categories_detail" :key="category.id">
           <template v-slot:prepend>
@@ -60,8 +60,8 @@
               <v-btn
                 icon
                 size="40"
-                @click.stop="deleteCategory(category.id)"
                 variant="text"
+                @click.stop="deleteCategory(category.id)"
               >
                 <v-icon size="22">close</v-icon>
               </v-btn>
@@ -96,10 +96,9 @@
             product.product_variants.length ? 'keyboard_arrow_down' : ' '
           "
           :value="product.id"
-
         >
           <template v-slot:activator="{ props, isOpen }">
-            <v-list-item  v-bind="props">
+            <v-list-item v-bind="props">
               <template v-slot:prepend>
                 <v-avatar rounded="lg">
                   <v-img
@@ -122,11 +121,11 @@
               </v-list-item-subtitle>
 
               <product-variants-view
+                :limit="6"
                 :variants="product.product_variants"
                 center
                 dense
                 small
-                :limit="6"
               />
 
               <template v-slot:append>
@@ -153,7 +152,8 @@
           <template v-if="!singleProductSelect">
             <div
               v-for="variant in product.product_variants"
-              :key="'var_' + variant.id" class="pa-1"
+              :key="'var_' + variant.id"
+              class="pa-1"
             >
               <variant-item-mini
                 :class="{ pen: forceNoVariants }"
@@ -176,7 +176,10 @@
                 :product-variant="variant"
                 :selected="variantId === variant.id"
                 @select="
-                  $emit('update:variantId', variantId===variant.id ? null : variant.id)
+                  $emit(
+                    'update:variantId',
+                    variantId === variant.id ? null : variant.id,
+                  )
                 "
               ></variant-item-mini>
             </v-list-item>
@@ -209,8 +212,8 @@
         v-model="dialog"
         fullscreen
         scrollable
-        transition="dialog-bottom-transition"
         theme="light"
+        transition="dialog-bottom-transition"
       >
         <v-card class="text-start">
           <v-card-title class="d-flex align-center">
@@ -221,13 +224,13 @@
           <v-card-text>
             <b-products-window
               v-if="dialog"
-              class="mx-auto"
-              style="max-width: 1720px"
               :can-select-category="!singleProductSelect && !productsOnly"
               :selected-list="modelValue ? modelValue : []"
               :shop="shop"
+              class="mx-auto"
               dialog-mode
               select-mode
+              style="max-width: 1720px"
               withFullVariant
               @select="selectProduct"
               @select-category="selectCategory"

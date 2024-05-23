@@ -21,10 +21,7 @@
 
       <v-col cols="12" md="4" sm="6">
         <span>{{ $t("global.commons.price") }}:</span>
-        <u-price
-          :amount="order.price"
-          :currency="order.currency"
-        ></u-price>
+        <u-price :amount="order.price" :currency="order.currency"></u-price>
       </v-col>
       <p />
 

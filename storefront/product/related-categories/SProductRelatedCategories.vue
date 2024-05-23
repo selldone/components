@@ -37,8 +37,8 @@
                 :src="getShopImagePath(item.icon)"
                 aspect-ratio="1"
                 class="-card-img"
-                width="100%"
                 cover
+                width="100%"
               >
                 <div class="-card-content">
                   <div class="-card-title">

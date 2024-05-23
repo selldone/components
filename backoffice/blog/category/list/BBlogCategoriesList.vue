@@ -31,7 +31,7 @@
     ></v-text-field>
   </v-row>
 
-  <v-data-table-server  :mobile="$vuetify.display.xs"
+  <v-data-table-server
     v-model:items-per-page="itemsPerPage"
     v-model:options="options"
     v-model:page="page"
@@ -39,6 +39,7 @@
     :headers="headers"
     :items="categories"
     :items-length="totalItems"
+    :mobile="$vuetify.display.xs"
     :row-props="
       (_data) => {
         return { class: 'row-hover' };

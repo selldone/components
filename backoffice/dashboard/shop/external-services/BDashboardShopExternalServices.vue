@@ -29,7 +29,7 @@
       >
         <v-list-item>
           <template v-slot:prepend>
-            <v-avatar rounded :image="sms_provider.icon"></v-avatar>
+            <v-avatar :image="sms_provider.icon" rounded></v-avatar>
           </template>
 
           <v-list-item-title>
@@ -64,8 +64,8 @@
               <v-btn
                 :to="{ name: 'BPageShopSettingSms' }"
                 color="primary"
-                variant="elevated"
                 size="small"
+                variant="elevated"
               >
                 <v-icon class="me-1" size="small">settings</v-icon>
                 SMS setting
@@ -76,7 +76,7 @@
 
         <v-list-item>
           <template v-slot:prepend>
-            <v-avatar rounded :src="sms_provider.icon">
+            <v-avatar :src="sms_provider.icon" rounded>
               <img v-if="mail_provider" :src="mail_provider.icon" />
               <v-icon v-else size="24">mail_outline</v-icon>
             </v-avatar>
@@ -115,8 +115,8 @@
               <v-btn
                 :to="{ name: 'BPageShopSettingEmail' }"
                 color="primary"
-                variant="elevated"
                 size="small"
+                variant="elevated"
               >
                 <v-icon class="me-1" size="small">settings</v-icon>
                 Email setting

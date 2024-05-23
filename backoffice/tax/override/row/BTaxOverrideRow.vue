@@ -162,7 +162,7 @@
         variant="elevated"
         @click.stop="setOverrideTax()"
       >
-        <v-icon class="me-1" size="small">save </v-icon>
+        <v-icon class="me-1" size="small">save</v-icon>
         {{ $t("global.actions.save") }}
       </v-btn>
       <v-btn

@@ -63,9 +63,9 @@
     <div v-else-if="hierarchyItems.length > 0">
       <v-btn class="w-100" size="x-large" variant="text" @click="dialog = true">
         {{ $t("global.commons.category") }}
-        <v-icon end class="t-all-400" :class="{ 'rotate-180': dialog }"
-          >expand_more</v-icon
-        >
+        <v-icon :class="{ 'rotate-180': dialog }" class="t-all-400" end
+          >expand_more
+        </v-icon>
       </v-btn>
     </div>
 
@@ -78,7 +78,7 @@
       scrollable
       width="480"
     >
-      <v-card min-height="40vh" rounded="t-xl" class="text-start">
+      <v-card class="text-start" min-height="40vh" rounded="t-xl">
         <v-list class="text-start" style="margin-bottom: 100px">
           <v-list-item
             v-for="(item, i) in hierarchyItems"
@@ -89,27 +89,27 @@
           >
             <template v-slot:prepend>
               <u-avatar-folder
+                :border-size="8"
+                :placeholder-icon="item.icon"
+                :size="56"
                 :src="
                   item.image
                     ? getShopImagePath(item.image, IMAGE_SIZE_SMALL)
                     : undefined
                 "
-                :placeholder-icon="item.icon"
                 is-amber
                 small-side-icon
-                :border-size="8"
-                :size="56"
               >
               </u-avatar-folder>
             </template>
-            <v-list-item-title>{{ item.text }} </v-list-item-title>
+            <v-list-item-title>{{ item.text }}</v-list-item-title>
 
             <template v-slot:append>
               <v-chip
                 v-if="i === hierarchyItems.length - 1"
                 color="#111"
-                variant="flat"
                 size="x-small"
+                variant="flat"
                 >{{ $t("global.commons.current") }}
               </v-chip>
             </template>

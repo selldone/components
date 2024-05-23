@@ -116,7 +116,8 @@
               v-html="helper.getTitle(item)"
             ></v-list-item-title>
 
-            <v-list-item-subtitle style="font-size: 12px;"
+            <v-list-item-subtitle
+              style="font-size: 12px"
               v-html="helper.getDescription(item)"
             ></v-list-item-subtitle>
 
@@ -154,7 +155,7 @@
             </v-list-item-subtitle>
           </div>
           <template v-slot:append>
-            <v-list-item-action end class="d-flex flex-column">
+            <v-list-item-action class="d-flex flex-column" end>
               <v-icon
                 v-if="!item.read_at"
                 class="mx-auto"
@@ -162,9 +163,9 @@
                 size="x-small"
                 >circle
               </v-icon>
-              <div class="d-block x-small mt-1 op-0-6">{{
-                getFromNowString(item.created_at)
-              }}</div>
+              <div class="d-block x-small mt-1 op-0-6">
+                {{ getFromNowString(item.created_at) }}
+              </div>
             </v-list-item-action>
           </template>
         </v-list-item>

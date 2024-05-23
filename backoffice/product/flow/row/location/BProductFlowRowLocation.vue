@@ -13,11 +13,11 @@
   -->
 
 <template>
-  <v-row no-gutters align="center">
+  <v-row align="center" no-gutters>
     <v-list-item
-      class="flex-grow-1"
       :prepend-icon="locations_count ? 'mode_of_travel' : 'public'"
       :title="`Selling location restriction ● ${locations_count ? 'Available in ' + locations_count + ' countries' : 'Not restricted'} `"
+      class="flex-grow-1"
     >
       <v-list-item-subtitle v-if="shop_countries?.length">
         <v-icon class="me-1" color="green">check_circle</v-icon>
@@ -49,8 +49,8 @@
         {{ getCountryName(country) }}
 
         <v-icon v-if="!isValidLocation(country)" color="red" end
-          >warning</v-icon
-        >
+          >warning
+        </v-icon>
 
         <v-tooltip
           activator="parent"

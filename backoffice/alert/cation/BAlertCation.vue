@@ -14,12 +14,12 @@
 
 <template>
   <v-alert
+    :title="cation.title"
     :type="cation.type"
     border="start"
     class="text-start"
     closable
     density="compact"
-    :title="cation.title"
   >
     <v-row align="center" no-gutters>
       <v-btn

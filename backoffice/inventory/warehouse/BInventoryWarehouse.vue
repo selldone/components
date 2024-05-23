@@ -18,15 +18,15 @@
       <v-expansion-panel
         v-if="warehouse"
         class="border"
-        style="border-radius: 16px"
         elevation="0"
+        style="border-radius: 16px"
       >
         <v-expansion-panel-title>
           <img
+            class="me-2"
             height="36px"
             src="../../../assets/logistics/warehouse.svg"
             style="max-width: 48px"
-            class="me-2"
           />
 
           <div v-if="!!warehouse.name || !!full_address">
@@ -41,13 +41,13 @@
               {{ $t("shop_warehouse_edit.title") }}
 
               <v-chip
+                class="mx-1"
+                color="red"
+                pill
                 size="x-small"
                 variant="flat"
-                pill
-                color="red"
-                class="mx-1"
               >
-                <v-icon start class="blink-me">circle</v-icon>
+                <v-icon class="blink-me" start>circle</v-icon>
 
                 {{ $t("global.commons.important") }}
               </v-chip>

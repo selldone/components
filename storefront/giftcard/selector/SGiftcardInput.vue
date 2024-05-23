@@ -14,7 +14,6 @@
 
 <template>
   <v-select
-    :variant="variant"
     :items="giftCards"
     :label="$t('global.payment_form.gift_cards_input')"
     :model-value="modelValue"
@@ -22,6 +21,7 @@
     :no-data-text="$t('global.payment_form.gift_cards_input_empty')"
     :return-object="returnObject"
     :rounded="rounded"
+    :variant="variant"
     item-title="number"
     prepend-inner-icon="card_giftcard"
     @update:model-value="(val) => $emit('update:modelValue', val)"
@@ -33,8 +33,8 @@
         <v-icon>add_box</v-icon>
         <v-tooltip
           activator="parent"
-          location="bottom"
           content-class="bg-black"
+          location="bottom"
         >
           {{ $t("global.actions.add_giftcard") }}
         </v-tooltip>
@@ -79,7 +79,7 @@
       >
     </template>
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" class="text-start">
+      <v-list-item class="text-start" v-bind="props">
         <template v-slot:prepend>
           <img
             v-if="item.raw.gift_type.bg"

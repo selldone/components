@@ -22,10 +22,6 @@
     :messages="messages"
     :return-object="true"
     :rounded="rounded"
-    class="v-input-auto-height"
-    item-title="account_number"
-    placeholder="Select a wallet..."
-    prepend-inner-icon="wallet"
     :variant="
       variant
         ? variant
@@ -35,10 +31,13 @@
             ? 'outlined'
             : 'underlined'
     "
-
+    class="v-input-auto-height"
+    item-title="account_number"
+    placeholder="Select a wallet..."
+    prepend-inner-icon="wallet"
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" class="text-start" density="compact">
+      <v-list-item class="text-start" density="compact" v-bind="props">
         <template v-slot:prepend>
           <div class="text-center me-1">
             <u-currency-icon
@@ -50,7 +49,7 @@
 
         <template v-slot:title>
           <v-row no-gutters>
-            <v-col cols="6" class="text-subtitle-2 px-2">
+            <v-col class="text-subtitle-2 px-2" cols="6">
               {{ formatCard(item.raw.account_number) }}
 
               <div class="mt-1">
@@ -65,7 +64,7 @@
               </div>
             </v-col>
 
-            <v-col cols="6" class="px-1">
+            <v-col class="px-1" cols="6">
               <small class="d-block">{{
                 $t("account_list.free_balance")
               }}</small>
@@ -249,7 +248,4 @@ export default {
 };
 </script>
 
-<style scoped>
-
-
-</style>
+<style scoped></style>

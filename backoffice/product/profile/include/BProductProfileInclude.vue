@@ -47,7 +47,7 @@
       </v-sheet>
     </v-menu>
     <v-list-item-subtitle v-if="!product.includes?.length">
-      {{$t('product_include_profile.subtitle')}}
+      {{ $t("product_include_profile.subtitle") }}
     </v-list-item-subtitle>
 
     <template v-slot:append>
@@ -75,28 +75,28 @@
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1">bento</v-icon>
-          {{$t('product_include_profile.dialog.header')}}
-
+          {{ $t("product_include_profile.dialog.header") }}
         </v-card-title>
         <v-card-text>
           <div class="widget-box -large mb-5">
             <s-widget-header
-              :disabled="IS_VENDOR_PANEL"
-              :to="{ name: 'BPageShopLogisticIncludes' }"
               :add-caption="$t('product_include_profile.dialog.action_manage')"
+              :disabled="IS_VENDOR_PANEL"
+              :disabled-reason="
+                $t('product_include_profile.dialog.action_disable_msg')
+              "
+              :title="$t('product_include_profile.dialog.title')"
+              :to="{ name: 'BPageShopLogisticIncludes' }"
               add-icon="ballot"
               add-text
-              :disabled-reason="$t('product_include_profile.dialog.action_disable_msg')"
               icon="library_add_check"
-              :title="$t('product_include_profile.dialog.title') "
             >
             </s-widget-header>
 
             <v-expand-transition>
               <div v-if="includes?.length">
                 <v-list-subheader>
-                  {{$t('product_include_profile.dialog.subtitle')}}
-
+                  {{ $t("product_include_profile.dialog.subtitle") }}
                 </v-list-subheader>
                 <v-container>
                   <v-row>
@@ -138,8 +138,7 @@
             </v-expand-transition>
 
             <v-list-subheader>
-              {{$t('product_include_profile.dialog.select_items_tips')}}
-
+              {{ $t("product_include_profile.dialog.select_items_tips") }}
             </v-list-subheader>
 
             <div class="max-widget-width">
@@ -156,8 +155,7 @@
 
             <template v-if="!IS_VENDOR_PANEL">
               <v-list-subheader>
-                {{$t('product_include_profile.dialog.create_item_tips')}}
-
+                {{ $t("product_include_profile.dialog.create_item_tips") }}
               </v-list-subheader>
 
               <div class="widget-buttons">
@@ -167,7 +165,9 @@
                   @click="dialog_add = true"
                 >
                   <v-icon class="me-1">add_box</v-icon>
-                  {{$t('product_include_profile.dialog.create_new_item_action')}}
+                  {{
+                    $t("product_include_profile.dialog.create_new_item_action")
+                  }}
                 </v-btn>
               </div>
             </template>
@@ -212,6 +212,7 @@
         :shop="shop"
         :vendor="vendor"
         class="max-widget-width"
+        dialog-mode
         @add="
           (include) => {
             AddOrUpdateItemByID(includes, include);
@@ -219,7 +220,6 @@
           }
         "
         @close="dialog_add = false"
-        dialog-mode
       >
       </b-include-item-add>
     </v-dialog>

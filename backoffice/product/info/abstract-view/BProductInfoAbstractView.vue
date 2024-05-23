@@ -30,37 +30,34 @@
   >
     <template v-slot:top-left>
       <!-- ⬬⬬⬬⬬ Embed ⬬⬬⬬⬬ -->
-      <span caption="Embed" class="sub-caption inline-block -hover me-3" title="Embed iframe code">
-        <v-btn
-          icon
-
-          variant="text"
-          @click="showEmbedCode"
-        >
+      <span
+        caption="Embed"
+        class="sub-caption inline-block -hover me-3"
+        title="Embed iframe code"
+      >
+        <v-btn icon variant="text" @click="showEmbedCode">
           <v-icon color="#111">code</v-icon>
         </v-btn>
       </span>
 
       <!-- ⬬⬬⬬⬬ Download ⬬⬬⬬⬬ -->
-      <span caption="Download" class="sub-caption inline-block -hover me-3"  title="Create a report static page of product (beta)">
-        <v-btn
-          icon
-
-          variant="text"
-          @click="downloadProduct()"
-        >
+      <span
+        caption="Download"
+        class="sub-caption inline-block -hover me-3"
+        title="Create a report static page of product (beta)"
+      >
+        <v-btn icon variant="text" @click="downloadProduct()">
           <v-icon color="#111">html</v-icon>
         </v-btn>
       </span>
 
       <!-- ⬬⬬⬬⬬ QR CODE ⬬⬬⬬⬬ -->
-      <span caption="Barcode" class="sub-caption inline-block -hover me-0"     title="Product public link ⮕ QR Code">
-        <v-btn
-          icon
-
-          variant="text"
-          @click="showBarcode(true, true)"
-        >
+      <span
+        caption="Barcode"
+        class="sub-caption inline-block -hover me-0"
+        title="Product public link ⮕ QR Code"
+      >
+        <v-btn icon variant="text" @click="showBarcode(true, true)">
           <v-icon color="#111">fa:fas fa-qrcode</v-icon>
         </v-btn>
       </span>
@@ -338,9 +335,7 @@
                   {{ numeralFormat(product.quantity, "0.[0] a") }}
                 </td>
                 <td v-else-if="isFile" class="pt-2" dir="ltr">
-                  <s-files-group
-                    :files="product.files"
-                  ></s-files-group>
+                  <s-files-group :files="product.files"></s-files-group>
                 </td>
 
                 <td class="text-left">

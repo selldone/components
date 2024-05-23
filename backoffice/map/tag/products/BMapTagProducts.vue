@@ -30,7 +30,6 @@
       ></v-text-field>
     </v-row>
     <v-data-table-server
-      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -40,6 +39,7 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('admin_shop.blogs.list.waiting_message')"
+      :mobile="$vuetify.display.xs"
       :row-props="
         (_data) => {
           return { class: 'row-hover' };
@@ -106,9 +106,9 @@
 
         <div v-if="item.discount">
           <v-chip
+            :title="`Discount: ${item.discount} ${item.currency}`"
             color="#C2185B"
             size="x-small"
-            :title="`Discount: ${item.discount} ${item.currency}`"
           >
             <v-icon size="x-small" start>fa:fas fa-percentage</v-icon>
             {{ numeralFormat((100 * item.discount) / item.price, "0.[0]") }}
@@ -136,9 +136,9 @@
             :to="{ name: 'BPageProductEdit', params: { product_id: item.id } }"
             icon
             size="small"
-            variant="text"
             target="_blank"
             title="Edit product"
+            variant="text"
           >
             <v-icon>edit</v-icon>
           </v-btn>

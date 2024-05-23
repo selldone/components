@@ -36,7 +36,9 @@
       <span class="text-muted"
         ><v-icon size="small">fingerprint</v-icon> Identity information</span
       >,
-      <router-link :to="{ name: 'BPageShuttleIdentity' }"><b>here</b></router-link>
+      <router-link :to="{ name: 'BPageShuttleIdentity' }"
+        ><b>here</b></router-link
+      >
       . It takes only 60 seconds.
     </div>
     <!-- ------------------- Deposit Form ------------------- -->
@@ -101,18 +103,18 @@
         color="primary"
         rounded
         size="x-large"
+        stacked
         variant="elevated"
         @click.stop="showDialog()"
-        stacked
       >
         <div>
           {{ $t("account_page.deposit.form.charge_action") }}
 
           <u-price
-              v-if="amount > 0"
-              :amount="amount"
-              :currency="account.currency"
-              class="ms-2"
+            v-if="amount > 0"
+            :amount="amount"
+            :currency="account.currency"
+            class="ms-2"
           >
           </u-price>
 
@@ -123,7 +125,7 @@
             <span class="small">VAT</span></template
           >
         </div>
-        <div v-if="amount<=0" class="small mt-1">
+        <div v-if="amount <= 0" class="small mt-1">
           ⚠ Please enter an amount to charge.
         </div>
         <div v-if="!is_available" class="small mt-1">
@@ -344,11 +346,11 @@ export default {
           if (!data.error) {
             // Payment succeeded:
             /* if (data.success) {
-                this.showSuccessAlert(
-                  "Payment confirmed",
-                  "Your payment received and processing now."
-                );
-              } else {*/
+                  this.showSuccessAlert(
+                    "Payment confirmed",
+                    "Your payment received and processing now."
+                  );
+                } else {*/
 
             // Fill payment form:
             this.fillPaymentForm(data);
@@ -385,8 +387,8 @@ export default {
             if (data.address && data.amount && data.qr_code) {
               // 1. Set time out to remove QR code: Time out in form!
               /*  this.timeout_instance = setTimeout(() => {
-                  this.delayedHide();
-                }, this.timeout);*/
+                    this.delayedHide();
+                  }, this.timeout);*/
 
               // 2. Show success alert:
               this.showSuccessAlert(

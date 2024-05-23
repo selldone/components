@@ -18,12 +18,11 @@
 
     <div class="widget-box mb-5">
       <s-widget-header
-        icon="settings_ethernet"
         :title="$t('shop_connect.edit.service.title')"
+        icon="settings_ethernet"
       ></s-widget-header>
-      <v-list-subheader
-        >
-        {{$t('shop_connect.edit.service.subtitle')}}
+      <v-list-subheader>
+        {{ $t("shop_connect.edit.service.subtitle") }}
       </v-list-subheader>
 
       <connect-input-field
@@ -53,34 +52,36 @@
           <u-smart-switch
             v-model="params.test"
             :disabled="!connect.enable"
-            class="my-3"
-            :false-description="$t('shop_connect.edit.test.false_desc') "
-            false-icon="all_inclusive"
+            :false-description="$t('shop_connect.edit.test.false_desc')"
             :false-title="$t('shop_connect.edit.test.false_title')"
-            label="Sync mode"
-            :true-description="$t('shop_connect.edit.test.true_desc') "
-            true-icon="science"
+            :true-description="$t('shop_connect.edit.test.true_desc')"
             :true-title="$t('shop_connect.edit.test.true_title')"
+            class="my-3"
+            false-icon="all_inclusive"
+            label="Sync mode"
+            true-icon="science"
             @change="$forceUpdate()"
           ></u-smart-switch>
 
           <u-smart-switch
             v-if="shopConnect"
             v-model="overwrite"
-            class="my-3"
             :false-description="$t('shop_connect.edit.overwrite.false_desc')"
+            :false-title="$t('shop_connect.edit.overwrite.false_title')"
+            :true-description="$t('shop_connect.edit.overwrite.true_desc')"
+            :true-title="$t('shop_connect.edit.overwrite.true_title')"
+            class="my-3"
             false-gray
             false-icon="edit_off"
-            :false-title="$t('shop_connect.edit.overwrite.false_title')"
-            :true-description="$t('shop_connect.edit.overwrite.true_desc') "
             true-icon="mode_edit"
-            :true-title="$t('shop_connect.edit.overwrite.true_title') "
           ></u-smart-switch>
 
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Cation : Migration ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-          <div v-if="mode === 'Migration'" class="py-2" v-html="$t('shop_connect.edit.migration_tips')">
-
-          </div>
+          <div
+            v-if="mode === 'Migration'"
+            class="py-2"
+            v-html="$t('shop_connect.edit.migration_tips')"
+          ></div>
 
           <div class="widget-buttons">
             <v-btn
@@ -99,12 +100,12 @@
               @click="loading = true"
             >
               <v-icon start>add</v-icon>
-              {{$t('shop_connect.edit.add_action')}}
+              {{ $t("shop_connect.edit.add_action") }}
 
               <v-avatar
                 :image="getShopImagePath(connect.icon)"
-                size="22"
                 class="mx-1 avatar-gradient -thin -connect"
+                size="22"
               ></v-avatar>
               {{ connect.name }}
             </v-btn>
@@ -117,36 +118,35 @@
     <template v-if="shopConnect">
       <div class="widget-box mb-5">
         <s-widget-header
-          icon="shopping_bag"
           :title="$t('shop_connect.edit.order.title')"
+          icon="shopping_bag"
         ></s-widget-header>
         <v-list-subheader>
-
-          {{$t('shop_connect.edit.order.subtitle')}}
+          {{ $t("shop_connect.edit.order.subtitle") }}
         </v-list-subheader>
         <u-smart-switch
           v-model="enable"
           :false-title="$t('global.commons.disable')"
+          :label="$t('shop_connect.edit.enable.label')"
+          :true-description="$t('shop_connect.edit.enable.true_desc')"
           :true-title="$t('global.commons.enable')"
           class="my-3"
           false-gray
           false-icon="stop"
-          :label="$t('shop_connect.edit.enable.label') "
-          :true-description="$t('shop_connect.edit.enable.true_desc') "
           true-icon="cloud_sync"
         ></u-smart-switch>
 
         <u-smart-switch
           v-if="connect.confirm"
           v-model="auto_confirm"
+          :false-description="$t('shop_connect.edit.confirm.false_desc')"
           :false-title="$t('global.commons.disable')"
+          :label="$t('shop_connect.edit.confirm.label')"
+          :true-description="$t('shop_connect.edit.confirm.true_desc')"
           :true-title="$t('global.commons.enable')"
           class="my-3"
-          :false-description="$t('shop_connect.edit.confirm.false_desc') "
           false-gray
           false-icon="close"
-          :label="$t('shop_connect.edit.confirm.label') "
-          :true-description="$t('shop_connect.edit.confirm.true_desc')"
           true-icon="flash_auto"
         ></u-smart-switch>
 
@@ -155,8 +155,7 @@
             <v-list-subheader>
               <div>
                 <v-icon class="me-1" size="small">tips_and_updates</v-icon>
-                {{$t('shop_connect.edit.confirm.tips') }}
-
+                {{ $t("shop_connect.edit.confirm.tips") }}
               </div>
             </v-list-subheader>
           </div>
@@ -165,23 +164,20 @@
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Shipping  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <template v-if="connect.shipping">
-          <v-list-subheader
-            >
-            {{$t('shop_connect.edit.shipping.tips')}}
-
-
+          <v-list-subheader>
+            {{ $t("shop_connect.edit.shipping.tips") }}
           </v-list-subheader>
 
           <u-smart-switch
             v-model="shipping"
-            class="my-3"
             :false-description="$t('shop_connect.edit.shipping.false_desc')"
-            false-gray
             :false-title="$t('shop_connect.edit.shipping.false_title')"
             :label="$t('shop_connect.edit.shipping.label')"
             :true-description="$t('shop_connect.edit.shipping.true_desc')"
-            true-icon="local_shipping"
             :true-title="$t('shop_connect.edit.shipping.true_title')"
+            class="my-3"
+            false-gray
+            true-icon="local_shipping"
           ></u-smart-switch>
         </template>
 
@@ -194,7 +190,7 @@
             @click="updateConnect"
           >
             <v-icon start>save</v-icon>
-            {{$t('global.actions.save_changes')}}
+            {{ $t("global.actions.save_changes") }}
           </v-btn>
         </div>
       </div>
@@ -209,9 +205,9 @@
         <u-smart-verify
           v-model="accept_delete"
           :true-description="delete_label"
+          :true-title="$t('shop_connect.edit.remove.verify')"
           class="my-3"
           color="red"
-          :true-title="$t('shop_connect.edit.remove.verify') "
         ></u-smart-verify>
 
         <div class="widget-buttons">
@@ -224,7 +220,7 @@
           >
             <v-icon class="me-1">remove</v-icon>
 
-            {{$t('shop_connect.edit.remove.action')}}
+            {{ $t("shop_connect.edit.remove.action") }}
           </v-btn>
         </div>
       </div>
@@ -239,7 +235,7 @@
       ></s-widget-header>
 
       <v-list-subheader>
-        {{ mode_desc}}
+        {{ mode_desc }}
       </v-list-subheader>
 
       <template v-if="connect.read_categories || connect.write_categories">

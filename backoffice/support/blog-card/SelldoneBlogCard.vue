@@ -62,7 +62,8 @@
         <v-chip
           v-if="current_blog.article.user"
           class="m-2 small font-weight-medium absolute-bottom-start"
-          color="#fff" variant="flat"
+          color="#fff"
+          variant="flat"
         >
           <s-blog-card-author-category
             :user="current_blog.article.user"
@@ -96,7 +97,6 @@
 </template>
 
 <script>
-
 import SBlogCardAuthorCategory from "../../../storefront/blog/card/author-category/SBlogCardAuthorCategory.vue";
 
 export default {

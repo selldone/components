@@ -19,11 +19,11 @@
       :key="index"
       class="text-start row-hover border-bottom flex-wrap"
       density="compact"
-      style="cursor: default"
       lines="two"
+      style="cursor: default"
     >
       <template v-slot:prepend>
-        <v-avatar rounded="lg" variant="outlined" color="#eee">
+        <v-avatar color="#eee" rounded="lg" variant="outlined">
           <v-img
             :src="
               item.product.icon
@@ -40,21 +40,19 @@
         </v-avatar>
       </template>
 
-      <v-row no-gutters align="center">
-        <v-col
-            cols="12"
-            sm="6"
-            md="6"
-
-          :class="{ 'constrained': !viewOnly }"
-        >
+      <v-row align="center" no-gutters>
+        <v-col :class="{ constrained: !viewOnly }" cols="12" md="6" sm="6">
           <v-list-item-title class="ptitle">
             <component
               :is="!viewOnly ? 'router-link' : 'div'"
-              :to="isAffiliatePos?{}:{
-                name: 'BPageProductDashboard',
-                params: { product_id: item.product.id },
-              }"
+              :to="
+                isAffiliatePos
+                  ? {}
+                  : {
+                      name: 'BPageProductDashboard',
+                      params: { product_id: item.product.id },
+                    }
+              "
               class="text-dark"
             >
               <b>{{ item.product.title?.limitWords(7) }}</b>
@@ -63,7 +61,8 @@
                 v-if="!item.product.original"
                 class="m-1 text-uppercase px-2"
                 color="red"
-                label density="comfortable"
+                density="comfortable"
+                label
                 size="x-small"
                 variant="tonal"
                 >{{ $t("global.commons.fake") }}
@@ -96,43 +95,29 @@
         <v-col
           class="text-center px-2 v-col-2 v-col-sm-4"
           cols="6"
-          sm="4"
           md="3"
+          sm="4"
         >
-          <b  v-if="viewOnly">{{ item.count }}</b>
+          <b v-if="viewOnly">{{ item.count }}</b>
 
-
-            <s-shop-basket-item-count-select
-                v-else
-                v-model="item.count"
-                :loading="busyAdd === item.product_id + '-' + item.variant_id"
-                :max="availableQuantity(item)"
-                :min="0"
-                background-color="#111"
-                dark
-                filled
-                no-unit
-                @change="(count) => spinnerSelectAction(item, count)"
-                rounded="lg"
-
-            ></s-shop-basket-item-count-select>
-
+          <s-shop-basket-item-count-select
+            v-else
+            v-model="item.count"
+            :loading="busyAdd === item.product_id + '-' + item.variant_id"
+            :max="availableQuantity(item)"
+            :min="0"
+            background-color="#111"
+            dark
+            filled
+            no-unit
+            rounded="lg"
+            @change="(count) => spinnerSelectAction(item, count)"
+          ></s-shop-basket-item-count-select>
         </v-col>
 
-
-
-        <v-col
-            cols="6"
-            sm="2"
-            md="3"
-
-
-            class="text-left px-3">
+        <v-col class="text-left px-3" cols="6" md="3" sm="2">
           <div v-if="item.dis" class="text-muted">
-            <u-price
-              :amount="item.dis * item.count"
-              line-through
-            ></u-price>
+            <u-price :amount="item.dis * item.count" line-through></u-price>
           </div>
           <div class="price">
             <u-price :amount="item.price * item.count"></u-price>
@@ -143,9 +128,10 @@
       <template v-slot:append>
         <v-list-item-action v-if="!viewOnly" class="text-center m-0">
           <v-btn
-            :title="$t('global.actions.delete')"
             :loading="busyDelete === item.id"
-            icon variant="text"
+            :title="$t('global.actions.delete')"
+            icon
+            variant="text"
             @click.stop="$emit('delete', item.id)"
           >
             <v-icon> close</v-icon>
@@ -176,7 +162,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    isAffiliatePos:Boolean
+    isAffiliatePos: Boolean,
   },
 
   data: function () {

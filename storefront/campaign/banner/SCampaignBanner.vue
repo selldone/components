@@ -27,13 +27,13 @@
     >
       <v-banner
         :class="{ '-bg-repeat': banner.repeat }"
-        :theme="banner.dark ? 'dark' : 'light'"
         :style="{
           'background-color': banner.bg,
           'background-image': banner.bg_image
             ? `url(${banner.bg_image})`
             : undefined,
         }"
+        :theme="banner.dark ? 'dark' : 'light'"
         class="s--storefront-top-banner"
       >
         <template v-slot:prepend>
@@ -72,8 +72,8 @@
               class="mx-2 flex-grow-0"
               icon
               size="42"
-              @click.stop="dismiss"
               variant="text"
+              @click.stop="dismiss"
             >
               <v-icon>close</v-icon>
             </v-btn>

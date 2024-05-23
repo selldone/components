@@ -57,7 +57,11 @@
               line-through
             ></u-price>
 
-            <v-chip class="mx-1 float-end" color="red" variant="flat" size="small"
+            <v-chip
+              class="mx-1 float-end"
+              color="red"
+              size="small"
+              variant="flat"
               >{{ discount_percent }} %
             </v-chip>
           </p>
@@ -108,17 +112,20 @@
       max-width="680"
     >
       <v-card class="rounded-28px text-start">
-        <v-card-title>    <v-icon class="me-1">qr_code_scanner</v-icon>{{ $t("global.commons.barcode_scanner") }}</v-card-title>
+        <v-card-title>
+          <v-icon class="me-1">qr_code_scanner</v-icon>
+          {{ $t("global.commons.barcode_scanner") }}
+        </v-card-title>
         <v-card-text v-if="show_scanner">
           <u-scanner qr-code @on-scan="onScan"></u-scanner>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
+              prepend-icon="close"
+              size="x-large"
               variant="text"
               @click="show_scanner = false"
-              size="x-large"
-              prepend-icon="close"
               >{{ $t("global.actions.close") }}
             </v-btn>
           </div>

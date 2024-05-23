@@ -175,7 +175,7 @@
               icon="info"
             ></s-widget-header>
             <v-list-subheader
-              >{{$t('product_studio.info.subtitle')}}
+              >{{ $t("product_studio.info.subtitle") }}
             </v-list-subheader>
 
             <v-text-field
@@ -214,9 +214,8 @@
               :title="$t('global.commons.price')"
               icon="monetization_on"
             ></s-widget-header>
-            <v-list-subheader
-              >
-              {{$t('product_studio.price.subtitle')}}
+            <v-list-subheader>
+              {{ $t("product_studio.price.subtitle") }}
             </v-list-subheader>
 
             <u-currency-input
@@ -417,7 +416,7 @@ export default {
     },
 
     can_add() {
-      return this.type && this.title && this.price>=0 && this.currency;
+      return this.type && this.title && this.price >= 0 && this.currency;
     },
 
     isFile() {

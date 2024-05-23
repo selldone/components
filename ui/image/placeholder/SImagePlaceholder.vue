@@ -27,9 +27,9 @@ Use case:
   <v-progress-circular
     :bg-color="bgColor"
     :color="color"
+    :size="size"
     class="center-absolute"
     indeterminate
-    :size="size"
   />
 </template>
 
@@ -46,9 +46,9 @@ export default defineComponent({
     bgColor: {
       type: String,
     },
-    size:{
+    size: {
       type: String,
-    }
+    },
   },
   computed: {},
 });

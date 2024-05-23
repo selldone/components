@@ -16,19 +16,18 @@
 
   <s-article-category-shop-blog-input
     :model-value="categoryId"
-    @update:model-value="(v) => setCategoryId(v)"
     :shop="shop"
     class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
     clearable
     flat
     rounded
     variant="solo"
+    @update:model-value="(v) => setCategoryId(v)"
   >
   </s-article-category-shop-blog-input>
 
   <b-cluster-input
     :model-value="clusterId"
-    @update:model-value="(v) => setClusterId(v)"
     :return-object="false"
     class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
     clearable
@@ -39,6 +38,7 @@
     placeholder="Select a cluster... (optional)"
     rounded
     solo
+    @update:model-value="(v) => setClusterId(v)"
   ></b-cluster-input>
 </template>
 
@@ -62,4 +62,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

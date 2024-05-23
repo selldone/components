@@ -31,16 +31,16 @@
       <LPageViewer
         v-if="popup.content"
         :class="[{ 's--shadow-no-padding': style && style.s }]"
+        :initialPageData="popup.content"
         :style="{
           borderRadius: style && style.r ? style.r : undefined,
           width: style && style.w ? style.w : Math.min(window.innerWidth, 800),
           height:
             style && style.h ? style.h : Math.min(window.innerHeight, 800),
         }"
-        @click.stop
-        :initialPageData="popup.content"
         class="pop-card overflow-auto d-flex thin-scroll"
         style="max-height: 100%; width: 100%; cursor: initial"
+        @click.stop
       />
 
       <v-btn
@@ -64,9 +64,9 @@
         v-if="popup.delay"
         class="m-1"
         color="green"
-        variant="flat"
         label
         size="small"
+        variant="flat"
       >
         <v-icon class="me-1" size="small">motion_photos_on</v-icon>
         {{ popup.delay }} s
@@ -75,9 +75,9 @@
         v-if="popup.hide"
         class="m-1"
         color="red"
-        variant="flat"
         label
         size="small"
+        variant="flat"
       >
         <v-icon class="me-1" size="small">hourglass_bottom</v-icon>
         {{ popup.hide }} s
@@ -86,9 +86,9 @@
         v-if="popup.transition"
         class="m-1"
         color="blue"
-        variant="flat"
         label
         size="small"
+        variant="flat"
       >
         <v-icon class="me-1" size="small">timelapse</v-icon>
         {{ getName(popup.transition) }}

@@ -31,7 +31,10 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Normal ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <template v-if="businessModel === 'normal'">
-        <u-pod-node :title="$t('global.commons.customers')" icon="people_outline">
+        <u-pod-node
+          :title="$t('global.commons.customers')"
+          icon="people_outline"
+        >
         </u-pod-node>
 
         <div class="flex-grow-1">
@@ -63,8 +66,16 @@
 
       <template v-else-if="businessModel === 'wholesaler'">
         <div>
-          <u-pod-node class="my-1" icon="storefront" title="Store A"></u-pod-node>
-          <u-pod-node class="my-1" icon="storefront" title="Store B"></u-pod-node>
+          <u-pod-node
+            class="my-1"
+            icon="storefront"
+            title="Store A"
+          ></u-pod-node>
+          <u-pod-node
+            class="my-1"
+            icon="storefront"
+            title="Store B"
+          ></u-pod-node>
         </div>
 
         <div class="flex-grow-1">
@@ -104,14 +115,20 @@
           >
         </div>
 
-        <u-pod-node :title="$t('global.commons.customers')" icon="people_outline">
+        <u-pod-node
+          :title="$t('global.commons.customers')"
+          icon="people_outline"
+        >
         </u-pod-node>
       </template>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Marketplace ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <template v-else-if="businessModel === 'marketplace'">
-        <u-pod-node :title="$t('global.commons.customers')" icon="people_outline">
+        <u-pod-node
+          :title="$t('global.commons.customers')"
+          icon="people_outline"
+        >
           <v-icon class="mb-1">people_outline</v-icon>
         </u-pod-node>
 
@@ -153,9 +170,17 @@
         </div>
 
         <div>
-          <u-pod-node class="my-1" icon="storefront" title="Vendor A"></u-pod-node>
+          <u-pod-node
+            class="my-1"
+            icon="storefront"
+            title="Vendor A"
+          ></u-pod-node>
 
-          <u-pod-node class="my-1" icon="storefront" title="Vendor B"></u-pod-node>
+          <u-pod-node
+            class="my-1"
+            icon="storefront"
+            title="Vendor B"
+          ></u-pod-node>
         </div>
 
         <div class="flex-grow-1">
@@ -187,7 +212,10 @@
           </div>
         </div>
 
-        <u-pod-node :title="$t('global.commons.customers')" icon="people_outline">
+        <u-pod-node
+          :title="$t('global.commons.customers')"
+          icon="people_outline"
+        >
         </u-pod-node>
       </template>
 
@@ -323,7 +351,10 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Dropshipping (Connect OS) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <template v-else-if="businessModel === 'dropshipping'">
-        <u-pod-node :title="$t('global.commons.customers')" icon="people_outline">
+        <u-pod-node
+          :title="$t('global.commons.customers')"
+          icon="people_outline"
+        >
         </u-pod-node>
 
         <div class="flex-grow-1">

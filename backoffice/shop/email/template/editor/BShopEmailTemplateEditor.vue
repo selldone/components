@@ -117,7 +117,8 @@
           v-model="header_image"
           v-model:file="header_image_file"
           hint="This image will be shown on the email header."
-          label="Header image" variant="underlined"
+          label="Header image"
+          variant="underlined"
         ></u-smart-image>
 
         <v-textarea
@@ -131,7 +132,8 @@
           v-model="footer_image"
           v-model:file="footer_image_file"
           hint="This image will be shown under email content."
-          label="Footer image" variant="underlined"
+          label="Footer image"
+          variant="underlined"
         ></u-smart-image>
 
         <hr />

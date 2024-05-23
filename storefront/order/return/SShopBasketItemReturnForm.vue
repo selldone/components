@@ -54,7 +54,7 @@
       </div>
 
       <v-container fluid>
-        <v-row align="center" justify="center"  >
+        <v-row align="center" justify="center">
           <v-col v-if="step === 1" md6 xs12>
             <p class="action-title text-start m-2">
               <u-number-input
@@ -103,7 +103,7 @@
             </p>
           </v-col>
 
-          <v-col v-if="step === 2" class="p-2 text-center" md="3" cols="12">
+          <v-col v-if="step === 2" class="p-2 text-center" cols="12" md="3">
             <div style="min-height: 48px">
               <v-img
                 v-if="imagePath"
@@ -131,7 +131,7 @@
             />
           </v-col>
 
-          <v-col v-if="step === 2" class="p-2 text-center" md="3" cols="12">
+          <v-col v-if="step === 2" class="p-2 text-center" cols="12" md="3">
             <div style="min-height: 48px">
               <v-img
                 v-if="videoPath"
@@ -158,7 +158,7 @@
             />
           </v-col>
 
-          <v-col v-if="step === 2" class="p-2 text-center" md="3" cols="12">
+          <v-col v-if="step === 2" class="p-2 text-center" cols="12" md="3">
             <div style="min-height: 48px">
               <v-img
                 v-if="voicePath"
@@ -390,8 +390,8 @@ export default {
             count: this.count,
             note: this.note,
             /*image: this.image,
-                                video: this.video,
-                                voice: this.voice*/
+                                    video: this.video,
+                                    voice: this.voice*/
           },
         )
         .then(({ data }) => {

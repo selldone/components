@@ -38,8 +38,8 @@
     <template v-slot:append-inner>
       <v-progress-circular
         v-if="busy_currency"
-        size="24"
         indeterminate
+        size="24"
       ></v-progress-circular>
     </template>
   </u-currency-selector>

@@ -16,17 +16,17 @@
   <div>
     <s-setting-group
       v-if="option.type === 'section'"
-      :title="option.title"
-      :subtitle="option.description"
       :icon="option.icon"
+      :subtitle="option.description"
+      :title="option.title"
     >
       <b-email-section-editor-row
         v-for="(child, i) in option.children"
         :key="i"
-        :shop="shop"
-        :option="child"
-        :upload-url="uploadUrl"
         :loaded-fonts="loadedFonts"
+        :option="child"
+        :shop="shop"
+        :upload-url="uploadUrl"
       ></b-email-section-editor-row>
     </s-setting-group>
 
@@ -41,13 +41,13 @@
 
     <s-setting-toggle
       v-else-if="option.type === 'align'"
-      :title="option.label"
+      v-model="option.object[option.key]"
       :items="[
         { value: 'left', title: 'Left', icon: 'format_align_left' },
         { value: 'center', title: 'Center', icon: 'format_align_center' },
         { value: 'right', title: 'Right', icon: 'format_align_right' },
       ]"
-      v-model="option.object[option.key]"
+      :title="option.label"
     >
     </s-setting-toggle>
 
@@ -60,17 +60,17 @@
       outlined
       single-product-select
       @change="onUpdate()"
-      >{{$t('global.placeholders.select_products')}}
+      >{{ $t("global.placeholders.select_products") }}
     </b-products-select-box>
 
     <s-setting-text-input
       v-else-if="option.type === 'text'"
       v-model="option.object[option.key]"
       :counter="option.counter"
-      :title="option.label ? option.label : key"
       :messages="option.messages"
       :placeholder="option.placeholder"
       :rules="option.rules"
+      :title="option.label ? option.label : key"
       @blur="onUpdate()"
     >
     </s-setting-text-input>
@@ -107,11 +107,11 @@
       :label="option.label ? option.label : key"
       :model-value="JSON.stringify(option.object[option.key])"
       :placeholder="option.placeholder"
+      variant="underlined"
       @blur="onUpdate()"
       @update:model-value="
         (val) => (option.object[option.key] = JSON.parse(val))
       "
-      variant="underlined"
     >
     </v-textarea>
 
@@ -121,8 +121,8 @@
       :items="option.enums"
       :label="option.label ? option.label : key"
       :placeholder="option.placeholder"
-      @update:model-value="onUpdate()"
       variant="underlined"
+      @update:model-value="onUpdate()"
     >
     </v-select>
 
@@ -142,6 +142,7 @@
     <div v-else-if="option.type === 'delete'" class="widget-buttons">
       <v-btn
         color="red"
+        prepend-icon="close"
         size="x-large"
         variant="flat"
         @click="
@@ -151,7 +152,6 @@
             }
           }
         "
-        prepend-icon="close"
       >
         {{ $t("global.actions.delete") }}
       </v-btn>
@@ -164,12 +164,16 @@
         :label="option.label ? option.label : key"
         :placeholder="option.placeholder"
         append-icon="font_download"
+        variant="underlined"
         @blur="onSelectFont"
         @keydown.enter="onSelectFont"
-        variant="underlined"
       >
-        <template v-slot:item="{ item,props }">
-          <v-list-item v-bind="props" :style="`font-family:${item.raw}`" :title="item.raw"></v-list-item>
+        <template v-slot:item="{ item, props }">
+          <v-list-item
+            :style="`font-family:${item.raw}`"
+            :title="item.raw"
+            v-bind="props"
+          ></v-list-item>
         </template>
       </v-combobox>
 
@@ -276,4 +280,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss" scoped></style>

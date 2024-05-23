@@ -180,7 +180,10 @@
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
       </v-form>
 
-      <BShopLicenseBlockOverlay v-if="licenseRestriction" fill-h></BShopLicenseBlockOverlay>
+      <BShopLicenseBlockOverlay
+        v-if="licenseRestriction"
+        fill-h
+      ></BShopLicenseBlockOverlay>
     </v-card-text>
     <v-card-actions>
       <s-widget-buttons :auto-fixed-position="!hasCloseButton">

@@ -22,6 +22,7 @@
     :messages="selected_connect && selected_connect.description"
     :model-value="modelValue"
     :return-object="false"
+    :variant="variant"
     clearable
     item-title="name"
     item-value="id"
@@ -35,7 +36,6 @@
       $emit('click:clear');
       getConnects();
     "
-    :variant="variant"
   >
     <template v-slot:selection="{}">
       <template v-if="selected_connect">
@@ -59,7 +59,7 @@
     </template>
 
     <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props" class="text-start">
+      <v-list-item class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar v-if="item.raw.icon" rounded size="40">
             <img :src="getShopImagePath(item.raw.icon, 64)" />

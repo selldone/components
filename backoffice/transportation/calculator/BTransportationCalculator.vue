@@ -194,7 +194,14 @@
 
     <v-icon color="primary">fa:fas fa-equals</v-icon>
 
-    <v-chip v-if="calculated_cost" class="mx-1" color="#222" label size="large" variant="flat">
+    <v-chip
+      v-if="calculated_cost"
+      class="mx-1"
+      color="#222"
+      label
+      size="large"
+      variant="flat"
+    >
       <u-price
         :amount="calculated_cost"
         :currency="transportation.currency"

@@ -30,10 +30,7 @@
       </div>
     </td>
     <td class="text-left">
-      <u-price
-        :amount="payment.amount"
-        :currency="payment.currency"
-      ></u-price>
+      <u-price :amount="payment.amount" :currency="payment.currency"></u-price>
     </td>
 
     <!-- Detailed -->

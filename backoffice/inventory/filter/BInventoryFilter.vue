@@ -15,6 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-select
     :density="dense ? 'compact' : undefined"
+    :flat="flat"
     :items="[
       ...Object.values(ProductType).map((t) => {
         return { value: t.code, obj: t };
@@ -24,16 +25,15 @@
       }),
     ]"
     :model-value="modelValue"
+    :placeholder="$t('inventory_filter.placeholder')"
+    :variant="variant"
     bg-color="transparent"
     chips
     clearable
-    :flat="flat"
     hide-details
     item-value="value"
     multiple
-    :placeholder="$t('inventory_filter.placeholder')"
     prepend-inner-icon="filter_alt"
-    :variant="variant"
     @update:model-value="
       (val) => {
         $emit('update:modelValue', val);

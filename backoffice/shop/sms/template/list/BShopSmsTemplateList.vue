@@ -65,8 +65,8 @@
       <v-row no-gutters>
         <u-smart-toggle
           v-model="active"
-          true-title="Active only"
           false-gray
+          true-title="Active only"
         ></u-smart-toggle>
         <v-spacer></v-spacer>
 
@@ -83,7 +83,6 @@
       </v-row>
 
       <v-data-table-server
-        :mobile="$vuetify.display.xs"
         v-model:options="options"
         v-model:page="page"
         v-model:sort-by="sortBy"
@@ -92,6 +91,7 @@
         :items="templates"
         :items-length="totalItems"
         :items-per-page="itemsPerPage"
+        :mobile="$vuetify.display.xs"
         :row-props="
           (_data) => {
             return { class: 'row-hover' };

@@ -101,10 +101,10 @@
               :class="{ disabled: !can_create_wallet }"
               :loading="busy_create"
               color="success"
+              prepend-icon="add"
               size="x-large"
               variant="elevated"
               @click="createNewBlockchainWallet()"
-              prepend-icon="add"
               >Create a new wallet
             </v-btn>
           </div>

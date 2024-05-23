@@ -18,9 +18,9 @@
       :color="show_discount_code_input ? SaminColorLight : SaminColorDark"
       :icon="show_discount_code_input"
       :loading="busy"
-      :size="show_discount_code_input ? 'small':'large'"
-      class="mx-1 animated-all-normal"
       :rounded="!show_discount_code_input"
+      :size="show_discount_code_input ? 'small' : 'large'"
+      class="mx-1 animated-all-normal"
       variant="flat"
       @click="
         show_discount_code_input
@@ -52,8 +52,9 @@
     <v-btn
       v-if="show_discount_code_input"
       class="mx-1 animated-all-normal"
-      icon variant="text"
+      icon
       size="small"
+      variant="text"
       @click="show_discount_code_input = false"
     >
       <v-icon>close</v-icon>

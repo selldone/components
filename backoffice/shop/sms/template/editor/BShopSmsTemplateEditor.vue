@@ -13,8 +13,8 @@
   -->
 
 <template>
-  <v-card flat class="text-start">
-    <v-card-title  class="d-flex align-center">
+  <v-card class="text-start" flat>
+    <v-card-title class="d-flex align-center">
       <v-avatar class="me-1" rounded>
         <v-img :src="getShopImagePath(shop.icon, 128)"></v-img>
       </v-avatar>
@@ -25,13 +25,19 @@
 
       <div class="widget-box mb-5">
         <s-widget-header icon="tune" title="Message Config"></s-widget-header>
-        <v-list-subheader>You can create a template for the SMS message on your SMS provider's website, then specify its code and data structure here. We'll forward this information to your provider, where the actual SMS message will be generated.</v-list-subheader>
+        <v-list-subheader
+          >You can create a template for the SMS message on your SMS provider's
+          website, then specify its code and data structure here. We'll forward
+          this information to your provider, where the actual SMS message will
+          be generated.
+        </v-list-subheader>
 
         <v-text-field
           :append-icon="sms.icon"
           :model-value="sms.title"
           disabled
-          label="Code" variant="underlined"
+          label="Code"
+          variant="underlined"
         ></v-text-field>
 
         <u-language-input
@@ -43,7 +49,8 @@
           messages="Leave it empty to set it as default."
           persistent-placeholder
           placeholder="Default - All languages"
-          title="Language"  variant="underlined"
+          title="Language"
+          variant="underlined"
         ></u-language-input>
 
         <u-smart-switch
@@ -74,14 +81,18 @@
 
       <div v-if="mode === 'text'" class="widget-box mb-5">
         <s-widget-header icon="subject" title="Plain text"></s-widget-header>
-        <v-list-subheader>Enter a personalized SMS message here. Dynamic values will be substituted with their actual values before being sent to the user.</v-list-subheader>
+        <v-list-subheader
+          >Enter a personalized SMS message here. Dynamic values will be
+          substituted with their actual values before being sent to the user.
+        </v-list-subheader>
 
         <v-textarea
           v-model="text"
           :rows="3"
           auto-grow
           hide-details
-          label="Message" variant="underlined"
+          label="Message"
+          variant="underlined"
         ></v-textarea>
 
         <div class="text-end mb-3">
@@ -231,8 +242,9 @@
           v-if="template"
           :class="{ disabled: !mode }"
           :loading="busy"
-          color="primary" variant="elevated"
+          color="primary"
           size="x-large"
+          variant="elevated"
           @click="editTemplate()"
         >
           <v-icon start>save</v-icon>

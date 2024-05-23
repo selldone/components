@@ -56,8 +56,8 @@
               class="ms-2 zoomIn"
               icon
               size="small"
-              variant="text"
               title="Open contacts page"
+              variant="text"
             >
               <v-icon size="small">launch</v-icon>
             </v-btn>
@@ -90,15 +90,12 @@
         v-if="!show"
         :color="SaminColorDark"
         class="chat-btn"
-        icon
         height="60"
+        icon
         variant="flat"
         width="60"
         @click="show = true"
-        ><img
-          height="24"
-          src="../../../assets/icons/headphones.svg"
-          width="24"
+        ><img height="24" src="../../../assets/icons/headphones.svg" width="24"
       /></v-btn>
     </v-scale-transition>
   </div>

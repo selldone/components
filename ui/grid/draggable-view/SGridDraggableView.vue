@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div v-bind="$attrs" :id="id" class="s--grid-view">
+  <div :id="id" class="s--grid-view" v-bind="$attrs">
     <slot></slot>
   </div>
 </template>

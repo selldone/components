@@ -22,7 +22,7 @@
     scrollable
     @update:model-value="(v) => $emit('update:modelValue', v)"
   >
-    <v-card color="#f9f9f9" class="text-start">
+    <v-card class="text-start" color="#f9f9f9">
       <v-card-title>
         <v-avatar v-if="icon" class="me-2" rounded size="36">
           <v-img :src="icon" />

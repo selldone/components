@@ -919,19 +919,19 @@
               <v-btn
                 :loading="busy_affiliate === 'ACCEPT'"
                 class="me-1 -green"
+                prepend-icon="check_circle"
                 size="small"
                 value="ACCEPT"
                 @click="updateAffiliateStatus('ACCEPT')"
-                prepend-icon="check_circle"
                 >{{ $t("global.actions.accept") }}
               </v-btn>
               <v-btn
                 :loading="busy_affiliate === 'REJECT'"
                 class="ms-1 -red"
+                prepend-icon="cancel"
                 size="small"
                 value="REJECT"
                 @click="updateAffiliateStatus('REJECT')"
-                prepend-icon="cancel"
                 >{{ $t("global.actions.reject") }}
               </v-btn>
             </v-btn-toggle>
@@ -1264,9 +1264,9 @@
 
   <v-bottom-sheet
     v-model="dialog_customer_pay_money_dir"
+    content-class="rounded-t-xl"
     max-width="680"
     width="98vw"
-    content-class="rounded-t-xl"
   >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>
@@ -1284,9 +1284,9 @@
             :src="getShopImagePath(im)"
             class="pointer-zoom-in"
             height="auto"
+            rounded="lg"
             width="100%"
             @click="showFullscreen"
-            rounded="lg"
           ></v-img>
         </div>
         <u-smart-verify v-model="accept_action"></u-smart-verify>

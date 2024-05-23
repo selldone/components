@@ -104,8 +104,9 @@
           : require('../../../assets/icons/map-shop.svg')
       "
       class="map-view-box -jumping pointer-pointer fadeIn delay_300 rounded-18px mx-auto my-3"
+      cover
       height="auto"
-      width="100%" cover
+      width="100%"
       @click="$emit('show:map')"
     >
       <u-map-view-pin

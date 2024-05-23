@@ -58,7 +58,7 @@
         <span v-copy @click.stop>{{ formatCard(account.account_number) }}</span>
 
         <v-chip
-          :color="account.status === 'Approved'?'green':undefined"
+          :color="account.status === 'Approved' ? 'green' : undefined"
           class="ms-2"
           size="x-small"
         >
@@ -78,9 +78,7 @@
         </v-btn>
       </p>
 
-      <div
-        class="d-flex justify-content-between mt-5 w-100 max-w-550 mx-auto"
-      >
+      <div class="d-flex justify-content-between mt-5 w-100 max-w-550 mx-auto">
         <p>
           <small>{{ $t("account_card.balance") }}:</small>
           <u-price

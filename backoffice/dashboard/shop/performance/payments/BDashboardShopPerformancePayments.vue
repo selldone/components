@@ -35,10 +35,7 @@
           :title="title"
           class="font--20"
         >
-          <u-price
-            :amount="finance.pay"
-            :currency="finance.currency"
-          ></u-price>
+          <u-price :amount="finance.pay" :currency="finance.currency"></u-price>
 
           <u-chip-change
             :currency="finance.currency"

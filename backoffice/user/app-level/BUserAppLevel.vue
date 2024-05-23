@@ -28,9 +28,9 @@
   >
     <template v-slot:item="{ item, props }">
       <v-list-item
-        v-bind="props"
-        class="text-start"
         :title="$t(item.raw.title)"
+        class="text-start"
+        v-bind="props"
       >
         <template v-slot:append>
           <v-rating

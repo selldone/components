@@ -243,10 +243,10 @@
 
           <v-switch
             v-model="has_code"
-            color="success"
-            density="compact"
             :label="$t('coupon_edit.need_code')"
             :messages="$t('coupon_edit.constraints.has_code_message')"
+            color="success"
+            density="compact"
             inset
           >
           </v-switch>
@@ -254,15 +254,18 @@
           <v-text-field
             v-model="code"
             :counter="64"
-            :label="$t('coupon_edit.coupon_code') + ` (${$t('global.commons.optional')})`"
+            :label="
+              $t('coupon_edit.coupon_code') +
+              ` (${$t('global.commons.optional')})`
+            "
             :persistent-hint="has_code"
             :readonly="!has_code"
             :single-line="!has_code"
             color="success"
             hint="User should enter this code to add coupon."
+            variant="underlined"
             @blur="has_code = !!code"
             @click="has_code = true"
-            variant="underlined"
           >
           </v-text-field>
 
@@ -282,7 +285,7 @@
             :shop="shop"
             border-less
             class="my-6"
-            >{{$t('global.placeholders.select_products')}}
+            >{{ $t("global.placeholders.select_products") }}
           </b-products-select-box>
 
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Only first buy ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -304,13 +307,13 @@
 
               <u-smart-switch
                 v-model="qualify"
+                :false-title="$t('coupon_edit.constraints.no_limit')"
                 :label="$t('coupon_edit.has_qualify_constraints')"
                 :true-description="
                   $t('coupon_edit.has_qualify_constraints_message')
                 "
-                class="my-3"
-                :false-title="$t('coupon_edit.constraints.no_limit')"
                 :true-title="$t('coupon_edit.constraints.has_limit')"
+                class="my-3"
               >
               </u-smart-switch>
 
@@ -396,12 +399,12 @@
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
         <div class="widget-box mb-5">
           <s-widget-header
-            :to="{ name: 'BPageShopClassificationClusters' }"
             :add-caption="$t('global.commons.management')"
+            :title="$t('global.commons.cluster')"
+            :to="{ name: 'BPageShopClassificationClusters' }"
             add-icon="settings"
             add-text
             icon="workspaces"
-            :title="$t('global.commons.cluster')"
           ></s-widget-header>
 
           <v-list-subheader>

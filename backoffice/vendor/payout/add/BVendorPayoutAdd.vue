@@ -67,9 +67,9 @@
               v-if="!item.livemode"
               class="mx-1 pa-1"
               color="amber"
-              variant="flat"
               label
               size="x-small"
+              variant="flat"
               >{{ $t("global.commons.debug") }}
             </v-chip>
           </template>
@@ -80,39 +80,32 @@
                 :key="b.currency"
                 class="me-2"
                 color="#111"
-                variant="flat"
                 size="small"
+                variant="flat"
               >
                 <u-currency-icon
                   :currency="b.currency"
                   class="ms-n3"
-                  small
                   flag-only
+                  small
                 ></u-currency-icon>
-                <u-price
-                  :amount="b.amount"
-                  :currency="b.currency"
-                ></u-price>
+                <u-price :amount="b.amount" :currency="b.currency"></u-price>
 
                 <v-tooltip
                   activator="parent"
+                  content-class="bg-black text-start"
                   location="bottom"
                   max-width="320"
-                  content-class="bg-black text-start"
                 >
                   <div class="d-flex align-center">
                     <v-img
+                      :height="24"
                       :src="getShopImagePath(item.image)"
                       :width="24"
-                      :height="24"
                       class="me-2"
                     ></v-img>
                     Available fund in your connected account.
-
-
                   </div>
-
-
 
                   <u-price
                     :amount="b.amount"
@@ -121,9 +114,9 @@
                   ></u-price>
 
                   <u-currency-icon
-                      :currency="b.currency"
-                      class="ms-2 float-end"
-                      flag
+                    :currency="b.currency"
+                    class="ms-2 float-end"
+                    flag
                   ></u-currency-icon>
                 </v-tooltip>
               </v-chip>
@@ -299,9 +292,7 @@
           transfer. This indicates that the balance has been deducted from the
           vendor's account and transferred to your account.
         </v-list-subheader>
-        <b-vendor-payout-history
-          :payment="payment"
-        ></b-vendor-payout-history>
+        <b-vendor-payout-history :payment="payment"></b-vendor-payout-history>
       </div>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Delete ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 

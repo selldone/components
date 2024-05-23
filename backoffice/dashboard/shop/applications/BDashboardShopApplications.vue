@@ -77,7 +77,7 @@
           <div class="small">
             <v-icon>straight</v-icon>
 
-            {{$t('selldone_applications.scan_qr_code')}}
+            {{ $t("selldone_applications.scan_qr_code") }}
           </div>
           <div class="center-absolute circle-white p-1">
             <v-icon
@@ -100,29 +100,29 @@
       <v-col class="flex-grow-1 max-w-400 min-width-250">
         <div class="text-start">
           <v-list-item
+            :subtitle="$t('selldone_applications.notification.subtitle')"
+            :title="$t('selldone_applications.notification.title')"
             class="ma-2"
             prepend-icon="notifications_active"
             rounded="lg"
-            :subtitle="$t('selldone_applications.notification.subtitle')"
-            :title="$t('selldone_applications.notification.title') "
             variant="plain"
           >
           </v-list-item>
           <v-list-item
+            :subtitle="$t('selldone_applications.order.subtitle')"
+            :title="$t('selldone_applications.order.title')"
             class="ma-2"
             prepend-icon="shopping_bag"
             rounded="lg"
-            :subtitle="$t('selldone_applications.order.subtitle')"
-            :title="$t('selldone_applications.order.title') "
             variant="plain"
           >
           </v-list-item>
           <v-list-item
+            :subtitle="$t('selldone_applications.product.subtitle')"
+            :title="$t('selldone_applications.product.title')"
             class="ma-2"
             prepend-icon="shelves"
             rounded="lg"
-            :subtitle="$t('selldone_applications.product.subtitle')"
-            :title="$t('selldone_applications.product.title') "
             variant="plain"
           >
           </v-list-item>

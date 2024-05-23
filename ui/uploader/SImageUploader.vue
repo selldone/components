@@ -58,9 +58,9 @@
         </v-btn>
 
         <v-btn
-          title="Edit image"
           class="ms-1"
           icon
+          title="Edit image"
           variant="text"
           @click="
             force_edit = !force_edit;

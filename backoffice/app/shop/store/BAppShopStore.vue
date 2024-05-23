@@ -22,18 +22,18 @@
               <v-btn
                 class="mx-2"
                 icon
-                variant="text"
                 size="small"
                 style="align-self: baseline"
                 v-bind="props"
+                variant="text"
               >
                 <v-icon>more_vert</v-icon>
               </v-btn>
             </template>
             <v-list>
               <v-list-item
-                @click="show_add_enterprise = true"
                 prepend-icon="add"
+                @click="show_add_enterprise = true"
               >
                 <v-list-item-title>Add enterprise app</v-list-item-title>
               </v-list-item>
@@ -63,10 +63,10 @@
         >
           <template v-slot:item="{ item, props }">
             <v-list-item
-              v-bind="props"
               :prepend-icon="item.raw.icon"
               :title="$t(item.raw.name)"
               class="text-start"
+              v-bind="props"
             >
             </v-list-item>
           </template>
@@ -103,9 +103,9 @@
               :key="app.id"
               :app="app.raw"
               :loading="busy_fetch_id === app.raw.id"
-              @select="editPluginDialog"
               :style="`animation-delay: ${130 * index}ms`"
               class="ma-2 zoomIn"
+              @select="editPluginDialog"
             >
             </b-app-shop-store-icon>
           </v-row>

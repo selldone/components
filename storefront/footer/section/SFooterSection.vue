@@ -17,9 +17,12 @@
     v-if="!disabled"
     :class="{ '-dark': dark, '-rtl': $vuetify.locale.isRtl }"
     :color="dark ? SaminColorDarkDeep : '#fff'"
-    :theme="dark?'dark':'light'"
+    :style="{
+      '--color-link': dark ? '#fff' : '#000',
+      '--color-hover-bg': dark ? '#00000033' : '#fafafa',
+    }"
+    :theme="dark ? 'dark' : 'light'"
     class="s--storefront-primary-footer"
-    :style="{'--color-link': dark ? '#fff' : '#000','--color-hover-bg': dark ? '#00000033' : '#fafafa'}"
   >
     <v-container style="max-width: 1520px">
       <!--- ================= Info ================= --->
@@ -165,14 +168,14 @@
 
             <v-btn
               v-if="location"
-              icon
               :title="$t('footer.map')"
               class="ms-2 hover-scale-small"
+              icon
               size="small"
               variant="text"
               @click="show_map = !show_map"
             >
-              <v-icon> near_me </v-icon>
+              <v-icon> near_me</v-icon>
             </v-btn>
           </p>
         </v-col>
@@ -230,15 +233,15 @@
           <u-currency-selector
             v-if="shop.currencies && shop.currencies.length > 1"
             :shop="shop"
+            class="ma-2"
             flag-mode
             hide-details
+            variant="outlined"
             @change="
               () => {
                 onChangeUserSelectedCurrency();
               }
             "
-            variant="outlined"
-            class="ma-2"
           />
 
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
@@ -364,14 +367,14 @@
 
     <v-dialog
       v-model="apps_dialog"
-      max-width="720px"
       content-class="rounded-xl"
+      max-width="720px"
     >
       <s-cookie-preferences
         :shop="shop"
+        class="rounded-xl"
         has-close
         @close="apps_dialog = false"
-        class="rounded-xl"
       ></s-cookie-preferences>
     </v-dialog>
   </v-sheet>
@@ -395,8 +398,13 @@
       >
       </u-map-view>
       <div class="widget-buttons absolute-bottom-center w-100">
-        <v-btn size="x-large" prepend-icon="close" @click="show_map=false" variant="flat">
-          {{$t('global.actions.close')}}
+        <v-btn
+          prepend-icon="close"
+          size="x-large"
+          variant="flat"
+          @click="show_map = false"
+        >
+          {{ $t("global.actions.close") }}
         </v-btn>
       </div>
     </v-card>
@@ -410,7 +418,7 @@ import SStorefrontSocialButtons from "../../../storefront/social/SStorefrontSoci
 
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import SLanguageSelector from "../../../storefront/language/selector/SLanguageSelector.vue";
-import {ShopFooterHelper} from "../ShopFooterHelper.ts";
+import { ShopFooterHelper } from "../ShopFooterHelper.ts";
 
 export default {
   name: "SFooterSection",
@@ -481,8 +489,7 @@ export default {
     },
 
     menu() {
-     return ShopFooterHelper.GetMenuItems(this.menu_footer,this.$router)
-
+      return ShopFooterHelper.GetMenuItems(this.menu_footer, this.$router);
     },
 
     location() {

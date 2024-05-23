@@ -124,8 +124,8 @@
                   : undefined
             "
             color="primary"
-            variant="elevated"
             tile
+            variant="elevated"
             width="100%"
             @click.prevent="$emit('quick-buy')"
           >
@@ -144,8 +144,8 @@
             "
             :title="$t('global.commons.compare')"
             block
-            tile
             color="primary"
+            tile
             variant="text"
             @click.prevent="
               existInComparisonList
@@ -182,8 +182,8 @@
 
           <v-row class="toggle-hidden-on-hover" no-gutters>
             <v-col
-              class="text-start pt-1 lhn"
               :class="{ small: isInsta || isSmall, 'my-1 ': !isInsta }"
+              class="text-start pt-1 lhn"
               cols="12"
             >
               <div class="single-line">
@@ -264,7 +264,7 @@
                     >{{ discount_percent }} %
                   </span>
                 </p>
-                <p class="" :class="{ 'mt-2': !isInsta, 'mt-1': isInsta }">
+                <p :class="{ 'mt-2': !isInsta, 'mt-1': isInsta }" class="">
                   <!-- Main price -->
 
                   <u-price
@@ -288,7 +288,7 @@
                 </p>
               </div>
             </v-col>
-            <v-col v-else class="sec--price" :cols="7">
+            <v-col v-else :cols="7" class="sec--price">
               <template v-if="!isInsta">
                 <h5 class="mt-1 mb-0">
                   {{ $t("product_card.sold_out") }}
@@ -302,8 +302,8 @@
               <img
                 v-else
                 :src="require('../../../assets/icons/sold.svg')"
-                width="20px"
                 class="float-end"
+                width="20px"
               />
             </v-col>
           </v-row>
@@ -1256,19 +1256,19 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-left:7px;
+    padding-left: 7px;
 
-    img{
+    img {
       width: 13px;
       height: 13px;
       margin: 0 auto;
     }
-    span{
+
+    span {
       font-size: 6px !important;
       margin: 0;
     }
   }
-
 }
 
 .colors-rating-small-mode {
@@ -1467,8 +1467,9 @@ export default {
     color: #000;
     display: block;
     text-align: end;
-    margin: 0!important;
+    margin: 0 !important;
   }
+
   .offer-top-end {
     width: 36px;
     height: 36px;
@@ -1476,14 +1477,15 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-left:7px;
+    padding-left: 7px;
 
-    img{
+    img {
       width: 13px;
       height: 13px;
       margin: 0 auto;
     }
-    span{
+
+    span {
       font-size: 6px !important;
       margin: 0;
     }

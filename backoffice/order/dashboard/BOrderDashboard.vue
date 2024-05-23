@@ -16,7 +16,10 @@
   <div v-bind="$attrs">
     <v-toolbar class="text-start" color="transparent" flat>
       <v-toolbar-title class="body-title">
-        <router-link :to="IS_VENDOR_PANEL?{}:{ name: root_baskets_name }" class="text-uppercase">
+        <router-link
+          :to="IS_VENDOR_PANEL ? {} : { name: root_baskets_name }"
+          class="text-uppercase"
+        >
           <img :src="getProductTypeImage(type)" height="20" width="20" />
           {{ order_type }}
         </router-link>
@@ -29,10 +32,14 @@
           <span class="mx-1">/</span>
           <img :src="ProductType.SUBSCRIPTION.image" height="20" width="20" />
           <router-link
-            :to="IS_VENDOR_PANEL?{}:{
-              name: ProductType.SUBSCRIPTION.order_page,
-              params: { basket_id: basket.subscription_id },
-            }"
+            :to="
+              IS_VENDOR_PANEL
+                ? {}
+                : {
+                    name: ProductType.SUBSCRIPTION.order_page,
+                    params: { basket_id: basket.subscription_id },
+                  }
+            "
           >
             SN-{{ basket.subscription_id }}
           </router-link>
@@ -230,19 +237,16 @@
         :updateState="updateState"
       ></slot>
     </v-container>
-
-
   </div>
-
 
   <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Dialog > ❌ Reject ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
   <v-dialog
-      v-if="!isHyper && basket"
-      v-model="dialog_reject"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
+    v-if="!isHyper && basket"
+    v-model="dialog_reject"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
   >
     <v-card class="text-start">
       <v-card-title>
@@ -255,27 +259,27 @@
       <v-card-text>
         <div class="widget-box -large mb-5">
           <u-smart-select
-              v-model="reject_reason"
-              :items="basketRejectReasons"
-              force-show-all
-              item-text="title"
-              item-value="code"
+            v-model="reject_reason"
+            :items="basketRejectReasons"
+            force-show-all
+            item-text="title"
+            item-value="code"
           >
           </u-smart-select>
         </div>
 
         <div v-if="rejected" class="widget-buttons">
           <v-btn
-              :loading="busy_delete_reject"
-              color="green-darken-1"
-              size="x-large"
-              variant="flat"
-              @click="clearRejectOrder()"
+            :loading="busy_delete_reject"
+            color="green-darken-1"
+            size="x-large"
+            variant="flat"
+            @click="clearRejectOrder()"
           >
             <v-icon class="me-1">settings_backup_restore</v-icon>
             {{
               $t(
-                  "process_order_page_dashboard.reject_dialog.dismiss_reject_action",
+                "process_order_page_dashboard.reject_dialog.dismiss_reject_action",
               )
             }}
           </v-btn>
@@ -289,12 +293,12 @@
             {{ $t("global.actions.close") }}
           </v-btn>
           <v-btn
-              :class="{ disabled: !reject_reason }"
-              :loading="busy_reject_order"
-              color="red-darken-1"
-              size="x-large"
-              variant="flat"
-              @click="rejectOrder()"
+            :class="{ disabled: !reject_reason }"
+            :loading="busy_reject_order"
+            color="red-darken-1"
+            size="x-large"
+            variant="flat"
+            @click="rejectOrder()"
           >
             <v-icon class="me-1">check</v-icon>
             {{
