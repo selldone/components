@@ -31,8 +31,8 @@
             <img :src="getShopImagePath(category.icon)" alt="" />
           </div>
           <div class="details">
-            <b class="-title">{{ category.title }}</b
-            ><span class="-description">{{
+            <b class="-title text-wrap">{{ category.title }}</b
+            ><span class="-description text-wrap">{{
               category.description?.limitWords(smallMode ? 8 : 12)
             }}</span>
           </div>
@@ -123,14 +123,15 @@ Npt scoped: in landing builder show wrong style for insta-card (global style to 
 
       .details {
         .-title {
-          font-size: 12px;
+          font-size: 10px;
         }
 
         .-description {
           font-size: 0.8rem;
         }
       }
-      .category-title{
+
+      .category-title {
         font-size: 12px;
       }
     }
@@ -217,7 +218,7 @@ Npt scoped: in landing builder show wrong style for insta-card (global style to 
         margin: 0;
         padding: 0;
         font-weight: 700;
-        font-size: 14px;
+        font-size: 12px;
         text-transform: uppercase;
       }
 
