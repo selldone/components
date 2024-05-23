@@ -504,11 +504,9 @@
             <s-widget-header icon="dns" title="DNS records"></s-widget-header>
             <v-list-subheader v-if="domain"
               >{{
-              domain.ssl_proxy
-              ? "If you added this domain via Selldone SSL service, Selldone will issue an SSL certificate if your DNS
-              configuration is correct."
-              : "When you add a domain in direct mode, it implies that you are responsible for adding SSL to your domain
-              via CDNs like Cloudflare. Please note that Selldone will not issue SSL for your domain in this case."
+                domain.ssl_proxy
+                    ? "If you added this domain via Selldone SSL service, Selldone will issue an SSL certificate if your DNS configuration is correct."
+                    : "When you add a domain in direct mode, it implies that you are responsible for adding SSL to your domain via CDNs like Cloudflare. Please note that Selldone will not issue SSL for your domain in this case."
               }}
             </v-list-subheader>
 

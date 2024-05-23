@@ -445,10 +445,10 @@ import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import UCountDown from "../../ui/count-down/UCountDown.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import { SuccessVerifyMethod } from "@selldone/sdk-storefront";
-import { CustomerSource } from "@selldone/core-js/enums/customer/source/CustomerSource";
 
 import ShopEmailLogin from "../../storefront/login/widgets/ShopEmailLogin.vue";
 import UTelInput from "../../ui/tel-input/UTelInput.vue";
+import {Customer} from "@selldone/core-js/models/shop/customer/customer.model";
 
 export default {
   name: "SShopLogin",
@@ -470,7 +470,7 @@ export default {
       default: "transparent",
     },
     source: {
-      default: CustomerSource.CUSTOMER,
+      default: Customer.Source.CUSTOMER,
     },
   },
   data() {
