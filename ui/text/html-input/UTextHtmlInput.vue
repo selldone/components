@@ -19,6 +19,7 @@
     :data-placeholder="placeholder ? placeholder : label"
     class="s--html-input html-style"
     contenteditable="true"
+    :messages="messages"
     @blur="updateMentions"
     @input="updateHTML"
     @paste="onPast"

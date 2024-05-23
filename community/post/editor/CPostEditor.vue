@@ -296,6 +296,7 @@
             v-model:mentions="mentions"
             v-model:text="body_text"
             :placeholder="$t('community.editor.body_placeholder')"
+            messages="Markdown: **bold** , @user , __italic__ , ## header2 , ### header 3 , ..."
             auto-grow
             class="my-2 mx-3"
             flat
@@ -489,13 +490,11 @@
               view-only
             >
             </c-attach-viewer>
-            <v-list-subheader>
-              <div>
-                <v-icon class="me-1">warning_amber</v-icon>
-                You can not edit attachments after sending them. If you remove
-                post, attachments will be deleted.
-              </div>
-            </v-list-subheader>
+            <div class="text-start small pa-3">
+              <v-icon class="me-1">warning_amber</v-icon>
+              You can not edit attachments after sending them. If you remove
+              post, attachments will be deleted.
+            </div>
           </template>
         </div>
       </v-slide-y-transition>
@@ -511,7 +510,9 @@
             @click="showSelectImage()"
           >
             <v-icon class="me-1">add_a_photo</v-icon>
-            <span class="d-none d-sm-inline-block">{{ $t("community.editor.add_image") }}</span>
+            <span class="d-none d-sm-inline-block">{{
+              $t("community.editor.add_image")
+            }}</span>
           </v-btn>
 
           <v-btn
@@ -522,7 +523,9 @@
             @click="showSelectVideo()"
           >
             <v-icon class="me-1">video_call</v-icon>
-            <span class="d-none d-sm-inline-block">{{ $t("community.editor.add_video") }}</span>
+            <span class="d-none d-sm-inline-block">{{
+              $t("community.editor.add_video")
+            }}</span>
           </v-btn>
 
           <v-btn
@@ -551,7 +554,9 @@
           color="blue"
           @click="sendPost()"
         >
-          <span class="d-none d-sm-inline-block">{{ $t("community.editor.send_post") }}</span>
+          <span class="d-none d-sm-inline-block">{{
+            $t("community.editor.send_post")
+          }}</span>
           <v-icon class="ms-1 flip-rtl">send</v-icon>
         </v-btn>
       </div>
@@ -566,7 +571,6 @@
         v-if="!USER()"
         class="ma-auto"
         color="blue"
-
         rounded
         size="x-large"
         variant="flat"

@@ -50,12 +50,14 @@
       <div v-if="files?.length < 3">
         <v-file-input
           v-model="selected_file"
+          :key="`i-${files?.length}`"
           append-inner-icon="add_box"
           class="mt-3 mx-3"
           clearable
           multiple
           label="Select files... max 3 files limited to 8MB each file."
           variant="solo"
+          single-line
           @update:model-value="selectFile"
           messages=" "
         >
