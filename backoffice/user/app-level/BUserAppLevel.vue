@@ -27,11 +27,10 @@
     return-object
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item
-        :title="$t(item.raw.title)"
-        class="text-start"
-        v-bind="props"
-      >
+      <v-list-item class="text-start" v-bind="props">
+        <template v-slot:title>
+          {{ $t(item.raw.title) }}
+        </template>
         <template v-slot:append>
           <v-rating
             :model-value="item.raw.level"
@@ -68,7 +67,7 @@
 </template>
 
 <script>
-import { AppLevel } from "@selldone/core-js/enums/application/AppLevel";
+import { User } from "@selldone/core-js";
 
 export default {
   name: "BUserAppLevel",
@@ -93,12 +92,12 @@ export default {
   },
 
   data: () => ({
-    selectedAppLevel: AppLevel.ADVANCED,
+    selectedAppLevel: User.Preferences.AppLevel.ADVANCED,
   }),
 
   computed: {
     app_level() {
-      return Object.values(AppLevel);
+      return Object.values(User.Preferences.AppLevel);
     },
   },
 

@@ -476,35 +476,13 @@
 
 <script>
 import BAppComments from "../comments/BAppComments.vue";
-import { ApplicationCategories } from "@selldone/core-js/enums/application/ApplicationCategories";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
-import { Swiper, SwiperSlide } from "swiper/vue";
-import {
-  Autoplay,
-  Controller,
-  EffectCards,
-  EffectCoverflow,
-  EffectCreative,
-  EffectCube,
-  EffectFade,
-  EffectFlip,
-  FreeMode,
-  Grid,
-  Keyboard,
-  Mousewheel,
-  Navigation,
-  Pagination,
-  Parallax,
-  Scrollbar,
-  Thumbs,
-  Virtual,
-  Zoom,
-} from "swiper/modules";
 import BAppDetailGallery from "../../app/detail/gallery/BAppDetailGallery.vue";
+import { Application } from "@selldone/core-js";
 
 export default {
   name: "BAppDetail",
-  components: { BAppDetailGallery, BAppComments, Swiper, SwiperSlide },
+  components: { BAppDetailGallery, BAppComments },
   props: {
     shopId: {}, // Optional
 
@@ -540,69 +518,9 @@ export default {
     user_message: "",
 
     type: "production",
-
-    modules: [
-      // Effect modules
-      EffectFade, // Fade Effect module
-      EffectCube, // Cube Effect module
-      EffectFlip, // Flip Effect module
-      EffectCoverflow, // Coverflow Effect module
-      EffectCards, // Cards Effect module
-      EffectCreative, // Creative Effect module
-
-      // Navigation modules
-      Navigation, // Navigation module
-      Pagination, // Pagination module
-      Scrollbar, // Scrollbar module
-      Thumbs, // Thumbs module
-
-      // Control modules
-      Keyboard, // Keyboard Control module
-      Mousewheel, // Mousewheel Control module
-      Controller, // Controller module
-
-      // Advanced functionality modules
-      Virtual, // Virtual Slides module
-      Parallax, // Parallax module
-      FreeMode, // Free Mode module
-      Grid, // Grid module
-      //  Manipulation, // Slides manipulation module (only for Core version)
-      Zoom, // Zoom module
-
-      // Accessibility & Usability modules
-      //   A11y, // Accessibility module
-      //   History, // History Navigation module
-      //    HashNavigation, // Hash Navigation module
-      Autoplay, // Autoplay module
-    ],
   }),
 
   computed: {
-    swiperOption() {
-      return {
-        loop: false,
-        spaceBetween: 10,
-        slidesPerView: this.$vuetify.display.xs
-          ? 1
-          : this.$vuetify.display.smAndDown
-            ? 2
-            : 3,
-        //  touchRatio: 0.2,
-        centeredSlides: false,
-        //  loop: true,
-        loopedSlides: "auto", //looped slides should be the same
-        slideToClickedSlide: true,
-
-        keyboard: {
-          enabled: true,
-        },
-
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      };
-    },
     company() {
       return this.app.company;
     },
@@ -664,7 +582,7 @@ export default {
     },
 
     getCategory(cat) {
-      return ApplicationCategories[cat];
+      return Application.ApplicationCategories[cat];
     },
     assignFromProps() {
       if (this.shopApp) {

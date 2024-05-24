@@ -167,9 +167,9 @@
 </template>
 
 <script>
-import { ApplicationCategories } from "@selldone/core-js/enums/application/ApplicationCategories";
 import BAppConfigDialog from "../../config/dialog/BAppConfigDialog.vue";
 import BAppShopStoreIcon from "../../../app/shop/store/icon/BAppShopStoreIcon.vue";
+import { Application } from "@selldone/core-js";
 
 export default {
   name: "BAppShopStore",
@@ -223,7 +223,7 @@ export default {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
     categories() {
-      return Object.values(ApplicationCategories);
+      return Object.values(Application.ApplicationCategories);
     },
   },
 

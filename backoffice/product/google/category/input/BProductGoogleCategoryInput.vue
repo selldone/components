@@ -52,14 +52,14 @@
 
 <script>
 import _ from "lodash-es";
-import { AppLevel } from "@selldone/core-js/enums/application/AppLevel";
+import { User } from "@selldone/core-js";
 
 export default {
   name: "BProductGoogleCategoryInput",
   emits: ["update:modelValue"],
   computed: {
     AppLevel() {
-      return AppLevel;
+      return User.Preferences.AppLevel;
     },
   },
 

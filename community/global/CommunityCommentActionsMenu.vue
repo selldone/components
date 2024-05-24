@@ -88,10 +88,10 @@
 </template>
 
 <script>
-import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
 import AFeedbackContentViolationReport from "../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import _ from "lodash-es";
+import { ArticleReport } from "@selldone/core-js";
 
 export default {
   name: "CommunityCommentActionsMenu",
@@ -150,7 +150,9 @@ export default {
           icon: "report",
           subtitle:
             this.comment.action && this.comment.action.report
-              ? this.$t(ArticleReport[this.comment.action.report].title)
+              ? this.$t(
+                  ArticleReport.Category[this.comment.action.report].title,
+                )
               : "Is this comment inappropriate?",
           click: this.showReportComment,
           color:

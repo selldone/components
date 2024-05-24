@@ -13,8 +13,9 @@
  */
 
 import {XapiUser} from "@selldone/sdk-storefront";
-import {ShopApplicationInterface} from "@selldone/core-js/enums/application/ShopApplicationInterface.ts";
-import {ShopEventsName} from "@selldone/core-js/enums/application/event/ShopEventsName.ts";
+import {
+    ApplicationExecutorStorefront
+} from "@selldone/core-js";
 import {Shop} from "@selldone/core-js/models/shop/shop.model.ts";
 
 declare global {
@@ -43,7 +44,10 @@ export function NativeInterfaceShop(shop: Shop): void {
   }
 
   // To pass to shop apps listen to shop change:
-  ShopApplicationInterface.TriggerEvent(ShopEventsName.ChangeShop, shop);
+  ApplicationExecutorStorefront.TriggerEvent(
+    ApplicationExecutorStorefront.EventsName.ChangeShop,
+    shop,
+  );
 }
 
 /**
@@ -64,5 +68,8 @@ export function NativeInterfaceUser(
   }
 
   // To pass to shop apps listen to user change:
-  ShopApplicationInterface.TriggerEvent(ShopEventsName.ChangeUser, user);
+  ApplicationExecutorStorefront.TriggerEvent(
+    ApplicationExecutorStorefront.EventsName.ChangeUser,
+    user,
+  );
 }

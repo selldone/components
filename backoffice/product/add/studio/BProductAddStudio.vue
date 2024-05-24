@@ -317,8 +317,6 @@
 
 <script>
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-
-import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
 import BProductInventoryManagement from "../../inventory/management/BProductInventoryManagement.vue";
 import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
@@ -331,6 +329,7 @@ import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import BProductEditType from "../../../product/edit/type/BProductEditType.vue";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
+import { Article } from "@selldone/core-js";
 
 const TAB_PRODUCT = 1;
 const TAB_CATEGORY = 2;
@@ -364,7 +363,7 @@ export default {
     return {
       show_article: true, // For refresh article!
 
-      article_type: ArticleTypes.Product,
+      article_type: Article.Type.Product,
 
       TAB_PRODUCT: TAB_PRODUCT,
       TAB_CATEGORY: TAB_CATEGORY,

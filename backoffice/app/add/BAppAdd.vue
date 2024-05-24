@@ -267,11 +267,10 @@
 </template>
 
 <script>
-import { ApplicationCategories } from "@selldone/core-js/enums/application/ApplicationCategories";
 import SFormBuilder from "../../../ui/form/SFormBuilder.vue";
 import { Scopes } from "@selldone/core-js/enums/permission/Scopes";
-import { AppMode } from "@selldone/core-js/enums/application/AppMode";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
+import { Application } from "@selldone/core-js";
 
 export default {
   name: "BAppAdd",
@@ -297,7 +296,7 @@ export default {
   data: () => ({
     busy: false,
 
-    mode: AppMode.TEST.code,
+    mode: Application.AppMode.TEST.code,
 
     category: null,
     enable: false,
@@ -318,14 +317,14 @@ export default {
     public_form: [],
     private_form: [],
 
-    AppMode: AppMode,
+    AppMode: Application.AppMode,
   }),
 
   computed: {
     categories() {
       let out = [];
-      for (let key in ApplicationCategories) {
-        let item = ApplicationCategories[key];
+      for (let key in Application.ApplicationCategories) {
+        let item = Application.ApplicationCategories[key];
         out.push(item);
       }
       return out;
@@ -354,14 +353,14 @@ export default {
 
   methods: {
     canSelectMode(mode) {
-      if (mode === AppMode.TEST.code) return true;
-      if (mode === AppMode.ENTERPRISE.code)
+      if (mode === Application.AppMode.TEST.code) return true;
+      if (mode === Application.AppMode.ENTERPRISE.code)
         return (
           this.company.register &&
           this.company.developer &&
           this.company.verified
         );
-      if (mode === AppMode.PUBLIC.code)
+      if (mode === Application.AppMode.PUBLIC.code)
         return this.company.register && this.company.developer;
     },
 

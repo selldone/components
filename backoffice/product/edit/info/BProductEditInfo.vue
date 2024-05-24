@@ -891,11 +891,11 @@ import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.v
 import BTranslationButtonProduct from "../../../translation/button/product/BTranslationButtonProduct.vue";
 import ProductsDenseImagesCircles from "../../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
-import { AppLevel } from "@selldone/core-js/enums/application/AppLevel";
 import BProductProfileMap from "../../../product/profile/map/BProductProfileMap.vue";
 import BProductProfileTax from "../../../product/profile/tax/BProductProfileTax.vue";
 import BProductProfileLogistic from "../../../product/profile/logistic/BProductProfileLogistic.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import { User } from "@selldone/core-js";
 
 export default {
   name: "BProductEditInfo",
@@ -963,7 +963,7 @@ export default {
   },
   computed: {
     AppLevel() {
-      return AppLevel;
+      return User.Preferences.AppLevel;
     },
     ProductStatus() {
       return ProductStatus;

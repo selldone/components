@@ -244,11 +244,16 @@
             max-width="150px"
             prepend-inner-icon="translate"
             single-line
-            :variant="can_change_article_language?'solo':'plain'"
+            :variant="can_change_article_language ? 'solo' : 'plain'"
             @change="onChangeNote()"
             hide-details
           >
-            <v-tooltip v-if="can_change_article_language" activator="parent" location="top" max-width="360">
+            <v-tooltip
+              v-if="can_change_article_language"
+              activator="parent"
+              location="top"
+              max-width="360"
+            >
               Change the language of this article.
             </v-tooltip>
           </u-language-input>
@@ -520,7 +525,9 @@
                       class="ma-1"
                       v-for="lang in multiLanguageAvailable"
                       :key="lang"
-                      :variant="lang===article?.lang?.toLowerCase()?'flat':'plain'"
+                      :variant="
+                        lang === article?.lang?.toLowerCase() ? 'flat' : 'plain'
+                      "
                     >
                       {{ getLanguageObject(lang)?.title }}
                     </v-chip>
@@ -1001,8 +1008,6 @@ import SArticleComments from "./comment/SArticleComments.vue";
 import SArticleSeoEditor from "./SArticleSeoEditor.vue";
 
 import SArticleEditor from "./SArticleEditor.vue";
-
-import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
 import { PermissionNames } from "@selldone/core-js/enums/admin/permission/PermissionNames";
 import { PermissionLevels } from "@selldone/core-js/enums/admin/permission/PermissionLevels";
 import UDateInput from "../ui/date/input/UDateInput.vue";
@@ -1018,6 +1023,7 @@ import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import UButtonAiSmall from "../ui/button/ai/small/UButtonAiSmall.vue";
 import _ from "lodash-es";
 import SArticleAuthorBox from "../article/author/box/SArticleAuthorBox.vue";
+import { Article } from "@selldone/core-js";
 
 export default {
   name: "ArticleViewer",
@@ -1159,7 +1165,7 @@ export default {
 
   data() {
     return {
-      ArticleTypes: ArticleTypes,
+      ArticleTypes: Article.Type,
 
       can_edit: false,
 
@@ -1262,7 +1268,7 @@ export default {
     },
 
     is_shop_blog() {
-      return this.articleType === ArticleTypes.Blog.code;
+      return this.articleType === Article.Type.Blog.code;
     },
 
     // ▃▃▃▃▃▃▃▃▃▃▃▃▃ Multi Language ▃▃▃▃▃▃▃▃▃▃▃▃▃
@@ -1271,8 +1277,8 @@ export default {
       // Available languages of shop!
       return this.shop && ShopOptionsHelper.GetLanguages(this.shop);
     },
-    can_change_article_language(){
-      return this.in_edit_mode && !this.forceLanguage
+    can_change_article_language() {
+      return this.in_edit_mode && !this.forceLanguage;
     },
 
     can_auto_translate() {
@@ -1316,7 +1322,7 @@ export default {
 
     upload_url() {
       // Shop Products:
-      if (this.articleType === ArticleTypes.Product.code) {
+      if (this.articleType === Article.Type.Product.code) {
         return this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
           ? window.VAPI.UPLOAD_MY_VENDOR_ARTICLE_IMAGE(
               this.$route.params.vendor_id,
@@ -1569,13 +1575,13 @@ export default {
             // --------------------------------- After Action ---------------------------------
             if (this.isNew) {
               // Need navigate to new URL!
-              if (this.articleType === ArticleTypes.SelldoneHelp.code) {
+              if (this.articleType === Article.Type.SelldoneHelp.code) {
                 this.$router.replace({ params: { help_id: data.help_id } });
-              } else if (this.articleType === ArticleTypes.SelldoneBlog.code) {
+              } else if (this.articleType === Article.Type.SelldoneBlog.code) {
                 this.$router.replace({ params: { blog_id: data.blog_id } });
               }
             } else {
-              if (this.articleType === ArticleTypes.SelldoneHelp.code) {
+              if (this.articleType === Article.Type.SelldoneHelp.code) {
                 this.menu = data.menu;
               }
             }
@@ -1937,20 +1943,20 @@ export default {
 
     getArticlePageTo(target) {
       const target_id = target.id;
-      if (this.articleType === ArticleTypes.SelldoneBlog.code) {
+      if (this.articleType === Article.Type.SelldoneBlog.code) {
         return {
           name: "BlogSlug",
           params: { blog_id: target_id, slug: target.article.slug },
         };
-      } else if (this.articleType === ArticleTypes.SelldoneHelp.code) {
+      } else if (this.articleType === Article.Type.SelldoneHelp.code) {
         return { name: "OPageHelp", params: { help_id: target_id } };
-      } else if (this.articleType === ArticleTypes.Product.code) {
+      } else if (this.articleType === Article.Type.Product.code) {
       } else if (this.is_shop_blog) {
         return {
           name: window.$storefront.routes.SHOP_BLOG_PAGE,
           params: { blog_id: target_id },
         };
-      } else if (this.articleType === ArticleTypes.Company.code) {
+      } else if (this.articleType === Article.Type.Company.code) {
       }
     },
 

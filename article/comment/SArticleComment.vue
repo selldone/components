@@ -204,7 +204,12 @@
               />
 
               <div class="widget-buttons">
-                <v-btn size="x-large" variant="text" @click="resetEdit" prepend-icon="close">
+                <v-btn
+                  size="x-large"
+                  variant="text"
+                  @click="resetEdit"
+                  prepend-icon="close"
+                >
                   {{ $t("global.actions.cancel") }}
                 </v-btn>
                 <v-btn

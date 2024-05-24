@@ -13,8 +13,8 @@
  */
 
 import {ComponentPublicInstance, ObjectDirective} from "vue";
-import {AppLevel, IAppLevel} from "@selldone/core-js/enums/application/AppLevel";
-import {Store} from "vuex"; // Import Vuex Store type
+import {Store} from "vuex";
+import {User} from "@selldone/core-js"; // Import Vuex Store type
 
 interface HTMLElementWithCleanup extends HTMLElement {
   _cleanup?: () => void;
@@ -33,7 +33,7 @@ interface VueInstance extends ComponentPublicInstance {
  */
 const levelDirective: ObjectDirective<
   HTMLElementWithCleanup,
-  keyof typeof AppLevel | IAppLevel
+  keyof typeof User.Preferences.AppLevel | User.Preferences.IAppLevel
 > = {
   beforeMount(el: HTMLElementWithCleanup, binding, vnode) {
     const store = (binding.instance as VueInstance).$store as Store<any>;
@@ -47,7 +47,7 @@ const levelDirective: ObjectDirective<
       const currentLevel: number = store.getters.getAppLevel.level;
       const targetLevel: number =
         typeof binding.value === "string"
-          ? AppLevel[binding.value].level
+          ? User.Preferences.AppLevel[binding.value].level
           : binding.value.level;
 
       let shouldRender = true;

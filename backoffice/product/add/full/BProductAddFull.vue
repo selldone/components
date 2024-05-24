@@ -390,7 +390,6 @@ import BProductEditExtra from "../../../product/edit/extra/BProductEditExtra.vue
 
 import ArticleViewer from "../../../../article/ArticleViewer.vue";
 import BProductEditSpec from "../../../product/edit/spec/BProductEditSpec.vue";
-import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
 import BProductInventoryManagement from "../../inventory/management/BProductInventoryManagement.vue";
 import UTabsRounded from "../../../../ui/tab/rounded/UTabsRounded.vue";
 import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
@@ -404,6 +403,7 @@ import { TrackSeller } from "@selldone/core-js/enums/gtag/TrackSeller";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import BProductEditInputs from "../../../product/edit/inputs/BProductEditInputs.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import { Article } from "@selldone/core-js";
 
 const TAB_TYPE = 1;
 const TAB_GENERAL_INFO = 2;
@@ -469,7 +469,7 @@ export default {
     return {
       show_article: true, // For refresh article!
 
-      article_type: ArticleTypes.Product,
+      article_type: Article.Type.Product,
 
       TAB_TYPE: TAB_TYPE,
       TAB_GENERAL_INFO: TAB_GENERAL_INFO,
@@ -1221,8 +1221,8 @@ not need!
 
         this.step =
           /* this.hasStep__Inputs
-                                ? TAB_INPUTS
-                                :*/
+                                  ? TAB_INPUTS
+                                  :*/
           this.hasStep__Outputs
             ? TAB_OUTPUTS
             : this.hasStep__physicalExtra

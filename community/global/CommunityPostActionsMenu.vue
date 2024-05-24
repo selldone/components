@@ -123,9 +123,9 @@
 <script>
 import CPostEditor from "../../community/post/editor/CPostEditor.vue";
 import AFeedbackContentViolationReport from "../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
-import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import _ from "lodash-es";
+import { ArticleReport } from "@selldone/core-js";
 
 export default {
   name: "CommunityPostActionsMenu",
@@ -214,7 +214,7 @@ export default {
           icon: "report",
           subtitle:
             this.post.action && this.post.action.report
-              ? this.$t(ArticleReport[this.post.action.report].title)
+              ? this.$t(ArticleReport.Category[this.post.action.report].title)
               : this.$t("community.post_actions.report_msg"),
           click: this.showReportPost,
           color:

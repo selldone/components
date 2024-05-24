@@ -43,16 +43,15 @@
         {{ $t("global.article.report_dialog.message") }}
       </v-card-subtitle>
       <v-card-text class="thin-scroll">
-        <v-radio-group
-          v-model="report"
-          active-class="shadow-paper-small"
-          class="max-widget-width"
-        >
+        <v-radio-group v-model="report" class="max-widget-width">
           <v-radio
             v-for="(item, key, i) in ArticleReport"
             :key="item.value"
             :label="$t(item.title)"
-            :style="{ 'animation-delay': i * 50 + 'ms' }"
+            :style="{
+              'animation-delay': i * 50 + 'ms',
+              'shadow-paper-small': report === item.value,
+            }"
             :value="item.value"
             class="my-1 border p-3 rounded-18px flipInX"
             color="red"
@@ -62,7 +61,11 @@
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="$emit('update:modelValue', false)">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="$emit('update:modelValue', false)"
+          >
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -98,7 +101,7 @@
 </template>
 
 <script>
-import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
+import { ArticleReport } from "@selldone/core-js";
 
 export default {
   name: "AFeedbackContentViolationReport",
@@ -116,7 +119,7 @@ export default {
   },
   data() {
     return {
-      ArticleReport: ArticleReport,
+      ArticleReport: ArticleReport.Category,
 
       report: null,
     };

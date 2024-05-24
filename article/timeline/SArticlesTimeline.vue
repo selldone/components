@@ -111,7 +111,7 @@
                 cover
               />
             </v-avatar>
-            {{$t("global.article.schedule_dialog.article_for_product") }}
+            {{ $t("global.article.schedule_dialog.article_for_product") }}
             : P-{{ _article.parent_id }}
           </p>
 
@@ -153,14 +153,16 @@
           </div>
         </v-timeline-item>
       </v-timeline>
-      <h2 class="text-h3 font-weight-thin px-2 py-6">{{ $t("global.article.schedule_dialog.no_article")}}</h2>
+      <h2 class="text-h3 font-weight-thin px-2 py-6">
+        {{ $t("global.article.schedule_dialog.no_article") }}
+      </h2>
     </div>
   </div>
 </template>
 
 <script>
-import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
 import UTextValueDashed from "../../ui/text/value-dashed/UTextValueDashed.vue";
+import { Article } from "@selldone/core-js";
 
 export default {
   name: "SArticlesTimeline",
@@ -205,8 +207,8 @@ export default {
 
       let url = null;
       if (
-        this.articleType === ArticleTypes.Blog.code ||
-        this.articleType === ArticleTypes.Product.code
+        this.articleType === Article.Type.Blog.code ||
+        this.articleType === Article.Type.Product.code
       )
         url = this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
           ? window.VAPI.GET_MY_VENDOR_SHOP_ARTICLES_TIMELINE(
@@ -214,8 +216,8 @@ export default {
             )
           : window.ARTICLE_API.GET_SHOP_ARTICLES_TIMELINE(this.shopId);
       else if (
-        this.articleType === ArticleTypes.SelldoneHelp.code ||
-        this.articleType === ArticleTypes.SelldoneBlog.code
+        this.articleType === Article.Type.SelldoneHelp.code ||
+        this.articleType === Article.Type.SelldoneBlog.code
       )
         url = window.ADMIN_API.GET_SAMIN_ARTICLES_TIMELINE();
 
@@ -236,29 +238,29 @@ export default {
     getArticleTypeColor(type) {
       if (!type) return "#333";
 
-      let obj = Object.values(ArticleTypes).find((val) => {
+      let obj = Object.values(Article.Type).find((val) => {
         // console.log("type", type);
         return val.code === type;
       });
       return obj ? obj.color : "#eee";
     },
     getArticleLink(article) {
-      if (article.parent_type === ArticleTypes.Product.code)
+      if (article.parent_type === Article.Type.Product.code)
         return {
           name: "ProductAdmin_EditArticle",
           params: { product_id: article.parent_id },
         };
-      else if (article.parent_type === ArticleTypes.Blog.code)
+      else if (article.parent_type === Article.Type.Blog.code)
         return {
           name: "BPageShopBlogsEdit",
           params: { blog_id: article.parent_id }, // Shop blog param is article_id!
         };
-      else if (article.parent_type === ArticleTypes.SelldoneBlog.code)
+      else if (article.parent_type === Article.Type.SelldoneBlog.code)
         return {
           name: "Blog",
           params: { blog_id: article.parent_id },
         };
-      else if (article.parent_type === ArticleTypes.SelldoneHelp.code)
+      else if (article.parent_type === Article.Type.SelldoneHelp.code)
         return {
           name: "OPageHelp",
           params: { help_id: article.parent_id },

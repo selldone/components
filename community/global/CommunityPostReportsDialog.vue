@@ -62,8 +62,8 @@
 </template>
 
 <script>
-import { ArticleReport } from "@selldone/core-js/enums/article/ArticleReport";
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
+import { ArticleReport } from "@selldone/core-js";
 
 export default {
   name: "CommunityPostReportsDialog",
@@ -79,7 +79,7 @@ export default {
       dialog: false,
       post: null,
 
-      ArticleReport: ArticleReport,
+      ArticleReport: ArticleReport.Category,
 
       reports: null,
       busy: false,

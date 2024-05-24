@@ -51,7 +51,7 @@
 </template>
 <script>
 import { defineComponent } from "vue";
-import { AppMode } from "@selldone/core-js/enums/application/AppMode";
+import { Application } from "@selldone/core-js";
 
 export default defineComponent({
   name: "BAppShopStoreIcon",
@@ -65,8 +65,10 @@ export default defineComponent({
   computed: {
     mode_badge() {
       const mode = this.app.mode;
-      if (mode === AppMode.TEST.code) return AppMode.TEST;
-      else if (mode === AppMode.ENTERPRISE.code) return AppMode.ENTERPRISE;
+      if (mode === Application.AppMode.TEST.code)
+        return Application.AppMode.TEST;
+      else if (mode === Application.AppMode.ENTERPRISE.code)
+        return Application.AppMode.ENTERPRISE;
       return null;
     },
   },
