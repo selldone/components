@@ -1,9 +1,11 @@
 {
   "name": "@selldone/components-vue",
-  "version": "1.5.25",
+  "version": "1.5.26",
   "private": false,
   "type": "module",
   "author": "Mehrdad Pajuhaan <mehrdad@selldone.com> (https://selldone.com)",
+  "description": "Collection of pre-made Vue3 components for the Selldone platform to build white-label storefront and dashboard applications.",
+
   "main": "index.ts",
   "scripts": {
     "build": "tsc",
