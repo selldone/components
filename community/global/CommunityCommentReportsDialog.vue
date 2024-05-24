@@ -80,7 +80,7 @@ export default {
       dialog: false,
       comment: null,
 
-      ArticleReport: ArticleReport.Category,
+      ArticleReport: ArticleReport.Categories,
 
       reports: null,
       busy: false,

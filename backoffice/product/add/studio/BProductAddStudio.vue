@@ -363,7 +363,7 @@ export default {
     return {
       show_article: true, // For refresh article!
 
-      article_type: Article.Type.Product,
+      article_type: Article.Types.Product,
 
       TAB_PRODUCT: TAB_PRODUCT,
       TAB_CATEGORY: TAB_CATEGORY,

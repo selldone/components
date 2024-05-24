@@ -151,7 +151,7 @@ export default {
           subtitle:
             this.comment.action && this.comment.action.report
               ? this.$t(
-                  ArticleReport.Category[this.comment.action.report].title,
+                  ArticleReport.Categories[this.comment.action.report].title,
                 )
               : "Is this comment inappropriate?",
           click: this.showReportComment,

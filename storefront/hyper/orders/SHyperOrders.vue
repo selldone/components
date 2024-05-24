@@ -121,10 +121,10 @@
 
 <script>
 import SOrderStatusView from "../../../storefront/order/order-status/SOrderStatusView.vue";
-import { AvocadoOrderStates } from "@selldone/core-js/enums/avocado/AvocadoOrderStates";
 import SOrderDeliveryStatusStepper from "../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import { Avocado } from "@selldone/core-js";
 
 export default {
   name: "SHyperOrders",
@@ -139,7 +139,7 @@ export default {
 
   data: () => ({
     busy_delete: null,
-    AvocadoOrderStates: AvocadoOrderStates,
+    AvocadoOrderStates: Avocado.DeliveryStates,
     BasketStatus: BasketStatus,
   }),
 

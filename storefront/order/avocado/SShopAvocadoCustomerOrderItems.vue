@@ -124,7 +124,7 @@
 
 <script>
 import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
-import { AvocadoItemStatus } from "@selldone/core-js/enums/avocado/AvocadoItemStatus";
+import { AvocadoItem } from "@selldone/core-js";
 
 export default {
   name: "SShopAvocadoCustomerOrderItems",
@@ -140,7 +140,7 @@ export default {
 
   data: () => ({
     BasketStatus: BasketStatus,
-    AvocadoItemStatus: AvocadoItemStatus,
+    AvocadoItemStatus: AvocadoItem.Status,
     busy_delete: null,
 
     show_all: true,
@@ -157,7 +157,7 @@ export default {
     filtered_items() {
       if (!this.viewOnly || this.show_all) return this.items;
       return this.items.filter(
-        (it) => it.status === AvocadoItemStatus.ACCEPTED.code,
+        (it) => it.status === AvocadoItem.Status.ACCEPTED.code,
       );
     },
   },

@@ -780,7 +780,6 @@ import ProductsDenseImagesCircles from "../../../storefront/product/products-den
 import SOrderStatusView from "../../../storefront/order/order-status/SOrderStatusView.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import { ServiceOrderStates } from "@selldone/core-js/enums/basket/ServiceOrderStates";
-import { AvocadoOrderStates } from "@selldone/core-js/enums/avocado/AvocadoOrderStates";
 import UButtonWhatsapp from "../../../ui/button/whatsapp/UButtonWhatsapp.vue";
 import SOrderReceiverInfoCard from "../../../storefront/order/receiver-info/card/SOrderReceiverInfoCard.vue";
 import ConnectOrderChip from "../../connect/order/chip/ConnectOrderChip.vue";
@@ -795,6 +794,7 @@ import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper
 import _ from "lodash-es";
 import { OrderType } from "@selldone/core-js/enums/order/OrderType";
 import { RouteMixin } from "../../../mixin/RouteMixin";
+import { Avocado } from "@selldone/core-js";
 
 export default {
   name: "BProcessCenterList",
@@ -1189,7 +1189,7 @@ export default {
 
     deliveryStates() {
       if (this.isDropShipping) return PhysicalOrderStates;
-      if (this.isAvocado) return AvocadoOrderStates;
+      if (this.isAvocado) return Avocado.DeliveryStates;
 
       if (this.type?.code === ProductType.PHYSICAL.code)
         return PhysicalOrderStates;

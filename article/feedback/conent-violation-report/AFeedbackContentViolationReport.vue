@@ -119,7 +119,7 @@ export default {
   },
   data() {
     return {
-      ArticleReport: ArticleReport.Category,
+      ArticleReport: ArticleReport.Categories,
 
       report: null,
     };

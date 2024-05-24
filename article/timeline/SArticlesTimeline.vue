@@ -207,8 +207,8 @@ export default {
 
       let url = null;
       if (
-        this.articleType === Article.Type.Blog.code ||
-        this.articleType === Article.Type.Product.code
+        this.articleType === Article.Types.Blog.code ||
+        this.articleType === Article.Types.Product.code
       )
         url = this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
           ? window.VAPI.GET_MY_VENDOR_SHOP_ARTICLES_TIMELINE(
@@ -216,8 +216,8 @@ export default {
             )
           : window.ARTICLE_API.GET_SHOP_ARTICLES_TIMELINE(this.shopId);
       else if (
-        this.articleType === Article.Type.SelldoneHelp.code ||
-        this.articleType === Article.Type.SelldoneBlog.code
+        this.articleType === Article.Types.SelldoneHelp.code ||
+        this.articleType === Article.Types.SelldoneBlog.code
       )
         url = window.ADMIN_API.GET_SAMIN_ARTICLES_TIMELINE();
 
@@ -238,29 +238,29 @@ export default {
     getArticleTypeColor(type) {
       if (!type) return "#333";
 
-      let obj = Object.values(Article.Type).find((val) => {
+      let obj = Object.values(Article.Types).find((val) => {
         // console.log("type", type);
         return val.code === type;
       });
       return obj ? obj.color : "#eee";
     },
     getArticleLink(article) {
-      if (article.parent_type === Article.Type.Product.code)
+      if (article.parent_type === Article.Types.Product.code)
         return {
           name: "ProductAdmin_EditArticle",
           params: { product_id: article.parent_id },
         };
-      else if (article.parent_type === Article.Type.Blog.code)
+      else if (article.parent_type === Article.Types.Blog.code)
         return {
           name: "BPageShopBlogsEdit",
           params: { blog_id: article.parent_id }, // Shop blog param is article_id!
         };
-      else if (article.parent_type === Article.Type.SelldoneBlog.code)
+      else if (article.parent_type === Article.Types.SelldoneBlog.code)
         return {
           name: "Blog",
           params: { blog_id: article.parent_id },
         };
-      else if (article.parent_type === Article.Type.SelldoneHelp.code)
+      else if (article.parent_type === Article.Types.SelldoneHelp.code)
         return {
           name: "OPageHelp",
           params: { help_id: article.parent_id },

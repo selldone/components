@@ -1165,7 +1165,7 @@ export default {
 
   data() {
     return {
-      ArticleTypes: Article.Type,
+      ArticleTypes: Article.Types,
 
       can_edit: false,
 
@@ -1268,7 +1268,7 @@ export default {
     },
 
     is_shop_blog() {
-      return this.articleType === Article.Type.Blog.code;
+      return this.articleType === Article.Types.Blog.code;
     },
 
     // ▃▃▃▃▃▃▃▃▃▃▃▃▃ Multi Language ▃▃▃▃▃▃▃▃▃▃▃▃▃
@@ -1322,7 +1322,7 @@ export default {
 
     upload_url() {
       // Shop Products:
-      if (this.articleType === Article.Type.Product.code) {
+      if (this.articleType === Article.Types.Product.code) {
         return this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
           ? window.VAPI.UPLOAD_MY_VENDOR_ARTICLE_IMAGE(
               this.$route.params.vendor_id,
@@ -1575,13 +1575,13 @@ export default {
             // --------------------------------- After Action ---------------------------------
             if (this.isNew) {
               // Need navigate to new URL!
-              if (this.articleType === Article.Type.SelldoneHelp.code) {
+              if (this.articleType === Article.Types.SelldoneHelp.code) {
                 this.$router.replace({ params: { help_id: data.help_id } });
-              } else if (this.articleType === Article.Type.SelldoneBlog.code) {
+              } else if (this.articleType === Article.Types.SelldoneBlog.code) {
                 this.$router.replace({ params: { blog_id: data.blog_id } });
               }
             } else {
-              if (this.articleType === Article.Type.SelldoneHelp.code) {
+              if (this.articleType === Article.Types.SelldoneHelp.code) {
                 this.menu = data.menu;
               }
             }
@@ -1943,20 +1943,20 @@ export default {
 
     getArticlePageTo(target) {
       const target_id = target.id;
-      if (this.articleType === Article.Type.SelldoneBlog.code) {
+      if (this.articleType === Article.Types.SelldoneBlog.code) {
         return {
           name: "BlogSlug",
           params: { blog_id: target_id, slug: target.article.slug },
         };
-      } else if (this.articleType === Article.Type.SelldoneHelp.code) {
+      } else if (this.articleType === Article.Types.SelldoneHelp.code) {
         return { name: "OPageHelp", params: { help_id: target_id } };
-      } else if (this.articleType === Article.Type.Product.code) {
+      } else if (this.articleType === Article.Types.Product.code) {
       } else if (this.is_shop_blog) {
         return {
           name: window.$storefront.routes.SHOP_BLOG_PAGE,
           params: { blog_id: target_id },
         };
-      } else if (this.articleType === Article.Type.Company.code) {
+      } else if (this.articleType === Article.Types.Company.code) {
       }
     },
 

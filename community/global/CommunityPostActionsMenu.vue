@@ -214,7 +214,7 @@ export default {
           icon: "report",
           subtitle:
             this.post.action && this.post.action.report
-              ? this.$t(ArticleReport.Category[this.post.action.report].title)
+              ? this.$t(ArticleReport.Categories[this.post.action.report].title)
               : this.$t("community.post_actions.report_msg"),
           click: this.showReportPost,
           color:

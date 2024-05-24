@@ -79,7 +79,7 @@ export default {
       dialog: false,
       post: null,
 
-      ArticleReport: ArticleReport.Category,
+      ArticleReport: ArticleReport.Categories,
 
       reports: null,
       busy: false,
