@@ -13,11 +13,12 @@
   -->
 
 <template>
-  <v-menu max-width="720" min-width="400" offset-y content-class="rounded-lg">
+  <v-menu max-width="720" min-width="400" content-class="rounded-lg">
     <template v-slot:activator="{ props }">
       <v-btn
         :title="`${keywords}\n\nClick to view details...`"
-        icon variant="text"
+        icon
+        variant="text"
         v-bind="props"
         @click.stop
       >

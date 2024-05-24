@@ -31,7 +31,6 @@
 
 <script>
 import { defineComponent } from "vue";
-import { ArticleTypes } from "@selldone/core-js/enums/article/ArticleTypes";
 import { HelpCategories } from "@selldone/core-js/enums/admin/help/HelpCategories";
 
 export default defineComponent({
