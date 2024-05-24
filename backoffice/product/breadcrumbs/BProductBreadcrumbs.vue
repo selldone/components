@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import { HierarchyHelper } from "@selldone/core-js/helper/breadcrumb/HierarchyHelper";
 import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
+import { BProductBreadcrumbsHelper } from "./helper/BProductBreadcrumbsHelper";
 
 export default {
   name: "BProductBreadcrumbs",
@@ -53,9 +53,7 @@ export default {
     },
 
     hierarchy_items() {
-      //  return HierarchyHelper.GenerateCategoryHierarchyGeneral(this.$t('global.store'), this.product.category, this.product.shop_name, this.product)
-
-      return HierarchyHelper.GenerateCategoryHierarchy(
+      return BProductBreadcrumbsHelper.GenerateCategoryHierarchy(
         this.$t("global.store"),
         this.product.category,
         undefined,

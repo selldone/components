@@ -340,7 +340,6 @@
 import SShopProductCard from "../../../storefront/product/card/SShopProductCard.vue";
 import SProductsSortView from "../../../storefront/product/sort/SProductsSortView.vue";
 import SCategoryCard from "../../../storefront/category/card/SCategoryCard.vue";
-import { HierarchyHelper } from "@selldone/core-js/helper/breadcrumb/HierarchyHelper";
 import SCategoryFilter from "../../../storefront/category/filter/SCategoryFilter.vue";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";
@@ -353,6 +352,7 @@ import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 import _ from "lodash-es";
 import { defineAsyncComponent } from "vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
+import { SProductBreadcrumbHelper } from "./helper/SProductBreadcrumbHelper";
 
 export default {
   name: "SProductsListing",
@@ -658,7 +658,7 @@ export default {
 
     hierarchy_items() {
       if (!this.getShop()) return [];
-      return HierarchyHelper.GenerateCategoryHierarchyGeneral(
+      return SProductBreadcrumbHelper.GenerateCategoryHierarchyGeneral(
         this.$t("global.store"),
         this.parent_folders,
         this.getShop().name,

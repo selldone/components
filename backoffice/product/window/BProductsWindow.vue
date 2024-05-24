@@ -1908,7 +1908,6 @@ import BProductWindowCategoryLarge from "../../product/window/category/large/BPr
 
 import CircleImage from "../../../ui/image/CircleImage.vue";
 import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
-import { HierarchyHelper } from "@selldone/core-js/helper/breadcrumb/HierarchyHelper";
 import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
 import UButtonAdd from "../../../ui/button/add/UButtonAdd.vue";
 import BCategoryAdd from "../../category/add/BCategoryAdd.vue";
@@ -1940,6 +1939,7 @@ import UDrag from "../../../ui/drag/core/UDrag.vue";
 import VPricingInput from "../../../storefront/pricing/VPricingInput.vue";
 import BCategoryEngineEditor from "@selldone/components-vue/backoffice/category/engine/BCategoryEngineEditor.vue";
 import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
+import { BProductBreadcrumbsHelper } from "../breadcrumbs/helper/BProductBreadcrumbsHelper";
 
 export default {
   name: "BProductsWindow",
@@ -2243,7 +2243,7 @@ export default {
     },
 
     hierarchy_items() {
-      return HierarchyHelper.GenerateCategoryHierarchy(
+      return BProductBreadcrumbsHelper.GenerateCategoryHierarchy(
         this.$t("global.store"),
         this.parent_folders,
         undefined,
