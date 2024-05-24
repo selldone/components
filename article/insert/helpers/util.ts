@@ -29,7 +29,7 @@ function placeCaret(el: Element, position: number) {
   sel?.addRange(range);
 }
 
-function dataURItoBlob(dataURI:string) {
+function dataURItoBlob(dataURI: string) {
   // convert base64 to raw binary data held in a string
   const byteString = atob(dataURI.split(",")[1]),
     // separate out the mime component

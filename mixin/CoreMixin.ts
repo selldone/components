@@ -12,60 +12,63 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {SetupService} from "@selldone/core-js/server/SetupService";
-import {ProductType} from "@selldone/core-js/enums/product/ProductType";
-import {PhysicalOrderStates} from "@selldone/core-js/enums/basket/PhysicalOrderStates";
-import {DateConverter} from "@selldone/core-js/helper/date/DateConverter";
-import type {ICurrency} from "@selldone/core-js/enums/payment/Currency";
-import {Currency} from "@selldone/core-js/enums/payment/Currency";
-import {type ILanguage, Language,} from "@selldone/core-js/enums/language/Language";
-import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense";
-import {Scopes} from "@selldone/core-js/enums/permission/Scopes";
+import { SetupService } from "@selldone/core-js/server/SetupService";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
+import type { ICurrency } from "@selldone/core-js/enums/payment/Currency";
+import { Currency } from "@selldone/core-js/enums/payment/Currency";
+import {
+  type ILanguage,
+  Language,
+} from "@selldone/core-js/enums/language/Language";
+import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense";
+import { Scopes } from "@selldone/core-js/enums/permission/Scopes";
 
-import {ReturnItemStates} from "@selldone/core-js/enums/basket/ReturnItemStates";
-import {FileExtensions} from "@selldone/core-js/enums/file/FileExtensions";
+import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
+import { FileExtensions } from "@selldone/core-js/enums/file/FileExtensions";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
-import {SocialNetwork} from "@selldone/core-js/enums/social/SocialNetwork";
-import {ShopURLs} from "@selldone/core-js/helper/url/ShopURLs";
-import {ColorHelper} from "@selldone/core-js/helper/color/ColorHelper";
+import { SocialNetwork } from "@selldone/core-js/enums/social/SocialNetwork";
+import { ShopURLs } from "@selldone/core-js/helper/url/ShopURLs";
+import { ColorHelper } from "@selldone/core-js/helper/color/ColorHelper";
 
-import {CustomerClubLevels} from "@selldone/core-js/enums/customer/CustomerClubLevels";
-import {CurrencyHelper} from "@selldone/core-js/helper/currency/CurrencyHelper.ts";
-import {PriceHelper} from "@selldone/core-js/helper/price/PriceHelper";
-import {LogesticHelper} from "@selldone/core-js/helper/logistic/LogesticHelper";
-import {GiftStatus} from "@selldone/core-js/enums/wallet/gift/GiftStatus";
-import {GiftStProgramTypes} from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes";
-import {MapHelper} from "@selldone/core-js/helper/map/MapHelper";
+import { CustomerClubLevels } from "@selldone/core-js/enums/customer/CustomerClubLevels";
+import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper.ts";
+import { PriceHelper } from "@selldone/core-js/helper/price/PriceHelper";
+import { LogesticHelper } from "@selldone/core-js/helper/logistic/LogesticHelper";
+import { GiftStatus } from "@selldone/core-js/enums/wallet/gift/GiftStatus";
+import { GiftStProgramTypes } from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes";
+import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import numeral from "numeral";
 import _ from "lodash-es";
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
+import { EventBus, EventName } from "@selldone/core-js/events/EventBus";
 
 //―――――――――――――――――――――― Country ――――――――――――――――――――
-import {getCountryName} from "@selldone/core-js/enums/country/country-list";
-import {Shop} from "@selldone/core-js/models/shop/shop.model";
-import type {ProductVariant} from "@selldone/core-js/models/shop/product/product_variant.model";
-import {Product} from "@selldone/core-js/models/shop/product/product.model";
-import {XapiShop} from "@selldone/sdk-storefront";
-import type {Basket} from "@selldone/core-js/models/shop/order/basket/basket.model";
-import type {IAddress} from "@selldone/core-js/models/traits/address.model";
-import type {CommunityTopic} from "@selldone/core-js/models/community/community.topic.model";
-import type {CommunityPost} from "@selldone/core-js/models/community/community.post.model";
-import type {CommunityComment} from "@selldone/core-js/models/community/community.comment.model";
-import type {Guild} from "@selldone/core-js/models/guild/guild.model";
-import type {IOrder} from "@selldone/core-js/models/traits/order.model";
-import type {Avocado} from "@selldone/core-js/models/shop/order/avocado/avocado.order";
-import type {ICountryCode} from "@selldone/core-js/enums/country/CountriesListEnum";
-import type {BasketItem} from "@selldone/core-js/models/shop/order/basket/basket_item.model";
-import type {gapi} from "@selldone/core-js/gapi/requests/gapi.countries.get";
-import type {User} from "@selldone/core-js/models/user/user.model";
-import {XapiUser} from "@selldone/sdk-storefront";
+import { getCountryName } from "@selldone/core-js/enums/country/country-list";
+import { Shop } from "@selldone/core-js/models/shop/shop.model";
+import type { ProductVariant } from "@selldone/core-js/models/shop/product/product_variant.model";
+import { Product } from "@selldone/core-js/models/shop/product/product.model";
+import { XapiShop } from "@selldone/sdk-storefront";
+import type { Basket } from "@selldone/core-js/models/shop/order/basket/basket.model";
+import type { IAddress } from "@selldone/core-js/models/traits/address.model";
+import type { CommunityTopic } from "@selldone/core-js/models/community/community.topic.model";
+import type { CommunityPost } from "@selldone/core-js/models/community/community.post.model";
+import type { CommunityComment } from "@selldone/core-js/models/community/community.comment.model";
+import type { Guild } from "@selldone/core-js/models/guild/guild.model";
+import type { IOrder } from "@selldone/core-js/models/traits/order.model";
+import type { Avocado } from "@selldone/core-js/models/shop/order/avocado/avocado.order";
+import type { ICountryCode } from "@selldone/core-js/enums/country/CountriesListEnum";
+import type { BasketItem } from "@selldone/core-js/models/shop/order/basket/basket_item.model";
+import type { gapi } from "@selldone/core-js/gapi/requests/gapi.countries.get";
+import type { User } from "@selldone/core-js/models/user/user.model";
+import { XapiUser } from "@selldone/sdk-storefront";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
-import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
-import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
-import {Slugify} from "../utils/slugify/slugify.ts";
-import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
-import {UserProfile} from "@selldone/core-js/models/user/user_profile.model";
+import { BackofficeLocalStorages } from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
+import { ExecuteCopyToClipboard } from "../directives/copy/CopyDirective";
+import { Slugify } from "../utils/slugify/slugify.ts";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
+import { UserProfile } from "@selldone/core-js/models/user/user_profile.model";
 
 //――― User Device Preferences ―――
 

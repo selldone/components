@@ -18,7 +18,7 @@
     :title="filter.type"
     class="it"
   >
-    <v-icon v-if="icon" :dark="dark" class="me-2" size="x-small">{{
+    <v-icon v-if="icon"  class="me-2" size="x-small">{{
       icon
     }}</v-icon>
     <span
@@ -76,13 +76,13 @@
       "
     >
       <small v-if="filter.start" class="mx-1"
-        ><v-icon :dark="dark" class="me-1" color="green" size="small"
+        ><v-icon  class="me-1" color="green" size="small"
           >play_arrow</v-icon
         >
         {{ getLocalTimeStringSmall(filter.start) }}</small
       >
       <small v-if="filter.end" class="mx-1"
-        ><v-icon :dark="dark" class="me-1" color="red" size="small"
+        ><v-icon  class="me-1" color="red" size="small"
           >stop</v-icon
         >
         {{ getLocalTimeStringSmall(filter.end) }}</small

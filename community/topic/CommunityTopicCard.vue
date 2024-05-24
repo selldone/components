@@ -171,7 +171,7 @@
 
     <!-- Trend -->
     <u-ribbon v-if="topic.trend" red>
-      <v-icon dark size="small">local_fire_department</v-icon>
+      <v-icon  size="small">local_fire_department</v-icon>
       {{ $t("community.commons.trend") }}
     </u-ribbon>
   </v-col>

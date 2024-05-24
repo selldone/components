@@ -72,12 +72,11 @@
 </template>
 
 <script>
-import SGiftcardView from "../../../../storefront/giftcard/view/SGiftcardView.vue";
 import BGiftcardTypeIcon from "../icon/BGiftcardTypeIcon.vue";
 
 export default {
   name: "BGiftcardTypeInput",
-  components: { BGiftcardTypeIcon, SGiftcardView },
+  components: { BGiftcardTypeIcon },
 
   props: {
     shop: {

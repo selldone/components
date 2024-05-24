@@ -102,7 +102,7 @@
                     v-else-if="!drop_shop.dropship_access"
                     :loading="busy_request"
                     color="primary"
-                    dark
+
                     @click.stop="requestAccount(drop_shop)"
                     >{{ $t("dropshipping_products.request_account") }}
                   </v-btn>
@@ -123,7 +123,7 @@
                       :loading="busy_request"
                       class="ms-1"
                       color="primary"
-                      dark
+
                       icon
                       @click.stop="requestAccount(drop_shop)"
                       ><v-icon>refresh</v-icon></v-btn
@@ -263,7 +263,7 @@
               @click="showAddProduct(product)"
             >
               <v-img
-                :contain="product.style && product.style.contain"
+                :cover="!(product.style && product.style.contain)"
                 :src="getShopImagePath(product.icon)"
                 class="rounded-18px"
                 height="128"
@@ -328,7 +328,7 @@
       <v-card v-if="selected_product">
         <v-card-title class="text-start">
           <v-img
-            :contain="selected_product.style && selected_product.style.contain"
+            :cover="!(selected_product.style && selected_product.style.contain)"
             :src="getShopImagePath(selected_product.icon)"
             aspect-ratio="1"
             class="rounded-lg me-1 flex-grow-0"
@@ -351,7 +351,7 @@
                 :title="$t('global.commons.Variants')"
                 icon="animation"
               ></s-widget-header>
-              <v-menu offset-y>
+              <v-menu>
                 <template v-slot:activator="{ props }">
                   <div class="position-relative mb-10" v-bind="props">
                     <variant-item-mini
@@ -359,7 +359,7 @@
                       class="m-2"
                       selected
                     />
-                    <v-icon class="absolute-top-end" dark>
+                    <v-icon class="absolute-top-end" >
                       arrow_drop_down
                     </v-icon>
                   </div>

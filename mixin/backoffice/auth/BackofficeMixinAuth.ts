@@ -12,8 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-
-import {SetupService} from "@selldone/core-js/server/SetupService.ts";
+import { SetupService } from "@selldone/core-js/server/SetupService.ts";
 
 /**
  *

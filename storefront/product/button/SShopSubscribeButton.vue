@@ -25,7 +25,6 @@
       }"
       class="s--shop-subscription-button"
       color="#000"
-      dark
       min-width="220"
       @click="load_basket = !load_basket"
     >
@@ -89,7 +88,7 @@
                   <v-btn
                     class="-delivery-btn"
                     color="#03A9F4"
-                    dark
+
                     rounded
                     size="x-large"
                     @click="showMapSelect"
@@ -169,7 +168,7 @@
                 :class="{ disabled: !can_subscribe }"
                 :color="default_color"
                 :loading="busy_subscribe"
-                dark
+
                 height="82"
                 size="x-large"
                 @click="subscribeNow"

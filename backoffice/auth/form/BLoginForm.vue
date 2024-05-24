@@ -803,7 +803,6 @@
               :class="{ disabled: !can_request_reset }"
               :loading="busy_reset"
               color="primary"
-              dark
               size="x-large"
               @click.stop="requestResetPassword()"
             >
@@ -823,7 +822,6 @@
               }"
               :loading="busy_set_mail"
               color="primary"
-              dark
               size="x-large"
               @click.stop="setUserEmail()"
             >
@@ -894,7 +892,6 @@
 
             <v-btn
               color="success"
-              dark
               size="x-large"
               @click="
                 () => {

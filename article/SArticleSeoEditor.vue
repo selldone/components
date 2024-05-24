@@ -71,7 +71,6 @@
               <template v-slot:append-inner>
                 <u-progress-score
                   :value="$SEO.GetPageURLScore(slug)"
-
                 ></u-progress-score>
               </template>
             </v-text-field>
@@ -89,7 +88,6 @@
               <template v-slot:append-inner>
                 <u-progress-score
                   :value="$SEO.GetPageTitleScore(page_title)"
-
                 ></u-progress-score>
               </template>
             </v-text-field>
@@ -107,7 +105,6 @@
               <template v-slot:append-inner>
                 <u-progress-score
                   :value="$SEO.GetPageDescription(description)"
-
                 ></u-progress-score>
               </template>
             </v-textarea>

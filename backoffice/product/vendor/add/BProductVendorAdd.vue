@@ -138,11 +138,9 @@
             </s-widget-header>
             <v-list-subheader>
               {{
-              isSubscription
-              ? "The subscription pricing is determined in the Product > Inventory > Subscription Price tab. You can set
-              these pricing options here just to keep accounting, but the marketplace pricing does not affect the price
-              of the listing and the final cost of the subscription."
-              : "It's the price of the product sales in your marketplace."
+                isSubscription
+                  ? "The subscription pricing is determined in the Product > Inventory > Subscription Price tab. You can set these pricing options here just to keep accounting, but the marketplace pricing does not affect the price of the listing and the final cost of the subscription."
+                  : "It's the price of the product sales in your marketplace."
               }}
             </v-list-subheader>
 

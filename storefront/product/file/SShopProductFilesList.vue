@@ -45,7 +45,7 @@
           v-if="file.sample"
           class="mx-2"
           color="#009688"
-          dark
+          variant="flat"
           label
           size="small"
           style="min-width: 68px"
@@ -55,7 +55,7 @@
           v-else
           class="mx-2"
           color="#673AB7"
-          dark
+          variant="flat"
           label
           size="small"
           style="min-width: 68px"

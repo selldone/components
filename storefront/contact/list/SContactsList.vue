@@ -257,7 +257,7 @@
                 :loading="busy_send"
                 :title="$t('global.actions.send')"
                 color="blue"
-                dark
+
                 icon
                 rounded
                 variant="flat"

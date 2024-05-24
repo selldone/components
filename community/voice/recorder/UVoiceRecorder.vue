@@ -94,7 +94,7 @@ export default {
       return Promise.resolve();
     }
 
-    const recorder = new MediaRecorder(stream,{
+    const recorder = new MediaRecorder(stream, {
       mimeType: this.mimeType,
     });
     let chunks = [];

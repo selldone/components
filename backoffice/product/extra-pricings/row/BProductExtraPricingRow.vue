@@ -71,7 +71,7 @@
   </tr>
   <tr v-if="error_msg">
     <td class="small" colspan="4">
-      <v-icon :dark="!light" class="me-1 blink-me-linear" size="small"
+      <v-icon  class="me-1 blink-me-linear" size="small"
         >warning_amber
       </v-icon>
       <span v-html="error_msg"></span>

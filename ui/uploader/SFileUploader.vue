@@ -52,7 +52,7 @@
       <v-btn
         v-if="clearable"
         class="absolute-top-end m-2 z2"
-        fab
+        icon
         size="small"
         variant="flat"
         @click.stop="

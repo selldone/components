@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {Category} from "@selldone/core-js";
+import { Category } from "@selldone/core-js";
 
 export class BProductBreadcrumbsHelper {
   /**
@@ -142,5 +142,4 @@ export class BProductBreadcrumbsHelper {
     }
     return out;
   }
-
 }

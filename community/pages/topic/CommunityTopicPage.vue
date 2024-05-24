@@ -74,7 +74,7 @@
                 <v-btn
                   :loading="busy_delete"
                   color="red"
-                  dark
+
                   size="x-large"
                   variant="flat"
                   @click="removeTopic()"
@@ -248,7 +248,11 @@
               cols="12"
               style="height: 50vh"
             >
-              <u-loading-ellipsis v-if="busy_posts" css-mode light></u-loading-ellipsis>
+              <u-loading-ellipsis
+                v-if="busy_posts"
+                css-mode
+                light
+              ></u-loading-ellipsis>
             </v-col>
           </template>
 

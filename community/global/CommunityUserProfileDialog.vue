@@ -94,7 +94,7 @@
               <v-btn
                 :color="profile.follow ? 'blue' : '#111'"
                 :loading="busy_follow"
-                :variant="!profile.follow ? 'outlined':'flat'"
+                :variant="!profile.follow ? 'outlined' : 'flat'"
                 size="large"
                 @click="follow(!profile.follow)"
               >

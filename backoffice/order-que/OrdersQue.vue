@@ -21,7 +21,7 @@
       class="flex-grow-1 d-flex"
     >
       <span :title="$t(item.name)" class="flex-grow-1">
-        <v-icon :dark="dark" class="me-1" size="small"> {{ item.icon }}</v-icon>
+        <v-icon  class="me-1" size="small"> {{ item.icon }}</v-icon>
         <b>
           {{ numeralFormat(getQueCountBasketsByType(item.code), "0,0") }}
         </b>
@@ -37,7 +37,7 @@
     </div>
 
     <span v-if="!list.length" class="ma-auto"
-      ><v-icon :dark="dark" class="me-1">emoji_food_beverage</v-icon>
+      ><v-icon  class="me-1">emoji_food_beverage</v-icon>
       {{ $t("global.commons.auto") }}</span
     >
   </div>

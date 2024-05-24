@@ -18,22 +18,52 @@
     <v-list-subheader class="justify-center">
       {{ $t("global.commons.included_in_the_product_description") }}
     </v-list-subheader>
-    <v-row v-if="$vuetify.display.mdAndUp" align="start" justify="center">
-      <v-col v-for="it in includes" :key="it.id" cols="3">
-        <a v-if="it.url && !it.path" :href="it.url" :target="'_blank'">
-          <img
-            v-if="it.image"
-            :src="getShopImagePath(it.image)"
-            class="-image"
-            loading="eager"
-          />
+    <u-fade-scroll v-if="$vuetify.display.mdAndUp" show-arrow small-arrow>
+      <div class="d-flex align-start justify-center">
+        <v-col v-for="it in includes" :key="it.id" cols="3">
+          <v-card
+            variant="text"
+            flat
+            :href="it.path ? undefined : it.url"
+            :target="it.url ? '_blank' : undefined"
+            :to="
+              it.path
+                ? {
+                    name: window.$storefront?.routes.INCLUDE_PAGE_RENDER,
+                    params: { path: it.path, include_id: it.id },
+                  }
+                : undefined
+            "
+          >
+            <img
+              v-if="it.image"
+              :src="getShopImagePath(it.image)"
+              class="-image"
+              loading="eager"
+            />
 
-          <div class="-title">
-            {{ it.title }}
-          </div>
-        </a>
-        <router-link
-          v-else-if="it.path"
+            <div class="-title">
+              {{ it.title }}
+            </div>
+          </v-card>
+        </v-col>
+      </div>
+    </u-fade-scroll>
+    <v-carousel
+      v-else
+      :continuous="true"
+      :cycle="true"
+      delimiter-icon="circle"
+      height="300"
+      hide-delimiter-background
+      show-arrows="hover"
+    >
+      <v-carousel-item v-for="it in includes" :key="it.id">
+        <v-card
+          variant="text"
+          flat
+          :href="it.path ? undefined : it.url"
+          :target="it.url ? '_blank' : undefined"
           :to="
             it.path
               ? {
@@ -53,63 +83,18 @@
           <div class="-title">
             {{ it.title }}
           </div>
-        </router-link>
-        <div v-else>
-          <img
-            v-if="it.image"
-            :src="getShopImagePath(it.image)"
-            class="-image"
-            loading="eager"
-          />
-
-          <div class="-title">
-            {{ it.title }}
-          </div>
-        </div>
-      </v-col>
-    </v-row>
-    <v-carousel
-      v-else
-      :continuous="true"
-      :cycle="true"
-      :show-arrows="false"
-      delimiter-icon="circle"
-      height="300"
-      hide-delimiter-background
-      show-arrows="hover"
-    >
-      <v-carousel-item
-        v-for="it in includes"
-        :key="it.id"
-        :href="it.path ? undefined : it.url"
-        :target="it.url ? '_blank' : undefined"
-        :to="
-          it.path
-            ? {
-                name: window.$storefront?.routes.INCLUDE_PAGE_RENDER,
-                params: { path: it.path, include_id: it.id },
-              }
-            : undefined
-        "
-      >
-        <img
-          v-if="it.image"
-          :src="getShopImagePath(it.image)"
-          class="-image"
-          loading="eager"
-        />
-
-        <div class="-title">
-          {{ it.title }}
-        </div>
+        </v-card>
       </v-carousel-item>
     </v-carousel>
   </v-container>
 </template>
 
 <script>
+import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
+
 export default {
   name: "SShopProductIncludes",
+  components: { UFadeScroll },
   props: {
     product: {
       required: true,

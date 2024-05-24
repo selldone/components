@@ -719,7 +719,7 @@
                 <!-- ================= Add Sections ================= -->
                 <div class="hed-line center-absolute"></div>
                 <p class="hed center-absolute">
-                  <v-icon dark>keyboard_arrow_down</v-icon>
+                  <v-icon >keyboard_arrow_down</v-icon>
                   Add
                 </p>
                 <div class="overflow-auto d-flex justify-center">

@@ -27,14 +27,14 @@
         <v-img
           :src="require('../assets/warehouse-location.svg')"
           class="m-2 imgi"
-          contain
+
         ></v-img>
       </div>
 
       <div class="widget-buttons">
         <v-btn
           color="#000"
-          dark
+
           size="x-large"
           @click="warehouse_dialog = true"
         >
@@ -60,7 +60,7 @@
         <v-img
           :src="require('../assets/delivery.svg')"
           class="m-2 imgi"
-          contain
+
         ></v-img>
       </div>
 
@@ -68,7 +68,7 @@
         <v-btn
           :to="{ name: 'BPageShopLogisticShipping' }"
           color="#000"
-          dark
+
           size="x-large"
         >
           <v-icon class="me-1" size="small">add</v-icon>

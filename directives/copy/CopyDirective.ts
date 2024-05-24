@@ -30,7 +30,7 @@
  * @author [Your Name]
  */
 
-import {DirectiveBinding, ObjectDirective} from "vue";
+import { DirectiveBinding, ObjectDirective } from "vue";
 
 /**
  * A Vue directive to copy text to the clipboard when an element is clicked.
@@ -60,7 +60,6 @@ const CopyToClipboardDirective: ObjectDirective<
         : (event.target as HTMLElement).innerText;
 
       ExecuteCopyToClipboard(binding.instance, valueToCopy, null, null);
-
     };
 
     el.addEventListener("click", el.__copy_click__);

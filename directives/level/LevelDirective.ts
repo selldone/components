@@ -12,9 +12,9 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {ComponentPublicInstance, ObjectDirective} from "vue";
-import {Store} from "vuex";
-import {User} from "@selldone/core-js"; // Import Vuex Store type
+import { ComponentPublicInstance, ObjectDirective } from "vue";
+import { Store } from "vuex";
+import { User } from "@selldone/core-js"; // Import Vuex Store type
 
 interface HTMLElementWithCleanup extends HTMLElement {
   _cleanup?: () => void;

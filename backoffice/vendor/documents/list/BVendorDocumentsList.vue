@@ -24,10 +24,8 @@
       <v-list-subheader>
         {{
         IS_VENDOR_PANEL
-        ? "Please upload the necessary business, IP, and address verification documents. We require this information to
-        confirm your partnership and provide you with the necessary access."
-        : "Vendors can submit documents such as business, intellectual property, and address verification to facilitate
-        their KYC process, allowing you to grant them the appropriate access."
+        ? "Please upload the necessary business, IP, and address verification documents. We require this information to confirm your partnership and provide you with the necessary access."
+        : "Vendors can submit documents such as business, intellectual property, and address verification to facilitate their KYC process, allowing you to grant them the appropriate access."
         }}
       </v-list-subheader>
       <u-loading-progress v-if="busy"></u-loading-progress>

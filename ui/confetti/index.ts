@@ -13,7 +13,7 @@
  */
 
 import Confetti from "./confetti";
-import {App, Plugin} from "vue";
+import { App, Plugin } from "vue";
 
 export { Confetti };
 

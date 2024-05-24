@@ -147,7 +147,7 @@ export default {
         // Create an id
         const name = "h_" + tag + i;
         headers[i].id = name;
-       // console.log("headers[i]", headers[i]);
+        // console.log("headers[i]", headers[i]);
 
         this.items.push({
           id: name,

@@ -23,7 +23,7 @@
         <v-btn
           v-if="!selected_contact"
           class="absolute-top-end"
-          dark
+
           icon
           @click="show = false"
         >
@@ -34,7 +34,7 @@
           v-else
           :caption="$t('global.actions.back')"
           class="m-1 sub-caption -hover absolute-top-end"
-          dark
+
           icon
           @click="selected_contact = null"
         >

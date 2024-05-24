@@ -85,7 +85,7 @@
       show-arrows="hover"
     >
       <v-carousel-item
-        v-for="(item, i) in images_list_embedded"
+        v-for="(item) in images_list_embedded"
         :key="item.key"
         :eager="
           !!item.image /*Only for images! Prevent load YouTube and ar by default!*/

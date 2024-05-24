@@ -16,7 +16,7 @@
   <v-col class="c-max-w d-flex align-center" cols="12">
     <v-btn
       color="success"
-       icon
+      icon
       size="small"
       variant="flat"
       @click="show_cross = true"
@@ -31,7 +31,8 @@
         :href="getUrl(main_community)"
         :title="main_community.title"
         class="m-2"
-        icon variant="text"
+        icon
+        variant="text"
         size="large"
         target="_blank"
       >
@@ -46,7 +47,8 @@
         :href="getUrl(item)"
         :title="item.title"
         class="m-2"
-        icon variant="text"
+        icon
+        variant="text"
         size="large"
         target="_blank"
       >

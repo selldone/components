@@ -32,9 +32,8 @@
       <v-btn
         :variant="show_prizes ? 'outlined' : 'elevated'"
         color="green"
-        dark
+
         size="small"
-        variant="flat"
         @click="show_prizes = !show_prizes"
         ><i class="fas fa-ticket-alt me-2"></i>
         {{ show_prizes ? "Hide Prizes" : "Show Prizes" }}

@@ -25,7 +25,6 @@
       :element="element"
       :title="$t('global.commons.canvas')"
     >
-
     </a-addon-toolbar>
 
     <a-addon-canvas-editor

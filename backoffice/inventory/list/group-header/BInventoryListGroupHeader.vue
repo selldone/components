@@ -107,7 +107,7 @@
       colspan="1"
       @click="toggleGroup(item)"
     >
-      <v-icon :dark="is_open">{{ icon }}</v-icon>
+      <v-icon >{{ icon }}</v-icon>
     </td>
 
     <td

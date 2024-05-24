@@ -89,13 +89,13 @@ export default defineComponent({
     };
   },
   computed: {
-    pages(){
-      if(this.edit_mode && !this.muted_pack?.pages?.length){
+    pages() {
+      if (this.edit_mode && !this.muted_pack?.pages?.length) {
         return [
-          require('../../../article/add-on/comparison/asset/image-placeholder.svg'),
+          require("../../../article/add-on/comparison/asset/image-placeholder.svg"),
         ];
       }
-      return this.muted_pack?.pages
+      return this.muted_pack?.pages;
     },
     json_data() {
       let time = this.time;

@@ -78,10 +78,9 @@
         <div v-if="last_subscription === item">
           <v-btn
             :color="item.renewal ? 'green' : undefined"
-            :dark="item.renewal"
             :loading="busy_renewal === item"
             :variant="item.renewal ? 'flat' : 'outlined'"
-            fab
+            icon
             size="small"
             @click="toggleRenewal(item)"
           >
@@ -445,7 +444,7 @@
               }"
               :loading="busy_buy"
               color="primary"
-              dark
+
               size="x-large"
               variant="elevated"
               @click="buySubscription()"

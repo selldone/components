@@ -111,7 +111,6 @@
                 :src="imagePath"
                 :width="48"
                 class="ma-auto"
-                contain
               />
             </div>
 
@@ -202,7 +201,6 @@
         v-if="step === 1"
         class="m-1"
         color="#C2185B"
-        dark
         variant="flat"
         @click="addReturnItemRequest()"
       >

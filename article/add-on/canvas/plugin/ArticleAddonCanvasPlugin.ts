@@ -12,7 +12,8 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-import $ from 'jquery';
+import $ from "jquery";
+
 window.$ = $;
 window.jQuery = $;
 /**
@@ -123,7 +124,7 @@ window.jQuery = $;
    * @param e
    */
   CustomAddon.prototype.keydownAction = function (e) {
-    const $el = $(e.target);
+    //const $el = $(e.target);
     // e.preventDefault();
     /////  e.stopPropagation();
   };
@@ -149,8 +150,8 @@ window.jQuery = $;
    * @param e
    */
   CustomAddon.prototype.selectAction = function (e) {
-    let that = this,
-      $image;
+    const that = this;
+    let $image;
 
     if (this.core.options.enabled) {
       $image = $(e.target).closest(RootClassName);
@@ -166,9 +167,9 @@ window.jQuery = $;
       setTimeout(function () {
         that.addToolbar();
         /*
-                                if (that.options.captions) {
-                                  that.core.addCaption($image.parent().closest('div'), that.options.captionPlaceholder);
-                                }*/
+                                        if (that.options.captions) {
+                                          that.core.addCaption($image.parent().closest('div'), that.options.captionPlaceholder);
+                                        }*/
       }, 50);
     }
   };

@@ -13,7 +13,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {App, defineAsyncComponent} from "vue";
+import { App, defineAsyncComponent } from "vue";
 
 //---------------- Vue FilePond --------------
 // Import Vue FilePond
@@ -49,7 +49,6 @@ import ULoadingEllipsis from "./ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 import ULoadingProgress from "./ui/loading/progress/ULoadingProgress.vue";
 
-
 // @ts-ignore
 import VueTheMask from "vue-the-mask";
 
@@ -72,12 +71,12 @@ import "./article/add-on/catalog/plugin/ArticleAddonCatalogPlugin";
 import "./article/add-on/canvas/plugin/ArticleAddonCanvasPlugin";
 
 // @ts-ignore
-import {MediumInsert} from "./article/insert/SelldoneEditorInsert";
+import { MediumInsert } from "./article/insert/SelldoneEditorInsert";
 //―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
 import "prismjs";
 import "prismjs/themes/prism.css";
 
-import {PrismEditor} from "vue-prism-editor";
+import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css";
 
 //---------------- Widget --------------
@@ -86,7 +85,6 @@ import SWidget from "./ui/widget/widget/SWidget.vue";
 import SWidgetHeader from "./ui/widget/header/SWidgetHeader.vue";
 
 import VueConfetti from "./ui/confetti";
-
 
 //---------------- prototypes --------------
 
@@ -118,9 +116,7 @@ export function installGlobalComponents(app: App) {
 
   const UMapView = defineAsyncComponent(
     () =>
-      import(
-        /* webpackChunkName: "plug-map" */ "./ui/map/view/UMapView.vue"
-      ),
+      import(/* webpackChunkName: "plug-map" */ "./ui/map/view/UMapView.vue"),
   );
   app.component("u-map-view", UMapView);
 
@@ -128,9 +124,7 @@ export function installGlobalComponents(app: App) {
 
   const ULottie = defineAsyncComponent(
     () =>
-      import(
-        /* webpackChunkName: "plug-lottie" */ "./ui/lottie/ULottie.vue"
-      ),
+      import(/* webpackChunkName: "plug-lottie" */ "./ui/lottie/ULottie.vue"),
   );
   app.component("u-lottie", ULottie);
 
@@ -178,8 +172,6 @@ export function installGlobalComponents(app: App) {
   );
   app.component("u-barcode", UBarcode);
 
-
-
   app.use(VueConfetti);
 
   app.use(VueTheMask);
@@ -193,5 +185,4 @@ export function installGlobalComponents(app: App) {
 
   //Vue.prototype.window = window;
   app.config.globalProperties.window = window; // 🌴 Global object in vue components
-
 }

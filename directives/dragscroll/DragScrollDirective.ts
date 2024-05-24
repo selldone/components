@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import type {DirectiveBinding, VNode} from "vue";
+import type { DirectiveBinding, VNode } from "vue";
 
 const POINTER_START_EVENTS = ["mousedown", "touchstart"];
 const POINTER_MOVE_EVENTS = ["mousemove", "touchmove"];

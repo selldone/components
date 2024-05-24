@@ -17,7 +17,6 @@
     <div v-if="$vuetify.display.mdAndUp" class="mb-5 inline-block">
       <v-btn-toggle
         v-model="preview_mode"
-        borderless
         class="widget-toggle"
         mandatory
         rounded

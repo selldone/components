@@ -231,7 +231,6 @@ export default defineComponent({
       type: Object,
       required: true,
     },
-    fonts: Array,
     loadedFonts: Array,
     uploadUrl: {
       type: String,

@@ -39,7 +39,7 @@
         <v-btn
           :to="{ name: 'BPageShopFinanceExchange' }"
           color="#000"
-          dark
+
           size="x-large"
         >
           <v-icon class="me-1" size="small">currency_exchange</v-icon>
@@ -62,7 +62,7 @@
         <v-img
           :src="require('../assets/payment.svg')"
           class="m-2 imgi"
-          contain
+
         ></v-img>
       </div>
 
@@ -84,7 +84,7 @@
           v-if="!gateways_online.length"
           :to="{ name: 'BPageShopFinanceGateways' }"
           color="#000"
-          dark
+
           size="x-large"
         >
           <v-icon class="me-1" size="small">add</v-icon>
@@ -158,7 +158,7 @@
         <v-btn
           :to="{ name: 'BPageShopFinanceGateways' }"
           color="#000"
-          dark
+
           size="x-large"
         >
           <v-icon class="me-1">account_balance</v-icon>

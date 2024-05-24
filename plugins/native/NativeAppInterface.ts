@@ -12,11 +12,9 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {XapiUser} from "@selldone/sdk-storefront";
-import {
-    ApplicationExecutorStorefront
-} from "@selldone/core-js";
-import {Shop} from "@selldone/core-js/models/shop/shop.model.ts";
+import { XapiUser } from "@selldone/sdk-storefront";
+import { ApplicationExecutorStorefront } from "@selldone/core-js";
+import { Shop } from "@selldone/core-js/models/shop/shop.model.ts";
 
 declare global {
   interface Window {}

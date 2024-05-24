@@ -22,11 +22,11 @@
       <img :src="getShopImagePath(gateway.icon)" class="mx-2" height="24" />
       {{ gateway.name }}
 
-      <v-chip v-if="isSubscribed" class="m-1" color="#4CAF50" dark size="small">
+      <v-chip v-if="isSubscribed" class="m-1" color="#4CAF50" variant="flat" size="small">
         <v-icon size="small" start>credit_score</v-icon>
         Subscribed
       </v-chip>
-      <v-chip v-if="isUnsubscribed" class="m-1" color="#ddd" dark size="small">
+      <v-chip v-if="isUnsubscribed" class="m-1" color="#ddd" variant="flat" size="small">
         <v-icon size="small" start>credit_card_off</v-icon>
         Unsubscribed
       </v-chip>

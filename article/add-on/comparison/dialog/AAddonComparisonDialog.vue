@@ -13,7 +13,13 @@
   -->
 
 <template>
-  <v-bottom-sheet v-model="show_dialog" width="98vw" max-width="860" scrollable content-class="rounded-t-xl">
+  <v-bottom-sheet
+    v-model="show_dialog"
+    width="98vw"
+    max-width="860"
+    scrollable
+    content-class="rounded-t-xl"
+  >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1">compare</v-icon>

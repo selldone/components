@@ -36,7 +36,6 @@
         <v-btn
           :href="admin_url_guide"
           class="tnt fadeIn"
-          dark
           target="_blank"
           title="Open product admin panel"
         >

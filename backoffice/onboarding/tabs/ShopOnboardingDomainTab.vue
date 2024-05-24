@@ -26,7 +26,7 @@
         <v-img
           :src="require('../assets/add-domain.svg')"
           class="m-2 imgi"
-          contain
+
         ></v-img>
       </div>
 

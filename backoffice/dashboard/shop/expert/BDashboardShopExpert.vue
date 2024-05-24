@@ -22,7 +22,7 @@
       class="text-start contracts-panel thin-scroll widget-dark"
       custom-header
     >
-      <v-icon class="absolute-top-end" dark>emoji_food_beverage</v-icon>
+      <v-icon class="absolute-top-end" >emoji_food_beverage</v-icon>
       <v-sheet class="border-between-vertical -dashed" color="transparent" dark>
         <v-row
           v-for="contract in contracts"

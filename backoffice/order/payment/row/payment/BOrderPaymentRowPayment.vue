@@ -72,7 +72,7 @@
         <div v-if="is_require_capture" class="widget-buttons">
           <v-btn
             color="#673AB7"
-            dark
+
             size="x-large"
             @click="dialog_capture = true"
           >
@@ -129,7 +129,7 @@
           :href="payment.track_id"
           class="ma-1 tnt"
           color="#673AB7"
-          dark
+
           size="x-small"
           target="_blank"
           @click.stop=""
@@ -157,7 +157,7 @@
         <div v-if="is_require_capture" class="widget-buttons">
           <v-btn
             color="#673AB7"
-            dark
+
             size="x-large"
             @click="dialog_capture = true"
           >
@@ -185,7 +185,7 @@
         >
           <v-img
             :src="getShopImagePath(gateway?.logo)"
-            contain
+
             height="24"
             max-width="36"
           />
@@ -208,7 +208,7 @@
           :href="payment.track_id"
           class="ma-1 tnt"
           color="#673AB7"
-          dark
+
           size="x-small"
           target="_blank"
           title="See payment receipt on the payment service provider."

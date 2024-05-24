@@ -129,7 +129,6 @@
                   :class="{ disabled: !check_delete }"
                   :loading="busy_delete"
                   color="red"
-                  dark
                   size="x-large"
                   variant="flat"
                   @click="removeCategory()"
@@ -157,7 +156,7 @@
           class="c-widget d-flex text-black pp usn"
           @click="showAddTopic()"
         >
-          <v-avatar :size="64" height="100%" tile>
+          <v-avatar :size="64" tile>
             <v-icon color="success" size="48">add</v-icon>
           </v-avatar>
           <div
@@ -219,7 +218,6 @@
       <v-btn
         class="ma-auto"
         color="blue"
-        dark
         rounded
         size="x-large"
         variant="flat"
@@ -243,7 +241,7 @@
           class="c-widget d-flex text-black pp usn"
           @click="showCrossTopic()"
         >
-          <v-avatar :size="64" height="100%" tile>
+          <v-avatar :size="64" tile>
             <v-icon color="success" size="48">alt_route</v-icon>
           </v-avatar>
           <div

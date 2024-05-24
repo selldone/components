@@ -12,12 +12,10 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {Category} from "@selldone/core-js";
-import type {Product} from "@selldone/core-js";
+import { Category } from "@selldone/core-js";
+import type { Product } from "@selldone/core-js";
 
 export class SProductBreadcrumbHelper {
-
-
   /**
    * Customer shop page.
    *
@@ -122,6 +120,4 @@ export class SProductBreadcrumbHelper {
 
     return out;
   }
-
-
 }

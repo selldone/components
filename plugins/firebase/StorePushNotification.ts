@@ -21,7 +21,7 @@ import {
   isSupported,
 } from "firebase/messaging";
 import { getAnalytics } from "firebase/analytics";
-import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
+import { EventBus, EventName } from "@selldone/core-js/events/EventBus";
 
 const firebaseConfig = {
   apiKey: "{!! enter here e.g. AIzaSyBlMGghN...!!}",
@@ -39,7 +39,6 @@ export class StorePushNotification {
   messaging = null;
 
   constructor() {
-
     // Messaging:
     isSupported().then(() => {
       this.initializeMessaging();
@@ -60,10 +59,7 @@ export class StorePushNotification {
 
     onMessage(messaging, (payload) => {
       //console.log("Message received - Foreground. ", payload);
-      EventBus.$emit(
-        EventName.FIREBASE_RECEIVE_MESSAGE,
-        payload,
-      );
+      EventBus.$emit(EventName.FIREBASE_RECEIVE_MESSAGE, payload);
     });
 
     // Get Token:
@@ -102,10 +98,7 @@ export class StorePushNotification {
       .then((currentToken) => {
         if (currentToken) {
           // Send the token to your server and update the UI if necessary
-          EventBus.$emit(
-            EventName.FIREBASE_GET_TOKEN,
-            currentToken,
-          );
+          EventBus.$emit(EventName.FIREBASE_GET_TOKEN, currentToken);
         } else {
           // Show permission request UI
           console.log(

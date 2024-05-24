@@ -101,7 +101,6 @@
             :class="{ disabled: !accept_delete }"
             :loading="busy_delete"
             color="red"
-            dark
             size="x-large"
             @click="remove"
           >
@@ -152,14 +151,12 @@
 <script>
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
-import BTranslationButtonVendor from "../../../translation/button/vendor/BTranslationButtonVendor.vue";
 import BTranslationButtonVendorPricing from "../../../translation/button/vendor-pricing/BTranslationButtonVendorPricing.vue";
 
 export default {
   name: "BVendorPricingAdd",
   components: {
     BTranslationButtonVendorPricing,
-    BTranslationButtonVendor,
     USmartVerify,
     UNumberInput,
   },

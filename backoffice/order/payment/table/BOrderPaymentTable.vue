@@ -133,7 +133,7 @@
                     v-if="item.product_id"
                     :src="getProductImage(item.product_id, IMAGE_SIZE_SMALL)"
                   />
-                  <v-icon v-else dark>emoji_events</v-icon>
+                  <v-icon v-else >emoji_events</v-icon>
                 </v-avatar>
 
                 <p class="my-1 font-weight-bold">{{ item.offer.title }}</p>
@@ -987,7 +987,7 @@
                 min-width="280"
               >
                 <div class="d-flex align-center">
-                  <v-icon class="me-1" dark>wallet</v-icon>
+                  <v-icon class="me-1" >wallet</v-icon>
 
                   {{ linked_account.account_name }}
                   <v-spacer></v-spacer>
@@ -1228,7 +1228,7 @@
             :class="{ disabled: !accept_action }"
             :loading="busy_pay"
             color="success"
-            dark
+
             height="64"
             rounded
             size="x-large"

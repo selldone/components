@@ -60,7 +60,7 @@
         </template>
       </v-img>
     </div>
-    <v-icon v-if="is_product" class="absolute-top-end" dark
+    <v-icon v-if="is_product" class="absolute-top-end"
       >shopping_bag
     </v-icon>
 

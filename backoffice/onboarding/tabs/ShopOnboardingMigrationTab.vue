@@ -24,14 +24,14 @@
         <v-img
           :src="require('../../onboarding/assets/shopify.png')"
           class="m-2 imgi"
-          contain
+
         ></v-img>
       </div>
       <div class="widget-buttons">
         <v-btn
           :to="{ name: 'BPageShopChannelConnect', add: true }"
           color="#000"
-          dark
+
           exact
           size="x-large"
         >
@@ -63,7 +63,7 @@
         <v-img
           :src="require('../../onboarding/assets/woocommerce.svg')"
           class="m-2 imgi"
-          contain
+
         ></v-img>
       </div>
 
@@ -71,7 +71,7 @@
         <v-btn
           :to="{ name: 'BPageShopChannelConnect', add: true }"
           color="#000"
-          dark
+
           exact
           size="x-large"
         >

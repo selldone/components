@@ -300,14 +300,12 @@ import BInventoryBulkPreview from "../../../inventory/bulk/preview/BInventoryBul
 
 import _ from "lodash-es";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
-import UCube from "../../../../ui/cube/UCube.vue";
 import BInventoryPricePreview from "../../../inventory/price-preview/BInventoryPricePreview.vue";
 
 export default {
   name: "BInventoryBulkPrice",
   components: {
     BInventoryPricePreview,
-    UCube,
     USmartVerify,
     BInventoryBulkPreview,
     UTextValueDashed,

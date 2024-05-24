@@ -45,7 +45,8 @@
         :placeholder="$t('community.community.name_plc')"
         :readonly="lock"
         @click:append-inner="lock = !lock"
-        @update:model-value="checkName" variant="underlined"
+        @update:model-value="checkName"
+        variant="underlined"
       >
         <template v-slot:append-inner>
           <v-icon v-if="valid_name === name" color="success">check</v-icon>
@@ -57,7 +58,8 @@
         :counter="128"
         :label="$t('community.community.title')"
         :messages="$t('community.community.title_msg')"
-        :placeholder="$t('community.community.title_plc')" variant="underlined"
+        :placeholder="$t('community.community.title_plc')"
+        variant="underlined"
       ></v-text-field>
 
       <v-text-field
@@ -65,7 +67,8 @@
         :counter="256"
         :label="$t('community.community.desc')"
         :messages="$t('community.community.desc_msg')"
-        :placeholder="$t('community.community.desc_plc')" variant="underlined"
+        :placeholder="$t('community.community.desc_plc')"
+        variant="underlined"
       ></v-text-field>
     </div>
 
@@ -198,9 +201,10 @@
         label="Allowed file types"
         messages="Leave it empty means all file types are accepted."
         multiple
-        placeholder="Enter value and press enter. ex: zip" variant="underlined"
+        placeholder="Enter value and press enter. ex: zip"
+        variant="underlined"
       >
-        <template v-slot:chip="{item,props}">
+        <template v-slot:chip="{ item, props }">
           <v-chip v-bind="props">
             <img
               :src="getFileExtensionImage(item.raw)"
@@ -229,12 +233,13 @@
         v-model="rule"
         :placeholder="$t('community.community.rule_plc')"
         :rows="4"
-        class="m-0" variant="underlined"
+        class="m-0"
+        variant="underlined"
       >
       </v-textarea>
     </div>
 
-    <s-widget-buttons auto-fixed-position >
+    <s-widget-buttons auto-fixed-position>
       <v-btn
         v-if="hasClose"
         size="x-large"
@@ -273,7 +278,7 @@ import SWidgetButtons from "../../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "CCommunityEdit",
-  components: {SWidgetButtons, USmartSelect, USmartToggle, CImageInput },
+  components: { SWidgetButtons, USmartSelect, USmartToggle, CImageInput },
 
   props: {
     shop: {}, // optional for shops.

@@ -69,7 +69,7 @@
         <v-btn
           :href="order.track"
           color="blue"
-          dark
+
           target="_blank"
           variant="flat"
         >

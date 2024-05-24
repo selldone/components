@@ -190,7 +190,7 @@
                       <v-chip
                         class="mx-1 float-end"
                         color="red"
-                        dark
+                        variant="flat"
                         size="small"
                         >{{ discount_percent }} %
                       </v-chip>
@@ -266,8 +266,8 @@
 
               <v-btn
                 class="-back"
-                fab
-                light
+
+                icon
                 size="x-small"
                 variant="flat"
                 @click="preStory(highlight)"
@@ -276,8 +276,8 @@
               </v-btn>
               <v-btn
                 class="-next"
-                fab
-                light
+                icon
+
                 size="x-small"
                 variant="flat"
                 @click="nextStory(highlight)"

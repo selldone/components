@@ -35,7 +35,7 @@
       :min-width="$vuetify.display.smAndUp ? 150 : 64"
       class="tnt"
       color="#000"
-      dark
+
       height="64"
       tile
       variant="flat"

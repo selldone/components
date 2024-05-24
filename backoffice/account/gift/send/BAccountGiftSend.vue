@@ -100,13 +100,12 @@
 
 <script>
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
-import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
 import BAccountInput from "../../../account/input/BAccountInput.vue";
 import SUserInput from "../../../user/input/SUserInput.vue";
 
 export default {
   name: "BAccountGiftSend",
-  components: { SUserInput, BAccountInput, UCurrencyInput, UPriceInput },
+  components: { SUserInput, BAccountInput, UPriceInput },
   emits: ["update:modelValue"],
   props: {
     modelValue: {},

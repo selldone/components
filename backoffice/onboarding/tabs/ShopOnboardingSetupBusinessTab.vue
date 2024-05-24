@@ -26,7 +26,7 @@
         <v-img
           :src="require('../assets/strategy.svg')"
           class="m-2 imgi"
-          contain
+
         ></v-img>
       </div>
 
@@ -40,7 +40,7 @@
         <v-btn
           :to="{ name: 'BPageShopSettingBusinessModel', hash: '#add' }"
           color="#000"
-          dark
+
           exact
           size="x-large"
         >

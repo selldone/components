@@ -67,11 +67,17 @@
           <span class="text-h4"
             >{{ certificate["Name"] }} - {{ certificate["Key Type"] }}</span
           >
-          <v-chip v-if="is_valid" class="mx-2" color="success" dark label>
+          <v-chip
+            v-if="is_valid"
+            class="mx-2"
+            color="success"
+            variant="flat"
+            label
+          >
             <v-icon start>check_circle</v-icon>
             Valid
           </v-chip>
-          <v-chip v-else class="mx-2" color="red" dark label>
+          <v-chip v-else class="mx-2" color="red" variant="flat" label>
             <v-icon start>cancel</v-icon>
             Expired
           </v-chip>

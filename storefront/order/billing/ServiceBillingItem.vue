@@ -441,10 +441,8 @@
             <v-btn
               :color="service_item ? 'primary' : 'success'"
               :loading="busy_set"
-              :size="!service_item && 'large'"
-              :variant="!!service_item && 'flat'"
-              dark
-              size="x-large"
+              :size="!service_item ?'large':'x-large'"
+              :variant="!!service_item? 'flat':undefined"
               @click="setServiceItem"
             >
               <v-icon class="me-1"

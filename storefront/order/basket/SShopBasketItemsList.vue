@@ -138,7 +138,6 @@
           <v-btn
             class="tnt my-1"
             color="success"
-            dark
             size="small"
             @click.stop="
               () => {
@@ -147,7 +146,7 @@
               }
             "
           >
-            <v-icon class="me-1" size="small">add</v-icon>
+            <v-icon start>add</v-icon>
             User data form
           </v-btn>
           <v-progress-linear
@@ -183,8 +182,8 @@
         ></u-price>
 
         <div v-if="item.offer_amount">
-          <v-chip color="blue" dark size="small" title="Offer">
-            <v-icon size="small" start>add</v-icon>
+          <v-chip color="blue" variant="flat" size="small" title="Offer">
+            <v-icon  start>add</v-icon>
             <u-price
               :amount="-item.offer_amount"
               :currency="item.currency"
@@ -228,7 +227,7 @@
             'small'
           "
           color="red"
-          dark
+
           rounded
           variant="flat"
           @click.stop="

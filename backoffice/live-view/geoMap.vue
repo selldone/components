@@ -143,7 +143,7 @@
         :class="{ disabled: busy }"
         :loading="busy"
         class="refresh-button"
-        fab
+        icon
         size="small"
         variant="flat"
         @click="fetchData()"

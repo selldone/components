@@ -26,14 +26,14 @@
         <v-img
           :src="require('../assets/add-product-manually.svg')"
           class="m-2 imgi"
-          contain
+
         ></v-img>
       </div>
       <div class="widget-buttons">
         <v-btn
           :to="{ name: 'BPageShopProductsList', hash: '#add' }"
           color="#000"
-          dark
+
           exact
           size="x-large"
         >
@@ -54,7 +54,7 @@
           <v-btn
             :to="{ name: 'BPageShopProductsList', hash: '#category' }"
             color="#000"
-            dark
+
             exact
             size="x-large"
           >
@@ -76,7 +76,7 @@
         <v-img
           :src="require('../assets/add-product-excel.svg')"
           class="m-2 imgi"
-          contain
+
         ></v-img>
       </div>
 
@@ -84,7 +84,7 @@
         <v-btn
           :to="{ name: 'BPageShopProductsList' }"
           color="#000"
-          dark
+
           size="x-large"
         >
           <v-icon class="me-1" size="small">publish</v-icon>

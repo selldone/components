@@ -448,7 +448,7 @@ import { SuccessVerifyMethod } from "@selldone/sdk-storefront";
 
 import ShopEmailLogin from "../../storefront/login/widgets/ShopEmailLogin.vue";
 import UTelInput from "../../ui/tel-input/UTelInput.vue";
-import {Customer} from "@selldone/core-js/models/shop/customer/customer.model";
+import { Customer } from "@selldone/core-js/models/shop/customer/customer.model";
 
 export default {
   name: "SShopLogin",

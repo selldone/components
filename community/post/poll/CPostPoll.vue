@@ -26,7 +26,8 @@
         :loading="busy === item"
         :style="{ 'animation-delay': 250 + i * 75 + 'ms' }"
         class="bounceIn"
-        icon variant="text"
+        icon
+        variant="text"
         @click="isCheck(item) ? undefined : $emit('click:item', item)"
       >
         <v-icon
@@ -58,7 +59,8 @@
         <v-btn
           v-if="editable"
           color="red"
-          icon variant="text"
+          icon
+          variant="text"
           @click="remove(modelValue, item)"
         >
           <v-icon>close</v-icon>

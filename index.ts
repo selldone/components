@@ -1,10 +1,5 @@
+import { createComponents } from "./components.ts";
 
+export { createComponents };
 
-import { createComponents } from './components.ts';
-
-
-export {
-    createComponents,
-};
-
-export * from './ui';
+export * from "./ui";

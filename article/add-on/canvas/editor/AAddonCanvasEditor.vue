@@ -80,22 +80,22 @@
           <div v-if="selected_rect" class="d-flex">
             <div class="w-50 pa-1">
               <v-text-field
-                  v-model="selected_rect.caption"
-                  placeholder="Type caption..."
-                  label="Caption"
-                  @blur="drawAll()"
-                  variant="solo"
-                  hide-details
+                v-model="selected_rect.caption"
+                placeholder="Type caption..."
+                label="Caption"
+                @blur="drawAll()"
+                variant="solo"
+                hide-details
               />
             </div>
             <div class="w-50 pa-1">
               <v-text-field
-                  v-model="selected_rect.header"
-                  placeholder="Type header..."
-                  label="Header"
-                  @blur="drawAll()"
-                  variant="solo"
-                  hide-details
+                v-model="selected_rect.header"
+                placeholder="Type header..."
+                label="Header"
+                @blur="drawAll()"
+                variant="solo"
+                hide-details
               />
             </div>
           </div>

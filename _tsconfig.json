@@ -31,11 +31,10 @@
       "esnext",
       "dom",
       "dom.iterable",
-      "scripthost",
+      "scripthost"
     ],
     "rootDir": ".",
     "paths": {
-      //"@selldone/components-vue/*": ["*"]
 
     }
   },

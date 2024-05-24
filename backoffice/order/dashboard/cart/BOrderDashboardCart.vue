@@ -130,7 +130,7 @@
         ></variant-item-view-micro>
       </v-col>
       <v-col class="flex-grow-0 p-2">
-        <v-icon dark>fa:fas fa-dice</v-icon>
+        <v-icon >fa:fas fa-dice</v-icon>
       </v-col>
     </v-row>
 

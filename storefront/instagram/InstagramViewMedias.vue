@@ -29,7 +29,7 @@
           cover
           width="100%"
         >
-          <v-icon class="absolute-top-right" dark
+          <v-icon class="absolute-top-right"
             >{{
               getProductsCount(media)
                 ? "shopping_bag"
@@ -46,13 +46,13 @@
           <div class="card-hover">
             <v-row class="card-hover-icons" no-gutters>
               <div class="p-1">
-                <v-icon dark>favorite</v-icon>
+                <v-icon >favorite</v-icon>
                 <span class="ms-2">{{
                   numeralFormat(media.likes, "0.[0]a")
                 }}</span>
               </div>
               <div class="p-1">
-                <v-icon dark>mode_comment</v-icon>
+                <v-icon >mode_comment</v-icon>
                 <span class="ms-2">{{
                   numeralFormat(media.comments, "0.[0]a")
                 }}</span>

@@ -44,7 +44,7 @@
         <v-btn
           class="mx-1"
           color="green-darken-1"
-          dark
+
           size="large"
           variant="flat"
           @click="sendTokenToNativeApp()"

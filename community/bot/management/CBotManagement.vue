@@ -59,7 +59,8 @@
         messages="Past your channel name here"
         placeholder="Your channel name without @..."
         prefix="@"
-        @click:prepend-inner="telegram_lock = !telegram_lock" variant="underlined"
+        @click:prepend-inner="telegram_lock = !telegram_lock"
+        variant="underlined"
       >
       </v-text-field>
 

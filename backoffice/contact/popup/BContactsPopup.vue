@@ -23,7 +23,7 @@
         <v-btn
           v-if="!selected_contact"
           class="absolute-top-end"
-          dark
+
           icon
           @click="show = false"
         >

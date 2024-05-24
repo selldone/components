@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {Router} from "vue-router";
+import { Router } from "vue-router";
 
 export class ShopFooterHelper {
   /**

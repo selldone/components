@@ -15,7 +15,7 @@
 //―――――――――――――― Js & Components――――――――――――――
 //█████████████████████████████████████████████████████████████
 
-import $ from 'jquery';
+import $ from "jquery";
 window.$ = $;
 window.jQuery = $;
 
@@ -26,8 +26,6 @@ import "@selldone/core-js/utils/console/ConsoleStyle";
 //█████████████████████████████████████████████████████████████
 
 import "./style/components.scss";
-
-
 
 //█████████████████████████████████████████████████████████████
 //――――――――――― Selldone ® Business OS™ ―――――――――――

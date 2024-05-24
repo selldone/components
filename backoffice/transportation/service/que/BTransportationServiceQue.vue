@@ -310,7 +310,6 @@ import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransp
 import BOrderButtonBasket from "../../../order/button/basket/BOrderButtonBasket.vue";
 import UMapGeoButton from "../../../../ui/map/geo-button/UMapGeoButton.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
-import UFadeScroll from "../../../../ui/fade-scroll/UFadeScroll.vue";
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import UDrag from "../../../../ui/drag/core/UDrag.vue";
 
@@ -319,7 +318,6 @@ export default {
   components: {
     UDrag,
     SDenseImagesCircles,
-    UFadeScroll,
     UMapGeoButton,
     BOrderButtonBasket,
   },

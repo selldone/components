@@ -54,7 +54,7 @@
                       <v-img
                         :src="app_mode.src"
                         class="mx-auto my-2"
-                        contain
+
                         height="64"
                         width="64"
                       ></v-img>
@@ -238,7 +238,7 @@
         v-if="app"
         :loading="busy"
         color="primary"
-        dark
+
         size="x-large"
         variant="flat"
         @click="editApp"
@@ -250,7 +250,7 @@
         v-else
         :loading="busy"
         color="primary"
-        dark
+
         size="x-large"
         variant="flat"
         @click="addApp"

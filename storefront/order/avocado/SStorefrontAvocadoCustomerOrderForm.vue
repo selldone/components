@@ -79,7 +79,7 @@
             :loading="busy_save_items"
             class="-add-btn"
             color="success"
-            dark
+
             rounded
             size="x-large"
             @click="addItem()"
@@ -103,7 +103,7 @@
           <v-btn
             class="-delivery-btn"
             color="#03A9F4"
-            dark
+
             rounded
             size="x-large"
             @click="showMapSelect"

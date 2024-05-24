@@ -17,43 +17,43 @@
 
   <div>
     <div
-        v-for="item in itemsHasReturnRequest"
-        :key="item.id"
-        :class="{ 'selected-item': isSelectedBasketItemReturn(item) }"
-        class="return-request-frame"
+      v-for="item in itemsHasReturnRequest"
+      :key="item.id"
+      :class="{ 'selected-item': isSelectedBasketItemReturn(item) }"
+      class="return-request-frame"
     >
       <div class="float-end small p-2 not-selectable text-center">
         <h1>RR-{{ item.return_request.id }}</h1>
 
-        <i class="fas fa-exchange-alt"/>
+        <i class="fas fa-exchange-alt" />
         {{ $t("global.basket_return_request_view.title") }}
 
         <i
-            v-if="isSelectedBasketItemReturn(item)"
-            class="fas fa-circle text-success mx-1"
+          v-if="isSelectedBasketItemReturn(item)"
+          class="fas fa-circle text-success mx-1"
         />
       </div>
       <div class="frame-container">
         <div class="title-bar">
           <circle-image
-              :size="48"
-              :src="getProductImage(item.product_id)"
-              class="image"
+            :size="48"
+            :src="getProductImage(item.product_id)"
+            class="image"
           />
           <b class="m-0 pt-1"
-          >{{ item.product.title }}
+            >{{ item.product.title }}
 
-            <i v-if="item.product.original" class="fas fa-certificate"/>
-            <i v-if="item.product.warranty" class="fas fa-shield-alt mx-2"/>
+            <i v-if="item.product.original" class="fas fa-certificate" />
+            <i v-if="item.product.warranty" class="fas fa-shield-alt mx-2" />
           </b>
           <p class="small text-muted m-0">
             {{ item.product.title_en }}
           </p>
         </div>
         <variant-item-view-micro
-            v-if="item.variant"
-            :product-variant="item.variant"
-            class="variant"
+          v-if="item.variant"
+          :product-variant="item.variant"
+          class="variant"
         />
 
         <u-text-value-dashed>
@@ -70,13 +70,13 @@
 
           {{ getLocalTimeString(item.return_request.created_at) }}
           <span
-              class="font-weight-bold ms-4"
-              title="The time between receiving and returning the order by customer."
-          ><i class="fas fa-history"/>
+            class="font-weight-bold ms-4"
+            title="The time between receiving and returning the order by customer."
+            ><i class="fas fa-history" />
             {{
               getFromOtherTimeString(
-                  item.return_request.created_at,
-                  basket.delivery_at,
+                item.return_request.created_at,
+                basket.delivery_at,
               )
             }}</span
           >
@@ -97,8 +97,8 @@
           <b>
             {{
               $t(
-                  getReturnBasketItemReasonObject(item.return_request.reason)
-                      .title,
+                getReturnBasketItemReasonObject(item.return_request.reason)
+                  .title,
               )
             }}
           </b>
@@ -120,45 +120,45 @@
               $t(getReturnRequestStateObject(item.return_request.state).name)
             }}
             <v-icon
-                :color="
+              :color="
                 getReturnRequestStateObject(item.return_request.state).color
               "
-                class="me-2"
-                size="small"
-            >{{ getReturnRequestStateObject(item.return_request.state).icon }}
+              class="me-2"
+              size="small"
+              >{{ getReturnRequestStateObject(item.return_request.state).icon }}
             </v-icon>
           </b>
         </u-text-value-dashed>
       </div>
 
       <div
-          class="d-flex justify-space-around align-items-center text-center attachment-container"
+        class="d-flex justify-space-around align-items-center text-center attachment-container"
       >
         <div>
           <a
-              :class="{ disabled: !getImagePath(item.return_request) }"
-              :href="getImagePath(item.return_request)"
-              target="_blank"
+            :class="{ disabled: !getImagePath(item.return_request) }"
+            :href="getImagePath(item.return_request)"
+            target="_blank"
           >
             <circle-image
-                v-if="getImagePath(item.return_request)"
-                :size="48"
-                :src="getImagePath(item.return_request)"
-                class="ma-auto"
+              v-if="getImagePath(item.return_request)"
+              :size="48"
+              :src="getImagePath(item.return_request)"
+              class="ma-auto"
             />
             <v-img
-                v-else
-                :height="48"
-                :src="require('../../../../assets/icons/camera.svg')"
-                :width="48"
-                class="ma-auto"
+              v-else
+              :height="48"
+              :src="require('../../../../assets/icons/camera.svg')"
+              :width="48"
+              class="ma-auto"
             />
 
             <p class="m-2">
               {{
                 getImagePath(item.return_request)
-                    ? $t("global.basket_return_request_view.download_image")
-                    : $t("global.not_exist")
+                  ? $t("global.basket_return_request_view.download_image")
+                  : $t("global.not_exist")
               }}
             </p>
           </a>
@@ -166,42 +166,42 @@
 
         <div>
           <a
-              :class="{ disabled: !getVideoPath(item.return_request) }"
-              :href="getVideoPath(item.return_request)"
-              target="_blank"
+            :class="{ disabled: !getVideoPath(item.return_request) }"
+            :href="getVideoPath(item.return_request)"
+            target="_blank"
           >
             <v-img
-                :height="48"
-                :src="require('../../../../assets/icons/film.svg')"
-                :width="48"
-                class="ma-auto"
+              :height="48"
+              :src="require('../../../../assets/icons/film.svg')"
+              :width="48"
+              class="ma-auto"
             />
             <p class="m-2">
               {{
                 getVideoPath(item.return_request)
-                    ? $t("global.basket_return_request_view.download_film")
-                    : $t("global.not_exist")
+                  ? $t("global.basket_return_request_view.download_film")
+                  : $t("global.not_exist")
               }}
             </p>
           </a>
         </div>
         <div>
           <a
-              :class="{ disabled: !getVoicePath(item.return_request) }"
-              :href="getVoicePath(item.return_request)"
-              target="_blank"
+            :class="{ disabled: !getVoicePath(item.return_request) }"
+            :href="getVoicePath(item.return_request)"
+            target="_blank"
           >
             <v-img
-                :height="48"
-                :src="require('../../../../assets/icons/voice.svg')"
-                :width="48"
-                class="ma-auto"
+              :height="48"
+              :src="require('../../../../assets/icons/voice.svg')"
+              :width="48"
+              class="ma-auto"
             />
             <p class="m-2">
               {{
                 getVoicePath(item.return_request)
-                    ? $t("global.basket_return_request_view.download_voice")
-                    : $t("global.not_exist")
+                  ? $t("global.basket_return_request_view.download_voice")
+                  : $t("global.not_exist")
               }}
             </p>
           </a>
@@ -211,32 +211,32 @@
       <div v-if="isAdmin || isRolePanel" class="admin">
         <div class="widget-buttons">
           <v-btn
-              :class="{ disabled: item.return_request.state === 'Accepted' }"
-              :loading="busy_item === 'Accepted' + item.id"
-              color="#388E3C"
-              size="x-large"
-              variant="flat"
-              @click="updateReturnState(item, 'Accepted')"
+            :class="{ disabled: item.return_request.state === 'Accepted' }"
+            :loading="busy_item === 'Accepted' + item.id"
+            color="#388E3C"
+            size="x-large"
+            variant="flat"
+            @click="updateReturnState(item, 'Accepted')"
           >
             <v-icon start>check</v-icon>
             {{ $t("global.basket_return_request_view.accept_by_admin_action") }}
           </v-btn>
 
           <v-btn
-              :class="{ disabled: item.return_request.state === 'Rejected' }"
-              :loading="busy_item === 'Rejected' + item.id"
-              color="#D32F2F"
-              size="x-large"
-              variant="flat"
-              @click="updateReturnState(item, 'Rejected')"
+            :class="{ disabled: item.return_request.state === 'Rejected' }"
+            :loading="busy_item === 'Rejected' + item.id"
+            color="#D32F2F"
+            size="x-large"
+            variant="flat"
+            @click="updateReturnState(item, 'Rejected')"
           >
-            <v-icon start>close</v-icon start>
+            <v-icon start>close</v-icon>
             {{ $t("global.basket_return_request_view.reject_by_admin_action") }}
           </v-btn>
         </div>
 
         <p class="text-start mt-3">
-          <i class="fas fa-exclamation-triangle ms-1"/>
+          <i class="fas fa-exclamation-triangle ms-1" />
           {{ $t("global.basket_return_request_view.message_for_admin") }}
         </p>
       </div>
@@ -245,8 +245,8 @@
 </template>
 
 <script>
-import {ReturnItemStates} from "@selldone/core-js/enums/basket/ReturnItemStates";
-import {ReturnOrderReason} from "@selldone/core-js/enums/basket/ReturnOrderReason";
+import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
+import { ReturnOrderReason } from "@selldone/core-js/enums/basket/ReturnOrderReason";
 import CircleImage from "../../../../ui/image/CircleImage.vue";
 import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
@@ -295,8 +295,7 @@ export default {
   },
 
   watch: {},
-  created() {
-  },
+  created() {},
 
   methods: {
     isSelectedBasketItemReturn(item) {
@@ -336,42 +335,42 @@ export default {
       let url = null;
       if (this.isAdmin) {
         url = window.API.POST_UPDATE_RETURN_REQUEST_STATE(
-            this.$route.params.shop_id,
-            this.$route.params.basket_id,
-            item.id,
+          this.$route.params.shop_id,
+          this.$route.params.basket_id,
+          item.id,
         );
       } else if (this.isRolePanel) {
         url = window.API.POST_MY_ROLE_TASK_ACTION(
-            this.role.id,
-            this.basket.id,
-            "return-request",
+          this.role.id,
+          this.basket.id,
+          "return-request",
         );
       }
 
       axios
-          .post(url, {
-            state: state,
-            item_id: item.id, // Use by role controller (server)
-          })
-          .then(({data}) => {
-            if (data.error) {
-              this.showErrorAlert(null, data.error_msg);
-            } else {
-              this.showSuccessAlert(
-                  null,
-                  this.$t(
-                      "global.basket_return_request_view.notifications.update_status_success",
-                  ),
-              );
-              item.return_request = data.return_request;
-            }
-          })
-          .catch((error) => {
-            this.showLaravelError(error);
-          })
-          .finally(() => {
-            this.busy_item = null;
-          });
+        .post(url, {
+          state: state,
+          item_id: item.id, // Use by role controller (server)
+        })
+        .then(({ data }) => {
+          if (data.error) {
+            this.showErrorAlert(null, data.error_msg);
+          } else {
+            this.showSuccessAlert(
+              null,
+              this.$t(
+                "global.basket_return_request_view.notifications.update_status_success",
+              ),
+            );
+            item.return_request = data.return_request;
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_item = null;
+        });
     },
   },
 };
@@ -397,13 +396,13 @@ export default {
 
   &:after {
     background: linear-gradient(
-            -45deg,
-            #fff 16px,
-            red 16px,
-            blue 16px,
-            transparent 0
-    ),
-    linear-gradient(45deg, #fff 16px, transparent 0);
+        -45deg,
+        #fff 16px,
+        red 16px,
+        blue 16px,
+        transparent 0
+      ),
+      linear-gradient(45deg, #fff 16px, transparent 0);
     background-position: left top;
     background-repeat: repeat-x;
     background-size: 22px 32px;

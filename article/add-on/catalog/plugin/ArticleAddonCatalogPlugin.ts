@@ -12,7 +12,7 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-import $ from 'jquery';
+import $ from "jquery";
 window.$ = $;
 window.jQuery = $;
 /**
@@ -149,8 +149,8 @@ window.jQuery = $;
    * @param e
    */
   CustomAddon.prototype.selectAction = function (e) {
-    let that = this,
-      $image;
+    const  that = this
+    let  $image;
 
     if (this.core.options.enabled) {
       $image = $(e.target).closest(RootClassName);

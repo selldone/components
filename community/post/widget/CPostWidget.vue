@@ -56,7 +56,8 @@
         <div class="opx">
           <v-btn
             v-if="!simpleMode"
-            icon variant="text"
+            icon
+            variant="text"
             @click="
               (e) =>
                 showCommunityPostActionsMenu(
@@ -296,7 +297,8 @@
             :caption="$t(rec.name)"
             :style="{ 'animation-delay': 50 * i + 'ms' }"
             class="m-2 zoomIn anim-fast sub-caption -hover"
-            icon  variant="text"
+            icon
+            variant="text"
             @click="setReaction(rec.code)"
             ><img :src="rec.image" height="24" width="24"
           /></v-btn>

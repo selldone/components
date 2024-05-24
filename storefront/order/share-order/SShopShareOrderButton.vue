@@ -18,7 +18,6 @@
       :color="SaminColorDarkDeep"
       :loading="busy_share"
       class="tnt"
-      dark
       rounded
       @click="showShareDialog"
     >
@@ -38,7 +37,7 @@
           <v-icon class="me-2">share</v-icon>
           {{ $t("share_order.title") }}
           <v-spacer></v-spacer>
-          <v-chip class="mx-2" color="green" dark size="small" variant="flat">
+          <v-chip class="mx-2" color="green" size="small" variant="flat">
             <v-icon start>lock_clock</v-icon>
             {{ $t("global.commons.secure") }}
           </v-chip>
@@ -63,9 +62,8 @@
           </u-smart-switch>
 
           <u-text-copy-box
-            :border="false"
-            :value="wishlist_url"
             border
+            :value="wishlist_url"
             class="my-5"
             small-width-mode
           ></u-text-copy-box>

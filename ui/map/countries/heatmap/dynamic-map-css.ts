@@ -14,7 +14,7 @@
 
 // We multiply this unit by the (value of a country - min) to get the
 // decimal value to provide to the Chroma scale instance.
-import type {Scale} from "chroma-js";
+import type { Scale } from "chroma-js";
 
 const getColorScaleUnit = (min: number, max: number) => 1 / (max - min);
 

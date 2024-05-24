@@ -23,7 +23,7 @@
     :items="items"
     :label="label"
     :loading="loading"
-    :messages="messages?messages:undefined"
+    :messages="messages ? messages : undefined"
     :placeholder="placeholder"
     :prepend-inner-icon="!noIcon && !select ? 'account_circle' : undefined"
     :readonly="readonly"

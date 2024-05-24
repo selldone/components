@@ -31,8 +31,6 @@
       </v-card-title>
       <div>
         <v-tabs v-model="reaction" slider-size="4">
-          <v-tabs-slider color="success"></v-tabs-slider>
-
           <v-tab
             v-for="item in tabs"
             :key="item.act.code"
@@ -58,21 +56,19 @@
                 </v-img>
               </v-avatar>
             </template>
-            <v-list-item-content class="p-0">
-              <v-list-item-title class="uname"
-                >{{ item.name }}
-                <v-icon
-                  v-if="item.verified"
-                  class="ms-1"
-                  color="blue"
-                  size="small"
-                  >verified
-                </v-icon>
-              </v-list-item-title>
-              <v-list-item-subtitle class="udesc my-1"
-                >{{ item.description }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <v-list-item-title class="uname"
+              >{{ item.name }}
+              <v-icon
+                v-if="item.verified"
+                class="ms-1"
+                color="blue"
+                size="small"
+                >verified
+              </v-icon>
+            </v-list-item-title>
+            <v-list-item-subtitle class="udesc my-1"
+              >{{ item.description }}
+            </v-list-item-subtitle>
           </v-list-item>
         </v-list>
 

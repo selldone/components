@@ -30,7 +30,7 @@
           :height="small ? 16 : 24"
           :src="icon"
           class="mx-2 pointer-pointer"
-          contain
+
           width="48px"
           @mouseleave="show_description = false"
           @mouseover="show_description = true"
@@ -50,7 +50,6 @@
       <div v-if="!show_description" class="mb-2">
         <v-btn
           v-if="false"
-          :dark="dark"
           icon
           @click="$emit('selectDelete', plugin)"
           @click.stop
@@ -58,13 +57,12 @@
           <v-icon color="#D32F2F"> delete</v-icon>
         </v-btn>
 
-        <v-btn :dark="dark" icon @click="goToEditPlugin(plugin)" @click.stop>
+        <v-btn  icon @click="goToEditPlugin(plugin)" @click.stop>
           <v-icon :color="dark ? '#fff' : '#444'"> edit</v-icon>
         </v-btn>
 
         <v-btn
           v-if="url"
-          :dark="dark"
           :href="url"
           icon
           rel="nofollow"

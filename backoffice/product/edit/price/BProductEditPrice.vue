@@ -134,7 +134,7 @@
             ></v-img>
           </v-col>
           <v-col class="text-start text-subtitle-2" cols="12" sm="6">
-            <v-icon :dark="!light" size="small">info</v-icon>
+            <v-icon  size="small">info</v-icon>
             {{ $t(PricingTypes[pricing].message) }}
           </v-col>
         </v-row>

@@ -13,8 +13,14 @@
   -->
 
 <template>
-  <v-bottom-sheet v-model="show_dialog" width="98vw" max-width="860" scrollable content-class="rounded-t-xl">
-    <v-card  rounded="t-xl">
+  <v-bottom-sheet
+    v-model="show_dialog"
+    width="98vw"
+    max-width="860"
+    scrollable
+    content-class="rounded-t-xl"
+  >
+    <v-card rounded="t-xl">
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1">import_contacts</v-icon>
         {{ $t("global.commons.catalog") }}
@@ -32,7 +38,6 @@
           <v-icon start>delete</v-icon>
           {{ $t("global.actions.delete") }}
         </v-btn>
-
       </v-card-title>
       <v-card-text>
         <u-tabs-rounded
@@ -52,8 +57,6 @@
           class="mb-5"
         >
         </u-tabs-rounded>
-
-
 
         <v-window v-model="tab" class="bg-transparent">
           <v-window-item value="image">
@@ -204,7 +207,7 @@ export default {
         this.callback = callback;
         this.deleteCallback = deleteCallback;
 
-        this.tab = tab ;
+        this.tab = tab;
 
         this.showDialog();
       },
