@@ -23,12 +23,10 @@
     >
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <v-col
-        class="text-start px-2 flex-grow-1"
+        class="text-start px-2"
         cols="12"
-        lg="6"
-        md="12"
-        sm="12"
-        xl="6"
+        sm="5"
+
       >
         <router-link
           :to="{
@@ -121,7 +119,7 @@
       </v-col>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <v-col cols="6" lg="3" md="6" sm="5" xl="3">
+      <v-col cols="6"  sm="3" >
         <p v-if="basketItem.dis" class="discount-value">
           <u-price
             :amount="
@@ -206,7 +204,7 @@
       </v-col>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <v-col cols="6" lg="3" md="6" sm="7" xl="3">
+      <v-col cols="6" sm="4" >
         <s-shop-basket-item-count-select
           v-model="basketItem.count"
           :disabled="['area', 'volume'].includes(product.price_input)"

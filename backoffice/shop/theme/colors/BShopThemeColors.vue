@@ -238,7 +238,7 @@
                 <img
                   class="mx-auto my-2"
                   height="24"
-                  src="../../../../../core-js/enums/customer/assets/customer-levels/diamond.svg"
+                  src="../../../../../core-js/models/shop/club/assets/customer-levels/diamond.svg"
                   width="24"
                 />
               </div>

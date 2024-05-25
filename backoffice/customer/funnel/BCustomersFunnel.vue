@@ -73,9 +73,9 @@
 
 <script>
 import BCustomersFilterDesign from "../filter/design/BCustomersFilterDesign.vue";
-import CustomersFilterTypes from "@selldone/core-js/enums/customer/CustomersFilterTypes";
 import _ from "lodash-es";
 import UChartFunnel from "../../../ui/chart/funnel/UChartFunnel.vue";
+import { Customer } from "@selldone/core-js";
 
 export default {
   name: "BCustomersFunnel",
@@ -138,7 +138,7 @@ export default {
 
       //-------------
 
-      filter_types: CustomersFilterTypes,
+      filter_types: Customer.Filters,
       //------------
 
       changed: false,
@@ -242,10 +242,10 @@ export default {
               );
 
             /*  if(download_data){
-                      const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
-                      excel.downLoad();
-        
-                    }*/
+                        const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
+                        excel.downLoad();
+          
+                      }*/
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

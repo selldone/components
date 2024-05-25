@@ -54,9 +54,9 @@
       "
     >
       <template v-slot:item="{ item, props }">
-        <v-list-item v-if="item.raw" v-bind="props">
+        <v-list-item v-if="item.raw" v-bind="props" class="text-start">
           <template v-slot:title>
-            {{ item.raw }}
+            <b class="me-1">{{ item.raw }}</b>
 
             <small class="ms-1">{{
               unit ? unit : $t("global.commons.count_unit")
@@ -74,9 +74,9 @@
           class="single-line d-block"
         >
           {{ item.raw }}
-          <small v-if="!noUnit" class="mx-1">{{
+          <span v-if="!noUnit" class="mx-1 x-small">{{
             unit ? unit : $t("global.commons.count_unit")
-          }}</small>
+          }}</span>
         </span>
       </template>
 

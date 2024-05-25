@@ -18,9 +18,7 @@
     :title="filter.type"
     class="it"
   >
-    <v-icon v-if="icon"  class="me-2" size="x-small">{{
-      icon
-    }}</v-icon>
+    <v-icon v-if="icon" class="me-2" size="x-small">{{ icon }}</v-icon>
     <span
       v-if="!noLabel"
       class="me-1"
@@ -76,15 +74,11 @@
       "
     >
       <small v-if="filter.start" class="mx-1"
-        ><v-icon  class="me-1" color="green" size="small"
-          >play_arrow</v-icon
-        >
+        ><v-icon class="me-1" color="green" size="small">play_arrow</v-icon>
         {{ getLocalTimeStringSmall(filter.start) }}</small
       >
       <small v-if="filter.end" class="mx-1"
-        ><v-icon  class="me-1" color="red" size="small"
-          >stop</v-icon
-        >
+        ><v-icon class="me-1" color="red" size="small">stop</v-icon>
         {{ getLocalTimeStringSmall(filter.end) }}</small
       >
     </div>
@@ -97,7 +91,7 @@
 </template>
 
 <script>
-import CustomersFilterTypes from "@selldone/core-js/enums/customer/CustomersFilterTypes";
+import { Customer } from "@selldone/core-js";
 
 export default {
   name: "BCustomersFilterItem",
@@ -109,12 +103,12 @@ export default {
 
   computed: {
     icon() {
-      if (!CustomersFilterTypes[this.filter.type]) return null;
-      return CustomersFilterTypes[this.filter.type].icon;
+      if (!Customer.Filters[this.filter.type]) return null;
+      return Customer.Filters[this.filter.type].icon;
     },
     name() {
-      if (!CustomersFilterTypes[this.filter.type]) return null;
-      return this.$t(CustomersFilterTypes[this.filter.type].title);
+      if (!Customer.Filters[this.filter.type]) return null;
+      return this.$t(Customer.Filters[this.filter.type].title);
     },
   },
   methods: {},
