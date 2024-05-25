@@ -354,7 +354,7 @@ export default {
         this.last_cat = old_route.params.category_name;
         this.last_product = old_route.params.product_id;
 
-        console.log("last_cat", this.last_cat);
+        //console.log("Last category", this.last_cat);
       }
 
       // When user enter a product from a category:

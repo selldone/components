@@ -683,7 +683,7 @@ export default {
       this.cal_height = this.$refs.list_container?.clientHeight;
       if (!this.cal_height) return;
       this.$emit("change-height", this.cal_height);
-      console.debug("Filter menu height", this.cal_height);
+      //console.debug("Filter menu height", this.cal_height);
     },
   },
   mounted() {
