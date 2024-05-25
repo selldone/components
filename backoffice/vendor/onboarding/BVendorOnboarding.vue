@@ -718,7 +718,8 @@ export default {
           if (!data.error) {
             this.$emit("update:modelValue", data.vendor_request);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            // We don't have any request! no need to show error!
+           // this.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
