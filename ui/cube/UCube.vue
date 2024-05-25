@@ -61,46 +61,105 @@ export default {
       return scale > 1 ? 1 : scale;
     },
   },
+  watch:{
+    x(){
+      this.draw()
+    },
+    y(){
+      this.draw()
+    },
+    z(){
+      this.draw()
+    },
+    size(){
+      this.draw()
+    },
+    color(){
+      this.draw()
+    },
+  },
+  data() {
+    return {
+      ctx: null,
+    };
+  },
 
   mounted() {
-    let size = this.size;
     // Set up our canvas
     let canvas = this.$refs.canvas;
-    canvas.width = size;
-    canvas.height = size;
-    let ctx = canvas.getContext("2d");
+    canvas.width = this.size;
+    canvas.height = this.size;
+    this.ctx = canvas.getContext("2d");
 
+    this.draw();
+  },
+  methods: {
     // Animation function
 
-    let t = this;
+    draw() {
+      const size = this.size;
+      const ctx = this.ctx;
 
-    function draw() {
       // clear the canvas
       ctx.clearRect(0, 0, size, size);
 
       // Wobble the cube using a sine wave
-      const wobble = t.noAnimation
-        ? 0
-        : (Math.sin(Date.now() / 250) * size * t.scale) / 50;
+      const wobble = this.noAnimation
+        ? size / 4
+        : (Math.sin(Date.now() / 250) * size * this.scale) / 50;
 
       // draw the cube
-      drawCube(
+      this.drawCube(
         size / 2,
-        size / 2 + wobble + (t.z * t.scale) / 2 + (size > 100 ? 15 : 0),
-        Number(t.x * t.scale),
-        Number(t.y * t.scale),
-        Number(t.z * t.scale),
-        t.color,
+        size / 2 + wobble + (this.z * this.scale) / 2 + (size > 100 ? 15 : 0),
+        Number(this.x * this.scale),
+        Number(this.y * this.scale),
+        Number(this.z * this.scale),
+        this.color,
       );
 
-      if (!t.noAnimation) requestAnimationFrame(draw);
-    }
+      if (!this.noAnimation) requestAnimationFrame(this.draw);
+    },
+    // Draw a cube to the specified specs
+    drawCube(x, y, wx, wy, h, color) {
+      const ctx = this.ctx;
 
-    draw();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x - wx, y - wx * 0.5);
+      ctx.lineTo(x - wx, y - h - wx * 0.5);
+      ctx.lineTo(x, y - h * 1);
+      ctx.closePath();
+      ctx.fillStyle = this.shadeColor(color, -10);
+      ctx.strokeStyle = color;
+      ctx.stroke();
+      ctx.fill();
 
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + wy, y - wy * 0.5);
+      ctx.lineTo(x + wy, y - h - wy * 0.5);
+      ctx.lineTo(x, y - h * 1);
+      ctx.closePath();
+      ctx.fillStyle = this.shadeColor(color, 10);
+      ctx.strokeStyle = this.shadeColor(color, 50);
+      ctx.stroke();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(x, y - h);
+      ctx.lineTo(x - wx, y - h - wx * 0.5);
+      ctx.lineTo(x - wx + wy, y - h - (wx * 0.5 + wy * 0.5));
+      ctx.lineTo(x + wy, y - h - wy * 0.5);
+      ctx.closePath();
+      ctx.fillStyle = this.shadeColor(color, 20);
+      ctx.strokeStyle = this.shadeColor(color, 60);
+      ctx.stroke();
+      ctx.fill();
+    },
     // Colour adjustment function
     // Nicked from http://stackoverflow.com/questions/5560248
-    function shadeColor(color, percent) {
+    shadeColor(color, percent) {
       color = color.substring(1);
       let num = parseInt(color, 16),
         amt = Math.round(2.55 * percent),
@@ -118,43 +177,7 @@ export default {
           .toString(16)
           .slice(1)
       );
-    }
-
-    // Draw a cube to the specified specs
-    function drawCube(x, y, wx, wy, h, color) {
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x - wx, y - wx * 0.5);
-      ctx.lineTo(x - wx, y - h - wx * 0.5);
-      ctx.lineTo(x, y - h * 1);
-      ctx.closePath();
-      ctx.fillStyle = shadeColor(color, -10);
-      ctx.strokeStyle = color;
-      ctx.stroke();
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + wy, y - wy * 0.5);
-      ctx.lineTo(x + wy, y - h - wy * 0.5);
-      ctx.lineTo(x, y - h * 1);
-      ctx.closePath();
-      ctx.fillStyle = shadeColor(color, 10);
-      ctx.strokeStyle = shadeColor(color, 50);
-      ctx.stroke();
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(x, y - h);
-      ctx.lineTo(x - wx, y - h - wx * 0.5);
-      ctx.lineTo(x - wx + wy, y - h - (wx * 0.5 + wy * 0.5));
-      ctx.lineTo(x + wy, y - h - wy * 0.5);
-      ctx.closePath();
-      ctx.fillStyle = shadeColor(color, 20);
-      ctx.strokeStyle = shadeColor(color, 60);
-      ctx.stroke();
-      ctx.fill();
-    }
+    },
   },
 };
 </script>
