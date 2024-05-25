@@ -171,7 +171,7 @@
 
     <!-- Trend -->
     <u-ribbon v-if="topic.trend" red>
-      <v-icon  size="small">local_fire_department</v-icon>
+      <v-icon size="small">local_fire_department</v-icon>
       {{ $t("community.commons.trend") }}
     </u-ribbon>
   </v-col>
@@ -180,11 +180,10 @@
 <script>
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import CImageView from "../../community/image/view/CImageView.vue";
-import { TopicSubscriptionType } from "@selldone/core-js/enums/community/TopicSubscriptionType";
-import { TopicTrialType } from "@selldone/core-js/enums/community/TopicTrialType";
 import URibbon from "../../ui/ribbon/URibbon.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
+import { CommunityTopic } from "@selldone/core-js";
 
 export default {
   name: "CommunityTopicCard",
@@ -239,11 +238,11 @@ export default {
     subscription_title() {
       return (
         this.subscription &&
-        this.$t(TopicSubscriptionType[this.subscription].name)
+        this.$t(CommunityTopic.SubscriptionTypes[this.subscription].name)
       );
     },
     trial_title() {
-      return this.trial && this.$t(TopicTrialType[this.trial].name);
+      return this.trial && this.$t(CommunityTopic.TrialTypes[this.trial].name);
     },
   },
   created() {

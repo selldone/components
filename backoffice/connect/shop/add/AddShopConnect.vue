@@ -298,8 +298,8 @@ import ConnectInputField from "../../../connect/input/ConnectInputField.vue";
 import ConnectOsPods from "../../../connect/pods/ConnectOsPods.vue";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import { ToQueryString } from "@selldone/core-js/helper/string/StringHelper";
-import { ConnectMode } from "@selldone/core-js/enums/connect/ConnectMode";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
+import { Connect } from "@selldone/core-js";
 
 export default {
   name: "AddShopConnect",
@@ -358,9 +358,9 @@ export default {
     },
 
     delete_label() {
-      if (this.connect.mode === ConnectMode.Migration.code)
+      if (this.connect.mode === Connect.Modes.Migration.code)
         return `I want to delete the ${this.connect.name} connection. All synced products will remain, and just its Connect badge in products management will be removed.`;
-      else if (this.connect.mode === ConnectMode.Dropshipping.code)
+      else if (this.connect.mode === Connect.Modes.Dropshipping.code)
         return `I want to delete ${this.connect.name} <-> product connection. All synced products will be removed (Move to trashed).`;
 
       return `I want to delete ${this.connect.name} service.`;
@@ -370,7 +370,7 @@ export default {
       return this.connect.mode;
     },
     mode_desc() {
-      return ConnectMode[this.mode] && this.$t(ConnectMode[this.mode].desc);
+      return Connect.Modes[this.mode] && this.$t(Connect.Modes[this.mode].desc);
     },
   },
   watch: {

@@ -671,8 +671,6 @@ import { Screenshot } from "@selldone/core-js/helper/canvas/Screenshot.ts";
 import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper.ts";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
-import { TopicSubscriptionType } from "@selldone/core-js/enums/community/TopicSubscriptionType.ts";
-import { TopicTrialType } from "@selldone/core-js/enums/community/TopicTrialType.ts";
 import { Currency } from "@selldone/core-js/enums/payment/Currency.ts";
 import CPostPoll from "../poll/CPostPoll.vue";
 import CProductEditor from "../../../community/product/editor/CProductEditor.vue";
@@ -683,7 +681,7 @@ import CAttachEditor from "../../../community/attach/editor/CAttachEditor.vue";
 import CAttachViewer from "../../../community/attach/viewer/CAttachViewer.vue";
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
 import _ from "lodash-es";
-import { Community } from "@selldone/core-js";
+import { Community, CommunityTopic } from "@selldone/core-js";
 
 /**
  * Calculate aspect ratio of element.
@@ -791,8 +789,8 @@ export default {
       price: 0,
       currency: null,
 
-      TopicSubscriptionType: TopicSubscriptionType,
-      TopicTrialType: TopicTrialType,
+      TopicSubscriptionType: CommunityTopic.SubscriptionTypes,
+      TopicTrialType: CommunityTopic.TrialTypes,
 
       poll: null,
 

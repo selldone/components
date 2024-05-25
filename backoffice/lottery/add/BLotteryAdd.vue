@@ -183,7 +183,7 @@
             class="my-7"
           ></u-smart-switch>
 
-          <b-club-select v-model="clubs" multiple no-club> </b-club-select>
+          <b-club-select v-model="clubs" multiple no-club></b-club-select>
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Prize ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
@@ -353,7 +353,6 @@
 </template>
 
 <script>
-import { CustomerClubLevels } from "@selldone/core-js/enums/customer/CustomerClubLevels";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
@@ -365,6 +364,7 @@ import BClubSelect from "../../club/select/BClubSelect.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import BTranslationButtonLottery from "../../translation/button/lottery/BTranslationButtonLottery.vue";
 import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue";
+import { Club } from "@selldone/core-js";
 
 export default {
   name: "BLotteryAdd",
@@ -403,7 +403,7 @@ export default {
   data: () => ({
     tab: "amount",
 
-    CustomerClubLevels: CustomerClubLevels,
+    CustomerClubLevels: Club.Levels,
 
     enable: false,
     quantity: 10,
@@ -445,11 +445,11 @@ export default {
         chance: this.chance,
         free_for_first: this.free_for_first,
         no_club: this.clubs.includes("no-club"),
-        bronze_club: this.clubs.includes(CustomerClubLevels.BRONZE.code),
-        silver_club: this.clubs.includes(CustomerClubLevels.SILVER.code),
-        gold_club: this.clubs.includes(CustomerClubLevels.GOLD.code),
-        platinum_club: this.clubs.includes(CustomerClubLevels.PLATINUM.code),
-        diamond_club: this.clubs.includes(CustomerClubLevels.DIAMOND.code),
+        bronze_club: this.clubs.includes(Club.Levels.BRONZE.code),
+        silver_club: this.clubs.includes(Club.Levels.SILVER.code),
+        gold_club: this.clubs.includes(Club.Levels.GOLD.code),
+        platinum_club: this.clubs.includes(Club.Levels.PLATINUM.code),
+        diamond_club: this.clubs.includes(Club.Levels.DIAMOND.code),
 
         currency: this.currency,
 
@@ -575,23 +575,23 @@ export default {
         this.clubs.push("no-club");
       }
       if (this.lottery.bronze_club) {
-        this.clubs.push(CustomerClubLevels.BRONZE.code);
+        this.clubs.push(Club.Levels.BRONZE.code);
       }
 
       if (this.lottery.silver_club) {
-        this.clubs.push(CustomerClubLevels.SILVER.code);
+        this.clubs.push(Club.Levels.SILVER.code);
       }
 
       if (this.lottery.gold_club) {
-        this.clubs.push(CustomerClubLevels.GOLD.code);
+        this.clubs.push(Club.Levels.GOLD.code);
       }
 
       if (this.lottery.platinum_club) {
-        this.clubs.push(CustomerClubLevels.PLATINUM.code);
+        this.clubs.push(Club.Levels.PLATINUM.code);
       }
 
       if (this.lottery.diamond_club) {
-        this.clubs.push(CustomerClubLevels.DIAMOND.code);
+        this.clubs.push(Club.Levels.DIAMOND.code);
       }
 
       this.amount = this.lottery.amount;

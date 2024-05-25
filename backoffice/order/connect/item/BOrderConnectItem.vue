@@ -171,7 +171,7 @@
 import SOrderDeliveryStatusStepper from "../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
-import { ConnectMode } from "@selldone/core-js/enums/connect/ConnectMode";
+import { Connect } from "@selldone/core-js";
 
 export default {
   name: "BOrderConnectItem",
@@ -270,9 +270,9 @@ export default {
     },
     has_cancel() {
       return [
-        ConnectMode.Dropshipping.code,
-        ConnectMode.Marketplace.code,
-        ConnectMode.Other.code,
+        Connect.Modes.Dropshipping.code,
+        Connect.Modes.Marketplace.code,
+        Connect.Modes.Other.code,
       ].includes(this.connect_mode);
     },
 

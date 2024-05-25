@@ -15,15 +15,10 @@
 <template>
   <div v-bind="$attrs">
     <draggable
-      :component-data="{
-        tag: 'ul',
-        type: 'transition-group',
-        name: !drag ? 'flip-list' : 'fade',
-      }"
       :model-value="modelValue"
       class="list-group list-group-flush"
       style="list-style-type: none"
-      tag="transition-group"
+      tag="div"
       v-bind="dragOptions"
       @end="drag = false"
       @start="drag = true"

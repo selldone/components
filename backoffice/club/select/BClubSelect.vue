@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { CustomerClubLevels } from "@selldone/core-js/enums/customer/CustomerClubLevels";
+import { Club } from "@selldone/core-js";
 
 export default {
   name: "BClubSelect",
@@ -89,7 +89,7 @@ export default {
     },
   },
   data: () => ({
-    CustomerClubLevels: CustomerClubLevels,
+    CustomerClubLevels: Club.Levels,
   }),
 };
 </script>

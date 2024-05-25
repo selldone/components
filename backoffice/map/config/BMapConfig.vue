@@ -124,8 +124,8 @@
 <script>
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
-import { MapProviders } from "@selldone/core-js/enums/map/MapProviders";
 import BMapDriverOptions from "../../map/driver/options/BMapDriverOptions.vue";
+import { Map } from "@selldone/core-js";
 
 export default {
   name: "BMapConfig",
@@ -141,9 +141,9 @@ export default {
     },
   },
   data: () => ({
-    map_providers: Object.values(MapProviders),
+    map_providers: Object.values(Map.Providers),
 
-    driver: MapProviders.Mapbox.code,
+    driver: Map.Providers.Mapbox.code,
     enable: false,
     busy_set: false,
 

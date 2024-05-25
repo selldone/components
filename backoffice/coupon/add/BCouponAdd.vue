@@ -500,7 +500,6 @@
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import UDateInput from "../../../ui/date/input/UDateInput.vue";
-import { CustomerClubLevels } from "@selldone/core-js/enums/customer/CustomerClubLevels";
 import UColorSelector from "../../../ui/color/selector/UColorSelector.vue";
 import SStorefrontCouponView from "../../../storefront/coupon/view/SStorefrontCouponView.vue";
 import BProductsSelectBox from "../../../backoffice/product/select-box/BProductsSelectBox.vue";
@@ -515,6 +514,7 @@ import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import BTranslationButtonCoupon from "../../translation/button/coupon/BTranslationButtonCoupon.vue";
 import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
+import { Club } from "@selldone/core-js";
 
 export default {
   name: "BCouponAdd",
@@ -561,7 +561,7 @@ export default {
   },
 
   data: () => ({
-    CustomerClubLevels: CustomerClubLevels,
+    CustomerClubLevels: Club.Levels,
 
     enable: false,
 

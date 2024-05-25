@@ -32,12 +32,12 @@
 <script>
 import { defineComponent } from "vue";
 import BMapDriverMapboxOptions from "../../../map/driver/mapbox/options/BMapDriverMapboxOptions.vue";
-import { MapProviders } from "@selldone/core-js/enums/map/MapProviders";
+import { Map } from "@selldone/core-js";
 
 export default defineComponent({
   name: "BMapDriverOptions",
   data: () => ({
-    MapProviders: MapProviders,
+    MapProviders: Map.Providers,
   }),
   computed: {},
   components: { BMapDriverMapboxOptions },

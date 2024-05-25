@@ -25,8 +25,6 @@ import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
 import {SocialNetwork} from "@selldone/core-js/enums/social/SocialNetwork";
 import {ShopURLs} from "@selldone/core-js/helper/url/ShopURLs";
 import {ColorHelper} from "@selldone/core-js/helper/color/ColorHelper";
-
-import {CustomerClubLevels} from "@selldone/core-js/enums/customer/CustomerClubLevels";
 import {CurrencyHelper} from "@selldone/core-js/helper/currency/CurrencyHelper.ts";
 import {PriceHelper} from "@selldone/core-js/helper/price/PriceHelper";
 import {LogesticHelper} from "@selldone/core-js/helper/logistic/LogesticHelper";
@@ -59,7 +57,7 @@ import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
 import {Slugify} from "../utils/slugify/slugify.ts";
 import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
 import {UserProfile} from "@selldone/core-js/models/user/user_profile.model";
-import {Basket, BasketItemReturn, Map, Order} from "@selldone/core-js";
+import {Basket, BasketItemReturn, Club, Map, Order} from "@selldone/core-js";
 
 //――― User Device Preferences ―――
 
@@ -192,8 +190,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                                                                      return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                                                                    },*/
+                                                                          return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                                                                        },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -359,8 +357,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                                                                      return Num2persian(number);
-                                                                    },*/
+                                                                          return Num2persian(number);
+                                                                        },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -1327,8 +1325,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                                                      PushNotification.AskForPermission();
-                                                                    },*/
+                                                                          PushNotification.AskForPermission();
+                                                                        },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 
@@ -1458,8 +1456,8 @@ const CoreMixin = {
 
     //―――――――――――――――――――――― Enums ――――――――――――――――――――
 
-    getCustomerClubLevel(level: keyof typeof CustomerClubLevels) {
-      return CustomerClubLevels[level];
+    getCustomerClubLevel(level: keyof typeof Club.Levels) {
+      return Club.Levels[level];
     },
 
     isString(value: any): value is string {

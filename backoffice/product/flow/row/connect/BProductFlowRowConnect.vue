@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { ConnectMode } from "@selldone/core-js/enums/connect/ConnectMode";
+import { Connect } from "@selldone/core-js";
 
 export default {
   name: "BProductFlowRowConnect",
@@ -96,7 +96,7 @@ export default {
     },
 
     connect_mode() {
-      return ConnectMode[this.connect?.mode];
+      return Connect.Modes[this.connect?.mode];
     },
   },
 

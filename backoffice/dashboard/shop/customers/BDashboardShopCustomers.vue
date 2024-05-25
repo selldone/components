@@ -186,7 +186,7 @@ import _ from "lodash-es";
 import numeral from "numeral";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UpDownIcon from "../../../../ui/icon/UpDownIcon.vue";
-import { CustomerClubLevels } from "@selldone/core-js/enums/customer/CustomerClubLevels";
+import { Club } from "@selldone/core-js";
 
 export default {
   name: "BDashboardShopCustomers",
@@ -502,8 +502,8 @@ export default {
     },
     levels() {
       let out = [];
-      for (let key in CustomerClubLevels) {
-        let level = CustomerClubLevels[key];
+      for (let key in Club.Levels) {
+        let level = Club.Levels[key];
 
         if (this.clubs) {
           const club = this.clubs.find((club) => club.level === level.code);

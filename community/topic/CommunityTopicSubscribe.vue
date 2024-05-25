@@ -79,8 +79,7 @@
 </template>
 
 <script>
-import { TopicTrialType } from "@selldone/core-js/enums/community/TopicTrialType";
-import { TopicSubscriptionType } from "@selldone/core-js/enums/community/TopicSubscriptionType";
+import { CommunityTopic } from "@selldone/core-js";
 
 export default {
   name: "CommunityTopicSubscribe",
@@ -107,10 +106,10 @@ export default {
 
     trial() {
       if (!this.topic.trial) return null;
-      return TopicTrialType[this.topic.trial];
+      return CommunityTopic.TrialTypes[this.topic.trial];
     },
     subscription() {
-      return TopicSubscriptionType[this.topic.subscription];
+      return CommunityTopic.SubscriptionTypes[this.topic.subscription];
     },
   },
 

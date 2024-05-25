@@ -166,11 +166,15 @@ export default {
   },
 
   watch: {
-    modelValue() {
-      this.changed = true;
+    modelValue: {
+      handler(new_val, old_val) {
+        this.changed = true;
+      },
+      deep: true,
     },
 
-    changed: _.throttle(function (newVal, oldVal) {
+    changed: _.debounce(function (newVal, oldVal) {
+      if (!newVal) return;
       this.refreshFunnel();
     }, 1000),
   },
@@ -238,10 +242,10 @@ export default {
               );
 
             /*  if(download_data){
-                    const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
-                    excel.downLoad();
-      
-                  }*/
+                      const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
+                      excel.downLoad();
+        
+                    }*/
           } else {
             this.showErrorAlert(null, data.error_msg);
           }
