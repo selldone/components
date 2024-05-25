@@ -214,7 +214,7 @@
 <script>
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
-import { ReturnOrderReason } from "@selldone/core-js/enums/basket/ReturnOrderReason";
+import { BasketItemReturn } from "@selldone/core-js";
 
 export default {
   name: "SShopBasketItemReturnForm",
@@ -240,7 +240,7 @@ export default {
 
       reason: null,
 
-      items: ReturnOrderReason.physical,
+      items: BasketItemReturn.Reason.physical,
     };
   },
   computed: {
@@ -388,8 +388,8 @@ export default {
             count: this.count,
             note: this.note,
             /*image: this.image,
-                                    video: this.video,
-                                    voice: this.voice*/
+                                        video: this.video,
+                                        voice: this.voice*/
           },
         )
         .then(({ data }) => {

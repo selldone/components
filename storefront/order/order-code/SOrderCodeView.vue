@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "SOrderCodeView",
@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     status() {
-      return BasketStatus[this.basket.status];
+      return Basket.Status[this.basket.status];
     },
     code() {
       return this.basket.type === ProductType.PHYSICAL.code

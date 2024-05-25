@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
+import { BasketItemReturn } from "@selldone/core-js";
 
 export default {
   name: "ReturnRequestButtonBadge",
@@ -94,14 +94,14 @@ export default {
     getDotColorOfReturnRequests(basket_item_returns) {
       if (
         basket_item_returns.some(
-          (item) => item.state === ReturnItemStates.Pending.code,
+          (item) => item.state === BasketItemReturn.States.Pending.code,
         )
       )
         return "red";
 
       if (
         basket_item_returns.some(
-          (item) => item.state === ReturnItemStates.Rejected.code,
+          (item) => item.state === BasketItemReturn.States.Rejected.code,
         )
       )
         return "amber";

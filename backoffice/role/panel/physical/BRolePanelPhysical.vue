@@ -73,7 +73,7 @@
             @confirm-order="
               ({ list, callback }) =>
                 updateState(
-                  this.PhysicalOrderStates.OrderConfirm.code,
+                  PhysicalOrderStates.OrderConfirm.code,
                   list,
                   callback,
                   null,
@@ -165,12 +165,11 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ShopRoles } from "@selldone/core-js/enums/staff/ShopRoles";
 import BOrderDashboardPayment from "../../../order/dashboard/payment/BOrderDashboardPayment.vue";
 import BOrderDashboardCart from "../../../order/dashboard/cart/BOrderDashboardCart.vue";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import BOrderDashboardPreparing from "../../../order/dashboard/preparing/BOrderDashboardPreparing.vue";
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import BOrderDashboardDelivery from "../../../order/dashboard/delivery/BOrderDashboardDelivery.vue";
 import SOrderBasketReturn from "../../../../storefront/order/basket/return/SOrderBasketReturn.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BRolePanelPhysical",
@@ -222,19 +221,22 @@ export default {
   computed: {
     is_active_OrderBasketListWidget() {
       return (
-        this.basket.status === BasketStatus.Payed.code ||
-        this.basket.status === BasketStatus.COD.code
+        this.basket.status === Basket.Status.Payed.code ||
+        this.basket.status === Basket.Status.COD.code
       );
     },
 
     is_active_OrderPreparingWidget() {
       return (
         this.is_active_OrderBasketListWidget &&
-        (this.basket.delivery_state === PhysicalOrderStates.OrderConfirm.code ||
+        (this.basket.delivery_state ===
+          Basket.PhysicalOrderStates.OrderConfirm.code ||
           this.basket.delivery_state ===
-            PhysicalOrderStates.PreparingOrder.code ||
-          this.basket.delivery_state === PhysicalOrderStates.SentOrder.code ||
-          this.basket.delivery_state === PhysicalOrderStates.ToCustomer.code)
+            Basket.PhysicalOrderStates.PreparingOrder.code ||
+          this.basket.delivery_state ===
+            Basket.PhysicalOrderStates.SentOrder.code ||
+          this.basket.delivery_state ===
+            Basket.PhysicalOrderStates.ToCustomer.code)
       );
     },
 
@@ -242,9 +244,11 @@ export default {
       return (
         this.is_active_OrderBasketListWidget &&
         (this.basket.delivery_state ===
-          PhysicalOrderStates.PreparingOrder.code ||
-          this.basket.delivery_state === PhysicalOrderStates.SentOrder.code ||
-          this.basket.delivery_state === PhysicalOrderStates.ToCustomer.code)
+          Basket.PhysicalOrderStates.PreparingOrder.code ||
+          this.basket.delivery_state ===
+            Basket.PhysicalOrderStates.SentOrder.code ||
+          this.basket.delivery_state ===
+            Basket.PhysicalOrderStates.ToCustomer.code)
       );
     },
   },

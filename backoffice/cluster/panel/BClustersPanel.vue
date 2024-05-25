@@ -259,8 +259,8 @@
 <script>
 import BClusterFolder from "../../cluster/folder/BClusterFolder.vue";
 import BClusterResource from "../../cluster/resource/BClusterResource.vue";
-import { ClusterResourceType } from "@selldone/core-js/enums/cluster/type/ClusterResourceType.ts";
 import _ from "lodash-es";
+import { Cluster } from "@selldone/core-js";
 
 export default {
   name: "BClustersPanel",
@@ -272,7 +272,7 @@ export default {
     },
   },
   data: () => ({
-    ClusterResourceType: ClusterResourceType,
+    ClusterResourceType: Cluster.ResourceTypes,
 
     dialog: false,
 
@@ -290,7 +290,7 @@ export default {
     flattenedResources() {
       if (!this.current_cluster) return [];
       const result = [];
-      Object.values(ClusterResourceType).forEach((_type) => {
+      Object.values(Cluster.ResourceTypes).forEach((_type) => {
         const items = this.current_cluster[_type.resource_key];
         if (items)
           for (let _item of items) {

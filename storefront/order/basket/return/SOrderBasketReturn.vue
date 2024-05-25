@@ -245,11 +245,10 @@
 </template>
 
 <script>
-import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
-import { ReturnOrderReason } from "@selldone/core-js/enums/basket/ReturnOrderReason";
 import CircleImage from "../../../../ui/image/CircleImage.vue";
 import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
+import { BasketItemReturn } from "@selldone/core-js";
 
 export default {
   name: "SOrderBasketReturn",
@@ -303,12 +302,14 @@ export default {
     },
 
     getReturnRequestStateObject(state) {
-      let out = ReturnItemStates[state];
+      let out = BasketItemReturn.States[state];
       return out ? out : {};
     },
 
     getReturnBasketItemReasonObject(code) {
-      let out = ReturnOrderReason.physical.find((item) => item.value === code);
+      let out = BasketItemReturn.Reason.physical.find(
+        (item) => item.value === code,
+      );
       return out ? out : {};
     },
 

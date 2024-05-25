@@ -742,8 +742,6 @@
 </template>
 
 <script>
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import UPaymentRiskIndicator from "../../../../ui/payment/risk/indicator/UPaymentRiskIndicator.vue";
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import UPaymentBillingDetails from "../../../../ui/payment/billing-details/UPaymentBillingDetails.vue";
@@ -753,12 +751,8 @@ import VariantItemViewMicro from "../../../../storefront/product/variant/Variant
 import BCampaignSourceIcon from "../../../campaign/source/icon/BCampaignSourceIcon.vue";
 import BCampaignMediumIcon from "../../../campaign/medium/icon/BCampaignMediumIcon.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import { VirtualOrderStates } from "@selldone/core-js/enums/basket/VirtualOrderStates";
-import { FileOrderStates } from "@selldone/core-js/enums/basket/FileOrderStates";
-import { ServiceOrderStates } from "@selldone/core-js/enums/basket/ServiceOrderStates";
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
-import { BillStatus } from "@selldone/core-js/enums/basket/BillStatus";
 import BOrderPaymentRowPending from "../../../order/payment/row/pending/BOrderPaymentRowPending.vue";
 import BOrderPaymentRowGiftcard from "../../../order/payment/row/giftcard/BOrderPaymentRowGiftcard.vue";
 import BOrderPaymentRowPayment from "../../../order/payment/row/payment/BOrderPaymentRowPayment.vue";
@@ -772,6 +766,7 @@ import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import BOrderPaymentTable from "../../../order/payment/table/BOrderPaymentTable.vue";
 import UChartSankey from "../../../../ui/chart/sankey/UChartSankey.vue";
+import { Basket, Bill } from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardPayment",
@@ -822,12 +817,12 @@ export default {
 
       ProductType: ProductType,
 
-      BillStatus: BillStatus,
+      BillStatus: Bill.Status,
 
       dialog_customer_pay_money_cod: false,
       accept_action: false,
 
-      PhysicalOrderStates: PhysicalOrderStates,
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
 
       busy_check: false,
 
@@ -877,27 +872,28 @@ export default {
       return this.order.type === "POS";
     },
     in_this_step() {
-      const reserved = this.order.status === BasketStatus.Reserved.code;
+      const reserved = this.order.status === Basket.Status.Reserved.code;
 
       // console.log('===========',this.order.delivery_state ,reserved)
       if (this.isPhysical) {
         return (
-          this.order.delivery_state === PhysicalOrderStates.CheckQueue.code &&
-          reserved
+          this.order.delivery_state ===
+            Basket.PhysicalOrderStates.CheckQueue.code && reserved
         );
       } else if (this.isVirtual) {
         return (
-          this.order.delivery_state === VirtualOrderStates.CheckQueue.code &&
-          reserved
+          this.order.delivery_state ===
+            Basket.VirtualOrderStates.CheckQueue.code && reserved
         );
       } else if (this.isFile) {
         return (
-          this.order.delivery_state === FileOrderStates.PreparingOrder.code &&
-          reserved
+          this.order.delivery_state ===
+            Basket.FileOrderStates.PreparingOrder.code && reserved
         );
       } else if (this.isService) {
         return (
-          this.order.delivery_state === ServiceOrderStates.CheckQueue.code &&
+          this.order.delivery_state ===
+            Basket.ServiceOrderStates.CheckQueue.code &&
           reserved &&
           !this.in_service_billing_state
         );
@@ -995,7 +991,7 @@ export default {
     },
 
     isCOD() {
-      return this.codEnable && this.order.status === BasketStatus.COD.code;
+      return this.codEnable && this.order.status === Basket.Status.COD.code;
     },
 
     codGateways() {
@@ -1397,12 +1393,12 @@ export default {
     },
     isSubscribed() {
       return (
-        this.isSubscription && this.order.status === BasketStatus.Payed.code
+        this.isSubscription && this.order.status === Basket.Status.Payed.code
       );
     },
     isUnsubscribed() {
       return (
-        this.isSubscription && this.order.status === BasketStatus.Canceled.code
+        this.isSubscription && this.order.status === Basket.Status.Canceled.code
       );
     },
     subscription_period() {

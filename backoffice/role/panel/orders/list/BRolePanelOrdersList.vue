@@ -145,15 +145,12 @@
 </template>
 
 <script>
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import SOrderStatusesSelect from "../../../../../storefront/order/status-select/SOrderStatusesSelect.vue";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import { VirtualOrderStates } from "@selldone/core-js/enums/basket/VirtualOrderStates";
-import { FileOrderStates } from "@selldone/core-js/enums/basket/FileOrderStates";
 import SOrderDeliveryStatusStepper from "../../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import ReturnRequestButtonBadge from "../../../../../storefront/order/order-return/ReturnRequestButtonBadge.vue";
 import SOrderStatusView from "../../../../../storefront/order/order-status/SOrderStatusView.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BRolePanelOrdersList",
@@ -187,7 +184,7 @@ export default {
     return {
       busy_fetch: false,
 
-      status: [BasketStatus.Payed.code, BasketStatus.COD.code],
+      status: [Basket.Status.Payed.code, Basket.Status.COD.code],
 
       orders: [],
 
@@ -254,10 +251,11 @@ export default {
 
     deliveryStates() {
       if (this.type.code === ProductType.PHYSICAL.code)
-        return PhysicalOrderStates;
+        return Basket.PhysicalOrderStates;
       else if (this.type.code === ProductType.VIRTUAL.code)
-        return VirtualOrderStates;
-      else if (this.type.code === ProductType.FILE.code) return FileOrderStates;
+        return Basket.VirtualOrderStates;
+      else if (this.type.code === ProductType.FILE.code)
+        return Basket.FileOrderStates;
       else if (this.type.code === ProductType.SERVICE.code) return {};
 
       return null;
@@ -304,9 +302,9 @@ export default {
 
     inQueProcess(delivery_state) {
       return [
-        PhysicalOrderStates.CheckQueue.code,
-        PhysicalOrderStates.OrderConfirm.code,
-        PhysicalOrderStates.PreparingOrder.code,
+        Basket.PhysicalOrderStates.CheckQueue.code,
+        Basket.PhysicalOrderStates.OrderConfirm.code,
+        Basket.PhysicalOrderStates.PreparingOrder.code,
       ].includes(delivery_state);
     },
   },

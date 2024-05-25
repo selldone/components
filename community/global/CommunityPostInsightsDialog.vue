@@ -36,7 +36,7 @@
       <v-card-text class="text-center insi">
         <v-row>
           <v-col
-            v-for="item in PostAction"
+            v-for="item in PostActions"
             :key="item.code"
             cols="6"
             md="3"
@@ -72,8 +72,8 @@
 </template>
 
 <script>
-import { PostReaction } from "@selldone/core-js/enums/community/PostReaction";
-import { PostAction } from "@selldone/core-js/enums/community/PostAction";
+import { CommunityPost } from "@selldone/core-js";
+import { CommunityPostReaction } from "@selldone/core-js/models";
 
 export default {
   name: "CommunityPostInsightsDialog",
@@ -89,8 +89,8 @@ export default {
       dialog: false,
       post: null,
 
-      PostReaction: PostReaction,
-      PostAction: PostAction,
+      PostReaction: CommunityPostReaction.Reactions,
+      PostActions: CommunityPost.PostActions,
     };
   },
 

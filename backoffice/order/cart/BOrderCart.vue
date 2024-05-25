@@ -534,13 +534,13 @@
 
 <script>
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
-import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import UTextValueDashed from "../../../ui/text/value-dashed/UTextValueDashed.vue";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import { OrderTypeCode } from "@selldone/core-js/enums/order/OrderTypeCode";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
+import { BasketItemReturn } from "@selldone/core-js";
 
 export default {
   name: "BOrderCart",
@@ -689,7 +689,7 @@ export default {
     },
 
     getReturnRequestStateObject(state) {
-      let out = ReturnItemStates[state];
+      let out = BasketItemReturn.States[state];
       return out ? out : {};
     },
 

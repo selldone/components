@@ -412,12 +412,12 @@ import UDenseCirclesUsers from "../../../ui/dense-circles/users/UDenseCirclesUse
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations.ts";
 import { Reactions } from "@selldone/core-js/enums/support/Reactions.ts";
 import { Brands } from "@selldone/core-js/enums/social/Brands.ts";
-import { CampaignMedium } from "@selldone/core-js/enums/campaign/CampaignMedium.ts";
 import { CustomerClubLevels } from "@selldone/core-js/enums/customer/CustomerClubLevels.ts";
 import UMapGeoButton from "../../../ui/map/geo-button/UMapGeoButton.vue";
 import TimelineStatus from "@selldone/core-js/enums/timeline/TimelineStatus.ts";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import { TimelineEmailType } from "@selldone/core-js/enums/timeline/TimelineEmailType.ts";
+import { CampaignLink } from "@selldone/core-js";
 
 export default {
   name: "BOrderTimeline",
@@ -851,7 +851,7 @@ export default {
         ShopTransportations,
         Reactions,
         Brands,
-        CampaignMedium,
+        CampaignLink.Medium,
         CustomerClubLevels,
       ];
 

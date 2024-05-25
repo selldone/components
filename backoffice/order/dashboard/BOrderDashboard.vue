@@ -157,7 +157,7 @@
           @confirm-order="
             ({ list, callback }) =>
               updateState(
-                this.PhysicalOrderStates.OrderConfirm.code,
+                PhysicalOrderStates.OrderConfirm.code,
                 list,
                 callback,
                 null,
@@ -313,8 +313,6 @@
 
 <script>
 import SOrderDeliveryState from "../../../storefront/order/delivery-state/SOrderDeliveryState.vue";
-import { BasketRejectReasons } from "@selldone/core-js/enums/basket/BasketRejectReasons";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
@@ -329,6 +327,7 @@ import BOrderConnectsList from "../../order/connect/list/BOrderConnectsList.vue"
 
 import BOrderDashboardDropshippingDelivery from "../../order/dashboard/dropshipping/delivery/BOrderDashboardDropshippingDelivery.vue";
 import BOrderVendorPaymentManagement from "../../order/vendor/payment/BOrderVendorPaymentManagement.vue";
+import { Basket, Order } from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboard",
@@ -375,12 +374,13 @@ export default {
   },
   data: function () {
     return {
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
       center: { lat: 0, lng: 0 },
       location: null,
 
       dialog_reject: false,
       reject_reason: null,
-      basketRejectReasons: Object.values(BasketRejectReasons),
+      basketRejectReasons: Object.values(Order.RejectReasons),
 
       busy_update_state: false,
       busy_reject_order: false,
@@ -451,7 +451,7 @@ export default {
     },
 
     basketStatus() {
-      return BasketStatus[this.basket.status];
+      return Basket.Status[this.basket.status];
     },
 
     rejected() {
@@ -459,14 +459,15 @@ export default {
     },
     inFirstCheckState() {
       return (
-        this.basket.delivery_state === this.PhysicalOrderStates.CheckQueue.code
+        this.basket.delivery_state ===
+        Basket.PhysicalOrderStates.CheckQueue.code
       );
     },
 
     is_active_OrderBasketListWidget() {
       return (
-        this.basket.status === BasketStatus.Payed.code ||
-        this.basket.status === BasketStatus.COD.code
+        this.basket.status === Basket.Status.Payed.code ||
+        this.basket.status === Basket.Status.COD.code
       );
     },
 
@@ -487,23 +488,23 @@ export default {
     },
 
     isOpen() {
-      return this.basket.status === BasketStatus.Open.code;
+      return this.basket.status === Basket.Status.Open.code;
     },
 
     isReserved() {
-      return this.basket.status === BasketStatus.Reserved.code;
+      return this.basket.status === Basket.Status.Reserved.code;
     },
 
     isPayed() {
-      return this.basket.status === BasketStatus.Payed.code;
+      return this.basket.status === Basket.Status.Payed.code;
     },
 
     isCOD() {
-      return this.basket.status === BasketStatus.COD.code;
+      return this.basket.status === Basket.Status.COD.code;
     },
 
     isCanceled() {
-      return this.basket.status === BasketStatus.Canceled.code;
+      return this.basket.status === Basket.Status.Canceled.code;
     },
 
     has_connect_orders() {

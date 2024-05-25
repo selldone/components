@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { PostReaction } from "@selldone/core-js/enums/community/PostReaction";
+import { CommunityPostReaction } from "@selldone/core-js";
 
 export default {
   name: "CommunityPostReactionsDialog",
@@ -106,7 +106,7 @@ export default {
       post: null,
       reaction: null,
 
-      PostReaction: PostReaction,
+      PostReaction: CommunityPostReaction.Reactions,
 
       reactions: [],
 
@@ -121,11 +121,14 @@ export default {
   computed: {
     tabs() {
       const out = [
-        { act: PostReaction.LIKE, value: this.post.likes },
-        { act: PostReaction.SMILE, value: this.post.smiles },
-        { act: PostReaction.CLAP, value: this.post.claps },
-        { act: PostReaction.IDEA, value: this.post.ideas },
-        { act: PostReaction.DISAGREE, value: this.post.disagrees },
+        { act: CommunityPostReaction.Reactions.LIKE, value: this.post.likes },
+        { act: CommunityPostReaction.Reactions.SMILE, value: this.post.smiles },
+        { act: CommunityPostReaction.Reactions.CLAP, value: this.post.claps },
+        { act: CommunityPostReaction.Reactions.IDEA, value: this.post.ideas },
+        {
+          act: CommunityPostReaction.Reactions.DISAGREE,
+          value: this.post.disagrees,
+        },
       ];
 
       return out
@@ -143,15 +146,15 @@ export default {
 
     total() {
       switch (this.reaction) {
-        case PostReaction.LIKE.code:
+        case CommunityPostReaction.Reactions.LIKE.code:
           return this.post.likes;
-        case PostReaction.SMILE.code:
+        case CommunityPostReaction.Reactions.SMILE.code:
           return this.post.smiles;
-        case PostReaction.CLAP.code:
+        case CommunityPostReaction.Reactions.CLAP.code:
           return this.post.claps;
-        case PostReaction.IDEA.code:
+        case CommunityPostReaction.Reactions.IDEA.code:
           return this.post.ideas;
-        case PostReaction.DISAGREE.code:
+        case CommunityPostReaction.Reactions.DISAGREE.code:
           return this.post.disagrees;
       }
 

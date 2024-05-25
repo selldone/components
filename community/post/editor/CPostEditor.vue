@@ -675,7 +675,6 @@ import { TopicSubscriptionType } from "@selldone/core-js/enums/community/TopicSu
 import { TopicTrialType } from "@selldone/core-js/enums/community/TopicTrialType.ts";
 import { Currency } from "@selldone/core-js/enums/payment/Currency.ts";
 import CPostPoll from "../poll/CPostPoll.vue";
-import { CommunityStageLevel } from "@selldone/core-js/enums/community/CommunityStageLevel.ts";
 import CProductEditor from "../../../community/product/editor/CProductEditor.vue";
 import CProductView from "../../../community/product/view/CProductView.vue";
 import { ImageDimension } from "@selldone/core-js/helper/image/ImageDimension.ts";
@@ -684,6 +683,7 @@ import CAttachEditor from "../../../community/attach/editor/CAttachEditor.vue";
 import CAttachViewer from "../../../community/attach/viewer/CAttachViewer.vue";
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
 import _ from "lodash-es";
+import { Community } from "@selldone/core-js";
 
 /**
  * Calculate aspect ratio of element.
@@ -828,7 +828,7 @@ export default {
       return (
         this.USER() &&
         !this.access.post &&
-        this.community.stage === CommunityStageLevel.PRIVATE.code
+        this.community.stage === Community.StageLevels.PRIVATE.code
       );
     },
 

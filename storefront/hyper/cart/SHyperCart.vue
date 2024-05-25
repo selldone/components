@@ -123,9 +123,9 @@ import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import SHyperCartItems from "../../../storefront/hyper/cart/items/SHyperCartItems.vue";
 import SHyperProduct from "../product/SHyperProduct.vue";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import UStamp from "../../../ui/stamp/UStamp.vue";
 import _ from "lodash-es";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "SHyperCart",
@@ -171,16 +171,16 @@ export default {
       return this.hyper.price + (this.hyper.tax_included ? 0 : this.hyper.tax);
     },
     isOpen() {
-      return this.hyper.status === BasketStatus.Open.code;
+      return this.hyper.status === Basket.Status.Open.code;
     },
     isReserved() {
-      return this.hyper.status === BasketStatus.Reserved.code;
+      return this.hyper.status === Basket.Status.Reserved.code;
     },
     isPayed() {
-      return this.hyper.status === BasketStatus.Payed.code;
+      return this.hyper.status === Basket.Status.Payed.code;
     },
     isCanceled() {
-      return this.hyper.status === BasketStatus.Canceled.code;
+      return this.hyper.status === Basket.Status.Canceled.code;
     },
   },
 

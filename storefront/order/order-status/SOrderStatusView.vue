@@ -64,8 +64,8 @@
 </template>
 
 <script>
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import UTimeProgressBar from "../../../ui/time/progress-bar/UTimeProgressBar.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "SOrderStatusView",
@@ -84,19 +84,19 @@ export default {
   computed: {
     statusObject() {
       // Tips: For billing status is: PENDING , PAYED , CANCELED  (Is upper case!) TODO: Correct it!
-      return Object.values(BasketStatus).find(
+      return Object.values(Basket.Status).find(
         (i) => i.code.toLowerCase() === this.status.toLowerCase(),
       );
     },
     ticked() {
       return [
-        BasketStatus.Payed.code.toLowerCase(),
-        BasketStatus.COD.code.toLowerCase(),
+        Basket.Status.Payed.code.toLowerCase(),
+        Basket.Status.COD.code.toLowerCase(),
       ].includes(this.status.toLowerCase());
     },
 
     canceled() {
-      return this.status === BasketStatus.Canceled.code;
+      return this.status === Basket.Status.Canceled.code;
     },
     processing() {
       return !!this.gatewayProcessing;

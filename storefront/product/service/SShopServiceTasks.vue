@@ -37,8 +37,7 @@
 
 <script>
 import ServiceBillingItem from "../../../storefront/order/billing/ServiceBillingItem.vue";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
-import { ServiceOrderStates } from "@selldone/core-js/enums/basket/ServiceOrderStates";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "SShopServiceTasks",
@@ -56,15 +55,16 @@ export default {
 
   data: function () {
     return {
-      ServiceOrderStates: ServiceOrderStates,
+      ServiceOrderStates: Basket.ServiceOrderStates,
     };
   },
 
   computed: {
     in_this_step() {
       return (
-        this.basket.status === BasketStatus.Payed.code &&
-        this.basket.delivery_state === ServiceOrderStates.PreparingOrder.code
+        this.basket.status === Basket.Status.Payed.code &&
+        this.basket.delivery_state ===
+          Basket.ServiceOrderStates.PreparingOrder.code
       );
     },
   },

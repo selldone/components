@@ -65,9 +65,8 @@
 </template>
 
 <script>
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
-import { ServiceOrderStates } from "@selldone/core-js/enums/basket/ServiceOrderStates";
 import ServiceBillingItem from "../../../../storefront/order/billing/ServiceBillingItem.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardServiceTasks",
@@ -88,19 +87,21 @@ export default {
       busy_start: false,
       busy_end: false,
 
-      ServiceOrderStates: ServiceOrderStates,
+      ServiceOrderStates: Basket.ServiceOrderStates,
     };
   },
 
   computed: {
     can_start() {
       return (
-        this.basket.delivery_state === ServiceOrderStates.OrderConfirm.code
+        this.basket.delivery_state ===
+        Basket.ServiceOrderStates.OrderConfirm.code
       );
     },
     can_end() {
       return (
-        this.basket.delivery_state === ServiceOrderStates.PreparingOrder.code
+        this.basket.delivery_state ===
+        Basket.ServiceOrderStates.PreparingOrder.code
       );
     },
 
@@ -109,12 +110,13 @@ export default {
     },
 
     is_active() {
-      return this.basket.status === BasketStatus.Payed.code;
+      return this.basket.status === Basket.Status.Payed.code;
     },
     in_this_step() {
       return (
-        this.basket.status === BasketStatus.Payed.code &&
-        this.basket.delivery_state === ServiceOrderStates.PreparingOrder.code
+        this.basket.status === Basket.Status.Payed.code &&
+        this.basket.delivery_state ===
+          Basket.ServiceOrderStates.PreparingOrder.code
       );
     },
   },

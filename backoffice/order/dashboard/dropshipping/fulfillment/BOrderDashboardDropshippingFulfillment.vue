@@ -200,9 +200,8 @@
 
 <script>
 import BOrderCart from "../../../cart/BOrderCart.vue";
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import SOrderDeliveryStatusStepper from "../../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardDropshippingFulfillment",
@@ -225,7 +224,7 @@ export default {
 
   data: function () {
     return {
-      PhysicalOrderStates: PhysicalOrderStates,
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
       force_show_items: false,
       busy: false,
     };
@@ -248,10 +247,10 @@ export default {
 
     checked() {
       return [
-        PhysicalOrderStates.OrderConfirm.code,
-        PhysicalOrderStates.PreparingOrder.code,
-        PhysicalOrderStates.SentOrder.code,
-        PhysicalOrderStates.ToCustomer.code,
+        Basket.PhysicalOrderStates.OrderConfirm.code,
+        Basket.PhysicalOrderStates.PreparingOrder.code,
+        Basket.PhysicalOrderStates.SentOrder.code,
+        Basket.PhysicalOrderStates.ToCustomer.code,
       ].includes(this.fulfillment.delivery_state);
     },
     in_this_step() {
@@ -261,7 +260,7 @@ export default {
     initial_select_all() {
       return (
         this.fulfillment.delivery_state ===
-        this.PhysicalOrderStates.CheckQueue.code
+        Basket.PhysicalOrderStates.CheckQueue.code
       );
     },
 
@@ -270,7 +269,7 @@ export default {
     },
 
     isPayed() {
-      return this.fulfillment.status === BasketStatus.Payed.code;
+      return this.fulfillment.status === Basket.Status.Payed.code;
     },
 
     showItems() {
@@ -278,9 +277,9 @@ export default {
       if (!this.fulfillment) return false;
       return (
         this.fulfillment.delivery_state ===
-          this.PhysicalOrderStates.CheckQueue.code ||
+          Basket.PhysicalOrderStates.CheckQueue.code ||
         this.fulfillment.delivery_state ===
-          this.PhysicalOrderStates.PreparingOrder.code
+          Basket.PhysicalOrderStates.PreparingOrder.code
       );
     },
 

@@ -143,10 +143,9 @@
 
 <script>
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
-import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
-import { ReturnOrderReason } from "@selldone/core-js/enums/basket/ReturnOrderReason";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BOrderButton from "../../order/button/BOrderButton.vue";
+import { BasketItemReturn } from "@selldone/core-js";
 
 export default {
   name: "SBackofficeReturnRequestsList",
@@ -271,11 +270,13 @@ export default {
     },
 
     getReturnRequestStateObject(state) {
-      return ReturnItemStates[state];
+      return BasketItemReturn.States[state];
     },
 
     getReturnBasketItemReasonObject(code) {
-      return ReturnOrderReason.physical.find((item) => item.value === code);
+      return BasketItemReturn.Reason.physical.find(
+        (item) => item.value === code,
+      );
     },
   },
 };

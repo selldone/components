@@ -299,10 +299,10 @@
 </template>
 
 <script>
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import SOrderReceiverInfoCard from "../../../../storefront/order/receiver-info/card/SOrderReceiverInfoCard.vue";
 import SOrderBillCard from "../../../../storefront/order/billing/card/SOrderBillCard.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardServiceLocation",
@@ -335,7 +335,7 @@ export default {
     return {
       dialog_received_by_customer: false,
 
-      PhysicalOrderStates: PhysicalOrderStates,
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
 
       center: { lat: 0, lng: 0 },
 
@@ -369,31 +369,36 @@ export default {
     },
     checked() {
       return [
-        PhysicalOrderStates.SentOrder.code,
-        PhysicalOrderStates.ToCustomer.code,
+        Basket.PhysicalOrderStates.SentOrder.code,
+        Basket.PhysicalOrderStates.ToCustomer.code,
       ].includes(this.basket.delivery_state);
     },
     in_this_step() {
       return (
         this.isPhysical &&
-        this.basket.delivery_state === PhysicalOrderStates.PreparingOrder.code
+        this.basket.delivery_state ===
+          Basket.PhysicalOrderStates.PreparingOrder.code
       );
     },
     active_track() {
       return (
         this.basket.delivery_state ===
-          PhysicalOrderStates.PreparingOrder.code ||
-        this.basket.delivery_state === PhysicalOrderStates.SentOrder.code
+          Basket.PhysicalOrderStates.PreparingOrder.code ||
+        this.basket.delivery_state === Basket.PhysicalOrderStates.SentOrder.code
       );
     },
 
     isActive() {
       return (
-        this.basket.delivery_state === PhysicalOrderStates.PreparingOrder.code
+        this.basket.delivery_state ===
+        Basket.PhysicalOrderStates.PreparingOrder.code
       );
     },
     canAddToDeliveryQue() {
-      return this.basket.delivery_state !== PhysicalOrderStates.ToCustomer.code;
+      return (
+        this.basket.delivery_state !==
+        Basket.PhysicalOrderStates.ToCustomer.code
+      );
     },
 
     receiver_info() {

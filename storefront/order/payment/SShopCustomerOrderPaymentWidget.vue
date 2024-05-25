@@ -675,12 +675,9 @@
 </template>
 
 <script>
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
-import { BillStatus } from "@selldone/core-js/enums/basket/BillStatus";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";
 import SShopRowCustomerPaymentGiftCard from "../../../storefront/order/payment/rows/SShopRowCustomerPaymentGiftCard.vue";
 import SShopRowCustomerPaymentRecord from "../../../storefront/order/payment/rows/SShopRowCustomerPaymentRecord.vue";
@@ -690,6 +687,7 @@ import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import UPaymentCard from "../../../ui/payment/card/UPaymentCard.vue";
 import { URLHelper } from "@selldone/core-js/helper/url/URLHelper";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
+import { Basket, Bill } from "@selldone/core-js";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",
@@ -711,8 +709,8 @@ export default {
   data: function () {
     return {
       TransactionStatus: TransactionStatus,
-      PhysicalOrderStates: PhysicalOrderStates,
-      BillStatus: BillStatus,
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
+      BillStatus: Bill.Status,
 
       busy_try_pay: false,
 
@@ -785,7 +783,7 @@ export default {
     },
 
     isCOD() {
-      return this.codEnable && this.order.status === BasketStatus.COD.code;
+      return this.codEnable && this.order.status === Basket.Status.COD.code;
     },
 
     delivery_info() {
@@ -870,7 +868,7 @@ export default {
     },
 
     current_bill_waiting() {
-      return this.bills.find((it) => it.status === BillStatus.PENDING.code); // return first bill waiting for payment
+      return this.bills.find((it) => it.status === Bill.Status.PENDING.code); // return first bill waiting for payment
     },
 
     has_subscription_portal() {

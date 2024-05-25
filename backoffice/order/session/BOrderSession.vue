@@ -100,7 +100,7 @@
 
 <script>
 import SWidgetBox from "../../../ui/widget/box/SWidgetBox.vue";
-import { DeviceType } from "@selldone/core-js/enums/campaign/DeviceType";
+import { Analytics } from "@selldone/core-js";
 
 export default {
   name: "BOrderSession",
@@ -122,10 +122,10 @@ export default {
   },
   computed: {
     device() {
-      let out = DeviceType.find(
+      let out = Analytics.DeviceType.find(
         (item) => item.code === this.session.type.toLowerCase(),
       );
-      return out ? out : DeviceType[0];
+      return out ? out : Analytics.DeviceType[0];
     },
   },
 

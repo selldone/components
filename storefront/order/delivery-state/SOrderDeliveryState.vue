@@ -219,10 +219,10 @@
 </template>
 
 <script>
-import { BasketRejectReasons } from "@selldone/core-js/enums/basket/BasketRejectReasons";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { Order } from "@selldone/core-js";
 
 export default {
   name: "SOrderDeliveryState",
@@ -344,7 +344,7 @@ export default {
 
     reject_reason() {
       if (!this.rejected) return null;
-      let obj = BasketRejectReasons[this.basket.reject];
+      let obj = Order.RejectReasons[this.basket.reject];
       return obj
         ? this.$t(obj.title)
         : this.$t("global.basket_delivery_state.reason_not_found");

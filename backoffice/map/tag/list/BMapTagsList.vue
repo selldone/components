@@ -293,7 +293,7 @@ export default {
     },
     search: _.throttle(function (newVal, oldVal) {
       this.options.page = 1;
-      this.fetchLocations(this.page, this.sortBy);
+      this.fetchLocations(this.page,  this.sortBy[0]?.key, this.sortBy[0]?.order === "desc");
     }, window.SERACH_THROTTLE),
   },
 

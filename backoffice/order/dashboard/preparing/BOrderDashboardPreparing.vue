@@ -352,16 +352,15 @@
 </template>
 
 <script>
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import UCube from "../../../../ui/cube/UCube.vue";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import UDenseCirclesUsers from "../../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardPreparing",
@@ -387,7 +386,7 @@ export default {
 
   data: function () {
     return {
-      PhysicalOrderStates: PhysicalOrderStates,
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
       busy: false,
 
       //------------------------
@@ -458,14 +457,15 @@ export default {
 
     checked() {
       return [
-        PhysicalOrderStates.PreparingOrder.code,
-        PhysicalOrderStates.SentOrder.code,
-        PhysicalOrderStates.ToCustomer.code,
+        Basket.PhysicalOrderStates.PreparingOrder.code,
+        Basket.PhysicalOrderStates.SentOrder.code,
+        Basket.PhysicalOrderStates.ToCustomer.code,
       ].includes(this.basket.delivery_state);
     },
     in_this_step() {
       return (
-        this.basket.delivery_state === PhysicalOrderStates.OrderConfirm.code
+        this.basket.delivery_state ===
+        Basket.PhysicalOrderStates.OrderConfirm.code
       );
     },
 
@@ -474,8 +474,10 @@ export default {
     },
     isActive() {
       return (
-        this.basket.delivery_state === PhysicalOrderStates.OrderConfirm.code ||
-        this.basket.delivery_state === PhysicalOrderStates.PreparingOrder.code
+        this.basket.delivery_state ===
+          Basket.PhysicalOrderStates.OrderConfirm.code ||
+        this.basket.delivery_state ===
+          Basket.PhysicalOrderStates.PreparingOrder.code
       );
     },
 
@@ -484,7 +486,7 @@ export default {
     },
 
     is_cod() {
-      return this.basket.status === BasketStatus.COD.code;
+      return this.basket.status === Basket.Status.COD.code;
     },
 
     distance() {
@@ -595,7 +597,6 @@ export default {
           this.busy = false;
         },
       });
-      //this.updateState(this.PhysicalOrderStates.PreparingOrder.code, false);
     },
     loadData() {
       if (!this.delivery_info.volume) this.delivery_info.volume = {};

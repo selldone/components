@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardVirtualPreparing",
@@ -73,7 +73,7 @@ export default {
     return {
       transportation: null,
 
-      PhysicalOrderStates: PhysicalOrderStates,
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
       busy: false,
     };
   },
@@ -82,21 +82,24 @@ export default {
   computed: {
     checked() {
       return [
-        PhysicalOrderStates.PreparingOrder.code,
-        PhysicalOrderStates.SentOrder.code,
-        PhysicalOrderStates.ToCustomer.code,
+        Basket.PhysicalOrderStates.PreparingOrder.code,
+        Basket.PhysicalOrderStates.SentOrder.code,
+        Basket.PhysicalOrderStates.ToCustomer.code,
       ].includes(this.basket.delivery_state);
     },
     in_this_step() {
       return (
-        this.basket.delivery_state === PhysicalOrderStates.OrderConfirm.code
+        this.basket.delivery_state ===
+        Basket.PhysicalOrderStates.OrderConfirm.code
       );
     },
 
     isActive() {
       return (
-        this.basket.delivery_state === PhysicalOrderStates.OrderConfirm.code ||
-        this.basket.delivery_state === PhysicalOrderStates.PreparingOrder.code
+        this.basket.delivery_state ===
+          Basket.PhysicalOrderStates.OrderConfirm.code ||
+        this.basket.delivery_state ===
+          Basket.PhysicalOrderStates.PreparingOrder.code
       );
     },
   },

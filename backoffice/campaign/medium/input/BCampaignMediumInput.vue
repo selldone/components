@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { CampaignMedium } from "@selldone/core-js/enums/campaign/CampaignMedium";
+import { CampaignLink } from "@selldone/core-js";
 
 export default {
   name: "BCampaignMediumInput",
@@ -75,7 +75,7 @@ export default {
     return {
       search: null,
 
-      mediums: CampaignMedium,
+      mediums: CampaignLink.Medium,
     };
   },
 
@@ -97,7 +97,7 @@ export default {
 
       return found?.icon
         ? found.icon
-        : require("@selldone/core-js/enums/campaign/assets/mediums/default.svg");
+        : require("@selldone/core-js/models/shop/campaign/assets/mediums/default.svg");
     },
   },
 };

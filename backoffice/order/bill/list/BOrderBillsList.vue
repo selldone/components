@@ -283,12 +283,12 @@
 
 <script>
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
-import { BillStatus } from "@selldone/core-js/enums/basket/BillStatus";
 import BOrderButton from "../../../order/button/BOrderButton.vue";
 import SOrderDeliveryStatusStepper from "../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BOrderPaymentRowPayment from "../../../order/payment/row/payment/BOrderPaymentRowPayment.vue";
 import _ from "lodash-es";
+import { Bill } from "@selldone/core-js";
 
 export default {
   name: "BOrderBillsList",
@@ -311,7 +311,7 @@ export default {
 
   data: function () {
     return {
-      BillStatus: BillStatus,
+      BillStatus: Bill.Status,
 
       busy_fetch: false,
 

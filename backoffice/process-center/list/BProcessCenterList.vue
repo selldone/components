@@ -768,25 +768,19 @@
 </template>
 
 <script>
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import SOrderDeliveryStatusStepper from "../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import SOrderStatusesSelect from "../../../storefront/order/status-select/SOrderStatusesSelect.vue";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import ReturnRequestButtonBadge from "../../../storefront/order/order-return/ReturnRequestButtonBadge.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import { VirtualOrderStates } from "@selldone/core-js/enums/basket/VirtualOrderStates";
-import { FileOrderStates } from "@selldone/core-js/enums/basket/FileOrderStates";
 import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import SOrderStatusView from "../../../storefront/order/order-status/SOrderStatusView.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
-import { ServiceOrderStates } from "@selldone/core-js/enums/basket/ServiceOrderStates";
 import UButtonWhatsapp from "../../../ui/button/whatsapp/UButtonWhatsapp.vue";
 import SOrderReceiverInfoCard from "../../../storefront/order/receiver-info/card/SOrderReceiverInfoCard.vue";
 import ConnectOrderChip from "../../connect/order/chip/ConnectOrderChip.vue";
 import UAvatarText from "../../../ui/avatar/text/UAvatarText.vue";
 import SOrderChatBox from "../../../storefront/order/chat/box/SOrderChatBox.vue";
 import SOrderChatMessage from "../../../storefront/order/chat/message/SOrderChatMessage.vue";
-import { SubscriptionOrderStates } from "@selldone/core-js/enums/basket/SubscriptionOrderStates";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import BProductSubscriptionPricingInput from "../../product/subscription/pricing/input/BProductSubscriptionPricingInput.vue";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
@@ -794,7 +788,7 @@ import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper
 import _ from "lodash-es";
 import { OrderType } from "@selldone/core-js/enums/order/OrderType";
 import { RouteMixin } from "../../../mixin/RouteMixin";
-import { Avocado } from "@selldone/core-js";
+import { Avocado, Basket } from "@selldone/core-js";
 
 export default {
   name: "BProcessCenterList",
@@ -885,13 +879,13 @@ export default {
 
   data: function () {
     return {
-      BasketStatus: BasketStatus,
+      BasketStatus: Basket.Status,
       ProductType: ProductType,
 
       activator: null,
       activator_item: null,
 
-      status: [BasketStatus.Payed.code, BasketStatus.COD.code],
+      status: [Basket.Status.Payed.code, Basket.Status.COD.code],
 
       busy_fetch: false,
 
@@ -1188,19 +1182,19 @@ export default {
     },
 
     deliveryStates() {
-      if (this.isDropShipping) return PhysicalOrderStates;
+      if (this.isDropShipping) return Basket.PhysicalOrderStates;
       if (this.isAvocado) return Avocado.DeliveryStates;
 
       if (this.type?.code === ProductType.PHYSICAL.code)
-        return PhysicalOrderStates;
+        return Basket.PhysicalOrderStates;
       else if (this.type?.code === ProductType.VIRTUAL.code)
-        return VirtualOrderStates;
+        return Basket.VirtualOrderStates;
       else if (this.type?.code === ProductType.FILE.code)
-        return FileOrderStates;
+        return Basket.FileOrderStates;
       else if (this.type?.code === ProductType.SERVICE.code)
-        return ServiceOrderStates;
+        return Basket.ServiceOrderStates;
       else if (this.type?.code === ProductType.SUBSCRIPTION.code)
-        return SubscriptionOrderStates;
+        return Basket.SubscriptionOrderStates;
 
       return null;
     },
@@ -1264,11 +1258,11 @@ export default {
   },
   created() {
     if (this.isService) {
-      this.status = [BasketStatus.Payed.code, BasketStatus.Reserved.code]; // Show reserved basket to review by seller and set price. (Or auto pricing)
+      this.status = [Basket.Status.Payed.code, Basket.Status.Reserved.code]; // Show reserved basket to review by seller and set price. (Or auto pricing)
     } else if (this.isAvocado) {
-      this.status = [BasketStatus.Reserved.code, BasketStatus.Payed.code]; // Show All
+      this.status = [Basket.Status.Reserved.code, Basket.Status.Payed.code]; // Show All
     } else if (this.isHyper) {
-      this.status = [BasketStatus.Reserved.code, BasketStatus.Payed.code]; // Show All
+      this.status = [Basket.Status.Reserved.code, Basket.Status.Payed.code]; // Show All
     }
     this.fetchOrders(
       this.page,
@@ -1428,15 +1422,15 @@ export default {
     inQueProcess(item) {
       return (
         [
-          this.isAvocado ? BasketStatus.Reserved.code : null, // Tips: in Avocado orders 'Reserved' are in processing mode (need seller actions...)
-          //BasketStatus.Reserved.code,
-          BasketStatus.Payed.code,
-          BasketStatus.COD.code,
+          this.isAvocado ? Basket.Status.Reserved.code : null, // Tips: in Avocado orders 'Reserved' are in processing mode (need seller actions...)
+          //Basket.Status.Reserved.code,
+          Basket.Status.Payed.code,
+          Basket.Status.COD.code,
         ].includes(item.status) &&
         [
-          PhysicalOrderStates.CheckQueue.code,
-          PhysicalOrderStates.OrderConfirm.code,
-          PhysicalOrderStates.PreparingOrder.code,
+          Basket.PhysicalOrderStates.CheckQueue.code,
+          Basket.PhysicalOrderStates.OrderConfirm.code,
+          Basket.PhysicalOrderStates.PreparingOrder.code,
         ].includes(item.delivery_state)
       );
     },
@@ -1472,9 +1466,9 @@ export default {
       if (item.reject) return require("../../../assets/emotions/010-dead.svg");
 
       if (
-        item.status === BasketStatus.Open ||
-        item.status === BasketStatus.Reserved ||
-        item.status === BasketStatus.Canceled
+        item.status === Basket.Status.Open ||
+        item.status === Basket.Status.Reserved ||
+        item.status === Basket.Status.Canceled
       )
         return null;
 
@@ -1496,9 +1490,9 @@ export default {
     getDiffLastUpdateOver3Days(item) {
       if (item.reject) return false;
       if (
-        item.status === BasketStatus.Open ||
-        item.status === BasketStatus.Reserved ||
-        item.status === BasketStatus.Canceled
+        item.status === Basket.Status.Open ||
+        item.status === Basket.Status.Reserved ||
+        item.status === Basket.Status.Canceled
       )
         return false;
       if (!this.inQueProcess(item)) return false;
@@ -1532,7 +1526,7 @@ export default {
 
     // ――――――――――― 🎗️ Subscription ―――――――――――
     isSubscribed(order) {
-      return this.isSubscription && order.status === BasketStatus.Payed.code;
+      return this.isSubscription && order.status === Basket.Status.Payed.code;
     },
 
     subscriptionPeriod(order) {
@@ -1566,12 +1560,12 @@ export default {
     waitingToDeliver(item) {
       const delivery_info = item.delivery_info;
       if (
-        [BasketStatus.COD.code, BasketStatus.Payed.code].includes(
+        [Basket.Status.COD.code, Basket.Status.Payed.code].includes(
           item.status,
         ) && // Payed or COD
         ![
-          PhysicalOrderStates.SentOrder.code,
-          PhysicalOrderStates.ToCustomer.code,
+          Basket.PhysicalOrderStates.SentOrder.code,
+          Basket.PhysicalOrderStates.ToCustomer.code,
         ].includes(item.delivery_state) && // Nor delivered yet!
         delivery_info &&
         delivery_info.date // Has date

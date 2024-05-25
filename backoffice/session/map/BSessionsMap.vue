@@ -242,10 +242,10 @@ import UMapCountriesHeatmap from "../../../ui/map/countries/heatmap/UMapCountrie
 import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 import TimeSeriesInlineChart from "../../chart/TimeSeriesInlineChart.vue";
-import { DeviceType } from "@selldone/core-js/enums/campaign/DeviceType";
 import UTimeSpan from "../../../ui/time/span/UTimeSpan.vue";
 import BSessionDevicesPie from "../../session/devices/pie/BSessionDevicesPie.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
+import { Analytics } from "@selldone/core-js";
 
 export default {
   name: "BSessionsMap",
@@ -284,7 +284,7 @@ export default {
   },
   data: () => ({
     busy: false,
-    types: DeviceType,
+    types: Analytics.DeviceType,
 
     timeSeries: null,
 

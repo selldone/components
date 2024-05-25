@@ -376,10 +376,10 @@ import CommunityTopicCard from "../../../community/topic/CommunityTopicCard.vue"
 import CPostEditor from "../../../community/post/editor/CPostEditor.vue";
 import CCategoryEdit from "../../../community/category/edit/CCategoryEdit.vue";
 import CCategoryAnalytics from "../../../community/category/analytics/CCategoryAnalytics.vue";
-import { CommunityStageLevel } from "@selldone/core-js/enums/community/CommunityStageLevel";
 import CImageView from "../../../community/image/view/CImageView.vue";
 import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
+import { Community } from "@selldone/core-js";
 
 export default {
   name: "CommunityCategoryPage",
@@ -447,7 +447,7 @@ export default {
 
   computed: {
     stage_level() {
-      return this.community.stage && CommunityStageLevel[this.community.stage];
+      return this.community.stage && Community.StageLevels[this.community.stage];
     },
     access() {
       return this.community.access;

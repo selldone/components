@@ -268,13 +268,12 @@
 
 <script>
 import CImageInput from "../../community/image/input/CImageInput.vue";
-import { CommunityStageLevel } from "@selldone/core-js/enums/community/CommunityStageLevel";
 import USmartToggle from "../../ui/smart/toggle/USmartToggle.vue";
 import USmartSelect from "../../ui/smart/select/USmartSelect.vue";
-import { CommunityAttachmentAccess } from "@selldone/core-js/enums/community/CommunityAttachmentAccess";
 import _ from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import SWidgetButtons from "../../ui/widget/buttons/SWidgetButtons.vue";
+import { Community } from "@selldone/core-js";
 
 export default {
   name: "CCommunityEdit",
@@ -288,8 +287,8 @@ export default {
 
   data() {
     return {
-      CommunityStageLevel: CommunityStageLevel,
-      CommunityAttachmentAccess: CommunityAttachmentAccess,
+      CommunityStageLevel: Community.StageLevels,
+      CommunityAttachmentAccess: Community.AttachmentAccesses,
 
       busy: false,
 
@@ -305,11 +304,11 @@ export default {
       nofollow: true,
       cross: false,
 
-      stage: CommunityStageLevel.VERIFIED.code,
+      stage: Community.StageLevels.VERIFIED.code,
 
       enable: true,
 
-      attachment: CommunityAttachmentAccess.PRIVATE.code,
+      attachment: Community.AttachmentAccesses.PRIVATE.code,
       mims: [],
 
       //-------------------

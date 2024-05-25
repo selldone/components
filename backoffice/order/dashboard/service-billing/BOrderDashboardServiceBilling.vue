@@ -68,9 +68,8 @@
 </template>
 
 <script>
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
-import { ServiceOrderStates } from "@selldone/core-js/enums/basket/ServiceOrderStates";
 import ServiceBillingItem from "../../../../storefront/order/billing/ServiceBillingItem.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardServiceBilling",
@@ -97,8 +96,9 @@ export default {
 
     in_this_step() {
       return (
-        this.basket.status === BasketStatus.Reserved.code &&
-        this.basket.delivery_state === ServiceOrderStates.CheckQueue.code &&
+        this.basket.status === Basket.Status.Reserved.code &&
+        this.basket.delivery_state ===
+          Basket.ServiceOrderStates.CheckQueue.code &&
         this.in_service_billing_state
       );
     },

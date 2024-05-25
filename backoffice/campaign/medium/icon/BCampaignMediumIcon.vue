@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { CampaignMedium } from "@selldone/core-js/enums/campaign/CampaignMedium";
+import { CampaignLink } from "@selldone/core-js";
 
 export default {
   name: "BCampaignMediumIcon",
@@ -32,14 +32,14 @@ export default {
   computed: {
     icon() {
       const found = this.value
-        ? CampaignMedium.find(
+        ? CampaignLink.Medium.find(
             (item) => item.name.toLowerCase() === this.value.toLowerCase(),
           )
         : null;
 
       return found
         ? found.icon
-        : require("@selldone/core-js/enums/campaign/assets/mediums/default.svg");
+        : require("@selldone/core-js/models/shop/campaign/assets/mediums/default.svg");
     },
   },
   methods: {},

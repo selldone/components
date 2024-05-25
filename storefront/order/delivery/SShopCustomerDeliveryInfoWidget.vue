@@ -354,7 +354,6 @@
 </template>
 
 <script>
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
 import SOrderBillCard from "../../../storefront/order/billing/card/SOrderBillCard.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SOrderDeliveryAutoComplete from "../../../storefront/order/auto-complete/SOrderDeliveryAutoComplete.vue";
@@ -362,6 +361,7 @@ import DeliveryTimelineTransportationOrder from "../../../storefront/order/deliv
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import UMapGeoButton from "../../../ui/map/geo-button/UMapGeoButton.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
@@ -381,7 +381,7 @@ export default {
 
   data: function () {
     return {
-      PhysicalOrderStates: PhysicalOrderStates,
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
 
       center: { lat: 0, lng: 0 },
 
@@ -446,11 +446,13 @@ export default {
     canConfirmReceived() {
       if (this.has_goods_delivery) {
         return (
-          this.basket.delivery_state === PhysicalOrderStates.SentOrder.code
+          this.basket.delivery_state ===
+          Basket.PhysicalOrderStates.SentOrder.code
         );
       } else if (this.isVirtual) {
         return (
-          this.basket.delivery_state === PhysicalOrderStates.PreparingOrder.code
+          this.basket.delivery_state ===
+          Basket.PhysicalOrderStates.PreparingOrder.code
         );
       }
 
@@ -483,8 +485,10 @@ export default {
 
     can_edit_address() {
       return (
-        this.basket.delivery_state !== PhysicalOrderStates.SentOrder.code &&
-        this.basket.delivery_state !== PhysicalOrderStates.ToCustomer.code
+        this.basket.delivery_state !==
+          Basket.PhysicalOrderStates.SentOrder.code &&
+        this.basket.delivery_state !==
+          Basket.PhysicalOrderStates.ToCustomer.code
       );
     },
 

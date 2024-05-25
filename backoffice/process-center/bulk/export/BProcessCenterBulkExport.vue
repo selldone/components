@@ -167,13 +167,10 @@
 <script>
 import SExportFormatSelect from "../../../../ui/file/export-format-select/SExportFormatSelect.vue";
 import UDateInput from "../../../../ui/date/input/UDateInput.vue";
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
-import { VirtualOrderStates } from "@selldone/core-js/enums/basket/VirtualOrderStates";
-import { ServiceOrderStates } from "@selldone/core-js/enums/basket/ServiceOrderStates";
-import { FileOrderStates } from "@selldone/core-js/enums/basket/FileOrderStates";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import SWidgetHeader from "../../../../ui/widget/header/SWidgetHeader.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BProcessCenterBulkExport",
@@ -194,10 +191,10 @@ export default {
       end: new Date(),
 
       delivery_states: [
-        PhysicalOrderStates.CheckQueue.code,
-        PhysicalOrderStates.OrderConfirm.code,
-        PhysicalOrderStates.PreparingOrder.code,
-        PhysicalOrderStates.SentOrder.code,
+        Basket.PhysicalOrderStates.CheckQueue.code,
+        Basket.PhysicalOrderStates.OrderConfirm.code,
+        Basket.PhysicalOrderStates.PreparingOrder.code,
+        Basket.PhysicalOrderStates.SentOrder.code,
       ],
 
       page: "A5",
@@ -207,12 +204,13 @@ export default {
   computed: {
     all_delivery_states() {
       if (this.type.code === ProductType.PHYSICAL.code)
-        return PhysicalOrderStates;
+        return Basket.PhysicalOrderStates;
       else if (this.type.code === ProductType.VIRTUAL.code)
-        return VirtualOrderStates;
-      else if (this.type.code === ProductType.FILE.code) return FileOrderStates;
+        return Basket.VirtualOrderStates;
+      else if (this.type.code === ProductType.FILE.code)
+        return Basket.FileOrderStates;
       else if (this.type.code === ProductType.SERVICE.code)
-        return ServiceOrderStates;
+        return Basket.ServiceOrderStates;
 
       return [];
     },

@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "SOrderStatusesSelect",
@@ -72,20 +72,20 @@ export default {
       const out = [];
 
       if (this.hasOpen) {
-        out.push(BasketStatus.Open);
+        out.push(Basket.Status.Open);
       }
 
       if (this.hasReserved) {
-        out.push(BasketStatus.Reserved);
+        out.push(Basket.Status.Reserved);
       }
 
-      out.push(BasketStatus.Payed);
+      out.push(Basket.Status.Payed);
 
       if (this.hasCod) {
-        out.push(BasketStatus.COD);
+        out.push(Basket.Status.COD);
       }
 
-      out.push(BasketStatus.Canceled);
+      out.push(Basket.Status.Canceled);
 
       return out;
     },

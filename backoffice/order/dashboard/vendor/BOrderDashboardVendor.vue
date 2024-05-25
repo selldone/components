@@ -361,16 +361,11 @@
 
 <script>
 import BOrderCart from "../../cart/BOrderCart.vue";
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import SOrderDeliveryStatusStepper from "../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import { VirtualOrderStates } from "@selldone/core-js/enums/basket/VirtualOrderStates";
-import { FileOrderStates } from "@selldone/core-js/enums/basket/FileOrderStates";
-import { ServiceOrderStates } from "@selldone/core-js/enums/basket/ServiceOrderStates";
 import UCube from "../../../../ui/cube/UCube.vue";
-import { SubscriptionOrderStates } from "@selldone/core-js/enums/basket/SubscriptionOrderStates";
 import BOrderVendorPaymentManagement from "../../../order/vendor/payment/BOrderVendorPaymentManagement.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardVendor",
@@ -413,13 +408,13 @@ export default {
     },
 
     last_state_text() {
-      if (this.vendorOrder.status === BasketStatus.Reserved.code)
+      if (this.vendorOrder.status === Basket.Status.Reserved.code)
         return this.vendorOrder.reserved_at;
-      else if (this.vendorOrder.status === BasketStatus.Payed.code)
+      else if (this.vendorOrder.status === Basket.Status.Payed.code)
         return this.vendorOrder.payment_at;
-      else if (this.vendorOrder.status === BasketStatus.Canceled.code)
+      else if (this.vendorOrder.status === Basket.Status.Canceled.code)
         return this.vendorOrder.cancel_at;
-      else if (this.vendorOrder.status === BasketStatus.COD.code)
+      else if (this.vendorOrder.status === Basket.Status.COD.code)
         return this.vendorOrder.reserved_at;
 
       return null;
@@ -431,15 +426,15 @@ export default {
 
     orders_states() {
       if (this.type === ProductType.PHYSICAL.code) {
-        return PhysicalOrderStates;
+        return Basket.PhysicalOrderStates;
       } else if (this.type === ProductType.VIRTUAL.code) {
-        return VirtualOrderStates;
+        return Basket.VirtualOrderStates;
       } else if (this.type === ProductType.FILE.code) {
-        return FileOrderStates;
+        return Basket.FileOrderStates;
       } else if (this.type === ProductType.SERVICE.code) {
-        return ServiceOrderStates;
+        return Basket.ServiceOrderStates;
       } else if (this.type === ProductType.SUBSCRIPTION.code) {
-        return SubscriptionOrderStates;
+        return Basket.SubscriptionOrderStates;
       }
       return null;
     },
@@ -455,7 +450,7 @@ export default {
     },
 
     disabled() {
-      return this.basket.status === BasketStatus.Reserved.code;
+      return this.basket.status === Basket.Status.Reserved.code;
     },
 
     in_this_step() {
@@ -465,7 +460,7 @@ export default {
     initial_select_all() {
       return (
         this.vendorOrder.delivery_state ===
-        this.PhysicalOrderStates.CheckQueue.code
+        Basket.PhysicalOrderStates.CheckQueue.code
       );
     },
 
@@ -474,7 +469,7 @@ export default {
     },
 
     isPayed() {
-      return this.vendorOrder.status === BasketStatus.Payed.code;
+      return this.vendorOrder.status === Basket.Status.Payed.code;
     },
 
     showItems() {
@@ -482,9 +477,9 @@ export default {
       if (!this.vendorOrder) return false;
       return (
         this.vendorOrder.delivery_state ===
-          this.PhysicalOrderStates.CheckQueue.code ||
+          Basket.PhysicalOrderStates.CheckQueue.code ||
         this.vendorOrder.delivery_state ===
-          this.PhysicalOrderStates.PreparingOrder.code
+          Basket.PhysicalOrderStates.PreparingOrder.code
       );
     },
 

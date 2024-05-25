@@ -123,8 +123,7 @@
 </template>
 
 <script>
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
-import { AvocadoItem } from "@selldone/core-js";
+import { AvocadoItem, Basket } from "@selldone/core-js";
 
 export default {
   name: "SShopAvocadoCustomerOrderItems",
@@ -139,7 +138,7 @@ export default {
   },
 
   data: () => ({
-    BasketStatus: BasketStatus,
+    BasketStatus: Basket.Status,
     AvocadoItemStatus: AvocadoItem.Status,
     busy_delete: null,
 
@@ -148,10 +147,10 @@ export default {
 
   computed: {
     isOpen() {
-      return this.avocado.status === BasketStatus.Open.code;
+      return this.avocado.status === Basket.Status.Open.code;
     },
     isReserved() {
-      return this.avocado.status === BasketStatus.Reserved.code;
+      return this.avocado.status === Basket.Status.Reserved.code;
     },
 
     filtered_items() {

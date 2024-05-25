@@ -21,7 +21,7 @@
       class="flex-grow-1 d-flex"
     >
       <span :title="$t(item.name)" class="flex-grow-1">
-        <v-icon  class="me-1" size="small"> {{ item.icon }}</v-icon>
+        <v-icon class="me-1" size="small"> {{ item.icon }}</v-icon>
         <b>
           {{ numeralFormat(getQueCountBasketsByType(item.code), "0,0") }}
         </b>
@@ -37,7 +37,7 @@
     </div>
 
     <span v-if="!list.length" class="ma-auto"
-      ><v-icon  class="me-1">emoji_food_beverage</v-icon>
+      ><v-icon class="me-1">emoji_food_beverage</v-icon>
       {{ $t("global.commons.auto") }}</span
     >
   </div>
@@ -45,8 +45,7 @@
 
 <script>
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import { PhysicalOrderStates } from "@selldone/core-js/enums/basket/PhysicalOrderStates";
-import { VirtualOrderStates } from "@selldone/core-js/enums/basket/VirtualOrderStates";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "OrdersQue",
@@ -69,16 +68,16 @@ export default {
     list() {
       if (this.type === ProductType.PHYSICAL.code || this.type === "AVO")
         return [
-          PhysicalOrderStates.CheckQueue,
-          PhysicalOrderStates.OrderConfirm,
-          PhysicalOrderStates.PreparingOrder,
-          PhysicalOrderStates.SentOrder,
+          Basket.PhysicalOrderStates.CheckQueue,
+          Basket.PhysicalOrderStates.OrderConfirm,
+          Basket.PhysicalOrderStates.PreparingOrder,
+          Basket.PhysicalOrderStates.SentOrder,
         ];
       else if (this.type === ProductType.VIRTUAL.code)
         return [
-          VirtualOrderStates.CheckQueue,
-          VirtualOrderStates.OrderConfirm,
-          VirtualOrderStates.PreparingOrder,
+          Basket.VirtualOrderStates.CheckQueue,
+          Basket.VirtualOrderStates.OrderConfirm,
+          Basket.VirtualOrderStates.PreparingOrder,
         ];
       else if (this.type === ProductType.FILE.code) return [];
 

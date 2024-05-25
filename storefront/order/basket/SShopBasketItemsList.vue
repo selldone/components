@@ -183,7 +183,7 @@
 
         <div v-if="item.offer_amount">
           <v-chip color="blue" variant="flat" size="small" title="Offer">
-            <v-icon  start>add</v-icon>
+            <v-icon start>add</v-icon>
             <u-price
               :amount="-item.offer_amount"
               :currency="item.currency"
@@ -227,7 +227,6 @@
             'small'
           "
           color="red"
-
           rounded
           variant="flat"
           @click.stop="
@@ -354,11 +353,11 @@
 
 <script>
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
-import { ReturnItemStates } from "@selldone/core-js/enums/basket/ReturnItemStates";
 import SShopBasketItemReturnForm from "../../../storefront/order/return/SShopBasketItemReturnForm.vue";
 import BasketItemUserMessageForm from "../../../storefront/order/product-input/BasketItemUserMessageForm.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
+import { BasketItemReturn } from "@selldone/core-js";
 
 export default {
   name: "SShopBasketItemsList",
@@ -479,7 +478,9 @@ export default {
 
   methods: {
     getStateItemStateObject(state) {
-      return ReturnItemStates[state] ? ReturnItemStates[state] : {};
+      return BasketItemReturn.States[state]
+        ? BasketItemReturn.States[state]
+        : {};
     },
     getFilledPercent(_basket_item) {
       if (!_basket_item.message) return 0;

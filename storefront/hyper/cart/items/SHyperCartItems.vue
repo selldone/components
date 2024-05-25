@@ -67,8 +67,8 @@
 </template>
 
 <script>
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
 import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "SHyperCartItems",
@@ -84,16 +84,16 @@ export default {
   },
 
   data: () => ({
-    BasketStatus: BasketStatus,
+    BasketStatus: Basket.Status,
     busy_delete: null,
   }),
 
   computed: {
     isOpen() {
-      return this.hyper.status === BasketStatus.Open.code;
+      return this.hyper.status === Basket.Status.Open.code;
     },
     isReserved() {
-      return this.hyper.status === BasketStatus.Reserved.code;
+      return this.hyper.status === Basket.Status.Reserved.code;
     },
   },
 

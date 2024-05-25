@@ -345,12 +345,12 @@
 import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
 import CCommentsList from "../../../community/comment/list/CCommentsList.vue";
 import CImageView from "../../../community/image/view/CImageView.vue";
-import { PostReaction } from "@selldone/core-js/enums/community/PostReaction.ts";
 import URibbon from "../../../ui/ribbon/URibbon.vue";
 import CPostPoll from "../../../community/post/poll/CPostPoll.vue";
 import CProductView from "../../../community/product/view/CProductView.vue";
 import CAttachViewer from "../../../community/attach/viewer/CAttachViewer.vue";
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
+import { CommunityPostReaction } from "@selldone/core-js";
 
 export default {
   name: "CPostWidget",
@@ -404,7 +404,7 @@ export default {
 
       show_comments: false,
 
-      PostReaction: PostReaction,
+      PostReaction: CommunityPostReaction.Reactions,
 
       busy_reaction: false,
 
@@ -442,11 +442,14 @@ export default {
 
     reactions() {
       const out = [
-        { act: PostReaction.LIKE, value: this.post.likes },
-        { act: PostReaction.SMILE, value: this.post.smiles },
-        { act: PostReaction.CLAP, value: this.post.claps },
-        { act: PostReaction.IDEA, value: this.post.ideas },
-        { act: PostReaction.DISAGREE, value: this.post.disagrees },
+        { act: CommunityPostReaction.Reactions.LIKE, value: this.post.likes },
+        { act: CommunityPostReaction.Reactions.SMILE, value: this.post.smiles },
+        { act: CommunityPostReaction.Reactions.CLAP, value: this.post.claps },
+        { act: CommunityPostReaction.Reactions.IDEA, value: this.post.ideas },
+        {
+          act: CommunityPostReaction.Reactions.DISAGREE,
+          value: this.post.disagrees,
+        },
       ];
 
       return out
@@ -460,7 +463,7 @@ export default {
       return (
         this.post.action &&
         this.post.action.reaction &&
-        PostReaction[this.post.action.reaction]
+        CommunityPostReaction.Reactions[this.post.action.reaction]
       );
     },
     is_trend() {

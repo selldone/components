@@ -190,7 +190,7 @@
 <script>
 import UMapGeoButton from "../../ui/map/geo-button/UMapGeoButton.vue";
 import BOrderButtonBasket from "../order/button/basket/BOrderButtonBasket.vue";
-import { BasketStatus } from "@selldone/core-js/enums/basket/status/BasketStatus";
+import { Basket } from "@selldone/core-js";
 
 export default {
   name: "MapLocationAddressWidget",
@@ -276,7 +276,7 @@ export default {
 
     is_cod() {
       if (!this.order) return false;
-      return this.order.status === BasketStatus.COD.code;
+      return this.order.status === Basket.Status.COD.code;
     },
   },
 
