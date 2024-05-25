@@ -121,7 +121,7 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
     // Add 'cursor-pan-all' class on init
     target.classList.add("cursor-grab");
 
-    target.md = function (e: MouseEvent | TouchEvent) {
+    target.onPointerStart = function (e: MouseEvent | TouchEvent) {
       e.preventDefault();
       const isMouseEvent = e instanceof window.MouseEvent;
       // The coordinates of the mouse pointer compared to the page when the mouse button is clicked on an element
@@ -173,7 +173,7 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
       }
     };
 
-    target.mu = function (e: MouseEvent | TouchEvent) {
+    target.onPointerEnd = function (e: MouseEvent | TouchEvent) {
       pushed = 0;
 
       if (isDragging) {
@@ -197,7 +197,7 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
       }
     };
 
-    target.mm = function (e: MouseEvent | TouchEvent) {
+    target.onPointerMove = function (e: MouseEvent | TouchEvent) {
       const isMouseEvent = e instanceof window.MouseEvent;
       let newScrollX, newScrollY;
       if (pushed) {
@@ -264,11 +264,11 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
       }
     };
 
-    addEventListeners(target, POINTER_START_EVENTS, target.md);
+    addEventListeners(target, POINTER_START_EVENTS, target.onPointerStart);
 
-    addEventListeners(window, POINTER_END_EVENTS, target.mu);
+    addEventListeners(window, POINTER_END_EVENTS, target.onPointerEnd);
 
-    addEventListeners(window, POINTER_MOVE_EVENTS, target.mm);
+    addEventListeners(window, POINTER_MOVE_EVENTS, target.onPointerMove);
   };
   // if value is undefined or true we will init
   if (active) {
@@ -280,18 +280,18 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
   } else {
     // if value is false means we disable
     // window.removeEventListener('load', reset)
-    removeEventListeners(target, POINTER_START_EVENTS, target.md);
-    removeEventListeners(window, POINTER_END_EVENTS, target.mu);
-    removeEventListeners(window, POINTER_MOVE_EVENTS, target.mm);
+    removeEventListeners(target, POINTER_START_EVENTS, target.onPointerStart);
+    removeEventListeners(window, POINTER_END_EVENTS, target.onPointerEnd);
+    removeEventListeners(window, POINTER_MOVE_EVENTS, target.onPointerMove);
   }
 };
 
 const destroy = (el: any) => {
   const target = el;
   target.classList.remove("cursor-grab");
-  removeEventListeners(target, POINTER_START_EVENTS, target.md);
-  removeEventListeners(window, POINTER_END_EVENTS, target.mu);
-  removeEventListeners(window, POINTER_MOVE_EVENTS, target.mm);
+  removeEventListeners(target, POINTER_START_EVENTS, target.onPointerStart);
+  removeEventListeners(window, POINTER_END_EVENTS, target.onPointerEnd);
+  removeEventListeners(window, POINTER_MOVE_EVENTS, target.onPointerMove);
 };
 
 export default {
