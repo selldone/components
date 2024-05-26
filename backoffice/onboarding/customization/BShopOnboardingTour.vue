@@ -76,6 +76,10 @@
         >
           <b class="d-block mb-2"> {{ items[index]?.title }}</b>
           {{ items[index]?.description }}
+
+          <div v-if="items[index].action" class="py-2 text-end">
+            <v-btn  class="tnt" size="large" append-icon="open_in_new" :href="items[index].action.href" target="_blank">{{items[index].action.title}}</v-btn>
+          </div>
         </v-sheet>
 
 
@@ -114,6 +118,7 @@ export default {
         description:
           "With Avocado, you can offer services or products without predefined prices or details. Create a custom form for your customers to request services or products. Once they submit their request, you can set the price and process the payment. Share the form on your social media, allowing customers to add items, upload images, and submit orders easily.",
         image: require("./assets/avocado.jpg"),
+        action:{title:'Read About Avocado',href:'https://selldone.com/blog/avocado-social-sell-tool-116'}
       },
 
       {
@@ -121,6 +126,8 @@ export default {
         description:
           "Build a thriving marketplace with Selldone by adding multiple vendors. Vendors can list their products, and you can set a commission rate for each sale. When a customer makes a purchase, the vendor receives the payment directly, manages the order through their dedicated panel, and you earn a commission via the auto payout feature.",
         image: require("./assets/marketplace.jpg"),
+        action:{title:'Auto Vendors Payout',href:'https://selldone.com/blog/stripe-connect-payout-marketplace-120'}
+
       },
       {
         title: "Support Complex Business Models",
