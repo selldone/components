@@ -79,7 +79,7 @@
           <v-icon class="me-1" color="#111">data_object</v-icon>
           Structural template
           <u-check
-            :value="selected_provider.support_template"
+            :model-value="selected_provider.support_template"
             class="ms-2"
           ></u-check>
         </div>
