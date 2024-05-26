@@ -13,12 +13,15 @@
   -->
 
 <template>
-  <v-dialog
+  <v-bottom-sheet
     :model-value="modelValue"
     max-width="640"
+    inset
+    width="98vw"
+    content-class="rounded-t-xl"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <v-card class="text-start" dir="ltr">
+    <v-card class="text-start" dir="ltr" rounded="t-xl">
       <v-card-title>
         <img
           class="me-1"
@@ -41,9 +44,9 @@
             min-width="180"
             size="x-large"
             target="_blank"
-            variant="flat"
+            variant="elevated"
           >
-            <v-icon class="me-1">download</v-icon>
+            <v-icon start>download</v-icon>
             <div>
               Simple version
               <small class="d-block text-white">Recommended</small>
@@ -63,9 +66,9 @@
             min-width="180"
             size="x-large"
             target="_blank"
-            variant="flat"
+            variant="elevated"
           >
-            <v-icon class="me-1">download</v-icon>
+            <v-icon start>download</v-icon>
             Full version
           </v-btn>
         </div>
@@ -82,10 +85,21 @@
             min-width="180"
             size="x-large"
             target="_blank"
-            variant="flat"
+            variant="elevated"
           >
-            <v-icon class="me-1">download</v-icon>
+            <v-icon start>download</v-icon>
             Wholesaler version
+          </v-btn>
+        </div>
+        <div class="widget-buttons my-5">
+          <v-btn
+            href="https://github.com/selldone/excel"
+            target="_blank"
+            size="x-large"
+            prepend-icon="fa:fab fa-github"
+            variant="elevated"
+          >
+            Click to find more samples & details
           </v-btn>
         </div>
       </v-card-text>
@@ -102,7 +116,7 @@
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 </template>
 
 <script>

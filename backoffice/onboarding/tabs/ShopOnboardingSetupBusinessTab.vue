@@ -15,9 +15,11 @@
 <template>
   <v-card color="transparent" flat>
     <v-card-text>
-      <h2 class="mb-2">
-        {{ $t("onboarding.business.step1.title") }}
-      </h2>
+
+      <s-widget-header :title="$t('onboarding.business.step1.title')" icon="work"> </s-widget-header>
+
+
+
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
           {{ $t("onboarding.business.step1.msg") }}

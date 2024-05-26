@@ -34,7 +34,7 @@
           v-model="title"
           :label="$t('global.commons.title')"
           :placeholder="$t('avocado.title_plc')"
-          class="mt-5"
+          class="mt-5" variant="underlined"
         >
         </v-text-field>
 
@@ -43,7 +43,7 @@
           :label="$t('global.commons.description')"
           :placeholder="$t('avocado.description_plc')"
           auto-grow
-          rows="2"
+          rows="2" variant="underlined"
         >
         </v-textarea>
 
@@ -51,7 +51,7 @@
           v-model="link"
           :label="$t('global.commons.link')"
           :placeholder="$t('avocado.link_plc')"
-          append-inner-icon="link"
+          append-inner-icon="link" variant="underlined"
         >
         </v-text-field>
 
@@ -61,7 +61,7 @@
           :messages="$t('avocado.image_msg')"
           accept="image/*"
           append-inner-icon="image"
-          prepend-icon=""
+          prepend-icon="" variant="underlined"
         />
 
         <u-number-input
@@ -69,7 +69,7 @@
           :label="$t('global.commons.count')"
           :min="1"
           class="mt-5"
-          show-buttons
+          show-buttons variant="underlined"
         >
         </u-number-input>
 
@@ -84,7 +84,7 @@
             size="x-large"
             @click="addItem()"
           >
-            <v-icon class="me-1" size="small">add</v-icon>
+            <v-icon start>add</v-icon>
             {{ $t("avocado.add_item") }}
           </v-btn>
         </div>

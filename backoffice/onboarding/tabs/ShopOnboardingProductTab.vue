@@ -15,9 +15,11 @@
 <template>
   <v-card color="transparent" flat>
     <v-card-text>
-      <h2 class="mb-2">
-        {{ $t("onboarding.product.step1.title") }}
-      </h2>
+      <s-widget-header
+        :title="$t('onboarding.product.step1.title')"
+        icon="looks_one"
+      ></s-widget-header>
+
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
           {{ $t("onboarding.product.step1.msg") }}
@@ -26,14 +28,12 @@
         <v-img
           :src="require('../assets/add-product-manually.svg')"
           class="m-2 imgi"
-
         ></v-img>
       </div>
       <div class="widget-buttons">
         <v-btn
           :to="{ name: 'BPageShopProductsList', hash: '#add' }"
           color="#000"
-
           exact
           size="x-large"
         >
@@ -54,7 +54,6 @@
           <v-btn
             :to="{ name: 'BPageShopProductsList', hash: '#category' }"
             color="#000"
-
             exact
             size="x-large"
           >
@@ -64,11 +63,13 @@
         </div>
       </template>
 
-      <hr />
+      <hr class="my-5" />
 
-      <h2 class="mt-5 mb-2">
-        {{ $t("onboarding.product.step2.title") }}
-      </h2>
+      <s-widget-header
+        :title="$t('onboarding.product.step2.title')"
+        icon="looks_two"
+      ></s-widget-header>
+
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
           {{ $t("onboarding.product.step2.msg") }}
@@ -76,7 +77,6 @@
         <v-img
           :src="require('../assets/add-product-excel.svg')"
           class="m-2 imgi"
-
         ></v-img>
       </div>
 
@@ -84,7 +84,6 @@
         <v-btn
           :to="{ name: 'BPageShopProductsList' }"
           color="#000"
-
           size="x-large"
         >
           <v-icon class="me-1" size="small">publish</v-icon>

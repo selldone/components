@@ -15,7 +15,21 @@
 <template>
   <v-card class="s--shop-onboarding-customization" color="transparent" flat>
     <v-card-text>
-      <h2 class="mb-2">{{ $t("onboarding.customize.template.title") }}</h2>
+      <s-widget-header title="Tour" icon="movie_filter"> </s-widget-header>
+      <p class="typo-body flex-grow-1">
+        Discover what's possible here that isn't anywhere else.
+      </p>
+
+      <b-shop-onboarding-tour :shop="shop"></b-shop-onboarding-tour>
+
+      <hr class="my-5" />
+
+      <s-widget-header
+        :title="$t('onboarding.customize.template.title')"
+        icon="auto_awesome_motion"
+      >
+      </s-widget-header>
+
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
           {{ $t("onboarding.customize.template.msg") }}
@@ -38,13 +52,12 @@
             v-for="template in templates"
             :key="template.id"
             :template="template"
-            :to="{
-              name: 'BPageLandingEditor',
-              params: { page_id: 'new' },
-              query: { template_id: template.id },
-            }"
-            class="min-width-250 me-2"
-            clickable
+
+            class="me-2"
+            min-width="250"
+            size="default"
+
+            variant="flat"
           ></l-template-card>
         </div>
       </u-fade-scroll>
@@ -70,11 +83,14 @@
         </v-btn>
       </div>
 
-      <hr />
+      <hr class="my-5" />
 
-      <h2 class="mt-5 mb-2">
-        {{ $t("onboarding.customize.colors.title") }}
-      </h2>
+      <s-widget-header
+        :title="$t('onboarding.customize.colors.title')"
+        icon="palette"
+      >
+      </s-widget-header>
+
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
           {{ $t("onboarding.customize.colors.msg") }}
@@ -108,10 +124,18 @@
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import LTemplateCard from "@selldone/page-builder/components/templates/card/LTemplateCard.vue";
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
+import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import BShopOnboardingTour from "@selldone/components-vue/backoffice/onboarding/customization/BShopOnboardingTour.vue";
 
 export default {
   name: "SShopOnboardingCustomization",
-  components: { UColorCircle, LTemplateCard, UFadeScroll },
+  components: {
+    BShopOnboardingTour,
+    SWidgetHeader,
+    UColorCircle,
+    LTemplateCard,
+    UFadeScroll,
+  },
   props: {
     shop: {
       required: true,

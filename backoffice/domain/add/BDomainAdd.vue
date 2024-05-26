@@ -14,12 +14,11 @@
 
 <template>
   <v-card
-    :color="inline ? 'transparent' : undefined"
-    :variant="inline ? 'outlined' : 'flat'"
+    :variant="inline ? 'text' : 'flat'"
     class="position-relative text-start"
   >
     <u-loading-progress v-if="busy_add"></u-loading-progress>
-    <v-card-title>
+    <v-card-title v-if="!inline">
       <v-icon class="me-1" color="#333"
         >{{ inDomainEditMode ? "public" : "travel_explore" }}
       </v-icon>
@@ -264,7 +263,7 @@
                     : !custom_ips_ssl_proxy?.includes(x),
                 )"
                 :key="item"
-                class="border-seft-thick-blue p-2 my-2"
+                class="border-seft-thick-blue "
                 dir="ltr"
               >
                 <p class="font-weight-black mb-1">DNS Record type: <b>A</b></p>
@@ -272,14 +271,14 @@
                 <u-text-copy-box
                   :value="domain_verification_title"
                   full-width
-                  message="DNS A key"
+                  message="DNS A key" class="my-2"
                 >
                 </u-text-copy-box>
 
                 <u-text-copy-box
                   :value="item"
                   full-width
-                  message="DNS A record value"
+                  message="DNS A record value" class="my-2"
                 >
                 </u-text-copy-box>
               </div>
@@ -298,7 +297,7 @@
                   <div
                     v-for="item in SelldoneShopsHostCNAMEs"
                     :key="item"
-                    class="border-seft-thick-blue p-2 my-2"
+                    class="border-seft-thick-blue  "
                     dir="ltr"
                   >
                     <p class="font-weight-black mb-1">
@@ -309,6 +308,7 @@
                       :value="domain_verification_title"
                       full-width
                       message="DNS CNAME key"
+                      class="my-2"
                     >
                     </u-text-copy-box>
 
@@ -316,6 +316,7 @@
                       :value="item"
                       full-width
                       message="DNS CNAME record value"
+                      class="my-2"
                     >
                     </u-text-copy-box>
                   </div>
@@ -331,7 +332,7 @@
               <v-list-subheader>
                 {{ $t("admin_shop.dashboard.info.add_dialog.step2") }}
               </v-list-subheader>
-              <div class="border-seft-thick-blue p-2 my-2" dir="ltr">
+              <div class="border-seft-thick-blue  " dir="ltr">
                 <p class="font-weight-black mb-1">
                   DNS Record type: <b>TXT</b>
                 </p>
@@ -343,6 +344,7 @@
                   "
                   full-width
                   message="DNS TXT key"
+                  class="my-2"
                 >
                 </u-text-copy-box>
 
@@ -350,6 +352,7 @@
                   :value="domain_verification_code"
                   full-width
                   message="DNS TXT record value"
+                  class="my-2"
                 >
                 </u-text-copy-box>
               </div>

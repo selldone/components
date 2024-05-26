@@ -141,7 +141,7 @@
             </template>
 
             <template v-slot:append-value>
-              <div class="mx-2">
+              <div class="mx-2 d-flex align-center justify-center">
                 <BShopLicenseBlockIcon
                   v-if="item.domain && !can_edit_domain(item.domain)"
                 ></BShopLicenseBlockIcon>
@@ -201,6 +201,7 @@
               size="small"
               title="Same as main home!"
               variant="flat"
+              color="#000"
             >
               <v-icon start>home</v-icon>
               {{ $t("global.commons.default") }}
@@ -213,6 +214,7 @@
               pill
               size="small"
               variant="flat"
+              color="#000"
             >
               <v-icon start> assignment_ind</v-icon>
               Affiliate
@@ -226,6 +228,7 @@
               size="small"
               title="Last SSL certificate issued by Selldone."
               variant="flat"
+              color="#000"
             >
               <v-icon start> verified_user</v-icon>
               {{ item.certificate.Name }} <span class="mx-2">|</span>

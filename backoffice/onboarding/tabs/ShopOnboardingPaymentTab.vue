@@ -15,9 +15,13 @@
 <template>
   <v-card color="transparent" flat>
     <v-card-text>
-      <h2 class="mb-2">
-        {{ $t("onboarding.payment.step1.title") }}
-      </h2>
+
+
+      <s-widget-header
+          :title="$t('onboarding.payment.step1.title')"
+          icon="price_change"
+      ></s-widget-header>
+
 
       <p class="typo-body">
         {{ $t("onboarding.payment.step1.msg") }}
@@ -39,7 +43,6 @@
         <v-btn
           :to="{ name: 'BPageShopFinanceExchange' }"
           color="#000"
-
           size="x-large"
         >
           <v-icon class="me-1" size="small">currency_exchange</v-icon>
@@ -48,22 +51,22 @@
         </v-btn>
       </div>
 
-      <hr />
+      <hr class="my-5" />
 
-      <h2 class="mt-5 mb-2">
-        {{ $t("onboarding.payment.step2.title") }}
-      </h2>
+
+
+      <s-widget-header
+          :title="$t('onboarding.payment.step2.title')"
+          icon="payment"
+      ></s-widget-header>
+
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
           {{ $t("onboarding.payment.step2.msg") }}
         </p>
 
-        <v-img
-          :src="require('../assets/payment.svg')"
-          class="m-2 imgi"
-
-        ></v-img>
+        <v-img :src="require('../assets/payment.svg')" class="m-2 imgi"></v-img>
       </div>
 
       <div class="mb-3">
@@ -84,7 +87,6 @@
           v-if="!gateways_online.length"
           :to="{ name: 'BPageShopFinanceGateways' }"
           color="#000"
-
           size="x-large"
         >
           <v-icon class="me-1" size="small">add</v-icon>
@@ -158,7 +160,6 @@
         <v-btn
           :to="{ name: 'BPageShopFinanceGateways' }"
           color="#000"
-
           size="x-large"
         >
           <v-icon class="me-1">account_balance</v-icon>

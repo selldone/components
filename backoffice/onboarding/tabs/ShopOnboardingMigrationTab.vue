@@ -15,7 +15,15 @@
 <template>
   <v-card color="transparent" flat>
     <v-card-text>
-      <h2 class="mb-2">Shopify Migration</h2>
+
+
+      <s-widget-header
+          title="Shopify Migration"
+          :src="require('../../onboarding/assets/shopify.png')"
+
+      ></s-widget-header>
+
+
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
           {{ $t("onboarding.migration.shopify.msg") }}
@@ -24,14 +32,12 @@
         <v-img
           :src="require('../../onboarding/assets/shopify.png')"
           class="m-2 imgi"
-
         ></v-img>
       </div>
       <div class="widget-buttons">
         <v-btn
           :to="{ name: 'BPageShopChannelConnect', add: true }"
           color="#000"
-
           exact
           size="x-large"
         >
@@ -53,9 +59,13 @@
         </v-btn>
       </div>
 
-      <hr />
+      <hr class="my-5" />
 
-      <h2 class="mt-5 mb-2">Woocommerce Migration</h2>
+      <s-widget-header
+          title="Woocommerce Migration"
+          :src="require('../../onboarding/assets/woocommerce.svg')"
+      ></s-widget-header>
+
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
           {{ $t("onboarding.migration.woocommerce.msg") }}
@@ -63,7 +73,6 @@
         <v-img
           :src="require('../../onboarding/assets/woocommerce.svg')"
           class="m-2 imgi"
-
         ></v-img>
       </div>
 
@@ -71,7 +80,6 @@
         <v-btn
           :to="{ name: 'BPageShopChannelConnect', add: true }"
           color="#000"
-
           exact
           size="x-large"
         >

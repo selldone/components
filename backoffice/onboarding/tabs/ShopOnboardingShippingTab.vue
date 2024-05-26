@@ -15,9 +15,12 @@
 <template>
   <v-card color="transparent" flat>
     <v-card-text>
-      <h2 class="mb-2">
-        {{ $t("onboarding.shipping.step1.title") }}
-      </h2>
+
+      <s-widget-header
+          :title="$t('onboarding.shipping.step1.title')"
+          icon="looks_one"
+      ></s-widget-header>
+
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
@@ -27,17 +30,11 @@
         <v-img
           :src="require('../assets/warehouse-location.svg')"
           class="m-2 imgi"
-
         ></v-img>
       </div>
 
       <div class="widget-buttons">
-        <v-btn
-          color="#000"
-
-          size="x-large"
-          @click="warehouse_dialog = true"
-        >
+        <v-btn color="#000" size="x-large" @click="warehouse_dialog = true">
           <v-icon class="me-1" size="small">place</v-icon>
           {{
             has_warehouse
@@ -46,11 +43,15 @@
           }}
         </v-btn>
       </div>
-      <hr />
+      <hr class="my-5" />
 
-      <h2 class="mt-5 mb-2">
-        {{ $t("onboarding.shipping.step2.title") }}
-      </h2>
+
+      <s-widget-header
+          :title="$t('onboarding.shipping.step2.title')"
+          icon="looks_two"
+      ></s-widget-header>
+
+
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
@@ -60,7 +61,6 @@
         <v-img
           :src="require('../assets/delivery.svg')"
           class="m-2 imgi"
-
         ></v-img>
       </div>
 
@@ -68,7 +68,6 @@
         <v-btn
           :to="{ name: 'BPageShopLogisticShipping' }"
           color="#000"
-
           size="x-large"
         >
           <v-icon class="me-1" size="small">add</v-icon>

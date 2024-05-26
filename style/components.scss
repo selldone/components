@@ -4543,6 +4543,7 @@ canvas.heatmap-canvas {
 .widget-buttons {
   border-radius: 12px;
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   margin: auto;
   max-width: 580px;

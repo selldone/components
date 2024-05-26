@@ -15,40 +15,37 @@
 <template>
   <v-card color="transparent" flat>
     <v-card-text>
-      <h2 class="mb-2">
-        {{ $t("onboarding.domain.step1.title") }}
-      </h2>
+      <s-widget-header
+        :title="$t('onboarding.domain.buy_domain_step.title')"
+        icon="domain_add"
+      ></s-widget-header>
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
-          {{ $t("onboarding.domain.step1.msg") }}
+          {{ $t("onboarding.domain.buy_domain_step.msg") }}
         </p>
         <v-img
           :src="require('../assets/add-domain.svg')"
           class="m-2 imgi"
-
         ></v-img>
       </div>
 
-      <h2 class="mt-3 mb-2">
-        {{ $t("onboarding.domain.step2.title") }}
-      </h2>
+      <s-widget-header
+        :title="$t('onboarding.domain.set_dns_step.title')"
+        icon="dns"
+        class="mt-5"
+      ></s-widget-header>
+
       <p class="typo-body">
-        {{ $t("onboarding.domain.step2.msg") }}
-      </p>
-      <h2 class="mt-12 mb-2">
-        {{ $t("onboarding.domain.step3.title") }}
-      </h2>
-      <p class="typo-body">
-        {{ $t("onboarding.domain.step3.msg") }}
+        {{ $t("onboarding.domain.set_dns_step.msg") }}
       </p>
 
-      <v-alert v-if="domains.length" type="success">
+      <v-alert v-if="domains.length" type="success" class="my-5">
         {{ domains[0].domain }}
       </v-alert>
 
       <template v-else>
-        <hr class="mt-12" />
+        <hr class="my-5" />
         <b-domain-add :domain="{}" :shop="shop" inline></b-domain-add>
       </template>
     </v-card-text>

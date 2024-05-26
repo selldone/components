@@ -204,17 +204,17 @@
       </v-dialog>
     </div>
 
-    <div class="widget-box -large mb-5" style="--background: #fff">
+    <div class="widget-box -large my-16" style="--background: #fff">
       <s-widget-header
         :title="$t('onboarding.overview.title')"
-        icon="storefront"
+        icon="light"
       >
       </s-widget-header>
       <v-list-subheader>
         {{ $t("onboarding.overview.subtitle") }}
       </v-list-subheader>
 
-      <u-fade-scroll show-arrow stick-class="v-card">
+      <u-fade-scroll show-arrow drag-scroll stick-class="v-card">
         <div class="d-flex align-stretch text-center">
           <v-card
             class="ma-2 border d-flex flex-column"
