@@ -344,7 +344,7 @@
               variant="elevated"
               @click.stop="NeedLogin()"
             >
-              <v-icon class="me-2" size="small"> login</v-icon>
+              <v-icon start> login</v-icon>
               <div v-if="!!shop">
                 <span class="hide-on-small-600"
                   >{{ $t("layout_shop.login_to_shop") }}

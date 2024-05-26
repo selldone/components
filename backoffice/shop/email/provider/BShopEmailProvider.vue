@@ -228,14 +228,26 @@
         variant="underlined"
       ></v-text-field>
 
-      <v-list-subheader v-if="enable">
-        <div>
+      <template v-if="enable">
+        <v-list-subheader>
           <v-icon class="me-1">info</v-icon>
-          You will receive a test mail on
+          After save changes, you will receive a test mail on
           <b>{{ USER().email }}</b
-          >.
+          >. Save changes before sending a test email with the new
+          configuration.
+        </v-list-subheader>
+
+        <div class="my-2 text-end">
+          <v-btn
+            append-icon="send"
+            size="small"
+            class="tnt"
+            @click="sendTestMail"
+            :loading="busy_send_test"
+            >Send a test email
+          </v-btn>
         </div>
-      </v-list-subheader>
+      </template>
     </template>
 
     <s-widget-buttons auto-fixed-position>
@@ -309,6 +321,8 @@ export default {
 
     show_api: false,
     show_password: false,
+    busy_send_test: false,
+
     //----------------------------
     busy_reset: false,
   }),
@@ -429,6 +443,28 @@ export default {
         })
         .finally(() => {
           this.busy_reset = false;
+        });
+    },
+
+    sendTestMail() {
+      this.busy_send_test = true;
+      axios
+        .post(window.API.POST_SHOP_MAIL_SERVICE_TEST(this.shop.id))
+        .then(({ data }) => {
+          if (!data.error) {
+            this.showSuccessAlert(
+              "Send Success",
+              "Test email sent successfully. Please check your inbox.",
+            );
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_send_test = false;
         });
     },
   },

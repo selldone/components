@@ -134,7 +134,7 @@
         <!-- ――――――――――――――――――――― Header Menu ――――――――――――――――――――― -->
 
         <template
-          v-for="(tab, index) in tabs.filter((t) =>
+          v-for="(tab, index) in tabs?.filter((t) =>
             ['link', 'default', 'category'].includes(t.type),
           )"
         >

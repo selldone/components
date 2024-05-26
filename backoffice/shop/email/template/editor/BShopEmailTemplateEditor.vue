@@ -67,11 +67,16 @@
           true-icon="check"
         ></u-smart-toggle>
 
+        <hr class="my-5" />
+
+        <s-widget-header title="Content" class="mb-3"></s-widget-header>
+
         <v-text-field
           v-model="subject"
           :placeholder="default_values?.subject"
           counter="256"
           label="Email Subject"
+          messages="This will be shown as email subject."
           variant="underlined"
         ></v-text-field>
 
@@ -82,14 +87,16 @@
           counter="256"
           label="Title"
           variant="underlined"
+          class="mt-3"
         ></v-text-field>
         <v-text-field
           v-model="category"
           :placeholder="default_values?.category"
           counter="256"
           label="Category"
-          messages="Small title will be shown on top of the email title."
+          messages="It’s a small subtitle that will appear above the main email title."
           variant="underlined"
+          class="mt-3"
         ></v-text-field>
         <v-textarea
           v-model="message"
@@ -97,7 +104,19 @@
           :placeholder="default_values?.message"
           label="Message"
           variant="underlined"
+          class="mt-3"
         ></v-textarea>
+
+        <hr class="my-5" />
+
+        <s-widget-header title="Header" class="mb-3"></s-widget-header>
+        <u-smart-image
+          v-model="header_image"
+          v-model:file="header_image_file"
+          hint="This image will be shown on the email header."
+          label="Header image"
+          variant="underlined"
+        ></u-smart-image>
 
         <u-smart-toggle
           v-model="header_logo"
@@ -111,22 +130,9 @@
           true-title="Show"
         ></u-smart-toggle>
 
-        <hr />
+        <hr class="my-5" />
 
-        <u-smart-image
-          v-model="header_image"
-          v-model:file="header_image_file"
-          hint="This image will be shown on the email header."
-          label="Header image"
-          variant="underlined"
-        ></u-smart-image>
-
-        <v-textarea
-          v-model="footer"
-          label="Footer"
-          messages="Html content of the footer."
-          variant="underlined"
-        ></v-textarea>
+        <s-widget-header title="Footer" class="mb-3"></s-widget-header>
 
         <u-smart-image
           v-model="footer_image"
@@ -136,7 +142,18 @@
           variant="underlined"
         ></u-smart-image>
 
-        <hr />
+        <v-textarea
+          v-model="footer"
+          label="Footer"
+          messages="Html content of the footer."
+          variant="underlined"
+          class="mt-3"
+        ></v-textarea>
+
+        <hr class="my-5" />
+
+        <s-widget-header title="Action" class="mb-3"></s-widget-header>
+
         <v-text-field
           v-model="action"
           :placeholder="default_values?.action"
@@ -166,10 +183,12 @@
 import USmartToggle from "../../../../../ui/smart/toggle/USmartToggle.vue";
 import USmartImage from "../../../../../ui/smart/image/USmartImage.vue";
 import SWidgetButtons from "../../../../../ui/widget/buttons/SWidgetButtons.vue";
+import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 
 export default {
   name: "BShopEmailTemplateEditor",
   components: {
+    SWidgetHeader,
     SWidgetButtons,
     USmartImage,
     USmartToggle,
