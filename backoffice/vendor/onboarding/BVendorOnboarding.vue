@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ██████████████████████ Vendor request form ██████████████████████ -->
 
-  <v-card class="text-start">
+  <v-card v-bind="$attrs" class="text-start">
     <v-card-title class="d-flex align-center">
       <v-icon class="me-1">add_business</v-icon>
       {{
@@ -391,7 +391,11 @@
 
           <div v-if="step === 5">
             <div class="widget-box mb-5">
-              <s-widget-header icon="pageview" title="Upload Document">
+              <s-widget-header
+                icon="pageview"
+                title="Upload Document"
+                class="mt-3"
+              >
               </s-widget-header>
               <v-list-subheader
                 >Please upload the necessary business, IP, and address
@@ -399,13 +403,66 @@
                 your partnership and provide you with the necessary access.
               </v-list-subheader>
 
-              <template v-for="(item, i) in marketplace_documents" :key="i">
+              <!-- ----------------- Embed Docs ----------------- -->
+              <template v-for="(doc, i) in documents_embed" :key="'e' + i">
+                <s-widget-header
+                  :icon="getType(doc)?.icon"
+                  :title="doc.title ? doc.title : $t(getType(doc)?.title)"
+                  class="mt-5"
+                >
+                </s-widget-header>
+                <v-list-subheader
+                  v-html="doc.guide ? doc.guide : $t(getType(doc)?.description)"
+                >
+                </v-list-subheader>
+
+                <div class="widget-buttons">
+                  <v-btn
+                    append-icon="edit"
+                    size="x-large"
+                    @click="showEmbedForm(doc)"
+                  >
+                    {{ doc.title ? doc.title : $t(getType(doc)?.title) }}
+                  </v-btn>
+                </div>
+              </template>
+
+              <!-- ----------------- Link Docs ----------------- -->
+
+              <template v-for="(doc, i) in documents_link" :key="'l' + i">
+                <s-widget-header
+                  :icon="getType(doc)?.icon"
+                  :title="doc.title ? doc.title : $t(getType(doc)?.title)"
+                  class="mt-5"
+                >
+                </s-widget-header>
+                <v-list-subheader
+                  v-html="doc.guide ? doc.guide : $t(getType(doc)?.description)"
+                >
+                </v-list-subheader>
+
+                <div class="widget-buttons">
+                  <v-btn
+                    append-icon="open_in_new"
+                    size="x-large"
+                    :href="doc.link"
+                    target="_blank"
+                  >
+                    {{ doc.title ? doc.title : $t(getType(doc)?.title) }}
+                  </v-btn>
+                </div>
+              </template>
+
+              <!-- ----------------- Upload Docs ----------------- -->
+
+              <template v-for="(item, i) in documents_upload" :key="i">
                 <s-widget-header
                   :icon="getType(item)?.icon"
                   :title="
-                    $t(getType(item)?.title) +
+                    (item.title ? item.title : $t(getType(item)?.title)) +
                     (item.name ? ` | ${item.name}` : '')
                   "
+                  class="mt-5"
                 >
                 </s-widget-header>
 
@@ -592,6 +649,43 @@
       </div>
     </v-card-actions>
   </v-card>
+
+  <!-- ██████████████████████ Dialog > Embed Form ██████████████████████ -->
+
+  <v-dialog
+    v-model="dialog_embed"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <v-card v-if="selected_embed" class="text-start" color="#eee">
+      <v-card-title class="d-flex align-center">
+        <v-icon class="me-1">view_cozy</v-icon>
+        {{ selected_embed.title }}
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-sheet
+            v-html="selected_embed.code"
+            color="#fff"
+            rounded="lg"
+            class="overflow-hidden"
+            v-dynamic-scripts="true"
+            min-height="20vh"
+          >
+          </v-sheet>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn size="x-large" variant="text" @click="dialog_embed = false">
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -638,6 +732,9 @@ export default {
     accept: false,
     reject: false,
     busy_accept: null,
+
+    selected_embed: null,
+    dialog_embed: false,
   }),
 
   computed: {
@@ -679,6 +776,28 @@ export default {
     attachments() {
       return this.modelValue?.attachments;
     },
+
+    documents_upload() {
+      return this.marketplace_documents.filter(
+        (x) =>
+          ![
+            VendorDocumentType.Embed.code,
+            VendorDocumentType.Link.code,
+          ].includes(x.type),
+      );
+    },
+
+    documents_embed() {
+      return this.marketplace_documents.filter(
+        (x) => VendorDocumentType.Embed.code === x.type,
+      );
+    },
+
+    documents_link() {
+      return this.marketplace_documents.filter(
+        (x) => VendorDocumentType.Link.code === x.type,
+      );
+    },
   },
 
   watch: {
@@ -719,7 +838,7 @@ export default {
             this.$emit("update:modelValue", data.vendor_request);
           } else {
             // We don't have any request! no need to show error!
-           // this.showErrorAlert(null, data.error_msg);
+            // this.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
@@ -896,6 +1015,11 @@ export default {
     },
     getType(document) {
       return VendorDocumentType[document?.type];
+    },
+
+    showEmbedForm(doc) {
+      this.selected_embed = doc;
+      this.dialog_embed = true;
     },
   },
 };
