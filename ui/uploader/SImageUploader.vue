@@ -17,15 +17,14 @@
     <!-- --------- Compact mode --------- -->
     <v-list-item v-if="on_compact" class="text-start py-5" lines="two">
       <template v-slot:prepend>
-        <v-avatar class="border" rounded="lg" size="64">
+        <v-avatar class="border pa-1 elevation-5 bg-white" rounded="lg" size="64">
           <v-img
             :src="image_url"
-            class="pa-1"
             style="
               object-fit: cover;
               height: inherit;
               width: inherit;
-              border-radius: 0.7em;
+              border-radius: 0.6em;
             "
           />
         </v-avatar>
