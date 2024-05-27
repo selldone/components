@@ -90,7 +90,7 @@ export default {
 
         plotOptions: {
           radar: {
-            size: (this.fullDetails ? 140 : 80) / (this.small ? 2 : 1),
+            size: (this.fullDetails ? 140 : 80) / (this.small ? 2.5 : 1),
             polygons: {
               strokeColors: "#e9e9e9",
               fill: {
@@ -117,18 +117,29 @@ export default {
         },
         xaxis: {
           categories: labels,
+          labels:{
+            style: {
+              fontSize: this.small ? "8px" : "10px",
+            },
+
+          }
         },
         yaxis: {
           tickAmount: 6,
           labels: {
-            formatter: function (val, i) {
-              if (i % 2 === 0) {
+            formatter:  (val, i)=> {
+              if (i % (this.small?4:2) === 0) {
                 return val;
               } else {
                 return "";
               }
             },
+
+            style: {
+              fontSize: this.small ? "8px" : "10px",
+            },
           },
+
         },
 
         dataLabels: {

@@ -28,11 +28,13 @@
     hide-default-footer
   >
     <template v-slot:item.source="{ item }">
-      <b-campaign-source-icon :value="item.source"></b-campaign-source-icon>
+      <b-campaign-source-icon :value="item.source" class="me-1"></b-campaign-source-icon>
+      {{item.source}}
     </template>
 
     <template v-slot:item.medium="{ item }">
-      <b-campaign-medium-icon :value="item.medium"></b-campaign-medium-icon>
+      <b-campaign-medium-icon :value="item.medium" class="me-1"></b-campaign-medium-icon>
+      {{item.medium}}
     </template>
 
     <template v-slot:item.name="{ item }">
@@ -53,9 +55,10 @@
           >circle
         </v-icon>
         <span
-          class="small text-truncate m-0 animate-underline limited-text-150px"
+          class="small text-truncate m-0 animate-underline max-w-200"
           v-text="getUrl(item)"
           @click.stop="copyToClipboard(getUrl(item))"
+
         ></span>
       </div>
     </template>
@@ -176,25 +179,25 @@ export default {
       const out = [
         {
           title: this.$t("global.commons.source"),
-          align: "center",
+          align: "start",
           sortable: true,
           value: "source",
         },
         {
           title: this.$t("global.commons.medium"),
-          align: "center",
+          align: "start",
           sortable: true,
           value: "medium",
         },
-        {
+       /* {
           title: this.$t("global.commons.name"),
           align: "center",
           sortable: false,
           value: "name",
-        },
+        },*/
         {
           title: this.$t("global.commons.url"),
-          align: "center",
+          align: "start",
           sortable: false,
           value: "url",
         },

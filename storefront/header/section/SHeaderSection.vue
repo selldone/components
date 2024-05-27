@@ -31,7 +31,7 @@
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
       }"
       :theme="is_dark ? 'dark' : 'light'"
-      class="s--storefront-primary-header"
+      class="s--storefront-primary-header px-2"
       extension-height="64px"
       flat
     >
@@ -62,7 +62,7 @@
 
         <s-storefront-lottery-wheel-of-fortune
           v-if="USER() && shop && shop.lottery && shop.lottery.enable"
-          class="fadeIn delay_200"
+          class="fadeIn delay_200 me-3"
         ></s-storefront-lottery-wheel-of-fortune>
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Orders history ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -72,7 +72,7 @@
           :color="is_light_header ? '#333' : '#fff'"
           :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }"
           :tooltip="$t('global.commons.orders')"
-          class="mx-3 fadeIn delay_300"
+          class="me-3 fadeIn delay_300"
           dense
           exact
           icon="local_mall"
@@ -88,7 +88,7 @@
           :has-badge="itemsCount > 0"
           :tooltip="$t('basket_top_menu.basket')"
           badge-color="teal"
-          class="mx-3 fadeIn delay_300"
+          class="me-3 fadeIn delay_300"
           dense
           icon="shopping_cart"
           persist-badge
@@ -111,7 +111,7 @@
           v-if="shop"
           :iconColor="is_light_header ? '#333' : '#fff'"
           :shop="shop"
-          class="mx-3"
+          class="me-3"
           icon-only
         ></s-language-selector>
 
@@ -124,7 +124,7 @@
           "
           :iconColor="is_light_header ? '#333' : '#fff'"
           :shop="shop"
-          class="rounded-18px"
+          class="me-3"
           dense
           hideDetails
           icon
@@ -354,9 +354,7 @@
                 }}</span>
               </div>
             </v-btn>
-            <div key="pls" style="min-width: 52px">
-              <!-- place holder -->
-            </div>
+
           </v-slide-y-reverse-transition>
         </template>
       </template>
