@@ -177,6 +177,11 @@
               >
               </s-widget-header>
 
+              <v-list-subheader
+              >Set a custom landing page for the vendor, providing them with a unique link to their dedicated page.
+              </v-list-subheader>
+
+
               <b-page-input
                 v-if="
                   !IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢 Vendor cant select landing page!*/
@@ -184,6 +189,7 @@
                 v-model="page"
                 :shop="shop"
                 variant="underlined"
+                clearable
               ></b-page-input>
               <v-list-item v-else class="my-3">
                 <template v-slot:prepend>
@@ -200,10 +206,13 @@
                 <template v-if="page">
                   <v-list-item-title>
                     <b>{{ page.title }}</b>
+
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    <v-icon class="me-1" size="small">visibility</v-icon>
-                    {{ page.visits }}
+                    /pages/{{ page.name }}
+                    <v-chip prepend-icon="visibility" size="x-small" class="ms-2">
+                      {{ numeralFormat(page.visits, "0.[0] a") }}
+                    </v-chip>
                   </v-list-item-subtitle>
                 </template>
 
@@ -218,19 +227,21 @@
                   </v-list-item-subtitle>
                 </template>
 
-                <v-list-item-action>
-                  <v-btn
-                    v-if="page"
-                    :href="`${getShopMainUrl(shop)}/pages/${page.name}`"
-                    color="primary"
-                    icon
-                    target="_blank"
-                    title="Open landing page"
-                    variant="text"
-                  >
-                    <v-icon>open_in_new</v-icon>
-                  </v-btn>
-                </v-list-item-action>
+                <template v-slot:append>
+                  <v-list-item-action end>
+                    <v-btn
+                      v-if="page"
+                      :href="`${getShopMainUrl(shop)}/pages/${page.name}`"
+                      color="primary"
+                      icon
+                      target="_blank"
+                      title="Open landing page"
+                      variant="text"
+                    >
+                      <v-icon>open_in_new</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </template>
               </v-list-item>
             </div>
 

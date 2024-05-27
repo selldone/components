@@ -108,6 +108,7 @@
           class="tnt fadeIn"
           target="_blank"
           title="Open product admin panel"
+          color="#000"
         >
           <img
             class="me-1"

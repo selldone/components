@@ -37,6 +37,7 @@
           :href="admin_url_guide"
           class="tnt fadeIn"
           target="_blank"
+          color="#000"
           title="Open product admin panel"
         >
           <img

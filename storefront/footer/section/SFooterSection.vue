@@ -58,14 +58,14 @@
           <div
             v-if="footer && footer.sec1 && footer.sec1.html"
             :style="`width: ${90 / sections_count}%;`"
-            class="pointer-pointer namad"
+            class="pointer-pointer footer-badge-container"
             v-html="footer.sec1.html"
           ></div>
           <div
             v-else-if="footer && footer.sec1"
             :class="{ 'pointer-pointer': footer.sec1.url }"
             :style="`width: ${90 / sections_count}%;`"
-            class="namad"
+            class="footer-badge-container"
             rel="nofollow"
             target="_blank"
             @click="footer.sec1.url ? window.open(footer.sec1.url) : ''"
@@ -81,14 +81,14 @@
           <div
             v-if="footer && footer.sec2 && footer.sec2.html"
             :style="`width: ${90 / sections_count}%;`"
-            class="pointer-pointer namad"
+            class="pointer-pointer footer-badge-container"
             v-html="footer.sec2.html"
           ></div>
           <div
             v-else-if="footer && footer.sec2"
             :class="{ 'pointer-pointer': footer.sec2.url }"
             :style="`width: ${90 / sections_count}%;`"
-            class="namad"
+            class="footer-badge-container"
             rel="nofollow"
             target="_blank"
             @click="footer.sec2.url ? window.open(footer.sec2.url) : ''"
@@ -104,14 +104,14 @@
           <div
             v-if="footer && footer.sec3 && footer.sec3.html"
             :style="`width: ${90 / sections_count}%;`"
-            class="pointer-pointer namad"
+            class="pointer-pointer footer-badge-container"
             v-html="footer.sec3.html"
           ></div>
           <div
             v-else-if="footer && footer.sec3"
             :class="{ 'pointer-pointer': footer.sec3.url }"
             :style="`width: ${90 / sections_count}%;`"
-            class="namad"
+            class="footer-badge-container"
             rel="nofollow"
             target="_blank"
             @click="footer.sec3.url ? window.open(footer.sec3.url) : ''"
@@ -582,13 +582,14 @@ export default {
     unicode-bidi: plaintext;
   }
 
-  .namad {
+  .footer-badge-container {
     margin: 0 auto;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: min-content;
+    min-height: 100%;
 
     transition: all 0.65s;
     border-radius: 6px;

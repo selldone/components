@@ -56,7 +56,7 @@
 
     <template v-slot:chip="{ item }">
       <div class="mb-n3">
-        <v-avatar :color="item.raw.color" class="me-2" size="32">
+        <v-avatar :color="item.raw.color" class="me-2" size="24">
           <v-img
             v-if="item.raw.image"
             :src="getShopImagePath(item.raw.image)"
@@ -95,18 +95,21 @@
           item.raw.image ? getShopImagePath(item.raw.image) : null
         "
         :prepend-icon="item.raw.image ? null : 'architecture'"
-        :title="item.raw.title"
         class="text-start"
         v-bind="props"
       >
-        <template v-slot:subtitle>
+        <template v-slot:title>
+          <span class="me-2">
+            {{ item.raw.title }}
+          </span>
           <v-icon
             v-if="item.raw.color"
             :color="item.raw.color"
             class="me-2"
-            size="16"
+            size="14"
             >circle
           </v-icon>
+
           <v-chip
             v-if="item.raw.published === false"
             class="me-2"
@@ -114,7 +117,13 @@
             size="small"
             >{{ $t("global.commons.draft") }}
           </v-chip>
-          {{ item.raw.note?.limitWords(10) }}
+        </template>
+        <template v-slot:subtitle>
+          {{
+            item.raw.note
+              ? item.raw.note.limitWords(10)
+              : item.raw.description?.limitWords(10)
+          }}
         </template>
 
         <template v-slot:append>
@@ -143,7 +152,7 @@ export default {
       require: true,
       type: Object,
     },
-
+    clearable: Boolean,
     modelValue: {},
 
     publishedOnly: {

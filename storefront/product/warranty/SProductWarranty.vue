@@ -91,6 +91,7 @@
         <v-btn
           :href="admin_url_warranty"
           class="tnt fadeIn"
+          color="#000"
 
           target="_blank"
           title="Open product admin panel"
@@ -135,7 +136,7 @@
         <v-btn
           :href="admin_url_return_policy"
           class="tnt fadeIn"
-
+          color="#000"
           target="_blank"
           title="Open product admin panel"
         >

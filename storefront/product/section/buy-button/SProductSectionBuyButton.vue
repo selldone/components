@@ -163,7 +163,7 @@
         '-hide': isIntersecting || no_side_buy,
         '-in-cart': corresponding_basket_item,
       }"
-      class="sticky-buy-widget"
+      class="sticky-buy-widget border"
     >
       <div class="sticky-product">
         <v-avatar v-if="sticky_image" class="me-3" rounded size="64">

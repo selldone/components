@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div>
+  <div v-bind="$attrs">
     <div class="widget-box mb-5">
       <s-widget-header
         :add-caption="IS_VENDOR_PANEL ? 'Upload Doc' : undefined"
@@ -23,9 +23,9 @@
       ></s-widget-header>
       <v-list-subheader>
         {{
-        IS_VENDOR_PANEL
-        ? "Please upload the necessary business, IP, and address verification documents. We require this information to confirm your partnership and provide you with the necessary access."
-        : "Vendors can submit documents such as business, intellectual property, and address verification to facilitate their KYC process, allowing you to grant them the appropriate access."
+          IS_VENDOR_PANEL
+            ? "Please upload the necessary business, IP, and address verification documents. We require this information to confirm your partnership and provide you with the necessary access."
+            : "Vendors can submit documents such as business, intellectual property, and address verification to facilitate their KYC process, allowing you to grant them the appropriate access."
         }}
       </v-list-subheader>
       <u-loading-progress v-if="busy"></u-loading-progress>
@@ -34,7 +34,55 @@
         class="border-between-vertical bg-transparent min-height-40vh"
         lines="two"
       >
-        <v-list-item v-for="doc in documents" :key="doc.id">
+        <!-- ----------------- Embed Docs ----------------- -->
+        <v-list-item
+          v-for="(doc, i) in documents_embed"
+          :key="'e' + i"
+          append-icon="edit"
+          @click="showEmbedForm(doc)"
+        >
+          <template v-slot:prepend>
+            <v-avatar tile>
+              <v-icon>{{ getType(doc)?.icon }}</v-icon>
+            </v-avatar>
+          </template>
+
+          <template v-slot:title>
+            <b>{{ doc.title ? doc.title : $t(getType(doc)?.title) }}</b>
+          </template>
+          <v-list-item-subtitle
+            v-html="doc.guide ? doc.guide : $t(getType(doc)?.description)"
+          >
+          </v-list-item-subtitle>
+        </v-list-item>
+
+        <!-- ----------------- Link Docs ----------------- -->
+        <v-list-item
+          v-for="(doc, i) in documents_link"
+          :key="'l' + i"
+          :href="doc.link"
+          target="_blank"
+          append-icon="open_in_new"
+        >
+          <template v-slot:prepend>
+            <v-avatar tile>
+              <v-icon>{{ getType(doc)?.icon }}</v-icon>
+            </v-avatar>
+          </template>
+
+          <template v-slot:title>
+            <b>{{ doc.title ? doc.title : $t(getType(doc)?.title) }}</b>
+          </template>
+
+          <v-list-item-subtitle
+            v-html="doc.guide ? doc.guide : $t(getType(doc)?.description)"
+          >
+          </v-list-item-subtitle>
+        </v-list-item>
+
+        <!-- ----------------- Upload Docs ----------------- -->
+
+        <v-list-item v-for="doc in uploaded_documents" :key="doc.id">
           <template v-slot:prepend>
             <v-avatar tile>
               <v-icon>{{ getType(doc)?.icon }}</v-icon>
@@ -50,9 +98,7 @@
                 width="20"
               />
 
-              {{
-                $t(getType(doc)?.title) + (doc.name ? ` | ${doc.name}` : "")
-              }}</b
+              {{ getTitleOfUploadedDoc(doc) }}</b
             >
 
             <v-chip
@@ -105,95 +151,136 @@
         </v-list-item>
       </v-list>
     </div>
-
-    <!-- ██████████████████████ Dialog ██████████████████████ -->
-
-    <v-dialog
-      v-model="dialog"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
-    >
-      <v-card class="text-start">
-        <v-card-title class="d-flex align-center">
-          <v-icon class="me-1">pageview</v-icon>
-          Upload Document
-        </v-card-title>
-        <v-card-text>
-          <div class="widget-box mb-5">
-            <s-widget-header
-              icon="assignment"
-              title="Document Type"
-            ></s-widget-header>
-            <v-list-subheader>
-              Please upload only the necessary documents. Avoid sharing any
-              documents that contain sensitive information. We request documents
-              that are publicly available.
-            </v-list-subheader>
-            <u-smart-select
-              v-model="type"
-              :items="available_types"
-              class="my-3"
-              item-description="description"
-              item-icon="icon"
-              item-text="title"
-              item-value="code"
-            >
-            </u-smart-select>
-
-            <div v-if="guide" class="py-3 typo-body">
-              <v-icon class="me-1">info_outline</v-icon>
-              <span v-html="smartConvert(guide)"></span>
-            </div>
-
-            <v-file-input
-              v-model="selected_file"
-              accept=".png,.jpg,.jpeg,.pdf"
-              class="mb-5"
-              color="primary"
-              label="Document file"
-              messages="Max image size: 8MB"
-              placeholder="Select image or pdf..."
-              prepend-icon=""
-              prepend-inner-icon="attach_file"
-              show-size
-              variant="underlined"
-            >
-            </v-file-input>
-
-            <v-textarea
-              v-model="note"
-              :counter="512"
-              label="Note (optional)"
-              persistent-placeholder
-              placeholder="If necessary, provide a brief description for the attached file..."
-              variant="underlined"
-            ></v-textarea>
-          </div>
-        </v-card-text>
-
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn size="x-large" variant="text" @click="dialog = false">
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
-
-            <v-btn
-              :loading="busy_save"
-              color="primary"
-              size="x-large"
-              variant="elevated"
-              @click="saveDocument"
-            >
-              <v-icon start>save</v-icon>
-              {{ $t("global.actions.save") }}
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
+
+  <!-- ██████████████████████ Dialog > Upload Document ██████████████████████ -->
+
+  <v-dialog
+    v-model="dialog"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <v-card class="text-start">
+      <v-card-title class="d-flex align-center">
+        <v-icon class="me-1">pageview</v-icon>
+        Upload Document
+      </v-card-title>
+      <v-card-text>
+        <div class="widget-box mb-5">
+          <s-widget-header
+            icon="assignment"
+            title="Document Type"
+          ></s-widget-header>
+          <v-list-subheader>
+            Please upload only the necessary documents. Avoid sharing any
+            documents that contain sensitive information. We request documents
+            that are publicly available.
+          </v-list-subheader>
+          <u-smart-select
+            v-model="type"
+            :items="available_types"
+            class="my-3"
+            item-description="description"
+            item-icon="icon"
+            item-text="title"
+            item-value="code"
+          >
+          </u-smart-select>
+
+          <div v-if="guide" class="py-3 typo-body">
+            <v-icon class="me-1">info_outline</v-icon>
+            <span v-html="smartConvert(guide)"></span>
+          </div>
+
+          <v-file-input
+            v-model="selected_file"
+            accept=".png,.jpg,.jpeg,.pdf"
+            class="my-5"
+            color="primary"
+            label="Document file"
+            messages="Max image size: 8MB"
+            placeholder="Select image or pdf..."
+            prepend-icon=""
+            prepend-inner-icon="attach_file"
+            show-size
+            variant="outlined"
+          >
+          </v-file-input>
+
+          <v-textarea
+            v-model="note"
+            :counter="512"
+            label="Note (optional)"
+            persistent-placeholder
+            placeholder="If necessary, provide a brief description for the attached file..."
+            variant="outlined"
+          ></v-textarea>
+        </div>
+      </v-card-text>
+
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn size="x-large" variant="text" @click="dialog = false">
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+
+          <v-btn
+            :loading="busy_save"
+            color="primary"
+            size="x-large"
+            variant="elevated"
+            @click="saveDocument"
+          >
+            <v-icon start>save</v-icon>
+            {{ $t("global.actions.save") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- ██████████████████████ Dialog > Embed Form ██████████████████████ -->
+
+  <v-dialog
+    v-model="dialog_embed"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <v-card v-if="selected_embed" class="text-start" color="#eee">
+      <v-card-title class="d-flex align-center">
+        <v-icon class="me-1">view_cozy</v-icon>
+        {{ selected_embed.title }}
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-sheet
+            v-html="selected_embed.code"
+            color="#fff"
+            rounded="lg"
+            class="overflow-hidden"
+            v-dynamic-scripts="true"
+            min-height="20vh"
+          >
+          </v-sheet>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="dialog_embed = false"
+          >
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -227,7 +314,7 @@ export default {
       VendorDocumentType: VendorDocumentType,
 
       busy: false,
-      documents: [],
+      uploaded_documents: [],
       totalItems: 0,
 
       //---------------------
@@ -240,6 +327,9 @@ export default {
 
       //---------------------
       busy_delete: null,
+
+      selected_embed: null,
+      dialog_embed: false,
     };
   },
   computed: {
@@ -254,14 +344,40 @@ export default {
     marketplace_documents() {
       return this.shop.marketplace?.documents; // array of {type,guide}
     },
+    documents_embed() {
+      return this.marketplace_documents.filter(
+        (x) => VendorDocumentType.Embed.code === x.type,
+      );
+    },
+
+    documents_link() {
+      return this.marketplace_documents.filter(
+        (x) => VendorDocumentType.Link.code === x.type,
+      );
+    },
+
     available_types() {
       if (!this.marketplace_documents) return [];
-      return this.marketplace_documents
-        .map((x) => {
-          const obj = VendorDocumentType[x.type];
-          return Object.assign({ guide: x.guide }, obj);
-        })
-        .uniqueByKey("code");
+      return (
+        this.marketplace_documents
+          // Embed and Link document type has no upload! So, we exclude them and show them directly in the list
+          .filter(
+            (x) =>
+              ![
+                VendorDocumentType.Embed.code,
+                VendorDocumentType.Link.code,
+              ].includes(x.type),
+          )
+          .map((x) => {
+            const obj = VendorDocumentType[x.type];
+            return {
+              ...obj,
+              title: x.title || obj.title,
+              guide: x.guide,
+            };
+          })
+          .uniqueByKey("code")
+      );
     },
 
     guide() {
@@ -274,6 +390,19 @@ export default {
   },
 
   methods: {
+    /**
+     * Create a title for uploaded document.
+     * @param doc
+     * @return {*}
+     */
+    getTitleOfUploadedDoc(doc) {
+      const find = this.marketplace_documents.find((x) => x.type === doc.type);
+
+      return (
+        (find?.title ? find.title : $t(this.getType(doc)?.title)) +
+        (doc.name ? ` | ${doc.name}` : "")
+      );
+    },
     showUpload() {
       this.type = null;
       this.selected_file = [];
@@ -309,7 +438,7 @@ export default {
             return this.showErrorAlert(null, data.error_msg);
           }
 
-          this.documents = data.documents;
+          this.uploaded_documents = data.documents;
           this.totalItems = data.total;
         })
         .catch((error) => {
@@ -338,7 +467,7 @@ export default {
         .post(window.VAPI.POST_MY_VENDOR_DOCUMENT_ADD(this.vendor.id), formData)
         .then(({ data }) => {
           if (!data.error) {
-            this.AddOrUpdateItemByID(this.documents, data.document);
+            this.AddOrUpdateItemByID(this.uploaded_documents, data.document);
             this.showSuccessAlert(
               null,
               "Document has been uploaded successfully.",
@@ -374,7 +503,7 @@ export default {
             )
             .then(({ data }) => {
               if (!data.error) {
-                this.DeleteItemByID(this.documents, document.id);
+                this.DeleteItemByID(this.uploaded_documents, document.id);
                 this.showSuccessAlert(
                   null,
                   "Document has been deleted successfully.",
@@ -394,6 +523,11 @@ export default {
     },
     smartConvert(guide) {
       return SmartConvertTextToHtml(guide, false);
+    },
+
+    showEmbedForm(doc) {
+      this.selected_embed = doc;
+      this.dialog_embed = true;
     },
   },
 };

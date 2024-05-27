@@ -31,14 +31,12 @@
 
 import { ObjectDirective } from "vue";
 
-const LoadScriptsDirective: ObjectDirective<
-  HTMLElement & { loadedScripts?: string[] }
-> = {
+const LoadScriptsDirective: ObjectDirective<HTMLElement & { loadedScripts?: string[] }> = {
   /**
    * Called when the directive is mounted to the DOM.
    */
   mounted(el, binding) {
-    // Function to load scripts
+    // Function to load and execute scripts
     const loadScripts = () => {
       if (!binding.value) {
         return;
@@ -54,13 +52,17 @@ const LoadScriptsDirective: ObjectDirective<
         const scriptSrc = script.getAttribute("src");
         if (scriptSrc && !el.loadedScripts.includes(scriptSrc)) {
           const newScript = document.createElement("script");
-          Array.from(script.attributes).forEach((attr) =>
-            newScript.setAttribute(attr.name, attr.value),
+          Array.from(script.attributes).forEach(attr =>
+              newScript.setAttribute(attr.name, attr.value)
           );
           newScript.onload = () => {
             el.loadedScripts?.push(scriptSrc);
           };
           document.head.appendChild(newScript);
+        } else if (!scriptSrc) {
+          const inlineScript = document.createElement("script");
+          inlineScript.text = script.innerHTML;
+          document.head.appendChild(inlineScript);
         }
       }
     };
@@ -73,7 +75,37 @@ const LoadScriptsDirective: ObjectDirective<
    */
   updated(el, binding) {
     if (binding.value !== binding.oldValue) {
-      // Repeat the same steps as in mounted if necessary
+      const loadScripts = () => {
+        if (!binding.value) {
+          return;
+        }
+
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = el.innerHTML;
+        const scripts = tempDiv.getElementsByTagName("script");
+
+        el.loadedScripts = el.loadedScripts || [];
+
+        for (const script of scripts) {
+          const scriptSrc = script.getAttribute("src");
+          if (scriptSrc && !el.loadedScripts.includes(scriptSrc)) {
+            const newScript = document.createElement("script");
+            Array.from(script.attributes).forEach(attr =>
+                newScript.setAttribute(attr.name, attr.value)
+            );
+            newScript.onload = () => {
+              el.loadedScripts?.push(scriptSrc);
+            };
+            document.head.appendChild(newScript);
+          } else if (!scriptSrc) {
+            const inlineScript = document.createElement("script");
+            inlineScript.text = script.innerHTML;
+            document.head.appendChild(inlineScript);
+          }
+        }
+      };
+
+      loadScripts();
     }
   },
 
@@ -83,9 +115,7 @@ const LoadScriptsDirective: ObjectDirective<
   unmounted(el) {
     if (el.loadedScripts) {
       for (const script of el.loadedScripts) {
-        const scriptElement = document.head.querySelector(
-          `script[src="${script}"]`,
-        );
+        const scriptElement = document.head.querySelector(`script[src="${script}"]`);
         if (scriptElement) {
           document.head.removeChild(scriptElement);
         }
@@ -96,3 +126,4 @@ const LoadScriptsDirective: ObjectDirective<
 };
 
 export default LoadScriptsDirective;
+
