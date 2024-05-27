@@ -19,16 +19,27 @@
     :options="options"
     :series="series"
     class="mt-2 mt-sm-0"
-    type="donut"
+    :type="type"
     width="100%"
   />
 </template>
 
 <script>
+import numeral from "numeral";
+
 export default {
   name: "BSessionDevicesPie",
 
   props: {
+    type: {
+      type: String,
+      default: "donut",
+    },
+    small: Boolean,
+    tickAmount: {
+      type: Number,
+      default: 5,
+    },
     fullDetails: {
       type: Boolean,
       default: false,
@@ -37,6 +48,10 @@ export default {
     desktop: {},
     tablet: {},
     mobile: {},
+    colors: {
+      type: Array,
+      default: () => ["#FFA000", "#E91E63", "#9C27B0"],
+    },
   },
 
   data: function () {
@@ -45,7 +60,7 @@ export default {
         chart: {
           fontFamily: "var(--font)",
         },
-        colors: ["#FFA000", "#E91E63", "#9C27B0"],
+        colors: this.colors,
 
         labels: [
           this.$t("device_types.desktop"),
@@ -70,6 +85,28 @@ export default {
             },
           },
         },
+
+        yaxis: {
+          tickAmount: this.tickAmount,
+          labels: {
+            style: {
+              fontSize: this.small ? "8px" : "10px",
+            },
+            formatter: function(value) {
+              return numeral(value).format("0.[0]a");
+            }
+          },
+        },
+
+        tooltip: {
+          y: {
+            formatter: function(value) {
+              return numeral(value).format("0.[0]a");
+            }
+          }
+        },
+
+
       },
     };
   },

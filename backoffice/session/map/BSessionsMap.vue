@@ -221,6 +221,9 @@
           :full-details="fullDetails"
           :mobile="mobile"
           :tablet="tablet"
+          :tick-amount="2"
+          small
+          type="polarArea"
         ></b-session-devices-pie>
       </v-col>
     </v-row>

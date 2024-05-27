@@ -15,7 +15,7 @@
 <template>
   <apexchart
     v-if="series && series.length"
-    :height="(fullDetails ? 480 : 210) / (small ? 2 : 1)"
+    :height="(fullDetails ? 480 : 240) / (small ? 2 : 1)"
     :options="options"
     :series="series"
     class="mt-2 mt-sm-0 mx-auto"
@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import numeral from "numeral";
+
 export default {
   name: "UChartRadar",
 
@@ -90,7 +92,7 @@ export default {
 
         plotOptions: {
           radar: {
-            size: (this.fullDetails ? 140 : 80) / (this.small ? 2.5 : 1),
+            size: (this.fullDetails ? 140 : 80) / (this.small ? 2 : 1),
             polygons: {
               strokeColors: "#e9e9e9",
               fill: {
@@ -110,8 +112,8 @@ export default {
 
         tooltip: {
           y: {
-            formatter: function (val) {
-              return val;
+            formatter: function (value) {
+              return numeral(value).format("0.[0]a");
             },
           },
         },
