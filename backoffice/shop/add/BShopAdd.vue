@@ -357,7 +357,7 @@
         :hint="$t('add_shop.address_input_message')"
         :label="$t('add_shop.address_input')"
         :rows="2"
-        append-icon="fa:fas fa-map-marked-alt"
+        append-inner-icon="fa:fas fa-map-marked-alt"
         auto-grow
         variant="underlined"
       />
@@ -367,7 +367,7 @@
         :color="SaminColorLight"
         :hint="$t('add_shop.postal_code_input_message')"
         :label="$t('add_shop.postal_code_input')"
-        append-icon="local_convenience_store"
+        append-inner-icon="local_convenience_store"
         variant="underlined"
       />
 
@@ -376,7 +376,7 @@
         :color="SaminColorLight"
         :hint="$t('add_shop.phone_input_message')"
         :label="$t('add_shop.phone_input')"
-        append-icon="fa:fas fa-phone"
+        append-inner-icon="fa:fas fa-phone"
         placeholder="+###-###-######## or use any preferred format..."
         variant="underlined"
       >
@@ -390,7 +390,7 @@
         :color="SaminColorLight"
         :hint="$t('add_shop.email_input_message')"
         :label="$t('add_shop.email_input')"
-        append-icon="fa:fas fa-envelope"
+        append-inner-icon="fa:fas fa-envelope"
         variant="underlined"
       />
     </div>
