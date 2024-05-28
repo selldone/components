@@ -320,11 +320,12 @@
       <s-country-select
         :hint="$t('add_shop.country_input_message')"
         :label="$t('add_shop.country_input')"
-        :model-value="info.country"
+        :model-value="selected_country_obj"
         item-value="name"
         return-object
         @update:model-value="
           (val) => {
+            selected_country_obj = val;
             info.country = val.name;
             info.country_code = val.alpha2;
           }
@@ -345,7 +346,7 @@
         :color="SaminColorLight"
         :hint="$t('add_shop.locality_input_message')"
         :label="$t('add_shop.locality_input')"
-        append-icon="near_me"
+        append-inner-icon="near_me"
         variant="underlined"
       />
 
@@ -585,6 +586,7 @@ import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import { TrackSeller } from "@selldone/core-js/enums/gtag/TrackSeller";
 import BTranslationButtonShop from "../../translation/button/shop/BTranslationButtonShop.vue";
 import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 
 export default {
   name: "BShopAdd",
@@ -629,6 +631,7 @@ export default {
     icon_pic: "",
     fav_pic: "",
 
+    selected_country_obj: null,
     info: {},
 
     step: 0,
@@ -734,6 +737,10 @@ export default {
     name: _.throttle(function (newVal, oldVal) {
       this.checkShopNameAvailable();
     }, 1000),
+
+    step(){
+      ScrollHelper.scrollToTop()
+    }
   },
   created() {
     this.reassignShopInfo();
@@ -994,6 +1001,8 @@ export default {
           this.shop.info && !Array.isArray(this.shop.info)
             ? this.shop.info
             : {};
+
+        this.selected_country_obj = {alpha2:this.info.country_code};
 
         if (this.info.location) {
           this.center.lat = this.info.location.lat;

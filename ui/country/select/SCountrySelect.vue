@@ -56,9 +56,14 @@
         $emit('change', val);
       }
     "
+    :custom-filter="customFilter"
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item :title="item.raw.name" class="text-start" v-bind="props">
+      <v-list-item
+        v-bind="props"
+        :title="getCountryName(item.raw.alpha2)"
+        class="text-start"
+      >
         <template v-slot:prepend>
           <flag :iso="item.raw.alpha2" :squared="false" class="me-2" />
         </template>
@@ -66,10 +71,10 @@
     </template>
 
     <template v-slot:chip="{ item, props }">
-      <component :is="chips ? 'v-chip' : 'span'" class="m-1" v-bind="props">
+      <component v-bind="props" :is="chips ? 'v-chip' : 'span'" class="m-1">
         <flag :iso="item.raw.alpha2" :squared="false" />
-        <span v-if="!noCountryName" class="px-3 small">{{
-          item.raw.name
+        <span v-if="!noCountryName" class="ps-2">{{
+          getCountryName(item.raw.alpha2)
         }}</span>
       </component>
     </template>
@@ -201,14 +206,44 @@ export default {
       return this.$store.getters.getCountries;
     },
   },
-  watch: {},
-  methods: {},
+  watch: {
+    countries() {
+      // Update modelValue if it's a string and countries are loaded!
+      if (this.returnObject && this.modelValue?.alpha2) {
+        this.$emit(
+          "update:modelValue",
+          this.countries.find((c) => c.alpha2 === this.modelValue.alpha2),
+        );
+      }
+    },
+  },
+  methods: {
+    customFilter(value, query, item) {
+      if (!query) return true;
+      const searchQuery = query.toLowerCase();
+      return (
+        item.raw.alpha2?.toLowerCase().includes(searchQuery) ||
+        item.raw.name?.toLowerCase().includes(searchQuery) ||
+        item.raw.alpha3?.toLowerCase().includes(searchQuery) ||
+        this.getCountryName(item.raw.alpha2)
+          ?.toLowerCase()
+          .includes(searchQuery)
+      );
+    },
+  },
   created() {
     if (!this.countries || !this.countries.length) {
       this.loading = true;
       this.fetchCountries(() => {
         this.loading = false;
       });
+    } else {
+      if (this.returnObject && this.modelValue?.alpha2) {
+        this.$emit(
+          "update:modelValue",
+          this.countries.find((c) => c.alpha2 === this.modelValue.alpha2),
+        );
+      }
     }
   },
 };
