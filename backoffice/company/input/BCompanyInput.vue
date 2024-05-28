@@ -184,9 +184,9 @@
 </template>
 
 <script>
-import EuropeCountriesAlpha2 from "@selldone/core-js/enums/country/EuropeCountriesAlpha2";
 import BCompanyAdd from "../../company/add/BCompanyAdd.vue";
 import threads from "@selldone/core-js/utils/thread/threads";
+import { Country } from "@selldone/core-js/models/general/country/country.model";
 
 export default {
   name: "BCompanyInput",
@@ -286,7 +286,7 @@ export default {
     },
 
     isEuropean(country) {
-      return country && EuropeCountriesAlpha2.includes(country);
+      return country && Country.EuropeCountriesAlpha2.includes(country);
     },
 
     onAddCompany(_company) {

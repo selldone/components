@@ -37,7 +37,7 @@ import _ from "lodash-es";
 import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
 
 //―――――――――――――――――――――― Country ――――――――――――――――――――
-import {getCountryName} from "@selldone/core-js/enums/country/country-list";
+import {getCountryName} from "@selldone/core-js/models/general/country/country-helper.ts";
 import {Shop} from "@selldone/core-js/models/shop/shop.model";
 import type {ProductVariant} from "@selldone/core-js/models/shop/product/product_variant.model";
 import {Product} from "@selldone/core-js/models/shop/product/product.model";
@@ -47,7 +47,7 @@ import type {CommunityPost} from "@selldone/core-js/models/community/community.p
 import type {CommunityComment} from "@selldone/core-js/models/community/community.comment.model";
 import type {Guild} from "@selldone/core-js/models/guild/guild.model";
 import type {Avocado} from "@selldone/core-js/models/shop/order/avocado/avocado.order";
-import type {ICountryCode} from "@selldone/core-js/enums/country/CountriesListEnum";
+import type {ICountryCode} from "@selldone/core-js/models/general/country/country.model.ts";
 import type {BasketItem} from "@selldone/core-js/models/shop/order/basket/basket_item.model";
 import type {gapi} from "@selldone/core-js/gapi/requests/gapi.countries.get";
 import type {User} from "@selldone/core-js/models/user/user.model";
@@ -190,8 +190,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                                                                          return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                                                                        },*/
+                                                                              return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                                                                            },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -357,8 +357,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                                                                          return Num2persian(number);
-                                                                        },*/
+                                                                              return Num2persian(number);
+                                                                            },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -795,7 +795,10 @@ const CoreMixin = {
     //―――――――――――――――――――――― Country ――――――――――――――――――――
 
     getCountryName(code: ICountryCode) {
-      return getCountryName(code);
+      const key = `countries.${code}`;
+      const translated = this.$t(key);
+      console.log("🌍", code, translated, key)
+      return key === translated ? getCountryName(code) : translated;
     },
 
     //―――――――――――――――――――――― Device Image ――――――――――――――――――――
@@ -1325,8 +1328,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                                                          PushNotification.AskForPermission();
-                                                                        },*/
+                                                                              PushNotification.AskForPermission();
+                                                                            },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 

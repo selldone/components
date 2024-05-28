@@ -615,7 +615,7 @@
         </v-col>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Summery > Country + Map ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <v-col v-if="card" class="p-2 text-center" cols="6" md="2">
+        <v-col v-if="card" class="pa-2 text-center" cols="6" md="2">
           <u-map-countries-single
             :country="card.country"
           ></u-map-countries-single>

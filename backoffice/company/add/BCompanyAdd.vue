@@ -202,8 +202,8 @@ import SImageUploader from "../../../ui/uploader/SImageUploader.vue";
 
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import EuropeCountriesAlpha2 from "@selldone/core-js/enums/country/EuropeCountriesAlpha2";
 import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
+import { Country } from "@selldone/core-js/models/general/country/country.model";
 
 export default {
   name: "BCompanyAdd",
@@ -246,7 +246,9 @@ export default {
 
   computed: {
     isEuropean() {
-      return this.country && EuropeCountriesAlpha2.includes(this.country);
+      return (
+        this.country && Country.EuropeCountriesAlpha2.includes(this.country)
+      );
     },
   },
 

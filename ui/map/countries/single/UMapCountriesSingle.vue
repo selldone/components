@@ -18,6 +18,7 @@
       v-if="mapData"
       :country-data="mapData"
       style="height: 84px"
+      class="mb-1"
     />
 
     <flag :iso="country" :squared="false" />
