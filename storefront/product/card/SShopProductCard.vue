@@ -186,7 +186,7 @@
               class="text-start pt-1 lhn"
               cols="12"
             >
-              <div class="single-line">
+              <div class="single-line font-weight-bold">
                 {{ product.title }}
               </div>
             </v-col>

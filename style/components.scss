@@ -134,7 +134,7 @@ body{
 
 
   // Container problem:
-  .container:not(.container--fluid) {
+  .container:not(.v-container--fluid) {
     max-width: 1140px;
     @media only screen and (max-width: 1200px) {
       max-width: 1140px;
@@ -1314,7 +1314,7 @@ Animation
 /******************
 New Vutify Bugs
  */
-.container--fluid { // Bug vuesax!!!
+.v-container--fluid { // Bug vuesax!!!
   max-width: 100% !important;
 }
 

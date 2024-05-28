@@ -242,11 +242,7 @@
                 @quick-buy="quickBuy(product)"
               />
 
-              <v-spacer
-                v-if="!landingPageMode && !freeMode"
-                key="space"
-                :style="{ 'max-width': spacer_w }"
-              ></v-spacer>
+
             </v-fade-transition>
           </v-row>
         </v-container>
