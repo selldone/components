@@ -49,8 +49,10 @@
     no-filter
     return-object
     @click:clear="
+       $emit('update:modelValue', null);
       $emit('update:user-id', null);
       $emit('update:user', null);
+
     "
   >
     <template v-slot:chip="{ item, props }">
@@ -81,12 +83,14 @@
             v-if="!item.raw.add && item.raw.id"
             :src="getUserAvatar(item.raw.id)"
           ></v-img>
-          <v-icon v-else>person_add</v-icon>
+          <v-img v-else color="#fff">
+            <v-icon>person_add</v-icon>
+          </v-img>
         </v-avatar>
 
         <div class="flex-grow-1">
           <div>
-            {{ item.raw.name }}
+            {{ item.raw.add ? item.raw.email : item.raw.name }}
 
             <v-chip
               v-if="item.raw.add"
@@ -146,6 +150,8 @@
 </template>
 
 <script>
+import threads from "@selldone/core-js/utils/thread/threads";
+
 export default {
   name: "SUserInput",
   emits: ["update:modelValue", "update:user-id", "update:user"],
@@ -256,9 +262,11 @@ export default {
     },
   },
   watch: {
-    search(val) {
+
+    search: threads.debounceSearch(function (val) {
       val && val !== this.select && this.querySelections(val);
-    },
+    }),
+
 
     select(select) {
       if (!select) {

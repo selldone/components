@@ -118,17 +118,69 @@
               </v-textarea>
 
               <v-expand-transition>
+                <div v-if="invite_email && !user_id">
+                  <v-list-item prepend-icon="person_add">
+                    <template v-slot:title>
+                      {{ `You've invited ${invite_email}.` }}
+                      <v-chip
+                        class="ms-1"
+                        color="green"
+                        size="small"
+                        variant="tonal"
+                        >invite
+                      </v-chip>
+                    </template>
+                    <template v-slot:append>
+                      <v-btn
+                        @click="invite_email = null"
+                        icon
+                        variant="text"
+                        title="Edit / Remove invitation!"
+                      >
+                        <v-icon>close</v-icon>
+                      </v-btn>
+                    </template>
+                    <template v-slot:subtitle>
+                      We will send an invitation email to this user. If the user
+                      joins your shop as a vendor, their account will be
+                      automatically assigned to them.
+                    </template>
+                    <v-list-item-subtitle
+                      v-if="invite_email === vendor?.invite"
+                    >
+                      <v-btn
+                        size="small"
+                        variant="elevated"
+                        class="ma-1 tnt"
+                        @click="sendInvitationEmail"
+                        :loading="busy_send_invitation"
+                        append-icon="send"
+                        >Send Invitation Email
+                      </v-btn>
+                    </v-list-item-subtitle>
+                  </v-list-item>
+
+                  <u-text-copy-box
+                    v-if="generated_invite_link"
+                    :value="generated_invite_link"
+                    small-width-mode
+                    text-start
+                    message="Invitation Link"
+                  ></u-text-copy-box>
+                </div>
                 <s-user-input
-                  v-if="user_edit || !user_id"
+                  v-else-if="user_edit || !user_id"
                   v-model:user-id="user_id"
                   :label="$t('affiliates.dialog.user')"
                   messages="Optional, Ex: vendor name in the Selldone"
                   variant="underlined"
                   @update:model-value="
                     (val) => {
+                      invite_email = val;
                       if (!email) email = val;
                     }
                   "
+                  can-invite
                 ></s-user-input>
                 <div v-else class="d-flex align-center">
                   <v-avatar
@@ -178,9 +230,9 @@
               </s-widget-header>
 
               <v-list-subheader
-              >Set a custom landing page for the vendor, providing them with a unique link to their dedicated page.
+                >Set a custom landing page for the vendor, providing them with a
+                unique link to their dedicated page.
               </v-list-subheader>
-
 
               <b-page-input
                 v-if="
@@ -206,11 +258,14 @@
                 <template v-if="page">
                   <v-list-item-title>
                     <b>{{ page.title }}</b>
-
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     /pages/{{ page.name }}
-                    <v-chip prepend-icon="visibility" size="x-small" class="ms-2">
+                    <v-chip
+                      prepend-icon="visibility"
+                      size="x-small"
+                      class="ms-2"
+                    >
                       {{ numeralFormat(page.visits, "0.[0] a") }}
                     </v-chip>
                   </v-list-item-subtitle>
@@ -845,10 +900,13 @@ import BVendorDocumentsList from "../../vendor/documents/list/BVendorDocumentsLi
 import BTranslationButtonVendor from "../../translation/button/vendor/BTranslationButtonVendor.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import VPricingInput from "../../../storefront/pricing/VPricingInput.vue";
+import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
+import { ShopURLs } from "@selldone/core-js";
 
 export default {
   name: "BVendorAdd",
   components: {
+    UTextCopyBox,
     SWidgetButtons,
     BTranslationButtonVendor,
     BVendorDocumentsList,
@@ -887,6 +945,7 @@ export default {
     description: null,
 
     email: null,
+    invite_email: null, // If invite new user!
     address: null,
     web: null,
     tel: null,
@@ -915,6 +974,9 @@ export default {
     //-----------------------------
     map_dialog: false,
     map_input: null,
+
+    //-----------------------------
+    busy_send_invitation: false,
   }),
   computed: {
     IS_VENDOR_PANEL() {
@@ -951,6 +1013,13 @@ export default {
         this.shop.marketplace?.documents?.length
       ); // array of {type,guide}
     },
+
+    generated_invite_link() {
+      return (
+        this.invite_email &&
+        `${ShopURLs.MainShopUrl(this.shop)}/vendors?email=${this.invite_email}`
+      );
+    },
   },
 
   watch: {
@@ -970,6 +1039,8 @@ export default {
       this.resetToDefault(); // 🞇 Reset to default
 
       if (this.vendor) {
+        this.invite_email = this.vendor.invite;
+
         this.enable = this.vendor.enable;
         this.access = this.vendor.access;
 
@@ -1015,6 +1086,8 @@ export default {
 
       axios
         .post(window.API.POST_SHOP_ADD_VENDOR(this.shop.id), {
+          invite: this.invite_email, // Send invite email!
+
           enable: this.enable,
           access: this.access,
           name: this.name,
@@ -1073,6 +1146,8 @@ export default {
               )
             : window.API.PUT_SHOP_EDIT_VENDOR(this.shop.id, this.vendor.id),
           {
+            invite: this.invite_email, // Send invite email!
+
             enable: this.enable,
             access: this.access,
             name: this.name,
@@ -1177,6 +1252,35 @@ export default {
       }
       this.map_id = map_input ? map_input.id : null;
       this.map_dialog = false;
+    },
+
+    sendInvitationEmail() {
+      this.busy_send_invitation = true;
+
+      axios
+        .post(
+          window.API.POST_SHOP_VENDOR_SEND_INVITE_EMAIL(
+            this.shop.id,
+            this.vendor.id,
+          ),
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            this.showSuccessAlert(
+              null,
+              "Invite email has been sent successfully.",
+            );
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+
+        .finally(() => {
+          this.busy_send_invitation = false;
+        });
     },
   },
 };

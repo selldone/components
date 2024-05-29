@@ -521,6 +521,10 @@ export default {
     login_modes() {
       return this.shop.login_modes;
     },
+
+    predefine_email(){
+      return this.$route.query.email;
+    }
   },
   watch: {
     user(user) {
@@ -539,6 +543,8 @@ export default {
     },
   },
   created() {
+    this.email=this.predefine_email;
+
     this.EventBus.$on("get-me:error", this.resetState);
   },
   beforeUnmount() {

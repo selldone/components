@@ -28,12 +28,20 @@
         <v-icon>alternate_email</v-icon>
       </v-avatar>
     </template>
-    <span>{{ $t("global.need_login.login_email") }}</span>
+    <div class="d-flex flex-column">
+      <span>{{ $t("global.need_login.login_email") }}</span>
+      <small v-if="predefine_email" class="mt-1"><v-icon class="me-1" size="small">lock</v-icon> {{predefine_email}}</small>
+    </div>
   </v-btn>
 
   <!-- ██████████████████████ Dialog ██████████████████████ -->
 
-  <v-bottom-sheet v-model="dialog" content-class="rounded-t-xl" max-width="680" :persistent="step === 3">
+  <v-bottom-sheet
+    v-model="dialog"
+    content-class="rounded-t-xl"
+    max-width="680"
+    :persistent="step === 3"
+  >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>
         <v-icon class="me-1">account_circle</v-icon>
@@ -52,6 +60,8 @@
             class="strong-field my-5 english-field"
             dir="ltr"
             variant="outlined"
+            :readonly="predefine_email"
+            :append-inner-icon="predefine_email?'lock':undefined"
           ></v-text-field>
         </template>
 
@@ -186,8 +196,14 @@ export default {
     is_valid_otp() {
       return this.otp?.length >= 8;
     },
+    predefine_email(){
+      return this.$route.query.email;
+    }
+
   },
   watch: {},
+  created() {
+  },
 
   methods: {
     tick() {
@@ -195,7 +211,7 @@ export default {
     },
     show() {
       this.step = 1;
-      this.email = null;
+      this.email = this.predefine_email;
       this.otp = "";
 
       this.dialog = true;
