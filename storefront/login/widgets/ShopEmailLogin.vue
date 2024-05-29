@@ -33,7 +33,7 @@
 
   <!-- ██████████████████████ Dialog ██████████████████████ -->
 
-  <v-bottom-sheet v-model="dialog" content-class="rounded-t-xl" max-width="680">
+  <v-bottom-sheet v-model="dialog" content-class="rounded-t-xl" max-width="680" :persistent="step === 3">
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>
         <v-icon class="me-1">account_circle</v-icon>

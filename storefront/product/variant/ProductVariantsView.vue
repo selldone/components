@@ -20,17 +20,20 @@
       dark: dark,
       'text-center': center,
       '-small': small,
+      '-single-line':singleLine,
+      '-ultra-dense': isUltraDense(colors)
     }"
     :justify="center ? 'center' : null"
     class="product-variant-view"
     @click="$emit('select')"
+    no-gutters
   >
     <div
       v-if="colors.length"
-      :class="{ dense: dense, '-ultra-dense': isUltraDense(colors) }"
-      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense,'flex-wrap':!singleLine }"
+      class="-var-row  align-center"
     >
-      <v-icon :color="icon_color" class="me-1" size="small"> palette</v-icon>
+      <v-icon v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center"> palette</v-icon>
 
       <u-color-circle
         v-for="color in colors"
@@ -47,14 +50,16 @@
         "
       >
       </u-color-circle>
+      <v-icon v-if="colors_more">more_horiz</v-icon>
     </div>
 
     <div
       v-if="volumes.length"
-      :class="{ dense: dense, '-ultra-dense': isUltraDense(volumes) }"
-      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense, 'flex-wrap':!singleLine }"
+      class="-var-row    "
+
     >
-      <v-icon :color="icon_color" class="me-1" size="small"> equalizer</v-icon>
+      <v-icon v-if="!hideIcon" :color="icon_color" class="me-1 align-self-center" > equalizer</v-icon>
 
       <span
         v-for="volume in volumes"
@@ -71,14 +76,17 @@
         ></u-variant-asset-image>
         {{ volume?.removeVariantAsset() }}
       </span>
+
+      <v-icon v-if="volumes_more">more_horiz</v-icon>
+
     </div>
 
     <div
       v-if="packs.length"
-      :class="{ dense: dense, '-ultra-dense': isUltraDense(packs) }"
-      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense,'flex-wrap':!singleLine  }"
+      class="-var-row    "
     >
-      <v-icon :color="icon_color" class="me-1" size="small"> all_inbox</v-icon>
+      <v-icon v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center" > all_inbox</v-icon>
 
       <span
         v-for="pack in packs"
@@ -95,14 +103,17 @@
         ></u-variant-asset-image>
         {{ pack?.removeVariantAsset() }}<span class="text-muted">x</span>
       </span>
+
+      <v-icon v-if="packs_more">more_horiz</v-icon>
+
     </div>
 
     <div
       v-if="weights.length"
-      :class="{ dense: dense, '-ultra-dense': isUltraDense(weights) }"
-      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense,'flex-wrap':!singleLine  }"
+      class="-var-row    "
     >
-      <v-icon :color="icon_color" class="me-1" size="small">
+      <v-icon v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center" >
         fa:fas fa-weight-hanging
       </v-icon>
 
@@ -121,14 +132,16 @@
         ></u-variant-asset-image>
         {{ weight?.removeVariantAsset() }}
       </span>
+      <v-icon v-if="weights_more">more_horiz</v-icon>
+
     </div>
 
     <div
       v-if="types.length"
-      :class="{ dense: dense, '-ultra-dense': isUltraDense(types) }"
-      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense, 'flex-wrap':!singleLine }"
+      class="-var-row   "
     >
-      <v-icon :color="icon_color" class="me-1" size="small">
+      <v-icon v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center" >
         fa:fas fa-toolbox
       </v-icon>
       <span
@@ -146,14 +159,17 @@
         ></u-variant-asset-image>
         {{ type?.removeVariantAsset() }}
       </span>
+
+      <v-icon v-if="types_more">more_horiz</v-icon>
+
     </div>
 
     <div
       v-if="styles.length"
-      :class="{ dense: dense, '-ultra-dense': isUltraDense(styles) }"
-      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense, 'flex-wrap':!singleLine  }"
+      class="-var-row   "
     >
-      <v-icon :color="icon_color" class="me-1" size="small"> style</v-icon>
+      <v-icon  v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center"> style</v-icon>
 
       <span
         v-for="style in styles"
@@ -170,12 +186,14 @@
         ></u-variant-asset-image>
         {{ style?.removeVariantAsset() }}
       </span>
+      <v-icon v-if="styles_more">more_horiz</v-icon>
+
     </div>
 
     <div
       v-if="!small && variants && variants.some((v) => v.price && v.currency)"
-      :class="{ dense: dense }"
-      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense ,'flex-wrap':!singleLine }"
+      class="-var-row   "
     >
       <p class="m-0">
         {{ $t("variants_view.prices") }}
@@ -197,8 +215,8 @@
 
     <div
       v-if="!small && quantitys && variants.some((v) => v.quantity || v === 0)"
-      :class="{ dense: dense }"
-      class="p-1 d-flex align-center flex-wrap"
+      :class="{ dense: dense,'flex-wrap':!singleLine  }"
+      class="-var-row   "
     >
       <p class="m-0">
         {{ $t("variants_view.inventory") }}
@@ -258,6 +276,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    singleLine:Boolean,
+    hideIcon:Boolean,
+    forceUltraDense:Boolean
   },
   data() {
     return {
@@ -275,27 +296,60 @@ export default {
     colors() {
       return this.getItemsInArray(this.variants, "color").limit(this.limit);
     },
+    colors_more() {
+      return this.getItemsInArray(this.variants, "color").length>this.limit;
+    },
     weights() {
       return this.getItemsInArray(this.variants, "weight").limit(this.limit);
     },
+    weights_more() {
+      return this.getItemsInArray(this.variants, "weight").length>this.limit;
+    },
+
     volumes() {
       return this.getItemsInArray(this.variants, "volume").limit(this.limit);
     },
+    volumes_more() {
+      return this.getItemsInArray(this.variants, "volume").length>this.limit;
+    },
+
     styles() {
       return this.getItemsInArray(this.variants, "style").limit(this.limit);
     },
+    styles_more() {
+      return this.getItemsInArray(this.variants, "style").length>this.limit;
+    },
+
     packs() {
       return this.getItemsInArray(this.variants, "pack").limit(this.limit);
     },
-    quantitys() {
-      return this.getItemsInArray(this.variants, "quantity").limit(this.limit);
+    packs_more() {
+      return this.getItemsInArray(this.variants, "pack").length>this.limit;
     },
-    prices() {
-      return this.getItemsInArray(this.variants, "price").limit(this.limit);
-    },
+
+
     types() {
       return this.getItemsInArray(this.variants, "type").limit(this.limit);
     },
+    types_more() {
+      return this.getItemsInArray(this.variants, "type").length>this.limit;
+    },
+
+    quantitys() {
+      return this.getItemsInArray(this.variants, "quantity").limit(this.limit);
+    },
+    quantitys_more() {
+      return this.getItemsInArray(this.variants, "quantity").length>this.limit;
+    },
+
+    prices() {
+      return this.getItemsInArray(this.variants, "price").limit(this.limit);
+    },
+    prices_more() {
+      return this.getItemsInArray(this.variants, "price").length>this.limit;
+    },
+
+
     shop_id() {
       return this.getShop()?.id;
     },
@@ -339,7 +393,7 @@ export default {
     },
 
     isUltraDense(items) {
-      return items?.join(" ").length > 50;
+      return this.forceUltraDense || items?.join(" ").length > (this.small?20:50);
     },
   },
 };
@@ -347,7 +401,7 @@ export default {
 
 <style lang="scss" scoped>
 .product-variant-view {
-  color: #444;
+  color: #000;
   font-size: 12px;
 
   padding: 8px;
@@ -367,9 +421,16 @@ export default {
   }
 
   &.dark {
+    color: #fff;
     .card-badge-info {
       color: #fff;
     }
+    .card-badge-color {
+      border: solid 1px #555;
+    }
+  }
+  .card-badge-color {
+    border: solid 1px #aaa;
   }
 
   &.-selectable {
@@ -382,7 +443,7 @@ export default {
 }
 
 .card-badge-info {
-  color: #777;
+
   user-select: none;
   padding: 4px 4px;
   font-weight: 600;
@@ -406,7 +467,7 @@ export default {
 .card-badge-color {
   &.-selected {
     border-radius: 50%;
-    border: solid medium #000;
+    border: solid medium #000 !important;
   }
 }
 
@@ -424,8 +485,24 @@ export default {
   max-width: max-content !important;
   margin: 2px 6px;
 }
-
+.-var-row{
+  display: flex;
+  padding: 4px;
+  align-items: center;
+}
 .-ultra-dense {
-  font-size: 0.5rem;
+
+  .-var-row{
+    font-size: 0.5rem;
+    padding: 1px;
+  }
+}
+.-single-line{
+  .card-badge-info{
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 </style>

@@ -1556,53 +1556,7 @@ export default {
         }
       }
 
-      .card__info {
-        position: absolute;
-        bottom: 0;
-        width: calc(100% - 6px);
-        height: max-content !important;
-        padding: 2px 4px !important;
-        margin: 3px;
-        border-radius: 8px;
-        background-color: #ffffff8f;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
 
-        .toggle-visible-on-hover {
-          width: auto !important;
-          margin: 0 2px !important;
-        }
-
-        .sec--rate-variants {
-          display: none;
-        }
-
-        .sec--price {
-          flex-grow: 1;
-          max-width: 100%;
-
-          .main-price-label {
-            font-size: 1rem;
-            margin: 1px !important;
-            padding: 2px;
-            display: flex !important;
-            justify-content: space-between;
-
-            p {
-              min-height: 0 !important;
-            }
-
-            /* .mt-2 {
-               margin: 0 !important;
-             }*/
-
-            .u--price.large {
-              font-size: 1rem !important;
-            }
-          }
-        }
-      }
 
       @media only screen and (max-width: 600px) {
         .top-title {

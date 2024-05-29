@@ -165,19 +165,22 @@
         </div>
 
         <div
-          :class="{ no_variants: !hasVariant }"
+          :class="{ no_variants: !hasVariant || (isInsta && $vuetify.display.xs) }"
           class="card__info"
           style="z-index: 2"
         >
           <product-variants-view
-            v-if="hasVariant"
+            v-if="hasVariant && !(isInsta && $vuetify.display.xs)"
             v-model:selected-variant="current_variant"
-            :limit="5"
+            :limit="isInsta?3:5"
             :variants="product.variants"
             center
             class="toggle-visible-on-hover"
             hoverable
-            small
+            :small="isInsta || smallMode || dense"
+            :single-line="isInsta"
+            :hide-icon="isInsta"
+            :force-ultra-dense="isInsta"
           />
 
           <v-row class="toggle-hidden-on-hover" no-gutters>
@@ -279,7 +282,7 @@
                   }}</span>
 
                   <!-- Coupon -->
-                  <span v-if="hasCoupon && !isSmall">
+                  <span v-if="hasCoupon && !isSmall && !isInsta">
                     <v-icon class="mx-1" color="#D32F2F" size="x-small"
                       >fa:fas fa-plus</v-icon
                     >
@@ -994,6 +997,9 @@ export default {
     background-color: rgba(255, 255, 255, 0.9);
 
     border-radius: 0px;
+    display: flex ;
+    align-items: center;
+    justify-content: center;
 
     transition:
       transform 0.4s ease-in-out,
@@ -1015,7 +1021,7 @@ export default {
     margin-bottom: 0px;
 
     overflow: hidden;
-    display: block;
+
     @media (max-width: 800px) {
       min-height: var(--footer-height);
     }
@@ -1059,6 +1065,7 @@ export default {
       border-radius: 16px;
       //  transform: scale(0.75, 0.75);
       background-color: rgba(255, 255, 255, 0.94);
+
       transform: scale(0.9, 0.9);
 
       &.no_variants {
@@ -1462,6 +1469,63 @@ export default {
 }
 
 .-insta-mode {
+  .card__info {
+    background-color: #fff !important;
+    backdrop-filter: unset !important;
+
+
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: max-content !important;
+    padding: 2px 4px !important;
+    margin: 0;
+    border-radius: 0px ;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    @media (max-width: 450px) {
+      font-size: 0.7rem;
+    }
+
+
+    .toggle-visible-on-hover {
+      width: auto !important;
+      margin: 0 2px !important;
+    }
+
+    .sec--rate-variants {
+      display: none;
+    }
+
+    .sec--price {
+      flex-grow: 1;
+      max-width: 100%;
+
+      .main-price-label {
+        font-size: 1rem;
+        margin: 1px !important;
+        padding: 2px;
+        display: flex !important;
+        justify-content: space-between;
+
+        p {
+          min-height: 0 !important;
+        }
+
+        /* .mt-2 {
+           margin: 0 !important;
+         }*/
+
+        .u--price.large {
+          font-size: 1rem !important;
+        }
+      }
+    }
+
+
+  }
   .price-label {
     font-size: 10px;
     color: #000;

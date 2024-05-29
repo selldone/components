@@ -247,9 +247,11 @@
         v-if="product.variants && product.variants.length"
         :variants="product.variants"
         class="tsec"
+        :limit="7"
         dark
         dense
         small
+        force-ultra-dense
       ></product-variants-view>
     </div>
 
