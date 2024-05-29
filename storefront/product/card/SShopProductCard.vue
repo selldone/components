@@ -504,6 +504,7 @@ import UPrice from "../../../ui/price/UPrice.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
+import {PriceHelper} from "@selldone/core-js";
 
 export default {
   name: "SShopProductCard",
@@ -577,7 +578,7 @@ export default {
     },
     //----------------------------------------
     hasDiscountCountDown() {
-      return this.HasDiscountCountDownMode(this.product, null);
+      return PriceHelper.HasDiscountCountDownMode(this.product, null);
     },
 
     endOfDiscountDate() {

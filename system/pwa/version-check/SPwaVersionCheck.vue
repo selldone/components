@@ -14,6 +14,7 @@
 
 <template>
   <v-snackbar
+    v-if="local_version"
     v-model="new_version"
     :timeout="60000"
     :vertical="$vuetify.display.smAndDown"
@@ -39,12 +40,18 @@ export default {
     new_version: false,
     busy: false,
   }),
+  computed: {
+    local_version() {
+      return SetupService.PWAVersion();
+    },
+  },
 
   created() {
     //――――――――――――――――――――――――― Check for new update of Web App ―――――――――――――――――――――――――
-    this.getPwaVersion((need_update) => {
-      if (need_update) this.new_version = true;
-    });
+    if (this.local_version)
+      this.getPwaVersion((need_update) => {
+        if (need_update) this.new_version = true;
+      });
   },
 
   methods: {
