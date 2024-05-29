@@ -26,7 +26,7 @@
             :key="cross_sell.id"
             class="-card"
           >
-            <v-avatar class="me-5" rounded size="84"
+            <v-avatar class="me-5 align-self-start" rounded size="84"
               ><img
                 v-if="cross_sell.target.icon"
                 :src="
@@ -57,7 +57,6 @@
               <div v-if="cross_sell.message" class="mb-3">
                 {{ cross_sell.message }}
               </div>
-              <v-spacer></v-spacer>
 
               <b class="d-block">
                 <router-link
@@ -72,9 +71,10 @@
                   {{ cross_sell.target.title }}
                 </router-link>
               </b>
+              <v-spacer></v-spacer>
 
               <div class="d-flex align-center mt-2">
-                <div class="d-flex flex-column me-3">
+                <div class="d-flex flex-column me-3 ">
                   <u-price
                     :amount="cross_sell.target.price"
                     :currency="cross_sell.target.currency"
@@ -98,6 +98,7 @@
                   :variants="cross_sell.target.product_variants"
                   class="mt-1 pa-0"
                   dense
+                  :limit="7"
                   selectable
                   small
                   @update:selected-variant="

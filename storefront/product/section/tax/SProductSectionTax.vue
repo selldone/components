@@ -13,9 +13,9 @@
   -->
 
 <template>
-  <div class="px-2 mb-2 d-flex flex-grow-0">
-    <span v-html="tax_string"></span>
-    <span v-if="has_free_shipping" class="text-success mx-2">
+  <div class="s--product-section-tax px-2 mb-2 flex-grow-0">
+    <span v-html="tax_string" class="-tax-box"></span>
+    <span v-if="has_free_shipping" class="-shipping-box text-success">
       ● {{ $t("global.commons.free_shipping") }}
       <span
         v-if="
@@ -44,58 +44,68 @@
     </span>
 
     <template v-if="pickup_transportation">
-      <v-menu location="bottom" max-width="460" open-on-hover>
-        <template v-slot:activator="{ props }">
-          <v-chip color="#fff" label size="small" v-bind="props">
-            <v-icon size="small" start>place</v-icon>
-            {{
-              pickup_transportation.title
-                ? pickup_transportation.title
-                : $t("global.transportation_type.pickup")
-            }}
-          </v-chip>
-        </template>
-        <v-sheet class="text-start" color="#000" dark>
-          <v-list class="bg-transparent" dark lines="three">
-            <v-list-item
-              v-for="(pickup, i) in pickup_transportation.pickups"
-              :key="i"
-              :href="MapHelper.GetMapDirectionUrl(pickup.location, true)"
-              target="_blank"
-              title="Open direction to the pickup store on the map."
-            >
-              <template v-slot:prepend>
-                <v-avatar class="hover-scale-small" rounded size="64">
-                  <img
-                    v-if="pickup.location?.lng && pickup.location?.lat"
-                    :src="
-                      MapHelper.GetMapImage(
-                        pickup.location.lng,
-                        pickup.location.lat,
-                        18,
-                      )
-                    "
-                  />
-                </v-avatar>
-              </template>
+      <v-chip
+        label
+        :size="$vuetify.display.xs ? 'x-small' : 'small'"
+        class="-pickup-box"
+        color="#000"
+        variant="flat"
+      >
+        <v-icon size="small" start>place</v-icon>
+        {{
+          pickup_transportation.title
+            ? pickup_transportation.title
+            : $t("global.transportation_type.pickup")
+        }}
 
-              <v-list-item-title>
-                {{ pickup.name }}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <flag
-                  v-if="pickup.country"
-                  :iso="pickup.country"
-                  :squared="false"
-                  class="me-1"
-                ></flag>
+        <v-menu
+          activator="parent"
+          location="bottom"
+          max-width="460"
+          open-on-hover
+        >
+          <v-sheet class="text-start" color="#000" dark>
+            <v-list class="bg-transparent" dark lines="three" density="compact">
+              <v-list-item
+                v-for="(pickup, i) in pickup_transportation.pickups"
+                :key="i"
+                :href="MapHelper.GetMapDirectionUrl(pickup.location, true)"
+                target="_blank"
+                title="Open direction to the pickup store on the map."
+              >
+                <template v-slot:prepend>
+                  <v-avatar class="hover-scale-small" rounded size="64">
+                    <img
+                      v-if="pickup.location?.lng && pickup.location?.lat"
+                      :src="
+                        MapHelper.GetMapImage(
+                          pickup.location.lng,
+                          pickup.location.lat,
+                          18,
+                        )
+                      "
+                    />
+                  </v-avatar>
+                </template>
 
-                {{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}
-              </v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
-        </v-sheet>
-      </v-menu>
+                <v-list-item-title>
+                  {{ pickup.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  <flag
+                    v-if="pickup.country"
+                    :iso="pickup.country"
+                    :squared="false"
+                    class="me-1"
+                  ></flag>
+
+                  {{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+          </v-sheet>
+        </v-menu>
+      </v-chip>
     </template>
   </div>
 </template>
@@ -214,4 +224,27 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.s--product-section-tax {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .-shipping-box {
+    margin: 4px 8px;
+  }
+
+  @media (max-width: 420px) {
+
+    font-size: 0.8rem;
+
+    .-tax-box,
+    .-shipping-box {
+      margin: 4px 0;
+    }
+    .-pickup-box {
+    }
+  }
+}
+</style>

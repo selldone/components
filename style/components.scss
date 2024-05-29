@@ -4556,6 +4556,7 @@ canvas.heatmap-canvas {
     flex-grow: 1;
     text-transform: capitalize;
     border-radius: 12px;
+    max-height: 64px;
     .v-btn__content{
       white-space: normal;
     }
