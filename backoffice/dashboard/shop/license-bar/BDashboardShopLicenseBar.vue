@@ -32,7 +32,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="s--shop-license-bar px-4 py-1 no-inv" dir="ltr">
+  <div class="s--shop-license-bar px-4 py-1 no-inv elevation-3" dir="ltr">
     <span class="pen"
       ><b>Business</b>
       <span class="bg-strong-bliss text-gradient mx-1">OS</span> |</span
@@ -63,7 +63,8 @@ export default defineComponent({
   font-size: 80%;
   background-image: linear-gradient(
     90deg,
-    var(--theme-deep-dark) 0%,
+          var(--theme-deep-dark) 0%,
+    var(--theme-deep-dark) 30%,
     var(--theme-dark) 100%
   );
   border-radius: 0 8px 8px 0;

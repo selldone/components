@@ -12,11 +12,11 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import type { DirectiveBinding, VNode } from "vue";
+import type {DirectiveBinding, VNode} from "vue";
 
-const POINTER_START_EVENTS = ["mousedown", "touchstart"];
-const POINTER_MOVE_EVENTS = ["mousemove", "touchmove"];
-const POINTER_END_EVENTS = ["mouseup", "touchend"];
+const POINTER_START_EVENTS = ["mousedown"/*, "touchstart"*/];
+const POINTER_MOVE_EVENTS = ["mousemove"/*, "touchmove"*/];
+const POINTER_END_EVENTS = ["mouseup"/*, "touchend"*/];
 
 function addEventListeners(el: any, events: Array<string>, handler: Function) {
   for (let i = 0, len = events.length; i < len; i++) {
@@ -25,9 +25,9 @@ function addEventListeners(el: any, events: Array<string>, handler: Function) {
 }
 
 function removeEventListeners(
-    el: any,
-    events: Array<string>,
-    handler: Function,
+  el: any,
+  events: Array<string>,
+  handler: Function,
 ) {
   for (let i = 0, len = events.length; i < len; i++) {
     el.removeEventListener(events[i], handler, { passive: false });
@@ -65,7 +65,9 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
         console.error("There is no element with the current target value.");
       }
     } else if (typeof binding.value.target !== "undefined") {
-      console.error('The parameter "target" should be either \'undefined\' or \'string\'.');
+      console.error(
+        "The parameter \"target\" should be either 'undefined' or 'string'.",
+      );
     }
     if (typeof binding.value.container === "string") {
       container = document.querySelector(binding.value.container);
@@ -73,15 +75,21 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
         console.error("There is no element with the current container value.");
       }
     } else if (typeof binding.value.container !== "undefined") {
-      console.error('The parameter "container" should be be either \'undefined\' or \'string\'.');
+      console.error(
+        "The parameter \"container\" should be be either 'undefined' or 'string'.",
+      );
     }
     if (typeof binding.value.active === "boolean") {
       active = binding.value.active;
     } else if (typeof binding.value.active !== "undefined") {
-      console.error('The parameter "active" value should be either \'undefined\', \'true\' or \'false\'.');
+      console.error(
+        "The parameter \"active\" value should be either 'undefined', 'true' or 'false'.",
+      );
     }
   } else if (typeof binding.value !== "undefined") {
-    console.error("The passed value should be either 'undefined', 'true' or 'false' or 'object'.");
+    console.error(
+      "The passed value should be either 'undefined', 'true' or 'false' or 'object'.",
+    );
   }
 
   const scrollBy = function (x: number, y: number) {
@@ -111,8 +119,8 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
       const pageX = isMouseEvent ? e.pageX : e.touches[0].pageX;
       const pageY = isMouseEvent ? e.pageY : e.touches[0].pageY;
       const clickedElement = document.elementFromPoint(
-          pageX - window.pageXOffset,
-          pageY - window.pageYOffset,
+        pageX - window.pageXOffset,
+        pageY - window.pageYOffset,
       ) as HTMLElement | null;
 
       const hasNoChildDrag = binding.arg === "nochilddrag";
@@ -125,8 +133,8 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
       const isEl = clickedElement === target;
       const isFirstChild = clickedElement === target.firstChild;
       const isDataDraggable = hasNoChildDrag
-          ? typeof clickedElement?.dataset.dragscroll !== "undefined"
-          : typeof clickedElement?.dataset.noDragscroll === "undefined";
+        ? typeof clickedElement?.dataset.dragscroll !== "undefined"
+        : typeof clickedElement?.dataset.noDragscroll === "undefined";
 
       if (!isEl && (!isDataDraggable || (hasFirstChildDrag && !isFirstChild))) {
         return;
@@ -155,6 +163,8 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
       }
     };
 
+
+
     target.onPointerEnd = function (e: MouseEvent | TouchEvent) {
       if (e.type === "touchend") return; // Disable for touch events
 
@@ -168,15 +178,15 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
       if (e.type === "touchend" && isClick === true) {
         const duration = Date.now() - startTime;
         const distance = Math.sqrt(
-            Math.pow(startX - lastClientX, 2) + Math.pow(startY - lastClientY, 2),
+          Math.pow(startX - lastClientX, 2) + Math.pow(startY - lastClientY, 2),
         );
         if (duration < 1000 && distance < 32) {
-          (e.target as HTMLElement).click();
+          (e.target as HTMLElement)?.click();
           isClick = false;
         }
-      } else {
-        (e.target as HTMLElement).focus();
-      }
+      } /*else {
+        (e.target as HTMLElement)?.focus();
+      }*/
     };
 
     target.onPointerMove = function (e: MouseEvent | TouchEvent) {
@@ -192,18 +202,18 @@ const init = function (el: Element, binding: DirectiveBinding, vnode: VNode) {
         isDragging = true;
 
         const isEndX =
-            target.scrollLeft + target.clientWidth >= target.scrollWidth ||
-            target.scrollLeft === 0;
+          target.scrollLeft + target.clientWidth >= target.scrollWidth ||
+          target.scrollLeft === 0;
         const isEndY =
-            target.scrollTop + target.clientHeight >= target.scrollHeight ||
-            target.scrollTop === 0;
+          target.scrollTop + target.clientHeight >= target.scrollHeight ||
+          target.scrollTop === 0;
 
         newScrollX =
-            -lastClientX +
-            (lastClientX = isMouseEvent ? e.clientX : e.touches[0].clientX);
+          -lastClientX +
+          (lastClientX = isMouseEvent ? e.clientX : e.touches[0].clientX);
         newScrollY =
-            -lastClientY +
-            (lastClientY = isMouseEvent ? e.clientY : e.touches[0].clientY);
+          -lastClientY +
+          (lastClientY = isMouseEvent ? e.clientY : e.touches[0].clientY);
 
         if (binding.modifiers.pass) {
           target.scrollLeft -= binding.modifiers.y ? -0 : newScrollX;
@@ -266,7 +276,7 @@ const destroy = (el: any) => {
 
 export default {
   mounted: (el: Element, binding: DirectiveBinding, vnode: VNode) =>
-      init(el, binding, vnode),
+    init(el, binding, vnode),
   updated: (el: Element, binding: DirectiveBinding, vnode: VNode) => {
     if (JSON.stringify(binding.value) !== JSON.stringify(binding.oldValue)) {
       init(el, binding, vnode);

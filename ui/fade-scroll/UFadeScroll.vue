@@ -26,7 +26,7 @@
   >
     <div
       ref="scroll"
-      v-dragscroll="dragScroll"
+      v-dragscroll="dragScroll && $vuetify.display.smAndUp"
       v-intersect="onIntersect"
       v-scroll.self="(ev) => onScroll(ev.target)"
       :class="{ usn: dragScroll }"

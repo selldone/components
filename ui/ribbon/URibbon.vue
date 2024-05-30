@@ -23,7 +23,7 @@
     }"
     class="ribbon"
   >
-    <img :src="src" class="approved-bg" />
+    <img :src="src" class="approved-bg" :class="{'op-0-8':transparent}" />
 
     <div class="approved-container single-line">
       <slot></slot>
@@ -53,6 +53,7 @@ export default {
 
     top680: {},
     left680: {},
+    transparent:Boolean
   },
 
   computed: {

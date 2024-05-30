@@ -359,47 +359,48 @@
           </v-img>
 
           <div
-            :style="{
-              'max-width': $vuetify.display.smAndDown
-                ? 'calc(100% - 195px)'
-                : 'calc(100% - 210px)',
-            }"
+
             class="text-start px-2 flex-grow-1"
           >
             <p class="mb-1 flex-grow-1 row-pro-title">{{ product.title }}</p>
 
-            <v-chip
-              v-if="product.rate_count"
-              class="my-1"
-              color="#fafafa"
-              size="x-small"
-            >
-              <v-rating
-                :model-value="product.rate"
-                active-color="yellow-darken-3"
-                color="grey-darken-1"
-                density="compact"
-                half-increments
-                readonly
-                size="x-small"
-              />
-              {{ Number(product.rate).toFixed(1) }}
-            </v-chip>
+            <div class="single-line py-1">
+              <v-chip
+                  v-if="product.rate_count"
+                  class="me-2"
+                  color="#fafafa"
+                  variant="flat"
+                  size="x-small"
 
-            <span v-if="product.rate_count" class="mx-2 text-black"
+              >
+                <v-rating
+                    :model-value="product.rate"
+                    active-color="yellow-darken-3"
+                    color="grey-darken-1"
+                    density="compact"
+                    half-increments
+                    readonly
+                    size="x-small"
+                    class="me-1"
+                />
+                {{ Number(product.rate).toFixed(1) }}
+              </v-chip>
+
+              <span v-if="product.rate_count" class="text-black small"
               ><b class="me-2">{{
-                numeralFormat(product.rate_count, "0,0")
-              }}</b>
+                  numeralFormat(product.rate_count, "0,0")
+                }}</b>
 
               <small>{{ $t("product_card.review_unit") }}</small>
             </span>
+            </div>
 
             <product-variants-view
               v-if="hasVariant"
               v-model:selected-variant="current_variant"
               :limit="5"
               :variants="product.variants"
-              class="p-0"
+              class="pa-0"
               dense
               hoverable
               small
@@ -408,7 +409,7 @@
 
           <div
             :class="{ small: $vuetify.display.smAndDown }"
-            class="text-end align-self-center flex-grow-1"
+            class="text-end align-self-center"
             style="flex-basis: 110px"
           >
             <div v-if="product.quantity || isFile" class="main-price-label p-0">
@@ -434,7 +435,7 @@
                   class="mx-1"
                   color="#D32F2F"
                   size="x-small"
-                  >fa:fas fa-plus
+                  >add
                 </v-icon>
                 <!-- Price label -->
                 <span v-if="product.price_label" class="mx-1 price-label">{{
@@ -458,8 +459,9 @@
 
             <v-btn
               v-if="quickBuy && (product.quantity || isFile)"
-              :size="$vuetify.display.mdAndUp ? undefined : 'small'"
-              class="align-self-center flex-grow-0 ms-2 tnt"
+              :size="$vuetify.display.mdAndUp ? 'small' : 'x-small'"
+              min-height="36"
+              class="align-self-center flex-grow-0 ms-2 tnt mt-1"
               color="#000"
               rounded
               variant="elevated"
@@ -1067,10 +1069,10 @@ export default {
       //  transform: scale(0.75, 0.75);
       background-color: rgba(255, 255, 255, 0.94);
 
-      transform: scale(0.9, 0.9);
+      transform: scale(0.9, 0.9) translateY(-4px);
 
       &.no_variants {
-        background: unset;
+        background: unset !important;
       }
 
       &:hover {
