@@ -126,7 +126,7 @@
           v-for="online_staff in online_staffs"
           :key="online_staff.id"
           color="#000"
-          content-class="bg-black rounded-lg"
+          content-class="bg-black rounded-pill"
           location="bottom"
         >
           <template v-slot:activator="{ props }">
@@ -142,10 +142,15 @@
           </template>
 
           <v-list-item
-            :prepend-avatar="getUserAvatar(online_staff.id)"
             :subtitle="online_staff.email"
             class="text-start my-2"
+            density="compact"
           >
+            <template v-slot:prepend>
+              <v-avatar start :image="getUserAvatar(online_staff.id)" class="avatar-gradient -thin ">
+
+              </v-avatar>
+            </template>
             <template v-slot:title>
               <b>{{ online_staff.name }}</b>
               <v-chip class="ms-2" color="green" size="small">
