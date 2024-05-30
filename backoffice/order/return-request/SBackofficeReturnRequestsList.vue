@@ -56,12 +56,12 @@
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
       <template v-slot:item.product_id="{ item }">
-        <v-img
-          :aspect-ratio="1"
-          :height="48"
-          :src="getProductImage(item.basket_item.product_id)"
-          :width="48"
-          class="rounded ma-2"
+        <u-avatar-folder
+          :src="getProductImage(item.basket_item?.product_id)"
+          class="ma-2"
+          is-gray
+          :side-image="getProductTypeImage(item.basket_item?.product?.type)"
+          elevated
         />
       </template>
 
@@ -72,25 +72,25 @@
       <template v-slot:item.product_name="{ item }">
         <div class="min-width-200">
           <p class="m-0 font-weight-bold">
-            {{ item.basket_item.product.title }}
+            {{ item.basket_item?.product?.title }}
             <i
-              v-if="item.basket_item.product.original"
+              v-if="item.basket_item?.product?.original"
               class="fas fa-certificate text-primary"
             />
           </p>
-          <small>{{ item.basket_item.product.title_en }}</small>
+          <small>{{ item.basket_item.product?.title_en }}</small>
           <variant-item-view-micro
-            v-if="item.basket_item.variant"
-            :product-variant="item.basket_item.variant"
+            v-if="item.basket_item?.variant"
+            :product-variant="item.basket_item?.variant"
           />
         </div>
       </template>
 
       <template v-slot:item.delivery_at="{ item }">
         <div class="min-width-200">
-          {{ getFromNowString(item.basket_item.basket.delivery_at) }}<br />
+          {{ getFromNowString(item.basket_item?.basket?.delivery_at) }}<br />
           <small>
-            {{ getLocalTimeString(item.basket_item.basket.delivery_at) }}
+            {{ getLocalTimeString(item.basket_item?.basket?.delivery_at) }}
           </small>
         </div>
       </template>
@@ -98,19 +98,19 @@
       <template v-slot:item.state="{ item }">
         <p class="m-1">
           <v-icon
-            :color="getReturnRequestStateObject(item.state).color"
+            :color="getReturnRequestStateObject(item.state)?.color"
             size="small"
           >
-            {{ getReturnRequestStateObject(item.state).icon }}
+            {{ getReturnRequestStateObject(item.state)?.icon }}
           </v-icon>
-          {{ $t(getReturnRequestStateObject(item.state).name) }}
+          {{ $t(getReturnRequestStateObject(item.state)?.name) }}
         </p>
       </template>
 
       <template v-slot:item.reason="{ item }">
         <div class="min-width-200">
           <p class="m-0">
-            {{ $t(getReturnBasketItemReasonObject(item.reason).title) }}
+            {{ $t(getReturnBasketItemReasonObject(item.reason)?.title) }}
           </p>
           <small
             >{{ $t("global.return_request_list.count") }}:
@@ -126,11 +126,11 @@
               {{ $t("global.return_request_list.return_warranty") }}
               :
             </small>
-            {{ item.basket_item.product.return_warranty }}
+            {{ item.basket_item?.product?.return_warranty }}
             {{ $t("global.return_request_list.return_warranty_unit") }}
           </p>
 
-          <small>{{ item.basket_item.product.warranty }}</small>
+          <small>{{ item.basket_item?.product?.warranty }}</small>
         </div>
       </template>
 
@@ -146,10 +146,11 @@ import VariantItemViewMicro from "../../../storefront/product/variant/VariantIte
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BOrderButton from "../../order/button/BOrderButton.vue";
 import { BasketItemReturn } from "@selldone/core-js";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "SBackofficeReturnRequestsList",
-  components: { BOrderButton, VariantItemViewMicro },
+  components: { UAvatarFolder, BOrderButton, VariantItemViewMicro },
   props: {
     url: {
       require: true,

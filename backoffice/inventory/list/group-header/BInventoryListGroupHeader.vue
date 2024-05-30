@@ -17,36 +17,40 @@
 
   <div
     v-if="isMobile"
-    class="pp text-start p-2 usn"
-    style="width: calc(100vw - 40px)"
+    class="pp text-start p-2 my-2 usn d-flex flex-column"
+    style="width: calc(100vw - 72px)"
     @click="toggleGroup(item)"
   >
-    <div class="d-flex align-center">
-      <v-icon class="me-2">{{ is_open ? "remove" : "add" }}</v-icon>
+    <v-list-item class="d-flex align-center" lines="one" density="compact">
+      <template v-slot:prepend>
+        <v-icon>{{ is_open ? "remove" : "add" }}</v-icon>
+      </template>
 
-      <v-avatar class="me-2" size="24">
-        <img :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)" />
-      </v-avatar>
 
-      <div class="text-start">
-        <p class="m-0 text-subtitle-2 font-weight-bold single-line">
-          {{ product.title }}
-        </p>
-        <small class="single-line d-block">{{ product.title_en }}</small>
-      </div>
-    </div>
 
-    <div class="d-flex justify-space-between pt-2 mt-2 border-top-dashed">
+      <v-list-item-title>
+        <v-avatar class="me-2" size="24" variant="outlined" rounded>
+          <img :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)" />
+        </v-avatar>
+
+        <b>{{ product.title}}</b>
+      </v-list-item-title>
+      <v-list-item-subtitle class="mt-1">
+        {{ product.title_en }}
+      </v-list-item-subtitle>
+    </v-list-item>
+
+    <div class="d-flex justify-space-between pt-1 mt-2 border-top-dashed">
       <div>
-        <small class="x-small">{{ $t("global.commons.total") }}: </small>
+        <small>{{ $t("global.commons.total") }}: </small>
         <b>{{ quantity }}</b>
       </div>
 
-      <div>
-        <u-price v-if="min_price" :amount="min_price"></u-price>
+      <div >
+        <u-price v-if="min_price" :amount="min_price" :currency="product.currency"></u-price>
         <template v-if="max_price && max_price !== min_price">
           ~
-          <u-price :amount="max_price"></u-price>
+          <u-price :amount="max_price" :currency="product.currency">></u-price>
         </template>
       </div>
     </div>
@@ -54,23 +58,21 @@
 
   <!-- ------------------------ Group > Normal ------------------------ -->
 
-  <tr v-else>
+  <tr v-else  :class="{ 'is-open elevation-6': is_open }">
     <td
-      :class="{ 'is-open': is_open }"
       :colspan="columns.length - 4"
       class="pp usn"
       @click="toggleGroup(item)"
     >
-      <div class="d-flex align-center">
+      <div class="d-flex align-center ">
         <v-icon class="me-2">{{ is_open ? "remove" : "add" }}</v-icon>
 
         <u-avatar-folder
-          :size="42"
           :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
           class="me-2 my-1"
           is-gray
           side-icon="folder"
-          small-side-icon
+          small-side-icon elevated
         >
         </u-avatar-folder>
 
@@ -102,7 +104,6 @@
     </td>
 
     <td
-      :class="{ 'is-open': is_open }"
       class="pp usn"
       colspan="1"
       @click="toggleGroup(item)"
@@ -111,7 +112,6 @@
     </td>
 
     <td
-      :class="{ 'is-open': is_open }"
       class="pp usn"
       colspan="1"
       @click="toggleGroup(item)"
@@ -120,7 +120,6 @@
       <b class="d-block">{{ quantity }}</b>
     </td>
     <td
-      :class="{ 'is-open': is_open }"
       class="pp usn"
       colspan="2"
       @click="toggleGroup(item)"

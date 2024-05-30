@@ -91,6 +91,7 @@
 
     <!---------------------------- List ----------------------->
     <v-data-table-server
+      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -101,7 +102,6 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('global.commons.waiting_load_data')"
-      :mobile="$vuetify.display.xs"
       :row-propsCC="
         (_data) => {
           return {
@@ -143,18 +143,12 @@
       <!-- ===================================== Start Group ================================== -->
 
       <template
-        v-slot:group-header="{
-          isMobile,
-          item,
-          columns,
-          toggleGroup,
-          isGroupOpen,
-        }"
+        v-slot:group-header="{ item, columns, toggleGroup, isGroupOpen }"
       >
         <b-inventory-list-group-header
           :columns="columns"
           :isGroupOpen="isGroupOpen"
-          :isMobile="isMobile"
+          :isMobile="$vuetify.display.xs"
           :item="item"
           :toggleGroup="toggleGroup"
         ></b-inventory-list-group-header>
@@ -170,18 +164,13 @@
               params: { product_id: item.id },
             }"
           >
-            <v-img
-              :aspect-ratio="1"
-              :height="48"
+            <u-avatar-folder
+              is-gray
               :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)"
-              :width="48"
-              class="image-border"
+              :side-image="getProductTypeImage(item.type)"
+              elevated
             >
-              <img
-                :src="getProductTypeImage(item.type)"
-                class="image-bottom-right"
-              />
-            </v-img>
+            </u-avatar-folder>
 
             <v-tooltip activator="parent" location="bottom"
               >Open product admin page.
@@ -207,18 +196,13 @@
               class="mx-2"
             ></product-status-view>
 
-            <v-img
-              :aspect-ratio="1"
-              :height="48"
+            <u-avatar-folder
+              is-gray
               :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)"
-              :width="48"
-              class="image-border flex-grow-0"
+              :side-image="getProductTypeImage(item.type)"
+              class="flex-grow-0"
             >
-              <img
-                :src="getProductTypeImage(item.type)"
-                class="image-bottom-right"
-              />
-            </v-img>
+            </u-avatar-folder>
           </div>
         </template>
         <template v-else>
@@ -371,7 +355,11 @@
                     ? item.number === 0
                     : item.number === item.quantity,
                 }"
-                :color="SaminColorLight"
+                :color="
+                  (item.add ? item.number === 0 : item.number === item.quantity)
+                    ? '#999'
+                    : '#000'
+                "
                 :loading="busy_count === item.key"
                 :variant="
                   (item.add ? item.number === 0 : item.number === item.quantity)
@@ -526,10 +514,12 @@ import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryData
 import BInventoryBulkPrice from "../../inventory/bulk/price/BInventoryBulkPrice.vue";
 import BInventoryBulkDiscount from "../../inventory/bulk/discount/BInventoryBulkDiscount.vue";
 import BInventoryListGroupHeader from "../../inventory/list/group-header/BInventoryListGroupHeader.vue";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "BInventoryList",
   components: {
+    UAvatarFolder,
     BInventoryListGroupHeader,
     BInventoryBulkDiscount,
     BInventoryBulkPrice,
@@ -953,11 +943,11 @@ export default {
             // available: this.filter_bundle.only_available,
             dir: "*",
             /* dir:
-                                                          !this.search &&
-                                                          this.filter_bundle.dir &&
-                                                          this.filter_bundle.dir.length
-                                                              ? this.filter_bundle.dir
-                                                              : "*",*/
+                                                            !this.search &&
+                                                            this.filter_bundle.dir &&
+                                                            this.filter_bundle.dir.length
+                                                                ? this.filter_bundle.dir
+                                                                : "*",*/
             products_only: true,
             need_full_variants: true, // Return full variants data
             optimized: true, // Dont send pricing & rating values!
@@ -1083,28 +1073,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.image-border {
-  outline: #dadada solid 1px;
-  border-radius: 4px;
-  outline-offset: 3px;
-
-  background-color: white;
-}
-
 .search-inline {
   display: inline-block;
   margin-right: 16px;
-}
-
-.image-bottom-right {
-  width: 23px;
-  height: 23px;
-  border-radius: 16px 0 0 0;
-  position: absolute;
-  padding: 5px 0 0 5px;
-  right: 0;
-  bottom: 0;
-  background-color: white;
 }
 
 .price-btn {

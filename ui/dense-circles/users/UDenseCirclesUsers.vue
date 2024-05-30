@@ -43,7 +43,7 @@
     <v-btn
       v-if="add"
       :size="size"
-      class="more-items"
+      class="more-items hover-scale-small"
       color="success"
       icon
       variant="flat"

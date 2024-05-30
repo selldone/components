@@ -156,6 +156,7 @@
             class="me-2"
             is-gray
             placeholder-icon="fastfood"
+            elevated
           >
           </u-avatar-folder>
           <div class="flex-grow-1">

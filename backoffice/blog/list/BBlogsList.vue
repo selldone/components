@@ -112,10 +112,11 @@
       >
         <u-avatar-folder
           :caption="item.parent.category.category"
-          :src="getShopImagePath(item.parent.category.icon)"
+          :src="item.parent.category.icon?getShopImagePath(item.parent.category.icon):undefined"
           class="my-1"
           is-amber
           side-icon="devices_fold"
+          elevated
         >
         </u-avatar-folder>
 
@@ -156,10 +157,11 @@
       <u-avatar-folder
         v-if="item.parent?.category?.icon"
         :caption="item.parent.category.category"
-        :src="getShopImagePath(item.parent.category.icon)"
+        :src="item.parent.category.icon?getShopImagePath(item.parent.category.icon):undefined"
         class="my-1"
         is-amber
         side-icon="devices_fold"
+        elevated
       >
       </u-avatar-folder>
     </template>

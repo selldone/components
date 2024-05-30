@@ -197,7 +197,7 @@
             name: 'BPageTransportationServices',
             params: { transportation_id: transportation.id },
           }"
-          class="ms-2"
+          class="ms-2 hover-scale-small"
           color="success"
           icon
           variant="flat"

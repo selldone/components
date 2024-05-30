@@ -143,7 +143,7 @@
       </template>
 
       <template v-slot:item.delivery_price="{ item }">
-        <div class="py-1 min-width-250">
+        <div class="py-1 min-width-250 text-start">
           <div v-if="item.basket.delivery_price > 0" class="min-width-100">
             <small>{{ $t("global.commons.shipping_cost") }}: </small>
             <u-price
@@ -151,11 +151,12 @@
               :currency="item.basket.currency"
             ></u-price>
           </div>
-          <div v-else-if="item.basket.delivery_price === 0" class="small">
-            {{ $t("global.commons.free") }}
+          <div v-else-if="item.basket.delivery_price === 0" >
+            <v-chip size="small" variant="flat" color="#000">{{ $t("global.commons.free") }}</v-chip>
           </div>
-          <div v-else-if="item.basket.delivery_price === -1" class="small">
-            {{ $t("global.commons.sod") }}
+          <div v-else-if="item.basket.delivery_price === -1" >
+            <v-chip size="small" variant="flat" color="#000">{{ $t("global.commons.sod") }}</v-chip>
+
           </div>
 
           <div v-if="item.basket.tax_shipping">
@@ -166,7 +167,7 @@
             ></u-price>
           </div>
 
-          <hr class="my-1" />
+          <hr v-if="item.rate || item.amount" class="my-1" />
           <b-transportation-service-rate
             v-if="item.rate"
             :rate="item.rate"

@@ -378,10 +378,15 @@ button.bg-dark:focus {
 
 .border-top {
   border-top: 1px solid #dee2e6 !important;
+
+  &.-dashed{
+    border-top-style: dashed !important;
+  }
 }
 
 .border-right {
   border-right: 1px solid #dee2e6 !important;
+
 }
 
 .border-bottom {

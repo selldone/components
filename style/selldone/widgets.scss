@@ -55,7 +55,7 @@ html {
   transition: all 0.65s;
 
   &:hover {
-    box-shadow: 0px 6px 30px 0px rgba(0, 0, 0, 0.4);
+    box-shadow: 0px 6px 30px 0px rgba(0, 0, 0, 0.4) !important;
     transition: all 0.5s;
     z-index: 2;
   }

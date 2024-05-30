@@ -13,13 +13,13 @@
   -->
 
 <template>
-  <div class="position-relative" style="height: 100%">
+  <div class="position-relative c-container -force-rounded pa-2" style="height: 100%">
     <s-widget
       :class="[small ? 'm-1' : '', dark ? 'widget-dark' : '']"
       :style="`background: ${color}`"
       :title="`<h5 class='align-items-center pb-1'>    <span class='circle ${class_state} me-1' style='font-size: 6px;'></span>  ${title_big}<span class='ms-1 small'> (${title})</span>  </h5>`"
       body-class="p-0 mt"
-      class="text-start widget-hover-dark pointer-pointer pb-0"
+      class="text-start elevation-3 widget-hover-dark pointer-pointer pb-0"
       custom-header
       style="border-radius: 8px; min-height: 160px; height: inherit"
     >
@@ -97,7 +97,7 @@
           @click.stop
         >
           <v-icon :color="dark ? '#fff' : '#444'" size="small">
-            edit_square
+            tune
           </v-icon>
         </v-btn>
       </div>
@@ -248,7 +248,7 @@
             class="mx-auto mb-2 zoomIn"
             width="48px"
           />
-          <p class="my-3">
+          <p class="my-3 text-subtitle-2">
             {{ description }}
           </p>
 

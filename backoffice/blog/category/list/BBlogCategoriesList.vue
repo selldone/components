@@ -68,10 +68,11 @@
 
     <template v-slot:item.icon="{ item }">
       <u-avatar-folder
-        :src="getShopImagePath(item.icon)"
+        :src="item.icon?getShopImagePath(item.icon):undefined"
         class="my-1"
         is-amber
         side-icon="devices_fold"
+        elevated
       >
       </u-avatar-folder>
     </template>

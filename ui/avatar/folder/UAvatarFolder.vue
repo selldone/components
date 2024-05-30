@@ -27,6 +27,7 @@
       :size="size - borderSize"
       :style="{ 'border-radius': `${border_radius - 2}px` }"
       cover
+      :class="{'elevation-3':elevated}"
     >
       <v-img v-if="src" :src="getShopImagePath(src)">
         <template v-slot:placeholder>
@@ -50,10 +51,11 @@
     <div
       v-if="!hideSideIcon"
       :style="{ backgroundImage: bg }"
-      class="absolute-bottom-end rounded-ts-circle h-auto w-auto pa-1 ma-n1"
-      style="background-size: 300% 300%; line-height: 0"
+      class="absolute-bottom-end-0 rounded-ts-circle h-auto w-auto pe-2 pb-2"
+
+      style="background-size: 300% 300%; line-height: 0 ;padding: 6px"
     >
-      <v-img
+      <img
         v-if="sideImage"
         :class="{
           'rounded rounded-ts-circle rounded-be-circle': side_image_rounded,
@@ -61,7 +63,7 @@
         :height="side_size / (smallSideIcon ? 2 : 1)"
         :src="sideImage"
         :width="side_size / (smallSideIcon ? 2 : 1)"
-      ></v-img>
+      >
       <v-icon v-else :size="side_size / (smallSideIcon ? 2 : 1)" color="#fff">
         {{ sideIcon }}
       </v-icon>
@@ -104,6 +106,7 @@ export default defineComponent({
     isPink: Boolean,
     isGray: Boolean,
     isGreen: Boolean,
+    isPurple: Boolean,
 
     size: {
       default: 62,
@@ -130,6 +133,7 @@ export default defineComponent({
       type: Boolean,
     },
     textAvatar: {},
+    elevated:Boolean
   },
 
   computed: {
@@ -142,7 +146,7 @@ export default defineComponent({
     },
 
     side_size() {
-      return Math.round(Math.min(this.size / 3.3, 24));
+      return Math.round(Math.min(this.size / 4, 24));
     },
     bg() {
       return `linear-gradient(45deg, ${this.color1}, ${this.color2})`;
@@ -161,6 +165,9 @@ export default defineComponent({
                 ? "#ddd"
                 : this.isGreen
                   ? "#4CAF50"
+                              : this.isPurple
+                                  ? "#5f36f4"
+
                   : "#000";
     },
     color2() {
@@ -176,7 +183,11 @@ export default defineComponent({
                 ? "#eee"
                 : this.isGreen
                   ? "#388E3C"
+
+                              : this.isPurple
+                                  ? "#673AB7"
                   : "#000";
+
     },
 
     text_avatar_value() {

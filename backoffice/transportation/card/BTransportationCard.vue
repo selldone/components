@@ -13,41 +13,44 @@
   -->
 
 <template>
-  <s-widget
-    :class="{ 'widget-hover pointer-pointer': true }"
-    :title="
-      `
+  <div class="c-container -force-rounded ma-1 pa-3 min-width-100">
+    <s-widget
+      :class="{ 'widget-hover pointer-pointer': true }"
+      :title="
+        `
 <span class='circle ${
-        transportation.enable ? 'bg-success' : 'bg-danger'
-      } me-1' style='font-size: 6px;'></span>
+          transportation.enable ? 'bg-success' : 'bg-danger'
+        } me-1' style='font-size: 6px;'></span>
 <span>${$t(transportationObj.name)}</span>` +
-      (transportation.title
-        ? ` <span class='typo-body'> / ${transportation.title}</span>`
-        : '')
-    "
-    class="text-start"
-    custom-header
-    @click="
-      $router.push({
-        name: 'BPageTransportationDashboard',
-        params: { transportation_id: transportation.id },
-      })
-    "
-  >
-    <u-ribbon v-if="transportationObj.pickup" green>
-      <v-icon size="small">add_location_alt</v-icon>
-      {{ $t("global.commons.pickup") }}
-    </u-ribbon>
-
-    <p>{{ $t(transportationObj.description) }}</p>
-
-    <b-transportation-overview
-      :outlined="outlined"
-      :shop="shop"
-      :transportation="transportation"
+        (transportation.title
+          ? ` <span class='typo-body'> / ${transportation.title}</span>`
+          : '')
+      "
+      class="text-start elevation-3"
+      color="#fff"
+      custom-header
+      @click="
+        $router.push({
+          name: 'BPageTransportationDashboard',
+          params: { transportation_id: transportation.id },
+        })
+      "
     >
-    </b-transportation-overview>
-  </s-widget>
+      <u-ribbon v-if="transportationObj.pickup" green>
+        <v-icon size="small">add_location_alt</v-icon>
+        {{ $t("global.commons.pickup") }}
+      </u-ribbon>
+
+      <p>{{ $t(transportationObj.description) }}</p>
+
+      <b-transportation-overview
+        :outlined="outlined"
+        :shop="shop"
+        :transportation="transportation"
+      >
+      </b-transportation-overview>
+    </s-widget>
+  </div>
 </template>
 
 <script>

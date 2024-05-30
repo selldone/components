@@ -45,7 +45,6 @@
         }
       "
       class="bg-transparent min-height-60vh"
-      density="compact"
       hide-default-footer
       item-key="id"
       @click:row="(_, r) => select(r.item)"

@@ -96,6 +96,23 @@
     }
   }
 }
+:not(.v-locale--is-rtl){
+  .rounded-ts-16px{
+    border-top-left-radius: 16px !important;
+  }
+  .rounded-bs-16px{
+    border-bottom-left-radius: 16px !important;
+  }
+}
+
+.v-locale--is-rtl {
+  .rounded-ts-16px{
+    border-top-right-radius: 16px !important;
+  }
+  .rounded-bs-16px{
+    border-bottom-right-radius: 16px !important;
+  }
+ }
 
 .c-widget {
   box-sizing: border-box;

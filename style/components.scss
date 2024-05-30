@@ -242,6 +242,10 @@ body{
       right: unset;
       left: 6px;
     }
+    .absolute-bottom-end-0 {
+      right: unset;
+      left: 0px;
+    }
 
     .absolute-bottom-start {
       position: absolute !important;
@@ -497,6 +501,11 @@ body{
   position: absolute !important;
   bottom: 6px;
   right: 6px;
+}
+.absolute-bottom-end-0 {
+  position: absolute !important;
+  bottom: 0px;
+  right: 0px;
 }
 
 .absolute-bottom-start {

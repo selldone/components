@@ -18,6 +18,7 @@
     <v-list-subheader></v-list-subheader>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
+        :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -26,7 +27,6 @@
       :items="charges"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
-      :mobile="$vuetify.display.xs"
       :row-props="
         (_data) => {
           return {
