@@ -94,7 +94,7 @@
             length="8"
             min-width="90%"
             type="number"
-            @finish="confirmOtp()"
+            @finish="verifyOTP()"
           ></v-otp-input>
 
           <v-expand-transition>
@@ -138,7 +138,7 @@
             color="primary"
             size="x-large"
             variant="elevated"
-            @click="sendEmail()"
+            @click="requestOTP()"
           >
             <v-icon start>check</v-icon>
             {{ $t("global.actions.yes") }}
@@ -151,7 +151,7 @@
             color="primary"
             size="x-large"
             variant="elevated"
-            @click="confirmOtp()"
+            @click="verifyOTP()"
           >
             <v-icon start>check</v-icon>
             {{ $t("global.actions.confirm") }}
@@ -219,7 +219,7 @@ export default {
       this.dialog = true;
     },
 
-    sendEmail() {
+    requestOTP() {
       this.busy = true;
       this.error_message_send_code = null;
 
@@ -239,7 +239,7 @@ export default {
         });
     },
 
-    confirmOtp() {
+    verifyOTP() {
       this.busy = true;
       this.error_message_otp_check = null;
 
