@@ -205,7 +205,7 @@ export default {
       this.busy = true;
       window.$storefront.products
         .optimize(60)
-        .fetchProducts(null, 0, 16, {
+        .list(null, 0, 16, {
           product_id: this.getId(this.product.id),
           sort: "related", //random
         })

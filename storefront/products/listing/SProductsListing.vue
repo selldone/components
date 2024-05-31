@@ -1093,7 +1093,7 @@ export default {
 
       window.$storefront.products
         .optimize(60)
-        .getInfo(product.id, {
+        .get(product.id, {
           no_article: true,
         })
         .cache(handleSuccessResponse)
@@ -1226,7 +1226,7 @@ export default {
 
       window.$storefront.products
         .optimize(600)
-        .fetchProducts(dir, more ? this.products.length : 0, limit, {
+        .list(dir, more ? this.products.length : 0, limit, {
           categories_count: categories_count,
 
           with_parent: with_parent,
