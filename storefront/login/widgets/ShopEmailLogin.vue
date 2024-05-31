@@ -30,7 +30,10 @@
     </template>
     <div class="d-flex flex-column">
       <span>{{ $t("global.need_login.login_email") }}</span>
-      <small v-if="predefine_email" class="mt-1"><v-icon class="me-1" size="small">lock</v-icon> {{predefine_email}}</small>
+      <small v-if="predefine_email" class="mt-1">
+        <v-icon class="me-1" size="small">lock</v-icon>
+        {{ predefine_email }}</small
+      >
     </div>
   </v-btn>
 
@@ -61,7 +64,7 @@
             dir="ltr"
             variant="outlined"
             :readonly="predefine_email"
-            :append-inner-icon="predefine_email?'lock':undefined"
+            :append-inner-icon="predefine_email ? 'lock' : undefined"
           ></v-text-field>
         </template>
 
@@ -89,6 +92,7 @@
             class="strong-field"
             dir="ltr"
             length="8"
+            min-width="90%"
             type="number"
             @finish="confirmOtp()"
           ></v-otp-input>
@@ -196,14 +200,12 @@ export default {
     is_valid_otp() {
       return this.otp?.length >= 8;
     },
-    predefine_email(){
+    predefine_email() {
       return this.$route.query.email;
-    }
-
+    },
   },
   watch: {},
-  created() {
-  },
+  created() {},
 
   methods: {
     tick() {
@@ -221,19 +223,14 @@ export default {
       this.busy = true;
       this.error_message_send_code = null;
 
-      axios
-        .post(window.XAPI.POST_SHOP_LOGIN_EMAIL_REQUEST(this.shop.name), {
-          email: this.email,
-        })
-        .then(({ data }) => {
-          if (!data.error) {
-            this.step = 3;
-          } else {
-            this.error_message_send_code = data.error_msg;
-            this.showErrorAlert(null, data.error_msg);
-          }
+      window.$storefront.auth.email
+        .requestOtp(this.email)
+        .then(({ success }) => {
+          this.step = 3;
         })
         .catch((error) => {
+          if (error.error_msg) this.error_message_send_code = error.error_msg;
+
           this.showLaravelError(error);
         })
 
@@ -246,29 +243,21 @@ export default {
       this.busy = true;
       this.error_message_otp_check = null;
 
-      axios
-        .post(window.XAPI.POST_SHOP_LOGIN_EMAIL_VERIFY(this.shop.name), {
-          email: this.email,
-          verification_code: this.otp,
-          source: this.source,
-        })
-        .then(({ data }) => {
-          if (!data.error) {
-            this.dialog = false;
+      window.$storefront.auth.email
+        .verifyOTP(this.email, this.otp, this.source)
+        .then(({ token, expires_in }) => {
+          this.dialog = false;
 
-            this.$emit("close"); // Close login dialog
+          this.$emit("login", {
+            token: token,
+            expires_in: expires_in,
+          }); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
 
-            this.$emit("login", {
-              token: data.token,
-              expires_in: data.expires_in,
-            }); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
-          } else {
-            this.error_message_otp_check = data.error_msg;
-
-            this.showErrorAlert(null, data.error_msg);
-          }
+          this.$emit("close"); // Close login dialog
         })
         .catch((error) => {
+          if (error.error_msg) this.error_message_otp_check = error.error_msg;
+
           this.showLaravelError(error);
         })
 

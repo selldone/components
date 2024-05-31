@@ -19,8 +19,11 @@
 </template>
 
 <script>
+import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";
+
 export default {
-  name: "UPodNode",
+  name: "UPodCut",
+  components: { UPodNode },
   props: {
     icon: {},
     image: {},
