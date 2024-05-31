@@ -444,11 +444,11 @@
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import UCountDown from "../../ui/count-down/UCountDown.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import { SuccessVerifyMethod } from "@selldone/sdk-storefront";
 
 import ShopEmailLogin from "../../storefront/login/widgets/ShopEmailLogin.vue";
 import UTelInput from "../../ui/tel-input/UTelInput.vue";
 import { Customer } from "@selldone/core-js/models/shop/customer/customer.model";
+import {XapiAuthSMSVerifyOtpTypes} from "@selldone/sdk-storefront";
 
 export default {
   name: "SShopLogin",
@@ -522,9 +522,9 @@ export default {
       return this.shop.login_modes;
     },
 
-    predefine_email(){
+    predefine_email() {
       return this.$route.query.email;
-    }
+    },
   },
   watch: {
     user(user) {
@@ -543,7 +543,7 @@ export default {
     },
   },
   created() {
-    this.email=this.predefine_email;
+    this.email = this.predefine_email;
 
     this.EventBus.$on("get-me:error", this.resetState);
   },
@@ -598,13 +598,17 @@ export default {
         .then((data) => {
           this.method = data.method;
 
-          if (data.method === SuccessVerifyMethod.SELECT) {
+          if (data.method === XapiAuthSMSVerifyOtpTypes.Method.SELECT) {
             // Next step is select user:
             this.users = data.users;
-          } else if (data.method === SuccessVerifyMethod.LOGIN) {
+          } else if (
+            data.method === XapiAuthSMSVerifyOtpTypes.Method.LOGIN
+          ) {
             // User has been login and get token
             this.handleToken(data.token, data.expires_in); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
-          } else if (data.method === SuccessVerifyMethod.REGISTER) {
+          } else if (
+            data.method === XapiAuthSMSVerifyOtpTypes.Method.REGISTER
+          ) {
             // Next step is register new user:
             this.code = data.code;
           }
@@ -669,7 +673,13 @@ export default {
       const expire_date = new Date();
       expire_date.setUTCSeconds(expires_in);
 
-      window.SetToken(token, expire_date,this.source===Customer.Source.VENDOR?'vendor_access_token':'access_token');
+      window.SetToken(
+        token,
+        expire_date,
+        this.source === Customer.Source.VENDOR
+          ? "vendor_access_token"
+          : "access_token",
+      );
     },
 
     resetState() {
