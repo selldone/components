@@ -222,6 +222,7 @@ export default {
     },
     wrap: {
       type: Boolean,
+      default:true
     },
     large: {
       required: false,
@@ -259,6 +260,7 @@ export default {
       default: false,
     },
     imageSize: {},
+    active:Boolean
   },
 
   data: () => ({
@@ -271,7 +273,7 @@ export default {
       return this.to ? JSON.stringify(this.to) : undefined;
     },
     isCurrent() {
-      return this.outline || this.beInCurrentRoute;
+      return this.outline || this.beInCurrentRoute || this.active;
     },
     isFilled() {
       return this.fill || this.isCurrent;
