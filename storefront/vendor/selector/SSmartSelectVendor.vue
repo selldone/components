@@ -18,7 +18,9 @@
       <v-icon :color="dark ? '#fff' : '#111'" class="me-1">storefront</v-icon>
       {{ label }}
     </h3>
-    <v-list-subheader v-if="hint" class="text-wrap">{{ hint }}</v-list-subheader>
+    <v-list-subheader v-if="hint" class="text-wrap"
+      >{{ hint }}
+    </v-list-subheader>
 
     <v-slide-y-transition
       :class="{ disabled: disabled, '-rounded-8px': items_show.length <= 1 }"
@@ -28,67 +30,63 @@
       tag="div"
     >
       <div
-        v-for="vendor in items_show"
-        :key="vendor.id"
+        v-for="vendor_item in items_show"
+        :key="vendor_item.id"
         :class="{
           'bg-dark': dark,
           'bg-white': !dark,
-          's--shadow-no-padding z1 my-2': vendor.id === modelValue,
+          's--shadow-no-padding z1 my-2': vendor_item.id === modelValue,
         }"
         class="s--smart-select-vendor-item row-hover usn border"
         @click="
           $emit(
             'update:modelValue',
-            forceShowAll ? vendor.id : modelValue ? null : vendor.id,
+            forceShowAll ? vendor_item.id : modelValue ? null : vendor_item.id,
           );
           $emit(
             'change',
-            forceShowAll ? vendor.id : modelValue ? null : vendor.id,
+            forceShowAll ? vendor_item.id : modelValue ? null : vendor_item.id,
           );
         "
       >
         <div class="s--smart-select-vendor-content">
           <div class="flex-grow-0 me-2">
             <v-icon
-              :size="vendor.id === modelValue ? 'large' : undefined"
+              :size="vendor_item.id === modelValue ? 'large' : undefined"
               color="primary"
               >{{
-                vendor.id === modelValue ? "lens" : "radio_button_unchecked"
+                vendor_item.id === modelValue ? "lens" : "radio_button_unchecked"
               }}
             </v-icon>
           </div>
-          <div class="flex-grow-1 ">
-            <router-link
-              v-if="vendor.page"
-              :to="{
-                name: window.$storefront.routes.PAGE_RENDER,
-                params: { page_name: vendor.page.name },
-              }"
+          <div class="flex-grow-1">
+            <a
+              v-if="true"
+              :href="getVendorLink(vendor_item)"
               class="s--smart-select-vendor-link tnt"
-              exact
               target="_blank"
               title="Go to the store page."
             >
-              {{ $t("select_vendor.item_title", { vendor: vendor.name }) }}
-              <v-icon class="ms-1" color="primary" size="small">launch</v-icon>
-            </router-link>
+              {{ $t("select_vendor.item_title", { vendor: vendor_item.name }) }}
+              <v-icon class="ms-1" size="small">launch</v-icon>
+            </a>
             <b v-else>
-              {{ vendor.name }}
+              {{ vendor_item.name }}
             </b>
             <div class="pa-0 text-subtitle-2" style="height: auto">
-              {{ vendor.description }}
+              {{ vendor_item.description }}
             </div>
           </div>
 
           <div class="min-width-100">
             <u-price
-              :amount="calcVendorPrice(vendor)"
+              :amount="calcVendorPrice(vendor_item)"
               :currency="GetUserSelectedCurrency()"
             ></u-price>
           </div>
 
           <v-avatar color="#fafafa" rounded>
-            <img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 128)" />
+            <img v-if="vendor_item.icon" :src="getShopImagePath(vendor_item.icon, 128)" />
             <v-icon v-else>storefront</v-icon>
           </v-avatar>
         </div>
@@ -98,6 +96,8 @@
 </template>
 
 <script>
+import { ShopURLs } from "@selldone/core-js";
+
 export default {
   name: "SSmartSelectVendor",
   emits: ["update:modelValue", "change"],
@@ -137,11 +137,19 @@ export default {
 
   methods: {
     //█████████████████████████████████████████████████████████████
-    //―――――――――――――――――――――――― 🟣 Marketplace 🟣 ――――――――――――――――――――――
+    //―――――――――――――― 🟣 Marketplace 🟣 ――――――――――――
     //█████████████████████████████████████████████████████████████
 
-    calcVendorPrice(vendor) {
-      return this.CalcPriceProductCurrentCurrency(this.getShop(), vendor, null);
+    calcVendorPrice(vendor_item) {
+      return this.CalcPriceProductCurrentCurrency(this.getShop(), vendor_item, null);
+    },
+
+    getVendorLink(vendor_item) {
+      return ShopURLs.GetVendorLandingPageUrl(this.getShop(), {
+        id: vendor_item.vendor_id,
+        slug: vendor_item.vendor_slug,
+        name: vendor_item.name,
+      });
     },
   },
 };
@@ -156,7 +164,6 @@ export default {
     cursor: pointer;
     margin-bottom: 4px;
     overflow: hidden;
-
 
     .s--smart-select-vendor-content {
       display: flex;
