@@ -14,15 +14,14 @@
 
 <template>
   <s-widget-box
-    :sub-title="$t('widgets.overview.title_small')"
     :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mr-sm' style='font-size: 6px;'></span> ${$t(
       'widgets.overview.title',
-    )} </h5>`"
+    )} </h5><span class='fw-normal ml-xs small'>${$t('widgets.overview.title_small')}</span>`"
     extended
     icon="favorite"
   >
     <template v-slot:actions>
-      <div v-for="item in available_types" :key="item.key">
+      <div v-for="item in available_types" :key="item.key" class="mt-2">
         <u-chart-bar
           :colors="[item.color]"
           :dataset="getArray(item.key)"

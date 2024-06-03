@@ -223,8 +223,8 @@
           "
           :size="
             item.return_request &&
-            item.return_request.state === 'Pending' &&
-            'small'
+            item.return_request.state === 'Pending' ?
+            'small':undefined
           "
           color="red"
           rounded
@@ -236,7 +236,7 @@
             }
           "
         >
-          <v-icon class="mx-2">
+          <v-icon start>
             {{
               item.return_request && item.return_request.state === "Pending"
                 ? "edit"
@@ -250,7 +250,7 @@
 
     <!-- -------------------------- Return request-------------------------- -->
 
-    <v-bottom-sheet v-model="bottom_sheet" inset persistent scrollable>
+    <v-bottom-sheet v-model="bottom_sheet" width="98vw" max-width="840" persistent scrollable content-class="rounded-t-xl">
       <s-shop-basket-item-return-form
         v-if="selected_item"
         :basket-item="selected_item"
@@ -411,7 +411,7 @@ export default {
     },
 
     headers() {
-      return [
+     const out= [
         {
           title: "",
           align: "start",
@@ -453,7 +453,7 @@ export default {
         },
       ];
 
-      if (this.isPhysical) {
+      if (this.isPhysical ) {
         out.push({
           text: this.$t("order_page.basket_items.table.returned"),
           align: "center",

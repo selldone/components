@@ -22,13 +22,9 @@
         :to="IS_VENDOR_PANEL ? undefined : { name: 'BPageShopChannelConnect' }"
         title="Go to the channels."
       >
-        <v-avatar class="me-2" rounded size="64">
-          <v-img
-            v-if="connect.icon"
-            :src="getShopImagePath(connect.icon, 128)"
-          />
-          <v-icon v-else>hub</v-icon>
-        </v-avatar>
+        <u-avatar-folder  v-if="connect.icon" class="me-2" :src="getShopImagePath(connect.icon, 128)" side-icon="hub" is-green size="64">
+
+        </u-avatar-folder>
       </router-link>
       <div class="flex-grow-1">
         <v-row align="center" justify="start" no-gutters>
@@ -52,7 +48,7 @@
             {{ $t("global.commons.disable") }}
           </v-chip>
         </v-row>
-        <div>
+        <div class="small">
           {{ connect.description }}
         </div>
       </div>
@@ -62,10 +58,11 @@
 <script>
 import { defineComponent } from "vue";
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 
 export default defineComponent({
   name: "BProductConnectAbstractView",
-  components: { SWidgetBox },
+  components: {UAvatarFolder, SWidgetBox },
   props: {
     shop: {
       required: true,

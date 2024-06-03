@@ -231,6 +231,8 @@
                 </v-tooltip>
               </v-chip>
 
+
+
               <i
                 v-if="inQueProcess(item) && !item.reject"
                 class="fas fa-circle-notch fa-spin text-info mx-2"
@@ -247,6 +249,9 @@
                   </div>
                 </v-tooltip>
               </i>
+
+
+
             </template>
 
             <v-spacer class="flex-grow-0 flex-md-grow-1"></v-spacer>
@@ -388,6 +393,22 @@
             class="m-0 font-weight-bold d-flex align-center min-width-250"
             title="Payment"
           >
+            <return-request-button-badge
+                v-if="item.basket_item_returns?.length"
+                :basket-item-returns="item.basket_item_returns"
+                @click:return="
+            cacheRouteState(item.id);
+            $router.push({
+              name: return_request_page_name,
+              params: {
+                basket_id: item.id,
+              },
+            });
+          "
+            ></return-request-button-badge>
+
+
+
             <connect-order-chip
               v-for="connect_order in item.connect_orders"
               :key="connect_order.id"
@@ -611,21 +632,7 @@
         </div>
       </template>
 
-      <template v-slot:item.basket_item_returns="{ item }">
-        <return-request-button-badge
-          v-if="item.basket_item_returns.length"
-          :basket-item-returns="item.basket_item_returns"
-          @click:return="
-            cacheRouteState(item.id);
-            $router.push({
-              name: return_request_page_name,
-              params: {
-                basket_id: item.id,
-              },
-            });
-          "
-        ></return-request-button-badge>
-      </template>
+
 
       <template v-slot:item.reserved_at="{ item }">
         <div class="min-width-200 py-1">
@@ -1117,12 +1124,7 @@ export default {
           sortable: true,
         },
 
-        {
-          title: "",
-          align: "center",
-          value: "basket_item_returns",
-          sortable: false,
-        },
+
 
         {
           title: this.$t("admin_shop.orders.physical.table.order_date"),

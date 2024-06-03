@@ -390,6 +390,9 @@ export default {
     @media (max-width: 960px) {
       font-size: 0.68rem;
     }
+    @media (max-width: 420px) {
+      font-size: 0.60rem;
+    }
   }
 
   &.--wrap {

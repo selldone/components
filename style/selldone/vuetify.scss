@@ -25,7 +25,22 @@
 .v-data-table{
 
   @media (max-width: 1280px) {
-    --v-table-row-height: auto; // Auto set height for table rows
+  //  --v-table-row-height: auto; // Auto set height for table rows
+  }
+  .v-data-table__tr--mobile{
+    td{
+      .v-data-table__td-title{
+        font-size: 10px;
+        opacity: 0.7;
+      }
+    }
+  }
+}
+.v-table{
+  table{
+    tr{
+      position: relative;
+    }
   }
 }
 

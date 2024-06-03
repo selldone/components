@@ -219,4 +219,23 @@ export default {
     left: 8px;
   }
 }
+
+</style>
+<style lang="scss">
+.s--widget{
+
+  @media (max-width: 620px) {
+    font-size: 14px;
+    h5{
+      font-size: 0.8em !important;
+      font-weight: 600 !important;
+    }
+    .typo-body{
+      font-size: 0.95rem;
+    }
+
+  }
+
+
+}
 </style>

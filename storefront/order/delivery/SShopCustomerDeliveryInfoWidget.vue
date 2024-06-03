@@ -287,13 +287,15 @@
           </div>
         </div>
 
-        <delivery-timeline-transportation-order
-          v-if="transportation_order"
-          :delivery-info="delivery_info"
-          :shop="getShop()"
-          :transportation-order="transportation_order"
-        >
-        </delivery-timeline-transportation-order>
+        <div>
+          <delivery-timeline-transportation-order
+              v-if="transportation_order"
+              :delivery-info="delivery_info"
+              :shop="getShop()"
+              :transportation-order="transportation_order"
+          >
+          </delivery-timeline-transportation-order>
+        </div>
       </v-col>
     </v-row>
 

@@ -86,7 +86,7 @@
               </v-chip>
             </v-row>
 
-            <div class="lhn mt-1">
+            <div class="lhn mt-1 small">
               {{ vendor.description?.limitWords(10) }}
             </div>
           </div>

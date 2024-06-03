@@ -13,200 +13,206 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-card class="s--shop-basket-item-return-form" rounded="0">
-    <v-card-title>
+  <v-card class="s--shop-basket-item-return-form" rounded="t-xl">
+    <v-card-title class="d-flex align-center">
+      <v-icon class="me-2">keyboard_return</v-icon>
       {{ $t("return_request.title") }}
       <v-spacer></v-spacer>
-      <v-btn icon @click="$emit('onClose')">
+      <v-btn icon @click="$emit('onClose')" variant="text">
         <v-icon>close</v-icon>
       </v-btn>
     </v-card-title>
     <v-card-text>
-      <div class="item-return">
-        <v-img
-          :src="getProductImage(basketItem.product_id)"
-          aspect-ratio="1"
-          class="image"
-          height="42px"
-          width="42px"
-        />
-        <div>
-          <p class="m-0 font-weight-medium">
-            {{ basketItem.product.title }}
-          </p>
-          <small class="m-0">
-            {{ basketItem.product.title_en }}
-          </small>
+      <div class="widget-box mb-5">
+        <v-list-item>
+          <template v-slot:prepend>
+            <u-avatar-folder
+              :src="getProductImage(basketItem.product_id)"
+              aspect-ratio="1"
+              class="image"
+            />
+          </template>
 
-          <variant-item-view-micro
-            v-if="basketItem.variant"
-            :product-variant="basketItem.variant"
-          />
-        </div>
-        <div>
-          <p class="m-0 font-weight-bold">
+          <template v-slot:title>
+            {{ basketItem.product.title }}
+          </template>
+
+          <template v-slot:subtitle>
+            {{ basketItem.product.title_en }}
+          </template>
+
+          <div class="d-flex align-center">
+            <variant-item-view-micro
+              v-if="basketItem.variant"
+              :product-variant="basketItem.variant"
+            />
+
+            <v-spacer></v-spacer>
+
             P{{ basketItem.product_id }}
             <span v-if="basketItem.variant_id">
               / SVP{{ basketItem.variant_id }}</span
             >
+          </div>
+        </v-list-item>
+
+        <hr class="my-5" />
+
+        <v-col v-if="step === 1" md6 xs12>
+          <p class="action-title text-start m-2">
+            <u-number-input
+              v-model="count"
+              :label="$t('return_request.count_input')"
+              :max="basketItem.count"
+              :messages="$t('return_request.count_input_message')"
+              :min="1"
+              variant="underlined"
+            />
           </p>
-        </div>
+
+          <v-select
+            v-model="reason"
+            :item-title="
+              (item) => {
+                return $t(item.title);
+              }
+            "
+            :items="items"
+            :label="$t('return_request.reason_input')"
+            :messages="$t('return_request.reason_input_message')"
+            item-value="value"
+            variant="underlined"
+          />
+
+          <v-textarea
+            v-model="note"
+            :hint="$t('return_request.note_input_hint')"
+            :label="$t('return_request.note_input')"
+            :messages="$t('return_request.note_input_message')"
+            :rows="2"
+            rounded
+            variant="underlined"
+          />
+        </v-col>
+
+        <v-col v-if="step === 2" class="p-2" cols="12">
+          <p class="text-start">
+            {{ $t("return_request.media_message") }}
+          </p>
+        </v-col>
+
+        <template v-if="step === 2">
+          <v-img
+            v-if="imagePath"
+            :height="48"
+            :src="imagePath"
+            :width="48"
+            class="ma-auto"
+          />
+
+          <file-pond
+            ref="pond_profile"
+            :label-idle="`<i class='fas fa-image'></i>  Image`"
+            :max-files="1"
+            :server="serverOptionsImage"
+            accepted-file-types="image/jpeg, image/png"
+            allow-multiple="false"
+            check-validity="true"
+            class="mt-2"
+            credits="false"
+            maxFileSize="1MB"
+            name="photo"
+            @processfile="handleProcessFileImage"
+          />
+        </template>
+
+        <template v-if="step === 2">
+          <v-img
+            v-if="videoPath"
+            :height="48"
+            :src="require('../../../assets/icons/film.svg')"
+            :width="48"
+            class="ma-auto"
+          />
+
+          <file-pond
+            ref="pond_profile"
+            :label-idle="`<i class='fas fa-video'></i> ${$t('return_request.video')}`"
+            :max-files="1"
+            :server="serverOptionsVideo"
+            accepted-file-types="mp4,avi,mov,mpg"
+            allow-multiple="false"
+            check-validity="true"
+            class="mt-2"
+            credits="false"
+            maxFileSize="10MB"
+            name="photo"
+            @processfile="handleProcessFileVideo"
+          />
+        </template>
+
+        <template v-if="step === 2">
+          <v-img
+            v-if="voicePath"
+            :height="48"
+            :src="require('../../../assets/icons/voice.svg')"
+            :width="48"
+            class="ma-auto"
+          />
+          <file-pond
+            ref="pond_profile"
+            :label-idle="`<i class='fas fa-microphone'></i>  ${$t(
+              'return_request.voice',
+            )}`"
+            :max-files="1"
+            :server="serverOptionsVoice"
+            accepted-file-types="mp3,wav"
+            allow-multiple="false"
+            check-validity="true"
+            class="mt-2"
+            credits="false"
+            maxFileSize="5MB"
+            name="photo"
+            @processfile="handleProcessFileVoice"
+          />
+        </template>
       </div>
-
-      <v-container fluid>
-        <v-row align="center" justify="center">
-          <v-col v-if="step === 1" md6 xs12>
-            <p class="action-title text-start m-2">
-              <u-number-input
-                v-model="count"
-                :label="$t('return_request.count_input')"
-                :max="basketItem.count"
-                :messages="$t('return_request.count_input_message')"
-                :min="1"
-                class="max-width-field mx-auto"
-                filled
-                rounded
-              />
-            </p>
-
-            <v-select
-              v-model="reason"
-              :item-title="
-                (item) => {
-                  return $t(item.title);
-                }
-              "
-              :items="items"
-              :label="$t('return_request.reason_input')"
-              :messages="$t('return_request.reason_input_message')"
-              class="max-width-field mx-auto"
-              item-value="value"
-              rounded
-              variant="filled"
-            />
-
-            <v-textarea
-              v-model="note"
-              :hint="$t('return_request.note_input_hint')"
-              :label="$t('return_request.note_input')"
-              :messages="$t('return_request.note_input_message')"
-              :rows="2"
-              name="input-7-1"
-              rounded
-              variant="filled"
-            />
-          </v-col>
-
-          <v-col v-if="step === 2" class="p-2" cols="12">
-            <p class="text-start">
-              {{ $t("return_request.media_message") }}
-            </p>
-          </v-col>
-
-          <v-col v-if="step === 2" class="p-2 text-center" cols="12" md="3">
-            <div style="min-height: 48px">
-              <v-img
-                v-if="imagePath"
-                :height="48"
-                :src="imagePath"
-                :width="48"
-                class="ma-auto"
-              />
-            </div>
-
-            <file-pond
-              ref="pond_profile"
-              :label-idle="`<i class='fa:fas fa-image'></i>  Image`"
-              :max-files="1"
-              :server="serverOptionsImage"
-              accepted-file-types="image/jpeg, image/png"
-              allow-multiple="false"
-              check-validity="true"
-              class="mt-2"
-              credits="false"
-              maxFileSize="1MB"
-              name="photo"
-              @processfile="handleProcessFileImage"
-            />
-          </v-col>
-
-          <v-col v-if="step === 2" class="p-2 text-center" cols="12" md="3">
-            <div style="min-height: 48px">
-              <v-img
-                v-if="videoPath"
-                :height="48"
-                :src="require('../../../assets/icons/film.svg')"
-                :width="48"
-                class="ma-auto"
-              />
-            </div>
-
-            <file-pond
-              ref="pond_profile"
-              :label-idle="`<i class='fa:fas fa-video'></i> ${$t('return_request.video')}`"
-              :max-files="1"
-              :server="serverOptionsVideo"
-              accepted-file-types="mp4,avi,mov,mpg"
-              allow-multiple="false"
-              check-validity="true"
-              class="mt-2"
-              credits="false"
-              maxFileSize="10MB"
-              name="photo"
-              @processfile="handleProcessFileVideo"
-            />
-          </v-col>
-
-          <v-col v-if="step === 2" class="p-2 text-center" cols="12" md="3">
-            <div style="min-height: 48px">
-              <v-img
-                v-if="voicePath"
-                :height="48"
-                :src="require('../../../assets/icons/voice.svg')"
-                :width="48"
-                class="ma-auto"
-              />
-            </div>
-            <file-pond
-              ref="pond_profile"
-              :label-idle="`<i class='fa:fas fa-microphone'></i>  ${$t(
-                'return_request.voice',
-              )}`"
-              :max-files="1"
-              :server="serverOptionsVoice"
-              accepted-file-types="mp3,wav"
-              allow-multiple="false"
-              check-validity="true"
-              class="mt-2"
-              credits="false"
-              maxFileSize="5MB"
-              name="photo"
-              @processfile="handleProcessFileVoice"
-            />
-          </v-col>
-        </v-row>
-      </v-container>
     </v-card-text>
     <v-card-actions class="pb-2">
-      <v-spacer></v-spacer>
-      <v-btn v-if="step === 2" class="m-1" variant="flat" @click="step = 1">
-        {{ $t("global.actions.back") }}
-      </v-btn>
+      <div class="widget-buttons">
+        <v-btn
+          v-if="step === 2"
+          class="m-1"
+          variant="text"
+          @click="step = 1"
+          size="x-large"
+        >
+          <v-icon start>{{ $t("icons.chevron_back") }}</v-icon>
+          {{ $t("global.actions.back") }}
+        </v-btn>
 
-      <v-btn class="m-1" variant="flat" @click="$emit('onClose')">
-        {{ $t("global.actions.close") }}
-      </v-btn>
+        <v-btn
+          class="m-1"
+          variant="text"
+          @click="$emit('onClose')"
+          size="x-large"
+          :prepend-icon="step === 1?'close':'done'"
+        >
+          {{step === 1? $t("global.actions.close"):$t("global.actions.done") }}
+        </v-btn>
 
-      <v-btn
-        v-if="step === 1"
-        class="m-1"
-        color="#C2185B"
-        variant="flat"
-        @click="addReturnItemRequest()"
-      >
-        {{ $t("return_request.add_action") }}
-      </v-btn>
-      <v-spacer></v-spacer>
+        <v-btn
+          v-if="step === 1"
+          class="m-1"
+          color="#C2185B"
+          variant="elevated"
+          @click="addReturnItemRequest()"
+          size="x-large"
+          prepend-icon="add_box"
+        >
+          {{ $t("return_request.add_action") }}
+        </v-btn>
+      </div>
     </v-card-actions>
   </v-card>
 </template>
@@ -215,10 +221,12 @@
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { BasketItemReturn } from "@selldone/core-js";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "SShopBasketItemReturnForm",
   components: {
+    UAvatarFolder,
     UNumberInput,
     VariantItemViewMicro,
   },
@@ -388,8 +396,8 @@ export default {
             count: this.count,
             note: this.note,
             /*image: this.image,
-                                        video: this.video,
-                                        voice: this.voice*/
+                                                    video: this.video,
+                                                    voice: this.voice*/
           },
         )
         .then(({ data }) => {
@@ -453,22 +461,6 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-basket-item-return-form {
-  .item-return {
-    min-height: 52px;
-    text-align: right;
-    border-bottom-width: 1px;
-    border-bottom-color: #aaa;
-    border-bottom-style: dashed;
-
-    display: grid;
-    grid-template-columns: 60px auto;
-    grid-gap: 10px;
-
-    padding: 10px;
-
-    .image {
-      grid-row: 1 / span 2;
-    }
-  }
+  text-align: start;
 }
 </style>
