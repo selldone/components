@@ -22,8 +22,15 @@
         :to="IS_VENDOR_PANEL ? undefined : { name: 'BPageShopChannelConnect' }"
         title="Go to the channels."
       >
-        <u-avatar-folder  v-if="connect.icon" class="me-2" :src="getShopImagePath(connect.icon, 128)" side-icon="hub" is-green size="64">
-
+        <u-avatar-folder
+          v-if="connect.icon"
+          class="me-2"
+          :src="getShopImagePath(connect.icon, 128)"
+          side-icon="hub"
+          is-green
+          size="64"
+          elevated
+        >
         </u-avatar-folder>
       </router-link>
       <div class="flex-grow-1">
@@ -62,7 +69,7 @@ import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFold
 
 export default defineComponent({
   name: "BProductConnectAbstractView",
-  components: {UAvatarFolder, SWidgetBox },
+  components: { UAvatarFolder, SWidgetBox },
   props: {
     shop: {
       required: true,
