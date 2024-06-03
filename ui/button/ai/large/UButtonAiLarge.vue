@@ -48,11 +48,11 @@
         <div class="pe-2 me-2 border-end text-h4">AI</div>
       </div>
 
-      <div class="flex-grow-1 text-center">
-        <div>
+      <div class="flex-grow-1 text-center overflow-hidden ">
+        <div class="single-line">
           {{ title }}
         </div>
-        <div class="small mt-1">
+        <div class="small mt-1 single-line">
           {{ subTitle }}
         </div>
       </div>

@@ -17,10 +17,9 @@
     :active="true"
     :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mr-sm' style='font-size: 6px;'></span>  ${$t(
       'admin_shop.dashboard.products.title',
-    )}<span class='fw-normal ml-xs small'> ${$t(
-      'admin_shop.dashboard.products.title_small',
-    )} </span>  </h5>`"
+    )} </h5>`"
     extended
+    :sub-title="$t( 'admin_shop.dashboard.products.title_small' )"
   >
     <template v-slot:top-left>
       <v-btn

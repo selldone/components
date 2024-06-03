@@ -16,9 +16,10 @@
   <s-widget-box
     :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mr-sm' style='font-size: 6px;'></span> ${$t(
       'widgets.overview.title',
-    )} </h5><span class='fw-normal ml-xs small'>${$t('widgets.overview.title_small')}</span>`"
+    )} </h5>`"
     extended
     icon="favorite"
+    :sub-title="$t('widgets.overview.title_small')"
   >
     <template v-slot:actions>
       <div v-for="item in available_types" :key="item.key" class="mt-2">

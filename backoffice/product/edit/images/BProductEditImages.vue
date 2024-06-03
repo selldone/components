@@ -17,16 +17,16 @@
     <!-- ==================== Main Image ==================== -->
 
     <div class="widget-box -large mb-5">
-      <h2>
-        <v-icon class="me-1">photo_camera</v-icon>
-        {{ $t("add_product.edit_images.title") }}
-      </h2>
-      <v-list-subheader
-        >{{ $t("add_product.edit_images.main_image_input_message") }}
-      </v-list-subheader>
-
       <v-row justify="center" no-gutters>
         <v-col class="d-flex flex-column" cols="12" sm="6">
+          <h2>
+            <v-icon class="me-1">photo_camera</v-icon>
+            {{ $t("add_product.edit_images.title") }}
+          </h2>
+          <v-list-subheader
+            >{{ $t("add_product.edit_images.main_image_input_message") }}
+          </v-list-subheader>
+
           <div>
             <s-image-uploader
               :image="getShopImagePath(product.icon)"
@@ -44,6 +44,7 @@
               class="mt-2"
               max-file-size="3MB"
               @new-path="handleProcessFile"
+              auto-compact
             >
             </s-image-uploader>
             <v-alert
@@ -57,7 +58,6 @@
             </v-alert>
           </div>
 
-          <v-spacer></v-spacer>
           <v-expand-transition>
             <div v-if="product.icon && !forStudio">
               <h2 class="mt-5">
@@ -81,6 +81,15 @@
                   $forceUpdate();
                 "
               ></u-smart-toggle>
+
+              <u-button-ai-large
+                v-if="product.icon && !forStudio"
+                :loading="busy_ai"
+                sub-title="Create transparent background."
+                title="Remove Background"
+                @select="removeBackground()"
+              >
+              </u-button-ai-large>
             </div>
           </v-expand-transition>
         </v-col>
@@ -110,8 +119,8 @@
 
           <v-expand-transition>
             <div v-if="show_preview_card || $vuetify.display.smAndUp">
-              <div class="sample-view mt-5 mb-16">
-                <small class="absolute-top-start">
+              <div class="sample-view">
+                <small class="d-block mb-2">
                   <v-icon class="me-1" color="green" size="12">circle</v-icon>
                   {{ $t("add_product.edit_images.preview") }}
                 </small>
@@ -121,26 +130,10 @@
                   :product="product"
                   rounded
                 >
-                  <!--
-                  <template v-slot:dynamic-background-layout>
-                    <div class="dynamic-background-layout bg-aqua-splash">
-
-                    </div>
-                  </template>-->
                 </s-shop-product-card>
               </div>
             </div>
           </v-expand-transition>
-
-          <v-spacer></v-spacer>
-
-          <u-button-ai-large
-            :loading="busy_ai"
-            sub-title="Create transparent background."
-            title="Remove Background"
-            @select="removeBackground()"
-          >
-          </u-button-ai-large>
         </v-col>
       </v-row>
     </div>
