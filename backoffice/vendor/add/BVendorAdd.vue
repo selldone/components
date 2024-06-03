@@ -42,22 +42,57 @@
 
           ...(has_documents ? [{ title: 'Documents', icon: 'source' }] : []),
 
+          ...(has_augment
+            ? [{ title: 'Page Template', icon: 'architecture', augment: true }]
+            : []),
+
           ...(vendor && !IS_VENDOR_PANEL
             ? [
-                { title: 'Access', icon: 'shield' },
-                { title: 'Critical zone', icon: 'lock_outline' },
+                { title: 'Access', icon: 'shield', access: true },
+                { title: 'Critical zone', icon: 'lock_outline'  },
               ]
             : []),
         ]"
-      ></u-tabs-floating>
+      >
+        <template v-slot:item="{ item }">
+          <div v-if="item.augment && page" class="small tnt single-line mt-1">
+            <v-avatar color="#fff" rounded size="16">
+              <img v-if="page.image" :src="getShopImagePath(page.image)" />
+              <v-icon v-else>architecture</v-icon>
+            </v-avatar>
+            {{ page.title }}
+          </div>
+          <div v-if="item.access " class="small tnt single-line mt-1">
+            <v-chip :color="enable?'green':'red'" size="x-small"  variant="flat" density="comfortable">{{enable?$t('global.commons.enable'):$t('global.commons.disable')}}</v-chip>
+            <v-chip :variant="user_id && access?'flat':'plain'" color="#673AB7" size="x-small" class="ms-1" density="comfortable" prepend-icon="admin_panel_settings">{{$t('global.commons.access')}}</v-chip>
+
+          </div>
+        </template>
+      </u-tabs-floating>
 
       <v-form ref="form" lazy-validation>
-        <v-window v-model="tab" direction="vertical" mandatory>
+        <v-window
+          v-model="tab"
+          :direction="$vuetify.display.mdAndUp ? 'vertical' : 'horizontal'"
+          mandatory
+          :continuous="false"
+        >
           <v-window-item>
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Profile  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header icon="admin_panel_settings" title="Vendor info">
+              <s-widget-header
+                icon="admin_panel_settings"
+                title="Vendor info"
+                :href="vendor_listing_page_url"
+                target="_blank"
+                :add-caption="vendor ? 'See Listing Page' : undefined"
+                add-icon="open_in_new"
+                add-text
+                add-sub-caption="Public products listing page."
+                :disabled="!vendor.enable"
+                disabled-reason="Vendor is disabled."
+              >
               </s-widget-header>
 
               <v-list-subheader
@@ -192,6 +227,7 @@
 
                   <div v-if="vendor?.user" class="flex-grow-1 text-start">
                     <b>{{ vendor.user.name }}</b>
+                    <small class="mx-2">({{ $t("global.commons.owner") }})</small>
                     <small class="d-block">{{ vendor.user.email }}</small>
                   </div>
 
@@ -222,10 +258,20 @@
                 </div>
               </v-list-subheader>
 
+              <hr class="my-5">
+
               <s-widget-header
                 class="mt-5"
                 icon="view_carousel"
                 title="Custom page"
+                :href="vendor_landing_page_url"
+                target="_blank"
+                :add-caption="page ? 'See Public Page' : undefined"
+                add-sub-caption="Custom landing page."
+                add-icon="open_in_new"
+                add-text
+                :disabled="!vendor.enable"
+                disabled-reason="Vendor is disabled."
               >
               </s-widget-header>
 
@@ -234,15 +280,51 @@
                 unique link to their dedicated page.
               </v-list-subheader>
 
-              <b-page-input
+              <template
                 v-if="
                   !IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢 Vendor cant select landing page!*/
                 "
-                v-model="page"
-                :shop="shop"
-                variant="underlined"
-                clearable
-              ></b-page-input>
+              >
+                <b-page-input
+                  v-model="page"
+                  :shop="shop"
+                  variant="underlined"
+                  clearable
+                  :message="
+                    page
+                      ? `Vendor has a custom landing page.`
+                      : 'No landing page selected.'
+                  "
+                ></b-page-input>
+
+                <v-expand-transition group>
+                  <div v-if="page?.id && !edit_slug">
+                    <v-list-item key="1">
+                      <template v-slot:title>
+                        <div class="text-subtitle-2">
+                          {{ vendor_landing_page_url }}
+                        </div>
+                      </template>
+                      <template v-slot:append>
+                        <v-btn @click="edit_slug = true" icon variant="text">
+                          <v-icon>edit</v-icon>
+                        </v-btn>
+                      </template>
+                    </v-list-item>
+                  </div>
+                  <div v-else-if="page?.id" key="2">
+                    <v-text-field
+                      v-model="slug"
+                      label="Path"
+                      hint="Change the path the vendor's dynamic landing page."
+                      variant="underlined"
+                      class="px-2"
+                    >
+                    </v-text-field>
+                  </div>
+                </v-expand-transition>
+              </template>
+
               <v-list-item v-else class="my-3">
                 <template v-slot:prepend>
                   <v-avatar color="#fff" rounded>
@@ -286,7 +368,7 @@
                   <v-list-item-action end>
                     <v-btn
                       v-if="page"
-                      :href="`${getShopMainUrl(shop)}/pages/${page.name}`"
+                      :href="vendor_landing_page_url"
                       color="primary"
                       icon
                       target="_blank"
@@ -444,7 +526,7 @@
                       :color="vendor?.map_id || map_id ? 'success' : 'primary'"
                       icon
                       tile
-                      variant="flat"
+                      variant="text"
                     >
                       <v-icon
                         >{{
@@ -649,9 +731,31 @@
             ></b-vendor-documents-list>
           </v-window-item>
 
-          <v-window-item>
-            <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Configuration  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Documents  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
+          <v-window-item v-if="has_augment">
+            <div class="widget-box mb-5">
+              <l-augment-form
+                v-model="augment"
+                @change="changed_argument = true"
+              ></l-augment-form>
+              <div class="text-end mt-3">
+                <v-btn
+                  v-if="page"
+                  :href="vendor_landing_page_url"
+                  target="_blank"
+                  append-icon="open_in_new"
+                  class="tnt"
+                  size="small"
+                >
+                  See Public Page
+                </v-btn>
+              </div>
+            </div>
+          </v-window-item>
+
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Configuration  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <v-window-item>
             <div
               v-if="
                 !IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢 Only marketplace owner can change these!*/
@@ -669,6 +773,7 @@
                 false-gray
                 false-icon="close"
                 label="Vendor status"
+                hint="You can enable or disable vendors globally. Customers will not be able to purchase anything from disabled vendors."
                 true-description="They will be able to sell their products through your marketplace."
                 true-icon="check"
               ></u-smart-switch>
@@ -684,6 +789,7 @@
                 false-icon="close"
                 label="Vendor panel & access"
                 true-description="The vendor has a dedicated panel to update quantity and price."
+                hint="You can enable or disable the vendor panel, which allows vendors to update product quantities and prices and receive partial orders."
                 true-icon="space_dashboard"
               ></u-smart-switch>
               <v-list-subheader v-if="!user_id">
@@ -829,7 +935,7 @@
                 v-if="!IS_VENDOR_PANEL /*Vendor can't edit map location!*/"
                 color="primary"
                 size="x-large"
-                variant="flat"
+                variant="elevated"
                 @click="selectMap(map_input)"
               >
                 <v-icon class="me-1">check</v-icon>
@@ -902,10 +1008,12 @@ import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import VPricingInput from "../../../storefront/pricing/VPricingInput.vue";
 import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
 import { ShopURLs } from "@selldone/core-js";
+import LAugmentForm from "@selldone/page-builder/components/augment/form/LAugmentForm.vue";
 
 export default {
   name: "BVendorAdd",
   components: {
+    LAugmentForm,
     UTextCopyBox,
     SWidgetButtons,
     BTranslationButtonVendor,
@@ -968,6 +1076,8 @@ export default {
     busy_delete: false,
 
     page: null,
+    slug: null,
+    edit_slug: false,
 
     map_id: null,
     pricing_id: null,
@@ -977,6 +1087,11 @@ export default {
 
     //-----------------------------
     busy_send_invitation: false,
+
+    //-----------------------------
+    augment: [],
+    busy_load: false,
+    changed_argument: false,
   }),
   computed: {
     IS_VENDOR_PANEL() {
@@ -1020,11 +1135,27 @@ export default {
         `${ShopURLs.MainShopUrl(this.shop)}/vendors?email=${this.invite_email}`
       );
     },
+
+    has_augment() {
+      return this.augment?.length;
+    },
+
+    vendor_listing_page_url() {
+      return ShopURLs.GetVendorListingPageUrl(this.shop,this.vendor);
+    },
+
+    vendor_landing_page_url() {
+      if (!this.page?.id || !this.vendor?.id) return null;
+      return ShopURLs.GetVendorLandingPageUrl(this.shop,this.vendor);
+    },
   },
 
   watch: {
     vendor() {
       this.assign();
+    },
+    "page.id"(page_id) {
+      this.loadArgumentStructure(page_id);
     },
   },
 
@@ -1039,6 +1170,8 @@ export default {
       this.resetToDefault(); // 🞇 Reset to default
 
       if (this.vendor) {
+        this.augment = this.vendor.augment;
+
         this.invite_email = this.vendor.invite;
 
         this.enable = this.vendor.enable;
@@ -1062,6 +1195,9 @@ export default {
         this.user_edit = !this.user_id;
 
         this.page = this.vendor.page;
+        this.slug = this.vendor.slug
+          ? this.vendor.slug
+          : this.slugify(this.vendor.name);
 
         this.map_id = this.vendor.map_id;
         this.pricing_id = this.vendor.pricing_id;
@@ -1103,6 +1239,7 @@ export default {
           user_id: this.user_id,
 
           page_id: this.page?.id,
+          slug: this.slug,
 
           map_id: this.map_id,
           pricing_id: this.pricing_id,
@@ -1112,6 +1249,8 @@ export default {
           business: this.business,
           business_name: this.business_name,
           tax_id: this.tax_id,
+
+          augment: this.augment,
         })
         .then(({ data }) => {
           if (!data.error) {
@@ -1164,6 +1303,7 @@ export default {
             user_id: this.user_id,
 
             page_id: this.page?.id,
+            slug: this.slug,
 
             map_id: this.map_id,
             pricing_id: this.pricing_id,
@@ -1173,6 +1313,8 @@ export default {
             business: this.business,
             business_name: this.business_name,
             tax_id: this.tax_id,
+
+            augment: this.augment,
           },
         )
         .then(({ data }) => {
@@ -1280,6 +1422,40 @@ export default {
 
         .finally(() => {
           this.busy_send_invitation = false;
+        });
+    },
+
+    // ████████████████████ Set Map ████████████████████
+
+    loadArgumentStructure(page_id) {
+      this.augment = [];
+      if (!page_id) {
+        return;
+      }
+
+      this.busy_load = true;
+
+      (this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+        ? window.$vendor.page.getPageAugment(
+            this.$route.params.vendor_id,
+            page_id,
+            this.vendor.augment,
+          )
+        : window.$backoffice.page.getPageAugment(
+            this.shop.id,
+            page_id,
+            this.vendor.augment,
+          )
+      )
+
+        .then(({ augment }) => {
+          this.augment = augment;
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_load = false;
         });
     },
   },

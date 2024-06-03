@@ -18,7 +18,7 @@
       <v-icon :color="dark ? '#fff' : '#111'" class="me-1">storefront</v-icon>
       {{ label }}
     </h3>
-    <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
+    <v-list-subheader v-if="hint" class="text-wrap">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
       :class="{ disabled: disabled, '-rounded-8px': items_show.length <= 1 }"
@@ -57,7 +57,7 @@
               }}
             </v-icon>
           </div>
-          <div class="flex-grow-1">
+          <div class="flex-grow-1 ">
             <router-link
               v-if="vendor.page"
               :to="{
@@ -75,9 +75,9 @@
             <b v-else>
               {{ vendor.name }}
             </b>
-            <v-list-subheader class="p-0" style="height: auto">
+            <div class="pa-0 text-subtitle-2" style="height: auto">
               {{ vendor.description }}
-            </v-list-subheader>
+            </div>
           </div>
 
           <div class="min-width-100">
@@ -155,6 +155,8 @@ export default {
     padding: 8px;
     cursor: pointer;
     margin-bottom: 4px;
+    overflow: hidden;
+
 
     .s--smart-select-vendor-content {
       display: flex;

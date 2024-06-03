@@ -54,7 +54,7 @@ import type {User} from "@selldone/core-js/models/user/user.model";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
-import {Slugify} from "../utils/slugify/slugify.ts";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify";
 import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
 import {UserProfile} from "@selldone/core-js/models/user/user_profile.model";
 import {Basket, BasketItemReturn, Club, Map, Order} from "@selldone/core-js";
@@ -773,13 +773,7 @@ const CoreMixin = {
 
       return (
         Slugify.apply(text.toString())
-          .toLowerCase()
-          .replace(/\s+/g, "-") // Replace spaces with -
-          //   .replace(/[^\w\-]+/gu, "") // Remove all non-word chars
-          .replace(/[^\u0100-\uFFFF\w\-]/g, "-") // Remove all non-word chars ( fix for UTF-8 chars )
-          .replace(/\-\-+/g, "-") // Replace multiple - with single -
-          .replace(/^-+/, "") // Trim - from start of text
-          .replace(/-+$/, "")
+
       ); // Trim - from end of text
     },
 

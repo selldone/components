@@ -20,7 +20,7 @@
     :items="pages"
     :label="$t('campaign.setting.general_setting.page_input')"
     :loading="busy"
-    :messages="modelValue ? `https://.../pages/${modelValue.name}` : ''"
+    :messages="message"
     :model-value="modelValue"
     item-title="title"
     no-filter
@@ -160,6 +160,7 @@ export default {
       type: Boolean,
     },
     disabled: Boolean,
+    message:{},
   },
 
   data() {

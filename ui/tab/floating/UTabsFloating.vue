@@ -23,14 +23,23 @@
       slider-size="7"
       @update:model-value="(val) => $emit('update:modelValue', val)"
     >
-      <v-tab v-for="(item, i) in items" :key="i" :value="i" class="sx-item">
-        <v-icon start>
-          {{ item.icon }}
-        </v-icon>
-        {{ item.title }}
-        <v-icon v-if="item.warning" class="mx-1" color="orange" size="small"
-          >warning
-        </v-icon>
+      <v-tab
+        v-for="(item, i) in items"
+        :key="i"
+        :value="i"
+        class="sx-item"
+        stacked
+      >
+        <div class="single-line align-self-start align-center d-flex">
+          <v-icon start>
+            {{ item.icon }}
+          </v-icon>
+          {{ item.title }}
+          <v-icon v-if="item.warning" class="mx-1" color="orange" size="small"
+            >warning
+          </v-icon>
+        </div>
+        <slot name="item" :item="item"></slot>
       </v-tab>
     </v-tabs>
   </u-fade-scroll>
@@ -57,8 +66,9 @@ export default {
   margin-bottom: 16px;
 
   .sx-item {
+    text-align: start;
     font-weight: 500;
-    justify-content: flex-start !important;
+    align-items: flex-start !important;
   }
 
   @media only screen and (min-width: 1100px) {

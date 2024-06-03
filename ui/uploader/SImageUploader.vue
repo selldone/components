@@ -15,7 +15,7 @@
 <template>
   <div>
     <!-- --------- Compact mode --------- -->
-    <v-list-item v-if="on_compact" class="text-start py-5" lines="two">
+    <v-list-item v-if="on_compact" class="text-start " :class="{'py-5':!dense,'py-2 px-0':dense}" lines="two" :density="dense?'compact':undefined">
       <template v-slot:prepend>
         <v-avatar class="border pa-1 elevation-5 bg-white" rounded="lg" size="64">
           <v-img

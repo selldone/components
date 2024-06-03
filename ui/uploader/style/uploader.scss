@@ -123,10 +123,18 @@
   }
 
   &.dense {
+
     .filepond--item {
       max-height: 36px;
       overflow: hidden;
       border-radius: 12px !important;
+    }
+    // Drop Label:
+    .filepond--drop-label{
+      font-size: 10px;
+    }
+    .file-size-limit{
+      font-size: 7px;
     }
   }
 
