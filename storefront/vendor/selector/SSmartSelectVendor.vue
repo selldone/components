@@ -55,7 +55,9 @@
               :size="vendor_item.id === modelValue ? 'large' : undefined"
               color="primary"
               >{{
-                vendor_item.id === modelValue ? "lens" : "radio_button_unchecked"
+                vendor_item.id === modelValue
+                  ? "lens"
+                  : "radio_button_unchecked"
               }}
             </v-icon>
           </div>
@@ -86,7 +88,10 @@
           </div>
 
           <v-avatar color="#fafafa" rounded>
-            <img v-if="vendor_item.icon" :src="getShopImagePath(vendor_item.icon, 128)" />
+            <img
+              v-if="vendor_item.icon"
+              :src="getShopImagePath(vendor_item.icon, 128)"
+            />
             <v-icon v-else>storefront</v-icon>
           </v-avatar>
         </div>
@@ -141,11 +146,22 @@ export default {
     //█████████████████████████████████████████████████████████████
 
     calcVendorPrice(vendor_item) {
-      return this.CalcPriceProductCurrentCurrency(this.getShop(), vendor_item, null);
+      return this.CalcPriceProductCurrentCurrency(
+        this.getShop(),
+        vendor_item,
+        null,
+      );
     },
 
     getVendorLink(vendor_item) {
-      return ShopURLs.GetVendorLandingPageUrl(this.getShop(), {
+      if (vendor_item.page_id)
+        return ShopURLs.GetVendorLandingPageUrl(this.getShop(), {
+          id: vendor_item.vendor_id,
+          slug: vendor_item.vendor_slug,
+          name: vendor_item.name,
+        });
+
+      return ShopURLs.GetVendorListingPageUrl(this.getShop(), {
         id: vendor_item.vendor_id,
         slug: vendor_item.vendor_slug,
         name: vendor_item.name,
