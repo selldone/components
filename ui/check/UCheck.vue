@@ -13,12 +13,12 @@
   -->
 
 <template>
-  <span>
+  <span :class="{ pen: readOnly }">
     <v-icon
       v-if="checked"
       :color="trueColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click="readOnly ? undefined : set(false)"
+      @click="set(false)"
     >
       {{ trueIcon }}
     </v-icon>
@@ -26,7 +26,7 @@
       v-else
       :color="falseColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click="readOnly ? undefined : set(true)"
+      @click="set(true)"
     >
       {{ falseIcon }}
     </v-icon>
