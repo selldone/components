@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ dark: dark }" class="text-start">
+  <div :class="{ dark: dark }" class="u--smart-multi-select">
     <h3 v-if="label" class="my-2">{{ label }}</h3>
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
@@ -28,35 +28,43 @@
         v-for="task in items_show"
         :key="task[itemValue]"
         :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: task.disabled }"
-        class="p-2 pp row-hover usn"
+        class="pa-2 pp row-hover usn"
         @click="toggle(task[itemValue])"
       >
         <div class="d-flex align-center mnh">
-          <div class="position-relative me-2" style="min-width: 32px">
-            <v-icon
-              :class="{
-                'avatar-gradient': modelValue.includes(task[itemValue]),
-              }"
-              class="-thin -gray flex-grow-0 h-auto center-absolute"
-              color="primary"
-              size="24"
-              >{{
-                modelValue.includes(task[itemValue])
-                  ? "lens"
-                  : "radio_button_unchecked"
-              }}
-            </v-icon>
+          <div
+            :class="{ 'avatar-gradient': modelValue.includes(task[itemValue]) }"
+            class="me-2 -thin -gray flex-grow-0"
+          >
+            <v-sheet
+              v-if="modelValue.includes(task[itemValue])"
+              :color="color"
+              class="circle-check zoomIn"
+            >
+              <!-- Loading -->
+              <v-progress-circular
+                v-if="loading"
+                :color="'#fff'"
+                :size="14"
+                :width="3"
+                class="center-absolute"
+                indeterminate
+              ></v-progress-circular>
+            </v-sheet>
+            <div v-else style="width: 28px" class="text-center">
+              <v-icon
+                :color="dark ? '#fff' : grayUnselected ? '#333' : color"
+                size="22"
+                >radio_button_unchecked
+              </v-icon>
+            </div>
           </div>
 
           <div class="flex-grow-1">
             <b v-html="$t(task[itemText])"> </b>
-            <v-list-subheader
-              v-if="itemDescription"
-              class="p-0"
-              style="height: auto"
-            >
+            <div v-if="itemDescription" class="op-0-7 small">
               {{ $t(task[itemDescription]) }}
-            </v-list-subheader>
+            </div>
           </div>
 
           <v-icon v-if="itemIcon">{{ task[itemIcon] }}</v-icon>
@@ -95,6 +103,9 @@ export default {
       default: false,
       type: Boolean,
     },
+    loading: { default: false, type: Boolean },
+    color: { default: "primary" },
+    grayUnselected: { default: false, type: Boolean },
   },
 
   data: function () {
@@ -127,7 +138,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.mnh {
-  min-height: 40px;
+.u--smart-multi-select {
+  text-align: start;
+
+  .mnh {
+    min-height: 40px;
+  }
+
+  .circle-check {
+    animation-duration: 250ms;
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    border-radius: 50%;
+  }
+
+  .bg-dark {
+    background: #000;
+  }
+
+  .bg-white {
+    background: #fff;
+  }
 }
 </style>

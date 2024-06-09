@@ -64,11 +64,11 @@
                 indeterminate
               ></v-progress-circular>
             </v-sheet>
-            <v-icon
-              v-else
-              :color="dark ? '#fff' : grayUnselected ? '#333' : color"
-              >radio_button_unchecked
-            </v-icon>
+            <div v-else style="width: 28px" class="text-center">
+              <v-icon :color="dark ? '#fff' : grayUnselected ? '#333' : color"
+                >radio_button_unchecked
+              </v-icon>
+            </div>
           </div>
           <div class="flex-grow-1">
             <slot :item="task" name="prepend-title"></slot>

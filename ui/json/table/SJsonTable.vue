@@ -19,7 +19,7 @@
       v-else
       :class="{ dense: dense }"
       :dark="dark"
-      :dense="dense"
+      :density="dense?'compact':undefined"
       class="mx-2 bg-transparent thin-scroll"
     >
       <template v-slot:default>
@@ -38,7 +38,7 @@
           >
             <!-- Json -->
 
-            <td v-if="!nested && jsonEnable && isObject(val)" colspan="2">
+            <td v-if="!nested && jsonEnable && (isObject(val) || Array.isArray(val))" colspan="2">
               <h4 class="my-2">{{ key }}</h4>
               <vue-json-pretty :data="val" class="limited-height">
               </vue-json-pretty>

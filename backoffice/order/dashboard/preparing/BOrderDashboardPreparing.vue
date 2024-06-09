@@ -72,13 +72,6 @@
             <v-icon size="small"> fa:fas fa-shipping-fast</v-icon>
             {{ $t("process_center.preparing.delivery_type") }}
           </p>
-          <!--
-          <transportation-select
-            v-model="transportation"
-            :transport-types="transportations"
-            :shop-transportations="shop.transportations"
-            :readonly="!isActive"
-          ></transportation-select>-->
 
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Select Type ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
           <u-smart-select
