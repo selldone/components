@@ -21,29 +21,29 @@
     closable
     density="compact"
   >
-    <v-row align="center" no-gutters>
+    <p v-if="!Array.isArray(cation.message)" class="text-subtitle-2">
+      {{ cation.message }}
+    </p>
+    <div v-else class="text-subtitle-2">
+      <p v-for="mes in cation.message" :key="mes" class="my-1">
+        <v-icon class="me-1" size="10">circle</v-icon>
+        {{ mes }}
+      </p>
+    </div>
+
+    <div class="pt-2">
       <v-btn
         v-if="cation.to"
         :to="cation.to"
         class="mx-2 tnt"
         color="primary"
         size="small"
-        variant="text"
+        variant="elevated"
         >{{ cation.action }}
         <v-icon class="mx-1" size="small"
           >{{ $t("icons.chevron_next") }}
         </v-icon>
       </v-btn>
-    </v-row>
-
-    <p v-if="!Array.isArray(cation.message)">
-      {{ cation.message }}
-    </p>
-    <div v-else>
-      <p v-for="mes in cation.message" :key="mes" class="my-1">
-        <v-icon class="me-2" size="small">circle</v-icon>
-        {{ mes }}
-      </p>
     </div>
 
     <template v-slot:append>

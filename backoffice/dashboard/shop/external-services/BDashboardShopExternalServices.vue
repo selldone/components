@@ -29,11 +29,16 @@
       >
         <v-list-item>
           <template v-slot:prepend>
-            <v-avatar :image="sms_provider.icon" rounded></v-avatar>
+            <v-avatar rounded>
+              <v-icon v-if="sms_provider.driver === 'default'"
+                >chat_bubble_outline
+              </v-icon>
+              <v-img v-else :src="sms_provider.icon" />
+            </v-avatar>
           </template>
 
           <v-list-item-title>
-            <b>SMS ● </b> {{ sms_provider.title }}
+            SMS ● <b class="ms-1">{{ sms_provider.title }}</b>
 
             <v-chip
               v-if="sms_service && !sms_service.enable"
@@ -76,15 +81,17 @@
 
         <v-list-item>
           <template v-slot:prepend>
-            <v-avatar :src="sms_provider.icon" rounded>
-              <img v-if="mail_provider" :src="mail_provider.icon" />
+            <v-avatar rounded>
+              <v-img v-if="mail_provider" :src="mail_provider.icon" />
               <v-icon v-else size="24">mail_outline</v-icon>
             </v-avatar>
           </template>
 
           <v-list-item-title>
-            <b>Email ● </b>
-            {{ mail_provider ? mail_provider.title : "Default" }}
+            Email ●
+            <b class="ms-1">{{
+              mail_provider ? mail_provider.title : "Default"
+            }}</b>
 
             <v-chip
               v-if="mail_service && !mail_service.enable"

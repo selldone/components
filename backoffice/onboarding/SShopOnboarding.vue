@@ -165,50 +165,10 @@
           </v-col>
         </v-row>
       </v-container>
-
-      <!-- ------------------------------- Intro dialog ---------------------------------- -->
-      <v-dialog
-        v-model="intro_dialog"
-        max-width="600"
-        scrollable
-        transition="scroll-y-transition"
-      >
-        <v-card>
-          <v-card-title></v-card-title>
-
-          <v-img
-            :src="require('../onboarding/assets/help-button.jpg')"
-            class="mb-3"
-            eager
-            height="300px"
-            width="100%"
-          ></v-img>
-
-          <v-card-text class="text-start typo-body">
-            {{ $t("onboarding.intro_inline_help_message") }}
-          </v-card-text>
-
-          <v-card-actions>
-            <div class="widget-buttons">
-              <v-btn
-                size="x-large"
-                variant="text"
-                @click="intro_dialog = false"
-              >
-                <v-icon class="me-1">check</v-icon>
-                {{ $t("global.actions.close") }}
-              </v-btn>
-            </div>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </div>
 
     <div class="widget-box -large my-16" style="--background: #fff">
-      <s-widget-header
-        :title="$t('onboarding.overview.title')"
-        icon="light"
-      >
+      <s-widget-header :title="$t('onboarding.overview.title')" icon="light">
       </s-widget-header>
       <v-list-subheader>
         {{ $t("onboarding.overview.subtitle") }}
@@ -362,7 +322,6 @@ import SShopOnboardingCustomization from "../onboarding/customization/SShopOnboa
 import ShopOnboardingSetupBusinessTab from "../onboarding/tabs/ShopOnboardingSetupBusinessTab.vue";
 import ShopOnboardingMigrationTab from "../onboarding/tabs/ShopOnboardingMigrationTab.vue";
 import UFadeScroll from "../../ui/fade-scroll/UFadeScroll.vue";
-import _ from "lodash-es";
 
 export default {
   name: "SShopOnboarding",
@@ -391,7 +350,6 @@ export default {
   data: () => ({
     tab: 0,
 
-    intro_dialog: false,
     contents: [
       {
         title: "20 Min 😄 | Work with Selldone",
@@ -490,11 +448,7 @@ export default {
     },
   },
 
-  watch: {
-    intro_dialog(val) {
-      if (!val) localStorage.setItem("intro", "true");
-    },
-  },
+  watch: {},
 
   methods: {
     dismiss() {
@@ -503,12 +457,7 @@ export default {
     },
   },
 
-  created() {
-    if (localStorage.getItem("intro") !== "true")
-      _.delay(() => {
-        this.intro_dialog = true;
-      }, 5000);
-  },
+  created() {},
 };
 </script>
 
