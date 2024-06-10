@@ -88,7 +88,7 @@
           </v-row>
 
           <div class="text-start mt-5">
-            <v-chip color="#fafafa" @click="show_flags = !show_flags">
+            <v-chip color="#fafafa" @click="show_flags = !show_flags" variant="flat">
               <v-icon :color="show_flags ? 'primary' : undefined" start
                 >{{
                   show_flags ? "radio_button_checked" : "radio_button_unchecked"

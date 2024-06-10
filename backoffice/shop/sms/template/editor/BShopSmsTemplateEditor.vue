@@ -18,25 +18,25 @@
       <v-avatar class="me-1" rounded>
         <v-img :src="getShopImagePath(shop.icon, 128)"></v-img>
       </v-avatar>
-      {{ template ? "Edit message template" : "Add new message template" }}
+      {{ template ? $t('shop_sms.template_edit.title_edit') : $t('shop_sms.template_edit.title_add')}}
     </v-card-title>
     <v-card-text>
       <!-- ███████████████████████ Template Info ███████████████████████ -->
 
       <div class="widget-box mb-5">
-        <s-widget-header icon="tune" title="Message Config"></s-widget-header>
-        <v-list-subheader
-          >You can create a template for the SMS message on your SMS provider's
-          website, then specify its code and data structure here. We'll forward
-          this information to your provider, where the actual SMS message will
-          be generated.
+        <s-widget-header
+          icon="tune"
+          :title="$t('shop_sms.template_edit.config.title')"
+        ></s-widget-header>
+        <v-list-subheader>
+          {{ $t("shop_sms.template_edit.config.subtitle") }}
         </v-list-subheader>
 
         <v-text-field
           :append-icon="sms.icon"
           :model-value="sms.title"
           disabled
-          label="Code"
+          :label="$t('shop_sms.template_edit.config.code')"
           variant="underlined"
         ></v-text-field>
 
@@ -46,12 +46,13 @@
           append-icon="translate"
           clearable
           max-width="unset"
-          messages="Leave it empty to set it as default."
+          :messages="$t('shop_sms.template_edit.config.language_msg')"
           persistent-placeholder
           placeholder="Default - All languages"
-          title="Language"
+          :title="$t('global.commons.language')"
           variant="underlined"
-        ></u-language-input>
+        >
+        </u-language-input>
 
         <u-smart-switch
           v-model="enable"
@@ -60,7 +61,7 @@
           class="my-3"
           false-gray
           false-icon="close"
-          true-description="This template will be used to create messages."
+          :true-description="$t('shop_sms.template_edit.config.enable_msg')"
           true-icon="check"
         >
         </u-smart-switch>
@@ -73,6 +74,7 @@
           item-icon="icon"
           item-text="title"
           item-value="code"
+          :disabled="!!template"
         >
         </u-smart-select>
       </div>
@@ -80,10 +82,12 @@
       <!-- ███████████████████████ Mode > Text ███████████████████████ -->
 
       <div v-if="mode === 'text'" class="widget-box mb-5">
-        <s-widget-header icon="subject" title="Plain text"></s-widget-header>
-        <v-list-subheader
-          >Enter a personalized SMS message here. Dynamic values will be
-          substituted with their actual values before being sent to the user.
+        <s-widget-header
+          icon="subject"
+          :title="$t('shop_sms.template_edit.text.title')"
+        ></s-widget-header>
+        <v-list-subheader>
+          {{ $t("shop_sms.template_edit.text.subtitle") }}
         </v-list-subheader>
 
         <v-textarea
@@ -91,7 +95,7 @@
           :rows="3"
           auto-grow
           hide-details
-          label="Message"
+          :label="$t('shop_sms.template_edit.text.message')"
           variant="underlined"
         ></v-textarea>
 
@@ -104,11 +108,23 @@
             @click="getDefault()"
           >
             <v-icon class="me-1">restart_alt</v-icon>
-            Reset to default
+            {{ $t("shop_sms.template_edit.text.reset_to_default") }}
 
             <b class="ms-1">{{ getLanguageName(language) }}</b>
           </v-btn>
         </div>
+
+        <hr class="my-5" />
+
+        <s-widget-header
+          :title="$t('shop_sms.template_edit.text.auto_fill.title')"
+          icon="auto_awesome"
+        >
+        </s-widget-header>
+
+        <v-list-subheader>
+          {{ $t("shop_sms.template_edit.text.auto_fill.subtitle") }}
+        </v-list-subheader>
 
         <v-list
           v-if="sms.params"
@@ -130,12 +146,14 @@
           </v-list-item>
         </v-list>
 
-        <v-list-subheader>
-          <div>
-            <b class="d-block">Sample message:</b>
+        <s-widget-header
+          :title="$t('shop_sms.template_edit.text.sample.title')"
+          icon="science"
+        >
+        </s-widget-header>
 
-            <div class="my-3" v-html="sms.sample"></div>
-          </div>
+        <v-list-subheader class="my-3">
+          <div v-html="sms.sample"></div>
         </v-list-subheader>
       </div>
 
@@ -144,46 +162,50 @@
       <div v-if="mode === 'template'" class="widget-box mb-5">
         <s-widget-header
           icon="data_object"
-          title="Structural Template"
+          :title="$t('shop_sms.template_edit.template.title')"
         ></s-widget-header>
         <v-list-subheader>
-          <div>
-            You can set template code in the value with the
-            <code>template</code> key. The template should be exactly what you
-            set in your SMS service provider. If <code>template</code> be empty
-            then <code>{{ sms.code }}</code> consider as template code.
-          </div>
+          <div
+            v-html="
+              $t('shop_sms.template_edit.template.subtitle', { code: sms.code })
+            "
+          ></div>
         </v-list-subheader>
 
-        <v-list class="border-between-vertical bg-transparent">
+        <v-list class="bg-transparent">
           <v-list-item v-for="(it, i) in data" :key="i">
-            <v-list-item-title>
+            <div class="d-flex align-stretch border-between">
               <v-text-field
                 v-model="it.key"
                 flat
                 hide-details
                 placeholder="Enter a key..."
-                prefix="Key: "
+                label="Key"
                 variant="solo"
+                rounded="s-xl"
+                persistent-placeholder
               >
               </v-text-field>
-            </v-list-item-title>
-            <v-list-item-title>
               <v-text-field
                 v-model="it.value"
                 flat
                 hide-details
                 placeholder="Enter a value..."
-                prefix="Value: "
+                label="Value"
                 variant="solo"
+                rounded="e-xl"
+                persistent-placeholder
               >
               </v-text-field>
-            </v-list-item-title>
-            <v-list-item-action>
-              <v-btn color="red" icon @click="data.remove(it)">
-                <v-icon>close</v-icon>
-              </v-btn>
-            </v-list-item-action>
+            </div>
+
+            <template v-slot:append>
+              <v-list-item-action>
+                <v-btn color="red" icon @click="data.remove(it)" variant="text">
+                  <v-icon>close</v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </template>
           </v-list-item>
         </v-list>
 
@@ -194,14 +216,21 @@
           @click="data.push({ key: '', value: '' })"
         >
           <v-icon start>add</v-icon>
-          Add new parameter
+
+          {{ $t("shop_sms.template_edit.template.add_new_parameter") }}
         </v-btn>
 
-        <div v-if="sms.params" class="my-3">
-          <b class="d-block">Auto fill parameters:</b>
-          <v-list-subheader
-            >You can set each of these parameters as a value, and Selldone will
-            replace them with the corresponding value.
+        <hr class="my-5" />
+
+        <template v-if="sms.params">
+          <s-widget-header
+            :title="$t('shop_sms.template_edit.template.auto_fill.title')"
+            icon="auto_awesome"
+          >
+          </s-widget-header>
+
+          <v-list-subheader>
+            {{ $t("shop_sms.template_edit.template.auto_fill.subtitle") }}
           </v-list-subheader>
           <v-list
             class="bg-transparent border-between-vertical"
@@ -223,10 +252,15 @@
               </template>
             </v-list-item>
           </v-list>
-        </div>
+        </template>
 
         <template v-if="preview_data">
-          <b class="d-block">Sample payload:</b>
+          <s-widget-header
+            :title="$t('shop_sms.template_edit.template.sample.title')"
+            icon="science"
+          >
+          </s-widget-header>
+
           <vue-json-pretty :data="preview_data" class="my-3"></vue-json-pretty>
         </template>
       </div>
@@ -235,7 +269,7 @@
       <div class="widget-buttons">
         <v-btn size="x-large" variant="text" @click="$emit('close')">
           <v-icon start>close</v-icon>
-          Close
+          {{ $t("global.actions.close") }}
         </v-btn>
 
         <v-btn
@@ -248,7 +282,8 @@
           @click="editTemplate()"
         >
           <v-icon start>save</v-icon>
-          Save changes
+
+          {{ $t("global.actions.save_changes") }}
         </v-btn>
         <v-btn
           v-else
@@ -256,10 +291,12 @@
           :loading="busy"
           color="primary"
           size="x-large"
+          variant="elevated"
           @click="addTemplate()"
         >
           <v-icon start>add</v-icon>
-          Add message template
+
+          {{ $t("shop_sms.template_edit.template.add_message_action") }}
         </v-btn>
       </div>
     </v-card-actions>
@@ -276,10 +313,12 @@ import "vue-json-pretty/lib/styles.css";
 import USmartSwitch from "../../../../../ui/smart/switch/USmartSwitch.vue";
 import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
+import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 
 export default {
   name: "BShopSmsTemplateEditor",
   components: {
+    SWidgetHeader,
     USmartSwitch,
     USmartSelect,
     ULanguageInput,
@@ -444,6 +483,7 @@ export default {
 
         if (!this.text) this.text = this.sms.body;
       } else {
+        this.language = this.shop.language;
         this.data = [{ key: "template", value: this.sms.code }];
       }
     },

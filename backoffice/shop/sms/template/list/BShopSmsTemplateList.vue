@@ -23,15 +23,15 @@
       "
       :disabled-reason="
         !shop.sms_service
-          ? 'Set your provider first!'
+          ? $t('shop_sms.template.disable_reason.set_provider')
           : !shop.sms_service?.enable
-            ? 'Provider is disable!'
+            ? $t('shop_sms.template.disable_reason.provider_is_disabled')
             : sms.verification
-              ? 'OTP - None customizable!'
-              : 'Select another provider.'
+              ? $t('shop_sms.template.disable_reason.otp')
+              : $t('shop_sms.template.disable_reason.select_another_provider')
       "
-      :title="$t('shop_sms.sub_title')"
-      add-caption="Add new"
+      :title="$t('shop_sms.template.title')"
+      :add-caption="$t('shop_sms.template.add_new')"
       icon="sms"
       @click:add="showDialog()"
     ></s-widget-header>
@@ -45,15 +45,15 @@
         "
       >
         <v-icon class="me-1" color="success">check_circle_outline</v-icon>
-        You can create custom SMS messages.
+        {{ $t("shop_sms.template.valid_message") }}
       </div>
       <div v-else-if="shop.sms_service && !shop.sms_service.enable">
         <v-icon class="me-1" color="orange">warning_amber</v-icon>
-        The SMS provider is <b>not enabled</b>!
+        {{ $t("shop_sms.template.provider_not_enable_message") }}
       </div>
       <div v-else>
         <v-icon class="me-1" color="orange">warning_amber</v-icon>
-        Customized SMS messages only work if you set a <b>custom provider</b>.
+        {{ $t("shop_sms.template.need_custom_provider_message") }}
       </div>
     </v-list-subheader>
 
@@ -66,7 +66,7 @@
         <u-smart-toggle
           v-model="active"
           false-gray
-          true-title="Active only"
+          :true-title="$t('shop_sms.template.enable_only_filter')"
         ></u-smart-toggle>
         <v-spacer></v-spacer>
 
@@ -106,38 +106,59 @@
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ code ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <template v-slot:item.code="{ item }">
-          <b class="small">{{ item.code }}</b>
-          <v-tooltip
+          <v-btn
             v-if="item.error"
-            color="#111"
-            location="bottom"
-            max-width="420"
+            class="ma-1 float-end"
+            color="red"
+            icon
+            size="24"
+            variant="text"
           >
-            <template v-slot:activator="{ props }">
-              <v-btn class="ms-2" color="red" icon size="small" v-bind="props">
-                <v-icon size="small">error</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ item.error }}</span>
-          </v-tooltip>
-          <v-icon
-            v-if="item.mode === 'text' && !sms_provider.support_text"
-            class="ms-1"
-            color="amber"
-            size="small"
-            title="Your provider does not support plain text messages."
-            >warning
-          </v-icon>
-          <v-icon
+            <v-icon>error</v-icon>
+
+            <v-tooltip
+              activator="parent"
+              content-class="bg-black text-start"
+              location="bottom"
+              max-width="360"
+            >
+              {{ item.error }}
+            </v-tooltip>
+          </v-btn>
+
+          <span v-if="item.mode === 'text' && !sms_provider.support_text">
+            <v-icon class="ma-1 float-end" color="amber" size="small"
+              >warning
+            </v-icon>
+            <v-tooltip
+              activator="parent"
+              content-class="bg-black text-start"
+              location="bottom"
+              max-width="360"
+            >
+              {{ $t("shop_sms.template.text_template_not_supported_msg") }}
+            </v-tooltip>
+          </span>
+          <span
             v-else-if="
               item.mode === 'template' && !sms_provider.support_template
             "
-            class="ms-1"
-            color="amber"
-            size="small"
-            title="Your provider does not support structural messages."
-            >warning
-          </v-icon>
+          >
+            <v-icon class="ma-1 float-end" color="amber" size="small"
+              >warning
+            </v-icon>
+
+            <v-tooltip
+              activator="parent"
+              content-class="bg-black text-start"
+              location="bottom"
+              max-width="360"
+            >
+              {{ $t("shop_sms.template.structure_template_not_supported_msg") }}
+            </v-tooltip>
+          </span>
+
+          <b class="small">{{ item.code }}</b>
         </template>
 
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ language ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
@@ -156,7 +177,7 @@
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ enable ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <template v-slot:item.enable="{ item }">
-          <u-check :model-value="item.enable"></u-check>
+          <u-check :model-value="item.enable" read-only></u-check>
         </template>
 
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ text ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
@@ -168,7 +189,7 @@
           </div>
           <div v-else-if="item.mode === 'template'" class="py-1">
             <v-icon class="me-1 float-start" color="#111">data_object</v-icon>
-            <code>Structured Data</code>
+            <code>{{$t('shop_sms.template.structured_data')}}</code>
           </div>
           <div class="py-1 small">
             <v-avatar
@@ -199,15 +220,16 @@
               },
 
               {
-                title: `Reset errors (${item.errors})`,
+                title: `${$t('shop_sms.template.menu.reset_error')} (${item.errors})`,
                 click: () => resetErrors(item),
                 icon: 'rotate_right',
               },
 
               {
-                title:
-                  `Send test message` +
-                  (USER().phone ? '' : ' - ⚠ set your phone number'),
+                title: $t('shop_sms.template.menu.send_test'),
+                subtitle:
+                  `${$t('global.commons.phone')}: ${USER().phone}` ||
+                  '⚠ Set your phone number first!',
                 click: () => sendTest(item),
                 icon: 'send',
                 disabled: !USER().phone,
@@ -361,39 +383,6 @@ export default {
 
     //------------------------------------------
     templates: [],
-    headers: [
-      {
-        text: "Code",
-        align: "start",
-        value: "code",
-        sortable: true,
-      },
-
-      {
-        text: "Lang",
-        align: "center",
-        value: "language",
-        sortable: true,
-      },
-      {
-        text: "Message",
-        align: "start",
-        value: "text",
-        sortable: true,
-      },
-      {
-        text: "Active",
-        align: "start",
-        value: "enable",
-        sortable: true,
-      },
-      {
-        text: "",
-        align: "center",
-        value: "action",
-        sortable: false,
-      },
-    ],
 
     busy: false,
 
@@ -423,6 +412,41 @@ export default {
   }),
 
   computed: {
+    headers() {
+      return [
+        {
+          title: this.$t("global.commons.code"),
+          align: "start",
+          value: "code",
+          sortable: true,
+        },
+
+        {
+          title: this.$t("global.commons.language"),
+          align: "center",
+          value: "language",
+          sortable: true,
+        },
+        {
+          title: this.$t("global.commons.message"),
+          align: "start",
+          value: "text",
+          sortable: true,
+        },
+        {
+          title: this.$t("global.commons.enable"),
+          align: "start",
+          value: "enable",
+          sortable: true,
+        },
+        {
+          title: "",
+          align: "center",
+          value: "action",
+          sortable: false,
+        },
+      ];
+    },
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },

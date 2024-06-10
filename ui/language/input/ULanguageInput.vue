@@ -76,7 +76,7 @@
         });
       "
     >
-      <template v-slot:append>
+      <template v-if="$slots['append-outer']"  v-slot:append>
         <slot name="append-outer"></slot>
       </template>
     </v-text-field>

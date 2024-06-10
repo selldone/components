@@ -20,22 +20,20 @@
       <s-widget-header
         :add-caption="
           sms_service && sms_service.errors > 0
-            ? `Reset errors (${sms_service.errors})`
+            ? `${$t('shop_sms_provider.reset_error')} (${sms_service.errors})`
             : undefined
         "
         :add-loading="busy_reset"
         add-icon="autorenew"
         icon="private_connectivity"
-        title="Custom SMS provider"
+        :title="$t('shop_sms_provider.title')"
         @click:add="resetErrors"
       >
       </s-widget-header>
 
       <u-loading-progress v-if="busy"></u-loading-progress>
       <v-list-subheader>
-        Set up a custom SMS service provider and customize your authentication
-        SMS and business name. The default provider just sends authentication
-        SMS and inform messages in some white-listed countries.
+        {{ $t("shop_sms_provider.subtitle") }}
       </v-list-subheader>
 
       <!-- ████████████████████ Select Service ████████████████████ -->
@@ -55,32 +53,37 @@
       <v-btn
         v-if="selected_provider?.link"
         :href="selected_provider.link"
-        class="font-weight-bold float-end"
+        class="font-weight-bold float-end tnt"
         color="primary"
         size="small"
         target="_blank"
         variant="text"
       >
-        <v-icon class="me-1" size="small">open_in_new</v-icon>
-        Visit
+        {{ $t("global.actions.visit") }}
         {{ selected_provider.title }}
+        <v-icon end>open_in_new</v-icon>
+
       </v-btn>
 
       <div v-if="selected_provider" class="d-flex align-center my-2">
         <div class="w-50" title="Support custom text message?">
           <v-icon class="me-1" color="#111">subject</v-icon>
-          Plain text
+
+          {{ $t("shop_sms_provider.plain_text") }}
           <u-check
             :model-value="selected_provider.support_text"
             class="ms-2"
+            read-only
           ></u-check>
         </div>
         <div class="w-50" title="Support custom template message?">
           <v-icon class="me-1" color="#111">data_object</v-icon>
-          Structural template
+
+          {{ $t("shop_sms_provider.structural_template") }}
           <u-check
             :model-value="selected_provider.support_template"
             class="ms-2"
+            read-only
           ></u-check>
         </div>
       </div>
@@ -104,8 +107,8 @@
         class="mt-5"
       >
         <v-icon class="me-1" color="amber">warning</v-icon>
-        If your service exceeds 100 errors, it will be disabled automatically!
-        You can reset errors to re-enable it.
+
+        {{ $t("shop_sms_provider.errors_limit_msg") }}
       </v-list-subheader>
 
       <v-alert
@@ -114,6 +117,7 @@
         color="red"
         text
         type="error"
+        density="compact"
         >{{ sms_service.error }}
       </v-alert>
       <!-- ████████████████████ Configs ████████████████████ -->
@@ -132,10 +136,14 @@
           :false-title="$t('global.commons.disable')"
           :true-title="$t('global.commons.enable')"
           class="my-5"
-          false-description="OTP messages will be dispatched through Selldone in select countries, while other order notification SMS will be sent as well."
+          :false-description="
+            $t('shop_sms_provider.enable_input.false_description')
+          "
           false-gray
           false-icon="close"
-          true-description="SMS messages will be delivered using your service provider."
+          :true-description="
+            $t('shop_sms_provider.enable_input.true_description')
+          "
           true-icon="check"
         >
         </u-smart-switch>
@@ -169,9 +177,9 @@
         <s-widget-header
           class="mt-6"
           icon="token"
-          title="Tokens"
+          :title=" $t('shop_sms_provider.tokens.title') "
         ></s-widget-header>
-        <v-list-subheader></v-list-subheader>
+        <v-list-subheader>{{$t('shop_sms_provider.tokens.subtitle') }}</v-list-subheader>
         <v-text-field
           v-for="(token, i) in selected_provider.tokens"
           :key="token"
@@ -192,16 +200,18 @@
         <hr />
         <u-smart-toggle
           v-model="test"
-          :true-description="`We will send a test message to your phone number 📞 <b>${
-            USER().phone
-          }</b>, it can charge you, but you can make sure everything works well.`"
+          :true-description="
+            $t('shop_sms_provider.test_input.true_description', {
+              phone: USER().phone,
+            })
+          "
           class="my-5"
           color="success"
           false-gray
           true-icon="ad_units"
-          true-title="Validate Configuration"
+          :true-title="$t('shop_sms_provider.test_input.true_title')"
         ></u-smart-toggle>
-        <hr />
+        <hr class="my-5" />
       </template>
 
       <s-widget-buttons auto-fixed-position>
@@ -220,13 +230,14 @@
 
     <!-- ████████████████████████ Actions ████████████████████████ -->
     <div v-if="has_sync_action" class="widget-box my-5">
-      <s-widget-header icon="fact_check" title="Actions"></s-widget-header>
+      <s-widget-header
+        icon="fact_check"
+        :title="$t('shop_sms_provider.sync_action.title')"
+      ></s-widget-header>
 
       <u-loading-progress v-if="busy"></u-loading-progress>
       <v-list-subheader>
-        Some SMS services provide extra services like campaigns, marketing, and
-        other features. You can sync your contacts or additional information to
-        use their features more quickly.
+        {{ $t("shop_sms_provider.sync_action.subtitle") }}
       </v-list-subheader>
 
       <u-smart-verify v-model="check" class="mb-3"></u-smart-verify>
@@ -240,7 +251,8 @@
           @click="syncContacts()"
         >
           <v-icon start>contacts</v-icon>
-          Sync contacts
+
+          {{ $t("shop_sms_provider.sync_action.action") }}
         </v-btn>
       </div>
     </div>
@@ -314,14 +326,14 @@ export default {
       return [
         {
           value: "all",
-          title: "OPT + Order Notifications",
-          desc: "Authentication messages and order notification will be sent.",
+          title: this.$t('sms_messages_options.all.title'),
+          desc:  this.$t('sms_messages_options.all.description'),
           icon: "notifications_active",
         },
         {
           value: "otp",
-          title: "OTP Only",
-          desc: "Authentication messages will be sent.",
+          title:this.$t('sms_messages_options.otp.title'),
+          desc: this.$t('sms_messages_options.otp.description'),
           icon: "pin",
         },
       ];
