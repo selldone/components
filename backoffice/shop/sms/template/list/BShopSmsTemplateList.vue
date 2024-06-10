@@ -189,7 +189,7 @@
           </div>
           <div v-else-if="item.mode === 'template'" class="py-1">
             <v-icon class="me-1 float-start" color="#111">data_object</v-icon>
-            <code>{{$t('shop_sms.template.structured_data')}}</code>
+            <code>{{ $t("shop_sms.template.structured_data") }}</code>
           </div>
           <div class="py-1 small">
             <v-avatar
@@ -303,33 +303,53 @@
     </v-dialog>
 
     <!-- ███████████████████████ Dialog > Test Response ███████████████████████ -->
-    <v-bottom-sheet v-model="show_data" max-width="520" width="90%">
+    <v-dialog
+      v-model="show_data"
+      fullscreen
+      scrollable
+      transition="dialog-bottom-transition"
+    >
       <v-card v-if="test_response" class="text-start">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1">science</v-icon>
           Test response
         </v-card-title>
 
-        <u-pods-panel>
-          <u-pod-node
-            :color="
-              test_response.error && !test_response.external_error
-                ? 'red'
-                : undefined
-            "
-            :image="getShopImagePath(shop.icon, 96)"
-            :title="shop.title"
-          ></u-pod-node>
-          <u-pod-wire forward></u-pod-wire>
-          <u-pod-node
-            :color="test_response.external_error ? 'red' : undefined"
-            :image="sms_provider.icon"
-            :title="sms_provider.title"
-          ></u-pod-node>
-        </u-pods-panel>
-
         <v-card-text>
-          <vue-json-pretty :data="test_response" class="my-3"></vue-json-pretty>
+          <v-container>
+            <div class="max-widget-width mx-auto">
+              <u-pods-panel>
+                <u-pod-node
+                  :color="
+                    test_response.error && !test_response.external_error
+                      ? 'red'
+                      : undefined
+                  "
+                  :image="getShopImagePath(shop.icon, 96)"
+                  :title="shop.title"
+                ></u-pod-node>
+                <u-pod-wire forward></u-pod-wire>
+                <u-pod-node
+                  :color="test_response.external_error ? 'red' : undefined"
+                  :image="sms_provider.icon"
+                  :title="sms_provider.title"
+                ></u-pod-node>
+              </u-pods-panel>
+            </div>
+            <s-widget-header title="Response"></s-widget-header>
+            <vue-json-pretty
+              :data="test_response.response"
+              class="my-3"
+            ></vue-json-pretty>
+
+            <hr class="my-5">
+            <s-widget-header title="Config & Parameters"></s-widget-header>
+            <vue-json-pretty
+                :data="test_response.request"
+                class="my-3"
+            ></vue-json-pretty>
+
+          </v-container>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -340,7 +360,7 @@
           </div>
         </v-card-actions>
       </v-card>
-    </v-bottom-sheet>
+    </v-dialog>
   </div>
 </template>
 
@@ -356,10 +376,12 @@ import UPodWire from "../../../../../ui/pod/wire/UPodWire.vue";
 import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";
 import _ from "lodash-es";
 import FrameView from "../../../../../ui/mockup/frame/FrameView.vue";
+import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 
 export default {
   name: "BShopSmsTemplateList",
   components: {
+    SWidgetHeader,
     UPodWire,
     UPodNode,
     UPodsPanel,
@@ -606,7 +628,7 @@ export default {
           } else {
             this.showErrorAlert(null, data.error_msg);
           }
-          this.show_data = true;
+          this.show_data = !!data;
           this.test_response = data;
         })
         .catch((error) => {
