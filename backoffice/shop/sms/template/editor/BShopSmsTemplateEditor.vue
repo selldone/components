@@ -18,7 +18,11 @@
       <v-avatar class="me-1" rounded>
         <v-img :src="getShopImagePath(shop.icon, 128)"></v-img>
       </v-avatar>
-      {{ template ? $t('shop_sms.template_edit.title_edit') : $t('shop_sms.template_edit.title_add')}}
+      {{
+        template
+          ? $t("shop_sms.template_edit.title_edit")
+          : $t("shop_sms.template_edit.title_add")
+      }}
     </v-card-title>
     <v-card-text>
       <!-- ███████████████████████ Template Info ███████████████████████ -->
@@ -33,17 +37,17 @@
         </v-list-subheader>
 
         <v-text-field
-          :append-icon="sms.icon"
           :model-value="sms.title"
           disabled
           :label="$t('shop_sms.template_edit.config.code')"
           variant="underlined"
+          :prepend-inner-icon="sms.icon"
         ></v-text-field>
 
         <u-language-input
           v-model="language"
           :available-languages="languages"
-          append-icon="translate"
+          prepend-inner-icon="translate"
           clearable
           max-width="unset"
           :messages="$t('shop_sms.template_edit.config.language_msg')"
@@ -105,7 +109,7 @@
             class="tnt"
             color="primary"
             variant="text"
-            @click="getDefault()"
+            @click="getDefaultText()"
           >
             <v-icon class="me-1">restart_alt</v-icon>
             {{ $t("shop_sms.template_edit.text.reset_to_default") }}
@@ -177,6 +181,8 @@
             <div class="d-flex align-stretch border-between">
               <v-text-field
                 v-model="it.key"
+                :readonly="isPermanent(it.key)"
+                :append-inner-icon="isPermanent(it.key) ? 'lock' : undefined"
                 flat
                 hide-details
                 placeholder="Enter a key..."
@@ -210,6 +216,7 @@
         </v-list>
 
         <v-btn
+          v-if="sms_provider.template?.has_dynamic_parameters"
           class="ma-2"
           color="primary"
           variant="text"
@@ -222,7 +229,9 @@
 
         <hr class="my-5" />
 
-        <template v-if="sms.params">
+        <template
+          v-if="sms.params && sms_provider.template?.has_dynamic_parameters"
+        >
           <s-widget-header
             :title="$t('shop_sms.template_edit.template.auto_fill.title')"
             icon="auto_awesome"
@@ -254,9 +263,27 @@
           </v-list>
         </template>
 
-        <template v-if="preview_data">
+        <template v-if="sample_template">
           <s-widget-header
             :title="$t('shop_sms.template_edit.template.sample.title')"
+            icon="chat_bubble_outline"
+          >
+          </s-widget-header>
+          <v-list-subheader>
+            {{ $t("shop_sms.template_edit.template.sample.subtitle") }}
+          </v-list-subheader>
+
+          <u-text-copy-box
+            :value="sample_template"
+            small-width-mode
+          ></u-text-copy-box>
+
+          <hr class="my-5" />
+        </template>
+
+        <template v-if="preview_data">
+          <s-widget-header
+            :title="$t('shop_sms.template_edit.template.request.title')"
             icon="science"
           >
           </s-widget-header>
@@ -314,10 +341,12 @@ import USmartSwitch from "../../../../../ui/smart/switch/USmartSwitch.vue";
 import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
 
 export default {
   name: "BShopSmsTemplateEditor",
   components: {
+    UTextCopyBox,
     SWidgetHeader,
     USmartSwitch,
     USmartSelect,
@@ -349,6 +378,7 @@ export default {
 
     busy: false,
 
+    sample_template: null,
     // ------------------------------
     busy_default: false,
     defaults: {}, // Keep received values!
@@ -396,9 +426,18 @@ export default {
     },
   },
 
-  watch: {},
+  watch: {
+    mode(mode) {
+      if (mode === SmsTemplateMode.template.code) {
+        this.getDefaultTemplate();
+      }
+    },
+  },
 
   methods: {
+    isPermanent(key) {
+      return this.sms_provider.template?.permanent_params?.includes(key);
+    },
     addTemplate() {
       this.busy = true;
       axios
@@ -484,16 +523,35 @@ export default {
         if (!this.text) this.text = this.sms.body;
       } else {
         this.language = this.shop.language;
-        this.data = [{ key: "template", value: this.sms.code }];
+        this.data = [];
+
+        if (this.sms_provider.template?.permanent_params) {
+          this.sms_provider.template.permanent_params.forEach((it) => {
+            this.data.push({
+              key: it,
+              value: this.sms.code /*some sample data!*/,
+            });
+          });
+        }
       }
     },
-
-    getDefault() {
+    getDefaultText() {
+      this.getDefault(SmsTemplateMode.text.code, (body) => {
+        this.text = body;
+      });
+    },
+    getDefaultTemplate() {
+      this.sample_template = null;
+      this.getDefault(SmsTemplateMode.template.code, (body) => {
+        this.sample_template = body;
+      });
+    },
+    getDefault(mode, callback) {
       const language = this.language ? this.language : "default";
 
       // Pre loaded data:
-      if (this.defaults[language]) {
-        this.text = this.defaults[language];
+      if (this.defaults[mode + language]) {
+        this.text = this.defaults[mode + language];
         return;
       }
 
@@ -505,13 +563,16 @@ export default {
             this.code,
             language,
           ),
+          {
+            params: { mode: mode, driver: this.sms_provider.driver },
+          },
         )
         .then(({ data }) => {
           if (data.error) {
             this.showErrorAlert(null, data.error_msg);
           } else {
-            this.defaults[data.language] = data.body;
-            this.text = data.body;
+            this.defaults[mode + data.language] = data.body;
+            callback(data.body);
             this.showSuccessAlert(
               this.sms.title + " | " + this.getLanguageName(data.language),
               `The default message for <b>${this.getLanguageName(
