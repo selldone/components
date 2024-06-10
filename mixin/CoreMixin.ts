@@ -789,9 +789,10 @@ const CoreMixin = {
     //―――――――――――――――――――――― Country ――――――――――――――――――――
 
     getCountryName(code: ICountryCode) {
+      if(!code)return null;
       const key = `countries.${code}`;
       const translated = this.$t(key);
-      console.log("🌍", code, translated, key)
+      //console.log("🌍", code, translated, key)
       return key === translated ? getCountryName(code) : translated;
     },
 

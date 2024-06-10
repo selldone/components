@@ -14,6 +14,7 @@
 
 <template>
   <div
+    v-if="is_available"
     id="payment-method-messaging-element"
     :title="getCountryName(countryCode)"
   ></div>
@@ -27,6 +28,9 @@ export default {
   name: "UPaymentStripeSplit",
   components: {},
   props: {
+    /**
+     * Suggested country code. Otherwise, we find it from receiver info or meta tags.
+     */
     countryCode: {},
     dark: { type: Boolean },
     isFlat: { type: Boolean },
@@ -51,9 +55,44 @@ export default {
       type: Object,
     },
   },
-  data: () => ({}),
+  data: () => ({
+    available_countries: [
+      "US",
+      "CA",
+      "AU",
+      "NZ",
+      "GB",
+      "IE",
+      "FR",
+      "ES",
+      "DE",
+      "AT",
+      "BE",
+      "DK",
+      "FI",
+      "IT",
+      "NL",
+      "NO",
+      "SE",
+      "CZ",
+      "GR",
+      "PT",
+      "CH",
+      "PL",
+    ],
+  }),
 
   computed: {
+    country_code() {
+      return this.countryCode
+        ? this.countryCode
+        : this.basket?.receiver_info?.country
+          ? this.basket.receiver_info.country
+          : SetupService.DefaultCountry();
+    },
+    is_available() {
+      return this.available_countries.includes(this.country_code);
+    },
     shop() {
       return this.getShop();
     },
@@ -117,6 +156,8 @@ export default {
       } catch (e) {
         return;
       }
+      // Check availability:
+      if (!this.is_available) return;
 
       if (
         this.product?.type === ProductType.SUBSCRIPTION.code ||
@@ -165,11 +206,7 @@ export default {
           currency: currency,
           paymentMethodTypes: ["klarna", "afterpay_clearpay", "affirm"],
           // the country that the end-buyer is in
-          countryCode: this.countryCode
-            ? this.countryCode
-            : this.basket?.receiver_info?.country
-              ? this.basket.receiver_info.country
-              : SetupService.DefaultCountry(),
+          countryCode: this.country_code,
         };
 
         const PaymentMessageElement = elements.create(

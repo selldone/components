@@ -88,6 +88,7 @@
           :key="index"
           :basket-item="item"
           :shop="shop"
+          small-width
         ></s-shop-basket-item>
       </div>
       <v-spacer style="min-height: 164px"></v-spacer>

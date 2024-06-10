@@ -19,6 +19,7 @@
       :key="index"
       :basket-item="item"
       :shop="shop"
+      :small-width="$vuetify.display.mdAndDown"
     >
     </s-shop-basket-item>
   </div>

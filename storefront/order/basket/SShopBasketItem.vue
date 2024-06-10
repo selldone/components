@@ -26,16 +26,18 @@
         class="text-start px-2"
         cols="12"
         sm="5"
-
+        :md="smallWidth?5:6"
       >
         <router-link
           :to="{
             name: window.$storefront.routes.PRODUCT_PAGE,
             params: { product_id: basketItem.product_id },
           }"
+          title="See product details"
         >
-          <v-img
-            :src="
+          <v-sheet class="pa-1 overflow-hidden d-inline-block me-2 float-start" rounded="lg" color="#eee">
+            <v-img
+                :src="
               product?.icon
                 ? getShopImagePath(
                     variant?.image ? variant.image : product.icon,
@@ -43,13 +45,14 @@
                   )
                 : getProductImage(basketItem.product_id)
             "
-            aspect-ratio="1"
-            class="item-image rounded float-start me-2"
-            height="84px"
-            min-height="42px"
-            min-width="42px"
-            width="84px"
-          />
+                aspect-ratio="1"
+                class="pp rounded-lg  border elevation-3 bg-white hover-scale-tiny"
+                height="84px"
+                min-height="42px"
+                min-width="42px"
+                width="84px"
+            />
+          </v-sheet>
         </router-link>
 
         <router-link
@@ -58,6 +61,7 @@
             params: { product_id: basketItem.product_id },
           }"
           class="shop-item-title"
+          title="See product details"
         >
           {{ product.title?.limitWords(12) }}
 
@@ -119,7 +123,7 @@
       </v-col>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <v-col cols="6"  sm="3" >
+      <v-col cols="6"  sm="3" :md="smallWidth?3:3" >
         <p v-if="basketItem.dis" class="discount-value">
           <u-price
             :amount="
@@ -204,7 +208,7 @@
       </v-col>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <v-col cols="6" sm="4" >
+      <v-col cols="6" sm="4" :md="smallWidth?4:3" >
         <s-shop-basket-item-count-select
           v-model="basketItem.count"
           :disabled="['area', 'volume'].includes(product.price_input)"
@@ -272,6 +276,7 @@ export default {
       required: true,
       type: Object,
     },
+    smallWidth:Boolean,
   },
 
   data: function () {
@@ -451,6 +456,10 @@ export default {
     cursor: pointer;
     font-weight: 500;
     color: currentColor;
+    &:hover{
+     // font-weight: bolder;
+      text-decoration: underline !important;
+    }
   }
 
   .mini-info {
@@ -459,9 +468,6 @@ export default {
     margin: 0;
   }
 
-  .item-image {
-    cursor: pointer;
-  }
 
   .shop-item-price {
     font-size: 1.2rem;

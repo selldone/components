@@ -13,85 +13,151 @@
   -->
 
 <template>
-  <v-menu
-    :disabled="!auto_complete_address"
-    :location="top ? 'top' : bottom ? 'bottom' : undefined"
-    :model-value="
-      auto_complete_address /*Disable after user click on an item*/ &&
-      suggestion_menu &&
-      search_results &&
-      search_results.length
-    "
-    :top="top"
-    @update:model-value="(val) => (suggestion_menu = val)"
-  >
-    <template v-slot:activator="{ props }">
-      <v-textarea
-        :hide-details="hideDetails"
-        :label="`▼ ${title}`"
-        :loading="search_busy"
-        :model-value="modelValue"
-        :placeholder="$t('global.map_view.enter_your_address')"
-        :readonly="viewOnly"
-        :rounded="rounded"
-        :rows="rows"
-        :variant="variant ? variant : solo ? 'solo' : 'underlined'"
-        auto-grow
-        clearable
-        color="green"
-        persistent-placeholder
-        v-bind="props"
-        @blur="$emit('update:isFocus', false)"
-        @focus="$emit('update:isFocus', true)"
-        @update:model-value="
-          (val) => {
-            search_address = val;
-            $emit('update:modelValue', val);
-          }
-        "
-        @click:clear="auto_complete_address = true"
-      >
-        <template v-slot:prepend-inner>
-          <v-icon :color="prependIconColor"> {{ prependIcon }}</v-icon>
-        </template>
-      </v-textarea>
-    </template>
-
-    <v-list
-      class="border-between-vertical -dashed"
-      density="compact"
-      lines="two"
-      rounded="xl"
-      style="line-height: 1.5em"
+  <div class="position-relative">
+    <v-textarea
+      :hide-details="hideDetails"
+      :label="`▼ ${title ? title : $t('global.commons.address')}`"
+      :loading="search_busy"
+      :model-value="modelValue"
+      :placeholder="$t('global.map_view.enter_your_address')"
+      :readonly="viewOnly"
+      :rounded="rounded"
+      :rows="rows"
+      :variant="variant ? variant : solo ? 'solo' : 'underlined'"
+      auto-grow
+      clearable
+      color="green"
+      persistent-placeholder
+      @blur="$emit('update:isFocus', false)"
+      @focus="$emit('update:isFocus', true)"
+      @update:model-value="
+        (val) => {
+          search_address = val;
+          $emit('update:modelValue', val);
+          if (!val) auto_complete_address = true;
+        }
+      "
+      @click:clear="auto_complete_address = true"
+      @update:focused="setFocused"
+      @keydown.enter.stop="auto_complete_address = false"
     >
-      <v-list-item
-        v-for="(item, index) in search_results"
-        :key="index"
-        class="text-start"
-        @click="
-          auto_complete_address =
-            !autoDisableAutoComplete /*Now user can edit address manually!*/;
-          $emit('select:address', item);
+      <template v-slot:prepend-inner>
+        <v-icon :color="prependIconColor"> {{ prependIcon }}</v-icon>
+      </template>
+    </v-textarea>
+
+    <v-expand-transition>
+      <div
+        v-if="
+          attach &&
+          focused &&
+          auto_complete_address /*Disable after user click on an item*/ &&
+          search_results &&
+          search_results.length
         "
       >
-        <b class="me-2 small">
-          <flag
-            v-if="item.country"
-            :iso="item.country"
-            :squared="false"
-            class="me-1"
-          />
-
-          {{ item.title }}</b
-        >
-        <p
-          class="text-start m-0"
+        <v-list
+          class="border-between-vertical -dashed text-start"
+          density="compact"
+          lines="two"
           style="line-height: 1.5em"
-          v-text="item.address"
-        />
-      </v-list-item>
-    </v-list>
-  </v-menu>
+        >
+          <v-list-item
+            v-for="(item, index) in search_results"
+            :key="index"
+            class="text-start"
+            @click="
+              auto_complete_address =
+                !autoDisableAutoComplete /*Now user can edit address manually!*/;
+              $emit('select:address', item);
+            "
+          >
+            <b class="me-2">
+              <flag
+                v-if="item.country"
+                :iso="item.country"
+                :squared="false"
+                class="me-1"
+              />
+
+              {{ item.title }}</b
+            >
+            <v-chip
+              v-if="item.state"
+              label
+              color="#000"
+              variant="plain"
+              size="x-small"
+              class="mx-1"
+              >{{ item.state }}
+            </v-chip>
+            <v-chip
+              v-if="item.city"
+              label
+              color="#000"
+              variant="plain"
+              size="x-small"
+              class="mx-1"
+              >{{ item.city }}
+            </v-chip>
+            <p
+              class="text-subtitle-2"
+              style="line-height: 1.5em"
+              v-text="item.address"
+            />
+          </v-list-item>
+        </v-list>
+      </div>
+    </v-expand-transition>
+    <v-menu
+      v-if="!attach"
+      activator="parent"
+      :disabled="!auto_complete_address"
+      :location="top ? 'top' : bottom ? 'bottom' : undefined"
+      :model-value="
+        auto_complete_address /*Disable after user click on an item*/ &&
+        suggestion_menu &&
+        search_results &&
+        search_results.length
+      "
+      @update:model-value="(val) => (suggestion_menu = val)"
+    >
+      <v-list
+        class="border-between-vertical -dashed"
+        density="compact"
+        lines="two"
+        rounded="xl"
+        style="line-height: 1.5em"
+      >
+        <v-list-item
+          v-for="(item, index) in search_results"
+          :key="index"
+          class="text-start"
+          @click="
+            auto_complete_address =
+              !autoDisableAutoComplete /*Now user can edit address manually!*/;
+            $emit('select:address', item);
+          "
+        >
+          <b class="me-2 small">
+            <flag
+              v-if="item.country"
+              :iso="item.country"
+              :squared="false"
+              class="me-1"
+            />
+
+            {{ item.title }}</b
+          >
+          <p
+            class="text-start m-0"
+            style="line-height: 1.5em"
+            v-text="item.address"
+          />
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </div>
 </template>
 
 <script>
@@ -110,7 +176,6 @@ export default {
 
     title: {
       type: String,
-      default: "Address",
     },
 
     isFocus: {},
@@ -153,6 +218,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    attach: Boolean,
   },
 
   data() {
@@ -164,24 +230,27 @@ export default {
       search_results: [],
       search_busy: false,
       auto_complete_address: true, // Enable auto complete, false: user can edit address manuaaly without opening menu!
+
+      focused: false,
     };
   },
 
   watch: {
     search_address: _.throttle(function (newVal, oldVal) {
+      if (!this.focused) return;
+
+      /*  this.search_results = [
+          { title: "title 1", address: "address 1" },
+          { title: "title 2", address: "address 2" },
+        ];
+        return;*/
       if (!newVal) this.auto_complete_address = true;
 
       if (!this.auto_complete_address) return;
-      // watch it
 
       if (!newVal || newVal.length < 4) return;
 
-      //  if(this.search_busy)return;
       this.search_busy = true;
-      // watch it
-
-      //let t = this;
-
       axios
         .get(window.ADDRESS_API.GET_AUTOCOMPLETE(), {
           params: {
@@ -206,6 +275,13 @@ export default {
           this.search_busy = false;
         });
     }, 800),
+  },
+  methods: {
+    setFocused(val) {
+      if (val) {
+        this.focused = true;
+      } else _.delay(() => (this.focused = false), 100);
+    },
   },
 };
 </script>

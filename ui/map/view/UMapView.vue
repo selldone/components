@@ -14,69 +14,41 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="map">
-    <v-slide-group
+    <u-map-view-address-book
       v-if="hasAddressBook"
-      :model-value="selected_address_from_list"
-      center-active
-      class="pa-4 center-items"
-      show-arrows
+      v-model="selected_address_from_list"
+      :selectedAddressId="selectedAddressId"
+      :newAddressTitle="newAddressTitle"
+      :external-pack="{
+        country: this.country,
+        state: this.state,
+        state_code: this.state_code,
+        city: this.city,
+
+        address: this.address,
+        location: this.last_selected_position,
+        no: this.details_number,
+        unit: this.details_unit,
+        name: this.details_full_name,
+        phone: this.phone_number,
+        message: this.details_message,
+        postal: this.postal,
+      }"
       style="
         position: absolute;
         top: 4px;
         left: 0px;
+        right: 0;
         z-index: 1;
         overflow-x: auto;
         white-space: nowrap;
         width: 100%;
       "
-    >
-      <v-slide-group-item v-for="item in address_book" :key="item.id">
-        <v-sheet
-          :class="{ 'op-0-5': !noMap, 'op-0-9': noMap }"
-          :color="selected_address_from_list === item ? '#1976d2' : '#fff'"
-          :dark="selected_address_from_list === item"
-          :title="item.address"
-          class="ma-1 pa-2 position-relative opacity-1-hover pp usn"
-          width="180"
-          @click="clickOnAddressItem(item)"
-        >
-          <div class="font-weight-bold single-line d-flex align-center">
-            {{ item.title }}
-            <v-spacer></v-spacer>
-            <v-btn
-              :title="$t('global.actions.delete')"
-              class="float-end"
-              icon
-              variant="text"
-              @click.stop="deleteAddressBook(item)"
-            >
-              <v-icon>close</v-icon>
-            </v-btn>
-          </div>
-          <div>
-            <div class="small single-line text-start">
-              <v-icon class="me-1" size="small">map</v-icon>
-              <flag
-                v-if="item.country"
-                :iso="item.country"
-                :squared="false"
-                class="me-1"
-              />
-
-              {{ item.address }}
-            </div>
-            <v-icon v-if="item.phone" size="small"> phone</v-icon>
-            <v-icon v-if="item.location" size="small"> pin_drop</v-icon>
-          </div>
-        </v-sheet>
-      </v-slide-group-item>
-    </v-slide-group>
-
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    ></u-map-view-address-book>
 
     <div
       v-if="hasAddressBook"
-      style="position: absolute; top: 48px; left: 8px; z-index: 1000"
+      style="position: absolute; top: 84px; left: 8px; z-index: 1000"
     >
       <div class="mb-5">
         <v-btn
@@ -95,39 +67,6 @@
 
           <v-tooltip activator="parent">
             {{ $t("global.actions.close") }}
-          </v-tooltip>
-        </v-btn>
-      </div>
-
-      <div v-if="$vuetify.display.mdAndUp" class="mb-5">
-        <v-btn
-          v-if="canSaveAddress"
-          class="zoomIn"
-          color="#1976D2"
-          icon
-          size="small"
-          variant="elevated"
-          @click="dialog_add_to_address_book = true"
-        >
-          <v-icon>add</v-icon>
-          <v-tooltip activator="parent">
-            {{ $t("global.actions.add") }}
-          </v-tooltip>
-        </v-btn>
-      </div>
-      <div v-if="$vuetify.display.mdAndUp" class="mb-5">
-        <v-btn
-          v-if="canSaveUpdate"
-          :loading="busy_update_book"
-          class="zoomIn"
-          icon
-          size="small"
-          variant="elevated"
-          @click="updateAddressBook"
-        >
-          <v-icon color="#1976D2"> save</v-icon>
-          <v-tooltip activator="parent">
-            {{ $t("global.actions.update") }}
           </v-tooltip>
         </v-btn>
       </div>
@@ -194,50 +133,9 @@
         '-detail': mode_bottom_card === 'detail',
         'is-mobile': isMobile,
         'is-full-h': /* isFocus ||*/ mode_bottom_card === 'detail',
-        'has-addresses': address_book && address_book.length,
       }"
       class="bottom-card thin-scroll text-start d-flex flex-column"
     >
-      <!-- --------- Tab Search address --------- -->
-
-      <v-slide-y-reverse-transition
-        v-if="$vuetify.display.smAndDown"
-        :style="$vuetify.locale.isRtl ? 'flex-direction: row-reverse;' : ''"
-        class="mobile-toolbar"
-        group
-        tag="v-row"
-      >
-        <v-btn
-          v-if="canSaveAddress"
-          key="mt-1"
-          :caption="$t('global.actions.add')"
-          class="sub-caption b-16px -black mx-2"
-          color="#1976D2"
-          icon
-          size="small"
-          variant="elevated"
-          @click="dialog_add_to_address_book = true"
-        >
-          <v-icon>add</v-icon>
-        </v-btn>
-
-        <v-btn
-          v-if="canSaveUpdate"
-          key="mt-2"
-          :caption="$t('global.actions.edit')"
-          :loading="busy_update_book"
-          class="sub-caption b-16px -black mx-2"
-          icon
-          size="small"
-          variant="elevated"
-          @click="updateAddressBook"
-        >
-          <v-icon color="#1976D2"> save</v-icon>
-        </v-btn>
-
-        <v-spacer key="mt-s"></v-spacer>
-      </v-slide-y-reverse-transition>
-
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Loading ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <v-progress-circular
@@ -256,20 +154,21 @@
         >
           <v-container>
             <!-- Uncompleted fields errors -->
-            <div
-              v-if="!isFocus"
-              :style="isMobile ? 'position: absolute;bottom: 0' : ''"
-              class="mb-4"
-            >
-              <div v-if="address && !country">
-                <v-icon class="me-1" color="red" size="small">warning</v-icon>
-                {{ $t("global.notification.country_invalid") }}
+            <v-expand-transition>
+              <div
+                  v-if="!isFocus"
+
+              >
+                <div v-if="address && !country"  class="mb-2">
+                  <v-icon class="me-1" color="red" size="small">warning</v-icon>
+                  {{ $t("global.notification.country_invalid") }}
+                </div>
+                <div v-if="address && !postal && has_postcode"  class="mb-2">
+                  <v-icon class="me-1" color="red" size="small">warning</v-icon>
+                  {{ $t("global.notification.postal_code_invalid") }}
+                </div>
               </div>
-              <div v-if="address && !postal && has_postcode">
-                <v-icon class="me-1" color="red" size="small">warning</v-icon>
-                {{ $t("global.notification.postal_code_invalid") }}
-              </div>
-            </div>
+            </v-expand-transition>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Has Map Mode > Address input (Auto complete) ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -281,6 +180,7 @@
               :top="!isMobile"
               auto-disable-auto-complete
               @select:address="(it) => onSelectAddress(it)"
+              attach
             ></u-map-address-input>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Actions ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -394,7 +294,7 @@
               <v-col cols="12" md="6" sm="6">
                 <s-country-select
                   v-model="country"
-                  :dense="isMobile"
+                  :density="isMobile ? 'compact' : undefined"
                   :filter="availableCountries"
                   :label="$t('global.address_info.country')"
                   :readonly="viewOnly"
@@ -408,7 +308,7 @@
                 <component
                   :is="states && states.length ? 'v-combobox' : 'v-text-field'"
                   v-model="state"
-                  :dense="isMobile"
+                  :density="isMobile ? 'compact' : undefined"
                   :items="states ? states : []"
                   :label="state_label"
                   :readonly="viewOnly"
@@ -546,57 +446,6 @@
         </div>
       </v-expand-transition>
     </div>
-
-    <!-- ███████████████████████ Dialog > Address book ███████████████████████ -->
-
-    <v-dialog v-model="dialog_add_to_address_book" max-width="500px">
-      <v-card>
-        <v-card-title>
-          <v-icon class="me-2" color="#333">map</v-icon>
-          {{ $t("global.map_view.add_address_to_list") }}
-        </v-card-title>
-        <v-card-text>
-          <v-text-field
-            v-model="new_address_title"
-            :label="$t('global.map_view.address_title_input')"
-            class="text-start mx-2"
-            color="primary"
-            prepend-inner-icon="fa:fas fa-tag"
-            variant="underlined"
-          >
-            <template v-slot:prepend-inner>
-              <v-fade-transition leave-absolute>
-                <v-icon v-if="new_address_title" color="success">
-                  check_circle
-                </v-icon>
-              </v-fade-transition>
-            </template>
-          </v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn
-              :class="{ disabled: !new_address_title }"
-              :loading="busy_save"
-              color="primary"
-              size="x-large"
-              @click="saveCurrentPosition"
-            >
-              <v-icon start>save</v-icon>
-              {{ $t("global.actions.save") }}
-            </v-btn>
-            <v-btn
-              size="x-large"
-              variant="text"
-              @click="dialog_add_to_address_book = false"
-            >
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.cancel") }}
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -613,10 +462,11 @@ import UMapAddressInput from "../../../ui/map/address/input/UMapAddressInput.vue
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { installGlobalComponents } from "../../../components-mandetory";
+import UMapViewAddressBook from "@selldone/components-vue/ui/map/view/address-book/UMapViewAddressBook.vue";
 
 export default {
   name: "UMapView",
-  components: { UMapAddressInput, SCountrySelect },
+  components: { UMapViewAddressBook, UMapAddressInput, SCountrySelect },
   emits: [
     "update:modelValue",
     "close",
@@ -709,6 +559,9 @@ export default {
       type: String,
     },
 
+    /**
+     * Force selected address ID
+     */
     selectedAddressId: {
       require: false,
     },
@@ -798,14 +651,7 @@ export default {
       user_location: null,
 
       // Address Book
-      address_book: null,
-      dialog_add_to_address_book: false,
-      new_address_title: null,
       selected_address_from_list: null,
-
-      busy_update_book: false,
-      busy_fetch: false,
-      busy_save: false,
 
       // =========== Value Info ===========
       country: SetupService.DefaultCountry(),
@@ -885,13 +731,9 @@ export default {
 
       this.mode_bottom_card = "default";
 
-      this.centerUpdated(val.location);
+      if (val.location) this.centerUpdated(val.location);
 
       this.addCurrentToDestinationList(this.last_selected_position);
-    },
-
-    newAddressTitle(val) {
-      this.new_address_title = val;
     },
   },
 
@@ -907,14 +749,6 @@ export default {
     },
     validPhoneNumber() {
       return this.phone_number && this.phone_number.length > 6;
-    },
-
-    canSaveAddress() {
-      return this.address;
-    },
-
-    canSaveUpdate() {
-      return this.address && this.selected_address_from_list;
     },
 
     //▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Country / State ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂
@@ -1018,10 +852,6 @@ export default {
     this.assignDataFromValue();
 
     if (this.startupMode) this.mode_bottom_card = this.startupMode;
-
-    if (this.hasAddressBook) this.fetchAddressBook();
-
-    this.new_address_title = this.newAddressTitle;
 
     // No map in shop configuration ➡ Force mode just in detail:
     if (this.noMap) {
@@ -1217,156 +1047,6 @@ export default {
      *                          Address book
      *******************************************************************/
 
-    clickOnAddressItem(item) {
-      this.selected_address_from_list = item;
-
-      // Reset center:
-      if (item.location) this.$emit("update:center", item.location);
-    },
-
-    setNewAddressName(address) {
-      this.dialog_add_to_address_book = address;
-    },
-
-    saveCurrentPosition() {
-      this.dialog_add_to_address_book = false;
-      this.busy_save = true;
-
-      axios
-        .post(window.ADDRESS_API.POST_ADDRESS(), {
-          title: this.new_address_title,
-
-          country: this.country,
-          state: this.state,
-          state_code: this.state_code,
-          city: this.city,
-
-          address: this.address,
-          location: this.last_selected_position,
-          no: this.details_number,
-          unit: this.details_unit,
-          name: this.details_full_name,
-          phone: this.phone_number,
-          message: this.details_message,
-          postal: this.postal,
-        })
-        .then((response) => {
-          if (!response.data.error) {
-            this.showSuccessAlert(
-              null,
-              this.$t("global.map_view.notifications.save_in_list"),
-            );
-            this.AddOrUpdateItemByID(this.address_book, response.data.address);
-            this.selected_address_from_list = null;
-
-            this.new_address_title = "";
-          } else {
-            this.showErrorAlert(null, response.data.error_msg);
-          }
-        })
-        .catch((error) => {
-          this.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_save = false;
-        });
-    },
-
-    fetchAddressBook() {
-      if (!this.USER()) return;
-
-      this.busy_fetch = true;
-
-      axios
-        .get(window.ADDRESS_API.GET_MY_ADDRESSES())
-        .then((response) => {
-          if (!response.data.error) {
-            this.address_book = response.data.addresses;
-          } else {
-            this.showErrorAlert(null, response.data.error_msg);
-          }
-        })
-        .catch((error) => {
-          this.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_fetch = false;
-        });
-    },
-
-    deleteAddressBook(item) {
-      this.openDangerAlert(
-        this.$t("global.map_view.delete_address_dialog.title"),
-        this.$t("global.map_view.delete_address_dialog.message"),
-        this.$t("global.map_view.delete_address_dialog.action"),
-        () => {
-          this.selected_address_from_list = null;
-
-          axios
-            .delete(window.ADDRESS_API.DELETE_MY_ADDRESSES(item.id))
-            .then((response) => {
-              if (!response.data.error) {
-                this.DeleteItemByID(this.address_book, response.data.id);
-              } else {
-                this.showErrorAlert(null, response.data.error_msg);
-              }
-            })
-            .catch((error) => {
-              this.showLaravelError(error);
-            });
-        },
-      );
-    },
-
-    updateAddressBook() {
-      this.busy_update_book = true;
-      axios
-        .put(
-          window.ADDRESS_API.PUT_ADDRESS(
-            this.selectedAddressId
-              ? this.selectedAddressId
-              : this.selected_address_from_list.id,
-          ),
-          {
-            title: this.selectedAddressTitle
-              ? this.selectedAddressTitle
-              : this.selected_address_from_list.title,
-
-            country: this.country,
-            state: this.state,
-            state_code: this.state_code,
-            city: this.city,
-            address: this.address,
-            location: this.last_selected_position,
-            no: this.details_number,
-            unit: this.details_unit,
-            name: this.details_full_name,
-            phone: this.phone_number,
-            message: this.details_message,
-            postal: this.postal,
-          },
-        )
-        .then((response) => {
-          if (!response.data.error) {
-            this.UpdateItemByID(this.address_book, response.data.address);
-            this.showSuccessAlert(
-              null,
-              this.$t("global.map_view.notifications.edit_success", {
-                title: response.data.address.title,
-              }),
-            );
-          } else {
-            this.showErrorAlert(null, response.data.error_msg);
-          }
-        })
-        .catch((error) => {
-          this.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_update_book = false;
-        });
-    },
-
     assignDataFromValue() {
       if (!this.modelValue) return;
 
@@ -1497,12 +1177,6 @@ export default {
       min-height: calc(100% - 120px);
     }
 
-    &.has-addresses {
-      max-height: calc(
-        100% - 130px
-      ); // No map mode : Make sure show addresses list correctly!
-    }
-
     > :last-child {
     }
   }
@@ -1519,13 +1193,6 @@ export default {
 
   p {
     margin: 0 !important;
-  }
-
-  .mobile-toolbar {
-    position: absolute;
-    top: -70px;
-    width: 90%;
-    left: 5%;
   }
 }
 
