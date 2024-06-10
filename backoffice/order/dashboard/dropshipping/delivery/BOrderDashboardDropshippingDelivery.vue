@@ -115,6 +115,7 @@
               :key="item.value"
               color="#fff"
               size="small"
+              variant="flat"
             >
               <v-icon v-if="item.today" color="green" size="12" start
                 >circle
@@ -130,6 +131,7 @@
               :key="item.value"
               color="#fff"
               size="small"
+              variant="flat"
             >
               <img :src="item.icon" class="me-1" width="14px" />
 
