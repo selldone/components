@@ -52,6 +52,7 @@
     "
     item-value="code"
     @update:model-value="(val) => $emit('change', val)"
+    :persistent-placeholder="persistentPlaceholder"
   >
     <template v-slot:item="{ item, props }">
       <v-list-item
@@ -249,6 +250,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    persistentPlaceholder: Boolean,
   },
 
   data: () => ({

@@ -30,8 +30,8 @@
     }}</span>
 
     <span :class="{ 'line-through': lineThrough }">
-      {{ absolute_part
-      }}<span class="small">{{
+      {{ compact?numeralFormat(absolute_part,'0.[0]a'): absolute_part
+      }}<span v-if="!compact" class="small">{{
         is_valid_amount ? getAmountAfterPoint(formatted_number) : ""
       }}</span>
     </span>
@@ -99,6 +99,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    compact:Boolean
   },
 
   computed: {

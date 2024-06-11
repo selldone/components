@@ -263,7 +263,7 @@
           </v-list>
         </template>
 
-        <template v-if="sample_template">
+        <template v-if="sample_template && !busy_default">
           <s-widget-header
             :title="$t('shop_sms.template_edit.template.sample.title')"
             icon="chat_bubble_outline"
@@ -278,8 +278,18 @@
             small-width-mode
           ></u-text-copy-box>
 
+          <v-chip v-for="(t_value,t_key) in sample_template_tokens" :key="t_key" class="ma-1" append-icon="content_copy" @click="copyToClipboard(t_key)" size="small" title="Click to copy key">
+            <b>{{t_key}}</b> <small class="mx-1">|</small> {{t_value}}
+          </v-chip>
+
+
           <hr class="my-5" />
         </template>
+
+        <div class="text-center" v-else-if="busy_default">
+          <v-progress-circular class="my-5" size="64" indeterminate>
+          </v-progress-circular>
+        </div>
 
         <template v-if="preview_data">
           <s-widget-header
@@ -379,6 +389,7 @@ export default {
     busy: false,
 
     sample_template: null,
+    sample_template_tokens:[],
     // ------------------------------
     busy_default: false,
     defaults: {}, // Keep received values!
@@ -538,12 +549,20 @@ export default {
     getDefaultText() {
       this.getDefault(SmsTemplateMode.text.code, (body) => {
         this.text = body;
+        this.showSuccessAlert(
+          this.sms.title + " | " + this.getLanguageName(data.language),
+          `The default message for <b>${this.getLanguageName(
+            data.language,
+          )}</b> been loaded successfully.`,
+        );
       });
     },
     getDefaultTemplate() {
       this.sample_template = null;
-      this.getDefault(SmsTemplateMode.template.code, (body) => {
+      this.sample_template_tokens=[];
+      this.getDefault(SmsTemplateMode.template.code, (body,tokens) => {
         this.sample_template = body;
+        this.sample_template_tokens=tokens;
       });
     },
     getDefault(mode, callback) {
@@ -572,13 +591,7 @@ export default {
             this.showErrorAlert(null, data.error_msg);
           } else {
             this.defaults[mode + data.language] = data.body;
-            callback(data.body);
-            this.showSuccessAlert(
-              this.sms.title + " | " + this.getLanguageName(data.language),
-              `The default message for <b>${this.getLanguageName(
-                data.language,
-              )}</b> been loaded successfully.`,
-            );
+            callback(data.body,data.tokens);
           }
         })
         .catch((error) => {
