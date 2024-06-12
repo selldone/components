@@ -172,10 +172,12 @@
                   class="text-wrap mb-2 html-style overflow-visible"
                   v-html="
                     item.type === 'note'
-                      ? smartBeautify(compileMarkdown(item.data.message))
-                      : smartBeautify(
-                          $t(getTimelineStatus(item.type).text, item.data),
-                        )
+                      ? smartBeautify(compileMarkdown(item.data?.message))
+                      : getTimelineStatus(item.type).text
+                        ? smartBeautify(
+                            $t(getTimelineStatus(item.type).text, item.data),
+                          )
+                        : item.type
                   "
                 ></v-list-item-title>
               </template>
@@ -844,6 +846,7 @@ export default {
     },
 
     smartBeautify(html) {
+      if (!html) return "";
       let out = html;
 
       const repos = [
@@ -863,12 +866,12 @@ export default {
           if (it.code) {
             out = out.replace(
               " " + it.code + " ",
-              `<img width="16" height="16" src="${_image}" title="${this.$t(it.name || it.code)}">`,
+              `<img class="mx-1" width="16" height="16" src="${_image}" title="${this.$t(it.name || it.code)}">`,
             );
           } else if (it.name)
             out = out.replace(
               " " + it.name + " ",
-              `<img width="16" height="16" src="${_image}" title="${this.$t(it.name)}">`,
+              `<img class="mx-1" width="16" height="16" src="${_image}" title="${this.$t(it.name)}">`,
             );
         });
       });

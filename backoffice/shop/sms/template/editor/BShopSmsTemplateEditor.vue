@@ -381,7 +381,7 @@ export default {
     enable: true,
 
     language: null,
-    mode: SmsTemplateMode.text.code,
+    mode: null,
     text: null,
     data: [],
     code: null,
