@@ -90,7 +90,7 @@
                 add-icon="open_in_new"
                 add-text
                 add-sub-caption="Public products listing page."
-                :disabled="!vendor.enable"
+                :disabled="!vendor?.enable"
                 disabled-reason="Vendor is disabled."
               >
               </s-widget-header>
@@ -298,7 +298,7 @@
                 ></b-page-input>
 
                 <v-expand-transition group>
-                  <div v-if="page?.id && !edit_slug">
+                  <div v-if="page?.id && !edit_slug && vendor?.id/*Edit mode*/">
                     <v-list-item key="1">
                       <template v-slot:title>
                         <div class="text-subtitle-2">
@@ -316,6 +316,8 @@
                     <v-text-field
                       v-model="slug"
                       label="Path"
+                      placeholder="Enter a custom path..."
+                      prepend-inner-icon="view_cozy"
                       hint="Change the path the vendor's dynamic landing page."
                       variant="underlined"
                       class="px-2"
@@ -342,7 +344,7 @@
                     <b>{{ page.title }}</b>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    /pages/{{ page.name }}
+                    {{ vendor_landing_page_url }}
                     <v-chip
                       prepend-icon="visibility"
                       size="x-small"
@@ -403,7 +405,7 @@
                     : 'Enter email...'
                 "
                 :rules="[GlobalRules.email()]"
-                append-icon="email"
+                append-inner-icon="email"
                 messages="This email will receive all notifications and updates."
                 variant="underlined"
               ></v-text-field>
@@ -439,19 +441,19 @@
               <v-text-field
                 v-model="address"
                 :label="$t('global.commons.address')"
-                append-icon="place"
+                append-inner-icon="place"
                 variant="underlined"
               ></v-text-field>
               <v-text-field
                 v-model="web"
                 :label="$t('global.commons.website')"
-                append-icon="link"
+                append-inner-icon="link"
                 variant="underlined"
               ></v-text-field>
               <v-text-field
                 v-model="tel"
                 :label="$t('global.commons.tel')"
-                append-icon="phone"
+                append-inner-icon="phone"
                 variant="underlined"
               ></v-text-field>
             </div>
@@ -603,14 +605,14 @@
                 <v-text-field
                   v-model="business_name"
                   :label="$t('global.commons.business_name')"
-                  append-icon="corporate_fare"
+                  append-inner-icon="corporate_fare"
                   variant="underlined"
                 ></v-text-field>
 
                 <v-text-field
                   v-model="tax_id"
                   :label="$t('global.commons.tax_id')"
-                  append-icon="assured_workload"
+                  append-inner-icon="assured_workload"
                   variant="underlined"
                 ></v-text-field>
               </template>
@@ -628,7 +630,7 @@
               <v-text-field
                 v-model="bank"
                 :label="$t('global.commons.bank_name')"
-                append-icon="account_balance"
+                append-inner-icon="account_balance"
                 auto-grow
                 hint="The name of the bank where the vendor has their account."
                 persistent-placeholder
@@ -1439,12 +1441,12 @@ export default {
         ? window.$vendor.page.getPageAugment(
             this.$route.params.vendor_id,
             page_id,
-            this.vendor.augment,
+            this.vendor?.augment,
           )
         : window.$backoffice.page.getPageAugment(
             this.shop.id,
             page_id,
-            this.vendor.augment,
+            this.vendor?.augment,
           )
       )
 
