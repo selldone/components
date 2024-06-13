@@ -270,7 +270,7 @@
                 add-sub-caption="Custom landing page."
                 add-icon="open_in_new"
                 add-text
-                :disabled="!vendor.enable"
+                :disabled="!vendor?.enable"
                 disabled-reason="Vendor is disabled."
               >
               </s-widget-header>
