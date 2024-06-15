@@ -60,7 +60,7 @@ export default {
   computed: {},
   watch: {
     show_dialog(val) {
-      this.BlurApp(!!val);
+      //this.BlurApp(!!val);
     },
   },
   created() {

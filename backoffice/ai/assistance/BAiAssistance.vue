@@ -153,7 +153,7 @@ export default {
 
   watch: {
     modelValue(val) {
-      this.BlurApp(val);
+      //this.BlurApp(val);
 
       if (val) {
         this.voice = null;

@@ -541,6 +541,16 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
     }
   }
 }
+.v-overlay:not(.v-dialog--fullscreen){
+  &.v-dialog,&.v-bottom-sheet{
+    transition: 0.5s all ;
+    &.v-overlay--active{
+      transition: 1s all ;
+      backdrop-filter: blur(8px) grayscale(0.5);
+    }
+
+  }
+}
 
 // ----------------------- Draw an outline around the badge ----------------------
 

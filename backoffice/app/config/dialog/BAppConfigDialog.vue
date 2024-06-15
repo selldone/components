@@ -64,7 +64,7 @@ export default {
   watch: {
     value_local(val) {
       this.$emit("update:modelValue", val);
-      this.BlurApp(val);
+      //this.BlurApp(val);
     },
 
     modelValue(val) {

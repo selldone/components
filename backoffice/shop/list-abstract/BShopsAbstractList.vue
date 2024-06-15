@@ -14,6 +14,8 @@
 
 <template>
   <v-container class="text-center">
+    <!-- ------------------------BShopsAbstractList Component------------------------ -->
+
     <v-row
       align="center"
       class="thin-scroll"

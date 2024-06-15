@@ -13,113 +13,123 @@
   -->
 
 <template>
-  <v-sheet :dark="dark !== 'upload'" color="transparent">
-    <v-alert
-      class="max-widget-width mx-auto mb-5 text-start"
-      closable
-      variant="outlined"
-    >
-      <v-row align="center" no-gutters>
-        <div>Discover how it works.</div>
-        <v-spacer></v-spacer>
-        <v-btn
-          class="ma-1 tnt"
-          color="#fff"
-          size="small"
-          variant="flat"
-          @click="dialog_video = true"
-        >
-          <v-icon class="me-1">smart_display</v-icon>
-          Watch Now
-        </v-btn>
-      </v-row>
-    </v-alert>
-
-    <v-alert
-      v-if="!is_premium"
-      class="max-widget-width mx-auto mb-5 text-start"
-      variant="outlined"
-    >
-      <v-row align="center" no-gutters>
-        <div>
-          Upgrade to <b>✨Premium User</b> and enjoy additional free background
-          removal tokens.
-        </div>
-        <v-spacer></v-spacer>
-        <v-btn
-          class="ma-1 tnt"
-          color="#fff"
-          size="small"
-          variant="flat"
-          @click="showNeedSubscribePremium()"
-          >View Plan
-        </v-btn>
-      </v-row>
-    </v-alert>
-
+  <v-sheet :dark="dark !== 'upload'" color="transparent" class="text-center">
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Drop Image ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <v-expand-transition>
       <div v-if="step === 'upload'">
         <u-loading-progress v-if="uploading"></u-loading-progress>
 
-        <v-text-field
-          v-model="title"
-          class="strong-field max-widget-width mx-auto"
-          label="Name of product? (optional)"
-          persistent-placeholder
-          placeholder="Model name, product tile or ..."
-          variant="underlined"
-        ></v-text-field>
+        <div class="max-widget-width mx-auto">
+          <s-widget-header title="Write about product" icon="looks_one">
+          </s-widget-header>
+          <v-text-field
+            v-model="title"
+            class="strong-field"
+            label="Name of product? (optional)"
+            persistent-placeholder
+            placeholder="Model name, product tile or ..."
+            variant="underlined"
+          ></v-text-field>
 
-        <div class="position-relative">
-          <s-image-uploader
-            :allow-multiple="false"
-            :dark="false"
-            :headers="{ 'category-id': category?.id, prompt: title }"
-            :placeholder-image="
-              require('../../../product/add/ai/assets/upload.svg')
-            "
-            :server="window.API.POST_AI_ADD_PRODUCT(shop.id)"
-            max-file-size="4MB"
-            min-height="360px"
-            no-svg
-            @onAddFile="onAddFile"
-            @onError="uploading = false"
-            @onProcessFileAbort="onAbortUpload"
-            @onProcessFileStart="onStartUpload"
-            @response="handleAiUploadImage"
-          ></s-image-uploader>
-          <u-lottie
-            v-if="uploading"
-            :options="{
-              path: '/animation/animation-scan.json',
-              loop: true,
-            }"
-            :speed="1"
-            class="center-absolute pen"
-            height="80%"
-            style="z-index: 10"
-            width="80%"
-          />
-        </div>
-        <div>
-          <img
-            class="my-2"
-            height="84"
-            src="./assets/arrow-circle.svg"
-            width="84"
-          />
-          <div
-            class="typo-body text-white fadeIn delay_300 max-widget-width mx-auto py-2"
-          >
-            You just need to take a photo or drag and drop an image here!
+          <s-widget-header title="Select product's image" icon="looks_two">
+          </s-widget-header>
+
+          <div class="position-relative">
+            <s-image-uploader
+              :allow-multiple="false"
+              :dark="false"
+              :headers="{ 'category-id': category?.id, prompt: title }"
+              :placeholder-image="
+                require('../../../product/add/ai/assets/upload.svg')
+              "
+              :server="demo?window.GAPI.POST_DEMO_AI_ADD_PRODUCT():window.API.POST_AI_ADD_PRODUCT(shop.id)"
+              max-file-size="4MB"
+              min-height="320px"
+              no-svg
+              @onAddFile="onAddFile"
+              @onError="uploading = false"
+              @onProcessFileAbort="onAbortUpload"
+              @onProcessFileStart="onStartUpload"
+              @response="handleAiUploadImage"
+            ></s-image-uploader>
+            <u-lottie
+              v-if="uploading"
+              :options="{
+                path: '/animation/animation-scan.json',
+                loop: true,
+              }"
+              :speed="1"
+              class="center-absolute pen"
+              height="80%"
+              style="z-index: 10"
+              width="80%"
+            />
           </div>
-          <div class="max-widget-width mx-auto py-2 text-start">
-            <v-icon class="me-1" size="small">auto_awesome</v-icon>
-            Currently, free users receive 3 tokens daily, while premium users
-            get 6 tokens. We plan to increase these limits in the future.
+          <div>
+            <img
+              class="my-2"
+              height="84"
+              src="./assets/arrow-circle.svg"
+              width="84"
+            />
+            <div
+              class="typo-body text-white fadeIn delay_300 max-widget-width mx-auto py-2"
+            >
+              You just need to take a photo or drag and drop an image here!
+            </div>
+            <div v-if="!demo" class="max-widget-width mx-auto py-2 text-start text-subtitle-2">
+              <v-icon class="me-1" size="small">auto_awesome</v-icon>
+              Currently, free users receive 10 tokens daily, while premium users
+              get 100 tokens. To get more tokens, you can upgrade your user to
+              premium.
+            </div>
           </div>
+
+
+        <v-alert
+          class="  my-5 text-start"
+          closable
+          variant="outlined"
+        >
+          <v-row align="center" no-gutters>
+            <div>Discover how it works.</div>
+            <v-spacer></v-spacer>
+            <v-btn
+              class="ma-1 tnt"
+              color="#fff"
+              size="small"
+              variant="flat"
+              @click="dialog_video = true"
+            >
+              <v-icon class="me-1">smart_display</v-icon>
+              Watch Now
+            </v-btn>
+          </v-row>
+        </v-alert>
+
+        <v-alert
+          v-if="!is_premium && !demo"
+          class="  my-5 text-start"
+          variant="outlined"
+        >
+          <v-row align="center" no-gutters>
+            <div>
+              Upgrade to <b>✨Premium User</b> and enjoy additional free
+              background removal tokens.
+            </div>
+            <v-spacer></v-spacer>
+            <v-btn
+              class="ma-1 tnt"
+              color="#fff"
+              size="small"
+              variant="flat"
+              @click="showNeedSubscribePremium()"
+              >View Plan
+            </v-btn>
+          </v-row>
+        </v-alert>
+
         </div>
       </div>
     </v-expand-transition>
@@ -263,7 +273,7 @@
           ></u-price-input>
         </v-sheet>
 
-        <div class="widget-buttons">
+        <div v-if="!demo" class="widget-buttons">
           <v-btn
             :disabled="!type"
             :loading="busy_edit"
@@ -275,6 +285,30 @@
             {{ $t("global.actions.save") }}
           </v-btn>
         </div>
+        <div v-else class="widget-buttons">
+          <v-btn
+              :to="{ name:USER()?'BPageShuttleShops': 'OnboardingPage' }"
+              class="tnt mt-5"
+              rounded="lg"
+              color="#fff"
+              height="unset"
+              max-height="auto"
+              min-height="64"
+              size="large"
+              prepend-icon="add_box"
+          >
+            <div class="d-flex flex-column p-2 text-subtitle-2">
+                        <span class="">{{
+                            $t("home.create_shopping_website")
+                          }}</span>
+              <b class="mt-1">{{ $t("home.start_now_btn") }}</b>
+            </div>
+            <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
+
+          </v-btn>
+
+        </div>
+
       </div>
     </v-expand-transition>
 
@@ -293,7 +327,7 @@
             >Congratulations, your product has been successfully added to your
             store and is now in the current folder.
           </v-list-subheader>
-          <div class="widget-buttons">
+          <div  class="widget-buttons">
             <v-btn
               :to="{
                 name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -325,7 +359,7 @@
             </v-btn>
           </div>
 
-          <div class="widget-buttons">
+          <div  class="widget-buttons">
             <v-btn
               color="#FFF"
               size="x-large"
@@ -336,6 +370,8 @@
               Add New Product
             </v-btn>
           </div>
+
+
         </v-sheet>
       </div>
     </v-expand-transition>
@@ -385,10 +421,12 @@ import { SetupService } from "@selldone/core-js/server/SetupService";
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import VueCompareImage from "../../../../ui/image-compare/VueCompareImage.vue";
+import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 
 export default {
   name: "BProductAddAi",
   components: {
+    SWidgetHeader,
     VueCompareImage,
     USmartSelect,
     UNumberInput,
@@ -401,6 +439,7 @@ export default {
     shop: {
       required: true,
     },
+    demo:Boolean,
     vendor: {
       /*🟢 Vendor Panel 🟢*/ required: false,
     },
@@ -459,7 +498,7 @@ export default {
       }
     },
     is_premium() {
-      return !!this.USER().premium;
+      return !!this.USER()?.premium;
     },
   },
 
