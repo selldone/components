@@ -27,6 +27,7 @@
       class="light-code scrollable-element-light mb-5"
       language="html"
       line-numbers
+      :readonly="readOnly"
     />
   </div>
 </template>
@@ -40,6 +41,7 @@ export default {
   emits: ["update:modelValue"],
   props: {
     modelValue: {},
+    readOnly:Boolean,
   },
   data: () => ({
     code: "\n\n\n\n\n\n",

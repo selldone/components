@@ -20,6 +20,8 @@
       :title="$t('community.access.admins')"
       icon="fa:fas fa-crown"
       target="_blank"
+      :disabled-access="shop && !writeShopAccess(ShopPermissionRegions.COMMUNITY.code)"
+
     ></s-widget-header>
     <v-list-subheader>
       Administrators have unrestricted access to every component of the
@@ -37,6 +39,7 @@
       class="mt-4"
       icon="admin_panel_settings"
       @click:add="showModerators"
+      :disabled-access="shop && !writeShopAccess(ShopPermissionRegions.COMMUNITY.code)"
     ></s-widget-header>
     <v-list-subheader
       >Moderators are granted limited access to oversee the community. They are
@@ -180,6 +183,7 @@
 <script>
 import UDenseCirclesUsers from "../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import CUserInput from "../../../community/user/input/CUserInput.vue";
+import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {
   name: "CAccessController",
@@ -212,6 +216,9 @@ export default {
     };
   },
   computed: {
+    ShopPermissionRegions() {
+      return ShopPermissionRegions
+    },
     admins_url() {
       if (!this.shop) return null;
       return URLS.AdminShopURL(this.shop.id) + "/setting/staff";

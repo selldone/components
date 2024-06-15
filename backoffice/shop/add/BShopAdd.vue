@@ -72,6 +72,7 @@
         placeholder="e.g. Serenity Spa & Wellness"
         required
         variant="underlined"
+        :disabled="readOnly"
       >
         <template v-slot:append-inner>
           <b-translation-button-shop
@@ -90,6 +91,7 @@
         v-model="language"
         :messages="$t('add_shop.language_input_message')"
         max-width="unset"
+        :disabled="readOnly"
       >
       </u-language-input>
 
@@ -104,6 +106,7 @@
         false-gray
         false-icon="public_off"
         true-icon="public"
+        :disabled="readOnly"
       />
       <v-expand-transition>
         <div v-if="!active && shop">
@@ -179,6 +182,7 @@
         placeholder="Write a name... e.g. my-shop"
         required
         variant="underlined"
+        :disabled="readOnly"
       >
         <template v-slot:append-inner>
           <v-progress-circular
@@ -259,6 +263,7 @@
         rows="3"
         style="max-width: 1250px"
         variant="underlined"
+        :disabled="readOnly"
       >
         <template v-slot:append-inner>
           <b-translation-button-shop
@@ -288,6 +293,7 @@
       <div
         class="position-relative map-circle -hover ma-auto pointer-pointer zoomIn mb-2 mt-4"
         @click="map_dialog = true"
+        :class="{pen:readOnly}"
       >
         <img
           :src="
@@ -304,7 +310,7 @@
         ></u-map-view-pin>
       </div>
 
-      <div class="text-center">
+      <div v-if="!readOnly" class="text-center">
         <v-btn
           class="m-2 fadeIn"
           color="red"
@@ -330,6 +336,7 @@
             info.country_code = val.alpha2;
           }
         "
+        :disabled="readOnly"
       />
 
       <v-text-field
@@ -339,6 +346,7 @@
         :label="$t('add_shop.region_input')"
         append-inner-icon="place"
         variant="underlined"
+        :disabled="readOnly"
       />
 
       <v-text-field
@@ -348,6 +356,7 @@
         :label="$t('add_shop.locality_input')"
         append-inner-icon="near_me"
         variant="underlined"
+        :disabled="readOnly"
       />
 
       <v-textarea
@@ -360,6 +369,7 @@
         append-inner-icon="fa:fas fa-map-marked-alt"
         auto-grow
         variant="underlined"
+        :disabled="readOnly"
       />
 
       <v-text-field
@@ -369,6 +379,7 @@
         :label="$t('add_shop.postal_code_input')"
         append-inner-icon="local_convenience_store"
         variant="underlined"
+        :disabled="readOnly"
       />
 
       <v-text-field
@@ -379,6 +390,7 @@
         append-inner-icon="fa:fas fa-phone"
         placeholder="+###-###-######## or use any preferred format..."
         variant="underlined"
+        :disabled="readOnly"
       >
         <template v-slot:append-inner>
           <u-tooltip-tips :message="$t('add_shop.phone_input_tips')" />
@@ -392,6 +404,7 @@
         :label="$t('add_shop.email_input')"
         append-inner-icon="fa:fas fa-envelope"
         variant="underlined"
+        :disabled="readOnly"
       />
     </div>
 
@@ -415,6 +428,7 @@
           label="Your Business Logo"
           max-file-size="512KB"
           @new-path="handleProcessIcon"
+          :disabled="readOnly"
         >
         </s-image-uploader>
       </div>
@@ -434,6 +448,7 @@
           label="Website Favorite Icon"
           max-file-size="512KB"
           @new-path="handleProcessFav"
+          :disabled="readOnly"
         >
         </s-image-uploader>
       </div>
@@ -441,7 +456,7 @@
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Buttons ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <div class="widget-buttons">
+    <div v-if="!readOnly" class="widget-buttons">
       <v-btn
         v-if="step !== 0 || hasFirstBack"
         class="m-2"
@@ -617,6 +632,8 @@ export default {
       default: false,
     },
     showStepper: Boolean,
+
+    readOnly: Boolean,
   },
 
   data: () => ({
@@ -738,9 +755,9 @@ export default {
       this.checkShopNameAvailable();
     }, 1000),
 
-    step(){
-      ScrollHelper.scrollToTop()
-    }
+    step() {
+      ScrollHelper.scrollToTop();
+    },
   },
   created() {
     this.reassignShopInfo();
@@ -1002,7 +1019,7 @@ export default {
             ? this.shop.info
             : {};
 
-        this.selected_country_obj = {alpha2:this.info.country_code};
+        this.selected_country_obj = { alpha2: this.info.country_code };
 
         if (this.info.location) {
           this.center.lat = this.info.location.lat;

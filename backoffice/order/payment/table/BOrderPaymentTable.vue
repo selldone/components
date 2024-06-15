@@ -579,8 +579,9 @@
               'border-start-green no-border-bottom-tr':
                 bill.status === BillStatus.PAYED.code,
               'border-start-red': bill.status === BillStatus.CANCELED.code,
+              'row-hover':bill.payment || bill.gift_cards?.length,
             }"
-            class="text-start row-hover"
+            class="text-start"
             @click="expanded_bill = expanded_bill === bill.id ? null : bill.id"
           >
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Bill > Payment Gateway ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -693,7 +694,7 @@
                   <!-- ▃▃▃▃▃ Bill Menu ▃▃▃▃▃ -->
                   <v-menu class="ms-2">
                     <template v-slot:activator="{ props }">
-                      <v-btn icon v-bind="props">
+                      <v-btn icon v-bind="props" variant="text">
                         <v-icon>more_vert</v-icon>
                       </v-btn>
                     </template>
@@ -1048,8 +1049,9 @@
 
   <!-- █████████████████████████ Dialog > Edit Bill █████████████████████████ -->
 
-  <v-dialog v-model="edit_bill_dialog" max-width="680">
-    <v-card v-if="selected_bill">
+  <v-bottom-sheet v-model="edit_bill_dialog"  max-width="680"
+                  width="98vw" content-class="rounded-t-xl">
+    <v-card v-if="selected_bill" rounded="t-xl" class="text-start">
       <v-card-title
         >{{ $t("process_center.payment_widget.edit_bill_dialog.title") }}
       </v-card-title>
@@ -1078,7 +1080,7 @@
             :variant="
               bill_price === bills_remains + selected_bill.price
                 ? 'text'
-                : 'flat'
+                : 'elevated'
             "
             color="primary"
             size="x-large"
@@ -1120,12 +1122,13 @@
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 
   <!-- █████████████████████████ Dialog > Add Bill █████████████████████████ -->
 
-  <v-dialog v-model="add_bill_dialog" max-width="680">
-    <v-card>
+  <v-bottom-sheet v-model="add_bill_dialog"  max-width="680"
+                  width="98vw"  content-class="rounded-t-xl">
+    <v-card  rounded="t-xl" class="text-start">
       <v-card-title>
         <v-icon class="me-2">note_add</v-icon>
         {{ $t("process_center.payment_widget.add_bill_dialog.title") }}
@@ -1153,14 +1156,14 @@
         <div class="widget-buttons">
           <v-btn
             :variant="bill_price === bills_remains ? 'text' : 'flat'"
-            color="primary"
+            color="#000"
             size="x-large"
             @click="
               bill_price = bills_remains;
               $forceUpdate();
             "
           >
-            <v-icon class="me-1" size="small">restart_alt</v-icon>
+            <v-icon start>restart_alt</v-icon>
             Set remains amount:
             <u-price
               :amount="bills_remains"
@@ -1179,7 +1182,8 @@
           <v-btn
             :disabled="bill_price <= 0"
             :loading="busy_add_bill"
-            color="success"
+            color="primary"
+            variant="elevated"
             size="x-large"
             @click="addBill()"
           >
@@ -1189,12 +1193,13 @@
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 
   <!-- █████████████████████████ Dialog > Confirm Cash Payment (For bill only) █████████████████████████ -->
 
-  <v-dialog v-model="dialog_pay_bill_by_cash" max-width="680">
-    <v-card v-if="selected_bill_to_pay">
+  <v-bottom-sheet v-model="dialog_pay_bill_by_cash"  max-width="680"
+                  width="98vw" content-class="rounded-t-xl">
+    <v-card v-if="selected_bill_to_pay" rounded="t-xl" class="text-start">
       <v-card-title
         >{{
           $t("process_center.payment_widget.bill_cash_payment_dialog.title")
@@ -1231,7 +1236,7 @@
             height="64"
             rounded
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="
               confirmCashPaymentForBill(selected_bill_to_pay, item.gateway.code)
             "
@@ -1257,7 +1262,7 @@
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 
   <!-- █████████████████████████ Dialog > Confirm DIR (Direct transfer money) Payment █████████████████████████ -->
 

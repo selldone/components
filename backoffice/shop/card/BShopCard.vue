@@ -84,21 +84,20 @@
         </u-fade-scroll>
 
         <template v-slot:append>
-          <v-list-item-action end style="z-index: 10">
+          <v-list-item-action end style="z-index: 2">
             <v-menu
               v-if="total_sell"
               :close-on-content-click="false"
               open-on-hover
             >
               <template v-slot:activator="{ props }">
-                <span class="badge-sell-products" v-bind="props">
+                <div class="badge-sell-products text-center ps-5" v-bind="props">
                   {{ numeralFormat(total_sell, "0.[0]a") }} 🔔
-                  <br />
-                  <small
+                  <div style="font-size: 10px"
                     ><i class="fas fa-circle mx-1 blink-me"></i>
                     {{ $t("user_dashboard.shops.shop_card.orders") }}
-                  </small>
-                </span>
+                  </div>
+                </div>
               </template>
 
               <v-card

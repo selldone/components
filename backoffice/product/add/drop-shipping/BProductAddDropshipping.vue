@@ -263,7 +263,7 @@
               @click="showAddProduct(product)"
             >
               <v-img
-                :cover="!(product.style && product.style.contain)"
+                :cover="!( product.style?.contain)"
                 :src="getShopImagePath(product.icon)"
                 class="rounded-18px"
                 height="128"
@@ -328,7 +328,7 @@
       <v-card v-if="selected_product">
         <v-card-title class="text-start">
           <v-img
-            :cover="!(selected_product.style && selected_product.style.contain)"
+            :cover="!(selected_product.style?.contain)"
             :src="getShopImagePath(selected_product.icon)"
             aspect-ratio="1"
             class="rounded-lg me-1 flex-grow-0"

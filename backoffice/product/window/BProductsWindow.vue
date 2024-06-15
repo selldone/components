@@ -1940,6 +1940,7 @@ import VPricingInput from "../../../storefront/pricing/VPricingInput.vue";
 import BCategoryEngineEditor from "@selldone/components-vue/backoffice/category/engine/BCategoryEngineEditor.vue";
 import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
 import { BProductBreadcrumbsHelper } from "../breadcrumbs/helper/BProductBreadcrumbsHelper";
+import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {
   name: "BProductsWindow",
@@ -2207,7 +2208,7 @@ export default {
     },
 
     CAN_ADD_PRODUCT() {
-      return (
+      return this.writeShopAccess(ShopPermissionRegions.PRODUCTS.code) && (
         !this.IS_VENDOR_PANEL ||
         (this.shop.marketplace && this.shop.marketplace.product)
       );

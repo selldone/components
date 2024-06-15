@@ -616,12 +616,12 @@ export default {
       return this.product.variants && this.product.variants.length;
     },
     product_style() {
-      return this.product.style;
+      return this.product?.style;
     },
 
     is_image_contain() {
       const r = this.rnd;
-      return this.product_style && this.product_style.contain;
+      return this.product_style?.contain;
     },
 
     price_in_selected_currency() {

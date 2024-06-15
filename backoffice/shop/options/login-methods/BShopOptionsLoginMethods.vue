@@ -26,6 +26,7 @@
         :key="login.code"
         :login="login"
         :shop="shop"
+        :readOnly="readOnly"
       >
       </b-options-login-method-row>
     </v-list>
@@ -54,6 +55,7 @@ export default {
       required: false,
       type: Object,
     },
+    readOnly:Boolean,
   },
 
   data: () => ({

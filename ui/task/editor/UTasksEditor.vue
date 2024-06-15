@@ -15,30 +15,25 @@
 <template>
   <draggable
     v-model="list"
-    :component-data="{
-      tag: 'ul',
-      type: 'transition-group',
-      name: !drag ? 'flip-list' : 'fade',
-    }"
     handle=".handle"
     style="list-style-type: none"
-    tag="transition-group"
+    tag="div"
     v-bind="dragOptions"
     @end="drag = false"
     @start="drag = true"
     @update:modelValue="$emit('update:modelValue', list)"
   >
-    <template v-slot:item="{ element }">
+    <template v-slot:item="{ element, index }">
       <li class="list-group-item bg-transparent">
         <v-text-field
           v-if="editable"
           v-model="element.title"
-          class="task-title"
           flat
           hide-details
-          placeholder="Task title..."
-          single-line
-          variant="solo"
+          placeholder="Write task title here..."
+          label="Task Title"
+          variant="solo-filled"
+          persistent-placeholder
         >
           <template v-slot:prepend>
             <v-icon
@@ -49,8 +44,9 @@
             </v-icon>
           </template>
 
-          <template v-slot:append>
+          <template v-slot:append-inner>
             <v-btn
+              variant="text"
               icon
               title="Delete item"
               @click="deleteItem(index)"
@@ -62,14 +58,14 @@
         </v-text-field>
 
         <p v-else class="task-title" v-text="element.title"></p>
-
         <v-progress-linear
           v-model="element.progress"
+          clickable
           :class="{ 'pointer-event-none': viewOnlyProgress }"
           :reverse="$vuetify.locale.isRtl"
-          bg-color="#eee"
-          class="pointer-pointer my-2"
-          color="blue"
+          bg-color="#aaa"
+          class="pointer-pointer my-2 border"
+          color="primary"
           height="18"
           rounded
           striped
@@ -78,15 +74,22 @@
             $emit('change');
           "
         >
+          <small v-if="viewOnlyProgress && editable">
+            <v-icon class="me-1" size="12">lock</v-icon>
+            lock
+          </small>
         </v-progress-linear>
       </li>
     </template>
 
     <template v-slot:footer>
       <div v-if="editable" class="widget-buttons">
-        <v-btn size="x-large" variant="outlined" @click="addItem">
+        <v-btn size="x-large" variant="flat" color="#000" @click="addItem">
           <v-icon start>add</v-icon>
-          {{ $t("global.actions.add") }}
+          <div>
+            {{ $t("global.actions.add") }}
+            <div class="small mt-1">Create new item for todo list</div>
+          </div>
         </v-btn>
       </div>
     </template>

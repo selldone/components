@@ -50,6 +50,7 @@
 
     <template v-slot:append>
       <v-btn
+        :class="{ pen: readOnly }"
         :loading="busy_login === login.code"
         icon
         variant="text"
@@ -87,6 +88,7 @@ export default {
       required: false,
       type: Object,
     },
+    readOnly: Boolean,
   },
 
   data: () => ({

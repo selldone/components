@@ -3468,7 +3468,7 @@ Fix snaky chart overflow problem!
 //------------------------- Blur animate -------------------------
 
 .blur-animate {
-  //animation: blur 1s ease;
+  animation: blur 1s ease;
   transition: filter 1s;
 
   &.blurred {

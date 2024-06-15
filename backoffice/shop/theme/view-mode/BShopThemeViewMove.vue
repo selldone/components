@@ -14,12 +14,13 @@
 
 <template>
   <v-btn-toggle
-    :class="{ '-dark': dark }"
+    :class="{ '-dark': dark,pen:readOnly }"
     :model-value="modelValue"
     class="widget-toggle force-horizontal"
     rounded
     selected-class="blue-flat"
     @update:model-value="(v) => $emit('update:modelValue', v)"
+
   >
     <div v-if="icon || label" class="widget-toggle-label border-end">
       <v-icon>{{ icon }}</v-icon>
@@ -54,6 +55,7 @@ export default defineComponent({
     icon: {},
     label: {},
     dark: Boolean,
+    readOnly:Boolean,
   },
   data: () => ({
     tab: "colors",

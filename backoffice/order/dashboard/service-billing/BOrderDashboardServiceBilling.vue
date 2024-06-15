@@ -14,7 +14,7 @@
 
 <template>
   <div :class="{ '-activated': in_this_step }" class="widget shadow m-3">
-    <v-expansion-panels class="mb-5 rounded-18px overflow-hidden text-start">
+    <v-expansion-panels class="mb-5 rounded-18px overflow-hidden text-start" >
       <v-expansion-panel elevation="0">
         <v-expansion-panel-title>
           <div>

@@ -28,7 +28,7 @@
     <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Login first / last ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
     <u-smart-select
       v-model="mode"
-      :disabled="busy"
+      :disabled="busy || !writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
       :items="LoginModes"
       :label="$t('shop_configuration.checkout.mode.title')"
       class="my-5"
@@ -50,7 +50,7 @@
     <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Config ask shipping address ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
     <u-smart-select
       v-model="shipping"
-      :disabled="busy"
+      :disabled="busy || !writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
       :items="ShippingOptions"
       :label="$t('shop_configuration.checkout.shipping_address.title')"
       class="mt-5"
@@ -69,7 +69,7 @@
     <u-smart-switch
       v-model="map"
       :class="{ disabled: shipping === 'off' }"
-      :disabled="busy"
+      :disabled="busy || !writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
       :false-description="$t('shop_configuration.checkout.map.subtitle_no_map')"
       :false-title="$t('global.commons.disable')"
       :label="$t('shop_configuration.checkout.map.title')"
@@ -91,7 +91,7 @@
 
     <u-smart-switch
       v-model="express"
-      :disabled="busy"
+      :disabled="busy || !writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
       :false-description="$t('shop_configuration.checkout.express.false.msg')"
       :false-title="$t('shop_configuration.checkout.express.false.title')"
       :label="$t('shop_configuration.checkout.express.title')"
@@ -114,6 +114,7 @@ import {
   LoginModes,
   ShippingOptions,
 } from "@selldone/core-js/enums/shop/options/CheckoutOptions";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {
   name: "BShopOptionsCheckout",
@@ -143,6 +144,9 @@ export default {
   }),
 
   computed: {
+    ShopPermissionRegions() {
+      return ShopPermissionRegions;
+    },
     checkout() {
       return ShopOptionsHelper.GetCheckout(this.shop);
     },

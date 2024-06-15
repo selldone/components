@@ -35,6 +35,7 @@
       variant="underlined"
       @update:model-value="change = true"
       @click:append-inner="lock = !lock"
+      :disabled="!writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
     >
     </v-text-field>
 
@@ -56,6 +57,8 @@
 </template>
 
 <script>
+import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
+
 export default {
   name: "BMetaPixel",
   components: {},
@@ -71,7 +74,11 @@ export default {
     change: false,
     lock: false,
   }),
-  computed: {},
+  computed: {
+    ShopPermissionRegions() {
+      return ShopPermissionRegions
+    }
+  },
 
   watch: {},
 

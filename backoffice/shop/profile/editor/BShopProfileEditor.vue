@@ -17,16 +17,16 @@
     <u-loading-progress v-if="busy"></u-loading-progress>
 
     <div v-else>
-      <div class="widget-buttons">
+      <div v-if="!readOnly" class="widget-buttons">
         <v-btn
           :class="{ disabled: state !== 'changed' }"
           :loading="busy_save"
           color="primary"
           size="x-large"
-          variant="flat"
+          variant="elevated"
           @click="saveShopProfile"
         >
-          <v-icon class="me-1" size="small">save</v-icon>
+          <v-icon start>save</v-icon>
           {{ $t("global.actions.save_changes") }}
         </v-btn>
       </div>
@@ -37,7 +37,7 @@
           :enable-title="false"
           :upload-url="upload_url"
           class="article"
-          edit
+          :edit="!readOnly"
           @change="onChangeNote"
         />
       </div>
@@ -60,6 +60,7 @@ export default {
       required: true,
       type: String,
     },
+    readOnly: Boolean,
   },
 
   data: () => ({

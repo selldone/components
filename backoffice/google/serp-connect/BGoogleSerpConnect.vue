@@ -64,7 +64,7 @@
       </ol>
     </div>
 
-    <div class="widget-buttons">
+    <div v-if="writeShopAccess(ShopPermissionRegions.CHANNELS.code)" class="widget-buttons">
       <v-btn
         v-if="!shop.search_console"
         :class="{ disabled: !main_domain }"
@@ -96,6 +96,8 @@
 </template>
 
 <script>
+import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
+
 export default {
   name: "BGoogleSerpConnect",
   components: {},
@@ -112,6 +114,9 @@ export default {
   }),
 
   computed: {
+    ShopPermissionRegions() {
+      return ShopPermissionRegions
+    },
     main_domain() {
       return this.shop.domains.find((i) => i.enable && i.primary);
     },

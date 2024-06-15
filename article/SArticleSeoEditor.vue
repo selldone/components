@@ -15,7 +15,7 @@
 <template>
   <div
     :class="{ 'pointer-pointer': !opened }"
-    class="s--article-seo-editor s--shadow-no-padding p-3"
+    class="s--article-seo-editor s--shadow-no-padding p-3 text-start"
     @click.stop="
       () => {
         if (!opened) openMenu();
@@ -33,7 +33,7 @@
       variant="text"
       @click.stop="opened = false"
     >
-      <v-icon size="small">close</v-icon>
+      <v-icon >close</v-icon>
     </v-btn>
 
     <div class="article-edit-form">
@@ -140,6 +140,7 @@
                         color="success"
                         icon="check_circle"
                         size="48"
+                        style="background-color: #ffffffaa;border-radius: 50%;backdrop-filter: blur(4px)"
                       ></v-icon>
                     </v-scale-transition>
                   </div>
@@ -261,6 +262,7 @@ export default {
   border-radius: 28px;
   text-align: center;
   position: relative;
+  background-color: #fff;
 
   .article-edit-placeholder {
     user-select: none;

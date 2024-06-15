@@ -128,7 +128,7 @@ export default {
       return this.getProductDiscountAmount(this.shop, this.product, null);
     },
     isImageContain() {
-      return this.product.style && this.product.style.contain;
+      return this.product.style?.contain;
     },
   },
 

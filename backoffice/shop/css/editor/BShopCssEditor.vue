@@ -27,6 +27,7 @@
       class="light-code scrollable-element-light mb-5"
       language="css"
       line-numbers
+      :readonly="readOnly"
     />
     <div v-if="!code || !code.trim()" class="text-end">
       <v-btn
@@ -63,6 +64,7 @@ export default {
   emits: ["update:modelValue"],
   props: {
     modelValue: {},
+    readOnly:Boolean
   },
   data: () => ({
     ShopCss: ShopCss,

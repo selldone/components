@@ -473,8 +473,8 @@
                   'border-start-green no-border-bottom-tr':
                     bill.status === BillStatus.PAYED.code,
                   'border-start-red': bill.status === BillStatus.CANCELED.code,
+                  'row-hover':bill.payment || bill.gift_cards?.length,
                 }"
-                class="row-hover"
                 @click="
                   expanded_bill = expanded_bill === bill.id ? null : bill.id
                 "
@@ -539,14 +539,14 @@
                     <v-btn
                       v-if="current_bill_waiting === bill"
                       :disabled="current_bill_waiting !== bill"
-                      :size="current_bill_waiting === bill && 'x-large'"
-                      :variant="current_bill_waiting !== bill && 'flat'"
+                      :size="current_bill_waiting === bill?'x-large':undefined"
+                      :variant="current_bill_waiting !== bill ? 'elevated':undefined"
                       color="success"
                       @click.stop="goToPaymentBill(bill)"
                     >
                       <v-icon
                         v-if="current_bill_waiting === bill"
-                        class="me-1 blink-me"
+                        class="me-2 blink-me"
                         size="small"
                         >lens
                       </v-icon>

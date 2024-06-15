@@ -43,6 +43,8 @@
       messages="Select the map service provider. More map service providers will be available in the future."
       title="Provider"
       variant="solo"
+      :disabled="!writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
+
     >
       <template v-slot:item="{ item, props }">
         <v-list-item class="text-start" v-bind="props">
@@ -62,7 +64,7 @@
 
     <u-smart-switch
       v-model="enable"
-      :disabled="busy_set"
+      :disabled="busy_set || !writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
       class="my-3"
       false-gray
       false-icon="disabled_visible"
@@ -71,6 +73,7 @@
       true-icon="mode_of_travel"
       true-title="Enable map listing"
       @change="setEnable"
+
     >
     </u-smart-switch>
 
@@ -126,6 +129,7 @@ import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import BMapDriverOptions from "../../map/driver/options/BMapDriverOptions.vue";
 import { Map } from "@selldone/core-js";
+import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {
   name: "BMapConfig",
@@ -150,6 +154,9 @@ export default {
     show_map_urls: false,
   }),
   computed: {
+    ShopPermissionRegions() {
+      return ShopPermissionRegions
+    },
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },

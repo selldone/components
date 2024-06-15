@@ -21,6 +21,7 @@
       icon="edit_location"
       title="List of location tags"
       @click:add="showAdd()"
+      :disabled-access="!writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
     ></s-widget-header>
 
     <v-list-subheader>
@@ -185,6 +186,7 @@
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import _ from "lodash-es";
 import BMapTagAdd from "../../../map/tag/add/BMapTagAdd.vue";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {
   name: "BMapTagsList",
@@ -225,6 +227,9 @@ export default {
     show_products: false,
   }),
   computed: {
+    ShopPermissionRegions() {
+      return ShopPermissionRegions;
+    },
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
@@ -293,7 +298,11 @@ export default {
     },
     search: _.throttle(function (newVal, oldVal) {
       this.options.page = 1;
-      this.fetchLocations(this.page,  this.sortBy[0]?.key, this.sortBy[0]?.order === "desc");
+      this.fetchLocations(
+        this.page,
+        this.sortBy[0]?.key,
+        this.sortBy[0]?.order === "desc",
+      );
     }, window.SERACH_THROTTLE),
   },
 

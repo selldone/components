@@ -34,6 +34,7 @@
         <u-pod-node
           :title="$t('global.commons.customers')"
           icon="people_outline"
+          :iconColor="dark?'#fff':'#000'"
         >
         </u-pod-node>
 
@@ -70,11 +71,13 @@
             class="my-1"
             icon="storefront"
             title="Store A"
+            :iconColor="dark?'#fff':'#000'"
           ></u-pod-node>
           <u-pod-node
             class="my-1"
             icon="storefront"
             title="Store B"
+            :iconColor="dark?'#fff':'#000'"
           ></u-pod-node>
         </div>
 
@@ -118,6 +121,7 @@
         <u-pod-node
           :title="$t('global.commons.customers')"
           icon="people_outline"
+          :iconColor="dark?'#fff':'#000'"
         >
         </u-pod-node>
       </template>
@@ -128,8 +132,8 @@
         <u-pod-node
           :title="$t('global.commons.customers')"
           icon="people_outline"
+          :iconColor="dark?'#fff':'#000'"
         >
-          <v-icon class="mb-1">people_outline</v-icon>
         </u-pod-node>
 
         <div class="sph my-2 flex-grow-1">
@@ -174,12 +178,14 @@
             class="my-1"
             icon="storefront"
             title="Vendor A"
+            :iconColor="dark?'#fff':'#000'"
           ></u-pod-node>
 
           <u-pod-node
             class="my-1"
             icon="storefront"
             title="Vendor B"
+            :iconColor="dark?'#fff':'#000'"
           ></u-pod-node>
         </div>
 
@@ -215,6 +221,7 @@
         <u-pod-node
           :title="$t('global.commons.customers')"
           icon="people_outline"
+          :iconColor="dark?'#fff':'#000'"
         >
         </u-pod-node>
       </template>
@@ -227,12 +234,14 @@
             :title="$t('global.commons.customers')"
             class="my-1"
             icon="people_outline"
+            :iconColor="dark?'#fff':'#000'"
           ></u-pod-node>
 
           <u-pod-node
             :title="$t('global.commons.customers')"
             class="my-1"
             icon="people_outline"
+            :iconColor="dark?'#fff':'#000'"
           ></u-pod-node>
         </div>
 
@@ -265,6 +274,7 @@
             class="my-1"
             icon="storefront"
             title-icon="looks_one"
+            :iconColor="dark?'#fff':'#000'"
           >
           </u-pod-node>
           <u-pod-node
@@ -272,6 +282,7 @@
             class="my-1"
             icon="storefront"
             title-icon="looks_two"
+            :iconColor="dark?'#fff':'#000'"
           >
           </u-pod-node>
         </div>
@@ -339,11 +350,13 @@
             :title="$t('global.commons.customers')"
             class="my-1"
             icon="people_outline"
+            :iconColor="dark?'#fff':'#000'"
           ></u-pod-node>
           <u-pod-node
             :title="$t('global.commons.customers')"
             class="my-1"
             icon="people_outline"
+            :iconColor="dark?'#fff':'#000'"
           ></u-pod-node>
         </div>
       </template>
@@ -354,6 +367,7 @@
         <u-pod-node
           :title="$t('global.commons.customers')"
           icon="people_outline"
+          :iconColor="dark?'#fff':'#000'"
         >
         </u-pod-node>
 
@@ -468,6 +482,7 @@
               :title="$t('global.commons.customers')"
               class="my-1"
               icon="people_outline"
+              :iconColor="dark?'#fff':'#000'"
             >
             </u-pod-node>
           </div>
@@ -499,6 +514,7 @@
               :title="$t('global.commons.customers')"
               class="my-1"
               icon="people_outline"
+              :iconColor="dark?'#fff':'#000'"
             ></u-pod-node>
           </div>
         </div>

@@ -20,6 +20,7 @@
       :title="$t('admin_shop.dashboard.info.shop_domains')"
       icon="dns"
       @click:add="showAddDomainDialog"
+      :disabled-access="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
     >
       <template v-slot:append-title>
         <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ In App Help (Help Center) ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
@@ -251,11 +252,15 @@
             </v-chip>
           </td>
 
-          <td :colspan="columns.length - 3">
+          <td
+            v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+            :colspan="columns.length - 3"
+          >
             <span class="float-end">
               <v-btn
                 v-if="item.domain"
-                class="ma-1"
+                class="ma-1 tnt"
+                size="small"
                 @click="showSetting(item.domain)"
               >
                 <v-icon start>settings</v-icon>
@@ -268,8 +273,9 @@
                   add_client_code ===
                     (item.domain ? item.domain.id : item.official)
                 "
-                class="ma-1"
+                class="ma-1 tnt"
                 variant="elevated"
+                size="small"
                 @click="
                   createClientSecret(
                     item.domain ? item.domain.id : item.official,
@@ -282,6 +288,7 @@
 
               <u-smart-menu
                 v-if="item.domain"
+                class="ms-2"
                 :items="[
                   {
                     title: 'Edit Domain',
@@ -634,6 +641,7 @@ import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import BDomainSetting from "../../domain/setting/BDomainSetting.vue";
 import _ from "lodash-es";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {
   name: "BDomainsList",
@@ -704,6 +712,9 @@ export default {
   }),
 
   computed: {
+    ShopPermissionRegions() {
+      return ShopPermissionRegions;
+    },
     headers() {
       return [
         {

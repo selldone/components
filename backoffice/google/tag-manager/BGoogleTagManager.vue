@@ -34,6 +34,7 @@
       variant="underlined"
       @update:model-value="change = true"
       @click:append-inner="lock = !lock"
+      :disabled="!writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
     >
     </v-text-field>
 
@@ -55,6 +56,8 @@
 </template>
 
 <script>
+import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
+
 export default {
   name: "BGoogleTagManager",
   components: {},
@@ -71,7 +74,11 @@ export default {
 
     loading_set_id: false,
   }),
-  computed: {},
+  computed: {
+    ShopPermissionRegions() {
+      return ShopPermissionRegions
+    }
+  },
 
   watch: {},
 

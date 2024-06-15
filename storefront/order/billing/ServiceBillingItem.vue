@@ -46,16 +46,23 @@
             class="me-2"
             title="Pricing of this item by seller."
           ></u-price>
-          <small v-else class="me-2">Not pricing yet!</small>
+          <v-chip v-else class="me-2" color="red" variant="elevated"
+            >Not pricing yet!</v-chip
+          >
 
-          <div v-if="start_at" class="ma-1" title="Checkin date.">
+          <div v-if="start_at" class="ma-1 text-subtitle-2" title="Checkin date.">
             <v-icon class="mx-1" size="small">login</v-icon>
             {{ getLocalDateString(start_at) }}
           </div>
-          <div v-if="end_at" class="ma-1" title="Checkout date.">
+          <div v-if="end_at" class="ma-1 text-subtitle-2" title="Checkout date.">
             <v-icon class="mx-1" size="small">logout</v-icon>
             {{ getLocalDateString(end_at) }}
           </div>
+
+          <v-chip v-for="task in tasks" size="x-small" class="ma-1" variant="flat" color="#000" prepend-icon="add_task">
+            {{task.title?.limitWords(3)}}
+            <v-progress-circular :model-value="task.progress" class="me-n1 ms-2" size="16" color="#fff" bg-color="#aaa"></v-progress-circular>
+          </v-chip>
         </v-row>
       </div>
 
@@ -176,7 +183,7 @@
                         getLocalTimeString(preferences.dates[0])
                       "
                       class="mx-1"
-                      icon
+                      icon variant="text"
                       @click="start_at = preferences.dates[0]"
                     >
                       <v-icon size="small">autorenew</v-icon>
@@ -237,7 +244,7 @@
                         getLocalTimeString(preferences.dates[1])
                       "
                       class="mx-1"
-                      icon
+                      icon variant="text"
                       @click="end_at = preferences.dates[1]"
                     >
                       <v-icon size="small">autorenew</v-icon>
@@ -295,13 +302,14 @@
                     <u-date-input
                       v-model="start_at"
                       :min="new Date().toISOString()"
-                      class="max-width-field mx-auto border rounded-lg pt-5 bg-white widget-hover"
+                      class="max-width-field mx-auto border rounded-lg pa-3 bg-white widget-hover"
                       color="#2196f3"
                       format="YYYY-MM-DD"
                       label="Check-in"
                       return-utc
                       rounded
                       type="date"
+                      variant="plain"
                     >
                     </u-date-input>
                   </v-col>
@@ -309,13 +317,14 @@
                     <u-date-input
                       v-model="end_at"
                       :min="start_at"
-                      class="max-width-field mx-auto border rounded-lg pt-5 bg-white widget-hover"
+                      class="max-width-field mx-auto border rounded-lg pa-3 bg-white widget-hover"
                       color="#2196f3"
                       format="YYYY-MM-DD"
                       label="Check-out"
                       return-utc
                       rounded
                       type="date"
+                      variant="plain"
                     >
                     </u-date-input>
                   </v-col>
@@ -426,23 +435,27 @@
 
           <u-price-input
             v-model="price"
-            :decimal="currency.floats"
+            :currency="currency"
             :disabled="!currency"
             :label="$t('add_product.pricing.price_input')"
             :rules="[GlobalRules.required()]"
-            :suffix="$t(currency.name)"
             class="max-width-field mx-auto my-2 strong-field"
             placeholder="0.00"
+            variant="solo"
+            rounded="xl"
             required
           >
+            <template v-slot:append-inner>
+              <v-icon  v-if="!price || price<=0" color="red" class="blink-me ms-2">warning</v-icon>
+            </template>
           </u-price-input>
 
-          <div class="widget-buttons">
+          <s-widget-buttons>
             <v-btn
               :color="service_item ? 'primary' : 'success'"
               :loading="busy_set"
-              :size="!service_item ?'large':'x-large'"
-              :variant="!!service_item? 'flat':undefined"
+              :size="!service_item ? 'large' : 'x-large'"
+              :variant="!!service_item ? 'elevated' : 'outlined'"
               @click="setServiceItem"
             >
               <v-icon class="me-1"
@@ -450,7 +463,7 @@
               </v-icon>
               {{ $t("service_bill.save_item") }}
             </v-btn>
-          </div>
+          </s-widget-buttons>
         </div>
       </div>
     </v-expand-transition>
@@ -468,10 +481,12 @@ import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 
 import _ from "lodash-es";
+import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "ServiceBillingItem",
   components: {
+    SWidgetButtons,
     UPriceInput,
     UTimeWeekPicker,
     UCalendarView,
@@ -673,6 +688,7 @@ export default {
               null,
               "Your service order billing has been saved.",
             );
+            this.expand=false;
           } else {
             this.showErrorAlert(null, data.error_msg);
           }
