@@ -30,8 +30,8 @@
 
     <v-tooltip
       activator="parent"
-      content-class="text-start"
-      location="top"
+      content-class="text-start bg-black"
+      location="end"
       max-width="360"
     >
       {{ $t(profile_type.desc) }}
