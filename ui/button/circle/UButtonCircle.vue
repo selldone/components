@@ -222,7 +222,7 @@ export default {
     },
     wrap: {
       type: Boolean,
-      default:true
+      default:false
     },
     large: {
       required: false,

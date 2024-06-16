@@ -29,6 +29,7 @@
     :variant="variant"
     item-value="code"
     @update:model-value="(val) => $emit('update:modelValue', val)"
+    closable-chips
   >
     <template v-slot:item="{ item, props }">
       <v-list-item
@@ -40,11 +41,14 @@
       </v-list-item>
     </template>
 
-    <template v-slot:chip="{ item }">
-      <span class="text-start text-subtitle-2">
+    <template v-slot:chip="{ item,props }">
+      <v-chip v-if="chips" :prepend-avatar="item.raw.src">
+        {{ $t(item.raw.text) }}
+      </v-chip>
+      <div v-else v-bind="props" class="text-start text-subtitle-2">
         <img :src="item.raw.src" class="me-1" height="26" />
         {{ $t(item.raw.text) }}
-      </span>
+      </div>
     </template>
   </v-select>
 </template>
