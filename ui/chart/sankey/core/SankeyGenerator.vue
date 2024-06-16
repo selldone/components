@@ -5,10 +5,11 @@
 <script>
 import { select, selectAll } from "d3-selection";
 import "d3-transition";
-import { id } from "d2b";
+import { IdGenerator } from "./id.js";
+import "../styles/index.scss";
 
 export default {
-  name: "Generator",
+  name: "SankeyGenerator",
   props: {
     data: {
       type: Object,
@@ -24,7 +25,7 @@ export default {
     },
     id: {
       type: Function,
-      default: id,
+      default: IdGenerator,
     },
     advanced: {
       type: Boolean,

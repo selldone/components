@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="text-start">
+  <div class="text-start" >
     <h3 v-if="label" class="my-2">
       <v-icon v-if="labelIcon" :color="labelIconColor" class="me-1 flex-grow-0"
         >{{ labelIcon }}
@@ -23,8 +23,8 @@
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <div
-      :class="{ disabled: disabled, pp: !readonly && !loading, pen: loading }"
-      class="pa-2 usn"
+      :class="{ disabled: disabled, pp: !readonly && !loading, pen: loading,border:border }"
+      class="pa-2 usn rounded-card"
       @click="toggle"
     >
       <div class="d-flex align-center mnh">
@@ -129,6 +129,7 @@ export default {
 
     labelIcon: {},
     labelIconColor: {},
+    border:Boolean,
   },
   computed: {
     icon() {

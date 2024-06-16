@@ -15,13 +15,45 @@
 <template>
   <div class="text-start">
     <div v-if="contract">
-      <div v-if="in_execution" class="absolute-top-start px-2">
-        <v-icon class="me-1" color="green" size="x-small">lens</v-icon>
-        {{ $t("contract_view.running") }}
-      </div>
-      <div v-if="in_cancellation" class="absolute-top-start px-2">
-        <v-icon class="me-1" color="red" size="x-small">lens</v-icon>
-        {{ $t("contract_view.cancelling") }}
+      <div class="d-flex align-center">
+        <div v-if="in_execution" class="px-2">
+          <v-icon class="me-1" color="green" size="x-small">lens</v-icon>
+          {{ $t("contract_view.running") }}
+        </div>
+        <div v-if="in_cancellation" class="px-2">
+          <v-icon class="me-1" color="red" size="x-small">lens</v-icon>
+          {{ $t("contract_view.cancelling") }}
+        </div>
+
+        <v-spacer></v-spacer>
+
+        <!-- Cancel Task -->
+        <span
+          v-if="can_cancel"
+          class="m-1 sub-caption -hover"
+          :caption="$t('global.actions.cancel')"
+        >
+          <v-btn color="red" icon variant="text" @click="dialog_cancel = true">
+            <v-icon size="small">delete</v-icon>
+          </v-btn></span
+        >
+
+        <div v-if="contract.cancel_at" class="small text-red"
+          ><b>{{ $t("global.commons.canceled") }}</b><br>
+          {{ getLocalTimeString(contract.cancel_at) }}</div
+        >
+
+        <!-- Edit Task -->
+
+        <span
+          v-if="can_edit"
+          :caption="$t('global.actions.edit')"
+          class="m-1 sub-caption -hover"
+        >
+          <v-btn icon variant="text" @click="edit_mode = !edit_mode">
+            <v-icon size="small">edit_square</v-icon>
+          </v-btn>
+        </span>
       </div>
 
       <v-row align="center" class="text-center" justify="center">
@@ -65,7 +97,7 @@
             <v-img :src="getShopIcon(contract.shop_id)" />
           </v-avatar>
           <p class="small font-weight-bold m-1 limited-text-100px">
-            {{ shop.name }}
+            {{ shop?.name }}
           </p>
         </div>
       </v-row>
@@ -145,7 +177,7 @@
         </div>
       </template>
 
-      <u-tasks-editor v-else v-model="new_tasks" editable> </u-tasks-editor>
+      <u-tasks-editor v-else v-model="new_tasks" editable></u-tasks-editor>
 
       <!-- ......................... Permissions ......................... -->
 
@@ -341,7 +373,7 @@
           </v-btn>
         </div>
         <div v-else-if="waiting_complete_by_customer">
-          <p>
+          <p class="text-subtitle-2 my-1">
             {{ $t("contract_view.waiting_complete_by_customer_message") }}
           </p>
         </div>
@@ -387,6 +419,7 @@
             v-if="can_rate"
             class="me-2"
             icon
+            variant="text"
             @click="
               comment = contract.comment;
               rate = contract.rate;
@@ -445,6 +478,7 @@
             v-if="can_response"
             class="float-end ms-2"
             icon
+            variant="text"
             @click="
               response = contract.response;
               edit_response = true;
@@ -526,38 +560,6 @@
 
       <div v-if="contract.cancel_at" class="top-bar-red"></div>
       <div v-if="contract.complete_at" class="top-bar-green"></div>
-
-      <div class="absolute-top-end">
-        <!-- Cancel Task -->
-
-        <v-btn
-          v-if="can_cancel"
-          :caption="$t('global.actions.cancel')"
-          class="m-1 sub-caption -hover"
-          color="red"
-          icon
-          @click="dialog_cancel = true"
-        >
-          <v-icon size="small">delete</v-icon>
-        </v-btn>
-
-        <b v-if="contract.cancel_at" class="small text-red"
-          >{{ $t("global.commons.canceled") }}:
-          {{ getLocalTimeString(contract.cancel_at) }}</b
-        >
-
-        <!-- Edit Task -->
-
-        <v-btn
-          v-if="can_edit"
-          :caption="$t('global.actions.edit')"
-          class="m-1 sub-caption -hover"
-          icon
-          @click="edit_mode = !edit_mode"
-        >
-          <v-icon size="small">edit_square</v-icon>
-        </v-btn>
-      </div>
     </div>
 
     <v-skeleton-loader
@@ -633,22 +635,24 @@
 
     <!-- ......................... Dialog > Cancel ......................... -->
     <v-dialog v-model="dialog_cancel" dark max-width="640" scrollable>
-      <v-card color="red" dark>
-        <v-card-title
-          >{{ $t("contract_view.dialog_cancel.title") }}
+      <v-card color="red" dark class="text-start" rounded="xl">
+        <v-card-title>
+          <v-icon class="me-2">cancel</v-icon>
+          {{ $t("contract_view.dialog_cancel.title") }}
         </v-card-title>
         <v-card-text class="text-start">
-          <p>
+          <p class="mb-5">
             {{ $t("contract_view.dialog_cancel.confirm_code") }}
             :
             <span class="text-h4">{{ confirm_code_ref }}</span>
           </p>
-          <v-text-field
+          <v-otp-input
             v-model="confirm_code"
             :label="$t('contract_view.dialog_cancel.confirm_code_label')"
-            placeholder="XXXXX"
-            variant="filled"
-          ></v-text-field>
+            :length="5"
+            variant="outlined"
+            class="my-3"
+          ></v-otp-input>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -659,7 +663,8 @@
             <v-btn
               :disabled="confirm_code !== confirm_code_ref"
               :loading="busy_cancel"
-              color="red"
+              color="#fff"
+              variant="elevated"
               size="x-large"
               @click="cancelContract()"
             >

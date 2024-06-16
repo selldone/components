@@ -84,9 +84,9 @@
       </v-list-item-subtitle>
 
       <v-list-item-action style="flex-basis: 50px">
-        <v-list-item-action-text class="text-center english-field" dir="ltr">
+        <div class="text-center english-field text-subtitle-2" dir="ltr">
           {{ numeralFormat(file.size * 1024, "0.[0] b") }}
-        </v-list-item-action-text>
+        </div>
 
         <v-btn
           v-if="canDownload(file)"

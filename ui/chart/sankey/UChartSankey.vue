@@ -13,12 +13,12 @@
   -->
 
 <script>
-import Generator from "./core/Generator.vue";
-import { chartSankey } from "d2b";
+import SankeyGenerator from "./core/SankeyGenerator.vue";
+import chartSankey from "./core/sankey.js";
 
 export default {
   name: "UChartSankey",
-  extends: Generator,
+  extends: SankeyGenerator,
   props: {
     // Assuming ChartSankeyData is an object. Adjust the type as necessary.
     data: {

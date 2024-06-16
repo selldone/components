@@ -26,7 +26,7 @@
     :outlined="outlined"
     :return-object="returnObject"
     :rounded="rounded"
-    :solo="solo"
+    :variant="variant"
     item-value="code"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
@@ -41,7 +41,7 @@
     </template>
 
     <template v-slot:chip="{ item }">
-      <span class="text-start">
+      <span class="text-start text-subtitle-2">
         <img :src="item.raw.src" class="me-1" height="26" />
         {{ $t(item.raw.text) }}
       </span>
@@ -65,11 +65,13 @@ export default {
     messages: {},
 
     outlined: { type: Boolean, default: false },
-    solo: { type: Boolean, default: false },
     flat: { type: Boolean, default: false },
 
     multiple: { type: Boolean, default: false },
     chips: { type: Boolean, default: false },
+    variant: {
+      default: "underlined",
+    },
   },
   data: () => ({
     permissions_list: Object.values(ShopPermissions),
