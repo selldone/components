@@ -360,17 +360,20 @@
         <!-- End Task -->
 
         <div v-if="can_end">
-          <p>
+          <p class="text-subtitle-2 mb-2">
             {{ $t("contract_view.all_tasks_completed_message") }}
           </p>
-          <v-btn
-            :loading="busy_end"
-            color="blue"
-            size="x-large"
-            @click="endContract()"
-          >
-            Complete tasks
-          </v-btn>
+         <div class="widget-buttons">
+           <v-btn
+               :loading="busy_end"
+               color="primary"
+               size="x-large"
+               @click="endContract()"
+               prepend-icon="done_all"
+           >
+             Complete tasks
+           </v-btn>
+         </div>
         </div>
         <div v-else-if="waiting_complete_by_customer">
           <p class="text-subtitle-2 my-1">

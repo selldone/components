@@ -15,6 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-text-field
     v-model="newValue"
+    v-model:focused="focused"
     :append-inner-icon="icon"
     :bg-color="backgroundColor"
     :class="{
@@ -303,6 +304,9 @@ export default {
       focus: false,
 
       is_locked: false,
+
+      focused:false,
+
     };
   },
 
@@ -380,6 +384,7 @@ export default {
     },
 
     handleMouseWheel(evt) {
+      if(!this.focused)return;
       if (this.readonly || this.is_locked) return;
       const deltaY = evt.deltaY;
       if (deltaY < 0) this.mpplus();

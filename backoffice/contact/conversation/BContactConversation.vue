@@ -25,7 +25,7 @@
         <v-btn
           :caption="$t('global.actions.close')"
           class="sub-caption -hover"
-          icon
+          icon variant="text"
           @click="show_user_detail = false"
         >
           <v-icon> close</v-icon>
@@ -175,7 +175,7 @@
                     :title="$t('global.actions.delete')"
                     class="absolute-top-end -zero"
                     color="red"
-                    icon
+                    icon variant="text"
                     @click="deleteResponse(index)"
                   >
                     <v-icon>close</v-icon>

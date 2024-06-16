@@ -47,8 +47,8 @@
         v-bind="props"
       >
         <template v-slot:prepend>
-          <v-avatar size="32">
-            <img :src="getShopIcon(item.raw.id, 96)" />
+          <v-avatar size="32" class="avatar-gradient -thin -shop">
+            <v-img :src="getShopIcon(item.raw.id, 96)" />
           </v-avatar>
         </template>
         <template v-slot:append>
@@ -74,8 +74,8 @@
     </template>
 
     <template v-slot:selection="{ item }">
-      <v-avatar class="me-2" size="32">
-        <img :src="getShopIcon(item.raw.id, 96)" />
+      <v-avatar class="avatar-gradient -thin -shop me-2" size="32">
+        <v-img :src="getShopIcon(item.raw.id, 96)" />
       </v-avatar>
       <span class="mx-2 font-weight-bold">{{ item.raw.title }}</span>
       <span class="mx-2 op-0-6 small hide-on-small-600"
