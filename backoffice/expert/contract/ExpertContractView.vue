@@ -493,6 +493,7 @@
             class="inline-block"
             color="grey-darken-1"
             readonly
+            density="compact"
           ></v-rating>
 
           <p v-if="contract.comment" class="card-text-normal">
@@ -583,24 +584,24 @@
       <v-row dense class="my-3">
         <v-col v-if="contract.start_at" class="flex-grow-1" cols="12" md="6">
           <small class="d-block">{{ $t("global.commons.start_date") }}</small>
-          <p>{{ getLocalTimeString(contract.start_at) }}</p>
+          <p class="text-subtitle-2">{{ getLocalDateString(contract.start_at) }} <small>({{ getFromNowString(contract.start_at) }})</small></p>
         </v-col>
 
         <v-col v-if="contract.end_at" class="flex-grow-1" cols="12" md="6">
           <small class="d-block">{{ $t("global.commons.finish_date") }}</small>
-          <p>{{ getLocalTimeString(contract.end_at) }}</p>
+          <p class="text-subtitle-2">{{ getLocalDateString(contract.end_at) }} <small>({{ getFromNowString(contract.end_at) }})</small></p>
         </v-col>
 
         <v-col v-if="contract.complete_at" class="flex-grow-1" cols="12" md="6">
           <small class="d-block">{{
             $t("global.commons.complete_date")
           }}</small>
-          <p>{{ getLocalTimeString(contract.complete_at) }}</p>
+          <p class="text-subtitle-2">{{ getLocalDateString(contract.complete_at) }} <small>({{ getFromNowString(contract.complete_at) }})</small></p>
         </v-col>
 
         <v-col v-if="contract.cancel_at" class="flex-grow-1" cols="12" md="6">
           <small class="d-block">{{ $t("global.commons.cancel_date") }}</small>
-          <p>{{ getLocalTimeString(contract.cancel_at) }}</p>
+          <p class="text-subtitle-2">{{ getLocalDateString(contract.cancel_at) }} <small>({{ getFromNowString(contract.cancel_at) }})</small></p>
         </v-col>
 
         <v-col
