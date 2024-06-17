@@ -18,6 +18,7 @@
     :model-value="modelValue"
     max-width="640"
     scrollable
+    content-class="rounded-t-xl"
     @update:model-value="(v) => $emit('update:modelValue', v)"
   >
     <v-card rounded="t-xl">
@@ -26,7 +27,7 @@
       </v-card-title>
 
       <v-card-text>
-        <div class="widget-box my-5">
+        <div class="my-5">
           <s-widget-header
             icon="join_right"
             title="Customer segments"
@@ -38,6 +39,7 @@
             v-model="segments_input"
             :label="$t('global.commons.segments')"
             :shop="shop"
+            variant="outlined" class="mt-5"
           ></b-customer-segment-input>
         </div>
       </v-card-text>
