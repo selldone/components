@@ -38,6 +38,10 @@ body {
     padding: 4px;
     font-size: 7px;
     border: solid 2px var(--pod-color);
+    line-height: normal;
+    .pod-icon{
+      margin: 0 !important;
+    }
 
   }
 
