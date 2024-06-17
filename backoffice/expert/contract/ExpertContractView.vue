@@ -38,10 +38,11 @@
           </v-btn></span
         >
 
-        <div v-if="contract.cancel_at" class="small text-red"
-          ><b>{{ $t("global.commons.canceled") }}</b><br>
-          {{ getLocalTimeString(contract.cancel_at) }}</div
-        >
+        <div v-if="contract.cancel_at" class="small text-red">
+          <b>{{ $t("global.commons.canceled") }}</b
+          ><br />
+          {{ getLocalTimeString(contract.cancel_at) }}
+        </div>
 
         <!-- Edit Task -->
 
@@ -78,7 +79,7 @@
           width="16"
         />
         <div>
-          <v-avatar class="m-2" color="#fff" size="64">
+          <v-avatar class="m-2 avatar-gradient -thin -user" color="#fff" size="64">
             <v-img :src="getUserAvatar(contract.user_id)" />
           </v-avatar>
           <p class="small font-weight-bold m-1 limited-text-100px">
@@ -93,12 +94,14 @@
         />
 
         <div>
-          <v-avatar class="m-2" color="#fff" size="64">
-            <v-img :src="getShopIcon(contract.shop_id)" />
-          </v-avatar>
-          <p class="small font-weight-bold m-1 limited-text-100px">
-            {{ shop?.name }}
-          </p>
+          <router-link :to="{name:'BPageShopDashboard',params:{shop_id:contract.shop_id}}" target="_blank">
+            <v-avatar class="m-2 avatar-gradient -thin -shop" color="#fff" size="64">
+              <v-img :src="getShopIcon(contract.shop_id)" />
+            </v-avatar>
+            <p class="small font-weight-bold m-1 limited-text-100px">
+              {{ shop?.name }}
+            </p>
+          </router-link>
         </div>
       </v-row>
 
@@ -316,37 +319,39 @@
       <v-expand-transition class="mb-3">
         <!-- Start Task -->
 
-        <v-btn
-          v-if="can_start"
-          color="blue"
-          size="x-large"
-          @click="dialog_pay = true"
-        >
-          {{ $t("contract_view.pay_now_action") }}
+        <div v-if="can_start" class="widget-buttons">
+          <v-btn
+            color="primary"
+            size="x-large"
+            @click="dialog_pay = true"
+            prepend-icon="check"
+          >
+            {{ $t("contract_view.pay_now_action") }}
 
-          <u-price
-            :amount="contract.cost"
-            :currency="contract.currency"
-          ></u-price>
-        </v-btn>
+            <u-price
+              :amount="contract.cost"
+              :currency="contract.currency"
+            ></u-price>
+          </v-btn>
+        </div>
 
         <!-- Complete Task -->
 
-        <div v-else-if="can_complete">
+        <div v-else-if="can_complete" class="widget-buttons">
           <v-btn
             :loading="busy_complete === 'yes'"
-            class="m-1"
             color="success"
             size="x-large"
+            prepend-icon="done_all"
             @click="completeContract(true)"
           >
             {{ $t("contract_view.complete_action") }}
           </v-btn>
           <v-btn
             :loading="busy_complete === 'no'"
-            class="m-1"
             color="red"
             variant="text"
+            prepend-icon="cancel"
             @click="completeContract(false)"
           >
             {{ $t("contract_view.reject_action") }}
@@ -363,17 +368,17 @@
           <p class="text-subtitle-2 mb-2">
             {{ $t("contract_view.all_tasks_completed_message") }}
           </p>
-         <div class="widget-buttons">
-           <v-btn
-               :loading="busy_end"
-               color="primary"
-               size="x-large"
-               @click="endContract()"
-               prepend-icon="done_all"
-           >
-             Complete tasks
-           </v-btn>
-         </div>
+          <div class="widget-buttons">
+            <v-btn
+              :loading="busy_end"
+              color="primary"
+              size="x-large"
+              @click="endContract()"
+              prepend-icon="done_all"
+            >
+              Complete tasks
+            </v-btn>
+          </div>
         </div>
         <div v-else-if="waiting_complete_by_customer">
           <p class="text-subtitle-2 my-1">
@@ -576,17 +581,35 @@
       v-if="!isAdmin"
       v-model="dialog_pay"
       dark
-      inset
-      max-width="840"
+      width="720"
+      max-width="98vw"
+      content-class="rounded-t-xl"
     >
-      <v-card v-if="contract" :color="SaminColorDarkDeep">
-        <v-card-title>{{ $t("contract_view.dialog_pay.title") }}</v-card-title>
+      <v-card
+        v-if="contract"
+        :color="SaminColorDarkDeep"
+        rounded="t-xl"
+        class="text-start"
+      >
+        <v-card-title class="d-flex align-center">
+          <v-icon class="me-2">payment</v-icon>
+          {{ $t("contract_view.dialog_pay.title") }}
+
+          <v-spacer></v-spacer>
+          <u-currency-icon :currency="currency" flag-only></u-currency-icon>
+        </v-card-title>
+
         <v-card-text>
+          <p class="mb-7">
+            The cost of the contract will be secured in your selected account.
+            Upon task completion, the funds will be transferred to the expert.
+          </p>
           <b-account-input
             v-model="account"
             :currency="currency"
             :label="$t('contract_view.account_input')"
-            outlined
+            variant="outlined"
+            has-add
           ></b-account-input>
 
           <v-alert
@@ -610,12 +633,14 @@
               }"
               color="blue"
               size="x-large"
-              variant="flat"
+              variant="elevated"
+              prepend-icon="add_card"
             >
               {{ $t("global.actions.charge") }}
               <u-price
                 :amount="insufficient_balance"
                 :currency="currency"
+                class="ms-2"
               ></u-price>
             </v-btn>
 
@@ -625,11 +650,16 @@
               :loading="busy_pay"
               color="success"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="payNow"
+              prepend-icon="check"
             >
               {{ $t("global.actions.pay_now") }}
-              <u-price :amount="contract.cost" :currency="currency"></u-price>
+              <u-price
+                :amount="contract.cost"
+                :currency="currency"
+                class="ms-2"
+              ></u-price>
             </v-btn>
           </div>
         </v-card-actions>
@@ -691,16 +721,19 @@ import BAccountInput from "../../account/input/BAccountInput.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import UTasksEditor from "../../../ui/task/editor/UTasksEditor.vue";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
+import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
 
 export default {
   name: "ExpertContractView",
   components: {
+    UCurrencyIcon,
     BPermissionInput,
     BAccountInput,
     UNumberInput,
     UTasksEditor,
     UPriceInput,
   },
+  emits: ["message", "update:contract"],
   props: {
     contractId: {
       require: true,
@@ -1038,6 +1071,7 @@ export default {
           if (!data.error) {
             this.contract.start_at = data.contract.start_at;
             this.contract.permissions = data.contract.permissions;
+            this.$emit("message", data.message);
 
             this.$emit("update:contract", this.contract);
             this.showSuccessAlert(

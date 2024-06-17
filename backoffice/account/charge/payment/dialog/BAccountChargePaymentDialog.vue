@@ -148,8 +148,8 @@
 
     <v-bottom-sheet
       v-model="showSelectGateway"
-      :max-width="640"
-      inset
+      max-width="98vw"
+      width="640"
       persistent
       scrollable
     >

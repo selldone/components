@@ -32,10 +32,16 @@
         label="Email"
         prepend-inner-icon="account_circle"
         readonly
+        variant="underlined"
       >
       </v-text-field>
 
-      <v-text-field v-model="name" label="Name" messages="Expert name*">
+      <v-text-field
+        v-model="name"
+        label="Name"
+        messages="Expert name*"
+        variant="underlined"
+      >
       </v-text-field>
 
       <s-image-uploader
@@ -64,10 +70,20 @@
         services to clients in your vicinity.
       </v-list-subheader>
 
-      <s-country-select v-model="country" item-value="alpha2" label="Country">
+      <s-country-select
+        v-model="country"
+        item-value="alpha2"
+        label="Country"
+        variant="underlined"
+      >
       </s-country-select>
 
-      <v-text-field v-model="address" label="Address" messages="Full address">
+      <v-text-field
+        v-model="address"
+        label="Address"
+        messages="Full address"
+        variant="underlined"
+      >
       </v-text-field>
 
       <v-row>
@@ -79,6 +95,7 @@
             :min="0"
             label="Longitude"
             placeholder="50.0000"
+            variant="underlined"
           >
           </u-number-input>
         </v-col>
@@ -91,6 +108,7 @@
             :min="0"
             label="Latitude"
             placeholder="50.0000"
+            variant="underlined"
           >
           </u-number-input>
         </v-col>
@@ -112,6 +130,7 @@
         v-model="description"
         label="Description"
         messages="About expert"
+        variant="underlined"
       >
       </v-textarea>
     </div>
@@ -131,6 +150,7 @@
         label="Languages"
         max-width="auto"
         multiple
+        variant="underlined"
       >
       </u-language-input>
     </div>
@@ -151,6 +171,7 @@
         item-value="code"
         label="Industries"
         multiple
+        variant="underlined"
       ></v-select>
     </div>
 
@@ -167,6 +188,7 @@
         class="english-field"
         label="LinkedIn"
         placeholder="https://www.linkedin.com/"
+        variant="underlined"
       >
       </v-text-field>
       <v-text-field
@@ -175,6 +197,7 @@
         class="english-field"
         label="Instagram"
         placeholder="https://www.instagram.com/"
+        variant="underlined"
       >
       </v-text-field>
       <v-text-field
@@ -183,6 +206,7 @@
         class="english-field"
         label="Facebook"
         placeholder="https://www.facebook.com/"
+        variant="underlined"
       >
       </v-text-field>
       <v-text-field
@@ -191,6 +215,7 @@
         class="english-field"
         label="Pinterest"
         placeholder="https://www.pinterest.com/"
+        variant="underlined"
       >
       </v-text-field>
     </div>
@@ -210,6 +235,7 @@
         color="success"
         label="Approved expert"
         messages="If the option is checked, you will have the ability to create a new contract."
+        variant="underlined"
       ></v-checkbox>
     </div>
   </v-container>

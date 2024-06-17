@@ -13,133 +13,154 @@
   -->
 
 <template>
-  <v-container class="s--shop-dashboard-expert pa-0 pa-sm-3">
-    <s-widget
-      :class="{ '-fullscreen': fullscreen }"
-      :title="`<span class='fa:fas fa-caret-down me-1' ></span> ${$t(
-        'experts_common.expert_contracts',
-      )}`"
-      class="text-start contracts-panel thin-scroll widget-dark"
-      custom-header
+  <v-container
+    v-bind="$attrs"
+    class="s--shop-dashboard-expert text-start pa-0 pa-sm-3"
+  >
+    <v-card
+      class="thin-scroll"
+      max-height="840"
+      style="background-image: linear-gradient(60deg, #1976d2, #1760a8)"
+      color="#1760a8"
+      rounded="xl"
     >
-      <v-icon class="absolute-top-end" >emoji_food_beverage</v-icon>
-      <v-sheet class="border-between-vertical -dashed" color="transparent" dark>
-        <v-row
-          v-for="contract in contracts"
-          :key="contract.id"
-          class="position-relative"
-        >
-          <v-btn
-            v-if="contract.user_id === USER_ID()"
-            class="absolute-top-end"
-            icon
-            @click="showContract(contract)"
+      <v-card-title class="d-flex align-center">
+        <v-icon class="me-1">emoji_food_beverage</v-icon>
+        {{ $t("experts_common.expert_contracts") }}
+        <v-spacer></v-spacer>
+      </v-card-title>
+      <v-card-text>
+        <div class="border-between-vertical -dashed">
+          <v-row
+            v-for="contract in contracts"
+            :key="contract.id"
+            class="position-relative"
           >
-            <v-icon>info</v-icon>
-          </v-btn>
+            <v-col cols="12" md="6">
+              <p class="font-weight-bold mb-2">
+                <v-avatar
+                  class="me-2 hover-scale avatar-gradient -thin -user"
+                  color="#fff"
+                  size="32"
+                >
+                  <v-img :src="getUserAvatar(contract.user_id)" />
+                </v-avatar>
 
-          <v-col cols="12" md="6">
-            <p class="font-weight-bold nb-1">
-              <v-avatar class="me-2 hover-scale" color="#fff" size="24">
-                <v-img :src="getUserAvatar(contract.user_id)" />
-              </v-avatar>
+                {{ contract.title }}
+                <v-btn
+                  class="ms-1"
+                  size="small"
+                  variant="outlined"
+                  rounded
+                  @click="showContract(contract)"
+                >
+                  <v-icon start>info</v-icon>
+                  Show Contract
+                </v-btn>
+              </p>
 
-              {{ contract.title }}
-            </p>
+              <div class="mb-2">
+                <u-price
+                  :amount="contract.cost"
+                  :class="{ 'text-success': contract.settle_at }"
+                  :currency="contract.currency"
+                  class="flex-grow-1"
+                  medium
+                ></u-price>
+              </div>
 
-            <u-price
-              :amount="contract.cost"
-              :class="{ 'text-success': contract.settle_at }"
-              :currency="contract.currency"
-              class="flex-grow-1 p-2"
-            ></u-price>
+              <p v-if="contract.start_at" class="mb-1">
+                <span class="me-1 small"
+                  >{{ $t("global.commons.start_date") }}:</span
+                >{{ getLocalDateString(contract.start_at) }}
+              </p>
+              <v-chip v-else size="small">
+                <v-icon start>hourglass_empty</v-icon>
+                {{ $t("experts_common.waiting_pay_and_start") }}
+              </v-chip>
 
-            <p v-if="contract.start_at" class="mb-1">
-              <small class="me-1">{{ $t("global.commons.start_date") }}:</small
-              >{{ getLocalTimeString(contract.start_at) }}
-            </p>
-            <small v-else>
-              <v-icon class="me-1" size="small">hourglass_empty</v-icon>
-              {{ $t("experts_common.waiting_pay_and_start") }}
-            </small>
+              <p v-if="contract.end_at" class="mt-2">
+                <span class="me-1 small"
+                  >{{ $t("global.commons.end_date") }}:</span
+                >{{ getLocalTimeString(contract.end_at) }}
 
-            <p v-if="contract.end_at" class="mb-1">
-              <small class="me-1">{{ $t("global.commons.end_date") }}:</small
-              >{{ getLocalTimeString(contract.end_at) }}
+                <v-chip class="ms-2" size="small"
+                  >{{ $t("experts_common.waiting_to_complete") }}
+                </v-chip>
+              </p>
+              <p v-else-if="contract.start_at" class="mt-2">
+                <v-icon class="me-1" color="green" size="small"
+                  >play_arrow
+                </v-icon>
+                {{ $t("experts_common.running") }}
+              </p>
 
-              <small class="ms-2">{{
-                $t("experts_common.waiting_to_complete")
-              }}</small>
-            </p>
-            <small v-else-if="contract.start_at">
-              <v-icon class="me-1" color="green" size="small"
-                >play_arrow
-              </v-icon>
-              {{ $t("experts_common.running") }}</small
-            >
+              <div class="pt-2">
+                <v-btn
+                  v-if="
+                    contract.user_id === USER_ID() &&
+                    !contract.start_at &&
+                    !contract.cancel_at
+                  "
+                  color="success"
+                  rounded
+                  @click="showContract(contract)"
+                >
+                  <v-icon class="me-1 blink-me" size="small">lens</v-icon>
+                  {{ $t("experts_common.paY_start_action") }}
+                </v-btn>
+              </div>
+            </v-col>
 
-            <div class="pt-2">
-              <v-btn
-                v-if="
-                  contract.user_id === USER_ID() &&
-                  !contract.start_at &&
-                  !contract.cancel_at
-                "
-                color="success"
-                rounded
-                @click="showContract(contract)"
+            <v-col cols="12" md="6">
+              <div
+                v-for="(task, index) in contract.tasks"
+                :key="index"
+                class="mb-3"
               >
-                <v-icon class="me-1 blink-me" size="small">lens</v-icon>
-                {{ $t("experts_common.paY_start_action") }}
-              </v-btn>
-            </div>
-          </v-col>
+                <div class="text-subtitle-2 mb-1 single-line">
+                  {{ index + 1 }}. {{ task.title }}
+                </div>
+                <v-progress-linear
+                  :color="task.progress > 99 ? 'green' : 'blue'"
+                  :model-value="task.progress"
+                  bg-color="#eee"
+                  height="6"
+                  rounded
+                  striped
+                >
+                </v-progress-linear>
+              </div>
 
-          <v-col cols="12" md="6">
-            <div
-              v-for="(task, index) in contract.tasks"
-              :key="index"
-              class="m-1 text-start text-ellipsis pt-1"
-            >
-              <small>{{ task.title }}</small>
-              <v-progress-linear
-                :color="task.progress > 99 ? 'green' : 'blue'"
-                :model-value="task.progress"
-                bg-color="#eee"
-                height="6"
-                rounded
-                striped
+              <v-chip
+                v-for="permission in contract.permissions"
+                :key="permission.code"
+                :title="getLocalTimeString(permission.grant_at)"
+                class="m-1"
+                color="#164f82"
+                variant="flat"
+                size="small"
               >
-              </v-progress-linear>
-            </div>
+                <img
+                  :src="ShopPermissions[permission.code].src"
+                  class="me-1"
+                  height="16"
+                  width="16"
+                />
+                {{ $t(ShopPermissions[permission.code].text) }}
 
-            <v-chip
-              v-for="permission in contract.permissions"
-              :key="permission.code"
-              :title="getLocalTimeString(permission.grant_at)"
-              class="m-1"
-              color="#164f82"
-              size="small"
-            >
-              <img
-                :src="ShopPermissions[permission.code].src"
-                class="me-1"
-                height="16"
-                width="16"
-              />
-              {{ $t(ShopPermissions[permission.code].text) }}
-
-              <u-check
-                v-if="contract.start_at"
-                :value="!!permission.grant_at"
-                class="ms-1"
-              ></u-check>
-              <v-icon v-else class="ms-1" size="small"
-                >panorama_fish_eye
-              </v-icon>
-            </v-chip>
-          </v-col>
-        </v-row>
+                <u-check
+                  v-if="contract.start_at"
+                  :value="!!permission.grant_at"
+                  class="ms-1"
+                ></u-check>
+                <v-icon v-else class="ms-1" size="small"
+                  >panorama_fish_eye
+                </v-icon>
+              </v-chip>
+            </v-col>
+          </v-row>
+        </div>
 
         <div v-if="!contracts || !contracts.length">
           {{ $t("experts_common.need_help") }}
@@ -148,36 +169,41 @@
             >{{ $t("experts_common.hire_me_now") }}
           </v-btn>
         </div>
-      </v-sheet>
+      </v-card-text>
 
       <!-- -------------------------------- Dialog > Contract ------------------------------------- -->
-      <v-dialog
-        v-model="dialog_contract"
-        content-class="no-shadow-dialog"
-        max-width="840"
-        scrollable
-      >
-        <v-card v-if="selected_contract" class="rounded-28px overflow-hidden">
-          <v-card-title></v-card-title>
-          <v-card-text>
-            <expert-contract-view
-              v-if="selected_contract"
-              :contract-id="selected_contract.id"
-              @update:contract="
-                (contract) => AddOrUpdateItemByID(contracts, contract)
-              "
-            ></expert-contract-view>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn variant="text" @click="dialog_contract = false"
-              >{{ $t("global.actions.close") }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </s-widget>
+    </v-card>
   </v-container>
+  <v-dialog
+    v-model="dialog_contract"
+    content-class="no-shadow-dialog"
+    max-width="840"
+    scrollable
+  >
+    <v-card v-if="selected_contract" class="rounded-28px overflow-hidden">
+      <v-card-title></v-card-title>
+      <v-card-text>
+        <expert-contract-view
+          v-if="selected_contract"
+          :contract-id="selected_contract.id"
+          @update:contract="
+            (contract) => AddOrUpdateItemByID(contracts, contract)
+          "
+        ></expert-contract-view>
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            variant="text"
+            @click="dialog_contract = false"
+            size="x-large"
+            prepend-icon="close"
+            >{{ $t("global.actions.close") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -196,10 +222,6 @@ export default {
     timeSeries: {
       required: true,
       type: Object,
-    },
-    fullscreen: {
-      default: false,
-      type: Boolean,
     },
   },
 
@@ -233,14 +255,5 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-dashboard-expert {
-  .contracts-panel {
-    max-height: 840px;
-    overflow-y: auto;
-    background-image: linear-gradient(60deg, #1976d2, #1760a8);
-
-    &.-fullscreen {
-      max-height: none;
-    }
-  }
 }
 </style>

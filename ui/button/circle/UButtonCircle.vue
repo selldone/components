@@ -335,7 +335,7 @@ export default {
   position: relative;
 
   display: inline-block;
-  padding: 0 9px;
+  padding: 0 7px;
 
   &.-small {
     padding: 0 4px;
@@ -367,7 +367,7 @@ export default {
     // opacity: 0.9;
     width: 100%;
     user-select: none;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     //letter-spacing: 0.35px;
     line-height: 1.4em;
     position: absolute;

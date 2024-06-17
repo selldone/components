@@ -50,6 +50,9 @@
             :to="{ query: { dashboard: 'expert' } }"
             class="small link"
             >{{ $t("experts_common.contracts") }}
+            <v-badge :content="contracts.length" inline color="red">
+
+            </v-badge>
           </router-link>
         </template>
 

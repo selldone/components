@@ -40,7 +40,7 @@
         <span class="text-h4 font-weight-light me-2">{{
           gateway?.currency
         }}</span>
-        <u-currency-icon :currency="currency" gradient></u-currency-icon>
+        <u-currency-icon :currency="currency" flag-only class="me-1"></u-currency-icon>
 
         <v-chip
           v-if="!gateway?.enable"
