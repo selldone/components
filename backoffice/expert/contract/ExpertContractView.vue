@@ -330,6 +330,31 @@
         </v-col>
       </v-row>
 
+      <v-alert
+        v-if="contract.cancel_at"
+        :model-value="true"
+        class="mt-2 mb-1"
+        density="compact"
+        type="error"
+        variant="flat"
+      >
+        Canceled at {{ getLocalTimeString(contract.cancel_at) }} ({{
+          getFromNowString(contract.cancel_at)
+        }}).
+      </v-alert>
+      <v-alert
+        v-else-if="contract.payment_at"
+        :model-value="true"
+        class="mt-2 mb-1"
+        density="compact"
+        type="success"
+        variant="flat"
+      >
+        Paid at {{ getLocalTimeString(contract.payment_at) }} ({{
+          getFromNowString(contract.payment_at)
+        }}).
+      </v-alert>
+
       <!-- ......................... Customer Actions ......................... -->
       <v-expand-transition class="mb-3">
         <!-- Start Task -->
