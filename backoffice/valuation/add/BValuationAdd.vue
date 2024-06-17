@@ -211,7 +211,6 @@
       max-width="98vw"
       width="640px"
       scrollable
-      width="98vw"
     >
       <v-card class="rounded-t-xl text-start" rounded="0">
         <v-card-title>
