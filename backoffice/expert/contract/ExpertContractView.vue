@@ -79,7 +79,11 @@
           width="16"
         />
         <div>
-          <v-avatar class="m-2 avatar-gradient -thin -user" color="#fff" size="64">
+          <v-avatar
+            class="m-2 avatar-gradient -thin -user"
+            color="#fff"
+            size="64"
+          >
             <v-img :src="getUserAvatar(contract.user_id)" />
           </v-avatar>
           <p class="small font-weight-bold m-1 limited-text-100px">
@@ -94,8 +98,18 @@
         />
 
         <div>
-          <router-link :to="{name:'BPageShopDashboard',params:{shop_id:contract.shop_id}}" target="_blank">
-            <v-avatar class="m-2 avatar-gradient -thin -shop" color="#fff" size="64">
+          <router-link
+            :to="{
+              name: 'BPageShopDashboard',
+              params: { shop_id: contract.shop_id },
+            }"
+            target="_blank"
+          >
+            <v-avatar
+              class="m-2 avatar-gradient -thin -shop"
+              color="#fff"
+              size="64"
+            >
               <v-img :src="getShopIcon(contract.shop_id)" />
             </v-avatar>
             <p class="small font-weight-bold m-1 limited-text-100px">
@@ -175,6 +189,7 @@
             rounded
             striped
             @update:model-value="setProgress()"
+            clickable
           >
           </v-progress-linear>
         </div>
@@ -351,6 +366,7 @@
             :loading="busy_complete === 'no'"
             color="red"
             variant="text"
+            size="x-large"
             prepend-icon="cancel"
             @click="completeContract(false)"
           >
@@ -404,22 +420,30 @@
             auto-grow
             label="Comment"
             rounded
-            variant="filled"
+            variant="outlined"
           >
           </v-textarea>
 
-          <v-btn class="m-1" variant="text" @click="edit_rate = false"
-            >{{ $t("global.actions.cancel") }}
-          </v-btn>
+          <div class="widget-buttons">
+            <v-btn
+              v-if="!no_comment_rate"
+              variant="text"
+              @click="edit_rate = false"
+              size="x-large"
+              >{{ $t("global.actions.cancel") }}
+            </v-btn>
 
-          <v-btn
-            :disabled="!rate"
-            :loading="busy_comment"
-            class="m-1"
-            color="success"
-            @click="sendComment()"
-            >{{ $t("global.actions.send") }}
-          </v-btn>
+            <v-btn
+              :disabled="!rate"
+              :loading="busy_comment"
+              color="primary"
+              size="x-large"
+              @click="sendComment()"
+              >{{ $t("global.actions.send") }}
+
+              <v-icon class="flip-image-rtl ms-2">send</v-icon>
+            </v-btn>
+          </div>
         </div>
         <div v-else-if="contract.start_at" class="mb-2">
           <!-- Edit button for customer after rate! -->
@@ -462,24 +486,31 @@
             v-model="response"
             :placeholder="$t('contract_view.response_placeholder')"
             auto-grow
-            bg-color="bisque"
             label="Response"
             rounded
-            variant="filled"
+            variant="outlined"
+            class="mt-4"
           >
           </v-textarea>
 
-          <v-btn class="m-1" variant="text" @click="edit_response = false"
-            >{{ $t("global.actions.cancel") }}
-          </v-btn>
-          <v-btn
-            :disabled="!response"
-            :loading="busy_response"
-            class="m-1"
-            color="success"
-            @click="sendResponse()"
-            >{{ $t("global.actions.send") }}
-          </v-btn>
+          <div class="widget-buttons">
+            <v-btn
+              v-if="contract.response"
+              variant="text"
+              @click="edit_response = false"
+              size="x-large"
+              >{{ $t("global.actions.cancel") }}
+            </v-btn>
+            <v-btn
+              :disabled="!response"
+              :loading="busy_response"
+              color="primary"
+              size="x-large"
+              @click="sendResponse()"
+              >{{ $t("global.actions.send") }}
+              <v-icon class="flip-image-rtl ms-2">send</v-icon>
+            </v-btn>
+          </div>
         </div>
         <div v-if="contract.response && !edit_response" class="response-box">
           <v-btn
@@ -524,7 +555,7 @@
         {{ $t("contract_view.waiting_for_customer") }}
       </p>
 
-      <v-row>
+      <v-row dense class="my-3">
         <v-col v-if="contract.start_at" class="flex-grow-1" cols="12" md="6">
           <small class="d-block">{{ $t("global.commons.start_date") }}</small>
           <p>{{ getLocalTimeString(contract.start_at) }}</p>
@@ -1233,6 +1264,8 @@ export default {
           if (!data.error) {
             this.contract.comment = data.contract.comment;
             this.contract.rate = data.contract.rate;
+
+            this.edit_rate = false;
 
             this.$emit("update:contract", this.contract);
 
