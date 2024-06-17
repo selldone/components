@@ -98,6 +98,7 @@
 </template>
 
 <script>
+import './style/devices.scss'
 export default {
   name: "PwaPreview",
 
@@ -193,4 +194,3 @@ export default {
 }
 </style>
 
-<style lang="scss" src="./style/devices.scss"></style>
