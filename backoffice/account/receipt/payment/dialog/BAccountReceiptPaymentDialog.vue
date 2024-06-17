@@ -17,9 +17,9 @@
 
   <v-bottom-sheet
     v-model="showReceiptPayment"
-    :max-width="640"
+    :width="640"
     content-class="rounded-t-xl overflow-hidden"
-    inset
+    max-width="98vw"
     scrollable
   >
     <v-card

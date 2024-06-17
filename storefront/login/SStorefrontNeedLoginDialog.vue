@@ -15,12 +15,11 @@
 <template>
   <v-bottom-sheet
     v-model="show_dialog"
-    :max-width="640"
+    width="640"
     content-class="s--storefront-need-login-dialog"
-    inset
+    max-width="98vw"
     persistent
     scrollable
-    width="90%"
   >
     <v-btn
       class="absolute-top-end m-3 z2"

@@ -16,9 +16,8 @@
   <v-bottom-sheet
     v-if="post"
     v-model="dialog"
-    max-width="560"
-    width="98vw"
-    inset
+    width="560"
+    max-width="98vw"
     scrollable
     content-class="rounded-t-xl"
   >

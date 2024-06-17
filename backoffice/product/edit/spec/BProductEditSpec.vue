@@ -68,9 +68,8 @@
 
         <v-bottom-sheet
           content-class="rounded-t-xl"
-          inset
-          max-width="640"
-          width="98%"
+          max-width="98vw"
+          width="640"
         >
           <template v-slot:activator="{ props }">
             <div class="widget-buttons">
@@ -142,9 +141,8 @@
 
         <v-bottom-sheet
           content-class="rounded-t-xl"
-          inset
-          max-width="640"
-          width="98%"
+          max-width="98vw"
+          width="640"
         >
           <template v-slot:activator="{ props }">
             <div class="widget-buttons">

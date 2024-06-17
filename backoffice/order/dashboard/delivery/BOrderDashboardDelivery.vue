@@ -711,9 +711,8 @@
   <v-bottom-sheet
     v-model="dialog_received_by_customer"
     content-class="rounded-t-xl"
-    inset
-    max-width="640"
-    width="98vw"
+    max-width="98vw"
+    width="640"
   >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title class="text-wrap">
@@ -761,9 +760,8 @@
   <v-bottom-sheet
     v-model="dialog_returned_by_customer"
     content-class="rounded-t-xl"
-    inset
-    max-width="640"
-    width="98vw"
+    max-width="98vw"
+    width="640"
   >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title class="text-wrap">

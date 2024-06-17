@@ -18,9 +18,9 @@
 
     <v-bottom-sheet
       v-model="showSelectGateway"
-      :max-width="640"
+      :width="640"
       content-class="s--storefront-master-payment-dialog"
-      inset
+      max-width="98vw"
       persistent
       scrollable
     >

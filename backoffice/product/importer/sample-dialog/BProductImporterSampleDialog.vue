@@ -16,7 +16,6 @@
   <v-bottom-sheet
     :model-value="modelValue"
     max-width="640"
-    inset
     width="98vw"
     content-class="rounded-t-xl"
     @update:model-value="(val) => $emit('update:modelValue', val)"

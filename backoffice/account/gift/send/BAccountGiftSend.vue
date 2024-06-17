@@ -17,8 +17,8 @@
     v-model="send_gift_dialog"
     content-class="rounded-t-xl"
     dark
-    inset
-    max-width="720px"
+    width="720px"
+    max-width="98vw"
     scrollable
   >
     <v-card :color="SaminColorDarkDeep" class="text-start" rounded="t-xl">

@@ -212,10 +212,11 @@
 
     <v-bottom-sheet
       v-model="sheet"
-      :max-width="1200"
+      max-width="98vw"
+      :width="1200"
       :overlay-opacity="0.9"
       content-class="rounded-t-xl"
-      inset
+
       scrollable
     >
       <v-card class="text-start rounded-t-xl">

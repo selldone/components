@@ -1507,10 +1507,9 @@
   <v-bottom-sheet
     v-model="dialog_vendors"
     content-class="rounded-t-xl"
-    inset
-    max-width="1080"
+    max-width="98vw"
+    width="1080"
     scrollable
-    width="98cw"
   >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>Bulk actions > Assign vendor</v-card-title>

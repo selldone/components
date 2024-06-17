@@ -73,7 +73,6 @@
       v-if="!$vuetify.display.smAndUp"
       v-model="dialog"
       content-class="rounded-t-xl"
-      inset
       max-width="98vw"
       scrollable
       width="480"

@@ -258,9 +258,9 @@
   <!-- ========================== Transaction Confirm Dialog ========================== -->
   <v-bottom-sheet
     v-model="TransactionConfirmDialog"
-    :max-width="640"
+    :width="640"
+    max-width="98vw"
     content-class="rounded-t-xl overflow-hidden"
-    inset
     opacity="0.9"
     scrollable
   >

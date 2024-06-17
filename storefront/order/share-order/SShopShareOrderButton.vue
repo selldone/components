@@ -29,8 +29,8 @@
     <v-bottom-sheet
       v-model="show_share"
       content-class="rounded-t-xl"
-      inset
-      max-width="820"
+      max-width="98vw"
+      width="820"
     >
       <v-card class="text-start" color="#fafafa" rounded="t-xl">
         <v-card-title class="d-flex align-center">
