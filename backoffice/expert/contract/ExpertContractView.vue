@@ -497,7 +497,7 @@
 
           <p v-if="contract.comment" class="card-text-normal">
             <v-avatar class="me-1" size="24">
-              <img :src="getUserAvatar(contract.user_id)" />
+              <v-img :src="getUserAvatar(contract.user_id)" />
             </v-avatar>
             <span v-html="smartConvert(contract.comment)"></span>
           </p>
@@ -553,7 +553,7 @@
 
           <p v-if="contract.response" class="card-text-normal">
             <v-avatar class="me-1" size="24">
-              <img
+              <v-img
                 :src="
                   expert.image
                     ? getShopImagePath(expert.image)

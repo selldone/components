@@ -72,9 +72,9 @@
               <p v-if="contract.start_at" class="mb-1">
                 <span class="me-1 small"
                   >{{ $t("global.commons.start_date") }}:</span
-                >{{ getLocalDateString(contract.start_at) }}
+                >{{ getLocalDateString(contract.start_at) }}  ({{ getFromNowString(contract.start_at) }})
               </p>
-              <v-chip v-else size="small">
+              <v-chip v-if="!contract.payment_at && !contract.cancel_at" size="small">
                 <v-icon start>hourglass_empty</v-icon>
                 {{ $t("experts_common.waiting_pay_and_start") }}
               </v-chip>
@@ -82,10 +82,10 @@
               <p v-if="contract.end_at" class="mt-2">
                 <span class="me-1 small"
                   >{{ $t("global.commons.end_date") }}:</span
-                >{{ getLocalTimeString(contract.end_at) }}
+                >{{ getLocalDateString(contract.end_at) }} ({{ getFromNowString(contract.end_at) }})
 
-                <v-chip class="ms-2" size="small"
-                  >{{ $t("experts_common.waiting_to_complete") }}
+                <v-chip v-if="contract.end_at && !contract.complete_at" class="ms-2" size="small"
+                >{{ $t("experts_common.waiting_to_complete") }}
                 </v-chip>
               </p>
               <p v-else-if="contract.start_at" class="mt-2">
@@ -94,6 +94,8 @@
                 </v-icon>
                 {{ $t("experts_common.running") }}
               </p>
+
+
 
               <div class="pt-2">
                 <v-btn
@@ -176,13 +178,13 @@
   </v-container>
   <v-dialog
     v-model="dialog_contract"
-    content-class="no-shadow-dialog"
+    content-class="rounded-xl"
     max-width="840"
     scrollable
   >
-    <v-card v-if="selected_contract" class="rounded-28px overflow-hidden">
+    <v-card v-if="selected_contract" rounded="xl" >
       <v-card-title></v-card-title>
-      <v-card-text>
+      <v-card-text class="thin-scroll">
         <expert-contract-view
           v-if="selected_contract"
           :contract-id="selected_contract.id"
