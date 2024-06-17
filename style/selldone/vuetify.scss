@@ -724,14 +724,14 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 /**
     * Fix v-combobox auto height issue!
  */
-.v-input-auto-height {
+/*.v-input-auto-height {
   .v-field__input {
     .v-combobox__selection, .v-autocomplete__selection {
       height: auto;
     }
   }
 
-}
+}*/
 
 /**
   Fix toolbar scroll and overflow issue! (after update to 3.5.7)

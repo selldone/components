@@ -34,6 +34,7 @@
       })
     "
   >
+
     <template v-slot:selection>
       {{ live_value?.name }}
     </template>
@@ -131,6 +132,13 @@ export default {
   },
 
   watch: {
+  /* FOR TEST!  menu(){
+      if(!this.menu){
+        this.$nextTick(() => {
+          this.menu = true;
+        });
+      }
+    },*/
     search: threads.debounceSearch(function (val) {
       if (
         !this.menu || // Search only if menu is open!
