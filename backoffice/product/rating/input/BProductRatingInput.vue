@@ -60,16 +60,27 @@
       :disabled="product.ratings.length >= 5"
       :items="items_select_rating"
       :label="$t('add_product.rating_pros_cons.rating_input')"
-      :loading="busy_rating"
       :messages="$t('add_product.rating_pros_cons.rating_input_message')"
       :placeholder="$t('add_product.rating_pros_cons.rating_input_placeholder')"
-      :suffix="product.ratings.length < 5 ? $t('global.actions.add') : ''"
       class="mb-3"
       item-title="name"
       item-value="id"
       variant="underlined"
-      @update:model-value="addRatingField"
+      @keydown.enter="addRatingField(new_rating)"
     >
+      <template v-slot:append-inner>
+        <v-slide-y-reverse-transition>
+          <v-btn
+            v-if="product.ratings.length < 5 && new_rating"
+            :loading="busy_rating"
+            @click="addRatingField(new_rating)"
+            prepend-icon="add"
+            size="small"
+          >
+            {{ $t("global.actions.add") }}
+          </v-btn>
+        </v-slide-y-reverse-transition>
+      </template>
     </v-combobox>
   </div>
 </template>

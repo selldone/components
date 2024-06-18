@@ -77,15 +77,15 @@
                 <v-icon start>create_new_folder</v-icon>
 
                 <div>
-                  <b>
-                    {{ $t("add_product.edit_spec.manual.add_group_action") }}</b
+                  <div>
+                    {{ $t("add_product.edit_spec.manual.add_group_action") }}</div
                   >
                   <div
                     class="d-flex align-center justify-content-around mt-1 min-width-150"
                   >
                     <div
-                      class="bg-amber rounded-lg"
-                      style="height: 8px; width: 90%"
+                      class="bg-amber rounded-lg mt-1"
+                      style="height: 4px; width: 90%"
                     ></div>
                   </div>
                 </div>
@@ -149,19 +149,19 @@
               <v-btn color="#000" size="x-large" v-bind="props" variant="flat">
                 <v-icon start>post_add</v-icon>
                 <div>
-                  <b>{{
+                  <div>{{
                     $t("add_product.edit_spec.manual.add_item_action")
-                  }}</b>
+                  }}</div>
                   <div
                     class="d-flex align-center justify-content-around mt-1 min-width-150"
                   >
                     <div
-                      class="bg-blue rounded-lg"
-                      style="height: 8px; width: 30%"
+                      class="bg-blue rounded-lg mt-1"
+                      style="height: 4px; width: 30%"
                     ></div>
                     <div
-                      class="bg-blue rounded-lg"
-                      style="height: 8px; width: 60%"
+                      class="bg-blue rounded-lg mt-1"
+                      style="height: 4px; width: 60%"
                     ></div>
                   </div>
                 </div>
