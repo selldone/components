@@ -264,7 +264,7 @@
       </div>
     </v-expand-transition>
 
-    <s-widget-buttons :auto-fixed-position="dialogMode" class="widget-buttons">
+    <s-widget-buttons auto-fixed-position class="widget-buttons">
       <v-btn
         v-if="dialogMode"
         size="x-large"

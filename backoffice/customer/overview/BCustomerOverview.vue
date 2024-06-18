@@ -157,9 +157,9 @@
             <v-icon class="me-1" color="#111">cake</v-icon>
             <b>{{ $t("global.commons.birthday") }}</b>
 
-            <h3 class="text-end">{{ getFromNowString(customer.birthday) }}</h3>
+            <h3 class="text-end">{{  getLocalDateString(customer.birthday) }}</h3>
             <small class="d-block text-end">{{
-              getLocalTimeString(customer.birthday)
+                getFromNowString(customer.birthday)
             }}</small>
           </template>
 
