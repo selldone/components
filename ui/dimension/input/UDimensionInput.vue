@@ -206,6 +206,9 @@ export default {
     gen_value() {
       if (this.dim_val === "auto") return "auto";
       if (this.dim_val === "unset") return "unset";
+      if (this.dim_val === "fit-content") return "fit-content";
+      if (this.dim_val === "max-content") return "max-content";
+      if (this.dim_val === "min-content") return "min-content";
 
       if (!this.number_val || !this.dim_val)
         return "0" + (this.dim_val ? this.dim_val : "px");
@@ -240,7 +243,13 @@ export default {
   },
   methods: {
     noNumberVal(value) {
-      return ["auto", "unset"].includes(value);
+      return [
+        "auto",
+        "unset",
+        "fit-content",
+        "max-content",
+        "min-content",
+      ].includes(value);
     },
 
     extractValue(value) {
