@@ -437,7 +437,7 @@
               :label="$t('add_product.pricing.price_input')"
               :rules="[GlobalRules.required()]"
               class="strong-field"
-              currency="currency"
+              :currency="currency"
               placeholder="0.00"
               required
             >
