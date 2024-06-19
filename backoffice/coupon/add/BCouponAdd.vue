@@ -62,6 +62,8 @@
             :messages="$t('coupon_edit.currency_input_message')"
             :return-object="false"
             variant="underlined"
+            :label="$t('global.commons.currency')"
+            :active-currencies="shop.currencies"
           >
           </u-currency-input>
 

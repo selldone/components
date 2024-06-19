@@ -23,6 +23,7 @@
     :small="small"
     :text="text"
     :vew-only="vewOnly"
+    :open-new-tab="openNewTab"
   >
   </b-order-button-basket>
   <b-order-button-pos
@@ -31,6 +32,7 @@
     :small="small"
     :text="text"
     :vew-only="vewOnly"
+    :open-new-tab="openNewTab"
   >
   </b-order-button-pos>
   <b-order-button-bill
@@ -39,6 +41,7 @@
     :small="small"
     :text="text"
     :vew-only="vewOnly"
+    :open-new-tab="openNewTab"
   >
   </b-order-button-bill>
 
@@ -50,6 +53,7 @@
     :small="small"
     :text="text"
     :vew-only="vewOnly"
+    :open-new-tab="openNewTab"
   >
   </b-order-button-fulfillment>
 
@@ -59,6 +63,7 @@
     :small="small"
     :text="text"
     :vew-only="vewOnly"
+    :open-new-tab="openNewTab"
   >
   </b-order-button-avocado>
 
@@ -68,6 +73,7 @@
     :small="small"
     :text="text"
     :vew-only="vewOnly"
+    :open-new-tab="openNewTab"
   >
   </b-order-button-hyper>
 
@@ -103,6 +109,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    openNewTab: Boolean,
     text: {
       type: Boolean,
       default: false,

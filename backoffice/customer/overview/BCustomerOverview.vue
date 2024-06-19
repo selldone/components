@@ -542,8 +542,8 @@
   </v-container>
 
   <!-- ------------------------- Dialog Chips ------------------------------- -->
-  <v-dialog v-model="show_set_ships" max-width="640" scrollable>
-    <v-card>
+  <v-bottom-sheet v-model="show_set_ships" max-width="98vw" width="640"  scrollable content-class="rounded-t-xl">
+    <v-card class="text-start" rounded="t-xl">
       <v-card-title>
         <v-icon class="me-1">casino</v-icon>
         {{ $t("shop_customers.dialog_chips.title") }}
@@ -568,20 +568,22 @@
           :max="1000"
           :min="0"
           append-icon="casino"
-          class="max-width-field mx-auto"
+          class="max-width-field mx-auto mt-5"
+          variant="outlined"
+          rounded
         >
         </u-number-input>
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="show_set_ships = false"
+          <v-btn size="x-large" variant="text" @click="show_set_ships = false" prepend-icon="close"
             >{{ $t("global.actions.close") }}
           </v-btn>
           <v-btn
             :loading="busy_set_chips"
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="setChips(chips)"
           >
             <v-icon start>save</v-icon>
@@ -590,11 +592,11 @@
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
   <!-- ███████████████████████ Dialog > Club ███████████████████████ -->
 
-  <v-dialog v-model="show_set_club" max-width="640" scrollable>
-    <v-card>
+  <v-bottom-sheet v-model="show_set_club" max-width="98vw" width="640"  scrollable content-class="rounded-t-xl">
+    <v-card rounded="t-xl" class="text-start">
       <v-card-title>
         <v-icon class="me-1">diamond</v-icon>
         {{ $t("shop_customers.dialog_club.title") }}
@@ -613,7 +615,7 @@
           {{ customer.email }}
         </p>
 
-        <b-club-select v-model="level"></b-club-select>
+        <b-club-select v-model="level" class="mt-5 mb-3"></b-club-select>
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
@@ -624,7 +626,7 @@
             :loading="busy_set_chips"
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="setClub(level)"
           >
             <v-icon class="me-1">save</v-icon>
@@ -633,7 +635,7 @@
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 
   <!-- ███████████████████████ Dialog > Segments ███████████████████████ -->
   <b-customer-segment-dialog

@@ -47,7 +47,7 @@
           <td class="text-left">
             <u-price
               :amount="
-                order.price +
+                order.price +wallet_paid+
                 order.discount -
                 (order.delivery_price > 0 ? order.delivery_price : 0)
               "
@@ -456,6 +456,15 @@
           </td>
         </tr>
 
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 👛 ROW ▶ Wallet (Customer Wallet) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+        <b-order-payment-row-wallet
+          v-if="order.wallet_transaction"
+          key="wallet"
+          :walletTransaction="order.wallet_transaction"
+        >
+        </b-order-payment-row-wallet>
+
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 🛕 ROW ▶ Tax ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <tr
@@ -487,7 +496,14 @@
               color="primary"
               variant="text"
               @click.stop="show_tax_detail = !show_tax_detail"
-              >{{ $t("global.commons.show_details") }}...
+              :append-icon="
+                show_tax_detail ? 'arrow_drop_up' : 'arrow_drop_down'
+              "
+              >{{
+                show_tax_detail
+                  ? $t("global.commons.hide")
+                  : $t("global.commons.show_details")
+              }}...
             </v-btn>
           </td>
         </tr>
@@ -579,7 +595,7 @@
               'border-start-green no-border-bottom-tr':
                 bill.status === BillStatus.PAYED.code,
               'border-start-red': bill.status === BillStatus.CANCELED.code,
-              'row-hover':bill.payment || bill.gift_cards?.length,
+              'row-hover': bill.payment || bill.gift_cards?.length,
             }"
             class="text-start"
             @click="expanded_bill = expanded_bill === bill.id ? null : bill.id"
@@ -1049,8 +1065,12 @@
 
   <!-- █████████████████████████ Dialog > Edit Bill █████████████████████████ -->
 
-  <v-bottom-sheet v-model="edit_bill_dialog"  max-width="680"
-                  width="98vw" content-class="rounded-t-xl">
+  <v-bottom-sheet
+    v-model="edit_bill_dialog"
+    max-width="680"
+    width="98vw"
+    content-class="rounded-t-xl"
+  >
     <v-card v-if="selected_bill" rounded="t-xl" class="text-start">
       <v-card-title
         >{{ $t("process_center.payment_widget.edit_bill_dialog.title") }}
@@ -1126,9 +1146,13 @@
 
   <!-- █████████████████████████ Dialog > Add Bill █████████████████████████ -->
 
-  <v-bottom-sheet v-model="add_bill_dialog"  max-width="680"
-                  width="98vw"  content-class="rounded-t-xl">
-    <v-card  rounded="t-xl" class="text-start">
+  <v-bottom-sheet
+    v-model="add_bill_dialog"
+    max-width="680"
+    width="98vw"
+    content-class="rounded-t-xl"
+  >
+    <v-card rounded="t-xl" class="text-start">
       <v-card-title>
         <v-icon class="me-2">note_add</v-icon>
         {{ $t("process_center.payment_widget.add_bill_dialog.title") }}
@@ -1197,8 +1221,12 @@
 
   <!-- █████████████████████████ Dialog > Confirm Cash Payment (For bill only) █████████████████████████ -->
 
-  <v-bottom-sheet v-model="dialog_pay_bill_by_cash"  max-width="680"
-                  width="98vw" content-class="rounded-t-xl">
+  <v-bottom-sheet
+    v-model="dialog_pay_bill_by_cash"
+    max-width="680"
+    width="98vw"
+    content-class="rounded-t-xl"
+  >
     <v-card v-if="selected_bill_to_pay" rounded="t-xl" class="text-start">
       <v-card-title
         >{{
@@ -1359,11 +1387,13 @@ import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
-import { Basket, Bill } from "@selldone/core-js";
+import { Basket, Bill, PriceHelper } from "@selldone/core-js";
+import BOrderPaymentRowWallet from "@selldone/components-vue/backoffice/order/payment/row/wallet/BOrderPaymentRowWallet.vue";
 
 export default {
   name: "BOrderPaymentTable",
   components: {
+    BOrderPaymentRowWallet,
     USmartVerify,
     UPriceInput,
     UTextValueBox,
@@ -1441,6 +1471,16 @@ export default {
   },
 
   computed: {
+    /**
+     * 👛 Paid by customer wallet
+     * @return {*|number}
+     */
+    wallet_paid() {
+      return this.order.wallet_transaction
+          ? this.order.wallet_transaction.amount
+          : 0;
+    },
+
     isPhysical() {
       return this.order.type === ProductType.PHYSICAL.code;
     },
@@ -1666,15 +1706,15 @@ export default {
     },
 
     items_discount() {
-      return (
+      const out =
         this.order.discount -
         (this.total_offers +
           this.discount_code_amount +
           this.coupon_amount +
           this.club_amount +
           this.lottery_amount +
-          this.total_cross_sells_discount)
-      );
+          this.total_cross_sells_discount);
+      return PriceHelper.FixPrecisionForCurrency(out, this.order.currency);
     },
 
     total_price() {

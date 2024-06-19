@@ -26,6 +26,9 @@
     "
     class="shadow-hover"
     variant="flat"
+    :target="openNewTab?'_blank':undefined"
+    :append-icon="openNewTab?'open_in_new':undefined"
+
   >
     <img
       :src="require('../../../../assets/icons/avocado.svg')"
@@ -55,6 +58,8 @@ export default {
       type: Boolean,
       default: false,
     },
+    openNewTab:Boolean,
+
   },
 };
 </script>

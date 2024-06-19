@@ -236,6 +236,7 @@
                   :messages="$t('lottery_edit.currency_message')"
                   :return-object="false"
                   variant="underlined"
+                  :active-currencies="shop.currencies"
                 >
                 </u-currency-input>
 
@@ -256,6 +257,7 @@
                   :messages="$t('lottery_edit.currency_message')"
                   :return-object="false"
                   variant="underlined"
+                  :active-currencies="shop.currencies"
                 >
                 </u-currency-input>
 

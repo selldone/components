@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -13,45 +13,34 @@
   -->
 
 <template>
-  <v-btn
-    :size="small ? 'small' : undefined"
-    :to="vewOnly ? undefined : getBasketOrderProcessTo(order)"
-    :variant="text ? 'text' : 'flat'"
-    class="shadow-hover"
-    :target="openNewTab?'_blank':undefined"
-    :append-icon="openNewTab?'open_in_new':undefined"
-  >
-    <img
-      :src="getBasketOrderImage(order)"
-      class="me-2"
-      height="16"
-      width="16"
-    />
+  <tr class="text-start">
+    <td>
+      <img
+        class="mx-2"
+        height="24"
+        src="../../../../../assets/icons/customer_wallet.svg"
+      />
 
-    {{ $t("global.commons.order") }} {{ getBasketOrderCode(order) }}
-  </v-btn>
+      {{ $t("global.commons.wallet") }}
+    </td>
+    <td class="text-left">
+      <u-price
+        :amount="-walletTransaction.amount"
+        :currency="walletTransaction.currency"
+      ></u-price>
+    </td>
+    <td>Paid by customer's wallet.</td>
+    <td></td>
+  </tr>
 </template>
 
 <script>
 export default {
-  name: "BOrderButtonBasket",
-
+  name: "BOrderPaymentRowWallet",
   props: {
-    order: {},
-    small: {
-      type: Boolean,
-      default: false,
+    walletTransaction: {
+      require: true,
     },
-    text: {
-      type: Boolean,
-      default: false,
-    },
-    vewOnly: {
-      type: Boolean,
-      default: false,
-    },
-    openNewTab:Boolean,
-
   },
 };
 </script>

@@ -127,6 +127,16 @@
           variant="outlined"
         >
         </s-giftcard-input>
+        <!-- Wallet -->
+        <s-wallet-input
+            v-if="hasWallet && !isFree"
+            class="mb-3"
+            :currency="currency.code"
+
+        >
+
+        </s-wallet-input>
+
 
         <div class="text-start">
           <small>{{ $t("global.commons.total_payment") }} </small>
@@ -185,7 +195,7 @@
 
                     <tr v-if="bill.items_discount">
                       <td>
-                        <v-icon size="small">fa:fas fa-gift</v-icon>
+                        <v-icon size="small"  class="me-1">fa:fas fa-gift</v-icon>
                         {{ $t("global.commons.discount") }}
                       </td>
 
@@ -199,7 +209,7 @@
 
                     <tr v-if="bill.offer">
                       <td>
-                        <v-icon size="small">fa:fas fa-gift</v-icon>
+                        <v-icon size="small" class="me-1">fa:fas fa-gift</v-icon>
                         {{ $t("global.commons.offer") }}
                       </td>
 
@@ -213,7 +223,7 @@
 
                     <tr v-if="bill.delivery_price !== null">
                       <td>
-                        <v-icon size="small">fa:fas fa-shipping-fast</v-icon>
+                        <v-icon size="small"  class="me-1">fa:fas fa-shipping-fast</v-icon>
                         {{ $t("global.commons.shipping") }}
                       </td>
 
@@ -229,7 +239,7 @@
 
                     <tr v-if="bill.discount_code">
                       <td>
-                        <v-icon size="small">fa:fas fa-percentage</v-icon>
+                        <v-icon size="small"  class="me-1">fa:fas fa-percentage</v-icon>
                         {{ $t("global.commons.discount_code") }}
                       </td>
                       <td>
@@ -241,7 +251,7 @@
                     </tr>
                     <tr v-if="bill.club">
                       <td>
-                        <v-icon size="small">fa:fas fa-gem</v-icon>
+                        <v-icon size="small"  class="me-1">fa:fas fa-gem</v-icon>
                         {{ $t("global.commons.customer_club") }}
                       </td>
                       <td>
@@ -253,7 +263,7 @@
                     </tr>
                     <tr v-if="bill.coupon">
                       <td>
-                        <v-icon size="small">fa:fas fa-ticket-alt</v-icon>
+                        <v-icon size="small"  class="me-1">fa:fas fa-ticket-alt</v-icon>
                         {{ $t("global.commons.coupon") }}
                       </td>
                       <td>
@@ -266,7 +276,7 @@
 
                     <tr v-if="bill.lottery">
                       <td>
-                        <v-icon size="small">fa:fas fa-dice</v-icon>
+                        <v-icon size="small"  class="me-1">fa:fas fa-dice</v-icon>
                         {{ $t("global.commons.prize") }}
                       </td>
                       <td>
@@ -277,9 +287,23 @@
                       </td>
                     </tr>
 
+                    <tr v-if="bill.wallet">
+                      <td>
+                        <v-icon size="small"  class="me-1">wallet</v-icon>
+                        {{ $t("global.commons.my_wallet") }}
+                      </td>
+                      <td>
+                        <u-price
+                            :amount="-bill.wallet"
+                            :currency="currency.code"
+                        ></u-price>
+                      </td>
+                    </tr>
+
+
                     <tr v-if="bill.tax">
                       <td>
-                        <v-icon size="small">fa:fas fa-coins</v-icon>
+                        <v-icon size="small"  class="me-1">fa:fas fa-coins</v-icon>
                         {{ $t("global.commons.tax") }}
                       </td>
                       <td>
@@ -296,7 +320,7 @@
 
                     <tr v-if="total_amount_by_gift_cards">
                       <td>
-                        <v-icon size="small">card_giftcard</v-icon>
+                        <v-icon size="small"  class="me-1">card_giftcard</v-icon>
                         {{ $t("global.commons.gift_card") }}
                       </td>
                       <td>
@@ -722,10 +746,14 @@ import UPaymentPaypalStandard from "../../../ui/payment/paypal-standard/UPayment
 import UPaymentMercadopago from "../../../ui/payment/mercadopago/UPaymentMercadopago.vue";
 import UPaymentPaymob from "../../../ui/payment/paymob/UPaymentPaymob.vue";
 import UPaymentSquareup from "../../../ui/payment/squareup/UPaymentSquareup.vue";
+import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
+import SWalletInput from "@selldone/components-vue/storefront/wallet/SWalletInput.vue";
 
 export default {
   name: "UPaymentForm",
   components: {
+    SWalletInput,
+    UPrice,
     UPaymentSquareup,
     UPaymentPaymob,
     UPaymentMercadopago,
@@ -789,13 +817,16 @@ export default {
     //-------------- Stripe ---------------
     pack: {},
 
-    //-------------- Gift Card ---------------
+    //-------------- Gift Card (Shop) ---------------
 
     hasGiftCardField: {
       require: false,
       type: Boolean,
       default: false,
     },
+    //-------------- Customer Virtual Wallet (Shop) ---------------
+
+    hasWallet:Boolean,
 
     //-------------- Club ---------------
 

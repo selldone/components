@@ -71,10 +71,11 @@
             v-model="currency"
             :color="SaminColorLight"
             :disabled="discountCode !== null && !cloneMode"
-            :label="$t('global.commons.currency')"
             :messages="$t('discount_codes.dialog.currency_input_message')"
             :return-object="false"
             variant="underlined"
+            :label="$t('global.commons.currency')"
+            :active-currencies="shop.currencies"
           >
           </u-currency-input>
         </div>

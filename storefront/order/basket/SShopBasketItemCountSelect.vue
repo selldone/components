@@ -95,6 +95,7 @@
             title="Remove item from the cart."
             variant="flat"
             @click.stop="$emit('click:delete')"
+            style="pointer-events: all"
           >
             <v-icon>close</v-icon>
           </v-btn>

@@ -21,7 +21,7 @@
       </v-avatar>
     </template>
 
-    <v-list-item-title class="text-h5">
+    <v-list-item-title>
       <b>{{ customer.name }}</b>
     </v-list-item-title>
     <v-list-item-subtitle>

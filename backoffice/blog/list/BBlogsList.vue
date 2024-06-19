@@ -30,7 +30,7 @@
       no-home
       placeholder="*.*"
       show-settings-button
-      title="Filter pages by resources cluster."
+      title="Filter articles by resources cluster."
       variant="solo"
     ></b-cluster-input>
 

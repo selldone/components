@@ -144,11 +144,16 @@ export default defineComponent({
 .u--chart-event-drops {
   position: relative;
   text-align: start;
-  overflow: auto;
 
-  .--chart {
-    min-width: 400px;
+
+  @media only screen and (max-width: 1850px) {
+    overflow: auto;
+    .--chart {
+      min-width: 400px;
+    }
   }
+
+
 
   .tooltip {
     position: absolute;

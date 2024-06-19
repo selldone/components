@@ -155,6 +155,7 @@
                 <u-price
                   :amount="
                     order.price +
+                    wallet_paid +
                     order.discount -
                     (order.delivery_price > 0 ? order.delivery_price : 0)
                   "
@@ -410,6 +411,14 @@
               <td />
             </tr>
 
+            <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 👛 ROW ▶ Wallet (Customer Wallet) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+            <s-order-payment-row-wallet
+              v-if="order.wallet_transaction"
+              :wallet-transaction="order.wallet_transaction"
+            >
+            </s-order-payment-row-wallet>
+
             <!------------ Tax ------------>
 
             <tr v-if="order.tax" class="text-start">
@@ -473,7 +482,7 @@
                   'border-start-green no-border-bottom-tr':
                     bill.status === BillStatus.PAYED.code,
                   'border-start-red': bill.status === BillStatus.CANCELED.code,
-                  'row-hover':bill.payment || bill.gift_cards?.length,
+                  'row-hover': bill.payment || bill.gift_cards?.length,
                 }"
                 @click="
                   expanded_bill = expanded_bill === bill.id ? null : bill.id
@@ -539,8 +548,12 @@
                     <v-btn
                       v-if="current_bill_waiting === bill"
                       :disabled="current_bill_waiting !== bill"
-                      :size="current_bill_waiting === bill?'x-large':undefined"
-                      :variant="current_bill_waiting !== bill ? 'elevated':undefined"
+                      :size="
+                        current_bill_waiting === bill ? 'x-large' : undefined
+                      "
+                      :variant="
+                        current_bill_waiting !== bill ? 'elevated' : undefined
+                      "
                       color="success"
                       @click.stop="goToPaymentBill(bill)"
                     >
@@ -687,11 +700,13 @@ import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import UPaymentCard from "../../../ui/payment/card/UPaymentCard.vue";
 import { URLHelper } from "@selldone/core-js/helper/url/URLHelper";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
-import { Basket, Bill } from "@selldone/core-js";
+import { Basket, Bill, PriceHelper } from "@selldone/core-js";
+import SOrderPaymentRowWallet from "@selldone/components-vue/storefront/order/payment/rows/SOrderPaymentRowWallet.vue";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",
   components: {
+    SOrderPaymentRowWallet,
     UPaymentCard,
     UCurrencyIcon,
     SShopRowCustomerPendingPayment,
@@ -723,6 +738,15 @@ export default {
   },
 
   computed: {
+    /**
+     * 👛 Paid by customer wallet
+     * @return {*|number}
+     */
+    wallet_paid() {
+      return this.order.wallet_transaction
+        ? this.order.wallet_transaction.amount
+        : 0;
+    },
     isPhysical() {
       return this.order.type === ProductType.PHYSICAL.code;
     },
@@ -830,15 +854,16 @@ export default {
     },
 
     items_discount() {
-      return (
+      const out =
         this.order.discount -
         (this.total_offers +
           this.discount_code_amount +
           this.coupon_amount +
           this.club_amount +
           this.lottery_amount +
-          this.total_cross_sells_discount)
-      );
+          this.total_cross_sells_discount);
+
+      return PriceHelper.FixPrecisionForCurrency(out, this.order.currency);
     },
 
     total_payed() {

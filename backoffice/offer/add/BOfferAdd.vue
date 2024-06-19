@@ -193,6 +193,7 @@
             :messages="$t('offer_edit.currency_input_message')"
             :return-object="false"
             variant="underlined"
+            :active-currencies="shop.currencies"
           >
           </u-currency-input>
 

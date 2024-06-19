@@ -50,6 +50,7 @@
         :qr-code="payment_form_qr_code"
         :timeout="timeout"
         has-club
+        has-wallet
         @close="delayedHide()"
         @onEndPayment="(data) => onFinishPayment(data)"
         @select-gateway="buy"

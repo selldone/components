@@ -37,6 +37,7 @@
             :messages="$t('gift_card_type_edit.currency_input_message')"
             :return-object="false"
             variant="underlined"
+            :active-currencies="shop.currencies"
           />
 
           <u-price-input
