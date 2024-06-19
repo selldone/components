@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--product-section-tax px-2 mb-2 flex-grow-0">
+  <div v-if="tax" class="s--product-section-tax px-2 mb-2 flex-grow-0">
     <span v-html="tax_string" class="-tax-box"></span>
     <span v-if="has_free_shipping" class="-shipping-box text-success">
       ● {{ $t("global.commons.free_shipping") }}

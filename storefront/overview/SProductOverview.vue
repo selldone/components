@@ -234,6 +234,14 @@
               :shop="shop"
             ></s-product-section-tax>
 
+            <!-- ▁▁▁▁▁▁ 🞇 Cashback Program  🞇 ▁▁▁▁▁▁ -->
+            <s-product-section-cashback
+                :product="product"
+                :shop="shop"
+                :currency="GetUserSelectedCurrency()?.code"
+                :amount="0"
+            ></s-product-section-cashback>
+
             <!-- ▁▁▁▁▁▁ 🞇 Extra Pricings 🞇 ▁▁▁▁▁▁ -->
             <s-product-section-extra-pricings
               :current-variant="current_variant"
@@ -364,10 +372,13 @@ import SProductSectionPrice from "../../storefront/product/section/price/SProduc
 import SProductSectionWaitingAuction from "../../storefront/product/section/auction/SProductSectionWaitingAuction.vue";
 import SProductSectionBadges from "../../storefront/product/section/badges/SProductSectionBadges.vue";
 import SProductSectionVariants from "../../storefront/product/section/variants/SProductSectionVariants.vue";
+import SProductSectionCashback
+  from "@selldone/components-vue/storefront/product/section/cashback/SProductSectionCashback.vue";
 
 export default {
   name: "SProductOverview",
   components: {
+    SProductSectionCashback,
     UPaymentStripeSplit,
     SShopBuyButton,
     ProductDiscountCountdown,
