@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-list-item v-if="wallet" variant="flat" base-color="#673AB7" rounded="lg" lines="two" prepend-icon="wallet" append-icon="celebration">
+  <v-list-item v-if="wallet?.balance" variant="flat" base-color="#673AB7" rounded="lg" lines="two" prepend-icon="wallet" append-icon="celebration">
     <template v-slot:title>
       <u-price :amount="wallet.balance" :currency="wallet.currency" ></u-price>
     </template>
