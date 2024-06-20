@@ -13,8 +13,8 @@
   -->
 
 <template>
-  <div v-if="tax" class="s--product-section-tax px-2 mb-2 flex-grow-0">
-    <span v-html="tax_string" class="-tax-box"></span>
+  <div class="s--product-section-tax px-2 mb-2 flex-grow-0">
+    <span v-html="tax && tax_string" class="-tax-box"></span>
     <span v-if="has_free_shipping" class="-shipping-box text-success">
       ● {{ $t("global.commons.free_shipping") }}
       <span
@@ -182,7 +182,8 @@ export default {
             : "")
         );
       } else {
-        return `(${this.$t("global.commons.tax_vary_by_location")})`;
+        return "";
+        //return `(${this.$t("global.commons.tax_vary_by_location")})`;
       }
     },
 
