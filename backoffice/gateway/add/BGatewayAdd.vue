@@ -339,7 +339,9 @@
         icon="code"
       ></s-widget-header>
 
-      <v-list-subheader></v-list-subheader>
+      <v-list-subheader>
+        You can enable the debug mode to test the payment gateway.
+      </v-list-subheader>
       <u-smart-switch
         v-model="debug"
         :color="debug ? 'amber' : 'success'"
