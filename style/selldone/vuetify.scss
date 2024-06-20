@@ -787,3 +787,15 @@ Make v-btn flex to put prepend and append in start and end of button
   font-weight: 500;
 }
 }
+
+// FIX BUG! rounded-ts-circle not exist in shop!
+.rounded-ts-circle {
+  border-top-left-radius: 50%;
+}
+.v-locale--is-rtl {
+  .rounded-ts-circle {
+    border-top-left-radius: unset;
+    border-top-right-radius: 50%;
+  }
+
+}

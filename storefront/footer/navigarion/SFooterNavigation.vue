@@ -466,10 +466,10 @@ export default {
   }
 
   &.-top {
-    width: 100% !important;
-    left: 0 !important;
-    border-radius: 0 !important;
-    top: 0 !important;
+    width: 98% !important;
+    left: 1% !important;
+    border-radius: 12px !important;
+    top: 1% !important;
     bottom: unset !important;
   }
 }

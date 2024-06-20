@@ -36,6 +36,7 @@
       prepend-icon=""
       prepend-inner-icon="verified_user"
       variant="outlined"
+      class="mt-3"
     >
       <template v-slot:append-inner>
         <v-btn

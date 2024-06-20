@@ -13,14 +13,8 @@
   -->
 
 <template>
-  <div>
-    <v-btn
-      v-if="available_lotories"
-      :loading="busy_fetch"
-      icon
-      variant="text"
-      @click="dialog = true"
-    >
+  <div v-if="USER() && shop.lottery?.enable && available_lotories">
+    <v-btn :loading="busy_fetch" icon variant="text" @click="dialog = true">
       <u-lottie
         :options="{ path: '/animation/happy_birthday.json', loop: true }"
         :speed="1"
@@ -105,7 +99,7 @@
                   :lottery="win"
                 ></s-storefront-lottery-prize-detail>
               </div>
-              <div v-else class="center-absolute" style="width: 70%">
+              <div v-else class="center-absolute text-center" style="width: 70%">
                 <h3 class="text-white zoomIn user-select-none text-center">
                   {{ $t("global.wheel_fortune.lost_message") }}
                 </h3>
@@ -255,6 +249,13 @@ import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 export default {
   name: "SStorefrontLotteryWheelOfFortune",
   components: { SStorefrontLotteryPrizeDetail },
+
+  props: {
+    shop: {
+      type: Object,
+      required: true,
+    },
+  },
   data: () => ({
     dialog: false,
 

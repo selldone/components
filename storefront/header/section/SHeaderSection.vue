@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <v-toolbar
-      v-if="!$store.getters.getIsNative"
+      v-if="!$store.getters.getIsNative && shop"
       :class="{ 'text-white': is_dark, '-dark': is_dark }"
       :color="
         color
@@ -39,392 +39,54 @@
         <div v-if="!overlay" style="min-height: 64px"></div>
       </template>
 
-      <template v-if="!isMobile || !searchMode">
-        <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
-        <v-btn
-          v-if="isMobile || is_standalone"
-          :disabled="!shop"
-          class="m-1"
-          icon
-          size="large"
-          @click.stop="drawer = !drawer"
-        >
-          <v-icon> menu</v-icon>
-        </v-btn>
+      <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
+      <s-header-section-drawer-menu
+        v-if="isMobile || is_standalone"
+        :shop="shop"
+      >
+      </s-header-section-drawer-menu>
 
-        <s-header-section-logo v-if="shop" :shop="shop"></s-header-section-logo>
+      <s-header-section-logo :shop="shop" class="mx-1"></s-header-section-logo>
 
-        <u-loading-ellipsis v-else-if="!shop" css-mode></u-loading-ellipsis>
+      <v-spacer />
 
-        <v-spacer />
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Lottery ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Lottery ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+      <s-storefront-lottery-wheel-of-fortune
+        :shop="shop"
+        class="fadeIn delay_200 me-3"
+      ></s-storefront-lottery-wheel-of-fortune>
 
-        <s-storefront-lottery-wheel-of-fortune
-          v-if="USER() && shop && shop.lottery && shop.lottery.enable"
-          class="fadeIn delay_200 me-3"
-        ></s-storefront-lottery-wheel-of-fortune>
+      <s-header-section-buttons :dark="!is_light_header" :shop="shop">
+      </s-header-section-buttons>
 
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Orders history ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-        <u-button-circle
-          v-if="show_top_cart && !isMobile"
-          :color="is_light_header ? '#333' : '#fff'"
-          :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }"
-          :tooltip="$t('global.commons.orders')"
-          class="me-3 fadeIn delay_300"
-          dense
-          exact
-          icon="local_mall"
-        >
-        </u-button-circle>
-
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Basket Top Menu ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-        <u-button-circle
-          v-if="show_top_cart && !isMobile"
-          :badge-number="itemsCount"
-          :color="is_light_header ? '#333' : '#fff'"
-          :has-badge="itemsCount > 0"
-          :tooltip="$t('basket_top_menu.basket')"
-          badge-color="teal"
-          class="me-3 fadeIn delay_300"
-          dense
-          icon="shopping_cart"
-          persist-badge
-          @click="show_basket = true"
-        >
-        </u-button-circle>
-
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User Badges ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-        <img
-          v-if="getClub() && !isMobile"
-          :src="getCustomerClubLevel(getClub().level).icon"
-          class="absolute-top-end fadeIn"
-          height="20px"
-          width="20px"
-        />
-
-        <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-        <s-language-selector
-          v-if="shop"
-          :iconColor="is_light_header ? '#333' : '#fff'"
-          :shop="shop"
-          class="me-3"
-          icon-only
-        ></s-language-selector>
-
-        <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-        <u-currency-selector
-          v-if="
-            /* isMobile &&*/ shop &&
-            shop.currencies &&
-            shop.currencies.length > 1
-          "
-          :iconColor="is_light_header ? '#333' : '#fff'"
-          :shop="shop"
-          class="me-3"
-          dense
-          hideDetails
-          icon
-          icon-only
-          max-width="80px"
-          outlined
-          singleLine
-          small
-          @change="
-            () => {
-              onChangeUserSelectedCurrency();
-            }
-          "
-        />
-
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-        <template v-if="!isMobile">
-          <v-slide-y-reverse-transition group leave-absolute>
-            <v-btn
-              v-if="!busy_user && USER()"
-              key="kav1"
-              :color="is_light_header ? '#ddd' : SaminColorDarkDeep"
-              :loading="busy_logout"
-              class="me-1 mt-1 hover-shadow"
-              height="42"
-              rounded
-              variant="outlined"
-            >
-              <v-icon :color="is_light_header ? '#222' : '#fff'" start
-                >menu
-              </v-icon>
-              <v-avatar
-                :color="is_light_header ? '#fff' : SaminColorDarkDeep"
-                class="me-n3"
-                size="32"
-              >
-                <img :src="getUserAvatar(USER_ID())" />
-              </v-avatar>
-              <v-menu
-                v-model="menu"
-                :close-on-content-click="true"
-                :max-width="460"
-                :min-width="280"
-                activator="parent"
-                open-on-click
-                width="80vw"
-                z-index="99999999"
-              >
-                <v-card color="#f8f8f8" flat rounded="xl">
-                  <v-card-text>
-                    <div class="d-flex text-start align-center">
-                      <v-avatar
-                        :size="64"
-                        class="avatar-gradient -thin me-2 flex-grow-0"
-                        color="#946f90"
-                      >
-                        <v-img :src="getUserAvatar(USER_ID())" />
-                      </v-avatar>
-
-                      <div class="flex-grow-1">
-                        <div class="my-1 text-subtitle-2 font-weight-black">
-                          {{ USER().name }}
-
-                          <v-icon
-                            v-if="USER().personal_information_verified"
-                            color="green"
-                            size="small"
-                          >
-                            check_circle
-                          </v-icon>
-
-                          <v-icon
-                            v-if="profile && profile.verified"
-                            class="ms-1"
-                            color="blue"
-                            size="small"
-                            >verified
-                          </v-icon>
-                        </div>
-
-                        <p class="text-muted m-0">
-                          {{ USER().email }}
-                        </p>
-
-                        <div
-                          v-if="shop && shop.lottery && shop.lottery.enable"
-                          class="d-flex align-center pt-2"
-                        >
-                          <img
-                            class="m-1"
-                            height="24"
-                            src="../../../assets/icons/chips.svg"
-                            width="24"
-                          />
-                          <b>
-                            {{
-                              $t("layout_shop.user_menu.chips", {
-                                chips: USER().chips,
-                              })
-                            }}
-                          </b>
-                        </div>
-                      </div>
-                    </div>
-                  </v-card-text>
-
-                  <!-- ―――――――――― Shop User Menu List ―――――――――― -->
-
-                  <s-shop-user-menu-list
-                    v-if="shop"
-                    :shop="shop"
-                    class="mx-4 my-2"
-                    @click:logout="logout()"
-                  ></s-shop-user-menu-list>
-
-                  <!-- ―――――――――― Extra links ―――――――――― -->
-
-                  <template v-if="has_avocado || has_hyper || has_insta">
-                    <v-row
-                      v-if="shop"
-                      class="m-0 pb-4"
-                      dense
-                      justify="space-around"
-                    >
-                      <v-col
-                        v-if="has_avocado"
-                        class="d-flex flex-column align-center"
-                        cols="4"
-                      >
-                        <v-btn
-                          :to="{ name: 'AvocadoPage' }"
-                          icon
-                          size="large"
-                          variant="text"
-                        >
-                          <img
-                            height="24"
-                            src="../../../assets/icons/avocado.svg"
-                            width="24"
-                          />
-                        </v-btn>
-                        <small>{{ $t("global.commons.avocado") }}</small>
-                      </v-col>
-                      <v-col
-                        v-if="has_hyper"
-                        class="d-flex flex-column align-center"
-                        cols="4"
-                      >
-                        <v-btn
-                          :to="{ name: window.$storefront.routes.HYPER_PAGE }"
-                          icon
-                          size="large"
-                          variant="text"
-                        >
-                          <img
-                            height="24"
-                            src="../../../assets/icons/hyper.svg"
-                            width="24"
-                          />
-                        </v-btn>
-                        <small>
-                          {{ $t("global.commons.hyper") }}
-                        </small>
-                      </v-col>
-                      <v-col
-                        v-if="has_insta"
-                        class="d-flex flex-column align-center"
-                        cols="4"
-                      >
-                        <v-btn
-                          :to="{ name: 'InstagramPage' }"
-                          icon
-                          size="large"
-                          variant="text"
-                        >
-                          <img
-                            height="24"
-                            src="../../../assets/trademark/instagram.svg"
-                            width="24"
-                          />
-                        </v-btn>
-                        <small>{{ $t("global.commons.instashop") }}</small>
-                      </v-col>
-                    </v-row>
-                  </template>
-
-                  <!-- ―――――――――― Terms / Privacy ―――――――――― -->
-
-                  <div
-                    class="d-flex align-center small text-center justify-content-around text-muted px-1 py-3"
-                  >
-                    <div class="p-1">
-                      <a class="text-muted" href="/privacy" target="_blank"
-                        >Privacy Policy</a
-                      >
-                    </div>
-                    •
-                    <div class="p-1">
-                      <a class="text-muted" href="/terms" target="_blank"
-                        >Terms of Service</a
-                      >
-                    </div>
-                  </div>
-                </v-card>
-              </v-menu>
-            </v-btn>
-
-            <v-btn
-              v-else-if="!busy_user"
-              key="kav2"
-              :color="SaminInfoColor"
-              :icon="!shop"
-              :loading="!shop"
-              class="s--storefront-primary-header-login-button"
-              roundedripple
-              variant="elevated"
-              @click.stop="NeedLogin()"
-            >
-              <v-icon start> login</v-icon>
-              <div v-if="!!shop">
-                <span class="hide-on-small-600"
-                  >{{ $t("layout_shop.login_to_shop") }}
-                </span>
-                <span class="show-on-small-600">{{
-                  $t("layout_shop.login_to_shop_short")
-                }}</span>
-              </div>
-            </v-btn>
-
-          </v-slide-y-reverse-transition>
-        </template>
-      </template>
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+      <s-header-section-user
+        v-if="!isMobile"
+        :dark="!is_light_header"
+        :shop="shop"
+      >
+      </s-header-section-user>
     </v-toolbar>
-    <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Menu ―――――――――― -->
-    <s-shop-navigation-drawer
-      v-if="(isMobile || is_standalone) && shop"
-      v-model="drawer"
-      :shop="shop"
-    ></s-shop-navigation-drawer>
-
-    <!-- ―――――――――― Shop Drawer ―――――――――― -->
-
-    <v-navigation-drawer
-      v-model="show_basket"
-      :class="{ 'ma-2': show_basket }"
-      :location="!$vuetify.locale.isRtl ? 'right' : undefined"
-      :width="Math.min(640, window.innerWidth * 0.86)"
-      class="s--storefront-primary-header-basket-navigation t-all-400"
-      color="#fff"
-      temporary
-    >
-      <div class="d-flex flex-column" style="min-height: 100%">
-        <v-btn
-          block
-          class="tnt flex-grow-0 mb-2"
-          size="x-large"
-          variant="text"
-          @click="show_basket = false"
-          >{{ $t("global.actions.close") }}
-          <v-icon class="ms-2">{{ $t("icons.long_end") }}</v-icon>
-        </v-btn>
-
-        <basket-top-menu
-          ref="basket_menu"
-          class="flex-grow-1"
-          @close="show_basket = false"
-        />
-      </div>
-    </v-navigation-drawer>
   </div>
 </template>
 
 <script>
-import BasketTopMenu from "../../order/basket/BasketTopMenu.vue";
-import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
-
 import SStorefrontLotteryWheelOfFortune from "../../../storefront/lottery/wheel-of-fortune/SStorefrontLotteryWheelOfFortune.vue";
-import UCurrencySelector from "../../../ui/currency/selector/UCurrencySelector.vue";
-import SShopNavigationDrawer from "../../../storefront/menu/side/SShopNavigationDrawer.vue";
-import SShopUserMenuList from "../../../storefront/menu/user/SShopUserMenuList.vue";
-import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
-import SLanguageSelector from "../../../storefront/language/selector/SLanguageSelector.vue";
-import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SHeaderSectionLogo from "../../../storefront/header/section/logo/SHeaderSectionLogo.vue";
+import SHeaderSectionDrawerMenu from "@selldone/components-vue/storefront/header/section/drawer-menu/SHeaderSectionDrawerMenu.vue";
+import SHeaderSectionButtons from "@selldone/components-vue/storefront/header/section/buttons/SHeaderSectionButtons.vue";
+import SHeaderSectionUser from "@selldone/components-vue/storefront/header/section/user/SHeaderSectionUser.vue";
 
-const BOTTOM_PADDING_CONTAINER = "82px";
 export default {
   name: "SHeaderSection",
   components: {
+    SHeaderSectionUser,
+    SHeaderSectionButtons,
+    SHeaderSectionDrawerMenu,
     SHeaderSectionLogo,
-    SLanguageSelector,
-    SShopUserMenuList,
-    SShopNavigationDrawer,
-    UCurrencySelector,
 
     SStorefrontLotteryWheelOfFortune,
-    ULoadingEllipsis,
-
-    BasketTopMenu,
   },
   props: {
     shop: {},
@@ -437,15 +99,6 @@ export default {
     color: {},
   },
   data: () => ({
-    menu: false,
-
-    busy_logout: false,
-
-    show_basket: false,
-
-    //----------------------
-    drawer: false,
-
     // Dynamic header style:
     transparentHeader: null,
     darkHeader: null,
@@ -469,95 +122,12 @@ export default {
       return this.$route.matched.some((record) => record.meta.card);
     },
 
-    itemsCount() {
-      return this.getTotalItemInBaskets();
-      /*  return this.current_basket && this.current_basket.items
-            ? this.current_basket.items.length
-            : 0;*/
-    },
-
-    in_custom_home_page() {
-      return this.$route.name === this.getCustomHomePage();
-    },
-
     campaign() {
       return this.shop ? this.shop.campaign : null;
     },
 
     banner() {
       return this.campaign ? this.campaign.banner : null;
-    },
-
-    availableInBasketCount() {
-      if (
-        this.$route.name !== window.$storefront.routes.PRODUCT_PAGE ||
-        !this.getId(this.$route.params.product_id)
-      )
-        return null;
-
-      let count = 0;
-      let baskets = this.getBaskets();
-      baskets.forEach((basket) => {
-        if (
-          basket &&
-          // 🎗️ Subscription
-          (basket.type !==
-            ProductType.SUBSCRIPTION
-              .code /*Basket for subscription doe not supported!*/ ||
-            this.shop.ribbon?.cart) /*Or support cart mode for subscription*/
-        )
-          basket.items.forEach((item) => {
-            if (
-              item.product_id ===
-              Number(this.getId(this.$route.params.product_id))
-            )
-              count += item.count;
-          });
-      });
-
-      return count;
-    },
-
-    /* badges() {
-      if (!this.shop) return [];
-      return this.shop.badges;
-    },*/
-
-    top_margin_content() {
-      if (this.$store.getters.getIsNative) {
-        return "0";
-      } else {
-        return "-64px";
-      }
-    },
-    bottom_padding_container() {
-      let is_native_mode = this.$store.getters.getIsNative;
-
-      if (is_native_mode) {
-        return "0";
-      } else {
-        if (
-          this.$route.name === window.$storefront.routes.PAGE_RENDER ||
-          this.$route.name === "CustomHomePage" ||
-          this.$route.name === window.$storefront?.routes.INCLUDE_PAGE_RENDER
-        ) {
-          return 0;
-        } else {
-          return BOTTOM_PADDING_CONTAINER;
-        }
-      }
-    },
-
-    top_menu() {
-      return (
-        this.$vuetify.display.mdAndUp &&
-        this.shop &&
-        this.shop.menus &&
-        this.shop.menus.find((it) => it.type === "HEADER")
-      );
-    },
-    header_disabled() {
-      return this.top_menu && this.top_menu.enable === false;
     },
 
     theme() {
@@ -583,43 +153,11 @@ export default {
 
     // --------------------------------------------------------------------------------
 
-    busy_user() {
-      return this.$store.getters.getBusyUser;
-    },
-
-    /*go_up(){
-      return this.offsetTop > 300
-    }*/
-
-    has_avocado() {
-      return this.shop.avocado && this.shop.avocado.enable;
-    },
-    has_hyper() {
-      return this.shop.hyper && this.shop.hyper.enable;
-    },
-    has_insta() {
-      return this.shop.instagram;
-    },
-
-    show_top_cart() {
-      return this.USER() || ShopOptionsHelper.HasGuestCheckout(this.getShop());
-    },
-
-    // --------------------------------------------------------------------------------
-
     logo() {
       if (this.theme && this.theme.logo)
         return this.getShopImagePath(this.theme.logo);
 
       return this.getShopImagePath(this.shop.icon, 128);
-    },
-    logo_custom_size() {
-      return (
-        this.theme &&
-        this.logo &&
-        ((this.theme.logo_w && this.theme.logo_w !== "unset") ||
-          (this.theme.logo_h && this.theme.logo_h !== "unset"))
-      );
     },
 
     title() {
@@ -642,36 +180,14 @@ export default {
         this.darkHeader = null; // Default value is null!
       }
     },
-
-    show_basket(value) {
-      this.$store.commit("setForceHideNavigation", value);
-    },
   },
 
   created() {},
 
-  mounted() {
-    //▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Event Bus ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+  mounted() {},
+  beforeUnmount() {},
 
-    this.EventBus.$on("side-cart-menu-open", ({ open, type }) => {
-      this.show_basket = open;
-      if (type)
-        // Select corresponding type:
-        this.$refs.basket_menu.setType(type);
-    });
-  },
-  beforeUnmount() {
-    this.EventBus.$off("side-cart-menu-open");
-  },
-
-  methods: {
-    logout() {
-      this.busy_logout = true;
-      this.Logout(() => {
-        this.busy_logout = false;
-      });
-    },
-  },
+  methods: {},
 };
 </script>
 
