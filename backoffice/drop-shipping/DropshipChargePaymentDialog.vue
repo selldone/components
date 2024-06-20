@@ -22,6 +22,7 @@
       max-width="98vw"
       persistent
       scrollable
+      content-class="rounded-t-xl"
     >
       <u-payment-form
         ref="payment_form_master"

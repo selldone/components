@@ -152,6 +152,7 @@
       width="640"
       persistent
       scrollable
+      content-class="rounded-t-xl"
     >
       <u-payment-form
         v-if="exist_payment_form"

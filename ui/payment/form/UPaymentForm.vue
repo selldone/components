@@ -17,10 +17,9 @@
 
   <v-card
     class="overflow-hidden text-start"
-    rounded="0"
+    rounded="t-xl"
     style="
       position: relative;
-      border-radius: 18px 18px 0 0 !important;
       min-height: 180px !important;
     "
   >

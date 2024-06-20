@@ -13,16 +13,25 @@
   -->
 
 <template>
-  <v-list-item v-if="wallet?.balance" variant="flat" base-color="#673AB7" rounded="lg" lines="two" prepend-icon="wallet" append-icon="celebration">
-    <template v-slot:title>
-      <u-price :amount="wallet.balance" :currency="wallet.currency" ></u-price>
-    </template>
-    <template v-slot:subtitle>
-      <div class="mt-1">
-        My wallet balance
-      </div>
-    </template>
-  </v-list-item>
+  <v-scale-transition hide-on-leave>
+    <v-list-item
+      v-if="wallet?.balance"
+      v-bind="$attrs"
+      variant="flat"
+      base-color="#673AB7"
+      rounded="lg"
+      lines="two"
+      prepend-icon="wallet"
+      append-icon="celebration"
+    >
+      <template v-slot:title>
+        <u-price :amount="wallet.balance" :currency="wallet.currency"></u-price>
+      </template>
+      <template v-slot:subtitle>
+        <div class="mt-1">My wallet balance</div>
+      </template>
+    </v-list-item>
+  </v-scale-transition>
 </template>
 
 <script>
@@ -40,7 +49,7 @@ export default {
   },
   data: () => ({
     busy: false,
-    wallet:null,
+    wallet: null,
   }),
   watch: {
     currency() {
