@@ -230,9 +230,10 @@
               </template>
               <template v-slot:item="{ item, props }">
                 <v-list-item
-                  :title="item.raw.name"
+                    v-bind="props"
+
+                    :title="item.raw.name"
                   class="text-start"
-                  v-bind="props"
                 >
                   <template v-slot:prepend>
                     <v-img

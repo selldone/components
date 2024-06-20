@@ -250,22 +250,24 @@
       <!-- ――――――――― Rates ――――――――― -->
       <template v-slot:item.rates="{ item }">
         <v-select
-          v-if="pricingResponse && pricingResponse.shipments"
+          v-if=" pricingResponse?.shipments"
           v-model="item.rate"
           :items="getRates(item)"
+          type="string"
           class="min-width-100 max-w-400 my-1"
           flat
           hide-details
           item-value="uid"
+          item-title="provider"
           placeholder="out of range!"
           return-object
           variant="solo"
+          density="compact"
         >
           <template v-slot:item="{ item, props }">
-            <v-list-item v-bind="props">
+            <v-list-item v-bind="props" title="">
               <b-transportation-service-rate
                 :rate="item.raw"
-                :selected="item.uid === item.rate?.uid"
               ></b-transportation-service-rate>
             </v-list-item>
           </template>
