@@ -58,9 +58,11 @@ export default {
   }),
   computed: {},
   watch: {
+
     show_dialog(val) {
-      //this.BlurApp(!!val);
+      this.$store.commit("setForceHideNavigation", val);
     },
+
   },
   created() {
     //█████████████████████████████████████████████████████████████
