@@ -100,18 +100,18 @@
         <v-list-subheader>
           Hold payment only available for :
 
-          <v-chip class="ma-1" color="#FFF" label size="small"
+          <v-chip class="ma-1" color="#FFF" variant="flat" label size="small"
             ><img
               :src="ProductType.PHYSICAL.image"
-              class="me-1"
+              class="me-1 ms-n1"
               height="16"
               width="16"
             />{{ $t(ProductType.PHYSICAL.name) }}
           </v-chip>
-          <v-chip class="ma-1" color="#FFF" label size="small"
+          <v-chip class="ma-1" color="#FFF" variant="flat" label size="small"
             ><img
               :src="ProductType.SERVICE.image"
-              class="me-1"
+              class="me-1 ms-n1"
               height="16"
               width="16"
             />{{ $t(ProductType.SERVICE.name) }}
@@ -304,6 +304,28 @@
       </template>
     </div>
 
+    <!-- █████████████████████ Limit █████████████████████ -->
+
+    <div class="widget-box mb-5">
+      <s-widget-header
+        :title="$t('edit_gateway.limit.title')"
+        icon="production_quantity_limits"
+      ></s-widget-header>
+
+      <v-list-subheader>{{
+        $t("edit_gateway.limit.subtitle")
+      }}</v-list-subheader>
+      <u-price-input
+        v-model="limit"
+        :currency="gateway.currency"
+        variant="underlined"
+        :label="$t('edit_gateway.limit_input.title')"
+        :messages="$t('edit_gateway.limit_input.msg')"
+        prepend-inner-icon="shopping_bag"
+      >
+      </u-price-input>
+    </div>
+
     <slot></slot>
     <!-- █████████████████████ Debug █████████████████████ -->
 
@@ -347,10 +369,12 @@ import { TrackSeller } from "@selldone/core-js/enums/gtag/TrackSeller";
 import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
+import UPriceInput from "@selldone/components-vue/ui/price/input/UPriceInput.vue";
 
 export default {
   name: "BGatewayAdd",
   components: {
+    UPriceInput,
     UPodWire,
     UPodNode,
     UPodsPanel,
@@ -394,6 +418,7 @@ export default {
     debug: false,
     busy_add: false,
     visibility: [],
+    limit: 0,
   }),
 
   computed: {
@@ -451,6 +476,7 @@ export default {
             enable: this.enable,
             livemode: !this.debug,
             manual: this.manual,
+            limit: this.limit,
           },
         )
         .then(({ data }) => {
@@ -470,6 +496,7 @@ export default {
               this.shopGateway.enable = data.shop_gateway.enable;
               this.shopGateway.livemode = data.shop_gateway.livemode;
               this.shopGateway.manual = data.shop_gateway.manual;
+              this.shopGateway.limit = data.shop_gateway.limit;
             }
 
             //┌─────────────── 🫐 Analytics 🫐 ───────────────┐
@@ -495,6 +522,7 @@ export default {
       this.enable = this.shopGateway.enable;
       this.debug = !this.shopGateway.livemode;
       this.manual = this.shopGateway.manual;
+      this.limit = this.shopGateway.limit;
 
       if (!this.public_val || Array.isArray(this.public_val))
         this.public_val = {};

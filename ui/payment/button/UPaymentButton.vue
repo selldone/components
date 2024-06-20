@@ -14,7 +14,7 @@
 
 <template>
   <div
-    :class="{ '-small': small, '-blue': blue, '-purple': purple }"
+    :class="{ '-small': small, '-blue': blue, '-purple': purple,pen:disabled }"
     class="container-btn border"
   >
     <div class="left-side">
@@ -38,6 +38,10 @@
 
       <v-icon class="arrow me-4">{{ $t("icons.chevron_next") }}</v-icon>
     </div>
+
+    <div v-if="disabled " class="-disable-reason">
+      <slot name="disable-reason"></slot>
+    </div>
   </div>
 </template>
 
@@ -60,6 +64,7 @@ export default {
     pos: {
       default: "$",
     },
+    disabled:Boolean,
   },
 };
 </script>
@@ -167,6 +172,7 @@ export default {
       width: 100%;
     }
   }
+
 }
 
 .left-side {
@@ -395,5 +401,23 @@ export default {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.-disable-reason{
+  position: absolute;
+  left: 10px;
+  right:10px;
+  top: 10px;
+  bottom:10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+background-color: #00000055;
+  color: #fff;
+  backdrop-filter: blur(1px);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
 }
 </style>

@@ -457,12 +457,12 @@
             v-if="total_amount_remain_for_pay > 0 || isSelldoneSubscription"
             class="pb-12"
           >
-            <p class="small text-start border-top-dashed pt-2 mb-2 mt-2">
+            <p class="small text-start border-top-dashed pt-3 mb-4 mt-2">
               {{
                 isBraintree
                   ? "Other payment methods"
                   : $t("global.payment_form.select_payment_method")
-              }}:
+              }}
             </p>
 
             <v-row justify="center">
@@ -476,6 +476,7 @@
                 <u-payment-button
                   :blue="gateway.cod"
                   :pos="GetUserSelectedCurrencyName(gateway.currency, true)"
+                  :disabled="gateway.limit && gateway.limit > final_payment"
                   class="ma-auto pointer-pointer"
                   small
                   @click="
@@ -506,6 +507,11 @@
                     class="mx-2"
                   />
                   {{ gateway.name }}
+
+                  <template v-slot:disable-reason>
+                    <v-icon class="me-1" size="18A" color="#fff">shopping_bag</v-icon>
+                    Min order: <u-price class="mx-1" :amount="gateway.limit" :currency="currency.code" />
+                  </template>
                 </u-payment-button>
               </v-col>
             </v-row>
