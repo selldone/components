@@ -46,7 +46,7 @@
     <template v-if="pickup_transportation">
       <v-chip
         label
-        :size="$vuetify.display.xs ? 'x-small' : 'small'"
+        size="x-small"
         class="-pickup-box"
         color="#000"
         variant="flat"
@@ -64,14 +64,13 @@
           max-width="460"
           open-on-hover
         >
-          <v-sheet class="text-start" color="#000" dark>
+          <v-sheet class="text-start ma-2" color="#000" dark rounded="lg">
             <v-list class="bg-transparent" dark lines="three" density="compact">
               <v-list-item
                 v-for="(pickup, i) in pickup_transportation.pickups"
                 :key="i"
                 :href="MapHelper.GetMapDirectionUrl(pickup.location, true)"
                 target="_blank"
-                title="Open direction to the pickup store on the map."
               >
                 <template v-slot:prepend>
                   <v-avatar class="hover-scale-small" rounded size="64">
@@ -88,10 +87,12 @@
                   </v-avatar>
                 </template>
 
-                <v-list-item-title>
-                  {{ pickup.name }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
+                <template v-slot:title>
+                  <div class="text-subtitle-2">
+                    {{ pickup.name }}
+                  </div>
+                </template>
+                <template v-slot:subtitle>
                   <flag
                     v-if="pickup.country"
                     :iso="pickup.country"
@@ -100,7 +101,7 @@
                   ></flag>
 
                   {{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}
-                </v-list-item-subtitle>
+                </template>
               </v-list-item>
             </v-list>
           </v-sheet>
@@ -236,7 +237,6 @@ export default {
   }
 
   @media (max-width: 420px) {
-
     font-size: 0.8rem;
 
     .-tax-box,
