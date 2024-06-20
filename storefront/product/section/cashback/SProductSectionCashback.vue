@@ -18,7 +18,8 @@
     class="s--product-section-cashback px-2 mb-2 flex-grow-0"
   >
     <v-icon class="me-2">wallet</v-icon>
-    <b>{{ $t("global.commons.cashback") }} </b>
+
+    <b>{{ cashback.title }} </b>
     <b class="mx-2"
       >%{{ cashback.percent }} {{ cashback.boosted ? "🞫2" : "" }}</b
     >
