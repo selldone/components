@@ -121,18 +121,21 @@
         "
         class="d-flex flex-column align-stretch text-start pt-3 border"
       >
-
         <template v-if="!items?.length">
           <v-list-subheader class="px-3 d-flex align-center">
             <v-icon class="me-1">manage_search</v-icon>
             {{ title }}
-
           </v-list-subheader>
 
-          <v-btn @click="focused_dealyed=false" icon variant="text" class="absolute-top-end ms-2" size="32">
+          <v-btn
+            @click="focused_dealyed = false"
+            icon
+            variant="text"
+            class="absolute-top-end ms-2"
+            size="32"
+          >
             <v-icon size="24">expand_more</v-icon>
           </v-btn>
-
 
           <v-list density="compact" class="flex-grow-1">
             <v-list-item
@@ -170,26 +173,29 @@
           <v-list-subheader class="px-3 d-flex align-center">
             <v-icon class="me-1">arrow_drop_down</v-icon>
             {{ $t("global.search_box.result") }}
-
-
           </v-list-subheader>
-          <v-btn @click="focused_dealyed=false" icon variant="text" class="absolute-top-end ms-2" size="32">
+          <v-btn
+            @click="focused_dealyed = false"
+            icon
+            variant="text"
+            class="absolute-top-end ms-2"
+            size="32"
+          >
             <v-icon size="24">expand_more</v-icon>
           </v-btn>
-
 
           <v-list>
             <v-list-item
               v-for="item in items"
               :title="item.title"
               @click="
-                search= item.title;
+                search = item.title;
                 goToResult(item);
               "
             >
               <template v-slot:prepend>
                 <u-avatar-folder
-                    v-if="item.icon"
+                  v-if="item.icon"
                   :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)"
                   placeholder-icon="grain"
                   :is-amber="!!item.cat"
@@ -361,7 +367,7 @@ export default {
     show_scanner: false,
 
     focused: false,
-    focused_dealyed:false
+    focused_dealyed: false,
   }),
   computed: {
     max_title() {
@@ -374,7 +380,7 @@ export default {
   },
 
   watch: {
-    focused(val){
+    focused(val) {
       if (val) {
         this.focused_dealyed = true;
       } else {
@@ -400,15 +406,15 @@ export default {
             : window.API.GET_SEARCH_QUERY_ADMIN(this.shopId, val),
         )
         .then(({ data }) => {
-          this.items.unshift(...data.items);
-
           // Remove just query items:
           this.items = this.items.filter((item) => !item.query);
+
+          this.items.unshift(...data.items);
 
           // Show current search on top:
           this.items.unshift({ title: val, query: true });
 
-          this.items=this.items.uniqueByKey('title')
+          this.items = this.items.uniqueByKey("title").limit(12);
         })
         .catch((err) => {
           console.log(err);
@@ -452,8 +458,7 @@ export default {
   },
   methods: {
     goToResult(item) {
-     // console.log("goToResult --> ", item);
-
+      // console.log("goToResult --> ", item);
 
       if (item && this.$route.query.search === item.title) return; // Prevent duplicated search!
 
