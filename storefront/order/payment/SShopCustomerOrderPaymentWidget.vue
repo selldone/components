@@ -634,6 +634,10 @@
               class="border-top-medium"
             >
             </s-shop-row-customer-payment-record>
+
+            <!------------ Cashback ------------>
+            <s-order-payment-row-cashback :order="order">
+            </s-order-payment-row-cashback>
           </tbody>
         </template>
       </v-table>
@@ -702,10 +706,12 @@ import { URLHelper } from "@selldone/core-js/helper/url/URLHelper";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import { Basket, Bill, PriceHelper } from "@selldone/core-js";
 import SOrderPaymentRowWallet from "@selldone/components-vue/storefront/order/payment/rows/SOrderPaymentRowWallet.vue";
+import SOrderPaymentRowCashback from "@selldone/components-vue/storefront/order/payment/rows/SOrderPaymentRowCashback.vue";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",
   components: {
+    SOrderPaymentRowCashback,
     SOrderPaymentRowWallet,
     UPaymentCard,
     UCurrencyIcon,

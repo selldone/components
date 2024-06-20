@@ -47,7 +47,8 @@
           <td class="text-left">
             <u-price
               :amount="
-                order.price +wallet_paid+
+                order.price +
+                wallet_paid +
                 order.discount -
                 (order.delivery_price > 0 ? order.delivery_price : 0)
               "
@@ -955,6 +956,15 @@
           </td>
         </tr>
 
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 🛕 ROW ▶ Cashback ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+        <b-order-payment-row-cashback
+          v-if="payment"
+          key="cashback"
+          :order="order"
+        >
+        </b-order-payment-row-cashback>
+
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 🛕 ROW ▶ Selldone Fee ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <tr v-if="wage" class="text-start">
@@ -1389,10 +1399,12 @@ import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import { Basket, Bill, PriceHelper } from "@selldone/core-js";
 import BOrderPaymentRowWallet from "@selldone/components-vue/backoffice/order/payment/row/wallet/BOrderPaymentRowWallet.vue";
+import BOrderPaymentRowCashback from "@selldone/components-vue/backoffice/order/payment/row/cashback/BOrderPaymentRowCashback.vue";
 
 export default {
   name: "BOrderPaymentTable",
   components: {
+    BOrderPaymentRowCashback,
     BOrderPaymentRowWallet,
     USmartVerify,
     UPriceInput,
@@ -1477,8 +1489,8 @@ export default {
      */
     wallet_paid() {
       return this.order.wallet_transaction
-          ? this.order.wallet_transaction.amount
-          : 0;
+        ? this.order.wallet_transaction.amount
+        : 0;
     },
 
     isPhysical() {

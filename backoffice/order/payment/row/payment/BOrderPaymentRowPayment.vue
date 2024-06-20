@@ -70,12 +70,7 @@
 
         <!-- Require Capture -->
         <div v-if="is_require_capture" class="widget-buttons">
-          <v-btn
-            color="#673AB7"
-
-            size="x-large"
-            @click="dialog_capture = true"
-          >
+          <v-btn color="#673AB7" size="x-large" @click="dialog_capture = true">
             <v-icon class="me-1">done_all</v-icon>
             <div class="d-flex flex-column">
               <div>
@@ -129,13 +124,12 @@
           :href="payment.track_id"
           class="ma-1 tnt"
           color="#673AB7"
-
           size="x-small"
           target="_blank"
           @click.stop=""
+          append-icon="launch"
         >
           Receipt URL
-          <v-icon class="ms-1" size="x-small">launch</v-icon>
         </v-btn>
       </td>
     </template>
@@ -155,12 +149,7 @@
 
         <!-- Require Capture -->
         <div v-if="is_require_capture" class="widget-buttons">
-          <v-btn
-            color="#673AB7"
-
-            size="x-large"
-            @click="dialog_capture = true"
-          >
+          <v-btn color="#673AB7" size="x-large" @click="dialog_capture = true">
             <v-icon class="me-1">done_all</v-icon>
             <div class="d-flex flex-column">
               <div>
@@ -185,7 +174,6 @@
         >
           <v-img
             :src="getShopImagePath(gateway?.logo)"
-
             height="24"
             max-width="36"
           />
@@ -208,14 +196,13 @@
           :href="payment.track_id"
           class="ma-1 tnt"
           color="#673AB7"
-
           size="x-small"
           target="_blank"
           title="See payment receipt on the payment service provider."
           @click.stop=""
+          append-icon="launch"
         >
           Receipt URL
-          <v-icon class="ms-1" size="x-small">launch</v-icon>
         </v-btn>
       </td>
     </template>
