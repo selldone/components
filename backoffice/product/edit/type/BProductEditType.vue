@@ -161,6 +161,7 @@
         :class="{ disabled: !can_reselling }"
         class="widget-hover -gray-bg widget-button"
         @click="dropshipping = !dropshipping"
+        append-icon="conveyor_belt"
       >
         <template v-slot:prepend>
           <v-avatar rounded="0">
@@ -189,7 +190,7 @@
           {{
             !can_reselling
               ? "Your license is not eligible."
-              : "Not available in your country now."
+              : "Find products in the wholesale marketplace and add them to your store."
           }}
         </v-list-item-subtitle>
       </v-list-item>
@@ -369,19 +370,24 @@
       scrollable
       transition="dialog-bottom-transition"
     >
-      <v-card>
-        <v-card-title>
+      <v-card class="text-start">
+        <v-card-title class="d-flex align-center">
           <v-avatar class="me-2 avatar-gradient -thin -shop" size="36"
             ><img :src="getShopImagePath(shop.icon, 128)"
           /></v-avatar>
 
-          {{ shop.title }}
+
+          <div>
+            {{ shop.title }}
+            <div class="text-subtitle-2">
+              Add dropshipping products
+            </div>
+          </div>
         </v-card-title>
 
         <v-card-text>
           <b-product-add-dropshipping
             :shop="shop"
-            class="my-10"
             @back="dropshipping = false"
           >
           </b-product-add-dropshipping>

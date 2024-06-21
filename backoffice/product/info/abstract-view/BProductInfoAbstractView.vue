@@ -190,26 +190,40 @@
           />
         </div>
 
-        <div class="p-2 m-2 flex-grow-1">
+        <div v-if="product.shipping" class="p-2 m-2 flex-grow-1">
           <p class="my-2 small">{{ $t("global.commons.shipping_area") }}</p>
           <flag
-            v-for="(ship, country) in product.shipping"
+            v-for="country in Object.keys(product.shipping)?.limit(10)"
             :key="country"
             :iso="country"
             :squared="false"
             :title="getCountryName(country)"
             class="me-2"
           />
+          <span
+            v-if="Object.values(product.shipping).length > 10"
+            class="mx-1 text-subtitle-2"
+          >
+            {{ Object.values(product.shipping).length - 1 }}
+            {{ $t("global.commons.more") }}
+            <v-icon class="mx-1">more_horiz</v-icon>
+          </span>
         </div>
 
         <div class="p-2 m-2 flex-grow-1">
-          <p class="my-2 small">Reselling shops</p>
-          {{ product.reselling_shops }}
+          <p class="my-2 small">
+            <v-icon class="me-1">storefront</v-icon>
+            Reselling shops
+          </p>
+          <b>{{ product.reselling_shops }}</b>
         </div>
 
         <div class="p-2 m-2 flex-grow-1">
-          <p class="my-2 small">Reselling count</p>
-          {{ product.reselling_count }}
+          <p class="my-2 small">
+            <v-icon class="me-1">conveyor_belt</v-icon>
+            Reselling count
+          </p>
+          <b>{{ product.reselling_count }}</b>
         </div>
       </v-row>
     </template>

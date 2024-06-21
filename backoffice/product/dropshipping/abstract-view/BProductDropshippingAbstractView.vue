@@ -32,16 +32,21 @@
         border="start"
         color="success"
         icon="info"
-        variant="outlined"
+        variant="elevated"
+        density="compact"
+        class="mb-3"
+
       >
         <p>
           {{ $t("product_dropshipping.need_re_enable") }}
         </p>
         <v-btn
           :loading="busy_enable"
-          color="success"
-          variant="flat"
+          color="#fff"
+          variant="elevated"
           @click="reEnable()"
+          class="mt-2"
+          prepend-icon="done_all"
         >
           {{ $t("product_dropshipping.need_re_enable_action") }}
         </v-btn>
@@ -52,16 +57,19 @@
         border="start"
         color="blue"
         icon="info"
-        variant="outlined"
+        variant="elevated"
+        density="compact"    class="mb-3"
       >
         <p>
           {{ $t("product_dropshipping.changed_value") }}
         </p>
         <v-btn
           :loading="busy_enable"
-          color="blue"
-          variant="flat"
+          color="#fff"
+          variant="elevated"
           @click="applyChanges()"
+          class="mt-2"
+          prepend-icon="done_all"
         >
           {{ $t("product_dropshipping.changed_value_action") }}
         </v-btn>
@@ -72,7 +80,9 @@
         border="start"
         color="red"
         icon="error"
-        variant="outlined"
+        variant="elevated"
+        density="compact"    class="mb-3"
+
       >
         <p>
           {{ $t("product_dropshipping.parent_deleted") }}
@@ -84,7 +94,9 @@
         border="start"
         color="amber"
         icon="warning"
-        variant="outlined"
+        variant="elevated"
+        density="compact"    class="mb-3"
+
       >
         <p>
           {{ $t("product_dropshipping.parent_closed") }}

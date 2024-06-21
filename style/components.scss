@@ -4285,7 +4285,7 @@ canvas.heatmap-canvas {
     background-image: linear-gradient(120deg, #e3dfdf 0%, #bdc1c2 100%) !important;
   }
 
-  &.-current {
+  &.-current,&.-wholesaler {
     background: radial-gradient(circle at 33% 100%, #4b76c2 4%, #2f9bd4 30%, #1e83ba 62%, #3F51B5 85%, #303F9F) !important;
   }
 
