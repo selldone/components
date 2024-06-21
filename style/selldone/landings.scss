@@ -84,6 +84,43 @@ $mod_2: 1.5; // desktop
   }
 
 
+  @media (min-width: 401px) and (max-width: 800px) {
+
+    .text-h1{
+      font-size: 4rem !important;
+    }
+
+    .text-h2{
+      font-size: 2.3rem !important;
+    }
+    .text-h3{
+      font-size: 2rem !important;
+    }
+    .text-h4{
+      font-size: 1.9rem !important;
+    }
+
+  }
+
+  @media (max-width: 400px) {
+
+    .text-h1{
+      font-size: 3rem !important;
+    }
+
+   .text-h2{
+      font-size: 1.9rem !important;
+    }
+    .text-h3{
+      font-size: 1.5rem !important;
+    }
+    .text-h4{
+      font-size: 1.2rem !important;
+    }
+
+  }
+
+
   //-------------------------
   .dark {
 
