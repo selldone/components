@@ -99,7 +99,11 @@
                   :lottery="win"
                 ></s-storefront-lottery-prize-detail>
               </div>
-              <div v-else class="center-absolute text-center" style="width: 70%">
+              <div
+                v-else
+                class="center-absolute text-center"
+                style="width: 70%"
+              >
                 <h3 class="text-white zoomIn user-select-none text-center">
                   {{ $t("global.wheel_fortune.lost_message") }}
                 </h3>
@@ -347,6 +351,8 @@ export default {
     },
 
     fetchLottery() {
+      if (this.busy_fetch) return;
+
       this.busy_fetch = true;
       axios
         .get(window.XAPI.GET_FETCH_LOTTERIES(this.shop_name))
@@ -354,7 +360,7 @@ export default {
           if (!data.error) {
             this.lotteries = data.lotteries;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            // this.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
