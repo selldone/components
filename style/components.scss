@@ -37,7 +37,6 @@
 @import "selldone/hover/all";
 @import "selldone/general_animates";
 
-
 @import "../article/Article";
 @import "selldone/pages/pages";
 @import "selldone/animations/transitions";
@@ -107,8 +106,7 @@ html {
 }
 
 
-
-body{
+body {
   --font-default: 'Inter', sans-serif, "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --font: 'Inter', sans-serif, "Graphik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
@@ -126,11 +124,9 @@ body{
   }
 
 
-    .text-h4, .text-h3, .text-h2, .text-h1,.text-subtitle-1,.text-subtitle-2,.v-list-item-title,main,.v-application__wrap, {
-      font-family: var(--font) !important;
-    }
-
-
+  .text-h5, .text-h4, .text-h3, .text-h2, .text-h1, .text-subtitle-1, .text-subtitle-2, .v-list-item-title, main, .v-application__wrap, {
+    font-family: var(--font) !important;
+  }
 
 
   // Container problem:
@@ -166,7 +162,7 @@ body{
     font-family: var(--font);
   }
 
-  .v-locale--is-rtl ,&.v-locale--is-rtl {
+  .v-locale--is-rtl, &.v-locale--is-rtl {
 
     font-family: var(--font) !important;
 
@@ -242,6 +238,7 @@ body{
       right: unset;
       left: 6px;
     }
+
     .absolute-bottom-end-0 {
       right: unset;
       left: 0px;
@@ -502,6 +499,7 @@ body{
   bottom: 6px;
   right: 6px;
 }
+
 .absolute-bottom-end-0 {
   position: absolute !important;
   bottom: 0px;
@@ -3277,6 +3275,7 @@ Fix snaky chart overflow problem!
   flex-wrap: wrap;
   justify-content: stretch;
   align-items: center;
+
   & > * {
     flex-grow: 1;
   }
@@ -4311,7 +4310,6 @@ canvas.heatmap-canvas {
   }
 
 
-
   &.-black, &.-agency {
     background-image: linear-gradient(120deg, #000 0%, #222 100%) !important;
   }
@@ -4567,7 +4565,8 @@ canvas.heatmap-canvas {
     text-transform: capitalize;
     border-radius: 12px;
     max-height: 64px;
-    .v-btn__content{
+
+    .v-btn__content {
       white-space: normal;
     }
   }
@@ -4622,11 +4621,11 @@ canvas.heatmap-canvas {
 
   box-shadow: inset 0 2px 8px rgba(15, 15, 15, 0.08);
 
-  &.-dark{
+  &.-dark {
     background-color: #000;
   }
 
-  & > .v-btn{
+  & > .v-btn {
     min-height: 42px !important;
   }
 
@@ -4637,11 +4636,12 @@ canvas.heatmap-canvas {
     }
   }
 
-  &.force-horizontal{
-      overflow: auto;
+  &.force-horizontal {
+    overflow: auto;
     justify-content: start;
 
   }
+
   @media only screen and (max-width: 680px) {
     margin: 12px 0;
   }
@@ -4700,7 +4700,7 @@ canvas.heatmap-canvas {
   }
 
   // Icon + Label at the start of buttons
-  .widget-toggle-label{
+  .widget-toggle-label {
     max-width: 80px;
     min-width: 80px;
     display: flex;
@@ -4903,8 +4903,8 @@ canvas.heatmap-canvas {
   justify-content: center;
   border-radius: 20%;
   background: rgba(250, 250, 250, 0.78);
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2),   /* Drop shadow */
-  inset 0 0 15px rgba(255, 255, 255, 0.5);  /* Inner white glow */
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2), /* Drop shadow */
+  inset 0 0 15px rgba(255, 255, 255, 0.5); /* Inner white glow */
   // border:  solid medium rgba(255, 255, 255, 0.8);
   backdrop-filter: saturate(180%) blur(10px);
 }
