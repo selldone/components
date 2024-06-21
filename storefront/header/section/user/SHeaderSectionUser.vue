@@ -305,4 +305,18 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
+
+
+.s--storefront-primary-header-login-button {
+  //  background-color: var(--theme-dark);
+  //  color: #fff;
+
+  top: -14px !important;
+  padding-top: 42px !important;
+  max-height: 84px !important;
+  height: auto !important;
+  padding-bottom: 22px !important;
+}
+
+
 </style>

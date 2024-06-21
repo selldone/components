@@ -189,4 +189,17 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
+
+.s--storefront-primary-header-basket-navigation {
+  padding: 8px;
+  height: calc(100vh - 16px) !important;
+  border-radius: 16px;
+  border: solid thin #ddd !important;
+
+  .v-navigation-drawer__border {
+    display: none;
+  }
+}
+
+
 </style>

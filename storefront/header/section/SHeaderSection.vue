@@ -210,25 +210,7 @@ export default {
   }
 }
 
-.s--storefront-primary-header-basket-navigation {
-  padding: 8px;
-  height: calc(100vh - 16px) !important;
-  border-radius: 16px;
-  border: solid thin #ddd !important;
 
-  .v-navigation-drawer__border {
-    display: none;
-  }
-}
 
-.s--storefront-primary-header-login-button {
-  //  background-color: var(--theme-dark);
-  //  color: #fff;
 
-  top: -14px !important;
-  padding-top: 42px !important;
-  max-height: 84px !important;
-  height: auto !important;
-  padding-bottom: 22px !important;
-}
 </style>
