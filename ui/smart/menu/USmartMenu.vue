@@ -17,6 +17,7 @@
     <v-menu content-class="rounded-lg" min-width="240">
       <template v-slot:activator="{ props }">
         <v-btn
+          @click.stop
           :loading="loading"
           :title="title"
           class="z1"

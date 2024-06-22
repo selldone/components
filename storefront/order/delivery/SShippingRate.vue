@@ -30,7 +30,7 @@
         <v-spacer></v-spacer>
         <v-chip
           v-if="!rate.live"
-          class="float-end"
+          class="ms-2"
           color="amber"
           prepend-icon="science"
           size="x-small"

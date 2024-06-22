@@ -4277,7 +4277,7 @@ canvas.heatmap-canvas {
     background: radial-gradient(circle at 33% 100%, #8BC34A 4%, #689F38 30%, #388E3C 62%, #4CAF50 85%, #4CAF50) !important;
   }
 
-  &.-role, &.-waiting, &.-connect, &.-category {
+  &.-role, &.-waiting, &.-connect, &.-category,&.-courier {
     background: radial-gradient(circle at 33% 100%, #FFEB3B 4%, #FBC02D 30%, #FF9800 62%, #FF9800 85%, #F57C00) !important;
   }
 

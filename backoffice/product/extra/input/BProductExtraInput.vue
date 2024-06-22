@@ -244,6 +244,10 @@ export default {
   },
 
   watch: {
+    extra() {
+      this.assignValues();
+    },
+
     lead(value) {
       this.$emit("onLeadChange", value);
     },
@@ -264,16 +268,20 @@ export default {
   },
 
   created() {
-    this.lead = this.extra.lead ? this.extra.lead : this.defaultLeadTime;
-
-    this.weight = this.extra.weight ? this.extra.weight : 0;
-
-    this.width = this.extra.width ? this.extra.width : 0;
-    this.length = this.extra.length ? this.extra.length : 0;
-    this.height = this.extra.height ? this.extra.height : 0;
+    this.assignValues();
   },
 
-  methods: {},
+  methods: {
+    assignValues() {
+      this.lead = this.extra.lead ? this.extra.lead : this.defaultLeadTime;
+
+      this.weight = this.extra.weight ? this.extra.weight : 0;
+
+      this.width = this.extra.width ? this.extra.width : 0;
+      this.length = this.extra.length ? this.extra.length : 0;
+      this.height = this.extra.height ? this.extra.height : 0;
+    },
+  },
 };
 </script>
 

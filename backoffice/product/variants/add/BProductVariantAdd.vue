@@ -502,6 +502,11 @@
         <s-widget-header
           :title="$t('product_admin.inventory.variant_add_edit.delivery_info')"
           icon="square_foot"
+          add-text
+          add-caption="Same as product"
+          add-icon="refresh"
+          :disabled="!product.extra"
+          @click:add="extra=Object.assign({},product.extra)"
         >
         </s-widget-header>
 

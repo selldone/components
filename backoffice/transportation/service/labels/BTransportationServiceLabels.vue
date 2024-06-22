@@ -39,12 +39,12 @@
       </v-btn>
     </v-alert>
 
-    <u-text-value-dashed v-else class="text-start">
+    <u-text-value-dashed v-else class="text-start text-subtitle-2">
       <template v-slot:label>
         <v-icon class="me-1" size="small">fa:fas fa-truck-pickup</v-icon>
-        <small>{{ $t("shipping.pickup_location") }}</small>
+        {{ $t("shipping.pickup_location") }}
       </template>
-      <b>{{ origin_address }}</b>
+      <span >{{ origin_address }}</span>
 
       <v-btn
         v-if="orderPageMode"

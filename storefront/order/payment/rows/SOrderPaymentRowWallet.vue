@@ -30,7 +30,6 @@
       ></u-price>
     </td>
     <td>Paid using my wallet.</td>
-    <td></td>
   </tr>
 </template>
 

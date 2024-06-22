@@ -16,7 +16,7 @@
   <div v-if="profile" class="widget-box">
     <h2>
       <v-icon class="me-1">account_circle</v-icon>
-      {{ $t("global.commons.profile") }}
+      {{ service.delivery_service?.name }} {{ $t("global.commons.profile") }}
     </h2>
     <u-loading-progress v-if="busy"></u-loading-progress>
 
@@ -37,12 +37,24 @@
         {{ profile.email }}
       </p>
 
-      <u-text-value-dashed v-if="profile.credit !== null" class="my-2">
+      <u-text-value-dashed
+        v-if="profile.credit !== null && profile.credit !== undefined"
+        class="my-2"
+      >
         <template v-slot:label>{{ $t("global.commons.credit") }}</template>
         <u-price
           :amount="profile.credit"
           :currency="profile.currency"
         ></u-price>
+      </u-text-value-dashed>
+
+
+      <u-text-value-dashed
+          v-if="profile.uid"
+          class="my-2"
+      >
+        <template v-slot:label>UID</template>
+        <small>{{profile.uid}}</small>
       </u-text-value-dashed>
     </div>
   </div>
@@ -57,6 +69,7 @@ export default {
 
   props: {
     shop: { type: Object, required: true },
+    service:{type: Object, required: true },
   },
   data: () => ({
     busy: false,

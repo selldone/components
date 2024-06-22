@@ -18,91 +18,102 @@
       v-if="busy_fetch || busy_info_order"
     ></u-loading-progress>
 
-    <v-data-table
-      v-model:options="options"
-      v-model:page="page"
+    <v-data-table-server
+      :mobile="$vuetify.display.xs"
+      :page="page"
       v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="transportation_orders"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
-      class="bg-transparent"
+      class="bg-transparent min-height-60vh"
       density="compact"
       hide-default-footer
       item-key="id"
+      :class="{ disabled: busy_fetch }"
     >
       <template v-slot:item.address="{ item }">
-        <div class="min-width-200 text-start">
+        <div class="min-width-200 text-start py-1">
           <div v-if="item.basket.user">
             <v-avatar :size="24" class="avatar-gradient -thin me-2">
               <v-img :src="getUserAvatar(item.basket.user.id)" />
             </v-avatar>
             <b class="me-2">{{ item.basket.user.name }}</b>
-            <u-button-whatsapp
-              :shop="shop"
-              :user="item.basket.user"
-            ></u-button-whatsapp>
+
+            <v-chip v-if="item.distance" size="x-small" class="me-2">
+              {{ item.distance }} Km</v-chip
+            >
           </div>
 
-          <div class="single-line max-w-300">
+          <div class="single-line max-w-200 mt-1">
             <flag
               :iso="item.basket.receiver_info.country"
               :squared="false"
               class="me-1"
             />
-            <span>{{ generateFullAddress(item.basket.receiver_info) }}</span>
+            <span
+              class="text-subtitle-2"
+              :title="generateFullAddress(item.basket.receiver_info)"
+              >{{ generateFullAddress(item.basket.receiver_info) }}</span
+            >
           </div>
 
-          <div>
+          <div v-if="item.basket.receiver_info?.phone">
             <i class="fas fa-phone me-1"></i>
-            <span v-copy>{{ item.basket.receiver_info.phone }}</span>
+            <span class="text-subtitle-2" v-copy>{{
+              item.basket.receiver_info.phone
+            }}</span>
+
+            <u-button-whatsapp
+              class="ms-2"
+              :shop="shop"
+              :user="{
+                phone: item.basket.receiver_info.phone,
+                name: item.basket.user?.name,
+              }"
+            ></u-button-whatsapp>
           </div>
         </div>
       </template>
 
       <template v-slot:item.receiver_info="{ item }">
         <div class="min-width-75">
-          <v-btn
-            v-if="
-              item.basket.receiver_info && item.basket.receiver_info.location
-            "
-            :href="`https://www.google.com/maps/dir/?api=1&destination=${item.basket.receiver_info.location.lat},${item.basket.receiver_info.location.lng}`"
-            icon
-            target="_blank"
-            title="Google map"
-            variant="text"
-          >
-            <v-icon>map</v-icon>
-          </v-btn>
+          <u-map-geo-button
+            v-if="item.basket?.receiver_info?.location"
+            :location="item.basket.receiver_info.location"
+            small
+          ></u-map-geo-button>
 
           <v-btn
             v-if="item.track"
             :href="item.track"
             color="primary"
-            icon
+            size="small"
             target="_blank"
             title="Tracking page"
-            variant="text"
+            variant="flat"
+            class="mt-1"
+            prepend-icon="gps_fixed"
           >
-            <v-icon>gps_fixed</v-icon>
+            Tracking Link
           </v-btn>
         </div>
-
-        <small>{{ item.distance }} Km</small>
       </template>
 
       <template v-slot:item.basket_id="{ item }">
-        <div v-if="item.basket.items">
+        <div v-if="item.basket.items" class="d-flex align-center">
           <products-dense-images-circles
             :ids="getProductsIDs(item.basket)"
+            border
           ></products-dense-images-circles>
+          <v-spacer></v-spacer>
+          <b-order-button-basket
+            :order="item.basket"
+            class="mb-1"
+            small
+          ></b-order-button-basket>
         </div>
-        <b-order-button-basket
-          :order="item.basket"
-          class="mb-1"
-          text
-        ></b-order-button-basket>
       </template>
 
       <template v-slot:item.person_id="{ item }">
@@ -143,7 +154,7 @@
       </template>
 
       <template v-slot:item.delivery_price="{ item }">
-        <div class="py-1 min-width-250 text-start">
+        <div class="py-1 min-width-200 text-start">
           <div v-if="item.basket.delivery_price > 0" class="min-width-100">
             <small>{{ $t("global.commons.shipping_cost") }}: </small>
             <u-price
@@ -151,12 +162,15 @@
               :currency="item.basket.currency"
             ></u-price>
           </div>
-          <div v-else-if="item.basket.delivery_price === 0" >
-            <v-chip size="small" variant="flat" color="#000">{{ $t("global.commons.free") }}</v-chip>
+          <div v-else-if="item.basket.delivery_price === 0">
+            <v-chip size="x-small" color="cyan"
+              >{{ $t("global.commons.free") }}
+            </v-chip>
           </div>
-          <div v-else-if="item.basket.delivery_price === -1" >
-            <v-chip size="small" variant="flat" color="#000">{{ $t("global.commons.sod") }}</v-chip>
-
+          <div v-else-if="item.basket.delivery_price === -1">
+            <v-chip size="x-small" color="#E91E63"
+              >{{ $t("global.commons.sod") }}
+            </v-chip>
           </div>
 
           <div v-if="item.basket.tax_shipping">
@@ -214,6 +228,11 @@
                   class="me-2"
                   color="primary"
                   v-bind="props"
+                  :class="{
+                    disabled: !writeShopAccess(
+                      ShopPermissionRegions.LOGISTIC.code,
+                    ),
+                  }"
                 >
                   {{ $t("global.actions.change_state") }}
 
@@ -322,7 +341,7 @@
       <template v-slot:bottom>
         <v-pagination v-model="page" :length="pageCount" rounded />
       </template>
-    </v-data-table>
+    </v-data-table-server>
   </div>
 </template>
 <script>
@@ -331,10 +350,13 @@ import DeliveryServiceFulfilledButton from "../../../transportation/DeliveryServ
 import UButtonWhatsapp from "../../../../ui/button/whatsapp/UButtonWhatsapp.vue";
 import ProductsDenseImagesCircles from "../../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import BTransportationServiceRate from "../../../transportation/service/rate/BTransportationServiceRate.vue";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+import UMapGeoButton from "@selldone/components-vue/ui/map/geo-button/UMapGeoButton.vue";
 
 export default {
   name: "BTransportationServiceOrders",
   components: {
+    UMapGeoButton,
     BTransportationServiceRate,
     ProductsDenseImagesCircles,
     UButtonWhatsapp,
@@ -378,6 +400,9 @@ export default {
     };
   },
   computed: {
+    ShopPermissionRegions() {
+      return ShopPermissionRegions;
+    },
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
@@ -451,23 +476,23 @@ export default {
   },
 
   watch: {
-    // Pagination:
-    options: {
-      handler() {
-        const { sortBy, page, itemsPerPage } = this.options;
-        this.fetchOrders(page, sortBy[0]?.key, sortBy[0]?.order === "desc");
-      },
-      deep: true,
+    sortBy() {
+      this.fetchOrders();
+    },
+    page() {
+      this.fetchOrders();
     },
   },
 
   mounted() {},
-  created() {},
+  created() {
+    this.fetchOrders();
+  },
 
   methods: {
     //――――――――――――――――――――――― Fetch transportation orders ―――――――――――――――――――――――
 
-    fetchOrders(page, sortBy, sortDesc = true) {
+    fetchOrders() {
       this.busy_fetch = true;
 
       axios
@@ -477,10 +502,10 @@ export default {
             service_id: this.service ? this.service.id : null,
             person_id: this.person ? this.person.id : null,
 
-            offset: (page - 1) * this.itemsPerPage,
+            offset: (this.page - 1) * this.itemsPerPage,
             limit: this.itemsPerPage,
-            sortBy: sortBy,
-            sortDesc: sortDesc,
+            sortBy: this.sortBy[0]?.key,
+            sortDesc: this.sortBy[0]?.order === "desc",
           },
         })
         .then(({ data }) => {
@@ -552,12 +577,7 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             if (data.changed) {
-              const { sortBy, page, itemsPerPage } = this.options;
-              this.fetchOrders(
-                page,
-                sortBy[0]?.key,
-                sortBy[0]?.order === "desc",
-              );
+              this.fetchOrders();
             }
           } else {
             this.showErrorAlert(null, data.error_msg);

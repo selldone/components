@@ -109,7 +109,8 @@
       </template>
 
       <s-shipping-rate v-if="rate" :rate="rate"></s-shipping-rate>
-      <div class="flex-grow-1 d-flex align-center py-1">
+
+      <div class="flex-grow-1 d-flex align-center py-1 text-subtitle-2">
         {{ deliveryService.name }}
         <span class="dashed-flex-space"></span>
 
@@ -125,13 +126,13 @@
             });
           "
         >
-          <v-icon class="me-1" size="small">refresh</v-icon>
+          <v-icon start>refresh</v-icon>
           {{ $t("global.actions.check") }}
         </v-btn>
       </div>
       <div
         v-if="transportationOrder && transportationOrder.track"
-        class="flex-grow-1 d-flex align-center py-1"
+        class="flex-grow-1 d-flex align-center py-1 text-subtitle-2"
       >
         {{ $t("global.commons.track") }}
         <span class="dashed-flex-space"></span>
@@ -140,14 +141,16 @@
           :href="transportationOrder.track"
           color="primary"
           icon
+          size="small"
+          variant="elevated"
           target="_blank"
         >
-          <v-icon size="small">gps_fixed</v-icon>
+          <v-icon>gps_fixed</v-icon>
         </v-btn>
       </div>
       <div
         v-if="transportationOrder && transportationOrder.label"
-        class="flex-grow-1 d-flex align-center py-1"
+        class="flex-grow-1 d-flex align-center py-1 text-subtitle-2"
       >
         {{ $t("global.commons.label") }}
         <span class="dashed-flex-space"></span>
@@ -156,9 +159,11 @@
           :href="transportationOrder.label"
           color="primary"
           icon
+          size="small"
+          variant="elevated"
           target="_blank"
         >
-          <v-icon size="small">download</v-icon>
+          <v-icon>download</v-icon>
         </v-btn>
       </div>
     </v-timeline-item>

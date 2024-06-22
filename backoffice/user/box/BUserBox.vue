@@ -17,8 +17,9 @@
     <v-avatar
       :size="small ? 32 : 42"
       class="hover-scale m-2 avatar-gradient -thin"
+      :class="avatarClass"
     >
-      <img :src="getUserAvatar(user.id)" />
+      <v-img :src="getUserAvatar(user.id)" />
     </v-avatar>
 
     <div class="flex-grow-1">
@@ -85,6 +86,7 @@ export default {
   props: {
     user: {},
     small: Boolean,
+    avatarClass: {},
   },
   methods: {},
 };

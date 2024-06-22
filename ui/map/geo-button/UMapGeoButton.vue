@@ -86,10 +86,7 @@ export default {
       Type: Boolean,
     },
 
-    small: {
-      default: false,
-      Type: Boolean,
-    },
+    small:Boolean,
   },
 
   computed: {

@@ -17,6 +17,8 @@
     :class="{ 'bg-gray': selected }"
     class="d-flex align-center w-100 text-start"
   >
+    <!-- ――――――――― Shipping Service Rates ――――――――― -->
+
     <v-img
       :src="rate.icon"
       class="me-2 flex-grow-0"
@@ -30,11 +32,12 @@
         <v-spacer></v-spacer>
         <v-chip
           v-if="!rate.live"
-          class="float-end"
+          class="ms-1"
           color="amber"
           prepend-icon="science"
           size="x-small"
           variant="flat"
+          density="comfortable"
         >
           {{ $t("global.commons.debug") }}
         </v-chip>

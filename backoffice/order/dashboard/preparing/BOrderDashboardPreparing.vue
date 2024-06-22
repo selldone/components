@@ -198,10 +198,10 @@
             :decimal="3"
             :label="$t('product_extra_physical.weight')"
             :messages="
-              $t('process_center.preparing.packing_weight', {
-                weight: total_items_weight,
-                unit: mass_unit,
-              })
+                `Total items weight: ${total_items_weight} ${mass_unit}`
+
+
+
             "
             :min="total_items_weight"
             :readonly="!isActive"

@@ -32,6 +32,15 @@
           <div v-if="!!warehouse.name || !!full_address">
             <p class="font-weight-bold mb-1">{{ warehouse.name }}</p>
 
+            <flag
+              v-if="warehouse.country"
+              :iso="warehouse.country"
+              :squared="false"
+              class="me-1"
+            />
+
+            <small class="mx-1">{{ warehouse.state }} ●</small>
+
             <small>{{ full_address }}</small>
           </div>
           <div v-else>
@@ -67,6 +76,7 @@
               :placeholder="$t('shop_warehouse_edit.name_input')"
               color="primary"
               variant="underlined"
+              @update:model-value="changed = true"
             />
 
             <div class="mt-5">
@@ -75,7 +85,18 @@
                   <i class="fas fa-directions me-1" />
                   {{ $t("shop_warehouse_edit.address") }}:
                 </span>
-                <b>{{ full_address }}</b>
+
+                <flag
+                  v-if="map_location.country"
+                  :iso="map_location.country"
+                  :squared="false"
+                  class="me-1"
+                />
+                <b>
+                  <span class="mx-1">{{ warehouse.state }} ●</span>
+
+                  {{ full_address }}</b
+                >
 
                 <u-button-circle
                   color="primary"
@@ -114,19 +135,20 @@
                 <b>{{ warehouse.phone }}</b>
               </p>
             </div>
-
-            <div class="widget-buttons mt-3">
-              <v-btn
-                :loading="busy"
-                color="primary"
-                size="x-large"
-                variant="elevated"
-                @click="updateWarehouse"
-              >
-                <v-icon start>save</v-icon>
-                {{ $t("global.actions.save") }}
-              </v-btn>
-            </div>
+            <v-expand-transition>
+              <div v-if="changed" class="widget-buttons mt-3">
+                <v-btn
+                  :loading="busy"
+                  color="primary"
+                  size="x-large"
+                  variant="elevated"
+                  @click="updateWarehouse"
+                >
+                  <v-icon start>save</v-icon>
+                  {{ $t("global.actions.save") }}
+                </v-btn>
+              </div>
+            </v-expand-transition>
           </div>
         </v-expansion-panel-text>
       </v-expansion-panel>
@@ -188,6 +210,8 @@ export default {
     map_location: {},
 
     warehouse: {},
+
+    changed: false,
   }),
   computed: {
     full_address() {
@@ -201,13 +225,6 @@ export default {
     this.loadData();
   },
   methods: {
-    /* fetchWarehouse() {
-      axios
-        .get(window.API.GET_SHOP_WAREHOUSE_ADMIN(this.shop.id))
-        .then(({ data }) => {
-          this.loadData();
-        });
-    },*/
     loadData() {
       if (!this.warehouse) this.warehouse = {};
 
@@ -222,6 +239,9 @@ export default {
         postal: this.warehouse.postal,
         country: this.warehouse.country,
         city: this.warehouse.city,
+
+        state: this.warehouse.state,
+        state_code: this.warehouse.state_code,
       }; // Same keys - values!
 
       if (this.warehouse.location)
@@ -245,6 +265,7 @@ export default {
             this.shop.warehouse = data.warehouse;
             this.$emit("update:warehouse", data.warehouse);
 
+            this.changed = false;
             this.showSuccessAlert(
               null,
               this.$t("shop_warehouse_edit.notifications.success_save"),
@@ -273,9 +294,12 @@ export default {
       this.warehouse.postal = info.postal;
       this.warehouse.country = info.country;
       this.warehouse.state = info.state;
+      this.warehouse.state_code = info.state_code;
       this.warehouse.city = info.city;
 
       this.map_dialog = false;
+
+      this.changed = true;
     },
   },
 };
