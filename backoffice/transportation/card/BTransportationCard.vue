@@ -41,7 +41,9 @@
         {{ $t("global.commons.pickup") }}
       </u-ribbon>
 
-      <p>{{ $t(transportationObj.description) }}</p>
+      <p>
+        <v-chip v-if="transportation?.marketplace" color="#6548cc" label size="x-small" class="me-1" variant="flat">{{$t('global.commons.marketplace')}}</v-chip>
+        {{ $t(transportationObj.description) }}</p>
 
       <b-transportation-overview
         :outlined="outlined"

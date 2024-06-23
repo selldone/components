@@ -46,10 +46,14 @@
             ? [{ title: 'Page Template', icon: 'architecture', augment: true }]
             : []),
 
+          ...(has_shipping
+            ? [{ title: 'Shipping', icon: 'local_shipping' }]
+            : []),
+
           ...(vendor && !IS_VENDOR_PANEL
             ? [
                 { title: 'Access', icon: 'shield', access: true },
-                { title: 'Critical zone', icon: 'lock_outline'  },
+                { title: 'Critical zone', icon: 'lock_outline' },
               ]
             : []),
         ]"
@@ -62,10 +66,28 @@
             </v-avatar>
             {{ page.title }}
           </div>
-          <div v-if="item.access " class="small tnt single-line mt-1">
-            <v-chip :color="enable?'green':'red'" size="x-small"  variant="flat" density="comfortable">{{enable?$t('global.commons.enable'):$t('global.commons.disable')}}</v-chip>
-            <v-chip :variant="user_id && access?'flat':'plain'" color="#673AB7" size="x-small" class="ms-1" density="comfortable" prepend-icon="admin_panel_settings">{{$t('global.commons.access')}}</v-chip>
-
+          <div v-if="item.access" class="small tnt single-line mt-1">
+            <v-chip
+              :color="enable ? 'green' : 'red'"
+              size="x-small"
+              variant="flat"
+              density="comfortable"
+            >
+              {{
+                enable
+                  ? $t("global.commons.enable")
+                  : $t("global.commons.disable")
+              }}
+            </v-chip>
+            <v-chip
+              :variant="user_id && access ? 'flat' : 'plain'"
+              color="#673AB7"
+              size="x-small"
+              class="ms-1"
+              density="comfortable"
+              prepend-icon="admin_panel_settings"
+              >{{ $t("global.commons.access") }}
+            </v-chip>
           </div>
         </template>
       </u-tabs-floating>
@@ -227,7 +249,9 @@
 
                   <div v-if="vendor?.user" class="flex-grow-1 text-start">
                     <b>{{ vendor.user.name }}</b>
-                    <small class="mx-2">({{ $t("global.commons.owner") }})</small>
+                    <small class="mx-2"
+                      >({{ $t("global.commons.owner") }})</small
+                    >
                     <small class="d-block">{{ vendor.user.email }}</small>
                   </div>
 
@@ -258,7 +282,7 @@
                 </div>
               </v-list-subheader>
 
-              <hr class="my-5">
+              <hr class="my-5" />
 
               <s-widget-header
                 class="mt-5"
@@ -298,7 +322,9 @@
                 ></b-page-input>
 
                 <v-expand-transition group>
-                  <div v-if="page?.id && !edit_slug && vendor?.id/*Edit mode*/">
+                  <div
+                    v-if="page?.id && !edit_slug && vendor?.id /*Edit mode*/"
+                  >
                     <v-list-item key="1">
                       <template v-slot:title>
                         <div class="text-subtitle-2">
@@ -756,6 +782,49 @@
             </div>
           </v-window-item>
 
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Shipping  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+          <v-window-item v-if="has_shipping">
+            <div class="widget-box mb-5">
+              <s-widget-header icon="local_shipping" title="Shipping">
+              </s-widget-header>
+
+              <v-list-subheader>
+                Vendors can setup their own shipping services and couriers.
+              </v-list-subheader>
+
+              <v-list class="bg-transparent">
+                <v-list-item prepend-icon="business">
+                  <v-list-item-title>
+                    <b>Shipping Services</b>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    The total number of shipping services that the vendor has.
+                  </v-list-item-subtitle>
+                  <template v-slot:append>
+                    <b>{{
+                      numeralFormat(vendor.static?.shipping_services, "0,0.[00]a")
+                    }}</b>
+                  </template>
+                </v-list-item>
+
+                <v-list-item prepend-icon="people">
+                  <v-list-item-title>
+                    <b>Couriers</b>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    The total number of couriers that the vendor has.
+                  </v-list-item-subtitle>
+                  <template v-slot:append>
+                    <b>{{
+                      numeralFormat(vendor.static?.shipping_couriers, "0,0.[00]a")
+                    }}</b>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </div>
+          </v-window-item>
+
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Configuration  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
           <v-window-item>
             <div
@@ -801,9 +870,9 @@
             </div>
           </v-window-item>
 
-          <v-window-item>
-            <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Delete  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Delete  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
+          <v-window-item>
             <div v-if="vendor && !IS_VENDOR_PANEL" class="widget-box mb-5">
               <s-widget-header icon="block" title="Remove vendor">
               </s-widget-header>
@@ -1142,13 +1211,17 @@ export default {
       return this.augment?.length;
     },
 
+    has_shipping() {
+      return this.shop.marketplace?.shipping;
+    },
+
     vendor_listing_page_url() {
-      return ShopURLs.GetVendorListingPageUrl(this.shop,this.vendor);
+      return ShopURLs.GetVendorListingPageUrl(this.shop, this.vendor);
     },
 
     vendor_landing_page_url() {
       if (!this.page?.id || !this.vendor?.id) return null;
-      return ShopURLs.GetVendorLandingPageUrl(this.shop,this.vendor);
+      return ShopURLs.GetVendorLandingPageUrl(this.shop, this.vendor);
     },
   },
 

@@ -13,12 +13,12 @@
   -->
 
 <template>
-  <v-timeline class="text-start" density="compact">
+  <v-timeline class="s--delivery-timeline" density="compact" line-color="#000">
     <!-- ------------- Send ------------- -->
 
     <v-timeline-item
       v-if="sendAt"
-      dot-color="#1976D2"
+      dot-color="#000"
       icon="play_arrow"
       size="small"
     >
@@ -34,7 +34,7 @@
     <v-timeline-item
       v-if="sendAt && status === 'PENDING'"
       :fill-dot="!person && !service"
-      dot-color="#1976D2"
+      dot-color="#000"
       icon="move_down"
       size="small"
     >
@@ -63,7 +63,7 @@
             class="ms-1"
             color="amber"
             size="x-small"
-            variant="outlined"
+            variant="flat"
             >{{ $t("global.commons.debug") }}
           </v-chip>
         </div>
@@ -108,9 +108,14 @@
         </v-avatar>
       </template>
 
-      <s-shipping-rate v-if="rate" :rate="rate"></s-shipping-rate>
+      <div class="pa-2 rounded-lg bg-white" style="border: solid #aaa thin">
+        <s-shipping-rate v-if="rate" :rate="rate"></s-shipping-rate>
+      </div>
 
-      <div class="flex-grow-1 d-flex align-center py-1 text-subtitle-2">
+      <div
+        class="flex-grow-1 d-flex align-center pa-2 text-subtitle-2 rounded-lg bg-white my-1"
+        style="border: solid #aaa thin"
+      >
         {{ deliveryService.name }}
         <span class="dashed-flex-space"></span>
 
@@ -121,7 +126,7 @@
           variant="text"
           @click="
             busy = true;
-            $emit('refresh-service', () => {
+            $emit('click:refresh-service', () => {
               busy = false;
             });
           "
@@ -280,7 +285,7 @@
 
     <v-timeline-item
       v-if="returnAt"
-      dot-color="amber"
+      dot-color="red"
       icon="keyboard_return"
       size="small"
     >
@@ -312,6 +317,7 @@ import SShippingRate from "../../../storefront/order/delivery/SShippingRate.vue"
 export default {
   name: "DeliveryTimeline",
   components: { SShippingRate },
+  emits: ["click:refresh-service"],
   props: {
     sendAt: {},
     returnAt: {},
@@ -349,4 +355,12 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.s--delivery-timeline {
+  text-align: start;
+
+  ::v-deep(.v-icon--size-small) {
+    font-size: 14px !important;
+  }
+}
+</style>

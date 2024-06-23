@@ -63,7 +63,7 @@
             v-if="activeIndex > index"
             class="hide-on-hover"
             color="#fff"
-            size="small"
+            size="14"
           >
             check_circle
           </v-icon>
@@ -72,7 +72,7 @@
             v-else-if="activeIndex === index"
             class="hide-on-hover"
             color="#fff"
-            size="small"
+            size="14"
           >
             {{ item.icon ? item.icon : "radio_button_unchecked" }}
           </v-icon>
@@ -80,7 +80,7 @@
             v-else-if="item.icon"
             class="op-0-6 hide-on-hover"
             color="#ccc"
-            size="small"
+            size="14"
           >
             {{ item.icon }}
           </v-icon>
@@ -88,7 +88,7 @@
           <v-icon
             :color="activeIndex >= index ? '#fff' : '#ccc'"
             class="show-on-hover"
-            size="small"
+            size="14"
           >
             {{ item.icon ? item.icon : "radio_button_unchecked" }}
           </v-icon>

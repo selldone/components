@@ -54,17 +54,38 @@
 
         <div class="text-start flex-grow-1">
           <v-btn
-            :to="IS_VENDOR_PANEL ? {} : { name: 'BPageMarketplaceVendors' }"
-            class="link-dash ms-1"
+            v-if="!IS_VENDOR_PANEL"
+            :to="{
+              name: 'VPageVendorDashboard',
+              params: { vendor_id: vendor.id },
+            }"
+            class="ms-1 tnt"
+            prepend-icon="storefront"
             color="primary"
             target="_blank"
-            title="Go to vendors management panel."
-            variant="text"
+            title="Go to vendor panel."
+            variant="elevated"
+            size="small"
           >
             {{ vendor.name }}
           </v-btn>
 
-          <div class="px-1">
+          <v-btn
+            :to="
+              IS_VENDOR_PANEL ? undefined : { name: 'BPageMarketplaceVendors' }
+            "
+            class="ms-1 tnt"
+            append-icon="launch"
+            color="primary"
+            target="_blank"
+            title="Go to vendors management panel."
+            variant="text"
+            size="small"
+          >
+            {{ $t("global.commons.vendors") }}
+          </v-btn>
+
+          <div class="px-1 mt-1">
             <v-chip
               v-if="vendor.enable"
               class="m-1"
@@ -108,8 +129,8 @@
           :state="vendorOrder.delivery_state"
           :states="orders_states"
           class="my-1"
-          color="#0288D1"
-          dark-color="#0288D1"
+          color="#000"
+          dark-color="#000"
           show-caption
         />
       </v-col>

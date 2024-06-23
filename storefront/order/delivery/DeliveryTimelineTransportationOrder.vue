@@ -33,7 +33,7 @@
     :transportation-order="transportationOrder"
     :transportation-type="deliveryInfo ? deliveryInfo.type : null"
     :updated-at="transportationOrder.updated_at"
-    @refresh-service="(callback) => $emit('refresh-service', callback)"
+    @click:refresh-service="(callback) => $emit('refresh-service', callback)"
   >
   </delivery-timeline>
 </template>
@@ -44,6 +44,7 @@ import DeliveryTimeline from "../../../storefront/order/delivery/DeliveryTimelin
 export default {
   name: "DeliveryTimelineTransportationOrder",
   components: { DeliveryTimeline },
+  emits: ["refresh-service"],
   props: {
     shop: { required: true },
     transportationOrder: { required: true },

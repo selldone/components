@@ -19,16 +19,16 @@
         {{ $t("shipping.errors.warehouse_error") }}
       </div>
       <ul>
-        <li v-if="!warehouse.location">
+        <li v-if="!warehouse?.location">
           {{ $t("shipping.errors.set_origin") }}
         </li>
-        <li v-if="!warehouse.country">
+        <li v-if="!warehouse?.country">
           {{ $t("shipping.errors.set_country") }}
         </li>
-        <li v-if="!warehouse.address">
+        <li v-if="!warehouse?.address">
           {{ $t("shipping.errors.set_address") }}
         </li>
-        <li v-if="!warehouse.postal">{{ $t("shipping.errors.set_zip") }}</li>
+        <li v-if="!warehouse?.postal">{{ $t("shipping.errors.set_zip") }}</li>
       </ul>
       <v-spacer></v-spacer>
       <v-btn
@@ -402,7 +402,7 @@ export default {
   },
   props: {
     shop: { type: Object, required: true },
-    warehouse: { type: Object, required: true },
+    warehouse: { type: Object, required: false },
     transportation: { type: Object, required: true },
     deliveryService: { type: Object, required: true },
     baskets: {},
