@@ -106,7 +106,7 @@
 
     <teleport to="body">
       <v-card
-        v-if="focused_dealyed"
+        v-if="focused_dealyed && search?.length"
         max-width="98vw"
         width="840"
         rounded="t-xl"
