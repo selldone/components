@@ -601,15 +601,15 @@ export default {
         .get(
           this.IS_VENDOR_PANEL
             ? window.VAPI.GET_MY_VENDOR_DELIVERY_SERVICE_ORDER_INFO(
-                this.$route.params.vendor_id,
+                  transportation_order.vendor_id,
                 transportation_order.transportation_id,
-                transportation_order.service.service_id,
-                transportation_order.id,
+                transportation_order.service.id,
+                transportation_order.uid,
               )
             : window.API.GET_DELIVERY_SERVICE_ORDER_INFO(
-                this.shop.id,
+                  transportation_order.shop_id,
                 transportation_order.transportation_id,
-                transportation_order.service.service_id,
+                transportation_order.service.id,
                 transportation_order.uid,
               ),
         )
