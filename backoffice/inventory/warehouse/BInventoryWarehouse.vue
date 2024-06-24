@@ -192,10 +192,14 @@ import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 export default {
   name: "BInventoryWarehouse",
   components: {},
+  emits: ["update:warehouse"],
   props: {
     shop: {
       required: true,
       type: Object,
+    },
+    vendor: {
+      required: true,
     },
   },
   data: () => ({
@@ -221,7 +225,7 @@ export default {
 
   watch: {},
   created() {
-    this.warehouse = this.shop.warehouse;
+    this.warehouse =this.vendor?this.vendor.warehouse: this.shop.warehouse;
     this.loadData();
   },
   methods: {
@@ -256,13 +260,20 @@ export default {
 
       axios
         .post(
-          window.API.POST_SHOP_WAREHOUSE_ADMIN(this.shop.id),
+          this.vendor // Marketplace Vendor Panel
+            ? window.VAPI.POST_MY_VENDOR_SHOP_WAREHOUSE_ADMIN(this.vendor.id)
+            : window.API.POST_SHOP_WAREHOUSE_ADMIN(this.shop.id),
           this.warehouse,
         )
 
         .then(({ data }) => {
           if (!data.error) {
-            this.shop.warehouse = data.warehouse;
+            if(this.vendor){
+              this.vendor.warehouse = data.warehouse;
+            }else{
+              this.shop.warehouse = data.warehouse;
+            }
+
             this.$emit("update:warehouse", data.warehouse);
 
             this.changed = false;
@@ -271,7 +282,7 @@ export default {
               this.$t("shop_warehouse_edit.notifications.success_save"),
             );
           } else {
-            this.showErrorAlert(null, data.message);
+            this.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {

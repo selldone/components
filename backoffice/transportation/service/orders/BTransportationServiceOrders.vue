@@ -35,42 +35,43 @@
     >
       <template v-slot:item.address="{ item }">
         <div class="min-width-200 text-start py-1">
-          <div v-if="item.basket.user">
+          <div v-if="getOrder(item).customer">
             <v-avatar :size="24" class="avatar-gradient -thin me-2">
-              <v-img :src="getUserAvatar(item.basket.user.id)" />
+              <v-img v-if="getOrder(item).customer.user_id" :src="getUserAvatar(getOrder(item).customer.user_id)" />
+              <v-icon v-else>face</v-icon>
             </v-avatar>
-            <b class="me-2">{{ item.basket.user.name }}</b>
+            <b class="me-2">{{ getOrder(item).customer.name }}</b>
 
             <v-chip v-if="item.distance" size="x-small" class="me-2">
-              {{ item.distance }} Km</v-chip
-            >
+              {{ item.distance }} Km
+            </v-chip>
           </div>
 
           <div class="single-line max-w-200 mt-1">
             <flag
-              :iso="item.basket.receiver_info.country"
+              :iso="getOrder(item).receiver_info?.country"
               :squared="false"
               class="me-1"
             />
             <span
               class="text-subtitle-2"
-              :title="generateFullAddress(item.basket.receiver_info)"
-              >{{ generateFullAddress(item.basket.receiver_info) }}</span
+              :title="generateFullAddress(getOrder(item).receiver_info)"
+              >{{ generateFullAddress(getOrder(item).receiver_info) }}</span
             >
           </div>
 
-          <div v-if="item.basket.receiver_info?.phone">
+          <div v-if="getOrder(item).receiver_info?.phone">
             <i class="fas fa-phone me-1"></i>
             <span class="text-subtitle-2" v-copy>{{
-              item.basket.receiver_info.phone
+              getOrder(item).receiver_info.phone
             }}</span>
 
             <u-button-whatsapp
               class="ms-2"
               :shop="shop"
               :user="{
-                phone: item.basket.receiver_info.phone,
-                name: item.basket.user?.name,
+                phone: getOrder(item).receiver_info.phone,
+                name: getOrder(item).customer?.name,
               }"
             ></u-button-whatsapp>
           </div>
@@ -80,8 +81,8 @@
       <template v-slot:item.receiver_info="{ item }">
         <div class="min-width-75">
           <u-map-geo-button
-            v-if="item.basket?.receiver_info?.location"
-            :location="item.basket.receiver_info.location"
+            v-if="getOrder(item)?.receiver_info?.location"
+            :location="getOrder(item).receiver_info.location"
             small
           ></u-map-geo-button>
 
@@ -102,14 +103,14 @@
       </template>
 
       <template v-slot:item.basket_id="{ item }">
-        <div v-if="item.basket.items" class="d-flex align-center">
+        <div v-if="getOrder(item).items" class="d-flex align-center">
           <products-dense-images-circles
-            :ids="getProductsIDs(item.basket)"
+            :ids="getProductsIDs(getOrder(item))"
             border
           ></products-dense-images-circles>
           <v-spacer></v-spacer>
           <b-order-button-basket
-            :order="item.basket"
+            :order="getOrder(item)"
             class="mb-1"
             small
           ></b-order-button-basket>
@@ -155,29 +156,29 @@
 
       <template v-slot:item.delivery_price="{ item }">
         <div class="py-1 min-width-200 text-start">
-          <div v-if="item.basket.delivery_price > 0" class="min-width-100">
+          <div v-if="getOrder(item)?.delivery_price > 0" class="min-width-100">
             <small>{{ $t("global.commons.shipping_cost") }}: </small>
             <u-price
-              :amount="item.basket.delivery_price"
-              :currency="item.basket.currency"
+              :amount="getOrder(item).delivery_price"
+              :currency="getOrder(item).currency"
             ></u-price>
           </div>
-          <div v-else-if="item.basket.delivery_price === 0">
+          <div v-else-if="getOrder(item).delivery_price === 0">
             <v-chip size="x-small" color="cyan"
               >{{ $t("global.commons.free") }}
             </v-chip>
           </div>
-          <div v-else-if="item.basket.delivery_price === -1">
+          <div v-else-if="getOrder(item).delivery_price === -1">
             <v-chip size="x-small" color="#E91E63"
               >{{ $t("global.commons.sod") }}
             </v-chip>
           </div>
 
-          <div v-if="item.basket.tax_shipping">
+          <div v-if="getOrder(item).tax_shipping">
             <small>{{ $t("global.commons.shipping_tax") }}: </small>
             <u-price
-              :amount="item.basket.tax_shipping"
-              :currency="item.basket.currency"
+              :amount="getOrder(item).tax_shipping"
+              :currency="getOrder(item).currency"
             ></u-price>
           </div>
 
@@ -400,6 +401,14 @@ export default {
     };
   },
   computed: {
+    IS_VENDOR_PANEL() {
+      /*🟢 Vendor Panel 🟢*/
+      return (
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
+      );
+    },
+
     ShopPermissionRegions() {
       return ShopPermissionRegions;
     },
@@ -490,24 +499,41 @@ export default {
   },
 
   methods: {
+    /**
+     * Return order
+     * In vendor panel it return vendor_order and in shop it return basket
+     * @param item
+     */
+    getOrder(item) {
+      const out = this.IS_VENDOR_PANEL ? item.vendor_order : item.basket;
+      return out ? out : {};
+    },
     //――――――――――――――――――――――― Fetch transportation orders ―――――――――――――――――――――――
 
     fetchOrders() {
       this.busy_fetch = true;
 
       axios
-        .get(window.API.GET_SHOP_TRANSPORTATION_ORDERS(this.shop.id), {
-          params: {
-            transportation_id: this.transportation.id,
-            service_id: this.service ? this.service.id : null,
-            person_id: this.person ? this.person.id : null,
+        .get(
+          this.IS_VENDOR_PANEL
+            ? window.VAPI.GET_MY_VENDOR_TRANSPORTATION_ORDERS(
+                this.$route.params.vendor_id,
+              )
+            : window.API.GET_SHOP_TRANSPORTATION_ORDERS(this.shop.id),
 
-            offset: (this.page - 1) * this.itemsPerPage,
-            limit: this.itemsPerPage,
-            sortBy: this.sortBy[0]?.key,
-            sortDesc: this.sortBy[0]?.order === "desc",
+          {
+            params: {
+              transportation_id: this.transportation.id,
+              service_id: this.service ? this.service.id : null,
+              person_id: this.person ? this.person.id : null,
+
+              offset: (this.page - 1) * this.itemsPerPage,
+              limit: this.itemsPerPage,
+              sortBy: this.sortBy[0]?.key,
+              sortDesc: this.sortBy[0]?.order === "desc",
+            },
           },
-        })
+        )
         .then(({ data }) => {
           this.totalItems = data.total;
           this.transportation_orders = data.transportation_orders;
@@ -531,11 +557,17 @@ export default {
           this.busy_transportation = transportation_order;
           axios
             .post(
-              window.API.POST_TRANSPORTATION_ORDER_STATUS(
-                this.shop.id,
-                transportation_order.transportation_id,
-                transportation_order.id,
-              ),
+              this.IS_VENDOR_PANEL
+                ? window.VAPI.POST_MY_VENDOR_TRANSPORTATION_ORDER_STATUS(
+                    this.$route.params.vendor_id,
+                    transportation_order.transportation_id,
+                    transportation_order.id,
+                  )
+                : window.API.POST_TRANSPORTATION_ORDER_STATUS(
+                    this.shop.id,
+                    transportation_order.transportation_id,
+                    transportation_order.id,
+                  ),
               {
                 status: status,
               },
@@ -567,12 +599,19 @@ export default {
 
       axios
         .get(
-          window.API.GET_DELIVERY_SERVICE_ORDER_INFO(
-            this.shop.id,
-            transportation_order.transportation_id,
-            transportation_order.service.service_id,
-            transportation_order.uid,
-          ),
+          this.IS_VENDOR_PANEL
+            ? window.VAPI.GET_MY_VENDOR_DELIVERY_SERVICE_ORDER_INFO(
+                this.$route.params.vendor_id,
+                transportation_order.transportation_id,
+                transportation_order.service.service_id,
+                transportation_order.id,
+              )
+            : window.API.GET_DELIVERY_SERVICE_ORDER_INFO(
+                this.shop.id,
+                transportation_order.transportation_id,
+                transportation_order.service.service_id,
+                transportation_order.uid,
+              ),
         )
         .then(({ data }) => {
           if (!data.error) {

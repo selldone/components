@@ -74,7 +74,7 @@
           }"
           :dark="getId($route.params.basket_id) === basket.id"
           :to="
-            getDeliveryServiceID(basket) &&
+          /*  getDeliveryServiceID(basket) &&
             getShopTransportationForBasketDeliveryTypeID(basket)
               ? {
                   name: 'BPageTransportationServiceDashboard',
@@ -84,7 +84,7 @@
                     delivery_service_id: getDeliveryServiceID(basket),
                   },
                 }
-              : getBasketOrderProcessTo(basket)
+              : */getBasketOrderProcessTo(basket)
           "
           class="border-bottom bg-white text-start"
           ripple
@@ -277,13 +277,13 @@
           lines="two"
         >
           <v-list-item
-            v-for="service in getDeliveryServices(selected_basket_service)"
-            :key="service.id"
-            :prepend-avatar="getShopImagePath(service.icon)"
-            :subtitle="service.description"
-            :title="service.name"
+            v-for="transportation_service in geTransportationServices(selected_basket_service)"
+            :key="transportation_service.id"
+            :prepend-avatar="getShopImagePath(transportation_service.delivery_service.icon)"
+            :subtitle="transportation_service.delivery_service.description"
+            :title="transportation_service.delivery_service.name"
             class="row-hover"
-            @click="setDeliveryServiceID(selected_basket_service, service.id)"
+            @click="setDeliveryServiceID(selected_basket_service,transportation_service.id, transportation_service.delivery_service.id)"
           >
           </v-list-item>
         </v-list>
@@ -484,23 +484,28 @@ export default {
         this.getShopTransportationForBasketDeliveryType(basket);
       return transportation ? transportation.id : null;
     },
-    getDeliveryServices(basket) {
+    geTransportationServices(basket) {
       const transportation =
         this.getShopTransportationForBasketDeliveryType(basket);
-      const service_ids =
+
+      return  transportation?.transportation_services
+
+    /*  const service_ids =
         transportation && transportation.info
           ? transportation.info.service_ids
           : [];
 
-      return this.delivery_services.filter((i) => service_ids.includes(i.id));
+      return this.delivery_services.filter((i) => service_ids.includes(i.id));*/
     },
 
     getDeliveryServiceID(basket) {
       if (!basket) return null;
       return basket.delivery_service_id; // Assign when add to que
     },
-    setDeliveryServiceID(basket, service_id) {
-      basket.delivery_service_id = service_id;
+    setDeliveryServiceID(basket, transportation_service_id,delivery_service_id) {
+      basket.delivery_service_id = delivery_service_id;
+      basket.transportation_service_id = transportation_service_id;
+
       this.show_delivery_services = false;
       this.saveOrdersQue();
     },

@@ -912,8 +912,12 @@ export default {
             if (!this.postal) this.postal = data.postal;
             this.city = data.city;
             this.state = data.state;
+            this.state_code = data.state_code;
+
+            //console.log("State Code", this.state_code,this.selected_country_detail?.states);
+
             if (
-              data.state_code &&
+              !this.state_code &&
               this.selected_country_detail?.states?.length
             ) {
               // Force to select state by state code: Maybe miss match state name with local

@@ -26,7 +26,7 @@
     </u-avatar-folder>
 
     <div class="flex-grow-1">
-      <b class="single-line"
+      <b class="single-line max-w-200"
         >{{ vendor.name?.limitWords(3) }}
         <v-icon v-if="vendor.access" class="ms-1" color="blue" size="small"
           >verified
@@ -35,7 +35,7 @@
           >remove_done
         </v-icon>
       </b>
-      <div v-if="vendor.description" class="flex-grow-1 single-line small">
+      <div v-if="vendor.description" class="flex-grow-1 single-line small max-w-200">
         {{ vendor.description }}
       </div>
 

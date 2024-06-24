@@ -789,7 +789,7 @@ export default {
             this.transportation = data.transportation;
             this.$emit("update:modelValue", data.transportation);
           } else {
-            this.showErrorAlert(null, data.message);
+            this.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
@@ -827,7 +827,7 @@ export default {
                   name: "BPageShopLogisticShipping",
                 });
               } else {
-                this.showErrorAlert(null, data.message);
+                this.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {

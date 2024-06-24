@@ -30,7 +30,7 @@
       <v-img
         :src="getShopImagePath(img)"
         class="rounded-card"
-        color="#ffffffbb"
+        :color="circleColor"
         cover
       />
     </v-avatar>
@@ -78,6 +78,9 @@ export default {
     },
     color: {
       default: "#00a89a",
+    },
+    circleColor: {
+      default: "#ffffffbb",
     },
   },
 

@@ -125,8 +125,7 @@
       <div
         v-if="
           !noService &&
-          delivery_services_id &&
-          delivery_services_id.length &&
+          transportation_services?.length &&
           !is_pickup
         "
       >
@@ -199,7 +198,7 @@
         <!-- ========================================= Delivery Service ========================================= -->
 
         <template
-          v-if="in_this_step && delivery_services && delivery_services.length"
+          v-if="in_this_step && transportation_services?.length"
         >
           <h3 class="mt-5">
             <v-icon class="me-1" color="black">looks_3</v-icon>
@@ -208,12 +207,13 @@
           <div class="d-flex">
             <v-spacer></v-spacer>
             <v-select
-              v-model="delivery_service"
-              v-intersect.quiet="autoSelectService()"
-              :items="delivery_services"
+              v-model="selected_transportation_service"
+              v-intersect.quiet="autoSelectService(false)"
+              :items="transportation_services"
               class="my-1"
               hide-details
               item-value="id"
+              item-title="delivery_service.name"
               return-object
               rounded
               style="max-width: 230px"
@@ -221,23 +221,24 @@
             >
               <template v-slot:selection="{ item }">
                 <v-img
-                  :src="getShopImagePath(item.raw.icon)"
+                  :src="getShopImagePath(item.raw.delivery_service.icon)"
                   class="me-1 flex-grow-0"
                   height="32"
                   width="32"
                 ></v-img>
-                {{ item.raw.name }}
+                {{ item.raw.delivery_service.name }}
               </template>
+
               <template v-slot:item="{ item, props }">
                 <v-list-item
                     v-bind="props"
 
-                    :title="item.raw.name"
+                    :title="item.raw.delivery_service.name"
                   class="text-start"
                 >
                   <template v-slot:prepend>
                     <v-img
-                      :src="getShopImagePath(item.raw.icon)"
+                      :src="getShopImagePath(item.raw.delivery_service.icon)"
                       class="me-2"
                       height="32"
                       width="32"
@@ -247,16 +248,18 @@
               </template>
             </v-select>
           </div>
-
           <v-expand-transition>
-            <div v-if="transportation && delivery_service">
+            <div v-if="transportation && selected_transportation_service" :key="selected_transportation_service?.id">
+
               <b-transportation-service-labels
                 :auto-calculate-rates="in_this_step"
                 :baskets="baskets"
-                :delivery-service="delivery_service"
+                :transportation-service="selected_transportation_service"
+                :delivery-service="selected_transportation_service.delivery_service"
                 :shop="shop"
+                :vendor="vendor"
                 :transportation="transportation"
-                :warehouse="shop.warehouse"
+                :warehouse="warehouse"
                 order-page-mode
                 @add:orders="
                   basket.delivery_state =
@@ -586,14 +589,22 @@
               v-else-if="transportation_order.service"
               :to="
                 IS_VENDOR_PANEL
-                  ? {}
+                  ? {
+                      name: 'VPageTransportationServiceOrders',
+                      params: {
+                        transportation_id:
+                          transportation_order.transportation_id,
+                        service_id:
+                          transportation_order.service.id,
+                      },
+                    }
                   : {
                       name: 'BPageTransportationServiceOrders',
                       params: {
                         transportation_id:
                           transportation_order.transportation_id,
-                        delivery_service_id:
-                          transportation_order.service.service_id,
+                        service_id:
+                          transportation_order.service.id,
                       },
                     }
               "
@@ -813,7 +824,6 @@ import SOrderDeliveryAutoComplete from "../../../../storefront/order/auto-comple
 import UButtonWhatsapp from "../../../../ui/button/whatsapp/UButtonWhatsapp.vue";
 import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
 import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
-import BTransportationServiceLabels from "../../../transportation/service/labels/BTransportationServiceLabels.vue";
 import DeliveryTimelineTransportationOrder from "../../../../storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import { ETA } from "@selldone/core-js/enums/logistic/ETA";
@@ -823,6 +833,8 @@ import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
 import { Basket } from "@selldone/core-js";
+import BTransportationServiceLabels
+  from "@selldone/components-vue/backoffice/transportation/service/labels/BTransportationServiceLabels.vue";
 
 export default {
   name: "BOrderDashboardDelivery",
@@ -853,6 +865,7 @@ export default {
       require: true,
       type: Object,
     },
+    vendor:{},
     basket: {
       require: true,
       type: Object,
@@ -886,7 +899,7 @@ export default {
 
       track_expanded: false,
 
-      delivery_service: null,
+      selected_transportation_service: null,
 
       //-------------------
       busy_edit: false,
@@ -902,6 +915,14 @@ export default {
         this.$route.params.vendor_id &&
         this.$route.matched.some((record) => record.meta.vendor)
       );
+    },
+
+    has_shipping_services() {
+      return !this.IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/ || !!this.shop.marketplace?.shipping /*Marketplace enable shipping for vendors*/
+    },
+
+    warehouse(){
+      return this.IS_VENDOR_PANEL? this.vendor.warehouse:this.shop.warehouse
     },
 
     baskets() {
@@ -1006,6 +1027,7 @@ export default {
     },
 
     transportations() {
+      if(this.vendor)   return this.vendor.transportations;
       return this.shop.transportations;
     },
 
@@ -1023,11 +1045,11 @@ export default {
       );
     },
 
-    delivery_services_id() {
+ /*   delivery_services_id() {
       return this.transportation && this.transportation.info
         ? this.transportation.info.service_ids
         : [];
-    },
+    },*/
 
     transportation_icon() {
       if (
@@ -1038,11 +1060,13 @@ export default {
       return ShopTransportations[this.transportation_type].icon;
     },
 
-    delivery_services() {
-      if (!this.shop.delivery_services) return [];
+    transportation_services() {
+      return  this.transportation?.transportation_services
+
+   /*   if (!this.shop.delivery_services) return [];
       return this.shop.delivery_services.filter((i) =>
         this.delivery_services_id.includes(i.id),
-      );
+      );*/
     },
 
     has_eta_weekday() {
@@ -1067,8 +1091,8 @@ export default {
   },
 
   watch: {
-    delivery_services() {
-      this.autoSelectService();
+    transportation_services() {
+      this.autoSelectService(true);
     },
   },
 
@@ -1122,19 +1146,21 @@ export default {
       });
     },
 
-    autoSelectService() {
+    autoSelectService(force) {
       if (
+          (this.selected_transportation_service && !force) ||
         !this.in_this_step ||
-        !this.delivery_services ||
-        !this.delivery_services.length ||
-        (this.delivery_service &&
-          this.delivery_services_id.includes(this.delivery_service.id))
+        !this.transportation_services?.length
       )
         return;
-      this.delivery_service = null;
+
+      this.selected_transportation_service = this.transportation_services[0];
+/*
+      this.selected_transportation_service = null;
       _.delay(() => {
-        this.delivery_service = this.delivery_services[0];
-      }, 1000);
+        this.selected_transportation_service = this.transportation_services[0];
+
+      }, 1000);*/
     },
   },
   created() {

@@ -65,7 +65,7 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select Type ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <v-row v-if="show_inputs" no-gutters>
-        <v-col v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/" cols="12">
+        <v-col v-if="has_shipping_services" cols="12">
           <!-- Delivery Type -->
 
           <p class="mt-2 small text-muted">
@@ -160,6 +160,7 @@
                     "
                     :limit="20"
                     color="#673AB7"
+                    circle-color="#fff"
                     title="Active services"
                   ></s-dense-images-circles>
                 </div>
@@ -178,6 +179,7 @@
                     :ids="item.info.user_ids"
                     :limit="20"
                     color="#FFA000"
+                    circle-color="#fff"
                     title="Active couriers"
                   ></u-dense-circles-users>
                 </div>
@@ -209,7 +211,7 @@
             class="my-3 max-w-250 mx-auto"
           />
 
-          <div v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/" class="mt-5">
+          <div v-if="has_shipping_services" class="mt-5">
             <v-alert
               :model-value="distance_warning"
               class="small mb-2"
@@ -225,7 +227,7 @@
                 label
                 size="x-small"
                 variant="flat"
-                >Max: {{ shop_transportation.distance }} {{ distance_unit }}
+                >Max: {{ shop_transportation?.distance }} {{ distance_unit }}
               </v-chip>
             </v-alert>
             <v-alert
@@ -243,7 +245,7 @@
                 label
                 size="x-small"
                 variant="flat"
-                >Max: {{ shop_transportation.max_weight }} {{ mass_unit }}
+                >Max: {{ shop_transportation?.max_weight }} {{ mass_unit }}
               </v-chip>
             </v-alert>
             <v-alert
@@ -262,7 +264,7 @@
                 label
                 size="x-small"
                 variant="flat"
-                >Max w: {{ shop_transportation.max_w }} {{ size_unit }}
+                >Max w: {{ shop_transportation?.max_w }} {{ size_unit }}
               </v-chip>
               <v-chip
                 class="ma-1"
@@ -270,7 +272,7 @@
                 label
                 size="x-small"
                 variant="flat"
-                >Max l: {{ shop_transportation.max_l }} {{ size_unit }}
+                >Max l: {{ shop_transportation?.max_l }} {{ size_unit }}
               </v-chip>
               <v-chip
                 class="ma-1"
@@ -278,7 +280,7 @@
                 label
                 size="x-small"
                 variant="flat"
-                >Max h: {{ shop_transportation.max_h }} {{ size_unit }}
+                >Max h: {{ shop_transportation?.max_h }} {{ size_unit }}
               </v-chip>
             </v-alert>
           </div>
@@ -370,6 +372,7 @@ export default {
       require: true,
       type: Object,
     },
+    vendor:{},
     basket: {
       require: true,
       type: Object,
@@ -403,6 +406,13 @@ export default {
   },
 
   computed: {
+
+    has_shipping_services() {
+      return !this.IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/ || !!this.shop.marketplace?.shipping /*Marketplace enable shipping for vendors*/
+    },
+
+
+
     has_delivery() {
       return ShopOptionsHelper.AskShippingAddress(
         this.shop,
@@ -511,13 +521,14 @@ export default {
       return this.findShopTransportation(this.transportation);
     },
     distance_warning() {
-      return (
+
+      return !!(
         this.shop_transportation &&
         this.shop_transportation.distance < this.distance
       );
     },
     volume_warning() {
-      return (
+      return !!(
         this.shop_transportation &&
         (this.shop_transportation.max_w < this.width ||
           this.shop_transportation.max_h < this.height ||
@@ -525,25 +536,21 @@ export default {
       );
     },
     weight_warning() {
-      return (
+      return !!(
         this.shop_transportation &&
         this.shop_transportation.max_weight < this.weight
       );
     },
-    /*
-    transportations() {
-      if (!this.shop.transportations) return [];
-      const out = [];
-      // Show only eligible transportation types for this order:
-      this.shop.transportations.forEach((transportation) => {
-        if (transportation.enable && (!this.is_cod || transportation.cod))
-          out.push(transportation.type);
-      });
-      return out;
-    },*/
+
+
+    transportations(){
+      if(this.vendor)   return this.vendor.transportations;
+      return this.shop.transportations;
+    },
+
     transportation_items() {
       let out = [];
-      this.shop.transportations.forEach((t) => {
+      this.transportations?.forEach((t) => {
         const obj = ShopTransportations[t.type];
 
         out.push({
@@ -565,10 +572,8 @@ export default {
   },
   methods: {
     findShopTransportation(type) {
-      return (
-        this.shop.transportations &&
-        this.shop.transportations.find((it) => it.type === type)
-      );
+      return this.transportations?.find((it) => it.type === type)
+
     },
     preparingOrder() {
       this.busy = true;
@@ -595,6 +600,10 @@ export default {
       if (!this.delivery_info.volume) this.delivery_info.volume = {};
 
       this.transportation = this.delivery_info.type;
+
+
+      // Check if transportation is available:
+      if(this.transportation && !this.transportations.some(t=>t.type===this.transportation))this.transportation=null;
 
       this.weight = this.delivery_info.weight;
 

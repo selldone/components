@@ -47,7 +47,7 @@
             : []),
 
           ...(has_shipping
-            ? [{ title: 'Shipping', icon: 'local_shipping' }]
+            ? [{ title: 'Shipping', icon: 'local_shipping' ,shipping:true}]
             : []),
 
           ...(vendor && !IS_VENDOR_PANEL
@@ -88,7 +88,22 @@
               prepend-icon="admin_panel_settings"
               >{{ $t("global.commons.access") }}
             </v-chip>
+
+
+
           </div>
+
+          <v-chip
+              v-if="item.shipping"
+              :color="warehouse?'#009688':'#F44336'"
+              size="x-small"
+              class="ms-1"
+              density="comfortable"
+              prepend-icon="warehouse"
+          >{{warehouse?warehouse.title:'Not set!'}}
+          </v-chip>
+
+
         </template>
       </u-tabs-floating>
 
@@ -792,7 +807,6 @@
               <v-list-subheader>
                 Vendors can setup their own shipping services and couriers.
               </v-list-subheader>
-
               <v-list class="bg-transparent">
                 <v-list-item prepend-icon="business">
                   <v-list-item-title>
@@ -803,7 +817,10 @@
                   </v-list-item-subtitle>
                   <template v-slot:append>
                     <b>{{
-                      numeralFormat(vendor.static?.shipping_services, "0,0.[00]a")
+                      numeralFormat(
+                        vendor.static?.shipping_services,
+                        "0,0.[00]a",
+                      )
                     }}</b>
                   </template>
                 </v-list-item>
@@ -817,11 +834,44 @@
                   </v-list-item-subtitle>
                   <template v-slot:append>
                     <b>{{
-                      numeralFormat(vendor.static?.shipping_couriers, "0,0.[00]a")
+                      numeralFormat(
+                        vendor.static?.shipping_couriers,
+                        "0,0.[00]a",
+                      )
                     }}</b>
                   </template>
                 </v-list-item>
               </v-list>
+            </div>
+            <div class="widget-box mb-5">
+              <h2>
+                <v-icon class="me-1" size="small">fa:fas fa-warehouse</v-icon>
+                {{ $t("admin_shop.logistic.warehouses.title") }}
+              </h2>
+              <v-list-subheader>
+                {{ $t("admin_shop.logistic.warehouses.subtitle") }}
+              </v-list-subheader>
+
+              <hr class="my-5" />
+
+              <h3>{{ $t("admin_shop.logistic.warehouse.title") }}</h3>
+              <v-list-subheader>
+                {{ $t("admin_shop.logistic.warehouse.sub_title") }}
+              </v-list-subheader>
+
+              <v-alert v-if="!warehouse?.location" color="red" type="error">
+                {{ $t("admin_shop.logistic.warehouse_btn_error") }}
+              </v-alert>
+              <b-inventory-warehouse
+                :shop="shop"
+                :vendor="vendor"
+                class="my-3"
+                @update:warehouse="
+                  (val) => {
+                    vendor.warehouse = val;
+                  }
+                "
+              />
             </div>
           </v-window-item>
 
@@ -1080,10 +1130,12 @@ import VPricingInput from "../../../storefront/pricing/VPricingInput.vue";
 import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
 import { ShopURLs } from "@selldone/core-js";
 import LAugmentForm from "@selldone/page-builder/components/augment/form/LAugmentForm.vue";
+import BInventoryWarehouse from "@selldone/components-vue/backoffice/inventory/warehouse/BInventoryWarehouse.vue";
 
 export default {
   name: "BVendorAdd",
   components: {
+    BInventoryWarehouse,
     LAugmentForm,
     UTextCopyBox,
     SWidgetButtons,
@@ -1172,6 +1224,11 @@ export default {
         this.$route.matched.some((record) => record.meta.vendor)
       );
     },
+
+    warehouse() {
+      return this.vendor ? this.vendor.warehouse : this.shop.warehouse;
+    },
+
 
     //----------------------- Select map dialog --------------------
     map_url() {

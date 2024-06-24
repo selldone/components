@@ -18,7 +18,7 @@
     @click="
       $router.push({
         name: 'BPageTransportationServiceDashboard',
-        params: { delivery_service_id: service.service_id },
+        params: { service_id: service.id },
       })
     "
   >
@@ -27,7 +27,7 @@
         :caption="$t('global.actions.edit')"
         :to="{
           name: 'BPageTransportationServiceEdit',
-          params: { delivery_service_id: service.service_id },
+          params: { service_id: service.id },
         }"
         class="sub-caption -hover"
         icon

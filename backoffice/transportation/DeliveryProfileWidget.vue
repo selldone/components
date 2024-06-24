@@ -102,7 +102,7 @@ export default {
           window.API.GET_DELIVERY_SERVICE_PROFILE(
             this.shop.id,
             this.$route.params.transportation_id,
-            this.$route.params.delivery_service_id,
+            this.$route.params.service_id,
           ),
         )
         .then(({ data }) => {

@@ -15,13 +15,7 @@
 <template>
   <delivery-timeline
     :deliver-at="transportationOrder.deliver_at"
-    :delivery-service="
-      transportationOrder.service &&
-      delivery_services &&
-      delivery_services.find(
-        (i) => i.id === transportationOrder.service.service_id,
-      )
-    "
+    :delivery-service="delivery_service"
     :history="transportationOrder.history"
     :payment-at="transportationOrder.payment_at"
     :person="transportationOrder.person"
@@ -59,8 +53,31 @@ export default {
   },
 
   computed: {
+    transportations() {
+      return this.shop.transportations;
+    },
+
+    transportation() {
+      return (
+        this.transportations &&
+        this.transportations.find(
+          (transportation) =>
+            transportation.id === this.transportationOrder.transportation_id,
+        )
+      );
+    },
+
     delivery_services() {
-      return this.shop.delivery_services;
+      return this.transportation?.transportation_services;
+    },
+
+    delivery_service() {
+      return (
+        this.transportationOrder.service &&
+        this.delivery_services?.find(
+          (i) => i.id === this.transportationOrder.service.service_id,
+        )
+      );
     },
   },
 

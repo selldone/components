@@ -14,9 +14,14 @@
 
 <template>
   <div>
-    <v-alert v-if="valid_origin" density="compact" type="error">
+    <v-alert
+      v-if="valid_origin"
+      density="compact"
+      type="error"
+      class="text-subtitle-2 mt-3"
+    >
       <div>
-        {{ $t("shipping.errors.warehouse_error") }}
+        {{ $t("shipping.warehouse_error") }}
       </div>
       <ul>
         <li v-if="!warehouse?.location">
@@ -32,9 +37,14 @@
       </ul>
       <v-spacer></v-spacer>
       <v-btn
-        :to="{ name: 'BPageShopLogisticWarehouse' }"
+        :to="{
+          name: IS_VENDOR_PANEL
+            ? 'VPageVendorProfile'
+            : 'BPageShopLogisticWarehouse',
+        }"
         class="m-2"
         variant="outlined"
+        prepend-icon="warehouse"
         >{{ $t("shipping.set_warehouse") }}
       </v-btn>
     </v-alert>
@@ -44,7 +54,7 @@
         <v-icon class="me-1" size="small">fa:fas fa-truck-pickup</v-icon>
         {{ $t("shipping.pickup_location") }}
       </template>
-      <span >{{ origin_address }}</span>
+      <span>{{ origin_address }}</span>
 
       <v-btn
         v-if="orderPageMode"
@@ -250,7 +260,7 @@
       <!-- ――――――――― Rates ――――――――― -->
       <template v-slot:item.rates="{ item }">
         <v-select
-          v-if=" pricingResponse?.shipments"
+          v-if="pricingResponse?.shipments"
           v-model="item.rate"
           :items="getRates(item)"
           type="string"
@@ -402,8 +412,11 @@ export default {
   },
   props: {
     shop: { type: Object, required: true },
+    vendor: { type: Object, required: false },
+
     warehouse: { type: Object, required: false },
     transportation: { type: Object, required: true },
+    transportationService: { type: Object, required: true },
     deliveryService: { type: Object, required: true },
     baskets: {},
     busyRates: {
@@ -440,6 +453,14 @@ export default {
     //------------------------------
   }),
   computed: {
+    IS_VENDOR_PANEL() {
+      /*🟢 Vendor Panel 🟢*/
+      return (
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
+      );
+    },
+
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
@@ -653,11 +674,17 @@ export default {
 
       axios
         .get(
-          window.API.GET_DELIVERY_SERVICE_PRICE(
-            this.shop.id,
-            this.transportation.id,
-            this.deliveryService.id,
-          ),
+          this.IS_VENDOR_PANEL
+            ? window.VAPI.GET_MY_VENDOR_DELIVERY_SERVICE_PRICE(
+                this.vendor.id,
+                this.transportation.id,
+                this.transportationService.id,
+              )
+            : window.API.GET_DELIVERY_SERVICE_PRICE(
+                this.shop.id,
+                this.transportation.id,
+                this.transportationService.id,
+              ),
           {
             params: {
               order_ids: order_ids,
@@ -672,6 +699,7 @@ export default {
             this.baskets.forEach((baske) => {
               const rates = this.getRates(baske);
               if (rates.length) baske.rate = rates[0];
+              else baske.rate = null;
             });
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -702,11 +730,17 @@ export default {
 
       axios
         .post(
-          window.API.POST_DELIVERY_SERVICE_ADD_ORDER(
-            this.shop.id,
-            this.transportation.id,
-            this.deliveryService.id,
-          ),
+          this.IS_VENDOR_PANEL
+            ? window.VAPI.POST_MY_VENDOR_DELIVERY_SERVICE_ADD_ORDER(
+                this.vendor.id,
+                this.transportation.id,
+                this.transportationService.id,
+              )
+            : window.API.POST_DELIVERY_SERVICE_ADD_ORDER(
+                this.shop.id,
+                this.transportation.id,
+                this.transportationService.id,
+              ),
           {
             order_ids: order_ids,
             rate: rate,

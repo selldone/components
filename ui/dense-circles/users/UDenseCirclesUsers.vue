@@ -30,7 +30,7 @@
       <v-img
         :src="getUserAvatar(id, IMAGE_SIZE_SMALL)"
         class="rounded-card"
-        color="#ffffffbb"
+        :color="circleColor"
         cover
       />
     </v-avatar>
@@ -79,6 +79,9 @@ export default {
     },
     color: {
       default: "#00a89a",
+    },
+    circleColor: {
+      default: "#ffffffbb",
     },
   },
 
