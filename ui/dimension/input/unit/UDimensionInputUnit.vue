@@ -47,6 +47,7 @@
         $emit('change', val);
       }
     "
+    :menu-icon="menuIcon"
   >
     <template v-slot:append-inner>
       <slot name="append-inner"></slot>
@@ -122,6 +123,9 @@ export default {
       type: Boolean,
     },
     backgroundColor: {},
+    menuIcon:{
+      default:'$dropdown'
+    },
   },
 
   data: () => ({

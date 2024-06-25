@@ -121,18 +121,24 @@ export default {
   created() {
     this.old_val = this.modelValue;
 
+    //console.log('UColorSelector',this.modelValue)
+
     if (!this.modelValue && !this.nullable) {
       this.$emit(
         "update:modelValue",
         this.default ? this.default : "#333333FF",
       );
+      return;
     }
 
     // Correction of rgb value bug: (Specially in get style color in page builder)
     if (this.modelValue && this.modelValue.startsWith("rgb(")) {
-      this.$emit("update:modelValue", rgb2hex(this.value));
+      //console.log('UColorSelector -----> ',rgb2hex(this.modelValue))
+      this.$emit("update:modelValue", rgb2hex(this.modelValue));
+      return;
     } else if (this.modelValue && this.modelValue.startsWith("rgba(")) {
-      this.$emit("update:modelValue", rgba2hexa(this.value));
+      this.$emit("update:modelValue", rgba2hexa(this.modelValue));
+      return;
     } else if (
       this.modelValue &&
       this.modelValue.startsWith("#") &&
@@ -153,11 +159,14 @@ export default {
         }
       }
       this.$emit("update:modelValue", val);
+      return;
     }
   },
 
   methods: {
     updateValue(val) {
+      //console.log('UColorSelector updateValue',val)
+
       const value = val && val.hexa ? val.hexa : val;
       if (this.old_val === value) return;
 

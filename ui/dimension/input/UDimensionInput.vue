@@ -32,6 +32,7 @@
     :solo="solo"
     :suffix="suffix"
     :variant="variant"
+    :dense="dense"
   >
     <!--
     <template v-slot:append-inner>
@@ -68,6 +69,7 @@
       class="flex-grow-1"
       @blur="$emit('blur')"
       @clear="dim_val = 'unset'"
+      :dense="dense"
     >
     </u-number-input>
     <u-dimension-input-unit
@@ -86,7 +88,10 @@
             rounded && solo ? '-7px' : rounded && !solo ? '-14px' : undefined,*/
       }"
       :variant="variant"
-      style="width: 40px; max-width: 90px"
+      style="width: 50px; max-width: 90px"
+      :class="{'ms-1': rounded,'-move-end-icon':dense}"
+      :dense="dense"
+
     >
     </u-dimension-input-unit>
   </div>
@@ -151,8 +156,6 @@ export default {
     },
 
     rounded: {
-      type: Boolean,
-      default: false,
     },
     dense: {
       type: Boolean,
@@ -286,4 +289,13 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+.-move-end-icon{
+  ::v-deep(.v-select__menu-icon){
+    margin-inline-end: -14px !important;
+    margin: 0;
+  }
+}
+
+</style>

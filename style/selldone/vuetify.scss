@@ -804,3 +804,17 @@ Make v-btn flex to put prepend and append in start and end of button
 .v-navigation-drawer__scrim{
   position: fixed;
 }
+
+// Make inputs smaller:
+.v-input-small{
+  &.v-input,.v-input{
+    --v-input-control-height:24px !important;
+    --v-input-padding-top:4px !important;
+    .v-field{
+      --v-field-padding-bottom:4px !important;
+      --v-field-padding-start:8px !important;
+      --v-field-padding-end:8px !important;
+    }
+  }
+
+}

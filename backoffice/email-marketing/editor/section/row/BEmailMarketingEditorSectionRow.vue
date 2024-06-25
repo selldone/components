@@ -20,20 +20,20 @@
       :subtitle="option.description"
       :title="option.title"
     >
-      <b-email-section-editor-row
+      <b-email-section-editor-row-self
         v-for="(child, i) in option.children"
         :key="i"
         :loaded-fonts="loadedFonts"
         :option="child"
         :shop="shop"
         :upload-url="uploadUrl"
-      ></b-email-section-editor-row>
+      ></b-email-section-editor-row-self>
     </s-setting-group>
 
     <s-setting-color
       v-else-if="option.type === 'color'"
       v-model="option.object[option.key]"
-      :title="option.label ? option.label : key"
+      :label="option.label ? option.label : key"
       clearable
       icon="palette"
     >
@@ -47,7 +47,7 @@
         { value: 'center', title: 'Center', icon: 'format_align_center' },
         { value: 'right', title: 'Right', icon: 'format_align_right' },
       ]"
-      :title="option.label"
+      :label="option.label"
     >
     </s-setting-toggle>
 
@@ -210,6 +210,7 @@ import BProductsSelectBox from "../../../../../backoffice/product/select-box/BPr
 import SSettingTextInput from "@selldone/page-builder/styler/settings/text-input/SSettingTextInput.vue";
 import SSettingToggle from "@selldone/page-builder/styler/settings/toggle/SSettingToggle.vue";
 import WebFont from "webfontloader";
+import { defineAsyncComponent } from 'vue';
 
 export default defineComponent({
   name: "BEmailMarketingEditorSectionRow",
@@ -221,6 +222,7 @@ export default defineComponent({
     SSettingColor,
     SSettingGroup,
     USmartToggle,
+    BEmailSectionEditorRowSelf: defineAsyncComponent(() => import('./BEmailMarketingEditorSectionRow.vue'))
   },
   props: {
     shop: {
