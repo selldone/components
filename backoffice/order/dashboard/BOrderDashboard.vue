@@ -945,6 +945,13 @@ export default {
           if (callback) callback(true);
           axios
             .put(
+
+                this.IS_VENDOR_PANEL? /*🟢 Vendor Panel 🟢*/
+                    window.VAPI.PUT_MY_VENDOR_UPDATE_ORDER_RECEIVER_INFO(
+                        this.$route.params.vendor_id,
+                        this.$route.params.vendor_order_id, // Vendor order id!
+                    ):
+
               window.API.PUT_UPDATE_ORDER_RECEIVER_INFO(
                 this.shop.id,
                 this.basket.id,

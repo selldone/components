@@ -67,16 +67,21 @@ export default {
       );
     },
 
-    delivery_services() {
+    transportation_services() {
       return this.transportation?.transportation_services;
     },
 
     delivery_service() {
+      if (this.transportationOrder.service?.delivery_service) {
+        return this.transportationOrder.service.delivery_service;
+      }
+
+      // Try to find the delivery service from the transportations of the shop!
       return (
         this.transportationOrder.service &&
-        this.delivery_services?.find(
+        this.transportation_services?.find(
           (i) => i.id === this.transportationOrder.service.service_id,
-        )
+        )?.delivery_service
       );
     },
   },

@@ -75,6 +75,7 @@
     </div>
     <!-- ――――――――――――――――――――――― Table ――――――――――――――――――――――― -->
     <v-data-table
+        :mobile="$vuetify.display.xs"
       v-model:page="page"
       :disable-sort="orderPageMode"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
@@ -251,7 +252,7 @@
             <span class="dashed-flex-space"></span>
             <span>{{ getShortAddress(item.receiver_info) }}</span>
           </div>
-          <div :ref="'ad-' + item.id" class="py-1">
+          <div :ref="'ad-' + item.id" class="py-1 small">
             {{ item.receiver_info.address }}
           </div>
         </div>
@@ -259,61 +260,63 @@
 
       <!-- ――――――――― Rates ――――――――― -->
       <template v-slot:item.rates="{ item }">
-        <v-select
-          v-if="pricingResponse?.shipments"
-          v-model="item.rate"
-          :items="getRates(item)"
-          type="string"
-          class="min-width-100 max-w-400 my-1"
-          flat
-          hide-details
-          item-value="uid"
-          item-title="provider"
-          placeholder="out of range!"
-          return-object
-          variant="solo"
-          density="compact"
-        >
-          <template v-slot:item="{ item, props }">
-            <v-list-item v-bind="props" title="">
-              <b-transportation-service-rate
-                :rate="item.raw"
-              ></b-transportation-service-rate>
-            </v-list-item>
-          </template>
+       <div class="d-flex flex-column align-stretch max-w-400">
+         <v-select
+             v-if="pricingResponse?.shipments"
+             v-model="item.rate"
+             :items="getRates(item)"
+             type="string"
+             class="min-width-250  mt-1"
+             flat
+             hide-details
+             item-value="uid"
+             item-title="provider"
+             placeholder="out of range!"
+             return-object
+             variant="solo"
+             density="compact"
+         >
+           <template v-slot:item="{ item, props }">
+             <v-list-item v-bind="props" title="">
+               <b-transportation-service-rate
+                   :rate="item.raw"
+               ></b-transportation-service-rate>
+             </v-list-item>
+           </template>
 
-          <template v-slot:selection="{ item }">
-            <b-transportation-service-rate
-              :rate="item.raw"
-            ></b-transportation-service-rate>
-          </template>
-        </v-select>
-        <div v-else class="min-width-100 py-2 text-center text-muted">
-          {{ $t("shipping.no_rate") }}
-        </div>
+           <template v-slot:selection="{ item }">
+             <b-transportation-service-rate
+                 :rate="item.raw"
+             ></b-transportation-service-rate>
+           </template>
+         </v-select>
+         <div v-else class="min-width-100 py-2 text-center text-muted">
+           {{ $t("shipping.no_rate") }}
+         </div>
 
-        <v-expansion-panels
-          v-if="getErrors(item)"
-          class="my-1 auto-small-expansion"
-        >
-          <v-expansion-panel elevation="0">
-            <v-expansion-panel-title
-              class="pa-1 text-primary font-weight-bold"
-              style="min-height: 24px"
-            >
-              {{ $t("shipping.view_messages") }}
-            </v-expansion-panel-title>
-            <v-expansion-panel-text>
-              <ul
-                class="text-red small font-weight-bold py-1 max-w-300 text-start"
-              >
-                <li v-for="(msg, i) in getErrors(item)" :key="i">
-                  {{ msg }}
-                </li>
-              </ul>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
+         <v-expansion-panels
+             v-if="getErrors(item)"
+             class="my-1 auto-small-expansion"
+         >
+           <v-expansion-panel elevation="0">
+             <v-expansion-panel-title
+                 class="pa-1 text-primary font-weight-bold"
+                 style="min-height: 24px"
+             >
+               {{ $t("shipping.view_messages") }}
+             </v-expansion-panel-title>
+             <v-expansion-panel-text>
+               <ul
+                   class="text-red small font-weight-bold py-1 max-w-300 text-start"
+               >
+                 <li v-for="(msg, i) in getErrors(item)" :key="i">
+                   {{ msg }}
+                 </li>
+               </ul>
+             </v-expansion-panel-text>
+           </v-expansion-panel>
+         </v-expansion-panels>
+       </div>
       </template>
 
       <!-- ――――――――― Actions ――――――――― -->
