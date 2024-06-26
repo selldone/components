@@ -70,7 +70,7 @@
       :messages="option.messages"
       :placeholder="option.placeholder"
       :rules="option.rules"
-      :title="option.label ? option.label : key"
+      :label="option.label ? option.label : key"
       @blur="onUpdate()"
     >
     </s-setting-text-input>

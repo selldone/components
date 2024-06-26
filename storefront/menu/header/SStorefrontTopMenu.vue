@@ -136,6 +136,7 @@
                 visibles[index]
               "
               :initialPageData="tab.page.content"
+              :initialPageCss="tab.page.css"
             />
           </v-sheet>
         </v-menu>

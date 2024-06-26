@@ -32,6 +32,8 @@
         v-if="popup.content"
         :class="[{ 's--shadow-no-padding': style && style.s }]"
         :initialPageData="popup.content"
+        :initialPageCss="popup.css"
+
         :style="{
           borderRadius: style && style.r ? style.r : undefined,
           width: style && style.w ? style.w : Math.min(window.innerWidth, 800),

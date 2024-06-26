@@ -29,6 +29,7 @@
       v-if="parent_folders?.page?.content"
       :augment="parent_folders.augment"
       :initialPageData="parent_folders.page.content"
+      :initialPageCss="parent_folders.page.css"
       :style="parent_folders.page.background"
     />
 
