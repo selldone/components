@@ -85,17 +85,18 @@
 
     <v-expand-transition>
       <div v-if="!on_compact">
-        <div v-if="!on_compact" class="label-top" v-html="label"></div>
+        <div v-if="!on_compact && label" class="label-top" v-html="label"></div>
         <div
-          :class="{
+          :class="[{
             dense: dense,
             dark: dark,
             disabled: disabled,
             'has-value': true,
             ctrl: ctrl,
-          }"
-          :style="{ minHeight: minHeight }"
-          class="uploader-container mx-auto rounded-18px overflow-hidden"
+
+          },rounded?`rounded-${rounded}`:'']"
+          :style="{ minHeight: minHeight,border:border?'dashed thin #ddd':undefined  }"
+          class="uploader-container mx-auto overflow-hidden"
         >
           <v-slide-y-transition>
             <v-avatar
@@ -247,6 +248,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    rounded:{
+      default:'xl'
+    },
 
     dark: {
       type: Boolean,
@@ -292,12 +296,14 @@ export default {
       default: false,
     },
     minHeight: { default: "240px" },
+    border:Boolean,
 
     autoCompact: {
       type: Boolean,
       default: false,
     },
     headers: {}, // Add extra headers
+
   },
 
   data: () => ({

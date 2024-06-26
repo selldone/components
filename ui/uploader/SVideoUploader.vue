@@ -17,9 +17,17 @@
     <!-- --------- Compact mode --------- -->
     <v-list-item v-if="on_compact" class="text-start py-5" lines="two">
       <template v-slot:prepend>
-        <v-avatar class="border" rounded="lg" size="64">
-          <v-icon size="x-large">smart_display</v-icon>
-        </v-avatar>
+        <a :href="video" target="_blank">
+          <v-avatar class="border pa-1 bg-white" rounded="lg" size="64" >
+            <v-sheet
+                style="height: 100%; width: 100%; border-radius: 0.6em"
+                color="red"
+                class="d-flex align-center justify-center elevation-5"
+            >
+              <v-icon size="x-large">smart_display</v-icon>
+            </v-sheet>
+          </v-avatar>
+        </a>
       </template>
       <v-list-item-title>
         <b>{{ label }}</b>
@@ -60,17 +68,27 @@
         </v-btn>
       </template>
     </v-list-item>
+
+    <!-- --------- Normal mode --------- -->
+
     <v-expand-transition>
       <div v-if="!on_compact">
         <div class="label-top" v-html="label"></div>
 
         <div
-          :class="{
-            dense: dense,
-            dark: dark,
-            disabled: disabled,
-            'has-value': true,
-            ctrl: ctrl,
+          :class="[
+            {
+              dense: dense,
+              dark: dark,
+              disabled: disabled,
+              'has-value': true,
+              ctrl: ctrl,
+            },
+            rounded ? `rounded-${rounded}` : '',
+          ]"
+          :style="{
+            minHeight: minHeight,
+            border: border ? 'dashed thin #ddd' : undefined,
           }"
           class="uploader-container mx-auto rounded-18px overflow-hidden"
         >
@@ -189,6 +207,12 @@ export default {
     autoCompact: {
       type: Boolean,
       default: false,
+    },
+
+    minHeight: { default: "240px" },
+    border: Boolean,
+    rounded: {
+      default: "xl",
     },
   },
 
