@@ -3945,6 +3945,9 @@ Fix snaky chart overflow problem!
   &-green-thin {
     box-shadow: inset 2px 0 0 0 #8BC34A;
   }
+  &-white-thin {
+    box-shadow: inset 2px 0 0 0 #fff;
+  }
 }
 
 .v-locale--is-rtl {
@@ -3975,6 +3978,10 @@ Fix snaky chart overflow problem!
 
     &-green-thin {
       box-shadow: inset -2px 0 0 0 #8BC34A;
+    }
+
+    &-white-thin {
+      box-shadow: inset -2px 0 0 0 #fff;
     }
   }
 }

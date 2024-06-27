@@ -17,7 +17,7 @@
     <!-- --------- Compact mode --------- -->
     <v-list-item v-if="on_compact" class="text-start py-5" lines="two">
       <template v-slot:prepend>
-        <a :href="video" target="_blank">
+        <a :href="video" target="_blank" class="me-3">
           <v-avatar class="border pa-1 bg-white" rounded="lg" size="64" >
             <v-sheet
                 style="height: 100%; width: 100%; border-radius: 0.6em"

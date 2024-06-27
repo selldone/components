@@ -27,13 +27,14 @@
 
 
 .border-between-vertical {
+  --border-color: #e8e8e8;
   > :not(:last-child) {
-    border-bottom: solid 1px #e8e8e8;
+    border-bottom: solid 1px var(--border-color);
   }
 
   &.-dashed {
     > :not(:last-child) {
-      border-bottom: dashed 1px #e8e8e8;
+      border-bottom: dashed 1px var(--border-color);
     }
   }
 
@@ -44,7 +45,7 @@
   }
 
   &.-light {
-    border-color: #fafafa;
+    --border-color: #fafafa;
   }
 
   &.-animated {
