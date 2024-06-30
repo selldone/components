@@ -46,7 +46,6 @@
         >
           <span v-html="action_text"></span>
           <v-icon class="ms-1">navigate_next</v-icon>
-          <v-icon></v-icon>
         </v-btn>
       </div>
     </div>
