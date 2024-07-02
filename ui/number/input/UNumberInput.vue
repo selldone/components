@@ -18,6 +18,7 @@
     v-model:focused="focused"
     :append-inner-icon="icon"
     :bg-color="backgroundColor"
+    :color="color"
     :class="{
       'center-input': textCenter,
       'no-padding-nf': noPadding,
@@ -85,23 +86,23 @@
       <v-btn
         v-if="lock"
         :title="lock ? 'Click to edit value.' : 'Click to lock input'"
-        class="me-2"
         icon
-        size="24"
+        :size="dense ? 18 : 24"
         variant="text"
         @click="is_locked = !is_locked"
       >
-        <v-icon size="24">{{ is_locked ? "lock" : "lock_open" }}</v-icon>
+        <v-icon :size="dense ? 18 : 24">{{
+          is_locked ? "lock" : "lock_open"
+        }}</v-icon>
       </v-btn>
 
       <v-btn
         v-if="hasAlternativeButton && !readonly"
-        :class="dense ? '' : 'margin-n7px'"
         :color="newValue === alternativeButtonValue ? 'success' : 'default'"
         :disabled="is_locked"
         :rounded="rounded"
-        :size="dense ? 'small' : undefined"
-        class="me-2"
+        :size="dense ? 18 : 24"
+        class="ms-2"
         variant="flat"
         @click.stop="newValue = alternativeButtonValue"
       >
@@ -111,11 +112,12 @@
         v-if="showButtons"
         :disabled="is_locked"
         icon
-        size="28"
+        class="ms-2"
+        :size="dense ? 18 : 24"
         variant="text"
         @click.stop="mpminus()"
       >
-        <v-icon size="24"> fa:fas fa-minus</v-icon>
+        <v-icon :size="dense ? 18 : 24"> fa:fas fa-minus</v-icon>
       </v-btn>
       <v-icon v-if="appendIcon">{{ appendIcon }}</v-icon>
 
@@ -124,14 +126,14 @@
       <v-btn
         v-if="clearable"
         icon
-        size="24"
+        :size="dense ? 18 : 24"
         variant="text"
         @click="
           newValue = 0;
           $emit('clear');
         "
       >
-        <v-icon size="24">close</v-icon>
+        <v-icon :size="dense ? 18 : 24">close</v-icon>
       </v-btn>
     </template>
     <template v-if="$slots.append" v-slot:append>
@@ -143,11 +145,11 @@
         v-if="showButtons && !readonly"
         :disabled="is_locked"
         icon
-        size="24"
+        :size="dense ? 18 : 24"
         variant="text"
         @click.stop="mpplus()"
       >
-        <v-icon size="24"> fa:fas fa-plus</v-icon>
+        <v-icon :size="dense ? 18 : 24"> fa:fas fa-plus</v-icon>
       </v-btn>
       <v-icon v-if="prependInnerIcon">{{ prependInnerIcon }}</v-icon>
 
@@ -289,6 +291,7 @@ export default {
     prependInnerIcon: {},
 
     backgroundColor: {},
+    color: {},
 
     lock: {
       // Has lock mode and the default is locked.
@@ -305,8 +308,7 @@ export default {
 
       is_locked: false,
 
-      focused:false,
-
+      focused: false,
     };
   },
 
@@ -384,7 +386,7 @@ export default {
     },
 
     handleMouseWheel(evt) {
-      if(!this.focused)return;
+      if (!this.focused) return;
       if (this.readonly || this.is_locked) return;
       const deltaY = evt.deltaY;
       if (deltaY < 0) this.mpplus();
