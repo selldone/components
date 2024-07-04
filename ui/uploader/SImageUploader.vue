@@ -85,7 +85,7 @@
 
     <v-expand-transition>
       <div v-if="!on_compact">
-        <div v-if="!on_compact && label" class="label-top" v-html="label"></div>
+        <div v-if="label" class="label-top" v-html="label"></div>
         <div
           :class="[{
             dense: dense,
@@ -325,8 +325,8 @@ export default {
       return (
         this.autoCompact &&
         this.last_image &&
-        !this.force_edit &&
-        !this.last_image.includes("/image-placeholder")
+        !this.force_edit
+      //  && !this.last_image.includes("/image-placeholder")
       ); // /image-placeholder -> default place holder image!
     },
 
