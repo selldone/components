@@ -36,7 +36,7 @@
     :readonly="readonly || is_locked"
     :rounded="rounded"
     :single-line="singleLine"
-    :suffix="suffix"
+    :suffix="!clearable || newValue!==null? suffix:undefined/*Do not show suffix when it's null*/"
     :theme="dark ? 'dark' : 'light'"
     :variant="
       variant
@@ -129,7 +129,7 @@
         :size="dense ? 18 : 24"
         variant="text"
         @click="
-          newValue = 0;
+          newValue = null;
           $emit('clear');
         "
       >

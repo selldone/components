@@ -430,10 +430,10 @@ export default {
     /**
      * Represents the criteria used to fetch products and categories.
      *
-     * @property {number} limit - Number of items to fetch, corresponds to `this.forcePackage.count`.
+     * @property {number} count - Number of items to fetch, corresponds to `this.forcePackage.count`.
      * @property {number} categories_count - Number of categories, typically used in the products section of a page builder.
      * @property {string} sort - Sorting criteria.
-     * @property {boolean} available - Indicates if only available products/categories should be fetched. Maps to `this.forcePackage.only_available`.
+     * @property {boolean} only_available - Indicates if only available products/categories should be fetched. Maps to `this.forcePackage.only_available`.
      * @property {string} search - Search query string.
      * @property {string} search_type - Type of search.
      * @property {string} dir - Direction for search. Default is "*", which forces a search across all products & categories.

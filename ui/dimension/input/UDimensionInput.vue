@@ -100,6 +100,7 @@
 <script>
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import UDimensionInputUnit from "./unit/UDimensionInputUnit.vue";
+import {isString} from "lodash-es";
 
 export default {
   name: "UDimensionInput",
@@ -261,7 +262,7 @@ export default {
         return;
       }
 
-      if (!value || !this.isString(value)) {
+      if (!value || !isString(value)) {
         this.number_val = null;
         this.dim_val = null;
         return;

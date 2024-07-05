@@ -60,6 +60,7 @@
 <script>
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
+import {isString} from "lodash-es";
 
 export default {
   name: "UTimeInput",
@@ -136,7 +137,7 @@ export default {
   methods: {
     assignValue() {
       if (this.modelValue === this.out) return;
-      if (!this.modelValue || !this.isString(this.modelValue)) {
+      if (!this.modelValue || !isString(this.modelValue)) {
         this.h = 0;
         this.m = 0;
         return;
