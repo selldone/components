@@ -4304,6 +4304,10 @@ canvas.heatmap-canvas {
     background-image: linear-gradient(120deg, #F44336 0%, #FF9800 100%) !important;
   }
 
+  &.-amber {
+    background-image: linear-gradient(120deg, #ecb700 0%, #FF9800 100%) !important;
+  }
+
   &.-green {
     background-image: linear-gradient(120deg, #8BC34A 0%, #4CAF50 100%) !important;
   }
