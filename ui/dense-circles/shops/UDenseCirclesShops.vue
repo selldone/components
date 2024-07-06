@@ -27,14 +27,14 @@
       class="citm"
       @click="$emit('click:item', id)"
     >
-      <img :src="getShopIcon(id, IMAGE_SIZE_SMALL)" style="padding: 2px" />
+      <v-img :src="getShopIcon(id, IMAGE_SIZE_SMALL)" style="padding: 2px" />
     </v-avatar>
   </div>
 </template>
 
 <script>
 export default {
-  name: "UDenseCirclesImages",
+  name: "UDenseCirclesShops",
   props: {
     ids: {
       require: true,

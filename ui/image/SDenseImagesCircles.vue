@@ -42,9 +42,10 @@
 
     <v-btn
       v-if="add"
-      class="more-items ms-2"
+      class="more-items ms-2 hover-scale-small"
       color="success"
       icon
+      :size="size"
       variant="flat"
       @click.stop="$emit('click:add')"
     >

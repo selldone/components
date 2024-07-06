@@ -1929,7 +1929,7 @@ import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
 import BInventoryFilter from "../../inventory/filter/BInventoryFilter.vue";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
-import _ from "lodash-es";
+import _, { isObject } from "lodash-es";
 import BCategoryFilterEditor from "../../category/filter/BCategoryFilterEditor.vue";
 import SDenseImagesCircles from "../../../ui/image/SDenseImagesCircles.vue";
 import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
@@ -1939,7 +1939,7 @@ import VPricingInput from "../../../storefront/pricing/VPricingInput.vue";
 import BCategoryEngineEditor from "@selldone/components-vue/backoffice/category/engine/BCategoryEngineEditor.vue";
 import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
 import { BProductBreadcrumbsHelper } from "../breadcrumbs/helper/BProductBreadcrumbsHelper";
-import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {
   name: "BProductsWindow",
@@ -2019,6 +2019,19 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    /**
+     * Array of ids
+     * ex: [254,51,...]
+     *
+     *
+     * Object of ids
+     * keys are product ids (ID) or category ids (c + ID)
+     * ex: {254:[23,34,35],'c-20':true,...}
+     *
+     * or just one id
+     */
+
     selectedList: {},
 
     withFullVariant: {
@@ -2207,9 +2220,10 @@ export default {
     },
 
     CAN_ADD_PRODUCT() {
-      return this.writeShopAccess(ShopPermissionRegions.PRODUCTS.code) && (
-        !this.IS_VENDOR_PANEL ||
-        (this.shop.marketplace && this.shop.marketplace.product)
+      return (
+        this.writeShopAccess(ShopPermissionRegions.PRODUCTS.code) &&
+        (!this.IS_VENDOR_PANEL ||
+          (this.shop.marketplace && this.shop.marketplace.product))
       );
     },
     CAN_ADD_CATEGORY() {
@@ -2461,9 +2475,24 @@ export default {
     },
 
     isSelected(item_id) {
-      return Object.keys(this.selectedList).some(
-        (item) => item === "" + item_id,
-      ); //int & string support!
+      if (Array.isArray(this.selectedList)) {
+        /**
+         * Array of ids
+         * ex: [254,51,...]
+         */
+        return this.selectedList.some(
+          (item) => item.toString() === item_id.toString(),
+        );
+      } else if (isObject(this.selectedList)) {
+        /**
+         * Object of ids
+         * keys are product ids (ID) or category ids (c + ID)
+         * ex: {254:[23,34,35],'c-20':true,...}
+         */
+        return Object.keys(this.selectedList).some(
+          (item) => item.toString() === item_id.toString(),
+        ); //int & string support!
+      } else return this.selectedList?.toString() === item_id.toString();
     },
 
     onDragStart(
