@@ -35,7 +35,7 @@
     -moz-hyphens: none;
     -ms-hyphens: none;
     hyphens: none;
-    line-height: 25px;
+    line-height: normal !important;
     font-size: 18px;
     margin: 5px 0;
   }
@@ -176,6 +176,9 @@
   }
 }
 
+textarea{
+  line-height: normal;
+}
 
 .prism-editor-wrapper.readonly {
   textarea {

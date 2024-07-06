@@ -209,7 +209,7 @@ export default {
 
     .prism-editor__line-numbers {
       background: #fafafa !important;
-      line-height: 1.2em !important;
+      line-height: normal !important;
       padding-top: 14px;
       font-size: 0.8em;
       border-right: #0288d1 solid thick;
@@ -221,7 +221,7 @@ export default {
       min-height: 100%;
 
       textarea {
-        line-height: 1.2em !important;
+        line-height: normal !important;
 
         &::selection {
           background: #c0d9ef;
@@ -231,7 +231,7 @@ export default {
       pre {
         border: none !important;
         // background: #fcfcfc !important;
-        line-height: 1.2em !important;
+        line-height: normal!important;
 
         code {
           background: none !important;
