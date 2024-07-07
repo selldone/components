@@ -667,7 +667,7 @@ export default {
     // ---------- Address map ----------
     map_model: null,
     map_dialog: false,
-    center: { lat: 37.3875, lng: -122.0575 },
+    center: { lat: 0, lng: 0 },
     startup_mode_map_dialog: "default", // detail
 
     map_location: {},

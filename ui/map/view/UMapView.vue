@@ -155,15 +155,12 @@
           <v-container>
             <!-- Uncompleted fields errors -->
             <v-expand-transition>
-              <div
-                  v-if="!isFocus"
-
-              >
-                <div v-if="address && !country"  class="mb-2">
+              <div v-if="!isFocus">
+                <div v-if="address && !country" class="mb-2">
                   <v-icon class="me-1" color="red" size="small">warning</v-icon>
                   {{ $t("global.notification.country_invalid") }}
                 </div>
-                <div v-if="address && !postal && has_postcode"  class="mb-2">
+                <div v-if="address && !postal && has_postcode" class="mb-2">
                   <v-icon class="me-1" color="red" size="small">warning</v-icon>
                   {{ $t("global.notification.postal_code_invalid") }}
                 </div>
@@ -178,7 +175,6 @@
               :bottom="isMobile"
               :center="center"
               :top="!isMobile"
-              auto-disable-auto-complete
               @select:address="(it) => onSelectAddress(it)"
               attach
             ></u-map-address-input>
@@ -648,7 +644,7 @@ export default {
       loading_address: false,
 
       // User location
-      user_location: null,
+     // user_location: null,
 
       // Address Book
       selected_address_from_list: null,
@@ -708,10 +704,6 @@ export default {
       this.$emit("phoneNumber", val);
     },
 
-    _location(val) {
-      this.location = val;
-    },
-
     // Address book
     selected_address_from_list(val) {
       if (!val) return;
@@ -735,6 +727,19 @@ export default {
 
       this.addCurrentToDestinationList(this.last_selected_position);
     },
+/*
+    selected_country_detail() {
+      if (!this.location && this.selected_country_detail.center) {
+        console.log(
+          "Auto move to the country location...",
+          this.selected_country_detail,
+        );
+        this.centerUpdated({
+          lat: this.selected_country_detail.center.lat,
+          lng: this.selected_country_detail.center.lng,
+        });
+      }
+    },*/
   },
 
   computed: {
@@ -800,7 +805,7 @@ export default {
   },
 
   mounted() {
-    if (!this.noMap)
+    if (!this.noMap){
       setTimeout(() => {
         this.$nextTick(() => {
           //   this.$refs.myMap.mapObject.ANY_LEAFLET_MAP_METHOD();
@@ -842,8 +847,18 @@ export default {
             else if (this.last_selected_position)
               this.addCurrentToDestinationList(this.last_selected_position);
           });
+
+          // Go to my location:
+        /*  if(!this.last_selected_position){
+            console.log("Go to my location!")
+            this.goToMyLocation()
+          }*/
+
+
         });
       }, this.delayLoad);
+    }
+
   },
 
   created() {
@@ -984,6 +999,8 @@ export default {
           return;
         }
 
+        console.log("Get current location", location.coords.latitude, location.coords.longitude);
+
         this.$emit("update:center", {
           lat: location.coords.latitude,
           lng: location.coords.longitude,
@@ -1055,7 +1072,7 @@ export default {
       if (!this.modelValue) return;
 
       //console.log("assignDataFromValue  old:" + this.last_selected_position);
-      this.location = this.modelValue.location;
+     // this.location = this.modelValue.location;
       this.last_selected_position = this.modelValue.location;
 
       this.country = this.modelValue.country

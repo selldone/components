@@ -201,7 +201,7 @@ export default {
   data: () => ({
     //-----------------------
     startup_mode_map_dialog: "default",
-    center: { lat: 35.715298, lng: 51.404343 },
+    center: { lat: 0, lng: 0 },
     map_location: {},
 
     //-----------------------
