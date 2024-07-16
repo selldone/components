@@ -2178,6 +2178,10 @@ Image loading (scale down)
   width: 99%;
   margin: auto;
   z-index: 1;
+  &.-fullscreen{
+    width: 100%;
+    border-radius: 0 !important;
+  }
 }
 
 /**********************************************
