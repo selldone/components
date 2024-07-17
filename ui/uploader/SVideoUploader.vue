@@ -18,11 +18,11 @@
     <v-list-item v-if="on_compact" class="text-start py-5" lines="two">
       <template v-slot:prepend>
         <a :href="video" target="_blank" class="me-3">
-          <v-avatar class="border pa-1 bg-white" rounded="lg" size="64" >
+          <v-avatar class="border pa-1 bg-white" rounded="lg" size="64">
             <v-sheet
-                style="height: 100%; width: 100%; border-radius: 0.6em"
-                color="red"
-                class="d-flex align-center justify-center elevation-5"
+              style="height: 100%; width: 100%; border-radius: 0.6em"
+              color="red"
+              class="d-flex align-center justify-center elevation-5"
             >
               <v-icon size="x-large">smart_display</v-icon>
             </v-sheet>
@@ -146,6 +146,7 @@
 <script>
 export default {
   name: "SVideoUploader",
+  emits: ["response", "new-path", "new-url", "onClear", "new-item"],
   props: {
     label: {
       required: false,
@@ -285,11 +286,21 @@ export default {
             console.log("done", file.path);
             this.$emit("new-path", file.path);
             this.$emit("new-url", file.url);
+
+            if (file.item) {
+              // Database record
+              this.$emit("new-item", file.item);
+            }
           });
         } else {
           console.log("done", response.files.path);
           this.$emit("new-path", response.files.path);
           this.$emit("new-url", response.files.url);
+
+          if (response.files.item) {
+            // Database record
+            this.$emit("new-item", response.files.item);
+          }
         }
 
         return true;
