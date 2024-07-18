@@ -695,9 +695,11 @@ import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper
 import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentType";
 import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
+import DynamicScriptDirective from "@selldone/components-vue/directives/script/DynamicScriptDirective.ts";
 
 export default {
   name: "BVendorOnboarding",
+  directives: { 'dynamic-scripts':DynamicScriptDirective },
   components: {
     SWidgetHeader,
     SCountrySelect,

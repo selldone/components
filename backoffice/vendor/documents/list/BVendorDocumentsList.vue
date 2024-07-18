@@ -269,11 +269,7 @@
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn
-            size="x-large"
-            variant="text"
-            @click="dialog_embed = false"
-          >
+          <v-btn size="x-large" variant="text" @click="dialog_embed = false">
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -289,9 +285,13 @@ import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
 import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentType";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
+import DynamicScriptDirective from "@selldone/components-vue/directives/script/DynamicScriptDirective.ts";
 
 export default {
   name: "BVendorDocumentsList",
+  directives: {
+    "dynamic-scripts": DynamicScriptDirective,
+  },
   components: {
     USmartMenu,
     USmartSelect,
