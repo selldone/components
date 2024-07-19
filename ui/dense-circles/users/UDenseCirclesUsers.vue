@@ -87,10 +87,10 @@ export default {
 
   computed: {
     ids_limited() {
-      return this.ids.slice(0, this.limit);
+      return this.ids?.slice(0, this.limit);
     },
     more_items() {
-      return this.ids.length - this.ids_limited.length;
+      return this.ids && (this.ids.length - this.ids_limited.length);
     },
   },
 };
