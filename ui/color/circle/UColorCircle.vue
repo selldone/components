@@ -29,7 +29,9 @@ import { ColorHelper } from "@selldone/core-js/helper/color/ColorHelper";
 export default {
   name: "UColorCircle",
   props: {
-    color: {},
+    color: {
+      type: [String, Array],
+    },
     size: { default: 24, type: Number },
     borderLess: {
       default: false,
@@ -38,6 +40,7 @@ export default {
   },
   computed: {
     colors() {
+      if (Array.isArray(this.color)) return this.color;
       return ColorHelper.ExtractColors(this.color);
     },
     gradient() {
