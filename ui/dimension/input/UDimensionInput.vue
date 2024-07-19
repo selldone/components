@@ -88,7 +88,7 @@
             rounded && solo ? '-7px' : rounded && !solo ? '-14px' : undefined,*/
       }"
       :variant="variant"
-      style="width: 50px; max-width: 90px"
+      style="width: 60px; max-width: 90px"
       :class="{'ms-1': rounded,'-move-end-icon':dense}"
       :dense="dense"
 
