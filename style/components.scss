@@ -1927,6 +1927,10 @@ Sales Chanel
 .s--shadow-no-padding, .v-card--flat.s--shadow-no-padding { //Fix card flat override shadow!
   box-shadow: 0px 10px 50px 5px rgba(113, 112, 112, 0.24) !important;
 
+  &.-fullscreen{
+    box-shadow: none !important;
+  }
+
   &.hover-able {
     transition: all 0.4s;
 
