@@ -26,34 +26,45 @@
           : 'center',
       }"
       class="position-relative"
-      style="max-height: 100%; max-width: 100%"
+      style="max-height: 100%; max-width: 100%;"
     >
       <LPageViewer
         v-if="popup.content"
-        :class="[{ 's--shadow-no-padding': style && style.s }]"
+        :class="[{ 's--shadow-no-padding': popup_style && popup_style.s }]"
         :initialPageData="popup.content"
         :initialPageCss="popup.css"
-
         :style="{
-          borderRadius: style && style.r ? style.r : undefined,
-          width: style && style.w ? style.w : Math.min(window.innerWidth, 800),
+          borderRadius:
+            popup_style && popup_style.r ? popup_style.r : undefined,
+          width:
+            popup_style && popup_style.w
+              ? popup_style.w
+              : Math.min(window.innerWidth, 800),
           height:
-            style && style.h ? style.h : Math.min(window.innerHeight, 800),
+            popup_style && popup_style.h
+              ? popup_style.h
+              : Math.min(window.innerHeight, 800),
         }"
-        class="pop-card overflow-auto d-flex thin-scroll"
+        class="pop-card overflow-auto thin-scroll"
         style="max-height: 100%; width: 100%; cursor: initial"
         @click.stop
       />
 
-      <v-btn
-        class="absolute-top-end zoomIn delay_500"
+      <v-sheet
+        class="absolute-top-end zoomIn delay_500 pa-2 ma-1"
         color="#fff"
-        icon
-        variant="flat"
-        @click="$emit('close')"
+        rounded="circle"
       >
-        <v-icon>close</v-icon>
-      </v-btn>
+        <v-btn
+          color="#fff"
+          icon
+          size="small"
+          variant="elevated"
+          @click="$emit('close')"
+        >
+          <v-icon>close</v-icon>
+        </v-btn>
+      </v-sheet>
     </div>
 
     <v-row
@@ -118,7 +129,7 @@ export default {
   data: () => ({}),
 
   computed: {
-    style() {
+    popup_style() {
       return this.popup.style ? this.popup.style : {};
     },
   },
