@@ -103,6 +103,18 @@
                   width="24"
                 />
               </v-tab>
+
+
+
+
+              <v-tab class="justify-start">
+                <v-icon class="me-1">
+                  light
+                </v-icon>
+                {{ $t('onboarding.overview.title') }}
+              </v-tab>
+
+
             </v-tabs>
           </v-col>
           <v-col cols="12" lg="9" md="8" sm="7">
@@ -161,155 +173,161 @@
                   :time-series="timeSeries"
                 ></shop-onboarding-migration-tab>
               </v-window-item>
+
+
+            <!-- ------------------------------ Overview ------------------------------ -->
+            <v-window-item>
+                <s-widget-header :title="$t('onboarding.overview.title')" icon="light">
+                </s-widget-header>
+                <v-list-subheader>
+                  {{ $t("onboarding.overview.subtitle") }}
+                </v-list-subheader>
+
+                <u-fade-scroll show-arrow drag-scroll stick-class="v-card">
+                  <div class="d-flex align-stretch text-center">
+                    <v-card
+                        class="ma-2 border d-flex flex-column"
+                        elevation="0"
+                        max-width="220"
+                        min-width="220"
+                        rounded="xl"
+                        width="220"
+                    >
+                      <v-avatar
+                          class="my-3 mx-auto avatar-gradient -thin -shop"
+                          size="64"
+                      >
+                        <img v-if="shop.icon" :src="getShopImagePath(shop.icon, 128)" />
+                        <v-icon v-else>help_outline</v-icon>
+                      </v-avatar>
+
+                      <v-card-text class="flex-grow-1">
+                        <div class="typo-body mb-2 text-wrap">
+                          {{ shop.title }}
+                        </div>
+                        <v-chip
+                            v-if="shop.active"
+                            :to="{ name: 'BPageShopSettingInfo' }"
+                            class="ms-2 text-lowercase"
+                            color="primary"
+                            label
+                            size="small"
+                        >
+                          <v-icon class="blink-me" size="x-small" start>lens</v-icon>
+                          {{ $t("global.commons.livemode") }}
+                        </v-chip>
+                        <v-chip
+                            v-else
+                            :to="{ name: 'BPageShopSettingInfo' }"
+                            class="ms-2 text-lowercase"
+                            color="#E64A19"
+                            label
+                            size="small"
+                        >
+                          <v-icon size="x-small" start>pause</v-icon>
+                          {{ $t("global.commons.paused") }}
+                        </v-chip>
+                      </v-card-text>
+
+                      <div class="widget-buttons flex-grow-0 w-100">
+                        <v-btn
+                            :href="getShopMainUrl(shop)"
+                            color="#000"
+                            size="large"
+                            target="_blank"
+                            variant="flat"
+                        >
+                          <v-icon class="me-1" size="small">open_in_new</v-icon>
+
+                          {{ $t("onboarding.open_website") }}
+                        </v-btn>
+                      </div>
+                    </v-card>
+
+                    <v-card
+                        class="ma-2 border d-flex flex-column"
+                        elevation="0"
+                        max-width="220"
+                        min-width="220"
+                        rounded="xl"
+                        width="220"
+                    >
+                      <img
+                          class="my-3 mx-auto"
+                          height="64"
+                          src="../../assets/icons/pdf.svg"
+                          width="64"
+                      />
+
+                      <v-card-text class="flex-grow-1">
+                        <div class="typo-body mb-2 text-wrap">
+                          The ultimate guide to start and make your first sale on your
+                          ecommerce.
+                        </div>
+                      </v-card-text>
+
+                      <div class="widget-buttons flex-grow-0 w-100">
+                        <v-btn
+                            color="#000"
+                            href="https://selldone.com/gapi/books/Do-Your-Business-Like-A-Game.pdf"
+                            size="large"
+                            target="_blank"
+                            variant="flat"
+                        >
+                          <v-icon class="me-1" size="small">download</v-icon>
+
+                          {{ $t("global.actions.download_now") }}
+                        </v-btn>
+                      </div>
+                    </v-card>
+                    <v-card
+                        v-for="item in contents"
+                        :key="item.title"
+                        class="ma-2 border d-flex flex-column"
+                        elevation="0"
+                        max-width="220"
+                        min-width="220"
+                        rounded="xl"
+                        width="220"
+                    >
+                      <v-img
+                          :src="item.image"
+                          aspect-ratio="2"
+                          class="flex-grow-1"
+                          cover
+                      />
+
+                      <v-card-text class="flex-grow-1">
+                        <div class="typo-body mb-2 text-wrap">
+                          {{ item.title }}
+                        </div>
+                      </v-card-text>
+
+                      <div class="widget-buttons flex-grow-0 w-100">
+                        <v-btn
+                            :href="item.video"
+                            color="#d22600"
+                            size="large"
+                            target="_blank"
+                            variant="flat"
+                        >
+                          <v-icon class="me-1" size="small">smart_display</v-icon>
+                          {{ $t("global.actions.watch_now") }}
+                        </v-btn>
+                      </div>
+                    </v-card>
+                  </div>
+                </u-fade-scroll>
+            </v-window-item>
             </v-window>
+
+
           </v-col>
         </v-row>
       </v-container>
     </div>
 
-    <div class="widget-box -large my-16" style="--background: #fff">
-      <s-widget-header :title="$t('onboarding.overview.title')" icon="light">
-      </s-widget-header>
-      <v-list-subheader>
-        {{ $t("onboarding.overview.subtitle") }}
-      </v-list-subheader>
 
-      <u-fade-scroll show-arrow drag-scroll stick-class="v-card">
-        <div class="d-flex align-stretch text-center">
-          <v-card
-            class="ma-2 border d-flex flex-column"
-            elevation="0"
-            max-width="220"
-            min-width="220"
-            rounded="xl"
-            width="220"
-          >
-            <v-avatar
-              class="my-3 mx-auto avatar-gradient -thin -shop"
-              size="64"
-            >
-              <img v-if="shop.icon" :src="getShopImagePath(shop.icon, 128)" />
-              <v-icon v-else>help_outline</v-icon>
-            </v-avatar>
-
-            <v-card-text class="flex-grow-1">
-              <div class="typo-body mb-2 text-wrap">
-                {{ shop.title }}
-              </div>
-              <v-chip
-                v-if="shop.active"
-                :to="{ name: 'BPageShopSettingInfo' }"
-                class="ms-2 text-lowercase"
-                color="primary"
-                label
-                size="small"
-              >
-                <v-icon class="blink-me" size="x-small" start>lens</v-icon>
-                {{ $t("global.commons.livemode") }}
-              </v-chip>
-              <v-chip
-                v-else
-                :to="{ name: 'BPageShopSettingInfo' }"
-                class="ms-2 text-lowercase"
-                color="#E64A19"
-                label
-                size="small"
-              >
-                <v-icon size="x-small" start>pause</v-icon>
-                {{ $t("global.commons.paused") }}
-              </v-chip>
-            </v-card-text>
-
-            <div class="widget-buttons flex-grow-0 w-100">
-              <v-btn
-                :href="getShopMainUrl(shop)"
-                color="#000"
-                size="large"
-                target="_blank"
-                variant="flat"
-              >
-                <v-icon class="me-1" size="small">open_in_new</v-icon>
-
-                {{ $t("onboarding.open_website") }}
-              </v-btn>
-            </div>
-          </v-card>
-
-          <v-card
-            class="ma-2 border d-flex flex-column"
-            elevation="0"
-            max-width="220"
-            min-width="220"
-            rounded="xl"
-            width="220"
-          >
-            <img
-              class="my-3 mx-auto"
-              height="64"
-              src="../../assets/icons/pdf.svg"
-              width="64"
-            />
-
-            <v-card-text class="flex-grow-1">
-              <div class="typo-body mb-2 text-wrap">
-                The ultimate guide to start and make your first sale on your
-                ecommerce.
-              </div>
-            </v-card-text>
-
-            <div class="widget-buttons flex-grow-0 w-100">
-              <v-btn
-                color="#000"
-                href="https://selldone.com/gapi/books/Do-Your-Business-Like-A-Game.pdf"
-                size="large"
-                target="_blank"
-                variant="flat"
-              >
-                <v-icon class="me-1" size="small">download</v-icon>
-
-                {{ $t("global.actions.download_now") }}
-              </v-btn>
-            </div>
-          </v-card>
-          <v-card
-            v-for="item in contents"
-            :key="item.title"
-            class="ma-2 border d-flex flex-column"
-            elevation="0"
-            max-width="220"
-            min-width="220"
-            rounded="xl"
-            width="220"
-          >
-            <v-img
-              :src="item.image"
-              aspect-ratio="2"
-              class="flex-grow-1"
-              cover
-            />
-
-            <v-card-text class="flex-grow-1">
-              <div class="typo-body mb-2 text-wrap">
-                {{ item.title }}
-              </div>
-            </v-card-text>
-
-            <div class="widget-buttons flex-grow-0 w-100">
-              <v-btn
-                :href="item.video"
-                color="#d22600"
-                size="large"
-                target="_blank"
-                variant="flat"
-              >
-                <v-icon class="me-1" size="small">smart_display</v-icon>
-                {{ $t("global.actions.watch_now") }}
-              </v-btn>
-            </div>
-          </v-card>
-        </div>
-      </u-fade-scroll>
-    </div>
   </div>
 </template>
 
