@@ -115,6 +115,9 @@
             transaction.currency,
           )
         "
+        :extra-params="{
+          code: order?.code /*Guest Code*/,
+        }"
         allow-image-transform
         auto-compact
         class="mt-2"
@@ -233,6 +236,9 @@ export default {
   components: { UTextValueDashed, SImageUploader },
   props: {
     transaction: {
+      require: true,
+    },
+    order: {
       require: true,
     },
   },

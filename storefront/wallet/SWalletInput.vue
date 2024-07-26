@@ -61,6 +61,7 @@ export default {
   },
   methods: {
     fetchWallet() {
+      if (!this.USER()) return;
       this.busy = true;
       axios
         .get(window.XAPI.GET_MY_WALLETS(this.shop_name), {

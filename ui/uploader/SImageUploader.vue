@@ -207,6 +207,9 @@ export default {
       required: false,
       type: String,
     },
+    extraParams:{
+      type:Object
+    },
 
     maxFileSize: {
       required: false,
@@ -360,6 +363,16 @@ export default {
           withCredentials: true,
 
           headers: headers,
+          ondata: (formData) => {
+            // Append extra parameters to the FormData object
+            if(this.extraParams ){
+              Object.keys(this.extraParams).forEach((key) => {
+                formData.append(key, this.extraParams[key]);
+              });
+            }
+
+            return formData;
+          }
         },
         revert: null,
       };
@@ -400,6 +413,7 @@ export default {
   },
 
   methods: {
+
     onIntersect(isIntersecting) {
       this.focused = isIntersecting;
     },

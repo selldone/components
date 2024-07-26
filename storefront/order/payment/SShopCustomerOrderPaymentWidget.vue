@@ -621,6 +621,7 @@
               v-for="(transaction_pending, index) in transactions_pending"
               :key="'pp' + index"
               :transaction="transaction_pending"
+              :order="order"
             >
             </s-shop-row-customer-pending-payment>
 
