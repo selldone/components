@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <ul v-if="end && diff>0" class="vuejs-countdown" dir="ltr">
+  <ul v-if="end && diff > 0" class="vuejs-countdown" dir="ltr">
     <li v-if="days > 0">
       <p class="digit">
         {{ twoDigits(days) }}
@@ -52,7 +52,7 @@
 <script>
 export default {
   name: "UCountDown",
-
+  emits: ["end"],
   props: {
     end: {},
     stop: {

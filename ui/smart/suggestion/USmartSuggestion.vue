@@ -19,21 +19,24 @@
         <v-btn
           size="small"
           title="View list of suggestions."
-          variant="text"
+          variant="plain"
           @click="showDialog"
         >
           <v-icon :size="18">pin_invoke</v-icon>
         </v-btn>
       </v-slide-group-item>
-      <v-slide-group-item v-for="n in samples_processed" :key="n">
+      <v-slide-group-item
+        v-for="n in samples_processed"
+        :key="is_object ? n.value : n"
+      >
         <v-btn
-          :title="n"
+          :title="is_object ? n.title : n"
           class="tnt"
           size="small"
           variant="plain"
-          @click="$emit('select', n)"
+          @click="$emit('select', is_object ? n.value : n)"
         >
-          {{ n.limitWords(4) }}
+          {{ (is_object ? n.title : n)?.limitWords(4) }}
         </v-btn>
       </v-slide-group-item>
     </v-slide-group>
@@ -55,16 +58,19 @@
           >
             <v-list-item
               v-for="n in samples_processed"
-              :key="n"
+              :key="is_object ? n.value : n"
               class="row-hover"
               @click="
-                $emit('select', n);
+                $emit('select', is_object ? n.value : n);
                 closeDialog();
               "
             >
               <v-list-item-title class="typo-body text-wrap">
-                {{ n }}
+                {{ is_object ? n.title : n }}
               </v-list-item-title>
+              <v-list-item-subtitle v-if="is_object">
+                {{ n.value }}
+              </v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -85,6 +91,7 @@
 <script>
 import { defineComponent } from "vue";
 import Seasons from "./Seasons.ts";
+import { isObject } from "lodash-es";
 
 export default defineComponent({
   name: "USmartSuggestion",
@@ -101,7 +108,12 @@ export default defineComponent({
     dialog: false,
   }),
   computed: {
+    is_object() {
+      return this.samples && isObject(this.samples[0]);
+    },
+
     samples_processed() {
+      if (this.is_object) return this.samples; // Not available for objects
       let out = this.samples;
       if (this.addSession) {
         // Get current date
