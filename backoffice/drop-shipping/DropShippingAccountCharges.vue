@@ -15,7 +15,9 @@
 <template>
   <div class="widget-box -large">
     <s-widget-header icon="paid" title="Wallet top-ups"></s-widget-header>
-    <v-list-subheader></v-list-subheader>
+    <v-list-subheader>
+      This is the list of all transactions between you and the wholesaler in this wallet.
+    </v-list-subheader>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
         :mobile="$vuetify.display.xs"
@@ -66,11 +68,11 @@
       </template>
 
       <template v-slot:item.completed="{ item }">
-        <u-check v-if="item.completed" :value="item.completed"></u-check>
+        <u-check v-if="item.completed" :model-value="item.completed" read-only></u-check>
         <v-btn
           v-else
           :loading="busy_refresh === item.id"
-          icon
+          icon variant="text"
           @click="refreshState(item)"
         >
           <v-icon>refresh</v-icon>
