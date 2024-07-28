@@ -17,7 +17,8 @@
     v-if="
       (no_account_error || negative_balance_account_error) &&
       !force_hide &&
-      !sample
+      !sample &&
+      !busy
     "
     class="b--alert-need-charge"
   >
@@ -38,7 +39,12 @@
           wallet, please click the button below.
         </p>
 
-        <v-btn :to="{ name: 'BPageShopFinanceBill' }" prepend-icon="wallet"
+        <v-btn
+          :to="{ name: 'BPageShopFinanceBill' }"
+          prepend-icon="wallet"
+          class="tnt"
+          append-icon="open_in_new"
+          target="_blank"
           >Manage Wallet
         </v-btn>
       </template>
@@ -56,9 +62,18 @@
           <b-account-box
             v-for="account in negative_balance_accounts"
             :account="account"
-            class="py-1AA"
+            class="py-1"
           ></b-account-box>
         </v-list>
+
+        <v-btn
+          :to="{ name: 'BPageShopFinanceBill' }"
+          prepend-icon="wallet"
+          class="mt-3 tnt"
+          append-icon="open_in_new"
+          target="_blank"
+          >Manage Connected Wallet
+        </v-btn>
       </template>
 
       <u-count-down
@@ -70,7 +85,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BAccountBox from "@selldone/components-vue/backoffice/account/box/BAccountBox.vue";
 import UCountDown from "@selldone/components-vue/ui/count-down/UCountDown.vue";
 
@@ -82,6 +97,9 @@ export default {
     return {
       force_hide: false,
       end: new Date().addSeconds(60),
+
+      exchanges: null,
+      busy: false,
     };
   },
   computed: {
@@ -99,14 +117,39 @@ export default {
       return this.accounts.length === 0;
     },
     negative_balance_accounts() {
-      return this.accounts.filter((a) => a.balance < 0);
+      return this.accounts.filter(
+        (a) => a.balance < this.threshold(a.currency),
+      );
     },
     negative_balance_account_error() {
       return this.negative_balance_accounts.length > 0;
     },
   },
   created() {
-    console.log("BAlertNeedCharge created", this.$shop);
+    if (!this.sample) {
+      this.busy = true;
+      window.$backoffice.finance.exchange
+        .optimize(600)
+        .cancellation(true)
+        .list()
+        .then((exchanges) => {
+          this.exchanges = exchanges;
+          //console.log("exchange list", exchanges);
+        })
+        .finally(() => {
+          this.busy = false;
+        });
+    }
+  },
+  methods: {
+    threshold(currency: string) {
+      const USD_THRESHOLD = 25;
+      if (!this.exchanges) return 0;
+      if (currency === "USD") return -USD_THRESHOLD;
+      const rate = this.exchanges[currency];
+      if (!rate) return 0;
+      return -USD_THRESHOLD * rate;
+    },
   },
 };
 </script>
@@ -127,6 +170,7 @@ s
   align-items: center;
   justify-content: center;
   padding: 24px;
+  overflow: auto;
 
   p,
   h1 {

@@ -55,7 +55,16 @@
           <v-icon class="ms-1" size="small">open_in_new</v-icon></v-btn
         >
       </div>
-      <span v-else class="text-subtitle-2">{{ account.account_name }}</span>
+      <div v-else>
+        <div class="text-subtitle-2 d-flex align-center">
+
+           <v-avatar class="avatar-gradient -thin -user me-1" size="24">
+            <v-img :src="getUserAvatar(account.user_id)" />
+          </v-avatar>
+
+          {{ account.account_name }}</div>
+        <small>You are not the wallet owner!</small>
+      </div>
     </span>
   </span>
 </template>
