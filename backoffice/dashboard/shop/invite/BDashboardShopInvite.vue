@@ -75,7 +75,7 @@ export default {
   data: () => ({}),
   computed: {
     referral() {
-      return this.USER().register_referral_link;
+      return this.USER().referral;
     },
   },
   methods: {

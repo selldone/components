@@ -41,7 +41,7 @@
 
           <v-spacer></v-spacer>
           <v-btn
-            :to="{ name: 'UserMonetizePlans' }"
+            :to="{ name: 'OPageMonetizeReferral' }"
             class="tnt"
             color="primary"
             rounded="xl"
@@ -227,7 +227,7 @@
 
                 <div class="widget-buttons">
                   <v-btn
-                    :to="{ name: 'UserMonetizePlans' }"
+                    :to="{ name: 'OPageMonetizeReferral' }"
                     color="primary"
                     size="x-large"
                     variant="text"
@@ -282,7 +282,7 @@ export default {
   }),
   computed: {
     referral() {
-      return this.USER().register_referral_link;
+      return this.USER().referral;
     },
     referral_url() {
       return window.URLS.MainServiceUrl() + `?ref=${this.referral.code}`;
