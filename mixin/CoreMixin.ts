@@ -1814,10 +1814,21 @@ const CoreMixin = {
 
     //―――――――――――――――――――――― Download Blob File ――――――――――――――――――――
     DownloadBlobFile(data: any, headers: { [key: string]: string }) {
-      // Get file name:
+      // Get the content-disposition header
       const headerLine = headers["content-disposition"];
-      const startFileNameIndex = headerLine.lastIndexOf("=") + 1;
+      if (!headerLine) {
+        console.error("Content-Disposition header is missing.");
+        return;
+      }
+
+      // Extract the filename from the content-disposition header
+      const startFileNameIndex = headerLine.lastIndexOf('=') + 1;
       let filename = headerLine.substring(startFileNameIndex);
+
+      // Remove any extra quotes or whitespace
+      filename = filename.replace(/["']/g, "").trim();
+
+      // Default filename if extraction fails
       if (!filename) filename = "data.xlsx";
 
       const downloadUrl = window.URL.createObjectURL(new Blob([data]));
