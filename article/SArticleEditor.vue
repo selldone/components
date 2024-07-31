@@ -257,6 +257,11 @@ const OPTIONS_BODY = {
     cleanReplacements: [
       // [new RegExp(/<div>/gi), '<p>'],
       //  [new RegExp(/<\/div>/gi), '</p>'],
+
+      [new RegExp(/<text>/gi), "<p>"],
+      [new RegExp(/<\/text>/gi), "</p>"],
+
+
       [new RegExp(/<strong>/gi), "<b>"],
       [new RegExp(/<\/strong>/gi), "</b>"],
       [new RegExp(/<font>/gi), ""],
@@ -970,7 +975,7 @@ export default defineComponent({
 
       this.editor_body.subscribe("request-re-render", (event, editable) => {
         // Do some work
-        //console.log("==========request-re-render==============");
+        console.log("Article Editor | request-re-render");
         this.reRenderAll();
       });
 
