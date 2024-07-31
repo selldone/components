@@ -38,8 +38,8 @@
       <v-list class="border-between-vertical pb-8" lines="two">
         <v-list-item
           subtitle="Appropriate for A5 size labels or any other similar 4:3 or 16:9 aspect ratio labels."
-          prepend-icon="crop_16_9"
           append-icon="download"
+
           :href="
             window.API.GET_ORDERS_PDF(
               $shop.id,
@@ -52,6 +52,9 @@
           class="hover-up"
           target="_blank"
         >
+          <template v-slot:prepend>
+            <v-avatar  :image="require('./assets/box-label-a5.svg')" rounded="0"></v-avatar>
+          </template>
           <template v-slot:title>
             <b>A5</b>
           </template>
@@ -59,7 +62,6 @@
         <v-list-item
           subtitle="Appropriate for 15cm x 15cm , 6in x 6in , 20cm x 20cm"
           append-icon="download"
-          prepend-icon="crop_square"
           :href="
             window.API.GET_ORDERS_PDF(
               $shop.id,
@@ -72,6 +74,10 @@
           class="hover-up"
           target="_blank"
         >
+          <template v-slot:prepend>
+            <v-avatar  :image="require('./assets/box-label-square.svg')" rounded="0"></v-avatar>
+          </template>
+
           <template v-slot:title>
             <b>Square</b>
           </template>

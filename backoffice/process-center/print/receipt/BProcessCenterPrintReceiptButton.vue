@@ -37,7 +37,6 @@
       <v-list class="border-between-vertical pb-8" lines="two">
         <v-list-item
           subtitle="Features enhanced graphical elements for intuitive comprehension."
-          prepend-icon="receipt"
           append-icon="download"
           :href="
             window.API.GET_ORDERS_PDF(
@@ -50,6 +49,10 @@
           class="hover-up"
           target="_blank"
         >
+          <template v-slot:prepend>
+            <v-avatar  :image="require('./assets/receipt-normal.svg')" rounded="0"></v-avatar>
+          </template>
+
           <template v-slot:title>
             <b>Normal Receipt</b>
           </template>
@@ -57,7 +60,7 @@
         <v-list-item
           subtitle="It's mostly text-based and suitable for printing."
           append-icon="download"
-          prepend-icon="receipt_long"
+
           :href="
             window.API.GET_ORDERS_PDF(
               $shop.id,
@@ -69,6 +72,11 @@
           class="hover-up"
           target="_blank"
         >
+
+          <template v-slot:prepend>
+            <v-avatar  :image="require('./assets/receipt-standard.svg')" rounded="0"></v-avatar>
+          </template>
+
           <template v-slot:title>
             <b>Standard Receipt</b>
             <v-chip size="x-small" class="ma-1" label>English</v-chip>
