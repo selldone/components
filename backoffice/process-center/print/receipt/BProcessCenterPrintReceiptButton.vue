@@ -26,11 +26,16 @@
     content-class="rounded-t-xl"
   >
     <v-card class="text-start" rounded="t-xl">
-      <v-card-title></v-card-title>
+      <v-card-title class="d-flex align-center">
+        <v-icon class="me-2">fa:fas fa-scroll</v-icon>
+        {{ $t("process_center.menu.receipt") }}
+        <v-spacer></v-spacer>
+
+        <b-order-button :order="basket" vew-only class="pen"></b-order-button>
+      </v-card-title>
 
       <v-list class="border-between-vertical pb-8" lines="two">
         <v-list-item
-          title="Normal Receipt"
           subtitle="Features enhanced graphical elements for intuitive comprehension."
           prepend-icon="receipt"
           append-icon="download"
@@ -42,9 +47,13 @@
               'pdf',
             )
           "
-          class="row-hover"
+          class="hover-up"
           target="_blank"
-        ></v-list-item>
+        >
+          <template v-slot:title>
+            <b>Normal Receipt</b>
+          </template>
+        </v-list-item>
         <v-list-item
           subtitle="It's mostly text-based and suitable for printing."
           append-icon="download"
@@ -57,11 +66,11 @@
               'standard',
             )
           "
-          class="row-hover"
+          class="hover-up"
           target="_blank"
         >
           <template v-slot:title>
-            Standard Receipt
+            <b>Standard Receipt</b>
             <v-chip size="x-small" class="ma-1" label>English</v-chip>
           </template>
         </v-list-item>
@@ -85,10 +94,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import {OrderExportPdfType} from "@selldone/core-js/enums/order/OrderExportPdfType.ts";
+import { OrderExportPdfType } from "@selldone/core-js/enums/order/OrderExportPdfType.ts";
+import BOrderButton from "@selldone/components-vue/backoffice/order/button/BOrderButton.vue";
 
 export default defineComponent({
   name: "BProcessCenterPrintReceiptButton",
+  components: { BOrderButton },
   inject: ["$shop"],
   props: {
     basket: {
