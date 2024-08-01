@@ -251,6 +251,7 @@ export default {
 
 .s--stick-table-content {
   position: fixed;
+  z-index: 1;
   top: 120px;
   left: calc((max(50vw, 760px) - 408px) - 320px);
   width: 240px;

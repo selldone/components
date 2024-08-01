@@ -896,14 +896,21 @@
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ author info + Edit / Follow / Save ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-      <s-article-author-box
+      <v-sheet
         v-if="showAuthorInfo && article?.user_id > 0"
-        v-model:is-follow="isFollow"
-        v-model:reported="reported"
-        :article="article"
-        class="widget my-5"
+        color="#eee"
+        class="my-5 pa-2 overflow-hidden"
+        rounded="xl"
       >
-      </s-article-author-box>
+        <v-sheet color="#fff" rounded="xl" elevation="4">
+          <s-article-author-box
+            v-model:is-follow="isFollow"
+            v-model:reported="reported"
+            :article="article"
+          >
+          </s-article-author-box>
+        </v-sheet>
+      </v-sheet>
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Relative Articles ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
