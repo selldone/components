@@ -60,7 +60,7 @@
           :direction="direction"
           :display-percentage="false"
           :gradient-direction="gradientDirection"
-          :height="100"
+          :height="140"
           :labels="labels"
           :sub-labels="subLabels"
           :values="values"
@@ -68,6 +68,7 @@
           class=""
           dense
           sub-label-value="value"
+          no-legend
 
         />
       </div>

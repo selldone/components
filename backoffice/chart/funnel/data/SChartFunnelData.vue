@@ -119,7 +119,7 @@ export default {
 
   created() {
     // Auto height calculation:
-    this.height = this.keys.length * 46;
+    this.height = this.keys.length * 50;
     this.height =
       this.height > 460 ? 460 : this.height < 150 ? 150 : this.height;
   },

@@ -14,6 +14,14 @@
 
 <template>
   <div
+    v-if="!has_valid_data"
+    class="d-flex align-center justify-center pa-5 text-h3 font-weight-thin op-0-3"
+  >
+    No Data!
+  </div>
+
+  <div
+    v-else
     :class="{
       '-vertical': direction === 'vertical',
       '-dark': dark,
@@ -31,6 +39,7 @@
         :height="height"
         :width="width"
         :class="{ 'ms-auto': direction === 'vertical' }"
+        class="t-all-400"
       >
         <defs>
           <linearGradient
@@ -53,6 +62,7 @@
           :d="path"
           :fill="colorSet[index].fill"
           :stroke="colorSet[index].fill"
+          class="t-all-400"
         ></path>
       </svg>
 
@@ -82,6 +92,8 @@
 
           <u-chart-funnel-hover
             v-if="!noHoverDetails"
+            :label="labels[index]"
+            :vertical="is_vertical"
             :index="index"
             :labels="subLabels"
             :values="values"
@@ -94,65 +106,65 @@
             :isPercentMode="isPercentMode"
             :subLabelBackgrounds="subLabelBackgrounds"
           ></u-chart-funnel-hover>
-
-          <div
-            v-if="
-              false &&
-              !noHoverDetails &&
-              (!isPercentMode || filtered_values[0]?.length > 1) &&
-              is2d() &&
-              filtered_subLabels.length > 1
-            "
-            class="u--hover-container elevation-3"
-            style="min-width: max-content"
-          >
-            {{ filtered_values[index] }}
-            <ul class="u--hover-label">
-              <li v-for="(subLabel, j) in filtered_subLabels" :key="j">
-                <img
-                  v-if="subLabelImages && subLabelImages.length > j"
-                  :src="subLabelImages[j]"
-                  class="d-block mx-auto"
-                  height="16"
-                  width="16"
-                />
-
-                <div v-if="isCurrency" class="d-flex flex-column py-1">
-                  <u-currency-icon
-                    :currency="GetCurrency(subLabel)"
-                    class="mb-1 mx-auto"
-                    flag
-                    small
-                  ></u-currency-icon>
-
-                  <u-price
-                    :amount="filtered_values[index][j]"
-                    :currency="subLabel"
-                    class="body-title"
-                  ></u-price>
-                </div>
-
-                <template v-else>
-                  <span class="--label">{{ subLabel }}</span>
-
-                  <span v-if="isPercentMode" class="--percent"
-                    >{{ twoDimPercentages()[index][j] }}%</span
-                  >
-                  <span v-else-if="actualValue"
-                    >{{
-                      numeralFormat(
-                        actualValue(index, j, filtered_values[index][j]),
-                        "0.[0]a",
-                      )
-                    }}
-                  </span>
-                  <span v-else class="--percent">{{
-                    numeralFormat(filtered_values[index][j], "0.[0]a")
-                  }}</span>
-                </template>
-              </li>
-            </ul>
-          </div>
+          <!--
+                    <div
+                      v-if="
+                        false &&
+                        !noHoverDetails &&
+                        (!isPercentMode || filtered_values[0]?.length > 1) &&
+                        is2d() &&
+                        filtered_subLabels.length > 1
+                      "
+                      class="u--hover-container elevation-3"
+                      style="min-width: max-content"
+                    >
+                      {{ filtered_values[index] }}
+                      <ul class="u--hover-label">
+                        <li v-for="(subLabel, j) in filtered_subLabels" :key="j">
+                          <img
+                            v-if="subLabelImages && subLabelImages.length > j"
+                            :src="subLabelImages[j]"
+                            class="d-block mx-auto"
+                            height="16"
+                            width="16"
+                          />
+          
+                          <div v-if="isCurrency" class="d-flex flex-column py-1">
+                            <u-currency-icon
+                              :currency="GetCurrency(subLabel)"
+                              class="mb-1 mx-auto"
+                              flag
+                              small
+                            ></u-currency-icon>
+          
+                            <u-price
+                              :amount="filtered_values[index][j]"
+                              :currency="subLabel"
+                              class="body-title"
+                            ></u-price>
+                          </div>
+          
+                          <template v-else>
+                            <span class="--label">{{ subLabel }}</span>
+          
+                            <span v-if="isPercentMode" class="--percent"
+                              >{{ twoDimPercentages()[index][j] }}%</span
+                            >
+                            <span v-else-if="actualValue"
+                              >{{
+                                numeralFormat(
+                                  actualValue(index, j, filtered_values[index][j]),
+                                  "0.[0]a",
+                                )
+                              }}
+                            </span>
+                            <span v-else class="--percent">{{
+                              numeralFormat(filtered_values[index][j], "0.[0]a")
+                            }}</span>
+                          </template>
+                        </li>
+                      </ul>
+                    </div>-->
         </div>
       </div>
     </div>
@@ -257,20 +269,8 @@ export default {
     isPercentMode() {
       return this.subLabelValue === "percent";
     },
-    filtered_values() {
-      if (this.filterZeros) {
-        return this.values.map((arr) => arr.filter((i) => i > 0.0001));
-      }
-      return this.values;
-    },
-    filtered_subLabels() {
-      if (this.filterZeros) {
-        return this.subLabels.filter((subLabel, index) => {
-          return this.values.some((value) => value[index] > 0.0001);
-        });
-      }
-
-      return this.subLabels;
+    has_valid_data() {
+      return this.values.some((value) => value.some((i) => i > 0.0001));
     },
 
     is_vertical() {

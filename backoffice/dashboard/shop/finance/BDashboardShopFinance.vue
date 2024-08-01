@@ -623,7 +623,7 @@ export default {
         ProductType.FILE.colors,
         ProductType.SERVICE.colors,
         ProductType.SUBSCRIPTION.colors,
-        ["#6232e5", "#822aa8"],
+        ["#333", "#111"],
       ];
     },
     todayData() {

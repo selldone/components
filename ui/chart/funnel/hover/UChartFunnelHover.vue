@@ -12,11 +12,20 @@
   - Tread carefully, for you're treading on dreams.
   -->
 <template>
-  <div v-if="is2d && filtered_values.length && (!isPercentMode || filtered_values.length>1)" class="u--hover-container elevation-3" style="min-width: max-content">
+  <div
+    v-if="
+      is2d &&
+      filtered_values.length &&
+      (!isPercentMode || filtered_values.length > 1)
+    "
+    class="u--hover-container elevation-3"
+    style="min-width: max-content"
+    :class="{ 'pt-7': label && !vertical }"
+  >
+    <div v-if="!vertical" class="absolute-top-center small op-0-5">{{ label }}</div>
+
     <ul class="u--hover-label">
       <li v-for="(subLabel, j) in filtered_subLabels" :key="j">
-
-
         <div v-if="isCurrency" class="d-flex flex-column py-1">
           <u-currency-icon
             :currency="GetCurrency(subLabel)"
@@ -33,21 +42,27 @@
         </div>
 
         <template v-else>
-
-
           <span class="--label">
-                      <div :style="subLabelBackgrounds(j)" style="height: 10px;width: 10px;border-radius: 50%;display: inline-block" class="me-1"></div>
+            <div
+              :style="subLabelBackgrounds(j)"
+              style="
+                height: 10px;
+                width: 10px;
+                border-radius: 50%;
+                display: inline-block;
+              "
+              class="me-1"
+            ></div>
 
-                  <img
-                      v-if="subLabelImages && subLabelImages.length > j"
-                      :src="subLabelImages[j]"
-                      class="me-1 "
-                      height="16"
-                      width="16"
-                  />
+            <img
+              v-if="subLabelImages && subLabelImages.length > j"
+              :src="subLabelImages[j]"
+              class="me-1"
+              height="16"
+              width="16"
+            />
 
             {{ subLabel }}
-
           </span>
 
           <span v-if="isPercentMode" class="--percent"
@@ -55,10 +70,7 @@
           >
           <span v-else-if="actualValue"
             >{{
-              numeralFormat(
-                actualValue(index, j, filtered_values[j]),
-                "0.[0]a",
-              )
+              numeralFormat(actualValue(index, j, filtered_values[j]), "0.[0]a")
             }}
           </span>
           <span v-else class="--percent">{{
@@ -94,7 +106,7 @@ export default defineComponent({
     subLabelImages: {},
     isCurrency: Boolean,
     is2d: Boolean,
-    actualValue:{
+    actualValue: {
       type: Function,
     },
 
@@ -104,17 +116,21 @@ export default defineComponent({
     },
     isPercentMode: Boolean,
     subLabelBackgrounds: Function,
+    label: {},
+    vertical: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     filtered_values() {
-      const out = this.values[this.index]
+      const out = this.values[this.index];
       if (this.filterZeros) {
         return out.filter((i) => i > 0.0001);
       }
       return out;
     },
     filtered_subLabels() {
-
       if (this.filterZeros) {
         return this.labels.filter((subLabel, index) => {
           return this.values[this.index][index] > 0.0001;
@@ -123,8 +139,6 @@ export default defineComponent({
 
       return this.labels;
     },
-
-
   },
 });
 </script>
