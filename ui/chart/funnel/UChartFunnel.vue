@@ -15,7 +15,7 @@
 <template>
   <div
     v-if="!has_valid_data"
-    class="d-flex align-center justify-center pa-5 text-h3 font-weight-thin op-0-3"
+    class="d-flex align-center justify-center pa-5 text-h3 font-weight-thin op-0-3 ma-auto"
   >
     No Data!
   </div>
