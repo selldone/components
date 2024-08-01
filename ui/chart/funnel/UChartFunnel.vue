@@ -181,8 +181,6 @@
 <script>
 import { interpolate } from "polymorph-js";
 import TWEEN from "@tweenjs/tween.js";
-
-import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import numeral from "numeral";
 import FunnelGraph from "../../../ui/chart/funnel/core/js/main";
 import { generateLegendBackground, getDefaultColors } from "./core/js/graph.js";
@@ -190,7 +188,7 @@ import UChartFunnelHover from "@selldone/components-vue/ui/chart/funnel/hover/UC
 
 export default {
   name: "UChartFunnel",
-  components: { UChartFunnelHover, UCurrencyIcon },
+  components: { UChartFunnelHover },
   props: {
     animated: {
       type: Boolean,
