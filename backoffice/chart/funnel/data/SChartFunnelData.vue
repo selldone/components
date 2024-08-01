@@ -16,7 +16,6 @@
   <div>
     <div
       v-if="hasInsufficientData"
-      class="funnel-scroll scrollable-element-light thin-scroll"
     >
       <u-chart-funnel
         id="fun-data"
@@ -120,9 +119,9 @@ export default {
 
   created() {
     // Auto height calculation:
-    this.height = this.keys.length * 45;
+    this.height = this.keys.length * 46;
     this.height =
-      this.height > 400 ? 400 : this.height < 150 ? 150 : this.height;
+      this.height > 460 ? 460 : this.height < 150 ? 150 : this.height;
   },
   methods: {},
 };

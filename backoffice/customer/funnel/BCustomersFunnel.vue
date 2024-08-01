@@ -32,7 +32,6 @@
         :sub-labels="subLabels"
         :values="values"
         :width="width - 200"
-        class="funnel-chart-simple"
       ></u-chart-funnel>
     </div>
 

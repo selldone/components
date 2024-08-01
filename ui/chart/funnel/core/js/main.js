@@ -199,13 +199,13 @@ class FunnelGraph {
 
   addLabels() {
     const holder = document.createElement("div");
-    holder.setAttribute("class", "svg-funnel-js__labels");
+    holder.setAttribute("class", "--segment");
 
     this.percentages.forEach((percentage, index) => {
       const labelElement = document.createElement("div");
       labelElement.setAttribute(
         "class",
-        `svg-funnel-js__label label-${index + 1}`,
+        `--segment-container`,
       );
 
       const title = document.createElement("div");
@@ -213,7 +213,7 @@ class FunnelGraph {
       title.textContent = this.labels[index] || "";
 
       const value = document.createElement("div");
-      value.setAttribute("class", "label__value");
+      value.setAttribute("class", "--label-value");
 
       const valueNumber = this.is2d()
         ? this.getValues2d()[index]
@@ -221,7 +221,7 @@ class FunnelGraph {
       value.textContent = formatNumber(valueNumber);
 
       const percentageValue = document.createElement("div");
-      percentageValue.setAttribute("class", "label__percentage");
+      percentageValue.setAttribute("class", "--label-percent-value");
       percentageValue.textContent = `${percentage.toString()}%`;
 
       labelElement.appendChild(value);
@@ -232,8 +232,8 @@ class FunnelGraph {
 
       if (this.is2d()) {
         const segmentPercentages = document.createElement("div");
-        segmentPercentages.setAttribute("class", "label__segment-percentages");
-        let percentageList = '<ul class="segment-percentage__list">';
+        segmentPercentages.setAttribute("class", "u--hover-container");
+        let percentageList = '<ul class="u--hover-label">';
 
         const twoDimPercentages = this.getPercentages2d();
 
@@ -243,7 +243,7 @@ class FunnelGraph {
               ? `${twoDimPercentages[index][j]}%`
               : formatNumber(this.values[index][j]);
           percentageList += `<li>${this.subLabels[j]}:
-    <span class="percentage__list-label">${subLabelDisplayValue}</span>
+    <span class="--percent">${subLabelDisplayValue}</span>
  </li>`;
         });
         percentageList += "</ul>";
@@ -260,15 +260,15 @@ class FunnelGraph {
   addSubLabels() {
     if (this.subLabels) {
       const subLabelsHolder = document.createElement("div");
-      subLabelsHolder.setAttribute("class", "svg-funnel-js__subLabels");
+      subLabelsHolder.setAttribute("class", "--legend");
 
       let subLabelsHTML = "";
 
       this.subLabels.forEach((subLabel, index) => {
-        subLabelsHTML += `<div class="svg-funnel-js__subLabel svg-funnel-js__subLabel-${index + 1}">
-    <div class="svg-funnel-js__subLabel--color"
+        subLabelsHTML += `<div class="--l-item">
+    <div class="--l-item-color"
         style="${generateLegendBackground(this.colors[index], this.gradientDirection)}"></div>
-    <div class="svg-funnel-js__subLabel--title">${subLabel}</div>
+    <div class="--l-item-title">${subLabel}</div>
 </div>`;
       });
 
@@ -300,11 +300,11 @@ class FunnelGraph {
     this.container.classList.add("svg-funnel-js");
 
     this.graphContainer = document.createElement("div");
-    this.graphContainer.classList.add("svg-funnel-js__container");
+    this.graphContainer.classList.add("--container");
     this.container.appendChild(this.graphContainer);
 
     if (this.direction === "vertical") {
-      this.container.classList.add("svg-funnel-js--vertical");
+      this.container.classList.add("-vertical");
     }
   }
 
@@ -538,7 +538,7 @@ class FunnelGraph {
     if (this.direction === "vertical") return true;
 
     this.direction = "vertical";
-    this.container.classList.add("svg-funnel-js--vertical");
+    this.container.classList.add("-vertical");
 
     const svg = this.getSVG();
     const height = this.getHeight();
@@ -554,7 +554,7 @@ class FunnelGraph {
     if (this.direction === "horizontal") return true;
 
     this.direction = "horizontal";
-    this.container.classList.remove("svg-funnel-js--vertical");
+    this.container.classList.remove("-vertical");
 
     const svg = this.getSVG();
     const height = this.getHeight();
@@ -637,8 +637,8 @@ class FunnelGraph {
 
   // @TODO: refactor data update
   updateData(d) {
-    const labels = this.container.querySelector(".svg-funnel-js__labels");
-    const subLabels = this.container.querySelector(".svg-funnel-js__subLabels");
+    const labels = this.container.querySelector(".--segment");
+    const subLabels = this.container.querySelector(".--legend");
 
     if (labels) labels.remove();
     if (subLabels) subLabels.remove();
@@ -683,17 +683,17 @@ class FunnelGraph {
       if (this.displayPercent !== o.displayPercent) {
         if (this.displayPercent === true) {
           this.container
-            .querySelectorAll(".label__percentage")
+            .querySelectorAll(".--label-percent-value")
             .forEach((label) => {
               label.remove();
             });
         } else {
           this.container
-            .querySelectorAll(".svg-funnel-js__label")
+            .querySelectorAll(".--segment-container")
             .forEach((label, index) => {
               const percentage = this.percentages[index];
               const percentageValue = document.createElement("div");
-              percentageValue.setAttribute("class", "label__percentage");
+              percentageValue.setAttribute("class", "--label-percent-value");
 
               if (percentage !== 100) {
                 percentageValue.textContent = `${percentage.toString()}%`;

@@ -14,7 +14,7 @@
 
 @import "selldone/buttons";
 @import "selldone/animate-underline";
-@import "selldone/funnel";
+
 @import "selldone/bootstrap";
 @import "selldone/animations";
 @import "selldone/vuetify";
@@ -206,9 +206,6 @@ body {
       }
     }
 
-    .funnel-chart-finance {
-      font-family: var(--font) !important;
-    }
 
 
     .absolute-top-start {
@@ -2309,20 +2306,6 @@ Smart invert
 
 }
 
-/*******************************************************
-Funnel chart add styles
- */
-
-.svg-funnel-js.bordered:not(.svg-funnel-js--vertical) {
-
-  .svg-funnel-js__labels {
-    .svg-funnel-js__label:not(:first-child) {
-      border-left: silver dashed thin !important;
-    }
-  }
-
-
-}
 
 
 /*******************************************************

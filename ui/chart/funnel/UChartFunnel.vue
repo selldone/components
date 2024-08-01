@@ -14,11 +14,24 @@
 
 <template>
   <div
-    :class="{ 'svg-funnel-js--vertical': direction === 'vertical' }"
-    class="funnel svg-funnel-js"
+    :class="{
+      '-vertical': direction === 'vertical',
+      '-dark': dark,
+      '-rtl': $vuetify.locale.isRtl,
+      '-dense': dense,
+    }"
+    class="u--chart-funnel"
+    :style="{
+      '--width': width + 'px',
+      '--height': height + 'px',
+    }"
   >
-    <div class="svg-funnel-js__container">
-      <svg :height="height" :width="width">
+    <div class="--container thin-scroll scrollable-element-light">
+      <svg
+        :height="height"
+        :width="width"
+        :class="{ 'ms-auto': direction === 'vertical' }"
+      >
         <defs>
           <linearGradient
             v-for="(colors, index) in gradientSet"
@@ -42,43 +55,60 @@
           :stroke="colorSet[index].fill"
         ></path>
       </svg>
-    </div>
 
-    <transition-group
-      class="svg-funnel-js__labels"
-      name="appear"
-      tag="div"
-      v-on:enter="enterTransition"
-      v-on:leave="leaveTransition"
-    >
       <div
-        v-for="(value, index) in valuesFormatted"
-        :key="labels[index].toLowerCase().split(' ').join('-')"
-        :class="`label-${index + 1}`"
-        class="svg-funnel-js__label"
+        class="--segment"
+        :style="{ height: height + 'px', width: width + 'px' }"
       >
-        <div v-if="labelValueCurrency" class="label__value">
-          <u-price :amount="value" :currency="labelValueCurrency"></u-price>
-        </div>
-        <div v-else class="label__value">{{ value }}</div>
+        <div
+          v-for="(value, index) in valuesFormatted"
+          :key="labels[index].toLowerCase().split(' ').join('-')"
+          class="--segment-container"
+        >
+          <div v-if="labelValueCurrency" class="--label-value px-1">
+            <u-price :amount="value" :currency="labelValueCurrency"></u-price>
+          </div>
+          <div v-else class="--label-value px-1">{{ value }}</div>
 
-        <div v-if="labels" class="label__title">{{ labels[index] }}</div>
-        <div
-          v-if="displayPercentage && percentages()[index] !== 100"
-          class="label__percentage"
-        >
-          {{ percentages()[index] }}%
-        </div>
-        <div
-          v-if="
-            is2d() && (!filterZeros || values[index].some((x) => x > 0.0001))
-          "
-          class="label__segment-percentages"
-          style="min-width: max-content"
-        >
-          <ul class="segment-percentage__list">
-            <li v-for="(subLabel, j) in subLabels" :key="j">
-              <template v-if="!filterZeros || values[index][j] > 0.0001">
+          <div v-if="labels" class="--label-title px-1">
+            {{ labels[index] }}
+          </div>
+          <div
+            v-if="displayPercentage && percentages()[index] !== 100"
+            class="--label-percent-value px-1"
+          >
+            {{ percentages()[index] }}%
+          </div>
+
+          <u-chart-funnel-hover
+            v-if="!noHoverDetails"
+            :index="index"
+            :labels="subLabels"
+            :values="values"
+            :filterZeros="filterZeros"
+            :subLabelImages="subLabelImages"
+            :isCurrency="isCurrency"
+            :is2d="is2d()"
+            :actualValue="actualValue"
+            :twoDimPercentages="twoDimPercentages()"
+            :isPercentMode="isPercentMode"
+            :subLabelBackgrounds="subLabelBackgrounds"
+          ></u-chart-funnel-hover>
+
+          <div
+            v-if="
+              false &&
+              !noHoverDetails &&
+              (!isPercentMode || filtered_values[0]?.length > 1) &&
+              is2d() &&
+              filtered_subLabels.length > 1
+            "
+            class="u--hover-container elevation-3"
+            style="min-width: max-content"
+          >
+            {{ filtered_values[index] }}
+            <ul class="u--hover-label">
+              <li v-for="(subLabel, j) in filtered_subLabels" :key="j">
                 <img
                   v-if="subLabelImages && subLabelImages.length > j"
                   :src="subLabelImages[j]"
@@ -90,65 +120,49 @@
                 <div v-if="isCurrency" class="d-flex flex-column py-1">
                   <u-currency-icon
                     :currency="GetCurrency(subLabel)"
-                    class="mb-1"
+                    class="mb-1 mx-auto"
                     flag
                     small
                   ></u-currency-icon>
 
                   <u-price
-                    :amount="values[index][j]"
+                    :amount="filtered_values[index][j]"
                     :currency="subLabel"
                     class="body-title"
                   ></u-price>
                 </div>
 
                 <template v-else>
-                  {{ subLabel }}:
+                  <span class="--label">{{ subLabel }}</span>
 
-                  <span
-                    v-if="subLabelValue === 'percent'"
-                    class="percentage__list-label"
+                  <span v-if="isPercentMode" class="--percent"
                     >{{ twoDimPercentages()[index][j] }}%</span
                   >
                   <span v-else-if="actualValue"
                     >{{
                       numeralFormat(
-                        actualValue(index, j, values[index][j]),
+                        actualValue(index, j, filtered_values[index][j]),
                         "0.[0]a",
                       )
                     }}
                   </span>
-                  <span v-else class="percentage__list-label">{{
-                    numeralFormat(values[index][j], "0.[0]a")
+                  <span v-else class="--percent">{{
+                    numeralFormat(filtered_values[index][j], "0.[0]a")
                   }}</span>
                 </template>
-              </template>
-            </li>
-          </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </transition-group>
-    <transition
-      name="fade"
-      v-on:enter="enterTransition"
-      v-on:leave="leaveTransition"
-    >
-      <div v-if="is2d()" class="svg-funnel-js__subLabels">
-        <div
-          v-for="(subLabel, index) in subLabels"
-          :key="index"
-          :class="`svg-funnel-js__subLabel svg-funnel-js__subLabel-${
-            index + 1
-          }`"
-        >
-          <div
-            :style="subLabelBackgrounds(index)"
-            class="svg-funnel-js__subLabel--color"
-          ></div>
-          <div class="svg-funnel-js__subLabel--title">{{ subLabel }}</div>
-        </div>
+    </div>
+
+    <div v-if="is2d() && !noLegend" class="--legend">
+      <div v-for="(subLabel, index) in subLabels" :key="index" class="--l-item">
+        <div :style="subLabelBackgrounds(index)" class="--l-item-color"></div>
+        <div class="--l-item-title">{{ subLabel }}</div>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
@@ -160,12 +174,11 @@ import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import numeral from "numeral";
 import FunnelGraph from "../../../ui/chart/funnel/core/js/main";
 import { generateLegendBackground, getDefaultColors } from "./core/js/graph.js";
-import "../../../ui/chart/funnel/core/scss/main.scss";
-import "../../../ui/chart/funnel/core/scss/theme.scss";
+import UChartFunnelHover from "@selldone/components-vue/ui/chart/funnel/hover/UChartFunnelHover.vue";
 
 export default {
   name: "UChartFunnel",
-  components: { UCurrencyIcon },
+  components: { UChartFunnelHover, UCurrencyIcon },
   props: {
     animated: {
       type: Boolean,
@@ -216,6 +229,20 @@ export default {
     },
 
     labelValueCurrency: {},
+
+    noHoverDetails: {
+      type: Boolean,
+      default: false,
+    },
+    dark: {
+      type: Boolean,
+      default: false,
+    },
+    noLegend: {
+      type: Boolean,
+      default: false,
+    },
+    dense: Boolean,
   },
   data() {
     return {
@@ -227,6 +254,25 @@ export default {
     };
   },
   computed: {
+    isPercentMode() {
+      return this.subLabelValue === "percent";
+    },
+    filtered_values() {
+      if (this.filterZeros) {
+        return this.values.map((arr) => arr.filter((i) => i > 0.0001));
+      }
+      return this.values;
+    },
+    filtered_subLabels() {
+      if (this.filterZeros) {
+        return this.subLabels.filter((subLabel, index) => {
+          return this.values.some((value) => value[index] > 0.0001);
+        });
+      }
+
+      return this.subLabels;
+    },
+
     is_vertical() {
       return this.direction === "vertical";
     },
@@ -235,6 +281,13 @@ export default {
     },
 
     valuesFormatted() {
+      if (this.labelValueCurrency) {
+        if (this.graph.is2d()) {
+          return this.graph.getValues2d();
+        }
+        return this.values;
+      }
+
       if (this.graph.is2d()) {
         return this.graph
           .getValues2d()
@@ -427,7 +480,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
@@ -436,37 +489,275 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.appear-enter-active,
-.appear-leave-active {
-  transition: all 0.7s ease-in-out;
-}
+.u--chart-funnel {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  margin: auto;
 
-.appear-enter-to,
-.appear-leave {
-  max-width: 100%;
-  max-height: 100%;
-  opacity: 1;
-}
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: start;
 
-.appear-enter,
-.appear-leave-to {
-  max-width: 0;
-  max-height: 0;
-  opacity: 0;
-}
+  .--container {
+    position: relative;
+    flex-grow: 1;
+    overflow: auto;
+  }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.3s ease;
-}
+  svg {
+    display: block;
+  }
 
-.fade-enter-to,
-.fade-leave {
-  opacity: 1;
-}
+  .--label-value {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #222;
+  }
 
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
+  .--label-title {
+    font-size: 0.8rem;
+    color: #444;
+    font-weight: 500;
+  }
+
+  .--label-percent-value {
+    color: #2a333c;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  &.-dense {
+    .--label-value {
+      font-size: 0.7rem;
+    }
+
+    .--label-title {
+      font-size: 0.7rem;
+    }
+
+    .--label-percent-value {
+      font-size: 0.8rem;
+    }
+  }
+
+  // ------------- Vertical -------------
+
+  &.-vertical {
+    .--segment-container:not(:first-child) {
+      border-top: 1px dashed #7777777a !important;
+    }
+
+    .u--hover-container {
+      padding: 4px 8px;
+      width: calc(100% - 8px);
+      height: calc(100% - 8px);
+      left: 4px;
+      top: 4px;
+      max-width: none;
+
+      right: auto;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+
+      .u--hover-label {
+        flex-direction: row;
+
+        > :not(:last-child) {
+          border-right: solid 1px #aaa;
+          padding-right: 4px;
+          padding-left: 4px;
+        }
+      }
+    }
+
+    .--segment {
+      flex-direction: column;
+
+      .--segment-container {
+        border-left: unset !important;
+      }
+    }
+  }
+
+  // ------------- Horizontal -------------
+
+  &:not(.-vertical) {
+    .--segment-container:not(:first-child) {
+      border-left: 1px dashed #7777777a !important;
+    }
+
+    .--segment {
+      .--segment-container:not(:first-child) {
+        border-left: silver dashed thin !important;
+      }
+
+      .u--hover-container {
+        padding: 4px 8px;
+
+        height: calc(100% - 16px);
+        top: 4px;
+        max-height: var(--height);
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        width: max-content;
+
+        .--label {
+          margin-bottom: 0;
+        }
+
+        .u--hover-label {
+          justify-content: space-evenly;
+
+          li {
+            flex-grow: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+
+  // ------------- RTL -------------
+  &.-rtl {
+    .--segment {
+      flex-direction: row-reverse; // Fix: RTL label orders is invalid!
+    }
+  }
+
+  .--segment {
+    box-sizing: border-box;
+    position: absolute;
+    display: flex;
+    min-width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    .--segment-container {
+      flex: 1 1 0;
+      position: relative;
+
+      .u--hover-container {
+        position: absolute;
+
+        box-sizing: border-box;
+
+        opacity: 0;
+        transition: opacity 0.1s ease;
+        cursor: default;
+
+        ul {
+          margin: 0;
+          padding: 0;
+          list-style-type: none;
+        }
+      }
+
+      &:hover {
+        .u--hover-container {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .u--hover-container {
+    min-width: 100%;
+    min-height: 90%;
+    display: grid;
+    border-radius: 14px;
+    text-align: center;
+    z-index: 2;
+    color: #444;
+
+    margin-left: 0; // Force 100% width!
+    margin-right: 0;
+
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    text-shadow: #ffffff 0px 0px 6px;
+    border: solid thin #eee;
+
+    .u--hover-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100%;
+      overflow: auto;
+      flex-grow: 1;
+
+      .--label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.75rem;
+        margin-bottom: 8px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .--percent {
+        color: #06080b;
+        font-weight: 800;
+        font-size: 0.9rem;
+      }
+
+      li {
+        flex-direction: column;
+        display: flex;
+        padding: 4px;
+        flex-grow: 1;
+      }
+
+      > * {
+        flex-grow: 1;
+        min-width: 60px;
+      }
+    }
+  }
+
+  .--legend {
+    flex-grow: 0;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    font-size: 8px;
+
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    .--l-item {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      color: #111;
+      line-height: 16px;
+
+      &:not(:first-child) {
+        margin-inline-start: 8px;
+      }
+
+      .--l-item-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-inline-start: 4px;
+      }
+    }
+
+    .--l-item-title {
+      margin: 2px 4px 2px 4px !important;
+    }
+  }
 }
 </style>

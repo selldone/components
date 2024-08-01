@@ -71,7 +71,6 @@
 
     <div
       v-if="hasInsufficientData"
-      class="funnel-scroll scrollable-element-light thin-scroll"
     >
       <u-chart-funnel
         id="fun-finance"

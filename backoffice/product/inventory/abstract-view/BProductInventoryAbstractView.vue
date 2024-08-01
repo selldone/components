@@ -60,13 +60,15 @@
           :direction="direction"
           :display-percentage="false"
           :gradient-direction="gradientDirection"
-          :height="height"
+          :height="100"
           :labels="labels"
           :sub-labels="subLabels"
           :values="values"
           :width="widthFunnelFinance"
-          class="mb-3 funnel-chart-finance funnel-no-label"
+          class=""
+          dense
           sub-label-value="value"
+
         />
       </div>
     </template>
@@ -138,7 +140,6 @@ export default {
     ],
     direction: "horizontal",
     gradientDirection: "horizontal",
-    height: 80,
   }),
 
   computed: {
@@ -196,23 +197,5 @@ export default {
 </script>
 
 <style lang="scss">
-.funnel-no-label {
-  padding-top: 18px !important;
 
-  .label__value {
-    display: none;
-  }
-
-  .label__segment-percentages {
-    display: none;
-  }
-
-  .label__title {
-    direction: rtl !important;
-    font-size: 8px !important;
-  }
-
-  .svg-funnel-js {
-  }
-}
 </style>

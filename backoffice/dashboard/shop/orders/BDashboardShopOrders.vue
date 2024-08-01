@@ -52,7 +52,7 @@
             class="text-center me-4 pa-2 -card flex-0-0"
             color="#fafafa"
             flat
-            max-width="460"
+            max-width="420"
             min-width="250"
             rounded="lg"
             width="90%"
@@ -60,14 +60,14 @@
             <u-chart-funnel-simple
               :colors="available_types.map((t) => t.colors)"
               :labels="[
-                $t('global.commons.views'),
+                $t('global.commons.leads'),
                 $t('global.commons.new_carts'),
                 $t('global.commons.checkouts'),
                 $t('global.commons.sells'),
               ]"
               :sub-labels="available_types.map((t) => $t(t.name))"
               :value="funnel_value"
-              :width="290"
+              :width="320"
               class="mx-auto"
               display-percentage
               height="280"
@@ -595,22 +595,43 @@ export default {
       return this.timeSeries.totalOf(key, this.start_date, this.end_date);
     },
     calculate_funnel() {
+      const sub_view_physical = this.sumInTimeSpan("view_products_physical");
+      const sub_view_virtual = this.sumInTimeSpan("view_products_virtual");
+      const sub_view_file = this.sumInTimeSpan("view_products_file");
+      const sub_view_service = this.sumInTimeSpan("view_products_service");
+      const sub_view_subscription = this.sumInTimeSpan(
+        "view_products_subscription",
+      );
+
+      const sum_vies =
+        sub_view_physical +
+        sub_view_virtual +
+        sub_view_file +
+        sub_view_service +
+        sub_view_subscription;
+
+      const sum_new_visitors = this.sumInTimeSpan("new_visitors");
+      const sum_returning_visitors = this.sumInTimeSpan("returning_visitors");
+
+      let sum_visitors = sum_new_visitors + sum_returning_visitors;
+      if (sum_visitors <= 0) sum_visitors = 1;
+
       this.funnel_value = [
         [
           ...(this.option_types.includes(ProductType.PHYSICAL.code)
-            ? [this.sumInTimeSpan("view_products_physical")]
+            ? [Math.round((sum_visitors * sub_view_physical) / sum_vies)]
             : []),
           ...(this.option_types.includes(ProductType.VIRTUAL.code)
-            ? [this.sumInTimeSpan("view_products_virtual")]
+            ? [Math.round((sum_visitors * sub_view_virtual) / sum_vies)]
             : []),
           ...(this.option_types.includes(ProductType.FILE.code)
-            ? [this.sumInTimeSpan("view_products_file")]
+            ? [Math.round((sum_visitors * sub_view_file) / sum_vies)]
             : []),
           ...(this.option_types.includes(ProductType.SERVICE.code)
-            ? [this.sumInTimeSpan("view_products_service")]
+            ? [Math.round((sum_visitors * sub_view_service) / sum_vies)]
             : []),
           ...(this.option_types.includes(ProductType.SUBSCRIPTION.code)
-            ? [this.sumInTimeSpan("view_products_subscription")]
+            ? [Math.round((sum_visitors * sub_view_subscription) / sum_vies)]
             : []),
         ],
         [

@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <u-chart-funnel
     :animated="true"
-    :class="{ dense: dense, dark: isDark, 'no-legend': noLegend }"
+
     :colors="colors"
     :direction="direction"
     :display-percentage="true"
@@ -25,7 +25,9 @@
     :sub-labels="subLabels"
     :values="values"
     :width="width"
-    class="funnel-chart-simple mx-auto my-2 overflow-hidden d-block px-3 py-2 ps-md-12 text-start"
+    :noLegend="noLegend"
+    :noHoverDetails="noHoverDetails"
+    :dense="dense"
     style="width: max-content"
   ></u-chart-funnel>
 </template>
@@ -85,6 +87,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    noHoverDetails:Boolean,
   },
   data() {
     return {
@@ -127,20 +130,5 @@ export default {
 </script>
 
 <style lang="scss">
-.svg-funnel-js {
-  &.dense {
-    .svg-funnel-js__labels {
-      line-height: normal !important;
 
-      .svg-funnel-js__label {
-        padding: 0 !important;
-      }
-
-      .label__value {
-        line-height: normal !important;
-        margin: 0 !important;
-      }
-    }
-  }
-}
 </style>

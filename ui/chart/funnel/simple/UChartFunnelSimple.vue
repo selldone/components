@@ -16,7 +16,7 @@
   <u-chart-funnel
     v-if="show_funnel"
     :animated="true"
-    :class="{ 'dense p-0': dense, dark: isDark, 'no-legend': noLegend }"
+    :class="{ 'dense p-0': dense, dark: isDark}"
     :colors="colors"
     :direction="direction"
     :display-percentage="displayPercentage"
@@ -26,7 +26,7 @@
     :sub-labels="subLabels"
     :values="values"
     :width="width"
-    class="funnel-chart-single-data mx-auto text-start pl-5"
+    :dark="isDark"
   ></u-chart-funnel>
 </template>
 
@@ -142,82 +142,5 @@ export default {
 </script>
 
 <style lang="scss">
-.funnel-chart-single-data {
-  padding-bottom: 32px;
-  font-family: var(--font) !important;
 
-  // Dashed horizontal on vertical chart only:
-  &.svg-funnel-js--vertical {
-    .svg-funnel-js__label:not(:first-child) {
-      border-top: 1px dashed rgba(119, 119, 119, 0.48) !important;
-    }
-  }
-
-  // Dashed horizontal on horizontal chart only:
-  &:not(.svg-funnel-js--vertical) {
-    .svg-funnel-js__label:not(:first-child) {
-      border-left: 1px dashed rgba(119, 119, 119, 0.48) !important;
-    }
-  }
-
-  .svg-funnel-js__label {
-    padding-top: 2px !important;
-
-    .label__value {
-      color: #333 !important;
-      font-size: 12px !important;
-    }
-
-    .label__title {
-      color: var(--theme-light) !important;
-      font-size: 8px !important;
-    }
-
-    .label__percentage {
-      color: #2a333c !important;
-    }
-  }
-
-  .svg-funnel-js__subLabels {
-    .svg-funnel-js__subLabel--title {
-      font-size: 8px !important;
-    }
-
-    .svg-funnel-js__subLabel--color {
-      margin: 2px 4px 2px 4px !important;
-    }
-  }
-
-  .label__segment-percentages {
-    padding: 8px !important;
-
-    .segment-percentage__list {
-      li {
-        margin: 0 !important;
-        font-size: 8px !important;
-
-        .percentage__list-label {
-          color: #00a89a;
-          padding: 2px 4px;
-        }
-      }
-    }
-  }
-
-  &.dark {
-    .svg-funnel-js__label {
-      .label__value {
-        color: #fff !important;
-      }
-
-      .label__title {
-        color: #d29ce3 !important;
-      }
-
-      .label__percentage {
-        color: #fff !important;
-      }
-    }
-  }
-}
 </style>
