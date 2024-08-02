@@ -533,6 +533,17 @@ export default {
       }
     }
 
+    &.-rtl{
+      .u--hover-container {
+        .u--hover-label {
+          > :not(:last-child) {
+            border-left: solid 1px #aaa;
+            border-right: unset;
+          }
+        }
+      }
+    }
+
     .--segment {
       flex-direction: column;
 
@@ -545,14 +556,25 @@ export default {
   // ------------- Horizontal -------------
 
   &:not(.-vertical) {
-    .--segment-container:not(:first-child) {
-      border-left: 1px dashed #7777777a !important;
+    &.-rtl {
+      .--segment-container:not(:first-child) {
+        border-right: 1px dashed silver !important;
+      }
+    }
+
+    &:not(.-rtl) {
+      .--segment-container:not(:first-child) {
+        border-left: 1px dashed silver !important;
+      }
+    }
+
+    .--label-value,
+    .--label-title,
+    .--label-percent-value {
+      text-align: center;
     }
 
     .--segment {
-      .--segment-container:not(:first-child) {
-        border-left: silver dashed thin !important;
-      }
 
       .u--hover-container {
         padding: 4px 8px;
@@ -585,8 +607,14 @@ export default {
 
   // ------------- RTL -------------
   &.-rtl {
+    .-vertical {
+      .--segment {
+        flex-direction: row-reverse; // Fix: RTL label orders is invalid!
+      }
+    }
     .--segment {
-      flex-direction: row-reverse; // Fix: RTL label orders is invalid!
+      left: unset;
+      right: 0;
     }
   }
 
