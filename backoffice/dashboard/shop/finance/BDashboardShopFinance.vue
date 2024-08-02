@@ -221,6 +221,8 @@
           :time-series="timeSeries"
           bordered
           finance-key="pay"
+          class="mx-n5"
+
         />
       </s-widget-box>
     </v-expand-transition>
@@ -240,6 +242,7 @@
           :time-series="timeSeries"
           bordered
           finance-key="sell"
+          class="mx-n5"
         />
       </s-widget-box>
     </v-expand-transition>
@@ -259,6 +262,7 @@
           :time-series="timeSeries"
           bordered
           finance-key="discount"
+          class="mx-n5"
         />
       </s-widget-box>
     </v-expand-transition>
@@ -288,6 +292,7 @@
           :sub-labels="subLabels"
           :time-series="timeSeries"
           bordered
+          class="mx-n5"
         />
       </s-widget-box>
     </v-expand-transition>

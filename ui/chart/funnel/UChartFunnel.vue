@@ -22,12 +22,16 @@
 
   <div
     v-else
-    :class="{
-      '-vertical': direction === 'vertical',
-      '-dark': dark,
-      '-rtl': $vuetify.locale.isRtl,
-      '-dense': dense,
-    }"
+    :class="[
+      {
+        '-vertical': direction === 'vertical',
+        '-horizontal': direction === 'horizontal',
+        '-dark': dark,
+        '-rtl': $vuetify.locale.isRtl,
+        '-dense': dense,
+      },
+      chartClass,
+    ]"
     class="u--chart-funnel"
     :style="{
       '--width': width + 'px',
@@ -68,15 +72,28 @@
 
       <div
         class="--segment"
-        :style="{ height: height + 'px', width: width + 'px' }"
+        :style="{
+          height: height + 'px',
+          width: width + 'px',
+          maxWidth: width + 'px',
+        }"
       >
         <div
           v-for="(value, index) in valuesFormatted"
           :key="labels[index].toLowerCase().split(' ').join('-')"
           class="--segment-container"
+          :style="
+            is_horizontal
+              ? { maxWidth: Math.round(width / valuesFormatted.length) + 'px' }
+              : {}
+          "
         >
           <div v-if="labelValueCurrency" class="--label-value px-1">
-            <u-price :amount="value" :currency="labelValueCurrency"></u-price>
+            <u-price
+              :amount="value"
+              :currency="labelValueCurrency"
+              compact
+            ></u-price>
           </div>
           <div v-else class="--label-value px-1">{{ value }}</div>
 
@@ -106,65 +123,6 @@
             :isPercentMode="isPercentMode"
             :subLabelBackgrounds="subLabelBackgrounds"
           ></u-chart-funnel-hover>
-          <!--
-                    <div
-                      v-if="
-                        false &&
-                        !noHoverDetails &&
-                        (!isPercentMode || filtered_values[0]?.length > 1) &&
-                        is2d() &&
-                        filtered_subLabels.length > 1
-                      "
-                      class="u--hover-container elevation-3"
-                      style="min-width: max-content"
-                    >
-                      {{ filtered_values[index] }}
-                      <ul class="u--hover-label">
-                        <li v-for="(subLabel, j) in filtered_subLabels" :key="j">
-                          <img
-                            v-if="subLabelImages && subLabelImages.length > j"
-                            :src="subLabelImages[j]"
-                            class="d-block mx-auto"
-                            height="16"
-                            width="16"
-                          />
-          
-                          <div v-if="isCurrency" class="d-flex flex-column py-1">
-                            <u-currency-icon
-                              :currency="GetCurrency(subLabel)"
-                              class="mb-1 mx-auto"
-                              flag
-                              small
-                            ></u-currency-icon>
-          
-                            <u-price
-                              :amount="filtered_values[index][j]"
-                              :currency="subLabel"
-                              class="body-title"
-                            ></u-price>
-                          </div>
-          
-                          <template v-else>
-                            <span class="--label">{{ subLabel }}</span>
-          
-                            <span v-if="isPercentMode" class="--percent"
-                              >{{ twoDimPercentages()[index][j] }}%</span
-                            >
-                            <span v-else-if="actualValue"
-                              >{{
-                                numeralFormat(
-                                  actualValue(index, j, filtered_values[index][j]),
-                                  "0.[0]a",
-                                )
-                              }}
-                            </span>
-                            <span v-else class="--percent">{{
-                              numeralFormat(filtered_values[index][j], "0.[0]a")
-                            }}</span>
-                          </template>
-                        </li>
-                      </ul>
-                    </div>-->
         </div>
       </div>
     </div>
@@ -253,6 +211,8 @@ export default {
       default: false,
     },
     dense: Boolean,
+
+    chartClass: {},
   },
   data() {
     return {
