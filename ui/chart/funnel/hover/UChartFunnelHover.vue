@@ -19,10 +19,11 @@
       (!isPercentMode || filtered_values.length > 1)
     "
     class="u--hover-container elevation-3"
-
     :class="{ 'pt-7': label && !vertical }"
   >
-    <div v-if="!vertical" class="absolute-top-center small op-0-5">{{ label }}</div>
+    <div v-if="!vertical" class="absolute-top-center small op-0-5">
+      {{ label }}
+    </div>
 
     <ul class="u--hover-label">
       <li v-for="(subLabel, j) in filtered_subLabels" :key="j">
