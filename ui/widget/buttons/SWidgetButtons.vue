@@ -15,10 +15,15 @@
 <template>
   <div
     v-if="autoFixedPosition"
-    v-intersect="(isIntersecting) => (intersected = isIntersecting)"
+    v-intersect="
+      (isIntersecting, entries) => onIntersect(isIntersecting, entries)
+    "
     class="flex-grow-1"
   >
-    <div :class="{ '-fixed-bottom': !intersected }" class="widget-buttons">
+    <div
+      :class="{ '-fixed-bottom': !intersected && !scrollUnder }"
+      class="widget-buttons"
+    >
       <slot></slot>
     </div>
   </div>
@@ -40,7 +45,25 @@ export default defineComponent({
   },
   data: () => ({
     intersected: false,
+    scrollUnder: false,
   }),
+  methods: {
+    onIntersect(isIntersecting, entries) {
+      this.intersected = isIntersecting;
+
+      // Ensure entries is not undefined and has elements
+      if (entries && entries.length > 0) {
+        const entry = entries[0];
+
+        // console.log(isIntersecting, "top", entry.boundingClientRect.top);
+
+        // Determine if the user has scrolled past the element
+        this.scrollUnder = entry.boundingClientRect.top < 0;
+      } else {
+        this.scrollUnder = false;
+      }
+    },
+  },
 });
 </script>
 
