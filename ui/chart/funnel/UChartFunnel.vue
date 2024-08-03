@@ -452,6 +452,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   position: relative;
   margin: auto;
+  overflow: visible;
 
   display: flex;
   flex-direction: column;
@@ -509,13 +510,15 @@ export default {
 
     .u--hover-container {
       padding: 4px 8px;
-      width: calc(100% - 8px);
+      width: 100%;
       height: calc(100% - 8px);
-      left: 4px;
-      top: 4px;
-      max-width: calc(var(--width) - 8px);
-
+      left: auto;
       right: auto;
+      top: 4px;
+      max-width: 100%;
+      margin: auto;
+
+
 
       display: flex;
       justify-content: center;
@@ -546,6 +549,7 @@ export default {
 
     .--segment {
       flex-direction: column;
+      padding: 0 4px;
 
       .--segment-container {
         border-left: unset !important;
