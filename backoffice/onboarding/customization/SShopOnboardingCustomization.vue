@@ -20,7 +20,7 @@
         Discover what's possible here that isn't anywhere else.
       </p>
 
-      <b-shop-onboarding-tour :shop="shop"></b-shop-onboarding-tour>
+      <b-shop-onboarding-tour :shop="shop"        class="mx-n3"></b-shop-onboarding-tour>
 
       <hr class="my-5" />
 
@@ -46,8 +46,9 @@
         drag-scroll
         show-arrow
         stick-class="min-width-250"
+        class="mx-n3"
       >
-        <div class="d-flex px-3 py-10">
+        <div class="d-flex px-3 py-10 justify-start">
           <l-template-card
             v-for="template in templates"
             :key="template.id"
@@ -104,14 +105,12 @@
           color="#000"
           size="x-large"
         >
-          <div class="me-2">
-            <u-color-circle :color="color_light" class="mx-1"></u-color-circle>
-            <u-color-circle :color="color_dark" class="mx-1"></u-color-circle>
-            <u-color-circle
+          <u-color-circle :color="color_light" class="me-1"></u-color-circle>
+          <u-color-circle :color="color_dark" class="me-1"></u-color-circle>
+          <u-color-circle
               :color="color_deep_dark"
-              class="mx-1"
-            ></u-color-circle>
-          </div>
+              class="me-1"
+          ></u-color-circle>
 
           {{ $t("onboarding.customize.colors.action") }}
         </v-btn>

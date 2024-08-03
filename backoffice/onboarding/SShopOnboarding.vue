@@ -27,9 +27,9 @@
         {{ $t("onboarding.shop.subtitle") }}
       </v-list-subheader>
 
-      <v-container>
+      <v-container class="px-0">
         <v-row>
-          <v-col cols="12" lg="3" md="4" sm="5">
+          <v-col cols="12" lg="3" md="4" sm="5" class="px-0 px-sm-2">
             <v-tabs
               v-model="tab"
               :direction="$vuetify.display.smAndUp ? 'vertical' : 'horizontal'"
@@ -117,7 +117,7 @@
 
             </v-tabs>
           </v-col>
-          <v-col cols="12" lg="9" md="8" sm="7">
+          <v-col cols="12" lg="9" md="8" sm="7" class="px-0 px-sm-2">
             <v-window v-model="tab">
               <!-- ------------------------------ customize website ------------------------------ -->
               <v-window-item>
