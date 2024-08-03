@@ -697,7 +697,7 @@
 
     <!-- ███████████████████ Reset password dialog ███████████████████ -->
 
-    <v-bottom-sheet v-model="reset_password_dialog" inset max-width="640px">
+    <v-bottom-sheet v-model="reset_password_dialog" width="640" max-width="98vw">
       <v-card class="text-start">
         <v-card-title>
           <v-icon class="me-1">password</v-icon>

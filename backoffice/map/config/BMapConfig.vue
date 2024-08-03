@@ -84,7 +84,7 @@
 
   <!-- ███████████████████████ Dialog > Show Links ███████████████████████ -->
 
-  <v-bottom-sheet v-model="show_map_urls" inset max-width="520">
+  <v-bottom-sheet v-model="show_map_urls" width="520" max-width="98vw">
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>
         <v-avatar
