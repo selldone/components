@@ -67,7 +67,7 @@
               ]"
               :sub-labels="available_types.map((t) => $t(t.name))"
               :value="funnel_value"
-              :width="320"
+              :width="$vuetify.display.xs?240:320"
               class="mx-auto"
               display-percentage
               height="280"

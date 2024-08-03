@@ -714,6 +714,8 @@ export default {
 
   .--legend {
     flex-grow: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
     margin-top: 16px;
     margin-bottom: 16px;
     font-size: 8px;
