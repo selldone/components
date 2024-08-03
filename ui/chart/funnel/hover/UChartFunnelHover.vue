@@ -19,7 +19,7 @@
       (!isPercentMode || filtered_values.length > 1)
     "
     class="u--hover-container elevation-3"
-    style="min-width: max-content"
+
     :class="{ 'pt-7': label && !vertical }"
   >
     <div v-if="!vertical" class="absolute-top-center small op-0-5">{{ label }}</div>

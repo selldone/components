@@ -513,7 +513,7 @@ export default {
       height: calc(100% - 8px);
       left: 4px;
       top: 4px;
-      max-width: none;
+      max-width: calc(var(--width) - 8px);
 
       right: auto;
 
@@ -575,6 +575,7 @@ export default {
     }
 
     .--segment {
+      overflow: hidden;
 
       .u--hover-container {
         padding: 4px 8px;
@@ -663,6 +664,7 @@ export default {
     text-align: center;
     z-index: 2;
     color: #444;
+
 
     margin-left: 0; // Force 100% width!
     margin-right: 0;
