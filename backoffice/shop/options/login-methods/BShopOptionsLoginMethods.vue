@@ -86,6 +86,7 @@ export default {
         title: this.$t("global.need_login.login_google"),
         image: require("../../../../assets/trademark/google.svg"),
         available: this.login_modes.includes("google"),
+        customizable:true,
       });
 
       // Meta:
