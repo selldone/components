@@ -370,7 +370,7 @@
       <!-- █████████████████████ Acquisition channel █████████████████████ -->
 
       <div v-if="channel" class="py-2">
-        <v-icon size="20">alt_route</v-icon>
+        <v-icon size="20" class="op-0-5">alt_route</v-icon>
         <small class="font-weight-bold me-3 ms-1"
           >{{ $t("global.commons.acquisition_channel") }} :</small
         >
@@ -381,7 +381,7 @@
           height="15"
           width="15"
         />
-        {{ channel }}
+        <span class="text-subtitle-2 text-capitalize">{{ channel }}</span>
       </div>
 
       <!-- █████████████████████ Affiliate █████████████████████ -->

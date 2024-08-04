@@ -117,10 +117,6 @@
       </template>
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
-      <template v-slot:loading>
-        <u-loading-ellipsis css-mode light></u-loading-ellipsis>
-      </template>
-
       <template v-slot:item.type="{ item }">
         <v-img
           v-if="isAffiliatePos"
@@ -141,10 +137,22 @@
             :height="42"
             :src="basket_image"
             :width="42"
-            class="my-2"
+            class="my-1"
             @click.stop
           />
         </router-link>
+
+        <div v-if="item.channel" style="font-size: 8px ;font-weight: 500;margin-bottom: 2px" class="d-flex align-center mx-n1">
+          <b-campaign-source-icon
+            :value="item.channel"
+            height="13"
+            width="13"
+            class="me-1"
+          />
+          <div class="single-line d-inline-block" style="max-width: 36px">
+            {{ item.channel }}
+          </div>
+        </div>
       </template>
 
       <template v-slot:item.id="{ item }">
@@ -231,8 +239,6 @@
                 </v-tooltip>
               </v-chip>
 
-
-
               <i
                 v-if="inQueProcess(item) && !item.reject"
                 class="fas fa-circle-notch fa-spin text-info mx-2"
@@ -249,9 +255,6 @@
                   </div>
                 </v-tooltip>
               </i>
-
-
-
             </template>
 
             <v-spacer class="flex-grow-0 flex-md-grow-1"></v-spacer>
@@ -394,20 +397,18 @@
             title="Payment"
           >
             <return-request-button-badge
-                v-if="item.basket_item_returns?.length"
-                :basket-item-returns="item.basket_item_returns"
-                @click:return="
-            cacheRouteState(item.id);
-            $router.push({
-              name: return_request_page_name,
-              params: {
-                basket_id: item.id,
-              },
-            });
-          "
+              v-if="item.basket_item_returns?.length"
+              :basket-item-returns="item.basket_item_returns"
+              @click:return="
+                cacheRouteState(item.id);
+                $router.push({
+                  name: return_request_page_name,
+                  params: {
+                    basket_id: item.id,
+                  },
+                });
+              "
             ></return-request-button-badge>
-
-
 
             <connect-order-chip
               v-for="connect_order in item.connect_orders"
@@ -603,6 +604,18 @@
 
       <!-- Status > Delivery -->
       <template v-if="has_delivery_col" v-slot:item.delivery_state="{ item }">
+        <div v-if="$vuetify.display.xs && item.channel" style="font-size: 12px ;font-weight: 500;" class="d-flex align-center">
+          <v-icon class="me-1 rotate-90-e ms-3">alt_route</v-icon>
+          <b-campaign-source-icon
+              :value="item.channel"
+              height="16"
+              width="16"
+              class="me-1"
+          />
+          <div>
+            {{ item.channel }}
+          </div>
+        </div>
         <s-order-delivery-status-stepper
           :has-subscription="isSubscription"
           :isSubscribed="item.status === 'Payed'"
@@ -631,8 +644,6 @@
           </template>
         </div>
       </template>
-
-
 
       <template v-slot:item.reserved_at="{ item }">
         <div class="min-width-200 py-1">
@@ -796,12 +807,14 @@ import _ from "lodash-es";
 import { OrderType } from "@selldone/core-js/enums/order/OrderType";
 import { RouteMixin } from "../../../mixin/RouteMixin";
 import { Avocado, Basket } from "@selldone/core-js";
+import BCampaignSourceIcon from "@selldone/components-vue/backoffice/campaign/source/icon/BCampaignSourceIcon.vue";
 
 export default {
   name: "BProcessCenterList",
   mixins: [RouteMixin],
 
   components: {
+    BCampaignSourceIcon,
     UCurrencyIcon,
     BProductSubscriptionPricingInput,
     SOrderChatMessage,
@@ -1123,8 +1136,6 @@ export default {
           value: "delivery_state",
           sortable: true,
         },
-
-
 
         {
           title: this.$t("admin_shop.orders.physical.table.order_date"),
