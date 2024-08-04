@@ -20,13 +20,13 @@
           <span :title="'Unique visitors: ' + total_visitors">
             <i class="fas fa-users" />
 
-            {{ numeralFormat(total_visitors, "0.[0]a") }}
+            {{ numeralFormat(total_visitors, "0a") }}
           </span>
-          <i class="fas fa-long-arrow-alt-right mx-1" />
+          <i class="fas fa-long-arrow-alt-right mx-1 flip-rtl small" />
 
           <span :title="'Page views: ' + page_views">
             <i class="fas fa-mouse" />
-            {{ numeralFormat(page_views, "0.[0]a") }}
+            {{ numeralFormat(page_views, "0a") }}
           </span>
         </h6>
 
