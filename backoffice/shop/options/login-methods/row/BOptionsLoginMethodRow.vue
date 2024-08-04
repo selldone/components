@@ -30,11 +30,12 @@
       <v-chip
         v-if="login.premium"
         class="float-end"
-        color="primary"
+        color="#000"
         label
         size="x-small"
+        prepend-icon="military_tech"
+        variant="flat"
       >
-        <v-icon size="x-small" start>add</v-icon>
         {{ $t("global.commons.premium") }}
       </v-chip>
       <v-chip
@@ -43,9 +44,22 @@
         color="#673AB7"
         label
         size="x-small"
+        prepend-icon="paid"
+        variant="flat"
       >
-        <v-icon size="x-small" start>paid</v-icon>
         {{ $t("global.commons.paid") }}
+      </v-chip>
+
+      <v-chip
+        v-if="enable"
+        class="float-end"
+        color="#009688"
+        label
+        size="x-small"
+        prepend-icon="token"
+        variant="flat"
+      >
+        Custom Token
       </v-chip>
     </v-list-item-title>
     <v-list-item-subtitle v-if="login.subtitle" :title="login.subtitle">
@@ -59,7 +73,7 @@
     <template v-slot:append>
       <v-btn
         v-if="login.customizable"
-        class="me-1"
+        class="ms-1"
         icon
         variant="text"
         @click="dialog = true"
@@ -74,6 +88,7 @@
         :loading="busy_login === login.code"
         icon
         variant="text"
+        class="ms-1"
         @click="
           setOptionLoginMethods(
             login.code,
@@ -82,6 +97,7 @@
         "
       >
         <u-check
+          class="ms-1"
           :model-value="
             login.available &&
             (!options_login || options_login.includes(login.code))
