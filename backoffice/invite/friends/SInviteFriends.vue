@@ -29,27 +29,36 @@
       :fullscreen="$vuetify.display.smAndDown"
       content-class="rounded-t-xl"
       max-width="860"
-      scrollable
+
       width="99vw"
     >
       <v-card class="rounded-t-xl">
-        <v-card-title class="d-flex align-center">
-          <v-avatar class="avatar-gradient -thin me-2" size="36">
-            <v-img :src="getUserAvatar(USER_ID(), 'big')"></v-img>
-          </v-avatar>
-          <b>{{ USER().name }}</b>
 
-          <v-spacer></v-spacer>
-          <v-btn
-            :to="{ name: 'OPageMonetizeReferral' }"
-            class="tnt"
-            color="primary"
-            rounded="xl"
-            size="x-large"
-            variant="plain"
+        <v-img :src="require('./assets/selldone-invite-landscape.webp')" width="100%" max-height="380" cover>
+
+          <v-card-title class="d-flex align-center">
+            <v-avatar class="avatar-gradient -thin me-2" size="36">
+              <v-img :src="getUserAvatar(USER_ID(), 'big')"></v-img>
+            </v-avatar>
+            <b>{{ USER().name }}</b>
+
+            <v-spacer></v-spacer>
+            <v-btn
+                :to="{ name: 'OPageMonetizeReferral' }"
+                class="tnt"
+                color="#fff"
+                rounded="xl"
+                size="x-large"
+                variant="outlined"
+                style="backdrop-filter: blur(7px)"
+                prepend-icon="trending_up"
             >My Affiliate Panel
-          </v-btn>
-        </v-card-title>
+            </v-btn>
+          </v-card-title>
+
+
+        </v-img>
+
 
         <v-card-text v-scroll.self="onScroll" class="thin-scroll">
           <h2 class="text-h4 my-3 text-start">
@@ -83,7 +92,7 @@
                   :variant="
                     emails[i] && valid_mails.includes(emails[i])
                       ? 'text'
-                      : 'underlined'
+                      : 'outlined'
                   "
                   class="english-field"
                   clearable
@@ -114,7 +123,7 @@
                   :variant="
                     emails[i] && valid_mails.includes(emails[i])
                       ? 'text'
-                      : 'underlined'
+                      : 'outlined'
                   "
                 >
                 </v-text-field>
@@ -150,7 +159,7 @@
           </v-container>
 
           <v-expansion-panels class="my-6">
-            <v-expansion-panel>
+            <v-expansion-panel rounded="xl">
               <v-expansion-panel-title>
                 <div>
                   <v-icon class="me-2" color="#111">share</v-icon>
@@ -188,7 +197,7 @@
               </v-expansion-panel-text>
             </v-expansion-panel>
 
-            <v-expansion-panel>
+            <v-expansion-panel rounded="xl">
               <v-expansion-panel-title>
                 <div>
                   <v-icon class="me-2" color="#111">trending_up</v-icon>
@@ -199,29 +208,23 @@
                 <!-- Report -->
                 <v-row>
                   <v-col cols="4">
-                    <v-sheet class="pa-2" color="#fafafa">
                       <small class="d-block">{{
                         $t("selldone_referral_page.registered")
                       }}</small>
                       <b>{{ referral.registered }}</b>
-                    </v-sheet>
                   </v-col>
                   <v-col cols="4">
-                    <v-sheet class="pa-2" color="#fafafa">
                       <small class="d-block">{{
                         $t("selldone_referral_page.accepted")
                       }}</small>
                       <b>{{ referral.accepted }}</b>
-                    </v-sheet>
                   </v-col>
                   <v-col :title="$t('global.commons.updated_at')" cols="4">
-                    <v-sheet class="pa-2" color="#fafafa">
                       <b>{{ getFromNowString(referral.updated_at) }}</b
                       ><br />
                       <small>{{
                         getLocalTimeString(referral.updated_at)
                       }}</small>
-                    </v-sheet>
                   </v-col>
                 </v-row>
 
