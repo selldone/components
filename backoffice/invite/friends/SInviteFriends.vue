@@ -29,13 +29,16 @@
       :fullscreen="$vuetify.display.smAndDown"
       content-class="rounded-t-xl"
       max-width="860"
-
       width="99vw"
     >
       <v-card class="rounded-t-xl">
-
-        <v-img :src="require('./assets/selldone-invite-landscape.webp')" width="100%" max-height="380" cover>
-
+        <v-img
+          :src="require('./assets/selldone-invite-landscape.webp')"
+          width="100%"
+          max-height="380"
+          cover
+          :aspect-ratio="1792/1024"
+        >
           <v-card-title class="d-flex align-center">
             <v-avatar class="avatar-gradient -thin me-2" size="36">
               <v-img :src="getUserAvatar(USER_ID(), 'big')"></v-img>
@@ -44,21 +47,18 @@
 
             <v-spacer></v-spacer>
             <v-btn
-                :to="{ name: 'OPageMonetizeReferral' }"
-                class="tnt"
-                color="#fff"
-                rounded="xl"
-                size="x-large"
-                variant="outlined"
-                style="backdrop-filter: blur(7px)"
-                prepend-icon="trending_up"
-            >My Affiliate Panel
+              :to="{ name: 'OPageMonetizeReferral' }"
+              class="tnt"
+              color="#fff"
+              rounded="xl"
+              size="x-large"
+              variant="outlined"
+              style="backdrop-filter: blur(7px)"
+              prepend-icon="trending_up"
+              >My Affiliate Panel
             </v-btn>
           </v-card-title>
-
-
         </v-img>
-
 
         <v-card-text v-scroll.self="onScroll" class="thin-scroll">
           <h2 class="text-h4 my-3 text-start">
@@ -208,23 +208,21 @@
                 <!-- Report -->
                 <v-row>
                   <v-col cols="4">
-                      <small class="d-block">{{
-                        $t("selldone_referral_page.registered")
-                      }}</small>
-                      <b>{{ referral.registered }}</b>
+                    <small class="d-block">{{
+                      $t("selldone_referral_page.registered")
+                    }}</small>
+                    <b>{{ referral.registered }}</b>
                   </v-col>
                   <v-col cols="4">
-                      <small class="d-block">{{
-                        $t("selldone_referral_page.accepted")
-                      }}</small>
-                      <b>{{ referral.accepted }}</b>
+                    <small class="d-block">{{
+                      $t("selldone_referral_page.accepted")
+                    }}</small>
+                    <b>{{ referral.accepted }}</b>
                   </v-col>
                   <v-col :title="$t('global.commons.updated_at')" cols="4">
-                      <b>{{ getFromNowString(referral.updated_at) }}</b
-                      ><br />
-                      <small>{{
-                        getLocalTimeString(referral.updated_at)
-                      }}</small>
+                    <b>{{ getFromNowString(referral.updated_at) }}</b
+                    ><br />
+                    <small>{{ getLocalTimeString(referral.updated_at) }}</small>
                   </v-col>
                 </v-row>
 
