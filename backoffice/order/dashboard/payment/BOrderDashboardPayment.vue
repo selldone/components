@@ -185,7 +185,7 @@
           <!-- ⬬⬬⬬⬬⬬⬬⬬ Buyer > 🥵 User ⬬⬬⬬⬬⬬⬬⬬ -->
 
           <div v-if="buyer" class="py-2 d-flex align-items-center">
-            <small class="font-weight-bold me-3 ms-1 flex-grow-0"
+            <small class="font-weight-bold me-3 ms-1 flex-grow-0" title="This is the user's profile on Selldone. It remains consistent across all stores on Selldone."
               >{{ $t("global.commons.buyer") }} :</small
             >
             <component
@@ -210,11 +210,11 @@
               <p class="m-0 font-weight-bold">
                 <span class="highlight-yellow">{{ buyer.name }}</span>
               </p>
-              <p class="m-0 text-subtitle-2">
+              <p v-if="buyer.email" class="m-0 text-subtitle-2">
                 <v-icon class="me-1" size="small">email</v-icon>
                 <span v-copy class="p-0">{{ buyer.email }}</span>
               </p>
-              <p class="m-0 text-subtitle-2">
+              <p v-if="buyer.phone" class="m-0 text-subtitle-2">
                 <v-icon class="me-1" size="small">phone</v-icon>
                 <span v-copy class="p-0">{{ buyer.phone }}</span>
               </p>
@@ -245,7 +245,7 @@
           <!-- ⬬⬬⬬⬬⬬⬬⬬ Buyer > 🧜 Customer ⬬⬬⬬⬬⬬⬬⬬ -->
 
           <div class="py-2 d-flex align-items-center">
-            <small class="font-weight-bold me-3 ms-1 flex-grow-0"
+            <small class="font-weight-bold me-3 ms-1 flex-grow-0"  title="This is the user's profile in your shop, and you can edit it."
               >{{ $t("global.commons.customer") }} :</small
             >
             <v-btn
@@ -288,11 +288,11 @@
                 >
               </v-row>
 
-              <p class="m-0 text-subtitle-2">
+              <p v-if="customer.email" class="m-0 text-subtitle-2">
                 <v-icon class="me-1" size="small">email</v-icon>
                 <span v-copy class="p-0">{{ customer.email }}</span>
               </p>
-              <p class="m-0 text-subtitle-2">
+              <p v-if="customer.phone" class="m-0 text-subtitle-2">
                 <v-icon class="me-1" size="small">phone</v-icon>
                 <span v-copy class="p-0">{{ customer.phone }}</span>
               </p>
