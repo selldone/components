@@ -39,7 +39,6 @@
             style="user-select: text; min-height: 84px"
             @edit="processEditOperationTitle"
             v-text="title"
-            @blur="$emit('update:title',purifyTitle())"
           />
         </div>
 
@@ -53,7 +52,6 @@
             style="user-select: text; min-height: 284px"
             @edit="processEditOperationBody"
             v-html="rendered_body"
-            @blur="$emit('update:body',purifyBody())"
           />
         </div>
 

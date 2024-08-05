@@ -14,7 +14,21 @@
 
 <template>
   <div>
-    <div class="widget-box -large mb-5">
+    <div v-if="languages?.length>1" class="widget-box -large mb-5">
+      <s-widget-header
+        title="Multi Language"
+        icon="language"
+        add-icon="translate"
+        @click:add="addNew"
+        add-caption="Add new article"
+        :disabled="!free_languages || !free_languages.length || !editable"
+        disabled-reason="No more language!"
+      >
+      </s-widget-header>
+      <v-list-subheader>
+        You can set different content for the logistics profile in various
+        languages.
+      </v-list-subheader>
       <v-row align="center" class="px-3" no-gutters>
         <v-btn
           v-for="item in articles"
@@ -32,38 +46,38 @@
           </v-tooltip>
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn
-          v-if="free_languages && free_languages.length > 0 && editable"
-          color="primary"
-          icon
-          title="Add new article"
-          @click="addNew"
-        >
-          <v-icon>add_circle</v-icon>
-        </v-btn>
       </v-row>
     </div>
 
     <v-expand-transition>
       <div v-if="article">
         <div class="widget-box -large mb-5">
+
           <u-loading-progress v-if="busy_delete" color="red">
           </u-loading-progress>
-          <v-row v-if="editable" no-gutters>
-            <u-language-input
-              v-if="languages && languages.length > 1"
-              v-model="article.lang"
-              :available-languages="languages"
-              label="Current article language"
-              prepend-inner-icon="translate"
-              variant="plain"
-            ></u-language-input>
 
-            <v-spacer></v-spacer>
 
-            <u-smart-menu
-              v-if="article.id /*Exclude new articles*/"
-              :items="[
+
+          <s-widget-header
+              title="Content"
+              icon="article"
+          >
+
+            <template v-slot:actions v-if="editable">
+              <u-language-input
+                  v-if="languages && languages.length > 1"
+                  v-model="article.lang"
+                  :available-languages="languages"
+                  label="Current article language"
+                  prepend-inner-icon="translate"
+                  variant="plain"
+                  hide-details
+              ></u-language-input>
+
+
+              <u-smart-menu
+                  v-if="article.id /*Exclude new articles*/"
+                  :items="[
                 ...auto_translation_items,
                 {
                   title: 'Delete Article',
@@ -72,38 +86,49 @@
                   disabled: this.articles.length <= 1,
                 },
               ]"
-            >
-              <v-tooltip activator="parent">
-                Auto translate / Delete article
-              </v-tooltip>
-            </u-smart-menu>
-          </v-row>
+              >
+                <v-tooltip activator="parent">
+                  Auto translate / Delete article
+                </v-tooltip>
+              </u-smart-menu>
+            </template>
+
+          </s-widget-header>
+          <v-list-subheader>
+            You can set different content for the logistics profile in various
+            languages.
+          </v-list-subheader>
+
+
+
+
 
           <div class="master-article-container">
             <s-article-editor
               ref="editor"
-              :body="article.body"
-              :title="article.title"
+              v-model:body="article.body"
+              v-model:title="article.title"
               :upload-url="
                 window.ARTICLE_API.UPLOAD_ARTICLE_BLOG_IMAGE(shop.id)
               "
               class="article min-height-60vh"
               edit
+              @change="changed = true"
             ></s-article-editor>
           </div>
 
-          <div v-if="editable" class="widget-buttons">
+          <s-widget-buttons v-if="editable && changed" auto-fixed-position>
             <v-btn
               :loading="busy_save"
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="saveArticle"
             >
               <v-icon start>save</v-icon>
               {{ $t("global.actions.save") }}
             </v-btn>
-          </div>
+          </s-widget-buttons>
         </div>
       </div>
     </v-expand-transition>
@@ -128,10 +153,14 @@ import BAiAutoTranslate from "../../../ai/auto-translate/BAiAutoTranslate.vue";
 import SArticleEditor from "../../../../article/SArticleEditor.vue";
 import ULanguageInput from "../../../../ui/language/input/ULanguageInput.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
+import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
+import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 
 export default defineComponent({
   name: "BLogisticProfileEditor",
   components: {
+    SWidgetHeader,
+    SWidgetButtons,
     ULanguageInput,
     SArticleEditor,
     BAiAutoTranslate,
@@ -149,6 +178,8 @@ export default defineComponent({
     article: null,
     busy_save: false,
     busy_delete: false,
+
+    changed: false,
 
     //------------ Auto Translate ----------
     busy_translate: false,
@@ -287,6 +318,7 @@ export default defineComponent({
           if (!data.error) {
             this.AddOrUpdateItemByID(this.articles, data.article);
             this.article = data.article;
+            this.changed = false;
 
             this.showSuccessAlert(null, "Article has been saved successfully.");
           } else {

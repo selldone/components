@@ -731,8 +731,8 @@
         <s-article-editor
           v-if="article"
           ref="editorContainer"
-          :body="article.body"
-          :title="article.title"
+          v-model:body="article.body"
+          v-model:title="article.title"
           :edit="in_edit_mode"
           :enable-title="showTitle"
           :has-table-of-content="hasTableOfContent"

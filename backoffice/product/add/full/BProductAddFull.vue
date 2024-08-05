@@ -773,15 +773,19 @@ export default {
     step(step) {
       this.applyDeepChangesToProduct();
 
-      if (!this.product) {
-        // Goto to:
-        // We have no route change => Move to up by code here!
-        this.$nextTick(() => {
-          try {
-            ScrollHelper.scrollToElement("#radial_bar", 0, "smooth");
-          } catch (e) {}
-        });
 
+      this.$nextTick(() => {
+        try {
+          if (this.product?.id) {
+            ScrollHelper.scrollToElement("#radial_bar", 0, "smooth");
+          } else {
+            ScrollHelper.scrollToTop(0, "smooth");
+          }
+        } catch (e) {}
+      });
+
+
+      if (!this.product) {
         return; // Only on product edit mode we have hash path!
       }
       const tab_hash =
@@ -1221,8 +1225,8 @@ not need!
 
         this.step =
           /* this.hasStep__Inputs
-                                  ? TAB_INPUTS
-                                  :*/
+                                    ? TAB_INPUTS
+                                    :*/
           this.hasStep__Outputs
             ? TAB_OUTPUTS
             : this.hasStep__physicalExtra
