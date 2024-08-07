@@ -15,7 +15,7 @@
 <template>
   <v-btn
     :small="small"
-    :text="text"
+    :variant="variant"
     :to="
       vewOnly
         ? undefined
@@ -25,10 +25,8 @@
           }
     "
     class="shadow-hover"
-    variant="flat"
-    :target="openNewTab?'_blank':undefined"
-    :append-icon="openNewTab?'open_in_new':undefined"
-
+    :target="openNewTab ? '_blank' : undefined"
+    :append-icon="openNewTab ? 'open_in_new' : undefined"
   >
     <img
       :src="require('../../../../assets/icons/hyper.svg')"
@@ -50,16 +48,14 @@ export default {
       type: Boolean,
       default: false,
     },
-    text: {
-      type: Boolean,
-      default: false,
+    variant: {
+      default: "flat",
     },
     vewOnly: {
       type: Boolean,
       default: false,
     },
-    openNewTab:Boolean,
-
+    openNewTab: Boolean,
   },
 };
 </script>

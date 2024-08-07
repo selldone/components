@@ -21,7 +21,7 @@
     "
     :order="order"
     :small="small"
-    :text="text"
+    :variant="variant"
     :vew-only="vewOnly"
     :open-new-tab="openNewTab"
   >
@@ -30,7 +30,7 @@
     v-else-if="order && (orderType === 'pos' || order.type === 'POS')"
     :order="order"
     :small="small"
-    :text="text"
+    :variant="variant"
     :vew-only="vewOnly"
     :open-new-tab="openNewTab"
   >
@@ -39,19 +39,17 @@
     v-else-if="order && (orderType === 'bill' || order.type === 'BILL')"
     :order="order"
     :small="small"
-    :text="text"
+    :variant="variant"
     :vew-only="vewOnly"
     :open-new-tab="openNewTab"
   >
   </b-order-button-bill>
 
   <b-order-button-fulfillment
-    v-else-if="
-      order && (orderType === 'dropship-charge' || order.type === 'FUL')
-    "
+    v-else-if="order && (order.type === 'FUL' || order.type === 'fulfillment')"
     :order="order"
     :small="small"
-    :text="text"
+    :variant="variant"
     :vew-only="vewOnly"
     :open-new-tab="openNewTab"
   >
@@ -61,7 +59,7 @@
     v-else-if="order && (orderType === 'avocado' || order.type === 'AVO')"
     :order="order"
     :small="small"
-    :text="text"
+    :variant="variant"
     :vew-only="vewOnly"
     :open-new-tab="openNewTab"
   >
@@ -71,11 +69,25 @@
     v-else-if="order && (orderType === 'hyper' || order.type === 'HYP')"
     :order="order"
     :small="small"
-    :text="text"
+    :variant="variant"
     :vew-only="vewOnly"
     :open-new-tab="openNewTab"
   >
   </b-order-button-hyper>
+
+  <v-btn
+    v-else-if="order && orderType === 'dropship-charge'"
+    :to="vewOnly ? undefined : { name: 'BPageWholesalerShops' }"
+    :variant="variant"
+  >
+    <img
+      :src="require('../../../assets/icons/dropshipping.svg')"
+      class="me-2"
+      height="16"
+      width="16"
+    />
+    Dropshipping CH-{{ order.id }}
+  </v-btn>
 
   <small v-else class="text-uppercase">
     {{ orderType }}
@@ -110,10 +122,11 @@ export default {
       default: false,
     },
     openNewTab: Boolean,
-    text: {
-      type: Boolean,
-      default: false,
+
+    variant: {
+      default: "flat",
     },
+
     vewOnly: {
       type: Boolean,
       default: false,

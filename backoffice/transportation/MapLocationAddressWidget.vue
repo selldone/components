@@ -83,7 +83,7 @@
             v-if="order"
             :order="order"
             small
-            text
+            variant="text"
           ></b-order-button-basket>
         </p>
 
@@ -191,10 +191,11 @@
 import UMapGeoButton from "../../ui/map/geo-button/UMapGeoButton.vue";
 import BOrderButtonBasket from "../order/button/basket/BOrderButtonBasket.vue";
 import { Basket } from "@selldone/core-js";
+import BOrderButton from "@selldone/components-vue/backoffice/order/button/BOrderButton.vue";
 
 export default {
   name: "MapLocationAddressWidget",
-  components: { BOrderButtonBasket, UMapGeoButton },
+  components: { BOrderButton, BOrderButtonBasket, UMapGeoButton },
   props: {
     isOrigin: {
       required: false,

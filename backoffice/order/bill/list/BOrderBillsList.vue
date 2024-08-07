@@ -157,7 +157,7 @@
           v-if="item.issued"
           :order="item.issued"
           :order-type="item.issued.type"
-          text
+          variant="text"
         >
         </b-order-button>
         <small v-else>No issued cart.</small>

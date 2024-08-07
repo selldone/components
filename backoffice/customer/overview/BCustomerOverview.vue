@@ -157,9 +157,11 @@
             <v-icon class="me-1" color="#111">cake</v-icon>
             <b>{{ $t("global.commons.birthday") }}</b>
 
-            <h3 class="text-end">{{  getLocalDateString(customer.birthday) }}</h3>
+            <h3 class="text-end">
+              {{ getLocalDateString(customer.birthday) }}
+            </h3>
             <small class="d-block text-end">{{
-                getFromNowString(customer.birthday)
+              getFromNowString(customer.birthday)
             }}</small>
           </template>
 
@@ -395,7 +397,7 @@
                 :order="item"
                 :small="dense"
                 target="_blank"
-                text
+                variant="text"
               ></b-order-button-basket>
             </template>
 
@@ -460,7 +462,7 @@
                 :order="item"
                 :small="dense"
                 target="_blank"
-                text
+                variant="text"
               ></b-order-button-pos>
             </template>
 
@@ -542,7 +544,13 @@
   </v-container>
 
   <!-- ------------------------- Dialog Chips ------------------------------- -->
-  <v-bottom-sheet v-model="show_set_ships" max-width="98vw" width="640"  scrollable content-class="rounded-t-xl">
+  <v-bottom-sheet
+    v-model="show_set_ships"
+    max-width="98vw"
+    width="640"
+    scrollable
+    content-class="rounded-t-xl"
+  >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>
         <v-icon class="me-1">casino</v-icon>
@@ -576,7 +584,11 @@
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="show_set_ships = false" prepend-icon="close"
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="show_set_ships = false"
+            prepend-icon="close"
             >{{ $t("global.actions.close") }}
           </v-btn>
           <v-btn
@@ -595,7 +607,13 @@
   </v-bottom-sheet>
   <!-- ███████████████████████ Dialog > Club ███████████████████████ -->
 
-  <v-bottom-sheet v-model="show_set_club" max-width="98vw" width="640"  scrollable content-class="rounded-t-xl">
+  <v-bottom-sheet
+    v-model="show_set_club"
+    max-width="98vw"
+    width="640"
+    scrollable
+    content-class="rounded-t-xl"
+  >
     <v-card rounded="t-xl" class="text-start">
       <v-card-title>
         <v-icon class="me-1">diamond</v-icon>
@@ -659,10 +677,12 @@ import BCustomerSegmentDialog from "../../customer/segment/dialog/BCustomerSegme
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import { URLHelper } from "@selldone/core-js/helper/url/URLHelper";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import BOrderButton from "@selldone/components-vue/backoffice/order/button/BOrderButton.vue";
 
 export default {
   name: "BCustomerOverview",
   components: {
+    BOrderButton,
     UCurrencyIcon,
     USmartMenu,
     BCustomerSegmentDialog,

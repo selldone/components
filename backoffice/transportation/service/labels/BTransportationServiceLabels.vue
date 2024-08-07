@@ -96,7 +96,7 @@
             <b-order-button
               :order="item"
               class="font-weight-black"
-              text
+              variant="text"
             ></b-order-button>
 
             <div class="text-muted text-center">
