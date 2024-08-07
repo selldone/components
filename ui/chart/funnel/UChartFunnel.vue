@@ -43,7 +43,7 @@
         :height="height"
         :width="width"
         :class="{ 'ms-auto': direction === 'vertical' }"
-        class="t-all-400"
+        class="t-all-400 flip-rtl"
       >
         <defs>
           <linearGradient
@@ -88,7 +88,7 @@
               : {}
           "
         >
-          <div v-if="labelValueCurrency" class="--label-value px-1">
+          <div v-if="labelValueCurrency" class="--label-value px-1 single-line">
             <u-price
               :amount="value"
               :currency="labelValueCurrency"
@@ -572,6 +572,21 @@ export default {
       }
     }
 
+    .--segment-container{
+      &:hover{
+        &:before{
+          content: '';
+          position: absolute;
+          height: 4px;
+          background-color: #0b5384;
+          left: 2px;
+          right: 2px;
+          top: 0;
+          border-radius: 3px;
+        }
+      }
+    }
+
     .--label-value,
     .--label-title,
     .--label-percent-value {
@@ -656,6 +671,8 @@ export default {
         .u--hover-container {
           opacity: 1;
         }
+
+
       }
     }
   }

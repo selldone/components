@@ -69,9 +69,7 @@
       </v-col>
     </v-row>
 
-    <div
-      v-if="hasInsufficientData"
-    >
+    <div v-if="hasInsufficientData">
       <u-chart-funnel
         id="fun-finance"
         :animated="true"

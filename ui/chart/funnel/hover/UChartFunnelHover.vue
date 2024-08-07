@@ -14,9 +14,10 @@
 <template>
   <div
     v-if="
-      is2d &&
-      filtered_values.length &&
-      (!isPercentMode || filtered_values.length > 1)
+      (is2d &&
+        filtered_values.length &&
+        (!isPercentMode || filtered_values.length > 1)) ||
+      isCurrency
     "
     class="u--hover-container elevation-3"
     :class="{ 'pt-7': label && !vertical }"
@@ -28,12 +29,15 @@
     <ul class="u--hover-label">
       <li v-for="(subLabel, j) in filtered_subLabels" :key="j">
         <div v-if="isCurrency" class="d-flex flex-column py-1">
-          <u-currency-icon
-            :currency="GetCurrency(subLabel)"
-            class="mb-1 mx-auto"
-            flag
-            small
-          ></u-currency-icon>
+          <div class="mb-1 mx-auto d-flex align-center">
+            <u-currency-icon
+              :currency="GetCurrency(subLabel)"
+              class="me-1"
+              flag-only
+              small
+            ></u-currency-icon>
+            <b>{{ subLabel }}</b>
+          </div>
 
           <u-price
             :amount="filtered_values[j]"
