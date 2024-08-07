@@ -39,6 +39,17 @@
           {{ $t("admin_shop.dashboard.title") }}
         </router-link>
 
+        <!-- Live View 
+        <span class="mx-1">/</span>
+        <router-link
+            :class="{ 'text-black font-weight-black': dashboard_query=== 'live-view' }"
+            :to="{ query: { dashboard: 'live-view' }  }"
+            class="small link"
+        >
+          <v-icon class="mx-1" size="small">public</v-icon>
+          Live View
+        </router-link>-->
+
         <!-- Expert dashboard -->
         <template v-if="has_contracts">
           <span class="mx-1">/</span>
@@ -50,9 +61,7 @@
             :to="{ query: { dashboard: 'expert' } }"
             class="small link"
             >{{ $t("experts_common.contracts") }}
-            <v-badge :content="contracts.length" inline color="red">
-
-            </v-badge>
+            <v-badge :content="contracts.length" inline color="red"> </v-badge>
           </router-link>
         </template>
 
@@ -150,8 +159,11 @@
             density="compact"
           >
             <template v-slot:prepend>
-              <v-avatar start :image="getUserAvatar(online_staff.id)" class="avatar-gradient -thin ">
-
+              <v-avatar
+                start
+                :image="getUserAvatar(online_staff.id)"
+                class="avatar-gradient -thin"
+              >
               </v-avatar>
             </template>
             <template v-slot:title>
