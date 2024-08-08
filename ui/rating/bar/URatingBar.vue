@@ -49,7 +49,7 @@
       </v-avatar>
     </div>
 
-    <small class="ms-4" style="width: 20%">{{ rating_name }}</small>
+    <small class="ms-4 d-none d-sm-block" style="width: 20%">{{ rating_name }}</small>
   </v-row>
 </template>
 

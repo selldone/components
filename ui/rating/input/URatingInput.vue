@@ -15,21 +15,24 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="d-flex align-center">
     <small class="text-center" style="min-width: 74px">
-      <v-icon :color="ticksColor[value_clone - 1]"
+      <v-icon v-if="value_clone" :color="ticksColor[value_clone - 1]"
         >{{ tickIcons[value_clone - 1] }}
+      </v-icon>
+      <v-icon v-else>
+        question_mark
       </v-icon>
       <br />
       <span class="small">{{ ticksLabels[value_clone - 1] }}</span>
     </small>
 
-    <p class="m-0 small text-muted">{{ title }}:</p>
+    <p class="m-0 text-subtitle-2">{{ title }}</p>
     <v-spacer></v-spacer>
 
     <div style="width: 240px">
       <v-slider
         v-model="value_clone"
         :max="5"
-        :min="1"
+        :min="min"
         color="primary"
         hide-details
         rounded
@@ -52,6 +55,9 @@ export default {
   props: {
     modelValue: {},
     title: {},
+    min: {
+      default: 3,
+    },
   },
 
   data: () => ({

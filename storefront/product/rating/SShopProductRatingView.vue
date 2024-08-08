@@ -23,10 +23,9 @@
       variant="text"
       @click="edit_mode = !edit_mode"
     >
-      <v-icon size="small"
-        >{{ edit_mode ? "close" : "fa:fas fa-poll-h" }}
-      </v-icon>
+      <v-icon>{{ edit_mode ? "close" : "fa:fas fa-poll-h" }} </v-icon>
     </v-btn>
+
 
     <v-expand-transition>
       <div v-if="input_rating_mode" key="edit">
@@ -39,17 +38,30 @@
           v-model="user_rating[rating.id]"
           :title="rating.name"
           class="my-1"
+          :min="bought ? 1 : 3"
         />
 
         <div class="text-end">
           <v-btn
+              :disabled="!Object.values(user_rating).some((v) => !!v)"
             :loading="busy"
             color="primary"
-            rounded
+            rounded="lg"
+            stacked
+            min-width="160"
+            height="52"
             variant="elevated"
             @click="setMyRating"
           >
-            {{ $t("global.actions.submit") }}
+            <div>
+              {{ $t("global.actions.submit") }}
+            </div>
+            <div class="small tnt mt-1 fadeInUp">
+              <v-avatar class="avatar-gradient -thin -user me-1" size="18">
+                <v-img :src="getUserAvatar(USER().id)" />
+              </v-avatar>
+              {{ USER().name }}
+            </div>
           </v-btn>
         </div>
       </div>
@@ -81,6 +93,28 @@
         />
       </div>
     </v-expand-transition>
+
+    <div v-if="can_rate_without_bought" class="text-start pt-2">
+      <v-btn
+        color="primary"
+        rounded="lg"
+        stacked
+        min-width="160"
+        height="52"
+        @click="edit_mode = true"
+        variant="elevated"
+      >
+        <div>
+          {{ $t("global.actions.rate_now") }}
+        </div>
+        <div class="small tnt mt-1 fadeInUp">
+          <v-avatar class="avatar-gradient -thin -user me-1" size="18">
+            <v-img :src="getUserAvatar(USER().id)" />
+          </v-avatar>
+          {{ USER().name }}
+        </div>
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -119,11 +153,21 @@ export default {
   }),
 
   computed: {
+    can_rate_without_bought() {
+      return this.USER() && !this.bought && !this.edit_mode;
+    },
+
+    bought() {
+      // Previously bought by user or not!
+      return !!this.product.bought;
+    },
     input_rating_mode() {
       return (
         !this.viewOnly &&
         this.product.my_ratings &&
-        (this.product.my_ratings.length === 0 || this.edit_mode)
+        ((this.product.my_ratings.length === 0 &&
+          this.bought) /*Just default show input for buyers*/ ||
+          this.edit_mode)
       );
     },
     show_edit_btn() {
@@ -150,7 +194,7 @@ export default {
         let val = this.product.my_ratings.find(
           (item) => item.rate_id === rating.id,
         );
-        this.user_rating[rating.id] = val ? val.value : 3;
+        this.user_rating[rating.id] = val ? val.value : null;
       });
     }
   },

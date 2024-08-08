@@ -113,6 +113,7 @@
             :comment="comment"
             :loading="busy_update === comment.id"
             :rates="getRates(comment.user_id)"
+            :isBuyer="isBuyer(comment.user_id)"
             :style="{ 'animation-delay': (index % 10) * 100 + 'ms' }"
             @comment-updated="updateComment($event)"
             @comment-deleted="openDeleteAlert($event)"
@@ -133,6 +134,7 @@
             :is-admin="isAdmin"
             :loading="busy_update === comment.id"
             :rates="getRates(comment.user_id)"
+            :isBuyer="isBuyer(comment.user_id)"
             :style="{ 'animation-delay': (index % 10) * 100 + 'ms' }"
             @comment-updated="updateComment($event)"
             @comment-deleted="openDeleteAlert($event)"
@@ -211,6 +213,7 @@ export default {
       comments_count: 0,
       comments: [],
       user_rates: [],
+      buyer_user_ids: [],
 
       error: false,
       error_message: "",
@@ -269,6 +272,12 @@ export default {
       });
     },
 
+    isBuyer(user_id){
+      if (!this.forProduct) return false;
+
+      return this.buyer_user_ids?.includes(user_id) // At least we find one rate by
+    },
+
     refreshPage() {
       // 🞇 Reset to default
       this.resetToDefault();
@@ -297,6 +306,7 @@ export default {
           if (!data.error) {
             this.comments = this.comments.concat(data.comments);
             this.user_rates = this.user_rates.concat(data.user_rates);
+            this.buyer_user_ids =this.buyer_user_ids.concat(data.buyer_user_ids)  ;
 
             this.offset = data.offset;
             this.more = data.more;

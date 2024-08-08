@@ -15,43 +15,16 @@
 <template>
   <div>
     <div class="comment-item pa-5">
-      <v-row align="center" no-gutters>
-        <v-btn
-          v-if="canDelete"
-          :title="$t('global.commons.delete')"
-          color="red"
-          icon
-          variant="text"
-          @click="deleteComment"
+      <v-row align="center" no-gutters class="mb-2">
+        <v-avatar
+          class="me-2 avatar-gradient -thin -user hover-scale force-top"
+          color="#fff"
+          size="38"
         >
-          <v-icon>close</v-icon>
-        </v-btn>
+          <v-img :src="getUserAvatar(comment.user.id)" />
+        </v-avatar>
 
-        <v-btn
-          v-if="editable"
-          :title="$t('global.commons.edit')"
-          icon
-          variant="text"
-          @click="state = state === 'editing' ? 'default' : 'editing'"
-        >
-          <v-icon>edit</v-icon>
-        </v-btn>
-
-        <v-chip
-          v-if="comment.deleted_at"
-          :title="'Deleted: ' + getLocalTimeString(comment.deleted_at)"
-          class="mx-2"
-          color="red"
-          label
-          size="small"
-        >
-          <v-icon size="small" start>delete</v-icon>
-          {{ getFromNowString(comment.deleted_at) }}
-        </v-chip>
-
-        <v-spacer></v-spacer>
-
-        <div class="comment-author-info">
+        <div class="comment-author-info text-start">
           <b>{{ comment.user.name }}</b>
 
           <time
@@ -72,13 +45,40 @@
           </transition>
         </div>
 
-        <v-avatar
-          class="m-2 avatar-gradient -thin -user hover-scale force-top"
-          color="#fff"
-          size="38"
+        <v-spacer></v-spacer>
+
+        <v-chip
+          v-if="comment.deleted_at"
+          :title="'Deleted: ' + getLocalTimeString(comment.deleted_at)"
+          class="mx-2"
+          color="red"
+          label
+          size="small"
         >
-          <v-img :src="getUserAvatar(comment.user.id)" />
-        </v-avatar>
+          <v-icon size="small" start>delete</v-icon>
+          {{ getFromNowString(comment.deleted_at) }}
+        </v-chip>
+
+        <v-btn
+          v-if="canDelete"
+          :title="$t('global.commons.delete')"
+          color="red"
+          icon
+          variant="text"
+          @click="deleteComment"
+        >
+          <v-icon>close</v-icon>
+        </v-btn>
+
+        <v-btn
+          v-if="editable"
+          :title="$t('global.commons.edit')"
+          icon
+          variant="text"
+          @click="state = state === 'editing' ? 'default' : 'editing'"
+        >
+          <v-icon>edit</v-icon>
+        </v-btn>
       </v-row>
 
       <div class="position-relative">
@@ -96,20 +96,42 @@
                   />
                 </v-col>
 
-                <v-col cols="12" sm="6">
-                  <v-rating
-                    :model-value="calculateRate"
-                    :readonly="true"
-                    active-color="yellow-darken-3"
-                    class="text-center"
-                    color="grey-darken-1"
-                    half-increments
+                <v-col
+                  cols="12"
+                  sm="6"
+                  class="d-flex align-center justify-end overflow-hidden"
+                >
+                  <v-chip
+                    v-if="isBuyer"
+                    color="#000"
                     size="small"
-                  />
-                  <v-chip color="success" size="small">
-                    <v-icon size="x-small" start> shopping_basket</v-icon>
+                    variant="flat"
+                  >
+                    <v-icon start> shopping_basket</v-icon>
                     {{ $t("global.comments.product_buyer") }}
+
+                    <v-rating
+                      :model-value="calculateRate"
+                      :readonly="true"
+                      active-color="yellow-darken-3"
+                      class="ms-1"
+                      color="#888"
+                      half-increments
+                      size="20"
+                      density="compact"
+                    />
                   </v-chip>
+                  <span v-else>
+                    <v-rating
+                      :model-value="calculateRate"
+                      :readonly="true"
+                      active-color="yellow-darken-3"
+                      color="#888"
+                      half-increments
+                      size="20"
+                      density="compact"
+                    />
+                  </span>
                 </v-col>
               </v-row>
 
@@ -264,6 +286,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    isBuyer: Boolean,
   },
   data: function () {
     return {
