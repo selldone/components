@@ -177,7 +177,44 @@
               :top="!isMobile"
               @select:address="(it) => onSelectAddress(it)"
               attach
-            ></u-map-address-input>
+              :messages="full_address"
+              class="mb-3"
+              @click:clear="center_clicked = false /*Can select again!*/"
+            >
+              <template v-slot:append-inner>
+                <v-btn
+                  v-if="availableCountries?.length > 1"
+                  min-width="24"
+                  min-height="36"
+                  variant="text"
+                  size="small"
+                >
+                  <flag
+                    :iso="country"
+                    :squared="false"
+                    style="font-size: 20px"
+                  />
+
+                  <v-menu activator="parent" max-height="460">
+                    <v-list
+                      v-model="country"
+                      class="text-start"
+                      density="compact"
+                    >
+                      <v-list-item
+                        v-for="it in availableCountries"
+                        :title="getCountryName(it)"
+                        :value="it"
+                      >
+                        <template v-slot:prepend>
+                          <flag :iso="it" :squared="false" class="me-2" />
+                        </template>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-btn>
+              </template>
+            </u-map-address-input>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Actions ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -228,7 +265,7 @@
                   rows="2"
                   variant="underlined"
                 />
-                <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ No Map Mode > Address input (Auto complete) ▃▃▃▃▃▃▃▃▃▃▃▃ -->
+                <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ No Map Mode > Address input (No Auto complete) ▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
                 <u-map-address-input
                   v-else
@@ -239,6 +276,7 @@
                   bottom
                   clearable
                   @select:address="(it) => onSelectAddress(it)"
+                  :messages="full_address"
                 ></u-map-address-input>
               </v-col>
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ Building No ▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -445,7 +483,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { createApp, h } from "vue";
 import UMapViewPin from "../../../ui/map/view/market/UMapViewPin.vue";
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
@@ -459,6 +497,7 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { installGlobalComponents } from "../../../components-mandetory";
 import UMapViewAddressBook from "@selldone/components-vue/ui/map/view/address-book/UMapViewAddressBook.vue";
+import { MapHelper } from "@selldone/core-js";
 
 export default {
   name: "UMapView",
@@ -644,7 +683,7 @@ export default {
       loading_address: false,
 
       // User location
-     // user_location: null,
+      // user_location: null,
 
       // Address Book
       selected_address_from_list: null,
@@ -675,6 +714,7 @@ export default {
       isFocus: false,
     };
   },
+
   watch: {
     modelValue(val) {
       if (val) this.center_clicked = false;
@@ -727,22 +767,36 @@ export default {
 
       this.addCurrentToDestinationList(this.last_selected_position);
     },
-/*
-    selected_country_detail() {
-      if (!this.location && this.selected_country_detail.center) {
-        console.log(
-          "Auto move to the country location...",
-          this.selected_country_detail,
-        );
-        this.centerUpdated({
-          lat: this.selected_country_detail.center.lat,
-          lng: this.selected_country_detail.center.lng,
-        });
-      }
-    },*/
+    /*
+        selected_country_detail() {
+          if (!this.location && this.selected_country_detail.center) {
+            console.log(
+              "Auto move to the country location...",
+              this.selected_country_detail,
+            );
+            this.centerUpdated({
+              lat: this.selected_country_detail.center.lat,
+              lng: this.selected_country_detail.center.lng,
+            });
+          }
+        },*/
   },
 
   computed: {
+    full_address() {
+      return MapHelper.GenerateFullAddressFromMapInfo({
+        address: this.address,
+        city: this.city,
+        state: this.state,
+        country: this.country,
+        postal: this.postal,
+        phone: this.phone_number,
+        no: this.details_number,
+        unit: this.details_unit,
+        name: this.details_full_name,
+      });
+    },
+
     //▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Validators ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂
 
     validPostalCode() {
@@ -805,7 +859,7 @@ export default {
   },
 
   mounted() {
-    if (!this.noMap){
+    if (!this.noMap) {
       setTimeout(() => {
         this.$nextTick(() => {
           //   this.$refs.myMap.mapObject.ANY_LEAFLET_MAP_METHOD();
@@ -813,7 +867,7 @@ export default {
           this.map_box = new Mapbox.Map({
             container: "map_box" + this.map_id,
             style: SetupService.MapStyle(),
-            center: [this.center.lng, this.center.lat],
+            center: this.center?[this.center.lng, this.center.lat]:null,
             zoom: this.zoom,
           });
 
@@ -849,16 +903,13 @@ export default {
           });
 
           // Go to my location:
-        /*  if(!this.last_selected_position){
-            console.log("Go to my location!")
-            this.goToMyLocation()
-          }*/
-
-
+          /*  if(!this.last_selected_position){
+              console.log("Go to my location!")
+              this.goToMyLocation()
+            }*/
         });
       }, this.delayLoad);
     }
-
   },
 
   created() {
@@ -999,7 +1050,11 @@ export default {
           return;
         }
 
-        console.log("Get current location", location.coords.latitude, location.coords.longitude);
+        console.log(
+          "Get current location",
+          location.coords.latitude,
+          location.coords.longitude,
+        );
 
         this.$emit("update:center", {
           lat: location.coords.latitude,
@@ -1046,6 +1101,8 @@ export default {
     onSelectAddress(item) {
       //  console.log("onSelectAddress", item);
       if (item.geometry && item.geometry.type === "Point") {
+        this.center_clicked = false; /*Can select again!*/
+
         const location_geo = {
           lat: item.geometry.coordinates[1],
           lng: item.geometry.coordinates[0],
@@ -1072,7 +1129,7 @@ export default {
       if (!this.modelValue) return;
 
       //console.log("assignDataFromValue  old:" + this.last_selected_position);
-     // this.location = this.modelValue.location;
+      // this.location = this.modelValue.location;
       this.last_selected_position = this.modelValue.location;
 
       this.country = this.modelValue.country

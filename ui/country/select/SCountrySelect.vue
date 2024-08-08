@@ -71,9 +71,9 @@
     </template>
 
     <template v-slot:chip="{ item, props }">
-      <component v-bind="props" :is="chips ? 'v-chip' : 'span'" class="m-1">
-        <flag :iso="item.raw.alpha2" :squared="false" />
-        <span v-if="!noCountryName" class="ps-2">{{
+      <component v-bind="props" :is="chips ? 'v-chip' : 'span'" class="m-1 d-inline-block" :class="{'single-line':!flagOnly && !noCountryName}">
+        <flag :iso="item.raw.alpha2" :squared="false" style="min-width: 24px" />
+        <span v-if="!flagOnly && !noCountryName" class="ps-2">{{
           getCountryName(item.raw.alpha2)
         }}</span>
       </component>
@@ -152,6 +152,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    flagOnly:Boolean,
 
     itemValue: {
       default: "code",

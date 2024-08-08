@@ -37,12 +37,25 @@
           if (!val) auto_complete_address = true;
         }
       "
-      @click:clear="auto_complete_address = true"
+      @click:clear="
+        () => {
+          auto_complete_address = true;
+          $emit('click:clear');
+        }
+      "
       @update:focused="setFocused"
       @keydown.enter.stop="auto_complete_address = false"
+      :messages="messages ? messages : undefined"
     >
       <template v-slot:prepend-inner>
         <v-icon :color="prependIconColor"> {{ prependIcon }}</v-icon>
+      </template>
+
+      <template v-slot:append-inner>
+        <slot name="append-inner"></slot>
+      </template>
+      <template v-slot:append>
+        <slot name="append"></slot>
       </template>
     </v-textarea>
 
@@ -160,12 +173,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import _ from "lodash-es";
+import SCountrySelect from "@selldone/components-vue/ui/country/select/SCountrySelect.vue";
 
 export default {
   name: "UMapAddressInput",
-  emits: ["update:modelValue", "select:address", "update:isFocus"],
+  components: {SCountrySelect},
+  emits: [
+    "update:modelValue",
+    "select:address",
+    "update:isFocus",
+    "click:clear",
+  ],
   props: {
     modelValue: {},
 
@@ -219,6 +239,9 @@ export default {
       default: false,
     },
     attach: Boolean,
+
+    messages: {},
+    country:{},
   },
 
   data() {
