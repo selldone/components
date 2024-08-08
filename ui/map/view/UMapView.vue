@@ -867,7 +867,7 @@ export default {
           this.map_box = new Mapbox.Map({
             container: "map_box" + this.map_id,
             style: SetupService.MapStyle(),
-            center: this.center?[this.center.lng, this.center.lat]:null,
+            center: this.center?[this.center.lng, this.center.lat]:[0,0],
             zoom: this.zoom,
           });
 
