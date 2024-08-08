@@ -175,11 +175,11 @@
 
 <script lang="ts">
 import _ from "lodash-es";
-import SCountrySelect from "@selldone/components-vue/ui/country/select/SCountrySelect.vue";
 
 export default {
   name: "UMapAddressInput",
-  components: {SCountrySelect},
+  components: {},
+
   emits: [
     "update:modelValue",
     "select:address",
@@ -188,6 +188,7 @@ export default {
   ],
   props: {
     modelValue: {},
+
 
     viewOnly: {
       type: Boolean,
@@ -281,6 +282,7 @@ export default {
             lat: this.center ? this.center.lat : null,
             lon: this.center ? this.center.lng : null,
             local: this.getCurrentLanguage().locale, // For Auto select service!
+            countries:this.getShop()?.countries?.join(',')
           },
         })
         .then(({ data }) => {
