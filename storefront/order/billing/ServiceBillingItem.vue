@@ -35,7 +35,7 @@
           </v-chip>
 
           <v-btn
-              v-if="!viewOnlyProgress/*Admin Panel Only!*/"
+            v-if="!viewOnlyProgress /*Admin Panel Only!*/"
             size="x-small"
             variant="elevated"
             class="ms-2 tnt"
