@@ -85,9 +85,8 @@
           >
         </div>
       </div>
-
       <u-date-range-picker
-        v-if="preferences.dates"
+        v-if="Array.isArray(preferences.dates)"
         v-model:end="preferences.dates[1]"
         v-model:start="preferences.dates[0]"
         :allowed-dates="isAllowed"
@@ -116,6 +115,7 @@ import UDateRangePicker from "../../../../ui/date/range-picker/UDateRangePicker.
 export default {
   name: "SProductServiceForm",
   components: { UDateRangePicker, UTimeWeekPicker },
+  emits: ["update:preferences"],
   props: {
     product: {
       require: true,
@@ -193,6 +193,9 @@ export default {
     preferences() {
       // Emit update preferences used in pre add to basket set preferences in the ProductInfo page.
       this.$emit("update:preferences", this.preferences);
+      if (this.has_booking && !Array.isArray(this.preferences.dates)) {
+        this.preferences.dates = [];
+      }
     },
   },
 

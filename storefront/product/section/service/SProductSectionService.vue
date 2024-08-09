@@ -33,6 +33,7 @@ export default {
   components: {
     SProductServiceForm,
   },
+  emits: ["update:preferences"],
   props: {
     shop: {
       required: true,
