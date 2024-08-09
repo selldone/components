@@ -62,7 +62,7 @@
             class="me-2"
             title="Pricing of this item by seller."
           ></u-price>
-          <v-chip v-else class="me-2" color="red" variant="elevated"
+          <v-chip v-else class="me-2" color="#FFA000" variant="elevated" size="small" prepend-icon="hourglass_top"
             >Not pricing yet!
           </v-chip>
 
