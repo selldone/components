@@ -87,7 +87,7 @@
       </div>
 
       <u-date-range-picker
-        v-if="preferences.dates?.length > 1"
+        v-if="preferences.dates"
         v-model:end="preferences.dates[1]"
         v-model:start="preferences.dates[0]"
         :allowed-dates="isAllowed"
