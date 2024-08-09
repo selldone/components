@@ -17,6 +17,7 @@
     v-bind="$attrs"
     :key="login.code"
     :class="{ disabled: !login.available }"
+    :subtitle="oauth?.callback"
   >
     <template v-slot:prepend>
       <v-avatar rounded size="24">
@@ -25,7 +26,7 @@
       </v-avatar>
     </template>
 
-    <v-list-item-title
+    <template v-slot:title
       >{{ login.title }}
       <v-chip
         v-if="login.premium"
@@ -61,7 +62,7 @@
       >
         Custom Token
       </v-chip>
-    </v-list-item-title>
+    </template>
     <v-list-item-subtitle v-if="login.subtitle" :title="login.subtitle">
       {{ login.subtitle }}
     </v-list-item-subtitle>
@@ -73,7 +74,7 @@
     <template v-slot:append>
       <v-btn
         v-if="login.customizable"
-        class="ms-1"
+        class="ms-2"
         icon
         variant="text"
         @click="dialog = true"
@@ -142,8 +143,20 @@
             provider.
           </v-list-subheader>
 
+          <v-alert type="warning" v-if="has_selldone_in_url" class="mb-3">
+            Your main domain contains 'selldone'. You can't use custom OAuth
+            client. Please add your custom domain to use this feature.
+            <v-btn
+              :to="{ name: 'BPageShopSettingDomain' }"
+              class="mt-2"
+              prepend-icon="dns"
+              >Manage Domains</v-btn
+            >
+          </v-alert>
+
           <u-smart-switch
             v-model="enable"
+            :disabled="has_selldone_in_url"
             true-title="Custom OAuth Client"
             false-title="Selldone OAuth Client"
             true-description="Use your own OAuth2 client token."
@@ -157,6 +170,7 @@
             <div v-if="enable">
               <v-text-field
                 v-model="client_id"
+                :disabled="has_selldone_in_url"
                 label="Client ID"
                 variant="underlined"
                 class="mt-5"
@@ -165,6 +179,7 @@
               ></v-text-field>
               <v-text-field
                 v-model="client_secret"
+                :disabled="has_selldone_in_url"
                 label="Client Secret"
                 variant="underlined"
                 persistent-placeholder
@@ -173,9 +188,18 @@
 
               <u-text-copy-box
                 :value="callback_url"
+                :disabled="has_selldone_in_url"
                 small-width-mode
                 message="Redirect URL"
               ></u-text-copy-box>
+
+              <v-alert v-if="callback_url !== oauth?.callback" type="warning">
+                The new callback URL based on your main domain is not the same
+                as the previous one. Please click save to update the callback
+                URL.
+                <div><b>Old: </b> {{ oauth?.callback }}</div>
+                <div><b>New: </b> {{ callback_url }}</div>
+              </v-alert>
             </div>
           </v-expand-transition>
         </div>
@@ -210,8 +234,6 @@ import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
 
-import { SetupService } from "@selldone/core-js";
-
 export default {
   name: "BOptionsLoginMethodRow",
   components: { UTextCopyBox, ULoadingProgress, USmartSwitch, SWidgetHeader },
@@ -231,6 +253,7 @@ export default {
     busy_login: null,
     dialog: false,
 
+    oauth: null,
     enable: false,
     client_id: null,
     client_secret: null,
@@ -246,7 +269,11 @@ export default {
     },
 
     callback_url() {
-      return `${SetupService.MainServiceUrl()}/shops/${this.shop.id}/login/${this.login.code}/callback`;
+      return `${this.getShopMainUrl(this.shop)}/login/${this.login.code}/callback`;
+    },
+
+    has_selldone_in_url() {
+      return this.getShopMainUrl(this.shop).includes("selldone");
     },
   },
   watch: {
@@ -298,6 +325,8 @@ export default {
             this.error_msg =
               "You don't have permission to access this resource.";
           } else {
+            this.oauth = data.oauth;
+
             this.client_id = data.oauth?.client_id;
             this.client_secret = data.oauth?.client_secret;
             this.enable = !!data.oauth?.enable;
@@ -329,6 +358,7 @@ export default {
           if (data.error) {
             this.showErrorAlert(null, data.error_msg);
           } else {
+            this.oauth = data.oauth;
             this.dialog = false;
           }
         })

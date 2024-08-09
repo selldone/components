@@ -104,13 +104,16 @@
     <div class="d-flex">
       <p class="mb-1 w-50">
         <small class="me-1">{{ $t("global.commons.cod") }}:</small>
-        <img
+        <v-chip
           v-if="transportation.cod"
-          class="ms-1"
-          height="24"
-          src="../../../assets/icons/pos.svg"
-          width="24"
-        />
+          prepend-icon="monetization_on"
+          append-icon="check_circle"
+          variant="elevated"
+          color="#1976D2"
+          size="small"
+        >
+          COD
+        </v-chip>
         <u-check v-else :model-value="transportation.cod" read-only></u-check>
       </p>
       <p class="mb-1 w-50">

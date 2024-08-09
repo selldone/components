@@ -569,6 +569,9 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 // ----------------------- Price fields ----------------------
 
 .strong-field {
+  .v-field__input{
+    --v-input-control-height: 54px;
+  }
   input {
     font-size: 22px;
     font-weight: 900;

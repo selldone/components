@@ -57,7 +57,7 @@
           color="grey-darken-2"
           title="Show today!"
           variant="text"
-          @click="calendar_value = ''"
+          @click="calendar_value = null"
         >
           <v-icon class="me-1" color="#1976D2" size="x-small">circle</v-icon>
           Today
@@ -82,7 +82,6 @@
           </v-btn>
         </v-btn-toggle>
       </v-toolbar>
-
       <v-calendar
         ref="calendar"
         v-model="calendar_value"
@@ -92,8 +91,15 @@
         class="s--calendar-table my-3"
         color="#1976D2"
         short-months
-        @change="onChangeDaysRange"
+        multiple
+        @update:modelValue="onChangeDaysRange"
+        :events="events"
+
+
       >
+
+
+
         <template
           v-slot:day-label="{ past, date, present, future, day, month }"
         >
@@ -144,9 +150,12 @@
 <script>
 import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
-
+import { VCalendar } from 'vuetify/labs/VCalendar'
 export default {
   name: "UCalendarView",
+  components: {
+    VCalendar,
+  },
   props: {
     canDisable: { type: Boolean, default: false },
     dayLevel: { type: Boolean, default: false },
@@ -170,7 +179,7 @@ export default {
 
     mode: "stack",
 
-    calendar_value: "",
+    calendar_value: null,
 
     current_range_month: null,
     current_range_start_date: null,
@@ -193,11 +202,11 @@ export default {
       // Add new event:
       if (this.newEvent && this.newEvent.start_at && this.newEvent.end_at)
         events.unshift({
-          name: this.newEvent.name,
+          title: this.newEvent.name,
           start: new Date(this.newEvent.start_at),
           end: new Date(this.newEvent.end_at),
           color: this.newEvent.color ? this.newEvent.color : "#2196f3",
-          timed: false,
+          allDay: true,
         });
 
       return events;

@@ -58,12 +58,23 @@
       </v-list-subheader>
       <u-loading-progress v-if="busy_output"></u-loading-progress>
 
-      <u-calendar-view
-        v-model:disabled="outputs.disabled"
-        can-disable
-        day-level
-        @change="updateProductOutput"
-      ></u-calendar-view>
+      <v-date-picker
+        :model-value="outputs.disabled.map((d) => new Date(d))"
+        @update:model-value="
+          (v) =>
+            (outputs.disabled = v
+              .filter((x) => x?.isAfterToday() || x?.isToday())
+              .map((date) => date))
+        "
+        title="Unavailable Dates"
+        view-mode="month"
+        width="100%"
+        multiple
+        :min="new Date().setStart()"
+        bg-color="transparent"
+        @update:modelValue="updateProductOutput"
+      >
+      </v-date-picker>
     </div>
   </div>
 </template>

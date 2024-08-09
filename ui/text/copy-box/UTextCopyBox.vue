@@ -19,6 +19,7 @@
       '-full-width': fullWidth,
       '-small': small,
       '-text-start': textStart,
+      disabled: disabled,
     }"
     class="s--value-copy-box"
     @click.stop
@@ -95,6 +96,7 @@ export default {
     contentClass: {},
     small: Boolean,
     textStart: Boolean,
+    disabled: Boolean,
     letterSpacing: {},
   },
   data: () => ({
@@ -112,11 +114,12 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 .s--value-copy-box {
-  &.-full-width{
-    .-btn{
+  &.-full-width {
+    .-btn {
       min-height: 100% !important;
     }
   }
+
   &.-limited-width {
     max-width: 1000px;
     margin: 0 auto 12px auto;

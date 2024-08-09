@@ -23,16 +23,31 @@
       >
       </v-img>
       <div class="flex-grow-1 ps-3">
-        <div class="mb-1">
+        <div class="mb-1 d-flex align-center">
           <b>{{ product.title }}</b>
           <v-chip
             v-if="type"
             :title="$t(type.desc)"
-            class="ma-1"
+            class="ms-2"
             label
             size="x-small"
             >{{ $t(type.title) }}
           </v-chip>
+
+          <v-btn
+            size="x-small"
+            variant="elevated"
+            class="ms-2 tnt"
+            target="_blank"
+            append-icon="open_in_new"
+            :to="{
+              name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                ? 'Vendor_ProductDashboard'
+                : 'BPageProductDashboard',
+              params: { product_id: product.id },
+            }"
+            >Product Admin
+          </v-btn>
         </div>
         <div class="text-subtitle-2 m-0">
           {{ product.title_en }}
@@ -47,21 +62,42 @@
             title="Pricing of this item by seller."
           ></u-price>
           <v-chip v-else class="me-2" color="red" variant="elevated"
-            >Not pricing yet!</v-chip
-          >
+            >Not pricing yet!
+          </v-chip>
 
-          <div v-if="start_at" class="ma-1 text-subtitle-2" title="Checkin date.">
+          <div
+            v-if="start_at"
+            class="ma-1 text-subtitle-2"
+            title="Checkin date."
+          >
             <v-icon class="mx-1" size="small">login</v-icon>
             {{ getLocalDateString(start_at) }}
           </div>
-          <div v-if="end_at" class="ma-1 text-subtitle-2" title="Checkout date.">
+          <div
+            v-if="end_at"
+            class="ma-1 text-subtitle-2"
+            title="Checkout date."
+          >
             <v-icon class="mx-1" size="small">logout</v-icon>
             {{ getLocalDateString(end_at) }}
           </div>
 
-          <v-chip v-for="task in tasks" size="x-small" class="ma-1" variant="flat" color="#000" prepend-icon="add_task">
-            {{task.title?.limitWords(3)}}
-            <v-progress-circular :model-value="task.progress" class="me-n1 ms-2" size="16" color="#fff" bg-color="#aaa"></v-progress-circular>
+          <v-chip
+            v-for="task in tasks"
+            size="x-small"
+            class="ma-1"
+            variant="flat"
+            color="#000"
+            prepend-icon="add_task"
+          >
+            {{ task.title?.limitWords(3) }}
+            <v-progress-circular
+              :model-value="task.progress"
+              class="me-n1 ms-2"
+              size="16"
+              color="#fff"
+              bg-color="#aaa"
+            ></v-progress-circular>
           </v-chip>
         </v-row>
       </div>
@@ -183,7 +219,8 @@
                         getLocalTimeString(preferences.dates[0])
                       "
                       class="mx-1"
-                      icon variant="text"
+                      icon
+                      variant="text"
                       @click="start_at = preferences.dates[0]"
                     >
                       <v-icon size="small">autorenew</v-icon>
@@ -244,7 +281,8 @@
                         getLocalTimeString(preferences.dates[1])
                       "
                       class="mx-1"
-                      icon variant="text"
+                      icon
+                      variant="text"
                       @click="end_at = preferences.dates[1]"
                     >
                       <v-icon size="small">autorenew</v-icon>
@@ -340,12 +378,19 @@
               <v-card class="rounded-t-xl" rounded="0">
                 <v-card-title></v-card-title>
                 <v-card-text>
-                  <u-calendar-view
-                    :disabled="outputs.disabled"
+                  <v-date-picker
+                    :model-value="[new Date(start_at), new Date(end_at)]"
+                    multiple="range"
+                    :allowed-dates="
+                      (d) =>
+                        !outputs.disabled?.some((x) => d.isSameDay(new Date(x)))
+                    "
                     :new-event="new_event"
                     class="my-3"
-                    day-level
-                  ></u-calendar-view>
+                    view-mode="month"
+                    width="100%"
+                    title="Booking Calendar"
+                  ></v-date-picker>
                 </v-card-text>
                 <v-card-actions>
                   <div class="widget-buttons">
@@ -446,7 +491,12 @@
             required
           >
             <template v-slot:append-inner>
-              <v-icon  v-if="!price || price<=0" color="red" class="blink-me ms-2">warning</v-icon>
+              <v-icon
+                v-if="!price || price <= 0"
+                color="red"
+                class="blink-me ms-2"
+                >warning
+              </v-icon>
             </template>
           </u-price-input>
 
@@ -688,7 +738,7 @@ export default {
               null,
               "Your service order billing has been saved.",
             );
-            this.expand=false;
+            this.expand = false;
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

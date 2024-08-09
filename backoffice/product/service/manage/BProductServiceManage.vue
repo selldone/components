@@ -121,12 +121,24 @@
           ></u-time-picker>
         </div>
       </v-row>
+      <v-date-picker
+        :model-value="outputs.disabled.map((d) => new Date(d))"
+        @update:model-value="
+          (v) =>
+            (outputs.disabled = v
+              .filter((x) => x?.isAfterToday() || x?.isToday())
+              .map((date) => date))
+        "
+        title="Unavailable Dates"
+        view-mode="month"
+        width="100%"
+        multiple
 
-      <u-calendar-view
-        v-model:disabled="outputs.disabled"
-        can-disable
-        day-level
-      ></u-calendar-view>
+        :min="new Date().setStart()"
+
+        bg-color="transparent"
+      >
+      </v-date-picker>
     </div>
 
     <!-- ----------------------- Subscription duration ----------------------- -->
@@ -200,21 +212,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UTasksEditor from "../../../../ui/task/editor/UTasksEditor.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import UTimeWeekPicker from "../../../../ui/time/week-picker/UTimeWeekPicker.vue";
-import UCalendarView from "../../../../ui/calendar/clendar-view/UCalendarView.vue";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UTimePicker from "../../../../ui/time/picker/UTimePicker.vue";
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
+import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays.ts";
 
 export default {
   name: "BProductServiceManage",
   components: {
     USmartSelect,
     UTimePicker,
-    UCalendarView,
     UTimeWeekPicker,
     UNumberInput,
     UTasksEditor,
@@ -226,6 +237,8 @@ export default {
     },
   },
   data: () => ({
+    WeekDays: WeekDays,
+
     types: ServiceTypes,
 
     //--------------------

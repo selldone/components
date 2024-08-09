@@ -15,16 +15,19 @@
 <template>
   <div class="c-container -force-rounded ma-1 pa-3 min-width-100">
     <s-widget
-      :class="{ 'widget-hover pointer-pointer': true }"
+      :class="{ 'widget-hover pp': true }"
       :title="
         `
 <span class='circle ${
-          transportation.enable ? 'bg-success' : 'bg-danger'
+          transportation.enable ? 'bg-success' : 'bg-red'
         } me-1' style='font-size: 6px;'></span>
 <span>${$t(transportationObj.name)}</span>` +
         (transportation.title
           ? ` <span class='typo-body'> / ${transportation.title}</span>`
-          : '')
+          : '') +
+        (transportation.enable
+          ? ''
+          : ` <span class='typo-body'> / ${$t('global.commons.disable')}</span>`)
       "
       class="text-start elevation-3"
       color="#fff"
@@ -42,13 +45,24 @@
       </u-ribbon>
 
       <p>
-        <v-chip v-if="transportation?.marketplace" color="#6548cc" label size="x-small" class="me-1" variant="flat">{{$t('global.commons.marketplace')}}</v-chip>
-        {{ $t(transportationObj.description) }}</p>
+        <v-chip
+          v-if="transportation?.marketplace"
+          color="#6548cc"
+          label
+          size="x-small"
+          class="me-1"
+          variant="flat"
+        >
+          {{ $t("global.commons.marketplace") }}
+        </v-chip>
+        {{ $t(transportationObj.description) }}
+      </p>
 
       <b-transportation-overview
         :outlined="outlined"
         :shop="shop"
         :transportation="transportation"
+        :class="{ 'img-grayscale': !transportation.enable }"
       >
       </b-transportation-overview>
     </s-widget>

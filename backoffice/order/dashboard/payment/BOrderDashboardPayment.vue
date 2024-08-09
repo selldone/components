@@ -1087,7 +1087,7 @@ export default {
             {
               source: "Items",
               target: "Order",
-              value: items_total_price,
+              value: items_total_price+0.001,
             },
           ],
         };
