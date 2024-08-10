@@ -60,7 +60,7 @@
             hide-details
             item-title="name"
             item-value="iso2"
-            style="width: 84px; min-height: 100%"
+            style="width: 118px; min-height: 100%"
             @update:model-value="choose"
             @update:menu="search = ''"
           >
@@ -90,7 +90,8 @@
             </template>
 
             <template v-slot:selection="{ item }">
-              <flag :iso="item.raw.iso2" :squared="false" />
+              <flag :iso="item.raw.iso2" :squared="false" style="min-width: 20px" />
+              <span class="ms-1">+{{ item.raw.dialCode }}</span>
             </template>
           </v-select>
         </template>
