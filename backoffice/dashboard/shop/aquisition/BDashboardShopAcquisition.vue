@@ -26,8 +26,8 @@
         <v-col cols="12" lg="9" order-lg="2">
           <v-row class="text-center border-between" dense>
             <v-col cols="4">
-              <h2 class="text-h4 font-weight-black">
-                {{ numeralFormat(all_new_visitors, "0.[00] a") }}
+              <h2 class="text-h5 text-sm-h4 font-weight-black">
+                {{ numeralFormat(all_new_visitors, "0.[0] a") }}
               </h2>
               <p class="small m-0">
                 {{ $t("shop_visitors_widget.new_visitors") }}
@@ -41,8 +41,8 @@
               </p>
             </v-col>
             <v-col cols="4">
-              <h2 class="text-h4 font-weight-black">
-                {{ numeralFormat(all_returning_visitors, "0.[00] a") }}
+              <h2 class="text-h5 text-sm-h4 font-weight-black">
+                {{ numeralFormat(all_returning_visitors, "0.[0] a") }}
               </h2>
               <p class="small m-0">
                 {{ $t("shop_visitors_widget.returning_visitors") }}
@@ -56,8 +56,8 @@
               </p>
             </v-col>
             <v-col cols="4">
-              <h2 class="text-h4 font-weight-black">
-                {{ numeralFormat(all_page_views, "0.[00] a") }}
+              <h2 class="text-h5 text-sm-h4 font-weight-black">
+                {{ numeralFormat(all_page_views, "0.[0] a") }}
               </h2>
               <p class="small m-0">
                 {{ $t("shop_visitors_widget.page_views") }}
