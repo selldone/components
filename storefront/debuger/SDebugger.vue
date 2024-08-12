@@ -402,7 +402,7 @@ export default {
     ) {
       // For demonstration purposes, we'll just log to the console
       // In a real-world scenario, you might want to send this information to a server
-      console.log("[🔴 Error Logger]", key, message, target, request);
+      //console.log("[🔴 Error Logger]", key, message, target, request);
       this.errors.set(key, { type: error_type, message, target, request });
       this.$forceUpdate();
     },

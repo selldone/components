@@ -1041,10 +1041,7 @@ const CoreMixin = {
           current_extra_pricing,
         );
       } catch (e) {
-        console.error(
-          e,
-          "⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",
-        );
+        console.error("⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",product.currency,'->',to_currency);
         return "🚨";
       }
     },
@@ -1079,7 +1076,7 @@ const CoreMixin = {
           to_currency,
         );
       } catch (e) {
-        console.error(e);
+        console.error("⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",product.currency,'->',to_currency);
         return "🚨";
       }
     },

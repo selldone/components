@@ -58,73 +58,16 @@
 
           <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ Products List ━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
-          <div
+          <s-product-related-product-card
             v-for="item in products"
             :key="item.id"
             :class="{
               disabled: item.id === product.id,
             }"
-            class="-product-card -hover"
+            :product="item"
           >
-            <router-link
-              :to="{
-                name: window.$storefront.routes.PRODUCT_PAGE,
-                params: { product_id: item.id },
-              }"
-            >
-              <v-img
-                :alt="item.title"
-                :cover="!item.style || !item.style.contain"
-                :lazy-src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)"
-                :src="getShopImagePath(item.icon)"
-                aspect-ratio="1"
-                class="-img-banner"
-                fetchpriority="low"
-                width="100%"
-              >
-                <template v-slot:placeholder>
-                  <v-progress-circular
-                    class="center-absolute"
-                    color="#333"
-                    indeterminate
-                  />
-                </template>
-              </v-img>
 
-              <div class="-card-title">
-                <span class="flex-grow-1">{{ item.title }}</span>
-                <span v-if="item.rate_count" class="-rate-view">
-                  {{ numeralFormat(item.rate, "0.0") }}
-
-                  <v-rating
-                    v-model="item.rate"
-                    :length="1"
-                    active-color="yellow-darken-3"
-                    class="d-inline"
-                    color="grey-darken-1"
-                    density="compact"
-                    dir="ltr"
-                    half-increments
-                    readonly
-                  />
-                </span>
-              </div>
-            </router-link>
-
-            <product-variants-view
-              v-if="item.variants"
-              :variants="item.variants"
-              dense
-              small
-            ></product-variants-view>
-
-            <div class="-card-content">
-              <u-price
-                :amount="CalcPriceProductCurrentCurrency(getShop(), item)"
-                large
-              ></u-price>
-            </div>
-          </div>
+          </s-product-related-product-card>
 
           <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ Loading Placeholder ━━━━━━━━━━━━━━━━━━━━━━━━ -->
           <template v-if="busy">
@@ -149,6 +92,8 @@ import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import ProductVariantsView from "../../../storefront/product/variant/ProductVariantsView.vue";
 import UTagsCloud from "../../../ui/tag/cloud/UTagsCloud.vue";
 import _ from "lodash-es";
+import SProductRelatedProductCard
+  from "@selldone/components-vue/storefront/product/related-products/card/SProductRelatedProductCard.vue";
 
 export default {
   name: "SProductRelatedProducts",
@@ -161,6 +106,7 @@ export default {
     },
   },
   components: {
+    SProductRelatedProductCard,
     UTagsCloud,
     ProductVariantsView,
     UFadeScroll,

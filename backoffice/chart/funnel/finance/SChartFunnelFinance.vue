@@ -254,7 +254,8 @@ export default {
 
               pack.push(val);
             } catch (e) {
-              pack.push(0.0001 /*Fix funnel bug in set zero!*/); // Error in exchange rate!
+
+              pack.push(0 /*Fix funnel bug in set zero!*/); // Error in exchange rate!
             }
           });
           out.push(pack);

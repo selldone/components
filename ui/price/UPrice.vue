@@ -25,28 +25,33 @@
     :style="{ 'min-height': minHeight }"
     class="u--price"
   >
-    <span v-if="isUnicode && !at_end">{{
-      GetUserSelectedCurrencyName(currency_code, true)
-    }}</span>
-
-    <span :class="{ 'line-through': lineThrough }">
-      {{ compact?numeralFormat(absolute_part,'0.[0]a'): absolute_part
-      }}<span v-if="!compact" class="small">{{
-        is_valid_amount ? getAmountAfterPoint(formatted_number) : ""
+    <template v-if="is_valid_amount">
+      <span v-if="isUnicode && !at_end">{{
+        GetUserSelectedCurrencyName(currency_code, true)
       }}</span>
-    </span>
-    <span v-if="!isUnicode" class="mx-2 cur-name">{{
-      GetUserSelectedCurrencyName(currency_code, true)
-    }}</span>
 
-    <span v-if="isUnicode && at_end" class="mx-1">{{
-      GetUserSelectedCurrencyName(currency_code, true)
-    }}</span>
+      <span :class="{ 'line-through': lineThrough }">
+        {{ compact ? numeralFormat(absolute_part, "0.[0]a") : absolute_part
+        }}<span v-if="!compact" class="small">{{
+          is_valid_amount ? getAmountAfterPoint(formatted_number) : ""
+        }}</span>
+      </span>
+      <span v-if="!isUnicode" class="mx-2 cur-name">{{
+        GetUserSelectedCurrencyName(currency_code, true)
+      }}</span>
+
+      <span v-if="isUnicode && at_end" class="mx-1">{{
+        GetUserSelectedCurrencyName(currency_code, true)
+      }}</span>
+    </template>
+    <template v-else>
+      {{ amount }} <small class="font-weight-medium text-red" style="font-size: 10px">[{{$t('global.commons.invalid')}}]</small>
+    </template>
 
     <v-tooltip
       v-if="!is_valid_amount"
       activator="parent"
-      content-class="text-start"
+      content-class="text-start bg-black"
       location="bottom"
       max-width="320"
     >
@@ -99,7 +104,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    compact:Boolean
+    compact: Boolean,
   },
 
   computed: {

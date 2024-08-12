@@ -28,7 +28,7 @@
       ref="scroll"
       v-dragscroll="dragScroll && $vuetify.display.smAndUp"
       v-intersect="onIntersect"
-      v-scroll.self="(ev) => onScroll(ev.target)"
+      v-scroll.self="(ev) => debouncedOnScroll(ev.target)"
       :class="{ usn: dragScroll }"
       class="--scroll"
     >
@@ -65,6 +65,8 @@
 </template>
 
 <script>
+import {debounce} from "lodash-es";
+
 export default {
   name: "UFadeScroll",
   props: {
@@ -101,12 +103,14 @@ export default {
   }),
 
   mounted() {
-    this.onScroll(this.$refs.scroll);
+    this.$nextTick(() => {
+      this.onScroll(this.$refs.scroll);
+    });
   },
 
   methods: {
     onIntersect() {
-      this.onScroll(this.$refs.scroll);
+      this.debouncedOnScroll(this.$refs.scroll);
     },
 
     onScroll(target) {
@@ -119,14 +123,23 @@ export default {
         scrollWidth,
       } = target;
 
-      // Check if the scroll is at the top or bottom
-      this.fadeTop = scrollTop === 0 ? "0" : "2em";
-      this.fadeBottom = scrollTop + clientHeight >= scrollHeight ? "0" : "2em";
+      const newFadeTop = scrollTop === 0 ? "0" : "2em";
+      const newFadeBottom = scrollTop + clientHeight >= scrollHeight ? "0" : "2em";
+      const newFadeLeft = scrollLeft === 0 ? "0" : "2em";
+      const newFadeRight = scrollLeft + clientWidth >= scrollWidth ? "0" : "2em";
 
-      // Check if the scroll is at the left or right
-      this.fadeLeft = scrollLeft === 0 ? "0" : "2em";
-      this.fadeRight = scrollLeft + clientWidth >= scrollWidth ? "0" : "2em";
+      // Only update if values have changed
+      if (this.fadeTop !== newFadeTop) this.fadeTop = newFadeTop;
+      if (this.fadeBottom !== newFadeBottom) this.fadeBottom = newFadeBottom;
+      if (this.fadeLeft !== newFadeLeft) this.fadeLeft = newFadeLeft;
+      if (this.fadeRight !== newFadeRight) this.fadeRight = newFadeRight;
     },
+
+    // In your methods
+    debouncedOnScroll: debounce(function(target) {
+      this.onScroll(target);
+    }, 100), // Adjust the delay as needed
+
 
     scrollRight() {
       if (this.stickClass) {

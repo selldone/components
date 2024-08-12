@@ -173,13 +173,19 @@ export default {
 
             //   console.log('currency',currency,'this.selected_currency',this.selected_currency)
 
-            let val =
-              this.findFinanceSellValueByCurrency(item.payment, currency) *
-              this.getBuyRateValue(this.shop, currency, this.selected_currency);
+            try{
+              let val =
+                  this.findFinanceSellValueByCurrency(item.payment, currency) *
+                  this.getBuyRateValue(this.shop, currency, this.selected_currency);
 
-            val = this.truncate(val + 0.0001, Number.parseInt(floats));
+              val = this.truncate(val + 0.0001, Number.parseInt(floats));
 
-            pack.push(val);
+              pack.push(val);
+            }catch (e) {
+              pack.push(0);
+            }
+
+
           });
           out.push(pack);
         });
