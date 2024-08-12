@@ -25,7 +25,19 @@
         </v-avatar>
 
         <div class="comment-author-info text-start">
-          <b>{{ comment.user.name }}</b>
+          <b>{{ comment.user.name }}
+
+            <v-chip
+                v-if="isBuyer"
+                color="#4CAF50"
+                size="x-small"
+                variant="flat"
+                prepend-icon="verified_user"
+                class="ms-1"
+            >
+              {{ $t("global.comments.verified_buyer") }}
+            </v-chip>
+          </b>
 
           <time
             >{{ $t("global.comments.comment_at") }}
@@ -101,26 +113,20 @@
                   sm="6"
                   class="d-flex align-center justify-end overflow-hidden"
                 >
-                  <v-chip
+                  <span
                     v-if="isBuyer"
-                    color="#000"
-                    size="small"
-                    variant="flat"
-                  >
-                    <v-icon start> shopping_basket</v-icon>
-                    {{ $t("global.comments.product_buyer") }}
 
+                  >
                     <v-rating
                       :model-value="calculateRate"
                       :readonly="true"
                       active-color="yellow-darken-3"
-                      class="ms-1"
                       color="#888"
                       half-increments
                       size="20"
                       density="compact"
                     />
-                  </v-chip>
+                  </span>
                   <span v-else>
                     <v-rating
                       :model-value="calculateRate"
