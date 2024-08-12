@@ -73,7 +73,7 @@
         "
         :size="!!basket.reject_at ? 'large' : undefined"
         :variant="!basket.reject_at ? 'text' : 'elevated'"
-        class="tnt"
+        class="tnt me-3"
         color="#F44336"
         rounded
         @click="dialog_reject = true"
@@ -249,23 +249,68 @@
     transition="dialog-bottom-transition"
   >
     <v-card class="text-start">
-      <v-card-title>
-        {{ $t("process_order_page_dashboard.reject_dialog.title") }}
+      <v-card-title class="d-flex align-center justify-start">
+        {{ $t("global.commons.reject") }} |
+        {{ getBasketOrderCode(basket) }}
+
+        <v-avatar
+          v-for="item in basket.items"
+          :key="item.id"
+          class="ma-1 avatar-gradient -thin -gray"
+          :image="getProductImage(item.product_id)"
+        >
+        </v-avatar>
       </v-card-title>
-      <v-card-subtitle>
-        {{ $t("process_order_page_dashboard.reject_dialog.message") }}
-      </v-card-subtitle>
 
       <v-card-text>
         <div class="widget-box -large mb-5">
+          <s-widget-header
+            :title="$t('process_order_page_dashboard.reject_dialog.title')"
+          >
+          </s-widget-header>
+
+          <v-list-subheader>
+            {{ $t("process_order_page_dashboard.reject_dialog.message") }}
+          </v-list-subheader>
+
+          <b-shop-customer-box
+            :customer="basket.customer"
+          ></b-shop-customer-box>
+
           <u-smart-select
             v-model="reject_reason"
             :items="basketRejectReasons"
-            force-show-all
             item-text="title"
             item-value="code"
+            class="mt-3"
           >
           </u-smart-select>
+        </div>
+
+        <div v-if="!rejected" class="widget-box -large mb-5">
+          <s-widget-header
+            :title="
+              $t('process_order_page_dashboard.reject_dialog.options.title')
+            "
+          >
+          </s-widget-header>
+          <v-list-subheader>
+            {{
+              $t("process_order_page_dashboard.reject_dialog.options.subtitle")
+            }}
+          </v-list-subheader>
+
+          <u-smart-switch
+            v-model="reject_express"
+            true-title="Express | Cancel Order Immediately"
+            false-title="Normal | Cancel Order After 48 Hours"
+            true-description="This will cancel the order immediately and update inventory now."
+            false-description="This will cancel the order after 48 hours, so items will be locked until final cancellation."
+            true-icon="flash_on"
+            false-icon="timelapse"
+            class="my-3"
+          >
+          </u-smart-switch>
         </div>
 
         <div v-if="rejected" class="widget-buttons">
@@ -297,13 +342,18 @@
             :loading="busy_reject_order"
             color="red-darken-1"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="rejectOrder()"
+            prepend-icon="check"
           >
-            <v-icon class="me-1">check</v-icon>
             {{
-              $t("process_order_page_dashboard.reject_dialog.confirm_action")
+              reject_express?
+                  $t("process_order_page_dashboard.reject_dialog.confirm_now_action")
+:
+
+                  $t("process_order_page_dashboard.reject_dialog.confirm_in48h_action")
             }}
+
           </v-btn>
         </div>
       </v-card-actions>
@@ -328,10 +378,18 @@ import BOrderConnectsList from "../../order/connect/list/BOrderConnectsList.vue"
 import BOrderDashboardDropshippingDelivery from "../../order/dashboard/dropshipping/delivery/BOrderDashboardDropshippingDelivery.vue";
 import BOrderVendorPaymentManagement from "../../order/vendor/payment/BOrderVendorPaymentManagement.vue";
 import { Basket, Order } from "@selldone/core-js";
+import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import BShopCustomerBox from "@selldone/components-vue/backoffice/customer/box/BShopCustomerBox.vue";
+import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
+import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 
 export default {
   name: "BOrderDashboard",
   components: {
+    USmartSwitch,
+    USmartToggle,
+    BShopCustomerBox,
+    SWidgetHeader,
     BOrderVendorPaymentManagement,
     BOrderDashboardDropshippingDelivery,
 
@@ -380,6 +438,7 @@ export default {
 
       dialog_reject: false,
       reject_reason: null,
+      reject_express: false,
       basketRejectReasons: Object.values(Order.RejectReasons),
 
       busy_update_state: false,
@@ -723,6 +782,7 @@ export default {
                   ),
           {
             reject: this.reject_reason,
+            express: this.reject_express,
           },
         )
         .then(({ data }) => {
@@ -808,21 +868,19 @@ export default {
       }
       axios
         .get(
-            this.IS_VENDOR_PANEL
-                ? window.VAPI.GET_MY_VENDOR_DELIVERY_SERVICE_ORDER_INFO(
-                    transportation_order.vendor_id,
-                    transportation_order.transportation_id,
-                    transportation_order.service.id,
-                    transportation_order.uid,
-                )
-                :
-
-          window.API.GET_DELIVERY_SERVICE_ORDER_INFO(
-              transportation_order.shop_id,
-            transportation_order.transportation_id,
-            transportation_order.service.id,
-            transportation_order.uid,
-          ),
+          this.IS_VENDOR_PANEL
+            ? window.VAPI.GET_MY_VENDOR_DELIVERY_SERVICE_ORDER_INFO(
+                transportation_order.vendor_id,
+                transportation_order.transportation_id,
+                transportation_order.service.id,
+                transportation_order.uid,
+              )
+            : window.API.GET_DELIVERY_SERVICE_ORDER_INFO(
+                transportation_order.shop_id,
+                transportation_order.transportation_id,
+                transportation_order.service.id,
+                transportation_order.uid,
+              ),
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -945,17 +1003,15 @@ export default {
           if (callback) callback(true);
           axios
             .put(
-
-                this.IS_VENDOR_PANEL? /*🟢 Vendor Panel 🟢*/
-                    window.VAPI.PUT_MY_VENDOR_UPDATE_ORDER_RECEIVER_INFO(
-                        this.$route.params.vendor_id,
-                        this.$route.params.vendor_order_id, // Vendor order id!
-                    ):
-
-              window.API.PUT_UPDATE_ORDER_RECEIVER_INFO(
-                this.shop.id,
-                this.basket.id,
-              ),
+              this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                ? window.VAPI.PUT_MY_VENDOR_UPDATE_ORDER_RECEIVER_INFO(
+                    this.$route.params.vendor_id,
+                    this.$route.params.vendor_order_id, // Vendor order id!
+                  )
+                : window.API.PUT_UPDATE_ORDER_RECEIVER_INFO(
+                    this.shop.id,
+                    this.basket.id,
+                  ),
               {
                 receiver_info: info,
               },

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-list-item class="text-start">
+  <v-list-item v-if="customer" class="text-start">
     <template v-slot:prepend>
       <v-avatar class="avatar-gradient -thin -customer" size="48">
         <v-img v-if="customer.user_id" :src="getUserAvatar(customer.user_id)" />

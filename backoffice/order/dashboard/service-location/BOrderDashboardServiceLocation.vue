@@ -255,9 +255,10 @@
 
             <v-btn
               :loading="busy_toCustomer"
-              color="green-darken-1"
-              variant="flat"
+              color="primary"
+              variant="elevated"
               @click="toCustomer()"
+              prepend-icon="done_all"
             >
               {{ $t("process_center.delivered_dialog.confirm_action") }}
             </v-btn>

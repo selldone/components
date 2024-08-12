@@ -22,12 +22,7 @@
       no-gutters
     >
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Product Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <v-col
-        class="text-start px-2"
-        cols="12"
-        sm="5"
-        :md="smallWidth?5:6"
-      >
+      <v-col class="text-start px-2" cols="12" sm="5" :md="smallWidth ? 5 : 6">
         <router-link
           :to="{
             name: window.$storefront.routes.PRODUCT_PAGE,
@@ -35,22 +30,26 @@
           }"
           title="See product details"
         >
-          <v-sheet class="pa-1 overflow-hidden d-inline-block me-2 float-start" rounded="lg" color="#eee">
+          <v-sheet
+            class="pa-1 overflow-hidden d-inline-block me-2 float-start"
+            rounded="lg"
+            color="#eee"
+          >
             <v-img
-                :src="
-              product?.icon
-                ? getShopImagePath(
-                    variant?.image ? variant.image : product.icon,
-                    128,
-                  )
-                : getProductImage(basketItem.product_id)
-            "
-                aspect-ratio="1"
-                class="pp rounded-lg  border elevation-3 bg-white hover-scale-tiny"
-                height="84px"
-                min-height="42px"
-                min-width="42px"
-                width="84px"
+              :src="
+                product?.icon
+                  ? getShopImagePath(
+                      variant?.image ? variant.image : product.icon,
+                      128,
+                    )
+                  : getProductImage(basketItem.product_id)
+              "
+              aspect-ratio="1"
+              class="pp rounded-lg border elevation-3 bg-white hover-scale-tiny"
+              height="84px"
+              min-height="42px"
+              min-width="42px"
+              width="84px"
             />
           </v-sheet>
         </router-link>
@@ -123,7 +122,7 @@
       </v-col>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <v-col cols="6"  sm="3" :md="smallWidth?3:3" >
+      <v-col cols="6" sm="3" :md="smallWidth ? 3 : 3">
         <p v-if="basketItem.dis" class="discount-value">
           <u-price
             :amount="
@@ -208,7 +207,7 @@
       </v-col>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <v-col cols="6" sm="4" :md="smallWidth?4:3" >
+      <v-col cols="6" sm="4" :md="smallWidth ? 4 : 3">
         <s-shop-basket-item-count-select
           v-model="basketItem.count"
           :disabled="['area', 'volume'].includes(product.price_input)"
@@ -276,7 +275,7 @@ export default {
       required: true,
       type: Object,
     },
-    smallWidth:Boolean,
+    smallWidth: Boolean,
   },
 
   data: function () {
@@ -351,11 +350,9 @@ export default {
     price_error_percent() {
       if (this.is_booking) return 0; // Does not work for service!
 
+      const old_price = this.getBasketItemPrice(this.shop, this.basketItem);
       return (
-        (100 *
-          (this.current_item_price -
-            this.getBasketItemPrice(this.shop, this.basketItem))) /
-        (0.00001 + this.current_item_price)
+        (100 * (this.current_item_price - old_price)) / (0.00001 + old_price)
       );
     },
 
@@ -456,8 +453,9 @@ export default {
     cursor: pointer;
     font-weight: 500;
     color: currentColor;
-    &:hover{
-     // font-weight: bolder;
+
+    &:hover {
+      // font-weight: bolder;
       text-decoration: underline !important;
     }
   }
@@ -467,7 +465,6 @@ export default {
     color: #6c757d;
     margin: 0;
   }
-
 
   .shop-item-price {
     font-size: 1.2rem;

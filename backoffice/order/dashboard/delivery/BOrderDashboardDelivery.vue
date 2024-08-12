@@ -755,10 +755,10 @@
             :loading="busy_toCustomer"
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="toCustomer()"
+            prepend-icon="where_to_vote"
           >
-            <v-icon class="me-1">where_to_vote</v-icon>
 
             {{ $t("process_center.delivered_dialog.confirm_action") }}
           </v-btn>
