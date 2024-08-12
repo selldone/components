@@ -41,7 +41,7 @@
               </div>
             </div>
 
-            <v-list class="border-between-vertical">
+            <v-list class="border-between-vertical" >
               <v-list-item v-for="item in items" :key="item.id">
                 <template v-slot:prepend>
                   <v-avatar tile>
@@ -75,16 +75,21 @@
                   ></variant-item-view-micro>
                 </v-list-item-subtitle>
 
-                <v-list-item-action>
-                  <b>{{ item.count }}</b>
-                </v-list-item-action>
+                <v-list-item-title>
 
-                <v-list-item-action>
-                  <u-price
-                    :amount="item.price"
-                    :currency="item.currency"
-                  ></u-price>
-                </v-list-item-action>
+                  <v-row>
+                    <v-col cols="4">
+                      <b>x{{ item.count }}</b>
+                    </v-col>
+                    <v-col cols="8">
+                      <u-price
+                          :amount="item.price"
+                          :currency="item.currency"
+                      ></u-price>
+                    </v-col>
+                  </v-row>
+                </v-list-item-title>
+
               </v-list-item>
             </v-list>
 
