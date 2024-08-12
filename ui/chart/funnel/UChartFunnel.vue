@@ -64,8 +64,8 @@
           v-for="(path, index) in paths"
           :key="index"
           :d="path"
-          :fill="colorSet[index].fill"
-          :stroke="colorSet[index].fill"
+          :fill="colorSet[index%colorSet.length].fill"
+          :stroke="colorSet[index%colorSet.length].fill"
           class="t-all-400"
         ></path>
       </svg>
@@ -130,7 +130,10 @@
     <div v-if="is2d() && !noLegend" class="--legend">
       <div v-for="(subLabel, index) in subLabels" :key="index" class="--l-item">
         <div :style="subLabelBackgrounds(index)" class="--l-item-color"></div>
-        <div class="--l-item-title">{{ subLabel }}</div>
+        <div class="--l-item-title">
+          <img v-if="subLabelImages && subLabelImages[index]" width="14" height="14" :src="subLabelImages[index]" class="">
+
+          {{ subLabel }}</div>
       </div>
     </div>
   </div>
@@ -258,7 +261,7 @@ export default {
       const colorSet = [];
       let gradientCount = 0;
 
-      for (let i = 0; i < this.paths.length; i++) {
+      for (let i = 0; i < this.getColors.length; i++) {
         const values = this.graph.is2d() ? this.getColors[i] : this.getColors;
         const fillMode =
           typeof values === "string" || values.length === 1
@@ -336,7 +339,7 @@ export default {
         return [];
       }
       return generateLegendBackground(
-        this.getColors[index],
+        this.getColors[index % this.getColors.length],
         this.gradientDirection,
       );
     },

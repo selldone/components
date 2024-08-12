@@ -97,8 +97,8 @@
           ></u-time-span>
         </v-col>
 
-        <v-col cols="12" order="3" sm="8">
-          <p class="font-weight-bold">Channels overview</p>
+        <v-col cols="12" order="3" sm="8" class="text-body-2">
+          <p class="font-weight-bold">   {{ $t("global.commons.channels_overview") }}</p>
 
           <b-session-chart-sankey
             v-if="socials && Object.keys(socials).length"
