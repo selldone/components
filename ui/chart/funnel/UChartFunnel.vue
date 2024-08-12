@@ -38,7 +38,10 @@
       '--height': height + 'px',
     }"
   >
-    <div class="--container thin-scroll scrollable-element-light">
+    <div
+      class="--container thin-scroll scrollable-element-light"
+      :class="{ '-hover-opacity-effect': hoverOpacityEffect }"
+    >
       <svg
         :height="height"
         :width="width"
@@ -64,9 +67,16 @@
           v-for="(path, index) in paths"
           :key="index"
           :d="path"
-          :fill="colorSet[index%colorSet.length].fill"
-          :stroke="colorSet[index%colorSet.length].fill"
+          :fill="colorSet[index % colorSet.length].fill"
+          :stroke="colorSet[index % colorSet.length].fill"
           class="t-all-400"
+          :style="
+            hoverOpacityEffect
+              ? {
+                  transitionDelay: `${index * 50}ms !important`, // Different delay for each path based on index
+                }
+              : undefined
+          "
         ></path>
       </svg>
 
@@ -131,9 +141,16 @@
       <div v-for="(subLabel, index) in subLabels" :key="index" class="--l-item">
         <div :style="subLabelBackgrounds(index)" class="--l-item-color"></div>
         <div class="--l-item-title">
-          <img v-if="subLabelImages && subLabelImages[index]" width="14" height="14" :src="subLabelImages[index]" class="">
+          <img
+            v-if="subLabelImages && subLabelImages[index]"
+            width="14"
+            height="14"
+            :src="subLabelImages[index]"
+            class=""
+          />
 
-          {{ subLabel }}</div>
+          {{ subLabel }}
+        </div>
       </div>
     </div>
   </div>
@@ -216,6 +233,7 @@ export default {
     dense: Boolean,
 
     chartClass: {},
+    hoverOpacityEffect: Boolean,
   },
   data() {
     return {
@@ -521,8 +539,6 @@ export default {
       max-width: 100%;
       margin: auto;
 
-
-
       display: flex;
       justify-content: center;
       align-items: center;
@@ -539,7 +555,7 @@ export default {
       }
     }
 
-    &.-rtl{
+    &.-rtl {
       .u--hover-container {
         .u--hover-label {
           > :not(:last-child) {
@@ -575,10 +591,10 @@ export default {
       }
     }
 
-    .--segment-container{
-      &:hover{
-        &:before{
-          content: '';
+    .--segment-container {
+      &:hover {
+        &:before {
+          content: "";
           position: absolute;
           height: 4px;
           background-color: #0b5384;
@@ -635,6 +651,7 @@ export default {
         flex-direction: row-reverse; // Fix: RTL label orders is invalid!
       }
     }
+
     .--segment {
       left: unset;
       right: 0;
@@ -674,8 +691,6 @@ export default {
         .u--hover-container {
           opacity: 1;
         }
-
-
       }
     }
   }
@@ -688,7 +703,6 @@ export default {
     text-align: center;
     z-index: 2;
     color: #444;
-
 
     margin-left: 0; // Force 100% width!
     margin-right: 0;
@@ -771,6 +785,22 @@ export default {
 
     .--l-item-title {
       margin: 2px 4px 2px 4px !important;
+    }
+  }
+
+  .-hover-opacity-effect {
+    svg {
+      path {
+        opacity: 0.3;
+      }
+    }
+
+    &:hover {
+      svg {
+        path {
+          opacity: 1;
+        }
+      }
     }
   }
 }

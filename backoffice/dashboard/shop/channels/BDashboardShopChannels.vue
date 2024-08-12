@@ -15,8 +15,10 @@
 <template>
   <div v-if="social_keys?.length > 2 && timeSeries.raw_data?.length > 5">
     <s-widget-box
-      :title="$t('global.commons.channels_overview')"
-      icon="air"
+    :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-orange mx-sm' style='font-size: 6px;'></span> ${ $t('global.commons.channels_overview')}  </h5>`"
+
+
+      icon="diversity_1"
       class="overflow-hidden"
     >
       <div class="mx-n5">
@@ -34,6 +36,7 @@
           :values="values"
           :width="width"
           class="mt-3"
+          hover-opacity-effect
         />
       </div>
     </s-widget-box>
