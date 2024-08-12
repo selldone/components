@@ -221,7 +221,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.$emit("input", data.wallet);
+            this.$emit("update:modelValue", data.wallet);
             this.show_create_wallet = false;
 
             this.showSuccessAlert();

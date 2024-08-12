@@ -44,13 +44,13 @@
         </u-tabs-rounded>
       </div>
 
-      <v-slide-y-transition leave-absolute>
+      <v-slide-y-transition leave-absolute hide-on-leave>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Monetize ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div
           v-if="tab === 'monetize'"
           class="px-4 py-2 max-widget-width mx-auto disabled"
         >
-          <v-list-subheader>
+          <v-list-subheader class="mb-2">
             <span>
               <v-icon class="me-1" color="red">warning_amber</v-icon> Available
               by your request. Please send it to support@selldone.com or Tweet
@@ -65,6 +65,7 @@
             clearable
             item-value="code"
             title="Subscription type"
+            variant="solo"
           ></v-select>
 
           <template v-if="subscription">
@@ -178,7 +179,7 @@
         <div v-if="tab === 'seo'" class="px-4 py-2">
           <v-img
             :src="cover ? cover : image"
-            class="rounded-18px mb-2 zoomIn"
+            class="rounded-18px mb-2 zoomIn border"
             height="128"
             width="128"
           >
@@ -212,9 +213,8 @@
             auto-grow
             class="font-weight-bold fadeIn delay_200"
             counter="128"
-            flat
+            variant="underlined"
             rows="1"
-            variant="solo"
             @update:model-value="(val) => (title_page = val)"
             @click:append-inner="
               title_page_auto = !title_page_auto;
@@ -235,9 +235,8 @@
             auto-grow
             class="fadeIn delay_400"
             counter="256"
-            flat
-            rows="1"
-            variant="solo"
+            rows="3"
+            variant="underlined"
             @update:model-value="(val) => (desc = val)"
             @click:append-inner="
               desc_auto = !desc_auto;

@@ -219,6 +219,13 @@ export default {
       promise
         .then(({ data }) => {
           if (!data.error) {
+            this.showSuccessAlert(
+              null,
+              this.category
+                ? "The category has been updated successfully."
+                : "New category has been created successfully.",
+            );
+
             if (this.category) {
               this.$emit("update:category", data.category);
 

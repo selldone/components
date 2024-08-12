@@ -187,7 +187,7 @@ export default {
   }
 
   &.small {
-    padding: 8px 20px !important;
+    padding: 8px 16px !important;
     font-size: 0.8rem !important;
     margin: 0 2px !important;
 

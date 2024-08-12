@@ -116,7 +116,7 @@ export default {
 
   watch: {
     gift_type_selected(account) {
-      this.$emit("input", account);
+      this.$emit("update:modelValue", account);
     },
     modelValue(account) {
       this.gift_type_selected = account;

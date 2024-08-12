@@ -73,12 +73,12 @@
           "
         ></c-category-edit>
 
-        <div v-if="access.admin" class="my-3 widget-buttons">
+        <s-widget-buttons v-if="access.admin" auto-fixed-position>
           <v-btn
             :loading="busy_edit"
             color="primary"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="
               $refs.editor.save((val) => {
                 busy_edit = val;
@@ -88,7 +88,7 @@
             <v-icon start>save</v-icon>
             {{ $t("global.actions.save") }}
           </v-btn>
-        </div>
+        </s-widget-buttons>
 
         <div class="text-end py-5">
           <v-btn

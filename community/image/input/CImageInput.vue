@@ -70,7 +70,7 @@
 export default {
   name: "CImageInput",
   components: {},
-
+  emits: ["update:modelValue"],
   props: {
     src: {},
   },
@@ -96,7 +96,7 @@ export default {
   methods: {
     clear() {
       this.local_src = null;
-      this.$emit("input", null);
+      this.$emit("update:modelValue", null);
     },
 
     //――――――――――――――――――――――― Select image file ―――――――――――――――――――――――
@@ -127,7 +127,7 @@ export default {
           // convert image to base64 encoded string
           // load on success:
           t.local_src = this.result;
-          t.$emit("input", file);
+          t.$emit("update:modelValue", file);
         });
         fileReader.readAsDataURL(file);
       }

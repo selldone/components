@@ -93,7 +93,7 @@ export default {
           // convert image to base64 encoded string
           t.cover = this.result;
           t.cover_file = file;
-          t.$emit("input", file);
+          t.$emit("update:modelValue", file);
         });
         fileReader.readAsDataURL(file);
       }

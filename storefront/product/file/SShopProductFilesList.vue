@@ -124,12 +124,7 @@ export default {
 
   computed: {},
   watch: {
-    files_show(files_show) {
-      this.$emit("input", files_show);
-    },
-    value(value) {
-      this.files_show = this.value;
-    },
+
   },
 
   data: function () {
@@ -142,7 +137,6 @@ export default {
   },
 
   created() {
-    this.files_show = this.value;
   },
   methods: {
     getBuyerFileUrl(file) {
