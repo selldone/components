@@ -15,9 +15,9 @@
 <template>
   <div v-if="social_keys?.length > 2 && timeSeries.raw_data?.length > 5">
     <s-widget-box
-    :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-orange mx-sm' style='font-size: 6px;'></span> ${ $t('global.commons.channels_overview')}  </h5>`"
-
-
+      :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-teal mx-sm' style='font-size: 6px;'></span> ${$t('admin_shop.dashboard.channels.title')}  </h5><span class='fw-normal ml-xs small'> ${$t(
+        'admin_shop.dashboard.channels.subtitle',
+      )} </span> `"
       icon="diversity_1"
       class="overflow-hidden"
     >
