@@ -134,6 +134,112 @@
       </v-col>
     </v-row>
 
+    <v-expand-transition>
+      <div
+        v-if="
+          payment?.refund_amount ||
+          need_to_refund ||
+          payment?.refunds?.length
+        "
+        class="text-start"
+      >
+        <v-row align="stretch" class="my-0">
+          <v-col cols="12" sm="6">
+            <v-card variant="flat" class="pa-2 h-100">
+              <div class="text-subtitle-2">
+                {{
+                  need_to_refund > 0
+                      ? "Refund required to the customer"
+                      : need_to_refund < 0
+                          ? "Customer pay back required"
+                          : "No refund necessary"
+                }}
+
+              </div>
+              <small v-if="need_to_refund>0">
+                We calculate the total amount of refunds that you need to make
+                manually. It calculated based on unavailable items and total
+                refunded values yet.
+              </small>
+              <small v-else-if="need_to_refund<0">
+                We've noticed that the total refunded to the customer is higher than the amount due based on the items in the cart. You may need to charge your customer to recover the excess amount.
+              </small>
+
+
+            <v-card-actions>
+              <u-price
+                  :amount="need_to_refund"
+                  :currency="basket.currency"
+                  large
+              ></u-price>
+              <v-spacer></v-spacer>
+              <v-btn v-if="gateway?.actions?.includes('refund')" variant="elevated" class="tnt">
+                <img :src="getShopImagePath(gateway.logo)" height="24">
+
+                <span class="me-2 ms-1">|</span> Refund
+                <u-price
+                    :amount="need_to_refund"
+                    :currency="basket.currency"
+                    class="ms-2"
+                ></u-price>
+              </v-btn>
+            </v-card-actions>
+
+
+            </v-card>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-card variant="flat" class="pa-2 h-100">
+              <div class="text-subtitle-2">Total refunded</div>
+              <small
+                >It's the total amount of refunds automatically made by your
+                payment gateway. Only some payment services support this
+                feature, so you need to refund manually.
+              </small>
+
+              <v-card-actions>
+                <u-price
+                  :amount="payment.refund_amount"
+                  :currency="basket.currency"
+                  large
+                ></u-price>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+        <div v-if="payment.refunds?.length" class="overflow-auto pa-3">
+          <v-card
+            v-for="refund in payment.refunds"
+            width="320"
+            class="ma-1"
+            rounded="lg"
+            elevation="3"
+            variant="tonal"
+          >
+            <small>sd_unique_id</small>
+            <div class="text-subtitle-2">
+              {{ refund.sd_unique_id }}
+            </div>
+            <small>ex_track_id</small>
+            <div class="text-subtitle-2">
+              {{ refund.ex_track_id }}
+            </div>
+            <small>amount</small>
+            <div class="text-subtitle-2">
+              <u-price
+                :amount="refund.amount"
+                :currency="refund.currency"
+              ></u-price>
+            </div>
+            <small>refund_at</small>
+            <div class="text-subtitle-2">
+              {{ getLocalTimeStringSmall(refund.refund_at) }}
+            </div>
+          </v-card>
+        </div>
+      </div>
+    </v-expand-transition>
+
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Seller Actions ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
     <div class="text-start">
       <v-btn
@@ -177,10 +283,12 @@
 import BOrderCart from "../../cart/BOrderCart.vue";
 import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
 import { Basket } from "@selldone/core-js";
+import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 
 export default {
   name: "BOrderDashboardCart",
   components: {
+    UPrice,
     VariantItemViewMicro,
     BOrderCart,
   },
@@ -274,6 +382,22 @@ export default {
         this.basket.delivery_state ===
           Basket.PhysicalOrderStates.PreparingOrder.code
       );
+    },
+
+    payment() {
+      return this.basket.payment;
+    },
+    gateway(){
+      return this.payment?.gateway
+    },
+    need_to_refund() {
+      const sum_unavailable_items = this.basket.items.reduce((acc, item) => {
+        if (!item.check) {
+          acc += item.price * item.count;
+        }
+        return acc;
+      }, 0);
+      return sum_unavailable_items - this.payment.refund_amount;
     },
   },
   methods: {
