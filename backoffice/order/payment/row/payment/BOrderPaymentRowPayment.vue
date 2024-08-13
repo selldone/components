@@ -131,6 +131,12 @@
         >
           Receipt URL
         </v-btn>
+
+        <u-smart-menu
+          v-if="action_items?.length"
+          :items="action_items"
+          class="ms-1 float-end"
+        ></u-smart-menu>
       </td>
     </template>
     <!-- Normal -->
@@ -204,107 +210,159 @@
         >
           Receipt URL
         </v-btn>
+
+        <u-smart-menu
+          v-if="action_items?.length"
+          :items="action_items"
+          class="ms-1 float-end"
+        ></u-smart-menu>
       </td>
     </template>
-
-    <!-- █████████████████████████ Dialog > Confirm Cash Payment (For bill only) █████████████████████████ -->
-
-    <v-dialog
-      v-if="is_require_capture"
-      v-model="dialog_capture"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
-    >
-      <v-card>
-        <v-card-title>
-          <img
-            :src="getShopImagePath(gateway?.icon)"
-            class="me-2"
-            height="24"
-          />
-          Capture the funds | Payment {{ gateway?.name }}
-          {{ payment.unique_id }}
-        </v-card-title>
-
-        <v-card-text>
-          <div class="widget-box mb-5">
-            <s-widget-header icon="price_check" title="Capture Amount">
-            </s-widget-header>
-            <v-list-subheader>
-              Once the payment method is authorized, the Order payment status
-              changes to 'Require Capture.' To seize the authorized funds,
-              initiate a capture request. By default, this action captures the
-              total authorized amount. If you wish to capture less than the
-              initially authorized amount, adjust the 'amount to capture' field
-              below. Performing a partial capture will automatically release any
-              remaining funds. Note that capture can only be executed once.
-            </v-list-subheader>
-
-            <u-price-input
-              v-model="capture_amount"
-              :currency="payment.currency"
-              class="strong-field"
-              label="Amount to capture"
-            ></u-price-input>
-
-            <v-expand-transition>
-              <ul v-if="capture_amount !== payment.amount">
-                <li>
-                  This will replace the 'amount' value in Selldone's payment
-                  details.
-                </li>
-                <li>
-                  This will also update the 'price' value in the order details
-                  on Selldone.
-                </li>
-                <li>
-                  If the order includes TAX, then both the price and tax will be
-                  recalculated based on the new amount, maintaining their
-                  original proportion to each other.
-                </li>
-              </ul>
-            </v-expand-transition>
-
-            <u-smart-verify
-              v-model="accept_action"
-              :true-title="`Verify capture ${capture_amount} ${payment.currency}`"
-              class="my-3"
-              true-description="I want to capture the payment and verify the order."
-            ></u-smart-verify>
-          </div>
-        </v-card-text>
-
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn
-              size="x-large"
-              variant="text"
-              @click="dialog_capture = false"
-            >
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.cancel") }}
-            </v-btn>
-
-            <v-btn
-              :class="{ disabled: !accept_action }"
-              :loading="busy_capture"
-              color="primary"
-              size="x-large"
-              @click="capturePayment"
-            >
-              <v-icon class="me-1">done_all</v-icon>
-              Capture
-              <u-price
-                :amount="capture_amount"
-                :currency="payment.currency"
-              ></u-price>
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </tr>
+
+  <!-- █████████████████████████ Refunds █████████████████████████ -->
+  <tr
+    v-for="refund in payment?.refunds"
+    :key="refund.sd_unique_id"
+    :class="{ 'flex-row': flexMode }"
+    class="text-start"
+  >
+    <td>
+      <v-icon class="flip-ltr ms-4">subdirectory_arrow_left</v-icon>
+      <img
+        class="mx-2"
+        height="24"
+        src="../../../../../assets/icons/refund.svg"
+        width="24"
+      />
+
+      {{ $t("global.commons.refund") }}
+    </td>
+
+    <td>
+      <u-price :amount="refund.amount" :currency="refund.currency"></u-price>
+    </td>
+
+    <td>
+      <small>Selldone UID</small>
+      <div class="text-subtitle-2">
+        {{ refund.sd_unique_id }}
+      </div>
+      <small>{{ gateway?.name }} UID</small>
+      <div class="text-subtitle-2">
+        {{ refund.ex_track_id }}
+      </div>
+    </td>
+
+    <td>
+      <small>{{ $t("global.commons.refund_date") }}</small>
+      <div class="text-subtitle-2">
+        {{ getLocalTimeStringSmall(refund.refund_at) }}
+      </div>
+    </td>
+  </tr>
+
+  <!-- █████████████████████████ Dialog > Confirm Cash Payment (For bill only) █████████████████████████ -->
+
+  <v-dialog
+    v-if="is_require_capture"
+    v-model="dialog_capture"
+    fullscreen
+    scrollable
+    transition="dialog-bottom-transition"
+  >
+    <v-card>
+      <v-card-title>
+        <img :src="getShopImagePath(gateway?.icon)" class="me-2" height="24" />
+        Capture the funds | Payment {{ gateway?.name }}
+        {{ payment.unique_id }}
+      </v-card-title>
+
+      <v-card-text>
+        <div class="widget-box mb-5">
+          <s-widget-header icon="price_check" title="Capture Amount">
+          </s-widget-header>
+          <v-list-subheader>
+            Once the payment method is authorized, the Order payment status
+            changes to 'Require Capture.' To seize the authorized funds,
+            initiate a capture request. By default, this action captures the
+            total authorized amount. If you wish to capture less than the
+            initially authorized amount, adjust the 'amount to capture' field
+            below. Performing a partial capture will automatically release any
+            remaining funds. Note that capture can only be executed once.
+          </v-list-subheader>
+
+          <u-price-input
+            v-model="capture_amount"
+            :currency="payment.currency"
+            class="strong-field"
+            label="Amount to capture"
+          ></u-price-input>
+
+          <v-expand-transition>
+            <ul v-if="capture_amount !== payment.amount">
+              <li>
+                This will replace the 'amount' value in Selldone's payment
+                details.
+              </li>
+              <li>
+                This will also update the 'price' value in the order details on
+                Selldone.
+              </li>
+              <li>
+                If the order includes TAX, then both the price and tax will be
+                recalculated based on the new amount, maintaining their original
+                proportion to each other.
+              </li>
+            </ul>
+          </v-expand-transition>
+
+          <u-smart-verify
+            v-model="accept_action"
+            :true-title="`Verify capture ${capture_amount} ${payment.currency}`"
+            class="my-3"
+            true-description="I want to capture the payment and verify the order."
+          ></u-smart-verify>
+        </div>
+      </v-card-text>
+
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn size="x-large" variant="text" @click="dialog_capture = false">
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.cancel") }}
+          </v-btn>
+
+          <v-btn
+            :class="{ disabled: !accept_action }"
+            :loading="busy_capture"
+            color="primary"
+            size="x-large"
+            @click="capturePayment"
+          >
+            <v-icon class="me-1">done_all</v-icon>
+            Capture
+            <u-price
+              :amount="capture_amount"
+              :currency="payment.currency"
+            ></u-price>
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <b-order-payment-actions-refund-dialog
+    v-if="has_refund_action"
+    v-model="refund_dialog"
+    :payment="payment"
+  ></b-order-payment-actions-refund-dialog>
+
+  <b-order-payment-actions-delivery-dialog
+    v-if="has_delivery_action"
+    v-model="delivery_dialog"
+    :payment="payment"
+  ></b-order-payment-actions-delivery-dialog>
 </template>
 
 <script>
@@ -315,10 +373,18 @@ import UPaymentRiskIndicator from "../../../../../ui/payment/risk/indicator/UPay
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import USmartVerify from "../../../../../ui/smart/verify/USmartVerify.vue";
 import UPriceInput from "../../../../../ui/price/input/UPriceInput.vue";
+import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
+import USmartMenu from "@selldone/components-vue/ui/smart/menu/USmartMenu.vue";
+import BOrderPaymentActionsRefundDialog from "@selldone/components-vue/backoffice/order/payment/actions/refund/dialog/BOrderPaymentActionsRefundDialog.vue";
+import BOrderPaymentActionsDeliveryDialog from "@selldone/components-vue/backoffice/order/payment/actions/delivery/dialog/BOrderPaymentActionsDeliveryDialog.vue";
 
 export default {
   name: "BOrderPaymentRowPayment",
   components: {
+    BOrderPaymentActionsDeliveryDialog,
+    BOrderPaymentActionsRefundDialog,
+    USmartMenu,
+    UPrice,
     UPriceInput,
     USmartVerify,
     UPaymentRiskIndicator,
@@ -348,14 +414,62 @@ export default {
       accept_action: false,
       capture_amount: 0,
       busy_capture: false,
+
+      refund_dialog: false,
+      delivery_dialog: false,
     };
   },
   computed: {
+    IS_VENDOR_PANEL() {
+      /*🟢 Vendor Panel 🟢*/
+      return (
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
+      );
+    },
+
     gateway() {
-      return this.payment.gateway;
+      return this.payment?.gateway;
     },
     is_require_capture() {
       return this.payment?.status === TransactionStatus.RequireCapture.code;
+    },
+
+    has_refund_action() {
+      return this.gateway?.actions?.includes("refund");
+    },
+
+    has_delivery_action() {
+      return this.gateway?.actions?.includes("delivery");
+    },
+
+    action_items() {
+      if (this.IS_VENDOR_PANEL) return [];
+
+      const out = [];
+
+      if (this.has_refund_action) {
+        out.push({
+          title: "Refund Payment",
+          subtitle: "Partial or full refund supported.",
+          icon: "keyboard_return",
+          click: () => {
+            this.refund_dialog = true;
+          },
+        });
+      }
+      if (this.has_delivery_action) {
+        out.push({
+          title: "Confirm On Delivery",
+          subtitle: "You can manually confirm delivery for payment provider.",
+          icon: "where_to_vote",
+          click: () => {
+            this.delivery_dialog = true;
+          },
+        });
+      }
+
+      return out;
     },
   },
   created() {

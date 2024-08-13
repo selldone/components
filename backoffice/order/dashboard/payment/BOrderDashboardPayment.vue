@@ -185,7 +185,9 @@
           <!-- ⬬⬬⬬⬬⬬⬬⬬ Buyer > 🥵 User ⬬⬬⬬⬬⬬⬬⬬ -->
 
           <div v-if="buyer" class="py-2 d-flex align-items-center">
-            <small class="font-weight-bold me-3 ms-1 flex-grow-0" title="This is the user's profile on Selldone. It remains consistent across all stores on Selldone."
+            <small
+              class="font-weight-bold me-3 ms-1 flex-grow-0"
+              title="This is the user's profile on Selldone. It remains consistent across all stores on Selldone."
               >{{ $t("global.commons.buyer") }} :</small
             >
             <component
@@ -245,7 +247,9 @@
           <!-- ⬬⬬⬬⬬⬬⬬⬬ Buyer > 🧜 Customer ⬬⬬⬬⬬⬬⬬⬬ -->
 
           <div class="py-2 d-flex align-items-center">
-            <small class="font-weight-bold me-3 ms-1 flex-grow-0"  title="This is the user's profile in your shop, and you can edit it."
+            <small
+              class="font-weight-bold me-3 ms-1 flex-grow-0"
+              title="This is the user's profile in your shop, and you can edit it."
               >{{ $t("global.commons.customer") }} :</small
             >
             <v-btn
@@ -1070,112 +1074,127 @@ export default {
         (this.order.delivery_price > 0 ? this.order.delivery_price : 0);
       if (items_total_price < 0) items_total_price = 0;
 
+      const _ORDER = this.$t("global.commons.order");
+      const _ITEMS = this.$t("global.commons.items");
+      const _TAX = this.$t("global.commons.tax");
+      const _SHIPPING_TAX = this.$t("global.commons.shipping_tax");
+      const _PAYMENT = this.$t("global.commons.payment");
+      const _DELIVERY = this.$t("global.commons.delivery");
+      const _INCENTIVES = this.$t("global.commons.incentives");
+      const _ITEMS_DISCOUNT = this.$t("global.commons.discount");
+      const _DISCOUNT_CODE = this.$t("global.commons.discount_code");
+      const _COUPON = this.$t("global.commons.coupon");
+      const _CLUB = this.$t("global.commons.club");
+      const _LOTTERY = this.$t("global.commons.lottery");
+      const _CROSS_SELL = this.$t("global.commons.cross_sell");
+      const _YOU = this.$t("global.commons.you");
+
       if (!this.total_payed) {
         // No payment yet!
         const out = {
           nodes: [
             {
-              name: "Order",
+              name: _ORDER,
               color: "#999",
             },
             {
-              name: "Items",
+              name: _ITEMS,
               color: "#999",
             },
           ],
           links: [
             {
-              source: "Items",
-              target: "Order",
-              value: items_total_price+0.001,
+              source: _ITEMS,
+              target: _ORDER,
+              value: items_total_price + 0.001,
             },
           ],
         };
         if (this.tax) {
-          out.nodes.push({ name: "Tax", color: "#999" });
+          out.nodes.push({ name: _TAX, color: "#999" });
           out.links.push({
-            source: "Tax",
-            target: "Order",
+            source: _TAX,
+            target: _ORDER,
             value: Math.abs(this.tax),
           });
         }
 
         if (this.tax_shipping) {
-          out.nodes.push({ name: "Tax Shipping", color: "#999" });
+          out.nodes.push({ name: _SHIPPING_TAX, color: "#999" });
           out.links.push({
-            source: "Tax Shipping",
-            target: "Order",
+            source: _SHIPPING_TAX,
+            target: _ORDER,
             value: Math.abs(this.tax_shipping),
           });
         }
 
         if (this.order.delivery_price > 0) {
-          out.nodes.push({ name: "Delivery", color: "#999" });
+          out.nodes.push({ name: _DELIVERY, color: "#999" });
           out.links.push({
-            source: "Delivery",
-            target: "Order",
+            source: _DELIVERY,
+            target: _ORDER,
             value: Math.abs(this.order.delivery_price),
           });
         }
 
         if (total_incentives) {
-          out.nodes.push({ name: "Incentives", color: "#401594" });
+          out.nodes.push({ name: _INCENTIVES, color: "#401594" });
           out.links.push({
-            source: "Incentives",
-            target: "Order",
+            source: _INCENTIVES,
+            target: _ORDER,
             value: total_incentives,
           });
 
           if (this.items_discount) {
-            out.nodes.push({ name: "Item Discount", color: "#13a4be" });
+            out.nodes.push({ name: _ITEMS_DISCOUNT, color: "#13a4be" });
             out.links.push({
-              source: "Item Discount",
-              target: "Incentives",
+              source: _ITEMS_DISCOUNT,
+              target: _INCENTIVES,
               value: Math.abs(this.items_discount),
             });
           }
 
           if (this.discount_code_amount) {
-            out.nodes.push({ name: "Discount Code", color: "#9b0909" });
+            out.nodes.push({ name: _DISCOUNT_CODE, color: "#9b0909" });
             out.links.push({
-              source: "Discount Code",
-              target: "Incentives",
+              source: _DISCOUNT_CODE,
+              target: _INCENTIVES,
               value: Math.abs(this.discount_code_amount),
             });
           }
 
           if (this.coupon_amount) {
-            out.nodes.push({ name: "Coupon", color: "#389833" });
+            out.nodes.push({ name: _COUPON, color: "#389833" });
             out.links.push({
-              source: "Coupon",
-              target: "Incentives",
+              source: _COUPON,
+              target: _INCENTIVES,
               value: Math.abs(this.coupon_amount),
             });
           }
 
           if (this.club_amount) {
-            out.nodes.push({ name: "Club", color: "#341cd2" });
+            out.nodes.push({ name: _CLUB, color: "#341cd2" });
             out.links.push({
-              source: "Club",
-              target: "Incentives",
+              source: _CLUB,
+              target: _INCENTIVES,
               value: Math.abs(this.club_amount),
             });
           }
           if (this.lottery_amount) {
-            out.nodes.push({ name: "Lottery", color: "#651683" });
+            out.nodes.push({ name: _LOTTERY, color: "#651683" });
 
             out.links.push({
-              source: "Lottery",
-              target: "Incentives",
+              source: _LOTTERY,
+              target: _INCENTIVES,
               value: Math.abs(this.lottery_amount),
             });
           }
 
           if (this.total_cross_sells_discount) {
-            out.nodes.push({ name: "Cross Sells", color: "#cc4f0d" });
+            out.nodes.push({ name: _CROSS_SELL, color: "#cc4f0d" });
             out.links.push({
-              source: "Cross Sells",
-              target: "Incentives",
+              source: _CROSS_SELL,
+              target: _INCENTIVES,
               value: Math.abs(this.total_cross_sells_discount),
             });
           }
@@ -1188,18 +1207,18 @@ export default {
       const out = {
         nodes: [
           {
-            name: "Order",
+            name: _ORDER,
             color: "#689F38",
           },
-          { name: "Payment", color: "#689F38" },
+          { name: _PAYMENT, color: "#689F38" },
 
-          { name: "You", color: "#689F38" },
+          { name: _YOU, color: "#689F38" },
         ],
         links: [
-          { source: "Order", target: "Payment", value: this.total_payed },
+          { source: _ORDER, target: _PAYMENT, value: this.total_payed },
           {
-            source: "Payment",
-            target: "You",
+            source: _PAYMENT,
+            target: _YOU,
             value: payment_to_you,
           },
         ],
@@ -1207,90 +1226,90 @@ export default {
 
       if (this.total_payed) {
         if (this.tax) {
-          out.nodes.push({ name: "Tax", color: "#000000" });
+          out.nodes.push({ name: _TAX, color: "#000000" });
           out.links.push({
-            source: "Payment",
-            target: "Tax",
+            source: _PAYMENT,
+            target: _TAX,
             value: Math.abs(this.tax),
           });
         }
         if (this.tax_shipping) {
-          out.nodes.push({ name: "Tax Shipping", color: "#000000" });
+          out.nodes.push({ name: _SHIPPING_TAX, color: "#000000" });
           out.links.push({
-            source: "Payment",
-            target: "Tax Shipping",
+            source: _PAYMENT,
+            target: _SHIPPING_TAX,
             value: Math.abs(this.tax_shipping),
           });
         }
 
         if (this.order.delivery_price > 0) {
-          out.nodes.push({ name: "Delivery", color: "#000000" });
+          out.nodes.push({ name: _DELIVERY, color: "#000000" });
           out.links.push({
-            source: "Payment",
-            target: "Delivery",
+            source: _PAYMENT,
+            target: _DELIVERY,
             value: Math.abs(this.order.delivery_price),
           });
         }
       }
 
       if (total_incentives) {
-        out.nodes.push({ name: "Incentives", color: "#401594" });
+        out.nodes.push({ name: _INCENTIVES, color: "#401594" });
         out.links.push({
-          source: "Order",
-          target: "Incentives",
+          source: _ORDER,
+          target: _INCENTIVES,
           value: total_incentives,
         });
 
         if (this.items_discount) {
-          out.nodes.push({ name: "Item Discount", color: "#13a4be" });
+          out.nodes.push({ name: _ITEMS_DISCOUNT, color: "#13a4be" });
           out.links.push({
-            source: "Incentives",
-            target: "Item Discount",
+            source: _INCENTIVES,
+            target: _ITEMS_DISCOUNT,
             value: Math.abs(this.items_discount),
           });
         }
 
         if (this.discount_code_amount) {
-          out.nodes.push({ name: "Discount Code", color: "#9b0909" });
+          out.nodes.push({ name: _DISCOUNT_CODE, color: "#9b0909" });
           out.links.push({
-            source: "Incentives",
-            target: "Discount Code",
+            source: _INCENTIVES,
+            target: _DISCOUNT_CODE,
             value: Math.abs(this.discount_code_amount),
           });
         }
 
         if (this.coupon_amount) {
-          out.nodes.push({ name: "Coupon", color: "#389833" });
+          out.nodes.push({ name: _COUPON, color: "#389833" });
           out.links.push({
-            source: "Incentives",
-            target: "Coupon",
+            source: _INCENTIVES,
+            target: _COUPON,
             value: Math.abs(this.coupon_amount),
           });
         }
 
         if (this.club_amount) {
-          out.nodes.push({ name: "Club", color: "#341cd2" });
+          out.nodes.push({ name: _CLUB, color: "#341cd2" });
           out.links.push({
-            source: "Incentives",
-            target: "Club",
+            source: _INCENTIVES,
+            target: _CLUB,
             value: Math.abs(this.club_amount),
           });
         }
         if (this.lottery_amount) {
-          out.nodes.push({ name: "Lottery", color: "#651683" });
+          out.nodes.push({ name: _LOTTERY, color: "#651683" });
 
           out.links.push({
-            source: "Incentives",
-            target: "Lottery",
+            source: _INCENTIVES,
+            target: _LOTTERY,
             value: Math.abs(this.lottery_amount),
           });
         }
 
         if (this.total_cross_sells_discount) {
-          out.nodes.push({ name: "Cross Sells", color: "#cc4f0d" });
+          out.nodes.push({ name: _CROSS_SELL, color: "#cc4f0d" });
           out.links.push({
-            source: "Incentives",
-            target: "Cross Sells",
+            source: _INCENTIVES,
+            target: _CROSS_SELL,
             value: Math.abs(this.total_cross_sells_discount),
           });
         }
