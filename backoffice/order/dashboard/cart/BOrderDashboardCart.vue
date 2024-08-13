@@ -137,7 +137,8 @@
     <v-expand-transition>
       <div
         v-if="
-          checked && payment &&
+          checked &&
+          payment &&
           (payment?.refund_amount || need_to_refund || payment?.refunds?.length)
         "
         class="text-start"
@@ -183,6 +184,14 @@
                 >
                 </b-order-payment-actions-refund-button>
               </v-card-actions>
+              <small>
+                <v-icon class="me-1">warning_amber</v-icon>
+                {{
+                  $t(
+                    "process_center.basket_list.need_to_refund.calculated_approximately",
+                  )
+                }}
+              </small>
             </v-card>
           </v-col>
           <v-col v-if="gateway?.actions?.includes('refund')" cols="12" sm="6">
@@ -367,8 +376,10 @@ export default {
       return this.payment?.gateway;
     },
     need_to_refund() {
+      const sum = this.need_to_refund_items + this.need_to_refund_tax;
+
       return PriceHelper.FixPrecisionForCurrency(
-        this.need_to_refund_items + this.need_to_refund_tax,
+        sum - this.payment.refund_amount,
         this.payment.currency,
       );
     },

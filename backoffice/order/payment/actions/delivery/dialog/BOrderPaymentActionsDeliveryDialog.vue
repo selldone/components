@@ -24,22 +24,18 @@
       <v-card-title>
         <img :src="getShopImagePath(gateway?.icon)" class="me-2" height="24" />
 
-        Customer Delivery Confirmation
+        {{$t('payment_delivery_dialog.title')}}
       </v-card-title>
 
       <v-card-text>
         <p>
-          Certain payment services require confirmation that the order has been
-          delivered to the customer. We typically send this confirmation during
-          the final step of order fulfillment when we receive the customer's
-          delivery confirmation. However, if you need to perform this action
-          manually, you can do so here.
+          {{$t('payment_delivery_dialog.message')}}
         </p>
 
         <u-smart-verify
           v-model="confirmed"
-          true-title="Verify Delivery"
-          true-description="I confirm that the order has been delivered to the customer."
+          :true-title="$t('payment_delivery_dialog.verify.title')"
+          :true-description="$t('payment_delivery_dialog.verify.description')"
           class="mt-3"
         ></u-smart-verify>
       </v-card-text>
@@ -64,7 +60,8 @@
             :disabled="!confirmed"
           >
             <v-icon start>check</v-icon>
-            Confirm Now
+
+            {{$t('payment_delivery_dialog.action')}}
           </v-btn>
         </div>
       </v-card-actions>

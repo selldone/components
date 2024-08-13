@@ -24,18 +24,18 @@
       <v-card-title>
         <img :src="getShopImagePath(gateway?.icon)" class="me-2" height="24" />
 
-        Refund Payment
+        {{ $t("payment_refund_dialog.title") }}
       </v-card-title>
 
       <v-card-text>
-        <p  class="mb-3">
-          For security reasons, only orders paid within the last 7 days are eligible for refunds.
+        <p class="mb-3">
+          {{ $t("payment_refund_dialog.message") }}
         </p>
         <v-table density="compact">
           <template v-slot:default>
             <tbody>
               <tr>
-                <td>Payment Amount</td>
+                <td>{{ $t("payment_refund_dialog.payment_amount") }}</td>
                 <td>
                   <u-price
                     :amount="payment.amount"
@@ -45,7 +45,7 @@
               </tr>
 
               <tr>
-                <td>Total Refunded Amount</td>
+                <td>{{ $t("payment_refund_dialog.total_refund_amount") }}</td>
                 <td>
                   <u-price
                     :amount="payment.refund_amount"
@@ -55,7 +55,7 @@
               </tr>
 
               <tr>
-                <td>Can Refund</td>
+                <td>{{ $t("payment_refund_dialog.can_refund") }}</td>
                 <td>
                   <u-price
                     :amount="max_amount"
@@ -65,14 +65,13 @@
               </tr>
 
               <tr>
-                <td>{{$t('global.commons.payment_date')}}</td>
+                <td>{{ $t("global.commons.payment_date") }}</td>
                 <td>
                   <b>{{ getFromNowString(payment.payment_at) }}</b
                   ><br />
                   <small> {{ getLocalTimeString(payment.payment_at) }}</small>
                 </td>
               </tr>
-
             </tbody>
           </template>
         </v-table>
@@ -81,15 +80,15 @@
           v-model="amount_input"
           :currency="payment.currency"
           variant="solo"
-          label="Refund Amount"
+          :label="$t('payment_refund_dialog.refund_amount')"
           class="strong-field mt-5"
           @update:model-value="confirmed = false"
         ></u-price-input>
 
         <u-smart-verify
           v-model="confirmed"
-          true-title="Verify Refund"
-          true-description="I confirm that the refund amount is correct and I want to proceed."
+          :true-title="$t('payment_refund_dialog.verify.title')"
+          :true-description="$t('payment_refund_dialog.verify.description')"
         ></u-smart-verify>
       </v-card-text>
 
@@ -113,7 +112,8 @@
             :disabled="!amount_input || !confirmed || amount_input > max_amount"
           >
             <v-icon start>check</v-icon>
-            Refund Now
+
+            {{ $t("payment_refund_dialog.action") }}
 
             <u-price
               v-if="amount_input"

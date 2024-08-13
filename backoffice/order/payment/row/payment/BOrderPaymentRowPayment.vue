@@ -450,8 +450,8 @@ export default {
 
       if (this.has_refund_action) {
         out.push({
-          title: "Refund Payment",
-          subtitle: "Partial or full refund supported.",
+          title: this.$t("row_payment.actions.refund.title"),
+          subtitle: this.$t("row_payment.actions.refund.subtitle"),
           icon: "keyboard_return",
           click: () => {
             this.refund_dialog = true;
@@ -460,8 +460,8 @@ export default {
       }
       if (this.has_delivery_action) {
         out.push({
-          title: "Confirm On Delivery",
-          subtitle: "You can manually confirm delivery for payment provider.",
+          title: this.$t("row_payment.actions.delivery.title"),
+          subtitle: this.$t("row_payment.actions.delivery.subtitle"),
           icon: "where_to_vote",
           click: () => {
             this.delivery_dialog = true;
