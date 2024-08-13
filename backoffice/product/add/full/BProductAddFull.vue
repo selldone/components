@@ -1136,6 +1136,9 @@ not need!
             this.showSuccessAlert(null, "The product edited.");
 
             Object.assign(this.product_new, data.product); // Copy product data (refresh)
+            if(this.product){
+              Object.assign(this.product, data.product); // Copy product data (refresh)
+            }
 
             this.$emit("update:product", data.product);
 
