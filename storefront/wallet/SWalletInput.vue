@@ -52,11 +52,13 @@ export default {
     wallet: null,
   }),
   watch: {
-    currency() {
+    currency(_new,_old) {
+      console.log("SWalletInput currency changed",_new,_old);
       this.fetchWallet();
     },
   },
   created() {
+    console.log("SWalletInput created");
     this.fetchWallet();
   },
   methods: {

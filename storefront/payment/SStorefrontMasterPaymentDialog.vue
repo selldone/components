@@ -50,7 +50,7 @@
         :qr-code="payment_form_qr_code"
         :timeout="timeout"
         has-club
-        has-wallet
+        :has-wallet="!payment_form_url/*Prevent reload in redirect payment mode*/"
         @close="delayedHide()"
         @onEndPayment="(data) => onFinishPayment(data)"
         @select-gateway="buy"
