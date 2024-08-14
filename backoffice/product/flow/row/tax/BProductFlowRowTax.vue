@@ -19,10 +19,12 @@
         current_tax_profile?.icon ? current_tax_profile.icon : 'balance'
       "
       :title="
-        (isSubscription ? 'Subscription tax' : $t('global.commons.tax')) +
+        (isSubscription
+          ? $t('product_flow.tax.title')
+          : $t('global.commons.tax')) +
         (current_tax_profile
           ? ` ● ${current_tax_profile.name}`
-          : ' ● Default Shop')
+          : ` ● ${$t('product_flow.tax.default_shop')}`)
       "
       class="flex-grow-1"
     >
@@ -43,7 +45,8 @@
         <v-avatar class="avatar-gradient -thin -shop me-1" size="24">
           <v-img :src="getShopImagePath(shop.icon, 64)"></v-img>
         </v-avatar>
-        Tax Profiles
+
+        {{ $t("product_flow.tax.tax_profiles") }}
       </v-btn>
     </div>
   </v-row>
@@ -96,37 +99,37 @@ export default {
 
     tax_profile_desc() {
       if (this.isSubscription)
-        return "We can apply tax only on the payment creation step.";
+        return this.$t("product_flow.tax.description.subscription_tax_msg");
       let out = "";
       let tax = null;
       if (!this.current_tax_profile) {
-        out = `<b>Default</b> `;
+        out = `<b>${this.$t("global.commons.default")}</b> `;
         tax = this.shop.tax;
       } else {
-        out = "<b>Dedicated</b> ";
+        out = `<b>${this.$t("product_flow.tax.description.dedicated")}</b> `;
         tax = this.current_tax_profile;
       }
 
       if (tax) {
         if (!tax.enable) {
-          out += " | This tax profile is disabled! (⚠️Warning)";
+          out += ` | ${this.$t("product_flow.tax.description.is_disabled")} (⚠️${this.$t("global.commons.warning")})`;
         } else {
           if (tax.fix) {
-            out += ` | Tax: ${tax.fix_vat}%`;
+            out += ` | ${this.$t("global.commons.tax")}: ${tax.fix_vat}%`;
 
             if (tax.shipping) {
-              out += ` | Shipping: ${tax.fix_shipping}%`;
+              out += ` | ${this.$t("global.commons.shipping")}: ${tax.fix_shipping}%`;
             }
           } else {
-            out += ` | Tax: Location based`;
+            out += ` | ${this.$t("product_flow.tax.description.tax_is_based_on_location")}`;
 
             if (tax.shipping) {
-              out += ` | Shipping: Location based`;
+              out += ` | ${this.$t("product_flow.tax.description.shipping_tax_is_based_on_location")} `;
             }
           }
 
           if (tax.included) {
-            out += ` | Included in price.`;
+            out += ` | ${this.$t("product_flow.tax.description.included_in_price")}`;
           } else {
             out += `.`;
           }

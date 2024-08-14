@@ -98,7 +98,7 @@
       <div class="dashed-hr my-2 mx-n5"></div>
 
       <v-row align="center" class="small text-muted py-2" no-gutters>
-        <i class="fas fa-angle-down me-2"></i> Staff messages
+        <i class="fas fa-angle-down me-2"></i>  {{ $t("product_admin.dashboard.info.staff_messages") }}
 
         <v-spacer></v-spacer>
         <v-btn
@@ -108,7 +108,8 @@
           @click="dialog_note = true"
         >
           <v-icon class="me-1" start>post_add</v-icon>
-          Add note
+          {{ $t("product_admin.dashboard.info.add_note") }}
+
         </v-btn>
       </v-row>
 
@@ -139,7 +140,8 @@
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Tags ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <v-row align="center" class="small text-muted py-2" no-gutters>
-        <i class="fas fa-angle-down me-2"></i>Product tags
+        <i class="fas fa-angle-down me-2"></i>
+        {{ $t("product_admin.dashboard.info.product_tags") }}
 
         <v-spacer></v-spacer>
         <v-btn
@@ -149,7 +151,8 @@
           @click="dialog_tags = true"
         >
           <v-icon class="me-1" start>label</v-icon>
-          Edit tags
+
+          {{ $t("product_admin.dashboard.info.edit_tags") }}
         </v-btn>
       </v-row>
 

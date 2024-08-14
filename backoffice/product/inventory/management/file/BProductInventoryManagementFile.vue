@@ -172,7 +172,7 @@
             :value="numeralFormat(max_file_size_mb * 1000 * 1000, '0 b')"
             icon="insert_page_break"
           ></u-text-value-box>
-          <u-text-value-box icon="snippet_folder" label="Files count limit">
+          <u-text-value-box icon="snippet_folder" :label="$t('product_file.file_count_limit')">
             <template v-slot:value>
               <b class="text-green">{{ files.length }}</b> / 20
             </template>
@@ -195,7 +195,7 @@
       <v-list-subheader>
         <div>
           <v-icon class="me-1">open_with</v-icon>
-          You can drag and sort files.
+          {{ $t("product_file.drag_sort_msg") }}
         </div>
       </v-list-subheader>
 
@@ -205,27 +205,30 @@
           <div>
             <v-chip class="me-1" color="#673AB7" label size="small">
               <v-icon size="small" start>diamond</v-icon>
-              Paid
+              {{ $t("global.commons.paid") }}
             </v-chip>
-            Users can download it only after purchasing the product.
+            {{ $t("product_file.paid_mode_msg") }}
           </div>
         </v-list-subheader>
         <v-list-subheader>
           <div>
-            <v-chip class="me-1" color="#009688" label size="small"
-              >Sample
+            <v-chip class="me-1" color="#009688" label size="small">
+              {{ $t("global.commons.sample") }}
             </v-chip>
-            Users can download it for free. Sample files must be under 50 MB.
+            {{ $t("product_file.free_mode_msg") }}
           </div>
         </v-list-subheader>
 
         <v-list-subheader>
           <div>
-            <span>{{
-              has_gust_shop
-                ? "● Registered and guest users can download files since guest purchases are enabled in the shop's settings > flow."
-                : "● Only registered users can download sample files."
-            }}</span>
+            <span
+              >●
+              {{
+                has_gust_shop
+                  ? $t("product_file.has_gust_shopping_msg")
+                  : $t("product_file.only_registered_shopping_msg")
+              }}</span
+            >
             <v-btn
               v-if="!IS_VENDOR_PANEL"
               :to="{ name: 'BPageShopSettingFlow' }"
@@ -301,7 +304,11 @@
                   <v-icon v-if="!element.sample" start
                     >{{ element.size > 50 * 1024 ? "lock" : "diamond" }}
                   </v-icon>
-                  {{ element.sample ? "Sample" : "Paid" }}
+                  {{
+                    element.sample
+                      ? $t("global.commons.sample")
+                      : $t("global.commons.paid")
+                  }}
                 </v-btn>
               </v-list-item-title>
               <v-list-item-subtitle class="py-1 usn">

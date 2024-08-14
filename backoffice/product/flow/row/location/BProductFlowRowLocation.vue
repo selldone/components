@@ -16,23 +16,31 @@
   <v-row align="center" no-gutters>
     <v-list-item
       :prepend-icon="locations_count ? 'mode_of_travel' : 'public'"
-      :title="`Selling location restriction ● ${locations_count ? 'Available in ' + locations_count + ' countries' : 'Not restricted'} `"
+      :title="
+        $t('product_flow.location.title', {
+          status: locations_count
+            ?$t('product_flow.location.status.has_restriction',{count:locations_count})
+            : $t('product_flow.location.status.no_restriction'),
+        })
+      "
       class="flex-grow-1"
     >
       <v-list-item-subtitle v-if="shop_countries?.length">
         <v-icon class="me-1" color="green">check_circle</v-icon>
-        Shopping globally restricted to {{ shop_countries.length }} countries.
-        These countries are
+
         {{
-          shop_countries
-            .map((i) => getCountryName(i))
-            .join(", ")
-            .limitWords(20)
+          $t("product_flow.location.available_countries_msg", {
+            count: shop_countries.length,
+            countries: shop_countries
+              .map((i) => getCountryName(i))
+              .join(", ")
+              .limitWords(20),
+          })
         }}
       </v-list-item-subtitle>
       <v-list-item-subtitle v-else-if="shop_countries">
         <v-icon class="me-1" color="red">cancel</v-icon>
-        Shopping is disabled for all countries in your shop > locations setting.
+        {{ $t("product_flow.location.disable_for_all_countries_msg") }}
       </v-list-item-subtitle>
 
       <v-chip
@@ -66,9 +74,14 @@
               color="red"
               >warning
             </v-icon>
-            You set {{ getCountryName(country) }} as a selling location but in
-            the store level you not permit this country. Please check your store
-            level settings.
+            {{
+              $t(
+                "product_flow.location.location_is_not_in_permitted_shop_locations_msg",
+                {
+                  country: getCountryName(country),
+                },
+              )
+            }}
           </div>
         </v-tooltip>
       </v-chip>
@@ -85,7 +98,8 @@
         <v-avatar class="avatar-gradient -thin -shop me-1" size="24">
           <v-img :src="getShopImagePath(shop.icon, 64)"></v-img>
         </v-avatar>
-        Shop Locations
+   {{$t("product_flow.location.shop_locations")}}
+
       </v-btn>
       <v-btn
         :to="{
@@ -100,8 +114,8 @@
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
           <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
         </v-avatar>
+        {{$t("product_flow.location.product_locations")}}
 
-        Product Locations
       </v-btn>
     </div>
   </v-row>

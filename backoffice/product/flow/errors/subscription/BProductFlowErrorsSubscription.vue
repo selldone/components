@@ -23,8 +23,8 @@
     <v-list-item
       base-color="#fff"
       class="flex-grow-1"
-      subtitle="This product has no subscription pricing plans. You need to add at least one subscription pricing plan to make this product available for subscription purchase."
-      title="Missing Subscription Pricing Plans"
+      :title="$t('product_flow.subscription_errors.title')"
+      :subtitle="$t('product_flow.subscription_errors.subtitle')"
     >
       <template v-slot:prepend>
         <v-icon class="blink-me-linear">report</v-icon>
@@ -44,8 +44,7 @@
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
           <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
         </v-avatar>
-
-        Pricing Plans
+        {{ $t("product_flow.subscription_errors.pricing_plans") }}
       </v-btn>
     </div>
   </v-row>

@@ -36,7 +36,7 @@
         ></apexchart>
       </template>
       <div v-else class="pa-3 text-muted text-center">
-        Users have not rated this product yet.
+        {{ $t("product_admin.dashboard.survey.users_not_rated_msg") }}
       </div>
     </template>
 
@@ -52,7 +52,8 @@
             {{ $t("product_admin.dashboard.survey.total_participation") }}
           </small>
           <v-tooltip activator="parent" max-width="360">
-            Total count of raters for the product.
+            {{ $t("product_admin.dashboard.survey.total_participation_tooltip") }}
+
           </v-tooltip>
         </v-col>
 

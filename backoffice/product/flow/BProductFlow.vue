@@ -14,9 +14,9 @@
 
 <template>
   <s-widget-box
-    :title="`<h5 class='align-items-center pb-1'>⚡ Purchase flow</h5>`"
+    :title="`<h5 class='align-items-center pb-1'>⚡ ${$t('product_flow.title')}</h5>`"
     class="b--product-flow"
-    sub-title="This is the purchase flow and health check of your product."
+    :sub-title="$t('product_flow.subtitle')"
   >
     <v-list :lines="3" class="border-between-vertical" rounded="xl">
       <!-- --------------- Connect --------------- -->
@@ -83,69 +83,90 @@
     <!-- --------------- Pods --------------- -->
 
     <u-pods-panel color="#ddd">
-      <u-pod-node icon="add_shopping_cart" title="Purchase"></u-pod-node>
+      <u-pod-node
+        icon="add_shopping_cart"
+        :title="$t('global.commons.purchase')"
+      ></u-pod-node>
       <u-pod-wire forward></u-pod-wire>
       <u-pod-node
         :image="getShopImagePath(product.icon, 64)"
         icon="inventory"
-        title="Add to cart"
+        :title="$t('global.actions.add_to_cart')"
       ></u-pod-node>
 
       <template v-if="isMarketplace">
         <u-pod-wire forward></u-pod-wire>
-        <u-pod-node icon="store" title="Vendor"></u-pod-node>
+        <u-pod-node
+          icon="store"
+          :title="$t('global.commons.vendor')"
+        ></u-pod-node>
       </template>
 
       <u-pod-wire forward></u-pod-wire>
-      <u-pod-node icon="monetization_on" title="Pricing"></u-pod-node>
+      <u-pod-node
+        icon="monetization_on"
+        :title="$t('global.commons.pricing')"
+      ></u-pod-node>
 
       <template v-if="has_valuation">
         <u-pod-wire forward></u-pod-wire>
         <u-pod-node
           :image="require('../../../assets/icons/valuation.svg')"
-          title="Valuation"
+          :title="$t('global.commons.valuation')"
         ></u-pod-node>
       </template>
 
       <u-pod-wire forward></u-pod-wire>
-      <u-pod-node icon="emoji_emotions" title="Incentives"></u-pod-node>
+      <u-pod-node
+        icon="emoji_emotions"
+        :title="$t('global.commons.incentives')"
+      ></u-pod-node>
 
       <u-pod-wire forward></u-pod-wire>
       <u-pod-node
         :image="require('../../../assets/icons/tax-3d.svg')"
-        title="Tax"
+        :title="$t('global.commons.tax')"
       ></u-pod-node>
 
       <u-pod-wire forward></u-pod-wire>
-      <u-pod-node icon="shopping_bag" title="Checkout"></u-pod-node>
+      <u-pod-node
+        icon="shopping_bag"
+        :title="$t('global.commons.checkout')"
+      ></u-pod-node>
 
       <template v-if="product.type === ProductType.SERVICE.code">
         <u-pod-wire forward></u-pod-wire>
         <u-pod-node
           icon="assignment_turned_in"
-          title="Confirmation"
+          :title="$t('global.commons.confirmation')"
         ></u-pod-node>
       </template>
 
       <u-pod-wire forward></u-pod-wire>
-      <u-pod-node icon="credit_score" title="Payment"></u-pod-node>
+      <u-pod-node
+        icon="credit_score"
+        :title="$t('global.commons.payment')"
+      ></u-pod-node>
 
       <u-pod-wire forward></u-pod-wire>
       <u-pod-node
         :image="getProductTypeImage(product.type)"
-        title="Fulfillment"
+        :title="$t('global.commons.fulfillment')"
       ></u-pod-node>
 
       <template v-if="isSubscription">
         <u-pod-wire forward></u-pod-wire>
-        <u-pod-node icon="repeat" title="Recurring payment"></u-pod-node>
+        <u-pod-node
+          icon="repeat"
+          :title="$t('global.commons.recurring_payment')"
+        ></u-pod-node>
       </template>
 
       <template v-if="isSubscription && ribbon_link_type">
         <u-pod-wire forward></u-pod-wire>
         <u-pod-node
           :image="ribbon_link_type.image"
-          title="+ Order"
+          :title="'+ ' + $t('global.commons.order')"
         ></u-pod-node>
       </template>
 

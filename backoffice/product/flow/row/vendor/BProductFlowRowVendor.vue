@@ -17,12 +17,12 @@
     <v-list-item
       v-if="isMarketplace"
       :title="
-        'Marketplace' +
+        $t('global.commons.marketplace') +
         (vendor_owner
           ? ` ● ${vendor_owner.name}`
           : vendors?.length
-            ? ` ● ${vendors?.length} vendors`
-            : ' ● No Vendor')
+            ? ` ● ${vendors?.length} ${$t('global.commons.vendors')}`
+            : ` ● ${$t('global.commons.no_vendors')}`)
       "
       class="flex-grow-1"
       prepend-icon="storefront"
@@ -30,19 +30,27 @@
       <template v-slot:subtitle>
         <div v-if="vendor_owner">
           <v-icon class="me-1" color="green">check_circle</v-icon>
-          This product belongs to <b>{{ vendor_owner.name }}</b
-          >.
+          <span
+            v-html="
+              $t('product_flow.vendor.vendor_owner_msg', {
+                vendor: vendor_owner.name,
+              })
+            "
+          >
+          </span>
         </div>
 
         <div v-else-if="vendors?.length">
           <v-icon class="me-1" color="green">check_circle</v-icon>
-          There is {{ vendors?.length }} vendors for this product.
+          {{
+            $t("product_flow.vendor.has_vendors_msg", {
+              count: vendors?.length,
+            })
+          }}
         </div>
         <div v-else>
           <v-icon class="me-1" color="red">cancel</v-icon>
-
-          You did not set any vendor for the product so customers can not
-          purchase it.
+          {{ $t("product_flow.vendor.no_vendor_msg") }}
         </div>
       </template>
     </v-list-item>
@@ -58,7 +66,7 @@
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
           <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
         </v-avatar>
-        Add Vendors
+        {{ $t("product_flow.vendor.add_vendors") }}
       </v-btn>
     </div>
   </v-row>

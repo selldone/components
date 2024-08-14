@@ -587,7 +587,7 @@
             v-model="new_profile_country"
             :return-object="false"
             item-value="alpha2"
-            placeholder="Select a country.."
+            :placeholder="$t('global.placeholders.select_a_country')"
           >
           </s-country-select>
 

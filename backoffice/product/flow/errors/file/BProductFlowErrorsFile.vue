@@ -23,8 +23,8 @@
     <v-list-item
       base-color="#fff"
       class="flex-grow-1"
-      subtitle="Currently, no files have been uploaded for this product. Please upload files to proceed."
-      title="Missing Files"
+      :title="$t('product_flow.file_errors.title')"
+      :subtitle="$t('product_flow.file_errors.subtitle')"
     >
       <template v-slot:prepend>
         <v-icon class="blink-me-linear">report</v-icon>
@@ -45,7 +45,7 @@
           <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
         </v-avatar>
 
-        Manage Files
+        {{ $t("product_flow.file_errors.manage_files") }}
       </v-btn>
     </div>
   </v-row>

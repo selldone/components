@@ -15,7 +15,8 @@
 <template>
   <v-list-item prepend-icon="calculate">
     <template v-slot:title>
-      Pricing ●
+      {{ $t("product_flow.pricing.title") }}
+      ●
       <u-price :amount="min_price" :currency="product.currency"></u-price>
       <template v-if="min_price !== max_price">
         ~
@@ -25,29 +26,32 @@
     <template v-slot:subtitle>
       <div v-if="product.price === 0">
         <v-icon class="me-1" color="red">cancel</v-icon>
-        The default product price not set yet!
+        {{ $t("product_flow.pricing.no_product_price_msg") }}
       </div>
       <div v-else>
         <v-icon class="me-1" color="green">check_circle</v-icon>
-        Listing pricing is set to
+        {{ $t("product_flow.pricing.listing_pricing_msg") }}
+
         <u-price :amount="product.price" :currency="product.currency"></u-price>
-        .
       </div>
 
       <div v-if="has_valuation">
         <v-icon class="me-1" color="green">check_circle</v-icon>
-        Product has valuation.
+        {{ $t("product_flow.pricing.has_valuation_msg") }}
       </div>
 
       <template v-if="isSubscription">
         <div v-if="subscription_prices?.length">
           <v-icon class="me-1" color="green">check_circle</v-icon>
-          This product has {{ subscription_prices?.length }} subscription
-          pricing plans.
+          {{
+            $t("product_flow.pricing.subscription_pricing_msg", {
+              count: subscription_prices?.length,
+            })
+          }}
         </div>
         <div v-else>
           <v-icon class="me-1" color="red">cancel</v-icon>
-          This product has no subscription pricing plans.
+          {{ $t("product_flow.pricing.has_no_subscription_pricing_msg") }}
         </div>
       </template>
     </template>

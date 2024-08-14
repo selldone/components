@@ -19,22 +19,23 @@
       :title="`${$t(connect_mode.title)} Connect ● ${connect.name}`"
     >
       <template v-slot:subtitle>
-        This product has been added via <b>{{ connect.name }}</b
-        >.
+       <span v-html="$t('product_flow.connect.subtitle',{name: connect.name})"></span>
 
         <div v-if="connect.enable">
           <v-icon class="me-1" color="green">check_circle</v-icon>
-          This bridge to external service is enabled.
+          {{$t('product_flow.connect.enable_msg')}}
         </div>
         <div v-else>
           <v-icon class="me-1" color="red">cancel</v-icon>
-          This bridge to external service is disabled.
+          {{$t('product_flow.connect.disable_msg')}}
+
         </div>
 
         <div v-if="connect.shipping">
           <v-icon class="me-1" color="green">check_circle</v-icon>
-          {{ connect.name }} support shipping. So you have the option to enable
-          auto shipping calculation by {{ connect.name }} on the checkout page.
+          {{$t('product_flow.connect.has_shipping_msg',{name: connect.name})}}
+
+
         </div>
       </template>
     </v-list-item>
@@ -54,7 +55,7 @@
           <v-img :src="getShopImagePath(connect.icon)"></v-img>
         </v-avatar>
 
-        Manage {{ connect.name }}
+        {{$t('global.commons.manage')}} {{ connect.name }}
       </v-btn>
     </div>
   </v-row>

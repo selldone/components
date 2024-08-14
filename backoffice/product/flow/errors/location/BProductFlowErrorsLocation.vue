@@ -22,7 +22,7 @@
   >
     <v-list-item
       :subtitle="subtitle"
-      :title="`Available locations error`"
+      :title="$t('product_flow.location_errors.title')"
       base-color="#fff"
       class="flex-grow-1"
     >
@@ -46,7 +46,7 @@
           <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
         </v-avatar>
 
-        Manage Locations
+        {{ $t("product_flow.location_errors.manage_locations") }}
       </v-btn>
     </div>
   </v-row>
@@ -74,9 +74,9 @@ export default defineComponent({
 
     subtitle() {
       return this.no_location_error
-        ? "You have activated a location restriction for purchasing the product, but currently, no country is listed under this restriction. As a result, this product is unavailable for purchase by anyone."
+        ? $t("product_flow.location_errors.no_location_error_subtitle")
         : this.invalid_location_error
-          ? "The location restriction settings for your product contain an error: certain locations listed do not have any associated ZIP codes. Consequently, users are unable to select a ZIP code, rendering the product unavailable for purchase."
+          ? $t("product_flow.invalid_location_error_subtitle")
           : "";
     },
 

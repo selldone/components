@@ -18,33 +18,39 @@
       product.icon ? getShopImagePath(product.icon, 64) : undefined
     "
     :prepend-icon="product.icon ? undefined : 'add_photo_alternate'"
-    :title="`Product Health ● ${product.title}`"
+    :title="`${$t('product_flow.health.title')} ● ${product.title}`"
   >
     <template v-slot:subtitle>
       <div v-if="product.quantity > 0 && !isFile">
         <v-icon class="me-1" color="green">check_circle</v-icon>
-        Product is available in stock.
+
+        {{ $t("product_flow.health.available_in_stock_msg") }}
       </div>
       <div v-else-if="!isFile">
         <v-icon class="me-1" color="red">cancel</v-icon>
-        Product is out of stock.
+
+        {{ $t("product_flow.health.out_of_stock_msg") }}
       </div>
       <div v-else-if="isFile">
         <template v-if="files_count">
           <v-icon class="me-1" color="green">check_circle</v-icon>
-          {{ files_count }} files with total
-          {{ numeralFormat(files_size * 1024, "0.[0] ib") }} uploaded for this
-          product.
+          {{
+            $t("product_flow.health.file_count_msg", {
+              files_count: files_count,
+              files_size: numeralFormat(files_size * 1024, "0.[0] ib"),
+            })
+          }}
         </template>
         <template v-else>
           <v-icon class="me-1" color="red">cancel</v-icon>
-          No file has been uploaded yet.
+
+          {{ $t("product_flow.health.no_file_uploaded_msg") }}
         </template>
       </div>
 
       <div v-if="!product.icon">
         <v-icon class="me-1" color="red">cancel</v-icon>
-        Upload a product image to make it more attractive.
+        {{ $t("product_flow.health.no_image_uploaded_msg") }}
       </div>
     </template>
   </v-list-item>

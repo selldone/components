@@ -17,10 +17,10 @@
     <div :class="{ '-large': !collapse }" class="widget-box mb-5">
       <s-widget-header
         :disabled="!locations"
-        add-caption="Add Country"
-        disabled-reason="No restriction"
+        :add-caption="$t('product_location_restrictions.add_location_action')"
+        :disabled-reason="$t('product_location_restrictions.no_restriction')"
         icon="mode_of_travel"
-        title="Available Locations"
+        :title="$t('product_location_restrictions.title')"
         @click:add="add_dialog = true"
       >
         <template v-slot:actions>
@@ -28,8 +28,8 @@
             v-if="locations && !IS_VENDOR_PANEL"
             :items="[
               {
-                title: 'Load profile',
-                subtitle: 'Select a saved locations profile.',
+                title: $t('product_location_restrictions.import.title'),
+                subtitle: $t('product_location_restrictions.import.subtitle'),
                 icon: 'sim_card_download',
                 click: () => {
                   dialog_load_profile = true;
@@ -37,8 +37,8 @@
               },
 
               {
-                title: 'Save profile',
-                subtitle: 'Store locations for future use.',
+                title: $t('product_location_restrictions.export.title'),
+                subtitle: $t('product_location_restrictions.export.subtitle'),
 
                 icon: 'save',
                 click: () => {
@@ -53,18 +53,17 @@
         </template>
       </s-widget-header>
       <v-list-subheader>
-        If this product or service is available exclusively in certain areas,
-        defined by country and zip or pin codes, you can specify those locations
-        here. These restrictions are applied at the product level. On the
-        product page, we request customers to select their location. If the
-        product is available in their selected area, they will then be able to
-        purchase it.
+        {{ $t("product_location_restrictions.subtitle") }}
       </v-list-subheader>
       <u-smart-toggle
         v-model="has_location"
         false-gray
-        true-description="Customers can only purchase this product within the specified country and zip code, due to the established location restriction."
-        true-title="Has location restriction"
+        :true-description="
+          $t('product_location_restrictions.has_restriction_input.description')
+        "
+        :true-title="
+          $t('product_location_restrictions.has_restriction_input.title')
+        "
         @change="
           (val) => {
             locations = val ? Object.assign({}, product.locations) : null;
@@ -87,7 +86,9 @@
                 <tr>
                   <th class="text-start">{{ $t("global.commons.country") }}</th>
 
-                  <th class="text-left">Zip / Pin Codes</th>
+                  <th class="text-left">
+                    {{ $t("product_location_restrictions.zip_pin_code") }}
+                  </th>
                   <th></th>
                 </tr>
               </thead>
@@ -152,23 +153,28 @@
           >
             <div class="text-h4 font-weight-light text-muted">
               <v-icon class="me-1" size="large">wrong_location</v-icon>
-              Please include at least one country along with a list of zip/pin
-              codes. Without it, this product will not be available.
+
+              {{
+                $t("product_location_restrictions.no_country_selected_error")
+              }}
             </div>
 
             <div class="max-widget-width my-5">
               <b-product-location-restrictions-input
                 v-model="selected_profile"
                 :shop="shop"
-                label="Location Profile"
-                placeholder="Select a saved profile..."
+                :label="   $t(
+                  'product_location_restrictions.load_profile_dialog.select_input.title',
+                )"
+                :placeholder="   $t(
+                  'product_location_restrictions.load_profile_dialog.select_input.placeholder',
+                )"
                 variant="solo"
                 @update:model-value="setProfile()"
               ></b-product-location-restrictions-input>
               <div class="pa-3 text-muted">{{ $t("global.commons.or") }}</div>
-              Click on the <b>+ Add Country</b> button to start creating a new
-              location set. Once you're done, you can save it by clicking on the
-              top-right <b>⋮ Menu</b> and selecting <b>Save Profile</b>.
+
+              <div v-html="$t('product_location_restrictions.tips')"></div>
             </div>
           </div>
         </div>
@@ -177,8 +183,7 @@
       <v-expand-transition>
         <div v-if="setting_changed">
           <v-list-subheader>
-            The location restriction settings for the product have been changed.
-            To preserve these changes, please click on the 'Save' button below.
+            {{ $t("product_location_restrictions.need_save_message") }}
           </v-list-subheader>
           <div class="widget-buttons">
             <v-btn
@@ -204,7 +209,8 @@
       <v-card class="rounded-t-xl text-start">
         <v-card-title>
           <v-icon class="me-2" color="#111">add_location_alt</v-icon>
-          Add Country
+
+          {{ $t("product_location_restrictions.add_dialog.title") }}
         </v-card-title>
 
         <template v-slot:image>
@@ -219,9 +225,7 @@
         </template>
         <v-card-text>
           <p>
-            Choose a country and click 'Add'. This will append the country to
-            the table, allowing you to assign Zipcodes, Pincodes, City names, or
-            Region names to it.
+            {{ $t("product_location_restrictions.add_dialog.message") }}
           </p>
 
           <div class="max-widget-width">
@@ -231,25 +235,29 @@
               class="my-5"
               clearable
               item-value="alpha2"
-              placeholder="Select a country..."
+              :placeholder="$t('global.placeholders.select_a_country')"
             ></s-country-select>
           </div>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
-            <v-btn size="x-large" variant="text" @click="add_dialog = false">
-              <v-icon start>close</v-icon>
-              Close
+            <v-btn
+              size="x-large"
+              variant="text"
+              @click="add_dialog = false"
+              prepend-icon="close"
+            >
+              {{ $t("global.actions.close") }}
             </v-btn>
 
             <v-btn
               :disabled="!country_input"
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="addCountry()"
+              prepend-icon="add"
             >
-              <v-icon start>add</v-icon>
               {{ $t("global.actions.add") }}
             </v-btn>
           </div>
@@ -266,21 +274,26 @@
       <v-card class="rounded-t-xl text-start">
         <v-card-title>
           <v-icon class="me-2" color="#111">save</v-icon>
-          Add Locations Profile
+
+          {{ $t("product_location_restrictions.save_profile_dialog.title") }}
         </v-card-title>
         <v-card-text>
-          Please input a name to save this set of locations. This saved location
-          set can be applied to other products, allowing for quick location
-          loading with just a single click. If a profile with the provided name
-          already exists, it will be updated with these new values.
-
+          {{ $t("product_location_restrictions.save_profile_dialog.message") }}
           <div class="max-widget-width">
             <v-text-field
               v-model="profile_title_input"
               :filter="shop.countries"
               class="my-5"
-              placeholder="A category name, or store name, ..."
-              title="Profile title"
+              :placeholder="
+                $t(
+                  'product_location_restrictions.save_profile_dialog.title_input.placeholder',
+                )
+              "
+              :title="
+                $t(
+                  'product_location_restrictions.save_profile_dialog.title_input.title',
+                )
+              "
               variant="underlined"
             ></v-text-field>
           </div>
@@ -291,19 +304,19 @@
               size="x-large"
               variant="text"
               @click="dialog_save_profile = false"
+              prepend-icon="close"
             >
-              <v-icon start>close</v-icon>
-              Close
+              {{ $t("global.actions.close") }}
             </v-btn>
 
             <v-btn
               :loading="busy_save_profile"
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="saveProfile()"
+              prepend-icon="add"
             >
-              <v-icon start>add</v-icon>
               {{ $t("global.actions.add") }}
             </v-btn>
           </div>
@@ -320,19 +333,26 @@
       <v-card class="rounded-t-xl text-start">
         <v-card-title>
           <v-icon class="me-2" color="#111">sim_card_download</v-icon>
-          Load Locations Profile
+
+          {{ $t("product_location_restrictions.load_profile_dialog.title") }}
         </v-card-title>
         <v-card-text>
-          You can load locations by selecting a previously saved location set
-          here.
-
+          {{ $t("product_location_restrictions.load_profile_dialog.message") }}
           <div class="max-widget-width">
             <b-product-location-restrictions-input
               v-model="selected_profile"
               :shop="shop"
               class="my-5"
-              label="Location Profile"
-              placeholder="Select a profile..."
+              :label="
+                $t(
+                  'product_location_restrictions.load_profile_dialog.select_input.title',
+                )
+              "
+              :placeholder="
+                $t(
+                  'product_location_restrictions.load_profile_dialog.select_input.placeholder',
+                )
+              "
             ></b-product-location-restrictions-input>
           </div>
         </v-card-text>
@@ -342,20 +362,20 @@
               size="x-large"
               variant="text"
               @click="dialog_load_profile = false"
+              prepend-icon="close"
             >
-              <v-icon start>close</v-icon>
-              Close
+              {{ $t("global.actions.close") }}
             </v-btn>
 
             <v-btn
               :class="{ disabled: !selected_profile }"
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="setProfile()"
+              prepend-icon="download"
             >
-              <v-icon class="me-1">download</v-icon>
-              Load {{ selected_profile?.title }}
+              {{ $t("global.actions.load") }} {{ selected_profile?.title }}
             </v-btn>
           </div>
         </v-card-actions>

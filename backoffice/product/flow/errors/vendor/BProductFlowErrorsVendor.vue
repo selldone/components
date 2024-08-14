@@ -21,10 +21,10 @@
     no-gutters
   >
     <v-list-item
-      :title="`Missing Vendors`"
+      :title="$t('product_flow.vendor_errors.title')"
       base-color="#fff"
       class="flex-grow-1"
-      subtitle="This product currently has no associated vendors. For a product to be purchasable in the marketplace, it must have at least one vendor."
+      :subtitle="$t('product_flow.vendor_errors.subtitle')"
     >
       <template v-slot:prepend>
         <v-icon class="blink-me-linear">report</v-icon>
@@ -41,8 +41,7 @@
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
           <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
         </v-avatar>
-
-        Manage Vendor
+        {{ $t("product_flow.vendor_errors.manage_vendors") }}
       </v-btn>
     </div>
   </v-row>

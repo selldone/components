@@ -58,7 +58,7 @@
 
           <v-text-field
             v-model="email"
-            :placeholder="$t('global.placeholders.email')"
+            placeholder="john@gmail.com"
             :rules="[GlobalRules.required(), GlobalRules.email()]"
             class="strong-field my-5 english-field"
             dir="ltr"
