@@ -98,7 +98,9 @@
         </v-col>
 
         <v-col cols="12" order="3" sm="8" class="text-body-2">
-          <p class="font-weight-bold">   {{ $t("global.commons.channels_overview") }}</p>
+          <p class="font-weight-bold">
+            {{ $t("global.commons.channels_overview") }}
+          </p>
 
           <b-session-chart-sankey
             v-if="socials && Object.keys(socials).length"
@@ -338,19 +340,19 @@ export default {
 
     maxPoints() {
       let maxPoints = [];
-      if (this.annotationMaxOn || true) {
-        // Create max points annotations:
-        maxPoints = ChartAnnotations.CreateMaxPoints(
-          this.timeSeries,
-          ["page_views", "new_visitors", "returning_visitors"],
-          [
-            this.$t("shop_visitors_widget.page_views"),
-            this.$t("shop_visitors_widget.new_visitors"),
-            this.$t("shop_visitors_widget.returning_visitors"),
-          ],
-          ["#FFA000", "#C2185B", "#1976D2"],
-        );
-      }
+
+      // Create max points annotations:
+      maxPoints = ChartAnnotations.CreateMaxPoints(
+        this.timeSeries,
+        ["page_views", "new_visitors", "returning_visitors"],
+        [
+          this.$t("shop_visitors_widget.page_views"),
+          this.$t("shop_visitors_widget.new_visitors"),
+          this.$t("shop_visitors_widget.returning_visitors"),
+        ],
+        ["#FFA000", "#C2185B", "#1976D2"],
+      );
+
       return maxPoints;
     },
 

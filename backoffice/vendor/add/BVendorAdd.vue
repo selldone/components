@@ -113,6 +113,7 @@
           :direction="$vuetify.display.mdAndUp ? 'vertical' : 'horizontal'"
           mandatory
           :continuous="false"
+          class="min-height-60vh"
         >
           <v-window-item>
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Profile  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -774,13 +775,13 @@
             ></b-vendor-documents-list>
           </v-window-item>
 
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Documents  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Page  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <v-window-item v-if="has_augment">
             <div class="widget-box mb-5">
               <l-augment-form
-                v-model="augment"
-                @change="changed_argument = true"
+                  v-model="augment"
+                  @change="changed_argument = true"
               ></l-augment-form>
               <div class="text-end mt-3">
                 <v-btn

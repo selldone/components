@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-navigation-drawer
     v-model="drawer"
-    :absolute="$vuetify.display.mdAndUp || true"
+    :absolute=" true"
     :class="{
       'scrollable-element-dark': !light,
       'scrollable-element-light': light,
