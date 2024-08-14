@@ -38,14 +38,14 @@
       />
       <v-avatar
         v-else
-        :size="in_custom_home_page ? 26 : 36"
-        :tile="in_custom_home_page"
+        :size="in_custom_home_page  && dynamic ? 26 : 36"
+        :tile="in_custom_home_page  && dynamic"
         class="pointer-pointer hover-scale-small force-top"
         color="transparent"
       >
         <v-img
           :src="
-            in_custom_home_page
+            in_custom_home_page && dynamic
               ? is_light_header
                 ? require('../../../../assets/icons/basket.svg')
                 : require('../../../../assets/icons/basket-w.svg')
@@ -94,6 +94,8 @@ export default {
   props: {
     shop: { required: true },
     viewOnly: { default: false, type: Boolean },
+    dynamic:Boolean,
+
   },
   data: () => ({}),
 
