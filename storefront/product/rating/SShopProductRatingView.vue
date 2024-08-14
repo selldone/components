@@ -94,7 +94,7 @@
       </div>
     </v-expand-transition>
 
-    <div v-if="can_rate_without_bought" class="text-start pt-2">
+    <div v-if="!viewOnly && can_rate_without_bought" class="text-start pt-2">
       <v-btn
         color="primary"
         rounded="lg"
