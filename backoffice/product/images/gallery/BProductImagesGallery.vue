@@ -112,7 +112,7 @@
         <v-card-text>
           <div class="max-widget-width mx-auto">
             <div class="text-center py-5">
-              <v-avatar rounded="xl" size="256">
+              <v-avatar rounded="xl" size="256" class="bg-tiny-checkers">
                 <v-img :src="getShopImagePath(selected_image_bg_remove.path)">
                 </v-img>
               </v-avatar>
@@ -238,6 +238,20 @@ export default {
   },
 
   methods: {
+    /**
+     * IMPORTANT: Called externally!
+     * this.$refs.images.forceInitializeImages()
+     *
+     */
+    forceInitializeImages() {
+      this.refreshImages();
+      // Force recreate gallery grid layout!
+      this.show = false;
+      this.$nextTick(() => {
+        this.show = true;
+      });
+    },
+
     refreshImages() {
       this.images = this.product.images.filter((item) => {
         return item.variant_id === (this.variant ? this.variant.id : null);

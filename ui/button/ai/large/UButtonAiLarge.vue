@@ -74,6 +74,7 @@ export default {
 
 <style lang="scss" scoped>
 .s--ai-button-large {
+  line-height: normal;
   ::v-deep(.v-btn__content) {
     width: 100%;
   }

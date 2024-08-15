@@ -82,14 +82,22 @@
                 "
               ></u-smart-toggle>
 
-              <u-button-ai-large
-                v-if="product.icon && !forStudio"
-                :loading="busy_ai"
-                sub-title="Create transparent background."
-                title="Remove Background"
-                @select="removeBackground()"
-              >
-              </u-button-ai-large>
+              <template v-if="product.icon && !forStudio">
+                <u-button-ai-large
+                  :loading="busy_ai"
+                  sub-title="Create transparent background."
+                  title="Remove Background"
+                  @select="removeBackground()"
+                >
+                </u-button-ai-large>
+
+                <u-button-ai-large
+                  sub-title="Create more images with new backgrounds."
+                  title="Reimagine"
+                  @select="showReplaceBg()"
+                >
+                </u-button-ai-large>
+              </template>
             </div>
           </v-expand-transition>
         </v-col>
@@ -148,7 +156,7 @@
       <v-list-subheader>
         {{ $t("add_product.edit_images.images.sub_title") }}
       </v-list-subheader>
-      <b-product-images-gallery :product="product" class="m-2" />
+      <b-product-images-gallery ref="images" :product="product" class="m-2" />
     </div>
 
     <!-- ==================== Product Video ==================== -->
@@ -198,6 +206,96 @@
         </v-icon>
       </v-btn>
     </s-widget-buttons>
+
+    <!-- ███████████████████████ Dialog > AI > Change Background ███████████████████████ -->
+
+    <v-dialog
+      v-model="dialog_replace_bg"
+      fullscreen
+      scrollable
+      transition="dialog-bottom-transition"
+    >
+      <v-card class="text-start">
+        <v-card-title class="d-flex align-center">
+          <v-icon class="me-1" color="#111">wallpaper</v-icon>
+          Create Image With New Background
+        </v-card-title>
+
+        <v-card-text>
+          <div class="text-center py-5">
+            <v-avatar rounded="xl" size="256" class="bg-tiny-checkers">
+              <v-img :src="getShopImagePath(product.icon)"></v-img>
+            </v-avatar>
+          </div>
+
+          <v-slide-group
+            v-model="prompt"
+            class="pa-4"
+            selected-class="bg-success"
+            show-arrows
+          >
+            <v-slide-group-item
+              v-for="it in items"
+              :key="it.value"
+              v-slot="{ isSelected, toggle, selectedClass }"
+              :value="it.value"
+            >
+              <v-card
+                :class="['ma-4', selectedClass]"
+                color="grey-lighten-1"
+                height="160"
+                width="160"
+                @click="toggle"
+                :image="it.src"
+              >
+                <div class="d-flex fill-height align-center justify-center">
+                  <v-scale-transition>
+                    <v-icon v-if="isSelected" color="white" size="48">
+                      check_circle
+                    </v-icon>
+                  </v-scale-transition>
+                  <b>
+                    {{it.title}}
+                  </b>
+                </div>
+              </v-card>
+            </v-slide-group-item>
+          </v-slide-group>
+
+          <div class="max-widget-width mx-auto">
+            <v-textarea
+              v-model="prompt"
+              label="Prompt"
+              placeholder="Describe what the background should be..."
+              persistent-placeholder
+              variant="outlined"
+            >
+            </v-textarea>
+          </div>
+
+          <u-button-ai-large
+            :loading="busy"
+            :sub-title="!prompt?'Reimagine entire image.':'Replace background.'"
+            title="Create New Image"
+            @select="replaceBackground()"
+          >
+          </u-button-ai-large>
+        </v-card-text>
+
+        <v-card-actions>
+          <div class="widget-buttons">
+            <v-btn
+              size="x-large"
+              variant="text"
+              @click="dialog_replace_bg = false"
+            >
+              <v-icon start>close</v-icon>
+              {{ $t("global.actions.close") }}
+            </v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -245,6 +343,113 @@ export default {
 
     // -------------------
     busy_ai: false,
+
+    dialog_replace_bg: false,
+    prompt: null,
+    busy: false,
+
+    items: [
+      {
+        value: "",
+        title: "Reimagine",
+        src: require("./assets/reimage.webp"),
+
+      },
+      {
+        value:
+          "A softly lit, seamless white backdrop with gentle shadows and a subtle gradient effect, ideal for highlighting clean and modern product designs.",
+        src: require("./assets/A softly lit, seamless white backdrop with gentle shadows and a subtle gradient effect. The background is smooth and clean, ideal for highlighting mod.webp"),
+
+      },
+      {
+        value:
+          "A soft pastel-colored studio background with a smooth, curved surface and diffused lighting, creating a calm and inviting atmosphere for delicate or luxury products.",
+        src: require("./assets/A soft pastel-colored studio background with a smooth, curved surface and diffused lighting. The colors are gentle and calming, creating an inviting a.webp"),
+
+      },
+      {
+        value:
+          "A neutral-toned studio setup with a light beige backdrop and a subtle spotlight effect, perfect for bringing attention to the details of premium or handcrafted items.",
+        src: require("./assets/A neutral-toned studio setup with a light beige backdrop and a subtle spotlight effect. The background is simple and elegant, with the light creating .webp"),
+
+      },
+      {
+        value:"A scene , product studio, with colorful persian mosaic tile designs, viewed from the side. The mosaic patterns create a vibrant backdrop,  leaving the center clear for product placement.",
+        src: require("./assets/A product studio scene featuring colorful Persian mosaic tile designs, viewed from the side. The intricate and vibrant mosaic patterns serve as a rich.webp"),
+
+      },
+
+      {
+        value:
+          "A minimalist white marble countertop with soft natural sunlight streaming through a large window, casting gentle shadows, perfect for displaying luxury skincare products.",
+        src: require("./assets/A minimalist white marble countertop with subtle veining, set in a bright room with large windows. Soft natural sunlight streams through the windows.webp"),
+      },
+      {
+        value:
+          "A rustic wooden table set in a cozy kitchen, with warm, ambient lighting and a vase of fresh flowers in the background, ideal for showcasing handmade kitchenware.",
+        src: require("./assets/A rustic wooden table set in a cozy, warmly lit kitchen. The table features a natural wood grain with a slightly weathered finish, giving it a charmin.webp"),
+      },
+      {
+        value:
+          "A sleek, modern living room with a clean-lined sofa and a coffee table, bathed in soft afternoon light, perfect for highlighting contemporary home decor items.",
+        src: require("./assets/A sleek, modern living room featuring a clean-lined, minimalist sofa in neutral tones, positioned against a simple, elegant backdrop. A contemporary c.webp"),
+      },
+      {
+        value:
+          "A serene outdoor garden scene with a small wooden deck, surrounded by lush greenery and soft dappled sunlight, ideal for presenting eco-friendly products.",
+        src: require("./assets/A serene outdoor garden scene featuring a small wooden deck surrounded by lush, vibrant greenery. The deck is nestled within a natural setting, with s.webp"),
+      },
+      {
+        value:
+          "A stylish bathroom with a marble sink and gold accents, with soft, diffused lighting, perfect for displaying premium grooming or beauty products.",
+        src: require("./assets/A stylish bathroom featuring a sleek marble sink with a polished finish, complemented by elegant gold accents such as faucets and handles. The space i.webp"),
+      },
+      {
+        value:
+          "A modern kitchen island with polished concrete surfaces and subtle under-cabinet lighting, ideal for showcasing high-end kitchen gadgets or appliances.",
+        src: require("./assets/A modern kitchen featuring a central island with polished concrete surfaces that have a smooth, refined finish. The island is complemented by subtle u.webp"),
+      },
+      {
+        value:
+          "A cozy bedroom scene with a neatly made bed, soft linens, and a bedside table with a small lamp, perfect for presenting sleep-related products.",
+        src: require("./assets/A cozy bedroom scene featuring a neatly made bed with soft, inviting linens in neutral tones. The bed is positioned against a simple, calming backdrop.webp"),
+      },
+      {
+        value:
+          "A clean, white desk setup with a sleek laptop, a few minimalist office accessories, and soft lighting from a nearby window, ideal for showcasing tech gadgets.",
+        src: require("./assets/A clean, white desk setup featuring a sleek, modern laptop at the center. The desk is minimalistic, with only a few carefully chosen office accessorie.webp"),
+      },
+      {
+        value:
+          "A luxurious dining table set with elegant tableware and a centerpiece of fresh flowers, with ambient evening lighting, perfect for showcasing dining products.",
+        src: require("./assets/A luxurious dining table elegantly set with fine tableware, including polished plates, crystal glassware, and silver cutlery. At the center of the tab.webp"),
+      },
+      {
+        value:
+          "A calm beach scene with a wooden boardwalk leading to the ocean, with soft sunlight and gentle waves, ideal for presenting outdoor or summer products.",
+        src: require("./assets/A calm beach scene featuring a wooden boardwalk that stretches towards the ocean. The boardwalk is weathered but sturdy, leading through soft sand tow.webp"),
+      },
+      {
+        value:
+          "A high-rise city balcony at dusk, with twinkling city lights in the background and a small table set with a cup of coffee, perfect for showcasing urban lifestyle products.",
+        src: require("./assets/A high-rise city balcony at dusk, overlooking a sprawling urban landscape with twinkling city lights in the distance. The balcony features a small, st.webp"),
+      },
+      {
+        value:
+          "A vintage-style study with a wooden desk, an antique globe, and warm, ambient lighting from a desk lamp, ideal for displaying classic stationery or books.",
+        src: require("./assets/A vintage-style study featuring a rich wooden desk with an antique finish. On the desk sits an antique globe with detailed maps, along with classic st.webp"),
+      },
+      {
+        value:
+          "A serene yoga studio with a clean wooden floor, soft natural light, and a few strategically placed plants, perfect for showcasing wellness or fitness products.",
+        src: require("./assets/A serene yoga studio with a clean, polished wooden floor that exudes warmth and simplicity. Soft natural light floods the room, creating a calm and in.webp"),
+      },
+      {
+        value:
+          "A chic, minimalist coffee shop with modern seating and a barista counter in the background, with soft morning light, ideal for presenting gourmet coffee or accessories.",
+        src: require("./assets/A chic, minimalist coffee shop featuring sleek, modern seating in neutral tones. In the background, a stylish barista counter is visible, with clean l.webp"),
+      },
+    ],
   }),
 
   computed: {
@@ -296,6 +501,46 @@ export default {
         })
         .finally(() => {
           this.busy_ai = false;
+        });
+    },
+
+    showReplaceBg() {
+      this.dialog_replace_bg = true;
+      if(!this.prompt)this.prompt=this.items[Math.floor(Math.random()*this.items.length)].value;
+    },
+    replaceBackground() {
+      if (!this.USER().premium) return this.showNeedSubscribePremium();
+
+      this.busy = true;
+      axios
+        .post(
+          window.API.POST_AI_CREATE_NEW_PRODUCT_IMAGE(
+            this.product.shop_id,
+            this.product.id,
+          ),
+          {
+            prompt: this.prompt,
+          },
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            if (data.variant) Object.assign(this.variant, data.variant);
+
+            this.AddOrUpdateItemByID(this.product.images, data.image);
+            this.$refs.images.forceInitializeImages();
+
+            this.dialog_replace_bg = false;
+
+            this.showSuccessAlert(null, "Image created successfully!");
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy = false;
         });
     },
 
