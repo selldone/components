@@ -193,7 +193,7 @@
         <!-- Add mode -->
         <v-btn
           v-else
-          :disabled="!include_title || !include_image?.length"
+          :disabled="!include_title || !include_image"
           :loading="busy_add"
           color="primary"
           size="x-large"
@@ -250,7 +250,7 @@ export default {
       //----------------------
       include_title: null,
       include_code: null,
-      include_image: [],
+      include_image: null,
       include_description: null,
       busy_add: false,
 
@@ -327,8 +327,8 @@ export default {
       this.busy_add = true;
 
       let formData = new FormData();
-      if (this.include_image?.length)
-        formData.append("photo", this.include_image[0]);
+      if (this.include_image)
+        formData.append("photo", this.include_image);
       if (this.include_title) formData.append("title", this.include_title);
       if (this.include_description)
         formData.append("description", this.include_description);
@@ -366,7 +366,7 @@ export default {
           this.include_title = null;
           this.include_description = null;
           this.include_code = null;
-          this.include_image = [];
+          this.include_image = null;
         })
         .catch((error) => {
           this.showLaravelError(error);
@@ -382,8 +382,8 @@ export default {
 
       this.busy_edit = true;
       let formData = new FormData();
-      if (this.include_image?.length)
-        formData.append("photo", this.include_image[0]);
+      if (this.include_image)
+        formData.append("photo", this.include_image);
       if (this.include_title) formData.append("title", this.include_title);
       if (this.include_description)
         formData.append("description", this.include_description);
@@ -421,7 +421,7 @@ export default {
           this.include_title = null;
           this.include_description = null;
           this.include_code = null;
-          this.include_image = [];
+          this.include_image = null;
         })
         .catch((error) => {
           this.showLaravelError(error);

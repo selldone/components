@@ -321,7 +321,7 @@ export default {
       dialog: false,
 
       type: null,
-      selected_file: [],
+      selected_file: null,
       busy_save: false,
       note: null,
 
@@ -405,7 +405,7 @@ export default {
     },
     showUpload() {
       this.type = null;
-      this.selected_file = [];
+      this.selected_file = null;
       this.note = null;
       this.dialog = true;
     },
@@ -454,7 +454,7 @@ export default {
       let formData = new FormData();
       formData.append(
         "file",
-        this.selected_file?.length ? this.selected_file[0] : null,
+        this.selected_file,
       );
 
       formData.append("type", this.type);

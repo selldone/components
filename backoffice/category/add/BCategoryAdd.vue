@@ -449,7 +449,7 @@ export default {
     busy: false,
     busy_delete: false,
 
-    selected_file: [],
+    selected_file: null,
     edit_name: false,
 
     accept_delete: false,
@@ -506,8 +506,8 @@ export default {
       this.busy = true;
 
       let formData = new FormData();
-      if (this.selected_file?.length)
-        formData.append("photo", this.selected_file[0]);
+      if (this.selected_file)
+        formData.append("photo", this.selected_file);
       if (this.title) formData.append("title", this.title);
       if (this.description) formData.append("description", this.description);
       formData.append("star", this.star);

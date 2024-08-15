@@ -40,7 +40,7 @@
     >
       <template v-slot:append-inner>
         <v-btn
-          :disabled="!verification_file?.length"
+          :disabled="!verification_file"
           :loading="busy_upload"
           class="mt-n2"
           color="primary"
@@ -69,7 +69,7 @@ export default {
 
   data: () => ({
     selected_domain: null,
-    verification_file: [],
+    verification_file: null,
     busy_upload: false,
   }),
 
@@ -87,7 +87,7 @@ export default {
       this.busy_upload = true;
 
       let formData = new FormData();
-      formData.append("file", this.verification_file[0]);
+      formData.append("file", this.verification_file);
 
       if (this.selected_domain) formData.append("domain", this.selected_domain);
 

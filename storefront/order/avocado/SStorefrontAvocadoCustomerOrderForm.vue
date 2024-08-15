@@ -210,7 +210,7 @@ export default {
     message: null,
     link: null,
     count: 1,
-    selected_file: [],
+    selected_file: null,
 
     //-----------------------
     busy_submit: false,
@@ -311,7 +311,7 @@ export default {
           this.title,
           this.message,
           this.link,
-          this.selected_file?.length ? this.selected_file[0] : null,
+          this.selected_file,
           this.count,
         )
 
@@ -321,7 +321,7 @@ export default {
           this.title = null;
           this.message = null;
           this.link = null;
-          this.selected_file = [];
+          this.selected_file = null;
           this.count = 1;
         })
         .catch((error) => {

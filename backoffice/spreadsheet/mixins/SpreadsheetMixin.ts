@@ -47,7 +47,7 @@ export default defineComponent({
 
   methods: {
     selectFile(files: FileList) {
-      this.file = files.length ? files[0] : null;
+      this.file = Array.isArray(files) ? files[0] : files;
       this.parseOrConvertFile();
     },
 

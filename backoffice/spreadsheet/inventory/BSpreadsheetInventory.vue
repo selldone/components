@@ -87,7 +87,7 @@ export default {
 
     inventory_import_type: null,
 
-    input_files: [],
+    input_files: null,
   }),
 
   computed: {},

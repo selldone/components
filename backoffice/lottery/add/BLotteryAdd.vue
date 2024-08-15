@@ -426,7 +426,7 @@ export default {
     variant_id: null,
     card_type_id: null,
 
-    selected_file: [],
+    selected_file: null,
 
     image: null,
 
@@ -530,13 +530,13 @@ export default {
     },
 
     uploadImage(lottery_id, callback) {
-      if (!this.selected_file?.length || Array.isArray(this.selected_file[0])) {
+      if (!this.selected_file) {
         if (callback) callback(this.lottery ? this.lottery.image : null);
         return;
       }
 
       let formData = new FormData();
-      formData.append("photo", this.selected_file[0]);
+      formData.append("photo", this.selected_file);
 
       this.busy_upload = true;
 

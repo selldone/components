@@ -84,7 +84,7 @@ export default {
     headers: null,
     items: null,
 
-    input_files: [],
+    input_files: null,
   }),
 
   computed: {},

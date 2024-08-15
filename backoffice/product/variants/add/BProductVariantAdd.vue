@@ -768,7 +768,7 @@ export default {
       show_graphical_asset_dialog: false,
 
       // Add image on add new variant mode
-      image_file: [],
+      image_file: null,
     };
   },
 
@@ -867,9 +867,7 @@ export default {
       item.lead = this.lead;
       item.extra = this.extra;
 
-      item._ATTACHED_IMAGE_FILE = this.image_file?.length
-        ? this.image_file[0]
-        : null; // Send to server after variant created!
+      item._ATTACHED_IMAGE_FILE = this.image_file; // Send to server after variant created!
 
       if (this.productVariant) {
         this.$emit("update", this.productVariant);

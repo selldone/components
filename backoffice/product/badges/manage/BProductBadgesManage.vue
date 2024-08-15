@@ -204,7 +204,7 @@
             <v-btn
               v-if="selected_badge"
               :class="{
-                disabled: !title_input && !image_input?.length,
+                disabled: !title_input && !image_input,
               }"
               :loading="busy_save"
               color="primary"
@@ -217,7 +217,7 @@
             </v-btn>
             <v-btn
               v-else
-              :disabled="!title_input && !image_input?.length"
+              :disabled="!title_input && !image_input"
               :loading="busy_save"
               color="primary"
               size="x-large"
@@ -261,7 +261,7 @@ export default {
 
     title_input: null,
     link_input: null,
-    image_input: [],
+    image_input: null,
     pattern_input: null,
     busy_save: false,
     show_advance: false,
@@ -324,8 +324,8 @@ export default {
       if (this.title_input) formData.append("title", this.title_input);
       if (this.link_input) formData.append("link", this.link_input);
 
-      if (this.image_input.length)
-        formData.append("image", this.image_input[0]);
+      if (this.image_input)
+        formData.append("image", this.image_input);
       if (this.pattern_input) formData.append("pattern", this.pattern_input);
 
       axios
@@ -348,7 +348,7 @@ export default {
           this.show_add = false;
           this.title_input = null;
           this.link_input = null;
-          this.image_input = [];
+          this.image_input = null;
           this.pattern_input = null;
 
           this.AddOrUpdateItemByID(this.all_badges, data.badge);
@@ -369,8 +369,8 @@ export default {
       if (this.title_input) formData.append("title", this.title_input);
       if (this.link_input) formData.append("link", this.link_input);
 
-      if (this.image_input.length)
-        formData.append("image", this.image_input[0]);
+      if (this.image_input)
+        formData.append("image", this.image_input);
       if (this.pattern_input) formData.append("pattern", this.pattern_input);
 
       axios
@@ -396,7 +396,7 @@ export default {
           this.show_add = false;
           this.title_input = null;
           this.link_input = null;
-          this.image_input = [];
+          this.image_input = null;
           this.pattern_input = null;
 
           this.AddOrUpdateItemByID(this.all_badges, data.badge);
@@ -415,7 +415,7 @@ export default {
       this.selected_badge = null;
       this.title_input = null;
       this.link_input = null;
-      this.image_input = [];
+      this.image_input = null;
       this.pattern_input = null;
       this.show_add = true;
     },
@@ -431,7 +431,7 @@ export default {
 
       this.title_input = item.title;
       this.link_input = item.link;
-      this.image_input = [];
+      this.image_input = null;
       this.pattern_input = item.pattern;
       this.show_add = true;
     },

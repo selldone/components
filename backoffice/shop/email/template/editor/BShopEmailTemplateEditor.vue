@@ -325,10 +325,10 @@ export default {
       if (this.header_image) formData.append("header_image", this.header_image);
       if (this.footer_image) formData.append("footer_image", this.footer_image);
 
-      if (this.header_image_file?.length)
-        formData.append("header_image_file", this.header_image_file[0]);
-      if (this.footer_image_file?.length)
-        formData.append("footer_image_file", this.footer_image_file[0]);
+      if (this.header_image_file)
+        formData.append("header_image_file", this.header_image_file);
+      if (this.footer_image_file)
+        formData.append("footer_image_file", this.footer_image_file);
 
       if (this.footer) formData.append("footer", this.footer);
 
