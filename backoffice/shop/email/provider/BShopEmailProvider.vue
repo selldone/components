@@ -23,14 +23,15 @@
       :add-loading="busy_reset"
       add-icon="autorenew"
       icon="private_connectivity"
-      title="Custom mail server"
+      :title="$t('shop_email_provider.title')"
       @click:add="resetErrors"
     >
     </s-widget-header>
 
     <u-loading-progress v-if="busy"></u-loading-progress>
     <v-list-subheader>
-      Connect your mail service provider to send emails via your custom domain.
+      {{$t('shop_email_provider.subtitle')}}
+
     </v-list-subheader>
 
     <u-smart-select
@@ -41,14 +42,14 @@
       item-image="icon"
       item-text="title"
       item-value="driver"
-      title="Provider"
+      :label="$t('shop_email_provider.provider')"
     >
     </u-smart-select>
 
     <v-list-subheader v-if="mail_service && mail_service.errors > 10">
       <v-icon class="me-1" color="amber">warning</v-icon>
-      If your service exceeds 100 errors, it will be disabled automatically! You
-      can reset errors to re-enable it.
+      {{$t('shop_email_provider.messages.provider_error_limit')}}
+
     </v-list-subheader>
 
     <v-alert
@@ -65,10 +66,10 @@
         :false-title="$t('global.commons.disable')"
         :true-title="$t('global.commons.enable')"
         class="my-3"
-        false-description="Your emails will be sent via your myselldone domain."
+        :false-description="$t('shop_email_provider.enable_input.false_description') "
         false-gray
         false-icon="close"
-        true-description="Your emails will be sent via your custom mail domain."
+        :true-description="$t('shop_email_provider.enable_input.true_description')  "
         true-icon="check"
       >
       </u-smart-switch>
@@ -76,12 +77,12 @@
       <s-widget-header
         class="mt-6"
         icon="tune"
-        title="Configs"
+        :title="$t('shop_email_provider.config.title')  "
       ></s-widget-header>
 
       <v-list-subheader>
-        To configure your custom mail service for your shop, input your service
-        API key along with other necessary settings.
+        {{$t('shop_email_provider.config.subtitle')}}
+
       </v-list-subheader>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Host ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -182,11 +183,9 @@
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Encryption ━━━━━━━━━━━━━━━━━━━━━━ -->
 
       <v-list-subheader>
-        <div>
-          Email providers may offer SSL, TLS, or unencrypted connections based
-          on available ports. If connecting results in an error, altering the
-          encryption mode might resolve the issue. Standard <b>TLS</b> use Port
-          : <b>587</b> and <b>SSL</b> use Port : <b>465</b>.
+        <div v-html="$t('shop_email_provider.messages.encryption_ports_guide')">
+
+
         </div>
       </v-list-subheader>
       <u-smart-select
@@ -199,11 +198,12 @@
       >
       </u-smart-select>
 
-      <s-widget-header class="mt-5" icon="contact_mail" title="From">
+      <s-widget-header class="mt-5" icon="contact_mail" :title="$t('shop_email_provider.sender.title')">
       </s-widget-header>
       <v-list-subheader
-        >You can configure the default sender's name and email address, which
-        will be used for dispatching emails to your customers.
+        >
+        {{$t('shop_email_provider.sender.subtitle')}}
+
       </v-list-subheader>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Default Sender Email ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -211,7 +211,7 @@
       <v-text-field
         v-model="from"
         append-icon="alternate_email"
-        label="From Email"
+        :label="$t('shop_email_provider.inputs.from.label') "
         persistent-placeholder
         placeholder="support@yourdomain.com"
         variant="underlined"
@@ -223,7 +223,7 @@
         v-model="from_name"
         :placeholder="shop.title + ' team'"
         append-icon="person"
-        label="From Name"
+        :label="$t('shop_email_provider.inputs.from_name.label')"
         persistent-placeholder
         variant="underlined"
       ></v-text-field>
@@ -231,10 +231,10 @@
       <template v-if="enable">
         <v-list-subheader>
           <v-icon class="me-1">info</v-icon>
-          After save changes, you will receive a test mail on
-          <b>{{ USER().email }}</b
-          >. Save changes before sending a test email with the new
-          configuration.
+          <span v-html="$t('shop_email_provider.messages.enable_receive_test',{
+            email:USER().email
+          })"></span>
+
         </v-list-subheader>
 
         <div class="my-2 text-end">
@@ -244,7 +244,10 @@
             class="tnt"
             @click="sendTestMail"
             :loading="busy_send_test"
-            >Send a test email
+            >
+            {{$t('shop_email_provider.actions.send_test_email')}}
+
+
           </v-btn>
         </div>
       </template>
