@@ -226,7 +226,7 @@ export default {
       if (this.files) {
         Object.keys(this.files).forEach((key) => {
           let val = this.files[key];
-          if (val && Array.isArray(val)) val = val.length ? val[0] : null; // <v-file-input> return array!
+          if (val && Array.isArray(val)) val = val.length ? val[0] : null; // if <v-file-input> return array!
           // console.log("file", val);
 
           if (val) {
