@@ -197,55 +197,63 @@
             </div>
           </v-expand-transition>
           <!-- ⬬⬬⬬⬬ Products ⬬⬬⬬⬬ -->
-
-          <v-row
-            :align="align"
-            :class="[
-              class_row_products,
-              align ? 'align-' + align : undefined,
-              justify ? 'justify-' + justify : undefined,
-            ]"
-            :justify="justify"
-            :style="{ '--insta-size': insta_size }"
-            class="s--products-listing-row"
+          <component
+            :is="forceSingleLine ? 'u-fade-scroll' : 'div'"
+            v-if="products.length"
+            drag-scroll
+            show-arrow
+            small-arrow
           >
-            <v-fade-transition group hide-on-leave>
-              <s-shop-product-card
-                v-for="(product, index) in products"
-                :key="product.id"
-                :class="[class_items_products]"
-                :dense="show_filter_menu"
-                :is-row="isRow"
-                :is-small="isSmallItem"
-                :isInsta="isInsta"
-                :product="product"
-                :quick-buy="hover_actions"
-                :rounded="freeMode"
-                :static="no_animation"
-                :to="
-                  viewOnly || window.ExternalWidget
-                    ? undefined
-                    : {
-                        name: window.$storefront.routes.PRODUCT_PAGE,
-                        params: {
-                          product_id: product.id,
-                        },
-                      }
-                "
-                v-bind="
-                  !viewOnly && window.ExternalWidget
-                    ? { href: getProductLink(shop, product.id), target: '' }
-                    : {}
-                "
-                @click="onClickProduct(product, index)"
-                @mouseenter="$emit('product-hover:enter', product)"
-                @mouseleave="$emit('product-hover:leave', product)"
-                @quick-buy="quickBuy(product)"
-              />
-
-
-            </v-fade-transition>
-          </v-row>
+            <v-row
+              :align="align"
+              :class="[
+                forceSingleLine ? undefined : class_row_products,
+                align ? 'align-' + align : undefined,
+                justify ? 'justify-' + justify : undefined,
+                forceSingleLine
+                  ? 'flex-nowrap overflow-visible py-16 ma-0'
+                  : undefined,
+              ]"
+              :justify="justify"
+              :style="{ '--insta-size': insta_size }"
+              class="s--products-listing-row"
+            >
+              <v-fade-transition group hide-on-leave>
+                <s-shop-product-card
+                  v-for="(product, index) in products"
+                  :key="product.id"
+                  :class="[class_items_products]"
+                  :dense="show_filter_menu"
+                  :is-row="isRow"
+                  :is-small="isSmallItem"
+                  :isInsta="isInsta"
+                  :product="product"
+                  :quick-buy="hover_actions"
+                  :rounded="freeMode"
+                  :static="no_animation"
+                  :to="
+                    viewOnly || window.ExternalWidget
+                      ? undefined
+                      : {
+                          name: window.$storefront.routes.PRODUCT_PAGE,
+                          params: {
+                            product_id: product.id,
+                          },
+                        }
+                  "
+                  v-bind="
+                    !viewOnly && window.ExternalWidget
+                      ? { href: getProductLink(shop, product.id), target: '' }
+                      : {}
+                  "
+                  @click="onClickProduct(product, index)"
+                  @mouseenter="$emit('product-hover:enter', product)"
+                  @mouseleave="$emit('product-hover:leave', product)"
+                  @quick-buy="quickBuy(product)"
+                />
+              </v-fade-transition>
+            </v-row>
+          </component>
         </v-container>
 
         <v-btn
@@ -520,6 +528,8 @@ export default {
      * If provided, only products for the specified vendor will be displayed.
      */
     vendorId: {}, // Show products only for this vendor!
+
+    forceSingleLine: Boolean,
   },
   data: () => ({
     busy_fetch: false,
@@ -560,7 +570,7 @@ export default {
 
   computed: {
     single_line_categories() {
-      return this.products.length > 0;
+      return this.products.length > 0 || this.forceSingleLine;
     },
     theme() {
       return this.shop.theme;
@@ -1556,8 +1566,6 @@ export default {
           //opacity: 0 !important;
         }
       }
-
-
 
       @media only screen and (max-width: 600px) {
         .top-title {

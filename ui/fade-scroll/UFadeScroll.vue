@@ -138,7 +138,7 @@ export default {
     // In your methods
     debouncedOnScroll: debounce(function(target) {
       this.onScroll(target);
-    }, 100), // Adjust the delay as needed
+    }, 100, { leading: true, trailing: true }), // Adjust the delay as needed
 
 
     scrollRight() {
@@ -289,7 +289,7 @@ export default {
     right: 0;
     pointer-events: none;
     transition: all 1s;
-    z-index: 2;
+    z-index: 10;
 
     background-image: linear-gradient(to bottom, var(--background), transparent),
       linear-gradient(to top, var(--background), transparent),
