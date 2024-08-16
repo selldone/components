@@ -400,6 +400,10 @@ export default {
       white-space: normal;
     }
   }
+
+  .v-avatar{
+    border: none; // Fix new vuetify issue show a border around v-avatar in production!
+  }
 }
 
 .small-badge {
