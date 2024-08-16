@@ -21,6 +21,10 @@
 
 
 }
+// Fix new vuetify issue show a border around v-avatar in production! V 3.7.0 (Should be removed after fix)
+.v-avatar{
+  border: none;
+}
 
 .v-data-table{
 
