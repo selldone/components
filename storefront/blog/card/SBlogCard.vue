@@ -14,7 +14,8 @@
 
 <template>
   <v-card
-    :class="{ '-flat': flat }"
+    :elevation="flat?0:elevation"
+    :flat="flat"
     :color="color"
     :rounded="rounded"
     :theme="dark ? 'dark' : 'light'"
@@ -114,6 +115,9 @@ export default {
     categories: {},
 
     flat: {},
+    elevation:{
+      default:5
+    },
     rounded: {},
     dark: {},
     color: {},
@@ -137,11 +141,9 @@ export default {
 <style lang="scss" scoped>
 .s--shop-blog-card {
   text-align: start;
-  --shadow: 0px 2px 40px 0px rgba(0, 0, 0, 0.1);
 
   position: relative;
   min-height: 100%;
-  box-shadow: var(--shadow) !important;
 
   transition: all 0.45s !important;
   cursor: pointer;
@@ -158,9 +160,7 @@ export default {
     border-radius: var(--radius) var(--radius) 0 0;
   }
 
-  &.-flat {
-    --shadow: none;
-  }
+
 
   /*  &.-rect {
       --radius: 0;
