@@ -72,7 +72,7 @@ export default function () {
 
     tooltipUpdate = tooltipUpdate.merge(newTooltip);
 
-    tooltipUpdate.transition().duration(100).style("opacity", 1);
+   // tooltipUpdate.transition().duration(100).style("opacity", 1); It has bug in production! tooltipUpdate has no transition() method
 
     $$.dispatch.call("insert", tooltipUpdate, this, d);
 
