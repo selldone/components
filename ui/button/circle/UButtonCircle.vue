@@ -401,6 +401,9 @@ export default {
     }
   }
 
+  .v-avatar{
+    border: none;
+  }
 }
 
 .small-badge {
