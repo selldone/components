@@ -136,6 +136,7 @@ export default {
 
 <style lang="scss" scoped>
 .s--shop-blog-card {
+  text-align: start;
   --shadow: 0px 2px 40px 0px rgba(0, 0, 0, 0.1);
 
   position: relative;
@@ -166,13 +167,6 @@ export default {
     }*/
 }
 
-.blog-category-title {
-  text-align: start;
-  color: var(--theme-dark);
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin: 12px 18px 0 18px;
-}
 
 .title-blog {
   min-height: 4em;
