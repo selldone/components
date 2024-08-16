@@ -111,7 +111,7 @@ export default function () {
   const mouseout = function (event, d) {
     let tooltipUpdate = $$.container.selectAll(".d2b-tooltip").data([d]);
 
-    tooltipUpdate.transition().duration(100).style("opacity", 0).remove();
+   // tooltipUpdate.transition().duration(100).style("opacity", 0).remove();  It has bug in production! tooltipUpdate has no transition() method
 
     $$.dispatch.call("remove", tooltipUpdate, this, d);
   };
