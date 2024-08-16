@@ -35,7 +35,7 @@
       >
         <template v-slot:prepend>
           <v-avatar rounded size="32">
-            <img :src="item.raw.image" />
+            <v-img :src="item.raw.image" />
           </v-avatar>
         </template>
       </v-list-item>
@@ -72,7 +72,7 @@ export default {
     ai_models: [
       {
         code: "chatgpt",
-        title: "ChatGPT",
+        title: "GPT 4",
         image: require("./asset/chatgpt.svg"),
       },
     ],
