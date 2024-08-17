@@ -148,7 +148,7 @@ export default {
     headers() {
       return [
         {
-          title: "Profile Type",
+          title: this.$t("global.commons.type"),
           align: "start",
           sortable: true,
           value: "type",

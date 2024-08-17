@@ -16,17 +16,20 @@
   <v-card class="text-start">
     <v-card-title>
       <v-icon class="me-2">bento</v-icon>
-      {{ include?.id ? "Edit included item" : "Create new included item" }}
+      {{
+        include?.id
+          ? $t("include_item_add.dialog_title_edit")
+          : $t("include_item_add.dialog_title_add")
+      }}
     </v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
-        <s-widget-header icon="tune" title="Included item"></s-widget-header>
-        <v-list-subheader
-          >Choose a brief title, ideally with 2 to 3 words at most. Use square
-          images, as we will auto-resize uploaded pictures to a 256x256 square
-          format. For the best appearance across all templates, employ
-          minimalistic images with transparent backgrounds and sustain a uniform
-          pattern throughout your products.
+        <s-widget-header
+          icon="tune"
+          :title="$t('include_item_add.title')"
+        ></s-widget-header>
+        <v-list-subheader>
+          {{ $t("include_item_add.subtitle") }}
         </v-list-subheader>
 
         <div v-if="include?.image" class="my-3 text-center">
@@ -37,9 +40,10 @@
         <v-text-field
           v-model="include_title"
           counter="256"
-          label="Title*"
-          placeholder="Concise title displayed on product page..."
+          :label="$t('global.commons.title') + '*'"
+          :placeholder="$t('include_item_add.inputs.title.placeholder')"
           variant="underlined"
+          persistent-placeholder
           @blur="
             include_code = include_code
               ? include_code
@@ -51,7 +55,7 @@
               v-if="include?.id"
               :include="include"
               :shop="shop"
-              label="Title"
+              :label="$t('global.commons.title')"
               translation-key="title"
             ></b-translation-button-include>
           </template>
@@ -61,18 +65,20 @@
           v-model="include_code"
           :rules="[GlobalRules.counter(32), GlobalRules.required()]"
           counter="32"
-          hint="Use this code to streamline the search process for locating items."
+          :hint="$t('include_item_add.inputs.code.hint')"
           label="Code*"
-          placeholder="Unique code, ex. mobile_cable_usb"
+          :placeholder="$t('include_item_add.inputs.code.placeholder')"
+          persistent-placeholder
           variant="underlined"
         ></v-text-field>
 
         <v-text-field
           v-model="include_description"
           counter="256"
-          hint="Description will be used for SEO and maybe visible to users on some custom layouts in the product page."
-          label="Description"
-          placeholder="A short description about this item..."
+          :hint="$t('include_item_add.inputs.description.hint')"
+          persistent-placeholder
+          :label="$t('global.commons.description')"
+          :placeholder="$t('include_item_add.inputs.description.placeholder')"
           variant="underlined"
         >
           <template v-slot:append-inner>
@@ -80,7 +86,7 @@
               v-if="include?.id"
               :include="include"
               :shop="shop"
-              label="Description"
+              :label="$t('global.commons.description')"
               translation-key="description"
             ></b-translation-button-include>
           </template>
@@ -89,8 +95,8 @@
         <v-file-input
           v-model="include_image"
           accept="image/*"
-          label="Image*"
-          messages="Max image size: 1MB"
+          :label="$t('global.commons.image') + '*'"
+          :messages="$t('include_item_add.inputs.image.message')"
           prepend-icon=""
           prepend-inner-icon="image"
           show-size
@@ -104,70 +110,101 @@
         <u-smart-select
           v-model="mode"
           :items="[
-            { value: null, title: 'No link' },
+            { value: null, title: $t('include_item_add.mode.no_link.title') },
             {
               value: 'external',
-              title: 'External link',
-              description: 'Set a link to an external url.',
+              title: $t('include_item_add.mode.external_link.title'),
+              description: $t(
+                'include_item_add.mode.external_link.description',
+              ),
             },
             {
               value: 'internal',
-              title: 'Internal link',
-              description:
-                'Create dynamic page by provided augment data for this item.',
+              title: $t('include_item_add.mode.internal_link.title'),
+              description: $t(
+                'include_item_add.mode.internal_link.description',
+              ),
             },
           ]"
-          class="my-3"
+          class="my-5"
           item-description="description"
           item-text="title"
           item-value="value"
         >
         </u-smart-select>
+      </div>
 
+      <v-expand-transition>
         <div v-if="mode === 'external'">
-          <v-text-field
-            v-model="url"
-            :counter="256"
-            label="URL"
-            persistent-placeholder
-            placeholder="https://your url here..."
-            variant="underlined"
-          ></v-text-field>
+          <div class="widget-box mb-5">
+            <s-widget-header
+              :title="$t('include_item_add.mode.external_link.title')"
+              icon="link"
+            >
+            </s-widget-header>
+            <v-list-subheader>
+              {{ $t("include_item_add.mode.external_link.tips") }}
+            </v-list-subheader>
+            <v-locale-provider :rtl="false">
+              <v-text-field
+                v-model="url"
+                :counter="256"
+                :label="$t('global.commons.link')"
+                persistent-placeholder
+                placeholder="https://your url here..."
+                variant="underlined"
+              ></v-text-field>
+            </v-locale-provider>
+          </div>
         </div>
         <div v-else-if="mode === 'internal'">
-          <v-text-field
-            v-model="path"
-            :counter="64"
-            :prefix="getShopMainUrl(shop) + '/in/'"
-            :suffix="`-${include ? include.id : 'XX'}`"
-            label="Page path"
-            messages="ex. light-cable"
-            variant="underlined"
-          >
-            <template v-slot:append-inner>
-              <v-btn
-                v-if="internal_page_link"
-                :href="internal_page_link"
-                icon
-                size="small"
-                target="_blank"
-                title="Open live page"
-                variant="text"
+          <div class="widget-box mb-5">
+            <s-widget-header
+              :title="$t('include_item_add.mode.internal_link.title')"
+              icon="architecture"
+            >
+            </s-widget-header>
+            <v-list-subheader>
+              {{ $t("include_item_add.mode.internal_link.tips") }}
+            </v-list-subheader>
+            <v-locale-provider :rtl="false">
+              <v-text-field
+                v-model="path"
+                :counter="64"
+                :prefix="getShopMainUrl(shop) + '/in/'"
+                :suffix="`-${include ? include.id : 'ID'}`"
+                :label="$t('include_item_add.inputs.path.label')"
+                messages="ex. light-cable"
+                variant="underlined"
+                persistent-placeholder
               >
-                <v-icon>open_in_new</v-icon>
-              </v-btn>
-            </template>
-          </v-text-field>
+                <template v-slot:append-inner>
+                  <v-btn
+                    v-if="internal_page_link"
+                    :href="internal_page_link"
+                    icon
+                    size="small"
+                    target="_blank"
+                    title="Open page"
+                    variant="text"
+                  >
+                    <v-icon>open_in_new</v-icon>
+                  </v-btn>
+                </template>
+              </v-text-field>
+            </v-locale-provider>
 
-          <b-page-input v-model="page" :shop="shop"></b-page-input>
+            <b-page-input v-model="page" :shop="shop"></b-page-input>
 
-          <l-augment-form
-            v-model="augment"
-            :loading="busy_load"
-            class="my-10"
-          ></l-augment-form>
+            <hr class="mt-10" />
+            <l-augment-form
+              v-model="augment"
+              :loading="busy_load"
+              class="my-10"
+            ></l-augment-form>
+          </div>
         </div>
-      </div>
+      </v-expand-transition>
     </v-card-text>
     <v-card-actions>
       <s-widget-buttons :auto-fixed-position="!dialogMode">
@@ -214,11 +251,13 @@ import BPageInput from "../../page/input/BPageInput.vue";
 import LAugmentForm from "@selldone/page-builder/components/augment/form/LAugmentForm.vue";
 import BTranslationButtonInclude from "../../translation/button/include/BTranslationButtonInclude.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
+import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 
 export default {
   name: "BIncludeItemAdd",
   emits: ["add", "edit", "close"],
   components: {
+    SWidgetHeader,
     SWidgetButtons,
     BTranslationButtonInclude,
     LAugmentForm,
@@ -327,8 +366,7 @@ export default {
       this.busy_add = true;
 
       let formData = new FormData();
-      if (this.include_image)
-        formData.append("photo", this.include_image);
+      if (this.include_image) formData.append("photo", this.include_image);
       if (this.include_title) formData.append("title", this.include_title);
       if (this.include_description)
         formData.append("description", this.include_description);
@@ -362,6 +400,10 @@ export default {
             return;
           }
 
+          this.showSuccessAlert(
+            null,
+            this.$t("include_item_add.notifications.add.message"),
+          );
           this.$emit("add", data.include);
           this.include_title = null;
           this.include_description = null;
@@ -382,8 +424,7 @@ export default {
 
       this.busy_edit = true;
       let formData = new FormData();
-      if (this.include_image)
-        formData.append("photo", this.include_image);
+      if (this.include_image) formData.append("photo", this.include_image);
       if (this.include_title) formData.append("title", this.include_title);
       if (this.include_description)
         formData.append("description", this.include_description);
@@ -416,6 +457,10 @@ export default {
             this.showErrorAlert(null, data.error_msg);
             return;
           }
+          this.showSuccessAlert(
+            null,
+            this.$t("include_item_add.notifications.edit.message"),
+          );
 
           this.$emit("edit", data.include);
           this.include_title = null;

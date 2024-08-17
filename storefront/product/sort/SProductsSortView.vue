@@ -147,30 +147,13 @@
               </v-btn>
             </template>
             <div class="text-start pa-3">
-              <b>Search Tips</b>
+              <b>{{$t('products_sort_view.search_tips.title')}}</b>
               <ul class="mt-3">
-                <li><b>Normal : </b>Search Title, MPN, SKU, Brand, Tags</li>
-                <li>
-                  <b>P+Product ID : </b>Find exact product ID, ex.
-                  <b class="text-green">P</b><i class="text-yellow">360</i>
-                </li>
-                <li>
-                  <b>Quotes : </b> Use quotes to search for an exact phrase, ex.
-                  <b class="text-green">"</b><i class="text-yellow">text here</i
-                  ><b class="text-green">"</b>
-                </li>
-                <li>
-                  <b>Tax : </b> To find products with a tax profile, ex.
-                  <b class="text-green">tax:</b
-                  ><i class="text-yellow">tax profile name</i>
-                </li>
-                <li>
-                  <b>New Products : </b> To find added products between dates,
-                  ex. <b class="text-green">new~</b
-                  ><i class="text-yellow">2023-08-10</i
-                  ><b class="text-green">~</b
-                  ><i class="text-yellow">2023-08-20</i>
-                </li>
+                <li v-html="$t('products_sort_view.search_tips.normal')"></li>
+                <li v-html="$t('products_sort_view.search_tips.product')"></li>
+                <li v-html="$t('products_sort_view.search_tips.quotes')"></li>
+                <li v-html="$t('products_sort_view.search_tips.tax')"></li>
+                <li v-html="$t('products_sort_view.search_tips.new_products')"></li>
               </ul>
             </div>
           </v-tooltip>

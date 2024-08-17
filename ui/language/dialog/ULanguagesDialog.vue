@@ -88,7 +88,11 @@
           </v-row>
 
           <div class="text-start mt-5">
-            <v-chip color="#fafafa" @click="show_flags = !show_flags" variant="flat">
+            <v-chip
+              color="#fafafa"
+              @click="show_flags = !show_flags"
+              variant="flat"
+            >
               <v-icon :color="show_flags ? 'primary' : undefined" start
                 >{{
                   show_flags ? "radio_button_checked" : "radio_button_unchecked"
@@ -97,7 +101,7 @@
               Show flags
             </v-chip>
           </div>
-          <v-list-subheader class="my-5"
+          <v-list-subheader v-if="show_flags" class="my-5"
             >*Countries are random! Do you have an opinion on languages and
             countries? Please email us.
           </v-list-subheader>
@@ -144,13 +148,16 @@ export default {
 
   computed: {
     languages() {
+      let out = [];
       if (this.availableLanguages) {
-        return Object.values(Language).filter((i) =>
+        out = Object.values(Language).filter((i) =>
           this.availableLanguages.includes(i.code),
         );
+      } else {
+        out = Object.values(Language);
       }
 
-      return Object.values(Language)
+      return out
         .filter((i) => i.vip || !SetupService.LocalServiceCountry())
         .filter((l) => {
           return (

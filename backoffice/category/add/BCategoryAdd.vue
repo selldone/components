@@ -48,8 +48,7 @@
           ></s-widget-header>
 
           <v-list-subheader>
-            Categories simplify product management for you and expedite product
-            searches for your customers in your store.
+            {{ $t("add_category.config.subtitle") }}
           </v-list-subheader>
 
           <v-text-field
@@ -174,28 +173,29 @@
             variant="underlined"
           />
 
+          <hr class="my-5" />
           <!-- Parent folder -->
-          <div v-if="parentFolder" class="text-start">
+          <template v-if="parentFolder">
             <s-widget-header
               :title="$t('add_category.parent_input')"
               icon="account_tree"
             ></s-widget-header>
             <v-list-subheader>
-              This category will be visible under its parent category. Products
-              that do not have a parent category will be displayed in the root
-              category.
+              {{ $t("add_category.parent.subtitle") }}
             </v-list-subheader>
-            <div class="m-2">
+            <div class="my-2 d-flex align-center">
               <circle-image
-                :size="32"
+                :size="36"
                 :src="getCategoryIcon(parentFolder.id)"
-                class="m-2 avatar-gradient -thin -category"
+                class="me-2 avatar-gradient -thin -category"
                 scale-on-hover
               />
-              <b>{{ parentFolder.title }}</b>
-              <p>{{ parentFolder.description }}</p>
+             <div>
+               <b class="text-subtitle-2">{{ parentFolder.title }}</b>
+               <p class="small">{{ parentFolder.description }}</p>
+             </div>
             </div>
-          </div>
+          </template>
           <b-category-input
             v-model="parent_id"
             :label="$t('add_category.parent_input')"
@@ -259,7 +259,11 @@
       <v-card-text>
         <div class="widget-box mb-5">
           <s-widget-header
-            :add-caption="page ? 'Edit Page' : 'List of Pages'"
+            :add-caption="
+              page
+                ? $t('add_category.template.edit_page')
+                : $t('add_category.template.Pages_list')
+            "
             :add-icon="page ? 'edit' : 'add_box'"
             :to="
               page
@@ -268,16 +272,11 @@
             "
             add-text
             icon="layers"
-            title="Template"
+            :title="$t('add_category.template.title')"
           ></s-widget-header>
 
           <v-list-subheader>
-            You have the capability to overlay a page on your category page for
-            improved display. The best strategy involves crafting pages with a
-            transparent background and designing 1 to 2 sections specific to
-            each category. Subsequently, you can link a single page to several
-            categories, utilizing dynamic content to individualize each
-            category.
+            {{ $t("add_category.template.subtitle") }}
           </v-list-subheader>
 
           <b-page-input
@@ -285,20 +284,20 @@
             :shop="shop"
             background-color="transparent"
             clearable
-            label="Page"
+            :label="$t('global.commons.page')"
           ></b-page-input>
-
-          <v-expand-transition>
-            <div v-if="page">
+        </div>
+        <v-expand-transition>
+          <div v-if="page">
+            <div class="widget-box mb-5">
               <l-augment-form
                 v-model="augment"
                 :loading="busy_load"
-                class="my-10"
                 @change="changed = true"
               ></l-augment-form>
             </div>
-          </v-expand-transition>
-        </div>
+          </div>
+        </v-expand-transition>
       </v-card-text>
 
       <v-card-actions>
@@ -328,26 +327,32 @@
       <v-card-text>
         <div class="widget-box mb-5">
           <s-widget-header
-            :title="$t('global.commons.critical_zone')"
+            :title="$t('add_category.critical_zone.title')"
             icon="warning_amber"
           >
           </s-widget-header>
           <v-list-subheader>
-            <div>
-              Removing a category will move its subcategories and products to
-              the parent directory
-              <b>📁 {{ parentFolder ? parentFolder.title : "Home" }}</b
-              >. To manage categories not present in the product list, navigate
-              to Shop > Categories tab.
-            </div>
+            <div
+              v-html="
+                $t('add_category.critical_zone.subtitle', {
+                  parent: parentFolder
+                    ? parentFolder.title
+                    : $t('global.commons.home'),
+                })
+              "
+            ></div>
           </v-list-subheader>
 
           <u-smart-verify
             v-model="accept_delete"
             color="red"
             false-gray
-            true-description="I want to remove this category."
-            true-title="Confirm Remove Category"
+            :true-description="
+              $t('add_category.critical_zone.accept_delete.true_description')
+            "
+            :true-title="
+              $t('add_category.critical_zone.accept_delete.true_title')
+            "
           ></u-smart-verify>
         </div>
       </v-card-text>
@@ -506,8 +511,7 @@ export default {
       this.busy = true;
 
       let formData = new FormData();
-      if (this.selected_file)
-        formData.append("photo", this.selected_file);
+      if (this.selected_file) formData.append("photo", this.selected_file);
       if (this.title) formData.append("title", this.title);
       if (this.description) formData.append("description", this.description);
       formData.append("star", this.star);

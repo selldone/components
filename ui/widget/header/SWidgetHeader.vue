@@ -100,7 +100,7 @@
         </div>
         <span v-else>
           {{ addCaption }}
-          <span v-if="addSubCaption" class="d-block tnt small op-0-8">{{
+          <span v-if="addSubCaption" class="d-block tnt small op-0-8 mt-1">{{
             addSubCaption
           }}</span>
         </span>

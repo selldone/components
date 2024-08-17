@@ -84,11 +84,13 @@
           <v-list-subheader>{{
             $t(selected_profile_type.desc)
           }}</v-list-subheader>
-          <b-logistic-profile-input
-            v-model="profile_input"
-            :shop="shop"
-            :type="selected_profile_type"
-          ></b-logistic-profile-input>
+          <v-locale-provider :rtl="false"><!-- Fix Open menu bug in RTL Vuetify 3 -->
+            <b-logistic-profile-input
+                v-model="profile_input"
+                :shop="shop"
+                :type="selected_profile_type"
+            ></b-logistic-profile-input>
+          </v-locale-provider>
         </div>
 
         <div v-if="articles && profile">

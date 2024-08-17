@@ -56,12 +56,12 @@
         :disabled="busy_get_specs"
         :items="spec_keys"
         :loading="busy_get_specs"
-        :messages="$t('add_category.edit_filter.spec_input_message')"
+        :messages="$t('add_category.edit_filter.inputs.spec.message')"
         chips
         clearable
         closable-chips
         multiple
-        placeholder="Select specs to show in filter..."
+        :placeholder="$t('add_category.edit_filter.inputs.spec.placeholder')"
         variant="underlined"
       >
       </v-select>
@@ -69,8 +69,7 @@
       <v-list-subheader>
         <div>
           <v-icon size="small">published_with_changes</v-icon>
-          <b>Important! </b> After changing products in a category, return here
-          and click the save/regenerate button to refresh the filter.
+         <span v-html="$t('add_category.edit_filter.manually_update_filters_tips')"></span>
         </div>
       </v-list-subheader>
       <!-- ███████████████████████████ Preview / Details ███████████████████████████ -->

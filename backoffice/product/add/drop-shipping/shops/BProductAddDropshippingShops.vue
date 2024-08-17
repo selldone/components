@@ -17,7 +17,8 @@
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <v-list-subheader>
-      Here you can find wholesalers who add their products to Selldone and make them available for other merchants. Using Selldone's native dropshipping platform makes the process extremely simple and straightforward for both sides.
+      {{$t('product_add_dropshipping_shops.subtitle')}}
+
     </v-list-subheader>
 
 

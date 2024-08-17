@@ -36,18 +36,24 @@
           {{ $t(item.description) }}
         </v-list-item-subtitle>
 
-        <v-list-item-subtitle>
-          <span
+        <v-list-item-subtitle class="op-1-0">
+          <v-chip
             v-if="item.code === ProductType.SERVICE.code"
-            class="text-success"
+            color="green"
+            size="x-small"
+            variant="tonal"
+            class="mt-1"
           >
-            ● Installment / Split payments</span
+            ● {{$t('global.commons.installment')}} / {{$t('global.commons.split_payment')}}</v-chip
           >
-          <span
+          <v-chip
             v-if="item.code === ProductType.SUBSCRIPTION.code"
-            class="text-success"
+            color="green"
+            size="x-small"
+            variant="tonal"
+            class="mt-1"
           >
-            ● Recurring payment</span
+            ● {{$t('global.commons.recurring_payment')}} </v-chip
           >
         </v-list-item-subtitle>
 
@@ -137,7 +143,7 @@
         </template>
 
         <v-list-item-title>
-          {{ $t("product_studio.add_by_sku") }}
+          {{ $t("product_studio.by_sku.title") }}
           <v-chip
             class="m-1 pa-1"
             color="#eee"
@@ -149,7 +155,8 @@
         </v-list-item-title>
 
         <v-list-item-subtitle>
-          The database in your country is not available.
+          {{ $t("product_studio.by_sku.subtitle") }}
+
         </v-list-item-subtitle>
       </v-list-item>
 
@@ -189,8 +196,8 @@
         <v-list-item-subtitle>
           {{
             !can_reselling
-              ? "Your license is not eligible."
-              : "Find products in the wholesale marketplace and add them to your store."
+              ?$t("product_studio.your_license_is_not_eligible")
+              : $t("product_studio.drop_shipping.subtitle")
           }}
         </v-list-item-subtitle>
       </v-list-item>
@@ -222,9 +229,8 @@
         </v-list-item-title>
 
         <v-list-item-subtitle>
-          Easily add products from POD or dropshipping suppliers with Selldone
-          Connect OS—just connect your store and enjoy automatic product
-          integration, no plugins needed.
+          {{$t("product_studio.by_connect.subtitle")  }}
+
         </v-list-item-subtitle>
       </v-list-item>
     </v-list>
@@ -237,49 +243,16 @@
       scrollable
       transition="dialog-bottom-transition"
     >
-      <v-card>
+      <v-card class="text-start">
         <v-card-title>
           <v-avatar class="me-2 avatar-gradient -thin -shop" size="36"
-            ><img :src="getShopImagePath(shop.icon, 128)"
+            ><v-img :src="getShopImagePath(shop.icon, 128)"
           /></v-avatar>
 
           {{ shop.title }}
         </v-card-title>
 
         <v-card-text>
-          <div class="widget-box mb-5">
-            <s-widget-header
-              icon="note_add"
-              title="Add Product by SKU"
-            ></s-widget-header>
-            <v-list-subheader>
-              You have the ability to locate products by their SKU in our
-              database and add them with just a single click.
-            </v-list-subheader>
-            <v-text-field
-              v-model="sku"
-              :label="$t('product_studio.sku_name_input')"
-              class="max-width-field-large mx-auto m-2 mt-4 border-green-input"
-              clearable
-              color="green"
-              hide-details
-              prepend-inner-icon="qr_code_scanner"
-              rounded
-              variant="solo"
-            >
-              <template v-slot:append-inner>
-                <v-btn
-                  :class="{ disabled: !sku || sku.length < 4 }"
-                  :loading="busy_search"
-                  color="success"
-                  rounded
-                  variant="flat"
-                  @click="searchSku()"
-                  >{{ $t("global.actions.search") }}
-                </v-btn>
-              </template>
-            </v-text-field>
-          </div>
 
           <v-container class="mb-12" fluid>
             <v-row>
@@ -294,73 +267,119 @@
               >
                 <v-card
                   :loading="busy_add_from_repository === item.id"
-                  class="widget widget-hover min-h-100 rounded-28px overflow-hidden"
+                  class="min-h-100 overflow-hidden"
+                  rounded="lg"
+                  variant="outlined"
                   @click="showRepositoryDialog(item)"
                 >
-                  <v-avatar class="mx-auto" rounded size="128">
+                <div class="d-flex align-start pa-2">
+                  <v-avatar class="flex-grow-0" rounded size="84">
                     <v-img
-                      v-if="item.icon"
-                      :src="getShopImagePath(item.icon)"
+                        v-if="item.icon"
+                        :src="getShopImagePath(item.icon)"
                     ></v-img>
                     <v-icon v-else>breakfast_dining</v-icon>
                   </v-avatar>
-                  <v-card-title>
-                    {{ item.title }}
-                  </v-card-title>
-                  <v-card-subtitle
-                    class="font-weight-black pt-1 english-field"
-                    dir="ltr"
-                  >
-                    SKU: {{ item.sku }}
-                  </v-card-subtitle>
-                  <v-card-text>
-                    <div v-if="auto_category">
+
+               <div class="ps-2">
+                 <div class="text-subtitle-2">
+                   {{ item.title }}
+                 </div>
+                 <div
+                     class="font-weight-black pt-1 english-field small"
+                     dir="ltr"
+                 >
+                   SKU: {{ item.sku }}
+                 </div>
+
+                 <div v-if="auto_category">
                       <span v-if="item.parent2_category">
                         {{ item.parent2_category }}
 
                         <v-icon size="small">{{
-                          $t("icons.angle_next")
-                        }}</v-icon>
+                            $t("icons.angle_next")
+                          }}</v-icon>
                       </span>
 
-                      <span v-if="item.parent_category">
+                   <span v-if="item.parent_category">
                         {{ item.parent_category }}
 
                         <v-icon size="small">{{
-                          $t("icons.angle_next")
-                        }}</v-icon>
+                            $t("icons.angle_next")
+                          }}</v-icon>
                       </span>
 
-                      {{ item.category }}
-                    </div>
-                    <div v-else>Add in current category</div>
+                   {{ item.category }}
+                 </div>
+                 <div v-else>{{$t('product_studio.add_in_current_category')}}</div>
 
-                    <div v-if="item.brand">
-                      {{ $t("global.commons.brand") }}: {{ item.brand }}
-                    </div>
+                 <div v-if="item.brand">
+                   {{ $t("global.commons.brand") }}: {{ item.brand }}
+                 </div>
 
-                    <div v-if="item.price">
-                      {{ $t("global.commons.price") }}:
-                      <u-price
-                        :amount="item.price"
-                        :currency="item.currency"
-                      ></u-price>
-                    </div>
-                  </v-card-text>
+                 <div v-if="item.price">
+                   {{ $t("global.commons.price") }}:
+                   <u-price
+                       :amount="item.price"
+                       :currency="item.currency"
+                   ></u-price>
+                 </div>
+
+               </div>
+
+                </div>
+
                 </v-card>
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
 
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn size="x-large" variant="text" @click="add_by_sku = false">
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
-          </div>
-        </v-card-actions>
+        <div style="position: fixed;bottom: 0;left: 0;right: 0;z-index: 2;">
+          <v-sheet  color="#eee" rounded="t-xl" class="mx-auto pa-4" max-width="98vw" width="640" elevation="3">
+            <s-widget-header
+                icon="note_add"
+                :title="$t('product_studio.sku_dialog.title')"
+            ></s-widget-header>
+            <v-list-subheader>
+              {{ $t('product_studio.sku_dialog.subtitle') }}
+
+            </v-list-subheader>
+            <v-text-field
+                v-model="sku"
+                :label="$t('product_studio.sku_name_input')"
+                class="max-width-field-large mx-auto m-2 mt-4 border-green-input"
+                clearable
+                color="green"
+                hide-details
+                prepend-inner-icon="qr_code_scanner"
+                rounded
+                variant="solo"
+            >
+              <template v-slot:append-inner>
+                <v-btn
+                    :class="{ disabled: !sku || sku.length < 4 }"
+                    :loading="busy_search"
+                    color="success"
+                    rounded
+                    variant="flat"
+                    @click="searchSku()"
+                >{{ $t("global.actions.search") }}
+                </v-btn>
+              </template>
+            </v-text-field>
+
+            <div class="widget-buttons">
+              <v-btn size="x-large" variant="text" @click="add_by_sku = false">
+                <v-icon start>close</v-icon>
+                {{ $t("global.actions.close") }}
+              </v-btn>
+            </div>
+          </v-sheet>
+        </div>
+
+
+
       </v-card>
     </v-dialog>
     <!-- ██████████████████████ Add Drop Shipping ██████████████████████ -->
@@ -373,14 +392,15 @@
       <v-card class="text-start">
         <v-card-title class="d-flex align-center">
           <v-avatar class="me-2 avatar-gradient -thin -shop" size="36"
-            ><img :src="getShopImagePath(shop.icon, 128)"
+            ><v-img :src="getShopImagePath(shop.icon, 128)"
           /></v-avatar>
 
 
           <div>
             {{ shop.title }}
             <div class="text-subtitle-2">
-              Add dropshipping products
+              {{$t('product_studio.dropshipping_dialog.title') }}
+
             </div>
           </div>
         </v-card-title>
@@ -488,7 +508,7 @@
               <div v-else>
                 <div class="py-3">
                   <v-icon class="me-1">home</v-icon>
-                  Add in current category
+                  {{$t('product_studio.add_in_current_category')}}
                 </div>
               </div>
             </v-expand-transition>
@@ -509,7 +529,7 @@
               :class="{ disabled: !price || !currency }"
               :loading="busy_add_from_repository === selected_repository.id"
               color="primary"
-              size="x-large"
+              size="x-large" variant="elevated"
               @click="addFromRepository(selected_repository.id)"
             >
               <v-icon start>add</v-icon>

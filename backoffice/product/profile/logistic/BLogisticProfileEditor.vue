@@ -14,20 +14,21 @@
 
 <template>
   <div>
-    <div v-if="languages?.length>1" class="widget-box -large mb-5">
+    <div v-if="languages?.length > 1" class="widget-box -large mb-5">
       <s-widget-header
-        title="Multi Language"
+        :title="$t('logistic_profile_editor.languages.title')"
         icon="language"
         add-icon="translate"
         @click:add="addNew"
-        add-caption="Add new article"
+        :add-caption="$t('logistic_profile_editor.languages.add_caption')"
         :disabled="!free_languages || !free_languages.length || !editable"
-        disabled-reason="No more language!"
+        :disabled-reason="
+          $t('logistic_profile_editor.languages.no_more_language')
+        "
       >
       </s-widget-header>
       <v-list-subheader>
-        You can set different content for the logistics profile in various
-        languages.
+        {{ $t("logistic_profile_editor.languages.subtitle") }}
       </v-list-subheader>
       <v-row align="center" class="px-3" no-gutters>
         <v-btn
@@ -52,56 +53,45 @@
     <v-expand-transition>
       <div v-if="article">
         <div class="widget-box -large mb-5">
-
           <u-loading-progress v-if="busy_delete" color="red">
           </u-loading-progress>
 
-
-
           <s-widget-header
-              title="Content"
-              icon="article"
+            :title="$t('logistic_profile_editor.content.title')"
+            icon="article"
           >
-
             <template v-slot:actions v-if="editable">
               <u-language-input
-                  v-if="languages && languages.length > 1"
-                  v-model="article.lang"
-                  :available-languages="languages"
-                  label="Current article language"
-                  prepend-inner-icon="translate"
-                  variant="plain"
-                  hide-details
+                v-if="languages && languages.length > 1"
+                v-model="article.lang"
+                :available-languages="languages"
+                :label="$t('logistic_profile_editor.content.language_input')"
+                prepend-inner-icon="translate"
+                variant="plain"
+                hide-details
               ></u-language-input>
 
-
               <u-smart-menu
-                  v-if="article.id /*Exclude new articles*/"
-                  :items="[
-                ...auto_translation_items,
-                {
-                  title: 'Delete Article',
-                  icon: 'delete_outline',
-                  click: () => deleteArticle(),
-                  disabled: this.articles.length <= 1,
-                },
-              ]"
+                v-if="article.id /*Exclude new articles*/"
+                :items="[
+                  ...auto_translation_items,
+                  {
+                    title: $t('logistic_profile_editor.content.delete_article'),
+                    icon: 'delete_outline',
+                    click: () => deleteArticle(),
+                    disabled: this.articles.length <= 1,
+                  },
+                ]"
               >
                 <v-tooltip activator="parent">
-                  Auto translate / Delete article
+                  {{ $t("logistic_profile_editor.content.menu_tooltip") }}
                 </v-tooltip>
               </u-smart-menu>
             </template>
-
           </s-widget-header>
           <v-list-subheader>
-            You can set different content for the logistics profile in various
-            languages.
+            {{ $t("logistic_profile_editor.content.subtitle") }}
           </v-list-subheader>
-
-
-
-
 
           <div class="master-article-container">
             <s-article-editor
@@ -213,7 +203,9 @@ export default defineComponent({
       this.languages.forEach((language) => {
         if (!this.articles.some((a) => a.lang === language)) {
           out.push({
-            title: `Translate to ${this.getLanguageName(language)}`,
+            title:
+              this.$t("logistic_profile_editor.translate_to") +
+              ` ${this.getLanguageName(language)}`,
             icon: "translate",
             click: () => this.showTranslate(language),
           });
@@ -261,7 +253,9 @@ export default defineComponent({
             this.selectArticle(data.article);
             this.showSuccessAlert(
               null,
-              "Article translation completed successfully.",
+              this.$t(
+                "logistic_profile_editor.notifications.translate.message",
+              ),
             );
             this.translate_dialog = false;
           } else {
@@ -320,7 +314,12 @@ export default defineComponent({
             this.article = data.article;
             this.changed = false;
 
-            this.showSuccessAlert(null, "Article has been saved successfully.");
+            this.showSuccessAlert(
+              null,
+              this.$t(
+                "logistic_profile_editor.notifications.save_article.message",
+              ),
+            );
           } else {
             this.showErrorAlert(null, data.error_msg);
           }
@@ -335,9 +334,9 @@ export default defineComponent({
 
     deleteArticle() {
       this.openDangerAlert(
-        "Delete " + this.article.title,
-        "Are you sure to delete this article for ever?",
-        "Yes, delete now",
+        this.$t("global.actions.delete") + " " + this.article.title,
+        this.$t("logistic_profile_editor.delete_dialog.message"),
+        this.$t("logistic_profile_editor.delete_dialog.action"),
         () => {
           this.deleteArticleNow();
         },
@@ -360,7 +359,9 @@ export default defineComponent({
 
             this.showSuccessAlert(
               null,
-              "Article has been deleted successfully.",
+              this.$t(
+                "logistic_profile_editor.notifications.delete_article.message",
+              ),
             );
           } else {
             this.showErrorAlert(null, data.error_msg);

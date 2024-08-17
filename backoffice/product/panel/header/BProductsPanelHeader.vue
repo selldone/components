@@ -20,151 +20,158 @@
     </template>
 
     <div class="body-title px-2">
-      <v-menu>
-        <template v-slot:activator="{ props }">
-          <v-btn color="primary" icon v-bind="props" variant="text">
-            <v-icon>more_vert</v-icon>
-          </v-btn>
-        </template>
-        <v-list class="text-start pa-0" density="compact" rounded="lg">
-          <v-list-item
-            :to="{
-              name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                ? 'VPageVendorProducts'
-                : 'BPageShopProductsList',
-            }"
-            exact
-            prepend-icon="shelves"
-          >
-            <v-list-item-title
-              >{{ $t("admin_shop.products.menu_products_list") }}
-            </v-list-item-title>
-          </v-list-item>
+      <v-btn color="primary" icon variant="text">
+        <v-icon>more_vert</v-icon>
 
-          <v-list-item
-            :to="{
-              name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                ? 'VendorProducts_Exporter'
-                : 'BPageShopProductsExporter',
-            }"
-            exact
-            prepend-icon="file_download"
-          >
-            <v-list-item-title>
-              {{ $t("admin_shop.products.menu_export") }}
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item
-            :to="{
-              name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                ? 'VendorProducts_Importer'
-                : 'BPageShopProductsImporter',
-            }"
-            exact
-            prepend-icon="system_update_alt"
-          >
-            <v-list-item-title
-              >{{ $t("admin_shop.products.menu_import") }}
-            </v-list-item-title>
-          </v-list-item>
-
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ RSS ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-          <v-list-item
-            v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
-            exact
-            prepend-icon="rss_feed"
-            subtitle="Importing products into Google, Meta, ..."
-            @click="rss_dialog = true"
-          >
-            <template v-slot:title>
-              Products RSS
-
-              <img
-                class="mx-1"
-                height="22"
-                src="./../../../../assets/trademark/google.svg"
-                width="22"
-              />
-              <img
-                class="mx-1"
-                height="22"
-                src="./../../../../assets/trademark/meta.png"
-                width="22"
-              />
-            </template>
-          </v-list-item>
-
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ API ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-          <v-list-item
-            v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
-            exact
-            prepend-icon="api"
-            subtitle="Importing products via a publicly accessible API call."
-            @click="api_dialog = true"
-          >
-            <template v-slot:title>
-              Products API
-
-              <img
-                v-for="i in available_api_feeds.limit(3)"
-                :key="i.driver"
-                :src="i.logo"
-                class="mx-1"
-                height="22"
-                width="22"
-              />
-            </template>
-          </v-list-item>
-
-          <template v-if="!IS_VENDOR_PANEL">
-            <v-divider class="my-1"></v-divider>
-
+        <v-menu activator="parent">
+          <v-list class="text-start pa-0" density="compact" rounded="lg">
             <v-list-item
-              prepend-icon="settings_suggest"
-              @click="showAdvancedOptions"
+              :to="{
+                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                  ? 'VPageVendorProducts'
+                  : 'BPageShopProductsList',
+              }"
+              exact
+              prepend-icon="shelves"
             >
-              <v-list-item-title>
-                {{ $t("admin_shop.products.menu_advanced_options") }}
+              <v-list-item-title
+                >{{ $t("admin_shop.products.menu_products_list") }}
               </v-list-item-title>
             </v-list-item>
-          </template>
 
-          <v-divider class="my-1"></v-divider>
-          <v-list-item>
-            <u-smart-toggle
-              :model-value="showDeletes"
-              :true-description="$t('admin_shop.products.menu_show_deletes')"
-              color="red"
-              false-gray
-              false-title="Hide deleted"
-              true-title="Show deleted"
-              @update:model-value="(v) => $emit('update:showDeletes', v)"
-            ></u-smart-toggle>
-          </v-list-item>
+            <v-list-item
+              :to="{
+                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                  ? 'VendorProducts_Exporter'
+                  : 'BPageShopProductsExporter',
+              }"
+              exact
+              prepend-icon="file_download"
+            >
+              <v-list-item-title>
+                {{ $t("admin_shop.products.menu_export") }}
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              :to="{
+                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                  ? 'VendorProducts_Importer'
+                  : 'BPageShopProductsImporter',
+              }"
+              exact
+              prepend-icon="system_update_alt"
+            >
+              <v-list-item-title
+                >{{ $t("admin_shop.products.menu_import") }}
+              </v-list-item-title>
+            </v-list-item>
 
-          <v-list-item v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL">
-            <u-smart-toggle
-              :model-value="showVendors"
-              false-gray
-              false-title="Hide vendors"
-              true-description="Show all vendors, ⌘Ctrl+1"
-              true-title="Show vendors"
-              @update:model-value="(v) => $emit('update:showVendors', v)"
-            ></u-smart-toggle>
-          </v-list-item>
+            <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ RSS ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+            <v-list-item
+              v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
+              exact
+              prepend-icon="rss_feed"
+              :subtitle="$t('admin_shop.products.products_rss.subtitle')"
+              @click="rss_dialog = true"
+            >
+              <template v-slot:title>
+                {{ $t("admin_shop.products.products_rss.title") }}
 
-          <v-list-item>
-            <u-smart-toggle
-              :model-value="showNotes"
-              false-gray
-              false-title="Hide notes"
-              true-description="Show all notes, ⌘Ctrl+2"
-              true-title="Show notes"
-              @update:model-value="(v) => $emit('update:showNotes', v)"
-            ></u-smart-toggle>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+                <img
+                  class="mx-1"
+                  height="22"
+                  src="./../../../../assets/trademark/google.svg"
+                  width="22"
+                />
+                <img
+                  class="mx-1"
+                  height="22"
+                  src="./../../../../assets/trademark/meta.png"
+                  width="22"
+                />
+              </template>
+            </v-list-item>
+
+            <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ API ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+            <v-list-item
+              v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
+              exact
+              prepend-icon="api"
+              :subtitle="$t('admin_shop.products.products_api.subtitle')"
+              @click="api_dialog = true"
+            >
+              <template v-slot:title>
+                {{ $t("admin_shop.products.products_api.title") }}
+
+                <img
+                  v-for="i in available_api_feeds.limit(3)"
+                  :key="i.driver"
+                  :src="i.logo"
+                  class="mx-1"
+                  height="22"
+                  width="22"
+                />
+              </template>
+            </v-list-item>
+
+            <template v-if="!IS_VENDOR_PANEL">
+              <v-divider class="my-1"></v-divider>
+
+              <v-list-item
+                prepend-icon="settings_suggest"
+                @click="showAdvancedOptions"
+              >
+                <v-list-item-title>
+                  {{ $t("admin_shop.products.menu_advanced_options") }}
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+
+            <v-divider class="my-1"></v-divider>
+            <v-list-item>
+              <u-smart-toggle
+                :model-value="showDeletes"
+                :true-description="$t('admin_shop.products.menu_show_deletes')"
+                color="red"
+                false-gray
+                :false-title="
+                  $t('admin_shop.products.show_deletes.false_title')
+                "
+                :true-title="$t('admin_shop.products.show_deletes.true_title')"
+                @update:model-value="(v) => $emit('update:showDeletes', v)"
+              ></u-smart-toggle>
+            </v-list-item>
+
+            <v-list-item v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL">
+              <u-smart-toggle
+                :model-value="showVendors"
+                false-gray
+                :false-title="
+                  $t('admin_shop.products.show_vendors.false_title')
+                "
+                :true-description="
+                  $t('admin_shop.products.show_vendors.false_description')
+                "
+                :true-title="$t('admin_shop.products.show_vendors.true_title')"
+                @update:model-value="(v) => $emit('update:showVendors', v)"
+              ></u-smart-toggle>
+            </v-list-item>
+
+            <v-list-item>
+              <u-smart-toggle
+                :model-value="showNotes"
+                false-gray
+                :false-title="$t('admin_shop.products.show_notes.false_title')"
+                :true-description="
+                  $t('admin_shop.products.show_notes.false_description')
+                "
+                :true-title="$t('admin_shop.products.show_notes.true_title')"
+                @update:model-value="(v) => $emit('update:showNotes', v)"
+              ></u-smart-toggle>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-btn>
 
       <router-link
         v-if="$vuetify.display.smAndUp"
@@ -173,7 +180,7 @@
             ? 'VPageVendorProducts'
             : 'BPageShopProductsList',
         }"
-        class="text-primary"
+        class="text-primary ms-1"
         exact
       >
         {{ $t("admin_shop.products.title") }}
@@ -186,7 +193,7 @@
       class="mx-2"
       color="primary"
       target="_blank"
-      title="Products in this shop has been linked to a sheet in the Google Drive."
+      :title="$t('admin_shop.products.google_sheet.tooltip')"
       variant="flat"
     >
       <img
@@ -194,7 +201,9 @@
         src="../../../../assets/trademark/google-drive.svg"
         width="16"
       />
-      <span class="d-none d-sm-inline small ms-2">Linked Sheet</span>
+      <span class="d-none d-sm-inline small ms-2">{{
+        $t("admin_shop.products.google_sheet.action")
+      }}</span>
       <v-icon class="mx-1 d-none d-sm-inline" size="small">open_in_new</v-icon>
     </v-chip>
 
@@ -240,12 +249,13 @@
     <v-card class="rounded-t-xl text-start" rounded="0">
       <v-card-title>
         <v-icon class="me-1" color="#111">rss_feed</v-icon>
-        Products RSS
+        {{ $t("admin_shop.products.rss_dialog.title") }}
       </v-card-title>
-      <v-card-text class="py-5">
-        <v-list-subheader>
-          Utilize this RSS feed to maintain an up-to-date list of all products.
-        </v-list-subheader>
+      <v-card-text>
+        <p class="py-5">
+          {{ $t("admin_shop.products.rss_dialog.subtitle") }}
+        </p>
+
         <u-text-copy-box
           :image="getShopImagePath(shop.icon, 128)"
           :value="products_feed"
@@ -280,14 +290,13 @@
     <v-card class="rounded-t-xl text-start" rounded="0">
       <v-card-title>
         <v-icon class="me-1" color="#111">rss_feed</v-icon>
-        Products API
+        {{ $t("admin_shop.products.api_dialog.title") }}
       </v-card-title>
-      <v-card-text class="py-5">
-        <v-list-subheader>
-          Use this API feed to keep your product list up-to-date. It provides a
-          publicly accessible API to fetch products from your store, making it
-          ideal for product listing and comparison websites.
-        </v-list-subheader>
+      <v-card-text>
+        <p class="py-5">
+          {{ $t("admin_shop.products.api_dialog.subtitle") }}
+        </p>
+
         <u-text-copy-box
           :image="getShopImagePath(shop.icon, 128)"
           :value="products_api_feed"
