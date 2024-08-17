@@ -211,9 +211,9 @@
         size="x-small"
         variant="flat"
       >
-        <div style="line-height: normal">
+        <div style="line-height: 8px">
           {{ discount_percent }}%
-          <span class="d-block" style="font-size: 5.5px">{{
+          <span class="d-block" style="font-size: 6px;font-weight: 500">{{
             $t("global.commons.discount")
           }}</span>
         </div>
@@ -260,7 +260,7 @@
       v-if="showNotes || (product.note && product.note.length)"
       :activeColor="showNotes ? undefined : '#333'"
       :note="product.note"
-      class="absolute-top-start z2"
+      class="position-absolute z2"
       style="top: -6px; left: -6px"
       @click="$emit('onShowNote', product)"
     ></b-note-button>

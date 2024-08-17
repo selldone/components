@@ -88,7 +88,9 @@
               append-icon="open_in_new"
               :href="items[index].action.href"
               target="_blank"
-              v-track:click="`Onboarding ● Tour ● ${items[index].title} ● Action`"
+              v-track:click="
+                `Onboarding ● Tour ● ${items[index].title} ● Action`
+              "
             >
               {{ items[index].action.title }}
             </v-btn>
@@ -123,47 +125,51 @@ export default {
   data: () => ({
     index: 0,
 
-    items: [
-      {
-        title: "Avocado - Sell Without Adding Any Product",
-        description:
-          "With Avocado, you can offer services or products without predefined prices or details. Create a custom form for your customers to request services or products. Once they submit their request, you can set the price and process the payment. Share the form on your social media, allowing customers to add items, upload images, and submit orders easily.",
-        image: require("./assets/avocado.jpg"),
-        action: {
-          title: "Read About Avocado",
-          href: "https://selldone.com/blog/avocado-social-sell-tool-116",
-        },
-      },
-
-      {
-        title: "Multi-vendor Marketplace & Auto Payout",
-        description:
-          "Build a thriving marketplace with Selldone by adding multiple vendors. Vendors can list their products, and you can set a commission rate for each sale. When a customer makes a purchase, the vendor receives the payment directly, manages the order through their dedicated panel, and you earn a commission via the auto payout feature.",
-        image: require("./assets/marketplace.jpg"),
-        action: {
-          title: "Auto Vendors Payout",
-          href: "https://selldone.com/blog/stripe-connect-payout-marketplace-120",
-        },
-      },
-      {
-        title: "Support Complex Business Models",
-        description:
-          "Selldone supports both simple and complex business models, allowing you to adapt as needed. Configure everything behind the scenes without installing additional plugins or apps, ensuring seamless transitions and operations.",
-        image: require("./assets/business-model.jpg"),
-      },
-      {
-        title: "Product Locations Restriction & Gift Shopping",
-        description:
-          "Set location restrictions for each product by specifying multiple countries, ZIP codes, and cities. This feature is perfect for creating a personalized gift shopping experience or limiting product availability to specific locations, such as for restaurants.",
-        image: require("./assets/product-location.jpg"),
-      },
-    ],
-
     dialog: false,
     selected_item: false,
   }),
 
-  computed: {},
+  computed: {
+    items() {
+      return [
+        {
+          title: this.$t("onboarding.customize.tour.avocado.title"),
+          description: this.$t("onboarding.customize.tour.avocado.description"),
+          image: require("./assets/avocado.jpg"),
+          action: {
+            title: this.$t("onboarding.customize.tour.avocado.action"),
+            href: "https://selldone.com/blog/avocado-social-sell-tool-116",
+          },
+        },
+
+        {
+          title: this.$t("onboarding.customize.tour.marketplace.title"),
+          description: this.$t(
+            "onboarding.customize.tour.marketplace.description",
+          ),
+          image: require("./assets/marketplace.jpg"),
+          action: {
+            title: this.$t("onboarding.customize.tour.marketplace.action"),
+            href: "https://selldone.com/blog/stripe-connect-payout-marketplace-120",
+          },
+        },
+        {
+          title: this.$t("onboarding.customize.tour.business_model.title"),
+          description: this.$t(
+            "onboarding.customize.tour.business_model.description",
+          ),
+          image: require("./assets/business-model.jpg"),
+        },
+        {
+          title: this.$t("onboarding.customize.tour.gift_shopping.title"),
+          description: this.$t(
+            "onboarding.customize.tour.gift_shopping.description",
+          ),
+          image: require("./assets/product-location.jpg"),
+        },
+      ];
+    },
+  },
 
   watch: {},
 

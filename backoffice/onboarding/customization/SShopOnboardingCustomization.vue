@@ -15,12 +15,18 @@
 <template>
   <v-card class="s--shop-onboarding-customization" color="transparent" flat>
     <v-card-text>
-      <s-widget-header title="Tour" icon="movie_filter"> </s-widget-header>
+      <s-widget-header
+        :title="$t('onboarding.customize.tour.title')"
+        icon="movie_filter"
+      ></s-widget-header>
       <p class="typo-body flex-grow-1">
-        Discover what's possible here that isn't anywhere else.
+        {{ $t("onboarding.customize.tour.subtitle") }}
       </p>
 
-      <b-shop-onboarding-tour :shop="shop"        class="mx-n3"></b-shop-onboarding-tour>
+      <b-shop-onboarding-tour
+        :shop="shop"
+        class="mx-n3"
+      ></b-shop-onboarding-tour>
 
       <hr class="my-5" />
 
@@ -53,11 +59,9 @@
             v-for="template in templates"
             :key="template.id"
             :template="template"
-
             class="me-2"
             min-width="250"
             size="default"
-
             variant="flat"
           ></l-template-card>
         </div>
@@ -108,8 +112,8 @@
           <u-color-circle :color="color_light" class="me-1"></u-color-circle>
           <u-color-circle :color="color_dark" class="me-1"></u-color-circle>
           <u-color-circle
-              :color="color_deep_dark"
-              class="me-1"
+            :color="color_deep_dark"
+            class="me-1"
           ></u-color-circle>
 
           {{ $t("onboarding.customize.colors.action") }}

@@ -44,7 +44,7 @@
       <div class="hr-dashed my-2"></div>
       <v-expand-transition>
         <div v-if="!engineCategories?.length && !engineTags?.length">
-          <div class="typo-body op-0-5 py-5">Nothing set!</div>
+          <div class="typo-body op-0-5 py-5">{{$t('global.commons.nothing_set')}}</div>
         </div>
       </v-expand-transition>
 

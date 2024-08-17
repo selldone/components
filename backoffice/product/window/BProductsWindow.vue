@@ -797,12 +797,11 @@
             class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
           >
             <div>
-              <h3>Extra Products Engine</h3>
+              <h3>{{ $t("products_select.engine.title") }}</h3>
 
               <template v-if="current_engine">
                 <small class="d-block">
-                  More products will be loaded from selected categories and
-                  tags.
+                  {{ $t("products_select.engine.subtitle") }}
                 </small>
 
                 <b-category-engine-preview
@@ -821,14 +820,15 @@
               <v-icon v-else class="my-2" size="36"> devices_fold</v-icon>
 
               <div class="mt-2">
-                <small class="d-block"
-                  >Load products from categories in the
+                <small class="d-block">
                   {{
-                    parent_folders
-                      ? parent_folders.title
-                      : $t("global.commons.home")
-                  }}.</small
-                >
+                    $t("products_select.engine.load_in_tips", {
+                      category: parent_folders
+                        ? parent_folders.title
+                        : $t("global.commons.home"),
+                    })
+                  }}
+                </small>
               </div>
 
               <v-btn
@@ -840,10 +840,12 @@
                 <v-icon class="me-1" size="small">auto_mode</v-icon>
 
                 {{
-                  parent_folders
-                    ? `Edit ${parent_folders.title.limitWords(1)} Engine`
-                    : "Edit Root Engine"
-                }}
+                  $t("products_select.engine.action", {
+                    category: parent_folders
+                        ? parent_folders.title.limitWords(1)
+                        : $t("global.commons.root"),
+                  })}}
+
               </v-btn>
             </div>
           </div>
@@ -870,8 +872,8 @@
         <div>
           <b>{{ remains_count }} {{ $t("global.actions.more") }}</b>
           <div class="small mt-1">
-            More products are available in this category; click to load
-            additional items.
+            {{$t("products_select.load_more_products")}}
+
           </div>
         </div>
       </v-btn>

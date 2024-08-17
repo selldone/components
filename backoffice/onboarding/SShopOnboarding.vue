@@ -14,7 +14,7 @@
 
 <template>
   <div class="s--shop-onboarding">
-    <div class="widget-box -large mb-5">
+    <div class="widget-box -x-large mb-5">
       <s-widget-header
         :add-caption="$t('global.actions.dismiss')"
         :title="$t('onboarding.shop.title')"
@@ -27,307 +27,298 @@
         {{ $t("onboarding.shop.subtitle") }}
       </v-list-subheader>
 
-      <v-container class="px-0">
-        <v-row>
-          <v-col cols="12" lg="3" md="4" sm="5" class="px-0 px-sm-2">
-            <v-tabs
-              v-model="tab"
-              :direction="$vuetify.display.smAndUp ? 'vertical' : 'horizontal'"
-              color="#000"
-              show-arrows
-            >
-              <v-tab class="justify-start">
-                <v-icon class="me-1"> architecture</v-icon>
-                {{ $t("onboarding.customize_theme") }}
-              </v-tab>
+      <v-row>
+        <v-col cols="12" lg="3" md="4" sm="5" class="px-0 px-sm-2">
+          <v-tabs
+            v-model="tab"
+            :direction="$vuetify.display.smAndUp ? 'vertical' : 'horizontal'"
+            color="#000"
+            show-arrows
+          >
+            <v-tab class="justify-start">
+              <v-icon class="me-1"> architecture</v-icon>
+              {{ $t("onboarding.customize_theme") }}
+            </v-tab>
 
-              <v-tab class="justify-start">
-                <v-icon class="me-1"> work_outline</v-icon>
-                {{ $t("onboarding.setup_business") }}
-              </v-tab>
+            <v-tab class="justify-start">
+              <v-icon class="me-1"> work_outline</v-icon>
+              {{ $t("onboarding.setup_business") }}
+            </v-tab>
 
-              <v-tab class="justify-start">
-                <v-icon
-                  :color="has_product ? 'success' : undefined"
-                  class="me-1"
-                >
-                  {{ has_product ? "task_alt" : "queue" }}
-                </v-icon>
-                {{ $t("onboarding.add_product") }}
-              </v-tab>
+            <v-tab class="justify-start">
+              <v-icon :color="has_product ? 'success' : undefined" class="me-1">
+                {{ has_product ? "task_alt" : "queue" }}
+              </v-icon>
+              {{ $t("onboarding.add_product") }}
+            </v-tab>
 
-              <v-tab class="justify-start">
-                <v-icon
-                  :color="has_warehouse ? 'success' : undefined"
-                  class="me-1"
-                >
-                  {{ has_warehouse ? "task_alt" : "delivery_dining" }}
-                </v-icon>
-                {{ $t("onboarding.setup_shipping") }}
-              </v-tab>
+            <v-tab class="justify-start">
+              <v-icon
+                :color="has_warehouse ? 'success' : undefined"
+                class="me-1"
+              >
+                {{ has_warehouse ? "task_alt" : "delivery_dining" }}
+              </v-icon>
+              {{ $t("onboarding.setup_shipping") }}
+            </v-tab>
 
-              <v-tab class="justify-start">
-                <v-icon
-                  :color="domains.length ? 'success' : undefined"
-                  class="me-1"
-                >
-                  {{ domains.length > 0 ? "task_alt" : "add_link" }}
-                </v-icon>
-                {{ $t("onboarding.add_domain") }}
-              </v-tab>
+            <v-tab class="justify-start">
+              <v-icon
+                :color="domains.length ? 'success' : undefined"
+                class="me-1"
+              >
+                {{ domains.length > 0 ? "task_alt" : "add_link" }}
+              </v-icon>
+              {{ $t("onboarding.add_domain") }}
+            </v-tab>
 
-              <v-tab class="justify-start">
-                <v-icon
-                  :color="gateways_online.length ? 'success' : undefined"
-                  class="me-1"
-                >
-                  {{ gateways_online.length > 0 ? "task_alt" : "attach_money" }}
-                </v-icon>
-                {{ $t("onboarding.add_payment") }}
-              </v-tab>
+            <v-tab class="justify-start">
+              <v-icon
+                :color="gateways_online.length ? 'success' : undefined"
+                class="me-1"
+              >
+                {{ gateways_online.length > 0 ? "task_alt" : "attach_money" }}
+              </v-icon>
+              {{ $t("onboarding.add_payment") }}
+            </v-tab>
 
-              <v-tab class="justify-start">
-                <v-icon class="me-1" size="small">sync_alt</v-icon>
+            <v-tab class="justify-start">
+              <v-icon class="me-1" size="small">sync_alt</v-icon>
 
-                {{ $t("onboarding.migration.title") }}
-                <img
-                  class="ms-1"
-                  height="24"
-                  src="./assets/shopify.png"
-                  width="24"
-                />
-                <img
-                  class="ms-1"
-                  height="24"
-                  src="./assets/woocommerce.svg"
-                  width="24"
-                />
-              </v-tab>
+              {{ $t("onboarding.migration.title") }}
+              <img
+                class="ms-1"
+                height="24"
+                src="./assets/shopify.png"
+                width="24"
+              />
+              <img
+                class="ms-1"
+                height="24"
+                src="./assets/woocommerce.svg"
+                width="24"
+              />
+            </v-tab>
 
+            <v-tab class="justify-start">
+              <v-icon class="me-1"> light </v-icon>
+              {{ $t("onboarding.overview.title") }}
+            </v-tab>
+          </v-tabs>
+        </v-col>
+        <v-col cols="12" lg="9" md="8" sm="7" class="px-0 px-sm-2">
+          <v-window v-model="tab">
+            <!-- ------------------------------ customize website ------------------------------ -->
+            <v-window-item>
+              <s-shop-onboarding-customization
+                :shop="shop"
+                :time-series="timeSeries"
+              ></s-shop-onboarding-customization>
+            </v-window-item>
 
+            <!-- ------------------------------ Setup Business ------------------------------ -->
+            <v-window-item>
+              <shop-onboarding-setup-business-tab
+                :shop="shop"
+                :time-series="timeSeries"
+              ></shop-onboarding-setup-business-tab>
+            </v-window-item>
 
+            <!-- ------------------------------ Add product ------------------------------ -->
+            <v-window-item>
+              <shop-onboarding-product-tab
+                :shop="shop"
+                :time-series="timeSeries"
+              ></shop-onboarding-product-tab>
+            </v-window-item>
+            <!-- ------------------------------ Add shipping ------------------------------ -->
+            <v-window-item>
+              <shop-onboarding-shipping-tab
+                :shop="shop"
+                :time-series="timeSeries"
+              ></shop-onboarding-shipping-tab>
+            </v-window-item>
 
-              <v-tab class="justify-start">
-                <v-icon class="me-1">
-                  light
-                </v-icon>
-                {{ $t('onboarding.overview.title') }}
-              </v-tab>
+            <!-- ------------------------------ Add domain ------------------------------ -->
+            <v-window-item>
+              <shop-onboarding-domain-tab
+                :shop="shop"
+                :time-series="timeSeries"
+              ></shop-onboarding-domain-tab>
+            </v-window-item>
 
+            <!-- ------------------------------ Payment ------------------------------ -->
+            <v-window-item>
+              <shop-onboarding-payment-tab
+                :shop="shop"
+                :time-series="timeSeries"
+              ></shop-onboarding-payment-tab>
+            </v-window-item>
 
-            </v-tabs>
-          </v-col>
-          <v-col cols="12" lg="9" md="8" sm="7" class="px-0 px-sm-2">
-            <v-window v-model="tab">
-              <!-- ------------------------------ customize website ------------------------------ -->
-              <v-window-item>
-                <s-shop-onboarding-customization
-                  :shop="shop"
-                  :time-series="timeSeries"
-                ></s-shop-onboarding-customization>
-              </v-window-item>
-
-              <!-- ------------------------------ Setup Business ------------------------------ -->
-              <v-window-item>
-                <shop-onboarding-setup-business-tab
-                  :shop="shop"
-                  :time-series="timeSeries"
-                ></shop-onboarding-setup-business-tab>
-              </v-window-item>
-
-              <!-- ------------------------------ Add product ------------------------------ -->
-              <v-window-item>
-                <shop-onboarding-product-tab
-                  :shop="shop"
-                  :time-series="timeSeries"
-                ></shop-onboarding-product-tab>
-              </v-window-item>
-              <!-- ------------------------------ Add shipping ------------------------------ -->
-              <v-window-item>
-                <shop-onboarding-shipping-tab
-                  :shop="shop"
-                  :time-series="timeSeries"
-                ></shop-onboarding-shipping-tab>
-              </v-window-item>
-
-              <!-- ------------------------------ Add domain ------------------------------ -->
-              <v-window-item>
-                <shop-onboarding-domain-tab
-                  :shop="shop"
-                  :time-series="timeSeries"
-                ></shop-onboarding-domain-tab>
-              </v-window-item>
-
-              <!-- ------------------------------ Payment ------------------------------ -->
-              <v-window-item>
-                <shop-onboarding-payment-tab
-                  :shop="shop"
-                  :time-series="timeSeries"
-                ></shop-onboarding-payment-tab>
-              </v-window-item>
-
-              <!-- ------------------------------ Migration ------------------------------ -->
-              <v-window-item>
-                <shop-onboarding-migration-tab
-                  :shop="shop"
-                  :time-series="timeSeries"
-                ></shop-onboarding-migration-tab>
-              </v-window-item>
-
+            <!-- ------------------------------ Migration ------------------------------ -->
+            <v-window-item>
+              <shop-onboarding-migration-tab
+                :shop="shop"
+                :time-series="timeSeries"
+              ></shop-onboarding-migration-tab>
+            </v-window-item>
 
             <!-- ------------------------------ Overview ------------------------------ -->
             <v-window-item>
-                <s-widget-header :title="$t('onboarding.overview.title')" icon="light">
-                </s-widget-header>
-                <v-list-subheader>
-                  {{ $t("onboarding.overview.subtitle") }}
-                </v-list-subheader>
+              <s-widget-header
+                :title="$t('onboarding.overview.title')"
+                icon="light"
+              >
+              </s-widget-header>
+              <v-list-subheader>
+                {{ $t("onboarding.overview.subtitle") }}
+              </v-list-subheader>
 
-                <u-fade-scroll show-arrow drag-scroll stick-class="v-card">
-                  <div class="d-flex align-stretch text-center">
-                    <v-card
-                        class="ma-2 border d-flex flex-column"
-                        elevation="0"
-                        max-width="220"
-                        min-width="220"
-                        rounded="xl"
-                        width="220"
-                    >
-                      <v-avatar
-                          class="my-3 mx-auto avatar-gradient -thin -shop"
-                          size="64"
-                      >
-                        <img v-if="shop.icon" :src="getShopImagePath(shop.icon, 128)" />
-                        <v-icon v-else>help_outline</v-icon>
-                      </v-avatar>
-
-                      <v-card-text class="flex-grow-1">
-                        <div class="typo-body mb-2 text-wrap">
-                          {{ shop.title }}
-                        </div>
-                        <v-chip
-                            v-if="shop.active"
-                            :to="{ name: 'BPageShopSettingInfo' }"
-                            class="ms-2 text-lowercase"
-                            color="primary"
-                            label
-                            size="small"
-                        >
-                          <v-icon class="blink-me" size="x-small" start>lens</v-icon>
-                          {{ $t("global.commons.livemode") }}
-                        </v-chip>
-                        <v-chip
-                            v-else
-                            :to="{ name: 'BPageShopSettingInfo' }"
-                            class="ms-2 text-lowercase"
-                            color="#E64A19"
-                            label
-                            size="small"
-                        >
-                          <v-icon size="x-small" start>pause</v-icon>
-                          {{ $t("global.commons.paused") }}
-                        </v-chip>
-                      </v-card-text>
-
-                      <div class="widget-buttons flex-grow-0 w-100">
-                        <v-btn
-                            :href="getShopMainUrl(shop)"
-                            color="#000"
-                            size="large"
-                            target="_blank"
-                            variant="flat"
-                        >
-                          <v-icon class="me-1" size="small">open_in_new</v-icon>
-
-                          {{ $t("onboarding.open_website") }}
-                        </v-btn>
-                      </div>
-                    </v-card>
-
-                    <v-card
-                        class="ma-2 border d-flex flex-column"
-                        elevation="0"
-                        max-width="220"
-                        min-width="220"
-                        rounded="xl"
-                        width="220"
+              <u-fade-scroll show-arrow drag-scroll stick-class="v-card">
+                <div class="d-flex align-stretch text-center">
+                  <v-card
+                    class="ma-2 border d-flex flex-column"
+                    elevation="0"
+                    max-width="220"
+                    min-width="220"
+                    rounded="xl"
+                    width="220"
+                  >
+                    <v-avatar
+                      class="my-3 mx-auto avatar-gradient -thin -shop"
+                      size="64"
                     >
                       <img
-                          class="my-3 mx-auto"
-                          height="64"
-                          src="../../assets/icons/pdf.svg"
-                          width="64"
+                        v-if="shop.icon"
+                        :src="getShopImagePath(shop.icon, 128)"
                       />
+                      <v-icon v-else>help_outline</v-icon>
+                    </v-avatar>
 
-                      <v-card-text class="flex-grow-1">
-                        <div class="typo-body mb-2 text-wrap">
-                          The ultimate guide to start and make your first sale on your
-                          ecommerce.
-                        </div>
-                      </v-card-text>
-
-                      <div class="widget-buttons flex-grow-0 w-100">
-                        <v-btn
-                            color="#000"
-                            href="https://selldone.com/gapi/books/Do-Your-Business-Like-A-Game.pdf"
-                            size="large"
-                            target="_blank"
-                            variant="flat"
-                        >
-                          <v-icon class="me-1" size="small">download</v-icon>
-
-                          {{ $t("global.actions.download_now") }}
-                        </v-btn>
+                    <v-card-text class="flex-grow-1">
+                      <div class="typo-body mb-2 text-wrap">
+                        {{ shop.title }}
                       </div>
-                    </v-card>
-                    <v-card
-                        v-for="item in contents"
-                        :key="item.title"
-                        class="ma-2 border d-flex flex-column"
-                        elevation="0"
-                        max-width="220"
-                        min-width="220"
-                        rounded="xl"
-                        width="220"
-                    >
-                      <v-img
-                          :src="item.image"
-                          aspect-ratio="2"
-                          class="flex-grow-1"
-                          cover
-                      />
-
-                      <v-card-text class="flex-grow-1">
-                        <div class="typo-body mb-2 text-wrap">
-                          {{ item.title }}
-                        </div>
-                      </v-card-text>
-
-                      <div class="widget-buttons flex-grow-0 w-100">
-                        <v-btn
-                            :href="item.video"
-                            color="#d22600"
-                            size="large"
-                            target="_blank"
-                            variant="flat"
+                      <v-chip
+                        v-if="shop.active"
+                        :to="{ name: 'BPageShopSettingInfo' }"
+                        class="ms-2 text-lowercase"
+                        color="primary"
+                        label
+                        size="small"
+                      >
+                        <v-icon class="blink-me" size="x-small" start
+                          >lens</v-icon
                         >
-                          <v-icon class="me-1" size="small">smart_display</v-icon>
-                          {{ $t("global.actions.watch_now") }}
-                        </v-btn>
+                        {{ $t("global.commons.livemode") }}
+                      </v-chip>
+                      <v-chip
+                        v-else
+                        :to="{ name: 'BPageShopSettingInfo' }"
+                        class="ms-2 text-lowercase"
+                        color="#E64A19"
+                        label
+                        size="small"
+                      >
+                        <v-icon size="x-small" start>pause</v-icon>
+                        {{ $t("global.commons.paused") }}
+                      </v-chip>
+                    </v-card-text>
+
+                    <div class="widget-buttons flex-grow-0 w-100">
+                      <v-btn
+                        :href="getShopMainUrl(shop)"
+                        color="#000"
+                        size="large"
+                        target="_blank"
+                        variant="flat"
+                      >
+                        <v-icon class="me-1" size="small">open_in_new</v-icon>
+
+                        {{ $t("onboarding.open_website") }}
+                      </v-btn>
+                    </div>
+                  </v-card>
+
+                  <v-card
+                    class="ma-2 border d-flex flex-column"
+                    elevation="0"
+                    max-width="220"
+                    min-width="220"
+                    rounded="xl"
+                    width="220"
+                  >
+                    <img
+                      class="my-3 mx-auto"
+                      height="64"
+                      src="../../assets/icons/pdf.svg"
+                      width="64"
+                    />
+
+                    <v-card-text class="flex-grow-1">
+                      <div class="typo-body mb-2 text-wrap">
+                        The ultimate guide to start and make your first sale on
+                        your ecommerce.
                       </div>
-                    </v-card>
-                  </div>
-                </u-fade-scroll>
+                    </v-card-text>
+
+                    <div class="widget-buttons flex-grow-0 w-100">
+                      <v-btn
+                        color="#000"
+                        href="https://selldone.com/gapi/books/Do-Your-Business-Like-A-Game.pdf"
+                        size="large"
+                        target="_blank"
+                        variant="flat"
+                      >
+                        <v-icon class="me-1" size="small">download</v-icon>
+
+                        {{ $t("global.actions.download_now") }}
+                      </v-btn>
+                    </div>
+                  </v-card>
+                  <v-card
+                    v-for="item in contents"
+                    :key="item.title"
+                    class="ma-2 border d-flex flex-column"
+                    elevation="0"
+                    max-width="220"
+                    min-width="220"
+                    rounded="xl"
+                    width="220"
+                  >
+                    <v-img
+                      :src="item.image"
+                      aspect-ratio="2"
+                      class="flex-grow-1"
+                      cover
+                    />
+
+                    <v-card-text class="flex-grow-1">
+                      <div class="typo-body mb-2 text-wrap">
+                        {{ item.title }}
+                      </div>
+                    </v-card-text>
+
+                    <div class="widget-buttons flex-grow-0 w-100">
+                      <v-btn
+                        :href="item.video"
+                        color="#d22600"
+                        size="large"
+                        target="_blank"
+                        variant="flat"
+                      >
+                        <v-icon class="me-1" size="small">smart_display</v-icon>
+                        {{ $t("global.actions.watch_now") }}
+                      </v-btn>
+                    </div>
+                  </v-card>
+                </div>
+              </u-fade-scroll>
             </v-window-item>
-            </v-window>
-
-
-          </v-col>
-        </v-row>
-      </v-container>
+          </v-window>
+        </v-col>
+      </v-row>
     </div>
-
-
   </div>
 </template>
 

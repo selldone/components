@@ -260,7 +260,6 @@
         :label="$t('add_shop.description_input')"
         :messages="$t('add_shop.description_input_message')"
         auto-grow
-        rows="3"
         style="max-width: 1250px"
         variant="underlined"
         :disabled="readOnly"

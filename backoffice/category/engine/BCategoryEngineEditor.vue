@@ -17,11 +17,11 @@
     <div class="widget-box mb-5 pb-5">
       <s-widget-header
         icon="shelves"
-        title="Extra Products Listing"
+        :title="$t('category_engine_editor.title')"
       ></s-widget-header>
       <v-list-subheader>
-        Display products from various categories. You have the option to choose
-        multiple categories to showcase products or filter products by tags.
+        {{$t('category_engine_editor.subtitle')}}
+
       </v-list-subheader>
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Preview ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
@@ -40,11 +40,11 @@
         :counter="32"
         class="my-3"
         clearable
-        label="Categories"
-        messages="Products in these categories will be shown."
+        :label="$t('category_engine_editor.inputs.categories.label')"
+        :messages="$t('category_engine_editor.inputs.categories.messages')"
         multiple
         persistent-placeholder
-        placeholder="Select categories..."
+        :placeholder="$t('category_engine_editor.inputs.categories.placeholder')"
         @change="engine_changed = true"
       >
       </b-category-input>
@@ -59,11 +59,11 @@
         class="my-3"
         clearable
         closable-chips
-        label="Product tags"
-        messages="Products with these tags will be show."
+        :label="$t('category_engine_editor.inputs.tags.label')"
+        :messages="$t('category_engine_editor.inputs.tags.messages')"
         multiple
         persistent-placeholder
-        placeholder="Wire tags here and press enter. ex. new collection"
+        :placeholder="$t('category_engine_editor.inputs.tags.placeholder')"
         variant="underlined"
         @update:model-value="engine_changed = true"
       >
@@ -74,9 +74,9 @@
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Auto Add All Sub Categories ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
-      <v-list-subheader
-        >You can automatically add all subcategories to the current category by
-        clicking the button below.
+      <v-list-subheader>
+        {{$t('category_engine_editor.aut_add_sub_categories_tips')}}
+
       </v-list-subheader>
       <div>
         <v-btn
@@ -86,7 +86,8 @@
           variant="elevated"
           @click="autoAddSubCategories"
         >
-          Auto add sub-categories
+          {{$t('category_engine_editor.actions.auto_add_subcategories')}}
+
         </v-btn>
       </div>
     </div>
@@ -102,7 +103,8 @@
           variant="elevated"
           @click="saveEngine()"
         >
-          Save Engine
+          {{$t('category_engine_editor.actions.save_engine')}}
+
           {{ IS_VENDOR_PANEL ? " [Marketplace Owner]" : "" }}
         </v-btn>
       </s-widget-buttons>
