@@ -660,7 +660,7 @@
           <u-button-add
             :caption="$t('add_product.title_new')"
             :fillHeight="false"
-            class="flex-grow-1"
+            class="flex-grow-1 elevation-1"
             icon="library_add"
             message="⌘Ctrl + P"
             min-height="100px"
@@ -670,7 +670,7 @@
           <u-button-add
             :caption="$t('add_product.title_new')"
             :fillHeight="false"
-            class="mt-1 flex-grow-1"
+            class="mt-1 flex-grow-1 elevation-1"
             icon="flash_on"
             message="Fast Mode"
             min-height="100px"
@@ -680,7 +680,7 @@
           <u-button-add
             :caption="$t('products_select.ai.title')"
             :fillHeight="false"
-            class="mt-1 flex-grow-1"
+            class="mt-1 flex-grow-1 elevation-1"
             color="#516ad6"
             hover-color="#667eea"
             icon="auto_fix_high"
@@ -842,10 +842,10 @@
                 {{
                   $t("products_select.engine.action", {
                     category: parent_folders
-                        ? parent_folders.title.limitWords(1)
-                        : $t("global.commons.root"),
-                  })}}
-
+                      ? parent_folders.title.limitWords(1)
+                      : $t("global.commons.root"),
+                  })
+                }}
               </v-btn>
             </div>
           </div>
@@ -872,8 +872,7 @@
         <div>
           <b>{{ remains_count }} {{ $t("global.actions.more") }}</b>
           <div class="small mt-1">
-            {{$t("products_select.load_more_products")}}
-
+            {{ $t("products_select.load_more_products") }}
           </div>
         </div>
       </v-btn>

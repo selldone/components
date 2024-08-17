@@ -55,7 +55,7 @@
 
 <script>
 /**
- * <s-button-add>
+ * <u-button-add>
  */
 export default {
   name: "UButtonAdd",
