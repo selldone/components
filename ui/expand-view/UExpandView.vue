@@ -128,6 +128,8 @@ export default {
   transition: all 1s ease 0s;
 
   .--scroll {
+    max-height: inherit;
+
     scrollbar-width: none;
     -ms-overflow-style: none; /* Hide scrollbar for Edge */
     &::-webkit-scrollbar {
@@ -137,7 +139,6 @@ export default {
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;
     overflow: hidden;
-    max-height: inherit;
   }
 
   &:not(.-expanded) {
