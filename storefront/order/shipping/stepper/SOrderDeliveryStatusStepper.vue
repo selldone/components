@@ -130,7 +130,7 @@ export default {
     },
     states: {
       required: true,
-      type: Array,
+      type: Object,
     },
     state: {},
     color: {

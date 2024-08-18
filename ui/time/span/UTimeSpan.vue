@@ -70,7 +70,7 @@ import _ from "lodash-es";
 export default {
   name: "UTimeSpan",
   components: { UTimeSpanSelector },
-  emits: ["onChange", "update:startDate", "update:endDate", "update:dateRange"],
+  emits: ["onChange", "update:startDate", "update:endDate", "update:dateRange", "update:offset", "update:days"],
   props: {
     startDate: {},
     endDate: {},
