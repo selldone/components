@@ -35,7 +35,7 @@
             'rounded-18px': smallWidthMode,
             'ma-2': !small && smallWidthMode,
             'ma-1': small && smallWidthMode,
-            'h-100':!smallWidthMode
+            'h-100': !smallWidthMode,
           }"
           :color="color"
           :min-height="small ? 24 : 64"
@@ -48,9 +48,12 @@
       </div>
 
       <div class="-link">
-        <div v-if="message" class="text-start small op-0-5">
-          {{ message }}
-        </div>
+        <div
+          v-if="message"
+          dir="auto"
+          class="text-start small op-0-5"
+          v-html="message"
+        ></div>
         <v-spacer></v-spacer>
 
         <span
