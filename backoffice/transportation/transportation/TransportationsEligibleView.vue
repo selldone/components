@@ -15,7 +15,9 @@
 <template>
   <div>
     <v-list-subheader
-      >Shipping services available depend on the provided size and weight.
+      >
+      {{$t('transportation_eligible.subtitle')}}
+
     </v-list-subheader>
     <v-row class="py-3" no-gutters>
       <div

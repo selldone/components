@@ -17,46 +17,55 @@
     <!-- ▀▀▀▀▀▀▀▀▀ 🟣 Marketplace 🟣 ▀▀▀▀▀▀▀▀▀ -->
     <div v-if="isMarketplace" class="widget-box my-5">
       <s-widget-header
-        :add-caption="!IS_VENDOR_PANEL ? 'Manage Vendors' : undefined"
+        :add-caption="
+          !IS_VENDOR_PANEL
+            ? $t('add_product.pricing.vendor.manage_vendors')
+            : undefined
+        "
         :src="require('../../../../assets/icons/marketplace.svg')"
-        :to="product?{
-          name: 'BPageProductVendors',
-          params:{ product_id: product.id } ,
-        }:undefined"
+        :to="
+          product
+            ? {
+                name: 'BPageProductVendors',
+                params: { product_id: product.id },
+              }
+            : undefined
+        "
         add-icon="price_change"
         add-text
         class="mb-2"
-        title="Vendor pricing"
+        :title="$t('add_product.pricing.vendor.title')"
       ></s-widget-header>
 
       <v-list-subheader>
         <div>
           <v-icon class="me-1">info_outline</v-icon>
-          This price will be shown only in the products listing. You can set
-          vendor price in the Product > Vendors tab.
+          {{ $t("add_product.pricing.vendor.subtitle") }}
         </div>
       </v-list-subheader>
 
       <v-list-subheader v-if="!vendorProduct && !variant && product?.vendor_id">
         <div>
           <v-icon class="me-1">info_outline</v-icon>
-          Adjusting the
-          <b>listing price</b> here will impact the pricing for vendor-products
-          that either not have variant or have variant without independent
-          pricing (same as product pricing). This price will be regarded as the
-          marketplace price, and the vendor price will be determined by the
-          pricing model or the previous marketplace profit margin.
+          <span
+            v-html="
+              $t('add_product.pricing.vendor.vendor_product_pricing_link')
+            "
+          >
+          </span>
         </div>
       </v-list-subheader>
 
       <v-list-subheader v-if="!vendorProduct && variant && product?.vendor_id">
         <div>
           <v-icon class="me-1">info_outline</v-icon>
-          Adjusting the
-          <b>variant price</b> here will impact the pricing for vendor-products
-          with the same variant. This price will be regarded as the marketplace
-          price, and the vendor price will be determined by the pricing model or
-          the previous marketplace profit margin.
+
+          <span
+            v-html="
+              $t('add_product.pricing.vendor.vendor_variant_pricing_link')
+            "
+          >
+          </span>
         </div>
       </v-list-subheader>
     </div>
@@ -68,10 +77,14 @@
         :src="
           require('@selldone/core-js/assets/product-types/subscription.svg')
         "
-        :to="{
-          name: 'BPageProductInventory',
-          params: product ? { product_id: product.id } : undefined,
-        }"
+        :to="
+          product
+            ? {
+                name: 'BPageProductInventory',
+                params: { product_id: product.id },
+              }
+            : undefined
+        "
         add-caption="Manage Plans"
         add-icon="price_change"
         add-text
@@ -134,7 +147,7 @@
             ></v-img>
           </v-col>
           <v-col class="text-start text-subtitle-2" cols="12" sm="6">
-            <v-icon  size="small">info</v-icon>
+            <v-icon size="small">info</v-icon>
             {{ $t(PricingTypes[pricing].message) }}
           </v-col>
         </v-row>

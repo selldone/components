@@ -48,15 +48,18 @@
       <div class="widget-box mb-5">
         <s-widget-header
           :title="
-            `Order limits` +
+            $t('add_product.extra_edit.order_limit.title')  +
             (limit_min ? ` | Min: ${limit_min}` : '') +
             (limit_max ? ` | Max: ${limit_max}` : '')
           "
           icon="running_with_errors"
         ></s-widget-header>
         <v-list-subheader
-          >If you're a wholesaler or there's a minimum or maximum limit on the
-          quantity of this item per order, you can specify that here.
+          >
+
+          {{ $t('add_product.extra_edit.order_limit.subtitle') }}
+
+
         </v-list-subheader>
 
         <v-slide-y-reverse-transition leave-absolute>
@@ -67,8 +70,8 @@
               @click="limit_min = Math.ceil(Math.max(100, limit_max) / 10)"
             >
               <div class="d-flex flex-column align-center">
-                <b>No limit</b>
-                <small>Minimum purchase quantity</small>
+                <b>{{$t('add_product.extra_edit.order_limit.no_limit') }}</b>
+                <small class="mt-1">{{$t('add_product.extra_edit.order_limit.minimum_purchase_quantity') }}</small>
               </div>
             </v-btn>
           </div>
@@ -93,8 +96,8 @@
               @click="limit_max = Math.max(10, limit_min) * 10"
             >
               <div class="d-flex flex-column align-center">
-                <b>No limit</b>
-                <small>Maximum purchase quantity</small>
+                <b>{{$t('add_product.extra_edit.order_limit.no_limit') }}</b>
+                <small class="mt-1">{{$t('add_product.extra_edit.order_limit.maximum_purchase_quantity') }}</small>
               </div>
             </v-btn>
           </div>

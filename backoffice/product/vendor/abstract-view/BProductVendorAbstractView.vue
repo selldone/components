@@ -17,7 +17,7 @@
     v-if="vendor"
     :title="$t('global.commons.vendor')"
     icon="storefront"
-    sub-title="The price and quantity of this product are set by a particular vendor to whom it belongs."
+    :sub-title="$t('product_vendor_profile.vendor.subtitle')"
   >
     <b-product-vendor-abstract-view-item
       :shop="shop"
@@ -30,7 +30,7 @@
     v-else-if="vendors?.length"
     :title="$t('global.commons.vendors')"
     icon="storefront"
-    sub-title="Here's a list of suppliers for the product. The quantity and price will be set by the suppliers."
+    :sub-title="$t('product_vendor_profile.vendors.subtitle') "
   >
     <div class="border-between-vertical">
       <b-product-vendor-abstract-view-item

@@ -16,16 +16,16 @@
   <div v-bind="$attrs">
     <div class="widget-box mb-5">
       <s-widget-header
-        :add-caption="IS_VENDOR_PANEL ? 'Upload Doc' : undefined"
+        :add-caption="IS_VENDOR_PANEL ? $t('vendor_documents_list.action_upload_doc') : undefined"
         icon="post_add"
-        title="Documents"
+        :title="$t('vendor_documents_list.title')"
         @click:add="showUpload"
       ></s-widget-header>
       <v-list-subheader>
         {{
           IS_VENDOR_PANEL
-            ? "Please upload the necessary business, IP, and address verification documents. We require this information to confirm your partnership and provide you with the necessary access."
-            : "Vendors can submit documents such as business, intellectual property, and address verification to facilitate their KYC process, allowing you to grant them the appropriate access."
+            ? $t('vendor_documents_list.vendor_subtitle')
+            :$t('vendor_documents_list.marketplace_subtitle')
         }}
       </v-list-subheader>
       <u-loading-progress v-if="busy"></u-loading-progress>
@@ -164,18 +164,18 @@
     <v-card class="text-start">
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1">pageview</v-icon>
-        Upload Document
+        {{$t('vendor_documents_list.upload_dialog.title')}}
+
       </v-card-title>
       <v-card-text>
         <div class="widget-box mb-5">
           <s-widget-header
             icon="assignment"
-            title="Document Type"
+            :title="$t('vendor_documents_list.upload_dialog.type.title')"
           ></s-widget-header>
           <v-list-subheader>
-            Please upload only the necessary documents. Avoid sharing any
-            documents that contain sensitive information. We request documents
-            that are publicly available.
+            {{$t('vendor_documents_list.upload_dialog.type.subtitle')}}
+
           </v-list-subheader>
           <u-smart-select
             v-model="type"

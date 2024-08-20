@@ -42,7 +42,7 @@
       :title="$t('add_product.inputs_edit.inputs_form')"
       class="mb-5"
       has-file
-      hint="You have the option to set up a personalized form to gather details from your customers when they're ready to place an order."
+      :hint="$t('add_product.inputs_edit.inputs_hint')"
       icon="input"
     />
 
@@ -56,7 +56,7 @@
       >
         {{ $t("global.actions.save_continue") }}
 
-        <v-icon class="ms-2" size="small">
+        <v-icon end>
           {{ $t("icons.arrow_end") }}
         </v-icon>
       </v-btn>

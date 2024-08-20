@@ -413,13 +413,13 @@
     <v-card v-if="item_clone && show_price_dialog_pre" class="text-start">
 
       <v-card-title class="d-flex align-center">
-        <u-avatar-folder class="me-2" size="48" elevated side-icon="shelves" :placeholder-icon="inventory"     :src="getShopImagePath(selected_item.icon, IMAGE_SIZE_SMALL)" is-gray border-size="8">
+        <u-avatar-folder class="me-2" size="48" elevated side-icon="shelves" placeholder-icon="inventory"     :src="getShopImagePath(selected_item.icon, IMAGE_SIZE_SMALL)" is-gray border-size="8">
         </u-avatar-folder>
 
-        <div class="flex-grow-1">
+        <div class="flex-grow-1 overflow-hidden">
           {{ selected_item?.product?.title }}
 
-          <div class="small">{{ selected_item?.product?.title_en?.limitWords(12) }}</div>
+          <div class="small single-line">{{ selected_item?.product?.title_en?.limitWords(12) }}</div>
         </div>
 
         <v-btn

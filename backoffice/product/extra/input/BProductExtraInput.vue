@@ -22,10 +22,8 @@
         icon="fa:fas fa-weight-hanging"
       ></s-widget-header>
 
-      <v-list-subheader
-        >Input the product's total packaging weight here. This information helps
-        choose the right shipping method and ensures the order doesn't surpass
-        the shipping limit.
+      <v-list-subheader>
+        {{ $t("product_extra_physical.weight_subtitle") }}
       </v-list-subheader>
       <u-number-input
         v-model="weight"
@@ -45,10 +43,8 @@
         icon="fa:fas fa-box"
       ></s-widget-header>
 
-      <v-list-subheader
-        >Input the product's full packaging size here. This information is used
-        to choose the correct shipping method and ensure the order doesn't
-        exceed the parcel size limit.
+      <v-list-subheader>
+        {{ $t("product_extra_physical.size_subtitle") }}
       </v-list-subheader>
       <u-number-input
         v-model="width"
@@ -101,8 +97,7 @@
         icon="pending_actions"
       ></s-widget-header>
       <v-list-subheader>
-        Lead time estimates the duration required to prepare a product for
-        shipping, which helps in estimating the delivery time.
+        {{ $t("product_extra_physical.lead_time_subtitle") }}
       </v-list-subheader>
       <u-number-input
         v-model="lead"
@@ -145,7 +140,7 @@
         icon="move_down"
       ></s-widget-header>
       <v-list-subheader>
-        You can apply the product parcel information to all variants.
+        {{ $t("product_extra_physical.bulk_action_subtitle") }}
       </v-list-subheader>
 
       <u-smart-toggle
@@ -215,18 +210,19 @@ export default {
     width: 0,
     length: 0,
     height: 0,
-
-    leads: [
-      { value: -1, title: "Unknown" },
-      { value: 0, title: "Instant" },
-      { value: 8, title: "8 hours" },
-      { value: 24, title: "1 day" },
-      { value: 3 * 24, title: "3 day" },
-      { value: 7 * 24, title: "1 week" },
-    ],
   }),
 
   computed: {
+    leads() {
+      return [
+        { value: -1, title: this.$t("global.commons.unknown") },
+        { value: 0, title: this.$t("global.timespan.Instant") },
+        { value: 8, title: `8 ${this.$t("global.commons.hours")}` },
+        { value: 24, title: `1 ${this.$t("global.commons.day")}` },
+        { value: 3 * 24, title: `3 ${this.$t("global.commons.days")}` },
+        { value: 7 * 24, title: `1 ${this.$t("global.commons.week")}` },
+      ];
+    },
     invalid_size() {
       return (
         (this.width <= 0 && this.length <= 0) ||

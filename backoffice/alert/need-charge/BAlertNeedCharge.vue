@@ -114,21 +114,21 @@ export default {
     },
 
     no_account_error() {
-      return this.accounts.length === 0;
+      return this.accounts?.length === 0;
     },
     negative_balance_accounts() {
-      return this.accounts.filter(
+      return this.accounts?.filter(
         (a) => a.balance < this.threshold(a.currency),
       );
     },
     negative_balance_account_error() {
-      return this.negative_balance_accounts.length > 0;
+      return this.negative_balance_accounts?.length > 0;
     },
   },
   created() {
     if (!this.sample) {
       this.busy = true;
-      window.$backoffice.finance.exchange
+      window.$backoffice?.finance.exchange
         .optimize(600)
         .cancellation(true)
         .list()

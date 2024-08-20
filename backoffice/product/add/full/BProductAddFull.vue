@@ -174,10 +174,12 @@
       @next="
         () => {
           nextStep();
-          this.product.extra = product_new.extra;
-          this.product.lead = product_new.lead;
-          this.product.limit_min = product_new.limit_min;
-          this.product.limit_max = product_new.limit_max;
+          if (product) {
+            product.extra = product_new.extra;
+            product.lead = product_new.lead;
+            product.limit_min = product_new.limit_min;
+            product.limit_max = product_new.limit_max;
+          }
         }
       "
     />
@@ -773,7 +775,6 @@ export default {
     step(step) {
       this.applyDeepChangesToProduct();
 
-
       this.$nextTick(() => {
         try {
           if (this.product?.id) {
@@ -783,7 +784,6 @@ export default {
           }
         } catch (e) {}
       });
-
 
       if (!this.product) {
         return; // Only on product edit mode we have hash path!
@@ -1136,7 +1136,7 @@ not need!
             this.showSuccessAlert(null, "The product edited.");
 
             Object.assign(this.product_new, data.product); // Copy product data (refresh)
-            if(this.product){
+            if (this.product) {
               Object.assign(this.product, data.product); // Copy product data (refresh)
             }
 
@@ -1228,8 +1228,8 @@ not need!
 
         this.step =
           /* this.hasStep__Inputs
-                                    ? TAB_INPUTS
-                                    :*/
+                                      ? TAB_INPUTS
+                                      :*/
           this.hasStep__Outputs
             ? TAB_OUTPUTS
             : this.hasStep__physicalExtra

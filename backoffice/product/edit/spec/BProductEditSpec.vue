@@ -72,14 +72,20 @@
           width="640"
         >
           <template v-slot:activator="{ props }">
-            <div class="widget-buttons">
-              <v-btn color="#000" size="x-large" v-bind="props" variant="flat">
+            <v-sheet class="widget-buttons pa-1 rounded-18px" color="#fff">
+              <v-btn
+                color="#fafafa"
+                size="x-large"
+                v-bind="props"
+                variant="elevated"
+                elevation="3"
+              >
                 <v-icon start>create_new_folder</v-icon>
 
                 <div>
                   <div>
-                    {{ $t("add_product.edit_spec.manual.add_group_action") }}</div
-                  >
+                    {{ $t("add_product.edit_spec.manual.add_group_action") }}
+                  </div>
                   <div
                     class="d-flex align-center justify-content-around mt-1 min-width-150"
                   >
@@ -90,7 +96,7 @@
                   </div>
                 </div>
               </v-btn>
-            </div>
+            </v-sheet>
           </template>
 
           <template v-slot:default="{ isActive }">
@@ -145,13 +151,19 @@
           width="640"
         >
           <template v-slot:activator="{ props }">
-            <div class="widget-buttons">
-              <v-btn color="#000" size="x-large" v-bind="props" variant="flat">
+            <v-sheet class="widget-buttons pa-1 rounded-18px" color="#fff">
+              <v-btn
+                color="#fafafa"
+                size="x-large"
+                v-bind="props"
+                variant="elevated"
+                elevation="3"
+              >
                 <v-icon start>post_add</v-icon>
                 <div>
-                  <div>{{
-                    $t("add_product.edit_spec.manual.add_item_action")
-                  }}</div>
+                  <div>
+                    {{ $t("add_product.edit_spec.manual.add_item_action") }}
+                  </div>
                   <div
                     class="d-flex align-center justify-content-around mt-1 min-width-150"
                   >
@@ -166,7 +178,7 @@
                   </div>
                 </div>
               </v-btn>
-            </div>
+            </v-sheet>
           </template>
           <template v-slot:default="{ isActive }">
             <v-card
@@ -231,11 +243,12 @@
           {{ $t("add_product.edit_spec.import.subtitle") }}
         </v-list-subheader>
 
-        <div class="widget-buttons">
+        <v-sheet class="widget-buttons pa-1 rounded-18px" color="#fff">
           <v-btn
-            color="#000"
+            color="#fafafa"
             size="x-large"
-            variant="flat"
+            variant="elevated"
+            elevation="3"
             @click="dialog_import = true"
           >
             <v-icon start> download</v-icon>
@@ -248,7 +261,7 @@
               </div>
             </div>
           </v-btn>
-        </div>
+        </v-sheet>
 
         <!-- ████████████████████ AI ████████████████████ -->
 

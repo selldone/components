@@ -21,7 +21,7 @@
         v-model="auto_save"
         :true-title="$t('spec_view.auto_save_input')"
         color="green"
-        true-description="Changes will be saved automatically."
+        :true-description="$t('spec_view.auto_save_input_message')"
       ></u-smart-toggle>
 
       <draggable

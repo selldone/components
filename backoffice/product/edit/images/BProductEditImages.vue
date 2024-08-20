@@ -65,6 +65,7 @@
                 {{ $t("add_product.edit_images.image_style") }}
               </h2>
               <u-smart-toggle
+                  v-if="product.style"
                 v-model="product.style.contain"
                 :true-description="
                   $t('add_product.edit_images.background_is_white_msg')
@@ -255,7 +256,7 @@
                     </v-icon>
                   </v-scale-transition>
                   <b>
-                    {{it.title}}
+                    {{ it.title }}
                   </b>
                 </div>
               </v-card>
@@ -275,7 +276,9 @@
 
           <u-button-ai-large
             :loading="busy"
-            :sub-title="!prompt?'Reimagine entire image.':'Replace background.'"
+            :sub-title="
+              !prompt ? 'Reimagine entire image.' : 'Replace background.'
+            "
             title="Create New Image"
             @select="replaceBackground()"
           >
@@ -353,30 +356,26 @@ export default {
         value: "",
         title: "Reimagine",
         src: require("./assets/reimage.webp"),
-
       },
       {
         value:
           "A softly lit, seamless white backdrop with gentle shadows and a subtle gradient effect, ideal for highlighting clean and modern product designs.",
         src: require("./assets/A softly lit, seamless white backdrop with gentle shadows and a subtle gradient effect. The background is smooth and clean, ideal for highlighting mod.webp"),
-
       },
       {
         value:
           "A soft pastel-colored studio background with a smooth, curved surface and diffused lighting, creating a calm and inviting atmosphere for delicate or luxury products.",
         src: require("./assets/A soft pastel-colored studio background with a smooth, curved surface and diffused lighting. The colors are gentle and calming, creating an inviting a.webp"),
-
       },
       {
         value:
           "A neutral-toned studio setup with a light beige backdrop and a subtle spotlight effect, perfect for bringing attention to the details of premium or handcrafted items.",
         src: require("./assets/A neutral-toned studio setup with a light beige backdrop and a subtle spotlight effect. The background is simple and elegant, with the light creating .webp"),
-
       },
       {
-        value:"A scene , product studio, with colorful persian mosaic tile designs, viewed from the side. The mosaic patterns create a vibrant backdrop,  leaving the center clear for product placement.",
+        value:
+          "A scene , product studio, with colorful persian mosaic tile designs, viewed from the side. The mosaic patterns create a vibrant backdrop,  leaving the center clear for product placement.",
         src: require("./assets/A product studio scene featuring colorful Persian mosaic tile designs, viewed from the side. The intricate and vibrant mosaic patterns serve as a rich.webp"),
-
       },
 
       {
@@ -465,14 +464,22 @@ export default {
       return this.product.icon || this.force_preview;
     },
   },
+  watch: {
+    product() {
+      this.fixStyle();
+    },
+  },
   created() {
-    if (!this.product.style || Array.isArray(this.product.style))
-      this.product.style = { contain: false };
+    this.fixStyle();
 
     this.video_id = this.product.video;
   },
 
   methods: {
+    fixStyle() {
+      if (!this.product.style || Array.isArray(this.product.style))
+        this.product.style = { contain: false };
+    },
     removeBackground() {
       if (!this.USER().premium) return this.showNeedSubscribePremium();
 
@@ -506,7 +513,9 @@ export default {
 
     showReplaceBg() {
       this.dialog_replace_bg = true;
-      if(!this.prompt)this.prompt=this.items[Math.floor(Math.random()*this.items.length)].value;
+      if (!this.prompt)
+        this.prompt =
+          this.items[Math.floor(Math.random() * this.items.length)].value;
     },
     replaceBackground() {
       if (!this.USER().premium) return this.showNeedSubscribePremium();

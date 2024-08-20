@@ -121,20 +121,23 @@
             <div class="widget-box mb-5">
               <s-widget-header
                 icon="admin_panel_settings"
-                title="Vendor info"
+                :title="$t('vendor_add.profile.title')"
                 :href="vendor_listing_page_url"
                 target="_blank"
-                :add-caption="vendor ? 'See Listing Page' : undefined"
+                :add-caption="vendor ?$t('vendor_add.profile.action_see_listing_page')  : undefined"
                 add-icon="open_in_new"
                 add-text
-                add-sub-caption="Public products listing page."
+                :add-sub-caption="$t('vendor_add.profile.action_sub_caption') "
                 :disabled="!vendor?.enable"
                 disabled-reason="Vendor is disabled."
               >
               </s-widget-header>
 
               <v-list-subheader
-                >This information is shown to customers publicly.
+                >
+                {{$t('vendor_add.profile.subtitle')}}
+
+
               </v-list-subheader>
 
               <div v-if="vendor">
@@ -214,9 +217,8 @@
                       </v-btn>
                     </template>
                     <template v-slot:subtitle>
-                      We will send an invitation email to this user. If the user
-                      joins your shop as a vendor, their account will be
-                      automatically assigned to them.
+                      {{$t('vendor_add.send_invitation_tips')}}
+
                     </template>
                     <v-list-item-subtitle
                       v-if="invite_email === vendor?.invite"
@@ -292,9 +294,9 @@
               >
                 <div>
                   <v-icon size="small">info</v-icon>
-                  Only the marketplace owner can edit the user. If you want to
-                  change the owner of this vendor, you can send the request to
-                  us.
+
+                  {{$t('vendor_add.only_marketplace_owner_can_edit_user')}}
+
                 </div>
               </v-list-subheader>
 
@@ -303,21 +305,24 @@
               <s-widget-header
                 class="mt-5"
                 icon="view_carousel"
-                title="Custom page"
+                :title="$t('vendor_add.page.title')"
                 :href="vendor_landing_page_url"
                 target="_blank"
-                :add-caption="page ? 'See Public Page' : undefined"
-                add-sub-caption="Custom landing page."
+                :add-caption="page ? $t('vendor_add.page.action_set_page') : undefined"
+                :add-sub-caption="$t('vendor_add.page.action_sub_caption') "
                 add-icon="open_in_new"
                 add-text
                 :disabled="!vendor?.enable"
-                disabled-reason="Vendor is disabled."
+                :disabled-reason="$t('vendor_add.vendor_is_disable_msg')  "
               >
               </s-widget-header>
 
               <v-list-subheader
-                >Set a custom landing page for the vendor, providing them with a
-                unique link to their dedicated page.
+                >
+
+                {{$t('vendor_add.page.subtitle')}}
+
+
               </v-list-subheader>
 
               <template
@@ -332,8 +337,8 @@
                   clearable
                   :message="
                     page
-                      ? `Vendor has a custom landing page.`
-                      : 'No landing page selected.'
+                      ? $t('vendor_add.page.vendor_has_landing_msg')
+                      : $t('vendor_add.page.no_landing_selected_msg')
                   "
                 ></b-page-input>
 
@@ -357,10 +362,10 @@
                   <div v-else-if="page?.id" key="2">
                     <v-text-field
                       v-model="slug"
-                      label="Path"
-                      placeholder="Enter a custom path..."
+                      :label=" $t('vendor_add.inputs.slug.label') "
+                      :placeholder="$t('vendor_add.inputs.slug.placeholder')"
                       prepend-inner-icon="view_cozy"
-                      hint="Change the path the vendor's dynamic landing page."
+                      :hint="$t('vendor_add.inputs.slug.hint')"
                       variant="underlined"
                       class="px-2"
                     >
@@ -401,10 +406,11 @@
 
                 <template v-else>
                   <v-list-item-title>
-                    <small>No landing page</small>
+                    <small>{{ $t('vendor_add.page.no_landing_page') }}</small>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    We can create a dedicated landing page for you.
+                    {{ $t('vendor_add.page.we_can_create_dedicated_landing_msg') }}
+
                   </v-list-item-subtitle>
                 </template>
 
@@ -431,11 +437,11 @@
             <div class="widget-box mb-5">
               <s-widget-header
                 icon="connect_without_contact"
-                title="Contact info"
+                :title="$t('vendor_add.contact.title') "
               >
               </s-widget-header>
               <v-list-subheader
-                >Kindly provide valid contact details.
+                >{{$t('vendor_add.contact.subtitle')}}
               </v-list-subheader>
 
               <v-text-field
@@ -448,7 +454,7 @@
                 "
                 :rules="[GlobalRules.email()]"
                 append-inner-icon="email"
-                messages="This email will receive all notifications and updates."
+                :messages="$t('vendor_add.inputs.email.message') "
                 variant="underlined"
               ></v-text-field>
               <v-expand-transition>
@@ -458,12 +464,11 @@
                   <v-list-subheader>
                     <div>
                       <v-icon size="small">notification_important</v-icon>
-                      Entered email does not match with user's email (<b
-                        >{{ vendor.user?.name }}:</b
-                      >
-                      {{ vendor.user?.email }}). Are you sure to send emails to
-                      <b>{{ email }}</b
-                      >?
+                      <span v-html="$t('vendor_add.email_not_match_with_user_msg',{
+                        user_name: vendor.user?.name,
+                        user_email: vendor.user?.email,
+                        email: email
+                      })"></span>
                     </div>
                   </v-list-subheader>
                 </div>
@@ -593,7 +598,7 @@
                       ? `We will send orders information to <b>${
                           email ? email : vendor?.user?.email
                         }</b>.`
-                      : 'We will send an invitation email to the user.'
+                      : $t('vendor_add.we_will_send_invitation_to_user_msg')
                   "
                 ></span>
               </p>
@@ -624,22 +629,21 @@
             <div class="widget-box mb-5">
               <s-widget-header
                 :icon="business ? 'business' : 'person'"
-                title="Business info"
+                :title="$t('vendor_add.business.title') "
               >
               </s-widget-header>
               <v-list-subheader
-                >Please provide accurate information about your business to
-                ensure a swift and seamless revenue collection process.
+                >{{$t('vendor_add.business.subtitle')}}
               </v-list-subheader>
 
               <u-smart-switch
                 v-model="business"
-                false-description="I work as an individual."
+                :false-description="$t('vendor_add.inputs.business.false_description') "
                 false-icon="person"
-                false-title="Individual"
-                true-description="I operate as a legally recognized business entity."
+                :false-title="$t('vendor_add.inputs.business.false_title') "
+                :true-description="$t('vendor_add.inputs.business.true_description')"
                 true-icon="business"
-                true-title="Business"
+                :true-title="$t('vendor_add.inputs.business.true_title')"
               >
               </u-smart-switch>
 
@@ -663,10 +667,13 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Bank info  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header icon="paid" title="Payout Information">
+              <s-widget-header icon="paid" :title="$t('vendor_add.bank.title')">
               </s-widget-header>
               <v-list-subheader
-                >Input your bank details here for payouts.
+                >
+                {{$t('vendor_add.bank.subtitle')}}
+
+
               </v-list-subheader>
 
               <v-text-field
@@ -674,70 +681,70 @@
                 :label="$t('global.commons.bank_name')"
                 append-inner-icon="account_balance"
                 auto-grow
-                hint="The name of the bank where the vendor has their account."
+                :hint="$t('vendor_add.inputs.bank.hint') "
                 persistent-placeholder
-                placeholder="Your bank name.."
+                :placeholder="$t('vendor_add.inputs.bank.placeholder') "
                 variant="underlined"
               ></v-text-field>
 
               <v-text-field
                 v-model="bank_info.account_name"
                 :label="$t('global.commons.bank_account_name')"
-                hint="This should match the name associated with the bank account."
+                :hint="$t('vendor_add.inputs.account_name.hint') "
                 persistent-placeholder
-                placeholder="Your name.."
+                :placeholder="$t('vendor_add.inputs.account_name.placeholder')"
                 variant="underlined"
               ></v-text-field>
 
               <v-text-field
                 v-model="bank_info.account_number"
                 :label="$t('global.commons.bank_account_number')"
-                hint="The vendor's unique account number."
+                :hint="$t('vendor_add.inputs.account_number.hint') "
                 persistent-placeholder
-                placeholder="Your bank account number.."
+                :placeholder="$t('vendor_add.inputs.account_number.placeholder') "
                 variant="underlined"
               ></v-text-field>
 
               <v-text-field
                 v-model="bank_info.routing_number"
                 :label="$t('global.commons.bank_routing_number')"
-                hint="This number varies by country. It's used to identify the specific bank branch the vendor uses."
+                :hint="$t('vendor_add.inputs.routing_number.hint')"
                 persistent-placeholder
-                placeholder="Your bank routing number, sort code, or BSB number.."
+                :placeholder="$t('vendor_add.inputs.routing_number.placeholder')"
                 variant="underlined"
               ></v-text-field>
 
               <v-text-field
                 v-model="bank_info.iban"
-                hint="International Bank Account Number): If the vendor's bank is in Europe or certain other countries."
+                :hint="$t('vendor_add.inputs.iban.hint')"
                 label="IBAN"
                 persistent-placeholder
-                placeholder="Your IBAN number..  eg. DE89 3704 0044 0000 0000 00"
+                :placeholder="$t('vendor_add.inputs.iban.placeholder')"
                 variant="underlined"
               ></v-text-field>
 
               <v-text-field
                 v-model="bank_info.swift"
-                hint="International Bank Account Number): If the vendor's bank is in Europe or certain other countries."
+                :hint="$t('vendor_add.inputs.swift.hint')"
                 label="Swift Code/BIC"
                 persistent-placeholder
-                placeholder="Your Swift code/BIC.."
+                :placeholder="$t('vendor_add.inputs.swift.placeholder')"
                 variant="underlined"
               ></v-text-field>
 
               <v-text-field
                 v-model="bank_info.branch_address"
                 :label="$t('global.commons.bank_branch_address')"
-                hint="The address of the bank branch where the vendor has their account."
+                :hint="$t('vendor_add.inputs.branch_address.hint') "
                 persistent-placeholder
-                placeholder="Your bank address.."
+                :placeholder="$t('vendor_add.inputs.branch_address.placeholder') "
                 variant="underlined"
               ></v-text-field>
             </div>
 
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Default Pricing  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
             <div class="widget-box mb-5">
-              <s-widget-header icon="sell" title="Default Pricing">
+              <s-widget-header icon="sell" :title="$t('vendor_add.default_pricing.title') ">
                 <template v-slot:append-title>
                   <v-chip
                     v-if="!pricing_id"
@@ -749,15 +756,16 @@
                     variant="flat"
                   >
                     <v-icon size="x-small" start>sell</v-icon>
-                    No pricing
+
+                    {{$t('vendor_add.default_pricing.no_pricing') }}
                   </v-chip>
                 </template>
               </s-widget-header>
               <v-list-subheader
-                >You can assign a default pricing model for the vendor. When the
-                vendor adds a new product, this pricing model will be used to
-                calculate the marketplace margin on the product's price. You can
-                later adjust the pricing model for each product individually.
+                >
+                {{$t('vendor_add.default_pricing.subtitle') }}
+
+
               </v-list-subheader>
               <v-pricing-input
                 v-model="pricing_id"
@@ -792,7 +800,7 @@
                   class="tnt"
                   size="small"
                 >
-                  See Public Page
+                  {{$t('vendor_add.page.action_set_page')}}
                 </v-btn>
               </div>
             </div>
@@ -802,19 +810,21 @@
 
           <v-window-item v-if="has_shipping">
             <div class="widget-box mb-5">
-              <s-widget-header icon="local_shipping" title="Shipping">
+              <s-widget-header icon="local_shipping" :title="$t('vendor_add.shipping.title') ">
               </s-widget-header>
 
               <v-list-subheader>
-                Vendors can setup their own shipping services and couriers.
+                {{$t('vendor_add.shipping.subtitle') }}
+
               </v-list-subheader>
               <v-list class="bg-transparent">
                 <v-list-item prepend-icon="business">
                   <v-list-item-title>
-                    <b>Shipping Services</b>
+                    <b>{{$t('vendor_add.shipping.shipping_services') }}</b>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    The total number of shipping services that the vendor has.
+                    {{$t('vendor_add.shipping.total_number_of_services') }}
+
                   </v-list-item-subtitle>
                   <template v-slot:append>
                     <b>{{
@@ -828,10 +838,10 @@
 
                 <v-list-item prepend-icon="people">
                   <v-list-item-title>
-                    <b>Couriers</b>
+                    <b>{{$t('vendor_add.shipping.couriers') }} </b>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    The total number of couriers that the vendor has.
+                    {{$t('vendor_add.shipping.total_couriers_count') }}
                   </v-list-item-subtitle>
                   <template v-slot:append>
                     <b>{{
@@ -884,7 +894,7 @@
               "
               class="widget-box mb-5"
             >
-              <s-widget-header icon="tune" title="Configuration">
+              <s-widget-header icon="tune" :title="$t('vendor_add.configuration.title') ">
               </s-widget-header>
 
               <u-smart-switch
@@ -894,9 +904,9 @@
                 class="mt-5"
                 false-gray
                 false-icon="close"
-                label="Vendor status"
-                hint="You can enable or disable vendors globally. Customers will not be able to purchase anything from disabled vendors."
-                true-description="They will be able to sell their products through your marketplace."
+                :label="$t('vendor_add.inputs.enable.label') "
+                :hint="$t('vendor_add.inputs.enable.hint') "
+                :true-description="$t('vendor_add.inputs.enable.true_description') "
                 true-icon="check"
               ></u-smart-switch>
 
@@ -906,17 +916,18 @@
                 :false-title="$t('global.commons.disable')"
                 :true-title="$t('global.commons.enable')"
                 class="mt-5"
-                false-description="The vendor has no access to anything."
+                :false-description="$t('vendor_add.inputs.access.false_description')"
                 false-gray
                 false-icon="close"
-                label="Vendor panel & access"
-                true-description="The vendor has a dedicated panel to update quantity and price."
-                hint="You can enable or disable the vendor panel, which allows vendors to update product quantities and prices and receive partial orders."
+                :label="$t('vendor_add.inputs.access.label') "
+                :true-description="$t('vendor_add.inputs.access.true_description') "
+                :hint="$t('vendor_add.inputs.access.hint') "
                 true-icon="space_dashboard"
               ></u-smart-switch>
               <v-list-subheader v-if="!user_id">
                 <v-icon class="me-1">warning_amber</v-icon>
-                Set a user for the vendor first.
+                {{$t('vendor_add.set_a_user_for_the_vendor_first_msg')}}
+
               </v-list-subheader>
             </div>
           </v-window-item>
@@ -925,15 +936,15 @@
 
           <v-window-item>
             <div v-if="vendor && !IS_VENDOR_PANEL" class="widget-box mb-5">
-              <s-widget-header icon="block" title="Remove vendor">
+              <s-widget-header icon="block" :title="$t('vendor_add.delete.title')">
               </s-widget-header>
 
               <u-smart-verify
                 v-model="accept_delete"
                 class="my-3"
                 color="red"
-                true-description="I know that all vendor product relations will be removed!"
-                true-title="I want to delete this vendor."
+                :true-description="$t('vendor_add.delete.verify_description')"
+                :true-title="$t('vendor_add.delete.verify_title')"
               ></u-smart-verify>
 
               <div class="widget-buttons">
@@ -945,7 +956,8 @@
                   @click="showRemove"
                 >
                   <v-icon class="me-1">remove</v-icon>
-                  Remove vendor
+
+                  {{$t('vendor_add.delete.action')}}
                 </v-btn>
               </div>
             </div>

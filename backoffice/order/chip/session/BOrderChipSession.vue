@@ -20,6 +20,7 @@
     :color="color"
   >
     <img
+        v-if="session"
       :src="getBrowserImage(session.browser)"
       :title="session.browser"
       class=""
@@ -27,7 +28,7 @@
       :width="imageSize"
     />
 
-    <v-icon :title="$t(device.title)" class="ms-1" :size="imageSize"
+    <v-icon v-if="device" :title="$t(device.title)" class="ms-1" :size="imageSize"
       >{{ device.icon }}
     </v-icon>
 
@@ -64,6 +65,7 @@ export default defineComponent({
       return this.order.session;
     },
     device() {
+      if(!this.session?.type)return null;
       let out = Analytics.DeviceType.find(
         (item) => item.code === this.session.type.toLowerCase(),
       );

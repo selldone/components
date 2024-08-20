@@ -15,15 +15,15 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Rating Fields ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
-    <b-product-rating-input :product="product" class="my-5">
+    <b-product-rating-input :product="product" class="my-5" :class="{disabled:IS_VENDOR_PANEL}">
     </b-product-rating-input>
 
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Pros ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
-    <b-product-pros-input :product="product" class="mb-5">
+    <b-product-pros-input :product="product" class="mb-5" :class="{disabled:IS_VENDOR_PANEL}">
     </b-product-pros-input>
 
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Cons ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
-    <b-product-cons-input :product="product" class="mb-5">
+    <b-product-cons-input :product="product" class="mb-5" :class="{disabled:IS_VENDOR_PANEL}">
     </b-product-cons-input>
 
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Badges ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
