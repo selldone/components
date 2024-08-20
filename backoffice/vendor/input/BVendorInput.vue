@@ -32,7 +32,6 @@
     :rounded="rounded"
     :single-line="singleLine"
     :variant="variant ? variant : solo ? 'solo' : 'underlined'"
-    clearable
     item-title="name"
     item-value="id"
     messages=" "
@@ -49,6 +48,8 @@
       $emit('click:clear');
       getVendors();
     "
+    :clearable="clearable"
+    :persistent-placeholder="persistentPlaceholder"
   >
     <template v-slot:selection="{}">
       <template v-if="selected_vendor">
@@ -137,6 +138,8 @@ export default {
     prependInnerIcon: {},
     variant: {},
     singleLine: Boolean,
+    clearable: Boolean,
+    persistentPlaceholder: Boolean,
   },
 
   data() {

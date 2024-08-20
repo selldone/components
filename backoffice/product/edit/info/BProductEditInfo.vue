@@ -69,7 +69,7 @@
           :shop="shop"
           flat
           label="Vendor*"
-          solo
+          solo clearable
           @change="$forceUpdate()"
         ></b-vendor-input>
         <v-list-item
@@ -116,7 +116,7 @@
               v-model="product.vendor_id"
               :shop="shop"
               class="mt-5"
-              flat
+              flat clearable
               label="Vendor"
               solo
               @change="$forceUpdate()"

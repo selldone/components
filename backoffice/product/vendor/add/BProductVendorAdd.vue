@@ -71,7 +71,7 @@
               :disabled="IS_VENDOR_PANEL || is_edit_mode"
               :shop="shop"
               prepend-inner-icon="business"
-              @click:clear="vendor_id = null"
+              @click:clear="vendor_id = null" clearable
             ></b-vendor-input>
           </div>
 

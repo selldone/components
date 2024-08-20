@@ -44,7 +44,7 @@
         <b-vendor-input
           v-model="vendor_id"
           :disabled="!!payment"
-          :shop="shop"
+          :shop="shop" clearable
           placeholder="Select a vendor..."
           @click:clear="vendor_id = null"
         ></b-vendor-input>

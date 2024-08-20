@@ -122,7 +122,7 @@
                 :shop="shop"
                 flat
                 label="Vendor*"
-                solo
+                solo clearable
               ></b-vendor-input>
             </template>
 
@@ -159,7 +159,7 @@
                     class="mt-5"
                     flat
                     label="Vendor"
-                    solo
+                    solo clearable
                     @change="$forceUpdate()"
                   ></b-vendor-input>
                 </div>

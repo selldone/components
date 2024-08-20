@@ -28,7 +28,6 @@
     </div>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
-      v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
       :class="{ disabled: busy_fetch }"
@@ -48,13 +47,14 @@
           :src="getShopImagePath(item.icon, 128)"
           :width="48"
           class="rounded my-1 border"
+          cover
         />
       </template>
 
       <template v-slot:item.title="{ item }">
         <div>
-          <b> {{ item.title }}</b>
-          <small class="d-block my-1">{{ item.title_en }}</small>
+          <b> {{ item.title?.limitWords(8) }}</b>
+          <small class="d-block my-1 max-w-300">{{ item.title_en?.limitWords(12) }}</small>
         </div>
       </template>
 
@@ -201,11 +201,11 @@ export default {
     }, window.SERACH_THROTTLE),
 
     // Pagination:
-    options: {
-      handler() {
-        this.fetchPage();
-      },
-      deep: true,
+    sortBy() {
+      this.fetchPage();
+    },
+    page() {
+      this.fetchPage();
     },
 
     currency(_new, _old) {
@@ -220,15 +220,15 @@ export default {
   methods: {
     fetchPage() {
       const { sortBy, page } = this.options;
-      this.fetchEligibleProducts(
-        page,
-        sortBy[0]?.key,
-        sortBy[0]?.order === "desc",
-      );
+      this.fetchEligibleProducts();
     },
 
-    fetchEligibleProducts(page, sortBy, sortDesc = true) {
+    fetchEligibleProducts() {
       if (this.hasCurrency && !this.currency) return;
+
+      const page = this.page;
+      const sortBy = this.sortBy[0]?.key;
+      const sortDesc = this.sortBy[0]?.order === "desc";
 
       this.busy_fetch = true;
 
@@ -255,7 +255,9 @@ export default {
           } else {
             this.showErrorAlert(null, data.error_msg);
           }
-        })
+        })   .catch((error) => {
+        this.showLaravelError(error);
+      })
         .finally(() => {
           this.busy_fetch = false;
         });

@@ -188,7 +188,7 @@
           class="max-w-300 min-width-200"
           dense
           flat
-          hide-details
+          hide-details clearable
           prepend-inner-icon="storefront"
           variant="solo"
           @change="fetchData()"
@@ -201,7 +201,7 @@
       v-model="vendor_filter"
       :shop="shop"
       dense
-      flat
+      flat clearable
       hide-details
       prepend-inner-icon="storefront"
       solo
@@ -1533,7 +1533,7 @@
           <b-vendor-input
             v-model="vendor_id_input"
             :shop="shop"
-            active-only
+            active-only clearable
             label="Vendor"
             placeholder="Filter by vendor..."
           ></b-vendor-input>

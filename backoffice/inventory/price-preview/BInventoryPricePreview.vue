@@ -13,7 +13,7 @@
   -->
 <template>
   <div class="position-relative">
-    <u-cube no-animation size="168"></u-cube>
+    <u-cube no-animation size="168" z="80"></u-cube>
     <u-cube
       v-if="multiple"
       no-animation

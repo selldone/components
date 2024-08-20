@@ -41,6 +41,21 @@
               <v-icon class="me-1">money</v-icon>
               {{ $t("inventory_list.bulk_price_dialog.ending_tab") }}
             </v-tab>
+
+            <v-tab v-if="IS_MARKETPLACE" value="marketplace">
+              <v-icon class="me-1">build</v-icon>
+              {{
+                $t("inventory_list.bulk_price_dialog.marketplace_listing_price")
+              }}
+              <v-chip
+                size="x-small"
+                color="#673AB7"
+                class="ms-1"
+                variant="elevated"
+              >
+                {{ $t("global.commons.marketplace") }}
+              </v-chip>
+            </v-tab>
           </v-tabs>
 
           <v-window v-model="mode" class="mt-3">
@@ -145,13 +160,56 @@
                   :active-currencies="shop.currencies"
                   :return-object="false"
                   @change="fetchReport"
+                  placeholder="Select a currency..."
                 ></u-currency-input>
 
                 <u-price-input
                   v-model="bulk_ending"
                   :currency="bulk_currency"
                   class="strong-field"
+                  label="Ending"
                 ></u-price-input>
+              </div>
+            </v-window-item>
+
+            <v-window-item value="marketplace">
+              <div class="widget-box mb-5">
+                <s-widget-header
+                  title="Marketplace Listing Price"
+                  icon="price_change"
+                ></s-widget-header>
+
+                <v-list-subheader>
+                  This option allows you to automatically update the listing
+                  price of products in the marketplace. Occasionally, the main
+                  product price may not align with vendor pricing due to manual
+                  price changes.
+                </v-list-subheader>
+
+                <u-smart-select
+                  v-model="marketplace_listing_price_fix_strategy"
+                  @change="fetchReport"
+                  item-value="value"
+                  item-text="title"
+                  item-description="description"
+                  :items="[
+                    {
+                      title: 'Set Minimum Price',
+                      value: 'min',
+                      description:
+                        'Set the minimum price of the product as the listing price.',
+                    },
+                    {
+                      title: 'Set Maximum Price',
+                      value: 'max',
+                      description:
+                        'Set the maximum price of the product as the listing price.',
+                    },
+                  ]"
+                  force-show-all
+                  gray-unselected
+                >
+                </u-smart-select>
               </div>
             </v-window-item>
           </v-window>
@@ -176,6 +234,43 @@
               @change="fetchReport"
             >
             </b-category-input>
+            <hr class="my-5" />
+
+            <template v-if="IS_MARKETPLACE">
+              <s-widget-header
+                :title="$t('global.commons.vendor')"
+                icon="storefront"
+              ></s-widget-header>
+              <v-list-subheader
+                >Limit bulk actions to a specific vendor. When a vendor is
+                selected, the price update will be applied to the vendor's
+                products, which represents the selling price for that vendor.
+              </v-list-subheader>
+
+              <b-vendor-input
+                v-model="bulk_vendor"
+                :label="$t('global.commons.vendor')"
+                :placeholder="$t('global.commons.all') + ' *.*'"
+                :shop="shop"
+                clearable
+                persistent-placeholder
+                @change="fetchReport"
+              >
+              </b-vendor-input>
+
+              <v-expand-transition>
+                <div v-if="bulk_vendor">
+                  <v-list-subheader>
+                    <v-icon>warning_amber</v-icon>
+                    If you want to update the listing price (the price displayed
+                    in the product list), you should resubmit the bulk update
+                    with the same filters but without selecting a vendor.
+                  </v-list-subheader>
+                </div>
+              </v-expand-transition>
+
+              <hr class="my-5" />
+            </template>
 
             <!-- ━━━━━━━━━━━━━━━━━━ 📊 Report ━━━━━━━━━━━━━━━━━━ -->
             <u-loading-progress v-if="busy_report"></u-loading-progress>
@@ -183,23 +278,35 @@
               v-if="!need_currency_in_params || bulk_currency"
             >
               <div v-if="report">
-                <div class="py-3">
+                <div v-if="mode === 'marketplace'">
+                  <u-text-value-dashed>
+                    <template v-slot:label>Listing products change</template>
+                    <b>{{ report.count_products }}</b>
+                  </u-text-value-dashed>
+                </div>
+                <div v-else-if="bulk_vendor">
+                  <u-text-value-dashed>
+                    <template v-slot:label> Total vendor products</template>
+                    <b>{{ report.count_products }}</b>
+                  </u-text-value-dashed>
+                </div>
+                <div v-else>
                   <u-text-value-dashed>
                     <template v-slot:label> Total products</template>
-                    {{ report.count_products }}
+                    <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
 
                   <u-text-value-dashed>
                     <template v-slot:label> Total variants</template>
-                    {{ report.count_variants }}
+                    <b>{{ report.count_variants }}</b>
                   </u-text-value-dashed>
                 </div>
+
+                <hr class="my-5" />
               </div>
             </v-expand-transition>
 
             <!-- ━━━━━━━━━━━━━━━━━━ Confirmation ━━━━━━━━━━━━━━━━━━ -->
-
-            <hr class="hr-dashed" />
 
             <u-smart-verify
               v-model="bulk_check"
@@ -230,7 +337,7 @@
             >
               {{ $t("global.actions.show_preview") }}
 
-              <v-icon start>{{ $t("icons.chevron_next") }}</v-icon>
+              <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
             </v-btn>
           </div>
         </v-card-actions>
@@ -272,6 +379,7 @@
               size="x-large"
               variant="elevated"
               @click="setBulkPrice"
+              prepend-icon="check"
             >
               {{ $t("global.actions.apply_change") }}
 
@@ -290,7 +398,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BCategoryInput from "../../../category/input/BCategoryInput.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
@@ -301,10 +409,15 @@ import BInventoryBulkPreview from "../../../inventory/bulk/preview/BInventoryBul
 import _ from "lodash-es";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import BInventoryPricePreview from "../../../inventory/price-preview/BInventoryPricePreview.vue";
+import BVendorInput from "@selldone/components-vue/backoffice/vendor/input/BVendorInput.vue";
+import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
+import USmartSelect from "@selldone/components-vue/ui/smart/select/USmartSelect.vue";
 
 export default {
   name: "BInventoryBulkPrice",
   components: {
+    USmartSelect,
+    BVendorInput,
     BInventoryPricePreview,
     USmartVerify,
     BInventoryBulkPreview,
@@ -326,6 +439,8 @@ export default {
     mode: "percent",
 
     bulk_category: null,
+    bulk_vendor: null,
+
     bulk_percent: 0,
     bulk_check: false,
     busy_bulk: false,
@@ -337,8 +452,14 @@ export default {
     busy_report: false,
 
     preview: false,
+
+    marketplace_listing_price_fix_strategy: null,
   }),
   computed: {
+    IS_MARKETPLACE() {
+      return this.shop.model === BusinessModel.MARKETPLACE.code;
+    },
+
     need_currency_in_params() {
       return ["constant", "ending"].includes(this.mode);
     },
@@ -351,6 +472,7 @@ export default {
       return {
         mode: this.mode, // Pricing strategy
         category: this.bulk_category,
+        vendor: this.bulk_vendor,
 
         percent: this.bulk_percent,
 
@@ -358,6 +480,8 @@ export default {
         currency: this.bulk_currency,
 
         ending: this.bulk_ending,
+
+        strategy: this.marketplace_listing_price_fix_strategy,
       };
     },
   },
