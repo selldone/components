@@ -94,10 +94,11 @@
         </p>
       </div>
     </div>
-    <hr />
+    <hr class="my-5" />
 
     <!-- Progress bar -->
     <u-time-progress-bar
+        v-if="campaign.start_at || campaign.end_at"
       v-model:ended="campaign.ended"
       :created-time="campaign.created_at"
       :end-time="campaign.end_at"
@@ -106,12 +107,12 @@
     ></u-time-progress-bar>
 
     <!-- Start End dates -->
-    <p class="mt-2">
+    <p v-if="campaign.start_at" class="mt-2">
       <small>{{ $t("global.commons.start_date") }}:</small>
       {{ getLocalTimeString(campaign.start_at) }}
     </p>
 
-    <p>
+    <p v-if="campaign.end_at">
       <small>{{ $t("global.commons.end_date") }}:</small>
       {{ getLocalTimeString(campaign.end_at) }}
     </p>
@@ -134,6 +135,7 @@
           :other="calcTotalOther(campaign)"
           :search="calcTotalOrganicSearch(campaign)"
           height="120px"
+          class="small"
         ></b-session-chart-sankey>
       </v-col>
       <v-col :md="extended ? 3 : 6" cols="6">

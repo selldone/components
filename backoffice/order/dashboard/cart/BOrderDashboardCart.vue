@@ -139,7 +139,8 @@
         v-if="
           checked &&
           payment &&
-          (payment?.refund_amount || need_to_refund || payment?.refunds?.length)
+          (need_to_refund ||
+            ((payment?.refund_amount || payment?.refunds?.length) && !busy))
         "
         class="text-start"
       >

@@ -347,13 +347,14 @@
             prepend-icon="check"
           >
             {{
-              reject_express?
-                  $t("process_order_page_dashboard.reject_dialog.confirm_now_action")
-:
-
-                  $t("process_order_page_dashboard.reject_dialog.confirm_in48h_action")
+              reject_express
+                ? $t(
+                    "process_order_page_dashboard.reject_dialog.confirm_now_action",
+                  )
+                : $t(
+                    "process_order_page_dashboard.reject_dialog.confirm_in48h_action",
+                  )
             }}
-
           </v-btn>
         </div>
       </v-card-actions>
@@ -380,14 +381,12 @@ import BOrderVendorPaymentManagement from "../../order/vendor/payment/BOrderVend
 import { Basket, Order } from "@selldone/core-js";
 import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 import BShopCustomerBox from "@selldone/components-vue/backoffice/customer/box/BShopCustomerBox.vue";
-import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 
 export default {
   name: "BOrderDashboard",
   components: {
     USmartSwitch,
-    USmartToggle,
     BShopCustomerBox,
     SWidgetHeader,
     BOrderVendorPaymentManagement,
@@ -483,17 +482,22 @@ export default {
       return null;*/
     },
     order_type() {
-      if (this.type === ProductType.PHYSICAL.code) return "Physical orders";
-      else if (this.type === ProductType.VIRTUAL.code) return "Virtual orders";
-      else if (this.type === ProductType.FILE.code) return "File orders";
-      else if (this.type === ProductType.SERVICE.code) return "Service orders";
+      if (this.type === ProductType.PHYSICAL.code)
+        return this.$t("global.commons.physical_orders");
+      else if (this.type === ProductType.VIRTUAL.code)
+        return this.$t("global.commons.virtual_orders");
+      else if (this.type === ProductType.FILE.code)
+        return this.$t("global.commons.file_orders");
+      else if (this.type === ProductType.SERVICE.code)
+        return this.$t("global.commons.service_orders");
       else if (this.type === ProductType.SUBSCRIPTION.code)
-        return "Subscription orders";
-      else if (this.isFulfillment) return "Fulfillments";
-      else if (this.isAvocado) return "Avocado orders";
-      else if (this.isHyper) return "Hyper orders";
-      else if (this.type === "POS") return "POS orders";
-      else if (this.type === "BILL") return "Bill"; // TODO: Not used! deprecated!
+        return this.$t("global.commons.subscription_orders");
+      else if (this.isFulfillment)
+        return this.$t("global.commons.fulfillments");
+      else if (this.isAvocado) return this.$t("global.commons.avocado_orders");
+      else if (this.isHyper) return this.$t("global.commons.hyper_orders");
+      else if (this.type === "POS") return this.$t("global.commons.pos_orders");
+      else if (this.type === "BILL") return "⚠ Bill"; // TODO: Not used! deprecated!
 
       return null;
     },

@@ -36,6 +36,7 @@
   >
     <template v-slot:item.data-table-select="{ item }">
       <v-btn
+        :key="item.id"
         :color="selected.some((i) => i.id === item.id) ? 'success' : '#999'"
         icon
         size="small"
@@ -669,7 +670,11 @@ export default {
     },
   },
 
-  watch: {},
+  watch: {
+    items(){
+      this.selected = this.items.filter((item) => item.check);
+    }
+  },
 
   mounted() {
     if (this.selectAll) this.selected = Object.assign([], this.items);
@@ -693,6 +698,10 @@ export default {
       return out ? out : {};
     },
 
+    /**
+     * IMPORTANT! External call
+     * @return {*[]}
+     */
     getCheckedItems() {
       return this.selected;
     },
