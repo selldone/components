@@ -157,7 +157,7 @@
       <!-- ===================================== End Group ================================== -->
 
       <template v-slot:item.icon="{ item }">
-        <div class="p-2">
+        <div class="py-2">
           <router-link
             :to="{
               name: 'BPageProductDashboard',
@@ -411,27 +411,26 @@
     transition="dialog-bottom-transition"
   >
     <v-card v-if="item_clone && show_price_dialog_pre" class="text-start">
-      <v-btn
-        class="absolute-top-end m-2"
-        icon
-        @click="show_price_dialog = false"
-      >
-        <v-icon>close</v-icon>
-      </v-btn>
-      <v-card-title class="d-flex align-center">
-        <v-avatar class="me-2" size="48">
-          <img
-            v-if="selected_item.icon"
-            :src="getShopImagePath(selected_item.icon, IMAGE_SIZE_SMALL)"
-          />
-          <v-icon v-else>inventory</v-icon>
-        </v-avatar>
 
-        <div>
+      <v-card-title class="d-flex align-center">
+        <u-avatar-folder class="me-2" size="48" elevated side-icon="shelves" :placeholder-icon="inventory"     :src="getShopImagePath(selected_item.icon, IMAGE_SIZE_SMALL)" is-gray border-size="8">
+        </u-avatar-folder>
+
+        <div class="flex-grow-1">
           {{ selected_item?.product?.title }}
 
-          <small class="d-block">{{ selected_item?.product?.title_en }}</small>
+          <div class="small">{{ selected_item?.product?.title_en?.limitWords(12) }}</div>
         </div>
+
+        <v-btn
+            class="ms-2"
+            icon
+            @click="show_price_dialog = false"
+            variant="text"
+        >
+          <v-icon>close</v-icon>
+        </v-btn>
+
       </v-card-title>
 
       <v-card-text class="thin-scroll">

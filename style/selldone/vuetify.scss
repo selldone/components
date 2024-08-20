@@ -26,6 +26,14 @@
   border: none;
 }
 
+// Bug in showing tables in RTL:
+.v-locale--is-rtl {
+  .v-data-table__td-title {
+    text-align: start;
+  }
+}
+
+
 .v-data-table{
 
   @media (max-width: 1280px) {

@@ -19,10 +19,10 @@
       <s-widget-header
         :add-caption="!IS_VENDOR_PANEL ? 'Manage Vendors' : undefined"
         :src="require('../../../../assets/icons/marketplace.svg')"
-        :to="{
+        :to="product?{
           name: 'BPageProductVendors',
-          params: product ? { product_id: product.id } : undefined,
-        }"
+          params:{ product_id: product.id } ,
+        }:undefined"
         add-icon="price_change"
         add-text
         class="mb-2"
@@ -37,7 +37,7 @@
         </div>
       </v-list-subheader>
 
-      <v-list-subheader v-if="!vendorProduct && !variant && product.vendor_id">
+      <v-list-subheader v-if="!vendorProduct && !variant && product?.vendor_id">
         <div>
           <v-icon class="me-1">info_outline</v-icon>
           Adjusting the
@@ -49,7 +49,7 @@
         </div>
       </v-list-subheader>
 
-      <v-list-subheader v-if="!vendorProduct && variant && product.vendor_id">
+      <v-list-subheader v-if="!vendorProduct && variant && product?.vendor_id">
         <div>
           <v-icon class="me-1">info_outline</v-icon>
           Adjusting the
