@@ -25,27 +25,27 @@
         <v-card-title>
           <v-icon class="me-2">shelves</v-icon>
 
-          {{ $t("inventory_list.bulk_price_dialog.title") }}
+          {{ $t("bulk_price_dialog.title") }}
         </v-card-title>
         <v-card-text class="text-start">
           <v-tabs v-model="mode" align-tabs="title" mandatory>
             <v-tab value="percent">
               <v-icon class="me-1">percent</v-icon>
-              {{ $t("inventory_list.bulk_price_dialog.add_percent_tab") }}
+              {{ $t("bulk_price_dialog.add_percent_tab") }}
             </v-tab>
             <v-tab value="constant">
               <v-icon class="me-1">functions</v-icon>
-              {{ $t("inventory_list.bulk_price_dialog.add_constant_tab") }}
+              {{ $t("bulk_price_dialog.add_constant_tab") }}
             </v-tab>
             <v-tab value="ending">
               <v-icon class="me-1">money</v-icon>
-              {{ $t("inventory_list.bulk_price_dialog.ending_tab") }}
+              {{ $t("bulk_price_dialog.ending_tab") }}
             </v-tab>
 
             <v-tab v-if="IS_MARKETPLACE" value="marketplace">
               <v-icon class="me-1">build</v-icon>
               {{
-                $t("inventory_list.bulk_price_dialog.marketplace_listing_price")
+                $t("bulk_price_dialog.marketplace_listing_price")
               }}
               <v-chip
                 size="x-small"
@@ -67,7 +67,7 @@
                 ></s-widget-header>
 
                 <v-list-subheader>
-                  {{ $t("inventory_list.bulk_price_dialog.message") }}
+                  {{ $t("bulk_price_dialog.message") }}
                 </v-list-subheader>
 
                 <b-inventory-price-preview multiple>
@@ -102,8 +102,8 @@
                 ></s-widget-header>
 
                 <v-list-subheader>
-                  The amount will be added or subtracted from the current price
-                  of products.
+                  {{$t('bulk_price_dialog.constant.subtitle')}}
+
                 </v-list-subheader>
 
                 <b-inventory-price-preview multiple>
@@ -143,8 +143,8 @@
                 ></s-widget-header>
 
                 <v-list-subheader>
-                  The ending of the current price of products will be changed to
-                  the specified value.
+                  {{$t('bulk_price_dialog.ending.subtitle')}}
+
                 </v-list-subheader>
 
                 <b-inventory-price-preview multiple>
@@ -175,15 +175,13 @@
             <v-window-item value="marketplace">
               <div class="widget-box mb-5">
                 <s-widget-header
-                  title="Marketplace Listing Price"
+                  :title="$t('bulk_price_dialog.marketplace.title') "
                   icon="price_change"
                 ></s-widget-header>
 
                 <v-list-subheader>
-                  This option allows you to automatically update the listing
-                  price of products in the marketplace. Occasionally, the main
-                  product price may not align with vendor pricing due to manual
-                  price changes.
+                  {{$t('bulk_price_dialog.marketplace.subtitle')}}
+
                 </v-list-subheader>
 
                 <u-smart-select
@@ -194,16 +192,15 @@
                   item-description="description"
                   :items="[
                     {
-                      title: 'Set Minimum Price',
                       value: 'min',
-                      description:
-                        'Set the minimum price of the product as the listing price.',
+                                            title:$t('bulk_price_dialog.marketplace.strategy.min.title') ,
+                      description:$t('bulk_price_dialog.marketplace.strategy.min.description') ,
                     },
                     {
-                      title: 'Set Maximum Price',
+
                       value: 'max',
-                      description:
-                        'Set the maximum price of the product as the listing price.',
+                               title:$t('bulk_price_dialog.marketplace.strategy.max.title') ,
+                      description:$t('bulk_price_dialog.marketplace.strategy.max.description') ,
                     },
                   ]"
                   force-show-all
@@ -220,7 +217,9 @@
               icon="snippet_folder"
             ></s-widget-header>
             <v-list-subheader
-              >Limit bulk action to a category and all subcategories.
+              >
+              {{$t('bulk_price_dialog.category.subtitle')}}
+
             </v-list-subheader>
 
             <b-category-input
@@ -242,9 +241,9 @@
                 icon="storefront"
               ></s-widget-header>
               <v-list-subheader
-                >Limit bulk actions to a specific vendor. When a vendor is
-                selected, the price update will be applied to the vendor's
-                products, which represents the selling price for that vendor.
+                >
+                {{$t('bulk_price_dialog.vendor.subtitle')}}
+
               </v-list-subheader>
 
               <b-vendor-input
@@ -262,9 +261,8 @@
                 <div v-if="bulk_vendor">
                   <v-list-subheader>
                     <v-icon>warning_amber</v-icon>
-                    If you want to update the listing price (the price displayed
-                    in the product list), you should resubmit the bulk update
-                    with the same filters but without selecting a vendor.
+                    {{$t('bulk_price_dialog.vendor.listing_price_need_update_msg')}}
+
                   </v-list-subheader>
                 </div>
               </v-expand-transition>
@@ -280,24 +278,24 @@
               <div v-if="report">
                 <div v-if="mode === 'marketplace'">
                   <u-text-value-dashed>
-                    <template v-slot:label>Listing products change</template>
+                    <template v-slot:label>{{$t('bulk_price_dialog.listing_products_changes')}} </template>
                     <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
                 </div>
                 <div v-else-if="bulk_vendor">
                   <u-text-value-dashed>
-                    <template v-slot:label> Total vendor products</template>
+                    <template v-slot:label> {{$t('bulk_price_dialog.total_vendor_products')}}  </template>
                     <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
                 </div>
                 <div v-else>
                   <u-text-value-dashed>
-                    <template v-slot:label> Total products</template>
+                    <template v-slot:label> {{$t('bulk_price_dialog.total_products')}}  </template>
                     <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
 
                   <u-text-value-dashed>
-                    <template v-slot:label> Total variants</template>
+                    <template v-slot:label>{{$t('bulk_price_dialog.total_variants')}} </template>
                     <b>{{ report.count_variants }}</b>
                   </u-text-value-dashed>
                 </div>
@@ -310,8 +308,8 @@
 
             <u-smart-verify
               v-model="bulk_check"
-              :label="$t('inventory_list.bulk_price_dialog.check')"
-              true-description="The price will be changed for the selected category and all subcategories."
+              :true-title="$t('bulk_price_dialog.check')"
+              :true-description="$t('bulk_price_dialog.check_description')"
             >
             </u-smart-verify>
           </div>
@@ -530,7 +528,10 @@ export default {
     fetchReport: _.throttle(function () {
       this.report = null;
 
-      this.$nextTick(() => {
+      if(this.mode==='marketplace' && !this.marketplace_listing_price_fix_strategy)return;
+
+
+        this.$nextTick(() => {
         // Make sure all params updated!
         if (this.need_currency_in_params && !this.bulk_currency) return;
 
