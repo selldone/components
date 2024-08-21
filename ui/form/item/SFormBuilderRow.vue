@@ -166,6 +166,7 @@
                 persistent-placeholder
                 placeholder="*.*"
                 variant="underlined"
+                class="mb-3"
               >
                 <template v-slot:chip="{ props, item }">
                   <v-chip v-bind="props">

@@ -47,7 +47,6 @@
         :persistent-placeholder="!!item.hint"
         :placeholder="item.hint"
         :style="{ 'animation-delay': `${index * 150}ms` }"
-        menu-props="auto"
         variant="outlined"
         @update:model-value="$emit('update:modelValue', message)"
       />
@@ -86,7 +85,6 @@
         :rules="[]"
         :style="{ 'animation-delay': `${index * 150}ms` }"
         append-inner-icon="attach_file"
-        menu-props="auto"
         messages="Max file size: 20MB"
         prepend-icon=""
         show-size

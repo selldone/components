@@ -245,7 +245,6 @@
                 v-model="new_virtual_product_data[item.name]"
                 :items="item.selects"
                 :label="item.title"
-                menu-props="auto"
                 variant="underlined"
               />
             </div>

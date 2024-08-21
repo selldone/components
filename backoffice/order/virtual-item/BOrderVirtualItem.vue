@@ -103,7 +103,6 @@
                   :label="item.title"
                   class="m-1 max-width-field"
                   hide-details
-                  menu-props="auto"
                   single-line
                   variant="filled"
                 />
