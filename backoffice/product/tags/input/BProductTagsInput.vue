@@ -15,19 +15,13 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <div class="widget-box mb-5">
-      <s-widget-header icon="label" title="Tags"></s-widget-header>
+      <s-widget-header
+        icon="label"
+        :title="$t('product_tags.title')"
+      ></s-widget-header>
 
       <ul class="small text-muted ps-5 pa-2">
-        <li>You can filter products based on tags on <b>landing pages</b>.</li>
-        <li>
-          You and your customers can search for these tags in the
-          <b>search</b> bar.
-        </li>
-        <li>
-          If set tags, only products with the <b>common tags</b> will be
-          displayed in the <b>related products section</b> on the product page;
-          otherwise, products in the same category will be displayed.
-        </li>
+        <li v-for="tip in $tm('product_tags.tips')" v-html="tip"></li>
       </ul>
 
       <u-loading-progress v-if="busy"></u-loading-progress>
@@ -39,7 +33,7 @@
         clearable
         closable-chips
         multiple
-        placeholder="Wire tags here and press enter. ex. new collection"
+        :placeholder="$t('product_tags.inputs.tags.placeholder')"
         variant="underlined"
         @update:model-value="change = true"
       >
@@ -95,7 +89,7 @@ export default {
   methods: {
     onChange: _.debounce(function () {
       this.setTags();
-    }, 3000),
+    }, 1500),
 
     setTags() {
       if (!this.change) return;
@@ -127,7 +121,10 @@ export default {
             tags,
           );
 
-          this.showSuccessAlert(null, "Tags updated successfully.");
+          this.showSuccessAlert(
+            null,
+            this.$t("product_tags.notifications.tags_updated"),
+          );
         })
         .catch((error) => {
           this.showLaravelError(error);

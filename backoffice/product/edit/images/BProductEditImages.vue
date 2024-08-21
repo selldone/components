@@ -65,7 +65,7 @@
                 {{ $t("add_product.edit_images.image_style") }}
               </h2>
               <u-smart-toggle
-                  v-if="product.style"
+                v-if="product.style"
                 v-model="product.style.contain"
                 :true-description="
                   $t('add_product.edit_images.background_is_white_msg')
@@ -86,15 +86,15 @@
               <template v-if="product.icon && !forStudio">
                 <u-button-ai-large
                   :loading="busy_ai"
-                  sub-title="Create transparent background."
-                  title="Remove Background"
+                  :title="$t('ai.remove_bg.title')"
+                  :sub-title="$t('ai.remove_bg.subtitle')"
                   @select="removeBackground()"
                 >
                 </u-button-ai-large>
 
                 <u-button-ai-large
-                  sub-title="Create more images with new backgrounds."
-                  title="Reimagine"
+                  :title="$t('ai.reimagine.title')"
+                  :sub-title="$t('ai.reimagine.subtitle')"
                   @select="showReplaceBg()"
                 >
                 </u-button-ai-large>
@@ -219,7 +219,7 @@
       <v-card class="text-start">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1" color="#111">wallpaper</v-icon>
-          Create Image With New Background
+          {{ $t("add_product.edit_images.change_bg_ai.title") }}
         </v-card-title>
 
         <v-card-text>
@@ -266,8 +266,14 @@
           <div class="max-widget-width mx-auto">
             <v-textarea
               v-model="prompt"
-              label="Prompt"
-              placeholder="Describe what the background should be..."
+              :label="
+                $t('add_product.edit_images.change_bg_ai.inputs.prompt.label')
+              "
+              :placeholder="
+                $t(
+                  'add_product.edit_images.change_bg_ai.inputs.prompt.placeholder',
+                )
+              "
               persistent-placeholder
               variant="outlined"
             >
@@ -277,9 +283,17 @@
           <u-button-ai-large
             :loading="busy"
             :sub-title="
-              !prompt ? 'Reimagine entire image.' : 'Replace background.'
+              !prompt
+                ? $t(
+                    'add_product.edit_images.change_bg_ai.actions.reimagine.subtitle',
+                  )
+                : $t(
+                    'add_product.edit_images.change_bg_ai.actions.replace.subtitle',
+                  )
             "
-            title="Create New Image"
+            :title="
+              $t('add_product.edit_images.change_bg_ai.actions.reimagine.title')
+            "
             @select="replaceBackground()"
           >
           </u-button-ai-large>

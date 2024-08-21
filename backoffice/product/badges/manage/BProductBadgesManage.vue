@@ -17,14 +17,14 @@
     <div :class="{ disabled: busy_fetch }" class="widget-box mb-5">
       <s-widget-header
         :disabled="IS_VENDOR_PANEL"
-        add-caption="Create new badge"
-        disabled-reason="Only marketplace owners"
+        :add-caption="$t('product_badges.create_new_badge_action')"
+        :disabled-reason="$t('product_badges.only_marketplace_owner_msg')"
         icon="verified"
-        title="Badges"
+        :title="$t('product_badges.title')"
         @click:add="showAdd"
       ></s-widget-header>
 
-      <v-list-subheader>Add and edit custom product badges.</v-list-subheader>
+      <v-list-subheader>{{ $t("product_badges.subtitle") }}</v-list-subheader>
 
       <u-loading-progress v-if="busy_set || busy_fetch"></u-loading-progress>
 
@@ -33,12 +33,14 @@
       <u-smart-switch
         v-model="custom"
         class="mb-5"
-        false-description="Products badges are created automatically."
+        :false-description="
+          $t('product_badges.inputs.custom.false_description')
+        "
         false-icon="brightness_auto"
-        false-title="Auto"
-        true-description="Add custom badges in the product page."
+        :false-title="$t('product_badges.inputs.custom.false_title')"
+        :true-description="$t('product_badges.inputs.custom.true_description')"
         true-icon="verified"
-        true-title="Custom products badges"
+        :true-title="$t('product_badges.inputs.custom.true_title')"
         @change="
           (val) => {
             badges = val ? [] : null;
@@ -85,14 +87,19 @@
                   hide-details
                   item-title="title"
                   item-value="id"
-                  placeholder="Select a badge"
+                  :placeholder="$t('product_badges.select_a_badge')"
                   prepend-inner-icon="add"
                   return-object
                   variant="solo"
                   @update:model-value="addBadge"
                 >
                   <template v-slot:item="{ item, props }">
-                    <v-list-item :title="item.raw.title" v-bind="props">
+                    <v-list-item
+                      :title="item.raw.title"
+                      :subtitle="item.raw.link"
+                      v-bind="props"
+                      class="text-start"
+                    >
                       <template v-slot:prepend>
                         <v-img
                           :src="getShopImagePath(item.raw.image)"
@@ -106,8 +113,6 @@
                         <v-icon
                           v-if="item.raw.link"
                           :title="item.raw.link"
-                          class="mx-1"
-                          color="blue"
                           size="small"
                           >link
                         </v-icon>
@@ -134,18 +139,21 @@
 
         <v-card-text>
           <div class="widget-box mb-5">
-            <s-widget-header title="Custom badge"></s-widget-header>
+            <s-widget-header
+              :title="$t('product_badges.add_custom_badge.title')"
+            ></s-widget-header>
 
-            <v-list-subheader
-              >Add a new custom badge to my shop. Keep badges count under 10.
-              More badges would slow down your shop.
+            <v-list-subheader>
+              {{ $t("product_badges.add_custom_badge.subtitle") }}
             </v-list-subheader>
 
             <v-text-field
               v-model="title_input"
               :label="$t('global.commons.title')"
               persistent-placeholder
-              placeholder="Public title..."
+              :placeholder="
+                $t('product_badges.add_custom_badge.inputs.title.placeholder')
+              "
               variant="underlined"
             ></v-text-field>
 
@@ -162,9 +170,13 @@
               v-model="image_input"
               accept="image/*"
               color="primary"
-              label="Image"
-              messages="Max image size: 128KB"
-              placeholder="Select a cover image"
+              :label="$t('product_badges.add_custom_badge.inputs.image.label')"
+              :messages="
+                $t('product_badges.add_custom_badge.inputs.image.message')
+              "
+              :placeholder="
+                $t('product_badges.add_custom_badge.inputs.image.placeholder')
+              "
               prepend-icon=""
               prepend-inner-icon="image"
               show-size
@@ -177,7 +189,10 @@
                 color="primary"
                 variant="text"
                 @click="show_advance = !show_advance"
-                >Show advanced option
+              >
+                {{
+                  $t("product_badges.add_custom_badge.show_advanced_options")
+                }}
               </v-btn>
             </div>
             <v-expand-transition>
@@ -185,10 +200,18 @@
                 <v-text-field
                   v-model="pattern_input"
                   class="mb-3"
-                  label="Pattern"
-                  messages="Automatically show this badge for products has this matched value in their spec. Regex supported."
+                  :label="
+                    $t('product_badges.add_custom_badge.inputs.pattern.label')
+                  "
+                  :messages="
+                    $t('product_badges.add_custom_badge.inputs.pattern.message')
+                  "
                   persistent-placeholder
-                  placeholder="To show for all products write: *.*"
+                  :placeholder="
+                    $t(
+                      'product_badges.add_custom_badge.inputs.pattern.placeholder',
+                    )
+                  "
                   variant="underlined"
                 ></v-text-field>
               </div>
@@ -324,8 +347,7 @@ export default {
       if (this.title_input) formData.append("title", this.title_input);
       if (this.link_input) formData.append("link", this.link_input);
 
-      if (this.image_input)
-        formData.append("image", this.image_input);
+      if (this.image_input) formData.append("image", this.image_input);
       if (this.pattern_input) formData.append("pattern", this.pattern_input);
 
       axios
@@ -352,7 +374,12 @@ export default {
           this.pattern_input = null;
 
           this.AddOrUpdateItemByID(this.all_badges, data.badge);
-          this.showSuccessAlert(null, "Badge added successfully!");
+          this.showSuccessAlert(
+            null,
+            this.$t(
+              "product_badges.add_custom_badge.notifications.badge_added",
+            ),
+          );
         })
         .catch((error) => {
           this.showLaravelError(error);
@@ -369,8 +396,7 @@ export default {
       if (this.title_input) formData.append("title", this.title_input);
       if (this.link_input) formData.append("link", this.link_input);
 
-      if (this.image_input)
-        formData.append("image", this.image_input);
+      if (this.image_input) formData.append("image", this.image_input);
       if (this.pattern_input) formData.append("pattern", this.pattern_input);
 
       axios
@@ -401,7 +427,12 @@ export default {
 
           this.AddOrUpdateItemByID(this.all_badges, data.badge);
 
-          this.showSuccessAlert(null, "Badge updated successfully!");
+          this.showSuccessAlert(
+            null,
+            this.$t(
+              "product_badges.add_custom_badge.notifications.badge_updated",
+            ),
+          );
         })
         .catch((error) => {
           this.showLaravelError(error);
@@ -424,7 +455,9 @@ export default {
       if (!item) {
         return this.showErrorAlert(
           null,
-          "Item not found! Refresh the page or call support.",
+          this.$t(
+            "product_badges.add_custom_badge.notifications.item_not_found_error",
+          ),
         );
       }
       this.selected_badge = item;

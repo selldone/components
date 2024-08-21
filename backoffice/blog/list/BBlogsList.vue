@@ -300,8 +300,8 @@
       >
         <template v-if="$vuetify.display.mdAndUp">
           <v-icon size="small">open_in_new</v-icon>
-          <div class="tnt absolute-bottom-center x-small" style="bottom: 4px">
-            Open
+          <div class="tnt absolute-bottom-center x-small" style="bottom: 0px">
+            {{$t('global.actions.open')}}
           </div>
         </template>
         <template v-else>
