@@ -142,7 +142,11 @@
           />
         </router-link>
 
-        <div v-if="item.channel" style="font-size: 8px ;font-weight: 500;margin-bottom: 2px" class="d-flex align-center mx-n1">
+        <div
+          v-if="item.channel"
+          style="font-size: 8px; font-weight: 500; margin-bottom: 2px"
+          class="d-flex align-center mx-n1"
+        >
           <b-campaign-source-icon
             :value="item.channel"
             height="13"
@@ -604,13 +608,17 @@
 
       <!-- Status > Delivery -->
       <template v-if="has_delivery_col" v-slot:item.delivery_state="{ item }">
-        <div v-if="$vuetify.display.xs && item.channel" style="font-size: 12px ;font-weight: 500;" class="d-flex align-center">
+        <div
+          v-if="$vuetify.display.xs && item.channel"
+          style="font-size: 12px; font-weight: 500"
+          class="d-flex align-center"
+        >
           <v-icon class="me-1 rotate-90-e ms-3">alt_route</v-icon>
           <b-campaign-source-icon
-              :value="item.channel"
-              height="16"
-              width="16"
-              class="me-1"
+            :value="item.channel"
+            height="16"
+            width="16"
+            class="me-1"
           />
           <div>
             {{ item.channel }}
@@ -656,41 +664,39 @@
           <span class="float-end">
             <!-- ▂▂▂▂▂▂▂▂ Chat ▂▂▂▂▂▂▂ -->
 
-            <v-tooltip
+            <v-btn
               v-if="item.chat && item.chat.length"
+              class="mx-1"
               color="#111"
-              location="bottom"
-              max-width="460"
+              icon
+              variant="text"
+              @click.stop="showChat(item)"
             >
-              <template v-slot:activator="{ props }">
-                <v-btn
-                  class="mx-1"
-                  color="#111"
-                  icon
-                  v-bind="props"
-                  variant="text"
-                  @click.stop="showChat(item)"
-                >
-                  <v-badge
-                    :model-value="
-                      !item.chat[item.chat.length - 1]
-                        .officer /*Show dot if customer send last message!*/
-                    "
-                    color="red"
-                    dot
-                  >
-                    <v-icon>chat</v-icon>
-                  </v-badge>
-                </v-btn>
-              </template>
-              <s-order-chat-message
-                :basket="item"
-                :message="item.chat[item.chat.length - 1]"
-                :shop="shop"
-                is-admin
+              <v-badge
+                :model-value="
+                  !item.chat[item.chat.length - 1]
+                    .officer /*Show dot if customer send last message!*/
+                "
+                color="red"
+                dot
               >
-              </s-order-chat-message>
-            </v-tooltip>
+                <v-icon>chat</v-icon>
+              </v-badge>
+
+              <v-tooltip
+                activator="parent"
+                content-class="bg-black"
+                location="bottom"
+                max-width="460"
+              >
+                <s-order-chat-message
+                  :basket="item"
+                  :message="item.chat[item.chat.length - 1]"
+                  is-admin
+                >
+                </s-order-chat-message>
+              </v-tooltip>
+            </v-btn>
 
             <!-- ▂▂▂▂▂▂▂▂ Emoji ▂▂▂▂▂▂▂ -->
 
@@ -757,13 +763,13 @@
       scrollable
       transition="dialog-bottom-transition"
     >
-      <v-card>
+      <v-card v-if="selected_basket" class="text-start">
         <v-card-title>
           <v-avatar class="m-2" size="24">
             <v-img :src="getShopImagePath(shop.icon, IMAGE_SIZE_SMALL)" />
           </v-avatar>
 
-          Chat
+          {{$t('global.commons.chat')}} > {{getBasketOrderCode(selected_basket)}}
         </v-card-title>
         <v-card-text v-if="selected_basket">
           <s-order-chat-box

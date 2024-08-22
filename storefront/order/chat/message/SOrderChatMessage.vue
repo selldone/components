@@ -80,11 +80,9 @@
 export default {
   name: "SOrderChatMessage",
   emits: ["showSuccessAlert", "showErrorAlert", "showLaravelError"],
+  inject:['$shop'],
   props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
+
     basket: {
       require: true,
       type: Object,
@@ -118,12 +116,12 @@ export default {
         .delete(
           !this.isAdmin
             ? window.XAPI.DELETE_CUSTOMER_BASKET_CHAT_MESSAGE(
-                this.shop.name,
+                this.$shop.name,
                 this.basket.id,
                 index,
               )
             : window.API.DELETE_BASKET_CHAT_MESSAGE(
-                this.shop.id,
+                this.$shop.id,
                 this.basket.id,
                 index,
               ),

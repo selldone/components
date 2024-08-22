@@ -81,13 +81,15 @@
           :class="{ disabled: !body_input }"
           :disabled="!body_input"
           :loading="busy_add"
-          append-icon="send"
+
           color="primary"
           size="x-large"
           variant="elevated"
           @click="addChat"
         >
           {{ $t("global.actions.send") }}
+
+          <v-icon end class="flip-rtl">send</v-icon>
         </v-btn>
       </div>
     </div>
