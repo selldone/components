@@ -301,6 +301,14 @@
               </v-btn>
             </div>
 
+            <!-- ▁▁▁▁▁▁ 🞇 Sells & Inventory progress 🞇 ▁▁▁▁▁▁ -->
+            <s-product-section-incentivise
+                :product="product"
+                :shop="shop"
+            ></s-product-section-incentivise>
+
+
+
             <u-payment-stripe-split
               :basket="corresponding_basket_item ? basket : null"
               :country-code="basket?.receiver_info?.country"
@@ -373,10 +381,13 @@ import SProductSectionWaitingAuction from "../../storefront/product/section/auct
 import SProductSectionBadges from "../../storefront/product/section/badges/SProductSectionBadges.vue";
 import SProductSectionVariants from "../../storefront/product/section/variants/SProductSectionVariants.vue";
 import SProductSectionCashback from "@selldone/components-vue/storefront/product/section/cashback/SProductSectionCashback.vue";
+import SProductSectionIncentivise
+  from "@selldone/components-vue/storefront/product/section/incentivise/SProductSectionIncentivise.vue";
 
 export default {
   name: "SProductOverview",
   components: {
+    SProductSectionIncentivise,
     SProductSectionCashback,
     UPaymentStripeSplit,
     SShopBuyButton,
