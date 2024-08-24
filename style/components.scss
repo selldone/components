@@ -2768,6 +2768,16 @@ Fix snaky chart overflow problem!
     color: #fff !important;
   }
 }
+.bg-insta{
+  background-image: linear-gradient(
+                  45deg,
+                  #f09433 0%,
+                  #e6683c 25%,
+                  #dc2743 50%,
+                  #cc2366 75%,
+                  #bc1888 100%
+  );;
+}
 
 
 .bg-selldone-gradient {
@@ -4908,7 +4918,7 @@ canvas.heatmap-canvas {
   align-items: center;
   justify-content: center;
   border-radius: 20%;
-  background: rgba(250, 250, 250, 1);
+  background: #fff;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2), /* Drop shadow */
   inset 0 0 15px rgba(255, 255, 255, 0.5); /* Inner white glow */
   // border:  solid medium rgba(255, 255, 255, 0.8);
