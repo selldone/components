@@ -147,7 +147,7 @@ export default {
 
       return (
         this.$route.matched.some((record) => record.meta.light_header) ||
-        (this.theme && this.theme.light_header)
+        ( this.theme?.light_header!==false)// Default theme footer is light!
       );
     },
 

@@ -88,6 +88,24 @@
           </v-list-item-action>
         </v-list-item>
       </v-list>
+
+      <!--- ================= Countries ================= --->
+      <div
+          v-if="shop.countries?.length"
+          class="text-start text-uppercase mt-3 mx-5"
+      >
+        <small>{{ $t("global.commons.service_area") }}</small
+        ><br />
+        <flag
+            v-for="country in shop.countries"
+            :key="country"
+            :iso="country"
+            :squared="false"
+            class="m-1 hover-scale force-top"
+        />
+      </div>
+
+
     </v-card-text>
     <v-card-actions>
       <div class="widget-buttons">

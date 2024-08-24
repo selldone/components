@@ -1,0 +1,198 @@
+/*!
+ * Copyright (c) 2024. Selldone® Business OS™
+ *
+ * Author: M.Pajuhaan
+ * Web: https://selldone.com
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
+ * From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
+ * Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
+ * Our journey is not just about reaching a destination, but about creating a masterpiece.
+ * Tread carefully, for you're treading on dreams.
+ */
+
+//------------------------------------------Border responsive------------------------------------------------
+:root {
+  --border-color: #dee2e6;
+  --border-style: solid;
+}
+
+.border-end {
+  border-left: unset !important;
+  border-right: 1px var(--border-style) var(--border-color) !important;
+}
+
+.border-start {
+  border-right: unset !important;
+  border-left: 1px var(--border-style) var(--border-color) !important;
+}
+
+
+.border-start-grater-xs {
+  border-right: unset !important;
+  border-left: 1px var(--border-style) var(--border-color) !important;
+  @media only screen and (max-width: 575px) {
+    border-left: unset !important;
+  }
+}
+
+
+.border-start-grater-md {
+  border-right: unset !important;
+
+  border-left: 1px var(--border-style) var(--border-color) !important;
+  @media only screen and (max-width: 767px) {
+    border-left: unset !important;
+  }
+}
+
+.border-start-grater-lg {
+  border-right: unset;
+
+  border-left: 1px var(--border-style) var(--border-color) !important;
+  @media only screen and (max-width: 960px) {
+    border-left: unset !important;
+  }
+}
+
+.border-start-grater-xl {
+  border-right: unset !important;
+
+  border-left: 1px var(--border-style) var(--border-color) !important;
+  @media only screen and (max-width: 1140px) {
+    border-left: unset !important;
+  }
+}
+
+
+.border-end-grater-xs {
+  border-left: unset !important;
+  border-right: 1px var(--border-style) var(--border-color) !important;
+  @media only screen and (max-width: 575px) {
+    border-right: unset !important;
+  }
+}
+
+
+.border-end-grater-md {
+  border-left: unset !important;
+
+  border-right: 1px var(--border-style) var(--border-color) !important;
+  @media only screen and (max-width: 767px) {
+    border-right: unset !important;
+  }
+}
+
+.border-end-grater-lg {
+  border-left: unset;
+
+  border-right: 1px var(--border-style) var(--border-color) !important;
+  @media only screen and (max-width: 960px) {
+    border-right: unset !important;
+  }
+}
+
+.border-end-grater-xl {
+  border-left: unset !important;
+
+  border-right: 1px var(--border-style) var(--border-color) !important;
+  @media only screen and (max-width: 1140px) {
+    border-right: unset !important;
+  }
+}
+
+.border-start-thick-green {
+  border-right: unset !important;
+  border-left: thick var(--border-style) #4CAF50 !important;
+}
+
+
+.v-locale--is-rtl {
+
+  .border-end {
+    border-right: unset !important;
+    border-left: 1px var(--border-style) var(--border-color) !important;
+  }
+
+  .border-start {
+    border-left: unset !important;
+    border-right: 1px var(--border-style) var(--border-color) !important;
+  }
+
+
+  .border-start-grater-xs {
+    border-left: unset !important;
+
+    border-right: 1px var(--border-style) var(--border-color) !important;
+    @media only screen and (max-width: 575px) {
+      border-right: unset !important;
+    }
+  }
+
+
+  .border-start-grater-md {
+    border-left: unset !important;
+    border-right: 1px var(--border-style) var(--border-color) !important;
+    @media only screen and (max-width: 767px) {
+      border-right: unset !important;
+    }
+  }
+
+  .border-start-grater-lg {
+    border-left: unset !important;
+    border-right: 1px var(--border-style) var(--border-color) !important;
+    @media only screen and (max-width: 960px) {
+      border-right: unset !important;
+    }
+  }
+
+  .border-start-grater-xl {
+    border-left: unset !important;
+    border-right: 1px var(--border-style) var(--border-color) !important;
+    @media only screen and (max-width: 1140px) {
+      border-right: unset !important;
+    }
+  }
+
+
+  .border-end-grater-xs {
+    border-right: unset !important;
+
+    border-left: 1px var(--border-style) var(--border-color) !important;
+    @media only screen and (max-width: 575px) {
+      border-left: unset !important;
+    }
+  }
+
+
+  .border-end-grater-md {
+    border-right: unset !important;
+    border-left: 1px var(--border-style) var(--border-color) !important;
+    @media only screen and (max-width: 767px) {
+      border-left: unset !important;
+    }
+  }
+
+  .border-end-grater-lg {
+    border-right: unset !important;
+    border-left: 1px var(--border-style) var(--border-color) !important;
+    @media only screen and (max-width: 960px) {
+      border-left: unset !important;
+    }
+  }
+
+  .border-end-grater-xl {
+    border-right: unset !important;
+    border-left: 1px var(--border-style) var(--border-color) !important;
+    @media only screen and (max-width: 1140px) {
+      border-left: unset !important;
+    }
+  }
+
+  .border-start-thick-green {
+    border-left: unset !important;
+    border-right: thick var(--border-style) #00a89a !important;
+  }
+
+}
