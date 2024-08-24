@@ -160,7 +160,9 @@ export default {
 
       const cartMessage =
         (is_physical || is_virtual) && this.in_carts >= this.quantity * 0.1 // if added to cart more than 10% of stock
-          ? `<b>${numeral(this.in_carts).format("0a")}</b> others have this in their carts!`
+          ? this.$t("product_section_incentivise.have_in_their_bag", {
+              in_carts: numeral(this.in_carts).format("0a"),
+            })
           : "";
 
       for (const condition of conditions) {
