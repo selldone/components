@@ -24,8 +24,8 @@
       <v-list-subheader>
         {{
           isAdmin
-            ? $t("global.order_chat.seller.history_title")
-            : $t("global.order_chat.customer.history_title")
+            ? $t("global.order_chat.seller.history.subtitle")
+            : $t("global.order_chat.customer.history.subtitle")
         }}
       </v-list-subheader>
       <s-order-chat-message
@@ -49,8 +49,8 @@
       <v-list-subheader>
         {{
           isAdmin
-            ? $t("global.order_chat.seller.input_message")
-            : $t("global.order_chat.customer.input_message")
+            ? $t("global.order_chat.seller.new_message.subtitle")
+            : $t("global.order_chat.customer.new_message.subtitle")
         }}
       </v-list-subheader>
 
