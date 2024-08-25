@@ -263,10 +263,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BOrderCart from "../../cart/BOrderCart.vue";
 import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
-import { Basket, PriceHelper } from "@selldone/core-js";
+import { Basket, BasketItem, PriceHelper } from "@selldone/core-js";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import BOrderPaymentActionsRefundButton from "@selldone/components-vue/backoffice/order/payment/actions/refund/button/BOrderPaymentActionsRefundButton.vue";
 
@@ -417,8 +417,16 @@ export default {
 
       this.$emit("confirm-order", {
         list: list,
-        callback: () => {
+        callback: (success: boolean, items: BasketItem[]) => {
           this.busy = false;
+
+          // Real time update!
+          if (items) {
+            this.items.forEach((item) => {
+              const new_item = items.find((i) => i.id === item.id);
+              item.check = new_item.check;
+            });
+          }
         },
       });
     },

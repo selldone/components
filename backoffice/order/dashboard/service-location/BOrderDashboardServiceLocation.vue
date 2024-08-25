@@ -299,7 +299,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderReceiverInfoCard from "../../../../storefront/order/receiver-info/card/SOrderReceiverInfoCard.vue";
 import SOrderBillCard from "../../../../storefront/order/billing/card/SOrderBillCard.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
@@ -457,9 +457,11 @@ export default {
       this.$emit("set-tracking", {
         tracking_code: this.tracking_code,
         tracking_url: this.tracking_url,
-        callback: () => {
+        callback: (success: boolean) => {
           this.busy_set_tracking = false;
-          this.track_expanded = false;
+          if (success) {
+            this.track_expanded = false;
+          }
         },
       });
     },

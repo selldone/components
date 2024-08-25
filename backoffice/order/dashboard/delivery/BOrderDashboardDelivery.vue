@@ -122,13 +122,7 @@
 
       <!-- Send by delivery service -->
 
-      <div
-        v-if="
-          !noService &&
-          transportation_services?.length &&
-          !is_pickup
-        "
-      >
+      <div v-if="!noService && transportation_services?.length && !is_pickup">
         <h3 class="mt-5">
           <v-icon class="me-1" color="black">looks_two</v-icon>
           {{ $t("order_delivery.option_add_to_que") }}
@@ -197,9 +191,7 @@
 
         <!-- ========================================= Delivery Service ========================================= -->
 
-        <template
-          v-if="in_this_step && transportation_services?.length"
-        >
+        <template v-if="in_this_step && transportation_services?.length">
           <h3 class="mt-5">
             <v-icon class="me-1" color="black">looks_3</v-icon>
             {{ $t("order_delivery.option_instant_shipping") }}
@@ -231,9 +223,8 @@
 
               <template v-slot:item="{ item, props }">
                 <v-list-item
-                    v-bind="props"
-
-                    :title="item.raw.delivery_service.name"
+                  v-bind="props"
+                  :title="item.raw.delivery_service.name"
                   class="text-start"
                 >
                   <template v-slot:prepend>
@@ -249,13 +240,17 @@
             </v-select>
           </div>
           <v-expand-transition>
-            <div v-if="transportation && selected_transportation_service" :key="selected_transportation_service?.id">
-
+            <div
+              v-if="transportation && selected_transportation_service"
+              :key="selected_transportation_service?.id"
+            >
               <b-transportation-service-labels
                 :auto-calculate-rates="in_this_step"
                 :baskets="baskets"
                 :transportation-service="selected_transportation_service"
-                :delivery-service="selected_transportation_service.delivery_service"
+                :delivery-service="
+                  selected_transportation_service.delivery_service
+                "
                 :shop="shop"
                 :vendor="vendor"
                 :transportation="transportation"
@@ -487,6 +482,8 @@
               append-inner-icon="link"
               flat
               variant="solo-filled"
+              :rules="[GlobalRules.url()]"
+              placeholder="Enter full address here. e.g. https://track..."
             />
 
             <div class="widget-buttons">
@@ -594,8 +591,7 @@
                       params: {
                         transportation_id:
                           transportation_order.transportation_id,
-                        service_id:
-                          transportation_order.service.id,
+                        service_id: transportation_order.service.id,
                       },
                     }
                   : {
@@ -603,8 +599,7 @@
                       params: {
                         transportation_id:
                           transportation_order.transportation_id,
-                        service_id:
-                          transportation_order.service.id,
+                        service_id: transportation_order.service.id,
                       },
                     }
               "
@@ -736,7 +731,11 @@
       <v-card-text>
         {{ $t("process_center.delivered_dialog.message") }}
 
-        <u-smart-verify v-model="accept_action" class="my-3"></u-smart-verify>
+        <u-smart-verify v-model="accept_action" class="my-3"
+        :true-title="$t('order_delivery.verify_delivery_input.true_title')"
+                        :true-description="$t('order_delivery.verify_delivery_input.true_description')"
+
+        ></u-smart-verify>
       </v-card-text>
 
       <v-card-actions>
@@ -759,7 +758,6 @@
             @click="toCustomer()"
             prepend-icon="where_to_vote"
           >
-
             {{ $t("process_center.delivered_dialog.confirm_action") }}
           </v-btn>
         </div>
@@ -816,7 +814,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderReceiverInfoCard from "../../../../storefront/order/receiver-info/card/SOrderReceiverInfoCard.vue";
 import SOrderBillCard from "../../../../storefront/order/billing/card/SOrderBillCard.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
@@ -827,14 +825,12 @@ import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
 import DeliveryTimelineTransportationOrder from "../../../../storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import { ETA } from "@selldone/core-js/enums/logistic/ETA";
-import _ from "lodash-es";
 import UDenseCirclesUsers from "../../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
 import { Basket } from "@selldone/core-js";
-import BTransportationServiceLabels
-  from "@selldone/components-vue/backoffice/transportation/service/labels/BTransportationServiceLabels.vue";
+import BTransportationServiceLabels from "@selldone/components-vue/backoffice/transportation/service/labels/BTransportationServiceLabels.vue";
 
 export default {
   name: "BOrderDashboardDelivery",
@@ -865,7 +861,7 @@ export default {
       require: true,
       type: Object,
     },
-    vendor:{},
+    vendor: {},
     basket: {
       require: true,
       type: Object,
@@ -918,11 +914,14 @@ export default {
     },
 
     has_shipping_services() {
-      return !this.IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/ || !!this.shop.marketplace?.shipping /*Marketplace enable shipping for vendors*/
+      return (
+        !this.IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/ ||
+        !!this.shop.marketplace?.shipping
+      ); /*Marketplace enable shipping for vendors*/
     },
 
-    warehouse(){
-      return this.IS_VENDOR_PANEL? this.vendor.warehouse:this.shop.warehouse
+    warehouse() {
+      return this.IS_VENDOR_PANEL ? this.vendor.warehouse : this.shop.warehouse;
     },
 
     baskets() {
@@ -1027,7 +1026,7 @@ export default {
     },
 
     transportations() {
-      if(this.vendor)   return this.vendor.transportations;
+      if (this.vendor) return this.vendor.transportations;
       return this.shop.transportations;
     },
 
@@ -1045,11 +1044,11 @@ export default {
       );
     },
 
- /*   delivery_services_id() {
-      return this.transportation && this.transportation.info
-        ? this.transportation.info.service_ids
-        : [];
-    },*/
+    /*   delivery_services_id() {
+         return this.transportation && this.transportation.info
+           ? this.transportation.info.service_ids
+           : [];
+       },*/
 
     transportation_icon() {
       if (
@@ -1061,12 +1060,12 @@ export default {
     },
 
     transportation_services() {
-      return  this.transportation?.transportation_services
+      return this.transportation?.transportation_services;
 
-   /*   if (!this.shop.delivery_services) return [];
-      return this.shop.delivery_services.filter((i) =>
-        this.delivery_services_id.includes(i.id),
-      );*/
+      /*   if (!this.shop.delivery_services) return [];
+         return this.shop.delivery_services.filter((i) =>
+           this.delivery_services_id.includes(i.id),
+         );*/
     },
 
     has_eta_weekday() {
@@ -1139,28 +1138,30 @@ export default {
       this.$emit("set-tracking", {
         tracking_code: this.tracking_code,
         tracking_url: this.tracking_url,
-        callback: () => {
+        callback: (success: boolean) => {
           this.busy_set_tracking = false;
-          this.track_expanded = false;
+          if (success) {
+            this.track_expanded = false;
+          }
         },
       });
     },
 
     autoSelectService(force) {
       if (
-          (this.selected_transportation_service && !force) ||
+        (this.selected_transportation_service && !force) ||
         !this.in_this_step ||
         !this.transportation_services?.length
       )
         return;
 
       this.selected_transportation_service = this.transportation_services[0];
-/*
-      this.selected_transportation_service = null;
-      _.delay(() => {
-        this.selected_transportation_service = this.transportation_services[0];
-
-      }, 1000);*/
+      /*
+            this.selected_transportation_service = null;
+            _.delay(() => {
+              this.selected_transportation_service = this.transportation_services[0];
+      
+            }, 1000);*/
     },
   },
   created() {

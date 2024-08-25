@@ -362,7 +362,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderDeliveryState from "../../../storefront/order/delivery-state/SOrderDeliveryState.vue";
 
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
@@ -378,7 +378,7 @@ import BOrderConnectsList from "../../order/connect/list/BOrderConnectsList.vue"
 
 import BOrderDashboardDropshippingDelivery from "../../order/dashboard/dropshipping/delivery/BOrderDashboardDropshippingDelivery.vue";
 import BOrderVendorPaymentManagement from "../../order/vendor/payment/BOrderVendorPaymentManagement.vue";
-import { Basket, Order } from "@selldone/core-js";
+import {AvocadoItem, Basket, BasketItem, Order} from "@selldone/core-js";
 import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 import BShopCustomerBox from "@selldone/components-vue/backoffice/customer/box/BShopCustomerBox.vue";
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
@@ -602,7 +602,7 @@ export default {
   methods: {
     //―――――――――――――――― Order ▶ Update basket status ――――――――――――――――
 
-    updateState(state, list, callback = null, delivery_info = null) {
+    updateState(state, list, callback :(success:boolean,items:BasketItem[]|AvocadoItem[])=>void= null, delivery_info = null) {
       this.busy_update_state = true;
       axios
         .post(
@@ -634,6 +634,7 @@ export default {
         .then(({ data }) => {
           if (data.error) {
             this.showErrorAlert(null, data.error_msg);
+            if(callback) callback(false);
           } else {
             this.showSuccessAlert(
               null,
@@ -643,7 +644,7 @@ export default {
             );
 
             this.basket.delivery_state = data.delivery_state;
-            this.basket.delivery_at = data.delivery_at; // If exist!
+            this.basket.delivery_at = data.delivery_at; // If existed!
             this.$emit("fetch-order"); //optional!
 
             // ☢ Remove basket from shipping que:
@@ -658,14 +659,16 @@ export default {
                 this.onDeleteLogisticSendingOrderQue(found_in_que);
               }
             }
+            if(callback) callback(true,data.items);
           }
         })
         .catch((error) => {
           this.showLaravelError(error);
+          if(callback) callback(false);
         })
         .finally(() => {
           this.busy_update_state = false;
-          callback();
+
         });
     },
     //―――――――――――――――― Drop shipping ▶ Check fulfillment by middle seller ――――――――――――――――
@@ -909,7 +912,7 @@ export default {
     },
     //―――――――――――――――― Delivery  ▶ Set tracking info manually ――――――――――――――――
 
-    setTracking(tracking_code, tracking_url, callback) {
+    setTracking(tracking_code, tracking_url, callback: (success:boolean)=>void) {
       axios
         .put(
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -935,6 +938,7 @@ export default {
         .then(({ data }) => {
           if (data.error) {
             this.showErrorAlert(null, data.error_msg);
+            if (callback) callback(false);
           } else {
             this.showSuccessAlert(
               null,
@@ -943,13 +947,15 @@ export default {
               ),
             );
             this.basket.delivery_info = data.delivery_info;
+            if (callback) callback(true);
           }
         })
         .catch((error) => {
           this.showLaravelError(error);
+          if (callback) callback(false);
         })
         .finally(() => {
-          if (callback) callback();
+
         });
     },
 

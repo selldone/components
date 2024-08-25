@@ -362,11 +362,11 @@
         variant="flat"
       >
         <v-icon start>check_circle</v-icon>
-        Available
+        {{$t('global.commons.available')}}
       </v-chip>
       <v-chip v-else color="red" pill size="x-small" variant="flat">
         <v-icon start>cancel</v-icon>
-        Not available
+        {{$t('global.commons.not_available')}}
       </v-chip>
 
       <v-btn
@@ -486,7 +486,7 @@
       </div>
     </template>
     <template v-slot:bottom>
-      <v-pagination v-model="page" :length="pageCount" class="my-5" rounded />
+      <v-pagination v-if="pageCount>1" v-model="page" :length="pageCount" class="my-5" rounded  />
     </template>
   </v-data-table>
 
@@ -654,7 +654,7 @@ export default {
     },
 
     pageCount() {
-      return Math.ceil(this.totalItems / this.itemsPerPage);
+      return Math.ceil(this.items.length / this.itemsPerPage);
     },
 
     size_unit() {
