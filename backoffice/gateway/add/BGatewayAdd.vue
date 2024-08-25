@@ -33,8 +33,8 @@
       <u-currency-input
         v-model="gateway.currency"
         disabled
-        label="Currency"
-        messages="The currency that this payment gateway supports."
+        :label="$t('global.commons.currency')"
+        :messages="$t('edit_gateway.currency_input.message')"
         variant="underlined"
       ></u-currency-input>
 
@@ -42,7 +42,7 @@
         v-model="gateway.code"
         append-inner-icon="fa:fas fa-copyright"
         disabled
-        label="Gateway Code"
+        :label="$t('edit_gateway.gateway_code') "
         variant="underlined"
       />
       <s-widget-header :title="$t('edit_gateway.status_title')" icon="flaky">
@@ -59,7 +59,7 @@
         class="my-3"
         false-gray
         false-icon="credit_card_off"
-        true-description="Your customers can pay with this payment method."
+        :true-description="$t('edit_gateway.status_true_description')"
         true-icon="check_circle"
       />
 
@@ -98,7 +98,7 @@
         </u-pods-panel>
 
         <v-list-subheader>
-          Hold payment only available for :
+          {{$t('edit_gateway.hold_only_for') }}:
 
           <v-chip class="ma-1" color="#FFF" variant="flat" label size="small"
             ><img
@@ -122,12 +122,12 @@
           v-model="manual"
           :disabled="!enable"
           class="my-3"
-          false-description="The payment status will be changed automatically from pending to confirmed in the payment provider system."
+          :false-description="$t('edit_gateway.manual_input.false_description')  "
           false-icon="published_with_changes"
-          false-title="Auto paymentconfirmation"
-          true-description="Place a hold on a payment so you need to verify the payments for an order to change their status from pending to confirmed in the payment provider system."
+          :false-title="$t('edit_gateway.manual_input.false_title')"
+          :true-description="$t('edit_gateway.manual_input.true_description')"
           true-icon="hourglass_empty"
-          true-title="Hold payments and Manual confirmation"
+          :true-title="$t('edit_gateway.manual_input.true_title')"
         />
       </template>
     </div>
@@ -335,12 +335,13 @@
       class="widget-box mb-5 border-top-medium"
     >
       <s-widget-header
-        :title="$t('edit_gateway.developer_setting')"
+        :title="$t('edit_gateway.debug.title')"
         icon="code"
       ></s-widget-header>
 
       <v-list-subheader>
-        You can enable the debug mode to test the payment gateway.
+        {{$t("edit_gateway.debug.subtitle")}}
+
       </v-list-subheader>
       <u-smart-switch
         v-model="debug"
