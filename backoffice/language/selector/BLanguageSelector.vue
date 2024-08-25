@@ -48,15 +48,16 @@
         :rounded="$vuetify.display.xs ? 't-xl b-0' : 'lg'"
         color="#f9f9f9"
         flat
+        class="text-start"
       >
-        <v-card-title class="text-capitalize" style="min-height: 100px">
+        <v-card-title class="text-capitalize d-flex align-center" style="min-height: 100px">
           <v-btn color="#fff" icon="" variant="flat" @click="reject_change()">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text
           :style="$vuetify.display.xs ? '' : 'height: 60vh;max-height: 460px'"
-          class="d-flex flex-column"
+          class="d-flex flex-column text-center"
           style="color: #222222"
         >
           <div
@@ -120,14 +121,13 @@
               {{ $t("global.actions.cancel") }}
             </v-btn>
 
-            <v-btn color="primary" size="x-large" @click="accept_change()">
-              <v-icon class="me-1">check</v-icon>
+            <v-btn color="primary" size="x-large" variant="elevated" @click="accept_change()">
+              <v-icon start>check</v-icon>
               Let's go
               {{ selected_language_object.title }} *
             </v-btn>
           </div>
         </v-card-actions>
-        <small class="mb-2">* Not recommended for now!</small>
       </v-card>
     </component>
   </div>
