@@ -18,8 +18,10 @@
       :color="SaminColorDark"
       class="b--cluster-panel-button tnt"
       @click="dialog = true"
+      :stacked="$vuetify.display.xs"
+      elevation="3"
     >
-      <v-icon class="me-1" size="small">workspaces</v-icon>
+      <v-icon class="me-sm-1 me-0 mb-sm-0 mb-1" size="small">workspaces</v-icon>
 
       {{ $t("global.commons.resources") }}
     </v-btn>
@@ -413,6 +415,14 @@ export default {
     z-index: 0;
 
     border-radius: 0 0 12px 12px;
+
+    @media only screen and (max-width: 480px) {
+      font-size: 10px;
+      padding: 4px;
+      height: 56px;
+      top: 4px;
+      border-radius: 12px;
+    }
   }
 }
 </style>
