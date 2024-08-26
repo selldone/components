@@ -374,93 +374,93 @@ export default {
       {
         value:
           "A softly lit, seamless white backdrop with gentle shadows and a subtle gradient effect, ideal for highlighting clean and modern product designs.",
-        src: require("./assets/A softly lit, seamless white backdrop with gentle shadows and a subtle gradient effect. The background is smooth and clean, ideal for highlighting mod.webp"),
+        src: require("./assets/a-softly-lit-seamless-white-backdrop-with-gentle-shadows.webp"),
       },
       {
         value:
           "A soft pastel-colored studio background with a smooth, curved surface and diffused lighting, creating a calm and inviting atmosphere for delicate or luxury products.",
-        src: require("./assets/A soft pastel-colored studio background with a smooth, curved surface and diffused lighting. The colors are gentle and calming, creating an inviting a.webp"),
+        src: require("./assets/a-soft-pastel-colored-studio-background-with-a-smooth.webp"),
       },
       {
         value:
           "A neutral-toned studio setup with a light beige backdrop and a subtle spotlight effect, perfect for bringing attention to the details of premium or handcrafted items.",
-        src: require("./assets/A neutral-toned studio setup with a light beige backdrop and a subtle spotlight effect. The background is simple and elegant, with the light creating .webp"),
+        src: require("./assets/a-neutral-toned-studio-setup-with-a-light-beige-backdrop .webp"),
       },
       {
         value:
           "A scene , product studio, with colorful persian mosaic tile designs, viewed from the side. The mosaic patterns create a vibrant backdrop,  leaving the center clear for product placement.",
-        src: require("./assets/A product studio scene featuring colorful Persian mosaic tile designs, viewed from the side. The intricate and vibrant mosaic patterns serve as a rich.webp"),
+        src: require("./assets/a-product-studio-scene-featuring-colorful-persian-mosaic.webp"),
       },
 
       {
         value:
           "A minimalist white marble countertop with soft natural sunlight streaming through a large window, casting gentle shadows, perfect for displaying luxury skincare products.",
-        src: require("./assets/A minimalist white marble countertop with subtle veining, set in a bright room with large windows. Soft natural sunlight streams through the windows.webp"),
+        src: require("./assets/a-minimalist-white-marble-countertop-with-subtle-veining.webp"),
       },
       {
         value:
           "A rustic wooden table set in a cozy kitchen, with warm, ambient lighting and a vase of fresh flowers in the background, ideal for showcasing handmade kitchenware.",
-        src: require("./assets/A rustic wooden table set in a cozy, warmly lit kitchen. The table features a natural wood grain with a slightly weathered finish, giving it a charmin.webp"),
+        src: require("./assets/a-rustic-wooden-table-set-in-a-cozy-warmly-lit-kitchen.webp"),
       },
       {
         value:
           "A sleek, modern living room with a clean-lined sofa and a coffee table, bathed in soft afternoon light, perfect for highlighting contemporary home decor items.",
-        src: require("./assets/A sleek, modern living room featuring a clean-lined, minimalist sofa in neutral tones, positioned against a simple, elegant backdrop. A contemporary c.webp"),
+        src: require("./assets/a-sleek-modern-living-room-featuring-a-clean-lined-minimalist.webp"),
       },
       {
         value:
           "A serene outdoor garden scene with a small wooden deck, surrounded by lush greenery and soft dappled sunlight, ideal for presenting eco-friendly products.",
-        src: require("./assets/A serene outdoor garden scene featuring a small wooden deck surrounded by lush, vibrant greenery. The deck is nestled within a natural setting, with s.webp"),
+        src: require("./assets/a-serene-outdoor-garden-scene-featuring-a-small-wooden.webp"),
       },
       {
         value:
           "A stylish bathroom with a marble sink and gold accents, with soft, diffused lighting, perfect for displaying premium grooming or beauty products.",
-        src: require("./assets/A stylish bathroom featuring a sleek marble sink with a polished finish, complemented by elegant gold accents such as faucets and handles. The space i.webp"),
+        src: require("./assets/a-stylish-bathroom-featuring-a-sleek-marble-sink-with-a-polished.webp"),
       },
       {
         value:
           "A modern kitchen island with polished concrete surfaces and subtle under-cabinet lighting, ideal for showcasing high-end kitchen gadgets or appliances.",
-        src: require("./assets/A modern kitchen featuring a central island with polished concrete surfaces that have a smooth, refined finish. The island is complemented by subtle u.webp"),
+        src: require("./assets/a-modern-kitchen-featuring-a-central-island-with-polished.webp"),
       },
       {
         value:
           "A cozy bedroom scene with a neatly made bed, soft linens, and a bedside table with a small lamp, perfect for presenting sleep-related products.",
-        src: require("./assets/A cozy bedroom scene featuring a neatly made bed with soft, inviting linens in neutral tones. The bed is positioned against a simple, calming backdrop.webp"),
+        src: require("./assets/a-cozy-bedroom-scene-featuring-a-neatly-made-bed.webp"),
       },
       {
         value:
           "A clean, white desk setup with a sleek laptop, a few minimalist office accessories, and soft lighting from a nearby window, ideal for showcasing tech gadgets.",
-        src: require("./assets/A clean, white desk setup featuring a sleek, modern laptop at the center. The desk is minimalistic, with only a few carefully chosen office accessorie.webp"),
+        src: require("./assets/a-clean-white-desk-setup-featuring-a-sleek-modern-laptop.webp"),
       },
       {
         value:
           "A luxurious dining table set with elegant tableware and a centerpiece of fresh flowers, with ambient evening lighting, perfect for showcasing dining products.",
-        src: require("./assets/A luxurious dining table elegantly set with fine tableware, including polished plates, crystal glassware, and silver cutlery. At the center of the tab.webp"),
+        src: require("./assets/a-luxurious-dining-table-elegantly-set-with-fine-tableware.webp"),
       },
       {
         value:
           "A calm beach scene with a wooden boardwalk leading to the ocean, with soft sunlight and gentle waves, ideal for presenting outdoor or summer products.",
-        src: require("./assets/A calm beach scene featuring a wooden boardwalk that stretches towards the ocean. The boardwalk is weathered but sturdy, leading through soft sand tow.webp"),
+        src: require("./assets/a-calm-beach-scene-featuring-a-wooden-boardwalk-that-stretches.webp"),
       },
       {
         value:
           "A high-rise city balcony at dusk, with twinkling city lights in the background and a small table set with a cup of coffee, perfect for showcasing urban lifestyle products.",
-        src: require("./assets/A high-rise city balcony at dusk, overlooking a sprawling urban landscape with twinkling city lights in the distance. The balcony features a small, st.webp"),
+        src: require("./assets/a-high-rise-city-balcony-at-dusk-overlooking-a-sprawling.webp"),
       },
       {
         value:
           "A vintage-style study with a wooden desk, an antique globe, and warm, ambient lighting from a desk lamp, ideal for displaying classic stationery or books.",
-        src: require("./assets/A vintage-style study featuring a rich wooden desk with an antique finish. On the desk sits an antique globe with detailed maps, along with classic st.webp"),
+        src: require("./assets/a-vintage-style-study-featuring-a-rich-wooden-desk-with-an-antique-finish.webp"),
       },
       {
         value:
           "A serene yoga studio with a clean wooden floor, soft natural light, and a few strategically placed plants, perfect for showcasing wellness or fitness products.",
-        src: require("./assets/A serene yoga studio with a clean, polished wooden floor that exudes warmth and simplicity. Soft natural light floods the room, creating a calm and in.webp"),
+        src: require("./assets/a-serene-yoga-studio-with-a-clean-polished-wooden.webp"),
       },
       {
         value:
           "A chic, minimalist coffee shop with modern seating and a barista counter in the background, with soft morning light, ideal for presenting gourmet coffee or accessories.",
-        src: require("./assets/A chic, minimalist coffee shop featuring sleek, modern seating in neutral tones. In the background, a stylish barista counter is visible, with clean l.webp"),
+        src: require("./assets/a-chic-minimalist-coffee-shop-featuring-sleek-modern.webp"),
       },
     ],
   }),
