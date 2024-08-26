@@ -18,13 +18,7 @@
       v-if="!$store.getters.getIsNative && shop"
       :class="{ 'text-white': is_dark, '-dark': is_dark }"
       :color="
-        color
-          ? color
-          : transparent_header || overlay
-            ? 'transparent'
-            : is_light_header
-              ? 'var(--background)'
-              : SaminColorDark
+       HEADER_COLOR
       "
       :extended="!overlay"
       :style="{
@@ -71,12 +65,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SStorefrontLotteryWheelOfFortune from "../../../storefront/lottery/wheel-of-fortune/SStorefrontLotteryWheelOfFortune.vue";
 import SHeaderSectionLogo from "../../../storefront/header/section/logo/SHeaderSectionLogo.vue";
 import SHeaderSectionDrawerMenu from "@selldone/components-vue/storefront/header/section/drawer-menu/SHeaderSectionDrawerMenu.vue";
 import SHeaderSectionButtons from "@selldone/components-vue/storefront/header/section/buttons/SHeaderSectionButtons.vue";
 import SHeaderSectionUser from "@selldone/components-vue/storefront/header/section/user/SHeaderSectionUser.vue";
+import {ThemeHelper} from "@selldone/core-js";
 
 export default {
   name: "SHeaderSection",
@@ -167,6 +162,17 @@ export default {
         ? this.theme.title
         : this.shop.title;
     },
+
+
+    HEADER_COLOR(){
+      return this. color
+          ? this.color
+          : this.transparent_header || this.overlay
+              ? 'transparent'
+              : this.is_light_header
+                  ? 'var(--background)'
+                  : this.SaminColorDark
+    }
   },
 
   watch: {
@@ -180,9 +186,18 @@ export default {
         this.darkHeader = null; // Default value is null!
       }
     },
+
+    HEADER_COLOR(color){
+      //console.log('HEADER_COLOR --------> Watch -> Change Color Meta', color);
+      // We try to set header color to meta theme color (for iphone)
+      ThemeHelper.SetMetaThemeColor(color);
+    }
   },
 
-  created() {},
+  created() {
+    //console.log('HEADER_COLOR --------> Created -> Change Color Meta', this.HEADER_COLOR);
+    ThemeHelper.SetMetaThemeColor(this.HEADER_COLOR);
+  },
 
   mounted() {},
   beforeUnmount() {},
