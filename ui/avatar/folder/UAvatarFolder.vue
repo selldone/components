@@ -28,7 +28,7 @@
       :style="{ 'border-radius': `${border_radius - 2}px` }"
       cover
       :class="{'elevation-3':elevated}"
-      class="hover-scale"
+      class="hover-scale force-top"
     >
       <v-img v-if="src" :src="getShopImagePath(src)">
         <template v-slot:placeholder>
