@@ -106,45 +106,49 @@
       <v-icon size="small">leaderboard</v-icon>
     </template>
 
-    <template v-slot:item.image="{ item }">
-      <template
-        v-if="$vuetify.display.smAndDown && item.parent?.category?.icon"
-      >
+    <template v-slot:item.title="{ item }">
+      <div class="min-width-200 max-w-300 py-1 d-flex align-center">
         <u-avatar-folder
-          :caption="item.parent.category.category"
-          :src="item.parent.category.icon?getShopImagePath(item.parent.category.icon):undefined"
-          class="my-1"
-          is-amber
-          side-icon="devices_fold"
+          class="rounded-18px"
+          color="#ccc"
+          :size="62"
+          is-gray
+          :src="getShopImagePath(item.image, 128)"
+          placeholder-icon="document_scanner"
           elevated
+          side-icon="edit_note"
         >
         </u-avatar-folder>
 
-        <img
-          class="mx-2"
-          height="12"
-          src="../../../assets/icons/wire.svg"
-          width="12"
-        />
-      </template>
+        <template
+          v-if="$vuetify.display.smAndDown && item.parent?.category?.icon"
+        >
+          <img
+            class="mx-2"
+            height="12"
+            src="../../../assets/icons/wire.svg"
+            width="12"
+          />
+          <u-avatar-folder
+            :caption="item.parent.category.category"
+            :src="
+              item.parent.category.icon
+                ? getShopImagePath(item.parent.category.icon)
+                : undefined
+            "
+            :size="62"
+            is-amber
+            side-icon="devices_fold"
+            elevated
+          >
+          </u-avatar-folder>
+        </template>
 
-      <v-avatar
-        class="rounded-18px my-1 hover-scale-small"
-        color="#ccc"
-        size="62"
-        variant="outlined"
-      >
-        <v-img v-if="item.image" :src="getShopImagePath(item.image, 128)" cover>
-          <template v-slot:placeholder>
-            <s-image-placeholder></s-image-placeholder>
-          </template>
-        </v-img>
-        <v-icon v-else color="#ccc" size="x-large">document_scanner</v-icon>
-      </v-avatar>
-    </template>
-
-    <template v-slot:item.title="{ item }">
-      <div class="min-width-200 max-w-300 py-1">
+        <div v-if="!$vuetify.display.smAndDown" class="ms-2">
+          {{ item.title }}
+        </div>
+      </div>
+      <div v-if="$vuetify.display.smAndDown" class="text-start">
         {{ item.title }}
       </div>
     </template>
@@ -157,7 +161,11 @@
       <u-avatar-folder
         v-if="item.parent?.category?.icon"
         :caption="item.parent.category.category"
-        :src="item.parent.category.icon?getShopImagePath(item.parent.category.icon):undefined"
+        :src="
+          item.parent.category.icon
+            ? getShopImagePath(item.parent.category.icon)
+            : undefined
+        "
         class="my-1"
         is-amber
         side-icon="devices_fold"
@@ -301,7 +309,7 @@
         <template v-if="$vuetify.display.mdAndUp">
           <v-icon size="small">open_in_new</v-icon>
           <div class="tnt absolute-bottom-center x-small" style="bottom: 0px">
-            {{$t('global.actions.open')}}
+            {{ $t("global.actions.open") }}
           </div>
         </template>
         <template v-else>
@@ -364,14 +372,6 @@ export default {
 
     headers() {
       return [
-        {
-          title: "",
-          align: "center",
-          sortable: false,
-          value: "image",
-          width: 100,
-          nowrap: true,
-        },
         {
           title: this.$t("admin_shop.blogs.list.table.title"),
           align: "start",

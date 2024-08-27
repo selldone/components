@@ -28,6 +28,7 @@
       :style="{ 'border-radius': `${border_radius - 2}px` }"
       cover
       :class="{'elevation-3':elevated}"
+      class="hover-scale"
     >
       <v-img v-if="src" :src="getShopImagePath(src)">
         <template v-slot:placeholder>
@@ -51,7 +52,7 @@
     <div
       v-if="!hideSideIcon"
       :style="{ backgroundImage: bg }"
-      class="absolute-bottom-end-0 rounded-ts-circle h-auto w-auto pe-2 pb-2"
+      class="absolute-bottom-end-0 rounded-ts-circle h-auto w-auto pe-2 pb-2 pen"
 
       style="background-size: 300% 300%; line-height: 0 ;padding: 6px"
     >
@@ -71,7 +72,7 @@
 
     <div
       v-if="caption"
-      class="single-line s---title"
+      class="single-line s---title pen"
       style="background: inherit"
     >
       {{ caption }}
