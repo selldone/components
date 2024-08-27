@@ -35,7 +35,7 @@
 
 
 
-    "@kyvg/vue3-notification": "^3.2.1",
+    "@kyvg/vue3-notification": "^3.3.0",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@tweenjs/tween.js": "^25.0.0",
     "@zxing/library": "^0.21.2",
@@ -91,8 +91,8 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
 
-    "@typescript-eslint/eslint-plugin": "^8.2.0",
-    "@typescript-eslint/parser": "^8.2.0",
+     "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
     "eslint": "^9.9.1",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
