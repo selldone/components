@@ -355,6 +355,7 @@
         color="red"
         label
         size="small"
+        variant="elevated"
       >
         <v-icon start>delete</v-icon>
         {{ getFromNowString(productVariant.deleted_at) }}
