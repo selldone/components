@@ -833,3 +833,10 @@ Make v-btn flex to put prepend and append in start and end of button
   }
 
 }
+
+// Prevent wrap counter on text input:
+.v-input{
+  .v-counter{
+    white-space: nowrap;
+  }
+}

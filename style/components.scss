@@ -4619,6 +4619,9 @@ canvas.heatmap-canvas {
 
 // Rounded decoration for v-btn-toggle:
 .widget-toggle {
+overflow: auto;
+  justify-content: start;
+  scrollbar-width: thin;
 
   border-radius: 28px !important;
   padding: 8px;
@@ -4626,7 +4629,6 @@ canvas.heatmap-canvas {
   background-color: #fafafa;
   display: flex !important; // V-toggle is inline flex! so we consider this as default!
   align-items: stretch;
-  justify-content: center;
   transition: all 0.3s ease-in-out;
   font-weight: 500;
   font-size: 12px;

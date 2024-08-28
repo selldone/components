@@ -61,7 +61,7 @@
           @click="$emit('update:withTrashed', !withTrashed)"
         >
           <v-list-item-title class="d-flex align-center"
-            >Show deleted items
+            >{{$t('smart_menu.show_delete_items')}}
             <v-spacer></v-spacer>
             <v-icon class="ms-1">delete_outline</v-icon>
           </v-list-item-title>

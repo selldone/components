@@ -16,11 +16,8 @@
   <v-container class="text-start">
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
-    <div>
-      <b>How it works? </b><br />
-      Upload pattern or item images here. To display these images as a variant
-      option, add <b>{filename}</b> to the variant value. You can not use the
-      code in <b><s>color</s></b> value.
+    <div v-html="$t('variant_graphical_assets.tips.how_it_works')">
+
     </div>
     <v-row no-gutters>
       <div class="woven-texture"></div>
@@ -28,14 +25,8 @@
       <div class="leather-texture"></div>
     </v-row>
 
-    <div>
-      <b>How set name?</b><br />
-      We use the first 12 characters of the uploaded file name as the asset
-      name. This option allows you to display customizable aspects of a product,
-      such as a motorcycle's tire size or fabric patterns. It is recommended to
-      avoid uploading images of variants here due to the limited maximum count
-      of variant graphical assets. This option should only be used if the number
-      of variant types, such as wood types of furniture, is fewer than 100.
+    <div v-html="$t('variant_graphical_assets.tips.how_set_name')">
+
     </div>
 
     <v-row align="center">

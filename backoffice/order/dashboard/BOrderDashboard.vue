@@ -76,13 +76,14 @@
         class="tnt me-3"
         color="#F44336"
         rounded
+        min-height="52"
         @click="dialog_reject = true"
       >
         <v-icon class="me-2" size="small">gavel</v-icon>
         <u-count-down
           v-if="!!basket.reject_at"
           :end="endOfRejectPeriod"
-          class="me-2 p-0"
+          class="mx-2"
         ></u-count-down>
 
         <span class="d-none d-sm-inline-block">{{
@@ -302,10 +303,10 @@
 
           <u-smart-switch
             v-model="reject_express"
-            true-title="Express | Cancel Order Immediately"
-            false-title="Normal | Cancel Order After 48 Hours"
-            true-description="This will cancel the order immediately and update inventory now."
-            false-description="This will cancel the order after 48 hours, so items will be locked until final cancellation."
+            :true-title="$t('process_order_page_dashboard.reject_dialog.express_input.true_title')"
+            :false-title="$t('process_order_page_dashboard.reject_dialog.express_input.false_title')"
+            :true-description="$t('process_order_page_dashboard.reject_dialog.express_input.true_description')"
+            :false-description="$t('process_order_page_dashboard.reject_dialog.express_input.false_description')"
             true-icon="flash_on"
             false-icon="timelapse"
             class="my-3"
@@ -805,6 +806,8 @@ export default {
             this.basket.reject = data.reject;
             this.basket.reject_at = data.reject_at;
             this.dialog_reject = false;
+
+            this.$emit("fetch-order"); // Force refresh order!
           }
         })
         .catch((error) => {
@@ -979,7 +982,7 @@ export default {
           } else {
             this.showSuccessAlert(
               null,
-              this.$t("Vendor fulfillment status successfully updated."),
+                this.$t("process_order_page_dashboard.notifications.vendor_order_status_update_success")
             );
 
             Object.assign(vendor_order, data.vendor_order);
@@ -1032,7 +1035,7 @@ export default {
               } else {
                 this.showSuccessAlert(
                   null,
-                  this.$t("Shipping address updated successfully."),
+                  this.$t("process_order_page_dashboard.notifications.shipping_address_update_success")
                 );
                 Object.assign(this.basket.receiver_info, data.receiver_info);
               }

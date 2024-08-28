@@ -50,7 +50,7 @@
       <v-card v-if="selected_image_alt">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1" color="#111">broken_image</v-icon>
-          Set Alternate Text for Image
+          {{ $t("product_images_gallery.dialog_alt.title") }}
         </v-card-title>
 
         <v-card-text>
@@ -68,7 +68,7 @@
               auto-grow
               label="Alt"
               persistent-placeholder
-              placeholder="Enter descriptive text for the image..."
+              :placeholder="$t('product_images_gallery.dialog_alt.placeholder')"
               variant="underlined"
             ></v-textarea>
           </div>
@@ -106,7 +106,7 @@
       <v-card v-if="selected_image_bg_remove">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1" color="#111">wallpaper</v-icon>
-          Auto Remove Background
+          {{ $t("product_images_gallery.dialog_bg_remove.title") }}
         </v-card-title>
 
         <v-card-text>
@@ -120,8 +120,12 @@
 
             <u-button-ai-large
               :loading="busy_ai"
-              sub-title="Create transparent background."
-              title="Remove Background"
+              :sub-title="
+                $t('product_images_gallery.dialog_bg_remove.action.subtitle')
+              "
+              :title="
+                $t('product_images_gallery.dialog_bg_remove.action.title')
+              "
               @select="removeBackground(selected_image_bg_remove)"
             >
             </u-button-ai-large>
@@ -346,7 +350,9 @@ export default {
 
             this.showSuccessAlert(
               null,
-              "Successfully updated the image alt text.",
+              this.$t(
+                "product_images_gallery.dialog_alt.success_update_notification",
+              ),
             );
             this.dialog_alt = false;
           } else {
@@ -388,7 +394,12 @@ export default {
             this.dialog_bg_remove = false;
             this.$forceUpdate();
 
-            this.showSuccessAlert(null, "Background removed successfully!");
+            this.showSuccessAlert(
+              null,
+              this.$t(
+                "product_images_gallery.dialog_alt.success_remove_bg_notification",
+              ),
+            );
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

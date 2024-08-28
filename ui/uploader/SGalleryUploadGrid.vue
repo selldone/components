@@ -131,7 +131,7 @@
         class="marginal-center"
         dense
         disable-past
-        label="Upload images"
+        :label="$t('gallery_upload_grid.upload_images')"
         @response="handleUploadAppImages"
       >
       </s-image-uploader>

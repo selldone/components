@@ -205,14 +205,14 @@
         <i class="fas fa-warning" />
         {{ $t("global.basket_delivery_state.rejected") }}
       </h2>
-      <small class="text-white"
-        ><i class="fas fa-stopwatch"></i> Time to cancel:
-      </small>
-      <u-count-down
-        v-if="basket.reject_at"
-        :end="endOfRejectPeriod"
-        class="me-2 p-0"
-      ></u-count-down>
+
+      <template v-if="basket.reject_at && basket.status !== 'Canceled'">
+        <small class="text-white"
+          ><i class="fas fa-stopwatch"></i> Time to cancel:
+        </small>
+        <u-count-down :end="endOfRejectPeriod" class="me-2 p-0"></u-count-down>
+      </template>
+
       <p>{{ reject_reason }}</p>
     </div>
   </div>

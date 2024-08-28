@@ -175,7 +175,16 @@
                       ? smartBeautify(compileMarkdown(item.data?.message))
                       : getTimelineStatus(item.type).text
                         ? smartBeautify(
-                            $t(getTimelineStatus(item.type).text, item.data),
+                            $t(
+                              getTimelineStatus(item.type).text,
+
+                              /*Interpretation of reject order reason*/
+                              ['reject-order-clear', 'reject-order'].includes(
+                                item.type,
+                              )
+                                ? getRejectReasonData(item)
+                                : item.data,
+                            ),
                           )
                         : item.type
                   "
@@ -408,7 +417,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import UTextMentionInput from "../../../ui/text/mention-input/UTextMentionInput.vue";
 import UDenseCirclesUsers from "../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations.ts";
@@ -418,7 +427,7 @@ import UMapGeoButton from "../../../ui/map/geo-button/UMapGeoButton.vue";
 import TimelineStatus from "@selldone/core-js/enums/timeline/TimelineStatus.ts";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import { TimelineEmailType } from "@selldone/core-js/enums/timeline/TimelineEmailType.ts";
-import { CampaignLink, Club } from "@selldone/core-js";
+import { CampaignLink, Club, Order } from "@selldone/core-js";
 
 export default {
   name: "BOrderTimeline",
@@ -884,6 +893,20 @@ export default {
 
       return out;
     },
+
+    getRejectReasonData(item: any) {
+      const rejectObj = Order.RejectReasons[item.data?.reject_code];
+
+      if (rejectObj) {
+        // Convert reject reason code to a human-readable note.
+        return {
+          reject_code: `<b>${this.$t(rejectObj.title)}</b>`,
+        };
+      }
+
+      return item.data;
+    }
+
   },
 };
 </script>

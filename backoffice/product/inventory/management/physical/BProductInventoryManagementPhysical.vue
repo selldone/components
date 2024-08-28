@@ -31,8 +31,8 @@
           <u-smart-menu
             :items="[
               {
-                title: 'Bulk Add',
-                subtitle: 'Add multiple variants in one action.',
+                title:$t('product_inventory_management_physical.menu.add_bulk.title'),
+                subtitle:$t('product_inventory_management_physical.menu.add_bulk.subtitle'),
                 icon: 'auto_fix_high',
                 disabled: add_by_dropShipping,
                 click: () => showBulkAdd(),

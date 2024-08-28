@@ -30,8 +30,8 @@
         :color="enable ? 'green' : 'red'"
         :title="
           enable
-            ? 'Available in the online store'
-            : 'This item not available in online store'
+            ? $t('product_variant_item.enable.true_tooltip')
+            : $t('product_variant_item.enable.false_tooltip')
         "
         size="small"
         >{{ enable ? "check_circle" : "cancel" }}
@@ -41,10 +41,12 @@
         class="mx-1"
         color="amber"
         size="x-small"
+        variant="elevated"
         title="There are multiple variants with the same values."
       >
         <v-icon class="blink-me-linear" size="x-small" start>warning</v-icon>
-        Duplicated variant!
+
+        {{ $t("product_variant_item.duplicated_variant") }}
       </v-chip>
     </div>
 
@@ -62,11 +64,12 @@
         "
         class="hover-scale-tiny"
         is-blue
-        tooltip="⚡ Drag and drop an image here to add it to the variant."
+        :tooltip="$t('product_variant_item.image.tooltip')"
         @dragend="dragleave"
         @dragleave="dragleave"
         @dragover="dragover"
         @drop="dropImage"
+        elevated
       >
         <v-progress-circular
           v-if="uploading"
@@ -115,7 +118,8 @@
           class="small text-red pa-1"
         >
           <v-icon color="red" size="small">warning_amber</v-icon>
-          Set color!
+
+          {{ $t("product_variant_item.set_color_warning") }}
         </div>
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Volume ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -143,7 +147,8 @@
           class="small text-red pa-1"
         >
           <v-icon color="red" size="small">warning_amber</v-icon>
-          Set volume!
+
+          {{ $t("product_variant_item.set_volume_warning") }}
         </div>
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Pack ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -172,7 +177,8 @@
           class="small text-red pa-1"
         >
           <v-icon color="red" size="small">warning_amber</v-icon>
-          Set pack!
+
+          {{ $t("product_variant_item.set_pack_warning") }}
         </div>
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Weight ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -201,7 +207,8 @@
           class="small text-red pa-1"
         >
           <v-icon color="red" size="small">warning_amber</v-icon>
-          Set weight!
+
+          {{ $t("product_variant_item.set_weight_warning") }}
         </div>
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Type ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -227,7 +234,8 @@
           class="small text-red pa-1"
         >
           <v-icon color="red" size="small">warning_amber</v-icon>
-          Set type!
+
+          {{ $t("product_variant_item.set_type_warning") }}
         </div>
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Style ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -254,7 +262,8 @@
           class="small text-red pa-1"
         >
           <v-icon color="red" size="small">warning_amber</v-icon>
-          Set style!
+
+          {{ $t("product_variant_item.set_style_warning") }}
         </div>
       </div>
     </div>
@@ -336,7 +345,8 @@
 
       <v-chip v-if="quantity <= 0" class="ma-1" color="red" label size="small">
         <v-icon start>error_outline</v-icon>
-        Out of stock
+
+        {{ $t("product_variant_item.out_of_stock") }}
       </v-chip>
 
       <v-chip
@@ -551,9 +561,10 @@ export default {
 
     showRestoreDialog() {
       this.openDangerAlert(
-        "Restore deleted variant",
-        "Do you want to restore this deleted variant?",
-        "Yes, Restore now",
+        this.$t("product_variant_item.restore_dialog.title"),
+
+        this.$t("product_variant_item.restore_dialog.message"),
+        this.$t("product_variant_item.restore_dialog.action"),
         () => {
           this.restoreProductVariant();
         },
@@ -688,7 +699,9 @@ export default {
         .then(({ variants, quantity, product_variant }) => {
           this.showSuccessAlert(
             null,
-            "The product variant was restored successfully.",
+            this.$t(
+              "product_variant_item.notifications.restore_variant_success",
+            ),
           );
           this.product.variants = variants;
           this.product.quantity = quantity;

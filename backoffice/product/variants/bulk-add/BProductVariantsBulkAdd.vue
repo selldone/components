@@ -24,17 +24,18 @@
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1" color="#111">auto_fix_high</v-icon>
-        Bulk add variants
+
+        {{$t('product_variants_bulk_add.title')}}
       </v-card-title>
       <v-card-text>
         <div class="widget-box mb-5">
           <s-widget-header
             icon="conveyor_belt"
-            title="Variants"
+            :title="$t('product_variants_bulk_add.variants.title') "
           ></s-widget-header>
           <v-list-subheader>
-            You have the option to choose up to two variants, after which you
-            can decide which variants you'd like to be automatically created.
+            {{$t('product_variants_bulk_add.variants.subtitle')}}
+
           </v-list-subheader>
 
           <u-smart-select
@@ -61,9 +62,9 @@
         </div>
 
         <div class="widget-box mb-5">
-          <s-widget-header icon="table_view" title="Values"></s-widget-header>
+          <s-widget-header icon="table_view" :title="$t('product_variants_bulk_add.values.title') "></s-widget-header>
           <v-list-subheader>
-            Input potential values for the variants here.
+            {{$t('product_variants_bulk_add.values.subtitle') }}
           </v-list-subheader>
 
           <b-product-variant-value-input
@@ -83,9 +84,8 @@
           </b-product-variant-value-input>
 
           <v-list-subheader>
-            <div>
-              <b>Important: </b>We verify existing variants and avoid adding any
-              that have matching values.
+            <div v-html="$t('product_variants_bulk_add.values.prevent_duplicates_tips')">
+
             </div>
           </v-list-subheader>
 
@@ -160,10 +160,11 @@
         </div>
 
         <div class="widget-box mb-5">
-          <s-widget-header icon="shelves" title="Inventory"></s-widget-header>
+          <s-widget-header icon="shelves" :title="$t('product_variants_bulk_add.inventory.title') "></s-widget-header>
 
           <v-list-subheader>
-            Set the initial inventory count for the newly created variants.
+            {{$t('product_variants_bulk_add.inventory.subtitle')}}
+
           </v-list-subheader>
 
           <u-number-input
@@ -188,9 +189,10 @@
             color="primary"
             size="x-large"
             @click="importVariants()"
+            variant="elevated"
           >
-            <v-icon class="me-1">check</v-icon>
-            Add variants ({{ add_variants_count }}🞫)
+            <v-icon start>check</v-icon>
+         {{$t('product_variants_bulk_add.add_variants_action')}}    ({{ add_variants_count }}🞫)
           </v-btn>
         </div>
       </v-card-actions>

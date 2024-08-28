@@ -32,9 +32,9 @@
               : getColor(i),
         }"
         :title="
-          `Min quantity: ${item.min} | Price: ${ConvertPriceToString(item.price, product.currency)} | Discount: ${item.discount}` +
+          `${$t('extra_pricing_levels.min_quantity')}: ${item.min} | ${$t('global.commons.price')}: ${ConvertPriceToString(item.price, product.currency)} | ${$t('global.commons.discount')}: ${item.discount}` +
           (inventoryQuantity !== null && item.min > inventoryQuantity
-            ? ' | 🍁 Range is out of stock!'
+            ? ` | 🍁 ${$t('extra_pricing_levels.range_is_out_of_stock')}`
             : '')
         "
         class="exp-item"
@@ -42,7 +42,7 @@
     </div>
     <small>
       <v-icon size="x-small">add</v-icon>
-      {{ extraPricings.length }} extra pricings.</small
+      {{ extraPricings.length }} {{$t('extra_pricing_levels.extra_pricings')}}.</small
     >
   </div>
 </template>

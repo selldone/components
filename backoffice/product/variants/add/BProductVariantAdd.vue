@@ -15,21 +15,20 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card class="font-weight-regular text-start">
     <v-card-title class="d-flex align-center">
-      <v-avatar
+      <u-avatar-folder
         v-if="productVariant?.image || product.icon"
         class="me-2"
         size="64"
+        :src="
+          getShopImagePath(
+            productVariant?.image ? productVariant.image : product.icon,
+            128,
+          )
+        "
+        is-gray
+        elevated
       >
-        <v-img
-          :src="
-            getShopImagePath(
-              productVariant?.image ? productVariant.image : product.icon,
-              128,
-            )
-          "
-          cover
-        />
-      </v-avatar>
+      </u-avatar-folder>
 
       <div class="flex-grow-1">
         <div>
@@ -54,13 +53,13 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅  Defining Product Variant ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div class="widget-box mb-5">
         <s-widget-header
-          :title="$t('product_admin.inventory.variant_add_edit.title')"
+          :title="$t('product_admin.inventory.variant_add_edit.config.title')"
           icon="tune"
         >
         </s-widget-header>
 
-        <v-list-subheader
-          >Set variant's SKU and MPN and toggle availability here.
+        <v-list-subheader>
+          {{ $t("product_admin.inventory.variant_add_edit.config.subtitle") }}
         </v-list-subheader>
 
         <u-smart-toggle
@@ -79,7 +78,9 @@
           :counter="48"
           :label="$t('product_admin.inventory.variant_add_edit.sku')"
           class="input-variant"
-          messages="Stock keeping unit"
+          :messages="
+            $t('product_admin.inventory.variant_add_edit.inputs.sku.message')
+          "
           required
           variant="underlined"
         >
@@ -103,7 +104,9 @@
           :disabled="!!product.connect_id"
           :label="$t('product_admin.inventory.variant_add_edit.mpn')"
           class="input-variant"
-          messages="Manufacturer Part Number"
+          :messages="
+            $t('product_admin.inventory.variant_add_edit.inputs.mpn.message')
+          "
           required
           variant="underlined"
         >
@@ -125,8 +128,12 @@
           v-model="gtin"
           :counter="48"
           class="input-variant"
-          label="Product's Global Trade Item Number"
-          messages="Supported values are UPC (North America, 12 digits), EAN (Europe, 13 digits), JAN (Japan, 8 or 13 digits), ISBN (books, 13 digits)."
+          :label="
+            $t('product_admin.inventory.variant_add_edit.inputs.gtin.label')
+          "
+          :messages="
+            $t('product_admin.inventory.variant_add_edit.inputs.gtin.message')
+          "
           required
           variant="underlined"
         />
@@ -137,11 +144,19 @@
       <div :class="{ disabled: !enable }" class="widget-box mb-5">
         <s-widget-header
           :title="
-            $t('product_admin.inventory.variant_add_edit.variant_variable')
+            $t('product_admin.inventory.variant_add_edit.variables.title')
           "
-          add-caption="Graphical Assets"
+          :add-caption="
+            $t(
+              'product_admin.inventory.variant_add_edit.variables.graphical_asset_action',
+            )
+          "
           add-icon="wallpaper"
-          add-sub-caption="Small images for variant."
+          :add-sub-caption="
+            $t(
+              'product_admin.inventory.variant_add_edit.variables.graphical_asset_action_caption',
+            )
+          "
           add-text
           icon="join_full"
           @click:add="show_graphical_asset_dialog = true"
@@ -150,11 +165,13 @@
 
         <template v-if="hasColor">
           <v-list-subheader>
-            <div>
-              Enter a hex color code here. You can enter a single color like
-              <b>#654FFF</b> or dual colors separated by a slash, such as
-              <b>#764FFA/#000000</b>.
-            </div>
+            <div
+              v-html="
+                $t(
+                  'product_admin.inventory.variant_add_edit.variables.subtitle',
+                )
+              "
+            ></div>
           </v-list-subheader>
           <v-text-field
             v-model="color"
@@ -209,12 +226,13 @@
         <v-list-subheader
           v-if="hasStyle || hasVolume || hasWeight || hasPack || hasType"
         >
-          <div>
-            You may input any value for the subsequent variable values.
-            Additionally, you can incorporate images as values by utilizing
-            <b>Graphic Assets</b>. Simply upload the desired pattern and insert
-            the generated code into the variant value.
-          </div>
+          <div
+            v-html="
+              $t(
+                'product_admin.inventory.variant_add_edit.variables.graphical_asset_tips',
+              )
+            "
+          ></div>
         </v-list-subheader>
 
         <v-text-field
@@ -371,16 +389,27 @@
 
             <v-tooltip
               activator="parent"
-              content-class="text-start"
+              content-class="text-start bg-black"
               location="bottom"
               max-width="360"
             >
-              Calculating unit price by considering <b>weight</b>,
-              <b>volume</b>, and <b>pack</b> variants property.
+              <span
+                v-html="
+                  $t(
+                    'product_admin.inventory.variant_add_edit.smart_unit_price.tips',
+                  )
+                "
+              >
+              </span>
             </v-tooltip>
           </v-btn>
           <v-spacer></v-spacer>
-          Smart unit price:
+          {{
+            $t(
+              "product_admin.inventory.variant_add_edit.smart_unit_price.smart_unit_price",
+            )
+          }}
+          :
 
           <span class="min-width-100 ms-2"
             >(<s-product-price
@@ -410,14 +439,15 @@
         class="widget-box mb-5"
       >
         <s-widget-header
-          :title="$t('product_admin.inventory.variant_add_edit.inventory')"
+          :title="$t('product_admin.inventory.variant_add_edit.quantity.title')"
           icon="inventory_2"
         >
         </s-widget-header>
 
         <v-list-subheader
-          >For each product variant, set its unique stock level in the
-          inventory.
+          >{{
+            $t("product_admin.inventory.variant_add_edit.quantity.subtitle")
+          }}
         </v-list-subheader>
 
         <v-text-field
@@ -457,14 +487,13 @@
 
       <div :class="{ disabled: !enable }" class="widget-box mb-5">
         <s-widget-header
-          :title="$t('product_admin.inventory.variant_add_edit.pricing')"
+          :title="$t('product_admin.inventory.variant_add_edit.price.title')"
           icon="sell"
         >
         </s-widget-header>
 
         <v-list-subheader
-          >Set a custom price for variant here, or they will use the product's
-          default price.
+          >{{ $t("product_admin.inventory.variant_add_edit.price.subtitle") }}
         </v-list-subheader>
 
         <u-smart-toggle
@@ -500,20 +529,22 @@
         class="widget-box mb-5"
       >
         <s-widget-header
-          :title="$t('product_admin.inventory.variant_add_edit.delivery_info')"
+          :title="$t('product_admin.inventory.variant_add_edit.package.title')"
           icon="square_foot"
           add-text
-          add-caption="Same as product"
+          :add-caption="
+            $t(
+              'product_admin.inventory.variant_add_edit.package.same_as_product_action',
+            )
+          "
           add-icon="refresh"
           :disabled="!product.extra"
-          @click:add="extra=Object.assign({},product.extra)"
+          @click:add="extra = Object.assign({}, product.extra)"
         >
         </s-widget-header>
 
         <v-list-subheader
-          >Set the weight and size for each variant if it's different from the
-          main product. This helps us determine the right shipping methods at
-          checkout.
+          >{{ $t("product_admin.inventory.variant_add_edit.package.subtitle") }}
         </v-list-subheader>
 
         <b-product-extra-input
@@ -537,18 +568,13 @@
         class="widget-box -large mb-5"
       >
         <s-widget-header
-          :title="$t('product_admin.inventory.variant_add_edit.images')"
+          :title="$t('product_admin.inventory.variant_add_edit.image.title')"
           icon="insert_photo"
         >
         </s-widget-header>
 
         <v-list-subheader
-          >Here you can add unique images for each variant in your custom
-          orders. These images will be displayed on the product page when a
-          customer selects a particular variant. To avoid repetition, please do
-          not upload the same images that have already been included in the main
-          product images. Also, note that the first image uploaded for a variant
-          will be considered the primary image for that variant.
+          >{{ $t("product_admin.inventory.variant_add_edit.image.subtitle") }}
         </v-list-subheader>
 
         <b-product-images-gallery
@@ -614,7 +640,8 @@
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1">snippet_folder</v-icon>
-          Variant Graphical Assets
+
+          {{ $t("variant_graphical_assets.title") }}
         </v-card-title>
 
         <v-card-text>
@@ -659,10 +686,12 @@ import UColorName from "../../../../ui/color/name/UColorName.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import BProductGraphicalAssetsSelector from "../../../product/graphical-assets/selector/BProductGraphicalAssetsSelector.vue";
 import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "BProductVariantAdd",
   components: {
+    UAvatarFolder,
     BProductGraphicalAssetsSelector,
     UColorName,
     UColorCircle,

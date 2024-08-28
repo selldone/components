@@ -16,7 +16,6 @@
   <div>
     <!-- Weight -->
 
-    <div class="widget-box">
       <s-widget-header
         :title="$t('product_extra_physical.weight')"
         icon="fa:fas fa-weight-hanging"
@@ -35,9 +34,8 @@
         class="my-3 max-width-field mx-auto sm-suffix"
         @change="$emit('update:extra', extra)"
       />
-    </div>
     <!-- Size -->
-    <div class="widget-box mt-5">
+    <hr class="my-5">
       <s-widget-header
         :title="$t('product_extra_physical.size')"
         icon="fa:fas fa-box"
@@ -89,9 +87,13 @@
         :weight="weight"
         :width="width"
       ></transportations-eligible-view>
-    </div>
+
     <!-- Lead Time -->
-    <div v-if="!noLead" class="widget-box mt-5">
+    <template v-if="!noLead">
+
+      <hr class="my-5">
+
+
       <s-widget-header
         :title="$t('product_extra_physical.lead_time_title')"
         icon="pending_actions"
@@ -104,9 +106,9 @@
         :label="$t('product_extra_physical.lead_time')"
         :messages="
           lead === -1
-            ? 'Dynamic lead time'
+            ? $t('product_extra_physical.dynamic_lead_time')
             : lead === 0
-              ? 'Instant delivery'
+              ? $t('product_extra_physical.instant_delivery')
               : ''
         "
         :min="-1"
@@ -120,7 +122,7 @@
         class="widget-toggle"
         density="compact"
         rounded
-        selected-class="blue-flat "
+        selected-class="blue-flat elevation-3 z1"
       >
         <v-btn
           v-for="it in leads"
@@ -131,7 +133,7 @@
           {{ $t(it.title) }}
         </v-btn>
       </v-btn-toggle>
-    </div>
+    </template>
 
     <!-- Bulk Action -->
     <div v-if="hasBulkAction" class="widget-box mt-5">
