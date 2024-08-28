@@ -19,7 +19,7 @@
       :color="loading ? '#512DA8' : '#673AB7'"
       block
       class="s--ai-button-large"
-      size="x-large"
+      :size="size"
       variant="flat"
       @click="$emit('select')"
     >
@@ -28,11 +28,11 @@
           :class="{ '-loading': loading }"
           class="me-2 -avatar position-relative"
           color="#512DA8"
-          size="36"
+          :size="avatarSize"
         >
           <img
-            :height="32"
-            :width="32"
+            :height="avatarSize - 4"
+            :width="avatarSize - 4"
             class="z1"
             src="../../../../assets/icons/ci-logo.png"
           />
@@ -45,14 +45,14 @@
           ></v-progress-circular>
         </v-avatar>
 
-        <div class="pe-2 me-2 border-end text-h4">AI</div>
+        <div class="pe-2 me-2 border-end" :class="prefixClass">AI</div>
       </div>
 
       <div class="flex-grow-1 text-center overflow-hidden lnh">
         <div class="single-line">
           {{ title }}
         </div>
-        <div class="single-line" style="margin-top: 2px;font-size: 0.75rem">
+        <div class="single-line" style="margin-top: 2px; font-size: 0.75rem">
           {{ subTitle }}
         </div>
       </div>
@@ -68,6 +68,15 @@ export default {
     loading: Boolean,
     title: {},
     subTitle: {},
+    size: {
+      default: "x-large",
+    },
+    avatarSize: {
+      default: 36,
+    },
+    prefixClass: {
+      default: "text-h4",
+    },
   },
 };
 </script>
@@ -75,6 +84,7 @@ export default {
 <style lang="scss" scoped>
 .s--ai-button-large {
   line-height: normal;
+
   ::v-deep(.v-btn__content) {
     width: 100%;
   }
