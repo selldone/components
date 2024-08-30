@@ -933,7 +933,7 @@
               cover
             ></v-img>
 
-            <v-card-title class="tit">
+            <v-card-title class="tit text-wrap">
               {{ it.article.title }}
             </v-card-title>
 
