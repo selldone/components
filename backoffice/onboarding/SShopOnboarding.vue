@@ -26,7 +26,12 @@
       <v-list-subheader>
         {{ $t("onboarding.shop.subtitle") }}
       </v-list-subheader>
-
+      <v-btn :href="getShopMainUrl(shop)" target="_blank" append-icon="open_in_new" class="nbt mb-3">
+        <v-avatar class="avatar-gradient -thin -shop ms-n2 me-2" size="24" >
+          <v-img :src="getShopImagePath(shop.icon,128)" />
+        </v-avatar>
+        {{getShopMainUrl(shop)}}
+      </v-btn>
       <v-row>
         <v-col cols="12" lg="3" md="4" sm="5" class="px-0 px-sm-2">
           <v-tabs
