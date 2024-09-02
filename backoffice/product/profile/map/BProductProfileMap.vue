@@ -105,66 +105,78 @@
           <v-list-subheader>
             {{ $t("product_location_profile.dialog.subtitle") }}
           </v-list-subheader>
-          <div class="typo-body mb-3">
+
+          <v-locale-provider :rtl="false">
+            <b-map-tag-input
+              v-model="map_input"
+              :shop="shop"
+              return-object
+            ></b-map-tag-input>
+          </v-locale-provider>
+
+          <v-expand-transition>
+            <div v-if="map_input">
+              <v-row align="center">
+                <v-col cols="12" sm="6">
+                  <v-img
+                    v-if="map_url"
+                    :src="map_url"
+                    aspect-ratio="1"
+                    class="map-view-box -jumping rounded-18px mx-auto my-5"
+                    height="auto"
+                    max-width="300"
+                    min-height="200"
+                    width="100%"
+                  >
+                    <u-map-view-pin class="map-pointer"></u-map-view-pin>
+                  </v-img>
+                </v-col>
+
+                <v-col v-if="map_input" cols="12" sm="6">
+                  <div v-if="full_address" class="mb-3 typo-body">
+                    <v-icon class="me-1">assistant_direction</v-icon>
+                    {{ $t("global.commons.address") }}
+                    :
+                    <flag
+                      v-if="map_input.country"
+                      :iso="map_input.country"
+                      :squared="false"
+                      class="mx-1"
+                    />
+                    {{ full_address }}
+                  </div>
+
+                  <div v-if="map_input.message" class="mb-3">
+                    <v-icon class="me-1">chat_bubble</v-icon>
+                    {{ $t("global.commons.message") }}:
+                    {{ map_input.message }}
+                  </div>
+
+                  <div
+                    :title="getFromNowString(map_input.created_at)"
+                    class="my-1"
+                  >
+                    <v-icon class="me-1">calendar_today</v-icon>
+                    {{ $t("global.commons.created_at") }}:
+                    {{ getLocalTimeString(map_input.created_at) }}
+                  </div>
+                  <div
+                    :title="getFromNowString(map_input.updated_at)"
+                    class="my-1"
+                  >
+                    <v-icon class="me-1">edit_calendar</v-icon>
+                    Last update:
+                    {{ getLocalTimeString(map_input.updated_at) }}
+                  </div>
+                </v-col>
+              </v-row>
+            </div>
+          </v-expand-transition>
+
+          <div class="my-3">
             <v-icon class="me-1">notification_important</v-icon>
             <span v-html="$t('product_location_profile.dialog.tips')"></span>
           </div>
-       <v-locale-provider :rtl="false">
-         <b-map-tag-input
-             v-model="map_input"
-             :shop="shop"
-             return-object
-         ></b-map-tag-input>
-       </v-locale-provider>
-
-          <v-row align="center">
-            <v-col cols="12" sm="6">
-              <v-img
-                v-if="map_url"
-                :src="map_url"
-                aspect-ratio="1"
-                class="map-view-box -jumping rounded-18px mx-auto my-5"
-                height="auto"
-                max-width="300"
-                min-height="200"
-                width="100%"
-              >
-                <u-map-view-pin class="map-pointer"></u-map-view-pin>
-              </v-img>
-            </v-col>
-
-            <v-col v-if="map_input" cols="12" sm="6">
-              <div v-if="full_address" class="mb-3 typo-body">
-                <v-icon class="me-1">assistant_direction</v-icon>
-                {{ $t("global.commons.address") }}
-                :
-                <flag
-                  v-if="map_input.country"
-                  :iso="map_input.country"
-                  :squared="false"
-                  class="mx-1"
-                />
-                {{ full_address }}
-              </div>
-
-              <div v-if="map_input.message" class="mb-3">
-                <v-icon class="me-1">chat_bubble</v-icon>
-                {{ $t("global.commons.message") }}:
-                {{ map_input.message }}
-              </div>
-
-              <div :title="getFromNowString(map_input.created_at)" class="my-1">
-                <v-icon class="me-1">calendar_today</v-icon>
-                {{ $t("global.commons.created_at") }}:
-                {{ getLocalTimeString(map_input.created_at) }}
-              </div>
-              <div :title="getFromNowString(map_input.updated_at)" class="my-1">
-                <v-icon class="me-1">edit_calendar</v-icon>
-                Last update:
-                {{ getLocalTimeString(map_input.updated_at) }}
-              </div>
-            </v-col>
-          </v-row>
         </div>
       </v-card-text>
 

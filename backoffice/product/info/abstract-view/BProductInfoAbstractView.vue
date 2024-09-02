@@ -98,7 +98,8 @@
       <div class="dashed-hr my-2 mx-n5"></div>
 
       <v-row align="center" class="small text-muted py-2" no-gutters>
-        <i class="fas fa-angle-down me-2"></i>  {{ $t("product_admin.dashboard.info.staff_messages") }}
+        <i class="fas fa-angle-down me-2"></i>
+        {{ $t("product_admin.dashboard.info.staff_messages") }}
 
         <v-spacer></v-spacer>
         <v-btn
@@ -109,7 +110,6 @@
         >
           <v-icon class="me-1" start>post_add</v-icon>
           {{ $t("product_admin.dashboard.info.add_note") }}
-
         </v-btn>
       </v-row>
 
@@ -157,6 +157,19 @@
       </v-row>
 
       <div class="text-start">
+
+        <v-chip v-if="product.map"   class="ma-1"      color="#fafafa"
+                variant="flat" key="-map">
+          <flag v-if="product.map.country" :iso="product.map.country" :squared="false" class="me-2" />  {{product.map.title}}
+
+          <v-tooltip activator="parent" max-width="320" content-class="bg-black text-start">
+            <b>Map Tag</b>
+            <div>
+              {{MapHelper.GenerateFullAddressFromMapInfo(product.map)}}
+            </div>
+          </v-tooltip>
+        </v-chip>
+
         <v-chip
           v-for="item in product.tags"
           :key="item"
@@ -394,42 +407,51 @@
 
       <!-- ------------------- End No variants list ------------------- -->
 
-      <v-col class="border-end-grater-xs p-3 px-4 text-center" cols="12" sm="4">
-        <h6>
+      <v-col class="border-end-grater-xs pa-1 text-center" cols="12" sm="4">
+        <div class="d-flex align-center text-start justify-center">
           <img
             :src="getProductTypeImage(product.type)"
-            class="ms-2"
-            height="24px"
+            class="me-2 flex-grow-0"
+            height="38"
           />
-          {{ getProductTypeName(product.type) }}
-        </h6>
-        <p class="text-muted mb-0 mt-2">
-          <small>{{ $t("product_admin.dashboard.info.type") }} </small>
-        </p>
+          <div class="flex-grow-0">
+            <b>{{ getProductTypeName(product.type) }}</b>
+            <small class="d-block"
+              >{{ $t("product_admin.dashboard.info.type") }}
+            </small>
+          </div>
+        </div>
       </v-col>
 
-      <v-col class="border-end-grater-xs p-3 px-4 text-center" cols="12" sm="4">
-        <h6>
-          <v-avatar :size="24" class="me-1" color="grey-lighten-4">
-            <circle-image
-              v-if="product.category"
-              :src="getShopImagePath(product.category.icon, 64)"
-            ></circle-image>
-            <v-icon v-else color="#111">home</v-icon>
-          </v-avatar>
-
-          {{
-            product.category
-              ? product.category.title
-              : $t("global.commons.home")
-          }}
-        </h6>
-        <p class="text-muted mb-0 mt-2">
-          <small>{{ $t("product_admin.dashboard.info.category") }}</small>
-        </p>
+      <v-col class="border-end-grater-xs pa-1 text-center" cols="12" sm="4">
+        <div class="d-flex align-center text-start justify-center">
+          <u-avatar-folder
+            :size="38"
+            :border-size="4"
+            class="me-2 flex-grow-0"
+            is-amber
+            :src="getShopImagePath(product.category.icon, 64)"
+            hide-side-icon
+            elevated
+            placeholder-icon="home"
+          >
+          </u-avatar-folder>
+          <div class="flex-grow-0">
+            <b>
+              {{
+                product.category
+                  ? product.category.title
+                  : $t("global.commons.home")
+              }}</b
+            >
+            <small class="d-block">{{
+              $t("product_admin.dashboard.info.category")
+            }}</small>
+          </div>
+        </div>
       </v-col>
 
-      <v-col class="p-3 px-4 text-center" cols="12" sm="4">
+      <v-col class="pa-1 text-center" cols="12" sm="4">
         <template v-if="product.inputs?.length || product.outputs?.length">
           <p v-if="product.inputs?.length">
             {{ $t("product_admin.dashboard.info.inputs") }}
@@ -596,7 +618,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import CircleImage from "../../../../ui/image/CircleImage.vue";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
@@ -614,10 +636,13 @@ import BProductBreadcrumbs from "../../../product/breadcrumbs/BProductBreadcrumb
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import { ProductEmbedHelper } from "@selldone/core-js/helper/embed/ProductEmbedHelper";
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import {MapHelper} from "@selldone/core-js";
 
 export default {
   name: "BProductInfoAbstractView",
   components: {
+    UAvatarFolder,
     UTextCopyBox,
     BProductBreadcrumbs,
     SFilesGroup,
@@ -627,7 +652,6 @@ export default {
     SCountrySelect,
     BProductVariantsTable,
     UTimeProgressBar,
-    CircleImage,
     SWidgetBox,
   },
   props: {
@@ -646,6 +670,7 @@ export default {
   },
 
   data: () => ({
+    MapHelper:MapHelper,
     ProductStatus: ProductStatus,
     selected_shipping_country: null,
 
@@ -663,6 +688,7 @@ export default {
     show_iframe_code: false,
   }),
   computed: {
+
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
