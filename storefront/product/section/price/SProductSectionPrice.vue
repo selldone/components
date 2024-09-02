@@ -237,7 +237,7 @@ export default {
       if (
         this.isService &&
         this.outputs &&
-        ServiceTypes[this.outputs.type].form.includes("booking")
+        ServiceTypes[this.outputs.type]?.form?.includes("booking")
       ) {
         //console.log("preferences", this.preferences);
         if (

@@ -22,7 +22,6 @@
       <v-list-subheader>
         {{ $t("service_design.type_message") }}
       </v-list-subheader>
-
       <u-smart-select
         v-model="outputs.type"
         :items="Object.values(types)"
@@ -122,7 +121,7 @@
         </div>
       </v-row>
       <v-date-picker
-        :model-value="outputs.disabled.map((d) => new Date(d))"
+        :model-value="outputs.disabled?.map((d) => new Date(d))"
         @update:model-value="
           (v) =>
             (outputs.disabled = v

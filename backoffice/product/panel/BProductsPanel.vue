@@ -35,7 +35,10 @@
       v-model:showVendors="show_vendors"
       :shop="shop"
       :vendor="vendor"
-      @click:addProduct="add_product_dialog = true"
+      @click:addProduct="
+        add_product_dialog = true;
+        last_added_product = null;
+      "
       @click:addCategory="dialog_add_category = true"
     >
       <template v-slot:center>
@@ -117,7 +120,10 @@
       "
       @select:middle="openInNewTab"
       @change:parent-folder="(folder) => (parent_folders = folder)"
-      @click:add="add_product_dialog = true"
+      @click:add="
+        add_product_dialog = true;
+        last_added_product = null;
+      "
       @click:fast-add="add_product_studio_dialog = true"
       @click:ai-add="showAIAddDialog()"
     >
@@ -331,7 +337,12 @@
           :shop="shop"
           :vendor="vendor"
           dark
-          @add="(p) => $refs.products_list?.onAddOrUpdateProduct(p)"
+          @add="
+            (p) => {
+              $refs.products_list?.onAddOrUpdateProduct(p);
+              last_added_product = p;
+            }
+          "
         >
         </b-product-add-full>
 
@@ -344,6 +355,20 @@
             >
               <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
+            </v-btn>
+            <v-btn
+              v-if="last_added_product?.id"
+              size="x-large"
+              variant="text"
+              :to="{
+                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                  ? 'Vendor_ProductDashboard'
+                  : 'BPageProductDashboard',
+                params: { product_id: last_added_product.id },
+              }"
+              prepend-icon="done_all"
+            >
+              {{ $t("global.actions.finish") }}
             </v-btn>
           </div>
         </v-card-actions>
@@ -473,6 +498,7 @@ export default {
   data: () => ({
     dialog_add_category: false,
     add_product_dialog: false,
+    last_added_product: null,
 
     mode: "list",
     ai_dialog: false,
@@ -588,6 +614,7 @@ export default {
     this.key_listener_keydown = (event) => {
       if ((event.ctrlKey || event.metaKey) && event.code === "KeyP") {
         this.add_product_dialog = true;
+        this.last_added_product = null;
         event.preventDefault();
       }
       if ((event.ctrlKey || event.metaKey) && event.code === "KeyX") {

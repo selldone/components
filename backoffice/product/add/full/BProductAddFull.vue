@@ -427,7 +427,7 @@ const TAB_VARIANTS = 11;
  * <b-product-add-full>
  */
 export default {
-  name: "BPageProductEdit",
+  name: "BProductAddFull",
   components: {
     SWidgetButtons,
     BProductEditType,

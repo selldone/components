@@ -157,15 +157,29 @@
       </v-row>
 
       <div class="text-start">
+        <v-chip
+          v-if="product.map"
+          class="ma-1"
+          color="#fafafa"
+          variant="flat"
+          key="-map"
+        >
+          <flag
+            v-if="product.map.country"
+            :iso="product.map.country"
+            :squared="false"
+            class="me-2"
+          />
+          {{ product.map.title }}
 
-        <v-chip v-if="product.map"   class="ma-1"      color="#fafafa"
-                variant="flat" key="-map">
-          <flag v-if="product.map.country" :iso="product.map.country" :squared="false" class="me-2" />  {{product.map.title}}
-
-          <v-tooltip activator="parent" max-width="320" content-class="bg-black text-start">
+          <v-tooltip
+            activator="parent"
+            max-width="320"
+            content-class="bg-black text-start"
+          >
             <b>Map Tag</b>
             <div>
-              {{MapHelper.GenerateFullAddressFromMapInfo(product.map)}}
+              {{ MapHelper.GenerateFullAddressFromMapInfo(product.map) }}
             </div>
           </v-tooltip>
         </v-chip>
@@ -430,7 +444,11 @@
             :border-size="4"
             class="me-2 flex-grow-0"
             is-amber
-            :src="getShopImagePath(product.category.icon, 64)"
+            :src="
+              product.category
+                ? getShopImagePath(product.category.icon, 64)
+                : undefined
+            "
             hide-side-icon
             elevated
             placeholder-icon="home"
@@ -620,7 +638,6 @@
 
 <script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
-import CircleImage from "../../../../ui/image/CircleImage.vue";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BProductVariantsTable from "../../variants/table/BProductVariantsTable.vue";
@@ -637,7 +654,7 @@ import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import { ProductEmbedHelper } from "@selldone/core-js/helper/embed/ProductEmbedHelper";
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
-import {MapHelper} from "@selldone/core-js";
+import { MapHelper } from "@selldone/core-js";
 
 export default {
   name: "BProductInfoAbstractView",
@@ -670,7 +687,7 @@ export default {
   },
 
   data: () => ({
-    MapHelper:MapHelper,
+    MapHelper: MapHelper,
     ProductStatus: ProductStatus,
     selected_shipping_country: null,
 
@@ -688,7 +705,6 @@ export default {
     show_iframe_code: false,
   }),
   computed: {
-
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
