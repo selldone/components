@@ -116,7 +116,7 @@ export default {
           //  height: 200,
           type: "area",
           stacked: true,
-
+          background: "transparent",
           //    background: this.SaminColorDarkDeep,
           fontFamily: "var(--font)",
         },
