@@ -18,27 +18,32 @@
     <v-card-text class="pt-5">
       <v-form ref="form" lazy-validation>
         <div class="widget-box mb-5">
-          <h2>
-            <v-icon class="me-1">tune</v-icon>
-            {{
+          <s-widget-header
+            :title="
               affiliate
-                ? $t("affiliates.dialog.edit")
-                : $t("affiliates.dialog.new")
-            }}
-          </h2>
-          <v-list-subheader></v-list-subheader>
+                ? $t('affiliate_edit.config.edit')
+                : $t('affiliate_edit.config.new')
+            "
+            icon="tune"
+          ></s-widget-header>
+
+          <v-list-subheader>
+            {{ $t("affiliate_edit.config.subtitle") }}
+          </v-list-subheader>
 
           <v-text-field
             v-model="name"
-            :label="$t('affiliates.dialog.affiliate_name')"
+            :label="$t('affiliate_edit.inputs.name.label')"
             :rules="[GlobalRules.required()]"
-            messages="Ex. John doe, Alex company, X marketers, ..."
+            :messages="$t('affiliate_edit.inputs.name.message')"
             variant="underlined"
           ></v-text-field>
 
           <u-smart-toggle
             v-model="enable"
-            :true-description="$t('affiliates.dialog.enable_switch')"
+            :true-description="
+              $t('affiliate_edit.inputs.enable.true_description')
+            "
             :true-title="$t('global.commons.enable')"
             class="my-3"
             false-gray
@@ -54,12 +59,14 @@
         </div>
 
         <div class="widget-box mb-5">
-          <h2>
-            <v-icon class="me-1">payment</v-icon>
+          <s-widget-header
+            :title="$t('affiliate_edit.payment.title')"
+            icon="payment"
+          ></s-widget-header>
 
-            {{ $t("affiliates.dialog.payment_info") }}
-          </h2>
-          <v-list-subheader></v-list-subheader>
+          <v-list-subheader>
+            {{ $t("affiliate_edit.payment.subtitle") }}
+          </v-list-subheader>
 
           <u-currency-input
             v-model="currency"
@@ -72,13 +79,17 @@
           <u-smart-switch
             v-model="commission"
             class="mb-5"
-            false-description="Calculate by fix and percentage commission."
+            :false-description="
+              $t('affiliate_edit.inputs.commission.false_description')
+            "
             false-icon="calculate"
-            false-title="Fix + percentage commission"
-            label="Commission calculation"
-            true-description="Calculate by products' commission in the pricing tab."
+            :false-title="$t('affiliate_edit.inputs.commission.false_title')"
+            :label="$t('affiliate_edit.inputs.commission.label')"
+            :true-description="
+              $t('affiliate_edit.inputs.commission.true_description')
+            "
             true-icon="local_offer"
-            true-title="Products' commission"
+            :true-title="$t('affiliate_edit.inputs.commission.true_title')"
           >
           </u-smart-switch>
 
@@ -121,7 +132,7 @@
                     class="absolute-top-center pa-2 rounded-xl"
                     style="background: #f3c50e; top: -20px; color: #000"
                   >
-                    Affiliate commission
+                    {{ $t("affiliate_edit.affiliate_commission") }}
                   </div>
                 </div>
               </v-sheet>
@@ -150,19 +161,21 @@
         </div>
 
         <div class="widget-box mb-5">
-          <h2>
-            <v-icon class="me-1">person</v-icon>
+          <s-widget-header
+            :title="$t('affiliate_edit.contact.title')"
+            icon="person"
+          ></s-widget-header>
 
-            {{ $t("affiliates.dialog.affiliate_info") }}
-          </h2>
-          <v-list-subheader></v-list-subheader>
+          <v-list-subheader>
+            {{ $t("affiliate_edit.contact.subtitle") }}
+          </v-list-subheader>
 
           <v-expand-transition>
             <s-user-input
               v-if="user_edit"
               v-model:user-id="user_id"
-              :label="$t('affiliates.dialog.user')"
-              messages="Optional, Ex: affiliate name in the Selldone"
+              :label="$t('affiliate_edit.inputs.user.label')"
+              :messages="$t('affiliate_edit.inputs.user.message')"
               variant="underlined"
               @update:model-value="
                 (val) => {
@@ -195,7 +208,7 @@
             v-model="email"
             :label="$t('global.commons.email')"
             :rules="[GlobalRules.required()]"
-            messages="Optional, Ex: affiliate-email@..."
+            placeholder="Optional, Ex: affiliate-email@..."
             prepend-inner-icon="alternate_email"
             variant="underlined"
           ></v-text-field>
@@ -203,7 +216,7 @@
           <v-text-field
             v-model="web"
             :label="$t('global.commons.website')"
-            messages="Optional, Ex: affiliate-web.com"
+            :placeholder="$t('affiliate_edit.inputs.web.placeholder')"
             prepend-inner-icon="public"
             variant="underlined"
           ></v-text-field>
@@ -211,47 +224,49 @@
           <v-text-field
             v-model="address"
             :label="$t('global.commons.address')"
-            messages="Optional, Ex: 1200 POX, NY, USA"
+            :placeholder="$t('affiliate_edit.inputs.address.placeholder')"
             prepend-inner-icon="place"
             variant="underlined"
           ></v-text-field>
           <v-text-field
             v-model="tel"
             :label="$t('global.commons.tel')"
-            messages="Optional, Ex: 001-808-210354"
+            :placeholder="$t('affiliate_edit.inputs.tel.placeholder')"
             prepend-inner-icon="local_phone"
             variant="underlined"
           ></v-text-field>
 
           <v-textarea
             v-model="bank"
-            :label="$t('affiliates.dialog.bank_info')"
+            :label="$t('global.commons.bank_info')"
             :rows="2"
             auto-grow
-            messages="Optional, Ex: Arstra Bank, No: 10002-325-800-845213"
+            :placeholder="$t('affiliate_edit.inputs.bank.placeholder')"
             prepend-inner-icon="account_balance"
             variant="underlined"
           ></v-textarea>
         </div>
 
         <div class="widget-box mb-5">
-          <h2>
-            <v-icon class="me-1">border_outer</v-icon>
+          <s-widget-header
+            :title="$t('affiliate_edit.restriction.title')"
+            icon="border_outer"
+          ></s-widget-header>
 
-            {{ $t("affiliates.dialog.restriction") }}
-          </h2>
-          <v-list-subheader></v-list-subheader>
+          <v-list-subheader>
+            {{ $t("affiliate_edit.restriction.subtitle") }}
+          </v-list-subheader>
 
           <b-products-select-box
             v-model="products"
-            :label="$t('affiliates.dialog.select_products_message')"
+            :label="$t('affiliate_edit.inputs.products.label')"
             :messages="
               (has_product_restrictions ? '❌ ' : '✅ ') +
               $t('blank_is_all_products')
             "
             :shop="shop"
             border-less
-            >{{ $t("affiliates.dialog.select_products") }}
+            >{{ $t('affiliate_edit.inputs.products.select_product')}}
             <b v-if="!has_product_restrictions" class="ms-1"
               >(
               <v-icon class="me-1" size="small">all_inclusive</v-icon>
@@ -262,12 +277,12 @@
 
         <div class="widget-box mb-5">
           <s-widget-header
-            :title="$t('affiliates.link_domain.title')"
+            :title="$t('affiliate_edit.link_domain.title')"
             icon="add_link"
           ></s-widget-header>
 
           <v-list-subheader>
-            {{ $t("affiliates.link_domain.subtitle") }}
+            {{ $t("affiliate_edit.link_domain.subtitle") }}
           </v-list-subheader>
 
           <v-select
@@ -280,13 +295,14 @@
             messages=" "
             return-object
             variant="underlined"
+            :placeholder="$t('affiliate_edit.inputs.domain.placeholder')"
           >
             <template v-if="selected_domain" v-slot:message>
               <span v-if="!selected_domain.approved" class="text-red">
-                The domain did not approve yet!
+                {{ $t("affiliate_edit.link_domain.domain_not_approved_msg") }}
               </span>
               <span v-else-if="!selected_domain.enable" class="text-red">
-                The domain is not enabled!
+                {{ $t("affiliate_edit.link_domain.domain_is_not_enable_msg") }}
               </span>
               <span
                 v-else-if="
@@ -295,7 +311,11 @@
                 "
                 class="text-red"
               >
-                This domain is linked to an affiliate!
+                {{
+                  $t(
+                    "affiliate_edit.link_domain.domain_is_linked_to_other_affiliate_msg",
+                  )
+                }}
               </span>
               <div v-else class="text-end">
                 <v-btn
@@ -328,9 +348,9 @@
             class="my-3"
             false-gray
             inset
-            true-description="Affiliates have the capability to place orders directly for their customers through their panel."
+            :true-description="$t('affiliate_edit.inputs.pos.true_description')"
             true-icon="point_of_sale"
-            true-title="POS Access"
+            :true-title="$t('affiliate_edit.inputs.pos.true_title')"
           ></u-smart-toggle>
 
           <v-expand-transition>
@@ -343,7 +363,7 @@
             </div>
             <div v-else-if="pos">
               <v-icon class="me-1" color="red">warning</v-icon>
-              Set user first!
+              {{ $t("affiliate_edit.set_users_first_message") }}
             </div>
           </v-expand-transition>
         </div>
@@ -352,16 +372,15 @@
         <div class="widget-box mb-5">
           <s-widget-header
             :to="{ name: 'BPageShopClassificationClusters' }"
-            add-caption="Management"
+            :add-caption="$t('affiliate_edit.cluster.manage_action')"
             add-icon="settings"
             add-text
             icon="workspaces"
-            title="Cluster"
+            :title="$t('affiliate_edit.cluster.title')"
           ></s-widget-header>
 
           <v-list-subheader>
-            By associating this affiliate with a cluster, you can easily manage
-            it alongside other resources in a single location.
+            {{ $t("affiliate_edit.cluster.subtitle") }}
           </v-list-subheader>
           <b-cluster-input
             v-model="cluster_id"
@@ -394,7 +413,7 @@
           @click="updateAffiliate()"
         >
           <v-icon start>save</v-icon>
-          {{ $t("affiliates.dialog.edit_action") }}
+          {{ $t('affiliate_edit.actions.update') }}
         </v-btn>
         <v-btn
           v-else
@@ -405,7 +424,7 @@
           @click="createAffiliate()"
         >
           <v-icon start>add</v-icon>
-          {{ $t("affiliates.dialog.add_action") }}
+          {{ $t('affiliate_edit.actions.add') }}
         </v-btn>
       </s-widget-buttons>
     </v-card-actions>
@@ -425,10 +444,12 @@ import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
+import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 
 export default {
   name: "BAffiliateEdit",
   components: {
+    SWidgetHeader,
     SWidgetButtons,
     BClusterInput,
     USmartToggle,
@@ -589,7 +610,10 @@ export default {
             Object.assign(this.affiliate, data.affiliate);
             this.$emit("edit", data.affiliate);
 
-            this.showSuccessAlert(null, "Affiliate has been updated.");
+            this.showSuccessAlert(
+              null,
+              this.$t("affiliate_edit.notifications.update_success"),
+            );
 
             this.$emit("close");
           }
@@ -637,7 +661,10 @@ export default {
           } else {
             this.$emit("add", data.affiliate);
 
-            this.showSuccessAlert(null, "New affiliate added.");
+            this.showSuccessAlert(
+              null,
+              this.$t("affiliate_edit.notifications.create_success"),
+            );
 
             this.$emit("close");
           }

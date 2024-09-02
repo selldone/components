@@ -142,15 +142,17 @@
             </v-list-subheader>
 
             <div class="max-widget-width">
-              <b-include-item-input
-                v-model="selected_include"
-                :shop="shop"
-                @update:model-value="
-                  (val) => {
-                    if (val) AddOrUpdateItemByID(includes, val);
-                  }
-                "
-              ></b-include-item-input>
+              <v-locale-provider :rtl="false">
+                <b-include-item-input
+                  v-model="selected_include"
+                  :shop="shop"
+                  @update:model-value="
+                    (val) => {
+                      if (val) AddOrUpdateItemByID(includes, val);
+                    }
+                  "
+                ></b-include-item-input>
+              </v-locale-provider>
             </div>
 
             <template v-if="!IS_VENDOR_PANEL">

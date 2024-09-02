@@ -246,7 +246,7 @@
                 <s-user-input
                   v-else-if="user_edit || !user_id"
                   v-model:user-id="user_id"
-                  :label="$t('affiliates.dialog.user')"
+                  :label="$t('global.commons.user')"
                   messages="Optional, Ex: vendor name in the Selldone"
                   variant="underlined"
                   @update:model-value="

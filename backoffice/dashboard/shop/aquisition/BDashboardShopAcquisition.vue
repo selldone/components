@@ -373,7 +373,7 @@ export default {
           height: 350,
           type: "area",
           stacked: false,
-
+          background: 'transparent', // Set the background to transparent
           //    background: this.SaminColorDarkDeep,
           fontFamily: "var(--font)",
 

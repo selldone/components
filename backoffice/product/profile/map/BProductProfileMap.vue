@@ -109,11 +109,13 @@
             <v-icon class="me-1">notification_important</v-icon>
             <span v-html="$t('product_location_profile.dialog.tips')"></span>
           </div>
-          <b-map-tag-input
-            v-model="map_input"
-            :shop="shop"
-            return-object
-          ></b-map-tag-input>
+       <v-locale-provider :rtl="false">
+         <b-map-tag-input
+             v-model="map_input"
+             :shop="shop"
+             return-object
+         ></b-map-tag-input>
+       </v-locale-provider>
 
           <v-row align="center">
             <v-col cols="12" sm="6">

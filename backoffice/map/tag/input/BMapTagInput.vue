@@ -25,7 +25,7 @@
     clearable
     item-title="title"
     item-value="id"
-    label="Location"
+    :label="$t('global.commons.location')"
     messages=" "
     @update:model-value="(val) => $emit('update:modelValue', val)"
     @click:clear="
