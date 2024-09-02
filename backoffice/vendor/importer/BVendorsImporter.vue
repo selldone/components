@@ -14,15 +14,15 @@
 
 <template>
   <div class="widget-box -large min-height-50vh" fluid @dragover="dragover">
-    <s-widget-header icon="upload" title="Import vendors">
+    <s-widget-header icon="upload" :title="$t('importer.vendor.title')">
       <template v-slot:actions></template>
     </s-widget-header>
 
     <v-list-subheader>
-      {{ $t("importer.customer.subtitle") }}
+      {{ $t("importer.vendor.subtitle") }}
     </v-list-subheader>
 
-    <v-stepper v-model="step" class="rounded-2rem" flat>
+    <v-stepper v-model="step" class="rounded-2rem mt-5" flat>
       <v-stepper-header class="head-step">
         <v-stepper-item :complete="step > 1" :value="1"
           >{{ $t("importer.step_select_file") }}
@@ -45,14 +45,14 @@
 
         <v-stepper-window-item :value="1">
           <s-widget-header
-            add-caption="Sample File"
+            :add-caption="$t('importer.vendor.checklist.sample_files')"
             add-icon="download"
             href="/app/excel/vendors-import.xlsx"
             icon="checklist"
-            title="Important checklist"
+            :title="$t('importer.vendor.checklist.title')"
           ></s-widget-header>
-          <v-list-subheader
-            >Make sure to follow the guideline.
+          <v-list-subheader>
+            {{ $t("importer.vendor.checklist.subtitle") }}
           </v-list-subheader>
           <v-list density="compact">
             <v-list-item>
@@ -61,9 +61,10 @@
               </template>
 
               <v-list-item-title
-                >You should provide a <b>valid name</b>. We use the
-                <b>name</b> value to determine whether it's a new
-                <i> (Create) </i> or existing <i> (Update) </i> vendor.
+                v-html="
+                  $t('importer.vendor.checklist.valid_vendor_name_needed')
+                "
+              >
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
@@ -72,8 +73,10 @@
               </template>
 
               <v-list-item-title
-                >You can manually assign a user to a vendor to access the vendor
-                panel after importing vendors.
+                v-html="
+                  $t('importer.vendor.checklist.assign_user_after_import')
+                "
+              >
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -90,8 +93,7 @@
             class="my-3"
             type="error"
           >
-            You need to verify your personal information before you can import
-            vendors.
+            {{ $t("importer.vendor.need_kyc_alert") }}
           </v-alert>
 
           <div class="widget-buttons mt-4">
@@ -99,7 +101,7 @@
               :disabled="!is_valid || !personal_information_verified"
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="step = 2"
             >
               {{ $t("global.actions.continue") }}
@@ -112,45 +114,25 @@
 
         <v-stepper-window-item :value="2">
           <div class="pt-6" style="min-height: 200px">
-            <v-container class="text-center">
-              <v-row>
-                <v-col cols="12" sm="4">
-                  <p>
-                    {{ $t("importer.shop_license") }}
-                  </p>
-                  <shop-license-view :shop="shop"></shop-license-view>
-                </v-col>
-
-                <v-col cols="12" sm="4">
-                  <p>
-                    {{ $t("importer.max_items_limit") }}
-                  </p>
-                  <b class="text-h4">{{ max_items_limit }}</b>
-                </v-col>
-
-                <v-col cols="12" sm="4">
-                  <p>
-                    {{ $t("importer.total_items") }}
-                  </p>
-                  <b
-                    :class="valid_count ? 'text-success' : 'text-danger'"
-                    class="text-h4"
-                    >{{ total_items }}</b
-                  >
-                </v-col>
-              </v-row>
-            </v-container>
-
-            <v-progress-linear
-              :model-value="progress"
-              class="mb-6 mt-3"
-              color="green"
-              height="14"
-              rounded
-              stream
-              striped
-            ></v-progress-linear>
-
+            <b-shop-quota-importer
+              :new-count="total_items"
+              :quota-key="shopQuota.Vendor"
+              :shop="shop"
+            ></b-shop-quota-importer>
+            <div
+              :class="{ 'op-0-0': !progress }"
+              class="mb-6 mt-3 shadow-small rounded-xl pa-2 mx-5"
+            >
+              <v-progress-linear
+                :model-value="progress"
+                class="mb-6 mt-3"
+                color="green"
+                height="14"
+                rounded
+                stream
+                striped
+              ></v-progress-linear>
+            </div>
             <div class="widget-buttons mt-4">
               <v-btn size="x-large" variant="flat" @click="step = 1">
                 <v-icon class="me-1">{{ $t("icons.chevron_back") }}</v-icon>
@@ -160,7 +142,7 @@
               <v-btn
                 :class="{ disabled: !valid_count }"
                 :loading="busy_send"
-                color="success"
+                color="primary" variant="elevated"
                 size="x-large"
                 @click="postToServer()"
               >
@@ -168,6 +150,8 @@
                   >fiber_manual_record
                 </v-icon>
                 {{ $t("importer.send_to_server_action") }}
+                <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
+
               </v-btn>
             </div>
           </div>
@@ -181,12 +165,12 @@
             <v-row>
               <v-col cols="12" sm="6">
                 <p class="m-0 small">{{ $t("global.commons.success") }}</p>
-                <h2 class="text-success text-h3">{{ result_success }}</h2>
+                <h2 class="text-success " style="font-size: 34px !important">{{ result_success }}</h2>
               </v-col>
 
               <v-col cols="12" sm="6">
                 <p class="m-0 small">{{ $t("global.commons.fail") }}</p>
-                <h2 class="text-danger text-h3">{{ result_fails }}</h2>
+                <h2 class="text-danger " style="font-size: 34px !important">{{ result_fails }}</h2>
               </v-col>
             </v-row>
           </v-container>
@@ -200,8 +184,8 @@
           </div>
 
           <div class="widget-buttons mt-4">
-            <v-btn exact size="x-large" variant="flat" @click="$emit('close')"
-              >Back to the vendors list
+            <v-btn exact size="x-large" variant="outlined" @click="$emit('close')">
+              {{ $t("importer.vendor.back_to_vendors_list") }}
               <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
             </v-btn>
           </div>
@@ -246,16 +230,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
 import ShopLicenseView from "../../shop/license/view/ShopLicenseView.vue";
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import BSpreadsheetVendors from "../../spreadsheet/vendors/BSpreadsheetVendors.vue";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";
+import BShopQuotaImporter from "@selldone/components-vue/backoffice/shop/quota/Importer/BShopQuotaImporter.vue";
+import shopQuota from "@selldone/core-js/enums/shop/quota/ShopQuota";
 
 export default {
   name: "BVendorsImporter",
   components: {
+    BShopQuotaImporter,
     BSpreadsheetVendors,
     ShopLicenseView,
   },
@@ -267,6 +254,8 @@ export default {
   },
 
   data: () => ({
+    shopQuota: shopQuota,
+
     step: 1,
     is_valid: false,
 

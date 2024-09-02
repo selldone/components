@@ -404,12 +404,14 @@ const CoreMixin = {
       else if (status === "Sold") return this.$t("global.status.sold");
       else if (status === "Open") return this.$t("global.status.open");
       else if (status === "Cancel") return this.$t("global.status.cancel");
-      else if (status.toLowerCase() === "accept")
+      else if (status.toLowerCase() === "accept" || status.toLowerCase() === "accepted")
         return this.$t("global.status.accept");
-      else if (status.toLowerCase() === "reject")
+      else if (status.toLowerCase() === "reject" || status.toLowerCase() === "rejected")
         return this.$t("global.status.reject");
       else if (status.toLowerCase() === "pending")
         return this.$t("global.status.pending");
+
+      return status;
     },
 
     getStatusColor(status: string) {
@@ -423,6 +425,8 @@ const CoreMixin = {
       else if (status === "Sold") return "#00796B";
       else if (status === "Open") return "#1976D2";
       else if (status === "Cancel") return "#D32F2F";
+
+      return '#111'
     },
     getStatusIcon(status: string) {
       if (!status) return "";

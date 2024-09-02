@@ -18,15 +18,11 @@
 
     <div class="widget-box -large">
       <s-widget-header
-        :title="`${account.currency} Transactions`"
+        :title="`${account.currency} ${$t('global.commons.transactions')}`"
         icon="wallet"
       ></s-widget-header>
       <v-list-subheader>
-        In this section, you can view a comprehensive list of all transactions
-        for the chosen wallet. A charge transaction is created when a customer
-        successfully pays for an order. Additionally, if an order is canceled or
-        partially refunded, the refund transaction will be recorded here as
-        well.
+        {{ $t("vendor_account_transactions.subtitle") }}
       </v-list-subheader>
 
       <u-loading-progress v-if="busy_fetch"></u-loading-progress>
@@ -66,15 +62,15 @@
           <div v-if="item.source === 'ORDER'" class="small">
             {{
               item.amount > 0
-                ? "🟨 Marketplace -> 🟪 Wallet"
-                : "🟪 Wallet -> 🟨 Marketplace"
+                ? `🟨 ${$t("global.commons.marketplace")} -> 🟪 ${$t("global.commons.wallet")}`
+                : `🟪 ${$t("global.commons.wallet")} -> 🟨 ${$t("global.commons.marketplace")}`
             }}
           </div>
           <div v-else-if="item.source === 'PAYOUT'" class="small">
             {{
               item.amount > 0
-                ? "🟥 Vendor Bank -> 🟪 Wallet"
-                : "🟪 Wallet -> 🟥 Vendor Bank"
+                ? `🟥 ${$t("vendor_account_transactions.vendor_bank")} -> 🟪 ${$t("global.commons.wallet")}`
+                : `🟪 ${$t("global.commons.wallet")} -> 🟥 ${$t("vendor_account_transactions.vendor_bank")}`
             }}
           </div>
         </template>
@@ -84,10 +80,14 @@
             >{{ item.source === "ORDER" ? "shopping_bag" : "account_balance" }}
           </v-icon>
           <span v-if="item.source === 'ORDER'">{{
-            item.amount > 0 ? "Order Fee" : "Order Refund"
+            item.amount > 0
+              ? $t("vendor_account_transactions.order_fee")
+              : $t("vendor_account_transactions.order_refund")
           }}</span>
           <span v-else-if="item.source === 'PAYOUT'">{{
-            item.amount > 0 ? "Reverse Fund" : "Payout"
+            item.amount > 0
+              ? $t("vendor_account_transactions.reverse_fund")
+              : $t("vendor_account_transactions.payout")
           }}</span>
         </template>
         <template v-slot:item.officer_id="{ item }">

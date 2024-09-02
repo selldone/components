@@ -29,7 +29,7 @@
         { title: $t('importer.step_send_to_server') },
         { title: $t('importer.step_view_que') },
       ]"
-      class="rounded-2rem"
+      class="rounded-2rem mt-5"
       flat
       hide-actions
       item-title="title"
@@ -101,7 +101,7 @@
               :disabled="!is_valid || !personal_information_verified"
               color="primary"
               size="x-large"
-              variant="flat"
+              variant="elevated"
               @click="step = 2"
             >
               {{ $t("global.actions.continue") }}
@@ -114,34 +114,6 @@
 
         <v-stepper-window-item :value="2">
           <div class="pt-6" style="min-height: 200px">
-            <v-container class="text-center">
-              <v-row>
-                <v-col cols="12" sm="4">
-                  <p>
-                    {{ $t("importer.shop_license") }}
-                  </p>
-                  <shop-license-view :shop="shop"></shop-license-view>
-                </v-col>
-
-                <v-col cols="12" sm="4">
-                  <p>
-                    {{ $t("importer.max_items_limit") }}
-                  </p>
-                  <b class="text-h4">{{ max_items_limit }}</b>
-                </v-col>
-
-                <v-col cols="12" sm="4">
-                  <p>
-                    {{ $t("importer.total_items") }}
-                  </p>
-                  <b
-                    :class="valid_count ? 'text-success' : 'text-danger'"
-                    class="text-h4"
-                    >{{ total_items }}</b
-                  >
-                </v-col>
-              </v-row>
-            </v-container>
 
             <b-shop-quota-importer
               :new-count="total_items"
@@ -219,7 +191,7 @@
           </div>
 
           <div class="widget-buttons mt-4">
-            <v-btn exact size="x-large" variant="flat" @click="$emit('close')"
+            <v-btn exact size="x-large" variant="outlined" @click="$emit('close')"
               >Back to the customers list
               <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
             </v-btn>

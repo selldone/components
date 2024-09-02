@@ -121,7 +121,7 @@
           (!styler[headers[col]].onlyProduct || !isVariant(rowValue)) &&
           (!styler[headers[col]].onlyVariant || isVariant(rowValue))
         "
-        :value="getBooleanValue(modelValue, styler[headers[col]].default)"
+        :model-value="getBooleanValue(modelValue, styler[headers[col]].default)"
         size="24"
       >
       </u-check>

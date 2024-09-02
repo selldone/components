@@ -18,63 +18,83 @@
       <v-col cols="12" sm="4">
         <v-card class="min-h-100" elevation="24" rounded="xl">
           <v-card-title>
-            <b>Quota</b>
+            <b>{{ $t("quota_importer.quota") }}</b>
           </v-card-title>
           <v-card-subtitle>
             {{ $t("importer.max_items_limit") }} |
-            {{ numeralFormat(quota_max + quota_extra, "0,0") }}
+            <b>{{ numeralFormat(quota_max + quota_extra, "0,0") }}</b>
           </v-card-subtitle>
           <v-card-text class="text-h4">
-            <v-list class="border-between-vertical">
+            <v-list
+              class="border-between-vertical"
+              lines="two"
+              density="compact"
+            >
               <v-list-item>
+                <template v-slot:prepend>
+                  <span class="me-2 text-h5" style="min-width: 40px">
+                    {{ numeralFormat(max_items_limit, "0a") }}
+                  </span>
+                </template>
                 <v-list-item-title>
-                  {{ numeralFormat(max_items_limit, "0,0") }}
-
                   <shop-license-view
                     :shop="shop"
                     class="mx-1"
                   ></shop-license-view>
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  Max import items limit per batch
+                  {{ $t("quota_importer.max_batch_msg") }}
                 </v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item>
-                <v-list-item-title>
-                  {{ numeralFormat(quota_max, "0,0") }}
+                <template v-slot:prepend>
+                  <span class="me-2 text-h5" style="min-width: 40px">
+                    {{ numeralFormat(quota_max, "0a") }}
+                  </span>
+                </template>
 
+                <v-list-item-title>
                   <v-avatar
-                    class="mx-2 avatar-gradient -thin -shop"
+                    class="me-2 avatar-gradient -thin -shop"
                     color="primary"
                     size="24"
                   >
-                    <img :src="getShopImagePath(shop.icon, 128)" />
+                    <v-img :src="getShopImagePath(shop.icon, 128)" />
                   </v-avatar>
                   <b>{{ shop.title }}</b>
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  Max daily product limit
+                  {{ $t("quota_importer.max_daily_limit_msg") }}
                 </v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item>
+                <template v-slot:prepend>
+                  <span class="me-2" style="min-width: 40px">
+                    <v-icon size="28">add</v-icon>
+                  </span>
+                </template>
+
                 <v-list-item-title>
-                  <v-icon start>add</v-icon>
-                  {{ numeralFormat(quota_extra, "0,0") }}
+                  {{ numeralFormat(quota_extra, "0a") }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  Extra daily product limit
+                  {{ $t("quota_importer.extra_daily_limit_msg") }}
                 </v-list-item-subtitle>
               </v-list-item>
 
               <v-list-item>
+                <template v-slot:prepend>
+                  <span class="me-2" style="min-width: 40px">
+                    <v-icon size="28">remove</v-icon>
+                  </span>
+                </template>
                 <v-list-item-title>
-                  <v-icon class="me-1">remove</v-icon>
-                  {{ numeralFormat(quota_usage, "0,0") }}
+                  {{ numeralFormat(quota_usage, "0a") }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  Added products today
+                  {{ $t("quota_importer.add_items_today_msg") }}
                 </v-list-item-subtitle>
               </v-list-item>
             </v-list>
@@ -104,7 +124,7 @@
               src="../../../../assets/file/excel.svg"
               width="16"
             />
-            Statistics about this file.
+            {{ $t("quota_importer.file_statistic_msg") }}
           </v-card-subtitle>
 
           <v-card-text>
@@ -121,16 +141,17 @@
             >
               <u-check
                 :model-value="valid_count"
-                false-color="red"
                 false-icon="cancel"
+                read-only
                 size="32"
-                true-color="primary"
+                true-color="#388E3C"
+                false-color="red"
                 true-icon="check_circle"
               ></u-check>
             </v-progress-circular>
 
-            <div class="ma-2">
-              Used quota:
+            <div class="ma-2 pa-2 rounded-lg text-white text-uppercase" style="background: #ffffff33;backdrop-filter: blur(6px);text-shadow: #00000055 0px 0px 6px;">
+              {{ $t("quota_importer.used_quota") }}:
               {{ numeralFormat(quota_usage, "0,0.[0]a") }} /
               {{ numeralFormat(quota_max + quota_extra, "0,0.[0]a") }}
             </div>

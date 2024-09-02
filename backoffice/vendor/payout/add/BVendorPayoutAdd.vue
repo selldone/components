@@ -19,33 +19,38 @@
       <!-- ███████████████████████ Select vendor ███████████████████████ -->
 
       <div class="widget-box mb-5">
-        <s-widget-header icon="store" title="Vendor"></s-widget-header>
+        <s-widget-header
+          icon="store"
+          :title="$t('vendor_payout_add.vendor.title')"
+        ></s-widget-header>
 
         <v-list-subheader>
-          Please choose the vendor you wish to transfer money to. Once you've
-          selected the vendor, you'll see available payment options. If you have
-          enabled payment gateways with payout capabilities, the payout options
-          will be displayed here as well.
+          {{ $t("vendor_payout_add.vendor.subtitle") }}
         </v-list-subheader>
 
         <!-- Visual fund flow -->
         <div class="text-center d-flex align-center justify-center" dir="ltr">
           <div class="min-width-100">
             <v-icon>wallet</v-icon>
-            <small class="d-block">Vendor wallet</small>
+            <small class="d-block">{{
+              $t("vendor_payout_add.vendor_wallet")
+            }}</small>
           </div>
           <v-icon class="mb-4">trending_flat</v-icon>
           <div class="min-width-100">
             <v-icon>account_balance</v-icon>
-            <small class="d-block">Vendor account</small>
+            <small class="d-block"
+              >{{ $t("vendor_payout_add.vendor_bank_account") }}
+            </small>
           </div>
         </div>
 
         <b-vendor-input
           v-model="vendor_id"
           :disabled="!!payment"
-          :shop="shop" clearable
-          placeholder="Select a vendor..."
+          :shop="shop"
+          clearable
+          :placeholder="$t('vendor_payout_add.inputs.vendor.placeholder')"
           @click:clear="vendor_id = null"
         ></b-vendor-input>
 
@@ -126,7 +131,6 @@
         <v-btn
           v-if="!payment /*Not edit mode!*/"
           class="tnt"
-          title="When you connect payout services such as Stripe Connect, we attempt to retrieve the available balance in your Stripe account and display it here for your reference."
           variant="text"
           @click="with_balance = !with_balance"
         >
@@ -136,25 +140,45 @@
             size="x-small"
             >circle
           </v-icon>
-          {{ with_balance ? "With balance" : "Without balance - fast mode" }}
+          {{
+            with_balance
+              ? $t("vendor_payout_add.with_balance")
+              : $t("vendor_payout_add.without_balance")
+          }}
+
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+            content-class="bg-black text-start"
+            max-width="320"
+          >
+            {{ $t("vendor_payout_add.with_balance_tooltip") }}
+          </v-tooltip>
         </v-btn>
       </div>
       <!-- ███████████████████████ Transfer Mode > Bank ███████████████████████ -->
 
       <div v-if="selected_option === 'bank'" class="widget-box mb-5">
-        <s-widget-header icon="account_balance" title="Bank Transfer">
+        <s-widget-header
+          icon="account_balance"
+          :title="$t('vendor_payout_add.bank_transfer.title')"
+        >
         </s-widget-header>
 
-        <v-list-subheader
-          >It is just a payment history record. No real money will be
-          transferred to the vendor by the system. You should pay your vendors
-          manually.
+        <v-list-subheader>
+          {{ $t("vendor_payout_add.bank_transfer.subtitle") }}
         </v-list-subheader>
 
         <u-pods-panel>
-          <u-pod-node icon="business" title="You"></u-pod-node>
+          <u-pod-node
+            icon="business"
+            :title="$t('global.commons.you')"
+          ></u-pod-node>
           <u-pod-wire forward></u-pod-wire>
-          <u-pod-node icon="account_balance" title="Vendor Bank"></u-pod-node>
+          <u-pod-node
+            icon="account_balance"
+            :title="$t('vendor_payout_add.vendor_bank')"
+          ></u-pod-node>
         </u-pods-panel>
 
         <b-vendor-payout-bank-info
@@ -180,20 +204,22 @@
         </v-list-subheader>
 
         <u-pods-panel>
-          <u-pod-node icon="business" title="You"></u-pod-node>
+          <u-pod-node
+            icon="business"
+            :title="$t('global.commons.you')"
+          ></u-pod-node>
           <u-pod-wire forward></u-pod-wire>
           <u-pod-node
             :icon="selected_option_obj.icon"
             :image="selected_option_obj.image"
-            :title="`Vendor ${selected_option_obj.title}`"
+            :title="`${$t('global.commons.vendor')} ${selected_option_obj.title}`"
           >
           </u-pod-node>
         </u-pods-panel>
 
         <v-list-subheader v-if="!selected_option_obj.livemode">
           <v-icon class="me-1" color="orange">warning</v-icon>
-          Since the payment gateway is currently in debug mode, funds will not
-          be transferred to an actual account.
+          {{ $t("vendor_payout_add.gateway_in_debug_mode_warning") }}
         </v-list-subheader>
 
         <u-text-value-box
@@ -237,14 +263,13 @@
       <!-- ███████████████████████ Payment ███████████████████████ -->
 
       <div :class="{ disabled: !selected_option }" class="widget-box mb-5">
-        <s-widget-header icon="paid" title="Payment"></s-widget-header>
+        <s-widget-header
+          icon="paid"
+          :title="$t('vendor_payout_add.payment.title')"
+        ></s-widget-header>
 
-        <v-list-subheader
-          >Select the currency and enter the payment amount you want to transfer
-          to your vendor. If you enter a negative amount, the funds will be
-          returned from the vendor's wallet and deducted accordingly. For
-          connected accounts with payout options, the funds will be reduced from
-          the connected account, such as the vendor's connected Stripe account.
+        <v-list-subheader>
+          {{ $t("vendor_payout_add.payment.subtitle") }}
         </v-list-subheader>
 
         <u-currency-input
@@ -272,7 +297,7 @@
           auto-grow
           hide-details
           persistent-placeholder
-          placeholder="You can attach a note here... This not is visible to the vendor."
+          :placeholder="$t('vendor_payout_add.inputs.note.placeholder')"
           rows="2"
           variant="underlined"
         >
@@ -286,31 +311,34 @@
       </div>
 
       <div v-if="payment?.reversal_detail?.length" class="widget-box mb-5">
-        <s-widget-header icon="history" title="History"></s-widget-header>
-        <v-list-subheader
-          >A portion of this payment has been refunded through a reversal
-          transfer. This indicates that the balance has been deducted from the
-          vendor's account and transferred to your account.
+        <s-widget-header
+          icon="history"
+          :title="$t('vendor_payout_add.history.title')"
+        ></s-widget-header>
+        <v-list-subheader>
+          {{ $t("vendor_payout_add.history.subtitle") }}
         </v-list-subheader>
         <b-vendor-payout-history :payment="payment"></b-vendor-payout-history>
       </div>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Delete ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div v-if="payment" class="widget-box mb-5">
-        <s-widget-header icon="block" title="Refund"></s-widget-header>
-        <v-list-subheader
-          >The charged amount will be subtracted from the vendor's account
-          balance. Additionally, all payments (or the remaining payment amounts)
-          in the associated vendor account (such as Stripe Connect) will be
-          refunded through a reversal transfer.
+        <s-widget-header
+          icon="block"
+          :title="$t('vendor_payout_add.refund.title')"
+        ></s-widget-header>
+        <v-list-subheader>
+          {{ $t("vendor_payout_add.refund.subtitle") }}
         </v-list-subheader>
 
         <u-smart-toggle
           v-model="accept_delete"
           class="my-3"
           color="red"
-          true-description="I would like to remove this payment."
-          true-title="Remove & Refund payment"
+          :true-description="
+            $t('vendor_payout_add.inputs.accept_refund.true_description')
+          "
+          :true-title="$t('vendor_payout_add.inputs.accept_refund.true_title')"
         ></u-smart-toggle>
 
         <div class="widget-buttons">
@@ -322,7 +350,8 @@
             @click="remove"
           >
             <v-icon class="me-1">remove</v-icon>
-            Refund
+
+            {{ $t("global.actions.refund") }}
           </v-btn>
         </div>
       </div>
@@ -529,8 +558,8 @@ export default {
             this.$emit("close");
 
             this.showSuccessAlert(
-              "Payout",
-              "The vendor's payout has been successfully processed and added.",
+              this.$t("vendor_payout_add.notifications.payout_success.title"),
+              this.$t("vendor_payout_add.notifications.payout_success.message"),
             );
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -557,8 +586,12 @@ export default {
             this.$emit("remove", data.id);
             this.$emit("close");
             this.showSuccessAlert(
-              "Revers Fund",
-              "The vendor's fund reversal has been successfully completed, with money transferred from the bank to the wallet and added to the wallet balance.",
+              this.$t(
+                "vendor_payout_add.notifications.reverse_fund_success.title",
+              ),
+              this.$t(
+                "vendor_payout_add.notifications.reverse_fund_success.message",
+              ),
             );
           } else {
             this.showErrorAlert(null, data.error_msg);
