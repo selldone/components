@@ -22,7 +22,7 @@
     :variant="variant"
     clearable
     item-title="title"
-    label="Pricing / Valuation models"
+    :label="$t('valuation_input.label')"
     messages=" "
     return-object
     @update:model-value="(val) => $emit('update:modelValue', val)"

@@ -20,7 +20,7 @@
   >
     <v-card-title>
       <v-icon class="me-2">calculate</v-icon>
-      {{ valuation ? "Edit Valuation Form" : "Create New Valuation Form" }}
+      {{ valuation ?$t('valuation_add.title_edit')  :$t('valuation_add.title_add')  }}
     </v-card-title>
     <v-card-text>
       <v-form ref="form" lazy-validation>
@@ -32,17 +32,18 @@
             icon="tune"
           ></s-widget-header>
           <v-list-subheader
-            >Implement valuation to establish flexible pricing using formulas
-            and reference tables for your items. Begin by assigning a unique
-            name to this valuation.
+            >
+            {{$t('valuation_add.config.subtitle')}}
+
+
           </v-list-subheader>
 
           <v-text-field
             v-model="title"
             :label="$t('global.commons.title') + '*'"
             :rules="[GlobalRules.counter(120), GlobalRules.required()]"
-            messages="This title is not shown to the customer."
-            placeholder="A name for pricing, e.g. Mugs pricing"
+            :messages="$t('valuation_add.inputs.title.message')"
+            :placeholder="$t('valuation_add.inputs.title.placeholder')"
             variant="underlined"
           ></v-text-field>
 
@@ -57,16 +58,17 @@
 
         <div class="widget-box mb-5">
           <s-widget-header
-            :add-caption="collapse ? 'Expand' : 'Collapse'"
+            :add-caption="collapse ?$t('valuation_add.structure.expand_action')  :$t('valuation_add.structure.collapse_action')  "
             :add-icon="collapse ? 'unfold_more' : 'unfold_less'"
             add-text
             icon="table_view"
-            title="Structure"
+            :title="$t('valuation_add.structure.title') "
             @click:add="collapse = !collapse"
           ></s-widget-header>
           <v-list-subheader
-            >Here, you can craft your pricing input form, integrating formulas
-            and reference tables.
+            >
+            {{$t('valuation_add.structure.subtitle')}}
+
           </v-list-subheader>
 
           <b-valuation-form-structure
@@ -91,7 +93,8 @@
           >
             <div class="pa-3 text-muted text-center mt-5">
               <v-icon class="me-1">science</v-icon>
-              Valuation form preview
+              {{$t('valuation_add.valuation_preview')}}
+
             </div>
 
             <s-product-section-valuation
@@ -106,7 +109,8 @@
           <div class="text-end m-3">
             <v-btn class="me-1" variant="text" @click="samples_dialog = true">
               <v-icon start>science</v-icon>
-              Load sample
+
+              {{$t('valuation_add.load_sample')}}
             </v-btn>
 
             <v-menu :min-width="160">
@@ -145,11 +149,10 @@
         <div class="widget-box mb-5">
           <s-widget-header
             icon="rule_folder"
-            title="Conditions"
+            :title="$t('valuation_add.conditions.title') "
           ></s-widget-header>
           <v-list-subheader
-            >Set logic behind the custom variants. This setup allows for
-            effortless management of variant availability.
+            >{{$t('valuation_add.conditions.subtitle')}}
           </v-list-subheader>
 
           <b-valuation-form-condition
@@ -204,7 +207,7 @@
       </div>
     </v-card-actions>
 
-    <!-- ███████████████████████ Withdraw approval dialog ███████████████████████ -->
+    <!-- ███████████████████████ Sample dialog ███████████████████████ -->
     <v-bottom-sheet
       v-model="samples_dialog"
       content-class="rounded-t-xl"
@@ -215,7 +218,8 @@
       <v-card class="rounded-t-xl text-start" rounded="0">
         <v-card-title>
           <v-icon class="me-2" color="#111">science</v-icon>
-          Sample Valuations
+          {{$t('valuation_add.samples.title')}}
+
         </v-card-title>
 
         <v-card-text>
@@ -250,7 +254,7 @@
               @click="samples_dialog = false"
             >
               <v-icon start>close</v-icon>
-              Close
+              {{$t('global.actions.close')}}
             </v-btn>
           </div>
         </v-card-actions>

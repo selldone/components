@@ -353,7 +353,15 @@
           <s-widget-header
             :title="$t('add_product.edit_info.custom_pricing.title')"
             icon="calculate"
+            :add-caption="product.valuation? $t('add_product.edit_info.custom_pricing.edit_pricing_action'):   $t('add_product.edit_info.custom_pricing.add_pricing_action')"
+            @click:add="showValuationForm"
+            :add-icon="product.valuation?'edit_note':'playlist_add'"
+            :add-sub-caption="product.valuation?.title"
           ></s-widget-header>
+
+
+
+
           <v-list-subheader>
             {{ $t("add_product.edit_info.custom_pricing.subtitle") }}
           </v-list-subheader>
@@ -391,34 +399,6 @@
             }}
           </div>
 
-          <div class="widget-buttons">
-            <v-btn
-              v-if="product.valuation"
-              color="primary"
-              size="x-large"
-              variant="text"
-              @click="showValuationForm"
-            >
-              <v-icon class="me-1">edit_note</v-icon>
-
-              {{
-                $t("add_product.edit_info.custom_pricing.edit_pricing_action")
-              }}
-            </v-btn>
-            <v-btn
-              v-else
-              color="primary"
-              size="x-large"
-              variant="text"
-              @click="showValuationForm"
-            >
-              <v-icon class="me-1">playlist_add</v-icon>
-
-              {{
-                $t("add_product.edit_info.custom_pricing.add_pricing_action")
-              }}
-            </v-btn>
-          </div>
 
           <v-dialog
             v-model="show_valuation"
