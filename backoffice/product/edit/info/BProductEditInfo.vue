@@ -277,108 +277,7 @@
       >
       </u-smart-select>
 
-      <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Custom Price Input ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-      <v-expand-transition>
-        <div v-if="product.price_input === 'custom'" id="custom_valuation">
-          <s-widget-header
-            :title="$t('add_product.edit_info.custom_pricing.title')"
-            icon="calculate"
-          ></s-widget-header>
-          <v-list-subheader>
-            {{ $t("add_product.edit_info.custom_pricing.subtitle") }}
-          </v-list-subheader>
 
-          <b-valuation-input
-            v-model="valuation"
-            :loading="busy_valuation"
-            :shop="shop"
-            @update:model-value="
-              (val) => {
-                setProductValuation(val ? val.id : null);
-              }
-            "
-          ></b-valuation-input>
-
-          <div v-if="!in_edit_mode" class="py-3 text-red font-weight-bold">
-            <v-icon class="me-1" color="red">warning_amber</v-icon>
-
-            {{
-              $t(
-                "add_product.edit_info.custom_pricing.valuation_need_saved_product_message",
-              )
-            }}
-          </div>
-          <div
-            v-else-if="!product.valuation_id"
-            class="py-3 text-red font-weight-bold"
-          >
-            <v-icon class="me-1" color="red">warning_amber</v-icon>
-
-            {{
-              $t(
-                "add_product.edit_info.custom_pricing.assign_valuation_message",
-              )
-            }}
-          </div>
-
-          <div class="widget-buttons">
-            <v-btn
-              v-if="product.valuation"
-              color="primary"
-              size="x-large"
-              variant="text"
-              @click="showValuationForm"
-            >
-              <v-icon class="me-1">edit_note</v-icon>
-
-              {{
-                $t("add_product.edit_info.custom_pricing.edit_pricing_action")
-              }}
-            </v-btn>
-            <v-btn
-              v-else
-              color="primary"
-              size="x-large"
-              variant="text"
-              @click="showValuationForm"
-            >
-              <v-icon class="me-1">playlist_add</v-icon>
-
-              {{
-                $t("add_product.edit_info.custom_pricing.add_pricing_action")
-              }}
-            </v-btn>
-          </div>
-
-          <v-dialog
-            v-model="show_valuation"
-            fullscreen
-            scrollable
-            transition="dialog-bottom-transition"
-          >
-            <b-valuation-add
-              v-if="pre_show_valuation"
-              :product="product"
-              :shop="shop"
-              :valuation="product.valuation"
-              has-file
-              @add="
-                (val) => {
-                  setProductValuation(val ? val.id : null);
-                  show_valuation = false;
-                }
-              "
-              @close="closeValuation"
-              @edit="
-                (val) => {
-                  product.valuation = val;
-                  Object.assign(valuation, val);
-                }
-              "
-            ></b-valuation-add>
-          </v-dialog>
-        </div>
-      </v-expand-transition>
 
       <!--
       <v-switch
@@ -417,6 +316,7 @@
         :placeholder="$t('add_product.edit_info.action.placeholder')"
         variant="underlined"
         @blur="live_action = product.action"
+        prepend-inner-icon="smart_button"
       >
         <template v-slot:append-inner>
           <v-btn
@@ -445,6 +345,114 @@
         </template>
       </v-combobox>
     </div>
+
+    <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Custom Price Input ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+    <v-expand-transition>
+      <div v-if="product.price_input === 'custom'" id="custom_valuation">
+<div class="widget-box mb-5">
+
+  <s-widget-header
+      :title="$t('add_product.edit_info.custom_pricing.title')"
+      icon="calculate"
+  ></s-widget-header>
+  <v-list-subheader>
+    {{ $t("add_product.edit_info.custom_pricing.subtitle") }}
+  </v-list-subheader>
+
+  <b-valuation-input
+      v-model="valuation"
+      :loading="busy_valuation"
+      :shop="shop"
+      @update:model-value="
+              (val) => {
+                setProductValuation(val ? val.id : null);
+              }
+            "
+  ></b-valuation-input>
+
+  <div v-if="!in_edit_mode" class="py-3 text-red font-weight-bold">
+    <v-icon class="me-1" color="red">warning_amber</v-icon>
+
+    {{
+      $t(
+          "add_product.edit_info.custom_pricing.valuation_need_saved_product_message",
+      )
+    }}
+  </div>
+  <div
+      v-else-if="!product.valuation_id"
+      class="py-3 text-red font-weight-bold"
+  >
+    <v-icon class="me-1" color="red">warning_amber</v-icon>
+
+    {{
+      $t(
+          "add_product.edit_info.custom_pricing.assign_valuation_message",
+      )
+    }}
+  </div>
+
+  <div class="widget-buttons">
+    <v-btn
+        v-if="product.valuation"
+        color="primary"
+        size="x-large"
+        variant="text"
+        @click="showValuationForm"
+    >
+      <v-icon class="me-1">edit_note</v-icon>
+
+      {{
+        $t("add_product.edit_info.custom_pricing.edit_pricing_action")
+      }}
+    </v-btn>
+    <v-btn
+        v-else
+        color="primary"
+        size="x-large"
+        variant="text"
+        @click="showValuationForm"
+    >
+      <v-icon class="me-1">playlist_add</v-icon>
+
+      {{
+        $t("add_product.edit_info.custom_pricing.add_pricing_action")
+      }}
+    </v-btn>
+  </div>
+
+  <v-dialog
+      v-model="show_valuation"
+      fullscreen
+      scrollable
+      transition="dialog-bottom-transition"
+  >
+    <b-valuation-add
+        v-if="pre_show_valuation"
+        :product="product"
+        :shop="shop"
+        :valuation="product.valuation"
+        has-file
+        @add="
+                (val) => {
+                  setProductValuation(val ? val.id : null);
+                  show_valuation = false;
+                }
+              "
+        @close="closeValuation"
+        @edit="
+                (val) => {
+                  product.valuation = val;
+                  Object.assign(valuation, val);
+                }
+              "
+    ></b-valuation-add>
+  </v-dialog>
+</div>
+      </div>
+    </v-expand-transition>
+
+
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ SKU / MPN ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div v-level.min="AppLevel.NOVICE" class="widget-box mb-5">
