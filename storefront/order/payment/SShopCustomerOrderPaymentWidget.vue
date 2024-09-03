@@ -654,8 +654,8 @@
           cols="12"
           @click="createMyPortalUrl()"
         >
-          <v-btn :loading="busy_portal" class="float-end" icon>
-            <v-icon color="#1976D2">open_in_new</v-icon>
+          <v-btn :loading="busy_portal" class="float-end" icon variant="text"  color="#1976D2">
+            <v-icon>open_in_new</v-icon>
           </v-btn>
 
           <b class="d-block">

@@ -48,12 +48,14 @@
       </div>
 
       <div class="-link">
-        <div
-          v-if="message"
-          dir="auto"
-          class="text-start small op-0-5"
-          v-html="message"
-        ></div>
+        <div dir="auto" class="text-start">
+          <span
+            v-if="message"
+            class="small op-0-5"
+            v-html="message"
+          ></span>
+          <slot name="append-message"></slot>
+        </div>
         <v-spacer></v-spacer>
 
         <span
