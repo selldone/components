@@ -218,6 +218,15 @@
       <v-icon v-if="action_icon" class="me-2"> {{ action_icon }}</v-icon>
       {{ action_text }}
     </v-btn>
+
+
+    <!--
+█████████████████████████████████████████████████████████████
+―――――――――――――――――――――――― External ▶ Second  Call to Action ―――――――――――――――――――――――
+█████████████████████████████████████████████████████████████
+-->
+    <s-product-external-button :product="product"></s-product-external-button>
+
   </div>
 </template>
 
@@ -233,10 +242,12 @@ import { SubscriptionMode } from "@selldone/core-js/enums/subscription/Subscript
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import { BuyButtonHelper } from "@selldone/core-js/helper/shop/BuyButtonHelper";
 import _ from "lodash-es";
+import SProductExternalButton
+  from "@selldone/components-vue/storefront/product/external/button/SProductExternalButton.vue";
 
 export default {
   name: "SShopBuyButton",
-  components: { SShopSubscribeButton, UNumberInput, ULoadingEllipsis },
+  components: {SProductExternalButton, SShopSubscribeButton, UNumberInput, ULoadingEllipsis },
   props: {
     product: {
       required: true,

@@ -61,7 +61,7 @@
 
     <!--  Small screen -->
     <div v-else-if="hierarchyItems.length > 0">
-      <v-btn class="w-100" size="x-large" variant="text" @click="dialog = true">
+      <v-btn class="w-100" size="x-large" variant="text" @click="dialog = true" :prepend-icon="prependIcon">
         {{ $t("global.commons.category") }}
         <v-icon :class="{ 'rotate-180': dialog }" class="t-all-400" end
           >expand_more
@@ -147,6 +147,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    prependIcon:{}
   },
   data: function () {
     return {

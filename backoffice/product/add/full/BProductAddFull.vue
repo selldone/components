@@ -1007,6 +1007,9 @@ not need!
             // Wholesaler:
             limit_min: this.product_new.limit_min,
             limit_max: this.product_new.limit_max,
+
+            // External
+            external: this.product_new.external,
           },
         )
         .then(({ data }) => {
@@ -1127,6 +1130,9 @@ not need!
             // Wholesaler:
             limit_min: this.product_new.limit_min,
             limit_max: this.product_new.limit_max,
+
+            // External
+            external: this.product_new.external,
           },
         )
         .then(({ data }) => {

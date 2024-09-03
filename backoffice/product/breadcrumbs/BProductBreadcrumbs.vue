@@ -19,6 +19,7 @@
     :image-size="imageSize"
     :title="$t('product_admin.dashboard.info.category')"
     flex-mode
+    :prependIcon="prependIcon"
   />
 </template>
 
@@ -41,6 +42,7 @@ export default {
     imageSize: {
       default: 20,
     },
+    prependIcon:{},
   },
 
   computed: {

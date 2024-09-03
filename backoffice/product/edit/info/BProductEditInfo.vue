@@ -37,14 +37,22 @@
 
         <v-list-item>
           <template v-slot:prepend>
-            <v-avatar rounded>
-              <img :src="getShopImagePath(vendor.icon, 64)" />
-            </v-avatar>
+            <u-avatar-folder
+              :src="getShopImagePath(vendor.icon, 64)"
+              :border-size="8"
+              side-icon="storefront"
+              is-gray
+              elevated
+              class="pen"
+            >
+            </u-avatar-folder>
           </template>
           <v-list-item-title class="font-weight-bold"
             >{{ vendor.name }}
           </v-list-item-title>
-          <v-list-item-subtitle>{{ vendor.description }}</v-list-item-subtitle>
+          <v-list-item-subtitle
+            >{{ vendor.description?.limitWords(24) }}
+          </v-list-item-subtitle>
         </v-list-item>
       </template>
 
@@ -344,6 +352,91 @@
           ></b-translation-button-product>
         </template>
       </v-combobox>
+
+      <v-expand-transition group>
+        <div
+          v-if="!force_show_external && !product.external"
+          class="d-flex flex-wrap align-center"
+        >
+
+          <small class="mx-2">{{can_set_external? $t('add_product.edit_info.external.available_message'):$t('add_product.edit_info.external.not_available_message')}}</small>
+
+          <v-spacer></v-spacer>
+          <v-btn
+            variant="text"
+            color="#000"
+            class="tnt"
+            size="small"
+            prepend-icon="add"
+            :disabled="!can_set_external"
+            @click="force_show_external = true"
+            >{{ $t("global.actions.add") }}
+
+            <img
+              :src="
+                require('@selldone/components-vue/assets/trademark/amazon.svg')
+              "
+              width="auto"
+              height="12"
+              class="ms-2"
+            />,
+            <img
+              :src="
+                require('@selldone/components-vue/assets/trademark/airbnb.svg')
+              "
+              width="auto"
+              height="12"
+              class="ms-2"
+            />
+            ...
+          </v-btn>
+        </div>
+
+        <div v-else>
+          <hr class="my-5" />
+          <v-text-field
+            class="mx-2"
+            v-model="product.external"
+            :label="$t('add_product.edit_info.external.input_label')"
+            placeholder="e.g. https://amazon.com/..."
+            variant="underlined"
+            messages=" "
+            clearable
+            persistent-placeholder
+            @click:clear="force_show_external = false"
+            :counter="255"
+          >
+            <template v-slot:message>
+              <div v-if="product_external_service" class="text-success">
+                <b class="me-1"> {{ $t(product_external_service.name) }}</b> |
+                {{ $t(product_external_service.actionText) }}
+              </div>
+
+              <template v-else>
+                <span class="text-muted"
+                  >{{ $t("global.commons.eligible") }}:</span
+                >
+                <img
+                  :src="
+                    require('@selldone/components-vue/assets/trademark/amazon.svg')
+                  "
+                  width="auto"
+                  height="12"
+                  class="ms-2"
+                />
+                <img
+                  :src="
+                    require('@selldone/components-vue/assets/trademark/airbnb.svg')
+                  "
+                  width="auto"
+                  height="12"
+                  class="ms-2"
+                />
+              </template>
+            </template>
+          </v-text-field>
+        </div>
+      </v-expand-transition>
     </div>
 
     <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Custom Price Input ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -353,14 +446,15 @@
           <s-widget-header
             :title="$t('add_product.edit_info.custom_pricing.title')"
             icon="calculate"
-            :add-caption="product.valuation? $t('add_product.edit_info.custom_pricing.edit_pricing_action'):   $t('add_product.edit_info.custom_pricing.add_pricing_action')"
+            :add-caption="
+              product.valuation
+                ? $t('add_product.edit_info.custom_pricing.edit_pricing_action')
+                : $t('add_product.edit_info.custom_pricing.add_pricing_action')
+            "
             @click:add="showValuationForm"
-            :add-icon="product.valuation?'edit_note':'playlist_add'"
+            :add-icon="product.valuation ? 'edit_note' : 'playlist_add'"
             :add-sub-caption="product.valuation?.title"
           ></s-widget-header>
-
-
-
 
           <v-list-subheader>
             {{ $t("add_product.edit_info.custom_pricing.subtitle") }}
@@ -398,7 +492,6 @@
               )
             }}
           </div>
-
 
           <v-dialog
             v-model="show_valuation"
@@ -857,7 +950,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import BCategoryInput from "../../../category/input/BCategoryInput.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
@@ -882,10 +975,14 @@ import BProductProfileTax from "../../../product/profile/tax/BProductProfileTax.
 import BProductProfileLogistic from "../../../product/profile/logistic/BProductProfileLogistic.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import { User } from "@selldone/core-js";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense.ts";
+import { ProductExternal } from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
 
 export default {
   name: "BProductEditInfo",
   components: {
+    UAvatarFolder,
     SWidgetButtons,
     BProductProfileLogistic,
     BProductProfileTax,
@@ -945,6 +1042,9 @@ export default {
       shortcut_dialog: false,
       busy_set_shortcuts: false,
       shortcuts: [],
+
+      //-----------------------------
+      force_show_external: false,
     };
   },
   computed: {
@@ -1079,6 +1179,16 @@ export default {
     //-------------------------- Marketplace --------------------------
     marketplace_has_verification_step() {
       return this.shop.marketplace?.need_verify;
+    },
+    //-------------------------- External (Amazon, Airbnb) --------------------------
+
+    can_set_external() {
+      return [ShopLicense.COMPANY.code, ShopLicense.ENTERPRISE.code].includes(
+        this.shop.license,
+      );
+    },
+    product_external_service() {
+      return ProductExternal.getServiceData(this.product.external);
     },
   },
 

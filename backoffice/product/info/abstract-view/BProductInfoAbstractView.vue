@@ -27,12 +27,13 @@
     } mr-sm' style='font-size: 6px;'></span> ${product.title?.limitWords(
       8,
     )}  </h5>`"
+    titlePadding="150px"
   >
     <template v-slot:top-left>
       <!-- ⬬⬬⬬⬬ Embed ⬬⬬⬬⬬ -->
       <span
         caption="Embed"
-        class="sub-caption inline-block -hover me-3"
+        class="sub-caption inline-block -hover me-0 me-sm-3"
         title="Embed iframe code"
       >
         <v-btn icon variant="text" @click="showEmbedCode">
@@ -43,7 +44,7 @@
       <!-- ⬬⬬⬬⬬ Download ⬬⬬⬬⬬ -->
       <span
         caption="Download"
-        class="sub-caption inline-block -hover me-3"
+        class="sub-caption inline-block -hover me-0 me-sm-3"
         title="Create a report static page of product (beta)"
       >
         <v-btn icon variant="text" @click="downloadProduct()">
@@ -67,13 +68,15 @@
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Breadcrumbs ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
       <b-product-breadcrumbs
-        v-if="product"
+        v-if="product?.category_id || $vuetify.display.smAndUp"
         :image-size="22"
         :product="product"
         :shop="shop"
+        class="my-5 my-sm-0"
+        prepend-icon="folder"
       ></b-product-breadcrumbs>
 
-      <p>
+      <div class="d-flex align-center">
         <v-btn
           :href="product_link"
           :title="$t('product_admin.dashboard.info.link')"
@@ -91,8 +94,31 @@
           @click.stop="copyToClipboard(product_link)"
           >{{ product_link }}</span
         >
-      </p>
+      </div>
+      <div v-if="product_external_service">
+        <v-btn
+            :href="product.external"
+            class="me-2"
+            icon
+            target="_blank"
+            variant="text"
+        >
+          <v-icon>link</v-icon>
+        </v-btn>
 
+        <b class="me-2 d-none d-sm-inline">{{ $t(product_external_service.name) }} |</b>
+        <v-btn :color="product_external_service.color" class="tnt" size="small" rounded="lg" :href="product.external"   target="_blank" variant="flat">
+          <img
+              class="me-2"
+              :src="product_external_service.image"
+              height="14"
+              width="auto"
+
+          />
+
+          {{ $t(product_external_service.actionText) }}
+        </v-btn>
+      </div>
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Messages ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
       <div class="dashed-hr my-2 mx-n5"></div>
@@ -655,6 +681,8 @@ import { ProductEmbedHelper } from "@selldone/core-js/helper/embed/ProductEmbedH
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import { MapHelper } from "@selldone/core-js";
+import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense.ts";
+import {ProductExternal} from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
 
 export default {
   name: "BProductInfoAbstractView",
@@ -755,6 +783,12 @@ export default {
 
     note() {
       return this.product.note;
+    },
+
+    //-------------------------- External (Amazon, Airbnb) --------------------------
+
+    product_external_service() {
+      return ProductExternal.getServiceData(this.product.external);
     },
   },
 

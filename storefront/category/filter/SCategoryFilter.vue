@@ -15,10 +15,11 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-navigation-drawer
     v-model="drawer"
-    :absolute=" true"
+    :absolute="true"
     :class="{
       'scrollable-element-dark': !light,
       'scrollable-element-light': light,
+      '-dark': !light,
     }"
     :color="light ? '#fafafa' : SaminColorDarkDeep"
     :expand-on-hover="expandOnHover"
@@ -30,6 +31,7 @@
       height: $vuetify.display.mdAndDown
         ? 'calc(100% - 48px)'
         : 'calc(100% - 16px)',
+
     }"
     :theme="light ? 'light' : 'dark'"
     :width="300"
@@ -60,12 +62,15 @@
           </template>
         </v-list-item>
 
-        <v-divider />
 
         <v-treeview
+          v-if="
+            categories_item?.length > 1 ||
+            categories_item?.some((item) => item.children?.length > 0)
+          "
           ref="treeview"
           :items="categories_item"
-          class="text-start hover-smart-tree"
+          class="text-start hover-smart-tree pt-0"
           density="comfortable"
           hoverable
           item-title="title"
@@ -92,7 +97,7 @@
         </v-treeview>
 
         <template v-if="!ignore?.includes('original')">
-          <v-divider />
+          <v-divider class="-divider" />
           <u-smart-toggle
             v-model="only_is_original"
             :dark="!light"
@@ -103,7 +108,7 @@
         </template>
 
         <template v-if="!ignore?.includes('discount')">
-          <v-divider />
+          <v-divider class="-divider" />
 
           <u-smart-toggle
             v-model="only_has_discount"
@@ -115,7 +120,7 @@
         </template>
         <!-- =========================================== Price =========================================== -->
         <div v-if="!ignore?.includes('price') && max_price">
-          <v-divider />
+          <v-divider class="-divider" />
 
           <div class="s-filter-header">
             {{ $t("product_filter_menu.price_range") }}
@@ -129,25 +134,23 @@
             :tick-size="8"
             class="align-center text-dark mt-5 mx-4"
             hide-details
-            thumb-label="always"
+            thumb-label
             @end="onChangeFilter"
             @start="price_range_changed = true"
           >
-            <template v-slot:thumb-label="">
-              <v-icon color="accent" size="small"> star</v-icon>
+            <template v-slot:thumb-label="{modelValue}">
+              <u-price :amount="modelValue" compact></u-price>
             </template>
           </v-range-slider>
 
-          <v-row>
+          <v-row class="text-center">
             <v-col class="p-2" cols="6">
-              {{ FormatNumberCurrency(price_range[0]) }}
-              <br />
-              <small>{{ GetUserSelectedCurrencyName() }}</small>
+              <u-price :amount="price_range[0]"></u-price>
+
             </v-col>
             <v-col class="p-2" cols="6">
-              {{ FormatNumberCurrency(price_range[1]) }}
-              <br />
-              <small>{{ GetUserSelectedCurrencyName() }}</small>
+              <u-price :amount="price_range[1]"></u-price>
+
             </v-col>
           </v-row>
         </div>
@@ -156,7 +159,7 @@
       <!-- =========================================== Brands =========================================== -->
 
       <div v-if="brands && brands.length > 0">
-        <v-divider />
+        <v-divider class="-divider mx-2" />
 
         <div class="s-filter-header">
           <v-icon style="color: currentColor"> fa:fas fa-braille</v-icon>
@@ -177,6 +180,7 @@
         v-if="
           present_variants_in_filter && present_variants_in_filter.length > 0
         "
+        class="-divider mx-2"
       />
 
       <div v-for="item in present_variants_in_filter" :key="item.code">
@@ -208,7 +212,7 @@
       </div>
 
       <!-- =========================================== Specs =========================================== -->
-      <v-divider v-if="other_filters && other_filters.length > 0" />
+      <v-divider v-if="other_filters && other_filters.length > 0" class="-divider mx-2"  />
 
       <div v-for="item in other_filters" :key="item">
         <div class="s-filter-header">
@@ -246,13 +250,14 @@
 import SCategoryFilterSelector from "../../../storefront/category/filter/selector/SCategoryFilterSelector.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
+import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 
 /**
  * >
  */
 export default {
   name: "SCategoryFilter",
-  components: { USmartToggle, SCategoryFilterSelector },
+  components: {UPrice, USmartToggle, SCategoryFilterSelector },
   emits: ["change-filter", "change-height", "update:modelValue"],
   props: {
     shop: {
@@ -480,17 +485,23 @@ export default {
         if (this.folders) {
           let id = 0;
           this.folders.forEach((folder) => {
-            children.push({
-              id: id++,
-              title: folder.title,
-              name: folder.name,
-              // to: {query: {dir: folder.id}}
-              to: {
-                name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
-                params: { category_name: folder.name },
-              },
-              icon: folder.icon,
-            });
+            if (
+              folder.categories > 0 ||
+              folder.products > 0 ||
+              folder.products === undefined /*Not set!*/
+            ) {
+              children.push({
+                id: id++,
+                title: folder.title,
+                name: folder.name,
+                // to: {query: {dir: folder.id}}
+                to: {
+                  name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+                  params: { category_name: folder.name },
+                },
+                icon: folder.icon,
+              });
+            }
           });
         }
 
@@ -518,17 +529,23 @@ export default {
         if (this.folders) {
           let id = 0;
           this.folders.forEach((folder) => {
-            children.push({
-              id: id++,
-              title: folder.title,
-              icon: folder.icon,
-              name: folder.name,
-              //to: {query: {dir: folder.id}}
-              to: {
-                name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
-                params: { category_name: folder.name },
-              },
-            });
+            if (
+              folder.categories > 0 ||
+              folder.products > 0 ||
+              folder.products === undefined /*Not set!*/
+            ) {
+              children.push({
+                id: id++,
+                title: folder.title,
+                icon: folder.icon,
+                name: folder.name,
+                //to: {query: {dir: folder.id}}
+                to: {
+                  name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+                  params: { category_name: folder.name },
+                },
+              });
+            }
           });
         }
         out.push({
@@ -697,6 +714,18 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 .s--storefront-products-filter-menu {
+  .-divider{
+    --v-border-opacity: 0.5;
+    margin: 8px 0;
+  }
+
+  &.-dark{
+    .-divider{
+      border-color: #fff;
+      --v-border-opacity: 0.15;
+    }
+  }
+
 }
 
 /*
@@ -711,5 +740,6 @@ export default {
     font-weight: 600;
     text-align: start;
   }
+
 }
 </style>
