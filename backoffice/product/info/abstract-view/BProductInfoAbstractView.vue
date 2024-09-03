@@ -76,49 +76,57 @@
         prepend-icon="folder"
       ></b-product-breadcrumbs>
 
-      <div class="d-flex align-center">
-        <v-btn
-          :href="product_link"
-          :title="$t('product_admin.dashboard.info.link')"
-          class="me-2"
-          icon
-          target="_blank"
-          variant="text"
-        >
-          <v-icon>link</v-icon>
-        </v-btn>
+     <v-row dense class="overflow-auto hide-scroll flex-nowrap single-line">
+       <v-col class="d-flex align-center ">
+         <v-btn
+             :href="product_link"
+             :title="$t('product_admin.dashboard.info.link')"
+             class="me-2"
+             icon
+             target="_blank"
+             variant="text"
+         >
+           <v-icon>link</v-icon>
+         </v-btn>
 
-        <span
-          class="font-weight-medium animate-underline"
-          dir="ltr"
-          @click.stop="copyToClipboard(product_link)"
-          >{{ product_link }}</span
-        >
-      </div>
-      <div v-if="product_external_service">
-        <v-btn
-            :href="product.external"
-            class="me-2"
-            icon
-            target="_blank"
-            variant="text"
-        >
-          <v-icon>link</v-icon>
-        </v-btn>
+         <b class="me-2 d-none d-sm-inline">{{ $t(shop.title) }} |</b>
 
-        <b class="me-2 d-none d-sm-inline">{{ $t(product_external_service.name) }} |</b>
-        <v-btn :color="product_external_service.color" class="tnt" size="small" rounded="lg" :href="product.external"   target="_blank" variant="flat">
-          <img
-              class="me-2"
-              :src="product_external_service.image"
-              height="14"
-              width="auto"
+         <v-btn     @click.stop="copyToClipboard(product_link)" color="#222" class="tnt" size="small" rounded="lg" variant="flat" append-icon="content_copy">
+           <v-avatar class="me-2" size="14">
+             <img :src="getShopImagePath(shop.icon, 96)" />
+           </v-avatar>
 
-          />
 
-          {{ $t(product_external_service.actionText) }}
-        </v-btn>
-      </div>
+           {{ $t('product_admin.dashboard.info.link')}}
+         </v-btn>
+
+
+       </v-col>
+       <v-col v-if="product_external_service" class="d-flex align-center">
+         <v-btn
+             :href="product.external"
+             class="me-2"
+             icon
+             target="_blank"
+             variant="text"
+         >
+           <v-icon>link</v-icon>
+         </v-btn>
+
+         <b class="me-2 d-none d-sm-inline">{{ $t(product_external_service.name) }} |</b>
+         <v-btn :color="product_external_service.color" class="tnt" size="small" rounded="lg" :href="product.external"   target="_blank" variant="flat" append-icon="open_in_new">
+           <img
+               class="me-2"
+               :src="product_external_service.image"
+               height="14"
+               width="auto"
+
+           />
+
+           {{ $t(product_external_service.actionText) }}
+         </v-btn>
+       </v-col>
+     </v-row>
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Messages ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
       <div class="dashed-hr my-2 mx-n5"></div>
