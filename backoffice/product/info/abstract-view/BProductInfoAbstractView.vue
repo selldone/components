@@ -91,7 +91,7 @@
 
          <b class="me-2 d-none d-sm-inline">{{ $t(shop.title) }} |</b>
 
-         <v-btn     @click.stop="copyToClipboard(product_link)" color="#222" class="tnt" size="small" rounded="lg" variant="flat" append-icon="content_copy">
+         <v-btn     @click.stop="copyToClipboard(product_link)" color="#000" class="tnt" size="small" rounded="lg" variant="flat" append-icon="content_copy">
            <v-avatar class="me-2" size="14">
              <img :src="getShopImagePath(shop.icon, 96)" />
            </v-avatar>
