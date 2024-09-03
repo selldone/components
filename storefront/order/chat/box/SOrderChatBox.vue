@@ -98,10 +98,13 @@
     <div v-if="isAdmin && order_link" class="widget-box -large mb-5">
       <s-widget-header title="Order Link" icon="shopping_bag"></s-widget-header>
       <v-list-subheader>
-        You can share the order link with the customer. Guest shoppers can
-        automatically view their order in the same browser. However, if the
-        customer is a guest and you need to share the order details, you can
-        create a secure link for them.
+        You can share the order link with the customer.
+
+        <span v-if="has_guest_checkout">
+          Guest shoppers can automatically view their order in the same browser.
+          However, if the customer is a guest and you need to share the order
+          details, you can create a secure link for them.</span
+        >
       </v-list-subheader>
 
       <u-text-copy-box
@@ -122,7 +125,7 @@
         </template>
       </u-text-copy-box>
 
-      <div class="position-relative">
+      <div v-if="has_guest_checkout" class="position-relative">
         <u-text-copy-box
           :value="secure_link"
           message="Secure Order URL"
@@ -169,7 +172,7 @@
 <script lang="ts">
 import SOrderChatMessage from "../message/SOrderChatMessage.vue";
 import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
-import { ShopURLs } from "@selldone/core-js/helper";
+import { ShopOptionsHelper, ShopURLs } from "@selldone/core-js/helper";
 import { Product } from "@selldone/core-js";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 import ProductType = Product.ProductType;
@@ -208,6 +211,9 @@ export default {
   }),
 
   computed: {
+    has_guest_checkout() {
+      return ShopOptionsHelper.HasGuestCheckout(this.shop);
+    },
     user() {
       return this.USER();
     },
