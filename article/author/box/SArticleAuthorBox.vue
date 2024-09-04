@@ -196,9 +196,13 @@
   ></a-feedback-content-violation-report>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import AFeedbackContentViolationReport from "../../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
+import {
+  PermissionLevels,
+  PermissionNames,
+} from "@selldone/core-js/enums/admin";
 
 export default defineComponent({
   name: "SArticleAuthorBox",
@@ -261,8 +265,8 @@ export default defineComponent({
         this.article.user_id !== this.USER_ID() &&
         this.HasPermission /*Available only in official selldone*/ &&
         this.HasPermission(
-          this.permissions.Content,
-          this.permissionLevels.DELETE_ACCESS,
+          PermissionNames.Content,
+          PermissionLevels.DELETE_ACCESS,
         )
       );
     },

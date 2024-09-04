@@ -1176,8 +1176,6 @@ export default {
 
       can_edit: false,
 
-      permissions: PermissionNames,
-      permissionLevels: PermissionLevels,
 
       article: {
         id: 0,
@@ -1388,8 +1386,8 @@ export default {
         this.article.user_id !== this.USER_ID() &&
         this.HasPermission /*Available only in official selldone*/ &&
         this.HasPermission(
-          this.permissions.Content,
-          this.permissionLevels.DELETE_ACCESS,
+            PermissionNames.Content,
+            PermissionLevels.DELETE_ACCESS,
         )
       );
     },
