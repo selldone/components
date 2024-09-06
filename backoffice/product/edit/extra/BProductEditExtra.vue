@@ -29,7 +29,7 @@
           {{ $t("add_product.extra_edit.physical.sub_title") }}
         </v-list-subheader>
       </div>
-
+      <div class="widget-box mb-5">
       <b-product-extra-input
         v-model:bulk="bulk"
         :class="{ disabled: add_by_dropShipping }"
@@ -44,7 +44,7 @@
           }
         "
       />
-
+      </div>
       <div class="widget-box mb-5">
         <s-widget-header
           :title="

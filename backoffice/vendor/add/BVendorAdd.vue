@@ -72,6 +72,7 @@
               size="x-small"
               variant="flat"
               density="comfortable"
+              :append-icon="enable ? 'check' : 'close'"
             >
               {{
                 enable
@@ -86,6 +87,7 @@
               class="ms-1"
               density="comfortable"
               prepend-icon="admin_panel_settings"
+              :append-icon="user_id && access ? 'check' : 'close'"
               >{{ $t("global.commons.access") }}
             </v-chip>
 
@@ -98,7 +100,7 @@
               :color="warehouse?'#009688':'#F44336'"
               size="x-small"
               class="ms-1"
-              density="comfortable"
+              density="comfortable" variant="flat"
               prepend-icon="warehouse"
           >{{warehouse?warehouse.title:'Not set!'}}
           </v-chip>

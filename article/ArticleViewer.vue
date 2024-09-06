@@ -899,8 +899,9 @@
       <v-sheet
         v-if="showAuthorInfo && article?.user_id > 0"
         color="#eee"
-        class="my-5 pa-2 overflow-hidden"
+        class="my-5 pa-2 overflow-hidden mx-auto"
         rounded="xl"
+        max-width="1160"
       >
         <v-sheet color="#fff" rounded="xl" elevation="4">
           <s-article-author-box

@@ -16,7 +16,7 @@
   <div v-if="is_valid">
     <v-list-item>
       <template v-slot:prepend>
-        <u-avatar-folder :src="thumbnail_url" is-red side-icon="smart_display">
+        <u-avatar-folder :src="thumbnail_url" is-red side-icon="smart_display" elevated>
         </u-avatar-folder>
       </template>
 

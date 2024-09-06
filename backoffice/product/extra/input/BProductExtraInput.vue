@@ -16,83 +16,81 @@
   <div>
     <!-- Weight -->
 
-      <s-widget-header
-        :title="$t('product_extra_physical.weight')"
-        icon="fa:fas fa-weight-hanging"
-      ></s-widget-header>
+    <s-widget-header
+      :title="$t('product_extra_physical.weight')"
+      icon="fa:fas fa-weight-hanging"
+    ></s-widget-header>
 
-      <v-list-subheader>
-        {{ $t("product_extra_physical.weight_subtitle") }}
-      </v-list-subheader>
-      <u-number-input
-        v-model="weight"
-        :decimal="3"
-        :label="$t('product_extra_physical.weight')"
-        :max="10000"
-        :min="0"
-        :suffix="mass_unit"
-        class="my-3 max-width-field mx-auto sm-suffix"
-        @change="$emit('update:extra', extra)"
-      />
+    <v-list-subheader>
+      {{ $t("product_extra_physical.weight_subtitle") }}
+    </v-list-subheader>
+    <u-number-input
+      v-model="weight"
+      :decimal="3"
+      :label="$t('product_extra_physical.weight')"
+      :max="10000"
+      :min="0"
+      :suffix="mass_unit"
+      class="my-3 max-width-field mx-auto sm-suffix"
+      @change="$emit('update:extra', extra)"
+    />
     <!-- Size -->
-    <hr class="my-5">
-      <s-widget-header
-        :title="$t('product_extra_physical.size')"
-        icon="fa:fas fa-box"
-      ></s-widget-header>
+    <hr class="my-5" />
+    <s-widget-header
+      :title="$t('product_extra_physical.size')"
+      icon="fa:fas fa-box"
+    ></s-widget-header>
 
-      <v-list-subheader>
-        {{ $t("product_extra_physical.size_subtitle") }}
-      </v-list-subheader>
-      <u-number-input
-        v-model="width"
-        :label="$t('product_extra_physical.width')"
-        :min="0"
-        :step="10"
-        :suffix="size_unit"
-        class="my-3 max-width-field mx-auto sm-suffix"
-        @change="$emit('update:extra', extra)"
-      />
+    <v-list-subheader>
+      {{ $t("product_extra_physical.size_subtitle") }}
+    </v-list-subheader>
+    <u-number-input
+      v-model="width"
+      :label="$t('product_extra_physical.width')"
+      :min="0"
+      :step="10"
+      :suffix="size_unit"
+      class="my-3 max-width-field mx-auto sm-suffix"
+      @change="$emit('update:extra', extra)"
+    />
 
-      <u-number-input
-        v-model="length"
-        :label="$t('product_extra_physical.length')"
-        :min="0"
-        :step="10"
-        :suffix="size_unit"
-        class="my-3 max-width-field mx-auto sm-suffix"
-        @change="$emit('update:extra', extra)"
-      />
+    <u-number-input
+      v-model="length"
+      :label="$t('product_extra_physical.length')"
+      :min="0"
+      :step="10"
+      :suffix="size_unit"
+      class="my-3 max-width-field mx-auto sm-suffix"
+      @change="$emit('update:extra', extra)"
+    />
 
-      <u-number-input
-        v-model="height"
-        :label="$t('product_extra_physical.height')"
-        :min="0"
-        :step="10"
-        :suffix="size_unit"
-        class="my-3 max-width-field mx-auto sm-suffix"
-        @change="$emit('update:extra', extra)"
-      />
+    <u-number-input
+      v-model="height"
+      :label="$t('product_extra_physical.height')"
+      :min="0"
+      :step="10"
+      :suffix="size_unit"
+      class="my-3 max-width-field mx-auto sm-suffix"
+      @change="$emit('update:extra', extra)"
+    />
 
-      <u-cube
-        :color="invalid_size ? '#eeeeee' : undefined"
-        :x="invalid_size ? 50 : width"
-        :y="invalid_size ? 50 : length"
-        :z="invalid_size ? 50 : height"
-      />
-      <transportations-eligible-view
-        :height="height"
-        :length="length"
-        :shop="shop"
-        :weight="weight"
-        :width="width"
-      ></transportations-eligible-view>
+    <u-cube
+      :color="invalid_size ? '#eeeeee' : undefined"
+      :x="invalid_size ? 50 : width"
+      :y="invalid_size ? 50 : length"
+      :z="invalid_size ? 50 : height"
+    />
+    <transportations-eligible-view
+      :height="height"
+      :length="length"
+      :shop="shop"
+      :weight="weight"
+      :width="width"
+    ></transportations-eligible-view>
 
     <!-- Lead Time -->
     <template v-if="!noLead">
-
-      <hr class="my-5">
-
+      <hr class="my-5" />
 
       <s-widget-header
         :title="$t('product_extra_physical.lead_time_title')"

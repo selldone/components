@@ -1260,7 +1260,7 @@ export default {
           bounds: bounds, // Location constraints
 
           tags: tags, //Filter by tags
-          vendor_id: vendor_id, // Show only for this vendor!
+          vendor_id: vendor_id==='{{vendor.id}}'?null:vendor_id, // Show only for this vendor! A;so clear dynamic vendor id! (Used in page builder)
 
           surrounded: surrounded, // true:Show only selected categories. false: Show items inside selected categories.
         })

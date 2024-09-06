@@ -101,6 +101,13 @@
         </template>
       </v-list-item>
     </template>
+
+    <template v-slot:append-inner>
+      <slot name="append-inner"></slot>
+    </template>
+    <template v-slot:append>
+      <slot name="append"></slot>
+    </template>
   </v-autocomplete>
 </template>
 
