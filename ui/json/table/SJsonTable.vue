@@ -15,8 +15,9 @@
 <template>
   <div>
     <div v-if="!value || isString(value)">{{ value }}</div>
+
     <v-table
-      v-else
+      v-else-if="isObject(value) || Array.isArray(value)"
       :class="{ dense: dense }"
       :dark="dark"
       :density="dense?'compact':undefined"
@@ -34,7 +35,7 @@
             v-for="(val, key) in value"
             :key="key"
             :class="highlights && highlights[key]"
-            class="row-hover"
+            class=""
           >
             <!-- Json -->
 
@@ -80,13 +81,13 @@
               </v-sparkline>
 
               <!-- Table -->
-              <json-table-view
+              <SJsonTable
                 v-else
                 :dense="dense"
                 :htmlEnable="htmlEnable"
                 :json-enable="jsonEnable"
                 :value="val"
-              ></json-table-view>
+              ></SJsonTable>
             </td>
 
             <!-- Print values -->
