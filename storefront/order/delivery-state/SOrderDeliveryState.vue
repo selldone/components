@@ -206,7 +206,7 @@
         {{ $t("global.basket_delivery_state.rejected") }}
       </h2>
 
-      <template v-if="basket.reject_at && basket.status !== 'Canceled'">
+      <template v-if="basket.reject_at && !canceled">
         <small class="text-white"
           ><i class="fas fa-stopwatch"></i> Time to cancel:
         </small>
@@ -340,6 +340,9 @@ export default {
 
     rejected() {
       return this.basket && this.basket.reject;
+    },
+    canceled(){
+      return this.basket.status === 'Canceled'
     },
 
     reject_reason() {

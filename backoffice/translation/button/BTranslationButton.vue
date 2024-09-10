@@ -66,7 +66,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="text-start">
-          <p v-if="defaultValue">
+          <p v-if="defaultValue" class="mb-3">
             <b>{{ $t("global.commons.default") }} :</b>
             {{ defaultValue }}
           </p>
@@ -159,6 +159,14 @@ export default {
   }),
 
   computed: {
+    IS_VENDOR_PANEL() {
+      /*🟢 Vendor Panel 🟢*/
+      return (
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
+      );
+    },
+
     is_premium() {
       return !!this.USER().premium;
     },
@@ -262,11 +270,16 @@ export default {
 
       this.busy_auto_translate = true;
       axios
-        .post(window.API.POS_SHOP_TRANSLATE(this.shop.id), {
-          text: this.defaultValue,
-          from_language: this.shop_default_language,
-          to_languages: to_languages, // Just not translated!
-        })
+        .post(
+          this.IS_VENDOR_PANEL
+            ? window.VAPI.POS_MY_VENDOR_TRANSLATE(this.$route.params.vendor_id)
+            : window.API.POS_SHOP_TRANSLATE(this.shop.id),
+          {
+            text: this.defaultValue,
+            from_language: this.shop_default_language,
+            to_languages: to_languages, // Just not translated!
+          },
+        )
         .then(({ data }) => {
           if (data.error) {
             this.showErrorAlert(null, data.error_msg);

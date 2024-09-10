@@ -394,9 +394,9 @@
               <v-icon start>add</v-icon>
               {{ $t("add_product.pricing.extra_pricings.title") }}</b
             >
-            <small>{{
+            <div class="x-small">{{
               $t("add_product.pricing.extra_pricings.subtitle")
-            }}</small>
+            }}</div>
           </div>
         </v-btn>
       </div>

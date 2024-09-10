@@ -162,7 +162,7 @@ export default {
       this.busy = true;
       axios
         .post(
-          window.API.GET_GIFT_CARD_TYPE_CARDS(
+          window.API.POST_GIFT_CARD_TYPE_CARDS_ADD(
             this.$route.params.shop_id,
             this.giftCardType.id,
           ),

@@ -28,7 +28,7 @@
         <u-price :amount="wallet.balance" :currency="wallet.currency"></u-price>
       </template>
       <template v-slot:subtitle>
-        <div class="mt-1">My wallet balance</div>
+        <div class="mt-1">{{$t('wallet_input.my_wallet_balance')}}</div>
       </template>
     </v-list-item>
   </v-scale-transition>

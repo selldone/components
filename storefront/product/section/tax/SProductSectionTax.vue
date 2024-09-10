@@ -92,7 +92,7 @@
                     {{ pickup.name }}
                   </div>
                 </template>
-                <template v-slot:subtitle>
+                <v-list-item-subtitle class="op-0-9">
                   <flag
                     v-if="pickup.country"
                     :iso="pickup.country"
@@ -101,7 +101,7 @@
                   ></flag>
 
                   {{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}
-                </template>
+                </v-list-item-subtitle>
               </v-list-item>
             </v-list>
           </v-sheet>
@@ -111,11 +111,12 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 export default {
   name: "SProductSectionTax",
@@ -139,6 +140,9 @@ export default {
   computed: {
     is_physical() {
       return this.product.type === ProductType.PHYSICAL.code;
+    },
+    IS_MARKETPLACE() {
+      return this.shop.model === BusinessModel.MARKETPLACE.code;
     },
 
     corresponding_item_in_basket() {
@@ -213,6 +217,7 @@ export default {
     pickup_transportation() {
       return (
         this.is_physical &&
+        !this.IS_MARKETPLACE /*Do not show pickup option here!*/ &&
         this.transportations?.find(
           (t) =>
             t.type === ShopTransportations.Pickup.code && t.pickups?.length > 0,

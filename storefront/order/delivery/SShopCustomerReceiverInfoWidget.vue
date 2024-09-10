@@ -54,8 +54,8 @@
           receiverInfo.postal ? receiverInfo.postal : $t("global.commons.empty")
         }}
       </span>
-      <span v-if="!receiverInfo.postal" class="ms-4 text-red text-lowercase">
-        <v-icon class="me-1 blink-me" color="red" size="small"
+      <span v-if="!receiverInfo.postal" class="ms-4 text-red text-lowercase d-inline-flex align-center">
+        <v-icon class="me-2 blink-me" color="red" size="14"
           >fa:fas fa-exclamation-circle</v-icon
         >
         {{ $t("global.commons.mandatory") }}!
@@ -74,8 +74,8 @@
         {{ receiverInfo.full_name }}
       </span>
 
-      <span v-if="!receiverInfo.phone" class="ms-4 text-red text-lowercase">
-        <v-icon class="me-1 blink-me" color="red" size="small"
+      <span v-if="!receiverInfo.phone" class="ms-4 text-red text-lowercase d-inline-flex align-center">
+        <v-icon class="me-2 blink-me" color="red" size="14"
           >fa:fas fa-exclamation-circle</v-icon
         >
         {{ $t("global.commons.mandatory") }}!
@@ -155,7 +155,7 @@ export default {
 
     has_postcode() {
       return (
-        !this.selected_country_detail || !this.selected_country_detail.nozip
+        !this.selected_country_detail?.nozip || this.receiverInfo?.postal/*Show if postal code exists!*/
       );
     },
   },

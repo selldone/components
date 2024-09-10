@@ -18,16 +18,21 @@
       v-if="busy_edit || busy_confirm || busy_sync || busy_refresh"
       :color="busy_refresh ? 'blue' : undefined"
     ></u-loading-progress>
-    <v-list-item>
-      <template v-slot:prepend>
-        <v-avatar rounded size="64">
-          <img :src="getShopImagePath(connect.icon, 128)" />
-        </v-avatar>
-      </template>
 
-      <v-list-item-title class="font-weight-bold small-xs-only">
-        {{ connect_mode }} >
-        {{ connect.name }}
+    <div class="text-start my-2">
+      <b>{{ $t(mode_obj.title) }}</b> > <b>{{ connect.name }}</b>
+    </div>
+
+    <v-row>
+      <v-col cols="12" md="6" class="d-flex align-center">
+        <u-avatar-folder
+          is-green
+          elevated
+          size="64"
+          class="me-2"
+          :src="getShopImagePath(connect.icon, 128)"
+        >
+        </u-avatar-folder>
 
         <v-menu
           v-if="connectOrder.price"
@@ -85,18 +90,24 @@
             </v-container>
           </v-sheet>
         </v-menu>
-      </v-list-item-title>
 
-      <v-list-item-subtitle class="overflow-visible d-flex pb-5 pt-2">
-        <s-order-delivery-status-stepper
-          :color="connectOrder.cancel_at ? '#F44336' : '#673AB7'"
-          :dark-color="connectOrder.cancel_at ? '#D32F2F' : '#512DA8'"
-          :state="state"
-          :states="states"
-          class="flex-grow-1"
-          show-caption
-        ></s-order-delivery-status-stepper>
+        <!-- Items -->
 
+        <div class="d-flex my-2">
+          <v-badge
+            v-for="item in items"
+            :key="item.id"
+            :color="item.check ? 'green' : 'red'"
+            class="m-2"
+          >
+            <template v-slot:badge>{{ item.count }}</template>
+            <v-avatar class="border">
+              <v-img :src="getProductImage(item.product_id)" />
+            </v-avatar>
+          </v-badge>
+        </div>
+
+        <v-spacer></v-spacer>
         <u-smart-menu
           :items="[
             {
@@ -136,46 +147,52 @@
           ]"
           title="Manual actions"
         ></u-smart-menu>
-      </v-list-item-subtitle>
-    </v-list-item>
-
-    <!-- Items -->
-
-    <div class="d-flex my-2">
-      <v-badge
-        v-for="item in items"
-        :key="item.id"
-        :color="item.check ? 'green' : 'red'"
-        class="m-2"
-      >
-        <template v-slot:badge>{{ item.count }}</template>
-        <v-avatar>
-          <img :src="getProductImage(item.product_id)" />
-        </v-avatar>
-      </v-badge>
-    </div>
+      </v-col>
+      <v-col cols="12" md="6">
+        <s-order-delivery-status-stepper
+          :color="connectOrder.cancel_at ? '#F44336' : '#673AB7'"
+          :dark-color="connectOrder.cancel_at ? '#D32F2F' : '#512DA8'"
+          :state="state"
+          :states="states"
+          class="flex-grow-1"
+          show-caption
+        ></s-order-delivery-status-stepper>
+      </v-col>
+    </v-row>
 
     <!-- Error -->
-    <div v-if="connectOrder.error" class="py-3 font-weight-bold text-red">
+    <div
+      v-if="connectOrder.error"
+      class="py-2 text-red text-subtitle-2 font-weight-bold"
+    >
       <v-icon class="me-1" color=" red">report</v-icon>
       {{ connectOrder.error }}
     </div>
-    <div v-if="error_msg" class="py-3 font-weight-bold text-red">
+    <div
+      v-if="error_msg"
+      class="py-2 text-red text-subtitle-2 font-weight-bold"
+    >
       <v-icon class="me-1" color=" red">report</v-icon>
       {{ error_msg }}
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderDeliveryStatusStepper from "../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
 import { Connect } from "@selldone/core-js";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "BOrderConnectItem",
-  components: { USmartMenu, UTextValueDashed, SOrderDeliveryStatusStepper },
+  components: {
+    UAvatarFolder,
+    USmartMenu,
+    UTextValueDashed,
+    SOrderDeliveryStatusStepper,
+  },
   props: {
     shop: {
       require: true,
@@ -267,6 +284,9 @@ export default {
     },
     connect_mode() {
       return this.connect.mode;
+    },
+    mode_obj() {
+      return Connect.Modes[this.connect_mode];
     },
     has_cancel() {
       return [

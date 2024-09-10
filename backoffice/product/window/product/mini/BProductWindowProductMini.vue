@@ -28,8 +28,8 @@
       <!-- Main icon -->
 
       <v-icon :color="selected ? 'primary' : dark ? '#000' : '#eee'" size="100"
-        >note</v-icon
-      >
+        >note
+      </v-icon>
 
       <!-- Connect service icon (top - Right) -->
 
@@ -204,17 +204,20 @@
       <u-price :amount="price_converted"></u-price>
 
       <v-chip
-        v-if="discount_percent"
+        v-if="discount_percent/*It will return value if discount be valid in this time*/"
         class="px-1 ms-1"
         color="#C2185B"
         label
         size="x-small"
         variant="flat"
+        :class="{ disabled: finished }"
       >
         <div style="line-height: 8px">
           {{ discount_percent }}%
-          <span class="d-block" style="font-size: 6px;font-weight: 500">{{
-            $t("global.commons.discount")
+          <span class="d-block" style="font-size: 6px; font-weight: 500">{{
+            finished
+              ? $t("global.commons.finished")
+              : $t("global.commons.discount")
           }}</span>
         </div>
       </v-chip>
@@ -290,7 +293,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CircleImage from "../../../../../ui/image/CircleImage.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import ProductVariantsView from "../../../../../storefront/product/variant/ProductVariantsView.vue";
@@ -298,6 +301,7 @@ import { GetArrayOfValuesInVariants } from "@selldone/core-js/enums/product/Prod
 import UColorCircle from "../../../../../ui/color/circle/UColorCircle.vue";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import BNoteButton from "../../../../note/button/BNoteButton.vue";
+import { DateConverter } from "@selldone/core-js";
 
 export default {
   name: "BProductWindowProductMini",
@@ -388,6 +392,17 @@ export default {
       } catch (e) {
         return "🚨";
       }
+    },
+    inBetween() {
+      return DateConverter.inBetweenDates(
+        new Date(),
+        this.convertToLocalTime(this.dis_start),
+        this.convertToLocalTime(this.dis_end),
+      );
+    },
+
+    finished() {
+      return (this.product.dis_start || this.dis_end) && !this.inBetween;
     },
 
     colors() {

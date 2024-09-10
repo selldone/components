@@ -1001,8 +1001,7 @@ export default {
     is_pickup() {
       return (
         this.delivery_info &&
-        this.delivery_info.type === ShopTransportations.Pickup.code &&
-        this.receiver_info.pickup
+        this.delivery_info.type === ShopTransportations.Pickup.code
       );
     },
 

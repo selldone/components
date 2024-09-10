@@ -36,7 +36,6 @@
     </div>
 
     <form
-      id="payment-form"
       :class="{
         disabled: busy_submit || success_payment,
         'blurred-lg': success_payment,
@@ -47,8 +46,8 @@
         <v-tab
           v-for="item in tabs"
           :key="item.title"
-          :tab-value="item.value"
-          class="border mx-3 my-2 rounded-lg tnt"
+          :value="item.value"
+          class="border mx-3 rounded-lg tnt"
           style="min-width: 120px"
         >
           {{ item.title }}
@@ -61,107 +60,109 @@
         </v-tab>
       </v-tabs>
 
+      <v-window v-model="tab">
+        <v-window-item value="Card" eager>
+          <div :id="`card-container-${master_id}`"></div>
+          <v-btn
+            v-if="square_js_loaded"
+            :loading="busy_submit"
+            block
+            class="mt-2 mb-8"
+            color="#0061e0"
+            size="x-large"
+            @click="handlePaymentSubmit(card)"
+            >{{ $t("global.actions.pay") }}
+            <u-price
+              :amount="amount"
+              :currency="currency.toUpperCase()"
+              class="mx-2"
+            ></u-price>
+          </v-btn>
+        </v-window-item>
+
+        <v-window-item value="Giftcard" eager>
+          <div :id="`gift-container-${master_id}`"></div>
+
+          <v-btn
+            :loading="busy_submit"
+            block
+            class="mt-2 mb-8"
+            color="#0061e0"
+            size="x-large"
+            @click="handlePaymentSubmit(giftCard)"
+            >Pay with Gift Card
+            <u-price
+              :amount="amount"
+              :currency="currency.toUpperCase()"
+              class="mx-2"
+            ></u-price>
+          </v-btn>
+        </v-window-item>
+
+        <v-window-item value="ACH" eager>
+          <v-row class="my-0">
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="give_name"
+                aria-label="First Name"
+                aria-required="true"
+                autocomplete="given-name"
+                placeholder="Given Name"
+                required="required"
+                spellcheck="false"
+                type="text"
+                variant="outlined"
+                hide-details
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="family_name"
+                aria-label="Last Name"
+                aria-required="true"
+                autocomplete="family-name"
+                placeholder="Family Name"
+                required="required"
+                spellcheck="false"
+                type="text"
+                variant="outlined"
+                hide-details
+              />
+            </v-col>
+          </v-row>
+
+          <v-btn
+            :loading="busy_submit"
+            block
+            class="mt-2 mb-8"
+            color="#0061e0"
+            size="x-large"
+            @click="achClick()"
+            >Pay with Bank Account
+            <u-price
+              :amount="amount"
+              :currency="currency.toUpperCase()"
+              class="mx-2"
+            ></u-price>
+          </v-btn>
+        </v-window-item>
+      </v-window>
+
       <div id="apple-pay-button"></div>
       <div id="google-pay-button"></div>
       <div id="afterpay-button"></div>
 
-      <div v-show="card && tab === 'Card'">
-        <div id="card-container"></div>
-        <v-btn
-          v-if="square_js_loaded"
-          id="submit"
-          :loading="busy_submit"
-          block
-          class="mb-3 mt-8"
-          color="#0061e0"
-          size="x-large"
-          @click="handlePaymentSubmit(card)"
-          >{{ $t("global.actions.pay") }}
-          <u-price
-            :amount="amount"
-            :currency="currency.toUpperCase()"
-            class="mx-2"
-          ></u-price>
-        </v-btn>
-      </div>
-
-      <div v-show="tab === 'Giftcard'">
-        <div id="gift-card-container"></div>
-
-        <v-btn
-          id="submit"
-          :loading="busy_submit"
-          block
-          class="mb-3 mt-8"
-          color="#0061e0"
-          size="x-large"
-          @click="handlePaymentSubmit(giftCard)"
-          >Pay with Gift Card
-          <u-price
-            :amount="amount"
-            :currency="currency.toUpperCase()"
-            class="mx-2"
-          ></u-price>
-        </v-btn>
-      </div>
-
-      <div v-show="tab === 'ACH'">
-        <fieldset class="buyer-inputs">
-          <input
-            aria-label="First Name"
-            aria-required="true"
-            autocomplete="given-name"
-            name="givenName"
-            placeholder="Given Name"
-            required="required"
-            spellcheck="false"
-            type="text"
-          />
-
-          <input
-            aria-label="Last Name"
-            aria-required="true"
-            autocomplete="family-name"
-            name="familyName"
-            placeholder="Family Name"
-            required="required"
-            spellcheck="false"
-            type="text"
-          />
-        </fieldset>
-
-        <v-btn
-          id="submit"
-          :loading="busy_submit"
-          block
-          class="mb-3 mt-8"
-          color="#0061e0"
-          size="x-large"
-          @click="achClick()"
-          >Pay with Bank Account
-          <u-price
-            :amount="amount"
-            :currency="currency.toUpperCase()"
-            class="mx-2"
-          ></u-price>
-        </v-btn>
-      </div>
-
-      <v-alert
-        v-if="!!error_message"
-        class="my-3 text-start"
-        density="compact"
-        type="error"
-      >
-        {{ error_message }}
-      </v-alert>
+      <v-sheet v-if="!!error_message" class="my-3 text-start pa-3 border">
+        <v-icon color="red" class="me-1">cancel</v-icon>
+        <span v-html="error_message"> </span>
+      </v-sheet>
     </form>
 
     <!-- ***************** Loading form ************************ -->
 
     <v-progress-circular
       v-if="!square_js_loaded || !card"
-      class="m-3"
+      class="my-5 mx-auto d-block"
       indeterminate
       size="48"
     ></v-progress-circular>
@@ -217,6 +218,8 @@ export default {
   data: () => ({
     tab: "Card",
 
+    master_id: Math.random().toString(36).substring(7),
+
     success_payment: false,
     error_message: null,
 
@@ -241,6 +244,10 @@ export default {
     ach: null,
 
     afterpay: null,
+
+    //----------------------
+    give_name: null,
+    family_name: null,
   }),
 
   computed: {
@@ -316,7 +323,7 @@ export default {
               `⚠ ❰ Square ❱  Failed to load script file: `,
               exception,
             );
-            this.showErrorAlert(null, "Can not load script!");
+            t.showErrorAlert(null, "Can not load Square script!");
           });
       }
     },
@@ -334,6 +341,7 @@ export default {
 
     async tokenize(paymentMethod) {
       const tokenResult = await paymentMethod.tokenize();
+      console.log("tokenResult", tokenResult);
       if (tokenResult.status === "OK") {
         return tokenResult.token;
       } else {
@@ -362,7 +370,7 @@ export default {
       } catch (e) {
         this.busy_submit = false;
         console.error(e);
-        this.error_message = "Payment Failed";
+        this.error_message = `Payment Failed<br><div class="text-subtitle-2">${e.message}</div>`;
       }
     },
 
@@ -391,14 +399,28 @@ export default {
 
     async initCard() {
       // Card payments
-      this.card = await this.payments.card();
-      await this.card.attach("#card-container");
+      try {
+        console.log("Initializing Card...");
+        this.card = await this.payments.card();
+        await this.card.attach(`#card-container-${this.master_id}`);
+        console.log("Card initialized successfully.");
+
+      } catch (e) {
+        console.error(e);
+      }
     },
 
     //----------------------------------------------------------------------------------------
 
     async initAch() {
       try {
+        console.log(
+          "Initializing Ach",
+          "redirectURI",
+          this.orderUrl,
+          "transactionId",
+          this.transactionId,
+        );
         // Card payments
         this.ach = await this.payments.ach({
           redirectURI: this.orderUrl,
@@ -406,6 +428,12 @@ export default {
         });
 
         this.ach.addEventListener("ontokenization", (event) => {
+          console.log("ontokenization listener", event.detail);
+          if (event.detail.error) {
+            this.error_message = event.detail.error.message;
+          }
+          if (!event.detail.tokenResult) return;
+
           const { tokenResult, error } = event.detail;
 
           if (tokenResult.status === "OK") {
@@ -430,18 +458,22 @@ export default {
     },
     async achClick() {
       this.busy_submit = true;
-      const paymentForm = document.getElementById("payment-form");
-      const formData = new FormData(paymentForm);
       // It is expected that the developer performs form field validation
       // which does not occur in this example.
-      const accountHolderName = `${formData.get("givenName")} ${formData.get(
-        "familyName",
-      )}`;
+      const accountHolderName = `${this.give_name} ${this.family_name}`;
+      console.log("accountHolderName", accountHolderName);
 
       try {
-        await this.ach.tokenize({ accountHolderName });
+        await this.ach.tokenize({
+          accountHolderName: accountHolderName,
+          intent: "CHARGE",
+          amount: {
+            total: this.amount,
+            currencyCode: this.currency,
+          },
+        });
       } catch (e) {
-        console.error(e);
+        console.error("Ach Error!", e);
       }
       this.busy_submit = false;
     },
@@ -463,7 +495,7 @@ export default {
 
         if (this.applePay !== undefined) {
           const applePayButton = document.getElementById("apple-pay-button");
-          applePayButton.addEventListener("click", async function (event) {
+          applePayButton.addEventListener("click", async  (event) =>{
             await this.handlePaymentSubmit(this.applePay);
           });
         }
@@ -500,7 +532,7 @@ export default {
         await this.googlePay.attach("#google-pay-button");
         const googlePayButton = document.getElementById("google-pay-button");
 
-        googlePayButton.addEventListener("click", async function (event) {
+        googlePayButton.addEventListener("click", async  (event)=> {
           await this.handlePaymentSubmit(this.googlePay);
         });
       } catch (e) {
@@ -532,7 +564,7 @@ export default {
         });
 
         /*
-        paymentRequest.addEventListener('afterpay_shippingaddresschanged', function () {
+        paymentRequest.addEventListener('afterpay_shippingaddresschanged',  ()=> {
           return {
             shippingOptions: [
               {
@@ -558,7 +590,7 @@ export default {
         await this.afterpay.attach("#afterpay-button");
 
         const afterpayButton = document.getElementById("afterpay-button");
-        afterpayButton.addEventListener("click", async function (event) {
+        afterpayButton.addEventListener("click", async  (event) =>{
           this.handlePaymentSubmit(this.afterpay);
         });
       } catch (e) {
@@ -575,7 +607,7 @@ export default {
       try {
         this.giftCard = await this.payments.giftCard();
 
-        await this.giftCard.attach("#gift-card-container");
+        await this.giftCard.attach(`#gift-container-${this.master_id}`);
       } catch (e) {
         console.error("Initializing Giftcard failed", e);
       }

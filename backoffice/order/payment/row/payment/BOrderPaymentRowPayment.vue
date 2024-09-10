@@ -271,7 +271,7 @@
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card>
+    <v-card class="text-start">
       <v-card-title>
         <img :src="getShopImagePath(gateway?.icon)" class="me-2" height="24" />
         Capture the funds | Payment {{ gateway?.name }}
@@ -337,6 +337,7 @@
             :class="{ disabled: !accept_action }"
             :loading="busy_capture"
             color="primary"
+            variant="elevated"
             size="x-large"
             @click="capturePayment"
           >
@@ -345,6 +346,7 @@
             <u-price
               :amount="capture_amount"
               :currency="payment.currency"
+              class="ms-2"
             ></u-price>
           </v-btn>
         </div>

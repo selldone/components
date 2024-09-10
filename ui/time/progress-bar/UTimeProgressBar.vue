@@ -65,14 +65,14 @@
         />
       </template>
       <p class="font-weight-bold">{{ title }}</p>
-      <p v-if="!no_start_end" class="text-center small m-0">
+      <p v-if="!no_start_end" class="text-center small ma-0">
         <span class="mx-2"> {{ getFromNowString(startTime) }}</span>
         <v-icon class="flip-image-rtl" color="#fff">forward</v-icon>
         <span class="mx-2"> {{ getFromNowString(endTime) }}</span>
       </p>
     </v-tooltip>
 
-    <p v-if="!no_start_end && !small" class="text-center text-muted small m-0">
+    <p v-if="!no_start_end && !small" class="text-center text-muted small ma-0">
       <span class="mx-2"> {{ getFromNowString(startTime) }}</span>
       <v-icon class="flip-image-rtl">forward</v-icon>
       <span class="mx-2"> {{ getFromNowString(endTime) }}</span>

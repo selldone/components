@@ -19,7 +19,7 @@
     :max-width="height * 1.7"
     :min-width="height * 1.7"
     :src="image"
-    :style="{ 'background-color': color }"
+    :style="{ 'background-color': color ,borderColor:color}"
     :width="height * 1.7"
     class="card-con"
     cover
@@ -48,5 +48,6 @@ export default {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
+  border: solid 2px;
 }
 </style>

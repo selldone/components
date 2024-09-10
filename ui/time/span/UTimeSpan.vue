@@ -14,7 +14,7 @@
 
 <template>
   <div class="s--time-span">
-    <div class="d-flex align-center text-start">
+    <div class="d-flex align-center text-start pt-2">
       <small class="not-selectable">{{ $t("time_spans.days_range") }}</small>
       <v-spacer></v-spacer>
 
@@ -23,6 +23,7 @@
         :max-days="maxDays"
         variant="text"
         @select="setTimeSpan"
+        size="small"
       ></u-time-span-selector>
     </div>
 

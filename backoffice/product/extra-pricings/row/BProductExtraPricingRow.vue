@@ -52,28 +52,29 @@
     </td>
 
     <td class="text-end">
-      <v-btn rounded variant="text" @click="showEdit">
-        <v-icon class="me-1" size="small">edit</v-icon>
-        {{ $t("global.actions.edit") }}
-      </v-btn>
-      <v-btn
-        :loading="busy_delete"
-        class="me-2"
-        rounded
-        title="Delete pricing"
-        variant="text"
-        @click="showDelete"
-      >
-        <v-icon class="me-1" size="small">delete</v-icon>
-        {{ $t("global.actions.delete") }}
-      </v-btn>
+      <template v-if="!readonly">
+        <v-btn rounded variant="text" @click="showEdit">
+          <v-icon class="me-1" size="small">edit</v-icon>
+          {{ $t("global.actions.edit") }}
+        </v-btn>
+        <v-btn
+          :loading="busy_delete"
+          class="me-2"
+          rounded
+          title="Delete pricing"
+          variant="text"
+          @click="showDelete"
+        >
+          <v-icon class="me-1" size="small">delete</v-icon>
+          {{ $t("global.actions.delete") }}
+        </v-btn>
+      </template>
+      <slot name="action"></slot>
     </td>
   </tr>
   <tr v-if="error_msg">
     <td class="small" colspan="4">
-      <v-icon  class="me-1 blink-me-linear" size="small"
-        >warning_amber
-      </v-icon>
+      <v-icon class="me-1 blink-me-linear" size="small">warning_amber </v-icon>
       <span v-html="error_msg"></span>
     </td>
   </tr>
@@ -128,6 +129,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    readonly: Boolean,
 
     color: {}, // Corresponding extra pricing color!
   },

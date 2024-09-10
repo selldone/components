@@ -103,7 +103,8 @@
                   <v-icon class="me-1" size="small"
                     >remove_shopping_cart
                   </v-icon>
-                  Refund order
+
+                  {{$t('order_vendor_payment.refund_order_action')}}
                 </v-btn>
               </td>
             </tr>
@@ -115,9 +116,9 @@
     <!-- █████████████████████ Payments █████████████████████ -->
     <template v-if="payments?.length">
       <v-list-subheader class="mt-5"
-        >This is a list of automatic payouts to your connected bank account.
-        Please note that only automatic payouts will be displayed here, and
-        manual payouts will not be shown.
+        >
+        {{$t('order_vendor_payment.automatic_payout_list.subtitle')}}
+
       </v-list-subheader>
 
       <div class="max-widget-width mx-auto my-3">
@@ -157,7 +158,7 @@
                   >
                     <v-img :src="getUserAvatar(payment.staff_id)" />
                   </v-avatar>
-                  <small v-else>System</small>
+                  <small v-else>{{$t('global.commons.system')}}</small>
                 </td>
                 <td
                   :title="$t('global.commons.note')"
@@ -187,7 +188,8 @@
                     @click="showReversalDialog(payment)"
                   >
                     <v-icon class="me-1" size="small">move_up</v-icon>
-                    Reversal transfer
+
+                    {{$t('order_vendor_payment.reversal_transfer_action')}}
                   </v-btn>
                 </td>
               </tr>

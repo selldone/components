@@ -18,7 +18,7 @@
       <v-tab
         v-for="item in tabs"
         :key="item.title"
-        :tab-value="item.value"
+        :value="item.value"
         class="border mx-3 my-2 rounded-lg tnt"
         style="min-width: 120px"
       >

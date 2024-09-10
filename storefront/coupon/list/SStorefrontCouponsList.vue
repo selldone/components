@@ -72,7 +72,7 @@
               width="200"
               @click="showAddMode"
             >
-              <v-icon class="me-1" size="small">add_box</v-icon>
+              <v-icon start>add_box</v-icon>
               {{ $t("coupons.add_coupon") }}
             </v-btn>
           </div>
@@ -80,9 +80,14 @@
       </u-fade-scroll>
     </v-expand-transition>
 
-    <v-dialog v-model="dialog" content-class="no-shadow-dialog" max-width="480">
-      <v-card class="rounded-28px text-start">
-        <v-card-title>
+    <v-bottom-sheet
+      v-model="dialog"
+      content-class="rounded-t-xl"
+      max-width="98vw"
+      width="640"
+    >
+      <v-card class="text-start" rounded="t-xl">
+        <v-card-title class="text-capitalize">
           <v-icon class="me-1">confirmation_number</v-icon>
           {{ $t("coupons.add_coupon") }}
         </v-card-title>
@@ -90,8 +95,8 @@
           <v-text-field
             v-model="code_input"
             :label="$t('coupons.coupon_code')"
-            class="strong-field"
-            variant="underlined"
+            class="strong-field max-widget-width mx-auto"
+            variant="outlined"
             @keydown.enter="addCoupon(code_input)"
           >
           </v-text-field>
@@ -123,7 +128,7 @@
           </div>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-bottom-sheet>
   </v-container>
 </template>
 

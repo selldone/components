@@ -4008,6 +4008,11 @@ Fix snaky chart overflow problem!
   background: #fff;
   border-radius: 50%;
   padding: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  min-height: 22px;
 }
 
 .v-locale--is-rtl {

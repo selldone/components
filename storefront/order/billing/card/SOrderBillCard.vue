@@ -23,7 +23,7 @@
       </template>
 
       <u-price
-        :amount="total_price + total_discount"
+        :amount="total_price + total_discount-(delivery_price>0?delivery_price:0)"
         :currency="basket.currency"
       ></u-price>
     </u-text-value-dashed>

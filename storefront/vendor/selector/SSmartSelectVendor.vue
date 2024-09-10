@@ -30,32 +30,40 @@
       tag="div"
     >
       <div
-        v-for="vendor_item in items_show"
-        :key="vendor_item.id"
+        v-for="product_vendor in items_show"
+        :key="product_vendor.id"
         :class="{
           'bg-dark': dark,
           'bg-white': !dark,
-          's--shadow-no-padding z1 my-2': vendor_item.id === modelValue,
+          's--shadow-no-padding z1 my-2': product_vendor.id === modelValue,
         }"
         class="s--smart-select-vendor-item row-hover usn border"
         @click="
           $emit(
             'update:modelValue',
-            forceShowAll ? vendor_item.id : modelValue ? null : vendor_item.id,
+            forceShowAll
+              ? product_vendor.id
+              : modelValue
+                ? null
+                : product_vendor.id,
           );
           $emit(
             'change',
-            forceShowAll ? vendor_item.id : modelValue ? null : vendor_item.id,
+            forceShowAll
+              ? product_vendor.id
+              : modelValue
+                ? null
+                : product_vendor.id,
           );
         "
       >
         <div class="s--smart-select-vendor-content">
           <div class="flex-grow-0 me-2">
             <v-icon
-              :size="vendor_item.id === modelValue ? 'large' : undefined"
+              :size="product_vendor.id === modelValue ? 'large' : undefined"
               color="primary"
               >{{
-                vendor_item.id === modelValue
+                product_vendor.id === modelValue
                   ? "lens"
                   : "radio_button_unchecked"
               }}
@@ -64,33 +72,83 @@
           <div class="flex-grow-1">
             <a
               v-if="true"
-              :href="getVendorLink(vendor_item)"
+              :href="getVendorLink(product_vendor.vendor)"
               class="s--smart-select-vendor-link tnt"
               target="_blank"
               title="Go to the store page."
             >
-              {{ $t("select_vendor.item_title", { vendor: vendor_item.name }) }}
+              {{
+                $t("select_vendor.item_title", {
+                  vendor: product_vendor.vendor.name,
+                })
+              }}
               <v-icon class="ms-1" size="small">launch</v-icon>
             </a>
             <b v-else>
-              {{ vendor_item.name }}
+              {{ product_vendor.vendor.name }}
             </b>
-            <div class="pa-0 text-subtitle-2" style="height: auto">
-              {{ vendor_item.description }}
+            <div class="text-subtitle-2" style="height: auto">
+              {{
+                product_vendor.vendor.description?.limitWords(
+                  $vuetify.display.xs ? 12 : 32,
+                )
+              }}
+            </div>
+
+            <div
+              v-if="
+                pickup_transportation_for_vendors_exists &&
+                product_vendor.vendor.warehouse
+              "
+              class="text-subtitle-2 mt-2"
+            >
+              <v-chip
+                label
+                size="x-small"
+                class="me-2"
+                color="#000"
+                variant="flat"
+              >
+                <v-icon size="small" start>place</v-icon>
+
+                {{ $t("global.commons.pickup") }}
+              </v-chip>
+
+              <flag
+                v-if="product_vendor.vendor.warehouse.country"
+                :iso="product_vendor.vendor.warehouse.country"
+                :squared="false"
+                class="me-1"
+              ></flag>
+              <span>
+                {{ getVendorAddress(product_vendor.vendor) }}
+              </span>
             </div>
           </div>
 
-          <div class="min-width-100">
+          <div class="min-width-100 text-center text-sm-start">
+            <v-avatar
+              color="#fafafa"
+              rounded
+              class="d-block d-sm-none mb-2 mx-auto"
+            >
+              <v-img
+                v-if="product_vendor.vendor.icon"
+                :src="getShopImagePath(product_vendor.vendor.icon, 128)"
+              />
+              <v-icon v-else>storefront</v-icon>
+            </v-avatar>
+
             <u-price
-              :amount="calcVendorPrice(vendor_item)"
+              :amount="calcVendorPrice(product_vendor)"
               :currency="GetUserSelectedCurrency()"
             ></u-price>
           </div>
 
-          <v-avatar color="#fafafa" rounded>
-            <img
-              v-if="vendor_item.icon"
-              :src="getShopImagePath(vendor_item.icon, 128)"
+          <v-avatar color="#fafafa" rounded class="d-none d-sm-block">
+            <v-img
+              v-if="product_vendor.vendor.icon"
+              :src="getShopImagePath(product_vendor.vendor.icon, 128)"
             />
             <v-icon v-else>storefront</v-icon>
           </v-avatar>
@@ -100,15 +158,18 @@
   </div>
 </template>
 
-<script>
-import { ShopURLs } from "@selldone/core-js";
+<script lang="ts">
+import { MapHelper, ShopURLs } from "@selldone/core-js";
+import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations.ts";
+import {BusinessModel} from "@selldone/core-js/enums/shop/BusinessModel.ts";
 
 export default {
   name: "SSmartSelectVendor",
   emits: ["update:modelValue", "change"],
+  inject: ["$shop"],
   props: {
     modelValue: {},
-    vendors: { type: Array },
+    vendorProducts: { type: Array },
 
     itemIcon: {},
     label: {},
@@ -133,10 +194,30 @@ export default {
 
   computed: {
     items_show() {
-      if (this.forceShowAll) return this.vendors;
-      if (!this.modelValue) return this.vendors;
-      const out = this.vendors.filter((i) => i.id === this.modelValue);
-      return out.length ? out : this.vendors;
+      if (this.forceShowAll) return this.vendorProducts;
+      if (!this.modelValue) return this.vendorProducts;
+      const out = this.vendorProducts.filter((i) => i.id === this.modelValue);
+      return out.length ? out : this.vendorProducts;
+    },
+
+    cod_payment_exists() {
+      return this.$shop.gateways?.some(
+        (gateway) => gateway.currency === this.basket.currency && gateway.cod,
+      );
+    },
+    IS_MARKETPLACE() {
+      return this.$shop.model === BusinessModel.MARKETPLACE.code;
+    },
+
+    pickup_transportation_for_vendors_exists() {
+      return this.IS_MARKETPLACE && this.$shop.transportations?.some(
+        (transportation) =>
+          transportation.type === ShopTransportations.Pickup.code &&
+          transportation.marketplace,
+          /* Transportation must be available for vendors. If the marketplace mode is not direct,
+       'marketplace' could be true (miss config!)! But vendor_products would not return any value. This check is safe, so there's no need to explicitly check
+       the marketplace mode. */
+      );
     },
   },
 
@@ -145,27 +226,31 @@ export default {
     //―――――――――――――― 🟣 Marketplace 🟣 ――――――――――――
     //█████████████████████████████████████████████████████████████
 
-    calcVendorPrice(vendor_item) {
+    calcVendorPrice(product_vendor) {
       return this.CalcPriceProductCurrentCurrency(
         this.getShop(),
-        vendor_item,
+        product_vendor,
         null,
       );
     },
 
-    getVendorLink(vendor_item) {
-      if (vendor_item.page_id)
+    getVendorLink(vendor) {
+      if (vendor.page_id)
         return ShopURLs.GetVendorLandingPageUrl(this.getShop(), {
-          id: vendor_item.vendor_id,
-          slug: vendor_item.vendor_slug,
-          name: vendor_item.name,
+          id: vendor.id,
+          slug: vendor.vendor_slug,
+          name: vendor.name,
         });
 
       return ShopURLs.GetVendorListingPageUrl(this.getShop(), {
-        id: vendor_item.vendor_id,
-        slug: vendor_item.vendor_slug,
-        name: vendor_item.name,
+        id: vendor.id,
+        slug: vendor.vendor_slug,
+        name: vendor.name,
       });
+    },
+
+    getVendorAddress(vendor) {
+      return MapHelper.GenerateFullAddressFromMapInfo(vendor.warehouse);
     },
   },
 };

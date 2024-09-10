@@ -25,7 +25,7 @@
 
       <div class="text-start">
         {{ name }}
-        <small class="d-block">{{ description?.limitWords(7) }}</small>
+        <div class="x-small">{{ description?.limitWords(12) }}</div>
       </div>
     </v-card-title>
 
@@ -33,27 +33,27 @@
       <u-tabs-floating
         v-model="tab"
         :items="[
-          { title: 'Profile & Info', icon: 'badge' },
+          { title: $t('vendor_add.menu.profile'), icon: 'badge' },
           {
-            title: 'Business & Payment',
+            title:  $t('vendor_add.menu.business'),
             icon: 'business',
             warning: !pricing_id,
           },
 
-          ...(has_documents ? [{ title: 'Documents', icon: 'source' }] : []),
+          ...(has_documents ? [{ title:  $t('vendor_add.menu.documents'), icon: 'source' }] : []),
 
           ...(has_augment
-            ? [{ title: 'Page Template', icon: 'architecture', augment: true }]
+            ? [{ title: $t('vendor_add.menu.page'), icon: 'architecture', augment: true }]
             : []),
 
           ...(has_shipping
-            ? [{ title: 'Shipping', icon: 'local_shipping' ,shipping:true}]
+            ? [{ title: $t('vendor_add.menu.shipping'), icon: 'local_shipping', shipping: true }]
             : []),
 
           ...(vendor && !IS_VENDOR_PANEL
             ? [
-                { title: 'Access', icon: 'shield', access: true },
-                { title: 'Critical zone', icon: 'lock_outline' },
+                { title: $t('vendor_add.menu.access'), icon: 'shield', access: true },
+                { title: $t('vendor_add.menu.critical_zone'), icon: 'lock_outline' },
               ]
             : []),
         ]"
@@ -90,22 +90,18 @@
               :append-icon="user_id && access ? 'check' : 'close'"
               >{{ $t("global.commons.access") }}
             </v-chip>
-
-
-
           </div>
 
           <v-chip
-              v-if="item.shipping"
-              :color="warehouse?'#009688':'#F44336'"
-              size="x-small"
-              class="ms-1"
-              density="comfortable" variant="flat"
-              prepend-icon="warehouse"
-          >{{warehouse?warehouse.title:'Not set!'}}
+            v-if="item.shipping"
+            :color="warehouse ? '#009688' : '#F44336'"
+            size="x-small"
+            class="ms-1"
+            density="comfortable"
+            variant="flat"
+            prepend-icon="warehouse"
+            >{{ warehouse ? warehouse.title : "Not set!" }}
           </v-chip>
-
-
         </template>
       </u-tabs-floating>
 
@@ -126,20 +122,21 @@
                 :title="$t('vendor_add.profile.title')"
                 :href="vendor_listing_page_url"
                 target="_blank"
-                :add-caption="vendor ?$t('vendor_add.profile.action_see_listing_page')  : undefined"
+                :add-caption="
+                  vendor
+                    ? $t('vendor_add.profile.action_see_listing_page')
+                    : undefined
+                "
                 add-icon="open_in_new"
                 add-text
-                :add-sub-caption="$t('vendor_add.profile.action_sub_caption') "
+                :add-sub-caption="$t('vendor_add.profile.action_sub_caption')"
                 :disabled="!vendor?.enable"
                 disabled-reason="Vendor is disabled."
               >
               </s-widget-header>
 
-              <v-list-subheader
-                >
-                {{$t('vendor_add.profile.subtitle')}}
-
-
+              <v-list-subheader>
+                {{ $t("vendor_add.profile.subtitle") }}
               </v-list-subheader>
 
               <div v-if="vendor">
@@ -153,7 +150,7 @@
                       : window.API.POST_UPLOAD_VENDOR_ICON(shop.id, vendor.id)
                   "
                   auto-compact
-                  label="Vendor logo"
+                  :label="$t('vendor_add.inputs.logo.label')"
                   maxFileSize="2MB"
                   @new-path="handleProcessFileIcon"
                 />
@@ -167,7 +164,7 @@
               >
                 <template v-slot:append-inner>
                   <b-translation-button-vendor
-                    v-if="vendor?.id && !IS_VENDOR_PANEL"
+                    v-if="vendor?.id "
                     :label="$t('global.commons.name')"
                     :shop="shop"
                     :vendor="vendor"
@@ -180,13 +177,13 @@
                 v-model="description"
                 :label="$t('global.commons.description')"
                 auto-grow
-                placeholder="Write a public description..."
+                :placeholder="$t('vendor_add.inputs.description.placeholder')"
                 rows="2"
                 variant="underlined"
               >
                 <template v-slot:append-inner>
                   <b-translation-button-vendor
-                    v-if="vendor?.id && !IS_VENDOR_PANEL"
+                    v-if="vendor?.id "
                     :label="$t('global.commons.description')"
                     :shop="shop"
                     :vendor="vendor"
@@ -219,8 +216,7 @@
                       </v-btn>
                     </template>
                     <template v-slot:subtitle>
-                      {{$t('vendor_add.send_invitation_tips')}}
-
+                      {{ $t("vendor_add.send_invitation_tips") }}
                     </template>
                     <v-list-item-subtitle
                       v-if="invite_email === vendor?.invite"
@@ -231,8 +227,10 @@
                         class="ma-1 tnt"
                         @click="sendInvitationEmail"
                         :loading="busy_send_invitation"
-                        append-icon="send"
-                        >Send Invitation Email
+                      >
+                        {{ $t("vendor_add.profile.send_invitation_email") }}
+
+                        <v-icon end class="flip-rtl">send</v-icon>
                       </v-btn>
                     </v-list-item-subtitle>
                   </v-list-item>
@@ -242,7 +240,7 @@
                     :value="generated_invite_link"
                     small-width-mode
                     text-start
-                    message="Invitation Link"
+                    :message="$t('vendor_add.profile.invitation_link')"
                   ></u-text-copy-box>
                 </div>
                 <s-user-input
@@ -297,8 +295,7 @@
                 <div>
                   <v-icon size="small">info</v-icon>
 
-                  {{$t('vendor_add.only_marketplace_owner_can_edit_user')}}
-
+                  {{ $t("vendor_add.only_marketplace_owner_can_edit_user") }}
                 </div>
               </v-list-subheader>
 
@@ -310,21 +307,19 @@
                 :title="$t('vendor_add.page.title')"
                 :href="vendor_landing_page_url"
                 target="_blank"
-                :add-caption="page ? $t('vendor_add.page.action_set_page') : undefined"
-                :add-sub-caption="$t('vendor_add.page.action_sub_caption') "
+                :add-caption="
+                  page ? $t('vendor_add.page.action_set_page') : undefined
+                "
+                :add-sub-caption="$t('vendor_add.page.action_sub_caption')"
                 add-icon="open_in_new"
                 add-text
                 :disabled="!vendor?.enable"
-                :disabled-reason="$t('vendor_add.vendor_is_disable_msg')  "
+                :disabled-reason="$t('vendor_add.vendor_is_disable_msg')"
               >
               </s-widget-header>
 
-              <v-list-subheader
-                >
-
-                {{$t('vendor_add.page.subtitle')}}
-
-
+              <v-list-subheader>
+                {{ $t("vendor_add.page.subtitle") }}
               </v-list-subheader>
 
               <template
@@ -364,7 +359,7 @@
                   <div v-else-if="page?.id" key="2">
                     <v-text-field
                       v-model="slug"
-                      :label=" $t('vendor_add.inputs.slug.label') "
+                      :label="$t('vendor_add.inputs.slug.label')"
                       :placeholder="$t('vendor_add.inputs.slug.placeholder')"
                       prepend-inner-icon="view_cozy"
                       :hint="$t('vendor_add.inputs.slug.hint')"
@@ -408,11 +403,12 @@
 
                 <template v-else>
                   <v-list-item-title>
-                    <small>{{ $t('vendor_add.page.no_landing_page') }}</small>
+                    <small>{{ $t("vendor_add.page.no_landing_page") }}</small>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    {{ $t('vendor_add.page.we_can_create_dedicated_landing_msg') }}
-
+                    {{
+                      $t("vendor_add.page.we_can_create_dedicated_landing_msg")
+                    }}
                   </v-list-item-subtitle>
                 </template>
 
@@ -439,11 +435,11 @@
             <div class="widget-box mb-5">
               <s-widget-header
                 icon="connect_without_contact"
-                :title="$t('vendor_add.contact.title') "
+                :title="$t('vendor_add.contact.title')"
               >
               </s-widget-header>
               <v-list-subheader
-                >{{$t('vendor_add.contact.subtitle')}}
+                >{{ $t("vendor_add.contact.subtitle") }}
               </v-list-subheader>
 
               <v-text-field
@@ -456,7 +452,7 @@
                 "
                 :rules="[GlobalRules.email()]"
                 append-inner-icon="email"
-                :messages="$t('vendor_add.inputs.email.message') "
+                :messages="$t('vendor_add.inputs.email.message')"
                 variant="underlined"
               ></v-text-field>
               <v-expand-transition>
@@ -466,11 +462,15 @@
                   <v-list-subheader>
                     <div>
                       <v-icon size="small">notification_important</v-icon>
-                      <span v-html="$t('vendor_add.email_not_match_with_user_msg',{
-                        user_name: vendor.user?.name,
-                        user_email: vendor.user?.email,
-                        email: email
-                      })"></span>
+                      <span
+                        v-html="
+                          $t('vendor_add.email_not_match_with_user_msg', {
+                            user_name: vendor.user?.name,
+                            user_email: vendor.user?.email,
+                            email: email,
+                          })
+                        "
+                      ></span>
                     </div>
                   </v-list-subheader>
                 </div>
@@ -512,10 +512,10 @@
             <div class="widget-box mb-5">
               <s-widget-header
                 icon="assignment"
-                title="Profiles"
+                :title="$t('vendor_add.profiles.title')"
               ></s-widget-header>
               <v-list-subheader
-                >You can assign location to this vendor.
+                >{{ $t("vendor_add.profiles.subtitle") }}
               </v-list-subheader>
 
               <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Map Profile ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
@@ -523,9 +523,10 @@
                 class="row-hover"
                 prepend-icon="map"
                 @click="showSetMapTag()"
+                lines="two"
               >
                 <v-list-item-title class="d-flex align-center">
-                  <b>Location</b>
+                  <b>{{ $t("global.commons.location") }}</b>
 
                   <template v-if="vendor?.map && vendor?.map_id">
                     <span>
@@ -563,11 +564,11 @@
                     </small>
                   </template>
                 </v-list-item-title>
-                <v-list-item-subtitle>
+                <v-list-item-subtitle class="text-wrap">
                   {{
                     vendor?.map
                       ? vendor.map.address
-                      : "Assign a location to the vendor if it's a location-based vendor."
+                      : $t("vendor_add.map.no_map_message")
                   }}
                 </v-list-item-subtitle>
 
@@ -592,15 +593,13 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Send email info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div v-if="email || user_id" class="max-widget-width my-5">
-              <p>
+              <p v-if="vendor">
                 <v-icon class="me-1" color="success">check</v-icon>
                 <span
                   v-html="
-                    vendor
-                      ? `We will send orders information to <b>${
-                          email ? email : vendor?.user?.email
-                        }</b>.`
-                      : $t('vendor_add.we_will_send_invitation_to_user_msg')
+                    $t('vendor_add.order_information_email_to_email', {
+                      email: email ? email : vendor?.user?.email,
+                    })
                   "
                 ></span>
               </p>
@@ -631,19 +630,23 @@
             <div class="widget-box mb-5">
               <s-widget-header
                 :icon="business ? 'business' : 'person'"
-                :title="$t('vendor_add.business.title') "
+                :title="$t('vendor_add.business.title')"
               >
               </s-widget-header>
               <v-list-subheader
-                >{{$t('vendor_add.business.subtitle')}}
+                >{{ $t("vendor_add.business.subtitle") }}
               </v-list-subheader>
 
               <u-smart-switch
                 v-model="business"
-                :false-description="$t('vendor_add.inputs.business.false_description') "
+                :false-description="
+                  $t('vendor_add.inputs.business.false_description')
+                "
                 false-icon="person"
-                :false-title="$t('vendor_add.inputs.business.false_title') "
-                :true-description="$t('vendor_add.inputs.business.true_description')"
+                :false-title="$t('vendor_add.inputs.business.false_title')"
+                :true-description="
+                  $t('vendor_add.inputs.business.true_description')
+                "
                 true-icon="business"
                 :true-title="$t('vendor_add.inputs.business.true_title')"
               >
@@ -671,11 +674,8 @@
             <div class="widget-box mb-5">
               <s-widget-header icon="paid" :title="$t('vendor_add.bank.title')">
               </s-widget-header>
-              <v-list-subheader
-                >
-                {{$t('vendor_add.bank.subtitle')}}
-
-
+              <v-list-subheader>
+                {{ $t("vendor_add.bank.subtitle") }}
               </v-list-subheader>
 
               <v-text-field
@@ -683,16 +683,16 @@
                 :label="$t('global.commons.bank_name')"
                 append-inner-icon="account_balance"
                 auto-grow
-                :hint="$t('vendor_add.inputs.bank.hint') "
+                :hint="$t('vendor_add.inputs.bank.hint')"
                 persistent-placeholder
-                :placeholder="$t('vendor_add.inputs.bank.placeholder') "
+                :placeholder="$t('vendor_add.inputs.bank.placeholder')"
                 variant="underlined"
               ></v-text-field>
 
               <v-text-field
                 v-model="bank_info.account_name"
                 :label="$t('global.commons.bank_account_name')"
-                :hint="$t('vendor_add.inputs.account_name.hint') "
+                :hint="$t('vendor_add.inputs.account_name.hint')"
                 persistent-placeholder
                 :placeholder="$t('vendor_add.inputs.account_name.placeholder')"
                 variant="underlined"
@@ -701,9 +701,11 @@
               <v-text-field
                 v-model="bank_info.account_number"
                 :label="$t('global.commons.bank_account_number')"
-                :hint="$t('vendor_add.inputs.account_number.hint') "
+                :hint="$t('vendor_add.inputs.account_number.hint')"
                 persistent-placeholder
-                :placeholder="$t('vendor_add.inputs.account_number.placeholder') "
+                :placeholder="
+                  $t('vendor_add.inputs.account_number.placeholder')
+                "
                 variant="underlined"
               ></v-text-field>
 
@@ -712,7 +714,9 @@
                 :label="$t('global.commons.bank_routing_number')"
                 :hint="$t('vendor_add.inputs.routing_number.hint')"
                 persistent-placeholder
-                :placeholder="$t('vendor_add.inputs.routing_number.placeholder')"
+                :placeholder="
+                  $t('vendor_add.inputs.routing_number.placeholder')
+                "
                 variant="underlined"
               ></v-text-field>
 
@@ -737,16 +741,21 @@
               <v-text-field
                 v-model="bank_info.branch_address"
                 :label="$t('global.commons.bank_branch_address')"
-                :hint="$t('vendor_add.inputs.branch_address.hint') "
+                :hint="$t('vendor_add.inputs.branch_address.hint')"
                 persistent-placeholder
-                :placeholder="$t('vendor_add.inputs.branch_address.placeholder') "
+                :placeholder="
+                  $t('vendor_add.inputs.branch_address.placeholder')
+                "
                 variant="underlined"
               ></v-text-field>
             </div>
 
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Default Pricing  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
             <div class="widget-box mb-5">
-              <s-widget-header icon="sell" :title="$t('vendor_add.default_pricing.title') ">
+              <s-widget-header
+                icon="sell"
+                :title="$t('vendor_add.default_pricing.title')"
+              >
                 <template v-slot:append-title>
                   <v-chip
                     v-if="!pricing_id"
@@ -759,15 +768,12 @@
                   >
                     <v-icon size="x-small" start>sell</v-icon>
 
-                    {{$t('vendor_add.default_pricing.no_pricing') }}
+                    {{ $t("vendor_add.default_pricing.no_pricing") }}
                   </v-chip>
                 </template>
               </s-widget-header>
-              <v-list-subheader
-                >
-                {{$t('vendor_add.default_pricing.subtitle') }}
-
-
+              <v-list-subheader>
+                {{ $t("vendor_add.default_pricing.subtitle") }}
               </v-list-subheader>
               <v-pricing-input
                 v-model="pricing_id"
@@ -790,10 +796,10 @@
           <v-window-item v-if="has_augment">
             <div class="widget-box mb-5">
               <l-augment-form
-                  v-model="augment"
-                  @change="changed_argument = true"
+                v-model="augment"
+                @change="changed_argument = true"
               ></l-augment-form>
-              <div class="text-end mt-3">
+              <div class="mt-3 mb-2">
                 <v-btn
                   v-if="page"
                   :href="vendor_landing_page_url"
@@ -802,7 +808,7 @@
                   class="tnt"
                   size="small"
                 >
-                  {{$t('vendor_add.page.action_set_page')}}
+                  {{ $t("vendor_add.page.action_set_page") }}
                 </v-btn>
               </div>
             </div>
@@ -812,21 +818,22 @@
 
           <v-window-item v-if="has_shipping">
             <div class="widget-box mb-5">
-              <s-widget-header icon="local_shipping" :title="$t('vendor_add.shipping.title') ">
+              <s-widget-header
+                icon="local_shipping"
+                :title="$t('vendor_add.shipping.title')"
+              >
               </s-widget-header>
 
               <v-list-subheader>
-                {{$t('vendor_add.shipping.subtitle') }}
-
+                {{ $t("vendor_add.shipping.subtitle") }}
               </v-list-subheader>
               <v-list class="bg-transparent">
                 <v-list-item prepend-icon="business">
                   <v-list-item-title>
-                    <b>{{$t('vendor_add.shipping.shipping_services') }}</b>
+                    <b>{{ $t("vendor_add.shipping.shipping_services") }}</b>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    {{$t('vendor_add.shipping.total_number_of_services') }}
-
+                    {{ $t("vendor_add.shipping.total_number_of_services") }}
                   </v-list-item-subtitle>
                   <template v-slot:append>
                     <b>{{
@@ -840,10 +847,10 @@
 
                 <v-list-item prepend-icon="people">
                   <v-list-item-title>
-                    <b>{{$t('vendor_add.shipping.couriers') }} </b>
+                    <b>{{ $t("vendor_add.shipping.couriers") }} </b>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    {{$t('vendor_add.shipping.total_couriers_count') }}
+                    {{ $t("vendor_add.shipping.total_couriers_count") }}
                   </v-list-item-subtitle>
                   <template v-slot:append>
                     <b>{{
@@ -867,7 +874,10 @@
 
               <hr class="my-5" />
 
-              <h3>{{ $t("admin_shop.logistic.warehouse.title") }}</h3>
+              <h3>
+                {{ $t("admin_shop.logistic.warehouse.title") }} /
+                {{ $t("global.commons.pickup") }}
+              </h3>
               <v-list-subheader>
                 {{ $t("admin_shop.logistic.warehouse.sub_title") }}
               </v-list-subheader>
@@ -896,7 +906,10 @@
               "
               class="widget-box mb-5"
             >
-              <s-widget-header icon="tune" :title="$t('vendor_add.configuration.title') ">
+              <s-widget-header
+                icon="tune"
+                :title="$t('vendor_add.configuration.title')"
+              >
               </s-widget-header>
 
               <u-smart-switch
@@ -906,9 +919,11 @@
                 class="mt-5"
                 false-gray
                 false-icon="close"
-                :label="$t('vendor_add.inputs.enable.label') "
-                :hint="$t('vendor_add.inputs.enable.hint') "
-                :true-description="$t('vendor_add.inputs.enable.true_description') "
+                :label="$t('vendor_add.inputs.enable.label')"
+                :hint="$t('vendor_add.inputs.enable.hint')"
+                :true-description="
+                  $t('vendor_add.inputs.enable.true_description')
+                "
                 true-icon="check"
               ></u-smart-switch>
 
@@ -918,18 +933,21 @@
                 :false-title="$t('global.commons.disable')"
                 :true-title="$t('global.commons.enable')"
                 class="mt-5"
-                :false-description="$t('vendor_add.inputs.access.false_description')"
+                :false-description="
+                  $t('vendor_add.inputs.access.false_description')
+                "
                 false-gray
                 false-icon="close"
-                :label="$t('vendor_add.inputs.access.label') "
-                :true-description="$t('vendor_add.inputs.access.true_description') "
-                :hint="$t('vendor_add.inputs.access.hint') "
+                :label="$t('vendor_add.inputs.access.label')"
+                :true-description="
+                  $t('vendor_add.inputs.access.true_description')
+                "
+                :hint="$t('vendor_add.inputs.access.hint')"
                 true-icon="space_dashboard"
               ></u-smart-switch>
               <v-list-subheader v-if="!user_id">
                 <v-icon class="me-1">warning_amber</v-icon>
-                {{$t('vendor_add.set_a_user_for_the_vendor_first_msg')}}
-
+                {{ $t("vendor_add.set_a_user_for_the_vendor_first_msg") }}
               </v-list-subheader>
             </div>
           </v-window-item>
@@ -938,7 +956,10 @@
 
           <v-window-item>
             <div v-if="vendor && !IS_VENDOR_PANEL" class="widget-box mb-5">
-              <s-widget-header icon="block" :title="$t('vendor_add.delete.title')">
+              <s-widget-header
+                icon="block"
+                :title="$t('vendor_add.delete.title')"
+              >
               </s-widget-header>
 
               <u-smart-verify
@@ -959,7 +980,7 @@
                 >
                   <v-icon class="me-1">remove</v-icon>
 
-                  {{$t('vendor_add.delete.action')}}
+                  {{ $t("vendor_add.delete.action") }}
                 </v-btn>
               </div>
             </div>
@@ -1243,7 +1264,6 @@ export default {
     warehouse() {
       return this.vendor ? this.vendor.warehouse : this.shop.warehouse;
     },
-
 
     //----------------------- Select map dialog --------------------
     map_url() {

@@ -19,7 +19,7 @@
     :theme="light ? 'light' : 'dark'"
     content-class="rounded-t-xl"
     scrollable
-    width="96%"
+    width="98vw"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <v-card
@@ -178,8 +178,8 @@
             <v-expansion-panels
               :dark="!light"
               :model-value="has_discount_period ? 0 : null"
-              class="price-input mt-5"
-              style="border-radius: 18px; overflow: hidden"
+              class="mt-5 mx-auto"
+              style="border-radius: 18px; overflow: hidden;max-width: 560px"
               @update:model-value="(val) => (has_discount_period = val === 0)"
             >
               <v-expansion-panel
@@ -197,6 +197,10 @@
                   <span class="flex-grow-1">{{
                     $t("add_product.pricing.has_discount_period_input")
                   }}</span>
+
+                  <v-chip v-if="is_finished_discount" color="#000" size="small" variant="flat">
+                    {{$t('global.commons.finished')}}
+                  </v-chip>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text color="transparent">
                   <p class="text-start">
@@ -287,12 +291,13 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import UDateInput from "../../../../ui/date/input/UDateInput.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
+import {DateConverter} from "@selldone/core-js";
 
 export default {
   name: "BProductExtraPricingAdd",
@@ -393,6 +398,9 @@ export default {
           currency: this.currency,
           commission: this.clone_extra_pricing.commission,
           discount: this.clone_extra_pricing.discount,
+
+          dis_start: this.clone_extra_pricing.dis_start,
+          dis_end: this.clone_extra_pricing.dis_end,
         },
         null,
         this.currency,
@@ -406,6 +414,18 @@ export default {
         discount: this.clone_extra_pricing.discount,
       });
     },
+
+    is_finished_discount() {
+      return (
+          (this.clone_extra_pricing?.dis_start || this.clone_extra_pricing?.dis_end) &&
+          !DateConverter.inBetweenDates(
+              new Date(),
+              this.convertToLocalTime(this.clone_extra_pricing.dis_start),
+              this.convertToLocalTime(this.clone_extra_pricing.dis_end),
+          )
+      );
+    },
+
   },
 
   watch: {

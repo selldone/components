@@ -34,14 +34,50 @@
     </td>
     <td>
       {{ formatCard(giftcard.number) }}
-    </td>
-    <td :title="getFromNowString(giftcard.expire_at)">
-      <small>
-        {{ $t("global.commons.expire_at") }}
-      </small>
-      <span class="small ms-1">
-        {{ getLocalDateString(giftcard.expire_at) }}</span
+
+      <v-chip
+        v-if="giftcard.vitem_id"
+        color="#948"
+        size="x-small"
+        variant="tonal"
+        prepend-icon="paid"
+        class="ms-1"
       >
+        {{$t('global.commons.purchased')}}
+      </v-chip>
+      <v-chip
+        v-else-if="giftcard.vitem_id === null"
+        color="#009688"
+        size="x-small"
+        variant="tonal"
+        prepend-icon="card_giftcard"
+        class="ms-1"
+        >{{$t('global.commons.giveaway')}}
+      </v-chip>
+    </td>
+    <td>
+      <div :title="getFromNowString(giftcard.expire_at)">
+        <small>
+          {{ $t("global.commons.expire_at") }}
+        </small>
+        <span class="small ms-1">
+          {{ getLocalDateString(giftcard.expire_at) }}</span
+        >
+      </div>
+      <div class="my-1">
+        <v-btn
+          class="nbt"
+          size="x-small"
+          target="_blank"
+          :to="{
+            name: 'AdminGiftCardManagementPage',
+            params: { gift_card_type_id: giftcard.type_id },
+          }"
+          >{{ $t("global.commons.management") }}
+
+          <v-icon end size="small">launch</v-icon>
+        </v-btn>
+      </div>
     </td>
   </tr>
 </template>

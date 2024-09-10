@@ -64,7 +64,7 @@
             :loading="busy_add"
             color="success"
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="addCard"
           >
             <v-icon start>add</v-icon>

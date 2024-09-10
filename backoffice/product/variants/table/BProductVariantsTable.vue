@@ -123,6 +123,8 @@
               "
               class="ms-2"
               size="small"
+              :start="item.dis_start"
+              :end="item.dis_end"
             ></u-chip-discount>
           </div>
 

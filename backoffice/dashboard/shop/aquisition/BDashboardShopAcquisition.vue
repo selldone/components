@@ -13,6 +13,8 @@
   -->
 
 <template>
+
+  <!-- ━━━━━━━━━━━━━━━━━━ BDashboardShopAcquisition ━━━━━━━━━━━━━━━━━━ -->
   <s-widget-box
     :active="true"
     :icon-to="{ name: 'BPageShopCrmReport' }"
@@ -112,12 +114,13 @@
             height="150px"
           ></b-session-chart-sankey>
         </v-col>
+        <!-- ━━━━━━━━━━━━━━━━━━ Channels ━━━━━━━━━━━━━━━━━━ -->
 
         <v-col class="text-body-2" cols="12" order="4" sm="4">
           <p class="font-weight-bold">
             {{ $t("global.commons.acquisition_channel") }}
           </p>
-          <div class="overflow-auto thin-scroll" style="max-height: 150px">
+          <div class="overflow-auto thin-scroll pe-3" style="max-height: 150px">
             <div
               v-for="(item, i) in sorted_socials"
               :key="i"

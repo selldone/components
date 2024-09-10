@@ -28,7 +28,9 @@
       clearable
       color="green"
       persistent-placeholder
-      @blur="$emit('update:isFocus', false)"
+      @blur="$nextTick(() => {
+         $emit('update:isFocus', false) // A delay needed!
+      });"
       @focus="$emit('update:isFocus', true)"
       @update:model-value="
         (val) => {
@@ -58,7 +60,6 @@
         <slot name="append"></slot>
       </template>
     </v-textarea>
-
     <v-expand-transition>
       <div
         v-if="
@@ -79,10 +80,12 @@
             v-for="(item, index) in search_results"
             :key="index"
             class="text-start"
-            @click="
+            @mousedown.prevent
+            @click.stop="
               auto_complete_address =
                 !autoDisableAutoComplete /*Now user can edit address manually!*/;
               $emit('select:address', item);
+                     clearFocus()
             "
           >
             <b class="me-2">
@@ -305,8 +308,13 @@ export default {
     setFocused(val) {
       if (val) {
         this.focused = true;
-      } else _.delay(() => (this.focused = false), 100);
+      } else _.delay(() => (this.focused = false), 300);
     },
+    clearFocus() {
+      if (document.activeElement) {
+        document.activeElement.blur(); // Clears focus from the active element
+      }
+    }
   },
 };
 </script>

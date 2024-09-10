@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <u-fade-scroll class="sx-menu">
+  <u-fade-scroll class="sx-menu" :class="{'-rtl':$vuetify.locale.isRtl}">
     <v-tabs
       :direction="$vuetify.display.mdAndUp ? 'vertical' : 'horizontal'"
       :model-value="modelValue"
@@ -77,6 +77,16 @@ export default {
     top: 86px;
     width: 240px;
     z-index: 1;
+  }
+
+  &.-rtl{
+    left: 0;
+    right: 8px;
+    ::v-deep(.v-tab__slider) {
+      right: 0;
+      left: unset;
+    }
+
   }
 }
 </style>

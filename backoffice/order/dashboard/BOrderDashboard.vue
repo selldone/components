@@ -303,10 +303,26 @@
 
           <u-smart-switch
             v-model="reject_express"
-            :true-title="$t('process_order_page_dashboard.reject_dialog.express_input.true_title')"
-            :false-title="$t('process_order_page_dashboard.reject_dialog.express_input.false_title')"
-            :true-description="$t('process_order_page_dashboard.reject_dialog.express_input.true_description')"
-            :false-description="$t('process_order_page_dashboard.reject_dialog.express_input.false_description')"
+            :true-title="
+              $t(
+                'process_order_page_dashboard.reject_dialog.express_input.true_title',
+              )
+            "
+            :false-title="
+              $t(
+                'process_order_page_dashboard.reject_dialog.express_input.false_title',
+              )
+            "
+            :true-description="
+              $t(
+                'process_order_page_dashboard.reject_dialog.express_input.true_description',
+              )
+            "
+            :false-description="
+              $t(
+                'process_order_page_dashboard.reject_dialog.express_input.false_description',
+              )
+            "
             true-icon="flash_on"
             false-icon="timelapse"
             class="my-3"
@@ -379,7 +395,7 @@ import BOrderConnectsList from "../../order/connect/list/BOrderConnectsList.vue"
 
 import BOrderDashboardDropshippingDelivery from "../../order/dashboard/dropshipping/delivery/BOrderDashboardDropshippingDelivery.vue";
 import BOrderVendorPaymentManagement from "../../order/vendor/payment/BOrderVendorPaymentManagement.vue";
-import {AvocadoItem, Basket, BasketItem, Order} from "@selldone/core-js";
+import { AvocadoItem, Basket, BasketItem, Order } from "@selldone/core-js";
 import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
 import BShopCustomerBox from "@selldone/components-vue/backoffice/customer/box/BShopCustomerBox.vue";
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
@@ -603,7 +619,15 @@ export default {
   methods: {
     //―――――――――――――――― Order ▶ Update basket status ――――――――――――――――
 
-    updateState(state, list, callback :(success:boolean,items:BasketItem[]|AvocadoItem[])=>void= null, delivery_info = null) {
+    updateState(
+      state,
+      list,
+      callback: (
+        success: boolean,
+        items: BasketItem[] | AvocadoItem[],
+      ) => void = null,
+      delivery_info = null,
+    ) {
       this.busy_update_state = true;
       axios
         .post(
@@ -635,7 +659,7 @@ export default {
         .then(({ data }) => {
           if (data.error) {
             this.showErrorAlert(null, data.error_msg);
-            if(callback) callback(false);
+            if (callback) callback(false);
           } else {
             this.showSuccessAlert(
               null,
@@ -660,16 +684,15 @@ export default {
                 this.onDeleteLogisticSendingOrderQue(found_in_que);
               }
             }
-            if(callback) callback(true,data.items);
+            if (callback) callback(true, data.items);
           }
         })
         .catch((error) => {
           this.showLaravelError(error);
-          if(callback) callback(false);
+          if (callback) callback(false);
         })
         .finally(() => {
           this.busy_update_state = false;
-
         });
     },
     //―――――――――――――――― Drop shipping ▶ Check fulfillment by middle seller ――――――――――――――――
@@ -915,7 +938,11 @@ export default {
     },
     //―――――――――――――――― Delivery  ▶ Set tracking info manually ――――――――――――――――
 
-    setTracking(tracking_code, tracking_url, callback: (success:boolean)=>void) {
+    setTracking(
+      tracking_code,
+      tracking_url,
+      callback: (success: boolean) => void,
+    ) {
       axios
         .put(
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -957,9 +984,7 @@ export default {
           this.showLaravelError(error);
           if (callback) callback(false);
         })
-        .finally(() => {
-
-        });
+        .finally(() => {});
     },
 
     //―――――――――――――――― 🟣 Marketplace 🟣 ▶ Update delivery state manually by marketplace owner ――――――――――――――――
@@ -982,10 +1007,17 @@ export default {
           } else {
             this.showSuccessAlert(
               null,
-                this.$t("process_order_page_dashboard.notifications.vendor_order_status_update_success")
+              this.$t(
+                "process_order_page_dashboard.notifications.vendor_order_status_update_success",
+              ),
             );
 
             Object.assign(vendor_order, data.vendor_order);
+
+            if (data.basket) {
+              // In some case like marketplace with direct shipping mode, it could update delivery_state of the main order.
+              Object.assign(this.basket, data.basket);
+            }
             // vendor_order.delivery_state = data.vendor_order.delivery_state;
             this.$emit("fetch-order"); //optional!
           }
@@ -1035,7 +1067,9 @@ export default {
               } else {
                 this.showSuccessAlert(
                   null,
-                  this.$t("process_order_page_dashboard.notifications.shipping_address_update_success")
+                  this.$t(
+                    "process_order_page_dashboard.notifications.shipping_address_update_success",
+                  ),
                 );
                 Object.assign(this.basket.receiver_info, data.receiver_info);
               }

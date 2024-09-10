@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -15,14 +15,15 @@
 <template>
   <div
     v-if="connect_shipping_options?.length"
-    class="s--shop-connect-shipping-options border-between-vertical"
+    class="s--shop-connect-shipping-options"
   >
     <div
       v-for="connect_shipping_option in connect_shipping_options"
       :key="connect_shipping_option.connect_id"
     >
       <div class="d-flex align-center my-2">
-        <small>{{ $t("global.commons.shipping") }}</small>
+        <span class="small min-width-50 d-inline-block">{{ $t("global.commons.shipping") }}</span>
+        <v-icon class="flip-rtl">arrow_right</v-icon>
         <products-dense-images-circles
           :ids="
             basket.items
@@ -36,31 +37,31 @@
                 ),
               )
           "
-          inline
+          inline border
           raw-images-path
         ></products-dense-images-circles>
       </div>
 
       <template v-if="connect_shipping_option.error">
-        <div class="font-weight-bold d-flex align-center my-3">
+        <div class="font-weight-bold d-flex align-center mb-1 mt-3">
           <img
             :src="getConnectIcon(connect_shipping_option.connect_id)"
             class="me-2"
-            height="16"
-            width="16"
+            height="24"
+            width="24"
           />
           {{ connect_shipping_option.connect_name }}
         </div>
-        <div class="my-1 text-amber">
-          <v-icon class="me-1" color="amber" size="small">warning_amber</v-icon>
+        <v-sheet class="pa-2 text-subtitle-2" color="amber" rounded="sm">
+          <v-icon class="me-1"  size="small">warning_amber</v-icon>
           {{ connect_shipping_option.error }}
-        </div>
+        </v-sheet>
       </template>
 
       <template v-else-if="connect_shipping_option.options?.length">
         <u-smart-select
-          :background-color="dark ? SaminColorDark : '#fafafa'"
-          :dark="dark"
+          :background-color="!light_checkout ? SaminColorDark : '#fafafa'"
+          :dark="!light_checkout"
           :items="connect_shipping_option.options"
           :model-value="
             findSelectedConnectShipping(connect_shipping_option)?.shipping_id
@@ -81,12 +82,15 @@
         </u-smart-select>
       </template>
     </div>
+
+    <div  class="spacer-line my-3" />
+
   </div>
 </template>
 
 <script>
-import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
-import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
+import ProductsDenseImagesCircles from "../../../product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopConnectShippingOptions",
@@ -102,10 +106,7 @@ export default {
       type: Object,
     },
 
-    dark: {
-      default: false,
-      type: Boolean,
-    },
+
   },
   data: () => ({
     connect_shippings: null,
@@ -118,6 +119,10 @@ export default {
   },
 
   computed: {
+    light_checkout() {
+      return this.shop.theme && this.shop.theme.light_checkout;
+    },
+
     bill() {
       return this.basket?.bill;
     },

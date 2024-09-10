@@ -139,7 +139,7 @@
             :src="getConnectIcon(getProduct(item).connect_id)"
             title="Connect OS"
         /></v-avatar>
-        {{ getProduct(item).title }}
+        {{ getProduct(item).title?.limitWords(12) }}
 
         <v-chip v-if="isFulfillment" size="x-small">
           <v-avatar
@@ -170,10 +170,10 @@
               ></v-avatar>
               <div>
                 <div>
-                  {{ item.product.title }}
+                  {{ item.product.title?.limitWords(12) }}
                 </div>
                 <div class="small">
-                  {{ item.product.title_en }}
+                  {{ item.product.title_en?.limitWords(24) }}
                 </div>
 
                 <variant-item-view-micro
@@ -185,7 +185,9 @@
           </v-tooltip>
         </v-chip>
       </p>
-      <small class="d-block text-start"> {{ getProduct(item).title_en }}</small>
+      <small class="d-block text-start">
+        {{ getProduct(item).title_en?.limitWords(24) }}</small
+      >
       <variant-item-view-micro
         v-if="getVariant(item)"
         :product-variant="getVariant(item)"
@@ -362,11 +364,11 @@
         variant="flat"
       >
         <v-icon start>check_circle</v-icon>
-        {{$t('global.commons.available')}}
+        {{ $t("global.commons.available") }}
       </v-chip>
       <v-chip v-else color="red" pill size="x-small" variant="flat">
         <v-icon start>cancel</v-icon>
-        {{$t('global.commons.not_available')}}
+        {{ $t("global.commons.not_available") }}
       </v-chip>
 
       <v-btn
@@ -396,52 +398,82 @@
 
     <template v-slot:item.price="{ item }">
       <div class="min-width-150">
-        <u-price
-          v-if="item.price !== undefined"
-          :amount="
-            item.count * item.price -
-            (item.offer_amount ? item.offer_amount : 0)
-          "
-          :currency="item.currency"
-          class="text-h4"
-        ></u-price>
+        <template v-if="IS_VENDOR_PANEL">
+          <!-- --- Vendor Price --- -->
+          <u-price
+            v-if="item.vendor_price !== undefined"
+            :amount="item.vendor_price"
+            :currency="item.currency"
+            class="text-h4"
+          ></u-price>
+        </template>
 
-        <div v-if="item.offer_amount">
-          <v-chip class="ms-2" color="blue" size="small" title="Offer">
-            <v-icon size="small" start>confirmation_number</v-icon>
+        <template v-else>
+          <!-- --- Main Price --- -->
+          <u-price
+            v-if="item.price !== undefined"
+            :amount="
+              item.count * item.price -
+              (item.offer_amount ? item.offer_amount : 0)
+            "
+            :currency="item.currency"
+            class="text-h4"
+          ></u-price>
+
+          <!-- --- Vendor Price --- -->
+
+          <div v-if="item.vendor_price">
+            <small>{{ $t("global.commons.vendor") }}:</small>
             <u-price
-              :amount="item.offer_amount"
+              :amount="item.vendor_price"
               :currency="item.currency"
+              class="ms-1"
             ></u-price>
-          </v-chip>
-        </div>
+            <u-tooltip-tips
+              >The cost of the item should be paid to the
+              vendor.</u-tooltip-tips
+            >
+          </div>
 
-        <div v-if="item.tax" class="small border-between-vertical">
-          <u-text-value-dashed title="Calculated tax by a dedicated rule.">
-            <template v-slot:label>{{ $t("global.commons.tax") }}</template>
-            <v-chip
-              v-if="item.tax.included"
-              class="mx-1"
-              color="#CDDC39"
-              label
-              size="x-small"
-              title="Included in product price"
-              >included
+          <div v-if="item.offer_amount">
+            <v-chip class="ms-2" color="blue" size="small" title="Offer">
+              <v-icon size="small" start>confirmation_number</v-icon>
+              <u-price
+                :amount="item.offer_amount"
+                :currency="item.currency"
+              ></u-price>
             </v-chip>
-            <u-price
-              :amount="item.tax.amount"
-              :currency="item.currency"
-            ></u-price>
-          </u-text-value-dashed>
+          </div>
 
-          <u-text-value-dashed v-if="item.tax.shipping">
-            <template v-slot:label>Shipping Tax</template>
-            <u-price
-              :amount="item.tax.shipping"
-              :currency="item.currency"
-            ></u-price>
-          </u-text-value-dashed>
-        </div>
+          <!-- --- Tax --- -->
+
+          <div v-if="item.tax" class="small border-between-vertical">
+            <u-text-value-dashed title="Calculated tax by a dedicated rule.">
+              <template v-slot:label>{{ $t("global.commons.tax") }}</template>
+              <v-chip
+                v-if="item.tax.included"
+                class="mx-1"
+                color="#CDDC39"
+                label
+                size="x-small"
+                title="Included in product price"
+                >included
+              </v-chip>
+              <u-price
+                :amount="item.tax.amount"
+                :currency="item.currency"
+              ></u-price>
+            </u-text-value-dashed>
+
+            <u-text-value-dashed v-if="item.tax.shipping">
+              <template v-slot:label>Shipping Tax</template>
+              <u-price
+                :amount="item.tax.shipping"
+                :currency="item.currency"
+              ></u-price>
+            </u-text-value-dashed>
+          </div>
+        </template>
 
         <div
           v-if="
@@ -486,7 +518,13 @@
       </div>
     </template>
     <template v-slot:bottom>
-      <v-pagination v-if="pageCount>1" v-model="page" :length="pageCount" class="my-5" rounded  />
+      <v-pagination
+        v-if="pageCount > 1"
+        v-model="page"
+        :length="pageCount"
+        class="my-5"
+        rounded
+      />
     </template>
   </v-data-table>
 
@@ -542,10 +580,12 @@ import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import { OrderTypeCode } from "@selldone/core-js/enums/order/OrderTypeCode";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
 import { BasketItemReturn } from "@selldone/core-js";
+import UTooltipTips from "@selldone/components-vue/ui/tooltip/tips/UTooltipTips.vue";
 
 export default {
   name: "BOrderCart",
   components: {
+    UTooltipTips,
     UTextValueDashed,
     SProductSectionValuation,
     VariantItemViewMicro,
@@ -671,9 +711,9 @@ export default {
   },
 
   watch: {
-    items(){
+    items() {
       this.selected = this.items.filter((item) => item.check);
-    }
+    },
   },
 
   mounted() {

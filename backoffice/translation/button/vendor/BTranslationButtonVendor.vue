@@ -20,7 +20,13 @@
     :shop="shop"
     :translation-key="translationKey"
     :url="
-      window.API.PUT_VENDOR_SET_TRANSLATIONS(shop.id, vendor.id, translationKey)
+      IS_VENDOR_PANEL
+        ? window.VAPI.PUT_MY_VENDOR_SET_TRANSLATIONS(vendor.id, translationKey)
+        : window.API.PUT_VENDOR_SET_TRANSLATIONS(
+            shop.id,
+            vendor.id,
+            translationKey,
+          )
     "
     is-string-mode
     @update:translations="
@@ -54,7 +60,15 @@ export default {
     label: {},
   },
   data: () => ({}),
-  computed: {},
+  computed: {
+    IS_VENDOR_PANEL() {
+      /*🟢 Vendor Panel 🟢*/
+      return (
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
+      );
+    },
+  },
 
   methods: {},
 };

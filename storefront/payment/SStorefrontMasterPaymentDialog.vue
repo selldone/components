@@ -27,7 +27,7 @@
       <u-payment-form
         v-if="exist_payment_form"
         ref="payment_form"
-        :accept-c-o-d="acceptCOD"
+        :acceptCOD="acceptCOD"
         :address="payment_form_address"
         :amount="payment_form_amount"
         :available-gateways="available_gateways"
@@ -58,8 +58,8 @@
     </v-bottom-sheet>
 
     <u-progress-radial
-      v-for="(item, index) in paymentQue"
-      :key="index"
+      v-for="(item) in paymentQue"
+      :key="item.id"
       :class="{
         disabled: busy_loading_payment && busy_loading_payment !== item.id,
       }"

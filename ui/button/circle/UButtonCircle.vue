@@ -84,10 +84,12 @@
                   ? 32
                   : 26) * (small ? 0.7 : 1)
           "
+          class="d-flex"
         >
           <img
             :src="src"
             :style="isCurrent || forceFill ? 'padding:3px' : ''"
+            style="aspect-ratio: 1;"
           />
         </v-avatar>
         <slot v-else></slot>

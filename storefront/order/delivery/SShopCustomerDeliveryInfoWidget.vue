@@ -304,13 +304,11 @@
       class="mt-2"
       icon="check"
       type="success"
+      rounded="xl"
+      variant="flat"
     >
-      <p class="m-0">
-        <span>
-          {{ $t("order_page.delivery.order_delivered") }}
-        </span>
-      </p>
-      <p :title="$t('order_page.delivery.delivery_time')" class="small m-0">
+      {{ $t("order_page.delivery.order_delivered") }}
+      <p v-if="basket.delivery_at" :title="$t('order_page.delivery.delivery_time')" class="small m-0">
         <v-icon class="me-1" size="small">access_time</v-icon>
 
         <b> {{ getFromNowString(basket.delivery_at) }}</b>
@@ -470,8 +468,7 @@ export default {
     is_pickup() {
       return (
         this.delivery_info &&
-        this.delivery_info.type === ShopTransportations.Pickup.code &&
-        this.receiver_info.pickup
+        this.delivery_info.type === ShopTransportations.Pickup.code
       );
     },
 

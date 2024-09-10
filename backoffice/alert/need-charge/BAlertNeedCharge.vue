@@ -127,15 +127,19 @@ export default {
   },
   created() {
     if (!this.sample) {
+      const handleSuccessResponse = (exchanges) => {
+        this.exchanges = exchanges;
+        //console.log("exchange list", exchanges);
+      };
+
       this.busy = true;
       window.$backoffice?.finance.exchange
         .optimize(600)
         .cancellation(true)
         .list()
-        .then((exchanges) => {
-          this.exchanges = exchanges;
-          //console.log("exchange list", exchanges);
-        })
+        .cache(handleSuccessResponse)
+        .then(handleSuccessResponse)
+
         .finally(() => {
           this.busy = false;
         });

@@ -27,7 +27,7 @@
           <u-fade-scroll>
             <div class="d-flex">
               <div
-                v-for="pickup in pickup_transportation.pickups"
+                v-for="pickup in pickups"
                 :key="pickup.id"
                 class="-pickup-card"
               >
@@ -125,7 +125,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SArticleEditor from "../../../article/SArticleEditor.vue";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
@@ -134,6 +134,7 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import UExpandView from "../../../ui/expand-view/UExpandView.vue";
+import {BusinessModel} from "@selldone/core-js/enums/shop/BusinessModel";
 
 export default {
   name: "SProductShipping",
@@ -180,23 +181,49 @@ export default {
         .map((t) => t.logo)
         .unique();
     },
+
+
+
     transportation_with_min_free_shipping_limit() {
       return this.transportations_free_shipping?.minByKey(
         "free_shipping_limit",
       );
     },
 
-    pickup_transportation() {
+    IS_MARKETPLACE() {
+      return this.shop.model === BusinessModel.MARKETPLACE.code;
+    },
+    pickup_transportation_for_vendors_exists() {
+      return this.IS_MARKETPLACE && this.shop.transportations?.some(
+        (transportation) =>
+          transportation.type === ShopTransportations.Pickup.code &&
+          transportation.marketplace,
+        /* Transportation must be available for vendors. If the marketplace mode is not direct, 
+   'marketplace' could be true (miss config!)! But vendor_products would not return any value. This check is safe, so there's no need to explicitly check
+   the marketplace mode. */
+      );
+    },
+
+    pickups() {
+      if (this.pickup_transportation_for_vendors_exists) {
+        // We are in the marketplace, with vendors send orders directly! So we should show pickup options of vendors!
+        return this.product.vendor_products
+          ?.map((pv) => {
+            return pv.vendor?.warehouse;
+          })
+          .filter((p) => !!p);
+      }
+
       return (
         this.is_physical &&
         this.transportations?.find(
           (t) =>
             t.type === ShopTransportations.Pickup.code && t.pickups?.length > 0,
-        )
+        )?.pickups
       );
     },
     has_pickup() {
-      return !!this.pickup_transportation;
+      return this.pickups?.length > 0;
     },
 
     // ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Logistic Profile > Shipping ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃

@@ -17,6 +17,8 @@
     :class="{ '-activated': in_this_step, disabled: disabled }"
     class="widget shadow my-3 mx-1 mx-md-3"
   >
+    <!-- ------------------ Title ------------------ -->
+
     <div class="d-flex align-center">
       <h2>
         <img
@@ -27,6 +29,32 @@
         />
         {{ $t("global.commons.vendors_panel") }}
       </h2>
+
+      <v-chip v-if="canceled"  class="mx-2" size="small" color="red" prepend-icon="cancel" variant="flat">
+        {{$t('global.commons.canceled')}}
+
+        <v-tooltip activator="parent" content-class="bg-red" location="bottom">
+          The vendor has rejected the order, and its fulfillment has been fully canceled.
+        </v-tooltip>
+
+      </v-chip>
+
+      <v-chip v-else-if="rejected"  class="mx-2" size="small" color="red" prepend-icon="do_not_disturb" variant="flat" >
+        {{$t('global.commons.reject')}}
+
+        <v-tooltip activator="parent" content-class="bg-red" location="bottom">
+          The vendor has rejected the order, but it has not been fully canceled yet.
+        </v-tooltip>
+      </v-chip>
+
+      <v-chip v-else-if="is_fulfilling"  class="mx-2" size="small"  variant="flat" color="#4CAF50">
+        {{$t('global.commons.fulfilling')}}...
+        <i
+            class="fas fa-circle-notch fa-spin ms-1"
+        ></i>
+      </v-chip>
+
+
       <v-spacer></v-spacer>
 
       <small
@@ -38,21 +66,82 @@
       >
     </div>
 
+    <!-- ------------------ Reject ------------------ -->
+    <u-count-down
+      v-if="vendorOrder?.reject_at && !canceled"
+      :end="endOfRejectPeriod"
+      class="mx-2 text-red"
+    ></u-count-down>
+
+    <div v-if="rejected" class="text-subtitle-2">
+      <v-icon class="me-1">do_not_disturb</v-icon>
+
+      {{ $t("order_vendor.order_rejected") }}:<b
+        class="mx-1"
+        v-if="vendorOrder.reject_at"
+        >{{ getLocalDateString(vendorOrder.reject_at) }}
+      </b>
+
+      <Span v-if="reject_reason">
+        |
+        {{ reject_reason }}
+      </Span>
+
+      <div v-if="vendorOrder.reject_note">
+        {{ vendorOrder.reject_note }}
+      </div>
+    </div>
+
+    <!-- ------------------ Cancel ------------------ -->
+
+    <div v-if="canceled" class="text-subtitle-2">
+      <v-icon class="me-1" color="red">cancel</v-icon>
+
+      {{ $t("order_vendor.order_canceled") }}:<b class="mx-1"
+        >{{ getLocalDateString(vendorOrder.cancel_at) }}
+      </b>
+
+      <Span v-if="vendorOrder.cancel_note">
+        |
+        {{ vendorOrder.cancel_note }}
+      </Span>
+    </div>
+
+    <!-- ------------------ Order Code ------------------ -->
+
     <p class="text-start my-2" title="Vendor order ID.">
       <v-icon class="me-1" color="#111">shopping_bag</v-icon>
       <v-icon class="me-1" color="#111">{{ $t("icons.chevron_next") }}</v-icon>
       <b>{{ getVendorOrderCode(vendorOrder) }}</b>
     </p>
 
-    <!-- Main seller shop info -->
+    <!-- ------------------ Vendor Info ------------------ -->
     <v-row>
       <v-col class="text-start d-flex align-center" cols="12" md="6">
-        <v-avatar class="me-1" color="#fafafa" rounded size="64">
-          <img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 128)" />
-          <v-icon v-else>storefront</v-icon>
-        </v-avatar>
+        <u-avatar-folder
+          :src="getShopImagePath(vendor.icon, 128)"
+          is-purple
+          class="me-1"
+          size="64"
+          side-icon="storefront"
+          elevated
+        >
+        </u-avatar-folder>
 
         <div class="text-start flex-grow-1">
+          <v-btn
+            v-if="!IS_VENDOR_PANEL"
+            :to="{ name: 'BPageMarketplaceVendors' }"
+            class="ms-1 tnt"
+            append-icon="launch"
+            color="#333"
+            target="_blank"
+            title="Go to vendors management panel."
+            variant="outlined"
+            size="small"
+          >
+            {{ $t("global.commons.vendors") }}
+          </v-btn>
           <v-btn
             v-if="!IS_VENDOR_PANEL"
             :to="{
@@ -61,28 +150,30 @@
             }"
             class="ms-1 tnt"
             prepend-icon="storefront"
-            color="primary"
+            color="#333"
             target="_blank"
             title="Go to vendor panel."
-            variant="elevated"
+            variant="outlined"
             size="small"
+            append-icon="launch"
           >
             {{ vendor.name }}
           </v-btn>
-
           <v-btn
-            :to="
-              IS_VENDOR_PANEL ? undefined : { name: 'BPageMarketplaceVendors' }
-            "
+            v-if="!IS_VENDOR_PANEL && type_obj"
+            :to="{
+              name: type_obj.vendor_order_page,
+              params: { vendor_id: vendor.id, vendor_order_id: vendorOrder.id },
+            }"
             class="ms-1 tnt"
             append-icon="launch"
-            color="primary"
+            color="#333"
             target="_blank"
-            title="Go to vendors management panel."
-            variant="text"
+            title="Go to vendor order fulfillment page."
+            variant="outlined"
             size="small"
           >
-            {{ $t("global.commons.vendors") }}
+            <img :src="type_obj.image" width="14" height="14" class="ms-n2" />
           </v-btn>
 
           <div class="px-1 mt-1">
@@ -136,12 +227,15 @@
       </v-col>
     </v-row>
 
-    <p class="text-start mt-2 text-muted" title="About the vendor.">
+    <p
+      class="text-start mt-2 text-muted small single-line d-block"
+      title="About the vendor."
+    >
       {{ vendor.description }}
     </p>
 
     <div
-      class="expand-button mb-2 mt-4 p-3 widget-hover rounded position-relative pointer-pointer"
+      class="expand-button mb-2 mt-2 px-2 widget-hover rounded position-relative pointer-pointer"
       @click="force_show_items = !force_show_items"
     >
       <span class="absolute-top-end text-muted px-2 small"
@@ -161,8 +255,8 @@
           class="m-2"
         >
           <template v-slot:badge>{{ item.count }}</template>
-          <v-avatar>
-            <img :src="getProductImage(item.product_id)" />
+          <v-avatar class="border">
+            <v-img :src="getProductImage(item.product_id)" />
           </v-avatar>
         </v-badge>
       </div>
@@ -175,13 +269,13 @@
           :select-all="initial_select_all"
           :shop="shop"
           :type="basket.type"
-          class="pb-4"
+          class="pb-4 mb-2"
         />
       </div>
     </v-expand-transition>
 
-    <v-expansion-panels class="mt-5" flat>
-      <v-expansion-panel class="bg-transparent">
+    <v-expansion-panels flat>
+      <v-expansion-panel v-if="!canceled" class="bg-transparent border" rounded="lg">
         <v-expansion-panel-title>
           <v-icon class="me-1">arrow_drop_down</v-icon>
           <div class="d-inline-flex flex-column">
@@ -203,18 +297,22 @@
           </div>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
-          <div class="widget-toggle">
+          <v-btn-toggle
+            :model-value="vendorOrder.delivery_state"
+            class="widget-toggle"
+            selected-class="bg-primary"
+          >
             <v-btn
               v-for="item in orders_states"
               :key="item.code"
-              :color="
-                vendorOrder.delivery_state === item.code ? 'primary' : undefined
-              "
               :loading="busy === item.code"
               :value="item.code"
-              class="ma-1"
               rounded
               variant="flat"
+              class="border"
+              :class="{
+                'elevation-3': vendorOrder.delivery_state === item.code,
+              }"
               @click="setDeliveryStatus(item.code)"
             >
               <v-icon start>{{ item.icon }}</v-icon>
@@ -223,7 +321,7 @@
                 >check_circle
               </v-icon>
             </v-btn>
-          </div>
+          </v-btn-toggle>
 
           <ul class="tips mt-4 text-start">
             <li
@@ -238,7 +336,8 @@
 
       <v-expansion-panel
         v-if="vendorOrder.transactions?.length /*It should be existed always!*/"
-        class="bg-transparent"
+        class="bg-transparent border"
+        rounded="lg"
       >
         <v-expansion-panel-title>
           <v-icon class="me-1">arrow_drop_down</v-icon>
@@ -315,28 +414,45 @@
       class="py-3 d-flex align-center"
     >
       <div class="p-3 me-2 border-end" title="Package">
-        <v-icon size="36">aspect_ratio</v-icon>
+        <v-icon size="18">aspect_ratio</v-icon>
       </div>
 
       <div class="mx-1 d-flex align-center">
         <div class="pa-1 rounded d-flex flex-column me-5 border">
-          {{ delivery_info.weight }}
-          <small>{{ $t("global.commons.weight") }}</small>
+          <div>
+            {{ delivery_info.weight }}
+            <small class="x-small">{{ mass_unit }}</small>
+          </div>
+          <small class="x-small min-width-50">{{
+            $t("global.commons.weight")
+          }}</small>
         </div>
 
         <div class="pa-1 rounded d-flex flex-column border me-1">
-          {{ volume.width }}
-          <small>{{ $t("global.commons.width") }}</small>
+          <div>
+            {{ volume.width }} <small class="x-small">{{ size_unit }}</small>
+          </div>
+          <small class="x-small min-width-50">{{
+            $t("global.commons.width")
+          }}</small>
         </div>
 
         <div class="pa-1 rounded d-flex flex-column border me-1">
-          {{ volume.length }}
-          <small>{{ $t("global.commons.length") }}</small>
+          <div>
+            {{ volume.length }} <small class="x-small">{{ size_unit }}</small>
+          </div>
+          <small class="x-small min-width-50">{{
+            $t("global.commons.length")
+          }}</small>
         </div>
 
         <div class="pa-1 rounded d-flex flex-column border me-1">
-          {{ volume.height }}
-          <small>{{ $t("global.commons.height") }}</small>
+          <div>
+            {{ volume.height }} <small class="x-small">{{ size_unit }}</small>
+          </div>
+          <small class="x-small min-width-50">{{
+            $t("global.commons.height")
+          }}</small>
         </div>
       </div>
 
@@ -380,17 +496,26 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BOrderCart from "../../cart/BOrderCart.vue";
 import SOrderDeliveryStatusStepper from "../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import UCube from "../../../../ui/cube/UCube.vue";
 import BOrderVendorPaymentManagement from "../../../order/vendor/payment/BOrderVendorPaymentManagement.vue";
-import { Basket } from "@selldone/core-js";
+import {
+  Basket,
+  DateConverter,
+  Order,
+  ShopOptionsHelper,
+} from "@selldone/core-js";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import UCountDown from "@selldone/components-vue/ui/count-down/UCountDown.vue";
 
 export default {
   name: "BOrderDashboardVendor",
   components: {
+    UCountDown,
+    UAvatarFolder,
     BOrderVendorPaymentManagement,
     UCube,
     SOrderDeliveryStatusStepper,
@@ -443,6 +568,18 @@ export default {
 
     type() {
       return this.vendorOrder.type; // Equal to basket type!
+    },
+    type_obj() {
+      return ProductType[this.type];
+    },
+    delivery_states() {
+      return this.type_obj?.delivery_states;
+    },
+    is_fulfilling() {
+      return [
+        Order.DeliveryStateCode.OrderConfirm,
+        Order.DeliveryStateCode.PreparingOrder,
+      ].includes(this.vendorOrder.delivery_state);
     },
 
     orders_states() {
@@ -526,6 +663,33 @@ export default {
 
     transactions() {
       return this.vendorOrder.transactions;
+    },
+    size_unit() {
+      return ShopOptionsHelper.GetSizeUnit(this.shop);
+    },
+
+    mass_unit() {
+      return ShopOptionsHelper.GetMassUnit(this.shop);
+    },
+    endOfRejectPeriod() {
+      let date = DateConverter.convertToLocalTime(this.vendorOrder.reject_at);
+      date.setHours(date.getHours() + 48);
+
+      return date;
+    },
+    rejected() {
+      return this.basket && this.vendorOrder.reject;
+    },
+    canceled() {
+      return this.vendorOrder.status === "Canceled";
+    },
+
+    reject_reason() {
+      if (!this.rejected) return null;
+      let obj = Order.RejectReasons[this.vendorOrder.reject];
+      return obj
+        ? this.$t(obj.title)
+        : this.$t("global.basket_delivery_state.reason_not_found");
     },
   },
   methods: {

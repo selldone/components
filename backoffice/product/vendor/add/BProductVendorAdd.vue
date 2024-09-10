@@ -71,7 +71,8 @@
               :disabled="IS_VENDOR_PANEL || is_edit_mode"
               :shop="shop"
               prepend-inner-icon="business"
-              @click:clear="vendor_id = null" clearable
+              @click:clear="vendor_id = null"
+              clearable
             ></b-vendor-input>
           </div>
 
@@ -162,15 +163,25 @@
               v-model:default-pricing="pricing"
               :disabled="IS_VENDOR_PANEL"
               :shop="shop"
+              class="border-start-thick-green ps-2 ms-n1 mb-0"
+              style="border-width: 2px !important"
+              messages="Auto calculated price based on the pricing model."
             ></v-pricing-input>
+
+            <v-icon color="green" size="26" class="ms-n4 me-1 rotate-90-s"
+              >private_connectivity
+            </v-icon>
+            <small>{{ $t("global.commons.or") }}</small>
 
             <u-price-input
               v-model="price"
               :currency="currency"
               :disabled="!!pricing_id || IS_VENDOR_PANEL"
-              class="sm-suffix price-input strong-field"
+              class="sm-suffix price-input strong-field border-start-thick-green ps-2 ms-n1 mt-0"
+              style="border-width: 2px !important"
               label="Marketplace price"
               required
+              messages="Manually set selling price."
             />
           </div>
 
@@ -187,43 +198,44 @@
 
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Raw price (Vendor price) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-            <u-price-input
-              v-if="vendor_enter_final_price"
-              v-model="raw_price_final_input"
-              :currency="currency"
-              :label="'Vendor price [After Marketplace Commission]'"
-              class="sm-suffix price-input strong-field"
-              required
-            >
-              <template v-slot:append-inner>
-                <v-btn
-                  class="tnt"
-                  prepend-icon="calculate"
-                  size="small"
-                  variant="flat"
-                  @click="vendor_enter_final_price = false"
-                  >Final Price
-                </v-btn>
-              </template>
-            </u-price-input>
+            <template v-if="pricing">
+              <u-price-input
+                v-model="raw_price_final_input"
+                :currency="currency"
+                :label="'Customer price'"
+                hint="Vendor price + Marketplace fee"
+                class="sm-suffix price-input strong-field border-start-thick-green ps-2 ms-n1 mb-0"
+                style="border-width: 2px !important"
+                required
+                @update:model-value="onChangeVendorTargetPrice"
+              >
+                <template v-slot:append-inner>
+                  <v-avatar class="avatar-gradient -thin -shop mb-1" size="24">
+                    <v-img :src="getShopImagePath(shop.icon, 96)" />
+                  </v-avatar>
+                </template>
+              </u-price-input>
+
+              <v-icon color="green" size="26" class="ms-n4 me-1 rotate-90-s"
+                >private_connectivity
+              </v-icon>
+              <small>{{ $t("global.commons.or") }}</small>
+            </template>
 
             <u-price-input
-              v-else
               v-model="raw_price"
               :currency="currency"
-              :label="'Vendor price [Before Marketplace Commission]'"
+              :label="'Vendor price'"
+              :class="{ 'border-start-thick-green ps-2 ms-n1 mt-0': pricing }"
               class="sm-suffix price-input strong-field"
+              style="border-width: 2px !important"
               required
+              @update:model-value="onChangeVendorPrice"
             >
               <template v-slot:append-inner>
-                <v-btn
-                  class="tnt"
-                  prepend-icon="calculate"
-                  size="small"
-                  variant="flat"
-                  @click="vendor_enter_final_price = true"
-                  >Vendor Price
-                </v-btn>
+                <v-avatar class="avatar-gradient -thin -vendor mb-1" size="24">
+                  <v-img :src="getShopImagePath(vendor_icon, 128)" />
+                </v-avatar>
               </template>
             </u-price-input>
 
@@ -278,7 +290,7 @@
               :label="$t('add_product.pricing.discount_input')"
               :messages="`${$t(
                 'add_product.pricing.discount_input_message',
-              )}: ${discount_percent}%`"
+              )}: ${discount_percent}%  [This discount will be deducted from vendor's price]`"
               class="sm-suffix price-input strong-field"
             />
 
@@ -299,7 +311,13 @@
             <div class="text-center my-3">
               <u-text-value-dashed class="my-1">
                 <template v-slot:label>
-                  <v-icon class="me-1">storefront</v-icon>
+                  <v-avatar
+                    class="avatar-gradient -thin -vendor me-1"
+                    size="24"
+                  >
+                    <v-img :src="getShopImagePath(vendor_icon, 128)" />
+                  </v-avatar>
+
                   Vendor payment
                 </template>
                 <u-price
@@ -313,9 +331,9 @@
 
               <u-text-value-dashed class="my-1">
                 <template v-slot:label>
-                  <v-avatar class="me-1 avatar-gradient -thin -shop" size="24"
-                    ><img :src="getShopImagePath(shop.icon, 96)"
-                  /></v-avatar>
+                  <v-avatar class="me-1 avatar-gradient -thin -shop" size="24">
+                    <v-img :src="getShopImagePath(shop.icon, 96)" />
+                  </v-avatar>
                   Marketplace fee
                 </template>
                 <u-price
@@ -365,6 +383,15 @@
                   <span class="flex-grow-1">{{
                     $t("add_product.pricing.has_discount_period_input")
                   }}</span>
+
+                  <v-chip
+                    v-if="is_finished_discount"
+                    color="#000"
+                    size="small"
+                    variant="flat"
+                  >
+                    {{ $t("global.commons.finished") }}
+                  </v-chip>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text color="transparent">
                   <p class="text-start">
@@ -425,12 +452,11 @@
                   <div>
                     <b class="d-block">
                       <v-icon start>add</v-icon>
-                      Add extra pricing</b
+                      {{ $t("add_product.pricing.extra_pricings.title") }}</b
                     >
-                    <small>
-                      Apply varying prices based on the quantity
-                      purchased.</small
-                    >
+                    <div class="x-small">
+                      {{ $t("add_product.pricing.extra_pricings.subtitle") }}
+                    </div>
                   </div>
                 </v-btn>
               </div>
@@ -438,6 +464,7 @@
               <extra-pricing-levels
                 v-if="extra_pricings?.length"
                 :extra-pricings="extra_pricings"
+                :original-pricing="vendorProduct"
                 :product="product"
                 class="max-w-250 mx-auto"
               ></extra-pricing-levels>
@@ -461,6 +488,26 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <b-product-extra-pricing-row
+                      key="base"
+                      :all-extra-pricings="extra_pricings"
+                      color="#aaa"
+                      :extra-pricing="vendorProduct"
+                      :product="product"
+                      :shop="shop"
+                      :vendor="vendor"
+                      :vendor-product="vendorProduct"
+                      light
+                      readonly
+                      message="Original Pricing"
+                    >
+                      <template v-slot:action>
+                        <div class="text-center text-muted">
+                          Original Pricing
+                        </div>
+                      </template>
+                    </b-product-extra-pricing-row>
+
                     <b-product-extra-pricing-row
                       v-for="(extra_price, i) in extra_pricings"
                       :key="extra_price.id"
@@ -496,7 +543,6 @@
                 :variant="variant_id ? { id: variant_id } : null"
                 :vendor="vendor"
                 :vendor-product="vendorProduct"
-                class="my-5"
                 light
                 @onAdd="
                   (val) => {
@@ -677,7 +723,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import BVendorInput from "../../../vendor/input/BVendorInput.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
@@ -696,6 +742,7 @@ import BProductExtraPricingRow from "../../../product/extra-pricings/row/BProduc
 import { standardDesignColor } from "@selldone/core-js/helper/color/ColorGenerator";
 import { PriceHelper } from "@selldone/core-js/helper/price/PriceHelper.ts";
 import VPricingInput from "../../../../storefront/pricing/VPricingInput.vue";
+import { DateConverter } from "@selldone/core-js";
 
 export default {
   name: "BProductVendorAdd",
@@ -781,8 +828,6 @@ export default {
     selected_extra_price: null,
 
     random: 0, //Fix update issue!
-
-    vendor_enter_final_price: false,
   }),
   computed: {
     IS_VENDOR_PANEL() {
@@ -791,6 +836,23 @@ export default {
         this.$route.params.vendor_id &&
         this.$route.matched.some((record) => record.meta.vendor)
       );
+    },
+
+    is_finished_discount() {
+      return (
+        (this.dis_start || this.dis_end) &&
+        !DateConverter.inBetweenDates(
+          new Date(),
+          this.convertToLocalTime(this.dis_start),
+          this.convertToLocalTime(this.dis_end),
+        )
+      );
+    },
+
+    vendor_icon() {
+      return this.vendor?.icon
+        ? this.vendor.icon
+        : this.vendorProduct?.vendor?.icon;
     },
 
     is_edit_mode() {
@@ -837,6 +899,8 @@ export default {
           currency: this.currency,
           commission: this.commission,
           discount: this.discount,
+          dis_start: this.dis_start,
+          dis_end: this.dis_end,
         },
         null,
         this.currency,
@@ -888,28 +952,9 @@ export default {
           this.GetCurrency(this.currency)?.floats,
         );
     },
-    raw_price() {
-      if (this.pricing)
-        this.price = PriceHelper.FixPrecision(
-          this.raw_price * (1 + this.pricing.commission / 100),
-          this.GetCurrency(this.currency)?.floats,
-        );
-    },
+
     price() {
-      if (!this.vendor_enter_final_price)
-        this.raw_price_final_input = this.price;
-    },
-    raw_price_final_input(val) {
-      if (this.vendor_enter_final_price) {
-        if (this.pricing) {
-          this.raw_price = PriceHelper.FixPrecision(
-            val / (1 + this.pricing.commission / 100),
-            this.GetCurrency(this.currency)?.floats,
-          );
-        } else {
-          this.raw_price = val;
-        }
-      }
+      this.raw_price_final_input = this.price;
     },
   },
 
@@ -918,6 +963,24 @@ export default {
   },
 
   methods: {
+    onChangeVendorTargetPrice(val) {
+      if (this.pricing) {
+        this.raw_price = PriceHelper.FixPrecision(
+          val / (1 + this.pricing.commission / 100),
+          this.GetCurrency(this.currency)?.floats,
+        );
+      } else {
+        this.raw_price = val;
+      }
+    },
+
+    onChangeVendorPrice() {
+      if (this.pricing)
+        this.price = PriceHelper.FixPrecision(
+          this.raw_price * (1 + this.pricing.commission / 100),
+          this.GetCurrency(this.currency)?.floats,
+        );
+    },
     //――――――――――――――――――――――― Edit Vendor ―――――――――――――――――――――――
 
     assign() {
@@ -939,6 +1002,9 @@ export default {
 
         this.pricing = this.vendorProduct.pricing;
         this.accept_delete = false;
+
+        this.has_discount_period =
+          !!this.vendorProduct.dis_start || !!this.vendorProduct.dis_end;
       } else {
         this.resetToDefault(); // 🞇 Reset to default
 

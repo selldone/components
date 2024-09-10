@@ -17,18 +17,12 @@
     <v-card-title></v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
-        <s-widget-header icon="remove_shopping_cart" title="Refund order">
+        <s-widget-header icon="remove_shopping_cart" :title="$t('vendor_order_refund.title')">
         </s-widget-header>
 
         <v-list-subheader>
-          <div>
-            <b>Important! </b>
-            Executing this action will generate a negative transaction in the
-            vendor's wallet and subtract the chosen amount from it. The amount
-            cannot exceed the remaining total transactions for the selected
-            order. Additionally, if funds have been transferred to connected
-            bank accounts (such as with Stripe Connect or manual wire transfer),
-            you should create a <b>reversal transfer</b>.
+          <div v-html="$t('vendor_order_refund.subtitle')">
+
           </div>
         </v-list-subheader>
 
@@ -36,19 +30,19 @@
         <div class="text-center d-flex align-center justify-center" dir="ltr">
           <div class="min-width-100">
             <v-icon>business</v-icon>
-            <small class="d-block">You</small>
+            <small class="d-block">{{$t('global.commons.you')}}</small>
           </div>
           <v-icon class="rotate-180 mb-4">trending_flat</v-icon>
           <div class="min-width-100">
             <v-icon>wallet</v-icon>
-            <small class="d-block">Vendor wallet</small>
+            <small class="d-block">{{$t('global.commons.vendor_wallet')}}</small>
           </div>
         </div>
 
         <u-currency-input
           :label="$t('global.commons.currency')"
           :return-object="false"
-          :value="currency"
+          :model-value="currency"
           disabled
           variant="underlined"
         ></u-currency-input>
@@ -57,7 +51,7 @@
           :currency="currency"
           :error-messages="
             amount > sum_transactions
-              ? 'The remaining amount has been exceeded.'
+              ?$t('vendor_order_refund.inputs.amount.error_message')
               : undefined
           "
           :label="$t('global.commons.amount')"
@@ -71,9 +65,9 @@
           :label="$t('global.commons.note')"
           append-inner-icon="sticky_note_2"
           auto-grow
-          messages="It's visible to the vendor."
+          :messages="$t('vendor_order_refund.inputs.note.message') "
           persistent-placeholder
-          placeholder="You can attach a note here..."
+          :placeholder="$t('vendor_order_refund.inputs.note.placeholder')"
           rows="2"
           variant="underlined"
         >

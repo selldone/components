@@ -318,6 +318,7 @@
               :selected-vendor-product="selected_vendor_product"
               :variant="current_variant"
               :vendor-product="selected_vendor_product"
+              class="px-2"
             ></u-payment-stripe-split>
           </v-container>
         </v-col>
@@ -326,12 +327,12 @@
 
     <!-- ████████████████████ 🟣 Marketplace (Vendors) 🟣 ████████████████████ -->
 
-    <v-container v-if="vendors && vendors.length" class="my-0 my-sm-5 my-md-10">
+    <v-container v-if="vendor_products && vendor_products.length" class="my-0 my-sm-5 my-md-10">
       <s-smart-select-vendor
         v-model="selected_vendor_product_id"
         :hint="$t('product_info.select_a_vendor_message')"
         :label="$t('global.commons.vendors')"
-        :vendors="vendors"
+        :vendorProducts="vendor_products"
         force-show-all
         @change="changeVendor"
       >
@@ -518,10 +519,10 @@ export default {
     },
 
     // ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ 🟣 Marketplace 🟣 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-    vendors() {
+    vendor_products() {
       return (
-        this.product.vendors &&
-        this.product.vendors.filter(
+        this.product.vendor_products &&
+        this.product.vendor_products.filter(
           (v) =>
             v.variant_id === (this.current_variant && this.current_variant.id),
         )
@@ -531,8 +532,8 @@ export default {
     selected_vendor_product() {
       return (
         this.selected_vendor_product_id &&
-        this.product.vendors &&
-        this.product.vendors.find(
+        this.product.vendor_products &&
+        this.product.vendor_products.find(
           (v) => v.id === this.selected_vendor_product_id,
         )
       );
@@ -760,10 +761,10 @@ export default {
       // Try assign first vendor:
       if (
         !this.selected_vendor_product_id &&
-        this.vendors &&
-        this.vendors.length
+        this.vendor_products &&
+        this.vendor_products.length
       ) {
-        this.selected_vendor_product_id = this.vendors[0].id;
+        this.selected_vendor_product_id = this.vendor_products[0].id;
       }
     },
   },

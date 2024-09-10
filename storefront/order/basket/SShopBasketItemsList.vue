@@ -59,6 +59,7 @@
               class="mx-auto my-2 rounded pointer-pointer border"
               min-height="62"
               min-width="62"
+              color="#fff"
             />
           </router-link>
           <v-btn
@@ -104,7 +105,7 @@
               <span> {{ item.product.warranty }}</span>
             </v-tooltip>
           </p>
-          <small class="m-0"> {{ item.product.title_en }}</small>
+          <small class="m-0"> {{ item.product.title_en?.limitWords(32) }}</small>
 
           <variant-item-view-micro
             v-if="item.variant"

@@ -76,57 +76,72 @@
         prepend-icon="folder"
       ></b-product-breadcrumbs>
 
-     <v-row dense class="overflow-auto hide-scroll flex-nowrap single-line">
-       <v-col class="d-flex align-center ">
-         <v-btn
-             :href="product_link"
-             :title="$t('product_admin.dashboard.info.link')"
-             class="me-2"
-             icon
-             target="_blank"
-             variant="text"
-         >
-           <v-icon>link</v-icon>
-         </v-btn>
+      <v-row dense class="overflow-auto hide-scroll flex-nowrap single-line">
+        <v-col class="d-flex align-center">
+          <v-btn
+            :href="product_link"
+            :title="$t('product_admin.dashboard.info.link')"
+            class="me-2"
+            icon
+            target="_blank"
+            variant="text"
+          >
+            <v-icon>link</v-icon>
+          </v-btn>
 
-         <b class="me-2 d-none d-sm-inline">{{ $t(shop.title) }} |</b>
+          <b class="me-2 d-none d-sm-inline">{{ $t(shop.title) }} |</b>
 
-         <v-btn     @click.stop="copyToClipboard(product_link)" color="#000" class="tnt" size="small" rounded="lg" variant="flat" append-icon="content_copy">
-           <v-avatar class="me-2" size="14">
-             <img :src="getShopImagePath(shop.icon, 96)" />
-           </v-avatar>
+          <v-btn
+            @click.stop="copyToClipboard(product_link)"
+            color="#000"
+            class="tnt"
+            size="small"
+            rounded="lg"
+            variant="flat"
+            append-icon="content_copy"
+          >
+            <v-avatar class="me-2" size="14">
+              <img :src="getShopImagePath(shop.icon, 96)" />
+            </v-avatar>
 
+            {{ $t("product_admin.dashboard.info.link") }}
+          </v-btn>
+        </v-col>
+        <v-col v-if="product_external_service" class="d-flex align-center">
+          <v-btn
+            :href="product.external"
+            class="me-2"
+            icon
+            target="_blank"
+            variant="text"
+          >
+            <v-icon>link</v-icon>
+          </v-btn>
 
-           {{ $t('product_admin.dashboard.info.link')}}
-         </v-btn>
+          <b class="me-2 d-none d-sm-inline"
+            >{{ $t(product_external_service.name) }} |</b
+          >
+          <v-btn
+            :color="product_external_service.color"
+            class="tnt"
+            size="small"
+            rounded="lg"
+            :href="product.external"
+            target="_blank"
+            variant="flat"
+            append-icon="open_in_new"
+          >
+            <img
+              class="me-2"
+              :src="product_external_service.image"
+              height="14"
+              width="auto"
+            />
 
-
-       </v-col>
-       <v-col v-if="product_external_service" class="d-flex align-center">
-         <v-btn
-             :href="product.external"
-             class="me-2"
-             icon
-             target="_blank"
-             variant="text"
-         >
-           <v-icon>link</v-icon>
-         </v-btn>
-
-         <b class="me-2 d-none d-sm-inline">{{ $t(product_external_service.name) }} |</b>
-         <v-btn :color="product_external_service.color" class="tnt" size="small" rounded="lg" :href="product.external"   target="_blank" variant="flat" append-icon="open_in_new">
-           <img
-               class="me-2"
-               :src="product_external_service.image"
-               height="14"
-               width="auto"
-
-           />
-
-           {{ $t(product_external_service.actionText) }}
-         </v-btn>
-       </v-col>
-     </v-row>
+            {{ $t(product_external_service.actionText) }}
+          </v-btn>
+        </v-col>
+      </v-row>
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Messages ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
       <div class="dashed-hr my-2 mx-n5"></div>
@@ -389,16 +404,16 @@
                     :currency="product.currency"
                   ></u-price>
 
-                  <v-chip class="mx-2" color="#C2185B" size="x-small">
-                    <v-icon size="x-small" start>fa:fas fa-percentage</v-icon>
-                    {{
-                      numeralFormat(
-                        (100 * product.discount) /
-                          (product.price + product.commission),
-                        "0.[0]",
-                      )
-                    }}
-                  </v-chip>
+                  <u-chip-discount
+                    :percent="
+                      (100 * product.discount) /
+                      (product.price + product.commission)
+                    "
+                    class="ms-2"
+                    size="small"
+                    :start="product.dis_start"
+                    :end="product.dis_end"
+                  ></u-chip-discount>
 
                   <u-time-progress-bar
                     :created-time="product.created_at"
@@ -689,12 +704,13 @@ import { ProductEmbedHelper } from "@selldone/core-js/helper/embed/ProductEmbedH
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import { MapHelper } from "@selldone/core-js";
-import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense.ts";
-import {ProductExternal} from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
+import { ProductExternal } from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
+import UChipDiscount from "@selldone/components-vue/ui/chip/discount/UChipDiscount.vue";
 
 export default {
   name: "BProductInfoAbstractView",
   components: {
+    UChipDiscount,
     UAvatarFolder,
     UTextCopyBox,
     BProductBreadcrumbs,

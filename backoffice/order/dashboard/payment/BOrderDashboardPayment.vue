@@ -685,9 +685,10 @@
 
   <!-- █████████████████████████ Dialog > Confirm COD Payment █████████████████████████ -->
 
-  <v-dialog v-model="dialog_customer_pay_money_cod" max-width="680">
-    <v-card class="text-start">
+  <v-bottom-sheet v-model="dialog_customer_pay_money_cod" max-width="98vw" width="680" content-class="rounded-t-xl">
+    <v-card class="text-start" rounded="t-xl">
       <v-card-title>
+        <v-icon class="me-2">paid</v-icon>
         {{ $t("process_center.payment_widget.pay_cod_dialog.title") }}
       </v-card-title>
 
@@ -696,6 +697,12 @@
           {{ $t("process_center.payment_widget.pay_cod_dialog.message") }}
         </div>
         <u-smart-verify v-model="accept_action"></u-smart-verify>
+
+        <div v-if="codGateways?.lenght" class="text-red py-2 text-subtitle-2">
+          <v-icon>report_gmailerrorred</v-icon>
+          We can not find any COD gateway to pay. Please add a COD gateway to your shop.
+        </div>
+
       </v-card-text>
 
       <v-card-actions>
@@ -718,7 +725,7 @@
             height="64"
             rounded
             size="x-large"
-            variant="flat"
+            variant="elevated"
             @click="confirmCODPaymentCompleted(item.gateway.code)"
           >
             <img
@@ -739,10 +746,11 @@
               >
             </p>
           </v-btn>
+
         </div>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-bottom-sheet>
 </template>
 
 <script>
@@ -1164,7 +1172,7 @@ export default {
           }
 
           if (this.coupon_amount) {
-            out.nodes.push({ name: _COUPON, color: "#389833" });
+            out.nodes.push({ name: _COUPON, color: "#C2185B" });
             out.links.push({
               source: _COUPON,
               target: _INCENTIVES,
@@ -1279,7 +1287,7 @@ export default {
         }
 
         if (this.coupon_amount) {
-          out.nodes.push({ name: _COUPON, color: "#389833" });
+          out.nodes.push({ name: _COUPON, color: "#C2185B" });
           out.links.push({
             source: _INCENTIVES,
             target: _COUPON,

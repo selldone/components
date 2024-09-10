@@ -18,8 +18,8 @@
       :color="show_discount_code_input ? SaminColorLight : SaminColorDark"
       :icon="show_discount_code_input"
       :loading="busy"
-      :rounded="!show_discount_code_input"
-      :size="show_discount_code_input ? 'small' : 'large'"
+      :rounded="show_discount_code_input ? 'circle' : 'pill'"
+      :size="show_discount_code_input ? undefined : 'large'"
       class="mx-1 animated-all-normal"
       variant="flat"
       @click="
@@ -53,7 +53,6 @@
       v-if="show_discount_code_input"
       class="mx-1 animated-all-normal"
       icon
-      size="small"
       variant="text"
       @click="show_discount_code_input = false"
     >
@@ -64,12 +63,12 @@
       <v-text-field
         v-if="show_discount_code_input"
         v-model="discount_code_code"
-        :label="$t('global.discount_input.code_input')"
+        :placeholder="$t('global.discount_input.code_input')"
         class="mx-1 animated-all-normal"
-        flat
+        single-line
         hide-details
         rounded
-        variant="solo"
+        variant="outlined"
         @keydown.enter="setDiscountCode"
       />
     </v-slide-x-reverse-transition>

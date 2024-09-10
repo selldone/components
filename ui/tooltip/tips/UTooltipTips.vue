@@ -14,17 +14,17 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-btn
-    class="margin-n7px hover-alpha"
+    class="hover-alpha"
     color="primary"
     icon
     max-width="420"
-    size="32"
+    size="24"
     variant="plain"
   >
-    <v-icon color="#000" size="20"> {{ icon }}</v-icon>
+    <v-icon color="#000" size="16"> {{ icon }}</v-icon>
 
     <v-tooltip
-      :max-width="480"
+      :max-width="360"
       activator="parent"
       content-class="bg-black text-start"
       location="bottom"
@@ -43,7 +43,7 @@ export default {
   name: "UTooltipTips",
   props: {
     message: {},
-    icon: { default: "help" },
+    icon: { default: "help_center" },
   },
 };
 </script>

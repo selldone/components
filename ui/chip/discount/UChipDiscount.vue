@@ -21,6 +21,7 @@
     style="line-height: normal"
     title="Discount percent"
     variant="flat"
+    :class="{ disabled: finished }"
   >
     <v-icon start>fa:fas fa-percentage</v-icon>
 
@@ -29,14 +30,17 @@
         {{ numeralFormat(percent, "0.[0]") }}
       </b>
       <div style="font-size: 7px">
-        {{ $t("global.commons.discount") }}
+        <span v-if="finished">{{ $t("global.commons.finished") }}</span>
+
+        <span v-else> {{ $t("global.commons.discount") }}</span>
       </div>
     </div>
   </v-chip>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
+import { DateConverter } from "@selldone/core-js";
 
 export default defineComponent({
   name: "UChipDiscount",
@@ -46,6 +50,26 @@ export default defineComponent({
     size: {},
     color: {
       default: "#C2185B",
+    },
+    start: {},
+    end: {},
+  },
+
+  computed: {
+    now() {
+      return new Date().getTime();
+    },
+
+    inBetween() {
+      return DateConverter.inBetweenDates(
+        new Date(),
+        this.convertToLocalTime(this.start),
+        this.convertToLocalTime(this.end),
+      );
+    },
+
+    finished() {
+      return (this.start || this.end) && !this.inBetween;
     },
   },
 });

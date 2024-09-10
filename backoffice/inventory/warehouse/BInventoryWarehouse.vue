@@ -30,7 +30,7 @@
           />
 
           <div v-if="!!warehouse.name || !!full_address">
-            <p class="font-weight-bold mb-1">{{ warehouse.name }}</p>
+            <p class="font-weight-bold mb-1">{{ warehouse.title }}  {{ warehouse.name?` > ${warehouse.name}`:'' }}</p>
 
             <flag
               v-if="warehouse.country"
