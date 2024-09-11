@@ -22,6 +22,7 @@
         :true-title="$t('spec_view.auto_save_input')"
         color="green"
         :true-description="$t('spec_view.auto_save_input_message')"
+        false-gray
       ></u-smart-toggle>
 
       <draggable
@@ -29,7 +30,7 @@
         :component-data="{
           tag: 'ul',
           type: 'transition-group',
-          name: !drag ? 'flip-list' : 'fade',
+          name: drag ? 'fade' : undefined,
         }"
         :model-value="spec"
         :press-delay="150"
@@ -40,15 +41,14 @@
         @start="drag = true"
         @update:modelValue="
           (list) => {
+            $emit('update', list);
             if (auto_save) $emit('save', list);
-            else $emit('update', list);
           }
         "
       >
         <template v-slot:item="{ element, index }">
           <b-product-spec-row
             v-if="element"
-            :key="index"
             :class="{
               '-border': !(
                 index >= spec.length - 1 ||
@@ -59,7 +59,12 @@
             :editable="editable"
             :item="element"
             :minimize="drag"
-            @delete="$emit('click-delete', element)"
+            @delete="
+              () => {
+                $emit('click-delete', element);
+                if (auto_save) $emit('save', list);
+              }
+            "
           />
         </template>
       </draggable>
@@ -110,8 +115,10 @@ export default {
     BProductSpecRow,
     draggable,
   },
-  event: "click-delete",
+
+  emits: ["update", "save", "click-delete"],
   props: {
+    autoSave: Boolean,
     spec: {
       required: true,
       type: Array,
@@ -184,8 +191,13 @@ export default {
     spec() {
       this.collapses = [];
     },
+    auto_save(val) {
+      this.$emit("autoSave", val);
+    },
   },
-  created() {},
+  created() {
+    this.auto_save = this.autoSave;
+  },
 
   methods: {},
 };

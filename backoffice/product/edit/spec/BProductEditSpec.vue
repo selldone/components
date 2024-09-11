@@ -30,9 +30,9 @@
         :spec="spec"
         class="max-width-container-1280px my-8"
         editable
+        v-model:autoSave="autoSave"
         @save="
-          (list) => {
-            spec = list;
+          () => {
             saveSpec(false);
           }
         "
@@ -579,6 +579,8 @@ export default {
     prompt: null,
     busy_ai: false,
     spec_generated: null,
+
+    autoSave: false,
   }),
 
   computed: {
@@ -624,7 +626,10 @@ export default {
       if (!this.spec) this.spec = [];
 
       this.spec.push({ group: this.group_title });
-      this.saveSpec(false);
+
+      if (this.autoSave) {
+        this.saveSpec(false);
+      }
 
       this.group_title = "";
     },
@@ -642,15 +647,17 @@ export default {
       if (!this.spec) this.spec = [];
 
       this.spec.push([this.item_title, this.item_value]);
-      this.saveSpec(false);
+
+      if (this.autoSave) {
+        this.saveSpec(false);
+      }
 
       this.item_title = "";
       this.item_value = "";
     },
 
-    deleteItemSpec(index) {
-      this.spec.splice(index, 1);
-      this.saveSpec(false);
+    deleteItemSpec(element) {
+      this.spec.remove(element);
     },
 
     saveSpec(go_next = false) {
@@ -660,13 +667,22 @@ export default {
         return;
       }
 
-      this.busy = true;
-
       //console.log("spec", this.spec);
 
       const { spec_json, spec_order } = SpecHelper.CONVERT_SPEC_ARRAY_TO_JSON(
         this.spec,
       );
+
+      if (
+        JSON.stringify(spec_json) === JSON.stringify(this.product.spec) &&
+        JSON.stringify(spec_order) === JSON.stringify(this.product.spec_order)
+      ) {
+        console.log("No spec change.");
+        if (go_next) this.$emit("next");
+        return;
+      }
+
+      this.busy = true;
 
       axios
         .post(

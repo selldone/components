@@ -547,12 +547,7 @@
         required
         variant="underlined"
       >
-        <template v-if="product.connect" v-slot:message>
-          <b-product-connect-locked
-            :connect="product.connect"
-            field="SKU"
-          ></b-product-connect-locked>
-        </template>
+
       </v-text-field>
 
       <v-text-field

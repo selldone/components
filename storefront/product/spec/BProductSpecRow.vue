@@ -88,38 +88,54 @@
       <div :class="{ '-view-mode': !editable }" class="grid">
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Item > Label ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div
-          :class="{ 'editable-blue': !editing && editable }"
-          class="section-item sec2 strong"
-          @click="editing = editable"
+          v-if="editing && !minimize"
+          class="section-item strong d-flex align-start"
         >
           <v-text-field
-            v-if="editing && !minimize"
             v-model="item[0]"
             flat
             hide-details
             placeholder="Name of spec.."
             type="text"
+            density="compact"
             variant="solo"
             @keypress.enter.stop="editing = false"
           />
-          <div v-else>{{ item[0] }}</div>
         </div>
 
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Value ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+        <div
+          v-else
+          :class="{ 'editable-blue': !editing && editable }"
+          class="section-item sec2 strong"
+          @click="editing = editable"
+        >
+          {{ item[0] }}
+        </div>
 
         <template v-if="!minimize">
-          <div v-if="editing" class="section-item sec1" contenteditable="true">
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Item > Value ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+          <div
+            v-if="editing"
+            class="section-item d-flex flex-column justify-start align-stretch"
+            contenteditable="true"
+          >
             <v-text-field
               v-for="i in item.length - 1"
               :key="i"
               v-model="item[i]"
-              class="my-1"
+              class="mb-1"
               flat
+              density="compact"
               hide-details
               placeholder="Value of spec.."
               type="text"
               variant="solo"
-              @keypress.enter.stop="addInnerItem(item, i)"
+              ref="item_value"
+              @keypress.enter.stop="
+                addInnerItem(item, i);
+                moveNestFocus(i);
+              "
             >
               <template v-slot:append-inner>
                 <v-btn
@@ -156,12 +172,12 @@
             </div>
           </div>
 
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Item > Edit ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Item > Edit Actions ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <template v-if="editable">
             <!-- Edit button -->
             <v-btn
-              :color="editing ? 'primary' : '#444'"
+              :color="editing ? 'green' : '#444'"
               class="section-action"
               icon
               size="small"
@@ -176,13 +192,13 @@
             <!-- Delete button -->
             <v-btn
               class="section-action"
-              color="#444"
+              color="red"
               icon
               size="small"
               variant="text"
               @click="$emit('delete')"
             >
-              <v-icon> delete</v-icon>
+              <v-icon>close</v-icon>
             </v-btn>
           </template>
         </template>
@@ -197,7 +213,7 @@
 export default {
   name: "BProductSpecRow",
   components: {},
-  emits: ["update:collapse"],
+  emits: ["update:collapse", "delete"],
   props: {
     item: {},
     editable: {
@@ -245,8 +261,12 @@ export default {
 
   methods: {
     addInnerItem(item, index) {
-      console.log("index", index);
       item.splice(index + 1, 0, "");
+    },
+    moveNestFocus(i /*Start from 1*/) {
+      this.$nextTick(() => {
+        if (this.$refs.item_value[i]) this.$refs.item_value[i].focus();
+      });
     },
   },
 };
@@ -297,6 +317,10 @@ export default {
     padding: 4px 8px 4px 8px;
 
     cursor: text;
+
+    word-wrap: break-word; /* For legacy browsers */
+    overflow-wrap: break-word; /* Standard CSS */
+    word-break: break-word; /* Modern browsers */
 
     &.strong {
       font-weight: 700;
