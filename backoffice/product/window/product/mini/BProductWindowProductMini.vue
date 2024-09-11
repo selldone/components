@@ -14,8 +14,9 @@
 
 <template>
   <div
-    :class="{ 'op-0-5 ': product.deleted_at }"
+    :class="{ 'op-0-5 ': product.deleted_at ,'disabled sub-caption b-12px':disabled}"
     :product-id="product.id"
+    :caption="disabled?$t('global.commons.can_not_edit'):undefined"
     class="position-relative d-flex flex-column align-center justify-center hover-up tooltip-con"
     @click="
       $emit('select');
@@ -351,6 +352,14 @@ export default {
   },
 
   computed: {
+    IS_VENDOR_PANEL() {
+      /*🟢 Vendor Panel 🟢*/
+      return (
+          this.$route.params.vendor_id &&
+          this.$route.matched.some((record) => record.meta.vendor)
+      );
+    },
+
     vendor() {
       // Vendor is owner!
       return this.product.vendor;
@@ -414,6 +423,13 @@ export default {
     status_obj() {
       return ProductStatus[this.product.status];
     },
+    disabled(){
+      // On store panel always all products are enabled to click!
+      if(!this.IS_VENDOR_PANEL)return false;
+
+      // It's not a product of the vendor! It has multi vendors, so vendor can not edit it in their panel.
+      return !this.vendor
+    }
   },
 };
 </script>

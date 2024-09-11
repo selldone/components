@@ -22,6 +22,7 @@
       product.deleted_at ? 'op-0-7 -deleted' : '',
       selected || iSelected ? 'border-selected ' : '',
       shortcut ? '-shortcut' : '',
+      { 'disabled': disabled },
     ]"
     :dark="dark"
     :deleted_at="getFromNowString(product.deleted_at)"
@@ -41,7 +42,7 @@
       <v-btn
         v-if="showEditButton"
         :to="{
-          name: 'BPageProductEdit',
+          name: IS_VENDOR_PANEL?'Vendor_AddProduct':'BPageProductEdit',
           params: { product_id: product.id },
           hash: '#general',
         }"
@@ -170,6 +171,10 @@
         <v-icon v-else size="small">storefront</v-icon>
       </v-avatar>
     </div>
+    <div v-if="disabled" class="text-subtitle-2 text-center">
+      <v-icon class="me-1">warning_amber</v-icon>
+      {{$t('global.commons.can_not_edit')}}
+    </div>
 
     <product-variants-view
       v-if="product.variants"
@@ -189,7 +194,7 @@
       @click.stop="
         showEditButton
           ? $router.push({
-              name: 'BPageProductEdit',
+              name: IS_VENDOR_PANEL?'Vendor_AddProduct':'BPageProductEdit',
               params: { product_id: product.id },
               hash: '#price',
             })
@@ -424,7 +429,7 @@
               <router-link
                 v-if="product.ar_src"
                 :to="{
-                  name: 'BPageProduct3D',
+                  name: IS_VENDOR_PANEL?'Vendor_Product3DPage': 'BPageProduct3D',
                   params: { product_id: product.id },
                 }"
                 class="row-hover mx-auto"
@@ -442,7 +447,7 @@
               <router-link
                 v-if="product.video"
                 :to="{
-                  name: 'BPageProductEdit',
+                  name:IS_VENDOR_PANEL?'Vendor_AddProduct': 'BPageProductEdit',
                   params: { product_id: product.id },
                   hash: '#images',
                 }"
@@ -456,7 +461,7 @@
               </router-link>
 
               <router-link
-                v-if="product.reselling"
+                v-if="product.reselling && !IS_VENDOR_PANEL/*Con not be vendor [wholesaling selldone]!*/"
                 :to="{
                   name: 'BPageProductDropshipping',
                   params: { product_id: product.id },
@@ -611,6 +616,14 @@ export default {
   },
 
   computed: {
+    IS_VENDOR_PANEL() {
+      /*🟢 Vendor Panel 🟢*/
+      return (
+          this.$route.params.vendor_id &&
+          this.$route.matched.some((record) => record.meta.vendor)
+      );
+    },
+
     vendor() {
       // Vendor is owner!
       return this.product.vendor;
@@ -674,6 +687,14 @@ export default {
       return found ? found : null;
     },
     // ----------------------------------
+
+    disabled() {
+      // On store panel always all products are enabled to click!
+      if (!this.IS_VENDOR_PANEL) return false;
+
+      // It's not a product of the vendor! It has multi vendors, so vendor can not edit it in their panel.
+      return !this.vendor;
+    },
   },
   mounted() {},
 
