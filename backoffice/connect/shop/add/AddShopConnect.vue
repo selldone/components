@@ -84,7 +84,36 @@
           ></div>
 
           <div class="widget-buttons">
+
             <v-btn
+                v-if="connect.direct_setup"
+                :disabled="
+                connect.form &&
+                connect.form.length &&
+                connect.form.some(
+                  (i) => ['endpoint'].includes(i.name) && !params[i.name],
+                )
+              "
+                :loading="loading"
+                :variant="!!shopConnect ? 'text' : 'elevated'"
+                color="primary"
+                size="x-large"
+                @click="setupDirect()"
+            >
+              <v-icon start>add</v-icon>
+              {{ $t("shop_connect.edit.add_action") }}
+
+              <v-avatar
+                  :image="getShopImagePath(connect.icon)"
+                  class="mx-1 avatar-gradient -thin -connect"
+                  size="22"
+              ></v-avatar>
+              {{ connect.name }}
+
+            </v-btn>
+
+            <v-btn
+              v-else
               :disabled="
                 connect.form &&
                 connect.form.length &&
@@ -98,6 +127,7 @@
               color="primary"
               size="x-large"
               @click="loading = true"
+
             >
               <v-icon start>add</v-icon>
               {{ $t("shop_connect.edit.add_action") }}
@@ -108,6 +138,9 @@
                 size="22"
               ></v-avatar>
               {{ connect.name }}
+
+              <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
+
             </v-btn>
           </div>
         </div>
@@ -303,13 +336,14 @@ import { Connect } from "@selldone/core-js";
 
 export default {
   name: "AddShopConnect",
-  emits: ["edit", "delete"],
+  emits: ["edit", "delete", "add"],
   components: {
     USmartVerify,
     USmartSwitch,
     ConnectOsPods,
     ConnectInputField,
   },
+
   props: {
     shop: {
       required: true,
@@ -404,6 +438,35 @@ export default {
   },
 
   methods: {
+    setupDirect(){
+      this.loading = true;
+
+      axios
+          .post(
+              window.API.POST_SHOP_CONNECT_SETUP_DIRECT(this.shop.id, this.connect.code),
+              this.params
+          )
+          .then(({ data }) => {
+            if (!data.error) {
+
+              this.$emit("add", data.shop_connect);
+
+
+              this.showSuccessAlert(
+                  null,
+                  "Connect has been added successfully.",
+              );
+            } else {
+              this.showErrorAlert(null, data.error_msg);
+            }
+          })
+          .catch((error) => {
+            this.showLaravelError(error);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+    },
     updateConnect() {
       this.busy_set = true;
 
