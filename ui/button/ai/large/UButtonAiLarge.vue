@@ -25,7 +25,7 @@
     >
       <div class="flex-grow-0 d-flex align-center">
         <v-avatar
-          :class="{ '-loading': loading }"
+          :class="{ '-loading': loading || highlighted}"
           class="me-2 -avatar position-relative"
           color="#512DA8"
           :size="avatarSize"
@@ -66,6 +66,7 @@ export default {
   emits: ["select"],
   props: {
     loading: Boolean,
+    highlighted: Boolean,
     title: {},
     subTitle: {},
     size: {

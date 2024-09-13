@@ -294,10 +294,10 @@ export default {
 
   .grid {
     display: grid;
-    grid-template-columns: 25% auto 50px 50px;
+    grid-template-columns: 35% auto 50px 50px;
 
     &.-view-mode {
-      grid-template-columns: 25% auto;
+      grid-template-columns: 35% auto;
     }
 
     @media only screen and (max-width: 900px) {

@@ -50,7 +50,7 @@
           size="42"
           title="Copy image URL"
         >
-          <img :src="item.url" />
+          <v-img :src="item.url" />
         </v-avatar>
       </template>
 

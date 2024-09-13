@@ -142,7 +142,7 @@
     </v-slide-y-transition>
 
     <!-- ██████████████████ Sort tools ██████████████████ -->
-    <v-row no-gutters>
+    <v-row no-gutters id="sort_tools">
       <s-products-sort-view
         v-model="sort"
         v-model:only-available="only_available"
@@ -152,6 +152,7 @@
         @update:search="
           (val) => {
             search = val;
+            product_page = 1;
             fetchData();
           }
         "
@@ -188,7 +189,8 @@
           class="max-w-300 min-width-200"
           dense
           flat
-          hide-details clearable
+          hide-details
+          clearable
           prepend-inner-icon="storefront"
           variant="solo"
           @change="fetchData()"
@@ -201,7 +203,8 @@
       v-model="vendor_filter"
       :shop="shop"
       dense
-      flat clearable
+      flat
+      clearable
       hide-details
       prepend-inner-icon="storefront"
       solo
@@ -287,596 +290,581 @@
 
     <!-- ██████████████████ List ██████████████████ -->
 
-    <v-fade-transition
-      id="manage-panel"
-      class="v-row v-row--dense"
-      group
-      hide-on-leave
-      origin="center center"
-      tag="div"
-    >
-      <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Spirit Container ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
-
-      <v-col
-        v-if="show_spirit_container"
-        key="drop-box"
-        cols="12"
-        lg="3"
-        md="4"
-        sm="6"
-        xl="3"
+    <v-row id="manage-panel" dense>
+      <v-fade-transition
+        group
+        hide-on-leave
+        origin="center center"
+        :disabled="busy_fetch && product_page!==1"
       >
-        <u-drop
-          :class="{
-            'drop-safe': inDragState,
+        <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Spirit Container ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
-            'now-drop-enter':
-              current_drop_enter_folder &&
-              current_drop_enter_folder.id === current_dir_id,
-          }"
-          class="spirit-container"
-          @dragenter="onDropEnter({ id: current_dir_id })"
-          @drop="(data) => handleDropInFolder(data, { id: current_dir_id })"
-        >
-          <div class="center-absolute text-center">
-            <v-icon size="64px"> add</v-icon>
-            <div class="my-2 small">
-              Drop here if you want to move it to current category.
-            </div>
-          </div>
-        </u-drop>
-      </v-col>
-
-      <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Back Button ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
-      <v-col
-        v-if="parent_folders"
-        key="back"
-        :cols="mini ? 4 : 12"
-        :lg="mini ? 1 : 3"
-        :md="mini ? 2 : 4"
-        :sm="mini ? 3 : 6"
-        :xl="mini ? 1 : 3"
-      >
-        <div
-          :class="{ disabled: busy_fetch, 'h-100': !mini }"
-          :title="`Back to ${
-            parent_folders.parent ? parent_folders.parent.title : 'Home'
-          } | Press 🠨 backspace`"
-          class="position-relative d-flex flex-column align-center justify-center hover-up"
-          @click="selectFolder(parent_folders.parent)"
-        >
-          <div class="position-relative">
-            <v-icon
-              :size="mini ? 100 : 200"
-              class="no-inv"
-              color="#dcab19"
-              style="position: absolute; top: -4px; left: -5px"
-              >folder
-            </v-icon>
-            <v-icon :size="mini ? 100 : 200" class="no-inv z1" color="amber"
-              >folder
-            </v-icon>
-          </div>
-
-          <div class="mt-n1 center-absolute" style="z-index: 2">
-            <v-avatar
-              v-if="parent_folders.parent?.icon"
-              class="center-absolute"
-              size="40"
-              ><img :src="getShopImagePath(parent_folders.parent?.icon, 128)"
-            /></v-avatar>
-            <v-icon class="z1" color="#fff" size="x-large"
-              >{{ $t("icons.chevron_back") }}
-            </v-icon>
-          </div>
-          <small class="d-block">{{
-            parent_folders.parent?.title
-              ? parent_folders.parent.title.limitWords(mini ? 2 : 5)
-              : $t("global.commons.home")
-          }}</small>
-        </div>
-      </v-col>
-
-      <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Folders ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
-
-      <v-col
-        v-for="category in folders.slice(
-          (folder_page - 1) * max_folders_per_page,
-          folder_page * max_folders_per_page,
-        )"
-        :key="'f' + category.id"
-        :cols="mini ? 4 : 12"
-        :lg="mini ? 1 : 3"
-        :md="mini ? 2 : 4"
-        :sm="mini ? 3 : 6"
-        :xl="mini ? 1 : 3"
-        class="position-relative"
-        @contextmenu="showMenu($event, null, category)"
-      >
-        <u-drag
-          :class="{
-            'arrange-side':
-              arrange_folder_mode &&
-              current_dragged_folder &&
-              arrange_categories_target === category,
-          }"
-          :drag-image-html="category.title.limitWords(3)"
-          :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
-          :draggable="draggable"
-          :transfer-data="{ category: category }"
-          class="h-100 position-relative"
-          drag-image-color="#FFA000"
-          @drag="onDragStart({ category: category }, false, ...arguments)"
-          @dragend="onDragEnd"
+        <v-col
+          v-if="show_spirit_container"
+          key="drop-box"
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
+          xl="3"
         >
           <u-drop
             :class="{
               'drop-safe': inDragState,
-              'rotate-7deg': arrange_folder_mode,
+
+              'now-drop-enter':
+                current_drop_enter_folder &&
+                current_drop_enter_folder.id === current_dir_id,
             }"
-            class="f-anim"
-            @dragenter="
-              show_spirit_container ? undefined : onDropEnter(category)
-            "
-            @dragleave="onDropLeave()"
-            @drop="(data) => handleDropInFolder(data, category)"
+            class="spirit-container"
+            @dragenter="onDropEnter({ id: current_dir_id })"
+            @drop="(data) => handleDropInFolder(data, { id: current_dir_id })"
           >
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category > Mini ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-            <b-product-window-category-mini
-              v-if="mini"
-              :category="category"
-              :class="{
-                'not-drop-able': current_dragged_folder === category,
-                'now-drop-enter': current_drop_enter_folder === category,
-              }"
-              @select="selectFolder(category)"
-            >
-            </b-product-window-category-mini>
+            <div class="center-absolute text-center">
+              <v-icon size="64px"> add</v-icon>
+              <div class="my-2 small">
+                Drop here if you want to move it to current category.
+              </div>
+            </div>
+          </u-drop>
+        </v-col>
 
-            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category > Normal ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-            <b-product-window-category-large
-              v-else
-              :category="category"
-              :class="{
-                'not-drop-able': current_dragged_folder === category,
-                'now-drop-enter': current_drop_enter_folder === category,
-              }"
-              :compact-mode="compactMode"
-              :loading="loading_cat === category"
-              :show-edit-button="showEditButton"
-              class="item h-100"
-              @select="selectFolder(category)"
-              @click:edit="showEditCategory(category)"
-            />
-            <v-btn
-              v-if="selectMode && canSelectCategory"
-              :size="38"
-              class="absolute-top-end selected-icon m-2"
-              icon
-              style="z-index: 50"
-              @click.stop="$emit('select-category', category)"
-            >
+        <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Back Button ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
+        <v-col
+          v-if="parent_folders"
+          key="back"
+          :cols="mini ? 4 : 12"
+          :lg="mini ? 1 : 3"
+          :md="mini ? 2 : 4"
+          :sm="mini ? 3 : 6"
+          :xl="mini ? 1 : 3"
+        >
+          <div
+            :class="{ disabled: busy_fetch, 'h-100': !mini }"
+            :title="`Back to ${
+              parent_folders.parent ? parent_folders.parent.title : 'Home'
+            } | Press 🠨 backspace`"
+            class="position-relative d-flex flex-column align-center justify-center hover-up"
+            @click="selectFolder(parent_folders.parent)"
+          >
+            <div class="position-relative">
               <v-icon
-                :color="isSelected('c-' + category.id) ? '#689F38' : '#ccc'"
-                :size="30"
+                :size="mini ? 100 : 200"
+                class="no-inv"
+                color="#dcab19"
+                style="position: absolute; top: -4px; left: -5px"
+                >folder
+              </v-icon>
+              <v-icon :size="mini ? 100 : 200" class="no-inv z1" color="amber"
+                >folder
+              </v-icon>
+            </div>
+
+            <div class="mt-n1 center-absolute" style="z-index: 2">
+              <v-avatar
+                v-if="parent_folders.parent?.icon"
+                class="center-absolute"
+                size="40"
+                ><img :src="getShopImagePath(parent_folders.parent?.icon, 128)"
+              /></v-avatar>
+              <v-icon class="z1" color="#fff" size="x-large"
+                >{{ $t("icons.chevron_back") }}
+              </v-icon>
+            </div>
+            <small class="d-block">{{
+              parent_folders.parent?.title
+                ? parent_folders.parent.title.limitWords(mini ? 2 : 5)
+                : $t("global.commons.home")
+            }}</small>
+          </div>
+        </v-col>
+
+        <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Folders ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
+
+        <v-col
+          v-for="category in folders.slice(
+            (folder_page - 1) * max_folders_per_page,
+            folder_page * max_folders_per_page,
+          )"
+          :key="'f' + category.id"
+          :cols="mini ? 4 : 12"
+          :lg="mini ? 1 : 3"
+          :md="mini ? 2 : 4"
+          :sm="mini ? 3 : 6"
+          :xl="mini ? 1 : 3"
+          class="position-relative"
+          @contextmenu="showMenu($event, null, category)"
+        >
+          <u-drag
+            :class="{
+              'arrange-side':
+                arrange_folder_mode &&
+                current_dragged_folder &&
+                arrange_categories_target === category,
+            }"
+            :drag-image-html="category.title.limitWords(3)"
+            :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
+            :draggable="draggable"
+            :transfer-data="{ category: category }"
+            class="h-100 position-relative"
+            drag-image-color="#FFA000"
+            @drag="onDragStart({ category: category }, false, ...arguments)"
+            @dragend="onDragEnd"
+          >
+            <u-drop
+              :class="{
+                'drop-safe': inDragState,
+                'rotate-7deg': arrange_folder_mode,
+              }"
+              class="f-anim"
+              @dragenter="
+                show_spirit_container ? undefined : onDropEnter(category)
+              "
+              @dragleave="onDropLeave()"
+              @drop="(data) => handleDropInFolder(data, category)"
+            >
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category > Mini ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+              <b-product-window-category-mini
+                v-if="mini"
+                :category="category"
+                :class="{
+                  'not-drop-able': current_dragged_folder === category,
+                  'now-drop-enter': current_drop_enter_folder === category,
+                }"
+                @select="selectFolder(category)"
+              >
+              </b-product-window-category-mini>
+
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category > Normal ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+              <b-product-window-category-large
+                v-else
+                :category="category"
+                :class="{
+                  'not-drop-able': current_dragged_folder === category,
+                  'now-drop-enter': current_drop_enter_folder === category,
+                }"
+                :compact-mode="compactMode"
+                :loading="loading_cat === category"
+                :show-edit-button="showEditButton"
+                class="item h-100"
+                @select="selectFolder(category)"
+                @click:edit="showEditCategory(category)"
+              />
+              <v-btn
+                v-if="selectMode && canSelectCategory"
+                :size="38"
+                class="absolute-top-end selected-icon m-2"
+                icon
+                style="z-index: 50"
+                @click.stop="$emit('select-category', category)"
+              >
+                <v-icon
+                  :color="isSelected('c-' + category.id) ? '#689F38' : '#ccc'"
+                  :size="30"
+                  >check_circle
+                </v-icon>
+              </v-btn>
+            </u-drop>
+          </u-drag>
+
+          <!-- Add Note Button -->
+          <b-note-button
+            v-if="showNotes || (category.note && category.note.length)"
+            :activeColor="showNotes ? undefined : '#333'"
+            :note="category.note"
+            class="absolute-top-start"
+            style="top: 0; left: 0; z-index: 50"
+            @click="showNoteCategory(category)"
+          ></b-note-button>
+        </v-col>
+
+        <!-- ━━━━━━━━━━━━━━━━ Pagination > Categories ━━━━━━━━━━━━━━━━ -->
+
+        <v-col
+          v-if="folder_pages_count > 1"
+          key="pagination-categories"
+          cols="12"
+        >
+          <v-pagination
+            v-model="folder_page"
+            :length="folder_pages_count"
+            rounded
+          ></v-pagination>
+        </v-col>
+
+        <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Products ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
+
+        <v-col
+          v-for="product in products"
+          :key="product.id"
+          :class="{
+            'op-0-3': cut_product === product,
+            'op-0-1 pen': arrange_folder_mode,
+            disabled: busy_fetch,
+          }"
+          :cols="mini ? 4 : 12"
+          :lg="mini ? 1 : 3"
+          :md="mini ? 2 : 4"
+          :sm="mini ? 3 : 6"
+          :xl="mini ? 1 : 3"
+          class="position-relative"
+          @contextmenu="showMenu($event, product, null)"
+          @dragover="
+            (e) => {
+              current_dragged_product && e.preventDefault();
+            }
+          "
+          @drop="onDropArrangeProduct(product)"
+          @dragenter.self="dragenterProduct(product)"
+        >
+          <u-drag
+            :class="{
+              'arrange-side':
+                current_dragged_product && arrange_products_target === product,
+
+              'bundle-mode':
+                drag_bundle_products && selected_products.includes(product.id),
+            }"
+            :drag-image-html="product.title.limitWords(3)"
+            :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+            :draggable="draggable"
+            :transfer-data="{ product: product }"
+            class="h-100 position-relative"
+            drag-image-color="#1976D2"
+            @drag="onDragStart({ product: product }, false, ...arguments)"
+            @dragend="onDragEnd"
+          >
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product > Mini ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+            <b-product-window-product-mini
+              v-if="mini"
+              :class="{
+                'not-drop-able':
+                  current_dragged_product || current_dragged_folder,
+
+                disabled: disableTypes?.includes(product.type),
+              }"
+              :dark="dark"
+              :deleting="
+                product.id === busy_delete ||
+                (busy_delete === 'selected' &&
+                  selected_products.includes(product.id))
+              "
+              :i-selected="selected_products.includes(product.id)"
+              :product="product"
+              :restoring="product.id === busy_restore"
+              :selected="selected_products.includes(product.id)"
+              :shop="shop"
+              :shortcut="
+                !busy_fetch &&
+                current_dir_id &&
+                product.category_id !== current_dir_id
+              "
+              :show-notes="showNotes"
+              :show-select="press_ctrl"
+              @onSelect="toggleProductsSelect(product)"
+              @onShowNote="showNoteProduct(product)"
+              @select="$emit('select', product)"
+              @mousedown.middle.stop="$emit('select:middle', product)"
+            >
+            </b-product-window-product-mini>
+
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product > Normal ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+            <b-product-window-product-large
+              v-else
+              :class="{
+                'not-drop-able':
+                  current_dragged_product || current_dragged_folder,
+
+                disabled: disableTypes?.includes(product.type),
+              }"
+              :color="dark ? '#000' : '#fff'"
+              :compact-mode="compactMode"
+              :dark="dark"
+              :deleting="product.id === busy_delete"
+              :i-selected="selected_products.includes(product.id)"
+              :product="product"
+              :restoring="product.id === busy_restore"
+              :selected="selected_products.includes(product.id)"
+              :shop="shop"
+              :shortcut="
+                current_dir_id && product.category_id !== current_dir_id
+              "
+              :show-edit-button="showEditButton"
+              :show-notes="showNotes"
+              :show-price="showPrice"
+              :show-ratting="showRatting"
+              :show-select="press_ctrl"
+              :show-statistics="showStatistics"
+              class="item h-100 ma-2"
+              @onSelect="toggleProductsSelect(product)"
+              @onShowNote="showNoteProduct(product)"
+              @select="$emit('select', product)"
+              @click:image="
+                (e) => {
+                  $router.push({
+                    name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                      ? 'Vendor_AddProduct'
+                      : 'BPageProductEdit',
+                    params: { product_id: product.id },
+                    hash: '#images',
+                  });
+                  e.preventDefault();
+                }
+              "
+            />
+
+            <v-scale-transition leave-absolute origin="center center">
+              <v-icon
+                v-if="selectMode && canSelectProduct && isSelected(product.id)"
+                class="absolute-top-end z2 selected-icon h-auto"
+                color="#689F38"
+                size="large"
                 >check_circle
               </v-icon>
-            </v-btn>
-          </u-drop>
-        </u-drag>
-
-        <!-- Add Note Button -->
-        <b-note-button
-          v-if="showNotes || (category.note && category.note.length)"
-          :activeColor="showNotes ? undefined : '#333'"
-          :note="category.note"
-          class="absolute-top-start"
-          style="top: 0; left: 0; z-index: 50"
-          @click="showNoteCategory(category)"
-        ></b-note-button>
-      </v-col>
-
-      <v-col
-        v-if="folder_pages_count > 1"
-        key="pagination-categories"
-        cols="12"
-      >
-        <v-pagination
-          v-model="folder_page"
-          :length="folder_pages_count"
-          rounded
-        ></v-pagination>
-      </v-col>
-
-      <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Products ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
-
-      <v-col
-        v-for="product in products.slice(
-          (product_page - 1) * max_products_per_page,
-          product_page * max_products_per_page,
-        )"
-        :key="product.id"
-        :class="{
-          'op-0-3': cut_product === product,
-          'op-0-1 pen': arrange_folder_mode,
-        }"
-        :cols="mini ? 4 : 12"
-        :lg="mini ? 1 : 3"
-        :md="mini ? 2 : 4"
-        :sm="mini ? 3 : 6"
-        :xl="mini ? 1 : 3"
-        class="position-relative"
-        @contextmenu="showMenu($event, product, null)"
-        @dragover="
-          (e) => {
-            current_dragged_product && e.preventDefault();
-          }
-        "
-        @drop="onDropArrangeProduct(product)"
-        @dragenter.self="dragenterProduct(product)"
-      >
-        <u-drag
-          :class="{
-            'arrange-side':
-              current_dragged_product && arrange_products_target === product,
-
-            'bundle-mode':
-              drag_bundle_products && selected_products.includes(product.id),
-          }"
-          :drag-image-html="product.title.limitWords(3)"
-          :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
-          :draggable="draggable"
-          :transfer-data="{ product: product }"
-          class="h-100 position-relative"
-          drag-image-color="#1976D2"
-          @drag="onDragStart({ product: product }, false, ...arguments)"
-          @dragend="onDragEnd"
-        >
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product > Mini ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-          <b-product-window-product-mini
-            v-if="mini"
-            :class="{
-              'not-drop-able':
-                current_dragged_product || current_dragged_folder,
-
-              disabled: disableTypes?.includes(product.type),
-            }"
-            :dark="dark"
-            :deleting="
-              product.id === busy_delete ||
-              (busy_delete === 'selected' &&
-                selected_products.includes(product.id))
-            "
-            :i-selected="selected_products.includes(product.id)"
-            :product="product"
-            :restoring="product.id === busy_restore"
-            :selected="selected_products.includes(product.id)"
-            :shop="shop"
-            :shortcut="
-              !busy_fetch &&
-              current_dir_id &&
-              product.category_id !== current_dir_id
-            "
-            :show-notes="showNotes"
-            :show-select="press_ctrl"
-            @onSelect="toggleProductsSelect(product)"
-            @onShowNote="showNoteProduct(product)"
-            @select="$emit('select', product)"
-            @mousedown.middle.stop="$emit('select:middle', product)"
-          >
-          </b-product-window-product-mini>
-
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product > Normal ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-          <b-product-window-product-large
-            v-else
-            :class="{
-              'not-drop-able':
-                current_dragged_product || current_dragged_folder,
-
-              disabled: disableTypes?.includes(product.type),
-            }"
-            :color="dark ? '#000' : '#fff'"
-            :compact-mode="compactMode"
-            :dark="dark"
-            :deleting="product.id === busy_delete"
-            :i-selected="selected_products.includes(product.id)"
-            :product="product"
-            :restoring="product.id === busy_restore"
-            :selected="selected_products.includes(product.id)"
-            :shop="shop"
-            :shortcut="current_dir_id && product.category_id !== current_dir_id"
-            :show-edit-button="showEditButton"
-            :show-notes="showNotes"
-            :show-price="showPrice"
-            :show-ratting="showRatting"
-            :show-select="press_ctrl"
-            :show-statistics="showStatistics"
-            class="item h-100 ma-2"
-            @onSelect="toggleProductsSelect(product)"
-            @onShowNote="showNoteProduct(product)"
-            @select="$emit('select', product)"
-            @click:image="
-              (e) => {
-                $router.push({
-                  name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                    ? 'Vendor_AddProduct'
-                    : 'BPageProductEdit',
-                  params: { product_id: product.id },
-                  hash: '#images',
-                });
-                e.preventDefault();
-              }
-            "
-          />
-
-          <v-scale-transition leave-absolute origin="center center">
-            <v-icon
-              v-if="selectMode && canSelectProduct && isSelected(product.id)"
-              class="absolute-top-end z2 selected-icon h-auto"
-              color="#689F38"
-              size="large"
-              >check_circle
-            </v-icon>
-          </v-scale-transition>
-        </u-drag>
-      </v-col>
-
-      <div v-if="mini" key="spx" class="pen" style="flex-grow: 12"></div>
-
-      <v-col v-if="product_pages_count > 1" key="pagination-products" cols="12">
-        <v-pagination
-          v-model="product_page"
-          :length="product_pages_count"
-          rounded
-        ></v-pagination>
-      </v-col>
-
-      <!-- ⬬⬬⬬ Add Mode ⬬⬬⬬ -->
-      <template
-        v-if="
-          CAN_ADD_PRODUCT &&
-          addProductButton &&
-          !search &&
-          (!busy_fetch || products.length)
-        "
-      >
-        <!-- ⬬⬬⬬ Force new line in mini mode ⬬⬬⬬ -->
-
-        <v-col v-if="mini" key="spacer" cols="12"></v-col>
-
-        <!-- ⬬⬬⬬ Add button ⬬⬬⬬ -->
-
-        <v-col
-          key="new"
-          class="p-2 d-flex flex-column"
-          cols="12"
-          lg="3"
-          md="4"
-          sm="6"
-          xl="3"
-        >
-          <u-button-add
-            :caption="$t('add_product.title_new')"
-            :fillHeight="false"
-            class="flex-grow-1 elevation-1"
-            icon="library_add"
-            message="⌘Ctrl + P"
-            min-height="100px"
-            small
-            @click="$emit('click:add')"
-          ></u-button-add>
-          <u-button-add
-            :caption="$t('add_product.title_new')"
-            :fillHeight="false"
-            class="mt-1 flex-grow-1 elevation-1"
-            icon="flash_on"
-            message="Fast Mode"
-            min-height="100px"
-            small
-            @click="$emit('click:fast-add')"
-          ></u-button-add>
-          <u-button-add
-            :caption="$t('products_select.ai.title')"
-            :fillHeight="false"
-            class="mt-1 flex-grow-1 elevation-1"
-            color="#516ad6"
-            hover-color="#667eea"
-            icon="auto_fix_high"
-            message="⌘Ctrl + X"
-            min-height="100px"
-            small
-            @click="$emit('click:ai-add')"
-          ></u-button-add>
+            </v-scale-transition>
+          </u-drag>
         </v-col>
 
-        <slot name="append-products"></slot>
+        <div v-if="mini" key="spx" class="pen" style="flex-grow: 12"></div>
 
+        <!-- ━━━━━━━━━━━━━━━━ Pagination > Products ━━━━━━━━━━━━━━━━ -->
         <v-col
-          v-if="
-            !IS_VENDOR_PANEL &&
-            (current_filter ||
-              products?.length > 1 ||
-              current_engine?.categories?.length ||
-              current_engine?.tags?.length)
-            // && !parent_folders /*Show just in the root*/
-          "
-          key="root-filters"
-          class="p-2 d-flex flex-column"
+          v-show="product_pages_count > 1"
+          key="pagination-products"
           cols="12"
-          lg="3"
-          md="4"
-          sm="6"
-          xl="3"
         >
-          <div
-            class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
-          >
-            <div>
-              <h3 v-if="current_filter">
-                <v-icon class="me-1 zoomIn" color="green">check_circle</v-icon>
-
-                {{
-                  parent_folders
-                    ? "This category has a filter."
-                    : $t("products_select.filter_box.has_root_filter_message")
-                }}
-              </h3>
-              <h3 v-else>
-                {{
-                  parent_folders
-                    ? "No filters have been defined!"
-                    : $t("products_select.filter_box.no_root_filter_message")
-                }}
-              </h3>
-
-              <s-dense-images-circles
-                :images="
-                  products?.map((p) =>
-                    getShopImagePath(p.icon, IMAGE_SIZE_SMALL),
-                  )
-                "
-                :limit="5"
-                class="justify-center"
-              ></s-dense-images-circles>
-
-              <small class="d-block">{{
-                $t("products_select.filter_box.set_filter_message")
-              }}</small>
-
-              <v-btn
-                class="tnt ma-1"
-                color="primary"
-                size="small"
-                @click="dialog_root_filter = true"
-              >
-                <v-icon class="me-1" size="small">filter_alt</v-icon>
-
-                {{
-                  parent_folders
-                    ? `Edit ${parent_folders.title.limitWords(1)} Filter`
-                    : $t("products_select.filter_box.edit_action")
-                }}
-              </v-btn>
-              <v-btn
-                v-if="current_filter"
-                :loading="busy_clear_root_filter"
-                class="tnt ma-1"
-                size="small"
-                variant="outlined"
-                @click="showClearRootFiltersDialog(parent_folders)"
-              >
-                <v-icon class="me-1" size="small">filter_alt_off</v-icon>
-
-                {{
-                  parent_folders
-                    ? "Clear Category Filter"
-                    : $t("products_select.filter_box.clear_action")
-                }}
-              </v-btn>
-            </div>
-          </div>
+          <v-pagination
+            v-model="product_page"
+            :length="product_pages_count"
+            rounded
+            :disabled="busy_fetch"
+          ></v-pagination>
         </v-col>
 
-        <v-col
+        <!-- ⬬⬬⬬ Add Mode ⬬⬬⬬ -->
+        <template
           v-if="
-            current_engine?.categories?.length ||
-            current_engine?.tags?.length ||
-            true
+            CAN_ADD_PRODUCT &&
+            addProductButton &&
+            !search &&
+            (!busy_fetch || products.length)
           "
-          key="engine"
-          class="p-2 d-flex flex-column"
-          cols="12"
-          lg="3"
-          md="4"
-          sm="6"
-          xl="3"
         >
-          <div
-            class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+          <!-- ⬬⬬⬬ Force new line in mini mode ⬬⬬⬬ -->
+
+          <v-col v-if="mini" key="spacer" cols="12"></v-col>
+
+          <!-- ⬬⬬⬬ Add button ⬬⬬⬬ -->
+
+          <v-col
+            key="add-new-product-buttons"
+            class="p-2 d-flex flex-column"
+            cols="12"
+            lg="3"
+            md="4"
+            sm="6"
+            xl="3"
           >
-            <div>
-              <h3>{{ $t("products_select.engine.title") }}</h3>
+            <u-button-add
+              :caption="$t('add_product.title_new')"
+              :fillHeight="false"
+              class="flex-grow-1 elevation-1"
+              icon="library_add"
+              message="⌘Ctrl + P"
+              min-height="100px"
+              small
+              @click="$emit('click:add')"
+            ></u-button-add>
+            <u-button-add
+              :caption="$t('add_product.title_new')"
+              :fillHeight="false"
+              class="mt-1 flex-grow-1 elevation-1"
+              icon="flash_on"
+              message="Fast Mode"
+              min-height="100px"
+              small
+              @click="$emit('click:fast-add')"
+            ></u-button-add>
+            <u-button-add
+              :caption="$t('products_select.ai.title')"
+              :fillHeight="false"
+              class="mt-1 flex-grow-1 elevation-1"
+              color="#516ad6"
+              hover-color="#667eea"
+              icon="auto_fix_high"
+              message="⌘Ctrl + X"
+              min-height="100px"
+              small
+              @click="$emit('click:ai-add')"
+            ></u-button-add>
+          </v-col>
 
-              <template v-if="current_engine">
-                <small class="d-block">
-                  {{ $t("products_select.engine.subtitle") }}
-                </small>
+          <slot name="append-products"></slot>
 
-                <b-category-engine-preview
-                  :category="
-                    parent_folders
-                      ? parent_folders
-                      : { id: 'root', title: $t('global.commons.home') }
-                  "
-                  :engine-categories="current_engine.categories"
-                  :engine-tags="current_engine.tags"
-                  class="my-2"
-                >
-                </b-category-engine-preview>
-              </template>
+          <v-col
+            v-if="
+              !IS_VENDOR_PANEL &&
+              (current_filter ||
+                products?.length > 1 ||
+                current_engine?.categories?.length ||
+                current_engine?.tags?.length)
+              // && !parent_folders /*Show just in the root*/
+            "
+            key="root-filters"
+            class="p-2 d-flex flex-column"
+            cols="12"
+            lg="3"
+            md="4"
+            sm="6"
+            xl="3"
+          >
+            <div
+              class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+            >
+              <div>
+                <h3 v-if="current_filter">
+                  <v-icon class="me-1 zoomIn" color="green"
+                    >check_circle
+                  </v-icon>
 
-              <v-icon v-else class="my-2" size="36"> devices_fold</v-icon>
-
-              <div class="mt-2">
-                <small class="d-block">
                   {{
-                    $t("products_select.engine.load_in_tips", {
+                    parent_folders
+                      ? "This category has a filter."
+                      : $t("products_select.filter_box.has_root_filter_message")
+                  }}
+                </h3>
+                <h3 v-else>
+                  {{
+                    parent_folders
+                      ? "No filters have been defined!"
+                      : $t("products_select.filter_box.no_root_filter_message")
+                  }}
+                </h3>
+
+                <s-dense-images-circles
+                  :images="
+                    products?.map((p) =>
+                      getShopImagePath(p.icon, IMAGE_SIZE_SMALL),
+                    )
+                  "
+                  :limit="5"
+                  class="justify-center"
+                ></s-dense-images-circles>
+
+                <small class="d-block">{{
+                  $t("products_select.filter_box.set_filter_message")
+                }}</small>
+
+                <v-btn
+                  class="tnt ma-1"
+                  color="primary"
+                  size="small"
+                  @click="dialog_root_filter = true"
+                >
+                  <v-icon class="me-1" size="small">filter_alt</v-icon>
+
+                  {{
+                    parent_folders
+                      ? `Edit ${parent_folders.title.limitWords(1)} Filter`
+                      : $t("products_select.filter_box.edit_action")
+                  }}
+                </v-btn>
+                <v-btn
+                  v-if="current_filter"
+                  :loading="busy_clear_root_filter"
+                  class="tnt ma-1"
+                  size="small"
+                  variant="outlined"
+                  @click="showClearRootFiltersDialog(parent_folders)"
+                >
+                  <v-icon class="me-1" size="small">filter_alt_off</v-icon>
+
+                  {{
+                    parent_folders
+                      ? "Clear Category Filter"
+                      : $t("products_select.filter_box.clear_action")
+                  }}
+                </v-btn>
+              </div>
+            </div>
+          </v-col>
+
+          <v-col
+            v-if="
+              current_engine?.categories?.length ||
+              current_engine?.tags?.length ||
+              true
+            "
+            key="engine"
+            class="p-2 d-flex flex-column"
+            cols="12"
+            lg="3"
+            md="4"
+            sm="6"
+            xl="3"
+          >
+            <div
+              class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+            >
+              <div>
+                <h3>{{ $t("products_select.engine.title") }}</h3>
+
+                <template v-if="current_engine">
+                  <small class="d-block">
+                    {{ $t("products_select.engine.subtitle") }}
+                  </small>
+
+                  <b-category-engine-preview
+                    :category="
+                      parent_folders
+                        ? parent_folders
+                        : { id: 'root', title: $t('global.commons.home') }
+                    "
+                    :engine-categories="current_engine.categories"
+                    :engine-tags="current_engine.tags"
+                    class="my-2"
+                  >
+                  </b-category-engine-preview>
+                </template>
+
+                <v-icon v-else class="my-2" size="36"> devices_fold</v-icon>
+
+                <div class="mt-2">
+                  <small class="d-block">
+                    {{
+                      $t("products_select.engine.load_in_tips", {
+                        category: parent_folders
+                          ? parent_folders.title
+                          : $t("global.commons.home"),
+                      })
+                    }}
+                  </small>
+                </div>
+
+                <v-btn
+                  class="tnt ma-1"
+                  color="primary"
+                  size="small"
+                  @click="dialog_root_engine = true"
+                >
+                  <v-icon class="me-1" size="small">auto_mode</v-icon>
+
+                  {{
+                    $t("products_select.engine.action", {
                       category: parent_folders
-                        ? parent_folders.title
-                        : $t("global.commons.home"),
+                        ? parent_folders.title.limitWords(1)
+                        : $t("global.commons.root"),
                     })
                   }}
-                </small>
+                </v-btn>
               </div>
-
-              <v-btn
-                class="tnt ma-1"
-                color="primary"
-                size="small"
-                @click="dialog_root_engine = true"
-              >
-                <v-icon class="me-1" size="small">auto_mode</v-icon>
-
-                {{
-                  $t("products_select.engine.action", {
-                    category: parent_folders
-                      ? parent_folders.title.limitWords(1)
-                      : $t("global.commons.root"),
-                  })
-                }}
-              </v-btn>
             </div>
-          </div>
-        </v-col>
-      </template>
-    </v-fade-transition>
-
-    <u-loading-ellipsis
-      v-if="busy_load_more"
-      css-mode
-      light
-    ></u-loading-ellipsis>
-    <div v-if="has_more" class="widget-buttons">
-      <v-btn
-        v-intersect="onIntersect"
-        :loading="busy_fetch"
-        class="m-3"
-        color="blue"
-        size="x-large"
-        variant="text"
-        @click="fetchData(true)"
-      >
-        <v-icon class="me-1">autorenew</v-icon>
-        <div>
-          <b>{{ remains_count }} {{ $t("global.actions.more") }}</b>
-          <div class="small mt-1">
-            {{ $t("products_select.load_more_products") }}
-          </div>
-        </div>
-      </v-btn>
-    </div>
+          </v-col>
+        </template>
+      </v-fade-transition>
+    </v-row>
 
     <!-- ███████████████████████ Context Menu ███████████████████████ -->
     <v-menu
@@ -1490,7 +1478,6 @@
         (id) => {
           DeleteItemByID(folders, id);
           fetchData(
-            false,
             true /*Force fetch items -> because inside folders and products return to current location*/,
           );
         }
@@ -1533,7 +1520,8 @@
           <b-vendor-input
             v-model="vendor_id_input"
             :shop="shop"
-            active-only clearable
+            active-only
+            clearable
             label="Vendor"
             placeholder="Filter by vendor..."
           ></b-vendor-input>
@@ -1901,14 +1889,13 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import BProductWindowProductLarge from "../../product/window/product/large/BProductWindowProductLarge.vue";
 import SProductsSortView from "../../../storefront/product/sort/SProductsSortView.vue";
 import BProductWindowCategoryLarge from "../../product/window/category/large/BProductWindowCategoryLarge.vue";
 
 import CircleImage from "../../../ui/image/CircleImage.vue";
 import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
-import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
 import UButtonAdd from "../../../ui/button/add/UButtonAdd.vue";
 import BCategoryAdd from "../../category/add/BCategoryAdd.vue";
 import BProductWindowCategoryMini from "../../product/window/category/mini/BProductWindowCategoryMini.vue";
@@ -1941,6 +1928,7 @@ import BCategoryEngineEditor from "@selldone/components-vue/backoffice/category/
 import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
 import { BProductBreadcrumbsHelper } from "../breadcrumbs/helper/BProductBreadcrumbsHelper";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 
 export default {
   name: "BProductsWindow",
@@ -1981,7 +1969,6 @@ export default {
     BProductWindowCategoryMini,
     BCategoryAdd,
     UButtonAdd,
-    ULoadingEllipsis,
     UBreadcrumb,
     CircleImage,
 
@@ -2096,7 +2083,6 @@ export default {
     products: [],
     products_count: 0,
     busy_fetch: false,
-    busy_load_more: false,
 
     sort: null,
     only_available: false,
@@ -2122,9 +2108,6 @@ export default {
     // Pagination:
     folder_page: 1,
     product_page: 1,
-
-    max_folders_per_page: 48,
-    max_products_per_page: 100,
 
     //-----------------------------------------
     showProductMenu: false,
@@ -2269,13 +2252,6 @@ export default {
       );
     },
 
-    has_more() {
-      return this.remains_count > 0;
-    },
-    remains_count() {
-      return this.products_count - this.products.length;
-    },
-
     copy_product() {
       return this.$store.getters.getCopyProduct;
     },
@@ -2342,7 +2318,7 @@ export default {
     product_pages_count() {
       return (
         this.products &&
-        Math.ceil(this.products.length / this.max_products_per_page)
+        Math.ceil(this.products_count / this.max_products_per_page)
       );
     },
 
@@ -2361,11 +2337,42 @@ export default {
         ? this.parent_folders.filters
         : this.shop.filters;
     },
+
+    max_folders_per_page() {
+      if (this.mini) {
+        if (this.$vuetify.display.lgAndUp) {
+          return 4 * 12;
+        } else if (this.$vuetify.display.md) {
+          return 4 * 6;
+        } else if (this.$vuetify.display.sm) {
+          return 4 * 4;
+        }
+        return 4 * 3;
+      } else {
+        return 8;
+      }
+    },
+    max_products_per_page() {
+      if (this.mini) {
+        if (this.$vuetify.display.lgAndUp) {
+          return 4 * 12;
+        } else if (this.$vuetify.display.md) {
+          return 4 * 6;
+        } else if (this.$vuetify.display.sm) {
+          return 4 * 4;
+        }
+        return 4 * 3;
+      } else {
+        return 8;
+      }
+    },
   },
   watch: {
     "$route.query"(query) {
       this.current_dir_id = query.dir ? parseInt(query.dir) : null;
       this.search = query.search;
+      this.product_page = 1;
+      this.folder_page = 1;
       this.fetchData();
       this.selected_products = [];
     },
@@ -2382,6 +2389,18 @@ export default {
     },
     showVendors() {
       this.fetchData();
+    },
+
+    product_page() {
+      this.fetchData();
+    },
+    max_products_per_page() {
+      this.fetchData();
+    },
+    current_dir_id() {
+      this.$nextTick(() => {
+        ScrollHelper.scrollToElement("#sort_tools", 0, "smooth");
+      });
     },
   },
   created() {
@@ -2462,18 +2481,6 @@ export default {
       return true;
     },
     //------------------------------ Internal methods ------------------------------
-
-    onIntersect(isIntersecting, entries, observer) {
-      // More information about these options
-      // is located here: https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-      // console.log('------- END -------',isIntersecting)
-
-      if (isIntersecting && !this.busy_fetch && this.has_more) {
-        // console.log("------- FETCH MORE -------");
-
-        this.fetchData(true);
-      }
-    },
 
     isSelected(item_id) {
       if (Array.isArray(this.selectedList)) {
@@ -2727,27 +2734,32 @@ export default {
     },
 
     onFilterChange() {
-      this.fetchData(false, false);
+      this.fetchData();
     },
 
-    fetchData(more = false, force = false) {
+    fetchData(force = false) {
+      const offset = (this.product_page - 1) * this.max_products_per_page;
+      const limit = this.max_products_per_page;
+
+      const with_folders = this.product_page === 1;
+
       const params = {
         statuses: this.filters?.filter((x) => !!ProductStatus[x]),
         types: this.filters?.filter((x) => !!ProductType[x]),
 
-        offset: more ? this.products.length : 0,
-        limit: this.mini ? 5 * 12 : 20,
+        offset,
+        limit, // Just for update query!
 
         sort: this.sort,
         available: this.only_available,
         set: this.set, // null : default  ,   spec: for copy spec (list)
         dir: this.current_dir_id,
         with_product_variants: this.withFullVariant,
-        with_parent: !more, // No parent if load more items!
+        with_parent: with_folders, // No parent if load more items!
         search: this.search,
         vendor: this.vendor_filter,
 
-        products_only: more, // Only products if load more!
+        products_only: !with_folders, // Only products if load more!
         with_total: true,
 
         show_deletes: this.showDeletes, // Show deletes items
@@ -2766,7 +2778,6 @@ export default {
       this.LAST_QUERY_PARAMS = params;
 
       this.busy_fetch = true;
-      this.busy_load_more = more;
 
       const handleSuccessResponse = ({
         folders,
@@ -2779,49 +2790,34 @@ export default {
       }) => {
         this.products_count = total;
 
-        if (more) {
-          products.forEach((product) => {
-            this.AddOrUpdateItemByID(this.products, product);
-          });
-        } else {
-          this.products = products;
+        this.products = products;
+
+        if (with_folders) {
           this.folders = folders;
           this.parent_folders = parent;
-
-          //━━━━━━━━━━━━━━━━ 🞧 Extra objects return by special search ━━━━━━━━━━━━
-          this.tax_profile = tax_profile;
-          this.valuation_filter = valuation;
-          this.time_filter = time_filter;
-
-          // Reset to firts page:
-          this.folder_page = 1;
-          this.product_page = 1;
-
-          this.$emit("change:folders", this.folders);
-          this.$emit("change:parent-folder", this.parent_folders);
         }
+
+        //━━━━━━━━━━━━━━━━ 🞧 Extra objects return by special search ━━━━━━━━━━━━
+        this.tax_profile = tax_profile;
+        this.valuation_filter = valuation;
+        this.time_filter = time_filter;
+
+        this.$emit("change:folders", this.folders);
+        this.$emit("change:parent-folder", this.parent_folders);
       };
 
       (this.IS_VENDOR_PANEL
         ? /*🟢 Vendor Panel 🟢*/ window.$vendor.product
             .optimize(30)
             .cancellation()
-            .list(
-              this.vendor.id,
-              more ? this.products.length : 0,
-              this.mini ? 5 * 12 : 20,
-              params,
-            )
+            .list(this.vendor.id, offset, limit, params)
         : window.$backoffice.product
             .optimize(30)
             .cancellation()
-            .list(
-              this.shop.id,
-              more ? this.products.length : 0,
-              this.mini ? 5 * 12 : 20,
-              params,
-            )
+            .list(this.shop.id, offset, limit, params)
       )
+
+        // It always returns all folders!
 
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
@@ -2830,7 +2826,6 @@ export default {
         })
         .finally(() => {
           this.busy_fetch = false;
-          this.busy_load_more = false;
         });
     },
 

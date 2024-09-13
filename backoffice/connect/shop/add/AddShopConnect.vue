@@ -33,6 +33,22 @@
         :shop="shop"
       ></connect-input-field>
 
+     <div class="mb-2">
+       <v-chip v-if="connect.read_categories" prepend-icon="folder" label size="x-small" color="amber" variant="flat" class="me-1">
+         {{ $t("global.commons.categories") }}
+       </v-chip>
+       <v-chip v-if="connect.read_products" prepend-icon="shelves" label size="x-small" color="#1976D2" variant="flat" class="me-1">
+         {{ $t("global.commons.products") }}
+       </v-chip>
+       <v-chip v-if="connect.read_customers" prepend-icon="people" label size="x-small" color="#673AB7" variant="flat" class="me-1">
+         {{ $t("global.commons.customers") }}
+       </v-chip>
+       <v-chip v-if="connect.read_orders" prepend-icon="shopping_bag" label size="x-small" color="#009688" variant="flat" class="me-1">
+         {{ $t("global.commons.orders") }}
+       </v-chip>
+     </div>
+
+
       <v-expand-transition>
         <div v-if="connect">
           <v-expand-transition>
@@ -83,33 +99,62 @@
             v-html="$t('shop_connect.edit.migration_tips')"
           ></div>
 
-          <div class="widget-buttons">
 
+
+          <v-expand-transition>
+            <div v-if="!params.test">
+              <u-fade-scroll>
+                <div class="my-1 d-flex" dense>
+                  <v-col v-if="connect?.read_categories" cols="12" sm="6">
+                    <b-shop-quota-card
+                      :quota-key="shopQuota.Category"
+                      elevation="0"
+                    ></b-shop-quota-card>
+                  </v-col>
+
+                  <v-col v-if="connect?.read_products" cols="12" sm="6">
+                    <b-shop-quota-card
+                      :quota-key="shopQuota.Product"
+                      elevation="0"
+                    ></b-shop-quota-card>
+                  </v-col>
+
+                  <v-col v-if="connect?.read_customers" cols="12" sm="6">
+                    <b-shop-quota-card
+                      :quota-key="shopQuota.Customer"
+                      elevation="0"
+                    ></b-shop-quota-card>
+                  </v-col>
+                </div>
+              </u-fade-scroll>
+            </div>
+          </v-expand-transition>
+
+          <div class="widget-buttons">
             <v-btn
-                v-if="connect.direct_setup"
-                :disabled="
+              v-if="connect.direct_setup"
+              :disabled="
                 connect.form &&
                 connect.form.length &&
                 connect.form.some(
                   (i) => ['endpoint'].includes(i.name) && !params[i.name],
                 )
               "
-                :loading="loading"
-                :variant="!!shopConnect ? 'text' : 'elevated'"
-                color="primary"
-                size="x-large"
-                @click="setupDirect()"
+              :loading="loading"
+              :variant="!!shopConnect ? 'text' : 'elevated'"
+              color="primary"
+              size="x-large"
+              @click="setupDirect()"
             >
               <v-icon start>add</v-icon>
               {{ $t("shop_connect.edit.add_action") }}
 
               <v-avatar
-                  :image="getShopImagePath(connect.icon)"
-                  class="mx-1 avatar-gradient -thin -connect"
-                  size="22"
+                :image="getShopImagePath(connect.icon)"
+                class="mx-1 avatar-gradient -thin -connect"
+                size="22"
               ></v-avatar>
               {{ connect.name }}
-
             </v-btn>
 
             <v-btn
@@ -127,7 +172,6 @@
               color="primary"
               size="x-large"
               @click="loading = true"
-
             >
               <v-icon start>add</v-icon>
               {{ $t("shop_connect.edit.add_action") }}
@@ -140,7 +184,6 @@
               {{ connect.name }}
 
               <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
-
             </v-btn>
           </div>
         </div>
@@ -213,20 +256,22 @@
             true-icon="local_shipping"
           ></u-smart-switch>
         </template>
-
-        <div class="widget-buttons">
-          <v-btn
-            :loading="busy_set"
-            color="primary"
-            size="x-large"
-            variant="flat"
-            @click="updateConnect"
-          >
-            <v-icon start>save</v-icon>
-            {{ $t("global.actions.save_changes") }}
-          </v-btn>
-        </div>
       </div>
+
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Save Action  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+      <s-widget-buttons auto-fixed-position>
+        <v-btn
+          :loading="busy_set"
+          color="primary"
+          size="x-large"
+          variant="elevated"
+          @click="updateConnect"
+        >
+          <v-icon start>save</v-icon>
+          {{ $t("global.actions.save_changes") }}
+        </v-btn>
+      </s-widget-buttons>
 
       <div class="widget-box mb-5 mt-10">
         <s-widget-header
@@ -326,18 +371,27 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ConnectInputField from "../../../connect/input/ConnectInputField.vue";
 import ConnectOsPods from "../../../connect/pods/ConnectOsPods.vue";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import { ToQueryString } from "@selldone/core-js/helper/string/StringHelper";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import { Connect } from "@selldone/core-js";
+import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
+import BShopQuotaImporter from "@selldone/components-vue/backoffice/shop/quota/Importer/BShopQuotaImporter.vue";
+import shopQuota from "@selldone/core-js/enums/shop/quota/ShopQuota.ts";
+import BShopQuotaCard from "@selldone/components-vue/backoffice/shop/quota/card/BShopQuotaCard.vue";
+import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "AddShopConnect",
   emits: ["edit", "delete", "add"],
   components: {
+    UFadeScroll,
+    BShopQuotaCard,
+    BShopQuotaImporter,
+    SWidgetButtons,
     USmartVerify,
     USmartSwitch,
     ConnectOsPods,
@@ -362,6 +416,8 @@ export default {
     },
   },
   data: () => ({
+    shopQuota: shopQuota,
+
     connect: null,
     connect_id: null,
     enable: false,
@@ -438,34 +494,32 @@ export default {
   },
 
   methods: {
-    setupDirect(){
+    setupDirect() {
       this.loading = true;
 
       axios
-          .post(
-              window.API.POST_SHOP_CONNECT_SETUP_DIRECT(this.shop.id, this.connect.code),
-              this.params
-          )
-          .then(({ data }) => {
-            if (!data.error) {
+        .post(
+          window.API.POST_SHOP_CONNECT_SETUP_DIRECT(
+            this.shop.id,
+            this.connect.code,
+          ),
+          this.params,
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            this.$emit("add", data.shop_connect);
 
-              this.$emit("add", data.shop_connect);
-
-
-              this.showSuccessAlert(
-                  null,
-                  "Connect has been added successfully.",
-              );
-            } else {
-              this.showErrorAlert(null, data.error_msg);
-            }
-          })
-          .catch((error) => {
-            this.showLaravelError(error);
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+            this.showSuccessAlert(null, "Connect has been added successfully.");
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     updateConnect() {
       this.busy_set = true;

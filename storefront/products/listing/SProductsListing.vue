@@ -730,6 +730,9 @@ export default {
      * @return {*}
      */
     max_folders_per_page() {
+      // In single line mode for categories we do not need pagination.
+      if(this.single_line_categories)return 999;
+
       let limit = 20;
 
       if (this.mode_view_categories.code === ModeView.NORMAL.code)

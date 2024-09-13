@@ -447,13 +447,15 @@
             :label="$t('add_product.edit_spec.dialog_ai.inputs.prompt.label')"
             persistent-placeholder
             :placeholder="
-              $t('add_product.edit_spec.dialog_ai.inputs.prompt.placeholder')
+              $t('add_product.edit_spec.dialog_ai.inputs.prompt.placeholder')+`
+
+✅ We auto use product information to generate spec: ${article_body}`
             "
             variant="underlined"
+
           ></v-textarea>
 
           <u-button-ai-large
-            :class="{ disabled: !prompt }"
             :loading="busy_ai"
             :sub-title="
               $t('add_product.edit_spec.dialog_ai.actions.run.subtitle')
@@ -520,7 +522,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import BProductSpecTable from "../../../../storefront/product/spec/table/BProductSpecTable.vue";
 import BProductsWindow from "../../../product/window/BProductsWindow.vue";
 import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper";
@@ -528,6 +530,7 @@ import BAiModelInput from "../../../../backoffice/ai/model/input/BAiModelInput.v
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
 import UButtonAiLarge from "../../../../ui/button/ai/large/UButtonAiLarge.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import {StripTags} from "@selldone/core-js/helper/index";
 
 export default {
   name: "BProductEditSpec",
@@ -595,6 +598,12 @@ export default {
     add_by_dropShipping() {
       return !!this.product.parent_id;
     },
+
+    article_body(){
+      const article= this.product.articles.length?this.product.articles[0]:null;
+      if(!article?.body)return 'No Article'
+      return StripTags(article.body).substring(0,500);
+    }
   },
 
   watch: {

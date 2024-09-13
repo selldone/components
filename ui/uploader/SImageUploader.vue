@@ -311,7 +311,7 @@ export default {
 
   data: () => ({
     logo: null,
-    version: "",
+  ///////  version: "",
     last_image: null,
 
     focused: false,
@@ -340,7 +340,7 @@ export default {
     },
     image_url() {
       if (!this.image) return null;
-      return this.image + this.version;
+      return this.image//// + this.version;
     },
     server_credential() {
       const token = document.head.querySelector('meta[name="csrf-token"]');
@@ -385,7 +385,7 @@ export default {
   },
   created() {
     this.last_image = this.image;
-    this.version = "?v=" + Math.round(Math.random() * 100); //Invalidate cache!
+   ///////// this.version = "?v=" + Math.round(Math.random() * 100); //Invalidate cache!
   },
 
   mounted() {
@@ -447,7 +447,7 @@ export default {
           this.$emit("new-url", response.files.url);
 
           this.$nextTick(() => {
-            this.version = "?v=" + Math.random(100);
+          //////  this.version = "?v=" + Math.random(100);
           });
         }
 

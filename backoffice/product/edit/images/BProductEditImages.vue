@@ -84,13 +84,29 @@
               ></u-smart-toggle>
 
               <template v-if="product.icon && !forStudio">
+
+                <!-- ━━━━━━━━━━━━━━━━━━━━━ Upscale ━━━━━━━━━━━━━━━━━━━━━ -->
                 <u-button-ai-large
+                  v-if="need_upscale"
+                  :loading="busy_upscale"
+                  :title="$t('ai.upscale.title')"
+                  :sub-title="$t('ai.upscale.subtitle')"
+                  @select="upscaleImage()"
+                  highlighted
+                >
+                </u-button-ai-large>
+
+                <!-- ━━━━━━━━━━━━━━━━━━━━━ Remove BG ━━━━━━━━━━━━━━━━━━━━━ -->
+
+                <u-button-ai-large
+                  v-else
                   :loading="busy_ai"
                   :title="$t('ai.remove_bg.title')"
                   :sub-title="$t('ai.remove_bg.subtitle')"
                   @select="removeBackground()"
                 >
                 </u-button-ai-large>
+                <!-- ━━━━━━━━━━━━━━━━━━━━━ Reimagin / Replace background ━━━━━━━━━━━━━━━━━━━━━ -->
 
                 <u-button-ai-large
                   :title="$t('ai.reimagine.title')"
@@ -316,7 +332,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopProductCard from "../../../../storefront/product/card/SShopProductCard.vue";
 import BProductImagesGallery from "../../images/gallery/BProductImagesGallery.vue";
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
@@ -325,6 +341,7 @@ import UYoutubePreview from "../../../../ui/youtube/preview/UYoutubePreview.vue"
 import UButtonAiLarge from "../../../../ui/button/ai/large/UButtonAiLarge.vue";
 import { getYoutubeId } from "../../../../ui/youtube/helper/YoutubeHelper";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import { ImageHelper } from "@selldone/core-js/utils/image/ImageHelper.ts";
 
 export default {
   name: "BProductEditImages",
@@ -360,6 +377,9 @@ export default {
 
     // -------------------
     busy_ai: false,
+
+    need_upscale: false,
+    busy_upscale: false,
 
     dialog_replace_bg: false,
     prompt: null,
@@ -482,21 +502,45 @@ export default {
     product() {
       this.fixStyle();
     },
+    "product.icon"() {
+      this.checkNeedsUpscale();
+    },
   },
   created() {
     this.fixStyle();
 
+    this.checkNeedsUpscale();
     this.video_id = this.product.video;
   },
 
   methods: {
+    async checkNeedsUpscale() {
+      this.need_upscale = false;
+      if (!this.product?.icon) return;
+
+      const helper = new ImageHelper(this.getShopImagePath(this.product.icon));
+      const { width, height } = await helper.getImageInfo();
+      //console.log("need_upscale", width, height);
+      this.need_upscale = width < 1000 || height < 1000;
+    },
+
     fixStyle() {
       if (!this.product.style || Array.isArray(this.product.style))
         this.product.style = { contain: false };
     },
     removeBackground() {
       if (!this.USER().premium) return this.showNeedSubscribePremium();
+      this.openDangerAlert(
+        `Remove Main Image Background`,
+        "Are you sure you want to remove the background of this image? We will replace the main image with new transparent background.",
+        "Yes,Remove it",
+        () => {
+          this.removeBackgroundNow();
+        },
+      );
+    },
 
+    removeBackgroundNow() {
       this.busy_ai = true;
       axios
         .post(
@@ -522,6 +566,35 @@ export default {
         })
         .finally(() => {
           this.busy_ai = false;
+        });
+    },
+
+    upscaleImage() {
+      this.busy_upscale = true;
+      axios
+        .post(
+          window.API.POST_AI_UPSCALE_BACKGROUND_PRODUCT_MAIN_IMAGE(
+            this.product.shop_id,
+            this.product.id,
+          ),
+          {},
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            this.product.icon = data.product.icon;
+            this.$forceUpdate();
+            this.$emit("update:icon", data.product.icon);
+
+            this.showSuccessAlert(null, "Image upscaled successfully!");
+          } else {
+            this.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_upscale = false;
         });
     },
 
