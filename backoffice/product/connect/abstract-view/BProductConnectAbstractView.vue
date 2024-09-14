@@ -36,6 +36,18 @@
       <div class="flex-grow-1">
         <v-row align="center" justify="start" no-gutters>
           <b class="body-title">{{ connect.name }}</b>
+
+          <v-chip
+            v-if="mode_obj"
+            class="mx-2 pa-1"
+            :color="mode_obj.title.toColor()"
+            label
+            size="x-small"
+            :title="$t(mode_obj.desc)"
+          >
+            {{ $t(mode_obj.title) }}
+          </v-chip>
+
           <v-chip
             v-if="connect.enable === true"
             class="mx-2 pa-1"
@@ -62,10 +74,11 @@
     </div>
   </s-widget-box>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import { Connect } from "@selldone/core-js/models";
 
 export default defineComponent({
   name: "BProductConnectAbstractView",
@@ -92,6 +105,10 @@ export default defineComponent({
 
     connect() {
       return this.product.connect;
+    },
+
+    mode_obj() {
+      return this.connect && Connect.Modes[this.connect.mode];
     },
   },
 });
