@@ -18,10 +18,7 @@
   <v-card
     class="overflow-hidden text-start"
     rounded="t-xl"
-    style="
-      position: relative;
-      min-height: 180px !important;
-    "
+    style="position: relative; min-height: 180px !important"
   >
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Top Bar ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
@@ -114,28 +111,26 @@
       "
     >
       <div>
-        <!-- Gift Cards -->
+        <!-- ━━━━━━━━━━━━━━━━━━━ Gift Cards ━━━━━━━━━━━━━━━━━━━ -->
+
         <s-giftcard-input
           v-if="hasGiftCardField && !isFree"
           v-model="selected_gift_cards"
           :gift-cards="giftcards"
           :loading="busy_gift_cards"
-          class="mt-3"
           multiple
           return-object
           variant="outlined"
+          single-line
         >
         </s-giftcard-input>
         <!-- Wallet -->
         <s-wallet-input
-            v-if="hasWallet && !isFree"
-            class="mb-3"
-            :currency="currency.code"
-
+          v-if="hasWallet && !isFree"
+          class="mb-3"
+          :currency="currency.code"
         >
-
         </s-wallet-input>
-
 
         <div class="text-start">
           <small>{{ $t("global.commons.total_payment") }} </small>
@@ -194,7 +189,9 @@
 
                     <tr v-if="bill.items_discount">
                       <td>
-                        <v-icon size="small"  class="me-1">fa:fas fa-gift</v-icon>
+                        <v-icon size="small" class="me-1"
+                          >fa:fas fa-gift</v-icon
+                        >
                         {{ $t("global.commons.discount") }}
                       </td>
 
@@ -208,7 +205,9 @@
 
                     <tr v-if="bill.offer">
                       <td>
-                        <v-icon size="small" class="me-1">fa:fas fa-gift</v-icon>
+                        <v-icon size="small" class="me-1"
+                          >fa:fas fa-gift</v-icon
+                        >
                         {{ $t("global.commons.offer") }}
                       </td>
 
@@ -222,7 +221,9 @@
 
                     <tr v-if="bill.delivery_price !== null">
                       <td>
-                        <v-icon size="small"  class="me-1">fa:fas fa-shipping-fast</v-icon>
+                        <v-icon size="small" class="me-1"
+                          >fa:fas fa-shipping-fast</v-icon
+                        >
                         {{ $t("global.commons.shipping") }}
                       </td>
 
@@ -238,7 +239,9 @@
 
                     <tr v-if="bill.discount_code">
                       <td>
-                        <v-icon size="small"  class="me-1">fa:fas fa-percentage</v-icon>
+                        <v-icon size="small" class="me-1"
+                          >fa:fas fa-percentage</v-icon
+                        >
                         {{ $t("global.commons.discount_code") }}
                       </td>
                       <td>
@@ -250,7 +253,7 @@
                     </tr>
                     <tr v-if="bill.club">
                       <td>
-                        <v-icon size="small"  class="me-1">fa:fas fa-gem</v-icon>
+                        <v-icon size="small" class="me-1">fa:fas fa-gem</v-icon>
                         {{ $t("global.commons.customer_club") }}
                       </td>
                       <td>
@@ -262,7 +265,9 @@
                     </tr>
                     <tr v-if="bill.coupon">
                       <td>
-                        <v-icon size="small"  class="me-1">fa:fas fa-ticket-alt</v-icon>
+                        <v-icon size="small" class="me-1"
+                          >fa:fas fa-ticket-alt</v-icon
+                        >
                         {{ $t("global.commons.coupon") }}
                       </td>
                       <td>
@@ -275,7 +280,9 @@
 
                     <tr v-if="bill.lottery">
                       <td>
-                        <v-icon size="small"  class="me-1">fa:fas fa-dice</v-icon>
+                        <v-icon size="small" class="me-1"
+                          >fa:fas fa-dice</v-icon
+                        >
                         {{ $t("global.commons.prize") }}
                       </td>
                       <td>
@@ -288,21 +295,22 @@
 
                     <tr v-if="bill.wallet">
                       <td>
-                        <v-icon size="small"  class="me-1">wallet</v-icon>
+                        <v-icon size="small" class="me-1">wallet</v-icon>
                         {{ $t("global.commons.my_wallet") }}
                       </td>
                       <td>
                         <u-price
-                            :amount="-bill.wallet"
-                            :currency="currency.code"
+                          :amount="-bill.wallet"
+                          :currency="currency.code"
                         ></u-price>
                       </td>
                     </tr>
 
-
                     <tr v-if="bill.tax">
                       <td>
-                        <v-icon size="small"  class="me-1">fa:fas fa-coins</v-icon>
+                        <v-icon size="small" class="me-1"
+                          >fa:fas fa-coins</v-icon
+                        >
                         {{ $t("global.commons.tax") }}
                       </td>
                       <td>
@@ -319,7 +327,7 @@
 
                     <tr v-if="total_amount_by_gift_cards">
                       <td>
-                        <v-icon size="small"  class="me-1">card_giftcard</v-icon>
+                        <v-icon size="small" class="me-1">card_giftcard</v-icon>
                         {{ $t("global.commons.gift_card") }}
                       </td>
                       <td>
@@ -508,8 +516,15 @@
                   {{ gateway.name }}
 
                   <template v-slot:disable-reason>
-                    <v-icon class="me-1" size="18A" color="#fff">shopping_bag</v-icon>
-                    Min order: <u-price class="mx-1" :amount="gateway.limit" :currency="currency.code" />
+                    <v-icon class="me-1" size="18A" color="#fff"
+                      >shopping_bag</v-icon
+                    >
+                    Min order:
+                    <u-price
+                      class="mx-1"
+                      :amount="gateway.limit"
+                      :currency="currency.code"
+                    />
                   </template>
                 </u-payment-button>
               </v-col>
@@ -831,7 +846,7 @@ export default {
     },
     //-------------- Customer Virtual Wallet (Shop) ---------------
 
-    hasWallet:Boolean,
+    hasWallet: Boolean,
 
     //-------------- Club ---------------
 
@@ -1288,6 +1303,7 @@ export default {
         })
         .then(({ data }) => {
           this.giftcards = data.giftcards;
+          this.autoSelectGiftcards();
         })
 
         .catch((error) => {
@@ -1295,6 +1311,23 @@ export default {
         })
         .finally(() => {
           this.busy_gift_cards = false;
+        });
+    },
+
+    autoSelectGiftcards() {
+      let totalAmount = 0;
+      this.selected_gift_cards = [];
+
+      this.giftcards
+        .filter((item) => item.balance > 0) // Filter gift cards with positive balance
+        .some((item) => {
+          // Add the card to selected list
+          this.selected_gift_cards.push(item);
+          // Increment the total amount
+          totalAmount += item.balance;
+
+          // If total amount reaches or exceeds $400, stop
+          return totalAmount >= this.final_payment;
         });
     },
 

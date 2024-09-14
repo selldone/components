@@ -18,7 +18,7 @@
     v-model:focused="focused"
     :bg-color="backgroundColor"
     :clearable="clearable"
-    :density="dense ? 'compact' : undefined"
+    :density="density?density:dense ? 'compact' : undefined"
     :disabled="disabled"
     :error-messages="errorMessages"
     :flat="flat"
@@ -124,6 +124,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    density:{},
 
     clearable: {
       type: Boolean,

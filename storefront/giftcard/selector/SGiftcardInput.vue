@@ -13,6 +13,48 @@
   -->
 
 <template>
+  <v-expand-transition>
+    <div v-if="has_giftcards">
+      <v-list
+        max-height="160"
+        class="text-start border-bottom-0"
+        style="border: solid #aaa thin"
+        rounded="t-lg b-0"
+      >
+        <v-list-item
+          v-for="_giftcard in giftCards"
+          :key="_giftcard.id"
+          @click="modelValue?.toggle(_giftcard)"
+        >
+          <template v-slot:prepend>
+            <v-scale-transition hide-on-leave>
+              <v-icon v-if="modelValue?.includes(_giftcard)" color="primary"
+                >circle
+              </v-icon>
+              <v-icon v-else>radio_button_unchecked</v-icon>
+            </v-scale-transition>
+
+            <b-giftcard-type-icon
+              :image="getShopImagePath(_giftcard.gift_type.bg, 128)"
+              :color="_giftcard.gift_type.color"
+              height="32"
+              class="mx-2"
+            ></b-giftcard-type-icon>
+          </template>
+          <template v-slot:title>
+            <b>{{ formatCard(_giftcard.number) }}</b>
+          </template>
+          <template v-slot:append>
+            <u-price
+              :amount="_giftcard.balance"
+              :currency="_giftcard.gift_type.currency"
+            ></u-price>
+          </template>
+        </v-list-item>
+      </v-list>
+    </div>
+  </v-expand-transition>
+
   <v-select
     :items="giftCards"
     :label="$t('global.payment_form.gift_cards_input')"
@@ -20,11 +62,16 @@
     :multiple="multiple"
     :no-data-text="$t('global.payment_form.gift_cards_input_empty')"
     :return-object="returnObject"
-    :rounded="rounded"
+    :rounded="has_giftcards ? 'b-lg t-0' : 'lg'"
     :variant="variant"
+    :bg-color="bgColor"
     item-title="number"
+    :single-line="singleLine"
     prepend-inner-icon="card_giftcard"
     @update:model-value="(val) => $emit('update:modelValue', val)"
+    style="--v-input-control-height: 65px"
+    readonly
+    @click="dialog = true"
   >
     <template v-slot:append-inner>
       <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
@@ -47,6 +94,7 @@
         @add="
           (gift_card) => {
             AddOrUpdateItemByID(giftCards, gift_card);
+            if (modelValue) AddOrUpdateItemByID(modelValue, gift_card);
             dialog = false;
           }
         "
@@ -56,11 +104,9 @@
       <v-chip
         v-if="index === 0"
         class="overflow-visible"
-        closable
         color="#ffffff"
         theme="light"
         variant="flat"
-        @click:close.stop="DeleteItemByID(modelValue, item.raw.id)"
       >
         <template v-slot:prepend>
           <v-avatar v-if="item.raw.gift_type.bg" class="me-2">
@@ -106,10 +152,12 @@
 
 <script>
 import SGiftcardAdd from "../../../storefront/giftcard/add/SGiftcardAdd.vue";
+import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
+import BGiftcardTypeIcon from "@selldone/components-vue/backoffice/giftcard/type/icon/BGiftcardTypeIcon.vue";
 
 export default {
   name: "SGiftcardInput",
-  components: { SGiftcardAdd },
+  components: { BGiftcardTypeIcon, UPrice, SGiftcardAdd },
   emits: ["update:modelValue"],
   props: {
     modelValue: {},
@@ -123,11 +171,7 @@ export default {
       type: Boolean,
     },
 
-    rounded: {
-      default: false,
-      type: Boolean,
-    },
-
+    bgColor: {},
     loading: {
       default: false,
       type: Boolean,
@@ -135,10 +179,17 @@ export default {
     variant: {
       default: "underlined",
     },
+    singleLine: Boolean,
   },
   data: () => ({
     dialog: false,
   }),
+
+  computed: {
+    has_giftcards() {
+      return this.giftCards?.length;
+    },
+  },
 };
 </script>
 

@@ -31,7 +31,7 @@
         <template v-slot:prepend>
           <b-giftcard-type-icon
             :color="item.raw.color"
-            :image="getShopImagePath(item.raw.bg)"
+            :image="getShopImagePath(item.raw.bg,128)"
             height="36"
           ></b-giftcard-type-icon>
         </template>

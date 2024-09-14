@@ -24,7 +24,7 @@
       <v-card class="text-start">
         <v-card-title>
           <v-avatar class="me-2" size="36">
-            <img :src="getShopImagePath(shop.icon, 64)" />
+            <v-img :src="getShopImagePath(shop.icon, 64)" />
           </v-avatar>
 
           {{ $t("share_order.retrieve_dialog_title") }}
