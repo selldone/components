@@ -13,12 +13,16 @@
   -->
 
 <template>
-  <div :style="{ height: height }" class="s--value-box" :class="{'-small':small}">
+  <div
+    :style="{ height: height }"
+    class="s--value-box"
+    :class="{ '-small': small }"
+  >
     <div class="flex-grow-1 border-end text-start pe-1 me-1">
       <v-icon v-if="icon" class="me-1">{{ icon }}</v-icon>
       {{ label }}
     </div>
-    <div :class="{ vb50: vb50 }" class="-val">
+    <div :class="{ vb50: vb50, vb25: vb25, vb75: vb75 }" class="-val">
       <u-check v-if="isBoolean(value)" :model-value="value" read-only></u-check>
       <span v-else>{{ value }}</span>
       <slot name="value"></slot>
@@ -34,12 +38,14 @@ export default {
     label: {},
     value: {},
     icon: {},
+    vb75: Boolean,
     vb50: {
       type: Boolean,
       default: false,
     },
+    vb25: Boolean,
     height: {},
-    small:Boolean
+    small: Boolean,
   },
 };
 </script>
@@ -67,16 +73,25 @@ export default {
     font-size: 0.875rem;
     font-weight: 500;
 
+    &.vb75 {
+      flex-basis: 75%;
+    }
+
     &.vb50 {
       flex-basis: 50%;
     }
+
+    &.vb25 {
+      flex-basis: 25%;
+    }
   }
 
-  &.-small{
+  &.-small {
     padding: 1px 4px;
     border-radius: 6px;
     margin: 2px auto;
     font-size: 10px;
+
     .-val {
       font-size: 0.7rem;
     }
