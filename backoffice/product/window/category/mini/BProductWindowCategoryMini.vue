@@ -23,8 +23,8 @@
     "
   >
     <div class="position-relative">
-      <v-icon class="no-inv" color="amber" size="100">folder</v-icon>
-
+      <v-icon class="no-inv" :color="isEmpty?'#959c9f':'amber'" size="100">folder</v-icon>
+<span v-if="isEmpty" class="absolute-top-right ma-1" style="font-size: 8px">{{$t('global.commons.empty')}}</span>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Connect service icon (top - Right) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div v-if="category.connect_id" class="top-r">
@@ -109,6 +109,7 @@ export default {
       required: true,
       type: Object,
     },
+    isEmpty:Boolean
   },
   data() {
     return {

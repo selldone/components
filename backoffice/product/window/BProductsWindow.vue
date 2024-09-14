@@ -431,6 +431,7 @@
                   'not-drop-able': current_dragged_folder === category,
                   'now-drop-enter': current_drop_enter_folder === category,
                 }"
+                :is-empty="category.is_empty/*We use it only in the vendor panel*/"
                 @select="selectFolder(category)"
               >
               </b-product-window-category-mini>
@@ -450,6 +451,7 @@
                 class="item h-100"
                 @select="selectFolder(category)"
                 @click:edit="showEditCategory(category)"
+                :is-empty="category.is_empty/*We use it only in the vendor panel*/"
               />
               <v-btn
                 v-if="selectMode && canSelectCategory"

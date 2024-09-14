@@ -16,20 +16,20 @@
   <div
     :category-id="category.id"
     :class="{ disabled: loading }"
-    :style="{ '--card-color': SaminColorDarkDeep }"
+    :style="{ '--card-color': isEmpty?'#959c9f':SaminColorDarkDeep }"
     class="widget-folder-root"
     @click="$emit('select')"
   >
     <div class="box">
       <s-widget
         :class="{ 'm-1': small, compact: compactMode }"
-        :color="SaminColorDarkDeep"
+        :color="isEmpty?'#959c9f':SaminColorDarkDeep"
         :title="`<h5 class='align-items-center pb-1 text-white '  style='font-size: 1.16rem;font-weight: 500'>    <span class=' ${star_class} mr-sm text-warning' style='font-size: 12px;'></span>  ${category.title}  </h5>`"
         body-class="p-0 mt"
         class="text-start card"
         custom-header
         dark
-        style="border-radius: 8px"
+        style="border-radius: 8px !important;"
       >
         <template v-slot:top-left>
           <v-btn
@@ -48,7 +48,6 @@
             dark
           ></circle-image>
         </template>
-
         <p
           :class="small ? 'small' : ''"
           :title="category.description"
@@ -59,6 +58,8 @@
           /></v-avatar>
 
           {{ category.description ? category.description.limitWords(12) : "" }}
+
+          <span v-if="isEmpty" class="mt-1 text-subtitle-2">{{$t('global.commons.empty')}}</span>
         </p>
 
         <div
@@ -200,6 +201,8 @@ export default {
       type: Boolean,
       default: false,
     },
+    isEmpty:Boolean
+
   },
 
   data() {
