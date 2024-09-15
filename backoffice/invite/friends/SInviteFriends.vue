@@ -16,7 +16,7 @@
   <div v-if="referral">
     <v-btn
       :size="large ? 'x-large' : 'small'"
-      color="#C2185B"
+      color="#000"
       target="_blank"
       @click="showDialog"
     >

@@ -480,32 +480,29 @@
       </div>
     </v-expand-transition>
 
-
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Free shipping ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
-      <div v-if="IS_MARKETPLACE">
-        <div class="widget-box mb-5" style="border-top: solid #6548cc medium">
-          <s-widget-header
-              title="Marketplace & Vendors"
-              icon="storefront"
-          ></s-widget-header>
+    <div v-if="IS_MARKETPLACE">
+      <div class="widget-box mb-5" style="border-top: solid #6548cc medium">
+        <s-widget-header
+          title="Marketplace & Vendors"
+          icon="storefront"
+        ></s-widget-header>
 
-          <v-list-subheader>
-            Here you can  enable this shipping method for your vendors.
-          </v-list-subheader>
+        <v-list-subheader>
+          Here you can enable this shipping method for your vendors.
+        </v-list-subheader>
 
-          <u-smart-switch
-              v-model="transportation.marketplace"
-              false-title="Not Available"
-              true-title="Available For Vendors"
-              true-description="Vendors can add their shipping services and couriers in their panel."
-              class="my-3"
-              false-gray
-          ></u-smart-switch>
-        </div>
+        <u-smart-switch
+          v-model="transportation.marketplace"
+          false-title="Not Available"
+          true-title="Available For Vendors"
+          true-description="Vendors can add their shipping services and couriers in their panel."
+          class="my-3"
+          false-gray
+        ></u-smart-switch>
       </div>
-
-
+    </div>
 
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Actions ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
@@ -641,10 +638,9 @@ import { ETA } from "@selldone/core-js/enums/logistic/ETA";
 import SCountrySelect from "../../ui/country/select/SCountrySelect.vue";
 import ShippingCostForm from "../transportation/ShippingCostForm.vue";
 import BTransportationCalculator from "../transportation/calculator/BTransportationCalculator.vue";
-import { LogesticHelper } from "@selldone/core-js/helper/logistic/LogesticHelper";
 import SWidgetButtons from "../../ui/widget/buttons/SWidgetButtons.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
-import {BusinessModel} from "@selldone/core-js/enums/shop/BusinessModel";
+import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 export default {
   name: "DeliveryFormWidget",
@@ -721,11 +717,9 @@ export default {
     dialog_new_profile: false,
   }),
   computed: {
-
     IS_MARKETPLACE() {
       return this.shop.model === BusinessModel.MARKETPLACE.code;
     },
-
 
     size_unit() {
       return ShopOptionsHelper.GetSizeUnit(this.shop);
@@ -733,17 +727,6 @@ export default {
 
     mass_unit() {
       return ShopOptionsHelper.GetMassUnit(this.shop);
-    },
-
-    price_min() {
-      return LogesticHelper.calculateShipping(
-        this.shop,
-        this.GetUserSelectedCurrency().code,
-        1,
-        1,
-        0,
-        this.transportation,
-      );
     },
 
     profiles() {

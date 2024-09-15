@@ -384,6 +384,17 @@
             </u-map-image>
           </template>
 
+          <div class="d-flex align-center py-1 small">
+            <v-icon>warehouse</v-icon>
+            <div style="height: 2px;background-color: #111" class="flex-grow-1 mx-1"></div>
+            <b>{{delivery_info.distance}} {{ delivery_info.distance_unit? delivery_info.distance_unit:distance_unit}}</b>
+            <div style="height: 2px;background-color: #111" class="flex-grow-1 mx-1"></div>
+
+            <v-icon>face</v-icon>
+
+          </div>
+
+
           <!-- =================== Preferences >  Preferred Delivery Time =================== -->
           <div v-if="delivery_info && delivery_info.custom">
             <p class="font-weight-bold mb-2 mt-5">
@@ -829,7 +840,7 @@ import UDenseCirclesUsers from "../../../../ui/dense-circles/users/UDenseCircles
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
-import { Basket } from "@selldone/core-js";
+import {Basket, ShopOptionsHelper} from "@selldone/core-js";
 import BTransportationServiceLabels from "@selldone/components-vue/backoffice/transportation/service/labels/BTransportationServiceLabels.vue";
 
 export default {
@@ -1085,6 +1096,10 @@ export default {
     },
     has_eta_time() {
       return [ETA.date_time.code].includes(this.transportation?.eta);
+    },
+
+    distance_unit() {
+      return ShopOptionsHelper.GetDistanceUnit(this.shop);
     },
   },
 

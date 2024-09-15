@@ -291,6 +291,10 @@ export default {
     variant() {
       return this.basketItem.variant;
     },
+    vendor_product() {
+      return this.basketItem.vendor_product;
+    },
+
     preferences() {
       return this.basketItem.preferences;
     },
@@ -372,7 +376,7 @@ export default {
     },
 
     lead_time() {
-      return this.leadProduct(this.product, this.variant);
+      return this.leadProduct(this.product, this.variant,this.vendor_product);
     },
   },
   methods: {

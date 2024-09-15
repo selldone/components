@@ -45,7 +45,10 @@
       }}</span>
     </template>
     <template v-else>
-      {{ amount }} <small class="font-weight-medium text-red" style="font-size: 10px">[{{$t('global.commons.invalid')}}]</small>
+      {{ amount }}
+      <small class="font-weight-medium text-red" style="font-size: 10px"
+        >[{{ $t("global.commons.invalid") }}]</small
+      >
     </template>
 
     <v-tooltip
@@ -119,7 +122,11 @@ export default {
     },
 
     currency_code() {
-      return this.isObject(this.currency) ? this.currency.code : this.currency;
+      let out = this.isObject(this.currency)
+        ? this.currency.code
+        : this.currency;
+
+      return out ? out : this.GetUserSelectedCurrency()?.code;
     },
     formatted_number() {
       if (!this.is_valid_amount) return null;

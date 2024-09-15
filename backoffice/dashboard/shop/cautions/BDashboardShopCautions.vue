@@ -47,8 +47,7 @@ export default defineComponent({
   computed: {
     cautions() {
       const cautions = ShopCautionHelper.Generate(this.shop);
-      if (cautions.length < 3) return cautions;
-      return [cautions[0]]; // Return only one item each time!
+      return cautions?.limit(3); // Limit the number of cautions to 3
     },
   },
 });

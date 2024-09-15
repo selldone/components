@@ -22,7 +22,7 @@
       product.deleted_at ? 'op-0-7 -deleted' : '',
       selected || iSelected ? 'border-selected ' : '',
       shortcut ? '-shortcut' : '',
-      { 'disabled': disabled },
+      { disabled: disabled },
     ]"
     :dark="dark"
     :deleted_at="getFromNowString(product.deleted_at)"
@@ -42,7 +42,7 @@
       <v-btn
         v-if="showEditButton"
         :to="{
-          name: IS_VENDOR_PANEL?'Vendor_AddProduct':'BPageProductEdit',
+          name: IS_VENDOR_PANEL ? 'Vendor_AddProduct' : 'BPageProductEdit',
           params: { product_id: product.id },
           hash: '#general',
         }"
@@ -173,7 +173,7 @@
     </div>
     <div v-if="disabled" class="text-subtitle-2 text-center">
       <v-icon class="me-1">warning_amber</v-icon>
-      {{$t('global.commons.can_not_edit')}}
+      {{ $t("global.commons.can_not_edit") }}
     </div>
 
     <product-variants-view
@@ -194,7 +194,7 @@
       @click.stop="
         showEditButton
           ? $router.push({
-              name: IS_VENDOR_PANEL?'Vendor_AddProduct':'BPageProductEdit',
+              name: IS_VENDOR_PANEL ? 'Vendor_AddProduct' : 'BPageProductEdit',
               params: { product_id: product.id },
               hash: '#price',
             })
@@ -205,7 +205,16 @@
         >{{ $t("global.commons.price") }}:
       </small>
 
+      <!-- Price > ⛔ Invalid exchange rate -->
+      <u-price-invalid
+        v-if="isNaN(price_converted)"
+        :currency="product.currency"
+        small
+      >
+      </u-price-invalid>
+
       <u-price
+        v-else
         :amount="price_converted"
         class="font-weight-medium hover-able mx-1"
         large
@@ -429,7 +438,9 @@
               <router-link
                 v-if="product.ar_src"
                 :to="{
-                  name: IS_VENDOR_PANEL?'Vendor_Product3DPage': 'BPageProduct3D',
+                  name: IS_VENDOR_PANEL
+                    ? 'Vendor_Product3DPage'
+                    : 'BPageProduct3D',
                   params: { product_id: product.id },
                 }"
                 class="row-hover mx-auto"
@@ -447,7 +458,9 @@
               <router-link
                 v-if="product.video"
                 :to="{
-                  name:IS_VENDOR_PANEL?'Vendor_AddProduct': 'BPageProductEdit',
+                  name: IS_VENDOR_PANEL
+                    ? 'Vendor_AddProduct'
+                    : 'BPageProductEdit',
                   params: { product_id: product.id },
                   hash: '#images',
                 }"
@@ -461,7 +474,10 @@
               </router-link>
 
               <router-link
-                v-if="product.reselling && !IS_VENDOR_PANEL/*Con not be vendor [wholesaling selldone]!*/"
+                v-if="
+                  product.reselling &&
+                  !IS_VENDOR_PANEL /*Con not be vendor [wholesaling selldone]!*/
+                "
                 :to="{
                   name: 'BPageProductDropshipping',
                   params: { product_id: product.id },
@@ -506,10 +522,14 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
 import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import BNoteButton from "../../../../note/button/BNoteButton.vue";
+import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
+import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 
 export default {
   name: "BProductWindowProductLarge",
   components: {
+    UPriceInvalid,
+    UCurrencyIcon,
     BNoteButton,
     ProductVariantsView,
     UTimeProgressBar,
@@ -619,8 +639,8 @@ export default {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
 

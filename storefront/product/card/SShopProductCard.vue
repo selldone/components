@@ -165,14 +165,16 @@
         </div>
 
         <div
-          :class="{ no_variants: !hasVariant || (isInsta && $vuetify.display.xs) }"
+          :class="{
+            no_variants: !hasVariant || (isInsta && $vuetify.display.xs),
+          }"
           class="card__info"
           style="z-index: 2"
         >
           <product-variants-view
             v-if="hasVariant && !(isInsta && $vuetify.display.xs)"
             v-model:selected-variant="current_variant"
-            :limit="isInsta?3:5"
+            :limit="isInsta ? 3 : 5"
             :variants="product.variants"
             center
             class="toggle-visible-on-hover"
@@ -269,8 +271,16 @@
                 </p>
                 <p :class="{ 'mt-2': !isInsta, 'mt-1': isInsta }" class="">
                   <!-- Main price -->
+                  <!-- Price > ⛔ Invalid exchange rate -->
+                  <u-price-invalid
+                    v-if="isNaN(price_in_selected_currency)"
+                    :currency="product.currency"
+                    small
+                  >
+                  </u-price-invalid>
 
                   <u-price
+                    v-else
                     :amount="price_in_selected_currency"
                     :medium="!dense && !isInsta && !isSmall"
                     class="-price-value"
@@ -358,41 +368,37 @@
           >
           </v-img>
 
-          <div
-
-            class="text-start px-2 flex-grow-1"
-          >
+          <div class="text-start px-2 flex-grow-1">
             <p class="mb-1 flex-grow-1 row-pro-title">{{ product.title }}</p>
 
             <div class="single-line py-1">
               <v-chip
-                  v-if="product.rate_count"
-                  class="me-2"
-                  color="#fafafa"
-                  variant="flat"
-                  size="x-small"
-
+                v-if="product.rate_count"
+                class="me-2"
+                color="#fafafa"
+                variant="flat"
+                size="x-small"
               >
                 <v-rating
-                    :model-value="product.rate"
-                    active-color="yellow-darken-3"
-                    color="grey-darken-1"
-                    density="compact"
-                    half-increments
-                    readonly
-                    size="x-small"
-                    class="me-1"
+                  :model-value="product.rate"
+                  active-color="yellow-darken-3"
+                  color="grey-darken-1"
+                  density="compact"
+                  half-increments
+                  readonly
+                  size="x-small"
+                  class="me-1"
                 />
                 {{ Number(product.rate).toFixed(1) }}
               </v-chip>
 
               <span v-if="product.rate_count" class="text-black small"
-              ><b class="me-2">{{
+                ><b class="me-2">{{
                   numeralFormat(product.rate_count, "0,0")
                 }}</b>
 
-              <small>{{ $t("product_card.review_unit") }}</small>
-            </span>
+                <small>{{ $t("product_card.review_unit") }}</small>
+              </span>
             </div>
 
             <product-variants-view
@@ -506,11 +512,15 @@ import UPrice from "../../../ui/price/UPrice.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
-import {PriceHelper} from "@selldone/core-js";
+import { PriceHelper } from "@selldone/core-js";
+import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
+import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 
 export default {
   name: "SShopProductCard",
   components: {
+    UPriceInvalid,
+    UCurrencyIcon,
     UCountDown,
     UColorCircle,
     UPrice,
@@ -1000,7 +1010,7 @@ export default {
     background-color: rgba(255, 255, 255, 0.9);
 
     border-radius: 0px;
-    display: flex ;
+    display: flex;
     align-items: center;
     justify-content: center;
 
@@ -1476,14 +1486,13 @@ export default {
     background-color: #fff !important;
     backdrop-filter: unset !important;
 
-
     position: absolute;
     bottom: 0;
     width: 100%;
     height: max-content !important;
     padding: 2px 4px !important;
     margin: 0;
-    border-radius: 0px ;
+    border-radius: 0px;
     display: flex !important;
     align-items: center;
     justify-content: center;
@@ -1491,7 +1500,6 @@ export default {
     @media (max-width: 450px) {
       font-size: 0.7rem;
     }
-
 
     .toggle-visible-on-hover {
       width: auto !important;
@@ -1526,8 +1534,6 @@ export default {
         }
       }
     }
-
-
   }
   .price-label {
     font-size: 10px;

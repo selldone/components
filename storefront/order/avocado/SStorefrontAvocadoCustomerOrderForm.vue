@@ -29,12 +29,14 @@
         {{ $t("avocado.step1") }}
       </p>
 
-      <div class="border p-2 rounded-28px mt-2 bg-light">
+      <div class="border pa-2 mt-2 rounded-lg">
         <v-text-field
           v-model="title"
           :label="$t('global.commons.title')"
           :placeholder="$t('avocado.title_plc')"
-          class="mt-5" variant="underlined"
+          variant="solo-filled"
+          flat
+          rounded="md"
         >
         </v-text-field>
 
@@ -43,7 +45,9 @@
           :label="$t('global.commons.description')"
           :placeholder="$t('avocado.description_plc')"
           auto-grow
-          rows="2" variant="underlined"
+          variant="solo-filled"
+          flat
+          rounded="md"
         >
         </v-textarea>
 
@@ -51,7 +55,10 @@
           v-model="link"
           :label="$t('global.commons.link')"
           :placeholder="$t('avocado.link_plc')"
-          append-inner-icon="link" variant="underlined"
+          append-inner-icon="link"
+          variant="solo-filled"
+          flat
+          rounded="md"
         >
         </v-text-field>
 
@@ -61,7 +68,10 @@
           :messages="$t('avocado.image_msg')"
           accept="image/*"
           append-inner-icon="image"
-          prepend-icon="" variant="underlined"
+          prepend-icon=""
+          variant="solo-filled"
+          flat
+          rounded="md"
         />
 
         <u-number-input
@@ -69,7 +79,10 @@
           :label="$t('global.commons.count')"
           :min="1"
           class="mt-5"
-          show-buttons variant="underlined"
+          show-buttons
+          variant="solo-filled"
+          flat
+          rounded="md"
         >
         </u-number-input>
 
@@ -79,7 +92,6 @@
             :loading="busy_save_items"
             class="-add-btn"
             color="success"
-
             rounded
             size="x-large"
             @click="addItem()"
@@ -103,7 +115,6 @@
           <v-btn
             class="-delivery-btn"
             color="#03A9F4"
-
             rounded
             size="x-large"
             @click="showMapSelect"

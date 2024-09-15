@@ -36,7 +36,11 @@
     :readonly="readonly || is_locked"
     :rounded="rounded"
     :single-line="singleLine"
-    :suffix="!clearable || newValue!==null? suffix:undefined/*Do not show suffix when it's null*/"
+    :suffix="
+      !clearable || newValue !== null
+        ? suffix
+        : undefined /*Do not show suffix when it's null*/
+    "
     :theme="dark ? 'dark' : 'light'"
     :variant="
       variant
@@ -91,9 +95,9 @@
         variant="text"
         @click="is_locked = !is_locked"
       >
-        <v-icon :size="dense ? 18 : 24">{{
-          is_locked ? "lock" : "lock_open"
-        }}</v-icon>
+        <v-icon :size="dense ? 18 : 24"
+          >{{ is_locked ? "lock" : "lock_open" }}
+        </v-icon>
       </v-btn>
 
       <v-btn
@@ -320,7 +324,8 @@ export default {
   watch: {
     modelValue: {
       handler: function (newVal, oldVal) {
-        if (this.focus) return;
+        if (this.focus && newVal === this.newValue /*Updated externally*/)
+          return;
         //  console.log("handler",newVal)
 
         this.newValue = NumberHelper.toEnglishFloat(newVal, this.decimal);

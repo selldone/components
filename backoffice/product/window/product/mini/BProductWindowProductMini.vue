@@ -14,9 +14,12 @@
 
 <template>
   <div
-    :class="{ 'op-0-5 ': product.deleted_at ,'disabled sub-caption b-12px':disabled}"
+    :class="{
+      'op-0-5 ': product.deleted_at,
+      'disabled sub-caption b-12px': disabled,
+    }"
     :product-id="product.id"
-    :caption="disabled?$t('global.commons.can_not_edit'):undefined"
+    :caption="disabled ? $t('global.commons.can_not_edit') : undefined"
     class="position-relative d-flex flex-column align-center justify-center hover-up tooltip-con"
     @click="
       $emit('select');
@@ -202,10 +205,21 @@
     <!-- Price -->
 
     <div>
-      <u-price :amount="price_converted"></u-price>
+      <!-- Price > ⛔ Invalid exchange rate -->
+      <u-price-invalid
+        v-if="isNaN(price_converted)"
+        :currency="product.currency"
+        small
+      >
+      </u-price-invalid>
+
+
+      <u-price v-else :amount="price_converted"></u-price>
 
       <v-chip
-        v-if="discount_percent/*It will return value if discount be valid in this time*/"
+        v-if="
+          discount_percent /*It will return value if discount be valid in this time*/
+        "
         class="px-1 ms-1"
         color="#C2185B"
         label
@@ -303,10 +317,14 @@ import UColorCircle from "../../../../../ui/color/circle/UColorCircle.vue";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import BNoteButton from "../../../../note/button/BNoteButton.vue";
 import { DateConverter } from "@selldone/core-js";
+import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
+import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 
 export default {
   name: "BProductWindowProductMini",
   components: {
+    UPriceInvalid,
+    UCurrencyIcon,
     BNoteButton,
     UColorCircle,
     ProductVariantsView,
@@ -355,8 +373,8 @@ export default {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
-          this.$route.params.vendor_id &&
-          this.$route.matched.some((record) => record.meta.vendor)
+        this.$route.params.vendor_id &&
+        this.$route.matched.some((record) => record.meta.vendor)
       );
     },
 
@@ -423,13 +441,13 @@ export default {
     status_obj() {
       return ProductStatus[this.product.status];
     },
-    disabled(){
+    disabled() {
       // On store panel always all products are enabled to click!
-      if(!this.IS_VENDOR_PANEL)return false;
+      if (!this.IS_VENDOR_PANEL) return false;
 
       // It's not a product of the vendor! It has multi vendors, so vendor can not edit it in their panel.
-      return !this.vendor
-    }
+      return !this.vendor;
+    },
   },
 };
 </script>

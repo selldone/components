@@ -80,10 +80,7 @@
             <v-icon>close</v-icon>
           </v-btn>
         </div>
-        <v-expansion-panels
-          class="border-between-vertical"
-          flat
-        >
+        <v-expansion-panels class="border-between-vertical" flat>
           <!-- ――――――――――――――――――――― Shop User Menu List ――――――――――――――――――――― -->
 
           <v-expansion-panel v-if="USER()" class="py-4">
@@ -103,7 +100,7 @@
                 </v-list-item-subtitle>
               </v-list-item>
             </v-expansion-panel-title>
-            <v-expansion-panel-text class="mx-n6" >
+            <v-expansion-panel-text class="mx-n6">
               <s-shop-user-menu-list
                 :shop="shop"
                 navigation
@@ -236,9 +233,14 @@
         </div>
 
         <!-- ――――――――――――――――――――― Social links ――――――――――――――――――――― -->
-        <v-spacer></v-spacer>
-        <v-sheet class="border-top mt-16 text-subtitle-2 pt-5" color="#fafafa">
-          <div v-if="info" class="pa-2">
+
+        <v-sheet
+          v-if="
+            info?.phone || info?.email || info?.address || shop?.socials?.length
+          "
+          class="border-top mt-16 text-subtitle-2 pt-5 border-top mt-3"
+        >
+          <div class="pa-2">
             <div v-if="info.phone" class="pa-1">
               <v-icon class="me-1" size="small">phone</v-icon>
               <span v-copy>{{ info.phone }}</span>

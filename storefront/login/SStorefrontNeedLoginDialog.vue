@@ -20,6 +20,7 @@
     max-width="98vw"
     persistent
     scrollable
+    :class="{ pen: busy_user }"
   >
     <v-btn
       class="absolute-top-end m-3 z2"
@@ -36,6 +37,24 @@
       :shop="shop"
       class="rounded-0"
     ></s-shop-login>
+
+    <div
+      v-if="busy_user"
+      class="d-flex align-center justify-center"
+      style="
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #aaaaaa44;
+        backdrop-filter: blur(6px);
+      "
+    >
+      <span class="text-h3 font-weight-thin" style="color: #fff">
+        {{ $t("global.commons.waiting") }}
+      </span>
+    </div>
   </v-bottom-sheet>
 </template>
 
@@ -56,13 +75,15 @@ export default {
   data: () => ({
     show_dialog: false,
   }),
-  computed: {},
+  computed: {
+    busy_user() {
+      return this.$store.getters.getBusyUser;
+    },
+  },
   watch: {
-
     show_dialog(val) {
       this.$store.commit("setForceHideNavigation", val);
     },
-
   },
   created() {
     //█████████████████████████████████████████████████████████████

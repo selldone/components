@@ -68,7 +68,15 @@
         </div>
       </v-tooltip>
       <!-- ............................................................... -->
+      <!-- Price > ⛔ Invalid exchange rate -->
+      <u-price-invalid
+        v-if="isNaN(calculated_price)"
+        :currency="product.currency"
+      >
+      </u-price-invalid>
+
       <u-price
+        v-else
         :amount="calculated_price * price_multi"
         class="price-value font-weight-black single-line"
       ></u-price>
@@ -132,10 +140,12 @@ import SProductPrice from "../../../../storefront/product/price/SProductPrice.vu
 import { ExtraPricingHelper } from "@selldone/core-js/helper/shop/ExtraPricingHelper";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import SProductSectionWaitingAuction from "../auction/SProductSectionWaitingAuction.vue";
+import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
+import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 
 export default {
   name: "SProductSectionPrice",
-  components: { SProductSectionWaitingAuction, SProductPrice },
+  components: {UPriceInvalid, UCurrencyIcon, SProductSectionWaitingAuction, SProductPrice },
   props: {
     shop: {
       required: true,

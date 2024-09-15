@@ -278,7 +278,8 @@
       <template v-slot:item.price="{ item }">
         <div
           :class="{ '-focus': show_price_dialog && selected_item === item }"
-          class="editable center-flex rounded-28px m-2 price-btn px-5"
+          class="editable center-flex rounded-lg ma-1 price-btn px-5"
+          :style="{height: $vuetify.display.xs?'42px':'65px'}"
           @click="showEditPrice(item)"
         >
           <v-icon
@@ -288,7 +289,14 @@
             size="small"
             >local_offer
           </v-icon>
+          <u-price-invalid
+            v-if="
+              isNaN(CalcPriceProductCurrentCurrency(shop, item, item.variant))
+            "
+            :currency="item.currency"
+          ></u-price-invalid>
           <u-price
+            v-else
             :amount="CalcPriceProductCurrentCurrency(shop, item, item.variant)"
             medium
           ></u-price>
@@ -317,32 +325,37 @@
 
         <div
           v-else-if="item.type === ProductType.PHYSICAL.code"
-          :class="{ 'min-width-250': $vuetify.display.smAndUp }"
+
           class="p-2"
         >
           <u-number-input
             v-model="item.number"
             :min="item.add ? -1000 : 0"
             background-color="#fafafa"
-            class="max-width-field inline-block vertical-align-middle center-input strong-field"
+            class="max-width-field inline-block vertical-align-middle center-input strong-field min-width-300"
+
             flat
             hide-details
             no-padding
-            rounded
+            rounded="lg"
             variant="solo-filled"
+            :dense="$vuetify.display.xs"
           >
             <template v-slot:prepend-inner>
               <v-btn-toggle
                 v-model="item.add"
-                class="mx-2 vertical-align-middle"
+                class="vertical-align-middle pa-1 bg-white"
                 density="compact"
                 mandatory
-                rounded="xl"
+                rounded="lg"
+                base-color="#efefef"
+                :style="{height: $vuetify.display.xs?'42px':'52px'}"
+                :selected-class="isChanged(item)?'elevation-1':undefined"
               >
-                <v-btn :value="true" selected-class="green-flat" size="small">
+                <v-btn :value="true" selected-class="green-flat " size="small">
                   {{ $t("global.actions.add") }}
                 </v-btn>
-                <v-btn :value="false" selected-class="blue-flat" size="small">
+                <v-btn :value="false" selected-class="blue-flat " size="small">
                   {{ $t("global.actions.set") }}
                 </v-btn>
               </v-btn-toggle>
@@ -356,18 +369,19 @@
                     : item.number === item.quantity,
                 }"
                 :color="
-                  (item.add ? item.number === 0 : item.number === item.quantity)
-                    ? '#999'
-                    : '#000'
+                  isChanged(item)
+                    ? '#000'
+                    : '#999'
                 "
                 :loading="busy_count === item.key"
                 :variant="
-                  (item.add ? item.number === 0 : item.number === item.quantity)
-                    ? 'plain'
-                    : 'elevated'
+                    isChanged(item)
+                    ? 'elevated'
+                    : 'plain'
                 "
-                class="mx-2 vertical-align-middle"
-                rounded
+                class="ms-2 me-n1 vertical-align-middle tnt"
+                rounded="lg"
+                :min-height="$vuetify.display.xs?36:52"
                 @click.stop="updateProductQuantity(item)"
               >
                 {{ $t("global.actions.save") }}
@@ -411,26 +425,35 @@
     transition="dialog-bottom-transition"
   >
     <v-card v-if="item_clone && show_price_dialog_pre" class="text-start">
-
       <v-card-title class="d-flex align-center">
-        <u-avatar-folder class="me-2" size="48" elevated side-icon="shelves" placeholder-icon="inventory"     :src="getShopImagePath(selected_item.icon, IMAGE_SIZE_SMALL)" is-gray border-size="8">
+        <u-avatar-folder
+          class="me-2"
+          size="48"
+          elevated
+          side-icon="shelves"
+          placeholder-icon="inventory"
+          :src="getShopImagePath(selected_item.icon, IMAGE_SIZE_SMALL)"
+          is-gray
+          border-size="8"
+        >
         </u-avatar-folder>
 
         <div class="flex-grow-1 overflow-hidden">
           {{ selected_item?.product?.title }}
 
-          <div class="small single-line">{{ selected_item?.product?.title_en?.limitWords(12) }}</div>
+          <div class="small single-line">
+            {{ selected_item?.product?.title_en?.limitWords(12) }}
+          </div>
         </div>
 
         <v-btn
-            class="ms-2"
-            icon
-            @click="show_price_dialog = false"
-            variant="text"
+          class="ms-2"
+          icon
+          @click="show_price_dialog = false"
+          variant="text"
         >
           <v-icon>close</v-icon>
         </v-btn>
-
       </v-card-title>
 
       <v-card-text class="thin-scroll">
@@ -514,10 +537,12 @@ import BInventoryBulkPrice from "../../inventory/bulk/price/BInventoryBulkPrice.
 import BInventoryBulkDiscount from "../../inventory/bulk/discount/BInventoryBulkDiscount.vue";
 import BInventoryListGroupHeader from "../../inventory/list/group-header/BInventoryListGroupHeader.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 
 export default {
   name: "BInventoryList",
   components: {
+    UPriceInvalid,
     UAvatarFolder,
     BInventoryListGroupHeader,
     BInventoryBulkDiscount,
@@ -664,7 +689,7 @@ export default {
             value: "price",
           },
           {
-            title: this.$t("inventory_list.table.edit"),
+            title: '',
             align: "center",
             value: "change",
             sortable: false,
@@ -687,19 +712,19 @@ export default {
         },
         {
           title: this.$t("inventory_list.table.code"),
-          align: "center",
+          align: "start",
           value: "id",
           sortable: true,
         },
         {
           title: this.$t("inventory_list.table.sku"),
-          align: "center",
+          align: "start",
           value: "sku",
           sortable: true,
         },
         {
           title: this.$t("inventory_list.table.mpn"),
-          align: "center",
+          align: "start",
           value: "mpn",
           sortable: true,
         },
@@ -1067,6 +1092,11 @@ export default {
     showBulkDiscount() {
       this.show_bulk_discount = true;
     },
+
+
+    isChanged(item){
+      return !(item.add ? item.number === 0 : item.number === item.quantity)
+    }
   },
 };
 </script>

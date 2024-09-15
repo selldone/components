@@ -19,7 +19,7 @@
         {{ $t("admin_shop.dashboard.performance.payments") }}
       </p>
 
-      <b :caption="$t('global.commons.total')" class="sub-caption b-12px me-1">
+      <b v-if="payments[selected_currency]" :caption="$t('global.commons.total')" class="sub-caption b-12px me-1">
         <u-price
           :amount="payments[selected_currency]"
           :currency="selected_currency"

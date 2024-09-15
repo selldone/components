@@ -27,7 +27,6 @@ import {ShopURLs} from "@selldone/core-js/helper/url/ShopURLs";
 import {ColorHelper} from "@selldone/core-js/helper/color/ColorHelper";
 import {CurrencyHelper} from "@selldone/core-js/helper/currency/CurrencyHelper.ts";
 import {PriceHelper} from "@selldone/core-js/helper/price/PriceHelper";
-import {LogesticHelper} from "@selldone/core-js/helper/logistic/LogesticHelper";
 import {GiftStatus} from "@selldone/core-js/enums/wallet/gift/GiftStatus";
 import {GiftStProgramTypes} from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes";
 import {MapHelper} from "@selldone/core-js/helper/map/MapHelper";
@@ -57,7 +56,7 @@ import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
 import {Slugify} from "@selldone/core-js/utils/slugify/slugify";
 import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
 import {UserProfile} from "@selldone/core-js/models/user/user_profile.model";
-import {Basket, BasketItemReturn, Club, Map, Order} from "@selldone/core-js";
+import {Basket, BasketItemReturn, Club, Map, Order, VendorProduct,} from "@selldone/core-js";
 
 //――― User Device Preferences ―――
 
@@ -190,8 +189,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                                                                              return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                                                                            },*/
+                                                                                  return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                                                                                },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -357,8 +356,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                                                                              return Num2persian(number);
-                                                                            },*/
+                                                                                  return Num2persian(number);
+                                                                                },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -404,9 +403,15 @@ const CoreMixin = {
       else if (status === "Sold") return this.$t("global.status.sold");
       else if (status === "Open") return this.$t("global.status.open");
       else if (status === "Cancel") return this.$t("global.status.cancel");
-      else if (status.toLowerCase() === "accept" || status.toLowerCase() === "accepted")
+      else if (
+        status.toLowerCase() === "accept" ||
+        status.toLowerCase() === "accepted"
+      )
         return this.$t("global.status.accept");
-      else if (status.toLowerCase() === "reject" || status.toLowerCase() === "rejected")
+      else if (
+        status.toLowerCase() === "reject" ||
+        status.toLowerCase() === "rejected"
+      )
         return this.$t("global.status.reject");
       else if (status.toLowerCase() === "pending")
         return this.$t("global.status.pending");
@@ -426,7 +431,7 @@ const CoreMixin = {
       else if (status === "Open") return "#1976D2";
       else if (status === "Cancel") return "#D32F2F";
 
-      return '#111'
+      return "#111";
     },
     getStatusIcon(status: string) {
       if (!status) return "";
@@ -775,10 +780,7 @@ const CoreMixin = {
     slugify(text: string | null) {
       if (!text) return "";
 
-      return (
-        Slugify.apply(text.toString())
-
-      ); // Trim - from end of text
+      return Slugify.apply(text.toString()); // Trim - from end of text
     },
 
     //―――――――――――――――――――――― Gift ――――――――――――――――――――
@@ -793,7 +795,7 @@ const CoreMixin = {
     //―――――――――――――――――――――― Country ――――――――――――――――――――
 
     getCountryName(code: ICountryCode) {
-      if(!code)return null;
+      if (!code) return null;
       const key = `countries.${code}`;
       const translated = this.$t(key);
       //console.log("🌍", code, translated, key)
@@ -1045,7 +1047,12 @@ const CoreMixin = {
           current_extra_pricing,
         );
       } catch (e) {
-        console.error("⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",product.currency,'->',to_currency);
+        console.error(
+          "⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",
+          product.currency,
+          "->",
+          to_currency,
+        );
         return "🚨";
       }
     },
@@ -1080,7 +1087,12 @@ const CoreMixin = {
           to_currency,
         );
       } catch (e) {
-        console.error("⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",product.currency,'->',to_currency);
+        console.error(
+          "⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",
+          product.currency,
+          "->",
+          to_currency,
+        );
         return "🚨";
       }
     },
@@ -1101,10 +1113,26 @@ const CoreMixin = {
       );
     },
 
-    leadProduct(product: Product, variant: ProductVariant | null = null) {
+    /**
+     * Lead -1: Unknown | 0: Instance
+     * @param product
+     * @param variant
+     * @param vendor_product
+     */
+    leadProduct(
+      product: Product,
+      variant: ProductVariant | null = null,
+      vendor_product: VendorProduct | null = null,
+    ) {
       if (!product) return 0;
 
-      if (variant && variant.lead > 0) {
+      // Marketplace:
+      if (vendor_product && vendor_product.lead >= 0) {
+        return vendor_product.lead;
+      }
+
+      // Variant:
+      if (variant && variant.lead >= 0) {
         return variant.lead;
       }
       return product.lead;
@@ -1291,26 +1319,6 @@ const CoreMixin = {
       return productType.image;
     },
 
-    calculateWeightBasket(basket: Basket) {
-      return LogesticHelper.calculateWeightBasket(basket);
-    },
-
-    calculateVolumeBasket(basket: Basket) {
-      return LogesticHelper.calculateVolumeBasket(basket);
-    },
-
-    calculateDistanceBasket(origin: Map.ILocation, target: Map.ILocation) {
-      return LogesticHelper.calculateDistanceBasket(origin, target);
-    },
-    GPSCalculateDistance(
-      lat1: number,
-      lon1: number,
-      lat2: number,
-      lon2: number,
-    ) {
-      return LogesticHelper.GPSCalculateDistance(lat1, lon1, lat2, lon2);
-    },
-
     //―――――――――――――――――――――― Notification ――――――――――――――――――――
     HasNotificationSupported() {
       try {
@@ -1324,8 +1332,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                                                              PushNotification.AskForPermission();
-                                                                            },*/
+                                                                                  PushNotification.AskForPermission();
+                                                                                },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 
@@ -1541,7 +1549,7 @@ const CoreMixin = {
       return ShopOptionsHelper.GetSizeUnit(shop);
     },
     getDistanceDimension(shop: Shop) {
-      return this.$t("global.dimensions.km");
+      return ShopOptionsHelper.GetDistanceUnit(shop);
     },
     getWeightDimension(shop: Shop) {
       return ShopOptionsHelper.GetMassUnit(shop);
@@ -1788,7 +1796,9 @@ const CoreMixin = {
     //―――――――――――――――――――――― Page Scroll Helper ――――――――――――――――――――
     GoToTopPage() {
       this.$nextTick(() => {
-        ScrollHelper.scrollToTop(0, "smooth");
+        this.$nextTick(() => {
+          ScrollHelper.scrollToTop(0, "smooth");
+        });
       });
     },
 
@@ -1823,7 +1833,7 @@ const CoreMixin = {
       }
 
       // Extract the filename from the content-disposition header
-      const startFileNameIndex = headerLine.lastIndexOf('=') + 1;
+      const startFileNameIndex = headerLine.lastIndexOf("=") + 1;
       let filename = headerLine.substring(startFileNameIndex);
 
       // Remove any extra quotes or whitespace

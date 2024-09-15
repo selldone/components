@@ -95,7 +95,7 @@
     <!-- ------------------------ Billing Info ------------------------ -->
 
     <template v-if="billing">
-      <hr />
+      <hr class="my-2" />
 
       <u-text-value-dashed>
         <template v-slot:label>

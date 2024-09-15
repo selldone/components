@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--value-dashed">
+  <div class="s--value-dashed" :class="{ 'flex-wrap': wrap }">
     <slot name="label"></slot>
     <div class="dashed-flex-space"></div>
     <slot></slot>
@@ -23,7 +23,9 @@
 <script>
 export default {
   name: "UTextValueDashed",
-  props: {},
+  props: {
+    wrap: Boolean,
+  },
 };
 </script>
 

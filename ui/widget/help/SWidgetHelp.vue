@@ -21,6 +21,8 @@
       color="#4f46e5"
       slim
       prepend-icon="tips_and_updates"
+      :height="inline ? 'auto' : undefined"
+      :class="{ 'px-1': inline }"
     >
       <span style="text-decoration: underline">
         {{ title }}
@@ -88,6 +90,7 @@ export default defineComponent({
     code: {
       required: true,
     },
+    inline: Boolean,
   },
   data: () => ({
     dialog: false,

@@ -228,7 +228,6 @@
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
-import { LogesticHelper } from "@selldone/core-js/helper/logistic/LogesticHelper";
 
 export default {
   name: "BTransportationCalculator",
@@ -249,17 +248,6 @@ export default {
     cal_p: 0,
   }),
   computed: {
-    price_min() {
-      return LogesticHelper.calculateShipping(
-        this.shop,
-        this.GetUserSelectedCurrency().code,
-        1,
-        1,
-        0,
-        this.transportation,
-      );
-    },
-
     currency() {
       return this.transportation.currency;
     },
