@@ -821,6 +821,14 @@ a {
 .rounded-18px {
   border-radius: 18px !important;
 }
+.rounded-t-18px{
+    border-top-left-radius: 18px !important;
+    border-top-right-radius: 18px !important;
+}
+.rounded-b-18px{
+    border-bottom-left-radius: 18px !important;
+    border-bottom-right-radius: 18px !important;
+}
 
 .rounded-28px {
   border-radius: 28px !important;

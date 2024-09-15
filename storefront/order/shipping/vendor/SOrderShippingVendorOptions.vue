@@ -28,6 +28,7 @@
     :warehouse="vendorShippingOption.warehouse"
     :selectedPickup="selected_pickup"
     @pickupSelected="selectPickup"
+    pickup-item-bg-color="#f4ffed"
   ></s-cart-shipping-options>
 </template>
 
