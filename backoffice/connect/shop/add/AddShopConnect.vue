@@ -33,21 +33,53 @@
         :shop="shop"
       ></connect-input-field>
 
-     <div class="mb-2">
-       <v-chip v-if="connect.read_categories" prepend-icon="folder" label size="x-small" color="amber" variant="flat" class="me-1">
-         {{ $t("global.commons.categories") }}
-       </v-chip>
-       <v-chip v-if="connect.read_products" prepend-icon="shelves" label size="x-small" color="#1976D2" variant="flat" class="me-1">
-         {{ $t("global.commons.products") }}
-       </v-chip>
-       <v-chip v-if="connect.read_customers" prepend-icon="people" label size="x-small" color="#673AB7" variant="flat" class="me-1">
-         {{ $t("global.commons.customers") }}
-       </v-chip>
-       <v-chip v-if="connect.read_orders" prepend-icon="shopping_bag" label size="x-small" color="#009688" variant="flat" class="me-1">
-         {{ $t("global.commons.orders") }}
-       </v-chip>
-     </div>
-
+      <!-- Connect Chips -->
+      <div v-if="connect" class="mb-2">
+        <v-chip
+          v-if="connect.read_categories"
+          prepend-icon="folder"
+          label
+          size="x-small"
+          color="amber"
+          variant="flat"
+          class="me-1"
+        >
+          {{ $t("global.commons.categories") }}
+        </v-chip>
+        <v-chip
+          v-if="connect.read_products"
+          prepend-icon="shelves"
+          label
+          size="x-small"
+          color="#1976D2"
+          variant="flat"
+          class="me-1"
+        >
+          {{ $t("global.commons.products") }}
+        </v-chip>
+        <v-chip
+          v-if="connect.read_customers"
+          prepend-icon="people"
+          label
+          size="x-small"
+          color="#673AB7"
+          variant="flat"
+          class="me-1"
+        >
+          {{ $t("global.commons.customers") }}
+        </v-chip>
+        <v-chip
+          v-if="connect.read_orders"
+          prepend-icon="shopping_bag"
+          label
+          size="x-small"
+          color="#009688"
+          variant="flat"
+          class="me-1"
+        >
+          {{ $t("global.commons.orders") }}
+        </v-chip>
+      </div>
 
       <v-expand-transition>
         <div v-if="connect">
@@ -99,8 +131,6 @@
             v-html="$t('shop_connect.edit.migration_tips')"
           ></div>
 
-
-
           <v-expand-transition>
             <div v-if="!params.test">
               <u-fade-scroll>
@@ -130,7 +160,7 @@
             </div>
           </v-expand-transition>
 
-          <div class="widget-buttons">
+          <div v-if="connect" class="widget-buttons">
             <v-btn
               v-if="connect.direct_setup"
               :disabled="
@@ -379,7 +409,6 @@ import { ToQueryString } from "@selldone/core-js/helper/string/StringHelper";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import { Connect } from "@selldone/core-js";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
-import BShopQuotaImporter from "@selldone/components-vue/backoffice/shop/quota/Importer/BShopQuotaImporter.vue";
 import shopQuota from "@selldone/core-js/enums/shop/quota/ShopQuota.ts";
 import BShopQuotaCard from "@selldone/components-vue/backoffice/shop/quota/card/BShopQuotaCard.vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
@@ -390,7 +419,6 @@ export default {
   components: {
     UFadeScroll,
     BShopQuotaCard,
-    BShopQuotaImporter,
     SWidgetButtons,
     USmartVerify,
     USmartSwitch,
