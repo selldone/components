@@ -89,9 +89,9 @@
           </p>
           <v-otp-input
             v-model="otp"
-            class="strong-field"
+            class="strong-field max-w-400 mx-auto"
             dir="ltr"
-            length="8"
+            length="6"
             min-width="90%"
             type="number"
             @finish="verifyOTP()"
