@@ -213,7 +213,6 @@
       >
       </u-price-invalid>
 
-
       <u-price v-else :amount="price_converted"></u-price>
 
       <v-chip
@@ -317,14 +316,12 @@ import UColorCircle from "../../../../../ui/color/circle/UColorCircle.vue";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import BNoteButton from "../../../../note/button/BNoteButton.vue";
 import { DateConverter } from "@selldone/core-js";
-import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 
 export default {
   name: "BProductWindowProductMini",
   components: {
     UPriceInvalid,
-    UCurrencyIcon,
     BNoteButton,
     UColorCircle,
     ProductVariantsView,
@@ -423,13 +420,15 @@ export default {
     inBetween() {
       return DateConverter.inBetweenDates(
         new Date(),
-        this.convertToLocalTime(this.dis_start),
-        this.convertToLocalTime(this.dis_end),
+        this.convertToLocalTime(this.product.dis_start),
+        this.convertToLocalTime(this.product.dis_end),
       );
     },
 
     finished() {
-      return (this.product.dis_start || this.dis_end) && !this.inBetween;
+      return (
+        (this.product.dis_start || this.product.dis_end) && !this.inBetween
+      );
     },
 
     colors() {

@@ -64,7 +64,6 @@
         :color="dark ? '#fff' : '#000'"
         class="me-2"
         rounded
-        v-bind="props"
         variant="text"
       >
         <v-icon

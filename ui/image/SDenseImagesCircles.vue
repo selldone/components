@@ -87,7 +87,7 @@ export default {
 
   computed: {
     images_limited() {
-      return this.images.slice(0, this.limit).filter((i) => !!i);
+      return this.images.unique().slice(0, this.limit).filter((i) => !!i);
     },
     more_items() {
       return this.images.length - this.images_limited.length;

@@ -17,7 +17,6 @@
     <v-btn
       :class="{ pen: loading }"
       :color="loading ? '#512DA8' : '#673AB7'"
-      block
       class="s--ai-button-large"
       :size="size"
       variant="flat"

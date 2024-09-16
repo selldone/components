@@ -43,7 +43,11 @@
               :placeholder-image="
                 require('../../../product/add/ai/assets/upload.svg')
               "
-              :server="demo?window.GAPI.POST_DEMO_AI_ADD_PRODUCT():window.API.POST_AI_ADD_PRODUCT(shop.id)"
+              :server="
+                demo
+                  ? window.GAPI.POST_DEMO_AI_ADD_PRODUCT()
+                  : window.API.POST_AI_ADD_PRODUCT(shop.id)
+              "
               max-file-size="4MB"
               min-height="320px"
               no-svg
@@ -78,7 +82,10 @@
             >
               You just need to take a photo or drag and drop an image here!
             </div>
-            <div v-if="!demo" class="max-widget-width mx-auto py-2 text-start text-subtitle-2">
+            <div
+              v-if="!demo"
+              class="max-widget-width mx-auto py-2 text-start text-subtitle-2"
+            >
               <v-icon class="me-1" size="small">auto_awesome</v-icon>
               Currently, free users receive 10 tokens daily, while premium users
               get 100 tokens. To get more tokens, you can upgrade your user to
@@ -86,50 +93,44 @@
             </div>
           </div>
 
+          <v-alert class="my-5 text-start" closable variant="outlined">
+            <v-row align="center" no-gutters>
+              <div>Discover how it works.</div>
+              <v-spacer></v-spacer>
+              <v-btn
+                class="ma-1 tnt"
+                color="#fff"
+                size="small"
+                variant="flat"
+                @click="dialog_video = true"
+              >
+                <v-icon class="me-1">smart_display</v-icon>
+                Watch Now
+              </v-btn>
+            </v-row>
+          </v-alert>
 
-        <v-alert
-          class="  my-5 text-start"
-          closable
-          variant="outlined"
-        >
-          <v-row align="center" no-gutters>
-            <div>Discover how it works.</div>
-            <v-spacer></v-spacer>
-            <v-btn
-              class="ma-1 tnt"
-              color="#fff"
-              size="small"
-              variant="flat"
-              @click="dialog_video = true"
-            >
-              <v-icon class="me-1">smart_display</v-icon>
-              Watch Now
-            </v-btn>
-          </v-row>
-        </v-alert>
-
-        <v-alert
-          v-if="!is_premium && !demo"
-          class="  my-5 text-start"
-          variant="outlined"
-        >
-          <v-row align="center" no-gutters>
-            <div>
-              Upgrade to <b>✨Premium User</b> and enjoy additional free
-              background removal tokens.
-            </div>
-            <v-spacer></v-spacer>
-            <v-btn
-              class="ma-1 tnt"
-              color="#fff"
-              size="small"
-              variant="flat"
-              @click="showNeedSubscribePremium()"
-              >View Plan
-            </v-btn>
-          </v-row>
-        </v-alert>
-
+          <v-alert
+            v-if="!is_premium && !demo"
+            class="my-5 text-start"
+            variant="outlined"
+          >
+            <v-row align="center" no-gutters>
+              <div>
+                Upgrade to <b>✨Premium User</b> and enjoy additional free
+                background removal tokens.
+              </div>
+              <v-spacer></v-spacer>
+              <v-btn
+                class="ma-1 tnt"
+                color="#fff"
+                size="small"
+                variant="flat"
+                @click="showNeedSubscribePremium()"
+                >View Plan
+              </v-btn>
+            </v-row>
+          </v-alert>
         </div>
       </div>
     </v-expand-transition>
@@ -287,28 +288,23 @@
         </div>
         <div v-else class="widget-buttons">
           <v-btn
-              :to="{ name:USER()?'BPageShuttleShops': 'OnboardingPage' }"
-              class="tnt mt-5"
-              rounded="lg"
-              color="#fff"
-              height="unset"
-              max-height="auto"
-              min-height="64"
-              size="large"
-              prepend-icon="add_box"
+            :to="{ name: USER() ? 'BPageShuttleShops' : 'OnboardingPage' }"
+            class="tnt mt-5"
+            rounded="lg"
+            color="#fff"
+            height="unset"
+            max-height="auto"
+            min-height="64"
+            size="large"
+            prepend-icon="add_box"
           >
             <div class="d-flex flex-column p-2 text-subtitle-2">
-                        <span class="">{{
-                            $t("home.create_shopping_website")
-                          }}</span>
+              <span class="">{{ $t("home.create_shopping_website") }}</span>
               <b class="mt-1">{{ $t("home.start_now_btn") }}</b>
             </div>
             <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
-
           </v-btn>
-
         </div>
-
       </div>
     </v-expand-transition>
 
@@ -327,7 +323,7 @@
             >Congratulations, your product has been successfully added to your
             store and is now in the current folder.
           </v-list-subheader>
-          <div  class="widget-buttons">
+          <div class="widget-buttons">
             <v-btn
               :to="{
                 name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -359,7 +355,7 @@
             </v-btn>
           </div>
 
-          <div  class="widget-buttons">
+          <div class="widget-buttons">
             <v-btn
               color="#FFF"
               size="x-large"
@@ -370,8 +366,6 @@
               Add New Product
             </v-btn>
           </div>
-
-
         </v-sheet>
       </div>
     </v-expand-transition>
@@ -439,7 +433,7 @@ export default {
     shop: {
       required: true,
     },
-    demo:Boolean,
+    demo: Boolean,
     vendor: {
       /*🟢 Vendor Panel 🟢*/ required: false,
     },

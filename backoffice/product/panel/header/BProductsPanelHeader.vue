@@ -346,6 +346,7 @@ export default {
     InlineHelp,
   },
 
+  emits: ["update:showDeletes", "update:showVendors", "update:showNotes"],
   props: {
     showDeletes: Boolean,
     showVendors: Boolean,
@@ -360,6 +361,8 @@ export default {
   },
 
   data: () => ({
+    HelpCenterCode: HelpCenterCode,
+
     dialog_advanced: false,
 
     rss_dialog: false,
@@ -369,9 +372,6 @@ export default {
   }),
 
   computed: {
-    HelpCenterCode() {
-      return HelpCenterCode;
-    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
