@@ -39,6 +39,8 @@
       </v-btn>
     </template>
 
+    <!--  ⬬⬬⬬⬬⬬⬬⬬⬬⬬ Notifications ⬬⬬⬬⬬⬬⬬⬬⬬⬬  -->
+
     <v-sheet class="text-start" max-width="100vw" rounded="xl">
       <div class="px-6 pt-3">
         <h2 class="font-weight-black my-1">Notifications</h2>
@@ -92,9 +94,9 @@
               :color="item.read_at ? '#aaa' : helper.getColor(item)"
               :content="numeralFormat(item.count, '0a')"
               :model-value="item.count > 1"
-              location="bottom"
-              offset-x="12"
-              offset-y="8"
+              location="bottom end"
+              offset-x="2"
+              offset-y="2"
             >
               <v-avatar
                 :color="item.read_at ? '#eee' : helper.getColor(item)"
