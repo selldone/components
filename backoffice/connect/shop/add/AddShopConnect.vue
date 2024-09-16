@@ -81,6 +81,17 @@
         </v-chip>
       </div>
 
+      <!-- Help -->
+      <v-expand-transition>
+        <div v-if="!connect">
+          <v-list-subheader
+            >These tutorials showcase some of the capabilities of Connect
+            OS.</v-list-subheader
+          >
+          <s-widget-help code="Connect.XCart"></s-widget-help>
+        </div>
+      </v-expand-transition>
+
       <v-expand-transition>
         <div v-if="connect">
           <v-expand-transition>
@@ -412,11 +423,13 @@ import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetBu
 import shopQuota from "@selldone/core-js/enums/shop/quota/ShopQuota.ts";
 import BShopQuotaCard from "@selldone/components-vue/backoffice/shop/quota/card/BShopQuotaCard.vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
+import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 
 export default {
   name: "AddShopConnect",
   emits: ["edit", "delete", "add"],
   components: {
+    SWidgetHelp,
     UFadeScroll,
     BShopQuotaCard,
     SWidgetButtons,
