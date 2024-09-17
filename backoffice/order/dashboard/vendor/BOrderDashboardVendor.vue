@@ -30,30 +30,48 @@
         {{ $t("global.commons.vendors_panel") }}
       </h2>
 
-      <v-chip v-if="canceled"  class="mx-2" size="small" color="red" prepend-icon="cancel" variant="flat">
-        {{$t('global.commons.canceled')}}
+      <v-chip
+        v-if="canceled"
+        class="mx-2"
+        size="small"
+        color="red"
+        prepend-icon="cancel"
+        variant="flat"
+      >
+        {{ $t("global.commons.canceled") }}
 
         <v-tooltip activator="parent" content-class="bg-red" location="bottom">
-          The vendor has rejected the order, and its fulfillment has been fully canceled.
+          The vendor has rejected the order, and its fulfillment has been fully
+          canceled.
         </v-tooltip>
-
       </v-chip>
 
-      <v-chip v-else-if="rejected"  class="mx-2" size="small" color="red" prepend-icon="do_not_disturb" variant="flat" >
-        {{$t('global.commons.reject')}}
+      <v-chip
+        v-else-if="rejected"
+        class="mx-2"
+        size="small"
+        color="red"
+        prepend-icon="do_not_disturb"
+        variant="flat"
+      >
+        {{ $t("global.commons.reject") }}
 
         <v-tooltip activator="parent" content-class="bg-red" location="bottom">
-          The vendor has rejected the order, but it has not been fully canceled yet.
+          The vendor has rejected the order, but it has not been fully canceled
+          yet.
         </v-tooltip>
       </v-chip>
 
-      <v-chip v-else-if="is_fulfilling"  class="mx-2" size="small"  variant="flat" color="#4CAF50">
-        {{$t('global.commons.fulfilling')}}...
-        <i
-            class="fas fa-circle-notch fa-spin ms-1"
-        ></i>
+      <v-chip
+        v-else-if="is_fulfilling"
+        class="mx-2"
+        size="small"
+        variant="flat"
+        color="#4CAF50"
+      >
+        {{ $t("global.commons.fulfilling") }}...
+        <i class="fas fa-circle-notch fa-spin ms-1"></i>
       </v-chip>
-
 
       <v-spacer></v-spacer>
 
@@ -82,10 +100,10 @@
         >{{ getLocalDateString(vendorOrder.reject_at) }}
       </b>
 
-      <Span v-if="reject_reason">
+      <span v-if="reject_reason">
         |
         {{ reject_reason }}
-      </Span>
+      </span>
 
       <div v-if="vendorOrder.reject_note">
         {{ vendorOrder.reject_note }}
@@ -101,10 +119,10 @@
         >{{ getLocalDateString(vendorOrder.cancel_at) }}
       </b>
 
-      <Span v-if="vendorOrder.cancel_note">
+      <span v-if="vendorOrder.cancel_note">
         |
         {{ vendorOrder.cancel_note }}
-      </Span>
+      </span>
     </div>
 
     <!-- ------------------ Order Code ------------------ -->
@@ -116,7 +134,7 @@
     </p>
 
     <!-- ------------------ Vendor Info ------------------ -->
-    <v-row>
+    <v-row class="mb-0">
       <v-col class="text-start d-flex align-center" cols="12" md="6">
         <u-avatar-folder
           :src="getShopImagePath(vendor.icon, 128)"
@@ -132,7 +150,7 @@
           <v-btn
             v-if="!IS_VENDOR_PANEL"
             :to="{ name: 'BPageMarketplaceVendors' }"
-            class="ms-1 tnt"
+            class="ms-1 tnt my-1"
             append-icon="launch"
             color="#333"
             target="_blank"
@@ -148,7 +166,7 @@
               name: 'VPageVendorDashboard',
               params: { vendor_id: vendor.id },
             }"
-            class="ms-1 tnt"
+            class="ms-1 tnt my-1"
             prepend-icon="storefront"
             color="#333"
             target="_blank"
@@ -165,7 +183,7 @@
               name: type_obj.vendor_order_page,
               params: { vendor_id: vendor.id, vendor_order_id: vendorOrder.id },
             }"
-            class="ms-1 tnt"
+            class="ms-1 tnt my-1"
             append-icon="launch"
             color="#333"
             target="_blank"
@@ -176,7 +194,7 @@
             <img :src="type_obj.image" width="14" height="14" class="ms-n2" />
           </v-btn>
 
-          <div class="px-1 mt-1">
+          <div class="px-1">
             <v-chip
               v-if="vendor.enable"
               class="m-1"
@@ -247,7 +265,7 @@
         >{{ $t("fulfilment_order_widget.list_of_items") }}
       </span>
 
-      <div class="d-flex my-2">
+      <div class="d-flex pt-5 pb-2">
         <v-badge
           v-for="item in items"
           :key="item.id"
@@ -275,7 +293,11 @@
     </v-expand-transition>
 
     <v-expansion-panels flat>
-      <v-expansion-panel v-if="!canceled" class="bg-transparent border" rounded="lg">
+      <v-expansion-panel
+        v-if="!canceled"
+        class="bg-transparent border"
+        rounded="lg"
+      >
         <v-expansion-panel-title>
           <v-icon class="me-1">arrow_drop_down</v-icon>
           <div class="d-inline-flex flex-column">
@@ -407,64 +429,66 @@
 
     <!-- Package info -->
 
-    <div
-      v-if="
-        volume && volume.width > 0 && volume.length > 0 && volume.height > 0
-      "
-      class="py-3 d-flex align-center"
-    >
-      <div class="p-3 me-2 border-end" title="Package">
-        <v-icon size="18">aspect_ratio</v-icon>
+    <u-fade-scroll>
+      <div
+        v-if="
+          volume && volume.width > 0 && volume.length > 0 && volume.height > 0
+        "
+        class="py-3 d-flex align-center"
+      >
+        <div class="p-3 me-2 border-end" title="Package">
+          <v-icon size="18">aspect_ratio</v-icon>
+        </div>
+
+        <div class="mx-1 d-flex align-center">
+          <div class="pa-1 rounded d-flex flex-column me-5 border">
+            <div>
+              {{ delivery_info.weight }}
+              <small class="x-small">{{ mass_unit }}</small>
+            </div>
+            <small class="x-small min-width-50">{{
+              $t("global.commons.weight")
+            }}</small>
+          </div>
+
+          <div class="pa-1 rounded d-flex flex-column border me-1">
+            <div>
+              {{ volume.width }} <small class="x-small">{{ size_unit }}</small>
+            </div>
+            <small class="x-small min-width-50">{{
+              $t("global.commons.width")
+            }}</small>
+          </div>
+
+          <div class="pa-1 rounded d-flex flex-column border me-1">
+            <div>
+              {{ volume.length }} <small class="x-small">{{ size_unit }}</small>
+            </div>
+            <small class="x-small min-width-50">{{
+              $t("global.commons.length")
+            }}</small>
+          </div>
+
+          <div class="pa-1 rounded d-flex flex-column border me-1">
+            <div>
+              {{ volume.height }} <small class="x-small">{{ size_unit }}</small>
+            </div>
+            <small class="x-small min-width-50">{{
+              $t("global.commons.height")
+            }}</small>
+          </div>
+        </div>
+
+        <u-cube
+          :size="64"
+          :x="volume.width"
+          :y="volume.length"
+          :z="volume.height"
+          color="#FFC107"
+          no-animation
+        ></u-cube>
       </div>
-
-      <div class="mx-1 d-flex align-center">
-        <div class="pa-1 rounded d-flex flex-column me-5 border">
-          <div>
-            {{ delivery_info.weight }}
-            <small class="x-small">{{ mass_unit }}</small>
-          </div>
-          <small class="x-small min-width-50">{{
-            $t("global.commons.weight")
-          }}</small>
-        </div>
-
-        <div class="pa-1 rounded d-flex flex-column border me-1">
-          <div>
-            {{ volume.width }} <small class="x-small">{{ size_unit }}</small>
-          </div>
-          <small class="x-small min-width-50">{{
-            $t("global.commons.width")
-          }}</small>
-        </div>
-
-        <div class="pa-1 rounded d-flex flex-column border me-1">
-          <div>
-            {{ volume.length }} <small class="x-small">{{ size_unit }}</small>
-          </div>
-          <small class="x-small min-width-50">{{
-            $t("global.commons.length")
-          }}</small>
-        </div>
-
-        <div class="pa-1 rounded d-flex flex-column border me-1">
-          <div>
-            {{ volume.height }} <small class="x-small">{{ size_unit }}</small>
-          </div>
-          <small class="x-small min-width-50">{{
-            $t("global.commons.height")
-          }}</small>
-        </div>
-      </div>
-
-      <u-cube
-        :size="64"
-        :x="volume.width"
-        :y="volume.length"
-        :z="volume.height"
-        color="#FFC107"
-        no-animation
-      ></u-cube>
-    </div>
+    </u-fade-scroll>
 
     <!-- Step 3 : Shipment tracking code -->
 
@@ -510,10 +534,12 @@ import {
 } from "@selldone/core-js";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import UCountDown from "@selldone/components-vue/ui/count-down/UCountDown.vue";
+import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "BOrderDashboardVendor",
   components: {
+    UFadeScroll,
     UCountDown,
     UAvatarFolder,
     BOrderVendorPaymentManagement,

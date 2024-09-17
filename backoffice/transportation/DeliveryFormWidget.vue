@@ -390,42 +390,46 @@
           each country.
         </v-list-subheader>
 
-        <v-chip
-          class="ma-1"
-          size="small"
-          label
-          :color="!selected_country ? '#000' : '#fff'"
-          variant="flat"
-          @click="selected_country = null"
-          prepend-icon="language"
-        >
-          {{ $t("global.commons.worldwide") }}
-        </v-chip>
-
-        <v-chip
-          v-for="(it, key) in profiles"
-          class="ma-1"
-          :key="key"
-          size="small"
-          label
-          :color="selected_country === key ? '#000' : '#fff'"
-          variant="flat"
-          @click="selected_country = selected_country === key ? null : key"
-        >
-          <flag :iso="key" :squared="false" class="me-1" />
-          <b>{{ key }}</b>
-          <span v-if="it.states && !isEmpty(it.states)" class="ms-1 text-green"
-            >{{ Object.keys(it.states).length }}🞫
-            {{ $t("global.commons.override") }}</span
+        <v-row class="my-1" dense>
+          <v-chip
+            class="ma-1"
+            size="small"
+            label
+            :color="!selected_country ? '#000' : '#fff'"
+            variant="flat"
+            @click="selected_country = null"
+            prepend-icon="language"
           >
+            {{ $t("global.commons.worldwide") }}
+          </v-chip>
 
-          <v-icon
-            @click.stop="removeCountryProfile(key)"
-            end
-            class="hover-scale-small"
-            >cancel
-          </v-icon>
-        </v-chip>
+          <v-chip
+            v-for="(it, key) in profiles"
+            class="ma-1"
+            :key="key"
+            size="small"
+            label
+            :color="selected_country === key ? '#000' : '#fff'"
+            variant="flat"
+            @click="selected_country = selected_country === key ? null : key"
+          >
+            <flag :iso="key" :squared="false" class="me-1" />
+            <b>{{ key }}</b>
+            <span
+              v-if="it.states && !isEmpty(it.states)"
+              class="ms-1 text-green"
+              >{{ Object.keys(it.states).length }}🞫
+              {{ $t("global.commons.override") }}</span
+            >
+
+            <v-icon
+              @click.stop="removeCountryProfile(key)"
+              end
+              class="hover-scale-small"
+              >cancel
+            </v-icon>
+          </v-chip>
+        </v-row>
 
         <s-country-select
           v-model="selected_country"

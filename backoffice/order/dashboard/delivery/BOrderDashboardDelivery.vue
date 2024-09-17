@@ -240,11 +240,9 @@
             </v-select>
           </div>
           <v-expand-transition>
-            <div
-              v-if="transportation && selected_transportation_service"
-              :key="selected_transportation_service?.id"
-            >
+            <div v-if="transportation && selected_transportation_service">
               <b-transportation-service-labels
+                :key="selected_transportation_service?.id"
                 :auto-calculate-rates="in_this_step"
                 :baskets="baskets"
                 :transportation-service="selected_transportation_service"
@@ -386,14 +384,25 @@
 
           <div class="d-flex align-center py-1 small">
             <v-icon>warehouse</v-icon>
-            <div style="height: 2px;background-color: #111" class="flex-grow-1 mx-1"></div>
-            <b>{{delivery_info.distance}} {{ delivery_info.distance_unit? delivery_info.distance_unit:distance_unit}}</b>
-            <div style="height: 2px;background-color: #111" class="flex-grow-1 mx-1"></div>
+            <div
+              style="height: 2px; background-color: #111"
+              class="flex-grow-1 mx-1"
+            ></div>
+            <b
+              >{{ delivery_info.distance }}
+              {{
+                delivery_info.distance_unit
+                  ? delivery_info.distance_unit
+                  : distance_unit
+              }}</b
+            >
+            <div
+              style="height: 2px; background-color: #111"
+              class="flex-grow-1 mx-1"
+            ></div>
 
             <v-icon>face</v-icon>
-
           </div>
-
 
           <!-- =================== Preferences >  Preferred Delivery Time =================== -->
           <div v-if="delivery_info && delivery_info.custom">
@@ -742,10 +751,13 @@
       <v-card-text>
         {{ $t("process_center.delivered_dialog.message") }}
 
-        <u-smart-verify v-model="accept_action" class="my-3"
-        :true-title="$t('order_delivery.verify_delivery_input.true_title')"
-                        :true-description="$t('order_delivery.verify_delivery_input.true_description')"
-
+        <u-smart-verify
+          v-model="accept_action"
+          class="my-3"
+          :true-title="$t('order_delivery.verify_delivery_input.true_title')"
+          :true-description="
+            $t('order_delivery.verify_delivery_input.true_description')
+          "
         ></u-smart-verify>
       </v-card-text>
 
@@ -840,7 +852,7 @@ import UDenseCirclesUsers from "../../../../ui/dense-circles/users/UDenseCircles
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
-import {Basket, ShopOptionsHelper} from "@selldone/core-js";
+import { Basket, ShopOptionsHelper } from "@selldone/core-js";
 import BTransportationServiceLabels from "@selldone/components-vue/backoffice/transportation/service/labels/BTransportationServiceLabels.vue";
 
 export default {
