@@ -303,11 +303,11 @@
 
             <!-- ▁▁▁▁▁▁ 🞇 Sells & Inventory progress 🞇 ▁▁▁▁▁▁ -->
             <s-product-section-incentivise
-                :product="product"
-                :shop="shop"
+              :product="product"
+              :variant="current_variant"
+              :vendorProduct="selected_vendor_product"
+              :shop="shop"
             ></s-product-section-incentivise>
-
-
 
             <u-payment-stripe-split
               :basket="corresponding_basket_item ? basket : null"
@@ -327,7 +327,10 @@
 
     <!-- ████████████████████ 🟣 Marketplace (Vendors) 🟣 ████████████████████ -->
 
-    <v-container v-if="vendor_products && vendor_products.length" class="my-0 my-sm-5 my-md-10">
+    <v-container
+      v-if="vendor_products && vendor_products.length"
+      class="my-0 my-sm-5 my-md-10"
+    >
       <s-smart-select-vendor
         v-model="selected_vendor_product_id"
         :hint="$t('product_info.select_a_vendor_message')"
@@ -382,8 +385,7 @@ import SProductSectionWaitingAuction from "../../storefront/product/section/auct
 import SProductSectionBadges from "../../storefront/product/section/badges/SProductSectionBadges.vue";
 import SProductSectionVariants from "../../storefront/product/section/variants/SProductSectionVariants.vue";
 import SProductSectionCashback from "@selldone/components-vue/storefront/product/section/cashback/SProductSectionCashback.vue";
-import SProductSectionIncentivise
-  from "@selldone/components-vue/storefront/product/section/incentivise/SProductSectionIncentivise.vue";
+import SProductSectionIncentivise from "@selldone/components-vue/storefront/product/section/incentivise/SProductSectionIncentivise.vue";
 
 export default {
   name: "SProductOverview",

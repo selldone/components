@@ -251,7 +251,6 @@ export default {
     },
 
     rounded: {
-      type: Boolean,
       default: false,
     },
     dense: {

@@ -535,6 +535,7 @@ export default {
     busy_fetch: false,
 
     products: [],
+    products_count:0,
     sort: null /*Custom sorting*/, // "most_popular",
     only_available: true,
 

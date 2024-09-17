@@ -59,6 +59,14 @@ export default {
       required: true,
       type: Object,
     },
+    variant: {
+      required: false,
+      type: Object,
+    },
+    vendorProduct: {
+      required: false,
+      type: Object,
+    },
   },
 
   data: () => ({
@@ -73,6 +81,11 @@ export default {
       );
     },
     quantity() {
+      if (this.vendorProduct) {
+        return this.vendorProduct.quantity;
+      } else if (this.variant) {
+        return this.variant.quantity;
+      }
       return this.product.quantity;
     },
 

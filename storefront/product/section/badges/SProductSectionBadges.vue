@@ -33,7 +33,7 @@
           :src="lead_time_object.icon"
           :title="lead_time_object.title(this, product.lead)"
         />
-        <p>
+        <p class="-badge-title">
           {{ lead_time_object.title(this, product.lead) }}
         </p>
       </div>
@@ -47,7 +47,7 @@
           "
           src="../../../../assets/product-badges/return_order.svg"
         />
-        <p>
+        <p class="-badge-title">
           {{
             $t("product_info.return_in_days", {
               days: product.return_warranty,
@@ -61,7 +61,7 @@
           :title="$t('product_info.support24h7')"
           src="../../../../assets/product-badges/support_24h.svg"
         />
-        <p>
+        <p class="-badge-title">
           {{ $t("product_info.support24h7") }}
         </p>
       </div>
@@ -71,7 +71,7 @@
           src="../../../../assets/product-badges/support_normal.svg"
         />
 
-        <p>
+        <p class="-badge-title">
           {{ $t("product_info.support_normal") }}
         </p>
       </div>
@@ -82,7 +82,7 @@
           src="../../../../assets/product-badges/orginal_warranty.svg"
         />
 
-        <p>
+        <p class="-badge-title">
           {{ $t("product_info.original_guarantee") }}
         </p>
       </div>
@@ -92,7 +92,7 @@
           src="../../../../assets/product-badges/cash_on_delivery.svg"
         />
 
-        <p>
+        <p class="-badge-title">
           {{ $t("product_info.cod_payment") }}
         </p>
       </div>
@@ -118,7 +118,7 @@
             :title="badge.title"
             class="rounded hover-scale"
           />
-          <p v-if="badge.title">
+          <p v-if="badge.title" class="-badge-title">
             {{ badge.title }}
           </p>
         </component>
@@ -127,8 +127,9 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import { LeadStatus } from "@selldone/core-js/enums/logistic/LeadStatus";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "SProductSectionBadges",
@@ -158,6 +159,10 @@ export default {
   data: () => ({}),
 
   computed: {
+    isPhysical() {
+      return this.product.type === ProductType.PHYSICAL.code;
+    },
+
     custom_badges: function () {
       if (
         !this.product.badges ||
@@ -188,24 +193,18 @@ export default {
       return this.product && this.product.return_warranty > 0;
     },
     has_support_24h() {
-      return this.getShop() && this.getShop().support_mode === "24h7d";
+      return this.shop?.support_mode === "24h7d";
     },
     has_support_normal() {
-      return this.getShop() && this.getShop().support_mode === "normal";
+      return this.shop?.support_mode === "normal";
     },
-    has_fast_delivery() {
-      return this.isPhysical && this.product.lead <= 3;
-    },
+
     has_original_warranty() {
       return this.product && this.product.original;
     },
     has_cash_on_delivery() {
-      if (!this.getShop().gateways) return false;
-      return (
-        this.isPhysical &&
-        this.getShop() &&
-        this.getShop().gateways.some((item) => item.cod)
-      );
+      if (!this.shop?.gateways) return false;
+      return this.isPhysical && this.shop.gateways.some((item) => item.cod);
     },
 
     lead_time_object() {
@@ -258,31 +257,35 @@ export default {
         height: 42px;
       }
 
-      p {
+      .-badge-title {
         min-height: unset;
       }
     }
   }
 
-  p {
-    margin: 8px 4px 4px 4px;
+  .-badge-title {
+    padding: 8px 4px 4px 4px;
+    margin: auto;
     font-size: 0.75rem;
     font-weight: 500;
     min-height: 3em;
+    max-width: 100px;
+    text-wrap: balance;
     @media only screen and (max-width: 480px) {
       font-size: 0.6rem;
     }
   }
 
   &.-small {
-    p {
+    .-badge-title {
       font-size: 8px !important;
     }
   }
 
   &.-large {
-    p {
+    .-badge-title {
       font-size: 1rem;
+      max-width: 200px;
     }
 
     .-badge {

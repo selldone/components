@@ -31,7 +31,7 @@
     <slot></slot>
     <template v-slot:placeholder>
       <v-progress-circular
-        :color="444"
+        color="#444"
         :size="84"
         :width="4"
         class="op-0-5 center-absolute"

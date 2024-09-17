@@ -317,7 +317,11 @@
         icon="monetization_on"
       ></s-widget-header>
 
-      <v-list-subheader></v-list-subheader>
+      <v-list-subheader>
+        For this shipping method, you can enable Cash on Delivery as a payment
+        option. You can also choose whether or not to collect the shipping cost
+        upon delivery.
+      </v-list-subheader>
 
       <u-smart-switch
         v-model="transportation.cod"
@@ -335,8 +339,10 @@
       ></u-smart-switch>
       <v-expand-transition>
         <div v-if="transportation.cod">
-          <v-list-subheader
-            >{{
+          <v-list-subheader>
+            <v-icon class="me-1">info_outline</v-icon>
+
+            {{
               $t("admin_shop.logistic.delivery.delivery_form.cod_true_message")
             }}
           </v-list-subheader>
@@ -379,22 +385,50 @@
         ></s-widget-header>
 
         <v-list-subheader
-          >Here, you can establish personalized pricing for parcel delivery. If
-          costs vary by country, you can set up a new profile for each nation.
+          >In this section, you can customize your delivery prices. If your
+          delivery costs vary by country, you can set up a separate profile for
+          each country.
         </v-list-subheader>
+        <v-chip
+          v-for="(it, key) in profiles"
+          class="ma-1"
+          :key="key"
+          size="small"
+          label
+          :color="selected_country === key ? '#000' : '#fff'"
+          variant="flat"
+          @click="selected_country = selected_country === key ? null : key"
+        >
+          <flag :iso="key" :squared="false" class="me-1" />
+          <b>{{ key }}</b>
+          <span v-if="it.states && !isEmpty(it.states)" class="ms-1 text-green"
+            >{{ Object.keys(it.states).length }}🞫
+            {{ $t("global.commons.override") }}</span
+          >
+
+          <v-icon
+            @click.stop="removeCountryProfile(key)"
+            end
+            class="hover-scale-small"
+            >cancel
+          </v-icon>
+        </v-chip>
 
         <s-country-select
           v-model="selected_country"
           :filter="profile_countries"
           :return-object="false"
-          class="rounded-16px mx-0"
+          class="mx-0"
+          rounded="lg"
           clearable
-          flat
+          bg-color="#fff"
           item-value="alpha2"
-          messages="Shipping country profile."
+          messages="⯅ Shipping country profile."
           placeholder="Worldwide ● Default"
-          solo
-          variant="underlined"
+          :label="$t('global.commons.country')"
+          variant="solo"
+          flat
+          persistent-placeholder
         >
           <template v-slot:prepend-inner>
             <v-icon v-if="!selected_country">language</v-icon>
@@ -641,6 +675,7 @@ import BTransportationCalculator from "../transportation/calculator/BTransportat
 import SWidgetButtons from "../../ui/widget/buttons/SWidgetButtons.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
+import { isEmpty } from "lodash-es";
 
 export default {
   name: "DeliveryFormWidget",
@@ -752,6 +787,7 @@ export default {
   },
 
   methods: {
+    isEmpty,
     updateDelivery() {
       this.busy = true;
 
@@ -850,6 +886,18 @@ export default {
 
       this.dialog_new_profile = false;
       this.selected_country = this.new_profile_country; // Select new profile!
+    },
+
+    removeCountryProfile(country) {
+      this.openDangerAlert(
+        `Remove Profile for ${this.getCountryName(country)}`,
+        `Are you sure you want to remove the country profile for ${this.getCountryName(country)}? This action cannot be undone.`,
+        "Yes,Remove Profile",
+        () => {
+          delete this.transportation.profiles[country];
+          if (this.selected_country === country) this.selected_country = null;
+        },
+      );
     },
   },
 };

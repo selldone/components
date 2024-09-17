@@ -16,19 +16,73 @@
   <div>
     <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ State ▃▃▃▃▃▃▃▃▃▃▃▃ -->
     <template v-if="states?.length">
+      <v-row dense class="my-1">
+        <v-chip
+          v-for="(it, _key) in modelValue.states"
+          class="ma-1"
+          :key="_key"
+          size="small"
+          label
+          :color="selected_state === _key ? '#000' : '#fff'"
+          variant="flat"
+          @click="selected_state = selected_state === _key ? null : _key"
+        >
+          <s-state-flag
+            :country="country"
+            :region="_key"
+            class="me-1"
+            height="14"
+          ></s-state-flag>
+          <b>{{ _key }}</b>
+          <span class="d-inline-flex align-center">
+            <span class="ms-1"
+              ><u-price
+                :currency="currency"
+                :amount="it.const?it.const:0"
+                style="font-weight: 500"
+              ></u-price
+            ></span>
+            <span v-if="it.distance_cof" class="ms-1"
+              >🞤 {{ it.distance_cof }}🞫d</span
+            >
+            <span v-if="it.weight_cof" class="ms-1"
+              >🞤 {{ it.weight_cof }}🞫w</span
+            >
+            <span v-if="it.price_cof" class="ms-1">🞤 {{ it.price_cof }}🞫p</span>
+            <span v-if="it.distance_weight_cof" class="ms-1"
+              >🞤 {{ it.distance_weight_cof }}🞫d🞫p</span
+            >
+          </span>
+
+          <v-icon
+            @click.stop="removeOverrideState(_key)"
+            end
+            class="hover-scale-small"
+            >cancel
+          </v-icon>
+        </v-chip>
+      </v-row>
+
       <v-select
         v-model="selected_state"
         :items="states"
-        :messages="$t('global.address_info.state')"
         :return-object="false"
         bg-color="#fff"
-        class="rounded-16px"
+        rounded="lg"
         clearable
         flat
+        :label="$t('global.commons.state')"
+        persistent-placeholder
         item-title="name"
         item-value="code"
-        placeholder="Default ● Apply to all except modified states"
+        :placeholder="
+          'Default ● Apply to all except modified' +
+          (!isEmpty(modelValue.states)
+            ? `: ${Object.keys(modelValue.states).join(', ')}`
+            : '')
+        "
         variant="solo"
+        messages="⯅ Select a state to override shipping cost."
       >
         <template v-if="selected_state" v-slot:prepend-inner>
           <s-state-flag :country="country" :region="selected_state" class="me-2"
@@ -237,9 +291,9 @@
         </div>
       </div>
       <div v-else key="b" class="d-flex align-center justify-space-between">
-        <div class="text-green">● Default country profile</div>
+        <div class="text-green text-subtitle-2">● Default country profile</div>
         <v-btn
-          class="nbt"
+          class="nbt my-1"
           variant="elevated"
           @click="addOverrideState(selected_state)"
         >
@@ -252,16 +306,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UPriceInput from "../../ui/price/input/UPriceInput.vue";
 
 import USmartSelect from "../../ui/smart/select/USmartSelect.vue";
 import UNumberInput from "../../ui/number/input/UNumberInput.vue";
 import SStateFlag from "../../ui/country/state-flag/SStateFlag.vue";
+import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
+import {isEmpty} from "lodash-es";
 
 export default {
   name: "ShippingCostForm",
   components: {
+    UPrice,
     SStateFlag,
     UNumberInput,
 
@@ -342,10 +399,10 @@ export default {
         title: "By weight cost + Insurance",
         desc: "To add shipping insurance based on weight, distance and the price of the order.",
       };
-
+      /*
       if (this.selected_state) {
         return [FLAT, WEIGHT, WEIGHT_PRICE];
-      }
+      }*/
       return [
         FLAT,
         DISTANCE,
@@ -378,6 +435,7 @@ export default {
   },
 
   methods: {
+    isEmpty,
     setCurrentValue() {
       if (!this.selected_state || !this.country)
         this.current_value = this.modelValue;
@@ -421,9 +479,17 @@ export default {
       this.setMode();
     },
     removeOverrideState(state_code) {
-      delete this.modelValue.states[state_code];
-      this.setCurrentValue();
-      this.setMode();
+      const state_name = this.states?.find((v) => v.code === state_code)?.name;
+      this.openDangerAlert(
+        `Remove Override for ${state_name ? state_name : state_code}`,
+        `Are you sure you want to remove the override rule for ${state_name ? state_name : state_code}? This action cannot be undone.`,
+        "Yes, Remove Override",
+        () => {
+          delete this.modelValue.states[state_code];
+          this.setCurrentValue();
+          this.setMode();
+        },
+      );
     },
   },
 };
