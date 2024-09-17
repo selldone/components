@@ -90,7 +90,7 @@
       v-if="receiverInfo.location"
       :large="large"
       :location="receiverInfo.location"
-      :transportation-type="receiverInfo.type"
+      :transportation-type="receiverInfo.type"  class="ma-1"
     ></u-map-geo-button>
 
     <slot name="append-buttons"></slot>

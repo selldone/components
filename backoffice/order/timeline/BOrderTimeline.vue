@@ -280,7 +280,7 @@
                         v-if="item.data.old && item.data.old.location"
                         :icon="true"
                         :location="item.data.old.location"
-                        class="ms-1"
+                        class="ma-1"
                         small
                       ></u-map-geo-button>
                     </div>
@@ -292,7 +292,7 @@
                         v-if="item.data.new && item.data.new.location"
                         :icon="true"
                         :location="item.data.new.location"
-                        class="ms-1"
+                        class="ma-1"
                         small
                       ></u-map-geo-button>
                     </div>

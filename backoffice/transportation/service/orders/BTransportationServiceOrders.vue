@@ -37,14 +37,13 @@
         <div class="min-width-200 text-start py-1">
           <div v-if="getOrder(item).customer">
             <v-avatar :size="24" class="avatar-gradient -thin me-2">
-              <v-img v-if="getOrder(item).customer.user_id" :src="getUserAvatar(getOrder(item).customer.user_id)" />
+              <v-img
+                v-if="getOrder(item).customer.user_id"
+                :src="getUserAvatar(getOrder(item).customer.user_id)"
+              />
               <v-icon v-else>face</v-icon>
             </v-avatar>
             <b class="me-2">{{ getOrder(item).customer.name }}</b>
-
-            <v-chip v-if="item.distance" size="x-small" class="me-2">
-              {{ item.distance }} Km
-            </v-chip>
           </div>
 
           <div class="single-line max-w-200 mt-1">
@@ -84,21 +83,32 @@
             v-if="getOrder(item)?.receiver_info?.location"
             :location="getOrder(item).receiver_info.location"
             small
+            class="my-1"
+            block
           ></u-map-geo-button>
 
-          <v-btn
-            v-if="item.track"
-            :href="item.track"
-            color="primary"
-            size="small"
-            target="_blank"
-            title="Tracking page"
-            variant="flat"
-            class="mt-1"
-            prepend-icon="gps_fixed"
-          >
-            Tracking Link
-          </v-btn>
+          <div v-if="item.track">
+            <v-btn
+              :href="item.track"
+              color="primary"
+              size="small"
+              target="_blank"
+              title="Tracking page"
+              variant="flat"
+              class="my-1"
+              prepend-icon="gps_fixed"
+              block
+              rounded="lg"
+            >
+              Tracking Link
+            </v-btn>
+          </div>
+
+          <div v-if="item.distance">
+            <v-chip size="small" class="my-1" variant="text" prepend-icon="ramp_left">
+              {{ item.distance }} Km
+            </v-chip>
+          </div>
         </div>
       </template>
 
@@ -601,13 +611,13 @@ export default {
         .get(
           this.IS_VENDOR_PANEL
             ? window.VAPI.GET_MY_VENDOR_DELIVERY_SERVICE_ORDER_INFO(
-                  transportation_order.vendor_id,
+                transportation_order.vendor_id,
                 transportation_order.transportation_id,
                 transportation_order.service.id,
                 transportation_order.uid,
               )
             : window.API.GET_DELIVERY_SERVICE_ORDER_INFO(
-                  transportation_order.shop_id,
+                transportation_order.shop_id,
                 transportation_order.transportation_id,
                 transportation_order.service.id,
                 transportation_order.uid,

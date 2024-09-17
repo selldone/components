@@ -13,50 +13,57 @@
   -->
 
 <template>
-  <span>
-    <!-- iOS -->
-    <v-btn
-      v-if="location && iphone"
-      :href="`http://maps.apple.com/?sll=${location.lat},${location.lng}`"
-      :icon="icon"
-      :size="large ? 'large' : small ? 'small' : undefined"
-      :variant="icon ? 'text' : text ? 'text' : 'flat'"
-      class="rounded-8px tnt m-1"
-      target="_blank"
-      @click.stop
-      ><v-icon class="me-1" color="blue">near_me</v-icon>
-      {{ !icon ? $t("global.commons.navigation_app") : "" }}</v-btn
-    >
-    <!-- Android -->
-    <v-btn
-      v-else-if="location && android"
-      :href="`maps://maps.google.com/maps?daddr=${location.lat},${location.lng}`"
-      :icon="icon"
-      :size="large ? 'large' : small ? 'small' : undefined"
-      :variant="icon ? 'text' : text ? 'text' : 'flat'"
-      class="rounded-8px tnt m-1"
-      target="_blank"
-      @click.stop
-      ><v-icon class="me-1" color="green">near_me</v-icon>
-      {{ !icon ? $t("global.commons.navigation_app") : "" }}</v-btn
-    >
-    <!-- Default -->
-    <v-btn
-      v-if="!onlyOne || (!iphone && !android)"
-      :href="`https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}&travelmode=${travelmode}`"
-      :icon="icon"
-      :size="large ? 'large' : small ? 'small' : undefined"
-      :title="$t('global.commons.map')"
-      :variant="icon ? 'text' : text ? 'text' : 'flat'"
-      class="rounded-8px tnt m-1"
-      target="_blank"
-      @click.stop
-      ><img height="20" src="../../../assets/icons/google-map.svg" width="20" />
-      <span v-if="!icon" class="ms-1">{{
-        $t("global.commons.navigation")
-      }}</span>
-    </v-btn>
-  </span>
+  <!-- iOS -->
+  <v-btn
+    v-if="location && iphone"
+    v-bind="$attrs"
+    :href="`http://maps.apple.com/?sll=${location.lat},${location.lng}`"
+    :icon="icon"
+    :size="large ? 'large' : small ? 'small' : undefined"
+    :variant="icon ? 'text' : text ? 'text' : 'flat'"
+    class="tnt"
+    :rounded="rounded"
+    target="_blank"
+    @click.stop
+    :block="block"
+  >
+    <v-icon class="me-1" color="blue">near_me</v-icon>
+    {{ !icon ? $t("global.commons.navigation_app") : "" }}
+  </v-btn>
+  <!-- Android -->
+  <v-btn
+    v-else-if="location && android"
+    v-bind="$attrs"
+    :href="`maps://maps.google.com/maps?daddr=${location.lat},${location.lng}`"
+    :icon="icon"
+    :size="large ? 'large' : small ? 'small' : undefined"
+    :variant="icon ? 'text' : text ? 'text' : 'flat'"
+    class="tnt"
+    target="_blank"
+    :rounded="rounded"
+    @click.stop
+    :block="block"
+  >
+    <v-icon class="me-1" color="green">near_me</v-icon>
+    {{ !icon ? $t("global.commons.navigation_app") : "" }}
+  </v-btn>
+  <!-- Default -->
+  <v-btn
+    v-if="!onlyOne || (!iphone && !android)"
+    v-bind="$attrs"
+    :href="`https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}&travelmode=${travelmode}`"
+    :icon="icon"
+    :size="large ? 'large' : small ? 'small' : undefined"
+    :title="$t('global.commons.map')"
+    :variant="icon ? 'text' : text ? 'text' : 'flat'"
+    class="tnt"
+    target="_blank"
+    :rounded="rounded"
+    @click.stop
+    :block="block"
+    ><img height="20" src="../../../assets/icons/google-map.svg" width="20" />
+    <span v-if="!icon" class="ms-1">{{ $t("global.commons.navigation") }}</span>
+  </v-btn>
 </template>
 
 <script>
@@ -86,7 +93,11 @@ export default {
       Type: Boolean,
     },
 
-    small:Boolean,
+    small: Boolean,
+    block: Boolean,
+    rounded: {
+      default: "lg",
+    },
   },
 
   computed: {

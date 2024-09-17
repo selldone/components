@@ -20,11 +20,19 @@
       <s-widget-header
         :title="$t('global.commons.vendor')"
         icon="storefront"
+        :add-caption="
+          in_edit_mode ? (force_can_edit ? 'Lock' : 'Change Mode') : undefined
+        "
+        @click:add="toggleForceEditVendor"
+        :add-icon="force_can_edit ? 'lock_open' : 'lock'"
+        add-text=""
+        :disabled="product.vendors?.length>1"
+        disabled-reason="It has more than one vendors."
       ></s-widget-header>
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Vendor panel > Fixed mode ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
-      <template v-if="vendor">
+      <template v-if="vendor && !force_can_edit">
         <v-list-subheader>
           <div
             v-html="
@@ -72,7 +80,7 @@
         </v-list-subheader>
 
         <b-vendor-input
-          v-if="!in_edit_mode /*Only in creation mode!*/"
+          v-if="!in_edit_mode /*Only in creation mode!*/ || force_can_edit"
           v-model="product.vendor_id"
           :shop="shop"
           flat
@@ -101,7 +109,7 @@
 
         <u-smart-switch
           v-model="single_vendor"
-          :disabled="in_edit_mode /*Only in creation mode!*/"
+          :disabled="in_edit_mode /*Only in creation mode!*/ && !force_can_edit"
           :false-description="
             $t('add_product.edit_info.marketplace.multi_vendors_desc')
           "
@@ -115,13 +123,17 @@
             $t('add_product.edit_info.marketplace.single_vendor_title')
           "
           class="my-3"
-          @change="product.vendor_id = null"
+          @change="
+
+             product.vendor_id =single_vendor? KEEP_VENDOR_FOR_SINGLE_MODE?.id
+              : null
+          "
         ></u-smart-switch>
 
         <v-expand-transition>
           <div v-if="single_vendor">
             <b-vendor-input
-              v-if="!in_edit_mode /*Only in creation mode!*/"
+              v-if="!in_edit_mode /*Only in creation mode!*/ || force_can_edit"
               v-model="product.vendor_id"
               :shop="shop"
               class="mt-5"
@@ -143,6 +155,9 @@
             <div v-else-if="product?.id" class="text-red pa-2">
               <b>Vendor has been deleted!</b>
             </div>
+          </div>
+          <div v-else>
+            <s-dense-images-circles v-if="product?.vendors" :images="product.vendors?.map(v=>getShopImagePath(v.icon,64))"></s-dense-images-circles>
           </div>
         </v-expand-transition>
       </template>
@@ -358,8 +373,11 @@
           v-if="!force_show_external && !product.external"
           class="d-flex flex-wrap align-center"
         >
-
-          <small class="mx-2">{{can_set_external? $t('add_product.edit_info.external.available_message'):$t('add_product.edit_info.external.not_available_message')}}</small>
+          <small class="mx-2">{{
+            can_set_external
+              ? $t("add_product.edit_info.external.available_message")
+              : $t("add_product.edit_info.external.not_available_message")
+          }}</small>
 
           <v-spacer></v-spacer>
           <v-btn
@@ -547,7 +565,6 @@
         required
         variant="underlined"
       >
-
       </v-text-field>
 
       <v-text-field
@@ -973,10 +990,12 @@ import { User } from "@selldone/core-js";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense.ts";
 import { ProductExternal } from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
+import SDenseImagesCircles from "@selldone/components-vue/ui/image/SDenseImagesCircles.vue";
 
 export default {
   name: "BProductEditInfo",
   components: {
+    SDenseImagesCircles,
     UAvatarFolder,
     SWidgetButtons,
     BProductProfileLogistic,
@@ -1030,6 +1049,8 @@ export default {
 
       //-----------------------------
       single_vendor: false,
+      force_can_edit: false,
+      KEEP_VENDOR_FOR_SINGLE_MODE: null,
 
       live_action: null,
 
@@ -1318,6 +1339,14 @@ export default {
         .finally(() => {
           this.busy_set_shortcuts = false;
         });
+    },
+
+    toggleForceEditVendor() {
+      this.KEEP_VENDOR_FOR_SINGLE_MODE = this.product.vendors?.length
+        ? this.product.vendors[0]
+        : this.product.vendor;
+
+      this.force_can_edit = !this.force_can_edit;
     },
   },
 };

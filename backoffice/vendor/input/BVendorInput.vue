@@ -192,6 +192,12 @@ export default {
 
       this.getVendors();
     }),
+
+    modelValue(val){
+      if(val && !this.selected_vendor){
+        this.getVendors();
+      }
+    }
   },
 
   created() {

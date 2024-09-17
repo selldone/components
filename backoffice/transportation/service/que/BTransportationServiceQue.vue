@@ -102,7 +102,7 @@
                 :location="basket.receiver_info.location"
                 :only-one="true"
                 :transportation-type="basket.delivery_info.type"
-                @click.stop
+                @click.stop  class="ma-1"
               ></u-map-geo-button>
 
               <v-btn

@@ -217,7 +217,7 @@
             <v-icon class="me-1" size="small">pin_drop</v-icon>
             {{ $t("global.commons.pickup") }}:
           </small>
-          <u-map-geo-button :location="receiver_info.location" class="my-1">
+          <u-map-geo-button :location="receiver_info.location"  class="ma-1">
           </u-map-geo-button>
         </p>
 

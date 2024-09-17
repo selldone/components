@@ -1197,6 +1197,9 @@ not need!
             : window.API.PUT_EDIT_PRODUCT(this.shop.id, this.product_new.id),
 
           {
+            // For marketplace: Vendor owner
+            vendor_id: this.product_new.vendor_id,
+
             type: this.product_new.type,
 
             unit: this.product_new.unit,
