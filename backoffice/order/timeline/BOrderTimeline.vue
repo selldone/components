@@ -719,8 +719,12 @@ export default {
       axios
         .get(this.base_url)
         .then(({ data }) => {
-          this.timelines = data.timelines;
-          this.resortItems();
+          if (data.error) {
+            this.showErrorAlert(null, data.error_msg);
+          } else {
+            this.timelines = data.timelines;
+            this.resortItems();
+          }
         })
         .catch((error) => {
           this.showLaravelError(error);
@@ -905,8 +909,7 @@ export default {
       }
 
       return item.data;
-    }
-
+    },
   },
 };
 </script>
