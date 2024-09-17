@@ -389,6 +389,19 @@
           delivery costs vary by country, you can set up a separate profile for
           each country.
         </v-list-subheader>
+
+        <v-chip
+          class="ma-1"
+          size="small"
+          label
+          :color="!selected_country ? '#000' : '#fff'"
+          variant="flat"
+          @click="selected_country = null"
+          prepend-icon="language"
+        >
+          {{ $t("global.commons.worldwide") }}
+        </v-chip>
+
         <v-chip
           v-for="(it, key) in profiles"
           class="ma-1"

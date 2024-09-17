@@ -18,6 +18,16 @@
     <template v-if="states?.length">
       <v-row dense class="my-1">
         <v-chip
+          class="ma-1"
+          size="small"
+          label
+          :color="!selected_state ? '#000' : '#fff'"
+          variant="flat"
+          @click="selected_state = null"
+        >
+          {{ $t("global.commons.default") }}
+        </v-chip>
+        <v-chip
           v-for="(it, _key) in modelValue.states"
           class="ma-1"
           :key="_key"
@@ -38,7 +48,7 @@
             <span class="ms-1"
               ><u-price
                 :currency="currency"
-                :amount="it.const?it.const:0"
+                :amount="it.const ? it.const : 0"
                 style="font-weight: 500"
               ></u-price
             ></span>
@@ -147,7 +157,12 @@
           :currency="currency"
           :label="$t('admin_shop.logistic.delivery.delivery_form.const_input')"
           class="strong-field"
-        />
+          suffix=" "
+        >
+          <template v-slot:append-inner>
+            <small>{{ currency }}</small>
+          </template>
+        </u-price-input>
 
         <!-- ━━━━━━━━━━━━━━ Distance ━━━━━━━━━━━━━━ -->
 
@@ -165,17 +180,18 @@
           :messages="
             $t(
               'admin_shop.logistic.delivery.delivery_form.distance_cof_input_dim',
-              { dim: getDistanceDimension(shop) },
+              { dim: distance_unit },
             )
           "
           :text-center="false"
           class="strong-field"
         >
           <template v-slot:append-inner>
-            <div class="d-flex flex-column text-center">
+            <div class="d-flex flex-column text-center small">
               <small>{{ currency }}</small>
-              <hr class="my-1" />
-              <small>{{ getDistanceDimension(shop) }}</small>
+              <div style="border-top: solid thin #999"></div>
+
+              <small>{{ distance_unit }}</small>
             </div>
           </template>
         </u-number-input>
@@ -199,7 +215,7 @@
             $t(
               'admin_shop.logistic.delivery.delivery_form.weight_cof_input_dim',
               {
-                dim: getWeightDimension(shop),
+                dim: mass_unit,
               },
             )
           "
@@ -207,10 +223,10 @@
           class="strong-field"
         >
           <template v-slot:append-inner>
-            <div class="d-flex flex-column text-center">
+            <div class="d-flex flex-column text-center small">
               <small>{{ currency }}</small>
-              <hr class="my-1" />
-              <small>{{ getWeightDimension(shop) }}</small>
+              <div style="border-top: solid thin #999"></div>
+              <small>{{ mass_unit }}</small>
             </div>
           </template>
         </u-number-input>
@@ -232,8 +248,8 @@
             $t(
               'admin_shop.logistic.delivery.delivery_form.distance_weight_cof_input_dim',
               {
-                weight: getWeightDimension(shop),
-                distance: getDistanceDimension(shop),
+                weight: mass_unit,
+                distance: distance_unit,
               },
             )
           "
@@ -241,14 +257,11 @@
           class="strong-field"
         >
           <template v-slot:append-inner>
-            <div class="d-flex flex-column text-center">
+            <div class="d-flex flex-column text-center small">
               <small>{{ currency }}</small>
-              <hr class="my-1" />
-              <small
-                >{{ getDistanceDimension(shop) }}🞬{{
-                  getWeightDimension(shop)
-                }}</small
-              >
+              <div style="border-top: solid thin #999"></div>
+
+              <small>{{ distance_unit }}🞬{{ mass_unit }}</small>
             </div>
           </template>
         </u-number-input>
@@ -313,7 +326,8 @@ import USmartSelect from "../../ui/smart/select/USmartSelect.vue";
 import UNumberInput from "../../ui/number/input/UNumberInput.vue";
 import SStateFlag from "../../ui/country/state-flag/SStateFlag.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
-import {isEmpty} from "lodash-es";
+import { isEmpty } from "lodash-es";
+import { ShopOptionsHelper } from "@selldone/core-js/helper";
 
 export default {
   name: "ShippingCostForm",
@@ -344,6 +358,13 @@ export default {
   }),
 
   computed: {
+    distance_unit() {
+      return ShopOptionsHelper.GetDistanceUnit(this.shop);
+    },
+    mass_unit() {
+      return ShopOptionsHelper.GetMassUnit(this.shop);
+    },
+
     //▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Country / State ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂
     countries() {
       return this.$store.getters.getCountries;
