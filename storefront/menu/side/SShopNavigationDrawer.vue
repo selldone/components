@@ -23,19 +23,25 @@
       style="border-radius: 24px; height: calc(100vh - 100px); max-width: 90vw"
       temporary
       @update:model-value="(val) => $emit('update:modelValue', val)"
+      theme="light"
     >
-      <div class="s--shop-navigation-drawer">
+      <div class="s--shop-navigation-drawer" >
         <div class="d-flex align-center pa-2">
-          <div v-if="!USER()">
+          <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Login ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
+
+          <div v-if="!USER()" class="flex-grow-1">
             <v-btn
               class="tnt"
-              color="#111"
-              max-width="80vw"
-              min-width="200"
-              size="large"
+
+              block
+              size="x-large"
               @click="NeedLogin()"
+              color="primary"
+              variant="flat"
+
+
             >
-              <v-icon class="me-1" size="small">login</v-icon>
+              <v-icon start>login</v-icon>
               {{ $t("global.actions.login") }}
             </v-btn>
           </div>
@@ -46,7 +52,6 @@
               :shop="shop"
               class="mx-3"
               hide-details
-              icon-color="#111"
               icon-only
             ></s-language-selector>
 
@@ -59,7 +64,6 @@
               "
               :shop="shop"
               hide-details
-              icon-color="#111"
               icon-only
               @change="
                 () => {
@@ -67,12 +71,12 @@
                 }
               "
             />
+            <v-spacer></v-spacer>
           </template>
 
-          <v-spacer></v-spacer>
+
 
           <v-btn
-            color="#000"
             icon
             variant="text"
             @click="$emit('update:modelValue', false)"
@@ -114,7 +118,6 @@
                   :loading="busy_logout"
                   block
                   class="tnt mt-3"
-                  color="#000"
                   size="large"
                   variant="flat"
                   @click="
@@ -209,6 +212,7 @@
                   v-if="tab.type === 'category' && tab.categories"
                   :categories="tab.categories"
                   style="--item-heigh: 42px"
+                  :dark="dark"
                 ></menu-categories>
               </v-expansion-panel-text>
             </v-expansion-panel>

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--top-menu-categories">
+  <div class="s--top-menu-categories" :style="{'--background':dark?'#111':'#fff'}">
     <v-container class="-container" @click.stop>
       <v-row>
         <v-col class="-categories-wrap" cols="12" lg="10">
@@ -243,6 +243,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    dark:Boolean,
   },
   data: () => ({
     selected_category: null,
@@ -363,7 +364,7 @@ export default {
 .s--top-menu-categories {
   --item-heigh: 28px;
   --font-size: 14px;
-  --background: #fff;
+
 
   text-align: start;
   min-height: calc(100vh - 200px);
@@ -395,7 +396,7 @@ export default {
       align-items: center;
       font-weight: 600;
       text-transform: uppercase;
-      color: #000 !important;
+     // color: #000 !important;
       height: var(--item-heigh);
       max-height: var(--item-heigh);
       margin-bottom: 4px;

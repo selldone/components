@@ -123,6 +123,7 @@
               :preview="preview"
               class="my-2 ms-2"
               style="width: 98vw; max-height: 90vh"
+              :dark="dark"
             ></menu-categories>
 
             <!-- Menu > Custom -->
