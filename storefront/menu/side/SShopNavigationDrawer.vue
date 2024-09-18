@@ -25,65 +25,57 @@
       @update:model-value="(val) => $emit('update:modelValue', val)"
       theme="light"
     >
-      <div class="s--shop-navigation-drawer" >
+      <div class="s--shop-navigation-drawer">
         <div class="d-flex align-center pa-2">
-          <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Login ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
+          <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
+          <s-language-selector
+            v-if="shop"
+            :shop="shop"
+            class="mx-3"
+            hide-details
+            icon-only
+          ></s-language-selector>
 
-          <div v-if="!USER()" class="flex-grow-1">
-            <v-btn
-              class="tnt"
+          <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
+          <u-currency-selector
+            v-if="
+              /* isMobile &&*/ shop &&
+              shop.currencies &&
+              shop.currencies.length > 1
+            "
+            :shop="shop"
+            hide-details
+            icon-only
+            @change="
+              () => {
+                onChangeUserSelectedCurrency();
+              }
+            "
+          />
+          <v-spacer></v-spacer>
 
-              block
-              size="x-large"
-              @click="NeedLogin()"
-              color="primary"
-              variant="flat"
-
-
-            >
-              <v-icon start>login</v-icon>
-              {{ $t("global.actions.login") }}
-            </v-btn>
-          </div>
-          <template v-else>
-            <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-            <s-language-selector
-              v-if="shop"
-              :shop="shop"
-              class="mx-3"
-              hide-details
-              icon-only
-            ></s-language-selector>
-
-            <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-            <u-currency-selector
-              v-if="
-                /* isMobile &&*/ shop &&
-                shop.currencies &&
-                shop.currencies.length > 1
-              "
-              :shop="shop"
-              hide-details
-              icon-only
-              @change="
-                () => {
-                  onChangeUserSelectedCurrency();
-                }
-              "
-            />
-            <v-spacer></v-spacer>
-          </template>
-
-
-
-          <v-btn
-            icon
-            variant="text"
-            @click="$emit('update:modelValue', false)"
-          >
+          <v-btn icon variant="text" @click="$emit('update:modelValue', false)">
             <v-icon>close</v-icon>
           </v-btn>
         </div>
+
+        <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Login ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
+
+        <div v-if="!USER()" class="flex-grow-1 my-2">
+          <v-btn
+            class="tnt"
+            rounded="0"
+            block
+            size="x-large"
+            @click="NeedLogin()"
+            color="primary"
+            variant="flat"
+          >
+            <v-icon start>login</v-icon>
+            {{ $t("global.actions.login") }}
+          </v-btn>
+        </div>
+
         <v-expansion-panels class="border-between-vertical" flat>
           <!-- ――――――――――――――――――――― Shop User Menu List ――――――――――――――――――――― -->
 
