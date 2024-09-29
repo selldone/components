@@ -26,7 +26,7 @@
         @click:add="toggleForceEditVendor"
         :add-icon="force_can_edit ? 'lock_open' : 'lock'"
         add-text=""
-        :disabled="product.vendors?.length>1"
+        :disabled="product.vendors?.length > 1"
         disabled-reason="It has more than one vendors."
       ></s-widget-header>
 
@@ -124,8 +124,8 @@
           "
           class="my-3"
           @change="
-
-             product.vendor_id =single_vendor? KEEP_VENDOR_FOR_SINGLE_MODE?.id
+            product.vendor_id = single_vendor
+              ? KEEP_VENDOR_FOR_SINGLE_MODE?.id
               : null
           "
         ></u-smart-switch>
@@ -157,7 +157,12 @@
             </div>
           </div>
           <div v-else>
-            <s-dense-images-circles v-if="product?.vendors" :images="product.vendors?.map(v=>getShopImagePath(v.icon,64))"></s-dense-images-circles>
+            <s-dense-images-circles
+              v-if="product?.vendors"
+              :images="
+                product.vendors?.map((v) => getShopImagePath(v.icon, 64))
+              "
+            ></s-dense-images-circles>
           </div>
         </v-expand-transition>
       </template>
@@ -477,6 +482,35 @@
           <v-list-subheader>
             {{ $t("add_product.edit_info.custom_pricing.subtitle") }}
           </v-list-subheader>
+
+          <s-product-section-valuation
+            v-if="$vuetify.display.mdAndUp"
+            v-model:preferences="preview_valuation"
+            :product="product"
+            :shop="shop"
+            class=""
+            preview-mode
+            style="
+              position: absolute;
+              left: 115%;
+              top: 50%;
+              transform: scale(0.6) translateX(-50%) translateY(-50%);
+              transform-origin: top center;
+              border: solid #eee thick;
+            "
+          >
+            <div class="pa-3 border-top-dashed d-flex align-center flex-wrap">
+              {{ $t("global.commons.price") }}:
+              <u-price
+                :amount="valuation_price_base"
+                class="ms-2"
+                medium
+                title="Base product price"
+              ></u-price>
+              <v-icon class="flip-rtl mx-3">trending_flat</v-icon>
+              <u-price :amount="valuation_price_preview" medium title="Product price after valuation"></u-price>
+            </div>
+          </s-product-section-valuation>
 
           <b-valuation-input
             v-model="valuation"
@@ -991,10 +1025,12 @@ import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFold
 import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense.ts";
 import { ProductExternal } from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
 import SDenseImagesCircles from "@selldone/components-vue/ui/image/SDenseImagesCircles.vue";
+import SProductSectionValuation from "@selldone/components-vue/storefront/product/section/valuation/SProductSectionValuation.vue";
 
 export default {
   name: "BProductEditInfo",
   components: {
+    SProductSectionValuation,
     SDenseImagesCircles,
     UAvatarFolder,
     SWidgetButtons,
@@ -1046,6 +1082,8 @@ export default {
       pre_show_valuation: false,
       busy_valuation: false,
       valuation: null,
+
+      preview_valuation: { valuation: {} },
 
       //-----------------------------
       single_vendor: false,
@@ -1205,6 +1243,31 @@ export default {
     },
     product_external_service() {
       return ProductExternal.getServiceData(this.product.external);
+    },
+    //-------------------------- Valuation --------------------------
+
+    valuation_price_base() {
+      return this.CalcPriceProductCurrentCurrency(
+        this.shop,
+        this.product,
+        null,
+        null,
+        null,
+        null,
+        null,
+      );
+    },
+
+    valuation_price_preview() {
+      return this.CalcPriceProductCurrentCurrency(
+        this.shop,
+        this.product,
+        null,
+        this.preview_valuation,
+        this.product.valuation,
+        null,
+        null,
+      );
     },
   },
 

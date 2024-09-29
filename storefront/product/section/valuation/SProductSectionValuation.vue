@@ -26,100 +26,104 @@
       :key="index"
       class="position-relative"
     >
-      <!-- Normal -->
-      <v-text-field
-        v-if="!item.type"
-        v-model="preferences_valuation[item.name]"
-        :label="item.title"
-        :persistent-placeholder="!!item.placeholder"
-        :placeholder="item.placeholder"
-        :readonly="readonly"
-        bg-color="transparent"
-        class="mx-4"
-        variant="underlined"
-        @blur="debounceSavePreferences()"
-        @update:model-value="
-          $emit('update:preferences', preferences);
-          $forceUpdate();
-        "
-      >
-      </v-text-field>
+      <v-expand-transition group>
+        <!-- Normal -->
+        <v-text-field
+          v-if="!item.type"
+          v-model="preferences_valuation[item.name]"
+          :label="item.title"
+          :persistent-placeholder="!!item.placeholder"
+          :placeholder="item.placeholder"
+          :readonly="readonly"
+          bg-color="transparent"
+          class="mx-4"
+          variant="underlined"
+          @blur="debounceSavePreferences()"
+          @update:model-value="
+            $emit('update:preferences', preferences);
+            $forceUpdate();
+          "
+        >
+        </v-text-field>
 
-      <!-- Number -->
-      <u-number-input
-        v-else-if="item.type === 'number'"
-        v-model="preferences_valuation[item.name]"
-        :label="item.title"
-        :min="0"
-        :readonly="readonly"
-        background-color="transparent"
-        class="mx-4"
-        variant="underlined"
-        @blur="debounceSavePreferences()"
-        @update:model-value="$emit('update:preferences', preferences)"
-      >
-      </u-number-input>
+        <!-- Number -->
+        <u-number-input
+          v-else-if="item.type === 'number'"
+          v-model="preferences_valuation[item.name]"
+          :label="item.title"
+          :min="0"
+          :readonly="readonly"
+          background-color="transparent"
+          class="mx-4"
+          variant="underlined"
+          @blur="debounceSavePreferences()"
+          @update:model-value="$emit('update:preferences', preferences)"
+        >
+        </u-number-input>
 
-      <!-- Select -->
-      <v-select
-        v-else-if="item.type === 'select'"
-        v-model="preferences_valuation[item.name]"
-        :chips="item.multiple"
-        :disabled="readonly"
-        :items="filterSelects(item.selects, preferences_valuation[item.name])"
-        :label="item.title"
-        :multiple="item.multiple"
-        :persistent-placeholder="!!item.placeholder"
-        :placeholder="item.placeholder"
-        :readonly="readonly"
-        :return-object="false"
-        bg-color="transparent"
-        class="mx-4"
-        clearable
-        variant="underlined"
-        @click:clear="preferences_valuation[item.name] = null"
-        @update:model-value="
-          $emit('update:preferences', preferences);
-          $forceUpdate();
-          debounceSavePreferences();
-        "
-      >
-      </v-select>
-      <!-- switch -->
-      <u-smart-switch
-        v-else-if="item.type === 'switch'"
-        v-model="preferences_valuation[item.name]"
-        :false-description="item.false_desc"
-        :false-disabled="!checkAvailable(`${item.name}-FALSE`)"
-        :false-title="
-          item.false_title ? item.false_title : $t('global.actions.no')
-        "
-        :label="item.title"
-        :readonly="readonly"
-        :true-description="item.true_desc"
-        :true-disabled="!checkAvailable(`${item.name}-TRUE`)"
-        :true-title="
-          item.true_title ? item.true_title : $t('global.actions.yes')
-        "
-        class="mx-4 mb-5"
-        false-icon="close"
-        true-icon="check"
-        @change="debounceSavePreferences"
-        @update:model-value="
-          $emit('update:preferences', preferences);
-          $forceUpdate();
-        "
-      >
-      </u-smart-switch>
+        <!-- Select -->
+        <v-select
+          v-else-if="item.type === 'select' && hasOptions(item)"
+          v-model="preferences_valuation[item.name]"
+          :chips="item.multiple"
+          :disabled="readonly"
+          :items="filterSelects(item.selects, preferences_valuation[item.name])"
+          :label="item.title"
+          :multiple="item.multiple"
+          :persistent-placeholder="!!item.placeholder"
+          :placeholder="item.placeholder"
+          :readonly="readonly"
+          :return-object="false"
+          bg-color="transparent"
+          class="mx-4"
+          clearable
+          variant="underlined"
+          @click:clear="preferences_valuation[item.name] = null"
+          @update:model-value="
+            $emit('update:preferences', preferences);
+            $forceUpdate();
+            debounceSavePreferences();
+          "
+        >
+        </v-select>
+        <!-- switch -->
+        <u-smart-switch
+          v-else-if="item.type === 'switch' && hasOptions(item)"
+          v-model="preferences_valuation[item.name]"
+          :false-description="item.false_desc"
+          :false-disabled="!checkAvailable(`${item.name}-FALSE`)"
+          :false-title="
+            item.false_title ? item.false_title : $t('global.actions.no')
+          "
+          :label="item.title"
+          :readonly="readonly"
+          :true-description="item.true_desc"
+          :true-disabled="!checkAvailable(`${item.name}-TRUE`)"
+          :true-title="
+            item.true_title ? item.true_title : $t('global.actions.yes')
+          "
+          class="mx-4 mb-5"
+          false-icon="close"
+          true-icon="check"
+          @change="debounceSavePreferences"
+          @update:model-value="
+            $emit('update:preferences', preferences);
+            $forceUpdate();
+          "
+        >
+        </u-smart-switch>
+      </v-expand-transition>
 
       <v-icon
-        v-if="index_blink === index"
+        v-if="index_blink === index "
         class="blink-me-linear indic"
         color="#1976D2"
         size="x-small"
         >circle
       </v-icon>
     </div>
+
+    <slot></slot>
   </div>
 </template>
 
@@ -198,7 +202,7 @@ export default {
 
     index_blink() {
       return this.structure.findIndex(
-        (row) => row.type !== "switch" && !this.preferences_valuation[row.name],
+        (row) => row.type !== "switch" && !this.preferences_valuation[row.name] && this. hasOptions(row),
       );
     },
   },
@@ -217,6 +221,21 @@ export default {
   },
 
   methods: {
+    hasOptions(item) {
+      if (item.type === "select") {
+        return this.filterSelects(
+          item.selects,
+          this.preferences_valuation[item.name],
+        ).length;
+      } else if (item.type === "switch") {
+        return (
+          this.checkAvailable(`${item.name}-FALSE`) ||
+          this.checkAvailable(`${item.name}-TRUE`)
+        );
+      }
+      return true;
+    },
+
     assignPreferences() {
       this.preferences_valuation = this.preferences.valuation;
     },

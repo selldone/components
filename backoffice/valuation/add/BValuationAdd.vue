@@ -20,7 +20,11 @@
   >
     <v-card-title>
       <v-icon class="me-2">calculate</v-icon>
-      {{ valuation ?$t('valuation_add.title_edit')  :$t('valuation_add.title_add')  }}
+      {{
+        valuation
+          ? $t("valuation_add.title_edit")
+          : $t("valuation_add.title_add")
+      }}
     </v-card-title>
     <v-card-text>
       <v-form ref="form" lazy-validation>
@@ -31,11 +35,8 @@
             :title="$t('global.commons.config')"
             icon="tune"
           ></s-widget-header>
-          <v-list-subheader
-            >
-            {{$t('valuation_add.config.subtitle')}}
-
-
+          <v-list-subheader>
+            {{ $t("valuation_add.config.subtitle") }}
           </v-list-subheader>
 
           <v-text-field
@@ -58,17 +59,19 @@
 
         <div class="widget-box mb-5">
           <s-widget-header
-            :add-caption="collapse ?$t('valuation_add.structure.expand_action')  :$t('valuation_add.structure.collapse_action')  "
+            :add-caption="
+              collapse
+                ? $t('valuation_add.structure.expand_action')
+                : $t('valuation_add.structure.collapse_action')
+            "
             :add-icon="collapse ? 'unfold_more' : 'unfold_less'"
             add-text
             icon="table_view"
-            :title="$t('valuation_add.structure.title') "
+            :title="$t('valuation_add.structure.title')"
             @click:add="collapse = !collapse"
           ></s-widget-header>
-          <v-list-subheader
-            >
-            {{$t('valuation_add.structure.subtitle')}}
-
+          <v-list-subheader>
+            {{ $t("valuation_add.structure.subtitle") }}
           </v-list-subheader>
 
           <b-valuation-form-structure
@@ -93,13 +96,12 @@
           >
             <div class="pa-3 text-muted text-center mt-5">
               <v-icon class="me-1">science</v-icon>
-              {{$t('valuation_add.valuation_preview')}}
-
+              {{ $t("valuation_add.valuation_preview") }}
             </div>
 
             <s-product-section-valuation
               v-model:preferences="preview_valuation"
-              :product="preview_product"
+              :product="{ ...preview_product,valuation:{structure,conditions} }"
               :shop="shop"
               class="my-5"
               preview-mode
@@ -110,7 +112,7 @@
             <v-btn class="me-1" variant="text" @click="samples_dialog = true">
               <v-icon start>science</v-icon>
 
-              {{$t('valuation_add.load_sample')}}
+              {{ $t("valuation_add.load_sample") }}
             </v-btn>
 
             <v-menu :min-width="160">
@@ -149,10 +151,10 @@
         <div class="widget-box mb-5">
           <s-widget-header
             icon="rule_folder"
-            :title="$t('valuation_add.conditions.title') "
+            :title="$t('valuation_add.conditions.title')"
           ></s-widget-header>
           <v-list-subheader
-            >{{$t('valuation_add.conditions.subtitle')}}
+            >{{ $t("valuation_add.conditions.subtitle") }}
           </v-list-subheader>
 
           <b-valuation-form-condition
@@ -218,8 +220,7 @@
       <v-card class="rounded-t-xl text-start" rounded="0">
         <v-card-title>
           <v-icon class="me-2" color="#111">science</v-icon>
-          {{$t('valuation_add.samples.title')}}
-
+          {{ $t("valuation_add.samples.title") }}
         </v-card-title>
 
         <v-card-text>
@@ -254,7 +255,7 @@
               @click="samples_dialog = false"
             >
               <v-icon start>close</v-icon>
-              {{$t('global.actions.close')}}
+              {{ $t("global.actions.close") }}
             </v-btn>
           </div>
         </v-card-actions>
