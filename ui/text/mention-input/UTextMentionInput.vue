@@ -276,7 +276,7 @@ export default {
     text-align: left;
     display: flex;
     align-items: center;
-    padding: 8px 12px;
+    padding: 4px 12px;
 
     div {
       flex-grow: 1;

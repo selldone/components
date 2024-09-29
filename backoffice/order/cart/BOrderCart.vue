@@ -536,7 +536,7 @@
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card>
+    <v-card class="text-start">
       <v-card-title>
         <img
           class="me-2"

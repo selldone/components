@@ -417,8 +417,9 @@
                 v-for="item in days"
                 :key="item.value"
                 color="#fff"
-                size="small"
+                size="x-small"
                 variant="flat"
+                style="margin: 2px"
               >
                 <v-icon v-if="item.today" color="green" size="12" start
                   >circle
@@ -433,8 +434,9 @@
                 v-for="item in time_spans"
                 :key="item.value"
                 color="#fff"
-                size="small"
+                size="x-small"
                 variant="flat"
+                style="margin: 2px"
               >
                 <img :src="item.icon" class="me-1" width="14px" />
 
