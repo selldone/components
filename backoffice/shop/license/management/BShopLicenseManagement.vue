@@ -17,7 +17,7 @@
     <!-- ██████████████████ Agency Client ██████████████████ -->
 
     <div v-if="agency_client">
-      <div class="widget-box -x-large mb-5">
+      <div class="widget-box -large mb-5">
         <s-widget-header
           :title="$t('shop_license.active_license.title')"
           icon="workspace_premium"
@@ -158,7 +158,7 @@
             ) /*Lifetime mode*/
           )
         "
-        class="widget-box -x-large mb-5"
+        class="widget-box -large mb-5"
       >
         <s-widget-header icon="build" title="Deal Issue Fix"></s-widget-header>
         <v-list-subheader>
@@ -256,7 +256,7 @@
     <div v-else>
       <!-- Current shop license info -->
 
-      <div class="widget-box -x-large mb-5">
+      <div class="widget-box -large mb-5">
         <s-widget-header
           :title="$t('shop_license.active_license.title')"
           icon="workspace_premium"

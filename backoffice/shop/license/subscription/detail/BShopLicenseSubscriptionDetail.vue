@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="widget-box -x-large">
+  <div class="widget-box -large">
     <s-widget-header
       :title="$t('shop_license.license_detail.title')"
       icon="info"

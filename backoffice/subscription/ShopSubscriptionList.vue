@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="widget-box -x-large">
+  <div class="widget-box -large">
     <s-widget-header
       :add-caption="$t('shop_license.add')"
       :title="$t('shop_license.licenses_table.title')"
