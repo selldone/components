@@ -40,6 +40,7 @@
       :loading="busy_fetch"
       class="bg-transparent mb-6"
       item-key="id"
+      :hide-default-footer="subscriptions.length < 5"
     >
       <template v-slot:item.code="{ item }">
         <div class="min-width-150 p-2">
@@ -213,23 +214,20 @@
     <v-bottom-sheet
       v-model="sheet"
       max-width="98vw"
-      :width="1200"
+      :width="860"
       :overlay-opacity="0.9"
       content-class="rounded-t-xl"
-
       scrollable
     >
       <v-card class="text-start rounded-t-xl">
-        <v-card-title class="text-capitalize">
-          <v-icon class="me-1" color="#111">workspace_premium</v-icon>
-          {{ $t("shop_license.buy") }}
+        <v-card-title class="text-capitalize d-flex align-center">
+          <v-avatar class="avatar-gradient -thin -shop me-2" size="36">
+            <img :src="getShopImagePath(shop.icon, 96)" />
+          </v-avatar>
 
-          <v-btn
-            class="absolute-top-end"
-            icon
-            variant="text"
-            @click="sheet = false"
-          >
+          {{ $t("shop_license.buy") }}
+          <v-spacer></v-spacer>
+          <v-btn class="ms-2" icon variant="text" @click="sheet = false">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
@@ -239,7 +237,7 @@
 
             <div v-if="!voucher_selected" class="py-5">
               <div class="widget-box mb-5">
-                <s-widget-header icon="looks_one" title="Select a wallet">
+                <s-widget-header icon="looks_one" :title="$t('shop_license.add_dialog.wallet.title')">
                   <template v-slot:append-title>
                     <v-icon
                       v-if="!account_selected"
@@ -251,9 +249,8 @@
                   </template>
                 </s-widget-header>
                 <v-list-subheader>
-                  Please choose a virtual wallet. If you do not have one, you
-                  can create one in the wallet section. This wallet will be used
-                  for charges.
+                  {{$t('shop_license.add_dialog.wallet.subtitle')}}
+
                 </v-list-subheader>
 
                 <b-account-input v-model="account_selected"></b-account-input>
@@ -280,7 +277,6 @@
                 </v-list-subheader>
                 <u-smart-select
                   v-model="subscription_code"
-                  :disabled="!account_selected"
                   :items="plans"
                   class="my-3"
                   item-image="icon"
@@ -330,22 +326,22 @@
                 <s-widget-header
                   class=""
                   icon="settings_applications"
-                  title="More options"
+                  :title="$t('shop_license.add_dialog.options.title') "
                 ></s-widget-header>
 
                 <u-smart-toggle
                   v-model="renewal"
-                  :true-title="$t('shop_license.auto_renewal')"
+                  :true-title="$t('shop_license.add_dialog.auto_renewal.true_title')"
                   class="my-3"
                   false-gray
-                  true-description="The system will extend if your wallet has sufficient balance or if you have available the same voucher."
+                  :true-description="$t('shop_license.add_dialog.auto_renewal.true_description') "
                   true-icon="autorenew"
                 ></u-smart-toggle>
               </div>
             </div>
 
             <!-- Voucher mode -->
-            <div v-else class="py-5 text-center widget-box mb-5">
+            <div v-else class="py-5 text-center mb-5">
               <v-img
                 :src="getVoucherImage(voucher_selected.code)"
                 height="168"
@@ -373,7 +369,7 @@
             <div class="widget-box mb-5">
               <s-widget-header
                 icon="check_box"
-                title="Verify"
+                :title="$t('shop_license.add_dialog.verify.title')"
               ></s-widget-header>
 
               <v-expand-transition>
@@ -405,7 +401,8 @@
 
               <u-smart-verify
                 v-model="agreement"
-                :true-title="$t('shop_license.terms')"
+                :true-title="$t('shop_license.verify.true_title')"
+                :true-description="$t('shop_license.verify.true_description')"
                 class="my-3"
               ></u-smart-verify>
             </div>
@@ -445,7 +442,6 @@
               }"
               :loading="busy_buy"
               color="primary"
-
               size="x-large"
               variant="elevated"
               @click="buySubscription()"

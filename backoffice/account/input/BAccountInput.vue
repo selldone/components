@@ -33,7 +33,7 @@
     "
     class="v-input-auto-height"
     item-title="account_number"
-    placeholder="Select a wallet..."
+    :placeholder="$t('global.placeholders.select_wallet')"
     prepend-inner-icon="wallet"
   >
     <template v-slot:item="{ item, props }">

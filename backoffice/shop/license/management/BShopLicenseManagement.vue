@@ -213,7 +213,7 @@
       </div>
 
       <b-shop-license-subscription-detail
-        v-if="!hideDetails"
+        v-if="showPartnerUpgrade"
         :shop="shop"
         class="my-5"
       >
@@ -303,13 +303,13 @@
       </div>
 
       <shop-subscription-list
-        v-if="!hideDetails"
+        v-if="showSubscriptionsList"
         :shop="shop"
         class="mb-5"
       ></shop-subscription-list>
 
       <b-shop-license-subscription-detail
-        v-if="!hideDetails"
+        v-if="showSubscriptionDetails"
         :shop="shop"
         class="mb-5"
       ></b-shop-license-subscription-detail>
@@ -337,7 +337,10 @@ export default {
       required: true,
       type: Object,
     },
-    hideDetails: { type: Boolean, default: false },
+    showSubscriptionsList:Boolean,
+    showSubscriptionDetails:Boolean,
+    showPartnerUpgrade:Boolean,
+
   },
   data: () => ({
     busy_fix: false,
