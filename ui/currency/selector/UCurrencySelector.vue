@@ -76,7 +76,7 @@
   <v-autocomplete
     v-else
     v-model="selectedCurrency"
-    :bg-color="backgroundColor"
+    :bg-color="bgColor"
     :class="{ '-small': small }"
     :color="color"
     :density="dense ? 'compact' : 'default'"
@@ -222,7 +222,7 @@ export default {
     minWidth: {
       default: "120px",
     },
-    backgroundColor: {},
+    bgColor: {},
 
     saveLocalStorage: {
       //true: for shop admin & false: for main service pricing

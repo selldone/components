@@ -15,7 +15,7 @@
 <template>
   <div>
     <v-text-field
-      :bg-color="backgroundColor"
+      :bg-color="bgColor"
       :density="dense ? 'compact' : undefined"
       :flat="flat"
       :hide-details="!messages"
@@ -163,7 +163,8 @@ export default {
       type: Boolean,
       default: false,
     },
-    backgroundColor: {},
+    bgColor: {},
+
     flat: Boolean,
   },
 

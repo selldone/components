@@ -15,7 +15,7 @@
 <template>
   <u-currency-selector
     v-model="user_currency"
-    :background-color="backgroundColor"
+    :bg-color="bgColor"
     :dark="dark"
     :dense="dense"
     :filled="filled"
@@ -114,7 +114,8 @@ export default {
       default: false,
       type: Boolean,
     },
-    backgroundColor: {},
+    bgColor: {},
+
   },
   data: () => ({
     user_currency: SetupService.DefaultCurrency(),
