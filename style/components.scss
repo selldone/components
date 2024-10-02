@@ -2203,12 +2203,12 @@ Smart invert
     background: #000;
   }
 
-  .admin-shop-container, .admin-user-container, .admin-account-container {
+  .admin-shop-container, .admin-user-container, .admin-account-container,.b--shop-loading {
     background: var(--theme-deep-dark) !important;
     border-radius: 16px 16px 48px 48px !important; // Fix bottom curve on dark mode.
   }
 
-  .card--flex-toolbar, .s--card-window-content, footer {
+  .card--flex-toolbar, .s--card-window-content, footer,.b--shop-loading-content {
     box-shadow: 0px 10px 50px 5px rgba(242, 242, 242, 0.84) !important;
     filter: invert(1);
 
@@ -2224,6 +2224,9 @@ Smart invert
 
     }
 
+    .widget-box{
+      --background: #eaeaea; // More contrast!
+    }
 
     .widget-dark {
       box-shadow: 0 0 40px #040404;
