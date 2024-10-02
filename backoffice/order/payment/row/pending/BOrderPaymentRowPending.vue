@@ -19,7 +19,7 @@
       'bg-cyan text-white': transaction.status === 'Processing',
       'bg-red text-white': transaction.status === 'Canceled',
     }"
-    class="text-start"
+    class="text-start no-inv"
   >
     <td class="py-1">
       <img :src="getShopImagePath(transaction.logo)" class="mx-2" height="24" />

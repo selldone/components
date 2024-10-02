@@ -685,7 +685,12 @@
 
   <!-- █████████████████████████ Dialog > Confirm COD Payment █████████████████████████ -->
 
-  <v-bottom-sheet v-model="dialog_customer_pay_money_cod" max-width="98vw" width="680" content-class="rounded-t-xl">
+  <v-bottom-sheet
+    v-model="dialog_customer_pay_money_cod"
+    max-width="98vw"
+    width="680"
+    content-class="rounded-t-xl"
+  >
     <v-card class="text-start" rounded="t-xl">
       <v-card-title>
         <v-icon class="me-2">paid</v-icon>
@@ -696,13 +701,26 @@
         <div class="mb-5">
           {{ $t("process_center.payment_widget.pay_cod_dialog.message") }}
         </div>
-        <u-smart-verify v-model="accept_action"></u-smart-verify>
 
-        <div v-if="codGateways?.lenght" class="text-red py-2 text-subtitle-2">
-          <v-icon>report_gmailerrorred</v-icon>
-          We can not find any COD gateway to pay. Please add a COD gateway to your shop.
+        <div v-if="!codGateways?.lenght">
+          <div class="text-red py-2 text-h5">
+            <v-icon>report_gmailerrorred</v-icon>
+            We can not find any COD gateway to pay. Please add a COD gateway to
+            your shop.
+
+            <v-btn
+              class="tnt ms-1"
+              size="small"
+              :to="{ name: 'BPageShopFinanceGateways' }"
+              append-icon="launch"
+              target="_blank"
+              >Add Gateway
+            </v-btn>
+          </div>
+          {{ $t("global.commons.currency") }}:
+          <u-currency-icon :currency="order.currency" flag></u-currency-icon>
         </div>
-
+        <u-smart-verify v-else v-model="accept_action"></u-smart-verify>
       </v-card-text>
 
       <v-card-actions>
@@ -746,7 +764,6 @@
               >
             </p>
           </v-btn>
-
         </div>
       </v-card-actions>
     </v-card>
