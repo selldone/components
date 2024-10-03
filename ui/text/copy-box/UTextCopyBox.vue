@@ -36,6 +36,7 @@
             'ma-2': !small && smallWidthMode,
             'ma-1': small && smallWidthMode,
             'h-100': !smallWidthMode,
+               'h-90': smallWidthMode,
           }"
           :color="color"
           :min-height="small ? 24 : 64"

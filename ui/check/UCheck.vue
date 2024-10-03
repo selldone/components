@@ -18,7 +18,9 @@
       v-if="checked"
       :color="trueColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click="set(false)"
+      @click.stop="set(false)"
+      class="hover-scale-small"
+      key="1"
     >
       {{ trueIcon }}
     </v-icon>
@@ -26,7 +28,9 @@
       v-else
       :color="falseColor"
       :size="size ? size : small ? 'small' : undefined"
-      @click="set(true)"
+      @click.stop="set(true)"
+      class="hover-scale-small"
+      key="2"
     >
       {{ falseIcon }}
     </v-icon>
