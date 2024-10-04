@@ -325,7 +325,7 @@
   </b-products-advanced-options>
 </template>
 
-<script>
+<script lang="ts">
 import InlineHelp from "../../../help/InlineHelp.vue";
 import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
@@ -335,6 +335,7 @@ import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
 import { HelpCenterCode } from "../../../help/HelpCenterCode";
 import { ShopPublicFeedApi } from "@selldone/core-js/enums/shop/feeds/api/ShopPublicFeedApi";
 import { SetupService } from "@selldone/core-js/server/SetupService";
+import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
 
 export default {
   name: "BProductsPanelHeader",
@@ -382,14 +383,26 @@ export default {
 
     CAN_ADD_PRODUCT() {
       return (
-        !this.IS_VENDOR_PANEL ||
-        (this.shop.marketplace && this.shop.marketplace.product)
+        (!this.IS_VENDOR_PANEL ||
+          (this.shop.marketplace && this.shop.marketplace.product)) &&
+        // Check in vendor panel limitations: (In the vendor panel, should have written product access)
+        (!this.IS_VENDOR_PANEL ||
+          this.writeVendorAccess(
+            this.vendor,
+            VendorMemberTypes.VendorMemberRegionCode.PRODUCTS,
+          ))
       );
     },
     CAN_ADD_CATEGORY() {
       return (
-        !this.IS_VENDOR_PANEL ||
-        (this.shop.marketplace && this.shop.marketplace.category)
+        (!this.IS_VENDOR_PANEL ||
+          (this.shop.marketplace && this.shop.marketplace.category)) &&
+        // Check in vendor panel limitations: (In the vendor panel, should have written product access)
+        (!this.IS_VENDOR_PANEL ||
+          this.writeVendorAccess(
+            this.vendor,
+            VendorMemberTypes.VendorMemberRegionCode.PRODUCTS,
+          ))
       );
     },
 

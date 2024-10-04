@@ -103,7 +103,7 @@
       :show-notes="show_notes"
       :show-vendors="show_vendors"
       :vendor="vendor"
-      add-product-button
+      :add-product-button="CAN_ADD_PRODUCT"
       class="mb-5 fadeIn"
       draggable
       multi-select-products
@@ -453,7 +453,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BProductsWindow from "../../product/window/BProductsWindow.vue";
 import BProductAddStudio from "../add/studio/BProductAddStudio.vue";
 import BCategoryAdd from "../../category/add/BCategoryAdd.vue";
@@ -470,6 +470,7 @@ import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryData
 import BShopProductsImportProcessing from "../../product/importer/processing/BShopProductsImportProcessing.vue";
 import BProductsPanelHeader from "../../product/panel/header/BProductsPanelHeader.vue";
 import BProductAddFull from "../../product/add/full/BProductAddFull.vue";
+import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
 
 export default {
   name: "BProductsPanel",
@@ -496,6 +497,8 @@ export default {
   },
   delimiters: ["${", "}"], // Avoid Twig conflicts
   data: () => ({
+    VendorMemberRegionCode: VendorMemberTypes.VendorMemberRegionCode,
+
     dialog_add_category: false,
     add_product_dialog: false,
     last_added_product: null,
@@ -536,14 +539,26 @@ export default {
 
     CAN_ADD_PRODUCT() {
       return (
-        !this.IS_VENDOR_PANEL ||
-        (this.shop.marketplace && this.shop.marketplace.product)
+        (!this.IS_VENDOR_PANEL ||
+          (this.shop.marketplace && this.shop.marketplace.product)) &&
+        // Check in vendor panel limitations: (In the vendor panel, should have written product access)
+        (!this.IS_VENDOR_PANEL ||
+          this.writeVendorAccess(
+            this.vendor,
+            VendorMemberTypes.VendorMemberRegionCode.PRODUCTS,
+          ))
       );
     },
     CAN_ADD_CATEGORY() {
       return (
-        !this.IS_VENDOR_PANEL ||
-        (this.shop.marketplace && this.shop.marketplace.category)
+        (!this.IS_VENDOR_PANEL ||
+          (this.shop.marketplace && this.shop.marketplace.category)) &&
+        // Check in vendor panel limitations: (In the vendor panel, should have written product access)
+        (!this.IS_VENDOR_PANEL ||
+          this.writeVendorAccess(
+            this.vendor,
+            VendorMemberTypes.VendorMemberRegionCode.PRODUCTS,
+          ))
       );
     },
 

@@ -123,71 +123,73 @@
       <!-- Send by delivery service -->
 
       <div v-if="!noService && transportation_services?.length && !is_pickup">
-        <h3 class="mt-5">
-          <v-icon class="me-1" color="black">looks_two</v-icon>
-          {{ $t("order_delivery.option_add_to_que") }}
-        </h3>
-        <p
-          class="my-2 text-muted"
-          v-html="$t('order_delivery.message_add_to_service')"
-        ></p>
+        <template v-if="!IS_VENDOR_PANEL">
+          <h3 class="mt-5">
+            <v-icon class="me-1" color="black">looks_two</v-icon>
+            {{ $t("order_delivery.option_add_to_que") }}
+          </h3>
+          <p
+            class="my-2 text-muted"
+            v-html="$t('order_delivery.message_add_to_service')"
+          ></p>
 
-        <s-dense-images-circles
-          v-if="
-            transportation?.info?.service_ids &&
-            Array.isArray(transportation.info.service_ids)
-          "
-          :images="
-            transportation.info.service_ids.map((k) =>
-              getDeliveryServiceIcon(k),
-            )
-          "
-          :limit="20"
-          color="#673AB7"
-        ></s-dense-images-circles>
+          <s-dense-images-circles
+            v-if="
+              transportation?.info?.service_ids &&
+              Array.isArray(transportation.info.service_ids)
+            "
+            :images="
+              transportation.info.service_ids.map((k) =>
+                getDeliveryServiceIcon(k),
+              )
+            "
+            :limit="20"
+            color="#673AB7"
+          ></s-dense-images-circles>
 
-        <v-row align="center" no-gutters>
-          <v-btn
-            :class="{ disabled: !canAddToDeliveryQue || !isActive }"
-            :size="in_this_step ? 'x-large' : undefined"
-            :variant="
-              in_this_step && !in_send_que
-                ? 'elevated'
-                : in_send_que
-                  ? 'flat'
-                  : 'outlined'
-            "
-            class="tnt text-start"
-            color="primary"
-            min-width="230"
-            rounded
-            @click="
-              in_send_que
-                ? onDeleteLogisticSendingOrderQue(basket)
-                : onAddLogisticSendingOrderQue(basket)
-            "
-          >
-            <v-icon start>{{ in_send_que ? "check" : "add" }}</v-icon>
-            <div>
-              {{
+          <v-row align="center" no-gutters>
+            <v-btn
+              :class="{ disabled: !canAddToDeliveryQue || !isActive }"
+              :size="in_this_step ? 'x-large' : undefined"
+              :variant="
+                in_this_step && !in_send_que
+                  ? 'elevated'
+                  : in_send_que
+                    ? 'flat'
+                    : 'outlined'
+              "
+              class="tnt text-start"
+              color="primary"
+              min-width="230"
+              rounded
+              @click="
                 in_send_que
-                  ? $t("order_delivery.in_que")
-                  : $t("order_delivery.add_to_delivery_que_action")
-              }}
-
-              <div class="small mt-1">
+                  ? onDeleteLogisticSendingOrderQue(basket)
+                  : onAddLogisticSendingOrderQue(basket)
+              "
+            >
+              <v-icon start>{{ in_send_que ? "check" : "add" }}</v-icon>
+              <div>
                 {{
                   in_send_que
-                    ? "Order is in the delivery queue."
-                    : "Add the order to the delivery queue for batch shipping."
+                    ? $t("order_delivery.in_que")
+                    : $t("order_delivery.add_to_delivery_que_action")
                 }}
-              </div>
-            </div>
-          </v-btn>
-          <v-spacer></v-spacer>
-        </v-row>
 
-        <div class="dashed-hr my-3 mx-n5"></div>
+                <div class="small mt-1">
+                  {{
+                    in_send_que
+                      ? "Order is in the delivery queue."
+                      : "Add the order to the delivery queue for batch shipping."
+                  }}
+                </div>
+              </div>
+            </v-btn>
+            <v-spacer></v-spacer>
+          </v-row>
+
+          <div class="dashed-hr my-3 mx-n5"></div>
+        </template>
 
         <!-- ========================================= Delivery Service ========================================= -->
 
