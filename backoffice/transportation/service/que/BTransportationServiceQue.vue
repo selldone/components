@@ -177,7 +177,7 @@
             >
               {{ numeralFormat(basket.delivery_info.distance, "0,0.[0]") }}
 
-              <span class="small">Km</span>
+              <span class="small">{{distance_unit}}</span>
             </v-chip>
           </div>
 
@@ -363,6 +363,9 @@ export default {
 
     mass_unit() {
       return ShopOptionsHelper.GetMassUnit(this.shop);
+    },
+    distance_unit() {
+      return ShopOptionsHelper.GetDistanceUnit(this.shop);
     },
 
     send_orders_list() {

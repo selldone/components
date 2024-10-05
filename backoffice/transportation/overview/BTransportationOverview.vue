@@ -48,7 +48,7 @@
       <div class="flex-grow-1">
         <p class="m-1 small">
           {{ $t("global.commons.distance") }}:
-          <b>{{ numeralFormat(transportation.distance, "0,0") }} Km</b>
+          <b>{{ numeralFormat(transportation.distance, "0,0") }} {{distance_unit}}</b>
         </p>
 
         <p class="m-1 small">
@@ -273,6 +273,10 @@ export default {
       return ShopOptionsHelper.GetSizeUnit(this.shop);
     },
 
+
+    distance_unit() {
+      return ShopOptionsHelper.GetDistanceUnit(this.shop);
+    },
     mass_unit() {
       return ShopOptionsHelper.GetMassUnit(this.shop);
     },
