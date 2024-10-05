@@ -171,8 +171,8 @@
                 <v-list-item-title
                   class="text-wrap mb-2 html-style overflow-visible"
                   v-html="
-                    item.type === 'note'
-                      ? smartBeautify(compileMarkdown(item.data?.message))
+                    (item.type === 'note'
+                      ? ''
                       : getTimelineStatus(item.type).text
                         ? smartBeautify(
                             $t(
@@ -186,7 +186,7 @@
                                 : item.data,
                             ),
                           )
-                        : item.type
+                        : item.type)+ ' '+ (item.data?.message?smartBeautify(compileMarkdown(item.data?.message)):'')
                   "
                 ></v-list-item-title>
               </template>
@@ -612,7 +612,8 @@ export default {
       if (
         item.type === TimelineEmailType.EMAIL_BUY ||
         item.type === TimelineEmailType.EMAIL_PAYMENT ||
-        item.type === TimelineEmailType.EMAIL_VENDOR
+        item.type === TimelineEmailType.EMAIL_VENDOR ||
+          item.type === TimelineEmailType.EMAIL_UPDATE
       ) {
         this.showEmailView(item);
       }

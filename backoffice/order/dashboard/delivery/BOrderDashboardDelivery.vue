@@ -105,13 +105,13 @@
         <div>
           {{
             is_pickup
-              ? $t("order_delivery.pickup_action")
+              ? $t("order_delivery.pickup_ready_action")
               : $t("order_delivery.courier_action")
           }}
           <div class="small mt-1">
             {{
               is_pickup
-                ? $t("order_delivery.pickup_action_subtitle")
+                ? $t("order_delivery.pickup_ready_action_subtitle")
                 : $t("order_delivery.courier_action_subtitle")
             }}
           </div>
