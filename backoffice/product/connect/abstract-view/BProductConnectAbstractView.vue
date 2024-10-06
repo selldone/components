@@ -68,6 +68,7 @@
           </v-chip>
 
           <v-btn
+            v-if="connect.read_products"
             size="x-small"
             class="ms-1 tnt"
             prepend-icon="sync"
@@ -140,7 +141,10 @@ export default defineComponent({
             return this.showErrorAlert(null, data.error_msg);
           }
           Object.assign(this.product, data.product);
-          this.showSuccessAlert(null, "Product has been re-synced and updated.");
+          this.showSuccessAlert(
+            null,
+            "Product has been re-synced and updated.",
+          );
         })
         .catch((error) => {
           this.showLaravelError(error);
