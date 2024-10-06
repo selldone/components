@@ -21,7 +21,7 @@
 
     <b>{{ cashback.title }} </b>
     <b class="mx-2"
-      >%{{ cashback.percent }} {{ cashback.boosted ? "🞫2" : "" }}</b
+      >%{{ cashback.percent }} {{ cashback.boosted ? "×2" : "" }}</b
     >
     <v-chip
       v-if="cashback.boosted"

@@ -35,11 +35,11 @@
       </router-link>
       <div class="flex-grow-1">
         <v-row align="center" justify="start" no-gutters>
-          <b class="body-title">{{ connect.name }}</b>
+          <b class="body-title me-1">{{ connect.name }}</b>
 
           <v-chip
             v-if="mode_obj"
-            class="mx-2 pa-1"
+            class="ms-1 pa-1"
             :color="mode_obj.title.toColor()"
             label
             size="x-small"
@@ -50,7 +50,7 @@
 
           <v-chip
             v-if="connect.enable === true"
-            class="mx-2 pa-1"
+            class="ms-1 pa-1"
             color="green"
             label
             size="x-small"
@@ -59,13 +59,24 @@
           </v-chip>
           <v-chip
             v-if="connect.enable === false"
-            class="mx-2 pa-1"
+            class="ms-1 pa-1"
             color="red"
             label
             size="x-small"
           >
             {{ $t("global.commons.disable") }}
           </v-chip>
+
+          <v-btn
+            size="x-small"
+            class="ms-1 tnt"
+            prepend-icon="sync"
+            :loading="busy_sync"
+            variant="elevated"
+            color="#fff"
+            @click="resync"
+            >Re-sync Product
+          </v-btn>
         </v-row>
         <div class="small">
           {{ connect.description }}
@@ -83,15 +94,17 @@ import { Connect } from "@selldone/core-js/models";
 export default defineComponent({
   name: "BProductConnectAbstractView",
   components: { UAvatarFolder, SWidgetBox },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     product: {
       required: true,
       type: Object,
     },
+  },
+  data() {
+    return {
+      busy_sync: false,
+    };
   },
 
   computed: {
@@ -109,6 +122,32 @@ export default defineComponent({
 
     mode_obj() {
       return this.connect && Connect.Modes[this.connect.mode];
+    },
+  },
+  methods: {
+    resync() {
+      this.busy_sync = true;
+
+      axios
+        .post(
+          window.API.POST_SHOP_CONNECT_SYNC_PRODUCT(
+            this.product.shop_id,
+            this.product.id,
+          ),
+        )
+        .then(({ data }) => {
+          if (data.error) {
+            return this.showErrorAlert(null, data.error_msg);
+          }
+          Object.assign(this.product, data.product);
+          this.showSuccessAlert(null, "Product has been re-synced and updated.");
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_sync = false;
+        });
     },
   },
 });
