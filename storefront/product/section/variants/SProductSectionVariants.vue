@@ -18,7 +18,7 @@
     <template v-if="hasVariants">
       <template v-if="MODE_DISPLAY_VARIANTS === 'row'">
         <variant-filter
-          :variants="product.product_variants"
+          :variants="$product.product_variants"
           @change="(filter) => $emit('update:filter', filter)"
         />
         <v-slide-y-reverse-transition group hide-on-leave>
@@ -33,7 +33,7 @@
           />
         </v-slide-y-reverse-transition>
         <v-btn
-          v-if="product.product_variants.length > 3"
+          v-if="$product.product_variants.length > 3"
           class="crossRotate m-1"
           icon
           @click="show_all = !show_all"
@@ -119,7 +119,7 @@
                       (s) => s.code === it.code && s.value === selection,
                     )
                   "
-                  :shop-id="product.shop_id"
+                  :shop-id="$product.shop_id"
                   :value="selection"
                   background
                 ></u-variant-asset-image>
@@ -148,17 +148,8 @@ export default {
     VariantItemMini,
     VariantFilter,
   },
+  inject: ["$shop", "$product"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-
     filter: {},
 
     currentVariant: {},
@@ -179,11 +170,7 @@ export default {
     },
 
     hasVariants() {
-      return (
-        this.product &&
-        this.product.product_variants &&
-        this.product.product_variants.length > 0
-      );
+      return this.$product.product_variants?.length > 0;
     },
 
     MODE_DISPLAY_VARIANTS() {
@@ -192,15 +179,10 @@ export default {
     },
 
     product_variants() {
-      if (
-        !this.product ||
-        !this.product.product_variants ||
-        !this.product.product_variants.length
-      )
-        return [];
-      let out = this.product.product_variants;
+      if (!this.$product.product_variants?.length) return [];
+      let out = this.$product.product_variants;
 
-      const instance = this.product.product_variants[0];
+      const instance = this.$product.product_variants[0];
       const sort_key = instance.volume
         ? "volume"
         : instance.weight

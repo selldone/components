@@ -20,13 +20,15 @@
   ></div>
 </template>
 
-<script>
+<script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService.ts";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "UPaymentStripeSplit",
   components: {},
+  inject: ["$shop", "$product"],
+
   props: {
     /**
      * Suggested country code. Otherwise, we find it from receiver info or meta tags.
@@ -34,10 +36,7 @@ export default {
     countryCode: {},
     dark: { type: Boolean },
     isFlat: { type: Boolean },
-    product: {
-      required: false,
-      type: Object,
-    },
+
     variant: {
       required: false,
       type: Object,
@@ -93,11 +92,9 @@ export default {
     is_available() {
       return this.available_countries.includes(this.country_code);
     },
-    shop() {
-      return this.getShop();
-    },
+
     valuation() {
-      return this.product.valuation;
+      return this.$product.valuation;
     },
 
     price() {
@@ -109,7 +106,7 @@ export default {
                   .tax) /*Consider basket price if product be in basket.*/
         : this.vendorProduct
           ? this.CalcPriceProductCurrentCurrency(
-              this.shop,
+              this.$shop,
               this.vendorProduct,
               null,
               this.preferences,
@@ -118,8 +115,8 @@ export default {
               null,
             )
           : this.CalcPriceProductCurrentCurrency(
-              this.shop,
-              this.product,
+              this.$shop,
+              this.$product,
               this.variant,
               this.preferences,
               this.valuation,
@@ -160,14 +157,14 @@ export default {
       if (!this.is_available) return;
 
       if (
-        this.product?.type === ProductType.SUBSCRIPTION.code ||
+        this.$product?.type === ProductType.SUBSCRIPTION.code ||
         this.basket?.type === ProductType.SUBSCRIPTION.code
       )
         return;
 
       const currency = this.GetUserSelectedCurrency().code;
 
-      const stripe_gateway = this.shop.gateways?.find(
+      const stripe_gateway = this.$shop.gateways?.find(
         (g) => g.code === "stripe_" + currency.toLowerCase(),
       );
       if (!stripe_gateway?.public?.key) return;

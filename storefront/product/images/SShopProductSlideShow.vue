@@ -68,7 +68,7 @@
     <!--  ▃▃▃▃▃▃▃▃▃▃ Gallery > Main Swiper ▃▃▃▃▃▃▃▃▃▃ -->
 
     <v-carousel
-      :key="product.id + '-' + currentVariant?.id"
+      :key="$product.id + '-' + currentVariant?.id"
       v-model="index"
       :class="{
         '-bg-white': isStyleContain,
@@ -221,16 +221,13 @@ import SImage from "../../../storefront/product/images/SImage.vue";
 export default {
   name: "SShopProductSlideShow",
   components: { SImage, UYoutubePlayer, UFadeScroll, VariantItemViewMicro },
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
 
-    product: {
-      required: true,
-      type: Object,
-    },
+  inject:['$shop','$product'],
+
+  props: {
+
+
+
     currentVariant: {},
 
     vertical: {
@@ -261,37 +258,37 @@ export default {
 
   computed: {
     isStyleContain() {
-      return this.product?.style?.contain;
+      return this.$product?.style?.contain;
     },
 
     images_list() {
       let out = [];
       let has_variant_image = false;
 
-      if (this.product.images && this.product.images.length) {
+      if (this.$product.images?.length) {
         if (this.currentVariant) {
-          let for_this_variant = this.product.images.filter((item) => {
+          let for_this_variant = this.$product.images.filter((item) => {
             return item.variant_id === this.currentVariant.id;
           });
           has_variant_image = for_this_variant.length > 0;
 
-          let for_other = this.product.images.filter((item) => {
+          let for_other = this.$product.images.filter((item) => {
             return item.variant_id === null;
           });
           out = for_this_variant.concat(for_other);
         } else {
-          out = this.product.images;
+          out = this.$product.images;
         }
       }
 
       if (
-        this.product.icon &&
+        this.$product.icon &&
         !out.some(
-          (i) => i.path === this.product.icon,
+          (i) => i.path === this.$product.icon,
         ) /*Prevent duplicate images - Specially external images in connect*/
       ) {
-        if (has_variant_image) out.push({ path: this.product.icon });
-        else out.unshift({ path: this.product.icon });
+        if (has_variant_image) out.push({ path: this.$product.icon });
+        else out.unshift({ path: this.$product.icon });
       }
 
       return out;
@@ -323,30 +320,30 @@ export default {
     current_ar() {
       if (this.currentVariant && this.currentVariant.ar)
         return this.currentVariant.ar;
-      return this.product.ar;
+      return this.$product.ar;
     },
 
     ar_url() {
       if (this.currentVariant && this.currentVariant.ar)
         return this.window.URLS.ARViewURL(
-          this.shop_name,
-          this.product.id,
+          this.$shop.name,
+          this.$product.id,
           this.currentVariant.id,
           this.currentVariant.ar.src,
         );
-      else if (this.product.ar)
+      else if (this.$product.ar)
         return this.window.URLS.ARViewURL(
-          this.shop_name,
-          this.product.id,
+          this.$shop.name,
+          this.$product.id,
           "default",
-          this.product.ar.src,
+          this.$product.ar.src,
         );
 
       return null;
     },
     current_youtube() {
       //ZGbxEgSIyWE
-      return this.product.video;
+      return this.$product.video;
     },
 
     prev_item() {

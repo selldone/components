@@ -15,7 +15,7 @@
 <template>
   <div
     v-if="
-      structure && preferences_valuation && product.price_input === 'custom'
+      structure && preferences_valuation && $product.price_input === 'custom'
     "
     :class="{ '-preview': previewMode }"
     class="widget-box w-100 py-3 mt-5 pricing-form strong-field"
@@ -115,7 +115,7 @@
       </v-expand-transition>
 
       <v-icon
-        v-if="index_blink === index "
+        v-if="index_blink === index"
         class="blink-me-linear indic"
         color="#1976D2"
         size="x-small"
@@ -127,7 +127,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
@@ -136,17 +136,8 @@ import _ from "lodash-es";
 export default {
   name: "SProductSectionValuation",
   components: { UNumberInput, USmartSwitch },
+  inject: ["$shop", "$product"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-
     currentVariant: {},
     preferences: {
       required: true,
@@ -175,7 +166,7 @@ export default {
 
   computed: {
     valuation() {
-      return this.product.valuation;
+      return this.$product.valuation;
     },
 
     structure() {
@@ -197,12 +188,15 @@ export default {
     },
 
     basket() {
-      return this.getBasket(this.product.type);
+      return this.getBasket(this.$product.type);
     },
 
     index_blink() {
       return this.structure.findIndex(
-        (row) => row.type !== "switch" && !this.preferences_valuation[row.name] && this. hasOptions(row),
+        (row) =>
+          row.type !== "switch" &&
+          !this.preferences_valuation[row.name] &&
+          this.hasOptions(row),
       );
     },
   },
@@ -283,8 +277,8 @@ export default {
       axios
         .put(
           window.XAPI.PUT_BASKET_ITEM_PREFERENCES(
-            this.shop.name,
-            this.product.id,
+            this.$shop.name,
+            this.$product.id,
           ),
           {
             basket_id: this.basket.id,

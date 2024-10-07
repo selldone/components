@@ -18,7 +18,7 @@
       <v-row align="center" justify="space-between">
         <v-col :md="free_files.length ? 6 : 12" class="text-start" cols="12">
           <v-list-subheader
-            >● Files included in {{ product.title }}
+            >● Files included in {{ $product.title }}
           </v-list-subheader>
           <h2 class="text-h3 line-height-normal font-weight-black">
             {{ $t("global.commons.files_list") }}
@@ -58,28 +58,22 @@
       >
         <s-shop-product-files-list
           :files="files"
-          :purchased="product.buy_file"
+          :purchased="$product.buy_file"
         ></s-shop-product-files-list>
       </u-expand-view>
     </v-container>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UExpandView from "../../../../ui/expand-view/UExpandView.vue";
 import SShopProductFilesList from "../../../../storefront/product/file/SShopProductFilesList.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "SProductFilesList",
-  props: {
-    shop: {
-      require: true,
-    },
-    product: {
-      require: true,
-    },
-  },
+  inject: ["$shop", "$product"],
+  props: {},
   components: {
     SShopProductFilesList,
     UExpandView,
@@ -91,14 +85,14 @@ export default {
 
   computed: {
     files() {
-      return this.product.files;
+      return this.$product.files;
     },
     free_files() {
-      return this.product.files.filter((f) => f.sample);
+      return this.$product.files.filter((f) => f.sample);
     },
 
     isFile() {
-      return this.product && this.product.type === ProductType.FILE.code;
+      return this.$product.type === ProductType.FILE.code;
     },
 
     files_grouped() {

@@ -89,21 +89,18 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "SShopProductIncludes",
   components: { UFadeScroll },
-  props: {
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+
+  inject: ["$product"],
+  props: {},
   computed: {
     includes() {
-      return this.product.includes;
+      return this.$product.includes;
     },
   },
 };

@@ -37,20 +37,12 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "SProductSectionCashback",
   components: {},
+  inject: ["$shop", "$product"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
     currency: {
       required: true,
     },

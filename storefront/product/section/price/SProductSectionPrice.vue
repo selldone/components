@@ -29,7 +29,7 @@
 
       <!-- ..................... Tips of pricing ..................... -->
       <v-tooltip
-        v-if="product.pricing === PricingTypes.ESTIMATION.code"
+        v-if="$product.pricing === PricingTypes.ESTIMATION.code"
         location="top"
         max-width="420"
       >
@@ -49,7 +49,7 @@
       </v-tooltip>
 
       <v-tooltip
-        v-if="product.pricing === PricingTypes.AGREEMENT.code"
+        v-if="$product.pricing === PricingTypes.AGREEMENT.code"
         location="top"
         max-width="420"
       >
@@ -71,7 +71,7 @@
       <!-- Price > ⛔ Invalid exchange rate -->
       <u-price-invalid
         v-if="isNaN(calculated_price)"
-        :currency="product.currency"
+        :currency="$product.currency"
       >
       </u-price-invalid>
 
@@ -81,7 +81,7 @@
         class="price-value font-weight-black single-line"
       ></u-price>
 
-      <small v-if="product.unit" class="ms-2">/ {{ product.unit }}</small>
+      <small v-if="$product.unit" class="ms-2">/ {{ $product.unit }}</small>
 
       <span v-if="price_label" class="mx-1">{{ price_label }}</span>
 
@@ -94,8 +94,8 @@
         class="mx-1"
         >(
         <s-product-price
-          :product="product"
-          :shop="shop"
+          :product="$product"
+          :shop="$shop"
           :variant="currentVariant"
         ></s-product-price>
         )</span
@@ -124,15 +124,15 @@
 
     <s-product-section-waiting-auction
       :current-variant="currentVariant"
-      :product="product"
-      :shop="shop"
+      :product="$product"
+      :shop="$shop"
       class="mb-2 min-width-200"
       style="max-width: 70%"
     ></s-product-section-waiting-auction>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
@@ -140,23 +140,13 @@ import SProductPrice from "../../../../storefront/product/price/SProductPrice.vu
 import { ExtraPricingHelper } from "@selldone/core-js/helper/shop/ExtraPricingHelper";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import SProductSectionWaitingAuction from "../auction/SProductSectionWaitingAuction.vue";
-import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 
 export default {
   name: "SProductSectionPrice",
-  components: {UPriceInvalid, UCurrencyIcon, SProductSectionWaitingAuction, SProductPrice },
+  components: { UPriceInvalid, SProductSectionWaitingAuction, SProductPrice },
+  inject: ["$shop", "$product"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-
     currentVariant: {},
     selectedVendorProduct: {},
     preferences: {},
@@ -168,7 +158,7 @@ export default {
 
   computed: {
     theme() {
-      return this.shop.theme;
+      return this.$shop.theme;
     },
 
     revers_col() {
@@ -179,11 +169,11 @@ export default {
     },
 
     outputs() {
-      return this.product.outputs;
+      return this.$product.outputs;
     },
 
     isService() {
-      return this.product && this.product.type === ProductType.SERVICE.code;
+      return this.$product.type === ProductType.SERVICE.code;
     },
 
     calculated_price() {
@@ -191,52 +181,43 @@ export default {
       // 🟣 Marketplace 🟣
       if (this.selectedVendorProduct) {
         out = this.CalcPriceProductCurrentCurrency(
-          this.shop,
+          this.$shop,
           this.selectedVendorProduct,
           null,
           this.preferences,
-          this.product.valuation,
+          this.$product.valuation,
           null,
           this.current_extra_pricing,
         );
       } else {
         out = this.CalcPriceProductCurrentCurrency(
-          this.shop,
-          this.product,
+          this.$shop,
+          this.$product,
           this.currentVariant,
           this.preferences,
-          this.product.valuation,
+          this.$product.valuation,
           null,
           this.current_extra_pricing,
         );
       }
 
       return out;
-      /*
-                if (this.currentVariant && this.currentVariant.price)
-                  return this.currentVariant.price;
-
-                let $out =
-                  this.product.price * this.getBuyRateValue(this.product.currency);
-                if (this.product.commission) $out += this.product.commission;
-                if (this.product.discount) $out -= this.product.discount;
-                return $out;*/
     },
 
     //
 
     discount_value() {
       return this.getProductDiscountAmount(
-        this.shop,
-        this.product,
+        this.$shop,
+        this.$product,
         this.currentVariant,
       );
     },
 
     discount_percent() {
       return this.discountProductPercent(
-        this.shop,
-        this.product,
+        this.$shop,
+        this.$product,
         this.currentVariant,
       );
     },
@@ -274,13 +255,13 @@ export default {
     price_label() {
       return this.currentVariant && this.currentVariant.pricing
         ? this.currentVariant.price_label
-        : this.product.price_label;
+        : this.$product.price_label;
     },
 
     // 🌸 Add extra pricing 🌸
     extra_pricings() {
       return ExtraPricingHelper.GetListOfExtraPricings(
-        this.product,
+        this.$product,
         this.currentVariant,
         this.selectedVendorProduct,
       );
@@ -295,13 +276,13 @@ export default {
     corresponding_item_in_basket() {
       return BasketHelper.FindItem(
         this.basket,
-        this.product,
+        this.$product,
         this.currentVariant,
       );
     },
 
     basket() {
-      return this.getBasket(this.product.type);
+      return this.getBasket(this.$product.type);
     },
   },
 

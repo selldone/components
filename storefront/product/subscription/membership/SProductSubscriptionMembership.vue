@@ -25,7 +25,7 @@
       >
         <s-product-subscription-content-viewer
           v-if="membership_subscribed_plan"
-          :product="product"
+          :product="$product"
           class="min-height-60vh"
         ></s-product-subscription-content-viewer>
         <div
@@ -43,7 +43,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UExpandView from "../../../../ui/expand-view/UExpandView.vue";
 import SProductSubscriptionContentViewer from "../../../../storefront/product/service/content/viewer/SProductSubscriptionContentViewer.vue";
 import { SubscriptionMode } from "@selldone/core-js/enums/subscription/SubscriptionMode";
@@ -51,14 +51,10 @@ import { RibbonHelper } from "@selldone/core-js/helper/ribbon/RibbonHelper";
 
 export default {
   name: "SProductSubscriptionMembership",
-  props: {
-    shop: {
-      require: true,
-    },
-    product: {
-      require: true,
-    },
-  },
+
+  inject: ["$shop", "$product"],
+
+  props: {},
   components: {
     SProductSubscriptionContentViewer,
     UExpandView,
@@ -72,12 +68,12 @@ export default {
     // ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ 🎗️ Subscription ▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 
     isMembershipSubscription() {
-      return this.product?.ribbon?.mode === SubscriptionMode.Membership.code;
+      return this.$product?.ribbon?.mode === SubscriptionMode.Membership.code;
     },
 
     // 🦄 Membership > Subscribed
     membership_subscribed_plan() {
-      return RibbonHelper.isMembershipSubscribed(this.product);
+      return RibbonHelper.isMembershipSubscribed(this.$product);
     },
   },
 

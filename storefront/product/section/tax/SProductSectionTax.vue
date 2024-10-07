@@ -121,17 +121,8 @@ import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 export default {
   name: "SProductSectionTax",
   components: {},
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+  inject: ["$shop", "$product"],
+  props: {},
 
   data: () => ({
     MapHelper: MapHelper,
@@ -139,28 +130,28 @@ export default {
 
   computed: {
     is_physical() {
-      return this.product.type === ProductType.PHYSICAL.code;
+      return this.$product.type === ProductType.PHYSICAL.code;
     },
     IS_MARKETPLACE() {
-      return this.shop.model === BusinessModel.MARKETPLACE.code;
+      return this.$shop.model === BusinessModel.MARKETPLACE.code;
     },
 
     corresponding_item_in_basket() {
       return BasketHelper.FindItem(
         this.basket,
-        this.product,
+        this.$product,
         this.currentVariant,
       );
     },
 
     basket() {
-      return this.getBasket(this.product.type);
+      return this.getBasket(this.$product.type);
     },
 
     tax() {
-      return this.product.tax_profile?.enable
-        ? this.product.tax_profile
-        : this.shop.tax;
+      return this.$product.tax_profile?.enable
+        ? this.$product.tax_profile
+        : this.$shop.tax;
     },
     tax_string() {
       if (!this.tax) return null;
@@ -192,7 +183,7 @@ export default {
     },
 
     transportations() {
-      return this.shop.transportations;
+      return this.$shop.transportations;
     },
     has_free_shipping() {
       return this.is_physical && this.transportations_free_shipping?.length;

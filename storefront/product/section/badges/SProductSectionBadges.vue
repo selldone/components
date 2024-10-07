@@ -31,10 +31,10 @@
       <div v-if="lead_time_object">
         <img
           :src="lead_time_object.icon"
-          :title="lead_time_object.title(this, product.lead)"
+          :title="lead_time_object.title(this, $product.lead)"
         />
         <p class="-badge-title">
-          {{ lead_time_object.title(this, product.lead) }}
+          {{ lead_time_object.title(this, $product.lead) }}
         </p>
       </div>
 
@@ -42,7 +42,7 @@
         <img
           :title="
             $t('product_info.return_in_days', {
-              days: product.return_warranty,
+              days: $product.return_warranty,
             })
           "
           src="../../../../assets/product-badges/return_order.svg"
@@ -50,7 +50,7 @@
         <p class="-badge-title">
           {{
             $t("product_info.return_in_days", {
-              days: product.return_warranty,
+              days: $product.return_warranty,
             })
           }}
         </p>
@@ -134,17 +134,8 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 export default {
   name: "SProductSectionBadges",
   components: {},
+  inject: ["$shop", "$product"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-
     vertical: {
       type: Boolean,
       default: false,
@@ -160,63 +151,67 @@ export default {
 
   computed: {
     isPhysical() {
-      return this.product.type === ProductType.PHYSICAL.code;
+      return this.$product.type === ProductType.PHYSICAL.code;
     },
 
     custom_badges: function () {
       if (
-        !this.product.badges ||
-        !Array.isArray(this.product.badges) ||
-        !this.shop.product_badges
+        !this.$product.badges ||
+        !Array.isArray(this.$product.badges) ||
+        !this.$shop.product_badges
       )
         return null;
 
-      const out = this.product.badges.map((id) =>
-        this.shop.product_badges.find((b) => b.id === id),
+      const out = this.$product.badges.map((id) =>
+        this.$shop.product_badges.find((b) => b.id === id),
       );
 
-      const auto = this.shop.product_badges.filter((badge) => {
+      const auto = this.$shop.product_badges.filter((badge) => {
         const reg =
-          badge.pattern && badge.pattern !== "*.*" && this.product.spec
+          badge.pattern && badge.pattern !== "*.*" && this.$product.spec
             ? new RegExp(badge.pattern)
             : null;
         return (
-          !this.product.badges.includes(badge.id) &&
+          !this.$product.badges.includes(badge.id) &&
           (badge.pattern === "*.*" ||
-            (reg && reg.test(JSON.stringify(this.product.spec))))
+            (reg && reg.test(JSON.stringify(this.$product.spec))))
         );
       });
       out.push(...auto);
       return out;
     },
     has_return_order() {
-      return this.product && this.product.return_warranty > 0;
+      return this.$product && this.$product.return_warranty > 0;
     },
     has_support_24h() {
-      return this.shop?.support_mode === "24h7d";
+      return this.$shop?.support_mode === "24h7d";
     },
     has_support_normal() {
-      return this.shop?.support_mode === "normal";
+      return this.$shop?.support_mode === "normal";
     },
 
     has_original_warranty() {
-      return this.product && this.product.original;
+      return this.$product && this.$product.original;
     },
     has_cash_on_delivery() {
-      if (!this.shop?.gateways) return false;
-      return this.isPhysical && this.shop.gateways.some((item) => item.cod);
+      if (!this.$shop?.gateways) return false;
+      return this.isPhysical && this.$shop.gateways.some((item) => item.cod);
     },
 
     lead_time_object() {
       if (this.isPhysical) {
         return LeadStatus.physical.find((item) => {
-          return this.product.lead > item.min && this.product.lead <= item.max;
+          return (
+            this.$product.lead > item.min && this.$product.lead <= item.max
+          );
         });
       }
 
       if (this.isVirtual) {
         return LeadStatus.virtual.find((item) => {
-          return this.product.lead > item.min && this.product.lead <= item.max;
+          return (
+            this.$product.lead > item.min && this.$product.lead <= item.max
+          );
         });
       }
 

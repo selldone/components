@@ -21,7 +21,7 @@
         <!--  ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Product Title (Large) ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
         <v-col v-if="!$vuetify.display.lgAndUp" cols="12">
           <h1>
-            {{ product.title }}
+            {{ $product.title }}
             <v-chip
               v-if="!has_original_warranty"
               class="mx-2"
@@ -47,8 +47,6 @@
 
           <s-shop-product-slide-show
             :current-variant="current_variant"
-            :product="product"
-            :shop="shop"
             :vertical="$vuetify.display.smAndUp"
           ></s-shop-product-slide-show>
         </v-col>
@@ -69,8 +67,8 @@
               <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Type ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
               <img
-                :src="getProductTypeImage(product.type)"
-                :title="getProductTypeName(product.type)"
+                :src="getProductTypeImage($product.type)"
+                :title="getProductTypeName($product.type)"
                 class="m-1 me-2 flex-grow-0"
                 height="16"
                 width="16"
@@ -80,36 +78,36 @@
 
               <component
                 :is="!window.ExternalWidget ? 'router-link' : 'a'"
-                v-if="product.brand"
+                v-if="$product.brand"
                 :title="$t('product_info.brand')"
                 :to="{
                   name: 'ShopPage',
-                  query: { search: product.brand },
+                  query: { search: $product.brand },
                 }"
                 class="link-underlined single-line d-inline-block flex-grow-0 me-2"
                 v-bind="
                   window.ExternalWidget
                     ? {
                         href: getShopPageLink(shop, {
-                          search: product.brand,
+                          search: $product.brand,
                         }),
                         target: '_blank',
                       }
                     : {}
                 "
-                ><b>{{ product.brand }}</b>
+                ><b>{{ $product.brand }}</b>
               </component>
               <span
-                v-if="product.brand && product.title_en"
+                v-if="$product.brand && $product.title_en"
                 class="mx-1 d-none d-sm-inline"
                 >/</span
               >
             </div>
 
             <div class="flex-grow-1 ps-1">
-              {{ product.title_en?.limitWords(limit_title_en) }}
+              {{ $product.title_en?.limitWords(limit_title_en) }}
               <v-btn
-                v-if="product.title_en?.wordsCount() > 20"
+                v-if="$product.title_en?.wordsCount() > 20"
                 class="tnt"
                 color="#111"
                 size="small"
@@ -123,13 +121,13 @@
               </v-btn>
             </div>
 
-            <template v-if="product.rate_count && product.rate">
+            <template v-if="$product.rate_count && $product.rate">
               <b class="mx-2 -rate-value">{{
-                numeralFormat(product.rate, "0.0")
+                numeralFormat($product.rate, "0.0")
               }}</b>
 
               <v-rating
-                v-model="product.rate"
+                v-model="$product.rate"
                 active-color="yellow-darken-3"
                 color="grey-darken-1"
                 density="compact"
@@ -143,7 +141,7 @@
           <!--  ▃▃▃▃▃▃▃▃▃▃ Product Title (Large) ▃▃▃▃▃▃▃▃▃▃ -->
 
           <h1 v-if="$vuetify.display.lgAndUp">
-            {{ product.title }}
+            {{ $product.title }}
             <v-chip
               v-if="!has_original_warranty"
               class="mx-2"
@@ -158,14 +156,10 @@
           <!-- ▁▁▁▁▁▁ 🞇 Under title buttons (Add to compare, like , ..) 🞇 ▁▁▁▁▁▁ -->
           <s-product-section-extra-buttons
             :current-variant="current_variant"
-            :product="product"
-            :shop="shop"
           ></s-product-section-extra-buttons>
 
           <!-- ▁▁▁▁▁▁ 🞇 Badges 🞇 ▁▁▁▁▁▁ -->
           <s-product-section-badges
-            :product="product"
-            :shop="shop"
             :vertical="vertical"
             class="mt-5"
           ></s-product-section-badges>
@@ -179,15 +173,11 @@
               v-model:current-variant="current_variant"
               v-model:filter="filter"
               v-model:selection-values="selection_values"
-              :product="product"
-              :shop="shop"
             ></s-product-section-variants>
 
             <!-- ▁▁▁▁▁▁ 🞇 Service 🞇 ▁▁▁▁▁▁ -->
             <s-product-section-service
               v-model:preferences="preferences"
-              :product="product"
-              :shop="shop"
             ></s-product-section-service>
 
             <v-spacer></v-spacer>
@@ -199,8 +189,6 @@
               :correspondingBasketItem="corresponding_basket_item"
               :current-variant="current_variant"
               :preferences="preferences"
-              :product="product"
-              :shop="shop"
             ></s-product-section-valuation>
 
             <!-- ▁▁▁▁▁▁ 🞇 🎗️ Subscription Price 🞇 ▁▁▁▁▁▁ -->
@@ -212,7 +200,7 @@
                   !!corresponding_basket_item?.subscription_price_id /*An item exists in the basket*/ ||
                   !!membership_subscribed_plan /* 🦄 Membership > Subscribed before*/,
               }"
-              :disabled="!product.quantity"
+              :disabled="!$product.quantity"
               :subscription-prices="subscription_prices"
               class="my-3"
               return-object
@@ -223,21 +211,14 @@
               v-else
               :current-variant="current_variant"
               :preferences="preferences"
-              :product="product"
               :selected-vendor-product="selected_vendor_product"
-              :shop="shop"
             ></s-product-section-price>
 
             <!-- ▁▁▁▁▁▁ 🞇 Tax + Shipping 🞇 ▁▁▁▁▁▁ -->
-            <s-product-section-tax
-              :product="product"
-              :shop="shop"
-            ></s-product-section-tax>
+            <s-product-section-tax></s-product-section-tax>
 
             <!-- ▁▁▁▁▁▁ 🞇 Cashback Program  🞇 ▁▁▁▁▁▁ -->
             <s-product-section-cashback
-              :product="product"
-              :shop="shop"
               :currency="GetUserSelectedCurrency()?.code"
               :amount="0"
             ></s-product-section-cashback>
@@ -246,10 +227,8 @@
             <s-product-section-extra-pricings
               :current-variant="current_variant"
               :preferences="preferences"
-              :product="product"
               :quantity="corresponding_basket_item?.count"
               :selected-vendor-product="selected_vendor_product"
-              :shop="shop"
               @select="(val) => $refs.buy_section.triggerBuyButton(val.min)"
             >
             </s-product-section-extra-pricings>
@@ -257,7 +236,7 @@
             <!-- ▁▁▁▁▁▁ 🞇 Coupon 🞇 ▁▁▁▁▁▁ -->
 
             <s-storefront-coupons-list
-              :product-id="product.id"
+              :product-id="$product.id"
               :variant-id="current_variant ? current_variant.id : undefined"
             ></s-storefront-coupons-list>
 
@@ -274,11 +253,9 @@
               :current-variant="current_variant"
               :hss-sticky-but-button="hssStickyButButton"
               :preferences="preferences"
-              :product="product"
               :quick-buy-mode="quickBuyMode"
               :selected-subscription-price="selected_subscription_price"
               :selected-vendor-product="selected_vendor_product"
-              :shop="shop"
               class="mt-3 mb-3"
             ></s-product-section-buy-button>
             <!-- ▁▁▁▁▁▁ 🞇 Embed Mode 🞇 ▁▁▁▁▁▁ -->
@@ -303,17 +280,14 @@
 
             <!-- ▁▁▁▁▁▁ 🞇 Sells & Inventory progress 🞇 ▁▁▁▁▁▁ -->
             <s-product-section-incentivise
-              :product="product"
               :variant="current_variant"
               :vendorProduct="selected_vendor_product"
-              :shop="shop"
             ></s-product-section-incentivise>
 
             <u-payment-stripe-split
               :basket="corresponding_basket_item ? basket : null"
               :country-code="basket?.receiver_info?.country"
               :preferences="preferences"
-              :product="product"
               :selected-subscription-price="selected_subscription_price"
               :selected-vendor-product="selected_vendor_product"
               :variant="current_variant"
@@ -348,7 +322,7 @@
       <basket-item-user-message-form
         v-if="basket"
         :basket="basket"
-        :product="product"
+        :product="$product"
         :variant-id="current_variant ? current_variant.id : null"
         class="my-10"
       ></basket-item-user-message-form>
@@ -356,11 +330,13 @@
 
     <!-- ████████████████████ Discount Countdown ████████████████████ -->
 
-    <product-discount-countdown :product="product"></product-discount-countdown>
+    <product-discount-countdown
+      :product="$product"
+    ></product-discount-countdown>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopProductRatingView from "../../storefront/product/rating/SShopProductRatingView.vue";
 import BasketItemUserMessageForm from "../../storefront/order/product-input/BasketItemUserMessageForm.vue";
 import SStorefrontCouponsList from "../../storefront/coupon/list/SStorefrontCouponsList.vue";
@@ -412,12 +388,8 @@ export default {
     BasketItemUserMessageForm,
     SShopProductRatingView,
   },
+  inject: ["$product"],
   props: {
-    product: {
-      required: true,
-      type: Object,
-    },
-
     canBuy: {
       required: false,
       type: Boolean,
@@ -487,31 +459,26 @@ export default {
     },
 
     basket() {
-      return this.getBasket(this.product.type);
+      return this.getBasket(this.$product.type);
     },
 
     corresponding_basket_item() {
       if (!this.basket) return null;
       return this.basket.items.find(
         (item) =>
-          item.product_id === this.product.id &&
+          item.product_id === this.$product.id &&
           item.variant_id ===
             (this.current_variant ? this.current_variant.id : null),
       );
     },
 
     has_original_warranty() {
-      return this.product && this.product.original;
+      return this.$product?.original;
     },
 
     product_variants() {
-      if (
-        !this.product ||
-        !this.product.product_variants ||
-        !this.product.product_variants.length
-      )
-        return [];
-      return this.product.product_variants;
+      if (!this.$product?.product_variants?.length) return [];
+      return this.$product.product_variants;
     },
 
     AvailableProductVariants() {
@@ -522,27 +489,23 @@ export default {
 
     // ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ 🟣 Marketplace 🟣 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
     vendor_products() {
-      return (
-        this.product.vendor_products &&
-        this.product.vendor_products.filter(
-          (v) =>
-            v.variant_id === (this.current_variant && this.current_variant.id),
-        )
+      return this.$product.vendor_products?.filter(
+        (v) =>
+          v.variant_id === (this.current_variant && this.current_variant.id),
       );
     },
 
     selected_vendor_product() {
       return (
         this.selected_vendor_product_id &&
-        this.product.vendor_products &&
-        this.product.vendor_products.find(
+        this.$product.vendor_products?.find(
           (v) => v.id === this.selected_vendor_product_id,
         )
       );
     },
 
     isService() {
-      return this.product && this.product.type === ProductType.SERVICE.code;
+      return this.$product.type === ProductType.SERVICE.code;
     },
 
     // ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -550,7 +513,7 @@ export default {
     // ▀▀▀▀▀▀▀▀▀ 🍁 Valuation (Pricing form) 🍁 ▀▀▀▀▀▀▀▀▀
 
     valuation() {
-      return this.product.valuation;
+      return this.$product.valuation;
     },
 
     structure() {
@@ -560,22 +523,20 @@ export default {
     // ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ 🎗️ Subscription ▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 
     isSubscription() {
-      return (
-        this.product && this.product.type === ProductType.SUBSCRIPTION.code
-      );
+      return this.$product.type === ProductType.SUBSCRIPTION.code;
     },
 
     subscription_prices() {
-      return this.product.subscription_prices;
+      return this.$product.subscription_prices;
     },
 
     // 🦄 Membership > Subscribed
     membership_subscribed_plan() {
-      return RibbonHelper.isMembershipSubscribed(this.product);
+      return RibbonHelper.isMembershipSubscribed(this.$product);
     },
   },
   watch: {
-    product() {
+    $product() {
       this.resetToDefault(); // 🞇 Reset to default
       this.init();
     },
@@ -642,10 +603,8 @@ export default {
 
       if (!this.preferences) this.preferences = {};
 
-      //  console.log('PRE preferences-->',this.preferences,this.product.price_input,this.valuation,this.structure)
-
       // ▀▀▀▀▀▀▀▀▀ 🍁 Valuation (Pricing form) 🍁 ▀▀▀▀▀▀▀▀▀
-      if (this.product.price_input === "custom") {
+      if (this.$product.price_input === "custom") {
         let preferences = this.preferences;
         if (!preferences || Array.isArray(preferences)) preferences = {};
 
@@ -711,7 +670,7 @@ export default {
       // 1. Try to find first variant existed in the basket:
       const basket_items =
         this.basket &&
-        this.basket.items.find((item) => item.product_id === this.product.id);
+        this.basket.items.find((item) => item.product_id === this.$product.id);
       this.current_variant =
         basket_items &&
         basket_items.variant_id &&

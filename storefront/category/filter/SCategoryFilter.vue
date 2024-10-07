@@ -31,7 +31,6 @@
       height: $vuetify.display.mdAndDown
         ? 'calc(100% - 48px)'
         : 'calc(100% - 16px)',
-
     }"
     :theme="light ? 'light' : 'dark'"
     :width="300"
@@ -61,7 +60,6 @@
             </v-list-item-action>
           </template>
         </v-list-item>
-
 
         <v-treeview
           v-if="
@@ -138,7 +136,7 @@
             @end="onChangeFilter"
             @start="price_range_changed = true"
           >
-            <template v-slot:thumb-label="{modelValue}">
+            <template v-slot:thumb-label="{ modelValue }">
               <u-price :amount="modelValue" compact></u-price>
             </template>
           </v-range-slider>
@@ -146,11 +144,9 @@
           <v-row class="text-center">
             <v-col class="p-2" cols="6">
               <u-price :amount="price_range[0]"></u-price>
-
             </v-col>
             <v-col class="p-2" cols="6">
               <u-price :amount="price_range[1]"></u-price>
-
             </v-col>
           </v-row>
         </div>
@@ -212,7 +208,10 @@
       </div>
 
       <!-- =========================================== Specs =========================================== -->
-      <v-divider v-if="other_filters && other_filters.length > 0" class="-divider mx-2"  />
+      <v-divider
+        v-if="other_filters && other_filters.length > 0"
+        class="-divider mx-2"
+      />
 
       <div v-for="item in other_filters" :key="item">
         <div class="s-filter-header">
@@ -246,24 +245,21 @@
   </v-navigation-drawer>
 </template>
 
-<script>
+<script lang="ts">
 import SCategoryFilterSelector from "../../../storefront/category/filter/selector/SCategoryFilterSelector.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 
 /**
- * >
+ *
  */
 export default {
   name: "SCategoryFilter",
-  components: {UPrice, USmartToggle, SCategoryFilterSelector },
+  components: { UPrice, USmartToggle, SCategoryFilterSelector },
   emits: ["change-filter", "change-height", "update:modelValue"],
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     modelValue: {},
     folders: {},
     parentFolders: {},
@@ -307,7 +303,7 @@ export default {
 
   computed: {
     theme() {
-      return this.shop.theme;
+      return this.$shop.theme;
     },
 
     light() {
@@ -324,7 +320,7 @@ export default {
 
       this.filters.prices.forEach((item) => {
         const rate = this.getExchangeRateValue(
-          this.shop,
+          this.$shop,
           item.currency,
           this.GetUserSelectedCurrency().code,
           null,
@@ -343,7 +339,7 @@ export default {
 
       this.filters.prices.forEach((item) => {
         const rate = this.getExchangeRateValue(
-          this.shop,
+          this.$shop,
           item.currency,
           this.GetUserSelectedCurrency().code,
           null,
@@ -359,7 +355,7 @@ export default {
     filters() {
       // Root category:
       if (!this.parentFolders) {
-        return this.shop.filters;
+        return this.$shop.filters;
       }
 
       // In a category:
@@ -394,26 +390,26 @@ export default {
       return this.filters?.ignore;
     },
     category_image() {
-      if (!this.shop) return null;
+      if (!this.$shop) return null;
       if (this.parentFolders) {
         return this.getShopImagePath(
           this.parentFolders.icon,
           this.IMAGE_SIZE_SMALL,
         );
       }
-      return this.getShopIcon(this.shop.id);
+      return this.getShopIcon(this.$shop.id);
     },
 
     category_title() {
-      if (!this.shop) return null;
+      if (!this.$shop) return null;
 
       if (this.parentFolders) {
         return this.parentFolders.title;
       }
-      return this.shop.title;
+      return this.$shop.title;
     },
     category_description() {
-      if (!this.shop) return null;
+      if (!this.$shop) return null;
 
       if (this.parentFolders) {
         return this.parentFolders.description;
@@ -654,7 +650,7 @@ export default {
         // console.log("*** item",item)
 
         const rate = this.getExchangeRateValue(
-          this.shop,
+          this.$shop,
           this.GetUserSelectedCurrency().code,
           item.currency,
           null,
@@ -714,18 +710,17 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 .s--storefront-products-filter-menu {
-  .-divider{
+  .-divider {
     --v-border-opacity: 0.5;
     margin: 8px 0;
   }
 
-  &.-dark{
-    .-divider{
+  &.-dark {
+    .-divider {
       border-color: #fff;
       --v-border-opacity: 0.15;
     }
   }
-
 }
 
 /*
@@ -740,6 +735,5 @@ export default {
     font-weight: 600;
     text-align: start;
   }
-
 }
 </style>

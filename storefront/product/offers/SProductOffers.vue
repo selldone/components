@@ -96,22 +96,16 @@
   </v-expand-transition>
 </template>
 
-<script>
+<script lang="ts">
 import ProductsDenseImagesCirclesLinks from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCirclesLinks.vue";
 
 export default {
   name: "SProductOffers",
   components: { ProductsDenseImagesCirclesLinks },
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
 
-    product: {
-      required: true,
-      type: Object,
-    },
+  inject: ["$shop", "$product"],
+
+  props: {
     currentVariant: {},
   },
 
@@ -120,14 +114,14 @@ export default {
   computed: {
     hasOffer() {
       return this.hasOfferThisProduct(
-        this.product.id,
+        this.$product.id,
         this.currentVariant ? this.currentVariant.id : null,
       );
     },
 
     offers() {
       return this.getOffersBuyProduct(
-        this.product.id,
+        this.$product.id,
         this.currentVariant ? this.currentVariant.id : null,
       );
     },

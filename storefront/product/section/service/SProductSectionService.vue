@@ -18,13 +18,13 @@
   <div v-if="isService" class="flex-grow-0" style="min-height: 1rem">
     <s-product-service-form
       :basket="basket"
-      :product="product"
+      :product="$product"
       @update:preferences="(val) => $emit('update:preferences', val)"
     ></s-product-service-form>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SProductServiceForm from "../../../../storefront/product/service/form/SProductServiceForm.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
@@ -34,16 +34,8 @@ export default {
     SProductServiceForm,
   },
   emits: ["update:preferences"],
+  inject: ["$shop", "$product"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
     preferences: {},
   },
 
@@ -51,11 +43,11 @@ export default {
 
   computed: {
     isService() {
-      return this.product && this.product.type === ProductType.SERVICE.code;
+      return this.$product.type === ProductType.SERVICE.code;
     },
 
     basket() {
-      return this.getBasket(this.product.type);
+      return this.getBasket(this.$product.type);
     },
   },
   methods: {},

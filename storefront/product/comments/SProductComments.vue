@@ -17,21 +17,21 @@
     <!-- ▁▁▁▁▁▁ 🞇 Rating 🞇 ▁▁▁▁▁▁ -->
 
     <v-container
-      v-if="product?.ratings?.length && product.rate_count"
+      v-if="$product?.ratings?.length && $product.rate_count"
       class="my-16"
     >
       <v-row align="center">
         <v-col cols="12" md="3" order="1" order-md="1" order-sm="2" sm="6">
           <div class="my-8">
             <span class="text-h1 font-weight-black">
-              {{ numeralFormat(product.rate, "0.0") }}
+              {{ numeralFormat($product.rate, "0.0") }}
             </span>
             <b class="mx-1">/ 5</b>
             <div class="mt-4">
               {{
                 $t("rating.product_rating_message", {
-                  rate: product.rate.toFixed(1),
-                  rate_count: product.rate_count,
+                  rate: $product.rate.toFixed(1),
+                  rate_count: $product.rate_count,
                 })
               }}
             </div>
@@ -39,7 +39,7 @@
         </v-col>
         <v-col cols="12" md="6" order="2" order-md="2" order-sm="1" sm="12">
           <s-shop-product-rating-view
-            :product="product"
+            :product="$product"
             class="my-8"
             dense
             style="font-size: 17px"
@@ -58,7 +58,7 @@
             style="aspect-ratio: 1"
           >
             <v-rating
-              v-model="product.rate"
+              v-model="$product.rate"
               active-color="#AAA"
               class="absolute-top-center op-0-2"
               color="grey-darken-1"
@@ -71,11 +71,11 @@
             <div class="ma-auto z1">
               <v-icon class="mb-2" color="#fff" size="x-large"
                 >{{
-                  product.rate > 4
+                  $product.rate > 4
                     ? "hotel_class"
-                    : product.rate > 3.5
+                    : $product.rate > 3.5
                       ? "star_rate"
-                      : product.rate > 2.5
+                      : $product.rate > 2.5
                         ? "star_half"
                         : "star_border"
                 }}
@@ -87,30 +87,27 @@
       </v-row>
     </v-container>
 
-    <v-container v-else-if="product.my_ratings">
+    <v-container v-else-if="$product.my_ratings">
       <s-shop-product-rating-view
-        :product="product"
+        :product="$product"
         class="my-8"
         dense
         style="font-size: 17px"
       />
     </v-container>
 
-    <div v-if="product?.article_pack" class="s--product-section-comments">
+    <div v-if="$product?.article_pack" class="s--product-section-comments">
       <u-expand-view max-height="80vh" min-height="30vh">
         <s-article-comments
-          :article-id="product.article_pack.article.id"
-          :article-user-id="product.user_id"
+          :article-id="$product.article_pack.article.id"
+          :article-user-id="$product.user_id"
           class="min-height-20vh"
           for-product
           is-shop
         >
           <template v-slot:login>
             <!-- Shop Login -->
-            <s-shop-login
-
-              class="mt-16 rounded-16px"
-            ></s-shop-login>
+            <s-shop-login class="mt-16 rounded-16px"></s-shop-login>
           </template>
         </s-article-comments>
       </u-expand-view>
@@ -118,7 +115,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UExpandView from "../../../ui/expand-view/UExpandView.vue";
 import SArticleComments from "../../../article/comment/SArticleComments.vue";
 import SShopProductRatingView from "../../../storefront/product/rating/SShopProductRatingView.vue";
@@ -127,14 +124,10 @@ import SShopLogin from "../../../storefront/login/SShopLogin.vue";
 
 export default {
   name: "SProductComments",
-  props: {
-    shop: {
-      require: true,
-    },
-    product: {
-      require: true,
-    },
-  },
+
+  inject: ["$shop", "$product"],
+
+  props: {},
   components: {
     SShopLogin,
     SShopProductRatingView,
@@ -148,7 +141,7 @@ export default {
 
   computed: {
     buyer_rating_statement() {
-      const rate = this.product.rate;
+      const rate = this.$product.rate;
       if (rate < 1)
         return ""; // Invalid rate!
       else if (rate < 2)

@@ -26,7 +26,7 @@
         size="large"
         tile
         variant="text"
-        @click="addToProductComparison(product, currentVariant)"
+        @click="addToProductComparison($product, currentVariant)"
       >
         <v-icon start>add</v-icon>
 
@@ -50,7 +50,7 @@
         size="large"
         tile
         variant="text"
-        @click="removeFromProductComparison(product, currentVariant)"
+        @click="removeFromProductComparison($product, currentVariant)"
       >
         <v-icon class="blink-me me-1" size="10">lens</v-icon>
         {{ $t("product_info.compare_be_in_list") }}
@@ -72,12 +72,7 @@
       </v-btn>
 
       <!-- 🞇 Direct Ask (WhatsApp,...) -->
-      <s-storefront-social-buttons
-        min-width="54px"
-        product-only
-        size="44"
-        tile
-      >
+      <s-storefront-social-buttons min-width="54px" product-only size="44" tile>
       </s-storefront-social-buttons>
     </div>
 
@@ -86,8 +81,8 @@
     <!-- 🞇 Blog -->
 
     <a
-      v-if="product.blog"
-      :href="product.blog"
+      v-if="$product.blog"
+      :href="$product.blog"
       class="elastic-button m-2"
       dir="ltr"
       rel="nofollow"
@@ -103,23 +98,15 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import SStorefrontSocialButtons from "../../../../storefront/social/SStorefrontSocialButtons.vue";
 
 export default {
   name: "SProductSectionExtraButtons",
   components: { SStorefrontSocialButtons },
+  inject: ["$shop", "$product"],
+
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-
     currentVariant: {},
   },
 
@@ -137,7 +124,7 @@ export default {
 
       return list.some((item) => {
         return (
-          item.id === this.product.id &&
+          item.id === this.$product.id &&
           (!item.variant || item.variant.id === this.currentVariant?.id)
         );
       });
@@ -149,7 +136,7 @@ export default {
     },
 
     inWishlist() {
-      return this.product.wishlist ? true : false;
+      return !!this.$product.wishlist;
     },
   },
   methods: {
@@ -166,11 +153,11 @@ export default {
       if (!this.inWishlist) {
         axios
           .put(
-            window.XAPI.PUT_WISHLIST_PRODUCT(this.shop_name, this.product.id),
+            window.XAPI.PUT_WISHLIST_PRODUCT(this.$shop.name, this.$product.id),
           )
           .then(({ data }) => {
             if (!data.error) {
-              this.product.wishlist = data.wishlist;
+              this.$product.wishlist = data.wishlist;
             } else {
               this.showErrorAlert(null, data.error_msg);
             }
@@ -185,13 +172,13 @@ export default {
         axios
           .delete(
             window.XAPI.DELETE_WISHLIST_PRODUCT(
-              this.shop_name,
-              this.product.id,
+              this.$shop.name,
+              this.$product.id,
             ),
           )
           .then(({ data }) => {
             if (!data.error) {
-              this.product.wishlist = null;
+              this.$product.wishlist = null;
             } else {
               this.showErrorAlert(null, data.error_msg);
             }

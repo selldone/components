@@ -31,9 +31,9 @@
 
               <!-- related products with common tags -->
 
-              <template v-if="product.tags?.length">
+              <template v-if="$product.tags?.length">
                 <p>{{ $t("related_products.card.same_tags_subtitle") }}</p>
-                <u-tags-cloud :tags="product.tags" class="my-3"></u-tags-cloud>
+                <u-tags-cloud :tags="$product.tags" class="my-3"></u-tags-cloud>
               </template>
 
               <!-- load products in same category -->
@@ -62,11 +62,10 @@
             v-for="item in products"
             :key="item.id"
             :class="{
-              disabled: item.id === product.id,
+              disabled: item.id === $product.id,
             }"
             :product="item"
           >
-
           </s-product-related-product-card>
 
           <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ Loading Placeholder ━━━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -89,26 +88,19 @@
 
 <script>
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
-import ProductVariantsView from "../../../storefront/product/variant/ProductVariantsView.vue";
 import UTagsCloud from "../../../ui/tag/cloud/UTagsCloud.vue";
 import _ from "lodash-es";
-import SProductRelatedProductCard
-  from "@selldone/components-vue/storefront/product/related-products/card/SProductRelatedProductCard.vue";
+import SProductRelatedProductCard from "@selldone/components-vue/storefront/product/related-products/card/SProductRelatedProductCard.vue";
 
 export default {
   name: "SProductRelatedProducts",
-  props: {
-    shop: {
-      require: true,
-    },
-    product: {
-      require: true,
-    },
-  },
+
+  inject: ["$shop", "$product"],
+
+  props: {},
   components: {
     SProductRelatedProductCard,
     UTagsCloud,
-    ProductVariantsView,
     UFadeScroll,
   },
 
@@ -121,18 +113,17 @@ export default {
 
   computed: {
     category() {
-      return this.product.category;
+      return this.$product.category;
     },
   },
 
   watch: {
-    product() {
+    $product() {
       this.fetch();
     },
   },
   created() {
     this.fetch();
-    // this.product.tags = ["modern", "new_feature", "avangard", "detailed", "wireless", "gaming",];
   },
 
   methods: {
@@ -142,7 +133,7 @@ export default {
     }, 3000),
 
     fetchRelatedProductsData() {
-      if (!this.product) return;
+      if (!this.$product) return;
 
       const handleSuccessResponse = ({ products }) => {
         this.products = products;
@@ -152,7 +143,7 @@ export default {
       window.$storefront.products
         .optimize(60)
         .list(null, 0, 16, {
-          product_id: this.getId(this.product.id),
+          product_id: this.getId(this.$product.id),
           sort: "related", //random
         })
         .cache(handleSuccessResponse)

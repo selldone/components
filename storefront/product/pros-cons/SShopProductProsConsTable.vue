@@ -14,7 +14,7 @@
 
 <template>
   <div>
-    <v-table v-if="product.pros" class="table-features">
+    <v-table v-if="$product.pros" class="table-features">
       <thead>
         <tr>
           <th colspan="2">
@@ -28,14 +28,14 @@
       </thead>
 
       <tbody>
-        <tr v-for="(value, title) in product.pros" :key="title">
+        <tr v-for="(value, title) in $product.pros" :key="title">
           <td>{{ title }}</td>
           <td>{{ value }}</td>
         </tr>
       </tbody>
     </v-table>
 
-    <v-table v-if="product.cons" class="table-features">
+    <v-table v-if="$product.cons" class="table-features">
       <thead>
         <tr>
           <th colspan="2">
@@ -48,7 +48,7 @@
       </thead>
 
       <tbody>
-        <tr v-for="(value, title) in product.cons" :key="title">
+        <tr v-for="(value, title) in $product.cons" :key="title">
           <td>{{ title }}</td>
           <td>{{ value }}</td>
         </tr>
@@ -57,21 +57,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "SShopProductProsConsTable",
   components: {},
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
+  inject: ["$shop", "$product"],
 
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+  props: {},
 
   data: () => ({}),
 

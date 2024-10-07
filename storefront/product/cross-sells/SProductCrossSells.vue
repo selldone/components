@@ -16,7 +16,7 @@
   <div v-if="cross_sells?.length" class="s--shop-product-cross-sell-list">
     <v-container fluid>
       <v-list-subheader>
-        ● {{ $t("cross_selling.title", { product: product.title }) }}
+        ● {{ $t("cross_selling.title", { product: $product.title }) }}
       </v-list-subheader>
 
       <u-fade-scroll v-model="index">
@@ -41,7 +41,7 @@
               <v-icon v-else>widgets</v-icon>
 
               <div
-                v-if="cross_sell.discount && product.icon"
+                v-if="cross_sell.discount && $product.icon"
                 class="-crossed-image"
                 dir="ltr"
               >
@@ -49,7 +49,7 @@
                   >add
                 </v-icon>
                 <v-avatar class="avatar-gradient -thin -current" size="36">
-                  <img :src="getShopImagePath(product.icon, 128)" />
+                  <img :src="getShopImagePath($product.icon, 128)" />
                 </v-avatar>
               </div>
             </v-avatar>
@@ -74,7 +74,7 @@
               <v-spacer></v-spacer>
 
               <div class="d-flex align-center mt-2">
-                <div class="d-flex flex-column me-3 ">
+                <div class="d-flex flex-column me-3">
                   <u-price
                     :amount="cross_sell.target.price"
                     :currency="cross_sell.target.currency"
@@ -120,7 +120,7 @@
                       CrossSellActionType.ViewProduct.code ||
                     cross_sell.target.type === ProductType.SUBSCRIPTION.code
                   "
-                  :href="getProductLink(shop, cross_sell.target_id)"
+                  :href="getProductLink($shop, cross_sell.target_id)"
                   class="tnt"
                   color="#eee"
                   rounded
@@ -157,7 +157,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ProductVariantsView from "../../../storefront/product/variant/ProductVariantsView.vue";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
@@ -167,16 +167,10 @@ import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelp
 export default {
   name: "SProductCrossSells",
   components: { UFadeScroll, ProductVariantsView },
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
 
-    product: {
-      required: true,
-      type: Object,
-    },
+  inject: ["$shop", "$product"],
+
+  props: {
     currentVariant: {},
   },
 
@@ -191,12 +185,12 @@ export default {
       return CrossSellActionType;
     },
     cross_sells() {
-      return this.product.cross_sells;
+      return this.$product.cross_sells;
     },
   },
 
   watch: {
-    product() {
+    $product() {
       this.autoSelectInitialVariants();
     },
   },
@@ -238,7 +232,7 @@ export default {
     addToCardCrossSelling(cross_sell) {
       if (
         !this.USER() &&
-        !ShopOptionsHelper.HasGuestCheckout(this.shop) /*🥶 Guest*/
+        !ShopOptionsHelper.HasGuestCheckout(this.$shop) /*🥶 Guest*/
       ) {
         this.NeedLogin();
         return;
@@ -257,7 +251,7 @@ export default {
       this.busy_add = product.id;
 
       this.AddToBasket(
-        this.shop.name,
+        this.$shop.name,
         product,
         variant,
         1,

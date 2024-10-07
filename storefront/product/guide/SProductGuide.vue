@@ -55,7 +55,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SArticleEditor from "../../../article/SArticleEditor.vue";
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import { SetupService } from "@selldone/core-js/server/SetupService";
@@ -64,14 +64,9 @@ import UExpandView from "../../../ui/expand-view/UExpandView.vue";
 
 export default {
   name: "SProductGuide",
-  props: {
-    shop: {
-      require: true,
-    },
-    product: {
-      require: true,
-    },
-  },
+  inject: ["$shop", "$product"],
+
+  props: {},
   components: {
     UExpandView,
     SArticleEditor,
@@ -85,12 +80,8 @@ export default {
     // ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Logistic Profile > Guide ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
     guide_profile() {
-      return (
-        this.product &&
-        this.product.profiles &&
-        this.product.profiles.find(
-          (p) => p.type === LogisticProfileType.GUIDE.value,
-        )
+      return this.$product?.profiles?.find(
+        (p) => p.type === LogisticProfileType.GUIDE.value,
       );
     },
     guide_article() {
@@ -98,14 +89,14 @@ export default {
     },
 
     admin_url_guide() {
-      const can_edit = this.product?.article_pack?.can_edit;
+      const can_edit = this.$product?.article_pack?.can_edit;
 
       return (
         this.guide_profile &&
         this.USER() &&
-        (this.USER_ID() === this.shop.user_id || can_edit) &&
+        (this.USER_ID() === this.$shop.user_id || can_edit) &&
         SetupService.MainServiceUrl() +
-          `/shuttle/shop/${this.shop.id}/logistic/profiles/${this.guide_profile.id}/dashboard`
+          `/shuttle/shop/${this.$shop.id}/logistic/profiles/${this.guide_profile.id}/dashboard`
       );
     },
   },

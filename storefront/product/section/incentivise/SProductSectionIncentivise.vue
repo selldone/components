@@ -41,7 +41,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import numeral from "numeral";
@@ -49,16 +49,8 @@ import numeral from "numeral";
 export default {
   name: "SProductSectionIncentivise",
   components: {},
+  inject: ["$shop", "$product"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
     variant: {
       required: false,
       type: Object,
@@ -76,8 +68,8 @@ export default {
   computed: {
     has_quantity() {
       return (
-        this.product.type === ProductType.PHYSICAL.code ||
-        this.product.type === ProductType.VIRTUAL.code
+        this.$product.type === ProductType.PHYSICAL.code ||
+        this.$product.type === ProductType.VIRTUAL.code
       );
     },
     quantity() {
@@ -86,28 +78,28 @@ export default {
       } else if (this.variant) {
         return this.variant.quantity;
       }
-      return this.product.quantity;
+      return this.$product.quantity;
     },
 
     sells() {
-      return this.product.sells;
+      return this.$product.sells;
     },
     show_progress() {
       return this.sells > 0 && this.sells / (this.quantity + this.sells) > 0.1;
     },
     in_carts() {
-      return this.product.in_carts;
+      return this.$product.in_carts;
     },
     message() {
       if (
-        this.product.type === ProductType.SUBSCRIPTION.code ||
-        this.product.type === ProductType.SERVICE.code
+        this.$product.type === ProductType.SUBSCRIPTION.code ||
+        this.$product.type === ProductType.SERVICE.code
       )
         return null;
 
-      const is_physical = this.product.type === ProductType.PHYSICAL.code;
-      const is_virtual = this.product.type === ProductType.VIRTUAL.code;
-      const is_file = this.product.type === ProductType.FILE.code;
+      const is_physical = this.$product.type === ProductType.PHYSICAL.code;
+      const is_virtual = this.$product.type === ProductType.VIRTUAL.code;
+      const is_file = this.$product.type === ProductType.FILE.code;
       let conditions = [];
 
       if (is_physical || is_virtual) {

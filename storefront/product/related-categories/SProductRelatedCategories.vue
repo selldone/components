@@ -57,18 +57,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "SProductRelatedCategories",
+
+  inject: ["$shop", "$product"],
+
   props: {
-    shop: {
-      require: true,
-    },
-    product: {
-      require: true,
-    },
     categories: { require: true, type: Array },
   },
   components: {

@@ -132,7 +132,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import SStorefrontCouponView from "../view/SStorefrontCouponView.vue";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";

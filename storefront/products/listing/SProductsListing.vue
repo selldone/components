@@ -125,7 +125,7 @@
                   v-bind="
                     !viewOnly && window.ExternalWidget
                       ? {
-                          href: getCategoryLink(shop, category.name),
+                          href: getCategoryLink($shop, category.name),
                           target: '',
                         }
                       : {}
@@ -243,7 +243,7 @@
                   "
                   v-bind="
                     !viewOnly && window.ExternalWidget
-                      ? { href: getProductLink(shop, product.id), target: '' }
+                      ? { href: getProductLink($shop, product.id), target: '' }
                       : {}
                   "
                   @click="onClickProduct(product, index)"
@@ -276,7 +276,6 @@
           }"
           :folders="folders"
           :parent-folders="parent_folders"
-          :shop="shop"
           :style="{
             borderRadius: $vuetify.display.mdAndDown ? '32px' : '32px',
           }"
@@ -341,7 +340,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopProductCard from "../../../storefront/product/card/SShopProductCard.vue";
 import SProductsSortView from "../../../storefront/product/sort/SProductsSortView.vue";
 import SCategoryCard from "../../../storefront/category/card/SCategoryCard.vue";
@@ -376,17 +375,9 @@ export default {
     SShopProductCard,
   },
 
-  props: {
-    /**
-     * Represents the current shop object.
-     * @type {Object}
-     * @required
-     */
-    shop: {
-      require: true,
-      type: Object,
-    },
+  inject: ["$shop"],
 
+  props: {
     /**
      * Determines whether to display the sorting bar.
      * @type {Boolean}
@@ -535,7 +526,7 @@ export default {
     busy_fetch: false,
 
     products: [],
-    products_count:0,
+    products_count: 0,
     sort: null /*Custom sorting*/, // "most_popular",
     only_available: true,
 
@@ -574,7 +565,7 @@ export default {
       return this.products.length > 0 || this.forceSingleLine;
     },
     theme() {
-      return this.shop.theme;
+      return this.$shop.theme;
     },
     no_animation() {
       return this.theme && this.theme.static;
@@ -679,7 +670,7 @@ export default {
       return (
         this.hasFilter &&
         (this.parent_folders?.filters /*Current category filter*/ ||
-          (!this.parent_folders && this.shop.filters)) /*Root filter*/
+          (!this.parent_folders && this.$shop.filters)) /*Root filter*/
       );
     },
 
@@ -732,7 +723,7 @@ export default {
      */
     max_folders_per_page() {
       // In single line mode for categories we do not need pagination.
-      if(this.single_line_categories)return 999;
+      if (this.single_line_categories) return 999;
 
       let limit = 20;
 
@@ -1099,7 +1090,7 @@ export default {
             this.selected_product.spec_order,
           );
         GtagEcommerce.MeasuringViewsOfProductDetails(
-          this.shop,
+          this.$shop,
           product,
           this.GetUserSelectedCurrency().code,
           "quick-view",
@@ -1123,7 +1114,7 @@ export default {
 
     onClickProduct(product, index) {
       GtagEcommerce.MeasuringProductClicks(
-        this.shop,
+        this.$shop,
         product,
         this.GetUserSelectedCurrency().code,
         index + 1,
@@ -1231,7 +1222,7 @@ export default {
         });
 
         GtagEcommerce.MeasuringProductImpressions(
-          this.shop,
+          this.$shop,
           products,
           this.GetUserSelectedCurrency().code,
           this.$route.query.search ? "Search Results" : null,
@@ -1264,7 +1255,7 @@ export default {
           bounds: bounds, // Location constraints
 
           tags: tags, //Filter by tags
-          vendor_id: vendor_id==='{{vendor.id}}'?null:vendor_id, // Show only for this vendor! A;so clear dynamic vendor id! (Used in page builder)
+          vendor_id: vendor_id === "{{vendor.id}}" ? null : vendor_id, // Show only for this vendor! A;so clear dynamic vendor id! (Used in page builder)
 
           surrounded: surrounded, // true:Show only selected categories. false: Show items inside selected categories.
         })

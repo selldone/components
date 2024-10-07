@@ -48,7 +48,7 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import { ExtraPricingHelper } from "@selldone/core-js/helper/shop/ExtraPricingHelper";
 import numeral from "numeral";
@@ -56,17 +56,9 @@ import numeral from "numeral";
 export default {
   name: "SProductSectionExtraPricings",
   components: {},
+  inject: ["$shop", "$product"],
+
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-
     currentVariant: {},
     selectedVendorProduct: {},
 
@@ -83,7 +75,7 @@ export default {
     // 🌸 Add extra pricing 🌸
     extra_pricings() {
       return ExtraPricingHelper.GetListOfExtraPricings(
-        this.product,
+        this.$product,
         this.currentVariant,
         this.selectedVendorProduct,
       );
@@ -100,11 +92,11 @@ export default {
         return this.selectedVendorProduct.quantity;
       else if (this.currentVariant) return this.currentVariant.quantity;
 
-      return this.product.quantity;
+      return this.$product.quantity;
     },
 
     theme() {
-      return this.shop.theme;
+      return this.$shop.theme;
     },
     default_color() {
       return this.theme && this.theme.color_buy
@@ -145,14 +137,14 @@ export default {
     },
 
     calculatedPrice(extra_pricing) {
-      extra_pricing.currency = this.product.currency; // Need currency to calculate!
+      extra_pricing.currency = this.$product.currency; // Need currency to calculate!
 
       return this.CalcPriceProductCurrentCurrency(
-        this.shop,
+        this.$shop,
         extra_pricing,
         null,
         this.preferences,
-        this.product.valuation,
+        this.$product.valuation,
       );
     },
   },

@@ -34,6 +34,7 @@
           hide-details
           item-value="alpha2"
           placeholder="Select a country..."
+          persistent-placeholder
           rounded="lg"
           transparent
           variant="solo"
@@ -80,7 +81,7 @@
       :class="{ disabled: hasVariants && !currentVariant }"
       :current-variant="currentVariant"
       :preferences="preferences"
-      :product="product"
+      :product="$product"
       :quick-buy-mode="quickBuyMode"
       :selected-subscription-price="selectedSubscriptionPrice"
       :vendor-product="selectedVendorProduct"
@@ -91,7 +92,7 @@
     <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ FILE:  Download list files dialog ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
     <v-btn
-      v-if="isFile && product.buy_file"
+      v-if="isFile && $product.buy_file"
       class="mx-n2 mx-sm-2 widget-buttons mt-2 mb-3 d-flex flex-column flex-grow-0"
       color="green"
       min-width="200"
@@ -129,7 +130,7 @@
             </v-list-subheader>
 
             <s-shop-product-files-list
-              :files="product.files"
+              :files="$product.files"
               purchased
             ></s-shop-product-files-list>
           </div>
@@ -170,14 +171,14 @@
           <img
             :src="sticky_image"
             :style="{
-              objectFit: product?.style?.contain ? 'contain' : 'cover',
+              objectFit: $product?.style?.contain ? 'contain' : 'cover',
             }"
           />
         </v-avatar>
         <div class="sticky-content">
-          <div class="sticky-title">{{ product.title?.limitWords(10) }}</div>
+          <div class="sticky-title">{{ $product.title?.limitWords(10) }}</div>
           <div class="sticky-title-en">
-            {{ product.title_en?.limitWords(20) }}
+            {{ $product.title_en?.limitWords(20) }}
           </div>
         </div>
       </div>
@@ -187,7 +188,7 @@
           :class="{ disabled: hasVariants && !currentVariant }"
           :current-variant="currentVariant"
           :preferences="preferences"
-          :product="product"
+          :product="$product"
           :quick-buy-mode="quickBuyMode"
           :selected-subscription-price="selectedSubscriptionPrice"
           :vendor-product="selectedVendorProduct"
@@ -208,17 +209,8 @@ import SCountrySelect from "../../../../ui/country/select/SCountrySelect.vue";
 export default {
   name: "SProductSectionBuyButton",
   components: { SCountrySelect, SShopProductFilesList, SShopBuyButton },
+  inject: ["$shop", "$product"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-
     currentVariant: {},
 
     preferences: {},
@@ -265,41 +257,37 @@ export default {
       return this.getShopImagePath(
         this.currentVariant?.image
           ? this.currentVariant.image
-          : this.product.icon,
+          : this.$product.icon,
       );
     },
 
     has_buy_button() {
       return (
-        (!this.isFile || !this.product.buy_file) /*File not purchased yet!*/ &&
+        (!this.isFile || !this.$product.buy_file) /*File not purchased yet!*/ &&
         (this.is_available_location || this.corresponding_basket_item)
       );
     },
 
     isFile() {
-      return this.product && this.product.type === ProductType.FILE.code;
+      return this.$product.type === ProductType.FILE.code;
     },
 
     hasVariants() {
-      return (
-        this.product &&
-        this.product.product_variants &&
-        this.product.product_variants.length > 0
-      );
+      return this.$product.product_variants?.length > 0;
     },
 
     files() {
-      return this.product.files;
+      return this.$product.files;
     },
     basket() {
-      return this.getBasket(this.product.type);
+      return this.getBasket(this.$product.type);
     },
 
     corresponding_basket_item() {
       if (!this.basket) return null;
       return this.basket.items.find(
         (item) =>
-          item.product_id === this.product.id &&
+          item.product_id === this.$product.id &&
           item.variant_id ===
             (this.currentVariant ? this.currentVariant.id : null),
       );
@@ -307,7 +295,7 @@ export default {
 
     //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Product Locations ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     locations() {
-      return this.product?.locations;
+      return this.$product?.locations;
     },
     has_product_locations_restriction() {
       return !!this.locations;
@@ -332,7 +320,7 @@ export default {
       );
     },
     theme() {
-      return this.shop.theme;
+      return this.$shop.theme;
     },
     buy_color() {
       return this.theme && this.theme.color_buy
@@ -341,7 +329,7 @@ export default {
     },
   },
   watch: {
-    product() {
+    $product() {
       this.init();
     },
   },
@@ -366,6 +354,13 @@ export default {
           this.selected_country = receiver_info.country;
           this.selected_postal = receiver_info.postal;
         }
+
+        // Check selected country is valid:
+        if (this.selected_country && !this.locations[this.selected_country]) {
+          this.selected_country = null;
+        }
+
+        // Auto select first country:
         if (
           !this.selected_country &&
           this.locations &&
@@ -384,7 +379,7 @@ export default {
 
       axios
         .post(
-          window.XAPI.POST_SET_MY_LOCATION(this.shop.name, this.product.type),
+          window.XAPI.POST_SET_MY_LOCATION(this.$shop.name, this.$product.type),
           {
             country: this.selected_country,
             postal: this.selected_postal,

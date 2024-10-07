@@ -17,7 +17,7 @@
     <v-container v-if="has_pickup" class="my-16" fluid>
       <v-row align="center">
         <v-col class="text-start" cols="12" md="6">
-          <v-list-subheader>● Pickup {{ product.title }}</v-list-subheader>
+          <v-list-subheader>● Pickup {{ $product.title }}</v-list-subheader>
           <h2 class="text-h3 line-height-normal font-weight-black">
             {{ shipping_article?.title ? shipping_article.title : "Shipping" }}
           </h2>
@@ -134,18 +134,13 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import UExpandView from "../../../ui/expand-view/UExpandView.vue";
-import {BusinessModel} from "@selldone/core-js/enums/shop/BusinessModel";
+import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 export default {
   name: "SProductShipping",
-  props: {
-    shop: {
-      require: true,
-    },
-    product: {
-      require: true,
-    },
-  },
+  inject: ["$shop", "$product"],
+
+  props: {},
   components: {
     UExpandView,
     UFadeScroll,
@@ -161,11 +156,11 @@ export default {
       return MapHelper;
     },
     is_physical() {
-      return this.product.type === ProductType.PHYSICAL.code;
+      return this.$product.type === ProductType.PHYSICAL.code;
     },
 
     transportations() {
-      return this.shop.transportations;
+      return this.$shop.transportations;
     },
     has_free_shipping() {
       return this.is_physical && this.transportations_free_shipping?.length;
@@ -182,8 +177,6 @@ export default {
         .unique();
     },
 
-
-
     transportation_with_min_free_shipping_limit() {
       return this.transportations_free_shipping?.minByKey(
         "free_shipping_limit",
@@ -191,23 +184,26 @@ export default {
     },
 
     IS_MARKETPLACE() {
-      return this.shop.model === BusinessModel.MARKETPLACE.code;
+      return this.$shop.model === BusinessModel.MARKETPLACE.code;
     },
     pickup_transportation_for_vendors_exists() {
-      return this.IS_MARKETPLACE && this.shop.transportations?.some(
-        (transportation) =>
-          transportation.type === ShopTransportations.Pickup.code &&
-          transportation.marketplace,
-        /* Transportation must be available for vendors. If the marketplace mode is not direct, 
-   'marketplace' could be true (miss config!)! But vendor_products would not return any value. This check is safe, so there's no need to explicitly check
-   the marketplace mode. */
+      return (
+        this.IS_MARKETPLACE &&
+        this.$shop.transportations?.some(
+          (transportation) =>
+            transportation.type === ShopTransportations.Pickup.code &&
+            transportation.marketplace,
+          /* Transportation must be available for vendors. If the marketplace mode is not direct, 
+     'marketplace' could be true (miss config!)! But vendor_products would not return any value. This check is safe, so there's no need to explicitly check
+     the marketplace mode. */
+        )
       );
     },
 
     pickups() {
       if (this.pickup_transportation_for_vendors_exists) {
         // We are in the marketplace, with vendors send orders directly! So we should show pickup options of vendors!
-        return this.product.vendor_products
+        return this.$product.vendor_products
           ?.map((pv) => {
             return pv.vendor?.warehouse;
           })
@@ -229,12 +225,8 @@ export default {
     // ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Logistic Profile > Shipping ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
     shipping_profile() {
-      return (
-        this.product &&
-        this.product.profiles &&
-        this.product.profiles.find(
-          (p) => p.type === LogisticProfileType.SHIPPING.value,
-        )
+      return this.$product?.profiles?.find(
+        (p) => p.type === LogisticProfileType.SHIPPING.value,
       );
     },
     shipping_article() {
@@ -242,14 +234,14 @@ export default {
     },
 
     admin_url_shipping() {
-      const can_edit = this.product?.article_pack?.can_edit;
+      const can_edit = this.$product?.article_pack?.can_edit;
 
       return (
         this.shipping_profile &&
         this.USER() &&
-        (this.USER_ID() === this.shop.user_id || can_edit) &&
+        (this.USER_ID() === this.$shop.user_id || can_edit) &&
         SetupService.MainServiceUrl() +
-          `/shuttle/shop/${this.shop.id}/logistic/profiles/${this.shipping_profile.id}/dashboard`
+          `/shuttle/shop/${this.$shop.id}/logistic/profiles/${this.shipping_profile.id}/dashboard`
       );
     },
   },

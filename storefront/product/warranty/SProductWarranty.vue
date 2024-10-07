@@ -25,11 +25,11 @@
               ●
               {{
                 $t("product_info.return_in_days", {
-                  days: product.return_warranty,
+                  days: $product.return_warranty,
                 })
               }}
             </span>
-            <span v-if="product.warranty"> ● {{ product.warranty }} </span>
+            <span v-if="$product.warranty"> ● {{ $product.warranty }} </span>
           </v-list-subheader>
 
           <h2 class="text-h3 line-height-normal font-weight-black">
@@ -41,10 +41,10 @@
           </h2>
         </v-col>
 
-        <v-col v-if="product.warranty" cols="12" md="3" sm="6">
+        <v-col v-if="$product.warranty" cols="12" md="3" sm="6">
           <div class="-highlight">
             <span class="text-h3 font-weight-black">{{
-              product.warranty
+              $product.warranty
             }}</span>
           </div>
           <div>Product Warranty!</div>
@@ -53,7 +53,7 @@
         <v-col v-if="has_return_warranty" cols="12" md="3" sm="6">
           <div class="-highlight">
             <span class="text-h1 font-weight-black">{{
-              product.return_warranty
+              $product.return_warranty
             }}</span>
             <b class="mx-a">/ {{ $t("global.commons.days") }}</b>
           </div>
@@ -92,7 +92,6 @@
           :href="admin_url_warranty"
           class="tnt fadeIn"
           color="#000"
-
           target="_blank"
           title="Open product admin panel"
         >
@@ -155,7 +154,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SArticleEditor from "../../../article/SArticleEditor.vue";
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import { SetupService } from "@selldone/core-js/server/SetupService";
@@ -163,14 +162,10 @@ import UExpandView from "../../../ui/expand-view/UExpandView.vue";
 
 export default {
   name: "SProductWarranty",
-  props: {
-    shop: {
-      require: true,
-    },
-    product: {
-      require: true,
-    },
-  },
+
+  inject: ["$shop", "$product"],
+
+  props: {},
   components: {
     UExpandView,
     SArticleEditor,
@@ -182,22 +177,18 @@ export default {
 
   computed: {
     has_big_header() {
-      return this.product.warranty || this.has_return_warranty;
+      return this.$product.warranty || this.has_return_warranty;
     },
 
     has_return_warranty() {
-      return this.product.return_warranty > 0;
+      return this.$product.return_warranty > 0;
     },
 
     // ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Logistic Profile > Warranty ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
     warranty_profile() {
-      return (
-        this.product &&
-        this.product.profiles &&
-        this.product.profiles.find(
-          (p) => p.type === LogisticProfileType.WARRANTY.value,
-        )
+      return this.$product?.profiles?.find(
+        (p) => p.type === LogisticProfileType.WARRANTY.value,
       );
     },
 
@@ -206,26 +197,22 @@ export default {
     },
 
     admin_url_warranty() {
-      const can_edit = this.product?.article_pack?.can_edit;
+      const can_edit = this.$product?.article_pack?.can_edit;
 
       return (
         this.warranty_profile &&
         this.USER() &&
-        (this.USER_ID() === this.shop.user_id || can_edit) &&
+        (this.USER_ID() === this.$shop.user_id || can_edit) &&
         SetupService.MainServiceUrl() +
-          `/shuttle/shop/${this.shop.id}/logistic/profiles/${this.warranty_profile.id}/dashboard`
+          `/shuttle/shop/${this.$shop.id}/logistic/profiles/${this.warranty_profile.id}/dashboard`
       );
     },
 
     // ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Logistic Profile > Return Policy ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
     return_policy_profile() {
-      return (
-        this.product &&
-        this.product.profiles &&
-        this.product.profiles.find(
-          (p) => p.type === LogisticProfileType.RETURN_POLICY.value,
-        )
+      return this.$product?.profiles?.find(
+        (p) => p.type === LogisticProfileType.RETURN_POLICY.value,
       );
     },
 
@@ -236,14 +223,14 @@ export default {
     },
 
     admin_url_return_policy() {
-      const can_edit = this.product?.article_pack?.can_edit;
+      const can_edit = this.$product?.article_pack?.can_edit;
 
       return (
         this.return_policy_profile &&
         this.USER() &&
-        (this.USER_ID() === this.shop.user_id || can_edit) &&
+        (this.USER_ID() === this.$shop.user_id || can_edit) &&
         SetupService.MainServiceUrl() +
-          `/shuttle/shop/${this.shop.id}/logistic/profiles/${this.return_policy_profile.id}/dashboard`
+          `/shuttle/shop/${this.$shop.id}/logistic/profiles/${this.return_policy_profile.id}/dashboard`
       );
     },
   },
