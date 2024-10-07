@@ -19,14 +19,10 @@
   </v-btn>
 
   <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Menu ―――――――――― -->
-  <s-shop-navigation-drawer
-    v-model="drawer"
-    :shop="shop"
-  ></s-shop-navigation-drawer>
+  <s-shop-navigation-drawer v-model="drawer"></s-shop-navigation-drawer>
 </template>
 
-<script>
-
+<script lang="ts">
 import SShopNavigationDrawer from "@selldone/components-vue/storefront/menu/side/SShopNavigationDrawer.vue";
 
 export default {
@@ -34,9 +30,9 @@ export default {
   components: {
     SShopNavigationDrawer,
   },
-  props: {
-    shop: {},
-  },
+  inject: ["$shop"],
+
+  props: {},
   data: () => ({
     menu: false,
 
@@ -52,8 +48,8 @@ export default {
     },
 
     theme() {
-      if (!this.shop) return null;
-      return this.shop.theme;
+      if (!this.$shop) return null;
+      return this.$shop.theme;
     },
   },
 

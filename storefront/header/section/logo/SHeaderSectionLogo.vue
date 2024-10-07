@@ -57,7 +57,7 @@
       </v-avatar>
     </component>
 
-    <template v-if="shop && $vuetify.display.smAndUp">
+    <template v-if="$shop && $vuetify.display.smAndUp">
       <span
         v-if="isMobile"
         class="z2 ms-2 font-weight-bold zoomIn d-block single-line"
@@ -91,8 +91,9 @@
 export default {
   name: "SHeaderSectionLogo",
   components: {},
+  inject: ["$shop"],
+
   props: {
-    shop: { required: true },
     viewOnly: { default: false, type: Boolean },
     dynamic:Boolean,
 
@@ -101,8 +102,8 @@ export default {
 
   computed: {
     theme() {
-      if (!this.shop) return null;
-      return this.shop.theme;
+      if (!this.$shop) return null;
+      return this.$shop.theme;
     },
 
     // --------------------------------------------------------------------------------
@@ -120,7 +121,7 @@ export default {
       if (this.theme && this.theme.logo)
         return this.getShopImagePath(this.theme.logo);
 
-      return this.getShopImagePath(this.shop.icon, 128);
+      return this.getShopImagePath(this.$shop.icon, 128);
     },
     logo_custom_size() {
       return (
@@ -136,7 +137,7 @@ export default {
         this.theme.title !== null &&
         this.theme.title !== undefined
         ? this.theme.title
-        : this.shop.title;
+        : this.$shop.title;
     },
 
     in_custom_home_page() {

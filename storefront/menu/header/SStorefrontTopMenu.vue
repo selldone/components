@@ -158,10 +158,8 @@ import LPageViewer from "@selldone/page-builder/page/viewer/LPageViewer.vue";
 export default {
   name: "SStorefrontTopMenu",
   components: { LPageViewer, MenuCategories },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-    },
     rounded: {
       type: Boolean,
       default: false,
@@ -217,7 +215,7 @@ export default {
     is_light_header() {
       return (
         this.$route.matched.some((record) => record.meta.light_header) ||
-        (this.shop.theme && this.shop.theme.light_header)
+        this.$shop?.theme?.light_header
       );
     },
     dark() {

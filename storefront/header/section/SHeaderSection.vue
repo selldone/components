@@ -15,11 +15,9 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <v-toolbar
-      v-if="!$store.getters.getIsNative && shop"
+      v-if="!$store.getters.getIsNative && $shop"
       :class="{ 'text-white': is_dark, '-dark': is_dark }"
-      :color="
-       HEADER_COLOR
-      "
+      :color="HEADER_COLOR"
       :extended="!overlay"
       :style="{
         marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
@@ -36,30 +34,23 @@
       <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
       <s-header-section-drawer-menu
         v-if="isMobile || is_standalone"
-        :shop="shop"
-      >
-      </s-header-section-drawer-menu>
+      ></s-header-section-drawer-menu>
 
-      <s-header-section-logo :shop="shop" class="mx-1"></s-header-section-logo>
+      <s-header-section-logo class="mx-1"></s-header-section-logo>
 
       <v-spacer />
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Lottery ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <s-storefront-lottery-wheel-of-fortune
-        :shop="shop"
         class="fadeIn delay_200 me-3"
       ></s-storefront-lottery-wheel-of-fortune>
 
-      <s-header-section-buttons :dark="!is_light_header" :shop="shop">
+      <s-header-section-buttons :dark="!is_light_header">
       </s-header-section-buttons>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <s-header-section-user
-        v-if="!isMobile"
-        :dark="!is_light_header"
-        :shop="shop"
-      >
+      <s-header-section-user v-if="!isMobile" :dark="!is_light_header">
       </s-header-section-user>
     </v-toolbar>
   </div>
@@ -71,7 +62,7 @@ import SHeaderSectionLogo from "../../../storefront/header/section/logo/SHeaderS
 import SHeaderSectionDrawerMenu from "@selldone/components-vue/storefront/header/section/drawer-menu/SHeaderSectionDrawerMenu.vue";
 import SHeaderSectionButtons from "@selldone/components-vue/storefront/header/section/buttons/SHeaderSectionButtons.vue";
 import SHeaderSectionUser from "@selldone/components-vue/storefront/header/section/user/SHeaderSectionUser.vue";
-import {ThemeHelper} from "@selldone/core-js";
+import { ThemeHelper } from "@selldone/core-js";
 
 export default {
   name: "SHeaderSection",
@@ -83,15 +74,13 @@ export default {
 
     SStorefrontLotteryWheelOfFortune,
   },
+  inject: ["$shop"],
   props: {
-    shop: {},
-    searchMode: {},
     overlay: { type: Boolean, default: false },
     overlayDark: {
       default: false,
       type: Boolean,
     },
-    color: {},
   },
   data: () => ({
     // Dynamic header style:
@@ -118,7 +107,7 @@ export default {
     },
 
     campaign() {
-      return this.shop ? this.shop.campaign : null;
+      return this.$shop ? this.$shop.campaign : null;
     },
 
     banner() {
@@ -126,8 +115,8 @@ export default {
     },
 
     theme() {
-      if (!this.shop) return null;
-      return this.shop.theme;
+      if (!this.$shop) return null;
+      return this.$shop.theme;
     },
 
     is_dark() {
@@ -142,7 +131,7 @@ export default {
 
       return (
         this.$route.matched.some((record) => record.meta.light_header) ||
-        ( this.theme?.light_header!==false)// Default theme header is light!
+        this.theme?.light_header !== false // Default theme header is light!
       );
     },
 
@@ -152,7 +141,7 @@ export default {
       if (this.theme && this.theme.logo)
         return this.getShopImagePath(this.theme.logo);
 
-      return this.getShopImagePath(this.shop.icon, 128);
+      return this.getShopImagePath(this.$shop.icon, 128);
     },
 
     title() {
@@ -160,19 +149,22 @@ export default {
         this.theme.title !== null &&
         this.theme.title !== undefined
         ? this.theme.title
-        : this.shop.title;
+        : this.$shop.title;
     },
 
+    HEADER_COLOR() {
+      return this.globalStyle.header_color
+        ? this.globalStyle.header_color
+        : this.transparent_header || this.overlay
+          ? "transparent"
+          : this.is_light_header
+            ? "var(--background)"
+            : this.SaminColorDark;
+    },
 
-    HEADER_COLOR(){
-      return this. color
-          ? this.color
-          : this.transparent_header || this.overlay
-              ? 'transparent'
-              : this.is_light_header
-                  ? 'var(--background)'
-                  : this.SaminColorDark
-    }
+    globalStyle() {
+      return this.$store.getters.getGlobalStyle;
+    },
   },
 
   watch: {
@@ -187,15 +179,13 @@ export default {
       }
     },
 
-    HEADER_COLOR(color){
-      //console.log('HEADER_COLOR --------> Watch -> Change Color Meta', color);
+    HEADER_COLOR(color) {
       // We try to set header color to meta theme color (for iphone)
       ThemeHelper.SetMetaThemeColor(color);
-    }
+    },
   },
 
   created() {
-    //console.log('HEADER_COLOR --------> Created -> Change Color Meta', this.HEADER_COLOR);
     ThemeHelper.SetMetaThemeColor(this.HEADER_COLOR);
   },
 
@@ -224,8 +214,4 @@ export default {
     border-bottom: 1px solid rgba(222, 226, 230, 0.3) !important;
   }
 }
-
-
-
-
 </style>

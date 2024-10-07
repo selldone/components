@@ -295,9 +295,9 @@
         <div class="-msg">
           <div class="d-flex align-items-center justify-center">
             <v-avatar class="avatar-gradient -thin -shop"
-              ><img :src="getShopIcon(shop.id)"
+              ><img :src="getShopIcon($shop.id)"
             /></v-avatar>
-            <p class="text-subtitle-2 mx-2 my-2">{{ shop.title }}</p>
+            <p class="text-subtitle-2 mx-2 my-2">{{ $shop.title }}</p>
           </div>
           <h2>{{ $t("global.need_login.msg_title") }}</h2>
           <p class="mb-5">{{ $t("global.need_login.msg_body") }}</p>
@@ -358,7 +358,6 @@
           <!-- 0. Email login -->
           <shop-email-login
             v-if="login_modes && login_modes.includes('email')"
-            :shop="shop"
             :source="source"
             @close="$emit('update:show', false)"
             @login="({ token, expires_in }) => handleToken(token, expires_in)"
@@ -457,11 +456,10 @@ export default {
     ShopEmailLogin,
     UCountDown,
   },
+  inject:['$shop'],
+
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
+
     show: {
       type: Boolean,
       default: false,
@@ -519,7 +517,7 @@ export default {
       return !!this.busy_redirect;
     },
     login_modes() {
-      return this.shop.login_modes;
+      return this.$shop.login_modes;
     },
 
     predefine_email() {

@@ -23,7 +23,7 @@
     :iconOnly="iconOnly"
     :rounded="rounded"
     :solo="solo"
-    :value="language"
+    :model-value="language"
     prepend-inner-icon="translate"
     @change="(lang) => (lang ? setCurrentLanguage(lang, true) : undefined)"
   />
@@ -36,11 +36,8 @@ import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelp
 export default {
   name: "SLanguageSelector",
   components: { ULanguageInput },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     solo: { type: Boolean, default: false },
 
     filled: { type: Boolean, default: false },
@@ -61,10 +58,10 @@ export default {
       return this.getCurrentLanguage().code;
     },
     options() {
-      return this.shop.options;
+      return this.$shop.options;
     },
     languages() {
-      return ShopOptionsHelper.GetLanguages(this.shop);
+      return ShopOptionsHelper.GetLanguages(this.$shop);
     },
 
     is_multi_language() {
@@ -72,7 +69,9 @@ export default {
     },
   },
 
-  watch: {},
+  watch: {
+
+  },
 
   created() {},
 };

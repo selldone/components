@@ -19,12 +19,12 @@
 
       <div>
         <v-avatar class="avatar-gradient -thin -shop mb-2" size="64">
-          <img :src="getShopImagePath(shop.icon, 128)" />
+          <img :src="getShopImagePath($shop.icon, 128)" />
         </v-avatar>
       </div>
 
       <div class="mb-5 font-weight-bold">
-        {{ shop.title }}
+        {{ $shop.title }}
       </div>
       <v-expand-transition>
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Busy User ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
@@ -123,19 +123,17 @@
 </template>
 
 <script>
-import { ShopRestriction } from "@selldone/core-js/enums/shop/options/ShopRestriction";
 
 export default {
   name: "SAccessPrivateCheck",
   components: {},
+  inject: ["$shop"],
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
    *  🔷 Props
    * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
    */
-  props: {
-    shop: { required: true, type: Object },
-  },
+  props: {},
 
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -153,22 +151,15 @@ export default {
    * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
    */
   computed: {
-    is_private() {
-      return (
-        this.shop && this.shop.restriction === ShopRestriction.PRIVATE.code
-      );
-    },
     user() {
       return this.USER();
     },
-    customer_has_access() {
-      return this.user && this.user.access;
-    },
+
     busy_user() {
       return this.$store.getters.getBusyUser;
     },
     info() {
-      return this.shop && this.shop.info;
+      return this.$shop?.info;
     },
   },
 };

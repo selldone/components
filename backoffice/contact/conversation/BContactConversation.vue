@@ -213,7 +213,6 @@
             <s-product-preview-by-id
               v-if="item.product"
               :product-id="item.product"
-              :shop="shop"
               class="mt-2 max-w-300 mx-auto shadow-paper"
             >
             </s-product-preview-by-id>

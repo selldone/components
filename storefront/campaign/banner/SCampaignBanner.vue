@@ -88,10 +88,8 @@
 export default {
   name: "SCampaignBanner",
 
+  inject: ["$shop"],
   props: {
-    shop: {
-      type: Object,
-    },
     bannerPreview: {
       type: Object,
     },
@@ -109,7 +107,7 @@ export default {
 
   computed: {
     campaign() {
-      return this.shop?.campaign;
+      return this.$shop?.campaign;
     },
     banner() {
       if (this.developerMode) return this.bannerPreview;

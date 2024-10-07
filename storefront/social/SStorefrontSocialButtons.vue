@@ -71,11 +71,8 @@ import _ from "lodash-es";
 
 export default {
   name: "SStorefrontSocialButtons",
+  inject: ["$shop"],
   props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
     vertical: {
       default: false,
       type: Boolean,
@@ -111,16 +108,16 @@ export default {
   computed: {
     socials() {
       if (this.productOnly)
-        return this.shop.socials?.filter(
+        return this.$shop.socials?.filter(
           (i) => SocialNetwork[i.network] && SocialNetwork[i.network].product,
         );
 
       if (this.activeOnly)
-        return this.shop.socials.filter(
+        return this.$shop.socials.filter(
           (i) => i.active && SocialNetwork[i.network],
         );
 
-      return this.shop.socials.filter((i) => SocialNetwork[i.network]); // Check exist in web app (supported)
+      return this.$shop.socials.filter((i) => SocialNetwork[i.network]); // Check exist in web app (supported)
     },
   },
 

@@ -34,15 +34,14 @@
           sm="12"
         >
           <h3 style="font-size: 32px; letter-spacing: -0.4px; font-weight: 900">
-            {{ shop.title }}
+            {{ $shop.title }}
           </h3>
           <p class="mt-3 text-justify">
-            {{ shop.description }}
+            {{ $shop.description }}
           </p>
 
           <!-- =――――――――――――――――――――― Social links ――――――――――――――――――――― -->
           <s-storefront-social-buttons
-            :shop="shop"
             class="my-3"
             parallax
           ></s-storefront-social-buttons>
@@ -81,8 +80,8 @@
         <v-row class="text-start my-2" justify="end" no-gutters>
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
           <u-currency-selector
-            v-if="shop.currencies && shop.currencies.length > 1"
-            :shop="shop"
+            v-if="$shop.currencies?.length > 1"
+            :shop="$shop"
             class="ma-2"
             flag-mode
             hide-details
@@ -97,7 +96,6 @@
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
 
           <s-language-selector
-            :shop="shop"
             class="ma-2"
             hide-details
             variant="outlined"
@@ -165,11 +163,8 @@ export default {
     SStorefrontSocialButtons,
     UCurrencySelector,
   },
+  inject: ["$shop"],
   props: {
-    shop: {
-      type: Object,
-      required: true,
-    },
     dark: {
       type: Boolean,
       default: false,
@@ -180,10 +175,10 @@ export default {
 
   computed: {
     theme() {
-      return this.shop.theme;
+      return this.$shop.theme;
     },
     footer() {
-      return this.shop.footer;
+      return this.$shop.footer;
     },
     sections_count() {
       let out = 0;
@@ -195,13 +190,11 @@ export default {
     },
 
     menu_footer() {
-      return this.shop.menus.find((it) => it.type === "FOOTER");
+      return this.$shop.menus.find((it) => it.type === "FOOTER");
     },
     disabled() {
       return this.menu_footer && this.menu_footer.enable === false;
     },
-
-
   },
 
   watch: {},

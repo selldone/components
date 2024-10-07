@@ -34,7 +34,6 @@
     <s-shop-login
       v-model:show="show_dialog"
       :color="SaminColorDarkDeep"
-      :shop="shop"
       class="rounded-0"
     ></s-shop-login>
 
@@ -65,12 +64,8 @@ import _ from "lodash-es";
 export default {
   name: "SStorefrontNeedLoginDialog",
   components: { SShopLogin },
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-  },
+  inject: ["$shop"],
+  props: {},
 
   data: () => ({
     show_dialog: false,

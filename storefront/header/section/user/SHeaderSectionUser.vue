@@ -18,9 +18,9 @@
   <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User Badges ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
   <img
-    v-if="getClub()"
-    :src="getCustomerClubLevel(getClub().level).icon"
-    class="absolute-top-end fadeIn"
+    v-if="club"
+    :src="getCustomerClubLevel(club.level).icon"
+    class="absolute-top-end fadeIn z1"
     height="20px"
     width="20px"
   />
@@ -71,6 +71,14 @@
                 <div class="my-1 text-subtitle-2 font-weight-black">
                   {{ USER().name }}
 
+                  <img
+                    v-if="club"
+                    :src="getCustomerClubLevel(club.level).icon"
+                    class="mx-1"
+                    height="18"
+                    width="18"
+                  />
+
                   <v-icon
                     v-if="USER().personal_information_verified"
                     color="green"
@@ -93,7 +101,7 @@
                 </p>
 
                 <div
-                  v-if="shop && shop.lottery && shop.lottery.enable"
+                  v-if=" $shop?.lottery?.enable"
                   class="d-flex align-center pt-2"
                 >
                   <img
@@ -117,8 +125,7 @@
           <!-- ―――――――――― Shop User Menu List ―――――――――― -->
 
           <s-shop-user-menu-list
-            v-if="shop"
-            :shop="shop"
+            v-if="$shop"
             class="mx-4 my-2"
             @click:logout="logout()"
           ></s-shop-user-menu-list>
@@ -126,7 +133,7 @@
           <!-- ―――――――――― Extra links ―――――――――― -->
 
           <template v-if="has_avocado || has_hyper || has_insta">
-            <v-row v-if="shop" class="m-0 pb-4" dense justify="space-around">
+            <v-row v-if="$shop" class="m-0 pb-4" dense justify="space-around">
               <v-col
                 v-if="has_avocado"
                 class="d-flex flex-column align-center"
@@ -214,15 +221,15 @@
       v-else-if="!busy_user"
       key="kav2"
       :color="SaminInfoColor"
-      :icon="!shop"
-      :loading="!shop"
+      :icon="!$shop"
+      :loading="!$shop"
       class="s--storefront-primary-header-login-button"
       roundedripple
       variant="elevated"
       @click.stop="NeedLogin()"
     >
       <v-icon start> login</v-icon>
-      <div v-if="!!shop">
+      <div v-if="!!$shop">
         <span class="hide-on-small-600"
           >{{ $t("layout_shop.login_to_shop") }}
         </span>
@@ -242,8 +249,9 @@ export default {
   components: {
     SShopUserMenuList,
   },
+  inject: ["$shop"],
+
   props: {
-    shop: {},
     dark: Boolean,
   },
   data: () => ({
@@ -255,13 +263,16 @@ export default {
     user() {
       return this.$store.getters.getUser;
     },
+    club(){
+      return this.getClub()
+    },
     profile() {
       return this.user && this.user.profile;
     },
 
     theme() {
-      if (!this.shop) return null;
-      return this.shop.theme;
+      if (!this.$shop) return null;
+      return this.$shop.theme;
     },
 
     busy_user() {
@@ -269,13 +280,13 @@ export default {
     },
 
     has_avocado() {
-      return this.shop.avocado && this.shop.avocado.enable;
+      return this.$shop.avocado && this.$shop.avocado.enable;
     },
     has_hyper() {
-      return this.shop.hyper && this.shop.hyper.enable;
+      return this.$shop.hyper && this.$shop.hyper.enable;
     },
     has_insta() {
-      return this.shop.instagram;
+      return this.$shop.instagram;
     },
   },
 
@@ -306,7 +317,6 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-
 .s--storefront-primary-header-login-button {
   //  background-color: var(--theme-dark);
   //  color: #fff;
@@ -317,6 +327,4 @@ export default {
   height: auto !important;
   padding-bottom: 22px !important;
 }
-
-
 </style>

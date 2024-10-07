@@ -257,7 +257,6 @@
                 :loading="busy_send"
                 :title="$t('global.actions.send')"
                 color="blue"
-
                 icon
                 rounded
                 variant="flat"
@@ -275,7 +274,6 @@
         <s-contact-conversation
           :popup="isSmall"
           :selected-contact="selectedContact"
-          :shop="shop"
           @update="(support) => AddOrUpdateItemByID(contacts, support)"
           @update:selectedContact="
             (val) => $emit('update:selectedContact', val)
@@ -311,11 +309,8 @@ export default {
     URatingEmoji,
   },
 
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     isSmall: {
       default: false,
       type: Boolean,
@@ -471,7 +466,7 @@ export default {
       this.busy_fetch = true;
 
       axios
-        .get(window.XAPI.GET_SHOP_TICKETS_LIST(this.shop.name), {
+        .get(window.XAPI.GET_SHOP_TICKETS_LIST(this.$shop.name), {
           params: {
             offset: (page - 1) * this.itemsPerPage,
             limit: this.itemsPerPage,
@@ -515,7 +510,7 @@ export default {
       const user = this.USER();
 
       axios
-        .post(window.XAPI.POST_CONTACT_US_FORM(this.shop.name), {
+        .post(window.XAPI.POST_CONTACT_US_FORM(this.$shop.name), {
           name: user.name,
           email: user.email,
           phone: user.phone,

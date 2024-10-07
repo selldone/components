@@ -52,7 +52,7 @@
     </v-list-item>
 
     <v-list-item
-      v-if="shop.community"
+      v-if="$shop.community"
       :to="{ name: 'CommunityHomePage' }"
       active-class="bg-primary text-white"
       prepend-icon="forum"
@@ -116,7 +116,7 @@
       </v-list-item-title>
     </v-list-item>
 
-    <template v-if="!navigation && shop.user_id === USER_ID()">
+    <template v-if="!navigation && $shop.user_id === USER_ID()">
       <v-divider />
       <v-list-subheader>Only visible to admins</v-list-subheader>
       <v-list-item
@@ -136,8 +136,8 @@
       </v-list-item>
 
       <v-list-item
-        v-if="shop.user_id === USER_ID()"
-        :href="window.URLS.AdminShopURL(shop.id)"
+        v-if="$shop.user_id === USER_ID()"
+        :href="window.URLS.AdminShopURL($shop.id)"
         active-class="bg-primary text-white"
         prepend-icon="settings"
         target="_blank"
@@ -145,7 +145,7 @@
         <v-list-item-title>
           {{
             $t("layout_shop.user_menu.go_to_admin", {
-              shop_name: shop.title,
+              shop_name: $shop.title,
             })
           }}
         </v-list-item-title>
@@ -169,7 +169,7 @@
         <v-list-item-title>
           {{
             $t("layout_shop.user_menu.exit_from", {
-              shop_name: shop.title,
+              shop_name: $shop.title,
             })
           }}
         </v-list-item-title>
@@ -186,11 +186,8 @@ export default {
   name: "SShopUserMenuList",
   components: {},
   emits: ["click:logout"],
+  inject: ["$shop"],
   props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
     navigation: {
       type: Boolean,
       default: false,

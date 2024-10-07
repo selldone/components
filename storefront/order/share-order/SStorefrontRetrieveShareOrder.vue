@@ -24,7 +24,7 @@
       <v-card class="text-start">
         <v-card-title>
           <v-avatar class="me-2" size="36">
-            <v-img :src="getShopImagePath(shop.icon, 64)" />
+            <v-img :src="getShopImagePath($shop.icon, 64)" />
           </v-avatar>
 
           {{ $t("share_order.retrieve_dialog_title") }}
@@ -41,7 +41,7 @@
               </div>
             </div>
 
-            <v-list class="border-between-vertical" >
+            <v-list class="border-between-vertical">
               <v-list-item v-for="item in items" :key="item.id">
                 <template v-slot:prepend>
                   <v-avatar tile>
@@ -76,20 +76,18 @@
                 </v-list-item-subtitle>
 
                 <v-list-item-title>
-
                   <v-row>
                     <v-col cols="4">
                       <b>x{{ item.count }}</b>
                     </v-col>
                     <v-col cols="8">
                       <u-price
-                          :amount="item.price"
-                          :currency="item.currency"
+                        :amount="item.price"
+                        :currency="item.currency"
                       ></u-price>
                     </v-col>
                   </v-row>
                 </v-list-item-title>
-
               </v-list-item>
             </v-list>
 
@@ -134,12 +132,8 @@ import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelp
 export default {
   name: "SStorefrontRetrieveShareOrder",
   components: { SShopCustomerReceiverInfoWidget, VariantItemViewMicro },
-  props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
-  },
+  inject: ["$shop"],
+  props: {},
   data: () => ({
     busy: false,
     show: false,
@@ -197,7 +191,7 @@ export default {
     importOrder() {
       if (
         !this.USER() &&
-        !ShopOptionsHelper.HasGuestCheckout(this.shop) /*🥶 Guest*/
+        !ShopOptionsHelper.HasGuestCheckout(this.$shop) /*🥶 Guest*/
       ) {
         this.NeedLogin();
         return;
@@ -206,7 +200,7 @@ export default {
       this.busy_import = true;
 
       axios
-        .post(window.XAPI.POST_BASKET_IMPORT(this.shop_name, this.type), {
+        .post(window.XAPI.POST_BASKET_IMPORT(this.$shop.name, this.type), {
           currency: this.GetUserSelectedCurrency().code,
           items: this.items,
           receiver_info: this.receiver_info,

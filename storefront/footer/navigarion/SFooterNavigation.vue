@@ -196,8 +196,6 @@
 
       <s-storefront-search-box
         ref="search"
-        :class="{}"
-        :shop-name="shop.name"
         :title="$t('layout_shop.search_title', { shop_name: shop.title })"
         background-color="transparent"
         block

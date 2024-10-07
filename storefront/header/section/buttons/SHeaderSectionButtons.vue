@@ -47,9 +47,8 @@
 
   <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
   <s-language-selector
-    v-if="shop"
+    v-if="$shop"
     :iconColor="!dark ? '#333' : '#fff'"
-    :shop="shop"
     class="me-3"
     icon-only
   ></s-language-selector>
@@ -57,10 +56,10 @@
   <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
   <u-currency-selector
     v-if="
-      /* isMobile &&*/ shop && shop.currencies && shop.currencies.length > 1
+      /* isMobile &&*/ $shop && $shop.currencies && $shop.currencies.length > 1
     "
     :iconColor="!dark ? '#333' : '#fff'"
-    :shop="shop"
+    :shop="$shop"
     class="me-3"
     dense
     hideDetails
@@ -81,29 +80,29 @@
 
   <teleport to="body">
     <v-navigation-drawer
-        v-model="show_basket"
-        :class="{ 'ma-2': show_basket }"
-        :location="!$vuetify.locale.isRtl ? 'right' : undefined"
-        :width="Math.min(640, window.innerWidth * 0.86)"
-        class="s--storefront-primary-header-basket-navigation t-all-400"
-        color="#fff"
-        temporary
+      v-model="show_basket"
+      :class="{ 'ma-2': show_basket }"
+      :location="!$vuetify.locale.isRtl ? 'right' : undefined"
+      :width="Math.min(640, window.innerWidth * 0.86)"
+      class="s--storefront-primary-header-basket-navigation t-all-400"
+      color="#fff"
+      temporary
     >
       <div class="d-flex flex-column" style="min-height: 100%">
         <v-btn
-            block
-            class="tnt flex-grow-0 mb-2"
-            size="x-large"
-            variant="text"
-            @click="show_basket = false"
-        >{{ $t("global.actions.close") }}
+          block
+          class="tnt flex-grow-0 mb-2"
+          size="x-large"
+          variant="text"
+          @click="show_basket = false"
+          >{{ $t("global.actions.close") }}
           <v-icon class="ms-2">{{ $t("icons.long_end") }}</v-icon>
         </v-btn>
 
         <basket-top-menu
-            ref="basket_menu"
-            class="flex-grow-1"
-            @close="show_basket = false"
+          ref="basket_menu"
+          class="flex-grow-1"
+          @close="show_basket = false"
         />
       </div>
     </v-navigation-drawer>
@@ -123,8 +122,9 @@ export default {
     UCurrencySelector,
     SLanguageSelector,
   },
+  inject: ["$shop"],
+
   props: {
-    shop: {},
     dark: Boolean,
   },
   data: () => ({
@@ -140,8 +140,8 @@ export default {
     },
 
     theme() {
-      if (!this.shop) return null;
-      return this.shop.theme;
+      if (!this.$shop) return null;
+      return this.$shop.theme;
     },
 
     show_top_cart() {
@@ -200,6 +200,4 @@ export default {
     display: none;
   }
 }
-
-
 </style>

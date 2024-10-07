@@ -44,7 +44,6 @@
         <v-btn
           class="mx-1"
           color="green-darken-1"
-
           size="large"
           variant="flat"
           @click="sendTokenToNativeApp()"
@@ -60,12 +59,8 @@
 export default {
   name: "SStorefrontApplicationLogin",
   components: {},
-  props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
-  },
+  inject: ["$shop"],
+  props: {},
   data: () => ({
     login_to_app_dialog: false,
   }),

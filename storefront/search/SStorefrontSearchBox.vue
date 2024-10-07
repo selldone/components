@@ -263,6 +263,7 @@ export default {
   name: "SStorefrontSearchBox",
   components: { UAvatarFolder, UScanner },
   emits: ["onSearch", "onClear", "update:expandInput"],
+  inject:['$shop'],
   props: {
     title: {
       type: String,
@@ -275,13 +276,8 @@ export default {
       default: null,
     },
 
-    shopId: {
-      required: false,
-    },
-    shopName: {
-      type: String,
-      required: false,
-    },
+    isAdmin:Boolean,
+
 
     filled: {
       type: Boolean,
@@ -401,9 +397,9 @@ export default {
 
       axios
         .get(
-          this.shopName
-            ? window.XAPI.GET_SEARCH_QUERY(this.shopName, val)
-            : window.API.GET_SEARCH_QUERY_ADMIN(this.shopId, val),
+          !this.isAdmin
+            ? window.XAPI.GET_SEARCH_QUERY(this.$shop.name, val)
+            : window.API.GET_SEARCH_QUERY_ADMIN(this.$shop.id, val),
         )
         .then(({ data }) => {
           // Remove just query items:

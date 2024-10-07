@@ -73,7 +73,6 @@
 
       <!-- 🞇 Direct Ask (WhatsApp,...) -->
       <s-storefront-social-buttons
-        :shop="shop"
         min-width="54px"
         product-only
         size="44"

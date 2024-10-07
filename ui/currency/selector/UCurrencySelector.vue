@@ -166,6 +166,9 @@ export default {
   emits: ["change"],
   props: {
     modelValue: {},
+    /**
+     * If shop is not provided, it will show all currencies
+     */
     shop: {},
     dark: {
       type: Boolean,
@@ -300,7 +303,7 @@ export default {
 
   methods: {
     selectCurrency(currency) {
-      console.log("currency", currency);
+      console.log("currency", currency,'save',this.saveLocalStorage);
 
       if (this.saveLocalStorage) {
         if (this.SetUserSelectedCurrency)

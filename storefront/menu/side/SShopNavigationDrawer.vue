@@ -29,8 +29,6 @@
         <div class="d-flex align-center pa-2">
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
           <s-language-selector
-            v-if="shop"
-            :shop="shop"
             class="mx-3"
             hide-details
             icon-only
@@ -38,12 +36,8 @@
 
           <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
           <u-currency-selector
-            v-if="
-              /* isMobile &&*/ shop &&
-              shop.currencies &&
-              shop.currencies.length > 1
-            "
-            :shop="shop"
+            v-if=" $shop.currencies?.length > 1"
+            :shop="$shop"
             hide-details
             icon-only
             @change="
@@ -98,7 +92,6 @@
             </v-expansion-panel-title>
             <v-expansion-panel-text class="mx-n6">
               <s-shop-user-menu-list
-                :shop="shop"
                 navigation
                 class="border-between-vertical"
               ></s-shop-user-menu-list>
@@ -232,7 +225,7 @@
 
         <v-sheet
           v-if="
-            info?.phone || info?.email || info?.address || shop?.socials?.length
+            info?.phone || info?.email || info?.address || $shop?.socials?.length
           "
           class="border-top mt-16 text-subtitle-2 pt-5 border-top mt-3"
         >
@@ -258,7 +251,6 @@
             </div>
           </div>
           <s-storefront-social-buttons
-            :shop="shop"
             class="justify-center mt-5"
           ></s-storefront-social-buttons>
           <div style="height: 15vh"></div>
@@ -285,12 +277,11 @@ export default {
     SShopUserMenuList,
     SStorefrontSocialButtons,
   },
+  inject: ["$shop"],
+
   props: {
     modelValue: {},
-    shop: {
-      require: true,
-      type: Object,
-    },
+
   },
   data: () => ({
     busy_logout: false,
@@ -298,7 +289,7 @@ export default {
 
   computed: {
     top_menu() {
-      return this.shop.menus?.find((it) => it.type === "HEADER");
+      return this.$shop.menus?.find((it) => it.type === "HEADER");
     },
 
     tabs() {
@@ -306,17 +297,17 @@ export default {
     },
 
     info() {
-      return this.shop.info;
+      return this.$shop.info;
     },
     menu_footer() {
-      return this.shop.menus?.find((it) => it.type === "FOOTER");
+      return this.$shop.menus?.find((it) => it.type === "FOOTER");
     },
 
     menu() {
       const out = [];
 
       // Avocado:
-      if (this.shop.avocado && this.shop.avocado.enable) {
+      if (this.$shop.avocado && this.$shop.avocado.enable) {
         out.push({
           to: { name: window.$storefront.routes.AVOCADO_PAGE },
           name: this.$t("global.commons.avocado"),
@@ -324,7 +315,7 @@ export default {
         });
       }
       // Hyper:
-      if (this.shop.hyper && this.shop.hyper.enable) {
+      if (this.$shop.hyper && this.$shop.hyper.enable) {
         out.push({
           to: { name: window.$storefront.routes.HYPER_PAGE },
           name: this.$t("global.commons.hyper"),
@@ -333,7 +324,7 @@ export default {
       }
 
       // Instagram:
-      if (this.shop.instagram) {
+      if (this.$shop.instagram) {
         out.push({
           to: { name: window.$storefront.routes.INSTAGRAM_PAGE },
           name: this.$t("global.commons.instagram"),

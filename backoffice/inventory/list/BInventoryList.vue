@@ -77,7 +77,7 @@
       <s-storefront-search-box
         :dark="false"
         :label="$t('inventory_list.search_input')"
-        :shop-id="shop.id"
+        is-admin
         :title="$t('inventory_list.search_input_title')"
         background-color="transparent"
         block

@@ -168,7 +168,6 @@
             <s-product-preview-by-id
               v-if="item.product"
               :product-id="item.product"
-              :shop="shop"
               :to="{
                 name: window.$storefront.routes.PRODUCT_PAGE,
                 params: { product_id: item.product },
@@ -263,12 +262,8 @@ import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper
 export default {
   name: "SContactConversation",
   components: { SProductPreviewById, URatingEmoji },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
     selectedContact: {},
 
     popup: {
@@ -308,7 +303,7 @@ export default {
       axios
         .put(
           window.XAPI.PUT_SHOP_TICKET_UPDATE_MESSAGE(
-            this.shop.name,
+            this.$shop.name,
             this.selectedContact.id,
           ),
           {
@@ -358,7 +353,7 @@ export default {
           axios
             .delete(
               window.XAPI.DELETE_SHOP_TICKET_MESSAGE_RESPONSE(
-                this.shop.name,
+                this.$shop.name,
                 this.selectedContact.id,
                 index,
               ),
@@ -390,7 +385,7 @@ export default {
       axios
         .post(
           window.XAPI.POST_SHOP_TICKET_CLOSE(
-            this.shop.name,
+            this.$shop.name,
             this.selectedContact.id,
           ),
           {
@@ -421,7 +416,7 @@ export default {
       axios
         .put(
           window.XAPI.PUT_SHOP_TICKET_RATE(
-            this.shop.name,
+            this.$shop.name,
             this.selectedContact.id,
           ),
           {

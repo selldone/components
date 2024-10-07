@@ -83,12 +83,10 @@ import UChipDiscount from "../../../ui/chip/discount/UChipDiscount.vue";
 export default {
   name: "SProductPreviewById",
   components: { UChipDiscount, ProductVariantsView },
-  props: {
-    // ------------ MOde Auto Fetch --------------
 
-    shop: {
-      require: true,
-    },
+  inject: ["$shop"],
+
+  props: {
     productId: {
       required: true,
     },
@@ -115,17 +113,17 @@ export default {
       if (!this.product) return 0;
 
       return this.CalcPriceProductCurrentCurrency(
-        this.shop,
+        this.$shop,
         this.product,
         null,
       );
     },
     discount_percent() {
-      return this.discountProductPercent(this.shop, this.product, null);
+      return this.discountProductPercent(this.$shop, this.product, null);
     },
 
     discount() {
-      return this.getProductDiscountAmount(this.shop, this.product, null);
+      return this.getProductDiscountAmount(this.$shop, this.product, null);
     },
     isImageContain() {
       return this.product.style?.contain;
@@ -137,7 +135,7 @@ export default {
     this.error_msg = null;
 
     axios
-      .get(window.XAPI.GET_PRODUCT_INFO_CARD(this.shop.name, this.productId))
+      .get(window.XAPI.GET_PRODUCT_INFO_CARD(this.$shop.name, this.productId))
       .then(({ data }) => {
         if (!data.error) {
           this.product = data.product;

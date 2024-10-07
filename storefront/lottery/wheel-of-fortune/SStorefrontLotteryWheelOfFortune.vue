@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div v-if="USER() && shop.lottery?.enable && available_lotories">
+  <div v-if="USER() && $shop.lottery?.enable && available_lotories">
     <v-btn :loading="busy_fetch" icon variant="text" @click="dialog = true">
       <u-lottie
         :options="{ path: '/animation/happy_birthday.json', loop: true }"
@@ -253,12 +253,10 @@ import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 export default {
   name: "SStorefrontLotteryWheelOfFortune",
   components: { SStorefrontLotteryPrizeDetail },
+  inject: ["$shop"],
 
   props: {
-    shop: {
-      type: Object,
-      required: true,
-    },
+
   },
   data: () => ({
     dialog: false,
@@ -355,7 +353,7 @@ export default {
 
       this.busy_fetch = true;
       axios
-        .get(window.XAPI.GET_FETCH_LOTTERIES(this.shop_name))
+        .get(window.XAPI.GET_FETCH_LOTTERIES(this.$shop.name))
         .then(({ data }) => {
           if (!data.error) {
             this.lotteries = data.lotteries;
@@ -470,7 +468,7 @@ export default {
         ids.push(it.id);
       });
       axios
-        .post(window.XAPI.POST_FETCH_LOTTERIES(this.shop_name), {
+        .post(window.XAPI.POST_FETCH_LOTTERIES(this.$shop.name), {
           ids: ids,
         })
         .then(({ data }) => {

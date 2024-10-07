@@ -23,7 +23,6 @@
         <v-btn
           v-if="!selected_contact"
           class="absolute-top-end"
-
           icon
           @click="show = false"
         >
@@ -34,7 +33,6 @@
           v-else
           :caption="$t('global.actions.back')"
           class="m-1 sub-caption -hover absolute-top-end"
-
           icon
           @click="selected_contact = null"
         >
@@ -45,10 +43,10 @@
         <div :class="{ 'h-84': selected_contact }" class="box-header">
           <p class="font-weight-bold">
             <v-avatar class="me-1" size="16">
-              <v-img :src="getShopImagePath(shop.icon)" />
+              <v-img :src="getShopImagePath($shop.icon)" />
             </v-avatar>
 
-            {{ shop.title }}
+            {{ $shop.title }}
           </p>
 
           <u-rating-emoji
@@ -65,11 +63,10 @@
         <s-contacts-list
           v-if="USER()"
           v-model:selected-contact="selected_contact"
-          :shop="shop"
           class="chats thin-scroll"
           is-small
         ></s-contacts-list>
-        <s-shop-login v-else :shop="shop" class="chat-login"></s-shop-login>
+        <s-shop-login v-else class="chat-login"></s-shop-login>
       </div>
     </v-slide-y-reverse-transition>
 
@@ -100,12 +97,8 @@ import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 export default {
   name: "SContactsPopup",
   components: { URatingEmoji, SShopLogin, SContactsList },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
     bottom: {
       default: 8,
     },

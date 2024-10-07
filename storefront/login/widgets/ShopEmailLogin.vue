@@ -168,12 +168,8 @@ import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
 
 export default {
   name: "ShopEmailLogin",
-
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
 
     source: {
       default: "customer",

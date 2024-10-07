@@ -50,7 +50,9 @@
         :qr-code="payment_form_qr_code"
         :timeout="timeout"
         has-club
-        :has-wallet="!payment_form_url/*Prevent reload in redirect payment mode*/"
+        :has-wallet="
+          !payment_form_url /*Prevent reload in redirect payment mode*/
+        "
         @close="delayedHide()"
         @onEndPayment="(data) => onFinishPayment(data)"
         @select-gateway="buy"
@@ -58,7 +60,7 @@
     </v-bottom-sheet>
 
     <u-progress-radial
-      v-for="(item) in paymentQue"
+      v-for="item in paymentQue"
       :key="item.id"
       :class="{
         disabled: busy_loading_payment && busy_loading_payment !== item.id,
@@ -133,12 +135,9 @@ export default {
   name: "SStorefrontMasterPaymentDialog",
   components: { UProgressRadial, UPaymentForm },
 
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-  },
+  inject: ["$shop"],
+
+  props: {},
   data: () => ({
     special_payment_mode: null, // null , stripe ,
 
@@ -220,11 +219,11 @@ export default {
   computed: {
     available_gateways() {
       if (this.type === ProductType.SUBSCRIPTION.code) {
-        return this.shop.gateways.filter((g) =>
+        return this.$shop.gateways.filter((g) =>
           this.subscription_gateway_codes.includes(g.code),
         );
       }
-      return this.shop.gateways;
+      return this.$shop.gateways;
     },
   },
 
@@ -557,7 +556,7 @@ export default {
       axios
         .get(
           window.XAPI.GET_PENDING_PAYMENT_INFO(
-            this.shop_name,
+            this.$shop.name,
             gateway,
             transaction_id,
           ),
@@ -738,7 +737,11 @@ export default {
       // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
       let guest_code = StorefrontLocalStorages.GetShopGuestCode(); // Auto set in headers!
 
-      let url = window.XAPI.POST_BUY_BASKET(this.shop_name, this.type, gateway);
+      let url = window.XAPI.POST_BUY_BASKET(
+        this.$shop.name,
+        this.type,
+        gateway,
+      );
 
       if (
         BasketHelper.IsServiceAndNeedPricing(
@@ -747,7 +750,7 @@ export default {
       ) {
         console.log("It needs pricing by the seller after checkout.");
         url = window.XAPI.POST_PAY_BILL(
-          this.shop_name,
+          this.$shop.name,
           this.shop_bill.order_id,
           this.shop_bill.id,
           gateway,
@@ -758,12 +761,12 @@ export default {
         ); // Service payments are after basket reservation! (Bills payments)
       } else if (this.type === "AVOCADO") {
         url = window.XAPI.POST_PAY_AVOCADO(
-          this.shop_name,
+          this.$shop.name,
           this.shop_avocado.hash,
           gateway,
         );
       } else if (this.type === "HYPER") {
-        url = window.XAPI.POST_PAY_HYPER(this.shop_name, gateway);
+        url = window.XAPI.POST_PAY_HYPER(this.$shop.name, gateway);
       }
 
       axios
@@ -986,7 +989,7 @@ export default {
       //    out.push({icon:Currency.BTC.icon,steps:1*60,progress:1*60,expire:date.toUTCString()})
       //     out.push({icon:Currency.BTC.icon,steps:1*60,progress:1*60,expire:date.toUTCString()})
       pending_transactions.forEach((que_item) => {
-        let gatewayObject = this.shop.gateways.find((item) => {
+        let gatewayObject = this.$shop.gateways.find((item) => {
           return item.code === que_item.code;
         });
         if (!gatewayObject) return;
