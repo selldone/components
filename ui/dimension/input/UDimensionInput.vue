@@ -33,6 +33,8 @@
     :suffix="suffix"
     :variant="variant"
     :dense="dense"
+    :clearable="clearable"
+    @click:clear="$emit('clear')"
   >
     <!--
     <template v-slot:append-inner>
@@ -68,7 +70,10 @@
       :variant="variant"
       class="flex-grow-1"
       @blur="$emit('blur')"
-      @clear="dim_val = 'unset'"
+      @clear="
+        dim_val = 'unset';
+        $emit('clear');
+      "
       :dense="dense"
     >
     </u-number-input>
@@ -89,9 +94,8 @@
       }"
       :variant="variant"
       style="width: 60px; max-width: 90px"
-      :class="{'ms-1': rounded,'-move-end-icon':dense}"
+      :class="{ 'ms-1': rounded, '-move-end-icon': dense }"
       :dense="dense"
-
     >
     </u-dimension-input-unit>
   </div>
@@ -100,12 +104,12 @@
 <script>
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import UDimensionInputUnit from "./unit/UDimensionInputUnit.vue";
-import {isString} from "lodash-es";
+import { isString } from "lodash-es";
 
 export default {
   name: "UDimensionInput",
   components: { UDimensionInputUnit, UNumberInput },
-  emits: ["update:modelValue", "change"],
+  emits: ["update:modelValue", "change", "clear"],
   props: {
     modelValue: {},
 
@@ -156,8 +160,7 @@ export default {
       default: false,
     },
 
-    rounded: {
-    },
+    rounded: {},
     dense: {
       type: Boolean,
       default: false,
@@ -291,12 +294,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-.-move-end-icon{
-  ::v-deep(.v-select__menu-icon){
+.-move-end-icon {
+  ::v-deep(.v-select__menu-icon) {
     margin-inline-end: -14px !important;
     margin: 0;
   }
 }
-
 </style>

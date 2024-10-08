@@ -332,6 +332,7 @@ export default {
     },
 
     newValue(newVal) {
+      if(!newVal && newVal!==0) return;
       let newValue = NumberHelper.toEnglishFloat(newVal, this.decimal);
 
       if (this.max !== undefined && newValue > this.max) newValue = this.max;

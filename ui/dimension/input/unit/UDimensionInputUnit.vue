@@ -48,6 +48,7 @@
       }
     "
     :menu-icon="menuIcon"
+    @click:clear="$emit('click:clear')"
   >
     <template v-slot:append-inner>
       <slot name="append-inner"></slot>
@@ -58,7 +59,7 @@
 <script>
 export default {
   name: "UDimensionInputUnit",
-  emits: ["update:modelValue", "change"],
+  emits: ["update:modelValue", "change", "click:clear"],
   props: {
     modelValue: {},
 
@@ -123,8 +124,8 @@ export default {
       type: Boolean,
     },
     backgroundColor: {},
-    menuIcon:{
-      default:'$dropdown'
+    menuIcon: {
+      default: "$dropdown",
     },
   },
 
