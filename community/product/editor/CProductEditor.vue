@@ -34,7 +34,7 @@
       <v-btn
         color="primary"
         size="x-large"
-        variant="flat"
+        variant="text"
         @click="showQRScanner"
       >
         <v-icon class="me-1">qr_code_scanner</v-icon>
@@ -43,13 +43,16 @@
     </div>
 
     <!-- ---------------- Product Info ---------------- -->
-    <c-product-view
-      :community="community"
-      :product-id="product_id"
-      :shop="shop"
-      class="fadeIn"
-    >
-    </c-product-view>
+    <div style="max-height: 600px; overflow: auto">
+      <c-product-view
+        :community="community"
+        :product-id="product_id"
+        :shop="shop"
+        class="fadeIn pen usn scale-0-5"
+        style="transform-origin: top"
+      >
+      </c-product-view>
+    </div>
 
     <!-- ████████████████ Dialog > Scan ████████████████ -->
     <v-dialog

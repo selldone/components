@@ -302,7 +302,6 @@
 
             <template v-if="selected_product">
               <s-product-overview
-                :product="selected_product"
                 can-buy
                 quick-buy-mode
                 show-cover
@@ -354,7 +353,7 @@ import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
 import SProductOverviewLoading from "../../../storefront/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 import _ from "lodash-es";
-import { defineAsyncComponent } from "vue";
+import {computed, defineAsyncComponent} from "vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 import { SProductBreadcrumbHelper } from "./helper/SProductBreadcrumbHelper";
 
@@ -522,6 +521,13 @@ export default {
 
     forceSingleLine: Boolean,
   },
+
+  provide() {
+    return {
+      $product: computed(() => this.selected_product),
+    };
+  },
+
   data: () => ({
     busy_fetch: false,
 

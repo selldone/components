@@ -18,7 +18,6 @@
     <div v-if="product && !busy">
       <s-product-overview
         :can-buy="product.shop_id === community.shop_id"
-        :product="product"
         class="blur-animate"
         show-cover
         vertical
@@ -56,6 +55,7 @@ import SProductOverview from "../../../storefront/overview/SProductOverview.vue"
 import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper.ts";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce.ts";
 import BProductSpecTable from "../../../storefront/product/spec/table/BProductSpecTable.vue";
+import {computed} from "vue";
 
 export default {
   name: "CProductView",
@@ -73,6 +73,14 @@ export default {
 
     productId: {},
   },
+
+  provide() {
+    return {
+      $shop: computed(() => this.shop),
+      $product: computed(() => this.product),
+    };
+  },
+
 
   data: () => ({
     busy: false,
