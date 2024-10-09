@@ -35,7 +35,7 @@
 
 
 
-    "@kyvg/vue3-notification": "^3.3.0",
+    "@kyvg/vue3-notification": "^3.4.0",
     "@mapbox/mapbox-gl-geocoder": "^5.0.3",
     "@tweenjs/tween.js": "^25.0.0",
     "@zxing/library": "^0.21.2",
@@ -56,7 +56,7 @@
     "heatmap.js": "^2.0.5",
     "jquery": "^3.7.1",
     "jsbarcode": "^3.11.6",
-    "libphonenumber-js": "^1.11.10",
+    "libphonenumber-js": "^1.11.11",
     "lodash-es": "^4.17.21",
     "lottie-web": "^5.12.2",
     "mapbox-gl": "^3.7.0",
@@ -71,14 +71,14 @@
      "vue": "^3.5.11",
     "vue-filepond": "^7.0.4",
     "vue-flag-icon": "^2.1.0",
-    "vue-i18n": "^10.0.3",
+    "vue-i18n": "^10.0.4",
     "vue-json-pretty": "^2.4.0",
     "vue-numerals": "^4.0.6",
     "vue-prism-editor": "^2.0.0-alpha.2",
     "vue-router": "^4.4.5",
     "vue-social-sharing": "^4.0.0-alpha4",
     "vue-the-mask": "^0.11.1",
-    "vue3-apexcharts": "^1.6.0",
+    "vue3-apexcharts": "^1.7.0",
     "vue3-emoji-picker": "^1.1.8",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.7.2",
@@ -91,13 +91,13 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
 
-     "@typescript-eslint/eslint-plugin": "^8.8.0",
-    "@typescript-eslint/parser": "^8.8.0",
-    "eslint": "^9.11.1",
+     "@typescript-eslint/eslint-plugin": "^8.8.1",
+    "@typescript-eslint/parser": "^8.8.1",
+    "eslint": "^9.12.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.0",
+    "typescript": "^5.6.3",
     "@types/chroma-js": "^2.4.3",
     "@types/d3-sankey": "^0.12.4",
     "@types/gtag.js": "^0.0.20",
@@ -109,7 +109,7 @@
     "@types/prismjs": "^1.26.4",
     "@types/qrcode": "^1.5.5",
 
-    "@vue/eslint-config-prettier": "^9.0.0",
+    "@vue/eslint-config-prettier": "^10.0.0",
     "eslint-plugin-vue": "^9.28.0",
 
     "sass": "^1.79.4",

@@ -30,7 +30,7 @@
     <v-expand-transition>
       <div v-if="input_rating_mode" key="edit">
         <p class="small text-muted me-10">
-          {{ $t("product_rating_view.message", { user: USER()?.name }) }}
+          {{ $t("product_rating_view.message", { user: user?.name }) }}
         </p>
         <u-rating-input
           v-for="rating in product.ratings"
@@ -58,9 +58,9 @@
             </div>
             <div class="small tnt mt-1 fadeInUp">
               <v-avatar class="avatar-gradient -thin -user me-1" size="18">
-                <v-img :src="getUserAvatar(USER().id)" />
+                <v-img :src="getUserAvatar(user?.id)" />
               </v-avatar>
-              {{ USER().name }}
+              {{ user?.name }}
             </div>
           </v-btn>
         </div>
@@ -109,9 +109,9 @@
         </div>
         <div class="small tnt mt-1 fadeInUp">
           <v-avatar class="avatar-gradient -thin -user me-1" size="18">
-            <v-img :src="getUserAvatar(USER().id)" />
+            <v-img :src="getUserAvatar(user?.id)" />
           </v-avatar>
-          {{ USER().name }}
+          {{ user?.name }}
         </div>
       </v-btn>
     </div>
@@ -153,8 +153,14 @@ export default {
   }),
 
   computed: {
+
+    user(){
+      return this.USER()
+    },
+
+
     can_rate_without_bought() {
-      return this.USER() && !this.bought && !this.edit_mode;
+      return this.user && !this.bought && !this.edit_mode;
     },
 
     bought() {
