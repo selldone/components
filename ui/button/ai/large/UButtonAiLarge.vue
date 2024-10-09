@@ -25,7 +25,7 @@
       <div class="flex-grow-0 d-flex align-center">
         <v-avatar
           :class="{ '-loading': loading || highlighted}"
-          class="me-2 -avatar position-relative"
+          class="me-2 -avatar position-relative ms-2"
           color="#512DA8"
           :size="avatarSize"
         >
@@ -48,10 +48,10 @@
       </div>
 
       <div class="flex-grow-1 text-center overflow-hidden lnh">
-        <div class="single-line">
+        <div class="single-line d-block">
           {{ title }}
         </div>
-        <div class="single-line" style="margin-top: 2px; font-size: 0.75rem">
+        <div class="single-line d-block" style="margin-top: 2px; font-size: 0.7rem;text-wrap: balance;">
           {{ subTitle }}
         </div>
       </div>
@@ -84,7 +84,7 @@ export default {
 <style lang="scss" scoped>
 .s--ai-button-large {
   line-height: normal;
-
+  display: flex;
   ::v-deep(.v-btn__content) {
     width: 100%;
   }

@@ -103,11 +103,9 @@ export default {
   name: "SProductOffers",
   components: { ProductsDenseImagesCirclesLinks },
 
-  inject: ["$shop", "$product"],
+  inject: ["$shop", "$product", "$variant"],
 
-  props: {
-    currentVariant: {},
-  },
+  props: {},
 
   data: () => ({}),
 
@@ -115,14 +113,14 @@ export default {
     hasOffer() {
       return this.hasOfferThisProduct(
         this.$product.id,
-        this.currentVariant ? this.currentVariant.id : null,
+        this.$variant ? this.$variant.id : null,
       );
     },
 
     offers() {
       return this.getOffersBuyProduct(
         this.$product.id,
-        this.currentVariant ? this.currentVariant.id : null,
+        this.$variant ? this.$variant.id : null,
       );
     },
   },

@@ -65,9 +65,7 @@ export default {
 
   inject: ["$shop", "$product"],
 
-  props: {
-    categories: { require: true, type: Array },
-  },
+  props: {},
   components: {
     UFadeScroll,
   },
@@ -76,7 +74,11 @@ export default {
     return {};
   },
 
-  computed: {},
+  computed: {
+    categories() {
+      return this.$product.categories;
+    },
+  },
 
   watch: {},
   created() {},

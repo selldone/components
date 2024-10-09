@@ -13,8 +13,8 @@
   -->
 
 <template>
-  <div>
-    <v-table v-if="$product.pros" class="table-features">
+  <div class="s--product-pros-cons">
+    <v-table v-if="$product.pros" class="-table">
       <thead>
         <tr>
           <th colspan="2">
@@ -35,7 +35,7 @@
       </tbody>
     </v-table>
 
-    <v-table v-if="$product.cons" class="table-features">
+    <v-table v-if="$product.cons" class="-table">
       <thead>
         <tr>
           <th colspan="2">
@@ -59,7 +59,7 @@
 
 <script lang="ts">
 export default {
-  name: "SShopProductProsConsTable",
+  name: "SProductProsCons",
   components: {},
   inject: ["$shop", "$product"],
 
@@ -81,24 +81,28 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.table-features {
-  text-align: start;
-  background: #e5e5e5 !important;
-  border-radius: 12px;
-  margin: 12px;
+.s--product-pros-cons{
+  .-table {
+    text-align: start;
+    background: #e5e5e5 !important;
+    border-radius: 12px;
+    margin: 12px;
 
-  tr {
-    th {
-      font-weight: 300;
-    }
+    tr {
+      th {
+        font-weight: 300;
+      }
 
-    td:first-child {
-      font-weight: 800;
-    }
+      td:first-child {
+        font-weight: 800;
+      }
 
-    td:last-child {
-      color: #666;
+      td:last-child {
+        color: #666;
+      }
     }
   }
 }
+
+
 </style>

@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-container v-if="includes?.length" class="s--shop-product-includes">
+  <v-container v-if="includes?.length" class="s--product-includes">
     <h2>{{ $t("global.commons.included_in_the_product") }}</h2>
     <v-list-subheader class="justify-center">
       {{ $t("global.commons.included_in_the_product_description") }}
@@ -93,7 +93,7 @@
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 
 export default {
-  name: "SShopProductIncludes",
+  name: "SProductIncludes",
   components: { UFadeScroll },
 
   inject: ["$product"],
@@ -114,7 +114,7 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
-.s--shop-product-includes {
+.s--product-includes {
   text-align: center;
 
   h2 {

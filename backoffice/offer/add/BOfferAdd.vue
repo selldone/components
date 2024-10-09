@@ -142,6 +142,7 @@
             :placeholder="$t('offer_edit.date_start_input_placeholder')"
             color="#C2185B"
             return-utc
+            clearable
             variant="underlined"
           ></u-date-input>
 

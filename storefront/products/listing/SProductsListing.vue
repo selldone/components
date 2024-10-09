@@ -307,7 +307,7 @@
                 show-cover
               />
 
-              <b-product-spec-table v-if="spec_array" :spec="spec_array" />
+              <u-product-spec-table v-if="spec_array" :spec="spec_array" />
               <div class="min-height-10vh"></div>
             </template>
             <v-btn
@@ -346,11 +346,11 @@ import SCategoryCard from "../../../storefront/category/card/SCategoryCard.vue";
 import SCategoryFilter from "../../../storefront/category/filter/SCategoryFilter.vue";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";
-import SProductOverview from "../../../storefront/overview/SProductOverview.vue";
+import SProductOverview from "../../product/overview/SProductOverview.vue";
 import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper";
-import BProductSpecTable from "../../../storefront/product/spec/table/BProductSpecTable.vue";
+import UProductSpecTable from "../../../ui/product/spec/table/UProductSpecTable.vue";
 import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
-import SProductOverviewLoading from "../../../storefront/overview/loading/SProductOverviewLoading.vue";
+import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 import _ from "lodash-es";
 import {computed, defineAsyncComponent} from "vue";
@@ -366,7 +366,7 @@ export default {
     ),
     SProductOverviewLoading,
     UBreadcrumb,
-    BProductSpecTable,
+    UProductSpecTable,
     SProductOverview,
     SCategoryFilter,
     SCategoryCard,

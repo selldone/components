@@ -89,7 +89,7 @@
           <img
             :src="src"
             :style="isCurrent || forceFill ? 'padding:3px' : ''"
-            style="aspect-ratio: 1;"
+            style="aspect-ratio: 1"
           />
         </v-avatar>
         <slot v-else></slot>
@@ -224,7 +224,7 @@ export default {
     },
     wrap: {
       type: Boolean,
-      default:false
+      default: false,
     },
     large: {
       required: false,
@@ -262,7 +262,7 @@ export default {
       default: false,
     },
     imageSize: {},
-    active:Boolean
+    active: Boolean,
   },
 
   data: () => ({
@@ -363,7 +363,7 @@ export default {
 
   .mini-name {
     transition: all 0.3s ease-in-out;
-
+    text-wrap: balance;
     text-align: center;
     font-weight: 500;
     // opacity: 0.9;
@@ -393,7 +393,7 @@ export default {
       font-size: 0.68rem;
     }
     @media (max-width: 420px) {
-      font-size: 0.60rem;
+      font-size: 0.6rem;
     }
   }
 
@@ -403,7 +403,7 @@ export default {
     }
   }
 
-  .v-avatar{
+  .v-avatar {
     border: none;
   }
 }

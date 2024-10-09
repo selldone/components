@@ -25,7 +25,7 @@
       <v-list-subheader>
         {{ $t("add_product.edit_spec.subtitle") }}
       </v-list-subheader>
-      <b-product-spec-table
+      <u-product-spec-table
         :class="{ disabled: add_by_dropShipping }"
         :spec="spec"
         class="max-width-container-1280px my-8"
@@ -362,10 +362,10 @@
                 {{ $t("add_product.edit_spec.dialog.spec_view_subtitle") }}
               </v-list-subheader>
 
-              <b-product-spec-table
+              <u-product-spec-table
                 :spec="spec_selected"
                 class="min-height-10vh"
-              ></b-product-spec-table>
+              ></u-product-spec-table>
             </div>
           </div>
         </v-expand-transition>
@@ -484,10 +484,10 @@
                 }}
               </v-list-subheader>
 
-              <b-product-spec-table
+              <u-product-spec-table
                 :spec="spec_generated"
                 class="min-height-10vh"
-              ></b-product-spec-table>
+              ></u-product-spec-table>
             </div>
           </div>
         </v-expand-transition>
@@ -523,7 +523,7 @@
 </template>
 
 <script lang="ts">
-import BProductSpecTable from "../../../../storefront/product/spec/table/BProductSpecTable.vue";
+import UProductSpecTable from "../../../../ui/product/spec/table/UProductSpecTable.vue";
 import BProductsWindow from "../../../product/window/BProductsWindow.vue";
 import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper";
 import BAiModelInput from "../../../../backoffice/ai/model/input/BAiModelInput.vue";
@@ -540,7 +540,7 @@ export default {
     USmartSuggestion,
     BAiModelInput,
     BProductsWindow,
-    BProductSpecTable,
+    UProductSpecTable,
   },
   props: {
     product: {

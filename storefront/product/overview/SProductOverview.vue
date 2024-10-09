@@ -337,29 +337,29 @@
 </template>
 
 <script lang="ts">
-import SShopProductRatingView from "../../storefront/product/rating/SShopProductRatingView.vue";
-import BasketItemUserMessageForm from "../../storefront/order/product-input/BasketItemUserMessageForm.vue";
-import SStorefrontCouponsList from "../../storefront/coupon/list/SStorefrontCouponsList.vue";
-import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
-import SSmartSelectVendor from "../../storefront/vendor/selector/SSmartSelectVendor.vue";
+import SShopProductRatingView from "../rating/SShopProductRatingView.vue";
+import BasketItemUserMessageForm from "../../order/product-input/BasketItemUserMessageForm.vue";
+import SStorefrontCouponsList from "../../coupon/list/SStorefrontCouponsList.vue";
+import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants.ts";
+import SSmartSelectVendor from "../../vendor/selector/SSmartSelectVendor.vue";
 
-import SShopProductSlideShow from "../../storefront/product/images/SShopProductSlideShow.vue";
-import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import SSubscriptionPriceSelect from "../../storefront/order/subscription/SSubscriptionPriceSelect.vue";
-import { RibbonHelper } from "@selldone/core-js/helper/ribbon/RibbonHelper";
-import ProductDiscountCountdown from "../../storefront/product/count-down/ProductDiscountCountdown.vue";
-import SShopBuyButton from "../../storefront/product/button/SShopBuyButton.vue";
-import UPaymentStripeSplit from "../../ui/payment/stripe/split/UPaymentStripeSplit.vue";
-import SProductSectionService from "../../storefront/product/section/service/SProductSectionService.vue";
-import SProductSectionValuation from "../../storefront/product/section/valuation/SProductSectionValuation.vue";
-import SProductSectionExtraPricings from "../../storefront/product/section/extra-pricing/SProductSectionExtraPricings.vue";
-import SProductSectionTax from "../../storefront/product/section/tax/SProductSectionTax.vue";
-import SProductSectionBuyButton from "../../storefront/product/section/buy-button/SProductSectionBuyButton.vue";
-import SProductSectionExtraButtons from "../../storefront/product/section/extra-buttons/SProductSectionExtraButtons.vue";
-import SProductSectionPrice from "../../storefront/product/section/price/SProductSectionPrice.vue";
-import SProductSectionWaitingAuction from "../../storefront/product/section/auction/SProductSectionWaitingAuction.vue";
-import SProductSectionBadges from "../../storefront/product/section/badges/SProductSectionBadges.vue";
-import SProductSectionVariants from "../../storefront/product/section/variants/SProductSectionVariants.vue";
+import SShopProductSlideShow from "../images/SShopProductSlideShow.vue";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
+import SSubscriptionPriceSelect from "../../order/subscription/SSubscriptionPriceSelect.vue";
+import { RibbonHelper } from "@selldone/core-js/helper/ribbon/RibbonHelper.ts";
+import ProductDiscountCountdown from "../count-down/ProductDiscountCountdown.vue";
+import SShopBuyButton from "../button/SShopBuyButton.vue";
+import UPaymentStripeSplit from "../../../ui/payment/stripe/split/UPaymentStripeSplit.vue";
+import SProductSectionService from "../section/service/SProductSectionService.vue";
+import SProductSectionValuation from "../section/valuation/SProductSectionValuation.vue";
+import SProductSectionExtraPricings from "../section/extra-pricing/SProductSectionExtraPricings.vue";
+import SProductSectionTax from "../section/tax/SProductSectionTax.vue";
+import SProductSectionBuyButton from "../section/buy-button/SProductSectionBuyButton.vue";
+import SProductSectionExtraButtons from "../section/extra-buttons/SProductSectionExtraButtons.vue";
+import SProductSectionPrice from "../section/price/SProductSectionPrice.vue";
+import SProductSectionWaitingAuction from "../section/auction/SProductSectionWaitingAuction.vue";
+import SProductSectionBadges from "../section/badges/SProductSectionBadges.vue";
+import SProductSectionVariants from "../section/variants/SProductSectionVariants.vue";
 import SProductSectionCashback from "@selldone/components-vue/storefront/product/section/cashback/SProductSectionCashback.vue";
 import SProductSectionIncentivise from "@selldone/components-vue/storefront/product/section/incentivise/SProductSectionIncentivise.vue";
 
@@ -462,6 +462,13 @@ export default {
       return this.getBasket(this.$product.type);
     },
 
+    user() {
+      return this.USER();
+    },
+    busy_user() {
+      return this.$store.getters.getBusyUser;
+    },
+
     corresponding_basket_item() {
       if (!this.basket) return null;
       return this.basket.items.find(
@@ -554,6 +561,10 @@ export default {
     corresponding_basket_item() {
       this.assignValuesByCurrentItemInBasket();
     },
+
+    user() {
+      this.autoBuy();
+    },
   },
   created() {
     this.init();
@@ -567,6 +578,31 @@ export default {
   },
 
   methods: {
+    /**
+     * Use to automatically add product to cart
+     */
+    autoBuy() {
+      if (this.$route.query.buy !== "true" || this.busy_user) return;
+
+      console.log("🧺 Auto buy...");
+      let variant = null;
+      if (
+        this.$product.product_variants.length &&
+        this.$route.query.variant_id
+      ) {
+        variant = this.$product.product_variants.find(
+          (v) => v.id === parseInt(this.$route.query.variant_id),
+        );
+      }
+
+      if (!this.$product.product_variants.length || variant) {
+        console.log("🧺 Buy now", variant);
+        this.$nextTick(() => {
+          this.buy(variant);
+        });
+      }
+    },
+
     init() {
       // ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ 🟣 Marketplace 🟣 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
       this.assignVendor();
@@ -594,6 +630,9 @@ export default {
           this.selected_subscription_price = this.membership_subscribed_plan;
         }
       }
+
+      // Auto buy (Check query)
+      this.autoBuy();
     },
 
     assignValuesByCurrentItemInBasket() {

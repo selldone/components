@@ -35,7 +35,7 @@
             </div>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
-            <b-product-spec-table :spec="spec_array"></b-product-spec-table>
+            <u-product-spec-table :spec="spec_array"></u-product-spec-table>
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -51,15 +51,15 @@
 </template>
 
 <script>
-import SProductOverview from "../../../storefront/overview/SProductOverview.vue";
+import SProductOverview from "../../../storefront/product/overview/SProductOverview.vue";
 import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper.ts";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce.ts";
-import BProductSpecTable from "../../../storefront/product/spec/table/BProductSpecTable.vue";
+import UProductSpecTable from "../../../ui/product/spec/table/UProductSpecTable.vue";
 import {computed} from "vue";
 
 export default {
   name: "CProductView",
-  components: { BProductSpecTable, SProductOverview },
+  components: { UProductSpecTable, SProductOverview },
   props: {
     shop: {
       require: true,

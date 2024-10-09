@@ -171,7 +171,7 @@ export default {
   inject: ["$shop", "$product"],
 
   props: {
-    currentVariant: {},
+
   },
 
   data: () => ({

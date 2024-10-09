@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="s--product-spec">
+  <div class="u--product-spec-table">
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Edit Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <template v-if="editable">
@@ -73,7 +73,7 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ View Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <v-container v-else fluid>
-      <v-row>
+      <v-row no-gutters>
         <v-col
           v-for="(item, index) in spec_grouped"
           :key="'g' + index"
@@ -103,13 +103,13 @@
 </template>
 
 <script>
-import BProductSpecRow from "../BProductSpecRow.vue";
+import BProductSpecRow from "../../../../storefront/product/spec/BProductSpecRow.vue";
 
-import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
+import USmartToggle from "../../../smart/toggle/USmartToggle.vue";
 import draggable from "vuedraggable";
 
 export default {
-  name: "BProductSpecTable",
+  name: "UProductSpecTable",
   components: {
     USmartToggle,
     BProductSpecRow,
@@ -204,7 +204,8 @@ export default {
 </script>
 
 <style lang="scss">
-.s--product-spec {
+.u--product-spec-table {
+  font-size: 13px;
   .list-item {
     // Change default items style
     border-radius: 0;
