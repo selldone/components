@@ -109,7 +109,7 @@
     "@types/prismjs": "^1.26.4",
     "@types/qrcode": "^1.5.5",
 
-    "@vue/eslint-config-prettier": "^10.0.0",
+    "@vue/eslint-config-prettier": "^9.0.0",
     "eslint-plugin-vue": "^9.28.0",
 
     "sass": "^1.79.4",

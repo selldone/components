@@ -23,9 +23,8 @@
       variant="text"
       @click="edit_mode = !edit_mode"
     >
-      <v-icon>{{ edit_mode ? "close" : "fa:fas fa-poll-h" }} </v-icon>
+      <v-icon>{{ edit_mode ? "close" : "fa:fas fa-poll-h" }}</v-icon>
     </v-btn>
-
 
     <v-expand-transition>
       <div v-if="input_rating_mode" key="edit">
@@ -43,7 +42,7 @@
 
         <div class="text-end">
           <v-btn
-              :disabled="!Object.values(user_rating).some((v) => !!v)"
+            :disabled="!Object.values(user_rating).some((v) => !!v)"
             :loading="busy"
             color="primary"
             rounded="lg"
@@ -153,11 +152,9 @@ export default {
   }),
 
   computed: {
-
-    user(){
-      return this.USER()
+    user() {
+      return this.USER();
     },
-
 
     can_rate_without_bought() {
       return this.user && !this.bought && !this.edit_mode;
