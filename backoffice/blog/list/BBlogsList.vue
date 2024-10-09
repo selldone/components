@@ -328,13 +328,12 @@
 <script>
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import _ from "lodash-es";
-import SImagePlaceholder from "../../../ui/image/placeholder/SImagePlaceholder.vue";
 import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
 import BUserBox from "../../user/box/BUserBox.vue";
 
 export default {
   name: "BBlogsList",
-  components: { BUserBox, UAvatarFolder, SImagePlaceholder, BClusterInput },
+  components: { BUserBox, UAvatarFolder, BClusterInput },
   props: {
     shop: {
       required: true,

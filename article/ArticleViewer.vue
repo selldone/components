@@ -1052,6 +1052,7 @@ export default {
     SArticleEditor,
     SArticleComments,
   },
+  emits: ["request-auto-translate", "update-article", "delete","get-data"],
   props: {
     shop: { required: false, type: Object },
 
