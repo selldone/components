@@ -186,7 +186,11 @@
                                 : item.data,
                             ),
                           )
-                        : item.type)+ ' '+ (item.data?.message?smartBeautify(compileMarkdown(item.data?.message)):'')
+                        : item.type) +
+                    ' ' +
+                    (item.data?.message
+                      ? smartBeautify(compileMarkdown(item.data?.message))
+                      : '')
                   "
                 ></v-list-item-title>
               </template>
@@ -613,18 +617,18 @@ export default {
         item.type === TimelineEmailType.EMAIL_BUY ||
         item.type === TimelineEmailType.EMAIL_PAYMENT ||
         item.type === TimelineEmailType.EMAIL_VENDOR ||
-          item.type === TimelineEmailType.EMAIL_UPDATE
+        item.type === TimelineEmailType.EMAIL_UPDATE
       ) {
         this.showEmailView(item);
       }
     },
 
     showEmailView(item) {
-      if (this.IS_VENDOR_PANEL) {
-        /*🟢 Vendor Panel 🟢*/
-        this.showWarningAlert(null, "Not supported for vendor!");
-        return;
-      }
+      /*🟢 Vendor Panel 🟢*/
+      /* In vendor panel maybe some email be visible to vendor! if (this.IS_VENDOR_PANEL) {
+          this.showWarningAlert(null, "Not supported for vendor!");
+          return;
+        }*/
 
       this.show_email = true;
       this.busy_email = true;
@@ -633,11 +637,17 @@ export default {
 
       axios
         .get(
-          window.API.GET_ORDER_EMAIL_PREVIEW(
-            this.shop.id,
-            this.order.id,
-            item.type,
-          ),
+          this.IS_VENDOR_PANEL
+            ? window.VAPI.GET_MY_VENDOR_ORDER_EMAIL_PREVIEW(
+                this.vendor.id,
+                this.order.id,
+                item.type,
+              )
+            : window.API.GET_ORDER_EMAIL_PREVIEW(
+                this.shop.id,
+                this.order.id,
+                item.type,
+              ),
           {
             params: {
               timeline_id: item.id, // Needs for vendor order email preview. An order can multiple vendor orders.
