@@ -199,12 +199,7 @@
             v-model="weight"
             :decimal="3"
             :label="$t('product_extra_physical.weight')"
-            :messages="
-                `Total items weight: ${total_items_weight} ${mass_unit}`
-
-
-
-            "
+            :messages="`Total items weight: ${total_items_weight} ${mass_unit}`"
             :min="total_items_weight"
             :readonly="!isActive"
             :suffix="mass_unit"
@@ -372,7 +367,7 @@ export default {
       require: true,
       type: Object,
     },
-    vendor:{},
+    vendor: {},
     basket: {
       require: true,
       type: Object,
@@ -406,12 +401,12 @@ export default {
   },
 
   computed: {
-
     has_shipping_services() {
-      return !this.IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/ || !!this.shop.marketplace?.shipping /*Marketplace enable shipping for vendors*/
+      return (
+        !this.IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/ ||
+        !!this.shop.marketplace?.shipping
+      ); /*Marketplace enable shipping for vendors*/
     },
-
-
 
     has_delivery() {
       return ShopOptionsHelper.AskShippingAddress(
@@ -521,7 +516,6 @@ export default {
       return this.findShopTransportation(this.transportation);
     },
     distance_warning() {
-
       return !!(
         this.shop_transportation &&
         this.shop_transportation.distance < this.distance
@@ -542,9 +536,8 @@ export default {
       );
     },
 
-
-    transportations(){
-      if(this.vendor)   return this.vendor.transportations;
+    transportations() {
+      if (this.vendor) return this.vendor.transportations;
       return this.shop.transportations;
     },
 
@@ -572,8 +565,7 @@ export default {
   },
   methods: {
     findShopTransportation(type) {
-      return this.transportations?.find((it) => it.type === type)
-
+      return this.transportations?.find((it) => it.type === type);
     },
     preparingOrder() {
       this.busy = true;
@@ -601,9 +593,12 @@ export default {
 
       this.transportation = this.delivery_info.type;
 
-
       // Check if transportation is available:
-      if(this.transportation && !this.transportations.some(t=>t.type===this.transportation))this.transportation=null;
+      if (
+        this.transportation &&
+        !this.transportations?.some((t) => t.type === this.transportation)
+      )
+        this.transportation = null;
 
       this.weight = this.delivery_info.weight;
 
