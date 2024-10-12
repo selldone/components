@@ -796,6 +796,9 @@ const CoreMixin = {
 
     getCountryName(code: ICountryCode) {
       if (!code) return null;
+      if (code.toLowerCase()==='eu') return this.$t('global.commons.europe');
+
+
       const key = `countries.${code}`;
       const translated = this.$t(key);
       //console.log("🌍", code, translated, key)
