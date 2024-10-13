@@ -1278,7 +1278,7 @@ export default defineComponent({
       div
         .find("*")
         .not(
-          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,iframe,strike,blockquote,script,span,table,tbody,tr,td,th,br,style",
+          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,iframe,strike,blockquote,script,span,table,tbody,thead,tr,td,th,br,style",
         ) // script: for embed link!
         .each(function () {
           if (!$(this).closest(".medium-insert-embed").length)
@@ -1631,10 +1631,25 @@ export default defineComponent({
     padding-left: 8px;
   }
 
-  table thead tr {
-    height: 60px;
-    background: #3a3a3a;
+  table{
+margin: 12px 0;
+    thead{
+      tr{
+        height: 60px;
+        background: #3a3a3a;
+        color: #fff;
+
+        font-size: 0.9rem;
+        td,th{
+          text-align: start;
+          padding: 8px;
+
+        }
+      }
+    }
   }
+
+
 
   table tbody tr {
     height: 50px;
@@ -1644,25 +1659,7 @@ export default defineComponent({
     border: 0;
   }
 
-  table td,
-  table th {
-    text-align: left;
-  }
 
-  table td.l,
-  table th.l {
-    text-align: right;
-  }
-
-  table td.c,
-  table th.c {
-    text-align: center;
-  }
-
-  table td.r,
-  table th.r {
-    text-align: center;
-  }
 
   .table th {
     // font-family: OpenSans-Regular;
