@@ -22,17 +22,12 @@
         icon="3p"
       ></s-widget-header>
       <v-list-subheader>
-        {{
-          isAdmin
-            ? $t("global.order_chat.seller.history.subtitle")
-            : $t("global.order_chat.customer.history.subtitle")
-        }}
+        {{ $t("global.order_chat.customer.history.subtitle") }}
       </v-list-subheader>
       <s-order-chat-message
         v-for="(message, i) in chat"
         :key="i"
         :basket="basket"
-        :is-admin="isAdmin"
         :message="message"
         :shop="shop"
         class="my-2 c-bubble"
@@ -47,11 +42,7 @@
         icon="add_comment"
       ></s-widget-header>
       <v-list-subheader>
-        {{
-          isAdmin
-            ? $t("global.order_chat.seller.new_message.subtitle")
-            : $t("global.order_chat.customer.new_message.subtitle")
-        }}
+        {{ $t("global.order_chat.customer.new_message.subtitle") }}
       </v-list-subheader>
 
       <div class="d-flex align-center my-3">
@@ -92,23 +83,16 @@
         </v-btn>
       </div>
     </div>
-
-    <!-- █████████████████████ Secure Order Link █████████████████████ -->
-
-    <b-order-share v-if="isAdmin" class="mb-5" :basket="basket"></b-order-share>
   </div>
 </template>
 
 <script lang="ts">
 import SOrderChatMessage from "../message/SOrderChatMessage.vue";
-import BOrderShare from "@selldone/components-vue/backoffice/order/share/BOrderShare.vue";
 
 export default {
   name: "SOrderChatBox",
 
   components: {
-    BOrderShare,
-
     SOrderChatMessage,
   },
 
@@ -120,11 +104,6 @@ export default {
     basket: {
       require: true,
       type: Object,
-    },
-
-    isAdmin: {
-      default: false,
-      type: Boolean,
     },
   },
 
@@ -152,15 +131,10 @@ export default {
 
       axios
         .post(
-          !this.isAdmin
-            ? window.XAPI.POST_CUSTOMER_BASKET_CHAT_ADD_MESSAGE(
-                this.shop.name,
-                this.basket.id,
-              )
-            : window.API.POST_BASKET_CHAT_ADD_MESSAGE(
-                this.shop.id,
-                this.basket.id,
-              ),
+          window.XAPI.POST_CUSTOMER_BASKET_CHAT_ADD_MESSAGE(
+            this.shop.name,
+            this.basket.id,
+          ),
           {
             body: this.body_input,
 

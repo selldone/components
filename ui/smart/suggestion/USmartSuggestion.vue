@@ -27,16 +27,16 @@
       </v-slide-group-item>
       <v-slide-group-item
         v-for="n in samples_processed"
-        :key="is_object ? n.value : n"
+        :key="is_object ? n[valueKey] : n"
       >
         <v-btn
-          :title="is_object ? n.title : n"
+          :title="is_object ? n[titleKey] : n"
           class="tnt"
           size="small"
           variant="plain"
-          @click="$emit('select', is_object ? n.value : n)"
+          @click="$emit('select', is_object ? n[valueKey] : n)"
         >
-          {{ (is_object ? n.title : n)?.limitWords(4) }}
+          {{ (is_object ? n[titleKey] : n)?.limitWords(4) }}
         </v-btn>
       </v-slide-group-item>
     </v-slide-group>
@@ -58,18 +58,18 @@
           >
             <v-list-item
               v-for="n in samples_processed"
-              :key="is_object ? n.value : n"
+              :key="is_object ? n[valueKey] : n"
               class="row-hover"
               @click="
-                $emit('select', is_object ? n.value : n);
+                $emit('select', is_object ? n[valueKey] : n);
                 closeDialog();
               "
             >
               <v-list-item-title class="typo-body text-wrap">
-                {{ is_object ? n.title : n }}
+                {{ is_object ? n[titleKey] : n }}
               </v-list-item-title>
               <v-list-item-subtitle v-if="is_object">
-                {{ n.value }}
+                {{ n[valueKey] }}
               </v-list-item-subtitle>
             </v-list-item>
           </v-list>
@@ -102,6 +102,12 @@ export default defineComponent({
     samples: {},
     addSession: { type: Boolean },
     noRandom: { type: Boolean },
+    valueKey: {
+      default: "value",
+    },
+    titleKey: {
+      default: "title",
+    },
   },
   data: () => ({
     dialog_pre: false,

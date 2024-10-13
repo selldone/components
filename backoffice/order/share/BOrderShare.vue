@@ -14,15 +14,16 @@
 
 <template>
   <div v-if="order_link" class="widget-box -large">
-    <s-widget-header title="Order Link" icon="shopping_bag"></s-widget-header>
+    <s-widget-header
+      :title="$t('b_order_share.title')"
+      icon="shopping_bag"
+    ></s-widget-header>
     <v-list-subheader>
-      You can share the order link with the customer.
+      {{ $t("b_order_share.subtitle") }}
 
       <span v-if="has_guest_checkout">
-        Guest shoppers can automatically view their order in the same browser.
-        However, if the customer is a guest and you need to share the order
-        details, you can create a secure link for them.</span
-      >
+        {{ $t("b_order_share.guest_checkout_message") }}
+      </span>
     </v-list-subheader>
 
     <u-text-copy-box
@@ -32,8 +33,14 @@
       small-width-mode
     >
       <template v-slot:append-message>
-        <v-chip size="x-small" color="#673AB7" label variant="flat" class="mx-2"
-          >Authentication
+        <v-chip
+          size="x-small"
+          color="#673AB7"
+          label
+          variant="flat"
+          class="mx-2"
+        >
+          {{ $t("b_order_share.authentication") }}
         </v-chip>
       </template>
     </u-text-copy-box>
@@ -51,7 +58,8 @@
             label
             variant="flat"
             class="mx-2"
-            >Guest
+          >
+            {{ $t("b_order_share.guest") }}
           </v-chip>
         </template>
       </u-text-copy-box>
@@ -70,7 +78,8 @@
         class="d-flex align-center justify-center text-black pp flex-column"
         @click="createSecureLink"
       >
-        Click to create... <small>[valid for 30 days]</small>
+        {{ $t("b_order_share.click_to_create") }}
+        <small>[ {{ $t("b_order_share.valid_for_30_days") }} ]</small>
 
         <u-loading-progress
           v-if="busy_secure_link"
@@ -163,7 +172,7 @@ export default defineComponent({
             this.secure_link = data.url;
             this.showSuccessAlert(
               null,
-              "Secure link has been created successfully.",
+              $t("b_order_share.notifications.secure_link_created"),
             );
           }
         })

@@ -769,14 +769,14 @@
             <v-img :src="getShopImagePath(shop.icon, IMAGE_SIZE_SMALL)" />
           </v-avatar>
 
-          {{$t('global.commons.chat')}} > {{getBasketOrderCode(selected_basket)}}
+          {{ $t("global.commons.chat") }} >
+          {{ getBasketOrderCode(selected_basket) }}
         </v-card-title>
         <v-card-text v-if="selected_basket">
-          <s-order-chat-box
+          <b-order-chat-box
             :basket="selected_basket"
             :shop="shop"
-            is-admin
-          ></s-order-chat-box>
+          ></b-order-chat-box>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -803,7 +803,6 @@ import UButtonWhatsapp from "../../../ui/button/whatsapp/UButtonWhatsapp.vue";
 import SOrderReceiverInfoCard from "../../../storefront/order/receiver-info/card/SOrderReceiverInfoCard.vue";
 import ConnectOrderChip from "../../connect/order/chip/ConnectOrderChip.vue";
 import UAvatarText from "../../../ui/avatar/text/UAvatarText.vue";
-import SOrderChatBox from "../../../storefront/order/chat/box/SOrderChatBox.vue";
 import SOrderChatMessage from "../../../storefront/order/chat/message/SOrderChatMessage.vue";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import BProductSubscriptionPricingInput from "../../product/subscription/pricing/input/BProductSubscriptionPricingInput.vue";
@@ -814,6 +813,7 @@ import { OrderType } from "@selldone/core-js/enums/order/OrderType";
 import { RouteMixin } from "../../../mixin/RouteMixin";
 import { Avocado, Basket } from "@selldone/core-js";
 import BCampaignSourceIcon from "@selldone/components-vue/backoffice/campaign/source/icon/BCampaignSourceIcon.vue";
+import BOrderChatBox from "@selldone/components-vue/backoffice/order/chat/box/BOrderChatBox.vue";
 
 export default {
   name: "BProcessCenterList",
@@ -824,7 +824,7 @@ export default {
     UCurrencyIcon,
     BProductSubscriptionPricingInput,
     SOrderChatMessage,
-    SOrderChatBox,
+    BOrderChatBox,
     UAvatarText,
     ConnectOrderChip,
     SOrderReceiverInfoCard,

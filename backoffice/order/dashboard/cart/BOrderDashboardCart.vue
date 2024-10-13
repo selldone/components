@@ -278,6 +278,7 @@ export default {
     VariantItemViewMicro,
     BOrderCart,
   },
+  emits: ["confirm-order"],
   props: {
     shop: {
       require: true,
