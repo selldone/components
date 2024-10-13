@@ -311,7 +311,7 @@
               auto-grow
               counter="1000"
               :messages="
-                $t('b_order_chat_box.add_template.inputs.body.messages')
+                $t('b_order_chat_box.add_template.inputs.body.messages',{order_id:'{order_id}',buyer_name:'{buyer_name}'})
               "
             >
             </v-textarea>
