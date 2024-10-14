@@ -306,6 +306,7 @@ export default {
 
   ::v-deep(li) {
     padding: 0;
+    padding-inline-start: 8px;
 
     &:before {
       margin: 0 8px;
@@ -321,12 +322,12 @@ export default {
     }
   }
 
-  ::v-deep(ol) {
+  /*::v-deep(ol) {
     li {
       &:before {
         content: counter(li) ".";
       }
     }
-  }
+  }*/
 }
 </style>

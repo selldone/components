@@ -1822,14 +1822,13 @@ margin: 12px 0;
 
 .s--article-editor-container ol {
   display: flow-root;
-  margin: 2.5em 1em;
+  margin: 1em 1em;
   line-height: 1em;
   font-size: 1.2rem;
 
   counter-reset: li;
   list-style: decimal;
   padding: 0;
-  margin-bottom: 4em;
 
   @media only screen and (max-width: 900px) {
     margin: 1.5em 0;
@@ -1894,14 +1893,13 @@ margin: 12px 0;
 
   ul {
     display: flow-root;
-    margin: 2.5em 1em;
+    margin: 1em 1em;
     line-height: 1em;
     font-size: 1.2rem;
 
     counter-reset: li;
     list-style: decimal;
     padding: 0;
-    margin-bottom: 4em;
 
     @media only screen and (max-width: 900px) {
       margin: 1.5em 0;
@@ -2390,6 +2388,8 @@ p iframe {
 
 .medium-insert-images-safe,
 .medium-insert-images {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   &.medium-insert-images-mediumImage {
     max-width: 100%;
     width: max-content;
@@ -2401,7 +2401,7 @@ p iframe {
     position: relative;
     box-shadow: 0 0 50px 3px rgba(68, 68, 68, 0.22) !important;
     transition: all 0.4s;
-    margin: auto auto 16px;
+    margin: 2rem auto 2rem auto;
 
     figure {
       max-width: 640px;
