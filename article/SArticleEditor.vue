@@ -2188,6 +2188,7 @@ p iframe {
 }
 
 .medium-insert-embeds {
+
   @media only screen and (max-width: 600px) {
     min-width: 100% !important;
   }
@@ -2205,6 +2206,7 @@ p iframe {
           flex: unset !important;
           //  max-width: 220px !important;
           max-height: 220px;
+          overflow: hidden;
 
           .section-text {
             font-size: 1rem;
@@ -2277,6 +2279,16 @@ p iframe {
 
     .main-image {
       border-radius: 12px;
+      margin: 0;
+
+      .v-image__image{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-size: cover;
+      }
     }
 
     .preview-provider {
