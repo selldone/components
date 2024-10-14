@@ -48,7 +48,7 @@
             :id="EDITABLE_BODY_ID"
             ref="editable_body"
             :data-placeholder="$t('global.article.editor.body_placeholder')"
-            class="can-edit-medium-insert"
+            class="can-edit-medium-insert u-article-body-edit"
             style="user-select: text; min-height: 284px"
             @edit="processEditOperationBody"
             v-html="rendered_body"
@@ -106,7 +106,7 @@
           v-if="enableBody"
           :id="REVIEW_BODY_ID"
           ref="review_body"
-          class="pt-3 corrected"
+          class="pt-3 corrected u-article-body-view"
           style="user-select: text"
           v-html="rendered_body_view /*Scripts not loaded by vue!*/"
         />
@@ -2059,6 +2059,9 @@ margin: 12px 0;
   }
 
   .medium-editor-insert-plugin {
+
+
+
     .medium-insert-buttons {
       .medium-insert-buttons-addons {
         direction: ltr;
@@ -2508,6 +2511,14 @@ p iframe {
   .embed-raw-html {
     pointer-events: none;
     user-select: none;
+  }
+}
+
+//------------------------ NEW STYLE ------------------------
+
+.u-article-body-view,.u-article-body-edit{
+  p{
+    margin-bottom: 2rem;
   }
 }
 </style>

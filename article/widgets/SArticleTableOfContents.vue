@@ -219,27 +219,28 @@ export default {
         color: #0f75ac !important;
 
         &:before {
-          font-size: 20px;
           z-index: 1;
           background: linear-gradient(to right bottom, #6cb9cd, #1c6eaa);
+          opacity: 1;
         }
       }
 
       &:before {
         transition: all 0.35s;
-        content: "•";
+        content: " ";
         counter-increment: li;
-        position: absolute;
-        left: -1em;
-        top: 50%;
-        margin-top: -1em;
+        display: inline-block;
+        left: 0;
+        top: 2px;
+        margin-top: 0.1em;
+       opacity: 0;
 
         background: linear-gradient(to right bottom, #5ea5b7, #104d79);
 
-        height: 2em;
-        width: 2em;
+        height: 18px;
+        width: 18px;
         line-height: 1.6em;
-        border: 0.3em solid #fff;
+        border: 2px solid #fff;
         text-align: center;
         font-weight: bold;
         border-radius: 2em;
@@ -257,7 +258,8 @@ export default {
   width: 240px;
   background: #fff;
 
-  box-shadow: 0px 10px 50px 5px rgba(113, 112, 112, 0.24);
+  //box-shadow: 0px 10px 50px 5px rgba(113, 112, 112, 0.24);
+  border: solid thin #ddd;
   border-radius: 12px;
   text-align: start;
 
