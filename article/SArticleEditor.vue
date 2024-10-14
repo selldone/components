@@ -1852,6 +1852,9 @@ margin: 12px 0;
   border-radius: 2em;
 
   line-height: 1.7em;
+  p{
+    margin: 0;
+  }
 }
 
 .s--article-editor-container ol li:hover {
@@ -1873,12 +1876,12 @@ margin: 12px 0;
 
       background: var(--ol-li-dot-bg);
 
-      height: 2em;
-      width: 2em;
+      font-size: 12px;
+      height: 30px;
+      width: 30px;
       border: 0.3em solid #fff;
       text-align: center;
       font-weight: bold;
-      font-size: 1.2rem;
       -moz-border-radius: 2em;
       -webkit-border-radius: 2em;
       border-radius: 2em;
@@ -1937,8 +1940,9 @@ margin: 12px 0;
 
         background: var(--ul-li-dot-bg);
 
-        height: 2em;
-        width: 2em;
+        font-size: 12px;
+        height: 30px;
+        width: 30px;
         border: 0.3em solid #fff;
         text-align: center;
         font-weight: bold;
@@ -1949,6 +1953,10 @@ margin: 12px 0;
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      p{
+        margin: 0;
       }
 
       &.filepond--item {

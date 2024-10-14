@@ -95,7 +95,7 @@
         </v-tab>
       </v-tabs>
 
-      <v-table class="thin-scroll" dense fixed-header height="350">
+      <v-table class="thin-scroll" fixed-header height="350" density="compact">
         <template v-slot:default>
           <thead>
             <tr>
