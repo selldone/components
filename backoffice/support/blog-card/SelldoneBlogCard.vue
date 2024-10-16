@@ -80,7 +80,7 @@
       </v-card-subtitle>
 
       <v-card-title class="title-blog">
-        {{ current_blog.article.title }}
+        {{ current_blog.article.title?.limitWords(10) }}
       </v-card-title>
       <v-card-title v-if="showDescription">
         {{ current_blog.article.description }}
@@ -202,13 +202,14 @@ export default {
   }
 
   .title-blog {
-    font-size: 1.45rem;
+    font-size: 1.2rem;
     color: #4f4f4f;
     line-height: 2.3rem;
     font-weight: 800;
     min-height: 8rem;
+    text-wrap: wrap;
     @media (max-width: 1320px) {
-      font-size: 1.3rem;
+      font-size: 1.05rem;
     }
   }
 
