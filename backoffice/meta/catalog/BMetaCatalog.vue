@@ -32,7 +32,7 @@
         </v-avatar>
       </u-pod-node>
 
-      <u-pod-wire forward> </u-pod-wire>
+      <u-pod-wire forward></u-pod-wire>
       <u-pod-node>
         <div>
           <img
@@ -70,9 +70,29 @@
       </v-btn>
     </div>
 
+    <template v-if="total_products > count_in_page">
+      <v-list-subheader>
+        <v-icon>warning_amber</v-icon>
+        You have over 1,000 products, and since Facebook's feed does not support
+        pagination, you'll need to manually add these URLs.
+      </v-list-subheader>
+
+      <u-text-copy-box
+        v-for="item in pages"
+        :key="item"
+        :value="`${facebook_catalog_feed}?page=${item}`"
+        small-width-mode
+        :image="require('../../../assets/icons/link.svg')"
+        message="Facebook Products Feed URL"
+
+      >
+      </u-text-copy-box>
+    </template>
+
     <u-text-copy-box
+      v-else
       :image="require('../../../assets/icons/link.svg')"
-      :value="facebook_catelog_feed"
+      :value="facebook_catalog_feed"
       message="Facebook Products Feed URL"
       small-width-mode
     >
@@ -89,6 +109,7 @@ import UPodWire from "@selldone/components-vue/ui/pod/wire/UPodWire.vue";
 export default {
   name: "BMetaCatalog",
   components: { UPodWire, UPodNode, UPodsPanel, UTextCopyBox },
+  inject: ["$shop", "$timeSeriesShopData"],
   props: {
     shop: {
       required: true,
@@ -97,10 +118,32 @@ export default {
   },
   data: () => ({
     busy_set: false,
+    count_in_page: 1000,
   }),
   computed: {
-    facebook_catelog_feed() {
+    facebook_catalog_feed() {
       return `${this.getShopMainUrl(this.shop)}/rss/facebook`;
+    },
+
+    pages() {
+      return Array.from(
+        { length: Math.ceil(this.total_products / this.count_in_page) },
+        (_, i) => i + 1,
+      );
+    },
+
+    lastDayData() {
+      return this.$timeSeriesShopData.lastDayData();
+    },
+
+    total_products() {
+      return (
+        this.lastDayData.total_products_virtual +
+        this.lastDayData.total_products_physical +
+        this.lastDayData.total_products_file +
+        this.lastDayData.total_products_service +
+        this.lastDayData.total_products_subscription
+      );
     },
   },
 

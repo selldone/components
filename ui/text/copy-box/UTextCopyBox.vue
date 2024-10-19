@@ -37,6 +37,7 @@
             'ma-1': small && smallWidthMode,
             'h-100': !smallWidthMode,
                'h-90': smallWidthMode,
+               'aspect-1':!small
           }"
           :color="color"
           :min-height="small ? 24 : 64"
@@ -161,6 +162,11 @@ export default {
 
     .-btn {
       flex-grow: 0;
+
+
+      &.aspect-1{
+        aspect-ratio: 1;
+      }
     }
 
     .-link {
