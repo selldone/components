@@ -191,7 +191,10 @@
               class="text-start pt-1 lhn"
               cols="12"
             >
-              <div class="single-line font-weight-bold">
+              <div
+                class="font-weight-bold"
+                :class="{ 'single-line': !wrap_title }"
+              >
                 {{ product.title }}
               </div>
             </v-col>
@@ -526,6 +529,7 @@ export default {
     UPrice,
     ProductVariantsView,
   },
+  inject: ["$shop"],
   props: {
     product: {
       required: true,
@@ -680,6 +684,10 @@ export default {
           ? this.current_variant.image
           : this.product.icon,
       );
+    },
+
+    wrap_title() {
+      return this.$shop?.theme?.wrap_title;
     },
   },
 
@@ -1535,6 +1543,7 @@ export default {
       }
     }
   }
+
   .price-label {
     font-size: 10px;
     color: #000;
