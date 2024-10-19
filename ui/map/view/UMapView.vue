@@ -498,10 +498,12 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { installGlobalComponents } from "../../../components-mandetory";
 import UMapViewAddressBook from "@selldone/components-vue/ui/map/view/address-book/UMapViewAddressBook.vue";
 import { MapHelper } from "@selldone/core-js";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "UMapView",
   components: { UMapViewAddressBook, UMapAddressInput, SCountrySelect },
+  mixins: [TemplateMixin],
   emits: [
     "update:modelValue",
     "close",
@@ -867,7 +869,7 @@ export default {
           this.map_box = new Mapbox.Map({
             container: "map_box" + this.map_id,
             style: SetupService.MapStyle(),
-            center: this.center?[this.center.lng, this.center.lat]:[0,0],
+            center: this.center ? [this.center.lng, this.center.lat] : [0, 0],
             zoom: this.zoom,
           });
 

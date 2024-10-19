@@ -126,7 +126,8 @@
         <p v-if="basketItem.dis" class="discount-value">
           <u-price
             :amount="
-              getBasketItemSumPriceDiscount(shop, basketItem) * basketItem.count
+              getBasketItemSumPriceDiscount($shop, basketItem) *
+              basketItem.count
             "
             line-through
           ></u-price>
@@ -134,7 +135,7 @@
         <p class="shop-item-price m-0">
           <u-price
             :amount="
-              getBasketItemPrice(shop, basketItem) * basketItem.count -
+              getBasketItemPrice($shop, basketItem) * basketItem.count -
               basketItem.offer_amount
             "
           ></u-price>
@@ -249,7 +250,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import BasketItemUserMessageForm from "../../../storefront/order/product-input/BasketItemUserMessageForm.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
@@ -266,11 +267,8 @@ export default {
     BasketItemUserMessageForm,
     VariantItemViewMicro,
   },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     basketItem: {
       required: true,
       type: Object,
@@ -330,7 +328,7 @@ export default {
       // ▀▀▀▀▀▀▀▀▀ 🟣 Marketplace 🟣 ▀▀▀▀▀▀▀▀▀
       if (this.basketItem.vendor_product) {
         return this.CalcPriceProductCurrentCurrency(
-          this.shop,
+          this.$shop,
           this.basketItem.vendor_product,
           null,
           this.preferences,
@@ -341,7 +339,7 @@ export default {
       }
 
       return this.CalcPriceProductCurrentCurrency(
-        this.shop,
+        this.$shop,
         this.product,
         this.variant,
         this.preferences,
@@ -354,7 +352,7 @@ export default {
     price_error_percent() {
       if (this.is_booking) return 0; // Does not work for service!
 
-      const old_price = this.getBasketItemPrice(this.shop, this.basketItem);
+      const old_price = this.getBasketItemPrice(this.$shop, this.basketItem);
       return (
         (100 * (this.current_item_price - old_price)) / (0.00001 + old_price)
       );
@@ -376,7 +374,7 @@ export default {
     },
 
     lead_time() {
-      return this.leadProduct(this.product, this.variant,this.vendor_product);
+      return this.leadProduct(this.product, this.variant, this.vendor_product);
     },
   },
   methods: {
@@ -392,7 +390,7 @@ export default {
     buyAddAction(count) {
       this.busy = true;
       this.AddToBasket(
-        this.shop_name,
+        this.$shop.name,
         this.product,
         this.variant,
         count,

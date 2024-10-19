@@ -85,7 +85,7 @@ export default {
           address: this.billingAddress,
         },
         theme: {
-          color: SetupService.SaminColorDark(),
+          color: SetupService.ColorThemeDark(),
         },
 
         remember_customer: true, // Determines whether to allow saving of cards.

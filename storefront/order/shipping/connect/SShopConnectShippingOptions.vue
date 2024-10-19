@@ -22,7 +22,9 @@
       :key="connect_shipping_option.connect_id"
     >
       <div class="d-flex align-center my-2">
-        <span class="small min-width-50 d-inline-block">{{ $t("global.commons.shipping") }}</span>
+        <span class="small min-width-50 d-inline-block">{{
+          $t("global.commons.shipping")
+        }}</span>
         <v-icon class="flip-rtl">arrow_right</v-icon>
         <products-dense-images-circles
           :ids="
@@ -37,7 +39,8 @@
                 ),
               )
           "
-          inline border
+          inline
+          border
           raw-images-path
         ></products-dense-images-circles>
       </div>
@@ -53,7 +56,7 @@
           {{ connect_shipping_option.connect_name }}
         </div>
         <v-sheet class="pa-2 text-subtitle-2" color="amber" rounded="sm">
-          <v-icon class="me-1"  size="small">warning_amber</v-icon>
+          <v-icon class="me-1" size="small">warning_amber</v-icon>
           {{ connect_shipping_option.error }}
         </v-sheet>
       </template>
@@ -83,30 +86,23 @@
       </template>
     </div>
 
-    <div  class="spacer-line my-3" />
-
+    <div class="spacer-line my-3" />
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import ProductsDenseImagesCircles from "../../../product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 
 export default {
   name: "SShopConnectShippingOptions",
   components: { ProductsDenseImagesCircles, USmartSelect },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
     basket: {
       required: true,
       type: Object,
     },
-
-
   },
   data: () => ({
     connect_shippings: null,
@@ -120,7 +116,7 @@ export default {
 
   computed: {
     light_checkout() {
-      return this.shop.theme && this.shop.theme.light_checkout;
+      return this.$shop.theme && this.$shop.theme.light_checkout;
     },
 
     bill() {

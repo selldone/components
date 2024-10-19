@@ -213,13 +213,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import UScanner from "../../ui/scanner/UScanner.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SStorefrontSearchBoxOld",
   components: { UScanner },
+  mixins: [TemplateMixin],
   emits: ["onSearch", "onClear", "update:expandInput"],
   props: {
     title: {

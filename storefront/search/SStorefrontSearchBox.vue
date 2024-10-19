@@ -254,16 +254,18 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import UScanner from "../../ui/scanner/UScanner.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SStorefrontSearchBox",
   components: { UAvatarFolder, UScanner },
+  mixins: [TemplateMixin],
   emits: ["onSearch", "onClear", "update:expandInput"],
-  inject:['$shop'],
+  inject: ["$shop"],
   props: {
     title: {
       type: String,
@@ -276,8 +278,7 @@ export default {
       default: null,
     },
 
-    isAdmin:Boolean,
-
+    isAdmin: Boolean,
 
     filled: {
       type: Boolean,

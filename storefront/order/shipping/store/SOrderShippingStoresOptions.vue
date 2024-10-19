@@ -23,7 +23,6 @@
     >
       <s-order-shipping-store-options
         :basket="basket"
-        :shop="shop"
         :storeShippingOption="store_shipping_option"
         :dark="dark"
         @set-basket-config="$emit('set-basket-config')"
@@ -43,13 +42,9 @@ export default {
   components: {
     SOrderShippingStoreOptions,
   },
+  inject: ["$shop"],
   emits: ["set-basket-config"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
     basket: {
       required: true,
       type: Object,

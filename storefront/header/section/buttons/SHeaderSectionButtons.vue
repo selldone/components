@@ -109,11 +109,12 @@
   </teleport>
 </template>
 
-<script>
+<script lang="ts">
 import SLanguageSelector from "@selldone/components-vue/storefront/language/selector/SLanguageSelector.vue";
 import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCurrencySelector.vue";
 import { ShopOptionsHelper } from "@selldone/core-js";
 import BasketTopMenu from "@selldone/components-vue/storefront/order/basket/BasketTopMenu.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SHeaderSectionButtons",
@@ -122,6 +123,7 @@ export default {
     UCurrencySelector,
     SLanguageSelector,
   },
+  mixins: [TemplateMixin],
   inject: ["$shop"],
 
   props: {

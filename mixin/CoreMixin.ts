@@ -71,16 +71,16 @@ const CoreMixin = {
       // Customizable theme:
       SaminColorLight: window.CUSTOME_TEMPLATE
         ? window.CUSTOME_TEMPLATE.color_light
-        : SetupService.SaminColorLight(), //"#70557e"
+        : SetupService.ColorThemeLight(), //"#70557e"
       SaminColorDark: window.CUSTOME_TEMPLATE
         ? window.CUSTOME_TEMPLATE.color_dark
-        : SetupService.SaminColorDark(), //"#3a2c41"
+        : SetupService.ColorThemeDark(), //"#3a2c41"
       SaminColorDarkDeep: window.CUSTOME_TEMPLATE
         ? window.CUSTOME_TEMPLATE.color_deep
-        : SetupService.SaminColorDarkDeep(), //"#261b2d"
+        : SetupService.ColorThemeDeepDark(), //"#261b2d"
       SaminInfoColor: window.CUSTOME_TEMPLATE
         ? window.CUSTOME_TEMPLATE.color_info
-        : SetupService.SaminInfoColor(), //   "#9964e3"
+        : SetupService.ColorThemeInfo(), //   "#9964e3"
 
       EventBus: EventBus,
 
@@ -110,9 +110,7 @@ const CoreMixin = {
     };
   },
   computed: {
-    isMobile() {
-      return this.$vuetify.display.smAndDown;
-    },
+
     is_standalone() {
       // Detects if device is in standalone mode
       const isInWebAppiOS = window.navigator.standalone === true;

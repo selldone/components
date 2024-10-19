@@ -44,8 +44,8 @@ const vuetifyOptions: VuetifyOptions = {
           //   'on-surface': '#000',
 
           // Define primary, secondary, accent, error, info, success, and warning colors.
-          primary: SetupService.SaminColorLight(),
-          secondary: SetupService.SaminColorDark(),
+          primary: SetupService.ColorThemeLight(),
+          secondary: SetupService.ColorThemeDark(),
           accent: "#FFA000",
           error: "#FF5252",
           info: "#9964e3",
@@ -57,8 +57,8 @@ const vuetifyOptions: VuetifyOptions = {
         dark: true,
         colors: {
           // Define primary, secondary, accent, error, info, success, and warning colors.
-          primary: SetupService.SaminColorLight(),
-          secondary: SetupService.SaminColorDark(),
+          primary: SetupService.ColorThemeLight(),
+          secondary: SetupService.ColorThemeDark(),
           accent: "#FFA000",
           error: "#FF5252",
           info: "#9964e3",

@@ -41,7 +41,6 @@ export default {
   name: "SShopVendorHeader",
   inject: ["$shop"],
   props: {
-
     vendorId: {},
   },
   components: {},

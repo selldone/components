@@ -148,13 +148,12 @@ export default {
   },
 
   data: function () {
-    return {};
+    return {
+      MapHelper: MapHelper,
+    };
   },
 
   computed: {
-    MapHelper() {
-      return MapHelper;
-    },
     is_physical() {
       return this.$product.type === ProductType.PHYSICAL.code;
     },
@@ -162,9 +161,7 @@ export default {
     transportations() {
       return this.$shop.transportations;
     },
-    has_free_shipping() {
-      return this.is_physical && this.transportations_free_shipping?.length;
-    },
+
     transportations_free_shipping() {
       return this.transportations?.filter(
         (t) => t.free_shipping && t.type !== ShopTransportations.Pickup.code,
@@ -175,12 +172,6 @@ export default {
         ?.filter((t) => !!t.logo)
         .map((t) => t.logo)
         .unique();
-    },
-
-    transportation_with_min_free_shipping_limit() {
-      return this.transportations_free_shipping?.minByKey(
-        "free_shipping_limit",
-      );
     },
 
     IS_MARKETPLACE() {
@@ -194,8 +185,8 @@ export default {
             transportation.type === ShopTransportations.Pickup.code &&
             transportation.marketplace,
           /* Transportation must be available for vendors. If the marketplace mode is not direct, 
-     'marketplace' could be true (miss config!)! But vendor_products would not return any value. This check is safe, so there's no need to explicitly check
-     the marketplace mode. */
+         'marketplace' could be true (miss config!)! But vendor_products would not return any value. This check is safe, so there's no need to explicitly check
+         the marketplace mode. */
         )
       );
     },

@@ -87,10 +87,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+
 export default {
   name: "SHeaderSectionLogo",
   components: {},
+  mixins:[TemplateMixin],
   inject: ["$shop"],
 
   props: {

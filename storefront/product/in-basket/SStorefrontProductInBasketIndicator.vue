@@ -32,12 +32,13 @@
   </v-slide-y-reverse-transition>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SStorefrontProductInBasketIndicator",
-
+  mixins:[TemplateMixin],
   computed: {
     shop() {
       return this.getShop();

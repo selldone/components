@@ -211,7 +211,7 @@
               <v-col cols="12" md="6" sm="6">
                 <s-country-select
                   v-model="address.country"
-                  :dense="isMobile"
+                  :dense="$vuetify.display.smAndDown"
                   :label="$t('global.address_info.country')"
                   item-value="alpha2"
                   required
@@ -222,7 +222,7 @@
                 <component
                   :is="states && states.length ? 'v-combobox' : 'v-text-field'"
                   v-model="address.state"
-                  :dense="isMobile"
+                  :dense="$vuetify.display.smAndDown"
                   :items="states ? states : []"
                   :label="state_label"
                   variant="underlined"

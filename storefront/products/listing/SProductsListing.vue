@@ -301,11 +301,7 @@
             ></s-product-overview-loading>
 
             <template v-if="selected_product">
-              <s-product-overview
-                can-buy
-                quick-buy-mode
-                show-cover
-              />
+              <s-product-overview can-buy quick-buy-mode show-cover />
 
               <u-product-spec-table v-if="spec_array" :spec="spec_array" />
               <div class="min-height-10vh"></div>
@@ -353,7 +349,7 @@ import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
 import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 import _ from "lodash-es";
-import {computed, defineAsyncComponent} from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 import { SProductBreadcrumbHelper } from "./helper/SProductBreadcrumbHelper";
 

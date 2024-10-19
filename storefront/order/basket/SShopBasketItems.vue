@@ -18,14 +18,13 @@
       v-for="(item, index) in items"
       :key="index"
       :basket-item="item"
-      :shop="shop"
       :small-width="$vuetify.display.mdAndDown"
     >
     </s-shop-basket-item>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopBasketItem from "../../../storefront/order/basket/SShopBasketItem.vue";
 
 export default {
@@ -33,11 +32,8 @@ export default {
   components: {
     SShopBasketItem,
   },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     items: {
       required: true,
       type: Array,

@@ -14,9 +14,10 @@
 
 <template>
   <div
+    v-if="show"
     :class="popup.position"
     class="popup-dialog-container"
-    @click="$emit('close')"
+    @click="show = false"
   >
     <div
       :class="[popup.transition]"
@@ -26,7 +27,7 @@
           : 'center',
       }"
       class="position-relative"
-      style="max-height: 100%; max-width: 100%;"
+      style="max-height: 100%; max-width: 100%"
     >
       <LPageViewer
         v-if="popup.content"
@@ -60,7 +61,7 @@
           icon
           size="small"
           variant="elevated"
-          @click="$emit('close')"
+          @click="show = false"
         >
           <v-icon>close</v-icon>
         </v-btn>
@@ -110,14 +111,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import LPageViewer from "@selldone/page-builder/page/viewer/LPageViewer.vue";
 
 export default {
   name: "SStorefrontPopup",
   components: { LPageViewer },
+  inject: ["$shop"],
   props: {
-    popup: {
+    modelValue: Boolean,
+    previewPopup: {
       require: true,
       type: Object,
     },
@@ -126,20 +129,64 @@ export default {
       type: Boolean,
     },
   },
-  data: () => ({}),
+  data: () => ({
+    show: false,
+  }),
 
   computed: {
     popup_style() {
       return this.popup.style ? this.popup.style : {};
     },
-  },
-  watch: {},
 
-  created() {},
+    popup() {
+      return this.previewPopup ? this.previewPopup : this.$shop?.popup;
+    },
+  },
+  watch: {
+    show(value) {
+      this.$emit("update:modelValue", value);
+    },
+
+    modelValue(value) {
+      if (value) this.init();
+    },
+
+    popup(popup) {
+      if (popup) this.init();
+    },
+  },
+
+  created() {
+    this.init();
+  },
 
   beforeUnmount() {},
 
-  methods: {},
+  methods: {
+    init() {
+      if (!this.popup) {
+        console.style("<b>🛸 Popup : None! </b>");
+        return;
+      }
+
+      console.style("<b>🛸 You have a popup! </b>");
+
+      setTimeout(
+        () => {
+          this.show = true;
+
+          // Auto hide:
+          if (this.popup.hide) {
+            console.log("🛸 Auto hide in", this.popup.hide , "seconds");
+            setTimeout(() => {
+              this.show = false;
+            }, this.popup.hide * 1000);
+          }
+        },
+        this.preview ? 0 : this.popup.delay * 1000,
+      );
+    },
+  },
 };
 </script>
 
@@ -167,6 +214,7 @@ export default {
   .pop-card {
     position: relative;
     overflow-y: auto;
+    background-color: #fff;
   }
 
   &.top-left {

@@ -14,7 +14,7 @@
 
 <template>
   <div
-    :class="{ '-center': center }"
+    :class="{ '-center': center, '-dark': dark }"
     class="product-variant-card-micro"
     style="position: relative"
   >
@@ -81,6 +81,7 @@ export default {
       type: Object,
     },
     center: Boolean,
+    dark: Boolean,
   },
   data() {
     return {
@@ -142,6 +143,12 @@ export default {
 
   &.-center {
     justify-content: center;
+  }
+
+  &.-dark {
+    .card-badge-info {
+      color: #fff;
+    }
   }
 }
 

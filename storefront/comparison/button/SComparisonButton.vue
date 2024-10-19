@@ -63,14 +63,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UProgressRadial from "../../../ui/progress/radial/UProgressRadial.vue";
 import SComparisonList from "../list/SComparisonList.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SComparisonButton",
   components: { SComparisonList, UProgressRadial },
-
+  mixins: [TemplateMixin],
   data: () => ({
     show: false,
     busy: false,

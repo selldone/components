@@ -85,7 +85,7 @@
       show-arrows="hover"
     >
       <v-carousel-item
-        v-for="(item) in images_list_embedded"
+        v-for="item in images_list_embedded"
         :key="item.key"
         :eager="
           !!item.image /*Only for images! Prevent load YouTube and ar by default!*/
@@ -100,11 +100,16 @@
             :product-variant="currentVariant"
             style="
               position: absolute;
-              bottom: 0;
+              bottom: 4px;
               z-index: 1;
               left: 50%;
               transform: translate(-50%, 0);
+              background-color: rgba(0, 0, 0, 0.2);
+              backdrop-filter: blur(4px);
+              padding: 4px;
+              border-radius: 16px;
             "
+            dark
           />
 
           <s-image
@@ -222,12 +227,9 @@ export default {
   name: "SShopProductSlideShow",
   components: { SImage, UYoutubePlayer, UFadeScroll, VariantItemViewMicro },
 
-  inject:['$shop','$product'],
+  inject: ["$shop", "$product"],
 
   props: {
-
-
-
     currentVariant: {},
 
     vertical: {

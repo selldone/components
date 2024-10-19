@@ -14,7 +14,6 @@
 
 <template>
   <s-cart-shipping-options
-    :shop="shop"
     :basket="basket"
     :transportations="storeShippingOption.transportations"
     v-model:transportation="transportation"
@@ -41,13 +40,10 @@ export default {
   components: {
     SCartShippingOptions,
   },
+  inject: ["$shop"],
+
   emits: ["set-basket-config", "pickupSelected"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
     basket: {
       required: true,
       type: Object,

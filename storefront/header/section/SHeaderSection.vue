@@ -63,9 +63,11 @@ import SHeaderSectionDrawerMenu from "@selldone/components-vue/storefront/header
 import SHeaderSectionButtons from "@selldone/components-vue/storefront/header/section/buttons/SHeaderSectionButtons.vue";
 import SHeaderSectionUser from "@selldone/components-vue/storefront/header/section/user/SHeaderSectionUser.vue";
 import { ThemeHelper } from "@selldone/core-js";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SHeaderSection",
+  mixins:[TemplateMixin],
   components: {
     SHeaderSectionUser,
     SHeaderSectionButtons,
@@ -89,6 +91,8 @@ export default {
   }),
 
   computed: {
+
+
     user() {
       return this.$store.getters.getUser;
     },

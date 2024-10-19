@@ -23,7 +23,6 @@
     >
       <s-order-shipping-vendor-options
         :basket="basket"
-        :shop="shop"
         :vendorShippingOption="vendor_shipping_option"
         @set-basket-config="$emit('set-basket-config')"
         :deliveryInfo="deliveryInfo"
@@ -34,7 +33,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderShippingVendorOptions from "@selldone/components-vue/storefront/order/shipping/vendor/SOrderShippingVendorOptions.vue";
 
 export default {
@@ -42,13 +41,9 @@ export default {
   components: {
     SOrderShippingVendorOptions,
   },
+  inject: ["$shop"],
   emits: ["set-basket-config"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
     basket: {
       required: true,
       type: Object,
