@@ -75,7 +75,6 @@
           </u-color-circle>
           <span v-else>
             <u-variant-asset-image
-              :shop-id="shop.id"
               :size="24"
               :value="item[key]"
             ></u-variant-asset-image>

@@ -32,7 +32,6 @@
 
   <v-dialog v-model="apps_dialog" content-class="rounded-xl" max-width="720px">
     <s-cookie-preferences
-      :shop="$shop"
       class="rounded-xl"
       has-close
       @close="apps_dialog = false"

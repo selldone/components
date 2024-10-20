@@ -133,7 +133,6 @@
             {{ ProductVariants.volume.icon }}
           </v-icon>
           <u-variant-asset-image
-            :shop-id="product.shop_id"
             :size="24"
             :value="volume"
           ></u-variant-asset-image>
@@ -164,7 +163,6 @@
 
           <span class="card-badge-info">
             <u-variant-asset-image
-              :shop-id="product.shop_id"
               :size="24"
               :value="pack"
             ></u-variant-asset-image>
@@ -193,7 +191,6 @@
           </v-icon>
 
           <u-variant-asset-image
-            :shop-id="product.shop_id"
             :size="24"
             :value="weight"
           ></u-variant-asset-image>
@@ -222,7 +219,6 @@
             {{ ProductVariants.type.icon }}
           </v-icon>
           <u-variant-asset-image
-            :shop-id="product.shop_id"
             :size="24"
             :value="type"
           ></u-variant-asset-image>
@@ -249,7 +245,6 @@
             {{ ProductVariants.style.icon }}
           </v-icon>
           <u-variant-asset-image
-            :shop-id="product.shop_id"
             :size="24"
             :value="style"
           ></u-variant-asset-image>

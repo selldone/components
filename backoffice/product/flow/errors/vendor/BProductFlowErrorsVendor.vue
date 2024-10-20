@@ -39,7 +39,7 @@
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
-          <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
+          <v-img :src="getShopImagePath($product.icon, 64)"></v-img>
         </v-avatar>
         {{ $t("product_flow.vendor_errors.manage_vendors") }}
       </v-btn>
@@ -47,21 +47,16 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 export default defineComponent({
   name: "BProductFlowErrorsVendor",
   components: {},
-  props: {
-    shop: {
-      required: true,
-    },
-    product: {
-      required: true,
-    },
-  },
+  inject: ["$shop", "$product"],
+
+  props: {},
   computed: {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
@@ -72,7 +67,7 @@ export default defineComponent({
     },
 
     is_marketplace() {
-      return this.shop.model === BusinessModel.MARKETPLACE.code;
+      return this.$shop.model === BusinessModel.MARKETPLACE.code;
     },
     has_no_vendor() {
       return (
@@ -81,12 +76,12 @@ export default defineComponent({
     },
     vendor() {
       // Single vendor product mode. Vendors access only to their product in the vendor pane, so vendor is equal to product vendor!
-      return this.product.vendor;
+      return this.$product.vendor;
     },
 
     vendors() {
       // Multi vendors product mode.
-      return this.product.vendors;
+      return this.$product.vendors;
     },
   },
 });

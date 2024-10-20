@@ -15,7 +15,7 @@
 <template>
   <!-- ⬬⬬⬬⬬ File Empty ⬬⬬⬬⬬ -->
   <v-row
-    v-if="is_file && !product?.files?.length"
+    v-if="is_file && !$product?.files?.length"
     align="center"
     class="bg-red shadow-small"
     no-gutters
@@ -42,7 +42,7 @@
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
-          <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
+          <v-img :src="getShopImagePath($product.icon, 64)"></v-img>
         </v-avatar>
 
         {{ $t("product_flow.file_errors.manage_files") }}
@@ -51,18 +51,16 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default defineComponent({
   name: "BProductFlowErrorsFile",
   components: {},
-  props: {
-    product: {
-      required: true,
-    },
-  },
+  inject: ["$product"],
+
+  props: {},
   computed: {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
@@ -73,7 +71,7 @@ export default defineComponent({
     },
 
     is_file() {
-      return this.product.type === ProductType.FILE.code;
+      return this.$product.type === ProductType.FILE.code;
     },
   },
 });

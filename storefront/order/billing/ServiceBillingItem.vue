@@ -62,7 +62,13 @@
             class="me-2"
             title="Pricing of this item by seller."
           ></u-price>
-          <v-chip v-else class="me-2" color="#FFA000" variant="elevated" size="small" prepend-icon="hourglass_top"
+          <v-chip
+            v-else
+            class="me-2"
+            color="#FFA000"
+            variant="elevated"
+            size="small"
+            prepend-icon="hourglass_top"
             >Not pricing yet!
           </v-chip>
 
@@ -521,11 +527,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UDateInput from "../../../ui/date/input/UDateInput.vue";
 import UTasksEditor from "../../../ui/task/editor/UTasksEditor.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
-import UCalendarView from "../../../ui/calendar/clendar-view/UCalendarView.vue";
 import UTimeWeekPicker from "../../../ui/time/week-picker/UTimeWeekPicker.vue";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
@@ -540,16 +545,12 @@ export default {
     SWidgetButtons,
     UPriceInput,
     UTimeWeekPicker,
-    UCalendarView,
     UNumberInput,
     UTasksEditor,
     UDateInput,
   },
+  inject: ["$shop"],
   props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
     basket: {
       require: true,
       type: Object,
@@ -713,7 +714,7 @@ export default {
       axios
         .put(
           window.API.PUT_SERVICE_ITEM(
-            this.shop.id,
+            this.$shop.id,
             this.basket.id,
             this.item.id,
           ),
@@ -769,7 +770,7 @@ export default {
                 this.item.id,
               )
             : window.API.PUT_SERVICE_ITEM_TASKS(
-                this.shop.id,
+                this.$shop.id,
                 this.basket.id,
                 this.item.id,
               ),

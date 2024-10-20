@@ -16,11 +16,11 @@
   <v-card class="text-start">
     <v-card-title class="d-flex align-center">
       <v-avatar :size="48" class="me-2 avatar-gradient -thin -shop">
-        <v-img :src="getShopImagePath(shop?.icon, 128)"></v-img>
+        <v-img :src="getShopImagePath($shop?.icon, 128)"></v-img>
       </v-avatar>
 
       <div>
-        <b class="d-block">{{ shop?.title }}</b>
+        <b class="d-block">{{ $shop?.title }}</b>
         {{ $t("footer.dialog_setting.title") }}
       </div>
     </v-card-title>
@@ -91,21 +91,19 @@
 
       <!--- ================= Countries ================= --->
       <div
-          v-if="shop.countries?.length"
-          class="text-start text-uppercase mt-3 mx-5"
+        v-if="$shop.countries?.length"
+        class="text-start text-uppercase mt-3 mx-5"
       >
         <small>{{ $t("global.commons.service_area") }}</small
         ><br />
         <flag
-            v-for="country in shop.countries"
-            :key="country"
-            :iso="country"
-            :squared="false"
-            class="m-1 hover-scale force-top"
+          v-for="country in $shop.countries"
+          :key="country"
+          :iso="country"
+          :squared="false"
+          class="m-1 hover-scale force-top"
         />
       </div>
-
-
     </v-card-text>
     <v-card-actions>
       <div class="widget-buttons">
@@ -142,11 +140,9 @@
 <script>
 export default {
   name: "SCookiePreferences",
+  inject: ["$shop"],
+  emits: ["close"],
   props: {
-    shop: {
-      type: Object,
-      required: true,
-    },
     hasClose: {
       type: Boolean,
       default: false,
@@ -162,19 +158,19 @@ export default {
     },
 
     apps() {
-      this.shop.apps.forEach((app) => {
+      this.$shop.apps.forEach((app) => {
         // GDPR: Load from local storage if user not login!
         if (!this.USER()) {
           app.blocked =
             localStorage.getItem(
-              `shop:${this.shop.id}-app:${app.code}:blocked`,
+              `shop:${this.$shop.id}-app:${app.code}:blocked`,
             ) === "1";
         }
 
         app.active = !app.blocked;
       });
 
-      return this.shop.apps;
+      return this.$shop.apps;
     },
   },
   methods: {
@@ -196,7 +192,7 @@ export default {
         axios
           .post(
             window.XAPI.POST_SET_SHOP_APP_STATUS_BY_CUSTOMER(
-              this.shop.name,
+              this.$shop.name,
               app.code,
             ),
             {
@@ -222,11 +218,11 @@ export default {
         // GDPR: Save in local storage if user not login!
         if (active)
           localStorage.removeItem(
-            `shop:${this.shop.id}-app:${app.code}:blocked`,
+            `shop:${this.$shop.id}-app:${app.code}:blocked`,
           );
         else
           localStorage.setItem(
-            `shop:${this.shop.id}-app:${app.code}:blocked`,
+            `shop:${this.$shop.id}-app:${app.code}:blocked`,
             "1",
           );
       }

@@ -39,7 +39,6 @@
         {{ volume.removeVariantAsset() }}
 
         <u-variant-asset-image
-          :shop-id="productVariant.shop_id"
           :size="24"
           :value="volume"
         ></u-variant-asset-image>
@@ -52,7 +51,6 @@
       <span class="card-badge-info">
         {{ pack.removeVariantAsset() }}
         <u-variant-asset-image
-          :shop-id="productVariant.shop_id"
           :size="24"
           :value="pack"
         ></u-variant-asset-image>
@@ -68,7 +66,6 @@
       <span class="card-badge-info">
         {{ weight.removeVariantAsset() }}
         <u-variant-asset-image
-          :shop-id="productVariant.shop_id"
           :size="24"
           :value="weight"
         ></u-variant-asset-image>
@@ -81,7 +78,6 @@
       <span class="card-badge-info">
         {{ style.removeVariantAsset() }}
         <u-variant-asset-image
-          :shop-id="productVariant.shop_id"
           :size="24"
           :value="style"
         ></u-variant-asset-image>
@@ -95,7 +91,6 @@
       <span class="card-badge-info">
         {{ type.removeVariantAsset() }}
         <u-variant-asset-image
-          :shop-id="productVariant.shop_id"
           :size="24"
           :value="type"
         ></u-variant-asset-image>

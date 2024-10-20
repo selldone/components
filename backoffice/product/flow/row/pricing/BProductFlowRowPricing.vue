@@ -17,14 +17,14 @@
     <template v-slot:title>
       {{ $t("product_flow.pricing.title") }}
       ●
-      <u-price :amount="min_price" :currency="product.currency"></u-price>
+      <u-price :amount="min_price" :currency="$product.currency"></u-price>
       <template v-if="min_price !== max_price">
         ~
-        <u-price :amount="max_price" :currency="product.currency"></u-price>
+        <u-price :amount="max_price" :currency="$product.currency"></u-price>
       </template>
     </template>
     <template v-slot:subtitle>
-      <div v-if="product.price === 0">
+      <div v-if="$product.price === 0">
         <v-icon class="me-1" color="red">cancel</v-icon>
         {{ $t("product_flow.pricing.no_product_price_msg") }}
       </div>
@@ -32,7 +32,10 @@
         <v-icon class="me-1" color="green">check_circle</v-icon>
         {{ $t("product_flow.pricing.listing_pricing_msg") }}
 
-        <u-price :amount="product.price" :currency="product.currency"></u-price>
+        <u-price
+          :amount="$product.price"
+          :currency="$product.currency"
+        ></u-price>
       </div>
 
       <div v-if="has_valuation">
@@ -58,23 +61,15 @@
   </v-list-item>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "BProductFlowRowPricing",
   components: {},
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
+  inject: ["$shop", "$product"],
 
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+  props: {},
 
   data: function () {
     return {};
@@ -90,9 +85,9 @@ export default {
     },
 
     min_price() {
-      let minPrice = this.product.price;
+      let minPrice = this.$product.price;
 
-      this.product.product_variants?.forEach((vendorProduct) => {
+      this.$product.product_variants?.forEach((vendorProduct) => {
         if (vendorProduct.pricing && vendorProduct.price < minPrice) {
           minPrice = vendorProduct.price;
         }
@@ -102,9 +97,9 @@ export default {
     },
 
     max_price() {
-      let maxPrice = this.product.price;
+      let maxPrice = this.$product.price;
 
-      this.product.product_variants?.forEach((vendorProduct) => {
+      this.$product.product_variants?.forEach((vendorProduct) => {
         if (vendorProduct.pricing && vendorProduct.price > maxPrice) {
           maxPrice = vendorProduct.price;
         }
@@ -114,14 +109,14 @@ export default {
     },
 
     has_valuation() {
-      return !!this.product.valuation;
+      return !!this.$product.valuation;
     },
 
     isSubscription() {
-      return this.product.type === ProductType.SUBSCRIPTION.code;
+      return this.$product.type === ProductType.SUBSCRIPTION.code;
     },
     subscription_prices() {
-      return this.product.subscription_prices;
+      return this.$product.subscription_prices;
     },
   },
 

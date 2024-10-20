@@ -24,19 +24,18 @@
       <s-hyper-product
         :busy-add="busy_add"
         :hyper="hyper"
-        :shop="shop"
         class="mb-3"
         @click:add="addHyperItem"
       ></s-hyper-product>
 
       <u-currency-input
-        v-if="shop.currencies.length > 1"
+        v-if="$shop.currencies.length > 1"
         v-model="currency"
         :label="$t('global.commons.currency')"
         :loading="busy_currency"
         :messages="$t('hyper.currency_msg')"
         :return-object="false"
-        :shop="shop"
+        :shop="$shop"
         class="mt-2 mb-3 max-width-field-mini"
         solo
         @change="setCurrencyHyper"
@@ -118,7 +117,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import SHyperCartItems from "../../../storefront/hyper/cart/items/SHyperCartItems.vue";
 import SHyperProduct from "../product/SHyperProduct.vue";
@@ -135,8 +134,9 @@ export default {
     SHyperCartItems,
     UCurrencyInput,
   },
+  inject: ["$shop"],
+  emits: ["update:hyper"],
   props: {
-    shop: { required: true },
     hyper: { required: true },
   },
 
@@ -186,14 +186,14 @@ export default {
 
   created() {
     this.currency = this.hyper.currency;
-    if (!this.currency) this.currency = this.shop.currencies[0];
+    if (!this.currency) this.currency = this.$shop.currencies[0];
   },
   methods: {
     setCurrencyHyper(currency) {
       console.log("setCurrencyHyper");
       this.busy_currency = true;
       axios
-        .get(window.XAPI.GET_CUSTOMER_OPEN_HYPER(this.shop_name), {
+        .get(window.XAPI.GET_CUSTOMER_OPEN_HYPER(this.$shop.name), {
           params: {
             currency: currency,
           },
@@ -225,7 +225,7 @@ export default {
       //console.log("********************* Add Item **********************");
       this.busy_add = true;
       axios
-        .post(window.XAPI.POST_ADD_OPEN_HYPER_ITEM(this.shop_name), {
+        .post(window.XAPI.POST_ADD_OPEN_HYPER_ITEM(this.$shop.name), {
           currency: this.hyper.currency,
 
           product_id: product_id,

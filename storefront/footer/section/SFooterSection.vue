@@ -138,7 +138,7 @@
   </v-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import UCurrencySelector from "../../../ui/currency/selector/UCurrencySelector.vue";
 import SStorefrontSocialButtons from "../../../storefront/social/SStorefrontSocialButtons.vue";
 import SLanguageSelector from "../../../storefront/language/selector/SLanguageSelector.vue";

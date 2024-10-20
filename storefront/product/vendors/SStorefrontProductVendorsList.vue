@@ -49,25 +49,16 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import _ from "lodash-es";
 
 export default {
   name: "SStorefrontProductVendorsList",
   emits: ["fetch-vendors", "vendor-hover:enter", "vendor-hover:leave"],
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     locationBounds: {
       type: Array,
-      /*
-      [
-      lng1,lat1, // max!
-       lng2,lat2  // min!
-      ]
-       */
     },
   },
 
@@ -99,7 +90,7 @@ export default {
       this.busy = true;
 
       axios
-        .get(window.XAPI.GET_VENDORS(this.shop.name), {
+        .get(window.XAPI.GET_VENDORS(this.$shop.name), {
           params: {
             offset: more ? this.vendors.length : 0,
             limit: this.limit,

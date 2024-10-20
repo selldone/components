@@ -87,7 +87,6 @@
           v-for="(item, index) in show_items"
           :key="index"
           :basket-item="item"
-          :shop="shop"
           small-width
         ></s-shop-basket-item>
       </div>
@@ -119,7 +118,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import SShopBasketItem from "../../../storefront/order/basket/SShopBasketItem.vue";
@@ -128,6 +127,7 @@ import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 export default {
   name: "BasketTopMenu",
   components: { SWidgetButtons, SShopBasketItem },
+  inject:['$shop'],
   props: {},
   data: () => ({
     menu: false,
@@ -143,9 +143,7 @@ export default {
     MapHelper() {
       return MapHelper;
     },
-    shop() {
-      return this.getShop();
-    },
+
 
     filtered_types() {
       return Object.values(ProductType).filter((type) => {
@@ -182,7 +180,7 @@ export default {
 
       let total = 0;
       this.current_basket.items.forEach((item) => {
-        total += item.count * this.getBasketItemPrice(this.shop, item);
+        total += item.count * this.getBasketItemPrice(this.$shop, item);
       });
       return total;
     },

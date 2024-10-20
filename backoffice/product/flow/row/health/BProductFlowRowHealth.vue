@@ -15,13 +15,13 @@
 <template>
   <v-list-item
     :prepend-avatar="
-      product.icon ? getShopImagePath(product.icon, 64) : undefined
+      $product.icon ? getShopImagePath($product.icon, 64) : undefined
     "
-    :prepend-icon="product.icon ? undefined : 'add_photo_alternate'"
-    :title="`${$t('product_flow.health.title')} ● ${product.title}`"
+    :prepend-icon="$product.icon ? undefined : 'add_photo_alternate'"
+    :title="`${$t('product_flow.health.title')} ● ${$product.title}`"
   >
     <template v-slot:subtitle>
-      <div v-if="product.quantity > 0 && !isFile">
+      <div v-if="$product.quantity > 0 && !isFile">
         <v-icon class="me-1" color="green">check_circle</v-icon>
 
         {{ $t("product_flow.health.available_in_stock_msg") }}
@@ -48,7 +48,7 @@
         </template>
       </div>
 
-      <div v-if="!product.icon">
+      <div v-if="!$product.icon">
         <v-icon class="me-1" color="red">cancel</v-icon>
         {{ $t("product_flow.health.no_image_uploaded_msg") }}
       </div>
@@ -56,23 +56,14 @@
   </v-list-item>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "BProductFlowRowHealth",
   components: {},
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+  inject: ["$shop", "$product"],
+  props: {},
 
   data: function () {
     return {};
@@ -88,14 +79,14 @@ export default {
     },
 
     isFile() {
-      return this.product.type === ProductType.FILE.code;
+      return this.$product.type === ProductType.FILE.code;
     },
 
     files_count() {
-      return this.product?.files?.length;
+      return this.$product?.files?.length;
     },
     files_size() {
-      return this.product?.files?.sumByKey("size");
+      return this.$product?.files?.sumByKey("size");
     },
   },
 

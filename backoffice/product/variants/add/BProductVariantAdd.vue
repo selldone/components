@@ -244,7 +244,6 @@
         >
           <template v-if="style" v-slot:append-inner>
             <u-variant-asset-image
-              :shop-id="shop.id"
               :size="24"
               :value="style"
             ></u-variant-asset-image>
@@ -272,7 +271,6 @@
         >
           <template v-if="volume" v-slot:append-inner>
             <u-variant-asset-image
-              :shop-id="shop.id"
               :size="24"
               :value="volume"
             ></u-variant-asset-image>
@@ -300,7 +298,6 @@
         >
           <template v-if="weight" v-slot:append-inner>
             <u-variant-asset-image
-              :shop-id="shop.id"
               :size="24"
               :value="weight"
             ></u-variant-asset-image>
@@ -331,7 +328,6 @@
         >
           <template v-if="pack" v-slot:append-inner>
             <u-variant-asset-image
-              :shop-id="shop.id"
               :size="24"
               :value="pack"
             ></u-variant-asset-image>
@@ -359,7 +355,6 @@
         >
           <template v-if="type" v-slot:append-inner>
             <u-variant-asset-image
-              :shop-id="shop.id"
               :size="24"
               :value="type"
             ></u-variant-asset-image>
@@ -409,7 +404,6 @@
           <span class="min-width-100 ms-2"
             >(<s-product-price
               :product="product"
-              :shop="shop"
               :variant="{
                 pricing: pricing,
                 price: price_object.price,

@@ -143,12 +143,11 @@ import UScanner from "../../../ui/scanner/UScanner.vue";
 export default {
   name: "SHyperProduct",
   components: { UScanner, UNumberInput, UVariantSelector },
-  props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
 
+  inject: ["$shop"],
+  emits: ["click:add"],
+
+  props: {
     hyper: {
       require: true,
       type: Object,
@@ -211,14 +210,14 @@ export default {
       if (!this.product) return 0;
 
       return this.CalcPriceProductCurrentCurrency(
-        this.shop,
+        this.$shop,
         this.product,
         this.selected_variant,
       );
     },
     discount_percent() {
       return this.discountProductPercent(
-        this.shop,
+        this.$shop,
         this.product,
         this.selected_variant,
       );
@@ -226,7 +225,7 @@ export default {
 
     discount() {
       return this.getProductDiscountAmount(
-        this.shop,
+        this.$shop,
         this.product,
         this.selected_variant,
       );
@@ -300,7 +299,7 @@ export default {
       );
       this.busy = true;
       axios
-        .get(window.XAPI.GET_PRODUCT_INFO_HYPER(this.shop_name, product_id))
+        .get(window.XAPI.GET_PRODUCT_INFO_HYPER(this.$shop.name, product_id))
         .then(({ data }) => {
           if (!data.error) {
             this.product = data.product;

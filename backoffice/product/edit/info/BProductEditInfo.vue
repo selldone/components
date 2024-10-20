@@ -487,7 +487,6 @@
             v-if="$vuetify.display.mdAndUp"
             v-model:preferences="preview_valuation"
             :product="product"
-            :shop="shop"
             class=""
             preview-mode
             style="

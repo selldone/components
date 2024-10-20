@@ -112,7 +112,6 @@
       :editable="editable"
       :highlights="highlights"
       :instagram="instagram"
-      :shop="shop"
       class="container"
     ></instagram-view-highlights>
 
@@ -177,7 +176,6 @@
         :editable="editable"
         :instagram="instagram"
         :medias="medias"
-        :shop="shop"
       >
       </instagram-view-medias>
     </div>
@@ -197,7 +195,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
 import InstagramViewMedias from "../../storefront/instagram/InstagramViewMedias.vue";
@@ -211,11 +209,8 @@ export default {
     InstagramViewHighlights,
     InstagramViewMedias,
   },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     instagram: {
       required: true,
       type: Object,
@@ -372,8 +367,8 @@ export default {
       axios
         .get(
           this.editable
-            ? window.API.GET_INSTAGRAM_DATA(this.shop.id)
-            : window.XAPI.GET_INSTAGRAM_DATA(this.shop.name),
+            ? window.API.GET_INSTAGRAM_DATA(this.$shop.id)
+            : window.XAPI.GET_INSTAGRAM_DATA(this.$shop.name),
           {
             params: {
               offset: (this.page - 1) * this.itemsPerPage,
@@ -383,7 +378,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.shop.instagram = data.instagram;
+            this.$shop.instagram = data.instagram;
             this.medias.push(...data.medias);
             this.highlights.push(...data.highlights);
 

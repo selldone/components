@@ -209,7 +209,6 @@
             <!-- ▁▁▁▁▁▁ 🞇 Price 🞇 ▁▁▁▁▁▁ -->
             <s-product-section-price
               v-else
-              :current-variant="current_variant"
               :preferences="preferences"
               :selected-vendor-product="selected_vendor_product"
             ></s-product-section-price>

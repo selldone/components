@@ -119,7 +119,6 @@
                       (s) => s.code === it.code && s.value === selection,
                     )
                   "
-                  :shop-id="$product.shop_id"
                   :value="selection"
                   background
                 ></u-variant-asset-image>

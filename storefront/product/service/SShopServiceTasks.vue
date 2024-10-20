@@ -28,7 +28,6 @@
         "
         :item="item"
         :product="item.product"
-        :shop="getShop()"
         view-only-progress
       ></service-billing-item>
     </div>

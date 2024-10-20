@@ -46,13 +46,13 @@
           <div class="card-hover">
             <v-row class="card-hover-icons" no-gutters>
               <div class="p-1">
-                <v-icon >favorite</v-icon>
+                <v-icon>favorite</v-icon>
                 <span class="ms-2">{{
                   numeralFormat(media.likes, "0.[0]a")
                 }}</span>
               </div>
               <div class="p-1">
-                <v-icon >mode_comment</v-icon>
+                <v-icon>mode_comment</v-icon>
                 <span class="ms-2">{{
                   numeralFormat(media.comments, "0.[0]a")
                 }}</span>
@@ -429,7 +429,7 @@
             <template v-slot:append-inner>
               <u-currency-input
                 v-model="in_currency"
-                :activeCurrencies="shop.currencies"
+                :activeCurrencies="$shop.currencies"
                 class="margin-n7px"
                 dense
                 hide-details
@@ -491,7 +491,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import {
   SmartConvertTextToHtml,
   SmartConvertTextToHtmlHashtags,
@@ -522,11 +522,8 @@ export default {
     ProductVariantsView,
     ProductsDenseImagesCircles,
   },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     instagram: {
       required: true,
       type: Object,
@@ -638,14 +635,14 @@ export default {
       if (!this.product_data) return 0;
 
       return this.CalcPriceProductCurrentCurrency(
-        this.shop,
+        this.$shop,
         this.product_data,
         this.selected_variant,
       );
     },
     discount_percent() {
       return this.discountProductPercent(
-        this.shop,
+        this.$shop,
         this.product_data,
         this.selected_variant,
       );
@@ -653,7 +650,7 @@ export default {
 
     discount() {
       return this.getProductDiscountAmount(
-        this.shop,
+        this.$shop,
         this.product_data,
         this.selected_variant,
       );
@@ -681,8 +678,8 @@ export default {
   },
 
   created() {
-    if (this.shop.currencies.length)
-      this.in_currency = Currency[this.shop.currencies[0]];
+    if (this.$shop.currencies.length)
+      this.in_currency = Currency[this.$shop.currencies[0]];
   },
 
   methods: {
@@ -742,7 +739,7 @@ export default {
     },
 
     showCategory(id) {
-      window.open(this.getCategoryLink(this.shop, id), "_blank");
+      window.open(this.getCategoryLink(this.$shop, id), "_blank");
       this.showNormalPost();
     },
     showProduct(id) {
@@ -759,7 +756,9 @@ export default {
       this.error_msg = null;
 
       axios
-        .get(window.XAPI.GET_PRODUCT_INFO_INSTAGRAM(this.shop.name, product_id))
+        .get(
+          window.XAPI.GET_PRODUCT_INFO_INSTAGRAM(this.$shop.name, product_id),
+        )
         .then(({ data }) => {
           if (!data.error) {
             this.product_data = data.product;
@@ -790,7 +789,7 @@ export default {
 
       axios
         .put(
-          window.API.PUT_INSTAGRAM_MEDIA_SET_PRODUCTS(this.shop.id, media.id),
+          window.API.PUT_INSTAGRAM_MEDIA_SET_PRODUCTS(this.$shop.id, media.id),
           {
             products: media.products,
           },
@@ -818,7 +817,7 @@ export default {
       this.busy_save = null;
       axios
         .put(
-          window.API.PUT_INSTAGRAM_MEDIA_SET_CAPTION(this.shop.id, media.id),
+          window.API.PUT_INSTAGRAM_MEDIA_SET_CAPTION(this.$shop.id, media.id),
           {
             caption: SmartConvertTextToHtml(caption),
           },
@@ -866,7 +865,7 @@ export default {
       this.busy_new_product = true;
 
       axios
-        .post(window.API.POST_ADD_PRODUCT(this.shop.id), {
+        .post(window.API.POST_ADD_PRODUCT(this.$shop.id), {
           type: ProductType.PHYSICAL.code,
           unit: this.in_unit,
 

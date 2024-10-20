@@ -113,7 +113,6 @@
                     </u-color-circle>
                     <template v-else>
                       <u-variant-asset-image
-                        :shop-id="shop.id"
                         :size="24"
                         :value="var_1"
                       ></u-variant-asset-image>
@@ -135,7 +134,6 @@
                     </u-color-circle>
                     <template v-else>
                       <u-variant-asset-image
-                        :shop-id="shop.id"
                         :size="24"
                         :value="var_2"
                       ></u-variant-asset-image>

@@ -585,8 +585,8 @@
                           >
                           <v-chip
                             v-if="
-                              shop &&
-                              lang.toLowerCase() === shop.language.toLowerCase()
+                              $shop &&
+                              lang.toLowerCase() === $shop.language.toLowerCase()
                             "
                             class="px-1 mx-2"
                             label
@@ -661,7 +661,7 @@
                   </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
-                  <s-article-tags-editor :article="article" :shop="shop" />
+                  <s-article-tags-editor :article="article" :shop="$shop" />
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -716,7 +716,7 @@
             v-if="article?.id && first_load_seo_audit"
             :key="'seo' + article?.id"
             :article="article"
-            :shop="shop"
+            :shop="$shop"
           >
           </s-article-search-console>
         </div>
@@ -958,7 +958,7 @@
           :article-user-id="article.user_id"
           :for-product="!!productId"
           :is-selldone="['blog', 'help'].includes(articleType)"
-          :is-shop="!!shopId"
+          :is-shop="!!$shop?.id"
           class="pt-3"
         >
           <template v-slot:login>
@@ -986,7 +986,7 @@
             <s-articles-timeline
               :article-type="articleType"
               :current-article-id="article.id"
-              :shop-id="shopId"
+              :shop-id="$shop?.id"
             ></s-articles-timeline>
           </v-container>
         </v-card-text>
@@ -1052,9 +1052,9 @@ export default {
     SArticleEditor,
     SArticleComments,
   },
+  inject:['$shop'],
   emits: ["request-auto-translate", "update-article", "delete","get-data"],
   props: {
-    shop: { required: false, type: Object },
 
     initialArticlePack: {
       required: false,
@@ -1131,7 +1131,6 @@ export default {
       default: "review",
     },
 
-    shopId: {},
 
     autoPageTitle: {
       required: false,
@@ -1282,7 +1281,7 @@ export default {
 
     languages() {
       // Available languages of shop!
-      return this.shop && ShopOptionsHelper.GetLanguages(this.shop);
+      return this.$shop && ShopOptionsHelper.GetLanguages(this.$shop);
     },
     can_change_article_language() {
       return this.in_edit_mode && !this.forceLanguage;
@@ -1291,10 +1290,10 @@ export default {
     can_auto_translate() {
       return (
         this.multiLanguage &&
-        this.shop &&
+        this.$shop &&
         this.forceLanguage &&
         this.forceLanguage.toLowerCase() !==
-          this.shop.language.toLowerCase() /*Not default language*/ &&
+          this.$shop.language.toLowerCase() /*Not default language*/ &&
         !this.multiLanguageAvailable.includes(this.forceLanguage.toLowerCase())
       ); /*Not have article!*/
     },
@@ -1303,8 +1302,8 @@ export default {
     shop_id() {
       return this.$route.params.shop_id
         ? this.$route.params.shop_id
-        : this.shopId
-          ? this.shopId
+        : this.$shop?.id
+          ? this.$shop.id
           : this.getShop()
             ? this.getShop().id
             : null;
@@ -1639,7 +1638,7 @@ export default {
         // 🞇 Get article from server.
 
         const url = this.is_shop_blog
-          ? window.XAPI.GET_SHOP_BLOG_DATA(this.shop.name, this.targetId)
+          ? window.XAPI.GET_SHOP_BLOG_DATA(this.$shop.name, this.targetId)
           : window.GAPI.GET_ARTICLE(this.articleType, this.targetId);
 
         axios
@@ -1768,8 +1767,8 @@ export default {
         : this.getCurrentLanguage().code;
 
       // Set language in shop mode:
-      if (this.shop) {
-        this.article.lang = this.shop.langauge;
+      if (this.$shop) {
+        this.article.lang = this.$shop.langauge;
       }
 
       this.refreshPlaceholders();

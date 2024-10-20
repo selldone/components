@@ -96,7 +96,6 @@
             >
             <template v-else>
               <u-variant-asset-image
-                :shop-id="category.shop_id"
                 :size="16"
                 :value="val"
                 class="pen me-1"

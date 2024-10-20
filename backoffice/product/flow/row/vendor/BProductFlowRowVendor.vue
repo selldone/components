@@ -64,7 +64,7 @@
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
-          <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
+          <v-img :src="getShopImagePath($product.icon, 64)"></v-img>
         </v-avatar>
         {{ $t("product_flow.vendor.add_vendors") }}
       </v-btn>
@@ -72,23 +72,15 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 export default {
   name: "BProductFlowRowVendor",
   components: {},
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
+  inject: ["$shop", "$product"],
 
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+  props: {},
 
   data: function () {
     return {};
@@ -104,13 +96,13 @@ export default {
     },
 
     isMarketplace() {
-      return this.shop.model === BusinessModel.MARKETPLACE.code;
+      return this.$shop.model === BusinessModel.MARKETPLACE.code;
     },
     vendor_owner() {
-      return this.product.vendor;
+      return this.$product.vendor;
     },
     vendors() {
-      return this.product.vendors;
+      return this.$product.vendors;
     },
   },
 

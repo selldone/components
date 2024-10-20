@@ -36,8 +36,6 @@
 
       <template v-else>
         <u-variant-asset-image
-          v-if="shop"
-          :shop-id="shop.id"
           :size="16"
           :value="item"
           class="pen me-1"
@@ -48,7 +46,7 @@
   </v-chip-group>
 </template>
 
-<script>
+<script lang="ts">
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
 
@@ -56,6 +54,7 @@ export default {
   name: "SCategoryFilterSelector",
   components: { UVariantAssetImage, UColorCircle },
   emits: ["update:modelValue", "change"],
+  inject: ["$shop"],
   props: {
     isColor: {
       type: Boolean,
@@ -79,11 +78,7 @@ export default {
       internal_change_value: false,
     };
   },
-  computed: {
-    shop() {
-      return this.getShop();
-    },
-  },
+  computed: {},
 
   watch: {
     selected_list: {

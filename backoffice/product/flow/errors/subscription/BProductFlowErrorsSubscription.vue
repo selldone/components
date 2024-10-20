@@ -42,7 +42,7 @@
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
-          <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
+          <v-img :src="getShopImagePath($product.icon, 64)"></v-img>
         </v-avatar>
         {{ $t("product_flow.subscription_errors.pricing_plans") }}
       </v-btn>
@@ -50,18 +50,16 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default defineComponent({
   name: "BProductFlowErrorsSubscription",
   components: {},
-  props: {
-    product: {
-      required: true,
-    },
-  },
+  inject: ["$shop", "$product"],
+
+  props: {},
   computed: {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
@@ -72,10 +70,10 @@ export default defineComponent({
     },
 
     isSubscription() {
-      return this.product.type === ProductType.SUBSCRIPTION.code;
+      return this.$product.type === ProductType.SUBSCRIPTION.code;
     },
     subscription_prices() {
-      return this.product.subscription_prices;
+      return this.$product.subscription_prices;
     },
   },
 });

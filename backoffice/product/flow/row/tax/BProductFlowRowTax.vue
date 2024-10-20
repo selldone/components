@@ -43,7 +43,7 @@
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -shop me-1" size="24">
-          <v-img :src="getShopImagePath(shop.icon, 64)"></v-img>
+          <v-img :src="getShopImagePath($shop.icon, 64)"></v-img>
         </v-avatar>
 
         {{ $t("product_flow.tax.tax_profiles") }}
@@ -52,23 +52,15 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {
   name: "BProductFlowRowTax",
   components: {},
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
+  inject: ["$shop", "$product"],
 
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+  props: {},
 
   data: function () {
     return {};
@@ -84,16 +76,16 @@ export default {
     },
 
     tax_profiles() {
-      return this.shop.tax_profiles;
+      return this.$shop.tax_profiles;
     },
 
     isSubscription() {
-      return this.product.type === ProductType.SUBSCRIPTION.code;
+      return this.$product.type === ProductType.SUBSCRIPTION.code;
     },
     current_tax_profile() {
       return (
-        this.product.tax_id &&
-        this.tax_profiles.find((t) => t.id === this.product.tax_id)
+        this.$product.tax_id &&
+        this.tax_profiles.find((t) => t.id === this.$product.tax_id)
       );
     },
 
@@ -104,7 +96,7 @@ export default {
       let tax = null;
       if (!this.current_tax_profile) {
         out = `<b>${this.$t("global.commons.default")}</b> `;
-        tax = this.shop.tax;
+        tax = this.$shop.tax;
       } else {
         out = `<b>${this.$t("product_flow.tax.description.dedicated")}</b> `;
         tax = this.current_tax_profile;

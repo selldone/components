@@ -55,20 +55,12 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "SProductSectionWaitingAuction",
   components: {},
+  inject: ["$shop", "$product"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
     currentVariant: {},
 
     vertical: {
@@ -83,8 +75,8 @@ export default {
 
   computed: {
     inform() {
-      if (!this.product.informs) return null;
-      return this.product.informs.find((item) => {
+      if (!this.$product.informs) return null;
+      return this.$product.informs.find((item) => {
         return (
           item.variant_id ===
           (this.currentVariant ? this.currentVariant.id : null)
@@ -98,8 +90,8 @@ export default {
 
     discount_percent() {
       return this.discountProductPercent(
-        this.shop,
-        this.product,
+        this.$shop,
+        this.$product,
         this.currentVariant,
       );
     },
@@ -116,8 +108,8 @@ export default {
       axios
         .put(
           window.XAPI.PUT_TO_WAITING_FOR_AUCTION(
-            this.shop.name,
-            this.product.id,
+            this.$shop.name,
+            this.$product.id,
           ),
           {
             variant_id: this.currentVariant ? this.currentVariant.id : null,
@@ -129,7 +121,7 @@ export default {
               this.$t("product_info.notifications.congratulation"),
               this.$t("product_info.notifications.waiting_list_add_success"),
             );
-            this.product.informs = data.informs;
+            this.$product.informs = data.informs;
             this.$forceUpdate();
           } else {
             this.showErrorAlert(null, data.error_msg);
@@ -148,8 +140,8 @@ export default {
       axios
         .delete(
           window.XAPI.DELETE_FROM_WAITING_FOR_AUCTION(
-            this.shop.name,
-            this.product.id,
+            this.$shop.name,
+            this.$product.id,
           ),
           {
             params: {
@@ -163,7 +155,7 @@ export default {
               null,
               this.$t("product_info.notifications.waiting_list_delete_success"),
             );
-            this.product.informs = data.informs;
+            this.$product.informs = data.informs;
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

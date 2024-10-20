@@ -37,7 +37,6 @@
         </template>
         <template v-else>
           <u-variant-asset-image
-            :shop-id="shop.id"
             :size="24"
             :value="item.raw"
           ></u-variant-asset-image>

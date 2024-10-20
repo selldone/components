@@ -14,7 +14,7 @@
 
 <template>
   <img
-    v-if="shopId && value && name"
+    v-if="$shop?.id && value && name"
     :class="{
       'inline-block': !block && !background,
       background: background,
@@ -27,12 +27,12 @@
   />
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "UVariantAssetImage",
   components: {},
+  inject: ["$shop"],
   props: {
-    shopId: {},
     value: {},
     size: {
       default: 32,
@@ -61,7 +61,7 @@ export default {
     },
     src() {
       return this.getShopImagePath(
-        `shops_${this.shopId}_variant-assets_${this.name}.png`,
+        `shops_${this.$shop.id}_variant-assets_${this.name}.png`,
       );
     },
   },

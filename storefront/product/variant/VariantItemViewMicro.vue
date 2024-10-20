@@ -23,7 +23,6 @@
 
     <span v-if="volume" class="card-badge-info">
       <u-variant-asset-image
-        :shop-id="shop_id"
         :size="24"
         :value="volume"
       ></u-variant-asset-image>
@@ -32,7 +31,6 @@
 
     <span v-if="pack" class="card-badge-info">
       <u-variant-asset-image
-        :shop-id="shop_id"
         :size="24"
         :value="pack"
       ></u-variant-asset-image>
@@ -41,7 +39,6 @@
 
     <span v-if="weight" class="card-badge-info">
       <u-variant-asset-image
-        :shop-id="shop_id"
         :size="24"
         :value="weight"
       ></u-variant-asset-image
@@ -50,7 +47,6 @@
 
     <span v-if="style" class="card-badge-info">
       <u-variant-asset-image
-        :shop-id="shop_id"
         :size="24"
         :value="style"
       ></u-variant-asset-image>
@@ -59,7 +55,6 @@
 
     <span v-if="type" class="card-badge-info">
       <u-variant-asset-image
-        :shop-id="shop_id"
         :size="24"
         :value="type"
       ></u-variant-asset-image>

@@ -84,7 +84,6 @@
               <small class="mx-1">{{ $t(ProductVariants.style.name) }}</small>
 
               <u-variant-asset-image
-                :shop-id="shop.id"
                 :size="24"
                 :value="task.style"
               ></u-variant-asset-image>
@@ -99,7 +98,6 @@
               <small class="mx-1">{{ $t(ProductVariants.volume.name) }}</small>
 
               <u-variant-asset-image
-                :shop-id="shop.id"
                 :size="24"
                 :value="task.volume"
               ></u-variant-asset-image>
@@ -114,7 +112,6 @@
               <small class="mx-1">{{ $t(ProductVariants.weight.name) }}</small>
 
               <u-variant-asset-image
-                :shop-id="shop.id"
                 :size="24"
                 :value="task.weight"
               ></u-variant-asset-image>
@@ -129,7 +126,6 @@
               <small class="mx-1">{{ $t(ProductVariants.pack.name) }}</small>
 
               <u-variant-asset-image
-                :shop-id="shop.id"
                 :size="24"
                 :value="task.pack"
               ></u-variant-asset-image>
@@ -144,7 +140,6 @@
               <small class="mx-1">{{ $t(ProductVariants.type.name) }}</small>
 
               <u-variant-asset-image
-                :shop-id="shop.id"
                 :size="24"
                 :value="task.type"
               ></u-variant-asset-image>

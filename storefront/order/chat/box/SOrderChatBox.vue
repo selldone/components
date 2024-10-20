@@ -29,7 +29,6 @@
         :key="i"
         :basket="basket"
         :message="message"
-        :shop="shop"
         class="my-2 c-bubble"
         has-delete
       >
@@ -95,12 +94,8 @@ export default {
   components: {
     SOrderChatMessage,
   },
-
+  inject: ["$shop"],
   props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
     basket: {
       require: true,
       type: Object,
@@ -132,7 +127,7 @@ export default {
       axios
         .post(
           window.XAPI.POST_CUSTOMER_BASKET_CHAT_ADD_MESSAGE(
-            this.shop.name,
+            this.$shop.name,
             this.basket.id,
           ),
           {

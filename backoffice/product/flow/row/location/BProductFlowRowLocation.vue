@@ -19,7 +19,9 @@
       :title="
         $t('product_flow.location.title', {
           status: locations_count
-            ?$t('product_flow.location.status.has_restriction',{count:locations_count})
+            ? $t('product_flow.location.status.has_restriction', {
+                count: locations_count,
+              })
             : $t('product_flow.location.status.no_restriction'),
         })
       "
@@ -64,6 +66,7 @@
           activator="parent"
           content-class="text-start"
           max-width="360"
+          location="bottom"
         >
           {{ `Available in ${zips.join(", ")}` }}
 
@@ -96,10 +99,9 @@
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -shop me-1" size="24">
-          <v-img :src="getShopImagePath(shop.icon, 64)"></v-img>
+          <v-img :src="getShopImagePath($shop.icon, 64)"></v-img>
         </v-avatar>
-   {{$t("product_flow.location.shop_locations")}}
-
+        {{ $t("product_flow.location.shop_locations") }}
       </v-btn>
       <v-btn
         :to="{
@@ -112,30 +114,21 @@
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
-          <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
+          <v-img :src="getShopImagePath($product.icon, 64)"></v-img>
         </v-avatar>
-        {{$t("product_flow.location.product_locations")}}
-
+        {{ $t("product_flow.location.product_locations") }}
       </v-btn>
     </div>
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "BProductFlowRowLocation",
   components: {},
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
+  inject: ["$shop", "$product"],
 
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+  props: {},
 
   data: function () {
     return {};
@@ -151,10 +144,10 @@ export default {
     },
 
     shop_countries() {
-      return this.shop.countries;
+      return this.$shop.countries;
     },
     locations() {
-      return this.product.locations;
+      return this.$product.locations;
     },
     locations_count() {
       return this.locations && Object.values(this.locations).length;

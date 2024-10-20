@@ -70,7 +70,6 @@
         @click="onSelect('volume', volume)"
       >
         <u-variant-asset-image
-          :shop-id="shop_id"
           :size="16"
           :value="volume"
         ></u-variant-asset-image>
@@ -97,7 +96,6 @@
         @click="onSelect('pack', pack)"
       >
         <u-variant-asset-image
-          :shop-id="shop_id"
           :size="16"
           :value="pack"
         ></u-variant-asset-image>
@@ -126,7 +124,6 @@
         @click="onSelect('weight', weight)"
       >
         <u-variant-asset-image
-          :shop-id="shop_id"
           :size="16"
           :value="weight"
         ></u-variant-asset-image>
@@ -153,7 +150,6 @@
         @click="onSelect('type', type)"
       >
         <u-variant-asset-image
-          :shop-id="shop_id"
           :size="16"
           :value="type"
         ></u-variant-asset-image>
@@ -180,7 +176,6 @@
         @click="onSelect('style', style)"
       >
         <u-variant-asset-image
-          :shop-id="shop_id"
           :size="16"
           :value="style"
         ></u-variant-asset-image>

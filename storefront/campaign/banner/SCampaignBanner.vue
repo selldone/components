@@ -1,30 +1,6 @@
-<!--
-  - Copyright (c) 2023. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
-  -->
-
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-expand-transition>
-    <div
-      v-if="
-        !close &&
-        banner &&
-        banner.message &&
-        !(
-          $route.name === window.$storefront.routes.PAGE_RENDER &&
-          $route.params.page_name === banner.page_name
-        )
-      "
-    >
+    <div v-if="show">
       <v-banner
         :class="{ '-bg-repeat': banner.repeat }"
         :style="{
@@ -84,7 +60,9 @@
   </v-expand-transition>
 </template>
 
-<script>
+<script lang="ts">
+import { defineAsyncComponent } from "vue";
+
 export default {
   name: "SCampaignBanner",
 
@@ -101,9 +79,11 @@ export default {
     },
   },
 
-  data: () => ({
-    close: false,
-  }),
+  data() {
+    return {
+      close: false,
+    };
+  },
 
   computed: {
     campaign() {
@@ -113,20 +93,44 @@ export default {
       if (this.developerMode) return this.bannerPreview;
       return this.campaign ? this.campaign.banner : null;
     },
+
+    show() {
+      return (
+        !this.close &&
+        this.banner?.message &&
+        !(
+          this.$route.name === window.$storefront.routes.PAGE_RENDER &&
+          this.$route.params.page_name === this.banner.page_name
+        )
+      );
+    },
   },
+
+  components: {
+    // Asynchronously load the u-lottie component
+    ULottie: defineAsyncComponent(
+      () =>
+        import(
+          /* webpackChunkName: "plug-lottie" */ "@selldone/components-vue/ui/lottie/ULottie.vue"
+        ),
+    ),
+  },
+
   created() {
     /**
-     * We set the banner status in the store state, to inform other components (like layout) the banner is showing or not)
+     * We set the banner status in the store state, to inform other components (like layout)
      */
     if (!this.developerMode)
       this.$store.commit("setShopMainBanner", this.banner);
   },
+
   watch: {
     banner() {
       if (!this.developerMode)
         this.$store.commit("setShopMainBanner", this.banner);
     },
   },
+
   methods: {
     dismiss() {
       this.close = true;

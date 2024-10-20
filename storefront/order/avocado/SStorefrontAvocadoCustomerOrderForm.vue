@@ -143,12 +143,12 @@
 
       <div v-if="!need_address || address_entered">
         <u-currency-input
-          v-if="shop.currencies.length > 1"
+          v-if="$shop.currencies.length > 1"
           v-model="avocado.currency"
           :label="$t('global.commons.currency')"
           :messages="$t('avocado.currency_msg')"
           :return-object="false"
-          :shop="shop"
+          :shop="$shop"
           class="my-5"
           dense
         >
@@ -190,7 +190,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopAvocadoCustomerOrderItems from "./SShopAvocadoCustomerOrderItems.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import SShopCustomerReceiverInfoWidget from "../delivery/SShopCustomerReceiverInfoWidget.vue";
@@ -204,8 +204,8 @@ export default {
     UNumberInput,
     SShopAvocadoCustomerOrderItems,
   },
+  inject: ["$shop"],
   props: {
-    shop: { required: true },
     avocado: { required: true },
   },
 
@@ -233,7 +233,7 @@ export default {
   }),
   computed: {
     shop_avocado() {
-      return this.shop.avocado ? this.shop.avocado : {};
+      return this.$shop.avocado ? this.$shop.avocado : {};
     },
 
     items() {

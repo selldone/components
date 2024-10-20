@@ -43,7 +43,7 @@
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
-          <v-img :src="getShopImagePath(product.icon, 64)"></v-img>
+          <v-img :src="getShopImagePath($product.icon, 64)"></v-img>
         </v-avatar>
 
         {{ $t("product_flow.location_errors.manage_locations") }}
@@ -52,17 +52,15 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "BProductFlowErrorsLocation",
   components: {},
-  props: {
-    product: {
-      required: true,
-    },
-  },
+  inject: ["$shop", "$product"],
+
+  props: {},
   computed: {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
@@ -81,15 +79,17 @@ export default defineComponent({
     },
 
     has_location() {
-      return !!this.product.locations;
+      return !!this.$product.locations;
     },
     no_location_error() {
-      return this.has_location && !Object.values(this.product.locations).length;
+      return (
+        this.has_location && !Object.values(this.$product.locations).length
+      );
     },
     invalid_location_error() {
       return (
         this.has_location &&
-        Object.values(this.product.locations).some((v) => !v.length)
+        Object.values(this.$product.locations).some((v) => !v.length)
       );
     },
   },

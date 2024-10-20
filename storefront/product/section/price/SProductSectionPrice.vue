@@ -86,17 +86,12 @@
       <span v-if="price_label" class="mx-1">{{ price_label }}</span>
 
       <span
-        v-if="
-          currentVariant &&
-          smart_price_enable &&
-          hasCountableVariants(currentVariant)
-        "
+        v-if="$variant && smart_price_enable && hasCountableVariants($variant)"
         class="mx-1"
         >(
         <s-product-price
           :product="$product"
-          :shop="$shop"
-          :variant="currentVariant"
+          :variant="$variant"
         ></s-product-price>
         )</span
       >
@@ -123,9 +118,7 @@
     <!-- ▁▁▁▁▁▁ 🞇 For Auction Inform 🞇 ▁▁▁▁▁▁ -->
 
     <s-product-section-waiting-auction
-      :current-variant="currentVariant"
-      :product="$product"
-      :shop="$shop"
+      :current-variant="$variant"
       class="mb-2 min-width-200"
       style="max-width: 70%"
     ></s-product-section-waiting-auction>
@@ -145,9 +138,8 @@ import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInval
 export default {
   name: "SProductSectionPrice",
   components: { UPriceInvalid, SProductSectionWaitingAuction, SProductPrice },
-  inject: ["$shop", "$product"],
+  inject: ["$shop", "$product", "$variant"],
   props: {
-    currentVariant: {},
     selectedVendorProduct: {},
     preferences: {},
   },
@@ -193,7 +185,7 @@ export default {
         out = this.CalcPriceProductCurrentCurrency(
           this.$shop,
           this.$product,
-          this.currentVariant,
+          this.$variant,
           this.preferences,
           this.$product.valuation,
           null,
@@ -210,7 +202,7 @@ export default {
       return this.getProductDiscountAmount(
         this.$shop,
         this.$product,
-        this.currentVariant,
+        this.$variant,
       );
     },
 
@@ -218,7 +210,7 @@ export default {
       return this.discountProductPercent(
         this.$shop,
         this.$product,
-        this.currentVariant,
+        this.$variant,
       );
     },
 
@@ -253,8 +245,8 @@ export default {
     },
 
     price_label() {
-      return this.currentVariant && this.currentVariant.pricing
-        ? this.currentVariant.price_label
+      return this.$variant && this.$variant.pricing
+        ? this.$variant.price_label
         : this.$product.price_label;
     },
 
@@ -262,7 +254,7 @@ export default {
     extra_pricings() {
       return ExtraPricingHelper.GetListOfExtraPricings(
         this.$product,
-        this.currentVariant,
+        this.$variant,
         this.selectedVendorProduct,
       );
     },
@@ -274,11 +266,7 @@ export default {
     },
 
     corresponding_item_in_basket() {
-      return BasketHelper.FindItem(
-        this.basket,
-        this.$product,
-        this.currentVariant,
-      );
+      return BasketHelper.FindItem(this.basket, this.$product, this.$variant);
     },
 
     basket() {

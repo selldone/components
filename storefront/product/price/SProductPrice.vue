@@ -20,14 +20,11 @@
   </span>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "SProductPrice",
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-    },
-
     product: {
       required: true,
     },
@@ -43,7 +40,7 @@ export default {
     },
     calculatePrice() {
       return this.priceProductByCurrency(
-        this.shop,
+        this.$shop,
         this.product,
         this.variant,
         this.currency,

@@ -30,7 +30,6 @@
         :basket="basket"
         is-admin
         :message="message"
-        :shop="$shop"
         class="my-2 c-bubble"
         has-delete
       >

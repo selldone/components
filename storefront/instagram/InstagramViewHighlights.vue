@@ -266,7 +266,6 @@
 
               <v-btn
                 class="-back"
-
                 icon
                 size="x-small"
                 variant="flat"
@@ -277,7 +276,6 @@
               <v-btn
                 class="-next"
                 icon
-
                 size="x-small"
                 variant="flat"
                 @click="nextStory(highlight)"
@@ -301,7 +299,7 @@
   </section>
 </template>
 
-<script>
+<script lang="ts">
 import ProductsDenseImagesCircles from "../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import { InstagramHelper } from "./helpers/InstagramHelper.js";
 import UDragPin from "../../ui/drag/pin/UDragPin.vue";
@@ -319,11 +317,8 @@ export default {
     UDragPin,
     ProductsDenseImagesCircles,
   },
+  inject: ["$shop"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
     instagram: {
       required: true,
       type: Object,
@@ -422,14 +417,14 @@ export default {
       if (!this.product_data) return 0;
 
       return this.CalcPriceProductCurrentCurrency(
-        this.shop,
+        this.$shop,
         this.product_data,
         this.selected_variant,
       );
     },
     discount_percent() {
       return this.discountProductPercent(
-        this.shop,
+        this.$shop,
         this.product_data,
         this.selected_variant,
       );
@@ -437,7 +432,7 @@ export default {
 
     discount() {
       return this.getProductDiscountAmount(
-        this.shop,
+        this.$shop,
         this.product_data,
         this.selected_variant,
       );
@@ -529,7 +524,7 @@ export default {
     },
 
     showCategory(id) {
-      window.open(this.getCategoryLink(this.shop, id), "_blank");
+      window.open(this.getCategoryLink(this.$shop, id), "_blank");
       this.showNormalPost();
     },
     showProduct(id) {
@@ -547,7 +542,9 @@ export default {
       this.error_msg = null;
 
       axios
-        .get(window.XAPI.GET_PRODUCT_INFO_INSTAGRAM(this.shop.name, product_id))
+        .get(
+          window.XAPI.GET_PRODUCT_INFO_INSTAGRAM(this.$shop.name, product_id),
+        )
         .then(({ data }) => {
           if (!data.error) {
             this.product_data = data.product;
@@ -578,7 +575,7 @@ export default {
 
       axios
         .put(
-          window.API.PUT_INSTAGRAM_STORY_SET_PRODUCTS(this.shop.id, story.id),
+          window.API.PUT_INSTAGRAM_STORY_SET_PRODUCTS(this.$shop.id, story.id),
           {
             products: story.products,
           },

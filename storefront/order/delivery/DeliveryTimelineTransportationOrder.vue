@@ -32,15 +32,15 @@
   </delivery-timeline>
 </template>
 
-<script>
+<script lang="ts">
 import DeliveryTimeline from "../../../storefront/order/delivery/DeliveryTimeline.vue";
 
 export default {
   name: "DeliveryTimelineTransportationOrder",
   components: { DeliveryTimeline },
   emits: ["refresh-service"],
+  inject: ["$shop"],
   props: {
-    shop: { required: true },
     transportationOrder: { required: true },
     deliveryInfo: {},
   },
@@ -54,7 +54,7 @@ export default {
 
   computed: {
     transportations() {
-      return this.shop.transportations;
+      return this.$shop.transportations;
     },
 
     transportation() {

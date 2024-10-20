@@ -20,64 +20,34 @@
   >
     <v-list :lines="3" class="border-between-vertical" rounded="xl">
       <!-- --------------- Connect --------------- -->
-      <b-product-flow-row-connect
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-row-connect>
+      <b-product-flow-row-connect></b-product-flow-row-connect>
 
       <!-- --------------- Product Health --------------- -->
-      <b-product-flow-row-health
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-row-health>
+      <b-product-flow-row-health></b-product-flow-row-health>
 
       <!-- ⬬⬬⬬⬬ Error > Marketplace ⬬⬬⬬⬬ -->
-      <b-product-flow-errors-vendor
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-errors-vendor>
+      <b-product-flow-errors-vendor></b-product-flow-errors-vendor>
 
       <!-- ⬬⬬⬬⬬ Error > File Empty ⬬⬬⬬⬬ -->
-      <b-product-flow-errors-file
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-errors-file>
+      <b-product-flow-errors-file></b-product-flow-errors-file>
 
       <!-- --------------- Pricing --------------- -->
-      <b-product-flow-row-pricing
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-row-pricing>
+      <b-product-flow-row-pricing></b-product-flow-row-pricing>
 
       <!-- ⬬⬬⬬⬬ Error > File Empty ⬬⬬⬬⬬ -->
-      <b-product-flow-errors-subscription
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-errors-subscription>
+      <b-product-flow-errors-subscription></b-product-flow-errors-subscription>
 
       <!-- --------------- Selling location restriction --------------- -->
-      <b-product-flow-row-location
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-row-location>
+      <b-product-flow-row-location></b-product-flow-row-location>
 
       <!-- ⬬⬬⬬⬬ Error > Location restriction ⬬⬬⬬⬬ -->
-      <b-product-flow-errors-location
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-errors-location>
+      <b-product-flow-errors-location></b-product-flow-errors-location>
 
       <!-- --------------- Tax --------------- -->
-      <b-product-flow-row-tax
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-row-tax>
+      <b-product-flow-row-tax></b-product-flow-row-tax>
 
       <!-- --------------- Vendor --------------- -->
-      <b-product-flow-row-vendor
-        :product="product"
-        :shop="shop"
-      ></b-product-flow-row-vendor>
+      <b-product-flow-row-vendor></b-product-flow-row-vendor>
     </v-list>
 
     <!-- --------------- Pods --------------- -->
@@ -89,7 +59,7 @@
       ></u-pod-node>
       <u-pod-wire forward></u-pod-wire>
       <u-pod-node
-        :image="getShopImagePath(product.icon, 64)"
+        :image="getShopImagePath($product.icon, 64)"
         icon="inventory"
         :title="$t('global.actions.add_to_cart')"
       ></u-pod-node>
@@ -134,7 +104,7 @@
         :title="$t('global.commons.checkout')"
       ></u-pod-node>
 
-      <template v-if="product.type === ProductType.SERVICE.code">
+      <template v-if="$product.type === ProductType.SERVICE.code">
         <u-pod-wire forward></u-pod-wire>
         <u-pod-node
           icon="assignment_turned_in"
@@ -150,7 +120,7 @@
 
       <u-pod-wire forward></u-pod-wire>
       <u-pod-node
-        :image="getProductTypeImage(product.type)"
+        :image="getProductTypeImage($product.type)"
         :title="$t('global.commons.fulfillment')"
       ></u-pod-node>
 
@@ -181,7 +151,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
@@ -218,17 +188,9 @@ export default {
     UPodNode,
     UPodsPanel,
   },
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
+  inject: ["$shop", "$product"],
 
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+  props: {},
 
   data: function () {
     return {};
@@ -236,24 +198,24 @@ export default {
 
   computed: {
     isMarketplace() {
-      return this.shop.model === BusinessModel.MARKETPLACE.code;
+      return this.$shop.model === BusinessModel.MARKETPLACE.code;
     },
 
     isPhysical() {
-      return this.product.type === ProductType.PHYSICAL.code;
+      return this.$product.type === ProductType.PHYSICAL.code;
     },
     isVirtual() {
-      return this.product.type === ProductType.VIRTUAL.code;
+      return this.$product.type === ProductType.VIRTUAL.code;
     },
     isService() {
-      return this.product.type === ProductType.SERVICE.code;
+      return this.$product.type === ProductType.SERVICE.code;
     },
     isSubscription() {
-      return this.product.type === ProductType.SUBSCRIPTION.code;
+      return this.$product.type === ProductType.SUBSCRIPTION.code;
     },
 
     ribbon() {
-      return this.product.ribbon;
+      return this.$product.ribbon;
     },
     subscription_mode() {
       return SubscriptionMode[this.ribbon?.mode];
@@ -263,11 +225,11 @@ export default {
     },
 
     has_valuation() {
-      return !!this.product.valuation;
+      return !!this.$product.valuation;
     },
 
     connect() {
-      return this.product.connect;
+      return this.$product.connect;
     },
   },
 

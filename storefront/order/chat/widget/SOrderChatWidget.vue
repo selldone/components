@@ -68,7 +68,7 @@
         {{ $t("global.commons.chat") }}
       </v-card-title>
       <v-card-text>
-        <s-order-chat-box :basket="basket" :shop="$shop"></s-order-chat-box>
+        <s-order-chat-box :basket="basket"></s-order-chat-box>
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">

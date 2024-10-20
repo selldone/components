@@ -331,7 +331,6 @@
             :current-variant="selected_item.variant"
             :preferences="selected_item.preferences"
             :product="selected_item.product"
-            :shop="getShop()"
             readonly
           ></s-product-section-valuation>
         </v-card-text>

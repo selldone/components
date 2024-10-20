@@ -102,7 +102,6 @@
             <s-product-section-valuation
               v-model:preferences="preview_valuation"
               :product="{ ...preview_product,valuation:{structure,conditions} }"
-              :shop="shop"
               class="my-5"
               preview-mode
             ></s-product-section-valuation>

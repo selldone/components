@@ -19,23 +19,24 @@
       :title="`${$t(connect_mode.title)} Connect ● ${connect.name}`"
     >
       <template v-slot:subtitle>
-       <span v-html="$t('product_flow.connect.subtitle',{name: connect.name})"></span>
+        <span
+          v-html="$t('product_flow.connect.subtitle', { name: connect.name })"
+        ></span>
 
         <div v-if="connect.enable">
           <v-icon class="me-1" color="green">check_circle</v-icon>
-          {{$t('product_flow.connect.enable_msg')}}
+          {{ $t("product_flow.connect.enable_msg") }}
         </div>
         <div v-else>
           <v-icon class="me-1" color="red">cancel</v-icon>
-          {{$t('product_flow.connect.disable_msg')}}
-
+          {{ $t("product_flow.connect.disable_msg") }}
         </div>
 
         <div v-if="connect.shipping">
           <v-icon class="me-1" color="green">check_circle</v-icon>
-          {{$t('product_flow.connect.has_shipping_msg',{name: connect.name})}}
-
-
+          {{
+            $t("product_flow.connect.has_shipping_msg", { name: connect.name })
+          }}
         </div>
       </template>
     </v-list-item>
@@ -49,35 +50,26 @@
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -shop" size="24">
-          <v-img :src="getShopImagePath(shop.icon, 64)"></v-img>
+          <v-img :src="getShopImagePath($shop.icon, 64)"></v-img>
         </v-avatar>
         <v-avatar class="avatar-gradient -thin -connect ms-n3 me-1" size="24">
           <v-img :src="getShopImagePath(connect.icon)"></v-img>
         </v-avatar>
 
-        {{$t('global.commons.manage')}} {{ connect.name }}
+        {{ $t("global.commons.manage") }} {{ connect.name }}
       </v-btn>
     </div>
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import { Connect } from "@selldone/core-js";
 
 export default {
   name: "BProductFlowRowConnect",
   components: {},
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
-    product: {
-      required: true,
-      type: Object,
-    },
-  },
+  inject: ["$shop", "$product"],
+  props: {},
 
   data: function () {
     return {};
@@ -93,7 +85,7 @@ export default {
     },
 
     connect() {
-      return this.product.connect;
+      return this.$product.connect;
     },
 
     connect_mode() {
