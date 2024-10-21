@@ -21,7 +21,7 @@
       color="#4f46e5"
       slim
       prepend-icon="tips_and_updates"
-      :height="inline ? 'auto' : undefined"
+      :density="inline ? 'compact' : undefined"
       :class="{ 'px-1': inline }"
     >
       <span style="text-decoration: underline">

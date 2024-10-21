@@ -48,7 +48,10 @@
       <div class="flex-grow-1">
         <p class="m-1 small">
           {{ $t("global.commons.distance") }}:
-          <b>{{ numeralFormat(transportation.distance, "0,0") }} {{distance_unit}}</b>
+          <b
+            >{{ numeralFormat(transportation.distance, "0,0") }}
+            {{ distance_unit }}</b
+          >
         </p>
 
         <p class="m-1 small">
@@ -76,7 +79,7 @@
         </p>
       </div>
     </div>
-    <hr />
+    <hr class="my-3" />
     <p class="mb-1">
       <small class="me-1">{{ $t("global.commons.days") }}:</small>
       <b>{{
@@ -99,7 +102,7 @@
       <small class="me-1">{{ $t("global.commons.holiday") }}:</small>
       <u-check :model-value="transportation.holidays" read-only></u-check>
     </p>
-    <hr />
+    <hr class="my-3" />
 
     <div class="d-flex">
       <p class="mb-1 w-50">
@@ -141,77 +144,97 @@
     </div>
     <div v-else style="min-height: 26px"></div>
 
-    <hr />
-
-    <div v-if="showButtons || user_ids?.length">
-      <small>
-        <v-icon class="me-1">people</v-icon>
-        {{ $t("global.commons.delivery_persons") }}:</small
-      >
-      <u-dense-circles-users
-        :add="showButtons"
-        :ids="user_ids"
-        :limit="10"
-        @click:add="
-          $router.push({
-            name: 'BPageTransportationCouriers',
-            params: { transportation_id: transportation.id },
-          })
-        "
-      ></u-dense-circles-users>
-    </div>
-
-    <div v-if="showButtons" class="widget-buttons">
-      <v-btn
-        :outlined="outlined"
-        :to="{
-          name: 'BPageTransportationCouriers',
-          params: { transportation_id: transportation.id },
-        }"
-        color="#111"
-        size="x-large"
-        variant="flat"
-      >
-        {{ $t("transportation_page.go_to_courier_list") }}
-        <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
-      </v-btn>
-    </div>
-
-    <hr />
-
-    <div v-if="showButtons || service_ids?.length">
-      <small>
-        <v-icon class="me-1">business</v-icon>
-        {{ $t("global.commons.delivery_services") }}:</small
-      >
-      <div style="padding: 11px">
-        <img
-          v-for="id in service_ids"
-          :key="id"
-          :src="getDeliveryServiceIcon(id, IMAGE_SIZE_SMALL)"
-          class="me-2"
-          height="32"
-          width="32"
-        />
-        <v-btn
-          v-if="showButtons"
-          :size="32"
-          :to="{
-            name: 'BPageTransportationServices',
-            params: { transportation_id: transportation.id },
-          }"
-          class="ms-2 hover-scale-small"
-          color="success"
-          icon
-          variant="flat"
+    <div
+      v-if="showButtons || user_ids?.length"
+      style="border-radius: 12px; border: solid thin #aaa"
+      class="mt-1 mx-n1 pa-1 d-flex align-stretch"
+    >
+      <div class="flex-grow-1">
+        <small>
+          <v-icon class="me-1">people</v-icon>
+          {{ $t("global.commons.delivery_persons") }}:</small
         >
-          <v-icon size="20">add</v-icon>
-        </v-btn>
+        <u-dense-circles-users
+          :add="showButtons"
+          :ids="user_ids"
+          :limit="10"
+          @click:add="
+            $router.push({
+              name: 'BPageTransportationCouriers',
+              params: { transportation_id: transportation.id },
+            })
+          "
+        ></u-dense-circles-users>
       </div>
 
-      <div v-if="showButtons" class="widget-buttons">
+      <div v-if="showButtons" class="flex-grow-0" style="width: 72px">
         <v-btn
           :outlined="outlined"
+          @click.stop
+          :to="{
+            name: 'BPageTransportationCouriers',
+            params: { transportation_id: transportation.id },
+          }"
+          color="#111"
+          size="x-large"
+          variant="flat"
+          stacked
+          class="text-wrap tnt text-center px-1"
+          density="compact"
+          min-width="0"
+          height="100%"
+          rounded="e-lg"
+        >
+          <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
+          <span style="font-size: 8px">
+            {{ $t("transportation_page.go_to_courier_list") }}</span
+          >
+        </v-btn>
+      </div>
+    </div>
+
+    <div
+      v-if="showButtons || service_ids?.length"
+      style="border-radius: 12px; border: solid thin #aaa"
+      class="mt-1 mx-n1 pa-1 d-flex align-stretch"
+    >
+      <div class="flex-grow-1">
+        <small>
+          <v-icon class="me-1">business</v-icon>
+          {{ $t("global.commons.delivery_services") }}:</small
+        >
+
+        <div style="padding: 11px">
+          <img
+            v-for="id in service_ids"
+            :key="id"
+            :src="getDeliveryServiceIcon(id, IMAGE_SIZE_SMALL)"
+            class="me-2"
+            height="32"
+            width="32"
+          />
+          <v-btn
+            v-if="showButtons"
+            :size="32"
+            @click.stop
+            :to="{
+              name: 'BPageTransportationServices',
+              params: { transportation_id: transportation.id },
+            }"
+            class="ms-2 hover-scale-small"
+            color="success"
+            icon
+            variant="flat"
+          >
+            <v-icon size="20">add</v-icon>
+          </v-btn>
+        </div>
+      </div>
+
+      <div v-if="showButtons" class="flex-grow-0" style="width: 72px">
+        <v-btn
+          :outlined="outlined"
+          @click.stop
           :to="{
             name: 'BPageTransportationServices',
             params: { transportation_id: transportation.id },
@@ -219,9 +242,17 @@
           color="#111"
           size="x-large"
           variant="flat"
+          stacked
+          class="text-wrap tnt text-center px-1"
+          density="compact"
+          min-width="0"
+          height="100%"
+          rounded="e-lg"
         >
-          {{ $t("transportation_page.go_to_service_list") }}
           <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
+          <span style="font-size: 8px">
+            {{ $t("transportation_page.go_to_service_list") }}</span
+          >
         </v-btn>
       </div>
     </div>
@@ -272,7 +303,6 @@ export default {
     size_unit() {
       return ShopOptionsHelper.GetSizeUnit(this.shop);
     },
-
 
     distance_unit() {
       return ShopOptionsHelper.GetDistanceUnit(this.shop);
