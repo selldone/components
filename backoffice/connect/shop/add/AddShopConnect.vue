@@ -88,7 +88,9 @@
             >These tutorials showcase some of the capabilities of Connect
             OS.</v-list-subheader
           >
+          <s-widget-help code="Connect.Printful" inline></s-widget-help>
           <s-widget-help code="Connect.XCart" inline></s-widget-help>
+
         </div>
       </v-expand-transition>
 
