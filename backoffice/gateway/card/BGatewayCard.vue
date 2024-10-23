@@ -13,7 +13,10 @@
   -->
 
 <template>
-  <div class="position-relative c-container -force-rounded pa-2" style="height: 100%">
+  <div
+    class="position-relative c-container -force-rounded pa-2"
+    style="height: 100%"
+  >
     <s-widget
       :class="[small ? 'm-1' : '', dark ? 'widget-dark' : '']"
       :style="`background: ${color}`"
@@ -37,16 +40,20 @@
       </div>
 
       <div v-if="!show_description" class="py-3 my-1 d-flex align-center">
-        <span class="text-h4 font-weight-light me-2">{{
+        <span class="text-h5 font-weight-black me-1">{{
           gateway?.currency
         }}</span>
-        <u-currency-icon :currency="currency" flag-only class="me-1"></u-currency-icon>
+        <u-currency-icon
+          :currency="currency"
+          flag-only
+          class="me-1"
+        ></u-currency-icon>
 
         <v-chip
           v-if="!gateway?.enable"
           color="red"
           prepend-icon="gpp_bad"
-          size="small"
+          size="x-small" variant="flat"
         >
           Gateway disabled
         </v-chip>
@@ -55,7 +62,7 @@
           v-else-if="shopGateway.enable && shopGateway.livemode"
           color="green"
           prepend-icon="verified_user"
-          size="small"
+          size="x-small" variant="flat"
         >
           {{ $t("global.status.active") }}
         </v-chip>
@@ -64,7 +71,7 @@
           v-else-if="shopGateway.enable && !shopGateway.livemode"
           color="orange"
           prepend-icon="science"
-          size="small"
+          size="x-small" variant="flat"
         >
           {{ $t("global.status.debug") }}
         </v-chip>
@@ -73,7 +80,7 @@
           v-else
           color="red"
           prepend-icon="report_gmailerrorred"
-          size="small"
+          size="x-small"
           variant="flat"
         >
           {{ $t("global.status.inactive") }}
@@ -88,6 +95,14 @@
           </v-tooltip>
         </v-chip>
 
+        <v-chip v-if="gateway.cod" size="x-small" color="blue" variant="flat" class="ms-1">COD</v-chip>
+        <v-chip v-if="gateway.cash" size="x-small" color="#009688" variant="flat" class="ms-1">Cash</v-chip>
+        <v-chip v-if="gateway.dir" size="x-small" color="#303F9F" variant="flat" class="ms-1">Direct</v-chip>
+        <v-chip v-if="gateway.blockchain" size="x-small" color="#C2185B" variant="flat" class="ms-1">Blockchain</v-chip>
+        <v-chip v-if="gateway.subscription" size="x-small" color="#673AB7" variant="flat" class="ms-1">Subscription</v-chip>
+        <v-chip v-if="gateway.pos" size="x-small" color="#000" variant="flat" class="ms-1">POS</v-chip>
+
+
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -96,9 +111,7 @@
           @click="goToEditGateway()"
           @click.stop
         >
-          <v-icon :color="dark ? '#fff' : '#444'" size="small">
-            tune
-          </v-icon>
+          <v-icon :color="dark ? '#fff' : '#444'" size="small"> tune </v-icon>
         </v-btn>
       </div>
 
@@ -238,6 +251,12 @@
             ></inline-chart-by-diff-days>
           </template>
         </div>
+
+        <div v-if="is_cod && transportations && !cod_transportations?.length">
+          <v-icon color="red" class="blink-me">warning</v-icon>
+          This shop currently doesn't have a shipping method that supports COD.
+          Please add at least one COD-supported shipping method in the settings.
+        </div>
       </template>
 
       <v-slide-y-reverse-transition hide-on-leave>
@@ -248,6 +267,20 @@
             class="mx-auto mb-2 zoomIn"
             width="48px"
           />
+
+          <template v-if="is_cod && transportations">
+            <v-chip
+              v-for="trans in cod_transportations"
+              :key="trans.code"
+              :prepend-avatar="trans.src"
+              class="ma-1"
+              size="small"
+              color="#eee"
+              variant="flat"
+              >{{ trans.name }}
+            </v-chip>
+          </template>
+
           <p class="my-3 text-subtitle-2">
             {{ description }}
           </p>
@@ -273,10 +306,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import InlineChartByDiffDays from "../../chart/InlineChartByDiffDays.vue";
 import BGatewayNetworkStatus from "../../gateway/network-status/BGatewayNetworkStatus.vue";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 
 export default {
   name: "BGatewayCard",
@@ -389,6 +423,28 @@ export default {
 
     class_state() {
       return this.gateway?.enable ? "bg-success" : "bg-danger"; //bg-warning
+    },
+    transportations() {
+      return this.shop.transportations;
+    },
+    cod_transportations() {
+      return this.transportations
+        ?.filter((item) => {
+          return item.enable && item.cod;
+        })
+
+        .map((item) => {
+          const t = ShopTransportations[item.type];
+          return {
+            src: item.logo ? this.getShopImagePath(item.logo) : t?.icon,
+            name: item.title ? item.title : this.$t(t?.name),
+            code: item.type,
+          };
+        });
+    },
+
+    is_cod() {
+      return this.gateway.cod;
     },
   },
   created() {},

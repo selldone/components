@@ -328,7 +328,6 @@
         :false-title="
           $t('admin_shop.logistic.delivery.delivery_form.cod_false')
         "
-        :force-show-all="false"
         :label="$t('admin_shop.logistic.delivery.delivery_form.cod_input')"
         :true-title="$t('admin_shop.logistic.delivery.delivery_form.cod_true')"
         class="max-widget-width mb-3"
@@ -336,6 +335,8 @@
         false-icon="payment"
         true-description="If the selected shipping method allows for Cash on Delivery (COD) payments, and a COD payment gateway is active for the chosen currency, then the customer can opt for COD payment."
         true-icon="local_atm"
+        force-show-all
+        false-gray
       ></u-smart-switch>
       <v-expand-transition>
         <div v-if="transportation.cod">
