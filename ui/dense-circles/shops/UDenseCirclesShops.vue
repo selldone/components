@@ -27,7 +27,7 @@
       class="citm"
       @click="$emit('click:item', id)"
     >
-      <v-img :src="getShopIcon(id, IMAGE_SIZE_SMALL)" style="padding: 2px" />
+      <v-img :src="getShopIcon(id, IMAGE_SIZE_SMALL)" style="padding: 2px" cover />
     </v-avatar>
   </div>
 </template>
