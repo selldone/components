@@ -50,7 +50,7 @@
           <v-icon v-else>account_circle</v-icon>
         </v-avatar>
         <div class="flex-grow-1">
-          <b>{{ user ? user.name : $t("global.commons.guest") }}</b>
+          <b>{{ user?.profile?.name?user.profile.name: user ? user.name : $t("global.commons.guest") }}</b>
           <small class="d-block">{{ $t("global.commons.now") }}</small>
         </div>
       </div>

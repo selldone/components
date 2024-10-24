@@ -50,8 +50,15 @@
           <v-img v-if="USER_ID()" :src="getUserAvatar(USER_ID())" />
           <v-icon v-else>account_circle</v-icon>
         </v-avatar>
+
         <div class="flex-grow-1">
-          <b>{{ user ? user.name : $t("global.commons.guest") }}</b>
+          <b>{{
+            user?.profile?.name
+              ? user.profile.name
+              : user
+                ? user.name
+                : $t("global.commons.guest")
+          }}</b>
           <small class="d-block">{{ $t("global.commons.now") }}</small>
         </div>
       </div>
@@ -65,14 +72,17 @@
         flat
         rounded="xl"
         variant="solo-filled"
-      ></v-textarea>
-
-      <u-smart-suggestion
-        :samples="templates"
-        @select="(v) => setTemplate(v)"
-        title-key="title"
-        value-key="body"
-      ></u-smart-suggestion>
+        messages=" "
+      >
+        <template v-slot:message>
+          <u-smart-suggestion
+            :samples="templates"
+            @select="(v) => setTemplate(v)"
+            title-key="title"
+            value-key="body"
+          ></u-smart-suggestion>
+        </template>
+      </v-textarea>
 
       <div class="widget-buttons">
         <v-btn
@@ -310,7 +320,10 @@
               auto-grow
               counter="1000"
               :messages="
-                $t('b_order_chat_box.add_template.inputs.body.messages',{order_id:'{order_id}',buyer_name:'{buyer_name}'})
+                $t('b_order_chat_box.add_template.inputs.body.messages', {
+                  order_id: '{order_id}',
+                  buyer_name: '{buyer_name}',
+                })
               "
             >
             </v-textarea>

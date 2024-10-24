@@ -256,6 +256,8 @@
           <v-icon color="red" class="blink-me">warning</v-icon>
           This shop currently doesn't have a shipping method that supports COD.
           Please add at least one COD-supported shipping method in the settings.
+          <br>
+          <v-btn @click.stop size="small" class="mt-2" append-icon="launch" :to="{name:'BPageShopLogisticShipping'}" target="_blank" color="primary">Shippings Methods</v-btn>
         </div>
       </template>
 

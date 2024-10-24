@@ -31,9 +31,10 @@
         <v-chip
           v-if="!isAdmin && message.officer"
           class="mx-2"
-          color="#F44336"
+          color="green"
           label
           size="x-small"
+          variant="flat"
         >
           {{ $t("global.commons.admin") }}
         </v-chip>
@@ -44,6 +45,7 @@
           color="#1976D2"
           label
           size="x-small"
+          variant="flat"
         >
           {{ $t("global.commons.customer") }}
         </v-chip>
