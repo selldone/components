@@ -31,7 +31,11 @@
         <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
       </template>
     </s-widget-header>
-    <v-list-subheader>{{ $t("domains.message") }}</v-list-subheader>
+    <v-list-subheader
+      >{{ $t("domains.message") }}
+
+      <s-widget-help code="Domain.RedirectWWW" inline></s-widget-help>
+    </v-list-subheader>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <!-- █████████████████████████████ Search █████████████████████████████ -->
@@ -642,10 +646,12 @@ import BDomainSetting from "../../domain/setting/BDomainSetting.vue";
 import _ from "lodash-es";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 
 export default {
   name: "BDomainsList",
   components: {
+    SWidgetHelp,
     UTextCopyBox,
     BDomainSetting,
     USmartMenu,
