@@ -13,22 +13,23 @@
   -->
 
 <template>
-  <div>
-    <v-btn
-      v-if="hasDelete"
-      class="m-1"
-      color="red"
-      size="small"
-      variant="text"
-      @click="$emit('click:delete')"
-    >
-      <v-icon size="small" start>delete</v-icon>
-      {{ $t("global.actions.delete") }}
-    </v-btn>
+  <div class="rounded-lg overflow-hidden" style="border: solid thin #ddd">
+    <v-sheet v-if="hasDelete" class="text-end mb-2 pa-1" color="#ddd">
+      <v-btn
+        class="ma-1"
+        color="#000"
+        size="x-small"
+        variant="plain"
+        @click="$emit('click:delete')"
+      >
+        <v-icon start>delete</v-icon>
+        {{ $t("global.actions.delete") }}
+      </v-btn>
+    </v-sheet>
     <draggable
       :class="{ '-flat': flat }"
       :model-value="list"
-      class="list-group list-group-flush"
+      class="list-group list-group-flush py-0"
       style="list-style-type: none"
       tag="div"
       v-bind="dragOptions"
@@ -38,19 +39,41 @@
     >
       <template v-slot:item="{ element, index }">
         <li :key="index" class="list-group-item d-flex align-center">
-          <v-tooltip v-if="element.to" color="black" location="bottom">
+          <v-tooltip
+            v-if="element.to"
+            color="black"
+            location="bottom"
+            content-class="text-start bg-black"
+          >
+            <template v-slot:activator="{ props }">
+              <v-avatar v-if="element.image" :image="getShopImagePath(element.image,128)" size="20" class="float-right ma-2" v-bind="props"> </v-avatar>
+              <v-icon v-else class="float-right ma-2" size="small" v-bind="props"
+                >info_outline
+              </v-icon>
+            </template>
+            <b class="mb-1">{{ element.to.name }}</b>
+            <div
+              v-if="element.to.params && element.to.params.page_name"
+              class="small"
+            >
+              <b>Page:</b> {{ element.to.params.page_name }}
+            </div>
+          </v-tooltip>
+
+          <v-tooltip
+            v-if="element.href"
+            color="black"
+            location="bottom"
+            content-class="text-start bg-black"
+          >
             <template v-slot:activator="{ props }">
               <v-icon class="float-right m-2" size="small" v-bind="props"
                 >link
               </v-icon>
             </template>
-            <p class="m-1">{{ element.to.name }}</p>
-            <p
-              v-if="element.to.params && element.to.params.page_name"
-              class="m-1"
-            >
-              Page: {{ element.to.params.page_name }}
-            </p>
+            <b class="mb-1">External Link | {{ element.name }}</b>
+            <div class="small"> {{ element.href }}</div>
+            <div v-if="element.target" class="small"><b>Target:</b> {{ element.target }}</div>
           </v-tooltip>
 
           <span
@@ -76,12 +99,13 @@
         <div class="py-2">
           <v-btn
             v-if="hasAdd"
-            class="nbt"
             min-height="36px"
             width="100%"
             @click="$emit('add-click')"
+            color="#000"
+            variant="plain"
           >
-            <v-icon color="success" start>add</v-icon>
+            <v-icon start>add_box</v-icon>
             {{ $t("global.actions.add") }}
           </v-btn>
         </div>

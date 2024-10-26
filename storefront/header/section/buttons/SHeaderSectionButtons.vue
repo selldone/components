@@ -23,8 +23,9 @@
     :tooltip="$t('global.commons.orders')"
     class="me-3 fadeIn delay_300"
     dense
-    exact
-    icon="local_mall"
+    exact tile
+    :src="dark?require('./assets/order-history-w.svg'):require('./assets/order-history.svg')"
+
   >
   </u-button-circle>
 
@@ -39,7 +40,8 @@
     badge-color="teal"
     class="me-3 fadeIn delay_300"
     dense
-    icon="shopping_cart"
+    :src="dark?require('./assets/shopping-bag-w.svg'):require('./assets/shopping-bag.svg')"
+    tile
     persist-badge
     @click="show_basket = true"
   >

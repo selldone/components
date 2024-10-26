@@ -98,8 +98,12 @@
               class="py-4 text-start"
               fluid
             >
-              <v-row>
-                <v-col v-for="(col, i) in tab.cols" :key="i">
+              <v-row dense align="start" justify="start">
+                <v-col
+                  v-for="(col, i) in tab.cols"
+                  :key="i"
+                  class="flex-grow-0"
+                >
                   <v-list-item
                     v-for="(item, index) in col"
                     :key="index"
@@ -107,10 +111,22 @@
                     :target="item.target"
                     :to="preview ? undefined : item.to"
                     exact
+                    min-width="200"
                   >
-                    <v-list-item-title class="list-menu-item"
+                    <v-list-item-title class="list-menu-item text-wrap"
                       >{{ item.name }}
                     </v-list-item-title>
+                    <template v-slot:append>
+                      <v-avatar
+                        v-if="item.image"
+                        :image="getShopImagePath(item.image, 128)"
+                        :size="24"
+                      >
+                      </v-avatar>
+                      <v-icon v-if="item.target === '_blank'" size="x-small"
+                        >launch</v-icon
+                      >
+                    </template>
                   </v-list-item>
                 </v-col>
               </v-row>

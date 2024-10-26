@@ -12,7 +12,7 @@
   - Tread carefully, for you're treading on dreams.
   -->
 <template>
-  <v-row v-if="menu_footer" >
+  <v-row v-if="menu_footer">
     <v-col
       v-for="index in 4"
       :key="index"
@@ -26,9 +26,12 @@
         v-for="(item, i) in menu[index - 1]"
         :key="i"
         :to="item.to"
-        class="menu-item"
+        :href="item.href"
+        class="menu-item pp"
+        :target="item.target"
       >
         {{ item.name }}
+        <v-icon v-if="item.target === '_blank'" size="x-small" class="ms-1">launch</v-icon>
       </router-link>
     </v-col>
   </v-row>
