@@ -18,7 +18,7 @@
       :class="{ '-green': enable, '-red': !enable }"
       class="widget-box mb-5 border-top-medium"
     >
-      <s-widget-header
+      <u-widget-header
         :title="$t('edit_gateway.gateway_status')"
         icon="settings"
       >
@@ -27,7 +27,7 @@
           <inline-help :code="'SHOP:GATEWAYS:' + gateway.code"></inline-help>
           <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
         </template>
-      </s-widget-header>
+      </u-widget-header>
       <v-list-subheader></v-list-subheader>
 
       <u-currency-input
@@ -45,8 +45,8 @@
         :label="$t('edit_gateway.gateway_code') "
         variant="underlined"
       />
-      <s-widget-header :title="$t('edit_gateway.status_title')" icon="flaky">
-      </s-widget-header>
+      <u-widget-header :title="$t('edit_gateway.status_title')" icon="flaky">
+      </u-widget-header>
 
       <v-list-subheader>
         {{ $t("edit_gateway.status_message") }}
@@ -64,11 +64,11 @@
       />
 
       <template v-if="gateway.manual">
-        <s-widget-header
+        <u-widget-header
           :title="$t('edit_gateway.manual_title')"
           icon="done_all"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader>
           {{ $t("edit_gateway.manual_message") }}
@@ -143,10 +143,10 @@
       <!-- █████████████████████ Blockchain mode █████████████████████ -->
 
       <template v-if="gateway.blockchain && shopGateway">
-        <s-widget-header
+        <u-widget-header
           :title="$t('edit_gateway.wallet')"
           icon="account_balance_wallet"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <u-text-value-box
           class="max-width-field my-4"
@@ -185,10 +185,10 @@
       <template v-else-if="!gateway.blockchain">
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Public Variables ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
         <div v-if="has_public" class="mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('edit_gateway.public_keys')"
             icon="public"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment ▂▂▂▂▂▂▂▂▂▂ -->
@@ -272,10 +272,10 @@
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Private Variables ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
         <div v-if="has_private" class="mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('edit_gateway.private_keys')"
             icon="admin_panel_settings"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader></v-list-subheader>
           <v-form autocomplete="off">
@@ -307,10 +307,10 @@
     <!-- █████████████████████ Limit █████████████████████ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('edit_gateway.limit.title')"
         icon="production_quantity_limits"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>{{
         $t("edit_gateway.limit.subtitle")
@@ -334,10 +334,10 @@
       :class="{ '-amber': debug, '-green': !debug }"
       class="widget-box mb-5 border-top-medium"
     >
-      <s-widget-header
+      <u-widget-header
         :title="$t('edit_gateway.debug.title')"
         icon="code"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         {{$t("edit_gateway.debug.subtitle")}}

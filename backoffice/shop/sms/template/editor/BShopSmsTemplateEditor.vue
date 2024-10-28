@@ -28,10 +28,10 @@
       <!-- ███████████████████████ Template Info ███████████████████████ -->
 
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="tune"
           :title="$t('shop_sms.template_edit.config.title')"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("shop_sms.template_edit.config.subtitle") }}
         </v-list-subheader>
@@ -86,10 +86,10 @@
       <!-- ███████████████████████ Mode > Text ███████████████████████ -->
 
       <div v-if="mode === 'text'" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="subject"
           :title="$t('shop_sms.template_edit.text.title')"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("shop_sms.template_edit.text.subtitle") }}
         </v-list-subheader>
@@ -120,11 +120,11 @@
 
         <hr class="my-5" />
 
-        <s-widget-header
+        <u-widget-header
           :title="$t('shop_sms.template_edit.text.auto_fill.title')"
           icon="auto_awesome"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader>
           {{ $t("shop_sms.template_edit.text.auto_fill.subtitle") }}
@@ -150,11 +150,11 @@
           </v-list-item>
         </v-list>
 
-        <s-widget-header
+        <u-widget-header
           :title="$t('shop_sms.template_edit.text.sample.title')"
           icon="science"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader class="my-3">
           <div v-html="sms.sample"></div>
@@ -164,10 +164,10 @@
       <!-- ███████████████████████ Mode > Template ███████████████████████ -->
 
       <div v-if="mode === 'template'" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="data_object"
           :title="$t('shop_sms.template_edit.template.title')"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           <div
             v-html="
@@ -232,11 +232,11 @@
         <template
           v-if="sms.params && sms_provider.template?.has_dynamic_parameters"
         >
-          <s-widget-header
+          <u-widget-header
             :title="$t('shop_sms.template_edit.template.auto_fill.title')"
             icon="auto_awesome"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("shop_sms.template_edit.template.auto_fill.subtitle") }}
@@ -264,11 +264,11 @@
         </template>
 
         <template v-if="sample_template && !busy_default">
-          <s-widget-header
+          <u-widget-header
             :title="$t('shop_sms.template_edit.template.sample.title')"
             icon="chat_bubble_outline"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("shop_sms.template_edit.template.sample.subtitle") }}
           </v-list-subheader>
@@ -292,11 +292,11 @@
         </div>
 
         <template v-if="preview_data">
-          <s-widget-header
+          <u-widget-header
             :title="$t('shop_sms.template_edit.template.request.title')"
             icon="science"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <vue-json-pretty :data="preview_data" class="my-3"></vue-json-pretty>
         </template>
@@ -350,14 +350,14 @@ import "vue-json-pretty/lib/styles.css";
 import USmartSwitch from "../../../../../ui/smart/switch/USmartSwitch.vue";
 import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
 
 export default {
   name: "BShopSmsTemplateEditor",
   components: {
     UTextCopyBox,
-    SWidgetHeader,
+    UWidgetHeader,
     USmartSwitch,
     USmartSelect,
     ULanguageInput,

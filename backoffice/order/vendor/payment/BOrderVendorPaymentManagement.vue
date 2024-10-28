@@ -16,7 +16,7 @@
   <div class="widget shadow my-3 mx-1 mx-md-3 text-start" v-bind="$attrs">
     <!-- █████████████████████ Header █████████████████████ -->
 
-    <s-widget-header
+    <u-widget-header
       :add-caption="
         IS_VENDOR_PANEL
           ? $t('order_vendor_payment.my_wallets')
@@ -39,7 +39,7 @@
       icon-color="#111"
       target="_blank"
     >
-    </s-widget-header>
+    </u-widget-header>
     <v-spacer></v-spacer>
 
     <!-- █████████████████████ Transactions █████████████████████ -->

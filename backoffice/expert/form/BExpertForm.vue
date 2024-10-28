@@ -15,7 +15,7 @@
 <template>
   <v-container>
     <div class="widget-box mb-5">
-      <s-widget-header icon="account_circle" title="User"></s-widget-header>
+      <u-widget-header icon="account_circle" title="User"></u-widget-header>
       <v-list-subheader
         >Please provide your contact information below.
       </v-list-subheader>
@@ -60,10 +60,10 @@
     </div>
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         icon="place"
         title="Address & Location"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         Please provide your office location and accurate address. We utilize
         this information to calculate your proximity to clients and offer
@@ -116,10 +116,10 @@
     </div>
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         icon="perm_contact_calendar"
         title="Public Profile"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         Please provide the necessary public information. We will utilize this
         information to create an expert page tailored specifically for the job.
@@ -136,10 +136,10 @@
     </div>
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.language')"
         icon="translate"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         Choose the languages you are proficient in for effective communication
         and seamless interaction with your clients in speaking, writing, and
@@ -156,7 +156,7 @@
     </div>
 
     <div class="widget-box mb-5">
-      <s-widget-header icon="factory" title="Industries"></s-widget-header>
+      <u-widget-header icon="factory" title="Industries"></u-widget-header>
       <v-list-subheader>
         Select industries where you have expertise and a proven track record of
         successfully completing projects for clients.
@@ -176,7 +176,7 @@
     </div>
 
     <div class="widget-box mb-5">
-      <s-widget-header icon="share" title="Social"></s-widget-header>
+      <u-widget-header icon="share" title="Social"></u-widget-header>
       <v-list-subheader>
         You can include your professional social links in your profile to make
         them publicly accessible. However, please note that adding personal
@@ -221,10 +221,10 @@
     </div>
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         icon="verified"
         title="Expert Verification"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader
         >Expert profiles require a review process before they can be made
         accessible to the public.

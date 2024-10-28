@@ -16,10 +16,10 @@
   <div>
     <!-- General -->
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.general_config')"
         icon="tune"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         Set a title and provide a concise description for the category.
@@ -45,10 +45,10 @@
 
     <!-- image -->
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.image')"
         icon="image"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader
         >You have the option to assign an image to the category.
       </v-list-subheader>
@@ -60,10 +60,10 @@
     </div>
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.seo')"
         icon="track_changes"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader
         >Here, you can adjust the SEO configurations specifically at the
@@ -80,10 +80,10 @@
 
     <!-- Cross Community -->
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('community.commons.cross_community')"
         icon="leak_add"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader
         >Categories can be cross-linked and integrated into other communities.
@@ -98,10 +98,10 @@
 
     <!-- Access -->
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.access')"
         icon="private_connectivity"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader
         >Determine whether customers are permitted to create new topics in this

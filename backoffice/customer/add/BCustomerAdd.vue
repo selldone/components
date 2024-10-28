@@ -15,14 +15,14 @@
 <template>
   <div>
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :icon="customer ? 'person_outline' : 'person_add_alt'"
         :title="
           customer
             ? $t('customer_add.edit_title')
             : $t('customer_add.add_title')
         "
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("customer_add.subtitle") }}
       </v-list-subheader>
@@ -90,10 +90,10 @@
       <div v-if="show_detail">
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Detail ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.personal_info')"
             icon="badge"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{ $t("customer_add.detail.subtitle") }}
           </v-list-subheader>
@@ -131,10 +131,10 @@
 
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Preferences ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.preferences')"
             icon="tune"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{ $t("customer_add.preferences.subtitle") }}
           </v-list-subheader>
@@ -156,10 +156,10 @@
 
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Address ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.address')"
             icon="map"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{ $t("customer_add.address.subtitle") }}
           </v-list-subheader>

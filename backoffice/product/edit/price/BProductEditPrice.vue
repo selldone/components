@@ -16,7 +16,7 @@
   <div>
     <!-- ▀▀▀▀▀▀▀▀▀ 🟣 Marketplace 🟣 ▀▀▀▀▀▀▀▀▀ -->
     <div v-if="isMarketplace" class="widget-box my-5">
-      <s-widget-header
+      <u-widget-header
         :add-caption="
           !IS_VENDOR_PANEL
             ? $t('add_product.pricing.vendor.manage_vendors')
@@ -35,7 +35,7 @@
         add-text
         class="mb-2"
         :title="$t('add_product.pricing.vendor.title')"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         <div>
@@ -73,7 +73,7 @@
 
     <!-- ▀▀▀▀▀▀▀▀▀ 🎗️ Subscription ▀▀▀▀▀▀▀▀▀ -->
     <div v-if="isSubscription" class="widget-box my-5">
-      <s-widget-header
+      <u-widget-header
         :src="
           require('@selldone/core-js/assets/product-types/subscription.svg')
         "
@@ -90,7 +90,7 @@
         add-text
         class="mb-2"
         title="Subscription pricing"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         <div>
@@ -112,11 +112,11 @@
       :theme="light ? 'light' : 'dark'"
       class="widget-box price-input-form mx-auto"
     >
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_product.pricing.edit_price')"
         icon="price_change"
       >
-      </s-widget-header>
+      </u-widget-header>
       <v-list-subheader :dark="!light">
         {{ subtitle }}
       </v-list-subheader>

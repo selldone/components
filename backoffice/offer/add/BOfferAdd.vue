@@ -22,11 +22,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ General ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.general_config')"
             icon="tune"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("offer_edit.config.subtitle") }}
           </v-list-subheader>
@@ -88,8 +88,8 @@
             </template>
           </v-text-field>
 
-          <s-widget-header :title="$t('offer_edit.enable')" icon="flash_auto">
-          </s-widget-header>
+          <u-widget-header :title="$t('offer_edit.enable')" icon="flash_auto">
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("offer_edit.max_actives_is_3") }}
           </v-list-subheader>
@@ -224,10 +224,10 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Discounted Products ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('offer_edit.discounted_products.title')"
             icon="border_outer"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{ $t("offer_edit.discounted_products.subtitle") }}
           </v-list-subheader>
@@ -268,14 +268,14 @@
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :add-caption="$t('global.commons.management')"
             :title="$t('global.commons.cluster')"
             :to="{ name: 'BPageShopClassificationClusters' }"
             add-icon="settings"
             add-text
             icon="workspaces"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("offer_edit.cluster.subtitle") }}
@@ -363,13 +363,13 @@ import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue"
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import BTranslationButtonOffer from "../../translation/button/offer/BTranslationButtonOffer.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
-import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import { Club } from "@selldone/core-js";
 
 export default {
   name: "BOfferAdd",
   components: {
-    SWidgetHeader,
+    UWidgetHeader,
     SWidgetButtons,
     BTranslationButtonOffer,
     BClusterInput,

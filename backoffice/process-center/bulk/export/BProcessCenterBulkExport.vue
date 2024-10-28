@@ -15,11 +15,11 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('orders_bulk_export.title')"
         icon="auto_fix_normal"
       >
-      </s-widget-header>
+      </u-widget-header>
 
       <v-list-subheader
         >{{ $t("orders_bulk_export.subtitle") }}
@@ -169,12 +169,12 @@ import SExportFormatSelect from "../../../../ui/file/export-format-select/SExpor
 import UDateInput from "../../../../ui/date/input/UDateInput.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
-import SWidgetHeader from "../../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../../ui/widget/header/UWidgetHeader.vue";
 import { Basket } from "@selldone/core-js";
 
 export default {
   name: "BProcessCenterBulkExport",
-  components: { SWidgetHeader, UDateInput, SExportFormatSelect },
+  components: { UWidgetHeader, UDateInput, SExportFormatSelect },
   props: {
     shop: {
       required: true,

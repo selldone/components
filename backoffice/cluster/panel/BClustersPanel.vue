@@ -224,10 +224,10 @@
                 :key="_type.resource_key"
               >
                 <template v-if="current_cluster[_type.resource_key]?.length">
-                  <s-widget-header
+                  <u-widget-header
                     :title="$t(_type.group_title)"
                     class="mt-3"
-                  ></s-widget-header>
+                  ></u-widget-header>
                   <v-row class="my-3">
                     <b-cluster-resource
                       v-for="_item in current_cluster[_type.resource_key]"

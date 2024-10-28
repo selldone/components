@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="widget-box -large">
-    <s-widget-header
+    <u-widget-header
       :add-caption="$t('shop_license.add')"
       :title="$t('shop_license.licenses_table.title')"
       icon="payments"
@@ -25,7 +25,7 @@
         }
       "
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader
       >{{ $t("shop_license.licenses_table.subtitle") }}
@@ -237,7 +237,7 @@
 
             <div v-if="!voucher_selected" class="py-5">
               <div class="widget-box mb-5">
-                <s-widget-header icon="looks_one" :title="$t('shop_license.add_dialog.wallet.title')">
+                <u-widget-header icon="looks_one" :title="$t('shop_license.add_dialog.wallet.title')">
                   <template v-slot:append-title>
                     <v-icon
                       v-if="!account_selected"
@@ -247,7 +247,7 @@
                       >circle
                     </v-icon>
                   </template>
-                </s-widget-header>
+                </u-widget-header>
                 <v-list-subheader>
                   {{$t('shop_license.add_dialog.wallet.subtitle')}}
 
@@ -257,7 +257,7 @@
               </div>
 
               <div class="widget-box mb-5">
-                <s-widget-header
+                <u-widget-header
                   :title="$t('shop_license.plan')"
                   class=""
                   icon="looks_two"
@@ -270,7 +270,7 @@
                       >circle
                     </v-icon>
                   </template>
-                </s-widget-header>
+                </u-widget-header>
 
                 <v-list-subheader
                   >{{ $t("shop_license.plan_placeholder") }}
@@ -286,7 +286,7 @@
                 </u-smart-select>
               </div>
               <div class="widget-box mb-5">
-                <s-widget-header
+                <u-widget-header
                   :title="$t('shop_license.validity_duration')"
                   class=""
                   icon="looks_3"
@@ -299,7 +299,7 @@
                       >circle
                     </v-icon>
                   </template>
-                </s-widget-header>
+                </u-widget-header>
 
                 <v-list-subheader
                   >{{ $t("shop_license.validity_duration_hint") }}
@@ -323,11 +323,11 @@
                 </u-smart-select>
               </div>
               <div class="widget-box mb-5">
-                <s-widget-header
+                <u-widget-header
                   class=""
                   icon="settings_applications"
                   :title="$t('shop_license.add_dialog.options.title') "
-                ></s-widget-header>
+                ></u-widget-header>
 
                 <u-smart-toggle
                   v-model="renewal"
@@ -367,10 +367,10 @@
             </div>
 
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="check_box"
                 :title="$t('shop_license.add_dialog.verify.title')"
-              ></s-widget-header>
+              ></u-widget-header>
 
               <v-expand-transition>
                 <div v-if="canPay" class="border-top border-bottom">

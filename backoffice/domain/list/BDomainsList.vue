@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div v-bind="$attrs">
-    <s-widget-header
+    <u-widget-header
       v-if="showHeader"
       :add-caption="$t('admin_shop.dashboard.info.add_domain')"
       :title="$t('admin_shop.dashboard.info.shop_domains')"
@@ -30,7 +30,7 @@
         ></inline-help>
         <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
       </template>
-    </s-widget-header>
+    </u-widget-header>
     <v-list-subheader
       >{{ $t("domains.message") }}
 

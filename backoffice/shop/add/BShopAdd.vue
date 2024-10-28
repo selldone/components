@@ -55,11 +55,11 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Title & State ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div v-if="step === 0" key="slide-0" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('admin_shop.edit.info.title_tab.title')"
         icon="store_mall_directory"
       >
-      </s-widget-header>
+      </u-widget-header>
       <v-list-subheader>
         {{ $t("admin_shop.edit.info.title_tab.subtitle") }}
       </v-list-subheader>
@@ -244,10 +244,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Description ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div v-if="step === 2" key="slide-2" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('admin_shop.edit.info.description_tab.title')"
         icon="subject"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         {{ $t("admin_shop.edit.info.description_tab.subtitle") }}
@@ -280,10 +280,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div v-if="step === 3" key="slide-3" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('admin_shop.edit.info.contact_tab.title')"
         icon="assistant_direction"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         {{ $t("admin_shop.edit.info.contact_tab.subtitle") }}
@@ -411,10 +411,10 @@
 
     <template v-if="shop && shop.id && step === 4">
       <div key="slide-4" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('admin_shop.edit.info.image_tab.title')"
           icon="grain"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("admin_shop.edit.info.image_tab.subtitle") }}
         </v-list-subheader>
@@ -433,7 +433,7 @@
       </div>
 
       <div key="slide-5" class="widget-box mb-5">
-        <s-widget-header icon="photo" title="Favicons"></s-widget-header>
+        <u-widget-header icon="photo" title="Favicons"></u-widget-header>
         <v-list-subheader>
           Favicons are small, iconic images that represent a website in browser
           tabs, bookmarks, and mobile app interfaces.
@@ -519,7 +519,7 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Google search preview ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div class="widget-box my-16 text-start" style="--background: #fff">
-      <s-widget-header
+      <u-widget-header
         :add-caption="shop?.id ? $t('global.actions.update') : undefined"
         :add-loading="busy_render_google"
         add-icon="refresh"
@@ -527,7 +527,7 @@
         icon="fa:fa-brands fa-google"
         title="SEO Preview"
         @click:add="getRenderedOnGoogle"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <div
         v-if="canShowGooglePreview"
@@ -599,13 +599,13 @@ import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import { TrackSeller } from "@selldone/core-js/enums/gtag/TrackSeller";
 import BTranslationButtonShop from "../../translation/button/shop/BTranslationButtonShop.vue";
-import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 
 export default {
   name: "BShopAdd",
   components: {
-    SWidgetHeader,
+    UWidgetHeader,
     BTranslationButtonShop,
     USmartSwitch,
     USmartToggle,

@@ -17,7 +17,7 @@
     <!-- ███████████████████ Items ███████████████████ -->
 
     <div class="widget-box -large mb-5 min-height-50vh">
-      <s-widget-header
+      <u-widget-header
         :add-caption="
           showAddItem ? $t('virtual_items_list.add_virtual_item') : undefined
         "
@@ -25,7 +25,7 @@
         icon="switch_access_shortcut"
         @click:add="dialog_add = true"
       >
-      </s-widget-header>
+      </u-widget-header>
 
       <v-list-subheader>
         {{ $t("virtual_items_list.add_virtual_item_desc") }}
@@ -266,7 +266,7 @@
     <!-- ███████████████████ Variants ███████████████████ -->
 
     <div class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :add-text="!hasVariants"
         add-caption="
         Add variant
@@ -275,7 +275,7 @@
         title="Virtual variants"
         @click:add="showEdit(null)"
       >
-      </s-widget-header>
+      </u-widget-header>
 
       <v-list-subheader>
         <div>

@@ -17,8 +17,8 @@
     <v-card-title></v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
-        <s-widget-header icon="move_up" title="Revers transfer">
-        </s-widget-header>
+        <u-widget-header icon="move_up" title="Revers transfer">
+        </u-widget-header>
 
         <v-list-subheader>
           <div>
@@ -52,8 +52,8 @@
       </div>
 
       <div class="widget-box mb-5">
-        <s-widget-header :title="option" icon="account_balance">
-        </s-widget-header>
+        <u-widget-header :title="option" icon="account_balance">
+        </u-widget-header>
 
         <v-list-subheader>
           This payment is transferred to the vendor, but under certain
@@ -78,8 +78,8 @@
       </div>
 
       <div class="widget-box mb-5">
-        <s-widget-header icon="paid" title="Reversing transfer">
-        </s-widget-header>
+        <u-widget-header icon="paid" title="Reversing transfer">
+        </u-widget-header>
 
         <v-list-subheader
           >Initiate a reverse transfer from the vendor account back to your

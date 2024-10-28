@@ -14,7 +14,7 @@
 
 <template>
   <div style="min-height: 150px">
-    <s-widget-header
+    <u-widget-header
       :add-caption="$t('add_virtual_item.edit_outputs')"
       :title="`VIT-${virtualItem.id}`"
       :to="{
@@ -26,7 +26,7 @@
       add-text
       icon="output"
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader
       >This section is designated for displaying output information. When a

@@ -15,7 +15,7 @@
 <template>
   <v-container class="pa-0 pa-sm-3">
     <div class="widget-box -large mb-5 min-height-50vh">
-      <s-widget-header :title="$t('admin_shop.apps.store.title')" icon="shop">
+      <u-widget-header :title="$t('admin_shop.apps.store.title')" icon="shop">
         <template v-slot:actions>
           <v-menu>
             <template v-slot:activator="{ props }">
@@ -40,7 +40,7 @@
             </v-list>
           </v-menu>
         </template>
-      </s-widget-header>
+      </u-widget-header>
 
       <v-list-subheader>
         {{ $t("admin_shop.apps.store.subtitle") }}

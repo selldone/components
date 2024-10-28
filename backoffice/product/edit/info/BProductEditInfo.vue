@@ -17,7 +17,7 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Marketplace Settings ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div v-if="is_marketplace" class="widget-box mb-5 mt-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.vendor')"
         icon="storefront"
         :add-caption="
@@ -28,7 +28,7 @@
         add-text=""
         :disabled="product.vendors?.length > 1"
         disabled-reason="It has more than one vendors."
-      ></s-widget-header>
+      ></u-widget-header>
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Vendor panel > Fixed mode ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
@@ -171,7 +171,7 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ General ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div class="widget-box mb-5 mt-5">
-      <s-widget-header :title="$t('global.commons.general')" icon="tune">
+      <u-widget-header :title="$t('global.commons.general')" icon="tune">
         <template v-if="type_object" v-slot:actions>
           <div
             class="d-flex flex-column x-small text-muted align-center text-uppercase"
@@ -180,7 +180,7 @@
             {{ $t(type_object.name) }}
           </div>
         </template>
-      </s-widget-header>
+      </u-widget-header>
       <v-list-subheader
         >{{ $t("add_product.edit_info.category.subtitle") }}
       </v-list-subheader>
@@ -258,10 +258,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Pricing / Units ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div v-level.min="AppLevel.NOVICE" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_product.edit_info.unit_section')"
         icon="price_change"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("add_product.edit_info.unit.subtitle") }}
       </v-list-subheader>
@@ -466,7 +466,7 @@
     <v-expand-transition>
       <div v-if="product.price_input === 'custom'" id="custom_valuation">
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('add_product.edit_info.custom_pricing.title')"
             icon="calculate"
             :add-caption="
@@ -477,7 +477,7 @@
             @click:add="showValuationForm"
             :add-icon="product.valuation ? 'edit_note' : 'playlist_add'"
             :add-sub-caption="product.valuation?.title"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("add_product.edit_info.custom_pricing.subtitle") }}
@@ -578,10 +578,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ SKU / MPN ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div v-level.min="AppLevel.NOVICE" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_product.edit_info.warehouse_section')"
         icon="warehouse"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader
         >{{ $t("add_product.edit_info.warehouse.subtitle") }}
       </v-list-subheader>
@@ -692,10 +692,10 @@
     </div>
 
     <div v-level.min="AppLevel.NOVICE" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_product.edit_info.conditions_section')"
         icon="bookmark"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader
         >{{ $t("add_product.edit_info.condition.subtitle") }}
       </v-list-subheader>
@@ -761,10 +761,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Warranty ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_product.edit_info.warranty_section')"
         icon="workspace_premium"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader
         >{{ $t("add_product.edit_info.warranty.subtitle") }}
       </v-list-subheader>
@@ -840,10 +840,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Status ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_product.edit_info.status.title')"
         icon="nat"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader
         >{{ $t("add_product.edit_info.status.subtitle") }}
       </v-list-subheader>
@@ -869,10 +869,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Logistic Profiles ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_product.edit_info.profiles.title')"
         icon="assignment"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("add_product.edit_info.profiles.subtitle") }}
       </v-list-subheader>
@@ -942,10 +942,10 @@
 
       <v-card-text v-if="shortcuts">
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             icon="snippet_folder"
             title="Shortcuts"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{ $t("add_product.edit_info.shortcuts.subtitle") }}
           </v-list-subheader>

@@ -16,10 +16,10 @@
   <v-card color="transparent" flat>
     <v-card-text>
 
-      <s-widget-header
+      <u-widget-header
           :title="$t('onboarding.shipping.step1.title')"
           icon="looks_one"
-      ></s-widget-header>
+      ></u-widget-header>
 
 
       <div class="d-flex align-center">
@@ -46,10 +46,10 @@
       <hr class="my-5" />
 
 
-      <s-widget-header
+      <u-widget-header
           :title="$t('onboarding.shipping.step2.title')"
           icon="looks_two"
-      ></s-widget-header>
+      ></u-widget-header>
 
 
 
@@ -90,10 +90,10 @@
         </v-card-title>
         <v-card-text>
           <div class="widget-box">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.config')"
               icon="tune"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader>
               {{ $t("admin_shop.logistic.warehouse.sub_title") }}
             </v-list-subheader>

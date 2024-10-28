@@ -20,7 +20,7 @@
     </v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :add-caption="
             company
               ? lock
@@ -35,7 +35,7 @@
           add-text
           icon="business"
           @click:add="lock = !lock"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader
           >Please enter the valid information of your registered company. Do not
           enter personal information here.
@@ -125,7 +125,7 @@
       </div>
 
       <div class="widget-box mb-5">
-        <s-widget-header icon="receipt_long" title="Billing"></s-widget-header>
+        <u-widget-header icon="receipt_long" title="Billing"></u-widget-header>
         <v-list-subheader>
           <div>
             Enter valid information here. After setting your Tax/VAT ID, you

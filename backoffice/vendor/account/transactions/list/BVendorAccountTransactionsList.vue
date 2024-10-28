@@ -17,10 +17,10 @@
     <!-- █████████████████████ List of payments █████████████████████ -->
 
     <div class="widget-box -large">
-      <s-widget-header
+      <u-widget-header
         :title="`${account.currency} ${$t('global.commons.transactions')}`"
         icon="wallet"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("vendor_account_transactions.subtitle") }}
       </v-list-subheader>

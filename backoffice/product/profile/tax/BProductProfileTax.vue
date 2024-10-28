@@ -66,7 +66,7 @@
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
-          <s-widget-header
+          <u-widget-header
             :add-caption="$t('product_tax_profile.dialog.action_manage')"
             :add-sub-caption="
               $t('product_tax_profile.dialog.action_manage_sub')
@@ -76,7 +76,7 @@
             add-text
             icon="gavel"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("product_tax_profile.dialog.subtitle") }}
           </v-list-subheader>

@@ -52,11 +52,11 @@
     <v-card-text>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅  Defining Product Variant ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('product_admin.inventory.variant_add_edit.config.title')"
           icon="tune"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader>
           {{ $t("product_admin.inventory.variant_add_edit.config.subtitle") }}
@@ -137,7 +137,7 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅   Variant variables  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div :class="{ disabled: !enable }" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="
             $t('product_admin.inventory.variant_add_edit.variables.title')
           "
@@ -156,7 +156,7 @@
           icon="join_full"
           @click:add="show_graphical_asset_dialog = true"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <template v-if="hasColor">
           <v-list-subheader>
@@ -427,11 +427,11 @@
         :class="{ disabled: !enable }"
         class="widget-box mb-5"
       >
-        <s-widget-header
+        <u-widget-header
           :title="$t('product_admin.inventory.variant_add_edit.quantity.title')"
           icon="inventory_2"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader
           >{{
@@ -475,11 +475,11 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Pricing ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div :class="{ disabled: !enable }" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('product_admin.inventory.variant_add_edit.price.title')"
           icon="sell"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader
           >{{ $t("product_admin.inventory.variant_add_edit.price.subtitle") }}
@@ -517,7 +517,7 @@
         :class="{ disabled: !enable }"
         class="widget-box mb-5"
       >
-        <s-widget-header
+        <u-widget-header
           :title="$t('product_admin.inventory.variant_add_edit.package.title')"
           icon="square_foot"
           add-text
@@ -530,7 +530,7 @@
           :disabled="!product.extra"
           @click:add="extra = Object.assign({}, product.extra)"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader
           >{{ $t("product_admin.inventory.variant_add_edit.package.subtitle") }}
@@ -556,11 +556,11 @@
         :class="{ disabled: !enable }"
         class="widget-box -large mb-5"
       >
-        <s-widget-header
+        <u-widget-header
           :title="$t('product_admin.inventory.variant_add_edit.image.title')"
           icon="insert_photo"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader
           >{{ $t("product_admin.inventory.variant_add_edit.image.subtitle") }}
@@ -573,11 +573,11 @@
         />
       </div>
       <div v-else class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('product_admin.inventory.variant_add_edit.images')"
           icon="insert_photo"
         >
-        </s-widget-header>
+        </u-widget-header>
         <v-list-subheader>
           {{ $t("product_admin.inventory.variant_add_edit.images_message") }}
         </v-list-subheader>

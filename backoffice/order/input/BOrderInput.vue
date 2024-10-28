@@ -15,7 +15,7 @@
 <template>
   <div class="py-10">
     <div v-for="item in items" :key="item.id" class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :add-caption="$t('commons.product_admin')"
         :title="item.product.title"
         :to="{
@@ -25,7 +25,7 @@
         add-icon="open_in_new"
         add-text
         icon="folder_shared"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         {{ $t("order_input.message") }}

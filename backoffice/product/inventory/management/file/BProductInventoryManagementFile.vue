@@ -21,10 +21,10 @@
 
     <!-- ████████████████████ Upload ████████████████████ -->
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.upload')"
         icon="cloud_upload"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader></v-list-subheader>
 
       <v-expansion-panels v-if="USER().permissions" class="mb-2">
@@ -127,10 +127,10 @@
     <!-- ████████████████████ Usage ████████████████████ -->
 
     <div v-if="!IS_VENDOR_PANEL" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.usage')"
         icon="data_usage"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader></v-list-subheader>
 
       <v-row align="center" no-gutters>
@@ -183,7 +183,7 @@
     <!-- ████████████████████ Files List ████████████████████ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :add-caption="$t('global.actions.refresh')"
         :add-loading="busy_fetch"
         :title="$t('global.commons.files_list')"
@@ -191,7 +191,7 @@
         add-text
         icon="folder"
         @click:add="fetchFiles()"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         <div>
           <v-icon class="me-1">open_with</v-icon>

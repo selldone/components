@@ -14,14 +14,14 @@
 
 <template>
   <div class="widget-box mb-5">
-    <s-widget-header
+    <u-widget-header
       :add-loading="busy"
       add-caption="Send test data"
       icon="science"
       title="Test lab"
       @click:add="sendTest()"
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <div
       :class="{ 'stop-animations': !busy }"

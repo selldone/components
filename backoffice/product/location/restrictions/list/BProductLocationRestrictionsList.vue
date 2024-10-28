@@ -15,7 +15,7 @@
 <template>
   <div>
     <div :class="{ '-large': !collapse }" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :disabled="!locations"
         :add-caption="$t('product_location_restrictions.add_location_action')"
         :disabled-reason="$t('product_location_restrictions.no_restriction')"
@@ -51,7 +51,7 @@
           >
           </u-smart-menu>
         </template>
-      </s-widget-header>
+      </u-widget-header>
       <v-list-subheader>
         {{ $t("product_location_restrictions.subtitle") }}
       </v-list-subheader>

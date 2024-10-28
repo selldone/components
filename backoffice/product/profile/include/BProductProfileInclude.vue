@@ -79,7 +79,7 @@
         </v-card-title>
         <v-card-text>
           <div class="widget-box -large mb-5">
-            <s-widget-header
+            <u-widget-header
               :add-caption="$t('product_include_profile.dialog.action_manage')"
               :disabled="IS_VENDOR_PANEL"
               :disabled-reason="
@@ -91,7 +91,7 @@
               add-text
               icon="library_add_check"
             >
-            </s-widget-header>
+            </u-widget-header>
 
             <v-expand-transition>
               <div v-if="includes?.length">

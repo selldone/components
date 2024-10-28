@@ -221,10 +221,10 @@
           />
 
           <template v-if="variants && variants.length">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.Variants')"
               icon="animation"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-menu>
               <template v-slot:activator="{ props }">
                 <div class="position-relative mb-10" v-bind="props">
@@ -250,10 +250,10 @@
             </v-menu>
           </template>
 
-          <s-widget-header
+          <u-widget-header
             :title="$t('add_product.pricing.edit_price')"
             icon="price_change"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-table class="mx-auto my-5 bg-transparent">
             <template v-slot:default>

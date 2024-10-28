@@ -28,10 +28,10 @@
 
       <v-card-text>
         <div class="my-5">
-          <s-widget-header
+          <u-widget-header
             icon="join_right"
             title="Customer segments"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader
             >Start managing your customers smarter by defining segments.
           </v-list-subheader>

@@ -15,10 +15,10 @@
 <template>
   <v-card color="transparent" flat>
     <v-card-text>
-      <s-widget-header
+      <u-widget-header
         :title="$t('onboarding.domain.buy_domain_step.title')"
         icon="domain_add"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
@@ -30,11 +30,11 @@
         ></v-img>
       </div>
 
-      <s-widget-header
+      <u-widget-header
         :title="$t('onboarding.domain.set_dns_step.title')"
         icon="dns"
         class="mt-5"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <p class="typo-body">
         {{ $t("onboarding.domain.set_dns_step.msg") }}

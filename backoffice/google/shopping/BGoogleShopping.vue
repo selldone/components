@@ -14,11 +14,11 @@
 
 <template>
   <div class="widget-box">
-    <s-widget-header
+    <u-widget-header
       :src="require('../../../assets/trademark/google-shopping.png')"
       :title="$t('channel_google.shopping.title')"
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader>
       {{ $t("channel_google.shopping.subtitle") }}

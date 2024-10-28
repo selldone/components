@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--form-builder widget-box">
-    <s-widget-header :icon="icon" :title="title"></s-widget-header>
+    <u-widget-header :icon="icon" :title="title"></u-widget-header>
     <v-list-subheader>{{ hint }}</v-list-subheader>
     <draggable
       :animation="200"

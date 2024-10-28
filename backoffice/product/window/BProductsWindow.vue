@@ -1507,8 +1507,8 @@
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Vendor ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header icon="admin_panel_settings" title="Vendor">
-          </s-widget-header>
+          <u-widget-header icon="admin_panel_settings" title="Vendor">
+          </u-widget-header>
           <v-list-subheader
             >This vendor will be added to selected products for all their
             variants.
@@ -1542,8 +1542,8 @@
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ price (Calculated / Manual price) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <div class="widget-box mb-5">
-          <s-widget-header icon="price_change" title="Marketplace pricing">
-          </s-widget-header>
+          <u-widget-header icon="price_change" title="Marketplace pricing">
+          </u-widget-header>
           <v-list-subheader
             >Select a marketplace pricing model to assign to the selected
             product. If you leave it empty, the product pricing will be set as
@@ -1556,10 +1556,10 @@
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Quantity  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             icon="inventory"
             title="Vendor Inventory"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader
             >Set as the inventory for each item. No effect on the File-type
             products.

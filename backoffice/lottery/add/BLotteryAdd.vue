@@ -30,10 +30,10 @@
     <v-card-text class="text-start position-relative">
       <v-form ref="form" lazy-validation>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('lottery_edit.general_config')"
             icon="tune"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader
             >{{ $t("lottery_edit.config.subtitle") }}
@@ -117,10 +117,10 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Design ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('lottery_edit.design_style')"
             icon="architecture"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("lottery_edit.design.subtitle") }}
@@ -153,10 +153,10 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Constraints ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('lottery_edit.condition')"
             icon="border_outer"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("lottery_edit.constraints.subtitle") }}
@@ -189,10 +189,10 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Prize ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('lottery_edit.prize.title')"
             icon="emoji_events"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("lottery_edit.prize.subtitle") }}

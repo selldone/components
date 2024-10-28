@@ -76,10 +76,10 @@
           <v-expand-transition>
             <div v-if="show_import_file">
               <div class="widget-box mb-5">
-                <s-widget-header
+                <u-widget-header
                   icon="file_download"
                   title="Import language pack"
-                ></s-widget-header>
+                ></u-widget-header>
                 <v-list-subheader
                   >Choose a language file here to import your custom language
                   pack.

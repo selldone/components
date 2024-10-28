@@ -30,7 +30,7 @@
       <!-- ███████████████████████████ Setting ███████████████████████████ -->
 
       <div class="widget-box mb-5">
-        <s-widget-header icon="tune" title="General Config"></s-widget-header>
+        <u-widget-header icon="tune" title="General Config"></u-widget-header>
         <v-list-subheader
           >Configure the cluster's name, description, and image
           here.</v-list-subheader
@@ -71,7 +71,7 @@
           title="Color"
         ></u-color-selector>
 
-        <s-widget-header icon="folder" title="Parent"></s-widget-header>
+        <u-widget-header icon="folder" title="Parent"></u-widget-header>
         <v-list-subheader>
           You can achieve a more organized arrangement by establishing a
           hierarchy of clusters, designating a parent for each cluster.
@@ -88,7 +88,7 @@
         >
         </b-cluster-input>
 
-        <s-widget-header icon="image" title="Image"></s-widget-header>
+        <u-widget-header icon="image" title="Image"></u-widget-header>
         <v-list-subheader>
           Optionally, assign an image to the cluster for easier identification.
         </v-list-subheader>
@@ -123,11 +123,11 @@
       <!-- ███████████████████████████ Critical ███████████████████████████ -->
 
       <div v-if="cluster" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('global.commons.critical_zone')"
           icon="warning_amber"
         >
-        </s-widget-header>
+        </u-widget-header>
         <v-list-subheader>
           Removing a cluster will not remove its resources.
         </v-list-subheader>

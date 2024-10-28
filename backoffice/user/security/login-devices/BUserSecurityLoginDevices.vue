@@ -16,7 +16,7 @@
   <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Login devices ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
   <div class="widget-box mb-5">
-    <s-widget-header
+    <u-widget-header
       :add-caption="$t('global.actions.refresh')"
       :add-loading="fetching_login_devices"
       add-icon="refresh"
@@ -24,7 +24,7 @@
       icon="devices"
       title="My Devices"
       @click:add="fetchLoginDevices"
-    ></s-widget-header>
+    ></u-widget-header>
     <v-list-subheader>List of my active devices.</v-list-subheader>
 
     <u-loading-progress v-if="fetching_login_devices"></u-loading-progress>

@@ -29,10 +29,10 @@
       </v-card-title>
       <v-card-text>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             icon="conveyor_belt"
             :title="$t('product_variants_bulk_add.variants.title') "
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{$t('product_variants_bulk_add.variants.subtitle')}}
 
@@ -62,7 +62,7 @@
         </div>
 
         <div class="widget-box mb-5">
-          <s-widget-header icon="table_view" :title="$t('product_variants_bulk_add.values.title') "></s-widget-header>
+          <u-widget-header icon="table_view" :title="$t('product_variants_bulk_add.values.title') "></u-widget-header>
           <v-list-subheader>
             {{$t('product_variants_bulk_add.values.subtitle') }}
           </v-list-subheader>
@@ -158,7 +158,7 @@
         </div>
 
         <div class="widget-box mb-5">
-          <s-widget-header icon="shelves" :title="$t('product_variants_bulk_add.inventory.title') "></s-widget-header>
+          <u-widget-header icon="shelves" :title="$t('product_variants_bulk_add.inventory.title') "></u-widget-header>
 
           <v-list-subheader>
             {{$t('product_variants_bulk_add.inventory.subtitle')}}

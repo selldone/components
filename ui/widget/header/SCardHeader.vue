@@ -14,7 +14,7 @@
 
 <template>
   <div class="px-6 text-start">
-    <s-widget-header
+    <u-widget-header
       :addCaption="addCaption"
       :addIcon="addIcon"
       :addLoading="addLoading"
@@ -31,7 +31,7 @@
       :target="target"
       :title="title"
       :to="to"
-    ></s-widget-header>
+    ></u-widget-header>
     <p class="px-0 op-0-7" style="font-size: 0.85rem">
       {{ subtitle }}
     </p>

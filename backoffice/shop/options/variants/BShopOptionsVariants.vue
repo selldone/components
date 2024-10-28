@@ -15,8 +15,8 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Custom Variants ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
   <div class="widget-box -large mb-5">
-    <s-widget-header icon="autofps_select" title="Custom Variants">
-    </s-widget-header>
+    <u-widget-header icon="autofps_select" title="Custom Variants">
+    </u-widget-header>
     <v-list-subheader>
       Physical products can have variants. You can change the default name of
       variants. Our suggestion is to leave these items as default and empty so

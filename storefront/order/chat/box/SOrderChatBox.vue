@@ -17,10 +17,10 @@
 
   <div>
     <div v-if="chat" class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.messages')"
         icon="3p"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("global.order_chat.customer.history.subtitle") }}
       </v-list-subheader>
@@ -36,10 +36,10 @@
     </div>
 
     <div class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.actions.add_new_message')"
         icon="add_comment"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("global.order_chat.customer.new_message.subtitle") }}
       </v-list-subheader>

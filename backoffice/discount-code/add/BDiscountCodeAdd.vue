@@ -25,10 +25,10 @@
       <v-form ref="form" lazy-validation>
         <!-- ---------------------- General ---------------------- -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('discount_codes.dialog.config.title')"
             icon="tune"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("discount_codes.dialog.config.subtitle") }}
@@ -82,11 +82,11 @@
         <!-- ---------------------- Limits ---------------------- -->
 
         <div :class="{ disabled: !code }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('discount_codes.dialog.limit.title')"
             icon="call_missed_outgoing"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader
             >{{ $t("discount_codes.dialog.limit.subtitle") }}
@@ -119,11 +119,11 @@
         <!-- ---------------------- Duration ---------------------- -->
 
         <div :class="{ disabled: !code }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('discount_codes.dialog.duration.title')"
             icon="schedule"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader
             >{{ $t("discount_codes.dialog.duration.subtitle") }}
@@ -160,11 +160,11 @@
         <!-- ---------------------- Design ---------------------- -->
 
         <div :class="{ disabled: !code }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.design_config')"
             icon="architecture"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("discount_codes.dialog.design.subtitle") }}
@@ -224,14 +224,14 @@
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :add-caption="$t('global.commons.management')"
             :title="$t('global.commons.cluster')"
             :to="{ name: 'BPageShopClassificationClusters' }"
             add-icon="settings"
             add-text
             icon="workspaces"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("discount_codes.dialog.cluster.subtitle") }}
@@ -321,14 +321,14 @@ import { RandomString } from "@selldone/core-js/helper/string/StringHelper";
 import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue";
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import BTranslationButtonDiscountCode from "../../translation/button/discount-code/BTranslationButtonDiscountCode.vue";
-import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
   name: "BDiscountCodeAdd",
   components: {
     SWidgetButtons,
-    SWidgetHeader,
+    UWidgetHeader,
     BTranslationButtonDiscountCode,
     BClusterInput,
     USmartSuggestion,

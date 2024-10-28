@@ -16,10 +16,10 @@
   <div>
     <!-- Weight -->
 
-    <s-widget-header
+    <u-widget-header
       :title="$t('product_extra_physical.weight')"
       icon="fa:fas fa-weight-hanging"
-    ></s-widget-header>
+    ></u-widget-header>
 
     <v-list-subheader>
       {{ $t("product_extra_physical.weight_subtitle") }}
@@ -36,10 +36,10 @@
     />
     <!-- Size -->
     <hr class="my-5" />
-    <s-widget-header
+    <u-widget-header
       :title="$t('product_extra_physical.size')"
       icon="fa:fas fa-box"
-    ></s-widget-header>
+    ></u-widget-header>
 
     <v-list-subheader>
       {{ $t("product_extra_physical.size_subtitle") }}
@@ -92,10 +92,10 @@
     <template v-if="!noLead">
       <hr class="my-5" />
 
-      <s-widget-header
+      <u-widget-header
         :title="$t('product_extra_physical.lead_time_title')"
         icon="pending_actions"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("product_extra_physical.lead_time_subtitle") }}
       </v-list-subheader>
@@ -135,10 +135,10 @@
 
     <!-- Bulk Action -->
     <div v-if="hasBulkAction" class="widget-box mt-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('product_extra_physical.bulk_action')"
         icon="move_down"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("product_extra_physical.bulk_action_subtitle") }}
       </v-list-subheader>

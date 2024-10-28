@@ -29,10 +29,10 @@
 
     <template v-if="isService">
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('product_outputs.service.title')"
           icon="info"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader
           >{{ $t("product_outputs.service.sub_title") }}

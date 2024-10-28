@@ -117,7 +117,7 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Profile  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="admin_panel_settings"
                 :title="$t('vendor_add.profile.title')"
                 :href="vendor_listing_page_url"
@@ -133,7 +133,7 @@
                 :disabled="!vendor?.enable"
                 disabled-reason="Vendor is disabled."
               >
-              </s-widget-header>
+              </u-widget-header>
 
               <v-list-subheader>
                 {{ $t("vendor_add.profile.subtitle") }}
@@ -301,7 +301,7 @@
 
               <hr class="my-5" />
 
-              <s-widget-header
+              <u-widget-header
                 class="mt-5"
                 icon="view_carousel"
                 :title="$t('vendor_add.page.title')"
@@ -316,7 +316,7 @@
                 :disabled="!vendor?.enable"
                 :disabled-reason="$t('vendor_add.vendor_is_disable_msg')"
               >
-              </s-widget-header>
+              </u-widget-header>
 
               <v-list-subheader>
                 {{ $t("vendor_add.page.subtitle") }}
@@ -433,11 +433,11 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Contact info  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="connect_without_contact"
                 :title="$t('vendor_add.contact.title')"
               >
-              </s-widget-header>
+              </u-widget-header>
               <v-list-subheader
                 >{{ $t("vendor_add.contact.subtitle") }}
               </v-list-subheader>
@@ -510,10 +510,10 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Vendor Profiles ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="assignment"
                 :title="$t('vendor_add.profiles.title')"
-              ></s-widget-header>
+              ></u-widget-header>
               <v-list-subheader
                 >{{ $t("vendor_add.profiles.subtitle") }}
               </v-list-subheader>
@@ -628,11 +628,11 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Business info  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 :icon="business ? 'business' : 'person'"
                 :title="$t('vendor_add.business.title')"
               >
-              </s-widget-header>
+              </u-widget-header>
               <v-list-subheader
                 >{{ $t("vendor_add.business.subtitle") }}
               </v-list-subheader>
@@ -672,8 +672,8 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Bank info  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header icon="paid" :title="$t('vendor_add.bank.title')">
-              </s-widget-header>
+              <u-widget-header icon="paid" :title="$t('vendor_add.bank.title')">
+              </u-widget-header>
               <v-list-subheader>
                 {{ $t("vendor_add.bank.subtitle") }}
               </v-list-subheader>
@@ -752,7 +752,7 @@
 
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Default Pricing  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="sell"
                 :title="$t('vendor_add.default_pricing.title')"
               >
@@ -771,7 +771,7 @@
                     {{ $t("vendor_add.default_pricing.no_pricing") }}
                   </v-chip>
                 </template>
-              </s-widget-header>
+              </u-widget-header>
               <v-list-subheader>
                 {{ $t("vendor_add.default_pricing.subtitle") }}
               </v-list-subheader>
@@ -818,11 +818,11 @@
 
           <v-window-item v-if="has_shipping">
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="local_shipping"
                 :title="$t('vendor_add.shipping.title')"
               >
-              </s-widget-header>
+              </u-widget-header>
 
               <v-list-subheader>
                 {{ $t("vendor_add.shipping.subtitle") }}
@@ -906,11 +906,11 @@
               "
               class="widget-box mb-5"
             >
-              <s-widget-header
+              <u-widget-header
                 icon="tune"
                 :title="$t('vendor_add.configuration.title')"
               >
-              </s-widget-header>
+              </u-widget-header>
 
               <u-smart-switch
                 v-model="enable"
@@ -956,11 +956,11 @@
 
           <v-window-item>
             <div v-if="vendor && !IS_VENDOR_PANEL" class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="block"
                 :title="$t('vendor_add.delete.title')"
               >
-              </s-widget-header>
+              </u-widget-header>
 
               <u-smart-verify
                 v-model="accept_delete"
@@ -1000,14 +1000,14 @@
           <v-card-title>Select location profile</v-card-title>
           <v-card-text>
             <div class="widget-box -large mb-5">
-              <s-widget-header
+              <u-widget-header
                 :add-caption="IS_VENDOR_PANEL ? undefined : 'Add new location'"
                 :to="{ name: 'BPageShopChannelMap' }"
                 add-text
                 icon="place"
                 title="Location profile"
               >
-              </s-widget-header>
+              </u-widget-header>
               <v-list-subheader>
                 You can pin vendors on the map location by assigning location
                 tags to the them.

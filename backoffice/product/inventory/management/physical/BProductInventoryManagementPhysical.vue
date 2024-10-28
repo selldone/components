@@ -17,7 +17,7 @@
     <!-- ----------------------- Physical------------------------ -->
 
     <div class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :add-caption="
           hasVariants && !add_by_dropShipping
             ? $t('product_admin.inventory.variants.add_action')
@@ -45,7 +45,7 @@
           >
           </u-smart-menu>
         </template>
-      </s-widget-header>
+      </u-widget-header>
 
       <v-list-subheader
         >{{ $t("product_admin.inventory.variants.sub_title") }}
@@ -204,10 +204,10 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ No variant Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div v-if="!hasVariants" class="widget-box -large my-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.inventory')"
         icon="shelves"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         {{

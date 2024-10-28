@@ -114,7 +114,7 @@
 import UButtonAiSmall from "../../button/ai/small/UButtonAiSmall.vue";
 
 export default {
-  name: "SWidgetHeader",
+  name: "UWidgetHeader",
   components: { UButtonAiSmall },
   emits: ["click:add", "click:ai"],
   props: {

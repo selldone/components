@@ -45,11 +45,11 @@
       <div v-if="!type" class="max-width-container-1280px mx-auto">
         <!-- ██████████████████████ Select type ██████████████████████ -->
 
-        <s-widget-header
+        <u-widget-header
           :title="$t('global.commons.product_type')"
           icon="workspaces"
           icon-color="#333"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("add_product.select_type.title") }}
         </v-list-subheader>
@@ -68,10 +68,10 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Marketplace Settings ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div v-if="is_marketplace" class="widget-box mb-5 mt-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.vendor')"
               icon="storefront"
-            ></s-widget-header>
+            ></u-widget-header>
 
             <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Vendor panel > Fixed mode ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
@@ -170,10 +170,10 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ General ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.info')"
               icon="info"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader
               >{{ $t("product_studio.info.subtitle") }}
             </v-list-subheader>
@@ -210,10 +210,10 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.price')"
               icon="monetization_on"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader>
               {{ $t("product_studio.price.subtitle") }}
             </v-list-subheader>

@@ -38,14 +38,14 @@
     <template v-if="tab === 'setting'">
       <v-card-text>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="
               category
                 ? $t('add_category.title_edit')
                 : $t('add_category.title_update')
             "
             icon="tune"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("add_category.config.subtitle") }}
@@ -176,10 +176,10 @@
           <hr class="my-5" />
           <!-- Parent folder -->
           <template v-if="parentFolder">
-            <s-widget-header
+            <u-widget-header
               :title="$t('add_category.parent_input')"
               icon="account_tree"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader>
               {{ $t("add_category.parent.subtitle") }}
             </v-list-subheader>
@@ -258,7 +258,7 @@
     <template v-if="tab === 'template' && category">
       <v-card-text>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :add-caption="
               page
                 ? $t('add_category.template.edit_page')
@@ -273,7 +273,7 @@
             add-text
             icon="layers"
             :title="$t('add_category.template.title')"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("add_category.template.subtitle") }}
@@ -326,11 +326,11 @@
     <template v-if="tab === 'critical' && category">
       <v-card-text>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('add_category.critical_zone.title')"
             icon="warning_amber"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             <div
               v-html="
@@ -385,7 +385,7 @@ import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
 import LAugmentForm from "@selldone/page-builder/components/augment/form/LAugmentForm.vue";
 import BPageInput from "../../page/input/BPageInput.vue";
 import BTranslationButtonCategory from "../../translation/button/category/BTranslationButtonCategory.vue";
-import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import BCategoryAddHeader from "../../category/add/header/BCategoryAddHeader.vue";
 import BCategoryEngineEditor from "@selldone/components-vue/backoffice/category/engine/BCategoryEngineEditor.vue";
 
@@ -395,7 +395,7 @@ export default {
     BCategoryEngineEditor,
 
     BCategoryAddHeader,
-    SWidgetHeader,
+    UWidgetHeader,
     BTranslationButtonCategory,
     BPageInput,
     LAugmentForm,

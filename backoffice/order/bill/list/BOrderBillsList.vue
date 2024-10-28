@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="widget-box -large mb-5" v-bind="$attrs">
-    <s-widget-header
+    <u-widget-header
       :add-caption="isSubscription ? 'Sync Bills Manually' : undefined"
       :add-loading="busy_sync"
       add-icon="sync"
@@ -24,7 +24,7 @@
       @click:add="syncBills"
     >
       <template v-slot:actions></template>
-    </s-widget-header>
+    </u-widget-header>
     <v-list-subheader>
       <div>
         Bills are records to keep transactions for orders with multiple

@@ -16,11 +16,11 @@
   <!-- --------------------------------- Google Search Console Connect --------------------------- -->
 
   <div v-if="search_console_available" class="widget-box">
-    <s-widget-header
+    <u-widget-header
       :src="require('../../../assets/icons/seo.svg')"
       :title="$t('channel_google.serp.title')"
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader>
       {{ $t("channel_google.serp.subtitle") }}

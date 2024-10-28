@@ -15,10 +15,10 @@
 <template>
   <div>
     <div class="widget-box mb-5 mt-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_product.inputs_edit.title')"
         icon="feed"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader
         >{{ $t("add_product.inputs_edit.sub_title") }}
       </v-list-subheader>

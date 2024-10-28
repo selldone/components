@@ -14,8 +14,8 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="widget-box mb-5">
-    <s-widget-header :title="$t('shop_configuration.login.title')" icon="login">
-    </s-widget-header>
+    <u-widget-header :title="$t('shop_configuration.login.title')" icon="login">
+    </u-widget-header>
     <v-list-subheader>
       {{ $t("shop_configuration.login.subtitle") }}
     </v-list-subheader>

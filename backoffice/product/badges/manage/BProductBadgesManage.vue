@@ -15,14 +15,14 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <div :class="{ disabled: busy_fetch }" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :disabled="IS_VENDOR_PANEL"
         :add-caption="$t('product_badges.create_new_badge_action')"
         :disabled-reason="$t('product_badges.only_marketplace_owner_msg')"
         icon="verified"
         :title="$t('product_badges.title')"
         @click:add="showAdd"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>{{ $t("product_badges.subtitle") }}</v-list-subheader>
 
@@ -139,9 +139,9 @@
 
         <v-card-text>
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('product_badges.add_custom_badge.title')"
-            ></s-widget-header>
+            ></u-widget-header>
 
             <v-list-subheader>
               {{ $t("product_badges.add_custom_badge.subtitle") }}

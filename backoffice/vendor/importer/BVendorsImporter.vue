@@ -14,9 +14,9 @@
 
 <template>
   <div class="widget-box -large min-height-50vh" fluid @dragover="dragover">
-    <s-widget-header icon="upload" :title="$t('importer.vendor.title')">
+    <u-widget-header icon="upload" :title="$t('importer.vendor.title')">
       <template v-slot:actions></template>
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader>
       {{ $t("importer.vendor.subtitle") }}
@@ -44,13 +44,13 @@
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ STEP 1 : Review imported data ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
         <v-stepper-window-item :value="1">
-          <s-widget-header
+          <u-widget-header
             :add-caption="$t('importer.vendor.checklist.sample_files')"
             add-icon="download"
             href="/app/excel/vendors-import.xlsx"
             icon="checklist"
             :title="$t('importer.vendor.checklist.title')"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{ $t("importer.vendor.checklist.subtitle") }}
           </v-list-subheader>

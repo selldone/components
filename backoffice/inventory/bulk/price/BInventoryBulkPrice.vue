@@ -61,10 +61,10 @@
           <v-window v-model="mode" class="mt-3">
             <v-window-item value="percent">
               <div class="widget-box mb-5">
-                <s-widget-header
+                <u-widget-header
                   :title="$t('global.commons.price')"
                   icon="price_change"
-                ></s-widget-header>
+                ></u-widget-header>
 
                 <v-list-subheader>
                   {{ $t("bulk_price_dialog.message") }}
@@ -96,10 +96,10 @@
             </v-window-item>
             <v-window-item value="constant">
               <div class="widget-box mb-5">
-                <s-widget-header
+                <u-widget-header
                   :title="$t('global.commons.price')"
                   icon="price_change"
-                ></s-widget-header>
+                ></u-widget-header>
 
                 <v-list-subheader>
                   {{$t('bulk_price_dialog.constant.subtitle')}}
@@ -137,10 +137,10 @@
 
             <v-window-item value="ending">
               <div class="widget-box mb-5">
-                <s-widget-header
+                <u-widget-header
                   :title="$t('global.commons.price')"
                   icon="price_change"
-                ></s-widget-header>
+                ></u-widget-header>
 
                 <v-list-subheader>
                   {{$t('bulk_price_dialog.ending.subtitle')}}
@@ -174,10 +174,10 @@
 
             <v-window-item value="marketplace">
               <div class="widget-box mb-5">
-                <s-widget-header
+                <u-widget-header
                   :title="$t('bulk_price_dialog.marketplace.title') "
                   icon="price_change"
-                ></s-widget-header>
+                ></u-widget-header>
 
                 <v-list-subheader>
                   {{$t('bulk_price_dialog.marketplace.subtitle')}}
@@ -212,10 +212,10 @@
           </v-window>
 
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.category')"
               icon="snippet_folder"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader
               >
               {{$t('bulk_price_dialog.category.subtitle')}}
@@ -236,10 +236,10 @@
             <hr class="my-5" />
 
             <template v-if="IS_MARKETPLACE">
-              <s-widget-header
+              <u-widget-header
                 :title="$t('global.commons.vendor')"
                 icon="storefront"
-              ></s-widget-header>
+              ></u-widget-header>
               <v-list-subheader
                 >
                 {{$t('bulk_price_dialog.vendor.subtitle')}}

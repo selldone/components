@@ -14,7 +14,7 @@
 
 <template>
   <div class="widget-box mb-5 min-height-40vh overflow-hidden">
-    <s-widget-header
+    <u-widget-header
       :disabled="
         sms.verification ||
         !shop.sms_service ||
@@ -34,7 +34,7 @@
       :add-caption="$t('shop_sms.template.add_new')"
       icon="sms"
       @click:add="showDialog()"
-    ></s-widget-header>
+    ></u-widget-header>
 
     <v-list-subheader>
       <div
@@ -336,14 +336,14 @@
                 ></u-pod-node>
               </u-pods-panel>
             </div>
-            <s-widget-header title="Response"></s-widget-header>
+            <u-widget-header title="Response"></u-widget-header>
             <vue-json-pretty
               :data="test_response.response"
               class="my-3"
             ></vue-json-pretty>
 
             <hr class="my-5">
-            <s-widget-header title="Config & Parameters"></s-widget-header>
+            <u-widget-header title="Config & Parameters"></u-widget-header>
             <vue-json-pretty
                 :data="test_response.request"
                 class="my-3"
@@ -376,12 +376,12 @@ import UPodWire from "../../../../../ui/pod/wire/UPodWire.vue";
 import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";
 import _ from "lodash-es";
 import FrameView from "../../../../../ui/mockup/frame/FrameView.vue";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BShopSmsTemplateList",
   components: {
-    SWidgetHeader,
+    UWidgetHeader,
     UPodWire,
     UPodNode,
     UPodsPanel,

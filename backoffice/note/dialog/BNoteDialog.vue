@@ -70,10 +70,10 @@
         </div>
 
         <div class="c-bubble mb-5 mt-12 max-widget-width">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.actions.add_new_message')"
             icon="chat_bubble"
-          ></s-widget-header>
+          ></u-widget-header>
           <div class="d-flex align-center mt-3">
             <v-avatar :size="32" class="avatar-gradient -thin -user me-2">
               <v-img :src="getUserAvatar(USER_ID())" />

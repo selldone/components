@@ -14,10 +14,10 @@
 
 <template>
   <div class="widget-box mb-5">
-    <s-widget-header
+    <u-widget-header
       icon="add_to_drive"
       title="Google Drive™"
-    ></s-widget-header>
+    ></u-widget-header>
 
     <v-list-subheader>
       You have the option to link your shop with your Google Drive. This will

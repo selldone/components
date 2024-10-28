@@ -14,7 +14,7 @@
 
 <template>
   <div :class="{ disabled: busy }" class="widget-box my-5 pb-6">
-    <s-widget-header
+    <u-widget-header
       :add-caption="
         mail_service && mail_service.errors > 0
           ? `Reset errors (${mail_service.errors})`
@@ -26,7 +26,7 @@
       :title="$t('shop_email_provider.title')"
       @click:add="resetErrors"
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <u-loading-progress v-if="busy"></u-loading-progress>
     <v-list-subheader>
@@ -74,11 +74,11 @@
       >
       </u-smart-switch>
 
-      <s-widget-header
+      <u-widget-header
         class="mt-6"
         icon="tune"
         :title="$t('shop_email_provider.config.title')  "
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         {{$t('shop_email_provider.config.subtitle')}}
@@ -198,8 +198,8 @@
       >
       </u-smart-select>
 
-      <s-widget-header class="mt-5" icon="contact_mail" :title="$t('shop_email_provider.sender.title')">
-      </s-widget-header>
+      <u-widget-header class="mt-5" icon="contact_mail" :title="$t('shop_email_provider.sender.title')">
+      </u-widget-header>
       <v-list-subheader
         >
         {{$t('shop_email_provider.sender.subtitle')}}

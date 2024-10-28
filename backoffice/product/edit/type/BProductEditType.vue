@@ -337,10 +337,10 @@
 
         <div style="position: fixed;bottom: 0;left: 0;right: 0;z-index: 2;">
           <v-sheet  color="#eee" rounded="t-xl" class="mx-auto pa-4" max-width="98vw" width="640" elevation="3">
-            <s-widget-header
+            <u-widget-header
                 icon="note_add"
                 :title="$t('product_studio.sku_dialog.title')"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader>
               {{ $t('product_studio.sku_dialog.subtitle') }}
 
@@ -445,10 +445,10 @@
         </v-card-title>
         <v-card-text>
           <div class="widget-box my-5">
-            <s-widget-header
+            <u-widget-header
               icon="shelves"
               title="Inventory & Price"
-            ></s-widget-header>
+            ></u-widget-header>
             <u-number-input
               v-model="quantity"
               :label="$t('product_admin.inventory.variants.count_input')"

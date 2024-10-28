@@ -341,14 +341,14 @@
 
       <v-col cols="12">
         <div class="widget-box -x-large">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.segments')"
             add-caption="Add tag"
             add-text
             icon="label_important"
             @click:add="showEditSegments()"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader
             >You can use segments to filter customers and send emails to
             targeted audiences.
@@ -373,11 +373,11 @@
       <v-col cols="12">
         <!-- ---------------------------------------- Online ---------------------------------- -->
         <div class="widget-box -x-large mb-5 min-height-20vh">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.online_orders')"
             icon="local_mall"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader
             >List of last five online orders by this customer.
           </v-list-subheader>
@@ -437,11 +437,11 @@
         <!-- ---------------------------------------- POS ---------------------------------- -->
 
         <div class="widget-box -x-large mb-5 min-height-20vh">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.pos_orders')"
             icon="local_mall"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader
             >List of last five in-person orders by this customer.
@@ -505,7 +505,7 @@
           v-if="customer.meta"
           class="widget-box -x-large mb-5 min-height-20vh"
         >
-          <s-widget-header icon="pix" title="Metadata"></s-widget-header>
+          <u-widget-header icon="pix" title="Metadata"></u-widget-header>
 
           <v-list-subheader
             >We connect your customer with the corresponding 3rd party services

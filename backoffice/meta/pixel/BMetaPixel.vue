@@ -14,11 +14,11 @@
 
 <template>
   <div class="widget-box">
-    <s-widget-header
+    <u-widget-header
       :src="require('../../../assets/trademark/facebook.svg')"
       title="Facebook pixel"
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader
       >The Facebook pixel is a valuable analytical instrument that enables you

@@ -31,10 +31,10 @@
         <!-- ████████████████████████ Config ████████████████████████ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.config')"
             icon="tune"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{ $t("valuation_add.config.subtitle") }}
           </v-list-subheader>
@@ -58,7 +58,7 @@
         <!-- ████████████████████████ Structure ████████████████████████ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :add-caption="
               collapse
                 ? $t('valuation_add.structure.expand_action')
@@ -69,7 +69,7 @@
             icon="table_view"
             :title="$t('valuation_add.structure.title')"
             @click:add="collapse = !collapse"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{ $t("valuation_add.structure.subtitle") }}
           </v-list-subheader>
@@ -148,10 +148,10 @@
 
         <!-- ████████████████████████ Conditions ████████████████████████ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             icon="rule_folder"
             :title="$t('valuation_add.conditions.title')"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader
             >{{ $t("valuation_add.conditions.subtitle") }}
           </v-list-subheader>

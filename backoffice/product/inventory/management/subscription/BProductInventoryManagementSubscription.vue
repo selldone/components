@@ -15,13 +15,13 @@
 <template>
   <div>
     <div class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         add-caption="Add new pricing "
         icon="fa:fas fa-cubes-stacked"
         title="Subscription Pricings"
         @click:add="showEdit()"
       >
-      </s-widget-header>
+      </u-widget-header>
 
       <v-list-subheader>
         Selldone Ribbon is the fastest way for your business to bill customers

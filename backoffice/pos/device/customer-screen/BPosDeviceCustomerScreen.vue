@@ -17,7 +17,7 @@
     <v-expand-transition>
       <u-loading-progress v-if="busy"></u-loading-progress>
       <div v-else class="widget-box">
-        <s-widget-header icon="cast" title="Customer Screen"></s-widget-header>
+        <u-widget-header icon="cast" title="Customer Screen"></u-widget-header>
         <v-list-subheader>
           You can convert any devices to a customer screen for your POS just by
           pasting the following link in its browser.
@@ -73,11 +73,11 @@
 
 <script>
 import { PosDeviceTypes } from "@selldone/core-js/enums/pos/PosDeviceTypes";
-import SWidgetHeader from "../../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../../ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BPosDeviceCustomerScreen",
-  components: { SWidgetHeader },
+  components: { UWidgetHeader },
   emits: ["close", "add"],
   props: {
     shop: {

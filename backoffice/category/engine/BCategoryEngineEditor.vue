@@ -15,10 +15,10 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card-text>
     <div class="widget-box mb-5 pb-5">
-      <s-widget-header
+      <u-widget-header
         icon="shelves"
         :title="$t('category_engine_editor.title')"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{$t('category_engine_editor.subtitle')}}
 
@@ -116,7 +116,7 @@
 import UChipTag from "../../../ui/chip/tag/UChipTag.vue";
 import BCategoryInput from "../input/BCategoryInput.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
-import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import { BackofficeLocalStorages } from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
 
@@ -124,7 +124,7 @@ export default {
   name: "BCategoryEngineEditor",
   components: {
     BCategoryEnginePreview,
-    SWidgetHeader,
+    UWidgetHeader,
     SWidgetButtons,
     BCategoryInput,
     UChipTag,

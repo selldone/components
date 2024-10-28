@@ -17,11 +17,11 @@
     <!-- ████████████████████ Spec Fields ████████████████████ -->
 
     <div :class="{ '-large': expanded }" class="widget-box mb-5 mt-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_product.edit_spec.title')"
         icon="summarize"
       >
-      </s-widget-header>
+      </u-widget-header>
       <v-list-subheader>
         {{ $t("add_product.edit_spec.subtitle") }}
       </v-list-subheader>
@@ -56,10 +56,10 @@
       </v-btn>
 
       <template v-if="!add_by_dropShipping">
-        <s-widget-header
+        <u-widget-header
           :title="$t('add_product.edit_spec.manual.title')"
           icon="format_list_bulleted_add"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("add_product.edit_spec.manual.subtitle") }}
         </v-list-subheader>
@@ -235,10 +235,10 @@
         <!-- ████████████████████ Import ████████████████████ -->
 
         <div class="dashed-hr my-2 mx-n5"></div>
-        <s-widget-header
+        <u-widget-header
           :title="$t('global.commons.import')"
           icon="save_alt"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("add_product.edit_spec.import.subtitle") }}
         </v-list-subheader>
@@ -267,10 +267,10 @@
 
         <div class="dashed-hr my-2 mx-n5"></div>
 
-        <s-widget-header
+        <u-widget-header
           :title="$t('add_product.edit_spec.ai.title')"
           icon="auto_fix_high"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader>
           {{ $t("add_product.edit_spec.ai.subtitle") }}
@@ -353,11 +353,11 @@
         <v-expand-transition>
           <div v-if="spec_selected">
             <div class="widget-box -large mb-5">
-              <s-widget-header
+              <u-widget-header
                 :title="$t('add_product.edit_spec.dialog.spec_view_title')"
                 icon="info_outline"
               >
-              </s-widget-header>
+              </u-widget-header>
               <v-list-subheader>
                 {{ $t("add_product.edit_spec.dialog.spec_view_subtitle") }}
               </v-list-subheader>
@@ -415,7 +415,7 @@
         <u-loading-progress v-if="busy || busy_find"></u-loading-progress>
 
         <div class="widget-box -large mb-5">
-          <s-widget-header
+          <u-widget-header
             icon="mode_comment"
             :title="$t('add_product.edit_spec.dialog_ai.prompt.title')"
           >
@@ -434,7 +434,7 @@
                 </b-ai-model-input>
               </v-locale-provider>
             </template>
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("add_product.edit_spec.dialog_ai.prompt.subtitle") }}
@@ -471,13 +471,13 @@
         <v-expand-transition>
           <div v-if="spec_generated">
             <div class="widget-box -large mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="info_outline"
                 :title="
                   $t('add_product.edit_spec.dialog_ai.generated_spec.title')
                 "
               >
-              </s-widget-header>
+              </u-widget-header>
               <v-list-subheader>
                 {{
                   $t("add_product.edit_spec.dialog_ai.generated_spec.subtitle")

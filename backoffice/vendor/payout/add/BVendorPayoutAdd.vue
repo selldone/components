@@ -19,10 +19,10 @@
       <!-- ███████████████████████ Select vendor ███████████████████████ -->
 
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="store"
           :title="$t('vendor_payout_add.vendor.title')"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader>
           {{ $t("vendor_payout_add.vendor.subtitle") }}
@@ -159,11 +159,11 @@
       <!-- ███████████████████████ Transfer Mode > Bank ███████████████████████ -->
 
       <div v-if="selected_option === 'bank'" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="account_balance"
           :title="$t('vendor_payout_add.bank_transfer.title')"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader>
           {{ $t("vendor_payout_add.bank_transfer.subtitle") }}
@@ -193,11 +193,11 @@
         v-else-if="selected_option_obj && selected_vendor"
         class="widget-box mb-5"
       >
-        <s-widget-header
+        <u-widget-header
           :src="getShopImagePath(selected_option_obj.image)"
           :title="selected_option_obj.title"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader
           >{{ selected_option_obj.description }}
@@ -263,10 +263,10 @@
       <!-- ███████████████████████ Payment ███████████████████████ -->
 
       <div :class="{ disabled: !selected_option }" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="paid"
           :title="$t('vendor_payout_add.payment.title')"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader>
           {{ $t("vendor_payout_add.payment.subtitle") }}
@@ -311,10 +311,10 @@
       </div>
 
       <div v-if="payment?.reversal_detail?.length" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="history"
           :title="$t('vendor_payout_add.history.title')"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("vendor_payout_add.history.subtitle") }}
         </v-list-subheader>
@@ -323,10 +323,10 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Delete ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div v-if="payment" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="block"
           :title="$t('vendor_payout_add.refund.title')"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("vendor_payout_add.refund.subtitle") }}
         </v-list-subheader>

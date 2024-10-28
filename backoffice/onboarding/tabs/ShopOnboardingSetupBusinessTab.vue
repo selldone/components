@@ -16,7 +16,7 @@
   <v-card color="transparent" flat>
     <v-card-text>
 
-      <s-widget-header :title="$t('onboarding.business.step1.title')" icon="work"> </s-widget-header>
+      <u-widget-header :title="$t('onboarding.business.step1.title')" icon="work"> </u-widget-header>
 
 
 

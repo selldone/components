@@ -17,10 +17,10 @@
     <v-expand-transition>
       <u-loading-progress v-if="busy"></u-loading-progress>
       <div v-else class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="barcode_reader"
           title="Barcode Scanner Config"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           You can connect compatible barcode scanners to your POS just by
           entering your WiFi info and scan the generated QR code by barcode
@@ -148,12 +148,12 @@
 
 <script>
 import { PosDeviceTypes } from "@selldone/core-js/enums/pos/PosDeviceTypes";
-import SWidgetHeader from "../../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../../ui/widget/header/UWidgetHeader.vue";
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
 
 export default {
   name: "BPosDeviceBarcodeScanner",
-  components: { UTextCopyBox, SWidgetHeader },
+  components: { UTextCopyBox, UWidgetHeader },
   emits: ["close", "add"],
   props: {
     shop: {

@@ -14,9 +14,9 @@
 
 <template>
   <div class="widget-box -large min-height-50vh" fluid @dragover="dragover">
-    <s-widget-header :title="$t('importer.customer.title')" icon="upload">
+    <u-widget-header :title="$t('importer.customer.title')" icon="upload">
       <template v-slot:actions></template>
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader>
       {{ $t("importer.customer.subtitle") }}
@@ -38,14 +38,14 @@
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ STEP 1 : Review imported data ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
         <v-stepper-window-item :value="1">
-          <s-widget-header
+          <u-widget-header
             add-caption="Sample Excel"
             add-icon="download"
             add-sub-caption="Download template file"
             href="/app/excel/customers-import.xlsx"
             icon="checklist"
             title="Important checklist"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader
             >Make sure to follow the guideline.</v-list-subheader
           >

@@ -14,10 +14,10 @@
 
 <template>
   <div v-if="order_link" class="widget-box -large">
-    <s-widget-header
+    <u-widget-header
       :title="$t('b_order_share.title')"
       icon="shopping_bag"
-    ></s-widget-header>
+    ></u-widget-header>
     <v-list-subheader>
       {{ $t("b_order_share.subtitle") }}
 

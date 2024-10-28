@@ -26,7 +26,7 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Category ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div class="widget-box mb-5">
-        <s-widget-header icon="assignment" title="Profile"></s-widget-header>
+        <u-widget-header icon="assignment" title="Profile"></u-widget-header>
         <v-list-subheader>
           <ul>
             <li>

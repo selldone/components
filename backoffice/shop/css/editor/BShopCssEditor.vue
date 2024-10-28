@@ -40,7 +40,7 @@
       </v-btn>
     </div>
 
-    <s-widget-header class="mt-5" icon="support" title="Help"></s-widget-header>
+    <u-widget-header class="mt-5" icon="support" title="Help"></u-widget-header>
     <v-list-subheader></v-list-subheader>
     <div class="border-between-vertical">
       <div v-for="item in list" :key="`${item.parent} ${item.path}`">

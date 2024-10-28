@@ -15,7 +15,7 @@
 <template>
   <!-- ██████████████████ Config ██████████████████ -->
   <div class="widget-box" v-bind="$attrs">
-    <s-widget-header
+    <u-widget-header
       :disabled="!enable"
       add-caption="Open map"
       add-icon="open_in_new"
@@ -24,7 +24,7 @@
       icon="map"
       title="Map | Location based search"
       @click:add="show_map_urls = true"
-    ></s-widget-header>
+    ></u-widget-header>
 
     <v-list-subheader>
       Your customers can find products by searching on the map.

@@ -194,8 +194,8 @@
     <v-card>
       <v-card-text>
         <div class="widget-box w-100 my-5">
-          <s-widget-header icon="cloud_upload" title="Upload 3D models">
-          </s-widget-header>
+          <u-widget-header icon="cloud_upload" title="Upload 3D models">
+          </u-widget-header>
 
           <v-list-subheader>
             You can upload .glb file for 3D model and .usdz file for iOS
@@ -271,12 +271,12 @@
 <script>
 import SArModelUploader from "../../../../../ui/uploader/SArModelUploader.vue";
 import VariantItemViewMicro from "../../../../../storefront/product/variant/VariantItemViewMicro.vue";
-import SWidgetHeader from "../../../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../../../ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BProductArTableRow",
   components: {
-    SWidgetHeader,
+    UWidgetHeader,
     VariantItemViewMicro,
     SArModelUploader,
   },

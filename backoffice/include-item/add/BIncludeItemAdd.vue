@@ -24,10 +24,10 @@
     </v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="tune"
           :title="$t('include_item_add.title')"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("include_item_add.subtitle") }}
         </v-list-subheader>
@@ -137,11 +137,11 @@
       <v-expand-transition>
         <div v-if="mode === 'external'">
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('include_item_add.mode.external_link.title')"
               icon="link"
             >
-            </s-widget-header>
+            </u-widget-header>
             <v-list-subheader>
               {{ $t("include_item_add.mode.external_link.tips") }}
             </v-list-subheader>
@@ -159,11 +159,11 @@
         </div>
         <div v-else-if="mode === 'internal'">
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('include_item_add.mode.internal_link.title')"
               icon="architecture"
             >
-            </s-widget-header>
+            </u-widget-header>
             <v-list-subheader>
               {{ $t("include_item_add.mode.internal_link.tips") }}
             </v-list-subheader>
@@ -251,13 +251,13 @@ import BPageInput from "../../page/input/BPageInput.vue";
 import LAugmentForm from "@selldone/page-builder/components/augment/form/LAugmentForm.vue";
 import BTranslationButtonInclude from "../../translation/button/include/BTranslationButtonInclude.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BIncludeItemAdd",
   emits: ["add", "edit", "close"],
   components: {
-    SWidgetHeader,
+    UWidgetHeader,
     SWidgetButtons,
     BTranslationButtonInclude,
     LAugmentForm,

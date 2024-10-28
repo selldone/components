@@ -18,14 +18,14 @@
     <v-card-text class="pt-5">
       <v-form ref="form" lazy-validation>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="
               affiliate
                 ? $t('affiliate_edit.config.edit')
                 : $t('affiliate_edit.config.new')
             "
             icon="tune"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("affiliate_edit.config.subtitle") }}
@@ -59,10 +59,10 @@
         </div>
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('affiliate_edit.payment.title')"
             icon="payment"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("affiliate_edit.payment.subtitle") }}
@@ -161,10 +161,10 @@
         </div>
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('affiliate_edit.contact.title')"
             icon="person"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("affiliate_edit.contact.subtitle") }}
@@ -248,10 +248,10 @@
         </div>
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('affiliate_edit.restriction.title')"
             icon="border_outer"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("affiliate_edit.restriction.subtitle") }}
@@ -276,10 +276,10 @@
         </div>
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('affiliate_edit.link_domain.title')"
             icon="add_link"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("affiliate_edit.link_domain.subtitle") }}
@@ -335,10 +335,10 @@
         </div>
 
         <div class="widget-box mb-5 pb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('affiliate_pos.title')"
             icon="table_view"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("affiliate_pos.description") }}
@@ -370,14 +370,14 @@
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :to="{ name: 'BPageShopClassificationClusters' }"
             :add-caption="$t('affiliate_edit.cluster.manage_action')"
             add-icon="settings"
             add-text
             icon="workspaces"
             :title="$t('affiliate_edit.cluster.title')"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("affiliate_edit.cluster.subtitle") }}
@@ -444,12 +444,12 @@ import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BAffiliateEdit",
   components: {
-    SWidgetHeader,
+    UWidgetHeader,
     SWidgetButtons,
     BClusterInput,
     USmartToggle,

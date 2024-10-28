@@ -134,7 +134,7 @@
       <v-card-text>
         <u-loading-progress v-if="busy_fetch"></u-loading-progress>
         <div class="widget-box mb-5">
-          <s-widget-header title="Conditional" icon="token"></s-widget-header>
+          <u-widget-header title="Conditional" icon="token"></u-widget-header>
           <v-list-subheader>
             Please provide your custom OAuth2 client token from the provider. By
             configuring this option, your business logo will appear on your
@@ -229,14 +229,14 @@
 
 <script lang="ts">
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
 
 export default {
   name: "BOptionsLoginMethodRow",
-  components: { UTextCopyBox, ULoadingProgress, USmartSwitch, SWidgetHeader },
+  components: { UTextCopyBox, ULoadingProgress, USmartSwitch, UWidgetHeader },
   props: {
     shop: {
       required: false,

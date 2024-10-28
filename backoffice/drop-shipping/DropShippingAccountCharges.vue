@@ -14,7 +14,7 @@
 
 <template>
   <div class="widget-box -large">
-    <s-widget-header icon="paid" title="Wallet top-ups"></s-widget-header>
+    <u-widget-header icon="paid" title="Wallet top-ups"></u-widget-header>
     <v-list-subheader>
       This is the list of all transactions between you and the wholesaler in this wallet.
     </v-list-subheader>

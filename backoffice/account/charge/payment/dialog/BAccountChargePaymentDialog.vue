@@ -14,10 +14,10 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="widget-box">
-    <s-widget-header
+    <u-widget-header
       :title="$t('account_page.deposit.form.title')"
       icon="add_box"
-    ></s-widget-header>
+    ></u-widget-header>
 
     <v-list-subheader>
       {{ $t("account_page.deposit.form.sub_title") }}

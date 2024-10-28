@@ -22,11 +22,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ General ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.general_config')"
             icon="tune"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("coupon_edit.config.subtitle") }}
@@ -79,11 +79,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Limits ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.limits_config')"
             icon="call_missed_outgoing"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("coupon_edit.limit.subtitle") }}
@@ -117,11 +117,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Duration ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.duration_config')"
             icon="schedule"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("coupon_edit.duration.subtitle") }}
@@ -158,11 +158,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Design ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.design_config')"
             icon="architecture"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("coupon_edit.design.subtitle") }}
@@ -233,11 +233,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Constraints ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.constraints_config')"
             icon="border_outer"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("coupon_edit.constraints.subtitle") }}
@@ -378,11 +378,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Clubs ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.clubs_config')"
             icon="groups"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("coupon_edit.club.subtitle") }}
@@ -400,14 +400,14 @@
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :add-caption="$t('global.commons.management')"
             :title="$t('global.commons.cluster')"
             :to="{ name: 'BPageShopClassificationClusters' }"
             add-icon="settings"
             add-text
             icon="workspaces"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("coupon_edit.cluster.subtitle") }}
@@ -426,8 +426,8 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Preview ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
-          <s-widget-header :title="$t('global.commons.preview')" icon="preview">
-          </s-widget-header>
+          <u-widget-header :title="$t('global.commons.preview')" icon="preview">
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("coupon_edit.preview.subtitle") }}
           </v-list-subheader>
@@ -514,7 +514,7 @@ import { RandomString } from "@selldone/core-js/helper/string/StringHelper";
 import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue";
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import BTranslationButtonCoupon from "../../translation/button/coupon/BTranslationButtonCoupon.vue";
-import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import { Club } from "@selldone/core-js";
 
@@ -522,7 +522,7 @@ export default {
   name: "BCouponAdd",
   components: {
     SWidgetButtons,
-    SWidgetHeader,
+    UWidgetHeader,
     BTranslationButtonCoupon,
     BClusterInput,
     USmartSuggestion,

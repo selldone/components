@@ -14,11 +14,11 @@
 
 <template>
   <div class="widget-box">
-    <s-widget-header
+    <u-widget-header
       :src="require('../../../assets/trademark/meta.png')"
       title="Meta Data Source"
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader>
       Selldone seamlessly integrates with Meta to automatically synchronize and

@@ -18,12 +18,12 @@
     class="s--storefront-lottery-prizes-list"
     fluid
   >
-    <s-widget-header
+    <u-widget-header
       :title="$t('global.commons.Prizes')"
       icon="casino"
       icon-color="#333"
     >
-    </s-widget-header>
+    </u-widget-header>
     <v-list-subheader>
       {{ $t("lottery_prizes.message") }}
     </v-list-subheader>

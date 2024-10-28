@@ -69,7 +69,7 @@
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
-          <s-widget-header
+          <u-widget-header
             :add-caption="$t('product_logistic_profile.dialog.add_new_action')"
             :disabled="IS_VENDOR_PANEL"
             :disabled-reason="
@@ -80,7 +80,7 @@
             :to="{ name: 'BPageShopLogisticProfiles' }"
             add-text
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>{{
             $t(selected_profile_type.desc)
           }}</v-list-subheader>

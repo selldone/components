@@ -14,10 +14,10 @@
 
 <template>
   <div class="widget-box mb-5">
-    <s-widget-header
+    <u-widget-header
       :title="$t('shop_theme.theme_colors')"
       icon="palette"
-    ></s-widget-header>
+    ></u-widget-header>
     <v-list-subheader
       >You can personalize the primary color palette of your shop here. Each
       template can utilize these colors to automatically generate a complete

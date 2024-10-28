@@ -72,7 +72,7 @@
         <u-loading-progress v-if="busy"></u-loading-progress>
 
         <div class="widget-box mb-5">
-          <s-widget-header title="Status" icon="tune"></s-widget-header>
+          <u-widget-header title="Status" icon="tune"></u-widget-header>
           <v-list-subheader>
             If you want to use default email content, you can disable this
             template.
@@ -94,7 +94,7 @@
         <v-expand-transition>
           <div v-if="enable">
             <div class="widget-box mb-5">
-              <s-widget-header title="Content" icon="notes"></s-widget-header>
+              <u-widget-header title="Content" icon="notes"></u-widget-header>
 
               <v-list-subheader>
                 <div v-html="parameters_tip"></div>
@@ -144,10 +144,10 @@
               ></v-textarea>
             </div>
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 title="Header"
                 icon="wallpaper"
-              ></s-widget-header>
+              ></u-widget-header>
 
               <v-list-subheader>
                 You can add a header image and show your business logo on the
@@ -175,10 +175,10 @@
               ></u-smart-toggle>
             </div>
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 title="Footer"
                 icon="call_to_action"
-              ></s-widget-header>
+              ></u-widget-header>
 
               <v-list-subheader>
                 You can add a footer image and html content to the footer.
@@ -202,10 +202,10 @@
               ></v-textarea>
             </div>
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 title="Action"
                 icon="smart_button"
-              ></s-widget-header>
+              ></u-widget-header>
 
               <v-list-subheader>
                 You can customize the call to action button at the end of the
@@ -252,14 +252,14 @@
 import USmartToggle from "../../../../../ui/smart/toggle/USmartToggle.vue";
 import USmartImage from "../../../../../ui/smart/image/USmartImage.vue";
 import SWidgetButtons from "../../../../../ui/widget/buttons/SWidgetButtons.vue";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 
 export default {
   name: "BShopEmailTemplateEditor",
   components: {
     ULoadingProgress,
-    SWidgetHeader,
+    UWidgetHeader,
     SWidgetButtons,
     USmartImage,
     USmartToggle,

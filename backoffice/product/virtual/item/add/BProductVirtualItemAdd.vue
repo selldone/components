@@ -50,7 +50,7 @@
         :class="{ '-x-large': expand }"
         class="widget-box mb-5"
       >
-        <s-widget-header
+        <u-widget-header
           :add-caption="$t('add_virtual_item.edit_outputs')"
           :to="{
             name: 'BPageProductEdit',
@@ -61,7 +61,7 @@
           add-text
           icon="support"
           title="Guid"
-        ></s-widget-header>
+        ></u-widget-header>
 
         {{ $t("add_virtual_item.message") }}
 
@@ -120,10 +120,10 @@
       </div>
 
       <div :class="{ '-x-large': expand }" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :icon="bulk ? 'summarize' : 'feed'"
           :title="!bulk ? 'Manual mode' : 'Bulk mode'"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader>
           <div>

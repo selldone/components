@@ -20,10 +20,10 @@
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  General ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.general_config')"
         icon="tune"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader
         >Configuration of the overall shipping settings for the store.
@@ -56,11 +56,11 @@
 
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  Customize ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.customize')"
         icon="design_services"
       >
-      </s-widget-header>
+      </u-widget-header>
       <v-list-subheader
         >Personalize the name and logo of your transportation service.
       </v-list-subheader>
@@ -87,10 +87,10 @@
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄  Limits ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('admin_shop.logistic.delivery.delivery_form.limits')"
         icon="archive"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         Once these limits are set, we will use them to determine whether a
@@ -128,10 +128,10 @@
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Package Limits ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('admin_shop.logistic.delivery.delivery_form.max_size_input')"
         icon="fa:fas fa-ruler-combined"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         Enter the appropriate dimensions for the maximum packaging size, taking
@@ -177,10 +177,10 @@
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Week days / time ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('admin_shop.logistic.delivery.delivery_form.days_input')"
         icon="date_range"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader></v-list-subheader>
 
@@ -312,10 +312,10 @@
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Payment options ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('admin_shop.logistic.delivery.delivery_form.payment')"
         icon="monetization_on"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         For this shipping method, you can enable Cash on Delivery as a payment
@@ -378,12 +378,12 @@
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Shipping calculation ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
     <v-expand-transition>
       <div v-if="!transportation.sod" class="widget-box mb-5 pb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('admin_shop.logistic.delivery.delivery_form.pricing')"
           add-caption="Add Country Profile"
           icon="calculate"
           @click:add="showAddNewProfile"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader
           >In this section, you can customize your delivery prices. If your
@@ -490,10 +490,10 @@
     <v-expand-transition>
       <div v-if="!transportation.sod">
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.free_shipping')"
             icon="cruelty_free"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             This can be a useful way to encourage customers to purchase more
@@ -536,10 +536,10 @@
 
     <div v-if="IS_MARKETPLACE">
       <div class="widget-box mb-5" style="border-top: solid #6548cc medium">
-        <s-widget-header
+        <u-widget-header
           title="Marketplace & Vendors"
           icon="storefront"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader>
           Here you can enable this shipping method for your vendors.
@@ -623,10 +623,10 @@
       </v-card-title>
       <v-card-text>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('admin_shop.logistic.delivery.delivery_form.pricing')"
             icon="calculate"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader
             >The pricing model can be established based on the destination
             country of the order.

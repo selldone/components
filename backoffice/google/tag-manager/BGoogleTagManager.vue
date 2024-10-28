@@ -14,11 +14,11 @@
 
 <template>
   <div class="widget-box">
-    <s-widget-header
+    <u-widget-header
       :src="require('../../../assets/trademark/google-tag-manager.svg')"
       :title="$t('channel_google.gtag.title')"
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader>
       {{ $t("channel_google.gtag.subtitle") }}

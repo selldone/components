@@ -19,11 +19,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ General ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.general_config')"
             icon="tune"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("cashback_edit.config.subtitle") }}
@@ -93,11 +93,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Duration ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !percent }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('cashback_edit.duration.title')"
             icon="schedule"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("cashback_edit.duration.subtitle") }}
@@ -134,11 +134,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Design ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !percent }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.design_config')"
             icon="architecture"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("cashback_edit.design.subtitle") }}
@@ -202,11 +202,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Constraints ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !percent }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.constraints_config')"
             icon="border_outer"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("cashback_edit.constraints.subtitle") }}
@@ -264,11 +264,11 @@
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Clubs ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
         <div :class="{ disabled: !percent }" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.clubs_config')"
             icon="groups"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("cashback_edit.club.subtitle") }}
@@ -286,14 +286,14 @@
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :add-caption="$t('global.commons.management')"
             :title="$t('global.commons.cluster')"
             :to="{ name: 'BPageShopClassificationClusters' }"
             add-icon="settings"
             add-text
             icon="workspaces"
-          ></s-widget-header>
+          ></u-widget-header>
 
           <v-list-subheader>
             {{ $t("cashback_edit.cluster.subtitle") }}
@@ -363,7 +363,7 @@ import BClubConstraint from "../../club/constraint/BClubConstraint.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue";
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
-import SWidgetHeader from "../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import { Club } from "@selldone/core-js";
 import BTranslationButtonCashback from "@selldone/components-vue/backoffice/translation/button/cashback/BTranslationButtonCashback.vue";
@@ -375,7 +375,7 @@ export default {
     USmartToggle,
     BTranslationButtonCashback,
     SWidgetButtons,
-    SWidgetHeader,
+    UWidgetHeader,
     BClusterInput,
     USmartSuggestion,
     USmartSwitch,

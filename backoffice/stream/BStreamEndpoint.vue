@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <div class="widget-box -large mb-5">
-      <s-widget-header icon="html" title="Html form"></s-widget-header>
+      <u-widget-header icon="html" title="Html form"></u-widget-header>
       <v-list-subheader></v-list-subheader>
 
       Send a <b>POST</b> request to the specified endpoint with a JSON payload

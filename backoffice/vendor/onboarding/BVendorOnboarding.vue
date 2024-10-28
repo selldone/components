@@ -151,10 +151,10 @@
               v-if="modelValue && modelValue.created_at"
               class="widget-box mb-5"
             >
-              <s-widget-header
+              <u-widget-header
                 icon="workspaces"
                 title="Last status"
-              ></s-widget-header>
+              ></u-widget-header>
               <v-list-subheader>
                 Here, you can view the latest status of the vendor request.
               </v-list-subheader>
@@ -208,10 +208,10 @@
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃ Company information ▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="business"
                 title="Company information"
-              ></s-widget-header>
+              ></u-widget-header>
               <v-list-subheader>
                 This is the information regarding the vendor's business.
               </v-list-subheader>
@@ -265,10 +265,10 @@
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃ Personal information ▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="person"
                 title="Personal information"
-              ></s-widget-header>
+              ></u-widget-header>
               <v-list-subheader>
                 Personal information of the vendor account owner.
               </v-list-subheader>
@@ -292,10 +292,10 @@
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃ Products Category ▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="inventory"
                 title="Your products"
-              ></s-widget-header>
+              ></u-widget-header>
               <v-list-subheader
                 >What are the products or items that your company offers for
                 sale?
@@ -315,8 +315,8 @@
 
           <div v-if="step === 4">
             <div class="widget-box mb-5">
-              <s-widget-header icon="paid" title="Payout Information">
-              </s-widget-header>
+              <u-widget-header icon="paid" title="Payout Information">
+              </u-widget-header>
               <v-list-subheader
                 >Input your bank details here for payouts.
               </v-list-subheader>
@@ -391,12 +391,12 @@
 
           <div v-if="step === 5">
             <div class="widget-box mb-5">
-              <s-widget-header
+              <u-widget-header
                 icon="pageview"
                 title="Upload Document"
                 class="mt-3"
               >
-              </s-widget-header>
+              </u-widget-header>
               <v-list-subheader
                 >Please upload the necessary business, IP, and address
                 verification documents. We require this information to confirm
@@ -405,12 +405,12 @@
 
               <!-- ----------------- Embed Docs ----------------- -->
               <template v-for="(doc, i) in documents_embed" :key="'e' + i">
-                <s-widget-header
+                <u-widget-header
                   :icon="getType(doc)?.icon"
                   :title="doc.title ? doc.title : $t(getType(doc)?.title)"
                   class="mt-5"
                 >
-                </s-widget-header>
+                </u-widget-header>
                 <v-list-subheader
                   v-html="doc.guide ? doc.guide : $t(getType(doc)?.description)"
                 >
@@ -430,12 +430,12 @@
               <!-- ----------------- Link Docs ----------------- -->
 
               <template v-for="(doc, i) in documents_link" :key="'l' + i">
-                <s-widget-header
+                <u-widget-header
                   :icon="getType(doc)?.icon"
                   :title="doc.title ? doc.title : $t(getType(doc)?.title)"
                   class="mt-5"
                 >
-                </s-widget-header>
+                </u-widget-header>
                 <v-list-subheader
                   v-html="doc.guide ? doc.guide : $t(getType(doc)?.description)"
                 >
@@ -456,7 +456,7 @@
               <!-- ----------------- Upload Docs ----------------- -->
 
               <template v-for="(item, i) in documents_upload" :key="i">
-                <s-widget-header
+                <u-widget-header
                   :icon="getType(item)?.icon"
                   :title="
                     (item.title ? item.title : $t(getType(item)?.title)) +
@@ -464,7 +464,7 @@
                   "
                   class="mt-5"
                 >
-                </s-widget-header>
+                </u-widget-header>
 
                 <v-list-subheader v-if="item.guide">
                   <span v-html="smartConvert(item.guide)"></span>
@@ -536,7 +536,7 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Admin Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div v-if="step === 100">
         <div v-if="adminMode" class="widget-box mb-5">
-          <s-widget-header icon="rate_review" title="Actions"></s-widget-header>
+          <u-widget-header icon="rate_review" title="Actions"></u-widget-header>
           <v-list-subheader
             >As the marketplace admin, please review the vendor's request. Here,
             you can accept or reject the request. Accepting the request will
@@ -693,7 +693,7 @@ import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
 import SCountrySelect from "@selldone/components-vue/ui/country/select/SCountrySelect.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentType";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
 import DynamicScriptDirective from "@selldone/components-vue/directives/script/DynamicScriptDirective.ts";
 
@@ -701,7 +701,7 @@ export default {
   name: "BVendorOnboarding",
   directives: { 'dynamic-scripts':DynamicScriptDirective },
   components: {
-    SWidgetHeader,
+    UWidgetHeader,
     SCountrySelect,
     USmartVerify,
   },

@@ -29,7 +29,7 @@
       <div class="text-black">
         <v-expand-transition>
           <div class="widget-box -large mb-5">
-            <s-widget-header icon="looks_one" title="Domain">
+            <u-widget-header icon="looks_one" title="Domain">
               <template v-if="is_valid_domain" v-slot:append-title>
                 <v-icon class="ms-1" color="success">check_circle</v-icon>
               </template>
@@ -40,7 +40,7 @@
                 ></inline-help>
                 <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
               </template>
-            </s-widget-header>
+            </u-widget-header>
 
             <v-text-field
               v-model="input_domain"
@@ -504,7 +504,7 @@
             v-if="inDomainEditMode"
             class="widget-box -large mb-5 min-height-20vh"
           >
-            <s-widget-header icon="dns" title="DNS records"></s-widget-header>
+            <u-widget-header icon="dns" title="DNS records"></u-widget-header>
             <v-list-subheader v-if="domain"
               >{{
                 domain.ssl_proxy
@@ -615,7 +615,7 @@
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Click Add > DNS Records ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
         <v-expand-transition>
           <div v-if="show_dns" class="widget-box -large mb-5" dir="ltr">
-            <s-widget-header icon="dns" title="DNS records"></s-widget-header>
+            <u-widget-header icon="dns" title="DNS records"></u-widget-header>
 
             <div v-if="domain_error_msg" class="mt-4 typo-body">
               <v-icon class="me-1" color="amber">warning</v-icon>

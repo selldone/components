@@ -30,7 +30,7 @@
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Location ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
         <div class="widget-box mb-5">
-          <s-widget-header icon="map" title="Location"></s-widget-header>
+          <u-widget-header icon="map" title="Location"></u-widget-header>
           <v-list-subheader
             >Choose the map tag's position by clicking on the following map.
           </v-list-subheader>
@@ -58,10 +58,10 @@
 
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Tagging ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             icon="add_location"
             title="Tagging"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             Enter the title and, optional tags for the map location.
           </v-list-subheader>
@@ -157,11 +157,11 @@
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄ Critical Zone ▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
 
         <div v-if="currentItem.id" class="widget-box mb-5 mt-10">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.critical_zone')"
             icon="warning_amber"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <u-smart-verify
             v-model="accept_delete"

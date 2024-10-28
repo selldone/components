@@ -15,10 +15,10 @@
 <template>
   <v-card class="s--shop-onboarding-customization" color="transparent" flat>
     <v-card-text>
-      <s-widget-header
+      <u-widget-header
         :title="$t('onboarding.customize.tour.title')"
         icon="movie_filter"
-      ></s-widget-header>
+      ></u-widget-header>
       <p class="typo-body flex-grow-1">
         {{ $t("onboarding.customize.tour.subtitle") }}
       </p>
@@ -30,11 +30,11 @@
 
       <hr class="my-5" />
 
-      <s-widget-header
+      <u-widget-header
         :title="$t('onboarding.customize.template.title')"
         icon="auto_awesome_motion"
       >
-      </s-widget-header>
+      </u-widget-header>
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
@@ -90,11 +90,11 @@
 
       <hr class="my-5" />
 
-      <s-widget-header
+      <u-widget-header
         :title="$t('onboarding.customize.colors.title')"
         icon="palette"
       >
-      </s-widget-header>
+      </u-widget-header>
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
@@ -127,14 +127,14 @@
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import LTemplateCard from "@selldone/page-builder/components/templates/card/LTemplateCard.vue";
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import BShopOnboardingTour from "@selldone/components-vue/backoffice/onboarding/customization/BShopOnboardingTour.vue";
 
 export default {
   name: "SShopOnboardingCustomization",
   components: {
     BShopOnboardingTour,
-    SWidgetHeader,
+    UWidgetHeader,
     UColorCircle,
     LTemplateCard,
     UFadeScroll,

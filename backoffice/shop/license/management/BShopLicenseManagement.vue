@@ -18,11 +18,11 @@
 
     <div v-if="agency_client">
       <div class="widget-box -large mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('shop_license.active_license.title')"
           icon="workspace_premium"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader
           >{{
@@ -160,7 +160,7 @@
         "
         class="widget-box -large mb-5"
       >
-        <s-widget-header icon="build" title="Deal Issue Fix"></s-widget-header>
+        <u-widget-header icon="build" title="Deal Issue Fix"></u-widget-header>
         <v-list-subheader>
           Your shop currently has an active deal; however, some information
           about your shop and the associated plan does not align. Please click
@@ -257,11 +257,11 @@
       <!-- Current shop license info -->
 
       <div class="widget-box -large mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('shop_license.active_license.title')"
           icon="workspace_premium"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <v-list-subheader
           >{{ $t("shop_license.active_license.subtitle") }}

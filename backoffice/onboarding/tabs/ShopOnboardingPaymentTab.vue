@@ -17,10 +17,10 @@
     <v-card-text>
 
 
-      <s-widget-header
+      <u-widget-header
           :title="$t('onboarding.payment.step1.title')"
           icon="price_change"
-      ></s-widget-header>
+      ></u-widget-header>
 
 
       <p class="typo-body">
@@ -55,10 +55,10 @@
 
 
 
-      <s-widget-header
+      <u-widget-header
           :title="$t('onboarding.payment.step2.title')"
           icon="payment"
-      ></s-widget-header>
+      ></u-widget-header>
 
 
       <div class="d-flex align-center">

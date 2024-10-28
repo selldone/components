@@ -15,14 +15,14 @@
 <template>
   <div class="s--shop-onboarding">
     <div class="widget-box -x-large mb-5">
-      <s-widget-header
+      <u-widget-header
         :add-caption="$t('global.actions.dismiss')"
         :title="$t('onboarding.shop.title')"
         add-icon="close"
         icon="tips_and_updates"
         @click:add="dismiss()"
       >
-      </s-widget-header>
+      </u-widget-header>
       <v-list-subheader>
         {{ $t("onboarding.shop.subtitle") }}
       </v-list-subheader>
@@ -170,11 +170,11 @@
 
             <!-- ------------------------------ Overview ------------------------------ -->
             <v-window-item>
-              <s-widget-header
+              <u-widget-header
                 :title="$t('onboarding.overview.title')"
                 icon="light"
               >
-              </s-widget-header>
+              </u-widget-header>
               <v-list-subheader>
                 {{ $t("onboarding.overview.subtitle") }}
               </v-list-subheader>

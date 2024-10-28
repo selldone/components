@@ -21,8 +21,8 @@
         <u-loading-progress v-if="uploading"></u-loading-progress>
 
         <div class="max-widget-width mx-auto">
-          <s-widget-header title="Write about product" icon="looks_one">
-          </s-widget-header>
+          <u-widget-header title="Write about product" icon="looks_one">
+          </u-widget-header>
           <v-text-field
             v-model="title"
             class="strong-field"
@@ -32,8 +32,8 @@
             variant="underlined"
           ></v-text-field>
 
-          <s-widget-header title="Select product's image" icon="looks_two">
-          </s-widget-header>
+          <u-widget-header title="Select product's image" icon="looks_two">
+          </u-widget-header>
 
           <div class="position-relative">
             <s-image-uploader
@@ -145,7 +145,7 @@
           color="#344695"
           theme="dark"
         >
-          <s-widget-header
+          <u-widget-header
             :href="getProductLink(shop, product.id, product.slug)"
             add-caption="View Product"
             add-icon="open_in_new"
@@ -154,7 +154,7 @@
             icon="warehouse"
             target="_blank"
             title="Type & Inventory"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader
             >Here you can change the product type and quantity for the product
             you've added.
@@ -235,10 +235,10 @@
           color="#344695"
           theme="dark"
         >
-          <s-widget-header
+          <u-widget-header
             icon="price_change"
             title="Pricing"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader
             >Here you can specify the price and discount for the product you've
             added.
@@ -318,7 +318,7 @@
           color="#344695"
           theme="dark"
         >
-          <s-widget-header icon="done_all" title="Finish"></s-widget-header>
+          <u-widget-header icon="done_all" title="Finish"></u-widget-header>
           <v-list-subheader
             >Congratulations, your product has been successfully added to your
             store and is now in the current folder.
@@ -415,12 +415,12 @@ import { SetupService } from "@selldone/core-js/server/SetupService";
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import VueCompareImage from "../../../../ui/image-compare/VueCompareImage.vue";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BProductAddAi",
   components: {
-    SWidgetHeader,
+    UWidgetHeader,
     VueCompareImage,
     USmartSelect,
     UNumberInput,

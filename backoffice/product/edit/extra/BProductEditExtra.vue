@@ -16,14 +16,14 @@
   <div class="mt-5">
     <template v-if="product.type === ProductType.PHYSICAL.code">
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :add-caption="!IS_VENDOR_PANEL ? 'Edit units' : undefined"
           :title="$t('add_product.extra_edit.physical.title')"
           :to="{ name: 'BPageShopLogisticWarehouse' }"
           add-icon="straighten"
           add-text
           icon="local_shipping"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader>
           {{ $t("add_product.extra_edit.physical.sub_title") }}
@@ -46,14 +46,14 @@
       />
       </div>
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="
             $t('add_product.extra_edit.order_limit.title')  +
             (limit_min ? ` | Min: ${limit_min}` : '') +
             (limit_max ? ` | Max: ${limit_max}` : '')
           "
           icon="running_with_errors"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader
           >
 

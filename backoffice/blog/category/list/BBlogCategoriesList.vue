@@ -128,10 +128,10 @@
       </v-card-title>
       <v-card-text>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.general_config')"
             icon="tune"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             Improve your blog classification by adding categories and assigning
             articles accordingly. Utilize specific and comprehensive topics
@@ -210,10 +210,10 @@
         </div>
 
         <div v-if="selected" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.commons.image')"
             icon="photo_camera"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             Customize blog category image here.
           </v-list-subheader>

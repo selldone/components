@@ -17,7 +17,7 @@
     <!-- ████████████████████████ Service ████████████████████████ -->
 
     <div class="widget-box my-5">
-      <s-widget-header
+      <u-widget-header
         :add-caption="
           sms_service && sms_service.errors > 0
             ? `${$t('shop_sms_provider.reset_error')} (${sms_service.errors})`
@@ -29,7 +29,7 @@
         :title="$t('shop_sms_provider.title')"
         @click:add="resetErrors"
       >
-      </s-widget-header>
+      </u-widget-header>
 
       <u-loading-progress v-if="busy"></u-loading-progress>
       <v-list-subheader>
@@ -125,11 +125,11 @@
       <template
         v-if="selected_provider && selected_provider?.driver !== 'default'"
       >
-        <s-widget-header
+        <u-widget-header
           class="mt-6"
           icon="tune"
           title="Configs"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <u-smart-switch
           v-model="enable"
@@ -174,11 +174,11 @@
       <!-- ████████████████████ Tokens ████████████████████ -->
 
       <template v-if="selected_provider?.tokens?.length">
-        <s-widget-header
+        <u-widget-header
           class="mt-6"
           icon="token"
           :title=" $t('shop_sms_provider.tokens.title') "
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>{{$t('shop_sms_provider.tokens.subtitle') }}</v-list-subheader>
         <v-text-field
           v-for="(token, i) in selected_provider.tokens"
@@ -230,10 +230,10 @@
 
     <!-- ████████████████████████ Actions ████████████████████████ -->
     <div v-if="has_sync_action" class="widget-box my-5">
-      <s-widget-header
+      <u-widget-header
         icon="fact_check"
         :title="$t('shop_sms_provider.sync_action.title')"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <u-loading-progress v-if="busy"></u-loading-progress>
       <v-list-subheader>

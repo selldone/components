@@ -14,11 +14,11 @@
 
 <template>
   <div class="widget-box">
-    <s-widget-header
+    <u-widget-header
       :src="require('../../../assets/trademark/search-console.svg')"
       :title="$t('channel_google.console.title')"
     >
-    </s-widget-header>
+    </u-widget-header>
     <v-list-subheader>
       <div>
         {{ $t("channel_google.console.subtitle") }}

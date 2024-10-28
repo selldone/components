@@ -14,10 +14,10 @@
 
 <template>
   <div class="widget-box">
-    <s-widget-header
+    <u-widget-header
       :title="$t('add_product.rating_pros_cons.title')"
       icon="ballot"
-    ></s-widget-header>
+    ></u-widget-header>
     <v-list-subheader
       >{{ $t("add_product.rating_pros_cons.message") }}
     </v-list-subheader>

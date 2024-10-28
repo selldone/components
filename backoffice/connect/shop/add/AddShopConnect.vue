@@ -17,10 +17,10 @@
     <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Select Service ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('shop_connect.edit.service.title')"
         icon="settings_ethernet"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("shop_connect.edit.service.subtitle") }}
       </v-list-subheader>
@@ -236,10 +236,10 @@
     <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Details (Shown only in edit) ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
     <template v-if="shopConnect">
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('shop_connect.edit.order.title')"
           icon="shopping_bag"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader>
           {{ $t("shop_connect.edit.order.subtitle") }}
         </v-list-subheader>
@@ -317,11 +317,11 @@
       </s-widget-buttons>
 
       <div class="widget-box mb-5 mt-10">
-        <s-widget-header
+        <u-widget-header
           :title="$t('global.commons.critical_zone')"
           icon="warning_amber"
         >
-        </s-widget-header>
+        </u-widget-header>
 
         <u-smart-verify
           v-model="accept_delete"
@@ -350,10 +350,10 @@
     <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Details (Shown only in add) ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
     <div v-if="connect && !shopConnect" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="`Functionality / ${mode}`"
         icon="settings_suggest"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <v-list-subheader>
         {{ mode_desc }}

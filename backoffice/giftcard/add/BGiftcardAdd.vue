@@ -20,10 +20,10 @@
     </v-card-title>
     <v-card-text class="text-start typo-body">
       <div class="widget-box mb-5 mt-5">
-        <s-widget-header
+        <u-widget-header
           icon="card_travel"
           title="Giftcard type"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader
           >New gift cards will be generated based on the default configuration
           of the card type.
@@ -60,10 +60,10 @@
       </div>
 
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="add_card"
           title="Issue new cards"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader
           >Please input the total quantity of new cards you wish to issue, along
           with their default status.

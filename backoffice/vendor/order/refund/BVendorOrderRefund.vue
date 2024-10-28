@@ -17,8 +17,8 @@
     <v-card-title></v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
-        <s-widget-header icon="remove_shopping_cart" :title="$t('vendor_order_refund.title')">
-        </s-widget-header>
+        <u-widget-header icon="remove_shopping_cart" :title="$t('vendor_order_refund.title')">
+        </u-widget-header>
 
         <v-list-subheader>
           <div v-html="$t('vendor_order_refund.subtitle')">

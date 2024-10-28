@@ -121,8 +121,8 @@
           :class="{ 'border-bottom': editing }"
           class="widget-box -large mb-5"
         >
-          <s-widget-header :title="$t('service_bill.task.title')" icon="rule">
-          </s-widget-header>
+          <u-widget-header :title="$t('service_bill.task.title')" icon="rule">
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("service_bill.task.message") }}
@@ -141,11 +141,11 @@
           :class="{ 'border-bottom': editing }"
           class="widget-box -large mb-5"
         >
-          <s-widget-header
+          <u-widget-header
             :title="$t('global.service.appointment.title')"
             icon="event_available"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <u-date-input
             v-model="reserved_at"
@@ -174,7 +174,7 @@
           :class="{ 'border-bottom': editing }"
           class="widget-box -large mb-5"
         >
-          <s-widget-header
+          <u-widget-header
             :add-caption="
               editing ? $t('service_bill.booking.show_calendar') : undefined
             "
@@ -184,7 +184,7 @@
             icon="date_range"
             @click:add="show_cal = !show_cal"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("service_bill.booking.message") }}
           </v-list-subheader>
@@ -421,11 +421,11 @@
           :class="{ 'border-bottom': editing }"
           class="widget-box -large mb-5"
         >
-          <s-widget-header
+          <u-widget-header
             :title="$t('service_bill.subscription.title')"
             icon="extension"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("service_bill.subscription.message") }}
           </v-list-subheader>
@@ -450,11 +450,11 @@
           :class="{ 'border-bottom': editing }"
           class="widget-box -large mb-5"
         >
-          <s-widget-header
+          <u-widget-header
             :title="$t('service_bill.charge.title')"
             icon="generating_tokens"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("service_bill.charge.message") }}
           </v-list-subheader>
@@ -476,11 +476,11 @@
         <!-- ----------------------- Set Price ----------------------- -->
 
         <div v-if="editing" class="widget-box -large mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('service_bill.pricing.title')"
             icon="price_change"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("service_bill.pricing.message") }}
           </v-list-subheader>

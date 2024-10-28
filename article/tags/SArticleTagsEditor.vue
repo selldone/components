@@ -69,10 +69,10 @@
 
         <v-card-text class="text-start">
           <div class="widget-box my-5">
-            <s-widget-header
+            <u-widget-header
               :title="`Old Tag: ${editing_tag_new}`"
               icon="label"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader>
               Please proceed to modify this tag name. Be aware: The rest of the
               article tags will be automatically updated!

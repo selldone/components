@@ -212,11 +212,11 @@
     <!-- ███████████████████████ Product Type ███████████████████████ -->
 
     <div v-if="step === TAB_TYPE" class="max-width-container-1280px mx-auto">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.product_type')"
         icon="workspaces"
         icon-color="#333"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("add_product.select_type.title") }}
       </v-list-subheader>
@@ -439,7 +439,7 @@
       <v-expand-transition>
         <div v-if="show_preview || force_show_preview">
           <div class="widget-box" style="--background: #fff">
-            <s-widget-header
+            <u-widget-header
               :add-caption="$t('global.actions.update')"
               :add-loading="busy_render_google"
               add-icon="refresh"
@@ -447,7 +447,7 @@
               icon="fa:fa-brands fa-google"
               title="SEO Preview"
               @click:add="getRenderedOnGoogle"
-            ></s-widget-header>
+            ></u-widget-header>
 
             <div
               :class="{ blurred: busy_render_google }"

@@ -15,10 +15,10 @@
 <template>
   <div>
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('service_design.type')"
         icon="home_repair_service"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("service_design.type_message") }}
       </v-list-subheader>
@@ -45,10 +45,10 @@
     <!-- ----------------------- Tasks ----------------------- -->
 
     <div v-if="has_tasks" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.service.task.title')"
         icon="playlist_add_check"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         You can set default tasks for this service, which will automatically be
         added to each order. You can then add or modify tasks for each specific
@@ -60,10 +60,10 @@
 
     <!-- ----------------------- Appointment ----------------------- -->
     <div v-if="has_reserve" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.service.appointment.title')"
         icon="date_range"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         You can schedule appointments by specifying the day of the week and
         time. This is beneficial for consultation, medical services, or any
@@ -84,10 +84,10 @@
 
     <!-- ----------------------- Booking ----------------------- -->
     <div v-if="has_booking" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.service.booking.title')"
         icon="book_online"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         You can set available dates and times for check-in and checkout for
         services that require booking.
@@ -142,10 +142,10 @@
 
     <!-- ----------------------- Subscription duration ----------------------- -->
     <div v-if="has_subscription" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.service.subscription.title')"
         icon="timelapse"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         <div>
           For subscription services, you can specify a duration. This helps
@@ -187,10 +187,10 @@
 
     <!-- ----------------------- Charge ----------------------- -->
     <div v-if="has_charge" class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.service.charge.title')"
         icon="data_saver_on"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         You can assign an initial charge for your service. This is handy when
         integrating your service with an API and using Selldone just for

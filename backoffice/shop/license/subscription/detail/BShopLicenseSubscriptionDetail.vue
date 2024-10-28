@@ -14,7 +14,7 @@
 
 <template>
   <div class="widget-box -large">
-    <s-widget-header
+    <u-widget-header
       :title="$t('shop_license.license_detail.title')"
       icon="info"
     >
@@ -41,7 +41,7 @@
           </u-smart-menu>
         </span>
       </template>
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader
       >{{ $t("shop_license.license_detail.subtitle") }}
@@ -255,10 +255,10 @@
 
         <v-card-text>
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               icon="warning_amber"
               title="Permanent cancellation"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader>
               Once you submit a cancellation request here, you will receive a
               confirmation link on shop owner mail box. Canceling this plan will

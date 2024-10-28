@@ -14,7 +14,7 @@
 
 <template>
   <div class="pt-5 pb-3 text-start">
-    <s-widget-header
+    <u-widget-header
       :add-caption="shop ? $t('community.access.manage_admins') : undefined"
       :href="admins_url"
       :title="$t('community.access.admins')"
@@ -22,7 +22,7 @@
       target="_blank"
       :disabled-access="shop && !writeShopAccess(ShopPermissionRegions.COMMUNITY.code)"
 
-    ></s-widget-header>
+    ></u-widget-header>
     <v-list-subheader>
       Administrators have unrestricted access to every component of the
       community. They are essentially part of your business staff.
@@ -33,14 +33,14 @@
       class="fadeIn delay_100"
     ></u-dense-circles-users>
 
-    <s-widget-header
+    <u-widget-header
       :add-caption="$t('community.access.manage_moderators')"
       :title="$t('community.access.moderators')"
       class="mt-4"
       icon="admin_panel_settings"
       @click:add="showModerators"
       :disabled-access="shop && !writeShopAccess(ShopPermissionRegions.COMMUNITY.code)"
-    ></s-widget-header>
+    ></u-widget-header>
     <v-list-subheader
       >Moderators are granted limited access to oversee the community. They are
       not privy to your business's shop dashboard or any other related
@@ -66,10 +66,10 @@
         </v-card-title>
         <v-card-text>
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               icon="person_add_alt"
               title="Add new moderator"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader
               >1. Make sure the user previously registered on Selldone.
             </v-list-subheader>
@@ -99,10 +99,10 @@
 
           <div class="widget-box mb-5 min-height-20vh">
             <u-loading-progress v-if="busy_fetch"></u-loading-progress>
-            <s-widget-header
+            <u-widget-header
               icon="supervisor_account"
               title="Moderators list"
-            ></s-widget-header>
+            ></u-widget-header>
 
             <v-list
               class="border-between-vertical my-3 bg-transparent"

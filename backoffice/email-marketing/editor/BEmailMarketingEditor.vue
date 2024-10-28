@@ -19,14 +19,14 @@
     <!-- ██████████████████████████ Config ██████████████████████████ -->
 
     <div class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.general_config')"
         add-caption="how it works?"
         add-icon="support"
         add-text
         icon="tune"
         @click:add="show_guide = true"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader
         >The campaign name is visible exclusively to administrators. Currency is
         utilized to determine the campaign fee and evaluate your campaign's
@@ -77,10 +77,10 @@
     <!-- ██████████████████████████ User ██████████████████████████ -->
 
     <div class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.filter')"
         icon="filter_alt"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader
         >Improve results by sending tailored emails to specific audiences. Apply
         filters to refine your target audience here.
@@ -959,10 +959,10 @@
       </v-card-title>
       <v-card-text>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             icon="upload"
             title="Upload design file"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader
             >You can export and import design files and use prev-designed
             emails.
@@ -1107,8 +1107,8 @@
         >
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Custom mail service ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
           <div class="widget-box -large mb-5">
-            <s-widget-header :title="$t('global.commons.from')" icon="person">
-            </s-widget-header>
+            <u-widget-header :title="$t('global.commons.from')" icon="person">
+            </u-widget-header>
             <v-list-subheader
               >To send emails from your domain, configure a custom email
               provider by navigating to Settings > Emails tab.
@@ -1189,11 +1189,11 @@
           </div>
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Schedule ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
           <div class="widget-box -large mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.schedule')"
               icon="av_timer"
             >
-            </s-widget-header>
+            </u-widget-header>
             <v-list-subheader
               >You can either send this email immediately after admin approval
               or schedule it to be sent at a specific time.
@@ -1232,11 +1232,11 @@
           </div>
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Cost ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
           <div class="widget-box -large mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.cost')"
               icon="request_quote"
             >
-            </s-widget-header>
+            </u-widget-header>
             <v-list-subheader
               >We only charge you for emails sent through campaigns managed by
               Selldone, as part of our commitment to preventing spam and

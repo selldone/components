@@ -18,8 +18,8 @@
     class="text-start"
   >
     <div class="widget-box">
-      <s-widget-header icon="fa:fab fa-telegram" title="Telegram channel">
-      </s-widget-header>
+      <u-widget-header icon="fa:fab fa-telegram" title="Telegram channel">
+      </u-widget-header>
 
       <p class="mt-3" dir="ltr">
         Auto publish post on your Telegram channel. <br />

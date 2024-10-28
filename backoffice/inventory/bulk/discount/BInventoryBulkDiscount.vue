@@ -45,10 +45,10 @@
         </v-card-title>
         <v-card-text class="text-start">
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.discount')"
               icon="discount"
-            ></s-widget-header>
+            ></u-widget-header>
 
             <v-list-subheader>
               {{ $t("inventory_list.bulk_discount_dialog.message") }}
@@ -103,10 +103,10 @@
           </div>
 
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.category')"
               icon="snippet_folder"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader
               >Limit bulk action to a category and all subcategories.
             </v-list-subheader>

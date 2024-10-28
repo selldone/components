@@ -17,10 +17,10 @@
 
   <div>
     <div v-if="chat" class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.commons.messages')"
         icon="3p"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("global.order_chat.seller.history.subtitle") }}
       </v-list-subheader>
@@ -37,10 +37,10 @@
     </div>
 
     <div class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('global.actions.add_new_message')"
         icon="add_comment"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("global.order_chat.seller.new_message.subtitle") }}
       </v-list-subheader>
@@ -108,10 +108,10 @@
       </div>
 
       <hr class="my-5" />
-      <s-widget-header
+      <u-widget-header
         :title="$t('b_order_chat_box.title')"
         icon="bolt"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("b_order_chat_box.subtitle") }}
       </v-list-subheader>
@@ -369,7 +369,7 @@
 <script lang="ts">
 import BOrderShare from "@selldone/components-vue/backoffice/order/share/BOrderShare.vue";
 import SOrderChatMessage from "@selldone/components-vue/storefront/order/chat/message/SOrderChatMessage.vue";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import USmartSuggestion from "@selldone/components-vue/ui/smart/suggestion/USmartSuggestion.vue";
 
 export default {
@@ -377,7 +377,7 @@ export default {
 
   components: {
     USmartSuggestion,
-    SWidgetHeader,
+    UWidgetHeader,
     BOrderShare,
 
     SOrderChatMessage,

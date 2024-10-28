@@ -15,10 +15,10 @@
 <template>
   <v-card color="transparent" flat>
     <v-card-text>
-      <s-widget-header
+      <u-widget-header
         :title="$t('onboarding.product.step1.title')"
         icon="looks_one"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
@@ -65,10 +65,10 @@
 
       <hr class="my-5" />
 
-      <s-widget-header
+      <u-widget-header
         :title="$t('onboarding.product.step2.title')"
         icon="looks_two"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">

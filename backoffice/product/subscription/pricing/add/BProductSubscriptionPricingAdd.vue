@@ -28,10 +28,10 @@
     <v-card-text>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅  Defining Subscription Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="tune"
           title="Title & Description"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader
           >Enter the plan title and SKU in this section. The title will be
@@ -97,10 +97,10 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Pricing ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="sell"
           title="Recurring Pricing"
-        ></s-widget-header>
+        ></u-widget-header>
 
         <v-list-subheader
           >Configure the plan's pricing in this section. Please be aware that

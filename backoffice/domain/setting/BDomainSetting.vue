@@ -25,7 +25,7 @@
     <v-card-text>
       <!-- ████████████████████████ SSL ████████████████████████ -->
       <div class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :add-loading="busy_check_ssl"
           :add-text="!!domain.ssl"
           add-caption="Check SSL"
@@ -33,7 +33,7 @@
           icon="https"
           title="SSL/TLS"
           @click:add="checkSSL()"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader
           >Advanced domain setting offers a flexible and customizable way to
           issue and manage certificates and SSL.
@@ -55,10 +55,10 @@
 
       <!-- ████████████████████████ Certificate ████████████████████████ -->
       <div v-if="certificate" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           icon="workspace_premium"
           title="Certificate"
-        ></s-widget-header>
+        ></u-widget-header>
         <v-list-subheader
           >The details of the SSL certificate issued by Selldone are visible.
         </v-list-subheader>

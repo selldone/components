@@ -14,10 +14,10 @@
 
 <template>
   <div class="widget-box mb-5">
-    <s-widget-header
+    <u-widget-header
       icon="description"
       title="Fix Products Descriptions"
-    ></s-widget-header>
+    ></u-widget-header>
 
     <v-list-subheader>
       <div>

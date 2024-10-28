@@ -82,7 +82,7 @@ import "vue-prism-editor/dist/prismeditor.min.css";
 //---------------- Widget --------------
 import SWidget from "./ui/widget/widget/SWidget.vue";
 
-import SWidgetHeader from "./ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "./ui/widget/header/UWidgetHeader.vue";
 
 import VueConfetti from "./ui/confetti";
 
@@ -181,7 +181,7 @@ export function installGlobalComponents(app: App) {
   app.component(UTooltipTips.name, UTooltipTips);
   app.component("prism-editor", PrismEditor);
   app.component(SWidget.name, SWidget);
-  app.component(SWidgetHeader.name, SWidgetHeader);
+  app.component(UWidgetHeader.name, UWidgetHeader);
 
   //Vue.prototype.window = window;
   app.config.globalProperties.window = window; // 🌴 Global object in vue components

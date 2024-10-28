@@ -15,7 +15,7 @@
 <template>
   <div>
     <div v-if="languages?.length > 1" class="widget-box -large mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('logistic_profile_editor.languages.title')"
         icon="language"
         add-icon="translate"
@@ -26,7 +26,7 @@
           $t('logistic_profile_editor.languages.no_more_language')
         "
       >
-      </s-widget-header>
+      </u-widget-header>
       <v-list-subheader>
         {{ $t("logistic_profile_editor.languages.subtitle") }}
       </v-list-subheader>
@@ -56,7 +56,7 @@
           <u-loading-progress v-if="busy_delete" color="red">
           </u-loading-progress>
 
-          <s-widget-header
+          <u-widget-header
             :title="$t('logistic_profile_editor.content.title')"
             icon="article"
           >
@@ -88,7 +88,7 @@
                 </v-tooltip>
               </u-smart-menu>
             </template>
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("logistic_profile_editor.content.subtitle") }}
           </v-list-subheader>
@@ -144,12 +144,12 @@ import SArticleEditor from "../../../../article/SArticleEditor.vue";
 import ULanguageInput from "../../../../ui/language/input/ULanguageInput.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default defineComponent({
   name: "BLogisticProfileEditor",
   components: {
-    SWidgetHeader,
+    UWidgetHeader,
     SWidgetButtons,
     ULanguageInput,
     SArticleEditor,

@@ -280,8 +280,8 @@
 
       <v-card-text>
         <div class="widget-box mb-5">
-          <s-widget-header icon="price_check" title="Capture Amount">
-          </s-widget-header>
+          <u-widget-header icon="price_check" title="Capture Amount">
+          </u-widget-header>
           <v-list-subheader>
             Once the payment method is authorized, the Order payment status
             changes to 'Require Capture.' To seize the authorized funds,

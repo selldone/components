@@ -17,8 +17,8 @@
     <!-- ----------------------- Physical------------------------ -->
 
     <div class="widget-box -large mb-5">
-      <s-widget-header :title="$t('global.commons.quantity')" icon="numbers">
-      </s-widget-header>
+      <u-widget-header :title="$t('global.commons.quantity')" icon="numbers">
+      </u-widget-header>
       <v-list-subheader>
         What is the current number of available services? If there isn't a
         specific number for your service at a given moment, feel free to input a
@@ -49,8 +49,8 @@
     </div>
 
     <div v-if="has_booking" class="widget-box -large mb-5">
-      <s-widget-header icon="calendar_month" title="Booking Calendar">
-      </s-widget-header>
+      <u-widget-header icon="calendar_month" title="Booking Calendar">
+      </u-widget-header>
 
       <v-list-subheader>
         Simply click on the days in the calendar below to mark up to 30 days as

@@ -15,12 +15,12 @@
 <template>
   <div v-bind="$attrs">
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :add-caption="IS_VENDOR_PANEL ? $t('vendor_documents_list.action_upload_doc') : undefined"
         icon="post_add"
         :title="$t('vendor_documents_list.title')"
         @click:add="showUpload"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{
           IS_VENDOR_PANEL
@@ -169,10 +169,10 @@
       </v-card-title>
       <v-card-text>
         <div class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             icon="assignment"
             :title="$t('vendor_documents_list.upload_dialog.type.title')"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader>
             {{$t('vendor_documents_list.upload_dialog.type.subtitle')}}
 

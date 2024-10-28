@@ -17,8 +17,8 @@
     <v-card-title></v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
-        <s-widget-header icon="price_change" :title="$t('vendor_pricing_add.title')">
-        </s-widget-header>
+        <u-widget-header icon="price_change" :title="$t('vendor_pricing_add.title')">
+        </u-widget-header>
 
         <v-list-subheader
           >
@@ -88,11 +88,11 @@
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Delete  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div v-if="pricing" class="widget-box mb-5">
-        <s-widget-header
+        <u-widget-header
           :title="$t('global.commons.critical_zone')"
           icon="warning_amber"
         >
-        </s-widget-header>
+        </u-widget-header>
         <v-list-subheader
           >
           {{$t('vendor_pricing_add.delete.subtitle') }}

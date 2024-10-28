@@ -46,14 +46,14 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Vendor ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :add-caption="!IS_VENDOR_PANEL ? 'Add new vendor' : undefined"
               :to="{ name: 'BPageMarketplaceVendors' }"
               add-text
               icon="admin_panel_settings"
               title="Vendor"
             >
-            </s-widget-header>
+            </u-widget-header>
             <v-list-subheader>
               Each product item is linked to a specific vendor. Every vendor
               must have a vendor-product record, which stores pricing and
@@ -77,8 +77,8 @@
           </div>
 
           <div class="widget-box mb-5">
-            <s-widget-header icon="tune" title="Configuration">
-            </s-widget-header>
+            <u-widget-header icon="tune" title="Configuration">
+            </u-widget-header>
             <v-list-subheader
               >Set the status of the vendor-product.
             </v-list-subheader>
@@ -129,14 +129,14 @@
           <!-- ██████████████████ Marketplace Pricing ██████████████████ -->
 
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :add-caption="!IS_VENDOR_PANEL ? 'Add new pricing' : undefined"
               :to="{ name: 'BPageMarketplacePricings' }"
               add-text
               icon="price_change"
               title="Marketplace pricing"
             >
-            </s-widget-header>
+            </u-widget-header>
             <v-list-subheader>
               {{
                 isSubscription
@@ -188,8 +188,8 @@
           <!-- ██████████████████ Vendor Pricing ██████████████████ -->
 
           <div class="widget-box mb-5">
-            <s-widget-header icon="price_change" title="Vendor pricing">
-            </s-widget-header>
+            <u-widget-header icon="price_change" title="Vendor pricing">
+            </u-widget-header>
             <v-list-subheader>
               It is the amount you will pay the vendor for each item sold.
               Vendor pricing is used to simplify auditing and keeping financial
@@ -562,10 +562,10 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Quantity  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div v-if="!isFile" class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               icon="inventory"
               title="Vendor Inventory"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader
               >Assign product inventory. Each vendor maintains their own stock.
             </v-list-subheader>
@@ -582,10 +582,10 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Lead time  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('product_extra_physical.lead_time_title')"
               icon="pending_actions"
-            ></s-widget-header>
+            ></u-widget-header>
             <v-list-subheader>
               Define the product preparation lead time. It helps determine
               fulfillment duration and delivery time.
@@ -629,11 +629,11 @@
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Delete  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <div v-if="vendorProduct" class="widget-box mb-5">
-            <s-widget-header
+            <u-widget-header
               :title="$t('global.commons.critical_zone')"
               icon="block"
             >
-            </s-widget-header>
+            </u-widget-header>
 
             <div v-if="!product.vendor_id">
               <u-smart-verify

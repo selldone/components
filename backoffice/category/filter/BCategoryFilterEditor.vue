@@ -15,10 +15,10 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card-text>
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_category.filter.title')"
         icon="filter_list"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("add_category.filter.sub_title") }}
       </v-list-subheader>
@@ -43,11 +43,11 @@
 
       <!-- ███████████████████████████ Spec List ███████████████████████████ -->
 
-      <s-widget-header
+      <u-widget-header
         :title="$t('add_category.edit_filter.spec_input')"
         class="mt-5"
         icon="summarize"
-      ></s-widget-header>
+      ></u-widget-header>
       <v-list-subheader>
         {{ $t("add_category.filter.message") }}
       </v-list-subheader>

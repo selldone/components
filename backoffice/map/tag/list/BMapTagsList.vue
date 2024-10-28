@@ -16,13 +16,13 @@
   <!-- ██████████████████ Locations List ██████████████████ -->
 
   <div class="widget-box" v-bind="$attrs">
-    <s-widget-header
+    <u-widget-header
       add-caption="Add location"
       icon="edit_location"
       title="List of location tags"
       @click:add="showAdd()"
       :disabled-access="!writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
-    ></s-widget-header>
+    ></u-widget-header>
 
     <v-list-subheader>
       You can pin products on the map location by assigning location tags to the

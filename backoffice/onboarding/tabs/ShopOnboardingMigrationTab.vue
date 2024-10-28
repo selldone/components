@@ -17,11 +17,11 @@
     <v-card-text>
 
 
-      <s-widget-header
+      <u-widget-header
           title="Shopify Migration"
           :src="require('../../onboarding/assets/shopify.png')"
 
-      ></s-widget-header>
+      ></u-widget-header>
 
 
       <div class="d-flex align-center">
@@ -61,10 +61,10 @@
 
       <hr class="my-5" />
 
-      <s-widget-header
+      <u-widget-header
           title="Woocommerce Migration"
           :src="require('../../onboarding/assets/woocommerce.svg')"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">

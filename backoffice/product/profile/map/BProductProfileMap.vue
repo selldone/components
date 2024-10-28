@@ -92,7 +92,7 @@
       </v-card-title>
       <v-card-text>
         <div class="widget-box -large mb-5">
-          <s-widget-header
+          <u-widget-header
             :add-caption="
               $t('product_location_profile.dialog.action_new_location')
             "
@@ -101,7 +101,7 @@
             add-text
             icon="place"
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{ $t("product_location_profile.dialog.subtitle") }}
           </v-list-subheader>

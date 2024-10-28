@@ -61,10 +61,10 @@
 
       <v-card-text>
         <div v-if="!action" class="widget-box mb-5">
-          <s-widget-header
+          <u-widget-header
             icon="batch_prediction"
             title="Advanced Options"
-          ></s-widget-header>
+          ></u-widget-header>
           <v-list-subheader> Please choose an option listed.</v-list-subheader>
 
           <v-list class="bg-transparent border-between-vertical">

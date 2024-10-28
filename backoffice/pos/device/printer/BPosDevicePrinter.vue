@@ -16,7 +16,7 @@
   <div class="mb-4">
     <u-loading-progress v-if="busy"></u-loading-progress>
     <div v-else class="widget-box">
-      <s-widget-header icon="print" title="Receipt Printer"></s-widget-header>
+      <u-widget-header icon="print" title="Receipt Printer"></u-widget-header>
       <v-list-subheader>
         You can add printer devices to your POS.
       </v-list-subheader>
@@ -26,11 +26,11 @@
 
 <script>
 import { PosDeviceTypes } from "@selldone/core-js/enums/pos/PosDeviceTypes";
-import SWidgetHeader from "../../../../ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "../../../../ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BPosDevicePrinter",
-  components: { SWidgetHeader },
+  components: { UWidgetHeader },
   emits: ["close", "add"],
   props: {
     shop: {

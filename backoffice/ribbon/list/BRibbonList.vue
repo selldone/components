@@ -14,11 +14,11 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="widget-box -large" v-bind="$attrs">
-    <s-widget-header
+    <u-widget-header
       :src="require('@selldone/core-js/assets/product-types/subscription.svg')"
       title="Ribbon Subscriptions"
     >
-    </s-widget-header>
+    </u-widget-header>
 
     <v-list-subheader
       >Here, you will find a collection of subscription products and their

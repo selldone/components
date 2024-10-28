@@ -15,10 +15,10 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <div class="widget-box mb-5">
-      <s-widget-header
+      <u-widget-header
         icon="label"
         :title="$t('product_tags.title')"
-      ></s-widget-header>
+      ></u-widget-header>
 
       <ul class="small text-muted ps-5 pa-2">
         <li v-for="tip in $tm('product_tags.tips')" v-html="tip"></li>

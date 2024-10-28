@@ -265,10 +265,10 @@
 
       <v-card-text>
         <div class="widget-box -large mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="$t('process_order_page_dashboard.reject_dialog.title')"
           >
-          </s-widget-header>
+          </u-widget-header>
 
           <v-list-subheader>
             {{ $t("process_order_page_dashboard.reject_dialog.message") }}
@@ -289,12 +289,12 @@
         </div>
 
         <div v-if="!rejected" class="widget-box -large mb-5">
-          <s-widget-header
+          <u-widget-header
             :title="
               $t('process_order_page_dashboard.reject_dialog.options.title')
             "
           >
-          </s-widget-header>
+          </u-widget-header>
           <v-list-subheader>
             {{
               $t("process_order_page_dashboard.reject_dialog.options.subtitle")
@@ -396,7 +396,7 @@ import BOrderConnectsList from "../../order/connect/list/BOrderConnectsList.vue"
 import BOrderDashboardDropshippingDelivery from "../../order/dashboard/dropshipping/delivery/BOrderDashboardDropshippingDelivery.vue";
 import BOrderVendorPaymentManagement from "../../order/vendor/payment/BOrderVendorPaymentManagement.vue";
 import { AvocadoItem, Basket, BasketItem, Order } from "@selldone/core-js";
-import SWidgetHeader from "@selldone/components-vue/ui/widget/header/SWidgetHeader.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import BShopCustomerBox from "@selldone/components-vue/backoffice/customer/box/BShopCustomerBox.vue";
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 
@@ -405,7 +405,7 @@ export default {
   components: {
     USmartSwitch,
     BShopCustomerBox,
-    SWidgetHeader,
+    UWidgetHeader,
     BOrderVendorPaymentManagement,
     BOrderDashboardDropshippingDelivery,
 
