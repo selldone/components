@@ -67,6 +67,7 @@
               >lock
             </v-icon>
           </b>
+          <slot name="title" ></slot>
           <div v-if="description" class="op-0-7 small">
             <span v-html="description"></span>
           </div>
@@ -80,7 +81,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "USmartToggle",
   components: {},
