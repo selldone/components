@@ -438,7 +438,7 @@
                 PhysicalOrderStates.ToCustomer
                   .code /*For online order payment can be accepted after delivery*/,
           }"
-          class="my-5"
+          class="my-5 text-capitalize"
           color="success"
           rounded
           size="x-large"
@@ -455,6 +455,12 @@
           </v-icon>
 
           {{ $t("process_center.payment_widget.action_cod_pay") }}
+
+          <u-currency-icon
+            :currency="order.currency"
+            flag
+            class="ms-2"
+          ></u-currency-icon>
         </v-btn>
 
         <p class="mt-1">
@@ -692,9 +698,11 @@
     content-class="rounded-t-xl"
   >
     <v-card class="text-start" rounded="t-xl">
-      <v-card-title>
+      <v-card-title class="d-flex align-center">
         <v-icon class="me-2">paid</v-icon>
         {{ $t("process_center.payment_widget.pay_cod_dialog.title") }}
+        <v-spacer></v-spacer>
+        <u-currency-icon :currency="order.currency" flag></u-currency-icon>
       </v-card-title>
 
       <v-card-text class="text-start">
@@ -702,7 +710,7 @@
           {{ $t("process_center.payment_widget.pay_cod_dialog.message") }}
         </div>
 
-        <div v-if="!codGateways?.lenght">
+        <div v-if="!codGateways?.length">
           <div class="text-red py-2 text-h5">
             <v-icon>report_gmailerrorred</v-icon>
             We can not find any COD gateway to pay. Please add a COD gateway to
