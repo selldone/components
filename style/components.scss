@@ -126,7 +126,11 @@ body {
   }
 
 
-  .text-h5, .text-h4, .text-h3, .text-h2, .text-h1, .text-subtitle-1, .text-subtitle-2, .v-list-item-title, main, .v-application__wrap,.text-body-1,.text-body-2 {
+  .text-h5, .text-h4, .text-h3, .text-h2, .text-h1, .text-subtitle-1, .text-subtitle-2, .v-list-item-title, main, .v-application__wrap,.text-body-1,.text-body-2,
+  .text-sm-h4, .text-sm-h3, .text-sm-h2, .text-sm-h1, .text-sm-subtitle-1, .text-sm-subtitle-2, .text-sm-body-1, .text-sm-body-2, .text-sm-caption, .text-sm-overline,
+
+  .typo-body
+  {
     font-family: var(--font) !important;
   }
 
