@@ -42,10 +42,10 @@
         @click="$emit('select:shop', returnObject ? shop : shop.id)"
       >
         <v-card
-          :color="dark ? '#222' : '#eee'"
-          class="d-flex align-center justify-center rounded-2rem widget-hover position-relative"
+          :color="dark ? '#000' : '#fff'"
+          class="d-flex align-center justify-center rounded-2rem widget-hover position-relative border"
           height="96"
-          variant="outlined"
+          variant="flat"
           width="96"
         >
           <img
