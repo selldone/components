@@ -120,7 +120,7 @@
             '-dropshipping': add_by_dropShipping,
           }"
           :size="36"
-          :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+          :src="getShopImagePath(product.icon,imageSize )"
           class="pos-img hover-scale force-top"
           drop-image="true"
         ></circle-image>
@@ -315,7 +315,7 @@ import { GetArrayOfValuesInVariants } from "@selldone/core-js/enums/product/Prod
 import UColorCircle from "../../../../../ui/color/circle/UColorCircle.vue";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import BNoteButton from "../../../../note/button/BNoteButton.vue";
-import { DateConverter } from "@selldone/core-js";
+import {BackofficeLocalStorages, DateConverter} from "@selldone/core-js";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 
 export default {
@@ -358,6 +358,14 @@ export default {
     iSelected: Boolean,
 
     dark: Boolean,
+
+    /**
+     * Can be 64, 128,... or null
+     */
+    imageSize: {
+      type: Number,
+      default: BackofficeLocalStorages.IMAGE_SIZE_SMALL,
+    },
   },
   data() {
     return {
