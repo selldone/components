@@ -15,6 +15,7 @@
 <template>
   <div
     :class="{ 'pointer-pointer': !opened }"
+    style="--background:#fff"
     class="s--article-seo-editor s--shadow-no-padding p-3 text-start"
     @click.stop="
       () => {
@@ -33,7 +34,7 @@
       variant="text"
       @click.stop="opened = false"
     >
-      <v-icon >close</v-icon>
+      <v-icon>close</v-icon>
     </v-btn>
 
     <div class="article-edit-form">
@@ -109,44 +110,47 @@
               </template>
             </v-textarea>
 
-            <v-slide-group
+            <u-fade-scroll
               v-if="hasImage"
-              :model-value="coverImage"
-              class="pa-4"
-              mandatory
+              class="my-4"
               selected-class="bg-success border-lg"
-              show-arrows
-              @update:model-value="onSelectImage"
+              show-arrow
             >
-              <v-slide-group-item
-                v-for="item in images"
-                :key="item"
-                v-slot="{ isSelected, toggle, selectedClass }"
-                :value="item"
-              >
+              <div class="d-flex align-center justify-start overflow-visible">
                 <v-card
-                  :class="['ma-4', selectedClass]"
+                  v-for="item in images"
+                  :key="item"
+                  :class="[
+                    'ma-2',
+                    { 'bg-success border-lg': coverImage === item },
+                  ]"
                   :image="item"
                   color="grey-lighten-1"
                   height="100"
                   rounded="xl"
+                  variant="outlined"
                   width="100"
-                  @click="toggle"
+                  min-width="100"
+                  @click="onSelectImage(item)"
                 >
                   <div class="d-flex fill-height align-center justify-center">
                     <v-scale-transition>
                       <v-icon
-                        v-if="isSelected"
+                        v-if="coverImage === item"
                         color="success"
                         icon="check_circle"
                         size="48"
-                        style="background-color: #ffffffaa;border-radius: 50%;backdrop-filter: blur(4px)"
+                        style="
+                          background-color: #ffffffaa;
+                          border-radius: 50%;
+                          backdrop-filter: blur(4px);
+                        "
                       ></v-icon>
                     </v-scale-transition>
                   </div>
                 </v-card>
-              </v-slide-group-item>
-            </v-slide-group>
+              </div>
+            </u-fade-scroll>
           </form>
         </div>
       </v-expand-transition>
@@ -156,11 +160,13 @@
 
 <script>
 import UProgressScore from "../ui/progress/score/UProgressScore.vue";
+import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 
 export default {
   name: "ArticleEdit",
 
   components: {
+    UFadeScroll,
     UProgressScore,
   },
   emits: ["open-menu", "change"],
