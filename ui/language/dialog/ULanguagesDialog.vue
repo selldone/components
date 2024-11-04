@@ -24,21 +24,23 @@
       <v-card-title class="d-flex">
         <v-icon class="me-1">translate</v-icon>
         {{ $t("global.commons.language") }}
-
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="search"
-          :placeholder="$t('global.commons.search')"
-          append-inner-icon="search"
-          class="max-width-field-mini"
-          clearable
-          flat
-          hide-details
-          variant="solo"
-        ></v-text-field>
       </v-card-title>
       <v-card-text>
         <v-container>
+          <v-row no-gutters>
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="search"
+              :placeholder="$t('global.commons.search')"
+              append-inner-icon="search"
+              class="max-width-field-mini"
+              clearable
+              flat
+              hide-details
+              variant="solo"
+            ></v-text-field>
+          </v-row>
+
           <v-row dense>
             <v-col
               v-for="lan in languages"
@@ -57,10 +59,13 @@
                     selectedLanguage === lan.code ||
                     (multiple && selectedLanguage?.includes(lan.code))
                   "
-                  class="me-1"
+                  class="me-2"
                   color="success"
                   >check
                 </v-icon>
+                <small class="font-weight-light me-1 ms-n1">{{
+                  lan.code
+                }}</small>
                 {{ lan.title }}
                 <v-icon
                   v-if="checkedLanguages && checkedLanguages.includes(lan.code)"
@@ -124,7 +129,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { Language } from "@selldone/core-js/enums/language/Language";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 
