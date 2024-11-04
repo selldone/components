@@ -31,8 +31,12 @@
           <u-smart-menu
             :items="[
               {
-                title:$t('product_inventory_management_physical.menu.add_bulk.title'),
-                subtitle:$t('product_inventory_management_physical.menu.add_bulk.subtitle'),
+                title: $t(
+                  'product_inventory_management_physical.menu.add_bulk.title',
+                ),
+                subtitle: $t(
+                  'product_inventory_management_physical.menu.add_bulk.subtitle',
+                ),
                 icon: 'auto_fix_high',
                 disabled: add_by_dropShipping,
                 click: () => showBulkAdd(),
@@ -49,6 +53,8 @@
 
       <v-list-subheader
         >{{ $t("product_admin.inventory.variants.sub_title") }}
+
+        <s-widget-help code="Product.Variants.AddBulkVariants" inline></s-widget-help>
       </v-list-subheader>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Variants ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -322,10 +328,12 @@ import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import USmartMenu from "../../../../../ui/smart/menu/USmartMenu.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import BProductVariantsBulkAdd from "../../../../product/variants/bulk-add/BProductVariantsBulkAdd.vue";
+import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 
 export default {
   name: "BProductInventoryManagementPhysical",
   components: {
+    SWidgetHelp,
     BProductVariantsBulkAdd,
 
     USmartMenu,
