@@ -101,7 +101,6 @@
 
             <s-product-section-valuation
               v-model:preferences="preview_valuation"
-              :product="{ ...preview_product,valuation:{structure,conditions} }"
               class="my-5"
               preview-mode
             ></s-product-section-valuation>
@@ -263,12 +262,13 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue";
 import BValuationFormStructure from "../../valuation/form/structure/BValuationFormStructure.vue";
 import { ValuationStructureItemType } from "../ValuationStructureItemType.ts";
 import BValuationFormCondition from "../../valuation/form/condition/BValuationFormCondition.vue";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
+import { computed } from "vue";
 
 export default {
   name: "BValuationAdd",
@@ -278,6 +278,21 @@ export default {
     BValuationFormStructure,
     USmartSuggestion,
   },
+
+  provide() {
+    return {
+      /**
+       * Simulate product
+       */
+      $product: computed(() => {
+        return {
+          ...this.preview_product,
+          valuation: { structure: this.structure, conditions: this.conditions },
+        };
+      }),
+    };
+  },
+
   emits: ["close", "edit", "add", "update:valuation"],
   props: {
     shop: {
@@ -422,25 +437,33 @@ export default {
     },
   },
 
-  watch: {},
+  watch: {
+    valuation() {
+      this.init();
+    },
+  },
   created() {
-    if (this.valuation) {
-      this.title = this.valuation.title;
-      this.structure = Object.assign([], this.valuation.structure);
-      this.conditions = Object.assign({}, this.valuation.conditions);
-    } else {
-      this.structure = [];
-      this.conditions = {};
-    }
-
-    if (this.cloneMode) {
-      this.title += " - 🍒clone";
-    }
-
-    // Default collapse if valuation is not null (in edit mode)
-    this.collapse = !!this.valuation;
+    this.init();
   },
   methods: {
+    init() {
+      if (this.valuation) {
+        this.title = this.valuation.title;
+        this.structure = Object.assign([], this.valuation.structure);
+        this.conditions = Object.assign({}, this.valuation.conditions);
+      } else {
+        this.structure = [];
+        this.conditions = {};
+      }
+
+      if (this.cloneMode) {
+        this.title += " - 🍒clone";
+      }
+
+      // Default collapse if valuation is not null (in edit mode)
+      this.collapse = !!this.valuation;
+    },
+
     addField(type) {
       this.structure.push({
         name: "",

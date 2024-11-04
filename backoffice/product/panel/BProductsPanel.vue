@@ -35,10 +35,7 @@
       v-model:showVendors="show_vendors"
       :shop="shop"
       :vendor="vendor"
-      @click:addProduct="
-        add_product_dialog = true;
-        last_added_product = null;
-      "
+      @click:addProduct="add_product_dialog = true"
       @click:addCategory="dialog_add_category = true"
     >
       <template v-slot:center>
@@ -120,10 +117,7 @@
       "
       @select:middle="openInNewTab"
       @change:parent-folder="(folder) => (parent_folders = folder)"
-      @click:add="
-        add_product_dialog = true;
-        last_added_product = null;
-      "
+      @click:add="add_product_dialog = true"
       @click:fast-add="add_product_studio_dialog = true"
       @click:ai-add="showAIAddDialog()"
     >
@@ -297,83 +291,16 @@
     </v-dialog>
 
     <!-- ███████████████████████ Dialog > Add product Normal ███████████████████████ -->
-    <v-dialog
+    <b-products-panel-add-product
       v-model="add_product_dialog"
-      fullscreen
-      scrollable
-      transition="dialog-bottom-transition"
+      @add="
+        (p) => {
+          $refs.products_list?.onAddOrUpdateProduct(p);
+        }
+      "
+      :category="parent_folders"
     >
-      <v-card color="#FFF">
-        <v-card-title>
-          <v-row no-gutters>
-            <div class="body-title">
-              <a class="text-primary" @click="add_product_dialog = false">
-                <template v-if="parent_folders">
-                  <v-avatar class="me-1" size="18">
-                    <img :src="getShopImagePath(parent_folders.icon, 64)" />
-                  </v-avatar>
-                  <span>{{ parent_folders.title }}</span>
-                </template>
-                <template v-else>
-                  <v-icon class="me-1" color="primary" size="small"
-                    >view_module
-                  </v-icon>
-                  <span>{{ $t("admin_shop.products.title") }}</span>
-                </template>
-              </a>
-
-              <v-icon class="mx-1" size="small"
-                >{{ $t("icons.angle_next") }}
-              </v-icon>
-
-              <span>{{ $t("add_product.title_new") }}</span>
-            </div>
-
-            <v-spacer />
-          </v-row>
-        </v-card-title>
-
-        <b-product-add-full
-          :shop="shop"
-          :vendor="vendor"
-          dark
-          @add="
-            (p) => {
-              $refs.products_list?.onAddOrUpdateProduct(p);
-              last_added_product = p;
-            }
-          "
-        >
-        </b-product-add-full>
-
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn
-              size="x-large"
-              variant="text"
-              @click="add_product_dialog = false"
-            >
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
-            <v-btn
-              v-if="last_added_product?.id"
-              size="x-large"
-              variant="text"
-              :to="{
-                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                  ? 'Vendor_ProductDashboard'
-                  : 'BPageProductDashboard',
-                params: { product_id: last_added_product.id },
-              }"
-              prepend-icon="done_all"
-            >
-              {{ $t("global.actions.finish") }}
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    </b-products-panel-add-product>
 
     <!-- █████████████████████ RSS Dialog █████████████████████ -->
 
@@ -469,15 +396,15 @@ import BProductAddAi from "../../product/add/ai/BProductAddAi.vue";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";
 import BShopProductsImportProcessing from "../../product/importer/processing/BShopProductsImportProcessing.vue";
 import BProductsPanelHeader from "../../product/panel/header/BProductsPanelHeader.vue";
-import BProductAddFull from "../../product/add/full/BProductAddFull.vue";
 import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
+import BProductsPanelAddProduct from "@selldone/components-vue/backoffice/product/panel/add-product/BProductsPanelAddProduct.vue";
 
 export default {
   name: "BProductsPanel",
   components: {
+    BProductsPanelAddProduct,
     BProductsPanelHeader,
     BShopProductsImportProcessing,
-    BProductAddFull,
     BProductAddAi,
     UTextCopyBox,
 
@@ -487,6 +414,7 @@ export default {
     BProductAddStudio,
     BProductsWindow,
   },
+
   props: {
     shop: {
       required: true,
@@ -501,7 +429,6 @@ export default {
 
     dialog_add_category: false,
     add_product_dialog: false,
-    last_added_product: null,
 
     mode: "list",
     ai_dialog: false,
@@ -629,7 +556,6 @@ export default {
     this.key_listener_keydown = (event) => {
       if ((event.ctrlKey || event.metaKey) && event.code === "KeyP") {
         this.add_product_dialog = true;
-        this.last_added_product = null;
         event.preventDefault();
       }
       if ((event.ctrlKey || event.metaKey) && event.code === "KeyX") {

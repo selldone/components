@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div v-bind="$attrs">
-    <template v-if="product?.id">
+    <template v-if="$product.id">
       <v-row align="center" no-gutters>
         <div style="min-width: 48px">
           <u-chart-radial-bar
@@ -37,7 +37,7 @@
         <b-product-breadcrumbs
           v-if="$vuetify.display.smAndUp"
           :image-size="20"
-          :product="product"
+          :product="$product"
           :shop="shop"
           class="flex-grow-0 ma-2 w-auto body-title"
         >
@@ -58,7 +58,7 @@
       </v-row>
     </template>
 
-    <template v-if="product_new?.id">
+    <template v-if="$product.id">
       <v-container class="pt-0 fadeIn" fluid>
         <v-row class="tab-container">
           <u-tabs-rounded
@@ -72,18 +72,18 @@
             <!-- TAB_IMAGES -->
             <template v-slot:[`item.${TAB_SPEC}`]>
               <div
-                v-if="product?.id"
+                v-if="$product.id"
                 style="position: absolute; bottom: 2px; z-index: -1"
               >
                 <v-chip
-                  v-if="product_new?.spec_order?.length"
+                  v-if="$product.spec_order?.length"
                   size="x-small"
                   density="comfortable"
                   color="#CDDC39"
                   variant="flat"
                   prepend-icon="check_circle"
-                  >
-                  {{$t('add_product.menu_extra.has_spec')}}
+                >
+                  {{ $t("add_product.menu_extra.has_spec") }}
                 </v-chip>
                 <v-chip
                   v-else
@@ -91,19 +91,29 @@
                   density="comfortable"
                   color="#FFEB3B"
                   variant="flat"
-                  > {{$t('add_product.menu_extra.no_spec')}}</v-chip
                 >
+                  {{ $t("add_product.menu_extra.no_spec") }}
+                </v-chip>
               </div>
             </template>
 
             <!-- TAB_IMAGES -->
             <template v-slot:[`item.${TAB_IMAGES}`]>
               <div
-                v-if="product?.id"
+                v-if="$product.id"
                 style="position: absolute; bottom: 2px; z-index: -1"
               >
                 <img
-                  v-for="x in product_new?.images?.limit(3)"
+                    v-if="$product.icon"
+                    key="p-icon"
+                    :src="getShopImagePath($product.icon, 64)"
+                    width="16"
+                    height="16"
+                    class="border rounded"
+                    style="margin-inline-start: 2px"
+                />
+                <img
+                  v-for="x in $product.images?.limit(2)"
                   :key="x.id"
                   :src="getShopImagePath(x.path, 64)"
                   width="16"
@@ -111,25 +121,25 @@
                   class="border rounded"
                   style="margin-inline-start: 2px"
                 />
-                {{ product_new?.images?.length > 3 ? "..." : "" }}
+                {{ $product.images?.length > 2 ? "..." : "" }}
               </div>
             </template>
 
             <!-- TAB_INPUTS -->
             <template v-slot:[`item.${TAB_INPUTS}`]>
               <div
-                v-if="product?.id"
+                v-if="$product.id"
                 style="position: absolute; bottom: 2px; z-index: -1"
               >
                 <v-chip
-                  v-if="product_new?.inputs?.length"
+                  v-if="$product.inputs?.length"
                   size="x-small"
                   density="comfortable"
                   color="#CDDC39"
                   variant="flat"
                   prepend-icon="checklist"
-                  >
-                  {{$t('add_product.menu_extra.form')}}
+                >
+                  {{ $t("add_product.menu_extra.form") }}
                 </v-chip>
               </div>
             </template>
@@ -137,12 +147,12 @@
             <!-- TAB_PRICE -->
             <template v-slot:[`item.${TAB_PRICE}`]>
               <div
-                v-if="product?.id"
+                v-if="$product.id"
                 style="position: absolute; bottom: 2px; z-index: -1"
               >
                 <u-price
-                  :amount="product_new.price"
-                  :currency="product_new.currency"
+                  :amount="$product.price"
+                  :currency="$product.currency"
                 ></u-price>
               </div>
             </template>
@@ -150,19 +160,19 @@
             <!-- TAB_PHYSICAL_EXTRA_INFO -->
             <template v-slot:[`item.${TAB_PHYSICAL_EXTRA_INFO}`]>
               <div
-                v-if="product?.id && product_new.extra"
+                v-if="$product.id && $product.extra"
                 style="position: absolute; bottom: 2px; z-index: -1"
                 class="small"
               >
-                <template v-if="product_new.extra?.width">
+                <template v-if="$product.extra?.width">
                   <v-icon>straighten</v-icon>
-                  {{ product_new.extra.width }}x{{
-                    product_new.extra.length
-                  }}x{{ product_new.extra.height }}
+                  {{ $product.extra.width }}x{{ $product.extra.length }}x{{
+                    $product.extra.height
+                  }}
                 </template>
-                <template v-if="product_new.extra.weight">
+                <template v-if="$product.extra.weight">
                   <v-icon class="ms-1">scale</v-icon>
-                  {{ product_new.extra.weight }}
+                  {{ $product.extra.weight }}
                 </template>
               </div>
             </template>
@@ -170,7 +180,7 @@
             <!-- TAB_REVIEW_BLOG -->
             <template v-slot:[`item.${TAB_REVIEW_BLOG}`]>
               <div
-                v-if="product?.id"
+                v-if="$product.id"
                 style="position: absolute; bottom: 2px; z-index: -1"
               >
                 <v-chip
@@ -180,7 +190,7 @@
                   color="#CDDC39"
                   variant="flat"
                   prepend-icon="format_quote"
-                  >{{$t('add_product.menu_extra.description')}}
+                  >{{ $t("add_product.menu_extra.description") }}
                 </v-chip>
               </div>
             </template>
@@ -188,11 +198,11 @@
             <!-- TAB_VARIANTS -->
             <template v-slot:[`item.${TAB_VARIANTS}`]>
               <div
-                v-if="product?.id"
+                v-if="$product.id"
                 style="position: absolute; bottom: 2px; z-index: -1"
               >
-                <template v-if="product_new?.quantity > 0">
-                  {{ numeralFormat(product_new?.quantity, "0.[0] a") }}
+                <template v-if="$product.quantity > 0">
+                  {{ numeralFormat($product.quantity, "0.[0] a") }}
                 </template>
                 <v-chip
                   v-else
@@ -235,7 +245,7 @@
     <b-product-edit-info
       v-if="step === TAB_GENERAL_INFO"
       :busy="busy"
-      :product="product_new"
+      :product="$product"
       :shop="shop"
       :vendor="vendor"
       @next="nextStep()"
@@ -244,21 +254,21 @@
 
     <b-product-edit-features
       v-if="step === TAB_RATING"
-      :product="product_new"
+      :product="$product"
       @next="nextStep()"
     />
     <!-- ███████████████████████ Product Spec ███████████████████████ -->
 
     <b-product-edit-spec
       v-if="step === TAB_SPEC"
-      :product="product_new"
+      :product="$product"
       :shop="shop"
       @next="nextStep()"
       @update-spec="
         () => {
-          if (product) {
-            product.spec = product_new.spec;
-            product.spec_order = product_new.spec_order;
+          if ($product) {
+            //  $product.spec = $product.spec;
+            //  $product.spec_order = $product.spec_order;
           }
         }
       "
@@ -267,10 +277,10 @@
 
     <b-product-edit-images
       v-if="step === TAB_IMAGES"
-      :product="product_new"
+      :product="$product"
       @next="nextStep()"
-      @update:icon="(icon) => (product ? (product.icon = icon) : undefined)"
-      @update:video="(video) => (product ? (product.video = video) : undefined)"
+      @update:icon="(icon) => ($product.icon = icon)"
+      @update:video="(video) => ($product.video = video)"
     />
     <!-- ███████████████████████ Product Price ███████████████████████ -->
 
@@ -278,7 +288,7 @@
       v-if="step === TAB_PRICE"
       :busy="busy"
       :is-marketplace="is_marketplace"
-      :product="product_new"
+      :product="$product"
       :shop="shop"
       :vendor="vendor"
       class="mt-5"
@@ -291,7 +301,7 @@
     <b-product-edit-inputs
       v-if="step === TAB_INPUTS"
       :busy="busy"
-      :product="product_new"
+      :product="$product"
       @next="nextStep()"
     />
     <!-- ███████████████████████ Product Outputs ███████████████████████ -->
@@ -299,24 +309,18 @@
     <b-product-edit-outputs
       v-if="step === TAB_OUTPUTS"
       :busy="busy"
-      :product="product_new"
+      :product="$product"
       @next="nextStep()"
     />
     <!-- ███████████████████████ Product Extra ███████████████████████ -->
 
     <b-product-edit-extra
       v-if="step === TAB_PHYSICAL_EXTRA_INFO"
-      :product="product_new"
+      :product="$product"
       :shop="shop"
       @next="
         () => {
           nextStep();
-          if (product) {
-            product.extra = product_new.extra;
-            product.lead = product_new.lead;
-            product.limit_min = product_new.limit_min;
-            product.limit_max = product_new.limit_max;
-          }
         }
       "
     />
@@ -331,15 +335,15 @@
         :initial-article-pack="SELECTED_ARTICLE_PACK"
         :need-create-new="!SELECTED_ARTICLE_PACK"
         :owner="true"
-        :product-id="product_new.id"
+        :product-id="$product.id"
         :shop="shop"
         :shop-id="shop.id"
         :show-author-info="false"
         :show-share-buttons="false"
         :tags="`${slugify(
-          product_new.category ? product_new.category.title : null,
-        )},${slugify(product_new.title)},${slugify(product_new.title_en)}`"
-        :target-id="SELECTED_ARTICLE_PACK ? product_new.id : 'new'"
+          $product.category ? $product.category.title : null,
+        )},${slugify($product.title)},${slugify($product.title_en)}`"
+        :target-id="SELECTED_ARTICLE_PACK ? $product.id : 'new'"
         class="mt-5 min-height-60vh"
         initial-render-state="editing"
         no-return-back-on-delete
@@ -387,7 +391,7 @@
 
     <div v-if="step === TAB_VARIANTS">
       <b-product-inventory-management
-        :product="product_new"
+        :product="$product"
         :shop="shop"
         :vendor="vendor"
         :withTrashed="withTrashed"
@@ -461,15 +465,15 @@
   </div>
 
   <!-- --------------------- Dialog delete --------------------- -->
-  <v-dialog v-if="product?.id" v-model="dialogDeleteProduct" max-width="460">
+  <v-dialog v-if="$product.id" v-model="dialogDeleteProduct" max-width="460">
     <v-card class="text-start" rounded="xl">
       <v-card-title class="d-flex align-center">
         <v-avatar
-          v-if="product.icon"
+          v-if="$product.icon"
           class="me-2 avatar-gradient -thin -product"
           size="2.6em"
         >
-          <img :src="getShopImagePath(product.icon, 64)" />
+          <img :src="getShopImagePath($product.icon, 64)" />
         </v-avatar>
 
         {{ $t("add_product.delete_product.title") }}
@@ -481,7 +485,7 @@
         <div
           v-html="
             $t('add_product.delete_product.message', {
-              product_title: product.title,
+              product_title: $product.title,
             })
           "
         ></div>
@@ -518,7 +522,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import BProductEditInfo from "../../../product/edit/info/BProductEditInfo.vue";
 import BProductEditFeatures from "../../../product/edit/features/BProductEditFeatures.vue";
 import BProductEditPrice from "../../../product/edit/price/BProductEditPrice.vue";
@@ -531,7 +535,6 @@ import ArticleViewer from "../../../../article/ArticleViewer.vue";
 import BProductEditSpec from "../../../product/edit/spec/BProductEditSpec.vue";
 import BProductInventoryManagement from "../../inventory/management/BProductInventoryManagement.vue";
 import UTabsRounded from "../../../../ui/tab/rounded/UTabsRounded.vue";
-import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
 import UChartRadialBar from "../../../../ui/chart/radial/bar/UChartRadialBar.vue";
 import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
@@ -584,13 +587,12 @@ export default {
     BProductEditInfo,
     ArticleViewer,
   },
+  /**
+   * $product : Available in edit mode! But in add mode we should feed with initial values.
+   */
+  inject: ["$shop", "$product"],
   emits: ["update:withTrashed", "update:product", "edit", "add"],
   props: {
-    product: {
-      // Edit mode
-      required: false,
-      type: Object,
-    },
     shop: {
       required: true,
       type: Object,
@@ -604,6 +606,12 @@ export default {
       default: false,
       type: Boolean,
     },
+
+    /**
+     * Update route hash with current tab
+     */
+    replaceHashRoute:Boolean,
+
   },
 
   data: function () {
@@ -645,12 +653,12 @@ export default {
       dialogDeleteProduct: false,
 
       step: 1,
-
-      product_new: {
-        status: "Open",
-        condition: ProductCondition.NEW.code,
-        original: true,
-      },
+      /*
+            $product: {
+              status: "Open",
+              condition: ProductCondition.NEW.code,
+              original: true,
+            },*/
       type: null,
 
       ProductType: ProductType,
@@ -697,7 +705,7 @@ export default {
 
     tabs() {
       return [
-        !this.product
+        !this.$product?.id /*In Edit Mode*/
           ? {
               title: this.$t("add_product.menu.type"),
               value: TAB_TYPE,
@@ -780,12 +788,7 @@ export default {
     },
 
     canShowGooglePreview() {
-      return (
-        this.shop &&
-        this.shop.id &&
-        ((this.product && this.product.id) ||
-          (this.product_new && this.product_new.id))
-      );
+      return this.shop && this.shop.id && this.$product.id;
     },
     force_show_preview() {
       return [
@@ -797,24 +800,16 @@ export default {
     },
 
     isPhysical() {
-      if (this.product_new)
-        return this.product_new.type === ProductType.PHYSICAL.code;
-      return this.product && this.product.type === ProductType.PHYSICAL.code;
+     return this.$product.type === ProductType.PHYSICAL.code;
     },
     isVirtual() {
-      if (this.product_new)
-        return this.product_new.type === ProductType.VIRTUAL.code;
-      return this.product && this.product.type === ProductType.VIRTUAL.code;
+      return  this.$product.type === ProductType.VIRTUAL.code;
     },
     isFile() {
-      if (this.product_new)
-        return this.product_new.type === ProductType.FILE.code;
-      return this.product && this.product.type === ProductType.FILE.code;
+    return this.$product.type === ProductType.FILE.code;
     },
     isService() {
-      if (this.product_new)
-        return this.product_new.type === ProductType.SERVICE.code;
-      return this.product && this.product.type === ProductType.SERVICE.code;
+   return this.$product.type === ProductType.SERVICE.code;
     },
 
     hasStep__Inputs() {
@@ -846,7 +841,7 @@ export default {
       this.step;
       let out = 0;
       out = 0;
-      let product = this.product_new;
+      let product = this.$product;
 
       // Type: +10
       if (product.type) out += 10;
@@ -901,22 +896,14 @@ export default {
     // ―――― Multi Language ――――
 
     articles() {
-      return this.product && this.product.articles;
+      return this.$product && this.$product.articles;
     },
   },
   watch: {
-    /*product_new:{
-      product: function(newValue) {
-
-        console.log(this.product_new)
-      },deep: true
-    },*/
     step(step) {
-      this.applyDeepChangesToProduct();
-
       this.$nextTick(() => {
         try {
-          if (this.product?.id) {
+          if (this.$product.id) {
             ScrollHelper.scrollToElement("#radial_bar", 0, "smooth");
           } else {
             ScrollHelper.scrollToTop(0, "smooth");
@@ -924,9 +911,8 @@ export default {
         } catch (e) {}
       });
 
-      if (!this.product) {
-        return; // Only on product edit mode we have hash path!
-      }
+      if (this.replaceHashRoute) {
+
       const tab_hash =
         "#" +
         Object.keys(this.tabs_name).find((key) => this.tabs_name[key] === step);
@@ -935,11 +921,12 @@ export default {
         this.$router.replace({
           hash: tab_hash,
         });
+      }
+
     },
   },
   created() {
-    if (this.product) {
-      Object.assign(this.product_new, this.product);
+    if (this.$product.id) {
       this.step = 2;
 
       // console.log("this.$route.hash", this.$route.hash);
@@ -954,21 +941,14 @@ not need!
       // set category:
       if(this.$route.query.dir){
         console.log('Current category:',this.$route.query.dir)
-        this.product_new.category_id=this.$route.query.dir
+        this.$product.category_id=this.$route.query.dir
       }*/
     }
 
-    this.type =
-      !this.product || !this.product.type
-        ? null
-        : ProductType[this.product.type];
+    this.type = this.$product.type ? ProductType[this.$product.type] : null;
 
-    this.product_new.inputs = this.product_new.inputs
-      ? this.product_new.inputs
-      : [];
-    this.product_new.outputs = this.product_new.outputs
-      ? this.product_new.outputs
-      : [];
+    this.$product.inputs = this.$product.inputs ? this.$product.inputs : [];
+    this.$product.outputs = this.$product.outputs ? this.$product.outputs : [];
 
     this.getRenderedOnGoogle();
 
@@ -987,9 +967,7 @@ not need!
     // console.log('---SELECTED_ARTICLE_PACK---',this.SELECTED_ARTICLE_PACK)
   },
 
-  beforeUnmount() {
-    this.applyDeepChangesToProduct();
-  },
+  beforeUnmount() {},
 
   methods: {
     generatePack(article) {
@@ -1006,16 +984,17 @@ not need!
       let t = this;
       this.busy_render_google = true;
 
-      let product_id = this.product ? this.product.id : this.product_new.id;
-
       axios
         .get(
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.GET_MY_VENDOR_SEO_PREVIEW_PRODUCT(
                 this.vendor.id,
-                product_id,
+                this.$product.id,
               )
-            : window.API.GET_SEO_PREVIEW_PRODUCT(this.shop.id, product_id),
+            : window.API.GET_SEO_PREVIEW_PRODUCT(
+                this.shop.id,
+                this.$product.id,
+              ),
         )
         .then(({ data }) => {
           if (data.error) {
@@ -1036,27 +1015,8 @@ not need!
       this.step = step;
     },
 
-    /**
-     * Deep changes which auto save without calling update product
-     * Only parameters which updated without pressing main save button!
-     */
-    applyDeepChangesToProduct() {
-      // We should update product here
-      if (!this.product || !this.product_new) return;
-      // console.log("Change", "product_new.pros", this.product_new);
-
-      this.product.tags = this.product_new.tags;
-      this.product.pros = this.product_new.pros;
-      this.product.cons = this.product_new.cons;
-      this.product.spec = this.product_new.spec;
-      this.product.spec_order = this.product_new.spec_order;
-      this.product.rating = this.product_new.rating;
-      this.product.includes = this.product_new.includes;
-      this.product.badges = this.product_new.badges;
-    },
-
     setType(type) {
-      this.product_new.type = type.code;
+      this.$product.type = type.code;
       this.type = type;
 
       this.nextStep();
@@ -1071,84 +1031,84 @@ not need!
 
           {
             // For marketplace: Vendor owner
-            vendor_id: this.product_new.vendor_id,
+            vendor_id: this.$product.vendor_id,
 
-            type: this.product_new.type,
+            type: this.$product.type,
 
-            unit: this.product_new.unit,
-            unit_float: this.product_new.unit_float,
-            price_input: this.product_new.price_input, // default, area, volume
-            action: this.product_new.action,
+            unit: this.$product.unit,
+            unit_float: this.$product.unit_float,
+            price_input: this.$product.price_input, // default, area, volume
+            action: this.$product.action,
 
-            title: this.product_new.title,
-            title_en: this.product_new.title_en,
+            title: this.$product.title,
+            title_en: this.$product.title_en,
 
-            sku: this.product_new.sku,
-            mpn: this.product_new.mpn,
-            gtin: this.product_new.gtin,
-            gpc: this.product_new.gpc,
-            hsn: this.product_new.hsn,
+            sku: this.$product.sku,
+            mpn: this.$product.mpn,
+            gtin: this.$product.gtin,
+            gpc: this.$product.gpc,
+            hsn: this.$product.hsn,
 
-            condition: this.product_new.condition,
+            condition: this.$product.condition,
 
-            pricing: this.product_new.pricing
-              ? this.product_new.pricing
+            pricing: this.$product.pricing
+              ? this.$product.pricing
               : PricingTypes.FIX.code,
 
-            price: this.product_new.price ? this.product_new.price : 0,
-            currency: this.product_new.currency
-              ? this.product_new.currency
+            price: this.$product.price ? this.$product.price : 0,
+            currency: this.$product.currency
+              ? this.$product.currency
               : this.$t("global.currency_default"),
 
-            commission: this.product_new.commission,
-            discount: this.product_new.discount,
+            commission: this.$product.commission,
+            discount: this.$product.discount,
 
-            price_label: this.product_new.price_label,
+            price_label: this.$product.price_label,
 
-            icon: this.product_new.icon,
+            icon: this.$product.icon,
 
-            message: this.product_new.message,
+            message: this.$product.message,
 
-            inputs: this.product_new.inputs ? this.product_new.inputs : null,
-            outputs: this.product_new.outputs ? this.product_new.outputs : null,
+            inputs: this.$product.inputs ? this.$product.inputs : null,
+            outputs: this.$product.outputs ? this.$product.outputs : null,
 
-            blog: this.product_new.blog,
-            status: this.product_new.status,
+            blog: this.$product.blog,
+            status: this.$product.status,
 
-            category_id: this.product_new.category_id,
+            category_id: this.$product.category_id,
 
-            lead: this.product_new.lead,
+            lead: this.$product.lead,
 
-            style: this.product_new.style,
+            style: this.$product.style,
 
-            brand: this.product_new.brand,
-            warranty: this.product_new.warranty,
-            original: this.product_new.original,
-            return_warranty: this.product_new.return_warranty,
+            brand: this.$product.brand,
+            warranty: this.$product.warranty,
+            original: this.$product.original,
+            return_warranty: this.$product.return_warranty,
 
-            video: this.product_new.video,
+            video: this.$product.video,
 
             // Logistic Profiles:
-            warranty_id: this.product_new.warranty_id,
-            return_policy_id: this.product_new.return_policy_id,
-            guide_id: this.product_new.guide_id,
-            shipping_id: this.product_new.shipping_id,
+            warranty_id: this.$product.warranty_id,
+            return_policy_id: this.$product.return_policy_id,
+            guide_id: this.$product.guide_id,
+            shipping_id: this.$product.shipping_id,
 
             // Tax profile:
-            tax_id: this.product_new.tax_id,
+            tax_id: this.$product.tax_id,
 
             // Map profile:
-            map_id: this.product_new.map_id,
+            map_id: this.$product.map_id,
 
             // Extra:
-            extra: this.product_new.extra,
+            extra: this.$product.extra,
 
             // Wholesaler:
-            limit_min: this.product_new.limit_min,
-            limit_max: this.product_new.limit_max,
+            limit_min: this.$product.limit_min,
+            limit_max: this.$product.limit_max,
 
             // External
-            external: this.product_new.external,
+            external: this.$product.external,
           },
         )
         .then(({ data }) => {
@@ -1157,8 +1117,7 @@ not need!
           } else {
             this.showSuccessAlert(null, "The product added to the list.");
             this.$emit("add", data.product);
-            //Object.assign(this.product_new, data.product);
-            this.product_new = data.product;
+            Object.assign(this.$product, data.product);
 
             this.getRenderedOnGoogle();
 
@@ -1192,89 +1151,89 @@ not need!
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.PUT_MY_VENDOR_EDIT_PRODUCT(
                 this.vendor.id,
-                this.product_new.id,
+                this.$product.id,
               )
-            : window.API.PUT_EDIT_PRODUCT(this.shop.id, this.product_new.id),
+            : window.API.PUT_EDIT_PRODUCT(this.shop.id, this.$product.id),
 
           {
             // For marketplace: Vendor owner
-            vendor_id: this.product_new.vendor_id,
+            vendor_id: this.$product.vendor_id,
 
-            type: this.product_new.type,
+            type: this.$product.type,
 
-            unit: this.product_new.unit,
-            unit_float: this.product_new.unit_float,
-            price_input: this.product_new.price_input,
-            action: this.product_new.action,
+            unit: this.$product.unit,
+            unit_float: this.$product.unit_float,
+            price_input: this.$product.price_input,
+            action: this.$product.action,
 
-            title: this.product_new.title,
-            title_en: this.product_new.title_en,
+            title: this.$product.title,
+            title_en: this.$product.title_en,
 
-            sku: this.product_new.sku,
-            mpn: this.product_new.mpn,
-            gtin: this.product_new.gtin,
-            gpc: this.product_new.gpc,
-            hsn: this.product_new.hsn,
-            condition: this.product_new.condition,
+            sku: this.$product.sku,
+            mpn: this.$product.mpn,
+            gtin: this.$product.gtin,
+            gpc: this.$product.gpc,
+            hsn: this.$product.hsn,
+            condition: this.$product.condition,
 
-            pricing: this.product_new.pricing,
-            price: this.product_new.price,
-            currency: this.product_new.currency
-              ? this.product_new.currency
+            pricing: this.$product.pricing,
+            price: this.$product.price,
+            currency: this.$product.currency
+              ? this.$product.currency
               : this.$t("global.currency_default"),
-            commission: this.product_new.commission,
-            discount: this.product_new.discount,
+            commission: this.$product.commission,
+            discount: this.$product.discount,
 
-            dis_start: this.product_new.dis_start,
-            dis_end: this.product_new.dis_end,
+            dis_start: this.$product.dis_start,
+            dis_end: this.$product.dis_end,
 
-            price_label: this.product_new.price_label,
+            price_label: this.$product.price_label,
 
-            icon: this.product_new.icon,
+            icon: this.$product.icon,
 
-            message: this.product_new.message,
+            message: this.$product.message,
 
-            inputs: this.product_new.inputs ? this.product_new.inputs : null,
-            outputs: this.product_new.outputs ? this.product_new.outputs : null,
+            inputs: this.$product.inputs ? this.$product.inputs : null,
+            outputs: this.$product.outputs ? this.$product.outputs : null,
 
-            blog: this.product_new.blog,
-            status: this.product_new.status,
+            blog: this.$product.blog,
+            status: this.$product.status,
 
-            category_id: this.product_new.category_id,
+            category_id: this.$product.category_id,
 
-            lead: this.product_new.lead,
+            lead: this.$product.lead,
 
-            style: this.product_new.style,
+            style: this.$product.style,
 
-            brand: this.product_new.brand,
-            warranty: this.product_new.warranty,
-            original: this.product_new.original,
+            brand: this.$product.brand,
+            warranty: this.$product.warranty,
+            original: this.$product.original,
 
-            return_warranty: this.product_new.return_warranty,
+            return_warranty: this.$product.return_warranty,
 
-            video: this.product_new.video,
+            video: this.$product.video,
 
             // Logistic Profiles:
-            warranty_id: this.product_new.warranty_id,
-            return_policy_id: this.product_new.return_policy_id,
-            guide_id: this.product_new.guide_id,
-            shipping_id: this.product_new.shipping_id,
+            warranty_id: this.$product.warranty_id,
+            return_policy_id: this.$product.return_policy_id,
+            guide_id: this.$product.guide_id,
+            shipping_id: this.$product.shipping_id,
 
             // Tax profile:
-            tax_id: this.product_new.tax_id,
+            tax_id: this.$product.tax_id,
 
             // Map profile:
-            map_id: this.product_new.map_id,
+            map_id: this.$product.map_id,
 
             // Extra:
-            extra: this.product_new.extra,
+            extra: this.$product.extra,
 
             // Wholesaler:
-            limit_min: this.product_new.limit_min,
-            limit_max: this.product_new.limit_max,
+            limit_min: this.$product.limit_min,
+            limit_max: this.$product.limit_max,
 
             // External
-            external: this.product_new.external,
+            external: this.$product.external,
           },
         )
         .then(({ data }) => {
@@ -1283,10 +1242,7 @@ not need!
           } else {
             this.showSuccessAlert(null, "The product edited.");
 
-            Object.assign(this.product_new, data.product); // Copy product data (refresh)
-            if (this.product) {
-              Object.assign(this.product, data.product); // Copy product data (refresh)
-            }
+            Object.assign(this.$product, data.product); // Copy product data (refresh)
 
             this.$emit("update:product", data.product);
 
@@ -1297,7 +1253,7 @@ not need!
             if (callback) callback();
 
             // Goto to:
-            if (!this.product)
+            if (!this.$product.id)
               // We have no route change => Move to up by code here!
               ScrollHelper.scrollToTop(0, "smooth");
           }
@@ -1317,9 +1273,9 @@ not need!
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.DELETE_MY_VENDOR_PRODUCT(
                 this.vendor.id,
-                this.product_new.id,
+                this.$product.id,
               )
-            : window.API.DELETE_PRODUCT(this.shop.id, this.product_new.id),
+            : window.API.DELETE_PRODUCT(this.shop.id, this.$product.id),
         )
         .then(({ data }) => {
           if (data.error) {
@@ -1332,7 +1288,7 @@ not need!
             this.$router.push({
               name: "BPageShopProductsList",
               params: { shop_id: this.shop.id },
-              query: { dir: this.product_new.category_id },
+              query: { dir: this.$product.category_id },
             });
           }
         })
@@ -1348,11 +1304,11 @@ not need!
       if (this.step === TAB_TYPE) {
         this.step = TAB_GENERAL_INFO;
       } else if (this.step === TAB_GENERAL_INFO) {
-        if (this.product || this.product_new.id)
+        if (this.$product.id)
           this.editProduct(() => {
             this.step = TAB_RATING;
           });
-        // this.product_new.id: prevent re add in create product if go back in tabs!
+        // this.$product.id: prevent re add in create product if go back in tabs!
         else
           this.addProduct(() => {
             this.step = TAB_RATING;
@@ -1376,8 +1332,8 @@ not need!
 
         this.step =
           /* this.hasStep__Inputs
-                                        ? TAB_INPUTS
-                                        :*/
+                                            ? TAB_INPUTS
+                                            :*/
           this.hasStep__Outputs
             ? TAB_OUTPUTS
             : this.hasStep__physicalExtra
@@ -1425,7 +1381,7 @@ not need!
           ? "Vendor_ProductDashboard"
           : "BPageProductDashboard",
         params: {
-          product_id: this.product_new.id,
+          product_id: this.$product.id,
         },
         hash: "#dashboard",
       });

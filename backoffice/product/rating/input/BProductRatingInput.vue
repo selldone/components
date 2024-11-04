@@ -26,7 +26,7 @@
       <div
         v-for="item in product.ratings"
         :key="item.id"
-        class="pa-2 d-flex align-center"
+        class="px-2 d-flex align-center"
       >
         <strong>{{ item.name }}</strong>
         <v-spacer></v-spacer>
@@ -35,10 +35,11 @@
           active-color="yellow-accent-4"
           class="ms-2"
           color="#999"
-          density="comfortable"
+          density="compact"
           half-increments
           readonly
-          size="14"
+          size="small"
+
         ></v-rating>
 
         <v-btn

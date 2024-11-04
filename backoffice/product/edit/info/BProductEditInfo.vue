@@ -26,7 +26,7 @@
         @click:add="toggleForceEditVendor"
         :add-icon="force_can_edit ? 'lock_open' : 'lock'"
         add-text=""
-        :disabled="product.vendors?.length > 1"
+        :disabled="$product.vendors?.length > 1"
         disabled-reason="It has more than one vendors."
       ></u-widget-header>
 
@@ -81,7 +81,7 @@
 
         <b-vendor-input
           v-if="!in_edit_mode /*Only in creation mode!*/ || force_can_edit"
-          v-model="product.vendor_id"
+          v-model="$product.vendor_id"
           :shop="shop"
           flat
           label="Vendor*"
@@ -90,13 +90,13 @@
           @change="$forceUpdate()"
         ></b-vendor-input>
         <v-list-item
-          v-else-if="product.vendor"
-          :append-avatar="getShopImagePath(product.vendor.icon, 64)"
-          :subtitle="product.vendor.description"
-          :title="product.vendor.name"
+          v-else-if="$product.vendor"
+          :append-avatar="getShopImagePath($product.vendor.icon, 64)"
+          :subtitle="$product.vendor.description"
+          :title="$product.vendor.name"
         >
         </v-list-item>
-        <div v-else-if="product?.id" class="text-red pa-2">
+        <div v-else-if="$product?.id" class="text-red pa-2">
           <b>Vendor has been deleted!</b>
         </div>
       </template>
@@ -124,7 +124,7 @@
           "
           class="my-3"
           @change="
-            product.vendor_id = single_vendor
+            $product.vendor_id = single_vendor
               ? KEEP_VENDOR_FOR_SINGLE_MODE?.id
               : null
           "
@@ -134,7 +134,7 @@
           <div v-if="single_vendor">
             <b-vendor-input
               v-if="!in_edit_mode /*Only in creation mode!*/ || force_can_edit"
-              v-model="product.vendor_id"
+              v-model="$product.vendor_id"
               :shop="shop"
               class="mt-5"
               flat
@@ -146,21 +146,21 @@
 
             <!-- In edit mode we never reach this section! Because vendor will be null!-->
             <v-list-item
-              v-else-if="product.vendor"
-              :prepend-avatar="getShopImagePath(product.vendor.icon, 64)"
-              :subtitle="product.vendor.description"
-              :title="product.vendor.name"
+              v-else-if="$product.vendor"
+              :prepend-avatar="getShopImagePath($product.vendor.icon, 64)"
+              :subtitle="$product.vendor.description"
+              :title="$product.vendor.name"
             >
             </v-list-item>
-            <div v-else-if="product?.id" class="text-red pa-2">
+            <div v-else-if="$product?.id" class="text-red pa-2">
               <b>Vendor has been deleted!</b>
             </div>
           </div>
           <div v-else>
             <s-dense-images-circles
-              v-if="product?.vendors"
+              v-if="$product?.vendors"
               :images="
-                product.vendors?.map((v) => getShopImagePath(v.icon, 64))
+                $product.vendors?.map((v) => getShopImagePath(v.icon, 64))
               "
             ></s-dense-images-circles>
           </div>
@@ -195,10 +195,10 @@
         clearable
         no-selected-icon="home"
       >
-        <template v-if="product?.id" v-slot:append-inner>
+        <template v-if="$product?.id" v-slot:append-inner>
           <products-dense-images-circles
-            v-if="product.shortcuts?.length"
-            :ids="product.shortcuts.map((i) => 'c-' + i)"
+            v-if="$product.shortcuts?.length"
+            :ids="$product.shortcuts.map((i) => 'c-' + i)"
             :size="32"
             class="pa-0 mx-1"
           ></products-dense-images-circles>
@@ -216,7 +216,7 @@
         </template>
       </b-category-input>
       <v-text-field
-        v-model="product.title"
+        v-model="$product.title"
         :counter="120"
         :label="$t('add_product.edit_info.product_name')"
         :rules="[GlobalRules.required(), GlobalRules.counter(120)]"
@@ -226,9 +226,9 @@
       >
         <template v-slot:append-inner>
           <b-translation-button-product
-            v-if="product?.id"
+            v-if="$product?.id"
             :label="$t('add_product.edit_info.product_name')"
-            :product="product"
+            :product="$product"
             :shop="shop"
             translation-key="title"
           ></b-translation-button-product>
@@ -236,7 +236,7 @@
       </v-text-field>
 
       <v-text-field
-        v-model="product.title_en"
+        v-model="$product.title_en"
         :counter="120"
         :label="$t('add_product.edit_info.product_code')"
         :rules="[GlobalRules.counter(120)]"
@@ -246,9 +246,9 @@
       >
         <template v-slot:append-inner>
           <b-translation-button-product
-            v-if="product?.id"
+            v-if="$product?.id"
             :label="$t('add_product.edit_info.product_code')"
-            :product="product"
+            :product="$product"
             :shop="shop"
             translation-key="title_en"
           ></b-translation-button-product>
@@ -267,7 +267,7 @@
       </v-list-subheader>
 
       <v-combobox
-        v-model="product.unit"
+        v-model="$product.unit"
         :counter="16"
         :hint="$t('add_product.edit_info.unit_message')"
         :items="unit_items"
@@ -285,9 +285,9 @@
       >
         <template v-slot:append-inner>
           <b-translation-button-product
-            v-if="product?.id"
+            v-if="$product?.id"
             :label="$t('add_product.edit_info.unit_message')"
-            :product="product"
+            :product="$product"
             :shop="shop"
             translation-key="unit"
           ></b-translation-button-product>
@@ -296,7 +296,7 @@
 
       <u-smart-select
         v-if="isPhysical || isService || isVirtual"
-        v-model="product.price_input"
+        v-model="$product.price_input"
         :items="price_input_modes"
         class="my-5"
         item-description="desc"
@@ -332,18 +332,18 @@
       -->
 
       <v-combobox
-        v-model="product.action"
+        v-model="$product.action"
         :counter="120"
         :items="actions"
         :label="
-          product.action
+          $product.action
             ? $t('add_product.edit_info.action.title')
             : `${$t('global.commons.default')}: ${default_buy_button}`
         "
         :messages="$tm('add_product.edit_info.action.message')"
         :placeholder="$t('add_product.edit_info.action.placeholder')"
         variant="underlined"
-        @blur="live_action = product.action"
+        @blur="live_action = $product.action"
         prepend-inner-icon="smart_button"
       >
         <template v-slot:append-inner>
@@ -362,11 +362,11 @@
           </v-btn>
 
           <b-translation-button-product
-            v-if="product?.id"
+            v-if="$product?.id"
             :label="
               $t('add_product.edit_info.action.multi_language_dialog_title')
             "
-            :product="product"
+            :product="$product"
             :shop="shop"
             translation-key="action"
           ></b-translation-button-product>
@@ -375,7 +375,7 @@
 
       <v-expand-transition group>
         <div
-          v-if="!force_show_external && !product.external"
+          v-if="!force_show_external && !$product.external"
           class="d-flex flex-wrap align-center"
         >
           <small class="mx-2">{{
@@ -419,7 +419,7 @@
           <hr class="my-5" />
           <v-text-field
             class="mx-2"
-            v-model="product.external"
+            v-model="$product.external"
             :label="$t('add_product.edit_info.external.input_label')"
             placeholder="e.g. https://amazon.com/..."
             variant="underlined"
@@ -464,19 +464,19 @@
 
     <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Custom Price Input ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
     <v-expand-transition>
-      <div v-if="product.price_input === 'custom'" id="custom_valuation">
+      <div v-if="$product.price_input === 'custom'" id="custom_valuation">
         <div class="widget-box mb-5">
           <u-widget-header
             :title="$t('add_product.edit_info.custom_pricing.title')"
             icon="calculate"
             :add-caption="
-              product.valuation
+              $product.valuation
                 ? $t('add_product.edit_info.custom_pricing.edit_pricing_action')
                 : $t('add_product.edit_info.custom_pricing.add_pricing_action')
             "
             @click:add="showValuationForm"
-            :add-icon="product.valuation ? 'edit_note' : 'playlist_add'"
-            :add-sub-caption="product.valuation?.title"
+            :add-icon="$product.valuation ? 'edit_note' : 'playlist_add'"
+            :add-sub-caption="$product.valuation?.title"
           ></u-widget-header>
 
           <v-list-subheader>
@@ -486,7 +486,7 @@
           <s-product-section-valuation
             v-if="$vuetify.display.mdAndUp"
             v-model:preferences="preview_valuation"
-            :product="product"
+            :product="$product"
             class=""
             preview-mode
             style="
@@ -532,7 +532,7 @@
             }}
           </div>
           <div
-            v-else-if="!product.valuation_id"
+            v-else-if="!$product.valuation_id"
             class="py-3 text-red font-weight-bold"
           >
             <v-icon class="me-1" color="red">warning_amber</v-icon>
@@ -552,9 +552,9 @@
           >
             <b-valuation-add
               v-if="pre_show_valuation"
-              :product="product"
+              :product="$product"
               :shop="shop"
-              :valuation="product.valuation"
+              :valuation="$product.valuation"
               has-file
               @add="
                 (val) => {
@@ -565,7 +565,7 @@
               @close="closeValuation"
               @edit="
                 (val) => {
-                  product.valuation = val;
+                  $product.valuation = val;
                   Object.assign(valuation, val);
                 }
               "
@@ -587,12 +587,12 @@
       </v-list-subheader>
 
       <v-text-field
-        v-model="product.sku"
+        v-model="$product.sku"
         v-level.min="AppLevel.NOVICE"
         :counter="48"
         :hint="$t('add_product.edit_info.sku.message')"
         :label="$t('add_product.edit_info.sku.label')"
-        :messages="product.connect ? ' ' : undefined"
+        :messages="$product.connect ? ' ' : undefined"
         :rules="[GlobalRules.counter(48)]"
         placeholder="XYZ-ABC-001"
         required
@@ -601,35 +601,35 @@
       </v-text-field>
 
       <v-text-field
-        v-model="product.mpn"
+        v-model="$product.mpn"
         v-level.min="AppLevel.NOVICE"
         :counter="48"
         :disabled="
-          !!product.connect_id /*Keep important product ID in the payment services like Stripe!*/
+          !!$product.connect_id /*Keep important product ID in the payment services like Stripe!*/
         "
         :hint="$t('add_product.edit_info.mpn.message')"
         :label="$t('add_product.edit_info.mpn.label')"
-        :messages="product.connect ? ' ' : undefined"
+        :messages="$product.connect ? ' ' : undefined"
         :rules="[GlobalRules.counter(48)]"
         placeholder="XYZ00001"
         required
         variant="underlined"
       >
-        <template v-if="product.connect" v-slot:message>
+        <template v-if="$product.connect" v-slot:message>
           <b-product-connect-locked
-            v-if="product.connect"
-            :connect="product.connect"
+            v-if="$product.connect"
+            :connect="$product.connect"
             field="MPN"
           ></b-product-connect-locked>
         </template>
 
         <template v-slot:append-inner>
-          <v-icon v-if="product.connect">hub</v-icon>
+          <v-icon v-if="$product.connect">hub</v-icon>
         </template>
       </v-text-field>
 
       <v-text-field
-        v-model="product.gtin"
+        v-model="$product.gtin"
         v-level.min="AppLevel.NOVICE"
         :counter="48"
         :hint="$t('add_product.edit_info.gtin.hint')"
@@ -641,7 +641,7 @@
       />
 
       <v-text-field
-        v-model="product.hsn"
+        v-model="$product.hsn"
         v-level.min="AppLevel.NOVICE"
         :counter="16"
         :hint="$t('add_product.edit_info.hsn.hint')"
@@ -654,9 +654,9 @@
       />
 
       <b-product-google-category-input
-        v-model="product.gpc"
+        v-model="$product.gpc"
         v-level.min="AppLevel.NOVICE"
-        :product="product"
+        :product="$product"
         :shop="shop"
       >
       </b-product-google-category-input>
@@ -678,7 +678,7 @@
       </v-alert>
 
       <u-smart-switch
-        v-model="product.original"
+        v-model="$product.original"
         :disabled="add_by_dropShipping"
         :false-title="$t('global.commons.fake')"
         :force-show-all="false"
@@ -701,7 +701,7 @@
       </v-list-subheader>
 
       <v-text-field
-        v-model="product.blog"
+        v-model="$product.blog"
         v-level.min="AppLevel.BEGINNER"
         :label="$t('add_product.edit_info.external_link')"
         class="english-field m-2"
@@ -711,7 +711,7 @@
       />
 
       <v-text-field
-        v-model="product.brand"
+        v-model="$product.brand"
         :disabled="add_by_dropShipping"
         :label="$t('add_product.edit_info.brand.label')"
         :placeholder="$t('add_product.edit_info.brand.placeholder')"
@@ -721,9 +721,9 @@
       >
         <template v-slot:append-inner>
           <b-translation-button-product
-            v-if="product?.id"
+            v-if="$product?.id"
             :label="$t('add_product.edit_info.brand')"
-            :product="product"
+            :product="$product"
             :shop="shop"
             translation-key="brand"
           ></b-translation-button-product>
@@ -747,7 +747,7 @@
       />-->
       <u-smart-select
         v-if="isPhysical"
-        v-model="product.condition"
+        v-model="$product.condition"
         :disabled="add_by_dropShipping"
         :hint="$t('add_product.edit_info.condition.message')"
         :items="conditions"
@@ -770,7 +770,7 @@
       </v-list-subheader>
 
       <v-text-field
-        v-model="product.warranty"
+        v-model="$product.warranty"
         :disabled="add_by_dropShipping"
         :label="$t('add_product.edit_info.warranty.label')"
         :placeholder="$t('add_product.edit_info.warranty.placeholder')"
@@ -785,7 +785,7 @@
             class="mb-4"
             @select="
               (v) => {
-                product.warranty = v;
+                $product.warranty = v;
                 $forceUpdate();
               }
             "
@@ -794,9 +794,9 @@
 
         <template v-slot:append-inner>
           <b-translation-button-product
-            v-if="product?.id"
+            v-if="$product?.id"
             :label="$t('add_product.edit_info.warranty.label')"
-            :product="product"
+            :product="$product"
             :shop="shop"
             translation-key="warranty"
           ></b-translation-button-product>
@@ -806,7 +806,7 @@
       <!-- Time -->
 
       <u-number-input
-        v-model="product.return_warranty"
+        v-model="$product.return_warranty"
         :disabled="add_by_dropShipping"
         :hideDetails="false"
         :label="$t('add_product.edit_info.return_warranty')"
@@ -825,7 +825,7 @@
 
       <template v-if="isVirtual">
         <u-number-input
-          v-model="product.lead"
+          v-model="$product.lead"
           :disabled="add_by_dropShipping"
           :label="$t('product_extra_physical.lead_time')"
           :messages="$t('product_extra_physical.lead_time_title')"
@@ -849,8 +849,8 @@
       </v-list-subheader>
 
       <u-smart-select
-        v-model="product.status"
-        :color="ProductStatus[product.status]?.color"
+        v-model="$product.status"
+        :color="ProductStatus[$product.status]?.color"
         :disabled="
           add_by_dropShipping ||
           (IS_VENDOR_PANEL && marketplace_has_verification_step)
@@ -879,7 +879,7 @@
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Profiles ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
       <b-product-profile-logistic
-        :product="product"
+        :product="$product"
         :shop="shop"
         :vendor="vendor"
       >
@@ -887,12 +887,12 @@
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Tax Profile ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
-      <b-product-profile-tax :product="product" :shop="shop" :vendor="vendor">
+      <b-product-profile-tax :product="$product" :shop="shop" :vendor="vendor">
       </b-product-profile-tax>
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Map Profile ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
       <b-product-profile-map
-        :product="product"
+        :product="$product"
         :shop="shop"
         :vendor="vendor"
       ></b-product-profile-map>
@@ -900,7 +900,7 @@
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Package Profile ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
       <b-product-profile-include
-        :product="product"
+        :product="$product"
         :shop="shop"
         :vendor="vendor"
       >
@@ -1051,12 +1051,10 @@ export default {
     BCategoryInput,
     UNumberInput,
   },
+  inject:['$shop','$product'],
   emits: ["next"],
   props: {
-    product: {
-      required: true,
-      type: Object,
-    },
+
     shop: {
       required: true,
     },
@@ -1116,7 +1114,7 @@ export default {
     },
 
     in_edit_mode() {
-      return !!this.product?.id;
+      return !!this.$product?.id;
     },
     price_input_modes() {
       return [
@@ -1165,27 +1163,27 @@ export default {
     },
 
     add_by_dropShipping() {
-      return !!this.product.parent_id;
+      return !!this.$product.parent_id;
     },
 
     product_image() {
-      return this.getShopImagePath(this.product.icon);
+      return this.getShopImagePath(this.$product.icon);
     },
     type_object() {
-      return ProductType[this.product.type];
+      return ProductType[this.$product.type];
     },
 
     isPhysical() {
-      return this.product.type === ProductType.PHYSICAL.code;
+      return this.$product.type === ProductType.PHYSICAL.code;
     },
     isVirtual() {
-      return this.product.type === ProductType.VIRTUAL.code;
+      return this.$product.type === ProductType.VIRTUAL.code;
     },
     isService() {
-      return this.product.type === ProductType.SERVICE.code;
+      return this.$product.type === ProductType.SERVICE.code;
     },
     isSubscription() {
-      return this.product.type === ProductType.SUBSCRIPTION.code;
+      return this.$product.type === ProductType.SUBSCRIPTION.code;
     },
     is_marketplace() {
       return this.shop.model === BusinessModel.MARKETPLACE.code;
@@ -1241,14 +1239,14 @@ export default {
       );
     },
     product_external_service() {
-      return ProductExternal.getServiceData(this.product.external);
+      return ProductExternal.getServiceData(this.$product.external);
     },
     //-------------------------- Valuation --------------------------
 
     valuation_price_base() {
       return this.CalcPriceProductCurrentCurrency(
         this.shop,
-        this.product,
+        this.$product,
         null,
         null,
         null,
@@ -1260,10 +1258,10 @@ export default {
     valuation_price_preview() {
       return this.CalcPriceProductCurrentCurrency(
         this.shop,
-        this.product,
+        this.$product,
         null,
         this.preview_valuation,
-        this.product.valuation,
+        this.$product.valuation,
         null,
         null,
       );
@@ -1276,23 +1274,23 @@ export default {
             },*/
 
     category_id(value) {
-      this.product.category_id = value;
+      this.$product.category_id = value;
     },
   },
 
   created() {
     // Set category id from current route state if be new product!
-    this.category_id = this.product.id
-      ? this.product.category_id
+    this.category_id = this.$product.id
+      ? this.$product.category_id
       : this.$route.query.dir;
 
-    if (!this.product.price_input) this.product.price_input = "default";
+    if (!this.$product.price_input) this.$product.price_input = "default";
 
-    this.valuation = this.product.valuation;
+    this.valuation = this.$product.valuation;
 
-    this.single_vendor = !!this.product.vendor_id;
+    this.single_vendor = !!this.$product.vendor_id;
 
-    this.live_action = this.product.action;
+    this.live_action = this.$product.action;
 
     if (
       !this.in_edit_mode /*New product*/ &&
@@ -1300,7 +1298,7 @@ export default {
       this.marketplace_has_verification_step
     ) {
       // Force select pending for new product added by vendor.
-      this.product.status = ProductStatus.Pending.code;
+      this.$product.status = ProductStatus.Pending.code;
     }
   },
 
@@ -1311,7 +1309,7 @@ export default {
       this.busy_valuation = true;
       axios
         .post(
-          window.API.POST_SET_PRODUCT_VALUATION(this.shop.id, this.product.id),
+          window.API.POST_SET_PRODUCT_VALUATION(this.shop.id, this.$product.id),
           {
             valuation_id: valuation_id,
           },
@@ -1322,12 +1320,14 @@ export default {
           } else {
             // Set
             if (data.valuation) {
-              this.product.valuation_id = data.valuation.id;
-              this.product.valuation = data.valuation;
+              this.$product.valuation_id = data.valuation.id;
+              this.$product.valuation = data.valuation;
+
+
             } else {
               // Clear
-              this.product.valuation_id = null;
-              this.product.valuation = null;
+              this.$product.valuation_id = null;
+              this.$product.valuation = null;
             }
 
             this.showSuccessAlert(
@@ -1360,7 +1360,7 @@ export default {
     // ████████████████████ Shortcuts (more categories) ████████████████████
 
     showShortcuts() {
-      this.shortcuts = this.product.shortcuts;
+      this.shortcuts = this.$product.shortcuts;
       if (!this.shortcuts || !Array.isArray(this.shortcuts))
         this.shortcuts = [];
 
@@ -1373,11 +1373,11 @@ export default {
           this.IS_VENDOR_PANEL
             ? window.VAPI.POST_MY_VENDOR_PRODUCT_SET_SHORTCUT_CATEGORIES(
                 this.vendor.id,
-                this.product.id,
+                this.$product.id,
               )
             : window.API.POST_PRODUCT_SET_SHORTCUT_CATEGORIES(
                 this.shop.id,
-                this.product.id,
+                this.$product.id,
               ),
           {
             shortcuts: this.shortcuts,
@@ -1387,7 +1387,7 @@ export default {
           if (data.error) {
             this.showErrorAlert(null, data.error_msg);
           } else {
-            this.product.shortcuts = data.shortcuts;
+            this.$product.shortcuts = data.shortcuts;
             this.shortcut_dialog = false;
             this.showSuccessAlert(
               "Shortcuts Updated",
@@ -1404,9 +1404,9 @@ export default {
     },
 
     toggleForceEditVendor() {
-      this.KEEP_VENDOR_FOR_SINGLE_MODE = this.product.vendors?.length
-        ? this.product.vendors[0]
-        : this.product.vendor;
+      this.KEEP_VENDOR_FOR_SINGLE_MODE = this.$product.vendors?.length
+        ? this.$product.vendors[0]
+        : this.$product.vendor;
 
       this.force_can_edit = !this.force_can_edit;
     },

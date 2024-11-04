@@ -173,7 +173,7 @@
       <v-list-subheader>
         {{ $t("add_product.edit_images.images.sub_title") }}
       </v-list-subheader>
-      <b-product-images-gallery ref="images" :product="product" class="m-2" />
+      <b-product-images-gallery ref="images" :product="product" class="m-2 min-height-40vh" />
     </div>
 
     <!-- ==================== Product Video ==================== -->
