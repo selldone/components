@@ -155,6 +155,7 @@ import AAddonComparisonDialog from "./add-on/comparison/dialog/AAddonComparisonD
 import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
 import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
 import { installGlobalComponents } from "../components-mandetory";
+import _ from "lodash-es";
 
 const OPTIONS_TITLE = {
   buttonLabels: "fontawesome",
@@ -258,7 +259,6 @@ const OPTIONS_BODY = {
 
       [new RegExp(/<text>/gi), "<p>"],
       [new RegExp(/<\/text>/gi), "</p>"],
-
 
       [new RegExp(/<strong>/gi), "<b>"],
       [new RegExp(/<\/strong>/gi), "</b>"],
@@ -607,8 +607,8 @@ export default defineComponent({
           this.showFullscreen,
           // Deprecated:
           /* function () {
-                          $(this).toggleClass("fullscreen");
-                        }*/
+                            $(this).toggleClass("fullscreen");
+                          }*/
         );
       }, 1000);
     },
@@ -862,7 +862,7 @@ export default defineComponent({
       if (!this.enableTitle) return;
       //   this.article.title = operation.api.origElements.innerText;
       this.onEdited();
-      this.applyDirection(
+      this.applyDirectionDebounce(
         element,
         null,
         document.getElementById(this.REVIEW_TITLE_ID),
@@ -873,7 +873,7 @@ export default defineComponent({
       //console.log('event',event,element)
       // this.article.body = operation.api.origElements.innerHTML;
       this.onEdited();
-      this.applyDirection(
+      this.applyDirectionDebounce(
         element,
         null,
         document.getElementById(this.REVIEW_BODY_ID),
@@ -1469,8 +1469,15 @@ export default defineComponent({
     },
 
     //―――――――――――――― Apply direction (English / Persian and...) ――――――――――――――
-
+    applyDirectionDebounce: _.debounce(function (
+      element,
+      sample_text,
+      link_element,
+    ) {
+      this.applyDirection(element, sample_text, link_element);
+    }, 500),
     applyDirection(element, sample_text, link_element) {
+      //console.log("applyDirection", element, sample_text, link_element);
       if (!element) return;
       //  if (element.innerText.length > 20 && !sample_text) return;   // Previously set direction!
       let doc = "";
@@ -1484,7 +1491,7 @@ export default defineComponent({
           doc = sample_text;
         }
       } else {
-        doc = element.innerText.substring(0, 20);
+        doc = element.innerText.substring(0, 200);
       }
       //  console.log("element= "+element.innerText)
 
@@ -1631,25 +1638,25 @@ export default defineComponent({
     padding-left: 8px;
   }
 
-  table{
-margin: 12px 0;
-    thead{
-      tr{
+  table {
+    margin: 12px 0;
+
+    thead {
+      tr {
         height: 60px;
         background: #3a3a3a;
         color: #fff;
 
         font-size: 0.9rem;
-        td,th{
+
+        td,
+        th {
           text-align: start;
           padding: 8px;
-
         }
       }
     }
   }
-
-
 
   table tbody tr {
     height: 50px;
@@ -1658,8 +1665,6 @@ margin: 12px 0;
   table tbody tr:last-child {
     border: 0;
   }
-
-
 
   .table th {
     // font-family: OpenSans-Regular;
@@ -1852,7 +1857,8 @@ margin: 12px 0;
   border-radius: 2em;
 
   line-height: 1.7em;
-  p{
+
+  p {
     margin: 0;
   }
 }
@@ -1955,7 +1961,7 @@ margin: 12px 0;
         justify-content: center;
       }
 
-      p{
+      p {
         margin: 0;
       }
 
@@ -2067,9 +2073,6 @@ margin: 12px 0;
   }
 
   .medium-editor-insert-plugin {
-
-
-
     .medium-insert-buttons {
       .medium-insert-buttons-addons {
         direction: ltr;
@@ -2197,7 +2200,6 @@ p iframe {
 }
 
 .medium-insert-embeds {
-
   @media only screen and (max-width: 600px) {
     min-width: 100% !important;
   }
@@ -2290,7 +2292,7 @@ p iframe {
       border-radius: 12px;
       margin: 0;
 
-      .v-image__image{
+      .v-image__image {
         width: 100%;
         height: 100%;
         position: absolute;
@@ -2401,6 +2403,7 @@ p iframe {
 .medium-insert-images {
   margin-top: 2rem;
   margin-bottom: 2rem;
+
   &.medium-insert-images-mediumImage {
     max-width: 100%;
     width: max-content;
@@ -2524,8 +2527,9 @@ p iframe {
 
 //------------------------ NEW STYLE ------------------------
 
-.u-article-body-view,.u-article-body-edit{
-  p{
+.u-article-body-view,
+.u-article-body-edit {
+  p {
     margin-bottom: 2rem;
   }
 }
