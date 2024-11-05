@@ -49,7 +49,6 @@
           <v-spacer />
         </v-row>
       </v-card-title>
-
       <b-product-add-full
         :shop="$shop"
         :vendor="$vendor"
@@ -99,7 +98,10 @@ import ProductCondition = Product.ProductCondition;
 export default defineComponent({
   name: "BProductsPanelAddProduct",
   components: { BProductAddFull },
-  inject: ["$shop", "$vendor"],
+  inject: {
+    $shop: { from: "$shop" },
+    $vendor: { from: "$vendor", default: null }, // Provide default as `null` if undefined
+  },
   emits: ["update:modelValue", "add"],
 
   /**

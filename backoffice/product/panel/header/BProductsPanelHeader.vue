@@ -347,7 +347,7 @@ export default {
     InlineHelp,
   },
 
-  emits: ["update:showDeletes", "update:showVendors", "update:showNotes"],
+  emits: ["update:showDeletes", "update:showVendors", "update:showNotes", "click:addProduct", "click:addCategory"],
   props: {
     showDeletes: Boolean,
     showVendors: Boolean,
