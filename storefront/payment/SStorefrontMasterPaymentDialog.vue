@@ -127,13 +127,14 @@ import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import _ from "lodash-es";
+import { delay, throttle } from "lodash-es";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "SStorefrontMasterPaymentDialog",
-  components: { UProgressRadial, UPaymentForm },
+  components: {ULoadingEllipsis, UProgressRadial, UPaymentForm },
 
   inject: ["$shop"],
 
@@ -243,7 +244,7 @@ export default {
 
     this.EventBus.$on(
       "payment-form-basket",
-      _.throttle(
+      throttle(
         ({
           code /*🥶 Guest*/,
           order,
@@ -309,7 +310,7 @@ export default {
 
     this.EventBus.$on(
       "payment-form-subscription",
-      _.throttle(({ currency, bill, gateway_codes, callback, order }) => {
+      throttle(({ currency, bill, gateway_codes, callback, order }) => {
         // Based on delivery methods support COD!
         // Reset previous data:
 
@@ -343,25 +344,22 @@ export default {
      */
     this.EventBus.$on(
       "try-to-pay",
-      _.throttle(
-        ({ gateway, transaction_id, order_id, force_reset_payment }) => {
-          // console.log("====== TRY TO PAY ======", gateway, transaction_id);
+      throttle(({ gateway, transaction_id, order_id, force_reset_payment }) => {
+        // console.log("====== TRY TO PAY ======", gateway, transaction_id);
 
-          this.getPendingPaymentInfo(
-            gateway,
-            transaction_id,
-            order_id,
-            force_reset_payment,
-          );
-        },
-        800,
-      ),
+        this.getPendingPaymentInfo(
+          gateway,
+          transaction_id,
+          order_id,
+          force_reset_payment,
+        );
+      }, 800),
     );
 
     // Payment of bill:
     this.EventBus.$on(
       "payment-form-bill",
-      _.throttle(({ code /*🥶 Guest*/, bill, callback, order }) => {
+      throttle(({ code /*🥶 Guest*/, bill, callback, order }) => {
         // Reset previous data:
         this.resetToDefault(); // 🞇 Reset to default
         this.getPaymentQue();
@@ -403,7 +401,7 @@ export default {
     // Payment of avocado:
     this.EventBus.$on(
       "payment-form-avocado",
-      _.throttle(({ avocado, callback }) => {
+      throttle(({ avocado, callback }) => {
         // Reset previous data:
         this.resetToDefault(); // 🞇 Reset to default
         /////this.getPaymentQue();
@@ -445,7 +443,7 @@ export default {
     // Payment of hyper:
     this.EventBus.$on(
       "payment-form-hyper",
-      _.throttle(({ hyper, callback }) => {
+      throttle(({ hyper, callback }) => {
         // Reset previous data:
         this.resetToDefault(); // 🞇 Reset to default
 
@@ -671,7 +669,7 @@ export default {
             data.timeout &&
             data.interval
           ) {
-            _.delay(() => {
+            delay(() => {
               if (this.$refs.payment_form)
                 this.$refs.payment_form.pollIntervalPaymentStatus(
                   data.gateway_code,
@@ -1051,7 +1049,7 @@ export default {
       // Scroll to top page:
       ScrollHelper.scrollToTop(0, "smooth");
 
-      _.delay(() => {
+      delay(() => {
         this.exist_payment_form = false;
 
         // Callback to open order page:

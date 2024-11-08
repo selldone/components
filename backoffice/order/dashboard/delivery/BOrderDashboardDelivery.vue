@@ -1186,12 +1186,7 @@ export default {
         return;
 
       this.selected_transportation_service = this.transportation_services[0];
-      /*
-            this.selected_transportation_service = null;
-            _.delay(() => {
-              this.selected_transportation_service = this.transportation_services[0];
-      
-            }, 1000);*/
+
     },
   },
   created() {

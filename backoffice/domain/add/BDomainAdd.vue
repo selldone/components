@@ -263,7 +263,7 @@
                     : !custom_ips_ssl_proxy?.includes(x),
                 )"
                 :key="item"
-                class="border-seft-thick-blue "
+                class="border-seft-thick-blue"
                 dir="ltr"
               >
                 <p class="font-weight-black mb-1">DNS Record type: <b>A</b></p>
@@ -271,14 +271,16 @@
                 <u-text-copy-box
                   :value="domain_verification_title"
                   full-width
-                  message="DNS A key" class="my-2"
+                  message="DNS A key"
+                  class="my-2"
                 >
                 </u-text-copy-box>
 
                 <u-text-copy-box
                   :value="item"
                   full-width
-                  message="DNS A record value" class="my-2"
+                  message="DNS A record value"
+                  class="my-2"
                 >
                 </u-text-copy-box>
               </div>
@@ -297,7 +299,7 @@
                   <div
                     v-for="item in SelldoneShopsHostCNAMEs"
                     :key="item"
-                    class="border-seft-thick-blue  "
+                    class="border-seft-thick-blue"
                     dir="ltr"
                   >
                     <p class="font-weight-black mb-1">
@@ -332,7 +334,7 @@
               <v-list-subheader>
                 {{ $t("admin_shop.dashboard.info.add_dialog.step2") }}
               </v-list-subheader>
-              <div class="border-seft-thick-blue  " dir="ltr">
+              <div class="border-seft-thick-blue" dir="ltr">
                 <p class="font-weight-black mb-1">
                   DNS Record type: <b>TXT</b>
                 </p>
@@ -723,11 +725,13 @@ import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "BDomainAdd",
   emits: ["close", "update", "update-shop-domain"],
   components: {
+    ULoadingEllipsis,
     UPodWire,
     UPodNode,
     UPodsPanel,

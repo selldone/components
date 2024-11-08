@@ -690,10 +690,6 @@ export default {
       // console.log("funnel_value", this.funnel_value);
     },
 
-    /* delayedHide(){
-      this.selected_type=null
-      _.delay(() =>{this.show_extra=false }, 500);
-    }*/
 
     getArray(key) {
       return this.timeSeries

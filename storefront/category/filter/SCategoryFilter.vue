@@ -250,6 +250,7 @@ import SCategoryFilterSelector from "../../../storefront/category/filter/selecto
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
+import { GetNameOfColor } from "@selldone/core-js/helper";
 
 /**
  *
@@ -681,7 +682,7 @@ export default {
     },
 
     coloName(color) {
-      return this.GetNameOfColor(color);
+      return GetNameOfColor(color);
     },
 
     clickTreeView(item) {

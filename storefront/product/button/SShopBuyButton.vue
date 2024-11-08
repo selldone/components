@@ -219,14 +219,12 @@
       {{ action_text }}
     </v-btn>
 
-
     <!--
 █████████████████████████████████████████████████████████████
 ―――――――――――――――――――――――― External ▶ Second  Call to Action ―――――――――――――――――――――――
 █████████████████████████████████████████████████████████████
 -->
     <s-product-external-button :product="product"></s-product-external-button>
-
   </div>
 </template>
 
@@ -241,13 +239,17 @@ import SShopSubscribeButton from "./SShopSubscribeButton.vue";
 import { SubscriptionMode } from "@selldone/core-js/enums/subscription/SubscriptionMode";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import { BuyButtonHelper } from "@selldone/core-js/helper/shop/BuyButtonHelper";
-import _ from "lodash-es";
-import SProductExternalButton
-  from "@selldone/components-vue/storefront/product/external/button/SProductExternalButton.vue";
+import { debounce, delay } from "lodash-es";
+import SProductExternalButton from "@selldone/components-vue/storefront/product/external/button/SProductExternalButton.vue";
 
 export default {
   name: "SShopBuyButton",
-  components: {SProductExternalButton, SShopSubscribeButton, UNumberInput, ULoadingEllipsis },
+  components: {
+    SProductExternalButton,
+    SShopSubscribeButton,
+    UNumberInput,
+    ULoadingEllipsis,
+  },
   props: {
     product: {
       required: true,
@@ -549,7 +551,7 @@ export default {
         );*/
     },
 
-    debounceSpinnerSelectAction: _.debounce(
+    debounceSpinnerSelectAction: debounce(
       function () {
         // console.log("Auto get rates...");
         this.spinnerSelectAction();
@@ -585,7 +587,7 @@ export default {
         );*/
     },
 
-    calculatorCall: _.debounce(
+    calculatorCall: debounce(
       function () {
         // console.log("Auto get rates...");
         this.calculateNow();
@@ -667,7 +669,7 @@ export default {
             });
           } else {
             this.show_success_save = true;
-            _.delay(() => {
+            delay(() => {
               this.show_success_save = false;
             }, 1000);
 

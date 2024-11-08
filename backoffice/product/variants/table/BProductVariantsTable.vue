@@ -89,13 +89,13 @@
             ></u-price>
             <v-spacer></v-spacer>
             <!-- custom variant pricing or same as product pricing? -->
-            <v-icon v-if="item.pricing" class="ms-1">price_change </v-icon>
+            <v-icon v-if="item.pricing" class="ms-1">price_change</v-icon>
 
             <v-tooltip activator="parent" content-class="bg-black">
               <template v-if="item.pricing">
                 Variant has independent pricing.
               </template>
-              <template v-else> Same as main product. </template>
+              <template v-else> Same as main product.</template>
             </v-tooltip>
           </div>
         </td>
@@ -311,13 +311,13 @@
   ></b-product-barcode>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
-import BProductBarcode from "../../../product/barcode/BProductBarcode.vue";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 import UChipDiscount from "../../../../ui/chip/discount/UChipDiscount.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "BProductVariantsTable",
@@ -325,7 +325,12 @@ export default {
     UChipDiscount,
     UColorCircle,
     UVariantAssetImage,
-    BProductBarcode,
+    BProductBarcode: defineAsyncComponent(
+      () =>
+        import(
+          "@selldone/components-vue/backoffice/product/barcode/BProductBarcode.vue"
+        ),
+    ),
     UTimeProgressBar,
   },
   props: {

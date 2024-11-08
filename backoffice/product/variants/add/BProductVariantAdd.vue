@@ -84,8 +84,6 @@
           required
           variant="underlined"
         >
-
-
           <template v-slot:append-inner>
             <u-tooltip-tips
               :message="$t('product_admin.inventory.variant_add_edit.sku_tips')"
@@ -657,7 +655,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import BProductEditPrice from "../../../product/edit/price/BProductEditPrice.vue";
 import BProductExtraInput from "../../extra/input/BProductExtraInput.vue";
 import BProductImagesGallery from "../../images/gallery/BProductImagesGallery.vue";
@@ -676,6 +674,7 @@ import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants
 import BProductGraphicalAssetsSelector from "../../../product/graphical-assets/selector/BProductGraphicalAssetsSelector.vue";
 import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import { GetNameOfColor } from "@selldone/core-js/helper";
 
 export default {
   name: "BProductVariantAdd",
@@ -753,6 +752,7 @@ export default {
 
   data() {
     return {
+      GetNameOfColor: GetNameOfColor,
       ProductVariants: ProductVariants,
 
       colors: VariantColorsSet,

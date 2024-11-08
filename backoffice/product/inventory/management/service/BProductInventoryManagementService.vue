@@ -83,7 +83,7 @@
 import UNumberInput from "../../../../../ui/number/input/UNumberInput.vue";
 import UCalendarView from "../../../../../ui/calendar/clendar-view/UCalendarView.vue";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BProductInventoryManagementService",
@@ -183,7 +183,7 @@ export default {
         });
     },
 
-    updateProductOutput: _.throttle(function () {
+    updateProductOutput: throttle(function () {
       // Debounce: Speed up first load!
       this.busy_output = true;
 

@@ -13,6 +13,7 @@
   -->
 
 <template>
+  <!-- UColorCircle -->
   <span
     :class="{ '-border': !borderLess }"
     :style="{ '--size': size + 'px' }"
@@ -23,8 +24,11 @@
   </span>
 </template>
 
-<script>
-import { ColorHelper } from "@selldone/core-js/helper/color/ColorHelper";
+<script lang="ts">
+import {
+  ColorHelper,
+  GetNameOfColor,
+} from "@selldone/core-js/helper/color/ColorHelper";
 
 export default {
   name: "UColorCircle",
@@ -37,6 +41,11 @@ export default {
       default: false,
       type: Boolean,
     },
+  },
+  data() {
+    return {
+      GetNameOfColor: GetNameOfColor,
+    };
   },
   computed: {
     colors() {

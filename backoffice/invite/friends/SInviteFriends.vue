@@ -37,7 +37,7 @@
           width="100%"
           max-height="380"
           cover
-          :aspect-ratio="1792/1024"
+          :aspect-ratio="1792 / 1024"
         >
           <v-card-title class="d-flex align-center">
             <v-avatar class="avatar-gradient -thin me-2" size="36">
@@ -255,10 +255,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
 import UButtonShareGroup from "../../../ui/button/share/group/UButtonShareGroup.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "SInviteFriends",
@@ -368,7 +368,7 @@ export default {
         });
     },
 
-    onScroll: _.throttle(function (e) {
+    onScroll: throttle(function (e) {
       const has_scroll = e.target.scrollHeight > e.target.clientHeight;
       // console.log(has_scroll)
       if (!has_scroll) return;

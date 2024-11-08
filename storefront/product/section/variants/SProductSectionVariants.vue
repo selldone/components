@@ -132,12 +132,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import VariantFilter from "../../variant/variant-filter/VariantFilter.vue";
 import VariantItemMini from "../../../../storefront/product/variant/VariantItemMini.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
+import { GetNameOfColor } from "@selldone/core-js/helper";
 
 export default {
   name: "SProductSectionVariants",
@@ -156,6 +157,7 @@ export default {
   },
 
   data: () => ({
+    GetNameOfColor: GetNameOfColor,
     show_all: false,
   }),
 

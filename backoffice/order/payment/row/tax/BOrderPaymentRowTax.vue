@@ -151,10 +151,12 @@
 
 <script>
 import BTaxProfileChip from "../../../../tax/profile/chip/BTaxProfileChip.vue";
+import SStateFlag from "@selldone/components-vue/ui/country/state-flag/SStateFlag.vue";
 
 export default {
   name: "BOrderPaymentRowTax",
   components: {
+    SStateFlag,
     BTaxProfileChip,
   },
 

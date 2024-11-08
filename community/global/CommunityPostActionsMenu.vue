@@ -124,7 +124,7 @@
 import CPostEditor from "../../community/post/editor/CPostEditor.vue";
 import AFeedbackContentViolationReport from "../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
-import _ from "lodash-es";
+import { delay } from "lodash-es";
 import { ArticleReport } from "@selldone/core-js";
 
 export default {
@@ -448,7 +448,7 @@ export default {
 
         if (this.value) {
           this.value = false;
-          _.delay(() => {
+          delay(() => {
             this.value = true;
           }, 350);
         } else {

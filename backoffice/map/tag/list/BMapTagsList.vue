@@ -184,7 +184,7 @@
 
 <script>
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import BMapTagAdd from "../../../map/tag/add/BMapTagAdd.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 
@@ -296,7 +296,7 @@ export default {
       },
       deep: true,
     },
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.options.page = 1;
       this.fetchLocations(
         this.page,

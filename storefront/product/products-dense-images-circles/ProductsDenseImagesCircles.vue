@@ -45,6 +45,7 @@
         "
         height="100%"
         style="padding: 2px"
+        alt="Category"
       />
       <img
         v-else
@@ -54,6 +55,7 @@
             : getProductImage(id, IMAGE_SIZE_SMALL)
         "
         height="100%"
+        alt="Product"
       />
     </v-avatar>
     <v-icon v-if="ids.length > maxCount">more_horiz</v-icon>

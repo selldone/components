@@ -86,8 +86,8 @@
   </v-combobox>
 </template>
 
-<script>
-import _ from "lodash-es";
+<script lang="ts">
+import { throttle } from "lodash-es";
 
 export default {
   name: "ConnectInputField",
@@ -139,7 +139,7 @@ export default {
   },
 
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.getConnects();
     }, window.SERACH_THROTTLE),
 

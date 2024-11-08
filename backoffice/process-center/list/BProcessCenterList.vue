@@ -808,7 +808,7 @@ import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import BProductSubscriptionPricingInput from "../../product/subscription/pricing/input/BProductSubscriptionPricingInput.vue";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper";
-import _ from "lodash-es";
+import { debounce, throttle } from "lodash-es";
 import { OrderType } from "@selldone/core-js/enums/order/OrderType";
 import { RouteMixin } from "../../../mixin/RouteMixin";
 import { Avocado, Basket } from "@selldone/core-js";
@@ -1266,7 +1266,7 @@ export default {
       );
     },
 
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       this.fetchOrders(
         1,
@@ -1348,7 +1348,7 @@ export default {
         this.sortBy[0]?.order === "desc",
       );
     },
-    fetchOrders: _.debounce(function () {
+    fetchOrders: debounce(function () {
       this.fetchOrdersNow(
         this.page,
         this.sortBy[0]?.key,

@@ -151,10 +151,12 @@ import SOrderDeliveryStatusStepper from "../../../../../storefront/order/shippin
 import ReturnRequestButtonBadge from "../../../../../storefront/order/order-return/ReturnRequestButtonBadge.vue";
 import SOrderStatusView from "../../../../../storefront/order/order-status/SOrderStatusView.vue";
 import { Basket } from "@selldone/core-js";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "BRolePanelOrdersList",
   components: {
+    ULoadingEllipsis,
     SOrderStatusView,
     ReturnRequestButtonBadge,
     SOrderStatusesSelect,

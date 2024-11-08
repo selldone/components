@@ -443,7 +443,7 @@
 import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
 import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import SelldoneHelpCard from "../help-card/SelldoneHelpCard.vue";
 import SelldoneBlogCard from "../blog-card/SelldoneBlogCard.vue";
 
@@ -505,7 +505,7 @@ export default {
     },
   },
   watch: {
-    support_message: _.throttle(function (newVal, oldVal) {
+    support_message: throttle(function (newVal, oldVal) {
       if (this.selected_support) return; // Only in new ticket!
       this.fetchFAQData(newVal);
     }, 1000),

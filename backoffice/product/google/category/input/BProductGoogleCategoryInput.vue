@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import { User } from "@selldone/core-js";
 
 export default {
@@ -86,7 +86,7 @@ export default {
     };
   },
   watch: {
-    search: _.throttle(function (val, oldVal) {
+    search: throttle(function (val, oldVal) {
       val &&
         val !== this.select &&
         this.getGoogleCategory(val, this.product.gpc);

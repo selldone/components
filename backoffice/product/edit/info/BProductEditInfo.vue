@@ -74,6 +74,7 @@
               class="me-1"
               height="20"
               width="20"
+              alt="Subscription"
             />
             {{ $t("add_product.edit_info.marketplace.subscription_message") }}
           </div>
@@ -176,7 +177,13 @@
           <div
             class="d-flex flex-column x-small text-muted align-center text-uppercase"
           >
-            <img :src="type_object.image" class="mb-1" height="18" width="18" />
+            <img
+              :src="type_object.image"
+              class="mb-1"
+              height="18"
+              width="18"
+              :alt="$t(type_object.name)"
+            />
             {{ $t(type_object.name) }}
           </div>
         </template>
@@ -402,6 +409,7 @@
               width="auto"
               height="12"
               class="ms-2"
+              alt="Amazon"
             />,
             <img
               :src="
@@ -410,6 +418,7 @@
               width="auto"
               height="12"
               class="ms-2"
+              alt="Airbnb"
             />
             ...
           </v-btn>
@@ -446,6 +455,7 @@
                   width="auto"
                   height="12"
                   class="ms-2"
+                  alt="Amazon"
                 />
                 <img
                   :src="
@@ -454,6 +464,7 @@
                   width="auto"
                   height="12"
                   class="ms-2"
+                  alt="Airbnb"
                 />
               </template>
             </template>
@@ -507,7 +518,11 @@
                 title="Base product price"
               ></u-price>
               <v-icon class="flip-rtl mx-3">trending_flat</v-icon>
-              <u-price :amount="valuation_price_preview" medium title="Product price after valuation"></u-price>
+              <u-price
+                :amount="valuation_price_preview"
+                medium
+                title="Product price after valuation"
+              ></u-price>
             </div>
           </s-product-section-valuation>
 
@@ -817,6 +832,7 @@
             class="ms-2"
             src="../../../../assets/product-badges/return_order-color.svg"
             width="32px"
+            alt="Return Order"
           />
         </template>
       </u-number-input>
@@ -1051,10 +1067,9 @@ export default {
     BCategoryInput,
     UNumberInput,
   },
-  inject:['$shop','$product'],
+  inject: ["$shop", "$product"],
   emits: ["next"],
   props: {
-
     shop: {
       required: true,
     },
@@ -1322,8 +1337,6 @@ export default {
             if (data.valuation) {
               this.$product.valuation_id = data.valuation.id;
               this.$product.valuation = data.valuation;
-
-
             } else {
               // Clear
               this.$product.valuation_id = null;

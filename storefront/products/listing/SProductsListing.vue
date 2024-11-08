@@ -348,7 +348,7 @@ import UProductSpecTable from "../../../ui/product/spec/table/UProductSpecTable.
 import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
 import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 import { computed, defineAsyncComponent } from "vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 import { SProductBreadcrumbHelper } from "./helper/SProductBreadcrumbHelper";
@@ -903,7 +903,7 @@ export default {
     },
     //-------------------------------------------------------
 
-    locationBounds: _.debounce(function (newVal, oldVal) {
+    locationBounds: debounce(function (newVal, oldVal) {
       this.fetchData(false);
     }, 1500),
   },

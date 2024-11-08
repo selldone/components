@@ -58,6 +58,7 @@
     "
     :custom-filter="customFilter"
     :persistentPlaceholder="persistentPlaceholder"
+    aria-label="Select Country"
   >
     <template v-slot:item="{ item, props }">
       <v-list-item

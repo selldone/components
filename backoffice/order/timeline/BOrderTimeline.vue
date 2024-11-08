@@ -432,10 +432,12 @@ import TimelineStatus from "@selldone/core-js/enums/timeline/TimelineStatus.ts";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import { TimelineEmailType } from "@selldone/core-js/enums/timeline/TimelineEmailType.ts";
 import { CampaignLink, Club, Order } from "@selldone/core-js";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "BOrderTimeline",
   components: {
+    ULoadingEllipsis,
     USmartMenu,
     UMapGeoButton,
     UDenseCirclesUsers,

@@ -69,7 +69,9 @@
       <v-list-subheader>
         <div>
           <v-icon size="small">published_with_changes</v-icon>
-         <span v-html="$t('add_category.edit_filter.manually_update_filters_tips')"></span>
+          <span
+            v-html="$t('add_category.edit_filter.manually_update_filters_tips')"
+          ></span>
         </div>
       </v-list-subheader>
       <!-- ███████████████████████████ Preview / Details ███████████████████████████ -->
@@ -196,10 +198,11 @@
   </v-card-actions>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import UVariantAssetImage from "../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import { GetNameOfColor } from "@selldone/core-js/helper";
 
 export default {
   name: "BCategoryFilterEditor",
@@ -333,7 +336,7 @@ export default {
   },
   methods: {
     coloName(color) {
-      return this.GetNameOfColor(color);
+      return GetNameOfColor(color);
     },
 
     getCategoryFilter() {

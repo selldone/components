@@ -144,10 +144,10 @@
   </v-autocomplete>
 </template>
 
-<script>
+<script lang="ts">
 import BClusterParent from "../../cluster/parent/BClusterParent.vue";
 import CircleImage from "../../../ui/image/CircleImage.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BClusterInput",
@@ -236,7 +236,7 @@ export default {
     },
   },
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       this.fetchClusters();
     }, window.SERACH_THROTTLE),

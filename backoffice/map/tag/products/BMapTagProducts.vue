@@ -154,7 +154,7 @@
 
 <script>
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BMapTagProducts",
@@ -228,7 +228,7 @@ export default {
       },
       deep: true,
     },
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.page = 1;
       const { sortBy, page, itemsPerPage } = this.options;
       this.fetchProducts(

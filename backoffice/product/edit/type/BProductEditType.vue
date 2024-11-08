@@ -44,8 +44,9 @@
             variant="tonal"
             class="mt-1"
           >
-            ● {{$t('global.commons.installment')}} / {{$t('global.commons.split_payment')}}</v-chip
-          >
+            ● {{ $t("global.commons.installment") }} /
+            {{ $t("global.commons.split_payment") }}
+          </v-chip>
           <v-chip
             v-if="item.code === ProductType.SUBSCRIPTION.code"
             color="green"
@@ -53,8 +54,8 @@
             variant="tonal"
             class="mt-1"
           >
-            ● {{$t('global.commons.recurring_payment')}} </v-chip
-          >
+            ● {{ $t("global.commons.recurring_payment") }}
+          </v-chip>
         </v-list-item-subtitle>
 
         <v-expand-transition>
@@ -156,7 +157,6 @@
 
         <v-list-item-subtitle>
           {{ $t("product_studio.by_sku.subtitle") }}
-
         </v-list-item-subtitle>
       </v-list-item>
 
@@ -196,7 +196,7 @@
         <v-list-item-subtitle>
           {{
             !can_reselling
-              ?$t("product_studio.your_license_is_not_eligible")
+              ? $t("product_studio.your_license_is_not_eligible")
               : $t("product_studio.drop_shipping.subtitle")
           }}
         </v-list-item-subtitle>
@@ -229,8 +229,7 @@
         </v-list-item-title>
 
         <v-list-item-subtitle>
-          {{$t("product_studio.by_connect.subtitle")  }}
-
+          {{ $t("product_studio.by_connect.subtitle") }}
         </v-list-item-subtitle>
       </v-list-item>
     </v-list>
@@ -245,15 +244,14 @@
     >
       <v-card class="text-start">
         <v-card-title>
-          <v-avatar class="me-2 avatar-gradient -thin -shop" size="36"
-            ><v-img :src="getShopImagePath(shop.icon, 128)"
-          /></v-avatar>
+          <v-avatar class="me-2 avatar-gradient -thin -shop" size="36">
+            <v-img :src="getShopImagePath(shop.icon, 128)" />
+          </v-avatar>
 
           {{ shop.title }}
         </v-card-title>
 
         <v-card-text>
-
           <v-container class="mb-12" fluid>
             <v-row>
               <v-col
@@ -272,99 +270,104 @@
                   variant="outlined"
                   @click="showRepositoryDialog(item)"
                 >
-                <div class="d-flex align-start pa-2">
-                  <v-avatar class="flex-grow-0" rounded size="84">
-                    <v-img
+                  <div class="d-flex align-start pa-2">
+                    <v-avatar class="flex-grow-0" rounded size="84">
+                      <v-img
                         v-if="item.icon"
                         :src="getShopImagePath(item.icon)"
-                    ></v-img>
-                    <v-icon v-else>breakfast_dining</v-icon>
-                  </v-avatar>
+                      ></v-img>
+                      <v-icon v-else>breakfast_dining</v-icon>
+                    </v-avatar>
 
-               <div class="ps-2">
-                 <div class="text-subtitle-2">
-                   {{ item.title }}
-                 </div>
-                 <div
-                     class="font-weight-black pt-1 english-field small"
-                     dir="ltr"
-                 >
-                   SKU: {{ item.sku }}
-                 </div>
+                    <div class="ps-2">
+                      <div class="text-subtitle-2">
+                        {{ item.title }}
+                      </div>
+                      <div
+                        class="font-weight-black pt-1 english-field small"
+                        dir="ltr"
+                      >
+                        SKU: {{ item.sku }}
+                      </div>
 
-                 <div v-if="auto_category">
-                      <span v-if="item.parent2_category">
-                        {{ item.parent2_category }}
+                      <div v-if="auto_category">
+                        <span v-if="item.parent2_category">
+                          {{ item.parent2_category }}
 
-                        <v-icon size="small">{{
+                          <v-icon size="small">{{
                             $t("icons.angle_next")
                           }}</v-icon>
-                      </span>
+                        </span>
 
-                   <span v-if="item.parent_category">
-                        {{ item.parent_category }}
+                        <span v-if="item.parent_category">
+                          {{ item.parent_category }}
 
-                        <v-icon size="small">{{
+                          <v-icon size="small">{{
                             $t("icons.angle_next")
                           }}</v-icon>
-                      </span>
+                        </span>
 
-                   {{ item.category }}
-                 </div>
-                 <div v-else>{{$t('product_studio.add_in_current_category')}}</div>
+                        {{ item.category }}
+                      </div>
+                      <div v-else>
+                        {{ $t("product_studio.add_in_current_category") }}
+                      </div>
 
-                 <div v-if="item.brand">
-                   {{ $t("global.commons.brand") }}: {{ item.brand }}
-                 </div>
+                      <div v-if="item.brand">
+                        {{ $t("global.commons.brand") }}: {{ item.brand }}
+                      </div>
 
-                 <div v-if="item.price">
-                   {{ $t("global.commons.price") }}:
-                   <u-price
-                       :amount="item.price"
-                       :currency="item.currency"
-                   ></u-price>
-                 </div>
-
-               </div>
-
-                </div>
-
+                      <div v-if="item.price">
+                        {{ $t("global.commons.price") }}:
+                        <u-price
+                          :amount="item.price"
+                          :currency="item.currency"
+                        ></u-price>
+                      </div>
+                    </div>
+                  </div>
                 </v-card>
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
 
-        <div style="position: fixed;bottom: 0;left: 0;right: 0;z-index: 2;">
-          <v-sheet  color="#eee" rounded="t-xl" class="mx-auto pa-4" max-width="98vw" width="640" elevation="3">
+        <div style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 2">
+          <v-sheet
+            color="#eee"
+            rounded="t-xl"
+            class="mx-auto pa-4"
+            max-width="98vw"
+            width="640"
+            elevation="3"
+          >
             <u-widget-header
-                icon="note_add"
-                :title="$t('product_studio.sku_dialog.title')"
+              icon="note_add"
+              :title="$t('product_studio.sku_dialog.title')"
             ></u-widget-header>
             <v-list-subheader>
-              {{ $t('product_studio.sku_dialog.subtitle') }}
-
+              {{ $t("product_studio.sku_dialog.subtitle") }}
             </v-list-subheader>
             <v-text-field
-                v-model="sku"
-                :label="$t('product_studio.sku_name_input')"
-                class="max-width-field-large mx-auto m-2 mt-4 border-green-input"
-                clearable
-                color="green"
-                hide-details
-                prepend-inner-icon="qr_code_scanner"
-                rounded
-                variant="solo"
+              v-model="sku"
+              :label="$t('product_studio.sku_name_input')"
+              class="max-width-field-large mx-auto m-2 mt-4 border-green-input"
+              clearable
+              color="green"
+              hide-details
+              prepend-inner-icon="qr_code_scanner"
+              rounded
+              variant="solo"
             >
               <template v-slot:append-inner>
                 <v-btn
-                    :class="{ disabled: !sku || sku.length < 4 }"
-                    :loading="busy_search"
-                    color="success"
-                    rounded
-                    variant="flat"
-                    @click="searchSku()"
-                >{{ $t("global.actions.search") }}
+                  :class="{ disabled: !sku || sku.length < 4 }"
+                  :loading="busy_search"
+                  color="success"
+                  rounded
+                  variant="flat"
+                  @click="searchSku()"
+                  >{{ $t("global.actions.search") }}
                 </v-btn>
               </template>
             </v-text-field>
@@ -377,9 +380,6 @@
             </div>
           </v-sheet>
         </div>
-
-
-
       </v-card>
     </v-dialog>
     <!-- ██████████████████████ Add Drop Shipping ██████████████████████ -->
@@ -391,25 +391,20 @@
     >
       <v-card class="text-start">
         <v-card-title class="d-flex align-center">
-          <v-avatar class="me-2 avatar-gradient -thin -shop" size="36"
-            ><v-img :src="getShopImagePath(shop.icon, 128)"
-          /></v-avatar>
-
+          <v-avatar class="me-2 avatar-gradient -thin -shop" size="36">
+            <v-img :src="getShopImagePath(shop.icon, 128)" />
+          </v-avatar>
 
           <div>
             {{ shop.title }}
             <div class="text-subtitle-2">
-              {{$t('product_studio.dropshipping_dialog.title') }}
-
+              {{ $t("product_studio.dropshipping_dialog.title") }}
             </div>
           </div>
         </v-card-title>
 
         <v-card-text>
-          <b-product-add-dropshipping
-            :shop="shop"
-            @back="dropshipping = false"
-          >
+          <b-product-add-dropshipping :shop="shop" @back="dropshipping = false">
           </b-product-add-dropshipping>
         </v-card-text>
         <v-card-actions>
@@ -508,7 +503,7 @@
               <div v-else>
                 <div class="py-3">
                   <v-icon class="me-1">home</v-icon>
-                  {{$t('product_studio.add_in_current_category')}}
+                  {{ $t("product_studio.add_in_current_category") }}
                 </div>
               </div>
             </v-expand-transition>
@@ -529,7 +524,8 @@
               :class="{ disabled: !price || !currency }"
               :loading="busy_add_from_repository === selected_repository.id"
               color="primary"
-              size="x-large" variant="elevated"
+              size="x-large"
+              variant="elevated"
               @click="addFromRepository(selected_repository.id)"
             >
               <v-icon start>add</v-icon>
@@ -554,7 +550,7 @@ import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BProductEditType",
@@ -638,7 +634,7 @@ export default {
   mounted() {},
 
   watch: {
-    sku: _.throttle(function (newVal, oldVal) {
+    sku: throttle(function (newVal, oldVal) {
       if (newVal.length < 4) return;
       this.searchSku();
     }, 1500),

@@ -260,7 +260,7 @@
 <script>
 import USmartDraggable from "../../../../ui/smart/draggable/USmartDraggable.vue";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BProductBadgesManage",
@@ -479,7 +479,7 @@ export default {
       this.saveProductBadges();
     },
 
-    saveProductBadges: _.throttle(function (newVal, oldVal) {
+    saveProductBadges: throttle(function (newVal, oldVal) {
       this.saveProductBadgesNow();
     }, 3000),
 

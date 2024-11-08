@@ -67,9 +67,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
+
 export default {
   name: "SFileUploader",
+  components: {
+    FilePond: FilePondLoader.loadFilePondComponent(),
+  },
   props: {
     label: {
       required: false,

@@ -22,14 +22,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineAsyncComponent, defineComponent } from "vue";
 import { AugmentHelper } from "@selldone/core-js/helper";
-import LPageViewer from "@selldone/page-builder/page/viewer/LPageViewer.vue";
 
 export default defineComponent({
   name: "SProductLanding",
   inject: ["$product"],
-  components: { LPageViewer },
+  components: {
+    LPageViewer: defineAsyncComponent(
+      () => import("@selldone/page-builder/page/viewer/LPageViewer.vue"),
+    ),
+  },
 
   computed: {
     // Custom internal page for the product

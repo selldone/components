@@ -57,10 +57,12 @@
 <script>
 import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CCommentWidget from "../../../community/comment/widget/CCommentWidget.vue";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "CommunityMyCommentsPage",
   components: {
+    ULoadingEllipsis,
     CCommentWidget,
 
     CBreadcrumb,

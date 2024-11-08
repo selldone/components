@@ -179,9 +179,9 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
-import _ from "lodash-es";
+import { isEmpty } from "lodash-es";
 
 import numeral from "numeral";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
@@ -229,11 +229,11 @@ export default {
 
   computed: {
     has_todayData() {
-      return !_.isEmpty(this.todayData);
+      return !isEmpty(this.todayData);
     },
 
     has_yesterdayData() {
-      return !_.isEmpty(this.yesterdayData);
+      return !isEmpty(this.yesterdayData);
     },
 
     change_today() {

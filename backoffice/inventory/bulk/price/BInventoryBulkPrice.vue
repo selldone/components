@@ -44,9 +44,7 @@
 
             <v-tab v-if="IS_MARKETPLACE" value="marketplace">
               <v-icon class="me-1">build</v-icon>
-              {{
-                $t("bulk_price_dialog.marketplace_listing_price")
-              }}
+              {{ $t("bulk_price_dialog.marketplace_listing_price") }}
               <v-chip
                 size="x-small"
                 color="#673AB7"
@@ -102,8 +100,7 @@
                 ></u-widget-header>
 
                 <v-list-subheader>
-                  {{$t('bulk_price_dialog.constant.subtitle')}}
-
+                  {{ $t("bulk_price_dialog.constant.subtitle") }}
                 </v-list-subheader>
 
                 <b-inventory-price-preview multiple>
@@ -143,8 +140,7 @@
                 ></u-widget-header>
 
                 <v-list-subheader>
-                  {{$t('bulk_price_dialog.ending.subtitle')}}
-
+                  {{ $t("bulk_price_dialog.ending.subtitle") }}
                 </v-list-subheader>
 
                 <b-inventory-price-preview multiple>
@@ -175,13 +171,12 @@
             <v-window-item value="marketplace">
               <div class="widget-box mb-5">
                 <u-widget-header
-                  :title="$t('bulk_price_dialog.marketplace.title') "
+                  :title="$t('bulk_price_dialog.marketplace.title')"
                   icon="price_change"
                 ></u-widget-header>
 
                 <v-list-subheader>
-                  {{$t('bulk_price_dialog.marketplace.subtitle')}}
-
+                  {{ $t("bulk_price_dialog.marketplace.subtitle") }}
                 </v-list-subheader>
 
                 <u-smart-select
@@ -193,14 +188,21 @@
                   :items="[
                     {
                       value: 'min',
-                                            title:$t('bulk_price_dialog.marketplace.strategy.min.title') ,
-                      description:$t('bulk_price_dialog.marketplace.strategy.min.description') ,
+                      title: $t(
+                        'bulk_price_dialog.marketplace.strategy.min.title',
+                      ),
+                      description: $t(
+                        'bulk_price_dialog.marketplace.strategy.min.description',
+                      ),
                     },
                     {
-
                       value: 'max',
-                               title:$t('bulk_price_dialog.marketplace.strategy.max.title') ,
-                      description:$t('bulk_price_dialog.marketplace.strategy.max.description') ,
+                      title: $t(
+                        'bulk_price_dialog.marketplace.strategy.max.title',
+                      ),
+                      description: $t(
+                        'bulk_price_dialog.marketplace.strategy.max.description',
+                      ),
                     },
                   ]"
                   force-show-all
@@ -216,10 +218,8 @@
               :title="$t('global.commons.category')"
               icon="snippet_folder"
             ></u-widget-header>
-            <v-list-subheader
-              >
-              {{$t('bulk_price_dialog.category.subtitle')}}
-
+            <v-list-subheader>
+              {{ $t("bulk_price_dialog.category.subtitle") }}
             </v-list-subheader>
 
             <b-category-input
@@ -240,10 +240,8 @@
                 :title="$t('global.commons.vendor')"
                 icon="storefront"
               ></u-widget-header>
-              <v-list-subheader
-                >
-                {{$t('bulk_price_dialog.vendor.subtitle')}}
-
+              <v-list-subheader>
+                {{ $t("bulk_price_dialog.vendor.subtitle") }}
               </v-list-subheader>
 
               <b-vendor-input
@@ -261,8 +259,11 @@
                 <div v-if="bulk_vendor">
                   <v-list-subheader>
                     <v-icon>warning_amber</v-icon>
-                    {{$t('bulk_price_dialog.vendor.listing_price_need_update_msg')}}
-
+                    {{
+                      $t(
+                        "bulk_price_dialog.vendor.listing_price_need_update_msg",
+                      )
+                    }}
                   </v-list-subheader>
                 </div>
               </v-expand-transition>
@@ -278,24 +279,34 @@
               <div v-if="report">
                 <div v-if="mode === 'marketplace'">
                   <u-text-value-dashed>
-                    <template v-slot:label>{{$t('bulk_price_dialog.listing_products_changes')}} </template>
+                    <template v-slot:label>{{
+                      $t("bulk_price_dialog.listing_products_changes")
+                    }}</template>
                     <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
                 </div>
                 <div v-else-if="bulk_vendor">
                   <u-text-value-dashed>
-                    <template v-slot:label> {{$t('bulk_price_dialog.total_vendor_products')}}  </template>
+                    <template v-slot:label>
+                      {{
+                        $t("bulk_price_dialog.total_vendor_products")
+                      }}</template
+                    >
                     <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
                 </div>
                 <div v-else>
                   <u-text-value-dashed>
-                    <template v-slot:label> {{$t('bulk_price_dialog.total_products')}}  </template>
+                    <template v-slot:label>
+                      {{ $t("bulk_price_dialog.total_products") }}</template
+                    >
                     <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
 
                   <u-text-value-dashed>
-                    <template v-slot:label>{{$t('bulk_price_dialog.total_variants')}} </template>
+                    <template v-slot:label>{{
+                      $t("bulk_price_dialog.total_variants")
+                    }}</template>
                     <b>{{ report.count_variants }}</b>
                   </u-text-value-dashed>
                 </div>
@@ -404,7 +415,7 @@ import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import BInventoryBulkPreview from "../../../inventory/bulk/preview/BInventoryBulkPreview.vue";
 
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import BInventoryPricePreview from "../../../inventory/price-preview/BInventoryPricePreview.vue";
 import BVendorInput from "@selldone/components-vue/backoffice/vendor/input/BVendorInput.vue";
@@ -525,13 +536,16 @@ export default {
         .finally(() => (this.busy_bulk = false));
     },
 
-    fetchReport: _.throttle(function () {
+    fetchReport: throttle(function () {
       this.report = null;
 
-      if(this.mode==='marketplace' && !this.marketplace_listing_price_fix_strategy)return;
+      if (
+        this.mode === "marketplace" &&
+        !this.marketplace_listing_price_fix_strategy
+      )
+        return;
 
-
-        this.$nextTick(() => {
+      this.$nextTick(() => {
         // Make sure all params updated!
         if (this.need_currency_in_params && !this.bulk_currency) return;
 

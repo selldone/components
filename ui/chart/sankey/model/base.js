@@ -52,11 +52,11 @@ export default function (base = {}, $$ = {}) {
   };
 
   const scaleFnFunctor = (prop, cb) => {
-    return function (_) {
+    return function (_i) {
       if (!arguments.length) return $$[prop];
       const old = $$[prop];
-      if (_ && _.domain) $$[prop] = () => _;
-      else $$[prop] = functor(_);
+      if (_i && _i.domain) $$[prop] = () => _i;
+      else $$[prop] = functor(_i);
       if (cb) cb($$[prop], old);
       return base;
     };

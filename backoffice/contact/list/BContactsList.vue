@@ -292,16 +292,18 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
 import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import BContactConversation from "../../contact/conversation/BContactConversation.vue";
 import SDataIteratorToolbar from "../../../ui/toolbar/SDataIteratorToolbar.vue";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "BContactsList",
   components: {
+    ULoadingEllipsis,
     SDataIteratorToolbar,
     BContactConversation,
     URatingEmoji,
@@ -449,7 +451,7 @@ export default {
       deep: true,
     },
 
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       //  console.log("search", newVal);
       const { sortBy, page, itemsPerPage } = this.options;

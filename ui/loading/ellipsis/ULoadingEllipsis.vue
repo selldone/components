@@ -30,7 +30,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+/**
+ * <u-loading-ellipsis>
+ */
 export default {
   name: "ULoadingEllipsis",
   props: {

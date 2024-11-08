@@ -20,13 +20,19 @@ import "blueimp-file-upload";
 
 declare let FB: any;
 
+
+
 const MediumInsert: Record<string, any> = {
   Templates: {},
   // Other properties and methods...
 };
 
+
 // Export MediumInsert
 export { MediumInsert };
+
+
+
 
 interface IMediumEditor {
   selection: {

@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts">
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 
 export default {
   name: "SStorefrontProductVendorsList",
@@ -76,7 +76,7 @@ export default {
   watch: {
     //-------------------------------------------------------
 
-    locationBounds: _.debounce(function (newVal, oldVal) {
+    locationBounds: debounce(function (newVal, oldVal) {
       this.fetchData(false);
     }, 1500),
   },

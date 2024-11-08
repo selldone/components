@@ -189,7 +189,7 @@ import { LRUCache } from "@selldone/core-js/helper/cache/LRUCache";
 import { StorefrontDebugLogType } from "@selldone/core-js/enums/debug/StorefrontDebugLogType.ts";
 import { StorefrontDebugEvents } from "@selldone/core-js/enums/debug/StorefrontDebugEvents.ts";
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import _ from "lodash-es";
+import { delay } from "lodash-es";
 import UTextValueBox from "../../ui/text/value-box/UTextValueBox.vue";
 
 export default {
@@ -521,7 +521,7 @@ export default {
 
             this.count_down_refresh = true;
 
-            _.delay(() => {
+            delay(() => {
               // Navigate to the new URL
               window.location.href = currentUrl.href;
             }, 5000);

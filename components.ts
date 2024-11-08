@@ -15,9 +15,7 @@
 //―――――――――――――― Js & Components――――――――――――――
 //█████████████████████████████████████████████████████████████
 
-import $ from "jquery";
-window.$ = $;
-window.jQuery = $;
+
 
 import "@selldone/core-js/utils/console/ConsoleStyle";
 
@@ -82,22 +80,8 @@ window.$language = Language.en;
 //█████████████████████████████████████████████████████████████
 import CoreMixin from "./mixin/CoreMixin";
 
-//█████████████████████████████████████████████████████████████
-//――――――――――――――――― JQuery ――――――――――――――――
-//█████████████████████████████████████████████████████████████
 
-$.cachedScript = function (url: string, options?: any) {
-  // Allow user to set any option except for dataType, cache, and url
-  options = $.extend(options || {}, {
-    dataType: "script",
-    cache: true,
-    url: url,
-  });
 
-  // Use $.ajax() since it is more flexible than $.getScript
-  // Return the jqXHR object so we can chain callbacks
-  return $.ajax(options);
-};
 
 //―――――――――――――――――――――― SEO ――――――――――――――――――――
 import { SEO } from "@selldone/core-js/helper/seo/SEO";
@@ -129,9 +113,6 @@ declare global {
     loadedScripts?: string[] /** {@see DynamicScriptDirective} */;
   }
 
-  interface JQueryStatic {
-    cachedScript(url: string, options?: any): JQuery.jqXHR<any>;
-  }
 
   /**
    * The `standalone` property indicates if the browser is running in standalone mode.

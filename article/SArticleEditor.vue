@@ -140,10 +140,24 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+
+//---------------- Medium Editor --------------
+import MediumEditor from "medium-editor";
+
+
+import "@selldone/components-vue/article/add-on/code-editor/plugin/ArticleAddonCodeEditorPlugin";
+import "@selldone/components-vue/article/add-on/comparison/plugin/ArticleAddonComparisonPlugin";
+import "@selldone/components-vue/article/add-on/catalog/plugin/ArticleAddonCatalogPlugin";
+import "@selldone/components-vue/article/add-on/canvas/plugin/ArticleAddonCanvasPlugin";
+
+// @ts-ignore
+import { MediumInsert } from "@selldone/components-vue/article/insert/SelldoneEditorInsert";
+window.MediumInsert = MediumInsert;
+
+
 import AAddonCodeEditor from "./add-on/code-editor/AAddonCodeEditor.vue";
 
-import MediumEditor from "medium-editor";
 
 import { createApp, defineComponent, h } from "vue";
 import AAddonComparison from "./add-on/comparison/AAddonComparison.vue";
@@ -155,7 +169,7 @@ import AAddonComparisonDialog from "./add-on/comparison/dialog/AAddonComparisonD
 import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
 import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
 import { installGlobalComponents } from "../components-mandetory";
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 
 const OPTIONS_TITLE = {
   buttonLabels: "fontawesome",
@@ -607,8 +621,8 @@ export default defineComponent({
           this.showFullscreen,
           // Deprecated:
           /* function () {
-                            $(this).toggleClass("fullscreen");
-                          }*/
+                              $(this).toggleClass("fullscreen");
+                            }*/
         );
       }, 1000);
     },
@@ -1469,7 +1483,7 @@ export default defineComponent({
     },
 
     //―――――――――――――― Apply direction (English / Persian and...) ――――――――――――――
-    applyDirectionDebounce: _.debounce(function (
+    applyDirectionDebounce: debounce(function (
       element,
       sample_text,
       link_element,
@@ -1784,13 +1798,6 @@ export default defineComponent({
     text-decoration: none;
     color: #fff !important;
     border-bottom: unset;
-    background: -webkit-gradient(
-      linear,
-      left top,
-      right top,
-      from(#0288d1),
-      to(#3f51b5)
-    );
     background: linear-gradient(to right, #0288d1, #3f51b5);
     border-radius: 3px;
   }

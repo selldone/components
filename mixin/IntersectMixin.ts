@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import _ from "lodash-es";
+import {delay} from "lodash-es";
 
 /**
  * IntersectMixin provides inline editing capabilities.
@@ -28,25 +28,25 @@ export const IntersectMixin = {
     /**
      * Load the intersecting entry.
      *
-     * @param {IntersectionObserverEntry[]} e - An array of intersection observer entries.
+     * @param isIntersecting
      * @param {string} key - The key identifier.
-     * @param {number} [delay=0] - The delay before processing the intersection.
+     * @param _delay
      * @returns {void}
      */
     OnIntersectLoad(
       isIntersecting: boolean,
       key: string,
-      delay: number = 0,
+      _delay: number = 0,
     ): void {
       if (!this.intersects)
         return console.error("ERROR! Register var: _intersects!");
 
       if (isIntersecting) {
-        if (delay) {
-          _.delay(() => {
+        if (_delay) {
+          delay(() => {
             this.intersects.push(key);
             this.$forceUpdate();
-          }, delay);
+          }, _delay);
         } else {
           this.intersects.push(key);
           this.$forceUpdate();

@@ -508,11 +508,13 @@ import UCurrencyInput from "../../ui/currency/input/UCurrencyInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import _ from "lodash-es";
+import { delay, throttle } from "lodash-es";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "InstagramViewMedias",
   components: {
+    ULoadingEllipsis,
     UCurrencyInput,
     UPriceInput,
     UNumberInput,
@@ -670,7 +672,7 @@ export default {
   },
 
   watch: {
-    change: _.throttle(function (newVal, oldVal) {
+    change: throttle(function (newVal, oldVal) {
       // Auto save ! even dialog not closed!
       if (newVal && this.selected_media)
         this.saveMediaProductInfo(this.selected_media);
@@ -719,7 +721,7 @@ export default {
       InstagramHelper.ProductsCorrection(media);
 
       // Scroll to first:
-      _.delay(() => {
+      delay(() => {
         if (
           this.$refs.post_content &&
           this.$refs.post_content.parentElement.scrollTop !== 0

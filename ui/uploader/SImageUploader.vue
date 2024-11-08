@@ -185,9 +185,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
+
 export default {
   name: "SImageUploader",
+  components: {
+    FilePond: FilePondLoader.loadFilePondComponent(),
+  },
   emits: [
     "response",
     "new-path",

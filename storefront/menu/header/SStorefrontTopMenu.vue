@@ -124,8 +124,8 @@
                       >
                       </v-avatar>
                       <v-icon v-if="item.target === '_blank'" size="x-small"
-                        >launch</v-icon
-                      >
+                        >launch
+                      </v-icon>
                     </template>
                   </v-list-item>
                 </v-col>
@@ -167,13 +167,19 @@
   </v-toolbar>
 </template>
 
-<script>
+<script lang="ts">
 import MenuCategories from "./MenuCategories.vue";
-import LPageViewer from "@selldone/page-builder/page/viewer/LPageViewer.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "SStorefrontTopMenu",
-  components: { LPageViewer, MenuCategories },
+  components: {
+    MenuCategories,
+
+    LPageViewer: defineAsyncComponent(
+      () => import("@selldone/page-builder/page/viewer/LPageViewer.vue"),
+    ),
+  },
   inject: ["$shop"],
   props: {
     rounded: {

@@ -27,7 +27,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import chroma from "chroma-js";
 import UMapCountriesSvg from "../../../../ui/map/countries/svg/UMapCountriesSvg.vue";
 import {

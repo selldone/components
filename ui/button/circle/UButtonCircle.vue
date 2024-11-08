@@ -48,6 +48,7 @@
         }
       "
       @click.stop
+      :aria-label="tooltip"
     >
       <v-badge
         :color="badgeColor"

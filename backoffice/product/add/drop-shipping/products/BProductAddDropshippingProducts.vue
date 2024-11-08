@@ -17,10 +17,11 @@
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <v-list-subheader>
-      Select products from the following list and add them to your shop. You can edit the product's content and more options on the admin product page afterward. Additionally, you can see the product preview in the wholesaler's shop if it is available on their website.
+      Select products from the following list and add them to your shop. You can
+      edit the product's content and more options on the admin product page
+      afterward. Additionally, you can see the product preview in the
+      wholesaler's shop if it is available on their website.
     </v-list-subheader>
-
-
 
     <v-row align="center" no-gutters class="mb-3">
       <!-- ⬬⬬⬬⬬ Breadcrumbs ⬬⬬⬬⬬ -->
@@ -383,7 +384,7 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import UTimeProgressBar from "@selldone/components-vue/ui/time/progress-bar/UTimeProgressBar.vue";
 import VariantItemMini from "@selldone/components-vue/storefront/product/variant/VariantItemMini.vue";
 import ProductVariantsView from "@selldone/components-vue/storefront/product/variant/ProductVariantsView.vue";
@@ -548,7 +549,7 @@ export default {
       this.fetchProducts();
     },
 
-    search_in_shop: _.throttle(function (newVal, oldVal) {
+    search_in_shop: throttle(function (newVal, oldVal) {
       this.fetchProducts();
     }, 1000),
   },

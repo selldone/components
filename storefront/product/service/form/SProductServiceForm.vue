@@ -109,7 +109,7 @@
 <script>
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UTimeWeekPicker from "../../../../ui/time/week-picker/UTimeWeekPicker.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import UDateRangePicker from "../../../../ui/date/range-picker/UDateRangePicker.vue";
 
 export default {
@@ -232,7 +232,7 @@ export default {
       return this.preferences;
     },
 
-    onChange: _.throttle(function () {
+    onChange: throttle(function () {
       if (this.basket_item) {
         // Only save if item added to basket! User flow for service allows to set preferences before add item to basket.
         console.log("=== SEND PREFERENCES 👍 ===");

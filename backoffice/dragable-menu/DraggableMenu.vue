@@ -46,8 +46,18 @@
             content-class="text-start bg-black"
           >
             <template v-slot:activator="{ props }">
-              <v-avatar v-if="element.image" :image="getShopImagePath(element.image,128)" size="20" class="float-right ma-2" v-bind="props"> </v-avatar>
-              <v-icon v-else class="float-right ma-2" size="small" v-bind="props"
+              <v-avatar
+                v-if="element.image"
+                :image="getShopImagePath(element.image, 128)"
+                size="20"
+                class="float-right ma-2"
+                v-bind="props"
+              ></v-avatar>
+              <v-icon
+                v-else
+                class="float-right ma-2"
+                size="small"
+                v-bind="props"
                 >info_outline
               </v-icon>
             </template>
@@ -72,8 +82,10 @@
               </v-icon>
             </template>
             <b class="mb-1">External Link | {{ element.name }}</b>
-            <div class="small"> {{ element.href }}</div>
-            <div v-if="element.target" class="small"><b>Target:</b> {{ element.target }}</div>
+            <div class="small">{{ element.href }}</div>
+            <div v-if="element.target" class="small">
+              <b>Target:</b> {{ element.target }}
+            </div>
           </v-tooltip>
 
           <span
@@ -114,12 +126,14 @@
   </div>
 </template>
 
-<script>
-import draggable from "vuedraggable";
+<script lang="ts">
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "DraggableMenu",
-  components: { draggable },
+  components: {
+    draggable: defineAsyncComponent(() => import("vuedraggable")),
+  },
   emits: ["update:modelValue", "add-click", "click:delete"],
   props: {
     modelValue: {},

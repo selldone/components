@@ -25,7 +25,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
+
 export default {
   name: "UCalendly",
   props: {
@@ -73,7 +75,9 @@ export default {
         this.init();
       } catch (e) {
         // Load dynamically:
-        $.cachedScript("https://assets.calendly.com/assets/external/widget.js")
+        ScriptHelper.CachedScript(
+          "https://assets.calendly.com/assets/external/widget.js",
+        )
           .done(function (script, textStatus) {
             console.style(
               `🔔 ❰ Calendly ❱  Load script file start... ▶ status: ${textStatus}`,

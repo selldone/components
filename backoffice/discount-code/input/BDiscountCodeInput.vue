@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BDiscountCodeInput",
@@ -103,7 +103,7 @@ export default {
   },
 
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.getDiscounts();
     }, window.SERACH_THROTTLE),
   },

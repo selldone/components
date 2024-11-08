@@ -100,10 +100,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    rounded: {
-      default: false,
-      type: Boolean,
-    },
+    rounded: {  },
     maxWidth: {},
     flagMode: {
       // Show flag instead of unicode!

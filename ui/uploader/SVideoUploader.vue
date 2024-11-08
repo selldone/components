@@ -143,9 +143,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
+
 export default {
   name: "SVideoUploader",
+  components: {
+    FilePond: FilePondLoader.loadFilePondComponent(),
+  },
   emits: ["response", "new-path", "new-url", "onClear", "new-item"],
   props: {
     label: {

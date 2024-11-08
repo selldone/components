@@ -68,11 +68,14 @@
 
 <script>
 import SFormBuilderRow from "../../ui/form/item/SFormBuilderRow.vue";
-import draggable from "vuedraggable";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "SFormBuilder",
-  components: { draggable, SFormBuilderRow },
+  components: {
+    draggable: defineAsyncComponent(() => import("vuedraggable")),
+    SFormBuilderRow,
+  },
   props: {
     structure: {
       required: false,

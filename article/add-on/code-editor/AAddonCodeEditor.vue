@@ -70,10 +70,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+//―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
+import "prismjs";
+import "prismjs/themes/prism.css";
+
+import { PrismEditor } from "vue-prism-editor";
+import "vue-prism-editor/dist/prismeditor.min.css";
+
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { ArticleMixin } from "../../../mixin/ArticleMixin";
-import { PrismEditor } from "vue-prism-editor";
 
 export default {
   name: "AAddonCodeEditor",
@@ -231,7 +237,7 @@ export default {
       pre {
         border: none !important;
         // background: #fcfcfc !important;
-        line-height: normal!important;
+        line-height: normal !important;
 
         code {
           background: none !important;

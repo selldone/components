@@ -30,8 +30,8 @@
   </v-snackbar>
 </template>
 
-<script>
-import _ from "lodash-es";
+<script lang="ts">
+import { debounce } from "lodash-es";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 
 export default {
@@ -68,7 +68,7 @@ export default {
 
     //―――――――――――――――――――――― Get PWA Version ――――――――――――――――――――
     getPwaVersion(callback_update = null) {
-      const fun = _.debounce((callback_update = null) => {
+      const fun = debounce((callback_update = null) => {
         // debounce : speed up firs load!
         axios
           .get("/check/version?v=" + SetupService.PWAVersion())

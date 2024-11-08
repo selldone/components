@@ -21,12 +21,14 @@
     :size="size ? size : xLarge ? 'x-large' : undefined"
     :variant="variant"
     class="ai-btn"
+    aria-label="Activate AI Assistance"
   >
     <img
       :class="{ '-circle-white': darkMode }"
       :height="imageSize ? imageSize : xLarge ? 36 : 24"
       :src="require('../../../../assets/icons/ci-logo.png')"
       :width="imageSize ? imageSize : xLarge ? 36 : 24"
+      alt="AI"
     />
     <v-icon
       v-if="placeholderIcon"
@@ -42,6 +44,7 @@
       activator="parent"
       content-class="bg-black text-start"
       max-width="360"
+      aria-label="AI Tooltip"
     >
       <div v-html="tooltip"></div>
     </v-tooltip>

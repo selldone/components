@@ -32,7 +32,6 @@
       <v-btn
         :variant="show_prizes ? 'outlined' : 'elevated'"
         color="green"
-
         size="small"
         @click="show_prizes = !show_prizes"
         ><i class="fas fa-ticket-alt me-2"></i>
@@ -141,7 +140,7 @@
 
 <script>
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "SStorefrontLotteryPrizesList",
@@ -214,7 +213,7 @@ export default {
       this.add_mode = true;
     },
 
-    setLotteryForBasket: _.throttle(function setLotteryForBasket(lottery) {
+    setLotteryForBasket: throttle(function setLotteryForBasket(lottery) {
       this.busy_set = true;
       //console.log("setLotteryForBasket", lottery);
       this.$emit("loading", true);

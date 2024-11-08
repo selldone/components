@@ -14,10 +14,8 @@
 
 <template>
   <div>
-    <v-list-subheader
-      >
-      {{$t('transportation_eligible.subtitle')}}
-
+    <v-list-subheader>
+      {{ $t("transportation_eligible.subtitle") }}
     </v-list-subheader>
     <v-row class="py-3" no-gutters>
       <div
@@ -69,7 +67,7 @@
 <script>
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import BTransportationOverview from "../../transportation/overview/BTransportationOverview.vue";
-import _ from "lodash-es";
+import { delay } from "lodash-es";
 
 export default {
   name: "TransportationsEligibleView",
@@ -116,7 +114,7 @@ export default {
     setActivator(node, item) {
       this.activator = node;
       this.menu = false;
-      _.delay(() => {
+      delay(() => {
         this.activator_item = item;
         this.menu = true;
       }, 300);

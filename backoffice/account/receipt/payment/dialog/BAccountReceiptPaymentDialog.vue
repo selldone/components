@@ -57,11 +57,11 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import BAccountTransactionForm from "../../../../account/transaction/form/BAccountTransactionForm.vue";
 import ULoadingEllipsis from "../../../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
 import UCurrencyIcon from "../../../../../ui/currency/icon/UCurrencyIcon.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BAccountReceiptPaymentDialog",
@@ -82,7 +82,7 @@ export default {
   created() {
     this.EventBus.$on(
       "receipt-payment-dialog",
-      _.throttle((receipt_number) => {
+      throttle((receipt_number) => {
         this.receipt_number = receipt_number;
         this.showReceiptPayment = !!this.receipt_number;
 

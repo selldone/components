@@ -49,6 +49,7 @@
 <script lang="ts">
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
+import {GetNameOfColor} from "@selldone/core-js/helper";
 
 export default {
   name: "SCategoryFilterSelector",
@@ -101,7 +102,7 @@ export default {
 
   methods: {
     coloName(color) {
-      return this.GetNameOfColor(color);
+      return GetNameOfColor(color);
     },
   },
 

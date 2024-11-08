@@ -28,6 +28,7 @@
       prepend-inner-icon="translate"
       readonly
       @click.stop="show_dialog = true"
+      aria-label="Select Language"
     >
     </v-text-field>
 
@@ -159,10 +160,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    rounded: {
-      type: Boolean,
-      default: false,
-    },
+    rounded: {},
     bgColor: {},
 
     flat: Boolean,

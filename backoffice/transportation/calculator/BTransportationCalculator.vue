@@ -228,10 +228,12 @@
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
+import SStateFlag from "@selldone/components-vue/ui/country/state-flag/SStateFlag.vue";
 
 export default {
   name: "BTransportationCalculator",
   components: {
+    SStateFlag,
     UPriceInput,
     UNumberInput,
   },

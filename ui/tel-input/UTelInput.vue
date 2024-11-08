@@ -113,7 +113,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import utils, { getCountry, setCaretPosition } from "./utils/utils";
 

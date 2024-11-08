@@ -66,12 +66,19 @@
 <script>
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UTimeSpanSelector from "./selector/UTimeSpanSelector.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "UTimeSpan",
   components: { UTimeSpanSelector },
-  emits: ["onChange", "update:startDate", "update:endDate", "update:dateRange", "update:offset", "update:days"],
+  emits: [
+    "onChange",
+    "update:startDate",
+    "update:endDate",
+    "update:dateRange",
+    "update:offset",
+    "update:days",
+  ],
   props: {
     startDate: {},
     endDate: {},
@@ -134,7 +141,7 @@ export default {
   },
 
   watch: {
-    date_range: _.throttle(function (newVal, oldVal) {
+    date_range: throttle(function (newVal, oldVal) {
       if (this.triggerOnEnd) return;
       this.emitValues();
     }, 800),

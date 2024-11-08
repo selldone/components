@@ -412,10 +412,11 @@
 <script>
 import CImageView from "../../../community/image/view/CImageView.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper.ts";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "CCommentsList",
-  components: { CImageView },
+  components: {ULoadingEllipsis, CImageView },
   props: {
     shop: {},
 

@@ -85,7 +85,13 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
+//―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
+import "prismjs";
+import "prismjs/themes/prism.css";
+
+import "vue-prism-editor/dist/prismeditor.min.css";
+
 import { EventName } from "@selldone/core-js/events/EventBus";
 import { PrismEditor } from "vue-prism-editor";
 

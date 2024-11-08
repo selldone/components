@@ -237,14 +237,13 @@
   </v-dialog>
 </template>
 
-<script>
-import draggable from "vuedraggable";
-
+<script lang="ts">
 import UDateInput from "../../../../ui/date/input/UDateInput.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import SCountrySelect from "../../../../ui/country/select/SCountrySelect.vue";
 import BCustomersFilterItem from "../../../customer/filter/item/BCustomersFilterItem.vue";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "BCustomersFilterDesign",
@@ -254,7 +253,7 @@ export default {
     SCountrySelect,
     UNumberInput,
     UDateInput,
-    draggable,
+    draggable: defineAsyncComponent(() => import("vuedraggable")),
   },
   emits: ["update:modelValue"],
   props: {

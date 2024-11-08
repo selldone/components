@@ -86,7 +86,7 @@
             <v-icon size="24">edit</v-icon>
             <div class="x-small mt-1 tnt">{{ $t("global.actions.edit") }}</div>
 
-            <v-tooltip activator="parent" location="top" max-width="360">
+            <v-tooltip activator="parent" location="top" max-width="360" aria-label="switch to edit mode">
               <b>{{ $t("global.article.menu.edit") }}</b>
               <div>Click to edit article.</div>
             </v-tooltip>
@@ -586,7 +586,8 @@
                           <v-chip
                             v-if="
                               $shop &&
-                              lang.toLowerCase() === $shop.language.toLowerCase()
+                              lang.toLowerCase() ===
+                                $shop.language.toLowerCase()
                             "
                             class="px-1 mx-2"
                             label
@@ -1010,7 +1011,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SArticleComments from "./comment/SArticleComments.vue";
 
 import SArticleSeoEditor from "./SArticleSeoEditor.vue";
@@ -1029,7 +1030,7 @@ import UTimeProgressBar from "../ui/time/progress-bar/UTimeProgressBar.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import SArticleSearchConsole from "./seo/SArticleSearchConsole.vue";
 import UButtonAiSmall from "../ui/button/ai/small/UButtonAiSmall.vue";
-import _ from "lodash-es";
+import { delay } from "lodash-es";
 import SArticleAuthorBox from "../article/author/box/SArticleAuthorBox.vue";
 import { Article } from "@selldone/core-js";
 
@@ -1052,10 +1053,9 @@ export default {
     SArticleEditor,
     SArticleComments,
   },
-  inject:['$shop'],
-  emits: ["request-auto-translate", "update-article", "delete","get-data"],
+  inject: ["$shop"],
+  emits: ["request-auto-translate", "update-article", "delete", "get-data"],
   props: {
-
     initialArticlePack: {
       required: false,
       type: Object,
@@ -1131,7 +1131,6 @@ export default {
       default: "review",
     },
 
-
     autoPageTitle: {
       required: false,
       type: Boolean,
@@ -1176,7 +1175,6 @@ export default {
       ArticleTypes: Article.Types,
 
       can_edit: false,
-
 
       article: {
         id: 0,
@@ -1387,8 +1385,8 @@ export default {
         this.article.user_id !== this.USER_ID() &&
         this.HasPermission /*Available only in official selldone*/ &&
         this.HasPermission(
-            PermissionNames.Content,
-            PermissionLevels.DELETE_ACCESS,
+          PermissionNames.Content,
+          PermissionLevels.DELETE_ACCESS,
         )
       );
     },
@@ -2011,7 +2009,7 @@ export default {
         })
         .then(({ data }) => {
           if (data.retry /*Retry after ms*/) {
-            _.delay(
+            delay(
               () => {
                 this.autoGenerate(false);
               },
@@ -2037,7 +2035,7 @@ export default {
         .catch((error) => {
           if (retry) {
             // Retry after 2 minutes
-            _.delay(() => {
+            delay(() => {
               this.autoGenerate(false);
             }, 2 * 60000);
           } else {

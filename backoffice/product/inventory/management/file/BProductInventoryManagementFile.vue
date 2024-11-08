@@ -172,7 +172,10 @@
             :value="numeralFormat(max_file_size_mb * 1000 * 1000, '0 b')"
             icon="insert_page_break"
           ></u-text-value-box>
-          <u-text-value-box icon="snippet_folder" :label="$t('product_file.file_count_limit')">
+          <u-text-value-box
+            icon="snippet_folder"
+            :label="$t('product_file.file_count_limit')"
+          >
             <template v-slot:value>
               <b class="text-green">{{ files.length }}</b> / 20
             </template>
@@ -406,28 +409,31 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import UChartRadialBar from "../../../../../ui/chart/radial/bar/UChartRadialBar.vue";
 import UTextValueBox from "../../../../../ui/text/value-box/UTextValueBox.vue";
 import UProgressRadial from "../../../../../ui/progress/radial/UProgressRadial.vue";
-import draggable from "vuedraggable";
 
 import USmartSwitch from "../../../../../ui/smart/switch/USmartSwitch.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import USparkline from "../../../../../ui/chart/sparkline/USparkline.vue";
+import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "BProductInventoryManagementFile",
   components: {
+    FilePond: FilePondLoader.loadFilePondComponent(),
+
     USparkline,
     USmartSwitch,
 
     UProgressRadial,
     UTextValueBox,
     UChartRadialBar,
-    draggable,
+    draggable: defineAsyncComponent(() => import("vuedraggable")),
   },
   props: {
     shop: {
@@ -935,7 +941,7 @@ export default {
           );
     },
 
-    fetchFiles: _.throttle(function () {
+    fetchFiles: throttle(function () {
       this.busy_fetch = true;
       axios
         .get(

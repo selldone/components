@@ -107,6 +107,7 @@
     class="s--currency-selector"
     item-value="code"
     @update:model-value="selectCurrency"
+    aria-label="Select Currency"
   >
     <template v-slot:item="{ item, props }">
       <v-list-item :title="$t(item.raw.name)" v-bind="props">
@@ -214,10 +215,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    rounded: {
-      default: false,
-      type: Boolean,
-    },
+    rounded: { },
     loading: { default: false, type: Boolean },
     maxWidth: {
       default: "220px",

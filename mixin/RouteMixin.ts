@@ -12,9 +12,9 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import type { IReturn } from "@selldone/core-js/types/route/return.type";
-import { defineComponent } from "vue";
-import _ from "lodash-es";
+import type {IReturn} from "@selldone/core-js/types/route/return.type";
+import {defineComponent} from "vue";
+import {delay} from "lodash-es";
 
 declare global {
   interface Window {
@@ -58,7 +58,7 @@ export const RouteMixin = defineComponent({
   mounted() {
     // Clear highlight ID:
     if (this.HIGHLIGHT_ID)
-      _.delay(() => {
+      delay(() => {
         this.HIGHLIGHT_ID = null;
       }, 3000);
   },

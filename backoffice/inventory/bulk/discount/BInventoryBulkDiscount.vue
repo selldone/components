@@ -251,7 +251,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UDateInput from "../../../../ui/date/input/UDateInput.vue";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import BCategoryInput from "../../../category/input/BCategoryInput.vue";
@@ -261,7 +261,7 @@ import BInventoryBulkPreview from "../../../inventory/bulk/preview/BInventoryBul
 
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import BCategoryParent from "../../../category/parent/BCategoryParent.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import UChipDiscount from "../../../../ui/chip/discount/UChipDiscount.vue";
 import BInventoryPricePreview from "../../../inventory/price-preview/BInventoryPricePreview.vue";
 
@@ -374,7 +374,7 @@ export default {
         .finally(() => (this.busy_bulk = false));
     },
 
-    fetchReport: _.throttle(function () {
+    fetchReport: throttle(function () {
       this.report = null;
       this.$nextTick(() => {
         // Make sure all params updated!

@@ -143,7 +143,7 @@
       <h2 class="mt-5 mb-2">
         <img
           :src="require('../../../assets/trademark/stripe.svg')"
-          height="32"
+          height="32"  alt="Stripe"
         />
       </h2>
       <p class="typo-body" v-html="$t('onboarding.payment.step3.msg')"></p>
@@ -170,7 +170,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import SVGs from "@selldone/core-js/enums/payment/stripe/SVGs";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import BGatewayChips from "../../gateway/chips/BGatewayChips.vue";

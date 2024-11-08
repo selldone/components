@@ -217,15 +217,18 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { BasketItemReturn } from "@selldone/core-js";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
 
 export default {
   name: "SShopBasketItemReturnForm",
   components: {
+    FilePond: FilePondLoader.loadFilePondComponent(),
+
     UAvatarFolder,
     UNumberInput,
     VariantItemViewMicro,

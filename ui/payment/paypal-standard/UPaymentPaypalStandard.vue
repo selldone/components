@@ -29,7 +29,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
+
 export default {
   name: "UPaymentPaypalStandard",
 
@@ -86,7 +88,7 @@ export default {
         this.initilize();
       } catch (e) {
         // Load dynamically:
-        $.cachedScript(this.pack.script)
+        ScriptHelper.CachedScript(this.pack.script)
           .done(function (script, textStatus) {
             console.style(
               `🔔 ❰ PayPal ❱  Load script file start... ▶ status: ${textStatus}`,

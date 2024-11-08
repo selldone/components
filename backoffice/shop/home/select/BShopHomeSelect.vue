@@ -288,7 +288,7 @@
 
 <script>
 import UButtonFeature from "../../../../ui/button/feature/UButtonFeature.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BShopHomeSelect",
@@ -372,7 +372,7 @@ export default {
           this.busy_fetch = false;
         });
     },
-    setHomePage: _.throttle(function () {
+    setHomePage: throttle(function () {
       if (this.old_page === this.home_page) return;
       this.old_page = this.home_page;
 

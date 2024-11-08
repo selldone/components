@@ -63,11 +63,11 @@
 </template>
 
 <script>
-import draggable from "vuedraggable";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "draggableImagesList",
-  components: { draggable },
+  components: { draggable: defineAsyncComponent(() => import("vuedraggable")) },
   emits: ["update:modelValue", "add-click"],
   props: {
     modelValue: {},

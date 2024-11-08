@@ -65,7 +65,7 @@
 <script>
 import UChipChange from "../../../../../ui/chip/change/UChipChange.vue";
 import TimeSeriesInlineChart from "../../../../chart/TimeSeriesInlineChart.vue";
-import _ from "lodash-es";
+import { isEmpty } from "lodash-es";
 
 export default {
   name: "BDashboardShopPerformanceOrders",
@@ -91,7 +91,7 @@ export default {
     },
 
     has_yesterdayData() {
-      return !_.isEmpty(this.yesterdayDataOffset);
+      return !isEmpty(this.yesterdayDataOffset);
     },
 
     todayDataOffset() {

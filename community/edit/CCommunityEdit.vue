@@ -270,7 +270,7 @@
 import CImageInput from "../../community/image/input/CImageInput.vue";
 import USmartToggle from "../../ui/smart/toggle/USmartToggle.vue";
 import USmartSelect from "../../ui/smart/select/USmartSelect.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import SWidgetButtons from "../../ui/widget/buttons/SWidgetButtons.vue";
 import { Community } from "@selldone/core-js";
@@ -353,7 +353,7 @@ export default {
 
   methods: {
     //――――――――――――――――――――――― Check community name available ―――――――――――――――――――――――
-    checkName: _.throttle(function (name) {
+    checkName: throttle(function (name) {
       if (!name) return;
       this.busy_name = true;
       axios

@@ -139,7 +139,7 @@
         >shield
       </v-icon>
       Payments are secured by
-      <img height="16" src="../../../../../assets/trademark/stripe.svg" />
+      <img height="16" src="../../../../../assets/trademark/stripe.svg"  alt="Stripe" />
     </div>
 
     <!-- ████████████████████████ PAYMENT > Start ████████████████████████ -->
@@ -207,7 +207,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UPriceInput from "../../../../../ui/price/input/UPriceInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UPaymentForm from "../../../../../ui/payment/form/UPaymentForm.vue";
@@ -217,7 +217,7 @@ import UPodsPanel from "../../../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../../../ui/pod/node/UPodNode.vue";
 
 import BAccountTax from "../../../../account/tax/BAccountTax.vue";
-import _ from "lodash-es";
+import { delay } from "lodash-es";
 
 export default {
   name: "BAccountChargePaymentDialog",
@@ -347,11 +347,11 @@ export default {
           if (!data.error) {
             // Payment succeeded:
             /* if (data.success) {
-                  this.showSuccessAlert(
-                    "Payment confirmed",
-                    "Your payment received and processing now."
-                  );
-                } else {*/
+                    this.showSuccessAlert(
+                      "Payment confirmed",
+                      "Your payment received and processing now."
+                    );
+                  } else {*/
 
             // Fill payment form:
             this.fillPaymentForm(data);
@@ -388,8 +388,8 @@ export default {
             if (data.address && data.amount && data.qr_code) {
               // 1. Set time out to remove QR code: Time out in form!
               /*  this.timeout_instance = setTimeout(() => {
-                    this.delayedHide();
-                  }, this.timeout);*/
+                      this.delayedHide();
+                    }, this.timeout);*/
 
               // 2. Show success alert:
               this.showSuccessAlert(
@@ -458,7 +458,7 @@ export default {
     delayedHide() {
       this.showSelectGateway = false;
 
-      _.delay(() => {
+      delay(() => {
         this.exist_payment_form = false;
 
         this.resetToDefault(); // 🞇 Reset to default

@@ -54,7 +54,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+//―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
+import "prismjs";
+import "prismjs/themes/prism.css";
+
+import "vue-prism-editor/dist/prismeditor.min.css";
+
 import ShopCss from "@selldone/core-js/enums/shop/ShopCss";
 import { PrismEditor } from "vue-prism-editor";
 
@@ -64,7 +70,7 @@ export default {
   emits: ["update:modelValue"],
   props: {
     modelValue: {},
-    readOnly:Boolean
+    readOnly: Boolean,
   },
   data: () => ({
     ShopCss: ShopCss,

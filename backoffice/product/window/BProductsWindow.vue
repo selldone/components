@@ -295,7 +295,7 @@
         group
         hide-on-leave
         origin="center center"
-        :disabled="busy_fetch && product_page!==1"
+        :disabled="busy_fetch && product_page !== 1"
       >
         <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Spirit Container ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
@@ -431,7 +431,9 @@
                   'not-drop-able': current_dragged_folder === category,
                   'now-drop-enter': current_drop_enter_folder === category,
                 }"
-                :is-empty="category.is_empty/*We use it only in the vendor panel*/"
+                :is-empty="
+                  category.is_empty /*We use it only in the vendor panel*/
+                "
                 @select="selectFolder(category)"
               >
               </b-product-window-category-mini>
@@ -451,7 +453,9 @@
                 class="item h-100"
                 @select="selectFolder(category)"
                 @click:edit="showEditCategory(category)"
-                :is-empty="category.is_empty/*We use it only in the vendor panel*/"
+                :is-empty="
+                  category.is_empty /*We use it only in the vendor panel*/
+                "
               />
               <v-btn
                 v-if="selectMode && canSelectCategory"
@@ -1919,7 +1923,7 @@ import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
 import BInventoryFilter from "../../inventory/filter/BInventoryFilter.vue";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
-import _, { isObject } from "lodash-es";
+import { delay, isObject } from "lodash-es";
 import BCategoryFilterEditor from "../../category/filter/BCategoryFilterEditor.vue";
 import SDenseImagesCircles from "../../../ui/image/SDenseImagesCircles.vue";
 import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
@@ -2577,7 +2581,7 @@ export default {
         ? category
         : null;
 
-      _.delay(
+      delay(
         () => {
           this.current_drop_enter_folder = category;
         },

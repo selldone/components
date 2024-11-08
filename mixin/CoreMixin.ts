@@ -24,14 +24,13 @@ import {FileExtensions} from "@selldone/core-js/enums/file/FileExtensions";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
 import {SocialNetwork} from "@selldone/core-js/enums/social/SocialNetwork";
 import {ShopURLs} from "@selldone/core-js/helper/url/ShopURLs";
-import {ColorHelper} from "@selldone/core-js/helper/color/ColorHelper";
 import {CurrencyHelper} from "@selldone/core-js/helper/currency/CurrencyHelper.ts";
 import {PriceHelper} from "@selldone/core-js/helper/price/PriceHelper";
 import {GiftStatus} from "@selldone/core-js/enums/wallet/gift/GiftStatus";
 import {GiftStProgramTypes} from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes";
 import {MapHelper} from "@selldone/core-js/helper/map/MapHelper";
 import numeral from "numeral";
-import _ from "lodash-es";
+import {debounce} from "lodash-es";
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
 import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
 
@@ -110,7 +109,6 @@ const CoreMixin = {
     };
   },
   computed: {
-
     is_standalone() {
       // Detects if device is in standalone mode
       const isInWebAppiOS = window.navigator.standalone === true;
@@ -159,7 +157,7 @@ const CoreMixin = {
     fetchCountries(
       callback?: (countries: gapi.countries.get.ICountry[]) => void,
     ) {
-      const fun = _.debounce((callback = null) => {
+      const fun = debounce((callback = null) => {
         const countries = this.$store.getters.getCountries;
         if (countries && countries.length) {
           if (callback) callback(countries);
@@ -187,8 +185,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                                                                                  return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                                                                                },*/
+                                                                                          return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                                                                                        },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -354,8 +352,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                                                                                  return Num2persian(number);
-                                                                                },*/
+                                                                                          return Num2persian(number);
+                                                                                        },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -794,8 +792,7 @@ const CoreMixin = {
 
     getCountryName(code: ICountryCode) {
       if (!code) return null;
-      if (code.toLowerCase()==='eu') return this.$t('global.commons.europe');
-
+      if (code.toLowerCase() === "eu") return this.$t("global.commons.europe");
 
       const key = `countries.${code}`;
       const translated = this.$t(key);
@@ -1333,8 +1330,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                                                                  PushNotification.AskForPermission();
-                                                                                },*/
+                                                                                          PushNotification.AskForPermission();
+                                                                                        },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 
@@ -1556,18 +1553,8 @@ const CoreMixin = {
       return ShopOptionsHelper.GetMassUnit(shop);
     },
 
-    //―――――――――――――――――――――― Color ――――――――――――――――――――
-    GetNameOfColor(color: string | null) {
-      if (!color || !this.isString(color)) return null;
+    //―――――――――――――――――――――― String ――――――――――――――――――――
 
-      const colors = ColorHelper.ExtractColors(color);
-
-      return colors
-        ?.map((color) =>
-          ColorHelper.getNameOfColor(this.$tm("global.colors") as {}, color),
-        )
-        .join(" / ");
-    },
     getName(val: any) {
       if (!val) return "";
       if (!this.isString(val)) val = "" + val;

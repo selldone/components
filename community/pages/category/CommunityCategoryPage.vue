@@ -380,10 +380,12 @@ import CImageView from "../../../community/image/view/CImageView.vue";
 import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import { Community } from "@selldone/core-js";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "CommunityCategoryPage",
   components: {
+    ULoadingEllipsis,
     SWidgetButtons,
     USmartVerify,
     CImageView,

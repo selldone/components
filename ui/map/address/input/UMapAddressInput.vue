@@ -28,9 +28,11 @@
       clearable
       color="green"
       persistent-placeholder
-      @blur="$nextTick(() => {
-         $emit('update:isFocus', false) // A delay needed!
-      });"
+      @blur="
+        $nextTick(() => {
+          $emit('update:isFocus', false); // A delay needed!
+        })
+      "
       @focus="$emit('update:isFocus', true)"
       @update:model-value="
         (val) => {
@@ -85,7 +87,7 @@
               auto_complete_address =
                 !autoDisableAutoComplete /*Now user can edit address manually!*/;
               $emit('select:address', item);
-                     clearFocus()
+              clearFocus();
             "
           >
             <b class="me-2">
@@ -177,7 +179,7 @@
 </template>
 
 <script lang="ts">
-import _ from "lodash-es";
+import { delay, throttle } from "lodash-es";
 
 export default {
   name: "UMapAddressInput",
@@ -191,7 +193,6 @@ export default {
   ],
   props: {
     modelValue: {},
-
 
     viewOnly: {
       type: Boolean,
@@ -245,7 +246,7 @@ export default {
     attach: Boolean,
 
     messages: {},
-    country:{},
+    country: {},
   },
 
   data() {
@@ -263,7 +264,7 @@ export default {
   },
 
   watch: {
-    search_address: _.throttle(function (newVal, oldVal) {
+    search_address: throttle(function (newVal, oldVal) {
       if (!this.focused) return;
 
       /*  this.search_results = [
@@ -285,7 +286,7 @@ export default {
             lat: this.center ? this.center.lat : null,
             lon: this.center ? this.center.lng : null,
             local: this.getCurrentLanguage().locale, // For Auto select service!
-            countries:this.getShop()?.countries?.join(',')
+            countries: this.getShop()?.countries?.join(","),
           },
         })
         .then(({ data }) => {
@@ -308,13 +309,13 @@ export default {
     setFocused(val) {
       if (val) {
         this.focused = true;
-      } else _.delay(() => (this.focused = false), 300);
+      } else delay(() => (this.focused = false), 300);
     },
     clearFocus() {
       if (document.activeElement) {
         document.activeElement.blur(); // Clears focus from the active element
       }
-    }
+    },
   },
 };
 </script>

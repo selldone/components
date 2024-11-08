@@ -147,13 +147,15 @@
               </v-btn>
             </template>
             <div class="text-start pa-3">
-              <b>{{$t('products_sort_view.search_tips.title')}}</b>
+              <b>{{ $t("products_sort_view.search_tips.title") }}</b>
               <ul class="mt-3">
                 <li v-html="$t('products_sort_view.search_tips.normal')"></li>
                 <li v-html="$t('products_sort_view.search_tips.product')"></li>
                 <li v-html="$t('products_sort_view.search_tips.quotes')"></li>
                 <li v-html="$t('products_sort_view.search_tips.tax')"></li>
-                <li v-html="$t('products_sort_view.search_tips.new_products')"></li>
+                <li
+                  v-html="$t('products_sort_view.search_tips.new_products')"
+                ></li>
               </ul>
             </div>
           </v-tooltip>
@@ -165,7 +167,7 @@
 
 <script>
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "SProductsSortView",
@@ -246,7 +248,7 @@ export default {
     },
   },
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       this.$emit("update:search", newVal);
     }, window.SERACH_THROTTLE),

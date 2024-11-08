@@ -134,7 +134,7 @@
 </template>
 <script>
 import BVendorPayoutPods from "../../../../vendor/payout/pods/BVendorPayoutPods.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BVendorAccountTransactionsList",
@@ -227,7 +227,7 @@ export default {
       deep: true,
     },
 
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       // console.log("this.options", this.options);
       const { sortBy, page, itemsPerPage } = this.options;
       this.fetchRequests(1, sortBy[0]?.key, sortBy[0]?.order === "desc");

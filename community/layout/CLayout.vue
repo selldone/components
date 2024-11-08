@@ -148,7 +148,7 @@ import CommunityAnalytics from "../../community/global/CommunityAnalytics.vue";
 import CommunityCommentReportsDialog from "../../community/global/CommunityCommentReportsDialog.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 import CPostWidget from "../post/widget/CPostWidget.vue";
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 
 export default {
   name: "CLayout",
@@ -200,7 +200,7 @@ export default {
     },
   },
   watch: {
-    search: _.debounce(function (newVal, oldVal) {
+    search: debounce(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       this.searchPosts(1);
     }, 1500),

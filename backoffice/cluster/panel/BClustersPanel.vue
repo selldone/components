@@ -258,10 +258,10 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BClusterFolder from "../../cluster/folder/BClusterFolder.vue";
 import BClusterResource from "../../cluster/resource/BClusterResource.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import { Cluster } from "@selldone/core-js";
 
 export default {
@@ -308,7 +308,7 @@ export default {
   },
 
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.fetchResources();
     }, window.SERACH_THROTTLE),
 

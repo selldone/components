@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BValuationInput",
@@ -124,7 +124,7 @@ export default {
   },
 
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.getValuations();
     }, window.SERACH_THROTTLE),
   },

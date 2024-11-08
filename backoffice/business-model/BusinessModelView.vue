@@ -58,7 +58,7 @@
 
         <u-pod-node :title="shop.title">
           <v-avatar class="avatar-gradient -thin -shop mb-1" size="24">
-            <img :src="getShopImagePath(shop.icon, 96)" />
+            <img :src="getShopImagePath(shop.icon, 96)" alt="Shop" />
           </v-avatar>
         </u-pod-node>
       </template>
@@ -106,7 +106,7 @@
 
         <u-pod-node :title="shop.title" large>
           <v-avatar class="avatar-gradient -thin -shop mb-1" size="44">
-            <img :src="getShopImagePath(shop.icon, 96)" />
+            <img :src="getShopImagePath(shop.icon, 96)" alt="Shop" />
           </v-avatar>
         </u-pod-node>
 
@@ -146,7 +146,7 @@
 
         <u-pod-node :title="shop.title" large>
           <v-avatar class="avatar-gradient -thin -shop mb-1" size="44">
-            <img :src="getShopImagePath(shop.icon, 96)" />
+            <img :src="getShopImagePath(shop.icon, 96)" alt="Shop" />
           </v-avatar>
         </u-pod-node>
 
@@ -312,7 +312,7 @@
 
         <u-pod-node :title="shop.title" large>
           <v-avatar class="avatar-gradient -thin -shop mb-1" size="44">
-            <img :src="getShopImagePath(shop.icon, 96)" />
+            <img :src="getShopImagePath(shop.icon, 96)" alt="Shop" />
           </v-avatar>
         </u-pod-node>
 
@@ -386,7 +386,7 @@
 
         <u-pod-node :title="shop.title" large>
           <v-avatar class="avatar-gradient -thin -shop mb-1" size="44">
-            <img :src="getShopImagePath(shop.icon, 96)" />
+            <img :src="getShopImagePath(shop.icon, 96)" alt="Shop" />
           </v-avatar>
         </u-pod-node>
 
@@ -461,6 +461,7 @@
                 :src="require('../../assets/trademark/printful.svg')"
                 height="24"
                 width="100%"
+                alt="Printful"
               ></v-img>
             </u-pod-node>
 
@@ -493,6 +494,7 @@
                 :src="require('../../assets/trademark/doba.svg')"
                 height="24"
                 width="100%"
+                alt="Doba"
               ></v-img>
             </u-pod-node>
 
@@ -523,7 +525,7 @@
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Guide ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <v-row class="m-0 mx-2 text-muted small flex-grow-0" dense>
+    <v-row class="m-0 mx-2 small flex-grow-0 op-0-7" dense>
       <v-col cols="6 fadeIn">
         <v-icon class="me-1" size="small">local_mall</v-icon>
         Customer order

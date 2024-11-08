@@ -130,7 +130,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 

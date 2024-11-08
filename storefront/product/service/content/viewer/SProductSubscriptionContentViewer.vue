@@ -138,7 +138,7 @@
 <script>
 import SShopProductFilesList from "../../../../../storefront/product/file/SShopProductFilesList.vue";
 import SFilesGroup from "../../../../../ui/file/group/SFilesGroup.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "SProductSubscriptionContentViewer",
@@ -175,7 +175,7 @@ export default {
   },
 
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       this.page = 1;
       this.fetchContents(this.page);

@@ -54,7 +54,9 @@
       <template v-slot:item.title="{ item }">
         <div>
           <b> {{ item.title?.limitWords(8) }}</b>
-          <small class="d-block my-1 max-w-300">{{ item.title_en?.limitWords(12) }}</small>
+          <small class="d-block my-1 max-w-300">{{
+            item.title_en?.limitWords(12)
+          }}</small>
         </div>
       </template>
 
@@ -126,7 +128,7 @@
 <script>
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BInventoryBulkPreview",
@@ -194,7 +196,7 @@ export default {
   },
 
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       this.page = 1;
       this.fetchPage();
@@ -255,9 +257,10 @@ export default {
           } else {
             this.showErrorAlert(null, data.error_msg);
           }
-        })   .catch((error) => {
-        this.showLaravelError(error);
-      })
+        })
+        .catch((error) => {
+          this.showLaravelError(error);
+        })
         .finally(() => {
           this.busy_fetch = false;
         });

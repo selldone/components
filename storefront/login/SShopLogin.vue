@@ -439,27 +439,30 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import UCountDown from "../../ui/count-down/UCountDown.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 
 import ShopEmailLogin from "../../storefront/login/widgets/ShopEmailLogin.vue";
-import UTelInput from "../../ui/tel-input/UTelInput.vue";
 import { Customer } from "@selldone/core-js/models/shop/customer/customer.model";
-import {XapiAuthSMSVerifyOtpTypes} from "@selldone/sdk-storefront";
+import { XapiAuthSMSVerifyOtpTypes } from "@selldone/sdk-storefront";
+import { defineAsyncComponent } from "vue";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "SShopLogin",
   components: {
-    UTelInput,
+    ULoadingEllipsis,
+    UTelInput: defineAsyncComponent(
+      () => import("@selldone/components-vue/ui/tel-input/UTelInput.vue"),
+    ),
     ShopEmailLogin,
     UCountDown,
   },
-  inject:['$shop'],
+  inject: ["$shop"],
 
   props: {
-
     show: {
       type: Boolean,
       default: false,
@@ -599,9 +602,7 @@ export default {
           if (data.method === XapiAuthSMSVerifyOtpTypes.Method.SELECT) {
             // Next step is select user:
             this.users = data.users;
-          } else if (
-            data.method === XapiAuthSMSVerifyOtpTypes.Method.LOGIN
-          ) {
+          } else if (data.method === XapiAuthSMSVerifyOtpTypes.Method.LOGIN) {
             // User has been login and get token
             this.handleToken(data.token, data.expires_in); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
           } else if (

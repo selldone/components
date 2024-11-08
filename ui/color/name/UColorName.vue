@@ -18,7 +18,9 @@
   </span>
 </template>
 
-<script>
+<script lang="ts">
+import { GetNameOfColor } from "@selldone/core-js/helper";
+
 export default {
   name: "UColorName",
   props: {
@@ -26,7 +28,7 @@ export default {
   },
   computed: {
     color_name() {
-      return this.GetNameOfColor(this.color);
+      return GetNameOfColor(this.color);
     },
   },
   methods: {},

@@ -302,7 +302,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
 import UDateInput from "../../../ui/date/input/UDateInput.vue";
@@ -311,12 +311,14 @@ import MapLocationAddressWidget from "../../transportation/MapLocationAddressWid
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 import BCustomerSegmentInput from "../../customer/segment/input/BCustomerSegmentInput.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
-import UTelInput from "../../../ui/tel-input/UTelInput.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "BCustomerAdd",
   components: {
-    UTelInput,
+    UTelInput: defineAsyncComponent(
+      () => import("@selldone/components-vue/ui/tel-input/UTelInput.vue"),
+    ),
     SWidgetButtons,
     BCustomerSegmentInput,
     SCountrySelect,

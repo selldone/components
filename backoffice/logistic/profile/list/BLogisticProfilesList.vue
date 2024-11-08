@@ -111,7 +111,7 @@
 
 <script>
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "BLogisticProfilesList",
@@ -193,7 +193,7 @@ export default {
       deep: true,
     },
 
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       // console.log("this.options", this.options);
       const { sortBy, page, itemsPerPage } = this.options;
       this.page = 1;

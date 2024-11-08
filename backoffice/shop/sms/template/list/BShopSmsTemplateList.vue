@@ -342,13 +342,12 @@
               class="my-3"
             ></vue-json-pretty>
 
-            <hr class="my-5">
+            <hr class="my-5" />
             <u-widget-header title="Config & Parameters"></u-widget-header>
             <vue-json-pretty
-                :data="test_response.request"
-                class="my-3"
+              :data="test_response.request"
+              class="my-3"
             ></vue-json-pretty>
-
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -374,7 +373,7 @@ import UPodsPanel from "../../../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../../../ui/pod/wire/UPodWire.vue";
 import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import FrameView from "../../../../../ui/mockup/frame/FrameView.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
@@ -493,7 +492,7 @@ export default {
       deep: true,
     },
 
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       // console.log("search", newVal);
       const { sortBy, page, itemsPerPage } = this.options;
       this.page = 1;

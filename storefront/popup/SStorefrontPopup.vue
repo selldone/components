@@ -112,11 +112,15 @@
 </template>
 
 <script lang="ts">
-import LPageViewer from "@selldone/page-builder/page/viewer/LPageViewer.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "SStorefrontPopup",
-  components: { LPageViewer },
+  components: {
+    LPageViewer: defineAsyncComponent(
+      () => import("@selldone/page-builder/page/viewer/LPageViewer.vue"),
+    ),
+  },
   inject: ["$shop"],
   props: {
     modelValue: Boolean,
@@ -177,7 +181,7 @@ export default {
 
           // Auto hide:
           if (this.popup.hide) {
-            console.log("🛸 Auto hide in", this.popup.hide , "seconds");
+            console.log("🛸 Auto hide in", this.popup.hide, "seconds");
             setTimeout(() => {
               this.show = false;
             }, this.popup.hide * 1000);

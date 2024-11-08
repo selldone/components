@@ -190,8 +190,8 @@
                     <tr v-if="bill.items_discount">
                       <td>
                         <v-icon size="small" class="me-1"
-                          >fa:fas fa-gift</v-icon
-                        >
+                          >fa:fas fa-gift
+                        </v-icon>
                         {{ $t("global.commons.discount") }}
                       </td>
 
@@ -206,8 +206,8 @@
                     <tr v-if="bill.offer">
                       <td>
                         <v-icon size="small" class="me-1"
-                          >fa:fas fa-gift</v-icon
-                        >
+                          >fa:fas fa-gift
+                        </v-icon>
                         {{ $t("global.commons.offer") }}
                       </td>
 
@@ -222,8 +222,8 @@
                     <tr v-if="bill.delivery_price !== null">
                       <td>
                         <v-icon size="small" class="me-1"
-                          >fa:fas fa-shipping-fast</v-icon
-                        >
+                          >fa:fas fa-shipping-fast
+                        </v-icon>
                         {{ $t("global.commons.shipping") }}
                       </td>
 
@@ -240,8 +240,8 @@
                     <tr v-if="bill.discount_code">
                       <td>
                         <v-icon size="small" class="me-1"
-                          >fa:fas fa-percentage</v-icon
-                        >
+                          >fa:fas fa-percentage
+                        </v-icon>
                         {{ $t("global.commons.discount_code") }}
                       </td>
                       <td>
@@ -266,8 +266,8 @@
                     <tr v-if="bill.coupon">
                       <td>
                         <v-icon size="small" class="me-1"
-                          >fa:fas fa-ticket-alt</v-icon
-                        >
+                          >fa:fas fa-ticket-alt
+                        </v-icon>
                         {{ $t("global.commons.coupon") }}
                       </td>
                       <td>
@@ -281,8 +281,8 @@
                     <tr v-if="bill.lottery">
                       <td>
                         <v-icon size="small" class="me-1"
-                          >fa:fas fa-dice</v-icon
-                        >
+                          >fa:fas fa-dice
+                        </v-icon>
                         {{ $t("global.commons.prize") }}
                       </td>
                       <td>
@@ -309,8 +309,8 @@
                     <tr v-if="bill.tax">
                       <td>
                         <v-icon size="small" class="me-1"
-                          >fa:fas fa-coins</v-icon
-                        >
+                          >fa:fas fa-coins
+                        </v-icon>
                         {{ $t("global.commons.tax") }}
                       </td>
                       <td>
@@ -517,8 +517,8 @@
 
                   <template v-slot:disable-reason>
                     <v-icon class="me-1" size="18A" color="#fff"
-                      >shopping_bag</v-icon
-                    >
+                      >shopping_bag
+                    </v-icon>
                     Min order:
                     <u-price
                       class="mx-1"
@@ -754,7 +754,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import UPaymentStripe from "../../../ui/payment/stripe/UPaymentStripe.vue";
 import UPaymentButton from "../../../ui/payment/button/UPaymentButton.vue";
 import SGiftcardInput from "../../../storefront/giftcard/selector/SGiftcardInput.vue";
@@ -768,10 +768,13 @@ import UPaymentPaymob from "../../../ui/payment/paymob/UPaymentPaymob.vue";
 import UPaymentSquareup from "../../../ui/payment/squareup/UPaymentSquareup.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import SWalletInput from "@selldone/components-vue/storefront/wallet/SWalletInput.vue";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
 
 export default {
   name: "UPaymentForm",
   components: {
+    ULoadingEllipsis,
     SWalletInput,
     UPrice,
     UPaymentSquareup,
@@ -1037,7 +1040,7 @@ export default {
         console.style(`✔ ❰ Stripe ❱  Script exist.`);
       } catch (e) {
         // Load dynamically:
-        $.cachedScript("https://js.stripe.com/v3/")
+        ScriptHelper.CachedScript("https://js.stripe.com/v3/")
           .done(function (script, textStatus) {
             console.style(
               `🔔 ❰ Stripe ❱  Load script file start... ▶ status: ${textStatus}`,
@@ -1072,7 +1075,7 @@ export default {
         this.getClientTokenPaypal();
       } catch (e) {
         // Load dynamically:
-        $.cachedScript(
+        ScriptHelper.CachedScript(
           "https://js.braintreegateway.com/web/dropin/1.29.0/js/dropin.min.js",
         )
           .done(function (script, textStatus) {

@@ -691,7 +691,6 @@ import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BProductVariantsTable from "../../variants/table/BProductVariantsTable.vue";
 import SCountrySelect from "../../../../ui/country/select/SCountrySelect.vue";
-import BProductBarcode from "../../../product/barcode/BProductBarcode.vue";
 import BNoteDialog from "../../../note/dialog/BNoteDialog.vue";
 import BProductTagsInput from "../../../product/tags/input/BProductTagsInput.vue";
 import SFilesGroup from "../../../../ui/file/group/SFilesGroup.vue";
@@ -706,6 +705,7 @@ import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFold
 import { MapHelper } from "@selldone/core-js";
 import { ProductExternal } from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
 import UChipDiscount from "@selldone/components-vue/ui/chip/discount/UChipDiscount.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "BProductInfoAbstractView",
@@ -717,7 +717,13 @@ export default {
     SFilesGroup,
     BProductTagsInput,
     BNoteDialog,
-    BProductBarcode,
+    BProductBarcode: defineAsyncComponent(
+      () =>
+        import(
+          "@selldone/components-vue/backoffice/product/barcode/BProductBarcode.vue"
+        ),
+    ),
+
     SCountrySelect,
     BProductVariantsTable,
     UTimeProgressBar,

@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 
 export default {
   name: "UExpandView",
@@ -87,7 +87,7 @@ export default {
   },
 
   methods: {
-    unBlock: _.debounce(function () {
+    unBlock: debounce(function () {
       this.block = false;
       this.onScroll(this.$refs.scroll);
     }, 1500),

@@ -381,6 +381,7 @@
 </template>
 
 <script lang="ts">
+
 import BProductsWindow from "../../product/window/BProductsWindow.vue";
 import BProductAddStudio from "../add/studio/BProductAddStudio.vue";
 import BCategoryAdd from "../../category/add/BCategoryAdd.vue";
@@ -391,7 +392,7 @@ import InlineHelp from "../../help/InlineHelp.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import BProductAddAi from "../../product/add/ai/BProductAddAi.vue";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";
 import BShopProductsImportProcessing from "../../product/importer/processing/BShopProductsImportProcessing.vue";
@@ -588,7 +589,7 @@ export default {
     },
 
     //--------------------------------------------------------------------------------------
-    overDropImage: _.throttle((selector) => {
+    overDropImage: throttle((selector) => {
       // Clear all:
       $("*[drop-image]").removeClass("shadow-drop-img");
 

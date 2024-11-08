@@ -136,7 +136,7 @@
 import SStorefrontCouponView from "../view/SStorefrontCouponView.vue";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "SStorefrontCouponsList",
@@ -327,7 +327,7 @@ export default {
       this.setCouponForBasket(coupon);
     },
 
-    setCouponForBasket: _.throttle(function setCouponForBasket(coupon) {
+    setCouponForBasket: throttle(function setCouponForBasket(coupon) {
       this.busy_set = true;
       // console.log("setCouponForBasket", coupon);
       this.$emit("loading", true);

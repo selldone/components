@@ -411,13 +411,13 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import BAccountInput from "../../../account/input/BAccountInput.vue";
 import UPodWire from "../../../../ui/pod/wire/UPodWire.vue";
 import UPodsPanel from "../../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../../ui/pod/node/UPodNode.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
@@ -503,15 +503,15 @@ export default {
   },
 
   watch: {
-    account_from: _.throttle(function (newVal, oldVal) {
+    account_from: throttle(function (newVal, oldVal) {
       if (this.account_to) this.checkToAccountInfo();
     }, 1000),
 
-    account_to: _.throttle(function (newVal, oldVal) {
+    account_to: throttle(function (newVal, oldVal) {
       this.checkToAccountInfo();
     }, 1000),
 
-    receipt_number: _.throttle(function (newVal, oldVal) {
+    receipt_number: throttle(function (newVal, oldVal) {
       this.checkReceiptInfo();
     }, 1000),
 

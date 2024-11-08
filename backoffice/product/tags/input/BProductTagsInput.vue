@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 import { BackofficeLocalStorages } from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import UChipTag from "@selldone/components-vue/ui/chip/tag/UChipTag.vue";
 
@@ -87,7 +87,7 @@ export default {
   },
 
   methods: {
-    onChange: _.debounce(function () {
+    onChange: debounce(function () {
       this.setTags();
     }, 1500),
 

@@ -135,14 +135,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UVariantSelector from "../../../ui/variant/selector/UVariantSelector.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
-import UScanner from "../../../ui/scanner/UScanner.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "SHyperProduct",
-  components: { UScanner, UNumberInput, UVariantSelector },
+  components: {
+    UScanner: defineAsyncComponent(
+      () => import("@selldone/components-vue/ui/scanner/UScanner.vue"),
+    ),
+    UNumberInput,
+    UVariantSelector,
+  },
 
   inject: ["$shop"],
   emits: ["click:add"],

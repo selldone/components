@@ -106,8 +106,8 @@
   </div>
 </template>
 
-<script>
-import _ from "lodash-es";
+<script lang="ts">
+import { throttle } from "lodash-es";
 
 export default {
   name: "SArticleTagsEditor",
@@ -228,7 +228,7 @@ export default {
         });
     },
 
-    setTags: _.throttle(function () {
+    setTags: throttle(function () {
       this.setTagsNow();
     }, 5000),
 

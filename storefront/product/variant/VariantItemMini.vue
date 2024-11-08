@@ -50,10 +50,7 @@
 
       <span class="card-badge-info">
         {{ pack.removeVariantAsset() }}
-        <u-variant-asset-image
-          :size="24"
-          :value="pack"
-        ></u-variant-asset-image>
+        <u-variant-asset-image :size="24" :value="pack"></u-variant-asset-image>
         <span class="text-muted">x</span>
       </span>
     </div>
@@ -90,10 +87,7 @@
       </v-icon>
       <span class="card-badge-info">
         {{ type.removeVariantAsset() }}
-        <u-variant-asset-image
-          :size="24"
-          :value="type"
-        ></u-variant-asset-image>
+        <u-variant-asset-image :size="24" :value="type"></u-variant-asset-image>
       </span>
     </div>
 
@@ -107,9 +101,10 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
 import UVariantAssetImage from "../../../ui/variant/asset/image/UVariantAssetImage.vue";
+import { GetNameOfColor } from "@selldone/core-js/helper";
 
 export default {
   name: "VariantItemMini",
@@ -139,7 +134,7 @@ export default {
   },
   computed: {
     coloName() {
-      return this.GetNameOfColor(this.color);
+      return GetNameOfColor(this.color);
     },
 
     icon_color() {

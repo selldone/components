@@ -53,6 +53,7 @@
     item-value="code"
     @update:model-value="(val) => $emit('change', val)"
     :persistent-placeholder="persistentPlaceholder"
+    aria-label="Select Currency"
   >
     <template v-slot:item="{ item, props }">
       <v-list-item

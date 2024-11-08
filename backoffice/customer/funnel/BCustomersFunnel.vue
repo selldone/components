@@ -70,9 +70,9 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import BCustomersFilterDesign from "../filter/design/BCustomersFilterDesign.vue";
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 import UChartFunnel from "../../../ui/chart/funnel/UChartFunnel.vue";
 import { Customer } from "@selldone/core-js";
 
@@ -172,7 +172,7 @@ export default {
       deep: true,
     },
 
-    changed: _.debounce(function (newVal, oldVal) {
+    changed: debounce(function (newVal, oldVal) {
       if (!newVal) return;
       this.refreshFunnel();
     }, 1000),
@@ -241,10 +241,10 @@ export default {
               );
 
             /*  if(download_data){
-                        const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
-                        excel.downLoad();
-          
-                      }*/
+                          const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
+                          excel.downLoad();
+            
+                        }*/
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

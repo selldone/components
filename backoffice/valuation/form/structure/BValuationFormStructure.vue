@@ -41,9 +41,9 @@
   </draggable>
 </template>
 
-<script>
-import draggable from "vuedraggable";
+<script lang="ts">
 import BValuationFormStructureRow from "../../../valuation/form/structure/row/BValuationFormStructureRow.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "BValuationFormStructure",
@@ -51,7 +51,7 @@ export default {
   components: {
     BValuationFormStructureRow,
 
-    draggable,
+    draggable: defineAsyncComponent(() => import("vuedraggable")),
   },
   props: {
     modelValue: {},

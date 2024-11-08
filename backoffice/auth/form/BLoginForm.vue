@@ -697,7 +697,11 @@
 
     <!-- ███████████████████ Reset password dialog ███████████████████ -->
 
-    <v-bottom-sheet v-model="reset_password_dialog" width="640" max-width="98vw">
+    <v-bottom-sheet
+      v-model="reset_password_dialog"
+      width="640"
+      max-width="98vw"
+    >
       <v-card class="text-start">
         <v-card-title>
           <v-icon class="me-1">password</v-icon>
@@ -963,20 +967,27 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import BLanguageSelector from "../../language/selector/BLanguageSelector.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import { TrackEventOnboarding } from "@selldone/core-js/enums/gtag/TrackEvents";
-import _ from "lodash-es";
+import { delay } from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
-import UTelInput from "../../../ui/tel-input/UTelInput.vue";
 import { BackofficeMixinAuth } from "../../../mixin/backoffice/auth/BackofficeMixinAuth.ts";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "BLoginForm",
   mixins: [BackofficeMixinAuth],
-  components: { UTelInput, USmartToggle, BLanguageSelector },
+  components: {
+    UTelInput: defineAsyncComponent(
+      () => import("@selldone/components-vue/ui/tel-input/UTelInput.vue"),
+    ),
+
+    USmartToggle,
+    BLanguageSelector,
+  },
 
   props: {
     inlineMode: {
@@ -1330,7 +1341,7 @@ export default {
         }
 
         // Fetch home data: (user shops...) Load by delay! (Must not cached!)
-        _.delay(() => {
+        delay(() => {
           this.needHomeData(true);
         }, 2000);
         // location.reload();

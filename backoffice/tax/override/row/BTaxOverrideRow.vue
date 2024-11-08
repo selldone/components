@@ -184,10 +184,12 @@
 <script>
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import BTaxRegionView from "../../../tax/region/view/BTaxRegionView.vue";
+import SStateFlag from "@selldone/components-vue/ui/country/state-flag/SStateFlag.vue";
 
 export default {
   name: "BTaxOverrideRow",
   components: {
+    SStateFlag,
     BTaxRegionView,
     UNumberInput,
   },

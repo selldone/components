@@ -490,19 +490,22 @@ import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 
 //―――――――――――――――――――――― Mapbox ――――――――――――――――――――
 import Mapbox from "../../../ui/map/providers/mapbox/MapBox";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+
+
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UMapAddressInput from "../../../ui/map/address/input/UMapAddressInput.vue";
 
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { installGlobalComponents } from "../../../components-mandetory";
 import UMapViewAddressBook from "@selldone/components-vue/ui/map/view/address-book/UMapViewAddressBook.vue";
 import { MapHelper } from "@selldone/core-js";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "UMapView",
-  components: { UMapViewAddressBook, UMapAddressInput, SCountrySelect },
+  components: {ULoadingEllipsis, UMapViewAddressBook, UMapAddressInput, SCountrySelect },
   mixins: [TemplateMixin],
   emits: [
     "update:modelValue",

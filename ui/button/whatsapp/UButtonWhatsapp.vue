@@ -13,43 +13,43 @@
   -->
 
 <template>
-  <span>
-    <v-menu
-      content-class="bg-black pa-4 rounded-xl text-start"
-      max-width="240"
-      open-on-hover
-    >
-      <template v-slot:activator="{ props }">
-        <v-btn
-          v-if="user.phone"
-          :href="link"
-          :size="xSmall ? '24' : small ? '28' : null"
-          icon
-          target="_blank"
-          v-bind="props"
-          variant="text"
-          @click.stop
-          ><img
-            :height="xSmall ? 12 : small ? 18 : 20"
-            :width="xSmall ? 12 : small ? 18 : 20"
-            src="../../../assets/trademark/whatsapp.svg"
-        /></v-btn>
-      </template>
-      <div class="mb-3 small">{{ $t("global.instance_message_title") }}:</div>
-      <div class="mb-2">
-        <v-icon class="me-1" size="small">phone</v-icon>
+  <v-menu
+    content-class="bg-black pa-4 rounded-xl text-start"
+    max-width="240"
+    open-on-hover
+  >
+    <template v-slot:activator="{ props }">
+      <v-btn
+        v-if="user.phone"
+        :href="link"
+        :size="xSmall ? '24' : small ? '28' : null"
+        icon
+        target="_blank"
+        v-bind="props"
+        variant="text"
+        @click.stop
+        aria-label="Call"
+        ><img
+          :height="xSmall ? 12 : small ? 18 : 20"
+          :width="xSmall ? 12 : small ? 18 : 20"
+          src="../../../assets/trademark/whatsapp.svg"
+          alt="WhatsApp"
+      /></v-btn>
+    </template>
+    <div class="mb-3 small">{{ $t("global.instance_message_title") }}:</div>
+    <div class="mb-2">
+      <v-icon class="me-1" size="small">phone</v-icon>
 
-        {{ user.phone }}
-      </div>
-      <div class="small">
-        <v-icon class="me-1" size="small">message</v-icon>
-        {{ message }}
-      </div>
-    </v-menu>
-  </span>
+      {{ user.phone }}
+    </div>
+    <div class="small">
+      <v-icon class="me-1" size="small">message</v-icon>
+      {{ message }}
+    </div>
+  </v-menu>
 </template>
 
-<script>
+<script lang="ts">
 import {
   CreateSocialConnectLink,
   SocialNetwork,

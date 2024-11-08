@@ -17,10 +17,8 @@
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <v-list-subheader>
-      {{$t('product_add_dropshipping_shops.subtitle')}}
-
+      {{ $t("product_add_dropshipping_shops.subtitle") }}
     </v-list-subheader>
-
 
     <v-row align="center" no-gutters>
       <u-smart-toggle
@@ -188,8 +186,6 @@
       <template v-slot:bottom>
         <v-pagination v-model="page" :length="pageCount" rounded />
       </template>
-
-
     </v-data-table-server>
   </div>
 </template>
@@ -197,7 +193,7 @@
 <script>
 import { SetupService } from "@selldone/core-js/server/SetupService";
 
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 import SCountrySelect from "@selldone/components-vue/ui/country/select/SCountrySelect.vue";
 
@@ -284,7 +280,7 @@ export default {
     },
   },
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.fetchDropShops();
     }, window.SERACH_THROTTLE),
 
@@ -295,7 +291,6 @@ export default {
     page() {
       this.fetchDropShops();
     },
-
 
     show_all() {
       this.fetchDropShops();
@@ -333,7 +328,7 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.drop_shops = data.shops;
-            this.totalItems=data.total
+            this.totalItems = data.total;
           } else {
             this.showErrorAlert(null, data.error_msg);
           }

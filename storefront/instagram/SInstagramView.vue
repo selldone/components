@@ -201,7 +201,7 @@ import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper
 import InstagramViewMedias from "../../storefront/instagram/InstagramViewMedias.vue";
 import InstagramViewHighlights from "../../storefront/instagram/InstagramViewHighlights.vue";
 import * as h337 from "heatmap.js";
-import _ from "lodash-es";
+import { delay } from "lodash-es";
 
 export default {
   name: "SInstagramView",
@@ -265,7 +265,7 @@ export default {
     onResize() {
       if (!this.show_heat) return;
 
-      _.delay(() => {
+      delay(() => {
         this.initHeatmap();
       }, 500);
     },
@@ -385,7 +385,7 @@ export default {
             // Maybe has more data:
             this.has_more = data.medias.length >= this.itemsPerPage;
 
-            _.delay(() => {
+            delay(() => {
               this.initHeatmap();
             }, 500);
           } else {

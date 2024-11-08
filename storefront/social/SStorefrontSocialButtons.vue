@@ -67,7 +67,7 @@ import {
   CreateSocialConnectLink,
   SocialNetwork,
 } from "@selldone/core-js/enums/social/SocialNetwork";
-import _ from "lodash-es";
+import { delay } from "lodash-es";
 
 export default {
   name: "SStorefrontSocialButtons",
@@ -125,7 +125,7 @@ export default {
     visible(visible) {
       if (visible) {
         this.finish = false;
-        _.delay(() => {
+        delay(() => {
           this.finish = true;
         }, 5000);
       }

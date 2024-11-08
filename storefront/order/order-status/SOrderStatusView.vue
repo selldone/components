@@ -26,6 +26,7 @@
         class="me-1"
         height="24"
         width="24"
+        alt="Status"
       />
 
       <v-icon

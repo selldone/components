@@ -174,8 +174,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+
+
 import { SetupService } from "@selldone/core-js/server/SetupService";
+import {ScriptHelper} from "@selldone/components-vue/plugins/jquery/ScriptHelper";
 
 export default {
   name: "UPaymentSquareup",
@@ -308,7 +311,7 @@ export default {
         this.initElements();
       } catch (e) {
         // Load dynamically:
-        $.cachedScript(this.script)
+        ScriptHelper.CachedScript(this.script)
           .done(function (script, textStatus) {
             console.style(
               `🔔 ❰ Square ❱  Load script file start... ▶ status: ${textStatus}`,

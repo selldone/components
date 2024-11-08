@@ -276,7 +276,7 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import BProcessCenterList from "../../process-center/list/BProcessCenterList.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
@@ -352,7 +352,7 @@ export default {
       },
       deep: true,
     },
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.page = 1;
       const { sortBy, page, itemsPerPage } = this.options;
       this.fetchRibbons(this.page, sortBy[0]?.key, sortBy[0]?.order === "desc");

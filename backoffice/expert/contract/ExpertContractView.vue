@@ -584,24 +584,36 @@
       <v-row dense class="my-3">
         <v-col v-if="contract.start_at" class="flex-grow-1" cols="12" md="6">
           <small class="d-block">{{ $t("global.commons.start_date") }}</small>
-          <p class="text-subtitle-2">{{ getLocalDateString(contract.start_at) }} <small>({{ getFromNowString(contract.start_at) }})</small></p>
+          <p class="text-subtitle-2">
+            {{ getLocalDateString(contract.start_at) }}
+            <small>({{ getFromNowString(contract.start_at) }})</small>
+          </p>
         </v-col>
 
         <v-col v-if="contract.end_at" class="flex-grow-1" cols="12" md="6">
           <small class="d-block">{{ $t("global.commons.finish_date") }}</small>
-          <p class="text-subtitle-2">{{ getLocalDateString(contract.end_at) }} <small>({{ getFromNowString(contract.end_at) }})</small></p>
+          <p class="text-subtitle-2">
+            {{ getLocalDateString(contract.end_at) }}
+            <small>({{ getFromNowString(contract.end_at) }})</small>
+          </p>
         </v-col>
 
         <v-col v-if="contract.complete_at" class="flex-grow-1" cols="12" md="6">
           <small class="d-block">{{
             $t("global.commons.complete_date")
           }}</small>
-          <p class="text-subtitle-2">{{ getLocalDateString(contract.complete_at) }} <small>({{ getFromNowString(contract.complete_at) }})</small></p>
+          <p class="text-subtitle-2">
+            {{ getLocalDateString(contract.complete_at) }}
+            <small>({{ getFromNowString(contract.complete_at) }})</small>
+          </p>
         </v-col>
 
         <v-col v-if="contract.cancel_at" class="flex-grow-1" cols="12" md="6">
           <small class="d-block">{{ $t("global.commons.cancel_date") }}</small>
-          <p class="text-subtitle-2">{{ getLocalDateString(contract.cancel_at) }} <small>({{ getFromNowString(contract.cancel_at) }})</small></p>
+          <p class="text-subtitle-2">
+            {{ getLocalDateString(contract.cancel_at) }}
+            <small>({{ getFromNowString(contract.cancel_at) }})</small>
+          </p>
         </v-col>
 
         <v-col
@@ -772,7 +784,7 @@
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
 import { ShopPermissions } from "@selldone/core-js/enums/permission/ShopPermissions";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import BPermissionInput from "../../permission/input/BPermissionInput.vue";
 import BAccountInput from "../../account/input/BAccountInput.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
@@ -1047,7 +1059,7 @@ export default {
       return SmartConvertTextToHtml(message, true);
     },
 
-    setProgress: _.throttle(function () {
+    setProgress: throttle(function () {
       this.setProgressNow();
     }, 2000),
 

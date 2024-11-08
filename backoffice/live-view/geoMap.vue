@@ -154,7 +154,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 //―――――――――――――――――――――― Mapbox ――――――――――――――――――――
 import Mapbox from "../../ui/map/providers/mapbox/MapBox";
 import USparkline from "../../ui/chart/sparkline/USparkline.vue";

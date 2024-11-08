@@ -58,8 +58,8 @@
   </div>
 </template>
 
-<script>
-import _ from "lodash-es";
+<script lang="ts">
+import { throttle } from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 
 export default {
@@ -81,7 +81,7 @@ export default {
   },
 
   watch: {
-    html: _.throttle(function (newVal, oldVal) {
+    html: throttle(function (newVal, oldVal) {
       this.gen();
     }, 1000),
   },
@@ -233,7 +233,7 @@ export default {
         left: 0;
         top: 2px;
         margin-top: 0.1em;
-       opacity: 0;
+        opacity: 0;
 
         background: linear-gradient(to right bottom, #5ea5b7, #104d79);
 

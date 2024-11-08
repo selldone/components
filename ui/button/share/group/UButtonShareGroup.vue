@@ -49,12 +49,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService";
+import VueSocialSharing from "vue-social-sharing/src/share-network.js";
 
 export default {
   name: "UButtonShareGroup",
-
+  components: {
+    "share-network": VueSocialSharing,
+  },
   props: {
     networks: {
       type: Array,

@@ -170,10 +170,11 @@
 import BAppConfigDialog from "../../config/dialog/BAppConfigDialog.vue";
 import BAppShopStoreIcon from "../../../app/shop/store/icon/BAppShopStoreIcon.vue";
 import { Application } from "@selldone/core-js";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "BAppShopStore",
-  components: { BAppShopStoreIcon, BAppConfigDialog },
+  components: {ULoadingEllipsis, BAppShopStoreIcon, BAppConfigDialog },
   props: {
     shop: {
       type: Object,

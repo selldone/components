@@ -89,7 +89,7 @@
 <script>
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import UTagsCloud from "../../../ui/tag/cloud/UTagsCloud.vue";
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 import SProductRelatedProductCard from "@selldone/components-vue/storefront/product/related-products/card/SProductRelatedProductCard.vue";
 
 export default {
@@ -128,7 +128,7 @@ export default {
 
   methods: {
     // Delayed for better performance:
-    fetch: _.debounce(function () {
+    fetch: debounce(function () {
       this.fetchRelatedProductsData(); // Show the related products list
     }, 3000),
 

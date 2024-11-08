@@ -85,13 +85,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CProductView from "../view/CProductView.vue";
-import UScanner from "../../../ui/scanner/UScanner.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "CProductEditor",
-  components: { UScanner, CProductView },
+  components: {
+    UScanner: defineAsyncComponent(
+      () => import("@selldone/components-vue/ui/scanner/UScanner.vue"),
+    ),
+
+    CProductView,
+  },
   emits: ["update:modelValue"],
   props: {
     shop: {

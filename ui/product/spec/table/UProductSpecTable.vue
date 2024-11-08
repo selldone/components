@@ -102,18 +102,18 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BProductSpecRow from "../../../../storefront/product/spec/BProductSpecRow.vue";
 
 import USmartToggle from "../../../smart/toggle/USmartToggle.vue";
-import draggable from "vuedraggable";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "UProductSpecTable",
   components: {
     USmartToggle,
     BProductSpecRow,
-    draggable,
+    draggable: defineAsyncComponent(() => import("vuedraggable")),
   },
 
   emits: ["update", "save", "click-delete"],
@@ -206,6 +206,7 @@ export default {
 <style lang="scss">
 .u--product-spec-table {
   font-size: 13px;
+
   .list-item {
     // Change default items style
     border-radius: 0;

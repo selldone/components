@@ -110,12 +110,15 @@
 </template>
 
 <script>
-import draggable from "vuedraggable";
 import USmartMenu from "../menu/USmartMenu.vue";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "USmartDraggable",
-  components: { USmartMenu, draggable },
+  components: {
+    USmartMenu,
+    draggable: defineAsyncComponent(() => import("vuedraggable")),
+  },
   emits: ["update:modelValue", "change", "click:add"],
   props: {
     modelValue: {},

@@ -325,9 +325,9 @@
   </v-data-table-server>
 </template>
 
-<script>
+<script lang="ts">
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
 import BUserBox from "../../user/box/BUserBox.vue";
 
@@ -460,7 +460,7 @@ export default {
       },
       deep: true,
     },
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.page = 1;
       const { sortBy, page, itemsPerPage } = this.options;
       const sort = sortBy[0];

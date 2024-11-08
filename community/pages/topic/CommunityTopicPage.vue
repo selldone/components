@@ -74,7 +74,6 @@
                 <v-btn
                   :loading="busy_delete"
                   color="red"
-
                   size="x-large"
                   variant="flat"
                   @click="removeTopic()"
@@ -273,12 +272,14 @@ import CommunityCrossTopics from "../../../community/topic/CommunityCrossTopics.
 import CommunityTopicSubscribe from "../../../community/topic/CommunityTopicSubscribe.vue";
 import CommunityFollowSuggestion from "../../../community/users/CommunityFollowSuggestion.vue";
 import CommunityTopicStatistic from "../../../community/topic/CommunityTopicStatistic.vue";
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 export default {
   name: "CommunityTopicPage",
   components: {
+    ULoadingEllipsis,
     CommunityTopicStatistic,
     CommunityFollowSuggestion,
     CommunityTopicSubscribe,
@@ -388,7 +389,7 @@ export default {
       this.fetchPosts(1);
     },
 
-    search: _.debounce(function (newVal, oldVal) {
+    search: debounce(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       this.fetchPosts(1);
     }, 1500),

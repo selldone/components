@@ -32,6 +32,7 @@
         class="rounded-card"
         :color="circleColor"
         cover
+        alt="Icon"
       />
     </v-avatar>
 

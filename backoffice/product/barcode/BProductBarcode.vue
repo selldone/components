@@ -37,7 +37,10 @@
               :value="qrcode_value"
             />
             <v-avatar class="center-absolute" size="38">
-              <v-img v-if="product.icon" :src="getShopImagePath(product.icon)" />
+              <v-img
+                v-if="product.icon"
+                :src="getShopImagePath(product.icon)"
+              />
             </v-avatar>
           </div>
           <div
@@ -119,11 +122,12 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { Print } from "@selldone/core-js/helper/canvas/Print";
 import UTabsRounded from "../../../ui/tab/rounded/UTabsRounded.vue";
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
+import { GetNameOfColor } from "@selldone/core-js/helper";
 
 export default {
   name: "BProductBarcode",
@@ -237,8 +241,8 @@ export default {
         let variant_name = "";
         // Color:
         if (variant.color)
-          variant_name += this.GetNameOfColor(variant.color)
-            ? this.GetNameOfColor(variant.color)
+          variant_name += GetNameOfColor(variant.color)
+            ? GetNameOfColor(variant.color)
             : variant.color;
 
         ["style", "volume", "weight", "pack", "type"].forEach((key) => {

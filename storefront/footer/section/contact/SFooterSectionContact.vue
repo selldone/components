@@ -101,8 +101,12 @@
   </v-dialog>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
-import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
+import {defineAsyncComponent, defineComponent} from "vue";
+
+// Asynchronously load UMapView using defineAsyncComponent
+const UMapView = defineAsyncComponent(() =>
+    import("@selldone/components-vue/ui/map/view/UMapView.vue")
+);
 
 export default defineComponent({
   name: "SFooterSectionContact",

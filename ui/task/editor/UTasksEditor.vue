@@ -96,12 +96,12 @@
   </draggable>
 </template>
 
-<script>
-import draggable from "vuedraggable";
+<script lang="ts">
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "UTasksEditor",
-  components: { draggable },
+  components: { draggable: defineAsyncComponent(() => import("vuedraggable")) },
   props: {
     modelValue: {},
     editable: {

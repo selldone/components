@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "SDiscountCodeInput",
@@ -126,7 +126,7 @@ export default {
       this.discount_code_code = null;
       this.setDiscountCode(true, true);
     },
-    setDiscountCode: _.throttle(function setDiscountCode(
+    setDiscountCode: throttle(function setDiscountCode(
       with_error_notification = true,
       force = false,
     ) {

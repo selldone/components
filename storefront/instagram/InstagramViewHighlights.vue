@@ -306,7 +306,7 @@ import UDragPin from "../../ui/drag/pin/UDragPin.vue";
 import ProductVariantsView from "../../storefront/product/variant/ProductVariantsView.vue";
 import UVariantSelector from "../../ui/variant/selector/UVariantSelector.vue";
 import SShopBuyButton from "../../storefront/product/button/SShopBuyButton.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "InstagramViewHighlights",
@@ -450,7 +450,7 @@ export default {
       this.category_data = null;
     },
 
-    change: _.throttle(function (newVal, oldVal) {
+    change: throttle(function (newVal, oldVal) {
       if (newVal) {
         this.saveStoryProductInfo(this.selected_story);
         this.change = false;

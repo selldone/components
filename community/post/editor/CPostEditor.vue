@@ -679,7 +679,7 @@ import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import CAttachEditor from "../../../community/attach/editor/CAttachEditor.vue";
 import CAttachViewer from "../../../community/attach/viewer/CAttachViewer.vue";
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
-import _ from "lodash-es";
+import { delay } from "lodash-es";
 import { Community, CommunityTopic } from "@selldone/core-js";
 
 /**
@@ -1030,12 +1030,7 @@ export default {
   },
 
   methods: {
-    selectEmoji(emoji) {
-      // console.log(emoji);
-      this.body = $(this.$refs.textarea.$el)
-        .find("textarea")[0]
-        .insertAtCaret(emoji.data);
-    },
+
 
     purify(message) {
       // Hashtag pages :
@@ -1131,7 +1126,7 @@ export default {
 
         this.$nextTick(() => {
           this.$refs.video_view.load();
-          _.delay(() => {
+          delay(() => {
             this.screenshot();
 
             this.setVideoRation();
@@ -1182,7 +1177,7 @@ export default {
     setImageRation() {
       if (this.in_edit_mode) return;
       this.$nextTick(() => {
-        _.delay(() => {
+        delay(() => {
           this.aspect = getAspect(this.$refs.post_image.$el);
         }, 350);
       });
@@ -1191,7 +1186,7 @@ export default {
     setVideoRation() {
       if (this.in_edit_mode) return;
       this.$nextTick(() => {
-        _.delay(() => {
+        delay(() => {
           this.aspect = getAspect(this.$refs.video_view);
         }, 350);
       });

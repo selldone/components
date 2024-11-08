@@ -292,7 +292,7 @@
       <div
         class="position-relative map-circle -hover ma-auto pointer-pointer zoomIn mb-2 mt-4"
         @click="map_dialog = true"
-        :class="{pen:readOnly}"
+        :class="{ pen: readOnly }"
       >
         <img
           :src="
@@ -582,7 +582,7 @@
 <script>
 import UProgressStepper from "../../../ui/progress/stepper/UProgressStepper.vue";
 
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import UTooltipTips from "../../../ui/tooltip/tips/UTooltipTips.vue";
 import BGooglePreview from "../../google/preview/BGooglePreview.vue";
@@ -750,7 +750,7 @@ export default {
       this.reassignShopInfo();
     },
 
-    name: _.throttle(function (newVal, oldVal) {
+    name: throttle(function (newVal, oldVal) {
       this.checkShopNameAvailable();
     }, 1000),
 

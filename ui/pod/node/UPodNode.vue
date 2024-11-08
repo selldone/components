@@ -39,6 +39,7 @@
       class="mb-1 pod-img"
       height="var(--pod-icon-size)"
       width="var(--pod-icon-size)"
+      alt="Icon"
     />
 
     <v-icon

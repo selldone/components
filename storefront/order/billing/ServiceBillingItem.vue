@@ -536,7 +536,7 @@ import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
 
 export default {
@@ -755,7 +755,7 @@ export default {
 
     //----------------------------------------------------------------------------
 
-    updateTasks: _.throttle(function () {
+    updateTasks: throttle(function () {
       if (this.viewOnlyProgress) return;
 
       this.busy_save = true;

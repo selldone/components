@@ -215,12 +215,16 @@
 
 <script lang="ts">
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
-import UScanner from "../../ui/scanner/UScanner.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "SStorefrontSearchBoxOld",
-  components: { UScanner },
+  components: {
+    UScanner: defineAsyncComponent(
+      () => import("@selldone/components-vue/ui/scanner/UScanner.vue"),
+    ),
+  },
   mixins: [TemplateMixin],
   emits: ["onSearch", "onClear", "update:expandInput"],
   props: {

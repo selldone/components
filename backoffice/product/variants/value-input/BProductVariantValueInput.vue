@@ -89,12 +89,13 @@
   </v-expand-transition>
 </template>
 
-<script>
+<script lang="ts">
 import BProductGraphicalAssetsSelector from "../../../product/graphical-assets/selector/BProductGraphicalAssetsSelector.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
+import { GetNameOfColor } from "@selldone/core-js/helper";
 
 export default {
   name: "BProductVariantValueInput",
@@ -115,6 +116,8 @@ export default {
   },
   data() {
     return {
+      GetNameOfColor: GetNameOfColor,
+
       ProductVariants: ProductVariants,
       show_all_colors: false,
 

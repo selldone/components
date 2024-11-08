@@ -59,7 +59,7 @@
 
 <script>
 import SShopLogin from "../../storefront/login/SShopLogin.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "SStorefrontNeedLoginDialog",
@@ -87,7 +87,7 @@ export default {
 
     this.EventBus.$on(
       "need-login",
-      _.throttle((show) => {
+      throttle((show) => {
         this.show_dialog = show;
       }, 800),
     );

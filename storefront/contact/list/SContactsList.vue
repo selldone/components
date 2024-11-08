@@ -295,8 +295,9 @@
 import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
 import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 import SContactConversation from "../conversation/SContactConversation.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import SDataIteratorToolbar from "../../../ui/toolbar/SDataIteratorToolbar.vue";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 /**
  * <s-contacts-list>
@@ -304,6 +305,7 @@ import SDataIteratorToolbar from "../../../ui/toolbar/SDataIteratorToolbar.vue";
 export default {
   name: "SContactsList",
   components: {
+    ULoadingEllipsis,
     SDataIteratorToolbar,
     SContactConversation,
     URatingEmoji,
@@ -445,7 +447,7 @@ export default {
       deep: true,
     },
 
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       //  console.log("search", newVal);
       const { sortBy, page, itemsPerPage } = this.options;

@@ -15,22 +15,7 @@
 
 import { App, defineAsyncComponent } from "vue";
 
-//---------------- Vue FilePond --------------
-// Import Vue FilePond
-import vueFilePond from "vue-filepond";
 
-// Import FilePond styles
-import "filepond/dist/filepond.min.css";
-
-// Import image preview plugin styles
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
-
-// Import image preview and file type validation plugins
-import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-import FilePondPluginImageTransform from "filepond-plugin-image-transform";
-import FilePondPluginImageResize from "filepond-plugin-image-resize";
-import FilePondPluginFileValidateSize from "filepond-plugin-file-validate-size";
 
 //―――――――――――――――――――――― Vue Notification ――――――――――――――――――――
 import VueNotifications from "@kyvg/vue3-notification";
@@ -45,7 +30,6 @@ import UCheck from "./ui/check/UCheck.vue";
 import UPrice from "./ui/price/UPrice.vue";
 
 //---------------- Loading --------------
-import ULoadingEllipsis from "./ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 import ULoadingProgress from "./ui/loading/progress/ULoadingProgress.vue";
 
@@ -57,27 +41,12 @@ import VueTheMask from "vue-the-mask";
 import FlagIcon from "vue-flag-icon";
 
 //---------------- Social Share --------------
-import VueSocialSharing from "vue-social-sharing";
 import UButtonCircle from "./ui/button/circle/UButtonCircle.vue";
 
 import UTooltipTips from "./ui/tooltip/tips/UTooltipTips.vue";
 
-//---------------- Medium Editor --------------
-import "medium-editor";
 
-import "./article/add-on/code-editor/plugin/ArticleAddonCodeEditorPlugin";
-import "./article/add-on/comparison/plugin/ArticleAddonComparisonPlugin";
-import "./article/add-on/catalog/plugin/ArticleAddonCatalogPlugin";
-import "./article/add-on/canvas/plugin/ArticleAddonCanvasPlugin";
 
-// @ts-ignore
-import { MediumInsert } from "./article/insert/SelldoneEditorInsert";
-//―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
-import "prismjs";
-import "prismjs/themes/prism.css";
-
-import { PrismEditor } from "vue-prism-editor";
-import "vue-prism-editor/dist/prismeditor.min.css";
 
 //---------------- Widget --------------
 import SWidget from "./ui/widget/widget/SWidget.vue";
@@ -90,26 +59,16 @@ import VueConfetti from "./ui/confetti";
 
 import "@selldone/core-js/prototypes/Prototypes";
 
-window.MediumInsert = MediumInsert;
 
 export function installGlobalComponents(app: App) {
   // Create component
-  const FilePond = vueFilePond(
-    FilePondPluginFileValidateType,
-    FilePondPluginImagePreview,
-    FilePondPluginImageTransform,
-    FilePondPluginImageResize,
-    FilePondPluginFileValidateSize,
-  );
 
-  app.component("file-pond", FilePond);
 
   app.use(VueNotifications);
 
   app.use(VueNumerals);
   app.component("UCheck", UCheck);
   app.component("u-price", UPrice);
-  app.component(ULoadingEllipsis.name, ULoadingEllipsis);
   app.component(ULoadingProgress.name, ULoadingProgress);
 
   //---------------- Map --------------
@@ -128,15 +87,7 @@ export function installGlobalComponents(app: App) {
   );
   app.component("u-lottie", ULottie);
 
-  //---------------- State Flags --------------
 
-  const SStateFlag = defineAsyncComponent(
-    () =>
-      import(
-        /* webpackChunkName: "plug-flag" */ "./ui/country/state-flag/SStateFlag.vue"
-      ),
-  );
-  app.component("s-state-flag", SStateFlag);
 
   //---------------- Miscellaneous --------------
 
@@ -176,10 +127,8 @@ export function installGlobalComponents(app: App) {
 
   app.use(VueTheMask);
   app.use(FlagIcon);
-  app.use(VueSocialSharing);
   app.component(UButtonCircle.name, UButtonCircle);
   app.component(UTooltipTips.name, UTooltipTips);
-  app.component("prism-editor", PrismEditor);
   app.component(SWidget.name, SWidget);
   app.component(UWidgetHeader.name, UWidgetHeader);
 

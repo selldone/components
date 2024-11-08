@@ -52,13 +52,14 @@
 
 <script>
 import BAppShopIcon from "../../../app/shop/icon/BAppShopIcon.vue";
+import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 /**
  * <b-app-shop-list>
  */
 export default {
   name: "BAppShopList",
-  components: { BAppShopIcon },
+  components: {ULoadingEllipsis, BAppShopIcon },
   props: {
     shop: {
       required: true,

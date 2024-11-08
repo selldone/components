@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import { debounce } from "lodash-es";
 
 export default {
   name: "BProductLocationRestrictionsInput",
@@ -104,7 +104,7 @@ export default {
     };
   },
   watch: {
-    search: _.debounce(function (newVal, oldVal) {
+    search: debounce(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       this.getProfiles();
     }, window.SERACH_THROTTLE),

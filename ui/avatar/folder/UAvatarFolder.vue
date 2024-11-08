@@ -91,7 +91,7 @@
   </v-avatar>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import SImagePlaceholder from "../../../ui/image/placeholder/SImagePlaceholder.vue";
 import { StringToColour } from "@selldone/core-js/helper/color/ColorGenerator";

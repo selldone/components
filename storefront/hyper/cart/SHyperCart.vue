@@ -123,7 +123,7 @@ import SHyperCartItems from "../../../storefront/hyper/cart/items/SHyperCartItem
 import SHyperProduct from "../product/SHyperProduct.vue";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";
 import UStamp from "../../../ui/stamp/UStamp.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import { Basket } from "@selldone/core-js";
 
 export default {
@@ -214,7 +214,7 @@ export default {
         });
     },
 
-    addHyperItem: _.throttle(function (
+    addHyperItem: throttle(function (
       { product_id, variant_id, count },
       oldVal,
     ) {

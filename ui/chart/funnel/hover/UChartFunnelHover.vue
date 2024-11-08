@@ -101,7 +101,7 @@ export default defineComponent({
     },
     labels: {
       type: Array,
-      required: true,
+      required: false,
     },
     index: {
       type: Number,
@@ -137,7 +137,7 @@ export default defineComponent({
     },
     filtered_subLabels() {
       if (this.filterZeros) {
-        return this.labels.filter((subLabel, index) => {
+        return this.labels?.filter((subLabel, index) => {
           return this.values[this.index][index] > 0.0001;
         });
       }

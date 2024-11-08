@@ -643,7 +643,7 @@ import BDomainAdd from "../add/BDomainAdd.vue";
 import InlineHelp from "../../help/InlineHelp.vue";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import BDomainSetting from "../../domain/setting/BDomainSetting.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
@@ -792,7 +792,7 @@ export default {
       deep: true,
     },
 
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       // console.log("this.options", this.options);
       const { sortBy, page, itemsPerPage } = this.options;
       this.page = 1;

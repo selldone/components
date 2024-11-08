@@ -58,6 +58,7 @@
             height="80"
             width="80"
             @click="selected_shop = shop.id"
+            alt="Shop Logo"
           />
           <v-avatar
             :color="dark ? '#000' : '#fff'"
@@ -137,7 +138,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopPermissions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import UButtonAdd from "../../../ui/button/add/UButtonAdd.vue";
 

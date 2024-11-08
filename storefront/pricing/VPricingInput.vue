@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "VPricingInput",
@@ -118,7 +118,7 @@ export default {
   },
 
   watch: {
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
       this.getPricings();
     }, window.SERACH_THROTTLE),

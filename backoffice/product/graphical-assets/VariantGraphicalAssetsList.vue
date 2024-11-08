@@ -16,18 +16,14 @@
   <v-container class="text-start">
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
-    <div v-html="$t('variant_graphical_assets.tips.how_it_works')">
-
-    </div>
+    <div v-html="$t('variant_graphical_assets.tips.how_it_works')"></div>
     <v-row no-gutters>
       <div class="woven-texture"></div>
       <div class="knitted-texture"></div>
       <div class="leather-texture"></div>
     </v-row>
 
-    <div v-html="$t('variant_graphical_assets.tips.how_set_name')">
-
-    </div>
+    <div v-html="$t('variant_graphical_assets.tips.how_set_name')"></div>
 
     <v-row align="center">
       <v-col key="-add-" cols="12" lg="3" md="4" sm="6">
@@ -93,7 +89,7 @@
 
 <script>
 import SImageUploader from "../../../ui/uploader/SImageUploader.vue";
-import _ from "lodash-es";
+import { throttle } from "lodash-es";
 
 export default {
   name: "VariantGraphicalAssetsList",
@@ -144,7 +140,7 @@ export default {
       this.fetchVariantAssets(page);
     },
 
-    search: _.throttle(function (newVal, oldVal) {
+    search: throttle(function (newVal, oldVal) {
       this.fetchVariantAssets(1);
     }, window.SERACH_THROTTLE),
   },
