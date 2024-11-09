@@ -491,13 +491,13 @@ export default {
   }
 
   .--label-value {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 800;
     color: #222;
   }
 
   .--label-title {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: #444;
     font-weight: 500;
   }

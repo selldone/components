@@ -27,6 +27,11 @@
 </template>
 
 <script>
+import $ from "jquery";
+
+window.$ = $;
+window.jQuery = $;
+
 import { StripTags } from "@selldone/core-js/helper/html/HtmlHelper";
 
 export default {
