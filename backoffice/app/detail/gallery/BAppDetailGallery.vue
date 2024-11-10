@@ -67,6 +67,11 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import EffectMaterial from "../../../../ui/swiper/effects/material/effect-material.esm.js";
 import "../../../../ui/swiper/effects/material/effect-material.scss";
 
+// Import Swiper styles
+import "swiper/css";
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
 export default {
   name: "BAppDetailGallery",
   components: { Swiper, SwiperSlide },

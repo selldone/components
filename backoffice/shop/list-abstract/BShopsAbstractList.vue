@@ -90,7 +90,7 @@
             >fa:fas fa-crown
           </v-icon>
 
-          <v-tooltip v-else :max-width="480" color="#111" location="bottom">
+          <v-tooltip v-else :max-width="480" color="#111" location="bottom" content-class="bg-black">
             <template v-slot:activator="{ props }">
               <v-icon class="me-1" color="#03A9F4" size="x-small" v-bind="props"
                 >fa:fas fa-user
@@ -117,9 +117,9 @@
             </div>
           </v-tooltip>
 
-          <small>
+          <span class="small text-black">
             {{ shop.title }}
-          </small>
+          </span>
         </div>
       </component>
     </v-row>
