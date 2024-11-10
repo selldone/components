@@ -416,10 +416,12 @@ import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import VueCompareImage from "../../../../ui/image-compare/VueCompareImage.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
+import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 
 export default {
   name: "BProductAddAi",
   components: {
+    ULottie,
     UWidgetHeader,
     VueCompareImage,
     USmartSelect,

@@ -304,10 +304,12 @@ import SOrderReceiverInfoCard from "../../../../storefront/order/receiver-info/c
 import SOrderBillCard from "../../../../storefront/order/billing/card/SOrderBillCard.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { Basket } from "@selldone/core-js";
+import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 
 export default {
   name: "BOrderDashboardServiceLocation",
   components: {
+    UMapView,
     SOrderBillCard,
     SOrderReceiverInfoCard,
   },

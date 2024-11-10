@@ -71,21 +71,8 @@ export function installGlobalComponents(app: App) {
   app.component("u-price", UPrice);
   app.component(ULoadingProgress.name, ULoadingProgress);
 
-  //---------------- Map --------------
 
-  const UMapView = defineAsyncComponent(
-    () =>
-      import(/* webpackChunkName: "plug-map" */ "./ui/map/view/UMapView.vue"),
-  );
-  app.component("u-map-view", UMapView);
 
-  //---------------- Lottie Animation View for Vue --------------
-
-  const ULottie = defineAsyncComponent(
-    () =>
-      import(/* webpackChunkName: "plug-lottie" */ "./ui/lottie/ULottie.vue"),
-  );
-  app.component("u-lottie", ULottie);
 
 
 

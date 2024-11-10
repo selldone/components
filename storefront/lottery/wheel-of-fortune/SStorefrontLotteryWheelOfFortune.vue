@@ -249,15 +249,14 @@
 <script>
 import SStorefrontLotteryPrizeDetail from "../../../storefront/lottery/prize-detail/SStorefrontLotteryPrizeDetail.vue";
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
+import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 
 export default {
   name: "SStorefrontLotteryWheelOfFortune",
-  components: { SStorefrontLotteryPrizeDetail },
+  components: { ULottie, SStorefrontLotteryPrizeDetail },
   inject: ["$shop"],
 
-  props: {
-
-  },
+  props: {},
   data: () => ({
     dialog: false,
 

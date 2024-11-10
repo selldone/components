@@ -601,10 +601,12 @@ import { TrackSeller } from "@selldone/core-js/enums/gtag/TrackSeller";
 import BTranslationButtonShop from "../../translation/button/shop/BTranslationButtonShop.vue";
 import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
+import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 
 export default {
   name: "BShopAdd",
   components: {
+    UMapView,
     UWidgetHeader,
     BTranslationButtonShop,
     USmartSwitch,

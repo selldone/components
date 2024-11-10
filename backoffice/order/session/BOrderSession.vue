@@ -101,10 +101,12 @@
 <script>
 import SWidgetBox from "../../../ui/widget/box/SWidgetBox.vue";
 import { Analytics } from "@selldone/core-js";
+import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 
 export default {
   name: "BOrderSession",
   components: {
+    UMapView,
     SWidgetBox,
   },
   props: {

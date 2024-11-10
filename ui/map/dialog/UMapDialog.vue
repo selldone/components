@@ -44,12 +44,17 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { EventName } from "@selldone/core-js/events/EventBus";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "UMapDialog",
-  components: {},
+  components: {
+    UMapView: defineAsyncComponent(
+      () => import("@selldone/components-vue/ui/map/view/UMapView.vue"),
+    ),
+  },
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
    *  🔷 Props
@@ -64,7 +69,7 @@ export default {
   data: () => ({
     map_dialog: false,
     map_load: false,
-    center: { lat:0, lng: 0 },
+    center: { lat: 0, lng: 0 },
     startup_mode_map_dialog: "default",
     map_location: {},
     onClickSetLocation: null,

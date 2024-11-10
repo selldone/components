@@ -31,11 +31,22 @@
 </template>
 
 <script lang="ts">
+import { defineAsyncComponent } from "vue";
+
 /**
  * <u-loading-ellipsis>
  */
 export default {
   name: "ULoadingEllipsis",
+  components: {
+    // Asynchronously load the u-lottie component
+    ULottie: defineAsyncComponent(
+      () =>
+        import(
+          /* webpackChunkName: "plug-lottie" */ "@selldone/components-vue/ui/lottie/ULottie.vue"
+        ),
+    ),
+  },
   props: {
     height: {
       default: "84px",

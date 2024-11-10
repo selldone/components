@@ -113,10 +113,11 @@
 <script>
 import BAccountInput from "../../../account/input/BAccountInput.vue";
 import { GiftStatus } from "@selldone/core-js/enums/wallet/gift/GiftStatus";
+import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 
 export default {
   name: "BAccountGiftRedeem",
-  components: { BAccountInput },
+  components: { ULottie, BAccountInput },
   emits: ["update:modelValue", "update"],
   props: {
     modelValue: {},

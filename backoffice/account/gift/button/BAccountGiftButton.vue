@@ -44,10 +44,11 @@
 
 <script>
 import BAccountGiftRedeem from "../../../account/gift/redeem/BAccountGiftRedeem.vue";
+import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 
 export default {
   name: "BAccountGiftButton",
-  components: { BAccountGiftRedeem },
+  components: { ULottie, BAccountGiftRedeem },
   data: () => ({
     busy: false,
     //------- Gift -------

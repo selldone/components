@@ -449,10 +449,12 @@ import { Customer } from "@selldone/core-js/models/shop/customer/customer.model"
 import { XapiAuthSMSVerifyOtpTypes } from "@selldone/sdk-storefront";
 import { defineAsyncComponent } from "vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 
 export default {
   name: "SShopLogin",
   components: {
+    ULottie,
     ULoadingEllipsis,
     UTelInput: defineAsyncComponent(
       () => import("@selldone/components-vue/ui/tel-input/UTelInput.vue"),

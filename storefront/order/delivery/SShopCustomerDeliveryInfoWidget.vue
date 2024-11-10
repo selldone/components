@@ -365,10 +365,12 @@ import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransp
 import UMapGeoButton from "../../../ui/map/geo-button/UMapGeoButton.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import { Basket } from "@selldone/core-js";
+import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
   components: {
+    UMapView,
     USmartToggle,
     UMapGeoButton,
     DeliveryTimelineTransportationOrder,

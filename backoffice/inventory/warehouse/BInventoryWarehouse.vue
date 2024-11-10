@@ -30,7 +30,10 @@
           />
 
           <div v-if="!!warehouse.name || !!full_address">
-            <p class="font-weight-bold mb-1">{{ warehouse.title }}  {{ warehouse.name?` > ${warehouse.name}`:'' }}</p>
+            <p class="font-weight-bold mb-1">
+              {{ warehouse.title }}
+              {{ warehouse.name ? ` > ${warehouse.name}` : "" }}
+            </p>
 
             <flag
               v-if="warehouse.country"
@@ -188,10 +191,11 @@
 
 <script>
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
+import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 
 export default {
   name: "BInventoryWarehouse",
-  components: {},
+  components: { UMapView },
   emits: ["update:warehouse"],
   props: {
     shop: {
@@ -225,7 +229,7 @@ export default {
 
   watch: {},
   created() {
-    this.warehouse =this.vendor?this.vendor.warehouse: this.shop.warehouse;
+    this.warehouse = this.vendor ? this.vendor.warehouse : this.shop.warehouse;
     this.loadData();
   },
   methods: {
@@ -268,9 +272,9 @@ export default {
 
         .then(({ data }) => {
           if (!data.error) {
-            if(this.vendor){
+            if (this.vendor) {
               this.vendor.warehouse = data.warehouse;
-            }else{
+            } else {
               this.shop.warehouse = data.warehouse;
             }
 
