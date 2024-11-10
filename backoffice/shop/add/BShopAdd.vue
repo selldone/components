@@ -579,7 +579,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import UProgressStepper from "../../../ui/progress/stepper/UProgressStepper.vue";
 
 import { throttle } from "lodash-es";
@@ -602,9 +602,12 @@ import BTranslationButtonShop from "../../translation/button/shop/BTranslationBu
 import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
+import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
+import { UMixinConfetti } from "@selldone/components-vue/mixin/confetti/UMixinConfetti.ts";
 
 export default {
   name: "BShopAdd",
+  mixins: [UMixinConfetti],
   components: {
     UMapView,
     UWidgetHeader,
@@ -638,6 +641,8 @@ export default {
   },
 
   data: () => ({
+    HelpCenterCode: HelpCenterCode,
+
     busy: false,
 
     title: "",

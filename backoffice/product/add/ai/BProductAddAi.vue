@@ -405,7 +405,7 @@
   </v-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
@@ -417,9 +417,11 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import VueCompareImage from "../../../../ui/image-compare/VueCompareImage.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
+import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
 export default {
   name: "BProductAddAi",
+  mixins: [BEventBusMixin],
   components: {
     ULottie,
     UWidgetHeader,

@@ -399,9 +399,11 @@ import { AvocadoItem, Basket, BasketItem, Order } from "@selldone/core-js";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import BShopCustomerBox from "@selldone/components-vue/backoffice/customer/box/BShopCustomerBox.vue";
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
+import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
 export default {
   name: "BOrderDashboard",
+  mixins: [BEventBusMixin],
   components: {
     USmartSwitch,
     BShopCustomerBox,

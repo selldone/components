@@ -399,6 +399,7 @@ import BShopProductsImportProcessing from "../../product/importer/processing/BSh
 import BProductsPanelHeader from "../../product/panel/header/BProductsPanelHeader.vue";
 import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
 import BProductsPanelAddProduct from "@selldone/components-vue/backoffice/product/panel/add-product/BProductsPanelAddProduct.vue";
+import {HelpCenterCode} from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
 
 export default {
   name: "BProductsPanel",
@@ -426,6 +427,7 @@ export default {
   },
   delimiters: ["${", "}"], // Avoid Twig conflicts
   data: () => ({
+    HelpCenterCode: HelpCenterCode,
     VendorMemberRegionCode: VendorMemberTypes.VendorMemberRegionCode,
 
     dialog_add_category: false,

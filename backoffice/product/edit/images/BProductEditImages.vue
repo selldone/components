@@ -84,7 +84,6 @@
               ></u-smart-toggle>
 
               <template v-if="product.icon && !forStudio">
-
                 <!-- ━━━━━━━━━━━━━━━━━━━━━ Upscale ━━━━━━━━━━━━━━━━━━━━━ -->
                 <u-button-ai-large
                   v-if="need_upscale"
@@ -173,7 +172,11 @@
       <v-list-subheader>
         {{ $t("add_product.edit_images.images.sub_title") }}
       </v-list-subheader>
-      <b-product-images-gallery ref="images" :product="product" class="m-2 min-height-40vh" />
+      <b-product-images-gallery
+        ref="images"
+        :product="product"
+        class="m-2 min-height-40vh"
+      />
     </div>
 
     <!-- ==================== Product Video ==================== -->
@@ -342,9 +345,11 @@ import UButtonAiLarge from "../../../../ui/button/ai/large/UButtonAiLarge.vue";
 import { getYoutubeId } from "../../../../ui/youtube/helper/YoutubeHelper";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import { ImageHelper } from "@selldone/core-js/utils/image/ImageHelper.ts";
+import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
 export default {
   name: "BProductEditImages",
+  mixins: [BEventBusMixin],
   components: {
     SWidgetButtons,
     UButtonAiLarge,

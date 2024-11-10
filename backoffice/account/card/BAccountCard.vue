@@ -137,13 +137,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import { AccountStatus } from "@selldone/core-js/enums/wallet/AccountStatus";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
 export default {
   name: "BAccountCard",
+  mixins: [BEventBusMixin],
   components: { UCurrencyIcon },
   props: {
     account: {

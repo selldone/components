@@ -149,12 +149,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SGalleryUploadGrid from "../../../../ui/uploader/SGalleryUploadGrid.vue";
 import UButtonAiLarge from "../../../../ui/button/ai/large/UButtonAiLarge.vue";
+import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
 export default {
   name: "BProductImagesGallery",
+  mixins: [BEventBusMixin],
   components: { UButtonAiLarge, SGalleryUploadGrid },
   props: {
     product: {

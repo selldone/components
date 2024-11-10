@@ -386,7 +386,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import ProductsDenseImagesCircles from "../../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import UButtonWhatsapp from "../../../../ui/button/whatsapp/UButtonWhatsapp.vue";
@@ -399,9 +399,11 @@ import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import BTransportationServiceRate from "../../../transportation/service/rate/BTransportationServiceRate.vue";
 import { debounce } from "lodash-es";
+import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
 export default {
   name: "BTransportationServiceLabels",
+  mixins: [BEventBusMixin],
   components: {
     BTransportationServiceRate,
     UTextValueDashed,

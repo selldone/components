@@ -115,11 +115,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
+import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
 export default {
   name: "BTranslationButton",
+  mixins: [BEventBusMixin],
   components: {},
   emits: ["update:translations"],
   props: {

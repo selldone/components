@@ -715,7 +715,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import BShopLicenseBlockOverlay from "../../shop/license/block/overlay/BShopLicenseBlockOverlay.vue";
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
@@ -726,6 +726,7 @@ import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import {HelpCenterCode} from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
 
 export default {
   name: "BDomainAdd",
@@ -756,6 +757,8 @@ export default {
   },
 
   data: () => ({
+    HelpCenterCode: HelpCenterCode,
+
     show_ssl_message: false,
 
     busy_fetch_domain_data: false,
