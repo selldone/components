@@ -129,7 +129,6 @@ export function createComponents(options: {
   const install = (app: App, options?: any) => {
     app.mixin(CoreMixin);
 
-    app.config.globalProperties.$SEO = SEO; // 🌴 Global object in vue components
 
     installGlobalComponents(app);
     installGlobalDirectives(app);
@@ -148,6 +147,10 @@ export function createComponents(options: {
       class: "overflow-x-auto overflow-y-hidden thin-scroll pb-4",
       minHeight: "84px",
     };
+
+    //――― SEO ―――
+    app.config.globalProperties.$SEO = SEO; // 🌴 Global object in vue components
+
     //――― Images ―――
     app.config.globalProperties.IMAGE_SIZE_SMALL =
       BackofficeLocalStorages.IMAGE_SIZE_SMALL;
